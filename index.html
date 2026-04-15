@@ -1,0 +1,2643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Atelier — Journey Master &amp; Portfolio Hub</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode:"class",
+      theme:{extend:{
+        colors:{
+          "primary":"#6366f1","primary-dark":"#4f46e5","primary-light":"#e0e7ff",
+          "on-primary":"#ffffff","secondary":"#8b5cf6","tertiary":"#ec4899",
+          "surface":"#ffffff","background":"#f8faff",
+          "on-surface":"#1e293b","on-surface-variant":"#475569","outline-variant":"#94a3b8",
+          "pastel-purple":"#c4b5fd","pastel-purple-light":"#f3f0ff","pastel-purple-dark":"#6d28d9",
+          "pastel-blue":"#bbdefb","pastel-blue-text":"#1565c0",
+          "pastel-rose":"#f8bbd0","pastel-rose-text":"#c2185b",
+          "pastel-amber":"#fcd34d","pastel-amber-dark":"#b45309",
+          "pastel-indigo":"#a5b4fc","pastel-indigo-dark":"#4338ca",
+          "pastel-lavender":"#e1bee7","pastel-lavender-text":"#6a1b9a",
+          "pastel-mint":"#b2dfdb","pastel-mint-text":"#2e7d32",
+          "pastel-gold":"#fff176","pastel-gold-text":"#f9a825",
+          "pastel-sage":"#dcedc8","pastel-lemon":"#fff9c4","pastel-peach":"#ffe0b2","pastel-slate":"#f8fafc",
+          "accent-mint":"#4db6ac","accent-blue":"#64b5f6","accent-peach":"#ffb74d",
+          "accent-rose":"#f06292","accent-lavender":"#ba68c8","accent-lemon":"#fdd835","accent-sage":"#9ccc65",
+          "lavender":"#e1bee7","on-lavender":"#6a1b9a","periwinkle":"#c5cae9","sky":"#b2ebf2",
+          "surface-container":"#f1f5f9","surface-container-low":"#fafafa",
+          "surface-container-high":"#f1f5f9","surface-container-lowest":"#ffffff",
+          "surface-container-highest":"#e0e0e0","surface-alt":"#f8fafc",
+          "surface-variant":"#f8fafc","surface-dim":"#f8f9fa","surface-bright":"#ffffff",
+          "error":"#ef5350","error-container":"#ffcdd2","on-error":"#ffffff",
+          "secondary-container":"#dbeafe","primary-container":"#c7d2fe",
+          "tertiary-container":"#e1bee7","on-secondary-container":"#0d47a1",
+          "on-primary-container":"#312e81","on-tertiary-container":"#4a148c",
+          "on-secondary":"#ffffff","on-tertiary":"#ffffff",
+          "inverse-primary":"#c7d2fe","surface-tint":"#6366f1"
+        },
+        borderRadius:{"DEFAULT":"0.5rem","sm":"0.125rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","3xl":"2rem","full":"9999px"},
+        fontFamily:{"headline":["Manrope","sans-serif"],"body":["Inter","sans-serif"],"label":["Inter","sans-serif"],"manrope":["Manrope","sans-serif"]}
+      }}
+    }
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#fff;color:#1e293b}
+    h1,h2,h3,h4{font-family:'Manrope',sans-serif}
+    .font-headline,.headline{font-family:'Manrope',sans-serif!important}
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+    .no-scrollbar::-webkit-scrollbar,.hide-scrollbar::-webkit-scrollbar{display:none}
+    .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .gradient-primary{background:linear-gradient(135deg,#6366f1 0%,#a855f7 100%)}
+    .gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
+    .bg-gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
+    .gradient-secondary{background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%)}
+    .text-gradient-primary{background:linear-gradient(135deg,#6366F1 0%,#A855F7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .pastel-shadow{box-shadow:0 10px 25px -5px rgba(100,116,139,.08)}
+    .glass-panel,.glass-effect{background:rgba(255,255,255,.8);backdrop-filter:blur(8px)}
+    .active-gradient,.purple-blue-gradient{background:linear-gradient(90deg,#B2EBF2 0%,#E1BEE7 100%)}
+    .section-tint-blue{background-color:#EBF5FF}
+    .section-tint-purple{background-color:#EEF2FF}
+
+    /* ── UNIFIED DESIGN OVERRIDES ── */
+    /* Card borders: all pages use same subtle border */
+    .page [class*="border-slate-400"]{border-color:#e2e8f0!important}
+    .page .divide-slate-400>*+*,.page .divide-slate-300>*+*{border-color:#e2e8f0!important}
+    /* Table/section bg headers */
+    .page .bg-slate-100{background-color:#f8fafc!important}
+    .page .bg-slate-200{background-color:#f1f5f9!important}
+
+    /* Our unified intro h2 — consistent style */
+    .atelier-page-h2{
+      font-family:'Manrope',sans-serif!important;
+      font-size:1.5rem!important;
+      font-weight:800!important;
+      color:#0f172a!important;
+      letter-spacing:-0.02em!important;
+    }
+
+    /* Page fade transition */
+    .page{animation:fadeIn .18s ease}
+    @keyframes fadeIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col py-6 z-50">
+  <div class="px-6 mb-6 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white shadow-sm shrink-0">
+      <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">palette</span>
+    </div>
+    <div>
+      <h1 class="text-base font-black text-slate-800 tracking-tight">The Atelier</h1>
+      <p class="font-manrope uppercase tracking-widest text-[9px] font-semibold text-slate-400 mt-0.5">v1.0.4</p>
+    </div>
+  </div>
+  <nav class="flex-1 space-y-0.5 overflow-y-auto hide-scrollbar">
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-dashboard" onclick="navigate('dashboard'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">dashboard</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">대시보드</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-journey" onclick="navigate('journey'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">explore</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">여행</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-finance" onclick="navigate('finance'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">payments</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">재정</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-finance-hub" onclick="navigate('finance-hub'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">monitoring</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">재정 허브</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-matrix" onclick="navigate('matrix'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">grid_view</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">매트릭스</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-english" onclick="navigate('english'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">translate</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">영어</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-income" onclick="navigate('income'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">account_balance_wallet</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">수입</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-planner" onclick="navigate('planner'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">calendar_month</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">플래너</span>
+    </a>
+  </nav>
+  <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
+    <button class="w-full py-2.5 gradient-primary text-white rounded-xl font-bold text-[10px] font-manrope uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm hover:opacity-90 active:scale-95 transition-all">
+      <span class="material-symbols-outlined text-sm">add</span> 새 항목
+    </button>
+    <a href="#" class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-600 rounded-xl transition-all">
+      <span class="material-symbols-outlined text-sm">help</span>
+      <span class="font-manrope uppercase tracking-widest text-[10px] font-semibold">도움말</span>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN WRAPPER -->
+<div class="ml-64 min-h-screen flex flex-col bg-white">
+  <header class="fixed top-0 left-64 right-0 h-16 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100 flex justify-between items-center px-8">
+    <div class="flex items-center gap-8">
+      <div>
+        <h2 id="page-title" class="text-sm font-extrabold tracking-tight text-slate-900 font-headline leading-tight">마스터 대시보드</h2>
+        <p id="page-subtitle" class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mt-0.5">생산성 허브</p>
+      </div>
+      <div class="relative hidden lg:block">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-lg">search</span>
+        <input class="pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm w-60 focus:ring-1 focus:ring-indigo-200 focus:border-indigo-200 transition-all placeholder:text-slate-300 outline-none" placeholder="Atelier 검색..." type="text"/>
+      </div>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">notifications</span></button>
+      <button class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">settings</span></button>
+      <div class="h-8 w-8 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm ml-2">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSlpmh80kQM2oc_gaRsT2sH5BoDrc7fFy6-_gPFCbWLJJC5RqabeKrXzE4ML55k2DaJrd8lCsQO7sIyxP1slNU1jWkWmpjZzIx_aD_UZ3lErnQGeGW_38xSIgCUQxWmEPS7BSXGsb6kB87WKShGMDrAGuKKttJS6dZplNR42xBqR7aG9w-Am77VSlO9wBCm0ATLnQG9xWmNp1EK6lMYpAErdACslPqf_uJXKTfEqj0UDYMA0Gbqr3qIJuRhTLEbR28a20xE633OLkK" alt="User" class="h-full w-full object-cover"/>
+      </div>
+    </div>
+  </header>
+
+  <div class="pt-16 flex-1">
+  <div id="page-dashboard" class="page" style="display:block">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+<div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+  <p class="text-slate-500 text-sm font-medium mt-2 leading-relaxed max-w-2xl">오늘의 실행 현황, 여행 일정, 재정 현황, 연간 마일스톤을 한눈에.</p>
+  <div class="shrink-0 pt-1">
+    <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">생산성 허브</span>
+  </div>
+</div>
+<!-- Top Nav -->
+
+<!-- Editorial Grid -->
+<div class="flex-1 overflow-y-auto p-8 no-scrollbar bg-slate-50/30">
+<div class="max-w-[1200px] mx-auto grid grid-cols-12 gap-8 pb-12">
+<!-- 오늘의 실행 -->
+<section class="col-span-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">오늘의 실행</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-white bg-slate-800 px-3 py-1 rounded-full">Daily Focus</span>
+</div>
+<div class="bg-white border border-slate-100 p-8 rounded-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-10 shadow-sm relative">
+<!-- Progress Items -->
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">글쓰기</span>
+<span class="text-xs font-bold text-primary">75%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-primary" style="width: 75%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">영어</span>
+<span class="text-xs font-bold text-blue-800">90%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-pastel-blue" style="width: 90%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">스터디</span>
+<span class="text-xs font-bold text-amber-800">45%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-pastel-amber" style="width: 45%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">운동</span>
+<span class="text-xs font-bold text-rose-800">60%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-pastel-rose" style="width: 60%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">업무</span>
+<span class="text-xs font-bold text-indigo-900">30%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-pastel-indigo" style="width: 30%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">개인</span>
+<span class="text-xs font-bold text-purple-900">100%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-pastel-purple" style="width: 100%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">휴가</span>
+<span class="text-xs font-bold text-slate-700">10%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-slate-400" style="width: 10%"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-900">전체</span>
+<span class="text-xs font-bold text-slate-900">58%</span>
+</div>
+<div class="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+<div class="h-full bg-slate-800" style="width: 58%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 다가오는 여행 -->
+<section class="col-span-12 lg:col-span-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">다가오는 여행</h3>
+<span class="material-symbols-outlined text-slate-300">flight_takeoff</span>
+</div>
+<div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm transition-all hover:pastel-shadow group">
+<div class="h-36 w-full relative">
+<img alt="Scenic Prague" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACKnxlMlIMk8O5X-wzkZdjTPlrjDAQEqvjByFT8SVdH-CAieVmbFMCLxMoWRnkEtGnp48qKkKZtCt6T2AkQBKOv7X991YzO4SGrG3__NYCQXv4shXBRHVOVf4c-K55D4jKjIK8I-zTIgTu0VQGHR896_yaYVHv8gJ_DYrJSgPGvthC9fXbvPD537LQ-RaT0Kz83sdLNxevoDvaWmI3gAWlijl_xQ-4AXB3U8ROezP7XD8gNCsn1BQ_GhzEqDvkyq7fOchVAiZlrAHA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-5">
+<div class="text-white">
+<p class="text-[10px] font-bold uppercase tracking-widest opacity-90">출발: Oct 12</p>
+<h4 class="text-xl font-bold">프라하 &amp; 빈</h4>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-slate-100">
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">주요 체크리스트</p>
+<ul class="space-y-4">
+<li class="flex items-center gap-3">
+<div class="size-5 rounded bg-primary text-white flex items-center justify-center border border-primary-dark/20">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+<span class="text-sm font-semibold text-slate-800">기차 티켓 확정 (ÖBB)</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="size-5 rounded bg-white border border-slate-200"></div>
+<span class="text-sm font-medium text-slate-700">에어비앤비 체크인 시간 확인</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="size-5 rounded bg-white border border-slate-200"></div>
+<span class="text-sm font-medium text-slate-700">큐레이션 키트 챙기기 (라이카 + 저널)</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- 재정 현황 -->
+<section class="col-span-12 lg:col-span-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">재정 현황</h3>
+<span class="material-symbols-outlined text-slate-300">monitoring</span>
+</div>
+<div class="bg-white border border-slate-100 p-6 rounded-2xl flex flex-col h-[324px] shadow-sm">
+<div class="grid grid-cols-2 gap-6 mb-8">
+<div class="p-4 bg-indigo-50/30 rounded-xl border border-slate-100/50 shadow-sm">
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">수입</p>
+<p class="text-2xl font-black text-primary-dark">$12,450</p>
+</div>
+<div class="p-4 bg-rose-50/30 rounded-xl border border-slate-100/50 shadow-sm">
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">지출</p>
+<p class="text-2xl font-black text-rose-800">$4,120</p>
+</div>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between items-end mb-4 px-1">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">저축 목표</p>
+<p class="text-sm font-bold text-slate-800">9월 리저브</p>
+</div>
+<div class="bg-primary text-white px-2.5 py-0.5 rounded-full text-[11px] font-bold">82%</div>
+</div>
+<div class="h-20 flex items-end gap-2 px-1 border-b border-slate-100">
+<div class="flex-1 bg-primary/20 rounded-t-lg h-1/4"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-2/3"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-1/2"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-3/4"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-full shadow-sm"></div>
+<div class="flex-1 bg-slate-200 rounded-t-lg h-1/6"></div>
+<div class="flex-1 bg-slate-200 rounded-t-lg h-1/6"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 일정 스냅샷 -->
+<section class="col-span-12 lg:col-span-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">일정 스냅샷</h3>
+<span class="material-symbols-outlined text-slate-300">calendar_month</span>
+</div>
+<div class="space-y-4">
+<div class="bg-white border border-slate-100 p-4 rounded-xl flex items-center gap-4 hover:pastel-shadow transition-all cursor-pointer group shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-pastel-blue border border-blue-100/50 flex flex-col items-center justify-center text-blue-900">
+<span class="text-[9px] font-bold uppercase">수</span>
+<span class="text-lg font-bold leading-none">14</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-slate-800 truncate">Annie's 영어 Lesson</h4>
+<p class="text-xs text-slate-500 font-medium">15:00 • 화상 통화</p>
+</div>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+<div class="bg-white border border-slate-100 p-4 rounded-xl flex items-center gap-4 hover:pastel-shadow transition-all cursor-pointer group shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-pastel-amber border border-amber-100/50 flex flex-col items-center justify-center text-amber-900">
+<span class="text-[9px] font-bold uppercase">목</span>
+<span class="text-lg font-bold leading-none">15</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-slate-800 truncate">분기 리뷰</h4>
+<p class="text-xs text-slate-500 font-medium">10:00 • 전략 회의실</p>
+</div>
+<span class="material-symbols-outlined text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+<div class="bg-white border border-slate-100 p-4 rounded-xl flex items-center gap-4 hover:pastel-shadow transition-all cursor-pointer group shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-pastel-purple border border-purple-100/50 flex flex-col items-center justify-center text-purple-900">
+<span class="text-[9px] font-bold uppercase">토</span>
+<span class="text-lg font-bold leading-none">17</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-slate-800 truncate">파인아트 큐레이팅 엑스포</h4>
+<p class="text-xs text-slate-500 font-medium">11:30 • 시내 갤러리</p>
+</div>
+<span class="material-symbols-outlined text-purple-700 opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+</div>
+</section>
+<!-- Yearly Milestone (Bottom Wide) -->
+<section class="col-span-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">연간 마일스톤</h3>
+<span class="material-symbols-outlined text-slate-300">star</span>
+</div>
+<div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-8 rounded-3xl relative overflow-hidden group shadow-xl border border-white/5">
+<div class="absolute -right-16 -top-16 size-64 bg-white/5 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-8">
+<div class="size-20 rounded-2xl bg-white/10 backdrop-blur-xl flex flex-col items-center justify-center text-white border border-white/20 shadow-2xl">
+<span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Sept</span>
+<span class="material-symbols-outlined text-3xl mt-1">auto_awesome</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-indigo-300 mb-1">현재 마일스톤</p>
+<h4 class="text-3xl font-bold tracking-tight text-white">라이팅 스프린트: 9월</h4>
+<p class="text-indigo-100/80 mt-2 max-w-lg leading-relaxed text-sm font-medium">목표: 현대 미학과 큐레이션 로직에 관한 4편의 에세이 — 총 30,000 단어.</p>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<div class="text-right hidden lg:block">
+<p class="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">전체 진행률</p>
+<p class="text-4xl font-black text-white">22.4k<span class="text-base font-medium opacity-60 ml-1">/ 30k</span></p>
+</div>
+<button class="px-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-xl active:scale-95">
+                                    매트릭스 보기
+                                </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+    </div>
+  </div>
+  <div id="page-journey" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+<div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+  <p class="text-slate-500 text-sm font-medium mt-2 leading-relaxed max-w-2xl">프라하 → 올로모우츠 → 브르노 → 빈  ·  1,240 km  ·  이동 수단, 일정, 큐레이션 기록.</p>
+  <div class="shrink-0 pt-1">
+    <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">2024.09.12 — 09.24</span>
+  </div>
+</div>
+<!-- Top Navigation Bar Shell -->
+
+<!-- Content Canvas -->
+<div class="p-10 max-w-7xl mx-auto space-y-12 pb-24">
+<!-- 전체 Timeline Section -->
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<h3 class="text-2xl font-black text-slate-900 tracking-tight">루트 요약</h3>
+<div class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-700 bg-indigo-100 px-4 py-1.5 rounded-full border border-indigo-300">총 1,240 KM</div>
+</div>
+<div class="grid grid-cols-4 gap-6">
+<div class="relative p-6 bg-slate-50/50 border border-slate-400/40 rounded-3xl group transition-all hover:bg-sky-100/40 hover:border-sky-400 shadow-sm">
+<div class="text-[10px] font-bold uppercase tracking-widest text-sky-600 mb-2">1번째</div>
+<h4 class="text-lg font-bold text-slate-900">Prague</h4>
+<p class="text-xs text-slate-600 mt-1 font-medium">4박 • 구시가지</p>
+<div class="mt-5 h-1.5 w-full bg-slate-300 rounded-full overflow-hidden">
+<div class="h-full w-full bg-gradient-to-r from-sky-500 to-indigo-500"></div>
+</div>
+</div>
+<div class="relative p-6 bg-slate-50/50 border border-slate-400/40 rounded-3xl group transition-all hover:bg-lavender/40 hover:border-lavender shadow-sm">
+<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">2번째</div>
+<h4 class="text-lg font-bold text-slate-900">Olomouc</h4>
+<p class="text-xs text-slate-600 mt-1 font-medium">2박 • 역사 지구</p>
+<div class="mt-5 h-1.5 w-full bg-slate-300 rounded-full overflow-hidden">
+<div class="h-full w-0 bg-indigo-500"></div>
+</div>
+</div>
+<div class="relative p-6 bg-slate-50/50 border border-slate-400/40 rounded-3xl group transition-all hover:bg-indigo-100/40 hover:border-indigo-400 shadow-sm">
+<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">3번째</div>
+<h4 class="text-lg font-bold text-slate-900">Brno</h4>
+<p class="text-xs text-slate-600 mt-1 font-medium">2박 • 대성당 언덕</p>
+<div class="mt-5 h-1.5 w-full bg-slate-300 rounded-full overflow-hidden">
+<div class="h-full w-0 bg-indigo-500"></div>
+</div>
+</div>
+<div class="relative p-6 bg-slate-50/50 border border-slate-400/40 rounded-3xl group transition-all hover:bg-sky-100/40 hover:border-sky-400 shadow-sm">
+<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">4번째</div>
+<h4 class="text-lg font-bold text-slate-900">Vienna</h4>
+<p class="text-xs text-slate-600 mt-1 font-medium">4박 • 링슈트라세</p>
+<div class="mt-5 h-1.5 w-full bg-slate-300 rounded-full overflow-hidden">
+<div class="h-full w-0 bg-indigo-500"></div>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-12 gap-12">
+<!-- Daily Hourly Schedule: Left Column (4 Cols) -->
+<section class="col-span-4 space-y-8 bg-slate-50/50 p-8 rounded-3xl border border-slate-400 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-sky-200 to-lavender text-indigo-800 flex items-center justify-center font-black text-lg border border-slate-400/30 shadow-sm">01</div>
+<div>
+<h3 class="text-xl font-black text-slate-900">1일차: 프라하</h3>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">도착 &amp; 몰입</p>
+</div>
+</div>
+<!-- Vertical Timeline -->
+<div class="relative border-l-2 border-slate-300 ml-6 space-y-12 py-4">
+<div class="relative pl-10">
+<div class="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-sky-500 ring-8 ring-white shadow-md"></div>
+<div class="text-xs font-black text-indigo-600 font-headline uppercase tracking-wider">09:00</div>
+<div class="mt-2 bg-white p-5 rounded-2xl border border-slate-400 hover:border-sky-500 transition-colors shadow-sm">
+<h5 class="font-bold text-sm text-slate-900">구시가지 광장 투어</h5>
+<p class="text-xs text-slate-600 mt-1 leading-relaxed">천문 시계 앞에서 만나 프라이빗 역사 워크스루 진행.</p>
+</div>
+</div>
+<div class="relative pl-10">
+<div class="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-lavender ring-8 ring-white border-2 border-indigo-400 shadow-md"></div>
+<div class="text-xs font-black text-indigo-600 font-headline uppercase tracking-wider">11:30</div>
+<div class="mt-2 bg-white p-5 rounded-2xl border border-slate-400 hover:border-lavender transition-colors shadow-sm">
+<h5 class="font-bold text-sm text-slate-900">카페 사보이 점심</h5>
+<p class="text-xs text-slate-600 mt-1 leading-relaxed">전통 체코 페이스트리와 아르누보 인테리어를 즐기는 미식 점심.</p>
+</div>
+</div>
+<div class="relative pl-10">
+<div class="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-indigo-400 ring-8 ring-white border-2 border-indigo-600/30 shadow-md"></div>
+<div class="text-xs font-black text-indigo-600 font-headline uppercase tracking-wider">14:30</div>
+<div class="mt-2 bg-white p-5 rounded-2xl border border-slate-400 hover:border-indigo-400 transition-colors shadow-sm">
+<h5 class="font-bold text-sm text-slate-900">무하 뮤지엄 관람</h5>
+<p class="text-xs text-slate-600 mt-1 leading-relaxed">슬라브 서사시와 알폰스 무하 작품 프라이빗 가이드 관람.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Tables & Details: Right Column (8 Cols) -->
+<div class="col-span-8 space-y-12">
+<!-- 이동 & 이동 -->
+<section class="bg-slate-100/50 p-1 rounded-3xl border border-slate-400/60 shadow-sm">
+<div class="flex items-center justify-between p-6">
+<h3 class="text-xl font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
+<button class="text-[10px] font-bold uppercase tracking-widest text-indigo-700 hover:text-indigo-900 transition-colors">티켓 보기</button>
+</div>
+<div class="bg-white rounded-2xl overflow-hidden border border-slate-400/40 shadow-sm mx-2 mb-2">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 border-b border-slate-300">Type</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 border-b border-slate-300">Route</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 border-b border-slate-300">Time</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right border-b border-slate-300">상태</th>
+</tr>
+</thead>
+<tbody class="bg-white">
+<tr class="hover:bg-indigo-50/40 transition-colors border-b border-slate-300">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-500" data-icon="directions_railway">directions_railway</span>
+<span class="text-sm font-bold text-slate-800">DB ICE Train</span>
+</div>
+</td>
+<td class="px-6 py-5 text-sm font-medium text-slate-700">Prague → Olomouc</td>
+<td class="px-6 py-5 text-sm text-slate-500">08:45 AM</td>
+<td class="px-6 py-5 text-right">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-300 uppercase tracking-widest">확정</span>
+</td>
+</tr>
+<tr class="hover:bg-indigo-50/40 transition-colors border-b border-slate-300">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-500" data-icon="directions_bus">directions_bus</span>
+<span class="text-sm font-bold text-slate-800">FlixBus Executive</span>
+</div>
+</td>
+<td class="px-6 py-5 text-sm font-medium text-slate-700">Olomouc → Brno</td>
+<td class="px-6 py-5 text-sm text-slate-500">14:15 PM</td>
+<td class="px-6 py-5 text-right">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-300 uppercase tracking-widest">확정</span>
+</td>
+</tr>
+<tr class="hover:bg-indigo-50/40 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-500" data-icon="car_rental">car_rental</span>
+<span class="text-sm font-bold text-slate-800">Eurocar Premium</span>
+</div>
+</td>
+<td class="px-6 py-5 text-sm font-medium text-slate-700">Brno → Vienna</td>
+<td class="px-6 py-5 text-sm text-slate-500">Flexible (10:00)</td>
+<td class="px-6 py-5 text-right">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-400 uppercase tracking-widest">대기 중</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Shopping & Souvenirs -->
+<section class="bg-indigo-100/30 p-8 rounded-3xl border border-indigo-400/40 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-black tracking-tight text-slate-900">기념품 체크리스트</h3>
+<button class="text-[10px] font-bold uppercase tracking-widest text-indigo-700 hover:text-indigo-900 transition-colors">목록 편집</button>
+</div>
+<div class="bg-white rounded-2xl shadow-sm border border-slate-400 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-slate-400 bg-slate-50">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Target</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Item / Brand</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Est. Price</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="hover:bg-indigo-50/30 transition-colors border-b border-slate-300 last:border-0">
+<td class="px-6 py-4 text-xs font-bold text-indigo-700">Family</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-800">Marvis Toothpaste Set</td>
+<td class="px-6 py-4 text-sm text-slate-500">€24.00</td>
+<td class="px-6 py-4 text-right"><input class="rounded border-slate-400 text-indigo-600 focus:ring-indigo-300 h-4 w-4" type="checkbox"/></td>
+</tr>
+<tr class="hover:bg-indigo-50/30 transition-colors border-b border-slate-300 last:border-0">
+<td class="px-6 py-4 text-xs font-bold text-indigo-700">Colleagues</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-800">Savini White Truffle Oil</td>
+<td class="px-6 py-4 text-sm text-slate-500">€45.00</td>
+<td class="px-6 py-4 text-right"><input class="rounded border-slate-400 text-indigo-600 focus:ring-indigo-300 h-4 w-4" type="checkbox"/></td>
+</tr>
+<tr class="hover:bg-indigo-50/30 transition-colors">
+<td class="px-6 py-4 text-xs font-bold text-indigo-700">Self</td>
+<td class="px-6 py-4 text-sm font-medium text-slate-800">Moser Crystal Glassware</td>
+<td class="px-6 py-4 text-sm text-slate-500">€180.00</td>
+<td class="px-6 py-4 text-right"><input checked="" class="rounded border-slate-400 text-indigo-600 focus:ring-indigo-300 h-4 w-4" type="checkbox"/></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Cost Tracker Memo -->
+<section class="bg-gradient-to-br from-sky-100 to-indigo-100 rounded-[2.5rem] p-10 border border-indigo-400/50 relative overflow-hidden shadow-md">
+<div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/30 to-transparent"></div>
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+<div class="space-y-1">
+<h3 class="text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-600">총 지출</h3>
+<div class="text-5xl font-black font-headline text-slate-900 tracking-tighter">€3,842.50</div>
+<p class="text-[10px] font-bold text-indigo-700 uppercase tracking-widest pt-1">남은 예산: €1,157.50</p>
+</div>
+<div class="flex gap-4 overflow-x-auto w-full md:w-auto no-scrollbar">
+<div class="bg-white/95 backdrop-blur-md p-5 rounded-3xl border border-indigo-300 min-w-[140px] shadow-sm text-center">
+<div class="text-[10px] uppercase font-bold text-indigo-600 tracking-widest mb-1">이동</div>
+<div class="text-lg font-black text-slate-900">€840.00</div>
+</div>
+<div class="bg-white/95 backdrop-blur-md p-5 rounded-3xl border border-indigo-300 min-w-[140px] shadow-sm text-center">
+<div class="text-[10px] uppercase font-bold text-indigo-600 tracking-widest mb-1">숙소</div>
+<div class="text-lg font-black text-slate-900">€2,150.00</div>
+</div>
+<div class="bg-white/95 backdrop-blur-md p-5 rounded-3xl border border-indigo-300 min-w-[140px] shadow-sm text-center">
+<div class="text-[10px] uppercase font-bold text-indigo-600 tracking-widest mb-1">여가</div>
+<div class="text-lg font-black text-slate-900">€565.50</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- 여행 사진 -->
+<section class="grid grid-cols-3 gap-8 pt-12 border-t border-slate-400">
+<div class="aspect-[4/5] rounded-[2rem] overflow-hidden bg-slate-50 relative group shadow-md border border-slate-400">
+<img alt="Prague Cityscape" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnyP5qBFdDH801OgrYFnOKYIQxRDvKtgv9cxIAreydrJP1u9YN0xaII5DYauS6hBuYHyyhFZlDd7tZt5c2Gm8suSxNNNz3H2gYsSZJbjFwI1I6KHPQIn4dv2dbj1BRp-6f2wGpZon9cJ49N0qNSGzat0GZhk7gEroBsZD0VoJFXqP6WqP2xey-TecSXf9T5PgXbxxdK5w7aSZrieneZk-0KvnS58JeQUAmCKM1s94b63d6Q8GnvE7jItxWjTeAVbP_j1opf9BFNFdl"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
+<span class="text-white text-[10px] font-bold uppercase tracking-widest mb-1">문화유산</span>
+<span class="text-white font-black text-lg">St. Vitus Cathedral</span>
+</div>
+</div>
+<div class="aspect-[4/5] rounded-[2rem] overflow-hidden bg-slate-50 relative group shadow-md border border-slate-400">
+<img alt="Vienna Interior" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKzk4FEjJnA5SQlg9QYIYjCq4BS_XfL6fdBp2NCWZVQeomp-K8IEJcxF3aJrS6NTIbdRGE2-nbZUe_o776FCUqxO_2t9WX7iI43xcZlcE6AN7gWqrHUj9AqU8g1VYKyAQcW5xs-b7hB_szTPdMKhD1qCCxqckqeNuEwPZZTd4KBIg0MA-eHVepOLlzDGM47VBr3ZAd2_g0KP-EMfDrltAxlkBx6OiQsTQFzKA2AaZdSbYEjnR7rWbuc3IjCTMPPpK0EHchWp_qUQBq"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
+<span class="text-white text-[10px] font-bold uppercase tracking-widest mb-1">문화</span>
+<span class="text-white font-black text-lg">Café Central Moments</span>
+</div>
+</div>
+<div class="aspect-[4/5] rounded-[2rem] overflow-hidden bg-slate-50 relative group shadow-md border border-slate-400">
+<img alt="Train Journey" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhTs5257BiCcH4Ml-XEWQv0IyYaztoUB05dvsSPi_25sOHrJGhUB6Cc7I3gxnNtpMZ_8ET0KHqbnbzydnuoK37PYBOKTysls6bKDhOxF2XSoloT2wmaYCHSUNa3QZQGttFlND-yMDaGEOgdfnSyXl58JDi6jxmx-Ese2E_n8iQmQLswaUeGc9AJx8MnGmE30WNg-wbSs262zswE7HdxYOzqoOfkA4OqxRF1FUEsl2Kqx6zSM5C7mwL5nZeVtqeNAbq_rgiudP_Mjcp"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
+<span class="text-white text-[10px] font-bold uppercase tracking-widest mb-1">이동</span>
+<span class="text-white font-black text-lg">Bohemian Landscapes</span>
+</div>
+</div>
+</section>
+</div>
+    </div>
+  </div>
+  <div id="page-finance" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">멀티 트립 예산 관리, 거래 내역, 취소 대비 버퍼 — FY 2024.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">멀티 트립 재정 관리</span>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gradient-soft border border-indigo-200 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-2 block font-manrope">총 지출</span>
+          <h3 id="finance-total" class="text-3xl font-extrabold text-indigo-950 font-headline">$0</h3>
+          <p id="finance-count" class="text-xs text-indigo-700 font-semibold mt-2">0개 항목</p>
+        </div>
+        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block font-manrope">이번 트립</span>
+          <h3 id="finance-trip-total" class="text-3xl font-extrabold text-slate-800 font-headline">$0</h3>
+          <p id="finance-trip-name" class="text-xs text-slate-400 font-medium mt-2">트립 없음</p>
+        </div>
+        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block font-manrope">카테고리 분석</span>
+          <div id="finance-categories" class="space-y-1.5 mt-2"></div>
+        </div>
+      </div>
+
+      <!-- Trip Filter -->
+      <div class="flex gap-2 mb-6 overflow-x-auto hide-scrollbar">
+        <button id="finance-filter-all" onclick="filterFinance('all')" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all">전체</button>
+        <div id="finance-trip-filters" class="flex gap-2"></div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div>
+            <h4 class="font-manrope font-bold text-slate-800">거래 내역</h4>
+            <p id="finance-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
+          </div>
+          <button onclick="openFinanceModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span> 지출 추가
+          </button>
+        </div>
+
+        <div id="finance-loading" class="flex items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
+          <span class="text-sm">Google Sheets에서 불러오는 중...</span>
+        </div>
+
+        <div id="finance-table-wrap" style="display:none">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <tr>
+                <th class="px-6 py-3 border-b border-slate-100">날짜</th>
+                <th class="px-6 py-3 border-b border-slate-100">내용</th>
+                <th class="px-6 py-3 border-b border-slate-100">트립</th>
+                <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">금액</th>
+                <th class="px-6 py-3 border-b border-slate-100">통화</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
+              </tr>
+            </thead>
+            <tbody id="finance-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
+          </table>
+        </div>
+
+        <div id="finance-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">payments</span>
+          <p class="text-sm font-medium">아직 거래 내역이 없어요</p>
+          <p class="text-xs mt-1">"지출 추가"를 눌러 첫 항목을 기록해봐!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE MODAL -->
+    <div id="finance-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h3 id="finance-modal-title" class="font-headline font-bold text-slate-900">새 지출 추가</h3>
+          <button onclick="closeFinanceModal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">날짜 *</label>
+              <input id="f-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">트립</label>
+              <input id="f-trip" type="text" placeholder="예: 프라하 봄 여행" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">내용 *</label>
+            <input id="f-desc" type="text" placeholder="예: 루프트한자 항공권" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">카테고리</label>
+              <select id="f-category" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>이동</option>
+                <option>숙소</option>
+                <option>식비</option>
+                <option>여가</option>
+                <option>쇼핑</option>
+                <option>기타</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">금액 *</label>
+              <input id="f-amount" type="number" placeholder="예: 450" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">통화</label>
+            <select id="f-currency" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+              <option>USD</option><option>EUR</option><option>KRW</option>
+              <option>GBP</option><option>CZK</option><option>HUF</option>
+            </select>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="closeFinanceModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="saveFinanceEntry()" id="finance-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-finance-hub" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">연간 수입, 저축 진행률, 지출 추적 및 시계열 활동 기록.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">연간 성과 개요</span>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-pastel-blue p-6 rounded-xl border border-slate-100 relative overflow-hidden group shadow-sm">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-pastel-blue-text mb-2 font-manrope">연간 총 수입</p>
+          <h2 id="hub-income" class="text-3xl font-extrabold text-pastel-blue-text font-headline">$0</h2>
+          <p id="hub-income-change" class="mt-3 text-[10px] font-bold text-pastel-blue-text bg-white/80 w-fit px-3 py-1 rounded-full border border-pastel-blue-text/20 flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">trending_up</span> —
+          </p>
+        </div>
+        <div class="bg-pastel-lavender p-6 rounded-xl border border-slate-100 relative overflow-hidden group shadow-sm">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-pastel-lavender-text mb-2 font-manrope">연간 총 저축</p>
+          <h2 id="hub-savings" class="text-3xl font-extrabold text-pastel-lavender-text font-headline">$0</h2>
+          <p class="mt-3 text-[10px] font-bold text-pastel-lavender-text bg-white/80 w-fit px-3 py-1 rounded-full border border-pastel-lavender-text/20">목표: 34%</p>
+        </div>
+        <div class="bg-pastel-rose p-6 rounded-xl border border-slate-100 relative overflow-hidden group shadow-sm">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-pastel-rose-text mb-2 font-manrope">연간 지출</p>
+          <h2 id="hub-expense" class="text-3xl font-extrabold text-pastel-rose-text font-headline">$0</h2>
+          <p id="hub-expense-change" class="mt-3 text-[10px] font-bold text-pastel-rose-text bg-white/80 w-fit px-3 py-1 rounded-full border border-pastel-rose-text/20">—</p>
+        </div>
+      </div>
+
+      <!-- Savings Tracker -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+          <h3 class="font-headline text-base font-bold text-slate-800 mb-1">저축 진행률</h3>
+          <p class="text-sm text-slate-400 mb-6">월별 누적 저축 현황</p>
+          <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 border-b border-slate-100 px-1"></div>
+          <div class="flex justify-between mt-3 text-[9px] text-slate-400 font-manrope uppercase tracking-widest font-semibold px-1">
+            <span>1월</span><span>2월</span><span>3월</span><span>4월</span><span>5월</span><span>6월</span>
+            <span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+          <h3 class="font-headline text-base font-bold text-slate-800 mb-4">저축 트래커</h3>
+          <div class="space-y-4 flex-1">
+            <div>
+              <div class="flex justify-between mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">비상금</span><span id="hub-emergency-pct" class="text-xs font-bold text-slate-700">0%</span></div>
+              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200"><div id="hub-emergency-bar" class="h-full gradient-primary rounded-full" style="width:0%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">연간 투자</span><span id="hub-invest-pct" class="text-xs font-bold text-slate-700">0%</span></div>
+              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200"><div id="hub-invest-bar" class="h-full bg-indigo-600 rounded-full" style="width:0%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">주택 보증금</span><span id="hub-deposit-pct" class="text-xs font-bold text-slate-700">0%</span></div>
+              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200"><div id="hub-deposit-bar" class="h-full bg-purple-500 rounded-full" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div id="hub-momentum" class="mt-6 pt-4 border-t border-slate-100">
+            <div class="bg-indigo-50 p-3 rounded-xl flex items-center gap-3 border border-indigo-100">
+              <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100">
+                <span class="material-symbols-outlined text-sm">rocket_launch</span>
+              </div>
+              <div><p class="text-xs font-bold text-slate-800">최고 모멘텀</p><p id="hub-avg" class="text-[10px] text-slate-500">평균 $0 / 월</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div>
+            <h3 class="font-headline text-base font-bold text-slate-800">연간 거래 내역</h3>
+            <p id="hub-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
+          </div>
+          <button onclick="openHubModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span> 항목 추가
+          </button>
+        </div>
+
+        <div id="hub-loading" class="flex items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
+          <span class="text-sm">Google Sheets에서 불러오는 중...</span>
+        </div>
+
+        <div id="hub-table-wrap" style="display:none" class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <tr>
+                <th class="px-6 py-3 border-b border-slate-100">날짜</th>
+                <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
+                <th class="px-6 py-3 border-b border-slate-100">내용</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">금액</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">누적 잔액</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
+              </tr>
+            </thead>
+            <tbody id="hub-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
+          </table>
+        </div>
+
+        <div id="hub-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">monitoring</span>
+          <p class="text-sm font-medium">아직 거래 내역이 없어요</p>
+          <p class="text-xs mt-1">"항목 추가"를 눌러 첫 거래를 기록해봐!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE HUB MODAL -->
+    <div id="hub-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h3 id="hub-modal-title" class="font-headline font-bold text-slate-900">새 항목 추가</h3>
+          <button onclick="closeHubModal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">날짜 *</label>
+              <input id="h-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">유형 *</label>
+              <select id="h-type" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>수입</option><option>지출</option><option>저축</option><option>이자</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">카테고리</label>
+            <input id="h-category" type="text" placeholder="예: 비상금, 연간 투자, 월급..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">내용 *</label>
+            <input id="h-desc" type="text" placeholder="예: 자동 비상금 이체" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">금액 *</label>
+            <input id="h-amount" type="number" placeholder="예: 2000" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="closeHubModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="saveHubEntry()" id="hub-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-matrix" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">업무, 글쓰기, 영어, 개인 활동을 통합 기록하는 생산성 매트릭스.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">Performance Tracking</span>
+      </div>
+
+      <!-- Top Summary Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        <div class="lg:col-span-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 font-headline tracking-tight">연간 매트릭스 <span class="text-indigo-500">2025</span></h2>
+          <p class="text-slate-500 text-sm mt-1">커리어 성장과 워라밸을 위한 통합 생산성 기록장.</p>
+        </div>
+        <div class="lg:col-span-4 bg-indigo-50 p-6 rounded-2xl border border-indigo-100 relative overflow-hidden">
+          <h3 class="font-manrope font-bold text-xs uppercase tracking-widest text-indigo-800 mb-3">연차 트래커</h3>
+          <div class="grid grid-cols-3 gap-4">
+            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">총계</p><p class="text-2xl font-black text-indigo-900" id="matrix-leave-total">17.0</p></div>
+            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">사용</p><p class="text-2xl font-black text-indigo-700" id="matrix-leave-used">0</p></div>
+            <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">잔여</p><p class="text-2xl font-black text-indigo-500" id="matrix-leave-left">17.0</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix Table -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        <!-- Table Toolbar -->
+        <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div class="flex gap-3 items-center">
+            <button onclick="openMatrixModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-sm">add</span> 새 항목
+            </button>
+            <span id="matrix-status" class="text-xs text-slate-400 font-medium"></span>
+          </div>
+          <div class="flex items-center gap-4 text-[10px] uppercase tracking-widest font-black text-slate-500">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-rose-200 border border-rose-300 inline-block"></span> Weekend</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-slate-100 border border-slate-200 inline-block"></span> Weekday</span>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div id="matrix-loading" class="flex items-center justify-center py-16 text-slate-400">
+          <span class="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+          <span class="text-sm font-medium">Google Sheets에서 불러오는 중...</span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-auto hide-scrollbar" style="max-height:600px; display:none" id="matrix-table-wrap">
+          <table class="w-full border-collapse">
+            <thead class="sticky top-0 z-20 bg-slate-50 text-[10px] uppercase tracking-widest font-black text-slate-500 text-left border-b border-slate-100">
+              <tr>
+                <th class="px-5 py-3 w-28 whitespace-nowrap">날짜</th>
+                <th class="px-5 py-3 w-20">요일</th>
+                <th class="px-5 py-3 w-44">업무</th>
+                <th class="px-5 py-3 w-28">연차</th>
+                <th class="px-5 py-3 w-40">개인</th>
+                <th class="px-5 py-3 w-44">글쓰기</th>
+                <th class="px-5 py-3 w-32">시리얼 1</th>
+                <th class="px-5 py-3 w-32">영어</th>
+                <th class="px-5 py-3 w-36">AI 스터디</th>
+                <th class="px-5 py-3 w-20 text-center">관리</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-tbody" class="text-[13px] text-slate-700 divide-y divide-slate-50">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="matrix-empty" class="flex flex-col items-center justify-center py-16 text-slate-400" style="display:none">
+          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">grid_view</span>
+          <p class="text-sm font-medium">No개 항목 yet</p>
+          <p class="text-xs mt-1">Click "새 항목" to add your first row</p>
+        </div>
+      </div>
+
+      <!-- Bottom Widgets -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+          <h4 class="text-[10px] font-black text-indigo-700 uppercase tracking-widest mb-3">라이터 로그 포커스</h4>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-600 inline-block"></span><span class="text-sm font-semibold text-slate-700">원고 V2 초안</span></div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 inline-block"></span><span class="text-sm font-semibold text-slate-700">시리얼 1 EP 13 다듬기</span></div>
+          </div>
+        </div>
+        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+          <h4 class="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-3">영어 마일스톤</h4>
+          <div class="flex items-center gap-3">
+            <div class="flex-1 bg-blue-200 h-2 rounded-full overflow-hidden"><div class="gradient-primary h-full w-[72%]"></div></div>
+            <span class="text-xs font-black text-indigo-800">72%</span>
+          </div>
+          <p class="text-[11px] text-slate-600 font-semibold mt-3">Target: IELTS Band 8.5</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100">
+          <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">AI 스터디 Tracks</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <span class="px-2 py-1.5 bg-indigo-100 text-indigo-800 text-[10px] font-black rounded-lg text-center uppercase">Transformers</span>
+            <span class="px-2 py-1.5 bg-indigo-100 text-indigo-800 text-[10px] font-black rounded-lg text-center uppercase">Diffusion</span>
+            <span class="px-2 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-black rounded-lg text-center uppercase">Auto-GPT</span>
+            <span class="px-2 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-black rounded-lg text-center uppercase">Interpreter</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADD/EDIT MODAL ===== -->
+    <div id="matrix-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h3 id="modal-title" class="font-headline font-bold text-slate-900">새 항목</h3>
+          <button onclick="closeMatrixModal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">날짜 *</label>
+            <input id="m-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">요일</label>
+            <select id="m-day" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+              <option>월</option><option>화</option><option>수</option><option>목</option>
+              <option>금</option><option>토</option><option>일</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">업무</label>
+            <input id="m-work" type="text" placeholder="예: 전략 워크샵" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">연차</label>
+            <input id="m-leave" type="text" placeholder="예: 반차 0.5 / 연차 1.0 / —" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">개인</label>
+            <input id="m-personal" type="text" placeholder="예: 헬스, 독서..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">글쓰기</label>
+            <input id="m-writing" type="text" placeholder="예: 3화 초안 작성" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">시리얼 1</label>
+            <input id="m-serial1" type="text" placeholder="예: EP 12 아웃라인" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">영어</label>
+            <input id="m-english" type="text" placeholder="예: Unit 5 비즈니스" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">AI 스터디</label>
+            <input id="m-ai" type="text" placeholder="예: LLM 파인튜닝" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="closeMatrixModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="saveMatrixEntry()" id="modal-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-english" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">어휘 정밀도와 서술 흐름을 마스터하기 위한 큐레이션 학습 공간.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">어휘 마스터리 모듈</span>
+      </div>
+
+      <!-- Top Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="md:col-span-2 section-tint-purple p-8 rounded-2xl border border-indigo-100 relative overflow-hidden">
+          <span class="material-symbols-outlined text-primary text-4xl mb-4">auto_awesome</span>
+          <h3 class="text-xl font-bold font-headline text-slate-900 mb-1">어휘 확장</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mb-4">비즈니스 관용어 집중 학습으로 이번 달 어휘 범위가 향상됐어.</p>
+          <div class="flex gap-2">
+            <span class="px-3 py-1 bg-primary text-white text-[10px] font-bold uppercase rounded-full">Idioms</span>
+            <span class="px-3 py-1 bg-secondary text-white text-[10px] font-bold uppercase rounded-full">Phonetics</span>
+          </div>
+        </div>
+        <div class="section-tint-blue p-6 rounded-2xl border border-blue-100 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">세션 진행률</span>
+            <span id="english-progress-pct" class="text-primary font-headline font-bold text-2xl">0%</span>
+          </div>
+          <div class="w-full bg-white h-2.5 rounded-full overflow-hidden border border-blue-200">
+            <div id="english-progress-bar" class="gradient-secondary h-full transition-all" style="width:0%"></div>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">전체</p><p id="english-total" class="font-black text-slate-800">0</p></div>
+            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">완료</p><p id="english-done" class="font-black text-indigo-600">0</p></div>
+            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">진행 중</p><p id="english-progress" class="font-black text-blue-500">0</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lesson Table -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div>
+            <h4 class="font-manrope font-bold text-slate-800">수업 트래커</h4>
+            <p id="english-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
+          </div>
+          <button onclick="openEnglishModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span> 수업 추가
+          </button>
+        </div>
+
+        <div id="english-loading" class="flex items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
+          <span class="text-sm">Google Sheets에서 불러오는 중...</span>
+        </div>
+
+        <div id="english-table-wrap" style="display:none">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <tr>
+                <th class="px-6 py-3 border-b border-slate-100">수업명</th>
+                <th class="px-6 py-3 border-b border-slate-100">날짜</th>
+                <th class="px-6 py-3 border-b border-slate-100">상태</th>
+                <th class="px-6 py-3 border-b border-slate-100">트랙</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">수강료</th>
+                <th class="px-6 py-3 border-b border-slate-100">메모</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
+              </tr>
+            </thead>
+            <tbody id="english-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
+          </table>
+        </div>
+
+        <div id="english-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">translate</span>
+          <p class="text-sm font-medium">아직 수업 기록이 없어요</p>
+          <p class="text-xs mt-1">"수업 추가"를 눌러 첫 수업을 기록해봐!</p>
+        </div>
+      </div>
+
+      <!-- Fee Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+          <h4 class="font-manrope font-bold text-slate-800 mb-4">수강료 관리</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center py-3 border-b border-slate-50">
+              <div><p class="text-sm font-bold text-slate-800" id="english-fee-month">이번 달</p><p class="text-[10px] text-slate-400 font-medium">수강료</p></div>
+              <div class="text-right"><p id="english-fee-total" class="text-lg font-black text-slate-800">$0</p></div>
+            </div>
+            <div class="flex justify-between items-center py-3">
+              <div><p class="text-sm font-bold text-slate-800">연간 누적</p><p class="text-[10px] text-slate-400 font-medium">총 수강료</p></div>
+              <div class="text-right"><p id="english-fee-annual" class="text-lg font-black text-indigo-600">$0</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-tint-blue p-6 rounded-2xl border border-blue-100">
+          <h4 class="font-manrope font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary">rule</span> 다음 수업
+          </h4>
+          <div id="english-next-lesson" class="space-y-2">
+            <p class="text-sm text-slate-500">예정된 수업이 없어요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGLISH MODAL -->
+    <div id="english-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h3 id="english-modal-title" class="font-headline font-bold text-slate-900">새 수업 추가</h3>
+          <button onclick="closeEnglishModal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">수업명 *</label>
+            <input id="e-name" type="text" placeholder="예: The Art of Negotiation" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">날짜</label>
+              <input id="e-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">상태</label>
+              <select id="e-status" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>예정</option>
+                <option>진행 중</option>
+                <option>완료</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">트랙</label>
+              <input id="e-track" type="text" placeholder="예: 비즈니스 영어" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">수강료</label>
+              <input id="e-fee" type="text" placeholder="예: $240" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">메모</label>
+            <input id="e-notes" type="text" placeholder="예: 협상 표현 중점 연습" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="closeEnglishModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="saveEnglishEntry()" id="english-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-income" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">크리에이티브 에디토리얼 프로젝트의 수익 성과 추적 — 연간 목표 ₩5.25M.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">FY 2026 재정 예측</span>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="gradient-soft border border-indigo-200 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-2 block font-manrope">연간 총 수입</span>
+          <h3 id="income-total" class="text-4xl font-extrabold text-indigo-950 font-headline">₩0</h3>
+          <p id="income-growth" class="text-xs text-indigo-700 font-bold mt-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">trending_up</span> —
+          </p>
+        </div>
+        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block font-manrope">월 평균 수입</span>
+          <h3 id="income-avg" class="text-4xl font-extrabold text-slate-800 font-headline">₩0</h3>
+          <p class="text-xs text-slate-500 font-semibold mt-2" id="income-entry-count">0개 항목</p>
+        </div>
+        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block font-manrope">저축 진행률</span>
+          <div class="mt-3 h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div id="income-progress-bar" class="gradient-primary h-full rounded-full transition-all" style="width:0%"></div>
+          </div>
+          <p class="text-xs font-bold mt-2"><span id="income-progress-pct">0%</span> of ₩5.25M Target</p>
+        </div>
+      </div>
+
+      <!-- Quarterly Targets -->
+      <div class="bg-indigo-50/50 p-6 rounded-2xl mb-8 border border-indigo-100">
+        <div class="flex justify-between items-center mb-6">
+          <h4 class="font-manrope font-bold text-slate-800 text-sm">2026 수익 목표</h4>
+          <span id="income-achieved-badge" class="px-3 py-1 bg-indigo-100 text-indigo-800 text-[10px] font-black uppercase tracking-wider rounded-full border border-indigo-200">0% Achieved</span>
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+          <div id="q1-bar-wrap" class="relative h-40 bg-white rounded-xl flex flex-col items-center justify-center border border-slate-100 shadow-sm overflow-hidden">
+            <div id="q1-bar" class="absolute bottom-0 left-0 w-full bg-indigo-100 transition-all" style="height:0%"></div>
+            <span class="relative z-10 text-2xl font-black font-manrope text-slate-700">Q1</span>
+            <span id="q1-label" class="relative z-10 text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-1">₩0</span>
+          </div>
+          <div id="q2-bar-wrap" class="relative h-40 bg-white rounded-xl flex flex-col items-center justify-center border border-slate-100 shadow-sm overflow-hidden">
+            <div id="q2-bar" class="absolute bottom-0 left-0 w-full bg-indigo-200 transition-all" style="height:0%"></div>
+            <span class="relative z-10 text-2xl font-black font-manrope text-slate-700">Q2</span>
+            <span id="q2-label" class="relative z-10 text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-1">₩0</span>
+          </div>
+          <div id="q3-bar-wrap" class="relative h-40 bg-white rounded-xl flex flex-col items-center justify-center border border-indigo-200 shadow-sm overflow-hidden">
+            <div id="q3-bar" class="absolute bottom-0 left-0 w-full gradient-primary transition-all" style="height:0%"></div>
+            <span class="relative z-10 text-2xl font-black font-manrope text-white">Q3</span>
+            <span id="q3-label" class="relative z-10 text-[9px] text-white/80 font-bold tracking-widest uppercase mt-1">₩0</span>
+          </div>
+          <div id="q4-bar-wrap" class="relative h-40 bg-white rounded-xl flex flex-col items-center justify-center border border-slate-100 shadow-sm overflow-hidden">
+            <div id="q4-bar" class="absolute bottom-0 left-0 w-full bg-slate-100 transition-all" style="height:0%"></div>
+            <span class="relative z-10 text-2xl font-black font-manrope text-slate-400">Q4</span>
+            <span id="q4-label" class="relative z-10 text-[9px] text-slate-300 font-bold tracking-widest uppercase mt-1">₩0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 수입 내역 Table -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div>
+            <h4 class="font-manrope font-bold text-slate-800">수입 내역</h4>
+            <p id="income-table-status" class="text-[10px] text-slate-400 font-medium mt-0.5">Loading...</p>
+          </div>
+          <button onclick="open수입Modal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span> 항목 추가
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="income-loading" class="flex items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
+          <span class="text-sm">Google Sheets에서 불러오는 중...</span>
+        </div>
+
+        <!-- Table -->
+        <div id="income-table-wrap" style="display:none">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <tr>
+                <th class="px-6 py-3 border-b border-slate-100">월</th>
+                <th class="px-6 py-3 border-b border-slate-100">작업 내용</th>
+                <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
+                <th class="px-6 py-3 border-b border-slate-100">상태</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">Revenue (KRW)</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
+              </tr>
+            </thead>
+            <tbody id="income-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
+          </table>
+        </div>
+
+        <!-- Empty -->
+        <div id="income-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
+          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">account_balance_wallet</span>
+          <p class="text-sm font-medium">아직 수입 내역이 없어요</p>
+          <p class="text-xs mt-1">"항목 추가"를 눌러 첫 항목을 추가해봐!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INCOME MODAL -->
+    <div id="income-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h3 id="income-modal-title" class="font-headline font-bold text-slate-900">New 수입 Entry</h3>
+          <button onclick="close수입Modal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">월 *</label>
+              <select id="i-month" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>1월</option><option>2월</option><option>3월</option>
+                <option>4월</option><option>5월</option><option>6월</option>
+                <option>7월</option><option>8월</option><option>9월</option>
+                <option>10월</option><option>11월</option><option>12월</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">카테고리</label>
+              <select id="i-category" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>에디토리얼 시리얼</option>
+                <option>크리에이티브 시리얼</option>
+                <option>스페셜 프로젝트</option>
+                <option>기타</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">작업 내용 *</label>
+            <input id="i-details" type="text" placeholder="예: 에디토리얼 시리얼 A — 테크 칼럼" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">상태</label>
+              <select id="i-status" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>완료</option>
+                <option>진행 중</option>
+                <option>대기 중</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">수입 (₩) *</label>
+              <input id="i-revenue" type="number" placeholder="예: 460000" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="close수입Modal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="save수입Entry()" id="income-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-planner" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Intro -->
+      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">월별 캘린더, 7개 카테고리 진행률 추적, 전략 실행 메모.</p>
+        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">월간 실행 캘린더</span>
+      </div>
+
+      <!-- Track Progress -->
+      <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm mb-8">
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 01</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">글쓰기</div>
+          <div id="planner-track-writing" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-writing" class="h-full bg-accent-mint" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 02</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">영어</div>
+          <div id="planner-track-english" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-english" class="h-full bg-accent-blue" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 03</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">스터디</div>
+          <div id="planner-track-study" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-study" class="h-full bg-accent-lemon" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 04</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">운동</div>
+          <div id="planner-track-exercise" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-exercise" class="h-full bg-accent-rose" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 05</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">업무</div>
+          <div id="planner-track-work" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-work" class="h-full bg-accent-sage" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 06</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">개인</div>
+          <div id="planner-track-personal" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-personal" class="h-full bg-accent-lavender" style="width:0%"></div></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
+          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 07</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">휴가</div>
+          <div id="planner-track-vacation" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-peach" style="width:0%"></div></div>
+        </div>
+      </section>
+
+      <!-- Calendar -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <h2 id="planner-month-title" class="text-lg font-bold font-headline text-slate-800"></h2>
+            <div class="flex border border-slate-100 rounded-lg overflow-hidden">
+              <button onclick="prevMonth()" class="p-1.5 hover:bg-slate-50 transition-colors border-r border-slate-100"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
+              <button onclick="nextMonth()" class="p-1.5 hover:bg-slate-50 transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+            </div>
+          </div>
+          <button onclick="openPlannerModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span> 일정 추가
+          </button>
+        </div>
+        <div class="grid grid-cols-7 border-b border-slate-50 bg-slate-50/30">
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">월</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">화</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">수</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">목</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">금</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">토</div>
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">일</div>
+        </div>
+        <div id="planner-grid" class="grid grid-cols-7 bg-white" style="min-height:480px"></div>
+      </div>
+
+    </div>
+
+    <!-- PLANNER MODAL -->
+    <div id="planner-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <h3 id="planner-modal-title" class="font-headline font-bold text-slate-900">일정 추가</h3>
+          <button onclick="closePlannerModal()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-slate-500">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">날짜 *</label>
+            <input id="p-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">제목 *</label>
+            <input id="p-title" type="text" placeholder="예: Annie 영어 수업" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">카테고리</label>
+              <select id="p-category" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option>글쓰기</option><option>영어</option><option>스터디</option>
+                <option>운동</option><option>업무</option><option>개인</option><option>휴가</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">색상</label>
+              <select id="p-color" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">
+                <option value="mint">민트</option><option value="blue">블루</option>
+                <option value="lavender">라벤더</option><option value="rose">로즈</option>
+                <option value="peach">피치</option><option value="lemon">레몬</option>
+                <option value="indigo">인디고</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">메모</label>
+            <input id="p-notes" type="text" placeholder="예: 화상통화, 준비물 챙기기..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>
+          </div>
+        </div>
+        <div class="px-6 pb-5 flex justify-end gap-3">
+          <button onclick="closePlannerModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">취소</button>
+          <button onclick="savePlannerEntry()" id="planner-save-btn" class="gradient-primary text-white px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+
+  // ===== PLANNER: GOOGLE SHEETS INTEGRATION =====
+  let plannerData = [];
+  let editingPlannerIndex = null;
+  let plannerYear = new Date().getFullYear();
+  let plannerMonth = new Date().getMonth(); // 0-indexed
+
+  const COLOR_MAP = {
+    'mint':    'bg-pastel-mint text-teal-800 border-teal-200',
+    'blue':    'bg-pastel-blue text-blue-800 border-blue-200',
+    'lavender':'bg-pastel-lavender text-purple-800 border-purple-200',
+    'rose':    'bg-pastel-rose text-rose-800 border-rose-200',
+    'peach':   'bg-pastel-peach text-orange-800 border-orange-200',
+    'lemon':   'bg-pastel-lemon text-yellow-800 border-yellow-200',
+    'indigo':  'bg-indigo-100 text-indigo-800 border-indigo-200',
+  };
+  const CAT_TRACK = {
+    '글쓰기':'writing','영어':'english','스터디':'study',
+    '운동':'exercise','업무':'work','개인':'personal','휴가':'vacation'
+  };
+
+  async function loadPlanner() {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?sheet=Planner');
+      const json = await res.json();
+      plannerData = json.data.slice(1);
+      renderCalendar();
+      updatePlannerTracks();
+    } catch(err) {
+      console.error('Planner load error:', err);
+    }
+  }
+
+  function renderCalendar() {
+    const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+    document.getElementById('planner-month-title').textContent = plannerYear + '년 ' + MONTHS_KR[plannerMonth];
+
+    const grid = document.getElementById('planner-grid');
+    grid.innerHTML = '';
+
+    const firstDay = new Date(plannerYear, plannerMonth, 1).getDay(); // 0=Sun
+    const daysInMonth = new Date(plannerYear, plannerMonth + 1, 0).getDate();
+    const offset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0
+
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
+
+    // Empty cells before first day
+    for (let i = 0; i < offset; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'border-r border-b border-slate-50 p-2 bg-slate-50/20 min-h-24';
+      grid.appendChild(cell);
+    }
+
+    // Day cells
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = plannerYear + '-' + String(plannerMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      const dayOfWeek = (offset + d - 1) % 7; // 0=Mon, 5=Sat, 6=Sun
+      const isWeekend = dayOfWeek >= 5;
+      const isToday = isCurrentMonth && d === today.getDate();
+
+      const events = plannerData.filter(function(r){ return (r[0]||'').toString().startsWith(dateStr); });
+
+      const cell = document.createElement('div');
+      cell.className = 'border-r border-b border-slate-50 p-2 min-h-24 hover:bg-slate-50/50 transition-colors cursor-pointer group';
+      cell.onclick = function() { openPlannerModal(null, dateStr); };
+
+      let dayNum = '<span class="';
+      if (isToday) dayNum += 'gradient-primary text-white w-6 h-6 flex items-center justify-center rounded-full text-[10px] shadow-sm font-bold';
+      else if (isWeekend) dayNum += 'text-rose-500 font-medium text-xs';
+      else dayNum += 'text-slate-500 font-medium text-xs';
+      dayNum += '">' + d + '</span>';
+
+      const eventHtml = events.map(function(ev, ei) {
+        const realIdx = plannerData.indexOf(ev);
+        const color = COLOR_MAP[ev[3]] || COLOR_MAP['blue'];
+        return '<div class="mt-1 text-[9px] px-1.5 py-0.5 rounded font-bold truncate border ' + color + ' flex items-center justify-between gap-1" title="' + (ev[1]||'') + '">' +
+          '<span class="truncate">' + (ev[1]||'') + '</span>' +
+          '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 text-current hover:opacity-100 shrink-0" title="삭제">×</button>' +
+          '</div>';
+      }).join('');
+
+      cell.innerHTML = dayNum + eventHtml;
+      grid.appendChild(cell);
+    }
+
+    // Fill remaining cells
+    const total = offset + daysInMonth;
+    const remainder = total % 7 === 0 ? 0 : 7 - (total % 7);
+    for (let i = 0; i < remainder; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'border-r border-b border-slate-50 p-2 bg-slate-50/20 min-h-24';
+      grid.appendChild(cell);
+    }
+  }
+
+  function updatePlannerTracks() {
+    const currentMonthStr = plannerYear + '-' + String(plannerMonth+1).padStart(2,'0');
+    const counts = { writing:0, english:0, study:0, exercise:0, work:0, personal:0, vacation:0 };
+    plannerData.forEach(function(row) {
+      const date = (row[0]||'').toString();
+      if (date.startsWith(currentMonthStr)) {
+        const track = CAT_TRACK[row[2]];
+        if (track) counts[track]++;
+      }
+    });
+    const daysInMonth = new Date(plannerYear, plannerMonth+1, 0).getDate();
+    Object.keys(counts).forEach(function(track) {
+      const el = document.getElementById('planner-track-'+track);
+      const bar = document.getElementById('planner-bar-'+track);
+      if (el) el.innerHTML = counts[track] + ' <span class="text-xs text-slate-400 font-normal">/월</span>';
+      if (bar) bar.style.width = Math.min(Math.round((counts[track]/daysInMonth)*100), 100) + '%';
+    });
+  }
+
+  function prevMonth() {
+    plannerMonth--;
+    if (plannerMonth < 0) { plannerMonth = 11; plannerYear--; }
+    renderCalendar();
+    updatePlannerTracks();
+  }
+
+  function nextMonth() {
+    plannerMonth++;
+    if (plannerMonth > 11) { plannerMonth = 0; plannerYear++; }
+    renderCalendar();
+    updatePlannerTracks();
+  }
+
+  function openPlannerModal(idx, prefillDate) {
+    editingPlannerIndex = (idx !== undefined && idx !== null) ? idx : null;
+    document.getElementById('planner-modal-title').textContent = editingPlannerIndex !== null ? '일정 수정' : '일정 추가';
+    if (editingPlannerIndex !== null) {
+      const row = plannerData[editingPlannerIndex];
+      document.getElementById('p-date').value = row[0]||'';
+      document.getElementById('p-title').value = row[1]||'';
+      document.getElementById('p-category').value = row[2]||'글쓰기';
+      document.getElementById('p-color').value = row[3]||'mint';
+      document.getElementById('p-notes').value = row[4]||'';
+    } else {
+      document.getElementById('p-date').value = prefillDate || new Date().toISOString().split('T')[0];
+      document.getElementById('p-title').value = '';
+      document.getElementById('p-notes').value = '';
+      document.getElementById('p-category').value = '글쓰기';
+      document.getElementById('p-color').value = 'mint';
+    }
+    document.getElementById('planner-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closePlannerModal() {
+    document.getElementById('planner-modal').style.cssText = 'display:none!important';
+    editingPlannerIndex = null;
+  }
+
+  async function savePlannerEntry() {
+    const btn = document.getElementById('planner-save-btn');
+    btn.textContent = '저장 중...'; btn.disabled = true;
+    const row = [
+      document.getElementById('p-date').value,
+      document.getElementById('p-title').value,
+      document.getElementById('p-category').value,
+      document.getElementById('p-color').value,
+      document.getElementById('p-notes').value,
+    ];
+    try {
+      if (editingPlannerIndex !== null) {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Planner', action:'update', rowIndex: editingPlannerIndex+2, row }) });
+        plannerData[editingPlannerIndex] = row;
+      } else {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Planner', action:'append', row }) });
+        plannerData.push(row);
+      }
+      renderCalendar();
+      updatePlannerTracks();
+      closePlannerModal();
+    } catch(err) { alert('저장에 실패했어요.'); }
+    finally { btn.textContent = '저장'; btn.disabled = false; }
+  }
+
+  async function deletePlannerRow(i) {
+    if (!confirm('이 일정을 삭제할까요?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Planner', action:'delete', rowIndex: i+2 }) });
+      plannerData.splice(i, 1);
+      renderCalendar();
+      updatePlannerTracks();
+    } catch(err) { alert('삭제에 실패했어요.'); }
+  }
+
+  const pageMeta = {
+    "dashboard": {
+        "title": "마스터 대시보드",
+        "subtitle": "생산성 허브"
+    },
+    "journey": {
+        "title": "그랜드 투어: 프라하 → 빈",
+        "subtitle": "Sep 12 \u2014 Sep 24, 2024"
+    },
+    "finance": {
+        "title": "연간 레저",
+        "subtitle": "멀티 트립 재정 관리"
+    },
+    "finance-hub": {
+        "title": "재정 허브",
+        "subtitle": "연간 성과 개요"
+    },
+    "matrix": {
+        "title": "연간 실행 매트릭스",
+        "subtitle": "FY 2024 성과 추적"
+    },
+    "english": {
+        "title": "Annie's 영어 Atelier",
+        "subtitle": "어휘 마스터리 모듈"
+    },
+    "income": {
+        "title": "부업 수입 마스터",
+        "subtitle": "FY 2026 재정 예측"
+    },
+    "planner": {
+        "title": "아우라 플래너",
+        "subtitle": "월간 실행 캘린더"
+    }
+};
+  function navigate(pageId) {
+    document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
+    const t = document.getElementById('page-'+pageId);
+    if(t) t.style.display='block';
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.style.background=''; n.style.color=''; n.style.borderLeft='';
+    });
+    const a = document.getElementById('nav-'+pageId);
+    if(a) {
+      a.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
+      a.style.color='#4338ca';
+      a.style.borderLeft='2px solid #6366f1';
+    }
+    const m = pageMeta[pageId];
+    if(m) {
+      document.getElementById('page-title').textContent = m.title;
+      document.getElementById('page-subtitle').textContent = m.subtitle;
+    }
+    localStorage.setItem('atelier-page', pageId);
+    window.scrollTo(0,0);
+    // 페이지별 데이터 로드
+    if(pageId==='matrix') { if(typeof loadMatrix==='function') loadMatrix(); }
+    if(pageId==='income') { if(typeof loadIncome==='function') loadIncome(); }
+    if(pageId==='english') { if(typeof loadEnglish==='function') loadEnglish(); }
+    if(pageId==='finance') { if(typeof loadFinance==='function') loadFinance(); }
+    if(pageId==='finance-hub') { if(typeof loadHub==='function') loadHub(); }
+    if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    navigate(localStorage.getItem('atelier-page') || 'dashboard');
+  });
+
+  // ===== MATRIX: GOOGLE SHEETS INTEGRATION =====
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsuKKD9CQ9x43Vj5EL4PReyPRHl78mqREzMo23OqQdyyh3e7_IneG_CGmHtymOzmFZtg/exec';
+  let matrixData = [];
+  let editingRowIndex = null;
+  const 요일S_LIST = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const WEEKEND = ['Sat','Sun'];
+
+  async function loadMatrix() {
+    const loading = document.getElementById('matrix-loading');
+    const tableWrap = document.getElementById('matrix-table-wrap');
+    const empty = document.getElementById('matrix-empty');
+    const status = document.getElementById('matrix-status');
+    loading.style.display = 'flex';
+    tableWrap.style.display = 'none';
+    empty.style.display = 'none';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL);
+      const json = await res.json();
+      matrixData = json.data.slice(1); // skip header row
+      loading.style.display = 'none';
+      if (matrixData.length === 0) {
+        empty.style.display = 'flex';
+      } else {
+        tableWrap.style.display = 'block';
+        renderMatrixTable();
+        updateLeaveTracker();
+      }
+      status.textContent = matrixData.length + '개 항목';
+    } catch(err) {
+      loading.innerHTML = '<span class="text-rose-400 text-sm font-medium">데이터를 불러올 수 없어요. Check connection.</span>';
+    }
+  }
+
+  function renderMatrixTable() {
+    const tbody = document.getElementById('matrix-tbody');
+    tbody.innerHTML = '';
+    matrixData.forEach(function(row, i) {
+      const day = row[1] || '';
+      const isWeekend = WEEKEND.includes(day);
+      const tr = document.createElement('tr');
+      tr.className = isWeekend
+        ? 'bg-rose-50/60 hover:bg-rose-100/60 transition-colors border-b border-rose-100'
+        : 'hover:bg-indigo-50/30 transition-colors border-b border-slate-50';
+      tr.innerHTML =
+        '<td class="px-5 py-3 font-headline font-bold text-sm ' + (isWeekend?'text-rose-600':'text-slate-800') + '">' + (row[0]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-xs font-semibold ' + (isWeekend?'text-rose-400':'text-slate-400') + '">' + (row[1]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-sm">' + (row[2]||'—') + '</td>' +
+        '<td class="px-5 py-3">' + formatLeaveCell(row[3]) + '</td>' +
+        '<td class="px-5 py-3 text-sm">' + (row[4]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-sm text-indigo-700 font-semibold">' + (row[5]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-sm">' + (row[6]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-sm">' + (row[7]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-sm">' + (row[8]||'—') + '</td>' +
+        '<td class="px-5 py-3 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="editMatrixRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteMatrixRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function formatLeaveCell(val) {
+    if (!val || val === '—' || val === '') return '<span class="text-slate-200">—</span>';
+    const isFullDay = val.toString().includes('1.0') || val.toString().toLowerCase().includes('full');
+    const cls = isFullDay ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-amber-100 text-amber-800 border-amber-200';
+    return '<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase border ' + cls + '">' + val + '</span>';
+  }
+
+  function updateLeaveTracker() {
+    let used = 0;
+    matrixData.forEach(function(row) {
+      const leave = (row[3] || '').toString();
+      if (leave.includes('1.0') || leave.toLowerCase().includes('full')) used += 1;
+      else if (leave.includes('0.5') || leave.toLowerCase().includes('half')) used += 0.5;
+    });
+    document.getElementById('matrix-leave-total').textContent = '17.0';
+    document.getElementById('matrix-leave-used').textContent = used.toFixed(1);
+    document.getElementById('matrix-leave-left').textContent = (17 - used).toFixed(1);
+  }
+
+  function openMatrixModal(rowIndex) {
+    editingRowIndex = (rowIndex !== undefined) ? rowIndex : null;
+    const modal = document.getElementById('matrix-modal');
+    document.getElementById('modal-title').textContent = (editingRowIndex !== null) ? '수정' : '새 항목';
+    if (editingRowIndex !== null) {
+      const row = matrixData[editingRowIndex];
+      document.getElementById('m-date').value = row[0] || '';
+      document.getElementById('m-day').value = row[1] || 'Mon';
+      document.getElementById('m-work').value = row[2] || '';
+      document.getElementById('m-leave').value = row[3] || '';
+      document.getElementById('m-personal').value = row[4] || '';
+      document.getElementById('m-writing').value = row[5] || '';
+      document.getElementById('m-serial1').value = row[6] || '';
+      document.getElementById('m-english').value = row[7] || '';
+      document.getElementById('m-ai').value = row[8] || '';
+    } else {
+      ['m-date','m-work','m-leave','m-personal','m-writing','m-serial1','m-english','m-ai'].forEach(function(id){ document.getElementById(id).value=''; });
+      const today = new 날짜();
+      document.getElementById('m-date').value = today.toISOString().split('T')[0];
+      document.getElementById('m-day').value = 요일S_LIST[today.getDay()===0?6:today.getDay()-1];
+    }
+    modal.style.cssText = 'display:flex!important';
+  }
+
+  function closeMatrixModal() {
+    document.getElementById('matrix-modal').style.cssText = 'display:none!important';
+    editingRowIndex = null;
+  }
+
+  async function saveMatrixEntry() {
+    const btn = document.getElementById('modal-save-btn');
+    btn.textContent = '저장 중...';
+    btn.disabled = true;
+    const row = [
+      document.getElementById('m-date').value,
+      document.getElementById('m-day').value,
+      document.getElementById('m-work').value,
+      document.getElementById('m-leave').value,
+      document.getElementById('m-personal').value,
+      document.getElementById('m-writing').value,
+      document.getElementById('m-serial1').value,
+      document.getElementById('m-english').value,
+      document.getElementById('m-ai').value,
+    ];
+    try {
+      if (editingRowIndex !== null) {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'update', rowIndex: editingRowIndex+2, row: row }) });
+        matrixData[editingRowIndex] = row;
+      } else {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'append', row: row }) });
+        matrixData.push(row);
+      }
+      document.getElementById('matrix-table-wrap').style.display = 'block';
+      document.getElementById('matrix-empty').style.display = 'none';
+      document.getElementById('matrix-status').textContent = matrixData.length + '개 항목';
+      renderMatrixTable();
+      updateLeaveTracker();
+      closeMatrixModal();
+    } catch(err) {
+      alert('저장에 실패했어요. 다시 시도해줘.');
+    } finally {
+      btn.textContent = '저장';
+      btn.disabled = false;
+    }
+  }
+
+  function editMatrixRow(i) { openMatrixModal(i); }
+
+  async function deleteMatrixRow(i) {
+    if (!confirm('이 항목을 삭제할까요?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'delete', rowIndex: i+2 }) });
+      matrixData.splice(i, 1);
+      renderMatrixTable();
+      updateLeaveTracker();
+      if (matrixData.length === 0) {
+        document.getElementById('matrix-table-wrap').style.display = 'none';
+        document.getElementById('matrix-empty').style.display = 'flex';
+      }
+      document.getElementById('matrix-status').textContent = matrixData.length + '개 항목';
+    } catch(err) { alert('삭제에 실패했어요.'); }
+  }
+
+  // ===== INCOME: GOOGLE SHEETS INTEGRATION =====
+  let incomeData = [];
+  let editing수입Index = null;
+
+  const MONTH_ORDER = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTH_TO_Q = {'January':1,'February':1,'March':1,'April':2,'May':2,'June':2,'July':3,'August':3,'September':3,'October':4,'November':4,'December':4};
+
+  async function load수입() {
+    document.getElementById('income-loading').style.display = 'flex';
+    document.getElementById('income-table-wrap').style.display = 'none';
+    document.getElementById('income-empty').style.display = 'none';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?sheet=수입');
+      const json = await res.json();
+      incomeData = json.data.slice(1);
+      document.getElementById('income-loading').style.display = 'none';
+      if (incomeData.length === 0) {
+        document.getElementById('income-empty').style.display = 'flex';
+      } else {
+        document.getElementById('income-table-wrap').style.display = 'block';
+        render수입Table();
+        update수입Stats();
+      }
+    } catch(err) {
+      document.getElementById('income-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+    }
+  }
+
+  function render수입Table() {
+    const tbody = document.getElementById('income-tbody');
+    tbody.innerHTML = '';
+    incomeData.forEach(function(row, i) {
+      const status = row[3] || '';
+      const statusClass = status === 'Finished'
+        ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
+        : status === 'In-Progress'
+        ? 'bg-purple-100 text-purple-700 border-purple-200'
+        : 'bg-slate-100 text-slate-600 border-slate-200';
+      const rev = parseInt(row[4]) || 0;
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-indigo-50/30 transition-colors';
+      tr.innerHTML =
+        '<td class="px-6 py-4 font-bold text-slate-800">' + (row[0]||'—') + '</td>' +
+        '<td class="px-6 py-4"><div class="flex flex-col"><span class="font-bold text-slate-800 text-sm">' + (row[1]||'—') + '</span><span class="text-[11px] text-slate-400 mt-0.5">' + (row[2]||'') + '</span></div></td>' +
+        '<td class="px-6 py-4 text-sm text-slate-500">' + (row[2]||'—') + '</td>' +
+        '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase border ' + statusClass + '">' + status + '</span></td>' +
+        '<td class="px-6 py-4 text-right font-bold font-mono text-slate-800">₩' + rev.toLocaleString() + '</td>' +
+        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="edit수입Row(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="delete수입Row(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('income-table-status').textContent = incomeData.length + '개 항목';
+  }
+
+  function update수입Stats() {
+    const total = incomeData.reduce(function(sum, row) { return sum + (parseInt(row[4]) || 0); }, 0);
+    const target = 5250000;
+    const pct = Math.min(Math.round((total / target) * 100), 100);
+    const months = [...new Set(incomeData.map(function(r){ return r[0]; }))].length || 1;
+    const avg = Math.round(total / months);
+
+    document.getElementById('income-total').textContent = '₩' + total.toLocaleString();
+    document.getElementById('income-avg').textContent = '₩' + avg.toLocaleString();
+    document.getElementById('income-progress-bar').style.width = pct + '%';
+    document.getElementById('income-progress-pct').textContent = pct + '%';
+    document.getElementById('income-achieved-badge').textContent = pct + '% Achieved';
+    document.getElementById('income-entry-count').textContent = incomeData.length + '개 항목';
+
+    // Quarterly breakdown
+    const qTotals = {1:0, 2:0, 3:0, 4:0};
+    incomeData.forEach(function(row) {
+      const q = MONTH_TO_Q[row[0]];
+      if (q) qTotals[q] += (parseInt(row[4]) || 0);
+    });
+    const maxQ = Math.max(...Object.values(qTotals), 1);
+    [1,2,3,4].forEach(function(q) {
+      const h = Math.round((qTotals[q] / maxQ) * 80);
+      document.getElementById('q' + q + '-bar').style.height = h + '%';
+      document.getElementById('q' + q + '-label').textContent = qTotals[q] > 0 ? '₩' + Math.round(qTotals[q]/10000) + '만' : '—';
+    });
+  }
+
+  function open수입Modal(idx) {
+    editing수입Index = (idx !== undefined) ? idx : null;
+    document.getElementById('income-modal-title').textContent = editing수입Index !== null ? '수정' : 'New 수입 Entry';
+    if (editing수입Index !== null) {
+      const row = incomeData[editing수입Index];
+      document.getElementById('i-month').value = row[0] || 'January';
+      document.getElementById('i-details').value = row[1] || '';
+      document.getElementById('i-category').value = row[2] || 'Editorial Serial';
+      document.getElementById('i-status').value = row[3] || 'Finished';
+      document.getElementById('i-revenue').value = row[4] || '';
+    } else {
+      document.getElementById('i-details').value = '';
+      document.getElementById('i-revenue').value = '';
+      const now = new 날짜();
+      document.getElementById('i-month').value = MONTH_ORDER[now.get월()];
+    }
+    document.getElementById('income-modal').style.cssText = 'display:flex!important';
+  }
+
+  function close수입Modal() {
+    document.getElementById('income-modal').style.cssText = 'display:none!important';
+    editing수입Index = null;
+  }
+
+  async function save수입Entry() {
+    const btn = document.getElementById('income-save-btn');
+    btn.textContent = '저장 중...'; btn.disabled = true;
+    const row = [
+      document.getElementById('i-month').value,
+      document.getElementById('i-details').value,
+      document.getElementById('i-category').value,
+      document.getElementById('i-status').value,
+      document.getElementById('i-revenue').value,
+    ];
+    try {
+      if (editing수입Index !== null) {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'수입', action:'update', rowIndex: editing수입Index+2, row }) });
+        incomeData[editing수입Index] = row;
+      } else {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'수입', action:'append', row }) });
+        incomeData.push(row);
+      }
+      document.getElementById('income-table-wrap').style.display = 'block';
+      document.getElementById('income-empty').style.display = 'none';
+      render수입Table();
+      update수입Stats();
+      close수입Modal();
+    } catch(err) { alert('저장에 실패했어요.'); }
+    finally { btn.textContent = '저장'; btn.disabled = false; }
+  }
+
+  function edit수입Row(i) { open수입Modal(i); }
+
+  async function delete수입Row(i) {
+    if (!confirm('이 항목을 삭제할까요?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'수입', action:'delete', rowIndex: i+2 }) });
+      incomeData.splice(i, 1);
+      render수입Table();
+      update수입Stats();
+      if (incomeData.length === 0) {
+        document.getElementById('income-table-wrap').style.display = 'none';
+        document.getElementById('income-empty').style.display = 'flex';
+      }
+    } catch(err) { alert('삭제에 실패했어요.'); }
+  }
+
+  // ===== FINANCE HUB: GOOGLE SHEETS INTEGRATION =====
+  let hubData = [];
+  let editingHubIndex = null;
+
+  const TYPE_COLORS = {
+    '수입': 'bg-pastel-blue text-pastel-blue-text border-blue-200',
+    '지출': 'bg-pastel-rose text-pastel-rose-text border-rose-200',
+    '저축': 'bg-pastel-lavender text-pastel-lavender-text border-purple-200',
+    '이자': 'bg-pastel-gold text-pastel-gold-text border-yellow-200',
+  };
+
+  async function loadHub() {
+    document.getElementById('hub-loading').style.display = 'flex';
+    document.getElementById('hub-table-wrap').style.display = 'none';
+    document.getElementById('hub-empty').style.display = 'none';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?sheet=Finance_Hub');
+      const json = await res.json();
+      hubData = json.data.slice(1);
+      document.getElementById('hub-loading').style.display = 'none';
+      if (hubData.length === 0) {
+        document.getElementById('hub-empty').style.display = 'flex';
+      } else {
+        document.getElementById('hub-table-wrap').style.display = 'block';
+        renderHubTable();
+        updateHubStats();
+      }
+    } catch(err) {
+      document.getElementById('hub-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+    }
+  }
+
+  function renderHubTable() {
+    const tbody = document.getElementById('hub-tbody');
+    tbody.innerHTML = '';
+    let running = 0;
+    hubData.forEach(function(row, i) {
+      const type = row[4] || '';
+      const amt = parseFloat(row[3]) || 0;
+      if (type === '수입' || type === '이자') running += amt;
+      else running -= amt;
+      const typeClass = TYPE_COLORS[type] || 'bg-slate-100 text-slate-600 border-slate-200';
+      const isIncome = type === '수입' || type === '이자';
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-indigo-50/30 transition-colors';
+      tr.innerHTML =
+        '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[0]||'—') + '</td>' +
+        '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase border ' + typeClass + '">' + (type||'—') + '</span></td>' +
+        '<td class="px-6 py-4 text-slate-600 text-sm">' + (row[2]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-right font-black text-sm ' + (isIncome?'text-pastel-blue-text':'text-pastel-rose-text') + '">' +
+          (isIncome?'+':'-') + '$' + amt.toLocaleString() + '</td>' +
+        '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">$' + running.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',') + '</td>' +
+        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="editHubRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteHubRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('hub-status').textContent = hubData.length + '개 항목';
+  }
+
+  function updateHubStats() {
+    let income=0, expense=0, savings=0;
+    const monthly = {};
+    hubData.forEach(function(row) {
+      const amt = parseFloat(row[3])||0;
+      const type = row[4]||'';
+      const date = (row[0]||'').toString();
+      const month = date.substring(0,7);
+      if (type==='수입') { income+=amt; if(month) monthly[month]=(monthly[month]||0)+amt; }
+      else if (type==='지출') expense+=amt;
+      else if (type==='저축') savings+=amt;
+    });
+
+    document.getElementById('hub-income').textContent = '$'+income.toLocaleString();
+    document.getElementById('hub-expense').textContent = '$'+expense.toLocaleString();
+    document.getElementById('hub-savings').textContent = '$'+savings.toLocaleString();
+
+    const months = Object.keys(monthly).sort();
+    const avg = months.length>0 ? Math.round(income/months.length) : 0;
+    document.getElementById('hub-avg').textContent = '평균 $'+avg.toLocaleString()+' / 월';
+
+    // Chart
+    const chartEl = document.getElementById('hub-chart');
+    const maxVal = Math.max(...Object.values(monthly),1);
+    const allMonths = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+    const year = months.length>0 ? months[0].substring(0,4) : new Date().getFullYear();
+    chartEl.innerHTML = allMonths.map(function(m){
+      const key = year+'-'+m;
+      const val = monthly[key]||0;
+      const h = Math.round((val/maxVal)*100);
+      const hasData = val>0;
+      return '<div class="group relative flex-1 rounded-t-sm transition-all ' +
+        (hasData?'gradient-primary hover:opacity-80':'bg-slate-100') +
+        '" style="height:' + (h||2) + '%">' +
+        (hasData?'<div class="opacity-0 group-hover:opacity-100 absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] px-2 py-1 rounded whitespace-nowrap">$'+val.toLocaleString()+'</div>':'') +
+        '</div>';
+    }).join('');
+
+    // Savings trackers (example ratios)
+    const total = savings||1;
+    const ep = Math.min(Math.round((savings*0.5/total)*100),100);
+    const ip = Math.min(Math.round((savings*0.3/total)*100),100);
+    const dp = Math.min(Math.round((savings*0.2/total)*100),100);
+    document.getElementById('hub-emergency-pct').textContent = ep+'%';
+    document.getElementById('hub-emergency-bar').style.width = ep+'%';
+    document.getElementById('hub-invest-pct').textContent = ip+'%';
+    document.getElementById('hub-invest-bar').style.width = ip+'%';
+    document.getElementById('hub-deposit-pct').textContent = dp+'%';
+    document.getElementById('hub-deposit-bar').style.width = dp+'%';
+  }
+
+  function openHubModal(idx) {
+    editingHubIndex = (idx!==undefined)?idx:null;
+    document.getElementById('hub-modal-title').textContent = editingHubIndex!==null?'항목 수정':'새 항목 추가';
+    if (editingHubIndex!==null) {
+      const row = hubData[editingHubIndex];
+      document.getElementById('h-date').value=row[0]||'';
+      document.getElementById('h-category').value=row[1]||'';
+      document.getElementById('h-desc').value=row[2]||'';
+      document.getElementById('h-amount').value=row[3]||'';
+      document.getElementById('h-type').value=row[4]||'수입';
+    } else {
+      ['h-date','h-category','h-desc','h-amount'].forEach(function(id){document.getElementById(id).value='';});
+      document.getElementById('h-date').value=new Date().toISOString().split('T')[0];
+      document.getElementById('h-type').value='수입';
+    }
+    document.getElementById('hub-modal').style.cssText='display:flex!important';
+  }
+
+  function closeHubModal() {
+    document.getElementById('hub-modal').style.cssText='display:none!important';
+    editingHubIndex=null;
+  }
+
+  async function saveHubEntry() {
+    const btn=document.getElementById('hub-save-btn');
+    btn.textContent='저장 중...'; btn.disabled=true;
+    const row=[
+      document.getElementById('h-date').value,
+      document.getElementById('h-category').value,
+      document.getElementById('h-desc').value,
+      document.getElementById('h-amount').value,
+      document.getElementById('h-type').value,
+    ];
+    try {
+      if (editingHubIndex!==null) {
+        await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({sheet:'Finance_Hub',action:'update',rowIndex:editingHubIndex+2,row})});
+        hubData[editingHubIndex]=row;
+      } else {
+        await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({sheet:'Finance_Hub',action:'append',row})});
+        hubData.push(row);
+      }
+      document.getElementById('hub-table-wrap').style.display='block';
+      document.getElementById('hub-empty').style.display='none';
+      renderHubTable(); updateHubStats(); closeHubModal();
+    } catch(err){alert('저장에 실패했어요.');}
+    finally{btn.textContent='저장';btn.disabled=false;}
+  }
+
+  function editHubRow(i){openHubModal(i);}
+  async function deleteHubRow(i){
+    if(!confirm('이 항목을 삭제할까요?'))return;
+    try{
+      await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({sheet:'Finance_Hub',action:'delete',rowIndex:i+2})});
+      hubData.splice(i,1);
+      if(hubData.length===0){document.getElementById('hub-table-wrap').style.display='none';document.getElementById('hub-empty').style.display='flex';}
+      else{renderHubTable();updateHubStats();}
+    }catch(err){alert('삭제에 실패했어요.');}
+  }
+
+  // ===== FINANCE: GOOGLE SHEETS INTEGRATION =====
+  let financeData = [];
+  let financeFiltered = [];
+  let editingFinanceIndex = null;
+  let currentFinanceFilter = 'all';
+
+  async function loadFinance() {
+    document.getElementById('finance-loading').style.display = 'flex';
+    document.getElementById('finance-table-wrap').style.display = 'none';
+    document.getElementById('finance-empty').style.display = 'none';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?sheet=Finance');
+      const json = await res.json();
+      financeData = json.data.slice(1);
+      document.getElementById('finance-loading').style.display = 'none';
+      if (financeData.length === 0) {
+        document.getElementById('finance-empty').style.display = 'flex';
+      } else {
+        buildTripFilters();
+        filterFinance('all');
+      }
+    } catch(err) {
+      document.getElementById('finance-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+    }
+  }
+
+  function buildTripFilters() {
+    var trips = [];
+    financeData.forEach(function(r){ if(r[2] && trips.indexOf(r[2])===-1) trips.push(r[2]); });
+    var container = document.getElementById('finance-trip-filters');
+    container.innerHTML = '';
+    trips.forEach(function(t){
+      var btn = document.createElement('button');
+      btn.className = 'finance-trip-btn px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap hover:border-indigo-300 transition-all';
+      btn.textContent = t;
+      btn.dataset.trip = t;
+      btn.addEventListener('click', function(){ filterFinance(this.dataset.trip); });
+      container.appendChild(btn);
+    });
+  }
+
+  function filterFinance(trip) {
+    currentFinanceFilter = trip;
+    financeFiltered = trip === 'all' ? financeData : financeData.filter(function(r){ return r[2] === trip; });
+
+    // Update filter button styles
+    document.getElementById('finance-filter-all').className = 
+      trip === 'all'
+        ? 'px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap'
+        : 'px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap hover:border-indigo-300 transition-all';
+    document.querySelectorAll('.finance-trip-btn').forEach(function(btn){
+      const isActive = btn.textContent === trip;
+      btn.className = isActive
+        ? 'finance-trip-btn px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap'
+        : 'finance-trip-btn px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap hover:border-indigo-300 transition-all';
+    });
+
+    renderFinanceTable();
+    updateFinanceStats();
+    document.getElementById('finance-table-wrap').style.display = 'block';
+    document.getElementById('finance-empty').style.display = financeFiltered.length === 0 ? 'flex' : 'none';
+    document.getElementById('finance-table-wrap').style.display = financeFiltered.length === 0 ? 'none' : 'block';
+  }
+
+  const CAT_ICONS = { '이동':'flight', '숙소':'bed', '식비':'restaurant', '여가':'attractions', '쇼핑':'shopping_bag', '기타':'more_horiz' };
+  const CAT_COLORS = { '이동':'text-indigo-600', '숙소':'text-blue-600', '식비':'text-purple-600', '여가':'text-teal-600', '쇼핑':'text-rose-500', '기타':'text-slate-500' };
+
+  function renderFinanceTable() {
+    const tbody = document.getElementById('finance-tbody');
+    tbody.innerHTML = '';
+    financeFiltered.forEach(function(row, i) {
+      const realIdx = financeData.indexOf(row);
+      const cat = row[3] || '기타';
+      const icon = CAT_ICONS[cat] || 'more_horiz';
+      const color = CAT_COLORS[cat] || 'text-slate-500';
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-indigo-50/30 transition-colors';
+      tr.innerHTML =
+        '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[0]||'—') + '</td>' +
+        '<td class="px-6 py-4 font-semibold text-slate-800">' + (row[1]||'—') + '</td>' +
+        '<td class="px-6 py-4"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-[9px] font-black border border-indigo-100">' + (row[2]||'—') + '</span></td>' +
+        '<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-sm font-semibold ' + color + '"><span class="material-symbols-outlined text-sm">' + icon + '</span>' + cat + '</span></td>' +
+        '<td class="px-6 py-4 text-right font-bold text-slate-800">-' + (parseFloat(row[4])||0).toLocaleString() + '</td>' +
+        '<td class="px-6 py-4 text-xs font-bold text-slate-400">' + (row[5]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="editFinanceRow(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteFinanceRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('finance-status').textContent = financeFiltered.length + '개 항목';
+  }
+
+  function updateFinanceStats() {
+    const total = financeData.reduce(function(s,r){ return s+(parseFloat(r[4])||0); }, 0);
+    const tripTotal = financeFiltered.reduce(function(s,r){ return s+(parseFloat(r[4])||0); }, 0);
+    const tripName = currentFinanceFilter === 'all' ? '전체 트립' : currentFinanceFilter;
+
+    document.getElementById('finance-total').textContent = '$' + total.toLocaleString();
+    document.getElementById('finance-count').textContent = financeData.length + '개 항목';
+    document.getElementById('finance-trip-total').textContent = '$' + tripTotal.toLocaleString();
+    document.getElementById('finance-trip-name').textContent = tripName;
+
+    // Category breakdown
+    const cats = {};
+    financeFiltered.forEach(function(r){ const c=r[3]||'기타'; cats[c]=(cats[c]||0)+(parseFloat(r[4])||0); });
+    const maxCat = Math.max(...Object.values(cats), 1);
+    const catEl = document.getElementById('finance-categories');
+    catEl.innerHTML = Object.entries(cats).sort(function(a,b){ return b[1]-a[1]; }).slice(0,4).map(function(e){
+      const pct = Math.round((e[1]/maxCat)*100);
+      return '<div class="flex items-center gap-2"><span class="text-[10px] text-slate-500 w-10 shrink-0">' + e[0] + '</span>' +
+        '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full gradient-primary rounded-full" style="width:' + pct + '%"></div></div>' +
+        '<span class="text-[10px] font-bold text-slate-600 w-12 text-right shrink-0">$' + Math.round(e[1]) + '</span></div>';
+    }).join('');
+  }
+
+  function openFinanceModal(idx) {
+    editingFinanceIndex = (idx !== undefined) ? idx : null;
+    document.getElementById('finance-modal-title').textContent = editingFinanceIndex !== null ? '지출 수정' : '새 지출 추가';
+    if (editingFinanceIndex !== null) {
+      const row = financeData[editingFinanceIndex];
+      document.getElementById('f-date').value = row[0]||'';
+      document.getElementById('f-desc').value = row[1]||'';
+      document.getElementById('f-trip').value = row[2]||'';
+      document.getElementById('f-category').value = row[3]||'이동';
+      document.getElementById('f-amount').value = row[4]||'';
+      document.getElementById('f-currency').value = row[5]||'USD';
+    } else {
+      ['f-date','f-desc','f-trip','f-amount'].forEach(function(id){ document.getElementById(id).value=''; });
+      document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('f-category').value = '이동';
+      document.getElementById('f-currency').value = 'USD';
+    }
+    document.getElementById('finance-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeFinanceModal() {
+    document.getElementById('finance-modal').style.cssText = 'display:none!important';
+    editingFinanceIndex = null;
+  }
+
+  async function saveFinanceEntry() {
+    const btn = document.getElementById('finance-save-btn');
+    btn.textContent = '저장 중...'; btn.disabled = true;
+    const row = [
+      document.getElementById('f-date').value,
+      document.getElementById('f-desc').value,
+      document.getElementById('f-trip').value,
+      document.getElementById('f-category').value,
+      document.getElementById('f-amount').value,
+      document.getElementById('f-currency').value,
+    ];
+    try {
+      if (editingFinanceIndex !== null) {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Finance', action:'update', rowIndex: editingFinanceIndex+2, row }) });
+        financeData[editingFinanceIndex] = row;
+      } else {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Finance', action:'append', row }) });
+        financeData.push(row);
+      }
+      buildTripFilters();
+      filterFinance(currentFinanceFilter);
+      closeFinanceModal();
+    } catch(err) { alert('저장에 실패했어요.'); }
+    finally { btn.textContent = '저장'; btn.disabled = false; }
+  }
+
+  function editFinanceRow(i) { openFinanceModal(i); }
+
+  async function deleteFinanceRow(i) {
+    if (!confirm('이 항목을 삭제할까요?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'Finance', action:'delete', rowIndex: i+2 }) });
+      financeData.splice(i, 1);
+      buildTripFilters();
+      filterFinance(currentFinanceFilter);
+      if (financeData.length === 0) {
+        document.getElementById('finance-table-wrap').style.display = 'none';
+        document.getElementById('finance-empty').style.display = 'flex';
+      }
+    } catch(err) { alert('삭제에 실패했어요.'); }
+  }
+
+  // ===== ENGLISH: GOOGLE SHEETS INTEGRATION =====
+  let englishData = [];
+  let editingEnglishIndex = null;
+
+  async function loadEnglish() {
+    document.getElementById('english-loading').style.display = 'flex';
+    document.getElementById('english-table-wrap').style.display = 'none';
+    document.getElementById('english-empty').style.display = 'none';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?sheet=English');
+      const json = await res.json();
+      englishData = json.data.slice(1);
+      document.getElementById('english-loading').style.display = 'none';
+      if (englishData.length === 0) {
+        document.getElementById('english-empty').style.display = 'flex';
+      } else {
+        document.getElementById('english-table-wrap').style.display = 'block';
+        renderEnglishTable();
+        updateEnglishStats();
+      }
+    } catch(err) {
+      document.getElementById('english-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+    }
+  }
+
+  function renderEnglishTable() {
+    const tbody = document.getElementById('english-tbody');
+    tbody.innerHTML = '';
+    englishData.forEach(function(row, i) {
+      const status = row[2] || '';
+      const statusClass = status === '완료'
+        ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
+        : status === '진행 중'
+        ? 'bg-blue-100 text-blue-700 border-blue-200'
+        : 'bg-slate-100 text-slate-600 border-slate-200';
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-indigo-50/30 transition-colors';
+      tr.innerHTML =
+        '<td class="px-6 py-4 font-bold text-slate-800">' + (row[0]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[1]||'—') + '</td>' +
+        '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase border ' + statusClass + '">' + (status||'—') + '</span></td>' +
+        '<td class="px-6 py-4 text-sm text-slate-600">' + (row[3]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('english-status').textContent = englishData.length + '개 수업';
+  }
+
+  function updateEnglishStats() {
+    const total = englishData.length;
+    const done = englishData.filter(function(r){ return r[2]==='완료'; }).length;
+    const inprog = englishData.filter(function(r){ return r[2]==='진행 중'; }).length;
+    const scheduled = englishData.filter(function(r){ return r[2]==='예정'; });
+    const pct = total > 0 ? Math.round((done/total)*100) : 0;
+
+    document.getElementById('english-total').textContent = total;
+    document.getElementById('english-done').textContent = done;
+    document.getElementById('english-progress').textContent = inprog;
+    document.getElementById('english-progress-pct').textContent = pct + '%';
+    document.getElementById('english-progress-bar').style.width = pct + '%';
+
+    // Fee totals
+    let feeTotal = 0;
+    englishData.forEach(function(r){
+      const f = parseFloat((r[4]||'').toString().replace(/[^0-9.]/g,''));
+      if(!isNaN(f)) feeTotal += f;
+    });
+    document.getElementById('english-fee-total').textContent = '$' + feeTotal.toFixed(0);
+    document.getElementById('english-fee-annual').textContent = '$' + feeTotal.toFixed(0);
+
+    // Next scheduled lesson
+    const nextEl = document.getElementById('english-next-lesson');
+    if (scheduled.length > 0) {
+      nextEl.innerHTML = scheduled.map(function(r){
+        return '<div class="bg-white rounded-xl p-3 border border-blue-100">' +
+          '<p class="text-sm font-bold text-slate-800">' + (r[0]||'') + '</p>' +
+          '<p class="text-[10px] text-slate-400 mt-0.5">' + (r[1]||'날짜 미정') + '</p>' +
+          '</div>';
+      }).join('');
+    } else {
+      nextEl.innerHTML = '<p class="text-sm text-slate-400">예정된 수업이 없어요</p>';
+    }
+  }
+
+  function openEnglishModal(idx) {
+    editingEnglishIndex = (idx !== undefined) ? idx : null;
+    document.getElementById('english-modal-title').textContent = editingEnglishIndex !== null ? '수업 수정' : '새 수업 추가';
+    if (editingEnglishIndex !== null) {
+      const row = englishData[editingEnglishIndex];
+      document.getElementById('e-name').value = row[0] || '';
+      document.getElementById('e-date').value = row[1] || '';
+      document.getElementById('e-status').value = row[2] || '예정';
+      document.getElementById('e-track').value = row[3] || '';
+      document.getElementById('e-fee').value = row[4] || '';
+      document.getElementById('e-notes').value = row[5] || '';
+    } else {
+      ['e-name','e-date','e-track','e-fee','e-notes'].forEach(function(id){ document.getElementById(id).value=''; });
+      document.getElementById('e-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('e-status').value = '예정';
+    }
+    document.getElementById('english-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeEnglishModal() {
+    document.getElementById('english-modal').style.cssText = 'display:none!important';
+    editingEnglishIndex = null;
+  }
+
+  async function saveEnglishEntry() {
+    const btn = document.getElementById('english-save-btn');
+    btn.textContent = '저장 중...'; btn.disabled = true;
+    const row = [
+      document.getElementById('e-name').value,
+      document.getElementById('e-date').value,
+      document.getElementById('e-status').value,
+      document.getElementById('e-track').value,
+      document.getElementById('e-fee').value,
+      document.getElementById('e-notes').value,
+    ];
+    try {
+      if (editingEnglishIndex !== null) {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'English', action:'update', rowIndex: editingEnglishIndex+2, row }) });
+        englishData[editingEnglishIndex] = row;
+      } else {
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'English', action:'append', row }) });
+        englishData.push(row);
+      }
+      document.getElementById('english-table-wrap').style.display = 'block';
+      document.getElementById('english-empty').style.display = 'none';
+      renderEnglishTable();
+      updateEnglishStats();
+      closeEnglishModal();
+    } catch(err) { alert('저장에 실패했어요.'); }
+    finally { btn.textContent = '저장'; btn.disabled = false; }
+  }
+
+  function editEnglishRow(i) { openEnglishModal(i); }
+
+  async function deleteEnglishRow(i) {
+    if (!confirm('이 수업을 삭제할까요?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify({ sheet:'English', action:'delete', rowIndex: i+2 }) });
+      englishData.splice(i, 1);
+      renderEnglishTable();
+      updateEnglishStats();
+      if (englishData.length === 0) {
+        document.getElementById('english-table-wrap').style.display = 'none';
+        document.getElementById('english-empty').style.display = 'flex';
+      }
+    } catch(err) { alert('삭제에 실패했어요.'); }
+  }
+
+
+</script>
+</body>
+</html>
