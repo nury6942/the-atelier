@@ -2215,7 +2215,7 @@
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
           if (!plannerByDate[sDs]) plannerByDate[sDs] = {};
           if (!plannerByDate[sDs][sFIdx]) plannerByDate[sDs][sFIdx] = [];
-          if (plannerByDate[sDs][sFIdx].indexOf(sRow[1]) === -1) plannerByDate[sDs][sFIdx].push(sRow[1]);
+          plannerByDate[sDs][sFIdx].push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
         }
       }
@@ -4908,7 +4908,7 @@
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
           if (!pByDate[sDs]) pByDate[sDs] = {};
           if (!pByDate[sDs][sFIdx]) pByDate[sDs][sFIdx] = [];
-          if (pByDate[sDs][sFIdx].indexOf(sRow[1])===-1) pByDate[sDs][sFIdx].push(sRow[1]);
+          pByDate[sDs][sFIdx].push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
         }
       }
