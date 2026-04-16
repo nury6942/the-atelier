@@ -1871,6 +1871,72 @@
 
 <script>
 
+  // ===== 모달 공통 키보드 핸들러 (Enter=저장, Tab/화살표=필드 이동) =====
+  (function() {
+    // 모달별 저장 버튼 매핑
+    var MODAL_SAVE = {
+      'planner-modal': 'planner-save-btn',
+      'city-modal': 'city-save-btn',
+      'trip-modal': null, // onclick 직접 호출
+      'finance-modal': 'fin-save-btn',
+      'hub-modal': 'hub-save-btn',
+      'matrix-modal': 'modal-save-btn',
+      'english-modal': 'english-save-btn',
+      'income-modal': 'income-save-btn',
+      'packing-cat-modal': null,
+      'packing-item-modal': null,
+      'journey-modal': 'journey-save-btn',
+      'income-goal-modal': 'income-goal-save-btn',
+      'goal-modal': 'goal-save-btn',
+    };
+
+    function getModalInputs(modal) {
+      return Array.from(modal.querySelectorAll('input:not([type=hidden]):not([type=checkbox]):not(.hidden), select, textarea')).filter(function(el) {
+        return el.offsetParent !== null; // visible only
+      });
+    }
+
+    function findParentModal(el) {
+      var node = el;
+      while (node && node !== document) {
+        if (node.id && MODAL_SAVE.hasOwnProperty(node.id)) return node;
+        node = node.parentElement;
+      }
+      return null;
+    }
+
+    document.addEventListener('keydown', function(e) {
+      var target = e.target;
+      if (!target || !target.closest) return;
+      var modal = findParentModal(target);
+      if (!modal) return;
+
+      // Enter → 저장 (select는 제외, textarea에서는 Shift+Enter만)
+      if (e.key === 'Enter' && target.tagName !== 'TEXTAREA' && target.tagName !== 'BUTTON') {
+        e.preventDefault();
+        var saveBtnId = MODAL_SAVE[modal.id];
+        if (saveBtnId) {
+          var btn = document.getElementById(saveBtnId);
+          if (btn && !btn.disabled) btn.click();
+        } else {
+          // save 버튼 ID 없으면 atl-btn-save 클래스로 찾기
+          var btn = modal.querySelector('.atl-btn-save');
+          if (btn && !btn.disabled) btn.click();
+        }
+        return;
+      }
+
+      // Arrow Down / Arrow Up → 필드 이동 (select에서는 기본 동작 유지)
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && target.tagName !== 'SELECT') {
+        var inputs = getModalInputs(modal);
+        var idx = inputs.indexOf(target);
+        if (idx < 0) return;
+        e.preventDefault();
+        var next = e.key === 'ArrowDown' ? idx + 1 : idx - 1;
+        if (next >= 0 && next < inputs.length) inputs[next].focus();
+      }
+    });
+  })();
 
   // ===== PLANNER GOALS (milestones 연동) =====
   let plannerGoals = [];
