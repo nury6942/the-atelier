@@ -5990,16 +5990,22 @@
             '</div></div>';
         }
 
+        var itemRunning = runningBalance - (mIncome - mExpense - mSavings);
         var itemsHtml = monthItems.map(function(mi) {
           var type = mi.row[4]||'';
           var isInc = type==='수입'||type==='이자';
           var isSav = type==='저축';
+          var amt = parseFloat(mi.row[3])||0;
+          if(isInc) itemRunning += amt; else itemRunning -= amt;
           var colorCls = isInc ? 'text-emerald-600' : (isSav ? 'text-yellow-600' : 'text-red-600');
           var dateDay = (mi.row[0]||'').substring(8,10);
+          var balK = Math.round(itemRunning/1000);
+          var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group">' +
             '<td class="py-1.5 text-slate-400 text-[10px] w-6">' + dateDay + '</td>' +
             '<td class="py-1.5 text-slate-600 text-[10px]">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-1.5 text-right text-[10px] font-bold ' + colorCls + '">' + (isInc?'+':'-') + '₩' + (parseFloat(mi.row[3])||0).toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-1.5 text-right text-[10px] font-bold ' + colorCls + '">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-1.5 text-right text-[8px] font-medium" style="' + balColor + 'white-space:nowrap;">' + balK.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-1.5 text-right w-12"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all justify-end">' +
               '<button onclick="editHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
               '<button onclick="deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
