@@ -2184,11 +2184,13 @@
       var migrated = 0;
       for (var mi = 0; mi < plannerData.length; mi++) {
         var row = plannerData[mi];
-        var correctColor = CAT_COLOR[row[2]];
+        var catTrimmed = (row[2]||'').trim();
+        var correctColor = CAT_COLOR[catTrimmed];
         if (correctColor && row[3] !== correctColor) {
           row[3] = correctColor;
+          if (catTrimmed !== row[2]) row[2] = catTrimmed;
           try {
-            await fbUpdate('planner', row[7], rowToObj('planner', row.slice(0, 7)));
+            await fbUpdate('planner', row[7], { color: correctColor, category: catTrimmed });
             migrated++;
           } catch(e) { console.error('Color migration error:', e); }
         }
