@@ -4917,7 +4917,7 @@
 
       const tr = document.createElement('tr');
       tr.className = isWeekend
-        ? 'bg-rose-50/40 hover:bg-rose-100/40 transition-colors border-b border-rose-50 group'
+        ? 'bg-rose-50/60 hover:bg-rose-100/50 transition-colors border-b border-rose-100 group'
         : (isToday
           ? 'bg-indigo-50/60 border-b border-indigo-200 group'
           : 'hover:bg-slate-50/50 transition-colors border-b border-slate-50/80 group');
@@ -4940,7 +4940,7 @@
 
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
-        '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-400':'text-slate-400') + '">' + day + '</td>' +
+        '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i) + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i) + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i) + '</td>' +
