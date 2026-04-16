@@ -1938,6 +1938,13 @@
     });
   })();
 
+  // ===== 모달 내 select 포커스 시 드롭다운 자동 열기 =====
+  document.addEventListener('focusin', function(e) {
+    if (e.target.tagName === 'SELECT' && e.target.closest('.fixed.inset-0.z-50')) {
+      try { e.target.showPicker(); } catch(err) {}
+    }
+  });
+
   // ===== 모달 바깥 클릭 시 닫기 =====
   document.addEventListener('click', function(e) {
     var modals = document.querySelectorAll('.fixed.inset-0.z-50.bg-black\\/40');
