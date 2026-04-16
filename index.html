@@ -2215,12 +2215,14 @@
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
           if (!plannerByDate[sDs]) plannerByDate[sDs] = {};
           if (!plannerByDate[sDs][sFIdx]) plannerByDate[sDs][sFIdx] = [];
-          // 연차: notes에서 일수 가져와서 "1.0 체코여행" 형태로
+          // 연차: 주말/공휴일은 스킵, 평일만 매트릭스에 반영
           var syncVal = sRow[1];
-          if ((sRow[2]||'').trim() === '연차') {
-            var lm = (sRow[4]||'').match(/^leave:([\d.]+)/);
-            var ld = lm ? lm[1] : '1.0';
-            syncVal = ld + ' ' + sRow[1];
+          var isLeave = (sRow[2]||'').trim() === '연차';
+          if (isLeave) {
+            var dow = sCur.getDay();
+            var syncHolidays = getKoreanHolidays(sCur.getFullYear());
+            if (dow === 0 || dow === 6 || syncHolidays[sDs]) { sCur.setDate(sCur.getDate()+1); continue; }
+            syncVal = '1.0 ' + sRow[1];
           }
           plannerByDate[sDs][sFIdx].push(syncVal);
           sCur.setDate(sCur.getDate()+1);
@@ -2479,7 +2481,50 @@
 
   function toggleLeaveDay() {
     var cat = document.getElementById('p-category').value;
-    document.getElementById('p-leave-day-wrap').style.display = cat === '연차' ? 'block' : 'none';
+    var wrap = document.getElementById('p-leave-day-wrap');
+    wrap.style.display = cat === '연차' ? 'block' : 'none';
+    if (cat === '연차') calcLeaveDays();
+  }
+
+  function calcLeaveDays() {
+    var startVal = document.getElementById('p-date').value;
+    var endVal = document.getElementById('p-date-end').value;
+    if (!startVal || !endVal || endVal <= startVal) return; // 단일 날짜면 수동 선택
+
+    var start = new Date(startVal + 'T00:00:00');
+    var end = new Date(endVal + 'T00:00:00');
+    var year = start.getFullYear();
+    var holidays = getKoreanHolidays(year);
+    // 종료일이 다른 연도면 그 연도 공휴일도 추가
+    if (end.getFullYear() !== year) {
+      var h2 = getKoreanHolidays(end.getFullYear());
+      Object.keys(h2).forEach(function(k){ holidays[k] = h2[k]; });
+    }
+
+    var workDays = 0;
+    var cur = new Date(start);
+    while (cur <= end) {
+      var dayOfWeek = cur.getDay(); // 0=일, 6=토
+      var ds = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
+      if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidays[ds]) {
+        workDays++;
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    // 자동으로 일수 설정
+    document.getElementById('p-leave-day').value = workDays.toFixed(1);
+    // 드롭다운에 해당 값이 없으면 옵션 추가
+    var sel = document.getElementById('p-leave-day');
+    var found = false;
+    for (var i = 0; i < sel.options.length; i++) { if (sel.options[i].value === workDays.toFixed(1)) found = true; }
+    if (!found) {
+      var opt = document.createElement('option');
+      opt.value = workDays.toFixed(1);
+      opt.textContent = workDays.toFixed(1) + '일 (자동 계산: 주말/공휴일 제외)';
+      sel.appendChild(opt);
+      sel.value = workDays.toFixed(1);
+    }
   }
 
   function toggleRepeatOptions() {
@@ -4937,7 +4982,12 @@
           if (!pByDate[sDs]) pByDate[sDs] = {};
           if (!pByDate[sDs][sFIdx]) pByDate[sDs][sFIdx] = [];
           var sv = sRow[1];
-          if ((sRow[2]||'').trim()==='연차') { var lm2=(sRow[4]||'').match(/^leave:([\d.]+)/); sv=(lm2?lm2[1]:'1.0')+' '+sRow[1]; }
+          var isLv = (sRow[2]||'').trim()==='연차';
+          if (isLv) {
+            var dow2=sCur.getDay(); var lh=getKoreanHolidays(sCur.getFullYear());
+            if (dow2===0||dow2===6||lh[sDs]) { sCur.setDate(sCur.getDate()+1); continue; }
+            sv='1.0 '+sRow[1];
+          }
           pByDate[sDs][sFIdx].push(sv);
           sCur.setDate(sCur.getDate()+1);
         }
@@ -6159,8 +6209,8 @@
     var sv = document.getElementById('trip-start'); initFlatpickr('trip-end', { minDate: sv&&sv.value||null });
   }
   function initPlannerDatePickers() {
-    initFlatpickr('p-date', { onChange: function(d){ if(d[0]&&fpInstances['p-date-end']) fpInstances['p-date-end'].set('minDate',d[0]); }});
-    var sv = document.getElementById('p-date'); initFlatpickr('p-date-end', { minDate: sv&&sv.value||null });
+    initFlatpickr('p-date', { onChange: function(d){ if(d[0]&&fpInstances['p-date-end']) fpInstances['p-date-end'].set('minDate',d[0]); calcLeaveDays(); }});
+    var sv = document.getElementById('p-date'); initFlatpickr('p-date-end', { minDate: sv&&sv.value||null, onChange: function(){ calcLeaveDays(); } });
   }
   function initMatrixDatePickers() {
     initFlatpickr('m-date', { onChange: function(d){ if(d[0]&&fpInstances['m-date-end']) fpInstances['m-date-end'].set('minDate',d[0]); autoFillMatrixDay(); }});
