@@ -2522,9 +2522,16 @@
       container.innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">이 날의 일정이 없어요<br/>+ 버튼으로 추가해봐!</div>';
       return;
     }
-    container.innerHTML = items.map(function(item) {
+    container.innerHTML = items.map(function(item, idx) {
       var realIdx = journeyData.indexOf(item);
-      return '<div class="relative pl-6">' +
+      var travelHtml = '';
+      if (idx > 0) {
+        var prev = items[idx - 1];
+        if (prev.lat && prev.lng && item.lat && item.lng) {
+          travelHtml = '<div id="travel-' + idx + '" class="relative pl-6 my-1"><div class="ml-1 flex items-center gap-1.5 text-[10px] text-slate-400 py-1"><span class="material-symbols-outlined" style="font-size:13px">more_vert</span><span class="italic">이동 시간 계산 중...</span></div></div>';
+        }
+      }
+      return travelHtml + '<div class="relative pl-6">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-sky-400 ring-4 ring-white shadow-sm"></div>' +
         (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1">' + item.time + '</div>' : '') +
         '<div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 transition-colors shadow-sm group">' +
@@ -2535,6 +2542,25 @@
         (item.description ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + item.description + '</p>' : '') +
         '</div></div>';
     }).join('');
+
+    // 이동 시간 계산
+    items.forEach(function(item, idx) {
+      if (idx === 0) return;
+      var prev = items[idx - 1];
+      if (!prev.lat || !prev.lng || !item.lat || !item.lng) return;
+      var el = document.getElementById('travel-' + idx);
+      if (!el) return;
+      getTravelTime(prev.lat, prev.lng, item.lat, item.lng, function(result) {
+        if (!result || !document.getElementById('travel-' + idx)) return;
+        var icon = result.mode === 'walk' ? 'directions_walk' : 'directions_transit';
+        var modeText = result.mode === 'walk' ? '도보' : '대중교통';
+        el.innerHTML = '<div class="relative pl-6 my-1">' +
+          '<div class="ml-1 flex items-center gap-1.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
+          '<span class="material-symbols-outlined" style="font-size:14px">' + icon + '</span>' +
+          '<span>' + modeText + ' ' + result.duration + ' (' + result.distance + ')</span>' +
+          '</div></div>';
+      });
+    });
   }
 
   function prevDay() {
@@ -2897,6 +2923,50 @@
     }
   }
 
+  var _selectedPlaceLat = null;
+  var _selectedPlaceLng = null;
+  var _travelTimeCache = {};
+
+  function getTravelTime(originLat, originLng, destLat, destLng, callback) {
+    var cacheKey = originLat.toFixed(5) + ',' + originLng.toFixed(5) + '->' + destLat.toFixed(5) + ',' + destLng.toFixed(5);
+    if (_travelTimeCache[cacheKey]) { callback(_travelTimeCache[cacheKey]); return; }
+    if (typeof google === 'undefined' || !google.maps || !google.maps.DistanceMatrixService) { callback(null); return; }
+    var service = new google.maps.DistanceMatrixService();
+    var origin = new google.maps.LatLng(originLat, originLng);
+    var dest = new google.maps.LatLng(destLat, destLng);
+    // 먼저 도보 시도
+    service.getDistanceMatrix({
+      origins: [origin], destinations: [dest], travelMode: 'WALKING'
+    }, function(res, status) {
+      if (status !== 'OK' || !res.rows[0] || !res.rows[0].elements[0] || res.rows[0].elements[0].status !== 'OK') { callback(null); return; }
+      var walkEl = res.rows[0].elements[0];
+      var walkMin = Math.round(walkEl.duration.value / 60);
+      // 도보 20분 이내면 도보로
+      if (walkMin <= 20) {
+        var result = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
+        _travelTimeCache[cacheKey] = result;
+        callback(result);
+      } else {
+        // 대중교통으로 재검색
+        service.getDistanceMatrix({
+          origins: [origin], destinations: [dest], travelMode: 'TRANSIT'
+        }, function(res2, status2) {
+          if (status2 === 'OK' && res2.rows[0] && res2.rows[0].elements[0] && res2.rows[0].elements[0].status === 'OK') {
+            var transitEl = res2.rows[0].elements[0];
+            var result = { mode: 'transit', duration: transitEl.duration.text, distance: transitEl.distance.text };
+            _travelTimeCache[cacheKey] = result;
+            callback(result);
+          } else {
+            // 대중교통 실패 시 도보 결과 사용
+            var result = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
+            _travelTimeCache[cacheKey] = result;
+            callback(result);
+          }
+        });
+      }
+    });
+  }
+
   var _scheduleAutocomplete = null;
   function initSchedulePlacesAutocomplete() {
     try {
@@ -2905,13 +2975,17 @@
       if (_scheduleAutocomplete) { try { google.maps.event.clearInstanceListeners(_scheduleAutocomplete); } catch(e){} _scheduleAutocomplete = null; }
       _scheduleAutocomplete = new google.maps.places.Autocomplete(input, {
         types: ['establishment'],
-        fields: ['name', 'formatted_address'],
+        fields: ['name', 'formatted_address', 'geometry'],
       });
       _scheduleAutocomplete.addListener('place_changed', function() {
         var place = _scheduleAutocomplete.getPlace();
         if (place.name) input.value = place.name;
         var descEl = document.getElementById('jf-desc');
         if (descEl && place.formatted_address && !descEl.value) descEl.value = place.formatted_address;
+        if (place.geometry && place.geometry.location) {
+          _selectedPlaceLat = place.geometry.location.lat();
+          _selectedPlaceLng = place.geometry.location.lng();
+        }
       });
       setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
     } catch(e) {
@@ -2941,6 +3015,10 @@
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
+      if (_selectedPlaceLat !== null && _selectedPlaceLng !== null) {
+        obj.lat = _selectedPlaceLat; obj.lng = _selectedPlaceLng;
+        _selectedPlaceLat = null; _selectedPlaceLng = null;
+      }
     } else if (currentJourneyType === '이동수단') {
       obj.date = (document.getElementById('jf-date')||{}).value||'';
       obj.time = (document.getElementById('jf-time')||{}).value||'';
