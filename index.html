@@ -2760,7 +2760,7 @@
     ];
     if (type === '숙소') return [
       {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
-      {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef'},
+      {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef', autocomplete:'lodging'},
       {id:'jf-address', label:'주소', type:'text', placeholder:'예: Rybná 20, 110 00 Praha'},
       {id:'jf-phone', label:'전화번호', type:'text', placeholder:'예: +420 221 700 111'},
       {id:'jf-payment-date', label:'결제일 *', type:'date'},
