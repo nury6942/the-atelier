@@ -2090,22 +2090,22 @@
   let plannerMonth = new Date().getMonth(); // 0-indexed
 
   const COLOR_MAP = {
-    'mint':    'bg-pastel-mint text-teal-800 border-teal-200',
-    'blue':    'bg-pastel-blue text-blue-800 border-blue-200',
-    'lavender':'bg-pastel-lavender text-violet-700 border-violet-200',
-    'rose':    'bg-pastel-rose text-rose-800 border-rose-200',
-    'peach':   'bg-pastel-peach text-orange-800 border-orange-200',
-    'lemon':   'bg-pastel-lemon text-yellow-800 border-yellow-200',
+    'sky':     'bg-sky-100 text-sky-800 border-sky-200',
+    'amber':   'bg-amber-100 text-amber-800 border-amber-200',
+    'violet':  'bg-violet-100 text-violet-800 border-violet-200',
+    'rose':    'bg-rose-100 text-rose-800 border-rose-200',
+    'slate':   'bg-slate-200 text-slate-700 border-slate-300',
+    'cyan':    'bg-cyan-100 text-cyan-800 border-cyan-200',
+    'orange':  'bg-orange-100 text-orange-800 border-orange-200',
     'indigo':  'bg-indigo-100 text-indigo-800 border-indigo-200',
-    'sage':    'bg-emerald-100 text-emerald-800 border-emerald-200',
   };
   const CAT_TRACK = {
     '글쓰기':'writing','영어':'english','스터디':'study',
     '운동':'exercise','업무':'work','개인':'personal','휴가':'vacation'
   };
   const CAT_COLOR = {
-    '글쓰기':'mint','영어':'blue','스터디':'lemon',
-    '운동':'rose','업무':'sage','개인':'lavender','휴가':'peach'
+    '글쓰기':'sky','영어':'amber','스터디':'violet',
+    '운동':'rose','업무':'slate','개인':'cyan','휴가':'orange'
   };
 
   // ===== 대한민국 공휴일 =====
@@ -3831,8 +3831,8 @@
     '휴가':   'bg-orange-50 text-orange-700 border-orange-100',
   };
   const TRACK_BARS = {
-    '글쓰기':'bg-accent-mint','영어':'bg-accent-blue','스터디':'bg-accent-lemon',
-    '운동':'bg-accent-rose','업무':'bg-accent-sage','개인':'bg-accent-lavender','휴가':'bg-accent-peach'
+    '글쓰기':'bg-sky-400','영어':'bg-amber-400','스터디':'bg-violet-400',
+    '운동':'bg-rose-400','업무':'bg-slate-400','개인':'bg-cyan-400','휴가':'bg-orange-400'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
