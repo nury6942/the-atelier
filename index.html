@@ -1004,7 +1004,6 @@
                 <th class="px-6 py-3 border-b border-slate-100">트립</th>
                 <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
                 <th class="px-6 py-3 border-b border-slate-100 text-right">금액</th>
-                <th class="px-6 py-3 border-b border-slate-100">통화</th>
                 <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
               </tr>
             </thead>
@@ -1055,15 +1054,39 @@
             <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="fin-cat" class="atl-input w-full bg-white"><option>숙소</option><option>항공</option><option>식비</option><option>교통</option><option>쇼핑</option><option>기타</option></select></div>
           </div>
           <div class="atl-field">
-            <label>통화</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">currency_exchange</span><select id="fin-currency" class="atl-input w-full bg-white"><option>EUR</option><option>CZK</option><option>USD</option><option>KRW</option></select></div>
+            <label>결제 통화</label>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">currency_exchange</span>
+              <select id="fin-currency" class="atl-input w-full bg-white" onchange="calcFinanceKRW()">
+                <option value="KRW">KRW (원화)</option>
+                <option value="EUR">EUR (유로)</option>
+                <option value="USD">USD (미국 달러)</option>
+                <option value="CZK">CZK (체코 코루나)</option>
+                <option value="PLN">PLN (폴란드 즐로티)</option>
+                <option value="CAD">CAD (캐나다 달러)</option>
+                <option value="NZD">NZD (뉴질랜드 달러)</option>
+                <option value="AUD">AUD (호주 달러)</option>
+                <option value="GBP">GBP (영국 파운드)</option>
+                <option value="JPY">JPY (일본 엔)</option>
+                <option value="CHF">CHF (스위스 프랑)</option>
+              </select>
+            </div>
           </div>
           </div>
           <div class="atl-field">
-            <label>금액 *</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="fin-amount" type="text" placeholder="예: 250" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')" class="atl-input w-full"/></div>
+            <label>결제 금액 *</label>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="fin-amount" type="text" placeholder="예: 250" inputmode="numeric" oninput="var v=this.value.replace(/[^0-9.]/g,'');this.value=v;calcFinanceKRW()" class="atl-input w-full"/></div>
           </div>
-          <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>숙소 항목은 여행 페이지에서 숙소 저장 시 자동으로 추가돼요.</span></div>
+          <div id="fin-krw-box" class="bg-indigo-50 rounded-xl p-3 flex items-center justify-between" style="display:none">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600" style="font-size:18px">sync_alt</span>
+              <span class="text-xs text-slate-500">원화 환산</span>
+            </div>
+            <div class="text-right">
+              <span id="fin-krw-amount" class="text-sm font-black text-indigo-700">₩0</span>
+              <span id="fin-krw-rate" class="text-[9px] text-slate-400 block">환율: —</span>
+            </div>
+          </div>
+          <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>외화 선택 시 실시간 환율로 원화 자동 환산됩니다.</span></div>
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeFinanceModal()" class="atl-btn-cancel">취소</button>
@@ -4130,8 +4153,10 @@
         '<td class="px-6 py-4"><p class="font-semibold text-slate-800 text-sm">' + (row[1]||'—') + '</p></td>' +
         '<td class="px-6 py-4"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-[9px] font-black border border-indigo-100">' + (row[2]||'—') + '</span></td>' +
         '<td class="px-6 py-4"><span class="flex items-center gap-1.5 text-xs font-bold ' + color + '"><span class="material-symbols-outlined text-sm">' + icon + '</span>' + cat + '</span></td>' +
-        '<td class="px-6 py-4 text-right font-bold ' + (cat==='입금'?'text-indigo-600':'text-rose-600') + '">' + (cat==='입금'?'+':'-') + amt.toLocaleString() + '</td>' +
-        '<td class="px-6 py-4 text-xs font-bold text-slate-400">' + (row[5]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-right">' +
+          '<div class="font-bold ' + (cat==='입금'?'text-indigo-600':'text-rose-600') + '">' + (cat==='입금'?'+':'') + (row[5]&&row[5]!=='KRW' ? row[5]+' ' : '₩') + amt.toLocaleString() + '</div>' +
+          (row[5]&&row[5]!=='KRW'&&row[6] ? '<div class="text-[9px] text-slate-400">≈ ₩' + parseInt(row[6]).toLocaleString('ko-KR') + '</div>' : '') +
+        '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
         '<button onclick="editFinanceRow(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteFinanceRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button>' +
@@ -4175,6 +4200,56 @@
     }).join('');
   }
 
+  // ===== 환율 자동 계산 =====
+  var _fxCache = {};
+  var _fxCurrentRate = null;
+
+  async function fetchExchangeRate(currency) {
+    if (currency === 'KRW') { _fxCurrentRate = 1; return 1; }
+    var cacheKey = currency;
+    if (_fxCache[cacheKey] && (Date.now() - _fxCache[cacheKey].ts < 3600000)) {
+      _fxCurrentRate = _fxCache[cacheKey].rate;
+      return _fxCurrentRate;
+    }
+    try {
+      var res = await fetch('https://api.frankfurter.app/latest?from=' + currency + '&to=KRW');
+      var data = await res.json();
+      if (data.rates && data.rates.KRW) {
+        _fxCurrentRate = data.rates.KRW;
+        _fxCache[cacheKey] = { rate: _fxCurrentRate, ts: Date.now() };
+        return _fxCurrentRate;
+      }
+    } catch(e) { console.warn('Exchange rate fetch failed:', e); }
+    _fxCurrentRate = null;
+    return null;
+  }
+
+  async function calcFinanceKRW() {
+    var currency = document.getElementById('fin-currency').value;
+    var amountStr = document.getElementById('fin-amount').value.replace(/,/g, '');
+    var amount = parseFloat(amountStr) || 0;
+    var box = document.getElementById('fin-krw-box');
+    var amtEl = document.getElementById('fin-krw-amount');
+    var rateEl = document.getElementById('fin-krw-rate');
+
+    if (currency === 'KRW') {
+      box.style.display = 'none';
+      return;
+    }
+    box.style.display = 'flex';
+    if (!amount) { amtEl.textContent = '₩0'; rateEl.textContent = '금액을 입력하세요'; return; }
+    amtEl.textContent = '계산 중...';
+    var rate = await fetchExchangeRate(currency);
+    if (rate) {
+      var krwAmount = Math.round(amount * rate);
+      amtEl.textContent = '₩' + krwAmount.toLocaleString('ko-KR');
+      rateEl.textContent = '1 ' + currency + ' = ₩' + Math.round(rate).toLocaleString('ko-KR');
+    } else {
+      amtEl.textContent = '환율 조회 실패';
+      rateEl.textContent = '네트워크를 확인해주세요';
+    }
+  }
+
   function openFinanceModal(idxOrType) {
     var isType = typeof idxOrType === 'string';
     editingFinanceIndex = (!isType && idxOrType!==undefined) ? idxOrType : null;
@@ -4200,6 +4275,11 @@
     var tripSel = document.getElementById('fin-trip');
     tripSel.innerHTML = '<option value="">— 여행 선택 —</option>' + financeTrips.map(function(t){ return '<option value="'+t.name+'">'+t.name+'</option>'; }).join('');
     if (editingFinanceIndex!==null) tripSel.value = financeData[editingFinanceIndex][2]||'';
+    document.getElementById('fin-krw-box').style.display = 'none';
+    _fxCurrentRate = null;
+    if (editingFinanceIndex!==null && financeData[editingFinanceIndex][5] !== 'KRW') {
+      calcFinanceKRW();
+    }
     document.getElementById('finance-modal').style.cssText='display:flex!important';
   }
 
@@ -4211,17 +4291,24 @@
   async function saveFinanceEntry() {
     var btn=document.getElementById('finance-save-btn');
     btn.textContent='저장 중...'; btn.disabled=true;
+    var currency = document.getElementById('fin-currency').value;
+    var amount = document.getElementById('fin-amount').value.replace(/,/g,'');
+    var krwAmount = '';
+    if (currency !== 'KRW' && _fxCurrentRate && parseFloat(amount)) {
+      krwAmount = String(Math.round(parseFloat(amount) * _fxCurrentRate));
+    }
     var row=[
       document.getElementById('fin-date').value,
       document.getElementById('fin-desc').value,
       document.getElementById('fin-trip').value,
       document.getElementById('fin-category').value,
-      document.getElementById('fin-amount').value.replace(/,/g,''),
-      document.getElementById('fin-currency').value,
+      amount,
+      currency,
+      krwAmount,
     ];
     try {
       if(editingFinanceIndex!==null){
-        const id = financeData[editingFinanceIndex][6];
+        const id = financeData[editingFinanceIndex][7];
         await fbUpdate('finance', id, rowToObj('finance', row));
         financeData[editingFinanceIndex]=row.concat([id]);
       } else {
@@ -4240,7 +4327,7 @@
   async function deleteFinanceRow(i){
     if(!confirm('이 항목을 삭제할까요?'))return;
     try{
-      const id = financeData[i][6];
+      const id = financeData[i][7];
       await fbDelete('finance', id);
       financeData.splice(i,1);
       buildFinanceTripFilters();
@@ -4731,7 +4818,7 @@
     matrix:   ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'],
     income:   ['month','work_details','category','status','revenue'],
     english:  ['lesson_name','date','status','track','fee','notes'],
-    finance:  ['date','description','trip','category','amount','currency'],
+    finance:  ['date','description','trip','category','amount','currency','krw_amount'],
     finance_hub: ['date','category','description','amount','type'],
     planner:  ['date','title','category','color','notes','date_end','order'],
     milestones: ['month','goal','status'],
