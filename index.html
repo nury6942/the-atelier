@@ -20,7 +20,7 @@
           "pastel-rose":"#f8bbd0","pastel-rose-text":"#c2185b",
           "pastel-amber":"#fcd34d","pastel-amber-dark":"#b45309",
           "pastel-indigo":"#a5b4fc","pastel-indigo-dark":"#4338ca",
-          "pastel-lavender":"#e1bee7","pastel-lavender-text":"#6a1b9a",
+          "pastel-lavender":"#ede9fe","pastel-lavender-text":"#7c3aed",
           "pastel-mint":"#b2dfdb","pastel-mint-text":"#2e7d32",
           "pastel-gold":"#fff176","pastel-gold-text":"#f9a825",
           "pastel-sage":"#dcedc8","pastel-lemon":"#fff9c4","pastel-peach":"#ffe0b2","pastel-slate":"#f8fafc",
@@ -1763,13 +1763,13 @@
           </button>
         </div>
         <div class="grid grid-cols-7 border-b border-slate-50 bg-slate-50/30">
+          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">일</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">월</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">화</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">수</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">목</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">금</div>
           <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">토</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">일</div>
         </div>
         <div id="planner-grid" class="grid grid-cols-7 bg-white" style="min-height:480px"></div>
       </div>
@@ -2008,7 +2008,7 @@
   const COLOR_MAP = {
     'mint':    'bg-pastel-mint text-teal-800 border-teal-200',
     'blue':    'bg-pastel-blue text-blue-800 border-blue-200',
-    'lavender':'bg-pastel-lavender text-purple-800 border-purple-200',
+    'lavender':'bg-pastel-lavender text-violet-700 border-violet-200',
     'rose':    'bg-pastel-rose text-rose-800 border-rose-200',
     'peach':   'bg-pastel-peach text-orange-800 border-orange-200',
     'lemon':   'bg-pastel-lemon text-yellow-800 border-yellow-200',
@@ -2105,7 +2105,7 @@
 
     const firstDay = new Date(plannerYear, plannerMonth, 1).getDay(); // 0=Sun
     const daysInMonth = new Date(plannerYear, plannerMonth + 1, 0).getDate();
-    const offset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0
+    const offset = firstDay; // Sun=0 시작
 
     const today = new Date();
     const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
@@ -2121,8 +2121,8 @@
     // Day cells
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = plannerYear + '-' + String(plannerMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-      const dayOfWeek = (offset + d - 1) % 7; // 0=Mon, 5=Sat, 6=Sun
-      const isWeekend = dayOfWeek >= 5;
+      const dayOfWeek = (offset + d - 1) % 7; // 0=Sun, 6=Sat
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       const isToday = isCurrentMonth && d === today.getDate();
 
       // 이 날짜에 해당하는 이벤트 (단일 날짜 + 범위 이벤트 포함)
@@ -2201,12 +2201,12 @@
         }
 
         // 범위 이벤트 — 셀 가장자리까지 꽉 채우기
-        // 요일(0=월)에 따라 월 시작/끝 여부 판단
-        var dayOfWeek = (offset + d - 1) % 7; // 0=월 ~ 6=일
+        // 요일(0=일)에 따라 주 시작/끝 여부 판단
+        var dayOfWeekR = (offset + d - 1) % 7; // 0=일 ~ 6=토
         var isMonthStart = d === 1;
         var isMonthEnd = d === daysInMonth;
-        var isWeekStart = dayOfWeek === 0;
-        var isWeekEnd = dayOfWeek === 6;
+        var isWeekStart = dayOfWeekR === 0;
+        var isWeekEnd = dayOfWeekR === 6;
 
         // 이 셀에서 블록의 시작/끝 결정
         var blockStart = isFirst || isMonthStart || isWeekStart;
