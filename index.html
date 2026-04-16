@@ -2096,14 +2096,13 @@
       cell.className = 'border-r border-b border-slate-50 px-2 pt-2 pb-1 min-h-24 transition-colors cursor-pointer group ' +
         (isHoliday ? 'bg-red-50/60 hover:bg-red-100/50' : 'hover:bg-indigo-50/30');
       cell.dataset.date = dateStr;
-      cell.onclick = function() { openPlannerModal(null, dateStr); };
-
-      // Track hovered date for paste
-      cell.addEventListener('mouseover', function() { hoveredPlannerDate = dateStr; });
+      cell.onclick = function() { selectPlannerDate(dateStr, this); };
+      cell.ondblclick = function() { openPlannerModal(null, dateStr); };
 
       // Drop target handlers
       cell.addEventListener('dragover', function(e) {
         e.preventDefault();
+        e.dataTransfer.dropEffect = (e.ctrlKey || e.metaKey) ? 'copy' : 'move';
         this.classList.add('bg-indigo-100', 'border-indigo-300');
       });
       cell.addEventListener('dragleave', function() {
@@ -2115,7 +2114,16 @@
         this.classList.remove('bg-indigo-100', 'border-indigo-300');
         var dragIdx = parseInt(e.dataTransfer.getData('text/plain'));
         var newDate = this.dataset.date;
-        if (!isNaN(dragIdx) && newDate) dropPlannerEvent(dragIdx, newDate);
+        if (!isNaN(dragIdx) && newDate) {
+          if (plannerCtrlDrag) {
+            // Ctrl+드래그: 복사
+            copiedPlannerEvent = plannerData[dragIdx].slice(0, 6);
+            pastePlannerEvent(newDate);
+          } else {
+            // 일반 드래그: 이동
+            dropPlannerEvent(dragIdx, newDate);
+          }
+        }
       });
 
       let dayNum = '<span class="';
@@ -2302,28 +2310,42 @@
     } catch(err) { alert('삭제에 실패했어요.'); }
   }
 
+  var plannerCtrlDrag = false; // Ctrl+드래그 중인지 여부
+
   function plannerDragStart(e, idx) {
     e.stopPropagation();
+    // Ctrl 누른 채 드래그 → 복사 모드
+    plannerCtrlDrag = e.ctrlKey || e.metaKey;
     e.dataTransfer.setData('text/plain', String(idx));
+    e.dataTransfer.effectAllowed = plannerCtrlDrag ? 'copy' : 'move';
     e.target.classList.add('opacity-50');
   }
 
   function plannerDragEnd(e) {
     e.target.classList.remove('opacity-50');
+    plannerCtrlDrag = false;
   }
 
   // ===== PLANNER COPY/PASTE =====
   let copiedPlannerEvent = null;
-  let hoveredPlannerDate = null;
+  let selectedPlannerDate = null;
   let selectedPlannerIdx = null;
 
   function selectPlannerEvent(idx, el) {
-    // Deselect previous
     document.querySelectorAll('.planner-selected').forEach(function(e){
       e.classList.remove('planner-selected', 'ring-2', 'ring-indigo-500', 'ring-offset-1');
     });
     selectedPlannerIdx = idx;
     el.classList.add('planner-selected', 'ring-2', 'ring-indigo-500', 'ring-offset-1');
+  }
+
+  function selectPlannerDate(dateStr, cellEl) {
+    // 이전 날짜 선택 해제
+    document.querySelectorAll('.planner-date-selected').forEach(function(e){
+      e.classList.remove('planner-date-selected', 'ring-2', 'ring-inset', 'ring-indigo-400');
+    });
+    selectedPlannerDate = dateStr;
+    cellEl.classList.add('planner-date-selected', 'ring-2', 'ring-inset', 'ring-indigo-400');
   }
 
   document.addEventListener('keydown', async function(e) {
@@ -2334,30 +2356,15 @@
     if (ctrlOrCmd && e.key === 'c' && selectedPlannerIdx !== null) {
       var row = plannerData[selectedPlannerIdx];
       if (row) {
-        copiedPlannerEvent = row.slice(0, 6); // copy without _id (indices 0-5, including end date)
-        showPlannerToast('📋 일정 복사됨! 날짜에 마우스를 올리고 Ctrl+V');
+        copiedPlannerEvent = row.slice(0, 6);
+        showPlannerToast('📋 일정 복사됨! 날짜를 클릭한 뒤 Ctrl+V');
       }
     }
 
-    // Ctrl+V: paste to hovered date
-    if (ctrlOrCmd && e.key === 'v' && copiedPlannerEvent && hoveredPlannerDate) {
+    // Ctrl+V: paste to clicked date
+    if (ctrlOrCmd && e.key === 'v' && copiedPlannerEvent && selectedPlannerDate) {
       e.preventDefault();
-      var newRow = copiedPlannerEvent.slice();
-      var origStart = newRow[0];
-      newRow[0] = hoveredPlannerDate;
-      // 범위 이벤트면 end date도 같은 일수만큼 이동
-      if (newRow[5] && newRow[5] > origStart) {
-        var diffMs = new Date(hoveredPlannerDate + 'T00:00:00') - new Date(origStart + 'T00:00:00');
-        var newEnd = new Date(new Date(newRow[5] + 'T00:00:00').getTime() + diffMs);
-        newRow[5] = newEnd.getFullYear() + '-' + String(newEnd.getMonth()+1).padStart(2,'0') + '-' + String(newEnd.getDate()).padStart(2,'0');
-      }
-      try {
-        var saved = await fbAdd('planner', rowToObj('planner', newRow));
-        plannerData.push(newRow.concat([saved._id]));
-        renderCalendar();
-        updatePlannerTracks();
-        showPlannerToast('✅ ' + hoveredPlannerDate + '에 붙이기 완료!');
-      } catch(err) { alert('붙이기에 실패했어요.'); }
+      await pastePlannerEvent(selectedPlannerDate);
     }
 
     // Escape: deselect
@@ -2365,10 +2372,32 @@
       document.querySelectorAll('.planner-selected').forEach(function(el){
         el.classList.remove('planner-selected', 'ring-2', 'ring-indigo-500', 'ring-offset-1');
       });
+      document.querySelectorAll('.planner-date-selected').forEach(function(el){
+        el.classList.remove('planner-date-selected', 'ring-2', 'ring-inset', 'ring-indigo-400');
+      });
       selectedPlannerIdx = null;
+      selectedPlannerDate = null;
       copiedPlannerEvent = null;
     }
   });
+
+  async function pastePlannerEvent(targetDate) {
+    var newRow = copiedPlannerEvent.slice();
+    var origStart = newRow[0];
+    newRow[0] = targetDate;
+    if (newRow[5] && newRow[5] > origStart) {
+      var diffMs = new Date(targetDate + 'T00:00:00') - new Date(origStart + 'T00:00:00');
+      var newEnd = new Date(new Date(newRow[5] + 'T00:00:00').getTime() + diffMs);
+      newRow[5] = newEnd.getFullYear() + '-' + String(newEnd.getMonth()+1).padStart(2,'0') + '-' + String(newEnd.getDate()).padStart(2,'0');
+    }
+    try {
+      var saved = await fbAdd('planner', rowToObj('planner', newRow));
+      plannerData.push(newRow.concat([saved._id]));
+      renderCalendar();
+      updatePlannerTracks();
+      showPlannerToast('✅ ' + targetDate + '에 붙이기 완료!');
+    } catch(err) { alert('붙이기에 실패했어요.'); }
+  }
 
   function showSyncToast(msg) {
     var existing = document.getElementById('sync-toast');
