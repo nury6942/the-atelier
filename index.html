@@ -2180,6 +2180,20 @@
     try {
       const docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+      // 기존 일정 색상 마이그레이션: CAT_COLOR 기준으로 자동 업데이트
+      var migrated = 0;
+      for (var mi = 0; mi < plannerData.length; mi++) {
+        var row = plannerData[mi];
+        var correctColor = CAT_COLOR[row[2]];
+        if (correctColor && row[3] !== correctColor) {
+          row[3] = correctColor;
+          try {
+            await fbUpdate('planner', row[6], rowToObj('planner', row.slice(0, 6)));
+            migrated++;
+          } catch(e) { console.error('Color migration error:', e); }
+        }
+      }
+      if (migrated > 0) console.log('Planner color migrated:', migrated, 'entries');
       renderCalendar();
       updatePlannerTracks();
       loadPlannerGoals();
@@ -2532,8 +2546,8 @@
       renderCalendar();
       updatePlannerTracks();
       closePlannerModal();
-      syncPlannerToMatrix(row);
-    } catch(err) { alert('저장에 실패했어요.'); }
+      try { syncPlannerToMatrix(row); } catch(e) { console.error('Matrix sync:', e); }
+    } catch(err) { console.error('Planner save error:', err); alert('저장에 실패했어요: ' + err.message); }
     finally { btn.textContent = '저장'; btn.disabled = false; }
   }
 
