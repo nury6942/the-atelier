@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Atelier — Packing Checklist</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "tertiary-container": "#a76500",
+            "on-tertiary-fixed-variant": "#673d00",
+            "error": "#ba1a1a",
+            "on-background": "#191c1d",
+            "outline": "#7b7486",
+            "surface-bright": "#f8f9fa",
+            "surface-container-high": "#e7e8e9",
+            "on-error": "#ffffff",
+            "tertiary": "#855000",
+            "on-primary-fixed-variant": "#5516be",
+            "surface-container-low": "#f3f4f5",
+            "primary-fixed": "#e9ddff",
+            "primary-fixed-dim": "#d0bcff",
+            "on-secondary-container": "#544183",
+            "surface-variant": "#e1e3e4",
+            "on-tertiary-fixed": "#2c1700",
+            "secondary-fixed-dim": "#d0bcff",
+            "surface-container-highest": "#e1e3e4",
+            "on-secondary-fixed": "#220b4e",
+            "on-primary-fixed": "#23005c",
+            "surface-container": "#edeeef",
+            "on-surface-variant": "#494454",
+            "primary-container": "#8455ef",
+            "secondary-container": "#c9b3fd",
+            "on-primary-container": "#fffbff",
+            "tertiary-fixed-dim": "#ffb869",
+            "inverse-primary": "#d0bcff",
+            "error-container": "#ffdad6",
+            "outline-variant": "#cbc3d7",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#fffbff",
+            "surface-tint": "#6d3bd7",
+            "secondary": "#665396",
+            "primary": "#6b38d4",
+            "inverse-on-surface": "#f0f1f2",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-error-container": "#93000a",
+            "background": "#f8f9fa",
+            "surface": "#f8f9fa",
+            "surface-dim": "#d9dadb",
+            "inverse-surface": "#2e3132",
+            "tertiary-fixed": "#ffdcbb",
+            "on-surface": "#191c1d",
+            "secondary-fixed": "#e9ddff",
+            "on-secondary-fixed-variant": "#4e3b7c"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #191c1d; }
+    h1, h2, h3, h4, .headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .gradient-primary { background: linear-gradient(135deg, #6b38d4 0%, #8455ef 100%); }
+    .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .card-shadow { box-shadow: 0px 12px 32px rgba(25,28,29,0.04); }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-inner { background: #fff; border-radius: 1.5rem; box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08); width: 100%; max-width: 480px; margin: 1rem; animation: modalIn 0.2s ease; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* Checkbox custom */
+    input[type="checkbox"] { accent-color: #6b38d4; }
+
+    /* Fade in */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease; }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ",
+      authDomain: "the-atelier-99b8c.firebaseapp.com",
+      projectId: "the-atelier-99b8c",
+      storageBucket: "the-atelier-99b8c.firebasestorage.app",
+      messagingSenderId: "820580020945",
+      appId: "1:820580020945:web:d8d8d284e9e21e83eccbf0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+  </script>
+</head>
+<body class="bg-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+
+  <!-- Header / Navigation -->
+  <header class="bg-white/80 glass-nav sticky top-0 z-50 flex justify-between items-center px-6 py-4 w-full card-shadow">
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="text-xl font-extrabold tracking-tight text-primary font-headline hover:opacity-80 transition-opacity">The Atelier</a>
+      <nav class="hidden sm:flex items-center gap-1">
+        <a href="index.html" class="px-3 py-1.5 rounded-xl text-xs font-bold text-outline hover:text-on-surface hover:bg-surface-container transition-all">Home</a>
+        <a href="packing.html" class="px-3 py-1.5 rounded-xl text-xs font-bold text-primary bg-primary-fixed/30 transition-all">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px; font-variation-settings: 'FILL' 1;">fact_check</span>
+            Packing
+          </span>
+        </a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Trip Selector -->
+      <select id="trip-selector" onchange="onTripSelect(this.value)" class="bg-surface-container-low border-0 rounded-xl px-4 py-2 text-sm font-semibold text-on-surface focus:ring-2 focus:ring-primary/30 cursor-pointer">
+        <option value="">여행 선택...</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-16">
+
+    <!-- Hero Section: Progress Tracking -->
+    <section class="mb-10" id="hero-section">
+      <div class="bg-surface-container-lowest rounded-3xl p-8 card-shadow relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-10">
+          <span class="material-symbols-outlined text-8xl">fact_check</span>
+        </div>
+        <div class="relative z-10">
+          <span class="text-xs font-bold tracking-[0.1em] text-primary uppercase mb-2 block">Trip Preparation</span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-on-surface mb-6 tracking-tight font-headline">Packing Checklist</h1>
+          <div class="flex flex-col md:flex-row md:items-end gap-6 md:gap-12">
+            <div class="flex-1">
+              <div class="flex justify-between items-end mb-3">
+                <span id="progress-pct" class="text-3xl font-bold text-primary">0% <span class="text-lg font-medium text-outline">Complete</span></span>
+                <span id="progress-count" class="text-sm font-medium text-outline">0 of 0 items packed</span>
+              </div>
+              <div class="h-3 w-full bg-surface-container-low rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full gradient-primary rounded-full transition-all duration-500" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="flex flex-col items-center justify-center py-24 text-outline fade-in" style="display:none">
+      <span class="material-symbols-outlined text-6xl mb-4 opacity-30">luggage</span>
+      <p class="text-lg font-semibold mb-1">여행을 선택해주세요</p>
+      <p class="text-sm opacity-60">상단 드롭다운에서 여행을 선택하면 패킹 체크리스트가 표시됩니다.</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div id="main-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" style="display:none">
+
+      <!-- Left Column: Daily Outfit Planner -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Daily Outfit Planner -->
+        <div class="bg-surface-container-low rounded-3xl p-6 card-shadow transition-all">
+          <div class="flex justify-between items-center mb-6 px-2">
+            <div class="flex items-center gap-3">
+              <div class="bg-secondary-container/30 p-2 rounded-xl text-secondary">
+                <span class="material-symbols-outlined">calendar_month</span>
+              </div>
+              <h2 class="text-xl font-bold text-on-surface font-headline">Daily Outfit Planner</h2>
+            </div>
+          </div>
+          <!-- Header Row -->
+          <div class="hidden md:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] font-bold uppercase tracking-wider text-outline border-b border-outline-variant/20 mb-3">
+            <div class="col-span-1">Date</div>
+            <div class="col-span-2 text-center">Weather</div>
+            <div class="col-span-2">City</div>
+            <div class="col-span-6">Schedule</div>
+            <div class="col-span-1 text-right"></div>
+          </div>
+          <div id="daily-planner" class="space-y-3">
+            <div class="text-center py-8 text-sm text-outline opacity-60">일정을 불러오는 중...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Category Checklists -->
+      <div class="space-y-8" id="right-column">
+        <div id="category-list" class="space-y-8"></div>
+
+        <!-- Add Category Button -->
+        <button onclick="openCategoryModal()" class="w-full py-8 border-2 border-dashed border-outline-variant/30 rounded-3xl flex flex-col items-center justify-center text-outline hover:bg-primary/5 hover:border-primary/30 transition-all group">
+          <span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">library_add</span>
+          <span class="font-semibold">카테고리 추가</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Category Modal -->
+  <div id="cat-modal" class="modal-overlay" onclick="if(event.target===this)closeCategoryModal()">
+    <div class="modal-inner">
+      <div class="gradient-primary rounded-t-3xl px-6 py-5">
+        <h3 class="text-lg font-bold text-white font-headline">카테고리 추가</h3>
+        <p class="text-xs text-white/70 mt-0.5">새로운 패킹 카테고리를 만들어보세요</p>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">카테고리 이름</label>
+          <input id="cat-name" type="text" placeholder="예: 의류, 전자기기, 세면도구" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 border-0"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">아이콘 선택</label>
+          <div id="icon-picker" class="flex gap-2 flex-wrap"></div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button onclick="closeCategoryModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-outline bg-surface-container-low hover:bg-surface-container transition-colors">취소</button>
+          <button onclick="saveCategory()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px">save</span> 저장
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div id="item-modal" class="modal-overlay" onclick="if(event.target===this)closeItemModal()">
+    <div class="modal-inner">
+      <div class="gradient-primary rounded-t-3xl px-6 py-5">
+        <h3 id="item-modal-title" class="text-lg font-bold text-white font-headline">아이템 추가</h3>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">아이템 이름</label>
+          <input id="item-name" type="text" placeholder="예: 여권, 충전기, 선크림" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 border-0" onkeydown="if(event.key==='Enter')saveItem()"/>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button onclick="closeItemModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-outline bg-surface-container-low hover:bg-surface-container transition-colors">취소</button>
+          <button onclick="saveItem()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px">add</span> 추가
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Firebase Helpers =====
+    async function fbRead(col) {
+      const snap = await db.collection(col).get();
+      return snap.docs.map(function(d) { var data = d.data(); data._id = d.id; return data; });
+    }
+    async function fbAdd(col, obj) {
+      obj._createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      const ref = await db.collection(col).add(obj);
+      obj._id = ref.id;
+      return obj;
+    }
+    async function fbUpdate(col, id, obj) {
+      await db.collection(col).doc(id).update(obj);
+    }
+    async function fbDelete(col, id) {
+      await db.collection(col).doc(id).delete();
+    }
+
+    // ===== State =====
+    var tripsData = [];
+    var packingData = [];
+    var citiesData = [];
+    var journeyData = [];
+    var currentTripId = null;
+    var _catIcon = 'star';
+    var _itemCatIndex = null;
+    var weatherCache = {}; // city -> {temp, icon, desc}
+
+    // Icon options for picker
+    var ICONS = ['star','checkroom','devices','spa','luggage','flight','restaurant','shopping_bag','medication','photo_camera','fitness_center','headphones','book','brush','music_note','sports_esports','local_cafe','beach_access'];
+
+    // ===== Init =====
+    document.addEventListener('DOMContentLoaded', async function() {
+      renderIconPicker();
+      try {
+        tripsData = await fbRead('trips');
+        renderTripSelector();
+        if (tripsData.length > 0) {
+          // Select first trip by default
+          document.getElementById('trip-selector').value = tripsData[0]._id;
+          await onTripSelect(tripsData[0]._id);
+        } else {
+          document.getElementById('empty-state').style.display = 'flex';
+        }
+      } catch(err) {
+        console.error('Init error:', err);
+      }
+    });
+
+    // ===== Trip Selector =====
+    function renderTripSelector() {
+      var sel = document.getElementById('trip-selector');
+      sel.innerHTML = '<option value="">여행 선택...</option>' +
+        tripsData.map(function(t) {
+          return '<option value="' + t._id + '">' + t.name + '</option>';
+        }).join('');
+    }
+
+    async function onTripSelect(tripId) {
+      if (!tripId) {
+        currentTripId = null;
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('empty-state').style.display = 'flex';
+        return;
+      }
+      currentTripId = tripId;
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('main-content').style.display = 'grid';
+
+      // Load all data in parallel
+      var [packingDocs, journeyDocs, cityDocs] = await Promise.all([
+        fbRead('packing'),
+        fbRead('journey'),
+        fbRead('trip_cities')
+      ]);
+
+      packingData = packingDocs.filter(function(d) { return d.trip_id === tripId; });
+      journeyData = journeyDocs.filter(function(d) { return d.trip_id === tripId; });
+      citiesData = cityDocs.filter(function(d) { return d.trip_id === tripId; });
+      citiesData.sort(function(a, b) { return (a.start_date || '').localeCompare(b.start_date || ''); });
+
+      renderProgress();
+      renderCategories();
+      renderDailyPlanner();
+    }
+
+    // ===== Progress =====
+    function renderProgress() {
+      var total = 0, checked = 0;
+      packingData.forEach(function(cat) {
+        (cat.items || []).forEach(function(it) { total++; if (it.checked) checked++; });
+      });
+      var pct = total > 0 ? Math.round(checked / total * 100) : 0;
+      document.getElementById('progress-pct').innerHTML = pct + '% <span class="text-lg font-medium text-outline">Complete</span>';
+      document.getElementById('progress-count').textContent = checked + ' of ' + total + ' items packed';
+      document.getElementById('progress-bar').style.width = pct + '%';
+    }
+
+    // ===== Category Checklists (Right Column) =====
+    function renderCategories() {
+      var container = document.getElementById('category-list');
+      if (packingData.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-sm text-outline opacity-60">카테고리를 추가해서 패킹 리스트를 시작해봐!</div>';
+        return;
+      }
+      container.innerHTML = packingData.map(function(cat, ci) {
+        var items = cat.items || [];
+        var done = items.filter(function(it) { return it.checked; }).length;
+        return '<div class="bg-surface-container-low rounded-3xl p-6 card-shadow transition-all fade-in">' +
+          '<div class="flex justify-between items-center mb-5 px-2">' +
+            '<div class="flex items-center gap-3">' +
+              '<div class="bg-primary/10 p-2 rounded-xl text-primary"><span class="material-symbols-outlined">' + (cat.icon || 'star') + '</span></div>' +
+              '<h2 class="text-xl font-bold text-on-surface font-headline">' + cat.category + '</h2>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-xs font-bold bg-surface-container-highest px-3 py-1 rounded-full text-on-surface-variant">' + done + '/' + items.length + '</span>' +
+              '<button onclick="deleteCategory(' + ci + ')" class="p-1.5 hover:bg-error-container rounded-lg text-outline hover:text-error transition-colors" title="삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="space-y-2.5">' +
+            items.map(function(item, ii) {
+              var checkedCls = item.checked ? 'line-through opacity-50' : '';
+              var bgCls = item.checked ? 'bg-primary-fixed-dim' : 'bg-surface-container-highest';
+              return '<label class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl cursor-pointer hover:bg-white/60 transition-all group shadow-sm">' +
+                '<input type="checkbox" ' + (item.checked ? 'checked' : '') + ' onchange="toggleItem(' + ci + ',' + ii + ',this.checked)" class="w-6 h-6 rounded-lg border-none ' + bgCls + ' text-primary focus:ring-0 cursor-pointer"/>' +
+                '<span class="flex-1 text-on-surface font-medium ' + checkedCls + '">' + item.name + '</span>' +
+                '<button onclick="event.preventDefault();deleteItem(' + ci + ',' + ii + ')" class="p-1 hover:bg-error-container rounded-lg text-outline/40 hover:text-error opacity-0 group-hover:opacity-100 transition-all" title="삭제"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>' +
+              '</label>';
+            }).join('') +
+          '</div>' +
+          '<button onclick="openItemModal(' + ci + ')" class="mt-4 w-full py-3 border-2 border-dashed border-outline-variant/20 rounded-2xl text-xs font-bold text-outline hover:border-primary/30 hover:text-primary transition-all flex items-center justify-center gap-1">' +
+            '<span class="material-symbols-outlined" style="font-size:16px">add</span> 아이템 추가' +
+          '</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    // ===== Daily Outfit Planner (Left Column) =====
+    async function renderDailyPlanner() {
+      var container = document.getElementById('daily-planner');
+      var trip = tripsData.find(function(t) { return t._id === currentTripId; });
+      if (!trip || !trip.start_date || !trip.end_date) {
+        container.innerHTML = '<div class="text-center py-8 text-sm text-outline opacity-60">여행 날짜가 설정되지 않았습니다.</div>';
+        return;
+      }
+
+      // Generate date range
+      var start = new Date(trip.start_date);
+      var end = new Date(trip.end_date);
+      var dates = [];
+      for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        dates.push(new Date(d));
+      }
+
+      if (dates.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-sm text-outline opacity-60">여행 날짜가 없습니다.</div>';
+        return;
+      }
+
+      // Build city map for each date
+      function getCityForDate(date) {
+        var dateStr = formatDate(date);
+        for (var i = 0; i < citiesData.length; i++) {
+          var c = citiesData[i];
+          if (c.start_date && c.end_date && dateStr >= c.start_date && dateStr <= c.end_date) {
+            return c.name;
+          }
+        }
+        // fallback: check journey data
+        var journeyItem = journeyData.find(function(j) { return j.date === dateStr; });
+        if (journeyItem && journeyItem.city) return journeyItem.city;
+        return citiesData.length > 0 ? citiesData[0].name : '';
+      }
+
+      // Get schedule items for a date
+      function getScheduleForDate(date) {
+        var dateStr = formatDate(date);
+        return journeyData.filter(function(j) {
+          return j.date === dateStr && (j.type === 'schedule' || j.type === 'activity' || !j.type || j.type === 'sightseeing');
+        }).sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
+      }
+
+      // Render initial structure, then fetch weather
+      var html = '';
+      var prevMonth = '';
+      dates.forEach(function(date, idx) {
+        var city = getCityForDate(date);
+        var schedules = getScheduleForDate(date);
+        var monthStr = date.toLocaleString('en', { month: 'short' });
+        var dayStr = String(date.getDate()).padStart(2, '0');
+        var isNewMonth = monthStr !== prevMonth;
+        prevMonth = monthStr;
+
+        var scheduleHtml = '';
+        if (schedules.length > 0) {
+          scheduleHtml = schedules.map(function(s) {
+            return '<p class="text-sm font-semibold text-on-surface">' + (s.time ? '<span class="text-xs text-outline mr-1">' + s.time + '</span> ' : '') + (s.title || s.description || '') + '</p>';
+          }).join('');
+        } else {
+          scheduleHtml = '<p class="text-sm text-outline/60 italic">일정 없음</p>';
+        }
+
+        html += '<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 hover:border-primary/20 transition-all p-4 md:p-5">' +
+          '<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">' +
+            '<div class="col-span-1 text-center md:text-left' + (idx > 0 && !isNewMonth ? '' : '') + '">' +
+              '<div class="text-[10px] font-bold text-outline uppercase leading-none mb-1">' + monthStr + '</div>' +
+              '<div class="text-xl font-extrabold text-on-surface leading-none">' + dayStr + '</div>' +
+            '</div>' +
+            '<div class="col-span-2 flex flex-col items-center justify-center" id="weather-' + idx + '">' +
+              '<span class="material-symbols-outlined text-outline/30 mb-0.5">cloud</span>' +
+              '<span class="text-[11px] font-semibold text-outline">...</span>' +
+            '</div>' +
+            '<div class="col-span-2">' +
+              '<div class="text-sm font-bold text-on-surface">' + (city || '-') + '</div>' +
+            '</div>' +
+            '<div class="col-span-6">' + scheduleHtml + '</div>' +
+            '<div class="col-span-1 flex justify-end">' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+
+      container.innerHTML = html;
+
+      // Fetch weather for each unique city
+      var cityDates = {};
+      dates.forEach(function(date, idx) {
+        var city = getCityForDate(date);
+        if (!city) return;
+        if (!cityDates[city]) cityDates[city] = [];
+        cityDates[city].push({ date: date, idx: idx });
+      });
+
+      for (var city in cityDates) {
+        fetchWeatherForCity(city, cityDates[city]);
+      }
+    }
+
+    // Weather from Open-Meteo
+    async function fetchWeatherForCity(cityName, dateEntries) {
+      try {
+        // Geocode city
+        var cacheKey = cityName.toLowerCase();
+        var coords = null;
+
+        if (weatherCache[cacheKey] && weatherCache[cacheKey].coords) {
+          coords = weatherCache[cacheKey].coords;
+        } else {
+          var geoRes = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cityName) + '&count=1&language=en');
+          var geoData = await geoRes.json();
+          if (!geoData.results || geoData.results.length === 0) {
+            dateEntries.forEach(function(e) { setWeatherUI(e.idx, null); });
+            return;
+          }
+          coords = { lat: geoData.results[0].latitude, lng: geoData.results[0].longitude };
+          if (!weatherCache[cacheKey]) weatherCache[cacheKey] = {};
+          weatherCache[cacheKey].coords = coords;
+        }
+
+        // Get date range
+        var allDates = dateEntries.map(function(e) { return formatDate(e.date); });
+        var minDate = allDates.reduce(function(a, b) { return a < b ? a : b; });
+        var maxDate = allDates.reduce(function(a, b) { return a > b ? a : b; });
+
+        // Try forecast first (within 16 days), else use historical/climate
+        var today = new Date();
+        var maxForecastDate = new Date(today);
+        maxForecastDate.setDate(maxForecastDate.getDate() + 15);
+
+        var weatherUrl;
+        if (new Date(minDate) <= maxForecastDate) {
+          weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + coords.lat + '&longitude=' + coords.lng +
+            '&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date=' + minDate + '&end_date=' + maxDate + '&timezone=auto';
+        } else {
+          // Use climate API for historical averages - approximate with previous year
+          var prevYearMin = minDate.replace(/^\d{4}/, String(new Date().getFullYear() - 1));
+          var prevYearMax = maxDate.replace(/^\d{4}/, String(new Date().getFullYear() - 1));
+          weatherUrl = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + coords.lat + '&longitude=' + coords.lng +
+            '&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date=' + prevYearMin + '&end_date=' + prevYearMax + '&timezone=auto';
+        }
+
+        var wxRes = await fetch(weatherUrl);
+        var wxData = await wxRes.json();
+
+        if (!wxData.daily || !wxData.daily.time) {
+          dateEntries.forEach(function(e) { setWeatherUI(e.idx, null); });
+          return;
+        }
+
+        // Map weather data to dates
+        var wxMap = {};
+        wxData.daily.time.forEach(function(t, i) {
+          wxMap[t] = {
+            tempMax: Math.round(wxData.daily.temperature_2m_max[i]),
+            tempMin: Math.round(wxData.daily.temperature_2m_min[i]),
+            code: wxData.daily.weathercode[i]
+          };
+        });
+
+        dateEntries.forEach(function(e) {
+          var dateStr = formatDate(e.date);
+          // If using previous year data, adjust the lookup key
+          var lookupDate = dateStr;
+          if (!wxMap[dateStr]) {
+            lookupDate = dateStr.replace(/^\d{4}/, String(new Date().getFullYear() - 1));
+          }
+          var wx = wxMap[lookupDate] || wxMap[dateStr];
+          if (wx) {
+            setWeatherUI(e.idx, wx);
+          } else {
+            setWeatherUI(e.idx, null);
+          }
+        });
+      } catch (err) {
+        console.error('Weather error for ' + cityName + ':', err);
+        dateEntries.forEach(function(e) { setWeatherUI(e.idx, null); });
+      }
+    }
+
+    function setWeatherUI(idx, wx) {
+      var el = document.getElementById('weather-' + idx);
+      if (!el) return;
+      if (!wx) {
+        el.innerHTML = '<span class="material-symbols-outlined text-outline/30 mb-0.5">cloud_off</span><span class="text-[11px] font-semibold text-outline">N/A</span>';
+        return;
+      }
+      var info = weatherCodeToInfo(wx.code);
+      el.innerHTML = '<span class="material-symbols-outlined ' + info.colorCls + ' mb-0.5">' + info.icon + '</span>' +
+        '<span class="text-[11px] font-semibold text-outline">' + wx.tempMax + '°/' + wx.tempMin + '° ' + info.label + '</span>';
+    }
+
+    function weatherCodeToInfo(code) {
+      // WMO Weather interpretation codes
+      if (code === 0) return { icon: 'wb_sunny', label: 'Clear', colorCls: 'text-amber-500' };
+      if (code === 1 || code === 2) return { icon: 'partly_cloudy_day', label: 'Partly Cloudy', colorCls: 'text-amber-400' };
+      if (code === 3) return { icon: 'cloud', label: 'Overcast', colorCls: 'text-blue-400' };
+      if (code >= 45 && code <= 48) return { icon: 'foggy', label: 'Fog', colorCls: 'text-gray-400' };
+      if (code >= 51 && code <= 55) return { icon: 'grain', label: 'Drizzle', colorCls: 'text-blue-300' };
+      if (code >= 56 && code <= 57) return { icon: 'ac_unit', label: 'Freezing Drizzle', colorCls: 'text-cyan-400' };
+      if (code >= 61 && code <= 65) return { icon: 'rainy', label: 'Rain', colorCls: 'text-blue-500' };
+      if (code >= 66 && code <= 67) return { icon: 'ac_unit', label: 'Freezing Rain', colorCls: 'text-cyan-500' };
+      if (code >= 71 && code <= 77) return { icon: 'ac_unit', label: 'Snow', colorCls: 'text-sky-300' };
+      if (code >= 80 && code <= 82) return { icon: 'thunderstorm', label: 'Showers', colorCls: 'text-blue-600' };
+      if (code >= 85 && code <= 86) return { icon: 'weather_snowy', label: 'Snow Showers', colorCls: 'text-sky-400' };
+      if (code >= 95) return { icon: 'thunderstorm', label: 'Thunderstorm', colorCls: 'text-purple-500' };
+      return { icon: 'cloud', label: 'Cloudy', colorCls: 'text-gray-400' };
+    }
+
+    // ===== Category Modal =====
+    function renderIconPicker() {
+      var container = document.getElementById('icon-picker');
+      container.innerHTML = ICONS.map(function(icon, i) {
+        var cls = i === 0 ? 'p-2 rounded-xl bg-primary/10 text-primary border-2 border-primary/30' : 'p-2 rounded-xl bg-surface-container-low text-outline border-2 border-transparent hover:border-primary/20';
+        return '<button type="button" onclick="pickIcon(this,\'' + icon + '\')" class="' + cls + '"><span class="material-symbols-outlined" style="font-size:20px">' + icon + '</span></button>';
+      }).join('');
+    }
+
+    function pickIcon(btn, icon) {
+      _catIcon = icon;
+      var btns = document.querySelectorAll('#icon-picker button');
+      btns.forEach(function(b) { b.className = 'p-2 rounded-xl bg-surface-container-low text-outline border-2 border-transparent hover:border-primary/20'; });
+      btn.className = 'p-2 rounded-xl bg-primary/10 text-primary border-2 border-primary/30';
+    }
+
+    function openCategoryModal() {
+      document.getElementById('cat-name').value = '';
+      _catIcon = 'star';
+      renderIconPicker();
+      document.getElementById('cat-modal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('cat-modal').classList.remove('active');
+    }
+
+    async function saveCategory() {
+      var name = document.getElementById('cat-name').value.trim();
+      if (!name) { alert('카테고리명을 입력해줘!'); return; }
+      var obj = { trip_id: currentTripId, category: name, icon: _catIcon, items: [] };
+      try {
+        var saved = await fbAdd('packing', obj);
+        packingData.push(saved);
+        renderCategories();
+        renderProgress();
+        closeCategoryModal();
+      } catch (err) { alert('저장에 실패했어요.'); console.error(err); }
+    }
+
+    async function deleteCategory(ci) {
+      if (!confirm('"' + packingData[ci].category + '" 카테고리를 삭제할까요?')) return;
+      try {
+        await fbDelete('packing', packingData[ci]._id);
+        packingData.splice(ci, 1);
+        renderCategories();
+        renderProgress();
+      } catch (err) { alert('삭제에 실패했어요.'); }
+    }
+
+    // ===== Item Modal =====
+    function openItemModal(ci) {
+      _itemCatIndex = ci;
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-modal-title').textContent = packingData[ci].category + ' — 아이템 추가';
+      document.getElementById('item-modal').classList.add('active');
+      setTimeout(function() { document.getElementById('item-name').focus(); }, 100);
+    }
+
+    function closeItemModal() {
+      document.getElementById('item-modal').classList.remove('active');
+    }
+
+    async function saveItem() {
+      var name = document.getElementById('item-name').value.trim();
+      if (!name || _itemCatIndex === null) { alert('아이템명을 입력해줘!'); return; }
+      var cat = packingData[_itemCatIndex];
+      if (!cat.items) cat.items = [];
+      cat.items.push({ name: name, checked: false });
+      try {
+        await fbUpdate('packing', cat._id, { items: cat.items });
+        renderCategories();
+        renderProgress();
+        closeItemModal();
+      } catch (err) { alert('저장에 실패했어요.'); console.error(err); }
+    }
+
+    async function toggleItem(ci, ii, checked) {
+      packingData[ci].items[ii].checked = checked;
+      try {
+        await fbUpdate('packing', packingData[ci]._id, { items: packingData[ci].items });
+        renderCategories();
+        renderProgress();
+      } catch (err) { alert('저장에 실패했어요.'); }
+    }
+
+    async function deleteItem(ci, ii) {
+      if (!confirm('"' + packingData[ci].items[ii].name + '" 아이템을 삭제할까요?')) return;
+      packingData[ci].items.splice(ii, 1);
+      try {
+        await fbUpdate('packing', packingData[ci]._id, { items: packingData[ci].items });
+        renderCategories();
+        renderProgress();
+      } catch (err) { alert('삭제에 실패했어요.'); }
+    }
+
+    // ===== Helpers =====
+    function formatDate(d) {
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, '0');
+      var day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+  </script>
+</body>
+</html>
