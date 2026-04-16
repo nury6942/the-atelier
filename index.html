@@ -2653,7 +2653,7 @@
 
   // Trip modal
   function openTripModal() {
-    ['trip-name','trip-start','trip-end','trip-cities'].forEach(function(id){ document.getElementById(id).value=''; });
+    ['trip-name','trip-start','trip-end','trip-cities'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
   }
   function closeTripModal() {
