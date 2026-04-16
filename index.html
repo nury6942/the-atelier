@@ -4684,11 +4684,17 @@
     initFlatpickr('m-date', { onChange: function(d){ if(d[0]&&fpInstances['m-date-end']) fpInstances['m-date-end'].set('minDate',d[0]); autoFillMatrixDay(); }});
     initFlatpickr('m-date-end', {});
   }
+  function initCityDatePickers() {
+    initFlatpickr('city-start', { onChange: function(d){ if(d[0]&&fpInstances['city-end']){ var next=new Date(d[0]); next.setDate(next.getDate()+1); fpInstances['city-end'].set('minDate',next); if(!fpInstances['city-end'].selectedDates.length) fpInstances['city-end'].open(); } }});
+    var sv = document.getElementById('city-start'); initFlatpickr('city-end', { minDate: sv&&sv.value ? (function(){ var n=new Date(sv.value+'T00:00:00'); n.setDate(n.getDate()+1); return n; })() : null });
+  }
   function initJourneyDatePickers() {
     setTimeout(function(){ ['jf-date','jf-payment-date'].forEach(function(id){ if(document.getElementById(id)) initFlatpickr(id,{}); }); }, 150);
   }
   function initSimpleDatePicker(id) { initFlatpickr(id, {}); }
 
+  var _origOpenCityModal = openCityModal;
+  openCityModal = function() { _origOpenCityModal.apply(this,arguments); setTimeout(initCityDatePickers,80); };
   var _origOpenTripModal = openTripModal;
   openTripModal = function() { _origOpenTripModal.apply(this,arguments); setTimeout(initTripDatePickers,80); };
   var _origOpenEditTripModal = openEditTripModal;
