@@ -4275,21 +4275,21 @@
     var isType = typeof idxOrType === 'string';
     editingFinanceIndex = (!isType && idxOrType!==undefined) ? idxOrType : null;
     var prefillType = isType ? idxOrType : null;
-    document.getElementById('finance-modal-title').textContent = 
+    document.getElementById('finance-modal-title-hdr').textContent =
       prefillType==='입금' ? '입금 추가' : editingFinanceIndex!==null ? '지출 수정' : '지출 추가';
     if(editingFinanceIndex!==null) {
       var row = financeData[editingFinanceIndex];
       document.getElementById('fin-date').value=row[0]||'';
       document.getElementById('fin-desc').value=row[1]||'';
       document.getElementById('fin-trip').value=row[2]||'';
-      document.getElementById('fin-category').value=row[3]||'이동';
+      document.getElementById('fin-cat').value=row[3]||'이동';
       var amtVal = (row[4]||'').toString().replace(/,/g,'');
       document.getElementById('fin-amount').value = amtVal ? Number(amtVal).toLocaleString('ko-KR') : '';
       document.getElementById('fin-currency').value=row[5]||'KRW';
     } else {
       ['fin-date','fin-desc','fin-trip','fin-amount'].forEach(function(id){document.getElementById(id).value=''});
       document.getElementById('fin-date').value=new Date().toISOString().split('T')[0];
-      document.getElementById('fin-category').value=prefillType||'이동';
+      document.getElementById('fin-cat').value=prefillType||'이동';
       document.getElementById('fin-currency').value='KRW';
     }
     // Populate trip dropdown from Firebase trips
@@ -4322,7 +4322,7 @@
       document.getElementById('fin-date').value,
       document.getElementById('fin-desc').value,
       document.getElementById('fin-trip').value,
-      document.getElementById('fin-category').value,
+      document.getElementById('fin-cat').value,
       amount,
       currency,
       krwAmount,
