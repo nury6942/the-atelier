@@ -2195,34 +2195,31 @@
         }
       }
       if (migrated > 0) console.log('Planner color migrated:', migrated, 'entries');
-      // 캘린더→매트릭스 일괄 동기화 (다일 일정 포함)
+      // 캘린더→매트릭스 일괄 동기화 (단일+다일 일정 모두)
       var matrixDocs = await fbRead('matrix');
       matrixData = matrixDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
+      var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+      var days = ['일','월','화','수','목','금','토'];
       var matrixSynced = 0;
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
         var sField = PLANNER_TO_MATRIX[sRow[2]];
         if (!sRow[0] || !sField) continue;
-        if (sEnd > sRow[0]) {
-          // 다일 일정 — 모든 날짜가 매트릭스에 있는지 확인
-          var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-          var sFIdx = FIELDS.indexOf(sField);
-          if (sFIdx <= 0) continue;
-          var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
-          var days = ['일','월','화','수','목','금','토'];
-          while (sCur <= sEndD) {
-            var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
-            var sMRow = matrixData.find(function(r){return r[0]===sDs;});
-            if (sMRow) {
-              if (!sMRow[sFIdx]) { sMRow[sFIdx]=sRow[1]; var smId=sMRow[10]||sMRow[9]; if(smId){try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){}} matrixSynced++; }
-            } else {
-              var sNewRow=[sDs,days[sCur.getDay()],'','','','','','','',''];
-              sNewRow[sFIdx]=sRow[1];
-              try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++;}catch(e){}
-            }
-            sCur.setDate(sCur.getDate()+1);
+        var sFIdx = FIELDS.indexOf(sField);
+        if (sFIdx <= 0) continue;
+        var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
+        while (sCur <= sEndD) {
+          var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
+          var sMRow = matrixData.find(function(r){return r[0]===sDs;});
+          if (sMRow) {
+            if (!sMRow[sFIdx]) { sMRow[sFIdx]=sRow[1]; var smId=sMRow[10]||sMRow[9]; if(smId){try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){}} matrixSynced++; }
+          } else {
+            var sNewRow=[sDs,days[sCur.getDay()],'','','','','','','',''];
+            sNewRow[sFIdx]=sRow[1];
+            try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++;}catch(e){}
           }
+          sCur.setDate(sCur.getDate()+1);
         }
       }
       if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
