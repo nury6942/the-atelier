@@ -5009,11 +5009,12 @@
         : '<span class="text-[12px] font-mono ' + (isRedDay?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>' +
           (holidayName ? '<span class="text-[8px] text-rose-400 font-bold ml-1">' + holidayName + '</span>' : '');
 
-      function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
+      function mxChip(val, color, dateStr, fieldIdx, rowIdx, inlineStyle) {
         if (!val) return '';
         var items = val.split(', ');
+        var styleAttr = inlineStyle ? ' style="' + inlineStyle + '"' : '';
         return items.map(function(v) {
-          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + ' mr-1 mb-0.5">' + v + '</span>';
+          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + ' mr-1 mb-0.5"' + styleAttr + '>' + v + '</span>';
         }).join('');
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
@@ -5023,12 +5024,12 @@
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        mxTd(mxChip(row&&row[2], 'bg-rose-200 text-rose-800', d.date, 2, i), d.date, 2, i) +
-        mxTd(mxChip(row&&row[3], 'bg-red-200 text-red-800', d.date, 3, i), d.date, 3, i) +
-        mxTd(mxChip(row&&row[4], 'bg-amber-200 text-amber-800', d.date, 4, i), d.date, 4, i) +
-        mxTd(mxChip(row&&row[5], 'bg-sky-200 text-sky-800', d.date, 5, i), d.date, 5, i) +
-        mxTd(mxChip(row&&row[7], 'bg-lime-200 text-lime-800', d.date, 7, i), d.date, 7, i) +
-        mxTd(mxChip(row&&row[8], 'bg-violet-200 text-violet-800', d.date, 8, i), d.date, 8, i) +
+        mxTd(mxChip(row&&row[2], 'text-rose-900', d.date, 2, i, 'background:rgba(251,113,133,0.25)'), d.date, 2, i) +
+        mxTd(mxChip(row&&row[3], 'text-red-900', d.date, 3, i, 'background:rgba(239,68,68,0.2)'), d.date, 3, i) +
+        mxTd(mxChip(row&&row[4], 'text-amber-900', d.date, 4, i, 'background:rgba(251,191,36,0.25)'), d.date, 4, i) +
+        mxTd(mxChip(row&&row[5], 'text-sky-900', d.date, 5, i, 'background:rgba(56,189,248,0.25)'), d.date, 5, i) +
+        mxTd(mxChip(row&&row[7], 'text-lime-900', d.date, 7, i, 'background:rgba(163,230,53,0.3)'), d.date, 7, i) +
+        mxTd(mxChip(row&&row[8], 'text-violet-900', d.date, 8, i, 'background:rgba(139,92,246,0.2)'), d.date, 8, i) +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1">' +
