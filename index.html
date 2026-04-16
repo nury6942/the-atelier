@@ -2446,7 +2446,6 @@
   }
 
   async function deletePlannerRow(i) {
-    if (!confirm('이 일정을 삭제할까요?')) return;
     try {
       const id = plannerData[i][6];
       await fbDelete('planner', id);
