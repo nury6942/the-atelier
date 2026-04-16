@@ -6387,12 +6387,13 @@
   });
 
   // ===== PACKING PAGE =====
-  var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
+  var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
   var PK_ICONS = ['star','checkroom','devices','spa','luggage','flight','restaurant','shopping_bag','medication','photo_camera','fitness_center','headphones','book','brush','local_cafe','beach_access'];
   var _pkWeatherCache = {};
 
   async function pkInit() {
-    var trips = await fbRead('trips');
+    pkTrips = await fbRead('trips');
+    var trips = pkTrips;
     var sel = document.getElementById('pk-trip-selector');
     sel.innerHTML = '<option value="">여행 선택...</option>' + trips.map(function(t){ return '<option value="'+t._id+'">'+t.name+'</option>'; }).join('');
     if (pkTripId) { sel.value = pkTripId; await pkOnTripSelect(pkTripId); }
@@ -6453,7 +6454,7 @@
 
   async function pkRenderDaily() {
     var container = document.getElementById('pk-daily-planner');
-    var trip = tripsData.find(function(t){return t._id===pkTripId;}) || {};
+    var trip = pkTrips.find(function(t){return t._id===pkTripId;}) || {};
     if (!trip.start_date||!trip.end_date) { container.innerHTML='<div class="text-center py-8 text-sm text-slate-400">여행 날짜가 설정되지 않았습니다.</div>'; return; }
     var start=new Date(trip.start_date+'T00:00:00'), end=new Date(trip.end_date+'T00:00:00'), dates=[];
     for (var d=new Date(start); d<=end; d.setDate(d.getDate()+1)) dates.push(new Date(d));
