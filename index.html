@@ -6258,7 +6258,7 @@
 
   function openEnglishModal(idx) {
     editingEnglishIndex = (idx !== undefined) ? idx : null;
-    document.getElementById('english-modal-title').textContent = editingEnglishIndex !== null ? '수업 수정' : '새 수업 추가';
+    document.getElementById('english-modal-hdr-title').textContent = editingEnglishIndex !== null ? '수업 수정' : '새 수업 추가';
     if (editingEnglishIndex !== null) {
       const row = englishData[editingEnglishIndex];
       document.getElementById('e-name').value = row[0] || '';
