@@ -630,6 +630,23 @@
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
+            <!-- 날씨 배너 -->
+            <div id="weather-banner" class="mb-4 rounded-2xl p-3.5 hidden" style="background:linear-gradient(135deg,#e0ecff 0%,#f0e6ff 100%);">
+              <div class="flex items-center gap-3">
+                <div id="weather-icon" class="text-3xl"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2">
+                    <span id="weather-temp" class="text-xl font-black text-slate-800"></span>
+                    <span id="weather-desc" class="text-[10px] font-bold uppercase tracking-widest text-indigo-600"></span>
+                  </div>
+                  <div class="flex gap-3 mt-0.5">
+                    <span id="weather-high-low" class="text-[10px] text-slate-500 font-medium"></span>
+                    <span id="weather-extra" class="text-[10px] text-slate-500 font-medium"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="flex items-center justify-between mb-4">
               <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">일정</span>
               <button onclick="openJourneyModal('일정')" class="p-1.5 hover:bg-indigo-100 rounded-lg transition-colors text-slate-400 hover:text-indigo-600">
@@ -2655,6 +2672,117 @@
           '</div></div>';
       });
     });
+
+    // 날씨 배너 업데이트
+    if (dateStr && cityName) {
+      fetchWeather(cityName, dateStr);
+    } else {
+      var wb = document.getElementById('weather-banner');
+      if (wb) wb.classList.add('hidden');
+    }
+  }
+
+  // ===== WEATHER =====
+  var _weatherCache = {};
+  var _geocodeCache = {};
+
+  var WMO_WEATHER = {
+    0: {desc:'맑음', icon:'☀️', bg:'linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)'},
+    1: {desc:'대체로 맑음', icon:'🌤️', bg:'linear-gradient(135deg,#e0f2fe 0%,#fef3c7 100%)'},
+    2: {desc:'구름 조금', icon:'⛅', bg:'linear-gradient(135deg,#e0ecff 0%,#f0e6ff 100%)'},
+    3: {desc:'흐림', icon:'☁️', bg:'linear-gradient(135deg,#e2e8f0 0%,#cbd5e1 100%)'},
+    45: {desc:'안개', icon:'🌫️', bg:'linear-gradient(135deg,#e2e8f0 0%,#d1d5db 100%)'},
+    48: {desc:'짙은 안개', icon:'🌫️', bg:'linear-gradient(135deg,#d1d5db 0%,#9ca3af 100%)'},
+    51: {desc:'가벼운 이슬비', icon:'🌦️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
+    53: {desc:'이슬비', icon:'🌦️', bg:'linear-gradient(135deg,#bfdbfe 0%,#93c5fd 100%)'},
+    55: {desc:'강한 이슬비', icon:'🌧️', bg:'linear-gradient(135deg,#93c5fd 0%,#60a5fa 100%)'},
+    61: {desc:'가벼운 비', icon:'🌧️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
+    63: {desc:'비', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#93c5fd 100%)'},
+    65: {desc:'폭우', icon:'🌧️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
+    71: {desc:'가벼운 눈', icon:'🌨️', bg:'linear-gradient(135deg,#e0e7ff 0%,#c7d2fe 100%)'},
+    73: {desc:'눈', icon:'❄️', bg:'linear-gradient(135deg,#c7d2fe 0%,#a5b4fc 100%)'},
+    75: {desc:'폭설', icon:'❄️', bg:'linear-gradient(135deg,#a5b4fc 0%,#818cf8 100%)'},
+    80: {desc:'소나기', icon:'🌦️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
+    81: {desc:'강한 소나기', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#60a5fa 100%)'},
+    82: {desc:'폭우 소나기', icon:'⛈️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
+    95: {desc:'뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#c4b5fd 0%,#8b5cf6 100%)'},
+    96: {desc:'우박 뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#a78bfa 0%,#7c3aed 100%)'},
+    99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%)'},
+  };
+
+  async function geocodeCity(cityName) {
+    if (_geocodeCache[cityName]) return _geocodeCache[cityName];
+    try {
+      var res = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cityName) + '&count=1&language=ko');
+      var data = await res.json();
+      if (data.results && data.results.length > 0) {
+        var r = data.results[0];
+        _geocodeCache[cityName] = { lat: r.latitude, lng: r.longitude, name: r.name };
+        return _geocodeCache[cityName];
+      }
+    } catch(e) { console.warn('Geocode failed:', e); }
+    return null;
+  }
+
+  async function fetchWeather(cityName, dateStr) {
+    var banner = document.getElementById('weather-banner');
+    if (!banner) return;
+
+    var cacheKey = cityName + ':' + dateStr;
+    if (_weatherCache[cacheKey]) { showWeatherBanner(_weatherCache[cacheKey]); return; }
+
+    var geo = await geocodeCity(cityName);
+    if (!geo) { banner.classList.add('hidden'); return; }
+
+    try {
+      var today = new Date();
+      var target = new Date(dateStr + 'T00:00:00');
+      var diffDays = Math.round((target - today) / (1000*60*60*24));
+
+      var url;
+      if (diffDays >= -1 && diffDays <= 15) {
+        url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max' +
+          '&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      } else {
+        // 과거 또는 16일 이후는 히스토리컬 데이터
+        banner.classList.add('hidden');
+        return;
+      }
+
+      var res = await fetch(url);
+      var data = await res.json();
+      if (data.daily && data.daily.time && data.daily.time.length > 0) {
+        var w = {
+          code: data.daily.weathercode[0],
+          tempMax: Math.round(data.daily.temperature_2m_max[0]),
+          tempMin: Math.round(data.daily.temperature_2m_min[0]),
+          rain: data.daily.precipitation_probability_max[0] || 0,
+          wind: Math.round(data.daily.windspeed_10m_max[0]),
+          city: geo.name
+        };
+        _weatherCache[cacheKey] = w;
+        showWeatherBanner(w);
+      } else {
+        banner.classList.add('hidden');
+      }
+    } catch(e) {
+      console.warn('Weather fetch failed:', e);
+      banner.classList.add('hidden');
+    }
+  }
+
+  function showWeatherBanner(w) {
+    var banner = document.getElementById('weather-banner');
+    if (!banner) return;
+    var wmo = WMO_WEATHER[w.code] || WMO_WEATHER[2];
+    banner.style.background = wmo.bg;
+    banner.classList.remove('hidden');
+    document.getElementById('weather-icon').textContent = wmo.icon;
+    document.getElementById('weather-temp').textContent = w.tempMax + '°';
+    document.getElementById('weather-desc').textContent = wmo.desc;
+    document.getElementById('weather-high-low').innerHTML = '<span class="text-rose-500">↑' + w.tempMax + '°</span> <span class="text-blue-500">↓' + w.tempMin + '°</span>';
+    document.getElementById('weather-extra').innerHTML = '💧 ' + w.rain + '% · 💨 ' + w.wind + 'km/h';
   }
 
   function prevDay() {
