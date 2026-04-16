@@ -1748,9 +1748,9 @@
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
           <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 06</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">휴가</div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">연차</div>
           <div id="planner-track-vacation" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-peach" style="width:0%"></div></div>
+          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-orange" style="width:0%"></div></div>
         </div>
       </section>
 
@@ -1817,7 +1817,7 @@
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="p-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="p-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
-                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>휴가</option></select></div></div>
+                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option></select></div></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="p-notes" type="text" placeholder="예: 3회차까지 마무리"  class="atl-input w-full"/></div></div>
           <!-- 반복 설정 -->
           <div id="p-repeat-section">
@@ -2106,11 +2106,11 @@
   };
   const CAT_TRACK = {
     '글쓰기':'writing','영어':'english','스터디':'study',
-    '업무':'work','개인':'personal','휴가':'vacation'
+    '업무':'work','개인':'personal','연차':'vacation'
   };
   const CAT_COLOR = {
-    '업무':'rose','연차':'red','개인':'amber','글쓰기':'sky',
-    '영어':'lime','스터디':'violet','휴가':'orange'
+    '업무':'rose','연차':'orange','개인':'amber','글쓰기':'sky',
+    '영어':'lime','스터디':'violet'
   };
 
   // ===== 대한민국 공휴일 =====
@@ -3844,12 +3844,11 @@
     '스터디': 'bg-yellow-50 text-yellow-700 border-yellow-100',
     '업무':   'bg-green-50 text-green-700 border-green-100',
     '개인':   'bg-purple-50 text-purple-700 border-purple-100',
-    '휴가':   'bg-orange-50 text-orange-700 border-orange-100',
-    '연차':   'bg-red-50 text-red-700 border-red-100',
+    '연차':   'bg-orange-50 text-orange-700 border-orange-100',
   };
   const TRACK_BARS = {
     '글쓰기':'bg-accent-sky','영어':'bg-accent-lime','스터디':'bg-accent-violet',
-    '업무':'bg-accent-rose','개인':'bg-accent-amber','휴가':'bg-accent-orange','연차':'bg-red-400'
+    '업무':'bg-accent-rose','개인':'bg-accent-amber','연차':'bg-accent-orange'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
@@ -3900,7 +3899,7 @@
     });
 
     const container = document.getElementById('dashboard-tracks');
-    const cats = ['업무','연차','개인','글쓰기','영어','스터디','휴가'];
+    const cats = ['업무','연차','개인','글쓰기','영어','스터디'];
     const max = Math.max(...cats.map(function(c){ return counts[c]||0; }), 1);
 
     container.innerHTML = cats.map(function(cat) {
@@ -4472,7 +4471,6 @@
     '스터디': 'ai_study',
     '업무': 'work',
     '개인': 'personal',
-    '휴가': 'leave',
     '연차': 'leave',
   };
 
@@ -5017,7 +5015,7 @@
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
         mxTd(mxChip(row&&row[2], 'text-rose-900', d.date, 2, i, 'background:rgba(251,113,133,0.25)'), d.date, 2, i) +
-        mxTd(mxChip(row&&row[3], 'text-red-900', d.date, 3, i, 'background:rgba(239,68,68,0.2)'), d.date, 3, i) +
+        mxTd(mxChip(row&&row[3], 'text-orange-900', d.date, 3, i, 'background:rgba(251,146,60,0.25)'), d.date, 3, i) +
         mxTd(mxChip(row&&row[4], 'text-amber-900', d.date, 4, i, 'background:rgba(251,191,36,0.25)'), d.date, 4, i) +
         mxTd(mxChip(row&&row[5], 'text-sky-900', d.date, 5, i, 'background:rgba(56,189,248,0.25)'), d.date, 5, i) +
         mxTd(mxChip(row&&row[7], 'text-lime-900', d.date, 7, i, 'background:rgba(163,230,53,0.3)'), d.date, 7, i) +
