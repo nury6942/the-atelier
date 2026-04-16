@@ -1344,10 +1344,8 @@
                 <th class="px-5 py-3 w-28">연차</th>
                 <th class="px-5 py-3 w-40">개인</th>
                 <th class="px-5 py-3 w-44">글쓰기</th>
-                <th class="px-5 py-3 w-32">시리얼 1</th>
-                <th class="px-5 py-3 w-32">영어 수업</th>
-                <th class="px-5 py-3 w-36">AI 스터디</th>
-                <th class="px-5 py-3 w-32">운동</th>
+                <th class="px-5 py-3 w-32">영어</th>
+                <th class="px-5 py-3 w-36">스터디</th>
                 <th class="px-5 py-3 w-20 text-center">관리</th>
               </tr>
             </thead>
@@ -1417,8 +1415,7 @@
           </div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>업무</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">work</span><select id="m-work" class="atl-input w-full bg-white"><option value="">—</option><option>출근</option><option>재택</option><option>출장</option><option>반차(오전)</option><option>반차(오후)</option><option>연차</option><option>병가</option><option>휴일근무</option></select></div></div>          <div class="atl-field"><label>연차</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">beach_access</span><select id="m-leave" class="atl-input w-full bg-white"><option value="">—</option><option>0.5 (반차)</option><option>1.0 (연차)</option><option>2.0</option><option>3.0</option><option>5.0</option></select></div></div></div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>개인</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">person</span><select id="m-personal" class="atl-input w-full bg-white"><option value="">—</option><option>헬스</option><option>러닝</option><option>독서</option><option>병원</option><option>약속</option><option>여행</option><option>기타</option></select></div></div>          <div class="atl-field"><label>글쓰기</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">edit_note</span><select id="m-writing" class="atl-input w-full bg-white"><option value="">—</option><option>초안 작성</option><option>퇴고</option><option>발행</option><option>아이디어 정리</option><option>리서치</option></select></div></div></div>
-                    <div class="atl-grid-2">          <div class="atl-field"><label>운동</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">fitness_center</span><select id="m-workingout" class="atl-input w-full bg-white"><option value="">—</option><option>헬스</option><option>러닝</option><option>수영</option><option>요가</option><option>필라테스</option><option>기타</option></select></div></div>          <div class="atl-field"><label>영어</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">translate</span><select id="m-english" class="atl-input w-full bg-white"><option value="">—</option><option>수업 완료</option><option>자습</option><option>단어 암기</option><option>복습</option></select></div></div></div>
-                    <div class="atl-grid-2">          <div class="atl-field"><label>시리얼 1</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">menu_book</span><input id="m-serial1" type="text" placeholder="예: EP 12 아웃라인"  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>AI 스터디</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">smart_toy</span><input id="m-ai" type="text" placeholder="예: LLM 파인튜닝"  class="atl-input w-full"/></div></div></div>
+                    <div class="atl-grid-2">          <div class="atl-field"><label>영어</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">translate</span><select id="m-english" class="atl-input w-full bg-white"><option value="">—</option><option>수업 완료</option><option>자습</option><option>단어 암기</option><option>복습</option></select></div></div>          <div class="atl-field"><label>스터디</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">smart_toy</span><input id="m-ai" type="text" placeholder="예: LLM 파인튜닝"  class="atl-input w-full"/></div></div></div>
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeMatrixModal()" class="atl-btn-cancel">취소</button>
@@ -1803,7 +1800,7 @@
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="p-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="p-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
-                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>운동</option><option>영어</option><option>스터디</option><option>휴가</option></select></div></div>
+                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>휴가</option></select></div></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="p-notes" type="text" placeholder="예: 3회차까지 마무리"  class="atl-input w-full"/></div></div>
           <!-- 반복 설정 -->
           <div id="p-repeat-section">
@@ -2097,7 +2094,7 @@
   };
   const CAT_COLOR = {
     '업무':'rose','연차':'red','개인':'amber','글쓰기':'sky',
-    '운동':'emerald','영어':'lime','스터디':'violet','휴가':'orange'
+    '영어':'lime','스터디':'violet','휴가':'orange'
   };
 
   // ===== 대한민국 공휴일 =====
@@ -3745,7 +3742,6 @@
     '글쓰기': 'bg-teal-50 text-teal-700 border-teal-100',
     '영어':   'bg-blue-50 text-blue-700 border-blue-100',
     '스터디': 'bg-yellow-50 text-yellow-700 border-yellow-100',
-    '운동':   'bg-rose-50 text-rose-700 border-rose-100',
     '업무':   'bg-green-50 text-green-700 border-green-100',
     '개인':   'bg-purple-50 text-purple-700 border-purple-100',
     '휴가':   'bg-orange-50 text-orange-700 border-orange-100',
@@ -3753,7 +3749,7 @@
   };
   const TRACK_BARS = {
     '글쓰기':'bg-accent-sky','영어':'bg-accent-lime','스터디':'bg-accent-violet',
-    '업무':'bg-accent-rose','개인':'bg-accent-amber','운동':'bg-emerald-400','휴가':'bg-accent-orange','연차':'bg-red-400'
+    '업무':'bg-accent-rose','개인':'bg-accent-amber','휴가':'bg-accent-orange','연차':'bg-red-400'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
@@ -3804,7 +3800,7 @@
     });
 
     const container = document.getElementById('dashboard-tracks');
-    const cats = ['업무','연차','개인','글쓰기','운동','영어','스터디','휴가'];
+    const cats = ['업무','연차','개인','글쓰기','영어','스터디','휴가'];
     const max = Math.max(...cats.map(function(c){ return counts[c]||0; }), 1);
 
     container.innerHTML = cats.map(function(cat) {
@@ -4313,7 +4309,6 @@
     '영어': 'english',
     '글쓰기': 'writing',
     '스터디': 'ai_study',
-    '운동': 'workingout',
     '업무': 'work',
     '개인': 'personal',
     '휴가': 'leave',
@@ -4707,7 +4702,7 @@
       const i = entry ? entry.idx : -1;
       const day = d.day;
       const isWeekend = WEEKEND.includes(day);
-      const hasData = row && (row[2]||row[3]||row[4]||row[5]||row[6]||row[7]||row[8]||row[9]);
+      const hasData = row && (row[2]||row[3]||row[4]||row[5]||row[7]||row[8]);
       const isToday = d.date === todayStr;
       const monthKey = d.date.slice(0,7);
 
@@ -4717,7 +4712,7 @@
         const monthNum = parseInt(d.date.slice(5,7)) - 1;
         const monthTr = document.createElement('tr');
         monthTr.className = 'bg-indigo-900 sticky top-0 z-10';
-        monthTr.innerHTML = '<td colspan="11" class="px-5 py-2">' +
+        monthTr.innerHTML = '<td colspan="9" class="px-5 py-2">' +
           '<span class="text-[11px] font-black uppercase tracking-widest text-indigo-200">' +
           '2026년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
@@ -4753,10 +4748,8 @@
         '<td class="px-5 py-2.5">' + formatLeaveCell(row&&row[3]) + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[4], 'bg-amber-50 text-amber-700') + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[5], 'bg-sky-50 text-sky-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[6], 'bg-purple-50 text-purple-700') + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[7], 'bg-lime-50 text-lime-700') + '</td>' +
         '<td class="px-5 py-2.5">' + mxChip(row&&row[8], 'bg-violet-50 text-violet-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[9], 'bg-emerald-50 text-emerald-700') + '</td>' +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">' +
