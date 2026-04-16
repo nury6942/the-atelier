@@ -2034,7 +2034,6 @@
 
       // Track hovered date for paste
       cell.addEventListener('mouseover', function() { hoveredPlannerDate = dateStr; });
-      cell.addEventListener('mouseout', function() { hoveredPlannerDate = null; });
 
       // Drop target handlers
       cell.addEventListener('dragover', function(e) {
@@ -2290,7 +2289,7 @@
         plannerData.push(newRow.concat([saved._id]));
         renderCalendar();
         updatePlannerTracks();
-        showPlannerToast('✅ 붙이기 완료!');
+        showPlannerToast('✅ ' + hoveredPlannerDate + '에 붙이기 완료!');
       } catch(err) { alert('붙이기에 실패했어요.'); }
     }
 
