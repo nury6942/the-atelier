@@ -4934,23 +4934,22 @@
         : '<span class="text-[12px] font-mono ' + (isWeekend?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>';
 
       function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
-        var dropZone = 'ondragover="event.preventDefault();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ondrop="event.preventDefault();this.classList.remove(\'ring-2\',\'ring-indigo-400\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')"';
-        if (!val) return '<span class="text-slate-200 cursor-pointer hover:text-indigo-400 transition-colors" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">+</span>';
-        return '<span draggable="true" ondragstart="mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">' + val + '</span>';
+        if (!val) return '';
+        return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '">' + val + '</span>';
       }
-      function mxTd(content, dateStr, fieldIdx) {
-        return '<td class="px-5 py-2.5 rounded transition-all" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + content + '</td>';
+      function mxTd(content, dateStr, fieldIdx, rowIdx) {
+        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
       }
 
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        mxTd(mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i), d.date, 2) +
-        mxTd(mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i), d.date, 3) +
-        mxTd(mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i), d.date, 4) +
-        mxTd(mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i), d.date, 5) +
-        mxTd(mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i), d.date, 7) +
-        mxTd(mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i), d.date, 8) +
+        mxTd(mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i), d.date, 2, i) +
+        mxTd(mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i), d.date, 3, i) +
+        mxTd(mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i), d.date, 4, i) +
+        mxTd(mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i), d.date, 5, i) +
+        mxTd(mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i), d.date, 7, i) +
+        mxTd(mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i), d.date, 8, i) +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1">' +
