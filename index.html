@@ -2113,7 +2113,8 @@
 
         return '<div class="mt-1 py-0.5 h-5 ' + roundLeft + ' ' + roundRight + ' ' + marginLeft + ' ' + marginRight + ' ' + bgColor + ' ' + borderColor + ' border-y ' +
           (blockStart ? 'border-l ' : '') + (blockEnd ? 'border-r ' : '') +
-          'flex items-center overflow-hidden cursor-pointer" ' +
+          'flex items-center overflow-hidden cursor-grab" ' +
+          'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
           'onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
           (showTitle
             ? '<span class="text-[9px] font-bold px-1.5 truncate ' + textColor + '">' + (ev[1]||'') + '</span>'
@@ -2321,8 +2322,16 @@
   async function dropPlannerEvent(idx, newDate) {
     if (plannerData[idx][0] === newDate) return; // 같은 날짜면 무시
     try {
-      const id = plannerData[idx][5];
+      const id = plannerData[idx][6];
+      var oldStart = plannerData[idx][0];
+      var oldEnd = plannerData[idx][5];
       plannerData[idx][0] = newDate;
+      // 범위 이벤트면 end도 같은 일수만큼 이동
+      if (oldEnd && oldEnd > oldStart) {
+        var diffMs = new Date(newDate + 'T00:00:00') - new Date(oldStart + 'T00:00:00');
+        var newEnd = new Date(new Date(oldEnd + 'T00:00:00').getTime() + diffMs);
+        plannerData[idx][5] = newEnd.getFullYear() + '-' + String(newEnd.getMonth()+1).padStart(2,'0') + '-' + String(newEnd.getDate()).padStart(2,'0');
+      }
       await fbUpdate('planner', id, rowToObj('planner', plannerData[idx]));
       renderCalendar();
       updatePlannerTracks();
