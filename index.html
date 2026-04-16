@@ -1318,7 +1318,7 @@
           </div>
         </div>
         <div class="atl-modal-header">
-          <h3 id="hub-modal-title-hdr">항목 추가</h3>
+          <h3 id="hub-modal-title">항목 추가</h3>
           <button onclick="closeHubModal()" class="atl-modal-close"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
         </div>
         <div class="atl-modal-body">
@@ -1327,8 +1327,12 @@
             <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="h-date" type="date" placeholder=""  class="atl-input w-full"/></div>
           </div>
           <div class="atl-field">
-            <label>카테고리 *</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="h-cat" class="atl-input w-full bg-white"><option>수입</option><option>지출</option><option>저축</option><option>이자</option></select></div>
+            <label>유형 *</label>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">swap_vert</span><select id="h-type" class="atl-input w-full bg-white"><option>수입</option><option>지출</option><option>저축</option><option>이자</option></select></div>
+          </div>
+          <div class="atl-field">
+            <label>카테고리</label>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><input id="h-category" type="text" placeholder="예: 월급, 식비, 비상금" class="atl-input w-full"/></div>
           </div>
           <div class="atl-field">
             <label>내용 *</label>
