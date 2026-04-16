@@ -6027,9 +6027,9 @@
           '</div>' +
           '<div class="p-5 flex-grow">' +
             '<div class="flex gap-2 mb-4">' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입</div><div class="text-xs font-black text-slate-700">₩' + mIncome.toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출</div><div class="text-xs font-black text-slate-700">₩' + mExpense.toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-xs font-black text-slate-700">₩' + mSavings.toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mIncome/1000).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mExpense/1000).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mSavings/1000).toLocaleString('ko-KR') + '</div></div>' +
             '</div>' +
             '<table class="w-full text-xs"><tbody>' +
               itemsHtml +
