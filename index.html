@@ -5294,9 +5294,9 @@
 
   const TYPE_COLORS = {
     '수입': 'bg-pastel-blue text-pastel-blue-text border-blue-200',
-    '지출': 'bg-pastel-rose text-pastel-rose-text border-rose-200',
-    '저축': 'bg-pastel-lavender text-pastel-lavender-text border-purple-200',
-    '이자': 'bg-pastel-gold text-pastel-gold-text border-yellow-200',
+    '지출': 'bg-red-50 text-red-600 border-red-200',
+    '저축': 'bg-yellow-50 text-yellow-600 border-yellow-200',
+    '이자': 'bg-blue-50 text-blue-600 border-blue-200',
   };
 
   async function loadHub() {
@@ -5336,7 +5336,7 @@
         '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[0]||'—') + '</td>' +
         '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase border ' + typeClass + '">' + (type||'—') + '</span></td>' +
         '<td class="px-6 py-4 text-slate-600 text-sm">' + (row[2]||'—') + '</td>' +
-        '<td class="px-6 py-4 text-right font-black text-sm ' + (isIncome?'text-pastel-blue-text':'text-pastel-rose-text') + '">' +
+        '<td class="px-6 py-4 text-right font-black text-sm ' + (isIncome?'text-emerald-600':'text-red-600') + '">' +
           (isIncome?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">₩' + running.toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
@@ -5452,7 +5452,7 @@
           var isInc = type==='수입'||type==='이자';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group">' +
             '<td class="py-1.5 text-slate-500 text-[10px]">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-1.5 text-right text-[10px] font-bold ' + (isInc?'text-emerald-600':'text-slate-600') + '">' + (isInc?'+':'-') + '₩' + (parseFloat(mi.row[3])||0).toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-1.5 text-right text-[10px] font-bold ' + (isInc?'text-emerald-600':'text-red-600') + '">' + (isInc?'+':'-') + '₩' + (parseFloat(mi.row[3])||0).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-1.5 text-right w-12"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all justify-end">' +
               '<button onclick="editHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
               '<button onclick="deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
