@@ -5279,8 +5279,12 @@
             '</button>' +
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
+            '<div class="flex justify-between items-center mb-1">' +
+              '<span class="text-[8px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
+              '<span class="text-[10px] font-bold" style="' + balLabel + '">₩' + (mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
+            '</div>' +
             '<div class="flex justify-between items-center">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">Balance</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적 Balance</span>' +
               '<span class="text-base font-black font-headline" style="' + balColor + '">₩' + runningBalance.toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
