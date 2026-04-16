@@ -1287,7 +1287,7 @@
             <thead class="text-[10px] font-black uppercase tracking-widest text-slate-400">
               <tr>
                 <th class="px-8 py-4">날짜</th>
-                <th class="px-8 py-4">카테고리</th>
+                <th class="px-8 py-4">유형</th>
                 <th class="px-8 py-4">내용</th>
                 <th class="px-8 py-4 text-right">금액</th>
                 <th class="px-8 py-4 text-right">누적 잔액</th>
@@ -1331,16 +1331,12 @@
             <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">swap_vert</span><select id="h-type" class="atl-input w-full bg-white"><option>수입</option><option>지출</option><option>저축</option><option>이자</option></select></div>
           </div>
           <div class="atl-field">
-            <label>카테고리</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><input id="h-category" type="text" placeholder="예: 월급, 식비, 비상금" class="atl-input w-full"/></div>
-          </div>
-          <div class="atl-field">
             <label>내용 *</label>
             <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">description</span><input id="h-desc" type="text" placeholder="예: MLB 월급"  class="atl-input w-full"/></div>
           </div>
           <div class="atl-field">
             <label>금액 *</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="h-amount" type="text" placeholder="예: 3,500,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')" class="atl-input w-full"/></div>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="h-amount" type="text" placeholder="예: 3,500,000" inputmode="numeric" oninput="var v=this.value.replace(/[^0-9]/g,'');this.value=v.replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="atl-input w-full"/></div>
           </div>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>현금 흐름 트래커에 자동으로 반영돼요.</span></div>
         </div>
@@ -5338,7 +5334,7 @@
         '<td class="px-6 py-4 text-slate-600 text-sm">' + (row[2]||'—') + '</td>' +
         '<td class="px-6 py-4 text-right font-black text-sm ' + (isIncome?'text-pastel-blue-text':'text-pastel-rose-text') + '">' +
           (isIncome?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
-        '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">$' + running.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',') + '</td>' +
+        '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">₩' + running.toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
         '<button onclick="editHubRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteHubRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
@@ -5499,12 +5495,11 @@
     if (editingHubIndex!==null) {
       const row = hubData[editingHubIndex];
       document.getElementById('h-date').value=row[0]||'';
-      document.getElementById('h-category').value=row[1]||'';
       document.getElementById('h-desc').value=row[2]||'';
       var hubAmt = (row[3]||'').toString().replace(/,/g,''); document.getElementById('h-amount').value = hubAmt ? Number(hubAmt).toLocaleString('ko-KR') : '';
       document.getElementById('h-type').value=row[4]||'수입';
     } else {
-      ['h-date','h-category','h-desc','h-amount'].forEach(function(id){document.getElementById(id).value='';});
+      ['h-date','h-desc','h-amount'].forEach(function(id){document.getElementById(id).value='';});
       document.getElementById('h-date').value=new Date().toISOString().split('T')[0];
       document.getElementById('h-type').value='수입';
     }
@@ -5521,7 +5516,7 @@
     btn.textContent='저장 중...'; btn.disabled=true;
     const row=[
       document.getElementById('h-date').value,
-      document.getElementById('h-category').value,
+      '',
       document.getElementById('h-desc').value,
       document.getElementById('h-amount').value.replace(/,/g,''),
       document.getElementById('h-type').value,
