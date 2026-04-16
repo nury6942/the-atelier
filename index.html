@@ -4861,8 +4861,38 @@
     tableWrap.style.display = 'none';
     empty.style.display = 'none';
     try {
-      const docs = await fbRead('matrix');
-      matrixData = docs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
+      // 매트릭스 + 캘린더 데이터 동시 로드
+      var [mDocs, pDocs] = await Promise.all([fbRead('matrix'), fbRead('planner')]);
+      matrixData = mDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
+      plannerData = pDocs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+
+      // 캘린더→매트릭스 동기화
+      var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+      var dayNames = ['일','월','화','수','목','금','토'];
+      var synced = 0;
+      for (var si = 0; si < plannerData.length; si++) {
+        var sRow = plannerData[si];
+        var sEnd = sRow[5] || sRow[0];
+        var sField = PLANNER_TO_MATRIX[sRow[2]];
+        if (!sRow[0] || !sField || !sRow[1]) continue;
+        var sFIdx = FIELDS.indexOf(sField);
+        if (sFIdx <= 0) continue;
+        var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
+        while (sCur <= sEndD) {
+          var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
+          var sMRow = matrixData.find(function(r){return r[0]===sDs;});
+          if (sMRow) {
+            if (!sMRow[sFIdx]) { sMRow[sFIdx]=sRow[1]; var smId=sMRow[10]||sMRow[9]; if(smId){try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){}} synced++; }
+          } else {
+            var sNewRow=[sDs,dayNames[sCur.getDay()],'','','','','','','',''];
+            sNewRow[sFIdx]=sRow[1];
+            try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++;}catch(e){}
+          }
+          sCur.setDate(sCur.getDate()+1);
+        }
+      }
+      if (synced > 0) console.log('Matrix synced on load:', synced);
+
       loading.style.display = 'none';
       tableWrap.style.display = 'block';
       empty.style.display = 'none';
