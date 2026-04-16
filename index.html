@@ -1977,6 +1977,56 @@
     '운동':'rose','업무':'sage','개인':'lavender','휴가':'peach'
   };
 
+  // ===== 대한민국 공휴일 =====
+  function getKoreanHolidays(year) {
+    var holidays = {};
+    function add(m, d, name) {
+      var key = year + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      holidays[key] = name;
+    }
+    // 양력 고정 공휴일
+    add(1,1,'신정');
+    add(3,1,'삼일절');
+    add(5,5,'어린이날');
+    add(6,6,'현충일');
+    add(8,15,'광복절');
+    add(10,3,'개천절');
+    add(10,9,'한글날');
+    add(12,25,'크리스마스');
+
+    // 음력 공휴일 (설날, 추석, 부처님오신날) — 연도별 양력 변환 테이블
+    var lunarMap = {
+      2024: { seol:['02-09','02-10','02-11'], chuseok:['09-16','09-17','09-18'], buddha:'05-15' },
+      2025: { seol:['01-28','01-29','01-30'], chuseok:['10-05','10-06','10-07'], buddha:'05-05' },
+      2026: { seol:['02-16','02-17','02-18'], chuseok:['09-24','09-25','09-26'], buddha:'05-24' },
+      2027: { seol:['02-06','02-07','02-08'], chuseok:['09-14','09-15','09-16'], buddha:'05-13' },
+      2028: { seol:['01-25','01-26','01-27'], chuseok:['10-02','10-03','10-04'], buddha:'05-02' },
+      2029: { seol:['02-12','02-13','02-14'], chuseok:['09-21','09-22','09-23'], buddha:'05-20' },
+      2030: { seol:['02-02','02-03','02-04'], chuseok:['09-11','09-12','09-13'], buddha:'05-09' },
+    };
+    if (lunarMap[year]) {
+      var lm = lunarMap[year];
+      lm.seol.forEach(function(d){ holidays[year+'-'+d] = '설날'; });
+      lm.chuseok.forEach(function(d){ holidays[year+'-'+d] = '추석'; });
+      holidays[year+'-'+lm.buddha] = '부처님오신날';
+    }
+
+    // 대체공휴일 처리 (2024~2030 주요 건)
+    var substMap = {
+      2025: [['05-06','어린이날 대체공휴일']],
+      2026: [['08-17','광복절 대체공휴일']],
+      2027: [['02-09','설날 대체공휴일'],['05-06','어린이날 대체공휴일']],
+      2028: [['01-28','설날 대체공휴일'],['05-03','부처님오신날 대체공휴일'],['10-05','추석 대체공휴일']],
+      2029: [['09-24','추석 대체공휴일']],
+      2030: [['02-05','설날 대체공휴일'],['09-16','추석 대체공휴일']],
+    };
+    if (substMap[year]) {
+      substMap[year].forEach(function(pair){ holidays[year+'-'+pair[0]] = pair[1]; });
+    }
+
+    return holidays;
+  }
+
   async function loadPlanner() {
     try {
       const docs = await fbRead('planner');
@@ -2002,6 +2052,7 @@
 
     const today = new Date();
     const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
+    const holidays = getKoreanHolidays(plannerYear);
 
     // Empty cells before first day
     for (let i = 0; i < offset; i++) {
@@ -2027,8 +2078,12 @@
         return start.startsWith(dateStr);
       });
 
+      const isHoliday = !!holidays[dateStr];
+      const holidayName = holidays[dateStr] || '';
+
       const cell = document.createElement('div');
-      cell.className = 'border-r border-b border-slate-50 px-2 pt-2 pb-1 min-h-24 hover:bg-indigo-50/30 transition-colors cursor-pointer group';
+      cell.className = 'border-r border-b border-slate-50 px-2 pt-2 pb-1 min-h-24 transition-colors cursor-pointer group ' +
+        (isHoliday ? 'bg-red-50/60 hover:bg-red-100/50' : 'hover:bg-indigo-50/30');
       cell.dataset.date = dateStr;
       cell.onclick = function() { openPlannerModal(null, dateStr); };
 
@@ -2054,9 +2109,10 @@
 
       let dayNum = '<span class="';
       if (isToday) dayNum += 'gradient-primary text-white w-6 h-6 flex items-center justify-center rounded-full text-[10px] shadow-sm font-bold';
-      else if (isWeekend) dayNum += 'text-rose-500 font-medium text-xs';
+      else if (isHoliday || isWeekend) dayNum += 'text-red-500 font-bold text-xs';
       else dayNum += 'text-slate-500 font-medium text-xs';
       dayNum += '">' + d + '</span>';
+      if (isHoliday) dayNum += '<span class="text-[8px] text-red-400 font-medium ml-1">' + holidayName + '</span>';
 
       const eventHtml = events.map(function(ev, ei) {
         const realIdx = plannerData.indexOf(ev);
