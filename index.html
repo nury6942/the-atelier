@@ -2071,8 +2071,9 @@
         if (!isRange) {
           // 단일 날짜 이벤트 - 기존 스타일
           return '<div class="mt-1 text-[9px] px-1.5 py-0.5 rounded font-bold truncate border ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
-            'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" onclick="event.stopPropagation()">' +
-            '<span class="truncate" onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ', this.parentElement)">' + (ev[1]||'') + '</span>' +
+            'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
+            'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
+            '<span class="truncate">' + (ev[1]||'') + '</span>' +
             '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
             '<button onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')" class="text-current">✎</button>' +
             '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ')" class="text-current">×</button>' +
@@ -2115,7 +2116,7 @@
           (blockStart ? 'border-l ' : '') + (blockEnd ? 'border-r ' : '') +
           'flex items-center overflow-hidden cursor-grab" ' +
           'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
-          'onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
+          'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
           (showTitle
             ? '<span class="text-[9px] font-bold px-1.5 truncate ' + textColor + '">' + (ev[1]||'') + '</span>'
             : '') +
@@ -2263,27 +2264,33 @@
     var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
     var ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
 
-    // Cmd+C: copy selected event
+    // Ctrl+C: copy selected event
     if (ctrlOrCmd && e.key === 'c' && selectedPlannerIdx !== null) {
       var row = plannerData[selectedPlannerIdx];
       if (row) {
-        copiedPlannerEvent = row.slice(0, 5); // copy without _id
-        // Show toast
-        showPlannerToast('일정 복사됨! 날짜에 마우스 올리고 Cmd+V로 붙이기');
+        copiedPlannerEvent = row.slice(0, 6); // copy without _id (indices 0-5, including end date)
+        showPlannerToast('📋 일정 복사됨! 날짜에 마우스를 올리고 Ctrl+V');
       }
     }
 
-    // Cmd+V: paste to hovered date
+    // Ctrl+V: paste to hovered date
     if (ctrlOrCmd && e.key === 'v' && copiedPlannerEvent && hoveredPlannerDate) {
       e.preventDefault();
       var newRow = copiedPlannerEvent.slice();
+      var origStart = newRow[0];
       newRow[0] = hoveredPlannerDate;
+      // 범위 이벤트면 end date도 같은 일수만큼 이동
+      if (newRow[5] && newRow[5] > origStart) {
+        var diffMs = new Date(hoveredPlannerDate + 'T00:00:00') - new Date(origStart + 'T00:00:00');
+        var newEnd = new Date(new Date(newRow[5] + 'T00:00:00').getTime() + diffMs);
+        newRow[5] = newEnd.getFullYear() + '-' + String(newEnd.getMonth()+1).padStart(2,'0') + '-' + String(newEnd.getDate()).padStart(2,'0');
+      }
       try {
         var saved = await fbAdd('planner', rowToObj('planner', newRow));
         plannerData.push(newRow.concat([saved._id]));
         renderCalendar();
         updatePlannerTracks();
-        showPlannerToast('붙이기 완료!');
+        showPlannerToast('✅ 붙이기 완료!');
       } catch(err) { alert('붙이기에 실패했어요.'); }
     }
 
