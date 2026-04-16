@@ -5563,7 +5563,7 @@
   });
 
   // ===== PACKING PAGE =====
-  var pkData = [], pkCities = [], pkJourney = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
+  var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
   var PK_ICONS = ['star','checkroom','devices','spa','luggage','flight','restaurant','shopping_bag','medication','photo_camera','fitness_center','headphones','book','brush','local_cafe','beach_access'];
   var _pkWeatherCache = {};
 
@@ -5581,10 +5581,11 @@
     pkTripId = tripId;
     document.getElementById('pk-empty').style.display='none';
     document.getElementById('pk-main').style.display='grid';
-    var [pDocs, jDocs, cDocs] = await Promise.all([fbRead('packing'), fbRead('journey'), fbRead('trip_cities')]);
+    var [pDocs, jDocs, cDocs, oDocs] = await Promise.all([fbRead('packing'), fbRead('journey'), fbRead('trip_cities'), fbRead('outfits')]);
     pkData = pDocs.filter(function(d){return d.trip_id===tripId;});
     pkJourney = jDocs.filter(function(d){return d.trip_id===tripId;});
     pkCities = cDocs.filter(function(d){return d.trip_id===tripId;}).sort(function(a,b){return (a.start_date||'').localeCompare(b.start_date||'');});
+    pkOutfits = oDocs.filter(function(d){return d.trip_id===tripId;});
     pkRenderProgress(); pkRenderCategories(); pkRenderDaily();
   }
 
@@ -5639,22 +5640,41 @@
       for (var i=0;i<pkCities.length;i++) { var c=pkCities[i]; if(c.start_date&&c.end_date&&ds>=c.start_date&&ds<=c.end_date) return c.name; }
       return pkCities.length>0?pkCities[0].name:'';
     }
-    function getSched(date) {
-      var ds=pkFmtDate(date);
-      return pkJourney.filter(function(j){return j.date===ds&&j.type==='일정';}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+
+    function getOutfit(dateStr) {
+      return pkOutfits.find(function(o){return o.date===dateStr;});
     }
 
     var html='';
     dates.forEach(function(date,idx){
-      var city=getCity(date), scheds=getSched(date);
+      var city=getCity(date);
+      var dateStr=pkFmtDate(date);
       var mon=date.toLocaleString('en',{month:'short'}), day=String(date.getDate()).padStart(2,'0');
-      var schedHtml = scheds.length>0 ? scheds.map(function(s){return '<p class="text-sm font-semibold text-slate-800">'+(s.time?'<span class="text-[10px] text-slate-400 mr-1">'+s.time+'</span> ':'')+(s.title||s.description||'')+'</p>';}).join('') : '<p class="text-sm text-slate-400 italic">일정 없음</p>';
+      var outfit = getOutfit(dateStr);
+      var items = outfit ? (outfit.items||[]) : [];
+
+      var itemsHtml = items.map(function(item, ii){
+        var cls = item.checked ? 'line-through opacity-50' : '';
+        var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
+        return '<div class="flex items-center gap-2 group">' +
+          '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-4 h-4 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
+          '<span class="text-xs text-slate-700 '+cls+' flex-1">'+item.name+'</span>' +
+          '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+        '</div>';
+      }).join('');
+
       html+='<div class="bg-white rounded-2xl shadow-sm p-4 md:p-5 hover:shadow-md transition-all">' +
-        '<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">' +
+        '<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">' +
           '<div class="col-span-1 text-center md:text-left"><div class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">'+mon+'</div><div class="text-xl font-extrabold text-slate-900 leading-none">'+day+'</div></div>' +
           '<div class="col-span-2 flex flex-col items-center justify-center" id="pk-wx-'+idx+'"><span class="material-symbols-outlined text-slate-300">cloud</span><span class="text-[11px] font-semibold text-slate-400">...</span></div>' +
           '<div class="col-span-2"><div class="text-sm font-bold text-slate-800">'+(city||'-')+'</div></div>' +
-          '<div class="col-span-7">'+schedHtml+'</div>' +
+          '<div class="col-span-7">' +
+            '<div class="space-y-1.5">'+itemsHtml+'</div>' +
+            '<div class="mt-2 flex gap-2">' +
+              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="flex-1 bg-slate-50 rounded-lg px-3 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')"/>' +
+              '<button onclick="pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="px-2 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
+            '</div>' +
+          '</div>' +
         '</div></div>';
     });
     container.innerHTML=html;
@@ -5663,6 +5683,39 @@
     var cityDates={};
     dates.forEach(function(date,idx){ var c=getCity(date); if(c){ if(!cityDates[c]) cityDates[c]=[]; cityDates[c].push({date:date,idx:idx}); }});
     for (var c in cityDates) pkFetchWeather(c,cityDates[c]);
+  }
+
+  // Outfit CRUD
+  async function pkAddOutfitItem(dateStr, inputIdx) {
+    var input = document.getElementById('pk-outfit-input-'+inputIdx);
+    var name = input.value.trim();
+    if (!name) return;
+    var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
+    if (outfit) {
+      outfit.items.push({name:name,checked:false});
+      await fbUpdate('outfits', outfit._id, {items:outfit.items});
+    } else {
+      var obj = {trip_id:pkTripId, date:dateStr, items:[{name:name,checked:false}]};
+      var saved = await fbAdd('outfits', obj);
+      pkOutfits.push(saved);
+    }
+    pkRenderDaily();
+  }
+
+  async function pkToggleOutfit(dateStr, ii, checked) {
+    var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
+    if (!outfit) return;
+    outfit.items[ii].checked = checked;
+    await fbUpdate('outfits', outfit._id, {items:outfit.items});
+    pkRenderDaily();
+  }
+
+  async function pkDeleteOutfitItem(dateStr, ii) {
+    var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
+    if (!outfit) return;
+    outfit.items.splice(ii, 1);
+    await fbUpdate('outfits', outfit._id, {items:outfit.items});
+    pkRenderDaily();
   }
 
   async function pkFetchWeather(cityName, entries) {
@@ -5804,7 +5857,7 @@
               <div class="col-span-1">Date</div>
               <div class="col-span-2 text-center">Weather</div>
               <div class="col-span-2">City</div>
-              <div class="col-span-7">Schedule</div>
+              <div class="col-span-7">Outfit &amp; Items</div>
             </div>
             <div id="pk-daily-planner" class="space-y-3">
               <div class="text-center py-8 text-sm text-slate-400">여행을 선택해주세요</div>
