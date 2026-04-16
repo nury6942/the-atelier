@@ -4942,10 +4942,10 @@
 
       function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
         if (!val) return '';
-        return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '">' + val + '</span>';
+        return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '">' + val + '</span>';
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
-        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
+        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondblclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
       }
 
       tr.innerHTML =
@@ -5271,6 +5271,122 @@
     updateLeaveTracker();
     renderCalendar(); updatePlannerTracks();
   }
+
+  // ===== 매트릭스 셀 복사 & 붙이기 =====
+  var _mxSelected = null; // {date, fieldIdx, el}
+  var _mxCopied = null;   // {val, fieldIdx}
+
+  function mxCellClick(td) {
+    var dateStr = td.dataset.date;
+    var fieldIdx = parseInt(td.dataset.field);
+    var rowIdx = parseInt(td.dataset.row);
+    var existingRow = matrixData.find(function(r){return r[0]===dateStr;});
+    var val = existingRow ? (existingRow[fieldIdx]||'') : '';
+
+    // 이전 선택 해제
+    document.querySelectorAll('.mx-selected').forEach(function(el){
+      el.classList.remove('mx-selected','ring-2','ring-indigo-500');
+    });
+
+    // 붙이기 모드: 이미 복사된 값이 있고 빈 셀이면 바로 붙이기
+    if (_mxCopied && !val) {
+      mxPasteCell(dateStr, fieldIdx);
+      return;
+    }
+
+    // 선택 (복사 준비)
+    td.classList.add('mx-selected','ring-2','ring-indigo-500');
+    _mxSelected = { date: dateStr, fieldIdx: fieldIdx, val: val };
+
+    // 선택된 셀에 복사/삭제 툴바 표시
+    var oldBar = document.getElementById('mx-toolbar');
+    if (oldBar) oldBar.remove();
+
+    if (val) {
+      var bar = document.createElement('div');
+      bar.id = 'mx-toolbar';
+      bar.className = 'fixed z-50 flex gap-1 bg-white rounded-xl shadow-lg border border-slate-200 px-2 py-1.5';
+      bar.style.left = (td.getBoundingClientRect().left + td.offsetWidth/2 - 60) + 'px';
+      bar.style.top = (td.getBoundingClientRect().top - 40) + 'px';
+      bar.innerHTML =
+        '<button onclick="mxCopyCell()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span>복사</button>' +
+        '<button onclick="mxDeleteSelectedCell()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-rose-500 hover:bg-rose-50 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">delete</span>삭제</button>';
+      document.body.appendChild(bar);
+    }
+  }
+
+  // 바깥 클릭 시 선택 해제
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('[data-field]') && !e.target.closest('#mx-toolbar') && !e.target.closest('#mx-cell-popup')) {
+      document.querySelectorAll('.mx-selected').forEach(function(el){ el.classList.remove('mx-selected','ring-2','ring-indigo-500'); });
+      _mxSelected = null;
+      var bar = document.getElementById('mx-toolbar');
+      if (bar) bar.remove();
+    }
+  });
+
+  function mxCopyCell() {
+    if (!_mxSelected || !_mxSelected.val) return;
+    _mxCopied = { val: _mxSelected.val, fieldIdx: _mxSelected.fieldIdx };
+    var bar = document.getElementById('mx-toolbar');
+    if (bar) bar.remove();
+    showMxToast('복사됨! 빈 칸을 클릭하면 붙이기');
+  }
+
+  async function mxPasteCell(dateStr, fieldIdx) {
+    if (!_mxCopied) return;
+    var days = ['일','월','화','수','목','금','토'];
+    var existing = matrixData.find(function(r){return r[0]===dateStr;});
+    if (existing) {
+      existing[fieldIdx] = _mxCopied.val;
+      var id = existing[10]||existing[9];
+      if (id) await fbUpdate('matrix', id, rowToObj('matrix', existing));
+      try { await syncMatrixToPlanner(existing); } catch(e){}
+    } else {
+      var dd = new Date(dateStr+'T00:00:00');
+      var newRow = [dateStr, days[dd.getDay()], '','','','','','','',''];
+      newRow[fieldIdx] = _mxCopied.val;
+      var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
+      matrixData.push(newRow.concat([saved._id]));
+      try { await syncMatrixToPlanner(newRow); } catch(e){}
+    }
+    showMxToast('붙이기 완료! (' + dateStr.slice(5) + ')');
+    renderMatrixTable(); updateLeaveTracker();
+    renderCalendar(); updatePlannerTracks();
+  }
+
+  async function mxDeleteSelectedCell() {
+    if (!_mxSelected) return;
+    var bar = document.getElementById('mx-toolbar');
+    if (bar) bar.remove();
+    await clearMxCell(_mxSelected.date, _mxSelected.fieldIdx, -1);
+    _mxSelected = null;
+  }
+
+  function showMxToast(msg) {
+    var old = document.getElementById('mx-toast');
+    if (old) old.remove();
+    var t = document.createElement('div');
+    t.id = 'mx-toast';
+    t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs font-bold px-5 py-3 rounded-full shadow-xl z-50';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 2500);
+  }
+
+  // Ctrl+C / Ctrl+V 단축키
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+    var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    var ctrl = isMac ? e.metaKey : e.ctrlKey;
+    if (ctrl && e.key === 'c' && _mxSelected && _mxSelected.val) {
+      e.preventDefault();
+      mxCopyCell();
+    }
+    if (ctrl && e.key === 'v' && _mxCopied) {
+      // 붙이기는 셀 클릭으로만 (위치 지정 필요)
+    }
+  });
 
   async function deleteMatrixRow(i) {
     if (!confirm('이 항목을 삭제할까요?')) return;
