@@ -2070,7 +2070,6 @@
   function editGoal(id) { openGoalModal(id); }
 
   async function deleteGoal(id) {
-    if (!confirm('이 목표를 삭제할까요?')) return;
     try {
       await fbDelete('milestones', id);
       plannerGoals = plannerGoals.filter(function(g){ return g._id !== id; });
@@ -2934,7 +2933,6 @@
   function editCityEntry(i) { openCityModal(i); }
 
   async function deleteCityEntry(i) {
-    if (!confirm('"' + citiesData[i].name + '" 도시를 삭제할까요?')) return;
     try {
       await fbDelete('trip_cities', citiesData[i]._id);
       citiesData.splice(i, 1);
@@ -3589,7 +3587,6 @@
   }
 
   async function deleteTripEntry(tripId) {
-    if (!confirm('이 여행을 삭제할까요? 관련 일정도 모두 삭제됩니다.')) return;
     try {
       await fbDelete('trips', tripId);
       tripsData = tripsData.filter(function(t){ return t._id !== tripId; });
@@ -3827,7 +3824,6 @@
   }
 
   async function deleteJourneyRow(i) {
-    if (!confirm('삭제할까요?')) return;
     try {
       await fbDelete('journey', journeyData[i]._id);
       journeyData.splice(i, 1);
@@ -4059,7 +4055,6 @@
   }
 
   async function deleteDashGoal(id) {
-    if (!confirm('이 목표를 삭제할까요?')) return;
     try {
       await fbDelete('milestones', id);
       loadDashboard();
@@ -4346,7 +4341,6 @@
   function editFinanceRow(i){openFinanceModal(i);}
 
   async function deleteFinanceRow(i){
-    if(!confirm('이 항목을 삭제할까요?'))return;
     try{
       const id = financeData[i][7];
       await fbDelete('finance', id);
@@ -4451,7 +4445,6 @@
   }
 
   async function deleteIncomeCategory(i) {
-    if (!confirm('"' + incomeCategories[i].name + '" 카테고리를 삭제할까요?')) return;
     try {
       if (incomeCategories[i]._id) await fbDelete('income_categories', incomeCategories[i]._id);
       incomeCategories.splice(i, 1);
@@ -4691,7 +4684,6 @@
   function editIncomeGoal(i) { openIncomeGoalModal(i); }
 
   async function deleteIncomeGoal(i) {
-    if (!confirm('"' + incomeGoals[i].title + '" 목표를 삭제할까요?')) return;
     try {
       await fbDelete('income_goals', incomeGoals[i]._id);
       incomeGoals.splice(i, 1);
@@ -5470,7 +5462,6 @@
   });
 
   async function deleteMatrixRow(i) {
-    if (!confirm('이 항목을 삭제할까요?')) return;
     try {
       var delRow = matrixData[i];
       const id = delRow[9];
@@ -5654,7 +5645,6 @@
   function editIncomeRow(i) { openIncomeModal(i); }
 
   async function deleteIncomeRow(i) {
-    if (!confirm('이 항목을 삭제할까요?')) return;
     try {
       const id = incomeData[i][5];
       await fbDelete('income', id);
@@ -5946,7 +5936,6 @@
 
   function editHubRow(i){openHubModal(i);}
   async function deleteHubRow(i){
-    if(!confirm('이 항목을 삭제할까요?'))return;
     try{
       const id = hubData[i][5];
       await fbDelete('finance_hub', id);
@@ -6100,7 +6089,6 @@
   function editEnglishRow(i) { openEnglishModal(i); }
 
   async function deleteEnglishRow(i) {
-    if (!confirm('이 수업을 삭제할까요?')) return;
     try {
       const id = englishData[i][6];
       await fbDelete('english', id);
@@ -6389,7 +6377,6 @@
     catch(e){alert('저장에 실패했어요.');}
   }
   async function pkDeleteCategory(ci) {
-    if(!confirm('"'+pkData[ci].category+'" 카테고리를 삭제할까요?')) return;
     try { await fbDelete('packing',pkData[ci]._id); pkData.splice(ci,1); pkRenderCategories(); pkRenderProgress(); } catch(e){alert('삭제 실패');}
   }
 
@@ -6408,7 +6395,6 @@
     try { await fbUpdate('packing',pkData[ci]._id,{items:pkData[ci].items}); pkRenderCategories(); pkRenderProgress(); } catch(e){alert('저장 실패');}
   }
   async function pkDeleteItem(ci,ii) {
-    if(!confirm('"'+pkData[ci].items[ii].name+'" 삭제?')) return;
     pkData[ci].items.splice(ii,1);
     try { await fbUpdate('packing',pkData[ci]._id,{items:pkData[ci].items}); pkRenderCategories(); pkRenderProgress(); } catch(e){alert('삭제 실패');}
   }
