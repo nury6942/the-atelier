@@ -5111,11 +5111,13 @@
         var items = val.split(', ');
         var styleAttr = inlineStyle ? ' style="' + inlineStyle + '"' : '';
         return items.map(function(v) {
-          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + ' mr-1 mb-0.5"' + styleAttr + '>' + v + '</span>';
+          // 연차: "1.0 체코여행" → "체코여행"만 표시
+          var displayVal = (fieldIdx === 3) ? v.replace(/^[\d.]+\s*/, '') || v : v;
+          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + ' mr-1 mb-0.5"' + styleAttr + '>' + displayVal + '</span>';
         }).join('');
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
-        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondblclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
+        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondblclick="mxOpenPlannerModal(\'' + dateStr + '\',' + fieldIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
       }
 
       tr.innerHTML =
@@ -5291,6 +5293,39 @@
   }
 
   function editMatrixRow(i) { openMatrixModal(i); }
+
+  // 매트릭스 셀 더블클릭 → 캘린더 모달로 열기
+  function mxOpenPlannerModal(dateStr, fieldIdx) {
+    // 툴바 닫기
+    var bar = document.getElementById('mx-toolbar');
+    if (bar) bar.remove();
+
+    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+    var catName = MATRIX_TO_PLANNER[FIELDS[fieldIdx]];
+    if (!catName) { openMatrixModalForDate(dateStr); return; }
+
+    // 해당 날짜+카테고리의 캘린더 일정 찾기
+    var plannerIdx = -1;
+    for (var pi = 0; pi < plannerData.length; pi++) {
+      var pr = plannerData[pi];
+      if ((pr[2]||'').trim() === catName) {
+        var pStart = pr[0], pEnd = pr[5] || pr[0];
+        if (dateStr >= pStart && dateStr <= pEnd) { plannerIdx = pi; break; }
+      }
+    }
+
+    if (plannerIdx >= 0) {
+      // 기존 일정 수정
+      openPlannerModal(plannerIdx);
+    } else {
+      // 새 일정 추가 (날짜+카테고리 프리필)
+      openPlannerModal(null, dateStr);
+      setTimeout(function(){
+        document.getElementById('p-category').value = catName;
+        toggleLeaveDay();
+      }, 100);
+    }
+  }
 
   // 셀 클릭 → 개별 필드 수정 팝업
   var FIELD_LABELS = {2:'업무',3:'연차',4:'개인',5:'글쓰기',7:'영어',8:'스터디'};
