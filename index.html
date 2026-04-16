@@ -1151,30 +1151,30 @@
   <div id="page-finance-hub" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Page Intro (Editorial Style) -->
-      <section class="mb-10 relative">
+      <!-- Hero Summary Dashboard -->
+      <section class="mb-12 relative">
         <div class="absolute -top-12 -right-8 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl -z-10"></div>
         <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-8">
           <div>
             <span class="text-[10px] font-bold text-indigo-600 tracking-[0.2em] uppercase mb-2 block">Financial Curation</span>
-            <h2 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight">Annual Asset Performance</h2>
+            <h1 class="text-4xl font-extrabold font-headline text-slate-900 tracking-tighter">Annual Asset Performance</h1>
           </div>
-          <div class="bg-slate-50 px-5 py-3 rounded-2xl">
+          <div style="background:#f3f4f5;" class="px-6 py-3 rounded-2xl">
             <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Fiscal Year</p>
             <p class="text-sm font-bold font-headline text-slate-800">연간 성과 개요</p>
           </div>
         </div>
 
-        <!-- Summary Cards (Bento Grid) -->
+        <!-- Summary Cards (Bento) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
             <div class="relative z-10">
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">account_balance_wallet</span>
-              <p class="text-slate-500 text-sm font-medium mb-1">연간 총 수입</p>
-              <h2 id="hub-income" class="text-3xl font-black font-headline text-slate-900">₩0</h2>
-              <p id="hub-income-change" class="mt-4 flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-                <span class="material-symbols-outlined text-sm">trending_up</span> —
-              </p>
+              <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 수입</h3>
+              <p id="hub-income" class="text-3xl font-black font-headline text-slate-900">₩0</p>
+              <div id="hub-income-change" class="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-600">
+                <span class="material-symbols-outlined text-sm">trending_up</span> <span>—</span>
+              </div>
             </div>
             <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined" style="font-size:80px">account_balance</span>
@@ -1183,77 +1183,100 @@
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
             <div class="relative z-10">
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">savings</span>
-              <p class="text-slate-500 text-sm font-medium mb-1">연간 총 저축</p>
-              <h2 id="hub-savings" class="text-3xl font-black font-headline text-slate-900">₩0</h2>
-              <p class="mt-4 flex items-center gap-1.5 text-xs font-bold text-indigo-600">
-                <span class="material-symbols-outlined text-sm">check_circle</span> 목표: 34%
-              </p>
+              <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 저축</h3>
+              <p id="hub-savings" class="text-3xl font-black font-headline text-slate-900">₩0</p>
+              <div class="mt-4 flex items-center gap-2 text-xs font-bold text-indigo-600">
+                <span class="material-symbols-outlined text-sm">check_circle</span> <span>목표: 34%</span>
+              </div>
             </div>
           </div>
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
             <div class="relative z-10">
-              <span class="material-symbols-outlined text-indigo-600 mb-4 block">payments</span>
-              <p class="text-slate-500 text-sm font-medium mb-1">연간 지출</p>
-              <h2 id="hub-expense" class="text-3xl font-black font-headline text-slate-900">₩0</h2>
-              <p id="hub-expense-change" class="mt-4 flex items-center gap-1.5 text-xs font-bold text-rose-500">—</p>
+              <span class="material-symbols-outlined text-indigo-600 mb-4 block">flag</span>
+              <h3 class="text-slate-500 text-sm font-medium mb-1">연간 지출</h3>
+              <p id="hub-expense" class="text-3xl font-black font-headline text-slate-900">₩0</p>
+              <p id="hub-expense-change" class="mt-4 text-xs font-bold text-rose-500">—</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Savings Tracker -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        <div class="lg:col-span-2 bg-white p-8 rounded-3xl" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-          <h3 class="font-headline text-lg font-bold text-slate-900 mb-1">저축 진행률</h3>
-          <p class="text-sm text-slate-400 mb-8">월별 누적 저축 현황</p>
-          <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 px-1" style="border-bottom:1px solid #f3f4f5;"></div>
-          <div class="flex justify-between mt-3 text-[9px] text-slate-400 uppercase tracking-widest font-semibold px-1">
-            <span>1월</span><span>2월</span><span>3월</span><span>4월</span><span>5월</span><span>6월</span>
-            <span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span>
-          </div>
-        </div>
-        <div class="bg-white p-8 rounded-3xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-          <h3 class="font-headline text-lg font-bold text-slate-900 mb-6">저축 트래커</h3>
-          <div class="space-y-5 flex-1">
-            <div>
-              <div class="flex justify-between mb-2"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">비상금</span><span id="hub-emergency-pct" class="text-xs font-bold text-slate-700">0%</span></div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div id="hub-emergency-bar" class="h-full rounded-full" style="width:0%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between mb-2"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">연간 투자</span><span id="hub-invest-pct" class="text-xs font-bold text-slate-700">0%</span></div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div id="hub-invest-bar" class="h-full bg-indigo-600 rounded-full" style="width:0%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between mb-2"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">주택 보증금</span><span id="hub-deposit-pct" class="text-xs font-bold text-slate-700">0%</span></div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div id="hub-deposit-bar" class="h-full bg-purple-500 rounded-full" style="width:0%"></div></div>
-            </div>
-          </div>
-          <div id="hub-momentum" class="mt-8 pt-6" style="border-top:1px solid #f3f4f5;">
-            <div class="bg-indigo-50/60 p-4 rounded-2xl flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-indigo-600" style="box-shadow:0px 4px 12px rgba(25,28,29,0.06);">
-                <span class="material-symbols-outlined text-sm">rocket_launch</span>
-              </div>
-              <div><p class="text-xs font-bold text-slate-800">최고 모멘텀</p><p id="hub-avg" class="text-[10px] text-slate-500">평균 $0 / 월</p></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ledger Table -->
-      <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-        <div class="px-8 py-5 bg-slate-50/50 flex justify-between items-center" style="border-bottom:1px solid #f3f4f5;">
-          <div>
-            <h3 class="font-headline text-lg font-bold text-slate-900">연간 거래 내역</h3>
-            <p id="hub-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
-          </div>
+      <!-- Monthly Artifacts Grid -->
+      <section class="mb-12 space-y-8">
+        <div class="flex items-center gap-4">
+          <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts</h2>
+          <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
           <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
           </button>
         </div>
+        <div id="hub-monthly-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
 
         <div id="hub-loading" class="flex items-center justify-center py-16 text-slate-400">
           <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
           <span class="text-sm">불러오는 중...</span>
+        </div>
+        <p id="hub-status" class="text-[10px] text-slate-400 font-medium hidden"></p>
+      </section>
+
+      <!-- Savings & Asset Composition (Memory Bloom) -->
+      <section class="bg-white rounded-3xl p-10 relative overflow-hidden mb-12" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+        <div class="absolute -left-12 -bottom-12 w-96 h-96 bg-indigo-100/30 rounded-full blur-3xl -z-10"></div>
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+          <div>
+            <span class="text-[10px] font-bold text-indigo-600 tracking-[0.3em] uppercase mb-4 block">Vault Analysis</span>
+            <h2 class="text-3xl font-extrabold font-headline tracking-tighter mb-4">저축 & 자산 구성</h2>
+            <p class="text-slate-500 mb-8 leading-relaxed text-sm">월별 누적 저축 현황과 자산 배분 전략을 한눈에 확인하세요.</p>
+            <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 px-1 mb-3" style="border-bottom:1px solid #f3f4f5;"></div>
+            <div class="flex justify-between text-[9px] text-slate-400 uppercase tracking-widest font-semibold px-1">
+              <span>1월</span><span>2월</span><span>3월</span><span>4월</span><span>5월</span><span>6월</span>
+              <span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-headline text-lg font-bold text-slate-900 mb-6">저축 트래커</h3>
+            <div class="space-y-5">
+              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
+                <div class="flex items-center gap-3">
+                  <div class="w-2.5 h-2.5 rounded-full" style="background:#6b38d4;"></div>
+                  <span class="font-bold text-sm text-slate-800">비상금</span>
+                </div>
+                <span id="hub-emergency-pct" class="font-headline font-black text-sm">0%</span>
+              </div>
+              <div id="hub-emergency-bar" class="h-2.5 rounded-full" style="width:0%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
+                <div class="flex items-center gap-3">
+                  <div class="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
+                  <span class="font-bold text-sm text-slate-800">연간 투자</span>
+                </div>
+                <span id="hub-invest-pct" class="font-headline font-black text-sm">0%</span>
+              </div>
+              <div id="hub-invest-bar" class="h-2.5 bg-indigo-600 rounded-full" style="width:0%"></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
+                <div class="flex items-center gap-3">
+                  <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
+                  <span class="font-bold text-sm text-slate-800">주택 보증금</span>
+                </div>
+                <span id="hub-deposit-pct" class="font-headline font-black text-sm">0%</span>
+              </div>
+              <div id="hub-deposit-bar" class="h-2.5 bg-purple-500 rounded-full" style="width:0%"></div>
+            </div>
+            <div id="hub-momentum" class="mt-8 p-4 rounded-2xl flex items-center gap-3" style="background:#f3f4f5;">
+              <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-indigo-600" style="box-shadow:0px 4px 12px rgba(25,28,29,0.06);">
+                <span class="material-symbols-outlined text-sm">rocket_launch</span>
+              </div>
+              <div><p class="text-xs font-bold text-slate-800">최고 모멘텀</p><p id="hub-avg" class="text-[10px] text-slate-500">평균 ₩0 / 월</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ledger Table -->
+      <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+        <div class="px-8 py-5 flex justify-between items-center" style="background:#f8f9fa;border-bottom:1px solid #f3f4f5;">
+          <div>
+            <h3 class="font-headline text-lg font-bold text-slate-900">연간 거래 내역</h3>
+          </div>
         </div>
 
         <div id="hub-table-wrap" style="display:none" class="overflow-x-auto">
@@ -5367,6 +5390,74 @@
     document.getElementById('hub-invest-bar').style.width = ip+'%';
     document.getElementById('hub-deposit-pct').textContent = dp+'%';
     document.getElementById('hub-deposit-bar').style.width = dp+'%';
+
+    // Monthly Artifacts Grid
+    var monthlyGrid = document.getElementById('hub-monthly-grid');
+    if (monthlyGrid) {
+      var MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+      var curMonth = new Date().getMonth(); // 0-based
+      var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
+      var monthData = {};
+      hubData.forEach(function(row) {
+        var date = (row[0]||'').toString();
+        var m = date.substring(5,7);
+        var amt = parseFloat((row[3]||'').toString().replace(/,/g,''))||0;
+        var type = row[4]||row[1]||'';
+        if (!m) return;
+        if (!monthData[m]) monthData[m] = {income:0,expense:0,savings:0,items:[]};
+        if (type==='수입') monthData[m].income += amt;
+        else if (type==='지출') monthData[m].expense += amt;
+        else if (type==='저축') monthData[m].savings += amt;
+        monthData[m].items.push({desc:row[2]||type, amt:amt, type:type});
+      });
+
+      monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
+        var d = monthData[m] || {income:0, expense:0, savings:0, items:[]};
+        var balance = d.income - d.expense - d.savings;
+        var hasData = d.income > 0 || d.expense > 0 || d.savings > 0;
+        var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
+        var isPending = idx > curMonth || !hasData;
+
+        if (isPending && !hasData) {
+          return '<div class="rounded-3xl overflow-hidden flex flex-col" style="background:#f3f4f5;border:2px dashed #e1e3e4;">' +
+            '<div class="px-6 py-4 flex justify-between items-center">' +
+              '<h3 class="font-headline font-bold text-lg text-slate-400">' + MONTHS_KR[idx] + '</h3>' +
+              '<span class="text-[9px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-full font-bold uppercase">Pending</span>' +
+            '</div>' +
+            '<div class="p-5 flex-grow"><div class="h-24 flex items-center justify-center"><span class="material-symbols-outlined text-slate-300 text-3xl">lock</span></div></div>' +
+            '<div class="p-4 text-center" style="background:#e7e8e9;">' +
+              '<span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">예정</span>' +
+            '</div></div>';
+        }
+
+        var activeBorder = isActive ? 'border:2px solid rgba(107,56,212,0.2);' : '';
+        var headerBg = isActive ? 'background:rgba(107,56,212,0.05);' : 'background:#f8f9fa;';
+        var badge = isActive ?
+          '<span class="text-[9px] text-white px-2.5 py-1 rounded-full font-bold uppercase" style="background:#6b38d4;">Active</span>' :
+          '<span class="text-[9px] px-2.5 py-1 rounded-full font-bold uppercase" style="background:rgba(107,56,212,0.1);color:#6b38d4;">Completed</span>';
+        var footerStyle = isActive ? 'background:#6b38d4;color:white;' : 'background:rgba(107,56,212,0.05);';
+        var balColor = isActive ? 'color:white;' : 'color:#6b38d4;';
+        var balLabel = isActive ? 'color:rgba(255,255,255,0.7);' : 'color:#94a3b8;';
+
+        return '<div class="bg-white rounded-3xl overflow-hidden flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);' + activeBorder + '">' +
+          '<div class="px-6 py-4 flex justify-between items-center" style="' + headerBg + 'border-bottom:1px solid #f3f4f5;">' +
+            '<h3 class="font-headline font-bold text-lg">' + MONTHS_KR[idx] + '</h3>' + badge +
+          '</div>' +
+          '<div class="p-5 flex-grow">' +
+            '<table class="w-full text-xs"><tbody>' +
+              '<tr><td class="py-2 text-slate-500">수입</td><td class="py-2 text-right font-bold text-emerald-600">₩' + d.income.toLocaleString('ko-KR') + '</td></tr>' +
+              '<tr style="border-top:1px solid #f3f4f5;"><td class="py-2 text-slate-500">지출</td><td class="py-2 text-right font-medium">₩' + d.expense.toLocaleString('ko-KR') + '</td></tr>' +
+              '<tr style="border-top:1px solid #f3f4f5;"><td class="py-2 text-slate-500">저축</td><td class="py-2 text-right font-medium">₩' + d.savings.toLocaleString('ko-KR') + '</td></tr>' +
+            '</tbody></table>' +
+          '</div>' +
+          '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
+            '<div class="flex justify-between items-center">' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">Balance</span>' +
+              '<span class="text-base font-black font-headline" style="' + balColor + '">₩' + balance.toLocaleString('ko-KR') + '</span>' +
+            '</div>' +
+          '</div></div>';
+      }).join('');
+    }
   }
 
   function openHubModal(idx) {
