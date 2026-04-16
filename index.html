@@ -1938,6 +1938,17 @@
     });
   })();
 
+  // ===== 모달 바깥 클릭 시 닫기 =====
+  document.addEventListener('click', function(e) {
+    var modals = document.querySelectorAll('.fixed.inset-0.z-50.bg-black\\/40');
+    modals.forEach(function(modal) {
+      if (modal.style.cssText.indexOf('none') >= 0) return; // 안 보이는 모달 무시
+      if (e.target === modal) {
+        modal.style.cssText = 'display:none!important';
+      }
+    });
+  });
+
   // ===== PLANNER GOALS (milestones 연동) =====
   let plannerGoals = [];
   let editingGoalId = null;
