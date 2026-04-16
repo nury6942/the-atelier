@@ -4310,7 +4310,7 @@
   }
 
   async function saveFinanceEntry() {
-    var btn=document.getElementById('finance-save-btn');
+    var btn=document.getElementById('fin-save-btn');
     btn.textContent='저장 중...'; btn.disabled=true;
     var currency = document.getElementById('fin-currency').value;
     var amount = document.getElementById('fin-amount').value.replace(/,/g,'');
@@ -5023,12 +5023,12 @@
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        mxTd(mxChip(row&&row[2], 'bg-rose-100 text-rose-700', d.date, 2, i), d.date, 2, i) +
-        mxTd(mxChip(row&&row[3], 'bg-red-100 text-red-700', d.date, 3, i), d.date, 3, i) +
-        mxTd(mxChip(row&&row[4], 'bg-amber-100 text-amber-700', d.date, 4, i), d.date, 4, i) +
-        mxTd(mxChip(row&&row[5], 'bg-sky-100 text-sky-700', d.date, 5, i), d.date, 5, i) +
-        mxTd(mxChip(row&&row[7], 'bg-lime-100 text-lime-700', d.date, 7, i), d.date, 7, i) +
-        mxTd(mxChip(row&&row[8], 'bg-violet-100 text-violet-700', d.date, 8, i), d.date, 8, i) +
+        mxTd(mxChip(row&&row[2], 'bg-rose-200 text-rose-800', d.date, 2, i), d.date, 2, i) +
+        mxTd(mxChip(row&&row[3], 'bg-red-200 text-red-800', d.date, 3, i), d.date, 3, i) +
+        mxTd(mxChip(row&&row[4], 'bg-amber-200 text-amber-800', d.date, 4, i), d.date, 4, i) +
+        mxTd(mxChip(row&&row[5], 'bg-sky-200 text-sky-800', d.date, 5, i), d.date, 5, i) +
+        mxTd(mxChip(row&&row[7], 'bg-lime-200 text-lime-800', d.date, 7, i), d.date, 7, i) +
+        mxTd(mxChip(row&&row[8], 'bg-violet-200 text-violet-800', d.date, 8, i), d.date, 8, i) +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1">' +
