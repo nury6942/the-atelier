@@ -4914,12 +4914,10 @@
       document.getElementById('m-personal').value = row[4] || '';
       document.getElementById('m-writing').value = row[5] || '';
       autoFillMatrixDay();
-      document.getElementById('m-serial1').value = row[6] || '';
       document.getElementById('m-english').value = row[7] || '';
       document.getElementById('m-ai').value = row[8] || '';
-      if(document.getElementById('m-workingout')) document.getElementById('m-workingout').value = row[9] || '';
     } else {
-      ['m-date','m-work','m-leave','m-personal','m-writing','m-serial1','m-english','m-ai','m-workingout','m-date-end'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      ['m-date','m-work','m-leave','m-personal','m-writing','m-english','m-ai','m-date-end'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       const today = new Date();
       document.getElementById('m-date').value = today.toISOString().split('T')[0];
       autoFillMatrixDay();
@@ -4968,10 +4966,10 @@
       document.getElementById('m-leave').value,
       document.getElementById('m-personal').value,
       document.getElementById('m-writing').value,
-      document.getElementById('m-serial1').value,
+      '',
       document.getElementById('m-english').value,
       document.getElementById('m-ai').value,
-      document.getElementById('m-workingout') ? document.getElementById('m-workingout').value : '',
+      '',
     ];
     try {
       var dateEnd = document.getElementById('m-date-end') ? document.getElementById('m-date-end').value : '';
