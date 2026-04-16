@@ -4934,19 +4934,23 @@
         : '<span class="text-[12px] font-mono ' + (isWeekend?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>';
 
       function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
+        var dropZone = 'ondragover="event.preventDefault();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ondrop="event.preventDefault();this.classList.remove(\'ring-2\',\'ring-indigo-400\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')"';
         if (!val) return '<span class="text-slate-200 cursor-pointer hover:text-indigo-400 transition-colors" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">+</span>';
-        return '<span class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">' + val + '</span>';
+        return '<span draggable="true" ondragstart="mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">' + val + '</span>';
+      }
+      function mxTd(content, dateStr, fieldIdx) {
+        return '<td class="px-5 py-2.5 rounded transition-all" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + content + '</td>';
       }
 
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i) + '</td>' +
+        mxTd(mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i), d.date, 2) +
+        mxTd(mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i), d.date, 3) +
+        mxTd(mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i), d.date, 4) +
+        mxTd(mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i), d.date, 5) +
+        mxTd(mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i), d.date, 7) +
+        mxTd(mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i), d.date, 8) +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1">' +
@@ -5207,6 +5211,56 @@
     var id = existing[10]||existing[9];
     if (id) await fbUpdate('matrix', id, rowToObj('matrix', existing));
     try { await syncMatrixToPlanner(existing); } catch(e){}
+    renderMatrixTable();
+    updateLeaveTracker();
+    renderCalendar(); updatePlannerTracks();
+  }
+
+  // ===== 매트릭스 드래그 & 드롭 =====
+  var _mxDragSource = null; // {date, fieldIdx, val}
+
+  function mxDragStart(e, dateStr, fieldIdx) {
+    var srcRow = matrixData.find(function(r){return r[0]===dateStr;});
+    if (!srcRow) return;
+    _mxDragSource = { date: dateStr, fieldIdx: fieldIdx, val: srcRow[fieldIdx] };
+    e.dataTransfer.setData('text/plain', 'mx-drag');
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.style.opacity = '0.4';
+  }
+
+  async function mxDropCell(e, targetDate, targetFieldIdx) {
+    if (!_mxDragSource) return;
+    var src = _mxDragSource;
+    _mxDragSource = null;
+    if (src.date === targetDate && src.fieldIdx === targetFieldIdx) return; // 같은 셀
+
+    var days = ['일','월','화','수','목','금','토'];
+
+    // 1. 원본 셀 비우기
+    var srcRow = matrixData.find(function(r){return r[0]===src.date;});
+    if (srcRow) {
+      srcRow[src.fieldIdx] = '';
+      var srcId = srcRow[10]||srcRow[9];
+      if (srcId) await fbUpdate('matrix', srcId, rowToObj('matrix', srcRow));
+      try { await syncMatrixToPlanner(srcRow); } catch(e2){}
+    }
+
+    // 2. 타겟 셀에 값 넣기
+    var tgtRow = matrixData.find(function(r){return r[0]===targetDate;});
+    if (tgtRow) {
+      tgtRow[targetFieldIdx] = src.val;
+      var tgtId = tgtRow[10]||tgtRow[9];
+      if (tgtId) await fbUpdate('matrix', tgtId, rowToObj('matrix', tgtRow));
+      try { await syncMatrixToPlanner(tgtRow); } catch(e2){}
+    } else {
+      var dd = new Date(targetDate+'T00:00:00');
+      var newRow = [targetDate, days[dd.getDay()], '','','','','','','',''];
+      newRow[targetFieldIdx] = src.val;
+      var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
+      matrixData.push(newRow.concat([saved._id]));
+      try { await syncMatrixToPlanner(newRow); } catch(e2){}
+    }
+
     renderMatrixTable();
     updateLeaveTracker();
     renderCalendar(); updatePlannerTracks();
