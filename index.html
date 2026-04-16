@@ -4685,8 +4685,10 @@
     initFlatpickr('m-date-end', {});
   }
   function initCityDatePickers() {
-    initFlatpickr('city-start', { onChange: function(d){ if(d[0]&&fpInstances['city-end']){ var next=new Date(d[0]); next.setDate(next.getDate()+1); fpInstances['city-end'].set('minDate',next); if(!fpInstances['city-end'].selectedDates.length) fpInstances['city-end'].open(); } }});
-    var sv = document.getElementById('city-start'); initFlatpickr('city-end', { minDate: sv&&sv.value ? (function(){ var n=new Date(sv.value+'T00:00:00'); n.setDate(n.getDate()+1); return n; })() : null });
+    initFlatpickr('city-start', { onChange: function(d){ if(d[0]&&fpInstances['city-end']){ var next=new Date(d[0]); next.setDate(next.getDate()+1); fpInstances['city-end'].set('minDate',next); fpInstances['city-end'].jumpTo(next); if(!fpInstances['city-end'].selectedDates.length) fpInstances['city-end'].open(); } }});
+    var sv = document.getElementById('city-start');
+    var minD = sv&&sv.value ? (function(){ var n=new Date(sv.value+'T00:00:00'); n.setDate(n.getDate()+1); return n; })() : null;
+    initFlatpickr('city-end', { minDate: minD, onOpen: function(){ if(minD && !this.selectedDates.length) this.jumpTo(minD); } });
   }
   function initJourneyDatePickers() {
     setTimeout(function(){ ['jf-date','jf-payment-date'].forEach(function(id){ if(document.getElementById(id)) initFlatpickr(id,{}); }); }, 150);
