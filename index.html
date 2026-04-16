@@ -2816,6 +2816,7 @@
       if (el && fieldMap[id]) el.value = fieldMap[id];
     });
     document.getElementById('journey-modal').style.cssText = 'display:flex!important';
+    if (item.type === '숙소') setTimeout(initPlacesAutocomplete, 100);
   }
 
   function openEditTripModal(tripId) {
@@ -2853,16 +2854,29 @@
     if (!input || !input.dataset.autocomplete || typeof google === 'undefined') return;
     var autocomplete = new google.maps.places.Autocomplete(input, {
       types: ['lodging', 'establishment'],
+      fields: ['geometry', 'name', 'formatted_address', 'formatted_phone_number'],
     });
     autocomplete.addListener('place_changed', function() {
       var place = autocomplete.getPlace();
       if (!place.geometry) return;
-      // Fill address
+      input.value = place.name || input.value;
       var addrEl = document.getElementById('jf-address');
       if (addrEl && place.formatted_address) addrEl.value = place.formatted_address;
-      // Fill phone
       var phoneEl = document.getElementById('jf-phone');
       if (phoneEl && place.formatted_phone_number) phoneEl.value = place.formatted_phone_number;
+    });
+  }
+
+  function initCityPlacesAutocomplete() {
+    var input = document.getElementById('city-name');
+    if (!input || typeof google === 'undefined') return;
+    var autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ['(cities)'],
+      fields: ['name'],
+    });
+    autocomplete.addListener('place_changed', function() {
+      var place = autocomplete.getPlace();
+      if (place.name) input.value = place.name;
     });
   }
 
@@ -4696,7 +4710,7 @@
   function initSimpleDatePicker(id) { initFlatpickr(id, {}); }
 
   var _origOpenCityModal = openCityModal;
-  openCityModal = function() { _origOpenCityModal.apply(this,arguments); setTimeout(initCityDatePickers,80); };
+  openCityModal = function() { _origOpenCityModal.apply(this,arguments); setTimeout(initCityDatePickers,80); setTimeout(initCityPlacesAutocomplete,100); };
   var _origOpenTripModal = openTripModal;
   openTripModal = function() { _origOpenTripModal.apply(this,arguments); setTimeout(initTripDatePickers,80); };
   var _origOpenEditTripModal = openEditTripModal;
