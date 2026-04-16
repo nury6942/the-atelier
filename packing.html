@@ -213,6 +213,13 @@
           <span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">library_add</span>
           <span class="font-semibold">카테고리 추가</span>
         </button>
+
+        <!-- Template Import Button -->
+        <button onclick="importPackingTemplate()" id="btn-import-template" class="w-full py-6 border-2 border-dashed border-secondary/20 rounded-3xl flex flex-col items-center justify-center text-secondary hover:bg-secondary/5 hover:border-secondary/40 transition-all group">
+          <span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">playlist_add</span>
+          <span class="font-semibold text-sm">템플릿 불러오기</span>
+          <span class="text-[10px] text-outline mt-0.5">기본 패킹 리스트 한번에 추가</span>
+        </button>
       </div>
     </div>
   </main>
@@ -707,6 +714,51 @@
         renderCategories();
         renderProgress();
       } catch (err) { alert('삭제에 실패했어요.'); }
+    }
+
+    // ===== Template Import =====
+    var PACKING_TEMPLATE = [
+      { category: '잠옷/수영복', icon: 'checkroom', items: ['잠옷 1','잠옷 2','잠옷 3','수영복'] },
+      { category: '신발', icon: 'steps', items: ['가호 운동화','메쉬 운동화 (신기)'] },
+      { category: '가방', icon: 'shopping_bag', items: ['아코크 가방'] },
+      { category: '속옷', icon: 'checkroom', items: ['누브라 1개','팬티 8개','양말 8개'] },
+      { category: 'ACC', icon: 'star', items: ['어나더 향수','제이에스티나 귀걸이 / 이어커프','머리빗','봉 고데기'] },
+      { category: '세면도구', icon: 'spa', items: ['헤어밴드','치약 & 칫솔','샤워볼','바디워시 / 샴푸 / 린스','클렌징폼 / 아이리무버 + 솜','스킨 / 시카이드 크림'] },
+      { category: '화장품', icon: 'brush', items: ['헤어 에센스','헤어 스프레이','썬크림','눈 연고 & 머리 약'] },
+      { category: '일반 준비물', icon: 'luggage', items: ['휴대용 물티슈','기본 펜 & 네임펜','우산','손톱깎이','책','생리대 (시작 안했으면)','상비약'] },
+      { category: '전자제품', icon: 'devices', items: ['아이패드 / 애플워치 / 에어팟','보조배터리','충전기 / 돼지코','eSIM','여러 랜선들'] },
+      { category: '항공', icon: 'flight', items: ['여권 / 여권 사본 / 여권 사진','국제운전면허증'] },
+      { category: '돈', icon: 'payments', items: ['환전 (캐쉬)','비상용 체크 & 신용카드'] },
+      { category: '보험', icon: 'shield', items: ['마이뱅크'] }
+    ];
+
+    async function importPackingTemplate() {
+      if (!currentTripId) { alert('여행을 먼저 선택해줘!'); return; }
+      if (!confirm('기본 패킹 템플릿 (12개 카테고리)을 추가할까요?')) return;
+      var btn = document.getElementById('btn-import-template');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-2xl mb-1 animate-spin">progress_activity</span><span class="font-semibold text-sm">추가 중...</span>';
+      try {
+        for (var i = 0; i < PACKING_TEMPLATE.length; i++) {
+          var tpl = PACKING_TEMPLATE[i];
+          var items = tpl.items.map(function(name) { return { name: name, checked: false }; });
+          var obj = { trip_id: currentTripId, category: tpl.category, icon: tpl.icon, items: items };
+          var saved = await fbAdd('packing', obj);
+          packingData.push(saved);
+        }
+        renderCategories();
+        renderProgress();
+        btn.innerHTML = '<span class="material-symbols-outlined text-2xl mb-1 text-emerald-500">check_circle</span><span class="font-semibold text-sm text-emerald-600">추가 완료!</span>';
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">playlist_add</span><span class="font-semibold text-sm">템플릿 불러오기</span><span class="text-[10px] text-outline mt-0.5">기본 패킹 리스트 한번에 추가</span>';
+        }, 2000);
+      } catch (err) {
+        alert('추가에 실패했어요: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-2xl mb-1 group-hover:scale-110 transition-transform">playlist_add</span><span class="font-semibold text-sm">템플릿 불러오기</span><span class="text-[10px] text-outline mt-0.5">기본 패킹 리스트 한번에 추가</span>';
+        console.error(err);
+      }
     }
 
     // ===== Helpers =====
