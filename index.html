@@ -6622,6 +6622,49 @@
     try { await fbUpdate('packing',pkData[ci]._id,{items:pkData[ci].items}); pkRenderCategories(); pkRenderProgress(); } catch(e){alert('삭제 실패');}
   }
 
+  // ===== Packing Template Import =====
+  var PK_TEMPLATE = [
+    { category: '잠옷/수영복', icon: 'checkroom', items: ['잠옷 1','잠옷 2','잠옷 3','수영복'] },
+    { category: '신발', icon: 'steps', items: ['가호 운동화','메쉬 운동화 (신기)'] },
+    { category: '가방', icon: 'shopping_bag', items: ['아코크 가방'] },
+    { category: '속옷', icon: 'checkroom', items: ['누브라 1개','팬티 8개','양말 8개'] },
+    { category: 'ACC', icon: 'star', items: ['어나더 향수','제이에스티나 귀걸이 / 이어커프','머리빗','봉 고데기'] },
+    { category: '세면도구', icon: 'spa', items: ['헤어밴드','치약 & 칫솔','샤워볼','바디워시 / 샴푸 / 린스','클렌징폼 / 아이리무버 + 솜','스킨 / 시카이드 크림'] },
+    { category: '화장품', icon: 'brush', items: ['헤어 에센스','헤어 스프레이','썬크림','눈 연고 & 머리 약'] },
+    { category: '일반 준비물', icon: 'luggage', items: ['휴대용 물티슈','기본 펜 & 네임펜','우산','손톱깎이','책','생리대 (시작 안했으면)','상비약'] },
+    { category: '전자제품', icon: 'devices', items: ['아이패드 / 애플워치 / 에어팟','보조배터리','충전기 / 돼지코','eSIM','여러 랜선들'] },
+    { category: '항공', icon: 'flight', items: ['여권 / 여권 사본 / 여권 사진','국제운전면허증'] },
+    { category: '돈', icon: 'payments', items: ['환전 (캐쉬)','비상용 체크 & 신용카드'] },
+    { category: '보험', icon: 'shield', items: ['마이뱅크'] }
+  ];
+
+  async function pkImportTemplate() {
+    if (!pkTripId) { alert('여행을 먼저 선택해줘!'); return; }
+    if (!confirm('기본 패킹 템플릿 (12개 카테고리)을 추가할까요?')) return;
+    var btn = document.getElementById('pk-btn-template');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:18px">progress_activity</span> 추가 중...';
+    try {
+      for (var i = 0; i < PK_TEMPLATE.length; i++) {
+        var tpl = PK_TEMPLATE[i];
+        var items = tpl.items.map(function(name) { return { name: name, checked: false }; });
+        var saved = await fbAdd('packing', { trip_id: pkTripId, category: tpl.category, icon: tpl.icon, items: items });
+        pkData.push(saved);
+      }
+      pkRenderCategories();
+      pkRenderProgress();
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span> 추가 완료!';
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기';
+      }, 2000);
+    } catch (err) {
+      alert('추가 실패: ' + err.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기';
+    }
+  }
+
 </script>
 
   <!-- PACKING PAGE -->
@@ -6652,6 +6695,9 @@
                   <div id="pk-progress-bar" class="h-full gradient-primary rounded-full transition-all" style="width:0%"></div>
                 </div>
               </div>
+              <button onclick="pkImportTemplate()" id="pk-btn-template" class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white gradient-primary hover:opacity-90 active:scale-95 transition-all shadow-sm whitespace-nowrap">
+                <span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기
+              </button>
             </div>
           </div>
         </div>
