@@ -2871,20 +2871,43 @@
   }
 
   var _cityAutocomplete = null;
+  var _cityAutocompleteFailed = false;
   function initCityPlacesAutocomplete() {
-    var input = document.getElementById('city-name');
-    if (!input || typeof google === 'undefined' || typeof google.maps === 'undefined') return;
-    if (_cityAutocomplete) { google.maps.event.clearInstanceListeners(_cityAutocomplete); _cityAutocomplete = null; }
-    _cityAutocomplete = new google.maps.places.Autocomplete(input, {
-      types: ['(cities)'],
-      fields: ['name'],
-    });
-    _cityAutocomplete.addListener('place_changed', function() {
-      var place = _cityAutocomplete.getPlace();
-      if (place.name) input.value = place.name;
-    });
-    // pac-container가 모달 위에 뜨도록 z-index 보장
-    setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
+    if (_cityAutocompleteFailed) return;
+    try {
+      var input = document.getElementById('city-name');
+      if (!input || typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
+      if (_cityAutocomplete) { try { google.maps.event.clearInstanceListeners(_cityAutocomplete); } catch(e){} _cityAutocomplete = null; }
+      var savedVal = input.value;
+      _cityAutocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['(cities)'],
+        fields: ['name'],
+      });
+      _cityAutocomplete.addListener('place_changed', function() {
+        var place = _cityAutocomplete.getPlace();
+        if (place.name) input.value = place.name;
+      });
+      // API 오류 시 input 복원 (!!!! 감지)
+      setTimeout(function(){
+        if (input.value === '!!!!' || input.value.indexOf('!') === 0) {
+          input.value = savedVal;
+          _cityAutocompleteFailed = true;
+          _cityAutocomplete = null;
+          // pac-container 제거
+          var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.remove(); });
+          // input을 새 것으로 교체하여 autocomplete 바인딩 해제
+          var newInput = input.cloneNode(true);
+          input.parentNode.replaceChild(newInput, input);
+          console.warn('City Places Autocomplete disabled due to API error');
+        } else {
+          var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; });
+        }
+      }, 500);
+    } catch(e) {
+      console.warn('City Places Autocomplete init failed:', e);
+      _cityAutocomplete = null;
+      _cityAutocompleteFailed = true;
+    }
   }
 
   function toggleCancelDate() {
