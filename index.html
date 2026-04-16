@@ -2200,8 +2200,9 @@
       matrixData = matrixDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       var days = ['일','월','화','수','목','금','토'];
-      // 캘린더 데이터를 날짜+필드별로 수집 (다중 항목 합치기)
-      var plannerByDateField = {};
+      // 캘린더→매트릭스 전체 동기화 (날짜별로 모든 필드 재구성)
+      var MAPPED_FIELDS = [2,3,4,5,7,8]; // work,leave,personal,writing,english,ai_study
+      var plannerByDate = {};
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
@@ -2212,32 +2213,39 @@
         var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
         while (sCur <= sEndD) {
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
-          var key = sDs + '_' + sFIdx;
-          if (!plannerByDateField[key]) plannerByDateField[key] = { date: sDs, fieldIdx: sFIdx, values: [] };
-          if (plannerByDateField[key].values.indexOf(sRow[1]) === -1) plannerByDateField[key].values.push(sRow[1]);
+          if (!plannerByDate[sDs]) plannerByDate[sDs] = {};
+          if (!plannerByDate[sDs][sFIdx]) plannerByDate[sDs][sFIdx] = [];
+          if (plannerByDate[sDs][sFIdx].indexOf(sRow[1]) === -1) plannerByDate[sDs][sFIdx].push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
         }
       }
-      // 매트릭스에 반영
       var matrixSynced = 0;
-      Object.keys(plannerByDateField).forEach(async function(key) {
-        var item = plannerByDateField[key];
-        var merged = item.values.join(', ');
-        var sMRow = matrixData.find(function(r){return r[0]===item.date;});
+      var syncDates = Object.keys(plannerByDate);
+      for (var sd = 0; sd < syncDates.length; sd++) {
+        var dateStr = syncDates[sd];
+        var fieldMap = plannerByDate[dateStr];
+        var sMRow = matrixData.find(function(r){return r[0]===dateStr;});
+        var needUpdate = false;
         if (sMRow) {
-          if (sMRow[item.fieldIdx] !== merged) {
-            sMRow[item.fieldIdx] = merged;
+          for (var mf = 0; mf < MAPPED_FIELDS.length; mf++) {
+            var fi = MAPPED_FIELDS[mf];
+            var expected = fieldMap[fi] ? fieldMap[fi].join(', ') : '';
+            if (sMRow[fi] !== expected) { sMRow[fi] = expected; needUpdate = true; }
+          }
+          if (needUpdate) {
             var smId = sMRow[10]||sMRow[9];
-            if (smId) try { await fbUpdate('matrix', smId, rowToObj('matrix', sMRow)); } catch(e){}
-            matrixSynced++;
+            if (smId) try { await fbUpdate('matrix', smId, rowToObj('matrix', sMRow)); matrixSynced++; } catch(e){}
           }
         } else {
-          var dd = new Date(item.date+'T00:00:00');
-          var sNewRow = [item.date, days[dd.getDay()], '','','','','','','',''];
-          sNewRow[item.fieldIdx] = merged;
+          var dd = new Date(dateStr+'T00:00:00');
+          var sNewRow = [dateStr, days[dd.getDay()], '','','','','','','',''];
+          for (var mf2 = 0; mf2 < MAPPED_FIELDS.length; mf2++) {
+            var fi2 = MAPPED_FIELDS[mf2];
+            if (fieldMap[fi2]) sNewRow[fi2] = fieldMap[fi2].join(', ');
+          }
           try { var sSaved = await fbAdd('matrix', rowToObj('matrix', sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++; } catch(e){}
         }
-      });
+      }
       if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
       renderCalendar();
       updatePlannerTracks();
@@ -4884,9 +4892,10 @@
 
       // 캘린더→매트릭스 동기화
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+      var MAPPED_FIELDS = [2,3,4,5,7,8];
       var dayNames = ['일','월','화','수','목','금','토'];
-      // 캘린더 데이터를 날짜+필드별로 수집
-      var pByDF = {};
+      // 캘린더→매트릭스 전체 동기화
+      var pByDate = {};
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
@@ -4897,30 +4906,31 @@
         var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
         while (sCur <= sEndD) {
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
-          var key = sDs+'_'+sFIdx;
-          if (!pByDF[key]) pByDF[key] = {date:sDs,fi:sFIdx,vals:[]};
-          if (pByDF[key].vals.indexOf(sRow[1])===-1) pByDF[key].vals.push(sRow[1]);
+          if (!pByDate[sDs]) pByDate[sDs] = {};
+          if (!pByDate[sDs][sFIdx]) pByDate[sDs][sFIdx] = [];
+          if (pByDate[sDs][sFIdx].indexOf(sRow[1])===-1) pByDate[sDs][sFIdx].push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
         }
       }
       var synced = 0;
-      var pKeys = Object.keys(pByDF);
-      for (var pk = 0; pk < pKeys.length; pk++) {
-        var item = pByDF[pKeys[pk]];
-        var merged = item.vals.join(', ');
-        var sMRow = matrixData.find(function(r){return r[0]===item.date;});
+      var sdKeys = Object.keys(pByDate);
+      for (var sdk = 0; sdk < sdKeys.length; sdk++) {
+        var dateStr2 = sdKeys[sdk];
+        var fMap = pByDate[dateStr2];
+        var sMRow = matrixData.find(function(r){return r[0]===dateStr2;});
+        var needUp = false;
         if (sMRow) {
-          if (sMRow[item.fi] !== merged) {
-            sMRow[item.fi] = merged;
-            var smId = sMRow[10]||sMRow[9];
-            if (smId) try { await fbUpdate('matrix', smId, rowToObj('matrix', sMRow)); } catch(e){}
-            synced++;
+          for (var mf = 0; mf < MAPPED_FIELDS.length; mf++) {
+            var fi = MAPPED_FIELDS[mf];
+            var exp = fMap[fi] ? fMap[fi].join(', ') : '';
+            if (sMRow[fi] !== exp) { sMRow[fi] = exp; needUp = true; }
           }
+          if (needUp) { var smId = sMRow[10]||sMRow[9]; if(smId) try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow)); synced++;}catch(e){} }
         } else {
-          var dd = new Date(item.date+'T00:00:00');
-          var sNewRow = [item.date, dayNames[dd.getDay()], '','','','','','','',''];
-          sNewRow[item.fi] = merged;
-          try { var sSaved = await fbAdd('matrix', rowToObj('matrix', sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++; } catch(e){}
+          var dd = new Date(dateStr2+'T00:00:00');
+          var sNewRow = [dateStr2, dayNames[dd.getDay()], '','','','','','','',''];
+          for (var mf2=0; mf2<MAPPED_FIELDS.length; mf2++) { var fi2=MAPPED_FIELDS[mf2]; if(fMap[fi2]) sNewRow[fi2]=fMap[fi2].join(', '); }
+          try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++;}catch(e){}
         }
       }
       if (synced > 0) console.log('Matrix synced on load:', synced);
