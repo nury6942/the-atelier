@@ -2706,7 +2706,7 @@
       {id:'jf-date', label:'날짜', type:'date'},
       {id:'jf-time', label:'시간', type:'text', placeholder:'예: 09:00'},
       {id:'jf-city', label:'도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
-      {id:'jf-title', label:'제목 *', type:'text', placeholder:'예: 구시가지 광장 투어'},
+      {id:'jf-title', label:'여행지 *', type:'text', placeholder:'예: 구시가지 광장 투어', autocomplete:'place'},
       {id:'jf-desc', label:'설명', type:'text', placeholder:'예: 천문 시계 앞에서 만나...'},
     ];
     if (type === '이동수단') return [
@@ -2775,8 +2775,9 @@
       }
     }
     document.getElementById('journey-modal').style.cssText = 'display:flex!important';
-    // Init places autocomplete if lodging type
+    // Init places autocomplete
     if (type === '숙소') setTimeout(initPlacesAutocomplete, 100);
+    if (type === '일정') setTimeout(initSchedulePlacesAutocomplete, 100);
   }
 
   function editJourneyItem(idx) {
@@ -2821,6 +2822,7 @@
     });
     document.getElementById('journey-modal').style.cssText = 'display:flex!important';
     if (item.type === '숙소') setTimeout(initPlacesAutocomplete, 100);
+    if (item.type === '일정') setTimeout(initSchedulePlacesAutocomplete, 100);
   }
 
   function openEditTripModal(tripId) {
@@ -2892,6 +2894,29 @@
     } catch(e) {
       console.warn('City Places Autocomplete init failed:', e);
       _cityAutocomplete = null;
+    }
+  }
+
+  var _scheduleAutocomplete = null;
+  function initSchedulePlacesAutocomplete() {
+    try {
+      var input = document.getElementById('jf-title');
+      if (!input || !input.dataset.autocomplete || typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
+      if (_scheduleAutocomplete) { try { google.maps.event.clearInstanceListeners(_scheduleAutocomplete); } catch(e){} _scheduleAutocomplete = null; }
+      _scheduleAutocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['establishment'],
+        fields: ['name', 'formatted_address'],
+      });
+      _scheduleAutocomplete.addListener('place_changed', function() {
+        var place = _scheduleAutocomplete.getPlace();
+        if (place.name) input.value = place.name;
+        var descEl = document.getElementById('jf-desc');
+        if (descEl && place.formatted_address && !descEl.value) descEl.value = place.formatted_address;
+      });
+      setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
+    } catch(e) {
+      console.warn('Schedule Places Autocomplete init failed:', e);
+      _scheduleAutocomplete = null;
     }
   }
 
