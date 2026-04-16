@@ -4893,12 +4893,16 @@
     let todayRow = null;
     let currentMonth = '';
 
+    var matrixHolidays = getKoreanHolidays(2026);
+
     allDates.forEach(function(d) {
       const entry = dataMap[d.date];
       const row = entry ? entry.row : null;
       const i = entry ? entry.idx : -1;
       const day = d.day;
       const isWeekend = WEEKEND.includes(day);
+      const isHoliday = !!matrixHolidays[d.date];
+      const isRedDay = isWeekend || isHoliday;
       const hasData = row && (row[2]||row[3]||row[4]||row[5]||row[7]||row[8]);
       const isToday = d.date === todayStr;
       const monthKey = d.date.slice(0,7);
@@ -4916,11 +4920,12 @@
       }
 
       const tr = document.createElement('tr');
-      tr.className = isWeekend
-        ? 'bg-rose-50/60 hover:bg-rose-100/50 transition-colors border-b border-rose-100 group'
-        : (isToday
-          ? 'bg-indigo-50/60 border-b border-indigo-200 group'
+      tr.className = isToday
+        ? 'bg-indigo-50/60 border-b border-indigo-200 group'
+        : (isRedDay
+          ? 'border-b border-rose-100 group' + ' ' + 'transition-colors hover:bg-rose-100/50'
           : 'hover:bg-slate-50/50 transition-colors border-b border-slate-50/80 group');
+      if (isRedDay && !isToday) tr.style.backgroundColor = 'rgba(255,0,0,0.04)';
 
       if (isToday) {
         tr.id = 'matrix-today-row';
@@ -4929,9 +4934,11 @@
 
       var dateParts = d.date.slice(5).split('-');
       var dateLabel = dateParts[0] + '/' + dateParts[1];
+      var holidayName = matrixHolidays[d.date]||'';
       const dateDisplay = isToday
         ? '<span class="inline-flex items-center justify-center gradient-primary text-white rounded-full text-[10px] font-bold px-2 py-0.5">' + dateLabel + '</span>'
-        : '<span class="text-[12px] font-mono ' + (isWeekend?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>';
+        : '<span class="text-[12px] font-mono ' + (isRedDay?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>' +
+          (holidayName ? '<span class="text-[8px] text-rose-400 font-bold ml-1">' + holidayName + '</span>' : '');
 
       function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
         if (!val) return '';
@@ -4943,7 +4950,7 @@
 
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
-        '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
+        '<td class="px-5 py-2.5 text-xs font-bold ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
         mxTd(mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i), d.date, 2, i) +
         mxTd(mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i), d.date, 3, i) +
         mxTd(mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i), d.date, 4, i) +
