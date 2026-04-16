@@ -2215,7 +2215,14 @@
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
           if (!plannerByDate[sDs]) plannerByDate[sDs] = {};
           if (!plannerByDate[sDs][sFIdx]) plannerByDate[sDs][sFIdx] = [];
-          plannerByDate[sDs][sFIdx].push(sRow[1]);
+          // 연차: notes에서 일수 가져와서 "1.0 체코여행" 형태로
+          var syncVal = sRow[1];
+          if ((sRow[2]||'').trim() === '연차') {
+            var lm = (sRow[4]||'').match(/^leave:([\d.]+)/);
+            var ld = lm ? lm[1] : '1.0';
+            syncVal = ld + ' ' + sRow[1];
+          }
+          plannerByDate[sDs][sFIdx].push(syncVal);
           sCur.setDate(sCur.getDate()+1);
         }
       }
@@ -2439,7 +2446,7 @@
         const track = CAT_TRACK[row[2]];
         if (track) {
           if (track === 'vacation') {
-            var lm = (row[1]||'').match(/^([\d.]+)/);
+            var lm = (row[4]||'').match(/^leave:([\d.]+)/);
             counts[track] += lm ? parseFloat(lm[1]) : 1;
           } else {
             counts[track]++;
@@ -2554,18 +2561,15 @@
       const row = plannerData[editingPlannerIndex];
       document.getElementById('p-date').value = row[0]||'';
       document.getElementById('p-category').value = row[2]||'업무';
-      // 연차: "1.0 체코여행" → 일수와 제목 분리
+      document.getElementById('p-title').value = row[1]||'';
+      // 연차: notes에서 일수 파싱 ("leave:1.0 ...")
       if (row[2] === '연차') {
-        var leaveMatch = (row[1]||'').match(/^([\d.]+)\s*(.*)/);
-        if (leaveMatch) {
-          document.getElementById('p-leave-day').value = leaveMatch[1];
-          document.getElementById('p-title').value = leaveMatch[2];
-        } else {
-          document.getElementById('p-title').value = row[1]||'';
-        }
+        var lMatch = (row[4]||'').match(/^leave:([\d.]+)/);
+        document.getElementById('p-leave-day').value = lMatch ? lMatch[1] : '1.0';
         document.getElementById('p-leave-day-wrap').style.display = 'block';
+        // notes에서 leave: 부분 제거해서 표시
+        document.getElementById('p-notes').value = (row[4]||'').replace(/^leave:[\d.]+\s*/, '');
       } else {
-        document.getElementById('p-title').value = row[1]||'';
         document.getElementById('p-leave-day-wrap').style.display = 'none';
       }
       document.getElementById('p-notes').value = row[4]||'';
@@ -2599,19 +2603,18 @@
     var maxOrder = 0;
     plannerData.forEach(function(r){ if (r[0] === dateVal && (parseInt(r[6])||0) >= maxOrder) maxOrder = (parseInt(r[6])||0) + 1; });
     var pTitle = document.getElementById('p-title').value;
-    // 연차일 때 제목 앞에 일수 추가 (매트릭스 트래커 연동)
+    var pNotes = document.getElementById('p-notes').value;
+    // 연차일 때 일수를 notes에 저장 (제목은 깔끔하게 유지)
     if (pCat === '연차') {
       var leaveDay = document.getElementById('p-leave-day').value;
-      if (pTitle && !pTitle.match(/^[\d.]+\s/)) {
-        pTitle = leaveDay + ' ' + pTitle;
-      }
+      pNotes = 'leave:' + leaveDay + (pNotes ? ' ' + pNotes : '');
     }
     const row = [
       dateVal,
       pTitle,
       pCat,
       CAT_COLOR[pCat] || 'mint',
-      document.getElementById('p-notes').value,
+      pNotes,
       document.getElementById('p-date-end').value || '',
       editingPlannerIndex !== null ? (plannerData[editingPlannerIndex][6]||'0') : String(maxOrder),
     ];
@@ -4933,7 +4936,9 @@
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
           if (!pByDate[sDs]) pByDate[sDs] = {};
           if (!pByDate[sDs][sFIdx]) pByDate[sDs][sFIdx] = [];
-          pByDate[sDs][sFIdx].push(sRow[1]);
+          var sv = sRow[1];
+          if ((sRow[2]||'').trim()==='연차') { var lm2=(sRow[4]||'').match(/^leave:([\d.]+)/); sv=(lm2?lm2[1]:'1.0')+' '+sRow[1]; }
+          pByDate[sDs][sFIdx].push(sv);
           sCur.setDate(sCur.getDate()+1);
         }
       }
