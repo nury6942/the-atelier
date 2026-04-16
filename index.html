@@ -1802,7 +1802,7 @@
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="p-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="p-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
-                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>글쓰기</option><option>영어</option><option>스터디</option><option>업무</option><option>개인</option><option>휴가</option></select></div></div>
+                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white"><option>글쓰기</option><option>영어</option><option>스터디</option><option>업무</option><option>개인</option><option>휴가</option><option>연차</option></select></div></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="p-notes" type="text" placeholder="예: 3회차까지 마무리"  class="atl-input w-full"/></div></div>
           <!-- 반복 설정 -->
           <div id="p-repeat-section">
@@ -2096,7 +2096,7 @@
   };
   const CAT_COLOR = {
     '글쓰기':'sky','영어':'lime','스터디':'violet',
-    '업무':'rose','개인':'amber','휴가':'orange'
+    '업무':'rose','개인':'amber','휴가':'orange','연차':'red'
   };
 
   // ===== 대한민국 공휴일 =====
@@ -3748,10 +3748,11 @@
     '업무':   'bg-green-50 text-green-700 border-green-100',
     '개인':   'bg-purple-50 text-purple-700 border-purple-100',
     '휴가':   'bg-orange-50 text-orange-700 border-orange-100',
+    '연차':   'bg-red-50 text-red-700 border-red-100',
   };
   const TRACK_BARS = {
     '글쓰기':'bg-accent-sky','영어':'bg-accent-lime','스터디':'bg-accent-violet',
-    '업무':'bg-accent-rose','개인':'bg-accent-amber','휴가':'bg-accent-orange'
+    '업무':'bg-accent-rose','개인':'bg-accent-amber','휴가':'bg-accent-orange','연차':'bg-red-400'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
@@ -3802,7 +3803,7 @@
     });
 
     const container = document.getElementById('dashboard-tracks');
-    const cats = ['글쓰기','영어','스터디','운동','업무','개인','휴가'];
+    const cats = ['글쓰기','영어','스터디','운동','업무','개인','휴가','연차'];
     const max = Math.max(...cats.map(function(c){ return counts[c]||0; }), 1);
 
     container.innerHTML = cats.map(function(cat) {
@@ -4315,6 +4316,7 @@
     '업무': 'work',
     '개인': 'personal',
     '휴가': 'leave',
+    '연차': 'leave',
   };
 
   async function syncPlannerToMatrix(plannerRow) {
