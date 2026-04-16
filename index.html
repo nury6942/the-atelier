@@ -1569,9 +1569,10 @@
         <div class="atl-modal-body">
           <div class="atl-field"><label>수업명 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">school</span><input id="e-name" type="text" placeholder="예: Intermediate Business English"  class="atl-input w-full"/></div></div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="e-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>상태</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">check_circle</span><select id="e-status"  class="atl-input w-full bg-white"><option>예정</option><option>완료</option><option>결석</option></select></div></div></div>
-                    <div class="atl-grid-2">          <div class="atl-field"><label>트랙</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">track_changes</span><input id="e-track" type="text" placeholder="예: Speaking"  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>수강료</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="e-fee" type="text" placeholder="예: $240"  class="atl-input w-full"/></div></div></div>
+                    <div class="atl-grid-2">          <div class="atl-field"><label>트랙</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">track_changes</span><input id="e-track" type="text" placeholder="예: Speaking"  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>수강료 (£)</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="e-fee" type="text" placeholder="예: £240" oninput="calcEnglishFeeKRW()" class="atl-input w-full"/></div></div></div>
+                    <div id="e-fee-krw-box" style="display:none" class="flex items-center gap-2 px-3 py-2 mb-3 bg-blue-50 border border-blue-100 rounded-xl text-sm"><span class="material-symbols-outlined text-blue-400" style="font-size:16px">currency_exchange</span><span id="e-fee-krw-amount" class="font-bold text-blue-700">₩0</span><span id="e-fee-krw-rate" class="text-[10px] text-blue-400 ml-auto">환율 정보</span></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="e-notes" type="text" placeholder="예: 비즈니스 이메일 작성"  class="atl-input w-full"/></div></div>
-          <div class="atl-info-box"><span class="material-symbols-outlined">lightbulb</span><span>Annie 선생님과의 수업 내용을 기록해봐!</span></div>
+          <div class="atl-info-box"><span class="material-symbols-outlined">lightbulb</span><span>Annie 선생님과의 수업 내용을 기록해봐! (수강료는 £ 파운드로 입력)</span></div>
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeEnglishModal()" class="atl-btn-cancel">취소</button>
@@ -6168,7 +6169,7 @@
         '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[1]||'—') + '</td>' +
         '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase border ' + statusClass + '">' + (status||'—') + '</span></td>' +
         '<td class="px-6 py-4 text-sm text-slate-600">' + (row[3]||'—') + '</td>' +
-        '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4]||'—') + '</td>' +
+        '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4] ? '£' + parseFloat(row[4].toString().replace(/[^0-9.]/g,'')).toFixed(0) : '—') + '</td>' +
         '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
         '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
@@ -6192,14 +6193,28 @@
     document.getElementById('english-progress-pct').textContent = pct + '%';
     document.getElementById('english-progress-bar').style.width = pct + '%';
 
-    // Fee totals
+    // Fee totals (GBP → KRW)
     let feeTotal = 0;
+    let feeAnnual = 0;
+    const nowMonth = new Date().getMonth();
+    const nowYear = new Date().getFullYear();
     englishData.forEach(function(r){
       const f = parseFloat((r[4]||'').toString().replace(/[^0-9.]/g,''));
-      if(!isNaN(f)) feeTotal += f;
+      if(!isNaN(f)) {
+        feeAnnual += f;
+        const d = r[1] ? new Date(r[1]) : null;
+        if(d && d.getMonth() === nowMonth && d.getFullYear() === nowYear) feeTotal += f;
+      }
     });
-    document.getElementById('english-fee-total').textContent = '$' + feeTotal.toFixed(0);
-    document.getElementById('english-fee-annual').textContent = '$' + feeTotal.toFixed(0);
+    document.getElementById('english-fee-total').textContent = '£' + feeTotal.toFixed(0);
+    document.getElementById('english-fee-annual').textContent = '£' + feeAnnual.toFixed(0);
+    // KRW conversion for fee summary
+    fetchExchangeRate('GBP').then(function(rate){
+      if(rate){
+        document.getElementById('english-fee-total').textContent = '£' + feeTotal.toFixed(0) + '  (₩' + Math.round(feeTotal*rate).toLocaleString('ko-KR') + ')';
+        document.getElementById('english-fee-annual').textContent = '£' + feeAnnual.toFixed(0) + '  (₩' + Math.round(feeAnnual*rate).toLocaleString('ko-KR') + ')';
+      }
+    });
 
     // Next scheduled lesson
     const nextEl = document.getElementById('english-next-lesson');
@@ -6212,6 +6227,26 @@
       }).join('');
     } else {
       nextEl.innerHTML = '<p class="text-sm text-slate-400">예정된 수업이 없어요</p>';
+    }
+  }
+
+  // 영어 수강료 입력 시 실시간 GBP→KRW 변환
+  async function calcEnglishFeeKRW(){
+    var raw = document.getElementById('e-fee').value.replace(/[^0-9.]/g,'');
+    var amount = parseFloat(raw) || 0;
+    var box = document.getElementById('e-fee-krw-box');
+    var amtEl = document.getElementById('e-fee-krw-amount');
+    var rateEl = document.getElementById('e-fee-krw-rate');
+    if(!amount){ box.style.display='none'; return; }
+    box.style.display='flex';
+    amtEl.textContent='계산 중...';
+    var rate = await fetchExchangeRate('GBP');
+    if(rate){
+      amtEl.textContent='₩'+Math.round(amount*rate).toLocaleString('ko-KR');
+      rateEl.textContent='1 GBP = ₩'+Math.round(rate).toLocaleString('ko-KR');
+    } else {
+      amtEl.textContent='환율 조회 실패';
+      rateEl.textContent='네트워크 확인';
     }
   }
 
