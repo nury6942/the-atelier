@@ -2849,15 +2849,17 @@
   }
 
   // ===== GOOGLE PLACES AUTOCOMPLETE =====
+  var _lodgingAutocomplete = null;
   function initPlacesAutocomplete() {
     var input = document.getElementById('jf-title');
-    if (!input || !input.dataset.autocomplete || typeof google === 'undefined') return;
-    var autocomplete = new google.maps.places.Autocomplete(input, {
+    if (!input || !input.dataset.autocomplete || typeof google === 'undefined' || typeof google.maps === 'undefined') return;
+    if (_lodgingAutocomplete) { google.maps.event.clearInstanceListeners(_lodgingAutocomplete); _lodgingAutocomplete = null; }
+    _lodgingAutocomplete = new google.maps.places.Autocomplete(input, {
       types: ['lodging', 'establishment'],
       fields: ['geometry', 'name', 'formatted_address', 'formatted_phone_number'],
     });
-    autocomplete.addListener('place_changed', function() {
-      var place = autocomplete.getPlace();
+    _lodgingAutocomplete.addListener('place_changed', function() {
+      var place = _lodgingAutocomplete.getPlace();
       if (!place.geometry) return;
       input.value = place.name || input.value;
       var addrEl = document.getElementById('jf-address');
@@ -2865,19 +2867,24 @@
       var phoneEl = document.getElementById('jf-phone');
       if (phoneEl && place.formatted_phone_number) phoneEl.value = place.formatted_phone_number;
     });
+    setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
   }
 
+  var _cityAutocomplete = null;
   function initCityPlacesAutocomplete() {
     var input = document.getElementById('city-name');
-    if (!input || typeof google === 'undefined') return;
-    var autocomplete = new google.maps.places.Autocomplete(input, {
+    if (!input || typeof google === 'undefined' || typeof google.maps === 'undefined') return;
+    if (_cityAutocomplete) { google.maps.event.clearInstanceListeners(_cityAutocomplete); _cityAutocomplete = null; }
+    _cityAutocomplete = new google.maps.places.Autocomplete(input, {
       types: ['(cities)'],
       fields: ['name'],
     });
-    autocomplete.addListener('place_changed', function() {
-      var place = autocomplete.getPlace();
+    _cityAutocomplete.addListener('place_changed', function() {
+      var place = _cityAutocomplete.getPlace();
       if (place.name) input.value = place.name;
     });
+    // pac-container가 모달 위에 뜨도록 z-index 보장
+    setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
   }
 
   function toggleCancelDate() {
