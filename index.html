@@ -2200,28 +2200,44 @@
       matrixData = matrixDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       var days = ['일','월','화','수','목','금','토'];
-      var matrixSynced = 0;
+      // 캘린더 데이터를 날짜+필드별로 수집 (다중 항목 합치기)
+      var plannerByDateField = {};
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
-        var sField = PLANNER_TO_MATRIX[sRow[2]];
-        if (!sRow[0] || !sField) continue;
+        var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
+        if (!sRow[0] || !sField || !sRow[1]) continue;
         var sFIdx = FIELDS.indexOf(sField);
         if (sFIdx <= 0) continue;
         var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
         while (sCur <= sEndD) {
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
-          var sMRow = matrixData.find(function(r){return r[0]===sDs;});
-          if (sMRow) {
-            if (!sMRow[sFIdx]) { sMRow[sFIdx]=sRow[1]; var smId=sMRow[10]||sMRow[9]; if(smId){try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){}} matrixSynced++; }
-          } else {
-            var sNewRow=[sDs,days[sCur.getDay()],'','','','','','','',''];
-            sNewRow[sFIdx]=sRow[1];
-            try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++;}catch(e){}
-          }
+          var key = sDs + '_' + sFIdx;
+          if (!plannerByDateField[key]) plannerByDateField[key] = { date: sDs, fieldIdx: sFIdx, values: [] };
+          if (plannerByDateField[key].values.indexOf(sRow[1]) === -1) plannerByDateField[key].values.push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
         }
       }
+      // 매트릭스에 반영
+      var matrixSynced = 0;
+      Object.keys(plannerByDateField).forEach(async function(key) {
+        var item = plannerByDateField[key];
+        var merged = item.values.join(', ');
+        var sMRow = matrixData.find(function(r){return r[0]===item.date;});
+        if (sMRow) {
+          if (sMRow[item.fieldIdx] !== merged) {
+            sMRow[item.fieldIdx] = merged;
+            var smId = sMRow[10]||sMRow[9];
+            if (smId) try { await fbUpdate('matrix', smId, rowToObj('matrix', sMRow)); } catch(e){}
+            matrixSynced++;
+          }
+        } else {
+          var dd = new Date(item.date+'T00:00:00');
+          var sNewRow = [item.date, days[dd.getDay()], '','','','','','','',''];
+          sNewRow[item.fieldIdx] = merged;
+          try { var sSaved = await fbAdd('matrix', rowToObj('matrix', sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++; } catch(e){}
+        }
+      });
       if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
       renderCalendar();
       updatePlannerTracks();
@@ -4869,26 +4885,42 @@
       // 캘린더→매트릭스 동기화
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       var dayNames = ['일','월','화','수','목','금','토'];
-      var synced = 0;
+      // 캘린더 데이터를 날짜+필드별로 수집
+      var pByDF = {};
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
-        var sField = PLANNER_TO_MATRIX[sRow[2]];
+        var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
         if (!sRow[0] || !sField || !sRow[1]) continue;
         var sFIdx = FIELDS.indexOf(sField);
         if (sFIdx <= 0) continue;
         var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
         while (sCur <= sEndD) {
           var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
-          var sMRow = matrixData.find(function(r){return r[0]===sDs;});
-          if (sMRow) {
-            if (!sMRow[sFIdx]) { sMRow[sFIdx]=sRow[1]; var smId=sMRow[10]||sMRow[9]; if(smId){try{await fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){}} synced++; }
-          } else {
-            var sNewRow=[sDs,dayNames[sCur.getDay()],'','','','','','','',''];
-            sNewRow[sFIdx]=sRow[1];
-            try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++;}catch(e){}
-          }
+          var key = sDs+'_'+sFIdx;
+          if (!pByDF[key]) pByDF[key] = {date:sDs,fi:sFIdx,vals:[]};
+          if (pByDF[key].vals.indexOf(sRow[1])===-1) pByDF[key].vals.push(sRow[1]);
           sCur.setDate(sCur.getDate()+1);
+        }
+      }
+      var synced = 0;
+      var pKeys = Object.keys(pByDF);
+      for (var pk = 0; pk < pKeys.length; pk++) {
+        var item = pByDF[pKeys[pk]];
+        var merged = item.vals.join(', ');
+        var sMRow = matrixData.find(function(r){return r[0]===item.date;});
+        if (sMRow) {
+          if (sMRow[item.fi] !== merged) {
+            sMRow[item.fi] = merged;
+            var smId = sMRow[10]||sMRow[9];
+            if (smId) try { await fbUpdate('matrix', smId, rowToObj('matrix', sMRow)); } catch(e){}
+            synced++;
+          }
+        } else {
+          var dd = new Date(item.date+'T00:00:00');
+          var sNewRow = [item.date, dayNames[dd.getDay()], '','','','','','','',''];
+          sNewRow[item.fi] = merged;
+          try { var sSaved = await fbAdd('matrix', rowToObj('matrix', sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++; } catch(e){}
         }
       }
       if (synced > 0) console.log('Matrix synced on load:', synced);
@@ -4969,7 +5001,10 @@
 
       function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
         if (!val) return '';
-        return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '">' + val + '</span>';
+        var items = val.split(', ');
+        return items.map(function(v) {
+          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1" class="mx-chip inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-indigo-300 transition-all ' + color + ' mr-1 mb-0.5">' + v + '</span>';
+        }).join('');
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
         return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondblclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
@@ -4978,12 +5013,12 @@
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        mxTd(mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i), d.date, 2, i) +
-        mxTd(mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i), d.date, 3, i) +
-        mxTd(mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i), d.date, 4, i) +
-        mxTd(mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i), d.date, 5, i) +
-        mxTd(mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i), d.date, 7, i) +
-        mxTd(mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i), d.date, 8, i) +
+        mxTd(mxChip(row&&row[2], 'bg-rose-100 text-rose-700', d.date, 2, i), d.date, 2, i) +
+        mxTd(mxChip(row&&row[3], 'bg-red-100 text-red-700', d.date, 3, i), d.date, 3, i) +
+        mxTd(mxChip(row&&row[4], 'bg-amber-100 text-amber-700', d.date, 4, i), d.date, 4, i) +
+        mxTd(mxChip(row&&row[5], 'bg-sky-100 text-sky-700', d.date, 5, i), d.date, 5, i) +
+        mxTd(mxChip(row&&row[7], 'bg-lime-100 text-lime-700', d.date, 7, i), d.date, 7, i) +
+        mxTd(mxChip(row&&row[8], 'bg-violet-100 text-violet-700', d.date, 8, i), d.date, 8, i) +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-1">' +
