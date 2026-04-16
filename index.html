@@ -2556,7 +2556,25 @@
 
   async function deletePlannerRow(i) {
     try {
-      const id = plannerData[i][7];
+      var row = plannerData[i];
+      const id = row[7];
+      // 매트릭스에서 해당 날짜 범위의 카테고리 데이터도 삭제
+      var matrixField = PLANNER_TO_MATRIX[row[2]];
+      if (matrixField) {
+        var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+        var fieldIdx = FIELDS.indexOf(matrixField);
+        var startD = new Date(row[0] + 'T00:00:00');
+        var endD = new Date((row[5]||row[0]) + 'T00:00:00');
+        for (var d = new Date(startD); d <= endD; d.setDate(d.getDate()+1)) {
+          var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+          var mRow = matrixData.find(function(r){return r[0]===ds;});
+          if (mRow && fieldIdx > 0) {
+            mRow[fieldIdx] = '';
+            var mId = mRow[10]||mRow[9];
+            if (mId) try { await fbUpdate('matrix', mId, rowToObj('matrix', mRow)); } catch(e){}
+          }
+        }
+      }
       await fbDelete('planner', id);
       plannerData.splice(i, 1);
       renderCalendar();
@@ -2646,7 +2664,9 @@
     }
     try {
       var saved = await fbAdd('planner', rowToObj('planner', newRow));
-      plannerData.push(newRow.concat([saved._id]));
+      var savedRow = newRow.concat([saved._id]);
+      plannerData.push(savedRow);
+      try { await syncPlannerToMatrix(savedRow); } catch(e){}
       renderCalendar();
       updatePlannerTracks();
       showPlannerToast('✅ ' + targetDate + '에 붙이기 완료!');
@@ -2719,6 +2739,21 @@
         plannerData[idx][5] = newEnd.getFullYear() + '-' + String(newEnd.getMonth()+1).padStart(2,'0') + '-' + String(newEnd.getDate()).padStart(2,'0');
       }
       await fbUpdate('planner', id, rowToObj('planner', plannerData[idx]));
+      // 매트릭스도 동기화: 이전 날짜 삭제 + 새 날짜 추가
+      var matrixField = PLANNER_TO_MATRIX[plannerData[idx][2]];
+      if (matrixField) {
+        var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+        var fIdx = FIELDS.indexOf(matrixField);
+        // 이전 날짜 범위 클리어
+        var oldS = new Date(oldStart+'T00:00:00'), oldE = new Date((oldEnd||oldStart)+'T00:00:00');
+        for (var od=new Date(oldS);od<=oldE;od.setDate(od.getDate()+1)){
+          var ods=od.getFullYear()+'-'+String(od.getMonth()+1).padStart(2,'0')+'-'+String(od.getDate()).padStart(2,'0');
+          var omr=matrixData.find(function(r){return r[0]===ods;});
+          if(omr&&fIdx>0){omr[fIdx]='';var oid=omr[10]||omr[9];if(oid)try{await fbUpdate('matrix',oid,rowToObj('matrix',omr));}catch(e){}}
+        }
+        // 새 날짜 범위 추가
+        try { await syncPlannerToMatrix(plannerData[idx]); } catch(e){}
+      }
       renderCalendar();
       updatePlannerTracks();
     } catch(err) { alert('이동에 실패했어요.'); }
@@ -4315,6 +4350,50 @@
     '연차': 'leave',
   };
 
+  // 매트릭스 필드 → 캘린더 카테고리 역매핑
+  var MATRIX_TO_PLANNER = {};
+  Object.keys(PLANNER_TO_MATRIX).forEach(function(k){ MATRIX_TO_PLANNER[PLANNER_TO_MATRIX[k]] = k; });
+
+  async function syncMatrixToPlanner(matrixRow) {
+    var date = matrixRow[0];
+    if (!date) return;
+    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+    // 매트릭스의 각 필드를 캘린더에 동기화
+    for (var fi = 2; fi < FIELDS.length; fi++) {
+      var val = matrixRow[fi];
+      var catName = MATRIX_TO_PLANNER[FIELDS[fi]];
+      if (!catName) continue;
+      // 해당 날짜+카테고리의 기존 캘린더 일정 찾기
+      var existingIdx = -1;
+      for (var pi = 0; pi < plannerData.length; pi++) {
+        if (plannerData[pi][0] === date && plannerData[pi][2] === catName) { existingIdx = pi; break; }
+      }
+      if (val) {
+        var color = CAT_COLOR[catName] || 'slate';
+        if (existingIdx >= 0) {
+          // 업데이트
+          if (plannerData[existingIdx][1] !== val) {
+            plannerData[existingIdx][1] = val;
+            var pid = plannerData[existingIdx][7];
+            if (pid) try { await fbUpdate('planner', pid, {title: val}); } catch(e){}
+          }
+        } else {
+          // 새로 추가
+          var newRow = [date, val, catName, color, '', '', ''];
+          try {
+            var saved = await fbAdd('planner', rowToObj('planner', newRow));
+            plannerData.push(newRow.concat([saved._id]));
+          } catch(e){}
+        }
+      } else if (existingIdx >= 0) {
+        // 값이 빈칸이면 캘린더에서 삭제
+        var pid = plannerData[existingIdx][7];
+        if (pid) try { await fbDelete('planner', pid); } catch(e){}
+        plannerData.splice(existingIdx, 1);
+      }
+    }
+  }
+
   async function syncPlannerToMatrix(plannerRow) {
     var startDate = plannerRow[0];
     var endDate = plannerRow[5] || startDate;
@@ -4896,6 +4975,20 @@
       document.getElementById('matrix-table-wrap').style.display = 'block';
       document.getElementById('matrix-empty').style.display = 'none';
       document.getElementById('matrix-status').textContent = matrixData.length + '개 항목';
+      // 매트릭스→캘린더 동기화
+      if (dateEnd && dateEnd > row[0]) {
+        var syncCur = new Date(row[0]+'T00:00:00'), syncEnd = new Date(dateEnd+'T00:00:00');
+        while (syncCur <= syncEnd) {
+          var sds = syncCur.getFullYear()+'-'+String(syncCur.getMonth()+1).padStart(2,'0')+'-'+String(syncCur.getDate()).padStart(2,'0');
+          var sRow = matrixData.find(function(r){return r[0]===sds;});
+          if (sRow) try { await syncMatrixToPlanner(sRow); } catch(e){}
+          syncCur.setDate(syncCur.getDate()+1);
+        }
+      } else {
+        var savedMRow = editingRowIndex!==null ? matrixData[editingRowIndex] : matrixData[matrixData.length-1];
+        if (savedMRow) try { await syncMatrixToPlanner(savedMRow); } catch(e){}
+      }
+      renderCalendar(); updatePlannerTracks();
       renderMatrixTable();
       updateLeaveTracker();
       closeMatrixModal();
@@ -4912,9 +5005,24 @@
   async function deleteMatrixRow(i) {
     if (!confirm('이 항목을 삭제할까요?')) return;
     try {
-      const id = matrixData[i][9];
+      var delRow = matrixData[i];
+      const id = delRow[9];
+      // 캘린더에서도 해당 날짜의 연동 데이터 삭제
+      var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+      for (var fi=2; fi<FIELDS.length; fi++) {
+        if (!delRow[fi]) continue;
+        var catName = MATRIX_TO_PLANNER[FIELDS[fi]];
+        if (!catName) continue;
+        for (var pi=plannerData.length-1; pi>=0; pi--) {
+          if (plannerData[pi][0]===delRow[0] && plannerData[pi][2]===catName) {
+            var pid=plannerData[pi][7]; if(pid) try{await fbDelete('planner',pid);}catch(e){}
+            plannerData.splice(pi,1);
+          }
+        }
+      }
       await fbDelete('matrix', id);
       matrixData.splice(i, 1);
+      renderCalendar(); updatePlannerTracks();
       renderMatrixTable();
       updateLeaveTracker();
       if (matrixData.length === 0) {
