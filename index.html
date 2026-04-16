@@ -1715,42 +1715,60 @@
       </div>
 
       <!-- Track Progress -->
-      <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm mb-8">
+      <section class="grid grid-cols-3 md:grid-cols-6 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm mb-8">
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 01</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">글쓰기</div>
-          <div id="planner-track-writing" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-writing" class="h-full bg-accent-mint" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">글쓰기</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-writing" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">/월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-writing">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-writing" class="h-full bg-accent-mint" style="width:0%"></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 02</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">영어 수업</div>
-          <div id="planner-track-english" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-english" class="h-full bg-accent-blue" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">영어</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-english" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">/월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-english">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-english" class="h-full bg-accent-blue" style="width:0%"></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 03</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">스터디</div>
-          <div id="planner-track-study" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-study" class="h-full bg-accent-lemon" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">스터디</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-study" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">/월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-study">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-study" class="h-full bg-accent-lemon" style="width:0%"></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 04</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">업무</div>
-          <div id="planner-track-work" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-work" class="h-full bg-accent-sage" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">업무</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-work" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">/월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-work">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-work" class="h-full bg-accent-sage" style="width:0%"></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 05</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">개인</div>
-          <div id="planner-track-personal" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">/월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-personal" class="h-full bg-accent-lavender" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">개인</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-personal" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">/월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-personal">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-personal" class="h-full bg-accent-lavender" style="width:0%"></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">트랙 06</div>
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">연차</div>
-          <div id="planner-track-vacation" class="text-xl font-extrabold text-slate-800 font-headline">0 <span class="text-xs text-slate-400 font-normal">일 /월</span></div>
-          <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-orange" style="width:0%"></div></div>
+          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">연차</div>
+          <div class="flex items-baseline gap-2">
+            <span id="planner-track-vacation" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
+            <span class="text-[10px] text-slate-400 font-bold">일 /월</span>
+            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-vacation">0 /년</span>
+          </div>
+          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-orange" style="width:0%"></div></div>
         </div>
       </section>
 
@@ -2473,13 +2491,36 @@
         counts[track]++;
       }
     });
+    // 연간 누적 계산
+    var yearStr = String(plannerYear);
+    var yearCounts = { writing:0, english:0, study:0, work:0, personal:0, vacation:0 };
+    var yearHolidays = getKoreanHolidays(plannerYear);
+    plannerData.forEach(function(row) {
+      var sd = (row[0]||'').toString();
+      var ed = (row[5]||sd).toString();
+      var track = CAT_TRACK[(row[2]||'').trim()];
+      if (!track || !sd.startsWith(yearStr)) return;
+      if (track === 'vacation') {
+        var c = new Date(sd+'T00:00:00'), e = new Date(ed+'T00:00:00');
+        while (c <= e) {
+          var cds = c.getFullYear()+'-'+String(c.getMonth()+1).padStart(2,'0')+'-'+String(c.getDate()).padStart(2,'0');
+          if (cds.startsWith(yearStr) && c.getDay()!==0 && c.getDay()!==6 && !yearHolidays[cds]) yearCounts[track]++;
+          c.setDate(c.getDate()+1);
+        }
+      } else if (ed > sd) {
+        var c2 = new Date(sd+'T00:00:00'), e2 = new Date(ed+'T00:00:00');
+        while (c2 <= e2) { var cds2=c2.getFullYear()+'-'+String(c2.getMonth()+1).padStart(2,'0')+'-'+String(c2.getDate()).padStart(2,'0'); if(cds2.startsWith(yearStr)) yearCounts[track]++; c2.setDate(c2.getDate()+1); }
+      } else { yearCounts[track]++; }
+    });
+
     const daysInMonth = new Date(plannerYear, plannerMonth+1, 0).getDate();
     Object.keys(counts).forEach(function(track) {
       const el = document.getElementById('planner-track-'+track);
       const bar = document.getElementById('planner-bar-'+track);
-      var unit = track === 'vacation' ? '일 /월' : '/월';
-      if (el) el.innerHTML = counts[track] + ' <span class="text-xs text-slate-400 font-normal">' + unit + '</span>';
+      const yearEl = document.getElementById('planner-year-'+track);
+      if (el) el.textContent = counts[track];
       if (bar) bar.style.width = Math.min(Math.round((counts[track]/daysInMonth)*100), 100) + '%';
+      if (yearEl) yearEl.textContent = yearCounts[track] + ' /년';
     });
   }
 
