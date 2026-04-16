@@ -4933,27 +4933,27 @@
         ? '<span class="inline-flex items-center justify-center gradient-primary text-white rounded-full text-[10px] font-bold px-2 py-0.5">' + dateLabel + '</span>'
         : '<span class="text-[12px] font-mono ' + (isWeekend?'text-rose-600 font-bold':'text-slate-600') + '">' + dateLabel + '</span>';
 
-      function mxChip(val, color) {
-        if (!val) return '<span class="text-slate-200">—</span>';
-        return '<span class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold ' + color + '">' + val + '</span>';
+      function mxChip(val, color, dateStr, fieldIdx, rowIdx) {
+        if (!val) return '<span class="text-slate-200 cursor-pointer hover:text-indigo-400 transition-colors" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">+</span>';
+        return '<span class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all ' + color + '" onclick="openMatrixCellEdit(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')">' + val + '</span>';
       }
 
       tr.innerHTML =
         '<td class="px-5 py-2.5 text-sm">' + dateDisplay + '</td>' +
         '<td class="px-5 py-2.5 text-xs font-bold ' + (isWeekend?'text-rose-400':'text-slate-400') + '">' + day + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[2], 'bg-rose-50 text-rose-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + formatLeaveCell(row&&row[3]) + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[4], 'bg-amber-50 text-amber-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[5], 'bg-sky-50 text-sky-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[7], 'bg-lime-50 text-lime-700') + '</td>' +
-        '<td class="px-5 py-2.5">' + mxChip(row&&row[8], 'bg-violet-50 text-violet-700') + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[2], 'bg-rose-50 text-rose-700', d.date, 2, i) + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[3], (row&&row[3]&&row[3].toString().includes('1.0')?'bg-indigo-100 text-indigo-800':'bg-amber-100 text-amber-800'), d.date, 3, i) + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[4], 'bg-amber-50 text-amber-700', d.date, 4, i) + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[5], 'bg-sky-50 text-sky-700', d.date, 5, i) + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[7], 'bg-lime-50 text-lime-700', d.date, 7, i) + '</td>' +
+        '<td class="px-5 py-2.5">' + mxChip(row&&row[8], 'bg-violet-50 text-violet-700', d.date, 8, i) + '</td>' +
         '<td class="px-5 py-2.5 text-center">' +
         (hasData
-          ? '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">' +
+          ? '<div class="flex items-center justify-center gap-1">' +
             '<button onclick="editMatrixRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
             '<button onclick="deleteMatrixRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
             '</div>'
-          : '<button onclick="openMatrixModalForDate(this.dataset.d)" data-d="' + d.date + '" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-200 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">add</span></button>'
+          : '<button onclick="openMatrixModalForDate(\'' + d.date + '\')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-200 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">add</span></button>'
         ) + '</td>';
       tbody.appendChild(tr);
     });
@@ -5111,6 +5111,106 @@
   }
 
   function editMatrixRow(i) { openMatrixModal(i); }
+
+  // 셀 클릭 → 개별 필드 수정 팝업
+  var FIELD_LABELS = {2:'업무',3:'연차',4:'개인',5:'글쓰기',7:'영어',8:'스터디'};
+  var FIELD_OPTIONS = {
+    2: ['출근','재택','출장','반차(오전)','반차(오후)','연차','병가','휴일근무'],
+    3: ['0.5 (반차)','1.0 (연차)','2.0','3.0','5.0'],
+    4: ['헬스','러닝','독서','병원','약속','여행','기타'],
+    5: ['초안 작성','퇴고','발행','아이디어 정리','리서치'],
+    7: ['수업 완료','자습','단어 암기','복습'],
+    8: [],
+  };
+
+  function openMatrixCellEdit(dateStr, fieldIdx, rowIdx) {
+    // 기존 팝업 닫기
+    var old = document.getElementById('mx-cell-popup');
+    if (old) old.remove();
+
+    var row = rowIdx >= 0 ? matrixData[rowIdx] : null;
+    var currentVal = row ? (row[fieldIdx]||'') : '';
+    var label = FIELD_LABELS[fieldIdx]||'';
+    var options = FIELD_OPTIONS[fieldIdx]||[];
+
+    var popup = document.createElement('div');
+    popup.id = 'mx-cell-popup';
+    popup.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm';
+    popup.onclick = function(e){ if(e.target===popup) popup.remove(); };
+
+    var optionsHtml = '';
+    if (options.length > 0) {
+      optionsHtml = '<div class="flex flex-wrap gap-1.5 mb-3">' +
+        options.map(function(opt){
+          var sel = opt===currentVal ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-indigo-100';
+          return '<button onclick="selectMxCellOption(this,\'' + opt.replace(/'/g,"\\'") + '\')" class="px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ' + sel + '">' + opt + '</button>';
+        }).join('') + '</div>';
+    }
+
+    popup.innerHTML = '<div class="bg-white rounded-2xl shadow-xl w-80 overflow-hidden">' +
+      '<div class="px-5 py-3 bg-slate-50 flex justify-between items-center">' +
+        '<span class="text-sm font-bold text-slate-800">' + dateStr.slice(5) + ' — ' + label + '</span>' +
+        (currentVal ? '<button onclick="clearMxCell(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" class="text-[10px] font-bold text-rose-500 hover:text-rose-700">삭제</button>' : '') +
+      '</div>' +
+      '<div class="p-5">' +
+        optionsHtml +
+        '<input id="mx-cell-input" type="text" value="' + currentVal.replace(/"/g,'&quot;') + '" placeholder="직접 입력..." class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')saveMxCell(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')"/>' +
+        '<div class="flex gap-2 mt-3">' +
+          '<button onclick="document.getElementById(\'mx-cell-popup\').remove()" class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200">취소</button>' +
+          '<button onclick="saveMxCell(\'' + dateStr + '\',' + fieldIdx + ',' + rowIdx + ')" class="flex-1 py-2 rounded-xl text-xs font-bold text-white gradient-primary hover:opacity-90">저장</button>' +
+        '</div>' +
+      '</div></div>';
+
+    document.body.appendChild(popup);
+    setTimeout(function(){ document.getElementById('mx-cell-input').focus(); }, 50);
+  }
+
+  function selectMxCellOption(btn, val) {
+    document.getElementById('mx-cell-input').value = val;
+    btn.parentElement.querySelectorAll('button').forEach(function(b){ b.className = b.className.replace('bg-indigo-600 text-white','bg-slate-100 text-slate-700 hover:bg-indigo-100'); });
+    btn.className = btn.className.replace('bg-slate-100 text-slate-700 hover:bg-indigo-100','bg-indigo-600 text-white');
+  }
+
+  async function saveMxCell(dateStr, fieldIdx, rowIdx) {
+    var val = document.getElementById('mx-cell-input').value.trim();
+    var popup = document.getElementById('mx-cell-popup');
+    if (popup) popup.remove();
+
+    var days = ['일','월','화','수','목','금','토'];
+    var existing = matrixData.find(function(r){return r[0]===dateStr;});
+
+    if (existing) {
+      existing[fieldIdx] = val;
+      var id = existing[10]||existing[9];
+      if (id) await fbUpdate('matrix', id, rowToObj('matrix', existing));
+      try { await syncMatrixToPlanner(existing); } catch(e){}
+    } else if (val) {
+      var d = new Date(dateStr+'T00:00:00');
+      var newRow = [dateStr, days[d.getDay()], '','','','','','','',''];
+      newRow[fieldIdx] = val;
+      var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
+      matrixData.push(newRow.concat([saved._id]));
+      try { await syncMatrixToPlanner(newRow); } catch(e){}
+    }
+    renderMatrixTable();
+    updateLeaveTracker();
+    renderCalendar(); updatePlannerTracks();
+  }
+
+  async function clearMxCell(dateStr, fieldIdx, rowIdx) {
+    var popup = document.getElementById('mx-cell-popup');
+    if (popup) popup.remove();
+
+    var existing = matrixData.find(function(r){return r[0]===dateStr;});
+    if (!existing) return;
+    existing[fieldIdx] = '';
+    var id = existing[10]||existing[9];
+    if (id) await fbUpdate('matrix', id, rowToObj('matrix', existing));
+    try { await syncMatrixToPlanner(existing); } catch(e){}
+    renderMatrixTable();
+    updateLeaveTracker();
+    renderCalendar(); updatePlannerTracks();
+  }
 
   async function deleteMatrixRow(i) {
     if (!confirm('이 항목을 삭제할까요?')) return;
