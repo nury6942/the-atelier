@@ -2405,9 +2405,13 @@
     var cityCards = document.getElementById('journey-city-cards');
     if (cities.length > 0) {
       cityCards.innerHTML = cities.map(function(city, i) {
-        return '<div class="relative p-5 bg-slate-50/50 border border-slate-200 rounded-3xl hover:bg-sky-100/40 hover:border-sky-400 transition-all shadow-sm">' +
+        return '<div class="relative group p-5 bg-slate-50/50 border border-slate-200 rounded-3xl hover:bg-sky-100/40 hover:border-sky-400 transition-all shadow-sm">' +
           '<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">' + (i+1) + '번째</div>' +
           '<h4 class="text-lg font-bold text-slate-900">' + city + '</h4>' +
+          '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+          '<button onclick="editCityEntry(' + i + ')" class="p-1.5 hover:bg-indigo-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
+          '<button onclick="deleteCityEntry(' + i + ')" class="p-1.5 hover:bg-rose-100 rounded-lg text-slate-400 hover:text-rose-500 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+          '</div>' +
           '<div class="mt-4 h-1 w-full bg-slate-200 rounded-full overflow-hidden">' +
           (i === 0 ? '<div class="h-full w-full bg-gradient-to-r from-sky-400 to-indigo-400"></div>' : '') +
           '</div></div>';
