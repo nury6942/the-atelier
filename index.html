@@ -2759,7 +2759,7 @@
       renderCalendar();
       updatePlannerTracks();
       closePlannerModal();
-      try { syncPlannerToMatrix(row); } catch(e) { console.error('Matrix sync:', e); }
+      try { await syncPlannerToMatrix(row); renderMatrixTable(); updateLeaveTracker(); } catch(e) { console.error('Matrix sync:', e); }
     } catch(err) { console.error('Planner save error:', err); alert('저장에 실패했어요: ' + err.message); }
     finally { btn.textContent = '저장'; btn.disabled = false; }
   }
