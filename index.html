@@ -1047,7 +1047,7 @@
           </div>
           <div class="atl-field">
             <label>트립</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">flight_takeoff</span><input id="fin-trip" type="text" placeholder="예: Prague 2026"  class="atl-input w-full"/></div>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">flight_takeoff</span><select id="fin-trip" class="atl-input w-full bg-white"><option value="">— 여행 선택 —</option></select></div>
           </div>
           <div class="atl-grid-2">
           <div class="atl-field">
@@ -4005,13 +4005,15 @@
   const FIN_CAT_COLORS = {'이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','기타':'text-slate-500'};
   const FIN_CAT_BG = {'이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
 
+  var financeTrips = [];
   async function loadFinance() {
     document.getElementById('finance-loading').style.display = 'flex';
     document.getElementById('finance-table-wrap').style.display = 'none';
     document.getElementById('finance-empty').style.display = 'none';
     try {
-      const docs = await fbRead('finance');
+      var [docs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
       financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
+      financeTrips = tripDocs;
       document.getElementById('finance-loading').style.display = 'none';
       buildFinanceTripFilters();
       filterFinanceByTrip('all');
@@ -4021,15 +4023,13 @@
   }
 
   function buildFinanceTripFilters() {
-    var trips = [];
-    financeData.forEach(function(r){ if(r[2] && trips.indexOf(r[2])===-1) trips.push(r[2]); });
     var list = document.getElementById('finance-trip-filter-list');
     list.innerHTML = '';
-    trips.forEach(function(t) {
+    financeTrips.forEach(function(t) {
       var btn = document.createElement('button');
       btn.className = 'w-full py-2 px-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-left hover:border-indigo-300 transition-all finance-trip-filter-btn';
-      btn.textContent = t;
-      btn.addEventListener('click', function(){ filterFinanceByTrip(t); });
+      btn.textContent = t.name;
+      btn.addEventListener('click', function(){ filterFinanceByTrip(t.name); });
       list.appendChild(btn);
     });
   }
@@ -4135,11 +4135,10 @@
       document.getElementById('fin-category').value=prefillType||'이동';
       document.getElementById('fin-currency').value='KRW';
     }
-    // Populate trip datalist
-    var trips = [];
-    financeData.forEach(function(r){ if(r[2] && trips.indexOf(r[2])===-1) trips.push(r[2]); });
-    var dl = document.getElementById('fin-trip-list');
-    if(dl) dl.innerHTML = trips.map(function(t){ return '<option value="'+t+'">'; }).join('');
+    // Populate trip dropdown from Firebase trips
+    var tripSel = document.getElementById('fin-trip');
+    tripSel.innerHTML = '<option value="">— 여행 선택 —</option>' + financeTrips.map(function(t){ return '<option value="'+t.name+'">'+t.name+'</option>'; }).join('');
+    if (editingFinanceIndex!==null) tripSel.value = financeData[editingFinanceIndex][2]||'';
     document.getElementById('finance-modal').style.cssText='display:flex!important';
   }
 
