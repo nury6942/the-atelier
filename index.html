@@ -4316,32 +4316,38 @@
   };
 
   async function syncPlannerToMatrix(plannerRow) {
-    var date = plannerRow[0];
+    var startDate = plannerRow[0];
+    var endDate = plannerRow[5] || startDate;
     var category = plannerRow[2];
     var title = plannerRow[1];
     var matrixField = PLANNER_TO_MATRIX[category];
-    if (!date || !matrixField) return;
+    if (!startDate || !matrixField) return;
+
+    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+    var fieldIdx = FIELDS.indexOf(matrixField);
+    if (fieldIdx <= 0) return;
+
+    // 시작일~종료일 모든 날짜에 대해 매트릭스 동기화
+    var cur = new Date(startDate + 'T00:00:00');
+    var end = new Date(endDate + 'T00:00:00');
+    var days = ['일','월','화','수','목','금','토'];
 
     try {
-      // 같은 날짜 매트릭스 행 찾기
-      var existing = matrixData.find(function(r){ return r[0] === date; });
-      if (existing) {
-        // 기존 행 업데이트
-        var fieldIdx = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'].indexOf(matrixField);
-        if (fieldIdx > 0) {
+      while (cur <= end) {
+        var dateStr = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+        var existing = matrixData.find(function(r){ return r[0] === dateStr; });
+        if (existing) {
           existing[fieldIdx] = title;
-          await fbUpdate('matrix', existing[10] || existing[9], rowToObj('matrix', existing));
+          var existId = existing[10] || existing[9];
+          if (existId) await fbUpdate('matrix', existId, rowToObj('matrix', existing));
+        } else {
+          var dayName = days[cur.getDay()];
+          var newRow = [dateStr, dayName, '', '', '', '', '', '', '', ''];
+          newRow[fieldIdx] = title;
+          var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
+          matrixData.push(newRow.concat([saved._id]));
         }
-      } else {
-        // 새 행 생성
-        var days = ['일','월','화','수','목','금','토'];
-        var d = new Date(date + 'T00:00:00');
-        var dayName = days[d.getDay()];
-        var newRow = [date, dayName, '', '', '', '', '', '', '', ''];
-        var fieldIdx = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'].indexOf(matrixField);
-        if (fieldIdx > 0) newRow[fieldIdx] = title;
-        var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
-        matrixData.push(newRow.concat([saved._id]));
+        cur.setDate(cur.getDate() + 1);
       }
     } catch(err) {
       console.error('Matrix sync error:', err);
