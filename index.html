@@ -2628,6 +2628,14 @@
     var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
     items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
 
+    // 날씨 배너 업데이트
+    if (dateStr && cityName) {
+      fetchWeather(cityName, dateStr);
+    } else {
+      var wb = document.getElementById('weather-banner');
+      if (wb) wb.classList.add('hidden');
+    }
+
     var container = document.getElementById('journey-schedule-list');
     if (items.length === 0) {
       container.innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">이 날의 일정이 없어요<br/>+ 버튼으로 추가해봐!</div>';
@@ -2672,14 +2680,6 @@
           '</div></div>';
       });
     });
-
-    // 날씨 배너 업데이트
-    if (dateStr && cityName) {
-      fetchWeather(cityName, dateStr);
-    } else {
-      var wb = document.getElementById('weather-banner');
-      if (wb) wb.classList.add('hidden');
-    }
   }
 
   // ===== WEATHER =====
@@ -2739,15 +2739,19 @@
       var target = new Date(dateStr + 'T00:00:00');
       var diffDays = Math.round((target - today) / (1000*60*60*24));
 
-      var url;
-      if (diffDays >= -1 && diffDays <= 15) {
+      var url, isHistorical = false;
+      if (diffDays >= -2 && diffDays <= 15) {
         url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
           '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max' +
           '&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
       } else {
-        // 과거 또는 16일 이후는 히스토리컬 데이터
-        banner.classList.add('hidden');
-        return;
+        // 16일 이후 미래: 작년 같은 날짜 기후 참고
+        isHistorical = true;
+        var lastYear = new Date(target); lastYear.setFullYear(lastYear.getFullYear() - 1);
+        var lyStr = lastYear.toISOString().split('T')[0];
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max' +
+          '&timezone=auto&start_date=' + lyStr + '&end_date=' + lyStr;
       }
 
       var res = await fetch(url);
@@ -2757,8 +2761,9 @@
           code: data.daily.weathercode[0],
           tempMax: Math.round(data.daily.temperature_2m_max[0]),
           tempMin: Math.round(data.daily.temperature_2m_min[0]),
-          rain: data.daily.precipitation_probability_max[0] || 0,
+          rain: data.daily.precipitation_probability_max ? (data.daily.precipitation_probability_max[0] || 0) : null,
           wind: Math.round(data.daily.windspeed_10m_max[0]),
+          historical: isHistorical,
           city: geo.name
         };
         _weatherCache[cacheKey] = w;
@@ -2781,8 +2786,11 @@
     document.getElementById('weather-icon').textContent = wmo.icon;
     document.getElementById('weather-temp').textContent = w.tempMax + '°';
     document.getElementById('weather-desc').textContent = wmo.desc;
-    document.getElementById('weather-high-low').innerHTML = '<span class="text-rose-500">↑' + w.tempMax + '°</span> <span class="text-blue-500">↓' + w.tempMin + '°</span>';
-    document.getElementById('weather-extra').innerHTML = '💧 ' + w.rain + '% · 💨 ' + w.wind + 'km/h';
+    document.getElementById('weather-high-low').innerHTML = '<span class="text-rose-500">↑' + w.tempMax + '°</span> <span class="text-blue-500">↓' + w.tempMin + '°</span>' + (w.historical ? ' <span class="text-slate-400">(작년 참고)</span>' : '');
+    var extraParts = [];
+    if (w.rain !== null) extraParts.push('💧 ' + w.rain + '%');
+    extraParts.push('💨 ' + w.wind + 'km/h');
+    document.getElementById('weather-extra').innerHTML = extraParts.join(' · ');
   }
 
   function prevDay() {
