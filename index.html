@@ -24,8 +24,15 @@
           "pastel-mint":"#b2dfdb","pastel-mint-text":"#2e7d32",
           "pastel-gold":"#fff176","pastel-gold-text":"#f9a825",
           "pastel-sage":"#dcedc8","pastel-lemon":"#fff9c4","pastel-peach":"#ffe0b2","pastel-slate":"#f8fafc",
+          "pastel-sky":"#e0f2fe","pastel-sky-text":"#0369a1",
+          "pastel-amber":"#fef3c7","pastel-amber-text":"#92400e",
+          "pastel-violet":"#ede9fe","pastel-violet-text":"#6d28d9",
+          "pastel-cyan":"#cffafe","pastel-cyan-text":"#0e7490",
+          "pastel-orange":"#ffedd5","pastel-orange-text":"#c2410c",
+          "pastel-lime":"#d9f99d","pastel-lime-text":"#3f6212",
           "accent-mint":"#4db6ac","accent-blue":"#64b5f6","accent-peach":"#ffb74d",
           "accent-rose":"#f06292","accent-lavender":"#ba68c8","accent-lemon":"#fdd835","accent-sage":"#9ccc65",
+          "accent-sky":"#38bdf8","accent-amber":"#fbbf24","accent-violet":"#8b5cf6","accent-cyan":"#22d3ee","accent-orange":"#fb923c","accent-lime":"#a3e635",
           "lavender":"#e1bee7","on-lavender":"#6a1b9a","periwinkle":"#c5cae9","sky":"#b2ebf2",
           "surface-container":"#f1f5f9","surface-container-low":"#fafafa",
           "surface-container-high":"#f1f5f9","surface-container-lowest":"#ffffff",
@@ -2090,13 +2097,13 @@
   let plannerMonth = new Date().getMonth(); // 0-indexed
 
   const COLOR_MAP = {
-    'sky':     'bg-sky-100 text-sky-800 border-sky-200',
-    'amber':   'bg-amber-100 text-amber-800 border-amber-200',
-    'violet':  'bg-violet-100 text-violet-800 border-violet-200',
-    'rose':    'bg-rose-100 text-rose-800 border-rose-200',
-    'slate':   'bg-slate-200 text-slate-700 border-slate-300',
-    'cyan':    'bg-cyan-100 text-cyan-800 border-cyan-200',
-    'orange':  'bg-orange-100 text-orange-800 border-orange-200',
+    'sky':     'bg-pastel-sky text-pastel-sky-text border-pastel-sky-text/20',
+    'amber':   'bg-pastel-amber text-pastel-amber-text border-pastel-amber-text/20',
+    'violet':  'bg-pastel-violet text-pastel-violet-text border-pastel-violet-text/20',
+    'rose':    'bg-pastel-rose text-pastel-rose-text border-pastel-rose-text/20',
+    'lime':    'bg-pastel-lime text-pastel-lime-text border-pastel-lime-text/20',
+    'cyan':    'bg-pastel-cyan text-pastel-cyan-text border-pastel-cyan-text/20',
+    'orange':  'bg-pastel-orange text-pastel-orange-text border-pastel-orange-text/20',
     'indigo':  'bg-indigo-100 text-indigo-800 border-indigo-200',
   };
   const CAT_TRACK = {
@@ -2105,7 +2112,7 @@
   };
   const CAT_COLOR = {
     '글쓰기':'sky','영어':'amber','스터디':'violet',
-    '운동':'rose','업무':'slate','개인':'cyan','휴가':'orange'
+    '운동':'rose','업무':'lime','개인':'cyan','휴가':'orange'
   };
 
   // ===== 대한민국 공휴일 =====
@@ -3831,8 +3838,8 @@
     '휴가':   'bg-orange-50 text-orange-700 border-orange-100',
   };
   const TRACK_BARS = {
-    '글쓰기':'bg-sky-400','영어':'bg-amber-400','스터디':'bg-violet-400',
-    '운동':'bg-rose-400','업무':'bg-slate-400','개인':'bg-cyan-400','휴가':'bg-orange-400'
+    '글쓰기':'bg-accent-sky','영어':'bg-accent-amber','스터디':'bg-accent-violet',
+    '운동':'bg-accent-rose','업무':'bg-accent-lime','개인':'bg-accent-cyan','휴가':'bg-accent-orange'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
