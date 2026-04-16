@@ -2188,7 +2188,7 @@
         if (correctColor && row[3] !== correctColor) {
           row[3] = correctColor;
           try {
-            await fbUpdate('planner', row[6], rowToObj('planner', row.slice(0, 6)));
+            await fbUpdate('planner', row[7], rowToObj('planner', row.slice(0, 7)));
             migrated++;
           } catch(e) { console.error('Color migration error:', e); }
         }
@@ -2240,6 +2240,12 @@
         }
         return start.startsWith(dateStr);
       });
+      // 정렬: 업무 카테고리 최상단, 그 외는 order 순
+      events.sort(function(a, b) {
+        if (a[2] === '업무' && b[2] !== '업무') return -1;
+        if (a[2] !== '업무' && b[2] === '업무') return 1;
+        return (parseInt(a[6])||0) - (parseInt(b[6])||0);
+      });
 
       const isHoliday = !!holidays[dateStr];
       const holidayName = holidays[dateStr] || '';
@@ -2269,7 +2275,7 @@
         if (!isNaN(dragIdx) && newDate) {
           if (plannerCtrlDrag) {
             // Ctrl+드래그: 복사
-            copiedPlannerEvent = plannerData[dragIdx].slice(0, 6);
+            copiedPlannerEvent = plannerData[dragIdx].slice(0, 7);
             pastePlannerEvent(newDate);
           } else {
             // 일반 드래그: 이동
@@ -2295,9 +2301,13 @@
         var isLast = !isRange || dateStr === end;
 
         if (!isRange) {
-          // 단일 날짜 이벤트 - 기존 스타일
+          // 단일 날짜 이벤트
           return '<div class="mt-1 text-[9px] px-1.5 py-0.5 rounded font-bold truncate border ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
+            'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
+            'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
+            'ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ' +
+            'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + realIdx + ')" ' +
             'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
             '<span class="truncate">' + (ev[1]||'') + '</span>' +
             '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
@@ -2341,7 +2351,11 @@
         return '<div class="mt-1 py-0.5 h-5 ' + roundLeft + ' ' + roundRight + ' ' + marginLeft + ' ' + marginRight + ' ' + bgColor + ' ' + borderColor + ' border-y ' +
           (blockStart ? 'border-l ' : '') + (blockEnd ? 'border-r ' : '') +
           'flex items-center overflow-hidden cursor-grab" ' +
+          'data-pidx="' + realIdx + '" ' +
           'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
+          'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
+          'ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ' +
+          'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + realIdx + ')" ' +
           'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
           (showTitle
             ? '<span class="text-[9px] font-bold px-1.5 truncate ' + textColor + '">' + (ev[1]||'') + '</span>'
@@ -2501,17 +2515,22 @@
     const btn = document.getElementById('planner-save-btn');
     btn.textContent = '저장 중...'; btn.disabled = true;
     const pCat = document.getElementById('p-category').value;
+    var dateVal = document.getElementById('p-date').value;
+    // 같은 날짜 이벤트 중 최대 order + 1
+    var maxOrder = 0;
+    plannerData.forEach(function(r){ if (r[0] === dateVal && (parseInt(r[6])||0) >= maxOrder) maxOrder = (parseInt(r[6])||0) + 1; });
     const row = [
-      document.getElementById('p-date').value,
+      dateVal,
       document.getElementById('p-title').value,
       pCat,
       CAT_COLOR[pCat] || 'mint',
       document.getElementById('p-notes').value,
       document.getElementById('p-date-end').value || '',
+      editingPlannerIndex !== null ? (plannerData[editingPlannerIndex][6]||'0') : String(maxOrder),
     ];
     try {
       if (editingPlannerIndex !== null) {
-        const id = plannerData[editingPlannerIndex][6];
+        const id = plannerData[editingPlannerIndex][7];
         await fbUpdate('planner', id, rowToObj('planner', row));
         plannerData[editingPlannerIndex] = row.concat([id]);
       } else {
@@ -2553,7 +2572,7 @@
 
   async function deletePlannerRow(i) {
     try {
-      const id = plannerData[i][6];
+      const id = plannerData[i][7];
       await fbDelete('planner', id);
       plannerData.splice(i, 1);
       renderCalendar();
@@ -2607,7 +2626,7 @@
     if (ctrlOrCmd && e.key === 'c' && selectedPlannerIdx !== null) {
       var row = plannerData[selectedPlannerIdx];
       if (row) {
-        copiedPlannerEvent = row.slice(0, 6);
+        copiedPlannerEvent = row.slice(0, 7);
         showPlannerToast('📋 일정 복사됨! 날짜를 클릭한 뒤 Ctrl+V');
       }
     }
@@ -2672,10 +2691,40 @@
     setTimeout(function(){ toast.remove(); }, 2500);
   }
 
+  async function reorderPlannerEvent(e, targetIdx) {
+    var dragIdx = parseInt(e.dataTransfer.getData('text/plain'));
+    if (isNaN(dragIdx) || dragIdx === targetIdx) return;
+    var dragRow = plannerData[dragIdx];
+    var targetRow = plannerData[targetIdx];
+    if (!dragRow || !targetRow) return;
+    // 다른 날짜면 일반 이동/복사
+    if (dragRow[0] !== targetRow[0]) {
+      if (plannerCtrlDrag) {
+        copiedPlannerEvent = dragRow.slice(0, 7);
+        pastePlannerEvent(targetRow[0]);
+      } else {
+        dropPlannerEvent(dragIdx, targetRow[0]);
+      }
+      return;
+    }
+    // 업무 카테고리는 항상 최상단 고정 — 업무 위로는 이동 불가
+    if (targetRow[2] === '업무' && dragRow[2] !== '업무') return;
+    // 같은 날짜 내 order 스왑
+    var tempOrder = dragRow[6];
+    dragRow[6] = targetRow[6];
+    targetRow[6] = tempOrder;
+    try {
+      await fbUpdate('planner', dragRow[7], rowToObj('planner', dragRow.slice(0, 7)));
+      await fbUpdate('planner', targetRow[7], rowToObj('planner', targetRow.slice(0, 7)));
+      renderCalendar();
+      updatePlannerTracks();
+    } catch(err) { console.error('Reorder error:', err); }
+  }
+
   async function dropPlannerEvent(idx, newDate) {
     if (plannerData[idx][0] === newDate) return; // 같은 날짜면 무시
     try {
-      const id = plannerData[idx][6];
+      const id = plannerData[idx][7];
       var oldStart = plannerData[idx][0];
       var oldEnd = plannerData[idx][5];
       plannerData[idx][0] = newDate;
@@ -4724,7 +4773,7 @@
     english:  ['lesson_name','date','status','track','fee','notes'],
     finance:  ['date','description','trip','category','amount','currency'],
     finance_hub: ['date','category','description','amount','type'],
-    planner:  ['date','title','category','color','notes','date_end'],
+    planner:  ['date','title','category','color','notes','date_end','order'],
     milestones: ['month','goal','status'],
     journey:  ['time','type','target_name','description','amount','status'],
   };
