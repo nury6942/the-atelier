@@ -3414,12 +3414,11 @@
 
   // 도시별 일차 매핑 계산
   function getDayMap() {
-    var sorted = citiesData.slice().sort(function(a,b){ return (a.order||0)-(b.order||0); });
-    var dayMap = [];
-    var globalDay = 0;
-
-    if (sorted.length > 0 && sorted.some(function(c){ return c.start_date && c.end_date; })) {
-      // 날짜 기반 도시: start_date~end_date 범위의 각 날짜를 일차로
+    var trip = getCurrentTrip();
+    if (!trip || !trip.start_date || !trip.end_date) {
+      // 여행 날짜 없으면 도시 기반 fallback
+      var sorted = citiesData.slice().sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
+      var dayMap = []; var globalDay = 0;
       sorted.forEach(function(city) {
         if (!city.start_date || !city.end_date) return;
         var cur = new Date(city.start_date + 'T00:00:00');
@@ -3427,41 +3426,34 @@
         while (cur <= end) {
           globalDay++;
           var ds = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
-          dayMap.push({
-            day: globalDay,
-            cityName: city.name,
-            cityDesc: city.desc || '',
-            date: ds
-          });
+          dayMap.push({ day: globalDay, cityName: city.name, cityDesc: city.desc||'', date: ds });
           cur.setDate(cur.getDate() + 1);
         }
       });
-    } else if (sorted.length > 0 && sorted.some(function(c){ return parseInt(c.nights)>0; })) {
-      // 박수 기반 (구형 데이터 호환)
-      var trip = getCurrentTrip();
-      var startDate = trip && trip.start_date ? new Date(trip.start_date + 'T00:00:00') : null;
-      sorted.forEach(function(city) {
-        var nights = parseInt(city.nights) || 1;
-        for (var n = 0; n < nights; n++) {
-          globalDay++;
-          var dateStr = '';
-          if (startDate) {
-            var d = new Date(startDate);
-            d.setDate(d.getDate() + globalDay - 1);
-            dateStr = d.toISOString().split('T')[0];
-          }
-          dayMap.push({ day: globalDay, cityName: city.name, date: dateStr });
-        }
-      });
-    } else {
-      // 도시 없으면 여행 날짜 기준
-      var dates = getTripDatesRaw();
-      dates.forEach(function(dateStr, i) {
-        var cityName = sorted.length > 0 ? sorted[0].name : '';
-        dayMap.push({ day: i+1, cityName: cityName, date: dateStr });
-      });
+      return dayMap;
     }
-    return dayMap;
+
+    // 여행 시작일~종료일 기준으로 전체 일차 생성
+    var sorted2 = citiesData.slice().sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
+    var dayMap2 = [];
+    var cur2 = new Date(trip.start_date + 'T00:00:00');
+    var end2 = new Date(trip.end_date + 'T00:00:00');
+    var dayNum = 0;
+    while (cur2 <= end2) {
+      dayNum++;
+      var ds2 = cur2.getFullYear()+'-'+String(cur2.getMonth()+1).padStart(2,'0')+'-'+String(cur2.getDate()).padStart(2,'0');
+      // 해당 날짜에 맞는 도시 찾기
+      var cityName = ''; var cityDesc = '';
+      for (var i = 0; i < sorted2.length; i++) {
+        var c = sorted2[i];
+        if (c.start_date && c.end_date && ds2 >= c.start_date && ds2 <= c.end_date) {
+          cityName = c.name; cityDesc = c.desc || ''; break;
+        }
+      }
+      dayMap2.push({ day: dayNum, cityName: cityName, cityDesc: cityDesc, date: ds2 });
+      cur2.setDate(cur2.getDate() + 1);
+    }
+    return dayMap2;
   }
 
   function getTripDatesRaw() {
