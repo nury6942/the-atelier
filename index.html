@@ -1725,10 +1725,15 @@
               <p class="text-slate-400 text-xs font-medium">Annual Matrix 에피소드 인덱스와 실시간 연동</p>
             </div>
           </div>
-          <div class="flex items-center bg-slate-100 rounded-lg p-1">
-            <button onclick="incomeCalPrev()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
-            <span id="income-cal-title" class="px-4 text-sm font-bold font-headline uppercase tracking-widest">2026년 4월</span>
-            <button onclick="incomeCalNext()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+          <div class="flex items-center gap-3">
+            <button onclick="openRepeatModal()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all">
+              <span class="material-symbols-outlined text-sm">repeat</span> 반복 추가
+            </button>
+            <div class="flex items-center bg-slate-100 rounded-lg p-1">
+              <button onclick="incomeCalPrev()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
+              <span id="income-cal-title" class="px-4 text-sm font-bold font-headline uppercase tracking-widest">2026년 4월</span>
+              <button onclick="incomeCalNext()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+            </div>
           </div>
         </header>
         <div id="income-cal-grid" class="grid grid-cols-7 gap-px bg-slate-200/30 rounded-2xl overflow-hidden"></div>
@@ -1812,6 +1817,52 @@
             <button onclick="closeCalEventModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
             <button id="cal-ev-delete-btn" onclick="deleteCalEventFromModal()" style="display:none" class="py-3 px-5 rounded-xl text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors">삭제</button>
             <button onclick="saveCalEventFromModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">save</span> 저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPEAT SCHEDULE MODAL -->
+    <div id="repeat-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-3xl shadow-xl w-full max-w-md mx-4 overflow-hidden" style="animation:modalIn 0.2s ease;">
+        <div class="gradient-primary px-6 py-5">
+          <h3 class="text-lg font-bold text-white font-headline">반복 연재 일정 추가</h3>
+          <p class="text-xs text-white/70 mt-0.5">매주 반복되는 연재 일정을 한번에 추가</p>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">시리즈 *</label>
+            <select id="rpt-series" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200 bg-white"></select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">시작 화수</label>
+            <input id="rpt-start-ep" type="number" value="1" min="1" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">반복 요일 (복수 선택)</label>
+            <div class="flex gap-2" id="rpt-days">
+              <label class="flex-1 text-center"><input type="checkbox" value="0" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">일</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="1" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">월</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="2" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">화</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="3" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">수</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="4" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">목</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="5" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">금</span></label>
+              <label class="flex-1 text-center"><input type="checkbox" value="6" class="hidden peer"/><span class="block py-2 rounded-lg text-xs font-bold border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 cursor-pointer transition-all">토</span></label>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">시작 날짜</label>
+              <input id="rpt-start-date" type="date" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">종료 날짜 / 마지막 화</label>
+              <input id="rpt-end" type="text" placeholder="날짜 또는 화수 (예: 30)" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
+            </div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button onclick="closeRepeatModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
+            <button onclick="saveRepeatSchedule()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">event_repeat</span> 일괄 추가</button>
           </div>
         </div>
       </div>
@@ -6903,7 +6954,9 @@
   function incomeCalPrev() { _incomeCalMonth--; if(_incomeCalMonth<0){_incomeCalMonth=11;_incomeCalYear--;} renderIncomeCal(); }
   function incomeCalNext() { _incomeCalMonth++; if(_incomeCalMonth>11){_incomeCalMonth=0;_incomeCalYear++;} renderIncomeCal(); }
 
-  var _calClipboard = null; // copy/paste buffer
+  var _calClipboard = null;
+  var _calSelectedEvt = null; // selected event index
+  var _calSelectedDate = null; // selected date string
 
   function renderIncomeCal() {
     var titleEl = document.getElementById('income-cal-title');
@@ -6936,31 +6989,57 @@
     for (var d2=1;d2<=daysInMonth;d2++) {
       var isToday = isThisMonth && d2===todayDate;
       var isSun = (firstDay+d2-1)%7===0;
-      var bgCls = isToday ? 'ring-2 ring-indigo-500 ring-inset' : '';
-      var numCls = isToday ? 'text-indigo-600 font-bold' : (isSun ? 'text-rose-400' : 'text-slate-600');
       var dateStr = _incomeCalYear+'-'+String(_incomeCalMonth+1).padStart(2,'0')+'-'+String(d2).padStart(2,'0');
+      var isSelDate = _calSelectedDate===dateStr;
+      // 오늘: 보라 동그라미 + 날짜 숫자 흰색
+      var todayHtml = isToday
+        ? '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">' + d2 + '</span>'
+        : '<span class="text-xs font-medium ' + (isSun?'text-rose-400':'text-slate-600') + '">' + d2 + '</span>';
+      var cellBorder = isSelDate ? ' ring-2 ring-indigo-400 ring-inset' : '';
       var evtHtml = '';
       if (dayEvents[d2]) {
         dayEvents[d2].forEach(function(ev) {
           var c = getSeriesColor(ev.series);
-          evtHtml += '<div draggable="true" ondragstart="calDragStart(event,'+ev.idx+')" onclick="event.stopPropagation()" class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-grab hover:bg-'+c+'-200 transition-colors group/ev relative">' +
-            '<p class="text-[8px] font-bold text-'+c+'-700 uppercase truncate pr-8">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
+          var isSel = _calSelectedEvt===ev.idx;
+          var selCls = isSel ? ' ring-2 ring-indigo-500' : '';
+          evtHtml += '<div draggable="true" ondragstart="calDragStart(event,'+ev.idx+')" ' +
+            'onclick="event.stopPropagation();selectCalEvent('+ev.idx+')" ' +
+            'ondblclick="event.stopPropagation();editCalEvent('+ev.idx+')" ' +
+            'class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-grab hover:bg-'+c+'-200 transition-colors group/ev relative'+selCls+'">' +
+            '<p class="text-[8px] font-bold text-'+c+'-700 uppercase truncate pr-7">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
             '<div class="absolute right-0.5 top-0.5 flex gap-px opacity-0 group-hover/ev:opacity-100 transition-opacity">' +
-              '<button onclick="event.stopPropagation();copyCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="복사"><span class="material-symbols-outlined" style="font-size:10px">content_copy</span></button>' +
               '<button onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="수정"><span class="material-symbols-outlined" style="font-size:10px">edit</span></button>' +
               '<button onclick="event.stopPropagation();quickDeleteCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:10px">close</span></button>' +
             '</div></div>';
         });
       }
-      html += '<div class="bg-white h-28 p-2 cursor-pointer hover:bg-slate-50 transition-colors '+bgCls+'" ' +
-        'onclick="addCalEvent(\''+dateStr+'\')" ' +
+      html += '<div class="bg-white h-28 p-2 cursor-pointer hover:bg-slate-50 transition-colors'+cellBorder+'" ' +
+        'onclick="calCellClick(\''+dateStr+'\')" ' +
         'ondragover="event.preventDefault();this.classList.add(\'bg-indigo-50\')" ' +
         'ondragleave="this.classList.remove(\'bg-indigo-50\')" ' +
         'ondrop="calDrop(event,\''+dateStr+'\')">' +
-        '<span class="text-xs font-medium '+numCls+'">' + d2 + '</span>' + evtHtml + '</div>';
+        todayHtml + evtHtml + '</div>';
     }
 
     grid.innerHTML = html;
+  }
+
+  // Cell click: select date, or add event if no events
+  function calCellClick(dateStr) {
+    _calSelectedDate = dateStr;
+    _calSelectedEvt = null;
+    // 이벤트 없는 날 클릭 시 추가
+    var evts = getCalEvents();
+    var has = evts.some(function(e){ return e.date===dateStr; });
+    if (!has) { addCalEvent(dateStr); return; }
+    renderIncomeCal();
+  }
+
+  // Event click: select for copy
+  function selectCalEvent(idx) {
+    _calSelectedEvt = (_calSelectedEvt===idx) ? null : idx;
+    _calSelectedDate = null;
+    renderIncomeCal();
   }
 
   // Drag & Drop
@@ -6968,53 +7047,102 @@
   function calDragStart(e, idx) { _calDragIdx = idx; e.dataTransfer.effectAllowed = 'move'; }
   function calDrop(e, dateStr) {
     e.preventDefault(); e.currentTarget.classList.remove('bg-indigo-50');
-    if (_calDragIdx === null) {
-      // Paste from clipboard
-      if (_calClipboard) { pasteCalEvent(dateStr); }
-      return;
+    if (_calDragIdx !== null) {
+      var evts = getCalEvents();
+      evts[_calDragIdx].date = dateStr;
+      saveCalEvents(evts);
+      _calDragIdx = null;
+      syncCalToMatrix();
+      renderIncomeCal(); renderIncomeMatrix();
     }
-    var evts = getCalEvents();
-    evts[_calDragIdx].date = dateStr;
-    saveCalEvents(evts);
-    _calDragIdx = null;
-    syncCalToMatrix();
-    renderIncomeCal(); renderIncomeMatrix();
   }
 
-  // Copy & Paste
-  function copyCalEvent(idx) {
-    var evts = getCalEvents();
-    _calClipboard = { series: evts[idx].series, episode: evts[idx].episode, note: evts[idx].note||'' };
-  }
-  function pasteCalEvent(dateStr) {
-    if (!_calClipboard) return;
-    var evts = getCalEvents();
-    evts.push({ id:'ce_'+Date.now(), date:dateStr, series:_calClipboard.series, episode:_calClipboard.episode, note:_calClipboard.note });
-    saveCalEvents(evts);
-    syncCalToMatrix();
-    renderIncomeCal(); renderIncomeMatrix();
-  }
-
-  // Quick delete (no modal)
+  // Quick delete
   function quickDeleteCalEvent(idx) {
     var evts = getCalEvents();
     evts.splice(idx, 1);
     saveCalEvents(evts);
+    _calSelectedEvt = null;
     syncCalToMatrix();
     renderIncomeCal(); renderIncomeMatrix();
   }
 
-  // Keyboard shortcut: Ctrl+V paste on focused day
+  // Keyboard: Ctrl+C copy, Ctrl+V paste
   document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'v' && _calClipboard) {
-      // paste to today if on income page
-      var page = document.getElementById('page-income');
-      if (page && page.style.display !== 'none') {
-        var todayStr = new Date().toISOString().split('T')[0];
-        pasteCalEvent(todayStr);
-      }
+    var page = document.getElementById('page-income');
+    if (!page || page.style.display === 'none') return;
+    if (e.ctrlKey && e.key === 'c' && _calSelectedEvt !== null) {
+      var evts = getCalEvents();
+      var ev = evts[_calSelectedEvt];
+      if (ev) _calClipboard = { series: ev.series, episode: ev.episode, note: ev.note||'' };
+    }
+    if (e.ctrlKey && e.key === 'v' && _calClipboard && _calSelectedDate) {
+      var evts2 = getCalEvents();
+      evts2.push({ id:'ce_'+Date.now(), date:_calSelectedDate, series:_calClipboard.series, episode:_calClipboard.episode, note:_calClipboard.note });
+      saveCalEvents(evts2);
+      syncCalToMatrix();
+      renderIncomeCal(); renderIncomeMatrix();
     }
   });
+
+  // ===== 반복 연재 일정 =====
+  function openRepeatModal() {
+    var series = getSeriesData();
+    if (series.length===0) { alert('먼저 시리즈를 추가해주세요!'); return; }
+    var sel = document.getElementById('rpt-series');
+    sel.innerHTML = series.map(function(s){ return '<option value="'+s.name+'">'+s.name+'</option>'; }).join('');
+    document.getElementById('rpt-start-ep').value = 1;
+    document.getElementById('rpt-start-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('rpt-end').value = '';
+    document.querySelectorAll('#rpt-days input').forEach(function(cb){ cb.checked=false; });
+    document.getElementById('repeat-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeRepeatModal() {
+    document.getElementById('repeat-modal').style.cssText = 'display:none!important';
+  }
+
+  function saveRepeatSchedule() {
+    var seriesName = document.getElementById('rpt-series').value;
+    var startEp = parseInt(document.getElementById('rpt-start-ep').value)||1;
+    var startDate = document.getElementById('rpt-start-date').value;
+    var endVal = document.getElementById('rpt-end').value.trim();
+    if (!startDate) { alert('시작 날짜를 입력해줘!'); return; }
+
+    // 선택된 요일들
+    var days = [];
+    document.querySelectorAll('#rpt-days input:checked').forEach(function(cb){ days.push(parseInt(cb.value)); });
+    if (days.length===0) { alert('반복 요일을 선택해줘!'); return; }
+
+    // 종료 조건: 날짜 형식이면 날짜, 숫자만이면 마지막 화수
+    var endDate = null, lastEp = null;
+    if (endVal.indexOf('-')>0) { endDate = endVal; }
+    else if (parseInt(endVal)) { lastEp = parseInt(endVal); }
+    else { alert('종료 날짜(YYYY-MM-DD) 또는 마지막 화수(숫자)를 입력해줘!'); return; }
+
+    var evts = getCalEvents();
+    var cur = new Date(startDate+'T00:00:00');
+    var ep = startEp;
+    var maxIter = 365; // safety
+
+    while (maxIter-- > 0) {
+      if (endDate && cur.toISOString().split('T')[0] > endDate) break;
+      if (lastEp && ep > lastEp) break;
+      if (!endDate && !lastEp) break;
+
+      if (days.indexOf(cur.getDay()) >= 0) {
+        var ds = cur.toISOString().split('T')[0];
+        evts.push({ id:'ce_'+Date.now()+'_'+ep, date:ds, series:seriesName, episode:ep+'화', note:'' });
+        ep++;
+      }
+      cur.setDate(cur.getDate()+1);
+    }
+
+    saveCalEvents(evts);
+    syncCalToMatrix();
+    closeRepeatModal();
+    renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+  }
 
   // 캘린더 이벤트 모달
   function openCalEventModal(dateStr, editIdx) {
