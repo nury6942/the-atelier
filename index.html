@@ -1800,6 +1800,9 @@
               <span class="material-symbols-outlined text-sm">upload_file</span> sessions.js 업로드
               <input id="eng-file-input" type="file" accept=".js" class="hidden" onchange="handleSessionUpload(this.files[0])"/>
             </label>
+            <button onclick="openReviewCreateModal()" class="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-sm">rate_review</span> 리뷰 추가
+            </button>
             <button onclick="openEnglishModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 수업 추가
             </button>
@@ -1874,6 +1877,58 @@
               <button onclick="resolveSessionDups('overwrite')" class="flex-1 py-2 rounded-xl text-sm font-bold text-white" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">덮어쓰기</button>
               <button onclick="resolveSessionDups('skip')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">건너뛰기</button>
               <button onclick="resolveSessionDups('cancel')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Create Modal -->
+      <div id="eng-review-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+          <div class="px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 flex justify-between items-center">
+            <h3 class="font-bold text-white text-lg font-headline">리뷰 직접 추가</h3>
+            <button onclick="closeReviewCreateModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div class="p-6 overflow-y-auto flex-1 space-y-6">
+            <!-- Step 1: Input -->
+            <div id="review-step1">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">1</span>
+                <h4 class="font-bold text-slate-800">수업 정보 입력</h4>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="space-y-1">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">날짜 *</label>
+                  <input id="review-date" type="date" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm"/>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">수업명</label>
+                  <input id="review-title" type="text" placeholder="예: Business Communication" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm"/>
+                </div>
+              </div>
+              <div class="space-y-1 mb-4">
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">트랜스크립트 *</label>
+                <textarea id="review-transcript" rows="6" placeholder="수업 트랜스크립트를 붙여넣으세요..." class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm resize-none"></textarea>
+              </div>
+              <button onclick="copyReviewPrompt()" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200">
+                <span class="material-symbols-outlined text-sm">content_copy</span> 프롬프트 복사
+              </button>
+              <p class="text-[10px] text-slate-400 mt-2 text-center">복사한 프롬프트를 Claude에 붙여넣고, 생성된 JSON을 아래에 입력하세요</p>
+            </div>
+
+            <!-- Step 2: JSON Paste -->
+            <div id="review-step2">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">2</span>
+                <h4 class="font-bold text-slate-800">리뷰 JSON 붙여넣기</h4>
+              </div>
+              <div class="space-y-1 mb-4">
+                <textarea id="review-json" rows="8" placeholder='Claude가 생성한 JSON을 여기에 붙여넣으세요...' class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm font-mono resize-none"></textarea>
+              </div>
+              <div id="review-parse-status" class="hidden mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2"></div>
+              <button onclick="parseAndSaveReview()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-emerald-200">
+                <span class="material-symbols-outlined text-sm">save</span> 파싱 & 저장
+              </button>
             </div>
           </div>
         </div>
@@ -10404,6 +10459,97 @@ async function deleteSessionFromDetail(dateId) {
     engSessionsData = engSessionsData.filter(function(s){ return s._id !== dateId; });
     closeSessionDetail();
   } catch(err) { alert('삭제 실패'); }
+}
+
+// ===== REVIEW CREATE =====
+var REVIEW_PROMPT_TEMPLATE = 'You are an expert ESL tutor reviewing a lesson transcript. Analyze this English lesson transcript and produce a structured JSON review.\n\nDate: {{DATE}}\n\nTranscript:\n{{TRANSCRIPT}}\n\nReturn ONLY valid JSON (no markdown, no code blocks) in this exact structure:\n\n{\n  "title": "Short lesson title (3-5 words in English)",\n  "subtitle": "One-sentence summary of what was covered",\n  "level": {\n    "fluency": 0-100,\n    "vocab": 0-100,\n    "grammar": 0-100,\n    "interaction": 0-100\n  },\n  "summary": {\n    "heading": "Summary heading",\n    "p1": "First paragraph of summary",\n    "p2": "Second paragraph of summary",\n    "kr": "Korean translation of summary"\n  },\n  "expressions": [\n    { "cat": "Category", "expr": "Expression", "kr": "Korean meaning", "ex": "Example sentence" }\n  ],\n  "expressionsKr": "Korean explanation of why these expressions are useful",\n  "upgrades": [\n    { "bad": "Original awkward sentence", "ok": "Acceptable version", "gem": "Advanced/natural version", "note": "English explanation", "noteKr": "Korean explanation" }\n  ],\n  "upgradesKr": "Korean summary of upgrade patterns",\n  "grammar": [\n    { "title": "Grammar point title", "rule": "Rule explanation", "examples": ["example1", "example2"] }\n  ],\n  "grammarKr": "Korean summary of grammar points",\n  "convoSkills": {\n    "followups": ["Follow-up question 1", "Follow-up question 2"],\n    "reactions": [{ "feel": "Feeling/situation", "say": "Natural reaction phrase" }],\n    "starters": ["C1-level sentence starter 1", "C1-level sentence starter 2"],\n    "kr": "Korean explanation of conversation skills"\n  },\n  "vocabSets": [\n    {\n      "topic": "Topic in English",\n      "topicKr": "Topic in Korean",\n      "words": [\n        { "word": "vocabulary word", "mean": "Korean meaning", "coll": "common collocation", "ex": "example sentence" }\n      ]\n    }\n  ],\n  "vocabKr": "Korean summary of vocabulary",\n  "drills": [\n    { "title": "Drill title", "items": [{ "q": "Question/prompt", "a": "Answer" }] }\n  ],\n  "drillsKr": "Korean explanation of drills",\n  "goals": [\n    { "title": "Goal title", "desc": "Goal description" }\n  ],\n  "goalsKr": "Korean summary of goals"\n}\n\nIMPORTANT:\n- Extract 5-8 useful expressions from the transcript\n- Find 3-5 sentences the student said that could be upgraded\n- Identify 2-3 grammar points that need attention\n- Create vocabulary sets organized by topic (2-3 sets, 4-6 words each)\n- Generate 2-3 practice drills based on weak points\n- Set 3-4 concrete goals for next lesson\n- All Korean translations should be natural and helpful\n- Score levels realistically based on actual performance in transcript';
+
+function openReviewCreateModal() {
+  document.getElementById('review-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('review-title').value = '';
+  document.getElementById('review-transcript').value = '';
+  document.getElementById('review-json').value = '';
+  var status = document.getElementById('review-parse-status');
+  status.className = 'hidden mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2';
+  status.innerHTML = '';
+  document.getElementById('eng-review-modal').style.cssText = 'display:flex!important';
+}
+
+function closeReviewCreateModal() {
+  document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
+}
+
+function copyReviewPrompt() {
+  var date = document.getElementById('review-date').value;
+  var transcript = document.getElementById('review-transcript').value.trim();
+  if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
+  if (!transcript) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 트랜스크립트를 입력하세요'); return; }
+  var prompt = REVIEW_PROMPT_TEMPLATE.replace('{{DATE}}', date).replace('{{TRANSCRIPT}}', transcript);
+  navigator.clipboard.writeText(prompt).then(function() {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 프롬프트가 클립보드에 복사되었습니다');
+  }).catch(function() {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 복사 실패 — 수동으로 복사하세요');
+  });
+}
+
+async function parseAndSaveReview() {
+  var date = document.getElementById('review-date').value;
+  var jsonText = document.getElementById('review-json').value.trim();
+  var status = document.getElementById('review-parse-status');
+
+  if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
+  if (!jsonText) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> JSON을 붙여넣으세요'); return; }
+
+  // Clean up JSON input: remove code blocks, sessionsData wrapper
+  var cleaned = jsonText;
+  // Remove markdown code blocks
+  cleaned = cleaned.replace(/^```(?:json)?\s*/gm, '').replace(/```\s*$/gm, '');
+  // Remove sessionsData["..."] = wrapper
+  cleaned = cleaned.replace(/^(?:const|let|var)?\s*sessionsData\s*\[\s*["'][^"']*["']\s*\]\s*=\s*/m, '');
+  // Remove trailing semicolons
+  cleaned = cleaned.replace(/;\s*$/, '');
+  cleaned = cleaned.trim();
+
+  var parsed;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch(e) {
+    // Try wrapping in braces
+    try {
+      parsed = JSON.parse('{' + cleaned + '}');
+    } catch(e2) {
+      status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-rose-50 text-rose-700';
+      status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> JSON 파싱 실패: ' + e.message;
+      return;
+    }
+  }
+
+  // Add title from input if not in JSON
+  var titleInput = document.getElementById('review-title').value.trim();
+  if (titleInput && !parsed.title) parsed.title = titleInput;
+
+  // Check for duplicate
+  try {
+    var existing = await db.collection('englishSessions').doc(date).get();
+    if (existing.exists) {
+      status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-amber-50 text-amber-700';
+      status.innerHTML = '<span class="material-symbols-outlined text-sm">warning</span> ' + date + ' 수업이 이미 존재합니다. 덮어씁니다...';
+    }
+  } catch(ex){}
+
+  // Save
+  parsed.updatedAt = new Date().toISOString();
+  try {
+    await db.collection('englishSessions').doc(date).set(parsed, {merge: true});
+    status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-emerald-50 text-emerald-700';
+    status.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> ' + date + ' 리뷰 저장 완료!';
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 저장 완료');
+    await loadEnglishSessions();
+    setTimeout(function(){ closeReviewCreateModal(); }, 1200);
+  } catch(err) {
+    status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-rose-50 text-rose-700';
+    status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> 저장 실패: ' + err.message;
+  }
 }
 
   // ===== 전역 검색 =====
