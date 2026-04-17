@@ -3575,9 +3575,9 @@
     div.innerHTML =
       '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-indigo-300 ring-4 ring-white shadow-sm"></div>' +
       '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(107,56,212,0.06),rgba(99,102,241,0.08))">' +
+        '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1.5 w-16"/>' +
         '<div class="flex gap-2 items-center">' +
-          '<input id="sched-add-time" type="text" placeholder="시간" class="'+ic+'" style="width:50px"/>' +
-          '<input id="sched-add-title" type="text" placeholder="일정 내용 입력..." class="'+ic+' flex-1" onkeydown="if(event.key===\'Enter\')saveScheduleInline()"/>' +
+          '<input id="sched-add-title" type="text" placeholder="일정 내용 입력..." class="'+ic+' flex-1 font-bold text-sm" onkeydown="if(event.key===\'Enter\')saveScheduleInline()"/>' +
           '<button onclick="saveScheduleInline()" class="p-1 text-indigo-400 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">check</span></button>' +
           '<button onclick="this.closest(\'.schedule-inline-add\').remove()" class="p-1 text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>' +
         '</div>' +
