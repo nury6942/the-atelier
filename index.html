@@ -1759,19 +1759,32 @@
           <p id="eng-rand-example" class="text-xs text-slate-400 italic mb-3" style="display:none"></p>
           <div id="eng-rand-badges" class="flex gap-2 flex-wrap"></div>
         </div>
-        <div class="section-tint-blue p-6 rounded-2xl border border-blue-100 flex flex-col justify-between">
-          <div class="flex justify-between items-start mb-4">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">세션 진행률</span>
-            <span id="english-progress-pct" class="text-primary font-headline font-bold text-2xl">0%</span>
+        <div class="p-6 rounded-2xl flex items-center gap-6 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#4F46E5);box-shadow:0 12px 32px rgba(107,56,212,0.25);" aria-label="세션 진행률">
+          <!-- 원형 진행률 -->
+          <div class="relative shrink-0" style="width:120px;height:120px;">
+            <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+              <defs><linearGradient id="progGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#818cf8"/></linearGradient></defs>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="10"/>
+              <circle id="english-progress-circle" cx="60" cy="60" r="50" fill="none" stroke="url(#progGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 1s ease;"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="english-progress-pct" class="text-3xl font-black text-white font-headline leading-none">0%</span>
+              <span class="text-[9px] text-white/60 uppercase font-bold tracking-wider mt-1">Complete</span>
+            </div>
           </div>
-          <div class="w-full bg-white h-2.5 rounded-full overflow-hidden border border-blue-200">
-            <div id="english-progress-bar" class="gradient-secondary h-full transition-all" style="width:0%"></div>
+          <!-- 메트릭 -->
+          <div class="flex-1">
+            <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-white/50 mb-3">세션 진행률</p>
+            <div class="space-y-2.5">
+              <div class="flex justify-between items-center"><span class="text-xs text-white/70">전체</span><span id="english-total" class="text-lg font-black text-white">0</span></div>
+              <div class="h-px bg-white/10"></div>
+              <div class="flex justify-between items-center"><span class="text-xs text-white/70">완료</span><span id="english-done" class="text-lg font-black text-violet-200">0</span></div>
+              <div class="h-px bg-white/10"></div>
+              <div class="flex justify-between items-center"><span class="text-xs text-white/70">진행 중</span><span id="english-progress" class="text-lg font-black text-amber-300">0</span></div>
+            </div>
           </div>
-          <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">전체</p><p id="english-total" class="font-black text-slate-800">0</p></div>
-            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">완료</p><p id="english-done" class="font-black text-indigo-600">0</p></div>
-            <div><p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">진행 중</p><p id="english-progress" class="font-black text-blue-500">0</p></div>
-          </div>
+          <!-- hidden for compat -->
+          <div id="english-progress-bar" style="display:none"></div>
         </div>
       </div>
 
@@ -9310,7 +9323,15 @@
     document.getElementById('english-done').textContent = done;
     document.getElementById('english-progress').textContent = inprog;
     document.getElementById('english-progress-pct').textContent = pct + '%';
-    document.getElementById('english-progress-bar').style.width = pct + '%';
+    // 원형 진행률 애니메이션
+    var circle = document.getElementById('english-progress-circle');
+    if (circle) {
+      var circumference = 2 * Math.PI * 50; // r=50
+      var offset = circumference - (pct / 100) * circumference;
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = circumference;
+      setTimeout(function(){ circle.style.strokeDashoffset = offset; }, 100);
+    }
 
     // Fee totals (GBP → KRW)
     let feeTotal = 0;
