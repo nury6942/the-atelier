@@ -10695,7 +10695,7 @@ function copyReviewPrompt() {
   var transcript = document.getElementById('review-transcript').value.trim();
   if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
   if (!transcript) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 트랜스크립트를 입력하세요'); return; }
-  var prompt = REVIEW_PROMPT_TEMPLATE.replace('{{DATE}}', date).replace('{{TRANSCRIPT}}', transcript);
+  var prompt = REVIEW_PROMPT_TEMPLATE.replaceAll('{{DATE}}', date).replaceAll('{{TRANSCRIPT}}', transcript);
   navigator.clipboard.writeText(prompt).then(function() {
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 프롬프트가 클립보드에 복사되었습니다');
   }).catch(function() {
