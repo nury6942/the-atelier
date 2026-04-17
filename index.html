@@ -3484,8 +3484,8 @@
     items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
 
     // 날씨 배너 업데이트
-    if (dateStr && cityName) {
-      fetchWeather(cityName, dateStr);
+    if (dateStr) {
+      fetchWeather(cityName || (citiesData.length > 0 ? citiesData[0].name : ''), dateStr);
     } else {
       var wb = document.getElementById('weather-banner');
       if (wb) wb.classList.add('hidden');
@@ -3633,15 +3633,40 @@
     99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%)'},
   };
 
+  function cleanCityName(name) {
+    if (!name) return '';
+    // "Oświęcim (아우슈비츠)" → "Oświęcim"
+    var cleaned = name.replace(/\s*\(.*?\)/g, '').trim();
+    // "Plitvička / Zagreb" → 첫 번째 이름 사용
+    if (cleaned.indexOf('/') >= 0) cleaned = cleaned.split('/')[0].trim();
+    // 한글만 남은 경우 원래 이름의 영문 부분 추출
+    if (/^[\uAC00-\uD7A3\s]+$/.test(cleaned) && /[a-zA-Z]/.test(name)) {
+      cleaned = name.replace(/[\uAC00-\uD7A3\s()]/g, '').trim();
+    }
+    return cleaned || name;
+  }
+
   async function geocodeCity(cityName) {
     if (_geocodeCache[cityName]) return _geocodeCache[cityName];
+    var searchName = cleanCityName(cityName);
+    if (!searchName) return null;
     try {
-      var res = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cityName) + '&count=1&language=ko');
+      var res = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(searchName) + '&count=1&language=en');
       var data = await res.json();
       if (data.results && data.results.length > 0) {
         var r = data.results[0];
         _geocodeCache[cityName] = { lat: r.latitude, lng: r.longitude, name: r.name };
         return _geocodeCache[cityName];
+      }
+      // 영어로 못 찾으면 한국어로 재시도
+      if (searchName !== cityName) {
+        res = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cityName.split('(')[0].split('/')[0].trim()) + '&count=1&language=ko');
+        data = await res.json();
+        if (data.results && data.results.length > 0) {
+          var r2 = data.results[0];
+          _geocodeCache[cityName] = { lat: r2.latitude, lng: r2.longitude, name: r2.name };
+          return _geocodeCache[cityName];
+        }
       }
     } catch(e) { console.warn('Geocode failed:', e); }
     return null;
@@ -3664,14 +3689,20 @@
 
       var url, isHistorical = false;
       if (diffDays >= -2 && diffDays <= 15) {
+        // 최근~16일 이내 예보
         url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
           '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max' +
+          '&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      } else if (diffDays < -2) {
+        // 과거 날씨 (실제 기록)
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max' +
           '&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
       } else {
         // 16일 이후 미래: 작년 같은 날짜 기후 참고
         isHistorical = true;
         var lastYear = new Date(target); lastYear.setFullYear(lastYear.getFullYear() - 1);
-        var lyStr = lastYear.toISOString().split('T')[0];
+        var lyStr = lastYear.getFullYear()+'-'+String(lastYear.getMonth()+1).padStart(2,'0')+'-'+String(lastYear.getDate()).padStart(2,'0');
         url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
           '&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max' +
           '&timezone=auto&start_date=' + lyStr + '&end_date=' + lyStr;
