@@ -5003,30 +5003,30 @@
     var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
     var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
     return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="flex items-center">' +
-        // 왼쪽: 아이콘 + 항공사
-        '<div class="flex items-center gap-3 w-1/4 min-w-0">' +
-          '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center shrink-0"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
-          '<div class="min-w-0">' +
-            '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
-            '<p class="text-xs text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
-          '</div>' +
+      '<div class="grid items-center gap-3" style="grid-template-columns:44px minmax(120px,180px) 1fr minmax(90px,140px) 80px;">' +
+        // 아이콘
+        '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
+        // 항공사
+        '<div class="min-w-0">' +
+          '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
+          '<p class="text-xs text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
         '</div>' +
-        // 중앙: 루트 (ICN → IST)
-        '<div class="flex-1 flex items-center justify-center gap-4">' +
-          '<div class="text-center"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+depIata+'</p>' +
+        // 루트 (고정 중앙)
+        '<div class="flex items-center justify-center gap-3">' +
+          '<div class="text-center w-12"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+depIata+'</p>' +
           '<p class="text-xs font-bold text-slate-600">'+(f.depart||f.time||'')+'</p></div>' +
-          '<div class="flex flex-col items-center w-16"><div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
+          '<div class="flex flex-col items-center w-14"><div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
           '<p class="text-xs text-slate-600 mt-1 font-semibold">'+(f.duration||'')+'</p></div>' +
-          '<div class="text-center"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+arrIata+'</p>' +
+          '<div class="text-center w-12"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+arrIata+'</p>' +
           '<p class="text-xs font-bold text-slate-600">'+(f.arrive||'')+'</p></div>' +
         '</div>' +
-        // 오른쪽: 가격 + 버튼
-        '<div class="flex items-center gap-3 shrink-0">' +
-          '<div class="text-right"><p class="text-base font-bold text-indigo-600 whitespace-nowrap">'+(f.price||f.amount||'—')+'</p>' +
-          '<p class="text-xs text-slate-600">'+(f.baggage||'')+'</p></div>' +
-          '<div class="flex gap-1">' + deleteHtml + '</div>' +
+        // 가격 (고정 너비, 오른쪽 정렬)
+        '<div class="text-right">' +
+          '<p class="text-base font-bold text-indigo-600 whitespace-nowrap">'+(f.price||f.amount||'—')+'</p>' +
+          '<p class="text-xs text-slate-600">'+(f.baggage||'')+'</p>' +
         '</div>' +
+        // 버튼 (고정 너비)
+        '<div class="flex gap-1 justify-end">' + deleteHtml + '</div>' +
       '</div></div>';
   }
 
