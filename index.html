@@ -1888,6 +1888,50 @@
           </div>
         </div>
       </div>
+
+      <!-- 수업 대시보드 아카이브 -->
+      <section class="mb-8">
+        <h3 class="text-lg font-black tracking-tight text-slate-900 mb-4">수업 대시보드 아카이브</h3>
+
+        <!-- Upload Area -->
+        <div id="eng-upload-area" class="border-2 border-dashed border-indigo-300 rounded-2xl p-8 text-center mb-6 cursor-pointer hover:bg-indigo-50/30 transition-all"
+          ondragover="event.preventDefault();this.classList.add('bg-indigo-50','border-indigo-500')"
+          ondragleave="this.classList.remove('bg-indigo-50','border-indigo-500')"
+          ondrop="event.preventDefault();this.classList.remove('bg-indigo-50','border-indigo-500');handleSessionUpload(event.dataTransfer.files[0])"
+          onclick="document.getElementById('eng-file-input').click()">
+          <span class="material-symbols-outlined text-4xl text-indigo-400 mb-2">upload_file</span>
+          <p class="text-sm font-bold text-slate-700">sessions.js 파일을 여기에 드래그하거나 클릭해서 선택하세요</p>
+          <p class="text-xs text-slate-400 mt-1">여러 수업이 한 파일에 있어도 자동으로 분류됩니다</p>
+          <input id="eng-file-input" type="file" accept=".js" class="hidden" onchange="handleSessionUpload(this.files[0])"/>
+        </div>
+
+        <!-- Session List -->
+        <div id="eng-session-list"></div>
+
+        <!-- Empty State -->
+        <div id="eng-empty-state" class="flex flex-col items-center justify-center py-16 text-slate-400" style="display:none">
+          <span class="material-symbols-outlined text-6xl mb-3 opacity-30">school</span>
+          <p class="text-base font-semibold mb-1">아직 아카이빙된 수업이 없어요</p>
+          <p class="text-xs">첫 번째 sessions.js 파일을 업로드해보세요</p>
+        </div>
+      </section>
+
+      <!-- Duplicate Modal -->
+      <div id="eng-dup-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50"><h3 class="font-bold text-slate-900">중복 수업 발견</h3></div>
+          <div class="p-6">
+            <p class="text-sm text-slate-600 mb-3">다음 수업들이 이미 저장되어 있습니다:</p>
+            <div id="eng-dup-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto"></div>
+            <div class="flex gap-2">
+              <button onclick="resolveSessionDups('overwrite')" class="flex-1 py-2 rounded-xl text-sm font-bold text-white" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">덮어쓰기</button>
+              <button onclick="resolveSessionDups('skip')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">건너뛰기</button>
+              <button onclick="resolveSessionDups('cancel')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ENGLISH MODAL -->
@@ -9208,6 +9252,7 @@
         renderEnglishTable();
         updateEnglishStats();
       }
+      loadEnglishSessions();
     } catch(err) {
       document.getElementById('english-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
     }
@@ -9817,6 +9862,150 @@
       btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기';
     }
   }
+
+// ===== ENGLISH SESSION ARCHIVE =====
+var engSessionsData = [];
+var _pendingSessionUpload = null;
+
+async function loadEnglishSessions() {
+  try {
+    var docs = await fbRead('englishSessions');
+    engSessionsData = docs.sort(function(a,b){ return (b._id||'').localeCompare(a._id||''); });
+    renderEnglishSessions();
+  } catch(e) { console.error('English sessions load error:', e); }
+}
+
+function renderEnglishSessions() {
+  var list = document.getElementById('eng-session-list');
+  var empty = document.getElementById('eng-empty-state');
+  if (!list) return;
+  if (engSessionsData.length === 0) {
+    list.innerHTML = '';
+    if (empty) empty.style.display = 'flex';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  list.innerHTML = engSessionsData.map(function(s, idx) {
+    var dateObj = new Date(s._id + 'T00:00:00');
+    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var dayName = days[dateObj.getDay()];
+    var monthName = months[dateObj.getMonth()];
+    var dateLabel = monthName + ' ' + String(dateObj.getDate()).padStart(2,'0') + ', ' + dateObj.getFullYear();
+
+    var lv = s.level || {};
+    var exprCount = (s.expressions||[]).length;
+    var upgCount = (s.upgrades||[]).length;
+    var vocabCount = (s.vocabSets||[]).length;
+    var drillCount = (s.drills||[]).reduce(function(sum,d){return sum+(d.items||[]).length;},0);
+
+    function lvBar(val, label) {
+      var pct = val || 0;
+      var cambLabel = pct >= 78 ? 'C1' : pct >= 65 ? 'B2+' : pct >= 55 ? 'B2' : pct >= 45 ? 'B1+' : 'B1';
+      return '<div class="flex items-center gap-2">' +
+        '<span class="text-[9px] font-bold text-slate-400 w-16 uppercase">' + label + '</span>' +
+        '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div></div>' +
+        '<span class="text-[9px] font-bold text-indigo-600 w-8">' + cambLabel + '</span>' +
+      '</div>';
+    }
+
+    return '<div class="bg-white rounded-2xl p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;" onclick="console.log(\'Session detail:\',\'' + s._id + '\')">' +
+      '<div class="flex gap-5">' +
+        '<div class="shrink-0 text-center pt-1">' +
+          '<p class="text-2xl font-extrabold text-slate-900 font-headline leading-none">' + String(dateObj.getDate()).padStart(2,'0') + '</p>' +
+          '<p class="text-[10px] font-bold text-indigo-600 uppercase">' + monthName + '</p>' +
+          '<p class="text-[9px] text-slate-400 font-medium">' + dayName + '</p>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<h4 class="font-bold text-base text-slate-900 font-headline truncate">' + (s.title||'Untitled') + '</h4>' +
+          '<p class="text-xs text-slate-400 mb-3 truncate">' + (s.subtitle||'') + '</p>' +
+          '<div class="space-y-1 mb-3">' + lvBar(lv.fluency,'Fluency') + lvBar(lv.vocab,'Vocab') + lvBar(lv.grammar,'Grammar') + lvBar(lv.interaction,'Interact') + '</div>' +
+          '<div class="flex flex-wrap gap-2">' +
+            (exprCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">표현 ' + exprCount + '</span>' : '') +
+            (upgCount ? '<span class="text-[9px] font-bold bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">업그레이드 ' + upgCount + '</span>' : '') +
+            (vocabCount ? '<span class="text-[9px] font-bold bg-teal-50 text-teal-600 px-2 py-0.5 rounded-full">어휘 ' + vocabCount + '세트</span>' : '') +
+            (drillCount ? '<span class="text-[9px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full">드릴 ' + drillCount + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="flex gap-1 shrink-0">' +
+          '<button onclick="event.stopPropagation();deleteEnglishSession(\'' + s._id + '\')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function handleSessionUpload(file) {
+  if (!file) return;
+  if (!file.name.endsWith('.js')) { alert('.js 파일만 업로드할 수 있어요.'); return; }
+
+  var reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      var content = e.target.result;
+      // Parse sessionsData
+      var script = 'var sessionsData = {};\n' + content + '\nreturn sessionsData;';
+      var parsed = new Function(script)();
+      var dates = Object.keys(parsed);
+      if (dates.length === 0) { alert('수업 데이터를 찾을 수 없어요.'); return; }
+
+      console.log('[Sessions] Parsed', dates.length, 'sessions:', dates);
+
+      // Check duplicates
+      var existing = [];
+      for (var i = 0; i < dates.length; i++) {
+        try {
+          var doc = await db.collection('englishSessions').doc(dates[i]).get();
+          if (doc.exists) existing.push(dates[i]);
+        } catch(ex){}
+      }
+
+      if (existing.length > 0) {
+        _pendingSessionUpload = { parsed: parsed, dates: dates, existing: existing };
+        var dupList = document.getElementById('eng-dup-list');
+        dupList.innerHTML = existing.map(function(d){ return '<div class="px-3 py-2 bg-amber-50 rounded-lg text-xs font-bold text-amber-700">' + d + '</div>'; }).join('');
+        document.getElementById('eng-dup-modal').style.cssText = 'display:flex!important';
+      } else {
+        await saveSessionsToFirestore(parsed, dates, []);
+      }
+    } catch(err) { alert('파일 파싱 실패: ' + err.message); console.error(err); }
+  };
+  reader.readAsText(file);
+}
+
+async function resolveSessionDups(action) {
+  document.getElementById('eng-dup-modal').style.cssText = 'display:none!important';
+  if (!_pendingSessionUpload || action === 'cancel') { _pendingSessionUpload = null; return; }
+  var skip = action === 'skip' ? _pendingSessionUpload.existing : [];
+  await saveSessionsToFirestore(_pendingSessionUpload.parsed, _pendingSessionUpload.dates, skip);
+  _pendingSessionUpload = null;
+}
+
+async function saveSessionsToFirestore(parsed, dates, skipDates) {
+  var saved = 0;
+  for (var i = 0; i < dates.length; i++) {
+    var date = dates[i];
+    if (skipDates.indexOf(date) >= 0) continue;
+    var data = parsed[date];
+    data.updatedAt = new Date().toISOString();
+    try {
+      await db.collection('englishSessions').doc(date).set(data, {merge: true});
+      saved++;
+    } catch(err) { console.error('Save error for', date, err); }
+  }
+  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + saved + '개 수업 저장 완료');
+  await loadEnglishSessions();
+}
+
+async function deleteEnglishSession(dateId) {
+  trashBeforeDelete('englishSessions', dateId);
+  try {
+    await db.collection('englishSessions').doc(dateId).delete();
+    engSessionsData = engSessionsData.filter(function(s){ return s._id !== dateId; });
+    renderEnglishSessions();
+  } catch(err) { alert('삭제 실패'); }
+}
 
 </script>
 
