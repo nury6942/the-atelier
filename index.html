@@ -3343,7 +3343,7 @@
       return '<div class="relative group p-5 bg-slate-50/80 border border-slate-200 rounded-2xl hover:bg-sky-50/60 hover:border-sky-300 transition-all shadow-sm min-w-[140px]">' +
         '<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">' + (i+1) + '번째</div>' +
         '<h4 class="text-base font-bold text-slate-900">' + city.name + (city.desc ? '<span class="text-xs font-medium text-slate-400">, ' + city.desc + '</span>' : '') + '</h4>' +
-        (city.start_date ? '<p class="text-[10px] text-slate-400 mt-1">' + city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '') + (city.nights ? ' <span class="font-bold text-indigo-600">(' + city.nights + '박)</span>' : '') + '</p>' : '') +
+        (city.start_date ? '<p class="text-[10px] text-slate-400 mt-1">' + city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '') + (city.nights !== undefined && city.nights !== '' ? ' <span class="font-bold text-indigo-600">(' + city.nights + '박' + (city.nights === 0 ? ' 1일' : '') + ')</span>' : '') + '</p>' : '') +
         '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
         '<button onclick="editCityEntry(' + i + ')" class="p-1.5 hover:bg-indigo-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
         '<button onclick="deleteCityEntry(' + i + ')" class="p-1.5 hover:bg-rose-100 rounded-lg text-slate-400 hover:text-rose-500 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
@@ -8715,9 +8715,9 @@
     initFlatpickr('m-date-end', {});
   }
   function initCityDatePickers() {
-    initFlatpickr('city-start', { onChange: function(d){ if(d[0]&&fpInstances['city-end']){ var next=new Date(d[0]); next.setDate(next.getDate()+1); fpInstances['city-end'].set('minDate',next); fpInstances['city-end'].jumpTo(next); if(!fpInstances['city-end'].selectedDates.length) fpInstances['city-end'].open(); } }});
+    initFlatpickr('city-start', { onChange: function(d){ if(d[0]&&fpInstances['city-end']){ var same=new Date(d[0]); fpInstances['city-end'].set('minDate',same); fpInstances['city-end'].jumpTo(same); if(!fpInstances['city-end'].selectedDates.length) fpInstances['city-end'].open(); } }});
     var sv = document.getElementById('city-start');
-    var minD = sv&&sv.value ? (function(){ var n=new Date(sv.value+'T00:00:00'); n.setDate(n.getDate()+1); return n; })() : null;
+    var minD = sv&&sv.value ? new Date(sv.value+'T00:00:00') : null;
     initFlatpickr('city-end', { minDate: minD, onOpen: function(){ if(minD && !this.selectedDates.length) this.jumpTo(minD); } });
   }
   function initJourneyDatePickers() {
