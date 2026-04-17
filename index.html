@@ -1903,16 +1903,25 @@
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
       <!-- Series Growth Correlation Chart -->
-      <section class="bg-white rounded-2xl p-6 shadow-[0_12px_32px_-4px_rgba(45,51,53,0.06)]">
-        <div class="flex justify-between items-start mb-6">
+      <section>
+        <header class="mb-6 flex justify-between items-center">
           <div>
-            <h3 class="text-xl font-extrabold font-headline tracking-tight text-slate-900">Series Growth Correlation</h3>
-            <p class="text-slate-400 text-xs mt-1 font-medium">Growth trajectory of your top performing titles.</p>
+            <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Series Growth Correlation</h2>
+            <p id="growth-year-subtitle" class="text-slate-400 text-sm mt-1">Growth trajectory of your top performing titles.</p>
           </div>
-          <div id="growth-chart-legend" class="flex items-center gap-4 text-xs"></div>
-        </div>
-        <div style="height:240px;">
-          <canvas id="growth-chart"></canvas>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center bg-slate-100 rounded-lg p-1">
+              <button onclick="growthPrevYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
+              <span id="growth-year-label" class="px-4 text-sm font-bold font-headline tracking-widest">2026</span>
+              <button onclick="growthNextYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+            </div>
+            <div id="growth-chart-legend" class="flex items-center gap-4 text-xs"></div>
+          </div>
+        </header>
+        <div class="bg-white rounded-2xl p-6 shadow-[0_12px_32px_-4px_rgba(45,51,53,0.06)]">
+          <div style="height:240px;">
+            <canvas id="growth-chart"></canvas>
+          </div>
         </div>
       </section>
 
@@ -7996,14 +8005,27 @@
   var MONTH_NAMES_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   var DAY_HEADERS = ['일','월','화','수','목','금','토'];
   var _matrixYear = 2026;
+  var _growthYear = 2026;
 
-  function matrixPrevYear() { _matrixYear--; refreshMatrix(); }
-  function matrixNextYear() { _matrixYear++; refreshMatrix(); }
+  function growthPrevYear() { _growthYear--; refreshGrowthYear(); }
+  function growthNextYear() { _growthYear++; refreshGrowthYear(); }
+  function refreshGrowthYear() {
+    var lbl = document.getElementById('growth-year-label');
+    if (lbl) lbl.textContent = _growthYear;
+    var sub = document.getElementById('growth-year-subtitle');
+    if (sub) sub.textContent = 'Growth trajectory — ' + _growthYear;
+    renderGrowthChart();
+  }
+
+  function matrixPrevYear() { _matrixYear--; _growthYear = _matrixYear; refreshMatrix(); }
+  function matrixNextYear() { _matrixYear++; _growthYear = _matrixYear; refreshMatrix(); }
   function refreshMatrix() {
     var lbl = document.getElementById('matrix-year-label');
     if (lbl) lbl.textContent = _matrixYear;
     var sub = document.getElementById('matrix-year-subtitle');
     if (sub) sub.textContent = '시리즈별 월간 에피소드 & 수익 인덱스 — ' + _matrixYear;
+    var glbl = document.getElementById('growth-year-label');
+    if (glbl) glbl.textContent = _growthYear;
     // Monthly Scheduler도 같은 연도 1월로 전환
     _incomeCalYear = _matrixYear;
     _incomeCalMonth = 0;
@@ -8108,7 +8130,7 @@
   function renderGrowthChart() {
     var canvas = document.getElementById('growth-chart');
     if (!canvas || typeof Chart === 'undefined') return;
-    var series = getSeriesData();
+    var series = getSeriesData(_growthYear);
     var labels = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 
     // Legend
