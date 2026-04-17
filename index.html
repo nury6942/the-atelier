@@ -3134,11 +3134,11 @@
     await loadCities(tripId);
     document.getElementById('journey-empty-state').style.display = 'none';
     document.getElementById('journey-content').style.display = 'block';
+    await seedTripDefaults();
     renderTripHeader();
     renderDayView();
     renderJourneyTransport();
     renderJourneyLodging();
-    await seedSouvenirDefaults();
     renderJourneySouvenir();
     updateJourneyCost();
   }
@@ -3501,6 +3501,113 @@
   }
 
 
+  // ===== 기본 데이터 시드 (2026 체코&크로아티아) =====
+  var SEED_TRIP_NAME = '2026 체코&크로아티아';
+
+  var CITY_DEFAULTS = [
+    { name:'Prague',                        desc:'체코',       start_date:'2026-04-29', end_date:'2026-05-01' },
+    { name:'Český Krumlov',                 desc:'체코',       start_date:'2026-05-02', end_date:'2026-05-02' },
+    { name:'Olomouc',                       desc:'체코',       start_date:'2026-05-03', end_date:'2026-05-03' },
+    { name:'Oświęcim (아우슈비츠)',          desc:'폴란드',     start_date:'2026-05-04', end_date:'2026-05-04' },
+    { name:'Dubrovnik',                     desc:'크로아티아',  start_date:'2026-05-05', end_date:'2026-05-06' },
+    { name:'Split',                         desc:'크로아티아',  start_date:'2026-05-07', end_date:'2026-05-07' },
+    { name:'Plitvička / Zagreb',            desc:'크로아티아',  start_date:'2026-05-08', end_date:'2026-05-09' }
+  ];
+
+  var SCHEDULE_DEFAULTS = [
+    // 1일차 2026-04-29 Prague
+    { date:'2026-04-29', time:'20:40', city:'Prague', title:'인천공항 출발' },
+    { date:'2026-04-29', time:'23:20', city:'Prague', title:'출국' },
+
+    // 2일차 2026-04-30 Prague
+    { date:'2026-04-30', time:'04:50', city:'Prague', title:'이스탄불 도착' },
+    { date:'2026-04-30', time:'06:45', city:'Prague', title:'이스탄불 출발' },
+    { date:'2026-04-30', time:'08:20', city:'Prague', title:'프라하 도착' },
+    { date:'2026-04-30', time:'10:00', city:'Prague', title:'공항에서 메이크오버' },
+    { date:'2026-04-30', time:'11:00', city:'Prague', title:'숙소 체크인' },
+    { date:'2026-04-30', time:'11:30', city:'Prague', title:'점심', description:'스비치코바 또는 굴라쉬' },
+    { date:'2026-04-30', time:'12:30', city:'Prague', title:'구시가 광장', description:'천문 시계탑 퍼포먼스, 틴 성모 교회' },
+    { date:'2026-04-30', time:'14:00', city:'Prague', title:'무하 박물관' },
+    { date:'2026-04-30', time:'15:30', city:'Prague', title:'화약탑 & 시민 회관' },
+    { date:'2026-04-30', time:'17:00', city:'Prague', title:'카를교' },
+    { date:'2026-04-30', time:'18:30', city:'Prague', title:'저녁' },
+    { date:'2026-04-30', time:'20:00', city:'Prague', title:'올드 타운 브리지 타워 야경' },
+    { date:'2026-04-30', time:'21:30', city:'Prague', title:'숙소 도착' },
+
+    // 3일차 2026-05-01 Prague
+    { date:'2026-05-01', time:'09:00', city:'Prague', title:'프라하성 (B코스)', description:'성 비투스 대성당, 구왕궁, 황금소로' },
+    { date:'2026-05-01', time:'12:30', city:'Prague', title:'말라스트라나 산책 + 점심' },
+    { date:'2026-05-01', time:'13:30', city:'Prague', title:'기념품 - 마누팍투라' },
+    { date:'2026-05-01', time:'14:30', city:'Prague', title:'짐 보관/휴식' },
+    { date:'2026-05-01', time:'17:00', city:'Prague', title:'페트린 힐 & 전망대' },
+    { date:'2026-05-01', time:'18:30', city:'Prague', title:'레트나 공원 / 하나브스키 파빌리온 노을' },
+    { date:'2026-05-01', time:'21:30', city:'Prague', title:'숙소 도착' },
+
+    // 4일차 2026-05-02 Český Krumlov
+    { date:'2026-05-02', time:'09:00', city:'Český Krumlov', title:'프라하 → 체스키크룸로프', description:'FLIX 버스, 약 2시간 40분' },
+    { date:'2026-05-02', time:'12:00', city:'Český Krumlov', title:'세미나르니 정원 전망대 파노라마 뷰' },
+    { date:'2026-05-02', time:'13:00', city:'Český Krumlov', title:'자이델 포토 아틀리에' },
+    { date:'2026-05-02', time:'14:00', city:'Český Krumlov', title:'에곤 실레 아트 센터' },
+    { date:'2026-05-02', time:'15:30', city:'Český Krumlov', title:'이발사의 다리 → 성, 흐라데크 타워' },
+    { date:'2026-05-02', time:'17:00', city:'Český Krumlov', title:'강변 & 마을 산책, 기념품 쇼핑' },
+    { date:'2026-05-02', time:'18:30', city:'Český Krumlov', title:'저녁' },
+    { date:'2026-05-02', time:'20:00', city:'Český Krumlov', title:'체스키크룸로프 → 프라하', description:'FLIX 버스, 약 2시간 35분' },
+    { date:'2026-05-02', time:'23:00', city:'Český Krumlov', title:'숙소 도착' },
+
+    // 5일차 2026-05-03 Olomouc
+    { date:'2026-05-03', time:'05:00', city:'Olomouc', title:'기상' },
+    { date:'2026-05-03', time:'10:23', city:'Olomouc', title:'프라하 → 올로모우츠', description:'기차 Leo Express' },
+    { date:'2026-05-03', time:'13:00', city:'Olomouc', title:'써니님' },
+    { date:'2026-05-03', time:'21:00', city:'Olomouc', title:'숙소' },
+
+    // 6일차 2026-05-04 Oświęcim
+    { date:'2026-05-04', time:'08:37', city:'Oświęcim (아우슈비츠)', title:'올로모우츠 → 오시비엥침', description:'기차' },
+    { date:'2026-05-04', time:'11:50', city:'Oświęcim (아우슈비츠)', title:'짐 보관 & 점심' },
+    { date:'2026-05-04', time:'12:00', city:'Oświęcim (아우슈비츠)', title:'아우슈비츠 가이드 투어', description:'약 3시간 30분' },
+    { date:'2026-05-04', time:'16:30', city:'Oświęcim (아우슈비츠)', title:'오시비엥침 → 크라쿠프', description:'FLIX 버스' },
+    { date:'2026-05-04', time:'20:10', city:'Oświęcim (아우슈비츠)', title:'크라쿠프 공항 출국' },
+    { date:'2026-05-04', time:'21:50', city:'Oświęcim (아우슈비츠)', title:'두브로브니크 도착' },
+    { date:'2026-05-04', time:'22:30', city:'Oświęcim (아우슈비츠)', title:'숙소 체크인' },
+
+    // 7일차 2026-05-05 Dubrovnik
+    { date:'2026-05-05', time:'09:00', city:'Dubrovnik', title:'성벽 투어' },
+    { date:'2026-05-05', time:'11:30', city:'Dubrovnik', title:'올드타운 & 기념품 쇼핑', description:'말라 브라차 약국, 크로아타' },
+    { date:'2026-05-05', time:'12:30', city:'Dubrovnik', title:'점심 / 플라차 거리 산책' },
+    { date:'2026-05-05', time:'14:00', city:'Dubrovnik', title:'로크룸 섬 산책 or 해변 카페' },
+    { date:'2026-05-05', time:'17:00', city:'Dubrovnik', title:'스르지 산 전망대', description:'일몰 야경' },
+    { date:'2026-05-05', time:'20:30', city:'Dubrovnik', title:'성벽 따라 야경 & 저녁' },
+    { date:'2026-05-05', time:'21:30', city:'Dubrovnik', title:'숙소 도착' },
+
+    // 8일차 2026-05-06 Dubrovnik → Split
+    { date:'2026-05-06', time:'10:00', city:'Dubrovnik', title:'브런치 / 두브로브니크 현대미술관' },
+    { date:'2026-05-06', time:'11:30', city:'Dubrovnik', title:'반예 비치' },
+    { date:'2026-05-06', time:'14:00', city:'Dubrovnik', title:'두브로브니크 → 스플리트 이동', description:'펠레샤츠 대교 경유' },
+    { date:'2026-05-06', time:'18:00', city:'Split', title:'스플리트 도착' },
+    { date:'2026-05-06', time:'18:30', city:'Split', title:'디오클레티아누스 궁전 & 리바 거리' },
+    { date:'2026-05-06', time:'19:30', city:'Split', title:'저녁 & 리바 거리 산책' },
+    { date:'2026-05-06', time:'20:30', city:'Split', title:'마르얀 언덕 전망대 야경' },
+    { date:'2026-05-06', time:'22:00', city:'Split', title:'숙소 체크인' },
+
+    // 9일차 2026-05-07 Split
+    { date:'2026-05-07', time:'09:00', city:'Split', title:'성 돔니우스 대성당 종탑, 그레고리 닌 동상' },
+    { date:'2026-05-07', time:'12:00', city:'Split', title:'점심 후 크르카로 출발' },
+    { date:'2026-05-07', time:'13:30', city:'Split', title:'크르카 국립공원', description:'스크라딘스키 부크 폭포' },
+    { date:'2026-05-07', time:'17:00', city:'Split', title:'숙소 체크인 & 휴식' },
+    { date:'2026-05-07', time:'19:30', city:'Split', title:'저녁' },
+
+    // 10일차 2026-05-08 Plitvička → Zagreb
+    { date:'2026-05-08', time:'07:30', city:'Plitvička / Zagreb', title:'플리트비체 국립공원', description:'C코스, 약 4~5시간' },
+    { date:'2026-05-08', time:'13:00', city:'Plitvička / Zagreb', title:'점심' },
+    { date:'2026-05-08', time:'14:30', city:'Plitvička / Zagreb', title:'라스토케 마을 산책' },
+    { date:'2026-05-08', time:'15:30', city:'Plitvička / Zagreb', title:'자그레브 공항으로 출발' },
+    { date:'2026-05-08', time:'17:30', city:'Plitvička / Zagreb', title:'렌터카 반납' },
+    { date:'2026-05-08', time:'18:30', city:'Plitvička / Zagreb', title:'공항 도착' },
+    { date:'2026-05-08', time:'20:25', city:'Plitvička / Zagreb', title:'자그레브 공항 출국' },
+
+    // 11일차 2026-05-09 Seoul
+    { date:'2026-05-09', time:'17:40', city:'Plitvička / Zagreb', title:'인천공항 도착' }
+  ];
+
   var SOUVENIR_DEFAULTS = [
     { title:'나 & 소중한 분', description:'매직 연색 연필, 홀더 펜', city:'프라하', amount:'5~20' },
     { title:'직장 동료', description:'맥주 샴푸, 립밤, 핸드크림', city:'프라하', amount:'3~10' },
@@ -3513,15 +3620,44 @@
     { title:'소장용 굿즈', description:'리치타르 (붉은 하트 장식)', city:'자그레브', amount:'3~10' }
   ];
 
-  async function seedSouvenirDefaults() {
-    if (!selectedTripId) return;
-    var existing = journeyData.filter(function(d){ return d.type === '기념품'; });
-    if (existing.length > 0) return;
-    for (var i = 0; i < SOUVENIR_DEFAULTS.length; i++) {
-      var d = SOUVENIR_DEFAULTS[i];
-      var obj = { trip_id: selectedTripId, type: '기념품', title: d.title, description: d.description, city: d.city, amount: d.amount, status: '' };
-      var saved = await fbAdd('journey', obj);
-      journeyData.push(saved);
+  async function seedTripDefaults() {
+    if (!currentTripId) return;
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip || trip.name !== SEED_TRIP_NAME) return;
+
+    // 도시 시드
+    if (citiesData.length === 0) {
+      for (var i = 0; i < CITY_DEFAULTS.length; i++) {
+        var c = CITY_DEFAULTS[i];
+        var nights = Math.max(0, Math.round((new Date(c.end_date) - new Date(c.start_date)) / (1000*60*60*24)));
+        var obj = { trip_id: currentTripId, name: c.name, start_date: c.start_date, end_date: c.end_date, nights: nights, desc: c.desc, order: c.start_date };
+        var saved = await fbAdd('trip_cities', obj);
+        citiesData.push(saved);
+      }
+      citiesData.sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
+      renderCityCards();
+    }
+
+    // 일정 시드
+    var schedules = journeyData.filter(function(d){ return d.type === '일정'; });
+    if (schedules.length === 0) {
+      for (var j = 0; j < SCHEDULE_DEFAULTS.length; j++) {
+        var s = SCHEDULE_DEFAULTS[j];
+        var obj2 = { trip_id: currentTripId, type: '일정', date: s.date, time: s.time, city: s.city, title: s.title, description: s.description || '' };
+        var saved2 = await fbAdd('journey', obj2);
+        journeyData.push(saved2);
+      }
+    }
+
+    // 기념품 시드
+    var souvenirs = journeyData.filter(function(d){ return d.type === '기념품'; });
+    if (souvenirs.length === 0) {
+      for (var k = 0; k < SOUVENIR_DEFAULTS.length; k++) {
+        var d = SOUVENIR_DEFAULTS[k];
+        var obj3 = { trip_id: currentTripId, type: '기념품', title: d.title, description: d.description, city: d.city, amount: d.amount, status: '' };
+        var saved3 = await fbAdd('journey', obj3);
+        journeyData.push(saved3);
+      }
     }
   }
 
