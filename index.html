@@ -4047,31 +4047,48 @@
     '</div>';
   }
 
+  // 날짜+시간 오름차순 정렬 (date 없으면 맨 뒤)
+  function sortByDateTime(a, b) {
+    var da = (a.date||'').replace(/\//g,'-'), db = (b.date||'').replace(/\//g,'-');
+    if (!da && db) return 1; if (da && !db) return -1; if (!da && !db) return 0;
+    if (da !== db) return da.localeCompare(db);
+    return (a.time||'').localeCompare(b.time||'');
+  }
+
   function renderJourneyTransport() {
     var fbItems = journeyData.filter(function(d){ return d.type === '이동수단'; });
-    fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
     var container = document.getElementById('journey-transport-list');
 
     var defaults = isSeedTrip() ? TRANSPORT_DEFAULTS : [];
     var fbKeys = {};
     fbItems.forEach(function(it){ fbKeys[(it.title||'')+'|'+(it.description||'')] = true; });
 
-    var html = '';
+    // 시드 + Firebase 합쳐서 정렬
+    var allItems = [];
     defaults.filter(function(d){ return !fbKeys[d.title+'|'+d.description]; }).forEach(function(d, si) {
-      var seedBtns = '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="migrateSeedAndEdit(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
-        '<button onclick="migrateSeedAndDelete(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>';
-      html += renderTransportCard(d, seedBtns);
+      allItems.push({ data: d, isSeed: true, seedIdx: si });
     });
-    html += fbItems.map(function(item) {
-      var realIdx = journeyData.indexOf(item);
-      return renderTransportCard(item,
+    fbItems.forEach(function(item) {
+      allItems.push({ data: item, isSeed: false, fbIdx: journeyData.indexOf(item) });
+    });
+    allItems.sort(function(a, b) { return sortByDateTime(a.data, b.data); });
+
+    var html = allItems.map(function(entry) {
+      if (entry.isSeed) {
+        var si = entry.seedIdx;
+        var seedBtns = '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+          '<button onclick="migrateSeedAndEdit(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
+          '<button onclick="migrateSeedAndDelete(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>';
+        return renderTransportCard(entry.data, seedBtns);
+      }
+      var realIdx = entry.fbIdx;
+      return renderTransportCard(entry.data,
         '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
         '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
         '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>');
     }).join('');
 
-    var totalCount = defaults.filter(function(d){ return !fbKeys[d.title+'|'+d.description]; }).length + fbItems.length;
+    var totalCount = allItems.length;
     var countEl = document.getElementById('transport-count');
     if (countEl) countEl.textContent = totalCount + ' Voyages';
     container.innerHTML = html || '<div class="text-center py-8 text-sm text-slate-400">이동 수단을 추가해봐!</div>';
@@ -4874,28 +4891,41 @@
     var fbKeys = {};
     fbFlights.forEach(function(f){ fbKeys[f.title||''] = true; });
 
-    var html = '';
     var totalKRW = 0;
     var extraPrice = '';
 
+    // 시드 + Firebase 합쳐서 날짜 정렬
+    var allFlights = [];
     defaults.filter(function(f){ return !fbKeys[f.flight]; }).forEach(function(f, si) {
-      totalKRW += f.priceKRW;
-      if (f.price.indexOf('$') >= 0) extraPrice = f.price;
-      var seedBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="migrateSeedAndEdit(\'항공편\','+si+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
-        '<button onclick="migrateSeedAndDelete(\'항공편\','+si+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
-      html += flightCard(f, seedBtns);
+      allFlights.push({ data: f, isSeed: true, seedIdx: si });
+    });
+    fbFlights.forEach(function(f) {
+      allFlights.push({ data: f, isSeed: false, fbIdx: journeyData.indexOf(f) });
+    });
+    allFlights.sort(function(a, b) {
+      var da = a.data.date||'', db = b.data.date||'';
+      if (!da && db) return 1; if (da && !db) return -1;
+      return da.localeCompare(db) || (a.data.depart||a.data.time||'').localeCompare(b.data.depart||b.data.time||'');
     });
 
-    fbFlights.forEach(function(f) {
-      var realIdx = journeyData.indexOf(f);
+    var html = allFlights.map(function(entry) {
+      if (entry.isSeed) {
+        var f = entry.data, si = entry.seedIdx;
+        totalKRW += f.priceKRW;
+        if (f.price.indexOf('$') >= 0) extraPrice = f.price;
+        var seedBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+          '<button onclick="migrateSeedAndEdit(\'항공편\','+si+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
+          '<button onclick="migrateSeedAndDelete(\'항공편\','+si+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
+        return flightCard(f, seedBtns);
+      }
+      var f = entry.data, realIdx = entry.fbIdx;
       var amt = parseFloat(f.amount) || 0;
       totalKRW += amt;
       var actionBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
         '<button onclick="editJourneyItem('+realIdx+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
         '<button onclick="deleteJourneyRow('+realIdx+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
-      html += flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:'', duration:'', baggage:'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
-    });
+      return flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:'', duration:'', baggage:'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
+    }).join('');
 
     container.innerHTML = html || '<p class="text-center text-xs text-slate-400 py-6">항공편을 추가해봐!</p>';
     if (totalEl && totalKRW > 0) {
