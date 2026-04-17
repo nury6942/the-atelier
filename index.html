@@ -6837,6 +6837,9 @@
     if (lbl) lbl.textContent = _matrixYear;
     var sub = document.getElementById('matrix-year-subtitle');
     if (sub) sub.textContent = '시리즈별 월간 에피소드 & 수익 인덱스 — ' + _matrixYear;
+    // Monthly Scheduler도 같은 연도 1월로 전환
+    _incomeCalYear = _matrixYear;
+    _incomeCalMonth = 0;
     renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
