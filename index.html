@@ -629,7 +629,8 @@
               <div id="voyage-path-badges" class="flex flex-wrap gap-2"></div>
             </div>
             <div class="md:w-1/2 w-full h-56 rounded-xl overflow-hidden bg-slate-200 relative">
-              <div class="absolute inset-0 bg-slate-300/50 flex items-center justify-center">
+              <img id="voyage-map-img" src="" alt="Map" class="w-full h-full object-cover" style="display:none"/>
+              <div id="voyage-map-placeholder" class="absolute inset-0 bg-slate-300/50 flex items-center justify-center">
                 <span class="material-symbols-outlined text-5xl text-slate-400">map</span>
               </div>
             </div>
@@ -3465,6 +3466,32 @@
   }
 
   var STOP_LABELS = ['1ST','2ND','3RD','4TH','5TH','6TH','7TH','8TH','9TH','10TH'];
+  var _cityPhotoCache = {};
+
+  function getCityPhotoUrl(cityName) {
+    if (_cityPhotoCache[cityName]) return _cityPhotoCache[cityName];
+    return ''; // placeholder, 비동기로 로드
+  }
+
+  function loadCityPhotos() {
+    if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+    var service = new google.maps.places.PlacesService(document.createElement('div'));
+    citiesData.forEach(function(city, i) {
+      if (_cityPhotoCache[city.name]) {
+        var el = document.getElementById('city-img-' + i);
+        if (el) el.src = _cityPhotoCache[city.name];
+        return;
+      }
+      service.findPlaceFromQuery({query: city.name + ' city', fields: ['photos']}, function(results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0] && results[0].photos && results[0].photos.length > 0) {
+          var url = results[0].photos[0].getUrl({maxWidth: 400, maxHeight: 250});
+          _cityPhotoCache[city.name] = url;
+          var el = document.getElementById('city-img-' + i);
+          if (el) { el.src = url; el.style.display = 'block'; }
+        }
+      });
+    });
+  }
 
   function renderCityCards() {
     var container = document.getElementById('journey-city-cards');
@@ -3479,12 +3506,13 @@
         if (city.start_date) dateRange = city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '');
         var nights = city.nights || 0;
         var nightsText = nights > 0 ? nights + ' night' + (nights > 1 ? 's' : '') : (city.start_date ? '당일' : '--');
-        var imgUrl = 'https://source.unsplash.com/400x250/?' + encodeURIComponent(city.name + ' city landmark');
+        var cachedUrl = _cityPhotoCache[city.name] || '';
 
         return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);">' +
           // 이미지
           '<div class="relative h-36 overflow-hidden bg-slate-200">' +
-            '<img src="' + imgUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.style.display=\'none\'"/>' +
+            '<div class="absolute inset-0 flex items-center justify-center text-slate-300"><span class="material-symbols-outlined text-4xl">photo_camera</span></div>' +
+            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 relative z-10" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
             '<div class="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[8px] font-extrabold tracking-widest uppercase text-indigo-800">' + (STOP_LABELS[i]||String(i+1)) + ' STOP</div>' +
             // 수정/삭제 버튼
             '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
@@ -3513,6 +3541,8 @@
     '</div>';
 
     container.innerHTML = html;
+    // 비동기 도시 사진 로드
+    setTimeout(loadCityPhotos, 300);
   }
 
   function openCityModal(idx) {
@@ -3711,6 +3741,17 @@
       if (busCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">directions_bus</span><span class="text-xs font-semibold">버스 ' + busCount + '편</span></div>';
       if (trainCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">train</span><span class="text-xs font-semibold">기차 ' + trainCount + '편</span></div>';
       document.getElementById('voyage-path-badges').innerHTML = badges;
+      // Static Map 이미지
+      var mapEl = document.getElementById('voyage-map-img');
+      var mapPh = document.getElementById('voyage-map-placeholder');
+      if (mapEl && citiesData.length > 0) {
+        var markers = citiesData.map(function(c,i){ return 'markers=color:0x6b38d4|label:' + (i+1) + '|' + encodeURIComponent(c.name); }).join('&');
+        var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=600x300&maptype=roadmap&' + markers + '&key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&style=feature:all|saturation:-80';
+        mapEl.src = mapUrl;
+        mapEl.style.display = 'block';
+        if (mapPh) mapPh.style.display = 'none';
+        mapEl.onerror = function(){ mapEl.style.display='none'; if(mapPh) mapPh.style.display='flex'; };
+      }
     }
   }
 
