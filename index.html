@@ -1899,7 +1899,7 @@
         <div class="atl-modal-body">
           <div class="atl-field"><label>수업명 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">school</span><input id="e-name" type="text" placeholder="예: Intermediate Business English"  class="atl-input w-full"/></div></div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="e-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>상태</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">check_circle</span><select id="e-status"  class="atl-input w-full bg-white"><option>예정</option><option>완료</option><option>결석</option></select></div></div></div>
-                    <div class="atl-grid-2">          <div class="atl-field"><label>트랙</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">track_changes</span><input id="e-track" type="text" placeholder="예: Speaking"  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>수강료 (£)</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="e-fee" type="text" placeholder="예: £240" oninput="calcEnglishFeeKRW()" class="atl-input w-full"/></div></div></div>
+                    <div class="atl-grid-2">          <div class="atl-field"><label>트랙</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">track_changes</span><input id="e-track" type="text" placeholder="예: Speaking"  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>수강료 (£)</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="e-fee" type="text" placeholder="예: £30" oninput="calcEnglishFeeKRW()" class="atl-input w-full"/></div></div></div>
                     <div id="e-fee-krw-box" style="display:none" class="flex items-center gap-2 px-3 py-2 mb-3 bg-blue-50 border border-blue-100 rounded-xl text-sm"><span class="material-symbols-outlined text-blue-400" style="font-size:16px">currency_exchange</span><span id="e-fee-krw-amount" class="font-bold text-blue-700">₩0</span><span id="e-fee-krw-rate" class="text-[10px] text-blue-400 ml-auto">환율 정보</span></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="e-notes" type="text" placeholder="예: 비즈니스 이메일 작성"  class="atl-input w-full"/></div></div>
           <div class="atl-info-box"><span class="material-symbols-outlined">lightbulb</span><span>Annie 선생님과의 수업 내용을 기록해봐! (수강료는 £ 파운드로 입력)</span></div>
@@ -9186,11 +9186,31 @@
       .filter(function(d){ return !fbDates[d[1]]; })
       .map(function(d){
         var status = overrides[d[1]] || (d[1] <= today ? '완료' : '예정');
-        return [d[0], d[1], status, '', '£20', '', '__default__'];
+        return [d[0], d[1], status, '', '£30', '', '__default__'];
       });
   }
 
+  // 수강료 £20→£30 일괄 마이그레이션 (1회)
+  async function migrateEnglishFee30() {
+    if (localStorage.getItem('eng_fee_30_migrated')) return;
+    try {
+      var docs = await fbRead('english');
+      var updated = 0;
+      for (var i = 0; i < docs.length; i++) {
+        var d = docs[i];
+        var fee = (d.fee||d.notes||'').toString();
+        if (fee.indexOf('20') >= 0 || fee === '£20' || fee === '20') {
+          await fbUpdate('english', d._id, { fee: '£30' });
+          updated++;
+        }
+      }
+      if (updated > 0) console.log('[Migration] English fee £20→£30:', updated, 'updated');
+      localStorage.setItem('eng_fee_30_migrated', 'true');
+    } catch(e) { console.error('Fee migration error:', e); }
+  }
+
   async function loadEnglish() {
+    await migrateEnglishFee30();
     document.getElementById('english-loading').style.display = 'flex';
     document.getElementById('english-table-wrap').style.display = 'none';
     document.getElementById('english-empty').style.display = 'none';
