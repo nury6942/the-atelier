@@ -6775,6 +6775,9 @@
     return s ? s.color : 'slate';
   }
 
+  // 만원 단위 축약: ₩500,000 → 50 / ₩70,000 → 7
+  function shortRev(v) { return v ? String(Math.round(v/10000)) : '—'; }
+
   // ===== Annual Matrix =====
   function renderIncomeMatrix() {
     var tbody = document.getElementById('income-matrix-body');
@@ -6800,25 +6803,37 @@
         html += '<td class="p-2 text-center text-[10px] cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls+'" onclick="editMatrixCell('+si+','+m+')">' + (d&&d.eps ? d.eps : '—') + '</td>';
       }
       html += '</tr>';
-      // Revenue row
+      // Target revenue row
+      html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
+        '<td class="p-2 border-l-4 border-'+c+'-200 bg-'+c+'-50/10"><div class="text-[10px] uppercase tracking-tighter text-slate-400">목표</div></td>';
+      for (var mt=0;mt<12;mt++) {
+        var dt = s.monthly[mt];
+        var tgt = dt ? (dt.target||0) : 0;
+        html += '<td class="p-2 text-center text-[10px] text-slate-400 cursor-pointer hover:bg-'+c+'-50/30 transition-colors" onclick="editMatrixTarget('+si+','+mt+')">' + (tgt ? shortRev(tgt) : '—') + '</td>';
+      }
+      html += '</tr>';
+      // Actual revenue row
       html += '<tr class="group hover:bg-slate-50 transition-colors">' +
-        '<td class="p-3 border-l-4 border-'+c+'-300 bg-'+c+'-50/30"><div class="text-[10px] uppercase tracking-tighter text-slate-400">월 수익</div></td>';
+        '<td class="p-3 border-l-4 border-'+c+'-300 bg-'+c+'-50/30"><div class="text-[10px] uppercase tracking-tighter text-slate-400">수익</div></td>';
       for (var m2=0;m2<12;m2++) {
         var d2 = s.monthly[m2];
         var rev = d2 ? d2.rev : 0;
+        var tgt2 = d2 ? (d2.target||0) : 0;
         var isCur2 = m2===curMonth;
-        var cls2 = isCur2 ? ' font-bold text-'+c+'-600 bg-'+c+'-50' : '';
-        html += '<td class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'" onclick="editMatrixCell('+si+','+m2+')">' + (rev ? '₩'+Math.round(rev/10000)+'만' : '—') + '</td>';
+        var revColor = (tgt2 && rev >= tgt2) ? ' text-emerald-600' : (tgt2 && rev > 0 && rev < tgt2) ? ' text-amber-600' : '';
+        var cls2 = isCur2 ? ' font-bold text-'+c+'-600 bg-'+c+'-50' : revColor;
+        html += '<td class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'" onclick="editMatrixCell('+si+','+m2+')">' + shortRev(rev) + '</td>';
       }
       html += '</tr>';
       // Progress bar
-      var totalRev = 0; for(var k in s.monthly) totalRev += s.monthly[k].rev||0;
-      var filled = totalRev > 0 ? Math.min(Math.round((curMonth+1)/12*100),100) : 0;
-      html += '<tr class="border-b border-slate-100/50"><td class="p-2 border-l-4 border-'+c+'-200"><div class="text-[10px] uppercase tracking-tighter text-slate-400">누적</div></td>' +
-        '<td class="p-2 px-4" colspan="12"><div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">' +
-        '<div class="h-full bg-gradient-to-r from-'+c+'-500 to-'+c+'-400 rounded-full" style="width:'+filled+'%"></div></div></td></tr>';
+      var totalRev = 0; var totalTgt = 0;
+      for(var k in s.monthly) { totalRev += s.monthly[k].rev||0; totalTgt += s.monthly[k].target||0; }
+      var filled = totalTgt > 0 ? Math.min(Math.round(totalRev/totalTgt*100),100) : (totalRev > 0 ? Math.min(Math.round((curMonth+1)/12*100),100) : 0);
+      html += '<tr class="border-b border-slate-100/50"><td class="p-2 border-l-4 border-'+c+'-200"><div class="text-[10px] uppercase tracking-tighter text-slate-400">달성</div></td>' +
+        '<td class="p-2 px-4" colspan="12"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">' +
+        '<div class="h-full bg-gradient-to-r from-'+c+'-500 to-'+c+'-400 rounded-full" style="width:'+filled+'%"></div></div>' +
+        '<span class="text-[9px] font-bold text-slate-400">'+filled+'%</span></div></td></tr>';
     });
-    // Add series button row
     html += '<tr><td colspan="13" class="p-3 text-center">' +
       '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size:14px">add</span> 시리즈 추가</button>' +
       '</td></tr>';
@@ -6857,16 +6872,28 @@
   function editMatrixCell(si, month) {
     var data = getSeriesData();
     var s = data[si];
-    if (!s.monthly[month]) s.monthly[month] = {eps:'',rev:0};
+    if (!s.monthly[month]) s.monthly[month] = {eps:'',rev:0,target:0};
     var eps = prompt(s.name+' '+MONTH_NAMES_KR[month]+' 에피소드:', s.monthly[month].eps||'');
     if (eps===null) return;
-    var rev = prompt(s.name+' '+MONTH_NAMES_KR[month]+' 수익 (₩):', s.monthly[month].rev||0);
+    var rev = prompt(s.name+' '+MONTH_NAMES_KR[month]+' 실제 수익 (₩):', s.monthly[month].rev||0);
     if (rev===null) return;
     s.monthly[month].eps = eps;
     s.monthly[month].rev = parseInt(rev)||0;
-    if (!eps && !parseInt(rev)) delete s.monthly[month];
+    if (!eps && !parseInt(rev) && !s.monthly[month].target) delete s.monthly[month];
     saveSeriesData(data);
     renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+  }
+
+  function editMatrixTarget(si, month) {
+    var data = getSeriesData();
+    var s = data[si];
+    if (!s.monthly[month]) s.monthly[month] = {eps:'',rev:0,target:0};
+    var tgt = prompt(s.name+' '+MONTH_NAMES_KR[month]+' 목표 수익 (₩):', s.monthly[month].target||0);
+    if (tgt===null) return;
+    s.monthly[month].target = parseInt(tgt)||0;
+    if (!s.monthly[month].eps && !s.monthly[month].rev && !s.monthly[month].target) delete s.monthly[month];
+    saveSeriesData(data);
+    renderIncomeMatrix();
   }
 
   // ===== Monthly Scheduler =====
@@ -6875,6 +6902,8 @@
 
   function incomeCalPrev() { _incomeCalMonth--; if(_incomeCalMonth<0){_incomeCalMonth=11;_incomeCalYear--;} renderIncomeCal(); }
   function incomeCalNext() { _incomeCalMonth++; if(_incomeCalMonth>11){_incomeCalMonth=0;_incomeCalYear++;} renderIncomeCal(); }
+
+  var _calClipboard = null; // copy/paste buffer
 
   function renderIncomeCal() {
     var titleEl = document.getElementById('income-cal-title');
@@ -6889,7 +6918,6 @@
     var isThisMonth = today.getMonth()===_incomeCalMonth && today.getFullYear()===_incomeCalYear;
     var todayDate = today.getDate();
 
-    // Group events by day
     var dayEvents = {};
     calEvents.forEach(function(ev, idx) {
       var d = new Date(ev.date);
@@ -6915,17 +6943,78 @@
       if (dayEvents[d2]) {
         dayEvents[d2].forEach(function(ev) {
           var c = getSeriesColor(ev.series);
-          evtHtml += '<div onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-pointer hover:bg-'+c+'-200 transition-colors group/ev">' +
-            '<p class="text-[8px] font-bold text-'+c+'-700 uppercase truncate">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
-            '</div>';
+          evtHtml += '<div draggable="true" ondragstart="calDragStart(event,'+ev.idx+')" onclick="event.stopPropagation()" class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-grab hover:bg-'+c+'-200 transition-colors group/ev relative">' +
+            '<p class="text-[8px] font-bold text-'+c+'-700 uppercase truncate pr-8">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
+            '<div class="absolute right-0.5 top-0.5 flex gap-px opacity-0 group-hover/ev:opacity-100 transition-opacity">' +
+              '<button onclick="event.stopPropagation();copyCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="복사"><span class="material-symbols-outlined" style="font-size:10px">content_copy</span></button>' +
+              '<button onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="수정"><span class="material-symbols-outlined" style="font-size:10px">edit</span></button>' +
+              '<button onclick="event.stopPropagation();quickDeleteCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:10px">close</span></button>' +
+            '</div></div>';
         });
       }
-      html += '<div class="bg-white h-28 p-2 cursor-pointer hover:bg-slate-50 transition-colors '+bgCls+'" onclick="addCalEvent(\''+dateStr+'\')">' +
+      html += '<div class="bg-white h-28 p-2 cursor-pointer hover:bg-slate-50 transition-colors '+bgCls+'" ' +
+        'onclick="addCalEvent(\''+dateStr+'\')" ' +
+        'ondragover="event.preventDefault();this.classList.add(\'bg-indigo-50\')" ' +
+        'ondragleave="this.classList.remove(\'bg-indigo-50\')" ' +
+        'ondrop="calDrop(event,\''+dateStr+'\')">' +
         '<span class="text-xs font-medium '+numCls+'">' + d2 + '</span>' + evtHtml + '</div>';
     }
 
     grid.innerHTML = html;
   }
+
+  // Drag & Drop
+  var _calDragIdx = null;
+  function calDragStart(e, idx) { _calDragIdx = idx; e.dataTransfer.effectAllowed = 'move'; }
+  function calDrop(e, dateStr) {
+    e.preventDefault(); e.currentTarget.classList.remove('bg-indigo-50');
+    if (_calDragIdx === null) {
+      // Paste from clipboard
+      if (_calClipboard) { pasteCalEvent(dateStr); }
+      return;
+    }
+    var evts = getCalEvents();
+    evts[_calDragIdx].date = dateStr;
+    saveCalEvents(evts);
+    _calDragIdx = null;
+    syncCalToMatrix();
+    renderIncomeCal(); renderIncomeMatrix();
+  }
+
+  // Copy & Paste
+  function copyCalEvent(idx) {
+    var evts = getCalEvents();
+    _calClipboard = { series: evts[idx].series, episode: evts[idx].episode, note: evts[idx].note||'' };
+  }
+  function pasteCalEvent(dateStr) {
+    if (!_calClipboard) return;
+    var evts = getCalEvents();
+    evts.push({ id:'ce_'+Date.now(), date:dateStr, series:_calClipboard.series, episode:_calClipboard.episode, note:_calClipboard.note });
+    saveCalEvents(evts);
+    syncCalToMatrix();
+    renderIncomeCal(); renderIncomeMatrix();
+  }
+
+  // Quick delete (no modal)
+  function quickDeleteCalEvent(idx) {
+    var evts = getCalEvents();
+    evts.splice(idx, 1);
+    saveCalEvents(evts);
+    syncCalToMatrix();
+    renderIncomeCal(); renderIncomeMatrix();
+  }
+
+  // Keyboard shortcut: Ctrl+V paste on focused day
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'v' && _calClipboard) {
+      // paste to today if on income page
+      var page = document.getElementById('page-income');
+      if (page && page.style.display !== 'none') {
+        var todayStr = new Date().toISOString().split('T')[0];
+        pasteCalEvent(todayStr);
+      }
+    }
+  });
 
   // 캘린더 이벤트 모달
   function openCalEventModal(dateStr, editIdx) {
