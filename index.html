@@ -726,6 +726,32 @@
               </div>
             </section>
 
+            <!-- 항공편 -->
+            <section class="bg-sky-50/50 p-5 rounded-3xl border border-sky-200 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-black tracking-tight text-slate-900 flex items-center gap-2"><span class="material-symbols-outlined text-sky-500">flight</span> 항공편</h3>
+              </div>
+              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
+                <table class="w-full text-left border-collapse">
+                  <thead class="border-b border-slate-100 bg-slate-50">
+                    <tr>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">항공사</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">편명</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">출발</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도착</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">비행시간</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">수하물</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
+                    </tr>
+                  </thead>
+                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-sm"></tbody>
+                </table>
+              </div>
+              <div id="journey-flight-total" class="mt-4 flex justify-end"></div>
+            </section>
+
             <!-- 기념품 체크리스트 -->
             <section class="bg-indigo-50/40 p-5 rounded-3xl border border-indigo-200 shadow-sm">
               <div class="flex items-center justify-between mb-4">
@@ -3139,6 +3165,7 @@
     renderDayView();
     renderJourneyTransport();
     renderJourneyLodging();
+    renderJourneyFlights();
     renderJourneySouvenir();
     updateJourneyCost();
   }
@@ -3608,6 +3635,14 @@
     { date:'2026-05-09', time:'17:40', city:'Plitvička / Zagreb', title:'인천공항 도착' }
   ];
 
+  var FLIGHT_DEFAULTS = [
+    { airline:'Turkish Airline', route:'인천(ICN) → 이스탄불(IST)', flight:'TK91',   date:'04/29', depart:'23:20', arrive:'04:50(+1)', duration:'11H 30M', baggage:'23kg', price:'₩1,743,400', priceKRW:1743400 },
+    { airline:'Turkish Airline', route:'이스탄불(IST) → 프라하(PRG)', flight:'TK1767', date:'04/30', depart:'06:45', arrive:'08:20',     duration:'2H 35M',  baggage:'23kg', price:'—',           priceKRW:0 },
+    { airline:'Ryanair',         route:'크라쿠프(KRK) → 두브로브니크(DBV)', flight:'FR5917', date:'05/04', depart:'20:10', arrive:'21:50',     duration:'1H 40M',  baggage:'20kg', price:'$99.39',     priceKRW:0 },
+    { airline:'Turkish Airline', route:'자그레브(ZAG) → 이스탄불(IST)', flight:'TK1056', date:'05/08', depart:'20:45', arrive:'23:40',     duration:'2H 15M',  baggage:'23kg', price:'—',           priceKRW:0 },
+    { airline:'Turkish Airline', route:'이스탄불(IST) → 인천(ICN)',     flight:'TK90',   date:'05/09', depart:'01:50', arrive:'17:40',     duration:'9H 50M',  baggage:'23kg', price:'—',           priceKRW:0 }
+  ];
+
   var SOUVENIR_DEFAULTS = [
     { title:'나 & 소중한 분', description:'매직 연색 연필, 홀더 펜', city:'프라하', amount:'5~20' },
     { title:'직장 동료', description:'맥주 샴푸, 립밤, 핸드크림', city:'프라하', amount:'3~10' },
@@ -3658,6 +3693,42 @@
         var saved3 = await fbAdd('journey', obj3);
         journeyData.push(saved3);
       }
+    }
+  }
+
+  function renderJourneyFlights() {
+    var tbody = document.getElementById('journey-flight-list');
+    var totalEl = document.getElementById('journey-flight-total');
+    if (!tbody) return;
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip || trip.name !== SEED_TRIP_NAME) {
+      tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">항공편 데이터가 없어요</td></tr>';
+      if (totalEl) totalEl.innerHTML = '';
+      return;
+    }
+    var totalKRW = 0;
+    tbody.innerHTML = FLIGHT_DEFAULTS.map(function(f) {
+      totalKRW += f.priceKRW;
+      var isTK = f.airline.indexOf('Turkish') >= 0;
+      var airlineColor = isTK ? 'text-red-700 bg-red-50' : 'text-yellow-700 bg-yellow-50';
+      return '<tr class="hover:bg-sky-50/30 transition-colors">' +
+        '<td class="px-4 py-3 text-xs font-bold"><span class="px-2 py-0.5 rounded-full text-[10px] ' + airlineColor + '">' + f.airline + '</span></td>' +
+        '<td class="px-4 py-3 text-xs font-semibold text-slate-800">' + f.route + '</td>' +
+        '<td class="px-4 py-3 text-xs font-mono font-bold text-slate-600">' + f.flight + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500">' + f.date + '</td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-slate-700">' + f.depart + '</td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-slate-700">' + f.arrive + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500">' + f.duration + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500">' + f.baggage + '</td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-right ' + (f.priceKRW > 0 ? 'text-sky-700' : 'text-slate-400') + '">' + f.price + '</td>' +
+        '</tr>';
+    }).join('');
+    if (totalEl) {
+      totalEl.innerHTML = '<div class="bg-sky-100 border border-sky-200 rounded-xl px-5 py-3 flex items-center gap-3">' +
+        '<span class="text-[10px] font-bold uppercase tracking-widest text-sky-600">총 항공권</span>' +
+        '<span class="text-lg font-black text-sky-800">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
+        '<span class="text-[10px] text-sky-500 font-medium">+ $99.39</span>' +
+      '</div>';
     }
   }
 
