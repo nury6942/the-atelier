@@ -4074,25 +4074,32 @@
     var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
     var leftBorder = status==='환불 가능' ? 'border-left:3px solid #a78bfa;' : 'border-left:3px solid #6b38d4;';
 
-    return '<div class="bg-white rounded-2xl p-4 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="flex items-center gap-3">' +
-        '<div class="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center text-indigo-600 shrink-0"><span class="material-symbols-outlined text-xl">' + icon + '</span></div>' +
-        '<div class="min-w-0 flex-1">' +
-          '<div class="flex items-center gap-2">' +
-            '<span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' +
-            (status ? '<span class="px-1.5 py-0.5 text-[8px] font-bold rounded-full uppercase tracking-wider shrink-0 ' + statusCls + '">' + status + '</span>' : '') +
-          '</div>' +
-          '<div class="flex items-center gap-1 text-xs text-slate-500 mt-0.5 truncate">' +
-            '<span class="font-medium text-slate-700">' + (routeParts[0]||'') + '</span>' +
-            (routeParts.length > 1 ? '<span class="material-symbols-outlined" style="font-size:10px">arrow_forward</span><span class="font-medium text-slate-700">' + routeParts[1] + '</span>' : '') +
+    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
+      '<div class="flex items-center">' +
+        // 왼쪽: 아이콘 + 교통수단
+        '<div class="flex items-center gap-3 w-1/3 min-w-0">' +
+          '<div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-indigo-600 shrink-0"><span class="material-symbols-outlined text-xl">' + icon + '</span></div>' +
+          '<div class="min-w-0">' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' +
+              (status ? '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 ' + statusCls + '">' + status + '</span>' : '') +
+            '</div>' +
+            '<div class="flex items-center gap-1 text-xs text-slate-500 mt-0.5 truncate">' +
+              '<span class="font-medium text-slate-700">' + (routeParts[0]||'') + '</span>' +
+              (routeParts.length > 1 ? '<span class="material-symbols-outlined" style="font-size:10px">arrow_forward</span><span class="font-medium text-slate-700">' + routeParts[1] + '</span>' : '') +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="flex items-center gap-4 shrink-0">' +
-          '<div><p class="text-[8px] font-bold text-slate-400 uppercase">Date</p><p class="text-xs font-semibold text-slate-800">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
-          '<div><p class="text-[8px] font-bold text-slate-400 uppercase">Time</p><p class="text-xs font-semibold text-slate-800 whitespace-nowrap">' + (item.time||'—') + (item.arrive ? '-'+item.arrive : '') + '</p></div>' +
-          '<div><p class="text-[8px] font-bold text-slate-400 uppercase">Price</p><p class="text-sm font-extrabold text-indigo-600 whitespace-nowrap">' + (item.amount||'—') + '</p></div>' +
+        // 중앙: Date + Time
+        '<div class="flex-1 flex items-center justify-center gap-6">' +
+          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Date</p><p class="text-sm font-semibold text-slate-800">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
+          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Time</p><p class="text-sm font-semibold text-slate-800 whitespace-nowrap">' + (item.time||'—') + (item.arrive ? ' - '+item.arrive : '') + '</p></div>' +
         '</div>' +
-        '<div class="flex gap-1 shrink-0 ml-2">' + deleteBtn + '</div>' +
+        // 오른쪽: 가격 + 버튼
+        '<div class="flex items-center gap-3 shrink-0">' +
+          '<div class="text-right"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + (item.amount||'—') + '</p></div>' +
+          '<div class="flex gap-1">' + deleteBtn + '</div>' +
+        '</div>' +
       '</div>' +
     '</div>';
   }
@@ -4881,22 +4888,31 @@
     var isTK = (f.airline||f.title||'').indexOf('Turkish') >= 0;
     var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
     var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
-    return '<div class="bg-white rounded-2xl p-4 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="flex items-center gap-3">' +
-        '<div class="w-9 h-9 rounded-lg '+iconBg+' flex items-center justify-center shrink-0"><span class="material-symbols-outlined '+iconColor+'" style="font-size:18px">flight_takeoff</span></div>' +
-        '<div class="min-w-0 flex-1">' +
-          '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
-          '<p class="text-[11px] text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
+    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
+      '<div class="flex items-center">' +
+        // 왼쪽: 아이콘 + 항공사
+        '<div class="flex items-center gap-3 w-1/4 min-w-0">' +
+          '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center shrink-0"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
+          '<div class="min-w-0">' +
+            '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
+            '<p class="text-xs text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
+          '</div>' +
         '</div>' +
+        // 중앙: 루트 (ICN → IST)
+        '<div class="flex-1 flex items-center justify-center gap-4">' +
+          '<div class="text-center"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+depIata+'</p>' +
+          '<p class="text-xs font-bold text-slate-600">'+(f.depart||f.time||'')+'</p></div>' +
+          '<div class="flex flex-col items-center w-16"><div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
+          '<p class="text-xs text-slate-600 mt-1 font-semibold">'+(f.duration||'')+'</p></div>' +
+          '<div class="text-center"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+arrIata+'</p>' +
+          '<p class="text-xs font-bold text-slate-600">'+(f.arrive||'')+'</p></div>' +
+        '</div>' +
+        // 오른쪽: 가격 + 버튼
         '<div class="flex items-center gap-3 shrink-0">' +
-          '<span class="text-lg font-extrabold tracking-tighter text-slate-900">'+depIata+'</span>' +
-          '<div class="flex flex-col items-center w-12"><div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:10px">flight</span></div>' +
-          '<p class="text-[9px] text-slate-500 mt-0.5">'+(f.duration||'')+'</p></div>' +
-          '<span class="text-lg font-extrabold tracking-tighter text-slate-900">'+arrIata+'</span>' +
+          '<div class="text-right"><p class="text-base font-bold text-indigo-600 whitespace-nowrap">'+(f.price||f.amount||'—')+'</p>' +
+          '<p class="text-xs text-slate-600">'+(f.baggage||'')+'</p></div>' +
+          '<div class="flex gap-1">' + deleteHtml + '</div>' +
         '</div>' +
-        '<div class="text-right shrink-0 ml-2"><p class="text-sm font-bold text-indigo-600 whitespace-nowrap">'+(f.price||f.amount||'—')+'</p>' +
-        '<p class="text-[9px] text-slate-500">'+(f.baggage||'')+'</p></div>' +
-        '<div class="flex gap-1 shrink-0 ml-2">' + deleteHtml + '</div>' +
       '</div></div>';
   }
 
