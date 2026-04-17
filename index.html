@@ -10531,7 +10531,149 @@ async function deleteSessionFromDetail(dateId) {
 }
 
 // ===== REVIEW CREATE =====
-var REVIEW_PROMPT_TEMPLATE = 'You are an expert ESL tutor reviewing a lesson transcript. Analyze this English lesson transcript and produce a structured JSON review.\n\nDate: {{DATE}}\n\nTranscript:\n{{TRANSCRIPT}}\n\nReturn ONLY valid JSON (no markdown, no code blocks) in this exact structure:\n\n{\n  "title": "Short lesson title (3-5 words in English)",\n  "subtitle": "One-sentence summary of what was covered",\n  "level": {\n    "fluency": 0-100,\n    "vocab": 0-100,\n    "grammar": 0-100,\n    "interaction": 0-100\n  },\n  "summary": {\n    "heading": "Summary heading",\n    "p1": "First paragraph of summary",\n    "p2": "Second paragraph of summary",\n    "kr": "Korean translation of summary"\n  },\n  "expressions": [\n    { "cat": "Category", "expr": "Expression", "kr": "Korean meaning", "ex": "Example sentence" }\n  ],\n  "expressionsKr": "Korean explanation of why these expressions are useful",\n  "upgrades": [\n    { "bad": "Original awkward sentence", "ok": "Acceptable version", "gem": "Advanced/natural version", "note": "English explanation", "noteKr": "Korean explanation" }\n  ],\n  "upgradesKr": "Korean summary of upgrade patterns",\n  "grammar": [\n    { "title": "Grammar point title", "rule": "Rule explanation", "examples": ["example1", "example2"] }\n  ],\n  "grammarKr": "Korean summary of grammar points",\n  "convoSkills": {\n    "followups": ["Follow-up question 1", "Follow-up question 2"],\n    "reactions": [{ "feel": "Feeling/situation", "say": "Natural reaction phrase" }],\n    "starters": ["C1-level sentence starter 1", "C1-level sentence starter 2"],\n    "kr": "Korean explanation of conversation skills"\n  },\n  "vocabSets": [\n    {\n      "topic": "Topic in English",\n      "topicKr": "Topic in Korean",\n      "words": [\n        { "word": "vocabulary word", "mean": "Korean meaning", "coll": "common collocation", "ex": "example sentence" }\n      ]\n    }\n  ],\n  "vocabKr": "Korean summary of vocabulary",\n  "drills": [\n    { "title": "Drill title", "items": [{ "q": "Question/prompt", "a": "Answer" }] }\n  ],\n  "drillsKr": "Korean explanation of drills",\n  "goals": [\n    { "title": "Goal title", "desc": "Goal description" }\n  ],\n  "goalsKr": "Korean summary of goals"\n}\n\nIMPORTANT:\n- Extract 5-8 useful expressions from the transcript\n- Find 3-5 sentences the student said that could be upgraded\n- Identify 2-3 grammar points that need attention\n- Create vocabulary sets organized by topic (2-3 sets, 4-6 words each)\n- Generate 2-3 practice drills based on weak points\n- Set 3-4 concrete goals for next lesson\n- All Korean translations should be natural and helpful\n- Score levels realistically based on actual performance in transcript';
+var REVIEW_PROMPT_TEMPLATE = `You are an expert English tutor creating a structured learning dashboard for Nuri, a Korean learner targeting C1-level.
+
+Analyze the transcript below from an English tutoring session with a native speaker tutor, then output EXACTLY ONE JavaScript object matching the schema below. No preamble, no explanation outside the code block — just one fenced \`\`\`js code block containing the assignment statement.
+
+=== QUALITY REQUIREMENTS (CRITICAL — FOLLOW EXACTLY) ===
+
+- Analyze in English first, then add a Korean explanation in every *Kr field.
+- When improving sentences, don't just correct them — UPGRADE to C1 level (more advanced vocab/grammar) while keeping natural spoken English.
+- Extract 12–20 useful expressions the tutor (not Nuri) actually used, categorized.
+- Provide 6–10 "upgrade" entries with original / natural B2 / C1 upgrade / note.
+- Identify 4–6 grammar patterns Nuri struggles with, each with rule + 2–3 examples.
+- Topic vocab sets: 2–3 topics, each with 5–8 C1-level words.
+- Drills: 2–3 formats (fill-in-blank, reorder, C1 replacement).
+- Goals: 3 specific, actionable next-class goals.
+- All Kr fields: warm, tutor-like tone with <b> emphasis on key points.
+- All English fields may include inline HTML: <strong>, <b>, <i>, <s>, <br>. PRESERVE these — they are intentional formatting.
+
+=== LEVEL SCORES (0–100) ===
+
+Estimate Nuri's level for this session based on the transcript:
+- fluency: overall speaking smoothness, recovery from word gaps
+- vocab: range and precision of vocabulary
+- grammar: tense consistency, articles, prepositions
+- interaction: follow-up questions, reactions, conversational flow
+
+Typical range: 55–85. Be realistic, not flattering.
+
+=== SCHEMA (output exactly this shape) ===
+
+sessionsData["{{DATE}}"] = {
+  title: "Short English session title (3–6 words)",
+  subtitle: "한글 부제목 (수업의 핵심 주제를 축약)",
+  level: { fluency: 0, vocab: 0, grammar: 0, interaction: 0 },
+
+  summary: {
+    heading: "One-sentence English mood summary",
+    p1: "First paragraph (English, 4–6 sentences). Describe what Nuri did well, storytelling moments, C1 skills shown. May include <strong> on key strengths.",
+    p2: "Second paragraph (English, 4–6 sentences). Two specific areas to refine with <strong> emphasis. End on encouraging note.",
+    kr: "한글 종합 평가. <b>핵심 포인트</b>는 볼드로 강조. 3–4 문장, 튜터가 말하듯 따뜻한 톤."
+  },
+
+  expressions: [
+    { cat: "Idiom", expr: "expression in English", kr: "한글 뜻 / 쓰임", ex: "natural example sentence in English." }
+  ],
+  expressionsKr: "이 중 가장 중요한 표현 4–6개를 <b>볼드</b>로 꼽고, 왜 외워야 하는지(시험/실생활) 설명. 튜터가 직접 가르쳐준 단어가 있으면 반드시 언급.",
+
+  upgrades: [
+    {
+      bad: "Nuri's original sentence in quotes.",
+      ok: "Natural B2 version — how a native would actually say it conversationally.",
+      gem: "C1 upgrade — more sophisticated but still natural. Use C1 structures (inversion, 'rather than', 'what X is Y', etc.)",
+      note: "Short English explanation of WHY the upgrade is better (grammar/vocab/structure/nuance).",
+      noteKr: "한글로 짧게 설명. 핵심 패턴은 <b>볼드</b>."
+    }
+  ],
+  upgradesKr: "전체 업그레이드의 공통 패턴 요약. 어떤 구조/어휘를 의식적으로 연습하면 되는지.",
+
+  grammar: [
+    {
+      title: "Issue 01 · descriptive name",
+      rule: "Short English rule. May include <i>italics</i> for formulas.",
+      examples: [
+        "Example 1 with <s>wrong</s> → <b>correct</b>",
+        "Example 2 (positive reinforcement, C1-friendly).",
+        "Example 3 (optional, real-life usable)."
+      ]
+    }
+  ],
+  grammarKr: "<b>가장 시급한 3가지</b>를 뽑아서 우선순위 매기기. 시험 감점 포인트로 연결 지어 설명.",
+
+  convoSkills: {
+    followups: [
+      "Better follow-up question 1 with optional <i>italic nuance</i>.",
+      "Better follow-up question 2."
+    ],
+    reactions: [
+      { feel: "shock", say: "You're kidding! / No way! / That's wild." },
+      { feel: "sympathy", say: "..." },
+      { feel: "agreement", say: "..." },
+      { feel: "warmth", say: "..." }
+    ],
+    starters: [
+      "From my point of view, …",
+      "When it comes to …"
+    ],
+    kr: "왜 이런 starter를 쓰면 답변 품질이 올라가는지 설명. 구체적 실천 tip 포함."
+  },
+
+  vocabSets: [
+    {
+      topic: "Topic 1 · English Topic Name",
+      topicKr: "한글 주제명",
+      words: [
+        { word: "vocabulary", mean: "한글 뜻", coll: "collocation 1 / collocation 2 / collocation 3", ex: "Natural example sentence." }
+      ]
+    }
+  ],
+  vocabKr: "IELTS/PTE 시험 연계해서 어떤 단어가 특히 중요한지 설명. <b>볼드</b>로 핵심 단어 강조.",
+
+  drills: [
+    {
+      title: "Drill A · Format name (articles / prepositions / etc.)",
+      items: [
+        { q: "Question with ____ blank.", a: "answer" }
+      ]
+    },
+    {
+      title: "Drill B · Reorder to sound natural",
+      items: [
+        { q: "scrambled / words / to / reorder", a: "Unscrambled natural sentence." }
+      ]
+    },
+    {
+      title: "Drill C · Replace with a C1 version",
+      items: [
+        { q: "basic expression", a: "C1 upgrade / alternative" }
+      ]
+    }
+  ],
+  drillsKr: "드릴을 어떻게 활용하면 되는지 실천 가이드. 예: '이 문장들은 2–3번 소리 내서 따라 읽어보세요.'",
+
+  goals: [
+    { title: "Goal 1 name", desc: "Specific, measurable action for next class. Reference today's mistakes." }
+  ],
+  goalsKr: "다음 수업을 위한 동기부여 메시지. 오늘의 핵심 과제를 다시 한 번 짚어주기."
+};
+
+=== STRICT OUTPUT RULES ===
+
+1. Output format: ONE fenced js code block containing ONLY the assignment statement.
+2. No text before or after the code block.
+3. No comments inside the object (no // anywhere in the output).
+4. Use backticks for multi-line strings; use double quotes for single-line strings.
+5. Preserve inline HTML tags (<b>, <strong>, <i>, <s>, <br>) as literal text inside strings — do not escape them.
+6. Do not invent facts not in the transcript. If something is missing (e.g., no grammar errors observed), you may reduce count but keep the field present.
+7. Replace the date placeholder with the actual date provided in INPUT.
+
+=== INPUT ===
+
+DATE: {{DATE}}
+
+TRANSCRIPT:
+{{TRANSCRIPT}}`;
 
 function openReviewCreateModal() {
   document.getElementById('review-date').value = new Date().toISOString().split('T')[0];
@@ -10569,27 +10711,36 @@ async function parseAndSaveReview() {
   if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
   if (!jsonText) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> JSON을 붙여넣으세요'); return; }
 
-  // Clean up JSON input: remove code blocks, sessionsData wrapper
+  // Clean up input: remove code blocks
   var cleaned = jsonText;
-  // Remove markdown code blocks
-  cleaned = cleaned.replace(/^```(?:json)?\s*/gm, '').replace(/```\s*$/gm, '');
-  // Remove sessionsData["..."] = wrapper
-  cleaned = cleaned.replace(/^(?:const|let|var)?\s*sessionsData\s*\[\s*["'][^"']*["']\s*\]\s*=\s*/m, '');
-  // Remove trailing semicolons
-  cleaned = cleaned.replace(/;\s*$/, '');
-  cleaned = cleaned.trim();
+  cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*/gm, '').replace(/```\s*$/gm, '').trim();
 
   var parsed;
+  // Strategy 1: Try JS evaluation (handles sessionsData["..."] = {...}; format with backtick strings)
   try {
-    parsed = JSON.parse(cleaned);
-  } catch(e) {
-    // Try wrapping in braces
+    var script = 'var sessionsData = {};\n' + cleaned + '\nreturn sessionsData;';
+    var result = new Function(script)();
+    var keys = Object.keys(result);
+    if (keys.length > 0) {
+      parsed = result[keys[0]];
+    }
+  } catch(e1) {}
+
+  // Strategy 2: Strip sessionsData wrapper, try JSON.parse
+  if (!parsed) {
+    var jsonCleaned = cleaned;
+    jsonCleaned = jsonCleaned.replace(/^(?:const|let|var)?\s*sessionsData\s*\[\s*["'][^"']*["']\s*\]\s*=\s*/m, '');
+    jsonCleaned = jsonCleaned.replace(/;\s*$/, '').trim();
     try {
-      parsed = JSON.parse('{' + cleaned + '}');
+      parsed = JSON.parse(jsonCleaned);
     } catch(e2) {
-      status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-rose-50 text-rose-700';
-      status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> JSON 파싱 실패: ' + e.message;
-      return;
+      try {
+        parsed = JSON.parse('{' + jsonCleaned + '}');
+      } catch(e3) {
+        status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-rose-50 text-rose-700';
+        status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> 파싱 실패: ' + e3.message + '<br><span class="font-normal text-xs">JS 코드블록 또는 JSON 형식으로 붙여넣으세요.</span>';
+        return;
+      }
     }
   }
 
