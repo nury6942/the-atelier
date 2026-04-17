@@ -8802,13 +8802,32 @@
   var PK_ICONS = ['star','checkroom','devices','spa','luggage','flight','restaurant','shopping_bag','medication','photo_camera','fitness_center','headphones','book','brush','local_cafe','beach_access'];
   var _pkWeatherCache = {};
 
+  function findNearestTrip(trips) {
+    var todayStr = new Date().toISOString().split('T')[0];
+    var valid = trips.filter(function(t) {
+      if (!t.start_date || !/^\d{4}-\d{2}-\d{2}/.test(t.start_date)) { console.warn('Trip missing/invalid start_date:', t.name||t._id); return false; }
+      return true;
+    });
+    // 1. 진행 중인 여행 (start <= today <= end)
+    var ongoing = valid.filter(function(t) { return t.start_date <= todayStr && (t.end_date||t.start_date) >= todayStr; });
+    if (ongoing.length > 0) return ongoing[0];
+    // 2. 미래 여행 중 가장 가까운
+    var future = valid.filter(function(t) { return t.start_date >= todayStr; }).sort(function(a,b) { return a.start_date.localeCompare(b.start_date); });
+    if (future.length > 0) return future[0];
+    // 3. 과거 여행 중 가장 최근
+    var past = valid.filter(function(t) { return t.start_date < todayStr; }).sort(function(a,b) { return b.start_date.localeCompare(a.start_date); });
+    if (past.length > 0) return past[0];
+    return null;
+  }
+
   async function pkInit() {
     pkTrips = await fbRead('trips');
     var trips = pkTrips;
     var sel = document.getElementById('pk-trip-selector');
     sel.innerHTML = '<option value="">여행 선택...</option>' + trips.map(function(t){ return '<option value="'+t._id+'">'+t.name+'</option>'; }).join('');
+    var defaultTrip = findNearestTrip(trips);
     if (pkTripId) { sel.value = pkTripId; await pkOnTripSelect(pkTripId); }
-    else if (trips.length > 0) { sel.value = trips[0]._id; await pkOnTripSelect(trips[0]._id); }
+    else if (defaultTrip) { sel.value = defaultTrip._id; await pkOnTripSelect(defaultTrip._id); }
     else { document.getElementById('pk-empty').style.display = 'flex'; document.getElementById('pk-main').style.display = 'none'; }
   }
 
