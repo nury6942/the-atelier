@@ -707,19 +707,19 @@
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
                 <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
-                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
+              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-x-auto" style="position:relative;">
+                <table class="w-full text-left border-collapse" style="min-width:800px;">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:10%">도시</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:22%">숙소명</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">유형</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">전화번호</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">체크인</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">체크아웃</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:10%">무료취소</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:10%">가격</th>
-                      <th class="px-2 py-2" style="width:3%"></th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:70px">도시</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500">숙소명</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:80px">유형</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:100px">전화번호</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:80px">체크인</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:80px">체크아웃</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:90px">무료취소</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:80px">가격</th>
+                      <th class="px-2 py-2 bg-slate-50 sticky right-0" style="width:50px"></th>
                     </tr>
                   </thead>
                   <tbody id="journey-lodging-list" class="bg-white divide-y divide-slate-50 text-xs">
@@ -3743,6 +3743,47 @@
     document.getElementById('lodging-edit-modal').style.cssText = 'display:flex!important';
   }
 
+  function toggleLodgingBreakfast(idx, checked) {
+    var data = getLodgingData();
+    data[idx].breakfast = checked;
+    saveLodgingData(data);
+  }
+
+  function inlineEditLodging(idx) {
+    var data = getLodgingData();
+    var d = data[idx];
+    var tr = document.querySelector('tr[data-lidx="'+idx+'"]');
+    if (!tr) return;
+    var ic = 'border border-slate-200 rounded px-1.5 py-1 text-[10px] outline-none focus:ring-1 focus:ring-indigo-200 w-full bg-white';
+    tr.className = 'bg-indigo-50/40';
+    tr.innerHTML =
+      '<td class="px-2 py-2"><input data-lf="city" value="'+(d.city||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><input data-lf="title" value="'+(d.title||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><select data-lf="type" class="'+ic+'"><option'+(d.type.indexOf('Hotel')>=0?' selected':'')+'>Hotel</option><option'+(d.type.indexOf('Airbnb')>=0?' selected':'')+'>Airbnb</option><option>Hostel</option></select></td>' +
+      '<td class="px-2 py-2"><input data-lf="phone" value="'+(d.phone||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><input data-lf="date" type="date" value="'+(d.date||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><input data-lf="checkout_date" type="date" value="'+(d.checkout_date||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><input data-lf="cancel_date" type="date" value="'+(d.cancel_date||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-2 py-2"><input data-lf="price" value="'+(d.price||'')+'" class="'+ic+' text-right"/></td>' +
+      '<td class="px-2 py-2 bg-white sticky right-0"><div class="flex gap-0.5">' +
+        '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">check</span></button>' +
+        '<button onclick="renderJourneyLodging()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500"><span class="material-symbols-outlined" style="font-size:13px">close</span></button>' +
+      '</div></td>';
+    tr.querySelector('input').focus();
+  }
+
+  function saveInlineLodging(idx) {
+    var tr = document.querySelector('tr[data-lidx="'+idx+'"]');
+    if (!tr) return;
+    var data = getLodgingData();
+    var d = data[idx];
+    tr.querySelectorAll('[data-lf]').forEach(function(inp) {
+      d[inp.dataset.lf] = inp.value.trim();
+    });
+    saveLodgingData(data);
+    renderJourneyLodging();
+  }
+
   function closeLodgingEditModal() {
     document.getElementById('lodging-edit-modal').style.cssText = 'display:none!important';
     _editLodgingIdx = null;
@@ -3799,19 +3840,24 @@
     container.innerHTML = data.map(function(d, idx) {
       var cancelOk = d.cancel_override !== undefined ? d.cancel_override : (d.cancel_date >= new Date().toISOString().split('T')[0]);
       var cancelCls = cancelOk ? 'text-teal-600 bg-teal-50 border-teal-200 cursor-pointer hover:opacity-80' : 'text-rose-600 bg-rose-50 border-rose-200 cursor-pointer hover:opacity-80';
-      var typeCls = d.type.indexOf('Airbnb') >= 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-blue-600 bg-blue-50 border-blue-200';
-      return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
+      // 유형 파싱: "Hotel (조식 포함)" → baseType="Hotel", hasBreakfast=true
+      var rawType = d.type || 'Hotel';
+      var baseType = rawType.replace(/\s*\(.*\)/, '');
+      var hasBreakfast = d.breakfast !== undefined ? d.breakfast : (rawType.indexOf('조식') >= 0);
+      var typeCls = baseType.indexOf('Airbnb') >= 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+      return '<tr class="hover:bg-indigo-50/30 transition-colors group" data-lidx="'+idx+'">' +
         '<td class="px-3 py-3 whitespace-nowrap"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
         '<td class="px-3 py-3 text-xs font-bold text-slate-800">' + d.title + '</td>' +
-        '<td class="px-3 py-3 whitespace-nowrap"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + d.type + '</span></td>' +
+        '<td class="px-3 py-3"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + baseType + '</span>' +
+          '<label class="flex items-center gap-1 mt-1 cursor-pointer"><input type="checkbox" ' + (hasBreakfast?'checked':'') + ' onchange="toggleLodgingBreakfast('+idx+',this.checked)" class="w-3 h-3 rounded text-indigo-600 border-slate-300"/><span class="text-[8px] text-slate-400">조식</span></label></td>' +
         '<td class="px-3 py-3 text-xs text-slate-500">' + (d.phone ? d.phone.replace(/-([^-]+)$/,'<br><span class="text-slate-700 font-semibold">$1</span>') : '—') + '</td>' +
         '<td class="px-3 py-3 text-xs"><div class="text-slate-500">' + shortDate(d.date) + '</div><div class="font-bold text-indigo-600">' + d.checkin + '</div></td>' +
         '<td class="px-3 py-3 text-xs"><div class="text-slate-500">' + shortDate(d.checkout_date) + '</div><div class="font-bold text-indigo-600">' + d.checkout + '</div></td>' +
         '<td class="px-3 py-3 whitespace-nowrap"><span onclick="toggleLodgingCancel(' + idx + ')" class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full transition-all ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span> <span class="text-[10px] text-slate-400">~' + shortDate(d.cancel_date) + '</span></td>' +
         '<td class="px-3 py-3 text-right text-xs text-slate-600 whitespace-nowrap">' + d.price + '</td>' +
-        '<td class="px-4 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="openLodgingEditModal(' + idx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<td class="px-2 py-3 bg-white sticky right-0"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all">' +
+        '<button onclick="inlineEditLodging('+idx+')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">edit</span></button>' +
+        '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>' +
         '</div></td></tr>';
     }).join('');
     appendLodgingInputRow();
