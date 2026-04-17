@@ -626,7 +626,7 @@
         <div class="grid grid-cols-12 gap-8 mb-10">
 
           <!-- 일정 (왼쪽) -->
-          <section class="col-span-4 bg-slate-50/50 p-5 rounded-3xl border border-slate-200 shadow-sm">
+          <section class="col-span-3 bg-slate-50/50 p-5 rounded-3xl border border-slate-200 shadow-sm">
             <!-- Day Nav -->
             <div class="flex items-center justify-between mb-5">
               <button onclick="prevDay()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400 hover:text-slate-700">
@@ -675,7 +675,7 @@
           </section>
 
           <!-- 오른쪽 -->
-          <div class="col-span-8 space-y-8">
+          <div class="col-span-9 space-y-8">
 
             <!-- 1. 항공편 -->
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
@@ -684,18 +684,18 @@
                 <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
               </div>
               <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
-                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
+                <table class="w-full text-left border-collapse">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:14%">항공사</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:20%">루트</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:8%">편명</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:11%">날짜</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:7%">출발</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">도착</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">비행</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:7%">수하물</th>
-                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:15%">가격</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">항공사</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">루트</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">편명</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">날짜</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">출발</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">도착</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">비행</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">수하물</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right whitespace-nowrap">가격</th>
                     </tr>
                   </thead>
                   <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-xs"></tbody>
@@ -4265,15 +4265,15 @@
       var isTK = f.airline.indexOf('Turkish') >= 0;
       var airlineColor = isTK ? 'text-red-700 bg-red-50' : 'text-yellow-700 bg-yellow-50';
       html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
-        '<td class="px-4 py-3 text-xs font-bold"><span class="px-2 py-0.5 rounded-full text-[10px] ' + airlineColor + '">' + f.airline + '</span></td>' +
-        '<td class="px-4 py-3 text-xs font-semibold text-slate-800">' + f.route + '</td>' +
-        '<td class="px-4 py-3 text-xs font-mono font-bold text-slate-600">' + f.flight + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500">' + f.date + '</td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-slate-700">' + f.depart + '</td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-slate-700">' + f.arrive + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500">' + f.duration + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500">' + f.baggage + '</td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-right ' + (f.priceKRW > 0 ? 'text-sky-700' : 'text-slate-400') + '">' + f.price + '</td>' +
+        '<td class="px-3 py-2 text-xs font-bold whitespace-nowrap"><span class="px-2 py-0.5 rounded-full text-[10px] ' + airlineColor + '">' + f.airline + '</span></td>' +
+        '<td class="px-3 py-2 text-xs font-semibold text-slate-800">' + f.route + '</td>' +
+        '<td class="px-3 py-2 text-xs font-mono font-bold text-slate-600 whitespace-nowrap">' + f.flight + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.date + '</td>' +
+        '<td class="px-3 py-2 text-xs font-bold text-slate-700 whitespace-nowrap">' + f.depart + '</td>' +
+        '<td class="px-3 py-2 text-xs font-bold text-slate-700 whitespace-nowrap">' + f.arrive + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.duration + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.baggage + '</td>' +
+        '<td class="px-3 py-2 text-xs font-bold text-right whitespace-nowrap ' + (f.priceKRW > 0 ? 'text-sky-700' : 'text-slate-400') + '">' + f.price + '</td>' +
         '</tr>';
     });
 
