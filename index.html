@@ -92,6 +92,40 @@
     /* Page fade transition */
     .page{animation:fadeIn .18s ease}
     @keyframes fadeIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ===== UNIFIED TRIP DROPDOWN ===== */
+    .trip-dd-btn {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      width: 100%; max-width: 360px;
+      background: #fff; border: 1.5px solid #a78bfa; border-radius: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem; font-weight: 600; color: #1e293b;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .trip-dd-btn:hover { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(107,56,212,0.12); }
+    .trip-dd-btn:focus { outline: none; ring: 2px; box-shadow: 0 0 0 2px rgba(107,56,212,0.3); }
+    .trip-dd-panel {
+      position: absolute; left: 0; top: 100%; margin-top: 4px;
+      width: 100%; max-width: 360px;
+      background: #fff; border-radius: 0.75rem;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #f1f5f9; overflow: hidden; z-index: 50;
+      transition: all 0.15s; transform-origin: top;
+    }
+    .trip-dd-opt {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; text-align: left;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem; font-weight: 500; color: #475569;
+      border: none; background: none; cursor: pointer; transition: all 0.1s;
+    }
+    .trip-dd-opt:hover { background: #f5f3ff; }
+    .trip-dd-opt.active {
+      background: linear-gradient(135deg, #6b38d4, #8455ef);
+      color: #fff; font-weight: 700;
+    }
+    .trip-dd-opt .dd-actions { display: none; gap: 2px; }
+    .trip-dd-opt:hover .dd-actions { display: flex; }
   
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
@@ -571,17 +605,20 @@
   <div id="page-journey" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Page Intro + Trip Tabs -->
-      <div class="mb-6">
-        <div class="flex items-center justify-end gap-4 mb-4">
-          <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
-            <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
+      <!-- Page Intro + Trip Selector -->
+      <div class="mb-6 flex items-center gap-3">
+        <div class="relative" id="journey-dd-wrap">
+          <button onclick="toggleJourneyDropdown()" id="journey-dd-btn" class="trip-dd-btn">
+            <span id="journey-dd-label">여행 선택...</span>
+            <span class="material-symbols-outlined text-violet-400 transition-transform" id="journey-dd-chevron" style="font-size:20px">expand_more</span>
           </button>
+          <div id="journey-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
+            <div id="journey-dd-options" class="py-1"></div>
+          </div>
         </div>
-        <!-- Trip Tabs -->
-        <div id="journey-trip-tabs" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-          <div class="text-xs text-slate-400 py-2">여행을 추가해봐!</div>
-        </div>
+        <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
+          <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
+        </button>
       </div>
 
       <!-- 도시 관리 패널 -->
@@ -1275,11 +1312,16 @@
         </div>
 
         <!-- 트립 필터 -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center">
           <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">트립 필터</p>
-          <div class="flex flex-col gap-2">
-            <button id="finance-filter-all" onclick="filterFinanceByTrip('all')" class="w-full py-2 px-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-left">전체</button>
-            <div id="finance-trip-filter-list" class="flex flex-col gap-2"></div>
+          <div class="relative" id="finance-dd-wrap">
+            <button onclick="toggleFinanceDropdown()" id="finance-dd-btn" class="trip-dd-btn" style="max-width:100%">
+              <span id="finance-dd-label">전체</span>
+              <span class="material-symbols-outlined text-violet-400 transition-transform" id="finance-dd-chevron" style="font-size:20px">expand_more</span>
+            </button>
+            <div id="finance-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;max-width:100%">
+              <div id="finance-dd-options" class="py-1"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -3708,15 +3750,10 @@
     } catch(err) { console.error('Journey load error:', err); }
   }
 
-  function renderTripTabs() {
-    var container = document.getElementById('journey-trip-tabs');
-    if (!tripsData.length) {
-      container.innerHTML = '<div class="text-xs text-slate-400 py-2">여행을 추가해봐!</div>';
-      return;
-    }
-    // 날짜순 정렬: 진행 중 → 미래(가까운순) → 과거(최근순)
+  // ===== UNIFIED TRIP DROPDOWN HELPERS =====
+  function _tripSortForDropdown(trips) {
     var today = new Date().toISOString().split('T')[0];
-    var sorted = tripsData.slice().sort(function(a, b) {
+    return trips.slice().sort(function(a, b) {
       var aActive = a.start_date && a.end_date && a.start_date <= today && a.end_date >= today;
       var bActive = b.start_date && b.end_date && b.start_date <= today && b.end_date >= today;
       if (aActive && !bActive) return -1;
@@ -3728,16 +3765,60 @@
       if (!aFuture && bFuture) return 1;
       return (b.end_date||b.start_date||'').localeCompare(a.end_date||a.start_date||'');
     });
-    container.innerHTML = sorted.map(function(t) {
+  }
+
+  function _toggleDropdown(panelId, chevronId, stateObj, stateKey) {
+    stateObj[stateKey] = !stateObj[stateKey];
+    var panel = document.getElementById(panelId);
+    var chevron = document.getElementById(chevronId);
+    if (stateObj[stateKey]) {
+      panel.style.display = 'block';
+      setTimeout(function(){ panel.style.transform='scaleY(1)'; panel.style.opacity='1'; },10);
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    } else {
+      panel.style.transform='scaleY(0.95)'; panel.style.opacity='0';
+      setTimeout(function(){ panel.style.display='none'; },150);
+      if (chevron) chevron.style.transform = '';
+    }
+  }
+
+  var _ddState = { journey: false, finance: false, pk: false };
+
+  // ===== JOURNEY PAGE DROPDOWN =====
+  function renderTripTabs() {
+    var label = document.getElementById('journey-dd-label');
+    if (!tripsData.length) {
+      if (label) label.textContent = '여행 선택...';
+      renderJourneyDdOptions();
+      return;
+    }
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (label) label.textContent = trip ? trip.name : '여행 선택...';
+    renderJourneyDdOptions();
+  }
+
+  function renderJourneyDdOptions() {
+    var optEl = document.getElementById('journey-dd-options');
+    if (!optEl) return;
+    if (!tripsData.length) { optEl.innerHTML = '<div class="px-5 py-3 text-sm text-slate-400">여행을 추가해봐!</div>'; return; }
+    var sorted = _tripSortForDropdown(tripsData);
+    optEl.innerHTML = sorted.map(function(t) {
       var isActive = t._id === currentTripId;
-      return '<div class="flex items-center gap-1">' +
-        '<button data-tid="' + t._id + '" onclick="selectTrip(this.dataset.tid)" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ' +
-        (isActive ? 'gradient-primary text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300') + '">' +
-        t.name + '</button>' +
-        (isActive ? '<button data-tid="' + t._id + '" onclick="openEditTripModal(this.dataset.tid)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400 hover:text-indigo-600" title="여행 수정"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button data-tid="' + t._id + '" onclick="deleteTripEntry(this.dataset.tid)" class="p-1.5 hover:bg-rose-100 rounded-lg transition-colors text-slate-400 hover:text-rose-500" title="여행 삭제"><span class="material-symbols-outlined text-sm">delete</span></button>' : '') +
-        '</div>';
+      return '<button onclick="selectTripFromDd(\'' + t._id + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + '">' +
+        '<span class="truncate">' + t.name + '</span>' +
+        '<span class="dd-actions">' +
+          '<span onclick="event.stopPropagation();openEditTripModal(\'' + t._id + '\')" class="material-symbols-outlined hover:text-violet-600 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">edit</span>' +
+          '<span onclick="event.stopPropagation();deleteTripEntry(\'' + t._id + '\')" class="material-symbols-outlined hover:text-rose-400 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">delete</span>' +
+        '</span>' +
+      '</button>';
     }).join('');
+  }
+
+  function toggleJourneyDropdown() { _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey'); }
+
+  function selectTripFromDd(tripId) {
+    _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey');
+    selectTrip(tripId);
   }
 
   async function selectTrip(tripId) {
@@ -6227,40 +6308,37 @@
   }
 
   function buildFinanceTripFilters() {
-    var list = document.getElementById('finance-trip-filter-list');
-    list.innerHTML = '';
-    // 날짜 오름차순 정렬 (가까운 미래 → 위, 지난 여행 → 아래)
-    var todayStr = new Date().toISOString().split('T')[0];
-    var sorted = financeTrips.slice().sort(function(a,b){
-      var aFuture = (a.start_date||'') >= todayStr ? 0 : 1;
-      var bFuture = (b.start_date||'') >= todayStr ? 0 : 1;
-      if (aFuture !== bFuture) return aFuture - bFuture;
-      return (a.start_date||'').localeCompare(b.start_date||'');
-    });
-    sorted.forEach(function(t) {
-      var btn = document.createElement('button');
-      btn.className = 'w-full py-2 px-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-left hover:border-indigo-300 transition-all finance-trip-filter-btn';
-      btn.textContent = t.name;
-      btn.addEventListener('click', function(){ filterFinanceByTrip(t.name); });
-      list.appendChild(btn);
-    });
+    renderFinanceDdOptions();
+  }
+
+  function renderFinanceDdOptions() {
+    var optEl = document.getElementById('finance-dd-options');
+    if (!optEl) return;
+    var sorted = _tripSortForDropdown(financeTrips);
+    var isAll = currentFinanceTrip === 'all';
+    var html = '<button onclick="selectFinanceTripDd(\'all\')" class="trip-dd-opt' + (isAll ? ' active' : '') + '"><span>전체</span></button>';
+    html += sorted.map(function(t) {
+      var isActive = currentFinanceTrip === t.name;
+      return '<button onclick="selectFinanceTripDd(\'' + t.name.replace(/'/g,"\\'") + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + '"><span class="truncate">' + t.name + '</span></button>';
+    }).join('');
+    optEl.innerHTML = html;
+    // Update label
+    var label = document.getElementById('finance-dd-label');
+    if (label) label.textContent = isAll ? '전체' : currentFinanceTrip;
+  }
+
+  function toggleFinanceDropdown() { _toggleDropdown('finance-dd-panel','finance-dd-chevron',_ddState,'finance'); }
+
+  function selectFinanceTripDd(trip) {
+    _toggleDropdown('finance-dd-panel','finance-dd-chevron',_ddState,'finance');
+    filterFinanceByTrip(trip);
   }
 
   function filterFinanceByTrip(trip) {
     currentFinanceTrip = trip;
     financeFiltered = trip==='all' ? financeData : financeData.filter(function(r){ return r[2]===trip; });
 
-    // Update filter button styles
-    document.getElementById('finance-filter-all').className =
-      trip==='all'
-        ? 'w-full py-2 px-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-left'
-        : 'w-full py-2 px-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-left hover:border-indigo-300 transition-all';
-    document.querySelectorAll('.finance-trip-filter-btn').forEach(function(btn){
-      btn.className = btn.textContent===trip
-        ? 'w-full py-2 px-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-left finance-trip-filter-btn'
-        : 'w-full py-2 px-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-left hover:border-indigo-300 transition-all finance-trip-filter-btn';
-    });
-
+    renderFinanceDdOptions();
     renderFinanceTable();
     updateFinanceStats();
     document.getElementById('finance-table-wrap').style.display = financeFiltered.length===0?'none':'block';
@@ -9648,15 +9726,13 @@
     else { document.getElementById('pk-empty').style.display = 'flex'; document.getElementById('pk-main').style.display = 'none'; }
   }
 
-  var _pkDropdownOpen = false;
   function renderPkDropdownOptions(trips) {
     var optEl = document.getElementById('pk-dropdown-options');
     if (!optEl) return;
     optEl.innerHTML = trips.map(function(t) {
       var isSelected = t._id === pkTripId;
-      return '<button onclick="selectPkTrip(\'' + t._id + '\',\'' + t.name.replace(/'/g,"\\'") + '\')" class="w-full text-left px-5 py-3 text-sm font-medium hover:bg-indigo-50 transition-colors flex items-center justify-between ' + (isSelected ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-700') + '">' +
-        '<span>' + t.name + '</span>' +
-        (isSelected ? '<span class="material-symbols-outlined text-indigo-600" style="font-size:16px">check</span>' : '') +
+      return '<button onclick="selectPkTrip(\'' + t._id + '\',\'' + t.name.replace(/'/g,"\\'") + '\')" class="trip-dd-opt' + (isSelected ? ' active' : '') + '">' +
+        '<span class="truncate">' + t.name + '</span>' +
       '</button>';
     }).join('');
   }
@@ -9667,36 +9743,29 @@
     if (label) label.textContent = trip ? trip.name : '여행 선택...';
   }
 
-  function togglePkDropdown() {
-    _pkDropdownOpen = !_pkDropdownOpen;
-    var panel = document.getElementById('pk-dropdown-panel');
-    var chevron = document.getElementById('pk-dropdown-chevron');
-    if (_pkDropdownOpen) {
-      panel.style.display = 'block';
-      setTimeout(function(){ panel.style.transform='scaleY(1)'; panel.style.opacity='1'; },10);
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
-    } else {
-      panel.style.transform='scaleY(0.95)'; panel.style.opacity='0';
-      setTimeout(function(){ panel.style.display='none'; },150);
-      if (chevron) chevron.style.transform = '';
-    }
-  }
+  function togglePkDropdown() { _toggleDropdown('pk-dropdown-panel','pk-dropdown-chevron',_ddState,'pk'); }
 
   function selectPkTrip(tripId, tripName) {
-    pkTripId = null; // reset so pkOnTripSelect loads fresh
+    pkTripId = null;
     setPkDropdownLabel(tripId);
     togglePkDropdown();
     renderPkDropdownOptions(pkTrips);
     pkOnTripSelect(tripId);
   }
 
-  // 외부 클릭으로 닫기
+  // 외부 클릭으로 모든 드롭다운 닫기
   document.addEventListener('click', function(e) {
-    if (_pkDropdownOpen && !e.target.closest('#pk-dropdown-wrap')) togglePkDropdown();
+    if (_ddState.pk && !e.target.closest('#pk-dropdown-wrap')) togglePkDropdown();
+    if (_ddState.journey && !e.target.closest('#journey-dd-wrap')) toggleJourneyDropdown();
+    if (_ddState.finance && !e.target.closest('#finance-dd-wrap')) toggleFinanceDropdown();
   });
-  // ESC로 닫기
+  // ESC로 모든 드롭다운 닫기
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && _pkDropdownOpen) togglePkDropdown();
+    if (e.key === 'Escape') {
+      if (_ddState.pk) togglePkDropdown();
+      if (_ddState.journey) toggleJourneyDropdown();
+      if (_ddState.finance) toggleFinanceDropdown();
+    }
   });
 
   async function pkOnTripSelect(tripId) {
@@ -10658,11 +10727,11 @@ async function parseAndSaveReview() {
 
       <!-- Trip Selector (Custom Dropdown) -->
       <div class="relative mb-6" id="pk-dropdown-wrap">
-        <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="flex items-center justify-between gap-3 w-full max-w-sm bg-white border border-indigo-200 rounded-xl px-5 py-3 text-sm font-bold text-slate-800 hover:border-indigo-400 hover:shadow-md focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all">
+        <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="trip-dd-btn">
           <span id="pk-dropdown-label">여행 선택...</span>
-          <span class="material-symbols-outlined text-indigo-400 transition-transform" id="pk-dropdown-chevron" style="font-size:20px">expand_more</span>
+          <span class="material-symbols-outlined text-violet-400 transition-transform" id="pk-dropdown-chevron" style="font-size:20px">expand_more</span>
         </button>
-        <div id="pk-dropdown-panel" class="absolute left-0 top-full mt-1 w-full max-w-sm bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50 transition-all duration-150 origin-top" style="display:none;transform:scaleY(0.95);opacity:0;">
+        <div id="pk-dropdown-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
           <div id="pk-dropdown-options" class="py-1"></div>
         </div>
         <!-- Hidden select for compatibility -->
