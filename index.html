@@ -782,6 +782,10 @@
                     <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명</label>
                     <input id="stay-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
+                  <div class="md:col-span-2">
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
+                    <input id="stay-address" type="text" placeholder="자동 입력됩니다" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400" readonly/>
+                  </div>
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
@@ -4164,6 +4168,48 @@
     saveLodgingData(data); closeLodgingEditModal(); renderJourneyLodging();
   }
 
+  // ===== 숙소명 Google Places Autocomplete =====
+  var _stayAutocomplete = null;
+  function initStayPlacesAutocomplete() {
+    var input = document.getElementById('stay-name');
+    if (!input || typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
+    if (_stayAutocomplete) { try { google.maps.event.clearInstanceListeners(_stayAutocomplete); } catch(e){} _stayAutocomplete = null; }
+    _stayAutocomplete = new google.maps.places.Autocomplete(input, {
+      types: ['lodging'],
+      fields: ['name', 'formatted_address', 'formatted_phone_number', 'international_phone_number', 'address_components'],
+    });
+    _stayAutocomplete.addListener('place_changed', function() {
+      var place = _stayAutocomplete.getPlace();
+      console.log('[Stay Places] Selected:', place);
+      if (!place) return;
+      // 숙소명
+      if (place.name) input.value = place.name;
+      // 주소
+      var addrEl = document.getElementById('stay-address');
+      if (addrEl && place.formatted_address) addrEl.value = place.formatted_address;
+      // 전화번호
+      var phoneEl = document.getElementById('stay-phone');
+      if (phoneEl) {
+        var phone = place.formatted_phone_number || place.international_phone_number || '';
+        if (phone) phoneEl.value = phone;
+      }
+      // 도시 추출
+      var cityEl = document.getElementById('stay-city');
+      if (cityEl && place.address_components) {
+        var cityName = '';
+        for (var i = 0; i < place.address_components.length; i++) {
+          var comp = place.address_components[i];
+          if (comp.types.indexOf('locality') >= 0) { cityName = comp.long_name; break; }
+          if (comp.types.indexOf('administrative_area_level_1') >= 0 && !cityName) { cityName = comp.long_name; }
+        }
+        if (cityName) cityEl.value = cityName;
+      }
+    });
+    setTimeout(function(){ var pacs = document.querySelectorAll('.pac-container'); pacs.forEach(function(p){ p.style.zIndex = '99999'; }); }, 300);
+  }
+  // 페이지 로드 후 초기화 (여행 페이지 진입 시)
+  setTimeout(initStayPlacesAutocomplete, 500);
+
   var _stayType = 'Hotel';
   function selectStayType(type) {
     _stayType = type;
@@ -4185,6 +4231,7 @@
     var obj = {
       trip_id: currentTripId, type: '숙소',
       city: city, title: name,
+      address: document.getElementById('stay-address').value.trim(),
       phone: document.getElementById('stay-phone').value.trim(),
       date: document.getElementById('stay-checkin').value,
       amount: document.getElementById('stay-price').value.replace(/,/g,''),
@@ -4196,7 +4243,7 @@
       renderJourneyLodging();
       updateJourneyCost();
       // 폼 초기화
-      ['stay-city','stay-name','stay-phone','stay-checkin','stay-price'].forEach(function(id){ document.getElementById(id).value=''; });
+      ['stay-city','stay-name','stay-address','stay-phone','stay-checkin','stay-price'].forEach(function(id){ document.getElementById(id).value=''; });
       _stayType = 'Hotel'; selectStayType('Hotel');
     } catch(err) { alert('저장에 실패했어요.'); }
   }
@@ -4224,6 +4271,7 @@
                   (item.phone ? '<span class="text-slate-500 text-[11px] font-medium flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span>' + item.phone + '</span>' : '') +
                 '</div>' +
               '</div>' +
+              (item.address ? '<p class="text-[11px] text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">location_on</span>' + item.address + '</p>' : '') +
               '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-1">' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.date||'—') + '</p>' + (item.checkin ? '<p class="text-[11px] text-slate-500">' + item.checkin + '</p>' : '') + '</div>' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.checkout||'—') + '</p></div>' +
