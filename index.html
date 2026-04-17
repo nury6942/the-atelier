@@ -727,11 +727,14 @@
             </section>
 
             <!-- 항공편 -->
-            <section class="bg-sky-50/50 p-5 rounded-3xl border border-sky-200 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-black tracking-tight text-slate-900 flex items-center gap-2"><span class="material-symbols-outlined text-sky-500">flight</span> 항공편</h3>
+            <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="flex items-center justify-between px-5 py-4">
+                <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
+                <button onclick="openJourneyModal('항공편')" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-sm">add</span> 항공편 추가
+                </button>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
+              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm mx-3 mb-3">
                 <table class="w-full text-left border-collapse">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
@@ -3530,6 +3533,12 @@
 
   // ===== 기본 데이터 시드 (2026 체코&크로아티아) =====
   var SEED_TRIP_NAME = '2026 체코&크로아티아';
+  function isSeedTrip() {
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip) return false;
+    var n = (trip.name||'').replace(/\s/g,'').toLowerCase();
+    return n.indexOf('체코') >= 0 || n.indexOf('크로아티아') >= 0 || n === SEED_TRIP_NAME.replace(/\s/g,'').toLowerCase();
+  }
 
   var CITY_DEFAULTS = [
     { name:'Prague',                        desc:'체코',       start_date:'2026-04-29', end_date:'2026-05-01' },
@@ -3658,7 +3667,7 @@
   async function seedTripDefaults() {
     if (!currentTripId) return;
     var trip = tripsData.find(function(t){ return t._id === currentTripId; });
-    if (!trip || trip.name !== SEED_TRIP_NAME) return;
+    if (!isSeedTrip()) return;
 
     // 도시 시드
     if (citiesData.length === 0) {
@@ -3690,18 +3699,26 @@
     var tbody = document.getElementById('journey-flight-list');
     var totalEl = document.getElementById('journey-flight-total');
     if (!tbody) return;
-    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
-    if (!trip || trip.name !== SEED_TRIP_NAME) {
-      tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">항공편 데이터가 없어요</td></tr>';
-      if (totalEl) totalEl.innerHTML = '';
-      return;
-    }
+
+    // 하드코딩 기본 항공편 (해당 여행)
+    var defaults = isSeedTrip() ? FLIGHT_DEFAULTS : [];
+    // Firebase 항공편
+    var fbFlights = journeyData.filter(function(d){ return d.type === '항공편'; });
+    // Firebase 편명 set (중복 방지)
+    var fbKeys = {};
+    fbFlights.forEach(function(f){ fbKeys[f.title||''] = true; });
+
+    var html = '';
     var totalKRW = 0;
-    tbody.innerHTML = FLIGHT_DEFAULTS.map(function(f) {
+    var extraPrice = '';
+
+    // 하드코딩 기본값
+    defaults.filter(function(f){ return !fbKeys[f.flight]; }).forEach(function(f) {
       totalKRW += f.priceKRW;
+      if (f.price.indexOf('$') >= 0) extraPrice = f.price;
       var isTK = f.airline.indexOf('Turkish') >= 0;
       var airlineColor = isTK ? 'text-red-700 bg-red-50' : 'text-yellow-700 bg-yellow-50';
-      return '<tr class="hover:bg-sky-50/30 transition-colors">' +
+      html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
         '<td class="px-4 py-3 text-xs font-bold"><span class="px-2 py-0.5 rounded-full text-[10px] ' + airlineColor + '">' + f.airline + '</span></td>' +
         '<td class="px-4 py-3 text-xs font-semibold text-slate-800">' + f.route + '</td>' +
         '<td class="px-4 py-3 text-xs font-mono font-bold text-slate-600">' + f.flight + '</td>' +
@@ -3712,12 +3729,37 @@
         '<td class="px-4 py-3 text-xs text-slate-500">' + f.baggage + '</td>' +
         '<td class="px-4 py-3 text-xs font-bold text-right ' + (f.priceKRW > 0 ? 'text-sky-700' : 'text-slate-400') + '">' + f.price + '</td>' +
         '</tr>';
-    }).join('');
-    if (totalEl) {
-      totalEl.innerHTML = '<div class="bg-sky-100 border border-sky-200 rounded-xl px-5 py-3 flex items-center gap-3">' +
-        '<span class="text-[10px] font-bold uppercase tracking-widest text-sky-600">총 항공권</span>' +
-        '<span class="text-lg font-black text-sky-800">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
-        '<span class="text-[10px] text-sky-500 font-medium">+ $99.39</span>' +
+    });
+
+    // Firebase 항공편
+    fbFlights.forEach(function(f) {
+      var realIdx = journeyData.indexOf(f);
+      var amt = parseFloat(f.amount) || 0;
+      totalKRW += amt;
+      html += '<tr class="hover:bg-slate-50/50 transition-colors group">' +
+        '<td class="px-4 py-3 text-xs font-bold">' + (f.title||'') + '</td>' +
+        '<td class="px-4 py-3 text-xs font-semibold text-slate-800">' + (f.description||'') + '</td>' +
+        '<td class="px-4 py-3 text-xs font-mono font-bold text-slate-600">' + (f.city||'') + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500">' + (f.date||'') + '</td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-slate-700">' + (f.time||'') + '</td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-slate-700"></td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500"></td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500"></td>' +
+        '<td class="px-4 py-3 text-xs font-bold text-right text-sky-700">' + (amt ? '₩'+amt.toLocaleString('ko-KR') : '—') + '</td>' +
+        '</tr>';
+    });
+
+    if (!html) {
+      tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">항공편을 추가해봐!</td></tr>';
+      if (totalEl) totalEl.innerHTML = '';
+      return;
+    }
+    tbody.innerHTML = html;
+    if (totalEl && totalKRW > 0) {
+      totalEl.innerHTML = '<div class="bg-slate-200/60 border border-slate-300 rounded-xl px-5 py-3 flex items-center gap-3">' +
+        '<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">총 항공권</span>' +
+        '<span class="text-lg font-black text-slate-800">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
+        (extraPrice ? '<span class="text-[10px] text-slate-500 font-medium">+ ' + extraPrice + '</span>' : '') +
       '</div>';
     }
   }
@@ -3728,7 +3770,7 @@
 
     // 하드코딩 기본 기념품 (해당 여행일 때만)
     var trip = tripsData.find(function(t){ return t._id === currentTripId; });
-    var defaults = (trip && trip.name === SEED_TRIP_NAME) ? SOUVENIR_DEFAULTS : [];
+    var defaults = isSeedTrip() ? SOUVENIR_DEFAULTS : [];
 
     // Firebase 기념품의 key set (중복 방지)
     var fbKeys = {};
@@ -3864,6 +3906,14 @@
       {id:'jf-city', label:'구매 도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
       {id:'jf-amount', label:'가격 (€)', type:'text', inputmode:'numeric', placeholder:'예: 24'},
     ];
+    if (type === '항공편') return [
+      {id:'jf-title', label:'항공사 *', type:'text', placeholder:'예: Turkish Airline'},
+      {id:'jf-desc', label:'루트 *', type:'text', placeholder:'예: 인천(ICN) → 이스탄불(IST)'},
+      {id:'jf-city', label:'편명', type:'text', placeholder:'예: TK91'},
+      {id:'jf-date', label:'날짜', type:'date'},
+      {id:'jf-time', label:'출발 시간', type:'text', placeholder:'예: 23:20'},
+      {id:'jf-amount', label:'가격', type:'text', placeholder:'예: 1743400'},
+    ];
     if (type === '숙소') return [
       {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
       {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef', autocomplete:'lodging'},
@@ -3881,7 +3931,7 @@
 
   function openJourneyModal(type) {
     currentJourneyType = type;
-    var titles = {'일정':'일정 추가','이동수단':'이동 수단 추가','기념품':'기념품 추가'};
+    var titles = {'일정':'일정 추가','이동수단':'이동 수단 추가','기념품':'기념품 추가','항공편':'항공편 추가'};
     document.getElementById('journey-modal-title').textContent = titles[type]||'항목 추가';
     var fields = getJourneyForms(type);
     document.getElementById('journey-modal-body').innerHTML = fields.map(function(f){
@@ -3926,7 +3976,7 @@
     var item = journeyData[idx];
     editingJourneyIndex = idx;
     currentJourneyType = item.type;
-    var titles = {'일정':'일정 수정','이동수단':'이동 수단 수정','기념품':'기념품 수정'};
+    var titles = {'일정':'일정 수정','이동수단':'이동 수단 수정','기념품':'기념품 수정','항공편':'항공편 수정'};
     document.getElementById('journey-modal-title').textContent = titles[item.type]||'수정';
     var fields = getJourneyForms(item.type);
     document.getElementById('journey-modal-body').innerHTML = fields.map(function(f){
@@ -4145,6 +4195,13 @@
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.amount = (document.getElementById('jf-amount')||{}).value||'';
+    } else if (currentJourneyType === '항공편') {
+      obj.title = (document.getElementById('jf-title')||{}).value||'';
+      obj.description = (document.getElementById('jf-desc')||{}).value||'';
+      obj.city = (document.getElementById('jf-city')||{}).value||'';
+      obj.date = (document.getElementById('jf-date')||{}).value||'';
+      obj.time = (document.getElementById('jf-time')||{}).value||'';
+      obj.amount = (document.getElementById('jf-amount')||{}).value||'';
     } else if (currentJourneyType === '숙소') {
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.title = (document.getElementById('jf-title')||{}).value||'';
@@ -4210,6 +4267,7 @@
       renderDayView();
       renderJourneyTransport();
       renderJourneyLodging();
+      renderJourneyFlights();
       renderJourneySouvenir();
       updateJourneyCost();
       closeJourneyModal();
@@ -4224,6 +4282,7 @@
       renderDayView();
       renderJourneyTransport();
       renderJourneyLodging();
+      renderJourneyFlights();
       renderJourneySouvenir();
       updateJourneyCost();
     } catch(err) { alert('삭제에 실패했어요.'); }
