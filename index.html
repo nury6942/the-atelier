@@ -6832,8 +6832,17 @@
     var year = yr || _matrixYear;
     var key = seriesKeyForYear(year);
     var s = localStorage.getItem(key);
+    // 마이그레이션: 기존 atelier_series → atelier_series_2026
+    if (!s && year === 2026) {
+      var oldData = localStorage.getItem('atelier_series');
+      if (oldData) {
+        localStorage.setItem(key, oldData);
+        localStorage.removeItem('atelier_series');
+        return JSON.parse(oldData);
+      }
+    }
     if (s) return JSON.parse(s);
-    // 최초 접근: incomeData에서 해당 연도 시리즈 추출 (빈 배열도 가능)
+    // 최초 접근: incomeData에서 해당 연도 시리즈 추출
     var cats = {};
     incomeData.forEach(function(r) {
       var cat = r[2]||'기타'; if(!cats[cat]) cats[cat] = {};
@@ -6843,7 +6852,6 @@
       cats[cat][mIdx].rev += parseInt(r[4])||0;
     });
     if (year !== 2026 || Object.keys(cats).length === 0) {
-      // 비 2026년 또는 데이터 없으면 빈 배열
       var empty = [];
       localStorage.setItem(key, JSON.stringify(empty));
       return empty;
@@ -6986,7 +6994,7 @@
         var d = s.monthly[m];
         var isCur = m===curMonth;
         var cls = isCur ? ' font-bold text-'+c+'-600 bg-'+c+'-50 ring-1 ring-'+c+'-200' : (d&&d.eps ? '' : ' text-slate-300');
-        html += '<td class="p-2 text-center text-[10px] cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls+'" onclick="editMatrixEps('+si+','+m+',this)">' + (d&&d.eps ? d.eps : '—') + '</td>';
+        html += '<td data-edit="eps" data-si="'+si+'" data-month="'+m+'" class="p-2 text-center text-[10px] cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls+'">' + (d&&d.eps ? d.eps : '—') + '</td>';
       }
       html += '</tr>';
       // Target revenue row
@@ -6995,7 +7003,7 @@
       for (var mt=0;mt<12;mt++) {
         var dt = s.monthly[mt];
         var tgt = dt ? (dt.target||0) : 0;
-        html += '<td class="p-2 text-center text-[10px] text-slate-400 cursor-pointer hover:bg-'+c+'-50/30 transition-colors" onclick="editMatrixTarget('+si+','+mt+',this)">' + (tgt ? shortRev(tgt) : '—') + '</td>';
+        html += '<td data-edit="target" data-si="'+si+'" data-month="'+mt+'" class="p-2 text-center text-[10px] text-slate-400 cursor-pointer hover:bg-'+c+'-50/30 transition-colors">' + (tgt ? shortRev(tgt) : '—') + '</td>';
       }
       html += '</tr>';
       // Actual revenue row
@@ -7008,7 +7016,7 @@
         var isCur2 = m2===curMonth;
         var revColor = (tgt2 && rev >= tgt2) ? ' text-emerald-600' : (tgt2 && rev > 0 && rev < tgt2) ? ' text-amber-600' : '';
         var cls2 = isCur2 ? ' font-bold text-'+c+'-600 bg-'+c+'-50' : revColor;
-        html += '<td class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'" onclick="editMatrixCell('+si+','+m2+',this)">' + shortRev(rev) + '</td>';
+        html += '<td data-edit="rev" data-si="'+si+'" data-month="'+m2+'" class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'">' + shortRev(rev) + '</td>';
       }
       html += '</tr>';
       // 누적 행 (1월부터 해당 월까지 합산)
@@ -7034,6 +7042,7 @@
       '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size:14px">add</span> 시리즈 추가</button>' +
       '</td></tr>';
     tbody.innerHTML = html;
+    initMatrixEditing();
   }
 
   function addNewSeries() {
@@ -7066,33 +7075,22 @@
   }
 
   // 인라인 셀 편집
-  var _matrixSaving = false;
-  function _matrixSaveAndRender(si, month, field, val) {
-    if (_matrixSaving) return;
-    _matrixSaving = true;
-    var data = getSeriesData();
-    var s = data[si];
-    if (!s) { _matrixSaving = false; return; }
-    if (!s.monthly) s.monthly = {};
-    var mKey = String(month);
-    if (!s.monthly[mKey]) s.monthly[mKey] = {eps:'',rev:0,target:0};
-    if (field === 'eps') {
-      s.monthly[mKey].eps = val;
-    } else if (field === 'rev') {
-      s.monthly[mKey].rev = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
-    } else {
-      s.monthly[mKey].target = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
-    }
-    if (!s.monthly[mKey].eps && !s.monthly[mKey].rev && !s.monthly[mKey].target) delete s.monthly[mKey];
-    saveSeriesData(data);
-    setTimeout(function() {
-      _matrixSaving = false;
-      renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
-    }, 10);
+  // 인라인 셀 편집 — event delegation 방식
+  function initMatrixEditing() {
+    var table = document.getElementById('income-annual-matrix');
+    if (!table || table._matrixInit) return;
+    table._matrixInit = true;
+    table.addEventListener('click', function(e) {
+      var td = e.target.closest('td[data-edit]');
+      if (!td || td.querySelector('input')) return;
+      var si = parseInt(td.dataset.si);
+      var month = parseInt(td.dataset.month);
+      var field = td.dataset.edit;
+      startCellEdit(td, si, month, field);
+    });
   }
 
-  function inlineEditCell(td, si, month, field) {
-    if (td.querySelector('input')) return;
+  function startCellEdit(td, si, month, field) {
     var data = getSeriesData();
     var s = data[si];
     if (!s) return;
@@ -7120,8 +7118,21 @@
     function finish(doSave) {
       if (done) return;
       done = true;
+      var val = input.value.trim();
       if (doSave) {
-        _matrixSaveAndRender(si, month, field, input.value.trim());
+        var data2 = getSeriesData();
+        var s2 = data2[si];
+        if (!s2) return;
+        if (!s2.monthly) s2.monthly = {};
+        if (!s2.monthly[mKey]) s2.monthly[mKey] = {eps:'',rev:0,target:0};
+        if (field === 'eps') s2.monthly[mKey].eps = val;
+        else if (field === 'rev') s2.monthly[mKey].rev = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
+        else s2.monthly[mKey].target = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
+        if (!s2.monthly[mKey].eps && !s2.monthly[mKey].rev && !s2.monthly[mKey].target) delete s2.monthly[mKey];
+        saveSeriesData(data2);
+        setTimeout(function() {
+          renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+        }, 0);
       } else {
         td.textContent = origText;
       }
@@ -7132,19 +7143,6 @@
       if (e.key === 'Escape') { e.preventDefault(); finish(false); }
     });
     input.addEventListener('blur', function() { finish(true); });
-  }
-
-  function editMatrixCell(si, month, td) {
-    // 수익 셀 클릭 → 인라인 편집
-    inlineEditCell(td, si, month, 'rev');
-  }
-
-  function editMatrixEps(si, month, td) {
-    inlineEditCell(td, si, month, 'eps');
-  }
-
-  function editMatrixTarget(si, month, td) {
-    inlineEditCell(td, si, month, 'target');
   }
 
   // ===== Monthly Scheduler =====
