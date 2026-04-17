@@ -4682,7 +4682,7 @@
     var isTK = (f.airline||f.title||'').indexOf('Turkish') >= 0;
     var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
     var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
-    return '<div class="bg-white rounded-3xl p-5 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] hover:scale-[1.005] transition-transform group relative">' +
+    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all group relative" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       deleteHtml +
       '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">' +
         '<div class="flex items-center gap-3">' +
