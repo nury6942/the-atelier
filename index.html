@@ -3996,8 +3996,11 @@
     fbItems.forEach(function(it){ fbKeys[(it.title||'')+'|'+(it.description||'')] = true; });
 
     var html = '';
-    defaults.filter(function(d){ return !fbKeys[d.title+'|'+d.description]; }).forEach(function(d) {
-      html += renderTransportCard(d, '');
+    defaults.filter(function(d){ return !fbKeys[d.title+'|'+d.description]; }).forEach(function(d, si) {
+      var seedBtns = '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+        '<button onclick="migrateSeedAndEdit(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
+        '<button onclick="migrateSeedAndDelete(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>';
+      html += renderTransportCard(d, seedBtns);
     });
     html += fbItems.map(function(item) {
       var realIdx = journeyData.indexOf(item);
@@ -4754,6 +4757,52 @@
       '</div></div>';
   }
 
+  // 시드 데이터를 Firebase로 마이그레이션 후 수정/삭제
+  async function migrateSeedAndEdit(type, seedIdx) {
+    var defaults = type === '항공편' ? FLIGHT_DEFAULTS : TRANSPORT_DEFAULTS;
+    var d = defaults[seedIdx];
+    if (!d) return;
+    var obj = { trip_id: currentTripId, type: type };
+    if (type === '항공편') {
+      obj.title = d.airline||d.flight; obj.description = d.route; obj.city = d.flight;
+      obj.date = d.date; obj.time = d.depart; obj.arrive = d.arrive;
+      obj.duration = d.duration; obj.baggage = d.baggage; obj.amount = String(d.priceKRW||'');
+    } else {
+      obj.title = d.title; obj.description = d.description; obj.date = d.date;
+      obj.time = d.time; obj.arrive = d.arrive; obj.amount = d.amount; obj.status = d.status;
+    }
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      var realIdx = journeyData.length - 1;
+      editJourneyItem(realIdx);
+      if (type === '항공편') renderJourneyFlights(); else renderJourneyTransport();
+    } catch(e) { alert('오류 발생'); }
+  }
+
+  async function migrateSeedAndDelete(type, seedIdx) {
+    var defaults = type === '항공편' ? FLIGHT_DEFAULTS : TRANSPORT_DEFAULTS;
+    var d = defaults[seedIdx];
+    if (!d) return;
+    // Firebase에 같은 항목이 있으면 삭제, 없으면 시드 배열에서 제거 (UI만)
+    var obj = { trip_id: currentTripId, type: type };
+    if (type === '항공편') {
+      obj.title = d.airline||d.flight; obj.description = d.route; obj.city = d.flight;
+      obj.date = d.date; obj.time = d.depart; obj.amount = String(d.priceKRW||'');
+    } else {
+      obj.title = d.title; obj.description = d.description; obj.date = d.date;
+      obj.time = d.time; obj.amount = d.amount;
+    }
+    // Firebase에 복사 후 즉시 삭제 (시드에서 제거 효과)
+    try {
+      var saved = await fbAdd('journey', obj);
+      await fbDelete('journey', saved._id);
+      // 시드 defaults에서 마킹 (fbKeys에 추가되어 렌더링 시 제외)
+      if (type === '항공편') { defaults[seedIdx]._deleted = true; renderJourneyFlights(); }
+      else { defaults[seedIdx]._deleted = true; renderJourneyTransport(); }
+    } catch(e) { alert('삭제 실패'); }
+  }
+
   function renderJourneyFlights() {
     var container = document.getElementById('journey-flight-list');
     var totalEl = document.getElementById('journey-flight-total');
@@ -4768,10 +4817,13 @@
     var totalKRW = 0;
     var extraPrice = '';
 
-    defaults.filter(function(f){ return !fbKeys[f.flight]; }).forEach(function(f) {
+    defaults.filter(function(f){ return !fbKeys[f.flight]; }).forEach(function(f, si) {
       totalKRW += f.priceKRW;
       if (f.price.indexOf('$') >= 0) extraPrice = f.price;
-      html += flightCard(f, '');
+      var seedBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+        '<button onclick="migrateSeedAndEdit(\'항공편\','+si+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
+        '<button onclick="migrateSeedAndDelete(\'항공편\','+si+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
+      html += flightCard(f, seedBtns);
     });
 
     fbFlights.forEach(function(f) {
