@@ -1258,57 +1258,35 @@
 
       <!-- Page Intro -->
       <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
-        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">여행별 예산 관리, 거래 내역, 취소 대비 버퍼 — FY 2024.</p>
+        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">여행별 예산 관리 및 거래 내역 추적.</p>
         <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">멀티 트립 재정 관리</span>
       </div>
 
       <!-- 트립 예산 카드 -->
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- 메인 트립 카드 (동적) -->
-        <div id="finance-main-trip" class="lg:col-span-2 bg-gradient-to-br from-indigo-100 to-purple-100 p-6 rounded-2xl border border-indigo-200 shadow-sm relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div id="finance-main-trip" class="lg:col-span-2 p-6 rounded-2xl shadow-sm relative overflow-hidden" style="background:linear-gradient(135deg,rgba(107,56,212,0.85),rgba(132,85,239,0.85));">
+          <img id="finance-trip-bg" src="" class="absolute inset-0 w-full h-full object-cover z-0" style="display:none" onerror="this.style.display='none'"/>
+          <div class="absolute inset-0 z-[1]" style="background:linear-gradient(135deg,rgba(107,56,212,0.8),rgba(132,85,239,0.7));"></div>
           <div class="flex justify-between items-start mb-6 relative z-10">
             <div>
-              <span class="px-3 py-1 bg-indigo-200 text-indigo-900 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-400">다가오는 여행</span>
-              <h3 id="finance-main-name" class="text-xl font-bold mt-2 text-slate-900">—</h3>
-            </div>
-            <div class="text-right">
-              <p class="text-[10px] uppercase font-black text-slate-600 tracking-widest">트립 추가</p>
-              <button onclick="openFinanceTripModal()" class="mt-1 text-indigo-600 hover:text-indigo-800 font-black text-lg">+</button>
+              <span id="finance-trip-badge" class="px-3 py-1 bg-white/20 text-white text-[10px] font-black uppercase tracking-widest rounded-full backdrop-blur-sm">다가오는 여행</span>
+              <h3 id="finance-main-name" class="text-xl font-bold mt-2 text-white">—</h3>
             </div>
           </div>
           <div class="grid grid-cols-3 gap-6 relative z-10">
-            <div><p id="finance-main-label" class="text-[10px] uppercase font-black text-slate-600 tracking-widest mb-1">잔여 예산</p><p id="finance-main-spent" class="text-2xl font-extrabold text-slate-900">₩0</p></div>
-            <div><p class="text-[10px] uppercase font-black text-slate-600 tracking-widest mb-1">이번 트립</p><p id="finance-trip-label" class="text-lg font-bold text-slate-600">전체</p></div>
-            <div><p class="text-[10px] uppercase font-black text-slate-600 tracking-widests mb-1">항목 수</p><p id="finance-item-count" class="text-2xl font-extrabold text-indigo-700">0</p></div>
+            <div><p id="finance-main-label" class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">지출</p><p id="finance-main-spent" class="text-2xl font-extrabold text-white">₩0</p></div>
+            <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">이번 트립</p><p id="finance-trip-label" class="text-lg font-bold text-white/90">전체</p></div>
+            <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">항목 수</p><p id="finance-item-count" class="text-2xl font-extrabold text-white">0</p></div>
           </div>
         </div>
 
-        <!-- 트립 필터 + 취소 버퍼 -->
-        <div class="space-y-4">
-          <!-- 트립 필터 -->
-          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">트립 필터</p>
-            <div class="flex flex-col gap-2">
-              <button id="finance-filter-all" onclick="filterFinanceByTrip('all')" class="w-full py-2 px-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-left">전체</button>
-              <div id="finance-trip-filter-list" class="flex flex-col gap-2"></div>
-            </div>
-          </div>
-          <!-- 취소 버퍼 -->
-          <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 shadow-sm flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="bg-purple-200 p-2 rounded-lg border border-purple-300">
-                <span class="material-symbols-outlined text-purple-800 text-xl" style="font-variation-settings:'FILL' 1">security</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-widest text-purple-800">취소 대비 버퍼</p>
-                <p class="text-xl font-extrabold text-slate-900">$2,500 <span class="text-[10px] font-bold text-slate-500">확보</span></p>
-              </div>
-            </div>
-            <div class="text-right">
-              <p class="text-[9px] uppercase tracking-wider font-black text-slate-600 mb-1">분할</p>
-              <p class="text-xs font-bold text-slate-800">$1,250 / $1,250</p>
-            </div>
+        <!-- 트립 필터 -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">트립 필터</p>
+          <div class="flex flex-col gap-2">
+            <button id="finance-filter-all" onclick="filterFinanceByTrip('all')" class="w-full py-2 px-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-left">전체</button>
+            <div id="finance-trip-filter-list" class="flex flex-col gap-2"></div>
           </div>
         </div>
       </section>
@@ -6211,7 +6189,15 @@
   function buildFinanceTripFilters() {
     var list = document.getElementById('finance-trip-filter-list');
     list.innerHTML = '';
-    financeTrips.forEach(function(t) {
+    // 날짜 오름차순 정렬 (가까운 미래 → 위, 지난 여행 → 아래)
+    var todayStr = new Date().toISOString().split('T')[0];
+    var sorted = financeTrips.slice().sort(function(a,b){
+      var aFuture = (a.start_date||'') >= todayStr ? 0 : 1;
+      var bFuture = (b.start_date||'') >= todayStr ? 0 : 1;
+      if (aFuture !== bFuture) return aFuture - bFuture;
+      return (a.start_date||'').localeCompare(b.start_date||'');
+    });
+    sorted.forEach(function(t) {
       var btn = document.createElement('button');
       btn.className = 'w-full py-2 px-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-left hover:border-indigo-300 transition-all finance-trip-filter-btn';
       btn.textContent = t.name;
@@ -6326,18 +6312,36 @@
     var total = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
     var allTotal = financeData.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
 
-    var netBalance = financeData.reduce(function(s,r){ return s+(r[3]==='입금'?(parseFloat(r[4])||0):-(parseFloat(r[4])||0)); }, 0);
-    document.getElementById('finance-main-spent').textContent = (netBalance>=0?'+':'') + '₩' + Math.abs(Math.round(netBalance)).toLocaleString('ko-KR');
-    document.getElementById('finance-main-label').textContent = netBalance>=0?'잔여 예산':'초과 지출';
+    // 선택된 여행 기준으로 지출 계산
+    var filteredTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
+    document.getElementById('finance-main-spent').textContent = '₩' + Math.abs(Math.round(filteredTotal)).toLocaleString('ko-KR');
+    document.getElementById('finance-main-label').textContent = filteredTotal > 0 ? '총 지출' : '절약';
     document.getElementById('finance-item-count').textContent = financeFiltered.length;
     document.getElementById('finance-trip-label').textContent = currentFinanceTrip==='all'?'전체':currentFinanceTrip;
 
-    // Trip name on card — 다가오는 여행 (가장 가까운 미래 날짜)
+    // 카드 제목 + 이미지 배경
     var todayStr = new Date().toISOString().split('T')[0];
-    var upcoming = financeTrips.filter(function(t){ return t.start_date && t.start_date >= todayStr; })
-      .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
-    var nearestTrip = upcoming.length > 0 ? upcoming[0] : (financeTrips.length > 0 ? financeTrips[financeTrips.length-1] : null);
-    document.getElementById('finance-main-name').textContent = nearestTrip ? nearestTrip.name : '여행을 추가해봐!';
+    var displayTrip = null;
+    if (currentFinanceTrip !== 'all') {
+      displayTrip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    }
+    if (!displayTrip) {
+      var upcoming = financeTrips.filter(function(t){ return t.start_date && t.start_date >= todayStr; })
+        .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
+      displayTrip = upcoming.length > 0 ? upcoming[0] : (financeTrips.length > 0 ? financeTrips[financeTrips.length-1] : null);
+    }
+    document.getElementById('finance-main-name').textContent = displayTrip ? displayTrip.name : '여행을 추가해봐!';
+    var badgeEl = document.getElementById('finance-trip-badge');
+    if (badgeEl) badgeEl.textContent = currentFinanceTrip !== 'all' ? '선택된 여행' : '다가오는 여행';
+    // 배경 이미지 로드
+    var bgImg = document.getElementById('finance-trip-bg');
+    if (bgImg && displayTrip && typeof google !== 'undefined' && google.maps && google.maps.places) {
+      var svc = new google.maps.places.PlacesService(document.createElement('div'));
+      var cityQuery = typeof normalizeCityQuery === 'function' ? normalizeCityQuery(displayTrip.name.split(/[&,]/)[0].trim()) : displayTrip.name;
+      svc.findPlaceFromQuery({query: cityQuery + ' city landmark', fields:['photos']}, function(res,st){
+        if(st==='OK'&&res&&res[0]&&res[0].photos&&res[0].photos[0]){bgImg.src=res[0].photos[0].getUrl({maxWidth:600});bgImg.style.display='block';}
+      });
+    }
 
     // Category breakdown
     var cats = {};
