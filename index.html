@@ -4956,16 +4956,19 @@
   function getFinanceDefaults() {
     var fbKeys = {};
     financeData.forEach(function(r){ fbKeys[(r[0]||'')+'|'+(r[1]||'')+'|'+(r[4]||'')] = true; });
-    var d1 = FINANCE_DEFAULTS
-      .filter(function(d){ return !fbKeys[d[0]+'|'+d[1]+'|'+d[3]]; })
-      .map(function(d){
-        return [d[0], d[1], FINANCE_SEED_TRIP, d[2], d[3], 'KRW', '', '__default__'];
-      });
-    var d2 = FINANCE_DEFAULTS2
-      .filter(function(d){ return !fbKeys[d[0]+'|'+d[1]+'|'+d[3]]; })
-      .map(function(d){
-        return [d[0], d[1], FINANCE_SEED_TRIP2, d[2], d[3], 'KRW', '', '__default__'];
-      });
+    var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
+    var delSet = {}; dels.forEach(function(k){ delSet[k]=true; });
+    var edits = JSON.parse(localStorage.getItem('atelier_finance_edits')||'{}');
+
+    function mapRow(d, trip) {
+      var key = d[0]+'|'+d[1]+'|'+d[3];
+      if (fbKeys[key] || delSet[key]) return null;
+      var row = [d[0], d[1], trip, d[2], d[3], 'KRW', '', '__default__'];
+      if (edits[key]) { var e=edits[key]; row[0]=e.date; row[1]=e.desc; row[3]=e.cat; row[4]=e.amt; }
+      return row;
+    }
+    var d1 = FINANCE_DEFAULTS.map(function(d){ return mapRow(d, FINANCE_SEED_TRIP); }).filter(Boolean);
+    var d2 = FINANCE_DEFAULTS2.map(function(d){ return mapRow(d, FINANCE_SEED_TRIP2); }).filter(Boolean);
     return d1.concat(d2);
   }
 
@@ -5046,9 +5049,8 @@
         '<td class="px-6 py-4 text-right">' + (!isDeposit ? '<span class="font-bold text-rose-600">₩' + amt.toLocaleString('ko-KR') + '</span>' : '') + '</td>' +
         '<td class="px-6 py-4 text-right text-xs font-semibold ' + balColor + '">₩' + Math.round(running).toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
-        (row[7] === '__default__' ? '' :
-        '<button onclick="editFinanceRow(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteFinanceRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button>') +
+        '<button onclick="inlineEditFinance(' + realIdx + ',this)" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteFinanceAny(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button>' +
         '</div></td>';
       tbody.appendChild(tr);
     });
@@ -5321,19 +5323,79 @@
 
   function editFinanceRow(i){openFinanceModal(i);}
 
-  async function deleteFinanceRow(i){
-    try{
-      const id = financeData[i][7];
-      await fbDelete('finance', id);
-      financeData.splice(i,1);
-      buildFinanceTripFilters();
-      filterFinanceByTrip(currentFinanceTrip);
-      if(financeData.length===0){
-        document.getElementById('finance-table-wrap').style.display='none';
-        document.getElementById('finance-empty').style.display='flex';
-      }
-    }catch(err){alert('삭제에 실패했어요.');}
+  // 인라인 편집
+  function inlineEditFinance(idx, btn) {
+    var row = financeData[idx];
+    var tr = btn.closest('tr');
+    var cat = row[3]||'기타';
+    var amt = parseFloat(row[4])||0;
+    var isDeposit = cat === '입금';
+    var ic = 'border border-slate-200 rounded px-1.5 py-1 text-xs outline-none focus:ring-1 focus:ring-indigo-200 w-full';
+    var catOpts = ['입금','이동','숙소','티켓','환전','보험','통신','식비','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
+    tr.className = 'bg-indigo-50/40';
+    tr.innerHTML =
+      '<td class="px-4 py-2"><input id="fie-date" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-4 py-2"><input id="fie-desc" type="text" value="'+(row[1]||'')+'" class="'+ic+'"/></td>' +
+      '<td class="px-4 py-2"><select id="fie-cat" class="'+ic+' bg-white">'+catOpts+'</select></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fie-deposit" type="text" value="'+(isDeposit?amt:'')+'" placeholder="입금" class="'+ic+' text-right text-indigo-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fie-expense" type="text" value="'+(!isDeposit?amt:'')+'" placeholder="출금" class="'+ic+' text-right text-rose-600"/></td>' +
+      '<td class="px-4 py-2 text-right text-xs text-slate-400">—</td>' +
+      '<td class="px-4 py-2 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<button onclick="saveInlineEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
+        '<button onclick="filterFinanceByTrip(currentFinanceTrip)" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500"><span class="material-symbols-outlined text-sm">close</span></button>' +
+      '</div></td>';
+    tr.querySelector('#fie-desc').focus();
   }
+
+  async function saveInlineEdit(idx) {
+    var row = financeData[idx];
+    var date = document.getElementById('fie-date').value;
+    var desc = document.getElementById('fie-desc').value.trim();
+    var cat = document.getElementById('fie-cat').value;
+    var deposit = (document.getElementById('fie-deposit').value||'').replace(/,/g,'');
+    var expense = (document.getElementById('fie-expense').value||'').replace(/,/g,'');
+    var amt = parseFloat(deposit) || parseFloat(expense) || 0;
+    if (parseFloat(deposit)) cat = '입금';
+    if (!desc) desc = cat;
+
+    if (row[7] === '__default__') {
+      // 기본값: localStorage에 수정 저장
+      var edits = JSON.parse(localStorage.getItem('atelier_finance_edits')||'{}');
+      var key = row[0]+'|'+row[1]+'|'+row[4];
+      edits[key] = { date:date, desc:desc, cat:cat, amt:String(amt), trip:row[2] };
+      localStorage.setItem('atelier_finance_edits', JSON.stringify(edits));
+      row[0]=date; row[1]=desc; row[3]=cat; row[4]=String(amt);
+    } else {
+      var newRow = [date, desc, row[2], cat, String(amt), 'KRW', ''];
+      try {
+        await fbUpdate('finance', row[7], rowToObj('finance', newRow));
+        financeData[idx] = newRow.concat([row[7]]);
+      } catch(e) { alert('저장 실패'); return; }
+    }
+    financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+    filterFinanceByTrip(currentFinanceTrip);
+  }
+
+  // 삭제 (Firebase + 기본값 모두 지원)
+  async function deleteFinanceAny(idx) {
+    var row = financeData[idx];
+    if (!confirm('"'+(row[1]||'항목')+'" 을(를) 삭제할까요?')) return;
+    if (row[7] === '__default__') {
+      var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
+      dels.push(row[0]+'|'+row[1]+'|'+row[4]);
+      localStorage.setItem('atelier_finance_dels', JSON.stringify(dels));
+      financeData.splice(idx,1);
+    } else {
+      try {
+        await fbDelete('finance', row[7]);
+        financeData.splice(idx,1);
+      } catch(e) { alert('삭제 실패'); return; }
+    }
+    buildFinanceTripFilters();
+    filterFinanceByTrip(currentFinanceTrip);
+  }
+
+  async function deleteFinanceRow(i){ await deleteFinanceAny(i); }
 
   function openFinanceTripModal(){
     // 지출 추가 모달로 바로 연결
