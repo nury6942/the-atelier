@@ -3191,10 +3191,8 @@
     container.innerHTML = citiesData.map(function(city, i) {
       return '<div class="relative group p-5 bg-slate-50/80 border border-slate-200 rounded-2xl hover:bg-sky-50/60 hover:border-sky-300 transition-all shadow-sm min-w-[140px]">' +
         '<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">' + (i+1) + '번째</div>' +
-        '<h4 class="text-base font-bold text-slate-900">' + city.name + '</h4>' +
-        (city.start_date ? '<p class="text-[10px] text-slate-500 mt-0.5">' + city.start_date + ' ~ ' + (city.end_date||'') + '</p>' : '') +
-        (city.nights ? '<p class="text-[10px] font-bold text-indigo-600 mt-0.5">' + city.nights + '박</p>' : '') +
-        (city.desc ? '<p class="text-[10px] text-slate-400 mt-0.5">' + city.desc + '</p>' : '') +
+        '<h4 class="text-base font-bold text-slate-900">' + city.name + (city.desc ? '<span class="text-xs font-medium text-slate-400">, ' + city.desc + '</span>' : '') + '</h4>' +
+        (city.start_date ? '<p class="text-[10px] text-slate-400 mt-1">' + city.start_date + ' ~ ' + (city.end_date||'') + (city.nights ? ' <span class="font-bold text-indigo-600">(' + city.nights + '박)</span>' : '') + '</p>' : '') +
         '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
         '<button onclick="editCityEntry(' + i + ')" class="p-1.5 hover:bg-indigo-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
         '<button onclick="deleteCityEntry(' + i + ')" class="p-1.5 hover:bg-rose-100 rounded-lg text-slate-400 hover:text-rose-500 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
