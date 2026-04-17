@@ -3465,12 +3465,22 @@
     return citiesData.map(function(c){ return c.name; });
   }
 
-  var STOP_LABELS = ['1ST','2ND','3RD','4TH','5TH','6TH','7TH','8TH','9TH','10TH'];
   var _cityPhotoCache = {};
 
-  function getCityPhotoUrl(cityName) {
-    if (_cityPhotoCache[cityName]) return _cityPhotoCache[cityName];
-    return ''; // placeholder, 비동기로 로드
+  // 순서 뱃지: 영어 ordinal 자동 생성
+  function ordinalStop(n) {
+    var s = ['TH','ST','ND','RD'], v = n % 100;
+    return n + (s[(v-20)%10]||s[v]||s[0]) + ' STOP';
+  }
+
+  // 도시명 정규화 (특수문자 → 라틴, 영어 국제 표기 폴백)
+  var CITY_NAME_MAP = {
+    'Plitvička Jezera':'Plitvice Lakes Croatia','Český Krumlov':'Cesky Krumlov Czech',
+    'Oświęcim':'Oswiecim Poland','체코':'Czech Republic','크로아티아':'Croatia',
+  };
+  function normalizeCityQuery(name) {
+    if (CITY_NAME_MAP[name]) return CITY_NAME_MAP[name];
+    return name.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   }
 
   function loadCityPhotos() {
@@ -3479,10 +3489,11 @@
     citiesData.forEach(function(city, i) {
       if (_cityPhotoCache[city.name]) {
         var el = document.getElementById('city-img-' + i);
-        if (el) el.src = _cityPhotoCache[city.name];
+        if (el) { el.src = _cityPhotoCache[city.name]; el.style.display = 'block'; }
         return;
       }
-      service.findPlaceFromQuery({query: city.name + ' city', fields: ['photos']}, function(results, status) {
+      var query = normalizeCityQuery(city.name) + ' city';
+      service.findPlaceFromQuery({query: query, fields: ['photos']}, function(results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0] && results[0].photos && results[0].photos.length > 0) {
           var url = results[0].photos[0].getUrl({maxWidth: 400, maxHeight: 250});
           _cityPhotoCache[city.name] = url;
@@ -3505,22 +3516,20 @@
         var dateRange = '';
         if (city.start_date) dateRange = city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '');
         var nights = city.nights || 0;
-        var nightsText = nights > 0 ? nights + ' night' + (nights > 1 ? 's' : '') : (city.start_date ? '당일' : '--');
+        var nightsText = nights > 0 ? nights + ' night' + (nights > 1 ? 's' : '') : (city.start_date ? 'Day trip' : '-- nights');
         var cachedUrl = _cityPhotoCache[city.name] || '';
+        var stopLabel = ordinalStop(i + 1);
 
         return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);">' +
-          // 이미지
           '<div class="relative h-36 overflow-hidden bg-slate-200">' +
-            '<div class="absolute inset-0 flex items-center justify-center text-slate-300"><span class="material-symbols-outlined text-4xl">photo_camera</span></div>' +
-            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 relative z-10" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
-            '<div class="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[8px] font-extrabold tracking-widest uppercase text-indigo-800">' + (STOP_LABELS[i]||String(i+1)) + ' STOP</div>' +
-            // 수정/삭제 버튼
-            '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+            '<div class="absolute inset-0 flex items-center justify-center text-slate-300 z-0"><span class="material-symbols-outlined text-4xl">photo_camera</span></div>' +
+            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 relative z-[1]" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
+            '<div class="absolute top-2.5 left-2.5 z-[2] bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[8px] font-extrabold tracking-widest uppercase text-indigo-800 shadow-sm">' + stopLabel + '</div>' +
+            '<div class="absolute top-2 right-2 z-[2] flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-indigo-600 shadow-sm"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
+              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-rose-500 shadow-sm"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
             '</div>' +
           '</div>' +
-          // 텍스트
           '<div class="p-4">' +
             '<h4 class="text-sm font-bold font-headline mb-0.5 leading-tight text-slate-900">' + city.name + '</h4>' +
             '<p class="text-[11px] text-slate-400 mb-3">' + (dateRange || 'TBD') + '</p>' +
