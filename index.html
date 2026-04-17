@@ -680,8 +680,7 @@
             <!-- 1. 항공편 -->
             <section>
               <div class="mb-4">
-                <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-500/60 block mb-1">Flight Logistics</span>
-                <h3 class="text-2xl font-extrabold tracking-tight text-slate-900 font-headline">항공편</h3>
+                <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
               </div>
               <div id="journey-flight-list" class="space-y-4"></div>
               <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
@@ -929,7 +928,6 @@
             <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
             <section class="mb-2">
               <div class="mb-4">
-                <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-600 block mb-1">Curated Journey</span>
                 <h3 class="text-lg font-black tracking-tight text-slate-900">Souvenir Checklist</h3>
               </div>
               <!-- Grid Header -->
@@ -4131,16 +4129,16 @@
     var html = allItems.map(function(entry) {
       if (entry.isSeed) {
         var si = entry.seedIdx;
-        var seedBtns = '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-          '<button onclick="migrateSeedAndEdit(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
-          '<button onclick="migrateSeedAndDelete(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>';
+        var seedBtns = '<div class="flex gap-1 transition-all">' +
+          '<button onclick="migrateSeedAndEdit(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
+          '<button onclick="migrateSeedAndDelete(\'이동수단\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div>';
         return renderTransportCard(entry.data, seedBtns);
       }
       var realIdx = entry.fbIdx;
       return renderTransportCard(entry.data,
-        '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-100 text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined">edit</span></button>' +
-        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined">delete</span></button></div>');
+        '<div class="flex gap-1 transition-all">' +
+        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
+        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div>');
     }).join('');
 
     var totalCount = allItems.length;
@@ -4986,17 +4984,17 @@
         var f = entry.data, si = entry.seedIdx;
         totalKRW += f.priceKRW;
         if (f.price.indexOf('$') >= 0) extraPrice = f.price;
-        var seedBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-          '<button onclick="migrateSeedAndEdit(\'항공편\','+si+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
-          '<button onclick="migrateSeedAndDelete(\'항공편\','+si+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
+        var seedBtns = '<div class="absolute top-3 right-3 flex gap-1 transition-all">' +
+          '<button onclick="migrateSeedAndEdit(\'항공편\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
+          '<button onclick="migrateSeedAndDelete(\'항공편\','+si+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div>';
         return flightCard(f, seedBtns);
       }
       var f = entry.data, realIdx = entry.fbIdx;
       var amt = parseFloat(f.amount) || 0;
       totalKRW += amt;
-      var actionBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="editJourneyItem('+realIdx+')" class="p-1.5 hover:bg-indigo-100 rounded-xl text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
-        '<button onclick="deleteJourneyRow('+realIdx+')" class="p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>';
+      var actionBtns = '<div class="absolute top-3 right-3 flex gap-1 transition-all">' +
+        '<button onclick="editJourneyItem('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
+        '<button onclick="deleteJourneyRow('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div>';
       return flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:'', duration:'', baggage:'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
     }).join('');
 
@@ -5122,8 +5120,8 @@
         '</div>' +
         '<div class="col-span-2 flex justify-end items-center gap-2">' +
           statusHtml +
-          (editFn ? '<button onclick="' + editFn + '" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' : '') +
-          '<button onclick="' + deleteFn + '" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+          (editFn ? '<button onclick="' + editFn + '" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' : '') +
+          '<button onclick="' + deleteFn + '" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>' +
         '</div>' +
       '</div>' +
     '</div>';
