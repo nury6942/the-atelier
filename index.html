@@ -3956,7 +3956,7 @@
     var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
     var leftBorder = status==='환불 가능' ? 'border-left:3px solid #a78bfa;' : 'border-left:3px solid #6b38d4;';
 
-    return '<div class="bg-white rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);' + leftBorder + '">' +
+    return '<div class="bg-white rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       '<div class="flex items-center gap-4">' +
         '<div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined text-2xl">' + icon + '</span></div>' +
         '<div>' +
@@ -4213,7 +4213,7 @@
         var realIdx = journeyData.indexOf(item);
         var cancelColor = item.cancel === '가능' ? 'text-emerald-600' : 'text-rose-600';
         var cancelText = item.cancel === '가능' ? '무료 취소 가능' : (item.cancel === '불가' ? '환불 불가' : (item.cancel||'—'));
-        return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border:1px solid #f3f4f5;">' +
+        return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
           '<div class="flex flex-col md:flex-row justify-between gap-4">' +
             '<div class="flex-1 space-y-4">' +
               '<div class="flex flex-wrap items-center gap-3">' +
@@ -4251,7 +4251,7 @@
       var rawType = d.type || 'Hotel';
       var baseType = rawType.replace(/\s*\(.*\)/, '');
       var typeIcon = baseType.indexOf('Airbnb') >= 0 ? 'home' : 'hotel';
-      return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border:1px solid #f3f4f5;">' +
+      return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
         '<div class="flex flex-col md:flex-row justify-between gap-4">' +
           '<div class="flex-1 space-y-4">' +
             '<div class="flex flex-wrap items-center gap-3">' +
@@ -4788,7 +4788,7 @@
     var statusHtml = checked
       ? '<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white cursor-pointer" onclick="' + checkFn + '"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1;">check</span></div>'
       : '<div class="w-6 h-6 rounded-full border-2 border-slate-300 cursor-pointer hover:border-indigo-400 transition-colors" onclick="' + checkFn + '"></div>';
-    return '<div class="bg-white rounded-xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 2px 8px rgba(25,28,29,0.03);">' +
+    return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       '<div class="grid grid-cols-12 items-center gap-2">' +
         '<div class="col-span-3 flex items-center gap-2">' +
           '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
