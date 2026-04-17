@@ -9944,9 +9944,12 @@ async function handleSessionUpload(file) {
   reader.onload = async function(e) {
     try {
       var content = e.target.result;
-      // Parse sessionsData
-      var script = 'var sessionsData = {};\n' + content + '\nreturn sessionsData;';
+      // Parse sessionsData — 최상위 선언부 제거 (중복 선언 방지)
+      var cleaned = content.replace(/^(const|let|var)\s+sessionsData\s*=\s*\{\s*\}\s*;?\s*$/gm, '');
+      cleaned = cleaned.replace(/(const|let|var)\s+sessionsData\s*=\s*\{\s*\}\s*;?/g, '');
+      var script = 'var sessionsData = {};\n' + cleaned + '\nreturn sessionsData;';
       var parsed = new Function(script)();
+      console.log('[Sessions] Parsed keys:', Object.keys(parsed).length);
       var dates = Object.keys(parsed);
       if (dates.length === 0) { alert('수업 데이터를 찾을 수 없어요.'); return; }
 
