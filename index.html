@@ -4783,9 +4783,51 @@
   let editingFinanceIndex = null;
   let currentFinanceTrip = 'all';
 
-  const FIN_CAT_ICONS = {'이동':'flight','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','기타':'more_horiz'};
-  const FIN_CAT_COLORS = {'이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','기타':'text-slate-500'};
-  const FIN_CAT_BG = {'이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+  const FIN_CAT_ICONS = {'입금':'savings','이동':'flight','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','기타':'more_horiz'};
+  const FIN_CAT_COLORS = {'입금':'text-emerald-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','기타':'text-slate-500'};
+  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+
+  var FINANCE_SEED_TRIP = '2026 체코&크로아티아';
+  var FINANCE_DEFAULTS = [
+    // 입금
+    ['2025-11-10','입금','입금',5230000],
+    ['2026-01-30','입금','입금',3000000],
+    ['2026-04-10','입금','입금',258694],
+    ['2026-05-10','입금','입금',300000],
+    ['2026-06-10','입금','입금',400000],
+    // 지출
+    ['2025-11-10','체코&크로아티아 비행기','이동',1743400],
+    ['2025-11-10','프라하 숙소','숙소',769515],
+    ['2025-11-10','올로모우츠 숙소 → 4/1 취소','숙소',158694],
+    ['2025-11-10','두브로브니크 숙소','숙소',311300],
+    ['2025-11-10','스플리트 숙소','숙소',151039],
+    ['2025-11-10','플리트비체 숙소','숙소',163199],
+    ['2025-11-10','크라쿠프→크로아티아 비행기','이동',149198],
+    ['2025-11-10','크로아티아 렌트','이동',344036],
+    ['2025-11-10','프라하→체스키크룸로프 (플릭스버스)','이동',33816],
+    ['2025-11-10','프라하→올로모우츠 (기차)','이동',20161],
+    ['2025-11-10','올로모우츠→오시비엥침 (기차)','이동',23319],
+    ['2026-02-10','(결제)','기타',21000],
+    ['2026-02-10','아우슈비츠 티켓','티켓',63139],
+    ['2026-02-10','플리트비체 ��장권 (필수)','티켓',49741],
+    ['2026-02-10','프라하 성 B코스 (필수)','티켓',37100],
+    ['2026-03-10','두브로브니크 패스 1일권 (추천)','티켓',70222],
+    ['2026-04-10','환전','환전',900000],
+    ['2026-04-10','보험','보험',18960],
+    ['2026-04-10','eSIM','통신',24800],
+    ['2026-04-10','(결제)','기타',16000],
+    ['2026-04-10','오시비엥침→크라쿠프 버스 (필수)','이동',10416]
+  ];
+
+  function getFinanceDefaults() {
+    var fbKeys = {};
+    financeData.forEach(function(r){ fbKeys[(r[0]||'')+'|'+(r[1]||'')+'|'+(r[4]||'')] = true; });
+    return FINANCE_DEFAULTS
+      .filter(function(d){ return !fbKeys[d[0]+'|'+d[1]+'|'+d[3]]; })
+      .map(function(d){
+        return [d[0], d[1], FINANCE_SEED_TRIP, d[2], d[3], 'KRW', '', '__default__'];
+      });
+  }
 
   var financeTrips = [];
   async function loadFinance() {
@@ -4796,6 +4838,9 @@
       var [docs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
       financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
       financeTrips = tripDocs;
+      var defaults = getFinanceDefaults();
+      financeData = financeData.concat(defaults);
+      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       document.getElementById('finance-loading').style.display = 'none';
       buildFinanceTripFilters();
       filterFinanceByTrip('all');
@@ -4859,8 +4904,9 @@
           (row[5]&&row[5]!=='KRW'&&row[6] ? '<div class="text-[9px] text-slate-400">≈ ₩' + parseInt(row[6]).toLocaleString('ko-KR') + '</div>' : '') +
         '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        (row[7] === '__default__' ? '' :
         '<button onclick="editFinanceRow(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteFinanceRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<button onclick="deleteFinanceRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button>') +
         '</div></td>';
       tbody.appendChild(tr);
     });
