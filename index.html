@@ -4735,20 +4735,20 @@
       '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">' +
         '<div class="flex items-center gap-3">' +
           '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
-          '<div><p class="font-bold text-sm leading-tight">'+(f.airline||f.title||'')+'</p>' +
-          '<p class="text-slate-400 text-[11px]">'+(f.flight||f.city||'')+' • '+(f.date||'')+'</p></div>' +
+          '<div><p class="font-bold text-base leading-tight text-slate-900">'+(f.airline||f.title||'')+'</p>' +
+          '<p class="text-[12px] mt-0.5"><span class="font-semibold text-slate-700">'+(f.flight||f.city||'')+'</span> <span class="text-slate-500">'+(f.date||'')+'</span></p></div>' +
         '</div>' +
         '<div class="flex items-center gap-6 md:gap-8">' +
-          '<div class="text-center"><p class="text-lg font-extrabold tracking-tighter">'+depIata+'</p>' +
-          '<p class="text-[9px] uppercase tracking-widest font-bold text-slate-400">'+(f.depart||f.time||'')+'</p></div>' +
-          '<div class="flex flex-col items-center min-w-[60px]">' +
+          '<div class="text-center"><p class="text-2xl font-extrabold tracking-tighter text-slate-900">'+depIata+'</p>' +
+          '<p class="text-xs font-bold text-slate-700 mt-0.5">'+(f.depart||f.time||'')+'</p></div>' +
+          '<div class="flex flex-col items-center min-w-[70px]">' +
             '<div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
-            '<p class="text-[9px] text-slate-400 mt-1 font-medium">'+(f.duration||'')+'</p></div>' +
-          '<div class="text-center"><p class="text-lg font-extrabold tracking-tighter">'+arrIata+'</p>' +
-          '<p class="text-[9px] uppercase tracking-widest font-bold text-slate-400">'+(f.arrive||'')+'</p></div>' +
+            '<p class="text-[10px] text-slate-600 mt-1 font-semibold">'+(f.duration||'')+'</p></div>' +
+          '<div class="text-center"><p class="text-2xl font-extrabold tracking-tighter text-slate-900">'+arrIata+'</p>' +
+          '<p class="text-xs font-bold text-slate-700 mt-0.5">'+(f.arrive||'')+'</p></div>' +
         '</div>' +
         '<div class="text-right"><p class="text-base font-bold text-indigo-600">'+(f.price||f.amount||'—')+'</p>' +
-        '<p class="text-[10px] text-slate-400">'+(f.baggage||'')+'</p></div>' +
+        '<p class="text-[10px] text-slate-500">'+(f.baggage||'')+'</p></div>' +
       '</div></div>';
   }
 
