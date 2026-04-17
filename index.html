@@ -678,30 +678,67 @@
           <div class="col-span-9 space-y-8">
 
             <!-- 1. 항공편 -->
-            <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-              <div class="flex items-center justify-between px-5 py-4">
-                <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
-                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
+            <section>
+              <div class="mb-4">
+                <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-500/60 block mb-1">Flight Logistics</span>
+                <h3 class="text-2xl font-extrabold tracking-tight text-slate-900 font-headline">항공편</h3>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                  <thead class="border-b border-slate-100 bg-slate-50">
-                    <tr>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">항공사</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">루트</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">편명</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">날짜</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">출발</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">도착</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">비행</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">수하물</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right whitespace-nowrap">가격</th>
-                    </tr>
-                  </thead>
-                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-xs"></tbody>
-                </table>
+              <div id="journey-flight-list" class="space-y-4"></div>
+              <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
+              <!-- 항공편 추가 폼 -->
+              <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6 mt-6">
+                <div class="flex items-center gap-2 mb-5">
+                  <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size:20px">add_circle</span>
+                  <h4 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h4>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
+                    <input id="flt-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
+                    <input id="flt-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40" onchange="lookupFlight(this)"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
+                    <input id="flt-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
+                    <input id="flt-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
+                    <input id="flt-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
+                    <input id="flt-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
+                    <input id="flt-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
+                    <input id="flt-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
+                    <input id="flt-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격</label>
+                    <input id="flt-price" type="text" placeholder="₩1,743,400" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div class="col-span-2 flex items-end">
+                    <button onclick="saveFlightForm()" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+                      <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">add_circle</span> 추가
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div id="journey-flight-total" class="mt-4 flex justify-end"></div>
             </section>
 
             <!-- 2. 숙소 정보 -->
@@ -4474,16 +4511,46 @@
     } catch(e) { alert('저장에 실패했어요.'); }
   }
 
-  function renderJourneyFlights() {
-    var tbody = document.getElementById('journey-flight-list');
-    var totalEl = document.getElementById('journey-flight-total');
-    if (!tbody) return;
+  function flightCard(f, deleteHtml) {
+    var routeParts = (f.route||f.description||'').split('→').map(function(s){return s.trim();});
+    var depCode = routeParts[0] ? routeParts[0].match(/\(([A-Z]{3})\)/)||[] : [];
+    var arrCode = routeParts[1] ? routeParts[1].match(/\(([A-Z]{3})\)/)||[] : [];
+    var depIata = depCode[1]||routeParts[0]||'';
+    var arrIata = arrCode[1]||routeParts[1]||'';
+    var depCity = routeParts[0] ? routeParts[0].replace(/\([^)]*\)/,'').trim() : '';
+    var arrCity = routeParts[1] ? routeParts[1].replace(/\([^)]*\)/,'').trim() : '';
+    var isTK = (f.airline||f.title||'').indexOf('Turkish') >= 0;
+    var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
+    var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
+    return '<div class="bg-white rounded-3xl p-5 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] hover:scale-[1.005] transition-transform group relative">' +
+      deleteHtml +
+      '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">' +
+        '<div class="flex items-center gap-3">' +
+          '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
+          '<div><p class="font-bold text-sm leading-tight">'+(f.airline||f.title||'')+'</p>' +
+          '<p class="text-slate-400 text-[11px]">'+(f.flight||f.city||'')+' • '+(f.date||'')+'</p></div>' +
+        '</div>' +
+        '<div class="flex items-center gap-6 md:gap-8">' +
+          '<div class="text-center"><p class="text-lg font-extrabold tracking-tighter">'+depIata+'</p>' +
+          '<p class="text-[9px] uppercase tracking-widest font-bold text-slate-400">'+(f.depart||f.time||'')+'</p></div>' +
+          '<div class="flex flex-col items-center min-w-[60px]">' +
+            '<div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
+            '<p class="text-[9px] text-slate-400 mt-1 font-medium">'+(f.duration||'')+'</p></div>' +
+          '<div class="text-center"><p class="text-lg font-extrabold tracking-tighter">'+arrIata+'</p>' +
+          '<p class="text-[9px] uppercase tracking-widest font-bold text-slate-400">'+(f.arrive||'')+'</p></div>' +
+        '</div>' +
+        '<div class="text-right"><p class="text-base font-bold text-indigo-600">'+(f.price||f.amount||'—')+'</p>' +
+        '<p class="text-[10px] text-slate-400">'+(f.baggage||'')+'</p></div>' +
+      '</div></div>';
+  }
 
-    // 하드코딩 기본 항공편 (해당 여행)
+  function renderJourneyFlights() {
+    var container = document.getElementById('journey-flight-list');
+    var totalEl = document.getElementById('journey-flight-total');
+    if (!container) return;
+
     var defaults = isSeedTrip() ? FLIGHT_DEFAULTS : [];
-    // Firebase 항공편
     var fbFlights = journeyData.filter(function(d){ return d.type === '항공편'; });
-    // Firebase 편명 set (중복 방지)
     var fbKeys = {};
     fbFlights.forEach(function(f){ fbKeys[f.title||''] = true; });
 
@@ -4491,55 +4558,50 @@
     var totalKRW = 0;
     var extraPrice = '';
 
-    // 하드코딩 기본값
     defaults.filter(function(f){ return !fbKeys[f.flight]; }).forEach(function(f) {
       totalKRW += f.priceKRW;
       if (f.price.indexOf('$') >= 0) extraPrice = f.price;
-      var isTK = f.airline.indexOf('Turkish') >= 0;
-      var airlineColor = isTK ? 'text-red-700 bg-red-50' : 'text-yellow-700 bg-yellow-50';
-      html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
-        '<td class="px-3 py-2 text-xs font-bold whitespace-nowrap"><span class="px-2 py-0.5 rounded-full text-[10px] ' + airlineColor + '">' + f.airline + '</span></td>' +
-        '<td class="px-3 py-2 text-xs font-semibold text-slate-800">' + f.route + '</td>' +
-        '<td class="px-3 py-2 text-xs font-mono font-bold text-slate-600 whitespace-nowrap">' + f.flight + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.date + '</td>' +
-        '<td class="px-3 py-2 text-xs font-bold text-slate-700 whitespace-nowrap">' + f.depart + '</td>' +
-        '<td class="px-3 py-2 text-xs font-bold text-slate-700 whitespace-nowrap">' + f.arrive + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.duration + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">' + f.baggage + '</td>' +
-        '<td class="px-3 py-2 text-xs font-bold text-right whitespace-nowrap ' + (f.priceKRW > 0 ? 'text-sky-700' : 'text-slate-400') + '">' + f.price + '</td>' +
-        '</tr>';
+      html += flightCard(f, '');
     });
 
-    // Firebase 항공편
     fbFlights.forEach(function(f) {
       var realIdx = journeyData.indexOf(f);
       var amt = parseFloat(f.amount) || 0;
       totalKRW += amt;
-      var dbl = ' ondblclick="fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'항공편\')"';
-      html += '<tr class="hover:bg-slate-50/50 transition-colors group">' +
-        '<td class="px-4 py-3 text-xs font-bold"' + dbl.replace('%FIELD%','title') + '>' + (f.title||'') + '</td>' +
-        '<td class="px-4 py-3 text-xs font-semibold text-slate-800"' + dbl.replace('%FIELD%','description') + '>' + (f.description||'') + '</td>' +
-        '<td class="px-4 py-3 text-xs font-mono font-bold text-slate-600"' + dbl.replace('%FIELD%','city') + '>' + (f.city||'') + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500"' + dbl.replace('%FIELD%','date') + '>' + (f.date||'') + '</td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-slate-700"' + dbl.replace('%FIELD%','time') + '>' + (f.time||'') + '</td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-slate-700"></td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500"></td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500"></td>' +
-        '<td class="px-4 py-3 text-xs font-bold text-right text-sky-700"' + dbl.replace('%FIELD%','amount') + '>' + (amt ? '₩'+amt.toLocaleString('ko-KR') : '—') + '</td>' +
-        '<td class="px-3 py-2 text-center"><div class="flex gap-0.5 justify-center opacity-0 group-hover:opacity-100">' +
-        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>' +
-        '</div></td></tr>';
+      var delBtn = '<button onclick="deleteJourneyRow('+realIdx+')" class="absolute top-3 right-3 p-1.5 hover:bg-rose-100 rounded-xl text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>';
+      html += flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:'', duration:'', baggage:'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, delBtn);
     });
 
-    tbody.innerHTML = html || '';
-    appendFlightInputRow();
+    container.innerHTML = html || '<p class="text-center text-xs text-slate-400 py-6">항공편을 추가해봐!</p>';
     if (totalEl && totalKRW > 0) {
-      totalEl.innerHTML = '<div class="bg-slate-200/60 border border-slate-300 rounded-xl px-5 py-3 flex items-center gap-3">' +
-        '<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">총 항공권</span>' +
-        '<span class="text-lg font-black text-slate-800">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
-        (extraPrice ? '<span class="text-[10px] text-slate-500 font-medium">+ ' + extraPrice + '</span>' : '') +
+      totalEl.innerHTML = '<div class="bg-slate-100 rounded-2xl px-6 py-4 flex items-center gap-4">' +
+        '<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">총 항공권</span>' +
+        '<span class="text-xl font-black text-slate-800 font-headline">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
+        (extraPrice ? '<span class="text-[10px] text-slate-400 font-medium">+ ' + extraPrice + '</span>' : '') +
       '</div>';
     } else if (totalEl) { totalEl.innerHTML = ''; }
+  }
+
+  async function saveFlightForm() {
+    var obj = {
+      trip_id: currentTripId, type: '항공편',
+      title: document.getElementById('flt-airline').value.trim(),
+      description: document.getElementById('flt-dep').value.trim() + ' → ' + document.getElementById('flt-arr').value.trim(),
+      city: document.getElementById('flt-code').value.trim(),
+      date: document.getElementById('flt-date').value,
+      time: document.getElementById('flt-time').value.trim(),
+      arrive: document.getElementById('flt-arrive').value.trim(),
+      duration: document.getElementById('flt-duration').value.trim(),
+      baggage: document.getElementById('flt-baggage').value.trim(),
+      amount: document.getElementById('flt-price').value.replace(/[^0-9]/g,'')
+    };
+    if (!obj.title) { alert('항공사를 입력해줘!'); return; }
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-price'].forEach(function(id){document.getElementById(id).value='';});
+      renderJourneyFlights();
+    } catch(e) { alert('저장 실패'); }
   }
 
   function renderJourneySouvenir() {
