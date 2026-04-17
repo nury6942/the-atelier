@@ -1841,7 +1841,7 @@
 
       <!-- Session Detail View (트래커에서 리뷰 보기 시 표시) -->
       <div id="eng-detail-view" style="display:none">
-        <div id="eng-back-btn" class="fixed z-30" style="display:none;top:76px;left:calc(16rem + 24px);">
+        <div id="eng-back-btn" class="fixed z-30" style="display:none;top:76px;right:24px;">
           <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
             <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> 트래커로
           </button>
@@ -9172,7 +9172,7 @@
         renderEnglishTable();
         updateEnglishStats();
       }
-      loadEnglishSessions();
+      await loadEnglishSessions();
     } catch(err) {
       document.getElementById('english-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
     }
@@ -9858,7 +9858,8 @@ async function loadEnglishSessions() {
   try {
     var docs = await fbRead('englishSessions');
     engSessionsData = docs.sort(function(a,b){ return (b._id||'').localeCompare(a._id||''); });
-    renderEnglishSessions();
+    // 트래커 테이블의 리뷰 컬럼 재렌더링
+    if (typeof renderEnglishTable === 'function') renderEnglishTable();
   } catch(e) { console.error('English sessions load error:', e); }
 }
 
