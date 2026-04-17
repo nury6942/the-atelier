@@ -3776,6 +3776,40 @@
   }
 
   function lodgingInlineEdit(td, idx, field) {
+    // 체크인/체크아웃은 날짜+시간 분리 편집
+    if (field === 'checkin' || field === 'checkout') {
+      if (td.querySelector('input')) return;
+      var data = getLodgingData(); var d = data[idx];
+      var dateField = field === 'checkin' ? 'date' : 'checkout_date';
+      var timeField = field === 'checkin' ? 'checkin' : 'checkout';
+      var origHtml = td.innerHTML;
+      var ic = 'border-0 border-b border-indigo-400 bg-transparent px-1 py-0.5 text-[10px] outline-none focus:border-indigo-600';
+      td.innerHTML = '<div class="flex flex-col gap-1">' +
+        '<input type="date" value="'+(d[dateField]||'')+'" class="'+ic+'" style="width:100%"/>' +
+        '<input type="time" value="'+(d[timeField]||'')+'" class="'+ic+'" style="width:100%"/>' +
+        '</div>';
+      var inputs = td.querySelectorAll('input');
+      inputs[0].focus();
+      var done = false;
+      function finish(save) {
+        if (done) return; done = true;
+        if (save) {
+          var data2 = getLodgingData();
+          data2[idx][dateField] = inputs[0].value;
+          data2[idx][timeField] = inputs[1].value;
+          saveLodgingData(data2);
+          renderJourneyLodging();
+        } else { td.innerHTML = origHtml; }
+      }
+      inputs.forEach(function(inp) {
+        inp.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+          if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+        });
+        inp.addEventListener('blur', function() { setTimeout(function(){ if(!td.contains(document.activeElement)) finish(true); }, 100); });
+      });
+      return;
+    }
     inlineEditTd(td, function(val) {
       var data = getLodgingData();
       data[idx][field] = val;
@@ -4245,8 +4279,8 @@
       '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="숙소명" class="'+_ic+'"'+_onEnter('숙소')+'/></td>'+
       '<td class="px-2 py-1.5"><select data-f="lodge_type" class="'+_ic+'"><option>Hotel</option><option>Airbnb</option></select></td>'+
       '<td class="px-2 py-1.5"><input data-f="phone" type="text" placeholder="전화" class="'+_ic+'"'+_onEnter('숙소')+'/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="checkout" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><div class="flex flex-col gap-0.5"><input data-f="date" type="date" class="'+_ic+'"/><input data-f="checkin" type="time" class="'+_ic+'"/></div></td>'+
+      '<td class="px-2 py-1.5"><div class="flex flex-col gap-0.5"><input data-f="checkout_date" type="date" class="'+_ic+'"/><input data-f="checkout" type="time" class="'+_ic+'"/></div></td>'+
       '<td class="px-2 py-1.5"><input data-f="cancel_date" type="date" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right"'+_onEnter('숙소')+'/></td>'+
       _actCol('숙소')+'<input type="hidden" data-f="type" value="숙소"/>');
