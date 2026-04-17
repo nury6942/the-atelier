@@ -9229,13 +9229,46 @@
     openSessionDetail(dateId);
   }
 
+  function getQuarter(dateStr) {
+    if (!dateStr) return null;
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) return null;
+    var m = d.getMonth(); // 0-based
+    var q = m < 3 ? 1 : m < 6 ? 2 : m < 9 ? 3 : 4;
+    return 'Q' + q + ' ' + d.getFullYear();
+  }
+
   function renderEnglishTable() {
     const tbody = document.getElementById('english-tbody');
     tbody.innerHTML = '';
-    englishData.forEach(function(row, i) {
-      const status = row[2] || '';
-      const date = row[1] || '';
-      // 상태 버튼 생성
+
+    // 날짜 오름차순 정렬 (원본 인덱스 보존)
+    var sorted = englishData.map(function(row, i) { return { row: row, origIdx: i }; });
+    sorted.sort(function(a, b) {
+      var da = a.row[1] || '', db = b.row[1] || '';
+      if (!da && db) return 1; if (da && !db) return -1;
+      return da.localeCompare(db);
+    });
+
+    var prevQuarter = null;
+    var colCount = 7; // 테이블 컬럼 수
+
+    sorted.forEach(function(entry, displayIdx) {
+      var row = entry.row;
+      var i = entry.origIdx;
+      var status = row[2] || '';
+      var date = row[1] || '';
+      var sessionNum = displayIdx + 1; // 자동 넘버링
+
+      // 분기 구분 바
+      var quarter = getQuarter(date);
+      if (quarter && quarter !== prevQuarter) {
+        prevQuarter = quarter;
+        var dividerTr = document.createElement('tr');
+        dividerTr.innerHTML = '<td colspan="' + colCount + '" class="px-6 py-2 bg-indigo-50/60 border-t border-indigo-100"><span class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">' + quarter + '</span></td>';
+        tbody.appendChild(dividerTr);
+      }
+
       function statusBtn(label, current) {
         var isActive = current === label;
         var cls = '';
@@ -9249,7 +9282,7 @@
       const tr = document.createElement('tr');
       tr.className = rowCls + ' transition-colors';
       tr.innerHTML =
-        '<td class="px-6 py-4 font-bold text-slate-800' + (status==='취소'?' line-through':'') + '">' + (row[0]||'—') + '</td>' +
+        '<td class="px-6 py-4 font-bold text-slate-800' + (status==='취소'?' line-through':'') + '">' + sessionNum + '회차</td>' +
         '<td class="px-6 py-4 text-slate-500 text-sm">' + (date||'—') + '</td>' +
         '<td class="px-6 py-4">' + statusHtml + '</td>' +
         '<td class="px-6 py-4">' + getReviewBtn(date) + '</td>' +
@@ -9262,7 +9295,7 @@
         '</div></td>';
       tbody.appendChild(tr);
     });
-    document.getElementById('english-status').textContent = englishData.length + '개 수업';
+    document.getElementById('english-status').textContent = sorted.length + '개 수업';
   }
 
   function updateEnglishStats() {
