@@ -1090,6 +1090,7 @@
                 <th class="px-6 py-3 border-b border-slate-100">트립</th>
                 <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
                 <th class="px-6 py-3 border-b border-slate-100 text-right">금액</th>
+                <th class="px-6 py-3 border-b border-slate-100 text-right">잔액</th>
                 <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
               </tr>
             </thead>
@@ -4898,6 +4899,7 @@
   function renderFinanceTable() {
     var tbody = document.getElementById('finance-tbody');
     tbody.innerHTML = '';
+    var running = 0;
     financeFiltered.forEach(function(row) {
       var realIdx = financeData.indexOf(row);
       var cat = row[3]||'기타';
@@ -4905,6 +4907,9 @@
       var color = FIN_CAT_COLORS[cat]||'text-slate-500';
       var bg = FIN_CAT_BG[cat]||'bg-slate-50 text-slate-600 border-slate-200';
       var amt = parseFloat(row[4])||0;
+      if (cat === '입금') running += amt; else running -= amt;
+      var balK = Math.round(running / 1000);
+      var balColor = running >= 0 ? 'text-indigo-600' : 'text-rose-600';
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-indigo-50/30 transition-colors group';
       tr.innerHTML =
@@ -4916,6 +4921,7 @@
           '<div class="font-bold ' + (cat==='입금'?'text-indigo-600':'text-rose-600') + '">' + (cat==='입금'?'+':'') + (row[5]&&row[5]!=='KRW' ? row[5]+' ' : '₩') + amt.toLocaleString() + '</div>' +
           (row[5]&&row[5]!=='KRW'&&row[6] ? '<div class="text-[9px] text-slate-400">≈ ₩' + parseInt(row[6]).toLocaleString('ko-KR') + '</div>' : '') +
         '</td>' +
+        '<td class="px-6 py-4 text-right text-xs font-semibold ' + balColor + '">' + balK.toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
         (row[7] === '__default__' ? '' :
         '<button onclick="editFinanceRow(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">edit</span></button>' +
