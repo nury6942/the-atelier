@@ -1749,14 +1749,15 @@
 
       <!-- Top Stats -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="md:col-span-2 section-tint-purple p-8 rounded-2xl border border-indigo-100 relative overflow-hidden">
-          <span class="material-symbols-outlined text-primary text-4xl mb-4">auto_awesome</span>
-          <h3 class="text-xl font-bold font-headline text-slate-900 mb-1">어휘 확장</h3>
-          <p class="text-slate-500 text-sm leading-relaxed mb-4">비즈니스 관용어 집중 학습으로 이번 달 어휘 범위가 향상됐어.</p>
-          <div class="flex gap-2">
-            <span class="px-3 py-1 bg-primary text-white text-[10px] font-bold uppercase rounded-full">Idioms</span>
-            <span class="px-3 py-1 bg-secondary text-white text-[10px] font-bold uppercase rounded-full">Phonetics</span>
+        <div id="eng-random-card" class="md:col-span-2 section-tint-purple p-8 rounded-2xl border border-indigo-100 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <span class="material-symbols-outlined text-primary text-4xl mb-4">auto_awesome</span>
+            <button onclick="renderEngRandomCard()" class="p-1.5 hover:bg-indigo-100 rounded-lg text-indigo-400 hover:text-indigo-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button>
           </div>
+          <h3 id="eng-rand-title" class="text-xl font-bold font-headline text-slate-900 mb-1">로딩 중...</h3>
+          <p id="eng-rand-meaning" class="text-slate-500 text-sm leading-relaxed mb-3"></p>
+          <p id="eng-rand-example" class="text-xs text-slate-400 italic mb-3" style="display:none"></p>
+          <div id="eng-rand-badges" class="flex gap-2 flex-wrap"></div>
         </div>
         <div class="section-tint-blue p-6 rounded-2xl border border-blue-100 flex flex-col justify-between">
           <div class="flex justify-between items-start mb-4">
@@ -9860,7 +9861,51 @@ async function loadEnglishSessions() {
     engSessionsData = docs.sort(function(a,b){ return (b._id||'').localeCompare(a._id||''); });
     // 트래커 테이블의 리뷰 컬럼 재렌더링
     if (typeof renderEnglishTable === 'function') renderEnglishTable();
+    // 랜덤 카드 렌더링
+    renderEngRandomCard();
   } catch(e) { console.error('English sessions load error:', e); }
+}
+
+function renderEngRandomCard() {
+  var titleEl = document.getElementById('eng-rand-title');
+  var meaningEl = document.getElementById('eng-rand-meaning');
+  var exampleEl = document.getElementById('eng-rand-example');
+  var badgesEl = document.getElementById('eng-rand-badges');
+  if (!titleEl) return;
+
+  if (!engSessionsData || engSessionsData.length === 0) {
+    titleEl.textContent = '수업 데이터가 없어요';
+    meaningEl.textContent = 'sessions.js를 업로드하면 여기에 랜덤 학습 콘텐츠가 표시됩니다.';
+    badgesEl.innerHTML = '';
+    exampleEl.style.display = 'none';
+    return;
+  }
+
+  // 통합 풀 구축
+  var pool = [];
+  var BADGE_COLORS = {expression:'bg-indigo-600',upgrade:'bg-violet-600',vocab:'bg-blue-600',grammar:'bg-emerald-600',starter:'bg-amber-600'};
+  engSessionsData.forEach(function(s) {
+    (s.expressions||[]).forEach(function(e) { pool.push({type:'expression',main:e.expr,meaning:e.kr,badges:[e.cat||'Expression'],example:e.ex}); });
+    (s.upgrades||[]).forEach(function(u) { if(u.gem) pool.push({type:'upgrade',main:u.gem,meaning:u.noteKr||'',badges:['C1 Upgrade'],example:''}); });
+    (s.vocabSets||[]).forEach(function(vs) { (vs.words||[]).forEach(function(w) { pool.push({type:'vocab',main:w.word,meaning:w.mean,badges:[vs.topicKr||vs.topic||'Vocab'],example:w.ex,coll:w.coll}); }); });
+    (s.grammar||[]).forEach(function(g) { pool.push({type:'grammar',main:g.title,meaning:g.rule,badges:['Grammar'],example:(g.examples||[])[0]||''}); });
+    if (s.convoSkills && s.convoSkills.starters) s.convoSkills.starters.forEach(function(st) { pool.push({type:'starter',main:st,meaning:'C1 대화 오프너',badges:['Convo Skill'],example:''}); });
+  });
+
+  if (pool.length === 0) { titleEl.textContent = '콘텐츠 없음'; return; }
+  var item = pool[Math.floor(Math.random() * pool.length)];
+
+  titleEl.textContent = item.main || '';
+  titleEl.style.fontSize = (item.main||'').length > 40 ? '16px' : '';
+  meaningEl.textContent = item.meaning || '';
+  if (item.example) { exampleEl.textContent = 'e.g. ' + item.example; exampleEl.style.display = 'block'; }
+  else { exampleEl.style.display = 'none'; }
+  if (item.coll) meaningEl.textContent += ' · ' + item.coll;
+
+  var badgeColor = BADGE_COLORS[item.type] || 'bg-indigo-600';
+  badgesEl.innerHTML = (item.badges||[]).map(function(b) {
+    return '<span class="px-3 py-1 ' + badgeColor + ' text-white text-[10px] font-bold uppercase rounded-full">' + b + '</span>';
+  }).join('') + '<span class="px-2 py-0.5 bg-slate-200 text-slate-500 text-[9px] font-bold rounded-full">' + item.type + '</span>';
 }
 
 function renderEnglishSessions() {
