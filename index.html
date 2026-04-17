@@ -1066,14 +1066,7 @@
             <h4 class="font-manrope font-bold text-slate-800">거래 내역</h4>
             <p id="finance-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
-          <div class="flex gap-2">
-            <button onclick="addFinanceInlineRow('입금')" class="bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-200 active:scale-95 transition-all">
-              <span class="material-symbols-outlined text-sm">arrow_downward</span> 입금 추가
-            </button>
-            <button onclick="addFinanceInlineRow()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
-              <span class="material-symbols-outlined text-sm">add</span> 지출 추가
-            </button>
-          </div>
+          <div class="text-[10px] text-slate-400 font-medium">테이블 하단에서 바로 입력</div>
         </div>
 
         <div id="finance-loading" class="flex items-center justify-center py-12 text-slate-400">
@@ -5039,6 +5032,55 @@
       tbody.appendChild(tr);
     });
     document.getElementById('finance-status').textContent = financeFiltered.length + '개 항목';
+    // 고정 인라인 입력 행
+    appendFinanceInputRow(tbody);
+  }
+
+  function appendFinanceInputRow(tbody) {
+    var ic = 'border border-slate-200 rounded px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-200';
+    var catOpts = ['입금','이동','숙소','티켓','환전','보험','통신','식비','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    var tripVal = currentFinanceTrip!=='all' ? currentFinanceTrip : (financeTrips.length?financeTrips[0].name:'');
+    var tr = document.createElement('tr');
+    tr.id = 'fin-input-row';
+    tr.className = 'bg-slate-50/50';
+    tr.innerHTML =
+      '<td class="px-4 py-2"><input id="fir-date" type="date" value="'+new Date().toISOString().split('T')[0]+'" class="'+ic+'" style="width:120px"/></td>' +
+      '<td class="px-4 py-2"><input id="fir-desc" type="text" placeholder="내용 입력..." class="'+ic+' w-full"/></td>' +
+      '<td class="px-4 py-2"><select id="fir-cat" class="'+ic+' bg-white" style="width:75px">' + catOpts + '</select></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fir-deposit" type="text" placeholder="입금" class="'+ic+' text-right text-indigo-600" style="width:90px" onfocus="document.getElementById(\'fir-cat\').value=\'입금\';document.getElementById(\'fir-expense\').value=\'\'"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fir-expense" type="text" placeholder="출금" class="'+ic+' text-right text-rose-600" style="width:90px" onfocus="if(document.getElementById(\'fir-cat\').value===\'입금\')document.getElementById(\'fir-cat\').value=\'이동\';document.getElementById(\'fir-deposit\').value=\'\'"/></td>' +
+      '<td class="px-4 py-2 text-right text-xs text-slate-300">—</td>' +
+      '<td class="px-4 py-2 text-center">' +
+        '<input type="hidden" id="fir-trip" value="'+tripVal+'"/>' +
+        '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
+      '</td>';
+    tbody.appendChild(tr);
+    // Enter로 저장
+    ['fir-desc','fir-deposit','fir-expense'].forEach(function(id){
+      var el = tr.querySelector('#'+id);
+      if(el) el.addEventListener('keydown', function(e){ if(e.key==='Enter') submitFinanceInputRow(); });
+    });
+  }
+
+  async function submitFinanceInputRow() {
+    var date = document.getElementById('fir-date').value;
+    var desc = document.getElementById('fir-desc').value.trim();
+    var cat = document.getElementById('fir-cat').value;
+    var deposit = (document.getElementById('fir-deposit').value||'').replace(/,/g,'');
+    var expense = (document.getElementById('fir-expense').value||'').replace(/,/g,'');
+    var amt = parseFloat(deposit) || parseFloat(expense) || 0;
+    var trip = document.getElementById('fir-trip').value;
+    if (!amt) return;
+    if (parseFloat(deposit)) cat = '입금';
+    if (!desc) desc = cat === '입금' ? '입금' : cat;
+    var row = [date, desc, trip, cat, String(amt), 'KRW', ''];
+    try {
+      var saved = await fbAdd('finance', rowToObj('finance', row));
+      financeData.push(row.concat([saved._id]));
+      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+      buildFinanceTripFilters();
+      filterFinanceByTrip(currentFinanceTrip);
+    } catch(err) { alert('저장에 실패했어요.'); }
   }
 
   function updateFinanceStats() {
