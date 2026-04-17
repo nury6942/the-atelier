@@ -707,20 +707,23 @@
                   <span class="material-symbols-outlined text-sm">add</span> 숙소 추가
                 </button>
               </div>
-              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3">
+              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3 overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도시</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">숙소명</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">체크인/아웃</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">취소</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
-                      <th class="px-5 py-2.5 w-20"></th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도시</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">숙소명</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">유형</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">전화번호</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">체크인</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">체크아웃</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">무료취소</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
+                      <th class="px-4 py-2.5 w-16"></th>
                     </tr>
                   </thead>
                   <tbody id="journey-lodging-list" class="bg-white divide-y divide-slate-50 text-sm">
-                    <tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>
+                    <tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -951,6 +954,39 @@
           <div class="flex gap-3 pt-2">
             <button onclick="closeSouvenirEditModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
             <button onclick="saveSouvenirEdit()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">save</span> 저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lodging Edit Modal -->
+    <div id="lodging-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden" style="animation: modalIn 0.2s ease;">
+        <div class="gradient-primary px-6 py-5">
+          <h3 class="text-lg font-bold text-white font-headline">숙소 수정</h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">도시</label><input id="lg-edit-city" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">유형</label><input id="lg-edit-type" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="Hotel / Airbnb"/></div>
+          </div>
+          <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">숙소명</label><input id="lg-edit-title" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+          <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">전화번호</label><input id="lg-edit-phone" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크인 날짜</label><input id="lg-edit-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크인 시간</label><input id="lg-edit-checkin" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="14:00"/></div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크아웃 날짜</label><input id="lg-edit-checkout-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크아웃 시간</label><input id="lg-edit-checkout" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="12:00"/></div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">무료취소 마감</label><input id="lg-edit-cancel" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
+            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">가격</label><input id="lg-edit-price" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="₩769,515"/></div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button onclick="closeLodgingEditModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
+            <button onclick="saveLodgingEdit()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">save</span> 저장</button>
           </div>
         </div>
       </div>
@@ -3533,67 +3569,117 @@
     }).join('');
   }
 
+  // localStorage 기반 숙소 관리
+  var LS_LODGING_KEY = 'atelier_lodging';
+
+  function getLodgingData() {
+    var stored = localStorage.getItem(LS_LODGING_KEY);
+    if (stored) return JSON.parse(stored);
+    var data = LODGING_DEFAULTS.map(function(d, i) {
+      return { id:'lg_'+i, city:d.city, title:d.title, type:d.type, phone:d.phone, date:d.date, checkin:d.checkin, checkout_date:d.checkout_date, checkout:d.checkout, cancel_date:d.cancel_date, price:d.price };
+    });
+    localStorage.setItem(LS_LODGING_KEY, JSON.stringify(data));
+    return data;
+  }
+
+  function saveLodgingData(data) { localStorage.setItem(LS_LODGING_KEY, JSON.stringify(data)); }
+
+  function deleteLodgingLocal(idx) {
+    if (!confirm('이 숙소를 삭제할까요?')) return;
+    var data = getLodgingData(); data.splice(idx, 1); saveLodgingData(data); renderJourneyLodging();
+  }
+
+  var _editLodgingIdx = null;
+
+  function openLodgingEditModal(idx) {
+    _editLodgingIdx = idx;
+    var data = getLodgingData(); var item = data[idx];
+    document.getElementById('lg-edit-city').value = item.city||'';
+    document.getElementById('lg-edit-title').value = item.title||'';
+    document.getElementById('lg-edit-type').value = item.type||'';
+    document.getElementById('lg-edit-phone').value = item.phone||'';
+    document.getElementById('lg-edit-date').value = item.date||'';
+    document.getElementById('lg-edit-checkin').value = item.checkin||'';
+    document.getElementById('lg-edit-checkout-date').value = item.checkout_date||'';
+    document.getElementById('lg-edit-checkout').value = item.checkout||'';
+    document.getElementById('lg-edit-cancel').value = item.cancel_date||'';
+    document.getElementById('lg-edit-price').value = item.price||'';
+    document.getElementById('lodging-edit-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeLodgingEditModal() {
+    document.getElementById('lodging-edit-modal').style.cssText = 'display:none!important';
+    _editLodgingIdx = null;
+  }
+
+  function saveLodgingEdit() {
+    if (_editLodgingIdx === null) return;
+    var data = getLodgingData(); var item = data[_editLodgingIdx];
+    item.city = document.getElementById('lg-edit-city').value.trim();
+    item.title = document.getElementById('lg-edit-title').value.trim();
+    item.type = document.getElementById('lg-edit-type').value.trim();
+    item.phone = document.getElementById('lg-edit-phone').value.trim();
+    item.date = document.getElementById('lg-edit-date').value.trim();
+    item.checkin = document.getElementById('lg-edit-checkin').value.trim();
+    item.checkout_date = document.getElementById('lg-edit-checkout-date').value.trim();
+    item.checkout = document.getElementById('lg-edit-checkout').value.trim();
+    item.cancel_date = document.getElementById('lg-edit-cancel').value.trim();
+    item.price = document.getElementById('lg-edit-price').value.trim();
+    saveLodgingData(data); closeLodgingEditModal(); renderJourneyLodging();
+  }
+
   function renderJourneyLodging() {
-    var fbItems = journeyData.filter(function(d){ return d.type === '숙소'; });
-    fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
     var container = document.getElementById('journey-lodging-list');
     if (!container) return;
 
-    // 하드코딩 기본 숙소 (해당 여행)
-    var defaults = isSeedTrip() ? LODGING_DEFAULTS : [];
-    var fbCities = {};
-    fbItems.forEach(function(it){ fbCities[(it.city||'')+'|'+(it.date||'')] = true; });
-
-    var html = '';
-
-    // 기본값 렌더링 (Firebase에 없는 것만)
-    defaults.filter(function(d){ return !fbCities[d.city+'|'+d.date]; }).forEach(function(d) {
-      var today = new Date().toISOString().split('T')[0];
-      var cancelStatus = d.cancel_date >= today ? '가능' : '불가';
-      var cancelCls = cancelStatus === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' : 'text-rose-600 bg-rose-50 border-rose-200';
-      var checkinOut = d.date + ' ' + d.checkin + ' ~ ' + d.checkout_date + ' ' + d.checkout;
-      html += '<tr class="hover:bg-indigo-50/30 transition-colors">' +
-        '<td class="px-5 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
-        '<td class="px-5 py-3"><div><span class="font-bold text-sm text-slate-800">' + d.title + '</span>' +
-        '<p class="text-[10px] text-slate-400 mt-0.5">' + d.type + '</p>' +
-        (d.phone ? '<p class="text-[10px] text-slate-400">' + d.phone + '</p>' : '') +
-        '</div></td>' +
-        '<td class="px-5 py-3 text-xs text-slate-600">' + checkinOut + '</td>' +
-        '<td class="px-5 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + cancelStatus + '</span>' +
-        '<p class="text-[10px] text-slate-400 mt-0.5">~' + d.cancel_date + '</p></td>' +
-        '<td class="px-5 py-3 text-right font-bold text-sm text-indigo-600">' + d.price + '</td>' +
-        '<td class="px-5 py-3"></td></tr>';
-    });
-
-    // Firebase 숙소 렌더링
-    html += fbItems.map(function(item) {
-      var realIdx = journeyData.indexOf(item);
-      var cancelCls = item.cancel === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' :
-                      item.cancel === '불가' ? 'text-rose-600 bg-rose-50 border-rose-200' :
-                      'text-amber-600 bg-amber-50 border-amber-200';
-      var checkinOut = '';
-      if (item.date) checkinOut += item.date + (item.checkin ? ' ' + item.checkin : '');
-      if (item.checkout) checkinOut += (checkinOut ? ' ~ ' : '') + item.checkout;
-      return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
-        '<td class="px-5 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + (item.city||'—') + '</span></td>' +
-        '<td class="px-5 py-3"><div><span class="font-bold text-sm text-slate-800">' + (item.title||'—') + '</span>' +
-        (item.address ? '<p class="text-[10px] text-slate-400 mt-0.5">' + item.address + '</p>' : '') +
-        (item.phone ? '<p class="text-[10px] text-slate-400">' + item.phone + '</p>' : '') +
-        '</div></td>' +
-        '<td class="px-5 py-3 text-xs text-slate-600">' + (checkinOut||'—') + '</td>' +
-        '<td class="px-5 py-3">' + (item.cancel ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + item.cancel + '</span>' : '—') + '</td>' +
-        '<td class="px-5 py-3 text-right font-bold text-sm text-indigo-600">' + (item.amount ? '€' + item.amount : '—') + '</td>' +
-        '<td class="px-5 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
-        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
-        '</div></td></tr>';
-    }).join('');
-
-    if (!html) {
-      container.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>';
+    if (!isSeedTrip()) {
+      // 비 시드 여행: Firebase 숙소만
+      var fbItems = journeyData.filter(function(d){ return d.type === '숙소'; });
+      fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
+      if (fbItems.length === 0) { container.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>'; return; }
+      container.innerHTML = fbItems.map(function(item) {
+        var realIdx = journeyData.indexOf(item);
+        var cancelCls = item.cancel === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' : item.cancel === '불가' ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-amber-600 bg-amber-50 border-amber-200';
+        return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
+          '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + (item.city||'—') + '</span></td>' +
+          '<td class="px-4 py-3 text-sm font-bold text-slate-800">' + (item.title||'—') + '</td>' +
+          '<td class="px-4 py-3 text-xs text-slate-500">—</td>' +
+          '<td class="px-4 py-3 text-xs text-slate-500">' + (item.phone||'—') + '</td>' +
+          '<td class="px-4 py-3 text-xs text-slate-600">' + (item.date||'') + (item.checkin ? ' '+item.checkin : '') + '</td>' +
+          '<td class="px-4 py-3 text-xs text-slate-600">' + (item.checkout||'—') + '</td>' +
+          '<td class="px-4 py-3">' + (item.cancel ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + item.cancel + '</span>' : '—') + '</td>' +
+          '<td class="px-4 py-3 text-right font-bold text-sm text-indigo-600">' + (item.amount ? '€'+item.amount : '—') + '</td>' +
+          '<td class="px-4 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+          '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+          '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+          '</div></td></tr>';
+      }).join('');
       return;
     }
-    container.innerHTML = html;
+
+    // 시드 여행: localStorage 기반
+    var data = getLodgingData();
+    if (data.length === 0) { container.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>'; return; }
+    var today = new Date().toISOString().split('T')[0];
+    container.innerHTML = data.map(function(d, idx) {
+      var cancelOk = d.cancel_date >= today;
+      var cancelCls = cancelOk ? 'text-teal-600 bg-teal-50 border-teal-200' : 'text-rose-600 bg-rose-50 border-rose-200';
+      var typeCls = d.type.indexOf('Airbnb') >= 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+      return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
+        '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
+        '<td class="px-4 py-3 text-sm font-bold text-slate-800">' + d.title + '</td>' +
+        '<td class="px-4 py-3"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + d.type + '</span></td>' +
+        '<td class="px-4 py-3 text-xs text-slate-500">' + (d.phone||'—') + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-700 font-semibold">' + d.date + ' ' + d.checkin + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-700 font-semibold">' + d.checkout_date + ' ' + d.checkout + '</td>' +
+        '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span>' +
+        '<p class="text-[10px] text-slate-400 mt-0.5">~' + d.cancel_date + '</p></td>' +
+        '<td class="px-4 py-3 text-right font-bold text-sm text-indigo-600">' + d.price + '</td>' +
+        '<td class="px-4 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
+        '<button onclick="openLodgingEditModal(' + idx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</div></td></tr>';
+    }).join('');
   }
 
 
