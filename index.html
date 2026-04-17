@@ -7263,12 +7263,13 @@
     var maxIter = 365; // safety
 
     while (maxIter-- > 0) {
-      if (endDate && cur.toISOString().split('T')[0] > endDate) break;
+      var curStr = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
+      if (endDate && curStr > endDate) break;
       if (lastEp && ep > lastEp) break;
       if (!endDate && !lastEp) break;
 
       if (days.indexOf(cur.getDay()) >= 0) {
-        var ds = cur.toISOString().split('T')[0];
+        var ds = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
         evts.push({ id:'ce_'+Date.now()+'_'+ep, date:ds, series:seriesName, episode:ep+'화', note:'' });
         ep++;
       }
