@@ -1697,12 +1697,19 @@
 
       <!-- Annual Performance Matrix -->
       <section>
-        <header class="mb-6 flex justify-between items-end">
+        <header class="mb-6 flex justify-between items-center">
           <div>
             <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Annual Matrix</h2>
-            <p class="text-slate-400 text-sm mt-1">시리즈별 월간 에피소드 & 수익 인덱스 — 2026</p>
+            <p id="matrix-year-subtitle" class="text-slate-400 text-sm mt-1">시리즈별 월간 에피소드 & 수익 인덱스</p>
           </div>
-          <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-indigo-600 rounded-full text-[0.65rem] font-bold uppercase tracking-wider">Sync Active</span>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center bg-slate-100 rounded-lg p-1">
+              <button onclick="matrixPrevYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
+              <span id="matrix-year-label" class="px-4 text-sm font-bold font-headline tracking-widest">2026</span>
+              <button onclick="matrixNextYear()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-indigo-600 rounded-full text-[0.65rem] font-bold uppercase tracking-wider">Sync Active</span>
+          </div>
         </header>
         <div class="bg-white rounded-xl shadow-[0_12px_32px_-4px_rgba(45,51,53,0.08)] overflow-hidden">
           <div class="overflow-x-auto">
@@ -6803,16 +6810,30 @@
   }
 
   // ===== Annual Matrix + Monthly Scheduler (localStorage) =====
-  var LS_SERIES_KEY = 'atelier_series';
   var LS_CAL_EVENTS_KEY = 'atelier_cal_events';
   var SERIES_COLORS = ['indigo','amber','rose','teal','purple','blue','cyan','orange'];
   var MONTH_NAMES_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   var DAY_HEADERS = ['일','월','화','수','목','금','토'];
+  var _matrixYear = 2026;
 
-  function getSeriesData() {
-    var s = localStorage.getItem(LS_SERIES_KEY);
+  function matrixPrevYear() { _matrixYear--; refreshMatrix(); }
+  function matrixNextYear() { _matrixYear++; refreshMatrix(); }
+  function refreshMatrix() {
+    var lbl = document.getElementById('matrix-year-label');
+    if (lbl) lbl.textContent = _matrixYear;
+    var sub = document.getElementById('matrix-year-subtitle');
+    if (sub) sub.textContent = '시리즈별 월간 에피소드 & 수익 인덱스 — ' + _matrixYear;
+    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+  }
+
+  function seriesKeyForYear(yr) { return 'atelier_series_' + yr; }
+
+  function getSeriesData(yr) {
+    var year = yr || _matrixYear;
+    var key = seriesKeyForYear(year);
+    var s = localStorage.getItem(key);
     if (s) return JSON.parse(s);
-    // 기본값: incomeData에서 시리즈 추출
+    // 최초 접근: incomeData에서 해당 연도 시리즈 추출 (빈 배열도 가능)
     var cats = {};
     incomeData.forEach(function(r) {
       var cat = r[2]||'기타'; if(!cats[cat]) cats[cat] = {};
@@ -6821,14 +6842,23 @@
       cats[cat][mIdx].eps += (cats[cat][mIdx].eps?', ':'') + (r[1]||'');
       cats[cat][mIdx].rev += parseInt(r[4])||0;
     });
+    if (year !== 2026 || Object.keys(cats).length === 0) {
+      // 비 2026년 또는 데이터 없으면 빈 배열
+      var empty = [];
+      localStorage.setItem(key, JSON.stringify(empty));
+      return empty;
+    }
     var ci=0;
     var data = Object.keys(cats).map(function(name) {
       return {id:'s_'+ci, name:name, color:SERIES_COLORS[ci++%SERIES_COLORS.length], monthly:cats[name]};
     });
-    localStorage.setItem(LS_SERIES_KEY, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
     return data;
   }
-  function saveSeriesData(d){ localStorage.setItem(LS_SERIES_KEY, JSON.stringify(d)); }
+  function saveSeriesData(d, yr) {
+    var year = yr || _matrixYear;
+    localStorage.setItem(seriesKeyForYear(year), JSON.stringify(d));
+  }
 
   function getCalEvents() {
     var s = localStorage.getItem(LS_CAL_EVENTS_KEY);
@@ -6938,8 +6968,8 @@
   function renderIncomeMatrix() {
     var tbody = document.getElementById('income-matrix-body');
     if (!tbody) return;
-    var series = getSeriesData();
-    var curMonth = new Date().getMonth();
+    var series = getSeriesData(_matrixYear);
+    var curMonth = (new Date().getFullYear() === _matrixYear) ? new Date().getMonth() : -1;
     var html = '';
     series.forEach(function(s, si) {
       var c = s.color;
