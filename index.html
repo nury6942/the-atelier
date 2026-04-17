@@ -3142,13 +3142,29 @@
   let currentJourneyType = null;
 
   // Trips CRUD
+  function findClosestTrip(trips) {
+    var today = new Date().toISOString().split('T')[0];
+    // 1. 진행 중인 여행 (오늘이 start~end 사이)
+    var active = trips.filter(function(t){ return t.start_date && t.end_date && t.start_date <= today && t.end_date >= today; });
+    if (active.length > 0) return active[0];
+    // 2. 오늘 이후 가장 가까운 여행
+    var future = trips.filter(function(t){ return t.start_date && t.start_date > today; })
+      .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
+    if (future.length > 0) return future[0];
+    // 3. 모든 여행이 과거 → 가장 최근 끝난 여행
+    var past = trips.filter(function(t){ return t.end_date; })
+      .sort(function(a,b){ return b.end_date.localeCompare(a.end_date); });
+    if (past.length > 0) return past[0];
+    return trips[0];
+  }
+
   async function loadJourney() {
     try {
       const docs = await fbRead('trips');
       tripsData = docs;
       renderTripTabs();
       if (tripsData.length > 0) {
-        selectTrip(tripsData[0]._id);
+        selectTrip(findClosestTrip(tripsData)._id);
       } else {
         document.getElementById('journey-empty-state').style.display = 'flex';
         document.getElementById('journey-content').style.display = 'none';
