@@ -3214,7 +3214,21 @@
       container.innerHTML = '<div class="text-xs text-slate-400 py-2">여행을 추가해봐!</div>';
       return;
     }
-    container.innerHTML = tripsData.map(function(t) {
+    // 날짜순 정렬: 진행 중 → 미래(가까운순) → 과거(최근순)
+    var today = new Date().toISOString().split('T')[0];
+    var sorted = tripsData.slice().sort(function(a, b) {
+      var aActive = a.start_date && a.end_date && a.start_date <= today && a.end_date >= today;
+      var bActive = b.start_date && b.end_date && b.start_date <= today && b.end_date >= today;
+      if (aActive && !bActive) return -1;
+      if (!aActive && bActive) return 1;
+      var aFuture = a.start_date && a.start_date > today;
+      var bFuture = b.start_date && b.start_date > today;
+      if (aFuture && bFuture) return (a.start_date||'').localeCompare(b.start_date||'');
+      if (aFuture && !bFuture) return -1;
+      if (!aFuture && bFuture) return 1;
+      return (b.end_date||b.start_date||'').localeCompare(a.end_date||a.start_date||'');
+    });
+    container.innerHTML = sorted.map(function(t) {
       var isActive = t._id === currentTripId;
       return '<div class="flex items-center gap-1">' +
         '<button data-tid="' + t._id + '" onclick="selectTrip(this.dataset.tid)" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ' +
@@ -4058,7 +4072,9 @@
 
   // Trip modal
   function openTripModal() {
-    ['trip-name','trip-start','trip-end','trip-cities'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    ['trip-name','trip-start','trip-end'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    delete document.getElementById('trip-modal').dataset.editId;
+    document.getElementById('trip-modal-title').textContent = '여행 추가';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
   }
   function closeTripModal() {
@@ -4078,7 +4094,7 @@
         var t = tripsData.find(function(t){ return t._id === editId; });
         if (t) Object.assign(t, obj);
         delete document.getElementById('trip-modal').dataset.editId;
-        document.getElementById('trip-modal').querySelector('h3').textContent = '새 여행 추가';
+        document.getElementById('trip-modal-title').textContent = '여행 추가';
         closeTripModal();
         selectTrip(editId);
       } else {
@@ -4240,21 +4256,21 @@
     document.getElementById('trip-name').value = trip.name||'';
     document.getElementById('trip-start').value = trip.start_date||'';
     document.getElementById('trip-end').value = trip.end_date||'';
-    document.getElementById('trip-cities').value = trip.cities||'';
-    // Store editing trip id
     document.getElementById('trip-modal').dataset.editId = tripId;
-    document.getElementById('trip-modal').querySelector('h3').textContent = '여행 수정';
+    document.getElementById('trip-modal-title').textContent = '여행 수정';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
   }
 
   async function deleteTripEntry(tripId) {
+    var trip = tripsData.find(function(t){ return t._id === tripId; });
+    if (!confirm('"' + (trip?trip.name:'') + '" 여행을 삭제할까요?')) return;
     try {
       await fbDelete('trips', tripId);
       tripsData = tripsData.filter(function(t){ return t._id !== tripId; });
       currentTripId = null;
       renderTripTabs();
       if (tripsData.length > 0) {
-        selectTrip(tripsData[0]._id);
+        selectTrip(findClosestTrip(tripsData)._id);
       } else {
         document.getElementById('journey-empty-state').style.display = 'flex';
         document.getElementById('journey-content').style.display = 'none';
