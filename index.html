@@ -8916,16 +8916,38 @@
         coords={lat:g.results[0].latitude,lng:g.results[0].longitude};
         _pkWeatherCache[key]=coords;
       }
-      var allD=entries.map(function(e){return pkFmtDate(e.date);}), minD=allD.reduce(function(a,b){return a<b?a:b;}), maxD=allD.reduce(function(a,b){return a>b?a:b;});
       var today=new Date(), maxF=new Date(today); maxF.setDate(maxF.getDate()+15);
-      var url;
-      if (new Date(minD)<=maxF) url='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date='+minD+'&end_date='+maxD+'&timezone=auto';
-      else { var py=function(d){return d.replace(/^\d{4}/,String(new Date().getFullYear()-1));}; url='https://archive-api.open-meteo.com/v1/archive?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date='+py(minD)+'&end_date='+py(maxD)+'&timezone=auto'; }
-      var wr=await fetch(url), wd=await wr.json();
-      if(!wd.daily||!wd.daily.time) return;
-      var wm={}; wd.daily.time.forEach(function(t,i){wm[t]={hi:Math.round(wd.daily.temperature_2m_max[i]),lo:Math.round(wd.daily.temperature_2m_min[i]),code:wd.daily.weathercode[i]};});
+      // forecast 범위와 archive 범위로 분리
+      var forecastEntries=[], archiveEntries=[];
       entries.forEach(function(e){
-        var ds=pkFmtDate(e.date), wx=wm[ds]||wm[ds.replace(/^\d{4}/,String(new Date().getFullYear()-1))];
+        var ds=pkFmtDate(e.date);
+        if (new Date(ds)<=maxF) forecastEntries.push(e);
+        else archiveEntries.push(e);
+      });
+      var wm={};
+      // Forecast API
+      if (forecastEntries.length>0) {
+        var fDates=forecastEntries.map(function(e){return pkFmtDate(e.date);});
+        var fMin=fDates.reduce(function(a,b){return a<b?a:b;}), fMax=fDates.reduce(function(a,b){return a>b?a:b;});
+        var fUrl='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date='+fMin+'&end_date='+fMax+'&timezone=auto';
+        var fr=await fetch(fUrl), fd=await fr.json();
+        if(fd.daily&&fd.daily.time) fd.daily.time.forEach(function(t,i){wm[t]={hi:Math.round(fd.daily.temperature_2m_max[i]),lo:Math.round(fd.daily.temperature_2m_min[i]),code:fd.daily.weathercode[i]};});
+      }
+      // Archive API (작년 데이터)
+      if (archiveEntries.length>0) {
+        var aDates=archiveEntries.map(function(e){return pkFmtDate(e.date);});
+        var aMin=aDates.reduce(function(a,b){return a<b?a:b;}), aMax=aDates.reduce(function(a,b){return a>b?a:b;});
+        var py=function(d){return d.replace(/^\d{4}/,String(new Date().getFullYear()-1));};
+        var aUrl='https://archive-api.open-meteo.com/v1/archive?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date='+py(aMin)+'&end_date='+py(aMax)+'&timezone=auto';
+        var ar=await fetch(aUrl), ad=await ar.json();
+        if(ad.daily&&ad.daily.time) ad.daily.time.forEach(function(t,i){
+          // 작년 날짜를 올해로 매핑
+          var thisYear=t.replace(/^\d{4}/,String(new Date().getFullYear()));
+          wm[thisYear]={hi:Math.round(ad.daily.temperature_2m_max[i]),lo:Math.round(ad.daily.temperature_2m_min[i]),code:ad.daily.weathercode[i]};
+        });
+      }
+      entries.forEach(function(e){
+        var ds=pkFmtDate(e.date), wx=wm[ds];
         var el=document.getElementById('pk-wx-'+e.idx); if(!el||!wx) return;
         var info=pkWxInfo(wx.code);
         el.innerHTML='<span class="material-symbols-outlined '+info.cls+' mb-0.5">'+info.icon+'</span><span class="text-[11px] font-semibold text-slate-400">'+wx.hi+'°/'+wx.lo+'°</span>';
