@@ -7036,54 +7036,72 @@
   }
 
   // 인라인 셀 편집
+  var _matrixSaving = false;
+  function _matrixSaveAndRender(si, month, field, val) {
+    if (_matrixSaving) return;
+    _matrixSaving = true;
+    var data = getSeriesData();
+    var s = data[si];
+    if (!s) { _matrixSaving = false; return; }
+    if (!s.monthly) s.monthly = {};
+    var mKey = String(month);
+    if (!s.monthly[mKey]) s.monthly[mKey] = {eps:'',rev:0,target:0};
+    if (field === 'eps') {
+      s.monthly[mKey].eps = val;
+    } else if (field === 'rev') {
+      s.monthly[mKey].rev = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
+    } else {
+      s.monthly[mKey].target = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
+    }
+    if (!s.monthly[mKey].eps && !s.monthly[mKey].rev && !s.monthly[mKey].target) delete s.monthly[mKey];
+    saveSeriesData(data);
+    setTimeout(function() {
+      _matrixSaving = false;
+      renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    }, 10);
+  }
+
   function inlineEditCell(td, si, month, field) {
     if (td.querySelector('input')) return;
     var data = getSeriesData();
     var s = data[si];
-    if (!s.monthly[month]) s.monthly[month] = {eps:'',rev:0,target:0};
-    var curVal = field === 'rev' ? (s.monthly[month].rev||0) : field === 'target' ? (s.monthly[month].target||0) : (s.monthly[month].eps||'');
-    var displayVal = field === 'eps' ? curVal : (curVal || '');
-    var origHtml = td.innerHTML;
-    var saved = false;
+    if (!s) return;
+    var mKey = String(month);
+    var mData = s.monthly && s.monthly[mKey];
+    var curVal = '';
+    if (mData) {
+      if (field === 'rev') curVal = mData.rev || '';
+      else if (field === 'target') curVal = mData.target || '';
+      else curVal = mData.eps || '';
+    }
+    var origText = td.textContent;
 
     var input = document.createElement('input');
     input.type = 'text';
-    input.value = displayVal;
+    input.value = curVal;
     input.className = 'w-full text-center text-[10px] border border-indigo-300 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-indigo-400 bg-white';
     input.style.minWidth = '30px';
-    td.innerHTML = '';
+    td.textContent = '';
     td.appendChild(input);
     input.focus();
     input.select();
 
-    function save() {
-      if (saved) return;
-      saved = true;
-      var val = input.value.trim();
-      var data2 = getSeriesData();
-      var s2 = data2[si];
-      if (!s2.monthly[month]) s2.monthly[month] = {eps:'',rev:0,target:0};
-      if (field === 'eps') {
-        s2.monthly[month].eps = val;
-      } else if (field === 'rev') {
-        s2.monthly[month].rev = parseInt(val.replace(/,/g,''))||0;
+    var done = false;
+    function finish(doSave) {
+      if (done) return;
+      done = true;
+      if (doSave) {
+        _matrixSaveAndRender(si, month, field, input.value.trim());
       } else {
-        s2.monthly[month].target = parseInt(val.replace(/,/g,''))||0;
+        td.textContent = origText;
       }
-      if (!s2.monthly[month].eps && !s2.monthly[month].rev && !s2.monthly[month].target) delete s2.monthly[month];
-      saveSeriesData(data2);
-      setTimeout(function() {
-        renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
-      }, 0);
     }
 
-    function cancel() { if (saved) return; saved = true; td.innerHTML = origHtml; }
-
     input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { e.preventDefault(); save(); }
-      if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+      if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+      if (e.key === 'Escape') { e.preventDefault(); finish(false); }
     });
-    input.addEventListener('blur', function() { save(); });
+    input.addEventListener('blur', function() { finish(true); });
   }
 
   function editMatrixCell(si, month, td) {
