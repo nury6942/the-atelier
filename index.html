@@ -3354,6 +3354,7 @@
     document.getElementById('journey-empty-state').style.display = 'none';
     document.getElementById('journey-content').style.display = 'block';
     await seedTripDefaults();
+    renderCityCards();
     renderTripHeader();
     renderDayView();
     renderJourneyTransport();
@@ -4294,7 +4295,25 @@
         citiesData.push(saved);
       }
       citiesData.sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
-      renderCityCards();
+    } else {
+      // 기존 도시에 날짜/설명 없으면 CITY_DEFAULTS에서 백필
+      var needsRender = false;
+      citiesData.forEach(function(city) {
+        var def = CITY_DEFAULTS.find(function(d){ return d.name === city.name; });
+        if (!def) return;
+        var updates = {};
+        if (!city.start_date && def.start_date) { city.start_date = def.start_date; updates.start_date = def.start_date; }
+        if (!city.end_date && def.end_date) { city.end_date = def.end_date; updates.end_date = def.end_date; }
+        if (!city.desc && def.desc) { city.desc = def.desc; updates.desc = def.desc; }
+        if (!city.nights && def.start_date && def.end_date) {
+          city.nights = Math.max(0, Math.round((new Date(def.end_date) - new Date(def.start_date)) / (1000*60*60*24)));
+          updates.nights = city.nights;
+        }
+        if (Object.keys(updates).length > 0 && city._id) {
+          needsRender = true;
+          fbUpdate('trip_cities', city._id, updates).catch(function(){});
+        }
+      });
     }
 
     // 일정 시드
