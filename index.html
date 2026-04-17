@@ -3684,16 +3684,6 @@
       }
     }
 
-    // 기념품 시드
-    var souvenirs = journeyData.filter(function(d){ return d.type === '기념품'; });
-    if (souvenirs.length === 0) {
-      for (var k = 0; k < SOUVENIR_DEFAULTS.length; k++) {
-        var d = SOUVENIR_DEFAULTS[k];
-        var obj3 = { trip_id: currentTripId, type: '기념품', title: d.title, description: d.description, city: d.city, amount: d.amount, status: '' };
-        var saved3 = await fbAdd('journey', obj3);
-        journeyData.push(saved3);
-      }
-    }
   }
 
   function renderJourneyFlights() {
@@ -3733,13 +3723,40 @@
   }
 
   function renderJourneySouvenir() {
-    var items = journeyData.filter(function(d){ return d.type === '기념품'; });
+    var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
     var tbody = document.getElementById('journey-souvenir-list');
-    if (items.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-xs text-slate-400 text-center">기념품을 추가해봐!</td></tr>';
+
+    // 하드코딩 기본 기념품 (해당 여행일 때만)
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    var defaults = (trip && trip.name === SEED_TRIP_NAME) ? SOUVENIR_DEFAULTS : [];
+
+    // Firebase 기념품의 key set (중복 방지)
+    var fbKeys = {};
+    fbItems.forEach(function(it){ fbKeys[(it.title||'')+'|'+(it.description||'')] = true; });
+
+    // 기본값 중 Firebase에 없는 것만 추가 표시
+    var defaultRows = defaults.filter(function(d){ return !fbKeys[d.title+'|'+d.description]; });
+
+    if (fbItems.length === 0 && defaultRows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">기념품을 추가해봐!</td></tr>';
       return;
     }
-    tbody.innerHTML = items.map(function(item) {
+
+    var html = '';
+
+    // 하드코딩 기본값 렌더링
+    html += defaultRows.map(function(d) {
+      return '<tr class="hover:bg-indigo-50/20 transition-colors">' +
+        '<td class="px-5 py-3 text-xs font-bold text-indigo-700">' + d.title + '</td>' +
+        '<td class="px-5 py-3 text-sm text-slate-700">' + d.description + '</td>' +
+        '<td class="px-5 py-3 text-xs text-slate-400">' + d.city + '</td>' +
+        '<td class="px-5 py-3 text-sm text-slate-500">€' + d.amount + '</td>' +
+        '<td class="px-5 py-3 text-right"><input type="checkbox" disabled class="h-4 w-4 rounded text-indigo-600 opacity-50"/></td>' +
+        '<td class="px-5 py-3"></td></tr>';
+    }).join('');
+
+    // Firebase 기념품 렌더링
+    html += fbItems.map(function(item) {
       var realIdx = journeyData.indexOf(item);
       var checked = item.status === '완료';
       return '<tr class="hover:bg-indigo-50/20 transition-colors group ' + (checked?'opacity-60':'') + '">' +
@@ -3754,6 +3771,8 @@
         '</div></td>' +
         '</tr>';
     }).join('');
+
+    tbody.innerHTML = html;
   }
 
   function updateJourneyCost() {
