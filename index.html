@@ -7594,11 +7594,11 @@
         if (tableWrap) { tableWrap.style.display = 'block'; renderIncomeTable(); }
       }
       updateIncomeStats();
-    } catch(err) {
-      console.error(err);
-      if (loadingEl) loadingEl.innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
-      // 에러나도 Matrix/Calendar는 렌더링
       renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal();
+    } catch(err) {
+      console.error('Income load error:', err);
+      if (loadingEl) loadingEl.style.display = 'none';
+      try { updateIncomeStats(); renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); } catch(e2){ console.error('Income render error:', e2); }
     }
   }
 
@@ -7653,6 +7653,8 @@
     if (totalEl) totalEl.textContent = '₩' + total.toLocaleString('ko-KR');
     var avgEl = document.getElementById('income-avg');
     if (avgEl) avgEl.textContent = '₩' + avg.toLocaleString('ko-KR');
+    var annualGoal = 5250000;
+    var pct = annualGoal > 0 ? Math.min(100, Math.round(total / annualGoal * 100)) : 0;
     var progBar = document.getElementById('income-progress-bar');
     if (progBar) progBar.style.width = pct + '%';
     var progPct = document.getElementById('income-progress-pct');
