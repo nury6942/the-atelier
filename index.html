@@ -3598,6 +3598,20 @@
 
   function saveLodgingData(data) { localStorage.setItem(LS_LODGING_KEY, JSON.stringify(data)); }
 
+  function shortDate(d) {
+    if (!d) return '—';
+    return d.replace(/^20(\d{2})-/, '$1/').replace(/-/g, '/');
+  }
+
+  function toggleLodgingCancel(idx) {
+    var data = getLodgingData();
+    var item = data[idx];
+    var current = item.cancel_override !== undefined ? item.cancel_override : (item.cancel_date >= new Date().toISOString().split('T')[0]);
+    item.cancel_override = !current;
+    saveLodgingData(data);
+    renderJourneyLodging();
+  }
+
   function deleteLodgingLocal(idx) {
     if (!confirm('이 숙소를 삭제할까요?')) return;
     var data = getLodgingData(); data.splice(idx, 1); saveLodgingData(data); renderJourneyLodging();
@@ -3674,21 +3688,20 @@
     // 시드 여행: localStorage 기반
     var data = getLodgingData();
     if (data.length === 0) { container.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>'; return; }
-    var today = new Date().toISOString().split('T')[0];
     container.innerHTML = data.map(function(d, idx) {
-      var cancelOk = d.cancel_date >= today;
-      var cancelCls = cancelOk ? 'text-teal-600 bg-teal-50 border-teal-200' : 'text-rose-600 bg-rose-50 border-rose-200';
+      var cancelOk = d.cancel_override !== undefined ? d.cancel_override : (d.cancel_date >= new Date().toISOString().split('T')[0]);
+      var cancelCls = cancelOk ? 'text-teal-600 bg-teal-50 border-teal-200 cursor-pointer hover:opacity-80' : 'text-rose-600 bg-rose-50 border-rose-200 cursor-pointer hover:opacity-80';
       var typeCls = d.type.indexOf('Airbnb') >= 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-blue-600 bg-blue-50 border-blue-200';
       return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
         '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
         '<td class="px-4 py-3 text-sm font-bold text-slate-800">' + d.title + '</td>' +
         '<td class="px-4 py-3"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + d.type + '</span></td>' +
         '<td class="px-4 py-3 text-xs text-slate-500">' + (d.phone||'—') + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-700 font-semibold">' + d.date + ' ' + d.checkin + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-700 font-semibold">' + d.checkout_date + ' ' + d.checkout + '</td>' +
-        '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span>' +
-        '<p class="text-[10px] text-slate-400 mt-0.5">~' + d.cancel_date + '</p></td>' +
-        '<td class="px-4 py-3 text-right font-bold text-sm text-indigo-600">' + d.price + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-600">' + shortDate(d.date) + ' ' + d.checkin + '</td>' +
+        '<td class="px-4 py-3 text-xs text-slate-600">' + shortDate(d.checkout_date) + ' ' + d.checkout + '</td>' +
+        '<td class="px-4 py-3"><span onclick="toggleLodgingCancel(' + idx + ')" class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full transition-all ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span>' +
+        '<p class="text-[10px] text-slate-400 mt-0.5">~' + shortDate(d.cancel_date) + '</p></td>' +
+        '<td class="px-4 py-3 text-right text-xs text-slate-600">' + d.price + '</td>' +
         '<td class="px-4 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
         '<button onclick="openLodgingEditModal(' + idx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
