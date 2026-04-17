@@ -3806,15 +3806,14 @@
       var cancelCls = cancelOk ? 'text-teal-600 bg-teal-50 border-teal-200 cursor-pointer hover:opacity-80' : 'text-rose-600 bg-rose-50 border-rose-200 cursor-pointer hover:opacity-80';
       var typeCls = d.type.indexOf('Airbnb') >= 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-blue-600 bg-blue-50 border-blue-200';
       return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
-        '<td class="px-4 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
-        '<td class="px-4 py-3 text-sm font-bold text-slate-800">' + d.title + '</td>' +
-        '<td class="px-4 py-3"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + d.type + '</span></td>' +
-        '<td class="px-4 py-3 text-xs text-slate-500">' + (d.phone||'—') + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-600">' + shortDate(d.date) + ' ' + d.checkin + '</td>' +
-        '<td class="px-4 py-3 text-xs text-slate-600">' + shortDate(d.checkout_date) + ' ' + d.checkout + '</td>' +
-        '<td class="px-4 py-3"><span onclick="toggleLodgingCancel(' + idx + ')" class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full transition-all ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span>' +
-        '<p class="text-[10px] text-slate-400 mt-0.5">~' + shortDate(d.cancel_date) + '</p></td>' +
-        '<td class="px-4 py-3 text-right text-xs text-slate-600">' + d.price + '</td>' +
+        '<td class="px-3 py-3 whitespace-nowrap"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
+        '<td class="px-3 py-3 text-xs font-bold text-slate-800">' + d.title + '</td>' +
+        '<td class="px-3 py-3 whitespace-nowrap"><span class="text-[9px] font-bold px-2 py-0.5 border rounded-full ' + typeCls + '">' + d.type + '</span></td>' +
+        '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (d.phone||'—') + '</td>' +
+        '<td class="px-3 py-3 text-xs whitespace-nowrap"><span class="text-slate-500">' + shortDate(d.date) + '</span> <span class="font-bold text-indigo-600">' + d.checkin + '</span></td>' +
+        '<td class="px-3 py-3 text-xs whitespace-nowrap"><span class="text-slate-500">' + shortDate(d.checkout_date) + '</span> <span class="font-bold text-indigo-600">' + d.checkout + '</span></td>' +
+        '<td class="px-3 py-3 whitespace-nowrap"><span onclick="toggleLodgingCancel(' + idx + ')" class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full transition-all ' + cancelCls + '">' + (cancelOk?'가능':'불가') + '</span> <span class="text-[10px] text-slate-400">~' + shortDate(d.cancel_date) + '</span></td>' +
+        '<td class="px-3 py-3 text-right text-xs text-slate-600 whitespace-nowrap">' + d.price + '</td>' +
         '<td class="px-4 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
         '<button onclick="openLodgingEditModal(' + idx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
