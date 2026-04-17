@@ -673,33 +673,36 @@
           <!-- 오른쪽 -->
           <div class="col-span-8 space-y-8">
 
-            <!-- 도시 간 이동 수단 -->
+            <!-- 1. 항공편 -->
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
-                <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
-                <button onclick="openJourneyModal('이동수단')" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
-                  <span class="material-symbols-outlined text-sm">add</span> 이동 추가
+                <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
+                <button onclick="openJourneyModal('항공편')" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-sm">add</span> 항공편 추가
                 </button>
               </div>
-              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3">
+              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm mx-3 mb-3">
                 <table class="w-full text-left border-collapse">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">유형</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜/시간</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">상태</th>
-                      <th class="px-5 py-2.5 w-12"></th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">항공사</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">편명</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">출발</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도착</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">비행시간</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">수하물</th>
+                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
                     </tr>
                   </thead>
-                  <tbody id="journey-transport-list" class="bg-white divide-y divide-slate-50 text-sm">
-                    <tr><td colspan="5" class="px-5 py-4 text-xs text-slate-400 text-center">이동 수단을 추가해봐!</td></tr>
-                  </tbody>
+                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-sm"></tbody>
                 </table>
               </div>
+              <div id="journey-flight-total" class="mt-4 flex justify-end"></div>
             </section>
 
-            <!-- 숙소 정보 -->
+            <!-- 2. 숙소 정보 -->
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
@@ -729,36 +732,33 @@
               </div>
             </section>
 
-            <!-- 항공편 -->
+            <!-- 3. 도시 간 이동 수단 -->
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
-                <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
-                <button onclick="openJourneyModal('항공편')" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
-                  <span class="material-symbols-outlined text-sm">add</span> 항공편 추가
+                <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
+                <button onclick="openJourneyModal('이동수단')" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-sm">add</span> 이동 추가
                 </button>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm mx-3 mb-3">
+              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3">
                 <table class="w-full text-left border-collapse">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">항공사</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">편명</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">출발</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도착</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">비행시간</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">수하물</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
+                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">유형</th>
+                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
+                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜/시간</th>
+                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">상태</th>
+                      <th class="px-5 py-2.5 w-12"></th>
                     </tr>
                   </thead>
-                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-sm"></tbody>
+                  <tbody id="journey-transport-list" class="bg-white divide-y divide-slate-50 text-sm">
+                    <tr><td colspan="5" class="px-5 py-4 text-xs text-slate-400 text-center">이동 수단을 추가해봐!</td></tr>
+                  </tbody>
                 </table>
               </div>
-              <div id="journey-flight-total" class="mt-4 flex justify-end"></div>
             </section>
 
-            <!-- 기념품 체크리스트 -->
+            <!-- 4. 기념품 체크리스트 -->
             <section class="bg-indigo-50/40 p-5 rounded-3xl border border-indigo-200 shadow-sm">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">기념품 체크리스트</h3>
