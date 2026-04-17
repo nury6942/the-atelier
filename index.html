@@ -59,6 +59,7 @@
     .no-scrollbar::-webkit-scrollbar,.hide-scrollbar::-webkit-scrollbar{display:none}
     .fixed-input-row input,.fixed-input-row select{border-radius:0;border-top:0;border-left:0;border-right:0;}
     .fixed-input-row select{background:transparent;cursor:pointer;}
+    .fixed-input-row input:focus,.fixed-input-row select:focus{background:rgba(107,56,212,0.06);}
     .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     .gradient-primary{background:linear-gradient(135deg,#6366f1 0%,#a855f7 100%)}
     .gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
@@ -4121,13 +4122,13 @@
   }
 
   // ===== 고정 인라인 입력 행 =====
-  var _ic = 'border-0 border-b border-slate-200 bg-transparent px-1 py-1 text-[10px] outline-none w-full placeholder:text-slate-300 placeholder:text-[9px] focus:border-indigo-500 transition-colors';
+  var _ic = 'border-0 border-b border-slate-300 bg-transparent px-1 py-1 text-[10px] outline-none w-full placeholder:text-indigo-400/60 placeholder:text-[9px] placeholder:font-medium focus:border-indigo-500 transition-colors';
 
   function _appendFixedRow(tbodyId, html) {
     var tbody = document.getElementById(tbodyId); if(!tbody) return;
     var tr = document.createElement('tr');
     tr.className = 'fixed-input-row';
-    tr.style.cssText = 'background:rgba(107,56,212,0.04);';
+    tr.style.cssText = 'background:linear-gradient(135deg,rgba(107,56,212,0.08) 0%,rgba(99,102,241,0.12) 100%);';
     tr.innerHTML = html;
     tbody.appendChild(tr);
   }
