@@ -8852,7 +8852,10 @@
 
   function pkRenderProgress() {
     var total=0, checked=0;
+    // 카테고리 체크리스트
     pkData.forEach(function(c){ (c.items||[]).forEach(function(it){ total++; if(it.checked) checked++; }); });
+    // Daily Outfit Planner 아이템
+    pkOutfits.forEach(function(o){ (o.items||[]).forEach(function(it){ total++; if(it.checked) checked++; }); });
     var pct = total>0 ? Math.round(checked/total*100) : 0;
     document.getElementById('pk-progress-pct').innerHTML = pct+'% <span class="text-lg font-medium text-slate-400">Complete</span>';
     document.getElementById('pk-progress-count').textContent = checked+' of '+total+' items packed';
@@ -8960,7 +8963,7 @@
       var saved = await fbAdd('outfits', obj);
       pkOutfits.push(saved);
     }
-    pkRenderDaily();
+    pkRenderDaily(); pkRenderProgress();
   }
 
   async function pkToggleOutfit(dateStr, ii, checked) {
@@ -8968,7 +8971,7 @@
     if (!outfit) return;
     outfit.items[ii].checked = checked;
     await fbUpdate('outfits', outfit._id, {items:outfit.items});
-    pkRenderDaily();
+    pkRenderDaily(); pkRenderProgress();
   }
 
   async function pkDeleteOutfitItem(dateStr, ii) {
@@ -8976,7 +8979,7 @@
     if (!outfit) return;
     outfit.items.splice(ii, 1);
     await fbUpdate('outfits', outfit._id, {items:outfit.items});
-    pkRenderDaily();
+    pkRenderDaily(); pkRenderProgress();
   }
 
   async function pkFetchWeather(cityName, entries) {
