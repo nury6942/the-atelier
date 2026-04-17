@@ -7962,9 +7962,14 @@
     var entryCountEl = document.getElementById('income-entry-count');
     if (entryCountEl) entryCountEl.textContent = monthCount + '개월 데이터';
 
-    // Update active series count from Matrix
+    // Update active series count from Matrix (수익이 1개라도 입력된 시리즈)
+    var activeSeries = series.filter(function(s) {
+      if (!s.monthly) return false;
+      for (var k in s.monthly) { if (s.monthly[k].rev > 0) return true; }
+      return false;
+    });
     var seriesCountEl = document.getElementById('income-series-count');
-    if (seriesCountEl) seriesCountEl.textContent = series.length > 0 ? String(series.length).padStart(2, '0') : '—';
+    if (seriesCountEl) seriesCountEl.textContent = activeSeries.length > 0 ? String(activeSeries.length).padStart(2, '0') : '—';
 
     // Quarterly breakdown
     const qTotals = {1:0, 2:0, 3:0, 4:0};
@@ -8349,10 +8354,42 @@
     }
 
     input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { e.preventDefault(); finish(true); }
-      if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      if (e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); finish(true); moveCellFocus(si, month, field, 0, 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); finish(true); moveCellFocus(si, month, field, 0, -1); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); finish(true); moveCellFocus(si, month, field, 1, 0); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); finish(true); moveCellFocus(si, month, field, -1, 0); }
+      else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      else if (e.key === 'Tab') { e.preventDefault(); finish(true); moveCellFocus(si, month, field, 0, e.shiftKey ? -1 : 1); }
     });
     input.addEventListener('blur', function() { finish(true); });
+  }
+
+  function moveCellFocus(si, month, field, rowDelta, colDelta) {
+    // 행 이동: 같은 시리즈 내에서 eps→target→rev 또는 시리즈 간
+    var fields = ['eps','target','rev'];
+    var fi = fields.indexOf(field);
+    var newMonth = month + colDelta;
+    var newFi = fi;
+    var newSi = si;
+
+    if (colDelta !== 0) {
+      if (newMonth > 11) { newMonth = 0; newFi++; if (newFi > 2) { newFi = 0; newSi++; } }
+      else if (newMonth < 0) { newMonth = 11; newFi--; if (newFi < 0) { newFi = 2; newSi--; } }
+    }
+    if (rowDelta !== 0) {
+      newFi += rowDelta;
+      if (newFi > 2) { newFi = 0; newSi++; }
+      else if (newFi < 0) { newFi = 2; newSi--; }
+    }
+
+    var data = getSeriesData();
+    if (newSi < 0 || newSi >= data.length) return;
+    var newField = fields[newFi];
+
+    setTimeout(function() {
+      var nextTd = document.querySelector('td[data-si="'+newSi+'"][data-month="'+newMonth+'"][data-edit="'+newField+'"]');
+      if (nextTd) nextTd.click();
+    }, 50);
   }
 
   // ===== Monthly Scheduler =====
