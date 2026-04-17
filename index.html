@@ -740,11 +740,14 @@
                 <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:25%">유형</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:30%">루트</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:25%">날짜/시간</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:15%">상태</th>
-                      <th class="px-3 py-2" style="width:5%"></th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:22%">유형</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:25%">루트</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:10%">날짜</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:8%">출발</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:8%">도착</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:10%">가격</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:12%">상태</th>
+                      <th class="px-2 py-2" style="width:5%"></th>
                     </tr>
                   </thead>
                   <tbody id="journey-transport-list" class="bg-white divide-y divide-slate-50 text-xs">
@@ -3659,14 +3662,14 @@
     var statusCls = status==='확정' ? 'bg-indigo-100 text-indigo-700 border-indigo-300' :
                     status==='환불 가능' ? 'bg-teal-100 text-teal-700 border-teal-300' :
                     'bg-amber-100 text-amber-800 border-amber-300';
-    var dateTime = '';
-    if (item.date) dateTime = shortDate(item.date) + (item.time ? ' '+item.time : '');
-    if (item.arrive) dateTime += ' → ' + item.arrive;
     return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
-      '<td class="px-3 py-2"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-indigo-400" style="font-size:13px">directions_railway</span><span class="font-bold text-xs text-slate-800">' + (item.title||'') + '</span></div></td>' +
-      '<td class="px-3 py-2 text-xs text-slate-600">' + (item.description||'—') + (item.seat ? ' <span class="text-[9px] text-slate-400">['+item.seat+']</span>' : '') + '</td>' +
-      '<td class="px-3 py-2 text-xs text-slate-500">' + (dateTime||'—') + (item.amount ? ' <span class="font-semibold text-slate-700">'+item.amount+'</span>' : '') + '</td>' +
-      '<td class="px-3 py-2 text-right"><span class="px-2 py-0.5 rounded-full text-[9px] font-black border ' + statusCls + '">' + (status||'—') + '</span></td>' +
+      '<td class="px-2 py-2"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-indigo-400" style="font-size:13px">directions_railway</span><span class="font-bold text-xs text-slate-800">' + (item.title||'') + '</span></div></td>' +
+      '<td class="px-2 py-2 text-xs text-slate-600">' + (item.description||'—') + (item.seat ? ' <span class="text-[9px] text-slate-400">['+item.seat+']</span>' : '') + '</td>' +
+      '<td class="px-2 py-2 text-xs text-slate-500">' + (item.date ? shortDate(item.date) : '—') + '</td>' +
+      '<td class="px-2 py-2 text-xs font-bold text-indigo-600">' + (item.time||'—') + '</td>' +
+      '<td class="px-2 py-2 text-xs font-bold text-indigo-600">' + (item.arrive||'—') + '</td>' +
+      '<td class="px-2 py-2 text-xs text-right font-semibold text-slate-700">' + (item.amount||'—') + '</td>' +
+      '<td class="px-2 py-2 text-right"><span class="px-2 py-0.5 rounded-full text-[9px] font-black border ' + statusCls + '">' + (status||'—') + '</span></td>' +
       actionHtml + '</tr>';
   }
 
@@ -4196,8 +4199,11 @@
     _appendFixedRow('journey-transport-list',
       '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="수단명" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
       '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
-      '<td class="px-2 py-1.5"><div class="flex gap-1"><input data-f="date" type="date" class="'+_ic+'"/><input data-f="time" type="text" placeholder="시간" class="'+_ic+'" style="width:40%"'+_onEnter('이동수단')+'/></div></td>'+
-      '<td class="px-2 py-1.5 text-right"><select data-f="status" class="'+_ic+'"><option>확정</option><option>대기 중</option></select></td>'+
+      '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="time" type="text" placeholder="출발" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="arrive" type="text" placeholder="도착" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right"'+_onEnter('이동수단')+'/></td>'+
+      '<td class="px-2 py-1.5 text-right"><select data-f="status" class="'+_ic+'"><option>확정</option><option>대기 중</option><option>환불 가능</option></select></td>'+
       _actCol('이동수단')+'<input type="hidden" data-f="type" value="이동수단"/>');
   }
 
