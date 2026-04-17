@@ -1067,10 +1067,10 @@
             <p id="finance-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
           <div class="flex gap-2">
-            <button onclick="openFinanceModal('입금')" class="bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-200 active:scale-95 transition-all">
+            <button onclick="addFinanceInlineRow('입금')" class="bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-200 active:scale-95 transition-all">
               <span class="material-symbols-outlined text-sm">arrow_downward</span> 입금 추가
             </button>
-            <button onclick="openFinanceModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <button onclick="addFinanceInlineRow()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 지출 추가
             </button>
           </div>
@@ -5112,6 +5112,65 @@
       closeFinanceModal();
     } catch(err){alert('저장에 실패했어요.');}
     finally{btn.textContent='저장';btn.disabled=false;}
+  }
+
+  function addFinanceInlineRow(type) {
+    // 테이블이 숨겨져 있으면 표시
+    document.getElementById('finance-table-wrap').style.display = 'block';
+    document.getElementById('finance-empty').style.display = 'none';
+    // 이미 인라인 행이 있으면 제거
+    var existing = document.getElementById('finance-inline-row');
+    if (existing) existing.remove();
+
+    var isDeposit = type === '입금';
+    var tbody = document.getElementById('finance-tbody');
+    var tr = document.createElement('tr');
+    tr.id = 'finance-inline-row';
+    tr.className = 'bg-indigo-50/40';
+    var catOptions = isDeposit ? '<option value="입금" selected>입금</option>' :
+      ['이동','숙소','티켓','환전','보험','통신','식비','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    var tripOptions = financeTrips.map(function(t){ return '<option value="'+t.name+'">'+t.name+'</option>'; }).join('');
+    tr.innerHTML =
+      '<td class="px-4 py-2"><input id="fin-i-date" type="date" value="'+new Date().toISOString().split('T')[0]+'" class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-200"/></td>' +
+      '<td class="px-4 py-2"><input id="fin-i-desc" type="text" placeholder="'+(isDeposit?'입금':'내용 입력')+'" class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-200" onkeydown="if(event.key===\'Enter\')saveFinanceInline()"/></td>' +
+      '<td class="px-4 py-2"><select id="fin-i-cat" class="border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-200 bg-white">' + catOptions + '</select></td>' +
+      '<td class="px-4 py-2 text-right">' + (isDeposit ? '<input id="fin-i-amt" type="text" placeholder="금액" class="w-24 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-right outline-none focus:ring-2 focus:ring-indigo-200" onkeydown="if(event.key===\'Enter\')saveFinanceInline()"/>' : '') + '</td>' +
+      '<td class="px-4 py-2 text-right">' + (!isDeposit ? '<input id="fin-i-amt" type="text" placeholder="금액" class="w-24 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-right outline-none focus:ring-2 focus:ring-indigo-200" onkeydown="if(event.key===\'Enter\')saveFinanceInline()"/>' : '') + '</td>' +
+      '<td class="px-4 py-2 text-right text-xs text-slate-400">—</td>' +
+      '<td class="px-4 py-2 text-center"><div class="flex items-center justify-center gap-1">' +
+        '<input id="fin-i-trip" type="hidden" value="'+(currentFinanceTrip!=='all'?currentFinanceTrip:(financeTrips.length?financeTrips[0].name:''))+'"/>' +
+        '<button onclick="saveFinanceInline()" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">check</span></button>' +
+        '<button onclick="cancelFinanceInline()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><span class="material-symbols-outlined text-sm">close</span></button>' +
+      '</div></td>';
+    tbody.appendChild(tr);
+    // 스크롤 & 포커스
+    tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function(){ (document.getElementById(isDeposit?'fin-i-amt':'fin-i-desc')||{}).focus(); }, 100);
+  }
+
+  async function saveFinanceInline() {
+    var date = document.getElementById('fin-i-date').value;
+    var desc = document.getElementById('fin-i-desc').value.trim();
+    var cat = document.getElementById('fin-i-cat').value;
+    var amt = (document.getElementById('fin-i-amt').value||'').replace(/,/g,'');
+    var trip = document.getElementById('fin-i-trip').value;
+    if (!amt || !parseFloat(amt)) { alert('금액을 입력해줘!'); return; }
+    if (!desc && cat !== '입금') desc = cat;
+    if (cat === '입금') desc = desc || '입금';
+    var row = [date, desc, trip, cat, amt, 'KRW', ''];
+    try {
+      var saved = await fbAdd('finance', rowToObj('finance', row));
+      financeData.push(row.concat([saved._id]));
+      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+      cancelFinanceInline();
+      buildFinanceTripFilters();
+      filterFinanceByTrip(currentFinanceTrip);
+    } catch(err) { alert('저장에 실패했어요.'); }
+  }
+
+  function cancelFinanceInline() {
+    var el = document.getElementById('finance-inline-row');
+    if (el) el.remove();
   }
 
   function editFinanceRow(i){openFinanceModal(i);}
