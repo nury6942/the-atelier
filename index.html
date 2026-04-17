@@ -1865,26 +1865,19 @@
       </div>
 
       <!-- Fee Summary -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="mb-8">
         <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
           <h4 class="font-manrope font-bold text-slate-800 mb-4">수강료 관리</h4>
-          <div class="space-y-3">
-            <div class="flex justify-between items-center py-3 border-b border-slate-50">
+          <div class="flex gap-8">
+            <div class="flex justify-between items-center py-3 flex-1">
               <div><p class="text-sm font-bold text-slate-800" id="english-fee-month">이번 달</p><p class="text-[10px] text-slate-400 font-medium">수강료</p></div>
               <div class="text-right"><p id="english-fee-total" class="text-lg font-black text-slate-800">₩0</p></div>
             </div>
-            <div class="flex justify-between items-center py-3">
+            <div class="w-px bg-slate-100"></div>
+            <div class="flex justify-between items-center py-3 flex-1">
               <div><p class="text-sm font-bold text-slate-800">연간 누적</p><p class="text-[10px] text-slate-400 font-medium">총 수강료</p></div>
               <div class="text-right"><p id="english-fee-annual" class="text-lg font-black text-indigo-600">₩0</p></div>
             </div>
-          </div>
-        </div>
-        <div class="section-tint-blue p-6 rounded-2xl border border-blue-100">
-          <h4 class="font-manrope font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-secondary">rule</span> 다음 수업
-          </h4>
-          <div id="english-next-lesson" class="space-y-2">
-            <p class="text-sm text-slate-500">예정된 수업이 없어요</p>
           </div>
         </div>
       </div>
@@ -9338,18 +9331,6 @@
       }
     });
 
-    // Next scheduled lesson
-    const nextEl = document.getElementById('english-next-lesson');
-    if (scheduled.length > 0) {
-      nextEl.innerHTML = scheduled.map(function(r){
-        return '<div class="bg-white rounded-xl p-3 border border-blue-100">' +
-          '<p class="text-sm font-bold text-slate-800">' + (r[0]||'') + '</p>' +
-          '<p class="text-[10px] text-slate-400 mt-0.5">' + (r[1]||'날짜 미정') + '</p>' +
-          '</div>';
-      }).join('');
-    } else {
-      nextEl.innerHTML = '<p class="text-sm text-slate-400">예정된 수업이 없어요</p>';
-    }
   }
 
   // 영어 수강료 입력 시 실시간 GBP→KRW 변환
