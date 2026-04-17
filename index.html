@@ -9242,20 +9242,21 @@
     openSessionDetail(dateId);
   }
 
-  function getQuarter(dateStr) {
+  function getTrimester(dateStr) {
     if (!dateStr) return null;
     var d = new Date(dateStr);
     if (isNaN(d.getTime())) return null;
     var m = d.getMonth(); // 0-based
-    var q = m < 3 ? 1 : m < 6 ? 2 : m < 9 ? 3 : 4;
-    return 'Q' + q + ' ' + d.getFullYear();
+    var t = m < 4 ? 1 : m < 8 ? 2 : 3;
+    return { key: 'T' + t + ' ' + d.getFullYear(), t: t, year: d.getFullYear() };
   }
 
   function renderEnglishTable() {
     const tbody = document.getElementById('english-tbody');
     tbody.innerHTML = '';
+    var colCount = 7;
 
-    // 날짜 오름차순 정렬 (원본 인덱스 보존)
+    // 날짜 오름차순 정렬
     var sorted = englishData.map(function(row, i) { return { row: row, origIdx: i }; });
     sorted.sort(function(a, b) {
       var da = a.row[1] || '', db = b.row[1] || '';
@@ -9263,50 +9264,80 @@
       return da.localeCompare(db);
     });
 
-    var prevQuarter = null;
-    var colCount = 7; // 테이블 컬럼 수
-
+    // 트라이메스터별 그룹화
+    var groups = [];
+    var curGroup = null;
     sorted.forEach(function(entry, displayIdx) {
-      var row = entry.row;
-      var i = entry.origIdx;
-      var status = row[2] || '';
-      var date = row[1] || '';
-      var sessionNum = displayIdx + 1; // 자동 넘버링
-
-      // 분기 구분 바
-      var quarter = getQuarter(date);
-      if (quarter && quarter !== prevQuarter) {
-        prevQuarter = quarter;
-        var dividerTr = document.createElement('tr');
-        dividerTr.innerHTML = '<td colspan="' + colCount + '" class="px-6 py-2 bg-indigo-50/60 border-t border-indigo-100"><span class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">' + quarter + '</span></td>';
-        tbody.appendChild(dividerTr);
+      var tri = getTrimester(entry.row[1]);
+      var key = tri ? tri.key : 'Unknown';
+      if (!curGroup || curGroup.key !== key) {
+        curGroup = { key: key, entries: [] };
+        groups.push(curGroup);
       }
+      curGroup.entries.push({ entry: entry, sessionNum: displayIdx + 1 });
+    });
 
-      function statusBtn(label, current) {
-        var isActive = current === label;
-        var cls = '';
-        if (label === '예정')  cls = isActive ? 'bg-slate-200 text-slate-700 border-slate-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-100';
-        if (label === '완료')  cls = isActive ? 'bg-indigo-100 text-indigo-700 border-indigo-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-indigo-50';
-        if (label === '취소')  cls = isActive ? 'bg-rose-100 text-rose-700 border-rose-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-rose-50';
-        return '<button onclick="setEnglishStatus(\'' + date + '\',\'' + label + '\')" class="px-2 py-0.5 rounded-full text-[9px] uppercase border transition-all ' + cls + '">' + label + '</button>';
-      }
-      var statusHtml = '<div class="flex gap-1">' + statusBtn('예정', status) + statusBtn('완료', status) + statusBtn('취소', status) + '</div>';
-      var rowCls = status === '취소' ? 'hover:bg-rose-50/30 opacity-50' : status === '완료' ? 'hover:bg-indigo-50/30' : 'hover:bg-slate-50/30';
-      const tr = document.createElement('tr');
-      tr.className = rowCls + ' transition-colors';
-      tr.innerHTML =
-        '<td class="px-6 py-4 font-bold text-slate-800' + (status==='취소'?' line-through':'') + '">' + sessionNum + '회차</td>' +
-        '<td class="px-6 py-4 text-slate-500 text-sm">' + (date||'—') + '</td>' +
-        '<td class="px-6 py-4">' + statusHtml + '</td>' +
-        '<td class="px-6 py-4">' + getReviewBtn(date) + '</td>' +
-        '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4] ? '£' + parseFloat(row[4].toString().replace(/[^0-9.]/g,'')).toFixed(0) : '—') + '</td>' +
-        '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
-        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
-        (row[6] === '__default__' ? '' :
-        '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>') +
-        '</div></td>';
-      tbody.appendChild(tr);
+    groups.forEach(function(group) {
+      if (group.entries.length === 0) return;
+
+      // 구간 시작 바
+      var headerTr = document.createElement('tr');
+      headerTr.innerHTML = '<td colspan="' + colCount + '" class="px-6 py-2 bg-indigo-50/60 border-t border-indigo-100"><span class="text-[11px] font-bold text-indigo-500 uppercase tracking-wider">' + group.key + '</span></td>';
+      tbody.appendChild(headerTr);
+
+      // 구간 수업료 합산
+      var trimesterFee = 0;
+      var sessionCount = 0;
+
+      group.entries.forEach(function(item) {
+        var row = item.entry.row;
+        var i = item.entry.origIdx;
+        var status = row[2] || '';
+        var date = row[1] || '';
+
+        // 수업료 합산 (취소 제외)
+        if (status !== '취소' && row[4]) {
+          var fee = parseFloat(row[4].toString().replace(/[^0-9.]/g, '')) || 0;
+          trimesterFee += fee;
+          sessionCount++;
+        }
+
+        function statusBtn(label, current) {
+          var isActive = current === label;
+          var cls = '';
+          if (label === '예정')  cls = isActive ? 'bg-slate-200 text-slate-700 border-slate-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-100';
+          if (label === '완료')  cls = isActive ? 'bg-indigo-100 text-indigo-700 border-indigo-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-indigo-50';
+          if (label === '취소')  cls = isActive ? 'bg-rose-100 text-rose-700 border-rose-300 font-black' : 'bg-white text-slate-400 border-slate-200 hover:bg-rose-50';
+          return '<button onclick="setEnglishStatus(\'' + date + '\',\'' + label + '\')" class="px-2 py-0.5 rounded-full text-[9px] uppercase border transition-all ' + cls + '">' + label + '</button>';
+        }
+        var statusHtml = '<div class="flex gap-1">' + statusBtn('예정', status) + statusBtn('완료', status) + statusBtn('취소', status) + '</div>';
+        var rowCls = status === '취소' ? 'hover:bg-rose-50/30 opacity-50' : status === '완료' ? 'hover:bg-indigo-50/30' : 'hover:bg-slate-50/30';
+        var tr = document.createElement('tr');
+        tr.className = rowCls + ' transition-colors';
+        tr.innerHTML =
+          '<td class="px-6 py-4 font-bold text-slate-800' + (status==='취소'?' line-through':'') + '">' + item.sessionNum + '회차</td>' +
+          '<td class="px-6 py-4 text-slate-500 text-sm">' + (date||'—') + '</td>' +
+          '<td class="px-6 py-4">' + statusHtml + '</td>' +
+          '<td class="px-6 py-4">' + getReviewBtn(date) + '</td>' +
+          '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4] ? '£' + parseFloat(row[4].toString().replace(/[^0-9.]/g,'')).toFixed(0) : '—') + '</td>' +
+          '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
+          '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+          (row[6] === '__default__' ? '' :
+          '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+          '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>') +
+          '</div></td>';
+        tbody.appendChild(tr);
+      });
+
+      // 구간 소계 행
+      var subtotalTr = document.createElement('tr');
+      subtotalTr.innerHTML = '<td class="px-6 py-2 text-[10px] font-bold text-indigo-400 uppercase tracking-wider" style="background:rgba(99,102,241,0.04);">' + group.key + ' Subtotal</td>' +
+        '<td style="background:rgba(99,102,241,0.04);"></td>' +
+        '<td style="background:rgba(99,102,241,0.04);"></td>' +
+        '<td class="px-6 py-2 text-[10px] text-slate-400" style="background:rgba(99,102,241,0.04);">' + sessionCount + ' sessions</td>' +
+        '<td class="px-6 py-2 text-right font-black text-indigo-600 text-sm" style="background:rgba(99,102,241,0.04);">£' + Math.round(trimesterFee) + '</td>' +
+        '<td style="background:rgba(99,102,241,0.04);"></td><td style="background:rgba(99,102,241,0.04);"></td>';
+      tbody.appendChild(subtotalTr);
     });
     document.getElementById('english-status').textContent = sorted.length + '개 수업';
   }
