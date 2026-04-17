@@ -7109,15 +7109,17 @@
     var mData = s.monthly && s.monthly[mKey];
     var curVal = '';
     if (mData) {
-      if (field === 'rev') curVal = mData.rev || '';
-      else if (field === 'target') curVal = mData.target || '';
+      if (field === 'rev') curVal = mData.rev ? Math.round(mData.rev/10000) : '';
+      else if (field === 'target') curVal = mData.target ? Math.round(mData.target/10000) : '';
       else curVal = mData.eps || '';
     }
     var origText = td.textContent;
+    var isNumField = (field === 'rev' || field === 'target');
 
     var input = document.createElement('input');
     input.type = 'text';
     input.value = curVal;
+    if (isNumField) input.placeholder = '만원 단위';
     input.className = 'w-full text-center text-[10px] border border-indigo-300 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-indigo-400 bg-white';
     input.style.minWidth = '30px';
     td.textContent = '';
@@ -7136,9 +7138,15 @@
         if (!s2) return;
         if (!s2.monthly) s2.monthly = {};
         if (!s2.monthly[mKey]) s2.monthly[mKey] = {eps:'',rev:0,target:0};
-        if (field === 'eps') s2.monthly[mKey].eps = val;
-        else if (field === 'rev') s2.monthly[mKey].rev = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
-        else s2.monthly[mKey].target = parseInt(String(val).replace(/[^0-9-]/g,''))||0;
+        if (field === 'eps') {
+          s2.monthly[mKey].eps = val;
+        } else if (field === 'rev') {
+          var numVal = parseFloat(String(val).replace(/[^0-9.-]/g,''))||0;
+          s2.monthly[mKey].rev = Math.round(numVal * 10000);
+        } else {
+          var numVal2 = parseFloat(String(val).replace(/[^0-9.-]/g,''))||0;
+          s2.monthly[mKey].target = Math.round(numVal2 * 10000);
+        }
         if (!s2.monthly[mKey].eps && !s2.monthly[mKey].rev && !s2.monthly[mKey].target) delete s2.monthly[mKey];
         saveSeriesData(data2);
         setTimeout(function() {
