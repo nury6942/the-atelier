@@ -1148,32 +1148,87 @@
 
     <!-- Lodging Edit Modal -->
     <div id="lodging-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-      <div class="bg-white rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden" style="animation: modalIn 0.2s ease;">
-        <div class="gradient-primary px-6 py-5">
-          <h3 class="text-lg font-bold text-white font-headline">숙소 수정</h3>
-        </div>
-        <div class="p-6 space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">도시</label><input id="lg-edit-city" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">유형</label><input id="lg-edit-type" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="Hotel / Airbnb"/></div>
+      <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 overflow-hidden relative">
+        <button onclick="closeLodgingEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+        <div class="p-6 md:p-8" style="background:#f3f4f5;">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+              <span class="material-symbols-outlined text-lg">edit_square</span>
+            </div>
+            <div>
+              <h4 class="font-headline text-base font-bold text-slate-900">숙소 수정</h4>
+              <p class="text-slate-500 text-[10px]">숙소 정보를 수정하세요</p>
+            </div>
           </div>
-          <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">숙소명</label><input id="lg-edit-title" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-          <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">전화번호</label><input id="lg-edit-phone" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-          <div class="grid grid-cols-2 gap-4">
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크인 날짜</label><input id="lg-edit-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크인 시간</label><input id="lg-edit-checkin" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="14:00"/></div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크아웃 날짜</label><input id="lg-edit-checkout-date" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">체크아웃 시간</label><input id="lg-edit-checkout" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="12:00"/></div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">무료취소 마감</label><input id="lg-edit-cancel" type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/></div>
-            <div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">가격</label><input id="lg-edit-price" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none" placeholder="₩769,515"/></div>
-          </div>
-          <div class="flex gap-3 pt-2">
-            <button onclick="closeLodgingEditModal()" class="flex-1 py-3 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
-            <button onclick="saveLodgingEdit()" class="flex-1 py-3 rounded-xl text-sm font-bold text-white gradient-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">save</span> 저장</button>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            <div>
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
+              <div class="relative">
+                <input id="lg-edit-city" type="text" placeholder="예: Prague" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
+              </div>
+            </div>
+            <div>
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="selectLgEditType('Hotel')" id="lg-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm">
+                  <span class="material-symbols-outlined text-sm">hotel</span> Hotel
+                </button>
+                <button type="button" onclick="selectLgEditType('Airbnb')" id="lg-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
+                  <span class="material-symbols-outlined text-sm">home</span> Airbnb
+                </button>
+              </div>
+              <input id="lg-edit-type" type="hidden" value="Hotel"/>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명</label>
+              <input id="lg-edit-title" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
+              <input id="lg-edit-address" type="text" placeholder="자동 입력됩니다" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+            </div>
+            <div>
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
+              <input id="lg-edit-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">1박 가격</label>
+                <div class="relative">
+                  <input id="lg-edit-price" type="text" placeholder="0" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
+                <input id="lg-edit-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+            </div>
+            <div>
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
+              <input id="lg-edit-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
+                <input id="lg-edit-checkin" type="text" placeholder="14:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
+                <input id="lg-edit-checkout" type="text" placeholder="12:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
+              <input id="lg-edit-cancel" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+            </div>
+            <div class="md:col-span-2 flex items-end gap-3 pt-2">
+              <button onclick="closeLodgingEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-white/50 rounded-2xl transition-colors">취소</button>
+              <button onclick="saveLodgingEdit()" class="flex-1 py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                <span class="material-symbols-outlined" style="font-size:18px">save</span> 저장
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -4173,12 +4228,27 @@
 
   var _editLodgingIdx = null;
 
+  var _lgEditType = 'Hotel';
+  function selectLgEditType(type) {
+    _lgEditType = type;
+    document.getElementById('lg-edit-type').value = type;
+    var h = document.getElementById('lg-edit-type-hotel');
+    var a = document.getElementById('lg-edit-type-airbnb');
+    if (type === 'Hotel') {
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
+    } else {
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm';
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
+    }
+  }
+
   function openLodgingEditModal(idx) {
     _editLodgingIdx = idx;
     var data = getLodgingData(); var item = data[idx];
     document.getElementById('lg-edit-city').value = item.city||'';
     document.getElementById('lg-edit-title').value = item.title||'';
-    document.getElementById('lg-edit-type').value = item.type||'';
+    document.getElementById('lg-edit-address').value = item.address||'';
     document.getElementById('lg-edit-phone').value = item.phone||'';
     document.getElementById('lg-edit-date').value = item.date||'';
     document.getElementById('lg-edit-checkin').value = item.checkin||'';
@@ -4186,6 +4256,9 @@
     document.getElementById('lg-edit-checkout').value = item.checkout||'';
     document.getElementById('lg-edit-cancel').value = item.cancel_date||'';
     document.getElementById('lg-edit-price').value = item.price||'';
+    // 유형 토글
+    var rawType = (item.type||'Hotel').replace(/\s*\(.*\)/,'');
+    selectLgEditType(rawType.indexOf('Airbnb')>=0 ? 'Airbnb' : 'Hotel');
     document.getElementById('lodging-edit-modal').style.cssText = 'display:flex!important';
   }
 
