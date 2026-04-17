@@ -1669,99 +1669,130 @@
   </div>
 
   <div id="page-income" class="page" style="display:none">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
-      <!-- Page Intro -->
-      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
-        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">크리에이티브 에디토리얼 프로젝트의 수익 성과 추적 — 연간 목표 ₩5.25M.</p>
-        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap">FY 2026 재정 예측</span>
-      </div>
+      <!-- Header Area — editorial style, no borders -->
+      <header class="flex justify-between items-end">
+        <div>
+          <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Annual Revenue</h2>
+          <p class="text-slate-500 text-sm mt-1 font-medium">크리에이티브 에디토리얼 프로젝트의 수익 성과 추적 — 연간 목표 ₩5.25M</p>
+        </div>
+        <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-indigo-600 rounded-full text-[0.65rem] font-bold uppercase tracking-wider">FY 2026</span>
+      </header>
 
-      <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div class="gradient-soft border border-indigo-200 p-6 rounded-2xl shadow-sm">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-800 mb-2 block font-manrope">연간 총 수입</span>
-          <h3 id="income-total" class="text-4xl font-extrabold text-indigo-950 font-headline">₩0</h3>
-          <p id="income-growth" class="text-xs text-indigo-700 font-bold mt-2 flex items-center gap-1">
-            <span class="material-symbols-outlined text-sm">trending_up</span> —
-          </p>
-        </div>
-        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 block font-manrope">월 평균 수입</span>
-          <h3 id="income-avg" class="text-4xl font-extrabold text-slate-800 font-headline">₩0</h3>
-          <p class="text-xs text-slate-500 font-semibold mt-2" id="income-entry-count">0개 항목</p>
-        </div>
-      </div>
-
-      <!-- 시리즈별 수입 -->
-      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden mb-8">
-        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-          <h4 class="font-manrope font-bold text-slate-800">시리즈별 수입</h4>
-          <p class="text-[10px] text-slate-400 mt-0.5">카테고리별 연간 총 수입 및 월 평균</p>
-        </div>
-        <div id="income-by-series" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="text-xs text-slate-400 col-span-full text-center py-4">데이터를 불러오는 중...</div>
-        </div>
-      </div>
-
-      <!-- 2026 수익 목표 -->
-      <div class="bg-indigo-50/50 p-6 rounded-2xl mb-8 border border-indigo-100">
-        <div class="flex justify-between items-center mb-4">
+      <!-- Summary Cards — 3 columns -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Revenue -->
+        <div class="bg-slate-50 p-6 rounded-2xl flex flex-col justify-between">
           <div>
-            <h4 class="font-manrope font-bold text-slate-800">2026 수익 목표</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5">분기별 목표 설정 및 달성률 추적</p>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 font-headline">연간 총 수입</p>
+            <h3 id="income-total" class="text-4xl font-black font-headline text-indigo-600 tracking-tighter">₩0</h3>
           </div>
-          <button onclick="openIncomeGoalModal()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
+          <div class="mt-4 flex items-center gap-2">
+            <p id="income-growth" class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">trending_up</span> —
+            </p>
+            <span class="text-[10px] text-slate-400 uppercase font-medium">vs 전월</span>
+          </div>
+        </div>
+        <!-- Monthly Average -->
+        <div class="bg-slate-50 p-6 rounded-2xl flex flex-col justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 font-headline">월 평균 수입</p>
+            <h3 id="income-avg" class="text-4xl font-black font-headline text-slate-800 tracking-tighter">₩0</h3>
+          </div>
+          <div class="mt-4">
+            <p class="text-[10px] text-slate-400 uppercase font-medium" id="income-entry-count">0개 항목</p>
+          </div>
+        </div>
+        <!-- Active Series -->
+        <div class="bg-slate-50 p-6 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+          <div class="relative z-10">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 font-headline">활성 시리즈</p>
+            <h3 class="text-4xl font-black font-headline text-slate-800 tracking-tighter" id="income-series-count">—</h3>
+          </div>
+          <div class="absolute right-0 bottom-0 p-4 opacity-[0.06] group-hover:opacity-[0.12] transition-opacity">
+            <span class="material-symbols-outlined text-6xl">auto_stories</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Series Performance — editorial card grid -->
+      <section>
+        <header class="mb-5 flex justify-between items-end">
+          <div>
+            <h3 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">시리즈별 수입</h3>
+            <p class="text-slate-400 text-xs mt-1 font-medium">카테고리별 연간 총 수입 및 월 평균</p>
+          </div>
+        </header>
+        <div id="income-by-series" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="text-xs text-slate-400 col-span-full text-center py-8">데이터를 불러오는 중...</div>
+        </div>
+      </section>
+
+      <!-- Revenue Goals -->
+      <section>
+        <header class="mb-5 flex justify-between items-center">
+          <div>
+            <h3 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">2026 수익 목표</h3>
+            <p class="text-slate-400 text-xs mt-1 font-medium">분기별 목표 설정 및 달성률 추적</p>
+          </div>
+          <button onclick="openIncomeGoalModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold font-headline flex items-center gap-1.5 hover:opacity-90 active:scale-95 transition-all">
             <span class="material-symbols-outlined text-sm">add</span> 목표 추가
           </button>
-        </div>
+        </header>
         <div id="income-goals-list" class="space-y-3">
-          <div class="text-xs text-slate-400 text-center py-4">목표를 추가해봐!</div>
+          <div class="text-xs text-slate-400 text-center py-8">목표를 추가해봐!</div>
         </div>
-      </div>
+      </section>
 
-      <!-- 수입 내역 Table -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+      <!-- Income History — editorial table -->
+      <section>
+        <header class="mb-5 flex justify-between items-center">
           <div>
-            <h4 class="font-manrope font-bold text-slate-800">수입 내역</h4>
-            <p id="income-table-status" class="text-[10px] text-slate-400 font-medium mt-0.5">Loading...</p>
+            <h3 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">수입 내역</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="material-symbols-outlined text-sm text-indigo-500" style="font-variation-settings:'wght' 700">sync</span>
+              <p id="income-table-status" class="text-slate-400 text-xs font-medium">Loading...</p>
+            </div>
           </div>
-          <button onclick="openIncomeModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+          <button onclick="openIncomeModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold font-headline flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
           </button>
-        </div>
+        </header>
 
-        <!-- Loading -->
-        <div id="income-loading" class="flex items-center justify-center py-12 text-slate-400">
-          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
-          <span class="text-sm">Google Sheets에서 불러오는 중...</span>
-        </div>
+        <div class="bg-white rounded-xl shadow-[0_12px_32px_-4px_rgba(45,51,53,0.08)] overflow-hidden border border-slate-100/15">
+          <!-- Loading -->
+          <div id="income-loading" class="flex items-center justify-center py-16 text-slate-400">
+            <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
+            <span class="text-sm font-medium">Google Sheets에서 불러오는 중...</span>
+          </div>
 
-        <!-- Table -->
-        <div id="income-table-wrap" style="display:none">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500">
-              <tr>
-                <th class="px-6 py-3 border-b border-slate-100">월</th>
-                <th class="px-6 py-3 border-b border-slate-100">작업 내용</th>
-                <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
-                <th class="px-6 py-3 border-b border-slate-100">상태</th>
-                <th class="px-6 py-3 border-b border-slate-100 text-right">Revenue (KRW)</th>
-                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
-              </tr>
-            </thead>
-            <tbody id="income-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
-          </table>
-        </div>
+          <!-- Table -->
+          <div id="income-table-wrap" style="display:none">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50/80">
+                  <th class="pl-6 pr-4 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline">월</th>
+                  <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline">작업 내용</th>
+                  <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline">카테고리</th>
+                  <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline">상태</th>
+                  <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline text-right">Revenue (KRW)</th>
+                  <th class="pl-4 pr-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline text-center w-20">관리</th>
+                </tr>
+              </thead>
+              <tbody id="income-tbody" class="text-sm"></tbody>
+            </table>
+          </div>
 
-        <!-- Empty -->
-        <div id="income-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
-          <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">account_balance_wallet</span>
-          <p class="text-sm font-medium">아직 수입 내역이 없어요</p>
-          <p class="text-xs mt-1">"항목 추가"를 눌러 첫 항목을 추가해봐!</p>
+          <!-- Empty -->
+          <div id="income-empty" style="display:none" class="flex flex-col items-center justify-center py-16 text-slate-400">
+            <span class="material-symbols-outlined text-5xl mb-3 text-slate-200">account_balance_wallet</span>
+            <p class="text-sm font-semibold text-slate-500">아직 수입 내역이 없어요</p>
+            <p class="text-xs mt-1 text-slate-400">"항목 추가"를 눌러 첫 항목을 추가해봐!</p>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- INCOME MODAL -->
@@ -5757,15 +5788,15 @@
       var name = entry[0], data = entry[1];
       var pct = Math.round((data.total / maxTotal) * 100);
       var avg = Math.round(data.total / months);
-      return '<div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4">' +
-        '<div class="flex items-center justify-between mb-2">' +
-        '<span class="text-xs font-black text-slate-700 uppercase tracking-widest">' + name + '</span>' +
-        '<span class="text-[9px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold border border-indigo-200">' + data.count + '건</span>' +
+      return '<div class="bg-slate-50 rounded-2xl p-5 group hover:bg-slate-100/60 transition-colors">' +
+        '<div class="flex items-center justify-between mb-3">' +
+        '<span class="text-xs font-bold text-slate-600 uppercase tracking-widest font-headline">' + name + '</span>' +
+        '<span class="text-[10px] bg-indigo-100/80 text-indigo-600 px-2 py-0.5 rounded-full font-bold">' + data.count + '건</span>' +
         '</div>' +
-        '<p class="text-xl font-extrabold text-slate-900 font-headline">₩' + data.total.toLocaleString('ko-KR') + '</p>' +
-        '<p class="text-[10px] text-slate-400 font-medium mt-0.5">월 평균 ₩' + avg.toLocaleString('ko-KR') + '</p>' +
-        '<div class="mt-3 h-1.5 bg-white rounded-full overflow-hidden border border-indigo-100">' +
-        '<div class="h-full gradient-primary rounded-full" style="width:' + pct + '%"></div></div>' +
+        '<p class="text-2xl font-black text-slate-900 font-headline tracking-tight">₩' + data.total.toLocaleString('ko-KR') + '</p>' +
+        '<p class="text-[10px] text-slate-400 font-medium mt-1">월 평균 ₩' + avg.toLocaleString('ko-KR') + '</p>' +
+        '<div class="mt-4 h-1.5 bg-slate-200/60 rounded-full overflow-hidden">' +
+        '<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all" style="width:' + pct + '%"></div></div>' +
         '</div>';
     }).join('');
   }
@@ -6609,22 +6640,22 @@
     incomeData.forEach(function(row, i) {
       const status = row[3] || '';
       const statusClass = status === 'Finished'
-        ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
+        ? 'bg-indigo-100/80 text-indigo-700'
         : status === 'In-Progress'
-        ? 'bg-purple-100 text-purple-700 border-purple-200'
-        : 'bg-slate-100 text-slate-600 border-slate-200';
+        ? 'bg-amber-100/80 text-amber-700'
+        : 'bg-slate-100/80 text-slate-500';
       const rev = parseInt(row[4]) || 0;
       const tr = document.createElement('tr');
-      tr.className = 'hover:bg-indigo-50/30 transition-colors';
+      tr.className = 'group hover:bg-slate-50 transition-colors';
       tr.innerHTML =
-        '<td class="px-6 py-4 font-bold text-slate-800">' + (row[0]||'—') + '</td>' +
-        '<td class="px-6 py-4"><div class="flex flex-col"><span class="font-bold text-slate-800 text-sm">' + (row[1]||'—') + '</span><span class="text-[11px] text-slate-400 mt-0.5">' + (row[2]||'') + '</span></div></td>' +
-        '<td class="px-6 py-4 text-sm text-slate-500">' + (row[2]||'—') + '</td>' +
-        '<td class="px-6 py-4"><span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase border ' + statusClass + '">' + status + '</span></td>' +
-        '<td class="px-6 py-4 text-right font-bold font-mono text-slate-800">₩' + rev.toLocaleString() + '</td>' +
-        '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
-        '<button onclick="editIncomeRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteIncomeRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<td class="pl-6 pr-4 py-4 border-l-4 border-indigo-500 font-bold text-slate-800">' + (row[0]||'—') + '</td>' +
+        '<td class="px-4 py-4"><div class="flex flex-col"><span class="font-semibold text-slate-800 text-sm">' + (row[1]||'—') + '</span><span class="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider">' + (row[2]||'') + '</span></div></td>' +
+        '<td class="px-4 py-4 text-sm text-slate-500 font-medium">' + (row[2]||'—') + '</td>' +
+        '<td class="px-4 py-4"><span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase ' + statusClass + '">' + status + '</span></td>' +
+        '<td class="px-4 py-4 text-right font-black font-headline text-slate-800 tracking-tight">₩' + rev.toLocaleString() + '</td>' +
+        '<td class="pl-4 pr-6 py-4 text-center"><div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+        '<button onclick="editIncomeRow(' + i + ')" class="p-1.5 hover:bg-indigo-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+        '<button onclick="deleteIncomeRow(' + i + ')" class="p-1.5 hover:bg-rose-100 rounded-lg text-slate-400 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
         '</div></td>';
       tbody.appendChild(tr);
     });
@@ -6640,10 +6671,18 @@
 
     document.getElementById('income-total').textContent = '₩' + total.toLocaleString();
     document.getElementById('income-avg').textContent = '₩' + avg.toLocaleString();
-    document.getElementById('income-progress-bar').style.width = pct + '%';
-    document.getElementById('income-progress-pct').textContent = pct + '%';
-    document.getElementById('income-achieved-badge').textContent = pct + '% Achieved';
+    var progBar = document.getElementById('income-progress-bar');
+    if (progBar) progBar.style.width = pct + '%';
+    var progPct = document.getElementById('income-progress-pct');
+    if (progPct) progPct.textContent = pct + '%';
+    var achievedBadge = document.getElementById('income-achieved-badge');
+    if (achievedBadge) achievedBadge.textContent = pct + '% Achieved';
     document.getElementById('income-entry-count').textContent = incomeData.length + '개 항목';
+
+    // Update active series count
+    var seriesSet = new Set(incomeData.map(function(r){ return r[2]; }).filter(Boolean));
+    var seriesCountEl = document.getElementById('income-series-count');
+    if (seriesCountEl) seriesCountEl.textContent = seriesSet.size > 0 ? String(seriesSet.size).padStart(2, '0') : '—';
 
     // Quarterly breakdown
     const qTotals = {1:0, 2:0, 3:0, 4:0};
@@ -6654,8 +6693,10 @@
     const maxQ = Math.max(...Object.values(qTotals), 1);
     [1,2,3,4].forEach(function(q) {
       const h = Math.round((qTotals[q] / maxQ) * 80);
-      document.getElementById('q' + q + '-bar').style.height = h + '%';
-      document.getElementById('q' + q + '-label').textContent = qTotals[q] > 0 ? '₩' + Math.round(qTotals[q]/10000) + '만' : '—';
+      var qBar = document.getElementById('q' + q + '-bar');
+      if (qBar) qBar.style.height = h + '%';
+      var qLabel = document.getElementById('q' + q + '-label');
+      if (qLabel) qLabel.textContent = qTotals[q] > 0 ? '₩' + Math.round(qTotals[q]/10000) + '만' : '—';
     });
   }
 
