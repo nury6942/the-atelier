@@ -6574,6 +6574,68 @@
     renderSettingsCategoryList();
   }
 
+  // ===== 전체 백업/복원 =====
+  async function exportAllData() {
+    var collections = ['income','income_categories','income_goals','finance','finance_hub','planner','matrix','trips','trip_cities','journey','packing','outfits'];
+    var backup = {exportedAt: new Date().toISOString(), collections: {}};
+    for (var i = 0; i < collections.length; i++) {
+      try {
+        var docs = await fbRead(collections[i]);
+        backup.collections[collections[i]] = docs;
+      } catch(e) { backup.collections[collections[i]] = []; }
+    }
+    // localStorage 시리즈 데이터도 포함
+    backup.localStorage = {};
+    ['atelier_series_2026','atelier_series_2025','atelier_lodging','atelier_souvenir'].forEach(function(k) {
+      var v = localStorage.getItem(k);
+      if (v) backup.localStorage[k] = v;
+    });
+    var blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'atelier_backup_' + new Date().toISOString().replace(/[:.]/g,'-').substring(0,19) + '.json';
+    a.click();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 백업 파일 다운로드 완료');
+  }
+
+  async function importAllData(input) {
+    var file = input.files[0];
+    if (!file) return;
+    // 먼저 현재 데이터 자동 백업
+    await exportAllData();
+    var reader = new FileReader();
+    reader.onload = async function(e) {
+      try {
+        var backup = JSON.parse(e.target.result);
+        if (!backup.collections) { alert('올바른 백업 파일이 아닙니다.'); return; }
+        var restored = 0;
+        for (var col in backup.collections) {
+          var docs = backup.collections[col];
+          for (var d = 0; d < docs.length; d++) {
+            var doc = docs[d];
+            var id = doc._id;
+            delete doc._id; delete doc._createdAt;
+            if (id) {
+              await db.collection(col).doc(id).set(doc, {merge:true});
+            } else {
+              await db.collection(col).add(doc);
+            }
+            restored++;
+          }
+        }
+        // localStorage 복원
+        if (backup.localStorage) {
+          for (var k in backup.localStorage) {
+            localStorage.setItem(k, backup.localStorage[k]);
+          }
+        }
+        alert('복원 완료! ' + restored + '개 문서 복원됨. 페이지를 새로고침합니다.');
+        location.reload();
+      } catch(err) { alert('복원 실패: ' + err.message); }
+    };
+    reader.readAsText(file);
+  }
+
   function closeSettingsPanel() {
     document.getElementById('settings-panel').style.cssText = 'display:none!important';
     cancelAddCategory();
@@ -6963,7 +7025,35 @@
   // Read all docs from a collection
   async function fbRead(collectionName) {
     const snap = await db.collection(collectionName).get();
-    return snap.docs.map(function(d){ var data = d.data(); data._id = d.id; return data; });
+    var results = snap.docs.map(function(d){ var data = d.data(); data._id = d.id; return data; });
+    // 읽을 때마다 localStorage에 전체 스냅샷 저장 (백업)
+    try { localStorage.setItem('atelier_snapshot_' + collectionName, JSON.stringify({data: results, ts: new Date().toISOString()})); } catch(e){}
+    return results;
+  }
+
+  // ===== 자동 백업 시스템 =====
+  var _backupCounter = 0;
+  function backupToLocalStorage(collectionName, action, data) {
+    try {
+      var key = 'atelier_backup_' + collectionName;
+      var existing = JSON.parse(localStorage.getItem(key) || '[]');
+      existing.push({action: action, data: data, ts: new Date().toISOString()});
+      if (existing.length > 50) existing = existing.slice(-50);
+      localStorage.setItem(key, JSON.stringify(existing));
+    } catch(e){}
+  }
+  function trashBeforeDelete(collectionName, id) {
+    try {
+      var trashKey = 'atelier_trash';
+      var trash = JSON.parse(localStorage.getItem(trashKey) || '[]');
+      db.collection(collectionName).doc(id).get().then(function(doc) {
+        if (doc.exists) {
+          trash.push({collection: collectionName, id: id, data: doc.data(), deletedAt: new Date().toISOString()});
+          if (trash.length > 100) trash = trash.slice(-100);
+          localStorage.setItem(trashKey, JSON.stringify(trash));
+        }
+      });
+    } catch(e){}
   }
 
   // Add a new doc
@@ -6971,16 +7061,19 @@
     rowObj._createdAt = firebase.firestore.FieldValue.serverTimestamp();
     const ref = await db.collection(collectionName).add(rowObj);
     rowObj._id = ref.id;
+    backupToLocalStorage(collectionName, 'add', rowObj);
     return rowObj;
   }
 
   // Update a doc by id
   async function fbUpdate(collectionName, id, rowObj) {
+    backupToLocalStorage(collectionName, 'update', {id: id, fields: rowObj});
     await db.collection(collectionName).doc(id).update(rowObj);
   }
 
   // Delete a doc by id
   async function fbDelete(collectionName, id) {
+    trashBeforeDelete(collectionName, id);
     await db.collection(collectionName).doc(id).delete();
   }
 
@@ -7850,6 +7943,18 @@
         return JSON.parse(oldData);
       }
     }
+    // Firebase 폴백: localStorage 비어있으면 Firebase에서 복구
+    if (!s) {
+      try {
+        db.collection('income_series').doc(String(year)).get().then(function(doc) {
+          if (doc.exists && doc.data().data) {
+            localStorage.setItem(key, doc.data().data);
+            console.log('[Series] Restored from Firebase for year', year);
+            location.reload();
+          }
+        });
+      } catch(e){}
+    }
     if (s) {
       var parsed = JSON.parse(s);
       // 2026년인데 B시리즈가 없으면 추가
@@ -7881,11 +7986,13 @@
     }
     var empty = [];
     localStorage.setItem(key, JSON.stringify(empty));
-    return data;
+    return empty;
   }
   function saveSeriesData(d, yr) {
     var year = yr || _matrixYear;
     localStorage.setItem(seriesKeyForYear(year), JSON.stringify(d));
+    // Firebase에도 백업
+    try { db.collection('income_series').doc(String(year)).set({data: JSON.stringify(d), updatedAt: new Date().toISOString()}); } catch(e){}
   }
 
   function getCalEvents() {
@@ -9690,6 +9797,20 @@
         <button onclick="closeSettingsPanel()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
           <span class="material-symbols-outlined text-slate-500">close</span>
         </button>
+      </div>
+
+      <!-- 데이터 백업/복원 -->
+      <div class="p-4 border-b border-slate-100">
+        <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-indigo-600" style="font-size:18px">backup</span> 데이터 관리</h4>
+        <div class="flex gap-2">
+          <button onclick="exportAllData()" class="flex-1 py-2 px-3 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:14px">download</span> 전체 백업
+          </button>
+          <label class="flex-1 py-2 px-3 bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors flex items-center justify-center gap-1 cursor-pointer">
+            <span class="material-symbols-outlined" style="font-size:14px">upload</span> 복원
+            <input type="file" accept=".json" onchange="importAllData(this)" class="hidden"/>
+          </label>
+        </div>
       </div>
 
       <!-- 수입 카테고리 관리 -->
