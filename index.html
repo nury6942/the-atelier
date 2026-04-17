@@ -6981,9 +6981,19 @@
         html += '<td class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'" onclick="editMatrixCell('+si+','+m2+',this)">' + shortRev(rev) + '</td>';
       }
       html += '</tr>';
+      // 누적 행 (1월부터 해당 월까지 합산)
+      html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
+        '<td class="p-2 border-l-4 border-'+c+'-200"><div class="text-[10px] uppercase tracking-tighter text-slate-400">누적</div></td>';
+      var cumul = 0;
+      for (var mc=0;mc<12;mc++) {
+        var dc = s.monthly[mc];
+        cumul += dc ? (dc.rev||0) : 0;
+        html += '<td class="p-2 text-center text-[10px] text-slate-400 font-medium">' + (cumul ? shortRev(cumul) : '—') + '</td>';
+      }
+      html += '</tr>';
       // Progress bar
-      var totalRev = 0; var totalTgt = 0;
-      for(var k in s.monthly) { totalRev += s.monthly[k].rev||0; totalTgt += s.monthly[k].target||0; }
+      var totalRev = cumul; var totalTgt = 0;
+      for(var k in s.monthly) { totalTgt += s.monthly[k].target||0; }
       var filled = totalTgt > 0 ? Math.min(Math.round(totalRev/totalTgt*100),100) : (totalRev > 0 ? Math.min(Math.round((curMonth+1)/12*100),100) : 0);
       html += '<tr class="border-b border-slate-100/50"><td class="p-2 border-l-4 border-'+c+'-200"><div class="text-[10px] uppercase tracking-tighter text-slate-400">달성</div></td>' +
         '<td class="p-2 px-4" colspan="12"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">' +
@@ -7027,13 +7037,14 @@
 
   // 인라인 셀 편집
   function inlineEditCell(td, si, month, field) {
-    if (td.querySelector('input')) return; // 이미 편집 중
+    if (td.querySelector('input')) return;
     var data = getSeriesData();
     var s = data[si];
     if (!s.monthly[month]) s.monthly[month] = {eps:'',rev:0,target:0};
     var curVal = field === 'rev' ? (s.monthly[month].rev||0) : field === 'target' ? (s.monthly[month].target||0) : (s.monthly[month].eps||'');
     var displayVal = field === 'eps' ? curVal : (curVal || '');
     var origHtml = td.innerHTML;
+    var saved = false;
 
     var input = document.createElement('input');
     input.type = 'text';
@@ -7046,6 +7057,8 @@
     input.select();
 
     function save() {
+      if (saved) return;
+      saved = true;
       var val = input.value.trim();
       var data2 = getSeriesData();
       var s2 = data2[si];
@@ -7059,10 +7072,12 @@
       }
       if (!s2.monthly[month].eps && !s2.monthly[month].rev && !s2.monthly[month].target) delete s2.monthly[month];
       saveSeriesData(data2);
-      renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+      setTimeout(function() {
+        renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+      }, 0);
     }
 
-    function cancel() { td.innerHTML = origHtml; }
+    function cancel() { if (saved) return; saved = true; td.innerHTML = origHtml; }
 
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); save(); }
