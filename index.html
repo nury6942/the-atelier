@@ -1853,12 +1853,12 @@
 
       <!-- Session Detail View (트래커에서 리뷰 보기 시 표시) -->
       <div id="eng-detail-view" style="display:none">
-        <div class="sticky top-4 z-30 mb-6">
-          <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-md">
+        <div id="eng-back-btn" class="fixed z-30" style="display:none;top:76px;left:calc(16rem + 24px);">
+          <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
             <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> 트래커로
           </button>
         </div>
-        <div id="eng-detail-content"></div>
+        <div id="eng-detail-content" class="pt-2"></div>
       </div>
 
       <!-- Duplicate Modal -->
@@ -10037,6 +10037,8 @@ function openSessionDetail(dateId) {
   var pageWrap = document.querySelector('#page-english .page-content-wrap');
   if (pageWrap) { Array.from(pageWrap.children).forEach(function(child) { if (child.id !== 'eng-detail-view') child.style.display = 'none'; }); }
   document.getElementById('eng-detail-view').style.display = 'block';
+  var backBtn = document.getElementById('eng-back-btn');
+  if (backBtn) backBtn.style.display = 'block';
 
   var s = session;
   var lv = s.level || {};
@@ -10226,13 +10228,21 @@ function initEngScrollSpy() {
 
 function closeSessionDetail() {
   _currentSessionId = null;
+  // fixed 버튼 숨기기
+  var backBtn = document.getElementById('eng-back-btn');
+  if (backBtn) backBtn.style.display = 'none';
+  // 중복 모달 강제 닫기 (잘못 열려있으면)
+  var dupModal = document.getElementById('eng-dup-modal');
+  if (dupModal) dupModal.style.cssText = 'display:none!important';
+  _pendingSessionUpload = null;
+  // 상세 뷰 숨기기 + 모든 섹션 복원
   document.getElementById('eng-detail-view').style.display = 'none';
-  // 모든 섹션 복원
   var pageWrap = document.querySelector('#page-english .page-content-wrap');
   if (pageWrap) {
     Array.from(pageWrap.children).forEach(function(child) { child.style.display = ''; });
   }
   document.getElementById('eng-detail-view').style.display = 'none';
+  window.scrollTo({top: 0});
 }
 
 async function deleteSessionFromDetail(dateId) {
