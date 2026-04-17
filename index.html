@@ -6841,26 +6841,37 @@
         return JSON.parse(oldData);
       }
     }
-    if (s) return JSON.parse(s);
-    // 최초 접근: incomeData에서 해당 연도 시리즈 추출
-    var cats = {};
-    incomeData.forEach(function(r) {
-      var cat = r[2]||'기타'; if(!cats[cat]) cats[cat] = {};
-      var mIdx = parseInt(r[0])-1; if(isNaN(mIdx)) mIdx = MONTH_NAMES_KR.indexOf(r[0]); if(mIdx<0) mIdx=0;
-      if(!cats[cat][mIdx]) cats[cat][mIdx] = {eps:'',rev:0};
-      cats[cat][mIdx].eps += (cats[cat][mIdx].eps?', ':'') + (r[1]||'');
-      cats[cat][mIdx].rev += parseInt(r[4])||0;
-    });
-    if (year !== 2026 || Object.keys(cats).length === 0) {
-      var empty = [];
-      localStorage.setItem(key, JSON.stringify(empty));
-      return empty;
+    if (s) {
+      var parsed = JSON.parse(s);
+      // 2026년인데 B시리즈가 없으면 추가
+      if (year === 2026 && parsed.length > 0 && !parsed.some(function(x){return x.name==='B'||x.name==='B시리즈';})) {
+        parsed.push({id:'s_b',name:'B시리즈',color:'amber',monthly:{}});
+        localStorage.setItem(key, JSON.stringify(parsed));
+      }
+      return parsed;
     }
-    var ci=0;
-    var data = Object.keys(cats).map(function(name) {
-      return {id:'s_'+ci, name:name, color:SERIES_COLORS[ci++%SERIES_COLORS.length], monthly:cats[name]};
-    });
-    localStorage.setItem(key, JSON.stringify(data));
+    // 최초 접근: 기본 시리즈 하드코딩
+    if (year === 2026) {
+      var data = [
+        {id:'s_0', name:'R시리즈', color:'indigo', monthly:{}},
+        {id:'s_1', name:'B시리즈', color:'amber', monthly:{}}
+      ];
+      // incomeData에서 추출 가능하면 merge
+      incomeData.forEach(function(r) {
+        var cat = r[2]||'';
+        var series = data.find(function(x){return x.name===cat;});
+        if (!series) return;
+        var mIdx = parseInt(r[0])-1; if(isNaN(mIdx)) mIdx = MONTH_NAMES_KR.indexOf(r[0]); if(mIdx<0) mIdx=0;
+        var mKey = String(mIdx);
+        if(!series.monthly[mKey]) series.monthly[mKey] = {eps:'',rev:0,target:0};
+        series.monthly[mKey].eps += (series.monthly[mKey].eps?', ':'') + (r[1]||'');
+        series.monthly[mKey].rev += parseInt(r[4])||0;
+      });
+      localStorage.setItem(key, JSON.stringify(data));
+      return data;
+    }
+    var empty = [];
+    localStorage.setItem(key, JSON.stringify(empty));
     return data;
   }
   function saveSeriesData(d, yr) {
