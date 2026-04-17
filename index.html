@@ -3138,6 +3138,7 @@
     renderDayView();
     renderJourneyTransport();
     renderJourneyLodging();
+    await seedSouvenirDefaults();
     renderJourneySouvenir();
     updateJourneyCost();
   }
@@ -3499,6 +3500,30 @@
     }).join('');
   }
 
+
+  var SOUVENIR_DEFAULTS = [
+    { title:'나 & 소중한 분', description:'매직 연색 연필, 홀더 펜', city:'프라하', amount:'5~20' },
+    { title:'직장 동료', description:'맥주 샴푸, 립밤, 핸드크림', city:'프라하', amount:'3~10' },
+    { title:'찐친/후배', description:'핸드메이드 목각 인형', city:'프라하', amount:'20~50' },
+    { title:'디자이너 픽', description:'크리스탈 글라스, 화병', city:'프라하', amount:'30~100' },
+    { title:'나 & 가족', description:'엑스트라 버진 올리브 오일', city:'브라치 섬', amount:'15~30' },
+    { title:'직장 동료', description:'누가 초콜릿', city:'자그레브', amount:'5~10' },
+    { title:'찐친/후배', description:'라벤더 사쉐', city:'흐바르 섬', amount:'2~5' },
+    { title:'디자이너 픽', description:'실크 넥타이, 스카프', city:'자그레브', amount:'40~90' },
+    { title:'소장용 굿즈', description:'리치타르 (붉은 하트 장식)', city:'자그레브', amount:'3~10' }
+  ];
+
+  async function seedSouvenirDefaults() {
+    if (!selectedTripId) return;
+    var existing = journeyData.filter(function(d){ return d.type === '기념품'; });
+    if (existing.length > 0) return;
+    for (var i = 0; i < SOUVENIR_DEFAULTS.length; i++) {
+      var d = SOUVENIR_DEFAULTS[i];
+      var obj = { trip_id: selectedTripId, type: '기념품', title: d.title, description: d.description, city: d.city, amount: d.amount, status: '' };
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+    }
+  }
 
   function renderJourneySouvenir() {
     var items = journeyData.filter(function(d){ return d.type === '기념품'; });
