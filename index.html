@@ -9240,9 +9240,16 @@
 
   function getReviewBtn(dateStr) {
     if (!dateStr) return '<span class="text-xs text-slate-300">—</span>';
-    var hasReview = engSessionsData.some(function(s){ return s._id === dateStr; });
+    // 날짜 형식 정규화: 어떤 형식이든 YYYY-MM-DD로
+    var normalized = dateStr;
+    if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) { normalized = dateStr; }
+    else {
+      var d = new Date(dateStr);
+      if (!isNaN(d.getTime())) normalized = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    }
+    var hasReview = engSessionsData.some(function(s){ return s._id === normalized; });
     if (hasReview) {
-      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + dateStr + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">bar_chart</span>리뷰 보기</button>';
+      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">bar_chart</span>리뷰 보기</button>';
     }
     return '<span class="text-xs text-slate-300">미작성</span>';
   }
