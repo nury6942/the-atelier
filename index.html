@@ -294,6 +294,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ",
@@ -1679,6 +1680,20 @@
         </div>
         <span class="inline-flex items-center px-3 py-1 bg-indigo-600/10 text-indigo-600 rounded-full text-[0.65rem] font-bold uppercase tracking-wider">FY 2026</span>
       </header>
+
+      <!-- Series Growth Correlation Chart -->
+      <section class="bg-white rounded-2xl p-6 shadow-[0_12px_32px_-4px_rgba(45,51,53,0.06)]">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h3 class="text-xl font-extrabold font-headline tracking-tight text-slate-900">Series Growth Correlation</h3>
+            <p class="text-slate-400 text-xs mt-1 font-medium">Growth trajectory of your top performing titles.</p>
+          </div>
+          <div id="growth-chart-legend" class="flex items-center gap-4 text-xs"></div>
+        </div>
+        <div style="height:240px;">
+          <canvas id="growth-chart"></canvas>
+        </div>
+      </section>
 
       <!-- Annual Performance Matrix -->
       <section>
@@ -6707,7 +6722,7 @@
       console.error(err);
       if (loadingEl) loadingEl.innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
       // 에러나도 Matrix/Calendar는 렌더링
-      renderIncomeMatrix(); renderIncomeCal();
+      renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal();
     }
   }
 
@@ -6781,6 +6796,7 @@
     });
 
     // Render new sections
+    renderGrowthChart();
     renderIncomeMatrix();
     renderIncomeCal();
     updateIncomeBottomStats();
@@ -6828,6 +6844,95 @@
 
   // 만원 단위 축약: ₩500,000 → 50 / ₩70,000 → 7
   function shortRev(v) { return v ? String(Math.round(v/10000)) : '—'; }
+
+  // ===== Series Growth Chart =====
+  var _growthChart = null;
+  var CHART_COLORS = {
+    indigo: { line:'rgba(107,56,212,1)', fill:'rgba(107,56,212,0.08)', border:'rgba(107,56,212,0.6)' },
+    amber:  { line:'rgba(161,140,0,1)',  fill:'rgba(161,140,0,0.05)',  border:'rgba(161,140,0,0.6)' },
+    rose:   { line:'rgba(225,29,72,1)',   fill:'rgba(225,29,72,0.06)',  border:'rgba(225,29,72,0.6)' },
+    teal:   { line:'rgba(20,184,166,1)',  fill:'rgba(20,184,166,0.06)', border:'rgba(20,184,166,0.6)' },
+    purple: { line:'rgba(147,51,234,1)',  fill:'rgba(147,51,234,0.06)', border:'rgba(147,51,234,0.6)' },
+    blue:   { line:'rgba(59,130,246,1)',  fill:'rgba(59,130,246,0.06)', border:'rgba(59,130,246,0.6)' },
+    cyan:   { line:'rgba(6,182,212,1)',   fill:'rgba(6,182,212,0.06)',  border:'rgba(6,182,212,0.6)' },
+    orange: { line:'rgba(249,115,22,1)',  fill:'rgba(249,115,22,0.06)', border:'rgba(249,115,22,0.6)' }
+  };
+
+  function renderGrowthChart() {
+    var canvas = document.getElementById('growth-chart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    var series = getSeriesData();
+    var labels = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+    // Legend
+    var legendEl = document.getElementById('growth-chart-legend');
+    if (legendEl) {
+      legendEl.innerHTML = series.map(function(s) {
+        var cc = CHART_COLORS[s.color] || CHART_COLORS.indigo;
+        return '<div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:'+cc.line+'"></span><span class="font-semibold text-slate-600">'+s.name+'</span></div>';
+      }).join('');
+    }
+
+    var datasets = series.map(function(s, si) {
+      var cc = CHART_COLORS[s.color] || CHART_COLORS.indigo;
+      var data = [];
+      for (var m=0;m<12;m++) {
+        var d = s.monthly[m];
+        data.push(d ? (d.rev||0) : 0);
+      }
+      return {
+        label: s.name,
+        data: data,
+        borderColor: cc.line,
+        backgroundColor: si===0 ? cc.fill : 'transparent',
+        borderWidth: 2.5,
+        borderDash: si===0 ? [] : [6,4],
+        fill: si===0,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: cc.line,
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2
+      };
+    });
+
+    if (_growthChart) { _growthChart.destroy(); }
+    _growthChart = new Chart(canvas, {
+      type: 'line',
+      data: { labels: labels, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { display:false },
+          tooltip: {
+            backgroundColor: 'rgba(45,51,53,0.9)',
+            titleFont: { family:'Manrope', weight:'bold' },
+            bodyFont: { family:'Inter' },
+            padding: 12,
+            cornerRadius: 8,
+            callbacks: {
+              label: function(ctx) { return ctx.dataset.label + ': ₩' + (ctx.parsed.y||0).toLocaleString(); }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display:false },
+            ticks: { font:{ family:'Inter', size:10, weight:'600' }, color:'#94a3b8' },
+            border: { display:false }
+          },
+          y: {
+            grid: { color:'rgba(148,163,184,0.1)', drawTicks:false },
+            ticks: { display:false },
+            border: { display:false }
+          }
+        }
+      }
+    });
+  }
 
   // ===== Annual Matrix =====
   function renderIncomeMatrix() {
@@ -6897,7 +7002,7 @@
     var data = getSeriesData();
     data.push({id:'s_'+Date.now(), name:name, color:SERIES_COLORS[data.length%SERIES_COLORS.length], monthly:{}});
     saveSeriesData(data);
-    renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function editSeries(si) {
@@ -6906,7 +7011,7 @@
     if (!name) return;
     data[si].name = name;
     saveSeriesData(data);
-    renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function deleteSeries(si) {
@@ -6917,7 +7022,7 @@
     saveCalEvents(evts);
     data.splice(si,1);
     saveSeriesData(data);
-    renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function editMatrixCell(si, month) {
@@ -6932,7 +7037,7 @@
     s.monthly[month].rev = parseInt(rev)||0;
     if (!eps && !parseInt(rev) && !s.monthly[month].target) delete s.monthly[month];
     saveSeriesData(data);
-    renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function editMatrixTarget(si, month) {
@@ -7053,7 +7158,7 @@
       saveCalEvents(evts);
       _calDragIdx = null;
       syncCalToMatrix();
-      renderIncomeCal(); renderIncomeMatrix();
+      renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
     }
   }
 
@@ -7064,7 +7169,7 @@
     saveCalEvents(evts);
     _calSelectedEvt = null;
     syncCalToMatrix();
-    renderIncomeCal(); renderIncomeMatrix();
+    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
   }
 
   // Keyboard: Ctrl+C copy, Ctrl+V paste
@@ -7081,7 +7186,7 @@
       evts2.push({ id:'ce_'+Date.now(), date:_calSelectedDate, series:_calClipboard.series, episode:_calClipboard.episode, note:_calClipboard.note });
       saveCalEvents(evts2);
       syncCalToMatrix();
-      renderIncomeCal(); renderIncomeMatrix();
+      renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
     }
   });
 
@@ -7141,7 +7246,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeRepeatModal();
-    renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   // 캘린더 이벤트 모달
@@ -7197,7 +7302,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeCalEventModal();
-    renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   function deleteCalEventFromModal() {
@@ -7209,7 +7314,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeCalEventModal();
-    renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   function addCalEvent(dateStr) { openCalEventModal(dateStr); }
