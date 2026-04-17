@@ -57,6 +57,8 @@
     .font-headline,.headline{font-family:'Manrope',sans-serif!important}
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
     .no-scrollbar::-webkit-scrollbar,.hide-scrollbar::-webkit-scrollbar{display:none}
+    .fixed-input-row input,.fixed-input-row select{border-radius:0;border-top:0;border-left:0;border-right:0;}
+    .fixed-input-row select{background:transparent;cursor:pointer;}
     .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     .gradient-primary{background:linear-gradient(135deg,#6366f1 0%,#a855f7 100%)}
     .gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
@@ -4134,12 +4136,13 @@
   }
 
   // ===== 고정 인라인 입력 행 =====
-  var _ic = 'border border-slate-200 rounded px-1.5 py-1 text-[10px] outline-none focus:ring-1 focus:ring-indigo-200 w-full bg-white';
+  var _ic = 'border-0 border-b border-slate-200 bg-transparent px-1 py-1 text-[10px] outline-none w-full placeholder:text-slate-300 placeholder:text-[9px] focus:border-indigo-500 transition-colors';
 
   function _appendFixedRow(tbodyId, html) {
     var tbody = document.getElementById(tbodyId); if(!tbody) return;
     var tr = document.createElement('tr');
-    tr.className = 'bg-slate-50/50 fixed-input-row';
+    tr.className = 'fixed-input-row';
+    tr.style.cssText = 'background:rgba(107,56,212,0.04);';
     tr.innerHTML = html;
     tbody.appendChild(tr);
   }
@@ -4175,49 +4178,54 @@
     }
   }
 
+  var _savBtn = '<button onclick="saveFixedRow(this,\'TYPE\')" class="p-1 text-indigo-400 hover:text-indigo-600 transition-colors" title="저장"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>';
+  var _canBtn = '<button onclick="this.closest(\'tr\').querySelectorAll(\'input,select\').forEach(function(i){i.value=\'\'})" class="p-1 text-slate-300 hover:text-slate-500 transition-colors" title="초기화"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>';
+  function _actCol(type) { return '<td class="px-1 py-1"><div class="flex gap-0">' + _savBtn.replace('TYPE',type) + _canBtn + '</div></td>'; }
+  function _onEnter(type) { return ' onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\''+type+'\')"'; }
+
   function appendFlightInputRow() {
     _appendFixedRow('journey-flight-list',
-      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="항공사" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="편명" class="'+_ic+'" onchange="lookupFlight(this)"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="항공사" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="편명" class="'+_ic+'" onchange="lookupFlight(this)"'+_onEnter('항공편')+'/></td>'+
       '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="time" type="text" placeholder="출발" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="arrive" type="text" placeholder="도착" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="duration" type="text" placeholder="시간" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="baggage" type="text" placeholder="kg" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'항공편\')"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="time" type="text" placeholder="출발" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="arrive" type="text" placeholder="도착" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="duration" type="text" placeholder="시간" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="baggage" type="text" placeholder="kg" class="'+_ic+'"'+_onEnter('항공편')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right"'+_onEnter('항공편')+'/></td>'+
       '<input type="hidden" data-f="type" value="항공편"/>');
   }
 
   function appendLodgingInputRow() {
     _appendFixedRow('journey-lodging-list',
-      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="숙소명" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"'+_onEnter('숙소')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="숙소명" class="'+_ic+'"'+_onEnter('숙소')+'/></td>'+
       '<td class="px-2 py-1.5"><select data-f="lodge_type" class="'+_ic+'"><option>Hotel</option><option>Airbnb</option></select></td>'+
-      '<td class="px-2 py-1.5"><input data-f="phone" type="text" placeholder="전화" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="phone" type="text" placeholder="전화" class="'+_ic+'"'+_onEnter('숙소')+'/></td>'+
       '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="checkout" type="date" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="cancel_date" type="date" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'숙소\')"/></td>'+
-      '<td></td><input type="hidden" data-f="type" value="숙소"/>');
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right"'+_onEnter('숙소')+'/></td>'+
+      _actCol('숙소')+'<input type="hidden" data-f="type" value="숙소"/>');
   }
 
   function appendTransportInputRow() {
     _appendFixedRow('journey-transport-list',
-      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="수단명" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><div class="flex gap-1"><input data-f="date" type="date" class="'+_ic+'"/><input data-f="time" type="text" placeholder="시간" class="'+_ic+'" style="width:40%" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'이동수단\')"/></div></td>'+
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="수단명" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"'+_onEnter('이동수단')+'/></td>'+
+      '<td class="px-2 py-1.5"><div class="flex gap-1"><input data-f="date" type="date" class="'+_ic+'"/><input data-f="time" type="text" placeholder="시간" class="'+_ic+'" style="width:40%"'+_onEnter('이동수단')+'/></div></td>'+
       '<td class="px-2 py-1.5 text-right"><select data-f="status" class="'+_ic+'"><option>확정</option><option>대기 중</option></select></td>'+
-      '<td></td><input type="hidden" data-f="type" value="이동수단"/>');
+      _actCol('이동수단')+'<input type="hidden" data-f="type" value="이동수단"/>');
   }
 
   function appendSouvenirInputRow() {
     _appendFixedRow('journey-souvenir-list',
-      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="대상" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="품목" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="€가격" class="'+_ic+'" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'기념품\')"/></td>'+
-      '<td></td><td></td><input type="hidden" data-f="type" value="기념품"/>');
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="대상" class="'+_ic+'"'+_onEnter('기념품')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="품목" class="'+_ic+'"'+_onEnter('기념품')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"'+_onEnter('기념품')+'/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="€가격" class="'+_ic+'"'+_onEnter('기념품')+'/></td>'+
+      '<td></td>'+_actCol('기념품')+'<input type="hidden" data-f="type" value="기념품"/>');
   }
 
   async function saveFixedRow(el, type) {
