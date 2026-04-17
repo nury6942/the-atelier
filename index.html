@@ -630,9 +630,13 @@
             </div>
             <div class="md:w-1/2 w-full h-56 rounded-xl overflow-hidden bg-slate-200 relative">
               <img id="voyage-map-img" src="" alt="Map" class="w-full h-full object-cover" style="display:none"/>
-              <div id="voyage-map-placeholder" class="absolute inset-0 bg-slate-300/50 flex items-center justify-center">
-                <span class="material-symbols-outlined text-5xl text-slate-400">map</span>
+              <div id="voyage-map-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-300/50">
+                <span class="material-symbols-outlined text-5xl text-slate-400 mb-2">map</span>
+                <p id="voyage-map-msg" class="text-xs text-slate-400"></p>
               </div>
+              <a id="voyage-map-link" href="#" target="_blank" class="absolute bottom-3 right-3 z-10 text-white px-4 py-2 rounded-full font-bold text-xs shadow-lg flex items-center gap-1.5 hover:opacity-90 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);display:none">
+                <span class="material-symbols-outlined" style="font-size:16px">map</span> Interactive View
+              </a>
             </div>
           </div>
         </section>
@@ -3750,21 +3754,84 @@
       if (busCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">directions_bus</span><span class="text-xs font-semibold">버스 ' + busCount + '편</span></div>';
       if (trainCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">train</span><span class="text-xs font-semibold">기차 ' + trainCount + '편</span></div>';
       document.getElementById('voyage-path-badges').innerHTML = badges;
-      // Static Map 이미지
-      var mapEl = document.getElementById('voyage-map-img');
-      var mapPh = document.getElementById('voyage-map-placeholder');
-      if (mapEl && citiesData.length > 0) {
-        var markers = citiesData.map(function(c,i){ return 'markers=color:0x6b38d4|label:' + (i+1) + '|' + encodeURIComponent(c.name); }).join('&');
-        var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=600x300&maptype=roadmap&' + markers + '&key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&style=feature:all|saturation:-80';
-        mapEl.src = mapUrl;
-        mapEl.style.display = 'block';
-        if (mapPh) mapPh.style.display = 'none';
-        mapEl.onerror = function(){ mapEl.style.display='none'; if(mapPh) mapPh.style.display='flex'; };
-      }
+      // 지도 렌더링
+      renderVoyageMap();
     }
   }
 
   // 도시별 일차 매핑 계산
+  var _voyageMapCache = {};
+  async function renderVoyageMap() {
+    var mapEl = document.getElementById('voyage-map-img');
+    var mapPh = document.getElementById('voyage-map-placeholder');
+    var mapMsg = document.getElementById('voyage-map-msg');
+    var mapLink = document.getElementById('voyage-map-link');
+    if (!mapEl || citiesData.length < 2) {
+      if (mapMsg) mapMsg.textContent = citiesData.length < 2 ? '도시를 2개 이상 추가하면 지도가 표시됩니다' : '';
+      return;
+    }
+
+    var MAPS_KEY = 'AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ';
+    // 캐시 키
+    var cacheKey = citiesData.map(function(c){return c.name;}).join('|');
+    if (_voyageMapCache[cacheKey]) {
+      mapEl.src = _voyageMapCache[cacheKey].url;
+      mapEl.style.display = 'block';
+      if (mapPh) mapPh.style.display = 'none';
+      if (mapLink) { mapLink.href = _voyageMapCache[cacheKey].link; mapLink.style.display = 'flex'; }
+      return;
+    }
+
+    if (mapMsg) mapMsg.textContent = '지도를 불러오는 중...';
+
+    // 좌표 수집 (Places API geocode)
+    var coords = [];
+    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+      var geocoder = new google.maps.Geocoder();
+      for (var ci = 0; ci < citiesData.length; ci++) {
+        var city = citiesData[ci];
+        try {
+          var result = await new Promise(function(resolve) {
+            var q = normalizeCityQuery(city.name);
+            geocoder.geocode({address: q}, function(results, status) {
+              if (status === 'OK' && results[0]) resolve({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+              else resolve(null);
+            });
+          });
+          if (result) coords.push(result);
+        } catch(e) {}
+      }
+    }
+
+    if (coords.length < 2) {
+      // 좌표 수집 실패 → 도시명 기반 폴백
+      var markers = citiesData.map(function(c,i){ return 'markers=color:0x6b38d4%7Clabel:' + (i+1) + '%7C' + encodeURIComponent(normalizeCityQuery(c.name)); }).join('&');
+      var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=800x400&scale=2&maptype=roadmap&' + markers + '&key=' + MAPS_KEY + '&style=feature:all%7Csaturation:-80';
+    } else {
+      // 좌표 기반 마커 + path
+      var markers2 = coords.map(function(c,i){ return 'markers=color:0x6b38d4%7Clabel:' + (i+1) + '%7C' + c.lat + ',' + c.lng; }).join('&');
+      var pathCoords = coords.map(function(c){ return c.lat+','+c.lng; }).join('%7C');
+      var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=800x400&scale=2&maptype=roadmap&' + markers2 + '&path=color:0x8B5CF6CC%7Cweight:3%7C' + pathCoords + '&key=' + MAPS_KEY + '&style=feature:all%7Csaturation:-80';
+    }
+
+    // Interactive View 링크
+    var dirUrl = 'https://www.google.com/maps/dir/' + citiesData.map(function(c){ return encodeURIComponent(normalizeCityQuery(c.name)); }).join('/');
+
+    _voyageMapCache[cacheKey] = {url: mapUrl, link: dirUrl};
+
+    mapEl.src = mapUrl;
+    mapEl.onload = function() {
+      mapEl.style.display = 'block';
+      if (mapPh) mapPh.style.display = 'none';
+      if (mapLink) { mapLink.href = dirUrl; mapLink.style.display = 'flex'; }
+    };
+    mapEl.onerror = function() {
+      mapEl.style.display = 'none';
+      if (mapPh) mapPh.style.display = 'flex';
+      if (mapMsg) mapMsg.textContent = 'Static Maps API를 활성화해주세요';
+    };
+  }
+
   function getDayMap() {
     var trip = getCurrentTrip();
     if (!trip || !trip.start_date || !trip.end_date) {
