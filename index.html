@@ -3953,11 +3953,42 @@
     tbody.appendChild(tr);
   }
 
+  var _AVIATION_KEY = 'c35b074210fd4a0a6244533feaaf0fb1';
+
+  async function lookupFlight(inputEl) {
+    var code = inputEl.value.trim().toUpperCase();
+    if (code.length < 3) return;
+    var tr = inputEl.closest('tr');
+    var airlineEl = tr.querySelector('[data-f=title]');
+    var routeEl = tr.querySelector('[data-f=description]');
+    var timeEl = tr.querySelector('[data-f=time]');
+    var arriveEl = tr.querySelector('[data-f=arrive]');
+    airlineEl.value = '조회 중...';
+    try {
+      var res = await fetch('https://api.aviationstack.com/v1/flights?access_key=' + _AVIATION_KEY + '&flight_iata=' + code + '&limit=1');
+      var data = await res.json();
+      if (data.data && data.data.length > 0) {
+        var f = data.data[0];
+        airlineEl.value = (f.airline && f.airline.name) || '';
+        var dep = f.departure || {};
+        var arr = f.arrival || {};
+        routeEl.value = (dep.iata||'') + ' → ' + (arr.iata||'');
+        if (dep.scheduled) timeEl.value = dep.scheduled.substring(11,16);
+        if (arr.scheduled) arriveEl.value = arr.scheduled.substring(11,16);
+      } else {
+        airlineEl.value = '';
+      }
+    } catch(e) {
+      console.warn('AviationStack lookup failed:', e);
+      airlineEl.value = '';
+    }
+  }
+
   function appendFlightInputRow() {
     _appendFixedRow('journey-flight-list',
       '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="항공사" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"/></td>'+
-      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="편명" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="편명" class="'+_ic+'" onchange="lookupFlight(this)"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="time" type="text" placeholder="출발" class="'+_ic+'"/></td>'+
       '<td class="px-2 py-1.5"><input data-f="arrive" type="text" placeholder="도착" class="'+_ic+'"/></td>'+
