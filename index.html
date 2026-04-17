@@ -6636,28 +6636,33 @@
   const MONTH_TO_Q = {'January':1,'February':1,'March':1,'April':2,'May':2,'June':2,'July':3,'August':3,'September':3,'October':4,'November':4,'December':4};
 
   async function loadIncome() {
-    document.getElementById('income-loading').style.display = 'flex';
-    document.getElementById('income-table-wrap').style.display = 'none';
-    document.getElementById('income-empty').style.display = 'none';
+    var loadingEl = document.getElementById('income-loading');
+    var tableWrap = document.getElementById('income-table-wrap');
+    var emptyEl = document.getElementById('income-empty');
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (tableWrap) tableWrap.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'none';
     try {
       const docs = await fbRead('income');
       incomeData = docs.map(function(d){ return objToRow('income', d).concat([d._id]); });
-      document.getElementById('income-loading').style.display = 'none';
+      if (loadingEl) loadingEl.style.display = 'none';
       if (incomeData.length === 0) {
-        document.getElementById('income-empty').style.display = 'flex';
+        if (emptyEl) emptyEl.style.display = 'flex';
       } else {
-        document.getElementById('income-table-wrap').style.display = 'block';
-        renderIncomeTable();
-        updateIncomeStats();
+        if (tableWrap) { tableWrap.style.display = 'block'; renderIncomeTable(); }
       }
+      updateIncomeStats();
     } catch(err) {
       console.error(err);
-      document.getElementById('income-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+      if (loadingEl) loadingEl.innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+      // 에러나도 Matrix/Calendar는 렌더링
+      renderIncomeMatrix(); renderIncomeCal();
     }
   }
 
   function renderIncomeTable() {
     const tbody = document.getElementById('income-tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     incomeData.forEach(function(row, i) {
       const status = row[3] || '';
@@ -6691,15 +6696,18 @@
     const months = [...new Set(incomeData.map(function(r){ return r[0]; }))].length || 1;
     const avg = Math.round(total / months);
 
-    document.getElementById('income-total').textContent = '₩' + total.toLocaleString();
-    document.getElementById('income-avg').textContent = '₩' + avg.toLocaleString();
+    var totalEl = document.getElementById('income-total');
+    if (totalEl) totalEl.textContent = '₩' + total.toLocaleString();
+    var avgEl = document.getElementById('income-avg');
+    if (avgEl) avgEl.textContent = '₩' + avg.toLocaleString();
     var progBar = document.getElementById('income-progress-bar');
     if (progBar) progBar.style.width = pct + '%';
     var progPct = document.getElementById('income-progress-pct');
     if (progPct) progPct.textContent = pct + '%';
     var achievedBadge = document.getElementById('income-achieved-badge');
     if (achievedBadge) achievedBadge.textContent = pct + '% Achieved';
-    document.getElementById('income-entry-count').textContent = incomeData.length + '개 항목';
+    var entryCountEl = document.getElementById('income-entry-count');
+    if (entryCountEl) entryCountEl.textContent = incomeData.length + '개 항목';
 
     // Update active series count
     var seriesSet = new Set(incomeData.map(function(r){ return r[2]; }).filter(Boolean));
