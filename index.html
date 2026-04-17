@@ -3168,11 +3168,35 @@
   let citiesData = []; // [{name, desc, nights, _id, order}]
   let editingCityIndex = null;
 
+  function getCityCache(tripId) {
+    var s = localStorage.getItem('atelier_city_cache_' + tripId);
+    return s ? JSON.parse(s) : null;
+  }
+  function saveCityCache(tripId, data) {
+    var toSave = data.map(function(c) {
+      return { name:c.name, start_date:c.start_date, end_date:c.end_date, desc:c.desc, nights:c.nights };
+    });
+    localStorage.setItem('atelier_city_cache_' + tripId, JSON.stringify(toSave));
+  }
+
   async function loadCities(tripId) {
     try {
       const docs = await fbRead('trip_cities');
       citiesData = docs.filter(function(d){ return d.trip_id === tripId; });
+      // localStorage 캐시에서 날짜/설명 복원
+      var cache = getCityCache(tripId);
+      if (cache) {
+        citiesData.forEach(function(city) {
+          var cached = cache.find(function(c){ return c.name === city.name; });
+          if (!cached) return;
+          if (!city.start_date && cached.start_date) city.start_date = cached.start_date;
+          if (!city.end_date && cached.end_date) city.end_date = cached.end_date;
+          if (!city.desc && cached.desc) city.desc = cached.desc;
+          if (!city.nights && cached.nights) city.nights = cached.nights;
+        });
+      }
       citiesData.sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
+      saveCityCache(tripId, citiesData);
       renderCityCards();
     } catch(err) { console.error('Cities load error:', err); citiesData = []; renderCityCards(); }
   }
@@ -3255,6 +3279,7 @@
         var saved = await fbAdd('trip_cities', obj);
         citiesData.push(saved);
       }
+      saveCityCache(currentTripId, citiesData);
       renderCityCards();
       renderDayView();
       closeCityModal();
@@ -4295,9 +4320,9 @@
         citiesData.push(saved);
       }
       citiesData.sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
+      saveCityCache(currentTripId, citiesData);
     } else {
       // 기존 도시에 날짜/설명 없으면 CITY_DEFAULTS에서 백필
-      var needsRender = false;
       citiesData.forEach(function(city) {
         var def = CITY_DEFAULTS.find(function(d){ return d.name === city.name; });
         if (!def) return;
@@ -4310,10 +4335,10 @@
           updates.nights = city.nights;
         }
         if (Object.keys(updates).length > 0 && city._id) {
-          needsRender = true;
           fbUpdate('trip_cities', city._id, updates).catch(function(){});
         }
       });
+      saveCityCache(currentTripId, citiesData);
     }
 
     // 일정 시드
