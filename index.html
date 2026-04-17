@@ -3534,15 +3534,39 @@
   }
 
   function renderJourneyLodging() {
-    var items = journeyData.filter(function(d){ return d.type === '숙소'; });
-    items.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
+    var fbItems = journeyData.filter(function(d){ return d.type === '숙소'; });
+    fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
     var container = document.getElementById('journey-lodging-list');
     if (!container) return;
-    if (items.length === 0) {
-      container.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>';
-      return;
-    }
-    container.innerHTML = items.map(function(item) {
+
+    // 하드코딩 기본 숙소 (해당 여행)
+    var defaults = isSeedTrip() ? LODGING_DEFAULTS : [];
+    var fbCities = {};
+    fbItems.forEach(function(it){ fbCities[(it.city||'')+'|'+(it.date||'')] = true; });
+
+    var html = '';
+
+    // 기본값 렌더링 (Firebase에 없는 것만)
+    defaults.filter(function(d){ return !fbCities[d.city+'|'+d.date]; }).forEach(function(d) {
+      var today = new Date().toISOString().split('T')[0];
+      var cancelStatus = d.cancel_date >= today ? '가능' : '불가';
+      var cancelCls = cancelStatus === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' : 'text-rose-600 bg-rose-50 border-rose-200';
+      var checkinOut = d.date + ' ' + d.checkin + ' ~ ' + d.checkout_date + ' ' + d.checkout;
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors">' +
+        '<td class="px-5 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">' + d.city + '</span></td>' +
+        '<td class="px-5 py-3"><div><span class="font-bold text-sm text-slate-800">' + d.title + '</span>' +
+        '<p class="text-[10px] text-slate-400 mt-0.5">' + d.type + '</p>' +
+        (d.phone ? '<p class="text-[10px] text-slate-400">' + d.phone + '</p>' : '') +
+        '</div></td>' +
+        '<td class="px-5 py-3 text-xs text-slate-600">' + checkinOut + '</td>' +
+        '<td class="px-5 py-3"><span class="text-[9px] font-black uppercase px-2 py-0.5 border rounded-full ' + cancelCls + '">' + cancelStatus + '</span>' +
+        '<p class="text-[10px] text-slate-400 mt-0.5">~' + d.cancel_date + '</p></td>' +
+        '<td class="px-5 py-3 text-right font-bold text-sm text-indigo-600">' + d.price + '</td>' +
+        '<td class="px-5 py-3"></td></tr>';
+    });
+
+    // Firebase 숙소 렌더링
+    html += fbItems.map(function(item) {
       var realIdx = journeyData.indexOf(item);
       var cancelCls = item.cancel === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' :
                       item.cancel === '불가' ? 'text-rose-600 bg-rose-50 border-rose-200' :
@@ -3562,9 +3586,14 @@
         '<td class="px-5 py-3"><div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">' +
         '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
-        '</div></td>' +
-        '</tr>';
+        '</div></td></tr>';
     }).join('');
+
+    if (!html) {
+      container.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>';
+      return;
+    }
+    container.innerHTML = html;
   }
 
 
@@ -3576,6 +3605,14 @@
     var n = (trip.name||'').replace(/\s/g,'').toLowerCase();
     return n.indexOf('체코') >= 0 || n.indexOf('크로아티아') >= 0 || n === SEED_TRIP_NAME.replace(/\s/g,'').toLowerCase();
   }
+
+  var LODGING_DEFAULTS = [
+    { city:'Prague', title:'K+K Hotel Fenix', type:'Hotel', phone:'+420-2-25012000', date:'2026-04-30', checkin:'14:00', checkout_date:'2026-05-03', checkout:'12:00', cancel_date:'2026-04-28', price:'₩769,515' },
+    { city:'Olomouc', title:'Smarthotel Nezvalova Archa', type:'Hotel (조식 포함)', phone:'+420-736532211', date:'2026-05-03', checkin:'14:00', checkout_date:'2026-05-04', checkout:'11:00', cancel_date:'2026-05-01', price:'₩158,694' },
+    { city:'Dubrovnik', title:'City Hotel Dubrovnik', type:'Hotel', phone:'+385-20301800', date:'2026-05-04', checkin:'14:00', checkout_date:'2026-05-06', checkout:'10:00', cancel_date:'2026-05-03', price:'₩311,300' },
+    { city:'Split', title:'Ulica Ante Starčevića 16, Split', type:'Airbnb', phone:'', date:'2026-05-06', checkin:'15:00', checkout_date:'2026-05-07', checkout:'10:00', cancel_date:'2026-05-04', price:'₩147,980' },
+    { city:'Plitvička', title:'Plitvička Jezera, Ličko-senjska županija 53231', type:'Airbnb', phone:'', date:'2026-05-07', checkin:'14:00', checkout_date:'2026-05-08', checkout:'10:00', cancel_date:'2026-05-04', price:'₩159,819' }
+  ];
 
   var CITY_DEFAULTS = [
     { name:'Prague',                        desc:'체코',       start_date:'2026-04-29', end_date:'2026-05-01' },
