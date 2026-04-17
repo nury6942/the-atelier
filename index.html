@@ -9117,7 +9117,51 @@
     pkJourney = jDocs.filter(function(d){return d.trip_id===tripId;});
     pkCities = cDocs.filter(function(d){return d.trip_id===tripId;}).sort(function(a,b){return (a.start_date||'').localeCompare(b.start_date||'');});
     pkOutfits = oDocs.filter(function(d){return d.trip_id===tripId;});
+    // 체코 여행 아웃핏 시딩 (1회)
+    await seedOutfitData(tripId);
     pkRenderProgress(); pkRenderCategories(); pkRenderDaily();
+  }
+
+  async function seedOutfitData(tripId) {
+    var trip = tripsData.find(function(t){return t._id===tripId;});
+    if (!trip) return;
+    var n = (trip.name||'').replace(/\s/g,'').toLowerCase();
+    if (n.indexOf('체코') < 0 && n.indexOf('크로아티아') < 0) return;
+
+    var OUTFIT_SEED = [
+      {date:'2026-04-29', items:['기내 허벌옷']},
+      {date:'2026-04-30', items:['다이닛 가죽 점퍼','타티아나 블랙 캡','화이트 홀터넥 티셔츠','블랙 브라렛','갈라 아카이브 시스루 롱 티셔츠','르바 화이트 플리츠 스커트','르바 블랙 팬츠','스웨이드 벨트']},
+      {date:'2026-05-01', items:['다이닛 가죽 점퍼','타티아나 블랙 캡','세릭 셔링 긴팔','세릭 슬립 원피스','니트 팬츠 + 랩 스커트']},
+      {date:'2026-05-02', items:['타티아나 블랙 캡','아티스트 컴플렉스 원피스','스웨이드 벨트','르바 화이트 플리츠 스커트','르바 블랙 팬츠']},
+      {date:'2026-05-03', items:['타티아나 화이트 캡','잽드 블라우스','아우어솔티 나시','아윳 서울 민트 랩 스커트','기준 프린트 팬츠']},
+      {date:'2026-05-04', items:['블랙 브라렛','아카이브스 러플 블라우스','다이애그널 데님 팬츠']},
+      {date:'2026-05-05', items:['오피쉬 야상','레이어 블라우스','아우어 솔티 나시 원피스','기준 프린트 팬츠']},
+      {date:'2026-05-06', items:['타티아나 화이트 캡','잽드 블라우스','아우어솔티 나시','아윳 서울 민트 랩 스커트','기준 프린트 팬츠']},
+      {date:'2026-05-07', items:['닉앤니콜 시어 티셔츠','파르티멘토 원피스','스웨이드 벨트','르바 데님 팬츠']},
+      {date:'2026-05-08', items:['블랙 브라렛','아카이브스 러플 블라우스','다이애그널 데님 팬츠','기내 허벌옷']},
+    ];
+
+    var seeded = 0;
+    for (var si = 0; si < OUTFIT_SEED.length; si++) {
+      var seed = OUTFIT_SEED[si];
+      var existing = pkOutfits.find(function(o){return o.date===seed.date;});
+      if (existing) {
+        // 기존 items에 중복 아닌 것만 추가
+        var existNames = (existing.items||[]).map(function(it){return it.name;});
+        var newItems = seed.items.filter(function(name){return existNames.indexOf(name)<0;}).map(function(name){return {name:name,checked:false};});
+        if (newItems.length > 0) {
+          existing.items = (existing.items||[]).concat(newItems);
+          await fbUpdate('outfits', existing._id, {items:existing.items});
+          seeded += newItems.length;
+        }
+      } else {
+        var obj = {trip_id:tripId, date:seed.date, items:seed.items.map(function(name){return {name:name,checked:false};})};
+        var saved = await fbAdd('outfits', obj);
+        pkOutfits.push(saved);
+        seeded += seed.items.length;
+      }
+    }
+    if (seeded > 0) console.log('Outfit seeded:', seeded, 'items');
   }
 
   function pkRenderProgress() {
