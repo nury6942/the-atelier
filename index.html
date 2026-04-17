@@ -6389,6 +6389,31 @@
   let englishData = [];
   let editingEnglishIndex = null;
 
+  var ENGLISH_DEFAULTS = [
+    ['1회차','2026-01-14'],['2회차','2026-01-21'],['3회차','2026-03-04'],['4회차','2026-03-11'],
+    ['5회차','2026-03-18'],['6회차','2026-04-01'],['7회차','2026-04-08'],['8회차','2026-04-15'],
+    ['9회차','2026-04-22'],['10회차','2026-05-20'],['11회차','2026-05-27'],['12회차','2026-06-03'],
+    ['13회차','2026-06-10'],['14회차','2026-06-17'],['15회차','2026-06-24'],['16회차','2026-07-01'],
+    ['17회차','2026-07-08'],['18회차','2026-07-15'],['19회차','2026-07-22'],['20회차','2026-07-29'],
+    ['21회차','2026-08-05'],['22회차','2026-08-12'],['23회차','2026-08-19'],['24회차','2026-08-26'],
+    ['25회차','2026-09-02'],['26회차','2026-09-09'],['27회차','2026-09-16'],['28회차','2026-09-23'],
+    ['29회차','2026-09-30'],['30회차','2026-10-21'],['31회차','2026-10-28'],['32회차','2026-11-04'],
+    ['33회차','2026-11-11'],['34회차','2026-11-18'],['35회차','2026-11-25'],['36회차','2026-12-02'],
+    ['37회차','2026-12-09'],['38회차','2026-12-16']
+  ];
+
+  function getEnglishDefaults() {
+    var today = new Date().toISOString().split('T')[0];
+    var fbDates = {};
+    englishData.forEach(function(r){ if(r[1]) fbDates[r[1]] = true; });
+    return ENGLISH_DEFAULTS
+      .filter(function(d){ return !fbDates[d[1]]; })
+      .map(function(d){
+        var status = d[1] <= today ? '완료' : '예정';
+        return [d[0], d[1], status, '', '£20', '', '__default__'];
+      });
+  }
+
   async function loadEnglish() {
     document.getElementById('english-loading').style.display = 'flex';
     document.getElementById('english-table-wrap').style.display = 'none';
@@ -6396,6 +6421,9 @@
     try {
       const docs = await fbRead('english');
       englishData = docs.map(function(d){ return objToRow('english', d).concat([d._id]); });
+      var defaults = getEnglishDefaults();
+      englishData = defaults.concat(englishData);
+      englishData.sort(function(a,b){ return (a[1]||'').localeCompare(b[1]||''); });
       document.getElementById('english-loading').style.display = 'none';
       if (englishData.length === 0) {
         document.getElementById('english-empty').style.display = 'flex';
@@ -6429,8 +6457,9 @@
         '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4] ? '£' + parseFloat(row[4].toString().replace(/[^0-9.]/g,'')).toFixed(0) : '—') + '</td>' +
         '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
+        (row[6] === '__default__' ? '' :
         '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>') +
         '</div></td>';
       tbody.appendChild(tr);
     });
