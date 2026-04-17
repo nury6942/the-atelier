@@ -834,26 +834,49 @@
               </div>
             </section>
 
-            <!-- 4. 기념품 체크리스트 -->
-            <section class="bg-indigo-50/40 p-5 rounded-3xl border border-indigo-200 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-black tracking-tight text-slate-900">기념품 체크리스트</h3>
-                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
+            <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
+            <section class="mb-2">
+              <div class="mb-4">
+                <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-600 block mb-1">Curated Journey</span>
+                <h3 class="text-lg font-black tracking-tight text-slate-900">Souvenir Checklist</h3>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
-                  <thead class="border-b border-slate-100 bg-slate-50">
-                    <tr>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:18%">대상</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:32%">품목</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:15%">도시</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">가격</th>
-                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:8%">완료</th>
-                      <th class="px-3 py-2" style="width:15%"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="journey-souvenir-list" class="divide-y divide-slate-50 text-xs"></tbody>
-                </table>
+              <!-- Grid Header -->
+              <div class="grid grid-cols-12 px-5 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <div class="col-span-3">대상</div>
+                <div class="col-span-3">품목</div>
+                <div class="col-span-2">도시</div>
+                <div class="col-span-2 text-right">가격</div>
+                <div class="col-span-2 text-right">상태</div>
+              </div>
+              <!-- List -->
+              <div id="journey-souvenir-list" class="space-y-2"></div>
+
+              <!-- New Souvenir 인라인 폼 -->
+              <div class="mt-6 rounded-2xl p-6" style="background:#f3f4f5;">
+                <h4 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">대상 (Recipient)</label>
+                    <input id="sv-recipient" type="text" placeholder="누구를 위한 선물?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">품목 (Item)</label>
+                    <input id="sv-item" type="text" placeholder="무엇을 살 건지?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">도시 (City)</label>
+                    <input id="sv-city" type="text" placeholder="구매 도시" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">가격 (Price)</label>
+                    <input id="sv-price" type="text" placeholder="예상 가격" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <button onclick="saveInlineSouvenir()" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                  Add to Collection
+                </button>
               </div>
             </section>
 
@@ -4700,45 +4723,76 @@
     } catch(e) { alert('저장 실패'); }
   }
 
+  async function saveInlineSouvenir() {
+    var title = document.getElementById('sv-recipient').value.trim();
+    var desc = document.getElementById('sv-item').value.trim();
+    if (!title && !desc) { alert('대상 또는 품목을 입력해줘!'); return; }
+    var obj = {
+      trip_id: currentTripId, type: '기념품',
+      title: title, description: desc,
+      city: document.getElementById('sv-city').value.trim(),
+      amount: document.getElementById('sv-price').value.replace(/,/g,''),
+      status: ''
+    };
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      renderJourneySouvenir();
+      ['sv-recipient','sv-item','sv-city','sv-price'].forEach(function(id){ document.getElementById(id).value=''; });
+    } catch(err) { alert('저장에 실패했어요.'); }
+  }
+
+  function svRow(title, desc, city, amount, checked, checkFn, deleteFn, dblClickFn) {
+    var dotCls = checked ? 'bg-indigo-500' : 'bg-slate-300';
+    var statusHtml = checked
+      ? '<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white cursor-pointer" onclick="' + checkFn + '"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1;">check</span></div>'
+      : '<div class="w-6 h-6 rounded-full border-2 border-slate-300 cursor-pointer hover:border-indigo-400 transition-colors" onclick="' + checkFn + '"></div>';
+    return '<div class="bg-white rounded-xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 2px 8px rgba(25,28,29,0.03);">' +
+      '<div class="grid grid-cols-12 items-center gap-2">' +
+        '<div class="col-span-3 flex items-center gap-2">' +
+          '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
+          '<span class="text-sm font-semibold text-slate-800 truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title||'—') + '</span>' +
+        '</div>' +
+        '<div class="col-span-3">' +
+          '<span class="text-sm text-slate-600 truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + (desc||'—') + '</span>' +
+        '</div>' +
+        '<div class="col-span-2">' +
+          '<span class="text-xs text-slate-400 font-medium truncate"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>' + (city||'—') + '</span>' +
+        '</div>' +
+        '<div class="col-span-2 text-right">' +
+          '<span class="text-xs font-headline font-bold text-indigo-600"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€'+amount : '—') + '</span>' +
+        '</div>' +
+        '<div class="col-span-2 flex justify-end items-center gap-2">' +
+          statusHtml +
+          '<button onclick="' + deleteFn + '" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function renderJourneySouvenir() {
-    var tbody = document.getElementById('journey-souvenir-list');
+    var container = document.getElementById('journey-souvenir-list');
     if (!isSeedTrip()) {
-      // 비 시드 여행: Firebase 기념품만 표시
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
-      tbody.innerHTML = (fbItems.length === 0 ? '' : fbItems.map(function(item) {
+      if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
+      container.innerHTML = fbItems.map(function(item) {
         var realIdx = journeyData.indexOf(item);
         var checked = item.status === '완료';
-        var dbl = ' ondblclick="fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')"';
-        return '<tr class="hover:bg-indigo-50/20 transition-colors group ' + (checked?'opacity-60':'') + '">' +
-          '<td class="px-5 py-3 text-xs font-bold text-indigo-700"' + dbl.replace('%FIELD%','title') + '>' + (item.title||'') + '</td>' +
-          '<td class="px-5 py-3 text-sm text-slate-700 ' + (checked?'line-through':'') + '"' + dbl.replace('%FIELD%','description') + '>' + (item.description||'—') + '</td>' +
-          '<td class="px-5 py-3 text-xs text-slate-400"' + dbl.replace('%FIELD%','city') + '>' + (item.city||'') + '</td>' +
-          '<td class="px-5 py-3 text-sm text-slate-500"' + dbl.replace('%FIELD%','amount') + '>' + (item.amount ? '€'+item.amount : '—') + '</td>' +
-          '<td class="px-5 py-3 text-right"><input type="checkbox" ' + (checked?'checked':'') + ' onchange="toggleSouvenir(' + realIdx + ', this.checked)" class="h-4 w-4 rounded text-indigo-600"/></td>' +
-          '<td class="px-5 py-3 text-center"><div class="flex gap-1 justify-center opacity-0 group-hover:opacity-100">' +
-          '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
-          '</div></td></tr>';
-      }).join(''));
-      appendSouvenirInputRow();
+        return svRow(item.title, item.description, item.city, item.amount, checked,
+          'toggleSouvenir(' + realIdx + ',' + !checked + ')',
+          'deleteJourneyRow(' + realIdx + ')',
+          'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+      }).join('');
       return;
     }
-
-    // 시드 여행: localStorage 기반 렌더링
     var data = getSouvenirData();
-    tbody.innerHTML = (data.length === 0 ? '' : data.map(function(item, idx) {
-      var checked = item.checked;
-      var sdbl = ' ondblclick="souvenirInlineEdit(this,' + idx + ',\'%FIELD%\')"';
-      return '<tr class="hover:bg-indigo-50/20 transition-colors group ' + (checked?'opacity-60':'') + '">' +
-        '<td class="px-3 py-2 text-xs font-bold text-indigo-700"' + sdbl.replace('%FIELD%','title') + '>' + item.title + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-700 ' + (checked?'line-through':'') + '"' + sdbl.replace('%FIELD%','description') + '>' + item.description + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-400"' + sdbl.replace('%FIELD%','city') + '>' + item.city + '</td>' +
-        '<td class="px-3 py-2 text-xs text-slate-500"' + sdbl.replace('%FIELD%','amount') + '>€' + item.amount + '</td>' +
-        '<td class="px-3 py-2 text-right"><input type="checkbox" ' + (checked?'checked':'') + ' onchange="toggleSouvenirLocal(' + idx + ')" class="h-3.5 w-3.5 rounded text-indigo-600"/></td>' +
-        '<td class="px-3 py-2 text-center"><div class="flex gap-0.5 justify-center opacity-0 group-hover:opacity-100">' +
-        '<button onclick="deleteSouvenirLocal(' + idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>' +
-        '</div></td></tr>';
-    }).join(''));
-    appendSouvenirInputRow();
+    if (data.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
+    container.innerHTML = data.map(function(item, idx) {
+      return svRow(item.title, item.description, item.city, item.amount, item.checked,
+        'toggleSouvenirLocal(' + idx + ')',
+        'deleteSouvenirLocal(' + idx + ')',
+        'souvenirInlineEdit(this,' + idx + ',\'%FIELD%\')');
+    }).join('');
   }
 
   function updateJourneyCost() {
