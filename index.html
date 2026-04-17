@@ -9688,7 +9688,7 @@
     // Daily Outfit Planner 아이템
     pkOutfits.forEach(function(o){ (o.items||[]).forEach(function(it){ total++; if(it.checked) checked++; }); });
     var pct = total>0 ? Math.round(checked/total*100) : 0;
-    document.getElementById('pk-progress-pct').innerHTML = pct+'% <span class="text-lg font-medium text-slate-400">Complete</span>';
+    document.getElementById('pk-progress-pct').innerHTML = pct+'% <span class="text-lg font-medium text-white/60">Complete</span>';
     document.getElementById('pk-progress-count').textContent = checked+' of '+total+' items packed';
     document.getElementById('pk-progress-bar').style.width = pct+'%';
   }
@@ -9751,9 +9751,9 @@
       var itemsHtml = items.map(function(item, ii){
         var cls = item.checked ? 'line-through opacity-50' : '';
         var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
-        return '<div class="flex items-center gap-2 group">' +
-          '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-4 h-4 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
-          '<span class="text-xs text-slate-700 '+cls+' flex-1">'+item.name+'</span>' +
+        return '<div class="flex items-center gap-2.5 group py-0.5">' +
+          '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
+          '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+'</span>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
         '</div>';
       }).join('');
@@ -9766,7 +9766,7 @@
           '<div class="col-span-7">' +
             '<div class="space-y-1.5">'+itemsHtml+'</div>' +
             '<div class="mt-2 flex gap-2">' +
-              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="flex-1 bg-slate-50 rounded-lg px-3 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')"/>' +
+              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')"/>' +
               '<button onclick="pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="px-2 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
             '</div>' +
           '</div>' +
@@ -10505,22 +10505,24 @@ async function deleteSessionFromDetail(dateId) {
 
       <!-- Hero Section -->
       <section class="mb-10">
-        <div class="bg-white rounded-3xl p-8 relative overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-          <div class="absolute top-0 right-0 p-8 opacity-10"><span class="material-symbols-outlined text-8xl">fact_check</span></div>
+        <div class="rounded-3xl p-8 md:p-10 relative overflow-hidden hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4 0%,#7c3aed 40%,#4f46e5 100%);box-shadow:0 20px 40px rgba(107,56,212,0.3);">
+          <div class="absolute -top-16 -left-16 w-48 h-48 rounded-full" style="background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,transparent 70%);"></div>
+          <div class="absolute -bottom-20 -right-20 w-64 h-64 rounded-full" style="background:radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%);"></div>
+          <div class="absolute top-0 right-0 p-8 opacity-[0.08]"><span class="material-symbols-outlined" style="font-size:100px">fact_check</span></div>
           <div class="relative z-10">
-            <span class="text-[10px] font-bold tracking-[0.1em] text-indigo-600 uppercase mb-2 block">Trip Preparation</span>
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-6 tracking-tight font-headline">Packing Checklist</h2>
+            <span class="text-[10px] font-bold tracking-[0.15em] text-white/70 uppercase mb-2 block">Trip Preparation</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-6 tracking-tight font-headline">Packing Checklist</h2>
             <div class="flex flex-col md:flex-row md:items-end gap-6 md:gap-12">
               <div class="flex-1">
                 <div class="flex justify-between items-end mb-3">
-                  <span id="pk-progress-pct" class="text-3xl font-bold text-indigo-600">0% <span class="text-lg font-medium text-slate-400">Complete</span></span>
-                  <span id="pk-progress-count" class="text-sm font-medium text-slate-400">0 of 0 items packed</span>
+                  <span id="pk-progress-pct" class="text-3xl font-black text-white">0% <span class="text-lg font-medium text-white/60">Complete</span></span>
+                  <span id="pk-progress-count" class="text-sm font-medium text-white/70">0 of 0 items packed</span>
                 </div>
-                <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div id="pk-progress-bar" class="h-full gradient-primary rounded-full transition-all" style="width:0%"></div>
+                <div class="h-3 w-full rounded-full overflow-hidden" style="background:rgba(255,255,255,0.15);">
+                  <div id="pk-progress-bar" class="h-full rounded-full transition-all duration-1000" style="width:0%;background:rgba(255,255,255,0.85);box-shadow:0 0 12px rgba(255,255,255,0.4);"></div>
                 </div>
               </div>
-              <button onclick="pkImportTemplate()" id="pk-btn-template" class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white gradient-primary hover:opacity-90 active:scale-95 transition-all shadow-sm whitespace-nowrap">
+              <button onclick="pkImportTemplate()" id="pk-btn-template" class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-indigo-700 bg-white hover:bg-white/90 active:scale-95 transition-all shadow-lg whitespace-nowrap">
                 <span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기
               </button>
             </div>
