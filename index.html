@@ -7867,7 +7867,43 @@
   const MONTH_ORDER = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const MONTH_TO_Q = {'January':1,'February':1,'March':1,'April':2,'May':2,'June':2,'July':3,'August':3,'September':3,'October':4,'November':4,'December':4};
 
+  // R시리즈 1화~4화 마이그레이션: 2026-12 → 2025-12 (1회만)
+  function migrateRSeriesDec() {
+    if (localStorage.getItem('rseries_dec_migrated_v1')) return;
+    var data2026 = getSeriesData(2026);
+    if (!data2026 || data2026.length === 0) return;
+    var rSeries = data2026.find(function(s){ return s.name === 'R시리즈' || s.name === 'R'; });
+    if (!rSeries || !rSeries.monthly || !rSeries.monthly['11']) return;
+    var dec2026 = rSeries.monthly['11'];
+    if (!dec2026.eps && !dec2026.rev) return;
+    // 이동할 데이터 로그
+    console.log('[Migration] R시리즈 2026-12월 → 2025-12월 이동:', dec2026);
+    // 백업
+    localStorage.setItem('atelier_series_2026_backup_dec_migration', localStorage.getItem('atelier_series_2026') || '');
+    localStorage.setItem('atelier_series_2025_backup_dec_migration', localStorage.getItem('atelier_series_2025') || '');
+    // 2025년 시리즈 가져오기/생성
+    var data2025 = getSeriesData(2025);
+    if (!data2025 || data2025.length === 0) {
+      data2025 = [{id:'s_0', name:'R시리즈', color:'indigo', monthly:{}}];
+    }
+    var rSeries2025 = data2025.find(function(s){ return s.name === 'R시리즈' || s.name === 'R'; });
+    if (!rSeries2025) {
+      rSeries2025 = {id:'s_0', name:'R시리즈', color:'indigo', monthly:{}};
+      data2025.push(rSeries2025);
+    }
+    // 2025-12월에 데이터 이동
+    rSeries2025.monthly['11'] = {eps: dec2026.eps, rev: dec2026.rev || 0, target: dec2026.target || 0};
+    // 2026-12월 비우기
+    delete rSeries.monthly['11'];
+    // 저장
+    saveSeriesData(data2025, 2025);
+    saveSeriesData(data2026, 2026);
+    localStorage.setItem('rseries_dec_migrated_v1', 'true');
+    console.log('[Migration] 완료: R시리즈 1화~4화 → 2025-12월');
+  }
+
   async function loadIncome() {
+    migrateRSeriesDec();
     var loadingEl = document.getElementById('income-loading');
     var tableWrap = document.getElementById('income-table-wrap');
     var emptyEl = document.getElementById('income-empty');
