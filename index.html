@@ -606,19 +606,33 @@
       <!-- Journey Content (hidden until trip selected) -->
       <div id="journey-content" style="display:none">
 
-        <!-- Trip Header + 도시 관리 -->
-        <section class="mb-8">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-2xl font-black text-slate-900 tracking-tight" id="journey-trip-title">—</h3>
-            <div id="journey-km-badge" class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-700 bg-indigo-100 px-4 py-1.5 rounded-full border border-indigo-300" style="display:none"></div>
+        <!-- Trip Header (Violet Voyage Style) -->
+        <section class="mb-10">
+          <div class="mb-6">
+            <span class="text-indigo-600 font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Current Voyage</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight mb-3" id="journey-trip-title">—</h2>
+            <div class="flex items-center gap-3 text-slate-500">
+              <span class="material-symbols-outlined text-indigo-600 text-lg">calendar_today</span>
+              <span id="journey-km-badge" class="font-medium text-sm" style="display:none"></span>
+              <span id="journey-days-badge" class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style="display:none"></span>
+            </div>
           </div>
 
-          <!-- 도시 카드 + 관리 -->
-          <div class="flex items-start gap-3 flex-wrap">
-            <div id="journey-city-cards" class="flex gap-3 flex-wrap flex-1"></div>
-            <button onclick="openCityModal()" class="flex items-center gap-2 px-4 py-3 bg-white border-2 border-dashed border-slate-300 text-slate-500 rounded-2xl text-xs font-bold hover:border-indigo-400 hover:text-indigo-600 transition-all whitespace-nowrap">
-              <span class="material-symbols-outlined text-sm">add</span> 도시 추가
-            </button>
+          <!-- 도시 카드 그리드 (Violet Voyage) -->
+          <div id="journey-city-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5"></div>
+
+          <!-- Voyage Path -->
+          <div id="journey-voyage-path" class="mt-10 rounded-xl p-8 flex flex-col md:flex-row items-center gap-8" style="background:#f3f4f5;display:none">
+            <div class="md:w-1/2">
+              <h3 class="text-xl font-bold font-headline mb-3">Voyage Path</h3>
+              <p id="voyage-path-desc" class="text-slate-500 mb-5 leading-relaxed text-sm"></p>
+              <div id="voyage-path-badges" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="md:w-1/2 w-full h-56 rounded-xl overflow-hidden bg-slate-200 relative">
+              <div class="absolute inset-0 bg-slate-300/50 flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-slate-400">map</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -3450,27 +3464,55 @@
     return citiesData.map(function(c){ return c.name; });
   }
 
+  var STOP_LABELS = ['1ST','2ND','3RD','4TH','5TH','6TH','7TH','8TH','9TH','10TH'];
+
   function renderCityCards() {
     var container = document.getElementById('journey-city-cards');
     if (!container) return;
+
+    var html = '';
     if (citiesData.length === 0) {
-      container.innerHTML = '<div class="text-xs text-slate-400 py-3">도시를 추가해봐!</div>';
-      return;
-    }
-    container.innerHTML = citiesData.map(function(city, i) {
-      return '<div class="relative group p-5 bg-slate-50/80 border border-slate-200 rounded-2xl hover:bg-sky-50/60 hover:border-sky-300 transition-all shadow-sm min-w-[140px]">' +
-        '<div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">' + (i+1) + '번째</div>' +
-        '<h4 class="text-base font-bold text-slate-900">' + city.name + (city.desc ? '<span class="text-xs font-medium text-slate-400">, ' + city.desc + '</span>' : '') + '</h4>' +
-        (city.start_date ? '<p class="text-[10px] text-slate-400 mt-1">' + city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '') + (city.nights !== undefined && city.nights !== '' ? ' <span class="font-bold text-indigo-600">(' + city.nights + '박' + (city.nights === 0 ? ' 1일' : '') + ')</span>' : '') + '</p>' : '') +
-        '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-        '<button onclick="editCityEntry(' + i + ')" class="p-1.5 hover:bg-indigo-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-        '<button onclick="deleteCityEntry(' + i + ')" class="p-1.5 hover:bg-rose-100 rounded-lg text-slate-400 hover:text-rose-500 transition-colors bg-white shadow-sm border border-slate-200"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
-        '</div>' +
-        '<div class="mt-3 h-1 w-full bg-slate-200 rounded-full overflow-hidden">' +
-        (i === 0 ? '<div class="h-full w-full bg-gradient-to-r from-sky-400 to-indigo-400"></div>' : '') +
-        '</div>' +
+      html = '<div class="col-span-full text-center text-sm text-slate-400 py-6">도시를 추가해봐!</div>';
+    } else {
+      html = citiesData.map(function(city, i) {
+        var dateRange = '';
+        if (city.start_date) dateRange = city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '');
+        var nights = city.nights || 0;
+        var nightsText = nights > 0 ? nights + ' night' + (nights > 1 ? 's' : '') : (city.start_date ? '당일' : '--');
+        var imgUrl = 'https://source.unsplash.com/400x250/?' + encodeURIComponent(city.name + ' city landmark');
+
+        return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);">' +
+          // 이미지
+          '<div class="relative h-36 overflow-hidden bg-slate-200">' +
+            '<img src="' + imgUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.style.display=\'none\'"/>' +
+            '<div class="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[8px] font-extrabold tracking-widest uppercase text-indigo-800">' + (STOP_LABELS[i]||String(i+1)) + ' STOP</div>' +
+            // 수정/삭제 버튼
+            '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
+              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+            '</div>' +
+          '</div>' +
+          // 텍스트
+          '<div class="p-4">' +
+            '<h4 class="text-sm font-bold font-headline mb-0.5 leading-tight text-slate-900">' + city.name + '</h4>' +
+            '<p class="text-[11px] text-slate-400 mb-3">' + (dateRange || 'TBD') + '</p>' +
+            '<div class="flex items-center justify-between pt-2.5" style="border-top:1px solid #f3f4f5;">' +
+              '<div class="flex items-center gap-1.5 text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">bed</span><span class="text-[11px] font-semibold">' + nightsText + '</span></div>' +
+              '<span class="material-symbols-outlined text-sm text-slate-400 group-hover:translate-x-1 transition-transform">arrow_forward</span>' +
+            '</div>' +
+          '</div>' +
         '</div>';
-    }).join('');
+      }).join('');
+    }
+
+    // Add City 카드
+    html += '<div onclick="openCityModal()" class="group flex flex-col items-center justify-center min-h-[220px] border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all cursor-pointer">' +
+      '<div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined text-xl">add_location_alt</span></div>' +
+      '<span class="text-sm font-bold font-headline text-slate-800">Add City</span>' +
+      '<span class="text-slate-400 text-[10px] mt-0.5">Extend journey</span>' +
+    '</div>';
+
+    container.innerHTML = html;
   }
 
   function openCityModal(idx) {
@@ -3642,11 +3684,33 @@
     var trip = getCurrentTrip();
     if (!trip) return;
     document.getElementById('journey-trip-title').textContent = trip.name;
-    // Date badge
     if (trip.start_date && trip.end_date) {
       var badge = document.getElementById('journey-km-badge');
       badge.textContent = trip.start_date + ' — ' + trip.end_date;
-      badge.style.display = 'block';
+      badge.style.display = 'inline';
+      // Days badge
+      var daysBadge = document.getElementById('journey-days-badge');
+      if (daysBadge) {
+        var days = Math.round((new Date(trip.end_date) - new Date(trip.start_date)) / (1000*60*60*24)) + 1;
+        daysBadge.textContent = days + ' DAYS';
+        daysBadge.style.display = 'inline';
+      }
+    }
+    // Voyage Path
+    var vpEl = document.getElementById('journey-voyage-path');
+    if (vpEl && citiesData.length > 0) {
+      vpEl.style.display = 'flex';
+      var cityNames = citiesData.map(function(c){return c.name;});
+      document.getElementById('voyage-path-desc').textContent = cityNames.join(' → ') + ' 루트의 여행입니다.';
+      var transports = journeyData.filter(function(d){return d.type==='이동수단';});
+      var flights = journeyData.filter(function(d){return d.type==='항공편';});
+      var badges = '';
+      if (flights.length > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">flight_takeoff</span><span class="text-xs font-semibold">항공 ' + flights.length + '편</span></div>';
+      var busCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('bus')>=0;}).length;
+      var trainCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('기차')>=0||(t.title||'').toLowerCase().indexOf('train')>=0||(t.title||'').toLowerCase().indexOf('express')>=0;}).length;
+      if (busCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">directions_bus</span><span class="text-xs font-semibold">버스 ' + busCount + '편</span></div>';
+      if (trainCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">train</span><span class="text-xs font-semibold">기차 ' + trainCount + '편</span></div>';
+      document.getElementById('voyage-path-badges').innerHTML = badges;
     }
   }
 
@@ -7603,19 +7667,27 @@
     try {
       const docs = await fbRead('income');
       incomeData = docs.map(function(d){ return objToRow('income', d).concat([d._id]); });
+      console.log('[Income] Loaded', incomeData.length, 'items from Firebase');
       if (loadingEl) loadingEl.style.display = 'none';
-      if (incomeData.length === 0) {
-        if (emptyEl) emptyEl.style.display = 'flex';
-      } else {
-        if (tableWrap) { tableWrap.style.display = 'block'; renderIncomeTable(); }
-      }
-      updateIncomeStats();
-      renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal();
+      // 데이터 상태를 페이지에 바로 표시
+      var entryCountEl = document.getElementById('income-entry-count');
+      if (entryCountEl) entryCountEl.textContent = incomeData.length + '개 항목 로드됨';
     } catch(err) {
       console.error('Income load error:', err);
       if (loadingEl) loadingEl.style.display = 'none';
-      try { updateIncomeStats(); renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); } catch(e2){ console.error('Income render error:', e2); }
     }
+    try {
+      updateIncomeStats();
+    } catch(e) { console.error('updateIncomeStats error:', e); }
+    try {
+      renderGrowthChart();
+    } catch(e) { console.error('renderGrowthChart error:', e); }
+    try {
+      renderIncomeMatrix();
+    } catch(e) { console.error('renderIncomeMatrix error:', e); }
+    try {
+      renderIncomeCal();
+    } catch(e) { console.error('renderIncomeCal error:', e); }
   }
 
   function renderIncomeTable() {
@@ -7699,11 +7771,7 @@
       if (qLabel) qLabel.textContent = qTotals[q] > 0 ? '₩' + Math.round(qTotals[q]/10000) + '만' : '—';
     });
 
-    // Render new sections
-    renderGrowthChart();
-    renderIncomeMatrix();
-    renderIncomeCal();
-    updateIncomeBottomStats();
+    try { updateIncomeBottomStats(); } catch(e) { console.error('updateIncomeBottomStats error:', e); }
   }
 
   // ===== Annual Matrix + Monthly Scheduler (localStorage) =====
