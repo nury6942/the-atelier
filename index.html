@@ -741,6 +741,67 @@
               </div>
             </section>
 
+    <!-- 항공편 수정 모달 (Add New Flight과 동일 디자인) -->
+    <div id="flight-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 overflow-hidden relative">
+        <button onclick="closeFlightEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+        <div class="bg-slate-50 p-6 md:p-8">
+          <div class="flex items-center gap-2 mb-5">
+            <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size:20px">edit_square</span>
+            <h4 class="text-lg font-bold tracking-tight font-headline">항공편 수정</h4>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
+              <input id="fe-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
+              <input id="fe-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
+              <input id="fe-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
+              <input id="fe-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
+              <input id="fe-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
+              <input id="fe-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
+              <input id="fe-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
+              <input id="fe-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
+              <input id="fe-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격</label>
+              <input id="fe-price" type="text" placeholder="₩1,743,400" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div class="col-span-2 flex items-end gap-3">
+              <button onclick="closeFlightEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200/50 rounded-2xl transition-colors">취소</button>
+              <button onclick="saveFlightEdit()" class="flex-1 gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined" style="font-size:18px">save</span> 저장
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
             <!-- 2. 숙소 정보 (Curated Stays) -->
             <section class="mb-2">
               <div class="flex items-center justify-between mb-4">
@@ -4846,6 +4907,55 @@
     } else if (totalEl) { totalEl.innerHTML = ''; }
   }
 
+  var _flightEditIdx = null;
+
+  function openFlightEditModal(idx) {
+    _flightEditIdx = idx;
+    var item = journeyData[idx];
+    // route 파싱: "인천(ICN) → 이스탄불(IST)" → dep="인천(ICN)", arr="이스탄불(IST)"
+    var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
+    document.getElementById('fe-airline').value = item.title || '';
+    document.getElementById('fe-code').value = item.city || '';
+    document.getElementById('fe-dep').value = routeParts[0] || '';
+    document.getElementById('fe-arr').value = routeParts[1] || '';
+    document.getElementById('fe-date').value = item.date || '';
+    document.getElementById('fe-time').value = item.time || '';
+    document.getElementById('fe-arrive').value = item.arrive || '';
+    document.getElementById('fe-duration').value = item.duration || '';
+    document.getElementById('fe-baggage').value = item.baggage || '';
+    document.getElementById('fe-price').value = item.amount ? '₩'+Number(item.amount).toLocaleString('ko-KR') : '';
+    document.getElementById('flight-edit-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeFlightEditModal() {
+    document.getElementById('flight-edit-modal').style.cssText = 'display:none!important';
+    _flightEditIdx = null;
+  }
+
+  async function saveFlightEdit() {
+    if (_flightEditIdx === null) return;
+    var item = journeyData[_flightEditIdx];
+    var id = item._id;
+    var update = {
+      title: document.getElementById('fe-airline').value.trim(),
+      description: document.getElementById('fe-dep').value.trim() + ' → ' + document.getElementById('fe-arr').value.trim(),
+      city: document.getElementById('fe-code').value.trim(),
+      date: document.getElementById('fe-date').value,
+      time: document.getElementById('fe-time').value.trim(),
+      arrive: document.getElementById('fe-arrive').value.trim(),
+      duration: document.getElementById('fe-duration').value.trim(),
+      baggage: document.getElementById('fe-baggage').value.trim(),
+      amount: document.getElementById('fe-price').value.replace(/[^0-9]/g,'')
+    };
+    try {
+      await fbUpdate('journey', id, update);
+      Object.assign(item, update);
+      renderJourneyFlights();
+      updateJourneyCost();
+      closeFlightEditModal();
+    } catch(err) { alert('저장에 실패했어요.'); }
+  }
+
   async function saveFlightForm() {
     var obj = {
       trip_id: currentTripId, type: '항공편',
@@ -5103,7 +5213,14 @@
     var item = journeyData[idx];
     editingJourneyIndex = idx;
     currentJourneyType = item.type;
-    var titles = {'일정':'일정 수정','이동수단':'이동 수단 수정','기념품':'기념품 수정','항공편':'항공편 수정'};
+
+    // 항공편은 전용 수정 모달 사용
+    if (item.type === '항공편') {
+      openFlightEditModal(idx);
+      return;
+    }
+
+    var titles = {'일정':'일정 수정','이동수단':'이동 수단 수정','기념품':'기념품 수정'};
     document.getElementById('journey-modal-title').textContent = titles[item.type]||'수정';
     var fields = getJourneyForms(item.type);
     document.getElementById('journey-modal-body').innerHTML = fields.map(function(f){
