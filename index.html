@@ -677,26 +677,24 @@
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
-                <button onclick="addInlineFlight()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
-                  <span class="material-symbols-outlined text-sm">add</span> 항공편 추가
-                </button>
+                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
               </div>
-              <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm mx-3 mb-3">
-                <table class="w-full text-left border-collapse">
+              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
+                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">항공사</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">편명</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">출발</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도착</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">비행시간</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">수하물</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:14%">항공사</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:20%">루트</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:8%">편명</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:11%">날짜</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:7%">출발</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">도착</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">비행</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:7%">수하물</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:15%">가격</th>
                     </tr>
                   </thead>
-                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-sm"></tbody>
+                  <tbody id="journey-flight-list" class="divide-y divide-slate-50 text-xs"></tbody>
                 </table>
               </div>
               <div id="journey-flight-total" class="mt-4 flex justify-end"></div>
@@ -706,27 +704,24 @@
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
-                <button onclick="addInlineLodging()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
-                  <span class="material-symbols-outlined text-sm">add</span> 숙소 추가
-                </button>
+                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
               </div>
-              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3 overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
+                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">도시</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">숙소명</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">유형</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">전화번호</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">체크인</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">체크아웃</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">무료취소</th>
-                      <th class="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">가격</th>
-                      <th class="px-4 py-2.5 w-16"></th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:10%">도시</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:22%">숙소명</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:9%">유형</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">전화번호</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">체크인</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">체크아웃</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:10%">무료취소</th>
+                      <th class="px-2 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:10%">가격</th>
+                      <th class="px-2 py-2" style="width:3%"></th>
                     </tr>
                   </thead>
-                  <tbody id="journey-lodging-list" class="bg-white divide-y divide-slate-50 text-sm">
-                    <tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>
+                  <tbody id="journey-lodging-list" class="bg-white divide-y divide-slate-50 text-xs">
                   </tbody>
                 </table>
               </div>
@@ -736,23 +731,20 @@
             <section class="bg-slate-100/50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <div class="flex items-center justify-between px-5 py-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
-                <button onclick="addInlineTransport()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
-                  <span class="material-symbols-outlined text-sm">add</span> 이동 추가
-                </button>
+                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
               </div>
-              <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm mx-3 mb-3">
-                <table class="w-full text-left border-collapse">
+              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mx-3 mb-3 overflow-hidden">
+                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
                   <thead class="border-b border-slate-100 bg-slate-50">
                     <tr>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">유형</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">루트</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">날짜/시간</th>
-                      <th class="px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">상태</th>
-                      <th class="px-5 py-2.5 w-12"></th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:25%">유형</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:30%">루트</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:25%">날짜/시간</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:15%">상태</th>
+                      <th class="px-3 py-2" style="width:5%"></th>
                     </tr>
                   </thead>
-                  <tbody id="journey-transport-list" class="bg-white divide-y divide-slate-50 text-sm">
-                    <tr><td colspan="5" class="px-5 py-4 text-xs text-slate-400 text-center">이동 수단을 추가해봐!</td></tr>
+                  <tbody id="journey-transport-list" class="bg-white divide-y divide-slate-50 text-xs">
                   </tbody>
                 </table>
               </div>
@@ -762,7 +754,21 @@
             <section class="bg-indigo-50/40 p-5 rounded-3xl border border-indigo-200 shadow-sm">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">기념품 체크리스트</h3>
-                <button onclick="addInlineSouvenir()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm">
+                <span class="text-[10px] text-slate-400">하단에서 바로 입력</span>
+              </div>
+              <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <table class="w-full table-fixed text-left border-collapse" style="word-break:break-word;">
+                  <thead class="border-b border-slate-100 bg-slate-50">
+                    <tr>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:18%">대상</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:32%">품목</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:15%">도시</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500" style="width:12%">가격</th>
+                      <th class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-500 text-right" style="width:8%">완료</th>
+                      <th class="px-3 py-2" style="width:15%"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="journey-souvenir-list" class="divide-y divide-slate-50 text-xs">
                   <span class="material-symbols-outlined text-sm">add</span> 기념품 추가
                 </button>
               </div>
@@ -3556,25 +3562,21 @@
     var items = journeyData.filter(function(d){ return d.type === '이동수단'; });
     items.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
     var tbody = document.getElementById('journey-transport-list');
-    if (items.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-xs text-slate-400 text-center">이동 수단을 추가해봐!</td></tr>';
-      return;
-    }
-    tbody.innerHTML = items.map(function(item) {
+    tbody.innerHTML = items.length === 0 ? '' : items.map(function(item) {
       var realIdx = journeyData.indexOf(item);
       var status = item.status||'';
       var statusCls = status==='확정' ? 'bg-indigo-100 text-indigo-700 border-indigo-300' : 'bg-amber-100 text-amber-800 border-amber-300';
       return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
-        '<td class="px-5 py-3"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-indigo-400 text-sm">directions_railway</span><span class="font-bold text-sm text-slate-800">' + (item.title||'') + '</span></div></td>' +
-        '<td class="px-5 py-3 text-sm text-slate-600">' + (item.description||'—') + '</td>' +
-        '<td class="px-5 py-3 text-sm text-slate-500">' + [(item.date||''), (item.time||'')].filter(Boolean).join(' ') + '</td>' +
-        '<td class="px-5 py-3 text-right"><span class="px-2 py-0.5 rounded-full text-[9px] font-black border ' + statusCls + '">' + (status||'—') + '</span></td>' +
-        '<td class="px-5 py-3 text-center"><div class="flex gap-1 justify-center opacity-0 group-hover:opacity-100">' +
-        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
-        '</div></td>' +
-        '</tr>';
+        '<td class="px-3 py-2"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-indigo-400" style="font-size:13px">directions_railway</span><span class="font-bold text-xs text-slate-800">' + (item.title||'') + '</span></div></td>' +
+        '<td class="px-3 py-2 text-xs text-slate-600">' + (item.description||'—') + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-500">' + [(item.date||''), (item.time||'')].filter(Boolean).join(' ') + '</td>' +
+        '<td class="px-3 py-2 text-right"><span class="px-2 py-0.5 rounded-full text-[9px] font-black border ' + statusCls + '">' + (status||'—') + '</span></td>' +
+        '<td class="px-3 py-2 text-center"><div class="flex gap-0.5 justify-center opacity-0 group-hover:opacity-100">' +
+        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">edit</span></button>' +
+        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>' +
+        '</div></td></tr>';
     }).join('');
+    appendTransportInputRow();
   }
 
   // localStorage 기반 숙소 관리
@@ -3658,8 +3660,7 @@
       // 비 시드 여행: Firebase 숙소만
       var fbItems = journeyData.filter(function(d){ return d.type === '숙소'; });
       fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
-      if (fbItems.length === 0) { container.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">숙소를 추가해봐!</td></tr>'; return; }
-      container.innerHTML = fbItems.map(function(item) {
+      container.innerHTML = (fbItems.length === 0 ? '' : fbItems.map(function(item) {
         var realIdx = journeyData.indexOf(item);
         var cancelCls = item.cancel === '가능' ? 'text-teal-600 bg-teal-50 border-teal-200' : item.cancel === '불가' ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-amber-600 bg-amber-50 border-amber-200';
         return '<tr class="hover:bg-indigo-50/30 transition-colors group">' +
@@ -3675,7 +3676,8 @@
           '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
           '</div></td></tr>';
-      }).join('');
+      }).join(''));
+      appendLodgingInputRow();
       return;
     }
 
@@ -3701,6 +3703,7 @@
         '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
         '</div></td></tr>';
     }).join('');
+    appendLodgingInputRow();
   }
 
 
@@ -3939,81 +3942,78 @@
 
   }
 
-  // ===== 인라인 입력 행 =====
-  var _inpCls = 'border border-slate-200 rounded px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-indigo-200 w-full';
-  var _actBtns = '<td class="px-2 py-2 text-center whitespace-nowrap">' +
-    '<button onclick="saveInlineRow(this)" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
-    '<button onclick="this.closest(\'tr\').remove()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500 ml-0.5"><span class="material-symbols-outlined" style="font-size:14px">close</span></button></td>';
+  // ===== 고정 인라인 입력 행 =====
+  var _ic = 'border border-slate-200 rounded px-1.5 py-1 text-[10px] outline-none focus:ring-1 focus:ring-indigo-200 w-full bg-white';
 
-  function _addRow(tbodyId, html) {
-    var old = document.querySelector('#'+tbodyId+' .inline-new'); if(old) old.remove();
-    var tbody = document.getElementById(tbodyId);
-    var tr = document.createElement('tr'); tr.className = 'inline-new bg-indigo-50/30';
-    tr.innerHTML = html; tbody.appendChild(tr);
-    tr.scrollIntoView({behavior:'smooth',block:'center'});
-    var first = tr.querySelector('input[type=text],input[type=date]'); if(first) setTimeout(function(){first.focus();},50);
+  function _appendFixedRow(tbodyId, html) {
+    var tbody = document.getElementById(tbodyId); if(!tbody) return;
+    var tr = document.createElement('tr');
+    tr.className = 'bg-slate-50/50 fixed-input-row';
+    tr.innerHTML = html;
+    tbody.appendChild(tr);
   }
 
-  function addInlineFlight() {
-    _addRow('journey-flight-list',
-      '<td class="px-2 py-2"><input data-f="title" type="text" placeholder="항공사" class="'+_inpCls+'"/></td>'+
-      '<td class="px-2 py-2"><input data-f="description" type="text" placeholder="루트" class="'+_inpCls+'" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<td class="px-2 py-2"><input data-f="city" type="text" placeholder="편명" class="'+_inpCls+'" style="width:60px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="date" type="date" class="'+_inpCls+'" style="width:110px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="time" type="text" placeholder="출발" class="'+_inpCls+'" style="width:50px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="arrive" type="text" placeholder="도착" class="'+_inpCls+'" style="width:60px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="duration" type="text" placeholder="비행시간" class="'+_inpCls+'" style="width:60px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="baggage" type="text" placeholder="수하물" class="'+_inpCls+'" style="width:50px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="amount" type="text" placeholder="가격" class="'+_inpCls+' text-right" style="width:70px" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<input type="hidden" data-f="type" value="항공편"/>'+_actBtns);
+  function appendFlightInputRow() {
+    _appendFixedRow('journey-flight-list',
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="항공사" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="편명" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="time" type="text" placeholder="출발" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="arrive" type="text" placeholder="도착" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="duration" type="text" placeholder="시간" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="baggage" type="text" placeholder="kg" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'항공편\')"/></td>'+
+      '<input type="hidden" data-f="type" value="항공편"/>');
   }
 
-  function addInlineLodging() {
-    _addRow('journey-lodging-list',
-      '<td class="px-2 py-2"><input data-f="city" type="text" placeholder="도시" class="'+_inpCls+'" style="width:70px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="title" type="text" placeholder="숙소명" class="'+_inpCls+'" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<td class="px-2 py-2"><select data-f="lodge_type" class="'+_inpCls+' bg-white" style="width:80px"><option>Hotel</option><option>Airbnb</option><option>Hostel</option></select></td>'+
-      '<td class="px-2 py-2"><input data-f="phone" type="text" placeholder="전화번호" class="'+_inpCls+'" style="width:100px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="date" type="date" class="'+_inpCls+'" style="width:110px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="checkout" type="date" class="'+_inpCls+'" style="width:110px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="cancel_date" type="date" class="'+_inpCls+'" style="width:110px"/></td>'+
-      '<td class="px-2 py-2"><input data-f="amount" type="text" placeholder="가격" class="'+_inpCls+' text-right" style="width:80px" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<input type="hidden" data-f="type" value="숙소"/>'+_actBtns);
+  function appendLodgingInputRow() {
+    _appendFixedRow('journey-lodging-list',
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="숙소명" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><select data-f="lodge_type" class="'+_ic+'"><option>Hotel</option><option>Airbnb</option></select></td>'+
+      '<td class="px-2 py-1.5"><input data-f="phone" type="text" placeholder="전화" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="date" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="checkout" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="cancel_date" type="date" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="가격" class="'+_ic+' text-right" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'숙소\')"/></td>'+
+      '<td></td><input type="hidden" data-f="type" value="숙소"/>');
   }
 
-  function addInlineTransport() {
-    _addRow('journey-transport-list',
-      '<td class="px-3 py-2"><input data-f="title" type="text" placeholder="수단명" class="'+_inpCls+'"/></td>'+
-      '<td class="px-3 py-2"><input data-f="description" type="text" placeholder="루트" class="'+_inpCls+'" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<td class="px-3 py-2"><div class="flex gap-1"><input data-f="date" type="date" class="'+_inpCls+'" style="width:110px"/><input data-f="time" type="text" placeholder="시간" class="'+_inpCls+'" style="width:50px"/></div></td>'+
-      '<td class="px-3 py-2 text-right"><select data-f="status" class="'+_inpCls+' bg-white" style="width:70px"><option>확정</option><option>대기 중</option><option>취소</option></select></td>'+
-      '<input type="hidden" data-f="type" value="이동수단"/>'+_actBtns);
+  function appendTransportInputRow() {
+    _appendFixedRow('journey-transport-list',
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="수단명" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="루트" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><div class="flex gap-1"><input data-f="date" type="date" class="'+_ic+'"/><input data-f="time" type="text" placeholder="시간" class="'+_ic+'" style="width:40%" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'이동수단\')"/></div></td>'+
+      '<td class="px-2 py-1.5 text-right"><select data-f="status" class="'+_ic+'"><option>확정</option><option>대기 중</option></select></td>'+
+      '<td></td><input type="hidden" data-f="type" value="이동수단"/>');
   }
 
-  function addInlineSouvenir() {
-    _addRow('journey-souvenir-list',
-      '<td class="px-3 py-2"><input data-f="title" type="text" placeholder="대상" class="'+_inpCls+'"/></td>'+
-      '<td class="px-3 py-2"><input data-f="description" type="text" placeholder="품목" class="'+_inpCls+'" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<td class="px-3 py-2"><input data-f="city" type="text" placeholder="도시" class="'+_inpCls+'" style="width:70px"/></td>'+
-      '<td class="px-3 py-2"><input data-f="amount" type="text" placeholder="€가격" class="'+_inpCls+'" style="width:60px" onkeydown="if(event.key===\'Enter\')saveInlineRow(this)"/></td>'+
-      '<td class="px-3 py-2"></td>'+
-      '<input type="hidden" data-f="type" value="기념품"/>'+_actBtns);
+  function appendSouvenirInputRow() {
+    _appendFixedRow('journey-souvenir-list',
+      '<td class="px-2 py-1.5"><input data-f="title" type="text" placeholder="대상" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="description" type="text" placeholder="품목" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="city" type="text" placeholder="도시" class="'+_ic+'"/></td>'+
+      '<td class="px-2 py-1.5"><input data-f="amount" type="text" placeholder="€가격" class="'+_ic+'" onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\'기념품\')"/></td>'+
+      '<td></td><td></td><input type="hidden" data-f="type" value="기념품"/>');
   }
 
-  async function saveInlineRow(el) {
+  async function saveFixedRow(el, type) {
     var tr = el.closest('tr');
-    var type = (tr.querySelector('[data-f=type]')||{}).value||'';
     var obj = { trip_id: currentTripId, type: type };
+    var hasValue = false;
     tr.querySelectorAll('[data-f]').forEach(function(inp) {
       var key = inp.dataset.f;
       if (key === 'type') return;
       if (key === 'lodge_type') { obj.address = inp.value; return; }
-      obj[key] = inp.value||'';
+      var v = inp.value||'';
+      if (v) hasValue = true;
+      obj[key] = v;
     });
+    if (!hasValue) return;
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
-      tr.remove();
       if (type==='항공편') renderJourneyFlights();
       else if (type==='숙소') renderJourneyLodging();
       else if (type==='이동수단') { renderJourneyTransport(); renderDayView(); }
@@ -4076,19 +4076,15 @@
         '</tr>';
     });
 
-    if (!html) {
-      tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-4 text-xs text-slate-400 text-center">항공편을 추가해봐!</td></tr>';
-      if (totalEl) totalEl.innerHTML = '';
-      return;
-    }
-    tbody.innerHTML = html;
+    tbody.innerHTML = html || '';
+    appendFlightInputRow();
     if (totalEl && totalKRW > 0) {
       totalEl.innerHTML = '<div class="bg-slate-200/60 border border-slate-300 rounded-xl px-5 py-3 flex items-center gap-3">' +
         '<span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">총 항공권</span>' +
         '<span class="text-lg font-black text-slate-800">₩' + totalKRW.toLocaleString('ko-KR') + '</span>' +
         (extraPrice ? '<span class="text-[10px] text-slate-500 font-medium">+ ' + extraPrice + '</span>' : '') +
       '</div>';
-    }
+    } else if (totalEl) { totalEl.innerHTML = ''; }
   }
 
   function renderJourneySouvenir() {
@@ -4096,11 +4092,7 @@
     if (!isSeedTrip()) {
       // 비 시드 여행: Firebase 기념품만 표시
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
-      if (fbItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">기념품을 추가해봐!</td></tr>';
-        return;
-      }
-      tbody.innerHTML = fbItems.map(function(item) {
+      tbody.innerHTML = (fbItems.length === 0 ? '' : fbItems.map(function(item) {
         var realIdx = journeyData.indexOf(item);
         var checked = item.status === '완료';
         return '<tr class="hover:bg-indigo-50/20 transition-colors group ' + (checked?'opacity-60':'') + '">' +
@@ -4113,29 +4105,27 @@
           '<button onclick="editJourneyItem(' + realIdx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
           '</div></td></tr>';
-      }).join('');
+      }).join(''));
+      appendSouvenirInputRow();
       return;
     }
 
     // 시드 여행: localStorage 기반 렌더링
     var data = getSouvenirData();
-    if (data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-xs text-slate-400 text-center">기념품을 추가해봐!</td></tr>';
-      return;
-    }
-    tbody.innerHTML = data.map(function(item, idx) {
+    tbody.innerHTML = (data.length === 0 ? '' : data.map(function(item, idx) {
       var checked = item.checked;
       return '<tr class="hover:bg-indigo-50/20 transition-colors group ' + (checked?'opacity-60':'') + '">' +
-        '<td class="px-5 py-3 text-xs font-bold text-indigo-700">' + item.title + '</td>' +
-        '<td class="px-5 py-3 text-sm text-slate-700 ' + (checked?'line-through':'') + '">' + item.description + '</td>' +
-        '<td class="px-5 py-3 text-xs text-slate-400">' + item.city + '</td>' +
-        '<td class="px-5 py-3 text-sm text-slate-500">€' + item.amount + '</td>' +
-        '<td class="px-5 py-3 text-right"><input type="checkbox" ' + (checked?'checked':'') + ' onchange="toggleSouvenirLocal(' + idx + ')" class="h-4 w-4 rounded text-indigo-600"/></td>' +
-        '<td class="px-5 py-3 text-center"><div class="flex gap-1 justify-center opacity-0 group-hover:opacity-100">' +
-        '<button onclick="openSouvenirEditModal(' + idx + ')" class="p-1 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-        '<button onclick="deleteSouvenirLocal(' + idx + ')" class="p-1 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '<td class="px-3 py-2 text-xs font-bold text-indigo-700">' + item.title + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-700 ' + (checked?'line-through':'') + '">' + item.description + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-400">' + item.city + '</td>' +
+        '<td class="px-3 py-2 text-xs text-slate-500">€' + item.amount + '</td>' +
+        '<td class="px-3 py-2 text-right"><input type="checkbox" ' + (checked?'checked':'') + ' onchange="toggleSouvenirLocal(' + idx + ')" class="h-3.5 w-3.5 rounded text-indigo-600"/></td>' +
+        '<td class="px-3 py-2 text-center"><div class="flex gap-0.5 justify-center opacity-0 group-hover:opacity-100">' +
+        '<button onclick="openSouvenirEditModal(' + idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">edit</span></button>' +
+        '<button onclick="deleteSouvenirLocal(' + idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:13px">delete</span></button>' +
         '</div></td></tr>';
-    }).join('');
+    }).join(''));
+    appendSouvenirInputRow();
   }
 
   function updateJourneyCost() {
