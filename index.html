@@ -631,7 +631,7 @@
               </button>
               <div class="text-center">
                 <div class="flex items-center gap-2">
-                  <div id="journey-day-badge" class="h-9 w-9 rounded-xl bg-gradient-to-br from-sky-200 to-indigo-200 text-indigo-800 flex items-center justify-center font-black text-sm border border-slate-200">01</div>
+                  <div id="journey-day-badge" class="h-9 px-3 rounded-xl bg-gradient-to-br from-sky-200 to-indigo-200 text-indigo-800 flex items-center justify-center font-black text-xs border border-slate-200 whitespace-nowrap">1일차</div>
                   <div>
                     <h3 id="journey-day-title" class="text-base font-black text-slate-900">1일차</h3>
                     <p id="journey-day-date" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">—</p>
@@ -3426,10 +3426,12 @@
         var end = new Date(city.end_date + 'T00:00:00');
         while (cur <= end) {
           globalDay++;
+          var ds = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
           dayMap.push({
             day: globalDay,
             cityName: city.name,
-            date: cur.toISOString().split('T')[0]
+            cityDesc: city.desc || '',
+            date: ds
           });
           cur.setDate(cur.getDate() + 1);
         }
@@ -3495,9 +3497,10 @@
     var dateStr = entry.date;
     var cityName = entry.cityName;
 
-    document.getElementById('journey-day-badge').textContent = String(dayNum).padStart(2,'0');
-    document.getElementById('journey-day-title').textContent = dayNum + '일차' + (cityName ? ' — ' + cityName : '');
-    document.getElementById('journey-day-date').textContent = dateStr || '—';
+    var cityDesc = entry.cityDesc || '';
+    document.getElementById('journey-day-badge').textContent = dayNum + '일차';
+    document.getElementById('journey-day-title').textContent = (cityName || '') + (cityDesc ? ', ' + cityDesc : '');
+    document.getElementById('journey-day-date').textContent = dateStr || '';
 
     var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
     items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
