@@ -9476,9 +9476,35 @@
     } catch(e) { console.error('Fee migration error:', e); }
   }
 
+  // 일회성 정리: 자동 생성 테스트로 잘못 저장된 데이터 삭제
+  async function cleanupTestReviewData() {
+    if (localStorage.getItem('cleanup_v1_done') === 'true') return;
+    try {
+      // english 컬렉션에서 date=2026-04-22 잘못 저장된 문서 삭제
+      var englishDocs = await fbRead('english');
+      for (var i = 0; i < englishDocs.length; i++) {
+        if (englishDocs[i].date === '2026-04-22') {
+          console.log('[Cleanup] Deleting english/' + englishDocs[i]._id + ' (date=2026-04-22)');
+          try { await db.collection('english').doc(englishDocs[i]._id).delete(); } catch(e){}
+        }
+      }
+      // englishSessions에서 2026-04-18 테스트 문서 삭제
+      try {
+        var testDoc = await db.collection('englishSessions').doc('2026-04-18').get();
+        if (testDoc.exists) {
+          console.log('[Cleanup] Deleting englishSessions/2026-04-18');
+          await db.collection('englishSessions').doc('2026-04-18').delete();
+        }
+      } catch(e){}
+      localStorage.setItem('cleanup_v1_done', 'true');
+      console.log('[Cleanup] Test review data cleanup complete');
+    } catch(e) { console.error('[Cleanup] Error:', e); }
+  }
+
   async function loadEnglish() {
     await fetchGbpKrwRate();
     await migrateEnglishFee30();
+    await cleanupTestReviewData();
     document.getElementById('english-loading').style.display = 'flex';
     document.getElementById('english-table-wrap').style.display = 'none';
     document.getElementById('english-empty').style.display = 'none';
@@ -11040,15 +11066,24 @@ async function autoGenerateReview() {
     return;
   }
 
-  // Step E: Firestore 저장
+  // Step E: Firestore 저장 — englishSessions 컬렉션 전용
+  // 저장 직전에 날짜를 다시 한 번 입력 필드에서 읽어 확실하게 사용
+  var targetDate = document.getElementById('review-date').value;
+  if (!targetDate || !/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+    showAutoError('날짜 형식 오류: ' + targetDate, '');
+    return;
+  }
+
   var titleInput = document.getElementById('review-title').value.trim();
   if (titleInput && !parsed.title) parsed.title = titleInput;
   parsed.updatedAt = new Date().toISOString();
 
+  console.log('[AutoReview] Saving to englishSessions/' + targetDate, '| keys:', Object.keys(parsed).join(', '));
+
   try {
-    await db.collection('englishSessions').doc(date).set(parsed, {merge: true});
+    await db.collection('englishSessions').doc(targetDate).set(parsed, {merge: true});
     loadingEl.className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 생성 완료 · ' + date);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 생성 완료 · ' + targetDate);
     await loadEnglishSessions();
     setTimeout(function(){ closeReviewCreateModal(); }, 800);
   } catch(err) {
