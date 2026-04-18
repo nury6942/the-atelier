@@ -10674,13 +10674,13 @@ function closeSessionDetail() {
   var dupModal = document.getElementById('eng-dup-modal');
   if (dupModal) dupModal.style.cssText = 'display:none!important';
   _pendingSessionUpload = null;
-  // 상세 뷰 숨기기 + 모든 섹션 복원
+  // 상세 뷰 숨기기 + 모든 섹션 복원 (모달은 제외)
   document.getElementById('eng-detail-view').style.display = 'none';
   var pageWrap = document.querySelector('#page-english .page-content-wrap');
+  var _skipRestore = {'eng-detail-view':1,'eng-dup-modal':1,'eng-review-modal':1,'api-settings-modal':1};
   if (pageWrap) {
-    Array.from(pageWrap.children).forEach(function(child) { child.style.display = ''; });
+    Array.from(pageWrap.children).forEach(function(child) { if (!_skipRestore[child.id]) child.style.display = ''; });
   }
-  document.getElementById('eng-detail-view').style.display = 'none';
   window.scrollTo({top: 0});
 }
 
