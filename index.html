@@ -158,6 +158,14 @@
     }
     .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
 
+    /* ===== VAULT PAGE ===== */
+    .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
+    .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
+    .vault-filter-chip:hover { background: #d9dadb; }
+    .vault-filter-chip.active { background: #6b38d4; color: #fff; }
+    .vault-card { background: #fff; border-radius: 1.5rem; padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
+    .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
+
     /* Review drop zone active state */
     .review-dz-active {
       border-color: #7c3aed !important;
@@ -518,6 +526,10 @@
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-english" onclick="navigate('english'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">translate</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">영어 수업</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-vault" onclick="navigate('vault'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">collections_bookmark</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Vault</span>
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-income" onclick="navigate('income'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">account_balance_wallet</span>
@@ -2159,6 +2171,117 @@
           <button onclick="closeEnglishModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveEnglishEntry()" id="english-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-vault" class="page vault-page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-12">
+
+      <!-- Header -->
+      <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-1">
+          <span class="text-[10px] uppercase tracking-[0.2em] font-bold" style="color:#6b38d4">Language Curator</span>
+          <h1 class="font-headline text-4xl font-extrabold tracking-tight text-[#191c1d]">My English Vault</h1>
+          <p class="text-[#494454] text-sm max-w-md">대화에서 수집한 영어 표현 아카이브.</p>
+        </div>
+        <button onclick="openVaultModal()" class="px-6 py-3 rounded-2xl text-white font-bold flex items-center gap-2 shadow-lg hover:scale-[1.02] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+          <span class="material-symbols-outlined text-sm">add</span> New Expression
+        </button>
+      </header>
+
+      <!-- Stats -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div class="bg-[#f3f4f5] rounded-3xl p-6">
+          <span class="text-[10px] uppercase tracking-wider text-[#494454] font-semibold">Total Collection</span>
+          <div class="mt-3"><span id="vault-stat-total" class="text-4xl font-headline font-black" style="color:#6b38d4">0</span><span class="text-[#494454] ml-2 text-sm">items</span></div>
+        </div>
+        <div class="bg-[#f3f4f5] rounded-3xl p-6">
+          <span class="text-[10px] uppercase tracking-wider text-[#494454] font-semibold">This Month</span>
+          <div class="mt-3"><span id="vault-stat-month" class="text-4xl font-headline font-black" style="color:#8455ef">0</span><span class="text-[#494454] ml-2 text-sm">newly curated</span></div>
+        </div>
+        <div class="hidden md:block md:col-span-2"></div>
+      </section>
+
+      <!-- Today's Highlight -->
+      <section class="relative">
+        <div id="vault-highlight" class="rounded-[2rem] overflow-hidden flex flex-col items-center justify-center text-center text-white p-12 md:p-16 min-h-[320px] relative" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <div class="absolute top-8 right-8 opacity-[0.12]"><span class="material-symbols-outlined text-7xl text-white">format_quote</span></div>
+          <button onclick="shuffleVaultHighlight()" class="absolute top-6 left-6 p-2 rounded-xl hover:bg-white/20 transition-all text-white/60 hover:text-white" title="셔플"><span class="material-symbols-outlined">shuffle</span></button>
+          <span class="text-[10px] uppercase tracking-widest font-extrabold mb-5 block text-white/80">Today's Highlight</span>
+          <h2 id="vault-hl-en" class="font-headline text-3xl md:text-4xl font-bold leading-tight mb-4 italic"></h2>
+          <p id="vault-hl-kr" class="text-xl font-light mb-6 italic text-white/90"></p>
+          <div id="vault-hl-ctx" class="flex items-center gap-3 text-sm text-white/60">
+            <span class="material-symbols-outlined text-sm text-white/50">lightbulb</span>
+            <p id="vault-hl-ctx-text"></p>
+          </div>
+          <div id="vault-hl-empty" style="display:none">
+            <span class="material-symbols-outlined text-5xl mb-4 text-white/40">collections_bookmark</span>
+            <p class="text-lg font-medium text-white/70">아직 수집된 표현이 없어요.</p>
+            <p class="text-sm text-white/50 mt-1">첫 표현을 추가해보세요!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search & Filter -->
+      <section class="flex flex-col md:flex-row gap-5 items-center">
+        <div class="relative w-full md:w-1/3">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#494454]">search</span>
+          <input id="vault-search" oninput="renderVaultGrid()" class="w-full bg-[#e1e3e4] rounded-2xl py-3.5 pl-12 pr-5 text-sm focus:ring-2 focus:ring-[#6b38d4]/40 transition-all border-none outline-none" placeholder="Search the vault..." type="text"/>
+        </div>
+        <div id="vault-filters" class="flex flex-wrap gap-2">
+          <button onclick="setVaultFilter('all')" data-cat="all" class="vault-filter-chip active">All</button>
+          <button onclick="setVaultFilter('work')" data-cat="work" class="vault-filter-chip">Work</button>
+          <button onclick="setVaultFilter('life')" data-cat="life" class="vault-filter-chip">Life</button>
+          <button onclick="setVaultFilter('study')" data-cat="study" class="vault-filter-chip">Study</button>
+          <button onclick="setVaultFilter('emotions')" data-cat="emotions" class="vault-filter-chip">Emotions</button>
+          <button onclick="setVaultFilter('insights')" data-cat="insights" class="vault-filter-chip">Insights</button>
+        </div>
+      </section>
+
+      <!-- Expression Grid -->
+      <section id="vault-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        <div class="text-sm text-[#494454] text-center py-12 col-span-full">불러오는 중...</div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Vault Modal -->
+  <div id="vault-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+      <div class="px-6 py-4 flex justify-between items-center" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+        <h3 id="vault-modal-title" class="font-bold text-white text-lg font-headline">New Expression</h3>
+        <button onclick="closeVaultModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">English Expression *</label>
+          <textarea id="vault-english" rows="2" placeholder='"Let me circle back on this"' class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm resize-none border-none focus:ring-2 focus:ring-[#6b38d4]/40"></textarea>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">Korean Meaning *</label>
+          <textarea id="vault-korean" rows="2" placeholder="나중에 다시 이야기하다" class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm resize-none border-none focus:ring-2 focus:ring-[#6b38d4]/40"></textarea>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">Category</label>
+          <select id="vault-category" class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm border-none focus:ring-2 focus:ring-[#6b38d4]/40">
+            <option value="work">Work</option>
+            <option value="life">Life</option>
+            <option value="study">Study</option>
+            <option value="emotions">Emotions</option>
+            <option value="insights">Insights</option>
+          </select>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">Context (optional)</label>
+          <textarea id="vault-context" rows="2" placeholder="언제 어떻게 쓰려고 저장하는지" class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm resize-none border-none focus:ring-2 focus:ring-[#6b38d4]/40"></textarea>
+        </div>
+      </div>
+      <div class="px-6 pb-6 flex gap-2">
+        <button onclick="saveVaultEntry()" id="vault-save-btn" class="flex-1 py-3 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+        <button id="vault-delete-btn" onclick="deleteVaultEntry()" class="py-3 px-5 rounded-xl bg-rose-50 text-rose-600 font-bold text-sm hover:bg-rose-100 transition-colors" style="display:none">삭제</button>
+        <button onclick="closeVaultModal()" class="py-3 px-5 rounded-xl bg-[#e7e8e9] text-[#494454] font-bold text-sm">취소</button>
       </div>
     </div>
   </div>
@@ -7433,6 +7556,7 @@
     "finance-hub": { "title": "현금 흐름" },
     "matrix": { "title": "연 매트릭스" },
     "english": { "title": "영어 수업" },
+    "vault": { "title": "Vault" },
     "income": { "title": "사이드 잡" },
     "planner": { "title": "캘린더" },
     "packing": { "title": "여행 체크리스트" }
@@ -7464,6 +7588,7 @@
     if(pageId==='finance-hub') { if(typeof loadHub==='function') loadHub(); }
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
+    if(pageId==='vault') { if(typeof loadVault==='function') loadVault(); }
   }
   window.addEventListener('DOMContentLoaded', () => {
     const startPage = localStorage.getItem('atelier-page') || 'dashboard';
@@ -11448,6 +11573,162 @@ async function parseAndSaveReview() {
     status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> 저장 실패: ' + err.message;
   }
 }
+
+  // ===== VAULT =====
+  var vaultData = [];
+  var vaultFilter = 'all';
+  var vaultEditId = null;
+  var _vaultHighlightIdx = -1;
+
+  var VAULT_CAT_STYLE = {
+    work: 'background:rgba(107,56,212,0.1);color:#6b38d4',
+    life: 'background:rgba(201,179,253,0.3);color:#544183',
+    study: 'background:rgba(107,56,212,0.1);color:#6b38d4',
+    emotions: 'background:rgba(201,179,253,0.3);color:#544183',
+    insights: 'background:rgba(255,220,187,0.4);color:#673d00'
+  };
+
+  async function loadVault() {
+    vaultData = await fbRead('vaultExpressions');
+    vaultData.sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+    updateVaultStats();
+    renderVaultHighlight();
+    renderVaultGrid();
+  }
+
+  function updateVaultStats() {
+    document.getElementById('vault-stat-total').textContent = vaultData.length;
+    var now = new Date();
+    var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    var monthCount = vaultData.filter(function(d){ return (d.createdAt||'').startsWith(monthKey); }).length;
+    document.getElementById('vault-stat-month').textContent = monthCount;
+  }
+
+  function renderVaultHighlight() {
+    var enEl = document.getElementById('vault-hl-en');
+    var krEl = document.getElementById('vault-hl-kr');
+    var ctxEl = document.getElementById('vault-hl-ctx');
+    var ctxText = document.getElementById('vault-hl-ctx-text');
+    var emptyEl = document.getElementById('vault-hl-empty');
+    if (vaultData.length === 0) {
+      enEl.textContent = ''; krEl.textContent = '';
+      ctxEl.style.display = 'none'; emptyEl.style.display = '';
+      return;
+    }
+    emptyEl.style.display = 'none'; ctxEl.style.display = '';
+    var idx;
+    do { idx = Math.floor(Math.random() * vaultData.length); } while (idx === _vaultHighlightIdx && vaultData.length > 1);
+    _vaultHighlightIdx = idx;
+    var item = vaultData[idx];
+    enEl.textContent = '"' + (item.english||'') + '"';
+    krEl.textContent = item.korean || '';
+    ctxText.textContent = item.context || '';
+    if (!item.context) ctxEl.style.display = 'none';
+  }
+
+  function shuffleVaultHighlight() { renderVaultHighlight(); }
+
+  function setVaultFilter(cat) {
+    vaultFilter = cat;
+    document.querySelectorAll('.vault-filter-chip').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.cat === cat);
+    });
+    renderVaultGrid();
+  }
+
+  function renderVaultGrid() {
+    var grid = document.getElementById('vault-grid');
+    var query = (document.getElementById('vault-search').value || '').toLowerCase().trim();
+    var filtered = vaultData.filter(function(d) {
+      if (vaultFilter !== 'all' && d.category !== vaultFilter) return false;
+      if (query) {
+        var text = ((d.english||'') + ' ' + (d.korean||'') + ' ' + (d.context||'')).toLowerCase();
+        if (text.indexOf(query) < 0) return false;
+      }
+      return true;
+    });
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="text-sm text-[#494454] text-center py-12 col-span-full">' +
+        (vaultData.length === 0 ? '아직 수집된 표현이 없어요. 첫 표현을 추가해보세요!' : '검색 결과가 없습니다.') + '</div>';
+      return;
+    }
+    grid.innerHTML = filtered.map(function(d) {
+      var catStyle = VAULT_CAT_STYLE[d.category] || VAULT_CAT_STYLE.work;
+      var dateLabel = d.createdAt ? new Date(d.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}).toUpperCase() : '';
+      return '<article class="vault-card" onclick="openVaultDetail(\'' + d._id + '\')">' +
+        '<div class="flex justify-between items-start mb-6">' +
+          '<span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest" style="' + catStyle + '">' + (d.category||'work') + '</span>' +
+          '<span class="text-[10px] font-medium text-[#494454]/60">' + dateLabel + '</span>' +
+        '</div>' +
+        '<h3 class="font-headline text-xl font-bold text-[#191c1d] mb-3 leading-snug">"' + (d.english||'') + '"</h3>' +
+        '<p class="text-[#494454] font-medium mb-6">' + (d.korean||'') + '</p>' +
+        (d.context ? '<div class="bg-[#f3f4f5] rounded-2xl p-4 text-sm text-[#494454]/80 leading-relaxed">' + d.context + '</div>' : '') +
+      '</article>';
+    }).join('');
+  }
+
+  function openVaultModal() {
+    vaultEditId = null;
+    document.getElementById('vault-modal-title').textContent = 'New Expression';
+    document.getElementById('vault-english').value = '';
+    document.getElementById('vault-korean').value = '';
+    document.getElementById('vault-category').value = 'work';
+    document.getElementById('vault-context').value = '';
+    document.getElementById('vault-delete-btn').style.display = 'none';
+    document.getElementById('vault-modal').style.cssText = 'display:flex!important';
+  }
+
+  function openVaultDetail(id) {
+    var item = vaultData.find(function(d){ return d._id === id; });
+    if (!item) return;
+    vaultEditId = id;
+    document.getElementById('vault-modal-title').textContent = 'Edit Expression';
+    document.getElementById('vault-english').value = item.english || '';
+    document.getElementById('vault-korean').value = item.korean || '';
+    document.getElementById('vault-category').value = item.category || 'work';
+    document.getElementById('vault-context').value = item.context || '';
+    document.getElementById('vault-delete-btn').style.display = '';
+    document.getElementById('vault-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeVaultModal() {
+    document.getElementById('vault-modal').style.cssText = 'display:none!important';
+    vaultEditId = null;
+  }
+
+  async function saveVaultEntry() {
+    var en = document.getElementById('vault-english').value.trim();
+    var kr = document.getElementById('vault-korean').value.trim();
+    if (!en || !kr) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영어 표현과 한국어 뜻은 필수입니다'); return; }
+    var data = {
+      english: en,
+      korean: kr,
+      category: document.getElementById('vault-category').value,
+      context: document.getElementById('vault-context').value.trim(),
+      updatedAt: new Date().toISOString()
+    };
+    try {
+      if (vaultEditId) {
+        await fbUpdate('vaultExpressions', vaultEditId, data);
+      } else {
+        data.createdAt = new Date().toISOString();
+        await fbAdd('vaultExpressions', data);
+      }
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 표현이 저장되었습니다');
+      closeVaultModal();
+      await loadVault();
+    } catch(err) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message); }
+  }
+
+  async function deleteVaultEntry() {
+    if (!vaultEditId) return;
+    try {
+      await db.collection('vaultExpressions').doc(vaultEditId).delete();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 삭제 완료');
+      closeVaultModal();
+      await loadVault();
+    } catch(err) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패'); }
+  }
 
   // ===== 전역 검색 =====
   var _searchTimeout = null;
