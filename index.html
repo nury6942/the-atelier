@@ -6476,8 +6476,8 @@
     var idx; do { idx = Math.floor(Math.random()*_dashExprPool.length); } while (idx === _dashExprIdx && _dashExprPool.length > 1);
     _dashExprIdx = idx;
     var item = _dashExprPool[idx];
-    enEl.innerHTML = formatSentences(item.english);
-    krEl.innerHTML = formatSentences(item.korean);
+    enEl.innerHTML = formatSentences(item.english, 3);
+    krEl.innerHTML = formatSentences(item.korean, 3);
     ctxEl.textContent = (item.cat ? '[' + item.cat + '] ' : '') + (item.context || '');
   }
   function shuffleDashExpr() {
@@ -6488,8 +6488,8 @@
     var idx; do { idx = Math.floor(Math.random()*_dashExprPool.length); } while (idx === _dashExprIdx && _dashExprPool.length > 1);
     _dashExprIdx = idx;
     var item = _dashExprPool[idx];
-    enEl.innerHTML = formatSentences(item.english);
-    krEl.innerHTML = formatSentences(item.korean);
+    enEl.innerHTML = formatSentences(item.english, 3);
+    krEl.innerHTML = formatSentences(item.korean, 3);
     ctxEl.textContent = (item.cat ? '[' + item.cat + '] ' : '') + (item.context || '');
   }
 
@@ -11965,15 +11965,17 @@ async function parseAndSaveReview() {
     document.getElementById('vault-stat-month').textContent = monthCount;
   }
 
-  function formatSentences(text) {
+  function formatSentences(text, maxSentences) {
     if (!text) return '';
     var abbrs = ['Mr.','Mrs.','Dr.','Ms.','Jr.','Sr.','vs.','etc.','e.g.','i.e.','U.S.','U.K.'];
     var t = text;
     abbrs.forEach(function(a,i){ t = t.split(a).join('__A'+i+'__'); });
     var parts = t.split(/(?<=[.!?])\s+/);
     parts = parts.map(function(s){ abbrs.forEach(function(a,i){ s = s.split('__A'+i+'__').join(a); }); return s; });
-    if (parts.length <= 1) return text;
-    return parts.map(function(s){ return '<span class="block mb-1.5">' + s + '</span>'; }).join('');
+    var truncated = false;
+    if (maxSentences && parts.length > maxSentences) { parts = parts.slice(0, maxSentences); truncated = true; }
+    if (parts.length <= 1) return text + (truncated ? '...' : '');
+    return parts.map(function(s){ return '<span class="block mb-1.5">' + s + '</span>'; }).join('') + (truncated ? '<span class="text-xs opacity-60">...</span>' : '');
   }
 
   function renderConvoHtml(convo, theme) {
@@ -12003,6 +12005,12 @@ async function parseAndSaveReview() {
     return parts.map(function(s){ abbrs.forEach(function(a,i){ s = s.split('__A'+i+'__').join(a); }); return s; }).filter(function(s){ return s.trim(); });
   }
 
+  function truncateSentences(text, max) {
+    var s = splitSentences(text);
+    if (s.length <= max) return { text: text, truncated: false };
+    return { text: s.slice(0, max).join(' '), truncated: true };
+  }
+
   function renderVaultHighlight() {
     var pairsEl = document.getElementById('vault-hl-pairs');
     var ctxEl = document.getElementById('vault-hl-ctx');
@@ -12019,9 +12027,9 @@ async function parseAndSaveReview() {
     _vaultHighlightIdx = idx;
     var item = vaultData[idx];
 
-    // Parallel sentence pairs
-    var enS = splitSentences(item.english||'');
-    var krS = splitSentences(item.korean||'');
+    // Parallel sentence pairs (max 3)
+    var enS = splitSentences(item.english||'').slice(0, 3);
+    var krS = splitSentences(item.korean||'').slice(0, 3);
     var max = Math.max(enS.length, krS.length);
     var html = '';
     for (var i = 0; i < max; i++) {
@@ -12070,8 +12078,8 @@ async function parseAndSaveReview() {
           '<span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest" style="' + catStyle + '">' + (d.category||'work') + '</span>' +
           '<span class="text-[10px] font-medium text-[#494454]/60">' + dateLabel + '</span>' +
         '</div>' +
-        '<h3 class="font-headline text-xl font-bold text-[#191c1d] mb-3 leading-snug">"' + formatSentences(d.english||'') + '"</h3>' +
-        '<p class="text-[#494454] font-medium mb-4">' + formatSentences(d.korean||'') + '</p>' +
+        (function(){ var te = truncateSentences(d.english||'', 2); return '<h3 class="font-headline text-lg font-bold text-[#191c1d] mb-3 leading-snug">"' + te.text + (te.truncated ? '...' : '') + '"</h3>'; })() +
+        (function(){ var tk = truncateSentences(d.korean||'', 2); return '<p class="text-[#494454] font-medium mb-4">' + tk.text + (tk.truncated ? '...' : '') + '</p>'; })() +
         renderConvoHtml(d.conversation, 'light') +
         (d.context ? '<div class="bg-[#f3f4f5] rounded-2xl p-4 text-sm text-[#494454]/80 leading-relaxed mt-3">' + d.context + '</div>' : '') +
       '</article>';
@@ -12311,9 +12319,14 @@ speaker 설정:
 
 중요: 독백은 conversation에 1개 턴만. 창작된 friend 질문 넣지 않기.
 
+표현 길이 제한:
+- english 필드는 최대 3문장 이내
+- 원본이 더 길면 핵심만 담아서 3문장으로 마무리
+- 원본이 너무 길어 3문장으로 담을 수 없으면, 의미 단위로 여러 개 표현으로 나누어 추출
+- conversation 배열 내 개별 턴도 최대 3문장 이내
+
 출력 길이 제한: 전체 응답이 너무 길어지지 않도록 주의.
-원본이 매우 긴 경우 가장 핵심적인 5~8개만 추출.
-각 english 필드는 최대 500자 이내 (그 이상 필요하면 분할).`;
+원본이 매우 긴 경우 가장 핵심적인 5~8개만 추출.`;
 
   function safeParseVaultJSON(text) {
     try { return { success: true, data: JSON.parse(text) }; } catch(e) {}
