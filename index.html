@@ -6518,6 +6518,12 @@
     }).join('');
   }
 
+  var DASH_CAT_STYLE = {
+    '업무':   'background:#f8bbd0;color:#c2185b', '연차':'background:#ffedd5;color:#c2410c',
+    '개인':   'background:#fef3c7;color:#92400e', '글쓰기':'background:#e0f2fe;color:#0369a1',
+    '영어':   'background:#d9f99d;color:#3f6212', '스터디':'background:#ede9fe;color:#6d28d9'
+  };
+
   function renderDashWeek(rows, now, todayStr) {
     var grid = document.getElementById('dash-week-grid');
     var dayOfWeek = now.getDay();
@@ -6536,7 +6542,10 @@
           evts.slice(0,2).map(function(ev){ return '<div class="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-bold text-white truncate">'+ev[1]+'</div>'; }).join('') + '</div>';
       }
       return '<div class="bg-white p-5 rounded-2xl space-y-3" style="box-shadow:0px 12px 32px rgba(25,28,29,0.02)"><div class="text-center"><p class="text-xs font-bold text-[#494454] uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-[#191c1d]">'+d.getDate()+'</p></div>' +
-        evts.slice(0,2).map(function(ev){ return '<div class="px-2 py-1 rounded-lg text-[10px] font-bold text-[#191c1d] truncate" style="background:#e7e8e9">'+ev[1]+'</div>'; }).join('') + '</div>';
+        evts.slice(0,2).map(function(ev){
+          var cs = DASH_CAT_STYLE[(ev[2]||'').trim()] || 'background:#e7e8e9;color:#191c1d';
+          return '<div class="px-2 py-1 rounded-lg text-[10px] font-bold truncate" style="'+cs+'">'+ev[1]+'</div>';
+        }).join('') + '</div>';
     }).join('');
   }
 
