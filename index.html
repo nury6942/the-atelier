@@ -1887,18 +1887,8 @@
             <p id="english-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
           <div class="flex gap-2">
-            <label class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-indigo-100 active:scale-95 transition-all cursor-pointer">
-              <span class="material-symbols-outlined text-sm">upload_file</span> sessions.js 업로드
-              <input id="eng-file-input" type="file" accept=".js" class="hidden" onchange="handleSessionUpload(this.files[0])"/>
-            </label>
             <button onclick="openReviewCreateModal()" class="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">rate_review</span> 리뷰 추가
-            </button>
-            <button onclick="openApiSettingsModal()" class="bg-slate-100 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-slate-200 active:scale-95 transition-all" title="Anthropic API 설정">
-              <span class="material-symbols-outlined text-sm">settings</span> API
-            </button>
-            <button onclick="openEnglishModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
-              <span class="material-symbols-outlined text-sm">add</span> 수업 추가
             </button>
           </div>
         </div>
@@ -1928,7 +1918,7 @@
         <div id="english-empty" style="display:none" class="flex flex-col items-center justify-center py-12 text-slate-400">
           <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">translate</span>
           <p class="text-sm font-medium">아직 수업 기록이 없어요</p>
-          <p class="text-xs mt-1">"수업 추가"를 눌러 첫 수업을 기록해봐!</p>
+          <p class="text-xs mt-1">"리뷰 추가"를 눌러 수업 리뷰를 생성해봐!</p>
         </div>
       </div>
 
@@ -6991,6 +6981,14 @@
 
   async function openSettingsPanel() {
     document.getElementById('settings-panel').style.cssText = 'display:flex!important';
+    // API 상태 표시
+    var apiStatus = document.getElementById('settings-api-status');
+    if (apiStatus) {
+      var k = localStorage.getItem('atelier_anthropic_api_key');
+      var m = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+      apiStatus.textContent = k ? '설정됨 · ' + m : '미설정';
+      apiStatus.className = 'text-[10px] mt-0.5 ' + (k ? 'text-emerald-600 font-bold' : 'text-slate-400');
+    }
     await loadIncomeCategories();
     renderSettingsCategoryList();
   }
@@ -9542,6 +9540,33 @@
   }
 
   // 일회성 정리: 자동 생성 테스트로 잘못 저장된 데이터 삭제
+  // ===== 수업 자동 생성 (리뷰 추가 시) =====
+  async function ensureLessonExists(dateStr) {
+    // ENGLISH_DEFAULTS에 해당 날짜가 있는지 확인
+    var inDefaults = ENGLISH_DEFAULTS.some(function(d){ return d[1] === dateStr; });
+    if (inDefaults) return null;
+
+    // Firestore english 컬렉션에 해당 날짜가 있는지 확인
+    var docs = await fbRead('english');
+    var exists = docs.some(function(d){ return d.date === dateStr; });
+    if (exists) return null;
+
+    // 새 수업 번호 = 기본일정 수 + Firestore 수업 수 + 1
+    var nextNum = ENGLISH_DEFAULTS.length + docs.length + 1;
+    var lessonName = nextNum + '회차';
+
+    await fbAdd('english', {
+      lesson_name: lessonName,
+      date: dateStr,
+      status: '완료',
+      track: '',
+      fee: '£30',
+      notes: ''
+    });
+
+    return lessonName;
+  }
+
   async function cleanupTestReviewData() {
     if (localStorage.getItem('cleanup_v1_done') === 'true') return;
     try {
@@ -11220,9 +11245,16 @@ async function autoGenerateReview() {
 
   try {
     await db.collection('englishSessions').doc(targetDate).set(parsed, {merge: true});
+    // 해당 날짜의 수업이 트래커에 없으면 자동 생성
+    var lessonCreated = await ensureLessonExists(targetDate);
     loadingEl.className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 생성 완료 · ' + targetDate);
+    if (lessonCreated) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 새 수업(' + lessonCreated + ')이 자동으로 생성되었습니다');
+    } else {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰가 추가되었습니다 · ' + targetDate);
+    }
     await loadEnglishSessions();
+    await loadEnglish();
     setTimeout(function(){ closeReviewCreateModal(); }, 800);
   } catch(err) {
     showAutoError('Firestore 저장 실패: ' + err.message, '<button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>');
@@ -11317,10 +11349,17 @@ async function parseAndSaveReview() {
   parsed.updatedAt = new Date().toISOString();
   try {
     await db.collection('englishSessions').doc(date).set(parsed, {merge: true});
+    var lessonCreated = await ensureLessonExists(date);
     status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-emerald-50 text-emerald-700';
-    status.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> ' + date + ' 리뷰 저장 완료!';
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 저장 완료');
+    if (lessonCreated) {
+      status.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> 새 수업(' + lessonCreated + ') 생성 + 리뷰 저장 완료!';
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 새 수업(' + lessonCreated + ')이 자동으로 생성되었습니다');
+    } else {
+      status.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> ' + date + ' 리뷰 저장 완료!';
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰가 추가되었습니다');
+    }
     await loadEnglishSessions();
+    await loadEnglish();
     setTimeout(function(){ closeReviewCreateModal(); }, 1200);
   } catch(err) {
     status.className = 'mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2 bg-rose-50 text-rose-700';
@@ -11562,6 +11601,20 @@ async function parseAndSaveReview() {
         <button onclick="closeSettingsPanel()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors">
           <span class="material-symbols-outlined text-slate-500">close</span>
         </button>
+      </div>
+
+      <!-- Anthropic API 설정 -->
+      <div class="p-4 border-b border-slate-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-violet-600" style="font-size:18px">smart_toy</span>
+            <div>
+              <h4 class="font-bold text-sm text-slate-800">Anthropic API</h4>
+              <p id="settings-api-status" class="text-[10px] text-slate-400 mt-0.5">미설정</p>
+            </div>
+          </div>
+          <button onclick="closeSettingsPanel();setTimeout(openApiSettingsModal,200)" class="px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg text-xs font-bold hover:bg-violet-100 transition-colors">설정</button>
+        </div>
       </div>
 
       <!-- 데이터 백업/복원 -->
