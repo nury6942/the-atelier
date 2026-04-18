@@ -133,6 +133,9 @@
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
 
+    /* ===== DASHBOARD PAGE ===== */
+    .dashboard-page .font-headline, .dashboard-page h1, .dashboard-page h2, .dashboard-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
+
     /* ===== CALENDAR PAGE — Digital Curator Style ===== */
     .calendar-page .font-headline, .calendar-page h2, .calendar-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .cal-stat-card {
@@ -588,117 +591,121 @@
   </header>
 
   <div class="pt-16 flex-1">
-  <div id="page-dashboard" class="page" style="display:block">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+  <div id="page-dashboard" class="page dashboard-page" style="display:block">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-12">
 
-      <!-- Page Intro -->
-      <div class="atelier-page-intro mb-6 pb-5 border-b border-slate-100 flex items-center justify-between gap-8">
-        <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">오늘의 실행 현황, 여행 일정, 재정 현황, 연간 마일스톤을 한눈에.</p>
-        <span id="dashboard-today" class="text-[9px] font-black uppercase tracking-[0.15em] text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap"></span>
-      </div>
-
-      <!-- A: 이번 달 카테고리별 일정 수 -->
-      <section class="mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">이번 달 활동</h3>
-          <span id="dashboard-month-label" class="text-[10px] font-bold uppercase tracking-widest text-white bg-slate-800 px-3 py-1 rounded-full"></span>
+      <!-- Hero: Expression + Schedule -->
+      <section class="grid grid-cols-1 md:grid-cols-10 gap-6 items-stretch">
+        <!-- Expression Card -->
+        <div id="dash-expr-card" class="md:col-span-6 bg-white rounded-2xl p-10 md:p-14 relative overflow-hidden flex flex-col justify-center cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)" onclick="navigate('vault')">
+          <div class="absolute top-8 left-8 text-6xl font-headline font-extrabold opacity-[0.08] pointer-events-none" style="color:#d0bcff">"</div>
+          <button onclick="event.stopPropagation();shuffleDashExpr()" class="absolute top-5 right-5 p-2 rounded-xl hover:bg-[#f3f4f5] transition-all text-[#494454]/40 hover:text-[#6b38d4] z-10" title="셔플"><span class="material-symbols-outlined">shuffle</span></button>
+          <h1 id="dash-expr-en" class="text-3xl md:text-4xl font-headline font-extrabold leading-tight tracking-tight text-[#191c1d] mb-6 z-10 italic"></h1>
+          <p id="dash-expr-kr" class="text-sm text-[#494454] mb-3 z-10"></p>
+          <div class="space-y-1 z-10">
+            <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#6b38d4">Today's English Expression</p>
+            <p id="dash-expr-ctx" class="text-[#494454]/60 text-xs"></p>
+          </div>
+          <div class="absolute bottom-8 right-8 text-6xl font-headline font-extrabold opacity-[0.08] pointer-events-none rotate-180" style="color:#d0bcff">"</div>
         </div>
-        <div id="dashboard-tracks" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <!-- JS로 채움 -->
-          <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm animate-pulse"><div class="h-3 bg-slate-100 rounded w-12 mb-3"></div><div class="h-7 bg-slate-100 rounded w-8"></div></div>
+        <!-- Schedule Card -->
+        <div class="md:col-span-4 bg-[#f3f4f5] rounded-2xl p-8 flex flex-col justify-between" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+          <div>
+            <div class="flex justify-between items-start mb-8">
+              <div>
+                <p class="text-[#494454] text-xs uppercase tracking-widest font-bold mb-1">Today's Schedule</p>
+                <h2 id="dash-today-label" class="text-2xl font-headline font-bold text-[#191c1d]"></h2>
+              </div>
+              <div class="p-3 rounded-xl" style="background:#8455ef;color:#fff"><span class="material-symbols-outlined">auto_awesome</span></div>
+            </div>
+            <div id="dash-today-events" class="space-y-5">
+              <p class="text-sm text-[#494454]/60">오늘 일정 없음 — 편안한 하루 되세요</p>
+            </div>
+          </div>
+          <button onclick="openPlannerModal()" class="mt-6 w-full py-3.5 rounded-xl text-white font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform" style="background:#6b38d4">
+            <span class="material-symbols-outlined text-sm">add</span> New Event
+          </button>
         </div>
       </section>
 
-      <!-- B: 이번 주 일정 미리보기 -->
-      <section class="mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">이번 주 일정</h3>
-          <span class="material-symbols-outlined text-slate-300">calendar_month</span>
+      <!-- Week in Review -->
+      <section class="space-y-5">
+        <div class="flex justify-between items-end">
+          <h2 class="text-2xl font-headline font-extrabold tracking-tight text-[#191c1d]">Week in Review</h2>
+          <span id="dash-week-range" class="font-bold text-sm" style="color:#6b38d4"></span>
         </div>
-        <div id="dashboard-week" class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-          <div class="grid grid-cols-7 divide-x divide-slate-50">
-            <!-- JS로 채움 -->
+        <div id="dash-week-grid" class="grid grid-cols-2 md:grid-cols-7 gap-4"></div>
+      </section>
+
+      <!-- Travel -->
+      <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-2xl h-[360px]" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-8 left-8 text-white z-10">
+            <p class="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Upcoming Journey</p>
+            <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
+            <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
+          </div>
+        </div>
+        <div class="md:col-span-4 flex flex-col">
+          <div id="dash-travel-next" class="p-8 rounded-2xl flex-1 flex flex-col justify-end" style="background:#c9b3fd;box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+            <span class="material-symbols-outlined text-3xl mb-3" style="color:#544183">flight_takeoff</span>
+            <h3 id="dash-travel-next-name" class="text-xl font-headline font-bold leading-tight" style="color:#544183"></h3>
+            <p id="dash-travel-next-date" class="mt-1 text-sm" style="color:#4e3b7c"></p>
           </div>
         </div>
       </section>
 
-      <!-- 하단 3개 카드 -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-        <!-- Financial Pulse -->
-        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">재정 현황</h3>
-            <span class="material-symbols-outlined text-slate-300">monitoring</span>
+      <!-- 3-Card Widgets -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Vacation -->
+        <div class="bg-white p-8 rounded-2xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-bold tracking-widest text-[#494454]">VACATION</span>
+            <span class="material-symbols-outlined" style="color:#6b38d4">beach_access</span>
           </div>
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="p-4 bg-indigo-50/50 rounded-xl border border-slate-100">
-              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">사이드 잡</p>
-              <p id="dash-income" class="text-xl font-black text-indigo-700">₩0</p>
-            </div>
-            <div class="p-4 bg-rose-50/30 rounded-xl border border-slate-100">
-              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">지출</p>
-              <p id="dash-expense" class="text-xl font-black text-rose-700">₩0</p>
-            </div>
+          <div class="flex items-baseline gap-2 mb-1">
+            <span id="dash-vac-remain" class="text-4xl font-headline font-extrabold text-[#191c1d]">—</span>
+            <span class="text-[#494454] font-medium text-sm">days remaining</span>
+          </div>
+          <div class="mt-auto pt-5">
+            <div class="w-full h-2 rounded-full overflow-hidden" style="background:#e7e8e9"><div id="dash-vac-bar" class="h-full rounded-full" style="background:#6b38d4;width:0%"></div></div>
+            <p id="dash-vac-label" class="text-xs font-bold text-[#494454] uppercase tracking-wider mt-2"></p>
+          </div>
+        </div>
+        <!-- English Vault -->
+        <div class="bg-white p-8 rounded-2xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-bold tracking-widest text-[#494454]">ENGLISH VAULT</span>
+            <span class="material-symbols-outlined" style="color:#6b38d4">library_books</span>
+          </div>
+          <div class="flex items-baseline gap-2 mb-1">
+            <span id="dash-vault-total" class="text-4xl font-headline font-extrabold text-[#191c1d]">0</span>
+            <span class="text-[#494454] font-medium text-sm">expressions</span>
+          </div>
+          <div class="mt-auto pt-5">
+            <p id="dash-vault-week" class="text-xs font-bold text-[#494454] uppercase tracking-wider">+0 this week</p>
+          </div>
+        </div>
+        <!-- Finance -->
+        <div class="bg-white p-8 rounded-2xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-bold tracking-widest text-[#494454]">THIS MONTH · FINANCE</span>
+            <span class="material-symbols-outlined" style="color:#6b38d4">trending_up</span>
+          </div>
+          <div class="space-y-1 mb-3">
+            <div class="flex justify-between text-sm"><span class="text-[#494454]">Income</span><span id="dash-income" class="font-bold">₩0</span></div>
+            <div class="flex justify-between text-sm"><span class="text-[#494454]">Expense</span><span id="dash-expense" class="font-bold">₩0</span></div>
           </div>
           <div class="mt-auto">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">저축</p>
-            <p id="dash-savings" class="text-sm font-bold text-slate-700">₩0</p>
-          </div>
-        </div>
-
-        <!-- 이번 달 목표 (Milestones) -->
-        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400">이달의 목표</h3>
-            <button onclick="openDashGoalModal()" class="p-1.5 hover:bg-indigo-100 rounded-lg transition-colors text-slate-400 hover:text-indigo-600">
-              <span class="material-symbols-outlined text-sm">add</span>
-            </button>
-          </div>
-          <div id="dash-milestones" class="space-y-2 flex-1">
-            <div class="text-sm text-slate-400">불러오는 중...</div>
-          </div>
-        </div>
-
-        <!-- Upcoming Journey -->
-        <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div class="h-32 w-full relative">
-            <img alt="여행" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACKnxlMlIMk8O5X-wzkZdjTPlrjDAQEqvjByFT8SVdH-CAieVmbFMCLxMoWRnkEtGnp48qKkKZtCt6T2AkQBKOv7X991YzO4SGrG3__NYCQXv4shXBRHVOVf4c-K55D4jKjIK8I-zTIgTu0VQGHR896_yaYVHv8gJ_DYrJSgPGvthC9fXbvPD537LQ-RaT0Kz83sdLNxevoDvaWmI3gAWlijl_xQ-4AXB3U8ROezP7XD8gNCsn1BQ_GhzEqDvkyq7fOchVAiZlrAHA"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-4">
-              <div class="text-white">
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">다가오는 여행</p>
-                <h4 id="dash-journey-title" class="text-lg font-bold">—</h4>
-              </div>
-            </div>
-          </div>
-          <div class="p-5">
-            <div id="dash-journey-events" class="space-y-3">
-              <p class="text-sm text-slate-400">플래너에서 여행 일정을 추가해봐!</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Yearly Milestone Banner -->
-      <section class="mt-8">
-        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-8 rounded-3xl relative overflow-hidden shadow-xl border border-white/5">
-          <div class="absolute -right-16 -top-16 size-64 bg-white/5 rounded-full"></div>
-          <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="flex items-center gap-8">
-              <div class="size-16 rounded-2xl bg-white/10 backdrop-blur-xl flex flex-col items-center justify-center text-white border border-white/20 shadow-2xl">
-                <span id="dash-milestone-month" class="text-[10px] font-bold uppercase tracking-widest opacity-60"></span>
-                <span class="material-symbols-outlined text-2xl mt-1">auto_awesome</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-300 mb-1">이달의 집중 목표</p>
-                <h4 id="dash-milestone-title" class="text-2xl font-bold tracking-tight text-white">—</h4>
-                <p id="dash-milestone-desc" class="text-indigo-100/80 mt-2 text-sm font-medium">목표를 Milestones 시트에 추가해봐!</p>
-              </div>
-            </div>
+            <p id="dash-net" class="text-2xl font-headline font-extrabold mb-1" style="color:#6b38d4">₩0</p>
+            <p class="text-xs font-bold text-[#494454] uppercase tracking-wider">net balance this month</p>
           </div>
         </div>
       </section>
+
+      <!-- Footer -->
+      <footer class="pt-6 text-center text-[#494454]/40 italic font-headline text-sm" id="dash-footer"></footer>
 
     </div>
   </div>
@@ -6388,111 +6395,169 @@
     '예정':'bg-slate-100 text-slate-600 border-slate-200',
   };
 
+  var _dashExprIdx = -1;
+
   async function loadDashboard() {
-    // Set today date badge
-    const now = new Date();
-    const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-    const days = ['일','월','화','수','목','금','토'];
-    document.getElementById('dashboard-today').textContent =
-      now.getFullYear() + '년 ' + months[now.getMonth()] + ' ' + now.getDate() + '일 ' + days[now.getDay()] + '요일';
-    document.getElementById('dashboard-month-label').textContent = months[now.getMonth()];
+    var now = new Date();
+    var DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var todayStr = now.toISOString().split('T')[0];
 
-    // Fetch all needed sheets in parallel
+    // Today label
+    document.getElementById('dash-today-label').textContent = DAYS_EN[now.getDay()] + ', ' + MONTHS_EN[now.getMonth()].substring(0,3) + ' ' + now.getDate();
+    // Footer
+    document.getElementById('dash-footer').textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
+
     try {
-      const [plannerDocs, hubDocs, milestoneDocs] = await Promise.all([
-        fbRead('planner'),
-        fbRead('finance_hub'),
-        fbRead('milestones'),
+      var [plannerDocs, hubDocs, tripDocs, vaultDocs] = await Promise.all([
+        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions')
       ]);
-      const plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
-      const hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
-      const milestoneRows = milestoneDocs.map(function(d){ return objToRow('milestones', d).concat([d._id]); });
+      var plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
+      var hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
 
-      renderDashboardTracks(plannerRows, now);
-      renderDashboardWeek(plannerRows, now);
-      renderDashboardFinance(hubRows);
-      renderDashboardMilestones(milestoneRows, now);
-      renderDashboardJourney(plannerRows, now);
-
-    } catch(err) {
-      console.error('Dashboard load error:', err);
-    }
+      // Expression
+      renderDashExpr(vaultDocs);
+      // Today schedule
+      renderDashSchedule(plannerRows, todayStr, tripDocs);
+      // Week
+      renderDashWeek(plannerRows, now, todayStr);
+      // Travel
+      renderDashTravel(tripDocs, todayStr);
+      // Vacation
+      renderDashVacation();
+      // Vault stats
+      renderDashVaultStats(vaultDocs, now);
+      // Finance
+      renderDashFinance(hubRows);
+    } catch(err) { console.error('Dashboard load error:', err); }
   }
 
-  function renderDashboardTracks(rows, now) {
-    const monthStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-    const counts = {};
-    rows.forEach(function(r) {
-      if ((r[0]||'').toString().startsWith(monthStr)) {
-        const cat = r[2] || '기타';
-        counts[cat] = (counts[cat]||0) + 1;
-      }
+  function renderDashExpr(docs) {
+    var enEl = document.getElementById('dash-expr-en');
+    var krEl = document.getElementById('dash-expr-kr');
+    var ctxEl = document.getElementById('dash-expr-ctx');
+    if (!docs || !docs.length) {
+      enEl.textContent = '"Vault에 표현을 추가해보세요"';
+      krEl.textContent = ''; ctxEl.textContent = '';
+      return;
+    }
+    var idx; do { idx = Math.floor(Math.random()*docs.length); } while (idx === _dashExprIdx && docs.length > 1);
+    _dashExprIdx = idx;
+    var item = docs[idx];
+    enEl.textContent = '"' + (item.english||'') + '"';
+    krEl.textContent = item.korean || '';
+    ctxEl.textContent = item.context || '';
+  }
+  function shuffleDashExpr() { loadDashboard(); }
+
+  function renderDashSchedule(rows, todayStr, trips) {
+    var el = document.getElementById('dash-today-events');
+    var todayEvents = rows.filter(function(r) {
+      var start = (r[0]||'').toString(), end = (r[5]||'').toString();
+      if (end && end > start) return todayStr >= start && todayStr <= end;
+      return start === todayStr;
     });
+    // D-day for trips
+    var ddays = (trips||[]).filter(function(t){
+      return t.start_date && t.start_date > todayStr;
+    }).map(function(t){
+      var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/(86400000));
+      return { name: t.name, diff: diff };
+    }).sort(function(a,b){ return a.diff - b.diff; }).slice(0,1);
 
-    const container = document.getElementById('dashboard-tracks');
-    const cats = ['업무','연차','개인','글쓰기','영어','스터디'];
-    const max = Math.max(...cats.map(function(c){ return counts[c]||0; }), 1);
-
-    container.innerHTML = cats.map(function(cat) {
-      const n = counts[cat] || 0;
-      const pct = Math.round((n/max)*100);
-      const colorClass = TRACK_COLORS[cat] || 'bg-slate-50 text-slate-600 border-slate-100';
-      const barClass = TRACK_BARS[cat] || 'bg-slate-300';
-      return '<div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm hover:border-indigo-200 transition-all">' +
-        '<p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">' + cat + '</p>' +
-        '<p class="text-2xl font-extrabold text-slate-800 font-headline">' + n + '<span class="text-xs text-slate-400 font-normal ml-1">회</span></p>' +
-        '<div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">' +
-        '<div class="h-full ' + barClass + ' rounded-full transition-all" style="width:' + pct + '%"></div></div>' +
-        '</div>';
-    }).join('');
-  }
-
-  function renderDashboardWeek(rows, now) {
-    const container = document.getElementById('dashboard-week').querySelector('.grid');
-    // Get Mon-Sun of current week
-    const dayOfWeek = now.getDay(); // 0=Sun
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-
-    const weekDates = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      weekDates.push(d);
+    if (!todayEvents.length && !ddays.length) {
+      el.innerHTML = '<p class="text-sm text-[#494454]/60">오늘 일정 없음 — 편안한 하루 되세요</p>';
+      return;
     }
-
-    container.innerHTML = weekDates.map(function(d, i) {
-      const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-      const isToday = dateStr === now.toISOString().split('T')[0];
-      const isWeekend = i >= 5;
-      const events = rows.filter(function(r){ return (r[0]||'').toString().startsWith(dateStr); });
-
-      return '<div class="p-3 min-h-24 ' + (isWeekend?'bg-rose-50/30':'') + '">' +
-        '<p class="text-[10px] font-black uppercase tracking-widest mb-1 ' + (isWeekend?'text-rose-400':'text-slate-400') + '">' + WEEK_DAYS[i] + '</p>' +
-        '<p class="' + (isToday?'gradient-primary text-white w-6 h-6 flex items-center justify-center rounded-full text-xs shadow-sm font-bold':'text-sm font-medium ' + (isWeekend?'text-rose-500':'text-slate-600')) + '">' + d.getDate() + '</p>' +
-        events.slice(0,3).map(function(ev) {
-          const colorCls = TRACK_COLORS[ev[2]] || 'bg-indigo-50 text-indigo-700 border-indigo-100';
-          const realIdx = plannerData.indexOf(ev);
-          return '<div class="mt-1 text-[9px] px-1.5 py-0.5 rounded font-bold truncate border ' + colorCls + ' flex items-center justify-between group/ev cursor-pointer" onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
-            '<span class="truncate">' + (ev[1]||'') + '</span>' +
-            '</div>';
-        }).join('') +
-        '</div>';
+    el.innerHTML = todayEvents.slice(0,3).map(function(ev){
+      return '<div class="flex items-center gap-4"><div class="w-2 h-10 rounded-full" style="background:#6b38d4"></div><div><h3 class="font-headline font-bold text-[#191c1d]">' + (ev[1]||'') + '</h3><p class="text-xs text-[#494454]">' + (ev[2]||'') + '</p></div></div>';
+    }).join('') + ddays.map(function(dd){
+      return '<div class="flex items-center gap-4"><div class="w-2 h-10 rounded-full" style="background:#a76500"></div><div><h3 class="font-headline font-bold text-[#191c1d]">' + dd.name + ' D-' + dd.diff + '</h3><p class="text-xs text-[#494454]">Check travel preparation</p></div></div>';
     }).join('');
   }
 
-  function renderDashboardFinance(rows) {
-    let income=0, expense=0, savings=0;
+  function renderDashWeek(rows, now, todayStr) {
+    var grid = document.getElementById('dash-week-grid');
+    var dayOfWeek = now.getDay();
+    var monday = new Date(now); monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    var weekDates = [];
+    for (var i = 0; i < 7; i++) { var d = new Date(monday); d.setDate(monday.getDate()+i); weekDates.push(d); }
+    var DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    document.getElementById('dash-week-range').textContent = (monday.getMonth()+1) + '/' + monday.getDate() + ' - ' + (weekDates[6].getMonth()+1) + '/' + weekDates[6].getDate();
+
+    grid.innerHTML = weekDates.map(function(d, i){
+      var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      var isToday = ds === todayStr;
+      var evts = rows.filter(function(r){ var s=(r[0]||'').toString(),e=(r[5]||'').toString(); if(e&&e>s) return ds>=s&&ds<=e; return s===ds; });
+      if (isToday) {
+        return '<div class="p-5 rounded-2xl space-y-3 ring-4" style="background:#8455ef;ring-color:rgba(107,56,212,0.1);box-shadow:0 8px 24px rgba(107,56,212,0.2)"><div class="text-center"><p class="text-xs font-bold text-white/80 uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-white">'+d.getDate()+'</p></div>' +
+          evts.slice(0,2).map(function(ev){ return '<div class="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-bold text-white truncate">'+ev[1]+'</div>'; }).join('') + '</div>';
+      }
+      return '<div class="bg-white p-5 rounded-2xl space-y-3" style="box-shadow:0px 12px 32px rgba(25,28,29,0.02)"><div class="text-center"><p class="text-xs font-bold text-[#494454] uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-[#191c1d]">'+d.getDate()+'</p></div>' +
+        evts.slice(0,2).map(function(ev){ return '<div class="px-2 py-1 rounded-lg text-[10px] font-bold text-[#191c1d] truncate" style="background:#e7e8e9">'+ev[1]+'</div>'; }).join('') + '</div>';
+    }).join('');
+  }
+
+  function renderDashTravel(trips, todayStr) {
+    var upcoming = (trips||[]).filter(function(t){ return t.start_date && t.start_date >= todayStr; })
+      .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
+    var nameEl = document.getElementById('dash-travel-name');
+    var metaEl = document.getElementById('dash-travel-meta');
+    var nextNameEl = document.getElementById('dash-travel-next-name');
+    var nextDateEl = document.getElementById('dash-travel-next-date');
+    if (upcoming.length === 0) {
+      nameEl.textContent = '다음 여행을 계획해보세요';
+      metaEl.innerHTML = '';
+      nextNameEl.textContent = ''; nextDateEl.textContent = '';
+      return;
+    }
+    var t = upcoming[0];
+    var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/86400000);
+    nameEl.textContent = t.name;
+    metaEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>' + (t.start_date||'').slice(5) + ' - ' + (t.end_date||'').slice(5) + '</span><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase">D-' + diff + '</span>';
+    if (upcoming.length > 1) {
+      nextNameEl.textContent = 'Next: ' + upcoming[1].name;
+      nextDateEl.textContent = upcoming[1].start_date || '';
+    } else { nextNameEl.textContent = ''; nextDateEl.textContent = ''; }
+  }
+
+  async function renderDashVacation() {
+    try {
+      var yr = new Date().getFullYear();
+      var doc = await db.collection('annualSettings').doc(String(yr)).get();
+      var total = (doc.exists && doc.data().vacationTotal !== undefined) ? doc.data().vacationTotal : 17;
+      var mDocs = await fbRead('matrix');
+      var used = 0;
+      mDocs.forEach(function(d){ var lv = (d.leave||'').toString(); var m = lv.match(/^([\d.]+)/); if(m) used += parseFloat(m[1]); });
+      var remain = Math.max(0, total - used);
+      document.getElementById('dash-vac-remain').textContent = remain.toFixed(remain%1?1:0);
+      var pct = total > 0 ? Math.round(((total-used)/total)*100) : 0;
+      document.getElementById('dash-vac-bar').style.width = Math.max(0,pct) + '%';
+      document.getElementById('dash-vac-label').textContent = 'Used ' + used.toFixed(used%1?1:0) + ' of ' + total;
+    } catch(e) {}
+  }
+
+  function renderDashVaultStats(docs, now) {
+    document.getElementById('dash-vault-total').textContent = (docs||[]).length;
+    var weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate()-7);
+    var weekStr = weekAgo.toISOString();
+    var thisWeek = (docs||[]).filter(function(d){ return (d.createdAt||'') >= weekStr; }).length;
+    document.getElementById('dash-vault-week').textContent = '+' + thisWeek + ' this week';
+  }
+
+  function renderDashFinance(rows) {
+    var income=0, expense=0;
     rows.forEach(function(r) {
-      const amt = parseFloat(r[3])||0;
-      const type = r[4]||'';
+      var amt = parseFloat(r[3])||0;
+      var type = r[4]||'';
       if(type==='수입') income+=amt;
       else if(type==='지출') expense+=amt;
-      else if(type==='저축') savings+=amt;
     });
     document.getElementById('dash-income').textContent = '₩'+income.toLocaleString('ko-KR');
     document.getElementById('dash-expense').textContent = '₩'+expense.toLocaleString('ko-KR');
-    document.getElementById('dash-savings').textContent = '₩'+savings.toLocaleString('ko-KR');
+    var net = income - expense;
+    document.getElementById('dash-net').textContent = (net>=0?'+':'') + '₩' + Math.abs(net).toLocaleString('ko-KR');
+    document.getElementById('dash-net').style.color = net >= 0 ? '#6b38d4' : '#ba1a1a';
   }
 
   let dashMilestones = []; // 캐시
