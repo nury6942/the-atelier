@@ -165,6 +165,11 @@
     .vault-filter-chip.active { background: #6b38d4; color: #fff; }
     .vault-card { background: #fff; border-radius: 1.5rem; padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
     .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
+    .vault-model-radio { cursor: pointer; }
+    .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: 0.75rem; background: #e7e8e9; font-size: 0.8125rem; font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
+    .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: #6b38d4; color: #fff; }
+    .vault-ai-item { background: #fff; border-radius: 1rem; padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
+    .vault-ai-item:hover { border-color: rgba(107,56,212,0.3); }
 
     /* Review drop zone active state */
     .review-dz-active {
@@ -2185,9 +2190,17 @@
           <h1 class="font-headline text-4xl font-extrabold tracking-tight text-[#191c1d]">My English Vault</h1>
           <p class="text-[#494454] text-sm max-w-md">대화에서 수집한 영어 표현 아카이브.</p>
         </div>
-        <button onclick="openVaultModal()" class="px-6 py-3 rounded-2xl text-white font-bold flex items-center gap-2 shadow-lg hover:scale-[1.02] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
-          <span class="material-symbols-outlined text-sm">add</span> New Expression
-        </button>
+        <div class="flex gap-2 flex-wrap">
+          <button onclick="openVaultBulkModal()" class="px-5 py-3 rounded-2xl bg-[#e7e8e9] text-[#494454] font-bold text-sm flex items-center gap-2 hover:bg-[#d9dadb] transition-all">
+            <span class="material-symbols-outlined text-sm">list_alt</span> 일괄 추가
+          </button>
+          <button onclick="openVaultAiModal()" class="px-5 py-3 rounded-2xl text-white font-bold text-sm flex items-center gap-2 shadow-lg hover:scale-[1.02] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+            ✨ AI로 추출
+          </button>
+          <button onclick="openVaultModal()" class="px-5 py-3 rounded-2xl text-[#6b38d4] font-bold text-sm flex items-center gap-2 hover:bg-[#f3f4f5] transition-all border border-[#cbc3d7]/30">
+            <span class="material-symbols-outlined text-sm">add</span> New
+          </button>
+        </div>
       </header>
 
       <!-- Stats -->
@@ -2282,6 +2295,83 @@
         <button onclick="saveVaultEntry()" id="vault-save-btn" class="flex-1 py-3 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
         <button id="vault-delete-btn" onclick="deleteVaultEntry()" class="py-3 px-5 rounded-xl bg-rose-50 text-rose-600 font-bold text-sm hover:bg-rose-100 transition-colors" style="display:none">삭제</button>
         <button onclick="closeVaultModal()" class="py-3 px-5 rounded-xl bg-[#e7e8e9] text-[#494454] font-bold text-sm">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vault Bulk Modal -->
+  <div id="vault-bulk-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="px-6 py-4 flex justify-between items-center" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+        <h3 class="font-bold text-white text-lg font-headline">일괄 추가</h3>
+        <button onclick="closeVaultBulkModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 space-y-4">
+        <div class="p-3 rounded-xl bg-[#f3f4f5] text-xs text-[#494454] leading-relaxed">
+          <p class="font-bold mb-1">형식: 영어 | 한국어 | 카테고리 | 맥락메모</p>
+          <p>카테고리: work, life, study, emotions, insights (생략 시 work)</p>
+          <p>맥락메모는 선택사항. 한 줄에 하나씩 입력.</p>
+        </div>
+        <textarea id="vault-bulk-input" rows="10" placeholder="I had to work late. | 야근했어 | work | 이사님 급한 요청&#10;This is above my pay grade. | 내 권한 밖이야 | work | 책임 선 긋기&#10;Let's call it a day. | 오늘은 여기까지 하자 | life |" class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm resize-none border-none focus:ring-2 focus:ring-[#6b38d4]/40 font-mono"></textarea>
+        <div id="vault-bulk-preview" class="space-y-2" style="display:none"></div>
+        <div id="vault-bulk-error" class="text-xs text-rose-600 font-bold" style="display:none"></div>
+      </div>
+      <div class="px-6 pb-6 flex gap-2">
+        <button onclick="previewVaultBulk()" class="flex-1 py-3 rounded-xl bg-[#e7e8e9] text-[#494454] font-bold text-sm">미리보기</button>
+        <button onclick="saveVaultBulk()" id="vault-bulk-save" class="flex-1 py-3 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vault AI Extract Modal -->
+  <div id="vault-ai-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="px-6 py-4 flex justify-between items-center" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+        <h3 class="font-bold text-white text-lg font-headline">✨ AI로 표현 추출</h3>
+        <button onclick="closeVaultAiModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 space-y-5">
+        <!-- Step 1: Input -->
+        <div id="vault-ai-step1">
+          <div class="space-y-1 mb-4">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">모델 선택</label>
+            <div class="flex gap-2 flex-wrap">
+              <label class="vault-model-radio"><input type="radio" name="vault-model" value="claude-haiku-4-5" class="hidden" onchange="updateVaultAiCost()"/><span class="vault-model-label">Haiku 4.5<br><span class="text-[10px] font-normal text-[#494454]">빠름</span></span></label>
+              <label class="vault-model-radio"><input type="radio" name="vault-model" value="claude-sonnet-4-6" class="hidden" checked onchange="updateVaultAiCost()"/><span class="vault-model-label active">Sonnet 4.6 ⭐<br><span class="text-[10px] font-normal text-[#494454]">추천</span></span></label>
+              <label class="vault-model-radio"><input type="radio" name="vault-model" value="claude-opus-4-7" class="hidden" onchange="updateVaultAiCost()"/><span class="vault-model-label">Opus 4.7<br><span class="text-[10px] font-normal text-[#494454]">최고 품질</span></span></label>
+            </div>
+          </div>
+          <div class="space-y-1 mb-3">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-[#494454] px-1">AI 대화 내용</label>
+            <textarea id="vault-ai-input" rows="10" oninput="updateVaultAiCost()" placeholder="Gemini, Claude 등과의 대화 내용을 붙여넣으세요..." class="w-full px-4 py-3 rounded-xl bg-[#e1e3e4] text-sm resize-none border-none focus:ring-2 focus:ring-[#6b38d4]/40"></textarea>
+          </div>
+          <p id="vault-ai-cost" class="text-xs text-[#494454] mb-4">예상 비용: 약 0원</p>
+          <button onclick="runVaultAiExtract()" class="w-full py-3 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            ✨ AI로 표현 추출
+          </button>
+        </div>
+        <!-- Loading -->
+        <div id="vault-ai-loading" class="hidden text-center py-8">
+          <span class="material-symbols-outlined text-[#6b38d4] text-3xl mb-2 animate-spin block">progress_activity</span>
+          <p class="text-sm font-bold text-[#494454]">Claude가 표현을 추출하고 있어요...</p>
+        </div>
+        <!-- Error -->
+        <div id="vault-ai-error" class="hidden p-4 rounded-xl bg-rose-50">
+          <p id="vault-ai-error-msg" class="text-sm font-bold text-rose-700 mb-2"></p>
+          <button onclick="document.getElementById('vault-ai-error').className='hidden';document.getElementById('vault-ai-step1').style.display=''" class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-bold">다시 시도</button>
+        </div>
+        <!-- Step 2: Results -->
+        <div id="vault-ai-step2" style="display:none">
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="font-bold text-[#191c1d] text-sm">추출된 표현</h4>
+            <div class="flex gap-2">
+              <button onclick="toggleAllVaultAi(true)" class="text-xs font-bold text-[#6b38d4]">전체 선택</button>
+              <button onclick="toggleAllVaultAi(false)" class="text-xs font-bold text-[#494454]">전체 해제</button>
+            </div>
+          </div>
+          <div id="vault-ai-results" class="space-y-2 max-h-[50vh] overflow-y-auto"></div>
+          <button onclick="saveVaultAiResults()" id="vault-ai-save-btn" class="w-full mt-4 py-3 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">0개 저장</button>
+        </div>
       </div>
     </div>
   </div>
@@ -11728,6 +11818,193 @@ async function parseAndSaveReview() {
       closeVaultModal();
       await loadVault();
     } catch(err) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패'); }
+  }
+
+  // ===== VAULT BULK ADD =====
+  var _vaultBulkParsed = [];
+  var VALID_CATS = ['work','life','study','emotions','insights'];
+
+  function openVaultBulkModal() {
+    document.getElementById('vault-bulk-input').value = '';
+    document.getElementById('vault-bulk-preview').style.display = 'none';
+    document.getElementById('vault-bulk-preview').innerHTML = '';
+    document.getElementById('vault-bulk-error').style.display = 'none';
+    _vaultBulkParsed = [];
+    document.getElementById('vault-bulk-modal').style.cssText = 'display:flex!important';
+  }
+  function closeVaultBulkModal() { document.getElementById('vault-bulk-modal').style.cssText = 'display:none!important'; }
+
+  function previewVaultBulk() {
+    var lines = document.getElementById('vault-bulk-input').value.split('\n').filter(function(l){ return l.trim(); });
+    _vaultBulkParsed = [];
+    var errors = [];
+    var preview = document.getElementById('vault-bulk-preview');
+    var errorEl = document.getElementById('vault-bulk-error');
+
+    lines.forEach(function(line, i) {
+      var parts = line.split('|').map(function(s){ return s.trim(); });
+      if (parts.length < 2 || !parts[0] || !parts[1]) {
+        errors.push((i+1) + '번째 줄: 영어와 한국어는 필수입니다');
+        return;
+      }
+      var cat = (parts[2]||'work').toLowerCase();
+      if (VALID_CATS.indexOf(cat) < 0) cat = 'work';
+      _vaultBulkParsed.push({ english: parts[0], korean: parts[1], category: cat, context: parts[3]||'' });
+    });
+
+    if (errors.length) {
+      errorEl.textContent = errors.join('\n');
+      errorEl.style.display = 'block';
+    } else { errorEl.style.display = 'none'; }
+
+    if (_vaultBulkParsed.length) {
+      var catStyle = VAULT_CAT_STYLE;
+      preview.innerHTML = _vaultBulkParsed.map(function(d, i) {
+        var cs = catStyle[d.category] || catStyle.work;
+        return '<div class="p-3 rounded-xl bg-[#f3f4f5] flex items-start gap-3"><span class="text-xs font-bold text-[#6b38d4] shrink-0 mt-0.5">' + (i+1) + '</span><div class="flex-1 min-w-0"><span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase mb-1" style="' + cs + '">' + d.category + '</span><p class="text-sm font-bold text-[#191c1d] truncate">' + d.english + '</p><p class="text-xs text-[#494454]">' + d.korean + '</p>' + (d.context ? '<p class="text-[10px] text-[#494454]/60 mt-1">' + d.context + '</p>' : '') + '</div></div>';
+      }).join('');
+      preview.style.display = 'block';
+    }
+  }
+
+  async function saveVaultBulk() {
+    if (!_vaultBulkParsed.length) { previewVaultBulk(); if (!_vaultBulkParsed.length) return; }
+    var now = Date.now();
+    for (var i = 0; i < _vaultBulkParsed.length; i++) {
+      var d = _vaultBulkParsed[i];
+      d.createdAt = new Date(now + i * 100).toISOString();
+      d.updatedAt = d.createdAt;
+      await fbAdd('vaultExpressions', d);
+    }
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + _vaultBulkParsed.length + '개 표현이 저장되었어요');
+    closeVaultBulkModal();
+    await loadVault();
+  }
+
+  // ===== VAULT AI EXTRACT =====
+  var _vaultAiResults = [];
+
+  function openVaultAiModal() {
+    document.getElementById('vault-ai-input').value = '';
+    document.getElementById('vault-ai-step1').style.display = '';
+    document.getElementById('vault-ai-loading').className = 'hidden text-center py-8';
+    document.getElementById('vault-ai-error').className = 'hidden p-4 rounded-xl bg-rose-50';
+    document.getElementById('vault-ai-step2').style.display = 'none';
+    _vaultAiResults = [];
+    updateVaultAiCost();
+    // Sync radio button visuals
+    document.querySelectorAll('.vault-model-label').forEach(function(l){ l.classList.remove('active'); });
+    var checked = document.querySelector('input[name="vault-model"]:checked');
+    if (checked) checked.nextElementSibling.classList.add('active');
+    document.getElementById('vault-ai-modal').style.cssText = 'display:flex!important';
+  }
+  function closeVaultAiModal() { document.getElementById('vault-ai-modal').style.cssText = 'display:none!important'; }
+
+  // Radio visual update
+  document.addEventListener('change', function(e) {
+    if (e.target.name === 'vault-model') {
+      document.querySelectorAll('.vault-model-label').forEach(function(l){ l.classList.remove('active'); });
+      e.target.nextElementSibling.classList.add('active');
+    }
+  });
+
+  function estimateTokens(text) { return Math.ceil((text||'').length * 0.5); }
+  function estimateCostKRW(inputTokens, model) {
+    var prices = { 'claude-haiku-4-5':{i:1,o:5}, 'claude-sonnet-4-6':{i:3,o:15}, 'claude-opus-4-7':{i:15,o:75} };
+    var p = prices[model] || prices['claude-sonnet-4-6'];
+    var outputTokens = inputTokens * 0.3;
+    return Math.round((inputTokens * p.i + outputTokens * p.o) / 1000000 * 1400);
+  }
+
+  function updateVaultAiCost() {
+    var text = document.getElementById('vault-ai-input').value;
+    var model = (document.querySelector('input[name="vault-model"]:checked') || {}).value || 'claude-sonnet-4-6';
+    var tokens = estimateTokens(text);
+    var cost = estimateCostKRW(tokens, model);
+    document.getElementById('vault-ai-cost').textContent = '예상 비용: 약 ' + cost + '원 (≈' + tokens + ' 토큰)';
+  }
+
+  var VAULT_AI_SYSTEM = '당신은 영어 학습자를 위한 표현 추출 전문가입니다. 사용자가 붙여넣은 AI 대화(Gemini, Claude 등과의 한국어 대화)에서 학습자가 기억하면 좋을 만한 유용한 영어 표현들을 추출하세요.\n\n규칙:\n1. 실용적이고 일상/업무에서 쓸 수 있는 표현 위주로 선택\n2. 너무 기본적이거나 너무 고급(학술적)인 것은 제외\n3. 각 표현마다:\n   - english: 영어 표현 (완전한 문장 또는 구)\n   - korean: 자연스러운 한국어 번역\n   - category: \'work\', \'life\', \'study\', \'emotions\', \'insights\' 중 하나\n   - context: 언제/어떻게 쓰면 좋을지 1줄 설명 (한국어)\n\n카테고리 가이드:\n- work: 업무, 비즈니스 맥락\n- life: 일상 생활, 캐주얼 대화\n- study: 학습, 책/영화에서 배운 것\n- emotions: 감정 표현, 심리 상태\n- insights: 깨달음, 통찰, 철학적 표현\n\n5~15개 정도 추출하여 순수 JSON 배열로만 응답.\n코드 블록 마크다운(```) 없이.\n\n예시:\n[{\"english\": \"I had to work late.\", \"korean\": \"야근해야 했어\", \"category\": \"work\", \"context\": \"급한 업무 받았을 때\"}]';
+
+  async function runVaultAiExtract() {
+    var text = document.getElementById('vault-ai-input').value.trim();
+    if (!text) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 대화 내용을 붙여넣으세요'); return; }
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 설정에서 Anthropic API 키를 먼저 등록해주세요'); return; }
+    var model = (document.querySelector('input[name="vault-model"]:checked') || {}).value || 'claude-sonnet-4-6';
+
+    document.getElementById('vault-ai-step1').style.display = 'none';
+    document.getElementById('vault-ai-loading').className = 'text-center py-8';
+    document.getElementById('vault-ai-error').className = 'hidden p-4 rounded-xl bg-rose-50';
+
+    try {
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: model, max_tokens: 4096, system: VAULT_AI_SYSTEM, messages: [{ role: 'user', content: text }] })
+      });
+      if (!res.ok) {
+        var errBody = {}; try { errBody = await res.json(); } catch(e){}
+        throw new Error((errBody.error && errBody.error.message) || 'HTTP ' + res.status);
+      }
+      var data = await res.json();
+      var responseText = (data.content && data.content[0] && data.content[0].text) || '';
+      var cleaned = responseText.trim().replace(/^```(?:json)?\s*/gm,'').replace(/```\s*$/gm,'').trim();
+      _vaultAiResults = JSON.parse(cleaned);
+      if (!Array.isArray(_vaultAiResults) || _vaultAiResults.length === 0) {
+        throw new Error('empty');
+      }
+      // Mark all checked
+      _vaultAiResults.forEach(function(r){ r._checked = true; });
+      renderVaultAiResults();
+      document.getElementById('vault-ai-loading').className = 'hidden text-center py-8';
+      document.getElementById('vault-ai-step2').style.display = '';
+    } catch(err) {
+      document.getElementById('vault-ai-loading').className = 'hidden text-center py-8';
+      var msg = err.message === 'empty' ? '유용한 영어 표현을 찾지 못했어요. 다른 대화로 시도해주세요.' : 'AI 추출 실패: ' + err.message;
+      document.getElementById('vault-ai-error-msg').textContent = msg;
+      document.getElementById('vault-ai-error').className = 'p-4 rounded-xl bg-rose-50';
+      document.getElementById('vault-ai-step1').style.display = '';
+    }
+  }
+
+  function renderVaultAiResults() {
+    var container = document.getElementById('vault-ai-results');
+    container.innerHTML = _vaultAiResults.map(function(r, i) {
+      var cs = VAULT_CAT_STYLE[r.category] || VAULT_CAT_STYLE.work;
+      return '<div class="vault-ai-item flex items-start gap-3">' +
+        '<input type="checkbox" ' + (r._checked ? 'checked' : '') + ' onchange="_vaultAiResults['+i+']._checked=this.checked;updateVaultAiSaveBtn()" class="mt-1.5 accent-[#6b38d4]"/>' +
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center gap-2 mb-1"><span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style="' + cs + '">' + (r.category||'work') + '</span></div>' +
+          '<p class="text-sm font-bold text-[#191c1d]">"' + (r.english||'') + '"</p>' +
+          '<p class="text-xs text-[#494454] mt-0.5">' + (r.korean||'') + '</p>' +
+          (r.context ? '<p class="text-[10px] text-[#494454]/60 mt-1">' + r.context + '</p>' : '') +
+        '</div></div>';
+    }).join('');
+    updateVaultAiSaveBtn();
+  }
+
+  function toggleAllVaultAi(state) {
+    _vaultAiResults.forEach(function(r){ r._checked = state; });
+    renderVaultAiResults();
+  }
+
+  function updateVaultAiSaveBtn() {
+    var count = _vaultAiResults.filter(function(r){ return r._checked; }).length;
+    document.getElementById('vault-ai-save-btn').textContent = count + '개 저장';
+  }
+
+  async function saveVaultAiResults() {
+    var toSave = _vaultAiResults.filter(function(r){ return r._checked; });
+    if (!toSave.length) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 저장할 표현을 선택해주세요'); return; }
+    var now = Date.now();
+    for (var i = 0; i < toSave.length; i++) {
+      var d = { english: toSave[i].english, korean: toSave[i].korean, category: toSave[i].category || 'work', context: toSave[i].context || '', createdAt: new Date(now + i * 100).toISOString(), updatedAt: new Date(now + i * 100).toISOString() };
+      await fbAdd('vaultExpressions', d);
+    }
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + toSave.length + '개 표현이 저장되었어요 ✨');
+    closeVaultAiModal();
+    await loadVault();
   }
 
   // ===== 전역 검색 =====
