@@ -11200,27 +11200,45 @@ async function autoGenerateReview() {
   }
 
   // Step D: 파싱
-  var cleaned = responseText;
-  cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*/gm, '').replace(/```\s*$/gm, '').trim();
+  var cleaned = responseText.trim();
+  // 코드 블록 제거: ```js ... ``` 또는 ```javascript ... ```
+  var codeBlockMatch = cleaned.match(/```(?:js|javascript|json)?\s*\n([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    cleaned = codeBlockMatch[1].trim();
+  } else {
+    // 코드 블록 없으면 라인 단위로 제거 시도
+    cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*\n?/gm, '').replace(/\n?```\s*$/gm, '').trim();
+  }
+
+  console.log('[AutoReview] Cleaned response (first 200 chars):', cleaned.substring(0, 200));
 
   var parsed;
-  // Strategy 1: JS evaluation
+  // Strategy 1: JS evaluation (handles sessionsData["..."] = {...}; with backtick strings)
   try {
     var script = 'var sessionsData = {};\n' + cleaned + '\nreturn sessionsData;';
     var result = new Function(script)();
     var keys = Object.keys(result);
     if (keys.length > 0) parsed = result[keys[0]];
-  } catch(e1) {}
+    if (parsed) console.log('[AutoReview] Strategy 1 (JS eval) succeeded, keys:', Object.keys(parsed).join(', '));
+  } catch(e1) {
+    console.log('[AutoReview] Strategy 1 (JS eval) failed:', e1.message);
+  }
 
-  // Strategy 2: JSON.parse fallback
+  // Strategy 2: Strip wrapper, try JSON.parse
   if (!parsed) {
     var jsonCleaned = cleaned;
     jsonCleaned = jsonCleaned.replace(/^(?:const|let|var)?\s*sessionsData\s*\[\s*["'][^"']*["']\s*\]\s*=\s*/m, '');
     jsonCleaned = jsonCleaned.replace(/;\s*$/, '').trim();
-    try { parsed = JSON.parse(jsonCleaned); } catch(e2) {}
+    try {
+      parsed = JSON.parse(jsonCleaned);
+      console.log('[AutoReview] Strategy 2 (JSON.parse) succeeded');
+    } catch(e2) {
+      console.log('[AutoReview] Strategy 2 (JSON.parse) failed:', e2.message);
+    }
   }
 
   if (!parsed) {
+    console.error('[AutoReview] All parsing strategies failed. Raw response length:', responseText.length);
     showAutoError(
       'Claude 응답 형식이 예상과 달라요. 아래 원본을 복사해서 수동으로 처리해주세요.',
       '<button onclick="navigator.clipboard.writeText(document.getElementById(\'review-auto-error-raw\').value);showSyncToast(\'복사됨\')" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">원본 복사</button>',
@@ -11300,8 +11318,13 @@ async function parseAndSaveReview() {
   if (!jsonText) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> JSON을 붙여넣으세요'); return; }
 
   // Clean up input: remove code blocks
-  var cleaned = jsonText;
-  cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*/gm, '').replace(/```\s*$/gm, '').trim();
+  var cleaned = jsonText.trim();
+  var codeBlockMatch = cleaned.match(/```(?:js|javascript|json)?\s*\n([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    cleaned = codeBlockMatch[1].trim();
+  } else {
+    cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*\n?/gm, '').replace(/\n?```\s*$/gm, '').trim();
+  }
 
   var parsed;
   // Strategy 1: Try JS evaluation (handles sessionsData["..."] = {...}; format with backtick strings)
