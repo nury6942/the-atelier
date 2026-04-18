@@ -9905,16 +9905,15 @@
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balK = Math.round(itemRunning/1000);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
-          var rowId = mi.row[7] || mi.row[6] || mi.idx;
-          return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
-            '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-40 text-slate-400" style="font-size:10px">⋮⋮</td>' +
-            '<td class="py-2 text-slate-400 text-xs w-7">' + dateDay + '</td>' +
-            '<td class="py-2 text-slate-700 text-xs font-medium">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-2 text-right text-xs font-bold ' + colorCls + '">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
+          var firestoreId = mi.row[7] || mi.row[6] || '';
+          return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
+            '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size:10px" title="드래그로 순서 변경">⋮⋮</td>' +
+            '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
+            '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
+            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + balK.toLocaleString('ko-KR') + '</td>' +
-            '<td class="py-2 text-right w-12"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all justify-end">' +
-              '<button onclick="editHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-              '<button onclick="deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+            '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
+              '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
             '</div></td></tr>';
         }).join('');
 
@@ -9940,14 +9939,14 @@
             '<table class="w-full"><tbody>' +
               itemsHtml +
             '</tbody></table>' +
-            '<div id="hub-inline-' + monthKey + '" style="display:none" class="mt-2 p-2 rounded-xl bg-indigo-50/50">' +
-              '<div class="flex flex-wrap gap-1 items-center">' +
-                '<input type="text" placeholder="일" class="w-8 px-1 py-1.5 rounded-lg bg-white text-[11px] text-center border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '" maxlength="2"/>' +
-                '<input type="text" placeholder="항목" class="flex-1 min-w-0 px-2 py-1.5 rounded-lg bg-white text-[11px] border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-desc-' + monthKey + '" style="min-width:60px"/>' +
-                '<input type="text" placeholder="금액" class="w-20 px-1.5 py-1.5 rounded-lg bg-white text-[11px] text-right border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric"/>' +
-                '<select class="px-1 py-1.5 rounded-lg bg-white text-[11px] border border-slate-200" id="hub-il-type-' + monthKey + '"><option value="수입">+</option><option value="지출">-</option><option value="저축">저축</option></select>' +
-                '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-1 shrink-0 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
-                '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-1 shrink-0 rounded-lg hover:bg-slate-200 text-slate-400"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
+            '<div id="hub-inline-' + monthKey + '" style="display:none" class="mt-2 p-2 rounded-xl" style="background:rgba(107,56,212,0.04)">' +
+              '<div class="grid gap-1 items-center" style="grid-template-columns:36px 1fr 56px 80px 24px 24px">' +
+                '<input type="text" placeholder="일" class="px-1 py-1.5 rounded bg-white text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '" maxlength="2"/>' +
+                '<input type="text" placeholder="항목명" class="px-2 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-il-desc-' + monthKey + '"/>' +
+                '<select class="px-1 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-type-' + monthKey + '"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option></select>' +
+                '<input type="text" placeholder="금액" class="px-1.5 py-1.5 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric"/>' +
+                '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
+                '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
               '</div>' +
             '</div>' +
             '<button onclick="showHubInline(\'' + monthKey + '\')" class="mt-2 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all" style="border:1px dashed #e1e3e4;">' +
@@ -9972,35 +9971,88 @@
   var _hubDragIdx = null;
   function hubDragStart(e, idx) {
     _hubDragIdx = idx;
-    e.target.style.opacity = '0.4';
+    var tr = e.target.closest('tr');
+    if (tr) tr.style.opacity = '0.4';
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', String(idx));
   }
-  function hubDragEnd(e) { e.target.style.opacity = '1'; _hubDragIdx = null; }
+  function hubDragEnd(e) {
+    var tr = e.target.closest('tr');
+    if (tr) tr.style.opacity = '1';
+    document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
+    _hubDragIdx = null;
+  }
   function hubDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
     var tr = e.target.closest('tr');
-    if (tr) tr.style.borderTop = '2px solid #6b38d4';
+    if (tr && tr.classList.contains('hub-drag-row')) tr.style.borderTop = '2px solid #6b38d4';
   }
   function hubDrop(e, targetIdx) {
     e.preventDefault();
-    var tr = e.target.closest('tr');
-    if (tr) tr.style.borderTop = '';
+    document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
     if (_hubDragIdx === null || _hubDragIdx === targetIdx) return;
-    // Swap dates to reorder
     var srcRow = hubData[_hubDragIdx];
     var tgtRow = hubData[targetIdx];
     if (!srcRow || !tgtRow) return;
-    // Swap the date values to change sort order
+    // Move src to target position in array
+    hubData.splice(_hubDragIdx, 1);
+    var newIdx = hubData.indexOf(tgtRow);
+    if (newIdx < 0) newIdx = hubData.length;
+    hubData.splice(newIdx, 0, srcRow);
+    // Swap dates so sort order reflects new position
     var srcDate = srcRow[0], tgtDate = tgtRow[0];
     srcRow[0] = tgtDate; tgtRow[0] = srcDate;
-    // Update Firestore
     var srcId = srcRow[7] || srcRow[6];
     var tgtId = tgtRow[7] || tgtRow[6];
     if (srcId) fbUpdate('finance_hub', srcId, { date: tgtDate }).catch(function(){});
     if (tgtId) fbUpdate('finance_hub', tgtId, { date: srcDate }).catch(function(){});
+    _hubDragIdx = null;
     updateHubStats();
+  }
+
+  // ===== HUB INLINE EDIT =====
+  function startHubInlineEdit(idx, monthKey) {
+    var row = hubData[idx];
+    if (!row) return;
+    var firestoreId = row[7] || row[6] || '';
+    var dateDay = (row[0]||'').substring(8,10);
+    var desc = row[2] || '';
+    var amt = parseFloat(row[3]) || 0;
+    var type = row[4] || '지출';
+
+    // Find the tr and replace with inline edit form
+    var trs = document.querySelectorAll('tr[data-hub-idx="' + idx + '"]');
+    if (!trs.length) return;
+    var tr = trs[0];
+    tr.innerHTML =
+      '<td colspan="6" class="py-1">' +
+        '<div class="grid gap-1 items-center" style="grid-template-columns:36px 1fr 56px 80px 24px 24px">' +
+          '<input type="text" value="' + dateDay + '" class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-date-' + idx + '" maxlength="2"/>' +
+          '<input type="text" value="' + desc + '" class="px-2 py-1.5 rounded bg-indigo-50 text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-edit-desc-' + idx + '"/>' +
+          '<select class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] border-none" id="hub-edit-type-' + idx + '"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
+          '<input type="text" value="' + amt.toLocaleString('ko-KR') + '" class="px-1.5 py-1.5 rounded bg-indigo-50 text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-amt-' + idx + '" inputmode="numeric"/>' +
+          '<button onclick="saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
+          '<button onclick="updateHubStats()" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
+        '</div>' +
+      '</td>';
+  }
+
+  async function saveHubInlineEdit(idx, monthKey, firestoreId) {
+    var dateDay = (document.getElementById('hub-edit-date-' + idx).value || '').trim();
+    var desc = (document.getElementById('hub-edit-desc-' + idx).value || '').trim();
+    var amtStr = (document.getElementById('hub-edit-amt-' + idx).value || '').replace(/[^0-9]/g, '');
+    var type = document.getElementById('hub-edit-type-' + idx).value;
+    if (!dateDay || !desc || !amtStr) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 모든 필드를 입력하세요'); return; }
+    var fullDate = monthKey + '-' + String(dateDay).padStart(2, '0');
+    try {
+      await fbUpdate('finance_hub', firestoreId, { date: fullDate, description: desc, amount: parseInt(amtStr), type: type });
+      var row = hubData[idx];
+      if (row) { row[0] = fullDate; row[2] = desc; row[3] = parseInt(amtStr); row[4] = type; }
+      updateHubStats();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정 완료');
+    } catch(e) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 수정 실패'); }
   }
 
   function showHubInline(monthKey) {
