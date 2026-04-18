@@ -1845,6 +1845,9 @@
             <button onclick="openReviewCreateModal()" class="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">rate_review</span> 리뷰 추가
             </button>
+            <button onclick="openApiSettingsModal()" class="bg-slate-100 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-slate-200 active:scale-95 transition-all" title="Anthropic API 설정">
+              <span class="material-symbols-outlined text-sm">settings</span> API
+            </button>
             <button onclick="openEnglishModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 수업 추가
             </button>
@@ -1953,7 +1956,33 @@
                 <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">트랜스크립트 *</label>
                 <textarea id="review-transcript" rows="6" placeholder="수업 트랜스크립트를 붙여넣으세요..." class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm resize-none"></textarea>
               </div>
-              <button onclick="copyReviewPrompt()" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200">
+              <!-- Auto Generate -->
+              <button onclick="autoGenerateReview()" id="review-auto-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2">
+                ✨ 자동 생성
+              </button>
+              <p id="review-auto-hint" class="text-[10px] text-slate-400 mb-4 text-center"></p>
+
+              <!-- Loading Overlay (hidden by default) -->
+              <div id="review-loading-overlay" class="hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center">
+                <span class="material-symbols-outlined text-violet-400 text-3xl mb-2 animate-spin block">progress_activity</span>
+                <p class="text-sm font-bold text-violet-700">Claude가 수업을 분석하고 있어요...</p>
+                <p class="text-[10px] text-violet-400 mt-1">30초~1분 소요</p>
+              </div>
+
+              <!-- Error display (hidden) -->
+              <div id="review-auto-error" class="hidden mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100">
+                <p id="review-auto-error-msg" class="text-sm font-bold text-rose-700 mb-2"></p>
+                <div id="review-auto-error-actions" class="flex gap-2 flex-wrap"></div>
+                <textarea id="review-auto-error-raw" class="hidden w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none" rows="6"></textarea>
+              </div>
+
+              <div class="flex items-center gap-3 mb-2">
+                <div class="flex-1 h-px bg-slate-200"></div>
+                <span class="text-[10px] text-slate-400 font-bold uppercase">또는 수동</span>
+                <div class="flex-1 h-px bg-slate-200"></div>
+              </div>
+
+              <button onclick="copyReviewPrompt()" class="w-full py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 active:scale-[0.98] transition-all">
                 <span class="material-symbols-outlined text-sm">content_copy</span> 프롬프트 복사
               </button>
               <p class="text-[10px] text-slate-400 mt-2 text-center">복사한 프롬프트를 Claude에 붙여넣고, 생성된 JSON을 아래에 입력하세요</p>
@@ -1977,6 +2006,43 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- API Settings Modal -->
+    <div id="api-settings-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 flex justify-between items-center">
+          <h3 class="font-bold text-white text-lg font-headline">Anthropic API 설정</h3>
+          <button onclick="closeApiSettingsModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-5">
+          <div class="p-3 rounded-xl bg-blue-50 border border-blue-100">
+            <p class="text-xs text-blue-700 leading-relaxed">리뷰 자동 생성을 위해 Anthropic API 키가 필요해요. 키는 이 브라우저에만 저장되며, 서버로 전송되지 않습니다.<br><a href="https://console.anthropic.com/settings/keys" target="_blank" class="underline font-bold">console.anthropic.com</a>에서 발급받을 수 있어요.</p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">API 키</label>
+            <input id="api-key-input" type="password" placeholder="sk-ant-api03-..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm font-mono"/>
+            <p id="api-key-hint" class="text-[10px] text-slate-400 px-1"></p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">사용 모델</label>
+            <select id="api-model-select" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm">
+              <option value="claude-opus-4-7">Claude Opus 4.7 (최신, 최고 품질, ~$0.15/회)</option>
+              <option value="claude-opus-4-5">Claude Opus 4.5 (이전 버전, ~$0.10/회)</option>
+              <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (빠르고 저렴, ~$0.03/회)</option>
+            </select>
+            <p class="text-[10px] text-slate-400 px-1">모델은 언제든 바꿀 수 있어요. Opus는 분석이 꼼꼼하고, Sonnet은 빠르고 저렴해요.</p>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="saveApiSettings()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm hover:opacity-90 transition-all">저장</button>
+            <button onclick="deleteApiKey()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all">키 삭제</button>
+            <button onclick="closeApiSettingsModal()" class="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm hover:bg-slate-50 transition-all">취소</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ENGLISH MODAL -->
@@ -10755,11 +10821,231 @@ function openReviewCreateModal() {
   var status = document.getElementById('review-parse-status');
   status.className = 'hidden mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2';
   status.innerHTML = '';
+  // Reset auto-generate UI
+  document.getElementById('review-loading-overlay').className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
+  document.getElementById('review-auto-error').className = 'hidden mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100';
+  updateAutoGenButton();
   document.getElementById('eng-review-modal').style.cssText = 'display:flex!important';
 }
 
 function closeReviewCreateModal() {
   document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
+}
+
+// ===== API SETTINGS =====
+// API 키는 브라우저 환경상 완전히 숨길 수 없습니다.
+// Anthropic Console의 월간 지출 한도($5)가 최후의 방어선입니다.
+var _API_MODEL_INFO = {
+  'claude-opus-4-7': { label: 'Claude Opus 4.7', cost: '~$0.15/회' },
+  'claude-opus-4-5': { label: 'Claude Opus 4.5', cost: '~$0.10/회' },
+  'claude-sonnet-4-6': { label: 'Claude Sonnet 4.6', cost: '~$0.03/회' }
+};
+
+function openApiSettingsModal() {
+  var existing = localStorage.getItem('atelier_anthropic_api_key') || '';
+  var input = document.getElementById('api-key-input');
+  input.value = '';
+  var hint = document.getElementById('api-key-hint');
+  if (existing) {
+    hint.textContent = '저장된 키: sk-ant-***' + existing.slice(-4);
+    hint.className = 'text-[10px] text-emerald-600 px-1 font-bold';
+  } else {
+    hint.textContent = '아직 키가 설정되지 않았어요';
+    hint.className = 'text-[10px] text-slate-400 px-1';
+  }
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+  document.getElementById('api-model-select').value = model;
+  document.getElementById('api-settings-modal').style.cssText = 'display:flex!important';
+}
+
+function closeApiSettingsModal() {
+  document.getElementById('api-settings-modal').style.cssText = 'display:none!important';
+}
+
+function saveApiSettings() {
+  var key = document.getElementById('api-key-input').value.trim();
+  var model = document.getElementById('api-model-select').value;
+  if (key) {
+    if (!key.startsWith('sk-ant-')) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 키 형식이 올바르지 않아요 (sk-ant-... 으로 시작해야 함)');
+      return;
+    }
+    localStorage.setItem('atelier_anthropic_api_key', key);
+  }
+  localStorage.setItem('atelier_anthropic_model', model);
+  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 설정 저장 완료');
+  closeApiSettingsModal();
+  updateAutoGenButton();
+}
+
+function deleteApiKey() {
+  localStorage.removeItem('atelier_anthropic_api_key');
+  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키가 삭제되었습니다');
+  closeApiSettingsModal();
+  updateAutoGenButton();
+}
+
+function updateAutoGenButton() {
+  var btn = document.getElementById('review-auto-btn');
+  var hint = document.getElementById('review-auto-hint');
+  if (!btn || !hint) return;
+  var hasKey = !!localStorage.getItem('atelier_anthropic_api_key');
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+  var info = _API_MODEL_INFO[model] || _API_MODEL_INFO['claude-opus-4-7'];
+  if (!hasKey) {
+    btn.disabled = true;
+    btn.className = 'w-full py-3 rounded-xl bg-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed mb-2';
+    hint.innerHTML = '<span class="material-symbols-outlined text-sm" style="font-size:12px">settings</span> <a onclick="openApiSettingsModal()" class="underline cursor-pointer">API 키를 먼저 설정해주세요</a>';
+  } else {
+    btn.disabled = false;
+    btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
+    hint.textContent = '현재 모델: ' + info.label + ' (' + info.cost + ')';
+  }
+}
+
+// ===== AUTO GENERATE =====
+async function autoGenerateReview() {
+  var date = document.getElementById('review-date').value;
+  var transcript = document.getElementById('review-transcript').value.trim();
+  if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
+  if (!transcript) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 트랜스크립트를 입력하세요'); return; }
+
+  var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+  if (!apiKey) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> API 키를 먼저 설정해주세요'); return; }
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+
+  // Step A: UI 로딩 상태
+  var loadingEl = document.getElementById('review-loading-overlay');
+  var errorEl = document.getElementById('review-auto-error');
+  var autoBtn = document.getElementById('review-auto-btn');
+  loadingEl.className = 'mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
+  errorEl.className = 'hidden mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100';
+  autoBtn.disabled = true;
+  autoBtn.className = 'w-full py-3 rounded-xl bg-slate-300 text-slate-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed mb-2';
+
+  // Step B: 프롬프트 조립
+  var filledPrompt = REVIEW_PROMPT_TEMPLATE.replaceAll('{{DATE}}', date).replaceAll('{{TRANSCRIPT}}', transcript);
+
+  // Step C: API 호출
+  var responseText = '';
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 8192,
+        messages: [{ role: 'user', content: filledPrompt }]
+      })
+    });
+
+    if (!res.ok) {
+      var errBody = {};
+      try { errBody = await res.json(); } catch(e){}
+      var errMsg = '';
+      var errActions = '';
+      var status = res.status;
+
+      if (status === 401) {
+        errMsg = 'API 키가 유효하지 않아요. 키를 다시 확인해주세요.';
+        errActions = '<button onclick="openApiSettingsModal()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">설정 열기</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      } else if (status === 429) {
+        errMsg = '잠시 후 다시 시도해주세요 (요청이 너무 많아요).';
+        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      } else if (status === 400) {
+        errMsg = '스크립트가 너무 길거나 형식에 문제가 있어요. 내용을 확인해주세요.';
+        errActions = '<button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      } else if (status === 402 || (errBody.error && errBody.error.type === 'insufficient_quota')) {
+        errMsg = 'Anthropic 크레딧이 부족하거나 월 한도에 도달했어요.';
+        errActions = '<a href="https://console.anthropic.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 text-xs font-bold">콘솔 열기</a><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      } else if (status === 404) {
+        errMsg = '선택한 모델을 사용할 수 없어요. 다른 모델로 변경해보세요.';
+        errActions = '<button onclick="openApiSettingsModal()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">설정 열기</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      } else {
+        errMsg = 'Anthropic 서버 오류예요. 잠시 후 다시 시도해주세요. (HTTP ' + status + ')';
+        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+      }
+
+      console.error('[API] Error ' + status + ':', errBody.error ? errBody.error.message : 'Unknown');
+      showAutoError(errMsg, errActions);
+      return;
+    }
+
+    var data = await res.json();
+    responseText = (data.content && data.content[0] && data.content[0].text) || '';
+
+  } catch(e) {
+    console.error('[API] Network error:', e.message);
+    showAutoError('인터넷 연결을 확인해주세요.', '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>');
+    return;
+  }
+
+  // Step D: 파싱
+  var cleaned = responseText;
+  cleaned = cleaned.replace(/^```(?:js|json|javascript)?\s*/gm, '').replace(/```\s*$/gm, '').trim();
+
+  var parsed;
+  // Strategy 1: JS evaluation
+  try {
+    var script = 'var sessionsData = {};\n' + cleaned + '\nreturn sessionsData;';
+    var result = new Function(script)();
+    var keys = Object.keys(result);
+    if (keys.length > 0) parsed = result[keys[0]];
+  } catch(e1) {}
+
+  // Strategy 2: JSON.parse fallback
+  if (!parsed) {
+    var jsonCleaned = cleaned;
+    jsonCleaned = jsonCleaned.replace(/^(?:const|let|var)?\s*sessionsData\s*\[\s*["'][^"']*["']\s*\]\s*=\s*/m, '');
+    jsonCleaned = jsonCleaned.replace(/;\s*$/, '').trim();
+    try { parsed = JSON.parse(jsonCleaned); } catch(e2) {}
+  }
+
+  if (!parsed) {
+    showAutoError(
+      'Claude 응답 형식이 예상과 달라요. 아래 원본을 복사해서 수동으로 처리해주세요.',
+      '<button onclick="navigator.clipboard.writeText(document.getElementById(\'review-auto-error-raw\').value);showSyncToast(\'복사됨\')" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">원본 복사</button>',
+      responseText
+    );
+    return;
+  }
+
+  // Step E: Firestore 저장
+  var titleInput = document.getElementById('review-title').value.trim();
+  if (titleInput && !parsed.title) parsed.title = titleInput;
+  parsed.updatedAt = new Date().toISOString();
+
+  try {
+    await db.collection('englishSessions').doc(date).set(parsed, {merge: true});
+    loadingEl.className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 리뷰 생성 완료 · ' + date);
+    await loadEnglishSessions();
+    setTimeout(function(){ closeReviewCreateModal(); }, 800);
+  } catch(err) {
+    showAutoError('Firestore 저장 실패: ' + err.message, '<button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>');
+  }
+}
+
+function showAutoError(msg, actionsHtml, rawText) {
+  var loadingEl = document.getElementById('review-loading-overlay');
+  var errorEl = document.getElementById('review-auto-error');
+  loadingEl.className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
+  errorEl.className = 'mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100';
+  document.getElementById('review-auto-error-msg').textContent = msg;
+  document.getElementById('review-auto-error-actions').innerHTML = actionsHtml || '';
+  var rawEl = document.getElementById('review-auto-error-raw');
+  if (rawText) {
+    rawEl.className = 'w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none';
+    rawEl.value = rawText;
+  } else {
+    rawEl.className = 'hidden w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none';
+  }
+  updateAutoGenButton();
 }
 
 function copyReviewPrompt() {
