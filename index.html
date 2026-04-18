@@ -1976,20 +1976,19 @@
                 <textarea id="review-auto-error-raw" class="hidden w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none" rows="6"></textarea>
               </div>
 
-              <div class="flex items-center gap-3 mb-2">
-                <div class="flex-1 h-px bg-slate-200"></div>
-                <span class="text-[10px] text-slate-400 font-bold uppercase">또는 수동</span>
-                <div class="flex-1 h-px bg-slate-200"></div>
-              </div>
-
-              <button onclick="copyReviewPrompt()" class="w-full py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 active:scale-[0.98] transition-all">
-                <span class="material-symbols-outlined text-sm">content_copy</span> 프롬프트 복사
+              <!-- Manual toggle -->
+              <button onclick="toggleManualReview()" id="review-manual-toggle" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-400 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 hover:text-slate-500 transition-all">
+                <span id="review-manual-chevron" class="text-sm transition-transform" style="font-size:10px">&#9654;</span> 수동으로 입력하기
               </button>
-              <p class="text-[10px] text-slate-400 mt-2 text-center">복사한 프롬프트를 Claude에 붙여넣고, 생성된 JSON을 아래에 입력하세요</p>
             </div>
 
-            <!-- Step 2: JSON Paste -->
-            <div id="review-step2">
+            <!-- Manual Section (collapsed by default) -->
+            <div id="review-manual-section" style="display:none;overflow:hidden">
+              <button onclick="copyReviewPrompt()" class="w-full py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 active:scale-[0.98] transition-all mb-2">
+                <span class="material-symbols-outlined text-sm">content_copy</span> 프롬프트 복사
+              </button>
+              <p class="text-[10px] text-slate-400 mb-5 text-center">복사한 프롬프트를 Claude에 붙여넣고, 생성된 JSON을 아래에 입력하세요</p>
+
               <div class="flex items-center gap-2 mb-4">
                 <span class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">2</span>
                 <h4 class="font-bold text-slate-800">리뷰 JSON 붙여넣기</h4>
@@ -10824,12 +10823,38 @@ function openReviewCreateModal() {
   // Reset auto-generate UI
   document.getElementById('review-loading-overlay').className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
   document.getElementById('review-auto-error').className = 'hidden mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100';
+  // Collapse manual section
+  _manualReviewOpen = false;
+  var manualSec = document.getElementById('review-manual-section');
+  if (manualSec) { manualSec.style.display = 'none'; manualSec.style.transition = ''; manualSec.style.maxHeight = ''; manualSec.style.opacity = ''; }
+  var chevron = document.getElementById('review-manual-chevron');
+  if (chevron) chevron.style.transform = '';
   updateAutoGenButton();
   document.getElementById('eng-review-modal').style.cssText = 'display:flex!important';
 }
 
 function closeReviewCreateModal() {
   document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
+}
+
+var _manualReviewOpen = false;
+function toggleManualReview() {
+  _manualReviewOpen = !_manualReviewOpen;
+  var section = document.getElementById('review-manual-section');
+  var chevron = document.getElementById('review-manual-chevron');
+  if (_manualReviewOpen) {
+    section.style.display = 'block';
+    section.style.maxHeight = '0px';
+    section.style.opacity = '0';
+    setTimeout(function(){ section.style.transition = 'max-height 0.3s ease, opacity 0.3s ease'; section.style.maxHeight = '600px'; section.style.opacity = '1'; }, 10);
+    if (chevron) chevron.style.transform = 'rotate(90deg)';
+  } else {
+    section.style.transition = 'max-height 0.3s ease, opacity 0.2s ease';
+    section.style.maxHeight = '0px';
+    section.style.opacity = '0';
+    setTimeout(function(){ section.style.display = 'none'; section.style.transition = ''; }, 300);
+    if (chevron) chevron.style.transform = '';
+  }
 }
 
 // ===== API SETTINGS =====
