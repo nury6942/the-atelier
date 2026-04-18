@@ -155,8 +155,10 @@
       border-bottom: 1px solid rgba(203,195,215,0.15);
       min-height: 140px; padding: 12px;
       background: #fff; transition: all 0.15s;
+      overflow: visible;
     }
     .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
+    .calendar-page #planner-grid { overflow: visible; }
 
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
@@ -3332,49 +3334,39 @@
             '</div></div>';
         }
 
-        // 범위 이벤트 — 셀 가장자리까지 꽉 채우기
-        // 요일(0=일)에 따라 주 시작/끝 여부 판단
+        // 범위 이벤트 — 연결된 bar로 주 단위 렌더링
         var dayOfWeekR = (offset + d - 1) % 7; // 0=일 ~ 6=토
-        var isMonthStart = d === 1;
-        var isMonthEnd = d === daysInMonth;
         var isWeekStart = dayOfWeekR === 0;
         var isWeekEnd = dayOfWeekR === 6;
+        var isMonthStart = d === 1;
+        var isMonthEnd = d === daysInMonth;
 
-        // 이 셀에서 블록의 시작/끝 결정
         var blockStart = isFirst || isMonthStart || isWeekStart;
         var blockEnd = isLast || isMonthEnd || isWeekEnd;
-
-        // 타이틀 표시 위치: 각 세그먼트 중간에 표시
-        // 세그먼트 시작/끝 날짜 계산
-        var segStart = isFirst ? start : (isMonthStart ? dateStr : (isWeekStart ? dateStr : start));
-        var segEnd = isLast ? end : (isMonthEnd ? dateStr : (isWeekEnd ? dateStr : end));
-        // 현재 날짜가 세그먼트 중간인지 확인 (간단히: 블록 시작일에만 표시)
         var showTitle = blockStart;
 
-        var roundLeft = blockStart ? 'rounded-l-md' : 'rounded-l-none';
-        var roundRight = blockEnd ? 'rounded-r-md' : 'rounded-r-none';
+        var rl = blockStart ? 'border-radius:6px 0 0 6px;' : 'border-radius:0;';
+        var rr = blockEnd ? 'border-radius:0 6px 6px 0;' : '';
+        if (blockStart && blockEnd) { rl = 'border-radius:6px;'; rr = ''; }
+        else if (!blockStart && blockEnd) { rl = 'border-radius:0 6px 6px 0;'; rr = ''; }
+        else if (!blockStart && !blockEnd) { rl = 'border-radius:0;'; rr = ''; }
 
-        // 셀 패딩 제거로 끊김 없애기: -mx-2 사용
-        var marginLeft = blockStart ? '-ml-2 pl-2' : '-ml-2 pl-0';
-        var marginRight = blockEnd ? '-mr-2 pr-2' : '-mr-2 pr-0';
-
-        // 색상에서 bg/text/border 분리
+        // 색상에서 bg/text 분리
         var colorParts = color.split(' ');
         var bgColor = colorParts.find(function(c){ return c.startsWith('bg-'); }) || 'bg-indigo-100';
         var textColor = colorParts.find(function(c){ return c.startsWith('text-'); }) || 'text-indigo-700';
-        var borderColor = colorParts.find(function(c){ return c.startsWith('border-'); }) || 'border-indigo-200';
 
-        return '<div class="mt-1 py-0.5 h-5 ' + roundLeft + ' ' + roundRight + ' ' + marginLeft + ' ' + marginRight + ' ' + bgColor + ' ' + borderColor + ' border-y ' +
-          (blockStart ? 'border-l ' : '') + (blockEnd ? 'border-r ' : '') +
-          'flex items-center overflow-hidden cursor-grab" ' +
+        // 블록 시작이 아닌 중간 셀: 좌측 패딩 없애고 음수 마진으로 셀 간 간격 메우기
+        var ml = blockStart ? 'margin-left:0;padding-left:8px;' : 'margin-left:-13px;padding-left:0;';
+        var mr = blockEnd ? 'margin-right:0;padding-right:8px;' : 'margin-right:-13px;padding-right:0;';
+
+        return '<div class="mt-1 ' + bgColor + ' flex items-center overflow-visible cursor-grab" ' +
+          'style="height:22px;' + rl + rr + ml + mr + 'position:relative;z-index:5;" ' +
           'data-pidx="' + realIdx + '" ' +
           'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
-          'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
-          'ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ' +
-          'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + realIdx + ')" ' +
           'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
           (showTitle
-            ? '<span class="text-[9px] font-bold px-1.5 truncate ' + textColor + '">' + (ev[1]||'') + '</span>'
+            ? '<span class="text-[9px] font-bold truncate whitespace-nowrap ' + textColor + '" style="padding:0 4px">' + (ev[1]||'') + '</span>'
             : '') +
           '</div>';
       }).join('');
@@ -3388,7 +3380,8 @@
     const remainder = total % 7 === 0 ? 0 : 7 - (total % 7);
     for (let i = 0; i < remainder; i++) {
       const cell = document.createElement('div');
-      cell.className = 'border-r border-b border-slate-50 p-2 bg-slate-50/20 min-h-24';
+      cell.className = 'p-3 min-h-24';
+      cell.style.background = 'rgba(243,244,245,0.4)';
       grid.appendChild(cell);
     }
   }
