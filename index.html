@@ -133,6 +133,31 @@
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
 
+    /* ===== CALENDAR PAGE — Digital Curator Style ===== */
+    .calendar-page .font-headline, .calendar-page h2, .calendar-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
+    .cal-stat-card {
+      background: #fff; padding: 1.25rem; border-radius: 0.75rem;
+      box-shadow: 0px 12px 32px rgba(25,28,29,0.02);
+      border: 1px solid rgba(203,195,215,0.1);
+      transition: all 0.3s;
+    }
+    .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
+    .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
+    .cal-day-header {
+      border-right: 1px solid rgba(203,195,215,0.15);
+      border-bottom: 1px solid rgba(203,195,215,0.15);
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #494454;
+      background: rgba(243,244,245,0.5);
+    }
+    .calendar-page #planner-grid > div {
+      border-right: 1px solid rgba(203,195,215,0.15);
+      border-bottom: 1px solid rgba(203,195,215,0.15);
+      min-height: 140px; padding: 12px;
+      background: #fff; transition: all 0.15s;
+    }
+    .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
+
     /* Review drop zone active state */
     .review-dz-active {
       border-color: #7c3aed !important;
@@ -2378,110 +2403,133 @@
     </div>
   </div>
 
-  <div id="page-planner" class="page" style="display:none">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+  <div id="page-planner" class="page calendar-page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
-      <!-- Page Intro -->
-
-      <!-- Track Progress -->
-      <section class="grid grid-cols-3 md:grid-cols-6 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm mb-8">
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">글쓰기</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-writing" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">/월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-writing">0 /년</span>
+      <!-- Statistics Cards -->
+      <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(107,56,212,0.1);color:#6b38d4;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">edit_note</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Monthly</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-writing" class="h-full bg-accent-mint" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">글쓰기</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-writing" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">/월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-writing" class="h-full rounded-full" style="width:0%;background:#6b38d4"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-writing">0</span></p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">영어</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-english" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">/월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-english">0 /년</span>
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(102,83,150,0.1);color:#665396;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">language</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Sessions</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-english" class="h-full bg-accent-blue" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">영어</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-english" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">/월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-english" class="h-full rounded-full" style="width:0%;background:#665396"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-english">0</span></p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">스터디</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-study" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">/월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-study">0 /년</span>
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(133,80,0,0.1);color:#855000;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">school</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Focus</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-study" class="h-full bg-accent-lemon" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">스터디</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-study" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">/월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-study" class="h-full rounded-full" style="width:0%;background:#855000"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-study">0</span></p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">업무</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-work" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">/월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-work">0 /년</span>
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(132,85,239,0.1);color:#8455ef;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">work</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Work</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-work" class="h-full bg-accent-sage" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">업무</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-work" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">/월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-work" class="h-full rounded-full" style="width:0%;background:#8455ef"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-work">0</span></p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">개인</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-personal" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">/월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-personal">0 /년</span>
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(186,26,26,0.08);color:#ba1a1a;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">person</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Life</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-personal" class="h-full bg-accent-lavender" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">개인</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-personal" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">/월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-personal" class="h-full rounded-full" style="width:0%;background:#ba1a1a"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-personal">0</span></p>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-100 hover:border-indigo-200 transition-all">
-          <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">연차</div>
-          <div class="flex items-baseline gap-2">
-            <span id="planner-track-vacation" class="text-xl font-extrabold text-slate-800 font-headline">0</span>
-            <span class="text-[10px] text-slate-400 font-bold">일 /월</span>
-            <span class="text-[10px] text-indigo-500 font-bold" id="planner-year-vacation">0 /년</span>
+        <div class="cal-stat-card">
+          <div class="flex justify-between items-start mb-3">
+            <div class="p-2 rounded-lg" style="background:rgba(255,184,105,0.15);color:#855000;"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px">beach_access</span></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-[#494454]">Days</span>
           </div>
-          <div class="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full bg-accent-orange" style="width:0%"></div></div>
+          <h3 class="font-headline font-bold text-[#191c1d] text-sm mb-1">연차</h3>
+          <div class="flex items-baseline gap-1.5">
+            <span id="planner-track-vacation" class="text-2xl font-extrabold text-[#191c1d] font-headline">0</span>
+            <span class="text-xs font-medium text-[#494454]">일 /월</span>
+          </div>
+          <div class="mt-3 h-1.5 w-full bg-[#e7e8e9] rounded-full overflow-hidden"><div id="planner-bar-vacation" class="h-full rounded-full" style="width:0%;background:#ffb869"></div></div>
+          <p class="mt-2 text-[11px] text-[#494454]">연간: <span class="font-bold text-[#191c1d]" id="planner-year-vacation">0</span></p>
         </div>
       </section>
 
       <!-- Calendar -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
-        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <h2 id="planner-month-title" class="text-lg font-bold font-headline text-slate-800"></h2>
-            <div class="flex border border-slate-100 rounded-lg overflow-hidden">
-              <button onclick="prevMonth()" class="p-1.5 hover:bg-slate-50 transition-colors border-r border-slate-100"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
-              <button onclick="nextMonth()" class="p-1.5 hover:bg-slate-50 transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+      <section class="bg-white rounded-3xl p-8 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] overflow-hidden relative">
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none" style="background:rgba(107,56,212,0.05)"></div>
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center gap-5">
+            <h2 id="planner-month-title" class="text-3xl font-headline font-extrabold tracking-tighter text-[#191c1d]"></h2>
+            <div class="flex gap-1">
+              <button onclick="prevMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button onclick="nextMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
             </div>
           </div>
-          <button onclick="openPlannerModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+          <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
             <span class="material-symbols-outlined text-sm">add</span> 일정 추가
           </button>
         </div>
-        <div class="grid grid-cols-7 border-b border-slate-50 bg-slate-50/30">
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">일</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">월</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">화</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">수</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">목</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">금</div>
-          <div class="py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400">토</div>
+        <div class="grid grid-cols-7 cal-grid-border">
+          <div class="p-4 cal-day-header text-rose-400">일</div>
+          <div class="p-4 cal-day-header">월</div>
+          <div class="p-4 cal-day-header">화</div>
+          <div class="p-4 cal-day-header">수</div>
+          <div class="p-4 cal-day-header">목</div>
+          <div class="p-4 cal-day-header">금</div>
+          <div class="p-4 cal-day-header text-rose-400">토</div>
         </div>
-        <div id="planner-grid" class="grid grid-cols-7 bg-white" style="min-height:480px"></div>
-      </div>
+        <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px"></div>
+      </section>
 
       <!-- 이달의 목표 -->
-      <div class="mt-8 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-          <div>
-            <h4 class="font-manrope font-bold text-slate-800">이달의 목표</h4>
-            <p id="planner-goal-month" class="text-[10px] text-slate-400 mt-0.5"></p>
+      <section class="space-y-5">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="text-2xl font-headline font-bold text-[#191c1d]">이달의 목표</h2>
+          <div class="flex items-center gap-3">
+            <span id="planner-goal-month" class="text-xs text-[#494454]"></span>
+            <button onclick="openGoalModal()" class="text-sm font-bold flex items-center gap-1 hover:underline" style="color:#6b38d4">
+              목표 추가 <span class="material-symbols-outlined text-sm">add</span>
+            </button>
           </div>
-          <button onclick="openGoalModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-sm">add</span> 목표 추가
-          </button>
         </div>
-        <div id="planner-goals-list" class="p-4 space-y-2">
-          <div class="text-xs text-slate-400 text-center py-4">이달의 목표를 추가해봐!</div>
+        <div id="planner-goals-list" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="text-sm text-[#494454] text-center py-8 col-span-full">이달의 목표를 추가해봐!</div>
         </div>
-      </div>
+      </section>
 
     </div>
 
@@ -2970,7 +3018,9 @@
     // Empty cells before first day
     for (let i = 0; i < offset; i++) {
       const cell = document.createElement('div');
-      cell.className = 'border-r border-b border-slate-50 p-2 bg-slate-50/20 min-h-24';
+      cell.className = 'p-3 min-h-24';
+      cell.style.background = 'rgba(243,244,245,0.4)';
+      cell.style.color = 'rgba(73,68,84,0.4)';
       grid.appendChild(cell);
     }
 
@@ -3001,8 +3051,9 @@
       const holidayName = holidays[dateStr] || '';
 
       const cell = document.createElement('div');
-      cell.className = 'border-r border-b border-slate-50 px-2 pt-2 pb-1 min-h-24 transition-colors cursor-pointer group ' +
-        (isHoliday ? 'bg-red-50/60 hover:bg-red-100/50' : 'hover:bg-indigo-50/30');
+      cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
+      if (isToday) { cell.style.background = 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
+      else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.03)'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
       cell.ondblclick = function() { openPlannerModal(null, dateStr); };
@@ -3035,11 +3086,11 @@
       });
 
       let dayNum = '<span class="';
-      if (isToday) dayNum += 'gradient-primary text-white w-6 h-6 flex items-center justify-center rounded-full text-[10px] shadow-sm font-bold';
-      else if (isHoliday || isWeekend) dayNum += 'text-red-500 font-bold text-xs';
-      else dayNum += 'text-slate-500 font-medium text-xs';
+      if (isToday) dayNum += 'inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)';
+      else if (isHoliday || isWeekend) dayNum += 'font-bold text-sm" style="color:rgba(186,26,26,0.6)';
+      else dayNum += 'font-bold text-sm text-[#191c1d]';
       dayNum += '">' + d + '</span>';
-      if (isHoliday) dayNum += '<span class="text-[8px] text-red-400 font-medium ml-1">' + holidayName + '</span>';
+      if (isHoliday) dayNum += '<span class="text-[8px] font-bold ml-1" style="color:rgba(186,26,26,0.5)">' + holidayName + '</span>';
 
       const eventHtml = events.map(function(ev, ei) {
         const realIdx = plannerData.indexOf(ev);
@@ -3052,7 +3103,7 @@
 
         if (!isRange) {
           // 단일 날짜 이벤트
-          return '<div class="mt-1 text-[9px] px-1.5 py-0.5 rounded font-bold truncate border ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
+          return '<div class="mt-1 text-[10px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
