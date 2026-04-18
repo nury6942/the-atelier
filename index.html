@@ -9762,7 +9762,7 @@
     document.getElementById('hub-empty').style.display = 'none';
     try {
       const docs = await fbRead('finance_hub');
-      hubData = docs.map(function(d){ return objToRow('finance_hub', d).concat([d._id]); });
+      hubData = docs.map(function(d){ return objToRow('finance_hub', d).concat([d._id, d.order||0]); });
       document.getElementById('hub-loading').style.display = 'none';
       if (hubData.length === 0) {
         document.getElementById('hub-empty').style.display = 'flex';
@@ -9870,7 +9870,7 @@
           var rowMonth = (row[0]||'').toString().substring(0,7);
           if (rowMonth === monthKey) monthItems.push({idx:ri, row:row});
         });
-        monthItems.sort(function(a,b){ return (a.row[0]||'').localeCompare(b.row[0]||''); });
+        monthItems.sort(function(a,b){ var dc = (a.row[0]||'').localeCompare(b.row[0]||''); return dc !== 0 ? dc : (a.row[6]||0) - (b.row[6]||0); });
 
         var mIncome=0, mExpense=0, mSavings=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; });
@@ -9968,20 +9968,25 @@
   }
 
   // ===== HUB DRAG & DROP =====
-  var _hubDragIdx = null;
+  var _hubDragId = null; // Firestore document ID of dragged item
+
   function hubDragStart(e, idx) {
-    _hubDragIdx = idx;
+    var row = hubData[idx];
+    _hubDragId = row ? (row[5] || '') : '';
+    console.log('[CashFlow] Drag start id=' + _hubDragId);
     var tr = e.target.closest('tr');
     if (tr) tr.style.opacity = '0.4';
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(idx));
+    e.dataTransfer.setData('text/plain', _hubDragId);
   }
+
   function hubDragEnd(e) {
     var tr = e.target.closest('tr');
     if (tr) tr.style.opacity = '1';
     document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
-    _hubDragIdx = null;
+    _hubDragId = null;
   }
+
   function hubDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -9989,27 +9994,54 @@
     var tr = e.target.closest('tr');
     if (tr && tr.classList.contains('hub-drag-row')) tr.style.borderTop = '2px solid #6b38d4';
   }
-  function hubDrop(e, targetIdx) {
+
+  async function hubDrop(e, targetIdx) {
     e.preventDefault();
     document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
-    if (_hubDragIdx === null || _hubDragIdx === targetIdx) return;
-    var srcRow = hubData[_hubDragIdx];
-    var tgtRow = hubData[targetIdx];
-    if (!srcRow || !tgtRow) return;
-    // Move src to target position in array
-    hubData.splice(_hubDragIdx, 1);
-    var newIdx = hubData.indexOf(tgtRow);
-    if (newIdx < 0) newIdx = hubData.length;
-    hubData.splice(newIdx, 0, srcRow);
-    // Swap dates so sort order reflects new position
-    var srcDate = srcRow[0], tgtDate = tgtRow[0];
-    srcRow[0] = tgtDate; tgtRow[0] = srcDate;
-    var srcId = srcRow[5] || '';
-    var tgtId = tgtRow[5] || '';
-    if (srcId) fbUpdate('finance_hub', srcId, { date: tgtDate }).catch(function(){});
-    if (tgtId) fbUpdate('finance_hub', tgtId, { date: srcDate }).catch(function(){});
-    _hubDragIdx = null;
-    updateHubStats();
+    var draggedId = e.dataTransfer.getData('text/plain') || _hubDragId;
+    var targetRow = hubData[targetIdx];
+    var targetId = targetRow ? (targetRow[5] || '') : '';
+    console.log('[CashFlow] Drop dragId=' + draggedId + ' targetId=' + targetId);
+    if (!draggedId || !targetId || draggedId === targetId) return;
+
+    // Same month check
+    var srcRow = hubData.find(function(r){ return r[5] === draggedId; });
+    if (!srcRow || !targetRow) return;
+    if ((srcRow[0]||'').substring(0,7) !== (targetRow[0]||'').substring(0,7)) {
+      console.log('[CashFlow] Different month, rejected');
+      return;
+    }
+
+    // Get all items in this month, in current display order
+    var monthKey = (targetRow[0]||'').substring(0,7);
+    var monthItems = hubData.filter(function(r){ return (r[0]||'').substring(0,7) === monthKey; });
+    monthItems.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+
+    // Remove dragged, insert before target
+    var dragIdx = monthItems.findIndex(function(r){ return r[5] === draggedId; });
+    var tgtIdx = monthItems.findIndex(function(r){ return r[5] === targetId; });
+    if (dragIdx < 0 || tgtIdx < 0) return;
+    var removed = monthItems.splice(dragIdx, 1)[0];
+    var newTgtIdx = monthItems.findIndex(function(r){ return r[5] === targetId; });
+    if (newTgtIdx < 0) newTgtIdx = monthItems.length;
+    monthItems.splice(newTgtIdx, 0, removed);
+
+    // Assign sequential dates within the month to reflect new order
+    // Keep the same dates but assign order field
+    console.log('[CashFlow] Saving order for ' + monthItems.length + ' items');
+    for (var i = 0; i < monthItems.length; i++) {
+      var id = monthItems[i][5];
+      if (id) {
+        try {
+          await fbUpdate('finance_hub', id, { order: i });
+          console.log('[CashFlow] Updated ' + id + ' → order ' + i);
+        } catch(err) { console.error('[CashFlow] Order update failed:', err); }
+      }
+    }
+
+    // Reload to reflect changes
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 순서 변경됨');
+    await loadHub();
   }
 
   // ===== HUB INLINE EDIT =====
