@@ -401,6 +401,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script>
     const firebaseConfig = {
@@ -414,6 +415,7 @@
     firebase.initializeApp(firebaseConfig);
     window.db = firebase.firestore();
     window.auth = firebase.auth();
+    window.storage = firebase.storage();
     var ALLOWED_EMAIL = 'nury6942@gmail.com';
   </script>
   <!-- Flatpickr custom datepicker -->
@@ -654,21 +656,32 @@
       </section>
 
       <!-- Travel -->
+      <input type="file" id="dash-trip-file-input" accept="image/*" style="display:none" onchange="handleTripFileSelect(this.files[0])"/>
       <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-2xl h-[360px]" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);">
+        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-2xl h-[360px] cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);"
+             onclick="triggerTripUpload('hero')"
+             ondragover="event.preventDefault();this.style.outline='3px dashed #fff';this.style.outlineOffset='-6px'"
+             ondragleave="this.style.outline=''"
+             ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'hero')">
           <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
           <div class="absolute bottom-8 left-8 text-white z-10">
             <p class="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Upcoming Journey</p>
             <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
             <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
           </div>
+          <div class="absolute top-4 right-4 px-3 py-1.5 bg-black/40 rounded-lg text-white/50 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center gap-1 pointer-events-none"><span class="material-symbols-outlined" style="font-size:14px">add_photo_alternate</span> 이미지 변경</div>
           <div id="dash-travel-credit" class="absolute bottom-2 right-4 text-[10px] text-white/40 z-10" style="display:none"></div>
         </div>
         <div class="md:col-span-4 flex flex-col">
-          <div id="dash-travel-next" class="p-8 rounded-2xl flex-1 flex flex-col justify-end" style="background:#c9b3fd;box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
+          <div id="dash-travel-next" class="p-8 rounded-2xl flex-1 flex flex-col justify-end cursor-pointer group" style="background:#c9b3fd;box-shadow:0px 12px 32px rgba(25,28,29,0.04)"
+               onclick="triggerTripUpload('next')"
+               ondragover="event.preventDefault();this.style.outline='3px dashed #6b38d4';this.style.outlineOffset='-6px'"
+               ondragleave="this.style.outline=''"
+               ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'next')">
             <span class="material-symbols-outlined text-3xl mb-3" style="color:#544183">flight_takeoff</span>
             <h3 id="dash-travel-next-name" class="text-xl font-headline font-bold leading-tight" style="color:#544183"></h3>
             <p id="dash-travel-next-date" class="mt-1 text-sm" style="color:#4e3b7c"></p>
+            <div class="absolute top-3 right-3 px-2 py-1 bg-black/30 rounded-lg text-white/60 text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 pointer-events-none"><span class="material-symbols-outlined" style="font-size:12px">add_photo_alternate</span></div>
           </div>
         </div>
       </section>
@@ -1267,17 +1280,6 @@
               <input id="trip-end" type="date" placeholder=""  class="atl-input w-full"/>
             </div>
           </div>
-          </div>
-          <div class="atl-field">
-            <label>대표 이미지 URL</label>
-            <div class="atl-field-input">
-              <span class="atl-field-icon material-symbols-outlined">image</span>
-              <input id="trip-image" type="url" placeholder="https://images.unsplash.com/..." oninput="previewTripImage()" class="atl-input w-full"/>
-            </div>
-            <p class="text-[10px] text-slate-400 mt-1 px-1">Unsplash 등에서 이미지 URL을 복사해서 붙여넣으세요</p>
-          </div>
-          <div id="trip-image-preview" style="display:none" class="rounded-xl overflow-hidden h-24 bg-slate-100">
-            <img id="trip-image-preview-img" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<p class=\'text-xs text-rose-400 p-3\'>이미지를 불러올 수 없어요</p>'"/>
           </div>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>여행 날짜 기간 안에서 도시를 추가할 수 있어요.</span></div>
         </div>
@@ -5945,15 +5947,16 @@
 
   // Trip modal
   function openTripModal() {
-    ['trip-name','trip-start','trip-end','trip-image'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-    document.getElementById('trip-image-preview').style.display = 'none';
+    ['trip-name','trip-start','trip-end'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     delete document.getElementById('trip-modal').dataset.editId;
     document.getElementById('trip-modal-title').textContent = '여행 추가';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
   }
   function previewTripImage() {
-    var url = document.getElementById('trip-image').value.trim();
-    var preview = document.getElementById('trip-image-preview');
+    // Removed: image URL input no longer exists
+    return;
+    var url = '';
+    var preview = null;
     if (url && url.startsWith('http')) {
       preview.style.display = 'block';
       preview.innerHTML = '<img class="w-full h-full object-cover" src="' + url + '" onerror="this.parentElement.innerHTML=\'<p class=\\\'text-xs text-rose-400 p-3\\\'>이미지를 불러올 수 없어요</p>\'"/>';
@@ -5967,7 +5970,7 @@
       name: document.getElementById('trip-name').value,
       start_date: document.getElementById('trip-start').value,
       end_date: document.getElementById('trip-end').value,
-      imageUrl: document.getElementById('trip-image').value.trim() || '',
+      // imageUrl is managed via dashboard upload, not modal
     };
     if (!obj.name) return alert('여행 이름을 입력해줘!');
     var editId = document.getElementById('trip-modal').dataset.editId;
@@ -6146,8 +6149,6 @@
     document.getElementById('trip-name').value = trip.name||'';
     document.getElementById('trip-start').value = trip.start_date||'';
     document.getElementById('trip-end').value = trip.end_date||'';
-    document.getElementById('trip-image').value = trip.imageUrl||'';
-    previewTripImage();
     document.getElementById('trip-modal').dataset.editId = tripId;
     document.getElementById('trip-modal-title').textContent = '여행 수정';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
@@ -6566,9 +6567,69 @@
     }).join('');
   }
 
+  // ===== TRIP IMAGE UPLOAD =====
+  var _dashUpcomingTrips = [];
+  var _tripUploadTarget = null; // 'hero' or 'next'
+
+  function triggerTripUpload(target) {
+    _tripUploadTarget = target;
+    var input = document.getElementById('dash-trip-file-input');
+    input.value = '';
+    input.click();
+  }
+
+  function handleTripFileDrop(e, target) {
+    var file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      _tripUploadTarget = target;
+      handleTripFileSelect(file);
+    }
+  }
+
+  async function handleTripFileSelect(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > 5 * 1024 * 1024) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 5MB 이하 이미지만 가능해요'); return; }
+    var tripIdx = _tripUploadTarget === 'next' ? 1 : 0;
+    var trip = _dashUpcomingTrips[tripIdx];
+    if (!trip || !trip._id) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 여행 정보 없음'); return; }
+
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1 animate-spin">progress_activity</span> 업로드 중...');
+    try {
+      var ext = file.name.split('.').pop() || 'jpg';
+      var ref = storage.ref('trips/' + trip._id + '/cover.' + ext);
+      var snap = await ref.put(file);
+      var url = await snap.ref.getDownloadURL();
+      await fbUpdate('trips', trip._id, { imageUrl: url });
+      trip.imageUrl = url;
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이미지가 업로드되었어요');
+      loadDashboard();
+    } catch(err) {
+      console.error('[Upload]', err);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 업로드 실패: ' + err.message);
+    }
+  }
+
+  // Clipboard paste on hero card
+  document.addEventListener('paste', function(e) {
+    // Only on dashboard
+    var dashPage = document.getElementById('page-dashboard');
+    if (!dashPage || dashPage.style.display === 'none') return;
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        var file = items[i].getAsFile();
+        _tripUploadTarget = 'hero';
+        handleTripFileSelect(file);
+        break;
+      }
+    }
+  });
+
   function renderDashTravel(trips, todayStr) {
     var upcoming = (trips||[]).filter(function(t){ return t.start_date && t.start_date >= todayStr; })
       .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
+    _dashUpcomingTrips = upcoming;
     var nameEl = document.getElementById('dash-travel-name');
     var metaEl = document.getElementById('dash-travel-meta');
     var creditEl = document.getElementById('dash-travel-credit');
