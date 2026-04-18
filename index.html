@@ -1263,6 +1263,9 @@
           <div id="trip-image-preview" style="display:none" class="rounded-xl overflow-hidden h-24 bg-slate-100">
             <img id="trip-image-preview-img" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<p class=\'text-xs text-rose-400 p-3\'>이미지를 불러올 수 없어요</p>'"/>
           </div>
+          <button id="trip-refresh-image-btn" type="button" onclick="var id=document.getElementById('trip-modal').dataset.editId;if(id){refreshTripImage(id);closeTripModal();}" class="text-xs text-indigo-600 font-bold flex items-center gap-1 hover:underline px-1" style="display:none">
+            <span class="material-symbols-outlined" style="font-size:14px">refresh</span> Unsplash 이미지 새로고침
+          </button>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>여행 날짜 기간 안에서 도시를 추가할 수 있어요.</span></div>
         </div>
         <div class="atl-modal-footer">
@@ -5931,6 +5934,7 @@
   function openTripModal() {
     ['trip-name','trip-start','trip-end','trip-image'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('trip-image-preview').style.display = 'none';
+    document.getElementById('trip-refresh-image-btn').style.display = 'none';
     delete document.getElementById('trip-modal').dataset.editId;
     document.getElementById('trip-modal-title').textContent = '여행 추가';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
@@ -6132,6 +6136,7 @@
     document.getElementById('trip-end').value = trip.end_date||'';
     document.getElementById('trip-image').value = trip.imageUrl||'';
     previewTripImage();
+    document.getElementById('trip-refresh-image-btn').style.display = '';
     document.getElementById('trip-modal').dataset.editId = tripId;
     document.getElementById('trip-modal-title').textContent = '여행 수정';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
@@ -6553,6 +6558,7 @@
   // ===== UNSPLASH IMAGE AUTO-FETCH =====
   var UNSPLASH_KEY = '90Y56nyXGDJyTP3ZS-0cvy0mVALeJ4XYL7qgC5u2-As';
   var LOCATION_MAP = {
+    // 국가
     '체코':'Czech Republic','크로아티아':'Croatia','독일':'Germany','이탈리아':'Italy',
     '일본':'Japan','프랑스':'France','영국':'UK','스페인':'Spain','포르투갈':'Portugal',
     '태국':'Thailand','베트남':'Vietnam','미국':'USA','뉴질랜드':'New Zealand',
@@ -6560,14 +6566,50 @@
     '터키':'Turkey','그리스':'Greece','네덜란드':'Netherlands','스위스':'Switzerland',
     '오스트리아':'Austria','벨기에':'Belgium','덴마크':'Denmark','스웨덴':'Sweden',
     '노르웨이':'Norway','핀란드':'Finland','아이슬란드':'Iceland',
-    '프라하':'Prague','파리':'Paris','런던':'London','도쿄':'Tokyo','교토':'Kyoto',
-    '오사카':'Osaka','뉴욕':'New York','로마':'Rome','베를린':'Berlin','바르셀로나':'Barcelona'
+    // 독일
+    '프랑크푸르트':'Frankfurt','베를린':'Berlin','뮌헨':'Munich','함부르크':'Hamburg','쾰른':'Cologne','드레스덴':'Dresden',
+    // 이탈리아
+    '로마':'Rome','밀라노':'Milan','베네치아':'Venice','피렌체':'Florence','나폴리':'Naples','토스카나':'Tuscany','시칠리아':'Sicily',
+    // 체코
+    '프라하':'Prague','체스키크룸로프':'Cesky Krumlov','브르노':'Brno',
+    // 크로아티아
+    '자그레브':'Zagreb','두브로브니크':'Dubrovnik','스플리트':'Split','플리트비체':'Plitvice',
+    // 일본
+    '도쿄':'Tokyo','교토':'Kyoto','오사카':'Osaka','삿포로':'Sapporo','후쿠오카':'Fukuoka','나고야':'Nagoya','오키나와':'Okinawa','나라':'Nara',
+    // 미국
+    '뉴욕':'New York','로스앤젤레스':'Los Angeles','LA':'Los Angeles','시애틀':'Seattle','샌프란시스코':'San Francisco','시카고':'Chicago','라스베가스':'Las Vegas','라스베이거스':'Las Vegas','마이애미':'Miami',
+    // 프랑스
+    '파리':'Paris','니스':'Nice','리옹':'Lyon','마르세유':'Marseille',
+    // 영국
+    '런던':'London','에든버러':'Edinburgh',
+    // 스페인
+    '바르셀로나':'Barcelona','마드리드':'Madrid','세비야':'Seville',
+    // 태국
+    '방콕':'Bangkok','치앙마이':'Chiang Mai','푸켓':'Phuket',
+    // 베트남
+    '하노이':'Hanoi','호치민':'Ho Chi Minh','다낭':'Da Nang',
+    // 뉴질랜드
+    '오클랜드':'Auckland','퀸스타운':'Queenstown',
+    // 호주
+    '시드니':'Sydney','멜버른':'Melbourne'
   };
 
-  function extractLocationKeywords(title) {
-    var kw = [];
-    for (var ko in LOCATION_MAP) { if (title.indexOf(ko) >= 0) kw.push(LOCATION_MAP[ko]); }
-    return kw;
+  async function extractTripKeywords(trip) {
+    // 1순위: trip_cities 컬렉션에서 첫 번째 도시
+    try {
+      var cities = await fbRead('trip_cities');
+      var tripCities = cities.filter(function(c){ return c.trip_id === trip._id; })
+        .sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
+      if (tripCities.length > 0) {
+        var firstCity = (tripCities[0].name||'').trim();
+        if (LOCATION_MAP[firstCity]) return [LOCATION_MAP[firstCity]];
+        if (firstCity) return [firstCity]; // 매핑 없어도 그대로 사용
+      }
+    } catch(e){}
+    // 2순위: name에서 추출 (첫 매치만)
+    var title = trip.name || '';
+    for (var ko in LOCATION_MAP) { if (title.indexOf(ko) >= 0) return [LOCATION_MAP[ko]]; }
+    return [];
   }
 
   async function fetchUnsplashImage(keywords) {
@@ -6592,13 +6634,25 @@
 
   async function ensureTripImage(trip) {
     if (trip.imageUrl) return trip;
-    var kw = extractLocationKeywords(trip.name || '');
+    var kw = await extractTripKeywords(trip);
     if (!kw.length) return trip;
     var img = await fetchUnsplashImage(kw);
     if (!img) return trip;
     var update = { imageUrl: img.url, imagePhotographer: img.photographer, imagePhotographerUrl: img.photographerUrl, imageUnsplashUrl: img.unsplashUrl };
     try { await fbUpdate('trips', trip._id, update); Object.assign(trip, update); } catch(e){}
     return trip;
+  }
+
+  async function refreshTripImage(tripId) {
+    var trip = tripsData.find(function(t){ return t._id === tripId; });
+    if (!trip) return;
+    // Clear cached image
+    var clear = { imageUrl: '', imagePhotographer: '', imagePhotographerUrl: '', imageUnsplashUrl: '' };
+    try { await fbUpdate('trips', tripId, clear); Object.assign(trip, clear); } catch(e){}
+    // Re-fetch
+    await ensureTripImage(trip);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이미지가 새로고침되었습니다');
+    if (typeof loadDashboard === 'function') loadDashboard();
   }
 
   async function renderDashTravel(trips, todayStr) {
