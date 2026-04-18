@@ -12991,6 +12991,51 @@ document.addEventListener('keydown', function(e) {
   if ((e.metaKey || e.ctrlKey) && e.key === 'b') { e.preventDefault(); toggleSidebar(); }
 });
 
+// 2-finger swipe → sidebar toggle (no page navigation)
+(function() {
+  // Trackpad wheel
+  var _swAccum = 0, _swTimer = null;
+  document.addEventListener('wheel', function(e) {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { _swAccum = 0; return; }
+    // Skip if inside horizontally scrollable container
+    var t = e.target;
+    while (t && t !== document.body) {
+      var s = window.getComputedStyle(t);
+      if ((s.overflowX === 'auto' || s.overflowX === 'scroll') && t.scrollWidth > t.clientWidth) return;
+      t = t.parentElement;
+    }
+    _swAccum += e.deltaX;
+    clearTimeout(_swTimer);
+    _swTimer = setTimeout(function() {
+      if (Math.abs(_swAccum) > 150) {
+        var sb = document.getElementById('sidebar');
+        var isHidden = sb && sb.classList.contains('sidebar-collapsed');
+        if (_swAccum < 0 && isHidden) toggleSidebar();
+        else if (_swAccum > 0 && !isHidden) toggleSidebar();
+      }
+      _swAccum = 0;
+    }, 150);
+  }, { passive: true });
+  // Touch 2-finger
+  var _tStartX = 0, _tMulti = false;
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) { _tStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2; _tMulti = true; }
+    else { _tMulti = false; }
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    if (!_tMulti || e.changedTouches.length < 2) { _tMulti = false; return; }
+    var endX = (e.changedTouches[0].clientX + e.changedTouches[1].clientX) / 2;
+    var dx = endX - _tStartX;
+    if (Math.abs(dx) > 100) {
+      var sb = document.getElementById('sidebar');
+      var isHidden = sb && sb.classList.contains('sidebar-collapsed');
+      if (dx > 0 && isHidden) toggleSidebar();
+      else if (dx < 0 && !isHidden) toggleSidebar();
+    }
+    _tMulti = false;
+  }, { passive: true });
+})();
+
 var _profileDdOpen = false;
 function toggleProfileDropdown() {
   _profileDdOpen = !_profileDdOpen;
