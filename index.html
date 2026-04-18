@@ -478,7 +478,7 @@
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
 </head>
-<body class="overflow-x-hidden" style="overscroll-behavior-x:none;">
+<body class="overflow-x-hidden" style="overscroll-behavior:none;">
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background:linear-gradient(135deg,#6b38d4 0%,#4f46e5 50%,#312e81 100%);">
@@ -512,7 +512,7 @@
 <div id="app-container" style="display:none">
 
 <!-- SIDEBAR -->
-<div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="toggleSidebar()"></div>
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()"></div>
 <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col py-6 z-50 transition-transform duration-300">
   <div class="px-6 mb-6 flex items-center gap-3">
     <div class="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white shadow-sm shrink-0">
@@ -580,7 +580,7 @@
 <div id="main-wrapper" class="ml-64 min-h-screen flex flex-col bg-white transition-[margin] duration-300">
   <header id="main-header" class="fixed top-0 left-64 right-0 h-16 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100 flex justify-between items-center px-8 transition-[left] duration-300">
     <div class="flex items-center gap-4">
-      <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl" aria-label="사이드바 토글">
+      <button id="sidebar-toggle" type="button" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl" aria-label="사이드바 토글">
         <span class="material-symbols-outlined" id="sidebar-toggle-icon">menu</span>
       </button>
       <h2 id="page-title" class="text-sm font-extrabold tracking-tight text-slate-900 font-headline leading-tight">대시보드</h2>
