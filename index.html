@@ -2269,21 +2269,21 @@
 
       <!-- Today's Highlight -->
       <section class="relative">
-        <div id="vault-highlight" class="rounded-[2rem] overflow-hidden flex flex-col items-center justify-center text-center text-white p-8 relative" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
-          <div class="absolute top-6 right-6 opacity-[0.08]"><span class="material-symbols-outlined text-5xl text-white">format_quote</span></div>
-          <button onclick="shuffleVaultHighlight()" class="absolute top-6 left-6 p-2 rounded-xl hover:bg-white/20 transition-all text-white/60 hover:text-white" title="셔플"><span class="material-symbols-outlined">shuffle</span></button>
-          <span class="text-[10px] uppercase tracking-widest font-extrabold mb-5 block text-white/80">Today's Highlight</span>
-          <h2 id="vault-hl-en" class="font-headline text-xl md:text-2xl font-bold leading-relaxed mb-3 italic"></h2>
-          <p id="vault-hl-kr" class="text-base font-light mb-4 italic text-white/80"></p>
+        <div id="vault-highlight" class="rounded-2xl overflow-hidden text-white p-6 relative" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-[10px] uppercase tracking-widest font-extrabold text-white/70">Today's Highlight</span>
+            <button onclick="shuffleVaultHighlight()" class="p-1.5 rounded-lg hover:bg-white/20 transition-all text-white/50 hover:text-white" title="셔플"><span class="material-symbols-outlined" style="font-size:18px">shuffle</span></button>
+          </div>
+          <div id="vault-hl-pairs"></div>
           <div id="vault-hl-convo"></div>
-          <div id="vault-hl-ctx" class="flex items-center gap-3 text-sm text-white/60 mt-4">
-            <span class="material-symbols-outlined text-sm text-white/50">lightbulb</span>
+          <div id="vault-hl-ctx" class="flex items-center gap-2 text-xs text-white/50 mt-3">
+            <span class="material-symbols-outlined" style="font-size:14px">lightbulb</span>
             <p id="vault-hl-ctx-text"></p>
           </div>
-          <div id="vault-hl-empty" style="display:none">
-            <span class="material-symbols-outlined text-5xl mb-4 text-white/40">collections_bookmark</span>
-            <p class="text-lg font-medium text-white/70">아직 수집된 표현이 없어요.</p>
-            <p class="text-sm text-white/50 mt-1">첫 표현을 추가해보세요!</p>
+          <div id="vault-hl-empty" style="display:none" class="text-center py-6">
+            <span class="material-symbols-outlined text-4xl mb-3 text-white/30">collections_bookmark</span>
+            <p class="text-sm font-medium text-white/60">아직 수집된 표현이 없어요.</p>
+            <p class="text-xs text-white/40 mt-1">첫 표현을 추가해보세요!</p>
           </div>
         </div>
       </section>
@@ -11938,14 +11938,21 @@ async function parseAndSaveReview() {
     '</div>';
   }
 
+  function splitSentences(text) {
+    if (!text) return [''];
+    var abbrs = ['Mr.','Mrs.','Dr.','Ms.','Jr.','Sr.','vs.','etc.','e.g.','i.e.','U.S.','U.K.'];
+    var t = text; abbrs.forEach(function(a,i){ t = t.split(a).join('__A'+i+'__'); });
+    var parts = t.split(/(?<=[.!?])\s+/);
+    return parts.map(function(s){ abbrs.forEach(function(a,i){ s = s.split('__A'+i+'__').join(a); }); return s; }).filter(function(s){ return s.trim(); });
+  }
+
   function renderVaultHighlight() {
-    var enEl = document.getElementById('vault-hl-en');
-    var krEl = document.getElementById('vault-hl-kr');
+    var pairsEl = document.getElementById('vault-hl-pairs');
     var ctxEl = document.getElementById('vault-hl-ctx');
     var ctxText = document.getElementById('vault-hl-ctx-text');
     var emptyEl = document.getElementById('vault-hl-empty');
     if (vaultData.length === 0) {
-      enEl.textContent = ''; krEl.textContent = '';
+      pairsEl.innerHTML = '';
       ctxEl.style.display = 'none'; emptyEl.style.display = '';
       return;
     }
@@ -11954,8 +11961,19 @@ async function parseAndSaveReview() {
     do { idx = Math.floor(Math.random() * vaultData.length); } while (idx === _vaultHighlightIdx && vaultData.length > 1);
     _vaultHighlightIdx = idx;
     var item = vaultData[idx];
-    enEl.innerHTML = '"' + formatSentences(item.english||'') + '"';
-    krEl.innerHTML = formatSentences(item.korean || '');
+
+    // Parallel sentence pairs
+    var enS = splitSentences(item.english||'');
+    var krS = splitSentences(item.korean||'');
+    var max = Math.max(enS.length, krS.length);
+    var html = '';
+    for (var i = 0; i < max; i++) {
+      html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 py-1.5' + (i > 0 ? ' border-t border-white/10' : '') + '">' +
+        '<p class="text-sm text-white font-medium italic leading-relaxed">' + (enS[i]||'') + '</p>' +
+        '<p class="text-xs text-white/70 leading-relaxed mt-1 md:mt-0">' + (krS[i]||'') + '</p>' +
+      '</div>';
+    }
+    pairsEl.innerHTML = html;
     document.getElementById('vault-hl-convo').innerHTML = renderConvoHtml(item.conversation, 'dark');
     ctxText.textContent = item.context || '';
     if (!item.context) ctxEl.style.display = 'none';
