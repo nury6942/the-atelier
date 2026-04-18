@@ -646,6 +646,7 @@
             <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
             <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
           </div>
+          <button id="dash-travel-refresh" onclick="event.stopPropagation();refreshDashTripImage()" class="absolute top-4 right-4 p-2 rounded-xl bg-black/30 hover:bg-black/50 text-white/50 hover:text-white transition-all z-10 opacity-0 group-hover:opacity-100" title="이미지 새로고침" style="display:none"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button>
           <div id="dash-travel-credit" class="absolute bottom-2 right-4 text-[10px] text-white/40 z-10" style="display:none"></div>
         </div>
         <div class="md:col-span-4 flex flex-col">
@@ -6648,6 +6649,12 @@
     return trip;
   }
 
+  async function refreshDashTripImage() {
+    var btn = document.getElementById('dash-travel-refresh');
+    var tripId = btn ? btn.dataset.tripId : null;
+    if (tripId) await refreshTripImage(tripId);
+  }
+
   async function refreshTripImage(tripId) {
     var trip = tripsData.find(function(t){ return t._id === tripId; });
     if (!trip) return;
@@ -6684,6 +6691,7 @@
     var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/86400000);
     if (nameEl) nameEl.textContent = t.name;
     if (metaEl) metaEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>' + (t.start_date||'').slice(5) + ' - ' + (t.end_date||'').slice(5) + '</span><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase">D-' + diff + '</span>';
+    var refreshBtn = document.getElementById('dash-travel-refresh');
     if (heroEl) {
       if (t.imageUrl) {
         heroEl.style.background = 'url(' + t.imageUrl + ') center/cover no-repeat';
@@ -6691,9 +6699,11 @@
           creditEl.innerHTML = 'Photo by <a href="' + (t.imagePhotographerUrl||'#') + '" target="_blank" class="underline">' + t.imagePhotographer + '</a> on <a href="' + (t.imageUnsplashUrl||'https://unsplash.com') + '" target="_blank" class="underline">Unsplash</a>';
           creditEl.style.display = '';
         }
+        if (refreshBtn) { refreshBtn.style.display = ''; refreshBtn.dataset.tripId = t._id; }
       } else {
         heroEl.style.background = 'linear-gradient(135deg,#6b38d4,#8455ef)';
         if (creditEl) creditEl.style.display = 'none';
+        if (refreshBtn) refreshBtn.style.display = 'none';
       }
     }
     // Next trip
