@@ -640,12 +640,13 @@
       <!-- Travel -->
       <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-2xl h-[360px]" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
           <div class="absolute bottom-8 left-8 text-white z-10">
             <p class="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Upcoming Journey</p>
             <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
             <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
           </div>
+          <div id="dash-travel-credit" class="absolute bottom-2 right-4 text-[10px] text-white/40 z-10" style="display:none"></div>
         </div>
         <div class="md:col-span-4 flex flex-col">
           <div id="dash-travel-next" class="p-8 rounded-2xl flex-1 flex flex-col justify-end" style="background:#c9b3fd;box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
@@ -6549,40 +6550,96 @@
     }).join('');
   }
 
-  function renderDashTravel(trips, todayStr) {
+  // ===== UNSPLASH IMAGE AUTO-FETCH =====
+  var UNSPLASH_KEY = '90Y56nyXGDJyTP3ZS-0cvy0mVALeJ4XYL7qgC5u2-As';
+  var LOCATION_MAP = {
+    '체코':'Czech Republic','크로아티아':'Croatia','독일':'Germany','이탈리아':'Italy',
+    '일본':'Japan','프랑스':'France','영국':'UK','스페인':'Spain','포르투갈':'Portugal',
+    '태국':'Thailand','베트남':'Vietnam','미국':'USA','뉴질랜드':'New Zealand',
+    '호주':'Australia','싱가포르':'Singapore','대만':'Taiwan','홍콩':'Hong Kong',
+    '터키':'Turkey','그리스':'Greece','네덜란드':'Netherlands','스위스':'Switzerland',
+    '오스트리아':'Austria','벨기에':'Belgium','덴마크':'Denmark','스웨덴':'Sweden',
+    '노르웨이':'Norway','핀란드':'Finland','아이슬란드':'Iceland',
+    '프라하':'Prague','파리':'Paris','런던':'London','도쿄':'Tokyo','교토':'Kyoto',
+    '오사카':'Osaka','뉴욕':'New York','로마':'Rome','베를린':'Berlin','바르셀로나':'Barcelona'
+  };
+
+  function extractLocationKeywords(title) {
+    var kw = [];
+    for (var ko in LOCATION_MAP) { if (title.indexOf(ko) >= 0) kw.push(LOCATION_MAP[ko]); }
+    return kw;
+  }
+
+  async function fetchUnsplashImage(keywords) {
+    if (!UNSPLASH_KEY || !keywords.length) return null;
+    var query = keywords.join(' ') + ' travel landscape';
+    try {
+      var res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&orientation=landscape&per_page=3', {
+        headers: { 'Authorization': 'Client-ID ' + UNSPLASH_KEY }
+      });
+      if (!res.ok) return null;
+      var data = await res.json();
+      if (!data.results || !data.results.length) return null;
+      var photo = data.results[0];
+      return {
+        url: photo.urls.regular,
+        photographer: photo.user.name,
+        photographerUrl: photo.user.links.html + '?utm_source=the_atelier&utm_medium=referral',
+        unsplashUrl: photo.links.html + '?utm_source=the_atelier&utm_medium=referral'
+      };
+    } catch(e) { console.warn('[Unsplash] fetch error:', e); return null; }
+  }
+
+  async function ensureTripImage(trip) {
+    if (trip.imageUrl) return trip;
+    var kw = extractLocationKeywords(trip.name || '');
+    if (!kw.length) return trip;
+    var img = await fetchUnsplashImage(kw);
+    if (!img) return trip;
+    var update = { imageUrl: img.url, imagePhotographer: img.photographer, imagePhotographerUrl: img.photographerUrl, imageUnsplashUrl: img.unsplashUrl };
+    try { await fbUpdate('trips', trip._id, update); Object.assign(trip, update); } catch(e){}
+    return trip;
+  }
+
+  async function renderDashTravel(trips, todayStr) {
     var upcoming = (trips||[]).filter(function(t){ return t.start_date && t.start_date >= todayStr; })
       .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
     var nameEl = document.getElementById('dash-travel-name');
     var metaEl = document.getElementById('dash-travel-meta');
     var nextNameEl = document.getElementById('dash-travel-next-name');
     var nextDateEl = document.getElementById('dash-travel-next-date');
+    var creditEl = document.getElementById('dash-travel-credit');
     if (upcoming.length === 0) {
       nameEl.textContent = '다음 여행을 계획해보세요';
-      metaEl.innerHTML = '';
+      metaEl.innerHTML = ''; creditEl.style.display = 'none';
       nextNameEl.textContent = ''; nextDateEl.textContent = '';
       return;
     }
-    var t = upcoming[0];
+    // Auto-fetch images
+    var t = await ensureTripImage(upcoming[0]);
     var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/86400000);
     nameEl.textContent = t.name;
     metaEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>' + (t.start_date||'').slice(5) + ' - ' + (t.end_date||'').slice(5) + '</span><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase">D-' + diff + '</span>';
-    // 이미지 배경
     var heroEl = document.getElementById('dash-travel-hero');
     if (t.imageUrl) {
       heroEl.style.background = 'url(' + t.imageUrl + ') center/cover no-repeat';
+      if (t.imagePhotographer) {
+        creditEl.innerHTML = 'Photo by <a href="' + (t.imagePhotographerUrl||'#') + '" target="_blank" class="underline">' + t.imagePhotographer + '</a> on <a href="' + (t.imageUnsplashUrl||'https://unsplash.com') + '" target="_blank" class="underline">Unsplash</a>';
+        creditEl.style.display = '';
+      }
     } else {
       heroEl.style.background = 'linear-gradient(135deg,#6b38d4,#8455ef)';
+      creditEl.style.display = 'none';
     }
     // Next trip
     if (upcoming.length > 1) {
-      var t2 = upcoming[1];
+      var t2 = await ensureTripImage(upcoming[1]);
       nextNameEl.textContent = 'Next: ' + t2.name;
       nextDateEl.textContent = t2.start_date || '';
       var nextEl = document.getElementById('dash-travel-next');
       if (t2.imageUrl) {
         nextEl.style.background = 'url(' + t2.imageUrl + ') center/cover no-repeat';
-        nextEl.style.color = '#fff';
-        nextEl.innerHTML = '<div class="absolute inset-0 bg-black/40 rounded-2xl"></div><div class="relative z-10 mt-auto"><span class="material-symbols-outlined text-3xl mb-3 text-white/80">flight_takeoff</span><h3 id="dash-travel-next-name" class="text-xl font-headline font-bold leading-tight text-white">Next: ' + t2.name + '</h3><p id="dash-travel-next-date" class="mt-1 text-sm text-white/70">' + (t2.start_date||'') + '</p></div>';
+        nextEl.innerHTML = '<div class="absolute inset-0 bg-black/40 rounded-2xl"></div><div class="relative z-10 mt-auto"><span class="material-symbols-outlined text-3xl mb-3 text-white/80">flight_takeoff</span><h3 class="text-xl font-headline font-bold leading-tight text-white">Next: ' + t2.name + '</h3><p class="mt-1 text-sm text-white/70">' + (t2.start_date||'') + '</p></div>';
         nextEl.style.position = 'relative';
       }
     } else { nextNameEl.textContent = ''; nextDateEl.textContent = ''; }
