@@ -6438,9 +6438,10 @@
     document.getElementById('dash-footer').textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
 
     try {
-      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs] = await Promise.all([
-        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions')
+      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs, tripCitiesDocs, matrixDocs] = await Promise.all([
+        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions'), fbRead('trip_cities'), fbRead('matrix')
       ]);
+      _tripCitiesCache = tripCitiesDocs;
       var plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
       var hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
 
@@ -6450,10 +6451,10 @@
       renderDashSchedule(plannerRows, todayStr, tripDocs);
       // Week
       renderDashWeek(plannerRows, now, todayStr);
-      // Travel
-      renderDashTravel(tripDocs, todayStr);
-      // Vacation
-      renderDashVacation();
+      // Travel (pass cached cities)
+      renderDashTravel(tripDocs, todayStr, tripCitiesDocs);
+      // Vacation (pass cached matrix)
+      renderDashVacation(matrixDocs);
       // Vault stats
       renderDashVaultStats(vaultDocs, now);
       // Finance
@@ -6594,18 +6595,22 @@
     '시드니':'Sydney','멜버른':'Melbourne'
   };
 
-  async function extractTripKeywords(trip) {
-    // 1순위: trip_cities 컬렉션에서 첫 번째 도시
-    try {
-      var cities = await fbRead('trip_cities');
-      var tripCities = cities.filter(function(c){ return c.trip_id === trip._id; })
+  // 캐시: trip_cities는 dashboard 로드 시 1번만 읽기
+  var _tripCitiesCache = null;
+
+  function extractTripKeywords(trip, citiesData) {
+    // 1순위: citiesData(캐시)에서 해당 trip의 첫 번째 도시
+    if (citiesData) {
+      var tripCities = citiesData.filter(function(c){ return c.trip_id === trip._id; })
         .sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
       if (tripCities.length > 0) {
         var firstCity = (tripCities[0].name||'').trim();
+        // 영어면 그대로
+        if (/^[A-Za-z\s]+$/.test(firstCity)) return [firstCity];
         if (LOCATION_MAP[firstCity]) return [LOCATION_MAP[firstCity]];
-        if (firstCity) return [firstCity]; // 매핑 없어도 그대로 사용
+        if (firstCity) return [firstCity];
       }
-    } catch(e){}
+    }
     // 2순위: name에서 추출 (첫 매치만)
     var title = trip.name || '';
     for (var ko in LOCATION_MAP) { if (title.indexOf(ko) >= 0) return [LOCATION_MAP[ko]]; }
@@ -6632,9 +6637,9 @@
     } catch(e) { console.warn('[Unsplash] fetch error:', e); return null; }
   }
 
-  async function ensureTripImage(trip) {
+  async function ensureTripImage(trip, citiesData) {
     if (trip.imageUrl) return trip;
-    var kw = await extractTripKeywords(trip);
+    var kw = extractTripKeywords(trip, citiesData);
     if (!kw.length) return trip;
     var img = await fetchUnsplashImage(kw);
     if (!img) return trip;
@@ -6646,16 +6651,16 @@
   async function refreshTripImage(tripId) {
     var trip = tripsData.find(function(t){ return t._id === tripId; });
     if (!trip) return;
-    // Clear cached image
     var clear = { imageUrl: '', imagePhotographer: '', imagePhotographerUrl: '', imageUnsplashUrl: '' };
     try { await fbUpdate('trips', tripId, clear); Object.assign(trip, clear); } catch(e){}
-    // Re-fetch
-    await ensureTripImage(trip);
+    // Fetch cities once for re-fetch
+    var cd = await fbRead('trip_cities');
+    await ensureTripImage(trip, cd);
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이미지가 새로고침되었습니다');
     if (typeof loadDashboard === 'function') loadDashboard();
   }
 
-  async function renderDashTravel(trips, todayStr) {
+  async function renderDashTravel(trips, todayStr, citiesData) {
     var upcoming = (trips||[]).filter(function(t){ return t.start_date && t.start_date >= todayStr; })
       .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
     var nameEl = document.getElementById('dash-travel-name');
@@ -6675,7 +6680,7 @@
       return;
     }
     // Auto-fetch images
-    var t = await ensureTripImage(upcoming[0]);
+    var t = await ensureTripImage(upcoming[0], citiesData);
     var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/86400000);
     if (nameEl) nameEl.textContent = t.name;
     if (metaEl) metaEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>' + (t.start_date||'').slice(5) + ' - ' + (t.end_date||'').slice(5) + '</span><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase">D-' + diff + '</span>';
@@ -6693,7 +6698,7 @@
     }
     // Next trip
     if (upcoming.length > 1 && nextEl) {
-      var t2 = await ensureTripImage(upcoming[1]);
+      var t2 = await ensureTripImage(upcoming[1], citiesData);
       if (t2.imageUrl) {
         nextEl.style.background = 'url(' + t2.imageUrl + ') center/cover no-repeat';
         nextEl.style.position = 'relative';
@@ -6707,14 +6712,13 @@
     }
   }
 
-  async function renderDashVacation() {
+  async function renderDashVacation(matrixDocs) {
     try {
       var yr = new Date().getFullYear();
       var doc = await db.collection('annualSettings').doc(String(yr)).get();
       var total = (doc.exists && doc.data().vacationTotal !== undefined) ? doc.data().vacationTotal : 17;
-      var mDocs = await fbRead('matrix');
       var used = 0;
-      mDocs.forEach(function(d){ var lv = (d.leave||'').toString(); var m = lv.match(/^([\d.]+)/); if(m) used += parseFloat(m[1]); });
+      (matrixDocs||[]).forEach(function(d){ var lv = (d.leave||'').toString(); var m = lv.match(/^([\d.]+)/); if(m) used += parseFloat(m[1]); });
       var remain = Math.max(0, total - used);
       document.getElementById('dash-vac-remain').textContent = remain.toFixed(remain%1?1:0);
       var pct = total > 0 ? Math.round(((total-used)/total)*100) : 0;
