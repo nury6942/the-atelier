@@ -126,6 +126,14 @@
     }
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
+
+    /* Review drop zone active state */
+    .review-dz-active {
+      border-color: #7c3aed !important;
+      background: rgba(139,92,246,0.1) !important;
+    }
+    .review-dz-active .material-symbols-outlined { transform: scale(1.15); color: #7c3aed; }
+    .review-dz-success { border-color: #10b981 !important; background: rgba(16,185,129,0.08) !important; }
   
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
@@ -1977,6 +1985,22 @@
                 <span class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">1</span>
                 <h4 class="font-bold text-slate-800">수업 정보 입력</h4>
               </div>
+
+              <!-- Drag & Drop Zone -->
+              <div id="review-dropzone"
+                   ondragover="event.preventDefault();event.stopPropagation();this.classList.add('review-dz-active')"
+                   ondragleave="event.preventDefault();this.classList.remove('review-dz-active')"
+                   ondrop="event.preventDefault();this.classList.remove('review-dz-active');handleReviewFileDrop(event.dataTransfer.files)"
+                   class="mb-5 border-2 border-dashed border-violet-200 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/50 transition-all"
+                   style="min-height:130px;padding:24px 16px"
+                   onclick="document.getElementById('review-file-input').click()">
+                <span class="material-symbols-outlined text-violet-300 mb-2" style="font-size:36px">upload_file</span>
+                <p class="text-sm font-bold text-slate-600">MacWhisper .txt 파일을 여기로 드래그하세요</p>
+                <p class="text-[10px] text-slate-400 mt-1">날짜, 수업명, 트랜스크립트가 자동으로 채워집니다</p>
+                <p class="text-[10px] text-violet-500 font-bold mt-2 underline">또는 파일 선택</p>
+                <input id="review-file-input" type="file" accept=".txt" class="hidden" onchange="handleReviewFileDrop(this.files);this.value=''"/>
+              </div>
+
               <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="space-y-1">
                   <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">날짜 *</label>
@@ -10896,6 +10920,79 @@ function openReviewCreateModal() {
 
 function closeReviewCreateModal() {
   document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
+}
+
+// ===== DRAG & DROP TRANSCRIPT FILE =====
+function handleReviewFileDrop(files) {
+  if (!files || files.length === 0) return;
+  var file = files[0];
+
+  // 확장자 검증
+  if (!file.name.toLowerCase().endsWith('.txt')) {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> .txt 파일만 업로드 가능해요');
+    return;
+  }
+  // 크기 검증 (10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 파일이 너무 커요 (10MB 이하만 가능)');
+    return;
+  }
+
+  // 파일명에서 날짜 + 수업명 추출
+  var baseName = file.name.replace(/\.txt$/i, '');
+  var dateMatch = baseName.match(/(\d{4})[-._]?(\d{2})[-._]?(\d{2})/);
+  var extractedDate = '';
+  var extractedTitle = '';
+
+  if (dateMatch) {
+    extractedDate = dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3];
+    // 날짜 패턴 제거 후 수업명 추출
+    extractedTitle = baseName.replace(/\d{4}[-._]?\d{2}[-._]?\d{2}/, '').replace(/^[-_.\s]+|[-_.\s]+$/g, '');
+  } else {
+    // 날짜 없으면 파일 수정 날짜 사용
+    var lastMod = new Date(file.lastModified);
+    extractedDate = lastMod.toISOString().split('T')[0];
+    extractedTitle = baseName;
+  }
+  // 언더스코어 → 공백
+  extractedTitle = extractedTitle.replace(/_/g, ' ').trim();
+
+  // 파일 내용 읽기
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+    if (!text || !text.trim()) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 파일이 비어있어요');
+      return;
+    }
+
+    // 필드 채우기
+    document.getElementById('review-date').value = extractedDate;
+    if (extractedTitle) document.getElementById('review-title').value = extractedTitle;
+    document.getElementById('review-transcript').value = text;
+
+    // 성공 피드백
+    var dz = document.getElementById('review-dropzone');
+    dz.classList.add('review-dz-success');
+    setTimeout(function(){ dz.classList.remove('review-dz-success'); }, 1500);
+
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 파일 로드 완료 · ' + extractedDate);
+
+    // 1초 후 자동 생성 실행
+    setTimeout(function() {
+      var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+      if (apiKey) {
+        autoGenerateReview();
+      } else {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> API 키를 설정하면 자동 생성이 시작됩니다');
+        updateAutoGenButton();
+      }
+    }, 1000);
+  };
+  reader.onerror = function() {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 파일을 읽을 수 없어요. 다시 시도해 주세요');
+  };
+  reader.readAsText(file, 'UTF-8');
 }
 
 var _manualReviewOpen = false;
