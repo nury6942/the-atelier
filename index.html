@@ -9905,7 +9905,7 @@
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balK = Math.round(itemRunning/1000);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
-          var firestoreId = mi.row[7] || mi.row[6] || '';
+          var firestoreId = mi.row[5] || '';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size:10px" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
@@ -10004,8 +10004,8 @@
     // Swap dates so sort order reflects new position
     var srcDate = srcRow[0], tgtDate = tgtRow[0];
     srcRow[0] = tgtDate; tgtRow[0] = srcDate;
-    var srcId = srcRow[7] || srcRow[6];
-    var tgtId = tgtRow[7] || tgtRow[6];
+    var srcId = srcRow[5] || '';
+    var tgtId = tgtRow[5] || '';
     if (srcId) fbUpdate('finance_hub', srcId, { date: tgtDate }).catch(function(){});
     if (tgtId) fbUpdate('finance_hub', tgtId, { date: srcDate }).catch(function(){});
     _hubDragIdx = null;
@@ -10016,7 +10016,8 @@
   function startHubInlineEdit(idx, monthKey) {
     var row = hubData[idx];
     if (!row) return;
-    var firestoreId = row[7] || row[6] || '';
+    var firestoreId = row[5] || '';
+    console.log('[CashFlow] Edit idx=' + idx + ', id=' + firestoreId + ', row=', row);
     var dateDay = (row[0]||'').substring(8,10);
     var desc = row[2] || '';
     var amt = parseFloat(row[3]) || 0;
@@ -10040,19 +10041,23 @@
   }
 
   async function saveHubInlineEdit(idx, monthKey, firestoreId) {
+    console.log('[CashFlow] saveHubInlineEdit idx=' + idx + ', month=' + monthKey + ', id=' + firestoreId);
+    if (!firestoreId) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 문서 ID가 없습니다'); return; }
     var dateDay = (document.getElementById('hub-edit-date-' + idx).value || '').trim();
     var desc = (document.getElementById('hub-edit-desc-' + idx).value || '').trim();
     var amtStr = (document.getElementById('hub-edit-amt-' + idx).value || '').replace(/[^0-9]/g, '');
     var type = document.getElementById('hub-edit-type-' + idx).value;
+    console.log('[CashFlow] Form data:', { dateDay: dateDay, desc: desc, amt: amtStr, type: type });
     if (!dateDay || !desc || !amtStr) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 모든 필드를 입력하세요'); return; }
     var fullDate = monthKey + '-' + String(dateDay).padStart(2, '0');
     try {
       await fbUpdate('finance_hub', firestoreId, { date: fullDate, description: desc, amount: parseInt(amtStr), type: type });
+      console.log('[CashFlow] Save successful');
       var row = hubData[idx];
       if (row) { row[0] = fullDate; row[2] = desc; row[3] = parseInt(amtStr); row[4] = type; }
       updateHubStats();
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정 완료');
-    } catch(e) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 수정 실패'); }
+    } catch(e) { console.error('[CashFlow] Save failed:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 수정 실패: ' + e.message); }
   }
 
   function showHubInline(monthKey) {
@@ -10073,7 +10078,9 @@
     var obj = { date: fullDate, category: '', description: desc, amount: parseInt(amtStr), type: type, repeat: 'none' };
     try {
       var saved = await fbAdd('finance_hub', obj);
-      hubData.push(objToRow('finance_hub', saved).concat ? objToRow('finance_hub', saved) : [fullDate, '', desc, parseInt(amtStr), type, '', 'none', saved._id]);
+      var newRow = objToRow('finance_hub', saved);
+      newRow.push(saved._id);
+      hubData.push(newRow);
       cancelHubInline(monthKey);
       updateHubStats();
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 항목 추가 완료');
