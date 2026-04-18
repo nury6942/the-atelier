@@ -528,9 +528,17 @@
     <div class="flex items-center gap-1">
       <button class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">notifications</span></button>
       <button onclick="openSettingsPanel()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">settings</span></button>
-      <button onclick="auth.signOut()" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors rounded-xl" title="로그아웃"><span class="material-symbols-outlined">logout</span></button>
-      <div class="h-8 w-8 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm ml-2">
-        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSlpmh80kQM2oc_gaRsT2sH5BoDrc7fFy6-_gPFCbWLJJC5RqabeKrXzE4ML55k2DaJrd8lCsQO7sIyxP1slNU1jWkWmpjZzIx_aD_UZ3lErnQGeGW_38xSIgCUQxWmEPS7BSXGsb6kB87WKShGMDrAGuKKttJS6dZplNR42xBqR7aG9w-Am77VSlO9wBCm0ATLnQG9xWmNp1EK6lMYpAErdACslPqf_uJXKTfEqj0UDYMA0Gbqr3qIJuRhTLEbR28a20xE633OLkK" alt="User" class="h-full w-full object-cover"/>
+      <div class="relative ml-2" id="profile-dd-wrap">
+        <button onclick="toggleProfileDropdown()" class="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm border-2 border-white/60 hover:shadow-md transition-all" style="background:linear-gradient(135deg,#7c3aed,#6366f1);" id="profile-avatar">N</button>
+        <div id="profile-dd-panel" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50" style="display:none">
+          <div class="px-4 py-3 bg-slate-50 border-b border-slate-100">
+            <p id="profile-dd-name" class="text-sm font-bold text-slate-800">Nuri</p>
+            <p id="profile-dd-email" class="text-[11px] text-slate-400 mt-0.5">nury6942@gmail.com</p>
+          </div>
+          <button onclick="auth.signOut()" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:18px">logout</span> 로그아웃
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -11739,6 +11747,24 @@ async function parseAndSaveReview() {
 
 <script>
 // ===== AUTH =====
+var _profileDdOpen = false;
+function toggleProfileDropdown() {
+  _profileDdOpen = !_profileDdOpen;
+  document.getElementById('profile-dd-panel').style.display = _profileDdOpen ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  if (_profileDdOpen && !e.target.closest('#profile-dd-wrap')) {
+    _profileDdOpen = false;
+    document.getElementById('profile-dd-panel').style.display = 'none';
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _profileDdOpen) {
+    _profileDdOpen = false;
+    document.getElementById('profile-dd-panel').style.display = 'none';
+  }
+});
+
 function googleSignIn() {
   var provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(function(err) {
@@ -11773,6 +11799,15 @@ auth.onAuthStateChanged(function(user) {
     loginScreen.style.display = 'none';
     deniedScreen.style.display = 'none';
     appContainer.style.display = '';
+    // 프로필 정보 업데이트
+    var displayName = user.displayName || user.email.split('@')[0];
+    var initial = (displayName || 'U').charAt(0).toUpperCase();
+    var avatar = document.getElementById('profile-avatar');
+    if (avatar) avatar.textContent = initial;
+    var nameEl = document.getElementById('profile-dd-name');
+    if (nameEl) nameEl.textContent = displayName;
+    var emailEl = document.getElementById('profile-dd-email');
+    if (emailEl) emailEl.textContent = user.email;
   } else {
     // 비허용 계정
     loginScreen.style.display = 'none';
