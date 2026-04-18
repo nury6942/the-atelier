@@ -9845,13 +9845,13 @@
           var balK = Math.round(itemRunning/1000);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group">' +
-            '<td class="py-1.5 text-slate-400 text-[10px] w-6">' + dateDay + '</td>' +
-            '<td class="py-1.5 text-slate-600 text-[10px]">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-1.5 text-right text-[10px] font-bold ' + colorCls + '">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
-            '<td class="py-1.5 text-right text-[8px] font-medium" style="' + balColor + 'white-space:nowrap;">' + balK.toLocaleString('ko-KR') + '</td>' +
-            '<td class="py-1.5 text-right w-12"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all justify-end">' +
-              '<button onclick="editHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-              '<button onclick="deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
+            '<td class="py-2 text-slate-400 text-xs w-8">' + dateDay + '</td>' +
+            '<td class="py-2 text-slate-700 text-xs font-medium">' + (mi.row[2]||type) + '</td>' +
+            '<td class="py-2 text-right text-xs font-bold ' + colorCls + '">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + balK.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right w-12"><div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-all justify-end">' +
+              '<button onclick="editHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
+              '<button onclick="deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
             '</div></td></tr>';
         }).join('');
 
@@ -9870,29 +9870,64 @@
           '</div>' +
           '<div class="p-5 flex-grow">' +
             '<div class="flex gap-2 mb-4">' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mIncome/1000).toLocaleString('ko-KR') + '<span class="text-[8px] font-bold text-slate-400">K</span></div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mExpense/1000).toLocaleString('ko-KR') + '<span class="text-[8px] font-bold text-slate-400">K</span></div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-xs font-black text-slate-700">₩' + Math.round(mSavings/1000).toLocaleString('ko-KR') + '<span class="text-[8px] font-bold text-slate-400">K</span></div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mIncome/10000).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mExpense/10000).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings/10000).toLocaleString('ko-KR') + '</div></div>' +
             '</div>' +
-            '<table class="w-full text-xs"><tbody>' +
+            '<table class="w-full"><tbody>' +
               itemsHtml +
             '</tbody></table>' +
-            '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="mt-3 w-full py-2 rounded-xl text-[10px] font-bold text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all" style="border:1px dashed #e1e3e4;">' +
-              '<span class="material-symbols-outlined" style="font-size:13px">add</span> 추가' +
+            '<div id="hub-inline-' + monthKey + '" style="display:none" class="mt-2 p-2 rounded-xl bg-indigo-50/50">' +
+              '<div class="flex gap-1 items-center">' +
+                '<input type="text" placeholder="날짜" class="w-10 px-1.5 py-1.5 rounded-lg bg-white text-xs text-center border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '"/>' +
+                '<input type="text" placeholder="항목명" class="flex-1 px-2 py-1.5 rounded-lg bg-white text-xs border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-desc-' + monthKey + '"/>' +
+                '<input type="text" placeholder="금액" class="w-24 px-2 py-1.5 rounded-lg bg-white text-xs text-right border border-slate-200 focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric"/>' +
+                '<select class="px-1 py-1.5 rounded-lg bg-white text-xs border border-slate-200" id="hub-il-type-' + monthKey + '"><option value="수입">수입</option><option value="지출">지출</option><option value="저축">저축</option></select>' +
+                '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-1 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"><span class="material-symbols-outlined" style="font-size:16px">check</span></button>' +
+                '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-1 rounded-lg hover:bg-slate-200 text-slate-400"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>' +
+              '</div>' +
+            '</div>' +
+            '<button onclick="showHubInline(\'' + monthKey + '\')" class="mt-2 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all" style="border:1px dashed #e1e3e4;">' +
+              '<span class="material-symbols-outlined" style="font-size:14px">add</span> 추가' +
             '</button>' +
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[8px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
-              '<span class="text-[10px] font-bold" style="' + balLabel + '">₩' + (mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">₩' + (mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적 Balance</span>' +
-              '<span class="text-base font-black font-headline" style="' + balColor + '">₩' + runningBalance.toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-2xl font-black font-headline" style="' + balColor + '">₩' + runningBalance.toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
       }).join('');
     }
+  }
+
+  function showHubInline(monthKey) {
+    var el = document.getElementById('hub-inline-' + monthKey);
+    if (el) { el.style.display = 'block'; var dateInput = document.getElementById('hub-il-date-' + monthKey); if (dateInput) dateInput.focus(); }
+  }
+  function cancelHubInline(monthKey) {
+    var el = document.getElementById('hub-inline-' + monthKey);
+    if (el) el.style.display = 'none';
+  }
+  async function saveHubInline(monthKey) {
+    var dateDay = (document.getElementById('hub-il-date-' + monthKey).value || '').trim();
+    var desc = (document.getElementById('hub-il-desc-' + monthKey).value || '').trim();
+    var amtStr = (document.getElementById('hub-il-amt-' + monthKey).value || '').replace(/[^0-9]/g, '');
+    var type = document.getElementById('hub-il-type-' + monthKey).value;
+    if (!dateDay || !desc || !amtStr) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜, 항목명, 금액을 입력하세요'); return; }
+    var fullDate = monthKey + '-' + String(dateDay).padStart(2, '0');
+    var obj = { date: fullDate, category: '', description: desc, amount: parseInt(amtStr), type: type, repeat: 'none' };
+    try {
+      var saved = await fbAdd('finance_hub', obj);
+      hubData.push(objToRow('finance_hub', saved).concat ? objToRow('finance_hub', saved) : [fullDate, '', desc, parseInt(amtStr), type, '', 'none', saved._id]);
+      cancelHubInline(monthKey);
+      updateHubStats();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 항목 추가 완료');
+    } catch(e) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패'); }
   }
 
   function openHubModal(idx) {
