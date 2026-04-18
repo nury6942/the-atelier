@@ -10284,12 +10284,12 @@ function renderEngRandomCard() {
   if (pool.length === 0) { titleEl.textContent = '콘텐츠 없음'; return; }
   var item = pool[Math.floor(Math.random() * pool.length)];
 
-  titleEl.textContent = item.main || '';
+  titleEl.innerHTML = item.main || '';
   titleEl.style.fontSize = (item.main||'').length > 40 ? '16px' : '';
-  meaningEl.textContent = item.meaning || '';
-  if (item.example) { exampleEl.textContent = 'e.g. ' + item.example; exampleEl.style.display = 'block'; }
+  meaningEl.innerHTML = item.meaning || '';
+  if (item.example) { exampleEl.innerHTML = 'e.g. ' + item.example; exampleEl.style.display = 'block'; }
   else { exampleEl.style.display = 'none'; }
-  if (item.coll) meaningEl.textContent += ' · ' + item.coll;
+  if (item.coll) meaningEl.innerHTML += ' · ' + item.coll;
 
   var badgeColor = BADGE_COLORS[item.type] || 'bg-indigo-600';
   badgesEl.innerHTML = (item.badges||[]).map(function(b) {
