@@ -662,7 +662,6 @@
             <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
             <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
           </div>
-          <button id="dash-travel-refresh" onclick="event.stopPropagation();refreshDashTripImage()" class="absolute top-4 right-4 p-2 rounded-xl bg-black/30 hover:bg-black/50 text-white/50 hover:text-white transition-all z-10 opacity-0 group-hover:opacity-100" title="이미지 새로고침" style="display:none"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button>
           <div id="dash-travel-credit" class="absolute bottom-2 right-4 text-[10px] text-white/40 z-10" style="display:none"></div>
         </div>
         <div class="md:col-span-4 flex flex-col">
@@ -1280,9 +1279,6 @@
           <div id="trip-image-preview" style="display:none" class="rounded-xl overflow-hidden h-24 bg-slate-100">
             <img id="trip-image-preview-img" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<p class=\'text-xs text-rose-400 p-3\'>이미지를 불러올 수 없어요</p>'"/>
           </div>
-          <button id="trip-refresh-image-btn" type="button" onclick="var id=document.getElementById('trip-modal').dataset.editId;if(id){refreshTripImage(id);closeTripModal();}" class="text-xs text-indigo-600 font-bold flex items-center gap-1 hover:underline px-1" style="display:none">
-            <span class="material-symbols-outlined" style="font-size:14px">refresh</span> Unsplash 이미지 새로고침
-          </button>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>여행 날짜 기간 안에서 도시를 추가할 수 있어요.</span></div>
         </div>
         <div class="atl-modal-footer">
@@ -5951,7 +5947,6 @@
   function openTripModal() {
     ['trip-name','trip-start','trip-end','trip-image'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('trip-image-preview').style.display = 'none';
-    document.getElementById('trip-refresh-image-btn').style.display = 'none';
     delete document.getElementById('trip-modal').dataset.editId;
     document.getElementById('trip-modal-title').textContent = '여행 추가';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
@@ -6153,7 +6148,6 @@
     document.getElementById('trip-end').value = trip.end_date||'';
     document.getElementById('trip-image').value = trip.imageUrl||'';
     previewTripImage();
-    document.getElementById('trip-refresh-image-btn').style.display = '';
     document.getElementById('trip-modal').dataset.editId = tripId;
     document.getElementById('trip-modal-title').textContent = '여행 수정';
     document.getElementById('trip-modal').style.cssText = 'display:flex!important';
@@ -6455,10 +6449,9 @@
     document.getElementById('dash-footer').textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
 
     try {
-      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs, tripCitiesDocs, matrixDocs] = await Promise.all([
-        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions'), fbRead('trip_cities'), fbRead('matrix')
+      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs, matrixDocs] = await Promise.all([
+        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions'), fbRead('matrix')
       ]);
-      _tripCitiesCache = tripCitiesDocs;
       var plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
       var hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
 
@@ -6468,8 +6461,8 @@
       renderDashSchedule(plannerRows, todayStr, tripDocs);
       // Week
       renderDashWeek(plannerRows, now, todayStr);
-      // Travel (pass cached cities)
-      renderDashTravel(tripDocs, todayStr, tripCitiesDocs);
+      // Travel
+      renderDashTravel(tripDocs, todayStr);
       // Vacation (pass cached matrix)
       renderDashVacation(matrixDocs);
       // Vault stats
@@ -6573,119 +6566,7 @@
     }).join('');
   }
 
-  // ===== UNSPLASH IMAGE AUTO-FETCH =====
-  var UNSPLASH_KEY = '90Y56nyXGDJyTP3ZS-0cvy0mVALeJ4XYL7qgC5u2-As';
-  var LOCATION_MAP = {
-    // 국가
-    '체코':'Czech Republic','크로아티아':'Croatia','독일':'Germany','이탈리아':'Italy',
-    '일본':'Japan','프랑스':'France','영국':'UK','스페인':'Spain','포르투갈':'Portugal',
-    '태국':'Thailand','베트남':'Vietnam','미국':'USA','뉴질랜드':'New Zealand',
-    '호주':'Australia','싱가포르':'Singapore','대만':'Taiwan','홍콩':'Hong Kong',
-    '터키':'Turkey','그리스':'Greece','네덜란드':'Netherlands','스위스':'Switzerland',
-    '오스트리아':'Austria','벨기에':'Belgium','덴마크':'Denmark','스웨덴':'Sweden',
-    '노르웨이':'Norway','핀란드':'Finland','아이슬란드':'Iceland',
-    // 독일
-    '프랑크푸르트':'Frankfurt','베를린':'Berlin','뮌헨':'Munich','함부르크':'Hamburg','쾰른':'Cologne','드레스덴':'Dresden',
-    // 이탈리아
-    '로마':'Rome','밀라노':'Milan','베네치아':'Venice','피렌체':'Florence','나폴리':'Naples','토스카나':'Tuscany','시칠리아':'Sicily',
-    // 체코
-    '프라하':'Prague','체스키크룸로프':'Cesky Krumlov','브르노':'Brno',
-    // 크로아티아
-    '자그레브':'Zagreb','두브로브니크':'Dubrovnik','스플리트':'Split','플리트비체':'Plitvice',
-    // 일본
-    '도쿄':'Tokyo','교토':'Kyoto','오사카':'Osaka','삿포로':'Sapporo','후쿠오카':'Fukuoka','나고야':'Nagoya','오키나와':'Okinawa','나라':'Nara',
-    // 미국
-    '뉴욕':'New York','로스앤젤레스':'Los Angeles','LA':'Los Angeles','시애틀':'Seattle','샌프란시스코':'San Francisco','시카고':'Chicago','라스베가스':'Las Vegas','라스베이거스':'Las Vegas','마이애미':'Miami',
-    // 프랑스
-    '파리':'Paris','니스':'Nice','리옹':'Lyon','마르세유':'Marseille',
-    // 영국
-    '런던':'London','에든버러':'Edinburgh',
-    // 스페인
-    '바르셀로나':'Barcelona','마드리드':'Madrid','세비야':'Seville',
-    // 태국
-    '방콕':'Bangkok','치앙마이':'Chiang Mai','푸켓':'Phuket',
-    // 베트남
-    '하노이':'Hanoi','호치민':'Ho Chi Minh','다낭':'Da Nang',
-    // 뉴질랜드
-    '오클랜드':'Auckland','퀸스타운':'Queenstown',
-    // 호주
-    '시드니':'Sydney','멜버른':'Melbourne'
-  };
-
-  // 캐시: trip_cities는 dashboard 로드 시 1번만 읽기
-  var _tripCitiesCache = null;
-
-  function extractTripKeywords(trip, citiesData) {
-    // 1순위: citiesData(캐시)에서 해당 trip의 첫 번째 도시
-    if (citiesData) {
-      var tripCities = citiesData.filter(function(c){ return c.trip_id === trip._id; })
-        .sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
-      if (tripCities.length > 0) {
-        var firstCity = (tripCities[0].name||'').trim();
-        // 영어면 그대로
-        if (/^[A-Za-z\s]+$/.test(firstCity)) return [firstCity];
-        if (LOCATION_MAP[firstCity]) return [LOCATION_MAP[firstCity]];
-        if (firstCity) return [firstCity];
-      }
-    }
-    // 2순위: name에서 추출 (첫 매치만)
-    var title = trip.name || '';
-    for (var ko in LOCATION_MAP) { if (title.indexOf(ko) >= 0) return [LOCATION_MAP[ko]]; }
-    return [];
-  }
-
-  async function fetchUnsplashImage(keywords) {
-    if (!UNSPLASH_KEY || !keywords.length) { console.log('[Unsplash] Skipped: key=' + !!UNSPLASH_KEY + ', keywords=' + keywords.length); return null; }
-    var query = keywords.join(' ') + ' travel landscape';
-    console.log('[Unsplash] Fetching:', query);
-    try {
-      var res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&orientation=landscape&per_page=3', {
-        headers: { 'Authorization': 'Client-ID ' + UNSPLASH_KEY }
-      });
-      if (!res.ok) { console.warn('[Unsplash] HTTP error:', res.status); return null; }
-      var data = await res.json();
-      if (!data.results || !data.results.length) return null;
-      var photo = data.results[0];
-      return {
-        url: photo.urls.regular,
-        photographer: photo.user.name,
-        photographerUrl: photo.user.links.html + '?utm_source=the_atelier&utm_medium=referral',
-        unsplashUrl: photo.links.html + '?utm_source=the_atelier&utm_medium=referral'
-      };
-    } catch(e) { console.warn('[Unsplash] fetch error:', e); return null; }
-  }
-
-  async function ensureTripImage(trip, citiesData) {
-    if (trip.imageUrl) { console.log('[Unsplash] Cached:', trip.name, trip.imageUrl.substring(0,60)); return trip; }
-    var kw = extractTripKeywords(trip, citiesData);
-    console.log('[Unsplash] Keywords for "' + trip.name + '":', kw);
-    if (!kw.length) return trip;
-    var img = await fetchUnsplashImage(kw);
-    if (!img) return trip;
-    var update = { imageUrl: img.url, imagePhotographer: img.photographer, imagePhotographerUrl: img.photographerUrl, imageUnsplashUrl: img.unsplashUrl };
-    try { await fbUpdate('trips', trip._id, update); Object.assign(trip, update); } catch(e){}
-    return trip;
-  }
-
-  async function refreshDashTripImage() {
-    var btn = document.getElementById('dash-travel-refresh');
-    var tripId = btn ? btn.dataset.tripId : null;
-    if (tripId) await refreshTripImage(tripId);
-  }
-
-  async function refreshTripImage(tripId) {
-    var trip = tripsData.find(function(t){ return t._id === tripId; });
-    if (!trip) return;
-    var clear = { imageUrl: '', imagePhotographer: '', imagePhotographerUrl: '', imageUnsplashUrl: '' };
-    try { await fbUpdate('trips', tripId, clear); Object.assign(trip, clear); } catch(e){}
-    // Fetch cities once for re-fetch
-    var cd = await fbRead('trip_cities');
-    await ensureTripImage(trip, cd);
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이미지가 새로고침되었습니다');
-    if (typeof loadDashboard === 'function') loadDashboard();
-  }
-
-  async function renderDashTravel(trips, todayStr, citiesData) {
+  function renderDashTravel(trips, todayStr) {
     var upcoming = (trips||[]).filter(function(t){ return t.start_date && t.start_date >= todayStr; })
       .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
     var nameEl = document.getElementById('dash-travel-name');
@@ -6704,29 +6585,21 @@
       if (creditEl) creditEl.style.display = 'none';
       return;
     }
-    // Auto-fetch images
-    var t = await ensureTripImage(upcoming[0], citiesData);
+    var t = upcoming[0];
     var diff = Math.ceil((new Date(t.start_date) - new Date(todayStr))/86400000);
     if (nameEl) nameEl.textContent = t.name;
     if (metaEl) metaEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>' + (t.start_date||'').slice(5) + ' - ' + (t.end_date||'').slice(5) + '</span><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase">D-' + diff + '</span>';
-    var refreshBtn = document.getElementById('dash-travel-refresh');
     if (heroEl) {
       if (t.imageUrl) {
         heroEl.style.background = 'url(' + t.imageUrl + ') center/cover no-repeat';
-        if (t.imagePhotographer && creditEl) {
-          creditEl.innerHTML = 'Photo by <a href="' + (t.imagePhotographerUrl||'#') + '" target="_blank" class="underline">' + t.imagePhotographer + '</a> on <a href="' + (t.imageUnsplashUrl||'https://unsplash.com') + '" target="_blank" class="underline">Unsplash</a>';
-          creditEl.style.display = '';
-        }
-        if (refreshBtn) { refreshBtn.style.display = ''; refreshBtn.dataset.tripId = t._id; }
       } else {
         heroEl.style.background = 'linear-gradient(135deg,#6b38d4,#8455ef)';
-        if (creditEl) creditEl.style.display = 'none';
-        if (refreshBtn) refreshBtn.style.display = 'none';
       }
     }
+    if (creditEl) creditEl.style.display = 'none';
     // Next trip
     if (upcoming.length > 1 && nextEl) {
-      var t2 = await ensureTripImage(upcoming[1], citiesData);
+      var t2 = upcoming[1];
       if (t2.imageUrl) {
         nextEl.style.background = 'url(' + t2.imageUrl + ') center/cover no-repeat';
         nextEl.style.position = 'relative';
