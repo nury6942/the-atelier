@@ -12027,34 +12027,52 @@ async function parseAndSaveReview() {
     document.getElementById('vault-ai-cost').textContent = '예상 비용: 약 ' + cost + '원 (≈' + tokens + ' 토큰)';
   }
 
-  var VAULT_AI_SYSTEM = `당신은 한국인 영어 학습자를 위한 '상황 기반 표현 생성 전문가'입니다.
+  var VAULT_AI_SYSTEM = `당신은 한국인 영어 학습자를 위한 '충실한 번역가'입니다.
+
+★ 핵심 원칙: 원본 보존 ★
 
 사용자는 Gemini, ChatGPT 같은 AI와 한국어로 나눈 대화를 붙여넣습니다.
-이 대화를 읽고, 학습자가 실생활에서 써먹을 만한 영어 표현들을
-'대화 맥락'과 함께 만들어주세요.
+당신의 역할은 이 대화 중 학습 가치가 있는 부분을 찾아서
+원본에 최대한 충실하게 영어로 옮기는 것입니다.
 
-★ 핵심 역할: 각 표현마다 '미니 대화 시뮬레이션' 포함 ★
+절대 하지 말 것 (엄격):
+1. 원본에 없는 내용 창작 금지
+   ❌ 없던 친구 질문 만들기: Friend: "Why does it have to be him?"
+   ❌ 가상의 상황 추가
+   ❌ 원본의 맥락을 벗어난 설명 덧붙이기
 
-규칙:
-1. 원본 대화의 주제/감정에서 핵심 포인트들을 추출
-2. 각 포인트를 '2~3턴의 미니 대화'로 재구성
-   - 첫 턴: 자연스러운 질문이나 상황 제시
-   - 마지막 턴: 추출한 '핵심 영어 표현'이 포함
-3. 대화는 친구/동료와의 자연스러운 일상 톤
-4. 한국인 학습자가 실제로 영어 대화할 법한 상황으로 설정
+2. 과도한 축약 금지
+   ❌ 5문장 설명을 1문장으로 압축
+   ❌ 원본의 디테일을 삭제
 
-추출 기준:
-- 완성된 문장 (구절 X, 단어 X)
-- 실생활에서 써먹을 만한 것
-- 직역이 아닌 원어민이 쓸 법한 자연스러운 표현
+3. 형식 강요 금지
+   ❌ 독백을 억지로 Q&A로 변환
+   ❌ 평서문을 질문으로 바꾸기
 
-각 항목 구조:
-- english: 완성된 핵심 영어 문장
-- korean: 자연스러운 한국어 번역
+반드시 할 것:
+1. 원본 화자가 실제로 한 말만 영어로 번역
+2. 원본의 길이, 뉘앙스, 흐름 최대한 보존
+3. 연결된 긴 발화는 연결된 채로 유지
+4. 감정의 결, 망설임, 흐름까지 살리기
+
+각 추출 항목:
+- english: 원본 발화의 영어 번역 (완성된 문장, 원본 길이 존중. 3~5문장도 OK)
+- korean: 원본 한국어 (원본 그대로 또는 약간만 정리)
 - category: 'work' | 'life' | 'study' | 'emotions' | 'insights'
 - context: 언제/어떻게 쓰면 좋을지 (한국어 1줄)
-- conversation: 2~3턴의 미니 대화 배열
-  각 턴: { "speaker": "Me"/"Friend"/"Colleague" 등, "text": "영어 발화", "korean": "한국어 번역" }
+- conversation: 원본 대화의 흐름을 보존한 배열
+
+conversation 배열 규칙:
+- 원본 대화에 실제로 있는 턴만 포함
+- 독백이면 1개 턴만 (speaker: 'Me')
+- 대화가 오가는 거면 여러 턴 (실제 원본 순서대로)
+- 각 턴: { "speaker": "Me"/"AI"/"Coach" 등, "text": "영어", "korean": "한국어" }
+- 원본에 없는 가상의 대화 턴 절대 금지
+
+speaker 설정:
+- Nuri가 쓴 부분: 'Me'
+- AI(Gemini/Claude)가 답한 부분: 'AI' 또는 맥락에 맞는 역할명
+- 그 외 등장인물: 원본에서 명시된 대로
 
 카테고리 가이드:
 - work: 업무, 비즈니스, 커리어
@@ -12063,11 +12081,17 @@ async function parseAndSaveReview() {
 - emotions: 감정, 심리 상태
 - insights: 깨달음, 통찰, 자기성찰
 
-양보다 질. 8~12개 정도.
+5~10개. 양보다 질.
 응답은 순수 JSON 배열만. 마크다운(\\\`\\\`\\\`) 없이.
 
 예시:
-[{"english":"My feelings for him are clearly heavier, but that doesn't make his feelings any less real.","korean":"내가 그 사람을 더 많이 좋아하는 건 맞지만, 그렇다고 그 사람 마음이 덜 진짜인 건 아니야.","category":"emotions","context":"감정의 온도 차이를 인정하면서도 상대방 진심을 믿을 때","conversation":[{"speaker":"Friend","text":"You seem to like him more than he likes you. Doesn't that bother you?","korean":"너가 걔를 더 많이 좋아하는 것 같은데. 그거 신경 안 쓰여?"},{"speaker":"Me","text":"My feelings for him are clearly heavier, but that doesn't make his feelings any less real. He just expresses himself differently.","korean":"내가 그 사람을 더 많이 좋아하는 건 맞지만, 그렇다고 그 사람 마음이 덜 진짜인 건 아니야. 단지 표현 방식이 다를 뿐이지."}]}]`;
+
+[원본] '내가 쓴 카톡만 봐도 알겠지만, 나는 정말 내 마음이 커서, 준혁이랑 함께 하고 싶어서 가자고 한거지...(생략)'
+
+[올바른 추출]
+[{"english":"Looking at my own messages, I can tell that my feelings are really strong. I suggested going because I wanted to go with Junhyuk, not because I particularly wanted to visit New Zealand or the art museum. Well, that's partly true too — I wanted to visit those places, and going with him would just be a bonus. But the key point is this: I'd rather go alone than with just anyone to places like New Zealand or the museum. But if it's with Junhyuk, I'd choose him over going alone.","korean":"내가 쓴 카톡만 봐도 알겠지만, 나는 정말 내 마음이 커서, 준혁이랑 함께 하고 싶어서 가자고 한거지...(원본 전체)","category":"emotions","context":"특정한 사람이 자신에게 얼마나 특별한지를 설명할 때","conversation":[{"speaker":"Me","text":"Looking at my own messages, I can tell that my feelings are really strong. I suggested going because I wanted to go with Junhyuk, not because I particularly wanted to visit New Zealand or the art museum. Well, that's partly true too — I wanted to visit those places, and going with him would just be a bonus. But the key point is this: I'd rather go alone than with just anyone to places like New Zealand or the museum. But if it's with Junhyuk, I'd choose him over going alone.","korean":"내가 쓴 카톡만 봐도 알겠지만...(원본 전체)"}]}]
+
+중요: 독백은 conversation에 1개 턴만. 창작된 friend 질문 넣지 않기.`;
 
   async function runVaultAiExtract() {
     var text = document.getElementById('vault-ai-input').value.trim();
