@@ -6619,13 +6619,14 @@
   }
 
   async function fetchUnsplashImage(keywords) {
-    if (!UNSPLASH_KEY || !keywords.length) return null;
+    if (!UNSPLASH_KEY || !keywords.length) { console.log('[Unsplash] Skipped: key=' + !!UNSPLASH_KEY + ', keywords=' + keywords.length); return null; }
     var query = keywords.join(' ') + ' travel landscape';
+    console.log('[Unsplash] Fetching:', query);
     try {
       var res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&orientation=landscape&per_page=3', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_KEY }
       });
-      if (!res.ok) return null;
+      if (!res.ok) { console.warn('[Unsplash] HTTP error:', res.status); return null; }
       var data = await res.json();
       if (!data.results || !data.results.length) return null;
       var photo = data.results[0];
@@ -6639,8 +6640,9 @@
   }
 
   async function ensureTripImage(trip, citiesData) {
-    if (trip.imageUrl) return trip;
+    if (trip.imageUrl) { console.log('[Unsplash] Cached:', trip.name, trip.imageUrl.substring(0,60)); return trip; }
     var kw = extractTripKeywords(trip, citiesData);
+    console.log('[Unsplash] Keywords for "' + trip.name + '":', kw);
     if (!kw.length) return trip;
     var img = await fetchUnsplashImage(kw);
     if (!img) return trip;
