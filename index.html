@@ -597,7 +597,7 @@
       <!-- Hero: Expression + Schedule -->
       <section class="grid grid-cols-1 md:grid-cols-10 gap-6 items-stretch">
         <!-- Expression Card -->
-        <div id="dash-expr-card" class="md:col-span-6 bg-white rounded-2xl p-10 md:p-14 relative overflow-hidden flex flex-col justify-center cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)" onclick="navigate('vault')">
+        <div id="dash-expr-card" class="md:col-span-6 bg-white rounded-2xl p-10 md:p-14 relative overflow-hidden flex flex-col justify-center cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)" onclick="navigate('english')">
           <div class="absolute top-8 left-8 text-6xl font-headline font-extrabold opacity-[0.08] pointer-events-none" style="color:#d0bcff">"</div>
           <button onclick="event.stopPropagation();shuffleDashExpr()" class="absolute top-5 right-5 p-2 rounded-xl hover:bg-[#f3f4f5] transition-all text-[#494454]/40 hover:text-[#6b38d4] z-10" title="셔플"><span class="material-symbols-outlined">shuffle</span></button>
           <h1 id="dash-expr-en" class="text-xl md:text-2xl font-headline font-bold leading-relaxed tracking-tight text-[#191c1d] mb-6 z-10 italic"></h1>
@@ -6432,14 +6432,14 @@
     document.getElementById('dash-footer').textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
 
     try {
-      var [plannerDocs, hubDocs, tripDocs, vaultDocs] = await Promise.all([
-        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions')
+      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs] = await Promise.all([
+        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions')
       ]);
       var plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
       var hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
 
-      // Expression
-      renderDashExpr(vaultDocs);
+      // Expression (from English sessions)
+      renderDashExpr(sessionDocs);
       // Today schedule
       renderDashSchedule(plannerRows, todayStr, tripDocs);
       // Week
@@ -6455,23 +6455,42 @@
     } catch(err) { console.error('Dashboard load error:', err); }
   }
 
-  function renderDashExpr(docs) {
+  var _dashExprPool = [];
+  function renderDashExpr(sessions) {
     var enEl = document.getElementById('dash-expr-en');
     var krEl = document.getElementById('dash-expr-kr');
     var ctxEl = document.getElementById('dash-expr-ctx');
-    if (!docs || !docs.length) {
-      enEl.textContent = '"Vault에 표현을 추가해보세요"';
+    // Build pool from all sessions' expressions
+    _dashExprPool = [];
+    (sessions||[]).forEach(function(s) {
+      (s.expressions||[]).forEach(function(e) {
+        _dashExprPool.push({ english: e.expr||'', korean: e.kr||'', context: e.ex||'', cat: e.cat||'', sessionId: s._id, title: s.title||'' });
+      });
+    });
+    if (!_dashExprPool.length) {
+      enEl.textContent = '"영어 수업 리뷰를 추가하면 여기에 표현이 표시됩니다"';
       krEl.textContent = ''; ctxEl.textContent = '';
       return;
     }
-    var idx; do { idx = Math.floor(Math.random()*docs.length); } while (idx === _dashExprIdx && docs.length > 1);
+    var idx; do { idx = Math.floor(Math.random()*_dashExprPool.length); } while (idx === _dashExprIdx && _dashExprPool.length > 1);
     _dashExprIdx = idx;
-    var item = docs[idx];
-    enEl.innerHTML = '"' + formatSentences(item.english||'') + '"';
-    krEl.innerHTML = formatSentences(item.korean || '');
-    ctxEl.textContent = item.context || '';
+    var item = _dashExprPool[idx];
+    enEl.innerHTML = formatSentences(item.english);
+    krEl.innerHTML = formatSentences(item.korean);
+    ctxEl.textContent = (item.cat ? '[' + item.cat + '] ' : '') + (item.context || '');
   }
-  function shuffleDashExpr() { loadDashboard(); }
+  function shuffleDashExpr() {
+    if (!_dashExprPool.length) return;
+    var enEl = document.getElementById('dash-expr-en');
+    var krEl = document.getElementById('dash-expr-kr');
+    var ctxEl = document.getElementById('dash-expr-ctx');
+    var idx; do { idx = Math.floor(Math.random()*_dashExprPool.length); } while (idx === _dashExprIdx && _dashExprPool.length > 1);
+    _dashExprIdx = idx;
+    var item = _dashExprPool[idx];
+    enEl.innerHTML = formatSentences(item.english);
+    krEl.innerHTML = formatSentences(item.korean);
+    ctxEl.textContent = (item.cat ? '[' + item.cat + '] ' : '') + (item.context || '');
+  }
 
   function renderDashSchedule(rows, todayStr, trips) {
     var el = document.getElementById('dash-today-events');
