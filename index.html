@@ -133,6 +133,18 @@
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
 
+    /* ===== SIDEBAR TOGGLE ===== */
+    #sidebar.sidebar-collapsed { transform: translateX(-100%); }
+    #sidebar.sidebar-collapsed + #sidebar-overlay { display: none !important; }
+    .sidebar-collapsed ~ #main-wrapper,
+    body.sidebar-off #main-wrapper { margin-left: 0 !important; }
+    body.sidebar-off #main-header { left: 0 !important; }
+    @media (max-width: 768px) {
+      #sidebar { box-shadow: 0 0 24px rgba(0,0,0,0.08); }
+      #main-wrapper { margin-left: 0 !important; }
+      #main-header { left: 0 !important; }
+    }
+
     /* ===== DASHBOARD PAGE ===== */
     .dashboard-page .font-headline, .dashboard-page h1, .dashboard-page h2, .dashboard-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
 
@@ -498,7 +510,8 @@
 <div id="app-container" style="display:none">
 
 <!-- SIDEBAR -->
-<aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col py-6 z-50">
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col py-6 z-50 transition-transform duration-300">
   <div class="px-6 mb-6 flex items-center gap-3">
     <div class="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white shadow-sm shrink-0">
       <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">palette</span>
@@ -562,9 +575,12 @@
 </aside>
 
 <!-- MAIN WRAPPER -->
-<div class="ml-64 min-h-screen flex flex-col bg-white">
-  <header class="fixed top-0 left-64 right-0 h-16 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100 flex justify-between items-center px-8">
-    <div class="flex items-center gap-8">
+<div id="main-wrapper" class="ml-64 min-h-screen flex flex-col bg-white transition-[margin] duration-300">
+  <header id="main-header" class="fixed top-0 left-64 right-0 h-16 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100 flex justify-between items-center px-8 transition-[left] duration-300">
+    <div class="flex items-center gap-4">
+      <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl" aria-label="사이드바 토글">
+        <span class="material-symbols-outlined" id="sidebar-toggle-icon">menu</span>
+      </button>
       <h2 id="page-title" class="text-sm font-extrabold tracking-tight text-slate-900 font-headline leading-tight">대시보드</h2>
       <div class="relative hidden lg:block">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-lg">search</span>
@@ -12872,6 +12888,64 @@ speaker 설정:
 
 <script>
 // ===== AUTH =====
+// ===== SIDEBAR TOGGLE =====
+var _sidebarOpen = true;
+function toggleSidebar() {
+  _sidebarOpen = !_sidebarOpen;
+  var sb = document.getElementById('sidebar');
+  var mw = document.getElementById('main-wrapper');
+  var mh = document.getElementById('main-header');
+  var icon = document.getElementById('sidebar-toggle-icon');
+  var overlay = document.getElementById('sidebar-overlay');
+  if (_sidebarOpen) {
+    sb.classList.remove('sidebar-collapsed');
+    document.body.classList.remove('sidebar-off');
+    mw.style.marginLeft = ''; mh.style.left = '';
+    if (icon) icon.textContent = 'menu_open';
+    if (window.innerWidth <= 768 && overlay) overlay.classList.remove('hidden');
+  } else {
+    sb.classList.add('sidebar-collapsed');
+    document.body.classList.add('sidebar-off');
+    mw.style.marginLeft = '0'; mh.style.left = '0';
+    if (icon) icon.textContent = 'menu';
+    if (overlay) overlay.classList.add('hidden');
+  }
+  localStorage.setItem('atelier_sidebar', _sidebarOpen ? 'open' : 'closed');
+}
+// Restore state
+(function(){
+  var saved = localStorage.getItem('atelier_sidebar');
+  if (saved === 'closed') { _sidebarOpen = true; toggleSidebar(); }
+  else {
+    var icon = document.getElementById('sidebar-toggle-icon');
+    if (icon) icon.textContent = 'menu_open';
+  }
+})();
+// Trackpad/touch swipe
+var _swipeAccumX = 0, _swipeTimer = null;
+document.addEventListener('wheel', function(e) {
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 5) {
+    _swipeAccumX += e.deltaX;
+    clearTimeout(_swipeTimer);
+    _swipeTimer = setTimeout(function() {
+      if (_swipeAccumX < -120 && !_sidebarOpen) toggleSidebar();
+      else if (_swipeAccumX > 120 && _sidebarOpen) toggleSidebar();
+      _swipeAccumX = 0;
+    }, 150);
+  }
+}, { passive: true });
+// Touch gesture
+var _touchStartX = 0;
+document.addEventListener('touchstart', function(e) { if (e.touches.length === 1) _touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', function(e) {
+  if (e.changedTouches.length !== 1) return;
+  var dx = e.changedTouches[0].clientX - _touchStartX;
+  if (Math.abs(dx) > 80) {
+    if (dx > 0 && !_sidebarOpen && _touchStartX < 40) toggleSidebar();
+    else if (dx < 0 && _sidebarOpen) toggleSidebar();
+  }
+}, { passive: true });
+
 var _profileDdOpen = false;
 function toggleProfileDropdown() {
   _profileDdOpen = !_profileDdOpen;
