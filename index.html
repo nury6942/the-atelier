@@ -1755,15 +1755,46 @@
       <!-- Top Summary Row -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
         <div class="lg:col-span-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-          <h2 class="text-2xl font-black text-slate-900 font-headline tracking-tight">연간 매트릭스 <span class="text-indigo-500">2025</span></h2>
+          <div class="flex items-center gap-3">
+            <h2 class="text-2xl font-black text-slate-900 font-headline tracking-tight">연간 매트릭스</h2>
+            <div class="flex items-center gap-1">
+              <button onclick="switchMatrixYear(-1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400 text-lg">chevron_left</span></button>
+              <span id="matrix-year-label" class="text-2xl font-black text-indigo-500 font-headline min-w-[60px] text-center">2026</span>
+              <button onclick="switchMatrixYear(1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400 text-lg">chevron_right</span></button>
+            </div>
+          </div>
           <p class="text-slate-500 text-sm mt-1">커리어 성장과 워라밸을 위한 통합 생산성 기록장.</p>
         </div>
         <div class="lg:col-span-4 bg-indigo-50 p-6 rounded-2xl border border-indigo-100 relative overflow-hidden">
-          <h3 class="font-manrope font-bold text-xs uppercase tracking-widest text-indigo-800 mb-3">연차 트래커</h3>
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-manrope font-bold text-xs uppercase tracking-widest text-indigo-800">연차 트래커</h3>
+            <button onclick="openLeaveEditModal()" class="p-1 hover:bg-indigo-100 rounded-lg transition-colors text-indigo-400 hover:text-indigo-700" title="총계 수정"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>
+          </div>
           <div class="grid grid-cols-3 gap-4">
             <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">총계</p><p class="text-2xl font-black text-indigo-900" id="matrix-leave-total">17.0</p></div>
             <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">사용</p><p class="text-2xl font-black text-indigo-700" id="matrix-leave-used">0</p></div>
             <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">잔여</p><p class="text-2xl font-black text-indigo-500" id="matrix-leave-left">17.0</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leave Edit Modal -->
+      <div id="leave-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+          <div class="px-6 py-4 bg-indigo-50 flex justify-between items-center">
+            <h3 class="font-bold text-indigo-900 font-headline">연차 총계 수정</h3>
+            <button onclick="closeLeaveEditModal()" class="text-indigo-400 hover:text-indigo-700"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">연간 총 연차 일수</label>
+              <input id="leave-total-input" type="number" step="0.5" min="0" max="50" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-lg font-bold text-center focus:ring-2 focus:ring-indigo-300"/>
+            </div>
+            <p class="text-[10px] text-slate-400">장기근속이나 정책 변경 등으로 연차가 변경될 때 사용하세요.</p>
+          </div>
+          <div class="px-6 pb-6 flex gap-2">
+            <button onclick="saveLeaveTotal()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm gradient-primary">저장</button>
+            <button onclick="closeLeaveEditModal()" class="py-2.5 px-5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
           </div>
         </div>
       </div>
@@ -7769,19 +7800,25 @@
   const WEEKEND = ['토','일'];
 
   // 2026년 1월 1일 ~ 12월 31일 날짜 배열 생성
-  function generate2026Dates() {
+  var matrixYear = new Date().getFullYear();
+  var _leaveTotal = 17; // 기본값
+
+  function generateYearDates(year) {
     var DAYS = ['일','월','화','수','목','금','토'];
     var dates = [];
-    var d = new Date('2026-01-01T00:00:00');
-    while (d.getFullYear() === 2026) {
+    var d = new Date(year + '-01-01T00:00:00');
+    while (d.getFullYear() === year) {
       var dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
       dates.push({ date: dateStr, day: DAYS[d.getDay()] });
       d.setDate(d.getDate() + 1);
     }
     return dates;
   }
+  // Backward compat
+  function generate2026Dates() { return generateYearDates(matrixYear); }
 
   async function loadMatrix() {
+    document.getElementById('matrix-year-label').textContent = matrixYear;
     const loading = document.getElementById('matrix-loading');
     const tableWrap = document.getElementById('matrix-table-wrap');
     const empty = document.getElementById('matrix-empty');
@@ -7789,6 +7826,7 @@
     loading.style.display = 'flex';
     tableWrap.style.display = 'none';
     empty.style.display = 'none';
+    await loadLeaveSettings();
     try {
       // 매트릭스 + 캘린더 데이터 동시 로드
       var [mDocs, pDocs] = await Promise.all([fbRead('matrix'), fbRead('planner')]);
@@ -7874,7 +7912,7 @@
     let todayRow = null;
     let currentMonth = '';
 
-    var matrixHolidays = getKoreanHolidays(2026);
+    var matrixHolidays = getKoreanHolidays(matrixYear);
 
     allDates.forEach(function(d) {
       const entry = dataMap[d.date];
@@ -7896,7 +7934,7 @@
         monthTr.className = 'bg-indigo-900 sticky top-0 z-10';
         monthTr.innerHTML = '<td colspan="9" class="px-5 py-2">' +
           '<span class="text-[11px] font-black uppercase tracking-widest text-indigo-200">' +
-          '2026년 ' + MONTHS_KR[monthNum] + '</span></td>';
+          matrixYear + '년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
       }
 
@@ -7975,14 +8013,63 @@
     let used = 0;
     matrixData.forEach(function(row) {
       const leave = (row[3] || '').toString();
-      // 드롭다운 값: "0.5 (반차)", "1.0 (연차)", "2.0", "3.0", "5.0"
       const match = leave.match(/^([\d.]+)/);
       if (match) used += parseFloat(match[1]);
     });
-    const total = 17;
+    var total = _leaveTotal;
+    var left = total - used;
     document.getElementById('matrix-leave-total').textContent = total.toFixed(1);
     document.getElementById('matrix-leave-used').textContent = used.toFixed(1);
-    document.getElementById('matrix-leave-left').textContent = Math.max(0, total - used).toFixed(1);
+    var leftEl = document.getElementById('matrix-leave-left');
+    leftEl.textContent = left.toFixed(1);
+    leftEl.className = left < 0 ? 'text-2xl font-black text-rose-500' : 'text-2xl font-black text-indigo-500';
+  }
+
+  // ===== MATRIX YEAR SWITCH + LEAVE SETTINGS =====
+  async function loadLeaveSettings() {
+    try {
+      var doc = await db.collection('annualSettings').doc(String(matrixYear)).get();
+      if (doc.exists && doc.data().vacationTotal !== undefined) {
+        _leaveTotal = doc.data().vacationTotal;
+      } else {
+        _leaveTotal = 17;
+      }
+    } catch(e) { _leaveTotal = 17; }
+  }
+
+  function switchMatrixYear(delta) {
+    matrixYear += delta;
+    document.getElementById('matrix-year-label').textContent = matrixYear;
+    loadMatrix();
+  }
+
+  function openLeaveEditModal() {
+    document.getElementById('leave-total-input').value = _leaveTotal;
+    document.getElementById('leave-edit-modal').style.cssText = 'display:flex!important';
+  }
+  function closeLeaveEditModal() {
+    document.getElementById('leave-edit-modal').style.cssText = 'display:none!important';
+  }
+
+  async function saveLeaveTotal() {
+    var val = parseFloat(document.getElementById('leave-total-input').value);
+    if (isNaN(val) || val < 0 || val > 50) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 0 이상 50 이하의 숫자를 입력해주세요');
+      return;
+    }
+    _leaveTotal = val;
+    try {
+      await db.collection('annualSettings').doc(String(matrixYear)).set({
+        year: matrixYear,
+        vacationTotal: val,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + matrixYear + '년 연차 총계가 ' + val + '일로 수정되었어요');
+      closeLeaveEditModal();
+      updateLeaveTracker();
+    } catch(err) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message);
+    }
   }
 
   function openMatrixModal(rowIndex) {
