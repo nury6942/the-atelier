@@ -476,7 +476,7 @@
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden" style="overscroll-behavior-x:none;">
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background:linear-gradient(135deg,#6b38d4 0%,#4f46e5 50%,#312e81 100%);">
@@ -12829,30 +12829,10 @@ function toggleSidebar() {
     if (icon) icon.textContent = 'menu_open';
   }
 })();
-// Trackpad/touch swipe
-var _swipeAccumX = 0, _swipeTimer = null;
-document.addEventListener('wheel', function(e) {
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 5) {
-    _swipeAccumX += e.deltaX;
-    clearTimeout(_swipeTimer);
-    _swipeTimer = setTimeout(function() {
-      if (_swipeAccumX < -120 && !_sidebarOpen) toggleSidebar();
-      else if (_swipeAccumX > 120 && _sidebarOpen) toggleSidebar();
-      _swipeAccumX = 0;
-    }, 150);
-  }
-}, { passive: true });
-// Touch gesture
-var _touchStartX = 0;
-document.addEventListener('touchstart', function(e) { if (e.touches.length === 1) _touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', function(e) {
-  if (e.changedTouches.length !== 1) return;
-  var dx = e.changedTouches[0].clientX - _touchStartX;
-  if (Math.abs(dx) > 80) {
-    if (dx > 0 && !_sidebarOpen && _touchStartX < 40) toggleSidebar();
-    else if (dx < 0 && _sidebarOpen) toggleSidebar();
-  }
-}, { passive: true });
+// Keyboard shortcut: Cmd/Ctrl + B to toggle sidebar
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'b') { e.preventDefault(); toggleSidebar(); }
+});
 
 var _profileDdOpen = false;
 function toggleProfileDropdown() {
