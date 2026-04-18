@@ -12091,7 +12091,35 @@ speaker 설정:
 [올바른 추출]
 [{"english":"Looking at my own messages, I can tell that my feelings are really strong. I suggested going because I wanted to go with Junhyuk, not because I particularly wanted to visit New Zealand or the art museum. Well, that's partly true too — I wanted to visit those places, and going with him would just be a bonus. But the key point is this: I'd rather go alone than with just anyone to places like New Zealand or the museum. But if it's with Junhyuk, I'd choose him over going alone.","korean":"내가 쓴 카톡만 봐도 알겠지만, 나는 정말 내 마음이 커서, 준혁이랑 함께 하고 싶어서 가자고 한거지...(원본 전체)","category":"emotions","context":"특정한 사람이 자신에게 얼마나 특별한지를 설명할 때","conversation":[{"speaker":"Me","text":"Looking at my own messages, I can tell that my feelings are really strong. I suggested going because I wanted to go with Junhyuk, not because I particularly wanted to visit New Zealand or the art museum. Well, that's partly true too — I wanted to visit those places, and going with him would just be a bonus. But the key point is this: I'd rather go alone than with just anyone to places like New Zealand or the museum. But if it's with Junhyuk, I'd choose him over going alone.","korean":"내가 쓴 카톡만 봐도 알겠지만...(원본 전체)"}]}]
 
-중요: 독백은 conversation에 1개 턴만. 창작된 friend 질문 넣지 않기.`;
+중요: 독백은 conversation에 1개 턴만. 창작된 friend 질문 넣지 않기.
+
+출력 길이 제한: 전체 응답이 너무 길어지지 않도록 주의.
+원본이 매우 긴 경우 가장 핵심적인 5~8개만 추출.
+각 english 필드는 최대 500자 이내 (그 이상 필요하면 분할).`;
+
+  function safeParseVaultJSON(text) {
+    try { return { success: true, data: JSON.parse(text) }; } catch(e) {}
+    // 잘린 JSON 복구: 마지막 완전한 객체까지 찾기
+    if (!text.startsWith('[')) return { success: false };
+    var depth = 0, inStr = false, esc = false, lastEnd = -1;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (esc) { esc = false; continue; }
+      if (c === '\\') { esc = true; continue; }
+      if (c === '"' && !esc) { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (c === '[' || c === '{') depth++;
+      if (c === ']' || c === '}') {
+        depth--;
+        if (depth === 1 && c === '}') lastEnd = i;
+      }
+    }
+    if (lastEnd > 0) {
+      var recovered = text.substring(0, lastEnd + 1) + ']';
+      try { return { success: true, data: JSON.parse(recovered), partial: true }; } catch(e2) {}
+    }
+    return { success: false };
+  }
 
   async function runVaultAiExtract() {
     var text = document.getElementById('vault-ai-input').value.trim();
@@ -12104,11 +12132,15 @@ speaker 설정:
     document.getElementById('vault-ai-loading').className = 'text-center py-8';
     document.getElementById('vault-ai-error').className = 'hidden p-4 rounded-xl bg-rose-50';
 
+    // 모델별 max_tokens
+    var maxTokensMap = { 'claude-haiku-4-5': 8192, 'claude-sonnet-4-6': 8192, 'claude-opus-4-7': 16000 };
+    var maxTokens = maxTokensMap[model] || 8192;
+
     try {
       var res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
-        body: JSON.stringify({ model: model, max_tokens: 4096, system: VAULT_AI_SYSTEM, messages: [{ role: 'user', content: text }] })
+        body: JSON.stringify({ model: model, max_tokens: maxTokens, system: VAULT_AI_SYSTEM, messages: [{ role: 'user', content: text }] })
       });
       if (!res.ok) {
         var errBody = {}; try { errBody = await res.json(); } catch(e){}
@@ -12116,19 +12148,26 @@ speaker 설정:
       }
       var data = await res.json();
       var responseText = (data.content && data.content[0] && data.content[0].text) || '';
-      var cleaned = responseText.trim().replace(/^```(?:json)?\s*/gm,'').replace(/```\s*$/gm,'').trim();
-      _vaultAiResults = JSON.parse(cleaned);
-      if (!Array.isArray(_vaultAiResults) || _vaultAiResults.length === 0) {
-        throw new Error('empty');
-      }
-      // Mark all checked
+      var cleaned = responseText.trim().replace(/^```(?:json|js)?\s*/gm,'').replace(/```\s*$/gm,'').trim();
+
+      // JSON 파싱 (잘린 응답 복구 포함)
+      var parseResult = safeParseVaultJSON(cleaned);
+      if (!parseResult.success) throw new Error('parse_fail');
+      _vaultAiResults = parseResult.data;
+      if (!Array.isArray(_vaultAiResults) || _vaultAiResults.length === 0) throw new Error('empty');
+
       _vaultAiResults.forEach(function(r){ r._checked = true; });
       renderVaultAiResults();
       document.getElementById('vault-ai-loading').className = 'hidden text-center py-8';
       document.getElementById('vault-ai-step2').style.display = '';
+      if (parseResult.partial) {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 응답이 길어서 ' + _vaultAiResults.length + '개만 복구되었어요');
+      }
     } catch(err) {
       document.getElementById('vault-ai-loading').className = 'hidden text-center py-8';
-      var msg = err.message === 'empty' ? '유용한 영어 표현을 찾지 못했어요. 다른 대화로 시도해주세요.' : 'AI 추출 실패: ' + err.message;
+      var msg = err.message === 'empty' ? '유용한 영어 표현을 찾지 못했어요. 다른 대화로 시도해주세요.'
+        : err.message === 'parse_fail' ? '응답 형식 에러. 다시 시도해주세요.'
+        : 'AI 추출 실패: ' + err.message;
       document.getElementById('vault-ai-error-msg').textContent = msg;
       document.getElementById('vault-ai-error').className = 'p-4 rounded-xl bg-rose-50';
       document.getElementById('vault-ai-step1').style.display = '';
