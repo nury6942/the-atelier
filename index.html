@@ -6444,8 +6444,8 @@
     var idx; do { idx = Math.floor(Math.random()*docs.length); } while (idx === _dashExprIdx && docs.length > 1);
     _dashExprIdx = idx;
     var item = docs[idx];
-    enEl.textContent = '"' + (item.english||'') + '"';
-    krEl.textContent = item.korean || '';
+    enEl.innerHTML = '"' + formatSentences(item.english||'') + '"';
+    krEl.innerHTML = formatSentences(item.korean || '');
     ctxEl.textContent = item.context || '';
   }
   function shuffleDashExpr() { loadDashboard(); }
@@ -11841,6 +11841,17 @@ async function parseAndSaveReview() {
     document.getElementById('vault-stat-month').textContent = monthCount;
   }
 
+  function formatSentences(text) {
+    if (!text) return '';
+    var abbrs = ['Mr.','Mrs.','Dr.','Ms.','Jr.','Sr.','vs.','etc.','e.g.','i.e.','U.S.','U.K.'];
+    var t = text;
+    abbrs.forEach(function(a,i){ t = t.split(a).join('__A'+i+'__'); });
+    var parts = t.split(/(?<=[.!?])\s+/);
+    parts = parts.map(function(s){ abbrs.forEach(function(a,i){ s = s.split('__A'+i+'__').join(a); }); return s; });
+    if (parts.length <= 1) return text;
+    return parts.map(function(s){ return '<span class="block mb-1.5">' + s + '</span>'; }).join('');
+  }
+
   function renderConvoHtml(convo, theme) {
     if (!convo || !convo.length) return '';
     var isDark = theme === 'dark';
@@ -11876,8 +11887,8 @@ async function parseAndSaveReview() {
     do { idx = Math.floor(Math.random() * vaultData.length); } while (idx === _vaultHighlightIdx && vaultData.length > 1);
     _vaultHighlightIdx = idx;
     var item = vaultData[idx];
-    enEl.textContent = '"' + (item.english||'') + '"';
-    krEl.textContent = item.korean || '';
+    enEl.innerHTML = '"' + formatSentences(item.english||'') + '"';
+    krEl.innerHTML = formatSentences(item.korean || '');
     document.getElementById('vault-hl-convo').innerHTML = renderConvoHtml(item.conversation, 'dark');
     ctxText.textContent = item.context || '';
     if (!item.context) ctxEl.style.display = 'none';
@@ -11917,8 +11928,8 @@ async function parseAndSaveReview() {
           '<span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest" style="' + catStyle + '">' + (d.category||'work') + '</span>' +
           '<span class="text-[10px] font-medium text-[#494454]/60">' + dateLabel + '</span>' +
         '</div>' +
-        '<h3 class="font-headline text-xl font-bold text-[#191c1d] mb-3 leading-snug">"' + (d.english||'') + '"</h3>' +
-        '<p class="text-[#494454] font-medium mb-4">' + (d.korean||'') + '</p>' +
+        '<h3 class="font-headline text-xl font-bold text-[#191c1d] mb-3 leading-snug">"' + formatSentences(d.english||'') + '"</h3>' +
+        '<p class="text-[#494454] font-medium mb-4">' + formatSentences(d.korean||'') + '</p>' +
         renderConvoHtml(d.conversation, 'light') +
         (d.context ? '<div class="bg-[#f3f4f5] rounded-2xl p-4 text-sm text-[#494454]/80 leading-relaxed mt-3">' + d.context + '</div>' : '') +
       '</article>';
