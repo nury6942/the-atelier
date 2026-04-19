@@ -10019,7 +10019,7 @@
       var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
 
       var base = getBaseAssets();
-      var runningBalance = base.cash;
+      var runningBalance = 0;
       var runningIncome = 0, runningExpense = 0, runningSavings = 0;
 
       // 기초 자산 표시
