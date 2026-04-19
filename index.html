@@ -8841,6 +8841,66 @@
     input.addEventListener('blur', function() { setTimeout(function(){ if (!_mxSaving && document.querySelector('#mx-inline-input')) { mxCloseInlineEdit(); renderMatrixTable(); } }, 200); });
   }
 
+  // 메모리 기반 planner→matrix 동기화 (Firestore 재읽기 없음)
+  async function syncMatrixFromMemory() {
+    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+    var MAPPED_FIELDS = [2,3,4,5,7,8];
+    var dayNames = ['일','월','화','수','목','금','토'];
+    // plannerData에서 날짜별/필드별 그룹화
+    var pByDate = {};
+    for (var si = 0; si < plannerData.length; si++) {
+      var sRow = plannerData[si];
+      var sEnd = sRow[5] || sRow[0];
+      var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
+      if (!sRow[0] || !sField || !sRow[1]) continue;
+      var sFIdx = FIELDS.indexOf(sField);
+      if (sFIdx <= 0) continue;
+      var sCur = new Date(sRow[0]+'T00:00:00'), sEndD = new Date(sEnd+'T00:00:00');
+      while (sCur <= sEndD) {
+        var sDs = sCur.getFullYear()+'-'+String(sCur.getMonth()+1).padStart(2,'0')+'-'+String(sCur.getDate()).padStart(2,'0');
+        if (!pByDate[sDs]) pByDate[sDs] = {};
+        if (!pByDate[sDs][sFIdx]) pByDate[sDs][sFIdx] = [];
+        var sv = sRow[1];
+        if ((sRow[2]||'').trim()==='연차') {
+          var dow2=sCur.getDay(); var lh=getKoreanHolidays(sCur.getFullYear());
+          if (dow2===0||dow2===6||lh[sDs]) { sCur.setDate(sCur.getDate()+1); continue; }
+          sv='1.0 '+sRow[1];
+        }
+        pByDate[sDs][sFIdx].push(sv);
+        sCur.setDate(sCur.getDate()+1);
+      }
+    }
+    // matrixData 업데이트
+    var sdKeys = Object.keys(pByDate);
+    for (var sdk = 0; sdk < sdKeys.length; sdk++) {
+      var dateStr2 = sdKeys[sdk];
+      var fMap = pByDate[dateStr2];
+      var sMRow = matrixData.find(function(r){return r[0]===dateStr2;});
+      if (sMRow) {
+        for (var mf = 0; mf < MAPPED_FIELDS.length; mf++) {
+          var fi = MAPPED_FIELDS[mf];
+          var exp = fMap[fi] ? fMap[fi].join(', ') : '';
+          if (sMRow[fi] !== exp) { sMRow[fi] = exp; var smId=sMRow[10]||sMRow[9]; if(smId) try{fbUpdate('matrix',smId,rowToObj('matrix',sMRow));}catch(e){} }
+        }
+      } else {
+        var dd = new Date(dateStr2+'T00:00:00');
+        var sNewRow = [dateStr2, dayNames[dd.getDay()], '','','','','','','',''];
+        for (var mf2=0;mf2<MAPPED_FIELDS.length;mf2++){var fi2=MAPPED_FIELDS[mf2];if(fMap[fi2])sNewRow[fi2]=fMap[fi2].join(', ');}
+        try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow));matrixData.push(sNewRow.concat([sSaved._id]));}catch(e){}
+      }
+    }
+    // 삭제된 항목 처리: pByDate에 없는 날짜의 매핑 필드를 비우기
+    matrixData.forEach(function(mRow) {
+      var d = mRow[0];
+      for (var mf3=0;mf3<MAPPED_FIELDS.length;mf3++) {
+        var fi3=MAPPED_FIELDS[mf3];
+        var exp3 = (pByDate[d]&&pByDate[d][fi3]) ? pByDate[d][fi3].join(', ') : '';
+        if (mRow[fi3] !== exp3) { mRow[fi3] = exp3; var smId2=mRow[10]||mRow[9]; if(smId2) try{fbUpdate('matrix',smId2,rowToObj('matrix',mRow));}catch(e){} }
+      }
+    });
+    renderMatrixTable(); updateLeaveTracker();
+  }
+
   async function mxUpdateTag(pid, newTitle) {
     if (_mxSaving) return;
     _mxSaving = true;
@@ -8853,7 +8913,7 @@
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
     mxCloseInlineEdit();
-    await loadMatrix(false);
+    await syncMatrixFromMemory();
     _mxSaving = false;
   }
 
@@ -8862,23 +8922,21 @@
     if (pr) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
-    await loadMatrix(false);
+    await syncMatrixFromMemory();
   }
 
   async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
     if (!newVal) { mxCloseInlineEdit(); renderMatrixTable(); return; }
     if (_mxSaving) { console.log('[Matrix] 중복 저장 방지'); return; }
     _mxSaving = true;
-    console.log('[Matrix] 저장:', dateStr, catName, newVal);
     var color = CAT_COLOR[catName] || 'indigo';
     var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
     try {
       var saved = await fbAdd('planner', obj);
       plannerData.push(objToRow('planner', saved).concat([saved._id]));
-      console.log('[Matrix] 저장 완료, id=' + saved._id);
     } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
-    await loadMatrix(false);
+    await syncMatrixFromMemory();
     _mxSaving = false;
   }
 
