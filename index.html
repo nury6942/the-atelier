@@ -9863,6 +9863,7 @@
       var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
 
       var runningBalance = 0;
+      var runningAssets = 0;
       monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
         var monthKey = yr + '-' + m;
         var monthItems = [];
@@ -9875,6 +9876,7 @@
         var mIncome=0, mExpense=0, mSavings=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; });
         runningBalance += mIncome - mExpense - mSavings;
+        runningAssets += mIncome - mExpense;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
         var isPending = !hasData;
@@ -9955,12 +9957,16 @@
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
-              '<span class="text-sm font-bold" style="' + balLabel + '">₩' + (mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달 (만원)</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round((mIncome - mExpense - mSavings)/10000).toLocaleString('ko-KR') + '</span>' +
+            '</div>' +
+            '<div class="flex justify-between items-center mb-1">' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적 (만원)</span>' +
+              '<span class="text-lg font-black font-headline" style="' + balColor + '">' + Math.round(runningBalance/10000).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적 Balance</span>' +
-              '<span class="text-2xl font-black font-headline" style="' + balColor + '">₩' + runningBalance.toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산 (만원)</span>' +
+              '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:#6b38d4;') + '">' + Math.round(runningAssets/10000).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
       }).join('');
