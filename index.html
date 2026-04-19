@@ -8347,7 +8347,7 @@
         }).join('');
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
-        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondblclick="mxOpenPlannerModal(\'' + dateStr + '\',' + fieldIdx + ')" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
+        return '<td class="px-5 py-2.5 rounded transition-all cursor-pointer hover:bg-indigo-50/60" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '<span class="text-slate-200">—</span>') + '</td>';
       }
 
       tr.innerHTML =
@@ -8763,39 +8763,99 @@
   function mxCellClick(td) {
     var dateStr = td.dataset.date;
     var fieldIdx = parseInt(td.dataset.field);
-    var rowIdx = parseInt(td.dataset.row);
     var existingRow = matrixData.find(function(r){return r[0]===dateStr;});
     var val = existingRow ? (existingRow[fieldIdx]||'') : '';
 
-    // 이전 선택 해제
+    // 이전 선택/편집 해제
+    mxCloseInlineEdit();
+
+    // 인라인 편집 시작
+    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+    var catName = MATRIX_TO_PLANNER[FIELDS[fieldIdx]];
+    if (!catName) return; // 날짜/요일 열은 무시
+
+    td.classList.add('mx-selected','ring-2','ring-indigo-500');
+    var oldHtml = td.innerHTML;
+    td.dataset.oldHtml = oldHtml;
+    td.innerHTML = '<input type="text" value="' + (val||'').replace(/"/g,'&quot;') + '" class="w-full px-1 py-0.5 text-[10px] rounded border border-indigo-300 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
+    var input = td.querySelector('#mx-inline-input');
+    input.focus();
+    if (val) input.select();
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        mxCloseInlineEdit();
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
+        // 다음 셀로 이동
+        var next = e.shiftKey ? td.previousElementSibling : td.nextElementSibling;
+        if (next && next.dataset.field) setTimeout(function(){ mxCellClick(next); }, 50);
+      }
+    });
+    input.addEventListener('blur', function() {
+      setTimeout(function(){
+        if (document.activeElement && document.activeElement.id === 'mx-inline-input') return;
+        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
+      }, 100);
+    });
+  }
+
+  function mxCloseInlineEdit() {
     document.querySelectorAll('.mx-selected').forEach(function(el){
       el.classList.remove('mx-selected','ring-2','ring-indigo-500');
+      if (el.dataset.oldHtml !== undefined) { el.innerHTML = el.dataset.oldHtml; delete el.dataset.oldHtml; }
     });
-    var oldBar = document.getElementById('mx-toolbar');
-    if (oldBar) oldBar.remove();
+    var bar = document.getElementById('mx-toolbar');
+    if (bar) bar.remove();
+  }
 
-    // 선택
-    td.classList.add('mx-selected','ring-2','ring-indigo-500');
-    _mxSelected = { date: dateStr, fieldIdx: fieldIdx, val: val };
+  async function mxSaveInlineEdit(td, dateStr, fieldIdx, catName, newVal) {
+    var existingRow = matrixData.find(function(r){return r[0]===dateStr;});
+    var oldVal = existingRow ? (existingRow[fieldIdx]||'') : '';
+    if (newVal === oldVal) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    if (!newVal && !oldVal) { mxCloseInlineEdit(); return; }
 
-    // 툴바: 값 있으면 복사+삭제, 복사된 값 있으면 붙이기도 표시
-    var buttons = '';
-    if (val) {
-      buttons += '<button onclick="mxCopyCell()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span>복사</button>';
-      buttons += '<button onclick="mxDeleteSelectedCell()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-rose-500 hover:bg-rose-50 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">delete</span>삭제</button>';
+    if (!newVal && oldVal) {
+      // 삭제: planner에서 해당 일정 제거
+      for (var pi = 0; pi < plannerData.length; pi++) {
+        var pr = plannerData[pi];
+        if ((pr[2]||'').trim() === catName && pr[0] === dateStr) {
+          var pid = pr[7] || pr[pr.length-1];
+          if (pid) { try { await fbDelete('planner', pid); } catch(e){} }
+          plannerData.splice(pi, 1);
+          break;
+        }
+      }
+    } else if (newVal && !oldVal) {
+      // 추가: planner에 새 일정 생성
+      var color = CAT_COLOR[catName] || 'indigo';
+      var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
+      try {
+        var saved = await fbAdd('planner', obj);
+        plannerData.push(objToRow('planner', saved).concat([saved._id]));
+      } catch(e){}
+    } else {
+      // 수정: planner 기존 일정 업데이트
+      for (var pi2 = 0; pi2 < plannerData.length; pi2++) {
+        var pr2 = plannerData[pi2];
+        if ((pr2[2]||'').trim() === catName && pr2[0] === dateStr) {
+          var pid2 = pr2[7] || pr2[pr2.length-1];
+          if (pid2) { try { await fbUpdate('planner', pid2, { title: newVal }); pr2[1] = newVal; } catch(e){} }
+          break;
+        }
+      }
     }
-    if (_mxCopied) {
-      buttons += '<button onclick="mxPasteToSelected()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-emerald-600 hover:bg-emerald-50 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">content_paste</span>붙이기</button>';
-    }
-    if (buttons) {
-      var bar = document.createElement('div');
-      bar.id = 'mx-toolbar';
-      bar.className = 'fixed z-50 flex gap-1 bg-white rounded-xl shadow-lg border border-slate-200 px-2 py-1.5';
-      bar.style.left = (td.getBoundingClientRect().left + td.offsetWidth/2 - 60) + 'px';
-      bar.style.top = (td.getBoundingClientRect().top - 40) + 'px';
-      bar.innerHTML = buttons;
-      document.body.appendChild(bar);
-    }
+    // 매트릭스 동기화 + 리렌더
+    try { await syncPlannerToMatrix(null); } catch(e){}
+    renderMatrixTable();
+    updateLeaveTracker();
   }
 
   // 바깥 클릭 시 선택 해제
