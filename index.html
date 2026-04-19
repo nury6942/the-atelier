@@ -1631,6 +1631,11 @@
       <section class="mb-12 space-y-8">
         <div class="flex items-center gap-4">
           <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
+          <div class="flex items-center gap-1 ml-2">
+            <button onclick="switchHubYear(-1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_left</span></button>
+            <span id="hub-year-label" class="text-lg font-black font-headline min-w-[48px] text-center" style="color:#6b38d4"></span>
+            <button onclick="switchHubYear(1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_right</span></button>
+          </div>
           <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
           <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
             <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
@@ -9944,6 +9949,16 @@
     document.getElementById('hub-status').textContent = hubData.length + '개 항목';
   }
 
+  // ===== HUB YEAR SWITCH =====
+  var hubYear = new Date().getFullYear();
+  function switchHubYear(delta) {
+    var ny = hubYear + delta;
+    if (ny < 2020 || ny > new Date().getFullYear() + 5) return;
+    hubYear = ny;
+    document.getElementById('hub-year-label').textContent = hubYear;
+    updateHubStats();
+  }
+
   // ===== BASE ASSET =====
   function getBaseAssets() {
     return {
@@ -9969,12 +9984,15 @@
   }
 
   function updateHubStats() {
+    var yrPrefix = String(hubYear);
+    document.getElementById('hub-year-label').textContent = hubYear;
     let income=0, expense=0, savings=0;
     const monthly = {};
     hubData.forEach(function(row) {
+      const date = (row[0]||'').toString();
+      if (!date.startsWith(yrPrefix)) return;
       const amt = parseFloat(row[3])||0;
       const type = row[4]||'';
-      const date = (row[0]||'').toString();
       const month = date.substring(0,7);
       if (type==='수입') { income+=amt; if(month) monthly[month]=(monthly[month]||0)+amt; }
       else if (type==='지출') expense+=amt;
@@ -9993,7 +10011,7 @@
     const chartEl = document.getElementById('hub-chart');
     const maxVal = Math.max(...Object.values(monthly),1);
     const allMonths = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-    const year = months.length>0 ? months[0].substring(0,4) : new Date().getFullYear();
+    const year = yrPrefix;
     chartEl.innerHTML = allMonths.map(function(m){
       const key = year+'-'+m;
       const val = monthly[key]||0;
@@ -10023,7 +10041,8 @@
     if (monthlyGrid) {
       var MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
       var curMonth = new Date().getMonth();
-      var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
+      var curYear = new Date().getFullYear();
+      var yr = yrPrefix;
 
       var base = getBaseAssets();
       var runningBalance = 0;
@@ -10052,7 +10071,7 @@
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings;
         var runningAssets = base.cash + base.savings + runningIncome - runningExpense;
         var hasData = monthItems.length > 0;
-        var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
+        var isActive = idx === curMonth && curYear === hubYear;
         var isPending = !hasData;
 
         if (isPending) {
