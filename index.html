@@ -8764,50 +8764,104 @@
   var _mxCopied = null;   // {val, fieldIdx}
 
   function mxCellClick(td) {
+    if (td.querySelector('#mx-inline-input')) return; // 이미 편집 중
     var dateStr = td.dataset.date;
     var fieldIdx = parseInt(td.dataset.field);
-    var existingRow = matrixData.find(function(r){return r[0]===dateStr;});
-    var val = existingRow ? (existingRow[fieldIdx]||'') : '';
-
-    // 이전 선택/편집 해제
-    mxCloseInlineEdit();
-
-    // 인라인 편집 시작
     var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
     var catName = MATRIX_TO_PLANNER[FIELDS[fieldIdx]];
-    if (!catName) return; // 날짜/요일 열은 무시
+    if (!catName) return;
 
+    mxCloseInlineEdit();
     td.classList.add('mx-selected','ring-2','ring-indigo-500');
-    var oldHtml = td.innerHTML;
-    td.dataset.oldHtml = oldHtml;
-    td.innerHTML = '<input type="text" value="' + (val||'').replace(/"/g,'&quot;') + '" class="w-full px-1 py-0.5 text-[10px] rounded border border-indigo-300 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
+    td.dataset.oldHtml = td.innerHTML;
+
+    // 해당 날짜+카테고리의 planner 항목들 찾기
+    var items = plannerData.filter(function(pr){
+      return (pr[2]||'').trim() === catName && pr[0] === dateStr;
+    });
+
+    // 기존 태그 + 새 입력칸 렌더링
+    var tagsHtml = items.map(function(pr, i) {
+      var pid = pr[7] || pr[pr.length-1];
+      var color = COLOR_MAP[pr[3]] || COLOR_MAP['indigo'];
+      var bgOnly = (color.split(' ').find(function(c){return c.startsWith('bg-');}) || 'bg-indigo-100');
+      var txtOnly = (color.split(' ').find(function(c){return c.startsWith('text-');}) || 'text-indigo-800');
+      return '<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold mr-0.5 mb-0.5 ' + bgOnly + ' ' + txtOnly + ' cursor-pointer" onclick="event.stopPropagation();mxEditTag(\'' + dateStr + '\',' + fieldIdx + ',\'' + pid + '\',\'' + (pr[1]||'').replace(/'/g,"\\'") + '\')">' +
+        (pr[1]||'') +
+        '<span onclick="event.stopPropagation();mxDeleteTag(\'' + pid + '\')" class="ml-0.5 opacity-30 hover:opacity-100 cursor-pointer">&times;</span>' +
+      '</span>';
+    }).join('');
+
+    td.innerHTML = tagsHtml +
+      '<input type="text" placeholder="추가..." class="inline-block w-16 px-1 py-0.5 text-[9px] rounded border border-indigo-200 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
     var input = td.querySelector('#mx-inline-input');
     input.focus();
-    if (val) input.select();
 
     input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        mxCloseInlineEdit();
-      }
+      if (e.key === 'Enter') { e.preventDefault(); mxAddNewItem(td, dateStr, fieldIdx, catName, input.value.trim()); }
+      if (e.key === 'Escape') { e.preventDefault(); mxCloseInlineEdit(); renderMatrixTable(); }
       if (e.key === 'Tab') {
         e.preventDefault();
-        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
-        // 다음 셀로 이동
+        mxAddNewItem(td, dateStr, fieldIdx, catName, input.value.trim());
         var next = e.shiftKey ? td.previousElementSibling : td.nextElementSibling;
         if (next && next.dataset.field) setTimeout(function(){ mxCellClick(next); }, 50);
       }
     });
     input.addEventListener('blur', function() {
-      setTimeout(function(){
-        if (document.activeElement && document.activeElement.id === 'mx-inline-input') return;
-        mxSaveInlineEdit(td, dateStr, fieldIdx, catName, input.value.trim());
-      }, 100);
+      setTimeout(function(){ if (document.querySelector('#mx-inline-input')) mxAddNewItem(td, dateStr, fieldIdx, catName, input.value.trim()); }, 150);
     });
+  }
+
+  function mxEditTag(dateStr, fieldIdx, pid, oldTitle) {
+    mxCloseInlineEdit();
+    var td = document.querySelector('td[data-date="'+dateStr+'"][data-field="'+fieldIdx+'"]');
+    if (!td) return;
+    td.classList.add('mx-selected','ring-2','ring-indigo-500');
+    td.dataset.oldHtml = td.innerHTML;
+    td.innerHTML = '<input type="text" value="' + oldTitle.replace(/"/g,'&quot;') + '" class="w-full px-1 py-0.5 text-[10px] rounded border border-indigo-300 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
+    var input = td.querySelector('#mx-inline-input');
+    input.focus(); input.select();
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); mxUpdateTag(pid, input.value.trim()); }
+      if (e.key === 'Escape') { e.preventDefault(); mxCloseInlineEdit(); renderMatrixTable(); }
+    });
+    input.addEventListener('blur', function() { setTimeout(function(){ mxUpdateTag(pid, input.value.trim()); }, 150); });
+  }
+
+  async function mxUpdateTag(pid, newTitle) {
+    if (!pid) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    var pr = plannerData.find(function(r){ return (r[7]||r[r.length-1]) === pid; });
+    if (!pr) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    if (newTitle && newTitle !== pr[1]) {
+      try { await fbUpdate('planner', pid, { title: newTitle }); pr[1] = newTitle; } catch(e){}
+    } else if (!newTitle) {
+      try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
+    }
+    mxCloseInlineEdit();
+    try { await syncPlannerToMatrix(null); } catch(e){}
+    renderMatrixTable(); updateLeaveTracker();
+  }
+
+  async function mxDeleteTag(pid) {
+    var pr = plannerData.find(function(r){ return (r[7]||r[r.length-1]) === pid; });
+    if (pr) {
+      try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
+    }
+    try { await syncPlannerToMatrix(null); } catch(e){}
+    renderMatrixTable(); updateLeaveTracker();
+  }
+
+  async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
+    if (!newVal) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    var color = CAT_COLOR[catName] || 'indigo';
+    var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
+    try {
+      var saved = await fbAdd('planner', obj);
+      plannerData.push(objToRow('planner', saved).concat([saved._id]));
+    } catch(e){}
+    mxCloseInlineEdit();
+    try { await syncPlannerToMatrix(null); } catch(e){}
+    renderMatrixTable(); updateLeaveTracker();
   }
 
   function mxCloseInlineEdit() {
@@ -8815,50 +8869,7 @@
       el.classList.remove('mx-selected','ring-2','ring-indigo-500');
       if (el.dataset.oldHtml !== undefined) { el.innerHTML = el.dataset.oldHtml; delete el.dataset.oldHtml; }
     });
-    var bar = document.getElementById('mx-toolbar');
-    if (bar) bar.remove();
-  }
-
-  async function mxSaveInlineEdit(td, dateStr, fieldIdx, catName, newVal) {
-    var existingRow = matrixData.find(function(r){return r[0]===dateStr;});
-    var oldVal = existingRow ? (existingRow[fieldIdx]||'') : '';
-    if (newVal === oldVal) { mxCloseInlineEdit(); renderMatrixTable(); return; }
-    if (!newVal && !oldVal) { mxCloseInlineEdit(); return; }
-
-    if (!newVal && oldVal) {
-      // 삭제: planner에서 해당 일정 제거
-      for (var pi = 0; pi < plannerData.length; pi++) {
-        var pr = plannerData[pi];
-        if ((pr[2]||'').trim() === catName && pr[0] === dateStr) {
-          var pid = pr[7] || pr[pr.length-1];
-          if (pid) { try { await fbDelete('planner', pid); } catch(e){} }
-          plannerData.splice(pi, 1);
-          break;
-        }
-      }
-    } else if (newVal && !oldVal) {
-      // 추가: planner에 새 일정 생성
-      var color = CAT_COLOR[catName] || 'indigo';
-      var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
-      try {
-        var saved = await fbAdd('planner', obj);
-        plannerData.push(objToRow('planner', saved).concat([saved._id]));
-      } catch(e){}
-    } else {
-      // 수정: planner 기존 일정 업데이트
-      for (var pi2 = 0; pi2 < plannerData.length; pi2++) {
-        var pr2 = plannerData[pi2];
-        if ((pr2[2]||'').trim() === catName && pr2[0] === dateStr) {
-          var pid2 = pr2[7] || pr2[pr2.length-1];
-          if (pid2) { try { await fbUpdate('planner', pid2, { title: newVal }); pr2[1] = newVal; } catch(e){} }
-          break;
-        }
-      }
-    }
-    // 매트릭스 동기화 + 리렌더
-    try { await syncPlannerToMatrix(null); } catch(e){}
-    renderMatrixTable();
-    updateLeaveTracker();
+    var bar = document.getElementById('mx-toolbar'); if (bar) bar.remove();
   }
 
   // 바깥 클릭 시 선택 해제
