@@ -9882,7 +9882,7 @@
       var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
 
       var runningBalance = 0;
-      var runningAssets = 0;
+      var runningSavings = 0;
       monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
         var monthKey = yr + '-' + m;
         var monthItems = [];
@@ -9895,7 +9895,8 @@
         var mIncome=0, mExpense=0, mSavings=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; });
         runningBalance += mIncome - mExpense - mSavings;
-        runningAssets += mIncome - mExpense;
+        runningSavings += mSavings;
+        var runningAssets = runningBalance + runningSavings;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
         var isPending = !hasData;
