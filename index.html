@@ -9941,10 +9941,10 @@
             '</tbody></table>' +
             '<div id="hub-inline-' + monthKey + '" style="display:none" class="mt-2 p-2 rounded-xl" style="background:rgba(107,56,212,0.04)">' +
               '<div class="grid gap-1 items-center" style="grid-template-columns:36px 1fr 56px 80px 24px 24px">' +
-                '<input type="text" placeholder="일" class="px-1 py-1.5 rounded bg-white text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '" maxlength="2"/>' +
-                '<input type="text" placeholder="항목명" class="px-2 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-il-desc-' + monthKey + '"/>' +
-                '<select class="px-1 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-type-' + monthKey + '"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option></select>' +
-                '<input type="text" placeholder="금액" class="px-1.5 py-1.5 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)"/>' +
+                '<input type="text" placeholder="일" class="px-1 py-1.5 rounded bg-white text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '" maxlength="2" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
+                '<input type="text" placeholder="항목명" class="px-2 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-il-desc-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
+                '<select class="px-1 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-type-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option></select>' +
+                '<input type="text" placeholder="금액" class="px-1.5 py-1.5 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
                 '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
               '</div>' +
@@ -9965,6 +9965,11 @@
           '</div></div>';
       }).join('');
     }
+  }
+
+  function hubInlineKey(e, saveAction, cancelAction) {
+    if (e.key === 'Enter') { e.preventDefault(); saveAction(); }
+    if (e.key === 'Escape') { e.preventDefault(); cancelAction(); }
   }
 
   function hubFormatAmt(el) {
@@ -10073,14 +10078,16 @@
     tr.innerHTML =
       '<td colspan="6" class="py-1">' +
         '<div class="grid gap-1 items-center" style="grid-template-columns:36px 1fr 56px 80px 24px 24px">' +
-          '<input type="text" value="' + dateDay + '" class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-date-' + idx + '" maxlength="2"/>' +
-          '<input type="text" value="' + desc + '" class="px-2 py-1.5 rounded bg-indigo-50 text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-edit-desc-' + idx + '"/>' +
-          '<select class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] border-none" id="hub-edit-type-' + idx + '"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
-          '<input type="text" value="' + amt.toLocaleString('ko-KR') + '" class="px-1.5 py-1.5 rounded bg-indigo-50 text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-amt-' + idx + '" inputmode="numeric" oninput="hubFormatAmt(this)"/>' +
+          '<input type="text" value="' + dateDay + '" class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-date-' + idx + '" maxlength="2" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
+          '<input type="text" value="' + desc + '" class="px-2 py-1.5 rounded bg-indigo-50 text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-edit-desc-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
+          '<select class="px-1 py-1.5 rounded bg-indigo-50 text-[11px] border-none" id="hub-edit-type-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
+          '<input type="text" value="' + amt.toLocaleString('ko-KR') + '" class="px-1.5 py-1.5 rounded bg-indigo-50 text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-amt-' + idx + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
           '<button onclick="saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
           '<button onclick="updateHubStats()" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
         '</div>' +
       '</td>';
+    // Auto-focus date field
+    setTimeout(function(){ var df = document.getElementById('hub-edit-date-' + idx); if (df) { df.focus(); df.select(); } }, 50);
   }
 
   async function saveHubInlineEdit(idx, monthKey, firestoreId) {
@@ -10105,7 +10112,15 @@
 
   function showHubInline(monthKey) {
     var el = document.getElementById('hub-inline-' + monthKey);
-    if (el) { el.style.display = 'block'; var dateInput = document.getElementById('hub-il-date-' + monthKey); if (dateInput) dateInput.focus(); }
+    if (el) {
+      el.style.display = 'block';
+      // Clear previous values
+      var d = document.getElementById('hub-il-date-' + monthKey); if (d) { d.value = ''; }
+      var ds = document.getElementById('hub-il-desc-' + monthKey); if (ds) ds.value = '';
+      var a = document.getElementById('hub-il-amt-' + monthKey); if (a) a.value = '';
+      var t = document.getElementById('hub-il-type-' + monthKey); if (t) t.value = '지출';
+      setTimeout(function(){ if (d) d.focus(); }, 50);
+    }
   }
   function cancelHubInline(monthKey) {
     var el = document.getElementById('hub-inline-' + monthKey);
