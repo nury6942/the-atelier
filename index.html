@@ -6924,6 +6924,23 @@
   }
 
   var financeTrips = [];
+  function getDefaultFinanceTrip(trips) {
+    if (!trips || !trips.length) return 'all';
+    var today = new Date().toISOString().split('T')[0];
+    // 1: ongoing trip
+    var ongoing = trips.filter(function(t){ return t.start_date && t.end_date && t.start_date <= today && t.end_date >= today; });
+    if (ongoing.length) return ongoing[0].name;
+    // 2: closest upcoming
+    var upcoming = trips.filter(function(t){ return t.start_date && t.start_date > today; })
+      .sort(function(a,b){ return a.start_date.localeCompare(b.start_date); });
+    if (upcoming.length) return upcoming[0].name;
+    // 3: most recent past
+    var past = trips.filter(function(t){ return t.end_date && t.end_date < today; })
+      .sort(function(a,b){ return b.end_date.localeCompare(a.end_date); });
+    if (past.length) return past[0].name;
+    return 'all';
+  }
+
   async function loadFinance() {
     document.getElementById('finance-loading').style.display = 'flex';
     document.getElementById('finance-table-wrap').style.display = 'none';
@@ -6937,7 +6954,9 @@
       financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       document.getElementById('finance-loading').style.display = 'none';
       buildFinanceTripFilters();
-      filterFinanceByTrip('all');
+      // Auto-select closest upcoming trip
+      var defaultTrip = getDefaultFinanceTrip(financeTrips);
+      filterFinanceByTrip(defaultTrip);
     } catch(err) {
       document.getElementById('finance-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
     }
