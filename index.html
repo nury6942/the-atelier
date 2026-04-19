@@ -7065,23 +7065,41 @@
   }
 
   async function saveClickEdit(idx) {
-    var trs = document.querySelectorAll('tr[data-fin-idx="'+idx+'"]');
-    var tr = trs.length ? trs[0] : document.querySelector('tr.bg-indigo-50\\/40');
+    var tr = document.querySelector('tr[data-fin-idx="'+idx+'"]');
+    if (!tr) { tr = document.querySelector('tr.bg-indigo-50\\/40'); }
     if (!tr) { filterFinanceByTrip(currentFinanceTrip); return; }
     var date = (tr.querySelector('[data-fec="0"]')||{}).value||'';
     var desc = (tr.querySelector('[data-fec="1"]')||{}).value||'';
     var cat = (tr.querySelector('[data-fec="2"]')||{}).value||'기타';
-    var deposit = ((tr.querySelector('[data-fec="3"]')||{}).value||'').replace(/,/g,'');
-    var expense = ((tr.querySelector('[data-fec="4"]')||{}).value||'').replace(/,/g,'');
+    var deposit = ((tr.querySelector('[data-fec="3"]')||{}).value||'').replace(/[^0-9]/g,'');
+    var expense = ((tr.querySelector('[data-fec="4"]')||{}).value||'').replace(/[^0-9]/g,'');
     var amt = parseFloat(deposit) || parseFloat(expense) || 0;
     if (parseFloat(deposit)) cat = '입금';
+    if (!amt) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 금액을 입력해주세요'); return; }
     var row = financeData[idx]; if (!row) return;
     var id = row[7];
+    var trip = row[2] || '';
+    console.log('[Finance Edit] idx=' + idx + ', id=' + id + ', date=' + date + ', desc=' + desc + ', cat=' + cat + ', amt=' + amt);
+
+    // __default__ 항목은 Firestore에 없으므로 새로 생성
+    if (id === '__default__') {
+      try {
+        var newRow = [date, desc, trip, cat, String(amt), 'KRW', ''];
+        var saved = await fbAdd('finance', rowToObj('finance', newRow));
+        // 기존 default 행 제거하고 새 행으로 교체
+        financeData[idx] = newRow.concat([saved._id]);
+        buildFinanceTripFilters(); filterFinanceByTrip(currentFinanceTrip);
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장 완료');
+      } catch(e) { console.error('[Finance Edit] Create error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message); }
+      return;
+    }
+
     try {
       await fbUpdate('finance', id, { date:date, description:desc, category:cat, amount:String(amt) });
       row[0]=date; row[1]=desc; row[3]=cat; row[4]=String(amt);
       buildFinanceTripFilters(); filterFinanceByTrip(currentFinanceTrip);
-    } catch(e) { alert('저장 실패'); }
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정 완료');
+    } catch(e) { console.error('[Finance Edit] Update error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message); }
   }
 
   function appendFinanceInputRow(tbody) {
