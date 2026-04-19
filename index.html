@@ -8195,6 +8195,7 @@
   function generate2026Dates() { return generateYearDates(matrixYear); }
 
   async function loadMatrix() {
+    _mxScrolledOnce = false; // 페이지 진입 시 오늘로 스크롤 허용
     document.getElementById('matrix-year-label').textContent = matrixYear;
     const loading = document.getElementById('matrix-loading');
     const tableWrap = document.getElementById('matrix-table-wrap');
@@ -8370,14 +8371,16 @@
       tbody.appendChild(tr);
     });
 
-    // 오늘 날짜로 스크롤
-    setTimeout(function() {
-      var todayEl = document.getElementById('matrix-today-row');
-      if (todayEl) {
-        todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
+    // 오늘 날짜로 스크롤 (최초 로드 시에만)
+    if (!_mxScrolledOnce) {
+      _mxScrolledOnce = true;
+      setTimeout(function() {
+        var todayEl = document.getElementById('matrix-today-row');
+        if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
   }
+  var _mxScrolledOnce = false;
 
   function formatLeaveCell(val) {
     if (!val || val === '—' || val === '') return '<span class="text-slate-200">—</span>';
