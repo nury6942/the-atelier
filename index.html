@@ -8853,7 +8853,10 @@
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
     mxCloseInlineEdit();
+    var wrap = document.getElementById('matrix-table-wrap');
+    var scrollPos = wrap ? wrap.scrollTop : 0;
     await loadMatrix();
+    if (wrap) wrap.scrollTop = scrollPos;
     _mxSaving = false;
   }
 
@@ -8862,7 +8865,10 @@
     if (pr) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
+    var wrap = document.getElementById('matrix-table-wrap');
+    var scrollPos = wrap ? wrap.scrollTop : 0;
     await loadMatrix();
+    if (wrap) wrap.scrollTop = scrollPos;
   }
 
   async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
