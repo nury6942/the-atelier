@@ -8853,8 +8853,7 @@
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
     mxCloseInlineEdit();
-    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
-    renderMatrixTable(); updateLeaveTracker();
+    await loadMatrix();
     _mxSaving = false;
   }
 
@@ -8863,8 +8862,7 @@
     if (pr) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
-    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
-    renderMatrixTable(); updateLeaveTracker();
+    await loadMatrix();
   }
 
   async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
@@ -8876,11 +8874,12 @@
     var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
     try {
       var saved = await fbAdd('planner', obj);
-      plannerData.push(objToRow('planner', saved).concat([saved._id]));
+      var newRow = objToRow('planner', saved).concat([saved._id]);
+      plannerData.push(newRow);
       console.log('[Matrix] 저장 완료, id=' + saved._id);
+      await syncPlannerToMatrix(newRow);
     } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
-    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
     renderMatrixTable(); updateLeaveTracker();
     _mxSaving = false;
   }
