@@ -7192,13 +7192,11 @@
   }
 
   function updateFinanceStats() {
-    var total = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
-    var allTotal = financeData.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
-
-    // 선택된 여행 기준으로 지출 계산
-    var filteredTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?-(parseFloat(r[4])||0):(parseFloat(r[4])||0)); }, 0);
-    document.getElementById('finance-main-spent').textContent = '₩' + Math.abs(Math.round(filteredTotal)).toLocaleString('ko-KR');
-    document.getElementById('finance-main-label').textContent = filteredTotal > 0 ? '총 지출' : '절약';
+    // 출금 합계만 (입금 제외)
+    var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?(parseFloat(r[4])||0):0); }, 0);
+    console.log('[Finance Stats] 출금합계=' + expenseTotal + ', 항목수=' + financeFiltered.length);
+    document.getElementById('finance-main-spent').textContent = '₩' + Math.round(expenseTotal).toLocaleString('ko-KR');
+    document.getElementById('finance-main-label').textContent = '총 지출';
     document.getElementById('finance-item-count').textContent = financeFiltered.length;
     document.getElementById('finance-trip-label').textContent = currentFinanceTrip==='all'?'전체':currentFinanceTrip;
 
@@ -7551,19 +7549,24 @@
   async function deleteFinanceAny(idx) {
     var row = financeData[idx];
     if (!row) return;
+    console.log('[Finance Delete] idx=' + idx + ', id=' + row[7] + ', desc=' + row[1]);
     if (row[7] === '__default__') {
       var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
-      dels.push(row[0]+'|'+row[1]+'|'+row[4]);
+      var delKey = row[0]+'|'+row[1]+'|'+row[4];
+      dels.push(delKey);
       localStorage.setItem('atelier_finance_dels', JSON.stringify(dels));
+      console.log('[Finance Delete] Default item deleted, key=' + delKey);
       financeData.splice(idx,1);
     } else {
       try {
         await fbDelete('finance', row[7]);
+        console.log('[Finance Delete] Firestore delete success');
         financeData.splice(idx,1);
-      } catch(e) { alert('삭제 실패'); return; }
+      } catch(e) { console.error('[Finance Delete] Error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패: ' + e.message); return; }
     }
     buildFinanceTripFilters();
     filterFinanceByTrip(currentFinanceTrip);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 삭제 완료');
   }
 
   async function deleteFinanceRow(i){ await deleteFinanceAny(i); }
