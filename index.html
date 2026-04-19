@@ -1632,11 +1632,39 @@
         <div class="flex items-center gap-4">
           <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
           <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
+          <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
+            <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
+          </button>
           <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
           </button>
         </div>
+        <div id="hub-base-info" class="text-xs text-slate-400 mb-2" style="display:none"></div>
         <div id="hub-monthly-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
+
+        <!-- 기초 자산 모달 -->
+        <div id="base-asset-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+              <h3 class="font-bold text-white text-lg font-headline">기초 자산 설정</h3>
+            </div>
+            <div class="p-6 space-y-4">
+              <p class="text-xs text-slate-500 leading-relaxed">전년도까지 쌓인 자산을 입력하면 모든 월의 누적/총 자산 계산에 반영됩니다. (단위: 만원)</p>
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 현금성 자산</label>
+                <input id="base-cash-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this)" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 저축 자산</label>
+                <input id="base-savings-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this)" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
+              </div>
+            </div>
+            <div class="px-6 pb-6 flex gap-2">
+              <button onclick="saveBaseAsset()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+              <button onclick="closeBaseAssetModal()" class="py-2.5 px-5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Savings & Asset Composition (Memory Bloom) -->
@@ -9906,6 +9934,30 @@
     document.getElementById('hub-status').textContent = hubData.length + '개 항목';
   }
 
+  // ===== BASE ASSET =====
+  function getBaseAssets() {
+    return {
+      cash: parseInt(localStorage.getItem('cashflow_base_cash') || '0') || 0,
+      savings: parseInt(localStorage.getItem('cashflow_base_savings') || '0') || 0
+    };
+  }
+  function openBaseAssetModal() {
+    var base = getBaseAssets();
+    document.getElementById('base-cash-input').value = base.cash ? base.cash.toLocaleString('ko-KR') : '';
+    document.getElementById('base-savings-input').value = base.savings ? base.savings.toLocaleString('ko-KR') : '';
+    document.getElementById('base-asset-modal').style.cssText = 'display:flex!important';
+  }
+  function closeBaseAssetModal() { document.getElementById('base-asset-modal').style.cssText = 'display:none!important'; }
+  function saveBaseAsset() {
+    var cash = parseInt((document.getElementById('base-cash-input').value||'').replace(/[^0-9]/g,'')) || 0;
+    var savings = parseInt((document.getElementById('base-savings-input').value||'').replace(/[^0-9]/g,'')) || 0;
+    localStorage.setItem('cashflow_base_cash', String(cash));
+    localStorage.setItem('cashflow_base_savings', String(savings));
+    closeBaseAssetModal();
+    updateHubStats();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 기초 자산 저장 완료');
+  }
+
   function updateHubStats() {
     let income=0, expense=0, savings=0;
     const monthly = {};
@@ -9963,8 +10015,18 @@
       var curMonth = new Date().getMonth();
       var yr = months.length>0 ? months[0].substring(0,4) : String(new Date().getFullYear());
 
-      var runningBalance = 0;
+      var base = getBaseAssets();
+      var runningBalance = base.cash;
       var runningIncome = 0, runningExpense = 0, runningSavings = 0;
+
+      // 기초 자산 표시
+      var baseInfo = document.getElementById('hub-base-info');
+      if (baseInfo) {
+        if (base.cash || base.savings) {
+          baseInfo.style.display = '';
+          baseInfo.textContent = '기초 자산: 현금 ' + base.cash.toLocaleString('ko-KR') + '만 / 저축 ' + base.savings.toLocaleString('ko-KR') + '만';
+        } else { baseInfo.style.display = 'none'; }
+      }
       monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
         var monthKey = yr + '-' + m;
         var monthItems = [];
@@ -9978,7 +10040,7 @@
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; });
         runningBalance += mIncome - mExpense - mSavings;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings;
-        var runningAssets = runningIncome - runningExpense + runningSavings;
+        var runningAssets = base.cash + base.savings + runningIncome - runningExpense + runningSavings;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
         var isPending = !hasData;
