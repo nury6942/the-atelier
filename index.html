@@ -1630,7 +1630,7 @@
       <!-- Monthly Artifacts Grid -->
       <section class="mb-12 space-y-8">
         <div class="flex items-center gap-4">
-          <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts</h2>
+          <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
           <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
           <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
@@ -6705,10 +6705,10 @@
       if(type==='수입') income+=amt;
       else if(type==='지출') expense+=amt;
     });
-    document.getElementById('dash-income').textContent = '₩'+income.toLocaleString('ko-KR');
-    document.getElementById('dash-expense').textContent = '₩'+expense.toLocaleString('ko-KR');
+    document.getElementById('dash-income').textContent = Math.round(income).toLocaleString('ko-KR') + '만';
+    document.getElementById('dash-expense').textContent = Math.round(expense).toLocaleString('ko-KR') + '만';
     var net = income - expense;
-    document.getElementById('dash-net').textContent = (net>=0?'+':'') + '₩' + Math.abs(net).toLocaleString('ko-KR');
+    document.getElementById('dash-net').textContent = (net>=0?'+':'') + Math.abs(Math.round(net)).toLocaleString('ko-KR') + '만';
     document.getElementById('dash-net').style.color = net >= 0 ? '#6b38d4' : '#ba1a1a';
   }
 
@@ -9924,15 +9924,14 @@
           if(isInc) itemRunning += amt; else itemRunning -= amt;
           var colorCls = isInc ? 'text-emerald-600' : (isSav ? 'text-yellow-600' : 'text-red-600');
           var dateDay = (mi.row[0]||'').substring(8,10);
-          var balK = Math.round(itemRunning/1000);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size:10px" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
             '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (isInc?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
-            '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + balK.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (isInc?'+':'-') + amt.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
               '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
             '</div></td></tr>';
@@ -9953,9 +9952,9 @@
           '</div>' +
           '<div class="p-5 flex-grow">' +
             '<div class="flex gap-2 mb-4">' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mIncome/10000).toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mExpense/10000).toLocaleString('ko-KR') + '</div></div>' +
-              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축 (만원)</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings/10000).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">수입</div><div class="text-sm font-black text-slate-700">' + Math.round(mIncome).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">지출</div><div class="text-sm font-black text-slate-700">' + Math.round(mExpense).toLocaleString('ko-KR') + '</div></div>' +
+              '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings).toLocaleString('ko-KR') + '</div></div>' +
             '</div>' +
             '<table class="w-full"><tbody>' +
               itemsHtml +
@@ -9965,7 +9964,7 @@
                 '<input type="text" placeholder="일" class="px-1 py-1.5 rounded bg-white text-[11px] text-center border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-date-' + monthKey + '" maxlength="2" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<input type="text" placeholder="항목명" class="px-2 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 min-w-0" id="hub-il-desc-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<select class="px-1 py-1.5 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-type-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option></select>' +
-                '<input type="text" placeholder="금액" class="px-1.5 py-1.5 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
+                '<input type="text" placeholder="만원" class="px-1.5 py-1.5 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
                 '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
               '</div>' +
@@ -9976,21 +9975,41 @@
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달 (만원)</span>' +
-              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round((mIncome - mExpense - mSavings)/10000).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적 (만원)</span>' +
-              '<span class="text-lg font-black font-headline" style="' + balColor + '">' + Math.round(runningBalance/10000).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적</span>' +
+              '<span class="text-lg font-black font-headline" style="' + balColor + '">' + Math.round(runningBalance).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산 (만원)</span>' +
-              '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:#6b38d4;') + '">' + Math.round(runningAssets/10000).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산</span>' +
+              '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:#6b38d4;') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
       }).join('');
     }
   }
+
+  // Migration: 원 → 만원 (콘솔에서 수동 실행: migrateFinanceHubToManwon())
+  window.migrateFinanceHubToManwon = async function() {
+    if (localStorage.getItem('financeHubMigratedToManwon') === 'true') { alert('이미 마이그레이션 완료'); return; }
+    if (!confirm('현금 흐름 데이터를 만원 단위로 변환합니다.\n이 작업은 한 번만 실행됩니다.\n계속?')) return;
+    var docs = await fbRead('finance_hub');
+    var count = 0;
+    for (var i = 0; i < docs.length; i++) {
+      var d = docs[i];
+      var cur = parseInt(d.amount) || 0;
+      if (cur > 1000) { // likely 원 단위
+        var manwon = Math.round(cur / 10000);
+        await fbUpdate('finance_hub', d._id, { amount: manwon });
+        count++;
+      }
+    }
+    localStorage.setItem('financeHubMigratedToManwon', 'true');
+    alert(count + '개 항목 변환 완료');
+    location.reload();
+  };
 
   function hubInlineKey(e, saveAction, cancelAction) {
     if (e.key === 'Enter') { e.preventDefault(); saveAction(); }
