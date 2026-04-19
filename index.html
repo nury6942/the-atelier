@@ -7039,10 +7039,11 @@
   function renderFinanceTable() {
     var tbody = document.getElementById('finance-tbody');
     tbody.innerHTML = '';
-    // 잔액: 시간순으로 계산
+    // 잔액: 시간순(오름차순)으로 계산한 뒤 balMap에 저장
     var sorted = financeFiltered.slice().sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
-    var balMap = {}, running = 0;
-    sorted.forEach(function(row){ var k=financeData.indexOf(row); var c=row[3]||'기타'; var a=parseFloat(row[4])||0; if(c==='입금') running+=a; else running-=a; balMap[k]=running; });
+    var balMap = new Map();
+    var running = 0;
+    sorted.forEach(function(row){ var c=row[3]||'기타'; var a=parseFloat(row[4])||0; if(c==='입금') running+=a; else running-=a; balMap.set(row, running); });
     // 입력 행 맨 위
     appendFinanceInputRow(tbody);
     // 역순 표시 (최신→오래된)
@@ -7053,7 +7054,7 @@
       var icon = FIN_CAT_ICONS[cat]||'more_horiz';
       var color = FIN_CAT_COLORS[cat]||'text-slate-500';
       var amt = parseFloat(row[4])||0;
-      var bal = balMap[realIdx]||0;
+      var bal = balMap.get(row)||0;
       var balColor = bal >= 0 ? 'text-indigo-600' : 'text-rose-600';
       var isDeposit = cat === '입금';
       var tr = document.createElement('tr');
