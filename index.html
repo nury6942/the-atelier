@@ -9897,6 +9897,7 @@
         runningBalance += mIncome - mExpense - mSavings;
         runningSavings += mSavings;
         var runningAssets = runningBalance + runningSavings;
+        if (hasData) console.log('[CashFlow] ' + MONTHS_KR[idx] + ': 수입=' + mIncome + ' 지출=' + mExpense + ' 저축=' + mSavings + ' | 누적=' + runningBalance + ' 저축누적=' + runningSavings + ' 총자산=' + runningAssets);
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && String(new Date().getFullYear()) === yr;
         var isPending = !hasData;
