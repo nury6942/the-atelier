@@ -7047,8 +7047,8 @@
       '<td class="px-4 py-2"><input data-fec="0" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><input data-fec="1" type="text" value="'+(row[1]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><select data-fec="2" class="'+ic+' bg-white">'+catOpts+'</select></td>' +
-      '<td class="px-4 py-2 text-right"><input data-fec="3" type="text" value="'+(isDeposit?amt:'')+'" placeholder="입금" class="'+ic+' text-right text-indigo-600"/></td>' +
-      '<td class="px-4 py-2 text-right"><input data-fec="4" type="text" value="'+(!isDeposit?amt:'')+'" placeholder="출금" class="'+ic+' text-right text-rose-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input data-fec="3" type="text" value="'+(isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="입금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-indigo-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input data-fec="4" type="text" value="'+(!isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="출금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-rose-600"/></td>' +
       '<td class="px-4 py-2"></td>' +
       '<td class="px-4 py-2 text-center"><div class="flex gap-1 justify-center">' +
         '<button onclick="saveClickEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
@@ -7095,8 +7095,8 @@
       '<td class="px-4 py-2"><input id="fir-date" type="date" value="'+new Date().toISOString().split('T')[0]+'" class="'+ic+'" style="width:120px"/></td>' +
       '<td class="px-4 py-2"><input id="fir-desc" type="text" placeholder="내용 입력..." class="'+ic+' w-full"/></td>' +
       '<td class="px-4 py-2"><select id="fir-cat" class="'+ic+' bg-white" style="width:75px">' + catOpts + '</select></td>' +
-      '<td class="px-4 py-2 text-right"><input id="fir-deposit" type="text" placeholder="입금" class="'+ic+' text-right text-indigo-600" style="width:90px" onfocus="document.getElementById(\'fir-cat\').value=\'입금\';document.getElementById(\'fir-expense\').value=\'\'"/></td>' +
-      '<td class="px-4 py-2 text-right"><input id="fir-expense" type="text" placeholder="출금" class="'+ic+' text-right text-rose-600" style="width:90px" onfocus="if(document.getElementById(\'fir-cat\').value===\'입금\')document.getElementById(\'fir-cat\').value=\'이동\';document.getElementById(\'fir-deposit\').value=\'\'"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fir-deposit" type="text" placeholder="입금" inputmode="numeric" class="'+ic+' text-right text-indigo-600" style="width:90px" oninput="finAmtFmt(this)" onfocus="document.getElementById(\'fir-cat\').value=\'입금\';document.getElementById(\'fir-expense\').value=\'\'"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fir-expense" type="text" placeholder="출금" inputmode="numeric" class="'+ic+' text-right text-rose-600" style="width:90px" oninput="finAmtFmt(this)" onfocus="if(document.getElementById(\'fir-cat\').value===\'입금\')document.getElementById(\'fir-cat\').value=\'이동\';document.getElementById(\'fir-deposit\').value=\'\'"/></td>' +
       '<td class="px-4 py-2 text-right text-xs text-slate-300">—</td>' +
       '<td class="px-4 py-2 text-center">' +
         '<input type="hidden" id="fir-trip" value="'+tripVal+'"/>' +
@@ -7112,25 +7112,37 @@
     });
   }
 
+  function finAmtFmt(el) {
+    var pos = el.selectionStart, oldLen = el.value.length;
+    var raw = el.value.replace(/[^\d]/g, '');
+    if (!raw) { el.value = ''; return; }
+    el.value = parseInt(raw).toLocaleString('ko-KR');
+    var newPos = pos + (el.value.length - oldLen);
+    el.setSelectionRange(Math.max(0,newPos), Math.max(0,newPos));
+  }
+
   async function submitFinanceInputRow() {
     var date = document.getElementById('fir-date').value;
     var desc = document.getElementById('fir-desc').value.trim();
     var cat = document.getElementById('fir-cat').value;
-    var deposit = (document.getElementById('fir-deposit').value||'').replace(/,/g,'');
-    var expense = (document.getElementById('fir-expense').value||'').replace(/,/g,'');
+    var deposit = (document.getElementById('fir-deposit').value||'').replace(/[^0-9]/g,'');
+    var expense = (document.getElementById('fir-expense').value||'').replace(/[^0-9]/g,'');
     var amt = parseFloat(deposit) || parseFloat(expense) || 0;
     var trip = document.getElementById('fir-trip').value;
-    if (!amt) return;
+    if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력해주세요'); return; }
+    if (!amt) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 금액을 입력해주세요'); return; }
     if (parseFloat(deposit)) cat = '입금';
     if (!desc) desc = cat === '입금' ? '입금' : cat;
     var row = [date, desc, trip, cat, String(amt), 'KRW', ''];
+    console.log('[Finance] Saving:', { date:date, desc:desc, trip:trip, cat:cat, amt:amt });
     try {
       var saved = await fbAdd('finance', rowToObj('finance', row));
       financeData.push(row.concat([saved._id]));
       financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       buildFinanceTripFilters();
       filterFinanceByTrip(currentFinanceTrip);
-    } catch(err) { alert('저장에 실패했어요.'); }
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장 완료');
+    } catch(err) { console.error('[Finance] Save error:', err); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message); }
   }
 
   function updateFinanceStats() {
@@ -7450,8 +7462,8 @@
       '<td class="px-4 py-2"><input id="fie-date" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><input id="fie-desc" type="text" value="'+(row[1]||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-4 py-2"><select id="fie-cat" class="'+ic+' bg-white">'+catOpts+'</select></td>' +
-      '<td class="px-4 py-2 text-right"><input id="fie-deposit" type="text" value="'+(isDeposit?amt:'')+'" placeholder="입금" class="'+ic+' text-right text-indigo-600"/></td>' +
-      '<td class="px-4 py-2 text-right"><input id="fie-expense" type="text" value="'+(!isDeposit?amt:'')+'" placeholder="출금" class="'+ic+' text-right text-rose-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fie-deposit" type="text" value="'+(isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="입금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-indigo-600"/></td>' +
+      '<td class="px-4 py-2 text-right"><input id="fie-expense" type="text" value="'+(!isDeposit?amt.toLocaleString('ko-KR'):'')+'" placeholder="출금" inputmode="numeric" oninput="finAmtFmt(this)" class="'+ic+' text-right text-rose-600"/></td>' +
       '<td class="px-4 py-2 text-right text-xs text-slate-400">—</td>' +
       '<td class="px-4 py-2 text-center"><div class="flex items-center justify-center gap-1">' +
         '<button onclick="saveInlineEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
