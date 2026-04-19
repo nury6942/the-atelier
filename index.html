@@ -8880,13 +8880,14 @@
     var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
     try {
       var saved = await fbAdd('planner', obj);
-      var newRow = objToRow('planner', saved).concat([saved._id]);
-      plannerData.push(newRow);
+      plannerData.push(objToRow('planner', saved).concat([saved._id]));
       console.log('[Matrix] 저장 완료, id=' + saved._id);
-      await syncPlannerToMatrix(newRow);
     } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
-    renderMatrixTable(); updateLeaveTracker();
+    var wrap = document.getElementById('matrix-table-wrap');
+    var scrollPos = wrap ? wrap.scrollTop : 0;
+    await loadMatrix();
+    if (wrap) wrap.scrollTop = scrollPos;
     _mxSaving = false;
   }
 
