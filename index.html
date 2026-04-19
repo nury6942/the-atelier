@@ -7039,15 +7039,30 @@
   function renderFinanceTable() {
     var tbody = document.getElementById('finance-tbody');
     tbody.innerHTML = '';
-    // 잔액: 시간순(오름차순)으로 계산한 뒤 balMap에 저장
-    var sorted = financeFiltered.slice().sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+    // 잔액: 시간순(오름차순) + 원본 순서 유지로 계산
+    var indexed = financeFiltered.map(function(row, i){ return {row:row, origIdx:i}; });
+    indexed.sort(function(a,b){
+      var dc = (a.row[0]||'').localeCompare(b.row[0]||'');
+      return dc !== 0 ? dc : a.origIdx - b.origIdx;
+    });
     var balMap = new Map();
     var running = 0;
-    sorted.forEach(function(row){ var c=row[3]||'기타'; var a=parseFloat(row[4])||0; if(c==='입금') running+=a; else running-=a; balMap.set(row, running); });
+    indexed.forEach(function(item){
+      var c = item.row[3]||'기타';
+      var a = parseFloat(item.row[4])||0;
+      if (c==='입금') running += a; else running -= a;
+      balMap.set(item.row, running);
+    });
+    console.log('[Balance] 계산완료: 최종잔액=' + running + ', 항목수=' + indexed.length);
     // 입력 행 맨 위
     appendFinanceInputRow(tbody);
-    // 역순 표시 (최신→오래된)
-    var reversed = financeFiltered.slice().sort(function(a,b){ return (b[0]||'').localeCompare(a[0]||''); });
+    // 역순 표시 (최신→오래된, 같은 날짜 내에서는 원본 역순)
+    var reversed = financeFiltered.map(function(row, i){ return {row:row, origIdx:i}; });
+    reversed.sort(function(a,b){
+      var dc = (b.row[0]||'').localeCompare(a.row[0]||'');
+      return dc !== 0 ? dc : b.origIdx - a.origIdx;
+    });
+    reversed = reversed.map(function(item){ return item.row; });
     reversed.forEach(function(row) {
       var realIdx = financeData.indexOf(row);
       var cat = row[3]||'기타';
