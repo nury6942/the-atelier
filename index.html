@@ -7576,14 +7576,23 @@
     console.log('[Finance Delete] idx=' + idx + ', id=' + row[7] + ', row=', row.slice(0,5));
     if (row[7] === '__default__') {
       var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
-      // Store multiple key formats for robust matching
+      // 현재 row 기준 키 (편집된 금액 포함)
       var delKey = row[0]+'|'+row[1]+'|'+row[4];
-      var delKey2 = row[0]+'|'+row[1]+'|'+String(parseFloat(row[4])||0);
-      dels.push(delKey);
-      if (delKey !== delKey2) dels.push(delKey2);
+      if (dels.indexOf(delKey) < 0) dels.push(delKey);
+      // 원본 DEFAULTS에서 date+desc 매칭하여 원본 금액 키도 저장
+      var allDefs = FINANCE_DEFAULTS.concat(FINANCE_DEFAULTS2);
+      for (var di = 0; di < allDefs.length; di++) {
+        var dd = allDefs[di];
+        if (dd[0] === row[0] && dd[1] === row[1]) {
+          var origKey = dd[0]+'|'+dd[1]+'|'+dd[3];
+          var origKey2 = dd[0]+'|'+dd[1]+'|'+String(dd[3]);
+          if (dels.indexOf(origKey) < 0) dels.push(origKey);
+          if (origKey !== origKey2 && dels.indexOf(origKey2) < 0) dels.push(origKey2);
+          break;
+        }
+      }
       localStorage.setItem('atelier_finance_dels', JSON.stringify(dels));
-      console.log('[Finance Delete] Default deleted, keys=' + delKey + ', ' + delKey2);
-      console.log('[Finance Delete] localStorage dels=', JSON.parse(localStorage.getItem('atelier_finance_dels')));
+      console.log('[Finance Delete] default 삭제, 키:', delKey, '원본키 포함 dels 수:', dels.length);
       financeData.splice(idx,1);
     } else {
       try {
