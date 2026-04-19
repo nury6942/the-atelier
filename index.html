@@ -8204,8 +8204,8 @@
   // Backward compat
   function generate2026Dates() { return generateYearDates(matrixYear); }
 
-  async function loadMatrix() {
-    _mxScrolledOnce = false; // 페이지 진입 시 오늘로 스크롤 허용
+  async function loadMatrix(autoScroll) {
+    if (autoScroll !== false) _mxScrolledOnce = false; // 명시적으로 false일 때만 스크롤 유지
     document.getElementById('matrix-year-label').textContent = matrixYear;
     const loading = document.getElementById('matrix-loading');
     const tableWrap = document.getElementById('matrix-table-wrap');
@@ -8853,10 +8853,7 @@
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
     mxCloseInlineEdit();
-    var wrap = document.getElementById('matrix-table-wrap');
-    var scrollPos = wrap ? wrap.scrollTop : 0;
-    await loadMatrix();
-    if (wrap) wrap.scrollTop = scrollPos;
+    await loadMatrix(false);
     _mxSaving = false;
   }
 
@@ -8865,10 +8862,7 @@
     if (pr) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
-    var wrap = document.getElementById('matrix-table-wrap');
-    var scrollPos = wrap ? wrap.scrollTop : 0;
-    await loadMatrix();
-    if (wrap) wrap.scrollTop = scrollPos;
+    await loadMatrix(false);
   }
 
   async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
@@ -8884,10 +8878,7 @@
       console.log('[Matrix] 저장 완료, id=' + saved._id);
     } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
-    var wrap = document.getElementById('matrix-table-wrap');
-    var scrollPos = wrap ? wrap.scrollTop : 0;
-    await loadMatrix();
-    if (wrap) wrap.scrollTop = scrollPos;
+    await loadMatrix(false);
     _mxSaving = false;
   }
 
