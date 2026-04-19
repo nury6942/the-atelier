@@ -6941,7 +6941,8 @@
 
     function mapRow(d, trip) {
       var key = d[0]+'|'+d[1]+'|'+d[3];
-      if (fbKeys[key] || delSet[key]) return null;
+      var key2 = d[0]+'|'+d[1]+'|'+String(d[3]);
+      if (fbKeys[key] || fbKeys[key2] || delSet[key] || delSet[key2]) return null;
       var row = [d[0], d[1], trip, d[2], d[3], 'KRW', '', '__default__'];
       if (edits[key]) { var e=edits[key]; row[0]=e.date; row[1]=e.desc; row[3]=e.cat; row[4]=e.amt; }
       return row;
@@ -6977,7 +6978,9 @@
       var [docs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
       financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
       financeTrips = tripDocs;
+      console.log('[Finance Load] Firestore docs=' + financeData.length + ', dels=', JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]'));
       var defaults = getFinanceDefaults();
+      console.log('[Finance Load] Defaults added=' + defaults.length);
       financeData = financeData.concat(defaults);
       financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       document.getElementById('finance-loading').style.display = 'none';
@@ -7549,20 +7552,24 @@
   async function deleteFinanceAny(idx) {
     var row = financeData[idx];
     if (!row) return;
-    console.log('[Finance Delete] idx=' + idx + ', id=' + row[7] + ', desc=' + row[1]);
+    console.log('[Finance Delete] idx=' + idx + ', id=' + row[7] + ', row=', row.slice(0,5));
     if (row[7] === '__default__') {
       var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
+      // Store multiple key formats for robust matching
       var delKey = row[0]+'|'+row[1]+'|'+row[4];
+      var delKey2 = row[0]+'|'+row[1]+'|'+String(parseFloat(row[4])||0);
       dels.push(delKey);
+      if (delKey !== delKey2) dels.push(delKey2);
       localStorage.setItem('atelier_finance_dels', JSON.stringify(dels));
-      console.log('[Finance Delete] Default item deleted, key=' + delKey);
+      console.log('[Finance Delete] Default deleted, keys=' + delKey + ', ' + delKey2);
+      console.log('[Finance Delete] localStorage dels=', JSON.parse(localStorage.getItem('atelier_finance_dels')));
       financeData.splice(idx,1);
     } else {
       try {
         await fbDelete('finance', row[7]);
-        console.log('[Finance Delete] Firestore delete success');
+        console.log('[Finance Delete] Firestore delete OK, id=' + row[7]);
         financeData.splice(idx,1);
-      } catch(e) { console.error('[Finance Delete] Error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패: ' + e.message); return; }
+      } catch(e) { console.error('[Finance Delete] Firestore error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패: ' + e.message); return; }
     }
     buildFinanceTripFilters();
     filterFinanceByTrip(currentFinanceTrip);
