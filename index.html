@@ -7835,6 +7835,7 @@
   }
 
   async function syncPlannerToMatrix(plannerRow) {
+    if (!plannerRow) return;
     var startDate = plannerRow[0];
     var endDate = plannerRow[5] || startDate;
     var category = plannerRow[2];
@@ -8809,16 +8810,9 @@
         if (nextTd && nextTd.dataset.field) setTimeout(function(){ mxCellClick(nextTd); }, 100);
       }
     });
-    // blur: 빈 값이면 닫기만, 값 있으면 저장
+    // blur: 저장 없이 편집 취소만 (저장은 Enter로만)
     input.addEventListener('blur', function() {
-      setTimeout(function(){
-        if (_mxSaving) return;
-        var el = document.querySelector('#mx-inline-input');
-        if (!el) return;
-        var v = el.value.trim();
-        if (v) { mxAddNewItem(td, dateStr, fieldIdx, catName, v); }
-        else { mxCloseInlineEdit(); renderMatrixTable(); }
-      }, 200);
+      setTimeout(function(){ if (!_mxSaving && document.querySelector('#mx-inline-input')) { mxCloseInlineEdit(); renderMatrixTable(); } }, 200);
     });
   }
 
@@ -8835,7 +8829,7 @@
       if (e.key === 'Enter') { e.preventDefault(); mxUpdateTag(pid, input.value.trim()); }
       if (e.key === 'Escape') { e.preventDefault(); mxCloseInlineEdit(); renderMatrixTable(); }
     });
-    input.addEventListener('blur', function() { setTimeout(function(){ if (!_mxSaving) mxUpdateTag(pid, input.value.trim()); }, 200); });
+    input.addEventListener('blur', function() { setTimeout(function(){ if (!_mxSaving && document.querySelector('#mx-inline-input')) { mxCloseInlineEdit(); renderMatrixTable(); } }, 200); });
   }
 
   async function mxUpdateTag(pid, newTitle) {
@@ -8843,14 +8837,14 @@
     _mxSaving = true;
     if (!pid) { mxCloseInlineEdit(); renderMatrixTable(); _mxSaving = false; return; }
     var pr = plannerData.find(function(r){ return (r[7]||r[r.length-1]) === pid; });
-    if (!pr) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    if (!pr) { _mxSaving = false; mxCloseInlineEdit(); renderMatrixTable(); return; }
     if (newTitle && newTitle !== pr[1]) {
       try { await fbUpdate('planner', pid, { title: newTitle }); pr[1] = newTitle; } catch(e){}
     } else if (!newTitle) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
     mxCloseInlineEdit();
-    try { await syncPlannerToMatrix(null); } catch(e){}
+    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
     renderMatrixTable(); updateLeaveTracker();
     _mxSaving = false;
   }
@@ -8860,7 +8854,7 @@
     if (pr) {
       try { await fbDelete('planner', pid); var idx = plannerData.indexOf(pr); if (idx>=0) plannerData.splice(idx,1); } catch(e){}
     }
-    try { await syncPlannerToMatrix(null); } catch(e){}
+    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
     renderMatrixTable(); updateLeaveTracker();
   }
 
@@ -8877,7 +8871,7 @@
       console.log('[Matrix] 저장 완료, id=' + saved._id);
     } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
-    try { await syncPlannerToMatrix(null); } catch(e){}
+    var mxDocs = await fbRead("matrix"); matrixData = mxDocs.map(function(d){ return objToRow("matrix", d).concat([d._id]); });
     renderMatrixTable(); updateLeaveTracker();
     _mxSaving = false;
   }
