@@ -8763,8 +8763,10 @@
   var _mxSelected = null; // {date, fieldIdx, el}
   var _mxCopied = null;   // {val, fieldIdx}
 
+  var _mxSaving = false;
+
   function mxCellClick(td) {
-    if (td.querySelector('#mx-inline-input')) return; // 이미 편집 중
+    if (td.querySelector('#mx-inline-input')) return;
     var dateStr = td.dataset.date;
     var fieldIdx = parseInt(td.dataset.field);
     var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
@@ -8775,13 +8777,11 @@
     td.classList.add('mx-selected','ring-2','ring-indigo-500');
     td.dataset.oldHtml = td.innerHTML;
 
-    // 해당 날짜+카테고리의 planner 항목들 찾기
     var items = plannerData.filter(function(pr){
       return (pr[2]||'').trim() === catName && pr[0] === dateStr;
     });
 
-    // 기존 태그 + 새 입력칸 렌더링
-    var tagsHtml = items.map(function(pr, i) {
+    var tagsHtml = items.map(function(pr) {
       var pid = pr[7] || pr[pr.length-1];
       var color = COLOR_MAP[pr[3]] || COLOR_MAP['indigo'];
       var bgOnly = (color.split(' ').find(function(c){return c.startsWith('bg-');}) || 'bg-indigo-100');
@@ -8802,13 +8802,23 @@
       if (e.key === 'Escape') { e.preventDefault(); mxCloseInlineEdit(); renderMatrixTable(); }
       if (e.key === 'Tab') {
         e.preventDefault();
-        mxAddNewItem(td, dateStr, fieldIdx, catName, input.value.trim());
-        var next = e.shiftKey ? td.previousElementSibling : td.nextElementSibling;
-        if (next && next.dataset.field) setTimeout(function(){ mxCellClick(next); }, 50);
+        var val = input.value.trim();
+        var nextTd = e.shiftKey ? td.previousElementSibling : td.nextElementSibling;
+        if (val) { mxAddNewItem(td, dateStr, fieldIdx, catName, val); }
+        else { mxCloseInlineEdit(); renderMatrixTable(); }
+        if (nextTd && nextTd.dataset.field) setTimeout(function(){ mxCellClick(nextTd); }, 100);
       }
     });
+    // blur: 빈 값이면 닫기만, 값 있으면 저장
     input.addEventListener('blur', function() {
-      setTimeout(function(){ if (document.querySelector('#mx-inline-input')) mxAddNewItem(td, dateStr, fieldIdx, catName, input.value.trim()); }, 150);
+      setTimeout(function(){
+        if (_mxSaving) return;
+        var el = document.querySelector('#mx-inline-input');
+        if (!el) return;
+        var v = el.value.trim();
+        if (v) { mxAddNewItem(td, dateStr, fieldIdx, catName, v); }
+        else { mxCloseInlineEdit(); renderMatrixTable(); }
+      }, 200);
     });
   }
 
@@ -8825,11 +8835,13 @@
       if (e.key === 'Enter') { e.preventDefault(); mxUpdateTag(pid, input.value.trim()); }
       if (e.key === 'Escape') { e.preventDefault(); mxCloseInlineEdit(); renderMatrixTable(); }
     });
-    input.addEventListener('blur', function() { setTimeout(function(){ mxUpdateTag(pid, input.value.trim()); }, 150); });
+    input.addEventListener('blur', function() { setTimeout(function(){ if (!_mxSaving) mxUpdateTag(pid, input.value.trim()); }, 200); });
   }
 
   async function mxUpdateTag(pid, newTitle) {
-    if (!pid) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    if (_mxSaving) return;
+    _mxSaving = true;
+    if (!pid) { mxCloseInlineEdit(); renderMatrixTable(); _mxSaving = false; return; }
     var pr = plannerData.find(function(r){ return (r[7]||r[r.length-1]) === pid; });
     if (!pr) { mxCloseInlineEdit(); renderMatrixTable(); return; }
     if (newTitle && newTitle !== pr[1]) {
@@ -8840,6 +8852,7 @@
     mxCloseInlineEdit();
     try { await syncPlannerToMatrix(null); } catch(e){}
     renderMatrixTable(); updateLeaveTracker();
+    _mxSaving = false;
   }
 
   async function mxDeleteTag(pid) {
@@ -8853,15 +8866,20 @@
 
   async function mxAddNewItem(td, dateStr, fieldIdx, catName, newVal) {
     if (!newVal) { mxCloseInlineEdit(); renderMatrixTable(); return; }
+    if (_mxSaving) { console.log('[Matrix] 중복 저장 방지'); return; }
+    _mxSaving = true;
+    console.log('[Matrix] 저장:', dateStr, catName, newVal);
     var color = CAT_COLOR[catName] || 'indigo';
     var obj = { date: dateStr, title: newVal, category: catName, color: color, notes: '', date_end: '', order: 0 };
     try {
       var saved = await fbAdd('planner', obj);
       plannerData.push(objToRow('planner', saved).concat([saved._id]));
-    } catch(e){}
+      console.log('[Matrix] 저장 완료, id=' + saved._id);
+    } catch(e){ console.error('[Matrix] 저장 실패:', e); }
     mxCloseInlineEdit();
     try { await syncPlannerToMatrix(null); } catch(e){}
     renderMatrixTable(); updateLeaveTracker();
+    _mxSaving = false;
   }
 
   function mxCloseInlineEdit() {
