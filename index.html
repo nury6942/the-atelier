@@ -2144,10 +2144,10 @@
                    style="min-height:130px;padding:24px 16px"
                    onclick="document.getElementById('review-file-input').click()">
                 <span class="material-symbols-outlined text-violet-300 mb-2" style="font-size:36px">upload_file</span>
-                <p class="text-sm font-bold text-slate-600">MacWhisper .txt 파일을 여기로 드래그하세요</p>
-                <p class="text-[10px] text-slate-400 mt-1">날짜, 수업명, 트랜스크립트가 자동으로 채워집니다</p>
+                <p class="text-sm font-bold text-slate-600">수업 녹음 트랜스크립트 파일을 여기로 드래그하세요</p>
+                <p class="text-[10px] text-slate-400 mt-1">.txt 파일 또는 직접 복사한 텍스트 모두 가능</p>
                 <p class="text-[10px] text-violet-500 font-bold mt-2 underline">또는 파일 선택</p>
-                <input id="review-file-input" type="file" accept=".txt" class="hidden" onchange="handleReviewFileDrop(this.files);this.value=''"/>
+                <input id="review-file-input" type="file" accept=".txt,.md,.srt,text/plain" class="hidden" onchange="handleReviewFileDrop(this.files);this.value=''"/>
               </div>
 
               <div class="grid grid-cols-2 gap-4 mb-4">
@@ -2162,7 +2162,7 @@
               </div>
               <div class="space-y-1 mb-4">
                 <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">트랜스크립트 *</label>
-                <textarea id="review-transcript" rows="6" placeholder="수업 트랜스크립트를 붙여넣으세요..." class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm resize-none"></textarea>
+                <textarea id="review-transcript" rows="6" placeholder="MacWhisper 출력 또는 Notion 등에서 복사한 텍스트를 붙여넣으세요" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm resize-none"></textarea>
               </div>
               <!-- Auto Generate -->
               <button onclick="autoGenerateReview()" id="review-auto-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2">
@@ -12099,14 +12099,53 @@ function closeReviewCreateModal() {
   document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
 }
 
+// ===== 트랜스크립트 붙여넣기 시 자동 전처리 =====
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var ta = document.getElementById('review-transcript');
+    if (ta) {
+      ta.addEventListener('paste', function(e) {
+        e.preventDefault();
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        if (pasted) {
+          var cleaned = cleanTranscript(pasted);
+          // 커서 위치에 삽입
+          var start = ta.selectionStart;
+          var end = ta.selectionEnd;
+          var before = ta.value.substring(0, start);
+          var after = ta.value.substring(end);
+          ta.value = before + cleaned + after;
+          ta.selectionStart = ta.selectionEnd = start + cleaned.length;
+        }
+      });
+    }
+  });
+})();
+
+// ===== 트랜스크립트 전처리 =====
+function cleanTranscript(rawText) {
+  // MacWhisper 타임스탬프 형식 자동 제거
+  var cleaned = rawText.replace(/\[\d{2}:\d{2}:\d{2}\.\d+\s*-->\s*\d{2}:\d{2}:\d{2}\.\d+\]\s*/g, '');
+  // SRT 타임스탬프 형식 제거
+  cleaned = cleaned.replace(/\d{2}:\d{2}:\d{2},\d+\s*-->\s*\d{2}:\d{2}:\d{2},\d+\s*/g, '');
+  // SRT 시퀀스 번호 제거 (줄 시작의 단독 숫자)
+  cleaned = cleaned.replace(/^\d+\s*$/gm, '');
+  // 빈 줄 정리
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim();
+  return cleaned;
+}
+
 // ===== DRAG & DROP TRANSCRIPT FILE =====
 function handleReviewFileDrop(files) {
   if (!files || files.length === 0) return;
   var file = files[0];
 
-  // 확장자 검증
-  if (!file.name.toLowerCase().endsWith('.txt')) {
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> .txt 파일만 업로드 가능해요');
+  // 확장자 검증 - 텍스트 기반 파일 허용
+  var allowedExts = ['.txt', '.md', '.srt'];
+  var fileName = file.name.toLowerCase();
+  var validExt = allowedExts.some(function(ext) { return fileName.endsWith(ext); });
+  if (!validExt) {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 텍스트 파일만 업로드 가능해요 (.txt, .md, .srt)');
     return;
   }
   // 크기 검증 (10MB)
@@ -12116,7 +12155,7 @@ function handleReviewFileDrop(files) {
   }
 
   // 파일명에서 날짜 + 수업명 추출
-  var baseName = file.name.replace(/\.txt$/i, '');
+  var baseName = file.name.replace(/\.(txt|md|srt)$/i, '');
   var dateMatch = baseName.match(/(\d{4})[-._]?(\d{2})[-._]?(\d{2})/);
   var extractedDate = '';
   var extractedTitle = '';
@@ -12143,10 +12182,11 @@ function handleReviewFileDrop(files) {
       return;
     }
 
-    // 필드 채우기
+    // 타임스탬프 전처리 후 필드 채우기
+    var cleanedText = cleanTranscript(text);
     document.getElementById('review-date').value = extractedDate;
     if (extractedTitle) document.getElementById('review-title').value = extractedTitle;
-    document.getElementById('review-transcript').value = text;
+    document.getElementById('review-transcript').value = cleanedText;
 
     // 성공 피드백
     var dz = document.getElementById('review-dropzone');
