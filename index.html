@@ -12390,13 +12390,11 @@ async function autoGenerateReview() {
   var requestBody = {
     model: model,
     max_tokens: 32000,
-    temperature: 0.5,
     messages: [{ role: 'user', content: filledPrompt }]
   };
   console.log('[API Request Body]', JSON.stringify({
     model: requestBody.model,
     max_tokens: requestBody.max_tokens,
-    temperature: requestBody.temperature,
     prompt_length: filledPrompt.length,
     messages_preview: filledPrompt.substring(0, 200) + '...'
   }));
