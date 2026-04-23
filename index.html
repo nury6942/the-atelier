@@ -12062,7 +12062,7 @@ sessionsData["{{DATE}}"] = {
 1. Output format: ONE fenced js code block containing ONLY the assignment statement.
 2. No text before or after the code block.
 3. No comments inside the object (no // anywhere in the output).
-4. Use backticks for multi-line strings; use double quotes for single-line strings.
+4. Use double quotes for all strings. For multi-line content, use \\n escape sequences instead of backticks. Never use backticks or template literals — they can cause parsing issues.
 5. Preserve inline HTML tags (<b>, <strong>, <i>, <s>, <br>) as literal text inside strings — do not escape them.
 6. Do not invent facts not in the transcript. If something is missing (e.g., no grammar errors observed), you may reduce count but keep the field present.
 7. Replace the date placeholder with the actual date provided in INPUT.
@@ -12339,7 +12339,8 @@ async function autoGenerateReview() {
       },
       body: JSON.stringify({
         model: model,
-        max_tokens: 8192,
+        max_tokens: 16384,
+        temperature: 0.5,
         messages: [{ role: 'user', content: filledPrompt }]
       })
     });
@@ -12378,6 +12379,17 @@ async function autoGenerateReview() {
 
     var data = await res.json();
     responseText = (data.content && data.content[0] && data.content[0].text) || '';
+
+    // stop_reason 검증: 응답이 잘렸는지 확인
+    if (data.stop_reason === 'max_tokens') {
+      console.warn('[AutoReview] 응답이 max_tokens에 도달해 잘렸음. stop_reason:', data.stop_reason, '응답 길이:', responseText.length);
+      showAutoError(
+        '응답이 너무 길어 잘렸어요. 수업이 너무 긴 경우 발생할 수 있어요. 트랜스크립트를 나눠서 시도해보세요.',
+        '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>',
+        responseText
+      );
+      return;
+    }
 
   } catch(e) {
     console.error('[API] Network error:', e.message);
@@ -12425,6 +12437,7 @@ async function autoGenerateReview() {
 
   if (!parsed) {
     console.error('[AutoReview] All parsing strategies failed. Raw response length:', responseText.length);
+    console.error('[AutoReview] 응답 끝 100자:', responseText.slice(-100));
     showAutoError(
       'Claude 응답 형식이 예상과 달라요. 아래 원본을 복사해서 수동으로 처리해주세요.',
       '<button onclick="navigator.clipboard.writeText(document.getElementById(\'review-auto-error-raw\').value);showSyncToast(\'복사됨\')" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">원본 복사</button>',
