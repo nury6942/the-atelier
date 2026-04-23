@@ -12327,6 +12327,20 @@ async function autoGenerateReview() {
   var filledPrompt = REVIEW_PROMPT_TEMPLATE.replaceAll('{{DATE}}', date).replaceAll('{{TRANSCRIPT}}', transcript);
 
   // Step C: API 호출
+  var requestBody = {
+    model: model,
+    max_tokens: 16384,
+    temperature: 0.5,
+    messages: [{ role: 'user', content: filledPrompt }]
+  };
+  console.log('[API Request Body]', JSON.stringify({
+    model: requestBody.model,
+    max_tokens: requestBody.max_tokens,
+    temperature: requestBody.temperature,
+    prompt_length: filledPrompt.length,
+    messages_preview: filledPrompt.substring(0, 200) + '...'
+  }));
+
   var responseText = '';
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -12337,17 +12351,13 @@ async function autoGenerateReview() {
         'anthropic-dangerous-direct-browser-access': 'true',
         'content-type': 'application/json'
       },
-      body: JSON.stringify({
-        model: model,
-        max_tokens: 16384,
-        temperature: 0.5,
-        messages: [{ role: 'user', content: filledPrompt }]
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!res.ok) {
       var errBody = {};
       try { errBody = await res.json(); } catch(e){}
+      console.error('[API Error Response]', { status: res.status, statusText: res.statusText, body: errBody });
       var errMsg = '';
       var errActions = '';
       var status = res.status;
@@ -12379,6 +12389,14 @@ async function autoGenerateReview() {
 
     var data = await res.json();
     responseText = (data.content && data.content[0] && data.content[0].text) || '';
+    console.log('[API Success Response]', {
+      stop_reason: data.stop_reason,
+      model: data.model,
+      usage: data.usage,
+      response_length: responseText.length,
+      response_preview: responseText.substring(0, 200) + '...',
+      response_tail: '...' + responseText.slice(-200)
+    });
 
     // stop_reason 검증: 응답이 잘렸는지 확인
     if (data.stop_reason === 'max_tokens') {
