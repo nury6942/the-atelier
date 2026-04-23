@@ -13520,7 +13520,7 @@ speaker 설정:
   </div>
 
   <!-- Reference Full-Screen Edit Modal -->
-  <div id="ref-full-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important" onclick="if(event.target===this)closeRefFullModal()">
+  <div id="ref-full-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col" style="width:min(90vw,800px);height:min(80vh,600px)">
       <div class="px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-t-2xl flex items-center justify-between shrink-0">
         <input id="ref-full-title" type="text" placeholder="카드 제목" class="text-lg font-bold text-white outline-none flex-1 mr-4 bg-transparent placeholder:text-white/60"/>
@@ -14231,6 +14231,19 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.ref-toolbar')) refCloseAllPops();
   });
+
+  // Backdrop click-to-close with drag protection
+  var _refBackdropDown = false;
+  var fullModal = document.getElementById('ref-full-modal');
+  if (fullModal) {
+    fullModal.addEventListener('mousedown', function(e) {
+      _refBackdropDown = (e.target === fullModal);
+    });
+    fullModal.addEventListener('mouseup', function(e) {
+      if (_refBackdropDown && e.target === fullModal) closeRefFullModal();
+      _refBackdropDown = false;
+    });
+  }
 });
 
 auth.onAuthStateChanged(function(user) {
