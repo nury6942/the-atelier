@@ -195,7 +195,15 @@
     }
     .review-dz-active .material-symbols-outlined { transform: scale(1.15); color: #7c3aed; }
     .review-dz-success { border-color: #10b981 !important; background: rgba(16,185,129,0.08) !important; }
-  
+
+    /* ===== REVIEW FONT SIZE ===== */
+    #eng-detail-content.review-size-small { font-size: 0.9em; }
+    #eng-detail-content.review-size-medium { font-size: 1em; }
+    #eng-detail-content.review-size-large { font-size: 1.15em; }
+    .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:#94a3b8; }
+    .review-font-btn:hover { background:#ede9fe; }
+    .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
+
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
     background: #fff;
@@ -11830,8 +11838,14 @@ function openSessionDetail(dateId) {
     '<div><p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Session Report · ' + dateLabel + '</p>' +
     '<h2 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight mb-2">' + titleHtml + '</h2>' +
     '<p class="text-sm text-slate-500">' + (s.subtitle||'') + '</p></div>' +
+    '<div class="flex items-center gap-3">' +
+    '<div class="flex gap-1" id="review-font-btns">' +
+    '<button onclick="setReviewFontSize(\'small\')" data-size="small" class="review-font-btn" title="작게">A-</button>' +
+    '<button onclick="setReviewFontSize(\'medium\')" data-size="medium" class="review-font-btn" title="기본">A</button>' +
+    '<button onclick="setReviewFontSize(\'large\')" data-size="large" class="review-font-btn" title="크게">A+</button>' +
+    '</div>' +
     '<div class="flex gap-2"><button onclick="alert(\'편집 기능은 추후 지원 예정\')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
-    '<button onclick="deleteSessionFromDetail(\'' + dateId + '\')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div></div>' +
+    '<button onclick="deleteSessionFromDetail(\'' + dateId + '\')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div></div></div>' +
     '<div class="flex gap-4 mb-8">' + lvBarFull(lv.fluency,'Fluency','fluency') + lvBarFull(lv.vocab,'Vocabulary','vocab') + lvBarFull(lv.grammar,'Grammar','grammar') + lvBarFull(lv.interaction,'Interaction','interaction') + '</div>' +
     tabHtml +
     sectionCard(1,'Summary','총평',sec1) +
@@ -11844,9 +11858,29 @@ function openSessionDetail(dateId) {
     sectionCard(8,'Next Goals','다음 목표',sec8);
 
   document.getElementById('eng-detail-content').innerHTML = html;
+  applyReviewFontSize();
   window.scrollTo({top: 0, behavior: 'smooth'});
   // 스크롤 스파이 초기화
   setTimeout(initEngScrollSpy, 300);
+}
+
+// ===== REVIEW FONT SIZE =====
+function setReviewFontSize(size) {
+  var el = document.getElementById('eng-detail-content');
+  if (!el) return;
+  el.classList.remove('review-size-small', 'review-size-medium', 'review-size-large');
+  el.classList.add('review-size-' + size);
+  localStorage.setItem('atelier_review_font_size', size);
+  // 버튼 UI 업데이트
+  var btns = document.querySelectorAll('#review-font-btns .review-font-btn');
+  btns.forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-size') === size);
+  });
+}
+
+function applyReviewFontSize() {
+  var size = localStorage.getItem('atelier_review_font_size') || 'medium';
+  setReviewFontSize(size);
 }
 
 var _engScrollSpyObserver = null;
