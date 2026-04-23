@@ -211,6 +211,18 @@
     .review-font-btn:hover { background:#ede9fe; }
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
 
+    /* ===== REFERENCE CARDS ===== */
+    .ref-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; position:relative; transition:all .2s; box-shadow:0 1px 4px rgba(0,0,0,0.03); }
+    .ref-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+    .ref-card:hover .ref-actions { opacity:1; }
+    .ref-card.pinned { border-left:3px solid #7c3aed; }
+    .ref-actions { opacity:0; transition:opacity .15s; }
+    .ref-add-card { background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); border-radius:12px; min-height:180px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:all .2s; }
+    .ref-add-card:hover { background-color:rgba(139,92,246,0.04); }
+    .ref-add-card:hover .ref-add-icon { background:#7c3aed; color:#fff; }
+    .ref-add-icon { width:48px; height:48px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .ref-code-block { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; font-family:monospace; font-size:13px; line-height:1.6; color:#334155; white-space:pre-wrap; word-break:break-all; }
+
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
     background: #fff;
@@ -578,6 +590,10 @@
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-planner" onclick="navigate('planner'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">calendar_month</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">캘린더</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-reference" onclick="navigate('reference'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">menu_book</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">레퍼런스</span>
     </a>
   </nav>
   <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
@@ -8077,7 +8093,8 @@
     "vault": { "title": "Vault" },
     "income": { "title": "사이드 잡" },
     "planner": { "title": "캘린더" },
-    "packing": { "title": "여행 체크리스트" }
+    "packing": { "title": "여행 체크리스트" },
+    "reference": { "title": "레퍼런스" }
   };
   function navigate(pageId) {
     document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
@@ -8107,6 +8124,7 @@
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
     if(pageId==='vault') { if(typeof loadVault==='function') loadVault(); }
+    if(pageId==='reference') { if(typeof loadReference==='function') loadReference(); }
   }
   window.addEventListener('DOMContentLoaded', () => {
     const startPage = localStorage.getItem('atelier-page') || 'dashboard';
@@ -13385,6 +13403,67 @@ speaker 설정:
     </div>
   </div>
 
+  <!-- ===== WORKSPACE REFERENCE PAGE ===== -->
+  <div id="page-reference" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight" style="letter-spacing:-0.02em">Workspace Reference</h1>
+        <p class="text-slate-500 mt-1">자주 참고하는 커맨드와 노트</p>
+        <div class="mt-6 relative w-full max-w-[400px]">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" style="font-size:18px">search</span>
+          <input id="ref-search" type="text" placeholder="검색어를 입력하세요..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all placeholder:text-slate-400"/>
+        </div>
+      </div>
+      <div id="ref-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- cards rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference Card Modal -->
+  <div id="ref-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div class="px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-t-2xl">
+        <h3 id="ref-modal-title" class="text-lg font-bold text-white font-headline">새 카드</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1.5">제목 *</label>
+          <input id="ref-input-title" type="text" placeholder="카드 제목" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200 border border-slate-200"/>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">본문</label>
+            <label class="flex items-center gap-1.5 cursor-pointer select-none">
+              <input id="ref-input-code" type="checkbox" class="w-4 h-4 rounded accent-indigo-600"/>
+              <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
+            </label>
+          </div>
+          <textarea id="ref-input-body" rows="6" placeholder="내용을 입력하세요..." class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200 border border-slate-200 resize-none"></textarea>
+        </div>
+      </div>
+      <div class="px-6 pb-5 flex gap-2 justify-end">
+        <button onclick="closeRefModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
+        <button onclick="saveRefCard()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference Delete Confirm Modal -->
+  <div id="ref-del-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+      <div class="p-6 text-center">
+        <span class="material-symbols-outlined text-rose-400 mb-2" style="font-size:40px">delete_forever</span>
+        <h3 class="font-bold text-slate-800 mb-1">카드를 삭제할까요?</h3>
+        <p class="text-sm text-slate-500">삭제된 카드는 복구할 수 없어요</p>
+      </div>
+      <div class="px-6 pb-5 flex gap-2 justify-center">
+        <button onclick="closeRefDelModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
+        <button onclick="confirmDeleteRefCard()" class="bg-rose-500 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-rose-600">삭제</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SETTINGS PANEL -->
   <div id="settings-panel" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center" style="display:none!important">
     <div class="bg-white w-full md:max-w-md md:mx-4 md:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden">
@@ -13627,6 +13706,216 @@ function googleSignIn() {
 function signOutAndRetry() {
   auth.signOut();
 }
+
+// ===== WORKSPACE REFERENCE =====
+var _refCards = [];
+var _refEditId = null;
+var _refDeleteId = null;
+var _refSearchTimer = null;
+
+async function loadReference() {
+  try {
+    var snap = await db.collection('workspace_references').orderBy('updatedAt', 'desc').get();
+    _refCards = [];
+    snap.forEach(function(doc) {
+      _refCards.push(Object.assign({ _id: doc.id }, doc.data()));
+    });
+    renderRefCards();
+  } catch(e) {
+    console.error('[Reference] load error:', e);
+  }
+}
+
+function renderRefCards(filter) {
+  var grid = document.getElementById('ref-grid');
+  if (!grid) return;
+
+  var cards = _refCards.slice();
+  if (filter) {
+    var q = filter.toLowerCase();
+    cards = cards.filter(function(c) {
+      return (c.title || '').toLowerCase().includes(q) || (c.body || '').toLowerCase().includes(q);
+    });
+  }
+
+  // Sort: pinned first, then by updatedAt desc
+  cards.sort(function(a, b) {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    var tA = a.updatedAt ? (a.updatedAt.toDate ? a.updatedAt.toDate() : new Date(a.updatedAt)) : new Date(0);
+    var tB = b.updatedAt ? (b.updatedAt.toDate ? b.updatedAt.toDate() : new Date(b.updatedAt)) : new Date(0);
+    return tB - tA;
+  });
+
+  var html = '';
+
+  // Add card button
+  html += '<div class="ref-add-card" onclick="openRefModal()">' +
+    '<div class="ref-add-icon"><span class="material-symbols-outlined">add</span></div>' +
+    '<div class="text-center"><span class="font-bold text-slate-800 text-sm">+ New Card</span><br><span class="text-xs text-slate-400">새 카드 추가</span></div>' +
+    '</div>';
+
+  if (cards.length === 0 && !filter) {
+    html += '<div class="col-span-full text-center py-16 text-slate-400">' +
+      '<span class="material-symbols-outlined mb-2" style="font-size:48px;color:#cbd5e1">menu_book</span>' +
+      '<p class="font-bold text-slate-500">아직 카드가 없어요</p>' +
+      '<p class="text-sm mt-1">자주 쓰는 커맨드, URL, 메모를 저장하세요</p>' +
+      '</div>';
+  }
+
+  cards.forEach(function(c) {
+    var timeStr = refTimeAgo(c.updatedAt);
+    var pinClass = c.isPinned ? ' pinned' : '';
+    var pinIcon = c.isPinned ? '<span class="material-symbols-outlined text-violet-600" style="font-size:18px;font-variation-settings:\'FILL\' 1">push_pin</span>' : '<span class="material-symbols-outlined text-slate-300 hover:text-slate-400" style="font-size:18px">push_pin</span>';
+    var bodyHtml = '';
+    if (c.body) {
+      if (c.isCode) {
+        bodyHtml = '<pre class="ref-code-block">' + escHtml(c.body) + '</pre>';
+      } else {
+        bodyHtml = '<p class="text-sm text-slate-600 leading-relaxed" style="white-space:pre-wrap;word-break:break-word;">' + escHtml(c.body) + '</p>';
+      }
+    }
+    html += '<div class="ref-card' + pinClass + '">' +
+      '<div class="flex justify-between items-start mb-3">' +
+        '<h3 class="font-bold text-sm text-slate-900 pr-2">' + escHtml(c.title || '') + '</h3>' +
+        '<button onclick="toggleRefPin(\'' + c._id + '\')" class="shrink-0 p-0.5 rounded hover:bg-slate-100 transition-colors">' + pinIcon + '</button>' +
+      '</div>' +
+      '<div class="mb-4">' + bodyHtml + '</div>' +
+      '<div class="flex items-center justify-between mt-auto">' +
+        '<span class="text-[11px] text-slate-400">' + timeStr + '</span>' +
+        '<div class="ref-actions flex gap-1">' +
+          '<button onclick="copyRefCard(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="복사"><span class="material-symbols-outlined" style="font-size:16px">content_copy</span></button>' +
+          '<button onclick="openRefModal(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="편집"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
+          '<button onclick="openRefDelModal(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="삭제"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function refTimeAgo(ts) {
+  if (!ts) return '';
+  var d = ts.toDate ? ts.toDate() : new Date(ts);
+  var diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return '방금 전';
+  if (diff < 3600) return Math.floor(diff / 60) + '분 전';
+  if (diff < 86400) return Math.floor(diff / 3600) + '시간 전';
+  if (diff < 604800) return Math.floor(diff / 86400) + '일 전';
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function openRefModal(editId) {
+  _refEditId = editId || null;
+  document.getElementById('ref-input-title').value = '';
+  document.getElementById('ref-input-body').value = '';
+  document.getElementById('ref-input-code').checked = false;
+
+  if (_refEditId) {
+    document.getElementById('ref-modal-title').textContent = '카드 편집';
+    var card = _refCards.find(function(c) { return c._id === _refEditId; });
+    if (card) {
+      document.getElementById('ref-input-title').value = card.title || '';
+      document.getElementById('ref-input-body').value = card.body || '';
+      document.getElementById('ref-input-code').checked = !!card.isCode;
+    }
+  } else {
+    document.getElementById('ref-modal-title').textContent = '새 카드';
+  }
+  document.getElementById('ref-modal').style.cssText = 'display:flex!important';
+  document.getElementById('ref-input-title').focus();
+}
+
+function closeRefModal() {
+  document.getElementById('ref-modal').style.cssText = 'display:none!important';
+  _refEditId = null;
+}
+
+async function saveRefCard() {
+  var title = document.getElementById('ref-input-title').value.trim();
+  if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 제목을 입력하세요'); return; }
+  var body = document.getElementById('ref-input-body').value.trim();
+  var isCode = document.getElementById('ref-input-code').checked;
+  var now = new Date();
+
+  try {
+    if (_refEditId) {
+      await db.collection('workspace_references').doc(_refEditId).update({ title: title, body: body, isCode: isCode, updatedAt: now });
+    } else {
+      await db.collection('workspace_references').add({ title: title, body: body, isCode: isCode, isPinned: false, createdAt: now, updatedAt: now });
+    }
+    closeRefModal();
+    await loadReference();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (_refEditId ? '수정됨' : '추가됨'));
+  } catch(e) {
+    console.error('[Reference] save error:', e);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
+  }
+}
+
+async function toggleRefPin(id) {
+  var card = _refCards.find(function(c) { return c._id === id; });
+  if (!card) return;
+  var newPin = !card.isPinned;
+  try {
+    await db.collection('workspace_references').doc(id).update({ isPinned: newPin, updatedAt: new Date() });
+    card.isPinned = newPin;
+    renderRefCards(document.getElementById('ref-search').value.trim());
+  } catch(e) {
+    console.error('[Reference] pin error:', e);
+  }
+}
+
+function copyRefCard(id) {
+  var card = _refCards.find(function(c) { return c._id === id; });
+  if (!card) return;
+  var text = card.body || card.title || '';
+  navigator.clipboard.writeText(text).then(function() {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 복사됨!');
+  });
+}
+
+function openRefDelModal(id) {
+  _refDeleteId = id;
+  document.getElementById('ref-del-modal').style.cssText = 'display:flex!important';
+}
+
+function closeRefDelModal() {
+  document.getElementById('ref-del-modal').style.cssText = 'display:none!important';
+  _refDeleteId = null;
+}
+
+async function confirmDeleteRefCard() {
+  if (!_refDeleteId) return;
+  try {
+    await db.collection('workspace_references').doc(_refDeleteId).delete();
+    closeRefDelModal();
+    await loadReference();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 삭제됨');
+  } catch(e) {
+    console.error('[Reference] delete error:', e);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 삭제 실패');
+  }
+}
+
+// Search with debounce
+document.addEventListener('DOMContentLoaded', function() {
+  var searchEl = document.getElementById('ref-search');
+  if (searchEl) {
+    searchEl.addEventListener('input', function() {
+      clearTimeout(_refSearchTimer);
+      var val = searchEl.value.trim();
+      _refSearchTimer = setTimeout(function() { renderRefCards(val); }, 200);
+    });
+  }
+});
 
 auth.onAuthStateChanged(function(user) {
   var loginScreen = document.getElementById('login-screen');
