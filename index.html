@@ -212,12 +212,18 @@
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
 
     /* ===== REFERENCE CARDS ===== */
-    .ref-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; position:relative; transition:all .2s; box-shadow:0 1px 4px rgba(0,0,0,0.03); }
+    .ref-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; position:relative; transition:all .2s; box-shadow:0 1px 4px rgba(0,0,0,0.03); height:280px; display:flex; flex-direction:column; }
     .ref-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.06); }
     .ref-card:hover .ref-actions { opacity:1; }
     .ref-card.pinned { border-left:3px solid #7c3aed; }
+    .ref-card-header { flex-shrink:0; }
+    .ref-card-body { flex:1; overflow-y:auto; min-height:0; }
+    .ref-card-body::-webkit-scrollbar { width:4px; }
+    .ref-card-body::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
+    .ref-card-body::-webkit-scrollbar-track { background:transparent; }
+    .ref-card-footer { flex-shrink:0; }
     .ref-actions { opacity:0; transition:opacity .15s; }
-    .ref-add-card { background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); border-radius:12px; min-height:180px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:all .2s; }
+    .ref-add-card { background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); border-radius:12px; height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:all .2s; }
     .ref-add-card:hover { background-color:rgba(139,92,246,0.04); }
     .ref-add-card:hover .ref-add-icon { background:#7c3aed; color:#fff; }
     .ref-add-icon { width:48px; height:48px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; transition:all .2s; }
@@ -13770,16 +13776,16 @@ function renderRefCards(filter) {
       if (c.isCode) {
         bodyHtml = '<pre class="ref-code-block">' + escHtml(c.body) + '</pre>';
       } else {
-        bodyHtml = '<p class="text-sm text-slate-600 leading-relaxed" style="white-space:pre-wrap;word-break:break-word;">' + escHtml(c.body) + '</p>';
+        bodyHtml = '<p class="text-sm text-slate-600 leading-relaxed" style="white-space:pre-wrap;word-break:break-word;">' + renderBold(c.body) + '</p>';
       }
     }
     html += '<div class="ref-card' + pinClass + '">' +
-      '<div class="flex justify-between items-start mb-3">' +
+      '<div class="ref-card-header flex justify-between items-start mb-3">' +
         '<h3 class="font-bold text-sm text-slate-900 pr-2">' + escHtml(c.title || '') + '</h3>' +
         '<button onclick="toggleRefPin(\'' + c._id + '\')" class="shrink-0 p-0.5 rounded hover:bg-slate-100 transition-colors">' + pinIcon + '</button>' +
       '</div>' +
-      '<div class="mb-4">' + bodyHtml + '</div>' +
-      '<div class="flex items-center justify-between mt-auto">' +
+      '<div class="ref-card-body mb-3">' + bodyHtml + '</div>' +
+      '<div class="ref-card-footer flex items-center justify-between">' +
         '<span class="text-[11px] text-slate-400">' + timeStr + '</span>' +
         '<div class="ref-actions flex gap-1">' +
           '<button onclick="copyRefCard(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="복사"><span class="material-symbols-outlined" style="font-size:16px">content_copy</span></button>' +
@@ -13797,6 +13803,11 @@ function escHtml(s) {
   var d = document.createElement('div');
   d.textContent = s;
   return d.innerHTML;
+}
+
+function renderBold(text) {
+  var escaped = escHtml(text);
+  return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 
 function refTimeAgo(ts) {
@@ -13903,7 +13914,7 @@ async function confirmDeleteRefCard() {
   }
 }
 
-// Search with debounce
+// Search with debounce + Ctrl+B shortcut
 document.addEventListener('DOMContentLoaded', function() {
   var searchEl = document.getElementById('ref-search');
   if (searchEl) {
@@ -13913,6 +13924,30 @@ document.addEventListener('DOMContentLoaded', function() {
       _refSearchTimer = setTimeout(function() { renderRefCards(val); }, 200);
     });
   }
+
+  // Ctrl+B / Cmd+B bold toggle in textarea
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+      var ta = document.getElementById('ref-input-body');
+      if (!ta || document.activeElement !== ta) return;
+      e.preventDefault();
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      var val = ta.value;
+      if (start === end) return;
+      var selected = val.substring(start, end);
+      // Toggle: if already wrapped, unwrap
+      if (val.substring(start - 2, start) === '**' && val.substring(end, end + 2) === '**') {
+        ta.value = val.substring(0, start - 2) + selected + val.substring(end + 2);
+        ta.selectionStart = start - 2;
+        ta.selectionEnd = end - 2;
+      } else {
+        ta.value = val.substring(0, start) + '**' + selected + '**' + val.substring(end);
+        ta.selectionStart = start + 2;
+        ta.selectionEnd = end + 2;
+      }
+    }
+  });
 });
 
 auth.onAuthStateChanged(function(user) {
