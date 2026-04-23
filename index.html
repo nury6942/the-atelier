@@ -228,6 +228,14 @@
     .ref-add-card:hover .ref-add-icon { background:#7c3aed; color:#fff; }
     .ref-add-icon { width:48px; height:48px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; transition:all .2s; }
     .ref-code-block { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; font-family:monospace; font-size:13px; line-height:1.6; color:#334155; white-space:pre-wrap; word-break:break-all; }
+    .ref-toolbar { display:flex; gap:2px; }
+    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:#64748b; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+    .ref-toolbar button:hover { background:#ede9fe; color:#7c3aed; }
+    .ref-editor { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; outline:none; min-height:150px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+    .ref-editor:focus { ring:2px; border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
+    .ref-editor:empty::before { content:attr(data-placeholder); color:#94a3b8; pointer-events:none; }
+    .ref-editor::-webkit-scrollbar { width:4px; }
+    .ref-editor::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
 
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
@@ -13443,12 +13451,45 @@ speaker 설정:
               <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
             </label>
           </div>
-          <textarea id="ref-input-body" rows="6" placeholder="내용을 입력하세요..." class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-200 border border-slate-200 resize-none"></textarea>
+          <div class="ref-toolbar">
+            <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+            <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+            <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+            <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+          </div>
+          <div id="ref-input-body" contenteditable="true" class="ref-editor" data-placeholder="내용을 입력하세요..."></div>
         </div>
       </div>
       <div class="px-6 pb-5 flex gap-2 justify-end">
         <button onclick="closeRefModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
         <button onclick="saveRefCard()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference Full-Screen Edit Modal -->
+  <div id="ref-full-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important" onclick="if(event.target===this)closeRefFullModal()">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col" style="width:min(90vw,800px);height:min(80vh,600px)">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+        <input id="ref-full-title" type="text" placeholder="카드 제목" class="text-lg font-bold text-slate-900 outline-none flex-1 mr-4"/>
+        <button onclick="closeRefFullModal()" class="p-1.5 hover:bg-slate-100 rounded-lg"><span class="material-symbols-outlined text-slate-400">close</span></button>
+      </div>
+      <div class="px-6 py-2 border-b border-slate-100 flex items-center justify-between shrink-0">
+        <div class="ref-toolbar">
+          <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+          <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+          <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+          <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+        </div>
+        <label class="flex items-center gap-1.5 cursor-pointer select-none">
+          <input id="ref-full-code" type="checkbox" class="w-4 h-4 rounded accent-indigo-600"/>
+          <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
+        </label>
+      </div>
+      <div id="ref-full-body" contenteditable="true" class="ref-editor flex-1 overflow-y-auto" data-placeholder="내용을 입력하세요..." style="min-height:0"></div>
+      <div class="px-6 py-4 border-t border-slate-100 flex gap-2 justify-end shrink-0">
+        <button onclick="closeRefFullModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
+        <button onclick="saveRefFullCard()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
       </div>
     </div>
   </div>
@@ -13722,7 +13763,16 @@ async function loadReference() {
     var snap = await db.collection('workspace_references').orderBy('updatedAt', 'desc').get();
     _refCards = [];
     snap.forEach(function(doc) {
-      _refCards.push(Object.assign({ _id: doc.id }, doc.data()));
+      var data = Object.assign({ _id: doc.id }, doc.data());
+      // Migrate markdown **bold** to HTML <strong>
+      if (data.body && !data.isCode) {
+        var migrated = migrateMarkdown(data.body);
+        if (migrated !== data.body) {
+          data.body = migrated;
+          db.collection('workspace_references').doc(doc.id).update({ body: migrated });
+        }
+      }
+      _refCards.push(data);
     });
     renderRefCards();
   } catch(e) {
@@ -13738,7 +13788,8 @@ function renderRefCards(filter) {
   if (filter) {
     var q = filter.toLowerCase();
     cards = cards.filter(function(c) {
-      return (c.title || '').toLowerCase().includes(q) || (c.body || '').toLowerCase().includes(q);
+      var bodyText = stripHtml(c.body || '');
+      return (c.title || '').toLowerCase().includes(q) || bodyText.toLowerCase().includes(q);
     });
   }
 
@@ -13776,10 +13827,10 @@ function renderRefCards(filter) {
       if (c.isCode) {
         bodyHtml = '<pre class="ref-code-block">' + escHtml(c.body) + '</pre>';
       } else {
-        bodyHtml = '<p class="text-sm text-slate-600 leading-relaxed" style="white-space:pre-wrap;word-break:break-word;">' + renderBold(c.body) + '</p>';
+        bodyHtml = '<div class="text-sm text-slate-600 leading-relaxed" style="word-break:break-word;">' + sanitizeHtml(c.body) + '</div>';
       }
     }
-    html += '<div class="ref-card' + pinClass + '">' +
+    html += '<div class="ref-card' + pinClass + '" ondblclick="openRefFullModal(\'' + c._id + '\')">' +
       '<div class="ref-card-header flex justify-between items-start mb-3">' +
         '<h3 class="font-bold text-sm text-slate-900 pr-2">' + escHtml(c.title || '') + '</h3>' +
         '<button onclick="toggleRefPin(\'' + c._id + '\')" class="shrink-0 p-0.5 rounded hover:bg-slate-100 transition-colors">' + pinIcon + '</button>' +
@@ -13805,9 +13856,39 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
-function renderBold(text) {
-  var escaped = escHtml(text);
-  return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+function sanitizeHtml(html) {
+  var tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  function walk(node) {
+    var out = '';
+    node.childNodes.forEach(function(n) {
+      if (n.nodeType === 3) { out += escHtml(n.textContent); return; }
+      if (n.nodeType !== 1) return;
+      var tag = n.tagName.toLowerCase();
+      var allowed = ['strong','b','em','i','u','s','br','div'];
+      if (allowed.indexOf(tag) >= 0) {
+        if (tag === 'br') { out += '<br>'; return; }
+        var mapped = tag === 'b' ? 'strong' : tag === 'i' ? 'em' : tag;
+        out += '<' + mapped + '>' + walk(n) + '</' + mapped + '>';
+      } else {
+        out += walk(n);
+      }
+    });
+    return out;
+  }
+  return walk(tmp);
+}
+
+function stripHtml(html) {
+  var tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+function migrateMarkdown(text) {
+  if (!text || text.indexOf('**') < 0) return text;
+  if (text.indexOf('<') >= 0) return text;
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 
 function refTimeAgo(ts) {
@@ -13824,7 +13905,7 @@ function refTimeAgo(ts) {
 function openRefModal(editId) {
   _refEditId = editId || null;
   document.getElementById('ref-input-title').value = '';
-  document.getElementById('ref-input-body').value = '';
+  document.getElementById('ref-input-body').innerHTML = '';
   document.getElementById('ref-input-code').checked = false;
 
   if (_refEditId) {
@@ -13832,7 +13913,7 @@ function openRefModal(editId) {
     var card = _refCards.find(function(c) { return c._id === _refEditId; });
     if (card) {
       document.getElementById('ref-input-title').value = card.title || '';
-      document.getElementById('ref-input-body').value = card.body || '';
+      document.getElementById('ref-input-body').innerHTML = card.isCode ? escHtml(card.body || '') : (card.body || '');
       document.getElementById('ref-input-code').checked = !!card.isCode;
     }
   } else {
@@ -13850,8 +13931,9 @@ function closeRefModal() {
 async function saveRefCard() {
   var title = document.getElementById('ref-input-title').value.trim();
   if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 제목을 입력하세요'); return; }
-  var body = document.getElementById('ref-input-body').value.trim();
+  var el = document.getElementById('ref-input-body');
   var isCode = document.getElementById('ref-input-code').checked;
+  var body = isCode ? (el.textContent || '').trim() : sanitizeHtml(el.innerHTML).trim();
   var now = new Date();
 
   try {
@@ -13885,7 +13967,7 @@ async function toggleRefPin(id) {
 function copyRefCard(id) {
   var card = _refCards.find(function(c) { return c._id === id; });
   if (!card) return;
-  var text = card.body || card.title || '';
+  var text = card.isCode ? (card.body || card.title || '') : stripHtml(card.body || card.title || '');
   navigator.clipboard.writeText(text).then(function() {
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 복사됨!');
   });
@@ -13914,7 +13996,43 @@ async function confirmDeleteRefCard() {
   }
 }
 
-// Search with debounce + Ctrl+B shortcut
+// Full-screen modal functions
+var _refFullEditId = null;
+
+function openRefFullModal(editId) {
+  _refFullEditId = editId || null;
+  var card = _refCards.find(function(c) { return c._id === _refFullEditId; });
+  if (!card) return;
+  document.getElementById('ref-full-title').value = card.title || '';
+  document.getElementById('ref-full-body').innerHTML = card.isCode ? escHtml(card.body || '') : (card.body || '');
+  document.getElementById('ref-full-code').checked = !!card.isCode;
+  document.getElementById('ref-full-modal').style.cssText = 'display:flex!important';
+}
+
+function closeRefFullModal() {
+  document.getElementById('ref-full-modal').style.cssText = 'display:none!important';
+  _refFullEditId = null;
+}
+
+async function saveRefFullCard() {
+  var title = document.getElementById('ref-full-title').value.trim();
+  if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 제목을 입력하세요'); return; }
+  var el = document.getElementById('ref-full-body');
+  var isCode = document.getElementById('ref-full-code').checked;
+  var body = isCode ? (el.textContent || '').trim() : sanitizeHtml(el.innerHTML).trim();
+  var now = new Date();
+  try {
+    await db.collection('workspace_references').doc(_refFullEditId).update({ title: title, body: body, isCode: isCode, updatedAt: now });
+    closeRefFullModal();
+    await loadReference();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정됨');
+  } catch(e) {
+    console.error('[Reference] save error:', e);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
+  }
+}
+
+// Search with debounce + ESC to close full modal
 document.addEventListener('DOMContentLoaded', function() {
   var searchEl = document.getElementById('ref-search');
   if (searchEl) {
@@ -13925,27 +14043,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Ctrl+B / Cmd+B bold toggle in textarea
   document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-      var ta = document.getElementById('ref-input-body');
-      if (!ta || document.activeElement !== ta) return;
-      e.preventDefault();
-      var start = ta.selectionStart;
-      var end = ta.selectionEnd;
-      var val = ta.value;
-      if (start === end) return;
-      var selected = val.substring(start, end);
-      // Toggle: if already wrapped, unwrap
-      if (val.substring(start - 2, start) === '**' && val.substring(end, end + 2) === '**') {
-        ta.value = val.substring(0, start - 2) + selected + val.substring(end + 2);
-        ta.selectionStart = start - 2;
-        ta.selectionEnd = end - 2;
-      } else {
-        ta.value = val.substring(0, start) + '**' + selected + '**' + val.substring(end);
-        ta.selectionStart = start + 2;
-        ta.selectionEnd = end + 2;
-      }
+    if (e.key === 'Escape') {
+      if (document.getElementById('ref-full-modal').style.cssText.indexOf('flex') >= 0) closeRefFullModal();
     }
   });
 });
