@@ -12329,7 +12329,7 @@ async function autoGenerateReview() {
   // Step C: API 호출
   var requestBody = {
     model: model,
-    max_tokens: 16384,
+    max_tokens: 32000,
     temperature: 0.5,
     messages: [{ role: 'user', content: filledPrompt }]
   };
@@ -12400,9 +12400,9 @@ async function autoGenerateReview() {
 
     // stop_reason 검증: 응답이 잘렸는지 확인
     if (data.stop_reason === 'max_tokens') {
-      console.warn('[AutoReview] 응답이 max_tokens에 도달해 잘렸음. stop_reason:', data.stop_reason, '응답 길이:', responseText.length);
+      console.error('[AutoReview] 응답이 max_tokens(32000)에 도달해도 잘림. 응답 길이:', responseText.length);
       showAutoError(
-        '응답이 너무 길어 잘렸어요. 수업이 너무 긴 경우 발생할 수 있어요. 트랜스크립트를 나눠서 시도해보세요.',
+        '수업이 너무 길어 한 번에 처리하기 어려워요. 트랜스크립트를 반으로 나눠 시도해주세요.',
         '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>',
         responseText
       );
