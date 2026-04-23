@@ -197,9 +197,16 @@
     .review-dz-success { border-color: #10b981 !important; background: rgba(16,185,129,0.08) !important; }
 
     /* ===== REVIEW FONT SIZE ===== */
-    #eng-detail-content.review-size-small { font-size: 0.9em; }
-    #eng-detail-content.review-size-medium { font-size: 1em; }
-    #eng-detail-content.review-size-large { font-size: 1.15em; }
+    /* Base font size on section content cards */
+    #eng-detail-content.review-size-small section > .bg-white { font-size: 14px; }
+    #eng-detail-content.review-size-medium section > .bg-white { font-size: 16px; }
+    #eng-detail-content.review-size-large section > .bg-white { font-size: 18px; }
+    /* Convert Tailwind rem-based text utilities to em so they scale with parent */
+    #eng-detail-content section > .bg-white .text-\[10px\] { font-size: 0.625em; }
+    #eng-detail-content section > .bg-white .text-xs { font-size: 0.75em; }
+    #eng-detail-content section > .bg-white .text-sm { font-size: 0.875em; }
+    #eng-detail-content section > .bg-white .text-base { font-size: 1em; }
+    /* Button styles */
     .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:#94a3b8; }
     .review-font-btn:hover { background:#ede9fe; }
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
@@ -2104,7 +2111,7 @@
 
       <!-- Session Detail View (트래커에서 리뷰 보기 시 표시) -->
       <div id="eng-detail-view" style="display:none">
-        <div id="eng-back-btn" class="fixed z-30" style="display:none;top:76px;right:24px;">
+        <div id="eng-back-btn" class="mb-4" style="display:none;">
           <button onclick="closeSessionDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
             <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> 트래커로
           </button>
@@ -11871,6 +11878,7 @@ function setReviewFontSize(size) {
   el.classList.remove('review-size-small', 'review-size-medium', 'review-size-large');
   el.classList.add('review-size-' + size);
   localStorage.setItem('atelier_review_font_size', size);
+  console.log('[FontSize]', size, '| 컨테이너 클래스:', el.className);
   // 버튼 UI 업데이트
   var btns = document.querySelectorAll('#review-font-btns .review-font-btn');
   btns.forEach(function(btn) {
@@ -11937,7 +11945,7 @@ function initEngScrollSpy() {
 
 function closeSessionDetail() {
   _currentSessionId = null;
-  // fixed 버튼 숨기기
+  // 뒤로가기 버튼 숨기기
   var backBtn = document.getElementById('eng-back-btn');
   if (backBtn) backBtn.style.display = 'none';
   // 중복 모달 강제 닫기 (잘못 열려있으면)
