@@ -217,7 +217,7 @@
     .ref-card:hover .ref-actions { opacity:1; }
     .ref-card.pinned { border-left:3px solid #7c3aed; }
     .ref-card-header { flex-shrink:0; }
-    .ref-card-body { flex:1; overflow-y:auto; min-height:0; }
+    .ref-card-body { flex:1; overflow-y:auto; min-height:0; word-break:break-word; }
     .ref-card-body::-webkit-scrollbar { width:4px; }
     .ref-card-body::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
     .ref-card-body::-webkit-scrollbar-track { background:transparent; }
@@ -228,14 +228,25 @@
     .ref-add-card:hover .ref-add-icon { background:#7c3aed; color:#fff; }
     .ref-add-icon { width:48px; height:48px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; transition:all .2s; }
     .ref-code-block { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; font-family:monospace; font-size:13px; line-height:1.6; color:#334155; white-space:pre-wrap; word-break:break-all; }
-    .ref-toolbar { display:flex; gap:2px; }
-    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:#64748b; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+    .ref-toolbar { display:flex; gap:2px; align-items:center; flex-wrap:wrap; }
+    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:#64748b; display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
     .ref-toolbar button:hover { background:#ede9fe; color:#7c3aed; }
-    .ref-editor { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; outline:none; min-height:150px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
-    .ref-editor:focus { ring:2px; border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
+    .ref-toolbar .tb-sep { width:1px; height:20px; background:#e2e8f0; margin:0 4px; flex-shrink:0; }
+    .ref-toolbar .tb-color-bar { position:absolute; bottom:4px; left:8px; right:8px; height:3px; border-radius:1px; }
+    .ref-popover { position:absolute; top:100%; left:0; z-index:10; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none; }
+    .ref-popover.open { display:flex; gap:6px; flex-wrap:wrap; }
+    .ref-popover .cp-dot { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all .1s; }
+    .ref-popover .cp-dot:hover { transform:scale(1.2); }
+    .ref-popover .cp-dot.active { border-color:#7c3aed; }
+    .ref-popover .fs-opt { padding:4px 12px; border-radius:6px; cursor:pointer; font-size:13px; color:#475569; white-space:nowrap; }
+    .ref-popover .fs-opt:hover { background:#ede9fe; color:#7c3aed; }
+    .ref-editor { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
+    .ref-editor:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
     .ref-editor:empty::before { content:attr(data-placeholder); color:#94a3b8; pointer-events:none; }
     .ref-editor::-webkit-scrollbar { width:4px; }
     .ref-editor::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
+    .ref-editor code { background:#f1f5f9; padding:2px 6px; border-radius:4px; font-family:'Fira Code',monospace; font-size:0.9em; }
+    .ref-card-body code { background:#f1f5f9; padding:1px 4px; border-radius:3px; font-family:'Fira Code',monospace; font-size:0.9em; }
 
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
@@ -13451,11 +13462,42 @@ speaker 설정:
               <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
             </label>
           </div>
-          <div class="ref-toolbar">
-            <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
-            <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-            <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+          <div class="ref-toolbar" id="ref-tb-small">
+            <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold"><b>B</b></button>
+            <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic"><i>I</i></button>
+            <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline"><u>U</u></button>
             <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+            <span class="tb-sep"></span>
+            <button onmousedown="event.preventDefault();refTogglePop('fs-pop-s')" title="폰트 크기" style="font-size:13px;font-weight:700">A<span style="font-size:9px">▾</span>
+              <div class="ref-popover" id="fs-pop-s" style="width:90px;flex-direction:column;gap:2px">
+                <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('1')">작게</div>
+                <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('3')">보통</div>
+                <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('5')">크게</div>
+              </div>
+            </button>
+            <span class="tb-sep"></span>
+            <button onmousedown="event.preventDefault();refTogglePop('tc-pop-s')" title="텍스트 색상">A<span class="tb-color-bar" style="background:#e53e3e"></span>
+              <div class="ref-popover" id="tc-pop-s" style="width:180px">
+                <div class="cp-dot" style="background:#1d1a23" onmousedown="event.stopPropagation();refTextColor('#1d1a23')"></div>
+                <div class="cp-dot" style="background:#e53e3e" onmousedown="event.stopPropagation();refTextColor('#e53e3e')"></div>
+                <div class="cp-dot" style="background:#3182ce" onmousedown="event.stopPropagation();refTextColor('#3182ce')"></div>
+                <div class="cp-dot" style="background:#38a169" onmousedown="event.stopPropagation();refTextColor('#38a169')"></div>
+                <div class="cp-dot" style="background:#6b38d4" onmousedown="event.stopPropagation();refTextColor('#6b38d4')"></div>
+                <div class="cp-dot" style="background:#718096" onmousedown="event.stopPropagation();refTextColor('#718096')"></div>
+              </div>
+            </button>
+            <button onmousedown="event.preventDefault();refTogglePop('bg-pop-s')" title="배경 색상"><span class="material-symbols-outlined" style="font-size:18px">ink_highlighter</span>
+              <div class="ref-popover" id="bg-pop-s" style="width:200px">
+                <div class="cp-dot" style="background:#fef3c7" onmousedown="event.stopPropagation();refBgColor('#fef3c7')"></div>
+                <div class="cp-dot" style="background:#fce7f3" onmousedown="event.stopPropagation();refBgColor('#fce7f3')"></div>
+                <div class="cp-dot" style="background:#dbeafe" onmousedown="event.stopPropagation();refBgColor('#dbeafe')"></div>
+                <div class="cp-dot" style="background:#d1fae5" onmousedown="event.stopPropagation();refBgColor('#d1fae5')"></div>
+                <div class="cp-dot" style="background:#ede9fe" onmousedown="event.stopPropagation();refBgColor('#ede9fe')"></div>
+                <div class="cp-dot" style="background:#fff;border-color:#e2e8f0" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
+              </div>
+            </button>
+            <span class="tb-sep"></span>
+            <button onmousedown="event.preventDefault();refToggleCode()" title="코드" style="font-size:12px;font-weight:600">&lt;/&gt;</button>
           </div>
           <div id="ref-input-body" contenteditable="true" class="ref-editor" data-placeholder="내용을 입력하세요..."></div>
         </div>
@@ -13470,23 +13512,54 @@ speaker 설정:
   <!-- Reference Full-Screen Edit Modal -->
   <div id="ref-full-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important" onclick="if(event.target===this)closeRefFullModal()">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col" style="width:min(90vw,800px);height:min(80vh,600px)">
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
-        <input id="ref-full-title" type="text" placeholder="카드 제목" class="text-lg font-bold text-slate-900 outline-none flex-1 mr-4"/>
-        <button onclick="closeRefFullModal()" class="p-1.5 hover:bg-slate-100 rounded-lg"><span class="material-symbols-outlined text-slate-400">close</span></button>
+      <div class="px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-t-2xl flex items-center justify-between shrink-0">
+        <input id="ref-full-title" type="text" placeholder="카드 제목" class="text-lg font-bold text-white outline-none flex-1 mr-4 bg-transparent placeholder:text-white/60"/>
+        <button onclick="closeRefFullModal()" class="p-1.5 hover:bg-white/20 rounded-lg transition-colors"><span class="material-symbols-outlined text-white/80">close</span></button>
       </div>
       <div class="px-6 py-2 border-b border-slate-100 flex items-center justify-between shrink-0">
-        <div class="ref-toolbar">
-          <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
-          <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-          <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+        <div class="ref-toolbar" id="ref-tb-full">
+          <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold"><b>B</b></button>
+          <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic"><i>I</i></button>
+          <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline"><u>U</u></button>
           <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+          <span class="tb-sep"></span>
+          <button onmousedown="event.preventDefault();refTogglePop('fs-pop-f')" title="폰트 크기" style="font-size:13px;font-weight:700">A<span style="font-size:9px">▾</span>
+            <div class="ref-popover" id="fs-pop-f" style="width:90px;flex-direction:column;gap:2px">
+              <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('1')">작게</div>
+              <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('3')">보통</div>
+              <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('5')">크게</div>
+            </div>
+          </button>
+          <span class="tb-sep"></span>
+          <button onmousedown="event.preventDefault();refTogglePop('tc-pop-f')" title="텍스트 색상">A<span class="tb-color-bar" style="background:#e53e3e"></span>
+            <div class="ref-popover" id="tc-pop-f" style="width:180px">
+              <div class="cp-dot" style="background:#1d1a23" onmousedown="event.stopPropagation();refTextColor('#1d1a23')"></div>
+              <div class="cp-dot" style="background:#e53e3e" onmousedown="event.stopPropagation();refTextColor('#e53e3e')"></div>
+              <div class="cp-dot" style="background:#3182ce" onmousedown="event.stopPropagation();refTextColor('#3182ce')"></div>
+              <div class="cp-dot" style="background:#38a169" onmousedown="event.stopPropagation();refTextColor('#38a169')"></div>
+              <div class="cp-dot" style="background:#6b38d4" onmousedown="event.stopPropagation();refTextColor('#6b38d4')"></div>
+              <div class="cp-dot" style="background:#718096" onmousedown="event.stopPropagation();refTextColor('#718096')"></div>
+            </div>
+          </button>
+          <button onmousedown="event.preventDefault();refTogglePop('bg-pop-f')" title="배경 색상"><span class="material-symbols-outlined" style="font-size:18px">ink_highlighter</span>
+            <div class="ref-popover" id="bg-pop-f" style="width:200px">
+              <div class="cp-dot" style="background:#fef3c7" onmousedown="event.stopPropagation();refBgColor('#fef3c7')"></div>
+              <div class="cp-dot" style="background:#fce7f3" onmousedown="event.stopPropagation();refBgColor('#fce7f3')"></div>
+              <div class="cp-dot" style="background:#dbeafe" onmousedown="event.stopPropagation();refBgColor('#dbeafe')"></div>
+              <div class="cp-dot" style="background:#d1fae5" onmousedown="event.stopPropagation();refBgColor('#d1fae5')"></div>
+              <div class="cp-dot" style="background:#ede9fe" onmousedown="event.stopPropagation();refBgColor('#ede9fe')"></div>
+              <div class="cp-dot" style="background:#fff;border-color:#e2e8f0" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
+            </div>
+          </button>
+          <span class="tb-sep"></span>
+          <button onmousedown="event.preventDefault();refToggleCode()" title="코드" style="font-size:12px;font-weight:600">&lt;/&gt;</button>
         </div>
-        <label class="flex items-center gap-1.5 cursor-pointer select-none">
+        <label class="flex items-center gap-1.5 cursor-pointer select-none shrink-0 ml-3">
           <input id="ref-full-code" type="checkbox" class="w-4 h-4 rounded accent-indigo-600"/>
           <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
         </label>
       </div>
-      <div id="ref-full-body" contenteditable="true" class="ref-editor flex-1 overflow-y-auto" data-placeholder="내용을 입력하세요..." style="min-height:0"></div>
+      <div id="ref-full-body" contenteditable="true" class="ref-editor flex-1 overflow-y-auto" data-placeholder="내용을 입력하세요..." style="min-height:0;border-radius:0;border-left:none;border-right:none"></div>
       <div class="px-6 py-4 border-t border-slate-100 flex gap-2 justify-end shrink-0">
         <button onclick="closeRefFullModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
         <button onclick="saveRefFullCard()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
@@ -13859,17 +13932,41 @@ function escHtml(s) {
 function sanitizeHtml(html) {
   var tmp = document.createElement('div');
   tmp.innerHTML = html;
+  var allowedStyles = ['color','background-color','font-size'];
+  function cleanStyle(el) {
+    var s = el.getAttribute('style');
+    if (!s) return '';
+    var parts = s.split(';').map(function(p){ return p.trim(); }).filter(function(p){
+      var prop = (p.split(':')[0] || '').trim().toLowerCase();
+      return allowedStyles.indexOf(prop) >= 0;
+    });
+    return parts.length ? ' style="' + escHtml(parts.join(';')) + '"' : '';
+  }
   function walk(node) {
     var out = '';
     node.childNodes.forEach(function(n) {
       if (n.nodeType === 3) { out += escHtml(n.textContent); return; }
       if (n.nodeType !== 1) return;
       var tag = n.tagName.toLowerCase();
-      var allowed = ['strong','b','em','i','u','s','br','div'];
+      var allowed = ['strong','b','em','i','u','s','br','div','p','span','code','font'];
       if (allowed.indexOf(tag) >= 0) {
         if (tag === 'br') { out += '<br>'; return; }
+        // Map deprecated tags
         var mapped = tag === 'b' ? 'strong' : tag === 'i' ? 'em' : tag;
-        out += '<' + mapped + '>' + walk(n) + '</' + mapped + '>';
+        // Handle <font> from execCommand('fontSize')
+        if (tag === 'font') {
+          var size = n.getAttribute('size');
+          var fontSize = size === '1' ? '12px' : size === '5' ? '18px' : '';
+          var color = n.getAttribute('color') || '';
+          var st = '';
+          if (fontSize) st += 'font-size:' + fontSize + ';';
+          if (color && /^#[0-9a-fA-F]{3,8}$/.test(color)) st += 'color:' + color + ';';
+          if (st) { out += '<span style="' + st + '">' + walk(n) + '</span>'; }
+          else { out += walk(n); }
+          return;
+        }
+        var styleAttr = (tag === 'span' || tag === 'code') ? cleanStyle(n) : '';
+        out += '<' + mapped + styleAttr + '>' + walk(n) + '</' + mapped + '>';
       } else {
         out += walk(n);
       }
@@ -13996,6 +14093,73 @@ async function confirmDeleteRefCard() {
   }
 }
 
+// ===== Toolbar helper functions =====
+function refTogglePop(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  // Close all other popovers first
+  document.querySelectorAll('.ref-popover.open').forEach(function(p) { if (p.id !== id) p.classList.remove('open'); });
+  el.classList.toggle('open');
+}
+
+function refCloseAllPops() {
+  document.querySelectorAll('.ref-popover.open').forEach(function(p) { p.classList.remove('open'); });
+}
+
+function refFontSize(size) {
+  document.execCommand('fontSize', false, size);
+  refCloseAllPops();
+}
+
+function refTextColor(color) {
+  document.execCommand('foreColor', false, color);
+  refCloseAllPops();
+}
+
+function refBgColor(color) {
+  if (color === 'transparent') {
+    document.execCommand('removeFormat', false, 'backColor');
+    // hiliteColor fallback
+    document.execCommand('backColor', false, 'transparent');
+  } else {
+    document.execCommand('backColor', false, color);
+  }
+  refCloseAllPops();
+}
+
+function refToggleCode() {
+  var sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  var range = sel.getRangeAt(0);
+  // Check if already inside <code>
+  var parent = sel.anchorNode;
+  while (parent && parent.nodeType !== 1) parent = parent.parentNode;
+  if (parent && parent.tagName === 'CODE') {
+    // Unwrap
+    var text = document.createTextNode(parent.textContent);
+    parent.parentNode.replaceChild(text, parent);
+    sel.removeAllRanges();
+    var r = document.createRange();
+    r.selectNodeContents(text);
+    sel.addRange(r);
+  } else if (!range.collapsed) {
+    // Wrap selection in <code>
+    var code = document.createElement('code');
+    try {
+      range.surroundContents(code);
+    } catch(e) {
+      // If selection spans multiple elements, extract and wrap
+      var frag = range.extractContents();
+      code.appendChild(frag);
+      range.insertNode(code);
+    }
+    sel.removeAllRanges();
+    var r2 = document.createRange();
+    r2.selectNodeContents(code);
+    sel.addRange(r2);
+  }
+}
+
 // Full-screen modal functions
 var _refFullEditId = null;
 
@@ -14045,8 +14209,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
+      refCloseAllPops();
       if (document.getElementById('ref-full-modal').style.cssText.indexOf('flex') >= 0) closeRefFullModal();
     }
+  });
+
+  // Close popovers on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.ref-toolbar')) refCloseAllPops();
   });
 });
 
