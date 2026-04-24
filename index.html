@@ -9538,9 +9538,23 @@
         var col2 = MERGE_COLS[mc2];
         if (skipSet[col2]) continue; // covered by rowspan above
         var cs = COL_STYLES[col2];
-        var span2 = startSet[col2] || 1;
+        var chipColor = cs.color;
+        var chipBg = cs.bg;
+        // 글쓰기(5)/연재(6) 칸: 시리즈 색상 동적 적용
         var val = row ? row[col2] : '';
-        var chipHtml = mxChip(val, cs.color, d.date, col2, i, cs.bg, span2 > 1);
+        if (val && (col2 === 5 || col2 === 6)) {
+          var _pe = plannerData.find(function(pr) { return pr[0] === d.date && pr[1] === val && (pr[2]||'').trim() === '글쓰기'; });
+          if (_pe && _pe[3] && _pe[3] !== 'sky') {
+            var _sc = _pe[3]; // Tailwind color name: indigo, amber, etc.
+            chipColor = 'text-' + _sc + '-900';
+            chipBg = 'background:var(--mx-' + _sc + ',rgba(99,102,241,0.25))';
+            // Inline fallback colors
+            var _scMap = { indigo:'rgba(99,102,241,0.25)', amber:'rgba(245,158,11,0.25)', rose:'rgba(244,63,94,0.25)', teal:'rgba(20,184,166,0.25)', purple:'rgba(168,85,247,0.25)', blue:'rgba(59,130,246,0.25)', cyan:'rgba(6,182,212,0.25)', orange:'rgba(249,115,22,0.25)' };
+            if (_scMap[_sc]) chipBg = 'background:' + _scMap[_sc];
+          }
+        }
+        var span2 = startSet[col2] || 1;
+        var chipHtml = mxChip(val, chipColor, d.date, col2, i, chipBg, span2 > 1);
         var spanAttr = span2 > 1 ? ' rowspan="' + span2 + '"' : '';
         var alignStyle = span2 > 1 ? ' style="vertical-align:top;padding:0;height:1px"' : '';
         html += '<td class="p-0 ' + (span2 > 1 ? 'align-top' : 'align-top') + ' transition-all cursor-pointer hover:bg-[#f8f1fe]/40"' + spanAttr + alignStyle +
