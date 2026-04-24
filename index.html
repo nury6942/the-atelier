@@ -11334,7 +11334,7 @@
 
     // 1. 시놉: 빈 날 20일
     var synStart = new Date(input.start_date + 'T00:00:00');
-    var synDays = findNextAvailableDays(synStart, 20);
+    var synDays = findNextAvailableDays(synStart, 28);
     var synEnd = synDays.length > 0 ? synDays[synDays.length - 1] : synStart;
 
     // 2. 초고: 평일 0.5화/일, 주말 1화/일
