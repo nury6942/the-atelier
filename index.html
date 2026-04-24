@@ -11479,7 +11479,8 @@
     Object.keys(groups).forEach(function(seriesName) {
       html += '<div class="mb-5 last:mb-0">';
       html += '<div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-indigo-500" style="font-size:18px">auto_stories</span><span class="text-sm font-bold text-slate-800">' + seriesName + '</span></div>';
-      groups[seriesName].forEach(function(w) {
+      var grpWorks = groups[seriesName];
+      grpWorks.forEach(function(w) {
         var phase = w.current_phase || 'synopsis';
         var meta = _wpMeta[phase] || _wpMeta.synopsis;
         var pct = _wpProgress(w);
@@ -11541,6 +11542,35 @@
         html += '</div>';
         html += '</div>';
       });
+      // 추천 시작일 (마지막 작품 기준)
+      var lastW = grpWorks.slice().sort(function(a,b){ return (b.publish_end||'').localeCompare(a.publish_end||''); })[0];
+      if (lastW && lastW.publish_end) {
+        var lEnd = new Date(lastW.publish_end + 'T00:00:00');
+        var pDay = parseInt(lastW.publish_day) || 5;
+        var _nw = function(base) { var d = new Date(base.getTime()); while (d.getDay() !== pDay) d.setDate(d.getDate() + 1); return d; };
+        var earlyD = _nw(new Date(lEnd.getTime() - 14*86400000));
+        var contD = _nw(new Date(lEnd.getTime() + 7*86400000));
+        var restD = _nw(new Date(lEnd.getTime() + 14*86400000));
+        var sid = lastW.series_id || '';
+        var _fd = function(d) { return d.toLocaleDateString('ko-KR',{month:'short',day:'numeric'}); };
+        html += '<div class="mt-3 p-4 rounded-xl bg-slate-50/80 border border-slate-100">' +
+          '<div class="text-[10px] font-bold text-slate-400 mb-2">💡 다음 작품 추천 시작일</div>' +
+          '<div class="flex gap-2">' +
+            '<button onclick="quickNewWork(\'' + sid + '\',\'' + _fmtDate(earlyD) + '\')" class="flex-1 p-2.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 hover:border-amber-300 transition-all text-left cursor-pointer group">' +
+              '<div class="text-[10px] font-bold text-amber-700">🌅 거의 완결 쯤</div>' +
+              '<div class="text-xs font-black text-amber-900 mt-0.5">' + _fd(earlyD) + '</div>' +
+            '</button>' +
+            '<button onclick="quickNewWork(\'' + sid + '\',\'' + _fmtDate(contD) + '\')" class="flex-1 p-2.5 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-300 transition-all text-left cursor-pointer group">' +
+              '<div class="text-[10px] font-bold text-indigo-700">🏁 완결 다음 화</div>' +
+              '<div class="text-xs font-black text-indigo-900 mt-0.5">' + _fd(contD) + '</div>' +
+            '</button>' +
+            '<button onclick="quickNewWork(\'' + sid + '\',\'' + _fmtDate(restD) + '\')" class="flex-1 p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 transition-all text-left cursor-pointer group">' +
+              '<div class="text-[10px] font-bold text-emerald-700">☕ 2주 텀 후</div>' +
+              '<div class="text-xs font-black text-emerald-900 mt-0.5">' + _fd(restD) + '</div>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }
       html += '</div>';
     });
     el.innerHTML = html;
@@ -11663,6 +11693,16 @@
     document.getElementById('nw-preview').style.display = 'none';
     document.getElementById('new-work-modal').style.cssText = 'display:flex!important';
     setTimeout(function() { initSimpleDatePicker('nw-start-date'); initSimpleDatePicker('nw-publish-start'); }, 80);
+  }
+
+  function quickNewWork(seriesId, publishStart) {
+    openNewWorkModal();
+    // Pre-fill series
+    var sel = document.getElementById('nw-series');
+    if (sel) sel.value = seriesId;
+    // Pre-fill publish start
+    var pubEl = document.getElementById('nw-publish-start');
+    if (pubEl) pubEl.value = publishStart;
   }
 
   function closeNewWorkModal() {
