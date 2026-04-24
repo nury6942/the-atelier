@@ -2811,6 +2811,12 @@
               <span id="cal-leave-left" class="font-black text-indigo-600">22</span>
               <span class="text-xs text-slate-400">일</span>
             </div>
+            <div id="cal-special-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="특별휴가 현황" style="display:none">
+              <span class="material-symbols-outlined" style="font-size:16px;color:#ec4899">card_giftcard</span>
+              <span class="font-bold text-slate-700">특별</span>
+              <span id="cal-special-used" class="font-black text-pink-600">0</span>
+              <span class="text-xs text-slate-400">일</span>
+            </div>
             <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
               <span class="material-symbols-outlined text-sm">add</span> 일정 추가
             </button>
@@ -2953,7 +2959,7 @@
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="p-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="p-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
                     <div class="atl-field"><label>카테고리</label>
-                      <select id="p-category" style="display:none"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>생일</option></select>
+                      <select id="p-category" style="display:none"><option>업무</option><option>연차</option><option>특별휴가</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>생일</option></select>
                       <div id="p-cat-dropdown" class="relative"></div>
                     </div>
                     <div id="p-birthday-wrap" class="atl-field" style="display:none"><label class="flex items-center gap-2 cursor-pointer"><input id="p-yearly-repeat" type="checkbox" checked class="accent-yellow-400 w-4 h-4"/><span class="text-sm font-bold text-slate-700">매년 반복</span><span class="text-xs text-slate-400">(매년 같은 날짜에 자동 표시)</span></label></div>
@@ -3369,13 +3375,14 @@
     'orange':  'bg-pastel-orange text-pastel-orange-text border-pastel-orange-text/20',
     'indigo':  'bg-indigo-100 text-indigo-800 border-indigo-200',
     'birthday': 'bg-[#facc15] text-[#1d1a23] border-[#facc15]/40',
+    'pink':    'bg-pink-100 text-pink-700 border-pink-200',
   };
   const CAT_TRACK = {
     '글쓰기':'writing','영어':'english','스터디':'study',
     '업무':'work','개인':'personal','연차':'vacation'
   };
   const CAT_COLOR = {
-    '업무':'rose','연차':'orange','개인':'amber','글쓰기':'sky',
+    '업무':'rose','연차':'orange','특별휴가':'pink','개인':'amber','글쓰기':'sky',
     '영어':'lime','스터디':'violet','생일':'birthday'
   };
 
@@ -3610,10 +3617,15 @@
       const isHoliday = !!holidays[dateStr];
       const holidayName = holidays[dateStr] || '';
 
+      var hasLeave = events.some(function(ev) { return ev[2] === '연차'; });
+      var hasSpecial = events.some(function(ev) { return ev[2] === '특별휴가'; });
+
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
-      if (isToday) { cell.style.background = 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
+      if (isToday) { cell.style.background = hasLeave ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(167,243,208,0.3))' : hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.03)'; }
+      else if (hasLeave) { cell.style.background = '#d1fae5'; }
+      else if (hasSpecial) { cell.style.background = '#fce7f3'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
       cell.ondblclick = function() { openPlannerModal(null, dateStr); };
@@ -3825,6 +3837,25 @@
     }
     var tracker = document.getElementById('cal-leave-tracker');
     if (tracker) tracker.title = plannerYear + '년 연차 현황: ' + used + '일 사용, ' + left + '일 남음';
+
+    // 특별휴가 집계
+    var specialUsed = 0;
+    plannerData.forEach(function(row) {
+      if (row[2] !== '특별휴가') return;
+      var d = (row[0] || '').toString();
+      if (!d.startsWith(yr)) return;
+      var notes = (row[4] || '').toString();
+      var sm = notes.match(/^leave:([\d.]+)/);
+      if (sm) { specialUsed += parseFloat(sm[1]); }
+      else { specialUsed += 1; }
+    });
+    var spEl = document.getElementById('cal-special-used');
+    var spTracker = document.getElementById('cal-special-tracker');
+    if (spEl) spEl.textContent = specialUsed % 1 === 0 ? specialUsed : specialUsed.toFixed(1);
+    if (spTracker) {
+      spTracker.style.display = specialUsed > 0 ? '' : 'none';
+      spTracker.title = plannerYear + '년 특별휴가: ' + specialUsed + '일 사용';
+    }
   }
 
   function prevMonth() {
@@ -3844,8 +3875,9 @@
   function toggleLeaveDay() {
     var cat = document.getElementById('p-category').value;
     var wrap = document.getElementById('p-leave-day-wrap');
-    wrap.style.display = cat === '연차' ? 'block' : 'none';
-    if (cat === '연차') calcLeaveDays();
+    var isLeave = cat === '연차' || cat === '특별휴가';
+    wrap.style.display = isLeave ? 'block' : 'none';
+    if (isLeave) calcLeaveDays();
     var bdayWrap = document.getElementById('p-birthday-wrap');
     bdayWrap.style.display = cat === '생일' ? 'block' : 'none';
   }
@@ -4043,6 +4075,7 @@
     options: [
       { value: '업무',  dot: '#f43f5e', label: '업무' },
       { value: '연차',  dot: '#f97316', label: '연차' },
+      { value: '특별휴가', dot: '#ec4899', label: '특별휴가', emoji: '🎁' },
       { value: '개인',  dot: '#f59e0b', label: '개인' },
       { value: '글쓰기', dot: '#38bdf8', label: '글쓰기' },
       { value: '영어',  dot: '#84cc16', label: '영어' },
@@ -4206,12 +4239,11 @@
       var editTitle = row[1]||'';
       if (row[2] === '생일') editTitle = editTitle.replace(/^🎂\s*/, '');
       document.getElementById('p-title').value = editTitle;
-      // 연차: notes에서 일수 파싱 ("leave:1.0 ...")
-      if (row[2] === '연차') {
+      // 연차/특별휴가: notes에서 일수 파싱 ("leave:1.0 ...")
+      if (row[2] === '연차' || row[2] === '특별휴가') {
         var lMatch = (row[4]||'').match(/^leave:([\d.]+)/);
         document.getElementById('p-leave-day').value = lMatch ? lMatch[1] : '1.0';
         document.getElementById('p-leave-day-wrap').style.display = 'block';
-        // notes에서 leave: 부분 제거해서 표시
         document.getElementById('p-notes').value = (row[4]||'').replace(/^leave:[\d.]+\s*/, '');
       } else {
         document.getElementById('p-leave-day-wrap').style.display = 'none';
@@ -4263,8 +4295,8 @@
     plannerData.forEach(function(r){ if (r[0] === dateVal && (parseInt(r[6])||0) >= maxOrder) maxOrder = (parseInt(r[6])||0) + 1; });
     var pTitle = document.getElementById('p-title').value;
     var pNotes = document.getElementById('p-notes').value;
-    // 연차일 때 일수를 notes에 저장 (제목은 깔끔하게 유지)
-    if (pCat === '연차') {
+    // 연차/특별휴가일 때 일수를 notes에 저장 (제목은 깔끔하게 유지)
+    if (pCat === '연차' || pCat === '특별휴가') {
       var leaveDay = document.getElementById('p-leave-day').value;
       pNotes = 'leave:' + leaveDay + (pNotes ? ' ' + pNotes : '');
     }
