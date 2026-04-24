@@ -2578,7 +2578,7 @@
         <header class="mb-6 flex justify-between items-center">
           <div>
             <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Annual Matrix</h2>
-            <p id="matrix-year-subtitle" class="text-slate-400 text-sm mt-1">시리즈별 월간 에피소드 & 수익 인덱스</p>
+            <p id="matrix-year-subtitle" class="text-slate-400 text-base mt-1">시리즈별 월간 에피소드 & 수익 인덱스</p>
           </div>
           <div class="flex items-center gap-3">
             <div class="flex items-center bg-slate-100 rounded-lg p-1">
@@ -2598,19 +2598,19 @@
               </colgroup>
               <thead>
                 <tr class="bg-slate-50">
-                  <th class="p-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-400 font-headline whitespace-nowrap">시리즈</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">1월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">2월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">3월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">4월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">5월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">6월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">7월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">8월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">9월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">10월</th>
-                  <th class="p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">11월</th>
-                  <th class="p-4 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">12월</th>
+                  <th class="p-3 text-left text-xs font-bold uppercase tracking-widest text-slate-400 font-headline whitespace-nowrap">시리즈</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">1월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">2월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">3월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">4월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">5월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">6월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">7월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">8월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">9월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">10월</th>
+                  <th class="p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">11월</th>
+                  <th class="p-4 text-center text-xs font-bold uppercase tracking-widest text-slate-400">12월</th>
                 </tr>
               </thead>
               <tbody id="income-matrix-body"></tbody>
@@ -2626,7 +2626,7 @@
             <h2 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">Monthly Scheduler</h2>
             <div class="flex items-center gap-2 mt-1">
               <span class="material-symbols-outlined text-sm text-indigo-600" style="font-variation-settings:'wght' 700">sync</span>
-              <p class="text-slate-400 text-xs font-medium">Annual Matrix 에피소드 인덱스와 실시간 연동</p>
+              <p class="text-slate-400 text-sm font-medium">Annual Matrix 에피소드 인덱스와 실시간 연동</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -10416,8 +10416,8 @@
       // Episode row
       html += '<tr class="group hover:bg-slate-50 transition-colors">' +
         '<td class="p-2 border-l-4 border-'+c+'-500 whitespace-nowrap"><div class="flex items-center gap-1">' +
-          '<div><div class="font-bold text-xs text-'+c+'-600">'+s.name+'</div>' +
-          '<div class="text-[9px] uppercase tracking-tighter text-slate-400">에피소드</div></div>' +
+          '<div><div class="font-bold text-sm text-'+c+'-600">'+s.name+'</div>' +
+          '<div class="text-[11px] uppercase tracking-tighter text-slate-400">에피소드</div></div>' +
           '<div class="flex gap-0.5 opacity-0 group-hover:opacity-100 ml-auto">' +
             '<button onclick="editSeries('+si+')" class="p-0.5 hover:bg-'+c+'-100 rounded text-slate-300 hover:text-'+c+'-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
             '<button onclick="deleteSeries('+si+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
@@ -10426,21 +10426,21 @@
         var d = s.monthly[m];
         var isCur = m===curMonth;
         var cls = isCur ? ' font-bold text-'+c+'-600 bg-'+c+'-50 ring-1 ring-'+c+'-200' : (d&&d.eps ? '' : ' text-slate-300');
-        html += '<td data-edit="eps" data-si="'+si+'" data-month="'+m+'" class="p-2 text-center text-[10px] cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls+'">' + (d&&d.eps ? d.eps : '—') + '</td>';
+        html += '<td data-edit="eps" data-si="'+si+'" data-month="'+m+'" class="p-2 text-center text-xs cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls+'">' + (d&&d.eps ? d.eps : '—') + '</td>';
       }
       html += '</tr>';
       // Target revenue row
       html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
-        '<td class="p-2 border-l-4 border-'+c+'-200 bg-'+c+'-50/10 whitespace-nowrap"><div class="text-[9px] uppercase tracking-tighter text-slate-400">목표</div></td>';
+        '<td class="p-2 border-l-4 border-'+c+'-200 bg-'+c+'-50/10 whitespace-nowrap"><div class="text-[11px] uppercase tracking-tighter text-slate-400">목표</div></td>';
       for (var mt=0;mt<12;mt++) {
         var dt = s.monthly[mt];
         var tgt = dt ? (dt.target||0) : 0;
-        html += '<td data-edit="target" data-si="'+si+'" data-month="'+mt+'" class="p-2 text-center text-[10px] text-slate-400 cursor-pointer hover:bg-'+c+'-50/30 transition-colors">' + (tgt ? shortRev(tgt) : '—') + '</td>';
+        html += '<td data-edit="target" data-si="'+si+'" data-month="'+mt+'" class="p-2 text-center text-xs text-slate-400 cursor-pointer hover:bg-'+c+'-50/30 transition-colors">' + (tgt ? shortRev(tgt) : '—') + '</td>';
       }
       html += '</tr>';
       // Actual revenue row
       html += '<tr class="group hover:bg-slate-50 transition-colors">' +
-        '<td class="p-2 border-l-4 border-'+c+'-300 bg-'+c+'-50/30 whitespace-nowrap"><div class="text-[9px] uppercase tracking-tighter text-slate-400">수익</div></td>';
+        '<td class="p-2 border-l-4 border-'+c+'-300 bg-'+c+'-50/30 whitespace-nowrap"><div class="text-[11px] uppercase tracking-tighter text-slate-400">수익</div></td>';
       for (var m2=0;m2<12;m2++) {
         var d2 = s.monthly[m2];
         var rev = d2 ? d2.rev : 0;
@@ -10448,24 +10448,24 @@
         var isCur2 = m2===curMonth;
         var revColor = (tgt2 && rev >= tgt2) ? ' text-emerald-600' : (tgt2 && rev > 0 && rev < tgt2) ? ' text-amber-600' : '';
         var cls2 = isCur2 ? ' font-bold text-'+c+'-600 bg-'+c+'-50' : revColor;
-        html += '<td data-edit="rev" data-si="'+si+'" data-month="'+m2+'" class="p-2 text-center text-[10px] font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'">' + shortRev(rev) + '</td>';
+        html += '<td data-edit="rev" data-si="'+si+'" data-month="'+m2+'" class="p-2 text-center text-xs font-headline cursor-pointer hover:bg-'+c+'-50/50 transition-colors'+cls2+'">' + shortRev(rev) + '</td>';
       }
       html += '</tr>';
       // 누적 행 (1월부터 해당 월까지 합산)
       html += '<tr class="hover:bg-slate-50/50 transition-colors">' +
-        '<td class="p-2 border-l-4 border-'+c+'-200 whitespace-nowrap"><div class="text-[9px] uppercase tracking-tighter text-slate-400">누적</div></td>';
+        '<td class="p-2 border-l-4 border-'+c+'-200 whitespace-nowrap"><div class="text-[11px] uppercase tracking-tighter text-slate-400">누적</div></td>';
       var cumul = 0;
       for (var mc=0;mc<12;mc++) {
         var dc = s.monthly[mc];
         cumul += dc ? (dc.rev||0) : 0;
-        html += '<td class="p-2 text-center text-[10px] text-slate-400 font-medium">' + (cumul ? shortRev(cumul) : '—') + '</td>';
+        html += '<td class="p-2 text-center text-xs text-slate-400 font-medium">' + (cumul ? shortRev(cumul) : '—') + '</td>';
       }
       html += '</tr>';
       // Progress bar
       var totalRev = cumul; var totalTgt = 0;
       for(var k in s.monthly) { totalTgt += s.monthly[k].target||0; }
       var filled = totalTgt > 0 ? Math.min(Math.round(totalRev/totalTgt*100),100) : (totalRev > 0 ? Math.min(Math.round((curMonth+1)/12*100),100) : 0);
-      html += '<tr class="border-b border-slate-100/50"><td class="p-2 border-l-4 border-'+c+'-200 whitespace-nowrap"><div class="text-[9px] uppercase tracking-tighter text-slate-400">달성</div></td>' +
+      html += '<tr class="border-b border-slate-100/50"><td class="p-2 border-l-4 border-'+c+'-200 whitespace-nowrap"><div class="text-[11px] uppercase tracking-tighter text-slate-400">달성</div></td>' +
         '<td class="p-2 px-4" colspan="12"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">' +
         '<div class="h-full bg-gradient-to-r from-'+c+'-500 to-'+c+'-400 rounded-full" style="width:'+filled+'%"></div></div>' +
         '<span class="text-[9px] font-bold text-slate-400">'+filled+'%</span></div></td></tr>';
@@ -10650,7 +10650,7 @@
     });
 
     var html = DAY_HEADERS.map(function(d) {
-      return '<div class="bg-slate-100 p-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">' + d + '</div>';
+      return '<div class="bg-slate-100 p-2 text-center text-xs font-bold uppercase tracking-widest text-slate-400">' + d + '</div>';
     }).join('');
 
     for (var b=0;b<firstDay;b++) html += '<div class="bg-white h-28 p-2 text-slate-300"></div>';
@@ -10662,8 +10662,8 @@
       var isSelDate = _calSelectedDate===dateStr;
       // 오늘: 보라 동그라미 + 날짜 숫자 흰색
       var todayHtml = isToday
-        ? '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">' + d2 + '</span>'
-        : '<span class="text-xs font-medium ' + (isSun?'text-rose-400':'text-slate-600') + '">' + d2 + '</span>';
+        ? '<span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-sm font-bold" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">' + d2 + '</span>'
+        : '<span class="text-sm font-medium ' + (isSun?'text-rose-400':'text-slate-600') + '">' + d2 + '</span>';
       var cellBorder = isSelDate ? ' ring-2 ring-indigo-400 ring-inset' : '';
       var evtHtml = '';
       if (dayEvents[d2]) {
@@ -10675,7 +10675,7 @@
             'onclick="event.stopPropagation();selectCalEvent('+ev.idx+')" ' +
             'ondblclick="event.stopPropagation();editCalEvent('+ev.idx+')" ' +
             'class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-grab hover:bg-'+c+'-200 transition-colors group/ev relative'+selCls+'">' +
-            '<p class="text-[8px] font-bold text-'+c+'-700 uppercase truncate pr-7">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
+            '<p class="text-[11px] font-bold text-'+c+'-700 truncate pr-7">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
             '<div class="absolute right-0.5 top-0.5 flex gap-px opacity-0 group-hover/ev:opacity-100 transition-opacity">' +
               '<button onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="수정"><span class="material-symbols-outlined" style="font-size:10px">edit</span></button>' +
               '<button onclick="event.stopPropagation();quickDeleteCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:10px">close</span></button>' +
