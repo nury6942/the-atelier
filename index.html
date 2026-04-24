@@ -11917,24 +11917,26 @@
       var dEnd = new Date(p.draft.end + 'T00:00:00');
       var epNum = 0;
       var dIdx = 0;
-      while (dCur <= dEnd) {
+      while (dCur <= dEnd && Math.ceil(epNum) <= eps) {
         var ds = _fmtDate(dCur);
         if (!isBlockedDay(ds)) {
           var add = _isWeekend(dCur) ? 1 : 0.5;
           epNum += add;
-          var epLabel = '초고 ' + Math.ceil(epNum) + '화';
-          events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+          if (Math.ceil(epNum) <= eps) {
+            var epLabel = '초고 ' + Math.ceil(epNum) + '화';
+            events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+          }
         }
         dCur.setDate(dCur.getDate() + 1);
       }
     }
 
-    // 퇴고: start~end 빈 날마다
+    // 퇴고: start~end 빈 날마다 (최대 eps개)
     if (p.revision && p.revision.start && p.revision.end) {
       var rCur = new Date(p.revision.start + 'T00:00:00');
       var rEnd = new Date(p.revision.end + 'T00:00:00');
       var rIdx = 0;
-      while (rCur <= rEnd) {
+      while (rCur <= rEnd && rIdx < eps) {
         var rds = _fmtDate(rCur);
         if (!isBlockedDay(rds)) {
           events.push([rds, '퇴고 ' + (rIdx + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(rIdx)]);
