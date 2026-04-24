@@ -2576,7 +2576,10 @@
               <div class="space-y-1"><label class="text-xs font-bold text-slate-500">예상 화수</label><select id="nw-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
               <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="nw-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
             </div>
-            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시작 희망일</label><input id="nw-start-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시작 희망일</label><input id="nw-start-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+              <div class="space-y-1"><label class="text-xs font-bold text-indigo-600">🎯 연재 시작일 *</label><input id="nw-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+            </div>
             <div id="nw-preview" class="rounded-xl overflow-hidden" style="display:none">
               <div class="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100"><span class="text-xs font-bold text-indigo-700">📅 예상 스케줄</span></div>
               <div id="nw-preview-content" class="px-4 py-3 bg-indigo-50/50 text-xs space-y-1.5"></div>
@@ -11302,16 +11305,17 @@
   }
 
   function calculateWorkSchedule(input) {
-    // input: { start_date, episodes, publish_day(5 or 6) }
+    // input: { start_date, episodes, publish_day, publish_start(필수-고정) }
     var eps = parseInt(input.episodes) || 20;
     var publishDay = parseInt(input.publish_day) || 5;
+    var pubStart = new Date(input.publish_start + 'T00:00:00');
 
     // 1. 시놉: 빈 날 20일
     var synStart = new Date(input.start_date + 'T00:00:00');
     var synDays = findNextAvailableDays(synStart, 20);
     var synEnd = synDays.length > 0 ? synDays[synDays.length - 1] : synStart;
 
-    // 2. 초고: 평일 0.5화/일, 주말 1화/일 → eps화 완성까지
+    // 2. 초고: 평일 0.5화/일, 주말 1화/일
     var draftStart = new Date(synEnd.getTime());
     draftStart.setDate(draftStart.getDate() + 1);
     var written = 0;
@@ -11333,30 +11337,39 @@
     var revDays = findNextAvailableDays(revStart, eps);
     var revEnd = revDays.length > 0 ? revDays[revDays.length - 1] : revStart;
 
-    // 4. 휴식: 14일 연속 (차단 안 따짐)
+    // 4. 연재 시작일 검증: 퇴고 끝 < 연재 시작 필수
+    var gapDays = Math.round((pubStart - revEnd) / 86400000);
+    if (gapDays < 1) {
+      var minPub = _findNextWeekday(revEnd, publishDay);
+      return {
+        error: 'insufficient_time',
+        minPublishStart: _fmtDate(minPub),
+        message: '기간이 부족해요! 퇴고 종료: ' + _fmtDate(revEnd) + '. 최소 연재 시작일: ' + _fmtDate(minPub)
+      };
+    }
+
+    // 5. 휴식: 유동 (퇴고 끝 다음날 ~ 연재 전날)
     var restStart = new Date(revEnd.getTime());
     restStart.setDate(restStart.getDate() + 1);
-    var restEnd = new Date(restStart.getTime());
-    restEnd.setDate(restEnd.getDate() + 13);
+    var restEnd = new Date(pubStart.getTime());
+    restEnd.setDate(restEnd.getDate() - 1);
 
-    // 5. 연재 시작: 휴식 후 첫 설정 요일
-    var pubStart = _findNextWeekday(restEnd, publishDay);
-
-    // 6. 연재 완결: eps주 후
+    // 6. 연재 완결
     var pubEnd = new Date(pubStart.getTime());
     pubEnd.setDate(pubEnd.getDate() + (eps - 1) * 7);
 
     return {
       phases: {
-        synopsis: { start: _fmtDate(synStart), end: _fmtDate(synEnd), days: synDays.map(_fmtDate) },
+        synopsis: { start: _fmtDate(synStart), end: _fmtDate(synEnd) },
         draft:    { start: _fmtDate(draftStart), end: _fmtDate(draftEnd) },
-        revision: { start: _fmtDate(revStart), end: _fmtDate(revEnd), days: revDays.map(_fmtDate) },
+        revision: { start: _fmtDate(revStart), end: _fmtDate(revEnd) },
         rest:     { start: _fmtDate(restStart), end: _fmtDate(restEnd) }
       },
       publish_start: _fmtDate(pubStart),
       publish_end: _fmtDate(pubEnd),
       total_episodes: eps,
-      publish_day: publishDay
+      publish_day: publishDay,
+      rest_days: Math.round((restEnd - restStart) / 86400000) + 1
     };
   }
 
@@ -11491,9 +11504,10 @@
     if (sel) sel.innerHTML = series.map(function(s) { return '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>'; }).join('');
     document.getElementById('nw-title').value = '';
     document.getElementById('nw-start-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('nw-publish-start').value = '';
     document.getElementById('nw-preview').style.display = 'none';
     document.getElementById('new-work-modal').style.cssText = 'display:flex!important';
-    setTimeout(function() { initSimpleDatePicker('nw-start-date'); }, 80);
+    setTimeout(function() { initSimpleDatePicker('nw-start-date'); initSimpleDatePicker('nw-publish-start'); }, 80);
   }
 
   function closeNewWorkModal() {
@@ -11504,18 +11518,29 @@
 
   function previewWorkSchedule() {
     var startDate = document.getElementById('nw-start-date').value;
+    var pubStart = document.getElementById('nw-publish-start').value;
     if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시작일을 선택하세요'); return; }
+    if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 선택하세요'); return; }
     _workPreviewResult = calculateWorkSchedule({
       start_date: startDate,
       episodes: document.getElementById('nw-episodes').value,
-      publish_day: document.getElementById('nw-publish-day').value
+      publish_day: document.getElementById('nw-publish-day').value,
+      publish_start: pubStart
     });
     var r = _workPreviewResult;
+    if (r.error) {
+      document.getElementById('nw-preview-content').innerHTML =
+        '<div class="text-rose-600 font-bold mb-2">⚠️ ' + r.message + '</div>' +
+        '<button onclick="document.getElementById(\'nw-publish-start\').value=\'' + r.minPublishStart + '\';previewWorkSchedule()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-[11px] font-bold">📅 ' + r.minPublishStart + '로 변경</button>';
+      document.getElementById('nw-preview').style.display = '';
+      _workPreviewResult = null;
+      return;
+    }
     var html =
       '<p>📝 시놉: <b>' + r.phases.synopsis.start + '</b> ~ <b>' + r.phases.synopsis.end + '</b></p>' +
       '<p>✍️ 초고: <b>' + r.phases.draft.start + '</b> ~ <b>' + r.phases.draft.end + '</b></p>' +
       '<p>🔍 퇴고: <b>' + r.phases.revision.start + '</b> ~ <b>' + r.phases.revision.end + '</b></p>' +
-      '<p>☕ 휴식: <b>' + r.phases.rest.start + '</b> ~ <b>' + r.phases.rest.end + '</b></p>' +
+      '<p>☕ 휴식: <b>' + r.phases.rest.start + '</b> ~ <b>' + r.phases.rest.end + '</b> (' + r.rest_days + '일)</p>' +
       '<p>🎯 연재: <b class="text-indigo-700">' + r.publish_start + '</b> ~ <b>' + r.publish_end + '</b> (주 1회)</p>';
     document.getElementById('nw-preview-content').innerHTML = html;
     document.getElementById('nw-preview').style.display = '';
@@ -11586,12 +11611,19 @@
 
   function recalcEditWork() {
     var startDate = document.getElementById('ew-syn-start').value;
+    var pubStart = document.getElementById('ew-pub-start').value;
     if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시놉 시작일을 입력하세요'); return; }
+    if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 입력하세요'); return; }
     var r = calculateWorkSchedule({
       start_date: startDate,
       episodes: document.getElementById('ew-episodes').value,
-      publish_day: document.getElementById('ew-publish-day').value
+      publish_day: document.getElementById('ew-publish-day').value,
+      publish_start: pubStart
     });
+    if (r.error) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> ' + r.message);
+      return;
+    }
     document.getElementById('ew-syn-start').value = r.phases.synopsis.start;
     document.getElementById('ew-syn-end').value = r.phases.synopsis.end;
     document.getElementById('ew-draft-start').value = r.phases.draft.start;
@@ -11600,8 +11632,7 @@
     document.getElementById('ew-rev-end').value = r.phases.revision.end;
     document.getElementById('ew-rest-start').value = r.phases.rest.start;
     document.getElementById('ew-rest-end').value = r.phases.rest.end;
-    document.getElementById('ew-pub-start').value = r.publish_start;
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 스케줄 재계산 완료');
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 스케줄 재계산 완료 (휴식 ' + r.rest_days + '일)');
   }
 
   function saveEditWork() {
@@ -11791,7 +11822,8 @@
     });
     if (affected.length > 0) {
       var names = affected.map(function(w) { return '"' + w.title + '"'; }).join(', ');
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영향받는 작품: ' + names + ' — 파이프라인 재계산 필요');
+      var ids = affected.map(function(w) { return w.id; });
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영향받는 작품: ' + names + ' <button onclick="ids=[' + ids.map(function(id){return "\\'" + id + "\\'";}).join(',') + '];ids.forEach(function(id){resyncWorkCal(id)})" class="ml-2 px-2 py-0.5 bg-indigo-600 text-white rounded text-[10px] font-bold">🔄 재동기화</button>', 10000);
     }
   }
 
