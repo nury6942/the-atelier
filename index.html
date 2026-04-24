@@ -11715,10 +11715,12 @@
 
     var today = new Date(); today.setHours(0,0,0,0);
     var rangeStart = new Date(today); rangeStart.setMonth(rangeStart.getMonth() - 1);
-    var rangeEnd = new Date(today); rangeEnd.setMonth(rangeEnd.getMonth() + 12);
+    var rangeEnd = new Date(today); rangeEnd.setMonth(rangeEnd.getMonth() + 14);
     var totalMs = rangeEnd.getTime() - rangeStart.getTime();
     var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rangeStart.getTime()) / totalMs * 100))); };
     var todayPct = pct(today);
+    var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
+    var _md = function(d) { return (d.getMonth()+1)+'/'+d.getDate(); };
 
     // Month markers
     var mHtml = '';
@@ -11726,47 +11728,47 @@
     while (mc <= rangeEnd) {
       var mp = pct(mc);
       var isCur = mc.getMonth() === today.getMonth() && mc.getFullYear() === today.getFullYear();
-      mHtml += '<div class="absolute text-[8px] font-bold' + (isCur ? ' text-indigo-600' : ' text-slate-300') + '" style="left:' + mp.toFixed(1) + '%;top:0;transform:translateX(-50%)">' + (mc.getMonth()+1) + '월</div>';
+      mHtml += '<div class="absolute text-[9px] font-bold' + (isCur ? ' text-indigo-600' : ' text-slate-300') + '" style="left:' + mp.toFixed(1) + '%;bottom:0;transform:translateX(-50%)">' + (mc.getMonth()+1) + '월</div>';
       mc.setMonth(mc.getMonth() + 1);
     }
 
-    // Series rows
-    var phaseColors = { synopsis:'#7c3aed', draft:'#3b82f6', revision:'#eab308', rest:'#94a3b8' };
+    // Series rows — publishing only
     var rowsHtml = '';
+    var hasRows = false;
     series.forEach(function(s) {
-      var sWorks = _works.filter(function(w) { return w.series_id === s.id || w.series_name === s.name; });
+      var sWorks = _works.filter(function(w) { return (w.series_id === s.id || w.series_name === s.name) && w.publish_start; });
+      sWorks = sWorks.filter(function(w) { var pe = new Date((w.publish_end||w.publish_start)+'T00:00:00'); return pe >= rangeStart; });
       if (sWorks.length === 0) return;
-      var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
+      hasRows = true;
       var sColor = scMap[s.color] || '#6366f1';
-      rowsHtml += '<div class="flex items-center" style="height:28px;margin-top:2px">';
-      rowsHtml += '<div class="shrink-0 text-[10px] font-bold truncate" style="width:56px;color:' + sColor + '">' + s.name + '</div>';
-      rowsHtml += '<div class="relative flex-1" style="height:22px;background:#f1f5f9;border-radius:3px">';
+      rowsHtml += '<div class="flex items-center" style="height:50px;margin-bottom:4px">';
+      rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
+      rowsHtml += '<div class="relative flex-1" style="height:38px;background:#f8fafc;border-radius:4px">';
       sWorks.forEach(function(w) {
-        // All phases + publishing
-        var phases = ['synopsis','draft','revision','rest'];
-        phases.forEach(function(pk) {
-          var ph = w.phases ? w.phases[pk] : null;
-          if (!ph || !ph.start || !ph.end) return;
-          var ps = new Date(ph.start+'T00:00:00'), pe = new Date(ph.end+'T00:00:00');
-          if (pe < rangeStart || ps > rangeEnd) return;
-          var l = pct(ps), r = pct(pe), wd = Math.max(0.3, r - l);
-          rowsHtml += '<div class="absolute top-1 rounded-sm" style="left:'+l.toFixed(1)+'%;width:'+wd.toFixed(1)+'%;height:14px;background:'+(phaseColors[pk]||'#94a3b8')+';opacity:0.7" title="'+pk+'"></div>';
-        });
-        // Publishing bar
-        if (w.publish_start && w.publish_end) {
-          var ps2 = new Date(w.publish_start+'T00:00:00'), pe2 = new Date(w.publish_end+'T00:00:00');
-          if (!(pe2 < rangeStart || ps2 > rangeEnd)) {
-            var l2 = pct(ps2), r2 = pct(pe2), wd2 = Math.max(0.5, r2 - l2);
-            rowsHtml += '<div class="absolute top-1 rounded-sm" style="left:'+l2.toFixed(1)+'%;width:'+wd2.toFixed(1)+'%;height:14px;background:'+sColor+'" title="연재: '+w.title+'"><span class="text-[7px] font-bold text-white px-0.5 truncate block leading-[14px]">'+w.title+'</span></div>';
-          }
-        }
+        var ps = new Date(w.publish_start+'T00:00:00'), pe = new Date((w.publish_end||w.publish_start)+'T00:00:00');
+        if (pe < rangeStart || ps > rangeEnd) return;
+        var l = pct(ps), r = pct(pe), wd = Math.max(1, r - l);
+        var isTiny = wd < 8;
+        var startLbl = _md(ps), endLbl = _md(pe);
+        var epsTxt = w.total_episodes ? ' (' + w.total_episodes + '화)' : '';
+        rowsHtml += '<div class="absolute rounded-md flex items-center justify-center cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all" style="left:'+l.toFixed(1)+'%;width:'+wd.toFixed(1)+'%;top:4px;height:30px;background:'+sColor+';box-shadow:0 2px 4px rgba(0,0,0,0.1)" title="'+w.title+epsTxt+' | '+startLbl+' ~ '+endLbl+'">';
+        if (!isTiny) rowsHtml += '<span class="text-[10px] font-bold text-white truncate px-1.5">' + w.title + epsTxt + '</span>';
+        rowsHtml += '</div>';
+        // Start label
+        if (l > 3) rowsHtml += '<div class="absolute text-[8px] font-medium text-slate-400" style="left:'+l.toFixed(1)+'%;top:36px">' + startLbl + '</div>';
+        // End label with flag
+        rowsHtml += '<div class="absolute text-[8px] font-bold text-slate-700 whitespace-nowrap" style="left:'+(l+wd).toFixed(1)+'%;top:36px;transform:translateX(-100%)">🏁 ' + endLbl + '</div>';
       });
       // Today line
-      rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:1px;background:#ef4444;opacity:0.5"></div>';
+      rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:2px;background:#ef4444;opacity:0.4;border-radius:1px"></div>';
       rowsHtml += '</div></div>';
     });
 
-    el.innerHTML = '<div class="relative" style="min-width:400px"><div class="relative" style="height:14px;margin-left:56px">' + mHtml + '</div>' + rowsHtml + '<div class="text-[9px] text-slate-400 text-center mt-2">💡 시리즈별 진행 현황 — 빨간 선이 오늘</div></div>';
+    if (!hasRows) { el.style.display = 'none'; return; }
+    el.innerHTML = '<div style="min-width:400px">' +
+      '<div class="relative" style="height:16px;margin-left:60px;margin-bottom:4px;border-bottom:1px dashed #e5e7eb">' + mHtml + '</div>' +
+      '<div class="relative">' + rowsHtml + '</div>' +
+      '<div class="text-[9px] text-slate-400 text-center mt-3 pt-2" style="border-top:1px solid #f3f4f6">💡 빨간 선 = 오늘 · 🏁 = 연재 종료일</div></div>';
     el.style.display = '';
   }
 
