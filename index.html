@@ -11510,26 +11510,48 @@
             '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + sHex + '"></div>' +
           '</div>' +
         '</div>';
-        // 스케줄 타임라인
-        html += '<div class="grid grid-cols-5 gap-2 text-[11px]">';
-        var steps = [
-          { key: 'synopsis', icon: '📝', label: '시놉', date: p.synopsis ? p.synopsis.start : '—' },
-          { key: 'draft',    icon: '✏️', label: '초고', date: p.draft ? p.draft.start : '—' },
-          { key: 'revision', icon: '🔍', label: '퇴고', date: p.revision ? p.revision.start : '—' },
-          { key: 'publish',  icon: '🎯', label: '연재', date: w.publish_start || '—' },
-          { key: 'end',      icon: '🏁', label: '완결', date: w.publish_end || '—' }
-        ];
-        steps.forEach(function(st) {
-          var isActive = (st.key === phase) || (st.key === 'publish' && phase === 'publishing');
-          var isPub = st.key === 'publish';
-          var textCls = isActive ? 'font-black' : 'text-slate-400';
-          var dateCls = isPub ? 'font-black text-indigo-600' : (isActive ? 'font-bold text-slate-800' : 'text-slate-400');
-          html += '<div class="text-center ' + textCls + '">' +
-            '<div>' + st.icon + ' ' + st.label + '</div>' +
-            '<div class="mt-0.5 ' + dateCls + '">' + (st.date !== '—' ? st.date.substring(5) : '—') + '</div>' +
-          '</div>';
-        });
-        html += '</div>';
+        // 미니 간트 차트
+        var allDates = [p.synopsis?p.synopsis.start:null, p.synopsis?p.synopsis.end:null, p.draft?p.draft.start:null, p.draft?p.draft.end:null, p.revision?p.revision.start:null, p.revision?p.revision.end:null, w.publish_start, w.publish_end].filter(Boolean);
+        if (allDates.length >= 2) {
+          var gMin = new Date(Math.min.apply(null, allDates.map(function(d){return new Date(d+'T00:00:00').getTime();}))),
+              gMax = new Date(Math.max.apply(null, allDates.map(function(d){return new Date(d+'T00:00:00').getTime();})));
+          var gStart = new Date(gMin.getFullYear(), gMin.getMonth(), 1);
+          var gEnd = new Date(gMax.getFullYear(), gMax.getMonth() + 1, 0);
+          var gTotal = Math.max(1, (gEnd - gStart) / 86400000);
+          var gPct = function(d) { return Math.max(0, Math.min(100, ((new Date(d+'T00:00:00') - gStart) / 86400000) / gTotal * 100)); };
+          var gToday = new Date(); gToday.setHours(0,0,0,0);
+          var gTodayPct = (gToday >= gStart && gToday <= gEnd) ? ((gToday - gStart) / 86400000 / gTotal * 100) : -1;
+          // Month markers
+          var gMHtml = '';
+          var gmc = new Date(gStart);
+          while (gmc <= gEnd) {
+            var gmp = ((gmc - gStart) / 86400000 / gTotal * 100);
+            var isYr = gmc.getMonth() === 0;
+            gMHtml += '<div class="absolute text-[8px] font-bold' + (isYr ? ' text-indigo-500' : ' text-slate-300') + '" style="left:'+gmp.toFixed(1)+'%;bottom:0">' + (isYr ? '<span class="text-[7px] block">'+gmc.getFullYear()+'</span>' : '') + (gmc.getMonth()+1)+'월</div>';
+            gmc.setMonth(gmc.getMonth() + 1);
+          }
+          // Phase bars
+          var gPhases = [
+            { s: p.synopsis?p.synopsis.start:null, e: p.synopsis?p.synopsis.end:null, c:'#c084fc', l:'시놉' },
+            { s: p.draft?p.draft.start:null, e: p.draft?p.draft.end:null, c:'#60a5fa', l:'초고' },
+            { s: p.revision?p.revision.start:null, e: p.revision?p.revision.end:null, c:'#fbbf24', l:'퇴고' },
+            { s: p.rest?p.rest.start:null, e: p.rest?p.rest.end:null, c:'#cbd5e1', l:'휴식' },
+            { s: w.publish_start, e: w.publish_end, c:sHex, l:'연재' }
+          ];
+          var gBarsHtml = '';
+          gPhases.forEach(function(gp) {
+            if (!gp.s || !gp.e) return;
+            var gl = gPct(gp.s), gr = gPct(gp.e), gw = Math.max(0.5, gr - gl);
+            gBarsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-px hover:shadow transition-all" style="left:'+gl.toFixed(1)+'%;width:'+gw.toFixed(1)+'%;top:3px;height:20px;background:'+gp.c+'" title="'+gp.l+': '+gp.s+' ~ '+gp.e+'">';
+            if (gw > 6) gBarsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">'+gp.l+'</span>';
+            gBarsHtml += '</div>';
+          });
+          html += '<div class="mt-3 mb-2 p-3 rounded-lg" style="background:#fafafa;border:1px solid #f3f4f6">' +
+            '<div class="relative" style="height:18px;margin-bottom:4px;border-bottom:1px dashed #e5e7eb">' + gMHtml + '</div>' +
+            '<div class="relative" style="height:26px;background:#f1f5f9;border-radius:3px">' + gBarsHtml +
+            (gTodayPct >= 0 ? '<div class="absolute" style="left:'+gTodayPct.toFixed(1)+'%;top:-4px;bottom:-4px;width:2px;background:#ef4444;z-index:10;border-radius:1px"><div class="absolute text-[7px] font-bold text-white px-1 rounded-full" style="bottom:-14px;left:50%;transform:translateX(-50%);background:#ef4444">오늘</div></div>' : '') +
+            '</div></div>';
+        }
         // 연재 요일
         if (w.publish_start && pubDayStr) {
           html += '<div class="mt-2 text-[10px] text-slate-400">연재 요일: 매주 ' + pubDayStr + '요일</div>';
