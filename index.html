@@ -881,7 +881,7 @@
           </div>
 
           <!-- 도시 카드 그리드 (Violet Voyage) -->
-          <div id="journey-city-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5"></div>
+          <div id="journey-city-cards" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
 
           <!-- Voyage Path -->
           <div id="journey-voyage-path" class="mt-10 rounded-xl p-8 flex flex-col md:flex-row items-center gap-8" style="background:#f3f4f5;display:none">
@@ -4908,22 +4908,21 @@
         var cachedUrl = _cityPhotoCache[city.name] || '';
         var stopLabel = ordinalStop(i + 1);
 
-        return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);">' +
-          '<div class="relative h-36 overflow-hidden bg-slate-200">' +
-            '<div class="absolute inset-0 flex items-center justify-center text-slate-300 z-0"><span class="material-symbols-outlined text-4xl">photo_camera</span></div>' +
-            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 relative z-[1]" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
-            '<div class="absolute top-2.5 left-2.5 z-[2] bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[8px] font-extrabold tracking-widest uppercase text-indigo-800 shadow-sm">' + stopLabel + '</div>' +
-            '<div class="absolute top-2 right-2 z-[2] flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-indigo-600 shadow-sm"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-1 rounded-lg bg-white/90 backdrop-blur-md text-slate-600 hover:text-rose-500 shadow-sm"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+        return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-md transition-all duration-300" style="box-shadow:0px 2px 8px rgba(25,28,29,0.04);">' +
+          '<div class="relative h-20 overflow-hidden bg-slate-200">' +
+            '<div class="absolute inset-0 flex items-center justify-center text-slate-300 z-0"><span class="material-symbols-outlined text-2xl">photo_camera</span></div>' +
+            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover relative z-[1]" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
+            '<div class="absolute top-1.5 left-1.5 z-[2] bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[7px] font-extrabold tracking-widest uppercase text-indigo-800">' + stopLabel + '</div>' +
+            '<div class="absolute top-1 right-1 z-[2] flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">' +
+              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-0.5 rounded bg-white/90 text-slate-600 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
+              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-0.5 rounded bg-white/90 text-slate-600 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
             '</div>' +
           '</div>' +
-          '<div class="p-4">' +
-            '<h4 class="text-sm font-bold font-headline mb-0.5 leading-tight text-slate-900">' + city.name + '</h4>' +
-            '<p class="text-[11px] text-slate-400 mb-3">' + (dateRange || 'TBD') + '</p>' +
-            '<div class="flex items-center justify-between pt-2.5" style="border-top:1px solid #f3f4f5;">' +
-              '<div class="flex items-center gap-1.5 text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">bed</span><span class="text-[11px] font-semibold">' + nightsText + '</span></div>' +
-              '<span class="material-symbols-outlined text-sm text-slate-400 group-hover:translate-x-1 transition-transform">arrow_forward</span>' +
+          '<div class="px-3 py-2">' +
+            '<h4 class="text-xs font-bold font-headline leading-tight text-slate-900">' + city.name + '</h4>' +
+            '<div class="flex items-center justify-between mt-1">' +
+              '<p class="text-[10px] text-slate-400">' + (dateRange || 'TBD') + '</p>' +
+              '<div class="flex items-center gap-1 text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">bed</span><span class="text-[10px] font-semibold">' + nightsText + '</span></div>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -4931,10 +4930,9 @@
     }
 
     // Add City 카드
-    html += '<div onclick="openCityModal()" class="group flex flex-col items-center justify-center min-h-[220px] border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all cursor-pointer">' +
-      '<div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined text-xl">add_location_alt</span></div>' +
-      '<span class="text-sm font-bold font-headline text-slate-800">Add City</span>' +
-      '<span class="text-slate-400 text-[10px] mt-0.5">Extend journey</span>' +
+    html += '<div onclick="openCityModal()" class="group flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all cursor-pointer" style="min-height:120px">' +
+      '<div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined text-lg">add_location_alt</span></div>' +
+      '<span class="text-xs font-bold font-headline text-slate-800">Add City</span>' +
     '</div>';
 
     container.innerHTML = html;
