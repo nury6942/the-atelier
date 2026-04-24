@@ -10357,6 +10357,24 @@
     }
     if (s) {
       var parsed = JSON.parse(s);
+      // 빈 배열이면 이전 연도에서 시리즈 이름 복제 시도
+      if (parsed.length === 0 && year !== 2026) {
+        for (var py = year - 1; py >= 2024; py--) {
+          var pk = seriesKeyForYear(py);
+          var pd = localStorage.getItem(pk);
+          if (pd) {
+            try {
+              var pp = JSON.parse(pd);
+              if (pp.length > 0) {
+                parsed = pp.map(function(x) { return { id: x.id, name: x.name, color: x.color, monthly: {} }; });
+                localStorage.setItem(key, JSON.stringify(parsed));
+                break;
+              }
+            } catch(e) {}
+          }
+        }
+        return parsed;
+      }
       // 2026년인데 B시리즈가 없으면 추가
       if (year === 2026 && parsed.length > 0 && !parsed.some(function(x){return x.name==='B'||x.name==='B시리즈';})) {
         parsed.push({id:'s_b',name:'B시리즈',color:'amber',monthly:{}});
