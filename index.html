@@ -9210,7 +9210,7 @@
           ? 'group transition-colors hover:bg-rose-50/60'
           : 'transition-colors group');
       if (isToday) tr.style.backgroundColor = '#f3eeff';
-      else if (isRedDay) tr.style.backgroundColor = 'rgba(255,0,0,0.03)';
+      else if (isRedDay) tr.style.backgroundColor = '#fef2f2';
 
       if (isToday) {
         tr.id = 'matrix-today-row';
@@ -9912,7 +9912,13 @@
   async function deleteMatrixRow(i) {
     try {
       var delRow = matrixData[i];
-      const id = delRow[9];
+      const id = delRow[10] || delRow[9];
+      if (!id) {
+        console.error('[DeleteMatrix] 문서 ID 없음:', delRow);
+        alert('삭제에 필요한 정보가 없어요. 페이지를 새로고침 후 다시 시도해주세요.');
+        return;
+      }
+      console.log('[DeleteMatrix] 삭제 대상:', id, delRow[0]);
       // 캘린더에서도 해당 날짜의 연동 데이터 삭제
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       for (var fi=2; fi<FIELDS.length; fi++) {
