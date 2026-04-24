@@ -2579,25 +2579,23 @@
 
         <p class="mt-4 text-[10px] text-slate-400">💡 글쓰기 제외할 날은 일정 제목에 <b>'차단'</b> 키워드 추가 (예: "연차 여행 차단"). 여행·야근은 자동 차단.</p>
 
-        <!-- Timeline View -->
+        <!-- Unified Timeline -->
         <div id="work-timeline-section" class="mt-8" style="display:none">
-          <div class="flex items-center gap-3 mb-4">
-            <h3 class="text-lg font-bold text-slate-900">📊 연간 타임라인</h3>
-            <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
-              <button onclick="shiftTimelineYear(-1)" class="p-1 hover:bg-slate-200 rounded-md"><span class="material-symbols-outlined" style="font-size:16px">chevron_left</span></button>
-              <span id="timeline-year-label" class="px-3 text-xs font-bold font-headline">2026</span>
-              <button onclick="shiftTimelineYear(1)" class="p-1 hover:bg-slate-200 rounded-md"><span class="material-symbols-outlined" style="font-size:16px">chevron_right</span></button>
-            </div>
-            <div class="flex gap-3 ml-auto text-[10px] font-bold">
-              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#7c3aed"></span>시놉</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#3b82f6"></span>초고</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#eab308"></span>퇴고</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#94a3b8"></span>휴식</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#22c55e"></span>연재</span>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-900">📊 전체 작품 흐름</h3>
+            <div class="flex items-center gap-3">
+              <button onclick="_scrollUtToday()" class="px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 text-xs font-bold hover:bg-indigo-50 transition-all flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px">today</span>오늘로</button>
+              <div class="flex gap-3 text-[10px] font-bold text-slate-400">
+                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#c084fc"></span>시놉</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#60a5fa"></span>초고</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#fbbf24"></span>퇴고</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#cbd5e1"></span>휴식</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background:#ef4444"></span>오늘</span>
+              </div>
             </div>
           </div>
-          <div class="bg-white rounded-2xl border border-slate-100 overflow-x-auto">
-            <div id="work-timeline-chart" style="min-width:900px"></div>
+          <div class="rounded-2xl border border-slate-100 overflow-x-auto" style="scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
+            <div id="work-timeline-chart"></div>
           </div>
         </div>
       </section>
@@ -11510,48 +11508,26 @@
             '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + sHex + '"></div>' +
           '</div>' +
         '</div>';
-        // 미니 간트 차트
-        var allDates = [p.synopsis?p.synopsis.start:null, p.synopsis?p.synopsis.end:null, p.draft?p.draft.start:null, p.draft?p.draft.end:null, p.revision?p.revision.start:null, p.revision?p.revision.end:null, w.publish_start, w.publish_end].filter(Boolean);
-        if (allDates.length >= 2) {
-          var gMin = new Date(Math.min.apply(null, allDates.map(function(d){return new Date(d+'T00:00:00').getTime();}))),
-              gMax = new Date(Math.max.apply(null, allDates.map(function(d){return new Date(d+'T00:00:00').getTime();})));
-          var gStart = new Date(gMin.getFullYear(), gMin.getMonth(), 1);
-          var gEnd = new Date(gMax.getFullYear(), gMax.getMonth() + 1, 0);
-          var gTotal = Math.max(1, (gEnd - gStart) / 86400000);
-          var gPct = function(d) { return Math.max(0, Math.min(100, ((new Date(d+'T00:00:00') - gStart) / 86400000) / gTotal * 100)); };
-          var gToday = new Date(); gToday.setHours(0,0,0,0);
-          var gTodayPct = (gToday >= gStart && gToday <= gEnd) ? ((gToday - gStart) / 86400000 / gTotal * 100) : -1;
-          // Month markers
-          var gMHtml = '';
-          var gmc = new Date(gStart);
-          while (gmc <= gEnd) {
-            var gmp = ((gmc - gStart) / 86400000 / gTotal * 100);
-            var isYr = gmc.getMonth() === 0;
-            gMHtml += '<div class="absolute text-[8px] font-bold' + (isYr ? ' text-indigo-500' : ' text-slate-300') + '" style="left:'+gmp.toFixed(1)+'%;bottom:0">' + (isYr ? '<span class="text-[7px] block">'+gmc.getFullYear()+'</span>' : '') + (gmc.getMonth()+1)+'월</div>';
-            gmc.setMonth(gmc.getMonth() + 1);
-          }
-          // Phase bars
-          var gPhases = [
-            { s: p.synopsis?p.synopsis.start:null, e: p.synopsis?p.synopsis.end:null, c:'#c084fc', l:'시놉' },
-            { s: p.draft?p.draft.start:null, e: p.draft?p.draft.end:null, c:'#60a5fa', l:'초고' },
-            { s: p.revision?p.revision.start:null, e: p.revision?p.revision.end:null, c:'#fbbf24', l:'퇴고' },
-            { s: p.rest?p.rest.start:null, e: p.rest?p.rest.end:null, c:'#cbd5e1', l:'휴식' },
-            { s: w.publish_start, e: w.publish_end, c:sHex, l:'연재' }
-          ];
-          var gBarsHtml = '';
-          gPhases.forEach(function(gp) {
-            if (!gp.s || !gp.e) return;
-            var gl = gPct(gp.s), gr = gPct(gp.e), gw = Math.max(0.5, gr - gl);
-            gBarsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-px hover:shadow transition-all" style="left:'+gl.toFixed(1)+'%;width:'+gw.toFixed(1)+'%;top:3px;height:20px;background:'+gp.c+'" title="'+gp.l+': '+gp.s+' ~ '+gp.e+'">';
-            if (gw > 6) gBarsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">'+gp.l+'</span>';
-            gBarsHtml += '</div>';
-          });
-          html += '<div class="mt-3 mb-2 p-3 rounded-lg" style="background:#fafafa;border:1px solid #f3f4f6">' +
-            '<div class="relative" style="height:18px;margin-bottom:4px;border-bottom:1px dashed #e5e7eb">' + gMHtml + '</div>' +
-            '<div class="relative" style="height:26px;background:#f1f5f9;border-radius:3px">' + gBarsHtml +
-            (gTodayPct >= 0 ? '<div class="absolute" style="left:'+gTodayPct.toFixed(1)+'%;top:-4px;bottom:-4px;width:2px;background:#ef4444;z-index:10;border-radius:1px"><div class="absolute text-[7px] font-bold text-white px-1 rounded-full" style="bottom:-14px;left:50%;transform:translateX(-50%);background:#ef4444">오늘</div></div>' : '') +
-            '</div></div>';
-        }
+        // 단계별 일정 4칸 그리드
+        var _sd = function(d) { return d ? d.substring(5).replace('-','/') : '—'; };
+        html += '<div class="grid grid-cols-4 gap-2 mt-3 mb-2">';
+        var schedCells = [
+          { icon:'📝', label:'시놉', s:p.synopsis?p.synopsis.start:'', e:p.synopsis?p.synopsis.end:'', hi:false },
+          { icon:'✏️', label:'초고', s:p.draft?p.draft.start:'', e:p.draft?p.draft.end:'', hi:false },
+          { icon:'🔍', label:'퇴고', s:p.revision?p.revision.start:'', e:p.revision?p.revision.end:'', hi:false },
+          { icon:'🎯', label:'연재', s:w.publish_start||'', e:w.publish_end||'', hi:true }
+        ];
+        schedCells.forEach(function(sc) {
+          var border = sc.hi ? 'border:2px solid '+sHex : 'border:1px solid #f3f4f6';
+          var lColor = sc.hi ? 'color:'+sHex : 'color:#6b7280';
+          var dColor = sc.hi ? 'color:'+sHex+';font-weight:700' : '';
+          html += '<div class="bg-white p-2.5 rounded-lg text-center" style="'+border+'">' +
+            '<div class="text-base mb-1">'+sc.icon+'</div>' +
+            '<div class="text-[10px] font-bold mb-1" style="'+lColor+'">'+sc.label+'</div>' +
+            '<div class="text-[11px] font-semibold text-slate-800" style="'+dColor+'">'+_sd(sc.s)+' ~ '+_sd(sc.e)+'</div>' +
+          '</div>';
+        });
+        html += '</div>';
         // 연재 요일
         if (w.publish_start && pubDayStr) {
           html += '<div class="mt-2 text-[10px] text-slate-400">연재 요일: 매주 ' + pubDayStr + '요일</div>';
@@ -11697,8 +11673,72 @@
     if (!section) return;
     section.style.display = _works.length > 0 ? '' : 'none';
     if (_works.length === 0 || !chart) return;
-    _renderGanttInto(chart, _timelineYear);
+    // Dynamic range from all works
+    var today = new Date(); today.setHours(0,0,0,0);
+    var rStart = new Date(today); rStart.setMonth(rStart.getMonth() - 2);
+    var rEnd = new Date(today); rEnd.setMonth(rEnd.getMonth() + 6);
+    _works.forEach(function(w) {
+      [w.publish_start, w.publish_end, w.phases&&w.phases.synopsis?w.phases.synopsis.start:null, w.phases&&w.phases.revision?w.phases.revision.end:null].filter(Boolean).forEach(function(d) {
+        var dt = new Date(d+'T00:00:00'); if (dt > rEnd) rEnd = new Date(dt.getTime()+45*86400000); if (dt < rStart) rStart = new Date(dt.getTime()-30*86400000);
+      });
+    });
+    var yr = rStart.getFullYear(); // Use range start year for _renderGanttInto compatibility
+    // But we need full range, so render directly
+    var totalMs = rEnd.getTime() - rStart.getTime();
+    var totalDays = totalMs / 86400000;
+    var dynW = Math.max(900, Math.round(totalDays / 30 * 100));
+    var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rStart.getTime()) / totalMs * 100))); };
+    var todayPct = pct(today);
+    var phaseColors = { synopsis:'#c084fc', draft:'#60a5fa', revision:'#fbbf24', rest:'#cbd5e1', publishing:'#22c55e' };
+    var MO = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+    // Month header
+    var hHtml = '<div class="flex" style="border-bottom:1px solid #e5e7eb">' +
+      '<div class="shrink-0 p-2" style="width:140px"></div>';
+    var mc = new Date(rStart.getFullYear(), rStart.getMonth(), 1);
+    while (mc <= rEnd) {
+      var mp = pct(mc); var isYr = mc.getMonth()===0;
+      hHtml += '<div class="text-[11px] font-bold py-2' + (isYr?' text-indigo-600':' text-slate-400') + '" style="position:absolute;left:'+mp.toFixed(1)+'%;transform:translateX(-50%)">' + (isYr?'<span class="text-[9px] block">'+mc.getFullYear()+'</span>':'') + MO[mc.getMonth()]+'월</div>';
+      mc.setMonth(mc.getMonth()+1);
+    }
+    hHtml += '</div>';
+    // Rows
+    var series = getSeriesData((typeof _matrixYear!=='undefined'&&_matrixYear)?_matrixYear:new Date().getFullYear());
+    var rowsHtml = '';
+    series.forEach(function(s) {
+      var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;});
+      if (sWorks.length===0) return;
+      var sColor = (_seriesHexMap[s.color]||'#6366f1');
+      rowsHtml += '<div class="px-3 py-1 text-[12px] font-bold" style="color:'+sColor+';border-bottom:1px dashed #f1f5f9">📖 '+s.name+'</div>';
+      sWorks.forEach(function(w) {
+        rowsHtml += '<div class="flex items-center" style="height:44px;border-bottom:1px solid #f8fafc">';
+        rowsHtml += '<div class="shrink-0 px-3 text-[12px] font-semibold text-slate-700 truncate" style="width:140px" title="'+w.title+'">'+w.title+'</div>';
+        rowsHtml += '<div class="relative flex-1" style="height:44px">';
+        var allPh = ['synopsis','draft','revision','rest'];
+        if (w.publish_start&&w.publish_end) { w.phases = w.phases||{}; w.phases._pub={start:w.publish_start,end:w.publish_end}; allPh.push('_pub'); }
+        allPh.forEach(function(pk) {
+          var rk = pk==='_pub'?'publishing':pk;
+          var ph = pk==='_pub'?(w.phases._pub):(w.phases?w.phases[pk]:null);
+          if (!ph||!ph.start||!ph.end) return;
+          var ps=new Date(ph.start+'T00:00:00').getTime(), pe=new Date(ph.end+'T00:00:00').getTime();
+          if (pe<rStart.getTime()||ps>rEnd.getTime()) return;
+          var cl=Math.max(0,(ps-rStart.getTime())/totalMs*100), cr=Math.min(100,(pe-rStart.getTime())/totalMs*100);
+          var cw=Math.max(0.3,cr-cl);
+          var col = rk==='publishing'?sColor:(phaseColors[rk]||'#94a3b8');
+          var lbl = {synopsis:'시놉',draft:'초고',revision:'퇴고',rest:'휴식',publishing:'연재'}[rk]||rk;
+          var showLbl = cw>4;
+          rowsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;top:8px;height:28px;background:'+col+';box-shadow:0 1px 3px rgba(0,0,0,0.1)" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
+          if (showLbl) rowsHtml += '<span class="text-[10px] font-bold text-white px-1.5 truncate block leading-7">'+lbl+'</span>';
+          rowsHtml += '</div>';
+        });
+        if (w.phases&&w.phases._pub) delete w.phases._pub;
+        rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:2px;background:#ef4444;opacity:0.4"></div>';
+        rowsHtml += '</div></div>';
+      });
+    });
+    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative"><div class="relative" style="height:32px;margin-left:140px;position:relative">'+hHtml+'</div>'+rowsHtml+'</div>';
+    setTimeout(function() { var sc=document.getElementById('ut-scroll'); if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);} },120);
   }
+  function _scrollUtToday() { var sc=document.getElementById('ut-scroll'); if(!sc) return; var tl=sc.querySelector('[style*="background:#ef4444"]'); if(tl){sc.scrollLeft=Math.max(0,tl.offsetLeft-sc.offsetWidth/3);} }
 
   function renderMxPipelineGantt() {
     var section = document.getElementById('mx-pipeline-section');
