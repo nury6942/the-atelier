@@ -2945,16 +2945,7 @@
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
                     <div class="atl-field"><label>카테고리</label>
                       <select id="p-category" style="display:none"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>생일</option></select>
-                      <div id="p-cat-dropdown" class="relative">
-                        <button type="button" id="p-cat-trigger" onclick="toggleCatDropdown()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#6b38d4]/40 transition-all text-left cursor-pointer">
-                          <span class="atl-field-icon material-symbols-outlined" style="position:static;font-size:18px;color:#94a3b8">category</span>
-                          <span id="p-cat-dot" class="w-2.5 h-2.5 rounded-full shrink-0" style="background:#f43f5e"></span>
-                          <span id="p-cat-label" class="flex-1 text-sm font-bold text-[#1d1a23]">업무</span>
-                          <span class="material-symbols-outlined text-slate-400" style="font-size:16px">expand_more</span>
-                        </button>
-                        <div id="p-cat-popover" class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-slate-100 p-1 z-50" style="display:none">
-                        </div>
-                      </div>
+                      <div id="p-cat-dropdown" class="relative"></div>
                     </div>
                     <div id="p-birthday-wrap" class="atl-field" style="display:none"><label class="flex items-center gap-2 cursor-pointer"><input id="p-yearly-repeat" type="checkbox" checked class="accent-yellow-400 w-4 h-4"/><span class="text-sm font-bold text-slate-700">매년 반복</span><span class="text-xs text-slate-400">(매년 같은 날짜에 자동 표시)</span></label></div>
                     <div id="p-leave-day-wrap" class="atl-field" style="display:none"><label>연차 일수</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><select id="p-leave-day" class="atl-input w-full bg-white"><option value="1.0">1.0일 (연차)</option><option value="0.5">0.5일 (반차)</option><option value="2.0">2.0일</option><option value="3.0">3.0일</option><option value="5.0">5.0일</option></select></div></div>
@@ -2963,17 +2954,8 @@
           <div id="p-repeat-section">
             <div class="atl-field">
               <label>반복</label>
-              <div class="atl-field-input">
-                <span class="atl-field-icon material-symbols-outlined">repeat</span>
-                <select id="p-repeat" class="atl-input w-full bg-white" onchange="toggleRepeatOptions()">
-                  <option value="none">안함</option>
-                  <option value="daily">매일</option>
-                  <option value="weekly">매주</option>
-                  <option value="monthly">매월</option>
-                  <option value="yearly">매년</option>
-                  <option value="custom">커스텀</option>
-                </select>
-              </div>
+              <select id="p-repeat" style="display:none"><option value="none">안함</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option><option value="yearly">매년</option><option value="custom">커스텀</option></select>
+              <div id="p-repeat-dropdown" class="relative"></div>
             </div>
             <!-- 매주: 요일 선택 -->
             <div id="p-repeat-weekly" style="display:none" class="flex gap-1.5 mt-2 mb-3 justify-center">
@@ -3805,83 +3787,210 @@
     bdayWrap.style.display = cat === '생일' ? 'block' : 'none';
   }
 
-  // ===== CUSTOM CATEGORY DROPDOWN =====
-  var _CAT_OPTIONS = [
-    { value: '업무',  dot: '#f43f5e', icon: 'work',          label: '업무' },
-    { value: '연차',  dot: '#f97316', icon: 'beach_access',   label: '연차' },
-    { value: '개인',  dot: '#f59e0b', icon: 'person',         label: '개인' },
-    { value: '글쓰기', dot: '#38bdf8', icon: 'edit_note',     label: '글쓰기' },
-    { value: '영어',  dot: '#84cc16', icon: 'translate',      label: '영어' },
-    { value: '스터디', dot: '#8b5cf6', icon: 'smart_toy',     label: '스터디' },
-    { value: '생일',  dot: '#facc15', icon: 'cake',           label: '생일', emoji: '🎂' },
-  ];
+  // ===== REUSABLE CUSTOM DROPDOWN (AtelierDropdown) =====
+  var _atelierDropdowns = {};
 
-  function _renderCatPopover() {
-    var popover = document.getElementById('p-cat-popover');
-    var current = document.getElementById('p-category').value;
-    var html = '';
-    for (var i = 0; i < _CAT_OPTIONS.length; i++) {
-      var opt = _CAT_OPTIONS[i];
-      var isSelected = opt.value === current;
-      var cls = isSelected
-        ? 'background:#6b38d4;color:#fff;'
-        : '';
-      var hoverCls = isSelected ? '' : 'onmouseenter="this.style.background=\'#f8f1fe\'" onmouseleave="this.style.background=\'transparent\'"';
-      var dotBorder = isSelected ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
-      var prefix = opt.emoji ? '<span style="font-size:13px;margin-right:2px">' + opt.emoji + '</span> ' : '';
-      html += '<div onclick="selectCatOption(\'' + opt.value + '\')" ' + hoverCls +
-        ' class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors" style="' + cls + '">' +
-        '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' +
-        prefix + '<span class="text-sm font-bold">' + opt.label + '</span>' +
-        (isSelected ? '<span class="material-symbols-outlined ml-auto" style="font-size:16px">check</span>' : '') +
-        '</div>';
-    }
-    popover.innerHTML = html;
-  }
+  function AtelierDropdown(cfg) {
+    // cfg: { id, containerId, hiddenSelectId, icon, options:[{value,label,dot?,emoji?}], onSelect }
+    var self = this;
+    self.id = cfg.id;
+    self.options = cfg.options;
+    self.onSelect = cfg.onSelect || function(){};
+    self.hiddenSelect = document.getElementById(cfg.hiddenSelectId);
+    self.container = document.getElementById(cfg.containerId);
+    self.focusIdx = -1;
+    self.isOpen = false;
 
-  function toggleCatDropdown() {
-    var popover = document.getElementById('p-cat-popover');
-    if (popover.style.display === 'none') {
-      _renderCatPopover();
-      popover.style.display = 'block';
-    } else {
-      popover.style.display = 'none';
-    }
-  }
+    // Build trigger
+    var trigId = cfg.id + '-trigger';
+    var popId = cfg.id + '-popover';
+    self.container.innerHTML =
+      '<button type="button" id="' + trigId + '" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="' + (cfg.ariaLabel||'선택') + '"' +
+      ' class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#6b38d4]/40 focus:outline-none focus:ring-2 focus:ring-[#6b38d4]/30 focus:border-[#6b38d4]/40 transition-all text-left cursor-pointer">' +
+      (cfg.icon ? '<span class="material-symbols-outlined" style="font-size:18px;color:#94a3b8">' + cfg.icon + '</span>' : '') +
+      '<span id="' + cfg.id + '-dot" class="w-2.5 h-2.5 rounded-full shrink-0" style="' + (cfg.options[0].dot ? 'background:' + cfg.options[0].dot : 'display:none') + '"></span>' +
+      '<span id="' + cfg.id + '-label" class="flex-1 text-sm font-bold text-[#1d1a23]"></span>' +
+      '<span class="material-symbols-outlined text-slate-400" style="font-size:16px">expand_more</span>' +
+      '</button>' +
+      '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-slate-100 p-1 z-50" style="display:none;list-style:none;margin:0;padding:4px"></ul>';
 
-  function selectCatOption(value) {
-    document.getElementById('p-category').value = value;
-    _syncCatTrigger(value);
-    document.getElementById('p-cat-popover').style.display = 'none';
-    toggleLeaveDay();
-  }
+    self.trigger = document.getElementById(trigId);
+    self.popover = document.getElementById(popId);
 
-  function _syncCatTrigger(value) {
-    var opt = _CAT_OPTIONS.find(function(o) { return o.value === value; });
-    if (!opt) opt = _CAT_OPTIONS[0];
-    document.getElementById('p-cat-dot').style.background = opt.dot;
-    var prefix = opt.emoji ? opt.emoji + ' ' : '';
-    document.getElementById('p-cat-label').textContent = prefix + opt.label;
-  }
+    self.syncTrigger = function(value) {
+      var opt = self.options.find(function(o){ return o.value === value; }) || self.options[0];
+      var dot = document.getElementById(self.id + '-dot');
+      var label = document.getElementById(self.id + '-label');
+      if (opt.dot) { dot.style.background = opt.dot; dot.style.display = ''; } else { dot.style.display = 'none'; }
+      var prefix = opt.emoji ? opt.emoji + ' ' : '';
+      label.textContent = prefix + opt.label;
+    };
 
-  // Close on outside click
-  document.addEventListener('click', function(e) {
-    var dropdown = document.getElementById('p-cat-dropdown');
-    var popover = document.getElementById('p-cat-popover');
-    if (dropdown && popover && !dropdown.contains(e.target)) {
-      popover.style.display = 'none';
-    }
-  });
-
-  // Close on ESC (added to existing keydown handler scope)
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      var popover = document.getElementById('p-cat-popover');
-      if (popover && popover.style.display !== 'none') {
-        popover.style.display = 'none';
+    self.renderOptions = function() {
+      var current = self.hiddenSelect.value;
+      var html = '';
+      for (var i = 0; i < self.options.length; i++) {
+        var opt = self.options[i];
+        var isSelected = opt.value === current;
+        var isFocused = i === self.focusIdx;
+        var bg = isFocused ? 'background:#6b38d4;color:#fff;' : (isSelected && !isFocused ? '' : '');
+        var dotBorder = isFocused ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
+        var prefix = opt.emoji ? '<span style="font-size:13px;margin-right:2px">' + opt.emoji + '</span> ' : '';
+        var dotHtml = opt.dot ? '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' : '';
+        html += '<li role="option" id="' + self.id + '-opt-' + i + '" aria-selected="' + isSelected + '" data-idx="' + i + '"' +
+          ' class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer" style="' + bg + '">' +
+          dotHtml + prefix + '<span class="text-sm font-bold">' + opt.label + '</span>' +
+          (isSelected ? '<span class="material-symbols-outlined ml-auto" style="font-size:16px">check</span>' : '') +
+          '</li>';
       }
-    }
+      self.popover.innerHTML = html;
+      // Mouse events
+      var items = self.popover.querySelectorAll('li');
+      items.forEach(function(li) {
+        li.addEventListener('mouseenter', function() {
+          self.focusIdx = parseInt(this.dataset.idx);
+          self.renderOptions();
+        });
+        li.addEventListener('click', function(e) {
+          e.stopPropagation();
+          self.selectByIndex(parseInt(this.dataset.idx));
+        });
+      });
+      // Update aria-activedescendant
+      if (self.focusIdx >= 0) {
+        self.trigger.setAttribute('aria-activedescendant', self.id + '-opt-' + self.focusIdx);
+      } else {
+        self.trigger.removeAttribute('aria-activedescendant');
+      }
+    };
+
+    self.open = function() {
+      if (self.isOpen) return;
+      self.isOpen = true;
+      // Set focusIdx to current selected
+      var cur = self.hiddenSelect.value;
+      self.focusIdx = 0;
+      for (var i = 0; i < self.options.length; i++) {
+        if (self.options[i].value === cur) { self.focusIdx = i; break; }
+      }
+      self.renderOptions();
+      self.popover.style.display = '';
+      self.trigger.setAttribute('aria-expanded', 'true');
+    };
+
+    self.close = function() {
+      if (!self.isOpen) return;
+      self.isOpen = false;
+      self.popover.style.display = 'none';
+      self.trigger.setAttribute('aria-expanded', 'false');
+      self.trigger.removeAttribute('aria-activedescendant');
+    };
+
+    self.toggle = function() { self.isOpen ? self.close() : self.open(); };
+
+    self.selectByIndex = function(idx) {
+      if (idx < 0 || idx >= self.options.length) return;
+      var opt = self.options[idx];
+      self.hiddenSelect.value = opt.value;
+      self.syncTrigger(opt.value);
+      self.close();
+      self.onSelect(opt.value);
+    };
+
+    self.moveFocus = function(delta) {
+      self.focusIdx = Math.max(0, Math.min(self.options.length - 1, self.focusIdx + delta));
+      self.renderOptions();
+      // Scroll into view
+      var el = document.getElementById(self.id + '-opt-' + self.focusIdx);
+      if (el) el.scrollIntoView({ block: 'nearest' });
+    };
+
+    // Trigger click
+    self.trigger.addEventListener('click', function(e) { e.stopPropagation(); self.toggle(); });
+
+    // Keyboard on trigger
+    self.trigger.addEventListener('keydown', function(e) {
+      if (!self.isOpen) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          self.open();
+          return;
+        }
+        return;
+      }
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); self.moveFocus(1); break;
+        case 'ArrowUp': e.preventDefault(); self.moveFocus(-1); break;
+        case 'Home': e.preventDefault(); self.focusIdx = 0; self.renderOptions(); break;
+        case 'End': e.preventDefault(); self.focusIdx = self.options.length - 1; self.renderOptions(); break;
+        case 'Enter': case ' ': e.preventDefault(); self.selectByIndex(self.focusIdx); break;
+        case 'Escape': e.preventDefault(); self.close(); break;
+        case 'Tab': self.close(); break;
+        default:
+          // Type-ahead search
+          if (e.key.length === 1) {
+            var ch = e.key.toLowerCase();
+            for (var ti = 0; ti < self.options.length; ti++) {
+              if (self.options[ti].label.toLowerCase().startsWith(ch) || self.options[ti].label.charAt(0) === e.key) {
+                self.focusIdx = ti;
+                self.renderOptions();
+                break;
+              }
+            }
+          }
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+      if (!self.container.contains(e.target)) self.close();
+    });
+
+    // Initial sync
+    self.syncTrigger(self.hiddenSelect.value);
+    _atelierDropdowns[self.id] = self;
+  }
+
+  // ===== CATEGORY DROPDOWN INSTANCE =====
+  var _catDropdown = new AtelierDropdown({
+    id: 'p-cat',
+    containerId: 'p-cat-dropdown',
+    hiddenSelectId: 'p-category',
+    icon: 'category',
+    ariaLabel: '카테고리 선택',
+    options: [
+      { value: '업무',  dot: '#f43f5e', label: '업무' },
+      { value: '연차',  dot: '#f97316', label: '연차' },
+      { value: '개인',  dot: '#f59e0b', label: '개인' },
+      { value: '글쓰기', dot: '#38bdf8', label: '글쓰기' },
+      { value: '영어',  dot: '#84cc16', label: '영어' },
+      { value: '스터디', dot: '#8b5cf6', label: '스터디' },
+      { value: '생일',  dot: '#facc15', label: '생일', emoji: '🎂' },
+    ],
+    onSelect: function(val) { toggleLeaveDay(); }
   });
+
+  // ===== REPEAT DROPDOWN INSTANCE =====
+  var _repeatDropdown = new AtelierDropdown({
+    id: 'p-rpt',
+    containerId: 'p-repeat-dropdown',
+    hiddenSelectId: 'p-repeat',
+    icon: 'repeat',
+    ariaLabel: '반복 선택',
+    options: [
+      { value: 'none',    label: '안함' },
+      { value: 'daily',   label: '매일' },
+      { value: 'weekly',  label: '매주' },
+      { value: 'monthly', label: '매월' },
+      { value: 'yearly',  label: '매년' },
+      { value: 'custom',  label: '커스텀' },
+    ],
+    onSelect: function(val) { toggleRepeatOptions(); }
+  });
+
+  // Backward-compat: _syncCatTrigger for programmatic updates
+  function _syncCatTrigger(value) { _catDropdown.syncTrigger(value); }
+  function _syncRepeatTrigger(value) { _repeatDropdown.syncTrigger(value); }
 
   function calcLeaveDays() {
     var startVal = document.getElementById('p-date').value;
@@ -3993,6 +4102,7 @@
     document.getElementById('planner-modal-title').textContent = editingPlannerIndex !== null ? '일정 수정' : '일정 추가';
     // 반복 설정 초기화
     document.getElementById('p-repeat').value = 'none';
+    _syncRepeatTrigger('none');
     document.getElementById('p-repeat-until').value = '';
     document.getElementById('p-repeat-interval').value = '2';
     document.getElementById('p-repeat-unit').value = 'day';
@@ -4002,7 +4112,8 @@
     // 생일 매년 반복 초기화
     document.getElementById('p-birthday-wrap').style.display = 'none';
     document.getElementById('p-yearly-repeat').checked = true;
-    document.getElementById('p-cat-popover').style.display = 'none';
+    if (_catDropdown) _catDropdown.close();
+    if (_repeatDropdown) _repeatDropdown.close();
 
     if (editingPlannerIndex !== null) {
       const row = plannerData[editingPlannerIndex];
