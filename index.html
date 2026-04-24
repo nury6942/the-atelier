@@ -238,23 +238,15 @@
     .review-font-btn:hover { background:#ede9fe; }
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
 
-    /* ===== REFERENCE CARDS ===== */
-    .ref-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; position:relative; transition:all .2s; box-shadow:0 1px 4px rgba(0,0,0,0.03); height:280px; display:flex; flex-direction:column; }
-    .ref-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.06); }
-    .ref-card:hover .ref-actions { opacity:1; }
-    .ref-card.pinned { border-left:3px solid #7c3aed; }
-    .ref-card-header { flex-shrink:0; }
-    .ref-card-body { flex:1; overflow-y:auto; min-height:0; word-break:break-word; }
-    .ref-card-body::-webkit-scrollbar { width:4px; }
-    .ref-card-body::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
-    .ref-card-body::-webkit-scrollbar-track { background:transparent; }
-    .ref-card-footer { flex-shrink:0; }
-    .ref-actions { opacity:0; transition:opacity .15s; }
-    .ref-add-card { background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23CBD5E1' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); border-radius:12px; height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:all .2s; }
-    .ref-add-card:hover { background-color:rgba(139,92,246,0.04); }
-    .ref-add-card:hover .ref-add-icon { background:#7c3aed; color:#fff; }
-    .ref-add-icon { width:48px; height:48px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; transition:all .2s; }
-    .ref-code-block { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; font-family:monospace; font-size:13px; line-height:1.6; color:#334155; white-space:pre-wrap; word-break:break-all; }
+    /* ===== MEMO LIST (Apple Notes style) ===== */
+    .ref-list-item { padding:10px 12px; border-radius:8px; cursor:pointer; transition:background .15s; margin-bottom:1px; }
+    .ref-list-item:hover { background:rgba(0,0,0,0.04); }
+    .ref-list-item.active { background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+    .ref-list-item .ref-li-title { font-size:13px; font-weight:600; color:#1d1d1f; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.4; }
+    .ref-list-item .ref-li-preview { font-size:11px; color:#8e8e93; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.4; margin-top:1px; }
+    .ref-list-item .ref-li-date { font-size:10px; color:#aeaeb2; line-height:1.4; }
+    .ref-list-group { font-size:11px; font-weight:700; color:#6e6e73; text-transform:uppercase; letter-spacing:0.5px; padding:12px 12px 4px; }
+    .ref-list-item .ref-li-pin { color:#7c3aed; font-size:14px; margin-right:2px; vertical-align:middle; }
     .ref-toolbar { display:flex; gap:2px; align-items:center; flex-wrap:wrap; }
     .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:#64748b; display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
     .ref-toolbar button:hover { background:#ede9fe; color:#7c3aed; }
@@ -267,8 +259,10 @@
     .ref-popover .cp-dot.active { border-color:#7c3aed; }
     .ref-popover .fs-opt { padding:4px 12px; border-radius:6px; cursor:pointer; font-size:13px; color:#475569; white-space:nowrap; }
     .ref-popover .fs-opt:hover { background:#ede9fe; color:#7c3aed; }
-    .ref-editor { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
-    .ref-editor:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
+    .ref-editor { background:transparent; border:none; border-radius:0; padding:0; font-size:15px; line-height:1.8; color:#1d1d1f; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
+    .ref-editor:focus { border-color:transparent; box-shadow:none; }
+    #ref-input-body { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; }
+    #ref-input-body:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
     .ref-editor:empty::before { content:attr(data-placeholder); color:#94a3b8; pointer-events:none; }
     .ref-editor::-webkit-scrollbar { width:4px; }
     .ref-editor::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
@@ -14428,17 +14422,60 @@ speaker 설정:
 
   <!-- ===== WORKSPACE REFERENCE PAGE ===== -->
   <div id="page-reference" class="page" style="display:none">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
-      <div class="mb-8">
-        <h1 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight" style="letter-spacing:-0.02em">Workspace Reference</h1>
-        <p class="text-slate-500 mt-1">자주 참고하는 커맨드와 노트</p>
-        <div class="mt-6 relative w-full max-w-[400px]">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" style="font-size:18px">search</span>
-          <input id="ref-search" type="text" placeholder="검색어를 입력하세요..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all placeholder:text-slate-400"/>
+    <div class="flex h-[calc(100vh-64px)]">
+      <!-- Left Panel: Memo List -->
+      <div class="w-[300px] shrink-0 border-r border-slate-200 flex flex-col" style="background:#f5f5f7">
+        <div class="p-4 pb-2">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-bold text-slate-800" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif">Memo</h2>
+            <button onclick="openRefModal()" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 transition-colors" title="새 메모"><span class="material-symbols-outlined" style="font-size:20px">edit_square</span></button>
+          </div>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" style="font-size:16px">search</span>
+            <input id="ref-search" type="text" placeholder="검색" class="w-full pl-8 pr-3 py-1.5 bg-white/80 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-indigo-300 transition-all placeholder:text-slate-400"/>
+          </div>
         </div>
+        <div id="ref-list" class="flex-1 overflow-y-auto px-2 pb-4" style="scrollbar-width:thin"></div>
       </div>
-      <div id="ref-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- cards rendered by JS -->
+      <!-- Right Panel: Editor -->
+      <div class="flex-1 flex flex-col bg-white overflow-hidden">
+        <div id="ref-editor-panel" class="flex-1 flex flex-col">
+          <div id="ref-editor-empty" class="flex-1 flex items-center justify-center text-slate-300">
+            <div class="text-center">
+              <span class="material-symbols-outlined mb-3 block" style="font-size:48px">edit_note</span>
+              <p class="text-sm text-slate-400">메모를 선택하거나 새로 만드세요</p>
+            </div>
+          </div>
+          <div id="ref-editor-active" class="flex-1 flex flex-col" style="display:none">
+            <div class="px-8 pt-6 pb-2 flex items-center justify-between">
+              <p id="ref-editor-date" class="text-xs text-slate-400"></p>
+              <div class="flex gap-1">
+                <button onclick="toggleRefPin(_refEditingId)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="고정"><span id="ref-editor-pin-icon" class="material-symbols-outlined" style="font-size:18px">push_pin</span></button>
+                <button onclick="openRefDelModal(_refEditingId)" class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
+              </div>
+            </div>
+            <div class="px-8 pb-2 border-b border-slate-100 shrink-0">
+              <div class="ref-toolbar" id="ref-tb-inline">
+                <button onmousedown="event.preventDefault();document.execCommand('bold')" title="Bold"><b>B</b></button>
+                <button onmousedown="event.preventDefault();document.execCommand('italic')" title="Italic"><i>I</i></button>
+                <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline"><u>U</u></button>
+                <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strike"><s>S</s></button>
+                <span class="tb-sep"></span>
+                <button onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')" title="List"><span class="material-symbols-outlined" style="font-size:16px">format_list_bulleted</span></button>
+                <button onmousedown="event.preventDefault();document.execCommand('insertOrderedList')" title="Numbered"><span class="material-symbols-outlined" style="font-size:16px">format_list_numbered</span></button>
+                <span class="tb-sep"></span>
+                <button onmousedown="event.preventDefault();refToggleCode()" title="Code" style="font-size:11px;font-weight:600">&lt;/&gt;</button>
+              </div>
+            </div>
+            <div class="flex-1 overflow-y-auto px-8 py-4" style="max-width:800px">
+              <input id="ref-editor-title" type="text" placeholder="제목" class="w-full text-2xl font-bold text-slate-900 outline-none mb-3 bg-transparent placeholder:text-slate-300" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"/>
+              <div id="ref-editor-body" contenteditable="true" class="ref-editor text-base text-slate-700 outline-none leading-relaxed" data-placeholder="내용을 입력하세요..." style="min-height:300px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"></div>
+            </div>
+            <div class="px-8 py-3 border-t border-slate-100 flex justify-end shrink-0">
+              <button onclick="saveRefInline()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -14836,6 +14873,7 @@ var _refCards = [];
 var _refEditId = null;
 var _refDeleteId = null;
 var _refSearchTimer = null;
+var _refEditingId = null;
 
 async function loadReference() {
   try {
@@ -14843,7 +14881,6 @@ async function loadReference() {
     _refCards = [];
     snap.forEach(function(doc) {
       var data = Object.assign({ _id: doc.id }, doc.data());
-      // Migrate markdown **bold** to HTML <strong>
       if (data.body && !data.isCode) {
         var migrated = migrateMarkdown(data.body);
         if (migrated !== data.body) {
@@ -14853,15 +14890,48 @@ async function loadReference() {
       }
       _refCards.push(data);
     });
-    renderRefCards();
+    renderRefList();
+    // Reset editor to empty state
+    if (!_refEditingId || !_refCards.find(function(c) { return c._id === _refEditingId; })) {
+      _refEditingId = null;
+      document.getElementById('ref-editor-active').style.display = 'none';
+      document.getElementById('ref-editor-empty').style.display = 'flex';
+    }
   } catch(e) {
     console.error('[Reference] load error:', e);
   }
 }
 
-function renderRefCards(filter) {
-  var grid = document.getElementById('ref-grid');
-  if (!grid) return;
+function _refGetDate(ts) {
+  if (!ts) return new Date(0);
+  return ts.toDate ? ts.toDate() : new Date(ts);
+}
+
+function _refDateLabel(d) {
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var diff = today - new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var dayMs = 86400000;
+  if (diff < dayMs) return '오늘';
+  if (diff < 2 * dayMs) return '어제';
+  if (diff < 7 * dayMs) return '이전 7일';
+  if (diff < 30 * dayMs) return '이전 30일';
+  return '이전';
+}
+
+function _refShortDate(d) {
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var diff = today - new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if (diff < 86400000) {
+    return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+}
+
+function renderRefList(filter) {
+  var list = document.getElementById('ref-list');
+  if (!list) return;
 
   var cards = _refCards.slice();
   if (filter) {
@@ -14876,57 +14946,103 @@ function renderRefCards(filter) {
   cards.sort(function(a, b) {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-    var tA = a.updatedAt ? (a.updatedAt.toDate ? a.updatedAt.toDate() : new Date(a.updatedAt)) : new Date(0);
-    var tB = b.updatedAt ? (b.updatedAt.toDate ? b.updatedAt.toDate() : new Date(b.updatedAt)) : new Date(0);
+    var tA = _refGetDate(a.updatedAt);
+    var tB = _refGetDate(b.updatedAt);
     return tB - tA;
   });
 
-  var html = '';
-
-  // Add card button
-  html += '<div class="ref-add-card" onclick="openRefModal()">' +
-    '<div class="ref-add-icon"><span class="material-symbols-outlined">add</span></div>' +
-    '<div class="text-center"><span class="font-bold text-slate-800 text-sm">+ New Card</span><br><span class="text-xs text-slate-400">새 카드 추가</span></div>' +
-    '</div>';
-
-  if (cards.length === 0 && !filter) {
-    html += '<div class="col-span-full text-center py-16 text-slate-400">' +
-      '<span class="material-symbols-outlined mb-2" style="font-size:48px;color:#cbd5e1">menu_book</span>' +
-      '<p class="font-bold text-slate-500">아직 카드가 없어요</p>' +
-      '<p class="text-sm mt-1">자주 쓰는 커맨드, URL, 메모를 저장하세요</p>' +
-      '</div>';
+  if (cards.length === 0) {
+    list.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size:36px">edit_note</span><p class="text-xs">' + (filter ? '검색 결과 없음' : '메모가 없습니다') + '</p></div>';
+    return;
   }
 
-  cards.forEach(function(c) {
-    var timeStr = refTimeAgo(c.updatedAt);
-    var pinClass = c.isPinned ? ' pinned' : '';
-    var pinIcon = c.isPinned ? '<span class="material-symbols-outlined text-violet-600" style="font-size:18px;font-variation-settings:\'FILL\' 1">push_pin</span>' : '<span class="material-symbols-outlined text-slate-300 hover:text-slate-400" style="font-size:18px">push_pin</span>';
-    var bodyHtml = '';
-    if (c.body) {
-      if (c.isCode) {
-        bodyHtml = '<pre class="ref-code-block">' + escHtml(c.body) + '</pre>';
-      } else {
-        bodyHtml = '<div class="text-sm text-slate-600 leading-relaxed" style="word-break:break-word;">' + sanitizeHtml(c.body) + '</div>';
-      }
+  var html = '';
+  var lastGroup = '';
+  var pinned = cards.filter(function(c) { return c.isPinned; });
+  var unpinned = cards.filter(function(c) { return !c.isPinned; });
+
+  if (pinned.length > 0) {
+    html += '<div class="ref-list-group">고정된 메모</div>';
+    pinned.forEach(function(c) { html += _refListItemHtml(c); });
+  }
+
+  unpinned.forEach(function(c) {
+    var d = _refGetDate(c.updatedAt);
+    var group = _refDateLabel(d);
+    if (group !== lastGroup) {
+      html += '<div class="ref-list-group">' + group + '</div>';
+      lastGroup = group;
     }
-    html += '<div class="ref-card' + pinClass + '" ondblclick="openRefFullModal(\'' + c._id + '\')">' +
-      '<div class="ref-card-header flex justify-between items-start mb-3">' +
-        '<h3 class="font-bold text-sm text-slate-900 pr-2">' + escHtml(c.title || '') + '</h3>' +
-        '<button onclick="toggleRefPin(\'' + c._id + '\')" class="shrink-0 p-0.5 rounded hover:bg-slate-100 transition-colors">' + pinIcon + '</button>' +
-      '</div>' +
-      '<div class="ref-card-body mb-3">' + bodyHtml + '</div>' +
-      '<div class="ref-card-footer flex items-center justify-between">' +
-        '<span class="text-[11px] text-slate-400">' + timeStr + '</span>' +
-        '<div class="ref-actions flex gap-1">' +
-          '<button onclick="copyRefCard(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="복사"><span class="material-symbols-outlined" style="font-size:16px">content_copy</span></button>' +
-          '<button onclick="openRefModal(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="편집"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>' +
-          '<button onclick="openRefDelModal(\'' + c._id + '\')" class="p-1.5 rounded-md hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="삭제"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
+    html += _refListItemHtml(c);
   });
 
-  grid.innerHTML = html;
+  list.innerHTML = html;
+}
+
+function _refListItemHtml(c) {
+  var d = _refGetDate(c.updatedAt);
+  var dateStr = _refShortDate(d);
+  var preview = stripHtml(c.body || '').substring(0, 60);
+  var activeClass = (_refEditingId === c._id) ? ' active' : '';
+  var pinHtml = c.isPinned ? '<span class="material-symbols-outlined ref-li-pin" style="font-variation-settings:\'FILL\' 1">push_pin</span>' : '';
+  return '<div class="ref-list-item' + activeClass + '" onclick="selectMemo(\'' + c._id + '\')">' +
+    '<div class="ref-li-title">' + pinHtml + escHtml(c.title || '제목 없음') + '</div>' +
+    '<div class="ref-li-preview"><span class="ref-li-date">' + dateStr + '</span>  ' + escHtml(preview || '내용 없음') + '</div>' +
+  '</div>';
+}
+
+function selectMemo(id) {
+  _refEditingId = id;
+  var card = _refCards.find(function(c) { return c._id === id; });
+  if (!card) return;
+
+  document.getElementById('ref-editor-empty').style.display = 'none';
+  document.getElementById('ref-editor-active').style.display = 'flex';
+
+  document.getElementById('ref-editor-title').value = card.title || '';
+  var bodyEl = document.getElementById('ref-editor-body');
+  if (card.isCode) {
+    bodyEl.innerText = card.body || '';
+  } else {
+    bodyEl.innerHTML = card.body || '';
+  }
+
+  // Update date display
+  var d = _refGetDate(card.updatedAt);
+  document.getElementById('ref-editor-date').textContent = d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  // Update pin icon
+  var pinIcon = document.getElementById('ref-editor-pin-icon');
+  pinIcon.style.fontVariationSettings = card.isPinned ? "'FILL' 1" : "'FILL' 0";
+  pinIcon.style.color = card.isPinned ? '#7c3aed' : '';
+
+  // Highlight active item in list
+  renderRefList(document.getElementById('ref-search').value.trim());
+}
+
+async function saveRefInline() {
+  var title = document.getElementById('ref-editor-title').value.trim();
+  if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 제목을 입력하세요'); return; }
+  var el = document.getElementById('ref-editor-body');
+  var body = sanitizeHtml(el.innerHTML).trim();
+  var now = new Date();
+
+  try {
+    if (_refEditingId) {
+      await db.collection('workspace_references').doc(_refEditingId).update({ title: title, body: body, updatedAt: now });
+      var card = _refCards.find(function(c) { return c._id === _refEditingId; });
+      if (card) { card.title = title; card.body = body; card.updatedAt = now; }
+    } else {
+      var docRef = await db.collection('workspace_references').add({ title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now });
+      _refCards.unshift({ _id: docRef.id, title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now });
+      _refEditingId = docRef.id;
+    }
+    renderRefList(document.getElementById('ref-search').value.trim());
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장됨');
+  } catch(e) {
+    console.error('[Reference] save error:', e);
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
+  }
 }
 
 function escHtml(s) {
@@ -15006,24 +15122,23 @@ function refTimeAgo(ts) {
 }
 
 function openRefModal(editId) {
-  _refEditId = editId || null;
-  document.getElementById('ref-input-title').value = '';
-  document.getElementById('ref-input-body').innerHTML = '';
-  document.getElementById('ref-input-code').checked = false;
-
-  if (_refEditId) {
-    document.getElementById('ref-modal-title').textContent = '카드 편집';
-    var card = _refCards.find(function(c) { return c._id === _refEditId; });
-    if (card) {
-      document.getElementById('ref-input-title').value = card.title || '';
-      document.getElementById('ref-input-body').innerHTML = card.isCode ? escHtml(card.body || '') : (card.body || '');
-      document.getElementById('ref-input-code').checked = !!card.isCode;
-    }
-  } else {
-    document.getElementById('ref-modal-title').textContent = '새 카드';
+  if (editId) {
+    selectMemo(editId);
+    return;
   }
-  document.getElementById('ref-modal').style.cssText = 'display:flex!important';
-  document.getElementById('ref-input-title').focus();
+  // New memo — open inline editor with empty state
+  _refEditingId = null;
+  document.getElementById('ref-editor-empty').style.display = 'none';
+  document.getElementById('ref-editor-active').style.display = 'flex';
+  document.getElementById('ref-editor-title').value = '';
+  document.getElementById('ref-editor-body').innerHTML = '';
+  document.getElementById('ref-editor-date').textContent = '새 메모';
+  var pinIcon = document.getElementById('ref-editor-pin-icon');
+  pinIcon.style.fontVariationSettings = "'FILL' 0";
+  pinIcon.style.color = '';
+  // Deselect in list
+  document.querySelectorAll('.ref-list-item.active').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('ref-editor-title').focus();
 }
 
 function closeRefModal() {
@@ -15045,7 +15160,6 @@ async function saveRefCard() {
     } else {
       await db.collection('workspace_references').add({ title: title, body: body, isCode: isCode, isPinned: false, createdAt: now, updatedAt: now });
     }
-    closeRefModal();
     await loadReference();
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (_refEditId ? '수정됨' : '추가됨'));
   } catch(e) {
@@ -15061,7 +15175,13 @@ async function toggleRefPin(id) {
   try {
     await db.collection('workspace_references').doc(id).update({ isPinned: newPin, updatedAt: new Date() });
     card.isPinned = newPin;
-    renderRefCards(document.getElementById('ref-search').value.trim());
+    renderRefList(document.getElementById('ref-search').value.trim());
+    // Update pin icon in editor if this memo is currently open
+    if (_refEditingId === id) {
+      var pinIcon = document.getElementById('ref-editor-pin-icon');
+      pinIcon.style.fontVariationSettings = newPin ? "'FILL' 1" : "'FILL' 0";
+      pinIcon.style.color = newPin ? '#7c3aed' : '';
+    }
   } catch(e) {
     console.error('[Reference] pin error:', e);
   }
@@ -15089,9 +15209,16 @@ function closeRefDelModal() {
 async function confirmDeleteRefCard() {
   if (!_refDeleteId) return;
   try {
+    var wasEditing = (_refEditingId === _refDeleteId);
     await db.collection('workspace_references').doc(_refDeleteId).delete();
     closeRefDelModal();
-    await loadReference();
+    _refCards = _refCards.filter(function(c) { return c._id !== _refDeleteId; });
+    if (wasEditing) {
+      _refEditingId = null;
+      document.getElementById('ref-editor-active').style.display = 'none';
+      document.getElementById('ref-editor-empty').style.display = 'flex';
+    }
+    renderRefList(document.getElementById('ref-search').value.trim());
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 삭제됨');
   } catch(e) {
     console.error('[Reference] delete error:', e);
@@ -15195,6 +15322,7 @@ async function saveRefFullCard() {
     await db.collection('workspace_references').doc(_refFullEditId).update({ title: title, body: body, isCode: isCode, updatedAt: now });
     closeRefFullModal();
     await loadReference();
+    if (_refEditingId === _refFullEditId) selectMemo(_refFullEditId);
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정됨');
   } catch(e) {
     console.error('[Reference] save error:', e);
@@ -15209,7 +15337,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchEl.addEventListener('input', function() {
       clearTimeout(_refSearchTimer);
       var val = searchEl.value.trim();
-      _refSearchTimer = setTimeout(function() { renderRefCards(val); }, 200);
+      _refSearchTimer = setTimeout(function() { renderRefList(val); }, 200);
     });
   }
 
