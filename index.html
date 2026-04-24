@@ -2564,6 +2564,29 @@
   <div id="page-income" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
+      <!-- Sticky Unified Timeline -->
+      <div id="work-timeline-section" style="display:none;position:sticky;top:64px;z-index:30;background:white;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 16px 16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);padding:12px 16px;margin:-10px 0 16px;max-height:45vh;overflow:hidden">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-slate-800">📊 전체 작품 흐름</span>
+            <button onclick="var b=document.getElementById('ut-body');var i=this.querySelector('span');if(b.style.display==='none'){b.style.display='';i.textContent='expand_less'}else{b.style.display='none';i.textContent='expand_more'}" class="p-0.5 hover:bg-slate-100 rounded text-slate-400"><span class="material-symbols-outlined" style="font-size:16px">expand_less</span></button>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="_scrollUtToday()" class="px-2.5 py-1 rounded-lg border border-indigo-200 text-indigo-600 text-[10px] font-bold hover:bg-indigo-50 transition-all flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">today</span>오늘로</button>
+            <div class="flex gap-2 text-[9px] font-bold text-slate-400">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#c084fc"></span>시놉</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#60a5fa"></span>초고</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#fbbf24"></span>퇴고</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#cbd5e1"></span>휴식</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#ef4444"></span>오늘</span>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-100" style="overflow-x:auto;overflow-y:auto;max-height:calc(45vh - 40px);scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
+          <div id="work-timeline-chart"></div>
+        </div>
+      </div>
+
       <!-- Work Pipeline -->
       <section id="work-pipeline" class="bg-white rounded-3xl p-8 shadow-[0_12px_32px_-4px_rgba(45,51,53,0.06)]">
         <div class="flex items-center justify-between mb-6">
@@ -2574,26 +2597,6 @@
           <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
             <span class="material-symbols-outlined text-sm">add</span> 새 작품
           </button>
-        </div>
-
-        <!-- Unified Timeline (맨 위) -->
-        <div id="work-timeline-section" class="mb-6" style="display:none">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-bold text-slate-800">📊 전체 작품 흐름</span>
-            <div class="flex items-center gap-3">
-              <button onclick="_scrollUtToday()" class="px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 text-xs font-bold hover:bg-indigo-50 transition-all flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px">today</span>오늘로</button>
-              <div class="flex gap-3 text-[10px] font-bold text-slate-400">
-                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#c084fc"></span>시놉</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#60a5fa"></span>초고</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#fbbf24"></span>퇴고</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#cbd5e1"></span>휴식</span>
-                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background:#ef4444"></span>오늘</span>
-              </div>
-            </div>
-          </div>
-          <div class="rounded-2xl border border-slate-100" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
-            <div id="work-timeline-chart"></div>
-          </div>
         </div>
 
         <div id="work-pipeline-list"></div>
@@ -11709,11 +11712,11 @@
       var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;});
       if (sWorks.length===0) return;
       var sColor = (_seriesHexMap[s.color]||'#6366f1');
-      rowsHtml += '<div class="px-3 py-1.5 text-[12px] font-bold" style="color:'+sColor+';border-bottom:1px dashed #f1f5f9;position:sticky;left:0;background:white;z-index:7">📖 '+s.name+'</div>';
+      rowsHtml += '<div class="px-3 py-1 text-[11px] font-bold" style="color:'+sColor+';border-bottom:1px dashed #f1f5f9;position:sticky;left:0;background:white;z-index:7">📖 '+s.name+'</div>';
       sWorks.forEach(function(w) {
-        rowsHtml += '<div class="flex items-center" style="height:44px;border-bottom:1px solid #f8fafc">';
-        rowsHtml += '<div class="shrink-0 px-3 text-[12px] font-semibold text-slate-700 truncate" style="width:150px;position:sticky;left:0;background:white;z-index:6;box-shadow:2px 0 4px -2px rgba(0,0,0,0.05)" title="'+w.title+'">'+w.title+'</div>';
-        rowsHtml += '<div class="relative flex-1" style="height:44px">';
+        rowsHtml += '<div class="flex items-center" style="height:38px;border-bottom:1px solid #f8fafc">';
+        rowsHtml += '<div class="shrink-0 px-3 text-[11px] font-semibold text-slate-700 truncate" style="width:130px;position:sticky;left:0;background:white;z-index:6;box-shadow:2px 0 4px -2px rgba(0,0,0,0.05)" title="'+w.title+'">'+w.title+'</div>';
+        rowsHtml += '<div class="relative flex-1" style="height:38px">';
         var allPh = ['synopsis','draft','revision','rest'];
         if (w.publish_start&&w.publish_end) { w.phases = w.phases||{}; w.phases._pub={start:w.publish_start,end:w.publish_end}; allPh.push('_pub'); }
         allPh.forEach(function(pk) {
@@ -11726,8 +11729,8 @@
           var cw=Math.max(0.3,cr-cl);
           var col = rk==='publishing'?sColor:(phaseColors[rk]||'#94a3b8');
           var lbl = {synopsis:'시놉',draft:'초고',revision:'퇴고',rest:'휴식',publishing:'연재'}[rk]||rk;
-          rowsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all overflow-visible" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;top:8px;height:28px;background:'+col+';box-shadow:0 1px 3px rgba(0,0,0,0.1)" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
-          rowsHtml += '<span class="text-[10px] font-bold text-white px-1 truncate block leading-7" style="text-shadow:0 1px 2px rgba(0,0,0,0.3)">'+lbl+'</span>';
+          rowsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all overflow-visible" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;top:6px;height:24px;background:'+col+';box-shadow:0 1px 3px rgba(0,0,0,0.1)" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
+          rowsHtml += '<span class="text-[9px] font-bold text-white px-1 truncate block leading-6" style="text-shadow:0 1px 2px rgba(0,0,0,0.3)">'+lbl+'</span>';
           rowsHtml += '</div>';
         });
         if (w.phases&&w.phases._pub) delete w.phases._pub;
@@ -11735,7 +11738,7 @@
         rowsHtml += '</div></div>';
       });
     });
-    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative"><div class="relative" style="height:32px;margin-left:150px;position:relative">'+hHtml+'</div>'+rowsHtml+'</div>';
+    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative"><div class="relative" style="height:28px;margin-left:130px;position:relative">'+hHtml+'</div><div id="ut-body">'+rowsHtml+'</div></div>';
     setTimeout(function() { var sc=document.getElementById('ut-scroll'); if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);} },120);
   }
   function _scrollUtToday() { var sc=document.getElementById('ut-scroll'); if(!sc) return; var tl=sc.querySelector('[style*="background:#ef4444"]'); if(tl){sc.scrollLeft=Math.max(0,tl.offsetLeft-sc.offsetWidth/3);} }
