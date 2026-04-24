@@ -2943,7 +2943,19 @@
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="p-date" type="date" placeholder=""  class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="p-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
                     <div class="atl-field"><label>제목 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">title</span><input id="p-title" type="text" placeholder="예: 소설 5화 탈고"  class="atl-input w-full"/></div></div>
-                    <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="p-category" class="atl-input w-full bg-white" onchange="toggleLeaveDay()"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>생일</option></select></div></div>
+                    <div class="atl-field"><label>카테고리</label>
+                      <select id="p-category" style="display:none"><option>업무</option><option>연차</option><option>개인</option><option>글쓰기</option><option>영어</option><option>스터디</option><option>생일</option></select>
+                      <div id="p-cat-dropdown" class="relative">
+                        <button type="button" id="p-cat-trigger" onclick="toggleCatDropdown()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#6b38d4]/40 transition-all text-left cursor-pointer">
+                          <span class="atl-field-icon material-symbols-outlined" style="position:static;font-size:18px;color:#94a3b8">category</span>
+                          <span id="p-cat-dot" class="w-2.5 h-2.5 rounded-full shrink-0" style="background:#f43f5e"></span>
+                          <span id="p-cat-label" class="flex-1 text-sm font-bold text-[#1d1a23]">업무</span>
+                          <span class="material-symbols-outlined text-slate-400" style="font-size:16px">expand_more</span>
+                        </button>
+                        <div id="p-cat-popover" class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-slate-100 p-1 z-50" style="display:none">
+                        </div>
+                      </div>
+                    </div>
                     <div id="p-birthday-wrap" class="atl-field" style="display:none"><label class="flex items-center gap-2 cursor-pointer"><input id="p-yearly-repeat" type="checkbox" checked class="accent-yellow-400 w-4 h-4"/><span class="text-sm font-bold text-slate-700">매년 반복</span><span class="text-xs text-slate-400">(매년 같은 날짜에 자동 표시)</span></label></div>
                     <div id="p-leave-day-wrap" class="atl-field" style="display:none"><label>연차 일수</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><select id="p-leave-day" class="atl-input w-full bg-white"><option value="1.0">1.0일 (연차)</option><option value="0.5">0.5일 (반차)</option><option value="2.0">2.0일</option><option value="3.0">3.0일</option><option value="5.0">5.0일</option></select></div></div>
                     <div class="atl-field"><label>메모</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">notes</span><input id="p-notes" type="text" placeholder="예: 3회차까지 마무리"  class="atl-input w-full"/></div></div>
@@ -3793,6 +3805,84 @@
     bdayWrap.style.display = cat === '생일' ? 'block' : 'none';
   }
 
+  // ===== CUSTOM CATEGORY DROPDOWN =====
+  var _CAT_OPTIONS = [
+    { value: '업무',  dot: '#f43f5e', icon: 'work',          label: '업무' },
+    { value: '연차',  dot: '#f97316', icon: 'beach_access',   label: '연차' },
+    { value: '개인',  dot: '#f59e0b', icon: 'person',         label: '개인' },
+    { value: '글쓰기', dot: '#38bdf8', icon: 'edit_note',     label: '글쓰기' },
+    { value: '영어',  dot: '#84cc16', icon: 'translate',      label: '영어' },
+    { value: '스터디', dot: '#8b5cf6', icon: 'smart_toy',     label: '스터디' },
+    { value: '생일',  dot: '#facc15', icon: 'cake',           label: '생일', emoji: '🎂' },
+  ];
+
+  function _renderCatPopover() {
+    var popover = document.getElementById('p-cat-popover');
+    var current = document.getElementById('p-category').value;
+    var html = '';
+    for (var i = 0; i < _CAT_OPTIONS.length; i++) {
+      var opt = _CAT_OPTIONS[i];
+      var isSelected = opt.value === current;
+      var cls = isSelected
+        ? 'background:#6b38d4;color:#fff;'
+        : '';
+      var hoverCls = isSelected ? '' : 'onmouseenter="this.style.background=\'#f8f1fe\'" onmouseleave="this.style.background=\'transparent\'"';
+      var dotBorder = isSelected ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
+      var prefix = opt.emoji ? '<span style="font-size:13px;margin-right:2px">' + opt.emoji + '</span> ' : '';
+      html += '<div onclick="selectCatOption(\'' + opt.value + '\')" ' + hoverCls +
+        ' class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors" style="' + cls + '">' +
+        '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' +
+        prefix + '<span class="text-sm font-bold">' + opt.label + '</span>' +
+        (isSelected ? '<span class="material-symbols-outlined ml-auto" style="font-size:16px">check</span>' : '') +
+        '</div>';
+    }
+    popover.innerHTML = html;
+  }
+
+  function toggleCatDropdown() {
+    var popover = document.getElementById('p-cat-popover');
+    if (popover.style.display === 'none') {
+      _renderCatPopover();
+      popover.style.display = 'block';
+    } else {
+      popover.style.display = 'none';
+    }
+  }
+
+  function selectCatOption(value) {
+    document.getElementById('p-category').value = value;
+    _syncCatTrigger(value);
+    document.getElementById('p-cat-popover').style.display = 'none';
+    toggleLeaveDay();
+  }
+
+  function _syncCatTrigger(value) {
+    var opt = _CAT_OPTIONS.find(function(o) { return o.value === value; });
+    if (!opt) opt = _CAT_OPTIONS[0];
+    document.getElementById('p-cat-dot').style.background = opt.dot;
+    var prefix = opt.emoji ? opt.emoji + ' ' : '';
+    document.getElementById('p-cat-label').textContent = prefix + opt.label;
+  }
+
+  // Close on outside click
+  document.addEventListener('click', function(e) {
+    var dropdown = document.getElementById('p-cat-dropdown');
+    var popover = document.getElementById('p-cat-popover');
+    if (dropdown && popover && !dropdown.contains(e.target)) {
+      popover.style.display = 'none';
+    }
+  });
+
+  // Close on ESC (added to existing keydown handler scope)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var popover = document.getElementById('p-cat-popover');
+      if (popover && popover.style.display !== 'none') {
+        popover.style.display = 'none';
+      }
+    }
+  });
+
   function calcLeaveDays() {
     var startVal = document.getElementById('p-date').value;
     var endVal = document.getElementById('p-date-end').value;
@@ -3912,11 +4002,13 @@
     // 생일 매년 반복 초기화
     document.getElementById('p-birthday-wrap').style.display = 'none';
     document.getElementById('p-yearly-repeat').checked = true;
+    document.getElementById('p-cat-popover').style.display = 'none';
 
     if (editingPlannerIndex !== null) {
       const row = plannerData[editingPlannerIndex];
       document.getElementById('p-date').value = row[0]||'';
       document.getElementById('p-category').value = row[2]||'업무';
+      _syncCatTrigger(row[2]||'업무');
       // 생일: 🎂 이모지 제거해서 표시
       var editTitle = row[1]||'';
       if (row[2] === '생일') editTitle = editTitle.replace(/^🎂\s*/, '');
@@ -3954,6 +4046,7 @@
       document.getElementById('p-title').value = '';
       document.getElementById('p-notes').value = '';
       document.getElementById('p-category').value = '업무';
+      _syncCatTrigger('업무');
       document.getElementById('p-leave-day').value = '1.0';
       document.getElementById('p-leave-day-wrap').style.display = 'none';
 
@@ -9213,6 +9306,7 @@
       openPlannerModal(null, dateStr);
       setTimeout(function(){
         document.getElementById('p-category').value = catName;
+        _syncCatTrigger(catName);
         toggleLeaveDay();
       }, 100);
     }
