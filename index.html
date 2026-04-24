@@ -11701,7 +11701,7 @@
     var mc = new Date(rStart.getFullYear(), rStart.getMonth(), 1);
     while (mc <= rEnd) {
       var mp = pct(mc); var isYr = mc.getMonth()===0;
-      hHtml += '<div class="text-[11px] font-bold py-2' + (isYr?' text-indigo-600':' text-slate-400') + '" style="position:absolute;left:'+mp.toFixed(1)+'%;transform:translateX(-50%)">' + (isYr?'<span class="text-[9px] block">'+mc.getFullYear()+'</span>':'') + MO[mc.getMonth()]+'월</div>';
+      hHtml += '<div class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '" style="position:absolute;left:'+mp.toFixed(1)+'%;bottom:4px;transform:translateX(-50%);white-space:nowrap">' + (isYr?'<span class="text-[9px] font-black text-indigo-600 block" style="margin-bottom:1px">'+mc.getFullYear()+'</span>':'') + MO[mc.getMonth()]+'월</div>';
       mc.setMonth(mc.getMonth()+1);
     }
     hHtml += '</div>';
@@ -11712,7 +11712,9 @@
       var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;});
       if (sWorks.length===0) return;
       var sColor = (_seriesHexMap[s.color]||'#6366f1');
-      rowsHtml += '<div class="px-3 py-1 text-[11px] font-bold" style="color:'+sColor+';border-bottom:1px dashed #f1f5f9;position:sticky;left:0;background:white;z-index:7">📖 '+s.name+'</div>';
+      rowsHtml += '<div class="flex items-center" style="height:32px;border-bottom:1px dashed #f1f5f9;margin-top:8px">' +
+        '<div class="shrink-0 px-3 text-[12px] font-bold" style="width:130px;color:'+sColor+';position:sticky;left:0;background:white;z-index:7;box-shadow:2px 0 4px -2px rgba(0,0,0,0.05)">📖 '+s.name+'</div>' +
+        '<div class="flex-1" style="height:1px;background:'+sColor+'15"></div></div>';
       sWorks.forEach(function(w) {
         rowsHtml += '<div class="flex items-center" style="height:38px;border-bottom:1px solid #f8fafc">';
         rowsHtml += '<div class="shrink-0 px-3 text-[11px] font-semibold text-slate-700 truncate" style="width:130px;position:sticky;left:0;background:white;z-index:6;box-shadow:2px 0 4px -2px rgba(0,0,0,0.05)" title="'+w.title+'">'+w.title+'</div>';
@@ -11738,7 +11740,7 @@
         rowsHtml += '</div></div>';
       });
     });
-    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative"><div class="relative" style="height:28px;margin-left:130px;position:relative">'+hHtml+'</div><div id="ut-body">'+rowsHtml+'</div></div>';
+    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative"><div class="relative" style="height:36px;margin-left:130px;border-bottom:1px solid #e5e7eb">'+hHtml+'</div><div id="ut-body">'+rowsHtml+'</div></div>';
     setTimeout(function() { var sc=document.getElementById('ut-scroll'); if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);} },120);
   }
   function _scrollUtToday() { var sc=document.getElementById('ut-scroll'); if(!sc) return; var tl=sc.querySelector('[style*="background:#ef4444"]'); if(tl){sc.scrollLeft=Math.max(0,tl.offsetLeft-sc.offsetWidth/3);} }
