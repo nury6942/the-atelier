@@ -11730,6 +11730,11 @@
     var today = new Date(); today.setHours(0,0,0,0);
     var rangeStart = new Date(today); rangeStart.setMonth(rangeStart.getMonth() - 1);
     var rangeEnd = new Date(today); rangeEnd.setMonth(rangeEnd.getMonth() + 14);
+    // Auto-expand to fit all works
+    _works.forEach(function(w) {
+      var dates = [w.publish_start, w.publish_end, w.phases&&w.phases.synopsis?w.phases.synopsis.start:null, w.phases&&w.phases.revision?w.phases.revision.end:null].filter(Boolean);
+      dates.forEach(function(d) { var dt = new Date(d+'T00:00:00'); if (dt > rangeEnd) rangeEnd = new Date(dt.getTime() + 30*86400000); if (dt < rangeStart) rangeStart = new Date(dt.getTime() - 30*86400000); });
+    });
     var totalMs = rangeEnd.getTime() - rangeStart.getTime();
     var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rangeStart.getTime()) / totalMs * 100))); };
     var todayPct = pct(today);
@@ -11797,10 +11802,18 @@
     });
 
     if (!hasRows) { el.style.display = 'none'; return; }
-    el.innerHTML = '<div style="min-width:400px">' +
+    var totalMonths = Math.max(12, Math.round(totalMs / (30*86400000)));
+    var dynWidth = Math.max(500, totalMonths * 70);
+    el.innerHTML = '<div style="overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent;-webkit-overflow-scrolling:touch" id="nw-tl-scroll">' +
+      '<div style="min-width:' + dynWidth + 'px;position:relative">' +
       '<div class="relative" style="height:16px;margin-left:60px;margin-bottom:4px;border-bottom:1px dashed #e5e7eb">' + mHtml + '</div>' +
       '<div class="relative">' + rowsHtml + '</div>' +
-      '<div class="text-[9px] text-slate-400 text-center mt-3 pt-2" style="border-top:1px solid #f3f4f6">🔍 퇴고 종료 = 시놉 시작 기준 · 🏁 연재 종료 · 빨간 선 = 오늘</div></div>';
+      '<div class="text-[9px] text-slate-400 text-center mt-3 pt-2" style="border-top:1px solid #f3f4f6">🔍 퇴고 종료 = 시놉 시작 기준 · 🏁 연재 종료 · 빨간 선 = 오늘</div></div></div>';
+    // Auto-scroll to today
+    setTimeout(function() {
+      var sc = document.getElementById('nw-tl-scroll');
+      if (sc) { var tp = todayPct / 100 * dynWidth; sc.scrollLeft = Math.max(0, tp - sc.offsetWidth / 3); }
+    }, 120);
     el.style.display = '';
   }
 
