@@ -2913,12 +2913,15 @@
       <section class="bg-white rounded-3xl p-8 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] overflow-hidden relative">
         <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none" style="background:rgba(107,56,212,0.05)"></div>
         <div class="flex items-center justify-between mb-8">
-          <div class="flex items-center gap-5">
-            <h2 id="planner-month-title" class="text-3xl font-headline font-extrabold tracking-tighter text-[#191c1d]"></h2>
-            <div class="flex gap-1">
+          <div class="flex items-center gap-2">
+            <select id="cal-year-select" onchange="calNavJump()" class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d] bg-transparent border border-transparent hover:border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 appearance-none" style="padding-right:20px;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 4px center"></select>
+            <span class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d]">년</span>
+            <select id="cal-month-select" onchange="calNavJump()" class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d] bg-transparent border border-transparent hover:border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 appearance-none" style="padding-right:20px;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 4px center"></select>
+            <div class="flex gap-1 ml-1">
               <button onclick="prevMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
               <button onclick="nextMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
             </div>
+            <button onclick="calNavToday()" class="ml-2 px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 text-xs font-bold hover:bg-indigo-50 transition-all flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:14px">today</span>오늘</button>
           </div>
           <div class="flex items-center gap-3">
             <div id="cal-leave-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="연차 현황">
@@ -3675,6 +3678,7 @@
         }
       }
       if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
+      _initCalNavSelects();
       renderCalendar();
       updatePlannerTracks();
       loadPlannerGoals();
@@ -3687,7 +3691,7 @@
 
   function renderCalendar() {
     const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-    document.getElementById('planner-month-title').textContent = plannerYear + '년 ' + MONTHS_KR[plannerMonth];
+    _syncCalNavSelects();
 
     const grid = document.getElementById('planner-grid');
     grid.innerHTML = '';
@@ -3993,6 +3997,43 @@
   function nextMonth() {
     plannerMonth++;
     if (plannerMonth > 11) { plannerMonth = 0; plannerYear++; }
+    renderCalendar();
+    updatePlannerTracks();
+  }
+
+  function _initCalNavSelects() {
+    var ySel = document.getElementById('cal-year-select');
+    var mSel = document.getElementById('cal-month-select');
+    if (!ySel || !mSel) return;
+    var curY = new Date().getFullYear();
+    ySel.innerHTML = '';
+    for (var y = curY - 3; y <= curY + 5; y++) {
+      ySel.innerHTML += '<option value="' + y + '">' + y + '</option>';
+    }
+    mSel.innerHTML = '';
+    for (var m = 0; m < 12; m++) {
+      mSel.innerHTML += '<option value="' + m + '">' + (m + 1) + '월</option>';
+    }
+    _syncCalNavSelects();
+  }
+  function _syncCalNavSelects() {
+    var ySel = document.getElementById('cal-year-select');
+    var mSel = document.getElementById('cal-month-select');
+    if (ySel) ySel.value = plannerYear;
+    if (mSel) mSel.value = plannerMonth;
+  }
+  function calNavJump() {
+    var ySel = document.getElementById('cal-year-select');
+    var mSel = document.getElementById('cal-month-select');
+    if (ySel) plannerYear = parseInt(ySel.value);
+    if (mSel) plannerMonth = parseInt(mSel.value);
+    renderCalendar();
+    updatePlannerTracks();
+  }
+  function calNavToday() {
+    var now = new Date();
+    plannerYear = now.getFullYear();
+    plannerMonth = now.getMonth();
     renderCalendar();
     updatePlannerTracks();
   }
