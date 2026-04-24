@@ -2781,6 +2781,17 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
+            <div id="cal-leave-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="연차 현황">
+              <span class="material-symbols-outlined" style="font-size:16px;color:#f97316">beach_access</span>
+              <span class="font-bold text-slate-700">연차</span>
+              <span id="cal-leave-used" class="font-black text-slate-900">0</span>
+              <span class="text-slate-300">/</span>
+              <span id="cal-leave-total" class="font-bold text-slate-400">22</span>
+              <span class="text-slate-300 mx-0.5">·</span>
+              <span class="text-xs text-slate-400">남은</span>
+              <span id="cal-leave-left" class="font-black text-indigo-600">22</span>
+              <span class="text-xs text-slate-400">일</span>
+            </div>
             <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
               <span class="material-symbols-outlined text-sm">add</span> 일정 추가
             </button>
@@ -3701,6 +3712,7 @@
       cell.style.background = 'rgba(243,244,245,0.4)';
       grid.appendChild(cell);
     }
+    updateCalLeaveTracker();
   }
 
   function updatePlannerTracks() {
@@ -3767,6 +3779,33 @@
       if (bar) bar.style.width = Math.min(Math.round((counts[track]/daysInMonth)*100), 100) + '%';
       if (yearEl) yearEl.textContent = yearCounts[track] + ' /년';
     });
+  }
+
+  function updateCalLeaveTracker() {
+    var yr = String(plannerYear);
+    var used = 0;
+    plannerData.forEach(function(row) {
+      if (row[2] !== '연차') return;
+      var d = (row[0] || '').toString();
+      if (!d.startsWith(yr)) return;
+      var notes = (row[4] || '').toString();
+      var m = notes.match(/^leave:([\d.]+)/);
+      if (m) { used += parseFloat(m[1]); }
+      else { used += 1; }
+    });
+    var total = _leaveTotal || 22;
+    var left = total - used;
+    var usedEl = document.getElementById('cal-leave-used');
+    var totalEl = document.getElementById('cal-leave-total');
+    var leftEl = document.getElementById('cal-leave-left');
+    if (usedEl) usedEl.textContent = used % 1 === 0 ? used : used.toFixed(1);
+    if (totalEl) totalEl.textContent = total % 1 === 0 ? total : total.toFixed(1);
+    if (leftEl) {
+      leftEl.textContent = left % 1 === 0 ? left : left.toFixed(1);
+      leftEl.style.color = left < 0 ? '#ef4444' : '#4f46e5';
+    }
+    var tracker = document.getElementById('cal-leave-tracker');
+    if (tracker) tracker.title = plannerYear + '년 연차 현황: ' + used + '일 사용, ' + left + '일 남음';
   }
 
   function prevMonth() {
