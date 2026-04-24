@@ -3557,9 +3557,11 @@
       const docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
       // 기존 일정 색상 마이그레이션: CAT_COLOR 기준으로 자동 업데이트
+      // 작품 파이프라인 일정(work_id 포함)은 시리즈 색상 유지 → skip
       var migrated = 0;
       for (var mi = 0; mi < plannerData.length; mi++) {
         var row = plannerData[mi];
+        if ((row[4]||'').indexOf('work_id:') >= 0) continue;
         var catTrimmed = (row[2]||'').trim();
         var correctColor = CAT_COLOR[catTrimmed];
         if (correctColor && row[3] !== correctColor) {
@@ -11835,15 +11837,18 @@
       w.publish_end = _fmtDate(pe);
     }
     w.updated_at = new Date().toISOString();
-    // 확정 상태면 캘린더 일정 삭제 후 재생성 (상태 유지)
-    if (wasConfirmed) {
-      await removeWorkCalEvents(w.id);
+    // 항상 기존 캘린더 일정 삭제 (draft든 confirmed든 안전하게)
+    var removed = await removeWorkCalEvents(w.id);
+    console.log('[EditWork] Removed', removed, 'old events, status:', w.status);
+    // 확정 상태면 새 일정 재생성
+    if (w.status === 'confirmed') {
       await autoAddScheduleToCalendar(w);
+      console.log('[EditWork] Re-added calendar events');
     }
     saveWorks();
     closeEditWorkModal();
     renderWorkPipeline();
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (wasConfirmed ? ' (캘린더 일정 재동기화 완료)' : ''));
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (w.status === 'confirmed' ? ' (캘린더 재동기화)' : ''));
   }
 
   function confirmWork(id) {
@@ -11871,6 +11876,7 @@
   async function autoAddScheduleToCalendar(work) {
     var cat = '글쓰기';
     var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
+    console.log('[AutoAdd] Start:', work.title, 'series:', work.series_name, 'color:', color);
     var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
     var events = [];
     var p = work.phases || {};
@@ -11956,12 +11962,13 @@
       var notes = (row[4] || '').toString();
       if (notes.indexOf('work_id:' + workId) >= 0) toRemove.push(idx);
     });
+    console.log('[RemoveWorkCal] Found', toRemove.length, 'events for work_id:', workId, 'in', plannerData.length, 'total');
     // 역순으로 삭제 (인덱스 안 밀리게)
     toRemove.sort(function(a, b) { return b - a; });
     for (var i = 0; i < toRemove.length; i++) {
       var idx = toRemove[i];
       var id = plannerData[idx][7];
-      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
+      if (id) { try { await fbDelete('planner', id); } catch(e) { console.error('[RemoveWorkCal] fbDelete failed for', id, e); } }
       plannerData.splice(idx, 1);
     }
     if (toRemove.length > 0) renderCalendar();
