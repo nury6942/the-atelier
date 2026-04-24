@@ -3637,7 +3637,7 @@
           var docId = ev[7] || '';
           var evSeriesId = _getSeriesIdForDoc(docId);
           var seriesBtn = evSeriesId ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + evSeriesId + '\')" class="text-current" title="시리즈 전체 삭제">⊘</button>' : '';
-          return '<div class="mt-1 text-sm px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
+          return '<div class="mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
