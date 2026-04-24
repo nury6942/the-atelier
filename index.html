@@ -1957,6 +1957,21 @@
         </div>
       </div>
 
+      <!-- Pipeline Gantt (Year Matrix) -->
+      <div id="mx-pipeline-section" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6" style="display:none">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-sm font-bold text-slate-800">📊 연간 파이프라인</span>
+          <div class="flex gap-3 ml-auto text-[9px] font-bold text-slate-400">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#7c3aed"></span>시놉</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#3b82f6"></span>초고</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#eab308"></span>퇴고</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#94a3b8"></span>휴식</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#22c55e"></span>연재</span>
+          </div>
+        </div>
+        <div id="mx-pipeline-gantt" style="min-width:700px"></div>
+      </div>
+
       <!-- Matrix Table -->
       <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         <!-- Table Toolbar -->
@@ -9381,6 +9396,7 @@
       empty.style.display = 'none';
       renderMatrixTable();
       updateLeaveTracker();
+      try { renderMxPipelineGantt(); } catch(e) {}
       var filled = matrixData.filter(function(r){ return r[2]||r[3]||r[4]||r[5]||r[6]||r[7]||r[8]; }).length;
       status.textContent = '365일 · ' + filled + '일 기록됨';
     } catch(err) {
@@ -11566,14 +11582,8 @@
     renderWorkTimeline();
   }
 
-  function renderWorkTimeline() {
-    var section = document.getElementById('work-timeline-section');
-    var chart = document.getElementById('work-timeline-chart');
-    if (!section || !chart) return;
-    section.style.display = _works.length > 0 ? '' : 'none';
-    if (_works.length === 0) return;
-
-    var yr = _timelineYear;
+  function _renderGanttInto(chart, yr) {
+    if (!chart) return;
     var yrStart = new Date(yr, 0, 1).getTime();
     var yrEnd = new Date(yr, 11, 31).getTime();
     var totalDays = Math.round((yrEnd - yrStart) / 86400000) + 1;
@@ -11646,6 +11656,25 @@
     });
 
     chart.innerHTML = headerHtml + rowsHtml;
+  }
+
+  function renderWorkTimeline() {
+    var section = document.getElementById('work-timeline-section');
+    var chart = document.getElementById('work-timeline-chart');
+    if (!section) return;
+    section.style.display = _works.length > 0 ? '' : 'none';
+    if (_works.length === 0 || !chart) return;
+    _renderGanttInto(chart, _timelineYear);
+  }
+
+  function renderMxPipelineGantt() {
+    var section = document.getElementById('mx-pipeline-section');
+    var chart = document.getElementById('mx-pipeline-gantt');
+    if (!section) return;
+    loadWorks();
+    section.style.display = _works.length > 0 ? '' : 'none';
+    if (_works.length === 0 || !chart) return;
+    _renderGanttInto(chart, matrixYear);
   }
 
   function openNewWorkModal() {
