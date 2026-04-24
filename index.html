@@ -11806,7 +11806,7 @@
     }
   }
 
-  function saveEditWork() {
+  async function saveEditWork() {
     if (!_editWorkId) return;
     var w = getWorkById(_editWorkId);
     if (!w) return;
@@ -11825,22 +11825,21 @@
       rest: { start: document.getElementById('ew-rest-start').value, end: document.getElementById('ew-rest-end').value }
     };
     w.publish_start = document.getElementById('ew-pub-start').value;
-    // 연재 완결 자동 계산
     if (w.publish_start) {
       var pe = new Date(w.publish_start + 'T00:00:00');
       pe.setDate(pe.getDate() + (w.total_episodes - 1) * 7);
       w.publish_end = _fmtDate(pe);
     }
     w.updated_at = new Date().toISOString();
-    // 편집하면 초안으로 돌아감 (확정된 경우 캘린더 일정 제거)
+    // 확정 상태면 캘린더 일정 삭제 후 재생성 (상태 유지)
     if (wasConfirmed) {
       removeWorkCalEvents(w.id);
-      w.status = 'draft';
+      await autoAddScheduleToCalendar(w);
     }
     saveWorks();
     closeEditWorkModal();
     renderWorkPipeline();
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (wasConfirmed ? ' (초안으로 전환, 캘린더 일정 제거됨)' : ''));
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (wasConfirmed ? ' (캘린더 일정 재동기화 완료)' : ''));
   }
 
   function confirmWork(id) {
