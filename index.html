@@ -2548,6 +2548,48 @@
   <div id="page-income" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
+      <!-- Work Pipeline -->
+      <section id="work-pipeline" class="bg-white rounded-3xl p-8 shadow-[0_12px_32px_-4px_rgba(45,51,53,0.06)]">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">🎬 작품 파이프라인</h2>
+            <p class="text-slate-400 text-sm mt-1">집필 현황과 다음 연재 예측</p>
+          </div>
+          <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+            <span class="material-symbols-outlined text-sm">add</span> 새 작품
+          </button>
+        </div>
+        <div id="work-pipeline-list"></div>
+      </section>
+
+      <!-- New Work Modal -->
+      <div id="new-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+          <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <h3 class="font-bold text-white text-lg font-headline">🎬 새 작품 추가</h3>
+            <p class="text-white/70 text-xs mt-0.5">자동 스케줄 계산 → 캘린더 일괄 입력</p>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시리즈</label><select id="nw-series" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"></select></div>
+            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">작품명</label><input id="nw-title" type="text" placeholder="예: 안녕 오랜만이야" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1"><label class="text-xs font-bold text-slate-500">예상 화수</label><select id="nw-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
+              <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="nw-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
+            </div>
+            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시작 희망일</label><input id="nw-start-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+            <div id="nw-preview" class="rounded-xl overflow-hidden" style="display:none">
+              <div class="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100"><span class="text-xs font-bold text-indigo-700">📅 예상 스케줄</span></div>
+              <div id="nw-preview-content" class="px-4 py-3 bg-indigo-50/50 text-xs space-y-1.5"></div>
+            </div>
+          </div>
+          <div class="px-6 pb-6 flex gap-2">
+            <button onclick="previewWorkSchedule()" class="flex-1 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-sm hover:bg-indigo-100 transition-colors">스케줄 계산</button>
+            <button onclick="saveNewWork()" id="nw-save-btn" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장 + 캘린더 추가</button>
+            <button onclick="closeNewWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Series Growth Correlation Chart -->
       <section>
         <header class="mb-6 flex justify-between items-center">
@@ -10202,6 +10244,10 @@
     try {
       renderIncomeCal();
     } catch(e) { console.error('renderIncomeCal error:', e); }
+    try {
+      loadWorks();
+      renderWorkPipeline();
+    } catch(e) { console.error('renderWorkPipeline error:', e); }
   }
 
   function renderIncomeTable() {
@@ -11127,6 +11173,249 @@
       }
     });
     saveSeriesData(series, year);
+  }
+
+  // ===== Work Pipeline Engine =====
+  var _works = [];
+
+  function loadWorks() {
+    var s = localStorage.getItem('atelier_works');
+    _works = s ? JSON.parse(s) : [];
+    return _works;
+  }
+
+  function saveWorks() {
+    localStorage.setItem('atelier_works', JSON.stringify(_works));
+    try { db.collection('works').doc('list').set({ data: JSON.stringify(_works), updatedAt: new Date().toISOString() }); } catch(e) {}
+  }
+
+  function getWorkById(id) { return _works.find(function(w) { return w.id === id; }); }
+
+  function addWork(work) { _works.push(work); saveWorks(); }
+
+  function updateWork(id, updates) {
+    var w = getWorkById(id);
+    if (!w) return;
+    Object.keys(updates).forEach(function(k) { w[k] = updates[k]; });
+    w.updated_at = new Date().toISOString();
+    saveWorks();
+  }
+
+  function deleteWork(id) {
+    _works = _works.filter(function(w) { return w.id !== id; });
+    saveWorks();
+  }
+
+  // --- Scheduling helpers ---
+
+  function _fmtDate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function _isWeekend(d) { var day = d.getDay(); return day === 0 || day === 6; }
+
+  function isBlockedDay(dateStr) {
+    var dominated = ['연차', '특별휴가', '개인'];
+    for (var i = 0; i < plannerData.length; i++) {
+      var row = plannerData[i];
+      var start = (row[0] || '').toString();
+      var end = (row[5] || '').toString();
+      var cat = (row[2] || '').trim();
+      var title = (row[1] || '').toString();
+      // 범위 일정 체크
+      if (end && end >= start) {
+        if (dateStr >= start && dateStr <= end) {
+          if (dominated.indexOf(cat) >= 0) return true;
+          if (cat === '업무' && title.indexOf('야근') >= 0) return true;
+        }
+      } else {
+        if (start === dateStr) {
+          if (dominated.indexOf(cat) >= 0) return true;
+          if (cat === '업무' && title.indexOf('야근') >= 0) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function findNextAvailableDays(fromDate, count) {
+    var days = [];
+    var cur = new Date(fromDate.getTime());
+    var safety = 0;
+    while (days.length < count && safety < 500) {
+      if (!isBlockedDay(_fmtDate(cur))) {
+        days.push(new Date(cur.getTime()));
+      }
+      cur.setDate(cur.getDate() + 1);
+      safety++;
+    }
+    return days;
+  }
+
+  function _findNextWeekday(fromDate, targetDay) {
+    // targetDay: 5=금, 6=토
+    var cur = new Date(fromDate.getTime());
+    cur.setDate(cur.getDate() + 1);
+    var safety = 0;
+    while (cur.getDay() !== targetDay && safety < 10) {
+      cur.setDate(cur.getDate() + 1);
+      safety++;
+    }
+    return cur;
+  }
+
+  function calculateWorkSchedule(input) {
+    // input: { start_date, episodes, publish_day(5 or 6) }
+    var eps = parseInt(input.episodes) || 20;
+    var publishDay = parseInt(input.publish_day) || 5;
+
+    // 1. 시놉: 빈 날 20일
+    var synStart = new Date(input.start_date + 'T00:00:00');
+    var synDays = findNextAvailableDays(synStart, 20);
+    var synEnd = synDays.length > 0 ? synDays[synDays.length - 1] : synStart;
+
+    // 2. 초고: 평일 0.5화/일, 주말 1화/일 → eps화 완성까지
+    var draftStart = new Date(synEnd.getTime());
+    draftStart.setDate(draftStart.getDate() + 1);
+    var written = 0;
+    var draftCur = new Date(draftStart.getTime());
+    var draftEnd = new Date(draftStart.getTime());
+    var draftSafety = 0;
+    while (written < eps && draftSafety < 500) {
+      if (!isBlockedDay(_fmtDate(draftCur))) {
+        written += _isWeekend(draftCur) ? 1 : 0.5;
+      }
+      draftEnd = new Date(draftCur.getTime());
+      draftCur.setDate(draftCur.getDate() + 1);
+      draftSafety++;
+    }
+
+    // 3. 퇴고: 빈 날 eps일
+    var revStart = new Date(draftEnd.getTime());
+    revStart.setDate(revStart.getDate() + 1);
+    var revDays = findNextAvailableDays(revStart, eps);
+    var revEnd = revDays.length > 0 ? revDays[revDays.length - 1] : revStart;
+
+    // 4. 휴식: 14일 연속 (차단 안 따짐)
+    var restStart = new Date(revEnd.getTime());
+    restStart.setDate(restStart.getDate() + 1);
+    var restEnd = new Date(restStart.getTime());
+    restEnd.setDate(restEnd.getDate() + 13);
+
+    // 5. 연재 시작: 휴식 후 첫 설정 요일
+    var pubStart = _findNextWeekday(restEnd, publishDay);
+
+    // 6. 연재 완결: eps주 후
+    var pubEnd = new Date(pubStart.getTime());
+    pubEnd.setDate(pubEnd.getDate() + (eps - 1) * 7);
+
+    return {
+      phases: {
+        synopsis: { start: _fmtDate(synStart), end: _fmtDate(synEnd), days: synDays.map(_fmtDate) },
+        draft:    { start: _fmtDate(draftStart), end: _fmtDate(draftEnd) },
+        revision: { start: _fmtDate(revStart), end: _fmtDate(revEnd), days: revDays.map(_fmtDate) },
+        rest:     { start: _fmtDate(restStart), end: _fmtDate(restEnd) }
+      },
+      publish_start: _fmtDate(pubStart),
+      publish_end: _fmtDate(pubEnd),
+      total_episodes: eps,
+      publish_day: publishDay
+    };
+  }
+
+  // Stub — Phase B에서 구현
+  function renderWorkPipeline() {
+    var el = document.getElementById('work-pipeline-list');
+    if (!el) return;
+    if (_works.length === 0) {
+      el.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size:36px">auto_stories</span><p class="text-sm">등록된 작품이 없어요. 새 작품을 추가해보세요.</p></div>';
+      return;
+    }
+    el.innerHTML = _works.map(function(w) {
+      var phase = w.current_phase || 'synopsis';
+      var phaseLabels = { synopsis: '시놉', draft: '초고', revision: '퇴고', rest: '휴식', publishing: '연재', completed: '완결' };
+      var label = phaseLabels[phase] || phase;
+      return '<div class="p-4 rounded-2xl border border-slate-100 mb-3">' +
+        '<div class="flex items-center gap-3 mb-2">' +
+          '<span class="text-sm font-bold text-slate-900">' + (w.series_name || '') + '</span>' +
+          '<span class="text-slate-300">·</span>' +
+          '<span class="text-sm font-bold text-indigo-600">' + (w.title || '') + '</span>' +
+          '<span class="ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold uppercase" style="background:rgba(107,56,212,0.1);color:#6b38d4;">' + label + '</span>' +
+        '</div>' +
+        '<div class="grid grid-cols-4 gap-3 text-xs text-slate-500">' +
+          '<div>초고 시작 <span class="block font-bold text-slate-700">' + (w.phases && w.phases.draft ? w.phases.draft.start : '—') + '</span></div>' +
+          '<div>퇴고 시작 <span class="block font-bold text-slate-700">' + (w.phases && w.phases.revision ? w.phases.revision.start : '—') + '</span></div>' +
+          '<div>🎯 연재 시작 <span class="block font-bold text-indigo-600">' + (w.publish_start || '—') + '</span></div>' +
+          '<div>연재 완결 <span class="block font-bold text-slate-700">' + (w.publish_end || '—') + '</span></div>' +
+        '</div>' +
+        '<div class="mt-3 flex gap-2">' +
+          '<button onclick="deleteWork(\'' + w.id + '\');renderWorkPipeline()" class="text-[10px] text-slate-400 hover:text-rose-500">삭제</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function openNewWorkModal() {
+    var series = getSeriesData(_matrixYear);
+    var sel = document.getElementById('nw-series');
+    if (sel) sel.innerHTML = series.map(function(s) { return '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>'; }).join('');
+    document.getElementById('nw-title').value = '';
+    document.getElementById('nw-start-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('nw-preview').style.display = 'none';
+    document.getElementById('new-work-modal').style.cssText = 'display:flex!important';
+    setTimeout(function() { initSimpleDatePicker('nw-start-date'); }, 80);
+  }
+
+  function closeNewWorkModal() {
+    document.getElementById('new-work-modal').style.cssText = 'display:none!important';
+  }
+
+  var _workPreviewResult = null;
+
+  function previewWorkSchedule() {
+    var startDate = document.getElementById('nw-start-date').value;
+    if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시작일을 선택하세요'); return; }
+    _workPreviewResult = calculateWorkSchedule({
+      start_date: startDate,
+      episodes: document.getElementById('nw-episodes').value,
+      publish_day: document.getElementById('nw-publish-day').value
+    });
+    var r = _workPreviewResult;
+    var html =
+      '<p>📝 시놉: <b>' + r.phases.synopsis.start + '</b> ~ <b>' + r.phases.synopsis.end + '</b></p>' +
+      '<p>✍️ 초고: <b>' + r.phases.draft.start + '</b> ~ <b>' + r.phases.draft.end + '</b></p>' +
+      '<p>🔍 퇴고: <b>' + r.phases.revision.start + '</b> ~ <b>' + r.phases.revision.end + '</b></p>' +
+      '<p>☕ 휴식: <b>' + r.phases.rest.start + '</b> ~ <b>' + r.phases.rest.end + '</b></p>' +
+      '<p>🎯 연재: <b class="text-indigo-700">' + r.publish_start + '</b> ~ <b>' + r.publish_end + '</b> (주 1회)</p>';
+    document.getElementById('nw-preview-content').innerHTML = html;
+    document.getElementById('nw-preview').style.display = '';
+  }
+
+  function saveNewWork() {
+    var title = document.getElementById('nw-title').value.trim();
+    if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 작품명을 입력하세요'); return; }
+    if (!_workPreviewResult) { previewWorkSchedule(); if (!_workPreviewResult) return; }
+    var sel = document.getElementById('nw-series');
+    var opt = sel.options[sel.selectedIndex];
+    var work = {
+      id: 'w_' + Date.now(),
+      series_id: sel.value,
+      series_name: opt ? opt.dataset.name : '',
+      title: title,
+      total_episodes: _workPreviewResult.total_episodes,
+      current_phase: 'synopsis',
+      publish_day: _workPreviewResult.publish_day,
+      phases: _workPreviewResult.phases,
+      publish_start: _workPreviewResult.publish_start,
+      publish_end: _workPreviewResult.publish_end,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    addWork(work);
+    closeNewWorkModal();
+    renderWorkPipeline();
+    _workPreviewResult = null;
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 작품이 추가됐어요!');
   }
 
   // ===== Bottom Quick Stats =====
