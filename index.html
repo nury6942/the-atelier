@@ -4358,6 +4358,7 @@
     if (editingPlannerIndex !== null) {
       const row = plannerData[editingPlannerIndex];
       document.getElementById('p-date').value = row[0]||'';
+      document.getElementById('p-date-end').value = row[5]||'';
       document.getElementById('p-category').value = row[2]||'업무';
       _syncCatTrigger(row[2]||'업무');
       // 생일: 🎂 이모지 제거해서 표시
