@@ -1790,6 +1790,16 @@
         </div>
       </section>
 
+      <!-- Growth Journey -->
+      <section class="mb-12">
+        <div class="mb-6">
+          <span class="text-[10px] font-bold text-indigo-600 tracking-[0.3em] uppercase mb-2 block">Growth Journey</span>
+          <h2 class="text-3xl font-extrabold font-headline tracking-tighter mb-2">연도별 총 자산 추이</h2>
+          <p class="text-slate-500 text-sm">연도별 자산 성장 기록을 한눈에 확인하세요.</p>
+        </div>
+        <div id="hub-growth-cards" class="flex gap-4 overflow-x-auto pb-4 hide-scrollbar"></div>
+      </section>
+
       <!-- Ledger Table -->
       <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
         <div class="px-8 py-5 flex justify-between items-center" style="background:#f8f9fa;border-bottom:1px solid #f3f4f5;">
@@ -11142,6 +11152,69 @@
     if (totalEl) totalEl.textContent = '₩' + (totalExp*10000).toLocaleString('ko-KR') + ' (TOP 5가 ' + top5Pct + '%)';
   }
 
+  function renderHubGrowth() {
+    var container = document.getElementById('hub-growth-cards');
+    if (!container) return;
+    var base = getBaseAssets();
+    var curYr = new Date().getFullYear();
+    // Collect years that have data
+    var yearSet = {};
+    hubData.forEach(function(row) { var y = (row[0]||'').substring(0,4); if (y) yearSet[y] = true; });
+    // Ensure at least current year and range
+    yearSet[String(curYr)] = true;
+    var years = Object.keys(yearSet).sort();
+    // Expand to show at least 3 years
+    var minYr = parseInt(years[0]) || curYr;
+    if (years.length < 3) { for (var fy = minYr - 1; fy >= minYr - 2 && years.length < 3; fy--) years.unshift(String(fy)); }
+
+    // Calculate total assets per year
+    var yearAssets = {};
+    years.forEach(function(yr) {
+      var yrIncome = 0, yrExpense = 0;
+      hubData.forEach(function(row) {
+        if (!(row[0]||'').startsWith(yr)) return;
+        var type = row[4]||'', amt = parseFloat(row[3])||0;
+        if (type === '수입' || type === '이자') yrIncome += amt;
+        else if (type === '지출') yrExpense += amt;
+      });
+      yearAssets[yr] = base.cash + base.savings + yrIncome - yrExpense;
+    });
+
+    container.innerHTML = years.map(function(yr, i) {
+      var assets = yearAssets[yr] || 0;
+      var assetsWon = assets * 10000;
+      var hasData = hubData.some(function(r){ return (r[0]||'').startsWith(yr); });
+      var isCurrent = parseInt(yr) === hubYear;
+      var prevAssets = i > 0 ? (yearAssets[years[i-1]] || 0) : null;
+      var diff = prevAssets !== null ? assets - prevAssets : null;
+      var diffPct = (prevAssets !== null && prevAssets !== 0) ? Math.round((diff / Math.abs(prevAssets)) * 100) : null;
+      var diffWon = diff !== null ? diff * 10000 : 0;
+
+      var border = isCurrent ? 'border:2px solid #7c3aed;' : (hasData ? '' : 'border:2px dashed #e1e3e4;');
+      var bg = isCurrent ? 'background:linear-gradient(135deg,rgba(107,56,212,0.04),rgba(132,85,239,0.04));' : '';
+
+      var diffHtml = '';
+      if (diff !== null && hasData) {
+        var diffColor = diff >= 0 ? 'text-emerald-600' : 'text-rose-500';
+        var arrow = diff >= 0 ? '↑' : '↓';
+        diffHtml = '<p class="text-xs font-bold ' + diffColor + ' mt-2">' + arrow + ' ' + (diff >= 0 ? '+' : '') + '₩' + Math.abs(diffWon).toLocaleString('ko-KR') + '</p>' +
+          (diffPct !== null ? '<p class="text-[10px] text-slate-400">(' + (diff >= 0 ? '+' : '') + diffPct + '%)</p>' : '');
+      } else if (!hasData) {
+        diffHtml = '<p class="text-xs text-slate-300 mt-2 uppercase font-bold">Pending</p>';
+      } else {
+        diffHtml = '<p class="text-xs text-slate-400 mt-2">첫 기록</p>';
+      }
+
+      return '<div class="shrink-0 w-48 p-6 rounded-2xl bg-white hover:-translate-y-1 transition-all cursor-default" style="box-shadow:0px 8px 24px rgba(25,28,29,0.04);' + border + bg + '">' +
+        '<p class="text-xs font-bold text-slate-400 mb-3">' + yr + '년' + (isCurrent ? ' <span class="text-indigo-600">현재</span>' : '') + '</p>' +
+        (hasData
+          ? '<p class="text-xl font-black font-headline text-slate-900">₩' + Math.round(assetsWon).toLocaleString('ko-KR') + '</p>'
+          : '<p class="text-xl font-black font-headline text-slate-300">—</p>') +
+        diffHtml +
+      '</div>';
+    }).join('');
+  }
+
   function updateHubStats() {
     var yrPrefix = String(hubYear);
     document.getElementById('hub-year-label').textContent = hubYear;
@@ -11185,6 +11258,9 @@
 
     // 지출 TOP 5
     renderHubTop5(yrPrefix);
+
+    // Growth Journey
+    renderHubGrowth();
 
     // Monthly Artifacts Grid (4-column cards)
     var monthlyGrid = document.getElementById('hub-monthly-grid');
