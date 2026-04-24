@@ -11323,36 +11323,120 @@
     };
   }
 
-  // Stub — Phase B에서 구현
+  var _wpMeta = {
+    synopsis:   { icon: '🎯', label: '시놉 진행 중', color: '#7c3aed', bg: 'rgba(124,58,237,0.08)' },
+    draft:      { icon: '✏️', label: '초고 진행 중', color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
+    revision:   { icon: '🔍', label: '퇴고 진행 중', color: '#eab308', bg: 'rgba(234,179,8,0.08)' },
+    rest:       { icon: '☕', label: '휴식 중',      color: '#94a3b8', bg: 'rgba(148,163,184,0.08)' },
+    publishing: { icon: '📢', label: '연재 중',      color: '#22c55e', bg: 'rgba(34,197,94,0.08)' },
+    completed:  { icon: '✅', label: '완결',         color: '#6b7280', bg: 'rgba(107,114,128,0.08)' }
+  };
+
+  function _wpProgress(w) {
+    var phase = w.current_phase || 'synopsis';
+    var p = w.phases ? w.phases[phase] : null;
+    if (!p || !p.start || !p.end) return 0;
+    var s = new Date(p.start + 'T00:00:00'), e = new Date(p.end + 'T00:00:00');
+    var total = Math.max(1, (e - s) / 86400000);
+    var passed = Math.max(0, (new Date() - s) / 86400000);
+    return Math.min(100, Math.round((passed / total) * 100));
+  }
+
+  function _wpAutoPhase(w) {
+    // 오늘 기준으로 current_phase 자동 판정
+    var today = _fmtDate(new Date());
+    var order = ['synopsis', 'draft', 'revision', 'rest'];
+    for (var i = 0; i < order.length; i++) {
+      var ph = w.phases ? w.phases[order[i]] : null;
+      if (ph && ph.start && ph.end && today >= ph.start && today <= ph.end) return order[i];
+    }
+    if (w.publish_start && w.publish_end) {
+      if (today >= w.publish_start && today <= w.publish_end) return 'publishing';
+      if (today > w.publish_end) return 'completed';
+    }
+    // 아직 시작 전이면 synopsis
+    if (w.phases && w.phases.synopsis && today < w.phases.synopsis.start) return 'synopsis';
+    return w.current_phase || 'synopsis';
+  }
+
   function renderWorkPipeline() {
     var el = document.getElementById('work-pipeline-list');
     if (!el) return;
     if (_works.length === 0) {
-      el.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size:36px">auto_stories</span><p class="text-sm">등록된 작품이 없어요. 새 작품을 추가해보세요.</p></div>';
+      el.innerHTML = '<div class="text-center py-10 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size:40px">auto_stories</span><p class="text-sm font-medium">등록된 작품이 없어요</p><p class="text-xs mt-1">새 작품을 추가해서 파이프라인을 시작하세요</p></div>';
       return;
     }
-    el.innerHTML = _works.map(function(w) {
-      var phase = w.current_phase || 'synopsis';
-      var phaseLabels = { synopsis: '시놉', draft: '초고', revision: '퇴고', rest: '휴식', publishing: '연재', completed: '완결' };
-      var label = phaseLabels[phase] || phase;
-      return '<div class="p-4 rounded-2xl border border-slate-100 mb-3">' +
-        '<div class="flex items-center gap-3 mb-2">' +
-          '<span class="text-sm font-bold text-slate-900">' + (w.series_name || '') + '</span>' +
-          '<span class="text-slate-300">·</span>' +
-          '<span class="text-sm font-bold text-indigo-600">' + (w.title || '') + '</span>' +
-          '<span class="ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold uppercase" style="background:rgba(107,56,212,0.1);color:#6b38d4;">' + label + '</span>' +
-        '</div>' +
-        '<div class="grid grid-cols-4 gap-3 text-xs text-slate-500">' +
-          '<div>초고 시작 <span class="block font-bold text-slate-700">' + (w.phases && w.phases.draft ? w.phases.draft.start : '—') + '</span></div>' +
-          '<div>퇴고 시작 <span class="block font-bold text-slate-700">' + (w.phases && w.phases.revision ? w.phases.revision.start : '—') + '</span></div>' +
-          '<div>🎯 연재 시작 <span class="block font-bold text-indigo-600">' + (w.publish_start || '—') + '</span></div>' +
-          '<div>연재 완결 <span class="block font-bold text-slate-700">' + (w.publish_end || '—') + '</span></div>' +
-        '</div>' +
-        '<div class="mt-3 flex gap-2">' +
-          '<button onclick="deleteWork(\'' + w.id + '\');renderWorkPipeline()" class="text-[10px] text-slate-400 hover:text-rose-500">삭제</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
+    // 자동 단계 업데이트
+    _works.forEach(function(w) { w.current_phase = _wpAutoPhase(w); });
+
+    // 시리즈별 그룹화
+    var groups = {};
+    _works.forEach(function(w) {
+      var key = w.series_name || '기타';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(w);
+    });
+
+    var html = '';
+    Object.keys(groups).forEach(function(seriesName) {
+      html += '<div class="mb-5 last:mb-0">';
+      html += '<div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-indigo-500" style="font-size:18px">auto_stories</span><span class="text-sm font-bold text-slate-800">' + seriesName + '</span></div>';
+      groups[seriesName].forEach(function(w) {
+        var phase = w.current_phase || 'synopsis';
+        var meta = _wpMeta[phase] || _wpMeta.synopsis;
+        var pct = _wpProgress(w);
+        var p = w.phases || {};
+        var dayLabel = { 0:'일', 1:'월', 2:'화', 3:'수', 4:'목', 5:'금', 6:'토' };
+        var pubDayStr = dayLabel[w.publish_day] || '';
+
+        html += '<div class="p-5 rounded-2xl mb-3 border border-slate-100 hover:shadow-md transition-shadow" style="background:' + meta.bg + '">';
+        // 제목 + 상태 뱃지
+        html += '<div class="flex items-center justify-between mb-3">' +
+          '<span class="font-bold text-slate-900">' + (w.title || '') + '</span>' +
+          '<span class="px-3 py-1 rounded-full text-[10px] font-bold" style="background:' + meta.color + '20;color:' + meta.color + '">' + meta.icon + ' ' + meta.label + '</span>' +
+        '</div>';
+        // 진행도 바
+        html += '<div class="mb-4">' +
+          '<div class="flex items-center justify-between mb-1">' +
+            '<span class="text-[11px] font-bold text-slate-500">' + (w.total_episodes || 20) + '화 · ' + pct + '% 진행</span>' +
+          '</div>' +
+          '<div class="h-2 rounded-full overflow-hidden" style="background:rgba(0,0,0,0.06)">' +
+            '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + meta.color + '"></div>' +
+          '</div>' +
+        '</div>';
+        // 스케줄 타임라인
+        html += '<div class="grid grid-cols-5 gap-2 text-[11px]">';
+        var steps = [
+          { key: 'synopsis', icon: '📝', label: '시놉', date: p.synopsis ? p.synopsis.start : '—' },
+          { key: 'draft',    icon: '✏️', label: '초고', date: p.draft ? p.draft.start : '—' },
+          { key: 'revision', icon: '🔍', label: '퇴고', date: p.revision ? p.revision.start : '—' },
+          { key: 'publish',  icon: '🎯', label: '연재', date: w.publish_start || '—' },
+          { key: 'end',      icon: '🏁', label: '완결', date: w.publish_end || '—' }
+        ];
+        steps.forEach(function(st) {
+          var isActive = (st.key === phase) || (st.key === 'publish' && phase === 'publishing');
+          var isPub = st.key === 'publish';
+          var textCls = isActive ? 'font-black' : 'text-slate-400';
+          var dateCls = isPub ? 'font-black text-indigo-600' : (isActive ? 'font-bold text-slate-800' : 'text-slate-400');
+          html += '<div class="text-center ' + textCls + '">' +
+            '<div>' + st.icon + ' ' + st.label + '</div>' +
+            '<div class="mt-0.5 ' + dateCls + '">' + (st.date !== '—' ? st.date.substring(5) : '—') + '</div>' +
+          '</div>';
+        });
+        html += '</div>';
+        // 연재 요일
+        if (w.publish_start && pubDayStr) {
+          html += '<div class="mt-2 text-[10px] text-slate-400">연재 요일: 매주 ' + pubDayStr + '요일</div>';
+        }
+        // 액션 버튼
+        html += '<div class="mt-3 pt-3 border-t border-slate-100/60 flex gap-3">' +
+          '<button onclick="if(confirm(\'\\\"' + (w.title||'').replace(/'/g,"\\'") + '\\\" 작품을 삭제할까요?\')){deleteWork(\'' + w.id + '\');renderWorkPipeline()}" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">delete</span>삭제</button>' +
+        '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    el.innerHTML = html;
   }
 
   function openNewWorkModal() {
