@@ -2561,6 +2561,8 @@
         </div>
         <div id="work-pipeline-list"></div>
 
+        <p class="mt-4 text-[10px] text-slate-400">💡 글쓰기 제외할 날은 일정 제목에 <b>'차단'</b> 키워드 추가 (예: "연차 여행 차단"). 여행·야근은 자동 차단.</p>
+
         <!-- Timeline View -->
         <div id="work-timeline-section" class="mt-8" style="display:none">
           <div class="flex items-center gap-3 mb-4">
@@ -11276,25 +11278,27 @@
 
   function _isWeekend(d) { var day = d.getDay(); return day === 0 || day === 6; }
 
+  function _isEventBlocking(cat, title) {
+    // 여행: 무조건 차단
+    if (cat === '여행') return true;
+    // 업무 + "야근": 차단
+    if (cat === '업무' && title.indexOf('야근') >= 0) return true;
+    // 제목에 "차단" 키워드: 모든 카테고리 차단
+    if (title.indexOf('차단') >= 0) return true;
+    return false;
+  }
+
   function isBlockedDay(dateStr) {
-    var dominated = ['연차', '특별휴가', '개인'];
     for (var i = 0; i < plannerData.length; i++) {
       var row = plannerData[i];
       var start = (row[0] || '').toString();
       var end = (row[5] || '').toString();
       var cat = (row[2] || '').trim();
       var title = (row[1] || '').toString();
-      // 범위 일정 체크
       if (end && end >= start) {
-        if (dateStr >= start && dateStr <= end) {
-          if (dominated.indexOf(cat) >= 0) return true;
-          if (cat === '업무' && title.indexOf('야근') >= 0) return true;
-        }
+        if (dateStr >= start && dateStr <= end && _isEventBlocking(cat, title)) return true;
       } else {
-        if (start === dateStr) {
-          if (dominated.indexOf(cat) >= 0) return true;
-          if (cat === '업무' && title.indexOf('야근') >= 0) return true;
-        }
+        if (start === dateStr && _isEventBlocking(cat, title)) return true;
       }
     }
     return false;
@@ -11977,9 +11981,7 @@
     if (_wpDetectFlag || _works.length === 0) return;
     var cat = (eventRow[2] || '').trim();
     var title = (eventRow[1] || '').toString();
-    var blockedCats = ['연차', '특별휴가', '개인'];
-    var isBlocking = blockedCats.indexOf(cat) >= 0 || (cat === '업무' && title.indexOf('야근') >= 0);
-    if (!isBlocking) return;
+    if (!_isEventBlocking(cat, title)) return;
     var evDate = (eventRow[0] || '').toString();
     var evEnd = (eventRow[5] || evDate).toString();
     var affected = _works.filter(function(w) {
