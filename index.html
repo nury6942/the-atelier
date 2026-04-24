@@ -1961,19 +1961,19 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-auto hide-scrollbar" style="max-height:calc(100vh - 320px); display:none" id="matrix-table-wrap">
-          <table class="w-full border-collapse" style="border:1px solid #e2e8f0">
-            <thead class="sticky top-0 z-20 text-xs uppercase tracking-wider font-bold text-slate-500 text-center" style="background:#f1f5f9">
+        <div class="overflow-auto hide-scrollbar" style="max-height:calc(100vh - 320px); display:none; border-radius:10px; border:1px solid #e7e0ed; box-shadow:0 1px 3px rgba(0,0,0,0.04)" id="matrix-table-wrap">
+          <table class="w-full border-collapse">
+            <thead class="sticky top-0 z-20" style="background:#f8f1fe;border-bottom:2px solid #d0bcff">
               <tr>
-                <th class="px-3 py-2.5 w-28 whitespace-nowrap text-left" style="border:1px solid #e2e8f0">날짜</th>
-                <th class="px-2 py-2.5 w-14" style="border:1px solid #e2e8f0">요일</th>
-                <th class="px-2 py-2.5 w-36" style="border:1px solid #e2e8f0">업무</th>
-                <th class="px-2 py-2.5 w-24" style="border:1px solid #e2e8f0">연차</th>
-                <th class="px-2 py-2.5 w-36" style="border:1px solid #e2e8f0">개인</th>
-                <th class="px-2 py-2.5 w-36" style="border:1px solid #e2e8f0">글쓰기</th>
-                <th class="px-2 py-2.5 w-28" style="border:1px solid #e2e8f0">영어</th>
-                <th class="px-2 py-2.5 w-28" style="border:1px solid #e2e8f0">스터디</th>
-                <th class="px-2 py-2.5 w-16" style="border:1px solid #e2e8f0">관리</th>
+                <th class="w-28 whitespace-nowrap text-left" style="border:1px solid #e7e0ed;padding:10px 10px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em">날짜</th>
+                <th class="w-14" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">요일</th>
+                <th class="w-36" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">업무</th>
+                <th class="w-24" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연차</th>
+                <th class="w-36" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">개인</th>
+                <th class="w-36" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">글쓰기</th>
+                <th class="w-28" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">영어</th>
+                <th class="w-28" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">스터디</th>
+                <th class="w-16" style="border:1px solid #e7e0ed;padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">관리</th>
               </tr>
             </thead>
             <tbody id="matrix-tbody" class="text-sm text-slate-700">
@@ -9178,11 +9178,12 @@
 
       const tr = document.createElement('tr');
       tr.className = isToday
-        ? 'bg-indigo-50/60 group'
+        ? 'group'
         : (isRedDay
           ? 'group transition-colors hover:bg-rose-50/60'
-          : 'hover:bg-slate-50/50 transition-colors group');
-      if (isRedDay && !isToday) tr.style.backgroundColor = 'rgba(255,0,0,0.03)';
+          : 'transition-colors group');
+      if (isToday) tr.style.backgroundColor = '#f3eeff';
+      else if (isRedDay) tr.style.backgroundColor = 'rgba(255,0,0,0.03)';
 
       if (isToday) {
         tr.id = 'matrix-today-row';
@@ -9208,19 +9209,19 @@
         }).join('') + '</div>';
       }
       function mxTd(content, dateStr, fieldIdx, rowIdx) {
-        return '<td class="p-0 align-top transition-all cursor-pointer hover:bg-indigo-50/40" style="border:1px solid #e2e8f0" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '') + '</td>';
+        return '<td class="p-0 align-top transition-all cursor-pointer hover:bg-[#f8f1fe]/40" style="border:1px solid #e7e0ed" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '') + '</td>';
       }
 
       tr.innerHTML =
-        '<td class="px-3 py-1.5 text-sm" style="border:1px solid #e2e8f0">' + dateDisplay + '</td>' +
-        '<td class="px-2 py-1.5 text-sm text-center font-medium ' + (isRedDay?'text-rose-500':'text-slate-400') + '" style="border:1px solid #e2e8f0">' + day + '</td>' +
+        '<td class="px-3 py-1.5 text-sm" style="border:1px solid #e7e0ed">' + dateDisplay + '</td>' +
+        '<td class="px-2 py-1.5 text-sm text-center font-medium ' + (isRedDay?'text-rose-500':'text-slate-400') + '" style="border:1px solid #e7e0ed">' + day + '</td>' +
         mxTd(mxChip(row&&row[2], 'text-rose-900', d.date, 2, i, 'background:rgba(251,113,133,0.25)'), d.date, 2, i) +
         mxTd(mxChip(row&&row[3], 'text-orange-900', d.date, 3, i, 'background:rgba(251,146,60,0.25)'), d.date, 3, i) +
         mxTd(mxChip(row&&row[4], 'text-amber-900', d.date, 4, i, 'background:rgba(251,191,36,0.25)'), d.date, 4, i) +
         mxTd(mxChip(row&&row[5], 'text-sky-900', d.date, 5, i, 'background:rgba(56,189,248,0.25)'), d.date, 5, i) +
         mxTd(mxChip(row&&row[7], 'text-lime-900', d.date, 7, i, 'background:rgba(163,230,53,0.3)'), d.date, 7, i) +
         mxTd(mxChip(row&&row[8], 'text-violet-900', d.date, 8, i, 'background:rgba(139,92,246,0.2)'), d.date, 8, i) +
-        '<td class="p-0 text-center align-middle" style="border:1px solid #e2e8f0">' +
+        '<td class="p-0 text-center align-middle" style="border:1px solid #e7e0ed">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-0.5 py-1">' +
             '<button onclick="editMatrixRow(' + i + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
