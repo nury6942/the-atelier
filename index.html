@@ -11473,6 +11473,7 @@
           html += '<button onclick="confirmWork(\'' + w.id + '\')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">check_circle</span>확정 + 캘린더 추가</button>';
         } else {
           html += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✅ 확정</span>';
+          html += '<button onclick="resyncWorkCal(\'' + w.id + '\')" class="text-[11px] font-bold text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">sync</span>캘린더 재동기화</button>';
         }
         html += '<button onclick="openEditWorkModal(\'' + w.id + '\')" class="text-[11px] font-bold text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1 ml-auto"><span class="material-symbols-outlined" style="font-size:13px">edit</span>편집</button>';
         html += '<button onclick="if(confirm(\'삭제하면 연결된 캘린더 일정도 삭제됩니다. 계속할까요?\')){deleteWork(\'' + w.id + '\');renderWorkPipeline()}" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">delete</span>삭제</button>';
@@ -11652,6 +11653,16 @@
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정! 캘린더에 일정이 추가됐어요.');
   }
 
+  async function resyncWorkCal(id) {
+    var w = getWorkById(id);
+    if (!w) return;
+    if (!confirm('"' + (w.title || '') + '" 캘린더 일정을 재동기화할까요?\n기존 일정 삭제 후 다시 생성합니다.')) return;
+    removeWorkCalEvents(id);
+    await autoAddScheduleToCalendar(w);
+    renderWorkPipeline();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 캘린더 재동기화 완료');
+  }
+
   async function autoAddScheduleToCalendar(work) {
     var cat = '글쓰기';
     var color = CAT_COLOR[cat] || 'sky';
@@ -11660,14 +11671,21 @@
     var p = work.phases || {};
     var eps = work.total_episodes || 20;
 
-    // 시놉: 빈 날마다
-    if (p.synopsis && p.synopsis.days) {
-      p.synopsis.days.forEach(function(d, i) {
-        events.push([d, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(i)]);
-      });
+    // 시놉: start~end 빈 날마다
+    if (p.synopsis && p.synopsis.start && p.synopsis.end) {
+      var sCur = new Date(p.synopsis.start + 'T00:00:00');
+      var sEnd = new Date(p.synopsis.end + 'T00:00:00');
+      var sIdx = 0;
+      while (sCur <= sEnd) {
+        var sds = _fmtDate(sCur);
+        if (!isBlockedDay(sds)) {
+          events.push([sds, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(sIdx++)]);
+        }
+        sCur.setDate(sCur.getDate() + 1);
+      }
     }
 
-    // 초고: 시작~종료 빈 날마다 (화수 누적)
+    // 초고: start~end 빈 날마다 (화수 누적)
     if (p.draft && p.draft.start && p.draft.end) {
       var dCur = new Date(p.draft.start + 'T00:00:00');
       var dEnd = new Date(p.draft.end + 'T00:00:00');
@@ -11685,11 +11703,19 @@
       }
     }
 
-    // 퇴고: 빈 날마다
-    if (p.revision && p.revision.days) {
-      p.revision.days.forEach(function(d, i) {
-        events.push([d, '퇴고 ' + (i + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(i)]);
-      });
+    // 퇴고: start~end 빈 날마다
+    if (p.revision && p.revision.start && p.revision.end) {
+      var rCur = new Date(p.revision.start + 'T00:00:00');
+      var rEnd = new Date(p.revision.end + 'T00:00:00');
+      var rIdx = 0;
+      while (rCur <= rEnd) {
+        var rds = _fmtDate(rCur);
+        if (!isBlockedDay(rds)) {
+          events.push([rds, '퇴고 ' + (rIdx + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(rIdx)]);
+          rIdx++;
+        }
+        rCur.setDate(rCur.getDate() + 1);
+      }
     }
 
     // 연재: 주 1회
