@@ -1996,6 +1996,7 @@
                 <th class="w-24" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연차</th>
                 <th class="w-36" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">개인</th>
                 <th class="w-36" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">글쓰기</th>
+                <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연재</th>
                 <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">영어</th>
                 <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">스터디</th>
                 <th class="w-16" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">관리</th>
@@ -3580,12 +3581,13 @@
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       var days = ['일','월','화','수','목','금','토'];
       // 캘린더→매트릭스 전체 동기화 (날짜별로 모든 필드 재구성)
-      var MAPPED_FIELDS = [2,3,4,5,7,8]; // work,leave,personal,writing,english,ai_study
+      var MAPPED_FIELDS = [2,3,4,5,6,7,8]; // work,leave,personal,writing,serial1,english,ai_study
       var plannerByDate = {};
       for (var si = 0; si < plannerData.length; si++) {
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
         var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
+        if ((sRow[2]||'').trim() === '글쓰기' && _isPublishingEvent(sRow[1], sRow[4])) sField = 'serial1';
         if (!sRow[0] || !sField || !sRow[1]) continue;
         var sFIdx = FIELDS.indexOf(sField);
         if (sFIdx <= 0) continue;
@@ -4478,6 +4480,7 @@
       const id = row[7];
       // 매트릭스에서 해당 날짜 범위의 카테고리 데이터도 삭제
       var matrixField = PLANNER_TO_MATRIX[row[2]];
+      if ((row[2]||'').trim() === '글쓰기' && _isPublishingEvent(row[1], row[4])) matrixField = 'serial1';
       if (matrixField) {
         var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
         var fieldIdx = FIELDS.indexOf(matrixField);
@@ -8870,13 +8873,23 @@
     }
   }
 
+  function _isPublishingEvent(title, notes) {
+    if ((notes || '').indexOf('phase:publishing') >= 0) return true;
+    return /^\d+화\s*\(/.test(title || '');
+  }
+
   async function syncPlannerToMatrix(plannerRow) {
     if (!plannerRow) return;
     var startDate = plannerRow[0];
     var endDate = plannerRow[5] || startDate;
     var category = plannerRow[2];
     var title = plannerRow[1];
+    var notes = plannerRow[4] || '';
+    // 글쓰기 카테고리 중 연재 이벤트는 serial1 칸으로
     var matrixField = PLANNER_TO_MATRIX[category];
+    if (category === '글쓰기' && _isPublishingEvent(title, notes)) {
+      matrixField = 'serial1';
+    }
     if (!startDate || !matrixField) return;
 
     var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
@@ -9286,7 +9299,7 @@
 
       // 캘린더→매트릭스 동기화
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-      var MAPPED_FIELDS = [2,3,4,5,7,8];
+      var MAPPED_FIELDS = [2,3,4,5,6,7,8];
       var dayNames = ['일','월','화','수','목','금','토'];
       // 캘린더→매트릭스 전체 동기화
       var pByDate = {};
@@ -9294,6 +9307,7 @@
         var sRow = plannerData[si];
         var sEnd = sRow[5] || sRow[0];
         var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
+        if ((sRow[2]||'').trim() === '글쓰기' && _isPublishingEvent(sRow[1], sRow[4])) sField = 'serial1';
         if (!sRow[0] || !sField || !sRow[1]) continue;
         var sFIdx = FIELDS.indexOf(sField);
         if (sFIdx <= 0) continue;
@@ -9408,12 +9422,13 @@
     var matrixHolidays = getKoreanHolidays(matrixYear);
 
     // Pre-compute rowspan merge map per column
-    var MERGE_COLS = [2, 3, 4, 5, 7, 8];
+    var MERGE_COLS = [2, 3, 4, 5, 6, 7, 8];
     var COL_STYLES = {
       2: { color: 'text-rose-900', bg: 'background:rgba(251,113,133,0.25)' },
       3: { color: 'text-orange-900', bg: 'background:rgba(251,146,60,0.25)' },
       4: { color: 'text-amber-900', bg: 'background:rgba(251,191,36,0.25)' },
       5: { color: 'text-sky-900', bg: 'background:rgba(56,189,248,0.25)' },
+      6: { color: 'text-emerald-900', bg: 'background:rgba(52,211,153,0.25)' },
       7: { color: 'text-lime-900', bg: 'background:rgba(163,230,53,0.3)' },
       8: { color: 'text-violet-900', bg: 'background:rgba(139,92,246,0.2)' }
     };
@@ -9485,7 +9500,7 @@
         const monthTr = document.createElement('tr');
         monthTr.className = 'sticky top-0 z-10';
         monthTr.style.backgroundColor = '#f3eeff';
-        monthTr.innerHTML = '<td colspan="9" class="px-5 py-2" style="border-top:1px solid #e9d5ff;border-bottom:1px solid #e9d5ff;">' +
+        monthTr.innerHTML = '<td colspan="10" class="px-5 py-2" style="border-top:1px solid #e9d5ff;border-bottom:1px solid #e9d5ff;">' +
           '<span class="text-[11px] font-black uppercase tracking-widest" style="color:#6b38d4">' +
           matrixYear + '년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
@@ -9790,7 +9805,7 @@
   }
 
   // 셀 클릭 → 개별 필드 수정 팝업
-  var FIELD_LABELS = {2:'업무',3:'연차',4:'개인',5:'글쓰기',7:'영어',8:'스터디'};
+  var FIELD_LABELS = {2:'업무',3:'연차',4:'개인',5:'글쓰기',6:'연재',7:'영어',8:'스터디'};
   var FIELD_OPTIONS = {
     2: ['출근','재택','출장','반차(오전)','반차(오후)','연차','병가','휴일근무'],
     3: ['0.5 (반차)','1.0 (연차)','2.0','3.0','5.0'],
