@@ -3203,15 +3203,19 @@
     }
   });
 
-  // ===== 모달 바깥 클릭 시 닫기 =====
+  // ===== 모달 바깥 클릭 시 닫기 (드래그 선택 보호) =====
+  var _modalMouseDownTarget = null;
+  document.addEventListener('mousedown', function(e) { _modalMouseDownTarget = e.target; });
   document.addEventListener('click', function(e) {
     var modals = document.querySelectorAll('.fixed.inset-0.z-50.bg-black\\/40');
     modals.forEach(function(modal) {
-      if (modal.style.cssText.indexOf('none') >= 0) return; // 안 보이는 모달 무시
-      if (e.target === modal) {
+      if (modal.style.cssText.indexOf('none') >= 0) return;
+      // mousedown과 click 모두 오버레이에서 발생했을 때만 닫기
+      if (e.target === modal && _modalMouseDownTarget === modal) {
         modal.style.cssText = 'display:none!important';
       }
     });
+    _modalMouseDownTarget = null;
   });
 
   // ===== PLANNER GOALS (milestones 연동) =====
