@@ -11692,17 +11692,82 @@
     document.getElementById('nw-publish-start').value = '';
     document.getElementById('nw-preview').style.display = 'none';
     document.getElementById('new-work-modal').style.cssText = 'display:flex!important';
+    renderNwMiniTimeline();
     setTimeout(function() { initSimpleDatePicker('nw-start-date'); initSimpleDatePicker('nw-publish-start'); }, 80);
   }
 
   function quickNewWork(seriesId, publishStart) {
     openNewWorkModal();
-    // Pre-fill series
     var sel = document.getElementById('nw-series');
     if (sel) sel.value = seriesId;
-    // Pre-fill publish start
     var pubEl = document.getElementById('nw-publish-start');
     if (pubEl) pubEl.value = publishStart;
+  }
+
+  function renderNwMiniTimeline() {
+    var el = document.getElementById('nw-mini-timeline');
+    if (!el) return;
+    loadWorks();
+    if (_works.length === 0) { el.style.display = 'none'; return; }
+    var yr = (typeof _matrixYear !== 'undefined' && _matrixYear) ? _matrixYear : new Date().getFullYear();
+    var series = getSeriesData(yr);
+    if (series.length === 0) { el.style.display = 'none'; return; }
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var rangeStart = new Date(today); rangeStart.setMonth(rangeStart.getMonth() - 1);
+    var rangeEnd = new Date(today); rangeEnd.setMonth(rangeEnd.getMonth() + 12);
+    var totalMs = rangeEnd.getTime() - rangeStart.getTime();
+    var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rangeStart.getTime()) / totalMs * 100))); };
+    var todayPct = pct(today);
+
+    // Month markers
+    var mHtml = '';
+    var mc = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1);
+    while (mc <= rangeEnd) {
+      var mp = pct(mc);
+      var isCur = mc.getMonth() === today.getMonth() && mc.getFullYear() === today.getFullYear();
+      mHtml += '<div class="absolute text-[8px] font-bold' + (isCur ? ' text-indigo-600' : ' text-slate-300') + '" style="left:' + mp.toFixed(1) + '%;top:0;transform:translateX(-50%)">' + (mc.getMonth()+1) + '월</div>';
+      mc.setMonth(mc.getMonth() + 1);
+    }
+
+    // Series rows
+    var phaseColors = { synopsis:'#7c3aed', draft:'#3b82f6', revision:'#eab308', rest:'#94a3b8' };
+    var rowsHtml = '';
+    series.forEach(function(s) {
+      var sWorks = _works.filter(function(w) { return w.series_id === s.id || w.series_name === s.name; });
+      if (sWorks.length === 0) return;
+      var scMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316' };
+      var sColor = scMap[s.color] || '#6366f1';
+      rowsHtml += '<div class="flex items-center" style="height:28px;margin-top:2px">';
+      rowsHtml += '<div class="shrink-0 text-[10px] font-bold truncate" style="width:56px;color:' + sColor + '">' + s.name + '</div>';
+      rowsHtml += '<div class="relative flex-1" style="height:22px;background:#f1f5f9;border-radius:3px">';
+      sWorks.forEach(function(w) {
+        // All phases + publishing
+        var phases = ['synopsis','draft','revision','rest'];
+        phases.forEach(function(pk) {
+          var ph = w.phases ? w.phases[pk] : null;
+          if (!ph || !ph.start || !ph.end) return;
+          var ps = new Date(ph.start+'T00:00:00'), pe = new Date(ph.end+'T00:00:00');
+          if (pe < rangeStart || ps > rangeEnd) return;
+          var l = pct(ps), r = pct(pe), wd = Math.max(0.3, r - l);
+          rowsHtml += '<div class="absolute top-1 rounded-sm" style="left:'+l.toFixed(1)+'%;width:'+wd.toFixed(1)+'%;height:14px;background:'+(phaseColors[pk]||'#94a3b8')+';opacity:0.7" title="'+pk+'"></div>';
+        });
+        // Publishing bar
+        if (w.publish_start && w.publish_end) {
+          var ps2 = new Date(w.publish_start+'T00:00:00'), pe2 = new Date(w.publish_end+'T00:00:00');
+          if (!(pe2 < rangeStart || ps2 > rangeEnd)) {
+            var l2 = pct(ps2), r2 = pct(pe2), wd2 = Math.max(0.5, r2 - l2);
+            rowsHtml += '<div class="absolute top-1 rounded-sm" style="left:'+l2.toFixed(1)+'%;width:'+wd2.toFixed(1)+'%;height:14px;background:'+sColor+'" title="연재: '+w.title+'"><span class="text-[7px] font-bold text-white px-0.5 truncate block leading-[14px]">'+w.title+'</span></div>';
+          }
+        }
+      });
+      // Today line
+      rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:1px;background:#ef4444;opacity:0.5"></div>';
+      rowsHtml += '</div></div>';
+    });
+
+    el.innerHTML = '<div class="relative" style="min-width:400px"><div class="relative" style="height:14px;margin-left:56px">' + mHtml + '</div>' + rowsHtml + '<div class="text-[9px] text-slate-400 text-center mt-2">💡 시리즈별 진행 현황 — 빨간 선이 오늘</div></div>';
+    el.style.display = '';
   }
 
   function closeNewWorkModal() {
@@ -16008,12 +16073,14 @@ speaker 설정:
 
   <!-- New Work Modal (global) -->
   <div id="new-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden" style="max-height:90vh;overflow-y:auto">
       <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
         <h3 class="font-bold text-white text-lg font-headline">🎬 새 작품 추가</h3>
         <p class="text-white/70 text-xs mt-0.5">자동 스케줄 계산 → 캘린더 일괄 입력</p>
       </div>
       <div class="p-6 space-y-4">
+        <!-- Mini Timeline -->
+        <div id="nw-mini-timeline" class="rounded-xl border border-slate-100 bg-slate-50/50 p-3 overflow-x-auto" style="display:none"></div>
         <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시리즈</label><select id="nw-series" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"></select></div>
         <div class="space-y-1"><label class="text-xs font-bold text-slate-500">작품명</label><input id="nw-title" type="text" placeholder="예: 안녕 오랜만이야" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
         <div class="grid grid-cols-2 gap-3">
