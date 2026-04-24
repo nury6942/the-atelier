@@ -11837,7 +11837,7 @@
     w.updated_at = new Date().toISOString();
     // 확정 상태면 캘린더 일정 삭제 후 재생성 (상태 유지)
     if (wasConfirmed) {
-      removeWorkCalEvents(w.id);
+      await removeWorkCalEvents(w.id);
       await autoAddScheduleToCalendar(w);
     }
     saveWorks();
@@ -11862,7 +11862,7 @@
     var w = getWorkById(id);
     if (!w) return;
     if (!confirm('"' + (w.title || '') + '" 캘린더 일정을 재동기화할까요?\n기존 일정 삭제 후 다시 생성합니다.')) return;
-    removeWorkCalEvents(id);
+    await removeWorkCalEvents(id);
     await autoAddScheduleToCalendar(w);
     renderWorkPipeline();
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 캘린더 재동기화 완료');
@@ -11950,7 +11950,7 @@
     console.log('[Work Cal] Added', events.length, 'events for', work.title);
   }
 
-  function removeWorkCalEvents(workId) {
+  async function removeWorkCalEvents(workId) {
     var toRemove = [];
     plannerData.forEach(function(row, idx) {
       var notes = (row[4] || '').toString();
@@ -11958,19 +11958,45 @@
     });
     // 역순으로 삭제 (인덱스 안 밀리게)
     toRemove.sort(function(a, b) { return b - a; });
-    toRemove.forEach(function(idx) {
+    for (var i = 0; i < toRemove.length; i++) {
+      var idx = toRemove[i];
       var id = plannerData[idx][7];
-      if (id) { try { fbDelete('planner', id); } catch(e) {} }
+      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
       plannerData.splice(idx, 1);
-    });
+    }
     if (toRemove.length > 0) renderCalendar();
     return toRemove.length;
   }
 
   // deleteWork 업데이트: 캘린더 일정도 삭제
+  async function cleanupDuplicateWorkEvents() {
+    var seen = {};
+    var toRemove = [];
+    plannerData.forEach(function(row, idx) {
+      var notes = (row[4] || '').toString();
+      if (notes.indexOf('work_id:') < 0) return;
+      var key = (row[0] || '') + '|' + (row[1] || '') + '|' + notes;
+      if (seen[key]) {
+        toRemove.push(idx);
+      } else {
+        seen[key] = true;
+      }
+    });
+    toRemove.sort(function(a, b) { return b - a; });
+    for (var i = 0; i < toRemove.length; i++) {
+      var idx = toRemove[i];
+      var id = plannerData[idx][7];
+      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
+      plannerData.splice(idx, 1);
+    }
+    if (toRemove.length > 0) renderCalendar();
+    return toRemove.length;
+  }
+  window.cleanupDuplicateWorkEvents = cleanupDuplicateWorkEvents;
+
   var _origDeleteWork = deleteWork;
-  deleteWork = function(id) {
-    var removed = removeWorkCalEvents(id);
+  deleteWork = async function(id) {
+    var removed = await removeWorkCalEvents(id);
     _origDeleteWork(id);
     if (removed > 0) console.log('[Work] Removed', removed, 'calendar events');
   };
