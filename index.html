@@ -3507,6 +3507,28 @@
           try { var sSaved = await fbAdd('matrix', rowToObj('matrix', sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); matrixSynced++; } catch(e){}
         }
       }
+      // Phase B: 유령 데이터 정리 (loadPlanner)
+      var CLEANUP_FIELDS_P = [3, 5, 7, 8];
+      for (var ci2 = 0; ci2 < matrixData.length; ci2++) {
+        var cRow2 = matrixData[ci2];
+        var cDate2 = cRow2[0];
+        if (!cDate2) continue;
+        var cMap2 = plannerByDate[cDate2];
+        var cNeedUp2 = false;
+        for (var cf2 = 0; cf2 < CLEANUP_FIELDS_P.length; cf2++) {
+          var cfi2 = CLEANUP_FIELDS_P[cf2];
+          var cExp2 = (cMap2 && cMap2[cfi2]) ? cMap2[cfi2].join(', ') : '';
+          if (cRow2[cfi2] && cRow2[cfi2] !== cExp2) {
+            console.log('[MatrixClean] ' + cDate2 + ' field[' + cfi2 + ']: "' + cRow2[cfi2] + '" → "' + cExp2 + '"');
+            cRow2[cfi2] = cExp2;
+            cNeedUp2 = true;
+          }
+        }
+        if (cNeedUp2) {
+          var cId2 = cRow2[10] || cRow2[9];
+          if (cId2) try { await fbUpdate('matrix', cId2, rowToObj('matrix', cRow2)); matrixSynced++; } catch(e) {}
+        }
+      }
       if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
       renderCalendar();
       updatePlannerTracks();
@@ -8596,6 +8618,7 @@
     '업무': 'work',
     '개인': 'personal',
     '연차': 'leave',
+    '생일': 'personal',
   };
 
   // 매트릭스 필드 → 캘린더 카테고리 역매핑
@@ -9052,6 +9075,7 @@
         }
       }
       var synced = 0;
+      // Phase A: planner 데이터가 있는 날짜 → 매트릭스에 반영
       var sdKeys = Object.keys(pByDate);
       for (var sdk = 0; sdk < sdKeys.length; sdk++) {
         var dateStr2 = sdKeys[sdk];
@@ -9070,6 +9094,29 @@
           var sNewRow = [dateStr2, dayNames[dd.getDay()], '','','','','','','',''];
           for (var mf2=0; mf2<MAPPED_FIELDS.length; mf2++) { var fi2=MAPPED_FIELDS[mf2]; if(fMap[fi2]) sNewRow[fi2]=fMap[fi2].join(', '); }
           try{var sSaved=await fbAdd('matrix',rowToObj('matrix',sNewRow)); matrixData.push(sNewRow.concat([sSaved._id])); synced++;}catch(e){}
+        }
+      }
+      // Phase B: 유령 데이터 정리 — planner에 없는 매트릭스 행의 안전한 필드 초기화
+      // leave(3), writing(5), english(7), ai_study(8)만 정리. work(2), personal(4)는 직접 입력 보호.
+      var CLEANUP_FIELDS = [3, 5, 7, 8];
+      for (var ci = 0; ci < matrixData.length; ci++) {
+        var cRow = matrixData[ci];
+        var cDate = cRow[0];
+        if (!cDate) continue;
+        var cMap = pByDate[cDate];
+        var cNeedUp = false;
+        for (var cf = 0; cf < CLEANUP_FIELDS.length; cf++) {
+          var cfi = CLEANUP_FIELDS[cf];
+          var cExp = (cMap && cMap[cfi]) ? cMap[cfi].join(', ') : '';
+          if (cRow[cfi] && cRow[cfi] !== cExp) {
+            console.log('[MatrixClean] ' + cDate + ' field[' + cfi + ']: "' + cRow[cfi] + '" → "' + cExp + '"');
+            cRow[cfi] = cExp;
+            cNeedUp = true;
+          }
+        }
+        if (cNeedUp) {
+          var cId = cRow[10] || cRow[9];
+          if (cId) try { await fbUpdate('matrix', cId, rowToObj('matrix', cRow)); synced++; } catch(e) {}
         }
       }
       if (synced > 0) console.log('Matrix synced on load:', synced);
