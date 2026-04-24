@@ -10323,6 +10323,8 @@
     // Monthly Scheduler도 같은 연도 1월로 전환
     _incomeCalYear = _matrixYear;
     _incomeCalMonth = 0;
+    // Scheduler 데이터를 현재 연도 Matrix에 동기화
+    syncCalToMatrix(_matrixYear);
     renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
@@ -10382,9 +10384,25 @@
       localStorage.setItem(key, JSON.stringify(data));
       return data;
     }
-    var empty = [];
-    localStorage.setItem(key, JSON.stringify(empty));
-    return empty;
+    // 신규 연도: 가장 가까운 이전 연도에서 시리즈 이름/색상 복제
+    var copied = [];
+    for (var prevYr = year - 1; prevYr >= 2024; prevYr--) {
+      var prevKey = seriesKeyForYear(prevYr);
+      var prevData = localStorage.getItem(prevKey);
+      if (prevData) {
+        try {
+          var prevParsed = JSON.parse(prevData);
+          if (prevParsed.length > 0) {
+            copied = prevParsed.map(function(s) {
+              return { id: s.id, name: s.name, color: s.color, monthly: {} };
+            });
+            break;
+          }
+        } catch(e) {}
+      }
+    }
+    localStorage.setItem(key, JSON.stringify(copied));
+    return copied;
   }
   function saveSeriesData(d, yr) {
     var year = yr || _matrixYear;
@@ -10607,28 +10625,66 @@
   function addNewSeries() {
     var name = prompt('새 시리즈 이름:');
     if (!name) return;
+    var newId = 's_' + Date.now();
     var data = getSeriesData();
-    data.push({id:'s_'+Date.now(), name:name, color:SERIES_COLORS[data.length%SERIES_COLORS.length], monthly:{}});
+    var newColor = SERIES_COLORS[data.length % SERIES_COLORS.length];
+    data.push({id: newId, name: name, color: newColor, monthly: {}});
     saveSeriesData(data);
+    // 다른 연도에도 시리즈 추가 (전역)
+    for (var yr = 2024; yr <= 2030; yr++) {
+      if (yr === _matrixYear) continue;
+      var k = seriesKeyForYear(yr);
+      var s = localStorage.getItem(k);
+      if (s) {
+        try {
+          var d = JSON.parse(s);
+          if (!d.some(function(x){ return x.name === name; })) {
+            d.push({id: newId, name: name, color: newColor, monthly: {}});
+            localStorage.setItem(k, JSON.stringify(d));
+          }
+        } catch(e) {}
+      }
+    }
     renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function editSeries(si) {
     var data = getSeriesData();
-    var name = prompt('시리즈 이름 수정:', data[si].name);
-    if (!name) return;
+    var oldName = data[si].name;
+    var name = prompt('시리즈 이름 수정:', oldName);
+    if (!name || name === oldName) return;
     data[si].name = name;
     saveSeriesData(data);
+    // 다른 연도에도 이름 변경 반영 + Scheduler 이벤트도 업데이트
+    for (var yr = 2024; yr <= 2030; yr++) {
+      if (yr === _matrixYear) continue;
+      var k = seriesKeyForYear(yr);
+      var s = localStorage.getItem(k);
+      if (s) {
+        try {
+          var d = JSON.parse(s);
+          var found = d.find(function(x){ return x.name === oldName; });
+          if (found) { found.name = name; localStorage.setItem(k, JSON.stringify(d)); }
+        } catch(e) {}
+      }
+    }
+    var evts = getCalEvents();
+    evts.forEach(function(e){ if (e.series === oldName) e.series = name; });
+    saveCalEvents(evts);
     renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
 
   function deleteSeries(si) {
     var data = getSeriesData();
-    if (!confirm('"'+data[si].name+'" 시리즈를 삭제할까요?')) return;
-    // 관련 캘린더 이벤트도 삭제
-    var evts = getCalEvents().filter(function(e){return e.series!==data[si].name;});
+    var seriesName = data[si].name;
+    if (!confirm('"' + seriesName + '" 시리즈를 현재 연도에서 삭제할까요?\n(다른 연도 데이터는 유지됩니다)')) return;
+    // 관련 캘린더 이벤트: 현재 연도 것만 삭제
+    var yrStr = String(_matrixYear);
+    var evts = getCalEvents().filter(function(e){
+      return !(e.series === seriesName && (e.date||'').startsWith(yrStr));
+    });
     saveCalEvents(evts);
-    data.splice(si,1);
+    data.splice(si, 1);
     saveSeriesData(data);
     renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
   }
@@ -11012,13 +11068,15 @@
   function addCalEvent(dateStr) { openCalEventModal(dateStr); }
   function editCalEvent(idx) { openCalEventModal(null, idx); }
 
-  function syncCalToMatrix() {
-    var series = getSeriesData();
+  function syncCalToMatrix(targetYear) {
+    var year = targetYear || _matrixYear;
+    var yrStr = String(year);
+    var series = getSeriesData(year);
     var evts = getCalEvents();
     series.forEach(function(s) {
       // 각 월별로 해당 시리즈의 캘린더 이벤트를 날짜순 정렬 후 에피소드 범위 생성
       var monthEps = {};
-      evts.filter(function(e){ return e.series === s.name; })
+      evts.filter(function(e){ return e.series === s.name && (e.date||'').startsWith(yrStr); })
         .sort(function(a,b){ return a.date.localeCompare(b.date); })
         .forEach(function(e) {
           var m = new Date(e.date).getMonth();
@@ -11050,7 +11108,7 @@
         }
       }
     });
-    saveSeriesData(series);
+    saveSeriesData(series, year);
   }
 
   // ===== Bottom Quick Stats =====
