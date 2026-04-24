@@ -184,6 +184,9 @@
       transition: all 0.3s;
     }
     .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
+    .cal-nav-select { padding:8px 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size:15px; font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .cal-nav-select:hover { border-color:#a5b4fc; background:#f5f3ff; }
+    .cal-nav-select:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
     .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
     .cal-day-header {
       border-right: 1px solid rgba(203,195,215,0.15);
@@ -2625,10 +2628,10 @@
               <div id="nw-preview-content" class="px-4 py-3 bg-indigo-50/50 text-xs space-y-1.5"></div>
             </div>
           </div>
-          <div class="px-6 pb-6 flex gap-2">
-            <button onclick="previewWorkSchedule()" class="flex-1 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-sm hover:bg-indigo-100 transition-colors">스케줄 계산</button>
-            <button onclick="saveNewWork()" id="nw-save-btn" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">초안 저장</button>
-            <button onclick="closeNewWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+          <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;border-radius:0 0 16px 16px;padding-top:16px">
+            <button onclick="closeNewWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
+            <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
+            <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">💾 초안 저장</button>
           </div>
         </div>
       </div>
@@ -2914,9 +2917,8 @@
         <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none" style="background:rgba(107,56,212,0.05)"></div>
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-2">
-            <select id="cal-year-select" onchange="calNavJump()" class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d] bg-transparent border border-transparent hover:border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 appearance-none" style="padding-right:20px;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 4px center"></select>
-            <span class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d]">년</span>
-            <select id="cal-month-select" onchange="calNavJump()" class="text-2xl font-headline font-extrabold tracking-tighter text-[#191c1d] bg-transparent border border-transparent hover:border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 appearance-none" style="padding-right:20px;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 4px center"></select>
+            <select id="cal-year-select" onchange="calNavJump()" class="cal-nav-select"></select>
+            <select id="cal-month-select" onchange="calNavJump()" class="cal-nav-select"></select>
             <div class="flex gap-1 ml-1">
               <button onclick="prevMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
               <button onclick="nextMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
@@ -11800,6 +11802,8 @@
       addWork(work);
       closeNewWorkModal();
       renderWorkPipeline();
+      try { renderMxPipelineGantt(); } catch(e) {}
+      try { renderCalendar(); } catch(e) {}
       _workPreviewResult = null;
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 초안이 저장됐어요. 위젯에서 확정하세요.');
     } finally { _workSaving = false; _unlockSaveBtn(btn); }
