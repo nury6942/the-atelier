@@ -9248,9 +9248,10 @@
         currentMonth = monthKey;
         const monthNum = parseInt(d.date.slice(5,7)) - 1;
         const monthTr = document.createElement('tr');
-        monthTr.className = 'bg-indigo-900 sticky top-0 z-10';
+        monthTr.className = 'sticky top-0 z-10';
+        monthTr.style.cssText = 'background:#f3eeff;border-top:1px solid #e7e0ed;border-bottom:1px solid #e7e0ed';
         monthTr.innerHTML = '<td colspan="9" class="px-5 py-2">' +
-          '<span class="text-[11px] font-black uppercase tracking-widest text-indigo-200">' +
+          '<span class="text-[11px] font-black uppercase tracking-widest" style="color:#6b38d4">' +
           matrixYear + '년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
       }
