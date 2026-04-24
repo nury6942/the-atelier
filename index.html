@@ -2633,9 +2633,9 @@
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">📝 시놉 시작</label><input id="ew-syn-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">📝 시놉 종료</label><input id="ew-syn-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">✏️ 초고 시작</label><input id="ew-draft-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400 flex items-center gap-1">✏️ 초고 시작 <button onclick="recalcFromPhase('draft')" class="p-0.5 hover:bg-indigo-100 rounded text-indigo-400 hover:text-indigo-600" title="이후 단계 재계산"><span class="material-symbols-outlined" style="font-size:12px">sync</span></button></label><input id="ew-draft-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">✏️ 초고 종료</label><input id="ew-draft-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">🔍 퇴고 시작</label><input id="ew-rev-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400 flex items-center gap-1">🔍 퇴고 시작 <button onclick="recalcFromPhase('revision')" class="p-0.5 hover:bg-indigo-100 rounded text-indigo-400 hover:text-indigo-600" title="이후 단계 재계산"><span class="material-symbols-outlined" style="font-size:12px">sync</span></button></label><input id="ew-rev-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">🔍 퇴고 종료</label><input id="ew-rev-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">☕ 휴식 시작</label><input id="ew-rest-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">☕ 휴식 종료</label><input id="ew-rest-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
@@ -11748,6 +11748,62 @@
     document.getElementById('ew-rest-start').value = r.phases.rest.start;
     document.getElementById('ew-rest-end').value = r.phases.rest.end;
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 스케줄 재계산 완료 (휴식 ' + r.rest_days + '일)');
+  }
+
+  function recalcFromPhase(phase) {
+    var eps = parseInt(document.getElementById('ew-episodes').value) || 20;
+    var pubStart = document.getElementById('ew-pub-start').value;
+    if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 먼저 입력하세요'); return; }
+    var pubDate = new Date(pubStart + 'T00:00:00');
+
+    if (phase === 'draft') {
+      var ds = document.getElementById('ew-draft-start').value;
+      if (!ds) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 초고 시작일을 입력하세요'); return; }
+      // 초고 종료 계산
+      var draftCur = new Date(ds + 'T00:00:00'), written = 0, draftEnd = new Date(draftCur.getTime()), safety = 0;
+      while (written < eps && safety < 500) {
+        if (!isBlockedDay(_fmtDate(draftCur))) written += _isWeekend(draftCur) ? 1 : 0.5;
+        draftEnd = new Date(draftCur.getTime());
+        draftCur.setDate(draftCur.getDate() + 1); safety++;
+      }
+      // 퇴고
+      var revStart = new Date(draftEnd.getTime()); revStart.setDate(revStart.getDate() + 1);
+      var revDays = findNextAvailableDays(revStart, eps);
+      var revEnd = revDays.length > 0 ? revDays[revDays.length - 1] : revStart;
+      // 검증
+      if (revEnd >= pubDate) {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 퇴고(' + _fmtDate(revEnd) + ')가 연재 시작일을 넘어갑니다!');
+        return;
+      }
+      // 휴식
+      var restStart = new Date(revEnd.getTime()); restStart.setDate(restStart.getDate() + 1);
+      var restEnd = new Date(pubDate.getTime()); restEnd.setDate(restEnd.getDate() - 1);
+      document.getElementById('ew-draft-end').value = _fmtDate(draftEnd);
+      document.getElementById('ew-rev-start').value = _fmtDate(revStart);
+      document.getElementById('ew-rev-end').value = _fmtDate(revEnd);
+      document.getElementById('ew-rest-start').value = _fmtDate(restStart);
+      document.getElementById('ew-rest-end').value = _fmtDate(restEnd);
+      var restDays = Math.round((restEnd - restStart) / 86400000) + 1;
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 초고 이후 재계산 완료 (휴식 ' + restDays + '일)');
+    }
+
+    if (phase === 'revision') {
+      var rs = document.getElementById('ew-rev-start').value;
+      if (!rs) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 퇴고 시작일을 입력하세요'); return; }
+      var revDays2 = findNextAvailableDays(new Date(rs + 'T00:00:00'), eps);
+      var revEnd2 = revDays2.length > 0 ? revDays2[revDays2.length - 1] : new Date(rs + 'T00:00:00');
+      if (revEnd2 >= pubDate) {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 퇴고(' + _fmtDate(revEnd2) + ')가 연재 시작일을 넘어갑니다!');
+        return;
+      }
+      var restStart2 = new Date(revEnd2.getTime()); restStart2.setDate(restStart2.getDate() + 1);
+      var restEnd2 = new Date(pubDate.getTime()); restEnd2.setDate(restEnd2.getDate() - 1);
+      document.getElementById('ew-rev-end').value = _fmtDate(revEnd2);
+      document.getElementById('ew-rest-start').value = _fmtDate(restStart2);
+      document.getElementById('ew-rest-end').value = _fmtDate(restEnd2);
+      var restDays2 = Math.round((restEnd2 - restStart2) / 86400000) + 1;
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 퇴고 이후 재계산 완료 (휴식 ' + restDays2 + '일)');
+    }
   }
 
   function saveEditWork() {
