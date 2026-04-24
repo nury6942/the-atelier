@@ -30,7 +30,8 @@ self.addEventListener('fetch', event => {
   var url = new URL(event.request.url);
   if (url.hostname.includes('firestore') ||
       url.hostname.includes('firebase') ||
-      url.hostname.includes('googleapis')) {
+      url.hostname.includes('googleapis') ||
+      url.hostname.includes('gstatic')) {
     return;
   }
 
