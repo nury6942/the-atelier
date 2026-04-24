@@ -9993,7 +9993,7 @@
     }).join('');
 
     td.innerHTML = tagsHtml +
-      '<input type="text" placeholder="추가..." class="inline-block w-16 px-1 py-0.5 text-[9px] rounded border border-indigo-200 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
+      '<input type="text" placeholder="입력 후 Enter" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(99,102,241,0.1)" id="mx-inline-input"/>';
     var input = td.querySelector('#mx-inline-input');
     input.focus();
 
@@ -10021,7 +10021,7 @@
     if (!td) return;
     td.classList.add('mx-selected','ring-2','ring-indigo-500');
     td.dataset.oldHtml = td.innerHTML;
-    td.innerHTML = '<input type="text" value="' + oldTitle.replace(/"/g,'&quot;') + '" class="w-full px-1 py-0.5 text-[10px] rounded border border-indigo-300 focus:ring-1 focus:ring-indigo-400 outline-none bg-white" id="mx-inline-input"/>';
+    td.innerHTML = '<input type="text" value="' + oldTitle.replace(/"/g,'&quot;') + '" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(99,102,241,0.1)" id="mx-inline-input"/>';
     var input = td.querySelector('#mx-inline-input');
     input.focus(); input.select();
     input.addEventListener('keydown', function(e) {
