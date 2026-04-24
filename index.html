@@ -11430,6 +11430,12 @@
     completed:  { icon: '✅', label: '완결',         color: '#6b7280', bg: 'rgba(107,114,128,0.08)' }
   };
 
+  var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
+  function _getSeriesHex(seriesName) {
+    var c = getSeriesColor(seriesName);
+    return _seriesHexMap[c] || '#6366f1';
+  }
+
   function _wpProgress(w) {
     var phase = w.current_phase || 'synopsis';
     var p = w.phases ? w.phases[phase] : null;
@@ -11488,10 +11494,11 @@
         var dayLabel = { 0:'일', 1:'월', 2:'화', 3:'수', 4:'목', 5:'금', 6:'토' };
         var pubDayStr = dayLabel[w.publish_day] || '';
 
-        html += '<div class="p-5 rounded-2xl mb-3 border border-slate-100 hover:shadow-md transition-shadow" style="background:' + meta.bg + '">';
+        var sHex = _getSeriesHex(w.series_name);
+        html += '<div class="p-5 rounded-2xl mb-3 hover:shadow-md transition-shadow" style="background:' + sHex + '0a;border-left:4px solid ' + sHex + '">';
         // 제목 + 상태 뱃지
         html += '<div class="flex items-center justify-between mb-3">' +
-          '<span class="font-bold text-slate-900">' + (w.title || '') + '</span>' +
+          '<span class="font-bold" style="color:' + sHex + '">' + (w.title || '') + '</span>' +
           '<span class="px-3 py-1 rounded-full text-[10px] font-bold" style="background:' + meta.color + '20;color:' + meta.color + '">' + meta.icon + ' ' + meta.label + '</span>' +
         '</div>';
         // 진행도 바
@@ -11500,7 +11507,7 @@
             '<span class="text-[11px] font-bold text-slate-500">' + (w.total_episodes || 20) + '화 · ' + pct + '% 진행</span>' +
           '</div>' +
           '<div class="h-2 rounded-full overflow-hidden" style="background:rgba(0,0,0,0.06)">' +
-            '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + meta.color + '"></div>' +
+            '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + sHex + '"></div>' +
           '</div>' +
         '</div>';
         // 스케줄 타임라인
