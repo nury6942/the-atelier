@@ -2584,8 +2584,44 @@
           </div>
           <div class="px-6 pb-6 flex gap-2">
             <button onclick="previewWorkSchedule()" class="flex-1 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-sm hover:bg-indigo-100 transition-colors">스케줄 계산</button>
-            <button onclick="saveNewWork()" id="nw-save-btn" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장 + 캘린더 추가</button>
+            <button onclick="saveNewWork()" id="nw-save-btn" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">초안 저장</button>
             <button onclick="closeNewWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Work Modal -->
+      <div id="edit-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" style="max-height:90vh;overflow-y:auto">
+          <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <h3 id="ew-modal-title" class="font-bold text-white text-lg font-headline">작품 편집</h3>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시리즈</label><select id="ew-series" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"></select></div>
+            <div class="space-y-1"><label class="text-xs font-bold text-slate-500">작품명</label><input id="ew-title" type="text" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1"><label class="text-xs font-bold text-slate-500">예상 화수</label><select id="ew-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
+              <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="ew-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
+            </div>
+            <div class="border-t border-slate-100 pt-4 mt-2">
+              <p class="text-xs font-bold text-slate-500 mb-3">📅 일정 조정</p>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">📝 시놉 시작</label><input id="ew-syn-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">📝 시놉 종료</label><input id="ew-syn-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">✏️ 초고 시작</label><input id="ew-draft-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">✏️ 초고 종료</label><input id="ew-draft-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">🔍 퇴고 시작</label><input id="ew-rev-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">🔍 퇴고 종료</label><input id="ew-rev-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">☕ 휴식 시작</label><input id="ew-rest-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-400">☕ 휴식 종료</label><input id="ew-rest-end" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+              </div>
+              <div class="mt-3 space-y-1"><label class="text-[10px] font-bold text-slate-400">🎯 연재 시작일</label><input id="ew-pub-start" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-300"/></div>
+              <button onclick="recalcEditWork()" class="mt-3 w-full py-2 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition-colors">🔄 시작일 기준 자동 재계산</button>
+            </div>
+          </div>
+          <div class="px-6 pb-6 flex gap-2">
+            <button onclick="saveEditWork()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+            <button onclick="closeEditWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
           </div>
         </div>
       </div>
@@ -4402,6 +4438,7 @@
       updatePlannerTracks();
       closePlannerModal();
       try { await syncPlannerToMatrix(row); renderMatrixTable(); updateLeaveTracker(); } catch(e) { console.error('Matrix sync:', e); }
+      try { detectWorkImpact(row); } catch(e) {}
     } catch(err) { console.error('Planner save error:', err); alert('저장에 실패했어요: ' + err.message); }
     finally { btn.textContent = '저장'; btn.disabled = false; }
   }
@@ -11428,10 +11465,18 @@
         if (w.publish_start && pubDayStr) {
           html += '<div class="mt-2 text-[10px] text-slate-400">연재 요일: 매주 ' + pubDayStr + '요일</div>';
         }
-        // 액션 버튼
-        html += '<div class="mt-3 pt-3 border-t border-slate-100/60 flex gap-3">' +
-          '<button onclick="if(confirm(\'\\\"' + (w.title||'').replace(/'/g,"\\'") + '\\\" 작품을 삭제할까요?\')){deleteWork(\'' + w.id + '\');renderWorkPipeline()}" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">delete</span>삭제</button>' +
-        '</div>';
+        // 상태 뱃지 + 액션 버튼
+        var isDraft = w.status !== 'confirmed';
+        html += '<div class="mt-3 pt-3 border-t border-slate-100/60 flex items-center gap-3">';
+        if (isDraft) {
+          html += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">📝 초안</span>';
+          html += '<button onclick="confirmWork(\'' + w.id + '\')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">check_circle</span>확정 + 캘린더 추가</button>';
+        } else {
+          html += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✅ 확정</span>';
+        }
+        html += '<button onclick="openEditWorkModal(\'' + w.id + '\')" class="text-[11px] font-bold text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1 ml-auto"><span class="material-symbols-outlined" style="font-size:13px">edit</span>편집</button>';
+        html += '<button onclick="if(confirm(\'삭제하면 연결된 캘린더 일정도 삭제됩니다. 계속할까요?\')){deleteWork(\'' + w.id + '\');renderWorkPipeline()}" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">delete</span>삭제</button>';
+        html += '</div>';
         html += '</div>';
       });
       html += '</div>';
@@ -11488,6 +11533,7 @@
       title: title,
       total_episodes: _workPreviewResult.total_episodes,
       current_phase: 'synopsis',
+      status: 'draft',
       publish_day: _workPreviewResult.publish_day,
       phases: _workPreviewResult.phases,
       publish_start: _workPreviewResult.publish_start,
@@ -11499,7 +11545,228 @@
     closeNewWorkModal();
     renderWorkPipeline();
     _workPreviewResult = null;
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 작품이 추가됐어요!');
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 초안이 저장됐어요. 위젯에서 확정하세요.');
+  }
+
+  // ===== Work Edit / Confirm / Calendar =====
+  var _editWorkId = null;
+
+  function openEditWorkModal(id) {
+    var w = getWorkById(id);
+    if (!w) return;
+    _editWorkId = id;
+    var series = getSeriesData(_matrixYear);
+    var sel = document.getElementById('ew-series');
+    sel.innerHTML = series.map(function(s) { return '<option value="' + s.id + '" data-name="' + s.name + '"' + (s.id === w.series_id ? ' selected' : '') + '>' + s.name + '</option>'; }).join('');
+    document.getElementById('ew-modal-title').textContent = '🎬 작품 편집: ' + (w.title || '');
+    document.getElementById('ew-title').value = w.title || '';
+    document.getElementById('ew-episodes').value = String(w.total_episodes || 20);
+    document.getElementById('ew-publish-day').value = String(w.publish_day || 5);
+    var p = w.phases || {};
+    document.getElementById('ew-syn-start').value = p.synopsis ? p.synopsis.start : '';
+    document.getElementById('ew-syn-end').value = p.synopsis ? p.synopsis.end : '';
+    document.getElementById('ew-draft-start').value = p.draft ? p.draft.start : '';
+    document.getElementById('ew-draft-end').value = p.draft ? p.draft.end : '';
+    document.getElementById('ew-rev-start').value = p.revision ? p.revision.start : '';
+    document.getElementById('ew-rev-end').value = p.revision ? p.revision.end : '';
+    document.getElementById('ew-rest-start').value = p.rest ? p.rest.start : '';
+    document.getElementById('ew-rest-end').value = p.rest ? p.rest.end : '';
+    document.getElementById('ew-pub-start').value = w.publish_start || '';
+    document.getElementById('edit-work-modal').style.cssText = 'display:flex!important';
+    setTimeout(function() {
+      ['ew-syn-start','ew-syn-end','ew-draft-start','ew-draft-end','ew-rev-start','ew-rev-end','ew-rest-start','ew-rest-end','ew-pub-start'].forEach(function(id) { initSimpleDatePicker(id); });
+    }, 100);
+  }
+
+  function closeEditWorkModal() {
+    document.getElementById('edit-work-modal').style.cssText = 'display:none!important';
+    _editWorkId = null;
+  }
+
+  function recalcEditWork() {
+    var startDate = document.getElementById('ew-syn-start').value;
+    if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시놉 시작일을 입력하세요'); return; }
+    var r = calculateWorkSchedule({
+      start_date: startDate,
+      episodes: document.getElementById('ew-episodes').value,
+      publish_day: document.getElementById('ew-publish-day').value
+    });
+    document.getElementById('ew-syn-start').value = r.phases.synopsis.start;
+    document.getElementById('ew-syn-end').value = r.phases.synopsis.end;
+    document.getElementById('ew-draft-start').value = r.phases.draft.start;
+    document.getElementById('ew-draft-end').value = r.phases.draft.end;
+    document.getElementById('ew-rev-start').value = r.phases.revision.start;
+    document.getElementById('ew-rev-end').value = r.phases.revision.end;
+    document.getElementById('ew-rest-start').value = r.phases.rest.start;
+    document.getElementById('ew-rest-end').value = r.phases.rest.end;
+    document.getElementById('ew-pub-start').value = r.publish_start;
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 스케줄 재계산 완료');
+  }
+
+  function saveEditWork() {
+    if (!_editWorkId) return;
+    var w = getWorkById(_editWorkId);
+    if (!w) return;
+    var sel = document.getElementById('ew-series');
+    var opt = sel.options[sel.selectedIndex];
+    var wasConfirmed = w.status === 'confirmed';
+    w.series_id = sel.value;
+    w.series_name = opt ? opt.dataset.name : '';
+    w.title = document.getElementById('ew-title').value.trim();
+    w.total_episodes = parseInt(document.getElementById('ew-episodes').value) || 20;
+    w.publish_day = parseInt(document.getElementById('ew-publish-day').value) || 5;
+    w.phases = {
+      synopsis: { start: document.getElementById('ew-syn-start').value, end: document.getElementById('ew-syn-end').value },
+      draft: { start: document.getElementById('ew-draft-start').value, end: document.getElementById('ew-draft-end').value },
+      revision: { start: document.getElementById('ew-rev-start').value, end: document.getElementById('ew-rev-end').value },
+      rest: { start: document.getElementById('ew-rest-start').value, end: document.getElementById('ew-rest-end').value }
+    };
+    w.publish_start = document.getElementById('ew-pub-start').value;
+    // 연재 완결 자동 계산
+    if (w.publish_start) {
+      var pe = new Date(w.publish_start + 'T00:00:00');
+      pe.setDate(pe.getDate() + (w.total_episodes - 1) * 7);
+      w.publish_end = _fmtDate(pe);
+    }
+    w.updated_at = new Date().toISOString();
+    // 편집하면 초안으로 돌아감 (확정된 경우 캘린더 일정 제거)
+    if (wasConfirmed) {
+      removeWorkCalEvents(w.id);
+      w.status = 'draft';
+    }
+    saveWorks();
+    closeEditWorkModal();
+    renderWorkPipeline();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (wasConfirmed ? ' (초안으로 전환, 캘린더 일정 제거됨)' : ''));
+  }
+
+  function confirmWork(id) {
+    var w = getWorkById(id);
+    if (!w) return;
+    if (!confirm('"' + (w.title || '') + '" 작품을 확정하고 캘린더에 일정을 추가할까요?')) return;
+    w.status = 'confirmed';
+    w.updated_at = new Date().toISOString();
+    saveWorks();
+    autoAddScheduleToCalendar(w);
+    renderWorkPipeline();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정! 캘린더에 일정이 추가됐어요.');
+  }
+
+  async function autoAddScheduleToCalendar(work) {
+    var cat = '글쓰기';
+    var color = CAT_COLOR[cat] || 'sky';
+    var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
+    var events = [];
+    var p = work.phases || {};
+    var eps = work.total_episodes || 20;
+
+    // 시놉: 빈 날마다
+    if (p.synopsis && p.synopsis.days) {
+      p.synopsis.days.forEach(function(d, i) {
+        events.push([d, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(i)]);
+      });
+    }
+
+    // 초고: 시작~종료 빈 날마다 (화수 누적)
+    if (p.draft && p.draft.start && p.draft.end) {
+      var dCur = new Date(p.draft.start + 'T00:00:00');
+      var dEnd = new Date(p.draft.end + 'T00:00:00');
+      var epNum = 0;
+      var dIdx = 0;
+      while (dCur <= dEnd) {
+        var ds = _fmtDate(dCur);
+        if (!isBlockedDay(ds)) {
+          var add = _isWeekend(dCur) ? 1 : 0.5;
+          epNum += add;
+          var epLabel = '초고 ' + Math.ceil(epNum) + '화';
+          events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+        }
+        dCur.setDate(dCur.getDate() + 1);
+      }
+    }
+
+    // 퇴고: 빈 날마다
+    if (p.revision && p.revision.days) {
+      p.revision.days.forEach(function(d, i) {
+        events.push([d, '퇴고 ' + (i + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(i)]);
+      });
+    }
+
+    // 연재: 주 1회
+    if (work.publish_start && work.publish_end) {
+      var pCur = new Date(work.publish_start + 'T00:00:00');
+      var pEnd = new Date(work.publish_end + 'T00:00:00');
+      var epPub = 1;
+      while (pCur <= pEnd && epPub <= eps) {
+        events.push([_fmtDate(pCur), epPub + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0']);
+        pCur.setDate(pCur.getDate() + 7);
+        epPub++;
+      }
+    }
+
+    // plannerData에 추가 + Firestore 저장
+    for (var i = 0; i < events.length; i++) {
+      var row = events[i];
+      try {
+        var obj = rowToObj('planner', row);
+        var saved = await fbAdd('planner', obj);
+        plannerData.push(row.concat([saved._id]));
+      } catch(e) {
+        console.error('[Work Cal] Save error:', e);
+      }
+    }
+    renderCalendar();
+    console.log('[Work Cal] Added', events.length, 'events for', work.title);
+  }
+
+  function removeWorkCalEvents(workId) {
+    var toRemove = [];
+    plannerData.forEach(function(row, idx) {
+      var notes = (row[4] || '').toString();
+      if (notes.indexOf('work_id:' + workId) >= 0) toRemove.push(idx);
+    });
+    // 역순으로 삭제 (인덱스 안 밀리게)
+    toRemove.sort(function(a, b) { return b - a; });
+    toRemove.forEach(function(idx) {
+      var id = plannerData[idx][7];
+      if (id) { try { fbDelete('planner', id); } catch(e) {} }
+      plannerData.splice(idx, 1);
+    });
+    if (toRemove.length > 0) renderCalendar();
+    return toRemove.length;
+  }
+
+  // deleteWork 업데이트: 캘린더 일정도 삭제
+  var _origDeleteWork = deleteWork;
+  deleteWork = function(id) {
+    var removed = removeWorkCalEvents(id);
+    _origDeleteWork(id);
+    if (removed > 0) console.log('[Work] Removed', removed, 'calendar events');
+  };
+
+  // 변경 감지: 차단 카테고리 일정 추가 시 알림
+  var _wpDetectFlag = false;
+  function detectWorkImpact(eventRow) {
+    if (_wpDetectFlag || _works.length === 0) return;
+    var cat = (eventRow[2] || '').trim();
+    var title = (eventRow[1] || '').toString();
+    var blockedCats = ['연차', '특별휴가', '개인'];
+    var isBlocking = blockedCats.indexOf(cat) >= 0 || (cat === '업무' && title.indexOf('야근') >= 0);
+    if (!isBlocking) return;
+    var evDate = (eventRow[0] || '').toString();
+    var evEnd = (eventRow[5] || evDate).toString();
+    var affected = _works.filter(function(w) {
+      if (w.status !== 'confirmed') return false;
+      var phases = w.phases || {};
+      return Object.keys(phases).some(function(k) {
+        var p = phases[k];
+        return p && p.start && p.end && !(evEnd < p.start || evDate > p.end);
+      });
+    });
+    if (affected.length > 0) {
+      var names = affected.map(function(w) { return '"' + w.title + '"'; }).join(', ');
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영향받는 작품: ' + names + ' — 파이프라인 재계산 필요');
+    }
   }
 
   // ===== Bottom Quick Stats =====
