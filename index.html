@@ -11227,10 +11227,6 @@
     document.getElementById('hub-expense').textContent = '₩'+(expense*10000).toLocaleString('ko-KR');
     document.getElementById('hub-savings').textContent = '₩'+(savings*10000).toLocaleString('ko-KR');
 
-    const months = Object.keys(monthly).sort();
-    const avg = months.length>0 ? Math.round(income*10000/months.length) : 0;
-    document.getElementById('hub-avg').textContent = '평균 ₩'+avg.toLocaleString('ko-KR')+' / 월';
-
     // Chart
     const chartEl = document.getElementById('hub-chart');
     const maxVal = Math.max(...Object.values(monthly),1);
