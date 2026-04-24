@@ -354,11 +354,10 @@
   }
   .atl-field label {
     display: block;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #7c3aed;
     margin-bottom: 6px;
   }
   .atl-field-input {
@@ -3818,7 +3817,7 @@
       '<span id="' + cfg.id + '-label" class="flex-1 text-sm font-bold text-[#1d1a23]"></span>' +
       '<span class="material-symbols-outlined text-slate-400" style="font-size:16px">expand_more</span>' +
       '</button>' +
-      '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-slate-100 p-1 z-50" style="display:none;list-style:none;margin:0;padding:4px"></ul>';
+      '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="bg-white rounded-xl shadow-lg border border-slate-100 p-1" style="display:none;list-style:none;margin:0;padding:4px;position:fixed;z-index:9999"></ul>';
 
     self.trigger = document.getElementById(trigId);
     self.popover = document.getElementById(popId);
@@ -3855,7 +3854,15 @@
       items.forEach(function(li) {
         li.addEventListener('mouseenter', function() {
           self.focusIdx = parseInt(this.dataset.idx);
-          self.renderOptions();
+          // Update visual focus without re-rendering DOM
+          items.forEach(function(el) {
+            var idx = parseInt(el.dataset.idx);
+            if (idx === self.focusIdx) {
+              el.style.background = '#6b38d4'; el.style.color = '#fff';
+            } else {
+              el.style.background = ''; el.style.color = '';
+            }
+          });
         });
         li.addEventListener('click', function(e) {
           e.stopPropagation();
@@ -3880,6 +3887,11 @@
         if (self.options[i].value === cur) { self.focusIdx = i; break; }
       }
       self.renderOptions();
+      // Position fixed popover relative to trigger
+      var rect = self.trigger.getBoundingClientRect();
+      self.popover.style.left = rect.left + 'px';
+      self.popover.style.width = rect.width + 'px';
+      self.popover.style.top = (rect.bottom + 4) + 'px';
       self.popover.style.display = '';
       self.trigger.setAttribute('aria-expanded', 'true');
     };
@@ -3947,10 +3959,16 @@
       }
     });
 
-    // Close on outside click
+    // Close on outside click (check both container and fixed popover)
     document.addEventListener('click', function(e) {
-      if (!self.container.contains(e.target)) self.close();
+      if (!self.container.contains(e.target) && !self.popover.contains(e.target)) self.close();
     });
+
+    // Close on scroll (fixed popover would misalign)
+    var scrollParent = self.container.closest('.atl-modal-body') || self.container.closest('[style*="overflow"]');
+    if (scrollParent) {
+      scrollParent.addEventListener('scroll', function() { self.close(); });
+    }
 
     // Initial sync
     self.syncTrigger(self.hiddenSelect.value);
