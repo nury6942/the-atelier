@@ -12371,6 +12371,26 @@
   var _origOpenJourneyModal = openJourneyModal;
   openJourneyModal = function(type) { _origOpenJourneyModal(type); initJourneyDatePickers(); };
 
+  // Phase 1: Wrap modal open functions for flatpickr init
+  var _origOpenFlightEditModal = openFlightEditModal;
+  openFlightEditModal = function(idx) { _origOpenFlightEditModal(idx); setTimeout(function(){ initSimpleDatePicker('fe-date'); },80); };
+
+  var _origOpenLodgingEditModal = openLodgingEditModal;
+  openLodgingEditModal = function(idx) { _origOpenLodgingEditModal(idx); setTimeout(function(){ initSimpleDatePicker('lg-edit-date'); initSimpleDatePicker('lg-edit-checkout-date'); initSimpleDatePicker('lg-edit-cancel'); },80); };
+
+  var _origOpenRepeatModal = openRepeatModal;
+  openRepeatModal = function() { _origOpenRepeatModal(); setTimeout(function(){ initSimpleDatePicker('rpt-start-date'); },80); };
+
+  var _origOpenSeriesModal2 = openSeriesModal;
+  openSeriesModal = function() { _origOpenSeriesModal2(); setTimeout(function(){ initSimpleDatePicker('series-start-date'); },80); };
+
+  var _origOpenReviewCreateModal = openReviewCreateModal;
+  openReviewCreateModal = function() { _origOpenReviewCreateModal(); setTimeout(function(){ initSimpleDatePicker('review-date'); },80); };
+
+  // Extend planner datepickers to include repeat-until
+  var _origInitPlannerDP = initPlannerDatePickers;
+  initPlannerDatePickers = function() { _origInitPlannerDP(); initSimpleDatePicker('p-repeat-until'); };
+
   document.addEventListener('click', function(e) {
     var btn = e.target.closest('[onclick]');
     if (!btn) return;
@@ -12379,6 +12399,10 @@
     if (fn.includes('openHubModal'))     setTimeout(function(){ initSimpleDatePicker('h-date'); },80);
     if (fn.includes('openEnglishModal')) setTimeout(function(){ initSimpleDatePicker('e-date'); },80);
   });
+
+  // Inline travel forms: init on journey page load
+  var _origLoadJourney = loadJourney;
+  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('stay-checkin'); initSimpleDatePicker('tr-date'); },200); };
 
   // ===== PACKING PAGE =====
   var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
