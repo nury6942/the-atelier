@@ -10524,6 +10524,40 @@
         '<div class="h-full bg-gradient-to-r from-'+c+'-500 to-'+c+'-400 rounded-full" style="width:'+filled+'%"></div></div>' +
         '<span class="text-[9px] font-bold text-slate-400">'+filled+'%</span></div></td></tr>';
     });
+    // ===== 전체 합산 행 =====
+    if (series.length > 0) {
+      var monthlyTotals = [];
+      var cumulTotal = 0;
+      for (var tm = 0; tm < 12; tm++) {
+        var mTotal = 0;
+        series.forEach(function(s) { var d = s.monthly[tm]; if (d) mTotal += (d.rev || 0); });
+        monthlyTotals.push(mTotal);
+      }
+      // 구분선
+      html += '<tr><td colspan="13" class="p-0"><div class="border-t-2 border-indigo-200" style="margin:4px 0"></div></td></tr>';
+      // 월별 수익 합계
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(107,56,212,0.03)">' +
+        '<td class="p-2 border-l-4 border-indigo-500 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
+          '<span class="material-symbols-outlined text-indigo-600" style="font-size:14px">summarize</span>' +
+          '<div><div class="font-bold text-xs text-indigo-700">전체 합산</div>' +
+          '<div class="text-[10px] uppercase tracking-tighter text-indigo-400">월별 수익</div></div>' +
+        '</div></td>';
+      for (var tm1 = 0; tm1 < 12; tm1++) {
+        var v1 = monthlyTotals[tm1];
+        var isCurT = tm1 === curMonth;
+        var cls1 = isCurT ? ' font-bold text-indigo-700 bg-indigo-50 ring-1 ring-indigo-200' : (v1 ? ' text-slate-800' : ' text-slate-300');
+        html += '<td class="p-2 text-center text-xs font-headline font-bold' + cls1 + '">' + shortRev(v1) + '</td>';
+      }
+      html += '</tr>';
+      // 연간 누적
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors border-b border-indigo-100" style="background:rgba(107,56,212,0.03)">' +
+        '<td class="p-2 border-l-4 border-indigo-300 whitespace-nowrap"><div class="text-[10px] uppercase tracking-tighter text-indigo-400">연간 누적</div></td>';
+      for (var tm2 = 0; tm2 < 12; tm2++) {
+        cumulTotal += monthlyTotals[tm2];
+        html += '<td class="p-2 text-center text-xs font-medium text-indigo-400">' + (cumulTotal ? shortRev(cumulTotal) : '—') + '</td>';
+      }
+      html += '</tr>';
+    }
     html += '<tr><td colspan="13" class="p-3 text-center">' +
       '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size:14px">add</span> 시리즈 추가</button>' +
       '</td></tr>';
