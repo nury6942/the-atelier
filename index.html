@@ -11870,7 +11870,7 @@
 
   async function autoAddScheduleToCalendar(work) {
     var cat = '글쓰기';
-    var color = CAT_COLOR[cat] || 'sky';
+    var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
     var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
     var events = [];
     var p = work.phases || {};
