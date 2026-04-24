@@ -1776,38 +1776,15 @@
             </div>
           </div>
           <div>
-            <h3 class="font-headline text-lg font-bold text-slate-900 mb-6">저축 트래커</h3>
-            <div class="space-y-5">
-              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
-                <div class="flex items-center gap-3">
-                  <div class="w-2.5 h-2.5 rounded-full" style="background:#6b38d4;"></div>
-                  <span class="font-bold text-sm text-slate-800">비상금</span>
-                </div>
-                <span id="hub-emergency-pct" class="font-headline font-black text-sm">0%</span>
-              </div>
-              <div id="hub-emergency-bar" class="h-2.5 rounded-full" style="width:0%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div>
-              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
-                <div class="flex items-center gap-3">
-                  <div class="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
-                  <span class="font-bold text-sm text-slate-800">연간 투자</span>
-                </div>
-                <span id="hub-invest-pct" class="font-headline font-black text-sm">0%</span>
-              </div>
-              <div id="hub-invest-bar" class="h-2.5 bg-indigo-600 rounded-full" style="width:0%"></div>
-              <div class="flex items-center justify-between p-4 rounded-2xl" style="background:#f3f4f5;">
-                <div class="flex items-center gap-3">
-                  <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
-                  <span class="font-bold text-sm text-slate-800">주택 보증금</span>
-                </div>
-                <span id="hub-deposit-pct" class="font-headline font-black text-sm">0%</span>
-              </div>
-              <div id="hub-deposit-bar" class="h-2.5 bg-purple-500 rounded-full" style="width:0%"></div>
+            <h3 class="font-headline text-lg font-bold text-slate-900 mb-6">지출 TOP 5</h3>
+            <div id="hub-top5-list" class="space-y-4">
+              <p class="text-sm text-slate-400 text-center py-8">지출 기록이 없어요</p>
             </div>
-            <div id="hub-momentum" class="mt-8 p-4 rounded-2xl flex items-center gap-3" style="background:#f3f4f5;">
+            <div id="hub-top5-summary" class="mt-8 p-4 rounded-2xl flex items-center gap-3" style="background:#f3f4f5;">
               <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-indigo-600" style="box-shadow:0px 4px 12px rgba(25,28,29,0.06);">
-                <span class="material-symbols-outlined text-sm">rocket_launch</span>
+                <span class="material-symbols-outlined text-sm">analytics</span>
               </div>
-              <div><p class="text-xs font-bold text-slate-800">최고 모멘텀</p><p id="hub-avg" class="text-[10px] text-slate-500">평균 ₩0 / 월</p></div>
+              <div><p class="text-xs font-bold text-slate-800">총 지출</p><p id="hub-top5-total" class="text-[10px] text-slate-500">₩0</p></div>
             </div>
           </div>
         </div>
@@ -11123,6 +11100,48 @@
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 기초 자산 저장 완료');
   }
 
+  function renderHubTop5(yrPrefix) {
+    var listEl = document.getElementById('hub-top5-list');
+    var totalEl = document.getElementById('hub-top5-total');
+    if (!listEl) return;
+    // 해당 연도 지출만 집계
+    var cats = {};
+    var totalExp = 0;
+    hubData.forEach(function(row) {
+      var date = (row[0]||'').toString();
+      if (!date.startsWith(yrPrefix)) return;
+      var type = row[4]||'';
+      if (type !== '지출') return;
+      var amt = parseFloat(row[3])||0;
+      var desc = (row[2]||'기타').trim();
+      cats[desc] = (cats[desc]||0) + amt;
+      totalExp += amt;
+    });
+    var sorted = Object.entries(cats).sort(function(a,b){ return b[1]-a[1]; }).slice(0,5);
+    if (sorted.length === 0) {
+      listEl.innerHTML = '<p class="text-sm text-slate-400 text-center py-8">지출 기록이 없어요</p>';
+      if (totalEl) totalEl.textContent = '₩0';
+      return;
+    }
+    var maxVal = sorted[0][1];
+    listEl.innerHTML = sorted.map(function(entry) {
+      var name = entry[0], amt = entry[1];
+      var pct = totalExp > 0 ? Math.round(amt/totalExp*100) : 0;
+      var barW = maxVal > 0 ? Math.round(amt/maxVal*100) : 0;
+      return '<div>' +
+        '<div class="flex items-center justify-between mb-1.5">' +
+          '<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:#6b38d4"></div><span class="font-bold text-sm text-slate-800">' + name + '</span></div>' +
+          '<span class="font-headline font-black text-sm text-slate-700">' + Math.round(amt) + '만 <span class="text-slate-400 font-medium">' + pct + '%</span></span>' +
+        '</div>' +
+        '<div class="h-2 rounded-full overflow-hidden" style="background:#f3f4f5"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(135deg,#6b38d4,#8455ef)"></div></div>' +
+      '</div>';
+    }).join('');
+    // 총 지출 요약
+    var top5Sum = sorted.reduce(function(s,e){ return s+e[1]; }, 0);
+    var top5Pct = totalExp > 0 ? Math.round(top5Sum/totalExp*100) : 0;
+    if (totalEl) totalEl.textContent = '₩' + (totalExp*10000).toLocaleString('ko-KR') + ' (TOP 5가 ' + top5Pct + '%)';
+  }
+
   function updateHubStats() {
     var yrPrefix = String(hubYear);
     document.getElementById('hub-year-label').textContent = hubYear;
@@ -11164,17 +11183,8 @@
         '</div>';
     }).join('');
 
-    // Savings trackers (example ratios)
-    const total = savings||1;
-    const ep = Math.min(Math.round((savings*0.5/total)*100),100);
-    const ip = Math.min(Math.round((savings*0.3/total)*100),100);
-    const dp = Math.min(Math.round((savings*0.2/total)*100),100);
-    document.getElementById('hub-emergency-pct').textContent = ep+'%';
-    document.getElementById('hub-emergency-bar').style.width = ep+'%';
-    document.getElementById('hub-invest-pct').textContent = ip+'%';
-    document.getElementById('hub-invest-bar').style.width = ip+'%';
-    document.getElementById('hub-deposit-pct').textContent = dp+'%';
-    document.getElementById('hub-deposit-bar').style.width = dp+'%';
+    // 지출 TOP 5
+    renderHubTop5(yrPrefix);
 
     // Monthly Artifacts Grid (4-column cards)
     var monthlyGrid = document.getElementById('hub-monthly-grid');
