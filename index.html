@@ -1725,9 +1725,7 @@
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">account_balance_wallet</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 수입</h3>
               <p id="hub-income" class="text-2xl font-black font-headline text-slate-900">₩0</p>
-              <div id="hub-income-change" class="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-600">
-                <span class="material-symbols-outlined text-sm">trending_up</span> <span>—</span>
-              </div>
+              <div id="hub-goal-income" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('income')"></div>
             </div>
             <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined" style="font-size:80px">account_balance</span>
@@ -1738,9 +1736,7 @@
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">savings</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 저축</h3>
               <p id="hub-savings" class="text-2xl font-black font-headline text-slate-900">₩0</p>
-              <div class="mt-4 flex items-center gap-2 text-xs font-bold text-indigo-600">
-                <span class="material-symbols-outlined text-sm">check_circle</span> <span>목표: 34%</span>
-              </div>
+              <div id="hub-goal-savings" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('savings')"></div>
             </div>
           </div>
           <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
@@ -1748,11 +1744,34 @@
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">flag</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 지출</h3>
               <p id="hub-expense" class="text-2xl font-black font-headline text-slate-900">₩0</p>
-              <p id="hub-expense-change" class="mt-4 text-xs font-bold text-rose-500">—</p>
+              <div id="hub-goal-expense" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('expense')"></div>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- Goal Setting Modal -->
+      <div id="goal-setting-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+          <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <h3 id="goal-modal-title" class="font-bold text-white text-lg font-headline">목표 설정</h3>
+          </div>
+          <div class="p-6 space-y-4">
+            <p id="goal-modal-desc" class="text-xs text-slate-500 leading-relaxed"></p>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">금액 (만원)</label>
+              <input id="goal-modal-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this);previewGoalRate()" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
+            </div>
+            <div id="goal-modal-current" class="text-xs text-slate-400 px-1"></div>
+            <div id="goal-modal-preview" class="px-3 py-2.5 rounded-xl bg-indigo-50/60 text-sm font-bold text-indigo-700 text-center" style="display:none"></div>
+            <button onclick="deleteGoalValue()" id="goal-modal-delete-btn" class="text-xs text-slate-400 hover:text-rose-500 transition-colors px-1" style="display:none">목표 삭제</button>
+          </div>
+          <div class="px-6 pb-6 flex gap-2">
+            <button onclick="saveGoalValue()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+            <button onclick="closeGoalModal()" class="py-2.5 px-5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Savings & Asset Composition (Memory Bloom) -->
       <section class="bg-white rounded-3xl p-10 relative overflow-hidden mb-12" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
@@ -11159,6 +11178,133 @@
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 기초 자산 저장 완료');
   }
 
+  // ===== ANNUAL GOAL FUNCTIONS =====
+  var _goalEditType = null; // 'income' | 'savings' | 'expense'
+  var _goalCurrentAmounts = { income: 0, savings: 0, expense: 0 };
+
+  var _goalMeta = {
+    income:  { title: '연간 수입 목표 설정', desc: '올해 목표로 하는 총 수입을 입력하세요. (단위: 만원)', icon: 'trending_up', label: '목표', emptyLabel: '🎯 수입 목표 설정하기' },
+    savings: { title: '연간 저축 목표 설정', desc: '올해 저축하려는 총 금액을 입력하세요. (단위: 만원)', icon: 'savings', label: '목표', emptyLabel: '🎯 저축 목표 설정하기' },
+    expense: { title: '연간 지출 예산 설정', desc: '올해 지출 한도를 입력하세요. (단위: 만원)', icon: 'account_balance_wallet', label: '예산', emptyLabel: '💰 예산 한도 설정하기' }
+  };
+
+  function getAnnualGoals(year) {
+    try { return JSON.parse(localStorage.getItem('annual_goals_' + year) || '{}'); } catch(e) { return {}; }
+  }
+  function saveAnnualGoals(year, goals) {
+    localStorage.setItem('annual_goals_' + year, JSON.stringify(goals));
+  }
+
+  function goalRateColor(pct, isExpense) {
+    if (isExpense) {
+      if (pct >= 100) return '#ef4444';
+      if (pct >= 90) return '#eab308';
+      if (pct >= 60) return '#7c3aed';
+      return '#22c55e';
+    }
+    if (pct >= 100) return '#22c55e';
+    if (pct >= 90) return '#eab308';
+    if (pct >= 50) return '#7c3aed';
+    return '#94a3b8';
+  }
+
+  function updateGoalDisplays() {
+    var goals = getAnnualGoals(hubYear);
+    ['income', 'savings', 'expense'].forEach(function(type) {
+      var el = document.getElementById('hub-goal-' + type);
+      if (!el) return;
+      var goal = goals[type + '_goal'];
+      var current = _goalCurrentAmounts[type] || 0;
+      var isExpense = type === 'expense';
+      var meta = _goalMeta[type];
+
+      if (!goal || goal <= 0) {
+        el.innerHTML = '<span class="text-xs font-bold text-slate-400">' + meta.emptyLabel + '</span>';
+        return;
+      }
+      var pct = Math.round((current / goal) * 100);
+      var color = goalRateColor(pct, isExpense);
+      var barPct = Math.min(pct, 100);
+      var icon = pct >= 100 && !isExpense ? 'celebration' : (pct >= 100 && isExpense ? 'warning' : 'check_circle');
+      var goalWon = '₩' + (goal * 10000).toLocaleString('ko-KR');
+
+      el.innerHTML =
+        '<div class="flex items-center gap-2 text-xs font-bold" style="color:' + color + '">' +
+          '<span class="material-symbols-outlined" style="font-size:14px">' + icon + '</span>' +
+          '<span>' + meta.label + ': ' + pct + '%</span>' +
+        '</div>' +
+        '<div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">' +
+          '<div class="h-full rounded-full transition-all" style="width:' + barPct + '%;background:' + color + '"></div>' +
+        '</div>' +
+        '<p class="mt-1 text-[10px] text-slate-400">' + meta.label + ': ' + goalWon + '</p>';
+    });
+  }
+
+  function openGoalModal(type) {
+    _goalEditType = type;
+    var meta = _goalMeta[type];
+    var goals = getAnnualGoals(hubYear);
+    var existing = goals[type + '_goal'] || '';
+
+    document.getElementById('goal-modal-title').textContent = meta.title;
+    document.getElementById('goal-modal-desc').textContent = meta.desc;
+    var input = document.getElementById('goal-modal-input');
+    input.value = existing ? parseInt(existing).toLocaleString('ko-KR') : '';
+
+    var current = _goalCurrentAmounts[type] || 0;
+    var labels = { income: '현재 수입', savings: '현재 저축', expense: '현재 지출' };
+    document.getElementById('goal-modal-current').textContent = labels[type] + ': ₩' + (current * 10000).toLocaleString('ko-KR');
+
+    document.getElementById('goal-modal-delete-btn').style.display = existing ? '' : 'none';
+
+    previewGoalRate();
+    document.getElementById('goal-setting-modal').style.cssText = 'display:flex!important';
+    input.focus();
+  }
+
+  function closeGoalModal() {
+    document.getElementById('goal-setting-modal').style.cssText = 'display:none!important';
+    _goalEditType = null;
+  }
+
+  function previewGoalRate() {
+    var preview = document.getElementById('goal-modal-preview');
+    var raw = (document.getElementById('goal-modal-input').value || '').replace(/[^0-9]/g, '');
+    var goal = parseInt(raw) || 0;
+    if (!goal || !_goalEditType) { preview.style.display = 'none'; return; }
+    var current = _goalCurrentAmounts[_goalEditType] || 0;
+    var pct = Math.round((current / goal) * 100);
+    var isExpense = _goalEditType === 'expense';
+    var color = goalRateColor(pct, isExpense);
+    var label = isExpense ? '사용률' : '달성률';
+    preview.textContent = label + ': ' + pct + '%';
+    preview.style.color = color;
+    preview.style.display = '';
+  }
+
+  function saveGoalValue() {
+    if (!_goalEditType) return;
+    var raw = (document.getElementById('goal-modal-input').value || '').replace(/[^0-9]/g, '');
+    var val = parseInt(raw) || 0;
+    if (!val) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 금액을 입력하세요'); return; }
+    var goals = getAnnualGoals(hubYear);
+    goals[_goalEditType + '_goal'] = val;
+    saveAnnualGoals(hubYear, goals);
+    closeGoalModal();
+    updateGoalDisplays();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + _goalMeta[_goalEditType].label + ' 저장 완료');
+  }
+
+  function deleteGoalValue() {
+    if (!_goalEditType) return;
+    var goals = getAnnualGoals(hubYear);
+    delete goals[_goalEditType + '_goal'];
+    saveAnnualGoals(hubYear, goals);
+    closeGoalModal();
+    updateGoalDisplays();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + _goalMeta[_goalEditType].label + ' 삭제됨');
+  }
+
   function renderHubTop5(yrPrefix) {
     var listEl = document.getElementById('hub-top5-list');
     var totalEl = document.getElementById('hub-top5-total');
@@ -11283,6 +11429,10 @@
     document.getElementById('hub-income').textContent = '₩'+(income*10000).toLocaleString('ko-KR');
     document.getElementById('hub-expense').textContent = '₩'+(expense*10000).toLocaleString('ko-KR');
     document.getElementById('hub-savings').textContent = '₩'+(savings*10000).toLocaleString('ko-KR');
+
+    // Update goal displays
+    _goalCurrentAmounts = { income: income, savings: savings, expense: expense };
+    updateGoalDisplays();
 
     // Chart
     const chartEl = document.getElementById('hub-chart');
