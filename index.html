@@ -1980,8 +1980,8 @@
             <button onclick="openMatrixModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 새 항목
             </button>
-            <button onclick="openSeriesModal()" class="bg-white border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 active:scale-95 transition-all">
-              <span class="material-symbols-outlined text-sm">playlist_add</span> 시리즈 자동 추가
+            <button onclick="openNewWorkModal()" class="bg-white border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-sm">edit_note</span> 새 작품
             </button>
             <button onclick="scrollMatrixToToday()" class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:border-indigo-300 hover:text-indigo-600 active:scale-95 transition-all">
               <span class="material-symbols-outlined text-sm">today</span> 오늘로
@@ -2944,8 +2944,8 @@
             <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
               <span class="material-symbols-outlined text-sm">add</span> 일정 추가
             </button>
-            <button onclick="openSeriesModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[#6b38d4]/30 text-[#6b38d4] hover:bg-[#6b38d4]/5 shadow-sm">
-              <span class="material-symbols-outlined text-sm">playlist_add</span> 시리즈 자동 추가
+            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[#6b38d4]/30 text-[#6b38d4] hover:bg-[#6b38d4]/5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">edit_note</span> 새 작품
             </button>
           </div>
         </div>
@@ -3507,7 +3507,7 @@
     '업무':'work','개인':'personal','연차':'vacation'
   };
   const CAT_COLOR = {
-    '업무':'rose','연차':'orange','특별휴가':'pink','개인':'fuchsia','글쓰기':'sky',
+    '업무':'rose','연차':'cyan','특별휴가':'pink','개인':'fuchsia','글쓰기':'sky',
     '영어':'lime','스터디':'violet','생일':'birthday'
   };
 
@@ -3751,9 +3751,9 @@
 
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
-      if (isToday) { cell.style.background = hasLeave ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(167,243,208,0.3))' : hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
+      if (isToday) { cell.style.background = hasLeave ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(207,250,254,0.5))' : hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.03)'; }
-      else if (hasLeave) { cell.style.background = '#d1fae5'; }
+      else if (hasLeave) { cell.style.background = '#cffafe'; }
       else if (hasSpecial) { cell.style.background = '#fce7f3'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
@@ -4240,7 +4240,7 @@
     ariaLabel: '카테고리 선택',
     options: [
       { value: '업무',  dot: '#f43f5e', label: '업무' },
-      { value: '연차',  dot: '#f97316', label: '연차' },
+      { value: '연차',  dot: '#06b6d4', label: '연차' },
       { value: '특별휴가', dot: '#ec4899', label: '특별휴가', emoji: '🎁' },
       { value: '개인',  dot: '#d946ef', label: '개인' },
       { value: '글쓰기', dot: '#38bdf8', label: '글쓰기' },
@@ -7543,7 +7543,7 @@
   };
   const TRACK_BARS = {
     '글쓰기':'bg-accent-sky','영어':'bg-accent-lime','스터디':'bg-accent-violet',
-    '업무':'bg-accent-rose','개인':'bg-accent-fuchsia','연차':'bg-accent-orange'
+    '업무':'bg-accent-rose','개인':'bg-accent-fuchsia','연차':'bg-accent-cyan'
   };
   const WEEK_DAYS = ['월','화','수','목','금','토','일'];
   const MILESTONE_STATUS = {
@@ -9484,7 +9484,7 @@
     var MERGE_COLS = [2, 3, 4, 5, 6, 7, 8];
     var COL_STYLES = {
       2: { color: 'text-rose-900', bg: 'background:rgba(251,113,133,0.25)' },
-      3: { color: 'text-orange-900', bg: 'background:rgba(251,146,60,0.25)' },
+      3: { color: 'text-cyan-900', bg: 'background:rgba(6,182,212,0.2)' },
       4: { color: 'text-fuchsia-900', bg: 'background:rgba(217,70,239,0.2)' },
       5: { color: 'text-sky-900', bg: 'background:rgba(56,189,248,0.25)' },
       6: { color: 'text-emerald-900', bg: 'background:rgba(52,211,153,0.25)' },
