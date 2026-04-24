@@ -5870,6 +5870,7 @@
         '<input type="date" value="'+(d[dateField]||'')+'" class="'+ic+'" style="width:100%"/>' +
         '<input type="time" value="'+(d[timeField]||'')+'" class="'+ic+'" style="width:100%"/>' +
         '</div>';
+      initInlineDatePickers(td);
       var inputs = td.querySelectorAll('input');
       inputs[0].focus();
       var done = false;
@@ -5962,6 +5963,7 @@
         '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">check</span></button>' +
         '<button onclick="renderJourneyLodging()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500"><span class="material-symbols-outlined" style="font-size:13px">close</span></button>' +
       '</div></td>';
+    initInlineDatePickers(tr);
     tr.querySelector('input').focus();
   }
 
@@ -6439,6 +6441,7 @@
     tr.style.cssText = 'background:linear-gradient(135deg,rgba(107,56,212,0.08) 0%,rgba(99,102,241,0.12) 100%);';
     tr.innerHTML = html;
     tbody.appendChild(tr);
+    initInlineDatePickers(tr);
   }
 
   var _AVIATION_KEY = 'c35b074210fd4a0a6244533feaaf0fb1';
@@ -7985,6 +7988,7 @@
         '<button onclick="saveClickEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
         '<button onclick="filterFinanceByTrip(currentFinanceTrip)" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
+    initInlineDatePickers(tr);
     var input = tr.querySelector('[data-fec="'+col+'"]');
     if (input) { input.focus(); if (input.select) input.select(); }
     tr.querySelectorAll('input,select').forEach(function(el){
@@ -8052,6 +8056,7 @@
         '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
       '</td>';
     tbody.appendChild(tr);
+    initInlineDatePickers(tr);
     ['fir-date','fir-desc','fir-deposit','fir-expense'].forEach(function(id){
       var el = tr.querySelector('#'+id);
       if(el) el.addEventListener('keydown', function(e){
@@ -8363,6 +8368,7 @@
         '<button onclick="cancelFinanceInline()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 transition-colors"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
     tbody.appendChild(tr);
+    initInlineDatePickers(tr);
     // 스크롤 & 포커스
     tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(function(){ (document.getElementById(isDeposit?'fin-i-amt':'fin-i-desc')||{}).focus(); }, 100);
@@ -8416,6 +8422,7 @@
         '<button onclick="saveInlineEdit('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600"><span class="material-symbols-outlined text-sm">check</span></button>' +
         '<button onclick="filterFinanceByTrip(currentFinanceTrip)" class="p-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div></td>';
+    initInlineDatePickers(tr);
     tr.querySelector('#fie-desc').focus();
   }
 
@@ -12355,6 +12362,13 @@
     setTimeout(function(){ ['jf-date','jf-payment-date'].forEach(function(id){ if(document.getElementById(id)) initFlatpickr(id,{}); }); }, 150);
   }
   function initSimpleDatePicker(id) { initFlatpickr(id, {}); }
+  function initInlineDatePickers(container) {
+    if (!container || typeof flatpickr === 'undefined') return;
+    container.querySelectorAll('input[type="date"]').forEach(function(el) {
+      if (el._flatpickr) return;
+      flatpickr(el, { locale:'ko', dateFormat:'Y-m-d', disableMobile:true, allowInput:true, appendTo:document.body });
+    });
+  }
 
   var _origOpenCityModal = openCityModal;
   openCityModal = function() { _origOpenCityModal.apply(this,arguments); setTimeout(initCityDatePickers,80); setTimeout(initCityPlacesAutocomplete,100); };
