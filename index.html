@@ -11727,32 +11727,41 @@
     document.getElementById('nw-preview').style.display = '';
   }
 
+  var _workSaving = false;
+  function _lockSaveBtn(btn) { if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = '⏳ 저장 중...'; btn.style.opacity = '0.6'; } }
+  function _unlockSaveBtn(btn) { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || '저장'; btn.style.opacity = ''; } }
+
   function saveNewWork() {
+    if (_workSaving) return;
     var title = document.getElementById('nw-title').value.trim();
     if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 작품명을 입력하세요'); return; }
     if (!_workPreviewResult) { previewWorkSchedule(); if (!_workPreviewResult) return; }
-    var sel = document.getElementById('nw-series');
-    var opt = sel.options[sel.selectedIndex];
-    var work = {
-      id: 'w_' + Date.now(),
-      series_id: sel.value,
-      series_name: opt ? opt.dataset.name : '',
-      title: title,
-      total_episodes: _workPreviewResult.total_episodes,
-      current_phase: 'synopsis',
-      status: 'draft',
-      publish_day: _workPreviewResult.publish_day,
-      phases: _workPreviewResult.phases,
-      publish_start: _workPreviewResult.publish_start,
-      publish_end: _workPreviewResult.publish_end,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    addWork(work);
-    closeNewWorkModal();
-    renderWorkPipeline();
-    _workPreviewResult = null;
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 초안이 저장됐어요. 위젯에서 확정하세요.');
+    _workSaving = true;
+    var btn = document.getElementById('nw-save-btn'); _lockSaveBtn(btn);
+    try {
+      var sel = document.getElementById('nw-series');
+      var opt = sel.options[sel.selectedIndex];
+      var work = {
+        id: 'w_' + Date.now(),
+        series_id: sel.value,
+        series_name: opt ? opt.dataset.name : '',
+        title: title,
+        total_episodes: _workPreviewResult.total_episodes,
+        current_phase: 'synopsis',
+        status: 'draft',
+        publish_day: _workPreviewResult.publish_day,
+        phases: _workPreviewResult.phases,
+        publish_start: _workPreviewResult.publish_start,
+        publish_end: _workPreviewResult.publish_end,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      addWork(work);
+      closeNewWorkModal();
+      renderWorkPipeline();
+      _workPreviewResult = null;
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 초안이 저장됐어요. 위젯에서 확정하세요.');
+    } finally { _workSaving = false; _unlockSaveBtn(btn); }
   }
 
   // ===== Work Edit / Confirm / Calendar =====
@@ -11873,9 +11882,12 @@
   }
 
   async function saveEditWork() {
-    if (!_editWorkId) return;
+    if (_workSaving || !_editWorkId) return;
     var w = getWorkById(_editWorkId);
     if (!w) return;
+    _workSaving = true;
+    var btn = document.querySelector('#edit-work-modal button[onclick="saveEditWork()"]'); _lockSaveBtn(btn);
+    try {
     var sel = document.getElementById('ew-series');
     var opt = sel.options[sel.selectedIndex];
     var wasConfirmed = w.status === 'confirmed';
@@ -11909,18 +11921,23 @@
     closeEditWorkModal();
     renderWorkPipeline();
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (w.status === 'confirmed' ? ' (캘린더 재동기화)' : ''));
+    } finally { _workSaving = false; _unlockSaveBtn(btn); }
   }
 
-  function confirmWork(id) {
+  async function confirmWork(id) {
+    if (_workSaving) return;
     var w = getWorkById(id);
     if (!w) return;
     if (!confirm('"' + (w.title || '') + '" 작품을 확정하고 캘린더에 일정을 추가할까요?')) return;
-    w.status = 'confirmed';
-    w.updated_at = new Date().toISOString();
-    saveWorks();
-    autoAddScheduleToCalendar(w);
-    renderWorkPipeline();
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정! 캘린더에 일정이 추가됐어요.');
+    _workSaving = true;
+    try {
+      w.status = 'confirmed';
+      w.updated_at = new Date().toISOString();
+      saveWorks();
+      await autoAddScheduleToCalendar(w);
+      renderWorkPipeline();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정! 캘린더에 일정이 추가됐어요.');
+    } finally { _workSaving = false; }
   }
 
   async function resyncWorkCal(id) {
