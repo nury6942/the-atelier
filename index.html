@@ -9179,7 +9179,59 @@
 
     var matrixHolidays = getKoreanHolidays(matrixYear);
 
-    allDates.forEach(function(d) {
+    // Pre-compute rowspan merge map per column
+    var MERGE_COLS = [2, 3, 4, 5, 7, 8];
+    var COL_STYLES = {
+      2: { color: 'text-rose-900', bg: 'background:rgba(251,113,133,0.25)' },
+      3: { color: 'text-orange-900', bg: 'background:rgba(251,146,60,0.25)' },
+      4: { color: 'text-amber-900', bg: 'background:rgba(251,191,36,0.25)' },
+      5: { color: 'text-sky-900', bg: 'background:rgba(56,189,248,0.25)' },
+      7: { color: 'text-lime-900', bg: 'background:rgba(163,230,53,0.3)' },
+      8: { color: 'text-violet-900', bg: 'background:rgba(139,92,246,0.2)' }
+    };
+    // mergeStart[dateStr][colIdx] = spanCount, mergeSkip[dateStr] = Set of colIdx to skip
+    var mergeStart = {};
+    var mergeSkip = {};
+    for (var mc = 0; mc < MERGE_COLS.length; mc++) {
+      var col = MERGE_COLS[mc];
+      var ri = 0;
+      while (ri < allDates.length) {
+        var e1 = dataMap[allDates[ri].date];
+        var val1 = e1 ? (e1.row[col] || '') : '';
+        var month1 = allDates[ri].date.slice(0, 7);
+        if (!val1) { ri++; continue; }
+        var span = 1;
+        for (var rj = ri + 1; rj < allDates.length; rj++) {
+          if (allDates[rj].date.slice(0, 7) !== month1) break; // same month only
+          var e2 = dataMap[allDates[rj].date];
+          var val2 = e2 ? (e2.row[col] || '') : '';
+          if (val2 === val1) { span++; } else { break; }
+        }
+        if (span > 1) {
+          if (!mergeStart[allDates[ri].date]) mergeStart[allDates[ri].date] = {};
+          mergeStart[allDates[ri].date][col] = span;
+          for (var sk = 1; sk < span; sk++) {
+            var skDate = allDates[ri + sk].date;
+            if (!mergeSkip[skDate]) mergeSkip[skDate] = {};
+            mergeSkip[skDate][col] = true;
+          }
+        }
+        ri += span;
+      }
+    }
+
+    function mxChip(val, color, dateStr, fieldIdx, rowIdx, inlineStyle) {
+      if (!val) return '';
+      var items = val.split(', ');
+      return '<div class="flex flex-col gap-px">' + items.map(function(v) {
+        var displayVal = (fieldIdx === 3) ? v.replace(/^[\d.]+\s*/, '') || v : v;
+        return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1"' +
+          ' class="mx-chip block w-full text-center text-[11px] font-bold cursor-grab active:cursor-grabbing hover:brightness-90 transition-all ' + color + '"' +
+          ' style="padding:5px 6px;border-radius:2px;' + (inlineStyle||'') + '">' + displayVal + '</span>';
+      }).join('') + '</div>';
+    }
+
+    allDates.forEach(function(d, di) {
       const entry = dataMap[d.date];
       const row = entry ? entry.row : null;
       const i = entry ? entry.idx : -1;
@@ -9225,30 +9277,31 @@
         : '<span class="text-sm font-manrope ' + (isRedDay?'text-rose-600 font-bold':'text-slate-600 font-medium') + '">' + dateLabel + '</span>' +
           (holidayName ? '<span class="text-[8px] text-rose-400 font-bold ml-1">' + holidayName + '</span>' : '');
 
-      function mxChip(val, color, dateStr, fieldIdx, rowIdx, inlineStyle) {
-        if (!val) return '';
-        var items = val.split(', ');
-        return '<div class="flex flex-col gap-px">' + items.map(function(v) {
-          var displayVal = (fieldIdx === 3) ? v.replace(/^[\d.]+\s*/, '') || v : v;
-          return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1"' +
-            ' class="mx-chip block w-full text-center text-[11px] font-bold cursor-grab active:cursor-grabbing hover:brightness-90 transition-all ' + color + '"' +
-            ' style="padding:5px 6px;border-radius:2px;' + (inlineStyle||'') + '">' + displayVal + '</span>';
-        }).join('') + '</div>';
-      }
-      function mxTd(content, dateStr, fieldIdx, rowIdx) {
-        return '<td class="p-0 align-top transition-all cursor-pointer hover:bg-[#f8f1fe]/40" data-date="' + dateStr + '" data-field="' + fieldIdx + '" data-row="' + rowIdx + '" onclick="mxCellClick(this)" ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')" ondragleave="this.classList.remove(\'bg-indigo-100/50\')" ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + dateStr + '\',' + fieldIdx + ')">' + (content || '') + '</td>';
+      var html = '<td class="px-3 py-1.5 text-sm">' + dateDisplay + '</td>' +
+        '<td class="px-2 py-1.5 text-sm text-center font-medium ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>';
+
+      var skipSet = mergeSkip[d.date] || {};
+      var startSet = mergeStart[d.date] || {};
+
+      for (var mc2 = 0; mc2 < MERGE_COLS.length; mc2++) {
+        var col2 = MERGE_COLS[mc2];
+        if (skipSet[col2]) continue; // covered by rowspan above
+        var cs = COL_STYLES[col2];
+        var span2 = startSet[col2] || 1;
+        var val = row ? row[col2] : '';
+        var chipHtml = mxChip(val, cs.color, d.date, col2, i, cs.bg);
+        var spanAttr = span2 > 1 ? ' rowspan="' + span2 + '"' : '';
+        var alignStyle = span2 > 1 ? ' style="vertical-align:middle"' : '';
+        html += '<td class="p-0 ' + (span2 > 1 ? 'align-middle' : 'align-top') + ' transition-all cursor-pointer hover:bg-[#f8f1fe]/40"' + spanAttr + alignStyle +
+          ' data-date="' + d.date + '" data-field="' + col2 + '" data-row="' + i + '"' +
+          ' onclick="mxCellClick(this)"' +
+          ' ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')"' +
+          ' ondragleave="this.classList.remove(\'bg-indigo-100/50\')"' +
+          ' ondrop="event.preventDefault();this.classList.remove(\'bg-indigo-100/50\');mxDropCell(event,\'' + d.date + '\',' + col2 + ')">' +
+          (chipHtml || '') + '</td>';
       }
 
-      tr.innerHTML =
-        '<td class="px-3 py-1.5 text-sm">' + dateDisplay + '</td>' +
-        '<td class="px-2 py-1.5 text-sm text-center font-medium ' + (isRedDay?'text-rose-500':'text-slate-400') + '">' + day + '</td>' +
-        mxTd(mxChip(row&&row[2], 'text-rose-900', d.date, 2, i, 'background:rgba(251,113,133,0.25)'), d.date, 2, i) +
-        mxTd(mxChip(row&&row[3], 'text-orange-900', d.date, 3, i, 'background:rgba(251,146,60,0.25)'), d.date, 3, i) +
-        mxTd(mxChip(row&&row[4], 'text-amber-900', d.date, 4, i, 'background:rgba(251,191,36,0.25)'), d.date, 4, i) +
-        mxTd(mxChip(row&&row[5], 'text-sky-900', d.date, 5, i, 'background:rgba(56,189,248,0.25)'), d.date, 5, i) +
-        mxTd(mxChip(row&&row[7], 'text-lime-900', d.date, 7, i, 'background:rgba(163,230,53,0.3)'), d.date, 7, i) +
-        mxTd(mxChip(row&&row[8], 'text-violet-900', d.date, 8, i, 'background:rgba(139,92,246,0.2)'), d.date, 8, i) +
-        '<td class="p-0 text-center align-middle">' +
+      html += '<td class="p-0 text-center align-middle">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-0.5 py-1">' +
             '<button onclick="editMatrixRow(' + i + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
@@ -9256,6 +9309,8 @@
             '</div>'
           : '<button onclick="openMatrixModalForDate(\'' + d.date + '\')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-200 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined" style="font-size:14px">add</span></button>'
         ) + '</td>';
+
+      tr.innerHTML = html;
       tbody.appendChild(tr);
     });
 
