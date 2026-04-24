@@ -2560,6 +2560,28 @@
           </button>
         </div>
         <div id="work-pipeline-list"></div>
+
+        <!-- Timeline View -->
+        <div id="work-timeline-section" class="mt-8" style="display:none">
+          <div class="flex items-center gap-3 mb-4">
+            <h3 class="text-lg font-bold text-slate-900">📊 연간 타임라인</h3>
+            <div class="flex items-center bg-slate-100 rounded-lg p-0.5">
+              <button onclick="shiftTimelineYear(-1)" class="p-1 hover:bg-slate-200 rounded-md"><span class="material-symbols-outlined" style="font-size:16px">chevron_left</span></button>
+              <span id="timeline-year-label" class="px-3 text-xs font-bold font-headline">2026</span>
+              <button onclick="shiftTimelineYear(1)" class="p-1 hover:bg-slate-200 rounded-md"><span class="material-symbols-outlined" style="font-size:16px">chevron_right</span></button>
+            </div>
+            <div class="flex gap-3 ml-auto text-[10px] font-bold">
+              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#7c3aed"></span>시놉</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#3b82f6"></span>초고</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#eab308"></span>퇴고</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#94a3b8"></span>휴식</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-2 rounded-sm" style="background:#22c55e"></span>연재</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-100 overflow-x-auto">
+            <div id="work-timeline-chart" style="min-width:900px"></div>
+          </div>
+        </div>
       </section>
 
       <!-- New Work Modal -->
@@ -11496,6 +11518,99 @@
       html += '</div>';
     });
     el.innerHTML = html;
+    renderWorkTimeline();
+  }
+
+  // ===== Work Timeline (Gantt) =====
+  var _timelineYear = new Date().getFullYear();
+
+  function shiftTimelineYear(delta) {
+    _timelineYear += delta;
+    var lbl = document.getElementById('timeline-year-label');
+    if (lbl) lbl.textContent = _timelineYear;
+    renderWorkTimeline();
+  }
+
+  function renderWorkTimeline() {
+    var section = document.getElementById('work-timeline-section');
+    var chart = document.getElementById('work-timeline-chart');
+    if (!section || !chart) return;
+    section.style.display = _works.length > 0 ? '' : 'none';
+    if (_works.length === 0) return;
+
+    var yr = _timelineYear;
+    var yrStart = new Date(yr, 0, 1).getTime();
+    var yrEnd = new Date(yr, 11, 31).getTime();
+    var totalDays = Math.round((yrEnd - yrStart) / 86400000) + 1;
+
+    var phaseColors = { synopsis: '#7c3aed', draft: '#3b82f6', revision: '#eab308', rest: '#94a3b8', publishing: '#22c55e' };
+    var phaseLabels = { synopsis: '시놉', draft: '초고', revision: '퇴고', rest: '휴식', publishing: '연재' };
+    var MO = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+
+    // Month header
+    var headerHtml = '<div class="flex" style="border-bottom:1px solid #f1f5f9">' +
+      '<div class="shrink-0 p-2 text-[10px] font-bold text-slate-400" style="width:140px"></div>';
+    for (var mi = 0; mi < 12; mi++) {
+      var mStart = new Date(yr, mi, 1);
+      var mEnd = new Date(yr, mi + 1, 0);
+      var mDays = mEnd.getDate();
+      var pct = (mDays / totalDays * 100).toFixed(2);
+      headerHtml += '<div class="text-center text-[10px] font-bold text-slate-400 py-2" style="width:' + pct + '%;border-left:1px solid #f1f5f9">' + MO[mi] + '월</div>';
+    }
+    headerHtml += '</div>';
+
+    // Today marker position
+    var today = new Date();
+    var todayPct = today.getFullYear() === yr ? ((today.getTime() - yrStart) / (yrEnd - yrStart) * 100) : -1;
+
+    // Work rows
+    var rowsHtml = '';
+    _works.forEach(function(w) {
+      var phases = w.phases || {};
+      var allPhases = ['synopsis', 'draft', 'revision', 'rest'];
+      // Add publishing as virtual phase
+      if (w.publish_start && w.publish_end) {
+        phases._publishing = { start: w.publish_start, end: w.publish_end };
+        allPhases.push('_publishing');
+      }
+
+      rowsHtml += '<div class="flex items-center" style="border-bottom:1px solid #f8fafc;height:36px">';
+      // Label
+      rowsHtml += '<div class="shrink-0 px-3 py-1 text-[11px] font-bold text-slate-700 truncate" style="width:140px" title="' + (w.title || '') + ' (' + (w.series_name || '') + ')">' +
+        '<span class="text-slate-400">' + (w.series_name ? w.series_name.charAt(0) : '') + '</span> ' + (w.title || '') + '</div>';
+      // Bar area
+      rowsHtml += '<div class="relative flex-1" style="height:36px">';
+
+      allPhases.forEach(function(pKey) {
+        var realKey = pKey === '_publishing' ? 'publishing' : pKey;
+        var ph = pKey === '_publishing' ? phases._publishing : phases[pKey];
+        if (!ph || !ph.start || !ph.end) return;
+        var pStart = new Date(ph.start + 'T00:00:00').getTime();
+        var pEnd = new Date(ph.end + 'T00:00:00').getTime();
+        // Clamp to year
+        if (pEnd < yrStart || pStart > yrEnd) return;
+        var clampStart = Math.max(pStart, yrStart);
+        var clampEnd = Math.min(pEnd, yrEnd);
+        var leftPct = ((clampStart - yrStart) / (yrEnd - yrStart) * 100).toFixed(2);
+        var widthPct = Math.max(0.3, ((clampEnd - clampStart) / (yrEnd - yrStart) * 100)).toFixed(2);
+        var color = phaseColors[realKey] || '#94a3b8';
+        var label = phaseLabels[realKey] || '';
+        var showLabel = parseFloat(widthPct) > 3;
+
+        rowsHtml += '<div class="absolute top-1.5 rounded-sm" style="left:' + leftPct + '%;width:' + widthPct + '%;height:20px;background:' + color + ';opacity:0.85" title="' + label + ': ' + ph.start + ' ~ ' + ph.end + '">';
+        if (showLabel) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">' + label + '</span>';
+        rowsHtml += '</div>';
+      });
+
+      // Today marker
+      if (todayPct >= 0) {
+        rowsHtml += '<div class="absolute top-0 bottom-0" style="left:' + todayPct.toFixed(2) + '%;width:1px;background:#ef4444;opacity:0.5"></div>';
+      }
+
+      rowsHtml += '</div></div>';
+    });
+
+    chart.innerHTML = headerHtml + rowsHtml;
   }
 
   function openNewWorkModal() {
