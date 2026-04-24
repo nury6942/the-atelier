@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(grep -n \"\\\\$[0-9]\\\\|fee\\\\|수강료\\\\|lesson.*rate\\\\|rate.*lesson\" /c/Users/AC0987/the-atelier/the_atelier_v4.html)",
+      "Bash(powershell.exe *)",
+      "Bash(cmd.exe /c \"dir \\\\\"D:\\\\다운로드\\\\stitch_side job\\\\\\\\\\\\\" 2>nul\")",
+      "Bash(cmd.exe /c \"dir D:\\\\\\\\Downloads\\\\\\\\stitch* 2>nul\")",
+      "Bash(node *)",
+      "Bash(grep *)",
+      "Bash(wc *)"
+    ]
+  }
+}

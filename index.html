@@ -1940,6 +1940,9 @@
             <button onclick="openMatrixModal()" class="gradient-primary text-white px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 새 항목
             </button>
+            <button onclick="openSeriesModal()" class="bg-white border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-sm">playlist_add</span> 시리즈 추가
+            </button>
             <button onclick="scrollMatrixToToday()" class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold font-manrope flex items-center gap-2 hover:border-indigo-300 hover:text-indigo-600 active:scale-95 transition-all">
               <span class="material-symbols-outlined text-sm">today</span> 오늘로
             </button>
@@ -2880,9 +2883,14 @@
               <button onclick="nextMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
             </div>
           </div>
-          <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
-            <span class="material-symbols-outlined text-sm">add</span> 일정 추가
-          </button>
+          <div class="flex items-center gap-3">
+            <button onclick="openSeriesModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[#6b38d4]/30 text-[#6b38d4] hover:bg-[#6b38d4]/5">
+              <span class="material-symbols-outlined text-sm">playlist_add</span> 시리즈 추가
+            </button>
+            <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+              <span class="material-symbols-outlined text-sm">add</span> 일정 추가
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-7 cal-grid-border">
           <div class="p-4 cal-day-header text-rose-400">일</div>
@@ -2992,6 +3000,137 @@
       </div>
     </div>
 
+    <!-- SERIES AUTO-ADD MODAL -->
+    <div id="series-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="atl-modal-inner" style="max-width:560px">
+        <div class="atl-modal-hero hero-planner">
+          <div class="hero-deco" style="width:120px;height:120px;top:-40px;right:-30px"></div>
+          <div class="hero-deco" style="width:60px;height:60px;bottom:-20px;left:40px"></div>
+          <div class="atl-modal-hero-overlay">
+            <div class="atl-modal-hero-tag">THE ATELIER</div>
+            <div class="atl-modal-hero-title">시리즈 자동 추가</div>
+          </div>
+        </div>
+        <div class="atl-modal-header">
+          <h3>시리즈 자동 추가</h3>
+          <button onclick="closeSeriesModal()" class="atl-modal-close"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+        </div>
+        <div class="atl-modal-body" style="max-height:calc(100vh - 260px);overflow-y:auto">
+          <!-- 시리즈 타입 -->
+          <div class="atl-field">
+            <label>시리즈 타입</label>
+            <div class="flex gap-4 mt-1">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="series-type" value="draft" checked onchange="updateSeriesPreview()" class="accent-indigo-500"/>
+                <span class="text-sm font-bold text-slate-700">초고 <span class="text-slate-400 font-normal">(1화, 2화...)</span></span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="series-type" value="revision" onchange="updateSeriesPreview()" class="accent-indigo-500"/>
+                <span class="text-sm font-bold text-slate-700">퇴고 <span class="text-slate-400 font-normal">(1화 퇴고, 2화 퇴고...)</span></span>
+              </label>
+            </div>
+          </div>
+          <!-- 화 번호 -->
+          <div class="atl-grid-2">
+            <div class="atl-field">
+              <label>시작 화 번호</label>
+              <div class="atl-field-input">
+                <span class="atl-field-icon material-symbols-outlined">first_page</span>
+                <input id="series-start-ep" type="number" min="1" value="1" class="atl-input w-full" oninput="updateSeriesPreview()"/>
+              </div>
+            </div>
+            <div class="atl-field">
+              <label>끝 화 번호</label>
+              <div class="atl-field-input">
+                <span class="atl-field-icon material-symbols-outlined">last_page</span>
+                <input id="series-end-ep" type="number" min="1" value="24" class="atl-input w-full" oninput="updateSeriesPreview()"/>
+              </div>
+            </div>
+          </div>
+          <!-- 시작 날짜 -->
+          <div class="atl-field">
+            <label>시작 날짜</label>
+            <div class="atl-field-input">
+              <span class="atl-field-icon material-symbols-outlined">calendar_today</span>
+              <input id="series-start-date" type="date" class="atl-input w-full" onchange="updateSeriesPreview()"/>
+            </div>
+          </div>
+          <!-- 간격 -->
+          <div class="atl-field">
+            <label>간격</label>
+            <div class="flex gap-4 mt-1 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="series-interval" value="daily" checked onchange="toggleSeriesCustomInterval();updateSeriesPreview()" class="accent-indigo-500"/>
+                <span class="text-sm font-bold text-slate-700">매일</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="series-interval" value="weekday" onchange="toggleSeriesCustomInterval();updateSeriesPreview()" class="accent-indigo-500"/>
+                <span class="text-sm font-bold text-slate-700">평일만</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="series-interval" value="custom" onchange="toggleSeriesCustomInterval();updateSeriesPreview()" class="accent-indigo-500"/>
+                <span class="text-sm font-bold text-slate-700">N일마다</span>
+              </label>
+            </div>
+            <div id="series-custom-interval-wrap" style="display:none" class="flex items-center gap-2 mt-2">
+              <span class="text-xs text-slate-500">매</span>
+              <input id="series-custom-days" type="number" min="1" value="2" class="atl-input w-16 text-center text-sm" oninput="updateSeriesPreview()"/>
+              <span class="text-xs text-slate-500">일마다</span>
+            </div>
+          </div>
+          <!-- 카테고리 -->
+          <div class="atl-field">
+            <label>카테고리</label>
+            <div class="atl-field-input">
+              <span class="atl-field-icon material-symbols-outlined">category</span>
+              <select id="series-category" class="atl-input w-full bg-white">
+                <option selected>글쓰기</option>
+                <option>업무</option>
+                <option>개인</option>
+                <option>영어</option>
+                <option>스터디</option>
+              </select>
+            </div>
+          </div>
+          <!-- 검증 메시지 -->
+          <div id="series-validation-msg" class="text-xs font-bold text-red-500 mt-1" style="display:none"></div>
+          <!-- 미리보기 -->
+          <div class="mt-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">미리보기</span>
+              <span id="series-preview-count" class="text-xs font-bold text-indigo-500"></span>
+            </div>
+            <div id="series-preview-list" class="border border-slate-100 rounded-xl bg-slate-50 overflow-y-auto" style="max-height:300px;min-height:80px">
+              <div class="text-xs text-slate-400 text-center py-6">입력값을 채워주세요</div>
+            </div>
+          </div>
+        </div>
+        <div class="atl-modal-footer">
+          <button onclick="closeSeriesModal()" class="atl-btn-cancel">취소</button>
+          <button onclick="saveSeriesEntries()" id="series-save-btn" class="atl-btn-save" disabled>
+            <span class="material-symbols-outlined" style="font-size:15px">playlist_add_check</span>
+            <span id="series-save-label">일정 추가</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERIES DELETE CONFIRM MODAL -->
+    <div id="series-delete-modal" class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+        <div class="px-6 py-4 bg-red-50 flex justify-between items-center">
+          <h3 class="font-bold text-red-900 font-headline">시리즈 전체 삭제</h3>
+          <button onclick="closeSeriesDeleteModal()" class="text-red-400 hover:text-red-700"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6">
+          <p id="series-delete-msg" class="text-sm text-slate-700"></p>
+        </div>
+        <div class="px-6 pb-6 flex gap-2">
+          <button onclick="closeSeriesDeleteModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+          <button onclick="confirmSeriesDelete()" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600">전체 삭제</button>
+        </div>
+      </div>
+    </div>
 
 <script>
 
@@ -3376,6 +3515,7 @@
       renderCalendar();
       updatePlannerTracks();
       loadPlannerGoals();
+      _loadSeriesMap();
     } catch(err) {
       console.error('Planner load error:', err);
     }
@@ -3484,6 +3624,9 @@
 
         if (!isRange) {
           // 단일 날짜 이벤트
+          var docId = ev[7] || '';
+          var evSeriesId = _getSeriesIdForDoc(docId);
+          var seriesBtn = evSeriesId ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + evSeriesId + '\')" class="text-current" title="시리즈 전체 삭제">⊘</button>' : '';
           return '<div class="mt-1 text-[10px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
@@ -3495,6 +3638,7 @@
             '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
             '<button onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')" class="text-current">✎</button>' +
             '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ')" class="text-current">×</button>' +
+            seriesBtn +
             '</div></div>';
         }
 
@@ -3995,6 +4139,337 @@
     toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(function(){ toast.remove(); }, 2500);
+  }
+
+  // ===== SERIES AUTO-ADD =====
+  var _seriesPreviewDebounce = null;
+  var _pendingSeriesDeleteId = null;
+
+  function openSeriesModal() {
+    document.getElementById('series-start-ep').value = '1';
+    document.getElementById('series-end-ep').value = '24';
+    document.getElementById('series-start-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('series-category').value = '글쓰기';
+    document.querySelector('input[name="series-type"][value="draft"]').checked = true;
+    document.querySelector('input[name="series-interval"][value="daily"]').checked = true;
+    document.getElementById('series-custom-days').value = '2';
+    document.getElementById('series-custom-interval-wrap').style.display = 'none';
+    document.getElementById('series-validation-msg').style.display = 'none';
+    document.getElementById('series-save-btn').disabled = true;
+    document.getElementById('series-save-label').textContent = '일정 추가';
+    document.getElementById('series-modal').style.cssText = 'display:flex!important';
+    updateSeriesPreview();
+  }
+
+  function closeSeriesModal() {
+    document.getElementById('series-modal').style.cssText = 'display:none!important';
+  }
+
+  function toggleSeriesCustomInterval() {
+    var val = document.querySelector('input[name="series-interval"]:checked').value;
+    document.getElementById('series-custom-interval-wrap').style.display = val === 'custom' ? 'flex' : 'none';
+  }
+
+  function updateSeriesPreview() {
+    clearTimeout(_seriesPreviewDebounce);
+    _seriesPreviewDebounce = setTimeout(_renderSeriesPreview, 100);
+  }
+
+  function _generateSeriesDates(startDate, count, interval, customDays) {
+    var dates = [];
+    var cur = new Date(startDate + 'T00:00:00');
+    for (var i = 0; i < count; i++) {
+      if (interval === 'weekday') {
+        while (cur.getDay() === 0 || cur.getDay() === 6) cur.setDate(cur.getDate() + 1);
+      }
+      var ds = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+      dates.push({ date: ds, dayOfWeek: cur.getDay() });
+      if (interval === 'daily') {
+        cur.setDate(cur.getDate() + 1);
+      } else if (interval === 'weekday') {
+        cur.setDate(cur.getDate() + 1);
+      } else if (interval === 'custom') {
+        cur.setDate(cur.getDate() + (customDays || 1));
+      }
+    }
+    return dates;
+  }
+
+  function _renderSeriesPreview() {
+    var startEp = parseInt(document.getElementById('series-start-ep').value) || 1;
+    var endEp = parseInt(document.getElementById('series-end-ep').value) || 1;
+    var startDate = document.getElementById('series-start-date').value;
+    var seriesType = document.querySelector('input[name="series-type"]:checked').value;
+    var interval = document.querySelector('input[name="series-interval"]:checked').value;
+    var customDays = parseInt(document.getElementById('series-custom-days').value) || 1;
+
+    var validationEl = document.getElementById('series-validation-msg');
+    var saveBtn = document.getElementById('series-save-btn');
+    var saveLabel = document.getElementById('series-save-label');
+    var previewList = document.getElementById('series-preview-list');
+    var previewCount = document.getElementById('series-preview-count');
+
+    // Validation
+    if (!startDate) {
+      validationEl.textContent = '시작 날짜를 선택해주세요.';
+      validationEl.style.display = 'block';
+      saveBtn.disabled = true;
+      previewList.innerHTML = '<div class="text-xs text-slate-400 text-center py-6">시작 날짜를 선택해주세요</div>';
+      previewCount.textContent = '';
+      return;
+    }
+    if (startEp > endEp) {
+      validationEl.textContent = '시작 화가 끝 화보다 클 수 없어요.';
+      validationEl.style.display = 'block';
+      saveBtn.disabled = true;
+      previewList.innerHTML = '<div class="text-xs text-slate-400 text-center py-6">시작 화 ≤ 끝 화</div>';
+      previewCount.textContent = '';
+      return;
+    }
+    var totalCount = endEp - startEp + 1;
+    if (totalCount > 500) {
+      validationEl.textContent = '최대 500개까지 가능해요. (현재 ' + totalCount + '개)';
+      validationEl.style.display = 'block';
+      saveBtn.disabled = true;
+      previewList.innerHTML = '<div class="text-xs text-red-400 text-center py-6">최대 500개 제한 초과</div>';
+      previewCount.textContent = totalCount + '개';
+      return;
+    }
+    if (interval === 'custom' && customDays < 1) {
+      validationEl.textContent = '간격은 1일 이상이어야 해요.';
+      validationEl.style.display = 'block';
+      saveBtn.disabled = true;
+      return;
+    }
+    validationEl.style.display = 'none';
+
+    var dates = _generateSeriesDates(startDate, totalCount, interval, customDays);
+    var holidays = {};
+    var yearsNeeded = {};
+    dates.forEach(function(d) { yearsNeeded[d.date.substring(0, 4)] = true; });
+    Object.keys(yearsNeeded).forEach(function(y) {
+      var h = getKoreanHolidays(parseInt(y));
+      Object.keys(h).forEach(function(k) { holidays[k] = h[k]; });
+    });
+
+    var dayNames = ['일','월','화','수','목','금','토'];
+    var html = '';
+    for (var i = 0; i < dates.length; i++) {
+      var ep = startEp + i;
+      var title = seriesType === 'draft' ? (ep + '화') : (ep + '화 퇴고');
+      var d = dates[i];
+      var isWeekend = d.dayOfWeek === 0 || d.dayOfWeek === 6;
+      var holidayName = holidays[d.date] || '';
+      var dayName = dayNames[d.dayOfWeek];
+
+      var rowClass = 'px-4 py-2 text-xs border-b border-slate-100 flex items-center justify-between';
+      if (isWeekend) rowClass += ' bg-red-50';
+      else if (holidayName) rowClass += ' bg-orange-50';
+
+      var dateLabel = d.date + ' (' + dayName + ')';
+      var extra = '';
+      if (isWeekend) extra = '<span class="text-red-400 font-bold">' + (d.dayOfWeek === 0 ? '일' : '토') + '</span>';
+      if (holidayName) extra = '<span class="text-orange-500 font-bold flex items-center gap-0.5"><span style="font-size:11px">&#x1F6A9;</span> ' + holidayName + '</span>';
+
+      html += '<div class="' + rowClass + '">';
+      html += '<span class="font-medium text-slate-600">' + dateLabel + ' — <strong class="text-slate-800">' + title + '</strong></span>';
+      if (extra) html += extra;
+      html += '</div>';
+    }
+
+    previewList.innerHTML = html || '<div class="text-xs text-slate-400 text-center py-6">항목 없음</div>';
+    previewCount.textContent = '총 ' + totalCount + '개 항목';
+    saveBtn.disabled = false;
+    saveLabel.textContent = totalCount + '개 일정 추가';
+  }
+
+  async function saveSeriesEntries() {
+    var btn = document.getElementById('series-save-btn');
+    var saveLabel = document.getElementById('series-save-label');
+    btn.disabled = true;
+    saveLabel.textContent = '저장 중...';
+
+    var startEp = parseInt(document.getElementById('series-start-ep').value) || 1;
+    var endEp = parseInt(document.getElementById('series-end-ep').value) || 1;
+    var startDate = document.getElementById('series-start-date').value;
+    var seriesType = document.querySelector('input[name="series-type"]:checked').value;
+    var interval = document.querySelector('input[name="series-interval"]:checked').value;
+    var customDays = parseInt(document.getElementById('series-custom-days').value) || 1;
+    var category = document.getElementById('series-category').value;
+
+    var totalCount = endEp - startEp + 1;
+    if (totalCount < 1 || totalCount > 500 || !startDate) {
+      saveLabel.textContent = '입력값 오류';
+      btn.disabled = false;
+      return;
+    }
+
+    var dates = _generateSeriesDates(startDate, totalCount, interval, customDays);
+    var seriesId = 'series_' + startDate.replace(/-/g, '') + '_' + Math.random().toString(36).substring(2, 8);
+    var color = CAT_COLOR[category] || 'sky';
+    var seriesInfo = {
+      type: seriesType,
+      startEpisode: startEp,
+      endEpisode: endEp,
+      totalCount: totalCount,
+      interval: interval,
+      intervalDays: interval === 'custom' ? customDays : 1
+    };
+
+    try {
+      var batch = db.batch();
+      var newRows = [];
+
+      for (var i = 0; i < dates.length; i++) {
+        var ep = startEp + i;
+        var title = seriesType === 'draft' ? (ep + '화') : (ep + '화 퇴고');
+        var row = [dates[i].date, title, category, color, '', '', ''];
+        var obj = rowToObj('planner', row);
+        obj.seriesId = seriesId;
+        obj.seriesInfo = seriesInfo;
+        obj._createdAt = firebase.firestore.FieldValue.serverTimestamp();
+
+        var ref = db.collection('planner').doc();
+        batch.set(ref, obj);
+        newRows.push({ row: row, ref: ref });
+      }
+
+      await batch.commit();
+
+      // Add to in-memory plannerData
+      for (var j = 0; j < newRows.length; j++) {
+        var r = newRows[j].row.concat([newRows[j].ref.id]);
+        plannerData.push(r);
+        // Sync to matrix
+        try { await syncPlannerToMatrix(newRows[j].row); } catch(e) {}
+      }
+
+      renderCalendar();
+      updatePlannerTracks();
+      try { renderMatrixTable(); updateLeaveTracker(); } catch(e) {}
+      closeSeriesModal();
+      showPlannerToast('시리즈 ' + totalCount + '개 항목 추가 완료!');
+    } catch(err) {
+      console.error('Series save error:', err);
+      alert('시리즈 저장에 실패했어요. 다시 시도해주세요.\n' + err.message);
+    } finally {
+      btn.disabled = false;
+      saveLabel.textContent = '일정 추가';
+    }
+  }
+
+  // Series delete functions
+  function openSeriesDeleteConfirm(seriesId) {
+    _pendingSeriesDeleteId = seriesId;
+    // Count items in this series
+    var seriesItems = [];
+    for (var i = 0; i < plannerData.length; i++) {
+      var pId = plannerData[i][7];
+      if (pId) {
+        // Need to check Firestore for seriesId - but we can check from the loaded docs
+        // Actually, we store seriesId in Firestore but not in the plannerData array
+        // So we need another approach: keep a local mapping
+      }
+    }
+    // Use the cached series map
+    var items = _seriesItemsMap[seriesId] || [];
+    var typeLabel = items.length > 0 && items[0].type === 'revision' ? '퇴고' : '초고';
+    var count = items.length;
+
+    document.getElementById('series-delete-msg').innerHTML =
+      '<strong>[' + typeLabel + ']</strong> 시리즈의 <strong>' + count + '개 항목</strong>을 모두 삭제할까요?<br>' +
+      '<span class="text-xs text-slate-500 mt-1 block">이미 수정한 항목도 포함됩니다.</span>';
+    document.getElementById('series-delete-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeSeriesDeleteModal() {
+    document.getElementById('series-delete-modal').style.cssText = 'display:none!important';
+    _pendingSeriesDeleteId = null;
+  }
+
+  async function confirmSeriesDelete() {
+    if (!_pendingSeriesDeleteId) return;
+    var seriesId = _pendingSeriesDeleteId;
+    closeSeriesDeleteModal();
+
+    try {
+      // Find all planner items with this seriesId
+      var snapshot = await db.collection('planner').where('seriesId', '==', seriesId).get();
+      if (snapshot.empty) {
+        showPlannerToast('삭제할 시리즈 항목이 없어요.');
+        return;
+      }
+
+      var batch = db.batch();
+      var deletedIds = [];
+      snapshot.docs.forEach(function(doc) {
+        batch.delete(doc.ref);
+        deletedIds.push(doc.id);
+      });
+
+      await batch.commit();
+
+      // Remove from in-memory plannerData and clean up matrix
+      for (var i = plannerData.length - 1; i >= 0; i--) {
+        if (deletedIds.indexOf(plannerData[i][7]) >= 0) {
+          var row = plannerData[i];
+          // Clean matrix field
+          var matrixField = PLANNER_TO_MATRIX[row[2]];
+          if (matrixField) {
+            var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+            var fieldIdx = FIELDS.indexOf(matrixField);
+            var mRow = matrixData.find(function(r) { return r[0] === row[0]; });
+            if (mRow && fieldIdx > 0) {
+              mRow[fieldIdx] = '';
+              var mId = mRow[10] || mRow[9];
+              if (mId) try { await fbUpdate('matrix', mId, rowToObj('matrix', mRow)); } catch(e) {}
+            }
+          }
+          plannerData.splice(i, 1);
+        }
+      }
+
+      // Remove from series map
+      delete _seriesItemsMap[seriesId];
+
+      renderCalendar();
+      updatePlannerTracks();
+      try { renderMatrixTable(); updateLeaveTracker(); } catch(e) {}
+      showPlannerToast('시리즈 ' + deletedIds.length + '개 항목 삭제 완료!');
+    } catch(err) {
+      console.error('Series delete error:', err);
+      alert('시리즈 삭제에 실패했어요: ' + err.message);
+    }
+  }
+
+  // Keep track of series items loaded from Firestore
+  var _seriesItemsMap = {}; // { seriesId: [{docId, type, ...}] }
+
+  function _loadSeriesMap() {
+    _seriesItemsMap = {};
+    db.collection('planner').where('seriesId', '>', '').get().then(function(snap) {
+      snap.docs.forEach(function(doc) {
+        var data = doc.data();
+        var sid = data.seriesId;
+        if (!_seriesItemsMap[sid]) _seriesItemsMap[sid] = [];
+        _seriesItemsMap[sid].push({
+          docId: doc.id,
+          type: (data.seriesInfo && data.seriesInfo.type) || 'draft',
+          title: data.title || ''
+        });
+      });
+    }).catch(function(e) { console.error('Series map load:', e); });
+  }
+
+  // Returns seriesId for a planner item by its Firestore doc ID, or null
+  function _getSeriesIdForDoc(docId) {
+    for (var sid in _seriesItemsMap) {
+      var items = _seriesItemsMap[sid];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].docId === docId) return sid;
+      }
+    }
+    return null;
   }
 
   async function reorderPlannerEvent(e, targetIdx) {
@@ -8337,6 +8812,7 @@
         }
       }
       if (synced > 0) console.log('Matrix synced on load:', synced);
+      _loadSeriesMap();
 
       loading.style.display = 'none';
       tableWrap.style.display = 'block';
