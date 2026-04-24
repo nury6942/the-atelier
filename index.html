@@ -688,7 +688,7 @@
         <div id="profile-dd-panel" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50" style="display:none">
           <div class="px-4 py-3 bg-slate-50 border-b border-slate-100">
             <p id="profile-dd-name" class="text-sm font-bold text-slate-800">Nuri</p>
-            <p id="profile-dd-email" class="text-[11px] text-slate-400 mt-0.5">nury6942@gmail.com</p>
+            <p id="profile-dd-email" class="text-[11px] text-slate-400 mt-0.5"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ddb3a8afa4ebe4e9ef9dbab0bcb4b1f3beb2b0">[email&#160;protected]</a></p>
           </div>
           <button onclick="auth.signOut()" class="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined" style="font-size:18px">logout</span> 로그아웃
@@ -3154,7 +3154,7 @@
       </div>
     </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
   // ===== 모달 공통 키보드 핸들러 (Enter=저장, Tab/화살표=필드 이동) =====
   (function() {
@@ -9072,6 +9072,40 @@
       matrixData = mDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
       plannerData = pDocs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
 
+      // ★ 중복 매트릭스 행 병합 (같은 날짜에 여러 행이 있으면 값 있는 것 우선)
+      var _mxSeen = {};
+      var _mxDupsToDelete = [];
+      var _mxMerged = [];
+      for (var _mi = 0; _mi < matrixData.length; _mi++) {
+        var _mr = matrixData[_mi];
+        if (!_mr[0]) { _mxMerged.push(_mr); continue; }
+        if (!_mxSeen[_mr[0]]) {
+          _mxSeen[_mr[0]] = _mr;
+          _mxMerged.push(_mr);
+        } else {
+          // 중복: 기존 행에 빈 필드가 있으면 새 행 값으로 채움
+          var _existing = _mxSeen[_mr[0]];
+          for (var _mf = 2; _mf <= 8; _mf++) {
+            if (!_existing[_mf] && _mr[_mf]) _existing[_mf] = _mr[_mf];
+          }
+          // 중복 행의 Firebase ID 삭제 대상에 추가
+          var _dupId = _mr[10] || _mr[9];
+          if (_dupId) _mxDupsToDelete.push(_dupId);
+        }
+      }
+      matrixData = _mxMerged;
+      // 병합 후 기존 행 저장 (필드가 새로 채워졌을 수 있음)
+      for (var _ki = 0; _ki < matrixData.length; _ki++) {
+        var _kr = matrixData[_ki];
+        if (!_kr[0]) continue;
+        // matrixData에 남은 행은 대표 행이므로 그대로. 저장은 syncronize phase에서.
+      }
+      // Firebase에서 중복 행 삭제
+      for (var _di = 0; _di < _mxDupsToDelete.length; _di++) {
+        try { await fbDelete('matrix', _mxDupsToDelete[_di]); } catch(e){}
+      }
+      if (_mxDupsToDelete.length > 0) console.log('[MatrixDedup] removed ' + _mxDupsToDelete.length + ' duplicate row(s)');
+
       // 캘린더→매트릭스 동기화
       var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
       var MAPPED_FIELDS = [2,3,4,5,7,8];
@@ -9169,8 +9203,24 @@
     tbody.innerHTML = '';
     const allDates = generate2026Dates();
     const dataMap = {};
+    // 같은 날짜에 중복 행이 있을 경우, 값이 있는 행을 우선 사용
+    // (빈 행이 나중에 읽혀서 실제 데이터를 덮는 버그 방지)
     matrixData.forEach(function(row, i) {
-      if (row[0]) dataMap[row[0]] = { row: row, idx: i };
+      if (!row[0]) return;
+      var existing = dataMap[row[0]];
+      if (!existing) {
+        dataMap[row[0]] = { row: row, idx: i };
+        return;
+      }
+      // 기존 행과 새 행 중 "값이 있는 필드 수"가 더 많은 쪽을 선택
+      var countVals = function(r) {
+        var n = 0;
+        for (var k = 2; k <= 8; k++) { if (r[k]) n++; }
+        return n;
+      };
+      if (countVals(row) > countVals(existing.row)) {
+        dataMap[row[0]] = { row: row, idx: i };
+      }
     });
 
     const todayStr = new Date().toISOString().split('T')[0];
@@ -9189,27 +9239,32 @@
       7: { color: 'text-lime-900', bg: 'background:rgba(163,230,53,0.3)' },
       8: { color: 'text-violet-900', bg: 'background:rgba(139,92,246,0.2)' }
     };
-    // mergeStart[dateStr][colIdx] = spanCount, mergeSkip[dateStr] = Set of colIdx to skip
+    // mergeStart[dateStr][colIdx] = spanCount, mergeSkip[dateStr][colIdx] = true
     var mergeStart = {};
     var mergeSkip = {};
+    // 같은 열에서 연속된 같은 값(비어있지 않음)을 rowspan으로 병합
+    // 단, 같은 월 내에서만 병합 (월이 바뀌면 중단)
     for (var mc = 0; mc < MERGE_COLS.length; mc++) {
       var col = MERGE_COLS[mc];
       var ri = 0;
       while (ri < allDates.length) {
-        var e1 = dataMap[allDates[ri].date];
-        var val1 = e1 ? (e1.row[col] || '') : '';
-        var month1 = allDates[ri].date.slice(0, 7);
+        var startDate = allDates[ri].date;
+        var e1 = dataMap[startDate];
+        var val1 = (e1 && e1.row[col]) ? String(e1.row[col]).trim() : '';
         if (!val1) { ri++; continue; }
+        var month1 = startDate.slice(0, 7);
         var span = 1;
         for (var rj = ri + 1; rj < allDates.length; rj++) {
-          if (allDates[rj].date.slice(0, 7) !== month1) break; // same month only
-          var e2 = dataMap[allDates[rj].date];
-          var val2 = e2 ? (e2.row[col] || '') : '';
-          if (val2 === val1) { span++; } else { break; }
+          var nextDate = allDates[rj].date;
+          if (nextDate.slice(0, 7) !== month1) break; // 월 바뀌면 중단
+          var e2 = dataMap[nextDate];
+          var val2 = (e2 && e2.row[col]) ? String(e2.row[col]).trim() : '';
+          if (val2 !== val1) break;
+          span++;
         }
         if (span > 1) {
-          if (!mergeStart[allDates[ri].date]) mergeStart[allDates[ri].date] = {};
-          mergeStart[allDates[ri].date][col] = span;
+          if (!mergeStart[startDate]) mergeStart[startDate] = {};
+          mergeStart[startDate][col] = span;
           for (var sk = 1; sk < span; sk++) {
             var skDate = allDates[ri + sk].date;
             if (!mergeSkip[skDate]) mergeSkip[skDate] = {};
@@ -9220,14 +9275,16 @@
       }
     }
 
-    function mxChip(val, color, dateStr, fieldIdx, rowIdx, inlineStyle) {
+    function mxChip(val, color, dateStr, fieldIdx, rowIdx, inlineStyle, isMerged) {
       if (!val) return '';
       var items = val.split(', ');
-      return '<div class="flex flex-col gap-px">' + items.map(function(v) {
+      var wrapStyle = isMerged ? 'height:100%;min-height:100%;' : '';
+      var chipStyle = isMerged ? 'padding:5px 6px;border-radius:2px;height:100%;display:flex;align-items:center;justify-content:center;' : 'padding:5px 6px;border-radius:2px;';
+      return '<div class="flex flex-col gap-px" style="' + wrapStyle + '">' + items.map(function(v) {
         var displayVal = (fieldIdx === 3) ? v.replace(/^[\d.]+\s*/, '') || v : v;
         return '<span draggable="true" ondragstart="event.stopPropagation();mxDragStart(event,\'' + dateStr + '\',' + fieldIdx + ')" ondragend="this.style.opacity=1"' +
           ' class="mx-chip block w-full text-center text-[11px] font-bold cursor-grab active:cursor-grabbing hover:brightness-90 transition-all ' + color + '"' +
-          ' style="padding:5px 6px;border-radius:2px;' + (inlineStyle||'') + '">' + displayVal + '</span>';
+          ' style="' + chipStyle + (inlineStyle||'') + '">' + displayVal + '</span>';
       }).join('') + '</div>';
     }
 
@@ -9249,8 +9306,8 @@
         const monthNum = parseInt(d.date.slice(5,7)) - 1;
         const monthTr = document.createElement('tr');
         monthTr.className = 'sticky top-0 z-10';
-        monthTr.style.cssText = 'background:#f3eeff;border-top:1px solid #e7e0ed;border-bottom:1px solid #e7e0ed';
-        monthTr.innerHTML = '<td colspan="9" class="px-5 py-2">' +
+        monthTr.style.backgroundColor = '#f3eeff';
+        monthTr.innerHTML = '<td colspan="9" class="px-5 py-2" style="border-top:1px solid #e9d5ff;border-bottom:1px solid #e9d5ff;">' +
           '<span class="text-[11px] font-black uppercase tracking-widest" style="color:#6b38d4">' +
           matrixYear + '년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
@@ -9290,10 +9347,10 @@
         var cs = COL_STYLES[col2];
         var span2 = startSet[col2] || 1;
         var val = row ? row[col2] : '';
-        var chipHtml = mxChip(val, cs.color, d.date, col2, i, cs.bg);
+        var chipHtml = mxChip(val, cs.color, d.date, col2, i, cs.bg, span2 > 1);
         var spanAttr = span2 > 1 ? ' rowspan="' + span2 + '"' : '';
-        var alignStyle = span2 > 1 ? ' style="vertical-align:middle"' : '';
-        html += '<td class="p-0 ' + (span2 > 1 ? 'align-middle' : 'align-top') + ' transition-all cursor-pointer hover:bg-[#f8f1fe]/40"' + spanAttr + alignStyle +
+        var alignStyle = span2 > 1 ? ' style="vertical-align:top;padding:0;height:1px"' : '';
+        html += '<td class="p-0 ' + (span2 > 1 ? 'align-top' : 'align-top') + ' transition-all cursor-pointer hover:bg-[#f8f1fe]/40"' + spanAttr + alignStyle +
           ' data-date="' + d.date + '" data-field="' + col2 + '" data-row="' + i + '"' +
           ' onclick="mxCellClick(this)"' +
           ' ondragover="event.preventDefault();this.classList.add(\'bg-indigo-100/50\')"' +
