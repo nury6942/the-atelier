@@ -3731,9 +3731,11 @@
           var evSeriesId = _getSeriesIdForDoc(docId);
           var seriesBtn = evSeriesId ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + evSeriesId + '\')" class="text-current" title="시리즈 전체 삭제">⊘</button>' : '';
           var isPub = ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||'');
-          var pubStyle = isPub ? 'border-left-width:4px;box-shadow:0 1px 4px rgba(0,0,0,0.12);font-size:13px;padding:5px 8px' : '';
+          var evColor3 = (ev[3]||'').trim();
+          var pubCls = isPub ? 'mt-1.5 mb-1.5 text-[12px] px-3 py-1.5 rounded-full font-black border-l-4 flex items-center justify-between gap-1 cursor-grab text-white' : 'mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 flex items-center justify-between gap-1 cursor-grab';
+          var pubInline = isPub ? 'box-shadow:0 2px 6px rgba(0,0,0,0.18),0 0 0 2px white;text-shadow:0 1px 2px rgba(0,0,0,0.25);z-index:2;position:relative' : '';
           var pubPrefix = isPub ? '🎯 ' : '';
-          return '<div class="mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" style="' + pubStyle + '" ' +
+          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#6366f1') + ';border-left-color:rgba(0,0,0,0.2)' : '') + '" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
