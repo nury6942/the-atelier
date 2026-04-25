@@ -2577,7 +2577,6 @@
               <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#c084fc"></span>시놉</span>
               <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#60a5fa"></span>초고</span>
               <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#fbbf24"></span>퇴고</span>
-              <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#cbd5e1"></span>휴식</span>
               <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#ef4444"></span>오늘</span>
             </div>
           </div>
@@ -11734,7 +11733,7 @@
           '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
           '<span class="truncate">'+w.title+'</span></div>';
         rowsHtml += '<div class="relative flex-1" style="height:38px">';
-        var allPh = ['synopsis','draft','revision','rest'];
+        var allPh = ['synopsis','draft','revision'];
         if (w.publish_start&&w.publish_end) { w.phases = w.phases||{}; w.phases._pub={start:w.publish_start,end:w.publish_end}; allPh.push('_pub'); }
         allPh.forEach(function(pk) {
           var rk = pk==='_pub'?'publishing':pk;
