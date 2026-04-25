@@ -11486,7 +11486,7 @@
     Object.keys(groups).forEach(function(seriesName) {
       html += '<div class="mb-5 last:mb-0">';
       html += '<div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-indigo-500" style="font-size:18px">auto_stories</span><span class="text-sm font-bold text-slate-800">' + seriesName + '</span></div>';
-      var grpWorks = groups[seriesName];
+      var grpWorks = groups[seriesName].sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       grpWorks.forEach(function(w) {
         var phase = w.current_phase || 'synopsis';
         var meta = _wpMeta[phase] || _wpMeta.synopsis;
@@ -11718,7 +11718,7 @@
     var series = getSeriesData((typeof _matrixYear!=='undefined'&&_matrixYear)?_matrixYear:new Date().getFullYear());
     var rowsHtml = '';
     series.forEach(function(s) {
-      var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;});
+      var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;}).sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       if (sWorks.length===0) return;
       var sColor = (_seriesHexMap[s.color]||'#6366f1');
       rowsHtml += '<div class="flex items-stretch" style="height:30px;margin-top:6px">' +
@@ -11838,6 +11838,7 @@
     series.forEach(function(s) {
       var sWorks = _works.filter(function(w) { return (w.series_id === s.id || w.series_name === s.name) && w.publish_start; });
       sWorks = sWorks.filter(function(w) { var pe = new Date((w.publish_end||w.publish_start)+'T00:00:00'); return pe >= rangeStart; });
+      sWorks.sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       if (sWorks.length === 0) return;
       hasRows = true;
       var sColor = scMap[s.color] || '#6366f1';
