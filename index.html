@@ -2678,29 +2678,7 @@
         </div>
       </section>
 
-      <!-- Monthly Scheduler -->
-      <section>
-        <header class="mb-6 flex justify-between items-center">
-          <div>
-            <h2 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">Monthly Scheduler</h2>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="material-symbols-outlined text-sm text-indigo-600" style="font-variation-settings:'wght' 700">sync</span>
-              <p class="text-slate-400 text-sm font-medium">Annual Matrix 에피소드 인덱스와 실시간 연동</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <button onclick="openRepeatModal()" class="gradient-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 hover:opacity-90 transition-all">
-              <span class="material-symbols-outlined text-sm">repeat</span> 반복 추가
-            </button>
-            <div class="flex items-center bg-slate-100 rounded-lg p-1">
-              <button onclick="incomeCalPrev()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
-              <span id="income-cal-title" class="px-4 text-sm font-bold font-headline uppercase tracking-widest">2026년 4월</span>
-              <button onclick="incomeCalNext()" class="p-1.5 hover:bg-slate-200 rounded-md transition-colors"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
-            </div>
-          </div>
-        </header>
-        <div id="income-cal-grid" class="grid grid-cols-7 gap-px bg-slate-200/30 rounded-2xl overflow-hidden"></div>
-      </section>
+      <!-- Monthly Scheduler removed — pipeline manages schedules -->
 
       <!-- Summary Cards — 3 columns -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -10335,8 +10313,7 @@
       renderIncomeMatrix();
     } catch(e) { console.error('renderIncomeMatrix error:', e); }
     try {
-      renderIncomeCal();
-    } catch(e) { console.error('renderIncomeCal error:', e); }
+         } catch(e) { console.error('renderIncomeCal error:', e); }
     try {
       loadWorks();
       renderWorkPipeline();
@@ -10464,7 +10441,7 @@
     _incomeCalMonth = 0;
     // Scheduler 데이터를 현재 연도 Matrix에 동기화
     syncCalToMatrix(_matrixYear);
-    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
 
   function seriesKeyForYear(yr) { return 'atelier_series_' + yr; }
@@ -10802,7 +10779,7 @@
         } catch(e) {}
       }
     }
-    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
 
   function editSeries(si) {
@@ -10828,7 +10805,7 @@
     var evts = getCalEvents();
     evts.forEach(function(e){ if (e.series === oldName) e.series = name; });
     saveCalEvents(evts);
-    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
 
   function deleteSeries(si) {
@@ -10843,7 +10820,7 @@
     saveCalEvents(evts);
     data.splice(si, 1);
     saveSeriesData(data);
-    renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+    renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
 
   // 인라인 셀 편집
@@ -10910,7 +10887,7 @@
         if (!s2.monthly[mKey].eps && !s2.monthly[mKey].rev && !s2.monthly[mKey].target) delete s2.monthly[mKey];
         saveSeriesData(data2);
         setTimeout(function() {
-          renderGrowthChart(); renderIncomeMatrix(); renderIncomeCal(); updateIncomeBottomStats();
+          renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
         }, 0);
       } else {
         td.textContent = origText;
@@ -10960,8 +10937,8 @@
   var _incomeCalMonth = new Date().getMonth();
   var _incomeCalYear = new Date().getFullYear();
 
-  function incomeCalPrev() { _incomeCalMonth--; if(_incomeCalMonth<0){_incomeCalMonth=11;_incomeCalYear--;} renderIncomeCal(); }
-  function incomeCalNext() { _incomeCalMonth++; if(_incomeCalMonth>11){_incomeCalMonth=0;_incomeCalYear++;} renderIncomeCal(); }
+  function incomeCalPrev() { _incomeCalMonth--; if(_incomeCalMonth<0){_incomeCalMonth=11;_incomeCalYear--;} /* cal removed */ }
+  function incomeCalNext() { _incomeCalMonth++; if(_incomeCalMonth>11){_incomeCalMonth=0;_incomeCalYear++;} /* cal removed */ }
 
   var _calClipboard = null;
   var _calSelectedEvt = null; // selected event index
@@ -11041,15 +11018,13 @@
     var evts = getCalEvents();
     var has = evts.some(function(e){ return e.date===dateStr; });
     if (!has) { addCalEvent(dateStr); return; }
-    renderIncomeCal();
-  }
+     }
 
   // Event click: select for copy
   function selectCalEvent(idx) {
     _calSelectedEvt = (_calSelectedEvt===idx) ? null : idx;
     _calSelectedDate = null;
-    renderIncomeCal();
-  }
+     }
 
   // Drag & Drop
   var _calDragIdx = null;
@@ -11062,7 +11037,7 @@
       saveCalEvents(evts);
       _calDragIdx = null;
       syncCalToMatrix();
-      renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
+      renderGrowthChart(); /* cal removed */ renderIncomeMatrix();
     }
   }
 
@@ -11073,7 +11048,7 @@
     saveCalEvents(evts);
     _calSelectedEvt = null;
     syncCalToMatrix();
-    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
+    renderGrowthChart(); /* cal removed */ renderIncomeMatrix();
   }
 
   // Keyboard: Ctrl+C copy, Ctrl+V paste
@@ -11090,7 +11065,7 @@
       evts2.push({ id:'ce_'+Date.now(), date:_calSelectedDate, series:_calClipboard.series, episode:_calClipboard.episode, note:_calClipboard.note });
       saveCalEvents(evts2);
       syncCalToMatrix();
-      renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix();
+      renderGrowthChart(); /* cal removed */ renderIncomeMatrix();
     }
   });
 
@@ -11151,7 +11126,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeRepeatModal();
-    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); /* cal removed */ renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   // 캘린더 이벤트 모달
@@ -11207,7 +11182,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeCalEventModal();
-    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); /* cal removed */ renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   function deleteCalEventFromModal() {
@@ -11219,7 +11194,7 @@
     saveCalEvents(evts);
     syncCalToMatrix();
     closeCalEventModal();
-    renderGrowthChart(); renderIncomeCal(); renderIncomeMatrix(); updateIncomeBottomStats();
+    renderGrowthChart(); /* cal removed */ renderIncomeMatrix(); updateIncomeBottomStats();
   }
 
   function addCalEvent(dateStr) { openCalEventModal(dateStr); }
@@ -11231,8 +11206,8 @@
     var series = getSeriesData(year);
     var evts = getCalEvents();
     series.forEach(function(s) {
-      // 각 월별로 해당 시리즈의 캘린더 이벤트를 날짜순 정렬 후 에피소드 범위 생성
       var monthEps = {};
+      // Legacy scheduler events
       evts.filter(function(e){ return e.series === s.name && (e.date||'').startsWith(yrStr); })
         .sort(function(a,b){ return a.date.localeCompare(b.date); })
         .forEach(function(e) {
@@ -11240,6 +11215,18 @@
           if (!monthEps[m]) monthEps[m] = [];
           monthEps[m].push(e.episode);
         });
+      // Pipeline publishing events from plannerData
+      plannerData.forEach(function(row) {
+        var notes = (row[4]||'').toString();
+        if (notes.indexOf('phase:publishing') < 0) return;
+        if (notes.indexOf('series_id:' + s.id) < 0 && (row[1]||'').indexOf('(' + s.name + ')') < 0) return;
+        var d = (row[0]||'').toString();
+        if (!d.startsWith(yrStr)) return;
+        var m = new Date(d+'T00:00:00').getMonth();
+        if (!monthEps[m]) monthEps[m] = [];
+        var epMatch = (row[1]||'').match(/^(\d+)화/);
+        if (epMatch) monthEps[m].push(epMatch[1] + '화');
+      });
 
       // 캘린더 이벤트가 있는 월: eps를 범위 형태로 업데이트
       for (var m in monthEps) {
