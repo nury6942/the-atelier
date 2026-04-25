@@ -3730,14 +3730,17 @@
           var docId = ev[7] || '';
           var evSeriesId = _getSeriesIdForDoc(docId);
           var seriesBtn = evSeriesId ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + evSeriesId + '\')" class="text-current" title="시리즈 전체 삭제">⊘</button>' : '';
-          return '<div class="mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" ' +
+          var isPub = ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||'');
+          var pubStyle = isPub ? 'border-left-width:4px;box-shadow:0 1px 4px rgba(0,0,0,0.12);font-size:13px;padding:5px 8px' : '';
+          var pubPrefix = isPub ? '🎯 ' : '';
+          return '<div class="mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 ' + color + ' flex items-center justify-between gap-1 cursor-grab" style="' + pubStyle + '" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
             'ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ' +
             'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + realIdx + ')" ' +
             'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
-            '<span class="truncate">' + (ev[1]||'') + '</span>' +
+            '<span class="truncate">' + pubPrefix + (ev[1]||'') + '</span>' +
             '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
             '<button onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')" class="text-current">✎</button>' +
             '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ')" class="text-current">×</button>' +
