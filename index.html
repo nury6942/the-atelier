@@ -12183,19 +12183,40 @@
     if (!_isEventBlocking(cat, title)) return;
     var evDate = (eventRow[0] || '').toString();
     var evEnd = (eventRow[5] || evDate).toString();
-    var affected = _works.filter(function(w) {
-      if (w.status !== 'confirmed') return false;
-      var phases = w.phases || {};
-      return Object.keys(phases).some(function(k) {
-        var p = phases[k];
-        return p && p.start && p.end && !(evEnd < p.start || evDate > p.end);
-      });
+    // Find publishing events that overlap
+    var conflicting = plannerData.filter(function(row) {
+      if ((row[4]||'').indexOf('phase:publishing') < 0) return false;
+      var d = (row[0]||'').toString();
+      return d >= evDate && d <= evEnd;
     });
-    if (affected.length > 0) {
-      var names = affected.map(function(w) { return '"' + w.title + '"'; }).join(', ');
-      var ids = affected.map(function(w) { return w.id; });
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영향받는 작품: ' + names + ' <button onclick="ids=[' + ids.map(function(id){return "\\'" + id + "\\'";}).join(',') + '];ids.forEach(function(id){resyncWorkCal(id)})" class="ml-2 px-2 py-0.5 bg-indigo-600 text-white rounded text-[10px] font-bold">🔄 재동기화</button>', 10000);
-    }
+    if (conflicting.length === 0) return;
+    // Extract affected works
+    var workIds = {};
+    conflicting.forEach(function(row) {
+      var m = (row[4]||'').match(/work_id:([^|]+)/);
+      if (m) {
+        if (!workIds[m[1]]) workIds[m[1]] = [];
+        var ep = (row[1]||'').match(/^(\d+)화/);
+        workIds[m[1]].push((ep ? ep[1] + '화' : '') + ' (' + (row[0]||'').substring(5) + ')');
+      }
+    });
+    var affected = Object.keys(workIds).map(function(id) { return getWorkById(id); }).filter(Boolean);
+    if (affected.length === 0) return;
+    var detailMsg = affected.map(function(w) { return '📖 ' + w.title + '\n   ' + (workIds[w.id]||[]).join(', '); }).join('\n');
+    showConfirm({
+      icon: '⚠️', type: 'danger',
+      title: '연재 일정 충돌',
+      message: evDate + (evEnd !== evDate ? ' ~ ' + evEnd : '') + ' 기간에\n연재 일정이 겹칩니다.\n\n' + detailMsg + '\n\n재동기화하면 차단일을 건너뛰고 일정이 조정됩니다.',
+      confirmText: '🔄 재동기화', cancelText: '그대로 두기',
+      onConfirm: async function() {
+        for (var i = 0; i < affected.length; i++) {
+          await removeWorkCalEvents(affected[i].id);
+          await autoAddScheduleToCalendar(affected[i]);
+        }
+        renderWorkPipeline();
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + affected.length + '개 작품 재동기화 완료');
+      }
+    });
   }
 
   // ===== Existing Work (연재 중 등록) =====
