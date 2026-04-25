@@ -10661,6 +10661,14 @@
     var tbody = document.getElementById('income-matrix-body');
     if (!tbody) return;
     var series = getSeriesData(_matrixYear);
+    // Sort by earliest publish_start across all works
+    loadWorks();
+    series.sort(function(a, b) {
+      var aMin = '9999', bMin = '9999';
+      _works.forEach(function(w) { if ((w.series_id === a.id || w.series_name === a.name) && w.publish_start && w.publish_start < aMin) aMin = w.publish_start; });
+      _works.forEach(function(w) { if ((w.series_id === b.id || w.series_name === b.name) && w.publish_start && w.publish_start < bMin) bMin = w.publish_start; });
+      return aMin.localeCompare(bMin);
+    });
     var curMonth = (new Date().getFullYear() === _matrixYear) ? new Date().getMonth() : -1;
     var html = '';
     series.forEach(function(s, si) {
