@@ -3654,7 +3654,7 @@
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
       if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
       else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,224,224,0.5))' : 'rgba(107,56,212,0.04)'; }
-      else if (isHoliday) { cell.style.background = '#FFB8B8'; }
+      else if (isHoliday) { cell.style.background = '#FFCDCD'; }
       else if (hasSpecial) { cell.style.background = '#FFE0E0'; }
       if (isToday) { cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       cell.dataset.date = dateStr;
@@ -3690,10 +3690,10 @@
 
       let dayNum = '<span class="';
       if (isToday) dayNum += 'inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)';
-      else if (isHoliday || isWeekend) dayNum += 'font-bold text-sm" style="color:rgba(186,26,26,0.6)';
+      else if (isHoliday || isWeekend) dayNum += 'font-bold text-sm" style="color:#8B1A1A';
       else dayNum += 'font-bold text-sm text-[#191c1d]';
       dayNum += '">' + d + '</span>';
-      if (isHoliday) dayNum += '<span class="text-[8px] font-bold ml-1" style="color:rgba(186,26,26,0.5)">' + holidayName + '</span>';
+      if (isHoliday) dayNum += '<span class="text-[8px] font-bold ml-1" style="color:#8B1A1A">' + holidayName + '</span>';
 
       const eventHtml = events.map(function(ev, ei) {
         const realIdx = plannerData.indexOf(ev);
