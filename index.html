@@ -11717,19 +11717,20 @@
         (isYr?'<span class="text-[9px] font-black text-indigo-600">'+mm.y+'</span>':'') +
         '<span class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
     }
-    // Rows
-    var series = getSeriesData((typeof _matrixYear!=='undefined'&&_matrixYear)?_matrixYear:new Date().getFullYear());
+    // Rows — flat sorted by publish_start
+    var seriesData = getSeriesData((typeof _matrixYear!=='undefined'&&_matrixYear)?_matrixYear:new Date().getFullYear());
+    var seriesById = {}; seriesData.forEach(function(s){ seriesById[s.id]=s; });
+    var sorted = _works.slice().sort(function(a,b){ return (a.publish_start||a.phases&&a.phases.synopsis&&a.phases.synopsis.start||'9999').localeCompare(b.publish_start||b.phases&&b.phases.synopsis&&b.phases.synopsis.start||'9999'); });
     var rowsHtml = '';
-    series.forEach(function(s) {
-      var sWorks = _works.filter(function(w){return w.series_id===s.id||w.series_name===s.name;}).sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
-      if (sWorks.length===0) return;
+    sorted.forEach(function(w) {
+      var s = seriesById[w.series_id]; if (!s) { s = seriesData.find(function(x){return x.name===w.series_name;})||{name:'?',color:'slate'}; }
       var sColor = (_seriesHexMap[s.color]||'#6366f1');
-      rowsHtml += '<div class="flex items-stretch" style="height:30px;margin-top:6px">' +
-        '<div class="shrink-0 px-3 flex items-center text-[12px] font-bold" style="width:130px;color:'+sColor+';position:sticky;left:0;z-index:7;background:'+sColor+'0a;border-right:1px solid '+sColor+'20;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">📖 '+s.name+'</div>' +
-        '<div class="flex-1" style="border-bottom:1px dashed '+sColor+'20"></div></div>';
-      sWorks.forEach(function(w) {
+      var sShort = (s.name||'?').charAt(0);
         rowsHtml += '<div class="flex items-stretch" style="height:38px;border-bottom:1px solid #f3f4f6">';
-        rowsHtml += '<div class="shrink-0 px-3 flex items-center text-[11px] font-semibold text-slate-700 truncate" style="width:130px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+'">'+w.title+'</div>';
+        rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 truncate" style="width:150px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
+          '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left:4px;flex-shrink:0"></span>' +
+          '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
+          '<span class="truncate">'+w.title+'</span></div>';
         rowsHtml += '<div class="relative flex-1" style="height:38px">';
         var allPh = ['synopsis','draft','revision','rest'];
         if (w.publish_start&&w.publish_end) { w.phases = w.phases||{}; w.phases._pub={start:w.publish_start,end:w.publish_end}; allPh.push('_pub'); }
@@ -11750,11 +11751,10 @@
         if (w.phases&&w.phases._pub) delete w.phases._pub;
         rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:2px;background:#ef4444;opacity:0.4"></div>';
         rowsHtml += '</div></div>';
-      });
     });
     chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative">' +
       '<div class="flex items-stretch" style="height:40px;border-bottom:2px solid #e5e7eb">' +
-        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:130px;position:sticky;left:0;background:white;z-index:8;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
+        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:150px;position:sticky;left:0;background:white;z-index:8;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
         '<div class="relative flex-1" style="background:#f9fafb;border-radius:0 8px 0 0">' + hHtml + '</div>' +
       '</div><div id="ut-body">'+rowsHtml+'</div></div>';
     setTimeout(function() { var sc=document.getElementById('ut-scroll'); if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);} },120);
