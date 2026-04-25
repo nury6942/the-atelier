@@ -4566,6 +4566,26 @@
     setTimeout(function(){ toast.remove(); }, 3000);
   }
 
+  // ===== Custom Confirm =====
+  var _atlConfirmCb = null;
+  function showConfirm(opts) {
+    var m = document.getElementById('atl-confirm'); if (!m) return;
+    document.getElementById('atl-confirm-title').textContent = opts.title || '확인';
+    document.getElementById('atl-confirm-msg').textContent = opts.message || '진행하시겠어요?';
+    document.getElementById('atl-confirm-icon').textContent = opts.icon || '❓';
+    var wrap = document.getElementById('atl-confirm-icon-wrap');
+    var okBtn = document.getElementById('atl-confirm-ok');
+    if (opts.type === 'danger') { wrap.style.background = 'linear-gradient(135deg,#fee2e2,#fef2f2)'; okBtn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)'; okBtn.style.boxShadow = '0 2px 8px rgba(239,68,68,0.25)'; }
+    else { wrap.style.background = 'linear-gradient(135deg,#eef2ff,#f5f3ff)'; okBtn.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)'; okBtn.style.boxShadow = '0 2px 8px rgba(99,102,241,0.25)'; }
+    okBtn.textContent = opts.confirmText || '확인';
+    document.getElementById('atl-confirm-cancel').textContent = opts.cancelText || '취소';
+    _atlConfirmCb = opts.onConfirm || null;
+    m.style.display = 'flex';
+  }
+  function doAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; if (_atlConfirmCb) _atlConfirmCb(); _atlConfirmCb = null; }
+  function cancelAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; _atlConfirmCb = null; }
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var m = document.getElementById('atl-confirm'); if (m && m.style.display !== 'none') cancelAtlConfirm(); } });
+
   function showPlannerToast(msg) {
     var existing = document.getElementById('planner-toast');
     if (existing) existing.remove();
@@ -11586,7 +11606,7 @@
           (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span></button>' :
                      '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size:12px">sync</span></button>') +
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-          '<button onclick="event.stopPropagation();if(confirm(\'삭제?\')){deleteWork(\''+w.id+'\');renderWorkPipeline()}" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button></div>';
+          '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button></div>';
         rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
           '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left:4px;flex-shrink:0"></span>' +
           '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
@@ -11996,30 +12016,25 @@
     } finally { _workSaving = false; _unlockSaveBtn(btn); }
   }
 
-  async function confirmWork(id) {
+  function confirmWork(id) {
     if (_workSaving) return;
     var w = getWorkById(id);
     if (!w) return;
-    if (!confirm('"' + (w.title || '') + '" 작품을 확정하고 캘린더에 일정을 추가할까요?')) return;
-    _workSaving = true;
-    try {
-      w.status = 'confirmed';
-      w.updated_at = new Date().toISOString();
-      saveWorks();
-      await autoAddScheduleToCalendar(w);
-      renderWorkPipeline();
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정! 캘린더에 일정이 추가됐어요.');
-    } finally { _workSaving = false; }
+    showConfirm({ icon:'🎯', title:'작품 확정', message:'"' + (w.title||'') + '" 작품을 확정하고\n캘린더에 연재 일정을 추가할까요?', confirmText:'확정 + 추가', onConfirm: async function() {
+      _workSaving = true;
+      try { w.status = 'confirmed'; w.updated_at = new Date().toISOString(); saveWorks(); await autoAddScheduleToCalendar(w); renderWorkPipeline();
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 확정!');
+      } finally { _workSaving = false; }
+    }});
   }
 
-  async function resyncWorkCal(id) {
+  function resyncWorkCal(id) {
     var w = getWorkById(id);
     if (!w) return;
-    if (!confirm('"' + (w.title || '') + '" 캘린더 일정을 재동기화할까요?\n기존 일정 삭제 후 다시 생성합니다.')) return;
-    await removeWorkCalEvents(id);
-    await autoAddScheduleToCalendar(w);
-    renderWorkPipeline();
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 캘린더 재동기화 완료');
+    showConfirm({ icon:'🔄', title:'캘린더 재동기화', message:'"' + (w.title||'') + '"의 캘린더 일정을\n새로 동기화할까요?\n\n기존 일정 삭제 후 다시 생성됩니다.', confirmText:'재동기화', onConfirm: async function() {
+      await removeWorkCalEvents(id); await autoAddScheduleToCalendar(w); renderWorkPipeline();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 재동기화 완료');
+    }});
   }
 
   async function autoAddScheduleToCalendar(work) {
@@ -12265,7 +12280,9 @@
   }
 
   function runCalMigration() {
-    if (!confirm('파이프라인 작품들을 캘린더에 동기화하고\n옛날 데이터를 제거합니다.\n\n(_pre_migration_backup으로 자동 백업)')) return;
+    showConfirm({ icon:'🚀', title:'데이터 마이그레이션', message:'파이프라인 작품들을 캘린더에 동기화하고\n옛날 데이터를 제거합니다.\n\n자동 백업됩니다.', confirmText:'진행', onConfirm: _doCalMigration });
+  }
+  function _doCalMigration() {
     // Backup
     localStorage.setItem('_pre_migration_backup', JSON.stringify({ cal_events: localStorage.getItem('atelier_cal_events'), works: localStorage.getItem('atelier_works'), date: new Date().toISOString() }));
     var evts = getCalEvents();
@@ -16269,6 +16286,22 @@ speaker 설정:
       <div class="px-6 pb-6 flex gap-2">
         <button onclick="saveEditWork()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
         <button onclick="closeEditWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div id="atl-confirm" class="fixed inset-0 z-[9999] flex items-center justify-center p-5" style="display:none">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="cancelAtlConfirm()"></div>
+    <div class="relative bg-white rounded-[20px] p-8 max-w-[380px] w-full shadow-2xl" style="animation:modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1)">
+      <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl" id="atl-confirm-icon-wrap" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff)">
+        <span id="atl-confirm-icon">❓</span>
+      </div>
+      <h3 id="atl-confirm-title" class="text-[17px] font-bold text-center text-slate-900 mb-2"></h3>
+      <p id="atl-confirm-msg" class="text-sm text-slate-500 text-center leading-relaxed mb-6" style="white-space:pre-line"></p>
+      <div class="flex gap-2">
+        <button onclick="cancelAtlConfirm()" class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all" id="atl-confirm-cancel">취소</button>
+        <button onclick="doAtlConfirm()" class="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" id="atl-confirm-ok" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">확인</button>
       </div>
     </div>
   </div>
