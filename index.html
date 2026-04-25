@@ -3652,10 +3652,10 @@
 
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
-      if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,138,122,0.25))' : '#fff0ee'; cell.style.borderRadius = isToday ? '12px' : ''; }
-      else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; }
-      else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.08)'; }
-      else if (hasSpecial) { cell.style.background = 'rgba(252,231,243,0.35)'; }
+      if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
+      else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,224,224,0.5))' : 'rgba(107,56,212,0.04)'; }
+      else if (isHoliday) { cell.style.background = '#FFB8B8'; }
+      else if (hasSpecial) { cell.style.background = '#FFE0E0'; }
       if (isToday) { cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
