@@ -3634,8 +3634,11 @@
         }
         return false;
       });
-      // 정렬: 업무 카테고리 최상단, 그 외는 order 순
+      // 정렬: 다일 연속 일정 → 단일 일정 → 업무 → order 순
       events.sort(function(a, b) {
+        var aRange = (a[5] && a[5] > a[0]) ? 1 : 0;
+        var bRange = (b[5] && b[5] > b[0]) ? 1 : 0;
+        if (aRange !== bRange) return bRange - aRange; // 다일 먼저
         if (a[2] === '업무' && b[2] !== '업무') return -1;
         if (a[2] !== '업무' && b[2] === '업무') return 1;
         return (parseInt(a[6])||0) - (parseInt(b[6])||0);
@@ -3649,10 +3652,11 @@
 
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
-      if (isToday) { cell.style.background = hasLeave ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(207,250,254,0.5))' : hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
-      else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.03)'; }
-      else if (hasLeave) { cell.style.background = '#cffafe'; }
-      else if (hasSpecial) { cell.style.background = '#fce7f3'; }
+      if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,138,122,0.25))' : '#fff0ee'; cell.style.borderRadius = isToday ? '12px' : ''; }
+      else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,231,243,0.4))' : 'rgba(107,56,212,0.04)'; }
+      else if (isHoliday) { cell.style.background = 'rgba(186,26,26,0.08)'; }
+      else if (hasSpecial) { cell.style.background = 'rgba(252,231,243,0.35)'; }
+      if (isToday) { cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
       cell.ondblclick = function() { openPlannerModal(null, dateStr); };
