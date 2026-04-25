@@ -2594,9 +2594,14 @@
             <h2 class="text-2xl font-extrabold font-headline tracking-tight text-slate-900">🎬 작품 파이프라인</h2>
             <p class="text-slate-400 text-sm mt-1">집필 현황과 다음 연재 예측</p>
           </div>
-          <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
-            <span class="material-symbols-outlined text-sm">add</span> 새 작품
-          </button>
+          <div class="flex gap-2">
+            <button onclick="openExistingWorkModal()" class="px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-indigo-200 text-indigo-600 hover:bg-indigo-50">
+              <span class="material-symbols-outlined text-sm">library_books</span> 연재 중 추가
+            </button>
+            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+              <span class="material-symbols-outlined text-sm">add</span> 새 작품
+            </button>
+          </div>
         </div>
 
         <div id="work-pipeline-list"></div>
@@ -11512,26 +11517,34 @@
             '<div class="h-full rounded-full transition-all" style="width:' + pct + '%;background:' + sHex + '"></div>' +
           '</div>' +
         '</div>';
-        // 단계별 일정 4칸 그리드
+        // 단계별 일정 그리드
         var _sd = function(d) { return d ? d.substring(5).replace('-','/') : '—'; };
-        html += '<div class="grid grid-cols-4 gap-2 mt-3 mb-2">';
-        var schedCells = [
-          { icon:'📝', label:'시놉', s:p.synopsis?p.synopsis.start:'', e:p.synopsis?p.synopsis.end:'', hi:false },
-          { icon:'✏️', label:'초고', s:p.draft?p.draft.start:'', e:p.draft?p.draft.end:'', hi:false },
-          { icon:'🔍', label:'퇴고', s:p.revision?p.revision.start:'', e:p.revision?p.revision.end:'', hi:false },
-          { icon:'🎯', label:'연재', s:w.publish_start||'', e:w.publish_end||'', hi:true }
-        ];
-        schedCells.forEach(function(sc) {
-          var border = sc.hi ? 'border:2px solid '+sHex : 'border:1px solid #f3f4f6';
-          var lColor = sc.hi ? 'color:'+sHex : 'color:#6b7280';
-          var dColor = sc.hi ? 'color:'+sHex+';font-weight:700' : '';
-          html += '<div class="bg-white p-2.5 rounded-lg text-center" style="'+border+'">' +
-            '<div class="text-base mb-1">'+sc.icon+'</div>' +
-            '<div class="text-[10px] font-bold mb-1" style="'+lColor+'">'+sc.label+'</div>' +
-            '<div class="text-[11px] font-semibold text-slate-800" style="'+dColor+'">'+_sd(sc.s)+' ~ '+_sd(sc.e)+'</div>' +
+        if (w.is_existing) {
+          // 연재 중 등록 작품: 2칸 (완료 + 연재)
+          html += '<div class="grid grid-cols-2 gap-2 mt-3 mb-2">' +
+            '<div class="bg-emerald-50 p-2.5 rounded-lg text-center" style="border:1px solid #6ee7b7"><div class="text-base mb-1">✅</div><div class="text-[10px] font-bold text-emerald-700 mb-1">시놉/초고/퇴고</div><div class="text-[11px] font-semibold text-emerald-600">완료</div></div>' +
+            '<div class="bg-white p-2.5 rounded-lg text-center" style="border:2px solid '+sHex+'"><div class="text-base mb-1">🎯</div><div class="text-[10px] font-bold mb-1" style="color:'+sHex+'">연재</div><div class="text-[11px] font-semibold" style="color:'+sHex+';font-weight:700">'+_sd(w.publish_start)+' ~ '+_sd(w.publish_end)+'</div></div>' +
           '</div>';
-        });
-        html += '</div>';
+        } else {
+          html += '<div class="grid grid-cols-4 gap-2 mt-3 mb-2">';
+          var schedCells = [
+            { icon:'📝', label:'시놉', s:p.synopsis?p.synopsis.start:'', e:p.synopsis?p.synopsis.end:'', hi:false },
+            { icon:'✏️', label:'초고', s:p.draft?p.draft.start:'', e:p.draft?p.draft.end:'', hi:false },
+            { icon:'🔍', label:'퇴고', s:p.revision?p.revision.start:'', e:p.revision?p.revision.end:'', hi:false },
+            { icon:'🎯', label:'연재', s:w.publish_start||'', e:w.publish_end||'', hi:true }
+          ];
+          schedCells.forEach(function(sc) {
+            var border = sc.hi ? 'border:2px solid '+sHex : 'border:1px solid #f3f4f6';
+            var lColor = sc.hi ? 'color:'+sHex : 'color:#6b7280';
+            var dColor = sc.hi ? 'color:'+sHex+';font-weight:700' : '';
+            html += '<div class="bg-white p-2.5 rounded-lg text-center" style="'+border+'">' +
+              '<div class="text-base mb-1">'+sc.icon+'</div>' +
+              '<div class="text-[10px] font-bold mb-1" style="'+lColor+'">'+sc.label+'</div>' +
+              '<div class="text-[11px] font-semibold text-slate-800" style="'+dColor+'">'+_sd(sc.s)+' ~ '+_sd(sc.e)+'</div>' +
+            '</div>';
+          });
+          html += '</div>';
+        }
         // 연재 요일
         if (w.publish_start && pubDayStr) {
           html += '<div class="mt-2 text-[10px] text-slate-400">연재 요일: 매주 ' + pubDayStr + '요일</div>';
@@ -12310,6 +12323,75 @@
       var ids = affected.map(function(w) { return w.id; });
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 영향받는 작품: ' + names + ' <button onclick="ids=[' + ids.map(function(id){return "\\'" + id + "\\'";}).join(',') + '];ids.forEach(function(id){resyncWorkCal(id)})" class="ml-2 px-2 py-0.5 bg-indigo-600 text-white rounded text-[10px] font-bold">🔄 재동기화</button>', 10000);
     }
+  }
+
+  // ===== Existing Work (연재 중 등록) =====
+  function openExistingWorkModal() {
+    var yr = (typeof _matrixYear !== 'undefined' && _matrixYear) ? _matrixYear : new Date().getFullYear();
+    var series = getSeriesData(yr);
+    var sel = document.getElementById('ew2-series');
+    if (sel) sel.innerHTML = series.map(function(s) { return '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>'; }).join('');
+    document.getElementById('ew2-title').value = '';
+    document.getElementById('ew2-publish-start').value = '';
+    document.getElementById('ew2-episodes').value = '20';
+    document.getElementById('ew2-publish-day').value = '6';
+    document.getElementById('existing-work-modal').style.cssText = 'display:flex!important';
+    setTimeout(function() { initSimpleDatePicker('ew2-publish-start'); }, 80);
+  }
+  function closeExistingWorkModal() {
+    document.getElementById('existing-work-modal').style.cssText = 'display:none!important';
+  }
+  async function saveExistingWork() {
+    if (_workSaving) return;
+    var title = document.getElementById('ew2-title').value.trim();
+    var pubStart = document.getElementById('ew2-publish-start').value;
+    if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 작품명을 입력하세요'); return; }
+    if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 입력하세요'); return; }
+    _workSaving = true;
+    var btn = document.getElementById('ew2-save-btn'); _lockSaveBtn(btn);
+    try {
+      var sel = document.getElementById('ew2-series');
+      var opt = sel.options[sel.selectedIndex];
+      var eps = parseInt(document.getElementById('ew2-episodes').value) || 20;
+      var pubDay = parseInt(document.getElementById('ew2-publish-day').value) || 6;
+      var pubEnd = new Date(pubStart + 'T00:00:00');
+      pubEnd.setDate(pubEnd.getDate() + (eps - 1) * 7);
+      var work = {
+        id: 'w_ex_' + Date.now(),
+        series_id: sel.value,
+        series_name: opt ? opt.dataset.name : '',
+        title: title,
+        total_episodes: eps,
+        current_phase: 'publishing',
+        status: 'confirmed',
+        is_existing: true,
+        publish_day: pubDay,
+        publish_start: pubStart,
+        publish_end: _fmtDate(pubEnd),
+        phases: { synopsis: null, draft: null, revision: null, rest: null },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      addWork(work);
+      // Add calendar events (publishing only)
+      var cat = '글쓰기';
+      var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
+      var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
+      var pCur = new Date(pubStart + 'T00:00:00');
+      for (var ep = 1; ep <= eps; ep++) {
+        var row = [_fmtDate(pCur), ep + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0'];
+        try {
+          var obj = rowToObj('planner', row);
+          var saved = await fbAdd('planner', obj);
+          plannerData.push(row.concat([saved._id]));
+        } catch(e) {}
+        pCur.setDate(pCur.getDate() + 7);
+      }
+      closeExistingWorkModal();
+      renderWorkPipeline();
+      try { renderCalendar(); } catch(e) {}
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 연재 일정 등록 완료!');
+    } finally { _workSaving = false; _unlockSaveBtn(btn); }
   }
 
   // ===== Bottom Quick Stats =====
@@ -16220,6 +16302,30 @@ speaker 설정:
         <button onclick="closeNewWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
         <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
         <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">💾 초안 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Existing Work Modal (global) -->
+  <div id="existing-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div class="px-6 py-4" style="background:linear-gradient(135deg,#818cf8,#a78bfa);">
+        <h3 class="font-bold text-white text-lg font-headline">📚 연재 중 작품 추가</h3>
+        <p class="text-white/70 text-xs mt-0.5">시놉/초고/퇴고 건너뜀 — 연재 일정만 등록</p>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="px-3 py-2.5 rounded-lg bg-indigo-50 border-l-3 border-indigo-400 text-xs text-indigo-700 leading-relaxed" style="border-left:3px solid #818cf8">💡 이미 연재 중이거나 시작 예정인 작품용. 시놉/초고/퇴고는 "완료" 처리됩니다.</div>
+        <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시리즈 *</label><select id="ew2-series" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"></select></div>
+        <div class="space-y-1"><label class="text-xs font-bold text-slate-500">작품명 *</label><input id="ew2-title" type="text" placeholder="예: 센티넬 버스" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1"><label class="text-xs font-bold text-slate-500">총 화수</label><select id="ew2-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
+          <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="ew2-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
+        </div>
+        <div class="space-y-1"><label class="text-xs font-bold text-indigo-600">🎯 연재 시작일 *</label><input id="ew2-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
+      </div>
+      <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;padding-top:16px">
+        <button onclick="closeExistingWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
+        <button onclick="saveExistingWork()" id="ew2-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,#818cf8,#a78bfa)">💾 연재 일정 등록</button>
       </div>
     </div>
   </div>
