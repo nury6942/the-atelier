@@ -2632,6 +2632,12 @@
         </div>
       </section>
 
+      <!-- Migration Notice -->
+      <div id="cal-migration-notice" class="rounded-xl p-4 mb-4 flex items-center justify-between gap-4" style="display:none;background:#fef3c7;border:1.5px solid #fbbf24">
+        <span class="text-sm text-amber-800" id="cal-migration-text">⚠️ 옛날 데이터 발견</span>
+        <button onclick="runCalMigration()" class="px-4 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors shrink-0">🔄 마이그레이션</button>
+      </div>
+
       <!-- Annual Performance Matrix -->
       <section>
         <header class="mb-6 flex justify-between items-center">
@@ -10317,6 +10323,7 @@
     try {
       loadWorks();
       renderWorkPipeline();
+      checkCalMigration();
     } catch(e) { console.error('renderWorkPipeline error:', e); }
   }
 
@@ -12379,6 +12386,55 @@
       try { renderCalendar(); } catch(e) {}
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + title + '" 연재 일정 등록 완료!');
     } finally { _workSaving = false; _unlockSaveBtn(btn); }
+  }
+
+  // ===== Calendar Data Migration =====
+  function checkCalMigration() {
+    var notice = document.getElementById('cal-migration-notice');
+    if (!notice) return;
+    var evts = getCalEvents();
+    var oldCount = evts.filter(function(e) { return !(e.notes && (e.notes.indexOf('phase:publishing') >= 0 || e.notes.indexOf('work_id:') >= 0)); }).length;
+    if (oldCount > 0) {
+      notice.style.display = 'flex';
+      document.getElementById('cal-migration-text').textContent = '⚠️ 옛날 Monthly Scheduler 데이터 ' + oldCount + '개 발견. 파이프라인 데이터로 교체하세요.';
+    } else { notice.style.display = 'none'; }
+  }
+
+  function runCalMigration() {
+    if (!confirm('파이프라인 작품들을 캘린더에 동기화하고\n옛날 데이터를 제거합니다.\n\n(_pre_migration_backup으로 자동 백업)')) return;
+    // Backup
+    localStorage.setItem('_pre_migration_backup', JSON.stringify({ cal_events: localStorage.getItem('atelier_cal_events'), works: localStorage.getItem('atelier_works'), date: new Date().toISOString() }));
+    var evts = getCalEvents();
+    var yr = (typeof _matrixYear !== 'undefined' && _matrixYear) ? _matrixYear : new Date().getFullYear();
+    var series = getSeriesData(yr);
+    // Step 1: Add pipeline works
+    loadWorks();
+    var added = 0;
+    _works.forEach(function(w) {
+      if (w.status !== 'confirmed' || !w.publish_start) return;
+      var existing = evts.filter(function(e) { return (e.notes || '').indexOf('work_id:' + w.id) >= 0; });
+      if (existing.length > 0) return;
+      var s = series.find(function(x) { return x.id === w.series_id; });
+      var sName = s ? s.name : (w.series_name || '');
+      var eps = w.total_episodes || 20;
+      var pCur = new Date(w.publish_start + 'T00:00:00');
+      for (var i = 0; i < eps; i++) {
+        evts.push({ id: 'ce_' + Date.now() + '_' + i + '_' + w.id, date: _fmtDate(pCur), series: sName, episode: (i + 1) + '화', notes: 'work_id:' + w.id + '|phase:publishing|series_id:' + w.series_id + '|episode:' + (i + 1) });
+        pCur.setDate(pCur.getDate() + 7);
+        added++;
+      }
+    });
+    // Step 2: Remove old events (backup first)
+    var oldEvts = evts.filter(function(e) { return !(e.notes && (e.notes.indexOf('phase:publishing') >= 0 || e.notes.indexOf('work_id:') >= 0)); });
+    if (oldEvts.length > 0) localStorage.setItem('_legacy_cal_events_backup', JSON.stringify(oldEvts));
+    var newEvts = evts.filter(function(e) { return e.notes && (e.notes.indexOf('phase:publishing') >= 0 || e.notes.indexOf('work_id:') >= 0); });
+    saveCalEvents(newEvts);
+    // Refresh
+    syncCalToMatrix();
+    renderIncomeMatrix();
+    renderWorkPipeline();
+    checkCalMigration();
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 마이그레이션 완료! 추가 ' + added + '개, 제거 ' + oldEvts.length + '개');
   }
 
   // ===== Bottom Quick Stats =====
