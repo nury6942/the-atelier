@@ -13940,6 +13940,10 @@
       return pkOutfits.find(function(o){return o.date===dateStr;});
     }
 
+    // Build name→count map for badge
+    var _pkNameCount = {};
+    pkOutfits.forEach(function(o) { if (o.trip_id !== pkTripId) return; (o.items||[]).forEach(function(item) { var n = (item.name||'').trim(); if (n) _pkNameCount[n] = (_pkNameCount[n]||0) + 1; }); });
+
     var html='';
     dates.forEach(function(date,idx){
       var city=getCity(date);
@@ -13954,7 +13958,7 @@
         return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" draggable="true" data-date="'+dateStr+'" data-idx="'+ii+'" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
           '<span class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
-          '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+'</span>' +
+          '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
         '</div>';
       }).join('');
@@ -14007,8 +14011,24 @@
   async function pkToggleOutfit(dateStr, ii, checked) {
     var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
     if (!outfit) return;
+    var itemName = (outfit.items[ii].name||'').trim();
     outfit.items[ii].checked = checked;
     await fbUpdate('outfits', outfit._id, {items:outfit.items});
+    // Sync same-name items across all dates in this trip
+    if (itemName) {
+      for (var oi = 0; oi < pkOutfits.length; oi++) {
+        var o = pkOutfits[oi];
+        if (o.date === dateStr || o.trip_id !== pkTripId) continue;
+        var changed = false;
+        for (var ji = 0; ji < (o.items||[]).length; ji++) {
+          if ((o.items[ji].name||'').trim() === itemName && o.items[ji].checked !== checked) {
+            o.items[ji].checked = checked;
+            changed = true;
+          }
+        }
+        if (changed) await fbUpdate('outfits', o._id, {items:o.items});
+      }
+    }
     pkRenderDaily(); pkRenderProgress();
   }
 
