@@ -13955,16 +13955,18 @@
       var itemsHtml = items.map(function(item, ii){
         var cls = item.checked ? 'line-through opacity-50' : '';
         var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
-        return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" draggable="true" data-date="'+dateStr+'" data-idx="'+ii+'" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
+        var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
+        var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius:6px;' : '';
+        return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" draggable="true" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
           '<span class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
           '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
-          '<button onclick="event.stopPropagation();pkCopyItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-indigo-50 rounded text-slate-200 hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-all" title="이 아이템 복사"><span class="material-symbols-outlined" style="font-size:12px">content_copy</span></button>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
         '</div>';
       }).join('');
 
-      html+='<div class="bg-white rounded-2xl shadow-sm p-4 md:p-5 hover:shadow-md transition-all pk-day-card" data-date="'+dateStr+'" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
+      var isActive = _pkActiveDate === dateStr;
+      html+='<div class="bg-white rounded-2xl shadow-sm p-4 md:p-5 hover:shadow-md transition-all pk-day-card'+(isActive?' ring-2 ring-indigo-200':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
         '<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">' +
           '<div class="col-span-1 text-center md:text-left">' +
             '<div class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">'+mon+'</div><div class="text-xl font-extrabold text-slate-900 leading-none">'+day+'</div>' +
@@ -14071,13 +14073,57 @@
     pkRenderDaily(); pkRenderProgress();
   }
 
-  function pkCopyItem(dateStr, idx) {
-    var outfit = pkOutfits.find(function(o) { return o.date === dateStr; });
-    if (!outfit || !outfit.items[idx]) return;
-    _pkClipboard = [{ name: outfit.items[idx].name, checked: false }];
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">content_copy</span> "' + outfit.items[idx].name + '" 복사됨');
+  // ===== Packing Selection + Keyboard Shortcuts =====
+  var _pkSelected = []; // [{date, idx}]
+  var _pkActiveDate = null;
+  var _pkLastClickIdx = null;
+
+  function pkSelectItem(dateStr, idx, e) {
+    if (e && e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+    if (e && e.shiftKey && _pkLastClickIdx !== null && _pkActiveDate === dateStr) {
+      // Shift: range select
+      var lo = Math.min(_pkLastClickIdx, idx), hi = Math.max(_pkLastClickIdx, idx);
+      _pkSelected = [];
+      for (var i = lo; i <= hi; i++) _pkSelected.push({ date: dateStr, idx: i });
+    } else if (e && (e.ctrlKey || e.metaKey)) {
+      // Ctrl/Cmd: toggle single
+      var existing = _pkSelected.findIndex(function(s) { return s.date === dateStr && s.idx === idx; });
+      if (existing >= 0) _pkSelected.splice(existing, 1);
+      else _pkSelected.push({ date: dateStr, idx: idx });
+    } else {
+      // Normal click: select single
+      _pkSelected = [{ date: dateStr, idx: idx }];
+    }
+    _pkActiveDate = dateStr;
+    _pkLastClickIdx = idx;
     pkRenderDaily();
   }
+
+  function pkSetActiveCard(dateStr) { _pkActiveDate = dateStr; }
+
+  // Keyboard: Ctrl+C / Ctrl+V
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+    var page = document.getElementById('page-packing');
+    if (!page || page.style.display === 'none') return;
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+      if (_pkSelected.length === 0) return;
+      e.preventDefault();
+      _pkClipboard = _pkSelected.map(function(s) {
+        var o = pkOutfits.find(function(x) { return x.date === s.date; });
+        return o && o.items[s.idx] ? { name: o.items[s.idx].name, checked: false } : null;
+      }).filter(Boolean);
+      if (_pkClipboard.length > 0) {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">content_copy</span> ' + _pkClipboard.length + '개 아이템 복사됨');
+        pkRenderDaily();
+      }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+      if (!_pkClipboard || _pkClipboard.length === 0 || !_pkActiveDate) return;
+      e.preventDefault();
+      pkPasteDay(_pkActiveDate);
+    }
+  });
 
   // ===== Packing Drag & Drop =====
   var _pkDragData = null;
