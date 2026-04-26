@@ -13960,7 +13960,7 @@
         return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" draggable="true" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
           '<span class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
-          '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
+          '<span class="text-sm text-slate-800 '+cls+' flex-1 cursor-text hover:bg-slate-50 rounded px-1 -mx-1 transition-colors" ondblclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this)">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
         '</div>';
       }).join('');
@@ -14070,6 +14070,51 @@
       pkOutfits.push(saved);
     }
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">content_paste</span> ' + newItems.length + '개 아이템 붙여넣기 완료');
+    pkRenderDaily(); pkRenderProgress();
+  }
+
+  // ===== Packing Inline Edit =====
+  var _pkEditing = false;
+
+  function pkStartEdit(dateStr, idx, spanEl) {
+    if (_pkEditing) return;
+    _pkEditing = true;
+    var outfit = pkOutfits.find(function(o) { return o.date === dateStr; });
+    if (!outfit || !outfit.items[idx]) { _pkEditing = false; return; }
+    var oldName = outfit.items[idx].name || '';
+    var row = spanEl.closest('.pk-item-row');
+    if (row) row.setAttribute('draggable', 'false');
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = oldName;
+    input.className = 'text-sm text-slate-900 flex-1 px-2 py-1 rounded-lg border-2 border-indigo-400 outline-none bg-white';
+    input.style.cssText = 'box-shadow:0 0 0 3px rgba(99,102,241,0.12);min-width:0';
+    spanEl.replaceWith(input);
+    input.focus();
+    input.select();
+    var done = false;
+    function save() {
+      if (done) return; done = true; _pkEditing = false;
+      var val = input.value.trim();
+      if (!val) val = oldName; // empty → keep original
+      pkDoRename(dateStr, idx, val);
+    }
+    function cancel() {
+      if (done) return; done = true; _pkEditing = false;
+      pkRenderDaily(); pkRenderProgress();
+    }
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); save(); }
+      if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+    });
+    input.addEventListener('blur', function() { setTimeout(save, 100); });
+  }
+
+  async function pkDoRename(dateStr, idx, newName) {
+    var outfit = pkOutfits.find(function(o) { return o.date === dateStr; });
+    if (!outfit || !outfit.items[idx]) { pkRenderDaily(); return; }
+    outfit.items[idx].name = newName;
+    await fbUpdate('outfits', outfit._id, { items: outfit.items });
     pkRenderDaily(); pkRenderProgress();
   }
 
