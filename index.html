@@ -13957,8 +13957,8 @@
         var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
         var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
         var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius:6px;' : '';
-        return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" draggable="true" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
-          '<span class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px">drag_indicator</span>' +
+        return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
+          '<span draggable="true" class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
           '<span class="text-sm text-slate-800 '+cls+' flex-1 cursor-text hover:bg-slate-50 rounded px-1 -mx-1 transition-colors" ondblclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this)">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
@@ -14177,10 +14177,13 @@
     _pkDragData = { fromDate: dateStr, fromIdx: idx };
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', dateStr + '|' + idx);
-    e.target.style.opacity = '0.4';
+    var row = e.target.closest('.pk-item-row');
+    if (row) { row.style.opacity = '0.4'; e.dataTransfer.setDragImage(row, 20, 12); }
   }
 
   function pkDragEnd(e) {
+    var row = e.target.closest('.pk-item-row');
+    if (row) row.style.opacity = '1';
     e.target.style.opacity = '1';
     _pkDragData = null;
     document.querySelectorAll('.pk-item-row').forEach(function(el) { el.style.borderTop = ''; });
