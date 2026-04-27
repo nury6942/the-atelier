@@ -10560,7 +10560,12 @@
     var s = localStorage.getItem(LS_CAL_EVENTS_KEY);
     return s ? JSON.parse(s) : [];
   }
-  function saveCalEvents(d){ localStorage.setItem(LS_CAL_EVENTS_KEY, JSON.stringify(d)); }
+  function saveCalEvents(d){
+    var ts = new Date().toISOString();
+    localStorage.setItem(LS_CAL_EVENTS_KEY, JSON.stringify(d));
+    localStorage.setItem(LS_CAL_EVENTS_KEY + '_ts', ts);
+    try { db.collection('side_cal_events').doc('list').set({ data: JSON.stringify(d), updatedAt: ts }); } catch(e) {}
+  }
 
   function getSeriesColor(name) {
     var data = getSeriesData();
@@ -11284,11 +11289,55 @@
   }
 
   function saveWorks() {
+    var ts = new Date().toISOString();
     localStorage.setItem('atelier_works', JSON.stringify(_works));
-    try { db.collection('works').doc('list').set({ data: JSON.stringify(_works), updatedAt: new Date().toISOString() }); } catch(e) {}
+    localStorage.setItem('atelier_works_ts', ts);
+    try { db.collection('works').doc('list').set({ data: JSON.stringify(_works), updatedAt: ts }); } catch(e) {}
   }
 
   function getWorkById(id) { return _works.find(function(w) { return w.id === id; }); }
+
+  // ===== Cloud Sync =====
+  async function syncAllFromCloud() {
+    console.log('[Sync] 클라우드 동기화 시작...');
+    try {
+      // Works
+      var wDoc = await db.collection('works').doc('list').get();
+      if (wDoc.exists && wDoc.data().data) {
+        var rts = wDoc.data().updatedAt || '';
+        var lts = localStorage.getItem('atelier_works_ts') || '';
+        if (!lts || rts > lts) {
+          _works = JSON.parse(wDoc.data().data);
+          localStorage.setItem('atelier_works', wDoc.data().data);
+          localStorage.setItem('atelier_works_ts', rts);
+          console.log('[Sync] works ' + _works.length + '개 로드');
+        }
+      }
+      // Cal events
+      var ceDoc = await db.collection('side_cal_events').doc('list').get();
+      if (ceDoc.exists && ceDoc.data().data) {
+        var crts = ceDoc.data().updatedAt || '';
+        var clts = localStorage.getItem(LS_CAL_EVENTS_KEY + '_ts') || '';
+        if (!clts || crts > clts) {
+          localStorage.setItem(LS_CAL_EVENTS_KEY, ceDoc.data().data);
+          localStorage.setItem(LS_CAL_EVENTS_KEY + '_ts', crts);
+          var cnt = JSON.parse(ceDoc.data().data).length;
+          console.log('[Sync] cal_events ' + cnt + '개 로드');
+        }
+      }
+      // Series (current year ± 2)
+      var cy = new Date().getFullYear();
+      for (var sy = cy - 1; sy <= cy + 2; sy++) {
+        var sDoc = await db.collection('income_series').doc(String(sy)).get();
+        if (sDoc.exists && sDoc.data().data) {
+          var sk = seriesKeyForYear(sy);
+          localStorage.setItem(sk, sDoc.data().data);
+          console.log('[Sync] series ' + sy + ' 로드');
+        }
+      }
+      console.log('[Sync] ✅ 동기화 완료');
+    } catch(e) { console.warn('[Sync] 에러:', e); }
+  }
 
   function addWork(work) { _works.push(work); saveWorks(); }
 
@@ -17375,6 +17424,8 @@ auth.onAuthStateChanged(function(user) {
     loginScreen.style.display = 'none';
     deniedScreen.style.display = 'none';
     appContainer.style.display = '';
+    // 클라우드 동기화
+    if (typeof syncAllFromCloud === 'function') syncAllFromCloud();
     // 프로필 정보 업데이트
     var displayName = user.displayName || user.email.split('@')[0];
     var initial = (displayName || 'U').charAt(0).toUpperCase();
