@@ -11566,9 +11566,14 @@
     var today = new Date();
     var todayPct = today.getFullYear() === yr ? ((today.getTime() - yrStart) / (yrEnd - yrStart) * 100) : -1;
 
-    // Work rows
+    // Work rows — sort by publish_start (earliest first, empty last)
     var rowsHtml = '';
-    _works.forEach(function(w) {
+    var sortedWorks = _works.slice().sort(function(a, b) {
+      var aDate = a.publish_start || '9999';
+      var bDate = b.publish_start || '9999';
+      return aDate.localeCompare(bDate);
+    });
+    sortedWorks.forEach(function(w) {
       var phases = w.phases || {};
       var allPhases = ['synopsis', 'draft', 'revision', 'rest'];
       // Add publishing as virtual phase
