@@ -2251,6 +2251,10 @@
             </div>
             <button onclick="ldgAddBudget()" class="text-xs px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">+ 예산 추가</button>
           </div>
+          <div class="bg-indigo-50/50 rounded-xl p-4 mb-4 flex items-center justify-between">
+            <div><p class="text-xs font-semibold text-indigo-700">✨ AI가 2024~2025 패턴을 분석해서 카테고리별 예산을 자동 제안합니다.</p></div>
+            <button id="ldg-ai-budget-btn" onclick="ldgAIBudgetSuggest()" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 whitespace-nowrap">AI 자동 제안 받기</button>
+          </div>
           <div id="ldg-budget-default" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden"></div>
           <div id="ldg-budget-matrix" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-x-auto" style="display:none"></div>
         </div>
@@ -2344,6 +2348,8 @@
           </div>
           <div class="bg-slate-50 rounded-xl p-4 max-w-lg">
             <p class="text-[10px] text-slate-400 leading-relaxed">💡 이 토큰은 이 브라우저에만 저장됩니다. 다른 기기에서도 사용하려면 같은 토큰을 입력해주세요.</p>
+          </div>
+          <div id="ldg-ai-usage" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 max-w-lg mt-4">
           </div>
         </div>
 
@@ -20451,6 +20457,9 @@ function ldgRenderCoach() {
     (maxRiskCat ? '<p class="mt-2">가장 큰 위험: <b>' + maxRiskCat + '</b> (작년 대비 +' + maxRiskPct + '% 페이스)</p>' : '') +
     '</div></div>';
 
+  // AI Insight card placeholder
+  html += '<div id="ldg-ai-insight" class="mb-6"></div>';
+
   // KPI cards
   html += '<div class="grid grid-cols-3 gap-6 mb-8">';
   html += ldgCoachKPICard('💰 수입', totInc, g['수입'], paceInc, avgInc, remainMonths, 'income');
@@ -20460,12 +20469,10 @@ function ldgRenderCoach() {
 
   // Category pace analysis
   html += ldgCoachCategoryAnalysis(catExp, prevCatExp, dataMonths);
-
-  // Coming soon
-  html += '<div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mt-6">' +
-    '<p class="text-xs font-bold text-slate-500 mb-2">🚀 더 깊이 있는 분석을 받으려면</p>' +
-    '<p class="text-[10px] text-slate-400 leading-relaxed">AI 코치가 곧 추가됩니다: 패턴 분석, 카테고리 예산 자동 제안, 강한 어조의 맞춤 코칭, 자연어 질문/답변 (다음 업데이트 예정)</p></div>';
   el.innerHTML = html;
+
+  // Load AI insight (async, after DOM is set)
+  ldgLoadAIInsight(false);
 }
 
 function ldgCoachKPICard(label, current, goal, pace, avgMonthly, remainMonths, type) {
@@ -20565,6 +20572,179 @@ function ldgCoachCategoryAnalysis(catExp, prevCatExp, dataMonths) {
   return html;
 }
 
+// ===== DAILY LEDGER: AI INSIGHT + BUDGET SUGGESTION =====
+var _COACH_SYS = '당신은 사용자(Nuri)의 개인 재무 코치입니다.\n\n성격:\n- 차분하고 직설적인 분석가 톤 (분석 보고서 톤)\n- 평소엔 차분한 분석, 위험 시 강한 경고 ("정신 차려야 함", "이대로면 진짜 망함")\n- 진짜 잘했을 때만 칭찬\n- 구체적인 숫자와 액션 중심\n\n응답 구조:\n1. 핵심 진단 (가장 큰 위험/문제)\n2. 패턴 분석 (왜 그런가, 작년 대비)\n3. 미래 예측 (이대로 가면)\n4. 구체적 액션 3~5개 (각 절약 금액 명시)\n5. 칭찬 (있으면 짧게)\n\n응답 길이: 800~1500자. 모든 금액은 원화 천 단위 콤마.';
+
+function ldgBuildAnalysisPrompt() {
+  var goals = ldgLoadGoals()[_ldgCoachYear] || {};
+  var y = _ldgCoachYear;
+  var txs = (_ledgerData.transactions||[]);
+  var now = new Date();
+  var curMonth = now.getFullYear() === y ? now.getMonth()+1 : 12;
+  var dataDays = now.getFullYear() === y ? Math.floor((now - new Date(y,0,1))/(864e5)) : 365;
+  var remainDays = now.getFullYear() === y ? Math.floor((new Date(y,11,31) - now)/(864e5)) : 0;
+
+  // Current year aggregates
+  var curTxs = txs.filter(function(t){return t.date&&t.date.substring(0,4)===String(y);});
+  var totI=0,totS=0,totE=0;
+  curTxs.forEach(function(t){if(t['대분류']==='수입')totI+=t['금액'];else if(t['대분류']==='저축')totS+=t['금액'];else totE+=t['금액'];});
+
+  // Category breakdown
+  var catData = {};
+  curTxs.forEach(function(t){var k=t['대분류']+'.'+t['소분류'];catData[k]=(catData[k]||0)+t['금액'];});
+  var catLines = Object.keys(catData).sort(function(a,b){return catData[b]-catData[a];}).map(function(k){return k+': '+catData[k].toLocaleString('ko-KR')+'원';}).join('\n');
+
+  // Last year
+  var prevTxs = txs.filter(function(t){return t.date&&t.date.substring(0,4)===String(y-1);});
+  var prevSame = prevTxs.filter(function(t){return parseInt(t.date.split('-')[1])<=curMonth;});
+  var pI=0,pS=0,pE=0;
+  prevSame.forEach(function(t){if(t['대분류']==='수입')pI+=t['금액'];else if(t['대분류']==='저축')pS+=t['금액'];else pE+=t['금액'];});
+
+  // 2024 summary
+  var tx24 = txs.filter(function(t){return t.date&&t.date.substring(0,4)==='2024';});
+  var s24I=0,s24S=0,s24E=0;
+  tx24.forEach(function(t){if(t['대분류']==='수입')s24I+=t['금액'];else if(t['대분류']==='저축')s24S+=t['금액'];else s24E+=t['금액'];});
+
+  return y+'년 목표\n- 수입: '+(goals['수입']||0).toLocaleString('ko-KR')+'원\n- 저축: '+(goals['저축']||0).toLocaleString('ko-KR')+'원\n- 지출 한도: '+(goals['지출']||0).toLocaleString('ko-KR')+'원\n\n'+y+'년 현재까지 ('+curMonth+'개월)\n- 수입: '+totI.toLocaleString('ko-KR')+'원\n- 저축: '+totS.toLocaleString('ko-KR')+'원\n- 지출: '+totE.toLocaleString('ko-KR')+'원\n- 데이터 '+dataDays+'일 (남은 '+remainDays+'일)\n\n카테고리별 현황:\n'+catLines+'\n\n작년('+(y-1)+') 동일기간(1~'+curMonth+'월):\n- 수입: '+pI.toLocaleString('ko-KR')+'원\n- 저축: '+pS.toLocaleString('ko-KR')+'원\n- 지출: '+pE.toLocaleString('ko-KR')+'원\n\n2024년 전체: 수입 '+s24I.toLocaleString('ko-KR')+'원, 저축 '+s24S.toLocaleString('ko-KR')+'원, 지출 '+s24E.toLocaleString('ko-KR')+'원\n\n위 데이터를 종합 분석해주세요.';
+}
+
+function ldgRenderInsightCard(content, usage, cachedAt) {
+  var el = document.getElementById('ldg-ai-insight');
+  if (!el) return;
+  var ago = cachedAt ? Math.round((Date.now() - new Date(cachedAt).getTime())/3600000) : 0;
+  var agoText = ago < 1 ? '방금' : ago + '시간 전 캐시';
+  var usageText = usage ? '토큰: 입력 ' + (usage.input||0).toLocaleString() + ' / 출력 ' + (usage.output||0).toLocaleString() : '';
+  // Convert markdown-like formatting to HTML
+  var htmlContent = (content||'').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  el.innerHTML = '<div class="bg-white rounded-2xl border-l-4 border-l-indigo-500 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5">' +
+    '<div class="flex items-center justify-between mb-3"><p class="text-xs font-bold text-slate-700">🤖 AI 분석</p><div class="flex items-center gap-2"><span class="text-[10px] text-slate-400">' + agoText + '</span><button onclick="ldgLoadAIInsight(true)" class="text-slate-400 hover:text-indigo-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button></div></div>' +
+    '<div class="text-xs text-slate-600 leading-relaxed">' + htmlContent + '</div>' +
+    (usageText ? '<p class="text-[10px] text-slate-300 mt-3 border-t border-slate-100 pt-2">' + usageText + '</p>' : '') +
+    '</div>';
+}
+
+async function ldgLoadAIInsight(forceRefresh) {
+  var el = document.getElementById('ldg-ai-insight');
+  if (!el) return;
+  var token = localStorage.getItem('atelier_coach_auth_token');
+  if (!token) {
+    el.innerHTML = '<div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mb-2"><p class="text-xs text-slate-500">🔐 AI 분석을 사용하려면 <button onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'aiconfig\');},50)" class="text-indigo-600 font-semibold underline">설정 → AI 코치 설정</button>에서 토큰을 입력하세요.</p></div>';
+    return;
+  }
+  // Check cache
+  var cache = null;
+  try { cache = JSON.parse(localStorage.getItem('atelier_coach_ai_cache')); } catch(e){}
+  var txCount = (_ledgerData.transactions||[]).length;
+  if (!forceRefresh && cache && cache.year === _ldgCoachYear) {
+    var age = Date.now() - new Date(cache.lastAnalyzedAt).getTime();
+    var txDiff = txCount - (cache.lastTransactionCount||0);
+    if (age < 24*3600000 && txDiff < 5) {
+      ldgRenderInsightCard(cache.content, cache.usage, cache.lastAnalyzedAt);
+      return;
+    }
+  }
+  // Show loading
+  el.innerHTML = '<div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5"><p class="text-xs text-slate-500 flex items-center gap-2"><span class="animate-spin inline-block w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full"></span> AI 분석 중... (5~15초)</p></div>';
+  try {
+    var prompt = ldgBuildAnalysisPrompt();
+    var result = await callCoachAPI(prompt, _COACH_SYS, 2000);
+    var newCache = { lastAnalyzedAt: new Date().toISOString(), lastTransactionCount: txCount, year: _ldgCoachYear, content: result, usage: { input: prompt.length, output: result.length } };
+    localStorage.setItem('atelier_coach_ai_cache', JSON.stringify(newCache));
+    ldgUpdateUsage(prompt.length, result.length);
+    ldgRenderInsightCard(result, newCache.usage, newCache.lastAnalyzedAt);
+  } catch(e) {
+    el.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5"><p class="text-xs text-red-500 mb-2">⚠️ 분석 실패: ' + (e.message||'알 수 없는 오류').replace(/</g,'&lt;') + '</p><button onclick="ldgLoadAIInsight(true)" class="text-xs text-indigo-600 font-semibold">다시 시도</button></div>';
+  }
+}
+
+// ── Usage tracking ──
+function ldgUpdateUsage(inTok, outTok) {
+  var u = {};
+  try { u = JSON.parse(localStorage.getItem('atelier_coach_usage'))||{}; } catch(e){}
+  var now = new Date();
+  var resetKey = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  if (u.lastReset !== resetKey) { u = { totalInput:0, totalOutput:0, totalCalls:0, estimatedCost:0, lastReset:resetKey }; }
+  u.totalInput = (u.totalInput||0) + inTok;
+  u.totalOutput = (u.totalOutput||0) + outTok;
+  u.totalCalls = (u.totalCalls||0) + 1;
+  u.estimatedCost = Math.round((u.totalInput * 0.003 + u.totalOutput * 0.015) * 1400 / 1000); // rough KRW
+  localStorage.setItem('atelier_coach_usage', JSON.stringify(u));
+}
+
+// ── AI Budget Suggestion ──
+var _BUDGET_SYS = '당신은 재무 코치입니다. 과거 가계부 데이터를 분석해서 카테고리별 월 예산을 제안하세요.\n\n응답: JSON only (마크다운 코드 블록 없이 순수 JSON만)\n구조: {"summary":"요약 2~3문장","budgets":[{"대분류":"식비","소분류":"외식비","monthly":800000,"rationale":"근거"},...]}\n\n원칙: 실제 패턴 존중, 목표 달성 가능한 수준, 0인 카테고리 제외.';
+
+function ldgBuildBudgetPrompt() {
+  var goals = ldgLoadGoals()[_ldgCoachYear] || {};
+  var txs = _ledgerData.transactions || [];
+  function catSum(year) {
+    var d = {}; txs.filter(function(t){return t.date&&t.date.substring(0,4)===String(year);}).forEach(function(t){
+      if(t['대분류']==='수입'||t['대분류']==='저축') return;
+      var k = t['대분류']+'.'+t['소분류']; d[k]=(d[k]||0)+t['금액'];
+    });
+    return Object.keys(d).sort(function(a,b){return d[b]-d[a];}).map(function(k){return k+': '+d[k].toLocaleString('ko-KR')+'원';}).join('\n');
+  }
+  return '2024년 카테고리별 지출:\n'+catSum(2024)+'\n\n2025년 카테고리별 지출:\n'+catSum(2025)+'\n\n2026년 목표: 지출 한도 '+(goals['지출']||0).toLocaleString('ko-KR')+'원\n\n2026년 1~4월 실적:\n'+catSum(2026)+'\n\n위 데이터를 분석해서 2026년 카테고리별 월 예산을 JSON으로 제안하세요.';
+}
+
+async function ldgAIBudgetSuggest() {
+  var btn = document.getElementById('ldg-ai-budget-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'AI 분석 중...'; }
+  try {
+    var result = await callCoachAPI(ldgBuildBudgetPrompt(), _BUDGET_SYS, 3000);
+    ldgUpdateUsage(ldgBuildBudgetPrompt().length, result.length);
+    // Parse JSON — handle markdown code blocks
+    var json = result.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+    var data = JSON.parse(json);
+    ldgShowBudgetSuggestionModal(data);
+  } catch(e) {
+    alert('AI 예산 제안 실패: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'AI 자동 제안 받기'; }
+  }
+}
+
+function ldgShowBudgetSuggestionModal(data) {
+  var old = document.getElementById('ldg-budget-suggest-modal');
+  if (old) old.remove();
+  var budgets = data.budgets || [];
+  var modal = document.createElement('div');
+  modal.id = 'ldg-budget-suggest-modal';
+  modal.className = 'fixed inset-0 bg-black/30 z-[9999] flex items-center justify-center';
+  var rows = budgets.map(function(b, i) {
+    return '<tr class="border-b border-slate-50 text-xs"><td class="px-3 py-2"><input type="checkbox" checked data-idx="' + i + '" class="ldg-bs-check w-3 h-3 rounded text-indigo-600 border-slate-300"/></td><td class="px-3 py-2 text-slate-700">' + b['대분류'] + '.' + b['소분류'] + '</td><td class="px-3 py-2 text-right" style="font-feature-settings:\'tnum\'">' + (b.monthly||0).toLocaleString('ko-KR') + '</td><td class="px-3 py-2 text-[10px] text-slate-400">' + (b.rationale||'') + '</td></tr>';
+  }).join('');
+  var totalMonthly = budgets.reduce(function(s,b){return s+(b.monthly||0);},0);
+  modal.innerHTML = '<div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col"><div class="p-6 border-b border-slate-100"><h4 class="text-sm font-bold text-slate-900 mb-2">✨ AI 예산 제안 (' + _ldgCoachYear + '년)</h4><p class="text-xs text-slate-500">' + (data.summary||'') + '</p></div>' +
+    '<div class="overflow-auto flex-1 p-4"><table class="w-full"><thead class="text-[10px] font-bold text-slate-400 uppercase"><tr><th class="px-3 py-1 w-8"></th><th class="px-3 py-1">카테고리</th><th class="px-3 py-1 text-right">월 예산</th><th class="px-3 py-1">근거</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<div class="p-4 border-t border-slate-100 flex items-center justify-between"><div class="text-xs text-slate-500">합계: 월 ' + totalMonthly.toLocaleString('ko-KR') + '원</div><div class="flex gap-2"><button onclick="document.getElementById(\'ldg-budget-suggest-modal\').remove()" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded-lg">취소</button><button onclick="ldgApplyBudgetSuggestion()" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">선택 항목 적용</button></div></div></div>';
+  document.body.appendChild(modal);
+  modal._budgets = budgets;
+}
+
+function ldgApplyBudgetSuggestion() {
+  var modal = document.getElementById('ldg-budget-suggest-modal');
+  if (!modal) return;
+  var budgets = modal._budgets || [];
+  var checks = modal.querySelectorAll('.ldg-bs-check:checked');
+  var applied = 0;
+  checks.forEach(function(cb) {
+    var b = budgets[parseInt(cb.dataset.idx)];
+    if (!b) return;
+    var key = b['대분류'] + '.' + b['소분류'];
+    if (!_ledgerData.budgets) _ledgerData.budgets = {};
+    _ledgerData.budgets[key] = { default: b.monthly, overrides: (_ledgerData.budgets[key]||{}).overrides || {} };
+    applied++;
+  });
+  ldgSaveBudgets();
+  modal.remove();
+  var toast = document.createElement('div');
+  toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+  toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">' + applied + '개 카테고리에 예산 적용됨</span>';
+  document.body.appendChild(toast);
+  setTimeout(function(){if(toast.parentElement)toast.remove();},3000);
+}
+
 // ===== DAILY LEDGER: AI COACH API HELPER =====
 var ATELIER_FUNCTIONS_BASE = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net';
 
@@ -20588,6 +20768,17 @@ function ldgRenderAIConfig() {
   var tokenEl = document.getElementById('ldg-ai-token');
   var saved = localStorage.getItem('atelier_coach_auth_token') || '';
   if (tokenEl && saved) tokenEl.value = saved;
+  // Usage display
+  var uEl = document.getElementById('ldg-ai-usage');
+  if (uEl) {
+    var u = {};
+    try { u = JSON.parse(localStorage.getItem('atelier_coach_usage'))||{}; } catch(e){}
+    uEl.innerHTML = '<p class="text-xs font-bold text-slate-700 mb-2">이번 달 사용량</p>' +
+      '<div class="text-xs text-slate-500 space-y-1">' +
+      '<p>AI 호출: ' + (u.totalCalls||0) + '회</p>' +
+      '<p>토큰: ' + ((u.totalInput||0)+(u.totalOutput||0)).toLocaleString() + ' (입력 ' + (u.totalInput||0).toLocaleString() + ' + 출력 ' + (u.totalOutput||0).toLocaleString() + ')</p>' +
+      '<p>예상 비용: ₩' + (u.estimatedCost||0).toLocaleString() + '</p></div>';
+  }
 }
 
 function ldgSaveAIToken() {
