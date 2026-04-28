@@ -122,6 +122,23 @@
       letter-spacing:-0.02em!important;
     }
 
+    /* Ledger custom dropdown */
+    .ldg-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:4px;
+      padding:4px 8px;border-radius:8px;background:#f7f1ff;border:1.5px solid transparent;
+      font-size:12px;color:#1c1a24;cursor:pointer;min-height:28px;transition:all .15s;white-space:nowrap}
+    .ldg-dd-trigger:hover,.ldg-dd-trigger.open{border-color:#5b3cdd;background:#ede9fe}
+    .ldg-dd-trigger .dd-placeholder{color:#94a3b8}
+    .ldg-dd-trigger .dd-chevron{font-size:14px;color:#94a3b8;transition:transform .15s}
+    .ldg-dd-trigger.open .dd-chevron{transform:rotate(180deg)}
+    .ldg-dd-panel{position:absolute;left:0;top:100%;margin-top:4px;width:max-content;min-width:100%;
+      background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;
+      z-index:999;max-height:260px;overflow-y:auto;padding:4px 0;animation:ldgDdIn .12s ease}
+    @keyframes ldgDdIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+    .ldg-dd-opt{padding:6px 12px;font-size:12px;color:#1c1a24;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s}
+    .ldg-dd-opt:hover{background:#f7f1ff}
+    .ldg-dd-opt.selected{background:#5b3cdd;color:#fff}
+    .ldg-dd-opt.selected:hover{background:#4f35c5}
+
     /* Page fade transition */
     .page{animation:fadeIn .18s ease}
     @keyframes fadeIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
@@ -2042,14 +2059,14 @@
             <table class="w-full text-left" id="ldg-tx-table">
               <thead class="bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 <tr>
-                  <th class="px-6 py-3 w-24">날짜</th>
-                  <th class="px-4 py-3 w-20">대분류</th>
-                  <th class="px-4 py-3 w-20">소분류</th>
-                  <th class="px-4 py-3 w-28 text-right">금액</th>
-                  <th class="px-4 py-3 w-24">결제수단</th>
-                  <th class="px-4 py-3">세부사항</th>
-                  <th class="px-4 py-3">비고</th>
-                  <th class="px-4 py-3 w-10"></th>
+                  <th class="px-4 py-2" style="width:90px">날짜</th>
+                  <th class="px-3 py-2" style="width:100px">대분류</th>
+                  <th class="px-3 py-2" style="width:110px">소분류</th>
+                  <th class="px-3 py-2 text-right" style="width:130px">금액</th>
+                  <th class="px-3 py-2" style="width:110px">결제수단</th>
+                  <th class="px-3 py-2" style="max-width:200px">세부사항</th>
+                  <th class="px-3 py-2" style="width:130px">비고</th>
+                  <th class="px-2 py-2" style="width:40px"></th>
                 </tr>
               </thead>
               <tbody id="ldg-tx-body" class="text-sm divide-y divide-slate-50"></tbody>
@@ -2266,7 +2283,7 @@
               <input type="checkbox" id="ldg-rec-auto" onchange="ldgSaveRecAuto()" class="mt-0.5 w-4 h-4 rounded text-indigo-600 focus:ring-indigo-300 border-slate-300"/>
               <div>
                 <p class="text-sm font-semibold text-slate-800 mb-1">등록된 날짜에 자동으로 거래 추가</p>
-                <p class="text-xs text-slate-500 leading-relaxed">고정 내���에 등록된 일자가 되면 별도의 입력 없이 가계부에 지출 내역이 자동으로 생성됩니다. 변동 금액으로 설정된 항목은 알림으로 입력을 유도합니다.</p>
+                <p class="text-xs text-slate-500 leading-relaxed">고정 내역에 등록된 일자가 되면 별도의 입력 없이 가계부에 지출 내역이 자동으로 생성됩니다. 변동 금액으로 설정된 항목은 알림으로 입력을 유도합니다.</p>
               </div>
             </label>
           </div>
@@ -18290,7 +18307,7 @@ function ldgRenderCatGrid() {
       if (s.amt > 0) {
         html += '<li class="text-[10px] text-slate-500 flex justify-between"><span>' + s.name + '</span><span style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
       } else {
-        html += '<li class="text-[10px] text-slate-300 flex justify-between"><span>' + s.name + '</span><span>—</span></li>';
+        html += '<li class="text-[10px] flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-300">—</span></li>';
       }
     });
     html += '</ul>';
@@ -18356,14 +18373,14 @@ function ldgRenderTxTable() {
     } else {
       var isIncome = t['대분류'] === '수입';
       html += '<tr class="hover:bg-indigo-50/30 transition-colors group">';
-      html += '<td class="px-6 py-3 text-xs font-medium text-slate-600">' + (t.date||'').substring(5).replace('-','/') + '</td>';
-      html += '<td class="px-4 py-3 text-xs text-slate-900">' + (t['대분류']||'') + '</td>';
-      html += '<td class="px-4 py-3"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
-      html += '<td class="px-4 py-3 text-xs font-bold text-right ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'">' + ldgFmt(t['금액']) + '</td>';
-      html += '<td class="px-4 py-3 text-xs text-slate-500">' + (t['결제수단']||'') + '</td>';
-      html += '<td class="px-4 py-3 text-xs text-slate-600">' + (t['세부사항']||'') + '</td>';
-      html += '<td class="px-4 py-3 text-xs text-slate-400">' + (t['비고']||'') + '</td>';
-      html += '<td class="px-4 py-3 relative"><button onclick="ldgShowTxMenu(event,\'' + t.id + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
+      html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600">' + (t.date||'').substring(5).replace('-','/') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap">' + (t['대분류']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 whitespace-nowrap"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
+      html += '<td class="px-3 py-1.5 text-xs font-bold text-right ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'">' + ldgFmt(t['금액']) + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap">' + (t['결제수단']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate" style="max-width:200px">' + (t['세부사항']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-400">' + (t['비고']||'') + '</td>';
+      html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + t.id + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
       html += '</tr>';
     }
   });
@@ -18398,24 +18415,27 @@ function ldgInputRowHTML(tx) {
   pms.forEach(function(p) { pmOpts += '<option value="' + p + '"' + (p===pm?' selected':'') + '>' + p + '</option>'; });
 
   return '<tr class="bg-indigo-50/40 border-l-4 border-l-indigo-500" id="ldg-input-row">' +
-    '<td class="px-6 py-2"><input type="date" id="ldg-in-date" value="' + d + '" class="text-xs border border-slate-200 rounded px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,0)"/></td>' +
-    '<td class="px-4 py-2"><select id="ldg-in-major" class="text-xs border border-slate-200 rounded px-1 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onchange="ldgMajorChanged()" onkeydown="ldgInputKey(event,1)">' + majorOpts + '</select></td>' +
-    '<td class="px-4 py-2"><select id="ldg-in-minor" class="text-xs border border-slate-200 rounded px-1 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,2)">' + subOpts + '</select></td>' +
-    '<td class="px-4 py-2"><input type="text" id="ldg-in-amount" value="' + amt + '" placeholder="금액" class="text-xs border border-slate-200 rounded px-2 py-1 w-full text-right focus:ring-2 focus:ring-indigo-300 outline-none" oninput="ldgFormatAmount(this)" onkeydown="ldgInputKey(event,3)"/></td>' +
-    '<td class="px-4 py-2"><select id="ldg-in-payment" class="text-xs border border-slate-200 rounded px-1 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,4)">' + pmOpts + '</select></td>' +
-    '<td class="px-4 py-2"><input type="text" id="ldg-in-detail" value="' + detail.replace(/"/g,'&quot;') + '" placeholder="세부사항" class="text-xs border border-slate-200 rounded px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,5)"/></td>' +
-    '<td class="px-4 py-2"><input type="text" id="ldg-in-note" value="' + note.replace(/"/g,'&quot;') + '" placeholder="비고" class="text-xs border border-slate-200 rounded px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,6)"/></td>' +
-    '<td class="px-4 py-2"><button onclick="ldgCancelInput()" class="text-slate-400 hover:text-red-400"><span class="material-symbols-outlined text-sm">close</span></button></td>' +
+    '<td class="px-4 py-1"><input type="date" id="ldg-in-date" value="' + d + '" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,0)"/></td>' +
+    '<td class="px-3 py-1"><div class="ldg-custom-dd" id="ldg-dd-major" data-field="ldg-in-major" data-value="' + major.replace(/"/g,'&quot;') + '"></div><input type="hidden" id="ldg-in-major" value="' + major.replace(/"/g,'&quot;') + '"/></td>' +
+    '<td class="px-3 py-1"><div class="ldg-custom-dd" id="ldg-dd-minor" data-field="ldg-in-minor" data-value="' + minor.replace(/"/g,'&quot;') + '"></div><input type="hidden" id="ldg-in-minor" value="' + minor.replace(/"/g,'&quot;') + '"/></td>' +
+    '<td class="px-3 py-1"><input type="text" id="ldg-in-amount" value="' + amt + '" placeholder="금액" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full text-right focus:ring-2 focus:ring-indigo-300 outline-none" oninput="ldgFormatAmount(this)" onkeydown="ldgInputKey(event,3)"/></td>' +
+    '<td class="px-3 py-1"><div class="ldg-custom-dd" id="ldg-dd-payment" data-field="ldg-in-payment" data-value="' + pm.replace(/"/g,'&quot;') + '"></div><input type="hidden" id="ldg-in-payment" value="' + pm.replace(/"/g,'&quot;') + '"/></td>' +
+    '<td class="px-3 py-1"><input type="text" id="ldg-in-detail" value="' + detail.replace(/"/g,'&quot;') + '" placeholder="세부사항" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,5)"/></td>' +
+    '<td class="px-3 py-1"><input type="text" id="ldg-in-note" value="' + note.replace(/"/g,'&quot;') + '" placeholder="비고" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,6)"/></td>' +
+    '<td class="px-2 py-1"><button onclick="ldgCancelInput()" class="text-slate-400 hover:text-red-400"><span class="material-symbols-outlined text-sm">close</span></button></td>' +
     '</tr>';
 }
 
 function ldgMajorChanged() {
   var major = document.getElementById('ldg-in-major').value;
-  var minorSel = document.getElementById('ldg-in-minor');
-  var cats = _ledgerData.categories || {};
-  var subs = cats[major] || [];
-  minorSel.innerHTML = '<option value="">선택</option>';
-  subs.forEach(function(s) { var o = document.createElement('option'); o.value = s; o.textContent = s; minorSel.appendChild(o); });
+  // Reset minor value
+  document.getElementById('ldg-in-minor').value = '';
+  // Rebuild minor custom dropdown
+  var minorWrap = document.getElementById('ldg-dd-minor');
+  if (minorWrap) {
+    minorWrap.dataset.value = '';
+    ldgBuildDD('ldg-dd-minor', ldgGetMinorOpts(major), function(val) { document.getElementById('ldg-in-minor').value = val; });
+  }
 }
 
 function ldgFormatAmount(el) {
@@ -18424,14 +18444,88 @@ function ldgFormatAmount(el) {
   else el.value = '';
 }
 
-var _ldgInputFields = ['ldg-in-date','ldg-in-major','ldg-in-minor','ldg-in-amount','ldg-in-payment','ldg-in-detail','ldg-in-note'];
+// ── Custom Dropdown (modern, for tx input only) ──
+function ldgInitCustomDDs() {
+  ldgBuildDD('ldg-dd-major', ldgGetMajorOpts(), function(val) {
+    document.getElementById('ldg-in-major').value = val;
+    ldgMajorChanged();
+    // Auto-rebuild minor dd
+    ldgBuildDD('ldg-dd-minor', ldgGetMinorOpts(val), function(v2) { document.getElementById('ldg-in-minor').value = v2; });
+  });
+  var curMajor = document.getElementById('ldg-in-major').value;
+  ldgBuildDD('ldg-dd-minor', ldgGetMinorOpts(curMajor), function(val) { document.getElementById('ldg-in-minor').value = val; });
+  ldgBuildDD('ldg-dd-payment', ldgGetPMOpts(), function(val) { document.getElementById('ldg-in-payment').value = val; });
+}
+function ldgGetMajorOpts() { return Object.keys(_ledgerData.categories || {}).map(function(c){return {value:c,label:c};}); }
+function ldgGetMinorOpts(major) { var cats = _ledgerData.categories || {}; return (cats[major]||[]).map(function(s){return {value:s,label:s};}); }
+function ldgGetPMOpts() { return ldgGetActivePMs().map(function(p){return {value:p,label:p};}); }
+
+function ldgBuildDD(wrapperId, options, onChange) {
+  var wrap = document.getElementById(wrapperId);
+  if (!wrap) return;
+  var field = wrap.dataset.field;
+  var curVal = wrap.dataset.value || '';
+  wrap.style.position = 'relative';
+  var label = curVal || '';
+  wrap.innerHTML = '<div class="ldg-dd-trigger" tabindex="0" onkeydown="ldgDDKey(event,\'' + wrapperId + '\')">' +
+    '<span class="dd-label' + (!label ? ' dd-placeholder' : '') + '">' + (label || '선택') + '</span>' +
+    '<span class="material-symbols-outlined dd-chevron">expand_more</span></div>';
+  var trigger = wrap.querySelector('.ldg-dd-trigger');
+  trigger.onclick = function(e) {
+    e.stopPropagation();
+    var existing = wrap.querySelector('.ldg-dd-panel');
+    if (existing) { existing.remove(); trigger.classList.remove('open'); return; }
+    // Close any other open panels
+    document.querySelectorAll('.ldg-dd-panel').forEach(function(p){p.remove();}); document.querySelectorAll('.ldg-dd-trigger').forEach(function(t){t.classList.remove('open');});
+    trigger.classList.add('open');
+    var panel = document.createElement('div');
+    panel.className = 'ldg-dd-panel';
+    if (options.length === 0) { panel.innerHTML = '<div class="ldg-dd-opt" style="color:#94a3b8;cursor:default">항목 없음</div>'; }
+    else {
+      options.forEach(function(opt) {
+        var div = document.createElement('div');
+        div.className = 'ldg-dd-opt' + (opt.value === curVal ? ' selected' : '');
+        div.innerHTML = opt.label + (opt.value === curVal ? ' <span class="material-symbols-outlined" style="font-size:14px">check</span>' : '');
+        div.onclick = function(ev) {
+          ev.stopPropagation();
+          wrap.dataset.value = opt.value;
+          trigger.querySelector('.dd-label').textContent = opt.label;
+          trigger.querySelector('.dd-label').classList.remove('dd-placeholder');
+          trigger.classList.remove('open');
+          panel.remove();
+          if (onChange) onChange(opt.value);
+        };
+        panel.appendChild(div);
+      });
+    }
+    wrap.appendChild(panel);
+    // Close on outside click
+    setTimeout(function() { document.addEventListener('click', function h() { panel.remove(); trigger.classList.remove('open'); document.removeEventListener('click',h); }); }, 10);
+  };
+}
+
+function ldgDDKey(e, wrapperId) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); var t = document.getElementById(wrapperId); if(t) t.querySelector('.ldg-dd-trigger').click(); }
+  if (e.key === 'Escape') { var p = document.getElementById(wrapperId); if(p){var pn=p.querySelector('.ldg-dd-panel');if(pn)pn.remove();p.querySelector('.ldg-dd-trigger').classList.remove('open');} }
+  if (e.key === 'Tab') {
+    // Let tab navigate naturally — close any open panel
+    document.querySelectorAll('.ldg-dd-panel').forEach(function(p){p.remove();}); document.querySelectorAll('.ldg-dd-trigger').forEach(function(t){t.classList.remove('open');});
+  }
+}
+
+var _ldgInputFields = ['ldg-in-date','ldg-dd-major','ldg-dd-minor','ldg-in-amount','ldg-dd-payment','ldg-in-detail','ldg-in-note'];
+function ldgFocusField(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var trigger = el.querySelector && el.querySelector('.ldg-dd-trigger');
+  if (trigger) trigger.focus(); else el.focus();
+}
 function ldgInputKey(e, idx) {
   if (e.key === 'Escape') { ldgCancelInput(); return; }
   if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
     if (idx < _ldgInputFields.length - 1) {
       e.preventDefault();
-      var next = document.getElementById(_ldgInputFields[idx + 1]);
-      if (next) next.focus();
+      ldgFocusField(_ldgInputFields[idx + 1]);
     } else if (e.key === 'Enter') {
       e.preventDefault();
       ldgSaveInput();
@@ -18439,8 +18533,7 @@ function ldgInputKey(e, idx) {
   }
   if (e.key === 'Tab' && e.shiftKey && idx > 0) {
     e.preventDefault();
-    var prev = document.getElementById(_ldgInputFields[idx - 1]);
-    if (prev) prev.focus();
+    ldgFocusField(_ldgInputFields[idx - 1]);
   }
 }
 
@@ -18473,8 +18566,7 @@ function ldgSaveInput() {
   ldgSaveTx();
   _ldgEditingId = 'new'; // Continue with new row for continuous input
   ldgRenderMonthly();
-  // Focus first field after render
-  setTimeout(function() { var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+  setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
 }
 
 function ldgCancelInput() {
@@ -18485,7 +18577,7 @@ function ldgCancelInput() {
 function ldgAddNewTx() {
   _ldgEditingId = 'new';
   ldgRenderTxTable();
-  setTimeout(function() { var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+  setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
 }
 
 // ── TX Menu (edit/duplicate/delete) ──
@@ -18519,7 +18611,7 @@ function ldgEditTx(txId) {
   var m = document.getElementById('ldg-tx-menu'); if (m) m.remove();
   _ldgEditingId = txId;
   ldgRenderTxTable();
-  setTimeout(function() { var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+  setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
 }
 
 function ldgDuplicateTx(txId) {
