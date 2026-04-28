@@ -18300,14 +18300,14 @@ function ldgRenderCatGrid() {
       }
     });
     var opacity = hasTx ? '' : ' opacity-60';
-    html += '<div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
-    html += '<div class="flex justify-between items-start mb-2"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-[10px] text-slate-400 font-semibold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
-    html += '<ul class="space-y-0.5 mb-2">';
+    html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
+    html += '<div class="flex justify-between items-start mb-3"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-[10px] text-slate-400 font-semibold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
+    html += '<ul class="space-y-1.5 mb-3">';
     subAmts.forEach(function(s) {
       if (s.amt > 0) {
-        html += '<li class="text-xs flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
+        html += '<li class="text-xs leading-relaxed tracking-wide flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
       } else {
-        html += '<li class="text-xs flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-300">—</span></li>';
+        html += '<li class="text-xs leading-relaxed tracking-wide flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-300">—</span></li>';
       }
     });
     html += '</ul>';
