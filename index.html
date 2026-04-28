@@ -20346,7 +20346,7 @@ function ldgMigrate2024() {
       alert('데이터 로드 실패: ' + err.message);
       console.error('[DailyLedger] Migration error:', err);
     });
-  });
+  }, '가져오기');
 }
 
 // Service Worker 등록
