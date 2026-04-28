@@ -17929,7 +17929,6 @@ async function loadLedgerData() {
     _ldgAssetYear = _ldgYear;
   }
   ldgRenderMonthly();
-  ldgCheckRecurringAuto();
 }
 
 var _ledgerLoaded = false;
@@ -17970,6 +17969,7 @@ function ldgNextMonth() {
 // ── Main render ──
 function ldgRenderMonthly() {
   if (!_ledgerData.transactions) return;
+  ldgApplyRecurringForMonth(_ldgYear, _ldgMonth);
   var el = document.getElementById('ldg-month-title');
   if (el) el.textContent = _ldgYear + ' ' + _ldgMonthNames[_ldgMonth-1];
   var prevM = _ldgMonth - 1, prevY = _ldgYear;
@@ -18822,6 +18822,11 @@ function ldgCancelDelete() {
 }
 function ldgConfirmDelete() {
   if (_ldgDeleteTarget) {
+    // If deleting an auto-generated transaction, record it in skip list
+    var tx = _ledgerData.transactions.find(function(t) { return t.id === _ldgDeleteTarget; });
+    if (tx && tx.recurringId && tx.date) {
+      ldgAddSkipped(tx.recurringId, tx.date.substring(0,7));
+    }
     _ledgerData.transactions = _ledgerData.transactions.filter(function(t) { return t.id !== _ldgDeleteTarget; });
     ldgSaveTx();
   }
@@ -20079,36 +20084,57 @@ function ldgEnsureRecurringIds() {
   if (changed) ldgSaveRecurringData();
 }
 
-function ldgCheckRecurringAuto() {
+// ── Recurring skip list (deleted auto transactions) ──
+function ldgGetSkipped() {
+  try { return JSON.parse(localStorage.getItem('atelier_ledger_recurring_skipped')) || {}; } catch(e) { return {}; }
+}
+function ldgAddSkipped(recId, monthKey) {
+  var s = ldgGetSkipped();
+  if (!s[monthKey]) s[monthKey] = [];
+  if (s[monthKey].indexOf(recId) < 0) s[monthKey].push(recId);
+  localStorage.setItem('atelier_ledger_recurring_skipped', JSON.stringify(s));
+}
+
+var _ldgRecurringMigrated = false;
+function ldgApplyRecurringForMonth(year, month) {
   if (localStorage.getItem('atelier_ledger_recurring_auto') === 'false') return;
   ldgEnsureRecurringIds();
   var items = _ledgerData.recurring || [];
   var txs = _ledgerData.transactions || [];
+  var monthKey = String(year) + '-' + String(month).padStart(2,'0');
+
   // One-time migration: backfill recurringId on old auto transactions
-  var migrated = 0;
-  txs.forEach(function(t) {
-    if (t['비고'] === '자동(고정)' && !t.recurringId) {
-      // Best-effort match: find a recurring item with same 대분류+소분류+dayOfMonth+금액
-      var day = t.date ? parseInt(t.date.split('-')[2]) : 0;
-      var match = items.find(function(r) {
-        return r['대분류'] === t['대분류'] && r['소분류'] === t['소분류'] && r.dayOfMonth === day && (r['금액'] === t['금액'] || r['금액'] === 0);
-      });
-      if (match) { t.recurringId = match.recId; migrated++; }
-    }
-  });
-  if (migrated > 0) { ldgSaveTx(); console.log('[DailyLedger] Migrated recurringId on ' + migrated + ' old auto transactions'); }
-  var now = new Date();
-  var todayDay = now.getDate();
-  var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  if (!_ldgRecurringMigrated) {
+    _ldgRecurringMigrated = true;
+    var migrated = 0;
+    txs.forEach(function(t) {
+      if (t['비고'] === '자동(고정)' && !t.recurringId) {
+        var day = t.date ? parseInt(t.date.split('-')[2]) : 0;
+        var match = items.find(function(r) {
+          return r['대분류'] === t['대분류'] && r['소분류'] === t['소분류'] && r.dayOfMonth === day && (r['금액'] === t['금액'] || r['금액'] === 0);
+        });
+        if (match) { t.recurringId = match.recId; migrated++; }
+      }
+    });
+    if (migrated > 0) { ldgSaveTx(); console.log('[DailyLedger] Migrated recurringId on ' + migrated + ' old auto transactions'); }
+  }
+
+  var skipped = ldgGetSkipped();
+  var skipList = skipped[monthKey] || [];
   var added = 0, pendingVariable = 0;
+
   items.forEach(function(item) {
-    if (item.dayOfMonth > todayDay) return;
-    var dateStr = monthKey + '-' + String(item.dayOfMonth).padStart(2,'0');
-    // Check by recurringId — only skip if this exact recurring item already generated a tx this month
+    if (!item.recId) return;
+    // Skip if user previously deleted this auto transaction for this month
+    if (skipList.indexOf(item.recId) >= 0) return;
+    // Skip if already exists for this month (recurringId based)
     var exists = txs.some(function(t) {
-      return t.recurringId === item.recId && t.date.substring(0,7) === monthKey;
+      return t.recurringId === item.recId && t.date && t.date.substring(0,7) === monthKey;
     });
     if (exists) return;
+
+    var day = Math.min(item.dayOfMonth, new Date(year, month, 0).getDate()); // clamp to month's last day
+    var dateStr = monthKey + '-' + String(day).padStart(2,'0');
     var newTx = {
       id: 'txn_auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,4),
       date: dateStr,
@@ -20121,19 +20147,19 @@ function ldgCheckRecurringAuto() {
     added++;
     if (item['금액'] === 0) pendingVariable++;
   });
+
   if (added > 0) {
     ldgSaveTx();
-    console.log('[DailyLedger] Auto-applied ' + added + ' recurring transactions');
+    console.log('[DailyLedger] Auto-applied ' + added + ' recurring transactions for ' + monthKey);
   }
-  // Show banner for pending variable-amount items
   if (pendingVariable > 0) {
     setTimeout(function() {
       var banner = document.createElement('div');
       banner.className = 'fixed top-20 right-8 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-3';
-      banner.innerHTML = '<span class="text-amber-600 text-sm">입력 대기 중인 고정 거래가 ' + pendingVariable + '건 있습니다.</span><button onclick="this.parentElement.remove();switchLedgerTab(\'monthly\')" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800 whitespace-nowrap">확인하러 가기</button><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-sm">close</span></button>';
+      banner.innerHTML = '<span class="text-amber-600 text-sm">입력 대기 중인 고정 거래(변동 금액)가 ' + pendingVariable + '건 있습니다.</span><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-sm">close</span></button>';
       document.body.appendChild(banner);
-      setTimeout(function() { if (banner.parentElement) banner.remove(); }, 8000);
-    }, 1000);
+      setTimeout(function() { if (banner.parentElement) banner.remove(); }, 5000);
+    }, 500);
   }
 }
 
