@@ -2196,21 +2196,7 @@
 
       </div>
       <div id="ledger-panel-coach" class="ledger-panel" style="display:none">
-        <div class="flex items-center justify-center min-h-[400px]">
-          <div class="text-center max-w-md bg-indigo-50/50 rounded-2xl border border-indigo-100 p-10">
-            <p class="text-3xl mb-3">🎯</p>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">AI 코치 (준비 중)</h3>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">현재 단계에서는 목표 설정만 가능합니다.<br>다음 업데이트에서:</p>
-            <ul class="text-xs text-slate-500 space-y-1 mb-6 text-left inline-block">
-              <li>• 현재 페이스 분석</li>
-              <li>• AI 카테고리 예산 자동 제안</li>
-              <li>• 강한 어조의 맞춤 코칭</li>
-              <li>• AI 채팅으로 자연어 질문</li>
-            </ul>
-            <p class="text-xs text-slate-400 mb-4">먼저 설정 → 연간 목표에서 목표를 설정해주세요.</p>
-            <button onclick="ldgGoToGoals()" class="px-5 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors">목표 설정하러 가기</button>
-          </div>
-        </div>
+        <div id="ldg-coach-content"></div>
       </div>
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
@@ -17948,6 +17934,7 @@ function switchLedgerTab(tab) {
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
   if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
   if (tab === 'assets' && _ledgerData.transactions) ldgRenderAssets();
+  if (tab === 'coach') ldgRenderCoach();
   if (tab === 'settings') ldgRenderSettings();
 }
 
@@ -20373,7 +20360,189 @@ function ldgApplyRecurringForMonth(year, month) {
   }
 }
 
-// ===== DAILY LEDGER: GOALS + COACH =====
+// ===== DAILY LEDGER: COACH TRACKER =====
+var _ldgCoachYear = 2026;
+
+function ldgRenderCoach() {
+  var el = document.getElementById('ldg-coach-content');
+  if (!el) return;
+  var goals = ldgLoadGoals();
+  var g = goals[_ldgCoachYear];
+  if (!g || (!g['수입'] && !g['저축'] && !g['지출'])) {
+    // Placeholder
+    el.innerHTML = '<div class="flex items-center justify-center min-h-[400px]"><div class="text-center max-w-md bg-indigo-50/50 rounded-2xl border border-indigo-100 p-10">' +
+      '<p class="text-3xl mb-3">🎯</p><h3 class="text-lg font-bold text-slate-900 mb-2">AI 코치</h3>' +
+      '<p class="text-sm text-slate-500 leading-relaxed mb-6">먼저 설정 → 연간 목표에서<br>' + _ldgCoachYear + '년 목표를 설정해주세요.</p>' +
+      '<button onclick="ldgGoToGoals()" class="px-5 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors">목표 설정하러 가기</button></div></div>';
+    return;
+  }
+  var txs = (_ledgerData.transactions||[]).filter(function(t){return t.date&&t.date.substring(0,4)===String(_ldgCoachYear);});
+  var now = new Date();
+  var isCurrentYear = now.getFullYear() === _ldgCoachYear;
+  var curMonth = isCurrentYear ? now.getMonth()+1 : 12;
+  var curDay = isCurrentYear ? now.getDate() : 31;
+  var dataMonths = curMonth - 1 + curDay / 30; // fractional months
+  if (dataMonths < 1) dataMonths = 1;
+  var dataDays = isCurrentYear ? Math.floor((now - new Date(_ldgCoachYear,0,1))/(864e5)) : 365;
+  var remainDays = isCurrentYear ? Math.floor((new Date(_ldgCoachYear,11,31) - now)/(864e5)) : 0;
+  var remainMonths = 12 - curMonth;
+  if (remainMonths < 0) remainMonths = 0;
+
+  var totInc=0, totSav=0, totExp=0;
+  txs.forEach(function(t){
+    if(t['대분류']==='수입') totInc+=t['금액'];
+    else if(t['대분류']==='저축') totSav+=t['금액'];
+    else totExp+=t['금액'];
+  });
+  var paceInc=Math.round(totInc*(12/dataMonths)), paceSav=Math.round(totSav*(12/dataMonths)), paceExp=Math.round(totExp*(12/dataMonths));
+  var avgInc=Math.round(totInc/dataMonths), avgSav=Math.round(totSav/dataMonths), avgExp=Math.round(totExp/dataMonths);
+
+  // Year selector
+  var html = '<div class="flex items-center justify-between mb-6"><div><h3 class="text-lg font-bold text-slate-900">🎯 ' + _ldgCoachYear + ' 목표 트래커</h3>' +
+    '<p class="text-xs text-slate-400 mt-1">' + curMonth + '월 ' + curDay + '일 현재 · 데이터 ' + dataDays + '일' + (remainDays>0?' · 남은 '+remainDays+'일':'') + '</p></div>' +
+    '<div class="flex gap-1">' +
+    [2024,2025,2026,2027].map(function(yr){var ac=yr===_ldgCoachYear;return '<button onclick="_ldgCoachYear='+yr+';ldgRenderCoach()" class="px-3 py-1 rounded-full text-xs font-semibold '+(ac?'text-white" style="background:linear-gradient(135deg,#6366f1,#a855f7)':'text-slate-500" style="background:#f1f5f9')+'">' + yr + '</button>';}).join('') +
+    '</div></div>';
+
+  // Summary box
+  var pctI=g['수입']?Math.round(paceInc/g['수입']*100):0, pctS=g['저축']?Math.round(paceSav/g['저축']*100):0, pctE=g['지출']?Math.round(paceExp/g['지출']*100):0;
+  var biggestRisk = '';
+  // Find biggest risk category
+  var prevYearTxs = (_ledgerData.transactions||[]).filter(function(t){return t.date&&t.date.substring(0,4)===String(_ldgCoachYear-1);});
+  var catExp = {}, prevCatExp = {};
+  txs.forEach(function(t){if(ldgIsExpense(t)) catExp[t['대분류']]=(catExp[t['대분류']]||0)+t['금액'];});
+  prevYearTxs.forEach(function(t){if(ldgIsExpense(t)) prevCatExp[t['대분류']]=(prevCatExp[t['대분류']]||0)+t['금액'];});
+  var maxRiskPct = -999, maxRiskCat = '';
+  for(var c in catExp){
+    var prev = prevCatExp[c]||0;
+    if(prev>0){var pace=catExp[c]*(12/dataMonths);var chg=Math.round((pace-prev)/prev*100);if(chg>maxRiskPct){maxRiskPct=chg;maxRiskCat=c;}}
+  }
+
+  html += '<div class="bg-white rounded-2xl border-l-4 border-l-indigo-500 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 mb-6">' +
+    '<p class="text-xs font-bold text-slate-700 mb-3">💡 ' + curMonth + '월 데이터 분석 결과</p>' +
+    '<div class="text-xs text-slate-600 space-y-1">' +
+    '<p>현재 페이스 유지 시:</p>' +
+    '<p>• 수입: 목표의 <b>' + pctI + '%</b> 달성 예상' + (pctI<80?' <span class="text-red-500 font-bold">(부족)</span>':'') + '</p>' +
+    '<p>• 저축: 목표의 <b>' + pctS + '%</b> 달성 예상' + (pctS<50?' <span class="text-red-500 font-bold">(심각)</span>':'') + '</p>' +
+    '<p>• 지출: 목표의 <b>' + pctE + '%</b> 사용 예상' + (pctE>100?' <span class="text-red-500 font-bold">(초과)</span>':'') + '</p>' +
+    (maxRiskCat ? '<p class="mt-2">가장 큰 위험: <b>' + maxRiskCat + '</b> (작년 대비 +' + maxRiskPct + '% 페이스)</p>' : '') +
+    '</div></div>';
+
+  // KPI cards
+  html += '<div class="grid grid-cols-3 gap-6 mb-8">';
+  html += ldgCoachKPICard('💰 수입', totInc, g['수입'], paceInc, avgInc, remainMonths, 'income');
+  html += ldgCoachKPICard('🏦 저축', totSav, g['저축'], paceSav, avgSav, remainMonths, 'saving');
+  html += ldgCoachKPICard('💸 지출 (이하)', totExp, g['지출'], paceExp, avgExp, remainMonths, 'expense');
+  html += '</div>';
+
+  // Category pace analysis
+  html += ldgCoachCategoryAnalysis(catExp, prevCatExp, dataMonths);
+
+  // Coming soon
+  html += '<div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mt-6">' +
+    '<p class="text-xs font-bold text-slate-500 mb-2">🚀 더 깊이 있는 분석을 받으려면</p>' +
+    '<p class="text-[10px] text-slate-400 leading-relaxed">AI 코치가 곧 추가됩니다: 패턴 분석, 카테고리 예산 자동 제안, 강한 어조의 맞춤 코칭, 자연어 질문/답변 (다음 업데이트 예정)</p></div>';
+  el.innerHTML = html;
+}
+
+function ldgCoachKPICard(label, current, goal, pace, avgMonthly, remainMonths, type) {
+  if (!goal) return '';
+  var pct = Math.round(current / goal * 100);
+  var isExpense = type === 'expense';
+  // Progress bar color
+  var barColor;
+  if (isExpense) {
+    if (pct < 50) barColor = '#10b981';
+    else if (pct < 80) barColor = '#f59e0b';
+    else if (pct <= 100) barColor = '#f97316';
+    else barColor = '#ef4444';
+  } else {
+    barColor = pct >= 100 ? '#10b981' : '#6366f1';
+  }
+  // Status
+  var diff = pace - goal;
+  var statusIcon, statusMsg;
+  if (isExpense) {
+    if (pace <= goal) { statusIcon = '✅'; statusMsg = '목표 이내 페이스'; }
+    else if (diff / goal < 0.2) { statusIcon = '⚠️'; statusMsg = '목표 대비 ' + ldgFmt(diff) + ' 초과 예상'; }
+    else { statusIcon = '🚨'; statusMsg = '목표 대비 ' + ldgFmt(diff) + ' 초과 예상'; }
+  } else {
+    if (pace >= goal) { statusIcon = '✅'; statusMsg = '목표 달성 페이스'; }
+    else if (Math.abs(diff) / goal < 0.2) { statusIcon = '⚠️'; statusMsg = '목표 대비 ' + ldgFmt(Math.abs(diff)) + ' 부족'; }
+    else { statusIcon = '🚨'; statusMsg = '목표 대비 ' + ldgFmt(Math.abs(diff)) + ' 부족'; }
+  }
+  // Needed pace
+  var neededHtml = '';
+  if (remainMonths > 0) {
+    if (isExpense) {
+      var remaining = goal - current;
+      var neededMonthly = remaining > 0 ? Math.round(remaining / remainMonths) : 0;
+      neededHtml = '<p class="text-[10px] text-slate-500 mt-2">남은 ' + remainMonths + '개월간 매월 ' + ldgFmt(neededMonthly) + ' 이하로 써야 함</p>';
+      if (avgMonthly > 0 && neededMonthly < avgMonthly) {
+        var cutPct = Math.round((1 - neededMonthly / avgMonthly) * 100);
+        neededHtml += '<p class="text-[10px] text-slate-400">(현재 월평균 ' + ldgFmt(avgMonthly) + ' → ' + cutPct + '% 감축 필요)</p>';
+      }
+    } else {
+      var needed = goal - current;
+      var neededMonthly = needed > 0 ? Math.round(needed / remainMonths) : 0;
+      neededHtml = '<p class="text-[10px] text-slate-500 mt-2">남은 ' + remainMonths + '개월간 매월 ' + ldgFmt(neededMonthly) + ' 필요</p>';
+      if (avgMonthly > 0 && neededMonthly > avgMonthly) {
+        var ratio = (neededMonthly / avgMonthly).toFixed(1);
+        neededHtml += '<p class="text-[10px] text-slate-400">(현재 월평균 ' + ldgFmt(avgMonthly) + ' → ' + ratio + '배 증가 필요)</p>';
+      }
+    }
+  }
+  return '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">' +
+    '<p class="text-xs font-semibold text-slate-500 mb-2">' + label + '</p>' +
+    '<p class="text-sm font-bold text-slate-900 mb-1" style="font-feature-settings:\'tnum\'">' + ldgFmt(current) + ' / ' + ldgFmt(goal) + '</p>' +
+    '<div class="w-full h-2 bg-slate-100 rounded-full mb-3"><div class="h-full rounded-full" style="width:' + Math.min(pct,100) + '%;background:' + barColor + '"></div></div>' +
+    '<p class="text-[10px] text-slate-600">📊 페이스 → 연 ' + ldgFmt(pace) + ' 예상</p>' +
+    '<p class="text-[10px] font-semibold mt-0.5">' + statusIcon + ' ' + statusMsg + '</p>' +
+    neededHtml + '</div>';
+}
+
+function ldgCoachCategoryAnalysis(catExp, prevCatExp, dataMonths) {
+  var cats = _ledgerData.categories || {};
+  var expCats = Object.keys(cats).filter(function(c){return c!=='수입'&&c!=='저축';});
+  var items = [];
+  expCats.forEach(function(c) {
+    var cur = catExp[c] || 0;
+    var prev = prevCatExp[c] || 0;
+    var pace = cur > 0 ? Math.round(cur * (12 / dataMonths)) : 0;
+    var chg = prev > 0 ? Math.round((pace - prev) / prev * 100) : (cur > 0 ? 999 : 0);
+    var status;
+    if (cur === 0) status = 'none';
+    else if (chg >= 30) status = 'danger';
+    else if (chg >= 10) status = 'warn';
+    else status = 'ok';
+    items.push({ cat: c, cur: cur, prev: prev, pace: pace, chg: chg, status: status });
+  });
+  // Sort: danger > warn > ok > none
+  var order = { danger: 0, warn: 1, ok: 2, none: 3 };
+  items.sort(function(a, b) { return order[a.status] - order[b.status] || b.chg - a.chg; });
+
+  var html = '<div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6">' +
+    '<h4 class="text-sm font-bold text-slate-800 mb-4">📈 카테고리 페이스 분석</h4><div class="space-y-4">';
+  var noneList = [];
+  items.forEach(function(it) {
+    if (it.status === 'none') { noneList.push(it.cat); return; }
+    var icon = it.status === 'danger' ? '🚨' : (it.status === 'warn' ? '⚠️' : '✅');
+    var chgText = it.prev > 0 ? ((_ldgCoachYear - 1) + ' 연간(' + ldgFmtShort(it.prev) + ') 대비 ' + (it.chg >= 0 ? '+' : '') + it.chg + '% 페이스') : '작년 데이터 없음';
+    if (it.status === 'ok') {
+      var desc = it.chg <= -10 ? ('작년 대비 ' + it.chg + '%') : (it.prev > 0 ? '일정한 페이스' : '');
+      html += '<div class="text-xs text-slate-500">' + icon + ' <b>' + it.cat + '</b> — ' + (desc || '안정적') + '</div>';
+    } else {
+      html += '<div class="mb-2"><p class="text-xs font-semibold text-slate-700">' + icon + ' ' + it.cat + '</p>' +
+        '<p class="text-[10px] text-slate-500 ml-5">현재: ' + ldgFmt(it.cur) + ' · 페이스: 연 ' + ldgFmt(it.pace) + ' 예상</p>' +
+        '<p class="text-[10px] text-slate-400 ml-5">' + chgText + '</p></div>';
+    }
+  });
+  if (noneList.length) html += '<p class="text-[10px] text-slate-400 mt-2 border-t border-slate-100 pt-2">거래 없는 카테고리: ' + noneList.join(', ') + '</p>';
+  html += '</div></div>';
+  return html;
+}
+
+// ===== DAILY LEDGER: GOALS =====
 var _ldgGoalYear = 2026;
 
 function ldgGoToGoals() { switchLedgerTab('settings'); setTimeout(function(){ ldgSetSubTab('goals'); }, 50); }
