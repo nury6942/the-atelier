@@ -20012,21 +20012,46 @@ function ldgSaveRecAuto() {
 }
 
 // ── Recurring Auto-Apply ──
+function ldgEnsureRecurringIds() {
+  var items = _ledgerData.recurring || [];
+  var changed = false;
+  items.forEach(function(item, i) {
+    if (!item.recId) {
+      item.recId = 'rec_' + i + '_' + Math.random().toString(36).substr(2,6);
+      changed = true;
+    }
+  });
+  if (changed) ldgSaveRecurringData();
+}
+
 function ldgCheckRecurringAuto() {
   if (localStorage.getItem('atelier_ledger_recurring_auto') === 'false') return;
+  ldgEnsureRecurringIds();
   var items = _ledgerData.recurring || [];
   var txs = _ledgerData.transactions || [];
+  // One-time migration: backfill recurringId on old auto transactions
+  var migrated = 0;
+  txs.forEach(function(t) {
+    if (t['비고'] === '자동(고정)' && !t.recurringId) {
+      // Best-effort match: find a recurring item with same 대분류+소분류+dayOfMonth+금액
+      var day = t.date ? parseInt(t.date.split('-')[2]) : 0;
+      var match = items.find(function(r) {
+        return r['대분류'] === t['대분류'] && r['소분류'] === t['소분류'] && r.dayOfMonth === day && (r['금액'] === t['금액'] || r['금액'] === 0);
+      });
+      if (match) { t.recurringId = match.recId; migrated++; }
+    }
+  });
+  if (migrated > 0) { ldgSaveTx(); console.log('[DailyLedger] Migrated recurringId on ' + migrated + ' old auto transactions'); }
   var now = new Date();
   var todayDay = now.getDate();
   var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  var todayStr = monthKey + '-' + String(todayDay).padStart(2,'0');
   var added = 0, pendingVariable = 0;
   items.forEach(function(item) {
     if (item.dayOfMonth > todayDay) return;
     var dateStr = monthKey + '-' + String(item.dayOfMonth).padStart(2,'0');
-    // Check if already exists
+    // Check by recurringId — only skip if this exact recurring item already generated a tx this month
     var exists = txs.some(function(t) {
-      return t.date === dateStr && t['대분류'] === item['대분류'] && t['소분류'] === item['소분류'] && t['비고'] === '자동(고정)';
+      return t.recurringId === item.recId && t.date.substring(0,7) === monthKey;
     });
     if (exists) return;
     var newTx = {
@@ -20034,7 +20059,8 @@ function ldgCheckRecurringAuto() {
       date: dateStr,
       '대분류': item['대분류'], '소분류': item['소분류'],
       '금액': item['금액'], '결제수단': item['결제수단'],
-      '세부사항': '', '비고': '자동(고정)'
+      '세부사항': '', '비고': '자동(고정)',
+      recurringId: item.recId
     };
     txs.push(newTx);
     added++;
