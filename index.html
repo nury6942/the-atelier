@@ -1933,7 +1933,7 @@
           <div class="flex items-center gap-4">
             <button onclick="ldgPrevMonth()" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors" id="ldg-prev-btn">‹ 3월</button>
             <button onclick="ldgNextMonth()" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors" id="ldg-next-btn">5월 ›</button>
-            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-400 cursor-not-allowed opacity-50" disabled>
+            <button onclick="switchLedgerTab('settings')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
               <span class="material-symbols-outlined text-sm">settings</span> 설정
             </button>
           </div>
@@ -2075,8 +2075,98 @@
       <div id="ledger-panel-assets" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
         <p class="text-slate-400 text-sm">여기에 자산 콘텐츠가 들어갑니다</p>
       </div>
-      <div id="ledger-panel-settings" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
-        <p class="text-slate-400 text-sm">여기에 설정 콘텐츠가 들어갑니다</p>
+      <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
+
+        <!-- Back link -->
+        <button onclick="switchLedgerTab('monthly')" class="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 mb-4 font-semibold">
+          <span class="material-symbols-outlined text-sm">arrow_back</span> 가계부로 돌아가기
+        </button>
+
+        <!-- Sub-tabs -->
+        <div class="flex gap-2 mb-6">
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="categories" onclick="ldgSetSubTab('categories')">카테고리</button>
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="payments" onclick="ldgSetSubTab('payments')">결제수단</button>
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="budgets" onclick="ldgSetSubTab('budgets')">예산</button>
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="recurring" onclick="ldgSetSubTab('recurring')">고정내역</button>
+        </div>
+
+        <!-- ── Sub-tab: Categories ── -->
+        <div id="ldg-stab-categories" class="ldg-stab-panel">
+          <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-5 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-bold text-slate-800">대분류</h4>
+                <span id="ldg-cat-major-count" class="text-xs text-slate-400"></span>
+              </div>
+              <div id="ldg-cat-major-list" class="space-y-0.5 mb-3 max-h-[420px] overflow-y-auto hide-scrollbar"></div>
+              <button onclick="ldgAddMajorCat()" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800">+ 대분류 추가</button>
+            </div>
+            <div class="col-span-7 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-bold text-slate-800" id="ldg-cat-minor-title">소분류</h4>
+              </div>
+              <div id="ldg-cat-minor-list" class="space-y-0.5 mb-3 max-h-[420px] overflow-y-auto hide-scrollbar"></div>
+              <button onclick="ldgAddMinorCat()" id="ldg-add-minor-btn" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800" style="display:none">+ 소분류 추가</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Sub-tab: Payment Methods ── -->
+        <div id="ldg-stab-payments" class="ldg-stab-panel" style="display:none">
+          <div id="ldg-pm-list" class="space-y-2 max-w-xl"></div>
+          <button onclick="ldgAddPayment()" class="mt-4 text-xs text-indigo-600 font-semibold hover:text-indigo-800">+ 결제수단 추가</button>
+        </div>
+
+        <!-- ── Sub-tab: Budgets ── -->
+        <div id="ldg-stab-budgets" class="ldg-stab-panel" style="display:none">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex gap-2">
+              <button class="ldg-bview px-4 py-1.5 rounded-full text-xs font-semibold" data-bview="default" onclick="ldgSetBudgetView('default')">기본 예산</button>
+              <button class="ldg-bview px-4 py-1.5 rounded-full text-xs font-semibold" data-bview="matrix" onclick="ldgSetBudgetView('matrix')">월별 매트릭스</button>
+            </div>
+            <button onclick="ldgAddBudget()" class="text-xs px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">+ 예산 추가</button>
+          </div>
+          <div id="ldg-budget-default" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden"></div>
+          <div id="ldg-budget-matrix" class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-x-auto" style="display:none"></div>
+        </div>
+
+        <!-- ── Sub-tab: Recurring ── -->
+        <div id="ldg-stab-recurring" class="ldg-stab-panel" style="display:none">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-slate-800">고정 지출 내역</h4>
+            <button onclick="ldgAddRecurring()" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 flex items-center gap-1"><span class="material-symbols-outlined text-sm">add</span> 내역 추가</button>
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden mb-6">
+            <table class="w-full text-left" id="ldg-rec-table">
+              <thead class="bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <tr><th class="px-6 py-3">대분류</th><th class="px-4 py-3">소분류</th><th class="px-4 py-3 w-16">날짜(일)</th><th class="px-4 py-3 w-28 text-right">금액</th><th class="px-4 py-3">결제수단</th><th class="px-4 py-3 w-10"></th></tr>
+              </thead>
+              <tbody id="ldg-rec-body" class="text-sm divide-y divide-slate-50"></tbody>
+            </table>
+          </div>
+          <!-- Auto-apply option -->
+          <div class="bg-indigo-50/50 rounded-2xl border border-indigo-100 p-6 max-w-xl">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" id="ldg-rec-auto" onchange="ldgSaveRecAuto()" class="mt-0.5 w-4 h-4 rounded text-indigo-600 focus:ring-indigo-300 border-slate-300"/>
+              <div>
+                <p class="text-sm font-semibold text-slate-800 mb-1">등록된 날짜에 자동으로 거래 추가</p>
+                <p class="text-xs text-slate-500 leading-relaxed">고정 내���에 등록된 일자가 되면 별도의 입력 없이 가계부에 지출 내역이 자동으로 생성됩니다. 변동 금액으로 설정된 항목은 알림으로 입력을 유도합니다.</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Safety confirm modal -->
+        <div id="ldg-safety-modal" class="fixed inset-0 bg-black/30 z-[9999] flex items-center justify-center" style="display:none">
+          <div class="bg-white rounded-2xl p-6 shadow-xl max-w-sm w-full mx-4">
+            <p id="ldg-safety-msg" class="text-sm text-slate-800 mb-4 whitespace-pre-line"></p>
+            <div class="flex justify-end gap-2">
+              <button onclick="ldgSafetyCancel()" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded-lg">취소</button>
+              <button onclick="ldgSafetyConfirm()" id="ldg-safety-confirm-btn" class="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">삭제</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -17656,6 +17746,7 @@ function switchLedgerTab(tab) {
     }
   });
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
+  if (tab === 'settings') ldgRenderSettings();
 }
 
 async function loadLedgerData() {
@@ -17700,6 +17791,7 @@ async function loadLedgerData() {
     _ldgYear = parseInt(parts[0]); _ldgMonth = parseInt(parts[1]);
   }
   ldgRenderMonthly();
+  ldgCheckRecurringAuto();
 }
 
 var _ledgerLoaded = false;
@@ -18131,8 +18223,7 @@ function ldgRenderTxTable() {
   }
   var fPayment = document.getElementById('ldg-filter-payment');
   if (fPayment && fPayment.options.length <= 1) {
-    var pms = (_ledgerData.settings || {}).paymentMethods || [];
-    pms.forEach(function(p) { var o = document.createElement('option'); o.value = p; o.textContent = p; fPayment.appendChild(o); });
+    ((_ledgerData.settings || {}).paymentMethods || []).forEach(function(p) { var o = document.createElement('option'); o.value = p; o.textContent = p; fPayment.appendChild(o); });
   }
   var html = '';
   // If editing, show edit row at top
@@ -18159,9 +18250,14 @@ function ldgRenderTxTable() {
   body.innerHTML = html;
 }
 
+function ldgGetActivePMs() {
+  var all = (_ledgerData.settings || {}).paymentMethods || [];
+  var dis = (_ledgerData.settings || {}).disabledPayments || [];
+  return all.filter(function(p) { return dis.indexOf(p) < 0; });
+}
 function ldgInputRowHTML(tx) {
   var cats = _ledgerData.categories || {};
-  var pms = (_ledgerData.settings || {}).paymentMethods || [];
+  var pms = ldgGetActivePMs();
   var d = tx ? tx.date : '', major = tx ? tx['대분류'] : '', minor = tx ? tx['소분류'] : '';
   var amt = tx ? tx['금액'].toLocaleString('ko-KR') : '', pm = tx ? (tx['결제수단']||'') : '';
   var detail = tx ? (tx['세부사항']||'') : '', note = tx ? (tx['비고']||'') : '';
@@ -18357,6 +18453,650 @@ function ldgToggleSort() {
   else if (_ldgSortField === 'amount' && !_ldgSortAsc) { _ldgSortAsc = true; }
   else { _ldgSortField = 'date'; _ldgSortAsc = false; }
   ldgRenderTxTable();
+}
+
+// ===== DAILY LEDGER: SETTINGS TABS =====
+var _ldgSubTab = 'categories';
+var _ldgSelectedMajor = null;
+var _ldgBudgetView = 'default';
+var _ldgSafetyCallback = null;
+var _ldgRecEditIdx = null;
+
+function ldgRenderSettings() {
+  ldgSetSubTab(_ldgSubTab);
+}
+
+function ldgSetSubTab(tab) {
+  _ldgSubTab = tab;
+  document.querySelectorAll('.ldg-stab-panel').forEach(function(p) { p.style.display = 'none'; });
+  var panel = document.getElementById('ldg-stab-' + tab);
+  if (panel) panel.style.display = 'block';
+  document.querySelectorAll('.ldg-stab').forEach(function(btn) {
+    if (btn.dataset.stab === tab) {
+      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+    } else {
+      btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
+    }
+  });
+  if (tab === 'categories') ldgRenderCats();
+  if (tab === 'payments') ldgRenderPMs();
+  if (tab === 'budgets') { ldgSetBudgetView(_ldgBudgetView); }
+  if (tab === 'recurring') ldgRenderRecurring();
+}
+
+function ldgSaveCats() { localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); }
+function ldgSaveSettings() { localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); }
+function ldgSaveBudgets() { localStorage.setItem('atelier_ledger_budgets', JSON.stringify(_ledgerData.budgets)); }
+function ldgSaveRecurringData() { localStorage.setItem('atelier_ledger_recurring', JSON.stringify(_ledgerData.recurring)); }
+
+// ── Safety modal ──
+function ldgSafetyShow(msg, cb) {
+  document.getElementById('ldg-safety-msg').textContent = msg;
+  _ldgSafetyCallback = cb;
+  document.getElementById('ldg-safety-modal').style.display = 'flex';
+}
+function ldgSafetyCancel() { _ldgSafetyCallback = null; document.getElementById('ldg-safety-modal').style.display = 'none'; }
+function ldgSafetyConfirm() {
+  if (_ldgSafetyCallback) _ldgSafetyCallback();
+  _ldgSafetyCallback = null;
+  document.getElementById('ldg-safety-modal').style.display = 'none';
+}
+
+function ldgCountUsage(field, value) {
+  return (_ledgerData.transactions || []).filter(function(t) { return t[field] === value; }).length;
+}
+
+// ── Categories Tab ──
+function ldgRenderCats() {
+  var cats = _ledgerData.categories || {};
+  var keys = Object.keys(cats);
+  document.getElementById('ldg-cat-major-count').textContent = keys.length + '개';
+  if (!_ldgSelectedMajor || !cats[_ldgSelectedMajor]) _ldgSelectedMajor = keys[0] || null;
+  var majorList = document.getElementById('ldg-cat-major-list');
+  majorList.innerHTML = keys.map(function(k, i) {
+    var active = k === _ldgSelectedMajor;
+    return '<div class="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer group transition-all ' +
+      (active ? 'bg-indigo-50 border-l-4 border-l-indigo-500' : 'hover:bg-slate-50 border-l-4 border-l-transparent') +
+      '" draggable="true" ondragstart="ldgDragMajor(event,' + i + ')" ondragover="event.preventDefault()" ondrop="ldgDropMajor(event,' + i + ')" onclick="ldgSelectMajor(\'' + k.replace(/'/g,"\\'") + '\')">' +
+      '<span class="material-symbols-outlined text-slate-300 text-sm cursor-grab">drag_indicator</span>' +
+      '<span class="flex-1 text-xs font-semibold text-slate-700" ondblclick="ldgEditMajorName(event,\'' + k.replace(/'/g,"\\'") + '\')">' + k + '</span>' +
+      '<button onclick="event.stopPropagation();ldgDeleteMajor(\'' + k.replace(/'/g,"\\'") + '\')" class="text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-sm">close</span></button>' +
+      '</div>';
+  }).join('');
+  ldgRenderMinorCats();
+}
+
+function ldgSelectMajor(k) { _ldgSelectedMajor = k; ldgRenderCats(); }
+
+function ldgRenderMinorCats() {
+  var cats = _ledgerData.categories || {};
+  var subs = _ldgSelectedMajor ? (cats[_ldgSelectedMajor] || []) : [];
+  document.getElementById('ldg-cat-minor-title').textContent = _ldgSelectedMajor ? '소분류 · ' + _ldgSelectedMajor : '소분류';
+  document.getElementById('ldg-add-minor-btn').style.display = _ldgSelectedMajor ? '' : 'none';
+  var list = document.getElementById('ldg-cat-minor-list');
+  if (!_ldgSelectedMajor) { list.innerHTML = '<p class="text-xs text-slate-400 p-2">대분류를 선택하세요</p>'; return; }
+  list.innerHTML = subs.map(function(s, i) {
+    return '<div class="flex items-center gap-2 px-3 py-2 rounded-lg group hover:bg-slate-50 transition-all" draggable="true" ondragstart="ldgDragMinor(event,' + i + ')" ondragover="event.preventDefault()" ondrop="ldgDropMinor(event,' + i + ')">' +
+      '<span class="material-symbols-outlined text-slate-300 text-sm cursor-grab">drag_indicator</span>' +
+      '<span class="flex-1 text-xs text-slate-600" ondblclick="ldgEditMinorName(event,' + i + ')">' + s + '</span>' +
+      '<button onclick="ldgDeleteMinor(' + i + ')" class="text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-sm">close</span></button>' +
+      '</div>';
+  }).join('');
+}
+
+// Drag reorder - major
+var _ldgDragMajorIdx = null;
+function ldgDragMajor(e, i) { _ldgDragMajorIdx = i; e.dataTransfer.effectAllowed = 'move'; }
+function ldgDropMajor(e, i) {
+  e.preventDefault();
+  if (_ldgDragMajorIdx === null || _ldgDragMajorIdx === i) return;
+  var cats = _ledgerData.categories;
+  var keys = Object.keys(cats);
+  var moved = keys.splice(_ldgDragMajorIdx, 1)[0];
+  keys.splice(i, 0, moved);
+  var newCats = {};
+  keys.forEach(function(k) { newCats[k] = cats[k]; });
+  _ledgerData.categories = newCats;
+  ldgSaveCats(); ldgRenderCats();
+}
+// Drag reorder - minor
+var _ldgDragMinorIdx = null;
+function ldgDragMinor(e, i) { _ldgDragMinorIdx = i; e.dataTransfer.effectAllowed = 'move'; }
+function ldgDropMinor(e, i) {
+  e.preventDefault();
+  if (_ldgDragMinorIdx === null || _ldgDragMinorIdx === i || !_ldgSelectedMajor) return;
+  var subs = _ledgerData.categories[_ldgSelectedMajor];
+  var moved = subs.splice(_ldgDragMinorIdx, 1)[0];
+  subs.splice(i, 0, moved);
+  ldgSaveCats(); ldgRenderMinorCats();
+}
+
+function ldgAddMajorCat() {
+  var name = prompt('새 대분류 이름:');
+  if (!name || !name.trim()) return;
+  name = name.trim();
+  if (_ledgerData.categories[name]) { alert('이미 존재하는 대분류입니다.'); return; }
+  _ledgerData.categories[name] = [];
+  ldgSaveCats(); _ldgSelectedMajor = name; ldgRenderCats();
+}
+
+function ldgEditMajorName(e, oldName) {
+  e.stopPropagation();
+  var span = e.target;
+  var input = document.createElement('input');
+  input.type = 'text'; input.value = oldName;
+  input.className = 'text-xs border border-indigo-300 rounded px-2 py-1 w-full outline-none focus:ring-2 focus:ring-indigo-300';
+  span.replaceWith(input);
+  input.focus(); input.select();
+  function save() {
+    var newName = input.value.trim();
+    if (!newName || newName === oldName) { ldgRenderCats(); return; }
+    if (_ledgerData.categories[newName]) { alert('이미 존재하는 대분류입니다.'); ldgRenderCats(); return; }
+    // Migrate categories
+    var cats = _ledgerData.categories;
+    var newCats = {};
+    Object.keys(cats).forEach(function(k) { newCats[k === oldName ? newName : k] = cats[k]; });
+    _ledgerData.categories = newCats;
+    // Migrate transactions
+    (_ledgerData.transactions || []).forEach(function(t) { if (t['대분류'] === oldName) t['대분류'] = newName; });
+    // Migrate budgets
+    var budgets = _ledgerData.budgets || {};
+    var newBudgets = {};
+    Object.keys(budgets).forEach(function(k) {
+      var parts = k.split('.');
+      newBudgets[(parts[0] === oldName ? newName : parts[0]) + '.' + parts.slice(1).join('.')] = budgets[k];
+    });
+    _ledgerData.budgets = newBudgets;
+    ldgSaveCats(); ldgSaveTx(); ldgSaveBudgets();
+    if (_ldgSelectedMajor === oldName) _ldgSelectedMajor = newName;
+    ldgRenderCats();
+  }
+  input.addEventListener('keydown', function(ev) { if (ev.key === 'Enter') save(); if (ev.key === 'Escape') ldgRenderCats(); });
+  input.addEventListener('blur', save);
+}
+
+function ldgDeleteMajor(name) {
+  var count = ldgCountUsage('대분류', name);
+  var msg = count > 0
+    ? '"' + name + '"는 ' + count + '건의 거래에서 사용 중입니다.\n삭제하면 해당 거래의 카테고리가 "미분류"로 변경됩니다.'
+    : '"' + name + '" 대분류를 삭제하시겠습니까?\n포함된 소분류도 함께 삭제됩니다.';
+  ldgSafetyShow(msg, function() {
+    if (count > 0) {
+      (_ledgerData.transactions || []).forEach(function(t) {
+        if (t['대분류'] === name) { t['대분류'] = '미분류'; t['소분류'] = '미분류'; }
+      });
+      ldgSaveTx();
+    }
+    // Remove budgets for this category
+    var budgets = _ledgerData.budgets || {};
+    Object.keys(budgets).forEach(function(k) { if (k.split('.')[0] === name) delete budgets[k]; });
+    ldgSaveBudgets();
+    delete _ledgerData.categories[name];
+    ldgSaveCats();
+    if (_ldgSelectedMajor === name) _ldgSelectedMajor = Object.keys(_ledgerData.categories)[0] || null;
+    ldgRenderCats();
+  });
+}
+
+function ldgAddMinorCat() {
+  if (!_ldgSelectedMajor) return;
+  var name = prompt('새 소분류 이름:');
+  if (!name || !name.trim()) return;
+  name = name.trim();
+  var subs = _ledgerData.categories[_ldgSelectedMajor];
+  if (subs.indexOf(name) >= 0) { alert('이미 존재하는 소분류입니다.'); return; }
+  subs.push(name);
+  ldgSaveCats(); ldgRenderMinorCats();
+}
+
+function ldgEditMinorName(e, idx) {
+  e.stopPropagation();
+  if (!_ldgSelectedMajor) return;
+  var span = e.target;
+  var oldName = _ledgerData.categories[_ldgSelectedMajor][idx];
+  var input = document.createElement('input');
+  input.type = 'text'; input.value = oldName;
+  input.className = 'text-xs border border-indigo-300 rounded px-2 py-1 w-full outline-none focus:ring-2 focus:ring-indigo-300';
+  span.replaceWith(input);
+  input.focus(); input.select();
+  function save() {
+    var newName = input.value.trim();
+    if (!newName || newName === oldName) { ldgRenderMinorCats(); return; }
+    _ledgerData.categories[_ldgSelectedMajor][idx] = newName;
+    // Migrate transactions
+    (_ledgerData.transactions || []).forEach(function(t) {
+      if (t['대분류'] === _ldgSelectedMajor && t['소분류'] === oldName) t['소분류'] = newName;
+    });
+    // Migrate budgets
+    var bKey = _ldgSelectedMajor + '.' + oldName;
+    var nKey = _ldgSelectedMajor + '.' + newName;
+    if (_ledgerData.budgets[bKey]) { _ledgerData.budgets[nKey] = _ledgerData.budgets[bKey]; delete _ledgerData.budgets[bKey]; }
+    ldgSaveCats(); ldgSaveTx(); ldgSaveBudgets(); ldgRenderMinorCats();
+  }
+  input.addEventListener('keydown', function(ev) { if (ev.key === 'Enter') save(); if (ev.key === 'Escape') ldgRenderMinorCats(); });
+  input.addEventListener('blur', save);
+}
+
+function ldgDeleteMinor(idx) {
+  if (!_ldgSelectedMajor) return;
+  var name = _ledgerData.categories[_ldgSelectedMajor][idx];
+  var count = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === _ldgSelectedMajor && t['소분류'] === name; }).length;
+  var msg = count > 0
+    ? '"' + _ldgSelectedMajor + ' > ' + name + '"는 ' + count + '건의 거래에서 사용 중입니다.\n삭제하면 해당 거래의 소분류가 "미분류"로 변경됩니다.'
+    : '"' + name + '" 소분류를 삭제하시겠습니까?';
+  ldgSafetyShow(msg, function() {
+    if (count > 0) {
+      (_ledgerData.transactions || []).forEach(function(t) {
+        if (t['대분류'] === _ldgSelectedMajor && t['소분류'] === name) t['소분류'] = '미분류';
+      });
+      ldgSaveTx();
+    }
+    var bKey = _ldgSelectedMajor + '.' + name;
+    if (_ledgerData.budgets[bKey]) { delete _ledgerData.budgets[bKey]; ldgSaveBudgets(); }
+    _ledgerData.categories[_ldgSelectedMajor].splice(idx, 1);
+    ldgSaveCats(); ldgRenderMinorCats();
+  });
+}
+
+// ── Payment Methods Tab ──
+function ldgRenderPMs() {
+  var pms = (_ledgerData.settings || {}).paymentMethods || [];
+  var disabled = (_ledgerData.settings || {}).disabledPayments || [];
+  var list = document.getElementById('ldg-pm-list');
+  list.innerHTML = pms.map(function(pm, i) {
+    var isActive = disabled.indexOf(pm) < 0;
+    return '<div class="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] group" draggable="true" ondragstart="ldgDragPM(event,' + i + ')" ondragover="event.preventDefault()" ondrop="ldgDropPM(event,' + i + ')">' +
+      '<span class="material-symbols-outlined text-slate-300 text-sm cursor-grab">drag_indicator</span>' +
+      '<div class="w-2 h-2 rounded-full" style="background:' + (_ldgPaymentColors[pm] || '#94a3b8') + '"></div>' +
+      '<span class="flex-1 text-sm font-medium text-slate-700" ondblclick="ldgEditPMName(event,' + i + ')">' + pm + '</span>' +
+      '<span class="text-xs text-slate-400 mr-2">' + (isActive ? '활성' : '비활성') + '</span>' +
+      '<label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" ' + (isActive ? 'checked' : '') + ' onchange="ldgTogglePM(' + i + ')" class="sr-only peer"/><div class="w-9 h-5 bg-slate-200 peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-600 after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div></label>' +
+      '<div class="relative"><button onclick="ldgShowPMMenu(event,' + i + ')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></div>' +
+      '</div>';
+  }).join('');
+}
+
+var _ldgDragPMIdx = null;
+function ldgDragPM(e, i) { _ldgDragPMIdx = i; e.dataTransfer.effectAllowed = 'move'; }
+function ldgDropPM(e, i) {
+  e.preventDefault();
+  if (_ldgDragPMIdx === null || _ldgDragPMIdx === i) return;
+  var pms = _ledgerData.settings.paymentMethods;
+  var moved = pms.splice(_ldgDragPMIdx, 1)[0];
+  pms.splice(i, 0, moved);
+  ldgSaveSettings(); ldgRenderPMs();
+}
+
+function ldgTogglePM(i) {
+  var pm = _ledgerData.settings.paymentMethods[i];
+  if (!_ledgerData.settings.disabledPayments) _ledgerData.settings.disabledPayments = [];
+  var dis = _ledgerData.settings.disabledPayments;
+  var idx = dis.indexOf(pm);
+  if (idx >= 0) dis.splice(idx, 1); else dis.push(pm);
+  ldgSaveSettings(); ldgRenderPMs();
+}
+
+function ldgAddPayment() {
+  var name = prompt('새 결제수단 이름:');
+  if (!name || !name.trim()) return;
+  name = name.trim();
+  if (_ledgerData.settings.paymentMethods.indexOf(name) >= 0) { alert('이미 존재합니다.'); return; }
+  _ledgerData.settings.paymentMethods.push(name);
+  ldgSaveSettings(); ldgRenderPMs();
+}
+
+function ldgShowPMMenu(e, i) {
+  e.stopPropagation();
+  var old = document.getElementById('ldg-pm-menu'); if (old) old.remove();
+  var rect = e.currentTarget.getBoundingClientRect();
+  var menu = document.createElement('div');
+  menu.id = 'ldg-pm-menu';
+  menu.className = 'fixed bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-[9999]';
+  menu.style.top = rect.bottom + 4 + 'px';
+  menu.style.left = (rect.left - 80) + 'px';
+  menu.innerHTML =
+    '<button onclick="ldgRenamePM(' + i + ')" class="w-full text-left px-4 py-2 text-xs text-slate-600 hover:bg-slate-50">이름 변경</button>' +
+    '<button onclick="ldgDeletePM(' + i + ')" class="w-full text-left px-4 py-2 text-xs text-red-500 hover:bg-red-50">삭제</button>';
+  document.body.appendChild(menu);
+  setTimeout(function() { document.addEventListener('click', function h() { var m = document.getElementById('ldg-pm-menu'); if(m)m.remove(); document.removeEventListener('click',h); }); }, 10);
+}
+
+function ldgEditPMName(e, i) {
+  e.stopPropagation();
+  var span = e.target;
+  var oldName = _ledgerData.settings.paymentMethods[i];
+  var input = document.createElement('input');
+  input.type = 'text'; input.value = oldName;
+  input.className = 'text-xs border border-indigo-300 rounded px-2 py-1 w-full outline-none focus:ring-2 focus:ring-indigo-300';
+  span.replaceWith(input); input.focus(); input.select();
+  function save() {
+    var newName = input.value.trim();
+    if (!newName || newName === oldName) { ldgRenderPMs(); return; }
+    _ledgerData.settings.paymentMethods[i] = newName;
+    // Update disabledPayments
+    if (_ledgerData.settings.disabledPayments) {
+      var dIdx = _ledgerData.settings.disabledPayments.indexOf(oldName);
+      if (dIdx >= 0) _ledgerData.settings.disabledPayments[dIdx] = newName;
+    }
+    // Migrate transactions
+    (_ledgerData.transactions || []).forEach(function(t) { if (t['결제수단'] === oldName) t['결제수단'] = newName; });
+    // Update color map
+    if (_ldgPaymentColors[oldName]) { _ldgPaymentColors[newName] = _ldgPaymentColors[oldName]; delete _ldgPaymentColors[oldName]; }
+    ldgSaveSettings(); ldgSaveTx(); ldgRenderPMs();
+  }
+  input.addEventListener('keydown', function(ev) { if (ev.key === 'Enter') save(); if (ev.key === 'Escape') ldgRenderPMs(); });
+  input.addEventListener('blur', save);
+}
+
+function ldgRenamePM(i) {
+  var m = document.getElementById('ldg-pm-menu'); if (m) m.remove();
+  var oldName = _ledgerData.settings.paymentMethods[i];
+  var newName = prompt('새 이름:', oldName);
+  if (!newName || !newName.trim() || newName.trim() === oldName) return;
+  newName = newName.trim();
+  _ledgerData.settings.paymentMethods[i] = newName;
+  if (_ledgerData.settings.disabledPayments) {
+    var dIdx = _ledgerData.settings.disabledPayments.indexOf(oldName);
+    if (dIdx >= 0) _ledgerData.settings.disabledPayments[dIdx] = newName;
+  }
+  (_ledgerData.transactions || []).forEach(function(t) { if (t['결제수단'] === oldName) t['결제수단'] = newName; });
+  if (_ldgPaymentColors[oldName]) { _ldgPaymentColors[newName] = _ldgPaymentColors[oldName]; delete _ldgPaymentColors[oldName]; }
+  ldgSaveSettings(); ldgSaveTx(); ldgRenderPMs();
+}
+
+function ldgDeletePM(i) {
+  var m = document.getElementById('ldg-pm-menu'); if (m) m.remove();
+  var pm = _ledgerData.settings.paymentMethods[i];
+  var count = ldgCountUsage('결제수단', pm);
+  var msg = count > 0
+    ? '"' + pm + '"는 ' + count + '건의 거래에서 사용 중입니다.\n\n비활성화하면 목록에서 숨겨지지만 데이터는 보존됩니다.\n정말 삭제하시겠습니까?'
+    : '"' + pm + '"를 삭제하시겠습니까?\n\n비활성화하면 목록에서 숨겨지지만 데이터는 보존됩니다.\n정말 삭제하시겠습니까?';
+  ldgSafetyShow(msg, function() {
+    _ledgerData.settings.paymentMethods.splice(i, 1);
+    if (_ledgerData.settings.disabledPayments) {
+      var dIdx = _ledgerData.settings.disabledPayments.indexOf(pm);
+      if (dIdx >= 0) _ledgerData.settings.disabledPayments.splice(dIdx, 1);
+    }
+    ldgSaveSettings(); ldgRenderPMs();
+  });
+}
+
+// ── Budget Tab ──
+function ldgSetBudgetView(view) {
+  _ldgBudgetView = view;
+  document.querySelectorAll('.ldg-bview').forEach(function(btn) {
+    if (btn.dataset.bview === view) {
+      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+    } else {
+      btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
+    }
+  });
+  document.getElementById('ldg-budget-default').style.display = view === 'default' ? '' : 'none';
+  document.getElementById('ldg-budget-matrix').style.display = view === 'matrix' ? '' : 'none';
+  if (view === 'default') ldgRenderBudgetDefault();
+  if (view === 'matrix') ldgRenderBudgetMatrix();
+}
+
+function ldgRenderBudgetDefault() {
+  var budgets = _ledgerData.budgets || {};
+  var keys = Object.keys(budgets);
+  var html = '<table class="w-full text-left"><thead class="bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider"><tr><th class="px-6 py-3">카테고리.소분류</th><th class="px-4 py-3 text-right w-32">기본 예산</th><th class="px-4 py-3 w-40">월별 변동</th><th class="px-4 py-3 w-10"></th></tr></thead><tbody class="text-sm divide-y divide-slate-50">';
+  keys.forEach(function(k) {
+    var b = budgets[k];
+    var overrides = b.overrides || {};
+    var oKeys = Object.keys(overrides);
+    var oText = oKeys.length > 0
+      ? oKeys.length + '건 (' + oKeys.map(function(m){return parseInt(m.split('-')[1])+'월';}).join(', ') + ')'
+      : '0건';
+    html += '<tr class="hover:bg-indigo-50/30 transition-colors">';
+    html += '<td class="px-6 py-3 text-xs font-medium text-slate-700">' + k + '</td>';
+    html += '<td class="px-4 py-3 text-xs text-right font-semibold text-slate-900 cursor-pointer hover:bg-indigo-50 rounded" style="font-feature-settings:\'tnum\'" onclick="ldgEditBudgetDefault(\'' + k.replace(/'/g,"\\'") + '\')" title="클릭하여 편집">' + (b.default||0).toLocaleString('ko-KR') + '</td>';
+    html += '<td class="px-4 py-3 text-xs text-slate-500">' + oText + '</td>';
+    html += '<td class="px-4 py-3"><button onclick="ldgDeleteBudget(\'' + k.replace(/'/g,"\\'") + '\')" class="text-slate-300 hover:text-red-400"><span class="material-symbols-outlined text-sm">close</span></button></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('ldg-budget-default').innerHTML = html;
+}
+
+function ldgEditBudgetDefault(key) {
+  var b = _ledgerData.budgets[key];
+  if (!b) return;
+  var val = prompt('기본 예산 (' + key + '):', b.default || 0);
+  if (val === null) return;
+  var num = parseInt(String(val).replace(/[^0-9]/g,'')) || 0;
+  b.default = num;
+  ldgSaveBudgets(); ldgRenderBudgetDefault();
+}
+
+function ldgDeleteBudget(key) {
+  ldgSafetyShow('"' + key + '" 예산을 삭제하시겠습니까?', function() {
+    delete _ledgerData.budgets[key];
+    ldgSaveBudgets();
+    if (_ldgBudgetView === 'default') ldgRenderBudgetDefault();
+    else ldgRenderBudgetMatrix();
+  });
+}
+
+function ldgAddBudget() {
+  var cats = _ledgerData.categories || {};
+  var keys = Object.keys(cats);
+  var major = prompt('대분류 선택 (입력):\n' + keys.join(', '));
+  if (!major || !cats[major]) { if (major) alert('존재하지 않는 대분류입니다.'); return; }
+  var subs = cats[major];
+  var minor = prompt('소분류 선택 (입력):\n' + subs.join(', '));
+  if (!minor || subs.indexOf(minor) < 0) { if (minor) alert('존재하지 않는 소분류입니다.'); return; }
+  var bKey = major + '.' + minor;
+  if (_ledgerData.budgets[bKey]) { alert('이미 예산이 설정되어 있습니다.'); return; }
+  var amt = prompt('기본 예산 금액:');
+  if (amt === null) return;
+  var num = parseInt(String(amt).replace(/[^0-9]/g,'')) || 0;
+  _ledgerData.budgets[bKey] = { default: num, overrides: {} };
+  ldgSaveBudgets();
+  if (_ldgBudgetView === 'default') ldgRenderBudgetDefault();
+  else ldgRenderBudgetMatrix();
+}
+
+function ldgRenderBudgetMatrix() {
+  var budgets = _ledgerData.budgets || {};
+  var keys = Object.keys(budgets);
+  var months = [];
+  for (var m = 1; m <= 12; m++) months.push(String(_ldgYear) + '-' + String(m).padStart(2,'0'));
+  var html = '<table class="w-full text-left"><thead class="bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider"><tr><th class="px-4 py-3 sticky left-0 bg-slate-50/50 z-10 min-w-[160px]">카테고리</th>';
+  months.forEach(function(mk, i) { html += '<th class="px-3 py-3 text-right min-w-[80px]">' + (i+1) + '월</th>'; });
+  html += '</tr></thead><tbody class="text-sm divide-y divide-slate-50">';
+  keys.forEach(function(k) {
+    var b = budgets[k];
+    html += '<tr class="hover:bg-indigo-50/30 transition-colors">';
+    html += '<td class="px-4 py-2 text-xs font-medium text-slate-700 sticky left-0 bg-white z-10">' + k + '</td>';
+    months.forEach(function(mk) {
+      var hasOverride = b.overrides && b.overrides[mk] !== undefined;
+      var val = hasOverride ? b.overrides[mk] : (b.default || 0);
+      var cls = hasOverride ? 'font-semibold text-slate-900' : 'text-slate-400';
+      var display = val === 0 ? '—' : val.toLocaleString('ko-KR');
+      html += '<td class="px-3 py-2 text-xs text-right cursor-pointer hover:bg-indigo-50 rounded ' + cls + '" style="font-feature-settings:\'tnum\'" onclick="ldgEditMatrixCell(\'' + k.replace(/'/g,"\\'") + '\',\'' + mk + '\')">' + display + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('ldg-budget-matrix').innerHTML = html;
+}
+
+function ldgEditMatrixCell(key, monthKey) {
+  var b = _ledgerData.budgets[key];
+  if (!b) return;
+  var hasOverride = b.overrides && b.overrides[monthKey] !== undefined;
+  var current = hasOverride ? b.overrides[monthKey] : b.default;
+  var val = prompt(key + ' (' + monthKey + '):\n기본값: ' + (b.default||0).toLocaleString('ko-KR'), current || 0);
+  if (val === null) return;
+  var num = parseInt(String(val).replace(/[^0-9]/g,'')) || 0;
+  if (!b.overrides) b.overrides = {};
+  if (num === b.default) { delete b.overrides[monthKey]; }
+  else { b.overrides[monthKey] = num; }
+  ldgSaveBudgets(); ldgRenderBudgetMatrix();
+}
+
+// ── Recurring Tab ──
+function ldgRenderRecurring() {
+  var items = _ledgerData.recurring || [];
+  var body = document.getElementById('ldg-rec-body');
+  var html = '';
+  if (_ldgRecEditIdx === 'new') html += ldgRecInputRow(null);
+  items.forEach(function(item, i) {
+    if (_ldgRecEditIdx === i) {
+      html += ldgRecInputRow(item);
+    } else {
+      var amtDisplay = item['금액'] === 0
+        ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background:#fef3c7;color:#b45309">변동</span>'
+        : '<span style="font-feature-settings:\'tnum\'">' + ldgFmt(item['금액']) + '</span>';
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors">';
+      html += '<td class="px-6 py-3 text-xs text-slate-700">' + (item['대분류']||'') + '</td>';
+      html += '<td class="px-4 py-3 text-xs text-slate-600">' + (item['소분류']||'') + '</td>';
+      html += '<td class="px-4 py-3 text-xs text-slate-600">' + (item.dayOfMonth||'') + '일</td>';
+      html += '<td class="px-4 py-3 text-xs text-right font-semibold">' + amtDisplay + '</td>';
+      html += '<td class="px-4 py-3 text-xs text-slate-500">' + (item['결제수단']||'') + '</td>';
+      html += '<td class="px-4 py-3"><button onclick="ldgShowRecMenu(event,' + i + ')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
+      html += '</tr>';
+    }
+  });
+  body.innerHTML = html;
+  // Auto checkbox
+  var autoEl = document.getElementById('ldg-rec-auto');
+  if (autoEl) autoEl.checked = localStorage.getItem('atelier_ledger_recurring_auto') !== 'false';
+}
+
+function ldgRecInputRow(item) {
+  var cats = _ledgerData.categories || {};
+  var pms = (_ledgerData.settings || {}).paymentMethods || [];
+  var major = item ? item['대분류'] : '', minor = item ? item['소분류'] : '';
+  var day = item ? item.dayOfMonth : '', amt = item ? (item['금액'] === 0 ? '' : item['금액'].toLocaleString('ko-KR')) : '';
+  var pm = item ? (item['결제수단']||'') : '';
+  var isVariable = item ? item['금액'] === 0 : false;
+  var majorOpts = '<option value="">선택</option>';
+  Object.keys(cats).forEach(function(c) { majorOpts += '<option value="' + c + '"' + (c===major?' selected':'') + '>' + c + '</option>'; });
+  var minorOpts = '<option value="">선택</option>';
+  if (major && cats[major]) cats[major].forEach(function(s) { minorOpts += '<option value="' + s + '"' + (s===minor?' selected':'') + '>' + s + '</option>'; });
+  var pmOpts = '<option value="">선택</option>';
+  pms.forEach(function(p) { pmOpts += '<option value="' + p + '"' + (p===pm?' selected':'') + '>' + p + '</option>'; });
+  return '<tr class="bg-indigo-50/40 border-l-4 border-l-indigo-500">' +
+    '<td class="px-6 py-2"><select id="ldg-rec-major" class="text-xs border border-slate-200 rounded px-1 py-1 w-full" onchange="ldgRecMajorChanged()">' + majorOpts + '</select></td>' +
+    '<td class="px-4 py-2"><select id="ldg-rec-minor" class="text-xs border border-slate-200 rounded px-1 py-1 w-full">' + minorOpts + '</select></td>' +
+    '<td class="px-4 py-2"><input type="number" id="ldg-rec-day" value="' + day + '" min="1" max="31" class="text-xs border border-slate-200 rounded px-2 py-1 w-full" placeholder="일"/></td>' +
+    '<td class="px-4 py-2"><div class="flex items-center gap-1"><input type="text" id="ldg-rec-amt" value="' + amt + '" class="text-xs border border-slate-200 rounded px-2 py-1 flex-1 text-right" placeholder="금액" oninput="ldgFormatAmount(this)"/><label class="flex items-center gap-1 text-[10px] text-slate-500 whitespace-nowrap"><input type="checkbox" id="ldg-rec-variable" ' + (isVariable?'checked':'') + ' class="w-3 h-3 rounded"/> 변동</label></div></td>' +
+    '<td class="px-4 py-2"><select id="ldg-rec-pm" class="text-xs border border-slate-200 rounded px-1 py-1 w-full">' + pmOpts + '</select></td>' +
+    '<td class="px-4 py-2 flex gap-1"><button onclick="ldgSaveRec()" class="text-indigo-600 hover:text-indigo-800"><span class="material-symbols-outlined text-sm">check</span></button><button onclick="ldgCancelRec()" class="text-slate-400 hover:text-red-400"><span class="material-symbols-outlined text-sm">close</span></button></td>' +
+    '</tr>';
+}
+
+function ldgRecMajorChanged() {
+  var major = document.getElementById('ldg-rec-major').value;
+  var minorSel = document.getElementById('ldg-rec-minor');
+  var cats = _ledgerData.categories || {};
+  minorSel.innerHTML = '<option value="">선택</option>';
+  (cats[major]||[]).forEach(function(s) { var o = document.createElement('option'); o.value = s; o.textContent = s; minorSel.appendChild(o); });
+}
+
+function ldgAddRecurring() { _ldgRecEditIdx = 'new'; ldgRenderRecurring(); }
+function ldgCancelRec() { _ldgRecEditIdx = null; ldgRenderRecurring(); }
+
+function ldgSaveRec() {
+  var major = (document.getElementById('ldg-rec-major')||{}).value||'';
+  var minor = (document.getElementById('ldg-rec-minor')||{}).value||'';
+  var day = parseInt((document.getElementById('ldg-rec-day')||{}).value)||0;
+  var isVar = (document.getElementById('ldg-rec-variable')||{}).checked;
+  var amtStr = (document.getElementById('ldg-rec-amt')||{}).value||'';
+  var amt = isVar ? 0 : (parseInt(amtStr.replace(/[^0-9]/g,''))||0);
+  var pm = (document.getElementById('ldg-rec-pm')||{}).value||'';
+  if (!major || !minor || !day) { alert('대분류, 소분류, 날짜는 필수입니다.'); return; }
+  if (!isVar && amt === 0) { alert('금액을 입력하거나 "변동"을 체크하세요.'); return; }
+  var entry = {'대분류':major,'소분류':minor,dayOfMonth:day,'금액':amt,'결제수단':pm};
+  if (typeof _ldgRecEditIdx === 'number') {
+    _ledgerData.recurring[_ldgRecEditIdx] = entry;
+  } else {
+    _ledgerData.recurring.push(entry);
+  }
+  ldgSaveRecurringData();
+  _ldgRecEditIdx = null;
+  ldgRenderRecurring();
+}
+
+function ldgShowRecMenu(e, i) {
+  e.stopPropagation();
+  var old = document.getElementById('ldg-rec-menu'); if (old) old.remove();
+  var rect = e.currentTarget.getBoundingClientRect();
+  var menu = document.createElement('div');
+  menu.id = 'ldg-rec-menu';
+  menu.className = 'fixed bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-[9999]';
+  menu.style.top = rect.bottom + 4 + 'px';
+  menu.style.left = (rect.left - 60) + 'px';
+  menu.innerHTML =
+    '<button onclick="ldgEditRec(' + i + ')" class="w-full text-left px-4 py-2 text-xs text-slate-600 hover:bg-slate-50">수정</button>' +
+    '<button onclick="ldgDeleteRec(' + i + ')" class="w-full text-left px-4 py-2 text-xs text-red-500 hover:bg-red-50">삭제</button>';
+  document.body.appendChild(menu);
+  setTimeout(function() { document.addEventListener('click', function h() { var m = document.getElementById('ldg-rec-menu'); if(m)m.remove(); document.removeEventListener('click',h); }); }, 10);
+}
+
+function ldgEditRec(i) {
+  var m = document.getElementById('ldg-rec-menu'); if (m) m.remove();
+  _ldgRecEditIdx = i; ldgRenderRecurring();
+}
+
+function ldgDeleteRec(i) {
+  var m = document.getElementById('ldg-rec-menu'); if (m) m.remove();
+  ldgSafetyShow('이 고정 내역을 삭제하시겠습니까?', function() {
+    _ledgerData.recurring.splice(i, 1);
+    ldgSaveRecurringData(); ldgRenderRecurring();
+  });
+}
+
+function ldgSaveRecAuto() {
+  var checked = document.getElementById('ldg-rec-auto').checked;
+  localStorage.setItem('atelier_ledger_recurring_auto', checked ? 'true' : 'false');
+}
+
+// ── Recurring Auto-Apply ──
+function ldgCheckRecurringAuto() {
+  if (localStorage.getItem('atelier_ledger_recurring_auto') === 'false') return;
+  var items = _ledgerData.recurring || [];
+  var txs = _ledgerData.transactions || [];
+  var now = new Date();
+  var todayDay = now.getDate();
+  var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  var todayStr = monthKey + '-' + String(todayDay).padStart(2,'0');
+  var added = 0, pendingVariable = 0;
+  items.forEach(function(item) {
+    if (item.dayOfMonth > todayDay) return;
+    var dateStr = monthKey + '-' + String(item.dayOfMonth).padStart(2,'0');
+    // Check if already exists
+    var exists = txs.some(function(t) {
+      return t.date === dateStr && t['대분류'] === item['대분류'] && t['소분류'] === item['소분류'] && t['비고'] === '자동(고정)';
+    });
+    if (exists) return;
+    var newTx = {
+      id: 'txn_auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,4),
+      date: dateStr,
+      '대분류': item['대분류'], '소분류': item['소분류'],
+      '금액': item['금액'], '결제수단': item['결제수단'],
+      '세부사항': '', '비고': '자동(고정)'
+    };
+    txs.push(newTx);
+    added++;
+    if (item['금액'] === 0) pendingVariable++;
+  });
+  if (added > 0) {
+    ldgSaveTx();
+    console.log('[DailyLedger] Auto-applied ' + added + ' recurring transactions');
+  }
+  // Show banner for pending variable-amount items
+  if (pendingVariable > 0) {
+    setTimeout(function() {
+      var banner = document.createElement('div');
+      banner.className = 'fixed top-20 right-8 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-3';
+      banner.innerHTML = '<span class="text-amber-600 text-sm">입력 대기 중인 고정 거래가 ' + pendingVariable + '건 있습니다.</span><button onclick="this.parentElement.remove();switchLedgerTab(\'monthly\')" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800 whitespace-nowrap">확인하러 가기</button><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-sm">close</span></button>';
+      document.body.appendChild(banner);
+      setTimeout(function() { if (banner.parentElement) banner.remove(); }, 8000);
+    }, 1000);
+  }
 }
 
 // Service Worker 등록
