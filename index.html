@@ -122,6 +122,13 @@
       letter-spacing:-0.02em!important;
     }
 
+    /* Ledger column filter buttons */
+    .ldg-cf-btn{display:inline-flex;align-items:center;padding:1px 2px;border-radius:4px;color:#94a3b8;cursor:pointer;border:none;background:none;vertical-align:middle;transition:all .1s}
+    .ldg-cf-btn:hover,.ldg-cf-btn.active{color:#5b3cdd;background:#f7f1ff}
+    .ldg-cf-panel{position:absolute;left:0;top:100%;margin-top:4px;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;z-index:999;padding:8px 0;min-width:180px;max-height:280px;overflow-y:auto}
+    .ldg-cf-panel label{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:11px;color:#1c1a24;cursor:pointer;transition:background .1s}
+    .ldg-cf-panel label:hover{background:#f7f1ff}
+    .ldg-cf-panel .cf-actions{display:flex;gap:8px;padding:6px 12px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;font-size:10px}
     /* Ledger custom dropdown */
     .ldg-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:4px;
       padding:4px 8px;border-radius:8px;background:#f7f1ff;border:1.5px solid transparent;
@@ -2021,35 +2028,14 @@
 
         <!-- [5] Transaction Table -->
         <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div class="px-6 py-4 flex items-center justify-between border-b border-slate-100">
-            <button onclick="ldgAddNewTx()" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors">
-              <span class="material-symbols-outlined text-sm">add</span> 새 거래
-            </button>
+          <div class="px-6 py-3 flex items-center justify-between border-b border-slate-100">
+            <span class="text-xs font-bold text-slate-500">거래 내역</span>
             <div class="flex items-center gap-2">
               <div class="relative">
                 <input id="ldg-tx-search" type="text" placeholder="검색..." class="text-xs px-3 py-1.5 pl-8 border border-slate-200 rounded-lg w-40 focus:ring-2 focus:ring-indigo-300 outline-none" oninput="ldgRenderTxTable()"/>
                 <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-300 text-sm">search</span>
               </div>
-              <div class="relative">
-                <button onclick="ldgToggleFilter()" class="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors">
-                  <span class="material-symbols-outlined text-sm">filter_list</span>
-                </button>
-                <div id="ldg-filter-panel" class="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-50 w-64" style="display:none">
-                  <div class="mb-3">
-                    <p class="text-xs font-bold text-slate-500 mb-2">대분류</p>
-                    <select id="ldg-filter-major" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5" onchange="ldgRenderTxTable()">
-                      <option value="">전체</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <p class="text-xs font-bold text-slate-500 mb-2">결제수단</p>
-                    <select id="ldg-filter-payment" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5" onchange="ldgRenderTxTable()">
-                      <option value="">전체</option>
-                    </select>
-                  </div>
-                  <button onclick="ldgClearFilters()" class="text-xs text-indigo-600 font-semibold">필터 초기화</button>
-                </div>
-              </div>
+              <button id="ldg-col-filter-reset" onclick="ldgColFilterReset()" class="text-xs text-indigo-600 font-semibold hover:text-indigo-800 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-colors" style="display:none">필터 초기화</button>
               <button onclick="ldgToggleSort()" class="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors" title="정렬 전환">
                 <span class="material-symbols-outlined text-sm">swap_vert</span>
               </button>
@@ -2059,11 +2045,11 @@
             <table class="w-full text-left" id="ldg-tx-table">
               <thead class="bg-slate-50/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                 <tr>
-                  <th class="px-4 py-2" style="width:90px">날짜</th>
-                  <th class="px-3 py-2" style="width:100px">대분류</th>
-                  <th class="px-3 py-2" style="width:110px">소분류</th>
-                  <th class="px-3 py-2 text-right" style="width:130px">금액</th>
-                  <th class="px-3 py-2" style="width:110px">결제수단</th>
+                  <th class="px-4 py-2 relative" style="width:90px">날짜 <button onclick="ldgColFilter('date',this)" class="ldg-cf-btn"><span class="material-symbols-outlined" style="font-size:12px">filter_list</span></button></th>
+                  <th class="px-3 py-2 relative" style="width:100px">대분류 <button onclick="ldgColFilter('major',this)" class="ldg-cf-btn"><span class="material-symbols-outlined" style="font-size:12px">filter_list</span></button></th>
+                  <th class="px-3 py-2 relative" style="width:110px">소분류 <button onclick="ldgColFilter('minor',this)" class="ldg-cf-btn"><span class="material-symbols-outlined" style="font-size:12px">filter_list</span></button></th>
+                  <th class="px-3 py-2 text-right relative" style="width:130px">금액 <button onclick="ldgColFilter('amount',this)" class="ldg-cf-btn"><span class="material-symbols-outlined" style="font-size:12px">filter_list</span></button></th>
+                  <th class="px-3 py-2 relative" style="width:110px">결제수단 <button onclick="ldgColFilter('payment',this)" class="ldg-cf-btn"><span class="material-symbols-outlined" style="font-size:12px">filter_list</span></button></th>
                   <th class="px-3 py-2" style="max-width:200px">세부사항</th>
                   <th class="px-3 py-2" style="width:130px">비고</th>
                   <th class="px-2 py-2" style="width:40px"></th>
@@ -18353,16 +18339,20 @@ function ldgRenderCatGrid() {
 function ldgGetFilteredTx() {
   var txs = ldgGetMonthTx();
   var search = (document.getElementById('ldg-tx-search') || {}).value || '';
-  var filterMajor = (document.getElementById('ldg-filter-major') || {}).value || '';
-  var filterPayment = (document.getElementById('ldg-filter-payment') || {}).value || '';
   if (search) {
     var s = search.toLowerCase();
     txs = txs.filter(function(t) {
       return (t['세부사항'] || '').toLowerCase().indexOf(s) >= 0 || (t['비고'] || '').toLowerCase().indexOf(s) >= 0;
     });
   }
-  if (filterMajor) txs = txs.filter(function(t) { return t['대분류'] === filterMajor; });
-  if (filterPayment) txs = txs.filter(function(t) { return t['결제수단'] === filterPayment; });
+  // Column filters
+  var cf = _ldgColFilters;
+  if (cf.date.length > 0) txs = txs.filter(function(t) { return cf.date.indexOf(t.date) >= 0; });
+  if (cf.major.length > 0) txs = txs.filter(function(t) { return cf.major.indexOf(t['대분류']) >= 0; });
+  if (cf.minor.length > 0) txs = txs.filter(function(t) { return cf.minor.indexOf(t['소분류']) >= 0; });
+  if (cf.payment.length > 0) txs = txs.filter(function(t) { return cf.payment.indexOf(t['결제수단']) >= 0; });
+  if (cf.amount.min !== null) txs = txs.filter(function(t) { return t['금액'] >= cf.amount.min; });
+  if (cf.amount.max !== null) txs = txs.filter(function(t) { return t['금액'] <= cf.amount.max; });
   txs.sort(function(a, b) {
     var va, vb;
     if (_ldgSortField === 'date') { va = a.date; vb = b.date; }
@@ -18379,24 +18369,12 @@ function ldgRenderTxTable() {
   var body = document.getElementById('ldg-tx-body');
   if (!body) return;
   var txs = ldgGetFilteredTx();
-  // Populate filter dropdowns
-  var fMajor = document.getElementById('ldg-filter-major');
-  if (fMajor && fMajor.options.length <= 1) {
-    var cats = Object.keys(_ledgerData.categories || {});
-    cats.forEach(function(c) { var o = document.createElement('option'); o.value = c; o.textContent = c; fMajor.appendChild(o); });
-  }
-  var fPayment = document.getElementById('ldg-filter-payment');
-  if (fPayment && fPayment.options.length <= 1) {
-    ((_ledgerData.settings || {}).paymentMethods || []).forEach(function(p) { var o = document.createElement('option'); o.value = p; o.textContent = p; fPayment.appendChild(o); });
-  }
   var html = '';
-  // If editing, show edit row at top
-  if (_ldgEditingId === 'new') {
-    html += ldgInputRowHTML(null);
-  }
+  // Always show input row at top
+  html += ldgInputRowHTML(_ldgEditingId && _ldgEditingId !== 'new' ? (_ledgerData.transactions||[]).find(function(t){return t.id===_ldgEditingId;}) : null);
   txs.forEach(function(t) {
     if (_ldgEditingId === t.id) {
-      html += ldgInputRowHTML(t);
+      // Skip — being edited in the input row above
     } else {
       var isIncome = t['대분류'] === '수입';
       var tid = t.id.replace(/'/g,"\\'");
@@ -18414,6 +18392,7 @@ function ldgRenderTxTable() {
     }
   });
   body.innerHTML = html;
+  setTimeout(function() { ldgInitCustomDDs(); }, 20);
 }
 
 function ldgGetActivePMs() {
@@ -18558,7 +18537,7 @@ function ldgBuildDD(wrapperId, options, onChange) {
   trigger.addEventListener('keydown', function(e) {
     var panel = wrap.querySelector('.ldg-dd-panel');
     var isOpen = !!panel;
-    if (e.key === 'Escape') { e.preventDefault(); if (isOpen) closeDD(); else ldgCancelInput(); return; }
+    if (e.key === 'Escape') { e.preventDefault(); if (isOpen) closeDD(); else ldgCancelInput(); return; } // CancelInput clears fields but keeps row visible
     if (e.key === 'Tab') { closeDD(); return; /* let Tab propagate naturally */ }
     if (!isOpen && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
       e.preventDefault(); openDD(); return;
@@ -18772,20 +18751,15 @@ function ldgSaveInput() {
   }
   _ldgLastSavedDate = date;
   ldgSaveTx();
-  _ldgEditingId = 'new'; // Continue with new row for continuous input
+  _ldgEditingId = null; // Reset to blank input row
   ldgRenderMonthly();
-  setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+  setTimeout(function() { ldgInitCustomDDs(); }, 30);
 }
 
 function ldgCancelInput() {
   _ldgEditingId = null;
   ldgRenderTxTable();
-}
-
-function ldgAddNewTx() {
-  _ldgEditingId = 'new';
-  ldgRenderTxTable();
-  setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+  setTimeout(function() { ldgInitCustomDDs(); }, 30);
 }
 
 // ── TX Menu (edit/duplicate/delete) ──
@@ -18872,16 +18846,97 @@ function ldgConfirmDelete() {
 }
 
 // ── Filter/Sort toggles ──
-function ldgToggleFilter() {
-  var p = document.getElementById('ldg-filter-panel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+// ── Column Filters ──
+var _ldgColFilters = { date:[], major:[], minor:[], amount:{ min:null, max:null }, payment:[] };
+
+function ldgColFilter(col, btnEl) {
+  // Close any existing panel
+  var old = document.querySelector('.ldg-cf-panel');
+  if (old) { old.remove(); document.querySelectorAll('.ldg-cf-btn').forEach(function(b){b.classList.remove('active');}); if (old._cfCol === col) return; }
+  btnEl.classList.add('active');
+  var txs = ldgGetMonthTx();
+  var panel = document.createElement('div');
+  panel.className = 'ldg-cf-panel';
+  panel._cfCol = col;
+
+  if (col === 'amount') {
+    var cf = _ldgColFilters.amount;
+    panel.innerHTML = '<div class="p-3 space-y-2"><p class="text-[10px] font-bold text-slate-500 mb-1">금액 범위</p>' +
+      '<input id="ldg-cf-amt-min" type="text" placeholder="최소" value="' + (cf.min ? cf.min.toLocaleString('ko-KR') : '') + '" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1 text-right" oninput="ldgFormatAmount(this)"/>' +
+      '<input id="ldg-cf-amt-max" type="text" placeholder="최대" value="' + (cf.max ? cf.max.toLocaleString('ko-KR') : '') + '" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1 text-right" oninput="ldgFormatAmount(this)"/>' +
+      '<button onclick="ldgApplyAmtFilter()" class="w-full text-xs bg-indigo-600 text-white rounded-lg py-1 font-semibold">적용</button></div>';
+  } else {
+    // Checkbox multi-select
+    var values = {};
+    txs.forEach(function(t) {
+      var v;
+      if (col === 'date') v = t.date || '';
+      else if (col === 'major') v = t['대분류'] || '';
+      else if (col === 'minor') v = t['소분류'] || '';
+      else if (col === 'payment') v = t['결제수단'] || '';
+      if (v) values[v] = true;
+    });
+    var sorted = Object.keys(values).sort();
+    var selected = _ldgColFilters[col] || [];
+    var html = '<div class="cf-actions"><button onclick="ldgCFSelectAll(\'' + col + '\')" class="text-indigo-600 font-semibold">전체 선택</button><button onclick="ldgCFSelectNone(\'' + col + '\')" class="text-slate-500 font-semibold">전체 해제</button></div>';
+    sorted.forEach(function(v) {
+      var checked = selected.length === 0 || selected.indexOf(v) >= 0;
+      var display = col === 'date' ? v.substring(5).replace('-','/') : v;
+      html += '<label><input type="checkbox" value="' + v.replace(/"/g,'&quot;') + '" ' + (checked ? 'checked' : '') + ' onchange="ldgCFChanged(\'' + col + '\')" class="w-3 h-3 rounded text-indigo-600 border-slate-300"/>' + display + '</label>';
+    });
+    panel.innerHTML = html;
+  }
+  btnEl.parentElement.appendChild(panel);
+  setTimeout(function() { document.addEventListener('click', function h(e) { if (!panel.contains(e.target) && e.target !== btnEl) { panel.remove(); btnEl.classList.remove('active'); document.removeEventListener('click',h); } }); }, 10);
 }
-function ldgClearFilters() {
-  document.getElementById('ldg-filter-major').value = '';
-  document.getElementById('ldg-filter-payment').value = '';
-  document.getElementById('ldg-tx-search').value = '';
+
+function ldgCFChanged(col) {
+  var panel = document.querySelector('.ldg-cf-panel');
+  if (!panel) return;
+  var checks = panel.querySelectorAll('input[type=checkbox]');
+  var selected = [];
+  checks.forEach(function(cb) { if (cb.checked) selected.push(cb.value); });
+  var allChecked = selected.length === checks.length;
+  _ldgColFilters[col] = allChecked ? [] : selected;
+  ldgUpdateFilterResetBtn();
   ldgRenderTxTable();
 }
+function ldgCFSelectAll(col) {
+  _ldgColFilters[col] = [];
+  ldgUpdateFilterResetBtn();
+  var panel = document.querySelector('.ldg-cf-panel');
+  if (panel) panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){cb.checked=true;});
+  ldgRenderTxTable();
+}
+function ldgCFSelectNone(col) {
+  var panel = document.querySelector('.ldg-cf-panel');
+  if (!panel) return;
+  panel.querySelectorAll('input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+  _ldgColFilters[col] = ['__none__'];
+  ldgUpdateFilterResetBtn();
+  ldgRenderTxTable();
+}
+function ldgApplyAmtFilter() {
+  var minStr = (document.getElementById('ldg-cf-amt-min')||{}).value||'';
+  var maxStr = (document.getElementById('ldg-cf-amt-max')||{}).value||'';
+  _ldgColFilters.amount.min = minStr ? parseInt(minStr.replace(/[^0-9]/g,'')) : null;
+  _ldgColFilters.amount.max = maxStr ? parseInt(maxStr.replace(/[^0-9]/g,'')) : null;
+  ldgUpdateFilterResetBtn();
+  ldgRenderTxTable();
+  var panel = document.querySelector('.ldg-cf-panel');
+  if (panel) { panel.remove(); document.querySelectorAll('.ldg-cf-btn').forEach(function(b){b.classList.remove('active');}); }
+}
+function ldgColFilterReset() {
+  _ldgColFilters = { date:[], major:[], minor:[], amount:{ min:null, max:null }, payment:[] };
+  ldgUpdateFilterResetBtn();
+  ldgRenderTxTable();
+}
+function ldgUpdateFilterResetBtn() {
+  var hasFilter = _ldgColFilters.date.length > 0 || _ldgColFilters.major.length > 0 || _ldgColFilters.minor.length > 0 || _ldgColFilters.payment.length > 0 || _ldgColFilters.amount.min !== null || _ldgColFilters.amount.max !== null;
+  var btn = document.getElementById('ldg-col-filter-reset');
+  if (btn) btn.style.display = hasFilter ? '' : 'none';
+}
+
 function ldgToggleSort() {
   if (_ldgSortField === 'date' && !_ldgSortAsc) { _ldgSortAsc = true; }
   else if (_ldgSortField === 'date' && _ldgSortAsc) { _ldgSortField = 'amount'; _ldgSortAsc = false; }
