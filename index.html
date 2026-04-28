@@ -1945,6 +1945,7 @@
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="monthly" onclick="switchLedgerTab('monthly')">월별 뷰</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="annual" onclick="switchLedgerTab('annual')">연간 뷰</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="assets" onclick="switchLedgerTab('assets')">자산</button>
+        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="coach" onclick="switchLedgerTab('coach')">코치</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="settings" onclick="switchLedgerTab('settings')">설정</button>
       </div>
 
@@ -2194,6 +2195,23 @@
         </div>
 
       </div>
+      <div id="ledger-panel-coach" class="ledger-panel" style="display:none">
+        <div class="flex items-center justify-center min-h-[400px]">
+          <div class="text-center max-w-md bg-indigo-50/50 rounded-2xl border border-indigo-100 p-10">
+            <p class="text-3xl mb-3">🎯</p>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">AI 코치 (준비 중)</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">현재 단계에서는 목표 설정만 가능합니다.<br>다음 업데이트에서:</p>
+            <ul class="text-xs text-slate-500 space-y-1 mb-6 text-left inline-block">
+              <li>• 현재 페이스 분석</li>
+              <li>• AI 카테고리 예산 자동 제안</li>
+              <li>• 강한 어조의 맞춤 코칭</li>
+              <li>• AI 채팅으로 자연어 질문</li>
+            </ul>
+            <p class="text-xs text-slate-400 mb-4">먼저 설정 → 연간 목표에서 목표를 설정해주세요.</p>
+            <button onclick="ldgGoToGoals()" class="px-5 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors">목표 설정하러 가기</button>
+          </div>
+        </div>
+      </div>
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
         <!-- Back link -->
@@ -2207,6 +2225,7 @@
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="payments" onclick="ldgSetSubTab('payments')">결제수단</button>
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="budgets" onclick="ldgSetSubTab('budgets')">예산</button>
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="recurring" onclick="ldgSetSubTab('recurring')">고정내역</button>
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="goals" onclick="ldgSetSubTab('goals')">연간 목표</button>
         </div>
 
         <!-- ── Sub-tab: Categories ── -->
@@ -2276,6 +2295,50 @@
         </div>
 
         <!-- Data migration section -->
+        <!-- ── Sub-tab: Goals ── -->
+        <div id="ldg-stab-goals" class="ldg-stab-panel" style="display:none">
+          <div class="mb-4">
+            <h4 class="text-sm font-bold text-slate-800">연간 목표 설정</h4>
+            <p class="text-xs text-slate-400 mt-1">한 해의 재무 ���표를 설정하면 AI 코치가 진행 상황을 분석합니다.</p>
+          </div>
+          <!-- Year selector -->
+          <div class="flex gap-1 mb-6">
+            <button class="ldg-goal-yr px-3 py-1 rounded-full text-xs font-semibold" data-yr="2024" onclick="ldgGoalSetYear(2024)">2024</button>
+            <button class="ldg-goal-yr px-3 py-1 rounded-full text-xs font-semibold" data-yr="2025" onclick="ldgGoalSetYear(2025)">2025</button>
+            <button class="ldg-goal-yr px-3 py-1 rounded-full text-xs font-semibold" data-yr="2026" onclick="ldgGoalSetYear(2026)">2026</button>
+            <button class="ldg-goal-yr px-3 py-1 rounded-full text-xs font-semibold" data-yr="2027" onclick="ldgGoalSetYear(2027)">2027</button>
+          </div>
+          <!-- Goal form -->
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6 max-w-lg mb-6">
+            <h4 class="text-sm font-bold text-slate-900 mb-5" id="ldg-goal-form-title">2026년 목표</h4>
+            <div class="space-y-5">
+              <div>
+                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">💰 수입 목표</label>
+                <div class="flex items-center gap-2"><input id="ldg-goal-income" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <p id="ldg-goal-income-hint" class="text-[10px] text-slate-400 mt-1"></p>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">🏦 저축 목표</label>
+                <div class="flex items-center gap-2"><input id="ldg-goal-saving" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <p id="ldg-goal-saving-hint" class="text-[10px] text-slate-400 mt-1"></p>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">💸 지출 목표 (이하)</label>
+                <div class="flex items-center gap-2"><input id="ldg-goal-expense" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <p id="ldg-goal-expense-hint" class="text-[10px] text-slate-400 mt-1"></p>
+              </div>
+              <div id="ldg-goal-warn" class="text-[10px] text-amber-600 font-semibold" style="display:none"></div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">📝 메모 (선택)</label>
+                <textarea id="ldg-goal-memo" rows="2" class="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-300 outline-none resize-none" placeholder="예: 결혼 자금 모으기, 여행 계획..."></textarea>
+              </div>
+              <button onclick="ldgSaveGoal()" class="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors">저장</button>
+            </div>
+          </div>
+          <!-- Progress card -->
+          <div id="ldg-goal-progress" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 max-w-lg"></div>
+        </div>
+
         <div id="ldg-migration-section" class="mt-8 bg-slate-50 rounded-2xl border border-slate-200 p-5">
           <h4 class="text-sm font-bold text-slate-700 mb-3">데이터 관리</h4>
           <div id="ldg-migrate-2024-wrap">
@@ -19608,6 +19671,7 @@ function ldgSetSubTab(tab) {
   if (tab === 'payments') ldgRenderPMs();
   if (tab === 'budgets') { ldgSetBudgetView(_ldgBudgetView); }
   if (tab === 'recurring') ldgRenderRecurring();
+  if (tab === 'goals') ldgRenderGoals();
 }
 
 function ldgSaveCats() { localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); }
@@ -20307,6 +20371,102 @@ function ldgApplyRecurringForMonth(year, month) {
       setTimeout(function() { if (banner.parentElement) banner.remove(); }, 5000);
     }, 500);
   }
+}
+
+// ===== DAILY LEDGER: GOALS + COACH =====
+var _ldgGoalYear = 2026;
+
+function ldgGoToGoals() { switchLedgerTab('settings'); setTimeout(function(){ ldgSetSubTab('goals'); }, 50); }
+
+function ldgLoadGoals() {
+  try { return JSON.parse(localStorage.getItem('atelier_ledger_goals')) || {}; } catch(e) { return {}; }
+}
+
+function ldgGoalSetYear(yr) {
+  _ldgGoalYear = yr;
+  ldgRenderGoals();
+}
+
+function ldgRenderGoals() {
+  var goals = ldgLoadGoals();
+  var g = goals[_ldgGoalYear] || {};
+  // Year buttons
+  document.querySelectorAll('.ldg-goal-yr').forEach(function(btn) {
+    if (parseInt(btn.dataset.yr) === _ldgGoalYear) {
+      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+    } else {
+      btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
+    }
+  });
+  document.getElementById('ldg-goal-form-title').textContent = _ldgGoalYear + '년 목표';
+  document.getElementById('ldg-goal-income').value = g['수입'] ? g['수입'].toLocaleString('ko-KR') : '';
+  document.getElementById('ldg-goal-saving').value = g['저축'] ? g['저축'].toLocaleString('ko-KR') : '';
+  document.getElementById('ldg-goal-expense').value = g['지출'] ? g['지출'].toLocaleString('ko-KR') : '';
+  document.getElementById('ldg-goal-memo').value = g['메모'] || '';
+  ldgGoalCalc();
+  ldgGoalProgress();
+}
+
+function ldgGoalCalc() {
+  var inc = parseInt((document.getElementById('ldg-goal-income').value||'').replace(/[^0-9]/g,'')) || 0;
+  var sav = parseInt((document.getElementById('ldg-goal-saving').value||'').replace(/[^0-9]/g,'')) || 0;
+  var exp = parseInt((document.getElementById('ldg-goal-expense').value||'').replace(/[^0-9]/g,'')) || 0;
+  document.getElementById('ldg-goal-income-hint').textContent = inc > 0 ? '매월 평균 ' + Math.round(inc/12).toLocaleString('ko-KR') + '원' : '';
+  var savRate = inc > 0 ? (sav / inc * 100).toFixed(1) : 0;
+  document.getElementById('ldg-goal-saving-hint').textContent = sav > 0 && inc > 0 ? '수입의 ' + savRate + '% (저축률)' : '';
+  document.getElementById('ldg-goal-expense-hint').textContent = exp > 0 ? '매월 평균 ' + Math.round(exp/12).toLocaleString('ko-KR') + '원' : '';
+  var warn = document.getElementById('ldg-goal-warn');
+  if (inc > 0 && sav + exp > inc) { warn.textContent = '⚠️ 수입보다 지출+저축이 큼. 적자 예상'; warn.style.display = ''; }
+  else { warn.style.display = 'none'; }
+}
+
+function ldgSaveGoal() {
+  var inc = parseInt((document.getElementById('ldg-goal-income').value||'').replace(/[^0-9]/g,'')) || 0;
+  var sav = parseInt((document.getElementById('ldg-goal-saving').value||'').replace(/[^0-9]/g,'')) || 0;
+  var exp = parseInt((document.getElementById('ldg-goal-expense').value||'').replace(/[^0-9]/g,'')) || 0;
+  var memo = (document.getElementById('ldg-goal-memo').value || '').trim();
+  var goals = ldgLoadGoals();
+  goals[_ldgGoalYear] = { '수입': inc, '저축': sav, '지출': exp, '메모': memo, updatedAt: new Date().toISOString() };
+  localStorage.setItem('atelier_ledger_goals', JSON.stringify(goals));
+  // Toast
+  var toast = document.createElement('div');
+  toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+  toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">' + _ldgGoalYear + '년 목표가 저장되���습니다</span>';
+  document.body.appendChild(toast);
+  setTimeout(function() { if (toast.parentElement) toast.remove(); }, 3000);
+  ldgGoalProgress();
+}
+
+function ldgGoalProgress() {
+  var el = document.getElementById('ldg-goal-progress');
+  if (!el) return;
+  var goals = ldgLoadGoals();
+  var g = goals[_ldgGoalYear];
+  if (!g || (!g['수입'] && !g['저축'] && !g['지출'])) { el.innerHTML = '<p class="text-xs text-slate-400">목표를 저장하면 진행 상황이 표시됩니��.</p>'; return; }
+  var txs = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.substring(0,4) === String(_ldgGoalYear); });
+  var curInc = 0, curSav = 0, curExp = 0;
+  // Find latest month with data
+  var latestMonth = 0;
+  txs.forEach(function(t) {
+    var m = parseInt(t.date.split('-')[1]);
+    if (m > latestMonth) latestMonth = m;
+    if (t['대분류'] === '수입') curInc += t['금액'];
+    else if (t['대분류'] === '저축') curSav += t['금액'];
+    else curExp += t['금액'];
+  });
+  var monthLabel = latestMonth > 0 ? _ldgGoalYear + '년 ' + latestMonth + '월 현재' : _ldgGoalYear + '년 (데이터 없음)';
+  function pctBar(cur, goal) {
+    if (!goal) return '';
+    var pct = Math.min(Math.round(cur / goal * 100), 100);
+    return '<div class="flex items-center gap-2 mt-1"><div class="flex-1 h-1.5 bg-slate-200 rounded-full"><div class="h-full bg-indigo-500 rounded-full" style="width:' + pct + '%"></div></div><span class="text-[10px] font-bold text-indigo-600" style="font-feature-settings:\'tnum\'">' + pct + '%</span></div>';
+  }
+  el.innerHTML = '<p class="text-xs font-bold text-slate-700 mb-3">📊 ' + monthLabel + '</p>' +
+    '<div class="space-y-3">' +
+    (g['수���'] ? '<div><p class="text-xs text-slate-600">수입: ' + ldgFmt(curInc) + ' / ' + ldgFmt(g['수입']) + '</p>' + pctBar(curInc, g['수입']) + '</div>' : '') +
+    (g['저축'] ? '<div><p class="text-xs text-slate-600">저축: ' + ldgFmt(curSav) + ' / ' + ldgFmt(g['저축']) + '</p>' + pctBar(curSav, g['저축']) + '</div>' : '') +
+    (g['지출'] ? '<div><p class="text-xs text-slate-600">지출: ' + ldgFmt(curExp) + ' / ' + ldgFmt(g['지출']) + '</p>' + pctBar(curExp, g['지출']) + '</div>' : '') +
+    '</div>' +
+    '<p class="text-[10px] text-slate-400 mt-3">* 자세한 분석은 코치 탭에서 (Coming Soon)</p>';
 }
 
 // ===== 2024 DATA MIGRATION =====
