@@ -18267,6 +18267,16 @@ function ldgRenderCatGrid() {
     if (!catSums[major]) catSums[major] = {};
     catSums[major][minor] = (catSums[major][minor] || 0) + t['금액'];
   });
+  // Previous month totals by 대분류
+  var prevM = _ldgMonth - 1, prevY = _ldgYear;
+  if (prevM < 1) { prevM = 12; prevY--; }
+  var prevKey = prevY + '-' + String(prevM).padStart(2,'0');
+  var prevCatTotals = {};
+  (_ledgerData.transactions || []).forEach(function(t) {
+    if (t.date && t.date.substring(0,7) === prevKey) {
+      prevCatTotals[t['대분류']] = (prevCatTotals[t['대분류']] || 0) + t['금액'];
+    }
+  });
   var html = '';
   var catKeys = Object.keys(cats);
   catKeys.forEach(function(catName) {
@@ -18302,7 +18312,23 @@ function ldgRenderCatGrid() {
     });
     var opacity = hasTx ? '' : ' opacity-60';
     html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
-    html += '<div class="flex justify-between items-start mb-3"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-xs text-slate-900 font-bold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
+    html += '<div class="mb-3"><div class="flex justify-between items-start"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-xs text-slate-900 font-bold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
+    // Previous month comparison
+    var prevTotal = prevCatTotals[catName] || 0;
+    var diff = totalAmt - prevTotal;
+    if (totalAmt === 0 && prevTotal === 0) {
+      // Both zero — skip
+    } else {
+      var isGoodUp = (catName === '수입' || catName === '저축');
+      var diffColor;
+      if (diff === 0) diffColor = '#94a3b8';
+      else if ((diff > 0) === isGoodUp) diffColor = '#10b981';
+      else diffColor = '#ef4444';
+      var arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '');
+      var diffText = diff === 0 ? '전월비 ─' : arrow + ' 전월비 ' + (diff > 0 ? '+' : '') + diff.toLocaleString('ko-KR');
+      html += '<p class="text-[10px] text-right mt-0.5" style="color:' + diffColor + ';font-feature-settings:\'tnum\'">' + diffText + '</p>';
+    }
+    html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
     subAmts.forEach(function(s) {
       if (s.amt > 0) {
