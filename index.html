@@ -18305,7 +18305,7 @@ function ldgRenderCatGrid() {
     html += '<ul class="space-y-0.5 mb-2">';
     subAmts.forEach(function(s) {
       if (s.amt > 0) {
-        html += '<li class="text-[10px] text-slate-500 flex justify-between"><span>' + s.name + '</span><span style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
+        html += '<li class="text-[10px] flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(s.amt) + '</span></li>';
       } else {
         html += '<li class="text-[10px] flex justify-between"><span class="text-slate-700">' + s.name + '</span><span class="text-slate-300">—</span></li>';
       }
