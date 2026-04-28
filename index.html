@@ -18301,7 +18301,7 @@ function ldgRenderCatGrid() {
     });
     var opacity = hasTx ? '' : ' opacity-60';
     html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
-    html += '<div class="flex justify-between items-start mb-3"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-[10px] text-slate-400 font-semibold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
+    html += '<div class="flex justify-between items-start mb-3"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-xs text-slate-900 font-bold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
     html += '<ul class="space-y-1.5 mb-3">';
     subAmts.forEach(function(s) {
       if (s.amt > 0) {
