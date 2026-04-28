@@ -2130,8 +2130,66 @@
         </div>
 
       </div>
-      <div id="ledger-panel-assets" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
-        <p class="text-slate-400 text-sm">여기에 자산 콘텐츠가 들어갑니다</p>
+      <div id="ledger-panel-assets" class="ledger-panel" style="display:none">
+
+        <!-- [0] Year nav + add button -->
+        <div class="flex items-center justify-between mb-6">
+          <h3 id="ldg-asset-title" class="text-xl font-bold text-slate-900">2026 자산</h3>
+          <div class="flex items-center gap-4">
+            <button onclick="ldgAssetPrev()" id="ldg-asset-prev" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors">‹ 2025년</button>
+            <button onclick="ldgAssetNext()" id="ldg-asset-next" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors">2027년 ›</button>
+            <button onclick="ldgAddAssetItem()" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 flex items-center gap-1"><span class="material-symbols-outlined text-sm">add</span> 항목 추가</button>
+          </div>
+        </div>
+
+        <!-- [1] Info banner -->
+        <div class="flex items-center gap-6 bg-indigo-50/50 rounded-xl px-5 py-3 mb-6 text-xs">
+          <span class="flex items-center gap-2"><span class="w-4 h-3 rounded" style="background:#f7f1ff;border:1px solid #e5deff"></span> <span class="text-indigo-600 font-semibold">거래에서 자동 계산</span></span>
+          <span class="flex items-center gap-2"><span class="w-4 h-3 rounded bg-white border border-slate-200"></span> <span class="text-slate-600 font-semibold">직접 입력</span></span>
+        </div>
+
+        <!-- [2] KPI 3 cards -->
+        <div class="grid grid-cols-3 gap-6 mb-6" id="ldg-asset-kpi"></div>
+
+        <!-- [3] Net worth trend chart -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6 mb-8">
+          <h4 class="text-sm font-bold text-slate-800 mb-4">순자산 추이</h4>
+          <div class="h-48"><canvas id="ldg-asset-chart"></canvas></div>
+        </div>
+
+        <!-- [4] Asset matrix -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div class="overflow-x-auto" id="ldg-asset-matrix-wrap"></div>
+        </div>
+
+        <!-- Asset add modal -->
+        <div id="ldg-asset-add-modal" class="fixed inset-0 bg-black/30 z-[9999] flex items-center justify-center" style="display:none">
+          <div class="bg-white rounded-2xl p-6 shadow-xl max-w-md w-full mx-4">
+            <h4 class="text-sm font-bold text-slate-800 mb-4">자산 항목 추가</h4>
+            <div class="space-y-3">
+              <div><label class="text-xs text-slate-500 mb-1 block">분류</label><select id="ldg-asset-add-group" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" onchange="ldgAssetAddGroupChanged()"><option value="비유동자산">비유동자산 (수동)</option><option value="투자자산">투자자산 (수동)</option><option value="현금자산">현금자산 (자동)</option><option value="부채">부채 (자동)</option></select></div>
+              <div><label class="text-xs text-slate-500 mb-1 block">항목 이름</label><input id="ldg-asset-add-name" type="text" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" placeholder="예: ISA계좌"/></div>
+              <div id="ldg-asset-add-mapping-wrap" style="display:none"><label class="text-xs text-slate-500 mb-1 block">매핑 카테고리.소분류</label><input id="ldg-asset-add-mapping" type="text" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" placeholder="예: 저축.적금"/></div>
+              <div><label class="text-xs text-slate-500 mb-1 block">초기값 (1월 잔액)</label><input id="ldg-asset-add-init" type="text" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" placeholder="0" oninput="ldgFormatAmount(this)"/></div>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+              <button onclick="document.getElementById('ldg-asset-add-modal').style.display='none'" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded-lg">취소</button>
+              <button onclick="ldgSaveNewAsset()" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">추가</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asset delete modal -->
+        <div id="ldg-asset-del-modal" class="fixed inset-0 bg-black/30 z-[9999] flex items-center justify-center" style="display:none">
+          <div class="bg-white rounded-2xl p-6 shadow-xl max-w-sm w-full mx-4">
+            <p class="text-sm text-slate-800 mb-4">이 항목을 삭제할까요? 입력된 모든 월별 데이터가 사라집니다.</p>
+            <div class="flex justify-end gap-2">
+              <button onclick="document.getElementById('ldg-asset-del-modal').style.display='none'" class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded-lg">취소</button>
+              <button onclick="ldgConfirmDelAsset()" class="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">삭제</button>
+            </div>
+          </div>
+        </div>
+
       </div>
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
@@ -17805,6 +17863,7 @@ function switchLedgerTab(tab) {
   });
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
   if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
+  if (tab === 'assets' && _ledgerData.transactions) ldgRenderAssets();
   if (tab === 'settings') ldgRenderSettings();
 }
 
@@ -17849,6 +17908,7 @@ async function loadLedgerData() {
     var parts = latest.date.split('-');
     _ldgYear = parseInt(parts[0]); _ldgMonth = parseInt(parts[1]);
     _ldgAnnualYear = _ldgYear;
+    _ldgAssetYear = _ldgYear;
   }
   ldgRenderMonthly();
   ldgCheckRecurringAuto();
@@ -18513,6 +18573,317 @@ function ldgToggleSort() {
   else if (_ldgSortField === 'amount' && !_ldgSortAsc) { _ldgSortAsc = true; }
   else { _ldgSortField = 'date'; _ldgSortAsc = false; }
   ldgRenderTxTable();
+}
+
+// ===== DAILY LEDGER: ASSET SHEET =====
+var _ldgAssetYear = 2026;
+var _ldgAssetChart = null;
+var _ldgAssetDelTarget = null; // {group, idx}
+
+// Default auto-mappings per PROMPT spec (MVP: one mapping per category to avoid double counting)
+var _ldgAssetAutoMappings = {
+  '적금1': '저축.적금', '적금2': null, '예금1': '저축.예금',
+  '파킹1': null, '파킹2': null,
+  '신용대출': '저축.신용대출 상환', '담보대출': '저축.담보대출 상환'
+};
+
+function ldgAssetPrev() { _ldgAssetYear--; ldgRenderAssets(); }
+function ldgAssetNext() { _ldgAssetYear++; ldgRenderAssets(); }
+
+function ldgInitAssetData() {
+  // Convert template to working structure if not done yet
+  var ad = _ledgerData.assets;
+  if (!ad || !ad['비유동자산'] || (ad['비유동자산'][0] && ad['비유동자산'][0]['월별'] !== undefined)) return;
+  var groups = ['비유동자산','투자자산','현금자산','부채'];
+  var newData = {};
+  groups.forEach(function(g) {
+    newData[g] = (ad[g] || []).map(function(item) {
+      var isAuto = (g === '현금자산' || g === '부채');
+      var mapping = isAuto ? (_ldgAssetAutoMappings[item['소분류']] || null) : null;
+      var monthly = [null,null,null,null,null,null,null,null,null,null,null,null];
+      if (!isAuto) monthly[0] = item['초기값'] || 0; // 1월 = 초기값 for manual items
+      return { '소분류': item['소분류'], '월별': monthly, '자동': isAuto, '매핑': mapping, '초기값': item['초기값'] || 0 };
+    });
+  });
+  _ledgerData.assets = newData;
+  ldgSaveAssetData();
+}
+
+function ldgSaveAssetData() { localStorage.setItem('atelier_ledger_assets', JSON.stringify(_ledgerData.assets)); }
+
+function ldgComputeAutoValues(year) {
+  // Compute auto cells for 현금자산 and 부채 from transactions
+  var ad = _ledgerData.assets;
+  var txs = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.substring(0,4) === String(year); });
+  // Group tx by month and mapping key
+  var txByMonthMap = {};
+  txs.forEach(function(t) {
+    var m = parseInt(t.date.split('-')[1]) - 1; // 0-based index
+    var key = t['대분류'] + '.' + (t['소분류']||'');
+    if (!txByMonthMap[key]) txByMonthMap[key] = [0,0,0,0,0,0,0,0,0,0,0,0];
+    txByMonthMap[key][m] += t['금액'];
+  });
+
+  ['현금자산','부채'].forEach(function(group) {
+    (ad[group] || []).forEach(function(item) {
+      if (!item['자동'] || !item['매핑']) return;
+      var mapTx = txByMonthMap[item['매핑']] || [0,0,0,0,0,0,0,0,0,0,0,0];
+      var init = item['초기값'] || 0;
+      var bal = init;
+      for (var m = 0; m < 12; m++) {
+        if (group === '부채') {
+          bal = bal - mapTx[m]; // Subtract repayments
+        } else {
+          bal = bal + mapTx[m]; // Accumulate savings
+        }
+        item['월별'][m] = bal;
+      }
+    });
+  });
+}
+
+function ldgGetAssetMonthVal(item, mIdx) {
+  if (item['월별'] && item['월별'][mIdx] !== null && item['월별'][mIdx] !== undefined) return item['월별'][mIdx];
+  return null;
+}
+
+function ldgRenderAssets() {
+  if (!_ledgerData.assets) return;
+  ldgInitAssetData();
+  ldgComputeAutoValues(_ldgAssetYear);
+
+  var y = _ldgAssetYear;
+  document.getElementById('ldg-asset-title').textContent = y + ' 자산';
+  document.getElementById('ldg-asset-prev').textContent = '‹ ' + (y-1) + '년';
+  document.getElementById('ldg-asset-next').textContent = (y+1) + '년 ›';
+
+  ldgRenderAssetKPI();
+  ldgRenderAssetChart();
+  ldgRenderAssetMatrix();
+}
+
+function ldgRenderAssetKPI() {
+  var ad = _ledgerData.assets;
+  // Find latest month with any data
+  var latestM = 0;
+  ['비유동자산','투자자산','현금자산','부채'].forEach(function(g) {
+    (ad[g]||[]).forEach(function(item) {
+      for (var m = 11; m >= 0; m--) {
+        if (item['월별'][m] !== null && item['월별'][m] !== undefined) { if (m > latestM) latestM = m; break; }
+      }
+    });
+  });
+
+  function sumGroup(g, m) {
+    var s = 0;
+    (ad[g]||[]).forEach(function(item) { var v = ldgGetAssetMonthVal(item,m); if (v !== null) s += v; });
+    return s;
+  }
+  var totalAsset = sumGroup('비유동자산',latestM) + sumGroup('투자자산',latestM) + sumGroup('현금자산',latestM);
+  var totalDebt = sumGroup('부채',latestM);
+  var netWorth = totalAsset - totalDebt;
+
+  var prevM = latestM > 0 ? latestM - 1 : null;
+  var prevNet = null;
+  if (prevM !== null) {
+    var pa = sumGroup('비유동자산',prevM) + sumGroup('투자자산',prevM) + sumGroup('현금자산',prevM);
+    var pd = sumGroup('부채',prevM);
+    prevNet = pa - pd;
+  }
+  var diff = prevNet !== null ? netWorth - prevNet : null;
+  var diffHtml = '';
+  if (diff !== null) {
+    var color = diff >= 0 ? 'text-emerald-600' : 'text-red-500';
+    var arrow = diff >= 0 ? '▲' : '▼';
+    diffHtml = '<p class="text-[10px] ' + color + ' mt-1">' + arrow + ' 전월비 ' + (diff >= 0 ? '+' : '') + Math.abs(diff).toLocaleString('ko-KR') + '</p>';
+  }
+  var kpi = document.getElementById('ldg-asset-kpi');
+  kpi.innerHTML =
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총자산</p><p class="text-xl font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(totalAsset) + '</p></div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">부채</p><p class="text-xl font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(totalDebt) + '</p></div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border-l-4 border-l-indigo-500"><p class="text-xs text-slate-500 mb-1">순자산</p><p class="text-xl font-bold text-indigo-600" style="font-feature-settings:\'tnum\'">' + ldgFmt(netWorth) + '</p>' + diffHtml + '</div>';
+}
+
+function ldgRenderAssetChart() {
+  var canvas = document.getElementById('ldg-asset-chart');
+  if (!canvas) return;
+  if (_ldgAssetChart) _ldgAssetChart.destroy();
+  var ad = _ledgerData.assets;
+  var labels = [], data = [], pointBg = [], pointR = [];
+  for (var m = 0; m < 12; m++) {
+    labels.push((m+1) + '월');
+    var ta = 0, td = 0, hasData = false;
+    ['비유동자산','투자자산','현금자산'].forEach(function(g) {
+      (ad[g]||[]).forEach(function(item) { var v = ldgGetAssetMonthVal(item,m); if (v !== null) { ta += v; hasData = true; } });
+    });
+    (ad['부채']||[]).forEach(function(item) { var v = ldgGetAssetMonthVal(item,m); if (v !== null) { td += v; hasData = true; } });
+    data.push(hasData ? ta - td : null);
+    pointBg.push(hasData ? '#5b3cdd' : 'rgba(148,163,184,0.5)');
+    pointR.push(hasData ? 4 : 3);
+  }
+  _ldgAssetChart = new Chart(canvas, {
+    type: 'line',
+    data: { labels: labels, datasets: [{ data: data, borderColor: '#5b3cdd', borderWidth: 2, fill: true,
+      backgroundColor: function(ctx) { var g = ctx.chart.ctx.createLinearGradient(0,0,0,ctx.chart.height); g.addColorStop(0,'rgba(91,60,221,0.15)'); g.addColorStop(1,'rgba(91,60,221,0.01)'); return g; },
+      tension: 0.3, pointBackgroundColor: pointBg, pointRadius: pointR, pointHoverRadius: 5, spanGaps: true }] },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ctx.raw!==null?ldgFmt(ctx.raw):'데이터 없음';}}} },
+      scales: { x:{grid:{display:false},ticks:{font:{size:10}}}, y:{grid:{color:'#f1f5f9'},ticks:{font:{size:10},callback:function(v){return ldgFmtShort(v);}}} }
+    }
+  });
+}
+
+function ldgRenderAssetMatrix() {
+  var wrap = document.getElementById('ldg-asset-matrix-wrap');
+  if (!wrap) return;
+  var ad = _ledgerData.assets;
+  var groups = [
+    { key:'비유동자산', label:'비유동자산', hint:'직접 입력', auto:false },
+    { key:'투자자산', label:'투자자산', hint:'직접 입력 (분기 1회 권장)', auto:false },
+    { key:'현금자산', label:'현금자산', hint:'거래에서 자동', auto:true },
+    { key:'부채', label:'부채', hint:'상환 거래로 자동 차감', auto:true }
+  ];
+
+  var html = '<table class="w-full text-left border-collapse" style="min-width:900px"><thead class="bg-slate-50/80 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 z-10"><tr>';
+  html += '<th class="px-3 py-2 sticky left-0 bg-slate-50/80 z-20 min-w-[70px]">분류</th>';
+  html += '<th class="px-3 py-2 sticky left-[70px] bg-slate-50/80 z-20 min-w-[80px]">항목</th>';
+  for (var m = 1; m <= 12; m++) html += '<th class="px-2 py-2 text-right min-w-[80px]">' + m + '월</th>';
+  html += '</tr></thead><tbody class="text-[11px]">';
+
+  var netRow = new Array(12).fill(0);
+  var netHasData = new Array(12).fill(false);
+
+  groups.forEach(function(grp) {
+    var items = ad[grp.key] || [];
+    var subtotals = new Array(12).fill(0);
+    var subHas = new Array(12).fill(false);
+    var isDebt = grp.key === '부채';
+    // Group header
+    html += '<tr class="bg-indigo-50/40"><td class="px-3 py-2 sticky left-0 z-10 bg-indigo-50/40 font-bold text-slate-700" colspan="2">' + grp.label + ' <span class="font-normal text-[10px] text-slate-400">' + (grp.auto ? '🔗 ' : '✏️ ') + grp.hint + '</span></td>';
+    for (var m = 0; m < 12; m++) html += '<td class="px-2 py-2"></td>';
+    html += '</tr>';
+
+    items.forEach(function(item, idx) {
+      html += '<tr class="border-b border-slate-50 group">';
+      html += '<td class="px-3 py-1.5 sticky left-0 z-10 bg-white"></td>';
+      html += '<td class="px-3 py-1.5 sticky left-[70px] z-10 bg-white text-slate-600 flex items-center gap-1"><span ondblclick="ldgEditAssetName(\'' + grp.key + '\',' + idx + ')" class="cursor-pointer">' + item['소분류'] + '</span>' +
+        '<button onclick="ldgDelAssetItem(\'' + grp.key + '\',' + idx + ')" class="text-slate-200 hover:text-red-400 opacity-0 group-hover:opacity-100 ml-auto shrink-0"><span class="material-symbols-outlined" style="font-size:12px">close</span></button></td>';
+      for (var m = 0; m < 12; m++) {
+        var val = ldgGetAssetMonthVal(item, m);
+        var cellBg = grp.auto ? 'background:#f7f1ff;' : '';
+        var cellColor = grp.auto ? 'color:#5b3cdd;' : '';
+        if (val !== null && val !== undefined) {
+          subtotals[m] += val;
+          subHas[m] = true;
+          if (!isDebt) netRow[m] += val; else netRow[m] -= val;
+          netHasData[m] = true;
+        }
+        if (grp.auto) {
+          // Auto cell - read only
+          html += '<td class="px-2 py-1.5 text-right cursor-help" style="' + cellBg + cellColor + 'font-feature-settings:\'tnum\'" title="거래에서 자동 계산됩니다. 거래 추가는 월별 뷰에서.">';
+          html += (val !== null && val !== undefined) ? Math.round(val).toLocaleString('ko-KR') : '<span class="text-slate-300">—</span>';
+        } else {
+          // Manual cell - editable
+          html += '<td class="px-2 py-1.5 text-right cursor-pointer hover:bg-indigo-50/50 rounded" style="font-feature-settings:\'tnum\'" onclick="ldgEditAssetCell(\'' + grp.key + '\',' + idx + ',' + m + ',this)">';
+          html += (val !== null && val !== undefined) ? Math.round(val).toLocaleString('ko-KR') : '<span class="text-slate-300">—</span>';
+        }
+        html += '</td>';
+      }
+      html += '</tr>';
+    });
+    // Subtotal row
+    html += '<tr class="border-b-2 border-slate-200 font-semibold"><td class="px-3 py-1.5 sticky left-0 z-10 bg-slate-50/60"></td><td class="px-3 py-1.5 sticky left-[70px] z-10 bg-slate-50/60 text-slate-500 text-[10px]">소계</td>';
+    for (var m = 0; m < 12; m++) {
+      html += '<td class="px-2 py-1.5 text-right bg-slate-50/60" style="font-feature-settings:\'tnum\'">' + (subHas[m] ? Math.round(subtotals[m]).toLocaleString('ko-KR') : '<span class="text-slate-300">—</span>') + '</td>';
+    }
+    html += '</tr>';
+  });
+
+  // Net worth row
+  html += '<tr class="border-t-2 border-indigo-300 bg-indigo-50/30"><td class="px-3 py-2 sticky left-0 z-10 bg-indigo-50/30 font-bold text-indigo-700" colspan="2">순자산 (Net Worth)</td>';
+  for (var m = 0; m < 12; m++) {
+    html += '<td class="px-2 py-2 text-right font-bold text-indigo-700" style="font-feature-settings:\'tnum\'">' + (netHasData[m] ? Math.round(netRow[m]).toLocaleString('ko-KR') : '<span class="text-slate-300">—</span>') + '</td>';
+  }
+  html += '</tr>';
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function ldgEditAssetCell(group, idx, mIdx, tdEl) {
+  var item = _ledgerData.assets[group][idx];
+  if (item['자동']) return; // Never edit auto cells
+  var current = ldgGetAssetMonthVal(item, mIdx);
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.value = current !== null ? Math.round(current).toLocaleString('ko-KR') : '';
+  input.className = 'w-full text-[11px] text-right border border-indigo-300 rounded px-1 py-0.5 outline-none focus:ring-2 focus:ring-indigo-300';
+  input.style.fontFeatureSettings = "'tnum'";
+  tdEl.innerHTML = '';
+  tdEl.appendChild(input);
+  tdEl.onclick = null;
+  input.focus(); input.select();
+  input.oninput = function() { ldgFormatAmount(input); };
+  function save() {
+    var raw = input.value.replace(/[^0-9]/g, '');
+    var val = raw ? parseInt(raw) : null;
+    item['월별'][mIdx] = val;
+    ldgSaveAssetData();
+    ldgRenderAssets();
+  }
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') save(); if (e.key === 'Escape') ldgRenderAssetMatrix(); });
+  input.addEventListener('blur', save);
+}
+
+function ldgEditAssetName(group, idx) {
+  var item = _ledgerData.assets[group][idx];
+  var newName = prompt('항목 이름 변경:', item['소분류']);
+  if (!newName || !newName.trim() || newName.trim() === item['소분류']) return;
+  item['소분류'] = newName.trim();
+  ldgSaveAssetData(); ldgRenderAssetMatrix();
+}
+
+function ldgDelAssetItem(group, idx) {
+  _ldgAssetDelTarget = { group: group, idx: idx };
+  document.getElementById('ldg-asset-del-modal').style.display = 'flex';
+}
+function ldgConfirmDelAsset() {
+  if (_ldgAssetDelTarget) {
+    _ledgerData.assets[_ldgAssetDelTarget.group].splice(_ldgAssetDelTarget.idx, 1);
+    ldgSaveAssetData();
+  }
+  _ldgAssetDelTarget = null;
+  document.getElementById('ldg-asset-del-modal').style.display = 'none';
+  ldgRenderAssets();
+}
+
+function ldgAddAssetItem() {
+  document.getElementById('ldg-asset-add-modal').style.display = 'flex';
+  ldgAssetAddGroupChanged();
+}
+function ldgAssetAddGroupChanged() {
+  var g = document.getElementById('ldg-asset-add-group').value;
+  var isAuto = g === '현금자산' || g === '부채';
+  document.getElementById('ldg-asset-add-mapping-wrap').style.display = isAuto ? '' : 'none';
+}
+function ldgSaveNewAsset() {
+  var group = document.getElementById('ldg-asset-add-group').value;
+  var name = (document.getElementById('ldg-asset-add-name').value || '').trim();
+  var mapping = (document.getElementById('ldg-asset-add-mapping').value || '').trim();
+  var initStr = document.getElementById('ldg-asset-add-init').value || '0';
+  var init = parseInt(initStr.replace(/[^0-9]/g,'')) || 0;
+  if (!name) { alert('항목 이름을 입력하세요.'); return; }
+  var isAuto = group === '현금자산' || group === '부채';
+  var monthly = [null,null,null,null,null,null,null,null,null,null,null,null];
+  if (!isAuto) monthly[0] = init;
+  var entry = { '소분류': name, '월별': monthly, '자동': isAuto, '매핑': isAuto ? (mapping || null) : null, '초기값': init };
+  if (!_ledgerData.assets[group]) _ledgerData.assets[group] = [];
+  _ledgerData.assets[group].push(entry);
+  ldgSaveAssetData();
+  document.getElementById('ldg-asset-add-modal').style.display = 'none';
+  document.getElementById('ldg-asset-add-name').value = '';
+  document.getElementById('ldg-asset-add-mapping').value = '';
+  document.getElementById('ldg-asset-add-init').value = '';
+  ldgRenderAssets();
 }
 
 // ===== DAILY LEDGER: ANNUAL VIEW =====
