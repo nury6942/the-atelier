@@ -2069,8 +2069,66 @@
         </div>
 
       </div>
-      <div id="ledger-panel-annual" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
-        <p class="text-slate-400 text-sm">여기에 연간 뷰 콘텐츠가 들어갑니다</p>
+      <div id="ledger-panel-annual" class="ledger-panel" style="display:none">
+
+        <!-- [0] Year Navigation -->
+        <div class="flex items-center justify-between mb-8">
+          <h3 id="ldg-annual-title" class="text-xl font-bold text-slate-900">2026 연간 뷰</h3>
+          <div class="flex items-center gap-4">
+            <button onclick="ldgAnnualPrev()" id="ldg-annual-prev" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors">‹ 2025년</button>
+            <button onclick="ldgAnnualNext()" id="ldg-annual-next" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors">2027년 ›</button>
+            <button onclick="switchLedgerTab('settings')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+              <span class="material-symbols-outlined text-sm">settings</span> 설정
+            </button>
+          </div>
+        </div>
+
+        <!-- [1] Main KPI 3 cards -->
+        <div class="grid grid-cols-3 gap-6 mb-6" id="ldg-annual-kpi"></div>
+
+        <!-- [2] Insight chips 3 -->
+        <div class="grid grid-cols-3 gap-6 mb-8" id="ldg-annual-insights"></div>
+
+        <!-- [3] Monthly flow combo chart -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6 mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-slate-800">월별 흐름도</h4>
+            <div class="flex items-center gap-4 text-[10px]">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#6366f1"></span> 수입</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#eae0b5"></span> 저축</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#f4a6a6"></span> 지출</span>
+              <span class="flex items-center gap-1"><span class="w-6 border-t-2 border-indigo-600"></span> 저축률</span>
+            </div>
+          </div>
+          <div class="h-64"><canvas id="ldg-annual-flow-chart"></canvas></div>
+          <!-- Month strip + clickable labels -->
+          <div class="flex gap-1 mt-4" id="ldg-annual-strip"></div>
+        </div>
+
+        <!-- [4] Donut cards 3 -->
+        <div class="grid grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6">
+            <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-wider">수입 구성</h4>
+            <div class="flex items-center gap-4"><div class="w-36 h-36 shrink-0"><canvas id="ldg-annual-donut-income"></canvas></div><div id="ldg-annual-donut-income-legend" class="text-xs space-y-1"></div></div>
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6">
+            <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-wider">지출 구성</h4>
+            <div class="flex items-center gap-4"><div class="w-36 h-36 shrink-0"><canvas id="ldg-annual-donut-expense"></canvas></div><div id="ldg-annual-donut-expense-legend" class="text-xs space-y-1"></div></div>
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6">
+            <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-wider">결제수단 비중</h4>
+            <div class="flex items-center gap-4"><div class="w-36 h-36 shrink-0"><canvas id="ldg-annual-donut-payment"></canvas></div><div id="ldg-annual-donut-payment-legend" class="text-xs space-y-1"></div></div>
+          </div>
+        </div>
+
+        <!-- [5] Annual Matrix -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden mb-8">
+          <div class="px-6 py-4 border-b border-slate-100">
+            <h4 class="text-sm font-bold text-slate-800">연간 매트릭스</h4>
+          </div>
+          <div class="overflow-x-auto" id="ldg-annual-matrix-wrap"></div>
+        </div>
+
       </div>
       <div id="ledger-panel-assets" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
         <p class="text-slate-400 text-sm">여기에 자산 콘텐츠가 들어갑니다</p>
@@ -17746,6 +17804,7 @@ function switchLedgerTab(tab) {
     }
   });
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
+  if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
   if (tab === 'settings') ldgRenderSettings();
 }
 
@@ -17789,6 +17848,7 @@ async function loadLedgerData() {
     var latest = txs.reduce(function(a,b){ return a.date > b.date ? a : b; });
     var parts = latest.date.split('-');
     _ldgYear = parseInt(parts[0]); _ldgMonth = parseInt(parts[1]);
+    _ldgAnnualYear = _ldgYear;
   }
   ldgRenderMonthly();
   ldgCheckRecurringAuto();
@@ -18453,6 +18513,313 @@ function ldgToggleSort() {
   else if (_ldgSortField === 'amount' && !_ldgSortAsc) { _ldgSortAsc = true; }
   else { _ldgSortField = 'date'; _ldgSortAsc = false; }
   ldgRenderTxTable();
+}
+
+// ===== DAILY LEDGER: ANNUAL VIEW =====
+var _ldgAnnualYear = 2026;
+var _ldgAnnualFlowChart = null;
+var _ldgAnnualDonutI = null, _ldgAnnualDonutE = null, _ldgAnnualDonutP = null;
+
+function ldgAnnualPrev() { _ldgAnnualYear--; ldgRenderAnnual(); }
+function ldgAnnualNext() { _ldgAnnualYear++; ldgRenderAnnual(); }
+
+function ldgGetYearTx(year) {
+  var prefix = String(year);
+  return (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.substring(0,4) === prefix; });
+}
+
+function ldgJumpToMonth(year, month) {
+  _ldgYear = year; _ldgMonth = month;
+  switchLedgerTab('monthly');
+}
+
+function ldgRenderAnnual() {
+  if (!_ledgerData.transactions) return;
+  var y = _ldgAnnualYear;
+  document.getElementById('ldg-annual-title').textContent = y + ' 연간 뷰';
+  document.getElementById('ldg-annual-prev').textContent = '‹ ' + (y-1) + '년';
+  document.getElementById('ldg-annual-next').textContent = (y+1) + '년 ›';
+
+  var txs = ldgGetYearTx(y);
+  // Monthly aggregates
+  var monthly = {};
+  for (var m = 1; m <= 12; m++) monthly[m] = { income:0, saving:0, expense:0, txCount:0 };
+  txs.forEach(function(t) {
+    var m = parseInt(t.date.split('-')[1]);
+    monthly[m].txCount++;
+    if (t['대분류'] === '수입') monthly[m].income += t['금액'];
+    else if (t['대분류'] === '저축') monthly[m].saving += t['금액'];
+    else monthly[m].expense += t['금액'];
+  });
+  var activeMonths = [];
+  for (var m = 1; m <= 12; m++) { if (monthly[m].txCount > 0) activeMonths.push(m); }
+  var nMonths = activeMonths.length || 1;
+
+  var totalIncome = 0, totalSaving = 0, totalExpense = 0;
+  txs.forEach(function(t) {
+    if (t['대분류'] === '수입') totalIncome += t['금액'];
+    else if (t['대분류'] === '저축') totalSaving += t['금액'];
+    else totalExpense += t['금액'];
+  });
+  var savingRate = totalIncome > 0 ? (totalSaving / totalIncome * 100) : 0;
+
+  // [1] KPI
+  var kpiEl = document.getElementById('ldg-annual-kpi');
+  kpiEl.innerHTML =
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">수입</p><p class="text-xl font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(totalIncome) + '</p><p class="text-[10px] text-slate-400 mt-1">월평균 ' + ldgFmt(Math.round(totalIncome/nMonths)) + '</p></div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">저축·현금</p><p class="text-xl font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(totalSaving) + '</p><p class="text-[10px] text-slate-400 mt-1">저축률 ' + savingRate.toFixed(1) + '%</p></div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">지출</p><p class="text-xl font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(totalExpense) + '</p><p class="text-[10px] text-slate-400 mt-1">월평균 ' + ldgFmt(Math.round(totalExpense/nMonths)) + '</p></div>';
+
+  // [2] Insights
+  ldgRenderAnnualInsights(y, txs, monthly, activeMonths);
+  // [3] Flow chart
+  ldgRenderAnnualFlow(monthly, activeMonths);
+  // [4] Donuts
+  ldgRenderAnnualDonuts(txs);
+  // [5] Matrix
+  ldgRenderAnnualMatrix(y, txs, activeMonths);
+}
+
+function ldgRenderAnnualInsights(year, txs, monthly, activeMonths) {
+  var el = document.getElementById('ldg-annual-insights');
+  // TOP expense category
+  var catSums = {};
+  txs.forEach(function(t) { if (ldgIsExpense(t)) catSums[t['대분류']] = (catSums[t['대분류']]||0) + t['금액']; });
+  var topCat = '', topAmt = 0, totalExp = 0;
+  for (var k in catSums) { totalExp += catSums[k]; if (catSums[k] > topAmt) { topAmt = catSums[k]; topCat = k; } }
+  var topPct = totalExp > 0 ? (topAmt / totalExp * 100).toFixed(0) : 0;
+  var chip1 = '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">' +
+    '<p class="text-xs text-slate-500 mb-2">TOP 지출 카테고리</p>' +
+    (topCat ? '<p class="text-sm font-bold text-slate-900">' + topCat + ' · ' + topPct + '%</p><p class="text-xs text-slate-500" style="font-feature-settings:\'tnum\'">' + ldgFmt(topAmt) + '</p>' : '<p class="text-xs text-slate-400">데이터 없음</p>') +
+    '</div>';
+
+  // Monthly max/min expense
+  var maxM = null, minM = null, maxV = -1, minV = Infinity;
+  activeMonths.forEach(function(m) {
+    if (monthly[m].expense > maxV) { maxV = monthly[m].expense; maxM = m; }
+    if (monthly[m].expense < minV) { minV = monthly[m].expense; minM = m; }
+  });
+  var chip2 = '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">' +
+    '<p class="text-xs text-slate-500 mb-2">월별 지출 최고/최저</p>';
+  if (activeMonths.length >= 2) {
+    chip2 += '<p class="text-xs text-slate-700"><span class="font-bold text-red-500">최고</span> ' + maxM + '월 · ' + ldgFmt(maxV) + '</p>' +
+      '<p class="text-xs text-slate-700"><span class="font-bold text-emerald-500">최저</span> ' + minM + '월 · ' + ldgFmt(minV) + '</p>';
+  } else if (activeMonths.length === 1) {
+    chip2 += '<p class="text-xs text-slate-700">' + activeMonths[0] + '월 · ' + ldgFmt(monthly[activeMonths[0]].expense) + '</p>';
+  } else { chip2 += '<p class="text-xs text-slate-400">데이터 없음</p>'; }
+  chip2 += '</div>';
+
+  // Year-over-year comparison
+  var prevYear = year - 1;
+  var prevTxs = ldgGetYearTx(prevYear);
+  var chip3 = '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">' +
+    '<p class="text-xs text-slate-500 mb-2">작년 대비 (' + prevYear + ')</p>';
+  if (prevTxs.length === 0) {
+    chip3 += '<p class="text-xs text-slate-400">이전 연도 데이터 없음</p>';
+  } else {
+    // Fair comparison: same months only
+    var prevMonthly = {};
+    for (var m = 1; m <= 12; m++) prevMonthly[m] = { income:0, saving:0, expense:0 };
+    prevTxs.forEach(function(t) {
+      var pm = parseInt(t.date.split('-')[1]);
+      if (t['대분류'] === '수입') prevMonthly[pm].income += t['금액'];
+      else if (t['대분류'] === '저축') prevMonthly[pm].saving += t['금액'];
+      else prevMonthly[pm].expense += t['금액'];
+    });
+    var curI = 0, curS = 0, curE = 0, prevI = 0, prevS = 0, prevE = 0;
+    activeMonths.forEach(function(m) {
+      curI += monthly[m].income; curS += monthly[m].saving; curE += monthly[m].expense;
+      prevI += prevMonthly[m].income; prevS += prevMonthly[m].saving; prevE += prevMonthly[m].expense;
+    });
+    function yoyPct(cur, prev) { return prev > 0 ? ((cur - prev) / prev * 100).toFixed(0) : (cur > 0 ? '+∞' : '0'); }
+    function yoySpan(val, goodIfUp) {
+      var n = parseFloat(val);
+      var color = (isNaN(n) || n === 0) ? 'text-slate-500' : ((n > 0) === goodIfUp ? 'text-emerald-600' : 'text-red-500');
+      var arrow = isNaN(n) ? '' : (n > 0 ? '▲' : (n < 0 ? '▼' : ''));
+      return '<span class="' + color + ' font-semibold">' + arrow + ' ' + (n > 0 ? '+' : '') + val + '%</span>';
+    }
+    chip3 += '<p class="text-xs text-slate-700">수입 ' + yoySpan(yoyPct(curI,prevI), true) + '  지출 ' + yoySpan(yoyPct(curE,prevE), false) + '</p>' +
+      '<p class="text-xs text-slate-700">저축 ' + yoySpan(yoyPct(curS,prevS), true) + '</p>';
+  }
+  chip3 += '</div>';
+  el.innerHTML = chip1 + chip2 + chip3;
+}
+
+function ldgRenderAnnualFlow(monthly, activeMonths) {
+  var canvas = document.getElementById('ldg-annual-flow-chart');
+  if (!canvas) return;
+  if (_ldgAnnualFlowChart) _ldgAnnualFlowChart.destroy();
+
+  var labels = [], incomeData = [], savingData = [], expenseData = [], rateData = [];
+  for (var m = 1; m <= 12; m++) {
+    labels.push(m + '월');
+    var d = monthly[m];
+    var hasData = d.txCount > 0;
+    incomeData.push(hasData ? d.income : 0);
+    savingData.push(hasData ? d.saving : 0);
+    expenseData.push(hasData ? d.expense : 0);
+    rateData.push(hasData && d.income > 0 ? Math.round(d.saving / d.income * 100) : null);
+  }
+  // Placeholder bars for months without data
+  var placeholderData = [];
+  var maxVal = Math.max.apply(null, incomeData.concat(expenseData).concat(savingData));
+  for (var m = 1; m <= 12; m++) {
+    placeholderData.push(monthly[m].txCount === 0 ? maxVal * 0.15 : 0);
+  }
+
+  _ldgAnnualFlowChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: '수입', data: incomeData, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '저축', data: savingData, backgroundColor: '#eae0b5', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '지출', data: expenseData, backgroundColor: '#f4a6a6', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '(미입력)', data: placeholderData, backgroundColor: '#e2e8f0', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '저축률', data: rateData, type: 'line', borderColor: '#4f46e5', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#4f46e5', tension: 0.3, yAxisID: 'y1', order: 1, spanGaps: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) {
+        if (ctx.dataset.label === '저축률') return '저축률: ' + ctx.raw + '%';
+        if (ctx.dataset.label === '(미입력)') return '';
+        return ctx.dataset.label + ': ' + ldgFmt(ctx.raw);
+      }}}},
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, callback: function(v) { return ldgFmtShort(v); } } },
+        y1: { position: 'right', min: 0, max: 100, grid: { display: false }, ticks: { font: { size: 10 }, callback: function(v) { return v + '%'; } } }
+      },
+      onClick: function(e, elements) {
+        if (elements.length) { var idx = elements[0].index; ldgJumpToMonth(_ldgAnnualYear, idx + 1); }
+      }
+    }
+  });
+
+  // Month strip
+  var stripEl = document.getElementById('ldg-annual-strip');
+  var stripHtml = '';
+  for (var m = 1; m <= 12; m++) {
+    var has = monthly[m].txCount > 0;
+    stripHtml += '<div class="flex-1 flex flex-col items-center gap-1 cursor-pointer" onclick="ldgJumpToMonth(' + _ldgAnnualYear + ',' + m + ')">' +
+      '<div class="w-full h-2 rounded-full ' + (has ? 'bg-indigo-500' : 'bg-slate-200') + '"></div>' +
+      '<span class="text-[10px] ' + (has ? 'text-indigo-600 font-semibold' : 'text-slate-400') + '">' + m + '</span></div>';
+  }
+  stripEl.innerHTML = stripHtml;
+}
+
+function ldgRenderAnnualDonuts(txs) {
+  var donutColors = ['#6366f1','#a855f7','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16','#e11d48','#7c3aed'];
+
+  function renderADonut(canvasId, legendId, dataObj, chartRef) {
+    var canvas = document.getElementById(canvasId);
+    var legendEl = document.getElementById(legendId);
+    if (!canvas) return null;
+    if (chartRef) chartRef.destroy();
+    var labels = Object.keys(dataObj).sort(function(a,b){return dataObj[b]-dataObj[a];});
+    var values = labels.map(function(l){return dataObj[l];});
+    var total = values.reduce(function(a,b){return a+b;},0);
+    // Legend
+    if (legendEl) {
+      legendEl.innerHTML = labels.slice(0,6).map(function(l,i) {
+        var pct = total > 0 ? (dataObj[l]/total*100).toFixed(0) : 0;
+        return '<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:' + donutColors[i%donutColors.length] + '"></div><span class="text-slate-600">' + l + '</span><span class="font-semibold ml-auto" style="font-feature-settings:\'tnum\'">' + pct + '%</span></div>';
+      }).join('');
+    }
+    if (labels.length === 0) {
+      var ctx = canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#94a3b8'; ctx.font='12px Inter'; ctx.textAlign='center'; ctx.fillText('데이터 없음',canvas.width/2,canvas.height/2);
+      return null;
+    }
+    return new Chart(canvas, {
+      type: 'doughnut',
+      data: { labels: labels, datasets: [{ data: values, backgroundColor: donutColors.slice(0,labels.length), borderWidth: 0 }] },
+      options: { responsive:true, maintainAspectRatio:true, cutout:'65%', plugins: { legend:{display:false}, tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ldgFmt(ctx.raw);}}} } },
+      plugins: [{ id:'centerTextAnnual', afterDraw: function(chart) {
+        if (!chart.data.datasets[0].data.length) return;
+        var t = chart.data.datasets[0].data.reduce(function(a,b){return a+b;},0);
+        var mx = Math.max.apply(null,chart.data.datasets[0].data);
+        var pct = t>0?Math.round(mx/t*100):0;
+        var mi = chart.data.datasets[0].data.indexOf(mx);
+        var lb = chart.data.labels[mi];
+        var ctx=chart.ctx; ctx.save(); ctx.textAlign='center';
+        ctx.fillStyle='#1e293b'; ctx.font='bold 16px Inter'; ctx.fillText(pct+'%',chart.width/2,chart.height/2-2);
+        ctx.font='9px Inter'; ctx.fillStyle='#94a3b8'; ctx.fillText(lb,chart.width/2,chart.height/2+12);
+        ctx.restore();
+      }}]
+    });
+  }
+
+  // Income by subcategory
+  var incBySub = {};
+  txs.forEach(function(t) { if (t['대분류']==='수입') incBySub[t['소분류']||'기타'] = (incBySub[t['소분류']||'기타']||0) + t['금액']; });
+  _ldgAnnualDonutI = renderADonut('ldg-annual-donut-income','ldg-annual-donut-income-legend', incBySub, _ldgAnnualDonutI);
+
+  // Expense by major category
+  var expByCat = {};
+  txs.forEach(function(t) { if (ldgIsExpense(t)) expByCat[t['대분류']||'기타'] = (expByCat[t['대분류']||'기타']||0) + t['금액']; });
+  _ldgAnnualDonutE = renderADonut('ldg-annual-donut-expense','ldg-annual-donut-expense-legend', expByCat, _ldgAnnualDonutE);
+
+  // Payment method
+  var pmSums = {};
+  txs.forEach(function(t) { var p = t['결제수단']||'미분류'; pmSums[p] = (pmSums[p]||0) + t['금액']; });
+  _ldgAnnualDonutP = renderADonut('ldg-annual-donut-payment','ldg-annual-donut-payment-legend', pmSums, _ldgAnnualDonutP);
+}
+
+function ldgRenderAnnualMatrix(year, txs, activeMonths) {
+  var wrap = document.getElementById('ldg-annual-matrix-wrap');
+  if (!wrap) return;
+  var cats = _ledgerData.categories || {};
+  var catKeys = Object.keys(cats);
+  var nMonths = activeMonths.length || 1;
+
+  // Build aggregation: major.minor.month -> sum
+  var agg = {};
+  txs.forEach(function(t) {
+    var m = parseInt(t.date.split('-')[1]);
+    var key = t['대분류'] + '|' + (t['소분류']||'기타');
+    if (!agg[key]) agg[key] = {};
+    agg[key][m] = (agg[key][m]||0) + t['금액'];
+  });
+
+  var html = '<table class="w-full text-left border-collapse" style="min-width:900px"><thead class="bg-slate-50/80 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 z-10"><tr>';
+  html += '<th class="px-3 py-2 sticky left-0 bg-slate-50/80 z-20 min-w-[70px]">대분류</th>';
+  html += '<th class="px-3 py-2 sticky left-[70px] bg-slate-50/80 z-20 min-w-[80px]">소분류</th>';
+  for (var m = 1; m <= 12; m++) {
+    var hasData = activeMonths.indexOf(m) >= 0;
+    html += '<th class="px-2 py-2 text-right min-w-[68px] ' + (hasData ? 'text-indigo-600 cursor-pointer hover:bg-indigo-50' : 'text-slate-300') + '" ' + (hasData ? 'onclick="ldgJumpToMonth(' + year + ',' + m + ')"' : '') + '>' + m + '월' + (hasData ? ' ↗' : '') + '</th>';
+  }
+  html += '<th class="px-2 py-2 text-right min-w-[72px] bg-slate-100/60">합계</th>';
+  html += '<th class="px-2 py-2 text-right min-w-[72px] bg-slate-100/60">평균</th>';
+  html += '</tr></thead><tbody class="text-[11px]">';
+
+  catKeys.forEach(function(major) {
+    var subs = cats[major] || [];
+    subs.forEach(function(minor, si) {
+      var key = major + '|' + minor;
+      var rowSum = 0;
+      var isMajorRow = si === 0;
+      var bg = isMajorRow ? ' bg-indigo-50/30' : '';
+      html += '<tr class="border-b border-slate-50' + bg + '">';
+      html += '<td class="px-3 py-1.5 sticky left-0 z-10 font-semibold text-slate-700' + bg + (isMajorRow ? '' : ' text-transparent') + '">' + (isMajorRow ? major : major) + '</td>';
+      html += '<td class="px-3 py-1.5 sticky left-[70px] z-10 text-slate-600' + bg + '">' + minor + '</td>';
+      for (var mm = 1; mm <= 12; mm++) {
+        var val = (agg[key] && agg[key][mm]) || 0;
+        rowSum += val;
+        html += '<td class="px-2 py-1.5 text-right" style="font-feature-settings:\'tnum\'">';
+        if (val === 0) html += '<span class="text-slate-300">—</span>';
+        else html += Math.round(val/1000).toLocaleString('ko-KR') + 'k';
+        html += '</td>';
+      }
+      var avg = nMonths > 0 ? Math.round(rowSum / nMonths) : 0;
+      html += '<td class="px-2 py-1.5 text-right font-semibold bg-slate-50/60" style="font-feature-settings:\'tnum\'">' + (rowSum === 0 ? '<span class="text-slate-300">—</span>' : Math.round(rowSum/1000).toLocaleString('ko-KR') + 'k') + '</td>';
+      html += '<td class="px-2 py-1.5 text-right text-slate-500 bg-slate-50/60" style="font-feature-settings:\'tnum\'">' + (avg === 0 ? '<span class="text-slate-300">—</span>' : Math.round(avg/1000).toLocaleString('ko-KR') + 'k') + '</td>';
+      html += '</tr>';
+    });
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
 }
 
 // ===== DAILY LEDGER: SETTINGS TABS =====
