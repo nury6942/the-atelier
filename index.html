@@ -17857,6 +17857,7 @@ var _ldgYear = 2026, _ldgMonth = 4;
 var _ldgSortField = 'date', _ldgSortAsc = false;
 var _ldgDeleteTarget = null;
 var _ldgEditingId = null;
+var _ldgLastSavedDate = null;
 var _ldgChartIncome = null, _ldgChartExpense = null, _ldgChartDaily = null;
 var _ldgMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var _ldgMonthKo = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -18401,10 +18402,13 @@ function ldgInputRowHTML(tx) {
   var amt = tx ? tx['금액'].toLocaleString('ko-KR') : '', pm = tx ? (tx['결제수단']||'') : '';
   var detail = tx ? (tx['세부사항']||'') : '', note = tx ? (tx['비고']||'') : '';
   if (!d) {
-    // Default date: last added transaction's date or today
-    var monthTx = ldgGetMonthTx();
-    if (monthTx.length) d = monthTx.sort(function(a,b){ return a.date > b.date ? -1 : 1; })[0].date;
-    else { var now = new Date(); d = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0'); }
+    // Default date: last saved transaction date, then latest in month, then today
+    if (_ldgLastSavedDate) { d = _ldgLastSavedDate; }
+    else {
+      var monthTx = ldgGetMonthTx();
+      if (monthTx.length) d = monthTx.sort(function(a,b){ return a.date > b.date ? -1 : 1; })[0].date;
+      else { var now = new Date(); d = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0'); }
+    }
   }
   // Build subcategory options
   var subOpts = '<option value="">선택</option>';
@@ -18465,55 +18469,96 @@ function ldgGetPMOpts() { return ldgGetActivePMs().map(function(p){return {value
 function ldgBuildDD(wrapperId, options, onChange) {
   var wrap = document.getElementById(wrapperId);
   if (!wrap) return;
-  var field = wrap.dataset.field;
   var curVal = wrap.dataset.value || '';
   wrap.style.position = 'relative';
+  wrap._ddOpts = options;
+  wrap._ddOnChange = onChange;
+  wrap._ddHighlight = -1;
   var label = curVal || '';
-  wrap.innerHTML = '<div class="ldg-dd-trigger" tabindex="0" onkeydown="ldgDDKey(event,\'' + wrapperId + '\')">' +
+  wrap.innerHTML = '<div class="ldg-dd-trigger" tabindex="0">' +
     '<span class="dd-label' + (!label ? ' dd-placeholder' : '') + '">' + (label || '선택') + '</span>' +
     '<span class="material-symbols-outlined dd-chevron">expand_more</span></div>';
   var trigger = wrap.querySelector('.ldg-dd-trigger');
-  trigger.onclick = function(e) {
-    e.stopPropagation();
+
+  function closeDD() {
+    var p = wrap.querySelector('.ldg-dd-panel');
+    if (p) p.remove();
+    trigger.classList.remove('open');
+    wrap._ddHighlight = -1;
+  }
+  function selectOpt(opt) {
+    wrap.dataset.value = opt.value;
+    trigger.querySelector('.dd-label').textContent = opt.label;
+    trigger.querySelector('.dd-label').classList.remove('dd-placeholder');
+    closeDD();
+    if (onChange) onChange(opt.value);
+  }
+  function highlightIdx(panel, idx) {
+    var items = panel.querySelectorAll('.ldg-dd-opt');
+    items.forEach(function(el,i) { el.classList.remove('highlighted'); });
+    if (idx >= 0 && idx < items.length) {
+      items[idx].classList.add('highlighted');
+      items[idx].scrollIntoView({ block: 'nearest' });
+    }
+    wrap._ddHighlight = idx;
+  }
+  function openDD() {
     var existing = wrap.querySelector('.ldg-dd-panel');
-    if (existing) { existing.remove(); trigger.classList.remove('open'); return; }
-    // Close any other open panels
+    if (existing) { closeDD(); return; }
     document.querySelectorAll('.ldg-dd-panel').forEach(function(p){p.remove();}); document.querySelectorAll('.ldg-dd-trigger').forEach(function(t){t.classList.remove('open');});
     trigger.classList.add('open');
     var panel = document.createElement('div');
     panel.className = 'ldg-dd-panel';
     if (options.length === 0) { panel.innerHTML = '<div class="ldg-dd-opt" style="color:#94a3b8;cursor:default">항목 없음</div>'; }
     else {
-      options.forEach(function(opt) {
+      var selIdx = -1;
+      options.forEach(function(opt, i) {
+        if (opt.value === curVal) selIdx = i;
         var div = document.createElement('div');
         div.className = 'ldg-dd-opt' + (opt.value === curVal ? ' selected' : '');
         div.innerHTML = opt.label + (opt.value === curVal ? ' <span class="material-symbols-outlined" style="font-size:14px">check</span>' : '');
-        div.onclick = function(ev) {
-          ev.stopPropagation();
-          wrap.dataset.value = opt.value;
-          trigger.querySelector('.dd-label').textContent = opt.label;
-          trigger.querySelector('.dd-label').classList.remove('dd-placeholder');
-          trigger.classList.remove('open');
-          panel.remove();
-          if (onChange) onChange(opt.value);
-        };
+        div.onclick = function(ev) { ev.stopPropagation(); selectOpt(opt); };
         panel.appendChild(div);
       });
+      wrap._ddHighlight = selIdx >= 0 ? selIdx : 0;
     }
     wrap.appendChild(panel);
-    // Close on outside click
-    setTimeout(function() { document.addEventListener('click', function h() { panel.remove(); trigger.classList.remove('open'); document.removeEventListener('click',h); }); }, 10);
-  };
+    if (options.length > 0) highlightIdx(panel, wrap._ddHighlight);
+    setTimeout(function() { document.addEventListener('click', function h() { closeDD(); document.removeEventListener('click',h); }); }, 10);
+  }
+  trigger.onclick = function(e) { e.stopPropagation(); openDD(); };
+
+  // Keyboard on trigger
+  trigger.addEventListener('keydown', function(e) {
+    var panel = wrap.querySelector('.ldg-dd-panel');
+    var isOpen = !!panel;
+    if (e.key === 'Escape') { e.preventDefault(); if (isOpen) closeDD(); else ldgCancelInput(); return; }
+    if (e.key === 'Tab') { closeDD(); return; /* let Tab propagate naturally */ }
+    if (!isOpen && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault(); openDD(); return;
+    }
+    if (!isOpen) {
+      // Forward Enter to save logic when dropdown is closed
+      if (e.key === 'Enter') { e.preventDefault(); ldgSaveInput(); return; }
+      return;
+    }
+    var opts = wrap._ddOpts || [];
+    var hi = wrap._ddHighlight;
+    if (e.key === 'ArrowDown') { e.preventDefault(); hi = Math.min(hi + 1, opts.length - 1); highlightIdx(panel, hi); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); hi = Math.max(hi - 1, 0); highlightIdx(panel, hi); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (hi >= 0 && hi < opts.length) selectOpt(opts[hi]); }
+    else if (e.key.length === 1) {
+      // First-letter jump
+      var ch = e.key.toLowerCase();
+      for (var j = 0; j < opts.length; j++) {
+        if (opts[j].label.toLowerCase().charAt(0) === ch || opts[j].label.charAt(0) === e.key) { highlightIdx(panel, j); break; }
+      }
+    }
+  });
 }
 
-function ldgDDKey(e, wrapperId) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); var t = document.getElementById(wrapperId); if(t) t.querySelector('.ldg-dd-trigger').click(); }
-  if (e.key === 'Escape') { var p = document.getElementById(wrapperId); if(p){var pn=p.querySelector('.ldg-dd-panel');if(pn)pn.remove();p.querySelector('.ldg-dd-trigger').classList.remove('open');} }
-  if (e.key === 'Tab') {
-    // Let tab navigate naturally — close any open panel
-    document.querySelectorAll('.ldg-dd-panel').forEach(function(p){p.remove();}); document.querySelectorAll('.ldg-dd-trigger').forEach(function(t){t.classList.remove('open');});
-  }
-}
+// CSS for highlighted item (injected once)
+(function(){var s=document.createElement('style');s.textContent='.ldg-dd-opt.highlighted{background:#f7f1ff}';document.head.appendChild(s);})();
 
 // ── Cell-level inline edit (dblclick on existing rows) ──
 var _ldgCellFields = ['date','대분류','소분류','금액','결제수단','세부사항','비고'];
@@ -18649,13 +18694,15 @@ function ldgFocusField(id) {
 }
 function ldgInputKey(e, idx) {
   if (e.key === 'Escape') { ldgCancelInput(); return; }
-  if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    ldgSaveInput(); // Will focus first empty required field if incomplete
+    return;
+  }
+  if (e.key === 'Tab' && !e.shiftKey) {
     if (idx < _ldgInputFields.length - 1) {
       e.preventDefault();
       ldgFocusField(_ldgInputFields[idx + 1]);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      ldgSaveInput();
     }
   }
   if (e.key === 'Tab' && e.shiftKey && idx > 0) {
@@ -18673,7 +18720,14 @@ function ldgSaveInput() {
   var payment = (document.getElementById('ldg-in-payment') || {}).value || '';
   var detail = (document.getElementById('ldg-in-detail') || {}).value || '';
   var note = (document.getElementById('ldg-in-note') || {}).value || '';
-  if (!date || !major || !minor || !amount) { alert('날짜, 대분류, 소분류, 금액은 필수입니다.'); return; }
+  // Check required fields and focus first empty one
+  var missing = [];
+  if (!date) missing.push('ldg-in-date');
+  if (!major) missing.push('ldg-dd-major');
+  if (!minor) missing.push('ldg-dd-minor');
+  if (!amount) missing.push('ldg-in-amount');
+  if (!payment) missing.push('ldg-dd-payment');
+  if (missing.length) { ldgFocusField(missing[0]); return; }
   var txs = _ledgerData.transactions;
   if (_ldgEditingId && _ldgEditingId !== 'new') {
     // Update existing
@@ -18690,6 +18744,7 @@ function ldgSaveInput() {
     var newId = 'txn_' + Date.now();
     txs.push({ id: newId, date: date, '대분류': major, '소분류': minor, '금액': amount, '결제수단': payment, '세부사항': detail, '비고': note });
   }
+  _ldgLastSavedDate = date;
   ldgSaveTx();
   _ldgEditingId = 'new'; // Continue with new row for continuous input
   ldgRenderMonthly();
