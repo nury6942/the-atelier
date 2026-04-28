@@ -622,6 +622,10 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">monitoring</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Money</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-ledger" onclick="navigate('ledger'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">wallet</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Daily Ledger</span>
+    </a>
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-income" onclick="navigate('income'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">account_balance_wallet</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Side Jobs</span>
@@ -1902,6 +1906,38 @@
           <button onclick="saveHubEntry()" id="hub-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== DAILY LEDGER PAGE ===== -->
+  <div id="page-ledger" class="page" style="display:none">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- Page Title -->
+      <h2 class="atelier-page-h2 mb-6">Daily Ledger</h2>
+
+      <!-- Pill Tabs -->
+      <div class="flex gap-2 mb-8">
+        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="monthly" onclick="switchLedgerTab('monthly')">월별 뷰</button>
+        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="annual" onclick="switchLedgerTab('annual')">연간 뷰</button>
+        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="assets" onclick="switchLedgerTab('assets')">자산</button>
+        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="settings" onclick="switchLedgerTab('settings')">설정</button>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div id="ledger-panel-monthly" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <p class="text-slate-400 text-sm">여기에 월별 뷰 콘텐츠가 들어갑니다</p>
+      </div>
+      <div id="ledger-panel-annual" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
+        <p class="text-slate-400 text-sm">여기에 연간 뷰 콘텐츠가 들어갑니다</p>
+      </div>
+      <div id="ledger-panel-assets" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
+        <p class="text-slate-400 text-sm">여기에 자산 콘텐츠가 들어갑니다</p>
+      </div>
+      <div id="ledger-panel-settings" class="ledger-panel bg-white rounded-2xl p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]" style="display:none">
+        <p class="text-slate-400 text-sm">여기에 설정 콘텐츠가 들어갑니다</p>
+      </div>
+
     </div>
   </div>
 
@@ -9082,6 +9118,7 @@
     "journey": { "title": "Travel" },
     "finance": { "title": "Travel Budget" },
     "finance-hub": { "title": "Money" },
+    "ledger": { "title": "Daily Ledger" },
     "matrix": { "title": "Year Matrix" },
     "english": { "title": "Annie" },
     "vault": { "title": "Vault" },
@@ -9115,6 +9152,7 @@
     if(pageId==='english') { if(typeof loadEnglish==='function') loadEnglish(); }
     if(pageId==='finance') { if(typeof loadFinance==='function') loadFinance(); }
     if(pageId==='finance-hub') { if(typeof loadHub==='function') loadHub(); }
+    if(pageId==='ledger') { if(typeof loadLedger==='function') loadLedger(); }
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
     if(pageId==='vault') { if(typeof loadVault==='function') loadVault(); }
@@ -17447,6 +17485,92 @@ auth.onAuthStateChanged(function(user) {
     appContainer.style.display = 'none';
   }
 });
+
+// ===== DAILY LEDGER: DATA INFRASTRUCTURE =====
+var _ledgerData = {};
+var _ledgerTabActive = 'monthly';
+
+function switchLedgerTab(tab) {
+  _ledgerTabActive = tab;
+  document.querySelectorAll('.ledger-panel').forEach(function(p) { p.style.display = 'none'; });
+  var panel = document.getElementById('ledger-panel-' + tab);
+  if (panel) panel.style.display = 'block';
+  document.querySelectorAll('.ledger-tab').forEach(function(btn) {
+    if (btn.dataset.tab === tab) {
+      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)';
+      btn.style.color = '#fff';
+      btn.style.boxShadow = '0 2px 8px rgba(99,102,241,0.25)';
+    } else {
+      btn.style.background = '#f1f5f9';
+      btn.style.color = '#64748b';
+      btn.style.boxShadow = 'none';
+    }
+  });
+}
+
+async function loadLedgerData() {
+  var keys = {
+    settings: 'atelier_ledger_settings',
+    categories: 'atelier_ledger_categories',
+    budgets: 'atelier_ledger_budgets',
+    recurring: 'atelier_ledger_recurring',
+    assets: 'atelier_ledger_assets',
+    transactions: 'atelier_ledger_transactions'
+  };
+  var files = {
+    settings: 'data/ledger/settings.json',
+    categories: 'data/ledger/categories.json',
+    budgets: 'data/ledger/budgets.json',
+    recurring: 'data/ledger/recurring.json',
+    assets: 'data/ledger/assets-template.json',
+    transactions: 'data/ledger/transactions.json'
+  };
+
+  for (var name in keys) {
+    var stored = localStorage.getItem(keys[name]);
+    if (stored) {
+      try { _ledgerData[name] = JSON.parse(stored); continue; } catch(e) {}
+    }
+    try {
+      var resp = await fetch(files[name]);
+      if (resp.ok) {
+        _ledgerData[name] = await resp.json();
+        localStorage.setItem(keys[name], JSON.stringify(_ledgerData[name]));
+      }
+    } catch(e) {
+      console.warn('[DailyLedger] Failed to load ' + name, e);
+    }
+  }
+
+  // Console log for verification
+  var s = _ledgerData.settings || {};
+  var c = _ledgerData.categories || {};
+  var catCount = Object.keys(c).length;
+  var subCount = 0;
+  for (var k in c) { subCount += (c[k] || []).length; }
+  var b = _ledgerData.budgets || {};
+  var r = _ledgerData.recurring || [];
+  var a = _ledgerData.assets || {};
+  var t = _ledgerData.transactions || [];
+  console.log(
+    '[DailyLedger] Loaded:\n' +
+    '  - settings: { year: ' + (s.year || '?') + ', paymentMethods: ' + ((s.paymentMethods || []).length) + '개 }\n' +
+    '  - categories: ' + catCount + ' 대분류, ' + subCount + ' 소분류\n' +
+    '  - budgets: ' + Object.keys(b).length + ' 카테고리\n' +
+    '  - recurring: ' + r.length + ' 항목\n' +
+    '  - assets-template: ' + Object.keys(a).length + ' 분류\n' +
+    '  - transactions: ' + t.length.toLocaleString() + ' 건'
+  );
+}
+
+var _ledgerLoaded = false;
+function loadLedger() {
+  switchLedgerTab(_ledgerTabActive);
+  if (!_ledgerLoaded) {
+    _ledgerLoaded = true;
+    loadLedgerData();
+  }
+}
 
 // Service Worker 등록
 if ('serviceWorker' in navigator) {
