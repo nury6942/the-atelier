@@ -18822,10 +18822,20 @@ function ldgCancelDelete() {
 }
 function ldgConfirmDelete() {
   if (_ldgDeleteTarget) {
-    // If deleting an auto-generated transaction, record it in skip list
     var tx = _ledgerData.transactions.find(function(t) { return t.id === _ldgDeleteTarget; });
-    if (tx && tx.recurringId && tx.date) {
-      ldgAddSkipped(tx.recurringId, tx.date.substring(0,7));
+    if (tx && tx.date) {
+      var recId = tx.recurringId;
+      // If no recurringId but is auto-generated, best-effort match to find recurring item
+      if (!recId && tx['비고'] === '자동(고정)') {
+        ldgEnsureRecurringIds();
+        var day = parseInt(tx.date.split('-')[2]) || 0;
+        var items = _ledgerData.recurring || [];
+        var match = items.find(function(r) {
+          return r['대분류'] === tx['대분류'] && r['소분류'] === tx['소분류'] && r.dayOfMonth === day;
+        });
+        if (match) recId = match.recId;
+      }
+      if (recId) ldgAddSkipped(recId, tx.date.substring(0,7));
     }
     _ledgerData.transactions = _ledgerData.transactions.filter(function(t) { return t.id !== _ldgDeleteTarget; });
     ldgSaveTx();
