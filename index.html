@@ -20746,12 +20746,13 @@ function ldgApplyBudgetSuggestion() {
 }
 
 // ===== DAILY LEDGER: AI COACH API HELPER =====
-var ATELIER_FUNCTIONS_BASE = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net';
+var ATELIER_FUNCTIONS_URL_ANALYZE = 'https://coachanalyze-zrn5bx33ha-uc.a.run.app';
+var ATELIER_FUNCTIONS_URL_PING = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/coachPing';
 
 async function callCoachAPI(prompt, systemPrompt, maxTokens) {
   var token = localStorage.getItem('atelier_coach_auth_token');
   if (!token) throw new Error('인증 토큰이 설정되지 않았습니다. 설정 → AI 코치 설정에서 입력해주세요.');
-  var resp = await fetch(ATELIER_FUNCTIONS_BASE + '/coachAnalyze', {
+  var resp = await fetch(ATELIER_FUNCTIONS_URL_ANALYZE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': token },
     body: JSON.stringify({ prompt: prompt, systemPrompt: systemPrompt || '', maxTokens: maxTokens || 2000 })
@@ -20794,7 +20795,7 @@ async function ldgTestAIConnection() {
   if (st) st.innerHTML = '<span class="text-slate-400">연결 테스트 중...</span>';
   try {
     var token = localStorage.getItem('atelier_coach_auth_token') || '';
-    var resp = await fetch(ATELIER_FUNCTIONS_BASE + '/coachPing', {
+    var resp = await fetch(ATELIER_FUNCTIONS_URL_PING, {
       headers: token ? { 'X-Atelier-Token': token } : {}
     });
     var data = await resp.json();

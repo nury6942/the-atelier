@@ -18,7 +18,7 @@ function corsHeaders(res) {
 
 // ── Coach Analyze: Claude API proxy ──
 exports.coachAnalyze = onRequest(
-  { secrets: [anthropicApiKey, atelierAuthToken], memory: "256MiB", timeoutSeconds: 60 },
+  { secrets: [anthropicApiKey, atelierAuthToken], cors: true, memory: "256MiB", timeoutSeconds: 60 },
   async (req, res) => {
     corsHeaders(res);
     if (req.method === "OPTIONS") return res.status(204).send("");
@@ -69,7 +69,7 @@ exports.coachAnalyze = onRequest(
 
 // ── Health check / ping ──
 exports.coachPing = onRequest(
-  { secrets: [anthropicApiKey, atelierAuthToken] },
+  { secrets: [anthropicApiKey, atelierAuthToken], cors: true },
   (req, res) => {
     corsHeaders(res);
     if (req.method === "OPTIONS") return res.status(204).send("");
