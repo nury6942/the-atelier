@@ -2213,6 +2213,7 @@
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="recurring" onclick="ldgSetSubTab('recurring')">고정내역</button>
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="goals" onclick="ldgSetSubTab('goals')">연간 목표</button>
           <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="aiconfig" onclick="ldgSetSubTab('aiconfig')">AI 코치 설정</button>
+          <button class="ldg-stab px-4 py-1.5 rounded-full text-xs font-semibold transition-all" data-stab="data" onclick="ldgSetSubTab('data')">데이터 관리</button>
         </div>
 
         <!-- ── Sub-tab: Categories ── -->
@@ -2353,19 +2354,26 @@
           </div>
         </div>
 
-        <div id="ldg-migration-section" class="mt-8 bg-slate-50 rounded-2xl border border-slate-200 p-5">
-          <h4 class="text-sm font-bold text-slate-700 mb-3">데이터 관리</h4>
-          <div id="ldg-migrate-2024-wrap">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-xs font-semibold text-slate-600">2024년 거래 데이터 가져오기</p>
-                <p class="text-[10px] text-slate-400 mt-0.5">1,107건의 2024년 거래를 추가합니다. 기존 데이터에 영향 없음.</p>
-              </div>
-              <button onclick="ldgMigrate2024()" id="ldg-migrate-2024-btn" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 whitespace-nowrap">가져오기</button>
-            </div>
+        <!-- ── Sub-tab: Data Management ── -->
+        <div id="ldg-stab-data" class="ldg-stab-panel" style="display:none">
+          <div id="ldg-backup-section" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mb-5">
+            <!-- Rendered by ldgRenderBackupUI() -->
           </div>
-          <div id="ldg-migrate-2024-done" style="display:none">
-            <p class="text-xs text-emerald-600 font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> 2024년 데이터 가져오기 완료</p>
+
+          <div id="ldg-migration-section" class="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+            <h4 class="text-sm font-bold text-slate-700 mb-3">데이터 마이그레이션</h4>
+            <div id="ldg-migrate-2024-wrap">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-semibold text-slate-600">2024년 거래 데이터 가져오기</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">1,107건의 2024년 거래를 추가합니다. 기존 데이터에 영향 없음.</p>
+                </div>
+                <button onclick="ldgMigrate2024()" id="ldg-migrate-2024-btn" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 whitespace-nowrap">가져오기</button>
+              </div>
+            </div>
+            <div id="ldg-migrate-2024-done" style="display:none">
+              <p class="text-xs text-emerald-600 font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> 2024년 데이터 가져오기 완료</p>
+            </div>
           </div>
         </div>
 
@@ -18009,6 +18017,7 @@ async function loadLedgerData() {
     _ldgAnnualYear = _ldgYear;
     _ldgAssetYear = _ldgYear;
   }
+  ldgCheckDataAnomaly();
   ldgRenderMonthly();
 }
 
@@ -18034,6 +18043,7 @@ function ldgGetMonthTx() {
 }
 function ldgIsExpense(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축'; }
 function ldgSaveTx() {
+  ldgBackupBeforeSave('atelier_ledger_transactions');
   localStorage.setItem('atelier_ledger_transactions', JSON.stringify(_ledgerData.transactions));
 }
 
@@ -19074,7 +19084,7 @@ function ldgInitAssetData() {
   ldgSaveAssetData();
 }
 
-function ldgSaveAssetData() { localStorage.setItem('atelier_ledger_assets', JSON.stringify(_ledgerData.assets)); }
+function ldgSaveAssetData() { ldgBackupBeforeSave('atelier_ledger_assets'); localStorage.setItem('atelier_ledger_assets', JSON.stringify(_ledgerData.assets)); }
 
 function ldgComputeAutoValues(year) {
   // Compute auto cells for 현금자산 and 부채 from transactions
@@ -19688,12 +19698,13 @@ function ldgSetSubTab(tab) {
   if (tab === 'recurring') ldgRenderRecurring();
   if (tab === 'goals') ldgRenderGoals();
   if (tab === 'aiconfig') ldgRenderAIConfig();
+  if (tab === 'data') { ldgRenderBackupUI(); ldgCheckMigrationState(); }
 }
 
-function ldgSaveCats() { localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); }
-function ldgSaveSettings() { localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); }
-function ldgSaveBudgets() { localStorage.setItem('atelier_ledger_budgets', JSON.stringify(_ledgerData.budgets)); }
-function ldgSaveRecurringData() { localStorage.setItem('atelier_ledger_recurring', JSON.stringify(_ledgerData.recurring)); }
+function ldgSaveCats() { ldgBackupBeforeSave('atelier_ledger_categories'); localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); }
+function ldgSaveSettings() { ldgBackupBeforeSave('atelier_ledger_settings'); localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); }
+function ldgSaveBudgets() { ldgBackupBeforeSave('atelier_ledger_budgets'); localStorage.setItem('atelier_ledger_budgets', JSON.stringify(_ledgerData.budgets)); }
+function ldgSaveRecurringData() { ldgBackupBeforeSave('atelier_ledger_recurring'); localStorage.setItem('atelier_ledger_recurring', JSON.stringify(_ledgerData.recurring)); }
 
 // ── Safety modal ──
 function ldgSafetyShow(msg, cb, btnLabel) {
@@ -20907,6 +20918,7 @@ function ldgSaveGoal() {
   var memo = (document.getElementById('ldg-goal-memo').value || '').trim();
   var goals = ldgLoadGoals();
   goals[_ldgGoalYear] = { '수입': inc, '저축': sav, '지출': exp, '메모': memo, updatedAt: new Date().toISOString() };
+  ldgBackupBeforeSave('atelier_ledger_goals');
   localStorage.setItem('atelier_ledger_goals', JSON.stringify(goals));
   // Toast
   var toast = document.createElement('div');
@@ -20967,6 +20979,7 @@ function ldgMigrate2024() {
   }
   ldgSafetyShow('1,107건의 2024년 거래 데이터를 추가합니다.\n기존 데이터(2025~2026년)에는 영향 없습니다.\n\n진행하시겠습니까?', function() {
     // Backup current data
+    ldgBackupBeforeSave('atelier_ledger_transactions');
     localStorage.setItem('atelier_ledger_transactions_backup_pre_2024_migration', JSON.stringify(txs));
     // Fetch and merge
     fetch('data/ledger/transactions_2024_only.json').then(function(r) { return r.json(); }).then(function(data2024) {
@@ -20987,6 +21000,471 @@ function ldgMigrate2024() {
       console.error('[DailyLedger] Migration error:', err);
     });
   }, '가져오기');
+}
+
+// ===== AUTO BACKUP SYSTEM =====
+var _ldgBackupKeys = {
+  transactions: 'atelier_ledger_transactions',
+  categories: 'atelier_ledger_categories',
+  budgets: 'atelier_ledger_budgets',
+  recurring: 'atelier_ledger_recurring',
+  assets: 'atelier_ledger_assets',
+  settings: 'atelier_ledger_settings',
+  goals: 'atelier_ledger_goals'
+};
+
+function ldgRotateBackup(key) {
+  try {
+    var auto2 = localStorage.getItem(key + '_auto_2');
+    var auto1 = localStorage.getItem(key + '_auto_1');
+    if (auto2) localStorage.setItem(key + '_auto_3', auto2);
+    if (auto1) localStorage.setItem(key + '_auto_2', auto1);
+    var current = localStorage.getItem(key);
+    if (current) {
+      var parsed = JSON.parse(current);
+      var count = Array.isArray(parsed) ? parsed.length : (typeof parsed === 'object' ? Object.keys(parsed).length : 0);
+      localStorage.setItem(key + '_auto_1', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        itemCount: count,
+        data: parsed
+      }));
+    }
+  } catch(e) { console.warn('[Backup] rotate failed for ' + key, e); }
+}
+
+function ldgDailySnapshot(key) {
+  try {
+    var today = new Date().toISOString().split('T')[0];
+    var dailyKey = key + '_daily_' + today;
+    if (localStorage.getItem(dailyKey)) return;
+    var current = localStorage.getItem(key);
+    if (current) {
+      var parsed = JSON.parse(current);
+      var count = Array.isArray(parsed) ? parsed.length : (typeof parsed === 'object' ? Object.keys(parsed).length : 0);
+      localStorage.setItem(dailyKey, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        itemCount: count,
+        data: parsed
+      }));
+    }
+    ldgCleanOldDailyBackups(key);
+  } catch(e) { console.warn('[Backup] daily snapshot failed for ' + key, e); }
+}
+
+function ldgCleanOldDailyBackups(key) {
+  var prefix = key + '_daily_';
+  var cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 7);
+  var cutoffStr = cutoff.toISOString().split('T')[0];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.startsWith(prefix)) {
+      var dateStr = k.substring(prefix.length);
+      if (dateStr < cutoffStr) { localStorage.removeItem(k); i--; }
+    }
+  }
+}
+
+function ldgBackupBeforeSave(key) {
+  ldgRotateBackup(key);
+  ldgDailySnapshot(key);
+}
+
+function ldgGetBackupList() {
+  var result = { auto: [], daily: [], migration: [] };
+  for (var name in _ldgBackupKeys) {
+    var base = _ldgBackupKeys[name];
+    for (var slot = 1; slot <= 3; slot++) {
+      var bk = localStorage.getItem(base + '_auto_' + slot);
+      if (bk) {
+        try {
+          var info = JSON.parse(bk);
+          result.auto.push({ key: base + '_auto_' + slot, slot: slot, dataKey: base, name: name, timestamp: info.timestamp, itemCount: info.itemCount || 0 });
+        } catch(e) {}
+      }
+    }
+    // daily snapshots
+    var prefix = base + '_daily_';
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.startsWith(prefix)) {
+        try {
+          var info2 = JSON.parse(localStorage.getItem(k));
+          var dateStr = k.substring(prefix.length);
+          result.daily.push({ key: k, dataKey: base, name: name, date: dateStr, timestamp: info2.timestamp, itemCount: info2.itemCount || 0 });
+        } catch(e) {}
+      }
+    }
+  }
+  // migration backups
+  for (var i2 = 0; i2 < localStorage.length; i2++) {
+    var mk = localStorage.key(i2);
+    if (mk && mk.indexOf('_backup_pre_') >= 0 && mk.startsWith('atelier_ledger_')) {
+      try {
+        var raw = localStorage.getItem(mk);
+        var parsed2 = JSON.parse(raw);
+        var cnt = Array.isArray(parsed2) ? parsed2.length : 0;
+        result.migration.push({ key: mk, itemCount: cnt, label: mk.replace('atelier_ledger_transactions_backup_pre_', '').replace(/_/g, ' ') });
+      } catch(e) {}
+    }
+  }
+  // pre_restore backups
+  for (var i3 = 0; i3 < localStorage.length; i3++) {
+    var rk = localStorage.key(i3);
+    if (rk && rk.indexOf('_pre_restore_') >= 0 && rk.startsWith('atelier_ledger_')) {
+      try {
+        var raw2 = localStorage.getItem(rk);
+        var parsed3 = JSON.parse(raw2);
+        var cnt2 = Array.isArray(parsed3.data) ? parsed3.data.length : (Array.isArray(parsed3) ? parsed3.length : 0);
+        result.migration.push({ key: rk, itemCount: cnt2, label: '복원 전 백업 (' + (parsed3.timestamp || '').substring(0,10) + ')' });
+      } catch(e) {}
+    }
+  }
+  result.daily.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  result.auto.sort(function(a,b) { return a.slot - b.slot; });
+  return result;
+}
+
+function ldgFormatTimeAgo(isoStr) {
+  if (!isoStr) return '알 수 없음';
+  var diff = Date.now() - new Date(isoStr).getTime();
+  var mins = Math.floor(diff / 60000);
+  if (mins < 1) return '방금 전';
+  if (mins < 60) return mins + '분 전';
+  var hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + '시간 전';
+  var days = Math.floor(hours / 24);
+  return days + '일 전';
+}
+
+function ldgRestoreFromBackup(backupKey, dataKey) {
+  try {
+    var raw = localStorage.getItem(backupKey);
+    if (!raw) { alert('백업 데이터를 찾을 수 없습니다.'); return; }
+    var parsed = JSON.parse(raw);
+    var backupData = parsed.data !== undefined ? parsed.data : parsed;
+    // Validate
+    if (backupData === null || backupData === undefined) { alert('백업 데이터가 비어있습니다.'); return; }
+    // Count
+    var backupCount = Array.isArray(backupData) ? backupData.length : (typeof backupData === 'object' ? Object.keys(backupData).length : 0);
+    var currentRaw = localStorage.getItem(dataKey);
+    var currentData = currentRaw ? JSON.parse(currentRaw) : null;
+    var currentCount = currentData ? (Array.isArray(currentData) ? currentData.length : Object.keys(currentData).length) : 0;
+    var diff = backupCount - currentCount;
+    var diffStr = diff > 0 ? '+' + diff : String(diff);
+
+    var msg = '현재 데이터(' + currentCount.toLocaleString() + '건)를 백업(' + backupCount.toLocaleString() + '건)으로 복원합니다.\n변경: ' + diffStr + '건\n\n복원 전 현재 데이터는 자동으로 별도 백업됩니다.\n진행하시겠습니까?';
+    ldgSafetyShow(msg, function() {
+      // Save pre-restore backup
+      if (currentRaw) {
+        localStorage.setItem(dataKey + '_pre_restore_' + Date.now(), JSON.stringify({
+          timestamp: new Date().toISOString(),
+          itemCount: currentCount,
+          data: currentData
+        }));
+      }
+      // Restore
+      localStorage.setItem(dataKey, JSON.stringify(backupData));
+      // Update in-memory data
+      for (var name in _ldgBackupKeys) {
+        if (_ldgBackupKeys[name] === dataKey) {
+          _ledgerData[name] = backupData;
+          break;
+        }
+      }
+      // Toast + refresh
+      var toast = document.createElement('div');
+      toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+      toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">복원 완료. 페이지를 새로고침합니다.</span>';
+      document.body.appendChild(toast);
+      setTimeout(function() { location.reload(); }, 1500);
+    }, '복원');
+  } catch(e) { alert('복원 실패: ' + e.message); }
+}
+
+function ldgRestoreMigrationBackup(backupKey) {
+  ldgRestoreFromBackup(backupKey, 'atelier_ledger_transactions');
+}
+
+function ldgDownloadAll() {
+  try {
+    var exportData = { version: '1.0', exportedAt: new Date().toISOString() };
+    for (var name in _ldgBackupKeys) {
+      var raw = localStorage.getItem(_ldgBackupKeys[name]);
+      exportData[name] = raw ? JSON.parse(raw) : null;
+    }
+    var blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    var today = new Date().toISOString().split('T')[0];
+    a.download = 'atelier-ledger-backup-' + today + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    // Toast
+    var toast = document.createElement('div');
+    toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+    toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">download</span><span class="text-emerald-700 text-sm font-semibold">백업 파일 다운로드 완료</span>';
+    document.body.appendChild(toast);
+    setTimeout(function() { if (toast.parentElement) toast.remove(); }, 3000);
+  } catch(e) { alert('다운로드 실패: ' + e.message); }
+}
+
+function ldgUploadRestore() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var data = JSON.parse(ev.target.result);
+        if (!data.version || !data.exportedAt) { alert('올바른 백업 파일이 아닙니다.'); return; }
+        // Count transactions for display
+        var txCount = Array.isArray(data.transactions) ? data.transactions.length : 0;
+        var exportDate = data.exportedAt.substring(0, 10);
+        var msg = '백업 파일에서 복원합니다.\n\n파일 정보:\n• 내보낸 날짜: ' + exportDate + '\n• 거래: ' + txCount.toLocaleString() + '건\n\n현재 데이터는 자동으로 백업됩니다.\n진행하시겠습니까?';
+        ldgSafetyShow(msg, function() {
+          // Backup current data first
+          for (var name in _ldgBackupKeys) {
+            var currentRaw = localStorage.getItem(_ldgBackupKeys[name]);
+            if (currentRaw) {
+              localStorage.setItem(_ldgBackupKeys[name] + '_pre_restore_' + Date.now(), JSON.stringify({
+                timestamp: new Date().toISOString(),
+                data: JSON.parse(currentRaw)
+              }));
+            }
+          }
+          // Restore each data type
+          for (var name2 in _ldgBackupKeys) {
+            if (data[name2] !== undefined && data[name2] !== null) {
+              localStorage.setItem(_ldgBackupKeys[name2], JSON.stringify(data[name2]));
+            }
+          }
+          var toast = document.createElement('div');
+          toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+          toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">파일에서 복원 완료. 페이지를 새로고침합니다.</span>';
+          document.body.appendChild(toast);
+          setTimeout(function() { location.reload(); }, 1500);
+        }, '복원');
+      } catch(err) { alert('파일 파싱 실패: ' + err.message); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function ldgCheckDataAnomaly() {
+  try {
+    var txKey = 'atelier_ledger_transactions';
+    var current = localStorage.getItem(txKey);
+    if (!current) return;
+    var txs = JSON.parse(current);
+    var currentCount = Array.isArray(txs) ? txs.length : 0;
+    if (currentCount === 0) return;
+    // Check auto_1 for comparison
+    var auto1 = localStorage.getItem(txKey + '_auto_1');
+    if (!auto1) return;
+    var auto1Data = JSON.parse(auto1);
+    var prevCount = auto1Data.itemCount || 0;
+    if (prevCount === 0) return;
+    var ratio = currentCount / prevCount;
+    if (ratio < 0.5) {
+      // Show warning banner
+      setTimeout(function() {
+        if (document.getElementById('ldg-anomaly-banner')) return;
+        var banner = document.createElement('div');
+        banner.id = 'ldg-anomaly-banner';
+        banner.className = 'fixed top-4 left-1/2 -translate-x-1/2 bg-amber-50 border-2 border-amber-400 rounded-2xl px-6 py-4 shadow-2xl z-[99999] max-w-md w-full';
+        banner.innerHTML =
+          '<div class="flex items-start gap-3">' +
+            '<span class="material-symbols-outlined text-amber-600 text-xl mt-0.5">warning</span>' +
+            '<div class="flex-1">' +
+              '<p class="text-sm font-bold text-amber-800">거래 데이터가 평소보다 적습니다</p>' +
+              '<p class="text-xs text-amber-700 mt-1">현재 ' + currentCount.toLocaleString() + '건 / 이전 ' + prevCount.toLocaleString() + '건</p>' +
+              '<p class="text-xs text-amber-600 mt-1">복원이 필요한지 확인해주세요.</p>' +
+              '<div class="flex gap-2 mt-3">' +
+                '<button onclick="switchLedgerTab(\'settings\');ldgSetSubTab(\'data\');this.closest(\'#ldg-anomaly-banner\').remove()" class="text-xs px-3 py-1.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700">백업 보기</button>' +
+                '<button onclick="this.closest(\'#ldg-anomaly-banner\').remove()" class="text-xs px-3 py-1.5 text-amber-600 hover:bg-amber-100 rounded-lg">무시</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        document.body.appendChild(banner);
+      }, 1000);
+    }
+  } catch(e) { console.warn('[Backup] anomaly check failed', e); }
+}
+
+function ldgRenderBackupUI() {
+  var el = document.getElementById('ldg-backup-section');
+  if (!el) return;
+  var list = ldgGetBackupList();
+  // Latest backup info
+  var latestTs = '', latestCount = 0;
+  if (list.auto.length) {
+    var first = list.auto.find(function(a) { return a.slot === 1 && a.name === 'transactions'; });
+    if (first) { latestTs = first.timestamp; latestCount = first.itemCount; }
+  }
+  var html = '<div class="flex items-center justify-between mb-4">' +
+    '<div>' +
+      '<h4 class="text-sm font-bold text-slate-700 flex items-center gap-2"><span class="material-symbols-outlined text-base text-indigo-500">shield</span>데이터 백업 및 복원</h4>' +
+      '<p class="text-[10px] text-slate-400 mt-0.5">자동 백업: 활성화됨' + (latestTs ? ' · 최근 백업: ' + ldgFormatTimeAgo(latestTs) + ' (' + latestCount.toLocaleString() + '건)' : '') + '</p>' +
+    '</div>' +
+  '</div>';
+
+  // Auto backups - grouped by slot
+  var autoBySlot = {};
+  list.auto.forEach(function(a) { if (!autoBySlot[a.slot]) autoBySlot[a.slot] = []; autoBySlot[a.slot].push(a); });
+  if (Object.keys(autoBySlot).length) {
+    html += '<div class="mb-4"><p class="text-xs font-semibold text-slate-600 mb-2">자동 백업</p><div class="space-y-1.5">';
+    [1,2,3].forEach(function(slot) {
+      var items = autoBySlot[slot];
+      if (!items) return;
+      var txItem = items.find(function(i) { return i.name === 'transactions'; });
+      var ts = txItem ? txItem.timestamp : items[0].timestamp;
+      var cnt = txItem ? txItem.itemCount : items[0].itemCount;
+      var names = items.map(function(i) { return i.name; });
+      html += '<div class="flex items-center justify-between bg-white rounded-lg border border-slate-100 px-3 py-2">' +
+        '<div><span class="text-xs text-slate-700 font-medium">백업 ' + slot + '</span>' +
+        '<span class="text-[10px] text-slate-400 ml-2">' + ldgFormatTimeAgo(ts) + (cnt ? ', 거래 ' + cnt.toLocaleString() + '건' : '') + '</span>' +
+        '<span class="text-[10px] text-slate-300 ml-1">(' + names.length + '종)</span></div>' +
+        '<button onclick="ldgRestoreAutoSlot(' + slot + ')" class="text-[10px] px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md font-semibold hover:bg-indigo-100">복원</button>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Daily snapshots - grouped by date
+  var dailyByDate = {};
+  list.daily.forEach(function(d) { if (!dailyByDate[d.date]) dailyByDate[d.date] = []; dailyByDate[d.date].push(d); });
+  var dailyDates = Object.keys(dailyByDate).sort().reverse();
+  if (dailyDates.length) {
+    html += '<div class="mb-4"><p class="text-xs font-semibold text-slate-600 mb-2">일일 스냅샷</p><div class="space-y-1.5">';
+    dailyDates.forEach(function(date) {
+      var items = dailyByDate[date];
+      var txItem = items.find(function(i) { return i.name === 'transactions'; });
+      var cnt = txItem ? txItem.itemCount : items[0].itemCount;
+      var today = new Date().toISOString().split('T')[0];
+      var label = date === today ? date + ' (오늘)' : date;
+      html += '<div class="flex items-center justify-between bg-white rounded-lg border border-slate-100 px-3 py-2">' +
+        '<div><span class="text-xs text-slate-700 font-medium">' + label + '</span>' +
+        '<span class="text-[10px] text-slate-400 ml-2">거래 ' + cnt.toLocaleString() + '건</span>' +
+        '<span class="text-[10px] text-slate-300 ml-1">(' + items.length + '종)</span></div>' +
+        '<button onclick="ldgRestoreDailySlot(\'' + date + '\')" class="text-[10px] px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md font-semibold hover:bg-indigo-100">복원</button>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Migration backups
+  if (list.migration.length) {
+    html += '<div class="mb-4"><p class="text-xs font-semibold text-slate-600 mb-2">마이그레이션 백업</p><div class="space-y-1.5">';
+    list.migration.forEach(function(m) {
+      html += '<div class="flex items-center justify-between bg-white rounded-lg border border-slate-100 px-3 py-2">' +
+        '<div><span class="text-xs text-slate-700 font-medium">' + m.label + '</span>' +
+        '<span class="text-[10px] text-slate-400 ml-2">' + m.itemCount.toLocaleString() + '건</span></div>' +
+        '<button onclick="ldgRestoreMigrationBackup(\'' + m.key + '\')" class="text-[10px] px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md font-semibold hover:bg-indigo-100">복원</button>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Download / Upload buttons
+  html += '<div class="flex gap-2 mt-4">' +
+    '<button onclick="ldgDownloadAll()" class="flex-1 text-xs px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-sm">download</span>현재 데이터 다운로드 (JSON)</button>' +
+    '<button onclick="ldgUploadRestore()" class="flex-1 text-xs px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-sm">upload</span>백업 파일에서 복원</button>' +
+  '</div>';
+
+  // Storage usage estimate
+  var totalSize = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.startsWith('atelier_ledger_')) {
+      totalSize += (localStorage.getItem(k) || '').length * 2; // UTF-16
+    }
+  }
+  var sizeMB = (totalSize / 1024 / 1024).toFixed(1);
+  html += '<p class="text-[10px] text-slate-400 mt-3 text-center">가계부 localStorage 사용량: 약 ' + sizeMB + 'MB</p>';
+
+  el.innerHTML = html;
+}
+
+function ldgRestoreAutoSlot(slot) {
+  // Restore all data types from the given auto slot
+  var keys = [];
+  for (var name in _ldgBackupKeys) {
+    var bkKey = _ldgBackupKeys[name] + '_auto_' + slot;
+    if (localStorage.getItem(bkKey)) keys.push({ name: name, backupKey: bkKey, dataKey: _ldgBackupKeys[name] });
+  }
+  if (!keys.length) { alert('해당 백업을 찾을 수 없습니다.'); return; }
+  // Show info about tx count
+  var txBackup = keys.find(function(k) { return k.name === 'transactions'; });
+  var bkCount = 0;
+  if (txBackup) { try { bkCount = JSON.parse(localStorage.getItem(txBackup.backupKey)).itemCount || 0; } catch(e) {} }
+  var currentCount = (_ledgerData.transactions || []).length;
+  var diff = bkCount - currentCount;
+  var diffStr = diff > 0 ? '+' + diff : String(diff);
+  var msg = '자동 백업 ' + slot + '에서 복원합니다.\n\n복원 대상: ' + keys.map(function(k) { return k.name; }).join(', ') + '\n현재 거래: ' + currentCount.toLocaleString() + '건 → 백업: ' + bkCount.toLocaleString() + '건 (' + diffStr + ')\n\n복원 전 현재 데이터는 자동으로 백업됩니다.\n진행하시겠습니까?';
+  ldgSafetyShow(msg, function() {
+    var ts = Date.now();
+    keys.forEach(function(item) {
+      var currentRaw = localStorage.getItem(item.dataKey);
+      if (currentRaw) {
+        localStorage.setItem(item.dataKey + '_pre_restore_' + ts, JSON.stringify({
+          timestamp: new Date().toISOString(),
+          data: JSON.parse(currentRaw)
+        }));
+      }
+      var backup = JSON.parse(localStorage.getItem(item.backupKey));
+      var bData = backup.data !== undefined ? backup.data : backup;
+      localStorage.setItem(item.dataKey, JSON.stringify(bData));
+    });
+    var toast = document.createElement('div');
+    toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+    toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">복원 완료. 페이지를 새로고침합니다.</span>';
+    document.body.appendChild(toast);
+    setTimeout(function() { location.reload(); }, 1500);
+  }, '복원');
+}
+
+function ldgRestoreDailySlot(date) {
+  var keys = [];
+  for (var name in _ldgBackupKeys) {
+    var bkKey = _ldgBackupKeys[name] + '_daily_' + date;
+    if (localStorage.getItem(bkKey)) keys.push({ name: name, backupKey: bkKey, dataKey: _ldgBackupKeys[name] });
+  }
+  if (!keys.length) { alert('해당 일일 백업을 찾을 수 없습니다.'); return; }
+  var txBackup = keys.find(function(k) { return k.name === 'transactions'; });
+  var bkCount = 0;
+  if (txBackup) { try { bkCount = JSON.parse(localStorage.getItem(txBackup.backupKey)).itemCount || 0; } catch(e) {} }
+  var currentCount = (_ledgerData.transactions || []).length;
+  var diff = bkCount - currentCount;
+  var diffStr = diff > 0 ? '+' + diff : String(diff);
+  var msg = date + ' 일일 스냅샷에서 복원합니다.\n\n복원 대상: ' + keys.map(function(k) { return k.name; }).join(', ') + '\n현재 거래: ' + currentCount.toLocaleString() + '건 → 백업: ' + bkCount.toLocaleString() + '건 (' + diffStr + ')\n\n복원 전 현재 데이터는 자동으로 백업됩니다.\n진행하시겠습니까?';
+  ldgSafetyShow(msg, function() {
+    var ts = Date.now();
+    keys.forEach(function(item) {
+      var currentRaw = localStorage.getItem(item.dataKey);
+      if (currentRaw) {
+        localStorage.setItem(item.dataKey + '_pre_restore_' + ts, JSON.stringify({
+          timestamp: new Date().toISOString(),
+          data: JSON.parse(currentRaw)
+        }));
+      }
+      var backup = JSON.parse(localStorage.getItem(item.backupKey));
+      var bData = backup.data !== undefined ? backup.data : backup;
+      localStorage.setItem(item.dataKey, JSON.stringify(bData));
+    });
+    var toast = document.createElement('div');
+    toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
+    toast.innerHTML = '<span class="material-symbols-outlined text-emerald-600 text-sm">check_circle</span><span class="text-emerald-700 text-sm font-semibold">복원 완료. 페이지를 새로고침합니다.</span>';
+    document.body.appendChild(toast);
+    setTimeout(function() { location.reload(); }, 1500);
+  }, '복원');
 }
 
 // Service Worker 등록
