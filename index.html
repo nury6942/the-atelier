@@ -4090,12 +4090,15 @@
     const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
     const holidays = getKoreanHolidays(plannerYear);
 
-    // Empty cells before first day
+    // Previous month trailing days
+    const prevMonthDays = new Date(plannerYear, plannerMonth, 0).getDate();
     for (let i = 0; i < offset; i++) {
+      const prevDay = prevMonthDays - offset + 1 + i;
       const cell = document.createElement('div');
       cell.className = 'p-3 min-h-24';
       cell.style.background = 'rgba(243,244,245,0.4)';
-      cell.style.color = 'rgba(73,68,84,0.4)';
+      cell.style.color = 'rgba(73,68,84,0.35)';
+      cell.innerHTML = '<div class="text-sm font-semibold">' + prevDay + '</div>';
       grid.appendChild(cell);
     }
 
