@@ -1172,7 +1172,7 @@
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">1박 가격</label>
                       <div class="relative">
-                        <input id="stay-price" type="text" placeholder="0" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                        <input id="stay-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
                       </div>
                     </div>
@@ -1516,7 +1516,7 @@
               <div>
                 <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">1박 가격</label>
                 <div class="relative">
-                  <input id="lg-edit-price" type="text" placeholder="0" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <input id="lg-edit-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
                 </div>
               </div>
@@ -6658,7 +6658,7 @@
     document.getElementById('lg-edit-checkout-date').value = item.checkout_date||'';
     document.getElementById('lg-edit-checkout').value = item.checkout||'';
     document.getElementById('lg-edit-cancel').value = item.cancel_date||'';
-    document.getElementById('lg-edit-price').value = item.price||'';
+    document.getElementById('lg-edit-price').value = item.price ? Number(String(item.price).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '';
     // 유형 토글
     var rawType = (item.type||'Hotel').replace(/\s*\(.*\)/,'');
     selectLgEditType(rawType.indexOf('Airbnb')>=0 ? 'Airbnb' : 'Hotel');
@@ -6724,7 +6724,7 @@
     item.checkout_date = document.getElementById('lg-edit-checkout-date').value.trim();
     item.checkout = document.getElementById('lg-edit-checkout').value.trim();
     item.cancel_date = document.getElementById('lg-edit-cancel').value.trim();
-    item.price = document.getElementById('lg-edit-price').value.trim();
+    item.price = document.getElementById('lg-edit-price').value.replace(/,/g,'').trim();
     saveLodgingData(data); closeLodgingEditModal(); renderJourneyLodging();
   }
 
@@ -6838,9 +6838,9 @@
               (item.address ? '<p class="text-[11px] text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">location_on</span>' + item.address + '</p>' : '') +
               '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-1">' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.date||'—') + '</p>' + (item.checkin ? '<p class="text-[11px] text-slate-500">' + item.checkin + '</p>' : '') + '</div>' +
-                '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.checkout||'—') + '</p></div>' +
+                '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.checkout_date||'—') + '</p>' + (item.checkout ? '<p class="text-[11px] text-slate-500">' + item.checkout + '</p>' : '') + '</div>' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Cancellation</p><p class="text-[13px] font-semibold ' + cancelColor + ' leading-tight">' + cancelText + '</p></div>' +
-                '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + (item.amount ? '€'+item.amount : '—') + '</p></div>' +
+                '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p></div>' +
               '</div>' +
             '</div>' +
             '<div class="flex items-start gap-2">' +
@@ -7687,10 +7687,12 @@
       {id:'jf-phone', label:'전화번호', type:'text', placeholder:'예: +420 221 700 111'},
       {id:'jf-payment-date', label:'결제일 *', type:'date'},
       {id:'jf-date', label:'체크인 날짜', type:'date'},
+      {id:'jf-checkout-date', label:'체크아웃 날짜', type:'date'},
       {id:'jf-checkin', label:'체크인 시간', type:'text', placeholder:'예: 15:00'},
       {id:'jf-checkout', label:'체크아웃 시간', type:'text', placeholder:'예: 11:00'},
       {id:'jf-cancel', label:'무료 취소', type:'select', options:['가능', '불가', '조건부']},
-      {id:'jf-amount', label:'가격 (€)', type:'text', inputmode:'numeric', placeholder:'예: 240'},
+      {id:'jf-cancel-date', label:'무료 취소 마감일', type:'date'},
+      {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 150,375', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
     ];
     return [];
   }
@@ -7715,7 +7717,7 @@
           if (trip && trip.start_date) dateAttrs += ' min="' + trip.start_date + '"';
           if (trip && trip.end_date) dateAttrs += ' max="' + trip.end_date + '"';
         }
-        input = '<input id="'+f.id+'" type="'+f.type+'" '+(f.placeholder?'placeholder="'+f.placeholder+'"':'')+' '+(f.inputmode?'inputmode="'+f.inputmode+'"':'')+' '+(f.autocomplete?'data-autocomplete="'+f.autocomplete+'"':'')+dateAttrs+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>';
+        input = '<input id="'+f.id+'" type="'+f.type+'" '+(f.placeholder?'placeholder="'+f.placeholder+'"':'')+' '+(f.inputmode?'inputmode="'+f.inputmode+'"':'')+' '+(f.autocomplete?'data-autocomplete="'+f.autocomplete+'"':'')+(f.oninput?' oninput="'+f.oninput+'"':'')+dateAttrs+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>';
       }
       var wrapper = f.showIf ? 'id="wrap-'+f.id+'" style="display:none"' : '';
       return '<div '+wrapper+'><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">'+f.label+'</label>'+input+'</div>';
@@ -7767,15 +7769,16 @@
           if (tripE && tripE.start_date) dateAttrsE += ' min="' + tripE.start_date + '"';
           if (tripE && tripE.end_date) dateAttrsE += ' max="' + tripE.end_date + '"';
         }
-        input = '<input id="'+f.id+'" type="'+f.type+'" '+(f.placeholder?'placeholder="'+f.placeholder+'"':'')+dateAttrsE+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>';
+        input = '<input id="'+f.id+'" type="'+f.type+'" '+(f.placeholder?'placeholder="'+f.placeholder+'"':'')+(f.oninput?' oninput="'+f.oninput+'"':'')+dateAttrsE+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>';
       }
       return '<div><label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">'+f.label+'</label>'+input+'</div>';
     }).join('');
     // Fill existing values
+    var amountFmt = item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '';
     var fieldMap = {
-      'jf-payment-date': item.payment_date, 'jf-date': item.date, 'jf-time': item.time, 'jf-city': item.city,
+      'jf-payment-date': item.payment_date, 'jf-date': item.date, 'jf-checkout-date': item.checkout_date, 'jf-time': item.time, 'jf-city': item.city,
       'jf-title': item.title, 'jf-desc': item.description,
-      'jf-status': item.status, 'jf-amount': item.amount,
+      'jf-status': item.status, 'jf-amount': amountFmt,
       'jf-address': item.address, 'jf-phone': item.phone,
       'jf-checkin': item.checkin, 'jf-checkout': item.checkout,
       'jf-cancel': item.cancel,
@@ -7982,22 +7985,12 @@
       obj.phone = (document.getElementById('jf-phone')||{}).value||'';
       obj.payment_date = (document.getElementById('jf-payment-date')||{}).value||'';
       obj.date = (document.getElementById('jf-date')||{}).value||'';
+      obj.checkout_date = (document.getElementById('jf-checkout-date')||{}).value||'';
       obj.checkin = (document.getElementById('jf-checkin')||{}).value||'';
       obj.checkout = (document.getElementById('jf-checkout')||{}).value||'';
       obj.cancel = (document.getElementById('jf-cancel')||{}).value||'';
       obj.cancel_date = (document.getElementById('jf-cancel-date')||{}).value||'';
-      obj.amount = (document.getElementById('jf-amount')||{}).value||'';
-    } else if (currentJourneyType === '숙소') {
-      obj.city = (document.getElementById('jf-city')||{}).value||'';
-      obj.title = (document.getElementById('jf-title')||{}).value||'';
-      obj.address = (document.getElementById('jf-address')||{}).value||'';
-      obj.phone = (document.getElementById('jf-phone')||{}).value||'';
-      obj.date = (document.getElementById('jf-date')||{}).value||'';
-      obj.checkin = (document.getElementById('jf-checkin')||{}).value||'';
-      obj.checkout = (document.getElementById('jf-checkout')||{}).value||'';
-      obj.cancel = (document.getElementById('jf-cancel')||{}).value||'';
-      obj.cancel_date = (document.getElementById('jf-cancel-date')||{}).value||'';
-      obj.amount = (document.getElementById('jf-amount')||{}).value||'';
+      obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
     }
     try {
       if (editingJourneyIndex !== null) {
