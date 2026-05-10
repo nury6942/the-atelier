@@ -412,6 +412,50 @@
       #page-finance-hub section.mb-10 .text-2xl { font-size: 1.25rem !important; }
     }
 
+    /* ===== Travel Budget 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-finance .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* 보라색 메인 트립 카드 - 큰 숫자 (₩11,478,871 8자리) 폰트 축소 */
+      #finance-main-trip { padding: 1rem !important; }
+      #finance-main-trip h3 { font-size: 1rem !important; }
+      #finance-main-trip .text-2xl { font-size: 1rem !important; line-height: 1.2 !important; }
+      #finance-main-trip .grid { gap: 0.75rem !important; margin-top: 0.5rem; }
+      #finance-main-trip .text-[10px] { font-size: 9px !important; }
+      /* 트립 필터 카드 패딩 축소 */
+      #finance-dd-wrap { font-size: 12px !important; }
+
+      /* 예산 vs 지출 섹션 */
+      #finance-budget-section .px-6.py-4 { padding: 0.75rem !important; }
+      #finance-budget-body { padding: 0.75rem !important; }
+      #finance-budget-body .text-2xl { font-size: 1.125rem !important; }
+      #finance-budget-body .grid.md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+
+      /* 카테고리 분석 chip 작게 */
+      #finance-category-breakdown .text-xs { font-size: 10px !important; }
+
+      /* 거래 내역 테이블 - 잔액/관리 칼럼 숨겨서 좌우 스크롤 최소화 */
+      #finance-table-wrap table { width: 100% !important; min-width: 0 !important; }
+      #finance-table-wrap th,
+      #finance-table-wrap td {
+        padding: 6px 4px !important;
+        font-size: 11px !important;
+      }
+      /* 6번째(잔액), 7번째(관리) 칼럼 숨김 */
+      #finance-table-wrap thead th:nth-child(6),
+      #finance-table-wrap thead th:nth-child(7),
+      #finance-table-wrap tbody td:nth-child(6),
+      #finance-table-wrap tbody td:nth-child(7) {
+        display: none !important;
+      }
+      /* 거래 내역 헤더 wrap */
+      #page-finance > div > div.bg-white > div.px-6.py-4 {
+        padding: 0.75rem !important; flex-wrap: wrap; gap: 4px !important;
+      }
+      #page-finance #finance-status { font-size: 9px !important; }
+    }
+
     /* ===== Daily Ledger 모바일 대응 ===== */
     @media (max-width: 768px) {
       #page-ledger .page-content-wrap {
