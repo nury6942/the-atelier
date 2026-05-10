@@ -3482,7 +3482,7 @@
         <div class="lg:col-span-4 bg-indigo-50 p-6 rounded-2xl border border-indigo-100 relative overflow-hidden">
           <div class="flex justify-between items-start mb-3">
             <h3 class="font-manrope font-bold text-xs uppercase tracking-widest text-indigo-800">연차 트래커</h3>
-            <button onclick="openLeaveEditModal()" class="p-1 hover:bg-indigo-100 rounded-lg transition-colors text-indigo-400 hover:text-indigo-700" title="총계 수정"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>
+            <button onclick="openLeaveEditModal('matrix')" class="p-1 hover:bg-indigo-100 rounded-lg transition-colors text-indigo-400 hover:text-indigo-700" title="총계 수정"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>
           </div>
           <div class="grid grid-cols-3 gap-4">
             <div><p class="text-[10px] text-indigo-600 uppercase tracking-widest font-bold mb-1">총계</p><p class="text-2xl font-black text-indigo-900" id="matrix-leave-total">17.0</p></div>
@@ -4191,6 +4191,7 @@
               <span class="text-xs text-slate-400">남은</span>
               <span id="cal-leave-left" class="font-black text-indigo-600">22</span>
               <span class="text-xs text-slate-400">일</span>
+              <button onclick="openLeaveEditModal('cal')" class="ml-1 p-1 hover:bg-indigo-100 rounded-md transition-colors text-slate-400 hover:text-indigo-700" title="연차 총계 수정"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>
             </div>
             <div id="cal-special-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="특별휴가 현황" style="display:none">
               <span class="material-symbols-outlined" style="font-size:16px;color:#ec4899">card_giftcard</span>
@@ -12213,7 +12214,10 @@
 
   function updateLeaveTracker() {
     let used = 0;
+    var yrPrefix = String(matrixYear);
     matrixData.forEach(function(row) {
+      var date = (row[0] || '').toString();
+      if (!date.startsWith(yrPrefix)) return;  // 현재 연도 행만 합산
       const leave = (row[3] || '').toString();
       const match = leave.match(/^([\d.]+)/);
       if (match) used += parseFloat(match[1]);
@@ -12246,12 +12250,27 @@
     loadMatrix();
   }
 
-  function openLeaveEditModal() {
-    document.getElementById('leave-total-input').value = _leaveTotal;
+  // openLeaveEditModal('cal') | openLeaveEditModal('matrix') — 어느 페이지에서 열렸는지에 따라 대상 연도 결정
+  var _leaveEditTargetYear = null;
+  async function openLeaveEditModal(source) {
+    var year;
+    if (source === 'cal') {
+      year = plannerYear;
+    } else {
+      year = matrixYear;
+    }
+    _leaveEditTargetYear = year;
+    // 해당 연도 캐시값 우선, 없으면 fetch
+    var cur = _leaveTotalByYear[year];
+    if (cur === undefined) cur = await getLeaveTotalForYear(year);
+    document.getElementById('leave-total-input').value = cur;
+    var modalTitle = document.querySelector('#leave-edit-modal h3');
+    if (modalTitle) modalTitle.textContent = year + '년 연차 총계 수정';
     document.getElementById('leave-edit-modal').style.cssText = 'display:flex!important';
   }
   function closeLeaveEditModal() {
     document.getElementById('leave-edit-modal').style.cssText = 'display:none!important';
+    _leaveEditTargetYear = null;
   }
 
   async function saveLeaveTotal() {
@@ -12260,17 +12279,20 @@
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 0 이상 50 이하의 숫자를 입력해주세요');
       return;
     }
-    _leaveTotal = val;
-    _leaveTotalByYear[matrixYear] = val;
+    var targetYear = _leaveEditTargetYear || matrixYear;
+    _leaveTotalByYear[targetYear] = val;
+    if (targetYear === matrixYear) _leaveTotal = val;
     try {
-      await db.collection('annualSettings').doc(String(matrixYear)).set({
-        year: matrixYear,
+      await db.collection('annualSettings').doc(String(targetYear)).set({
+        year: targetYear,
         vacationTotal: val,
         updatedAt: new Date().toISOString()
       }, { merge: true });
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + matrixYear + '년 연차 총계가 ' + val + '일로 수정되었어요');
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + targetYear + '년 연차 총계가 ' + val + '일로 수정되었어요');
       closeLeaveEditModal();
-      updateLeaveTracker();
+      // 양쪽 트래커 갱신 (어디서 열렸든 상관없이)
+      try { updateLeaveTracker(); } catch(e){}
+      try { updateCalLeaveTracker(); } catch(e){}
     } catch(err) {
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message);
     }
