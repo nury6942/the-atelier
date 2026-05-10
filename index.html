@@ -13290,24 +13290,20 @@
       }
     }
 
-    // 초고: 평일 0.5화 / 주말 1화 누적, 같은 라벨이 연속해서 나오지 않도록 처리
+    // 초고: start~end 빈 날마다 (화수 누적)
     if (p.draft && p.draft.start && p.draft.end) {
       var dCur = new Date(p.draft.start + 'T00:00:00');
       var dEnd = new Date(p.draft.end + 'T00:00:00');
       var epNum = 0;
-      var lastEpShown = 0;
       var dIdx = 0;
-      while (dCur <= dEnd && Math.ceil(epNum) < eps) {
+      while (dCur <= dEnd && Math.ceil(epNum) <= eps) {
         var ds = _fmtDate(dCur);
         if (!isBlockedDay(ds)) {
           var add = _isWeekend(dCur) ? 1 : 0.5;
           epNum += add;
-          var ceilEp = Math.ceil(epNum);
-          // 새 화수에 진입한 날에만 이벤트 추가 (이전과 같은 라벨이면 skip)
-          if (ceilEp > lastEpShown && ceilEp <= eps) {
-            var epLabel = '초고 ' + ceilEp + '화';
+          if (Math.ceil(epNum) <= eps) {
+            var epLabel = '초고 ' + Math.ceil(epNum) + '화';
             events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
-            lastEpShown = ceilEp;
           }
         }
         dCur.setDate(dCur.getDate() + 1);
