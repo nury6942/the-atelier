@@ -532,23 +532,43 @@
         padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
       }
       /* Sticky 타임라인 컨테이너 */
-      #work-timeline-section { padding: 0.75rem !important; max-height: 50vh !important; }
+      #work-timeline-section { padding: 0.75rem !important; max-height: 55vh !important; }
       #work-timeline-section h2 { font-size: 1.125rem !important; }
-      /* 헤더 줄바꿈 + 버튼 작게 */
+      /* 헤더 줄바꿈 + 버튼 작게 (높이 압축) */
       #work-timeline-section > div.flex.items-center.justify-between.mb-3 {
-        gap: 6px !important;
+        gap: 6px !important; margin-bottom: 8px !important;
       }
       #work-timeline-section > div.flex.items-center.justify-between.mb-3 > div.flex.items-center.gap-2\.5 {
         gap: 4px !important; flex-wrap: wrap;
       }
       #work-timeline-section button {
-        padding: 4px 8px !important; font-size: 10px !important;
+        padding: 6px 10px !important; font-size: 11px !important;
         white-space: nowrap;
+        line-height: 1 !important;
+        min-height: auto !important;
       }
-      #work-timeline-section button .material-symbols-outlined { font-size: 12px !important; }
+      #work-timeline-section button .material-symbols-outlined { font-size: 13px !important; }
       /* 타임라인 차트 스크롤 영역 */
-      #ut-scroll { max-height: calc(50vh - 80px) !important; }
+      #ut-scroll { max-height: calc(55vh - 70px) !important; }
       #work-timeline-chart { min-width: 700px; }
+      /* 작품명 sticky 칼럼: 210px → 120px (모바일) */
+      #work-timeline-chart div[style*="width:210px"] {
+        width: 120px !important;
+        min-width: 120px !important;
+      }
+      #work-timeline-chart .text-\[11px\] { font-size: 10px !important; }
+      /* 호버 시만 보이는 액션 버튼들 모바일에선 항상 보이게 + 작게 */
+      #work-timeline-chart .opacity-40.group-hover\:opacity-100 {
+        opacity: 0.6 !important;
+        gap: 0 !important;
+      }
+      #work-timeline-chart .opacity-40.group-hover\:opacity-100 button {
+        width: 18px !important; height: 18px !important;
+        padding: 0 !important;
+      }
+      #work-timeline-chart .opacity-40.group-hover\:opacity-100 button .material-symbols-outlined {
+        font-size: 11px !important;
+      }
 
       /* Series Growth Correlation 헤더 */
       #page-income section h2 { font-size: 1.25rem !important; }
