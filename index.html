@@ -1338,18 +1338,6 @@
               </div>
             </div>
 
-            <!-- 총 지출 -->
-            <section class="bg-gradient-to-br from-sky-100 to-indigo-100 rounded-[2rem] p-7 border border-indigo-300 shadow-md">
-              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                  <h3 class="text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-600 mb-1">총 지출</h3>
-                  <div id="journey-total-display" class="text-4xl font-black font-headline text-slate-900 tracking-tighter">€0</div>
-                  <p class="text-[10px] font-bold text-indigo-700 uppercase tracking-widest pt-1">항목을 추가하면 자동 계산</p>
-                </div>
-                <div id="journey-cost-breakdown" class="flex gap-3 flex-wrap"></div>
-              </div>
-            </section>
-
           </div>
         </div>
       </div>
@@ -7629,17 +7617,7 @@
   }
 
   function updateJourneyCost() {
-    var costItems = journeyData.filter(function(d){ return parseFloat(d.amount) > 0; });
-    var total = costItems.reduce(function(s,d){ return s+(parseFloat(d.amount)||0); }, 0);
-    document.getElementById('journey-total-display').textContent = total > 0 ? '€'+total.toLocaleString() : '€0';
-    var cats = {};
-    costItems.forEach(function(d){ var c=d.type||'기타'; cats[c]=(cats[c]||0)+(parseFloat(d.amount)||0); });
-    var bdEl = document.getElementById('journey-cost-breakdown');
-    bdEl.innerHTML = Object.entries(cats).map(function(e){
-      return '<div class="bg-white/90 p-4 rounded-2xl border border-indigo-300 min-w-[100px] shadow-sm text-center">' +
-        '<div class="text-[10px] uppercase font-bold text-indigo-600 tracking-widest mb-1">' + e[0] + '</div>' +
-        '<div class="text-base font-black text-slate-900">€'+Math.round(e[1]).toLocaleString()+'</div></div>';
-    }).join('');
+    // 총 지출 섹션은 Travel Budget 페이지로 이전됨 (Travel 페이지에서는 표시하지 않음)
   }
 
   async function toggleSouvenir(idx, checked) {
