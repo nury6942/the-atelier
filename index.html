@@ -18753,6 +18753,8 @@ function openRefModal(editId) {
   pinIcon.style.color = '';
   // Deselect in list
   document.querySelectorAll('.ref-list-item.active').forEach(function(el) { el.classList.remove('active'); });
+  // 모바일에서 에디터 풀스크린 모드 진입
+  if (window.innerWidth <= 768) document.body.classList.add('memo-edit-open');
   document.getElementById('ref-editor-title').focus();
 }
 
