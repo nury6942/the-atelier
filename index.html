@@ -8460,7 +8460,7 @@
       ? '<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white cursor-pointer" onclick="' + checkFn + '"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1;">check</span></div>'
       : '<div class="w-6 h-6 rounded-full border-2 border-slate-300 cursor-pointer hover:border-indigo-400 transition-colors" onclick="' + checkFn + '"></div>';
     return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="grid grid-cols-12 items-center gap-2">' +
+      '<div class="grid grid-cols-12 items-start gap-2">' +
         '<div class="col-span-3 flex items-center gap-2">' +
           '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
           '<span class="text-sm font-semibold text-slate-800 truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title||'—') + '</span>' +
@@ -8471,7 +8471,7 @@
             var main = parts[0];
             var note = parts.slice(1).join(' ');
             var html = '<span class="block text-sm text-slate-700 font-medium truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + main + '</span>';
-            if (note) html += '<span class="block text-[11px] text-slate-400 truncate mt-0.5">' + note + '</span>';
+            if (note) html += '<span class="block text-[11px] text-slate-400 mt-0.5 leading-snug" style="word-break:keep-all;overflow-wrap:break-word;white-space:normal">' + note + '</span>';
             return html;
           })() +
         '</div>' +
