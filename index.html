@@ -1575,6 +1575,23 @@
         </div>
       </section>
 
+      <!-- 예산 vs 지출 -->
+      <section id="finance-budget-section" class="mb-6" style="display:none">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+            <div>
+              <h4 class="font-manrope font-bold text-slate-800">예산 vs 지출</h4>
+              <p id="finance-budget-status" class="text-[10px] text-slate-400 font-medium mt-0.5">—</p>
+            </div>
+            <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
+              <span class="material-symbols-outlined" style="font-size:14px">edit</span>
+              <span id="finance-budget-edit-label">예산 설정</span>
+            </button>
+          </div>
+          <div id="finance-budget-body" class="p-6"></div>
+        </div>
+      </section>
+
       <!-- 카테고리 분석 -->
       <section class="mb-6">
         <div id="finance-category-breakdown" class="flex gap-3 flex-wrap"></div>
@@ -1692,6 +1709,41 @@
         <div class="atl-modal-footer">
           <button onclick="closeFinanceModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveFinanceEntry()" id="fin-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예산 설정 모달 -->
+    <div id="budget-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+      <div class="atl-modal-inner">
+        <div class="atl-modal-hero hero-finance">
+          <div class="hero-deco" style="width:120px;height:120px;top:-40px;right:-30px"></div>
+          <div class="hero-deco" style="width:60px;height:60px;bottom:-20px;left:40px"></div>
+          <div class="atl-modal-hero-overlay">
+            <div class="atl-modal-hero-tag">THE ATELIER</div>
+            <div class="atl-modal-hero-title">트립 예산 설정</div>
+          </div>
+        </div>
+        <div class="atl-modal-header">
+          <h3 id="budget-modal-title">트립 예산</h3>
+          <button onclick="closeBudgetModal()" class="atl-modal-close"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+        </div>
+        <div class="atl-modal-body">
+          <div class="atl-grid-2">
+            <div class="atl-field"><label>항공권</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">flight</span><input id="budget-flight" type="text" placeholder="예: 1,900,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
+            <div class="atl-field"><label>숙소</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">bed</span><input id="budget-accom" type="text" placeholder="예: 1,530,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
+            <div class="atl-field"><label>투어</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">attractions</span><input id="budget-tour" type="text" placeholder="예: 1,080,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
+            <div class="atl-field"><label>생활비</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">restaurant</span><input id="budget-living" type="text" placeholder="예: 1,260,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
+          </div>
+          <div class="bg-indigo-50 rounded-xl p-4 flex items-center justify-between mt-2">
+            <span class="text-sm font-bold text-slate-700">총 예산</span>
+            <span id="budget-total-display" class="text-xl font-extrabold text-indigo-700">₩0</span>
+          </div>
+          <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>거래 카테고리 매핑: 항공권(항공·이동), 숙소(숙소), 투어(여가·티켓·쇼핑), 생활비(식비·교통·통신·보험·환전·기타)</span></div>
+        </div>
+        <div class="atl-modal-footer">
+          <button onclick="closeBudgetModal()" class="atl-btn-cancel">취소</button>
+          <button onclick="saveBudget()" id="budget-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -8760,6 +8812,175 @@
         '<span class="text-xs font-black text-slate-600">₩'+Math.round(e[1]).toLocaleString('ko-KR')+'</span>' +
         '</div>';
     }).join('');
+
+    renderTripBudget();
+  }
+
+  // ===== 트립 예산 (4 그룹) =====
+  const BUDGET_GROUPS = {
+    '항공권': { cats: ['항공','이동'], icon: 'flight', color: '#6366f1' },
+    '숙소':   { cats: ['숙소'],         icon: 'bed',    color: '#3b82f6' },
+    '투어':   { cats: ['여가','티켓','쇼핑'], icon: 'attractions', color: '#14b8a6' },
+    '생활비': { cats: ['식비','교통','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
+  };
+  const BUDGET_FIELDS = { '항공권': 'flight', '숙소': 'accom', '투어': 'tour', '생활비': 'living' };
+
+  function _categoryToGroup(cat) {
+    for (var g in BUDGET_GROUPS) {
+      if (BUDGET_GROUPS[g].cats.indexOf(cat) >= 0) return g;
+    }
+    return '생활비';
+  }
+
+  function renderTripBudget() {
+    var section = document.getElementById('finance-budget-section');
+    if (!section) return;
+    if (currentFinanceTrip === 'all') { section.style.display = 'none'; return; }
+    var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    if (!trip) { section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    var budget = trip.budget || {};
+    var hasBudget = Object.keys(BUDGET_FIELDS).some(function(g){ return parseFloat(budget[BUDGET_FIELDS[g]])||0 > 0; });
+
+    document.getElementById('finance-budget-edit-label').textContent = hasBudget ? '수정' : '예산 설정';
+
+    // Compute spent per group
+    var spent = { '항공권':0, '숙소':0, '투어':0, '생활비':0 };
+    financeFiltered.forEach(function(r) {
+      if (r[3] === '입금') return;
+      var g = _categoryToGroup(r[3] || '기타');
+      spent[g] += (parseFloat(r[4]) || 0);
+    });
+
+    var totalBudget = Object.values(BUDGET_FIELDS).reduce(function(s,f){ return s + (parseFloat(budget[f])||0); }, 0);
+    var totalSpent = Object.values(spent).reduce(function(s,v){ return s+v; }, 0);
+
+    var statusEl = document.getElementById('finance-budget-status');
+    if (statusEl) {
+      if (!hasBudget) statusEl.textContent = '아직 예산이 설정되지 않았어요';
+      else statusEl.textContent = trip.name + ' · 총 예산 ₩' + Math.round(totalBudget).toLocaleString('ko-KR');
+    }
+
+    var bodyEl = document.getElementById('finance-budget-body');
+    if (!hasBudget) {
+      bodyEl.innerHTML = '<div class="text-center py-8">' +
+        '<span class="material-symbols-outlined text-4xl text-slate-200 mb-3 block">savings</span>' +
+        '<p class="text-sm text-slate-500 mb-4">예산을 설정하면 카테고리별 사용 현황을 한눈에 볼 수 있어요</p>' +
+        '<button onclick="openBudgetModal()" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-colors">예산 설정하기</button>' +
+        '</div>';
+      return;
+    }
+
+    var totalRemaining = totalBudget - totalSpent;
+    var totalPct = totalBudget > 0 ? Math.min(100, (totalSpent / totalBudget) * 100) : 0;
+    var totalOverPct = totalBudget > 0 && totalSpent > totalBudget ? Math.min(100, ((totalSpent - totalBudget) / totalBudget) * 100) : 0;
+
+    var html = '<div class="mb-6 pb-6 border-b border-slate-100">' +
+      '<div class="flex justify-between items-baseline mb-2">' +
+        '<span class="text-xs font-bold uppercase tracking-widest text-slate-500">전체</span>' +
+        '<div class="text-right">' +
+          '<span class="text-2xl font-extrabold ' + (totalRemaining >= 0 ? 'text-slate-800' : 'text-red-500') + '">₩' + Math.round(Math.abs(totalRemaining)).toLocaleString('ko-KR') + '</span>' +
+          '<span class="text-xs text-slate-400 ml-2">' + (totalRemaining >= 0 ? '남음' : '초과') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="flex justify-between text-xs text-slate-500 mb-2">' +
+        '<span>지출 ₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</span>' +
+        '<span>예산 ₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
+      '</div>' +
+      '<div class="h-3 bg-slate-100 rounded-full overflow-hidden relative">' +
+        '<div class="h-full transition-all" style="width:' + totalPct + '%;background:' + (totalSpent > totalBudget ? '#ef4444' : 'linear-gradient(90deg,#6366f1,#8b5cf6)') + '"></div>' +
+      '</div>' +
+    '</div>';
+
+    html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+    Object.keys(BUDGET_GROUPS).forEach(function(g) {
+      var cfg = BUDGET_GROUPS[g];
+      var b = parseFloat(budget[BUDGET_FIELDS[g]]) || 0;
+      var s = spent[g] || 0;
+      var rem = b - s;
+      var pct = b > 0 ? Math.min(100, (s / b) * 100) : 0;
+      var over = s > b && b > 0;
+      var barColor = over ? '#ef4444' : cfg.color;
+
+      html += '<div class="border border-slate-100 rounded-xl p-4">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="material-symbols-outlined text-base" style="color:' + cfg.color + '">' + cfg.icon + '</span>' +
+            '<span class="text-sm font-bold text-slate-700">' + g + '</span>' +
+          '</div>' +
+          '<span class="text-xs font-bold ' + (rem >= 0 ? 'text-slate-500' : 'text-red-500') + '">' +
+            (rem >= 0 ? '₩' + Math.round(rem).toLocaleString('ko-KR') + ' 남음' : '₩' + Math.round(-rem).toLocaleString('ko-KR') + ' 초과') +
+          '</span>' +
+        '</div>' +
+        '<div class="flex justify-between text-[11px] text-slate-400 mb-1.5">' +
+          '<span>₩' + Math.round(s).toLocaleString('ko-KR') + '</span>' +
+          '<span>/ ₩' + Math.round(b).toLocaleString('ko-KR') + '</span>' +
+        '</div>' +
+        '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
+          '<div class="h-full transition-all" style="width:' + pct + '%;background:' + barColor + '"></div>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    bodyEl.innerHTML = html;
+  }
+
+  // ===== 예산 모달 =====
+  function _parseAmt(str) { return parseFloat((str||'').replace(/,/g,'')) || 0; }
+  function _fmtAmt(n) { return n ? n.toLocaleString('ko-KR') : ''; }
+
+  function openBudgetModal() {
+    if (currentFinanceTrip === 'all') return;
+    var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    if (!trip) return;
+    var b = trip.budget || {};
+    document.getElementById('budget-modal-title').textContent = trip.name + ' 예산';
+    document.getElementById('budget-flight').value = _fmtAmt(parseFloat(b.flight)||0);
+    document.getElementById('budget-accom').value = _fmtAmt(parseFloat(b.accom)||0);
+    document.getElementById('budget-tour').value = _fmtAmt(parseFloat(b.tour)||0);
+    document.getElementById('budget-living').value = _fmtAmt(parseFloat(b.living)||0);
+    updateBudgetTotal();
+    document.getElementById('budget-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeBudgetModal() {
+    document.getElementById('budget-modal').style.cssText = 'display:none!important';
+  }
+
+  function updateBudgetTotal() {
+    var t = _parseAmt(document.getElementById('budget-flight').value) +
+            _parseAmt(document.getElementById('budget-accom').value) +
+            _parseAmt(document.getElementById('budget-tour').value) +
+            _parseAmt(document.getElementById('budget-living').value);
+    document.getElementById('budget-total-display').textContent = '₩' + t.toLocaleString('ko-KR');
+  }
+
+  async function saveBudget() {
+    if (currentFinanceTrip === 'all') return;
+    var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    if (!trip) return;
+    var budget = {
+      flight: _parseAmt(document.getElementById('budget-flight').value),
+      accom:  _parseAmt(document.getElementById('budget-accom').value),
+      tour:   _parseAmt(document.getElementById('budget-tour').value),
+      living: _parseAmt(document.getElementById('budget-living').value),
+    };
+    var btn = document.getElementById('budget-save-btn');
+    btn.disabled = true;
+    try {
+      await fbUpdate('trips', trip._id, { budget: budget });
+      trip.budget = budget;
+      closeBudgetModal();
+      renderTripBudget();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 예산 저장 완료');
+    } catch(err) {
+      console.error('[Budget] Save error:', err);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message);
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   // ===== 환율 자동 계산 =====
