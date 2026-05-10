@@ -1287,6 +1287,96 @@
               </div>
             </div>
 
+            <!-- 3-2. 렌트카 (Rental Cars) -->
+            <section class="mb-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-black tracking-tight text-slate-900">렌트카</h3>
+                <button onclick="openTravelModal('rental-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>렌트카 추가</button>
+              </div>
+              <div id="journey-rental-list" class="flex flex-col gap-4"></div>
+            </section>
+
+            <!-- 렌트카 추가 모달 -->
+            <div id="rental-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('rental-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+              <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <span class="material-symbols-outlined text-lg">directions_car</span>
+                  </div>
+                  <div>
+                    <h4 class="font-headline text-base font-bold text-slate-900">Add New Rental Car</h4>
+                    <p class="text-slate-500 text-[10px]">새로운 렌트카를 등록하세요</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
+                    <input id="rc-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
+                    <input id="rc-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
+                    <input id="rc-city" type="text" list="rc-city-list" placeholder="예: Roma" oninput="onRentalCityChange()" onchange="onRentalCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    <datalist id="rc-city-list"></datalist>
+                  </div>
+                  <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
+                      <input id="rc-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
+                      <input id="rc-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
+                      <input id="rc-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                  </div>
+                  <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
+                      <input id="rc-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
+                      <input id="rc-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
+                      <input id="rc-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                    <input id="rc-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                      <input id="rc-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
+                    <input id="rc-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div class="md:col-span-2">
+                    <button onclick="saveInlineRental();closeTravelModal('rental-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                      렌트카 등록
+                    </button>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
             <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
             <section class="mb-2">
               <div class="mb-4 flex items-center justify-between">
@@ -5681,6 +5771,7 @@
       saveCityCache(tripId, citiesData);
       renderCityCards();
       _refreshStayCityDatalist();
+      _refreshRentalCityDatalist();
     } catch(err) { console.error('Cities load error:', err); citiesData = []; renderCityCards(); }
   }
 
@@ -5969,6 +6060,7 @@
     renderTripHeader();
     renderDayView();
     renderJourneyTransport();
+    renderJourneyRental();
     renderJourneyLodging();
     renderJourneyFlights();
     renderJourneySouvenir();
@@ -6477,6 +6569,7 @@
       } catch(e) { alert('저장 실패'); }
       if (rerenderType === '항공편') renderJourneyFlights();
       else if (rerenderType === '이동수단') { renderJourneyTransport(); renderDayView(); }
+      else if (rerenderType === '렌트카') renderJourneyRental();
       else if (rerenderType === '숙소') renderJourneyLodging();
       else if (rerenderType === '기념품') renderJourneySouvenir();
       updateJourneyCost();
@@ -6504,6 +6597,78 @@
       updateJourneyCost();
       ['tr-type','tr-route','tr-date','tr-time','tr-payment-date','tr-price'].forEach(function(id){ document.getElementById(id).value=''; });
     } catch(err) { alert('저장에 실패했어요.'); }
+  }
+
+  async function saveInlineRental() {
+    var company = document.getElementById('rc-company').value.trim();
+    if (!company) { alert('렌트카 회사를 입력해줘!'); return; }
+    var obj = {
+      trip_id: currentTripId, type: '렌트카',
+      title: company,
+      description: document.getElementById('rc-model').value.trim(),
+      city: document.getElementById('rc-city').value.trim(),
+      date: document.getElementById('rc-pickup-date').value,
+      time: document.getElementById('rc-pickup-time').value.trim(),
+      pickup_location: document.getElementById('rc-pickup-location').value.trim(),
+      checkout_date: document.getElementById('rc-drop-date').value,
+      checkout: document.getElementById('rc-drop-time').value.trim(),
+      drop_location: document.getElementById('rc-drop-location').value.trim(),
+      payment_date: document.getElementById('rc-payment-date').value,
+      amount: document.getElementById('rc-price').value.replace(/,/g,'').trim(),
+      notes: document.getElementById('rc-notes').value.trim(),
+      status: '확정'
+    };
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      await syncJourneyToFinance(saved);
+      renderJourneyRental();
+      ['rc-company','rc-model','rc-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes'].forEach(function(id){ document.getElementById(id).value=''; });
+    } catch(err) { alert('저장에 실패했어요.'); }
+  }
+
+  function renderRentalCard(item, actionBtns) {
+    var routeText = (item.pickup_location||'—') + ' → ' + (item.drop_location||'—');
+    var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
+    var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
+    var price = item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—';
+    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
+      '<div class="flex items-center">' +
+        '<div class="flex items-center gap-3 w-1/3 min-w-0">' +
+          '<div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0"><span class="material-symbols-outlined text-xl">directions_car</span></div>' +
+          '<div class="min-w-0">' +
+            '<div class="flex items-center gap-2"><span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' + (item.city ? '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 bg-indigo-100 text-indigo-700">' + item.city + '</span>' : '') + '</div>' +
+            '<div class="text-xs text-slate-500 mt-0.5 truncate">' + (item.description||'') + (item.notes ? ' · ' + item.notes : '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex-1 grid grid-cols-2 gap-4 px-4">' +
+          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">픽업</p><p class="text-xs font-semibold text-slate-800">' + pickup + '</p><p class="text-[10px] text-slate-500 truncate">' + (item.pickup_location||'') + '</p></div>' +
+          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">드롭</p><p class="text-xs font-semibold text-slate-800">' + drop + '</p><p class="text-[10px] text-slate-500 truncate">' + (item.drop_location||'') + '</p></div>' +
+        '</div>' +
+        '<div class="flex items-center gap-3 shrink-0">' +
+          '<div class="text-right"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + price + '</p></div>' +
+          '<div class="flex gap-1">' + actionBtns + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderJourneyRental() {
+    var container = document.getElementById('journey-rental-list');
+    if (!container) return;
+    var items = journeyData.filter(function(d){ return d.type === '렌트카'; });
+    items.sort(function(a, b) { return sortByDateTime(a, b); });
+    if (items.length === 0) {
+      container.innerHTML = '<p class="text-center text-xs text-slate-400 py-6">렌트카를 추가해봐!</p>';
+      return;
+    }
+    container.innerHTML = items.map(function(item) {
+      var realIdx = journeyData.indexOf(item);
+      var actionBtns =
+        '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
+        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>';
+      return renderRentalCard(item, actionBtns);
+    }).join('');
   }
 
   function renderTransportCard(item, deleteBtn) {
@@ -7720,6 +7885,20 @@
       {id:'jf-payment-date', label:'결제일', type:'date'},
       {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 1,743,400', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
     ];
+    if (type === '렌트카') return [
+      {id:'jf-title', label:'렌트카 회사 *', type:'text', placeholder:'예: Hertz, Sixt'},
+      {id:'jf-desc', label:'차종', type:'text', placeholder:'예: BMW X3'},
+      {id:'jf-city', label:'도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Roma'},
+      {id:'jf-date', label:'픽업 날짜', type:'date'},
+      {id:'jf-time', label:'픽업 시간', type:'text', placeholder:'예: 10:00'},
+      {id:'jf-pickup-location', label:'픽업 장소', type:'text', placeholder:'예: FCO 공항'},
+      {id:'jf-checkout-date', label:'드롭 날짜', type:'date'},
+      {id:'jf-checkout', label:'드롭 시간', type:'text', placeholder:'예: 18:00'},
+      {id:'jf-drop-location', label:'드롭 장소', type:'text', placeholder:'예: Orvieto 시내'},
+      {id:'jf-payment-date', label:'결제일', type:'date'},
+      {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 1,050,000', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
+      {id:'jf-notes', label:'메모', type:'text', placeholder:'예: 풀커버 보험 포함'},
+    ];
     if (type === '숙소') return [
       {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague', onchange:'onJourneyCityChange()'},
       {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef', autocomplete:'lodging'},
@@ -7739,7 +7918,7 @@
 
   function openJourneyModal(type) {
     currentJourneyType = type;
-    var titles = {'일정':'일정 추가','이동수단':'이동 수단 추가','기념품':'기념품 추가','항공편':'항공편 추가'};
+    var titles = {'일정':'일정 추가','이동수단':'이동 수단 추가','렌트카':'렌트카 추가','기념품':'기념품 추가','항공편':'항공편 추가'};
     document.getElementById('journey-modal-title').textContent = titles[type]||'항목 추가';
     var fields = getJourneyForms(type);
     document.getElementById('journey-modal-body').innerHTML = fields.map(function(f){
@@ -7822,7 +8001,10 @@
       'jf-address': item.address, 'jf-phone': item.phone,
       'jf-checkin': item.checkin, 'jf-checkout': item.checkout,
       'jf-cancel': item.cancel,
-      'jf-cancel-date': item.cancel_date
+      'jf-cancel-date': item.cancel_date,
+      'jf-pickup-location': item.pickup_location,
+      'jf-drop-location': item.drop_location,
+      'jf-notes': item.notes
     };
     Object.keys(fieldMap).forEach(function(id){
       var el = document.getElementById(id);
@@ -8013,6 +8195,7 @@
   function _journeyToFinanceCategory(item) {
     if (item.type === '숙소') return '숙소';
     if (item.type === '항공편') return '항공';
+    if (item.type === '렌트카') return '렌트';
     if (item.type === '이동수단') {
       var combined = ((item.title||'') + ' ' + (item.description||'')).toLowerCase();
       if (/렌트|rent/.test(combined)) return '렌트';
@@ -8027,6 +8210,7 @@
     if (item.type === '숙소') desc = (item.title||'숙소') + (item.city ? ' (' + item.city + ')' : '');
     else if (item.type === '항공편') desc = (item.title||'항공편') + (item.description ? ' · ' + item.description : '');
     else if (item.type === '이동수단') desc = (item.title||'이동') + (item.description ? ' · ' + item.description : '');
+    else if (item.type === '렌트카') desc = (item.title||'렌트카') + (item.city ? ' (' + item.city + ')' : '') + (item.description ? ' · ' + item.description : '');
     else desc = item.title || item.type || '여행 비용';
     return {
       date: item.payment_date || item.date || '',
@@ -8092,6 +8276,25 @@
     if (outEl && !outEl.value && range.end_date) outEl.value = range.end_date;
   }
 
+  // 렌트카 폼: 도시 datalist 갱신 + 도시 선택 시 픽업/드롭 날짜 prefill
+  function _refreshRentalCityDatalist() {
+    var dl = document.getElementById('rc-city-list');
+    if (!dl) return;
+    dl.innerHTML = (citiesData||[]).map(function(c){
+      var label = c.name + (c.start_date && c.end_date ? ' (' + c.start_date + '~' + c.end_date + ')' : '');
+      return '<option value="' + c.name + '">' + label + '</option>';
+    }).join('');
+  }
+  function onRentalCityChange() {
+    var city = (document.getElementById('rc-city')||{}).value||'';
+    var range = getCityDateRange(city);
+    if (!range) return;
+    var pickEl = document.getElementById('rc-pickup-date');
+    var dropEl = document.getElementById('rc-drop-date');
+    if (pickEl && !pickEl.value && range.start_date) pickEl.value = range.start_date;
+    if (dropEl && !dropEl.value && range.end_date) dropEl.value = range.end_date;
+  }
+
   // 항목 모달 (jf-city) 도시 변경 시 체크인/체크아웃 날짜 자동 입력
   function onJourneyCityChange() {
     var city = (document.getElementById('jf-city')||{}).value||'';
@@ -8125,6 +8328,19 @@
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.status = (document.getElementById('jf-status')||{}).value||'확정';
       obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
+    } else if (currentJourneyType === '렌트카') {
+      obj.title = (document.getElementById('jf-title')||{}).value||'';
+      obj.description = (document.getElementById('jf-desc')||{}).value||'';
+      obj.city = (document.getElementById('jf-city')||{}).value||'';
+      obj.date = (document.getElementById('jf-date')||{}).value||'';
+      obj.time = (document.getElementById('jf-time')||{}).value||'';
+      obj.pickup_location = (document.getElementById('jf-pickup-location')||{}).value||'';
+      obj.checkout_date = (document.getElementById('jf-checkout-date')||{}).value||'';
+      obj.checkout = (document.getElementById('jf-checkout')||{}).value||'';
+      obj.drop_location = (document.getElementById('jf-drop-location')||{}).value||'';
+      obj.payment_date = (document.getElementById('jf-payment-date')||{}).value||'';
+      obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
+      obj.notes = (document.getElementById('jf-notes')||{}).value||'';
     } else if (currentJourneyType === '기념품') {
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
@@ -8183,6 +8399,7 @@
       journeyData.splice(i, 1);
       renderDayView();
       renderJourneyTransport();
+      renderJourneyRental();
       renderJourneyLodging();
       renderJourneyFlights();
       renderJourneySouvenir();
@@ -14757,7 +14974,7 @@
 
   // Inline travel forms: init on journey page load
   var _origLoadJourney = loadJourney;
-  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('flt-payment-date'); initSimpleDatePicker('stay-checkin-date'); initSimpleDatePicker('stay-checkout-date'); initSimpleDatePicker('stay-cancel-date'); initSimpleDatePicker('tr-date'); initSimpleDatePicker('tr-payment-date'); _refreshStayCityDatalist(); },200); };
+  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('flt-payment-date'); initSimpleDatePicker('stay-checkin-date'); initSimpleDatePicker('stay-checkout-date'); initSimpleDatePicker('stay-cancel-date'); initSimpleDatePicker('tr-date'); initSimpleDatePicker('tr-payment-date'); initSimpleDatePicker('rc-pickup-date'); initSimpleDatePicker('rc-drop-date'); initSimpleDatePicker('rc-payment-date'); _refreshStayCityDatalist(); _refreshRentalCityDatalist(); },200); };
 
   // ===== PACKING PAGE =====
   var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
