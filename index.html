@@ -893,7 +893,11 @@
         <section class="mb-10">
           <div class="mb-6">
             <span class="text-indigo-600 font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Current Voyage</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight mb-3" id="journey-trip-title">—</h2>
+            <div class="flex items-center gap-3 mb-3">
+              <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight" id="journey-trip-title">—</h2>
+              <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors" title="여행 정보 수정"><span class="material-symbols-outlined" style="font-size:18px">edit</span></button>
+              <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="여행 삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
+            </div>
             <div class="flex items-center gap-3 text-slate-500">
               <span class="material-symbols-outlined text-indigo-600 text-lg">calendar_today</span>
               <span id="journey-km-badge" class="font-medium text-sm" style="display:none"></span>
@@ -7848,6 +7852,19 @@
     document.getElementById('journey-modal').style.cssText = 'display:flex!important';
     if (item.type === '숙소') setTimeout(initPlacesAutocomplete, 100);
     if (item.type === '일정') setTimeout(initSchedulePlacesAutocomplete, 100);
+  }
+
+  function openCurrentTripEditModal() {
+    if (currentTripId) openEditTripModal(currentTripId);
+  }
+
+  function confirmDeleteCurrentTrip() {
+    if (!currentTripId) return;
+    var trip = getCurrentTrip();
+    if (!trip) return;
+    if (confirm('"' + trip.name + '" 여행을 정말 삭제할까요?\n관련된 일정·숙소·항공편 등 데이터는 남아있어요.')) {
+      deleteTripEntry(currentTripId);
+    }
   }
 
   function openEditTripModal(tripId) {
