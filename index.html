@@ -393,6 +393,54 @@
       #page-finance-hub section.mb-10 .text-2xl { font-size: 1.25rem !important; }
     }
 
+    /* ===== Daily Ledger 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-ledger .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* Pill tabs 줄바꿈 + 작게 */
+      #page-ledger > div > div.flex.gap-2.mb-8 {
+        flex-wrap: wrap; gap: 4px !important; margin-bottom: 1rem !important;
+      }
+      #page-ledger .ledger-tab {
+        padding: 4px 10px !important; font-size: 11px !important;
+        white-space: nowrap;
+      }
+      /* Month nav bar wrap */
+      #page-ledger #ledger-panel-monthly > div.flex.items-center.justify-between.mb-8:first-child {
+        flex-wrap: wrap; gap: 6px !important; margin-bottom: 1rem !important;
+      }
+      #page-ledger #ldg-month-title { font-size: 1rem !important; }
+      #page-ledger #ledger-panel-monthly button { padding: 4px 8px !important; font-size: 11px !important; }
+      /* KPI strip: 5컬럼 → 2컬럼 (모바일) */
+      #page-ledger #ldg-kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 1rem !important; }
+      #page-ledger #ldg-kpi-strip > div { padding: 0.75rem !important; }
+      #page-ledger #ldg-kpi-strip p { font-size: 14px !important; }
+      #page-ledger #ldg-kpi-strip .text-xs { font-size: 10px !important; }
+      /* Two-column layout → 1열 */
+      #page-ledger #ledger-panel-monthly > div.grid.grid-cols-2 { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+      #page-ledger #ledger-panel-monthly .grid.grid-cols-2 { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+      /* 도넛 차트는 2열 유지 (작은 차트) */
+      #page-ledger #ledger-panel-monthly .grid.grid-cols-2:has(canvas) { grid-template-columns: repeat(2, 1fr) !important; }
+      /* 도넛 캔버스 작게 */
+      #page-ledger div.relative.w-36.h-36 { width: 100px !important; height: 100px !important; }
+      /* 카드 패딩 축소 */
+      #page-ledger #ledger-panel-monthly .bg-white.rounded-2xl { padding: 1rem !important; border-radius: 1rem !important; }
+      /* 캘린더 day header 작게 */
+      #page-ledger #ldg-calendar { gap: 1px !important; }
+      #page-ledger #ldg-calendar > div { font-size: 9px !important; padding: 2px !important; }
+      /* 카테고리 그리드 5컬럼 → 2컬럼 */
+      #page-ledger #ldg-cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      #page-ledger #ldg-cat-grid > div { padding: 0.75rem !important; font-size: 11px !important; }
+      /* 거래 내역 테이블: min-width 강제 + 가로 스크롤 */
+      #ldg-tx-table { min-width: 720px !important; }
+      /* 거래내역 헤더 wrap */
+      #page-ledger div.px-6.py-3.flex.items-center.justify-between.border-b {
+        flex-wrap: wrap; gap: 6px !important; padding: 0.75rem !important;
+      }
+      #page-ledger #ldg-tx-search { width: 140px !important; }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
