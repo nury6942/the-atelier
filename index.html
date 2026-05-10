@@ -13290,13 +13290,13 @@
       }
     }
 
-    // 초고: start~end 빈 날마다 (화수 누적)
-    if (p.draft && p.draft.start && p.draft.end) {
+    // 초고: start부터 평일 0.5화 / 주말 1화 누적. eps 다 찰 때까지 계속 (end 넘어도 OK)
+    if (p.draft && p.draft.start) {
       var dCur = new Date(p.draft.start + 'T00:00:00');
-      var dEnd = new Date(p.draft.end + 'T00:00:00');
       var epNum = 0;
       var dIdx = 0;
-      while (dCur <= dEnd && Math.ceil(epNum) <= eps) {
+      var dSafety = 0;
+      while (Math.ceil(epNum) < eps && dSafety++ < 1000) {
         var ds = _fmtDate(dCur);
         if (!isBlockedDay(ds)) {
           var add = _isWeekend(dCur) ? 1 : 0.5;
@@ -13310,12 +13310,12 @@
       }
     }
 
-    // 퇴고: start~end 빈 날마다 (최대 eps개)
-    if (p.revision && p.revision.start && p.revision.end) {
+    // 퇴고: start부터 빈 날마다 1화씩. eps개 다 찰 때까지 계속 (end 넘어도 OK)
+    if (p.revision && p.revision.start) {
       var rCur = new Date(p.revision.start + 'T00:00:00');
-      var rEnd = new Date(p.revision.end + 'T00:00:00');
       var rIdx = 0;
-      while (rCur <= rEnd && rIdx < eps) {
+      var rSafety = 0;
+      while (rIdx < eps && rSafety++ < 500) {
         var rds = _fmtDate(rCur);
         if (!isBlockedDay(rds)) {
           events.push([rds, '퇴고 ' + (rIdx + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(rIdx)]);
