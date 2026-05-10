@@ -667,18 +667,21 @@
       }
       #page-journey .col-span-3,
       #page-journey .col-span-9 { grid-column: span 1 / span 1 !important; }
-      /* 일정 섹션: 우측 패딩 0으로 — 카드가 화면 우측 끝까지, 타임라인은 그대로 유지 */
+      /* 일정 섹션: 박스(bg/border/shadow) 제거해 항공편처럼 풀폭으로 — 타임라인 디자인은 유지 */
       #page-journey section.col-span-3,
       #page-journey section.col-span-4 {
-        padding: 0.75rem 0 0.75rem 0.5rem !important;
-        border-radius: 1rem !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
       }
-      /* 타임라인(border-left)은 그대로 두되 좌측 여백/우측 마진 정리 */
+      /* 타임라인(border-left, dot) 그대로, 좌측만 살짝 들여 점이 잘려보이지 않게 */
       #page-journey #journey-schedule-list {
-        margin-left: 0.5rem !important;
+        margin-left: 0.4rem !important;
         margin-right: 0 !important;
       }
-      /* 일정 카드 좌우 패딩만 살짝 줄여 텍스트 폭 확보 */
+      /* 일정 카드 좌우 패딩 살짝 줄여 텍스트 폭 확보 */
       #page-journey #journey-schedule-list > div.relative.pl-6 > div.bg-white {
         padding-left: 0.85rem !important;
         padding-right: 0.85rem !important;
