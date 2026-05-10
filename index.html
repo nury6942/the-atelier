@@ -5237,7 +5237,16 @@
       if (m) { used += parseFloat(m[1]); }
       else { used += 1; }
     });
-    var total = _leaveTotal || 22;
+    // plannerYear 기준 총계: 캐시 우선, 없으면 백그라운드 fetch 후 재호출
+    var total;
+    if (_leaveTotalByYear[plannerYear] !== undefined) {
+      total = _leaveTotalByYear[plannerYear];
+    } else {
+      // matrixYear와 같으면 _leaveTotal 사용 (이미 loadLeaveSettings로 로드됐을 수 있음)
+      total = (plannerYear === matrixYear) ? (_leaveTotal || 17) : 17;
+      // 정확한 값 fetch 후 재렌더
+      getLeaveTotalForYear(plannerYear).then(function() { updateCalLeaveTracker(); });
+    }
     var left = total - used;
     var usedEl = document.getElementById('cal-leave-used');
     var totalEl = document.getElementById('cal-leave-total');
@@ -11810,7 +11819,18 @@
 
   // 2026년 1월 1일 ~ 12월 31일 날짜 배열 생성
   var matrixYear = new Date().getFullYear();
-  var _leaveTotal = 17; // 기본값
+  var _leaveTotal = 17; // 기본값 (matrixYear용)
+  var _leaveTotalByYear = {}; // 연도별 캐시 (캘린더는 plannerYear 기준 조회)
+
+  async function getLeaveTotalForYear(year) {
+    if (_leaveTotalByYear[year] !== undefined) return _leaveTotalByYear[year];
+    try {
+      var doc = await db.collection('annualSettings').doc(String(year)).get();
+      var t = (doc.exists && doc.data().vacationTotal !== undefined) ? doc.data().vacationTotal : 17;
+      _leaveTotalByYear[year] = t;
+      return t;
+    } catch(e) { return 17; }
+  }
 
   function generateYearDates(year) {
     var DAYS = ['일','월','화','수','목','금','토'];
@@ -12203,6 +12223,7 @@
       } else {
         _leaveTotal = 17;
       }
+      _leaveTotalByYear[matrixYear] = _leaveTotal;
     } catch(e) { _leaveTotal = 17; }
   }
 
@@ -12227,6 +12248,7 @@
       return;
     }
     _leaveTotal = val;
+    _leaveTotalByYear[matrixYear] = val;
     try {
       await db.collection('annualSettings').doc(String(matrixYear)).set({
         year: matrixYear,
