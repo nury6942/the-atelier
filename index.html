@@ -1030,8 +1030,12 @@
                     <input id="flt-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
                   <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격</label>
-                    <input id="flt-price" type="text" placeholder="₩1,743,400" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
+                    <input id="flt-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
+                    <input id="flt-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
                   <div class="col-span-2 flex items-end">
                     <button onclick="saveFlightForm()" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
@@ -1089,8 +1093,12 @@
               <input id="fe-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
             </div>
             <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격</label>
-              <input id="fe-price" type="text" placeholder="₩1,743,400" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
+              <input id="fe-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
+              <input id="fe-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
             </div>
             <div class="col-span-2 flex items-end gap-3">
               <button onclick="closeFlightEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200/50 rounded-2xl transition-colors">취소</button>
@@ -1226,7 +1234,7 @@
                   </div>
                   <div class="grid grid-cols-2 gap-3">
                     <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">날짜</label>
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
                       <input id="tr-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
                     </div>
                     <div>
@@ -1234,11 +1242,17 @@
                       <input id="tr-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
                     </div>
                   </div>
-                  <div>
-                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격</label>
-                    <div class="relative">
-                      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">payments</span>
-                      <input id="tr-price" type="text" placeholder="€19.47" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
+                      <input id="tr-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
+                      <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                        <input id="tr-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1574,9 +1588,10 @@
               <h3 id="finance-main-name" class="text-xl font-bold mt-2 text-white">—</h3>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-6 relative z-10">
-            <div><p id="finance-main-label" class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">지출</p><p id="finance-main-spent" class="text-2xl font-extrabold text-white">₩0</p></div>
-            <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">이번 트립</p><p id="finance-trip-label" class="text-lg font-bold text-white/90">전체</p></div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+            <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">총 입금</p><p id="finance-main-deposit" class="text-2xl font-extrabold text-white">₩0</p></div>
+            <div><p id="finance-main-label" class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">총 지출</p><p id="finance-main-spent" class="text-2xl font-extrabold text-white">₩0</p></div>
+            <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">잔액</p><p id="finance-main-balance" class="text-2xl font-extrabold text-white">₩0</p></div>
             <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">항목 수</p><p id="finance-item-count" class="text-2xl font-extrabold text-white">0</p></div>
           </div>
         </div>
@@ -6457,15 +6472,17 @@
       title: title, description: route,
       date: document.getElementById('tr-date').value,
       time: document.getElementById('tr-time').value.trim(),
-      amount: document.getElementById('tr-price').value.trim(),
+      payment_date: document.getElementById('tr-payment-date').value,
+      amount: document.getElementById('tr-price').value.replace(/,/g,'').trim(),
       status: '확정'
     };
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
+      await syncJourneyToFinance(saved);
       renderJourneyTransport();
       updateJourneyCost();
-      ['tr-type','tr-route','tr-date','tr-time','tr-price'].forEach(function(id){ document.getElementById(id).value=''; });
+      ['tr-type','tr-route','tr-date','tr-time','tr-payment-date','tr-price'].forEach(function(id){ document.getElementById(id).value=''; });
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
@@ -6499,7 +6516,7 @@
         '</div>' +
         // 오른쪽: 가격 + 버튼
         '<div class="flex items-center gap-3 shrink-0">' +
-          '<div class="text-right"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + (item.amount||'—') + '</p></div>' +
+          '<div class="text-right"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p></div>' +
           '<div class="flex gap-1">' + deleteBtn + '</div>' +
         '</div>' +
       '</div>' +
@@ -7446,7 +7463,8 @@
     document.getElementById('fe-arrive').value = item.arrive || '';
     document.getElementById('fe-duration').value = item.duration || '';
     document.getElementById('fe-baggage').value = item.baggage || '';
-    document.getElementById('fe-price').value = item.amount ? '₩'+Number(item.amount).toLocaleString('ko-KR') : '';
+    document.getElementById('fe-payment-date').value = item.payment_date || '';
+    document.getElementById('fe-price').value = item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '';
     document.getElementById('flight-edit-modal').style.cssText = 'display:flex!important';
   }
 
@@ -7468,6 +7486,7 @@
       arrive: document.getElementById('fe-arrive').value.trim(),
       duration: document.getElementById('fe-duration').value.trim(),
       baggage: document.getElementById('fe-baggage').value.trim(),
+      payment_date: document.getElementById('fe-payment-date').value,
       amount: document.getElementById('fe-price').value.replace(/[^0-9]/g,'')
     };
     try {
@@ -7491,6 +7510,7 @@
       arrive: document.getElementById('flt-arrive').value.trim(),
       duration: document.getElementById('flt-duration').value.trim(),
       baggage: document.getElementById('flt-baggage').value.trim(),
+      payment_date: document.getElementById('flt-payment-date').value,
       amount: document.getElementById('flt-price').value.replace(/[^0-9]/g,'')
     };
     if (!obj.title) { alert('항공사를 입력해줘!'); return; }
@@ -7498,7 +7518,7 @@
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
-      ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-price'].forEach(function(id){document.getElementById(id).value='';});
+      ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-payment-date','flt-price'].forEach(function(id){document.getElementById(id).value='';});
       renderJourneyFlights();
     } catch(e) { alert('저장 실패'); }
   }
@@ -7667,11 +7687,13 @@
       {id:'jf-desc', label:'설명', type:'text', placeholder:'예: 천문 시계 앞에서 만나...'},
     ];
     if (type === '이동수단') return [
-      {id:'jf-date', label:'날짜', type:'date'},
+      {id:'jf-date', label:'탑승 날짜', type:'date'},
       {id:'jf-time', label:'시간', type:'text', placeholder:'예: 08:45'},
+      {id:'jf-payment-date', label:'결제일', type:'date'},
       {id:'jf-title', label:'이동 수단명 *', type:'text', placeholder:'예: DB ICE Train'},
       {id:'jf-desc', label:'루트 *', type: routeOptions.length ? 'select_custom' : 'text', options: routeOptions, placeholder:'예: Prague → Olomouc'},
       {id:'jf-status', label:'상태', type:'select', options:['확정','대기 중','취소']},
+      {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 200,000', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
     ];
     if (type === '기념품') return [
       {id:'jf-title', label:'대상 *', type:'text', placeholder:'예: 가족, 동료, 나'},
@@ -7683,9 +7705,10 @@
       {id:'jf-title', label:'항공사 *', type:'text', placeholder:'예: Turkish Airline'},
       {id:'jf-desc', label:'루트 *', type:'text', placeholder:'예: 인천(ICN) → 이스탄불(IST)'},
       {id:'jf-city', label:'편명', type:'text', placeholder:'예: TK91'},
-      {id:'jf-date', label:'날짜', type:'date'},
+      {id:'jf-date', label:'탑승 날짜', type:'date'},
       {id:'jf-time', label:'출발 시간', type:'text', placeholder:'예: 23:20'},
-      {id:'jf-amount', label:'가격', type:'text', placeholder:'예: 1743400'},
+      {id:'jf-payment-date', label:'결제일', type:'date'},
+      {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 1,743,400', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
     ];
     if (type === '숙소') return [
       {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague', onchange:'onJourneyCityChange()'},
@@ -8064,21 +8087,24 @@
     } else if (currentJourneyType === '이동수단') {
       obj.date = (document.getElementById('jf-date')||{}).value||'';
       obj.time = (document.getElementById('jf-time')||{}).value||'';
+      obj.payment_date = (document.getElementById('jf-payment-date')||{}).value||'';
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.status = (document.getElementById('jf-status')||{}).value||'확정';
+      obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
     } else if (currentJourneyType === '기념품') {
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.city = (document.getElementById('jf-city')||{}).value||'';
-      obj.amount = (document.getElementById('jf-amount')||{}).value||'';
+      obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
     } else if (currentJourneyType === '항공편') {
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.date = (document.getElementById('jf-date')||{}).value||'';
       obj.time = (document.getElementById('jf-time')||{}).value||'';
-      obj.amount = (document.getElementById('jf-amount')||{}).value||'';
+      obj.payment_date = (document.getElementById('jf-payment-date')||{}).value||'';
+      obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
     } else if (currentJourneyType === '숙소') {
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.title = (document.getElementById('jf-title')||{}).value||'';
@@ -8902,13 +8928,23 @@
   }
 
   function updateFinanceStats() {
-    // 출금 합계만 (입금 제외)
+    // 출금/입금 합계
     var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?(parseFloat(r[4])||0):0); }, 0);
-    console.log('[Finance Stats] 출금합계=' + expenseTotal + ', 항목수=' + financeFiltered.length);
+    var depositTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?(parseFloat(r[4])||0):0); }, 0);
+    var balance = depositTotal - expenseTotal;
+    console.log('[Finance Stats] 입금=' + depositTotal + ', 출금=' + expenseTotal + ', 잔액=' + balance);
+    var depEl = document.getElementById('finance-main-deposit');
+    if (depEl) depEl.textContent = '₩' + Math.round(depositTotal).toLocaleString('ko-KR');
     document.getElementById('finance-main-spent').textContent = '₩' + Math.round(expenseTotal).toLocaleString('ko-KR');
+    var balEl = document.getElementById('finance-main-balance');
+    if (balEl) {
+      balEl.textContent = (balance < 0 ? '-' : '') + '₩' + Math.round(Math.abs(balance)).toLocaleString('ko-KR');
+      balEl.style.color = balance < 0 ? '#fecaca' : '#fff';
+    }
     document.getElementById('finance-main-label').textContent = '총 지출';
     document.getElementById('finance-item-count').textContent = financeFiltered.length;
-    document.getElementById('finance-trip-label').textContent = currentFinanceTrip==='all'?'전체':currentFinanceTrip;
+    var tripLabelEl = document.getElementById('finance-trip-label');
+    if (tripLabelEl) tripLabelEl.textContent = currentFinanceTrip==='all'?'전체':currentFinanceTrip;
 
     // 카드 제목 + 이미지 배경
     var todayStr = new Date().toISOString().split('T')[0];
@@ -14674,7 +14710,7 @@
 
   // Inline travel forms: init on journey page load
   var _origLoadJourney = loadJourney;
-  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('stay-checkin-date'); initSimpleDatePicker('stay-checkout-date'); initSimpleDatePicker('stay-cancel-date'); initSimpleDatePicker('tr-date'); },200); };
+  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('flt-payment-date'); initSimpleDatePicker('stay-checkin-date'); initSimpleDatePicker('stay-checkout-date'); initSimpleDatePicker('stay-cancel-date'); initSimpleDatePicker('tr-date'); initSimpleDatePicker('tr-payment-date'); _refreshStayCityDatalist(); },200); };
 
   // ===== PACKING PAGE =====
   var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
