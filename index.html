@@ -728,34 +728,34 @@
       /* 전화번호 라인의 번호 */
       #journey-lodging-list span.text-slate-500.text-\[11px\] { font-size: 12px !important; }
 
-      /* === 이동수단/렌트카 카드: 통일 폰트 + 더 컴팩트 === */
+      /* === 이동수단/렌트카 카드: 3개 자식을 세로로 stack === */
       #journey-transport-list > div,
       #journey-rental-list > div { padding: 1rem !important; border-radius: 1rem !important; }
-      /* grid 레이아웃으로 통일 */
+      /* 카드 안의 .flex.items-center를 column으로 */
       #journey-transport-list > div > div.flex.items-center {
-        display: grid !important;
-        grid-template-columns: 36px 1fr auto !important;
-        grid-template-areas: "icon title price" "meta meta meta" "actions actions actions" !important;
-        gap: 8px !important;
-        align-items: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
       }
-      #journey-transport-list > div > div.flex.items-center > div:nth-child(1) {
-        grid-area: icon !important; width: auto !important;
+      /* 자식 1: 좌측(아이콘+제목+루트) - w-1/3 풀고 풀폭으로 */
+      #journey-transport-list > div > div.flex.items-center > div.w-1\/3 {
+        width: 100% !important;
       }
-      #journey-transport-list > div > div.flex.items-center > div:nth-child(2) {
-        grid-area: title !important; width: auto !important;
-      }
-      #journey-transport-list > div > div.flex.items-center > div:nth-child(3) {
-        grid-area: meta !important; width: 100% !important;
+      /* 자식 2: 중앙(Date+Time) - flex-1 풀고 양쪽 끝 정렬 + 옅은 배경 */
+      #journey-transport-list > div > div.flex.items-center > div.flex-1 {
         justify-content: space-between !important;
-        background: rgba(107,56,212,0.04); border-radius: 8px; padding: 8px;
+        background: rgba(107,56,212,0.04);
+        border-radius: 8px;
+        padding: 8px 12px !important;
+        gap: 12px !important;
       }
-      #journey-transport-list > div > div.flex.items-center > div:nth-child(4) {
-        grid-area: price !important; width: auto !important;
+      /* 자식 3: 우측(가격+버튼) - 양쪽 끝 정렬 */
+      #journey-transport-list > div > div.flex.items-center > div.shrink-0 {
+        justify-content: space-between !important;
+        width: 100% !important;
       }
-      #journey-transport-list > div > div.flex.items-center > div:nth-child(5) {
-        grid-area: actions !important; width: 100% !important; justify-content: flex-end !important;
-      }
+      /* 폰트 */
       #journey-transport-list .font-bold.text-sm { font-size: 15px !important; }
       #journey-transport-list .text-xs { font-size: 12px !important; }
       #journey-transport-list .text-\[9px\] { font-size: 10px !important; }
