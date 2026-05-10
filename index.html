@@ -330,21 +330,28 @@
       #mx-pipeline-section {
         padding: 0.75rem !important;
         overflow-x: auto !important;
+        position: relative;
       }
+      /* 위쪽 헤더(타이틀+범례) 가로 스크롤 시 좌측 고정 */
       #mx-pipeline-section > div.flex.items-center.gap-3 {
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 20 !important;
+        background: white !important;
         flex-wrap: wrap; gap: 6px !important;
+        padding-bottom: 6px !important;
       }
       #mx-pipeline-section > div.flex.items-center.gap-3 > div.flex.gap-3 {
         margin-left: 0 !important; gap: 6px !important; flex-wrap: wrap;
       }
-      /* gantt 첫 칼럼(작품명) 좌측 sticky */
+      /* gantt 첫 칼럼(작품명) 좌측 sticky - 배경 강화 + 우측 그림자 더 진하게 */
       #mx-pipeline-gantt > div { position: relative; }
       #mx-pipeline-gantt > div > div:first-child {
         position: sticky !important;
         left: 0 !important;
-        z-index: 5 !important;
-        background: white !important;
-        box-shadow: 1px 0 0 rgba(0,0,0,0.06);
+        z-index: 10 !important;
+        background-color: #ffffff !important;
+        box-shadow: 4px 0 6px -2px rgba(0,0,0,0.08), 1px 0 0 #e5e7eb !important;
       }
 
       /* Matrix 테이블 가로 스크롤 + 날짜 칼럼 sticky */
