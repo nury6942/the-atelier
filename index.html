@@ -326,22 +326,41 @@
       #page-matrix h2 { font-size: 1.25rem !important; }
       #page-matrix h2 + div span#matrix-year-label { font-size: 1.25rem !important; min-width: 50px !important; }
 
-      /* Pipeline section: 좌우로 가로 스크롤 + 범례 wrap */
-      #mx-pipeline-section { padding: 0.75rem !important; }
+      /* Pipeline section: 부모에 overflow-x:auto 줘야 페이지 안 깨짐 */
+      #mx-pipeline-section {
+        padding: 0.75rem !important;
+        overflow-x: auto !important;
+      }
       #mx-pipeline-section > div.flex.items-center.gap-3 {
         flex-wrap: wrap; gap: 6px !important;
       }
       #mx-pipeline-section > div.flex.items-center.gap-3 > div.flex.gap-3 {
         margin-left: 0 !important; gap: 6px !important; flex-wrap: wrap;
       }
-      /* gantt 자체는 min-width 700px 유지, 컨테이너에 가로 스크롤 */
-      #mx-pipeline-gantt { overflow-x: auto; }
 
-      /* Matrix 테이블 가로 스크롤 강제: 표는 최소 900px, 컨테이너 overflow */
-      #matrix-table-wrap { max-height: calc(100vh - 280px) !important; }
+      /* Matrix 테이블 가로 스크롤 + 날짜 칼럼 sticky */
+      #matrix-table-wrap { max-height: calc(100vh - 280px) !important; overflow: auto !important; }
       #matrix-table-wrap table { min-width: 900px !important; }
       #matrix-table-wrap th { font-size: 11px !important; padding: 6px 4px !important; }
       #matrix-table-wrap td { font-size: 11px !important; }
+      /* 날짜 칼럼 (첫번째 td/th) 좌측 고정 */
+      #matrix-table-wrap table th:first-child,
+      #matrix-table-wrap table td:first-child {
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 15 !important;
+        background: #fff !important;
+        box-shadow: 1px 0 0 rgba(0,0,0,0.06);
+      }
+      /* sticky 헤더(thead)는 z-index 더 높게 */
+      #matrix-table-wrap table thead th:first-child {
+        z-index: 25 !important;
+        background: #f8f1fe !important;
+      }
+      /* 주말/오늘/월구분 행의 첫 칼럼 배경 유지 */
+      #matrix-table-wrap table tr.bg-rose-50 td:first-child { background: #fff1f2 !important; }
+      #matrix-table-wrap table tr.bg-indigo-50 td:first-child { background: #eef2ff !important; }
+      #matrix-table-wrap table tr[class*="month-divider"] td:first-child { background: #f5f3ff !important; }
 
       /* 툴바 wrap */
       #page-matrix div.p-4.border-b {
