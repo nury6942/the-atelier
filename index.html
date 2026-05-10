@@ -446,7 +446,11 @@
       #finance-budget-section .px-6.py-4 { padding: 0.75rem !important; }
       #finance-budget-body { padding: 0.75rem !important; }
       #finance-budget-body .text-2xl { font-size: 1.125rem !important; }
-      #finance-budget-body .grid.md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+      /* 카테고리 4개 카드 작은 화면에서도 2열 유지, 폰트만 작게 */
+      #finance-budget-body .grid.grid-cols-2 > div { padding: 0.75rem !important; }
+      #finance-budget-body .grid.grid-cols-2 .text-sm { font-size: 12px !important; }
+      #finance-budget-body .grid.grid-cols-2 .text-xs { font-size: 10px !important; }
+      #finance-budget-body .grid.grid-cols-2 .text-\[11px\] { font-size: 10px !important; }
 
       /* 카테고리 분석 chip - 2열 그리드 + 작게 */
       #finance-category-breakdown {
@@ -9933,7 +9937,7 @@
       '</div>' +
     '</div>';
 
-    html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+    html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
     Object.keys(BUDGET_GROUPS).forEach(function(g) {
       var cfg = BUDGET_GROUPS[g];
       var b = parseFloat(budget[BUDGET_FIELDS[g]]) || 0;
