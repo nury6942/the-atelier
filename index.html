@@ -636,16 +636,22 @@
       /* 모든 자식 박스가 부모 폭 안에 들어오게 */
       #page-journey section,
       #page-journey > div > div { max-width: 100% !important; }
-      /* day nav 헤더 (← 1일차 badge + Frankfurt am Main 타이틀 + →) */
+      /* day nav 헤더 (← 2일차 badge + Frankfurt am Main 타이틀 + →) */
       #page-journey #journey-day-title {
-        font-size: 12px !important;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        max-width: 60vw !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
+        white-space: normal !important;
+        word-break: keep-all !important;
+        line-height: 1.25 !important;
+        max-width: 65vw !important;
       }
       #page-journey #journey-day-badge {
-        height: 28px !important; font-size: 9px !important; padding: 0 6px !important;
+        height: 32px !important; font-size: 11px !important; padding: 0 10px !important;
       }
-      #page-journey #journey-day-date { font-size: 9px !important; }
+      #page-journey #journey-day-date {
+        font-size: 12px !important;
+        margin-top: 4px !important;
+      }
       /* day nav 좌우 버튼 작게 */
       #page-journey button[onclick="prevDay()"],
       #page-journey button[onclick="nextDay()"] {
@@ -661,8 +667,21 @@
       }
       #page-journey .col-span-3,
       #page-journey .col-span-9 { grid-column: span 1 / span 1 !important; }
-      /* 일정 섹션 자체는 컴팩트하게 */
-      #page-journey section.col-span-3 { padding: 1rem !important; border-radius: 1.25rem !important; }
+      /* 일정 섹션: 좌우 패딩 최소화로 카드가 화면 꽉 차게 */
+      #page-journey section.col-span-3,
+      #page-journey section.col-span-4 {
+        padding: 1rem 0.5rem !important;
+        border-radius: 1.25rem !important;
+      }
+      /* 타임라인 좌측 여백/패딩 축소 */
+      #page-journey #journey-schedule-list {
+        margin-left: 0.5rem !important;
+      }
+      /* 카드 내부 컨텐츠 들여쓰기 축소 (점 + 카드) */
+      #page-journey #journey-schedule-list > div.relative.pl-6 {
+        padding-left: 1rem !important;
+      }
+      /* 카드 자체 padding은 유지하되 부모가 좁으니 자연스럽게 꽉 찰 것 */
       /* === Travel 카드 통일 폰트 변수 ===
          body=14px, label/메타=12px, 강조 숫자=18px */
 
