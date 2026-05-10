@@ -448,8 +448,19 @@
       #finance-budget-body .text-2xl { font-size: 1.125rem !important; }
       #finance-budget-body .grid.md\:grid-cols-2 { grid-template-columns: 1fr !important; }
 
-      /* 카테고리 분석 chip 작게 */
-      #finance-category-breakdown .text-xs { font-size: 10px !important; }
+      /* 카테고리 분석 chip - 2열 그리드 + 작게 */
+      #finance-category-breakdown {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      #finance-category-breakdown > div {
+        padding: 8px 10px !important;
+        gap: 6px !important;
+        min-width: 0 !important;
+      }
+      #finance-category-breakdown .text-xs { font-size: 11px !important; }
+      #finance-category-breakdown .w-16 { width: 28px !important; }
 
       /* 거래 내역 테이블 - 잔액/관리 칼럼 숨겨서 좌우 스크롤 최소화 */
       #finance-table-wrap table { width: 100% !important; min-width: 0 !important; }
