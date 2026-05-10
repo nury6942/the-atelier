@@ -360,6 +360,39 @@
       }
     }
 
+    /* ===== Money (Finance Hub) 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-finance-hub .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* Monthly Artifacts 헤더: title + 연도네비 + 기초자산/항목추가 → 줄바꿈 */
+      #page-finance-hub section.mb-12 > div.flex.items-center.gap-4 {
+        flex-wrap: wrap; gap: 8px !important; margin-bottom: 0.5rem;
+      }
+      #page-finance-hub section.mb-12 h2 {
+        font-size: 1.125rem !important; flex: 1 1 100%;
+      }
+      /* 가운데 구분선 (flex-grow h-[1px]) 모바일에선 숨김 */
+      #page-finance-hub section.mb-12 > div.flex.items-center.gap-4 > div.flex-grow {
+        display: none !important;
+      }
+      /* 기초자산 / 항목추가 버튼 작게 */
+      #page-finance-hub section.mb-12 button[onclick*="openBaseAssetModal"],
+      #page-finance-hub section.mb-12 button[onclick*="openHubModal"] {
+        padding: 6px 10px !important; font-size: 11px !important;
+        white-space: nowrap;
+      }
+      /* 연도 네비 작게 */
+      #page-finance-hub #hub-year-label { font-size: 1rem !important; min-width: 40px !important; }
+
+      /* Monthly Artifacts 카드 grid 1열 */
+      #hub-monthly-grid { gap: 1rem !important; }
+
+      /* Summary cards 패딩/폰트 축소 */
+      #page-finance-hub section.mb-10 > div.grid > div { padding: 1.25rem !important; border-radius: 1rem !important; }
+      #page-finance-hub section.mb-10 .text-2xl { font-size: 1.25rem !important; }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
