@@ -8465,8 +8465,15 @@
           '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
           '<span class="text-sm font-semibold text-slate-800 truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title||'—') + '</span>' +
         '</div>' +
-        '<div class="col-span-3">' +
-          '<span class="text-sm text-slate-600 truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + (desc||'—') + '</span>' +
+        '<div class="col-span-3 min-w-0">' +
+          (function(){
+            var parts = (desc||'—').split('\n');
+            var main = parts[0];
+            var note = parts.slice(1).join(' ');
+            var html = '<span class="block text-sm text-slate-700 font-medium truncate ' + (checked?'line-through opacity-50':'') + '"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + main + '</span>';
+            if (note) html += '<span class="block text-[11px] text-slate-400 truncate mt-0.5">' + note + '</span>';
+            return html;
+          })() +
         '</div>' +
         '<div class="col-span-2">' +
           '<span class="text-xs text-slate-400 font-medium truncate"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>' + (city||'—') + '</span>' +
@@ -9023,6 +9030,46 @@
     }
     alert('완료: ' + ok + '/' + items.length + '개 추가됨' + (fail ? ' (실패 ' + fail + '개)' : ''));
     if (typeof loadJourney === 'function') await loadJourney();
+  };
+
+  // 기존 기념품에 설명(note) 한 줄씩 추가 (description 두 번째 라인)
+  window.addSouvenirNotes2026 = async function() {
+    var trip = (typeof tripsData !== 'undefined' ? tripsData : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof getCurrentTrip === 'function' && getCurrentTrip() && getCurrentTrip().name === '2026 독일&이탈리아' ? getCurrentTrip() : null);
+    if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요.'); return; }
+    // 품목명 keyword → note 매핑
+    var noteMap = [
+      {match:/가죽/, note:'질 좋은 가죽 특산지. 로고 없는 클래식.'},
+      {match:/마비스|Marvis/i, note:'치약계의 샤넬. 사무실 책상에 두기 좋음.'},
+      {match:/포켓 ?커피|Pocket ?Coffee/i, note:'10월부터 마트 풀림. 부피 작아 돌리기 최고.'},
+      {match:/사비니|Savini|트러플/i, note:'짜파게티/감튀에 뿌리면 감동. 마성의 조미료.'},
+      {match:/암펠만|Ampelmann/i, note:'베를린 한정. 귀여운 굿즈, 은근히 힙함.'},
+      {match:/아트북|포스터|엽서/, note:'타이포·레이아웃 미친 베를린 현대 미술.'},
+      {match:/세라믹|타일/, note:'레몬·올리브 패턴. 이탈리아 햇살 느낌.'},
+      {match:/비알레띠|Bialetti|모카포트/i, note:'주방 인테리어 완성. 클래식 디자인 아이콘.'},
+    ];
+    var existing = (journeyData||[]).filter(function(d){ return d.trip_id === trip._id && d.type === '기념품'; });
+    if (!existing.length) { alert('기념품 항목이 없어요. 먼저 import 하세요.'); return; }
+    var ok = 0;
+    for (var i = 0; i < existing.length; i++) {
+      var item = existing[i];
+      var desc = item.description || '';
+      // 이미 \n 있으면 skip
+      if (desc.indexOf('\n') >= 0) continue;
+      var note = '';
+      for (var k = 0; k < noteMap.length; k++) {
+        if (noteMap[k].match.test(desc)) { note = noteMap[k].note; break; }
+      }
+      if (!note) continue;
+      var newDesc = desc + '\n' + note;
+      try {
+        await fbUpdate('journey', item._id, { description: newDesc });
+        item.description = newDesc;
+        ok++;
+      } catch(e) { console.error(e); }
+    }
+    alert(ok + '개 항목에 설명 추가 완료!');
+    if (typeof renderJourneySouvenir === 'function') renderJourneySouvenir();
   };
 
   // 잘못된 기념품 import 정리 + 깔끔하게 재등록
