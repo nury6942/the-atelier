@@ -1125,7 +1125,8 @@
                   <div>
                     <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
                     <div class="relative">
-                      <input id="stay-city" type="text" placeholder="예: Prague" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      <input id="stay-city" type="text" list="stay-city-list" placeholder="예: Prague" oninput="onInlineStayCityChange()" onchange="onInlineStayCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      <datalist id="stay-city-list"></datalist>
                       <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
                     </div>
                   </div>
@@ -5644,6 +5645,7 @@
       citiesData.sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
       saveCityCache(tripId, citiesData);
       renderCityCards();
+      _refreshStayCityDatalist();
     } catch(err) { console.error('Cities load error:', err); citiesData = []; renderCityCards(); }
   }
 
@@ -6804,6 +6806,7 @@
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
+      await syncJourneyToFinance(saved);
       renderJourneyLodging();
       updateJourneyCost();
       // 폼 초기화
@@ -7470,6 +7473,7 @@
     try {
       await fbUpdate('journey', id, update);
       Object.assign(item, update);
+      await syncJourneyToFinance(item);
       renderJourneyFlights();
       updateJourneyCost();
       closeFlightEditModal();
@@ -7493,6 +7497,7 @@
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
+      await syncJourneyToFinance(saved);
       ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-price'].forEach(function(id){document.getElementById(id).value='';});
       renderJourneyFlights();
     } catch(e) { alert('저장 실패'); }
@@ -7683,7 +7688,7 @@
       {id:'jf-amount', label:'가격', type:'text', placeholder:'예: 1743400'},
     ];
     if (type === '숙소') return [
-      {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
+      {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague', onchange:'onJourneyCityChange()'},
       {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef', autocomplete:'lodging'},
       {id:'jf-address', label:'주소', type:'text', placeholder:'예: Rybná 20, 110 00 Praha'},
       {id:'jf-phone', label:'전화번호', type:'text', placeholder:'예: +420 221 700 111'},
@@ -7710,7 +7715,7 @@
         input = '<select id="'+f.id+'" '+(f.onchange?'onchange="'+f.onchange+'"':'')+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none bg-white">'+
           f.options.map(function(o){return '<option>'+o+'</option>';}).join('')+'</select>';
       } else if (f.type === 'select_custom') {
-        input = '<input id="'+f.id+'" type="text" list="'+f.id+'-list" placeholder="'+(f.placeholder||'')+'" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>'+
+        input = '<input id="'+f.id+'" type="text" list="'+f.id+'-list" placeholder="'+(f.placeholder||'')+'"'+(f.onchange?' oninput="'+f.onchange+'" onchange="'+f.onchange+'"':'')+' class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 outline-none"/>'+
           '<datalist id="'+f.id+'-list">'+(f.options||[]).map(function(o){return '<option value="'+o+'">'+o+'</option>';}).join('')+'</datalist>';
       } else {
         var dateAttrs = '';
@@ -7948,6 +7953,100 @@
     currentJourneyType = null;
   }
 
+  // ===== JOURNEY ↔ FINANCE 자동 동기화 헬퍼 =====
+  function _journeyToFinanceCategory(item) {
+    if (item.type === '숙소') return '숙소';
+    if (item.type === '항공편') return '항공';
+    if (item.type === '이동수단') {
+      var combined = ((item.title||'') + ' ' + (item.description||'')).toLowerCase();
+      if (/렌트|rent/.test(combined)) return '렌트';
+      return '교통';
+    }
+    if (item.type === '일정') return '티켓';
+    return '기타';
+  }
+
+  function _journeyToFinanceObj(item, tripName) {
+    var desc;
+    if (item.type === '숙소') desc = (item.title||'숙소') + (item.city ? ' (' + item.city + ')' : '');
+    else if (item.type === '항공편') desc = (item.title||'항공편') + (item.description ? ' · ' + item.description : '');
+    else if (item.type === '이동수단') desc = (item.title||'이동') + (item.description ? ' · ' + item.description : '');
+    else desc = item.title || item.type || '여행 비용';
+    return {
+      date: item.payment_date || item.date || '',
+      description: desc,
+      trip: tripName,
+      category: _journeyToFinanceCategory(item),
+      amount: String(item.amount||'').replace(/,/g,''),
+      currency: 'KRW',
+      journey_id: item._id,
+    };
+  }
+
+  async function syncJourneyToFinance(item) {
+    var amt = parseFloat(String(item.amount||'').replace(/[^0-9.]/g,''));
+    if (!amt || amt === 0) return;
+    var tripName = getCurrentTrip() ? getCurrentTrip().name : '';
+    if (!tripName) return;
+    var financeObj = _journeyToFinanceObj(item, tripName);
+    try {
+      if (item.finance_id) {
+        await fbUpdate('finance', item.finance_id, financeObj);
+      } else {
+        var finSaved = await fbAdd('finance', financeObj);
+        await fbUpdate('journey', item._id, {finance_id: finSaved._id});
+        item.finance_id = finSaved._id;
+        showSyncToast('💰 재정에 자동 등록 (' + tripName + ' · ' + financeObj.category + ')');
+      }
+    } catch(e) { console.error('[syncJourneyToFinance]', e); }
+  }
+
+  async function deleteJourneyFinance(item) {
+    if (item && item.finance_id) {
+      try { await fbDelete('finance', item.finance_id); } catch(e) { console.error('[deleteJourneyFinance]', e); }
+    }
+  }
+
+  // 도시 → 날짜 범위 (voyage path stop 데이터에서)
+  function getCityDateRange(cityName) {
+    if (!cityName) return null;
+    var c = (citiesData||[]).find(function(c){ return c.name === cityName; });
+    if (!c) return null;
+    return { start_date: c.start_date||'', end_date: c.end_date||'' };
+  }
+
+  // 인라인 숙소 폼 datalist 갱신 (도시 자동완성용)
+  function _refreshStayCityDatalist() {
+    var dl = document.getElementById('stay-city-list');
+    if (!dl) return;
+    dl.innerHTML = (citiesData||[]).map(function(c){
+      var label = c.name + (c.start_date && c.end_date ? ' (' + c.start_date + '~' + c.end_date + ')' : '');
+      return '<option value="' + c.name + '">' + label + '</option>';
+    }).join('');
+  }
+
+  // 인라인 숙소 폼: 도시 선택 시 체크인/체크아웃 날짜 자동 입력
+  function onInlineStayCityChange() {
+    var city = (document.getElementById('stay-city')||{}).value||'';
+    var range = getCityDateRange(city);
+    if (!range) return;
+    var inEl = document.getElementById('stay-checkin-date');
+    var outEl = document.getElementById('stay-checkout-date');
+    if (inEl && !inEl.value && range.start_date) inEl.value = range.start_date;
+    if (outEl && !outEl.value && range.end_date) outEl.value = range.end_date;
+  }
+
+  // 항목 모달 (jf-city) 도시 변경 시 체크인/체크아웃 날짜 자동 입력
+  function onJourneyCityChange() {
+    var city = (document.getElementById('jf-city')||{}).value||'';
+    var range = getCityDateRange(city);
+    if (!range) return;
+    var inEl = document.getElementById('jf-date');
+    var outEl = document.getElementById('jf-checkout-date');
+    if (inEl && !inEl.value && range.start_date) inEl.value = range.start_date;
+    if (outEl && !outEl.value && range.end_date) outEl.value = range.end_date;
+  }
+
   async function saveJourneyEntry() {
     var btn = document.getElementById('journey-save-btn');
     btn.textContent = '저장 중...'; btn.disabled = true;
@@ -7996,41 +8095,15 @@
     }
     try {
       if (editingJourneyIndex !== null) {
-        await fbUpdate('journey', journeyData[editingJourneyIndex]._id, obj);
-        // 재정 연동 업데이트
-        if (obj.type === '숙소' && obj.finance_id) {
-          await fbUpdate('finance', obj.finance_id, {
-            date: obj.payment_date||obj.date||'',
-            description: obj.title||'',
-            trip: getCurrentTrip() ? getCurrentTrip().name : '',
-            category: '숙소',
-            amount: obj.amount||'',
-            currency: 'EUR',
-          });
-        }
-        Object.assign(journeyData[editingJourneyIndex], obj);
+        var existing = journeyData[editingJourneyIndex];
+        await fbUpdate('journey', existing._id, obj);
+        Object.assign(existing, obj);
+        await syncJourneyToFinance(existing);
         editingJourneyIndex = null;
       } else {
         var saved = await fbAdd('journey', obj);
-        // 숙소면 재정에도 자동 등록
-        if (obj.type === '숙소' && obj.amount) {
-          var tripName = getCurrentTrip() ? getCurrentTrip().name : '';
-          var financeObj = {
-            date: obj.payment_date||obj.date||'',
-            description: (obj.title||'숙소') + (obj.city ? ' (' + obj.city + ')' : ''),
-            trip: tripName,
-            category: '숙소',
-            amount: obj.amount,
-            currency: 'EUR',
-            journey_id: saved._id,
-          };
-          var finSaved = await fbAdd('finance', financeObj);
-          // journey에 finance_id 저장 (나중에 업데이트용)
-          await fbUpdate('journey', saved._id, {finance_id: finSaved._id});
-          saved.finance_id = finSaved._id;
-          showSyncToast('💰 재정에도 자동 등록됐어! (' + tripName + ' · 숙소)');
-        }
         journeyData.push(saved);
+        await syncJourneyToFinance(saved);
       }
       renderDayView();
       renderJourneyTransport();
@@ -8045,7 +8118,9 @@
 
   async function deleteJourneyRow(i) {
     try {
-      await fbDelete('journey', journeyData[i]._id);
+      var item = journeyData[i];
+      await deleteJourneyFinance(item);
+      await fbDelete('journey', item._id);
       journeyData.splice(i, 1);
       renderDayView();
       renderJourneyTransport();
