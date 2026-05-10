@@ -5025,9 +5025,16 @@
       if (isOutMonth) {
         cell.style.background = 'rgba(243,244,245,0.4)';
         cell.style.opacity = '0.5';
-      } else if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
+      }
+      // 공휴일은 어떤 일정이 들어오든 무조건 빨간 배경 유지 (연차/특별/오늘과 그라데이션 결합)
+      else if (isHoliday) {
+        if (hasLeave) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,#FCC98F60)';
+        else if (hasSpecial) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,#FFE0E060)';
+        else if (isToday) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,rgba(107,56,212,0.10))';
+        else cell.style.background = '#FFCDCD';
+      }
+      else if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
       else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,224,224,0.5))' : 'rgba(107,56,212,0.04)'; }
-      else if (isHoliday) { cell.style.background = '#FFCDCD'; }
       else if (hasSpecial) { cell.style.background = '#FFE0E0'; }
       if (isToday) { cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       cell.dataset.date = dateStr;
