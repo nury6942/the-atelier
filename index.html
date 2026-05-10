@@ -229,6 +229,40 @@
     .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
     .calendar-page #planner-grid { overflow: visible; }
 
+    /* ===== 캘린더 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      .calendar-page .page-content-wrap { padding-left: 0.75rem !important; padding-right: 0.75rem !important; padding-top: 1rem !important; }
+      .calendar-page section { padding: 0.75rem !important; border-radius: 1rem !important; }
+      .calendar-page #planner-grid > div {
+        min-height: 60px; padding: 4px 2px;
+      }
+      .calendar-page .cal-day-header { padding: 0.5rem 0.25rem !important; font-size: 10px; }
+      /* 휴일명: 가로 잘림(말줄임), 세로 쌓임 방지 */
+      .calendar-page #planner-grid > div span[style*="color:#8B1A1A"] {
+        display: inline-block; max-width: 100%; overflow: hidden;
+        text-overflow: ellipsis; white-space: nowrap; font-size: 7px;
+        vertical-align: middle;
+      }
+      /* 이벤트 칩 작게 + 1줄 잘림 */
+      .calendar-page #planner-grid > div > div[class*="text-[13px]"],
+      .calendar-page #planner-grid > div > div[class*="text-[12px]"] {
+        font-size: 9px !important;
+        padding: 2px 4px !important;
+        margin-top: 2px !important;
+      }
+      .calendar-page #planner-grid > div > div span.truncate { font-size: 9px !important; }
+      /* 캘린더 헤더(연/월/오늘/연차/일정추가/새작품) 모바일에서 줄바꿈 + 좁게 */
+      .calendar-page section > div.flex.items-center.justify-between.mb-8 {
+        flex-wrap: wrap; gap: 8px; margin-bottom: 1rem !important;
+      }
+      .calendar-page section > div.flex.items-center.justify-between.mb-8 > div { gap: 6px !important; }
+      .calendar-page #cal-leave-tracker { padding: 4px !important; font-size: 11px; }
+      .calendar-page #cal-special-tracker { padding: 4px !important; font-size: 11px; }
+      .calendar-page section button { padding: 6px 10px !important; font-size: 11px; }
+      /* 오늘 셀 outline 줄임 */
+      .calendar-page #planner-grid > div[style*="outline"] { border-radius: 6px !important; }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
