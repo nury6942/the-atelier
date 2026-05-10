@@ -7345,16 +7345,37 @@
     if (hasSunrise && hasSunset) return;
 
     var geo = await geocodeCity(cityName);
-    if (!geo) return;
+    if (!geo) { console.warn('[sun] geocode failed:', cityName); return; }
 
     try {
-      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
-        '&daily=sunrise,sunset&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      // 16일 이내는 forecast, 그 이상은 archive(작년 같은 날짜)로 fallback
+      var today = new Date();
+      var target = new Date(dateStr + 'T00:00:00');
+      var diffDays = Math.round((target - today) / (1000*60*60*24));
+      var fetchDate = dateStr;
+      var url;
+      if (diffDays >= -2 && diffDays <= 15) {
+        url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=sunrise,sunset&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      } else if (diffDays < -2) {
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=sunrise,sunset&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      } else {
+        // 미래(16일 이후): 작년 같은 날짜 사용
+        var ly = new Date(target); ly.setFullYear(ly.getFullYear() - 1);
+        fetchDate = ly.getFullYear()+'-'+String(ly.getMonth()+1).padStart(2,'0')+'-'+String(ly.getDate()).padStart(2,'0');
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
+          '&daily=sunrise,sunset&timezone=auto&start_date=' + fetchDate + '&end_date=' + fetchDate;
+      }
       var res = await fetch(url);
       var data = await res.json();
-      if (!data.daily || !data.daily.sunrise || !data.daily.sunrise[0]) return;
-      var srTime = data.daily.sunrise[0].split('T')[1] || '';
-      var ssTime = data.daily.sunset[0].split('T')[1] || '';
+      if (!data.daily || !data.daily.sunrise || !data.daily.sunrise[0]) {
+        console.warn('[sun] no data for', cityName, dateStr, 'fetchDate=', fetchDate, data);
+        return;
+      }
+      var srTime = (data.daily.sunrise[0].split('T')[1] || '').substring(0,5);
+      var ssTime = (data.daily.sunset[0].split('T')[1] || '').substring(0,5);
+      console.log('[sun]', cityName, dateStr, '→', srTime, '/', ssTime);
 
       var added = false;
       if (!hasSunrise && srTime) {
