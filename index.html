@@ -7187,9 +7187,10 @@
       var descHtml = descText
         ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed cursor-pointer" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleDesc(this,'+realIdx+')">' + descText + '</p>'
         : '<p class="text-[11px] text-slate-300 italic mt-1 cursor-pointer hover:text-indigo-400" ondblclick="editScheduleDesc(this,'+realIdx+')">+ 내용 추가 (더블클릭)</p>';
+      var timeLabel = item.time ? (item.time + (item.end_time ? '-' + item.end_time : '')) : '';
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-sky-400 ring-4 ring-white shadow-sm"></div>' +
-        (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1 cursor-pointer" ondblclick="editScheduleTime(this,'+realIdx+')">' + item.time + '</div>' : '') +
+        (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + '</div>' : '') +
         '<div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + (item.title||'') + '</h5>' +
@@ -7221,11 +7222,61 @@
 
   // ===== 일정 인라인 편집/추가 =====
   function editScheduleTime(el, idx) {
-    inlineEditTd(el, function(val) {
-      journeyData[idx].time = val;
-      fbUpdate('journey', journeyData[idx]._id, {time:val}).catch(function(){});
-      renderDayView();
-    });
+    if (el.querySelector('input')) return;
+    var origHtml = el.innerHTML;
+    var item = journeyData[idx];
+    var wrap = document.createElement('div');
+    wrap.className = 'flex items-center gap-1';
+    var inStart = document.createElement('input');
+    inStart.type = 'text';
+    inStart.value = item.time || '';
+    inStart.placeholder = '09:00';
+    inStart.className = 'border-0 border-b border-indigo-400 bg-transparent px-1 py-0.5 text-[10px] outline-none w-12 focus:border-indigo-600 text-center';
+    var sep = document.createElement('span');
+    sep.textContent = '-';
+    sep.className = 'text-slate-400';
+    var inEnd = document.createElement('input');
+    inEnd.type = 'text';
+    inEnd.value = item.end_time || '';
+    inEnd.placeholder = '끝 (선택)';
+    inEnd.className = 'border-0 border-b border-indigo-400 bg-transparent px-1 py-0.5 text-[10px] outline-none w-14 focus:border-indigo-600 text-center';
+    wrap.appendChild(inStart); wrap.appendChild(sep); wrap.appendChild(inEnd);
+    el.innerHTML = '';
+    el.appendChild(wrap);
+    inStart.focus(); inStart.select();
+    var done = false;
+    function finish(save) {
+      if (done) return; done = true;
+      if (save) {
+        var startVal = inStart.value.trim();
+        var endVal = inEnd.value.trim();
+        item.time = startVal;
+        item.end_time = endVal;
+        fbUpdate('journey', item._id, {time:startVal, end_time:endVal}).catch(function(){});
+        renderDayView();
+      } else {
+        el.innerHTML = origHtml;
+      }
+    }
+    function onKey(e) {
+      if (e.key === 'Enter') { e.preventDefault();
+        if (e.target === inStart && !inEnd.value) { inEnd.focus(); return; }
+        finish(true);
+      }
+      if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      if (e.key === 'Tab' && e.target === inStart) { /* 자연스러운 탭 이동 */ }
+    }
+    inStart.addEventListener('keydown', onKey);
+    inEnd.addEventListener('keydown', onKey);
+    var blurTimer = null;
+    function onBlur() {
+      clearTimeout(blurTimer);
+      blurTimer = setTimeout(function() {
+        if (document.activeElement !== inStart && document.activeElement !== inEnd) finish(true);
+      }, 50);
+    }
+    inStart.addEventListener('blur', onBlur);
+    inEnd.addEventListener('blur', onBlur);
   }
   function editScheduleTitle(el, idx) {
     inlineEditTd(el, function(val) {
@@ -7291,7 +7342,11 @@
     div.innerHTML =
       '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-indigo-300 ring-4 ring-white shadow-sm"></div>' +
       '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(107,56,212,0.06),rgba(99,102,241,0.08))">' +
-        '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1.5 w-16"/>' +
+        '<div class="flex items-center gap-1 mb-1.5">' +
+          '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-14 text-center"/>' +
+          '<span class="text-[10px] text-slate-400">-</span>' +
+          '<input id="sched-add-end-time" type="text" placeholder="끝 (선택)" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-16 text-center"/>' +
+        '</div>' +
         '<input id="sched-add-title" type="text" placeholder="제목 입력..." class="'+ic+' w-full font-bold text-sm mb-2" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();document.getElementById(\'sched-add-desc\').focus();}"/>' +
         '<textarea id="sched-add-desc" placeholder="내용 입력 (선택)..." rows="2" class="'+ic+' w-full text-xs resize-none" style="line-height:1.5" onkeydown="if(event.key===\'Enter\'&&(event.metaKey||event.ctrlKey)){event.preventDefault();saveScheduleInline();}"></textarea>' +
         '<div class="flex gap-2 justify-end mt-2">' +
@@ -7311,10 +7366,11 @@
     var div = document.querySelector('.schedule-inline-add');
     if (!div) return;
     var time = document.getElementById('sched-add-time').value.trim();
+    var endTime = document.getElementById('sched-add-end-time').value.trim();
     var title = document.getElementById('sched-add-title').value.trim();
     var desc = document.getElementById('sched-add-desc').value.trim();
     if (!title) { alert('일정 제목을 입력해줘!'); return; }
-    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, city:div.dataset.city, title:title, description:desc };
+    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:div.dataset.city, title:title, description:desc };
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
