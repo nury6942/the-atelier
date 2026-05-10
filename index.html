@@ -7388,7 +7388,7 @@
       var actionBtns = '' +
         '<button onclick="editJourneyItem('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
         '<button onclick="deleteJourneyRow('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>';
-      return flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:'', duration:'', baggage:'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
+      return flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:f.arrive||'', duration:f.duration||'', baggage:f.baggage||'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
     }).join('');
 
     container.innerHTML = html || '<p class="text-center text-xs text-slate-400 py-6">항공편을 추가해봐!</p>';
