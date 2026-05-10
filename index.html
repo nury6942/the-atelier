@@ -1729,12 +1729,55 @@
           <button onclick="closeBudgetModal()" class="atl-modal-close"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
         </div>
         <div class="atl-modal-body">
-          <div class="atl-grid-2">
-            <div class="atl-field"><label>항공권</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">flight</span><input id="budget-flight" type="text" placeholder="예: 1,900,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
-            <div class="atl-field"><label>숙소</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">bed</span><input id="budget-accom" type="text" placeholder="예: 1,530,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
-            <div class="atl-field"><label>투어</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">attractions</span><input id="budget-tour" type="text" placeholder="예: 1,080,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
-            <div class="atl-field"><label>생활비</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">restaurant</span><input id="budget-living" type="text" placeholder="예: 1,260,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/></div></div>
+          <!-- 여행 일수 표시 -->
+          <div class="bg-slate-50 rounded-xl p-3 flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-500" style="font-size:18px">date_range</span>
+              <span class="text-xs text-slate-500">여행 일수</span>
+            </div>
+            <span id="budget-days-display" class="text-sm font-black text-slate-700">— 일</span>
           </div>
+
+          <!-- 항공권: 고정 총액 -->
+          <div class="atl-field">
+            <label>항공권 <span class="text-[10px] font-normal text-slate-400 ml-1">(왕복 총액)</span></label>
+            <div class="atl-field-input">
+              <span class="atl-field-icon material-symbols-outlined">flight</span>
+              <input id="budget-flight" type="text" placeholder="예: 1,900,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
+            </div>
+          </div>
+
+          <!-- 숙소/투어/생활비: 1일치 × 일수 -->
+          <div class="atl-grid-2">
+            <div class="atl-field">
+              <label>숙소 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
+              <div class="atl-field-input">
+                <span class="atl-field-icon material-symbols-outlined">bed</span>
+                <input id="budget-accom-per-day" type="text" placeholder="예: 170,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1 text-right">총 <span id="budget-accom-total" class="font-bold text-slate-600">₩0</span></p>
+            </div>
+            <div class="atl-field">
+              <label>투어 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
+              <div class="atl-field-input">
+                <span class="atl-field-icon material-symbols-outlined">attractions</span>
+                <input id="budget-tour-per-day" type="text" placeholder="예: 120,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1 text-right">총 <span id="budget-tour-total" class="font-bold text-slate-600">₩0</span></p>
+            </div>
+            <div class="atl-field">
+              <label>생활비 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
+              <div class="atl-field-input">
+                <span class="atl-field-icon material-symbols-outlined">restaurant</span>
+                <input id="budget-living-per-day" type="text" placeholder="예: 140,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1 text-right">총 <span id="budget-living-total" class="font-bold text-slate-600">₩0</span></p>
+            </div>
+            <div class="atl-field">
+              <!-- 빈 칸 (그리드 정렬용) -->
+            </div>
+          </div>
+
           <div class="bg-indigo-50 rounded-xl p-4 flex items-center justify-between mt-2">
             <span class="text-sm font-bold text-slate-700">총 예산</span>
             <span id="budget-total-display" class="text-xl font-extrabold text-indigo-700">₩0</span>
@@ -8931,16 +8974,28 @@
   function _parseAmt(str) { return parseFloat((str||'').replace(/,/g,'')) || 0; }
   function _fmtAmt(n) { return n ? n.toLocaleString('ko-KR') : ''; }
 
+  function getTripDays(trip) {
+    if (!trip || !trip.start_date || !trip.end_date) return 1;
+    var start = new Date(trip.start_date + 'T00:00:00');
+    var end = new Date(trip.end_date + 'T00:00:00');
+    var days = Math.round((end - start) / 86400000) + 1;
+    return days > 0 ? days : 1;
+  }
+
+  var _budgetEditingDays = 1;
+
   function openBudgetModal() {
     if (currentFinanceTrip === 'all') return;
     var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
     if (!trip) return;
     var b = trip.budget || {};
+    _budgetEditingDays = getTripDays(trip);
     document.getElementById('budget-modal-title').textContent = trip.name + ' 예산';
+    document.getElementById('budget-days-display').textContent = _budgetEditingDays + '일';
     document.getElementById('budget-flight').value = _fmtAmt(parseFloat(b.flight)||0);
-    document.getElementById('budget-accom').value = _fmtAmt(parseFloat(b.accom)||0);
-    document.getElementById('budget-tour').value = _fmtAmt(parseFloat(b.tour)||0);
-    document.getElementById('budget-living').value = _fmtAmt(parseFloat(b.living)||0);
+    document.getElementById('budget-accom-per-day').value = _fmtAmt(parseFloat(b.accomPerDay)||0);
+    document.getElementById('budget-tour-per-day').value = _fmtAmt(parseFloat(b.tourPerDay)||0);
+    document.getElementById('budget-living-per-day').value = _fmtAmt(parseFloat(b.livingPerDay)||0);
     updateBudgetTotal();
     document.getElementById('budget-modal').style.cssText = 'display:flex!important';
   }
@@ -8950,22 +9005,39 @@
   }
 
   function updateBudgetTotal() {
-    var t = _parseAmt(document.getElementById('budget-flight').value) +
-            _parseAmt(document.getElementById('budget-accom').value) +
-            _parseAmt(document.getElementById('budget-tour').value) +
-            _parseAmt(document.getElementById('budget-living').value);
-    document.getElementById('budget-total-display').textContent = '₩' + t.toLocaleString('ko-KR');
+    var days = _budgetEditingDays;
+    var flight = _parseAmt(document.getElementById('budget-flight').value);
+    var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
+    var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
+    var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
+    var accomTotal = accomPerDay * days;
+    var tourTotal = tourPerDay * days;
+    var livingTotal = livingPerDay * days;
+    document.getElementById('budget-accom-total').textContent = '₩' + accomTotal.toLocaleString('ko-KR');
+    document.getElementById('budget-tour-total').textContent = '₩' + tourTotal.toLocaleString('ko-KR');
+    document.getElementById('budget-living-total').textContent = '₩' + livingTotal.toLocaleString('ko-KR');
+    var total = flight + accomTotal + tourTotal + livingTotal;
+    document.getElementById('budget-total-display').textContent = '₩' + total.toLocaleString('ko-KR');
   }
 
   async function saveBudget() {
     if (currentFinanceTrip === 'all') return;
     var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
     if (!trip) return;
+    var days = _budgetEditingDays;
+    var flight = _parseAmt(document.getElementById('budget-flight').value);
+    var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
+    var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
+    var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
     var budget = {
-      flight: _parseAmt(document.getElementById('budget-flight').value),
-      accom:  _parseAmt(document.getElementById('budget-accom').value),
-      tour:   _parseAmt(document.getElementById('budget-tour').value),
-      living: _parseAmt(document.getElementById('budget-living').value),
+      flight: flight,
+      accom: accomPerDay * days,
+      tour: tourPerDay * days,
+      living: livingPerDay * days,
+      accomPerDay: accomPerDay,
+      tourPerDay: tourPerDay,
+      livingPerDay: livingPerDay,
+      days: days,
     };
     var btn = document.getElementById('budget-save-btn');
     btn.disabled = true;
