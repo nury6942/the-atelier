@@ -1646,6 +1646,27 @@
           </div>
         </section>
 
+        <!-- 트립 노트 -->
+        <section class="mb-8">
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between cursor-pointer" onclick="toggleTripNotes()">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-500" style="font-size:18px">sticky_note_2</span>
+                <h4 class="font-manrope font-bold text-slate-800">트립 노트</h4>
+                <span id="trip-notes-status" class="text-[10px] text-slate-400">—</span>
+              </div>
+              <span id="trip-notes-chevron" class="material-symbols-outlined text-slate-400 transition-transform">expand_more</span>
+            </div>
+            <div id="trip-notes-body" class="p-4" style="display:none">
+              <textarea id="trip-notes-textarea" placeholder="자유롭게 작성하세요. 예약 체크리스트, 교통 정보, 짐 리스트 등 무엇이든.&#10;&#10;예:&#10;## 예약 체크리스트&#10;- [ ] 보로스 컬렉션 (베를린) — 공식 홈페이지, 6~7월 확인&#10;- [ ] 독일 ICE 1등석 — DB Navigator, 1개월 전" class="w-full min-h-[300px] p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-mono outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 leading-relaxed" style="resize:vertical"></textarea>
+              <div class="flex justify-between items-center mt-3">
+                <p id="trip-notes-saved" class="text-[10px] text-slate-400">—</p>
+                <button onclick="saveTripNotes()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors">저장</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Day Navigator + Content -->
         <div class="grid grid-cols-12 gap-8 mb-10">
 
@@ -6670,12 +6691,111 @@
     renderJourneyLodging();
     renderJourneyFlights();
     renderJourneySouvenir();
+    loadTripNotes();
     updateJourneyCost();
   }
 
   function getCurrentTrip() {
     return tripsData.find(function(t){ return t._id === currentTripId; });
   }
+
+  // ===== TRIP NOTES =====
+  function loadTripNotes() {
+    var trip = getCurrentTrip();
+    var ta = document.getElementById('trip-notes-textarea');
+    var status = document.getElementById('trip-notes-status');
+    var saved = document.getElementById('trip-notes-saved');
+    if (!trip || !ta) return;
+    ta.value = trip.notes || '';
+    var hasNotes = !!(trip.notes && trip.notes.trim());
+    if (status) status.textContent = hasNotes ? '작성됨' : '비어있음';
+    if (saved) saved.textContent = trip.notesUpdatedAt ? '마지막 저장: ' + new Date(trip.notesUpdatedAt).toLocaleString('ko-KR') : '아직 저장 안 됨';
+  }
+
+  function toggleTripNotes() {
+    var body = document.getElementById('trip-notes-body');
+    var chev = document.getElementById('trip-notes-chevron');
+    if (!body) return;
+    var isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    if (chev) chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+  }
+
+  async function saveTripNotes() {
+    var trip = getCurrentTrip();
+    if (!trip) { alert('트립이 선택되지 않았어요.'); return; }
+    var ta = document.getElementById('trip-notes-textarea');
+    if (!ta) return;
+    var notes = ta.value;
+    var now = new Date().toISOString();
+    try {
+      await fbUpdate('trips', trip._id, { notes: notes, notesUpdatedAt: now });
+      trip.notes = notes;
+      trip.notesUpdatedAt = now;
+      var status = document.getElementById('trip-notes-status');
+      var saved = document.getElementById('trip-notes-saved');
+      if (status) status.textContent = notes.trim() ? '작성됨' : '비어있음';
+      if (saved) saved.textContent = '마지막 저장: ' + new Date(now).toLocaleString('ko-KR');
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 트립 노트 저장 완료');
+    } catch(e) {
+      console.error('[TripNotes] Save error:', e);
+      alert('저장 실패: ' + e.message);
+    }
+  }
+  window.toggleTripNotes = toggleTripNotes;
+  window.saveTripNotes = saveTripNotes;
+
+  // 2026 독일&이탈리아 트립 노트 자동 입력
+  window.importGermanyItalyTripNotes2026 = async function() {
+    var trip = (window.tripsData||[]).find(function(t){return t.name==='2026 독일&이탈리아';});
+    if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요.'); return; }
+    var notes = '## 📋 사전 예약 체크리스트\n\n' +
+      '- [ ] **보로스 컬렉션 (베를린)** — 지금 당장 (6~7월 확인) / 공식 홈페이지\n' +
+      '  - 100% 가이드 투어제. 10/3은 공휴일이라 매진. 영어 투어 시간 사수.\n\n' +
+      '- [ ] **독일 ICE 기차 (1등석)** — 최소 1개월 전 / 독일 철도청(DB)\n' +
+      '  - 10/3 이동편. 슈파프라이스 할인. 1등석은 좌석 지정 포함.\n\n' +
+      '- [ ] **베를린 → 피렌체 항공** — 지금 당장 / 루프트한자 또는 ITA\n' +
+      '  - 10/5(월) 오전 노선 수요 많음. 수하물 규정(23kg) 확인.\n\n' +
+      '- [ ] **이탈리아 렌터카** — 최소 1개월 전 / Hertz, Avis 등\n' +
+      '  - 피렌체 공항 픽업 → 로마 공항 반납. 오토 + 풀커버 보험 필수.\n\n' +
+      '- [ ] **시에나 대성당 통합권** — 2주 전 / 공식 홈페이지\n' +
+      '  - "천장의 문(Gate of Heaven)" 포함 OPA SI PASS. 현장 줄 매우 김.\n\n' +
+      '- [ ] **오르비에토 주차장** — 숙소 예약 직후 / 숙소 메시지\n' +
+      '  - "발렌티나" 숙소에 메시지 보내 전용 주차 자리 미리 찜.\n\n' +
+      '---\n\n' +
+      '## 🚇 도시별 교통 가이드\n\n' +
+      '### 프랑크푸르트 (10/2)\n' +
+      '- **수단**: S-Bahn (공항 → 시내) — 편도 1회권\n' +
+      '- **비용**: 약 €6\n' +
+      '- **전략**: 공항→중앙역 숙소 한 번만. 시내는 도보. 기계 영어 설정 후 구매.\n\n' +
+      '### 독일 기차 이동 (10/3)\n' +
+      '- **수단**: DB ICE 고속열차 (프랑크푸르트 → 베를린)\n' +
+      '- **비용**: 약 €30~80 (사전예매 필수)\n' +
+      '- **전략**: DB Navigator 앱 한국에서 미리 예매. 일찍 살수록 싸고 1등석 싸게 가능. QR 탑승.\n\n' +
+      '### 베를린 (10/3~10/4)\n' +
+      '- **수단**: Contactless 결제 또는 BVG 앱 24시간권\n' +
+      '- **비용**: 1회 €3.5 / 24h €9.9\n' +
+      '- **전략**: 트래블월렛/컨택트리스 카드 단말기 태그(일부 노선). 하루 3번+이면 24시간권 이득.\n\n' +
+      '### 토스카나 (10/5~10/9)\n' +
+      '- **수단**: 렌터카 🚗\n' +
+      '- **⚠️ 주의**: ZTL(교통제한구역). 피렌체/시에나 성벽 안쪽은 허가 차량만. 벌금 비쌈. 내비 "Avoid ZTL" 필수.\n\n' +
+      '### 로마 (10/9~10/11)\n' +
+      '- **수단**: Tap & Go 컨택트리스 + 레오나르도 익스프레스\n' +
+      '- **비용**: 1회 €1.5 / 공항철도 €14\n' +
+      '- **전략**: 지하철·버스 모두 컨택트리스로 단말기 찍고 탑승. 공항은 테르미니역에서 Leonardo Express.\n';
+    if (!confirm('"' + trip.name + '"의 트립 노트에 예약 체크리스트 + 교통 가이드를 저장합니다. 기존 노트가 있으면 덮어쓰여요. 계속할까요?')) return;
+    var now = new Date().toISOString();
+    try {
+      await fbUpdate('trips', trip._id, { notes: notes, notesUpdatedAt: now });
+      trip.notes = notes;
+      trip.notesUpdatedAt = now;
+      alert('완료! 트립 노트에 저장됐어요. 페이지 새로고침하면 보입니다.');
+      if (currentTripId === trip._id) loadTripNotes();
+    } catch(e) {
+      console.error(e);
+      alert('실패: ' + e.message);
+    }
+  };
 
   function renderTripHeader() {
     var trip = getCurrentTrip();
