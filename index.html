@@ -601,6 +601,31 @@
       #journey-flight-total .text-xl { font-size: 1rem !important; }
     }
 
+    /* ===== Memo (Reference) 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      /* 리스트 풀스크린 + 에디터는 오버레이로 (memo-edit-open 클래스 토글) */
+      #page-reference > div.flex { position: relative; height: calc(100vh - 64px) !important; }
+      #page-reference > div.flex > div:first-child {
+        width: 100% !important; border-right: none !important;
+      }
+      #page-reference > div.flex > div.flex-1 {
+        position: absolute !important; top: 0; left: 0; right: 0; bottom: 0;
+        background: white; z-index: 10; display: none !important;
+      }
+      body.memo-edit-open #page-reference > div.flex > div:first-child { display: none !important; }
+      body.memo-edit-open #page-reference > div.flex > div.flex-1 {
+        display: flex !important;
+      }
+      /* 에디터 내부 padding 축소 */
+      #ref-editor-active .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+      #ref-editor-active input#ref-editor-title { font-size: 1.25rem !important; }
+      /* 뒤로가기 버튼 (모바일에서만 표시) */
+      #ref-editor-back-mobile { display: inline-flex !important; }
+    }
+    @media (min-width: 769px) {
+      #ref-editor-back-mobile { display: none !important; }
+    }
+
     /* ===== Annie (English) 모바일 대응 ===== */
     @media (max-width: 768px) {
       #page-english .page-content-wrap {
@@ -17801,7 +17826,10 @@ speaker 설정:
           </div>
           <div id="ref-editor-active" class="flex-1 flex flex-col" style="display:none">
             <div class="px-8 pt-6 pb-2 flex items-center justify-between">
-              <p id="ref-editor-date" class="text-xs text-slate-400"></p>
+              <div class="flex items-center gap-2">
+                <button id="ref-editor-back-mobile" onclick="closeMemoEdit()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500" title="목록으로" style="display:none"><span class="material-symbols-outlined" style="font-size:20px">arrow_back</span></button>
+                <p id="ref-editor-date" class="text-xs text-slate-400"></p>
+              </div>
               <div class="flex gap-1">
                 <button onclick="toggleRefPin(_refEditingId)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="고정"><span id="ref-editor-pin-icon" class="material-symbols-outlined" style="font-size:18px">push_pin</span></button>
                 <button onclick="openRefDelModal(_refEditingId)" class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
@@ -18455,6 +18483,10 @@ function _refListItemHtml(c) {
   '</div>';
 }
 
+function closeMemoEdit() {
+  document.body.classList.remove('memo-edit-open');
+}
+
 function selectMemo(id) {
   _refEditingId = id;
   var card = _refCards.find(function(c) { return c._id === id; });
@@ -18462,6 +18494,8 @@ function selectMemo(id) {
 
   document.getElementById('ref-editor-empty').style.display = 'none';
   document.getElementById('ref-editor-active').style.display = 'flex';
+  // 모바일에서 에디터 풀스크린 모드 진입
+  if (window.innerWidth <= 768) document.body.classList.add('memo-edit-open');
 
   document.getElementById('ref-editor-title').value = card.title || '';
   var bodyEl = document.getElementById('ref-editor-body');
