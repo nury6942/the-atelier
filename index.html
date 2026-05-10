@@ -7164,6 +7164,11 @@
       if (wb) wb.classList.add('hidden');
     }
 
+    // 일출/일몰 자동 추가 (도시+날짜 있을 때만, 이미 있으면 스킵)
+    if (cityName && dateStr) {
+      autoAddSunriseSunset(cityName, dateStr);
+    }
+
     var container = document.getElementById('journey-schedule-list');
     if (items.length === 0) {
       container.innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">이 날의 일정이 없어요</div>';
@@ -7178,15 +7183,19 @@
           travelHtml = '<div id="travel-' + idx + '" class="relative pl-6 my-1"><div class="ml-1 flex items-center gap-1.5 text-[10px] text-slate-400 py-1"><span class="material-symbols-outlined" style="font-size:13px">more_vert</span><span class="italic">이동 시간 계산 중...</span></div></div>';
         }
       }
+      var descText = item.description || '';
+      var descHtml = descText
+        ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed cursor-pointer" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleDesc(this,'+realIdx+')">' + descText + '</p>'
+        : '<p class="text-[11px] text-slate-300 italic mt-1 cursor-pointer hover:text-indigo-400" ondblclick="editScheduleDesc(this,'+realIdx+')">+ 내용 추가 (더블클릭)</p>';
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-sky-400 ring-4 ring-white shadow-sm"></div>' +
         (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1 cursor-pointer" ondblclick="editScheduleTime(this,'+realIdx+')">' + item.time + '</div>' : '') +
         '<div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
-        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" ondblclick="editScheduleTitle(this,'+realIdx+')">' + (item.title||'') + '</h5>' +
+        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + (item.title||'') + '</h5>' +
         '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 shrink-0"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
         '</div>' +
-        (item.description ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed cursor-pointer" ondblclick="editScheduleDesc(this,'+realIdx+')">' + item.description + '</p>' : '') +
+        descHtml +
         '</div></div>';
     }).join('');
 
@@ -7226,11 +7235,45 @@
     });
   }
   function editScheduleDesc(el, idx) {
-    inlineEditTd(el, function(val) {
+    inlineEditTextarea(el, journeyData[idx].description || '', function(val) {
       journeyData[idx].description = val;
       fbUpdate('journey', journeyData[idx]._id, {description:val}).catch(function(){});
       renderDayView();
     });
+  }
+
+  function inlineEditTextarea(el, currentValue, saveCallback) {
+    if (el.querySelector('textarea')) return;
+    var origHtml = el.innerHTML;
+    var ta = document.createElement('textarea');
+    ta.value = currentValue;
+    ta.className = 'w-full text-xs text-slate-700 bg-white border-2 border-indigo-300 rounded-lg p-2 outline-none focus:border-indigo-500 resize-none';
+    ta.style.lineHeight = '1.6';
+    ta.style.minHeight = '60px';
+    ta.placeholder = '내용 입력 (Enter로 줄바꿈, Cmd/Ctrl+Enter로 저장, Esc 취소)';
+    el.innerHTML = '';
+    el.appendChild(ta);
+    var hint = document.createElement('div');
+    hint.className = 'text-[9px] text-slate-400 mt-1';
+    hint.textContent = 'Cmd/Ctrl+Enter 저장 · Esc 취소';
+    el.appendChild(hint);
+    ta.focus();
+    var len = ta.value.length;
+    ta.setSelectionRange(len, len);
+    var autoResize = function() { ta.style.height = 'auto'; ta.style.height = Math.max(60, ta.scrollHeight) + 'px'; };
+    ta.addEventListener('input', autoResize);
+    autoResize();
+    var done = false;
+    function finish(save) {
+      if (done) return; done = true;
+      if (save) { saveCallback(ta.value); }
+      else { el.innerHTML = origHtml; }
+    }
+    ta.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); finish(true); }
+      else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+    });
+    ta.addEventListener('blur', function() { finish(true); });
   }
 
   function addScheduleInline() {
@@ -7278,6 +7321,61 @@
       div.remove();
       renderDayView();
     } catch(e) { alert('저장 실패'); }
+  }
+
+  // ===== SUNRISE/SUNSET 자동 추가 =====
+  var _sunAttempt = {};
+  async function autoAddSunriseSunset(cityName, dateStr) {
+    if (!cityName || !dateStr || !currentTripId) return;
+    var key = currentTripId + ':' + cityName + ':' + dateStr;
+    if (_sunAttempt[key]) return;
+    _sunAttempt[key] = true;
+
+    var existing = journeyData.filter(function(d){
+      return d.type==='일정' && d.date===dateStr && d.trip_id===currentTripId;
+    });
+    var hasSunrise = existing.some(function(d){
+      var t = (d.title||'').toUpperCase();
+      return t.indexOf('SUNRISE')>=0 || (d.title||'').indexOf('일출')>=0 || d.auto_sun==='sunrise';
+    });
+    var hasSunset = existing.some(function(d){
+      var t = (d.title||'').toUpperCase();
+      return t.indexOf('SUNSET')>=0 || (d.title||'').indexOf('일몰')>=0 || d.auto_sun==='sunset';
+    });
+    if (hasSunrise && hasSunset) return;
+
+    var geo = await geocodeCity(cityName);
+    if (!geo) return;
+
+    try {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.lat + '&longitude=' + geo.lng +
+        '&daily=sunrise,sunset&timezone=auto&start_date=' + dateStr + '&end_date=' + dateStr;
+      var res = await fetch(url);
+      var data = await res.json();
+      if (!data.daily || !data.daily.sunrise || !data.daily.sunrise[0]) return;
+      var srTime = data.daily.sunrise[0].split('T')[1] || '';
+      var ssTime = data.daily.sunset[0].split('T')[1] || '';
+
+      var added = false;
+      if (!hasSunrise && srTime) {
+        var srObj = { trip_id: currentTripId, type:'일정', date: dateStr, time: srTime, city: cityName, title:'🌄 일출 (Sunrise)', description:'', auto_sun:'sunrise' };
+        var srSaved = await fbAdd('journey', srObj);
+        journeyData.push(srSaved);
+        added = true;
+      }
+      if (!hasSunset && ssTime) {
+        var ssObj = { trip_id: currentTripId, type:'일정', date: dateStr, time: ssTime, city: cityName, title:'🌇 일몰 (Sunset)', description:'', auto_sun:'sunset' };
+        var ssSaved = await fbAdd('journey', ssObj);
+        journeyData.push(ssSaved);
+        added = true;
+      }
+      if (added) {
+        // 현재 보고 있는 날짜라면 다시 렌더
+        var dayMap = getDayMap();
+        var cur = dayMap[currentDayIndex];
+        if (cur && cur.date === dateStr) renderDayView();
+      }
+    } catch(e) { console.warn('Sunrise/sunset failed:', e); }
   }
 
   // ===== WEATHER =====
