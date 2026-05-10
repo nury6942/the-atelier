@@ -436,13 +436,10 @@
       #page-ledger #ldg-kpi-strip > div { padding: 0.75rem !important; }
       #page-ledger #ldg-kpi-strip p { font-size: 14px !important; }
       #page-ledger #ldg-kpi-strip .text-xs { font-size: 10px !important; }
-      /* Two-column layout → 1열 */
-      #page-ledger #ledger-panel-monthly > div.grid.grid-cols-2 { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+      /* Two-column layout 모두 1열 (도넛 포함) — 카테고리 집계 빼고 */
       #page-ledger #ledger-panel-monthly .grid.grid-cols-2 { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
-      /* 도넛 차트는 2열 유지 (작은 차트) */
-      #page-ledger #ledger-panel-monthly .grid.grid-cols-2:has(canvas) { grid-template-columns: repeat(2, 1fr) !important; }
-      /* 도넛 캔버스 작게 */
-      #page-ledger div.relative.w-36.h-36 { width: 100px !important; height: 100px !important; }
+      /* 도넛 캔버스 크게 (이제 1행 1개라 공간 여유) */
+      #page-ledger div.relative.w-36.h-36 { width: 160px !important; height: 160px !important; }
       /* 카드 패딩 축소 */
       #page-ledger #ledger-panel-monthly .bg-white.rounded-2xl { padding: 1rem !important; border-radius: 1rem !important; }
       /* 캘린더 day header 작게 */
