@@ -2084,10 +2084,14 @@
                     <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
                     <input id="rc-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
-                  <div class="md:col-span-2">
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
-                    <input id="rc-city" type="text" list="rc-city-list" placeholder="예: Roma" oninput="onRentalCityChange()" onchange="onRentalCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
+                    <input id="rc-city" type="text" list="rc-city-list" placeholder="예: Pienza" oninput="onRentalCityChange()" onchange="onRentalCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                     <datalist id="rc-city-list"></datalist>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
+                    <input id="rc-drop-city" type="text" list="rc-city-list" placeholder="픽업 도시와 같으면 비워두기" oninput="onRentalDropCityChange()" onchange="onRentalDropCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
                   <div class="md:col-span-2 grid grid-cols-3 gap-3">
                     <div>
@@ -7676,6 +7680,7 @@
       title: company,
       description: document.getElementById('rc-model').value.trim(),
       city: document.getElementById('rc-city').value.trim(),
+      drop_city: document.getElementById('rc-drop-city').value.trim(),
       date: document.getElementById('rc-pickup-date').value,
       time: document.getElementById('rc-pickup-time').value.trim(),
       pickup_location: document.getElementById('rc-pickup-location').value.trim(),
@@ -7692,7 +7697,7 @@
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
       renderJourneyRental();
-      ['rc-company','rc-model','rc-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes'].forEach(function(id){ document.getElementById(id).value=''; });
+      ['rc-company','rc-model','rc-city','rc-drop-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes'].forEach(function(id){ document.getElementById(id).value=''; });
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
@@ -7701,12 +7706,20 @@
     var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
     var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
     var price = item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—';
+    var pickupCity = item.city || '';
+    var dropCity = item.drop_city || '';
+    var cityBadgeHtml = '';
+    if (pickupCity && dropCity && pickupCity !== dropCity) {
+      cityBadgeHtml = '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 bg-indigo-100 text-indigo-700">' + pickupCity + ' → ' + dropCity + '</span>';
+    } else if (pickupCity) {
+      cityBadgeHtml = '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 bg-indigo-100 text-indigo-700">' + pickupCity + '</span>';
+    }
     return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       '<div class="flex items-center">' +
         '<div class="flex items-center gap-3 w-1/3 min-w-0">' +
           '<div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0"><span class="material-symbols-outlined text-xl">directions_car</span></div>' +
           '<div class="min-w-0">' +
-            '<div class="flex items-center gap-2"><span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' + (item.city ? '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 bg-indigo-100 text-indigo-700">' + item.city + '</span>' : '') + '</div>' +
+            '<div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' + cityBadgeHtml + '</div>' +
             '<div class="text-xs text-slate-500 mt-0.5 truncate">' + (item.description||'') + (item.notes ? ' · ' + item.notes : '') + '</div>' +
           '</div>' +
         '</div>' +
@@ -8964,7 +8977,8 @@
     if (type === '렌트카') return [
       {id:'jf-title', label:'렌트카 회사 *', type:'text', placeholder:'예: Hertz, Sixt'},
       {id:'jf-desc', label:'차종', type:'text', placeholder:'예: BMW X3'},
-      {id:'jf-city', label:'도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Roma'},
+      {id:'jf-city', label:'픽업 도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Pienza'},
+      {id:'jf-drop-city', label:'드롭 도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'다르면 입력 (같으면 빈칸)'},
       {id:'jf-date', label:'픽업 날짜', type:'date'},
       {id:'jf-time', label:'픽업 시간', type:'text', placeholder:'예: 10:00'},
       {id:'jf-pickup-location', label:'픽업 장소', type:'text', placeholder:'예: FCO 공항'},
@@ -9072,6 +9086,7 @@
     var amountFmt = item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '';
     var fieldMap = {
       'jf-payment-date': item.payment_date, 'jf-date': item.date, 'jf-checkout-date': item.checkout_date, 'jf-time': item.time, 'jf-city': item.city,
+      'jf-drop-city': item.drop_city,
       'jf-title': item.title, 'jf-desc': item.description,
       'jf-status': item.status, 'jf-amount': amountFmt,
       'jf-address': item.address, 'jf-phone': item.phone,
@@ -9618,7 +9633,18 @@
     var pickEl = document.getElementById('rc-pickup-date');
     var dropEl = document.getElementById('rc-drop-date');
     if (pickEl && !pickEl.value && range.start_date) pickEl.value = range.start_date;
-    if (dropEl && !dropEl.value && range.end_date) dropEl.value = range.end_date;
+    // 드롭 도시가 비어있을 때만 픽업 도시 기준으로 드롭 날짜 prefill
+    var dropCityEl = document.getElementById('rc-drop-city');
+    var dropCityVal = dropCityEl ? (dropCityEl.value||'').trim() : '';
+    if (!dropCityVal && dropEl && !dropEl.value && range.end_date) dropEl.value = range.end_date;
+  }
+  function onRentalDropCityChange() {
+    var dropCity = (document.getElementById('rc-drop-city')||{}).value||'';
+    if (!dropCity) return;
+    var range = getCityDateRange(dropCity);
+    if (!range) return;
+    var dropEl = document.getElementById('rc-drop-date');
+    if (dropEl && range.end_date) dropEl.value = range.end_date;
   }
 
   // 항목 모달 (jf-city) 도시 변경 시 체크인/체크아웃 날짜 자동 입력
@@ -9658,6 +9684,7 @@
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.city = (document.getElementById('jf-city')||{}).value||'';
+      obj.drop_city = (document.getElementById('jf-drop-city')||{}).value||'';
       obj.date = (document.getElementById('jf-date')||{}).value||'';
       obj.time = (document.getElementById('jf-time')||{}).value||'';
       obj.pickup_location = (document.getElementById('jf-pickup-location')||{}).value||'';
