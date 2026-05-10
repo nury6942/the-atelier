@@ -600,106 +600,146 @@
       #page-journey .col-span-9 { grid-column: span 1 / span 1 !important; }
       /* 일정 섹션 자체는 컴팩트하게 */
       #page-journey section.col-span-3 { padding: 1rem !important; border-radius: 1.25rem !important; }
-      /* 항공편 카드: 내부 그리드를 flex column으로 강제 → 세로 배치 */
-      #journey-flight-list > div { padding: 0.75rem !important; }
+      /* === Travel 카드 통일 폰트 변수 ===
+         body=14px, label/메타=12px, 강조 숫자=18px */
+
+      /* 항공편 카드: grid 2행 레이아웃
+         row1: [icon] [항공사+편명] [가격]
+         row2: 라우트 (ICN ── FRA) 풀폭
+         row3: 액션 버튼들 */
+      #journey-flight-list > div {
+        padding: 1rem !important;
+        border-radius: 1rem !important;
+      }
       #journey-flight-list > div > div[style*="grid-template-columns"] {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-        align-items: stretch !important;
+        display: grid !important;
+        grid-template-columns: 36px 1fr auto !important;
+        grid-template-areas: "icon airline price" "route route route" "actions actions actions" !important;
+        gap: 10px 8px !important;
+        align-items: center !important;
       }
-      /* 그 안의 자식 div들은 자신의 너비대로 펼침 */
-      #journey-flight-list > div > div[style*="grid-template-columns"] > div {
-        width: 100% !important;
-        text-align: left !important;
-        justify-content: flex-start !important;
+      #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(1) {
+        grid-area: icon !important; width: auto !important;
       }
-      /* 라우트(IATA + duration) 가운데 정렬 유지 */
-      #journey-flight-list > div > div[style*="grid-template-columns"] > div.flex.items-center.justify-center {
-        justify-content: center !important;
+      #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(2) {
+        grid-area: airline !important; width: auto !important; text-align: left !important;
       }
-      /* 가격 우측 정렬 */
-      #journey-flight-list > div > div[style*="grid-template-columns"] > div.text-right {
-        text-align: right !important;
+      #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(3) {
+        grid-area: route !important; width: 100% !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        padding: 8px 4px !important;
+        background: rgba(107,56,212,0.04);
+        border-radius: 8px;
       }
-      /* 항공사명/제목/가격 폰트 다운 */
-      #journey-flight-list > div p.font-bold.text-sm { font-size: 13px !important; }
-      #journey-flight-list > div p.text-xs { font-size: 10px !important; }
-      #journey-flight-list > div p.text-xl { font-size: 16px !important; }
-      #journey-flight-list > div p.text-base { font-size: 13px !important; }
-      #journey-flight-list > div .w-10.h-10 { width: 32px !important; height: 32px !important; }
-      #journey-flight-list > div .w-10.h-10 .material-symbols-outlined { font-size: 16px !important; }
-      #journey-flight-list > div .w-12 { width: 40px !important; }
-      #journey-flight-list > div .w-14 { width: 50px !important; }
-      /* 항공편 카드 내 모든 텍스트 줄바꿈 허용 */
-      #journey-flight-list * {
-        word-break: keep-all;
-        overflow-wrap: break-word;
+      #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(4) {
+        grid-area: price !important; width: auto !important; text-align: right !important;
       }
+      #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(5) {
+        grid-area: actions !important; width: 100% !important;
+        justify-content: flex-end !important; display: flex !important;
+      }
+      /* 통일 폰트 */
+      #journey-flight-list > div p.font-bold.text-sm { font-size: 15px !important; }
+      #journey-flight-list > div p.text-xs { font-size: 12px !important; }
+      #journey-flight-list > div p.text-xl { font-size: 18px !important; }
+      #journey-flight-list > div p.text-base { font-size: 16px !important; font-weight: 700 !important; }
+      #journey-flight-list > div .w-10.h-10 { width: 36px !important; height: 36px !important; }
+      #journey-flight-list > div .w-10.h-10 .material-symbols-outlined { font-size: 18px !important; }
+      /* IATA 코드 좌우 폭을 늘려서 양쪽 끝으로 */
+      #journey-flight-list > div .w-12 { width: auto !important; flex: 0 0 auto; }
+      #journey-flight-list > div .w-14 { width: 60px !important; flex: 0 0 60px; }
+      #journey-flight-list * { word-break: keep-all; overflow-wrap: break-word; }
 
-      /* 숙소 카드: 헤더(도시 배지 + 호텔명 + HOTEL + 전화) 줄바꿈 강제 + 폰트 축소 */
-      #journey-lodging-list > div,
-      #journey-transport-list > div,
-      #journey-rental-list > div { padding: 0.75rem !important; border-radius: 1rem !important; }
-      #journey-lodging-list .flex-wrap.items-center.gap-3 {
-        gap: 6px !important;
-      }
-      /* 호텔명: 큰 폰트 다운 + 자체 줄로 강제 */
+      /* === 숙소 카드: 폰트 키움 + 통일 === */
+      #journey-lodging-list > div { padding: 1rem !important; border-radius: 1rem !important; }
+      #journey-lodging-list .flex-wrap.items-center.gap-3 { gap: 8px !important; }
+      /* 호텔명 - 메인 타이틀 */
       #journey-lodging-list h4.font-headline {
-        font-size: 14px !important;
-        line-height: 1.25 !important;
+        font-size: 17px !important;
+        line-height: 1.3 !important;
         flex-basis: 100% !important;
+        font-weight: 700 !important;
         word-break: keep-all;
-        overflow-wrap: break-word;
       }
-      /* 도시 배지 작게 */
+      /* 도시 배지 */
       #journey-lodging-list span.bg-indigo-100 {
-        font-size: 9px !important; padding: 2px 6px !important;
+        font-size: 11px !important; padding: 3px 8px !important;
       }
-      /* HOTEL 배지 + 전화번호 작게 */
+      /* HOTEL 배지 + 전화번호 */
       #journey-lodging-list span.bg-slate-50 {
-        font-size: 8px !important; padding: 1px 5px !important;
+        font-size: 11px !important; padding: 3px 8px !important;
       }
-      #journey-lodging-list .text-\[11px\] { font-size: 10px !important; }
-      /* 주소 줄바꿈 */
+      /* 주소 - 메타 */
       #journey-lodging-list p.text-\[11px\] {
-        word-break: keep-all; overflow-wrap: break-word;
+        font-size: 12px !important; line-height: 1.5 !important;
+        word-break: keep-all;
       }
-      /* check-in/out grid 4컬럼 → 2컬럼 */
+      /* check-in/out grid: 2x2 */
       #journey-lodging-list .grid.grid-cols-2 {
-        grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important;
+        grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important;
       }
-      #journey-lodging-list .text-lg { font-size: 13px !important; }
-      #journey-lodging-list .text-\[13px\] { font-size: 11px !important; }
-      /* lodging 카드 외부 flex (좌측 본문 + 우측 버튼) 줄바꿈 */
-      #journey-lodging-list > div > div.flex {
-        flex-wrap: wrap !important;
-      }
+      /* CHECK-IN/OUT 라벨 */
+      #journey-lodging-list .text-\[9px\] { font-size: 10px !important; margin-bottom: 4px !important; }
+      /* 날짜 (메인) */
+      #journey-lodging-list .text-\[13px\] { font-size: 14px !important; font-weight: 700 !important; }
+      /* 시간 (서브) */
+      #journey-lodging-list .text-\[11px\] { font-size: 12px !important; }
+      /* RATE 가격 */
+      #journey-lodging-list .text-lg { font-size: 18px !important; }
+      /* 전화번호 라인의 번호 */
+      #journey-lodging-list span.text-slate-500.text-\[11px\] { font-size: 12px !important; }
 
-      /* 이동수단 카드: 컨텐츠 세로 배치 */
+      /* === 이동수단/렌트카 카드: 통일 폰트 + 더 컴팩트 === */
+      #journey-transport-list > div,
+      #journey-rental-list > div { padding: 1rem !important; border-radius: 1rem !important; }
+      /* grid 레이아웃으로 통일 */
       #journey-transport-list > div > div.flex.items-center {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 6px !important;
+        display: grid !important;
+        grid-template-columns: 36px 1fr auto !important;
+        grid-template-areas: "icon title price" "meta meta meta" "actions actions actions" !important;
+        gap: 8px !important;
+        align-items: center !important;
       }
-      #journey-transport-list > div > div.flex.items-center > div {
-        width: 100% !important;
+      #journey-transport-list > div > div.flex.items-center > div:nth-child(1) {
+        grid-area: icon !important; width: auto !important;
       }
-      #journey-transport-list .font-bold.text-sm { font-size: 12px !important; }
-      #journey-transport-list p.text-base { font-size: 13px !important; }
-      #journey-transport-list .w-10.h-10 { width: 28px !important; height: 28px !important; }
+      #journey-transport-list > div > div.flex.items-center > div:nth-child(2) {
+        grid-area: title !important; width: auto !important;
+      }
+      #journey-transport-list > div > div.flex.items-center > div:nth-child(3) {
+        grid-area: meta !important; width: 100% !important;
+        justify-content: space-between !important;
+        background: rgba(107,56,212,0.04); border-radius: 8px; padding: 8px;
+      }
+      #journey-transport-list > div > div.flex.items-center > div:nth-child(4) {
+        grid-area: price !important; width: auto !important;
+      }
+      #journey-transport-list > div > div.flex.items-center > div:nth-child(5) {
+        grid-area: actions !important; width: 100% !important; justify-content: flex-end !important;
+      }
+      #journey-transport-list .font-bold.text-sm { font-size: 15px !important; }
+      #journey-transport-list .text-xs { font-size: 12px !important; }
+      #journey-transport-list .text-\[9px\] { font-size: 10px !important; }
+      #journey-transport-list p.text-base { font-size: 18px !important; }
+      #journey-transport-list .w-10.h-10 { width: 36px !important; height: 36px !important; }
+      #journey-transport-list .w-10.h-10 .material-symbols-outlined { font-size: 18px !important; }
       #journey-transport-list * { word-break: keep-all; overflow-wrap: break-word; }
 
-      /* 렌트카 카드: 동일하게 세로 배치 */
+      /* 렌트카 카드: 컨텐츠가 너무 다양해서 단순 column으로 */
       #journey-rental-list > div > div.flex.items-center {
+        display: flex !important;
         flex-direction: column !important;
         align-items: stretch !important;
-        gap: 6px !important;
+        gap: 8px !important;
       }
       #journey-rental-list > div > div.flex.items-center > div { width: 100% !important; }
-      #journey-rental-list .text-base,
-      #journey-rental-list .text-sm { font-size: 12px !important; }
-      #journey-rental-list .w-10.h-10 { width: 28px !important; height: 28px !important; }
+      #journey-rental-list .text-base { font-size: 18px !important; }
+      #journey-rental-list .text-sm { font-size: 14px !important; }
+      #journey-rental-list .text-xs { font-size: 12px !important; }
+      #journey-rental-list .text-\[9px\] { font-size: 10px !important; }
+      #journey-rental-list .text-\[10px\] { font-size: 11px !important; }
+      #journey-rental-list .w-10.h-10 { width: 36px !important; height: 36px !important; }
       #journey-rental-list * { word-break: keep-all; overflow-wrap: break-word; }
       /* 카드 헤더 액션 버튼들 작게 */
       #page-journey button[onclick*="openTravelModal"] {
