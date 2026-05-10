@@ -981,13 +981,19 @@
 
             <!-- 1. 항공편 -->
             <section>
-              <div class="mb-4">
+              <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
+                <button onclick="openTravelModal('flight-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
               </div>
               <div id="journey-flight-list" class="space-y-4"></div>
               <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
-              <!-- 항공편 추가 폼 -->
-              <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6 mt-6">
+            </section>
+
+            <!-- 항공편 추가 모달 -->
+            <div id="flight-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('flight-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+              <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6">
                 <div class="flex items-center gap-2 mb-5">
                   <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size:20px">add_circle</span>
                   <h4 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h4>
@@ -1038,13 +1044,14 @@
                     <input id="flt-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
                   <div class="col-span-2 flex items-end">
-                    <button onclick="saveFlightForm()" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <button onclick="saveFlightForm();closeTravelModal('flight-add-modal-wrap')" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
                       <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">add_circle</span> 추가
                     </button>
                   </div>
                 </div>
               </div>
-            </section>
+              </div>
+            </div>
 
     <!-- 항공편 수정 모달 (Add New Flight과 동일 디자인) -->
     <div id="flight-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
@@ -1115,11 +1122,16 @@
             <section class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
+                <button onclick="openTravelModal('stay-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>숙소 추가</button>
               </div>
               <div id="journey-lodging-list" class="flex flex-col gap-4"></div>
+            </section>
 
-              <!-- Add New Stay (인라인 폼) -->
-              <div class="mt-6 rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+            <!-- 숙소 추가 모달 -->
+            <div id="stay-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('stay-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+              <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
                 <div class="flex items-center gap-3 mb-6">
                   <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
                     <span class="material-symbols-outlined text-lg">add_business</span>
@@ -1195,24 +1207,32 @@
                     <input id="stay-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
                   <div class="flex items-end">
-                    <button onclick="saveInlineStay()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <button onclick="saveInlineStay();closeTravelModal('stay-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
                       숙소 등록
                     </button>
                   </div>
                 </div>
               </div>
-            </section>
+              </div>
+            </div>
 
             <!-- 3. 도시 간 이동 수단 (Voyages) -->
             <section class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
-                <span id="transport-count" class="text-sm font-medium text-indigo-600"></span>
+                <div class="flex items-center gap-3">
+                  <span id="transport-count" class="text-sm font-medium text-indigo-600"></span>
+                  <button onclick="openTravelModal('transport-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>이동수단 추가</button>
+                </div>
               </div>
               <div id="journey-transport-list" class="flex flex-col gap-4"></div>
+            </section>
 
-              <!-- Add New Transport 인라인 폼 -->
-              <div class="mt-6 rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
+            <!-- 이동수단 추가 모달 -->
+            <div id="transport-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('transport-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+              <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
                 <div class="mb-6">
                   <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Add New Transport</h4>
                   <p class="text-slate-500 text-xs mt-0.5">새로운 이동 수단을 등록하세요</p>
@@ -1256,16 +1276,18 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="saveInlineTransport()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                <button onclick="saveInlineTransport();closeTravelModal('transport-add-modal-wrap')" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
                   <span class="material-symbols-outlined text-sm">check_circle</span> Confirm Voyage
                 </button>
               </div>
-            </section>
+              </div>
+            </div>
 
             <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
             <section class="mb-2">
-              <div class="mb-4">
+              <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">Souvenir Checklist</h3>
+                <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>기념품 추가</button>
               </div>
               <!-- Grid Header -->
               <div class="grid grid-cols-12 px-5 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -1277,9 +1299,13 @@
               </div>
               <!-- List -->
               <div id="journey-souvenir-list" class="space-y-2"></div>
+            </section>
 
-              <!-- New Souvenir 인라인 폼 -->
-              <div class="mt-6 rounded-2xl p-6" style="background:#f3f4f5;">
+            <!-- 기념품 추가 모달 -->
+            <div id="souvenir-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('souvenir-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+              <div class="rounded-2xl p-6" style="background:#f3f4f5;">
                 <h4 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
                   <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
                 </h4>
@@ -1301,11 +1327,12 @@
                     <input id="sv-price" type="text" placeholder="예상 가격" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
                   </div>
                 </div>
-                <button onclick="saveInlineSouvenir()" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                <button onclick="saveInlineSouvenir();closeTravelModal('souvenir-add-modal-wrap')" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
                   Add to Collection
                 </button>
               </div>
-            </section>
+              </div>
+            </div>
 
             <!-- 총 지출 -->
             <section class="bg-gradient-to-br from-sky-100 to-indigo-100 rounded-[2rem] p-7 border border-indigo-300 shadow-md">
@@ -7974,6 +8001,16 @@
   function closeJourneyModal() {
     document.getElementById('journey-modal').style.cssText = 'display:none!important';
     currentJourneyType = null;
+  }
+
+  // ===== TRAVEL 인라인 폼 → 모달 헬퍼 =====
+  function openTravelModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.cssText = 'display:flex!important';
+  }
+  function closeTravelModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.cssText = 'display:none!important';
   }
 
   // ===== JOURNEY ↔ FINANCE 자동 동기화 헬퍼 =====
