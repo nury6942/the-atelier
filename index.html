@@ -1151,14 +1151,34 @@
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
-                      <input id="stay-checkin" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      <input id="stay-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
                     </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
+                      <input id="stay-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
+                      <input id="stay-checkin-time" type="text" placeholder="14:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
+                      <input id="stay-checkout-time" type="text" placeholder="12:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">1박 가격</label>
                       <div class="relative">
                         <input id="stay-price" type="text" placeholder="0" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
                       </div>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
+                      <input id="stay-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
                     </div>
                   </div>
                   <div>
@@ -6773,9 +6793,13 @@
       city: city, title: name,
       address: document.getElementById('stay-address').value.trim(),
       phone: document.getElementById('stay-phone').value.trim(),
-      date: document.getElementById('stay-checkin').value,
+      date: document.getElementById('stay-checkin-date').value,
+      checkout_date: document.getElementById('stay-checkout-date').value,
+      checkin: document.getElementById('stay-checkin-time').value.trim(),
+      checkout: document.getElementById('stay-checkout-time').value.trim(),
+      cancel_date: document.getElementById('stay-cancel-date').value,
       amount: document.getElementById('stay-price').value.replace(/,/g,''),
-      checkin: '', checkout: '', cancel: '', description: ''
+      description: ''
     };
     try {
       var saved = await fbAdd('journey', obj);
@@ -6783,7 +6807,7 @@
       renderJourneyLodging();
       updateJourneyCost();
       // 폼 초기화
-      ['stay-city','stay-name','stay-address','stay-phone','stay-checkin','stay-price'].forEach(function(id){ document.getElementById(id).value=''; });
+      ['stay-city','stay-name','stay-address','stay-phone','stay-checkin-date','stay-checkout-date','stay-checkin-time','stay-checkout-time','stay-cancel-date','stay-price'].forEach(function(id){ document.getElementById(id).value=''; });
       _stayType = 'Hotel'; selectStayType('Hotel');
     } catch(err) { alert('저장에 실패했어요.'); }
   }
@@ -14580,7 +14604,7 @@
 
   // Inline travel forms: init on journey page load
   var _origLoadJourney = loadJourney;
-  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('stay-checkin'); initSimpleDatePicker('tr-date'); },200); };
+  loadJourney = async function() { await _origLoadJourney(); setTimeout(function(){ initSimpleDatePicker('flt-date'); initSimpleDatePicker('stay-checkin-date'); initSimpleDatePicker('stay-checkout-date'); initSimpleDatePicker('stay-cancel-date'); initSimpleDatePicker('tr-date'); },200); };
 
   // ===== PACKING PAGE =====
   var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
