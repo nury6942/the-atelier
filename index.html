@@ -13290,20 +13290,24 @@
       }
     }
 
-    // 초고: start~end 빈 날마다 (화수 누적)
+    // 초고: 평일 0.5화 / 주말 1화 누적, 같은 라벨이 연속해서 나오지 않도록 처리
     if (p.draft && p.draft.start && p.draft.end) {
       var dCur = new Date(p.draft.start + 'T00:00:00');
       var dEnd = new Date(p.draft.end + 'T00:00:00');
       var epNum = 0;
+      var lastEpShown = 0;
       var dIdx = 0;
-      while (dCur <= dEnd && Math.ceil(epNum) <= eps) {
+      while (dCur <= dEnd && Math.ceil(epNum) < eps) {
         var ds = _fmtDate(dCur);
         if (!isBlockedDay(ds)) {
           var add = _isWeekend(dCur) ? 1 : 0.5;
           epNum += add;
-          if (Math.ceil(epNum) <= eps) {
-            var epLabel = '초고 ' + Math.ceil(epNum) + '화';
+          var ceilEp = Math.ceil(epNum);
+          // 새 화수에 진입한 날에만 이벤트 추가 (이전과 같은 라벨이면 skip)
+          if (ceilEp > lastEpShown && ceilEp <= eps) {
+            var epLabel = '초고 ' + ceilEp + '화';
             events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+            lastEpShown = ceilEp;
           }
         }
         dCur.setDate(dCur.getDate() + 1);
@@ -13397,12 +13401,40 @@
   }
   window.cleanupDuplicateWorkEvents = cleanupDuplicateWorkEvents;
 
+  // 고아 이벤트 정리: work_id가 _works 테이블에 더 이상 없는 일정 삭제
+  async function cleanupOrphanWorkEvents() {
+    var validIds = {};
+    (_works||[]).forEach(function(w) { if (w && w.id) validIds[w.id] = true; });
+    var toRemove = [];
+    plannerData.forEach(function(row, idx) {
+      var notes = (row[4] || '').toString();
+      var m = notes.match(/work_id:([^|]+)/);
+      if (!m) return;
+      var wid = m[1];
+      if (!validIds[wid]) toRemove.push(idx);
+    });
+    toRemove.sort(function(a, b) { return b - a; });
+    for (var i = 0; i < toRemove.length; i++) {
+      var idx = toRemove[i];
+      var id = plannerData[idx][7];
+      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
+      plannerData.splice(idx, 1);
+    }
+    if (toRemove.length > 0) renderCalendar();
+    return toRemove.length;
+  }
+  window.cleanupOrphanWorkEvents = cleanupOrphanWorkEvents;
+
   async function manualCleanupDuplicates() {
     var dups = await cleanupDuplicateWorkEvents();
-    if (dups > 0) {
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 중복 ' + dups + '개 정리 완료');
+    var orphans = await cleanupOrphanWorkEvents();
+    var msgs = [];
+    if (dups > 0) msgs.push('중복 ' + dups + '개');
+    if (orphans > 0) msgs.push('고아 일정 ' + orphans + '개');
+    if (msgs.length > 0) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + msgs.join(' · ') + ' 정리 완료');
     } else {
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 중복 일정 없음');
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 정리할 일정 없음');
     }
   }
   window.manualCleanupDuplicates = manualCleanupDuplicates;
