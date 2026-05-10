@@ -13786,6 +13786,8 @@
     document.getElementById('hub-table-wrap').style.display = 'none';
     document.getElementById('hub-empty').style.display = 'none';
     try {
+      // 기초 자산 Firebase에서 먼저 로드 (다기기 동기화)
+      await loadBaseAssetsFromFirebase();
       const docs = await fbRead('finance_hub');
       hubData = docs.map(function(d){ return objToRow('finance_hub', d).concat([d._id, d.order||0]); });
       document.getElementById('hub-loading').style.display = 'none';
@@ -13799,6 +13801,18 @@
     } catch(err) {
       document.getElementById('hub-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
     }
+  }
+
+  // 기초 자산 Firebase 동기화: appSettings/baseAssets 문서로 저장
+  async function loadBaseAssetsFromFirebase() {
+    try {
+      var doc = await db.collection('appSettings').doc('baseAssets').get();
+      if (doc.exists) {
+        var d = doc.data();
+        if (d.cash !== undefined) localStorage.setItem('cashflow_base_cash', String(d.cash));
+        if (d.savings !== undefined) localStorage.setItem('cashflow_base_savings', String(d.savings));
+      }
+    } catch(e) { console.error('[BaseAssets] Firebase load 실패:', e); }
   }
 
   function renderHubTable() {
@@ -13854,11 +13868,21 @@
     document.getElementById('base-asset-modal').style.cssText = 'display:flex!important';
   }
   function closeBaseAssetModal() { document.getElementById('base-asset-modal').style.cssText = 'display:none!important'; }
-  function saveBaseAsset() {
+  async function saveBaseAsset() {
     var cash = parseInt((document.getElementById('base-cash-input').value||'').replace(/[^0-9]/g,'')) || 0;
     var savings = parseInt((document.getElementById('base-savings-input').value||'').replace(/[^0-9]/g,'')) || 0;
     localStorage.setItem('cashflow_base_cash', String(cash));
     localStorage.setItem('cashflow_base_savings', String(savings));
+    // Firebase에도 저장 (다기기 동기화)
+    try {
+      await db.collection('appSettings').doc('baseAssets').set({
+        cash: cash, savings: savings,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch(e) {
+      console.error('[BaseAssets] Firebase save 실패:', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 로컬엔 저장됐지만 클라우드 동기화 실패');
+    }
     closeBaseAssetModal();
     updateHubStats();
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 기초 자산 저장 완료');
