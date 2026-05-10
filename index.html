@@ -693,6 +693,54 @@
       #eng-tab-nav .eng-tab-label { font-size: 10px !important; }
     }
 
+    /* ===== Travel Checklist (Daily Outfit Planner) 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-packing .page-content-wrap,
+      #page-packing > div:first-child > div {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important;
+      }
+      /* Daily Outfit Planner 카드 레이아웃 재구성:
+         [date] [city] 한 줄 + items 그 아래 + input 또 아래
+         날씨 아이콘은 모바일에선 숨김 */
+      .pk-day-card .grid.grid-cols-1 {
+        display: grid !important;
+        grid-template-columns: auto 1fr !important;
+        grid-auto-rows: auto;
+        gap: 6px 12px !important;
+        align-items: center;
+      }
+      /* 1번째: 날짜 */
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(1) {
+        grid-row: 1; grid-column: 1;
+        text-align: left !important;
+      }
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(1) .text-xl {
+        font-size: 1.125rem !important;
+      }
+      /* 2번째: 날씨 아이콘 - 모바일에선 숨김 */
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(2) {
+        display: none !important;
+      }
+      /* 3번째: 도시 이름 */
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(3) {
+        grid-row: 1; grid-column: 2;
+      }
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(3) .text-sm {
+        font-size: 0.875rem !important; font-weight: 700 !important;
+      }
+      /* 4번째: 아이템 + 입력 - 두 칼럼 모두 차지 */
+      .pk-day-card .grid.grid-cols-1 > div:nth-child(4) {
+        grid-row: 2; grid-column: 1 / -1;
+      }
+      .pk-day-card { padding: 0.75rem !important; }
+      .pk-day-card input[id^="pk-outfit-input"] { font-size: 13px !important; padding: 6px 10px !important; }
+      /* 카테고리 카드도 폰트/패딩 축소 */
+      #pk-category-list > div { padding: 1rem !important; border-radius: 1.25rem !important; }
+      #pk-category-list h4 { font-size: 1rem !important; }
+      /* 진행률 카드 */
+      #page-packing #pk-progress-pct { font-size: 1.5rem !important; }
+    }
+
     /* ===== Memo (Reference) 모바일 대응 ===== */
     @media (max-width: 768px) {
       /* 리스트 풀스크린 + 에디터는 오버레이로 (memo-edit-open 클래스 토글) */
