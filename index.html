@@ -667,7 +667,7 @@
       }
       #page-journey .col-span-3,
       #page-journey .col-span-9 { grid-column: span 1 / span 1 !important; }
-      /* 일정 섹션: 박스(bg/border/shadow) 제거해 항공편처럼 풀폭으로 — 타임라인 디자인은 유지 */
+      /* 일정 섹션 박스 제거 + 음수 margin으로 page-content-wrap 좌우 padding 무시하고 풀폭 강제 */
       #page-journey section.col-span-3,
       #page-journey section.col-span-4 {
         background: transparent !important;
@@ -675,16 +675,24 @@
         box-shadow: none !important;
         padding: 0 !important;
         border-radius: 0 !important;
+        margin-left: -0.25rem !important;  /* page-content-wrap padding 상쇄 */
+        margin-right: -0.25rem !important;
+        width: calc(100% + 0.5rem) !important;
       }
-      /* 타임라인(border-left, dot) 그대로, 좌측만 살짝 들여 점이 잘려보이지 않게 */
+      /* 타임라인 dot이 잘리지 않도록 좌측 margin만 약간 */
       #page-journey #journey-schedule-list {
         margin-left: 0.4rem !important;
         margin-right: 0 !important;
       }
-      /* 일정 카드 좌우 패딩 살짝 줄여 텍스트 폭 확보 */
+      /* 카드 자체가 부모 폭 100% 되도록 명시 */
+      #page-journey #journey-schedule-list > div.relative.pl-6 {
+        width: 100% !important;
+      }
       #page-journey #journey-schedule-list > div.relative.pl-6 > div.bg-white {
+        width: 100% !important;
         padding-left: 0.85rem !important;
         padding-right: 0.85rem !important;
+        box-sizing: border-box !important;
       }
 
       /* === 기념품 (Souvenir) 모바일 === */
