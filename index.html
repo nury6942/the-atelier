@@ -441,6 +441,48 @@
       #page-ledger #ldg-tx-search { width: 140px !important; }
     }
 
+    /* ===== Side Jobs (Income) 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-income .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* Sticky 타임라인 컨테이너 */
+      #work-timeline-section { padding: 0.75rem !important; max-height: 50vh !important; }
+      #work-timeline-section h2 { font-size: 1.125rem !important; }
+      /* 헤더 줄바꿈 + 버튼 작게 */
+      #work-timeline-section > div.flex.items-center.justify-between.mb-3 {
+        gap: 6px !important;
+      }
+      #work-timeline-section > div.flex.items-center.justify-between.mb-3 > div.flex.items-center.gap-2\.5 {
+        gap: 4px !important; flex-wrap: wrap;
+      }
+      #work-timeline-section button {
+        padding: 4px 8px !important; font-size: 10px !important;
+        white-space: nowrap;
+      }
+      #work-timeline-section button .material-symbols-outlined { font-size: 12px !important; }
+      /* 타임라인 차트 스크롤 영역 */
+      #ut-scroll { max-height: calc(50vh - 80px) !important; }
+      #work-timeline-chart { min-width: 700px; }
+
+      /* Series Growth Correlation 헤더 */
+      #page-income section h2 { font-size: 1.25rem !important; }
+      #page-income section header { flex-wrap: wrap; gap: 8px !important; }
+      #page-income #growth-year-subtitle { font-size: 11px !important; }
+      #page-income #growth-chart-legend { font-size: 10px !important; gap: 6px !important; flex-wrap: wrap; }
+      #page-income .bg-white.rounded-2xl,
+      #page-income .bg-white.rounded-xl { padding: 1rem !important; border-radius: 1rem !important; }
+
+      /* Annual Matrix 테이블: 가로 스크롤 + min-width */
+      #income-annual-matrix { min-width: 800px !important; }
+      #income-annual-matrix th,
+      #income-annual-matrix td { font-size: 10px !important; padding: 4px 6px !important; }
+      #page-income #matrix-year-subtitle { font-size: 11px !important; }
+      #page-income #income-matrix-year-label { padding: 0 8px !important; font-size: 11px !important; }
+      /* Sync Active 배지 작게 */
+      #page-income span.inline-flex.items-center.px-3 { padding: 2px 6px !important; font-size: 9px !important; }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
