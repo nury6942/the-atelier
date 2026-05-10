@@ -4090,27 +4090,14 @@
     const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
     const holidays = getKoreanHolidays(plannerYear);
 
-    // Previous month trailing days
-    const prevMonthDays = new Date(plannerYear, plannerMonth, 0).getDate();
-    for (let i = 0; i < offset; i++) {
-      const prevDay = prevMonthDays - offset + 1 + i;
-      const cell = document.createElement('div');
-      cell.className = 'p-3 min-h-24';
-      cell.style.background = 'rgba(243,244,245,0.4)';
-      cell.style.color = 'rgba(73,68,84,0.35)';
-      cell.innerHTML = '<div class="text-sm font-semibold">' + prevDay + '</div>';
-      grid.appendChild(cell);
-    }
-
-    // Day cells
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = plannerYear + '-' + String(plannerMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-      const dayOfWeek = (offset + d - 1) % 7; // 0=Sun, 6=Sat
+    function buildDayCell(yr, mn, d, gridIdx, isOutMonth) {
+      const dateStr = yr + '-' + String(mn+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      const dayOfWeek = gridIdx % 7;
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const isToday = isCurrentMonth && d === today.getDate();
+      const isToday = !isOutMonth && isCurrentMonth && d === today.getDate();
+      const cellHolidays = (isOutMonth && yr !== plannerYear) ? getKoreanHolidays(yr) : holidays;
 
-      // 이 날짜에 해당하는 이벤트 (단일 날짜 + 범위 이벤트 포함)
-      var monthDay = '-' + String(plannerMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      var monthDay = '-' + String(mn+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
       const events = plannerData.filter(function(r) {
         var start = (r[0]||'').toString();
         var end = (r[5]||'').toString();
@@ -4118,32 +4105,33 @@
           return dateStr >= start && dateStr <= end;
         }
         if (start.startsWith(dateStr)) return true;
-        // 매년 반복 생일: 월/일만 매칭, 원본 연도 다를 때만 가상 표시
-        if (r[2] === '생일' && start.endsWith(monthDay) && !start.startsWith(String(plannerYear))) {
+        if (r[2] === '생일' && start.endsWith(monthDay) && !start.startsWith(String(yr))) {
           var docId = r[7];
           if (docId && _yearlyBirthdayIds[docId]) return true;
         }
         return false;
       });
-      // 정렬: 다일 연속 일정 → 단일 일정 → 업무 → order 순
       events.sort(function(a, b) {
         var aRange = (a[5] && a[5] > a[0]) ? 1 : 0;
         var bRange = (b[5] && b[5] > b[0]) ? 1 : 0;
-        if (aRange !== bRange) return bRange - aRange; // 다일 먼저
+        if (aRange !== bRange) return bRange - aRange;
         if (a[2] === '업무' && b[2] !== '업무') return -1;
         if (a[2] !== '업무' && b[2] === '업무') return 1;
         return (parseInt(a[6])||0) - (parseInt(b[6])||0);
       });
 
-      const isHoliday = !!holidays[dateStr];
-      const holidayName = holidays[dateStr] || '';
+      const isHoliday = !!cellHolidays[dateStr];
+      const holidayName = cellHolidays[dateStr] || '';
 
       var hasLeave = events.some(function(ev) { return ev[2] === '연차'; });
       var hasSpecial = events.some(function(ev) { return ev[2] === '특별휴가'; });
 
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
-      if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
+      if (isOutMonth) {
+        cell.style.background = 'rgba(243,244,245,0.4)';
+        cell.style.opacity = '0.5';
+      } else if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
       else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,224,224,0.5))' : 'rgba(107,56,212,0.04)'; }
       else if (isHoliday) { cell.style.background = '#FFCDCD'; }
       else if (hasSpecial) { cell.style.background = '#FFE0E0'; }
@@ -4152,7 +4140,6 @@
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
       cell.ondblclick = function() { openPlannerModal(null, dateStr); };
 
-      // Drop target handlers
       cell.addEventListener('dragover', function(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = (e.ctrlKey || e.metaKey) ? 'copy' : 'move';
@@ -4169,11 +4156,9 @@
         var newDate = this.dataset.date;
         if (!isNaN(dragIdx) && newDate) {
           if (plannerCtrlDrag) {
-            // Ctrl+드래그: 복사
             copiedPlannerEvent = plannerData[dragIdx].slice(0, 7);
             pastePlannerEvent(newDate);
           } else {
-            // 일반 드래그: 이동
             dropPlannerEvent(dragIdx, newDate);
           }
         }
@@ -4196,7 +4181,6 @@
         var isLast = !isRange || dateStr === end;
 
         if (!isRange) {
-          // 단일 날짜 이벤트
           var docId = ev[7] || '';
           var evSeriesId = _getSeriesIdForDoc(docId);
           var seriesBtn = evSeriesId ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + evSeriesId + '\')" class="text-current" title="시리즈 전체 삭제">⊘</button>' : '';
@@ -4220,12 +4204,11 @@
             '</div></div>';
         }
 
-        // 범위 이벤트 — 연결된 bar로 주 단위 렌더링
-        var dayOfWeekR = (offset + d - 1) % 7; // 0=일 ~ 6=토
+        var dayOfWeekR = gridIdx % 7;
         var isWeekStart = dayOfWeekR === 0;
         var isWeekEnd = dayOfWeekR === 6;
-        var isMonthStart = d === 1;
-        var isMonthEnd = d === daysInMonth;
+        var isMonthStart = !isOutMonth && d === 1;
+        var isMonthEnd = !isOutMonth && d === daysInMonth;
 
         var blockStart = isFirst || isMonthStart || isWeekStart;
         var blockEnd = isLast || isMonthEnd || isWeekEnd;
@@ -4237,12 +4220,10 @@
         else if (!blockStart && blockEnd) { rl = 'border-radius:0 6px 6px 0;'; rr = ''; }
         else if (!blockStart && !blockEnd) { rl = 'border-radius:0;'; rr = ''; }
 
-        // 색상에서 bg/text 분리
         var colorParts = color.split(' ');
         var bgColor = colorParts.find(function(c){ return c.startsWith('bg-'); }) || 'bg-indigo-100';
         var textColor = colorParts.find(function(c){ return c.startsWith('text-'); }) || 'text-indigo-700';
 
-        // 블록 시작이 아닌 중간 셀: 좌측 패딩 없애고 음수 마진으로 셀 간 간격 메우기
         var ml = blockStart ? 'margin-left:0;padding-left:8px;' : 'margin-left:-13px;padding-left:0;';
         var mr = blockEnd ? 'margin-right:0;padding-right:8px;' : 'margin-right:-13px;padding-right:0;';
 
@@ -4258,17 +4239,30 @@
       }).join('');
 
       cell.innerHTML = dayNum + eventHtml;
-      grid.appendChild(cell);
+      return cell;
     }
 
-    // Fill remaining cells
+    // Previous month trailing days (with events, faded)
+    const prevMonthDays = new Date(plannerYear, plannerMonth, 0).getDate();
+    const prevYr = plannerMonth === 0 ? plannerYear - 1 : plannerYear;
+    const prevMn = plannerMonth === 0 ? 11 : plannerMonth - 1;
+    for (let i = 0; i < offset; i++) {
+      const prevDay = prevMonthDays - offset + 1 + i;
+      grid.appendChild(buildDayCell(prevYr, prevMn, prevDay, i, true));
+    }
+
+    // Current month days
+    for (let d = 1; d <= daysInMonth; d++) {
+      grid.appendChild(buildDayCell(plannerYear, plannerMonth, d, offset + d - 1, false));
+    }
+
+    // Next month leading days (with events, faded)
     const total = offset + daysInMonth;
     const remainder = total % 7 === 0 ? 0 : 7 - (total % 7);
+    const nextYr = plannerMonth === 11 ? plannerYear + 1 : plannerYear;
+    const nextMn = plannerMonth === 11 ? 0 : plannerMonth + 1;
     for (let i = 0; i < remainder; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'p-3 min-h-24';
-      cell.style.background = 'rgba(243,244,245,0.4)';
-      grid.appendChild(cell);
+      grid.appendChild(buildDayCell(nextYr, nextMn, i + 1, total + i, true));
     }
     updateCalLeaveTracker();
   }
