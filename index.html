@@ -1669,7 +1669,7 @@
           <div class="atl-grid-2">
           <div class="atl-field">
             <label>카테고리</label>
-            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="fin-cat" class="atl-input w-full bg-white"><option>숙소</option><option>항공</option><option>식비</option><option>교통</option><option>쇼핑</option><option>기타</option></select></div>
+            <div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="fin-cat" class="atl-input w-full bg-white"><option>숙소</option><option>항공</option><option>렌트</option><option>식비</option><option>교통</option><option>쇼핑</option><option>여가</option><option>티켓</option><option>통신</option><option>보험</option><option>환전</option><option>기타</option></select></div>
           </div>
           <div class="atl-field">
             <label>결제 통화</label>
@@ -1782,7 +1782,7 @@
             <span class="text-sm font-bold text-slate-700">총 예산</span>
             <span id="budget-total-display" class="text-xl font-extrabold text-indigo-700">₩0</span>
           </div>
-          <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>거래 카테고리 매핑: 항공권(항공·이동), 숙소(숙소), 투어(여가·티켓·쇼핑), 생활비(식비·교통·통신·보험·환전·기타)</span></div>
+          <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>거래 카테고리 매핑: 항공권(항공·이동), 숙소(숙소), 투어(여가·티켓·쇼핑·렌트), 생활비(식비·교통·통신·보험·환전·기타)</span></div>
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeBudgetModal()" class="atl-btn-cancel">취소</button>
@@ -8468,9 +8468,9 @@
   let editingFinanceIndex = null;
   let currentFinanceTrip = 'all';
 
-  const FIN_CAT_ICONS = {'입금':'savings','이동':'flight','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','기타':'more_horiz'};
-  const FIN_CAT_COLORS = {'입금':'text-emerald-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','기타':'text-slate-500'};
-  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+  const FIN_CAT_ICONS = {'입금':'savings','이동':'flight','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','렌트':'directions_car','교통':'directions_subway','기타':'more_horiz'};
+  const FIN_CAT_COLORS = {'입금':'text-emerald-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','렌트':'text-pink-600','교통':'text-lime-600','기타':'text-slate-500'};
+  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','렌트':'bg-pink-50 text-pink-700 border-pink-200','교통':'bg-lime-50 text-lime-700 border-lime-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
 
   var FINANCE_SEED_TRIP = '2026 체코&크로아티아';
   var FINANCE_DEFAULTS = [
@@ -8863,7 +8863,7 @@
   const BUDGET_GROUPS = {
     '항공권': { cats: ['항공','이동'], icon: 'flight', color: '#6366f1' },
     '숙소':   { cats: ['숙소'],         icon: 'bed',    color: '#3b82f6' },
-    '투어':   { cats: ['여가','티켓','쇼핑'], icon: 'attractions', color: '#14b8a6' },
+    '투어':   { cats: ['여가','티켓','쇼핑','렌트'], icon: 'attractions', color: '#14b8a6' },
     '생활비': { cats: ['식비','교통','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
   };
   const BUDGET_FIELDS = { '항공권': 'flight', '숙소': 'accom', '투어': 'tour', '생활비': 'living' };
@@ -9259,7 +9259,7 @@
     tr.id = 'finance-inline-row';
     tr.className = 'bg-indigo-50/40';
     var catOptions = isDeposit ? '<option value="입금" selected>입금</option>' :
-      ['이동','숙소','티켓','환전','보험','통신','식비','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      ['이동','숙소','렌트','티켓','환전','보험','통신','식비','교통','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
     var tripOptions = financeTrips.map(function(t){ return '<option value="'+t.name+'">'+t.name+'</option>'; }).join('');
     tr.innerHTML =
       '<td class="px-4 py-2"><input id="fin-i-date" type="date" value="'+new Date().toISOString().split('T')[0]+'" class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-200"/></td>' +
