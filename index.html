@@ -3211,6 +3211,7 @@
           </div>
           <div class="flex items-center gap-2.5">
             <button onclick="_scrollUtToday()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size:16px">today</span>오늘로</button>
+            <button onclick="manualCleanupDuplicates()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-amber-200 text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-300 hover:-translate-y-0.5 transition-all" title="캘린더에서 같은 화 중복 등록된 일정 정리"><span class="material-symbols-outlined" style="font-size:16px">cleaning_services</span>중복 정리</button>
             <button onclick="openExistingWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size:16px">library_books</span>연재 중</button>
             <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:16px">add</span>새 작품</button>
           </div>
@@ -13040,8 +13041,12 @@
     var w = getWorkById(id);
     if (!w) return;
     showConfirm({ icon:'🔄', title:'캘린더 재동기화', message:'"' + (w.title||'') + '"의 캘린더 일정을\n새로 동기화할까요?\n\n기존 일정 삭제 후 다시 생성됩니다.', confirmText:'재동기화', onConfirm: async function() {
-      await removeWorkCalEvents(id); await autoAddScheduleToCalendar(w); renderWorkPipeline();
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 재동기화 완료');
+      await removeWorkCalEvents(id);
+      await autoAddScheduleToCalendar(w);
+      var dups = await cleanupDuplicateWorkEvents();
+      renderWorkPipeline();
+      var msg = '"' + w.title + '" 재동기화 완료' + (dups > 0 ? ' (중복 ' + dups + '개 정리)' : '');
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + msg);
     }});
   }
 
@@ -13174,6 +13179,16 @@
     return toRemove.length;
   }
   window.cleanupDuplicateWorkEvents = cleanupDuplicateWorkEvents;
+
+  async function manualCleanupDuplicates() {
+    var dups = await cleanupDuplicateWorkEvents();
+    if (dups > 0) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 중복 ' + dups + '개 정리 완료');
+    } else {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 중복 일정 없음');
+    }
+  }
+  window.manualCleanupDuplicates = manualCleanupDuplicates;
 
   var _origDeleteWork = deleteWork;
   deleteWork = async function(id) {
