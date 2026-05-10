@@ -620,6 +620,9 @@
 <!-- SIDEBAR -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()"></div>
 <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col py-6 z-50 transition-transform duration-300">
+  <button id="sidebar-close-mobile" type="button" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()" class="absolute top-4 right-4 p-2 rounded-xl hover:bg-slate-100 text-slate-400 md:hidden" aria-label="사이드바 닫기">
+    <span class="material-symbols-outlined" style="font-size:20px">close</span>
+  </button>
   <div class="px-6 mb-6 flex items-center gap-3">
     <div class="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center text-white shadow-sm shrink-0">
       <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">palette</span>
@@ -10042,6 +10045,10 @@
       a.style.color='#4338ca';
       a.style.borderLeft='2px solid #6366f1';
     }
+    // 모바일에서 메뉴 클릭 시 사이드바 자동 닫힘
+    if (window.innerWidth <= 768 && _sidebarOpen) {
+      try { toggleSidebar(); } catch(e) {}
+    }
     const m = pageMeta[pageId];
     if(m) { document.getElementById('page-title').textContent = m.title; }
     localStorage.setItem('atelier-page', pageId);
@@ -17803,7 +17810,9 @@ function toggleSidebar() {
 // Restore state
 (function(){
   var saved = localStorage.getItem('atelier_sidebar');
-  if (saved === 'closed') { _sidebarOpen = true; toggleSidebar(); }
+  var isMobile = window.innerWidth <= 768;
+  // 모바일에서는 저장된 상태와 무관하게 기본 닫힘
+  if (isMobile || saved === 'closed') { _sidebarOpen = true; toggleSidebar(); }
   else {
     var icon = document.getElementById('sidebar-toggle-icon');
     if (icon) icon.textContent = 'menu_open';
