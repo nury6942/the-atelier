@@ -229,6 +229,25 @@
     .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
     .calendar-page #planner-grid { overflow: visible; }
 
+    /* ===== 트립 노트 렌더 스타일 ===== */
+    .prose-tn h2 { font-size: 1.125rem; font-weight: 800; color: #1e293b; margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e7ff; }
+    .prose-tn h2:first-child { margin-top: 0; }
+    .prose-tn h3 { font-size: 0.95rem; font-weight: 700; color: #4338ca; margin: 1rem 0 0.5rem; }
+    .prose-tn p { color: #334155; line-height: 1.65; margin: 0.5rem 0; font-size: 0.875rem; }
+    .prose-tn ul { list-style: none; padding-left: 0; margin: 0.5rem 0; }
+    .prose-tn ul ul { padding-left: 1.5rem; margin: 0.25rem 0; }
+    .prose-tn li { color: #334155; line-height: 1.6; margin: 0.25rem 0; padding-left: 1.25rem; position: relative; font-size: 0.875rem; }
+    .prose-tn li::before { content: '•'; color: #818cf8; position: absolute; left: 0.25rem; font-weight: bold; }
+    .prose-tn li.tn-checkbox { padding-left: 1.75rem; }
+    .prose-tn li.tn-checkbox::before { content: ''; }
+    .prose-tn li.tn-checkbox input[type="checkbox"] { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; cursor: pointer; accent-color: #6366f1; }
+    .prose-tn li.tn-checkbox.checked > .tn-text { text-decoration: line-through; color: #94a3b8; }
+    .prose-tn strong { color: #1e293b; font-weight: 700; }
+    .prose-tn hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+    .prose-tn em { color: #6b7280; font-style: italic; }
+    .prose-tn code { background: #f1f5f9; padding: 0.1em 0.4em; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.85em; }
+    .prose-tn .tn-empty { color: #94a3b8; font-style: italic; padding: 2rem 0; text-align: center; }
+
     /* ===== 캘린더 모바일 대응 ===== */
     @media (max-width: 768px) {
       .calendar-page .page-content-wrap { padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important; }
@@ -1658,10 +1677,17 @@
               <span id="trip-notes-chevron" class="material-symbols-outlined text-slate-400 transition-transform">expand_more</span>
             </div>
             <div id="trip-notes-body" class="p-4" style="display:none">
-              <textarea id="trip-notes-textarea" placeholder="자유롭게 작성하세요. 예약 체크리스트, 교통 정보, 짐 리스트 등 무엇이든.&#10;&#10;예:&#10;## 예약 체크리스트&#10;- [ ] 보로스 컬렉션 (베를린) — 공식 홈페이지, 6~7월 확인&#10;- [ ] 독일 ICE 1등석 — DB Navigator, 1개월 전" class="w-full min-h-[300px] p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-mono outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 leading-relaxed" style="resize:vertical"></textarea>
+              <!-- Rendered View (default) -->
+              <div id="trip-notes-view" class="prose-tn min-h-[200px]"></div>
+              <!-- Edit Mode -->
+              <textarea id="trip-notes-textarea" placeholder="자유롭게 작성하세요. 마크다운 지원: ## 제목, **굵게**, - 리스트, - [ ] 체크박스, --- 구분선&#10;&#10;예:&#10;## 예약 체크리스트&#10;- [ ] 보로스 컬렉션 (베를린) — 공식 홈페이지, 6~7월 확인&#10;- [ ] 독일 ICE 1등석 — DB Navigator, 1개월 전" class="w-full min-h-[300px] p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-mono outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 leading-relaxed" style="resize:vertical;display:none"></textarea>
               <div class="flex justify-between items-center mt-3">
                 <p id="trip-notes-saved" class="text-[10px] text-slate-400">—</p>
-                <button onclick="saveTripNotes()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors">저장</button>
+                <div class="flex gap-2">
+                  <button id="trip-notes-edit-btn" onclick="toggleTripNotesEdit(true)" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined" style="font-size:14px">edit</span>편집</button>
+                  <button id="trip-notes-save-btn" onclick="saveTripNotes()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors" style="display:none">저장</button>
+                  <button id="trip-notes-cancel-btn" onclick="toggleTripNotesEdit(false)" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 transition-colors" style="display:none">취소</button>
+                </div>
               </div>
             </div>
           </div>
@@ -6700,16 +6726,155 @@
   }
 
   // ===== TRIP NOTES =====
+  // 간단 markdown → HTML 렌더러
+  function renderTripNotesMarkdown(text) {
+    if (!text || !text.trim()) return '<div class="tn-empty">트립 노트가 비어있어요. <strong>편집</strong>을 눌러 작성해보세요.</div>';
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function inline(s) {
+      // bold **text**
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // italic *text*  (avoid matching bold)
+      s = s.replace(/(?:^|[^*])\*([^*\n]+)\*(?!\*)/g, function(m, p1){ var pre = m.startsWith('*') ? '' : m[0]; return pre + '<em>' + p1 + '</em>'; });
+      // inline code `text`
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      return s;
+    }
+    var lines = text.split('\n');
+    var html = '';
+    var inList = false, listIndent = 0, listStack = [];
+    function closeListsTo(indent) {
+      while (listStack.length > 0 && listStack[listStack.length-1] >= indent) {
+        html += '</ul>';
+        listStack.pop();
+      }
+      if (listStack.length === 0) inList = false;
+    }
+    for (var i = 0; i < lines.length; i++) {
+      var raw = lines[i];
+      var line = raw.trimEnd();
+      if (!line.trim()) {
+        // empty line — close all lists
+        closeListsTo(0);
+        continue;
+      }
+      // headers
+      var hMatch = line.match(/^(#{1,3})\s+(.+)$/);
+      if (hMatch) {
+        closeListsTo(0);
+        var lvl = Math.min(hMatch[1].length, 3);
+        var hTag = lvl === 1 ? 'h2' : (lvl === 2 ? 'h2' : 'h3');
+        html += '<' + hTag + '>' + inline(esc(hMatch[2])) + '</' + hTag + '>';
+        continue;
+      }
+      // hr
+      if (/^---+$/.test(line.trim())) {
+        closeListsTo(0);
+        html += '<hr>';
+        continue;
+      }
+      // list items (with indent)
+      var liMatch = raw.match(/^(\s*)-\s+(.*)$/);
+      if (liMatch) {
+        var indent = liMatch[1].length;
+        var content = liMatch[2];
+        // 새 리스트 열기 / 닫기
+        if (listStack.length === 0 || indent > listStack[listStack.length-1]) {
+          html += '<ul>';
+          listStack.push(indent);
+          inList = true;
+        } else {
+          while (listStack.length > 1 && indent < listStack[listStack.length-1]) {
+            html += '</ul>';
+            listStack.pop();
+          }
+        }
+        // checkbox? - [ ] / - [x]
+        var cbMatch = content.match(/^\[( |x|X)\]\s+(.*)$/);
+        if (cbMatch) {
+          var checked = (cbMatch[1].toLowerCase() === 'x');
+          var idAttr = 'tn-cb-' + i;
+          html += '<li class="tn-checkbox' + (checked?' checked':'') + '">' +
+            '<input type="checkbox" ' + (checked?'checked':'') + ' onclick="toggleTripNoteCheckbox(' + i + ', this.checked)" />' +
+            '<span class="tn-text">' + inline(esc(cbMatch[2])) + '</span>' +
+            '</li>';
+        } else {
+          html += '<li>' + inline(esc(content)) + '</li>';
+        }
+        continue;
+      }
+      // plain paragraph
+      closeListsTo(0);
+      html += '<p>' + inline(esc(line)) + '</p>';
+    }
+    closeListsTo(0);
+    return html;
+  }
+
+  // 체크박스 토글 시 textarea의 [ ]/[x] 동기화 + 자동 저장
+  window.toggleTripNoteCheckbox = async function(lineIdx, checked) {
+    var trip = getCurrentTrip();
+    if (!trip) return;
+    var lines = (trip.notes || '').split('\n');
+    if (!lines[lineIdx]) return;
+    lines[lineIdx] = lines[lineIdx].replace(/\[( |x|X)\]/, '[' + (checked ? 'x' : ' ') + ']');
+    var newNotes = lines.join('\n');
+    var ta = document.getElementById('trip-notes-textarea');
+    if (ta) ta.value = newNotes;
+    trip.notes = newNotes;
+    // 렌더 갱신
+    var view = document.getElementById('trip-notes-view');
+    if (view) view.innerHTML = renderTripNotesMarkdown(newNotes);
+    // 자동 저장
+    try {
+      var now = new Date().toISOString();
+      await fbUpdate('trips', trip._id, { notes: newNotes, notesUpdatedAt: now });
+      trip.notesUpdatedAt = now;
+      var saved = document.getElementById('trip-notes-saved');
+      if (saved) saved.textContent = '마지막 저장: ' + new Date(now).toLocaleString('ko-KR');
+    } catch(e) { console.error(e); }
+  };
+
+  function toggleTripNotesEdit(enterEdit) {
+    var view = document.getElementById('trip-notes-view');
+    var ta = document.getElementById('trip-notes-textarea');
+    var editBtn = document.getElementById('trip-notes-edit-btn');
+    var saveBtn = document.getElementById('trip-notes-save-btn');
+    var cancelBtn = document.getElementById('trip-notes-cancel-btn');
+    if (enterEdit) {
+      view.style.display = 'none';
+      ta.style.display = 'block';
+      editBtn.style.display = 'none';
+      saveBtn.style.display = 'inline-flex';
+      cancelBtn.style.display = 'inline-flex';
+      ta.focus();
+    } else {
+      // 취소 — 원래 데이터로 복원
+      var trip = getCurrentTrip();
+      if (trip) ta.value = trip.notes || '';
+      view.innerHTML = renderTripNotesMarkdown(ta.value);
+      view.style.display = 'block';
+      ta.style.display = 'none';
+      editBtn.style.display = 'inline-flex';
+      saveBtn.style.display = 'none';
+      cancelBtn.style.display = 'none';
+    }
+  }
+  window.toggleTripNotesEdit = toggleTripNotesEdit;
+
   function loadTripNotes() {
     var trip = getCurrentTrip();
     var ta = document.getElementById('trip-notes-textarea');
+    var view = document.getElementById('trip-notes-view');
     var status = document.getElementById('trip-notes-status');
     var saved = document.getElementById('trip-notes-saved');
     if (!trip || !ta) return;
     ta.value = trip.notes || '';
+    if (view) view.innerHTML = renderTripNotesMarkdown(trip.notes || '');
     var hasNotes = !!(trip.notes && trip.notes.trim());
     if (status) status.textContent = hasNotes ? '작성됨' : '비어있음';
     if (saved) saved.textContent = trip.notesUpdatedAt ? '마지막 저장: ' + new Date(trip.notesUpdatedAt).toLocaleString('ko-KR') : '아직 저장 안 됨';
+    // edit 모드 해제 (다른 트립으로 이동 시)
+    toggleTripNotesEdit(false);
   }
 
   function toggleTripNotes() {
