@@ -629,7 +629,7 @@
       /* 페이지 자체에서 가로 오버플로 차단 */
       #page-journey { overflow-x: hidden !important; }
       #page-journey .page-content-wrap {
-        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+        padding-left: 0.25rem !important; padding-right: 0.25rem !important; padding-top: 1rem !important;
         max-width: 100vw !important;
         overflow-x: hidden !important;
       }
@@ -670,18 +670,55 @@
       /* 일정 섹션: 좌우 패딩 최소화로 카드가 화면 꽉 차게 */
       #page-journey section.col-span-3,
       #page-journey section.col-span-4 {
-        padding: 1rem 0.5rem !important;
-        border-radius: 1.25rem !important;
+        padding: 0.75rem 0.25rem !important;
+        border-radius: 1rem !important;
       }
       /* 타임라인 좌측 여백/패딩 축소 */
       #page-journey #journey-schedule-list {
-        margin-left: 0.5rem !important;
+        margin-left: 0.25rem !important;
       }
       /* 카드 내부 컨텐츠 들여쓰기 축소 (점 + 카드) */
       #page-journey #journey-schedule-list > div.relative.pl-6 {
-        padding-left: 1rem !important;
+        padding-left: 0.75rem !important;
       }
-      /* 카드 자체 padding은 유지하되 부모가 좁으니 자연스럽게 꽉 찰 것 */
+      /* 일정 카드 자체 좌우 패딩 약간 줄여 텍스트 더 폭 넓게 */
+      #page-journey #journey-schedule-list > div.relative.pl-6 > div.bg-white {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+
+      /* === 기념품 (Souvenir) 모바일 === */
+      /* 헤더 라벨(대상/품목/도시/가격/상태) 모바일에서 숨김 — 1열 스택되며 둥둥 떠보이는 문제 */
+      #page-journey section .grid.grid-cols-12.text-\[10px\] {
+        display: none !important;
+      }
+      /* 기념품 카드: 1열 스택 대신 2행 컴팩트 레이아웃으로 */
+      #journey-souvenir-list > div.bg-white {
+        padding: 0.75rem !important;
+      }
+      #journey-souvenir-list > div.bg-white > .grid.grid-cols-12 {
+        display: grid !important;
+        grid-template-columns: 1fr auto !important;
+        grid-template-areas:
+          "title   actions"
+          "desc    desc"
+          "meta    price" !important;
+        gap: 0.4rem 0.5rem !important;
+        align-items: center !important;
+      }
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(1) { grid-area: title !important; }
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(2) { grid-area: desc !important; }
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(3) { grid-area: meta !important; }
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(4) {
+        grid-area: price !important; text-align: right !important;
+      }
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(5) {
+        grid-area: actions !important; justify-content: flex-end !important;
+      }
+      /* 도시 라벨 prefix */
+      #journey-souvenir-list > div.bg-white > .grid > div:nth-child(3) > span::before {
+        content: '📍 '; opacity: 0.6;
+      }
       /* === Travel 카드 통일 폰트 변수 ===
          body=14px, label/메타=12px, 강조 숫자=18px */
 
