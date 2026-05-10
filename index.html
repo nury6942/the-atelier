@@ -667,24 +667,21 @@
       }
       #page-journey .col-span-3,
       #page-journey .col-span-9 { grid-column: span 1 / span 1 !important; }
-      /* 일정 섹션: 좌우 패딩 최소화로 카드가 화면 꽉 차게 */
+      /* 일정 섹션: 우측 패딩 0으로 — 카드가 화면 우측 끝까지, 타임라인은 그대로 유지 */
       #page-journey section.col-span-3,
       #page-journey section.col-span-4 {
-        padding: 0.75rem 0.25rem !important;
+        padding: 0.75rem 0 0.75rem 0.5rem !important;
         border-radius: 1rem !important;
       }
-      /* 타임라인 좌측 여백/패딩 축소 */
+      /* 타임라인(border-left)은 그대로 두되 좌측 여백/우측 마진 정리 */
       #page-journey #journey-schedule-list {
-        margin-left: 0.25rem !important;
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
       }
-      /* 카드 내부 컨텐츠 들여쓰기 축소 (점 + 카드) */
-      #page-journey #journey-schedule-list > div.relative.pl-6 {
-        padding-left: 0.75rem !important;
-      }
-      /* 일정 카드 자체 좌우 패딩 약간 줄여 텍스트 더 폭 넓게 */
+      /* 일정 카드 좌우 패딩만 살짝 줄여 텍스트 폭 확보 */
       #page-journey #journey-schedule-list > div.relative.pl-6 > div.bg-white {
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
+        padding-left: 0.85rem !important;
+        padding-right: 0.85rem !important;
       }
 
       /* === 기념품 (Souvenir) 모바일 === */
