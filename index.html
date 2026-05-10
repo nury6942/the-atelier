@@ -8903,6 +8903,41 @@
     if (typeof loadJourney === 'function') await loadJourney();
   };
 
+  // ===== 일회성 기념품 일괄 등록 (2026 독일&이탈리아) — 콘솔에서 importGermanyItalySouvenirs2026() =====
+  window.importGermanyItalySouvenirs2026 = async function() {
+    var trip = (window.tripsData||[]).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (window.financeTrips||[]).find(function(t){return t.name==='2026 독일&이탈리아';});
+    if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요.'); return; }
+    var items = [
+      {recipient:'나 & 가족', item:'수제 가죽 가방/지갑/벨트 (피엔차 로컬 가죽 공방)', city:'Pienza', price:'€50~150', why:'질 좋은 가죽 특산지. 로고 없는 클래식 가죽.'},
+      {recipient:'직장 동료', item:'마비스(Marvis) 치약 (클래식 민트/자스민)', city:'Italy 약국', price:'€3~5', why:'치약계의 샤넬. 사무실 책상에 두기 좋음. 호불호 없음.'},
+      {recipient:'직장 동료', item:'포켓 커피(Pocket Coffee) — 에스프레소 초콜릿 박스', city:'Italy 마트', price:'€3~6/박스', why:'10월부터 마트 풀림. 부피 작아 돌리기 최고.'},
+      {recipient:'찐친/후배', item:'사비니(Savini) 트러플 소금·오일', city:'Italy', price:'€8~15', why:'짜파게티/감튀에 뿌리면 감동하는 마성의 조미료.'},
+      {recipient:'찐친/후배', item:'암펠만(Ampelmännchen) 굿즈 (에코백/키링)', city:'Berlin', price:'€5~15', why:'베를린에서만. 은근히 힙함.'},
+      {recipient:'디자이너 픽', item:'아트북·전시 포스터·엽서 (보로스 컬렉션/독립 서점)', city:'Berlin', price:'다양함', why:'타이포·레이아웃 미친 현대 미술 서적. 영감 수집.'},
+      {recipient:'디자이너 픽', item:'토스카나 세라믹 (핸드페인팅 타일/컵/접시)', city:'Pienza/Siena', price:'€10~30', why:'레몬/올리브 패턴. 이탈리아 햇살.'},
+      {recipient:'디자이너 픽', item:'비알레띠(Bialetti) 모카포트 (오리지널/컬러)', city:'Italy', price:'€25~40', why:'주방 인테리어 완성. 클래식 디자인 아이콘.'},
+    ];
+    if (!confirm(items.length + '개 기념품을 "' + trip.name + '"에 추가합니다.')) return;
+    var ok = 0, fail = 0;
+    for (var i = 0; i < items.length; i++) {
+      var s = items[i];
+      try {
+        await fbAdd('journey', {
+          trip_id: trip._id, type: '기념품',
+          title: s.recipient,
+          description: s.item + ' · 예상 ' + s.price + ' · ' + s.why,
+          city: s.city,
+          amount: '',
+          status: ''
+        });
+        ok++;
+      } catch(e) { console.error('Failed:', s, e); fail++; }
+    }
+    alert('완료: ' + ok + '/' + items.length + '개 추가됨' + (fail ? ' (실패 ' + fail + '개)' : ''));
+    if (typeof loadJourney === 'function') await loadJourney();
+  };
+
   // ===== JOURNEY ↔ FINANCE 자동 동기화 헬퍼 =====
   function _journeyToFinanceCategory(item) {
     if (item.type === '숙소') return '숙소';
