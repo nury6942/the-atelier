@@ -4406,6 +4406,7 @@
           </div>
         </div>
         <div class="atl-modal-footer">
+          <button onclick="deletePlannerFromModal()" id="planner-delete-btn" class="atl-btn-cancel" style="display:none;color:#e11d48;border-color:#fecdd3"><span class="material-symbols-outlined" style="font-size:15px">delete</span> 삭제</button>
           <button onclick="closePlannerModal()" class="atl-btn-cancel">취소</button>
           <button onclick="savePlannerEntry()" id="planner-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
@@ -5674,6 +5675,8 @@
   function openPlannerModal(idx, prefillDate) {
     editingPlannerIndex = (idx !== undefined && idx !== null) ? idx : null;
     document.getElementById('planner-modal-title').textContent = editingPlannerIndex !== null ? '일정 수정' : '일정 추가';
+    var delBtn = document.getElementById('planner-delete-btn');
+    if (delBtn) delBtn.style.display = (editingPlannerIndex !== null) ? '' : 'none';
     // 반복 설정 초기화
     document.getElementById('p-repeat').value = 'none';
     _syncRepeatTrigger('none');
@@ -5743,6 +5746,16 @@
   function closePlannerModal() {
     document.getElementById('planner-modal').style.cssText = 'display:none!important';
     editingPlannerIndex = null;
+  }
+
+  async function deletePlannerFromModal() {
+    if (editingPlannerIndex === null) return;
+    var row = plannerData[editingPlannerIndex];
+    var title = (row && row[1]) || '이 일정';
+    if (!confirm('"' + title + '"을(를) 삭제할까요?')) return;
+    var idx = editingPlannerIndex;
+    closePlannerModal();
+    await deletePlannerRow(idx);
   }
 
   async function savePlannerEntry() {
