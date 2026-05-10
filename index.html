@@ -6747,7 +6747,8 @@
 
   // 2026 독일&이탈리아 트립 노트 자동 입력
   window.importGermanyItalyTripNotes2026 = async function() {
-    var trip = (window.tripsData||[]).find(function(t){return t.name==='2026 독일&이탈리아';});
+    var trip = (typeof tripsData !== 'undefined' ? tripsData : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof getCurrentTrip === 'function' && getCurrentTrip() && getCurrentTrip().name === '2026 독일&이탈리아' ? getCurrentTrip() : null);
     if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요.'); return; }
     var notes = '## 📋 사전 예약 체크리스트\n\n' +
       '- [ ] **보로스 컬렉션 (베를린)** — 지금 당장 (6~7월 확인) / 공식 홈페이지\n' +
@@ -8919,8 +8920,9 @@
 
   // ===== 일회성 일정 일괄 등록 (2026 독일&이탈리아) — 콘솔에서 importGermanyItaly2026() 실행 =====
   window.importGermanyItaly2026 = async function() {
-    var trip = (window.tripsData||[]).find(function(t){return t.name==='2026 독일&이탈리아';})
-            || (window.financeTrips||[]).find(function(t){return t.name==='2026 독일&이탈리아';});
+    var trip = (typeof tripsData !== 'undefined' ? tripsData : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof financeTrips !== 'undefined' ? financeTrips : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof getCurrentTrip === 'function' && getCurrentTrip() && getCurrentTrip().name === '2026 독일&이탈리아' ? getCurrentTrip() : null);
     if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요. Travel 페이지에서 트립 선택 후 다시 시도하세요.'); return; }
     var items = [
       // 10/4 금 - Frankfurt
@@ -9025,8 +9027,9 @@
 
   // ===== 일회성 기념품 일괄 등록 (2026 독일&이탈리아) — 콘솔에서 importGermanyItalySouvenirs2026() =====
   window.importGermanyItalySouvenirs2026 = async function() {
-    var trip = (window.tripsData||[]).find(function(t){return t.name==='2026 독일&이탈리아';})
-            || (window.financeTrips||[]).find(function(t){return t.name==='2026 독일&이탈리아';});
+    var trip = (typeof tripsData !== 'undefined' ? tripsData : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof financeTrips !== 'undefined' ? financeTrips : []).find(function(t){return t.name==='2026 독일&이탈리아';})
+            || (typeof getCurrentTrip === 'function' && getCurrentTrip() && getCurrentTrip().name === '2026 독일&이탈리아' ? getCurrentTrip() : null);
     if (!trip || !trip._id) { alert('"2026 독일&이탈리아" 트립을 못 찾았어요.'); return; }
     var items = [
       {recipient:'나 & 가족', item:'수제 가죽 가방/지갑/벨트 (피엔차 로컬 가죽 공방)', city:'Pienza', price:'€50~150', why:'질 좋은 가죽 특산지. 로고 없는 클래식 가죽.'},
