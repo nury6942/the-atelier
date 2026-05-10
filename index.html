@@ -316,6 +316,50 @@
       .calendar-page #planner-grid > div[style*="outline"] { border-radius: 6px !important; }
     }
 
+    /* ===== Year Matrix 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-matrix .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* 헤더 카드: 연간 매트릭스 + 연차 트래커 */
+      #page-matrix .grid.grid-cols-1 { gap: 0.75rem !important; margin-bottom: 1rem !important; }
+      #page-matrix h2 { font-size: 1.25rem !important; }
+      #page-matrix h2 + div span#matrix-year-label { font-size: 1.25rem !important; min-width: 50px !important; }
+
+      /* Pipeline section: 좌우로 가로 스크롤 + 범례 wrap */
+      #mx-pipeline-section { padding: 0.75rem !important; }
+      #mx-pipeline-section > div.flex.items-center.gap-3 {
+        flex-wrap: wrap; gap: 6px !important;
+      }
+      #mx-pipeline-section > div.flex.items-center.gap-3 > div.flex.gap-3 {
+        margin-left: 0 !important; gap: 6px !important; flex-wrap: wrap;
+      }
+      /* gantt 자체는 min-width 700px 유지, 컨테이너에 가로 스크롤 */
+      #mx-pipeline-gantt { overflow-x: auto; }
+
+      /* Matrix 테이블 가로 스크롤 강제: 표는 최소 900px, 컨테이너 overflow */
+      #matrix-table-wrap { max-height: calc(100vh - 280px) !important; }
+      #matrix-table-wrap table { min-width: 900px !important; }
+      #matrix-table-wrap th { font-size: 11px !important; padding: 6px 4px !important; }
+      #matrix-table-wrap td { font-size: 11px !important; }
+
+      /* 툴바 wrap */
+      #page-matrix div.p-4.border-b {
+        padding: 0.5rem !important; flex-wrap: wrap; gap: 6px !important;
+      }
+      #page-matrix div.p-4.border-b > div.flex.gap-3 {
+        flex-wrap: wrap; gap: 4px !important;
+      }
+      #page-matrix div.p-4.border-b button {
+        padding: 5px 8px !important; font-size: 10px !important;
+      }
+      #page-matrix div.p-4.border-b button .material-symbols-outlined { font-size: 12px !important; }
+      #page-matrix #matrix-status { font-size: 10px !important; }
+      #page-matrix div.p-4.border-b > div.flex.items-center.gap-4 {
+        gap: 6px !important; font-size: 10px !important;
+      }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
