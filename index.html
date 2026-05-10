@@ -499,6 +499,37 @@
       #page-income span.inline-flex.items-center.px-3 { padding: 2px 6px !important; font-size: 9px !important; }
     }
 
+    /* ===== Annie (English) 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      #page-english .page-content-wrap {
+        padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important;
+      }
+      /* Top stats: 1열로 (랜덤 카드 + 진행률 카드) */
+      #page-english .grid.md\:grid-cols-3 { grid-template-columns: 1fr !important; gap: 0.75rem !important; margin-bottom: 1rem !important; }
+      #page-english #eng-random-card { padding: 1.25rem !important; }
+      #page-english h3#eng-rand-title { font-size: 1rem !important; }
+      /* 진행률 카드 작게 */
+      #page-english div[aria-label="세션 진행률"] { padding: 1rem !important; gap: 1rem !important; }
+      #page-english div[aria-label="세션 진행률"] > div.relative { width: 90px !important; height: 90px !important; }
+      #page-english #english-progress-pct { font-size: 1.5rem !important; }
+      /* 수업 트래커 헤더 */
+      #page-english #page-english > div.bg-white .px-6.py-4.flex.justify-between {
+        padding: 0.75rem !important; flex-wrap: wrap; gap: 6px !important;
+      }
+      /* 테이블 가로 스크롤 + min-width 강제 (리뷰/수강료/메모/관리 칼럼 접근 가능) */
+      #english-table-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      #english-table-wrap table { min-width: 720px !important; }
+      #english-table-wrap th { font-size: 10px !important; padding: 8px 10px !important; }
+      #english-table-wrap td { font-size: 11px !important; padding: 10px !important; }
+      /* 상태 버튼 작게 */
+      #english-table-wrap td button { padding: 2px 6px !important; font-size: 9px !important; }
+      /* 리뷰 추가 버튼 작게 */
+      #page-english button[onclick*="openReviewCreateModal"] { padding: 5px 10px !important; font-size: 10px !important; }
+    }
+
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
