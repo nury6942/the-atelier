@@ -627,6 +627,63 @@
       #journey-flight-total .text-xl { font-size: 1rem !important; }
     }
 
+    /* ===== Annie Review Detail 모바일 대응 ===== */
+    @media (max-width: 768px) {
+      /* 세션 리포트 타이틀: 너무 커서 단어마다 줄바꿈되던 문제 */
+      #eng-detail-content h2.text-3xl,
+      #eng-detail-content h2.text-4xl {
+        font-size: 1.25rem !important;
+        line-height: 1.25 !important;
+        word-break: keep-all !important;
+        overflow-wrap: break-word !important;
+      }
+      #eng-detail-content .text-xl { font-size: 1rem !important; }
+      #eng-detail-content section { margin-bottom: 1.25rem !important; }
+      #eng-detail-content .bg-white { padding: 1rem !important; border-radius: 1rem !important; }
+
+      /* Expressions 테이블: 의미(한글) 컬럼 가독성 개선 */
+      #eng-detail-content table { table-layout: fixed !important; width: 100% !important; }
+      #eng-detail-content table th,
+      #eng-detail-content table td {
+        padding: 8px 4px !important;
+        word-break: keep-all !important;
+        overflow-wrap: break-word !important;
+        vertical-align: top !important;
+      }
+      /* Category(1번째) 좁게, expression(2번째) 보통, 의미(3번째) 넓게, example(4번째) 보통 */
+      #eng-detail-content table th:nth-child(1),
+      #eng-detail-content table td:nth-child(1) { width: 56px !important; font-size: 9px !important; }
+      #eng-detail-content table th:nth-child(2),
+      #eng-detail-content table td:nth-child(2) { width: 28% !important; font-size: 13px !important; }
+      #eng-detail-content table th:nth-child(3),
+      #eng-detail-content table td:nth-child(3) {
+        width: 30% !important;
+        font-size: 12px !important;
+        color: #334155 !important;
+        line-height: 1.5 !important;
+      }
+      #eng-detail-content table th:nth-child(4),
+      #eng-detail-content table td:nth-child(4) {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+      }
+      /* 헤더 폰트 작게 */
+      #eng-detail-content table thead th { font-size: 9px !important; }
+      /* 가로 스크롤 방지 (overflow-x:auto 무력화) */
+      #eng-detail-content .overflow-x-auto { overflow-x: visible !important; }
+
+      /* 점수 바 (Fluency/Vocab/Grammar/Interaction) 4개 → 2x2 */
+      #eng-detail-content .grid.md\:grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+
+      /* 페이지 좌우 여백 축소 */
+      #eng-detail-view { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+
+      /* Tab nav scroll 영역 작게 */
+      #eng-tab-nav button { padding: 4px 8px !important; }
+      #eng-tab-nav .eng-tab-num { font-size: 1rem !important; }
+      #eng-tab-nav .eng-tab-label { font-size: 10px !important; }
+    }
+
     /* ===== Memo (Reference) 모바일 대응 ===== */
     @media (max-width: 768px) {
       /* 리스트 풀스크린 + 에디터는 오버레이로 (memo-edit-open 클래스 토글) */
