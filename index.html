@@ -4091,6 +4091,27 @@
         <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px"></div>
       </section>
 
+      <!-- 날짜 일정 팝업 (모바일) -->
+      <div id="day-events-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" style="display:none" onclick="if(event.target===this)closeDayEventsModal()">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[80vh] overflow-y-auto shadow-2xl">
+          <div class="sticky top-0 bg-white px-5 pt-4 pb-3 border-b border-slate-100 flex justify-between items-center">
+            <div>
+              <p id="day-events-date" class="text-xs font-bold text-slate-400 uppercase tracking-widest">—</p>
+              <h3 id="day-events-title" class="text-lg font-black text-slate-900 mt-1">—</h3>
+            </div>
+            <button onclick="closeDayEventsModal()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-400">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div id="day-events-list" class="p-4 space-y-2"></div>
+          <div class="px-4 pb-6">
+            <button id="day-events-add-btn" class="w-full py-3 rounded-xl gradient-primary text-white font-bold text-sm flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined" style="font-size:16px">add</span> 이 날짜에 일정 추가
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Statistics Cards -->
       <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
         <div class="cal-stat-card">
@@ -5733,7 +5754,73 @@
     });
     selectedPlannerDate = dateStr;
     cellEl.classList.add('planner-date-selected', 'ring-2', 'ring-inset', 'ring-indigo-400');
+    // 모바일에서 날짜 탭 시 일정 상세 팝업
+    if (window.innerWidth <= 768) showDayEventsModal(dateStr);
   }
+
+  function showDayEventsModal(dateStr) {
+    var modal = document.getElementById('day-events-modal');
+    if (!modal) return;
+    var dateObj = new Date(dateStr + 'T00:00:00');
+    var days = ['일','월','화','수','목','금','토'];
+    var dayName = days[dateObj.getDay()];
+    document.getElementById('day-events-date').textContent = dateStr.replace(/-/g,'.') + ' (' + dayName + ')';
+
+    // 해당 날짜 휴일 표시
+    var holidays = (typeof getKoreanHolidays === 'function') ? getKoreanHolidays(dateObj.getFullYear()) : {};
+    var holidayName = holidays[dateStr] || '';
+    document.getElementById('day-events-title').textContent = holidayName || (dayName + '요일');
+
+    // 해당 날짜 이벤트 필터
+    var monthDay = '-' + String(dateObj.getMonth()+1).padStart(2,'0') + '-' + String(dateObj.getDate()).padStart(2,'0');
+    var events = plannerData.filter(function(r) {
+      var start = (r[0]||'').toString();
+      var end = (r[5]||'').toString();
+      if (end && end > start) return dateStr >= start && dateStr <= end;
+      if (start.startsWith(dateStr)) return true;
+      if (r[2] === '생일' && start.endsWith(monthDay) && !start.startsWith(String(dateObj.getFullYear()))) {
+        var docId = r[7];
+        if (docId && _yearlyBirthdayIds[docId]) return true;
+      }
+      return false;
+    });
+
+    var listEl = document.getElementById('day-events-list');
+    if (events.length === 0) {
+      listEl.innerHTML = '<p class="text-center text-sm text-slate-400 py-6">이 날엔 일정이 없어요</p>';
+    } else {
+      listEl.innerHTML = events.map(function(ev) {
+        var realIdx = plannerData.indexOf(ev);
+        var color = COLOR_MAP[ev[3]] || COLOR_MAP['blue'];
+        var bg = (color.split(' ').find(function(c){return c.startsWith('bg-');}) || 'bg-indigo-100');
+        var textCls = (color.split(' ').find(function(c){return c.startsWith('text-');}) || 'text-indigo-700');
+        var start = (ev[0]||'').toString();
+        var end = (ev[5]||'').toString();
+        var rangeText = (end && end > start) ? ' (' + start.slice(5).replace('-','/') + ' ~ ' + end.slice(5).replace('-','/') + ')' : '';
+        var isPub = ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||'');
+        var icon = isPub ? '🎯' : (ev[2] === '생일' ? '🎂' : '');
+        return '<div class="flex items-center gap-3 p-3 rounded-xl ' + bg + ' cursor-pointer hover:opacity-80 transition" onclick="closeDayEventsModal();openPlannerModal(' + realIdx + ')">' +
+          '<div class="flex-1 min-w-0">' +
+            '<p class="text-sm font-bold ' + textCls + ' break-words">' + (icon ? icon + ' ' : '') + (ev[1]||'') + rangeText + '</p>' +
+            '<p class="text-[10px] text-slate-500 mt-0.5">' + (ev[2]||'') + '</p>' +
+          '</div>' +
+          '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ');closeDayEventsModal();" class="p-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>' +
+        '</div>';
+      }).join('');
+    }
+
+    var addBtn = document.getElementById('day-events-add-btn');
+    addBtn.onclick = function() { closeDayEventsModal(); openPlannerModal(null, dateStr); };
+
+    modal.style.cssText = 'display:block!important';
+  }
+
+  function closeDayEventsModal() {
+    var modal = document.getElementById('day-events-modal');
+    if (modal) modal.style.cssText = 'display:none!important';
+  }
+  window.showDayEventsModal = showDayEventsModal;
+  window.closeDayEventsModal = closeDayEventsModal;
 
   document.addEventListener('keydown', async function(e) {
     var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
