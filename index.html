@@ -20721,6 +20721,11 @@ function ldgGetFilteredTx() {
   if (cf.payment.length > 0) txs = txs.filter(function(t) { return cf.payment.indexOf(t['결제수단']) >= 0; });
   if (cf.amount.min !== null) txs = txs.filter(function(t) { return t['금액'] >= cf.amount.min; });
   if (cf.amount.max !== null) txs = txs.filter(function(t) { return t['금액'] <= cf.amount.max; });
+  function _ldgIdTs(id) {
+    if (!id) return 0;
+    var m = String(id).match(/(\d{10,})/);
+    return m ? parseInt(m[1], 10) : 0;
+  }
   txs.sort(function(a, b) {
     var va, vb;
     if (_ldgSortField === 'date') { va = a.date; vb = b.date; }
@@ -20728,7 +20733,8 @@ function ldgGetFilteredTx() {
     else { va = a['대분류']; vb = b['대분류']; }
     if (va < vb) return _ldgSortAsc ? -1 : 1;
     if (va > vb) return _ldgSortAsc ? 1 : -1;
-    return 0;
+    // Tiebreaker: 같은 정렬 키일 때 최근 등록된 항목이 위로
+    return _ldgIdTs(b.id) - _ldgIdTs(a.id);
   });
   return txs;
 }
