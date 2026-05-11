@@ -67,7 +67,8 @@
     .fixed-input-row select{background:transparent;cursor:pointer;}
     .fixed-input-row input:focus,.fixed-input-row select:focus{background:rgba(107,56,212,0.06);}
     .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-    .ldg-cell-selected{outline:2px solid #6366f1!important;outline-offset:-2px;background-color:rgba(99,102,241,0.08)!important;position:relative}
+    .ldg-row-selected td{background-color:rgba(99,102,241,0.12)!important}
+    .ldg-row-selected td:first-child{border-left:3px solid #6366f1!important;padding-left:calc(1rem - 3px)!important}
     .gradient-primary{background:linear-gradient(135deg,#6366f1 0%,#a855f7 100%)}
     .gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
     .bg-gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
@@ -20746,15 +20747,15 @@ function ldgRenderTxTable() {
       var isIncome = t['대분류'] === '수입';
       var tid = t.id.replace(/'/g,"\\'");
       var dbl = function(field) { return ' ondblclick="ldgCellEdit(\'' + tid + '\',\'' + field + '\',this)"'; };
-      var clk = function(field) { return ' onclick="ldgCellSelect(\'' + tid + '\',\'' + field + '\',this)"'; };
-      html += '<tr class="hover:bg-indigo-50/30 transition-colors group">';
-      html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600 cursor-pointer ldg-cell"' + clk('date') + dbl('date') + '>' + (t.date||'').substring(5).replace('-','/') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap cursor-pointer ldg-cell"' + clk('대분류') + dbl('대분류') + '>' + (t['대분류']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer ldg-cell"' + clk('소분류') + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
-      html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ldg-cell ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk('금액') + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer ldg-cell"' + clk('결제수단') + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer ldg-cell" style="max-width:200px"' + clk('세부사항') + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer ldg-cell"' + clk('비고') + dbl('비고') + '>' + (t['비고']||'') + '</td>';
+      var clk = ' onclick="ldgRowSelect(\'' + tid + '\',this)"';
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors group" data-tx-id="' + tid + '">';
+      html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600 cursor-pointer"' + clk + dbl('date') + '>' + (t.date||'').substring(5).replace('-','/') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap cursor-pointer"' + clk + dbl('대분류') + '>' + (t['대분류']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
+      html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:200px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + (t['비고']||'') + '</td>';
       html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + tid + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
       html += '</tr>';
     }
@@ -20937,24 +20938,26 @@ function ldgBuildDD(wrapperId, options, onChange) {
 var _ldgCellFields = ['date','대분류','소분류','금액','결제수단','세부사항','비고'];
 var _ldgCellEditingTx = null;
 
-// ── Excel-like cell copy/paste ──
-var _ldgSelectedCell = null; // {txId, field, el}
-var _ldgClipboard = null;    // {value, field}
+// ── Excel-like row copy/paste ──
+var _ldgSelectedRow = null;   // {txId, tr}
+var _ldgRowClipboard = null;  // tx snapshot
 
-function ldgCellSelect(txId, field, tdEl) {
+function ldgRowSelect(txId, tdEl) {
   if (_ldgCellEditingTx) return;
-  if (_ldgSelectedCell && _ldgSelectedCell.el) {
-    _ldgSelectedCell.el.classList.remove('ldg-cell-selected');
+  var tr = tdEl && tdEl.closest ? tdEl.closest('tr') : null;
+  if (!tr) return;
+  if (_ldgSelectedRow && _ldgSelectedRow.tr) {
+    _ldgSelectedRow.tr.classList.remove('ldg-row-selected');
   }
-  tdEl.classList.add('ldg-cell-selected');
-  _ldgSelectedCell = { txId: txId, field: field, el: tdEl };
+  tr.classList.add('ldg-row-selected');
+  _ldgSelectedRow = { txId: txId, tr: tr };
 }
 
-function ldgCellClear() {
-  if (_ldgSelectedCell && _ldgSelectedCell.el) {
-    _ldgSelectedCell.el.classList.remove('ldg-cell-selected');
+function ldgRowClear() {
+  if (_ldgSelectedRow && _ldgSelectedRow.tr) {
+    _ldgSelectedRow.tr.classList.remove('ldg-row-selected');
   }
-  _ldgSelectedCell = null;
+  _ldgSelectedRow = null;
 }
 
 function ldgCellToast(msg) {
@@ -20962,88 +20965,81 @@ function ldgCellToast(msg) {
   t.className = 'fixed top-20 right-8 bg-slate-800 text-white px-4 py-2 rounded-xl shadow-lg z-[9999] text-xs font-semibold';
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(function() { if (t.parentElement) t.remove(); }, 1500);
+  setTimeout(function() { if (t.parentElement) t.remove(); }, 1800);
 }
 
-function ldgCellCopy() {
-  if (!_ldgSelectedCell) return;
-  var tx = (_ledgerData.transactions || []).find(function(t) { return t.id === _ldgSelectedCell.txId; });
+function ldgRowCopy() {
+  if (!_ldgSelectedRow) return;
+  var tx = (_ledgerData.transactions || []).find(function(t) { return t.id === _ldgSelectedRow.txId; });
   if (!tx) return;
-  var val = tx[_ldgSelectedCell.field];
-  _ldgClipboard = { value: val, field: _ldgSelectedCell.field };
-  var displayVal = String(val == null ? '' : val);
+  _ldgRowClipboard = JSON.parse(JSON.stringify(tx));
+  var fields = ['date','대분류','소분류','금액','결제수단','세부사항','비고'];
+  var line = fields.map(function(f) { return String(tx[f] == null ? '' : tx[f]); }).join('\t');
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(displayVal);
+      navigator.clipboard.writeText(line);
     }
   } catch(e) {}
-  ldgCellToast('복사됨: ' + (displayVal || '(빈 값)'));
+  ldgCellToast('행 복사됨: ' + (tx.date||'') + ' · ' + (tx['대분류']||'') + ' › ' + (tx['소분류']||''));
 }
 
-function ldgCellPaste(externalText) {
-  if (!_ldgSelectedCell) return;
-  var tx = (_ledgerData.transactions || []).find(function(t) { return t.id === _ldgSelectedCell.txId; });
-  if (!tx) return;
-  var newVal;
-  if (_ldgClipboard != null && _ldgClipboard.value != null) {
-    newVal = _ldgClipboard.value;
-  } else if (externalText != null && externalText !== '') {
-    newVal = externalText;
-  } else {
-    ldgCellToast('복사된 값이 없습니다');
+function ldgRowPaste() {
+  if (!_ldgRowClipboard) {
+    ldgCellToast('복사된 행이 없습니다');
     return;
   }
-  var field = _ldgSelectedCell.field;
-  if (field === '금액') {
-    if (typeof newVal === 'string') newVal = parseInt(newVal.replace(/[^\d-]/g, ''), 10) || 0;
-    else if (typeof newVal !== 'number') newVal = 0;
-  } else if (field === 'date') {
-    var dateStr = String(newVal).trim();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      ldgCellToast('날짜 형식이 올바르지 않습니다 (YYYY-MM-DD)');
-      return;
-    }
-    newVal = dateStr;
-  } else {
-    newVal = String(newVal);
-  }
-  tx[field] = newVal;
+  var src = _ldgRowClipboard;
+  var dup = JSON.parse(JSON.stringify(src));
+  dup.id = 'txn_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+  // Clear recurring linkage so this is a standalone manual entry
+  if (dup.recurringId) delete dup.recurringId;
+  if (dup['비고'] === '자동(고정)') dup['비고'] = '';
+  _ledgerData.transactions = _ledgerData.transactions || [];
+  _ledgerData.transactions.push(dup);
   ldgSaveTx();
-  var msg = field === '금액' ? '₩' + Number(newVal).toLocaleString() : String(newVal);
-  ldgCellToast('붙여넣음: ' + (msg || '(빈 값)'));
+  ldgCellToast('행 붙여넣음: ' + (dup.date||'') + ' · ' + (dup['대분류']||'') + ' › ' + (dup['소분류']||'') + ' (날짜 변경하려면 더블 클릭)');
   ldgRenderMonthly();
-  _ldgSelectedCell = null;
+  // Re-select the new row after re-render
+  setTimeout(function() {
+    var newTr = document.querySelector('tr[data-tx-id="' + dup.id + '"]');
+    if (newTr) {
+      newTr.classList.add('ldg-row-selected');
+      _ldgSelectedRow = { txId: dup.id, tr: newTr };
+      newTr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, 50);
 }
 
 (function() {
   document.addEventListener('copy', function(e) {
     if (_ldgCellEditingTx) return;
-    if (!_ldgSelectedCell) return;
+    if (!_ldgSelectedRow) return;
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     var hasTextSel = false;
     try { hasTextSel = window.getSelection().toString().length > 0; } catch(_) {}
     if (hasTextSel) return;
     e.preventDefault();
-    ldgCellCopy();
-    var tx = (_ledgerData.transactions || []).find(function(t) { return t.id === _ldgSelectedCell.txId; });
+    ldgRowCopy();
+    var tx = (_ledgerData.transactions || []).find(function(t) { return t.id === _ldgSelectedRow.txId; });
     if (tx && e.clipboardData) {
-      var v = tx[_ldgSelectedCell.field];
-      e.clipboardData.setData('text/plain', String(v == null ? '' : v));
+      var fields = ['date','대분류','소분류','금액','결제수단','세부사항','비고'];
+      var line = fields.map(function(f) { return String(tx[f] == null ? '' : tx[f]); }).join('\t');
+      e.clipboardData.setData('text/plain', line);
     }
   });
   document.addEventListener('paste', function(e) {
     if (_ldgCellEditingTx) return;
-    if (!_ldgSelectedCell) return;
+    if (!_ldgRowClipboard) return;
     var tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     e.preventDefault();
-    var text = '';
-    try { text = e.clipboardData ? e.clipboardData.getData('text/plain') : ''; } catch(_) {}
-    ldgCellPaste(text);
+    ldgRowPaste();
   });
   document.addEventListener('keydown', function(e) {
     if (_ldgCellEditingTx) return;
-    if (e.key === 'Escape' && _ldgSelectedCell) {
-      ldgCellClear();
+    if (e.key === 'Escape' && _ldgSelectedRow) {
+      ldgRowClear();
     }
   });
 })();
