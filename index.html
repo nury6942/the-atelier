@@ -3443,6 +3443,18 @@
               <p class="text-xs text-emerald-600 font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> 2024년 데이터 가져오기 완료</p>
             </div>
           </div>
+
+          <div id="ldg-dedup-section" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mt-5">
+            <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-indigo-600" style="font-size:18px">content_copy</span> 중복 거래 정리</h4>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-600">중복으로 입력된 거래를 탐지하고 정리합니다</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">자동(고정) 항목이 중복으로 추가된 경우, 같은 날 동일 카테고리/금액으로 두 번 입력된 경우를 찾습니다.</p>
+              </div>
+              <button onclick="ldgRunDedupCheck()" id="ldg-dedup-btn" class="text-xs px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 whitespace-nowrap">중복 검사하기</button>
+            </div>
+            <div id="ldg-dedup-results" class="mt-4"></div>
+          </div>
         </div>
 
         <!-- Safety confirm modal -->
@@ -22619,6 +22631,16 @@ function ldgApplyRecurringForMonth(year, month) {
     });
     if (exists) return;
 
+    // Legacy fallback: 자동(고정) entry with same category+amount in this month (recurringId may be missing on old data)
+    var existsByContent = txs.some(function(t) {
+      return t['비고'] === '자동(고정)'
+        && t.date && t.date.substring(0,7) === monthKey
+        && t['대분류'] === item['대분류']
+        && t['소분류'] === item['소분류']
+        && (item['금액'] === 0 || t['금액'] === item['금액']);
+    });
+    if (existsByContent) return;
+
     var day = Math.min(item.dayOfMonth, new Date(year, month, 0).getDate()); // clamp to month's last day
     var dateStr = monthKey + '-' + String(day).padStart(2,'0');
     var newTx = {
@@ -22647,6 +22669,156 @@ function ldgApplyRecurringForMonth(year, month) {
       setTimeout(function() { if (banner.parentElement) banner.remove(); }, 5000);
     }, 500);
   }
+}
+
+// ===== DAILY LEDGER: DUPLICATE DETECTION =====
+function ldgFindDuplicates() {
+  var txs = _ledgerData.transactions || [];
+  var exactGroups = {};
+  var recGroups = {};
+
+  txs.forEach(function(t, idx) {
+    if (!t || !t.date) return;
+    var month = t.date.substring(0, 7);
+    var amt = t['금액'] || 0;
+    var major = t['대분류'] || '';
+    var minor = t['소분류'] || '';
+    var pm = t['결제수단'] || '';
+    var exactKey = t.date + '|' + major + '|' + minor + '|' + amt + '|' + pm;
+    if (!exactGroups[exactKey]) exactGroups[exactKey] = [];
+    exactGroups[exactKey].push(idx);
+    if (t['비고'] === '자동(고정)') {
+      var recKey = month + '|' + major + '|' + minor + '|' + amt;
+      if (!recGroups[recKey]) recGroups[recKey] = [];
+      recGroups[recKey].push(idx);
+    }
+  });
+
+  var exact = [];
+  Object.keys(exactGroups).forEach(function(k) {
+    if (exactGroups[k].length > 1) exact.push(exactGroups[k]);
+  });
+
+  var inExact = {};
+  exact.forEach(function(g) { g.forEach(function(i) { inExact[i] = true; }); });
+
+  var recurring = [];
+  Object.keys(recGroups).forEach(function(k) {
+    var filtered = recGroups[k].filter(function(i) { return !inExact[i]; });
+    if (filtered.length > 1) recurring.push(filtered);
+  });
+
+  return { exact: exact, recurring: recurring };
+}
+
+function ldgRunDedupCheck() {
+  var dups = ldgFindDuplicates();
+  var el = document.getElementById('ldg-dedup-results');
+  if (!el) return;
+
+  var totalDupRows = 0;
+  dups.exact.forEach(function(g) { totalDupRows += g.length - 1; });
+  dups.recurring.forEach(function(g) { totalDupRows += g.length - 1; });
+
+  if (totalDupRows === 0) {
+    el.innerHTML = '<div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700 flex items-center gap-2"><span class="material-symbols-outlined">check_circle</span>중복 거래가 없습니다.</div>';
+    return;
+  }
+
+  var txs = _ledgerData.transactions || [];
+  var allGroups = [];
+  dups.exact.forEach(function(g) { allGroups.push({ type: 'exact', indices: g }); });
+  dups.recurring.forEach(function(g) { allGroups.push({ type: 'recurring', indices: g }); });
+
+  var html = '<div class="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800"><b>' + totalDupRows + '건</b>의 중복 후보가 발견되었습니다. 체크된 항목이 삭제됩니다. (수동 입력 항목은 자동으로 보존)</div>';
+
+  allGroups.forEach(function(group, gi) {
+    var indices = group.indices;
+    var first = txs[indices[0]];
+    var dateLabel = group.type === 'exact' ? first.date : first.date.substring(0, 7) + ' (월간)';
+    var typeBadge = group.type === 'exact'
+      ? '<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-700 rounded-full font-bold">완전 중복</span>'
+      : '<span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">자동(고정) 월간 중복</span>';
+    var amtStr = '₩' + ((first['금액'] || 0)).toLocaleString();
+
+    html += '<div class="bg-white rounded-xl border border-slate-200 p-3 mb-2">';
+    html += '<div class="flex items-center gap-2 mb-2">' + typeBadge;
+    html += '<span class="text-xs font-bold text-slate-700">' + dateLabel + ' · ' + (first['대분류']||'-') + ' › ' + (first['소분류']||'-') + ' · ' + amtStr + '</span>';
+    html += '<span class="text-[10px] text-slate-400 ml-auto">' + indices.length + '건</span></div>';
+
+    var keepIdx = -1;
+    for (var i = 0; i < indices.length; i++) {
+      if (txs[indices[i]]['비고'] !== '자동(고정)') { keepIdx = indices[i]; break; }
+    }
+    if (keepIdx === -1) keepIdx = indices[0];
+
+    indices.forEach(function(idx) {
+      var t = txs[idx];
+      var isKeep = idx === keepIdx;
+      html += '<label class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-slate-50 cursor-pointer text-xs">';
+      html += '<input type="checkbox" data-tx-id="' + (t.id || '') + '" class="ldg-dedup-check w-4 h-4 rounded text-red-600 focus:ring-red-300 border-slate-300" ' + (isKeep ? '' : 'checked') + '/>';
+      html += '<span class="text-slate-600 flex-1">';
+      html += '<span class="font-mono">' + t.date + '</span> · ' + (t['결제수단']||'-') + ' · ' + (t['비고']||'-');
+      if (t['세부사항']) html += ' · ' + t['세부사항'];
+      html += '</span>';
+      if (isKeep) html += '<span class="text-[10px] font-bold text-emerald-600 px-2 py-0.5 bg-emerald-50 rounded-full">유지</span>';
+      html += '</label>';
+    });
+    html += '</div>';
+  });
+
+  html += '<div class="flex gap-2 mt-4">';
+  html += '<button onclick="ldgConfirmDedup()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600">선택한 항목 삭제</button>';
+  html += '<button onclick="document.getElementById(\'ldg-dedup-results\').innerHTML=\'\'" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm hover:bg-slate-300">취소</button>';
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+function ldgConfirmDedup() {
+  var checks = document.querySelectorAll('.ldg-dedup-check:checked');
+  if (checks.length === 0) {
+    alert('삭제할 항목을 선택하세요.');
+    return;
+  }
+  var ids = [];
+  checks.forEach(function(c) { if (c.dataset.txId) ids.push(c.dataset.txId); });
+  if (ids.length === 0) {
+    alert('삭제할 항목의 ID가 없습니다.');
+    return;
+  }
+
+  ldgSafetyShow(
+    ids.length + '건의 중복 거래를 삭제합니다.\n삭제 전 자동으로 백업이 생성됩니다.\n계속하시겠습니까?',
+    function() {
+      setTimeout(function() {
+        ldgSafetyShow(
+          '정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n(데이터 관리 > 백업에서 복원 가능)',
+          function() { ldgPerformDedup(ids); }
+        );
+      }, 150);
+    }
+  );
+}
+
+function ldgPerformDedup(idsToDelete) {
+  var txs = _ledgerData.transactions || [];
+  var idSet = {};
+  idsToDelete.forEach(function(id) { idSet[id] = true; });
+  var before = txs.length;
+  _ledgerData.transactions = txs.filter(function(t) { return !idSet[t.id]; });
+  var deleted = before - _ledgerData.transactions.length;
+
+  ldgSaveTx();
+
+  var toast = document.createElement('div');
+  toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999]';
+  toast.innerHTML = '<p class="text-sm font-semibold text-emerald-700">✓ ' + deleted + '건의 중복 거래를 삭제했습니다.</p>';
+  document.body.appendChild(toast);
+  setTimeout(function() { if (toast.parentElement) toast.remove(); }, 3500);
+
+  ldgRunDedupCheck();
+  if (typeof ldgRenderMonthly === 'function') ldgRenderMonthly();
 }
 
 // ===== DAILY LEDGER: COACH TRACKER =====
