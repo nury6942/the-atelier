@@ -15823,14 +15823,14 @@
 
         var mIncome=0, mExpense=0, mSavings=0, mWithdraw=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; else if(t==='출금') mWithdraw+=a; });
-        // 유동현금 변동: 수입+이자 - 지출 - 저축 + 출금 (출금은 저축에서 현금으로 이동)
-        runningBalance += mIncome - mExpense - mSavings + mWithdraw;
+        // 유동현금 변동: 수입+이자 - 지출 - 저축 (출금은 저축에서 빼서 쓴 돈 → 유동에 영향 없음)
+        runningBalance += mIncome - mExpense - mSavings;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
-        // 유동자산 = 기초저축 + (수입+이자 - 지출 - 저축 + 출금) 누적
+        // 유동자산 = 기초저축 + (수입+이자 - 지출 - 저축) 누적
         var liquidAssets = base.savings + runningBalance;
         // 비유동자산 = 기초현금 + (저축 - 출금) 누적
         var nonLiquidAssets = base.cash + runningSavings - runningWithdraw;
-        // 총자산 = 유동 + 비유동 (저축↔출금은 내부 이동이라 상쇄됨)
+        // 총자산 = 유동 + 비유동 (출금은 총자산도 감소시킴 - 저축에서 빠져나간 돈)
         var runningAssets = liquidAssets + nonLiquidAssets;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && curYear === hubYear;
@@ -15851,17 +15851,19 @@
             '</div></div>';
         }
 
-        var itemRunning = runningBalance - (mIncome - mExpense - mSavings + mWithdraw);
+        var itemRunning = runningBalance - (mIncome - mExpense - mSavings);
         var itemsHtml = monthItems.map(function(mi) {
           var type = mi.row[4]||'';
           var isInc = type==='수입'||type==='이자';
           var isSav = type==='저축';
           var isWith = type==='출금';
           var amt = parseFloat(mi.row[3])||0;
-          // 출금은 유동현금 증가 (저축에서 빼온 돈)
-          if (isInc || isWith) itemRunning += amt; else itemRunning -= amt;
+          // 출금은 유동현금에 영향 없음 (저축에서 빼서 쓴 돈) → itemRunning 변화 없음
+          if (isInc) itemRunning += amt;
+          else if (isWith) { /* no change */ }
+          else itemRunning -= amt;
           var colorCls = isInc ? 'text-emerald-600' : (isWith ? 'text-blue-600' : (isSav ? 'text-yellow-600' : 'text-red-600'));
-          var sign = (isInc || isWith) ? '+' : '-';
+          var sign = isInc ? '+' : '-'; // 출금도 - (저축에서 빠져나간 돈)
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
