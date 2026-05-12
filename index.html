@@ -15854,12 +15854,12 @@
 
         var mIncome=0, mExpense=0, mSavings=0, mWithdraw=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; else if(t==='출금') mWithdraw+=a; });
-        // Running balance(행 잔액): 모든 +는 더하고 모든 -는 빼는 직관적 누적
-        // (체크잔액 변화 - 저축 시 체크에서 파킹으로 이동, 출금 시 파킹에서 외부로 이동)
-        runningBalance += mIncome - mExpense - mSavings - mWithdraw;
+        // Running balance(행 잔액): 체크잔액 누적
+        // 저축(-): 체크→파킹 이동, 출금(+): 파킹에서 체크로 빼옴
+        runningBalance += mIncome - mExpense - mSavings + mWithdraw;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
         // 유동자산 = 기초 유동자산 + (수입+이자 - 지출 - 출금) 누적
-        // 저축은 유동 내부 이동(체크↔파킹)이라 유동 총액 변화 없음
+        // 저축은 파킹내부이동이라 영향 없음, 출금은 저축에서 빠져나간거라 유동 감소
         var liquidAssets = base.cash + (runningIncome - runningExpense - runningWithdraw);
         // 비유동자산 = 기초 비유동자산 (고정)
         var nonLiquidAssets = base.savings;
@@ -15884,18 +15884,19 @@
             '</div></div>';
         }
 
-        var itemRunning = runningBalance - (mIncome - mExpense - mSavings - mWithdraw);
+        var itemRunning = runningBalance - (mIncome - mExpense - mSavings + mWithdraw);
         var itemsHtml = monthItems.map(function(mi) {
           var type = mi.row[4]||'';
           var isInc = type==='수입'||type==='이자';
           var isSav = type==='저축';
           var isWith = type==='출금';
           var amt = parseFloat(mi.row[3])||0;
-          // 모든 outflow(지출/저축/출금)는 잔액 차감 - 직관적 누적
-          if (isInc) itemRunning += amt;
+          // 출금은 저축(파킹)에서 빼서 체크잔액으로 들어옴 → + 가산
+          // 저축은 체크에서 파킹으로 이동 → - 차감
+          if (isInc || isWith) itemRunning += amt;
           else itemRunning -= amt;
           var colorCls = isInc ? 'text-emerald-600' : (isWith ? 'text-blue-600' : (isSav ? 'text-yellow-600' : 'text-red-600'));
-          var sign = isInc ? '+' : '-';
+          var sign = (isInc || isWith) ? '+' : '-';
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
@@ -15949,7 +15950,7 @@
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
-              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings - mWithdraw).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings + mWithdraw).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center mb-1">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">유동자산</span>' +
