@@ -10353,7 +10353,11 @@
     ['2026-10-10','이탈리아 렌트','이동',1050000]
   ];
 
+  // 하드코딩 defaults는 마이그레이션 후 더 이상 노출하지 않음 (Firestore에 실제 문서로 존재)
+  var _financeDefaultsMigrated = false;
   function getFinanceDefaults() {
+    if (_financeDefaultsMigrated) return [];
+    // 마이그레이션 전(또는 실패) 폴백: 기존 동작 유지 — 삭제 묘비/편집 적용된 defaults 반환
     var fbKeys = {};
     financeData.forEach(function(r){ fbKeys[(r[0]||'')+'|'+(r[1]||'')+'|'+(r[4]||'')] = true; });
     var dels = JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
@@ -10371,6 +10375,70 @@
     var d1 = FINANCE_DEFAULTS.map(function(d){ return mapRow(d, FINANCE_SEED_TRIP); }).filter(Boolean);
     var d2 = FINANCE_DEFAULTS2.map(function(d){ return mapRow(d, FINANCE_SEED_TRIP2); }).filter(Boolean);
     return d1.concat(d2);
+  }
+
+  // 하드코딩 defaults를 Firestore에 실제 문서로 옮기는 1회성 마이그레이션
+  // - 이미 묘비(dels)에 있는 항목은 건너뜀 (사용자가 삭제한 항목 존중)
+  // - 이미 Firestore에 같은 키(date|desc|amount)가 있으면 건너뜀 (중복 방지)
+  // - 완료 후 appSettings/financeLocalState.defaultsMigrated = true 마킹 → 다른 기기에서 재실행 안 됨
+  async function migrateFinanceDefaultsToFirebase(existingDocs) {
+    try {
+      var stateDoc = await db.collection('appSettings').doc('financeLocalState').get();
+      var state = stateDoc.exists ? stateDoc.data() : {};
+      if (state.defaultsMigrated === true) {
+        _financeDefaultsMigrated = true;
+        console.log('[Finance Migration] 이미 완료됨, 스킵');
+        return false;
+      }
+
+      var dels = Array.isArray(state.dels) ? state.dels : JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]');
+      var delSet = {}; dels.forEach(function(k){ delSet[k]=true; });
+      var edits = (state.edits && typeof state.edits === 'object') ? state.edits : JSON.parse(localStorage.getItem('atelier_finance_edits')||'{}');
+
+      var existingKeys = {};
+      (existingDocs || []).forEach(function(d) {
+        var row = objToRow('finance', d);
+        var k = (row[0]||'')+'|'+(row[1]||'')+'|'+(row[4]||'');
+        var k2 = (row[0]||'')+'|'+(row[1]||'')+'|'+String(row[4]||'');
+        existingKeys[k] = true;
+        existingKeys[k2] = true;
+      });
+
+      var allDefaults = [];
+      FINANCE_DEFAULTS.forEach(function(d) { allDefaults.push({ d: d, trip: FINANCE_SEED_TRIP }); });
+      FINANCE_DEFAULTS2.forEach(function(d) { allDefaults.push({ d: d, trip: FINANCE_SEED_TRIP2 }); });
+
+      var migrated = 0, skippedDel = 0, skippedDup = 0;
+      for (var i = 0; i < allDefaults.length; i++) {
+        var entry = allDefaults[i];
+        var d = entry.d;
+        var key1 = d[0]+'|'+d[1]+'|'+d[3];
+        var key2 = d[0]+'|'+d[1]+'|'+String(d[3]);
+        if (delSet[key1] || delSet[key2]) { skippedDel++; continue; }
+        if (existingKeys[key1] || existingKeys[key2]) { skippedDup++; continue; }
+        var row = [d[0], d[1], entry.trip, d[2], d[3], 'KRW', ''];
+        if (edits[key1]) { var e = edits[key1]; row[0] = e.date; row[1] = e.desc; row[3] = e.cat; row[4] = e.amt; }
+        try {
+          await fbAdd('finance', rowToObj('finance', row));
+          migrated++;
+        } catch(err) {
+          console.error('[Finance Migration] 행 마이그레이션 실패:', d, err);
+        }
+      }
+
+      await db.collection('appSettings').doc('financeLocalState').set({
+        defaultsMigrated: true,
+        defaultsMigratedAt: new Date().toISOString(),
+        defaultsMigratedCount: migrated
+      }, { merge: true });
+
+      _financeDefaultsMigrated = true;
+      console.log('[Finance Migration] 완료: 추가됨=' + migrated + ', 삭제묘비스킵=' + skippedDel + ', 중복스킵=' + skippedDup);
+      return migrated > 0;
+    } catch(e) {
+      console.error('[Finance Migration] 오류 (폴백 동작 유지):', e);
+      return false;
+    }
   }
 
   var financeTrips = [];
@@ -10419,12 +10487,18 @@
     try {
       // 삭제/수정 목록 Firebase에서 먼저 로드 (다기기 동기화)
       await loadFinanceLocalStateFromFirebase();
-      var [docs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
-      financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
+      var [initialDocs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
       financeTrips = tripDocs;
-      console.log('[Finance Load] Firestore docs=' + financeData.length + ', dels=', JSON.parse(localStorage.getItem('atelier_finance_dels')||'[]'));
+
+      // 1회성 마이그레이션: 하드코딩 defaults를 Firestore에 실제 문서로 옮김
+      // 이후엔 getFinanceDefaults()가 []를 반환하므로 삭제하면 진짜 삭제됨
+      var didMigrate = await migrateFinanceDefaultsToFirebase(initialDocs);
+      var docs = didMigrate ? await fbRead('finance') : initialDocs;
+
+      financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
+      console.log('[Finance Load] Firestore docs=' + financeData.length + (didMigrate ? ' (마이그레이션 후 재로드)' : ''));
       var defaults = getFinanceDefaults();
-      console.log('[Finance Load] Defaults added=' + defaults.length);
+      if (defaults.length) console.log('[Finance Load] Defaults added=' + defaults.length + ' (마이그레이션 폴백)');
       financeData = financeData.concat(defaults);
       financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       document.getElementById('finance-loading').style.display = 'none';
