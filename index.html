@@ -15412,6 +15412,8 @@
     try {
       // 기초 자산 Firebase에서 먼저 로드 (다기기 동기화)
       await loadBaseAssetsFromFirebase();
+      // 1회성 마이그레이션: 사용자 실제 값으로 보정 (유동 705 / 비유동 1,470)
+      await migrateBaseAssetsToUserValues();
       const docs = await fbRead('finance_hub');
       hubData = docs.map(function(d){ return objToRow('finance_hub', d).concat([d._id, d.order||0]); });
       document.getElementById('hub-loading').style.display = 'none';
@@ -15437,6 +15439,32 @@
         if (d.savings !== undefined) localStorage.setItem('cashflow_base_savings', String(d.savings));
       }
     } catch(e) { console.error('[BaseAssets] Firebase load 실패:', e); }
+  }
+
+  // 1회성 마이그레이션: 사용자가 알려준 정확한 값으로 기초자산 보정
+  // 기초 유동자산(base.cash) = 705, 기초 비유동자산(base.savings) = 1,470
+  async function migrateBaseAssetsToUserValues() {
+    try {
+      var doc = await db.collection('appSettings').doc('baseAssets').get();
+      var d = doc.exists ? doc.data() : {};
+      if (d.userValuesApplied === true) return false;
+
+      localStorage.setItem('cashflow_base_cash', '705');
+      localStorage.setItem('cashflow_base_savings', '1470');
+
+      await db.collection('appSettings').doc('baseAssets').set({
+        cash: 705,
+        savings: 1470,
+        userValuesApplied: true,
+        userValuesAppliedAt: new Date().toISOString()
+      }, { merge: true });
+
+      console.log('[BaseAssets Migration] 기초 유동 705 / 기초 비유동 1,470 적용 완료');
+      return true;
+    } catch(e) {
+      console.error('[BaseAssets Migration] 실패:', e);
+      return false;
+    }
   }
 
   function renderHubTable() {
