@@ -1814,7 +1814,7 @@
             <section>
               <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
-                <button onclick="openTravelModal('flight-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
+                <button onclick="openFlightAddModal()" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
               </div>
               <div id="journey-flight-list" class="space-y-4"></div>
               <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
@@ -9388,6 +9388,15 @@
     var el = document.getElementById(id);
     if (el) el.style.cssText = 'display:none!important';
   }
+  function openFlightAddModal() {
+    openTravelModal('flight-add-modal-wrap');
+    // 신규 항공편 추가 시 결제일을 오늘로 기본 설정 (탑승일이 아닌 결제일 기준 budget 등록)
+    var pd = document.getElementById('flt-payment-date');
+    if (pd && !pd.value) {
+      var now = new Date();
+      pd.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    }
+  }
 
   // ===== 일회성 일정 일괄 등록 (2026 독일&이탈리아) — 콘솔에서 importGermanyItaly2026() 실행 =====
   window.importGermanyItaly2026 = async function() {
@@ -9653,13 +9662,52 @@
     return '기타';
   }
 
+  function _journeyShortDate(d) {
+    // '2026-10-04' → '10/04'
+    if (!d || String(d).length < 10) return d || '';
+    return String(d).substring(5).replace('-','/');
+  }
   function _journeyToFinanceObj(item, tripName) {
     var desc;
-    if (item.type === '숙소') desc = (item.title||'숙소') + (item.city ? ' (' + item.city + ')' : '');
-    else if (item.type === '항공편') desc = (item.title||'항공편') + (item.description ? ' · ' + item.description : '');
-    else if (item.type === '이동수단') desc = (item.title||'이동') + (item.description ? ' · ' + item.description : '');
-    else if (item.type === '렌트카') desc = (item.title||'렌트카') + (item.city ? ' (' + item.city + ')' : '') + (item.description ? ' · ' + item.description : '');
-    else desc = item.title || item.type || '여행 비용';
+    if (item.type === '숙소') {
+      var parts = [];
+      if (item.city) parts.push(item.city);
+      if (item.title) parts.push(item.title);
+      var base = parts.join(' · ') || '숙소';
+      // 체크인~체크아웃 날짜 추가
+      if (item.date && item.checkout_date) {
+        base += ' (' + _journeyShortDate(item.date) + '~' + _journeyShortDate(item.checkout_date) + ')';
+      } else if (item.date) {
+        base += ' (체크인 ' + _journeyShortDate(item.date) + ')';
+      }
+      desc = base;
+    } else if (item.type === '항공편') {
+      var fparts = [];
+      var airlineLine = (item.title || '항공편') + (item.city ? ' ' + item.city : ''); // 항공사 + 편명
+      fparts.push(airlineLine);
+      if (item.description) fparts.push(item.description); // 출발 → 도착
+      if (item.date) fparts.push(_journeyShortDate(item.date)); // 탑승일
+      desc = fparts.join(' · ');
+    } else if (item.type === '이동수단') {
+      var mparts = [];
+      if (item.title) mparts.push(item.title);
+      if (item.description) mparts.push(item.description);
+      if (item.date) mparts.push(_journeyShortDate(item.date));
+      desc = mparts.join(' · ') || '이동';
+    } else if (item.type === '렌트카') {
+      var rparts = [];
+      if (item.title) rparts.push(item.title);
+      if (item.city) rparts.push(item.city);
+      if (item.description) rparts.push(item.description);
+      if (item.date && item.checkout_date) {
+        rparts.push(_journeyShortDate(item.date) + '~' + _journeyShortDate(item.checkout_date));
+      } else if (item.date) {
+        rparts.push(_journeyShortDate(item.date));
+      }
+      desc = rparts.join(' · ') || '렌트카';
+    } else {
+      desc = item.title || item.type || '여행 비용';
+    }
     return {
       date: item.payment_date || item.date || '',
       description: desc,
@@ -10441,6 +10489,49 @@
     }
   }
 
+  // journey ↔ finance 설명 포맷 v2 일괄 재동기화 (도시/체크인-아웃/탑승일 포함)
+  async function migrateJourneyFinanceDescriptions() {
+    try {
+      var stateDoc = await db.collection('appSettings').doc('financeLocalState').get();
+      var state = stateDoc.exists ? stateDoc.data() : {};
+      if (state.journeyFinanceDescV2 === true) return false;
+
+      var results = await Promise.all([fbRead('trips'), fbRead('journey')]);
+      var tripDocs = results[0], journeyDocs = results[1];
+      var tripMap = {};
+      tripDocs.forEach(function(t) { tripMap[t._id] = t.name; });
+
+      var updated = 0;
+      for (var i = 0; i < journeyDocs.length; i++) {
+        var item = journeyDocs[i];
+        if (!item.finance_id) continue;
+        var amt = parseFloat(String(item.amount||'').replace(/[^0-9.]/g,''));
+        if (!amt || amt === 0) continue;
+        var tripName = tripMap[item.trip_id] || '';
+        if (!tripName) continue;
+        var financeObj = _journeyToFinanceObj(item, tripName);
+        try {
+          await fbUpdate('finance', item.finance_id, financeObj);
+          updated++;
+        } catch(e) {
+          console.error('[Journey Finance Re-sync]', item._id, e);
+        }
+      }
+
+      await db.collection('appSettings').doc('financeLocalState').set({
+        journeyFinanceDescV2: true,
+        journeyFinanceDescV2At: new Date().toISOString(),
+        journeyFinanceDescV2Count: updated
+      }, { merge: true });
+
+      console.log('[Journey Finance Re-sync] 완료: ' + updated + '건 재동기화');
+      return updated > 0;
+    } catch(e) {
+      console.error('[Journey Finance Re-sync] 오류:', e);
+      return false;
+    }
+  }
+
   var financeTrips = [];
   function getDefaultFinanceTrip(trips) {
     if (!trips || !trips.length) return 'all';
@@ -10493,7 +10584,9 @@
       // 1회성 마이그레이션: 하드코딩 defaults를 Firestore에 실제 문서로 옮김
       // 이후엔 getFinanceDefaults()가 []를 반환하므로 삭제하면 진짜 삭제됨
       var didMigrate = await migrateFinanceDefaultsToFirebase(initialDocs);
-      var docs = didMigrate ? await fbRead('finance') : initialDocs;
+      // journey 항목들의 finance 설명을 새 포맷(도시/체크인-아웃/탑승일 포함)으로 일괄 재동기화
+      var didResync = await migrateJourneyFinanceDescriptions();
+      var docs = (didMigrate || didResync) ? await fbRead('finance') : initialDocs;
 
       financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
       console.log('[Finance Load] Firestore docs=' + financeData.length + (didMigrate ? ' (마이그레이션 후 재로드)' : ''));
