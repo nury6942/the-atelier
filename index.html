@@ -15745,7 +15745,7 @@
   function updateHubStats() {
     var yrPrefix = String(hubYear);
     document.getElementById('hub-year-label').textContent = hubYear;
-    let income=0, expense=0, savings=0;
+    let income=0, expense=0, savings=0, withdraw=0;
     const monthly = {};
     hubData.forEach(function(row) {
       const date = (row[0]||'').toString();
@@ -15753,10 +15753,13 @@
       const amt = parseFloat(row[3])||0;
       const type = row[4]||'';
       const month = date.substring(0,7);
-      if (type==='수입') { income+=amt; if(month) monthly[month]=(monthly[month]||0)+amt; }
+      if (type==='수입'||type==='이자') { income+=amt; if(month) monthly[month]=(monthly[month]||0)+amt; }
       else if (type==='지출') expense+=amt;
       else if (type==='저축') savings+=amt;
+      else if (type==='출금') withdraw+=amt;
     });
+    // 저축 통계는 순 저축 (저축 - 출금) 으로 표시
+    savings = savings - withdraw;
 
     document.getElementById('hub-income').textContent = '₩'+(income*10000).toLocaleString('ko-KR');
     document.getElementById('hub-expense').textContent = '₩'+(expense*10000).toLocaleString('ko-KR');
@@ -15799,7 +15802,7 @@
 
       var base = getBaseAssets();
       var runningBalance = 0;
-      var runningIncome = 0, runningExpense = 0, runningSavings = 0;
+      var runningIncome = 0, runningExpense = 0, runningSavings = 0, runningWithdraw = 0;
 
       // 기초 자산 표시
       var baseInfo = document.getElementById('hub-base-info');
@@ -15818,11 +15821,17 @@
         });
         monthItems.sort(function(a,b){ var dc = (a.row[0]||'').localeCompare(b.row[0]||''); return dc !== 0 ? dc : (a.row[6]||0) - (b.row[6]||0); });
 
-        var mIncome=0, mExpense=0, mSavings=0;
-        monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; });
-        runningBalance += mIncome - mExpense - mSavings;
-        runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings;
-        var runningAssets = base.cash + base.savings + runningIncome - runningExpense;
+        var mIncome=0, mExpense=0, mSavings=0, mWithdraw=0;
+        monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; else if(t==='출금') mWithdraw+=a; });
+        // 유동현금 변동: 수입+이자 - 지출 - 저축 + 출금 (출금은 저축에서 현금으로 이동)
+        runningBalance += mIncome - mExpense - mSavings + mWithdraw;
+        runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
+        // 유동자산 = 기초현금 + 유동현금 변동 누적
+        var liquidAssets = base.cash + runningBalance;
+        // 비유동자산 = 기초저축 + 저축누적 - 출금누적
+        var nonLiquidAssets = base.savings + runningSavings - runningWithdraw;
+        // 총자산 = 유동 + 비유동 (저축↔출금은 내부 이동이라 상쇄됨)
+        var runningAssets = liquidAssets + nonLiquidAssets;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && curYear === hubYear;
         var isPending = !hasData;
@@ -15842,14 +15851,17 @@
             '</div></div>';
         }
 
-        var itemRunning = runningBalance - (mIncome - mExpense - mSavings);
+        var itemRunning = runningBalance - (mIncome - mExpense - mSavings + mWithdraw);
         var itemsHtml = monthItems.map(function(mi) {
           var type = mi.row[4]||'';
           var isInc = type==='수입'||type==='이자';
           var isSav = type==='저축';
+          var isWith = type==='출금';
           var amt = parseFloat(mi.row[3])||0;
-          if(isInc) itemRunning += amt; else itemRunning -= amt;
-          var colorCls = isInc ? 'text-emerald-600' : (isSav ? 'text-yellow-600' : 'text-red-600');
+          // 출금은 유동현금 증가 (저축에서 빼온 돈)
+          if (isInc || isWith) itemRunning += amt; else itemRunning -= amt;
+          var colorCls = isInc ? 'text-emerald-600' : (isWith ? 'text-blue-600' : (isSav ? 'text-yellow-600' : 'text-red-600'));
+          var sign = (isInc || isWith) ? '+' : '-';
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
@@ -15857,7 +15869,7 @@
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size:10px" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
             '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (isInc?'+':'-') + amt.toLocaleString('ko-KR') + '</td>' +
+            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
               '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
@@ -15892,7 +15904,7 @@
                 '<input type="text" placeholder="항목 입력" class="flex-1 min-w-0 px-2 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-desc-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
               '</div>' +
               '<div class="flex items-center gap-1">' +
-                '<select class="w-14 px-1 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-il-type-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option></select>' +
+                '<select class="w-16 px-1 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-il-type-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option><option value="출금">출금</option><option value="이자">이자</option></select>' +
                 '<input type="text" placeholder="금액" class="flex-1 min-w-0 px-2 py-1 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<button onclick="saveHubInline(\'' + monthKey + '\')" class="px-1.5 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
                 '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="px-1.5 py-1 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
@@ -15905,13 +15917,17 @@
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
-              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings + mWithdraw).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center mb-1">' +
-              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">누적</span>' +
-              '<span class="text-lg font-black font-headline" style="' + balColor + '">' + Math.round(runningBalance).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">유동자산</span>' +
+              '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(liquidAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
-            '<div class="flex justify-between items-center">' +
+            '<div class="flex justify-between items-center mb-1">' +
+              '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">비유동자산</span>' +
+              '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(nonLiquidAssets).toLocaleString('ko-KR') + '</span>' +
+            '</div>' +
+            '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(107,56,212,0.12)') + ';">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산</span>' +
               '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:#6b38d4;') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
@@ -16056,7 +16072,7 @@
             '<input type="text" value="' + desc.replace(/"/g,'&quot;') + '" class="flex-1 min-w-0 px-2 py-1.5 rounded bg-indigo-50 text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-desc-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
           '</div>' +
           '<div class="flex items-center gap-1">' +
-            '<select class="w-14 px-1 py-1.5 rounded bg-indigo-50 text-[11px] border-none shrink-0" id="hub-edit-type-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
+            '<select class="w-16 px-1 py-1.5 rounded bg-indigo-50 text-[11px] border-none shrink-0" id="hub-edit-type-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="출금"' + (type==='출금'?' selected':'') + '>출금</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
             '<input type="text" value="' + amt.toLocaleString('ko-KR') + '" class="flex-1 min-w-0 px-2 py-1.5 rounded bg-indigo-50 text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-amt-' + idx + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
             '<button onclick="saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')" class="px-1.5 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>' +
             '<button onclick="updateHubStats()" class="px-1.5 py-1 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
