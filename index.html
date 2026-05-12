@@ -2799,11 +2799,13 @@
             <div class="p-6 space-y-4">
               <p class="text-xs text-slate-500 leading-relaxed">전년도까지 쌓인 자산을 입력하면 모든 월의 누적/총 자산 계산에 반영됩니다. (단위: 만원)</p>
               <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 현금성 자산</label>
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 유동자산</label>
+                <p class="text-[10px] text-slate-400 px-1">현금, 체크 잔액, 파킹통장 등 언제든 쓸 수 있는 돈</p>
                 <input id="base-cash-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this)" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 저축 자산</label>
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">기초 비유동자산</label>
+                <p class="text-[10px] text-slate-400 px-1">적금, ETF, 투자, 부동산 등 묶여 있는 자산 (고정 표시)</p>
                 <input id="base-savings-input" type="text" inputmode="numeric" oninput="hubFormatAmt(this)" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-right font-bold focus:ring-2 focus:ring-indigo-300"/>
               </div>
             </div>
@@ -15694,17 +15696,18 @@
     var minYr = parseInt(years[0]) || curYr;
     if (years.length < 3) { for (var fy = minYr - 1; fy >= minYr - 2 && years.length < 3; fy--) years.unshift(String(fy)); }
 
-    // Calculate total assets per year
+    // Calculate total assets per year (출금은 차감, 저축은 유동 내부 이동이라 영향 없음)
     var yearAssets = {};
     years.forEach(function(yr) {
-      var yrIncome = 0, yrExpense = 0;
+      var yrIncome = 0, yrExpense = 0, yrWithdraw = 0;
       hubData.forEach(function(row) {
         if (!(row[0]||'').startsWith(yr)) return;
         var type = row[4]||'', amt = parseFloat(row[3])||0;
         if (type === '수입' || type === '이자') yrIncome += amt;
         else if (type === '지출') yrExpense += amt;
+        else if (type === '출금') yrWithdraw += amt;
       });
-      yearAssets[yr] = base.cash + base.savings + yrIncome - yrExpense;
+      yearAssets[yr] = base.cash + base.savings + yrIncome - yrExpense - yrWithdraw;
     });
 
     container.innerHTML = years.map(function(yr, i) {
@@ -15809,7 +15812,7 @@
       if (baseInfo) {
         if (base.cash || base.savings) {
           baseInfo.style.display = '';
-          baseInfo.textContent = '기초 자산: 현금 ' + base.cash.toLocaleString('ko-KR') + '만 / 저축 ' + base.savings.toLocaleString('ko-KR') + '만';
+          baseInfo.textContent = '기초 자산: 유동 ' + base.cash.toLocaleString('ko-KR') + '만 / 비유동 ' + base.savings.toLocaleString('ko-KR') + '만';
         } else { baseInfo.style.display = 'none'; }
       }
       monthlyGrid.innerHTML = allMonths.map(function(m, idx) {
@@ -15828,10 +15831,10 @@
         // 출금은 유동(파킹포함)에서 외부로 빠져나간 돈 → 유동 감소
         runningBalance += mIncome - mExpense - mWithdraw;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
-        // 유동자산 = 기초저축 + (수입+이자 - 지출 - 출금) 누적 (파킹통장 포함)
-        var liquidAssets = base.savings + runningBalance;
-        // 비유동자산 = 기초현금 (고정, 묶여있는 자산)
-        var nonLiquidAssets = base.cash;
+        // 유동자산 = 기초 유동자산(base.cash) + (수입+이자 - 지출 - 출금) 누적
+        var liquidAssets = base.cash + runningBalance;
+        // 비유동자산 = 기초 비유동자산(base.savings) (고정, 묶여있는 자산)
+        var nonLiquidAssets = base.savings;
         // 총자산 = 유동 + 비유동 (출금은 총자산도 감소)
         var runningAssets = liquidAssets + nonLiquidAssets;
         var hasData = monthItems.length > 0;
