@@ -15854,16 +15854,16 @@
 
         var mIncome=0, mExpense=0, mSavings=0, mWithdraw=0;
         monthItems.forEach(function(mi){ var t=mi.row[4]||'',a=parseFloat(mi.row[3])||0; if(t==='수입'||t==='이자') mIncome+=a; else if(t==='지출') mExpense+=a; else if(t==='저축') mSavings+=a; else if(t==='출금') mWithdraw+=a; });
-        // 유동자산 변동: 수입+이자 - 지출 - 출금
-        // 저축은 파킹통장 = 유동자산 내부 이동이라 총액 변화 없음
-        // 출금은 유동(파킹포함)에서 외부로 빠져나간 돈 → 유동 감소
-        runningBalance += mIncome - mExpense - mWithdraw;
+        // Running balance(행 잔액): 모든 +는 더하고 모든 -는 빼는 직관적 누적
+        // (체크잔액 변화 - 저축 시 체크에서 파킹으로 이동, 출금 시 파킹에서 외부로 이동)
+        runningBalance += mIncome - mExpense - mSavings - mWithdraw;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
-        // 유동자산 = 기초 유동자산(base.cash) + (수입+이자 - 지출 - 출금) 누적
-        var liquidAssets = base.cash + runningBalance;
-        // 비유동자산 = 기초 비유동자산(base.savings) (고정, 묶여있는 자산)
+        // 유동자산 = 기초 유동자산 + (수입+이자 - 지출 - 출금) 누적
+        // 저축은 유동 내부 이동(체크↔파킹)이라 유동 총액 변화 없음
+        var liquidAssets = base.cash + (runningIncome - runningExpense - runningWithdraw);
+        // 비유동자산 = 기초 비유동자산 (고정)
         var nonLiquidAssets = base.savings;
-        // 총자산 = 유동 + 비유동 (출금은 총자산도 감소)
+        // 총자산 = 유동 + 비유동
         var runningAssets = liquidAssets + nonLiquidAssets;
         var hasData = monthItems.length > 0;
         var isActive = idx === curMonth && curYear === hubYear;
@@ -15884,20 +15884,18 @@
             '</div></div>';
         }
 
-        var itemRunning = runningBalance - (mIncome - mExpense - mWithdraw);
+        var itemRunning = runningBalance - (mIncome - mExpense - mSavings - mWithdraw);
         var itemsHtml = monthItems.map(function(mi) {
           var type = mi.row[4]||'';
           var isInc = type==='수입'||type==='이자';
           var isSav = type==='저축';
           var isWith = type==='출금';
           var amt = parseFloat(mi.row[3])||0;
-          // 저축은 유동 내부 이동(파킹통장)이라 잔액 변화 없음
-          // 출금은 유동에서 외부로 빠져나간 돈이라 잔액 감소
+          // 모든 outflow(지출/저축/출금)는 잔액 차감 - 직관적 누적
           if (isInc) itemRunning += amt;
-          else if (isSav) { /* 유동 내부 이동, 변화 없음 */ }
-          else itemRunning -= amt; // 지출, 출금
+          else itemRunning -= amt;
           var colorCls = isInc ? 'text-emerald-600' : (isWith ? 'text-blue-600' : (isSav ? 'text-yellow-600' : 'text-red-600'));
-          var sign = isInc ? '+' : '-'; // 저축/출금 모두 - 부호
+          var sign = isInc ? '+' : '-';
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
@@ -15951,7 +15949,7 @@
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">이번 달</span>' +
-              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mWithdraw).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-sm font-bold" style="' + balLabel + '">' + Math.round(mIncome - mExpense - mSavings - mWithdraw).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
             '<div class="flex justify-between items-center mb-1">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">유동자산</span>' +
