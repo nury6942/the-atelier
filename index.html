@@ -21433,8 +21433,8 @@ function ldgAISeasonalAnalysis(catName) {
   return { monthlyAvg: monthlyAvg, monthWeights: monthWeights, dataYears: years };
 }
 
-// 추천 예산 (원 단위) - "올해 목표 - 누적 = 남은 가용 / 남은 개월 → 비중 분배"
-// 사용자 요구: 작년 평균이 아니라, 올해 목표 달성을 위해 이번 달 카테고리별 권장액을 분배
+// 추천 예산 (원 단위) - "올해 목표 - 누적 - 사용자 override 커밋 = 가용 풀 → 미커밋 슬롯에 작년 비중으로 분배"
+// 사용자 요구: 사용자가 명시적으로 설정한 월별 override는 "커밋"으로 존중하고 남은 풀만 재분배
 function ldgAIRecommendBudget(catName, year, month) {
   // 수입/저축은 작년/재작년 같은 달 평균 × 계절 가중치 그대로
   if (catName === '수입' || catName === '저축') {
@@ -21467,38 +21467,75 @@ function ldgAIRecommendBudget(catName, year, month) {
     ytdExpense += (t['금액'] || 0);
   });
 
-  // 남은 가용 지출 = 목표 - 누적 (음수면 0)
-  var remaining = Math.max(expenseGoal - ytdExpense, 0);
-  // 남은 개월 (이번 달 포함, 미래 진입 시 추천 잘못 가지 않게)
-  var remainingMonths = Math.max(12 - month + 1, 1);
-  if (remaining <= 0) return 0; // 이미 목표 초과 → 0 추천 (다음 달까지 절제)
+  // 사용자 명시적 override 합산 (현재월 + 미래월, 추천 슬롯 catName/month 만 제외)
+  // major-level override 우선, 없으면 sub-level override 합산. default는 커밋 아님(유동).
+  var cats = _ledgerData.categories || {};
+  var budgetsObj = _ledgerData.budgets || {};
+  function overrideFor(c, m) {
+    var mk = String(year) + '-' + (m < 10 ? '0' + m : String(m));
+    var cb = budgetsObj[c];
+    if (cb && cb.overrides && cb.overrides[mk] !== undefined) {
+      return cb.overrides[mk];
+    }
+    var subs = cats[c] || [];
+    var tot = 0, any = false;
+    subs.forEach(function(sub) {
+      var bk = c + '.' + sub;
+      if (budgetsObj[bk] && budgetsObj[bk].overrides && budgetsObj[bk].overrides[mk] !== undefined) {
+        any = true;
+        tot += budgetsObj[bk].overrides[mk];
+      }
+    });
+    return any ? tot : null;
+  }
 
-  var monthlyAvailable = remaining / remainingMonths;
+  var committedOverrides = 0;
+  var committedSlots = {};  // "cat|month" -> true
+  Object.keys(cats).forEach(function(c) {
+    if (c === '수입' || c === '저축') return;
+    for (var m = month; m <= 12; m++) {
+      if (c === catName && m === month) continue; // 추천 대상 슬롯은 풀에 포함
+      var ov = overrideFor(c, m);
+      if (ov !== null) {
+        committedOverrides += ov;
+        committedSlots[c + '|' + m] = true;
+      }
+    }
+  });
 
-  // 이 카테고리 비중: 작년/재작년 같은 달 가중치 패턴
+  // 가용 풀 = 목표 - 누적 - 커밋된 override (음수 보호)
+  var available = Math.max(expenseGoal - ytdExpense - committedOverrides, 0);
+  if (available <= 0) return 0;
+
+  // 미커밋 슬롯들 사이에서 작년 패턴 기반 비중 분배
   var thisAn = ldgAISeasonalAnalysis(catName);
   if (!thisAn.monthlyAvg) {
-    // 이 카테고리 작년 데이터 없음 → 카테고리 수로 균등 분배 (보수적)
-    var cats0 = _ledgerData.categories || {};
-    var nFlex = Object.keys(cats0).filter(function(c){ return c !== '수입' && c !== '저축'; }).length || 1;
-    return Math.round(monthlyAvailable / nFlex);
+    // 이 카테고리 작년 데이터 없음 → 미커밋 슬롯 수로 균등 분배 (보수적)
+    var uncommittedCount = 0;
+    Object.keys(cats).forEach(function(c) {
+      if (c === '수입' || c === '저축') return;
+      for (var m = month; m <= 12; m++) {
+        if (!committedSlots[c + '|' + m]) uncommittedCount++;
+      }
+    });
+    return uncommittedCount > 0 ? Math.round(available / uncommittedCount) : 0;
   }
-  var thisHist = thisAn.monthlyAvg * (thisAn.monthWeights[month] || 1.0);
+  var thisSlotWeight = thisAn.monthlyAvg * (thisAn.monthWeights[month] || 1.0);
 
-  // 전체 지출 카테고리의 작년 평균 합 (가중치 반영)
-  var cats = _ledgerData.categories || {};
-  var totalHist = 0;
+  // 모든 미커밋 슬롯의 가중치 합 (cat × 미래월 전체)
+  var totalUncommittedWeight = 0;
   Object.keys(cats).forEach(function(c) {
     if (c === '수입' || c === '저축') return;
     var a = ldgAISeasonalAnalysis(c);
-    if (a.monthlyAvg) {
-      totalHist += a.monthlyAvg * (a.monthWeights[month] || 1.0);
+    if (!a.monthlyAvg) return;
+    for (var m = month; m <= 12; m++) {
+      if (committedSlots[c + '|' + m]) continue;
+      totalUncommittedWeight += a.monthlyAvg * (a.monthWeights[m] || 1.0);
     }
   });
-  if (totalHist === 0) return Math.round(monthlyAvailable * 0.1);
+  if (totalUncommittedWeight === 0) return Math.round(available * 0.1);
 
-  var shareRatio = thisHist / totalHist;
-  return Math.max(Math.round(monthlyAvailable * shareRatio), 0);
+  return Math.max(Math.round(available * thisSlotWeight / totalUncommittedWeight), 0);
 }
 
 // 시즌 가중치 텍스트 (e.g., "+50% 평월 대비")
