@@ -20312,11 +20312,13 @@ function closeRefDelModal() {
 
 async function confirmDeleteRefCard() {
   if (!_refDeleteId) return;
+  // closeRefDelModal()이 _refDeleteId를 null로 초기화하므로 로컬 변수에 미리 저장
+  var idToDelete = _refDeleteId;
   try {
-    var wasEditing = (_refEditingId === _refDeleteId);
-    await db.collection('workspace_references').doc(_refDeleteId).delete();
+    var wasEditing = (_refEditingId === idToDelete);
+    await db.collection('workspace_references').doc(idToDelete).delete();
     closeRefDelModal();
-    _refCards = _refCards.filter(function(c) { return c._id !== _refDeleteId; });
+    _refCards = _refCards.filter(function(c) { return c._id !== idToDelete; });
     if (wasEditing) {
       _refEditingId = null;
       document.getElementById('ref-editor-active').style.display = 'none';
