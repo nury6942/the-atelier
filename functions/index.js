@@ -31,16 +31,16 @@ exports.coachAnalyze = onRequest(
     }
 
     try {
-      const { prompt, systemPrompt, maxTokens } = req.body;
+      const { prompt, systemPrompt, maxTokens, model } = req.body;
       if (!prompt) return res.status(400).json({ error: "prompt required" });
 
       const Anthropic = require("@anthropic-ai/sdk");
       const anthropic = new Anthropic({ apiKey: anthropicApiKey.value() });
 
       const message = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: maxTokens || 2000,
-        system: systemPrompt || "당신은 차분하고 직설적인 재무 코치입니다.",
+        model: model || "claude-haiku-4-5",
+        max_tokens: maxTokens || 1500,
+        system: systemPrompt || "당신은 차분하고 직설적인 한국어 재무 코치입니다. 줄글이 아닌 구체적인 숫자와 액션 위주로 답변하세요.",
         messages: [{ role: "user", content: prompt }],
       });
 

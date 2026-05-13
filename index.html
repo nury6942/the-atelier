@@ -3100,9 +3100,15 @@
         <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-bold text-slate-800 text-sm">카테고리별 집계</h4>
-            <span class="text-[10px] text-slate-400">🤖 각 카드의 페이스 뱃지 / 예산 추천 확인하세요</span>
+            <div class="flex items-center gap-2">
+              <button id="ldg-ai-deep-btn" onclick="ldgRunAIDeepAnalysis()" class="text-[10px] px-3 py-1.5 rounded-full text-white font-bold flex items-center gap-1" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">
+                <span style="font-size:13px">🤖</span> AI 깊은 분석
+              </button>
+              <span class="text-[10px] text-slate-400">각 카드의 페이스/추천 확인</span>
+            </div>
           </div>
-          <div id="ldg-ai-insight" class="mb-4"></div>
+          <div id="ldg-ai-insight" class="mb-3"></div>
+          <div id="ldg-ai-deep-result" style="display:none" class="mb-4"></div>
           <div id="ldg-cat-grid" class="grid grid-cols-5 gap-4"></div>
         </div>
 
@@ -21035,6 +21041,12 @@ function ldgRenderDailyChart() {
 function ldgRenderCatGrid() {
   var el = document.getElementById('ldg-cat-grid');
   if (!el) return;
+  // 캐시된 AI 깊은 분석 결과 로드 (있으면)
+  var deepEl = document.getElementById('ldg-ai-deep-result');
+  if (deepEl) {
+    var hasCached = ldgLoadCachedAIDeepAnalysis();
+    if (!hasCached) deepEl.style.display = 'none';
+  }
   // AI 인사이트 배너 렌더링
   var insightEl = document.getElementById('ldg-ai-insight');
   if (insightEl) {
@@ -24201,20 +24213,154 @@ function ldgApplyBudgetSuggestion() {
 var ATELIER_FUNCTIONS_URL_ANALYZE = 'https://coachanalyze-zrn5bx33ha-uc.a.run.app';
 var ATELIER_FUNCTIONS_URL_PING = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/coachPing';
 
-async function callCoachAPI(prompt, systemPrompt, maxTokens) {
+async function callCoachAPI(prompt, systemPrompt, maxTokens, model) {
   var token = localStorage.getItem('atelier_coach_auth_token');
   if (!token) throw new Error('인증 토큰이 설정되지 않았습니다. 설정 → AI 코치 설정에서 입력해주세요.');
   var resp = await fetch(ATELIER_FUNCTIONS_URL_ANALYZE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': token },
-    body: JSON.stringify({ prompt: prompt, systemPrompt: systemPrompt || '', maxTokens: maxTokens || 2000 })
+    body: JSON.stringify({ prompt: prompt, systemPrompt: systemPrompt || '', maxTokens: maxTokens || 1500, model: model || 'claude-haiku-4-5' })
   });
   if (!resp.ok) {
     var err = await resp.json().catch(function() { return {}; });
     throw new Error(err.message || err.error || 'HTTP ' + resp.status);
   }
   var data = await resp.json();
-  return data.content;
+  // 사용량 트래킹 (Haiku 가격 기준)
+  if (data.usage) {
+    try {
+      var u = JSON.parse(localStorage.getItem('atelier_coach_usage')) || { totalCalls:0, totalInput:0, totalOutput:0, estimatedCost:0 };
+      u.totalCalls++;
+      u.totalInput += data.usage.input_tokens;
+      u.totalOutput += data.usage.output_tokens;
+      // Haiku 4.5: $1 / M input, $5 / M output (USD → KRW 약 1,350)
+      var costUSD = (data.usage.input_tokens / 1e6) * 1 + (data.usage.output_tokens / 1e6) * 5;
+      u.estimatedCost += Math.round(costUSD * 1350);
+      localStorage.setItem('atelier_coach_usage', JSON.stringify(u));
+    } catch(e) {}
+  }
+  return { content: data.content, usage: data.usage };
+}
+
+// 가계부 데이터 요약 (AI 컨텍스트용)
+function ldgPrepareAIContext() {
+  var txs = _ledgerData.transactions || [];
+  var cats = _ledgerData.categories || {};
+  var goals = ldgLoadGoals();
+  var thisYearGoal = goals[_ldgYear] || {};
+  var now = new Date();
+  var curMonth = now.getMonth() + 1;
+
+  // 카테고리별 × 연도별 × 월별 합계 (만원 단위)
+  var summary = {};
+  txs.forEach(function(t) {
+    if (t.excludeFromGoal === true) return;
+    if (!t.date) return;
+    var y = t.date.substring(0,4);
+    var m = parseInt(t.date.substring(5,7));
+    var cat = t['대분류'];
+    if (!summary[cat]) summary[cat] = {};
+    if (!summary[cat][y]) summary[cat][y] = { total: 0, byMonth: {} };
+    summary[cat][y].total += (t['금액'] || 0);
+    summary[cat][y].byMonth[m] = (summary[cat][y].byMonth[m] || 0) + (t['금액'] || 0);
+  });
+
+  // 텍스트로 변환 (만원 단위로 줄여서 토큰 절약)
+  var lines = [];
+  lines.push('## 사용자 가계부 데이터 (단위: 만원)');
+  lines.push('');
+  lines.push('### 2026년 연간 목표');
+  lines.push('수입 ' + (thisYearGoal['수입']||'?') + '만 / 지출 ' + (thisYearGoal['지출']||'?') + '만 / 저축 ' + (thisYearGoal['저축']||'?') + '만');
+  if (thisYearGoal['메모']) lines.push('메모: ' + thisYearGoal['메모']);
+  lines.push('');
+  lines.push('### 현재 시점: ' + _ldgYear + '년 ' + curMonth + '월 ' + now.getDate() + '일');
+  lines.push('');
+  lines.push('### 카테고리별 연도 × 월별 지출/수입 패턴 (만원, 작년+재작년+올해)');
+  var orderedCats = ['수입','저축','주거비','고정비','교통비','식비','건강/의료비','여행','생필품비','자기계발비','여가비','품위유지비','관계비','경조사비','세금/보험'];
+  var presentCats = Object.keys(summary);
+  var allCats = orderedCats.filter(function(c){ return presentCats.indexOf(c) >= 0; }).concat(presentCats.filter(function(c){ return orderedCats.indexOf(c) < 0; }));
+  allCats.forEach(function(cat) {
+    var catData = summary[cat];
+    var years = Object.keys(catData).sort();
+    var parts = [];
+    years.forEach(function(y) {
+      var totalMan = Math.round(catData[y].total / 10000);
+      var monthBreakdown = [];
+      for (var m = 1; m <= 12; m++) {
+        if (catData[y].byMonth[m]) {
+          monthBreakdown.push(m + ':' + Math.round(catData[y].byMonth[m]/10000));
+        }
+      }
+      parts.push(y + ' 연간 ' + totalMan + '만 [' + monthBreakdown.join(', ') + ']');
+    });
+    lines.push('- ' + cat + ': ' + parts.join(' | '));
+  });
+  return lines.join('\n');
+}
+
+// AI 깊은 분석 실행
+async function ldgRunAIDeepAnalysis() {
+  var btn = document.getElementById('ldg-ai-deep-btn');
+  var resultEl = document.getElementById('ldg-ai-deep-result');
+  if (!resultEl) return;
+  // 캐시 확인 (같은 달은 1회만)
+  var cacheKey = 'atelier_ai_deep_' + _ldgYear + '-' + String(_ldgMonth).padStart(2,'0');
+  resultEl.style.display = 'block';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> Claude 분석 중...'; }
+  try {
+    var context = ldgPrepareAIContext();
+    var systemPrompt = '당신은 한국어로 답하는 직설적이고 친근한 재무 코치입니다. 사용자가 2년치 가계부 데이터를 보내면 패턴을 분석하고 올해 목표 달성을 도와야 합니다.\n\n답변 규칙:\n1. 인사말이나 서론 없이 바로 본론\n2. 구체적인 만원 단위 숫자로 답변 (예: "+50만", "-30만")\n3. 줄글 X. 짧은 불릿 포인트로\n4. 최대 5-6줄, 각 줄 핵심만\n5. 액션 가능한 조언 (어떤 카테고리를 얼마로 줄여야 하는지 등)\n6. 이모지 적절히 사용 (📊 🎯 💡 ⚠️ ✨ 등)';
+    var prompt = context + '\n\n위 데이터를 기반으로:\n1) 이번 달 가장 주의해야 할 카테고리 1-2개와 정확한 절감 금액\n2) 작년/재작년 대비 두드러진 변화\n3) 연간 목표 달성을 위한 구체적 액션 1-2개\n4) 긍정적 시그널 1개\n\n위 4가지를 짧은 불릿 포인트로 답변하세요.';
+    var res = await callCoachAPI(prompt, systemPrompt, 1500, 'claude-haiku-4-5');
+    var content = res.content || '응답을 받지 못했습니다.';
+    var usage = res.usage || {};
+    var costUSD = (usage.input_tokens || 0) / 1e6 * 1 + (usage.output_tokens || 0) / 1e6 * 5;
+    var costKrw = Math.round(costUSD * 1350);
+    // 저장 (캐시)
+    try { localStorage.setItem(cacheKey, JSON.stringify({ content: content, usage: usage, at: new Date().toISOString() })); } catch(e) {}
+    ldgRenderAIDeepResult(content, usage, costKrw, false);
+  } catch (e) {
+    resultEl.innerHTML = '<div class="rounded-2xl p-4 bg-rose-50 border border-rose-200 text-xs text-rose-700">❌ 분석 실패: ' + (e.message || e) + '<br><span class="text-[10px] text-rose-500">설정 → AI 코치 설정에서 토큰을 확인해주세요.</span></div>';
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size:13px">🤖</span> AI 깊은 분석 다시 실행'; }
+  }
+}
+
+// 캐시된 분석 결과 로드
+function ldgLoadCachedAIDeepAnalysis() {
+  var cacheKey = 'atelier_ai_deep_' + _ldgYear + '-' + String(_ldgMonth).padStart(2,'0');
+  try {
+    var cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (cached && cached.content) {
+      var usage = cached.usage || {};
+      var costUSD = (usage.input_tokens || 0) / 1e6 * 1 + (usage.output_tokens || 0) / 1e6 * 5;
+      var costKrw = Math.round(costUSD * 1350);
+      ldgRenderAIDeepResult(cached.content, usage, costKrw, true, cached.at);
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function ldgRenderAIDeepResult(content, usage, costKrw, fromCache, at) {
+  var resultEl = document.getElementById('ldg-ai-deep-result');
+  if (!resultEl) return;
+  resultEl.style.display = 'block';
+  // 줄바꿈을 <br>로, 이모지 그대로
+  var safe = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+  var atDate = at ? new Date(at).toLocaleString('ko-KR') : new Date().toLocaleString('ko-KR');
+  resultEl.innerHTML = '<div class="rounded-2xl p-4 mt-2" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;">' +
+    '<div class="flex items-start gap-3">' +
+      '<span style="font-size:22px">🤖</span>' +
+      '<div class="flex-1">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<p class="text-xs font-bold text-purple-900">Claude Haiku 깊은 분석' + (fromCache ? ' <span class="text-[9px] text-slate-400 font-normal">(캐시됨)</span>' : '') + '</p>' +
+          '<p class="text-[9px] text-slate-400">' + atDate + (usage.input_tokens ? ' · ' + (usage.input_tokens + (usage.output_tokens||0)).toLocaleString() + ' tokens · ₩' + costKrw : '') + '</p>' +
+        '</div>' +
+        '<div class="text-[12px] text-slate-700 leading-relaxed">' + safe + '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
 }
 
 function ldgRenderAIConfig() {
