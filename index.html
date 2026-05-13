@@ -16356,12 +16356,14 @@
       } catch(e) { return []; }
     }
     function monthTotal(seriesArr, monthIdx) {
+      // Annual Matrix는 원 단위로 저장됨 (4,150,000). Money는 만원 단위로 저장됨 (415).
+      // 따라서 합산 후 10,000으로 나눠서 만원 단위로 변환.
       var total = 0;
       (seriesArr || []).forEach(function(s) {
         var m = (s.monthly || {})[monthIdx];
         if (m && m.rev) total += parseFloat(m.rev) || 0;
       });
-      return total;
+      return Math.round(total / 10000);
     }
     var _MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
