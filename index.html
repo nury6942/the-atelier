@@ -23908,6 +23908,38 @@ function ldgAddSkipped(recId, monthKey) {
 }
 
 var _ldgRecurringMigrated = false;
+var _ldgDedupRan = false;
+
+// 자동거래 중복 제거 헬퍼: '자동(고정)' 태그 + (recurringId, 월) 또는 (대/소/금액, 월) 매칭으로 중복 판단
+// 사용자가 수동 입력한 거래는 건드리지 않음. 가장 먼저 만난 거래만 남김.
+function ldgDedupeAutoTx() {
+  var txs = _ledgerData.transactions || [];
+  var byKey = {};      // recurringId|month
+  var byContent = {};  // month|major|minor|amount (recurringId 없는 legacy 자동거래용)
+  var keep = [];
+  var removed = 0;
+  txs.forEach(function(t) {
+    if (t['비고'] !== '자동(고정)' || !t.date) { keep.push(t); return; }
+    var month = t.date.substring(0, 7);
+    if (t.recurringId) {
+      var key = t.recurringId + '|' + month;
+      if (byKey[key]) { removed++; return; }
+      byKey[key] = true;
+    } else {
+      var ck = month + '|' + (t['대분류'] || '') + '|' + (t['소분류'] || '') + '|' + (t['금액'] || 0);
+      if (byContent[ck]) { removed++; return; }
+      byContent[ck] = true;
+    }
+    keep.push(t);
+  });
+  if (removed > 0) {
+    _ledgerData.transactions = keep;
+    ldgSaveTx();
+    console.log('[DailyLedger] Removed ' + removed + ' duplicate auto transactions');
+  }
+  return removed;
+}
+
 function ldgApplyRecurringForMonth(year, month) {
   if (localStorage.getItem('atelier_ledger_recurring_auto') === 'false') return;
   ldgEnsureRecurringIds();
@@ -23929,6 +23961,12 @@ function ldgApplyRecurringForMonth(year, month) {
       }
     });
     if (migrated > 0) { ldgSaveTx(); console.log('[DailyLedger] Migrated recurringId on ' + migrated + ' old auto transactions'); }
+  }
+
+  // One-time per session: 기존 중복 자동거래 정리 (migration 후에 실행해야 recurringId 기반 매칭 가능)
+  if (!_ldgDedupRan) {
+    _ldgDedupRan = true;
+    ldgDedupeAutoTx();
   }
 
   var skipped = ldgGetSkipped();
@@ -23957,8 +23995,9 @@ function ldgApplyRecurringForMonth(year, month) {
 
     var day = Math.min(item.dayOfMonth, new Date(year, month, 0).getDate()); // clamp to month's last day
     var dateStr = monthKey + '-' + String(day).padStart(2,'0');
+    // 결정적 ID: 같은 (recurringId, 월) 조합은 어느 기기에서 만들어도 동일 ID → Firebase merge 시 자동 중복 제거
     var newTx = {
-      id: 'txn_auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,4),
+      id: 'txn_auto_' + item.recId + '_' + monthKey,
       date: dateStr,
       '대분류': item['대분류'], '소분류': item['소분류'],
       '금액': item['금액'], '결제수단': item['결제수단'],
