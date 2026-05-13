@@ -21249,7 +21249,18 @@ function ldgRenderCatGrid() {
         } else if (remainingDays > 0) {
           // 예산 내 사용 중이지만 페이스 빠름
           html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 현재 페이스로는 월말 <b>' + ldgFmt(pace.projected) + '</b> 예상' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ')</span>' : '') + '</p>';
-          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용하면 예산 OK</p>';
+          // 페이스 분해 정보 (어떻게 이 숫자가 나왔는지 표시)
+          if (pace.breakdown) {
+            var bd = pace.breakdown;
+            var parts = [];
+            if (bd.autoTotal > 0) parts.push('자동 ' + ldgFmt(bd.autoTotal));
+            if (bd.extrapolatedManual > 0) parts.push('변동 외삽 ' + ldgFmt(bd.extrapolatedManual) + ' (현재 ' + ldgFmt(bd.manualTotal) + ')');
+            if (bd.futureAuto > 0) parts.push('미래자동 ' + ldgFmt(bd.futureAuto));
+            if (parts.length) {
+              html += '<p class="text-[9px] text-slate-400 mt-0.5">= ' + parts.join(' + ') + '</p>';
+            }
+          }
+          html += '<p class="text-[10px] text-slate-600 mt-1">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용하면 예산 OK</p>';
         }
         if (over > 0 && pace.projected > 0) {
           var roundedUp = Math.ceil(Math.max(pace.projected, totalAmt) / 10000) * 10000;
@@ -21546,47 +21557,44 @@ function ldgAIPaceStatus(catName, year, month) {
 
   var catTypeForPace = ldgGetCatType(catName);
   var projected;
+  var autoTotal = 0, manualTotal = 0, futureAuto = 0, extrapolatedManual = 0;
   if (catTypeForPace === 'fixed' || !isCurrentMonth) {
     projected = monthTotal;
   } else {
     // 유동 카테고리: 자동(고정) 거래는 외삽 X, 변동 거래만 외삽
-    // + 미래 예정 자동 거래도 추가
-    var autoTotal = 0;
-    var manualTotal = 0;
     var txs = _ledgerData.transactions || [];
     txs.forEach(function(t) {
       if (t.excludeFromGoal === true) return;
       if (!t.date || t.date.substring(0,7) !== monthKey) return;
       if (t['대분류'] !== catName) return;
-      var isAuto = (t['비고'] === '자동(고정)' || t.recurringId);
+      var isAuto = (t['비고'] === '자동(고정)' || !!t.recurringId);
       if (isAuto) autoTotal += (t['금액'] || 0);
       else manualTotal += (t['금액'] || 0);
     });
     // 미래 예정 자동 거래 (recurring 항목 중 이번 달 후반에 발생할 것)
-    var futureAuto = 0;
     var recurringItems = _ledgerData.recurring || [];
     var currentDay = now.getDate();
     recurringItems.forEach(function(r) {
       if (r['대분류'] !== catName) return;
-      if (r.dayOfMonth <= currentDay) return; // 이미 지난 날짜는 거래 데이터에 반영됨
-      // 이번 달에 아직 등록 안 된 미래 자동 거래
+      if (r.dayOfMonth <= currentDay) return;
       futureAuto += (r['금액'] || 0);
     });
-    var extrapolatedManual = manualTotal > 0 ? manualTotal / dayProgress : 0;
+    extrapolatedManual = manualTotal > 0 ? manualTotal / dayProgress : 0;
     projected = Math.round(autoTotal + extrapolatedManual + futureAuto);
   }
   var spendRatio = budget > 0 ? projected / budget : 0;
-  var ratio = spendRatio; // 고정/유동 모두 projected 기반 비율
+  var ratio = spendRatio;
+  var breakdown = { autoTotal: autoTotal, manualTotal: manualTotal, extrapolatedManual: Math.round(extrapolatedManual), futureAuto: futureAuto };
 
   var isIncomeSavings = (catName === '수입' || catName === '저축');
   if (isIncomeSavings) {
-    if (ratio >= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '목표 페이스', projected: projected, budget: budget };
-    if (ratio >= 0.75) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '뒤처짐', projected: projected, budget: budget };
-    return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '미달 위험', projected: projected, budget: budget };
+    if (ratio >= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '목표 페이스', projected: projected, budget: budget, breakdown: breakdown };
+    if (ratio >= 0.75) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '뒤처짐', projected: projected, budget: budget, breakdown: breakdown };
+    return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '미달 위험', projected: projected, budget: budget, breakdown: breakdown };
   } else {
-    if (ratio <= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '안정', projected: projected, budget: budget };
-    if (ratio <= 1.1) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '주의', projected: projected, budget: budget };
-    return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '초과 위험', projected: projected, budget: budget };
+    if (ratio <= 0.95) return { status: 'good', color: '#10b981', emoji: '🟢', label: '안정', projected: projected, budget: budget, breakdown: breakdown };
+    if (ratio <= 1.1) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '주의', projected: projected, budget: budget, breakdown: breakdown };
+    return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '초과 위험', projected: projected, budget: budget, breakdown: breakdown };
   }
 }
 
