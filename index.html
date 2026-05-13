@@ -2786,6 +2786,9 @@
           <button onclick="syncSideJobsToMoney()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-purple-50 transition-all text-purple-600 border border-purple-200" title="Side Jobs Annual Matrix의 월별 수익을 다음 달 10일 부업 입금으로 동기화">
             <span class="material-symbols-outlined text-sm">sync</span> Side Jobs 동기화
           </button>
+          <button onclick="syncInterestToMoney()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-emerald-50 transition-all text-emerald-600 border border-emerald-200" title="월초 유동자산 기준 파킹통장 이자 자동 계산 (0~500만 3.01%, 500만 초과 2.40%)">
+            <span class="material-symbols-outlined text-sm">calculate</span> 이자 자동 계산
+          </button>
           <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
             <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
           </button>
@@ -16343,6 +16346,155 @@
     var result = copied + '개 항목이 ' + hubYear + '년으로 복사되었어요!';
     if (failed > 0) result += '\n(' + failed + '개 실패 — 콘솔 확인)';
     alert(result);
+  }
+
+  // 파킹통장 이자 자동 계산: 월초 유동자산 기준, 단계별 금리 적용
+  // 금리: 0~500만 → 3.01% / 500만 초과 → 2.40% (3억 초과도 동일)
+  // 입금일: 매월 19일. category 마커: 'auto_interest:YYYY-MM'
+  async function syncInterestToMoney() {
+    var yearStr = String(hubYear);
+    var INTEREST_DAY = 19;
+    var _MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+    // 이자 계산 (만원 단위)
+    function computeInterest(balanceManwon) {
+      if (balanceManwon <= 0) return 0;
+      var tier1 = Math.min(balanceManwon, 500);          // 500만 이하 부분
+      var tier2 = Math.max(balanceManwon - 500, 0);      // 500만 초과 부분
+      var annual = tier1 * 0.0301 + tier2 * 0.024;
+      var monthly = annual / 12;
+      return Math.round(monthly * 100) / 100;            // 소수 둘째자리까지
+    }
+
+    // 월초 유동자산: base.cash + 모든 이전 거래 합 (자동 이자 항목은 제외 — recompute 대상이므로)
+    function liquidAtStartOfMonth(monthIdx) {
+      var base = getBaseAssets();
+      var monthKey = yearStr + '-' + String(monthIdx + 1).padStart(2, '0');
+      var total = base.cash || 0;
+      hubData.forEach(function(row) {
+        var rowDate = (row[0] || '').toString();
+        if (!rowDate || rowDate >= monthKey + '-01') return;
+        var cat = (row[1] || '').toString();
+        if (cat.indexOf('auto_interest:') === 0) return; // 기존 자동 이자 제외
+        var t = row[4] || '', a = parseFloat(row[3]) || 0;
+        if (t === '수입' || t === '이자') total += a;
+        else if (t === '지출') total -= a;
+        else if (t === '출금') total -= a;
+        // 저축은 파킹 내부 이동이라 유동자산 변동 없음
+      });
+      return total;
+    }
+
+    // 기존 자동 이자 항목 인덱싱
+    var existing = {};
+    hubData.forEach(function(row, idx) {
+      var cat = (row[1] || '').toString();
+      if (cat.indexOf('auto_interest:') === 0) {
+        // YYYY-MM 부분이 현재 년도인 것만
+        if (cat.substring('auto_interest:'.length, 'auto_interest:'.length + 4) === yearStr) {
+          existing[cat] = { idx: idx, row: row };
+        }
+      }
+    });
+
+    // 12개월 계획 수립
+    var plan = [];
+    for (var m = 0; m < 12; m++) {
+      var balance = liquidAtStartOfMonth(m);
+      var interest = computeInterest(balance);
+      plan.push({
+        month: m + 1,
+        monthKey: yearStr + '-' + String(m+1).padStart(2,'0'),
+        balance: balance,
+        interest: interest
+      });
+    }
+
+    // 변경사항 분류
+    var toCreate = [], toUpdate = [], toDelete = [];
+    plan.forEach(function(p) {
+      var cat = 'auto_interest:' + p.monthKey;
+      var ex = existing[cat];
+      if (p.interest > 0) {
+        if (ex) {
+          var oldAmount = parseFloat(ex.row[3]) || 0;
+          if (Math.abs(oldAmount - p.interest) > 0.01) {
+            toUpdate.push({ existing: ex, plan: p, cat: cat });
+          }
+        } else {
+          toCreate.push({ plan: p, cat: cat });
+        }
+      } else {
+        if (ex) toDelete.push(ex);
+      }
+    });
+
+    if (toCreate.length === 0 && toUpdate.length === 0 && toDelete.length === 0) {
+      alert('모든 이자 항목이 이미 최신 상태입니다.');
+      return;
+    }
+
+    var preview = yearStr + '년 파킹통장 이자를 자동 계산합니다:\n\n';
+    preview += '금리: 0~500만 3.01% / 500만 초과 2.40%\n';
+    preview += '입금일: 매월 ' + INTEREST_DAY + '일\n\n';
+    if (toCreate.length > 0) {
+      preview += '✚ 새로 추가 (' + toCreate.length + '건):\n';
+      toCreate.slice(0, 4).forEach(function(c) {
+        preview += '   ' + _MONTHS_KR[c.plan.month-1] + ' ' + INTEREST_DAY + '일: 잔액 ' + c.plan.balance.toLocaleString('ko-KR') + '만 → +' + c.plan.interest + '만\n';
+      });
+      if (toCreate.length > 4) preview += '   ... 외 ' + (toCreate.length - 4) + '건\n';
+    }
+    if (toUpdate.length > 0) {
+      preview += '✎ 금액 업데이트 (' + toUpdate.length + '건):\n';
+      toUpdate.slice(0, 4).forEach(function(u) {
+        var oldA = parseFloat(u.existing.row[3]) || 0;
+        preview += '   ' + _MONTHS_KR[u.plan.month-1] + ': ' + oldA + '만 → ' + u.plan.interest + '만\n';
+      });
+      if (toUpdate.length > 4) preview += '   ... 외 ' + (toUpdate.length - 4) + '건\n';
+    }
+    if (toDelete.length > 0) {
+      preview += '✗ 제거: ' + toDelete.length + '건\n';
+    }
+    preview += '\n수동 입력한 이자 항목은 영향받지 않습니다.\n진행할까요?';
+
+    if (!confirm(preview)) return;
+
+    var addedN = 0, updatedN = 0, deletedN = 0;
+    for (var i = 0; i < toCreate.length; i++) {
+      var c = toCreate[i];
+      var dateStr = c.plan.monthKey + '-' + String(INTEREST_DAY).padStart(2,'0');
+      var newRow = [dateStr, c.cat, '이자 (파킹 자동)', c.plan.interest, '이자'];
+      try {
+        var saved = await fbAdd('finance_hub', rowToObj('finance_hub', newRow));
+        hubData.push(newRow.concat([saved._id, 0]));
+        addedN++;
+      } catch(e) { console.error('[Interest Sync] create failed', e); }
+    }
+    for (var j = 0; j < toUpdate.length; j++) {
+      var u = toUpdate[j];
+      var oldRow = u.existing.row;
+      var dateStr2 = u.plan.monthKey + '-' + String(INTEREST_DAY).padStart(2,'0');
+      var newRow2 = [dateStr2, u.cat, '이자 (파킹 자동)', u.plan.interest, '이자'];
+      try {
+        await fbUpdate('finance_hub', oldRow[5], rowToObj('finance_hub', newRow2));
+        hubData[u.existing.idx] = newRow2.concat([oldRow[5], oldRow[6] || 0]);
+        updatedN++;
+      } catch(e) { console.error('[Interest Sync] update failed', e); }
+    }
+    toDelete.sort(function(a,b) { return b.idx - a.idx; });
+    for (var k = 0; k < toDelete.length; k++) {
+      var d = toDelete[k];
+      try {
+        await fbDelete('finance_hub', d.row[5]);
+        hubData.splice(d.idx, 1);
+        deletedN++;
+      } catch(e) { console.error('[Interest Sync] delete failed', e); }
+    }
+
+    document.getElementById('hub-table-wrap').style.display = 'block';
+    document.getElementById('hub-empty').style.display = 'none';
+    renderHubTable(); updateHubStats();
+    alert('이자 자동 계산 완료!\n추가 ' + addedN + ' · 업데이트 ' + updatedN + ' · 제거 ' + deletedN);
   }
 
   // Side Jobs Annual Matrix → Money 부업 입금 동기화
