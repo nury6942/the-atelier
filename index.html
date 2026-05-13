@@ -20576,15 +20576,12 @@ async function loadLedgerData() {
   var catCount = Object.keys(c).length, subCount = 0;
   for (var k in c) subCount += (c[k] || []).length;
   console.log('[DailyLedger] Loaded:\n  - settings: { year: ' + (s.year||'?') + ', paymentMethods: ' + ((s.paymentMethods||[]).length) + '개 }\n  - categories: ' + catCount + ' 대분류, ' + subCount + ' 소분류\n  - budgets: ' + Object.keys(_ledgerData.budgets||{}).length + ' 카테고리\n  - recurring: ' + (_ledgerData.recurring||[]).length + ' 항목\n  - assets-template: ' + Object.keys(_ledgerData.assets||{}).length + ' 분류\n  - transactions: ' + (_ledgerData.transactions||[]).length.toLocaleString() + ' 건');
-  // Find latest month with transactions
-  var txs = _ledgerData.transactions || [];
-  if (txs.length) {
-    var latest = txs.reduce(function(a,b){ return a.date > b.date ? a : b; });
-    var parts = latest.date.split('-');
-    _ldgYear = parseInt(parts[0]); _ldgMonth = parseInt(parts[1]);
-    _ldgAnnualYear = _ldgYear;
-    _ldgAssetYear = _ldgYear;
-  }
+  // 월별 뷰는 항상 오늘 날짜 기준 월로 시작 (자동 고정 거래로 미래 월로 점프하는 문제 방지)
+  var _today = new Date();
+  _ldgYear = _today.getFullYear();
+  _ldgMonth = _today.getMonth() + 1;
+  _ldgAnnualYear = _ldgYear;
+  _ldgAssetYear = _ldgYear;
   ldgCheckDataAnomaly();
   ldgRenderMonthly();
 }
