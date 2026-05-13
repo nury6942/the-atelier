@@ -3095,19 +3095,9 @@
           </div>
         </div>
 
-        <!-- [4] Category Grid (5 cols) + AI Insight -->
+        <!-- [4] Category Grid (5 cols) -->
         <div class="mb-8">
-          <div class="flex items-center justify-between mb-4">
-            <h4 class="font-bold text-slate-800 text-sm">카테고리별 집계</h4>
-            <div class="flex items-center gap-2">
-              <button id="ldg-ai-deep-btn" onclick="ldgRunAIDeepAnalysis()" class="text-[10px] px-3 py-1.5 rounded-full text-white font-bold flex items-center gap-1" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">
-                <span style="font-size:13px">🤖</span> AI 깊은 분석
-              </button>
-              <span class="text-[10px] text-slate-400">각 카드의 페이스/추천 확인</span>
-            </div>
-          </div>
-          <div id="ldg-ai-insight" class="mb-3"></div>
-          <div id="ldg-ai-deep-result" style="display:none" class="mb-4"></div>
+          <h4 class="font-bold text-slate-800 text-sm mb-4">카테고리별 집계</h4>
           <div id="ldg-cat-grid" class="grid grid-cols-5 gap-4"></div>
         </div>
 
@@ -21036,14 +21026,8 @@ function ldgRenderDailyChart() {
 function ldgRenderCatGrid() {
   var el = document.getElementById('ldg-cat-grid');
   if (!el) return;
-  // 캐시된 AI 깊은 분석 결과 로드 (있으면)
-  var deepEl = document.getElementById('ldg-ai-deep-result');
-  if (deepEl) {
-    var hasCached = ldgLoadCachedAIDeepAnalysis();
-    if (!hasCached) deepEl.style.display = 'none';
-  }
-  // AI 인사이트 배너 렌더링
-  var insightEl = document.getElementById('ldg-ai-insight');
+  // (상단 줄글 인사이트/AI 깊은 분석 박스는 제거됨. 모든 정보는 카드 안에 직접 표시)
+  var insightEl = null;
   if (insightEl) {
     var rebalance = ldgAIComputeRebalance(_ldgYear, _ldgMonth);
     var alert_ = ldgAITopAlert(_ldgYear, _ldgMonth);
@@ -21182,7 +21166,7 @@ function ldgRenderCatGrid() {
         }
       });
     }
-    var opacity = hasTx ? '' : ' opacity-60';
+    var opacity = ''; // 사용량 없어도 동일하게 표시
     // AI 페이스 뱃지
     var pace = ldgAIPaceStatus(catName, _ldgYear, _ldgMonth);
     var paceBadge = '';
