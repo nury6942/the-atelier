@@ -20679,11 +20679,17 @@ function ldgRenderAnnualGoal() {
     return;
   }
 
-  // 연 누적 합계 (원 단위)
+  // 연 누적 합계 (원 단위) — excludeFromGoal 거래는 제외 (자산이동)
   var txs = _ledgerData.transactions || [];
   var incTotal = 0, expTotal = 0, savTotal = 0;
+  var excludedTotal = 0, excludedCount = 0;
   txs.forEach(function(t) {
     if (!t.date || t.date.substring(0,4) !== String(year)) return;
+    if (t.excludeFromGoal === true) {
+      excludedTotal += (t['금액'] || 0);
+      excludedCount++;
+      return;
+    }
     var amt = t['금액'] || 0;
     var major = t['대분류'];
     if (major === '수입') incTotal += amt;
@@ -20752,6 +20758,13 @@ function ldgRenderAnnualGoal() {
   html += bar('지출', expA, expGoal, false, '#ef4444');
   html += bar('저축', savA, savGoal, true, '#6366f1');
   html += '</div>';
+  if (excludedCount > 0) {
+    var excludedMan = Math.round(excludedTotal / 10000);
+    html += '<div class="mt-2 px-3 py-2 rounded-lg bg-slate-50/80 border border-slate-100 flex items-center gap-2">' +
+      '<span class="text-sm">🔁</span>' +
+      '<div class="flex-1 text-[10px] text-slate-500"><span class="font-bold text-slate-700">자산 이동: ' + excludedMan.toLocaleString('ko-KR') + '만 (' + excludedCount + '건)</span> · 정기 지출 목표 추적에서 제외</div>' +
+    '</div>';
+  }
   if (yg['메모']) {
     html += '<p class="text-[10px] text-slate-400 mt-1.5 italic">📝 ' + yg['메모'] + '</p>';
   }
@@ -21208,7 +21221,7 @@ function ldgRenderCatGrid() {
 // ============================================
 // ── AI 인사이트 (카드 내장형 코치) ──
 // ============================================
-// 작년/재작년 동월 합계 배열 (이 카테고리)
+// 작년/재작년 동월 합계 배열 (이 카테고리) — excludeFromGoal 거래는 학습에서 제외
 function ldgAIHistoricalSameMonth(catName, year, month) {
   var txs = _ledgerData.transactions || [];
   var results = [];
@@ -21216,6 +21229,7 @@ function ldgAIHistoricalSameMonth(catName, year, month) {
     var mk = y + '-' + String(month).padStart(2,'0');
     var total = 0;
     txs.forEach(function(t) {
+      if (t.excludeFromGoal === true) return;
       if (t.date && t.date.substring(0,7) === mk && t['대분류'] === catName) {
         total += (t['금액'] || 0);
       }
@@ -21239,12 +21253,13 @@ function ldgAIRecommendBudget(catName, year, month) {
   return Math.round(avg);
 }
 
-// 카테고리의 이번달 현재 사용 합계 (원)
+// 카테고리의 이번달 현재 사용 합계 (원) — excludeFromGoal 거래 제외 (페이스 계산용)
 function ldgAICurrentMonthTotal(catName, year, month) {
   var txs = _ledgerData.transactions || [];
   var mk = year + '-' + String(month).padStart(2,'0');
   var total = 0;
   txs.forEach(function(t) {
+    if (t.excludeFromGoal === true) return;
     if (t.date && t.date.substring(0,7) === mk && t['대분류'] === catName) {
       total += (t['금액'] || 0);
     }
@@ -21428,7 +21443,8 @@ function ldgRenderTxTable() {
       html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
       html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
       html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:200px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + (t['비고']||'') + '</td>';
+      var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';
+      html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + assetMarker + (t['비고']||'') + '</td>';
       html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + tid + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
       html += '</tr>';
     }
@@ -21922,10 +21938,17 @@ function ldgShowTxMenu(e, txId) {
   menu.id = 'ldg-tx-menu';
   menu.className = 'fixed bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-[9999]';
   menu.style.top = rect.bottom + 4 + 'px';
-  menu.style.left = (rect.left - 80) + 'px';
+  menu.style.left = (rect.left - 100) + 'px';
+  var tx = (_ledgerData.transactions || []).find(function(t){ return t.id === txId; });
+  var isExcluded = tx && tx.excludeFromGoal === true;
+  var toggleLabel = isExcluded ? '목표 추적 포함 ↩︎' : '목표 추적 제외 (자산이동)';
+  var toggleStyle = isExcluded ? 'text-emerald-600' : 'text-slate-600';
   menu.innerHTML =
     '<button onclick="ldgEditTx(\'' + txId + '\')" class="w-full text-left px-4 py-2 text-xs text-slate-600 hover:bg-slate-50">수정</button>' +
     '<button onclick="ldgDuplicateTx(\'' + txId + '\')" class="w-full text-left px-4 py-2 text-xs text-slate-600 hover:bg-slate-50">복제</button>' +
+    '<div class="border-t border-slate-100 my-1"></div>' +
+    '<button onclick="ldgToggleExcludeFromGoal(\'' + txId + '\')" class="w-full text-left px-4 py-2 text-xs ' + toggleStyle + ' hover:bg-slate-50">' + toggleLabel + '</button>' +
+    '<div class="border-t border-slate-100 my-1"></div>' +
     '<button onclick="ldgDeleteTx(\'' + txId + '\')" class="w-full text-left px-4 py-2 text-xs text-red-500 hover:bg-red-50">삭제</button>';
   document.body.appendChild(menu);
   setTimeout(function() {
@@ -21942,6 +21965,20 @@ function ldgEditTx(txId) {
   _ldgEditingId = txId;
   ldgRenderTxTable();
   setTimeout(function() { ldgInitCustomDDs(); var f = document.getElementById('ldg-in-date'); if (f) f.focus(); }, 50);
+}
+
+// 자산 이동(집 대출 상환 등) 토글 - 목표 추적/AI 계산에서 제외
+function ldgToggleExcludeFromGoal(txId) {
+  var m = document.getElementById('ldg-tx-menu'); if (m) m.remove();
+  var tx = (_ledgerData.transactions || []).find(function(t){ return t.id === txId; });
+  if (!tx) return;
+  tx.excludeFromGoal = !tx.excludeFromGoal;
+  ldgSaveTx();
+  ldgRenderMonthly();
+  if (typeof showSyncToast === 'function') {
+    var msg = tx.excludeFromGoal ? '목표 추적에서 제외됨 (자산이동)' : '목표 추적에 다시 포함됨';
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">swap_horiz</span> ' + msg);
+  }
 }
 
 function ldgDuplicateTx(txId) {
