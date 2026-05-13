@@ -16356,14 +16356,14 @@
     var INTEREST_DAY = 19;
     var _MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
-    // 이자 계산 (만원 단위)
+    // 이자 계산 (만원 단위) — 소수점 첫째자리에서 반올림하여 정수
     function computeInterest(balanceManwon) {
       if (balanceManwon <= 0) return 0;
       var tier1 = Math.min(balanceManwon, 500);          // 500만 이하 부분
       var tier2 = Math.max(balanceManwon - 500, 0);      // 500만 초과 부분
       var annual = tier1 * 0.0301 + tier2 * 0.024;
       var monthly = annual / 12;
-      return Math.round(monthly * 100) / 100;            // 소수 둘째자리까지
+      return Math.round(monthly);                        // 정수 만원
     }
 
     // 월초 유동자산: base.cash + 모든 이전 거래 합 (자동 이자 항목은 제외 — recompute 대상이므로)
