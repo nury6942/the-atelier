@@ -22956,14 +22956,25 @@ function ldgSaveRec() {
   if (!major || !minor || !day) { alert('대분류, 소분류, 날짜는 필수입니다.'); return; }
   if (!isVar && amt === 0) { alert('금액을 입력하거나 "변동"을 체크하세요.'); return; }
   var entry = {'대분류':major,'소분류':minor,dayOfMonth:day,'금액':amt,'결제수단':pm};
+  var futureUpdated = 0;
   if (typeof _ldgRecEditIdx === 'number') {
+    // 기존 recId 보존 → 미래 자동 거래와 연결 유지
+    var oldItem = _ledgerData.recurring[_ldgRecEditIdx];
+    if (oldItem && oldItem.recId) entry.recId = oldItem.recId;
     _ledgerData.recurring[_ldgRecEditIdx] = entry;
+    ldgSaveRecurringData();
+    // 다음 달 이후 자동 거래 일괄 갱신
+    futureUpdated = ldgUpdateFutureRecurringTx(entry.recId, entry);
   } else {
     _ledgerData.recurring.push(entry);
+    ldgSaveRecurringData();
   }
-  ldgSaveRecurringData();
   _ldgRecEditIdx = null;
   ldgRenderRecurring();
+  if (typeof ldgRenderMonthly === 'function') ldgRenderMonthly();
+  if (futureUpdated > 0 && typeof showSyncToast === 'function') {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 다음 달부터 ' + futureUpdated + '건 자동 갱신');
+  }
 }
 
 function ldgShowRecMenu(e, i) {
@@ -22989,9 +23000,19 @@ function ldgEditRec(i) {
 
 function ldgDeleteRec(i) {
   var m = document.getElementById('ldg-rec-menu'); if (m) m.remove();
-  ldgSafetyShow('이 고정 내역을 삭제하시겠습니까?', function() {
+  var target = _ledgerData.recurring[i];
+  if (!target) return;
+  var recId = target.recId;
+  ldgSafetyShow('이 고정 내역을 삭제하시겠습니까?\n(이번 달은 유지, 다음 달부터 자동 적용 안 됨)', function() {
     _ledgerData.recurring.splice(i, 1);
-    ldgSaveRecurringData(); ldgRenderRecurring();
+    ldgSaveRecurringData();
+    // 다음 달 이후 자동 거래 일괄 삭제
+    var deleted = recId ? ldgDeleteFutureRecurringTx(recId) : 0;
+    ldgRenderRecurring();
+    if (typeof ldgRenderMonthly === 'function') ldgRenderMonthly();
+    if (deleted > 0 && typeof showSyncToast === 'function') {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 다음 달 이후 ' + deleted + '건 자동 삭제');
+    }
   });
 }
 
@@ -23011,6 +23032,57 @@ function ldgEnsureRecurringIds() {
     }
   });
   if (changed) ldgSaveRecurringData();
+}
+
+// 다음 달 1일을 YYYY-MM-01 형식으로 반환 (오늘 기준)
+function ldgGetNextMonthStart() {
+  var now = new Date();
+  var y = now.getFullYear(), m = now.getMonth() + 1; // 1-12
+  m++; // 다음 달
+  if (m > 12) { m = 1; y++; }
+  return y + '-' + String(m).padStart(2,'0') + '-01';
+}
+
+// 고정내역 수정 시: 다음 달 이후의 자동 거래를 새 값으로 일괄 갱신
+function ldgUpdateFutureRecurringTx(recId, newItem) {
+  if (!recId) return 0;
+  var nextStart = ldgGetNextMonthStart();
+  var txs = _ledgerData.transactions || [];
+  var updated = 0;
+  txs.forEach(function(t) {
+    if (t.recurringId === recId && t.date && t.date >= nextStart) {
+      t['대분류'] = newItem['대분류'];
+      t['소분류'] = newItem['소분류'];
+      t['결제수단'] = newItem['결제수단'];
+      // 변동(0)이 아니면 금액도 갱신, 변동이면 기존 사용자 입력값 보존
+      if (newItem['금액'] && newItem['금액'] !== 0) {
+        t['금액'] = newItem['금액'];
+      }
+      // dayOfMonth 변경 반영
+      var mk = t.date.substring(0, 7);
+      var parts = mk.split('-');
+      var lastDay = new Date(parseInt(parts[0]), parseInt(parts[1]), 0).getDate();
+      var day = Math.min(newItem.dayOfMonth, lastDay);
+      t.date = mk + '-' + String(day).padStart(2,'0');
+      updated++;
+    }
+  });
+  if (updated > 0) ldgSaveTx();
+  return updated;
+}
+
+// 고정내역 삭제 시: 다음 달 이후의 자동 거래를 일괄 삭제
+function ldgDeleteFutureRecurringTx(recId) {
+  if (!recId) return 0;
+  var nextStart = ldgGetNextMonthStart();
+  var txs = _ledgerData.transactions || [];
+  var before = txs.length;
+  _ledgerData.transactions = txs.filter(function(t) {
+    return !(t.recurringId === recId && t.date && t.date >= nextStart);
+  });
+  var deleted = before - _ledgerData.transactions.length;
+  if (deleted > 0) ldgSaveTx();
+  return deleted;
 }
 
 // ── Recurring skip list (deleted auto transactions) ──
