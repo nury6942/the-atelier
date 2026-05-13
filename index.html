@@ -20491,6 +20491,11 @@ async function loadLedgerFromFirebase() {
         loaded++;
       }
     });
+    // goals는 별도 키 (localStorage 직접 저장, _ledgerData에 안 들어감)
+    if (d.goals !== undefined && d.goals !== null) {
+      try { localStorage.setItem('atelier_ledger_goals', JSON.stringify(d.goals)); } catch(e) {}
+      loaded++;
+    }
     var txCount = (d.transactions||[]).length;
     console.log('[LedgerSync] Firebase에서 로드: ' + loaded + ' keys, updatedAt=' + (d.updatedAt||'?') + ', tx=' + txCount);
     return { docExists: true, loaded: loaded, txCount: txCount };
@@ -20503,6 +20508,8 @@ async function loadLedgerFromFirebase() {
 async function saveLedgerToFirebase() {
   try {
     if (typeof db === 'undefined' || !db) return false;
+    var goalsStored = {};
+    try { goalsStored = JSON.parse(localStorage.getItem('atelier_ledger_goals')) || {}; } catch(e) {}
     var payload = {
       settings: _ledgerData.settings || {},
       categories: _ledgerData.categories || {},
@@ -20510,6 +20517,7 @@ async function saveLedgerToFirebase() {
       recurring: _ledgerData.recurring || [],
       assets: _ledgerData.assets || {},
       transactions: _ledgerData.transactions || [],
+      goals: goalsStored,
       updatedAt: new Date().toISOString()
     };
     var size = JSON.stringify(payload).length;
@@ -24091,6 +24099,7 @@ function ldgSaveGoal() {
   goals[_ldgGoalYear] = { '수입': inc, '저축': sav, '지출': exp, '메모': memo, updatedAt: new Date().toISOString() };
   ldgBackupBeforeSave('atelier_ledger_goals');
   localStorage.setItem('atelier_ledger_goals', JSON.stringify(goals));
+  scheduleLedgerSync(); // 다기기 자동 동기화
   // Toast
   var toast = document.createElement('div');
   toast.className = 'fixed top-20 right-8 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 shadow-lg z-[9999] flex items-center gap-2';
