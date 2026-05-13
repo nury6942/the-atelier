@@ -20430,6 +20430,7 @@ var _ldgSortField = 'date', _ldgSortAsc = false;
 var _ldgDeleteTarget = null;
 var _ldgEditingId = null;
 var _ldgLastSavedDate = null;
+var _ldgBudgetEditingCat = null; // 카테고리 카드에서 예산 인라인 편집 중인 카테고리명
 var _ldgChartIncome = null, _ldgChartExpense = null, _ldgChartDaily = null;
 var _ldgMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var _ldgMonthKo = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -20967,16 +20968,25 @@ function ldgRenderCatGrid() {
     }
     subAmts.sort(function(a,b) { return b.amt - a.amt; });
     // Budget for this category
+    // 1순위: 카테고리 단위 예산 (budgets[catName]) — 인라인 편집으로 설정
+    // 2순위: 소분류 단위 예산 합계 (budgets[catName.소분류])
     var budgetTotal = 0, hasBudget = false;
-    subs.forEach(function(sub) {
-      var bKey = catName + '.' + sub;
-      if (budgets[bKey]) {
-        hasBudget = true;
-        var bVal = budgets[bKey].default || 0;
-        if (budgets[bKey].overrides && budgets[bKey].overrides[monthKey] !== undefined) bVal = budgets[bKey].overrides[monthKey];
-        budgetTotal += bVal;
-      }
-    });
+    var catBudget = budgets[catName];
+    if (catBudget && (catBudget.default !== undefined || (catBudget.overrides && Object.keys(catBudget.overrides).length))) {
+      hasBudget = true;
+      budgetTotal = catBudget.default || 0;
+      if (catBudget.overrides && catBudget.overrides[monthKey] !== undefined) budgetTotal = catBudget.overrides[monthKey];
+    } else {
+      subs.forEach(function(sub) {
+        var bKey = catName + '.' + sub;
+        if (budgets[bKey]) {
+          hasBudget = true;
+          var bVal = budgets[bKey].default || 0;
+          if (budgets[bKey].overrides && budgets[bKey].overrides[monthKey] !== undefined) bVal = budgets[bKey].overrides[monthKey];
+          budgetTotal += bVal;
+        }
+      });
+    }
     var opacity = hasTx ? '' : ' opacity-60';
     html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
     html += '<div class="mb-3"><div class="flex justify-between items-start"><p class="text-sm font-bold text-slate-900">' + catName + '</p><p class="text-xs text-slate-900 font-bold" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
@@ -21005,15 +21015,87 @@ function ldgRenderCatGrid() {
       }
     });
     html += '</ul>';
-    if (hasBudget && budgetTotal > 0) {
+    var safeCatId = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+    var catNameEsc = catName.replace(/'/g, "\\'");
+    if (_ldgBudgetEditingCat === catName) {
+      // 인라인 편집 모드
+      var curVal = hasBudget ? Math.round(budgetTotal / 10000) : ''; // 만원 단위
+      html += '<div class="pt-2 border-t border-slate-50">' +
+        '<div class="flex items-center gap-1">' +
+          '<span class="text-[10px] text-slate-400 shrink-0">예산</span>' +
+          '<input type="text" id="ldg-cat-budget-input-' + safeCatId + '" value="' + curVal + '" placeholder="만원" class="flex-1 min-w-0 text-[10px] px-1.5 py-0.5 border border-indigo-200 rounded outline-none focus:ring-1 focus:ring-indigo-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCatBudget(\'' + catNameEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCatBudget();}"/>' +
+          '<span class="text-[10px] text-slate-400 shrink-0">만</span>' +
+          '<button onclick="ldgSaveCatBudget(\'' + catNameEsc + '\')" class="p-0.5 rounded bg-indigo-600 text-white shrink-0" title="저장"><span class="material-symbols-outlined" style="font-size:12px">check</span></button>' +
+          '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+        '</div>' +
+      '</div>';
+    } else if (hasBudget && budgetTotal > 0) {
       var remaining = budgetTotal - totalAmt;
       var color = remaining >= 0 ? '#10b981' : '#ef4444';
       var pct = Math.min(totalAmt / budgetTotal * 100, 100);
-      html += '<div class="pt-2 border-t border-slate-50"><div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + '</span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + (remaining >= 0 ? '+' : '') + ldgFmtShort(remaining) + '</span></div><div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + (remaining >= 0 ? '#10b981' : '#ef4444') + '"></div></div></div>';
+      html += '<div class="pt-2 border-t border-slate-50 cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 -mb-5 pb-5 rounded-b-2xl transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
+        '<div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + '</span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + (remaining >= 0 ? '+' : '') + ldgFmtShort(remaining) + '</span></div>' +
+        '<div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + (remaining >= 0 ? '#10b981' : '#ef4444') + '"></div></div>' +
+      '</div>';
+    } else {
+      // 예산 없음 - 설정 버튼
+      html += '<div class="pt-2 border-t border-slate-50">' +
+        '<button onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5">' +
+          '<span class="material-symbols-outlined" style="font-size:12px">add</span> 예산 설정' +
+        '</button>' +
+      '</div>';
     }
     html += '</div>';
   });
   el.innerHTML = html;
+}
+
+// ── 카테고리 카드에서 예산 인라인 편집 ──
+function ldgStartEditCatBudget(catName) {
+  _ldgBudgetEditingCat = catName;
+  ldgRenderCatGrid();
+  setTimeout(function() {
+    var safe = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+    var input = document.getElementById('ldg-cat-budget-input-' + safe);
+    if (input) { input.focus(); input.select(); }
+  }, 50);
+}
+
+function ldgCancelEditCatBudget() {
+  _ldgBudgetEditingCat = null;
+  ldgRenderCatGrid();
+}
+
+function ldgSaveCatBudget(catName) {
+  var safe = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+  var input = document.getElementById('ldg-cat-budget-input-' + safe);
+  if (!input) return;
+  var raw = (input.value || '').replace(/[^0-9.]/g, '');
+  if (!_ledgerData.budgets) _ledgerData.budgets = {};
+  var monthKey = ldgMonthKey();
+  if (raw === '' || raw === '0') {
+    // 빈 값 또는 0 → 이번 달 override만 제거 (default는 유지)
+    if (_ledgerData.budgets[catName] && _ledgerData.budgets[catName].overrides) {
+      delete _ledgerData.budgets[catName].overrides[monthKey];
+      // 만약 default도 없고 overrides도 비었으면 전체 삭제
+      var b = _ledgerData.budgets[catName];
+      var hasDef = b.default && b.default > 0;
+      var hasOv = b.overrides && Object.keys(b.overrides).length > 0;
+      if (!hasDef && !hasOv) delete _ledgerData.budgets[catName];
+    }
+  } else {
+    // 입력은 만원 단위 → 원으로 환산
+    var manVal = parseFloat(raw) || 0;
+    var amt = Math.round(manVal * 10000);
+    if (!_ledgerData.budgets[catName]) _ledgerData.budgets[catName] = { default: 0, overrides: {} };
+    if (!_ledgerData.budgets[catName].overrides) _ledgerData.budgets[catName].overrides = {};
+    _ledgerData.budgets[catName].overrides[monthKey] = amt;
+    // 처음 설정 시 default도 같이 채워서 다른 달도 자동 적용
+    if (!_ledgerData.budgets[catName].default) _ledgerData.budgets[catName].default = amt;
+  }
+  ldgSaveBudgets();
+  _ldgBudgetEditingCat = null;
+  ldgRenderCatGrid();
 }
 
 // ── Transaction Table ──
