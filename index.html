@@ -2783,6 +2783,9 @@
           <button onclick="copyPrevYearToHub()" id="hub-copy-prev-btn" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-indigo-50 transition-all text-indigo-600 border border-indigo-200" style="display:none">
             <span class="material-symbols-outlined text-sm">content_copy</span> <span id="hub-copy-prev-label">이전 년도 복사</span>
           </button>
+          <button onclick="syncSideJobsToMoney()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-purple-50 transition-all text-purple-600 border border-purple-200" title="Side Jobs Annual Matrix의 월별 수익을 다음 달 10일 부업 입금으로 동기화">
+            <span class="material-symbols-outlined text-sm">sync</span> Side Jobs 동기화
+          </button>
           <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
             <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
           </button>
@@ -16340,6 +16343,149 @@
     var result = copied + '개 항목이 ' + hubYear + '년으로 복사되었어요!';
     if (failed > 0) result += '\n(' + failed + '개 실패 — 콘솔 확인)';
     alert(result);
+  }
+
+  // Side Jobs Annual Matrix → Money 부업 입금 동기화
+  // 규칙: N월 수익 → (N+1)월 10일 입금. 12월 수익 → 다음 년도 1월 10일 입금.
+  // 마커: category 필드에 'side_jobs:YYYY-MM' (revenue month) 저장하여 추적
+  async function syncSideJobsToMoney() {
+    function readSeries(yr) {
+      try {
+        var raw = localStorage.getItem('atelier_series_' + yr);
+        return raw ? JSON.parse(raw) : [];
+      } catch(e) { return []; }
+    }
+    function monthTotal(seriesArr, monthIdx) {
+      var total = 0;
+      (seriesArr || []).forEach(function(s) {
+        var m = (s.monthly || {})[monthIdx];
+        if (m && m.rev) total += parseFloat(m.rev) || 0;
+      });
+      return total;
+    }
+    var _MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+    var curYearStr = String(hubYear);
+    var prevYearStr = String(hubYear - 1);
+    var curSeries = readSeries(curYearStr);
+    var prevSeries = readSeries(prevYearStr);
+
+    // 동기화 계획: 12개 입금 (Jan~Dec)
+    // - 1월 입금 = 이전 년도 12월 수익
+    // - 2~12월 입금 = 현재 년도 1~11월 수익
+    var plan = [];
+    plan.push({
+      revYear: prevYearStr,
+      revMonthIdx: 11,
+      revAmount: monthTotal(prevSeries, 11),
+      depositDate: curYearStr + '-01-10',
+      sourceKey: prevYearStr + '-12'
+    });
+    for (var m = 0; m < 11; m++) {
+      plan.push({
+        revYear: curYearStr,
+        revMonthIdx: m,
+        revAmount: monthTotal(curSeries, m),
+        depositDate: curYearStr + '-' + String(m+2).padStart(2,'0') + '-10',
+        sourceKey: curYearStr + '-' + String(m+1).padStart(2,'0')
+      });
+    }
+
+    // 기존 동기화 항목 인덱싱 (category가 'side_jobs:'로 시작)
+    var existing = {};
+    hubData.forEach(function(row, idx) {
+      var cat = (row[1] || '').toString();
+      if (cat.indexOf('side_jobs:') === 0) {
+        existing[cat] = { idx: idx, row: row };
+      }
+    });
+
+    var toCreate = [], toUpdate = [], toDelete = [];
+    plan.forEach(function(p) {
+      var cat = 'side_jobs:' + p.sourceKey;
+      var ex = existing[cat];
+      if (p.revAmount > 0) {
+        if (ex) {
+          var oldAmount = parseFloat(ex.row[3]) || 0;
+          if (Math.abs(oldAmount - p.revAmount) > 0.001) {
+            toUpdate.push({ existing: ex, plan: p, cat: cat });
+          }
+        } else {
+          toCreate.push({ plan: p, cat: cat });
+        }
+      } else {
+        // 수익 0 → 기존 동기화 항목 있으면 제거
+        if (ex) toDelete.push(ex);
+      }
+    });
+
+    if (toCreate.length === 0 && toUpdate.length === 0 && toDelete.length === 0) {
+      alert('모든 부업 입금이 이미 최신 상태입니다.\n\n수익 변경이 있다면 Side Jobs → Annual Matrix에서 먼저 수정해주세요.');
+      return;
+    }
+
+    var preview = '부업 입금을 Annual Matrix와 동기화합니다 (' + curYearStr + '년):\n\n';
+    if (toCreate.length > 0) {
+      preview += '✚ 새로 추가 (' + toCreate.length + '건):\n';
+      toCreate.slice(0, 5).forEach(function(c) {
+        preview += '   ' + c.plan.depositDate + ' +' + c.plan.revAmount.toLocaleString('ko-KR') + '만 (' + _MONTHS_KR[c.plan.revMonthIdx] + ' 수익)\n';
+      });
+      if (toCreate.length > 5) preview += '   ... 외 ' + (toCreate.length - 5) + '건\n';
+    }
+    if (toUpdate.length > 0) {
+      preview += '✎ 금액 업데이트 (' + toUpdate.length + '건):\n';
+      toUpdate.slice(0, 5).forEach(function(u) {
+        var oldA = parseFloat(u.existing.row[3]) || 0;
+        preview += '   ' + u.plan.depositDate + ': ' + oldA.toLocaleString('ko-KR') + '만 → ' + u.plan.revAmount.toLocaleString('ko-KR') + '만\n';
+      });
+      if (toUpdate.length > 5) preview += '   ... 외 ' + (toUpdate.length - 5) + '건\n';
+    }
+    if (toDelete.length > 0) {
+      preview += '✗ 제거 (수익 0으로 변경): ' + toDelete.length + '건\n';
+    }
+    preview += '\n수동으로 입력한 부업 항목은 영향받지 않습니다.\n진행할까요?';
+
+    if (!confirm(preview)) return;
+
+    var addedN = 0, updatedN = 0, deletedN = 0;
+    // 추가
+    for (var i = 0; i < toCreate.length; i++) {
+      var c = toCreate[i];
+      var revLabel = _MONTHS_KR[c.plan.revMonthIdx] + ' 수익';
+      var newRow = [c.plan.depositDate, c.cat, '부업 (' + revLabel + ')', c.plan.revAmount, '수입'];
+      try {
+        var saved = await fbAdd('finance_hub', rowToObj('finance_hub', newRow));
+        hubData.push(newRow.concat([saved._id, 0]));
+        addedN++;
+      } catch(e) { console.error('[SideJobs Sync] create failed', e); }
+    }
+    // 업데이트
+    for (var j = 0; j < toUpdate.length; j++) {
+      var u = toUpdate[j];
+      var revLabel2 = _MONTHS_KR[u.plan.revMonthIdx] + ' 수익';
+      var oldRow = u.existing.row;
+      var newRow2 = [u.plan.depositDate, u.cat, '부업 (' + revLabel2 + ')', u.plan.revAmount, '수입'];
+      try {
+        await fbUpdate('finance_hub', oldRow[5], rowToObj('finance_hub', newRow2));
+        hubData[u.existing.idx] = newRow2.concat([oldRow[5], oldRow[6] || 0]);
+        updatedN++;
+      } catch(e) { console.error('[SideJobs Sync] update failed', e); }
+    }
+    // 제거 (인덱스 역순 처리)
+    toDelete.sort(function(a,b) { return b.idx - a.idx; });
+    for (var k = 0; k < toDelete.length; k++) {
+      var d = toDelete[k];
+      try {
+        await fbDelete('finance_hub', d.row[5]);
+        hubData.splice(d.idx, 1);
+        deletedN++;
+      } catch(e) { console.error('[SideJobs Sync] delete failed', e); }
+    }
+
+    document.getElementById('hub-table-wrap').style.display = 'block';
+    document.getElementById('hub-empty').style.display = 'none';
+    renderHubTable(); updateHubStats();
+    alert('동기화 완료!\n추가 ' + addedN + ' · 업데이트 ' + updatedN + ' · 제거 ' + deletedN);
   }
 
   // 월간 항목 복사: 같은 년도 내 다른 달의 항목을 이 달로 복제
