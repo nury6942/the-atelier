@@ -3379,6 +3379,11 @@
                 <label class="text-xs font-semibold text-slate-600 mb-1.5 block">💰 수입 목표</label>
                 <div class="flex items-center gap-2"><input id="ldg-goal-income" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
                 <p id="ldg-goal-income-hint" class="text-[10px] text-slate-400 mt-1"></p>
+                <div class="mt-3 pl-3 border-l-2 border-slate-100">
+                  <label class="text-[11px] font-semibold text-slate-500 mb-1 block">└ 💼 부업 목표 (선택)</label>
+                  <div class="flex items-center gap-2"><input id="ldg-goal-sidegig" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                  <p id="ldg-goal-sidegig-hint" class="text-[10px] text-slate-400 mt-1"></p>
+                </div>
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-600 mb-1.5 block">🏦 저축 목표</label>
@@ -20664,7 +20669,7 @@ function ldgRenderAnnualGoal() {
   var year = _ldgYear;
   var goals = ldgLoadGoals();
   var yg = goals[year] || {};
-  var incGoal = yg['수입'] || 0, expGoal = yg['지출'] || 0, savGoal = yg['저축'] || 0;
+  var incGoal = yg['수입'] || 0, expGoal = yg['지출'] || 0, savGoal = yg['저축'] || 0, subGoal = yg['부업'] || 0;
   if (!incGoal && !expGoal && !savGoal) {
     wrap.innerHTML = '<div class="bg-indigo-50/40 border border-indigo-100 rounded-2xl p-3 flex items-center justify-between"><p class="text-xs text-slate-500"><span class="font-bold">' + year + '년 목표가 아직 설정되지 않았어요.</span> 설정 → 연간 목표에서 수입/지출/저축 목표를 입력하세요.</p><button onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)" class="text-[10px] px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-semibold whitespace-nowrap">목표 설정</button></div>';
     return;
@@ -20672,7 +20677,7 @@ function ldgRenderAnnualGoal() {
 
   // 연 누적 합계 (원 단위) — excludeFromGoal 거래는 제외 (자산이동)
   var txs = _ledgerData.transactions || [];
-  var incTotal = 0, expTotal = 0, savTotal = 0;
+  var incTotal = 0, expTotal = 0, savTotal = 0, subTotal = 0;
   var excludedTotal = 0, excludedCount = 0;
   txs.forEach(function(t) {
     if (!t.date || t.date.substring(0,4) !== String(year)) return;
@@ -20683,7 +20688,10 @@ function ldgRenderAnnualGoal() {
     }
     var amt = t['금액'] || 0;
     var major = t['대분류'];
-    if (major === '수입') incTotal += amt;
+    if (major === '수입') {
+      incTotal += amt;
+      if (t['소분류'] === '부업') subTotal += amt;
+    }
     else if (major === '저축') savTotal += amt;
     else expTotal += amt;
   });
@@ -20691,6 +20699,7 @@ function ldgRenderAnnualGoal() {
   var incA = Math.round(incTotal / 10000);
   var expA = Math.round(expTotal / 10000);
   var savA = Math.round(savTotal / 10000);
+  var subA = Math.round(subTotal / 10000);
 
   // 오늘 기준 연 진행률
   var now = new Date();
@@ -20749,6 +20758,38 @@ function ldgRenderAnnualGoal() {
   html += bar('지출', expA, expGoal, false, '#ef4444');
   html += bar('저축', savA, savGoal, true, '#6366f1');
   html += '</div>';
+
+  // 부업 sub-progress (수입 하위 목표) — 설정된 경우만 표시
+  if (subGoal > 0) {
+    var subPct = Math.min(subA / subGoal * 100, 100);
+    var subExpected = subGoal * yearProg;
+    var subDiff = subA - subExpected;
+    var subDiffPct = subGoal > 0 ? Math.abs(subDiff) / subGoal * 100 : 0;
+    var subStatus, subColor, subEmoji;
+    if (subDiff >= 0) { subStatus = '페이스 달성'; subEmoji = '🟢'; subColor = '#10b981'; }
+    else if (subDiffPct < 5) { subStatus = '약간 뒤처짐'; subEmoji = '🟡'; subColor = '#f59e0b'; }
+    else { subStatus = '부족'; subEmoji = '🔴'; subColor = '#ef4444'; }
+    var subDiffSign = subDiff >= 0 ? '+' : '';
+    var subDiffText = subDiffSign + Math.round(subDiff).toLocaleString('ko-KR') + '만';
+    html += '<div class="mt-2 px-3 py-2.5 rounded-xl bg-emerald-50/40 border border-emerald-100/70">' +
+      '<div class="flex items-center gap-2 mb-1.5">' +
+        '<span class="text-sm">💼</span>' +
+        '<span class="text-[11px] font-bold text-slate-700">└ 부업 진행도</span>' +
+        '<span class="text-[9px] font-bold ml-auto whitespace-nowrap" style="color:' + subColor + ';">' + subEmoji + ' ' + subStatus + '</span>' +
+      '</div>' +
+      '<div class="flex items-baseline gap-1 mb-1">' +
+        '<span class="text-sm font-bold text-slate-900" style="font-feature-settings:\'tnum\';">' + subA.toLocaleString('ko-KR') + '</span>' +
+        '<span class="text-[10px] text-slate-400">/ ' + subGoal.toLocaleString('ko-KR') + '만</span>' +
+        '<span class="text-[10px] font-semibold ml-auto" style="color:' + subColor + ';">' + Math.round(subPct) + '%</span>' +
+      '</div>' +
+      '<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden relative">' +
+        '<div class="h-full rounded-full" style="width:' + subPct + '%;background:' + subColor + ';"></div>' +
+        '<div style="position:absolute;left:' + Math.round(yearProg * 100) + '%;top:-2px;bottom:-2px;width:1.5px;background:#475569;" title="오늘까지 목표 페이스"></div>' +
+      '</div>' +
+      '<div class="text-[10px] mt-1" style="color:' + subColor + ';">목표 페이스 대비 ' + subDiffText + '</div>' +
+    '</div>';
+  }
+
   if (excludedCount > 0) {
     var excludedMan = Math.round(excludedTotal / 10000);
     html += '<div class="mt-2 px-3 py-2 rounded-lg bg-slate-50/80 border border-slate-100 flex items-center gap-2">' +
@@ -24804,6 +24845,7 @@ function ldgRenderGoals() {
   });
   document.getElementById('ldg-goal-form-title').textContent = _ldgGoalYear + '년 목표';
   document.getElementById('ldg-goal-income').value = g['수입'] ? g['수입'].toLocaleString('ko-KR') : '';
+  document.getElementById('ldg-goal-sidegig').value = g['부업'] ? g['부업'].toLocaleString('ko-KR') : '';
   document.getElementById('ldg-goal-saving').value = g['저축'] ? g['저축'].toLocaleString('ko-KR') : '';
   document.getElementById('ldg-goal-expense').value = g['지출'] ? g['지출'].toLocaleString('ko-KR') : '';
   document.getElementById('ldg-goal-memo').value = g['메모'] || '';
@@ -24813,24 +24855,34 @@ function ldgRenderGoals() {
 
 function ldgGoalCalc() {
   var inc = parseInt((document.getElementById('ldg-goal-income').value||'').replace(/[^0-9]/g,'')) || 0;
+  var sub = parseInt((document.getElementById('ldg-goal-sidegig').value||'').replace(/[^0-9]/g,'')) || 0;
   var sav = parseInt((document.getElementById('ldg-goal-saving').value||'').replace(/[^0-9]/g,'')) || 0;
   var exp = parseInt((document.getElementById('ldg-goal-expense').value||'').replace(/[^0-9]/g,'')) || 0;
   document.getElementById('ldg-goal-income-hint').textContent = inc > 0 ? '매월 평균 ' + Math.round(inc/12).toLocaleString('ko-KR') + '원' : '';
+  // 부업 hint: 월평균 + 수입 목표 대비 비중
+  var subHint = '';
+  if (sub > 0) {
+    subHint = '매월 평균 ' + Math.round(sub/12).toLocaleString('ko-KR') + '원';
+    if (inc > 0) subHint += ' · 수입의 ' + (sub / inc * 100).toFixed(1) + '%';
+  }
+  document.getElementById('ldg-goal-sidegig-hint').textContent = subHint;
   var savRate = inc > 0 ? (sav / inc * 100).toFixed(1) : 0;
   document.getElementById('ldg-goal-saving-hint').textContent = sav > 0 && inc > 0 ? '수입의 ' + savRate + '% (저축률)' : '';
   document.getElementById('ldg-goal-expense-hint').textContent = exp > 0 ? '매월 평균 ' + Math.round(exp/12).toLocaleString('ko-KR') + '원' : '';
   var warn = document.getElementById('ldg-goal-warn');
   if (inc > 0 && sav + exp > inc) { warn.textContent = '⚠️ 수입보다 지출+저축이 큼. 적자 예상'; warn.style.display = ''; }
+  else if (sub > 0 && inc > 0 && sub > inc) { warn.textContent = '⚠️ 부업 목표가 전체 수입 목표보다 큼'; warn.style.display = ''; }
   else { warn.style.display = 'none'; }
 }
 
 function ldgSaveGoal() {
   var inc = parseInt((document.getElementById('ldg-goal-income').value||'').replace(/[^0-9]/g,'')) || 0;
+  var sub = parseInt((document.getElementById('ldg-goal-sidegig').value||'').replace(/[^0-9]/g,'')) || 0;
   var sav = parseInt((document.getElementById('ldg-goal-saving').value||'').replace(/[^0-9]/g,'')) || 0;
   var exp = parseInt((document.getElementById('ldg-goal-expense').value||'').replace(/[^0-9]/g,'')) || 0;
   var memo = (document.getElementById('ldg-goal-memo').value || '').trim();
   var goals = ldgLoadGoals();
-  goals[_ldgGoalYear] = { '수입': inc, '저축': sav, '지출': exp, '메모': memo, updatedAt: new Date().toISOString() };
+  goals[_ldgGoalYear] = { '수입': inc, '부업': sub, '저축': sav, '지출': exp, '메모': memo, updatedAt: new Date().toISOString() };
   ldgBackupBeforeSave('atelier_ledger_goals');
   localStorage.setItem('atelier_ledger_goals', JSON.stringify(goals));
   scheduleLedgerSync(); // 다기기 자동 동기화
