@@ -21197,6 +21197,51 @@ function ldgRenderCatGrid() {
     html += '</ul>';
     var safeCatId = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
     var catNameEsc = catName.replace(/'/g, "\\'");
+
+    // ── AI 액션 박스 (페이스 주의/위험일 때만 카드 안에 직접 표시) ──
+    if (pace && hasTx && (pace.status === 'warning' || pace.status === 'danger')) {
+      var nowAct = new Date();
+      var isCurMoAct = (_ldgYear === nowAct.getFullYear() && _ldgMonth === nowAct.getMonth() + 1);
+      var daysInMAct = new Date(_ldgYear, _ldgMonth, 0).getDate();
+      var dayN = isCurMoAct ? nowAct.getDate() : daysInMAct;
+      var remainingDays = Math.max(daysInMAct - dayN, 0);
+      var isDangerCat = pace.status === 'danger';
+      var isIncSavCat = (catName === '수입' || catName === '저축');
+      var bgCls = isDangerCat ? 'background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca;'
+                              : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;';
+      var iconClr = isDangerCat ? '#dc2626' : '#d97706';
+
+      html += '<div class="rounded-xl p-2.5 mb-3" style="' + bgCls + '">';
+      if (isIncSavCat) {
+        // 수입/저축: 부족 메시지
+        var shortfall = Math.max(pace.budget - pace.projected, 0);
+        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b> 예상 <span class="font-normal">(목표 ' + ldgFmt(pace.budget) + ')</span></p>';
+        if (shortfall > 0 && remainingDays > 0) {
+          var perDayNeeded = shortfall / remainingDays;
+          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 일 <b>' + ldgFmt(Math.round(perDayNeeded)) + '</b> 추가 필요</p>';
+        }
+      } else {
+        // 지출 카테고리: 초과 + 일평균 줄이기 권장
+        var over = Math.max(pace.projected - pace.budget, 0);
+        var dailyAvg = dayN > 0 ? totalAmt / dayN : 0;
+        var remainingBudget = Math.max(pace.budget - totalAmt, 0);
+        var recommendedDaily = remainingDays > 0 ? remainingBudget / remainingDays : 0;
+        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b>' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ' 초과)</span>' : '') + '</p>';
+        if (remainingDays > 0 && recommendedDaily >= 0 && dailyAvg > recommendedDaily * 1.1) {
+          html += '<p class="text-[10px] text-slate-600">💡 일 <b>' + ldgFmt(Math.round(dailyAvg)) + '</b> → <b>' + ldgFmt(Math.round(recommendedDaily)) + '</b> 이내로 ↓ (예산 유지)</p>';
+        } else if (remainingBudget === 0 && totalAmt > pace.budget) {
+          html += '<p class="text-[10px] text-slate-600">⚠️ 이미 예산 한도 도달 — 추가 사용 시 초과</p>';
+        } else if (remainingDays > 0) {
+          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 일 <b>' + ldgFmt(Math.round(recommendedDaily)) + '</b> 이내</p>';
+        }
+        if (over > 0 && pace.projected > 0) {
+          var roundedUp = Math.ceil(pace.projected / 10000) * 10000;
+          var btnBg = isDangerCat ? 'background:#dc2626;color:white;' : 'background:#d97706;color:white;';
+          html += '<button onclick="ldgSetCatBudgetTo(\'' + catNameEsc + '\',' + roundedUp + ')" class="mt-1.5 text-[10px] font-bold px-2 py-1 rounded-lg hover:opacity-90" style="' + btnBg + '">예산 ' + ldgFmtShort(roundedUp) + ' 상향 적용</button>';
+        }
+      }
+      html += '</div>';
+    }
     if (_ldgBudgetEditingCat === catName) {
       // 인라인 편집 모드
       var curVal = hasBudget ? Math.round(budgetTotal / 10000) : ''; // 만원 단위
@@ -21433,6 +21478,22 @@ function ldgStartEditCatBudget(catName) {
 function ldgCancelEditCatBudget() {
   _ldgBudgetEditingCat = null;
   ldgRenderCatGrid();
+}
+
+// 특정 금액으로 이번 달 예산 즉시 설정 (액션 박스의 "예산 상향 적용" 버튼용)
+function ldgSetCatBudgetTo(catName, amountWon) {
+  if (!amountWon || amountWon <= 0) return;
+  if (!_ledgerData.budgets) _ledgerData.budgets = {};
+  if (!_ledgerData.budgets[catName]) _ledgerData.budgets[catName] = { default: 0, overrides: {} };
+  if (!_ledgerData.budgets[catName].overrides) _ledgerData.budgets[catName].overrides = {};
+  var monthKey = ldgMonthKey();
+  _ledgerData.budgets[catName].overrides[monthKey] = amountWon;
+  if (!_ledgerData.budgets[catName].default) _ledgerData.budgets[catName].default = amountWon;
+  ldgSaveBudgets();
+  ldgRenderCatGrid();
+  if (typeof showSyncToast === 'function') {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + catName + ' 예산 ' + ldgFmt(amountWon) + ' 적용됨');
+  }
 }
 
 // AI 추천 예산을 이번 달에 바로 적용
