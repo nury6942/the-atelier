@@ -20462,11 +20462,12 @@ function switchLedgerTab(tab) {
 var _ledgerSyncTimer = null;
 var _ledgerLastFBSync = 0;
 
+// 반환값: { docExists: boolean, loaded: number, txCount: number }
 async function loadLedgerFromFirebase() {
   try {
-    if (typeof db === 'undefined' || !db) return false;
+    if (typeof db === 'undefined' || !db) return { docExists: false, loaded: 0, txCount: 0 };
     var doc = await db.collection('appSettings').doc('ledgerData').get();
-    if (!doc.exists) return false;
+    if (!doc.exists) return { docExists: false, loaded: 0, txCount: 0 };
     var d = doc.data();
     var keys = ['settings','categories','budgets','recurring','assets','transactions'];
     var lsKeys = {
@@ -20485,11 +20486,12 @@ async function loadLedgerFromFirebase() {
         loaded++;
       }
     });
-    console.log('[LedgerSync] Firebase에서 로드: ' + loaded + ' keys, updatedAt=' + (d.updatedAt||'?') + ', tx=' + ((d.transactions||[]).length));
-    return loaded > 0;
+    var txCount = (d.transactions||[]).length;
+    console.log('[LedgerSync] Firebase에서 로드: ' + loaded + ' keys, updatedAt=' + (d.updatedAt||'?') + ', tx=' + txCount);
+    return { docExists: true, loaded: loaded, txCount: txCount };
   } catch(e) {
     console.error('[LedgerSync] Firebase 로드 실패:', e);
-    return false;
+    return { docExists: false, loaded: 0, txCount: 0 };
   }
 }
 
@@ -20546,7 +20548,7 @@ async function loadLedgerData() {
     transactions: 'data/ledger/transactions.json'
   };
   // 1순위: Firebase (다기기 동기화)
-  var fromFB = await loadLedgerFromFirebase();
+  var fbResult = await loadLedgerFromFirebase();
   for (var name in keys) {
     // Firebase에서 이미 로드된 경우 스킵
     if (_ledgerData[name] !== undefined && _ledgerData[name] !== null) continue;
@@ -20564,10 +20566,11 @@ async function loadLedgerData() {
       }
     } catch(e) { console.warn('[DailyLedger] Failed to load ' + name, e); }
   }
-  // Firebase에 없었으면 현재 데이터를 푸시 (최초 동기화)
-  if (!fromFB && _ledgerData.transactions && _ledgerData.transactions.length > 0) {
-    console.log('[LedgerSync] 최초 동기화: localStorage 데이터를 Firebase로 푸시');
-    scheduleLedgerSync();
+  // ⚠️ 자동 푸시 제거됨 (옛 localStorage 데이터로 Firebase 덮어쓰는 버그 방지)
+  // 첫 동기화는 사용자가 편집을 한 번 하면 자동으로 발생 (ldgSaveTx → scheduleLedgerSync)
+  // 명시적으로 Firebase가 비어있는 경우만 안내 로그 출력
+  if (!fbResult.docExists && _ledgerData.transactions && _ledgerData.transactions.length > 0) {
+    console.log('[LedgerSync] Firebase에 데이터 없음. 편집 시 자동 동기화됩니다. 즉시 동기화하려면 saveLedgerToFirebase() 실행');
   }
   var s = _ledgerData.settings || {}, c = _ledgerData.categories || {};
   var catCount = Object.keys(c).length, subCount = 0;
