@@ -2780,6 +2780,9 @@
             <button onclick="switchHubYear(1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_right</span></button>
           </div>
           <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
+          <button onclick="copyPrevYearToHub()" id="hub-copy-prev-btn" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-indigo-50 transition-all text-indigo-600 border border-indigo-200" style="display:none">
+            <span class="material-symbols-outlined text-sm">content_copy</span> <span id="hub-copy-prev-label">이전 년도 복사</span>
+          </button>
           <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
             <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
           </button>
@@ -15839,6 +15842,18 @@
       var runningBalance = 0;
       var runningIncome = 0, runningExpense = 0, runningSavings = 0, runningWithdraw = 0;
 
+      // 이전 년도들의 항목까지 누적 (자산 연속성 — 예: 2027년 1월은 2026년 12월에서 이어짐)
+      hubData.forEach(function(row) {
+        var rowYr = (row[0]||'').toString().substring(0,4);
+        if (rowYr && rowYr.length === 4 && rowYr < String(yr)) {
+          var t = row[4]||'', a = parseFloat(row[3])||0;
+          if (t === '수입' || t === '이자') { runningIncome += a; runningBalance += a; }
+          else if (t === '지출') { runningExpense += a; runningBalance -= a; }
+          else if (t === '저축') { runningSavings += a; runningBalance -= a; }
+          else if (t === '출금') { runningWithdraw += a; runningBalance += a; }
+        }
+      });
+
       // 기초 자산 표시
       var baseInfo = document.getElementById('hub-base-info');
       if (baseInfo) {
@@ -15970,6 +15985,21 @@
             '</div>' +
           '</div></div>';
       }).join('');
+    }
+
+    // "이전 년도 복사" 버튼 토글: 현재 년도가 비어있고 이전 년도에 항목이 있을 때만 표시
+    var prevYr = hubYear - 1;
+    var prevHas = hubData.some(function(row) { return (row[0]||'').toString().substring(0,4) === String(prevYr); });
+    var curHas = hubData.some(function(row) { return (row[0]||'').toString().substring(0,4) === String(hubYear); });
+    var copyBtn = document.getElementById('hub-copy-prev-btn');
+    var copyLbl = document.getElementById('hub-copy-prev-label');
+    if (copyBtn) {
+      if (prevHas && !curHas) {
+        copyBtn.style.display = '';
+        if (copyLbl) copyLbl.textContent = prevYr + '년 항목 복사';
+      } else {
+        copyBtn.style.display = 'none';
+      }
     }
   }
 
@@ -16243,6 +16273,55 @@
   function openHubModalForMonth(monthKey) {
     openHubModal();
     document.getElementById('h-date').value = monthKey + '-01';
+  }
+
+  // 이전 년도 항목들을 현재 년도로 복제 (날짜 +1년 시프트, 금액/항목은 그대로 유지)
+  // 자산은 별도 캐리오버 처리 불필요 — updateHubStats가 이전 년도 누적치를 자동 반영
+  async function copyPrevYearToHub() {
+    var prevYear = hubYear - 1;
+    var prevItems = hubData.filter(function(row) {
+      return (row[0]||'').toString().substring(0,4) === String(prevYear);
+    });
+    if (prevItems.length === 0) {
+      alert(prevYear + '년에 복사할 항목이 없어요.');
+      return;
+    }
+    var curItems = hubData.filter(function(row) {
+      return (row[0]||'').toString().substring(0,4) === String(hubYear);
+    });
+    var msg;
+    if (curItems.length > 0) {
+      msg = hubYear + '년에 이미 ' + curItems.length + '개 항목이 있어요.\n' +
+            prevYear + '년의 ' + prevItems.length + '개 항목을 추가로 복사할까요?\n(기존 항목은 그대로 유지)';
+    } else {
+      msg = prevYear + '년의 ' + prevItems.length + '개 항목을 ' + hubYear + '년으로 복사합니다.\n' +
+            '날짜는 +1년 시프트, 항목/금액/타입은 그대로 유지됩니다.\n진행할까요?';
+    }
+    if (!confirm(msg)) return;
+
+    var btn = document.getElementById('hub-copy-prev-btn');
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+    var copied = 0, failed = 0;
+    for (var i = 0; i < prevItems.length; i++) {
+      var src = prevItems[i];
+      var newDate = String(hubYear) + (src[0]||'').toString().substring(4);
+      var newRow = [newDate, src[1]||'', src[2]||'', src[3]||0, src[4]||''];
+      try {
+        var saved = await fbAdd('finance_hub', rowToObj('finance_hub', newRow));
+        hubData.push(newRow.concat([saved._id, src[6]||0]));
+        copied++;
+      } catch(e) {
+        console.error('[FinanceHub] Copy failed for item', src, e);
+        failed++;
+      }
+    }
+    if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+    document.getElementById('hub-table-wrap').style.display = 'block';
+    document.getElementById('hub-empty').style.display = 'none';
+    renderHubTable(); updateHubStats();
+    var result = copied + '개 항목이 ' + hubYear + '년으로 복사되었어요!';
+    if (failed > 0) result += '\n(' + failed + '개 실패 — 콘솔 확인)';
+    alert(result);
   }
 
   function editHubRow(i){openHubModal(i);}
