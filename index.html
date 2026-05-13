@@ -20458,6 +20458,76 @@ function switchLedgerTab(tab) {
   if (tab === 'settings') ldgRenderSettings();
 }
 
+// ── Firebase sync for Daily Ledger (다기기 자동 동기화) ──
+var _ledgerSyncTimer = null;
+var _ledgerLastFBSync = 0;
+
+async function loadLedgerFromFirebase() {
+  try {
+    if (typeof db === 'undefined' || !db) return false;
+    var doc = await db.collection('appSettings').doc('ledgerData').get();
+    if (!doc.exists) return false;
+    var d = doc.data();
+    var keys = ['settings','categories','budgets','recurring','assets','transactions'];
+    var lsKeys = {
+      settings: 'atelier_ledger_settings',
+      categories: 'atelier_ledger_categories',
+      budgets: 'atelier_ledger_budgets',
+      recurring: 'atelier_ledger_recurring',
+      assets: 'atelier_ledger_assets',
+      transactions: 'atelier_ledger_transactions'
+    };
+    var loaded = 0;
+    keys.forEach(function(k) {
+      if (d[k] !== undefined && d[k] !== null) {
+        _ledgerData[k] = d[k];
+        try { localStorage.setItem(lsKeys[k], JSON.stringify(d[k])); } catch(e) {}
+        loaded++;
+      }
+    });
+    console.log('[LedgerSync] Firebase에서 로드: ' + loaded + ' keys, updatedAt=' + (d.updatedAt||'?') + ', tx=' + ((d.transactions||[]).length));
+    return loaded > 0;
+  } catch(e) {
+    console.error('[LedgerSync] Firebase 로드 실패:', e);
+    return false;
+  }
+}
+
+async function saveLedgerToFirebase() {
+  try {
+    if (typeof db === 'undefined' || !db) return false;
+    var payload = {
+      settings: _ledgerData.settings || {},
+      categories: _ledgerData.categories || {},
+      budgets: _ledgerData.budgets || {},
+      recurring: _ledgerData.recurring || [],
+      assets: _ledgerData.assets || {},
+      transactions: _ledgerData.transactions || [],
+      updatedAt: new Date().toISOString()
+    };
+    var size = JSON.stringify(payload).length;
+    if (size > 950000) {
+      console.warn('[LedgerSync] 문서 크기가 1MB 한계에 근접:', size);
+    }
+    await db.collection('appSettings').doc('ledgerData').set(payload);
+    _ledgerLastFBSync = Date.now();
+    console.log('[LedgerSync] Firebase 저장 완료 (' + Math.round(size/1024) + 'KB, tx=' + payload.transactions.length + ')');
+    return true;
+  } catch(e) {
+    console.error('[LedgerSync] Firebase 저장 실패:', e);
+    return false;
+  }
+}
+
+// 디바운싱: 800ms 후 동기화 (연속 편집 시 1번만 푸시)
+function scheduleLedgerSync() {
+  if (_ledgerSyncTimer) clearTimeout(_ledgerSyncTimer);
+  _ledgerSyncTimer = setTimeout(function() {
+    saveLedgerToFirebase();
+    _ledgerSyncTimer = null;
+  }, 800);
+}
+
 async function loadLedgerData() {
   var keys = {
     settings: 'atelier_ledger_settings',
@@ -20475,11 +20545,17 @@ async function loadLedgerData() {
     assets: 'data/ledger/assets-template.json',
     transactions: 'data/ledger/transactions.json'
   };
+  // 1순위: Firebase (다기기 동기화)
+  var fromFB = await loadLedgerFromFirebase();
   for (var name in keys) {
+    // Firebase에서 이미 로드된 경우 스킵
+    if (_ledgerData[name] !== undefined && _ledgerData[name] !== null) continue;
+    // 2순위: localStorage
     var stored = localStorage.getItem(keys[name]);
     if (stored) {
       try { _ledgerData[name] = JSON.parse(stored); continue; } catch(e) {}
     }
+    // 3순위: 기본 템플릿 파일
     try {
       var resp = await fetch(files[name]);
       if (resp.ok) {
@@ -20487,6 +20563,11 @@ async function loadLedgerData() {
         localStorage.setItem(keys[name], JSON.stringify(_ledgerData[name]));
       }
     } catch(e) { console.warn('[DailyLedger] Failed to load ' + name, e); }
+  }
+  // Firebase에 없었으면 현재 데이터를 푸시 (최초 동기화)
+  if (!fromFB && _ledgerData.transactions && _ledgerData.transactions.length > 0) {
+    console.log('[LedgerSync] 최초 동기화: localStorage 데이터를 Firebase로 푸시');
+    scheduleLedgerSync();
   }
   var s = _ledgerData.settings || {}, c = _ledgerData.categories || {};
   var catCount = Object.keys(c).length, subCount = 0;
@@ -20529,6 +20610,7 @@ function ldgIsExpense(t) { return t['대분류'] !== '수입' && t['대분류'] 
 function ldgSaveTx() {
   ldgBackupBeforeSave('atelier_ledger_transactions');
   localStorage.setItem('atelier_ledger_transactions', JSON.stringify(_ledgerData.transactions));
+  scheduleLedgerSync();
 }
 
 // ── Month navigation ──
@@ -21681,7 +21763,7 @@ function ldgInitAssetData() {
   ldgSaveAssetData();
 }
 
-function ldgSaveAssetData() { ldgBackupBeforeSave('atelier_ledger_assets'); localStorage.setItem('atelier_ledger_assets', JSON.stringify(_ledgerData.assets)); }
+function ldgSaveAssetData() { ldgBackupBeforeSave('atelier_ledger_assets'); localStorage.setItem('atelier_ledger_assets', JSON.stringify(_ledgerData.assets)); scheduleLedgerSync(); }
 
 function ldgComputeAutoValues(year) {
   // Compute auto cells for 현금자산 and 부채 from transactions
@@ -22298,10 +22380,10 @@ function ldgSetSubTab(tab) {
   if (tab === 'data') { ldgRenderBackupUI(); ldgCheckMigrationState(); }
 }
 
-function ldgSaveCats() { ldgBackupBeforeSave('atelier_ledger_categories'); localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); }
-function ldgSaveSettings() { ldgBackupBeforeSave('atelier_ledger_settings'); localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); }
-function ldgSaveBudgets() { ldgBackupBeforeSave('atelier_ledger_budgets'); localStorage.setItem('atelier_ledger_budgets', JSON.stringify(_ledgerData.budgets)); }
-function ldgSaveRecurringData() { ldgBackupBeforeSave('atelier_ledger_recurring'); localStorage.setItem('atelier_ledger_recurring', JSON.stringify(_ledgerData.recurring)); }
+function ldgSaveCats() { ldgBackupBeforeSave('atelier_ledger_categories'); localStorage.setItem('atelier_ledger_categories', JSON.stringify(_ledgerData.categories)); scheduleLedgerSync(); }
+function ldgSaveSettings() { ldgBackupBeforeSave('atelier_ledger_settings'); localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); scheduleLedgerSync(); }
+function ldgSaveBudgets() { ldgBackupBeforeSave('atelier_ledger_budgets'); localStorage.setItem('atelier_ledger_budgets', JSON.stringify(_ledgerData.budgets)); scheduleLedgerSync(); }
+function ldgSaveRecurringData() { ldgBackupBeforeSave('atelier_ledger_recurring'); localStorage.setItem('atelier_ledger_recurring', JSON.stringify(_ledgerData.recurring)); scheduleLedgerSync(); }
 
 // ── Safety modal ──
 function ldgSafetyShow(msg, cb, btnLabel) {
