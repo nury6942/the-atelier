@@ -21045,23 +21045,49 @@ function ldgRenderCatGrid() {
   // AI 인사이트 배너 렌더링
   var insightEl = document.getElementById('ldg-ai-insight');
   if (insightEl) {
+    var rebalance = ldgAIComputeRebalance(_ldgYear, _ldgMonth);
     var alert_ = ldgAITopAlert(_ldgYear, _ldgMonth);
     var now = new Date();
     var isCurrentMonth = (_ldgYear === now.getFullYear() && _ldgMonth === now.getMonth() + 1);
-    var dayInfo = isCurrentMonth ? now.getMonth()+1 + '월 ' + now.getDate() + '일 기준 페이스' : '월말 기준';
-    if (alert_) {
+    var dayInfo = isCurrentMonth ? (now.getMonth()+1) + '월 ' + now.getDate() + '일' : '월말 기준';
+
+    // 우선순위 1: 고정 카테고리 초과 → 크로스 보정 제안 (가장 유용)
+    if (rebalance && rebalance.suggestions.length > 0) {
+      var fixedNames = rebalance.fixedOver.map(function(f){ return f.cat + ' +' + ldgFmtShort(f.over); }).join(', ');
+      var html = '<div class="rounded-2xl p-4" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca;">' +
+        '<div class="flex items-start gap-3 mb-2">' +
+          '<span style="font-size:20px">🤖</span>' +
+          '<div class="flex-1">' +
+            '<p class="text-xs font-bold text-slate-800">' + dayInfo + ' · <span style="color:#dc2626;">고정 지출 초과로 약 ' + ldgFmt(rebalance.totalOver) + ' 부족</span></p>' +
+            '<p class="text-[11px] text-slate-600 mt-0.5">' + fixedNames + ' (이미 발생/예정. 추가 절감 어려움)</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="border-t border-rose-200 pt-2 mt-2">' +
+          '<p class="text-[11px] font-bold text-slate-700 mb-1.5">💡 유동 카테고리에서 보정 권장 (작년/재작년 최저 사용량 기준 절감 가능액):</p>' +
+          '<div class="space-y-1">';
+      rebalance.suggestions.forEach(function(s) {
+        var pctOfNeed = Math.min(s.saveable / rebalance.totalOver * 100, 100);
+        html += '<div class="flex items-center justify-between text-[11px]">' +
+          '<span class="text-slate-700"><b>' + s.cat + '</b>: 약 <b style="color:#059669;">' + ldgFmt(s.saveable) + '</b> 절감 가능 ' +
+            '<span class="text-[9px] text-slate-400">(현 페이스 ' + ldgFmt(s.projected) + ' / 과거 최저 ' + ldgFmt(s.minHistorical) + ')</span></span>' +
+          '<span class="text-[10px] text-slate-500">초과액의 ' + Math.round(pctOfNeed) + '%</span>' +
+        '</div>';
+      });
+      html += '</div></div></div>';
+      insightEl.innerHTML = html;
+    } else if (alert_) {
+      // 우선순위 2: 유동 카테고리 위험 (보정 가능한 고정 초과는 없음)
       var p = alert_.pace;
-      var over = p.projected - p.budget;
+      var over2 = p.projected - p.budget;
       var bgStyle = p.status === 'danger'
         ? 'background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca'
         : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a';
       var iconColor = p.status === 'danger' ? '#dc2626' : '#d97706';
-      var overText = over > 0 ? ('월말 예상 <b>' + ldgFmt(p.projected) + '</b> (예산 ' + ldgFmt(p.budget) + ' 대비 <b style="color:' + iconColor + ';">+' + ldgFmt(over) + '</b>)') : '예산 내 진행';
-      // 시뮬레이션: AI 추천대로 맞추면 연 환산 절약 효과
+      var overText = over2 > 0 ? ('월말 예상 <b>' + ldgFmt(p.projected) + '</b> (예산 ' + ldgFmt(p.budget) + ' 대비 <b style="color:' + iconColor + ';">+' + ldgFmt(over2) + '</b>)') : '예산 내 진행';
       var sim = ldgAISimulateSavingImpact(alert_.catName, _ldgYear, _ldgMonth);
       var simText = '';
       if (sim && sim.monthlyDelta > 5000 && sim.annualImpact > 50000) {
-        simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연간 약 <b style="color:#059669;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과 가능 (남은 ' + sim.remainingMonths + '개월 기준)';
+        simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연 약 <b style="color:#059669;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과';
       }
       insightEl.innerHTML = '<div class="rounded-2xl p-4 flex items-start gap-3" style="' + bgStyle + ';">' +
         '<span style="font-size:20px">🤖</span>' +
@@ -21202,32 +21228,38 @@ function ldgRenderCatGrid() {
       var remainingDays = Math.max(daysInMAct - dayN, 0);
       var isDangerCat = pace.status === 'danger';
       var isIncSavCat = (catName === '수입' || catName === '저축');
+      var catTypeBox = ldgGetCatType(catName);
       var bgCls = isDangerCat ? 'background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca;'
                               : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;';
       var iconClr = isDangerCat ? '#dc2626' : '#d97706';
+      var over = Math.max(pace.projected - pace.budget, 0);
 
       html += '<div class="rounded-xl p-2.5 mb-3" style="' + bgCls + '">';
       if (isIncSavCat) {
-        // 수입/저축: 부족 메시지
+        // 수입/저축: 부족 메시지 (월 단위)
         var shortfall = Math.max(pace.budget - pace.projected, 0);
         html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b> 예상 <span class="font-normal">(목표 ' + ldgFmt(pace.budget) + ')</span></p>';
-        if (shortfall > 0 && remainingDays > 0) {
-          var perDayNeeded = shortfall / remainingDays;
-          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 일 <b>' + ldgFmt(Math.round(perDayNeeded)) + '</b> 추가 필요</p>';
+        if (shortfall > 0) {
+          html += '<p class="text-[10px] text-slate-600">💡 이번 달 <b>' + ldgFmt(shortfall) + '</b> 부족 — 다음 달부터 보강 필요</p>';
+        }
+      } else if (catTypeBox === 'fixed') {
+        // 고정 지출 카테고리 (주거비/고정비/세금/보험): 이미 발생 또는 자동, 일별 조절 X
+        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📌 <b>' + ldgFmt(totalAmt) + '</b> 발생' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ' 초과)</span>' : '') + '</p>';
+        html += '<p class="text-[10px] text-slate-600">이 카테고리는 고정 지출이라 이번 달 추가 절감이 어려워요.</p>';
+        if (over > 0) {
+          html += '<p class="text-[10px] text-slate-600 mt-1">💡 <b>유동 카테고리</b>에서 약 <b>' + ldgFmt(over) + '</b> 절감으로 보정 권장 (인사이트 배너 참고)</p>';
+          var roundedUpF = Math.ceil(totalAmt / 10000) * 10000;
+          var btnBgF = isDangerCat ? 'background:#dc2626;color:white;' : 'background:#d97706;color:white;';
+          html += '<button onclick="ldgSetCatBudgetTo(\'' + catNameEsc + '\',' + roundedUpF + ')" class="mt-1.5 text-[10px] font-bold px-2 py-1 rounded-lg hover:opacity-90" style="' + btnBgF + '">예산 ' + ldgFmtShort(roundedUpF) + ' 상향 적용</button>';
         }
       } else {
-        // 지출 카테고리: 초과 + 일평균 줄이기 권장
-        var over = Math.max(pace.projected - pace.budget, 0);
-        var dailyAvg = dayN > 0 ? totalAmt / dayN : 0;
+        // 유동 지출 카테고리: 월 단위로만 조언
         var remainingBudget = Math.max(pace.budget - totalAmt, 0);
-        var recommendedDaily = remainingDays > 0 ? remainingBudget / remainingDays : 0;
         html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b>' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ' 초과)</span>' : '') + '</p>';
-        if (remainingDays > 0 && recommendedDaily >= 0 && dailyAvg > recommendedDaily * 1.1) {
-          html += '<p class="text-[10px] text-slate-600">💡 일 <b>' + ldgFmt(Math.round(dailyAvg)) + '</b> → <b>' + ldgFmt(Math.round(recommendedDaily)) + '</b> 이내로 ↓ (예산 유지)</p>';
-        } else if (remainingBudget === 0 && totalAmt > pace.budget) {
+        if (remainingBudget > 0) {
+          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용 시 예산 OK</p>';
+        } else {
           html += '<p class="text-[10px] text-slate-600">⚠️ 이미 예산 한도 도달 — 추가 사용 시 초과</p>';
-        } else if (remainingDays > 0) {
-          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 일 <b>' + ldgFmt(Math.round(recommendedDaily)) + '</b> 이내</p>';
         }
         if (over > 0 && pace.projected > 0) {
           var roundedUp = Math.ceil(pace.projected / 10000) * 10000;
@@ -21281,6 +21313,28 @@ function ldgRenderCatGrid() {
 // ============================================
 // ── AI 인사이트 (카드 내장형 코치) ──
 // ============================================
+// 카테고리 타입: 'fixed' (이미 정해진 지출, 일별 조절 X) vs 'flex' (월 단위 조절 가능)
+var LDG_CATEGORY_TYPE = {
+  '수입': 'fixed',        // 월급 등 정해진 수입
+  '저축': 'fixed',        // 자동이체
+  '주거비': 'fixed',      // 월세/관리비 등 정해진 비용
+  '고정비': 'fixed',      // 구독, 통신비 등
+  '세금/보험': 'fixed',   // 보험료, 세금 등
+  '교통비': 'flex',
+  '식비': 'flex',
+  '건강/의료비': 'flex',
+  '여행': 'flex',
+  '생필품비': 'flex',
+  '자기계발비': 'flex',
+  '여가비': 'flex',
+  '품위유지비': 'flex',
+  '관계비': 'flex',
+  '경조사비': 'flex'
+};
+function ldgGetCatType(catName) {
+  return LDG_CATEGORY_TYPE[catName] || 'flex';
+}
+
 // 작년/재작년 동월 합계 배열 (이 카테고리) — excludeFromGoal 거래는 학습에서 제외
 function ldgAIHistoricalSameMonth(catName, year, month) {
   var txs = _ledgerData.transactions || [];
@@ -21438,6 +21492,57 @@ function ldgAISimulateSavingImpact(catName, year, month) {
     annualImpact: monthlyDelta * remainingMonths, // 절약 가능액 (+) 또는 추가 필요액 (-)
     recommended: rec,
     projected: pace.projected
+  };
+}
+
+// 크로스-카테고리 보정 제안: 고정 카테고리에서 초과가 발생하면 유동 카테고리에서 절감 가능액 계산
+// 사용자가 진짜 원하는 것: "세금이 +137만 늘었으니 품위유지비/관계비/여가비에서 -137만 줄이세요"
+function ldgAIComputeRebalance(year, month) {
+  var cats = _ledgerData.categories || {};
+  var fixedOver = []; // 고정 카테고리 중 초과
+  var flexCats = []; // 유동 카테고리 분석
+
+  Object.keys(cats).forEach(function(cat) {
+    if (cat === '수입' || cat === '저축') return;
+    var pace = ldgAIPaceStatus(cat, year, month);
+    if (!pace) return;
+    var type = ldgGetCatType(cat);
+    var over = pace.projected - pace.budget;
+
+    if (type === 'fixed' && over > 0) {
+      fixedOver.push({ cat: cat, over: over, projected: pace.projected, budget: pace.budget, status: pace.status });
+    } else if (type === 'flex') {
+      // 유동 카테고리에서 절감 가능액 추정
+      // = 현재 페이스 - 작년/재작년 같은 달 최저값 (가장 적게 쓴 사례)
+      var historical = ldgAIHistoricalSameMonth(cat, year, month);
+      var minHistorical = 0;
+      if (historical.length > 0) {
+        minHistorical = Math.min.apply(null, historical.map(function(h){ return h.amount; }));
+      }
+      var saveable = Math.max(pace.projected - minHistorical, 0);
+      if (saveable >= 50000) { // 5만 이상 절감 가능할 때만 추천
+        flexCats.push({
+          cat: cat,
+          saveable: saveable,
+          projected: pace.projected,
+          minHistorical: minHistorical,
+          paceStatus: pace.status
+        });
+      }
+    }
+  });
+
+  if (fixedOver.length === 0) return null;
+
+  // 총 초과액
+  var totalOver = fixedOver.reduce(function(s,f){ return s+f.over; }, 0);
+  // 절감 가능액이 큰 순서로 정렬
+  flexCats.sort(function(a,b){ return b.saveable - a.saveable; });
+
+  return {
+    fixedOver: fixedOver,
+    totalOver: totalOver,
+    suggestions: flexCats.slice(0, 4) // 상위 4개
   };
 }
 
@@ -24331,6 +24436,11 @@ function ldgPrepareAIContext() {
   lines.push('');
   lines.push('### 현재 시점: ' + _ldgYear + '년 ' + curMonth + '월 ' + now.getDate() + '일');
   lines.push('');
+  lines.push('### 카테고리 분류');
+  lines.push('- **고정 지출** (이미 발생/자동이체, 5월 13일 시점 추가 절감 어려움): 주거비, 고정비, 세금/보험');
+  lines.push('- **고정 흐름** (월급/자동저축): 수입, 저축');
+  lines.push('- **유동 지출** (월 단위 조절 가능): 식비, 교통비, 여행, 생필품비, 자기계발비, 여가비, 품위유지비, 관계비, 경조사비, 건강/의료비');
+  lines.push('');
   lines.push('### 카테고리별 연도 × 월별 지출/수입 패턴 (만원, 작년+재작년+올해)');
   var orderedCats = ['수입','저축','주거비','고정비','교통비','식비','건강/의료비','여행','생필품비','자기계발비','여가비','품위유지비','관계비','경조사비','세금/보험'];
   var presentCats = Object.keys(summary);
@@ -24365,8 +24475,8 @@ async function ldgRunAIDeepAnalysis() {
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> Claude 분석 중...'; }
   try {
     var context = ldgPrepareAIContext();
-    var systemPrompt = '당신은 한국어로 답하는 직설적이고 친근한 재무 코치입니다. 사용자가 2년치 가계부 데이터를 보내면 패턴을 분석하고 올해 목표 달성을 도와야 합니다.\n\n답변 규칙:\n1. 인사말이나 서론 없이 바로 본론\n2. 구체적인 만원 단위 숫자로 답변 (예: "+50만", "-30만")\n3. 줄글 X. 짧은 불릿 포인트로\n4. 최대 5-6줄, 각 줄 핵심만\n5. 액션 가능한 조언 (어떤 카테고리를 얼마로 줄여야 하는지 등)\n6. 이모지 적절히 사용 (📊 🎯 💡 ⚠️ ✨ 등)';
-    var prompt = context + '\n\n위 데이터를 기반으로:\n1) 이번 달 가장 주의해야 할 카테고리 1-2개와 정확한 절감 금액\n2) 작년/재작년 대비 두드러진 변화\n3) 연간 목표 달성을 위한 구체적 액션 1-2개\n4) 긍정적 시그널 1개\n\n위 4가지를 짧은 불릿 포인트로 답변하세요.';
+    var systemPrompt = '당신은 한국어로 답하는 직설적이고 친근한 재무 코치입니다. 2년치 가계부 데이터를 분석해 올해 목표 달성을 도와야 합니다.\n\n[필수 규칙]\n1. **월 단위로만 사고**: 사용자는 "일 단위"로 예산 관리하지 않습니다. "하루 4만으로 줄이세요" 같은 일 단위 조언은 절대 금지. 항상 "이번 달 X만으로", "다음 달부터 Y만으로" 같이 월 단위로.\n2. **카테고리 타입 이해**: 고정 카테고리(주거비/고정비/세금/보험)가 초과되면 → 그 카테고리는 이미 발생하거나 자동이체라 추가 절감이 어려움. 대신 **유동 카테고리에서 보정 제안**. (예: "세금/보험이 +137만 늘었으니 품위유지비/관계비/여가비/식비 같은 유동 카테고리에서 보정")\n3. **구체적 액션**: "줄이세요" X. "품위유지비를 작년 평균 30만 → 이번달 15만으로 줄이면 -15만 보정" 처럼 정확한 카테고리 + 정확한 금액.\n4. 인사말 X, 서론 X, 바로 본론. 짧은 불릿 포인트. 최대 6줄.\n5. 만원 단위 숫자. 이모지(📊🎯💡⚠️✨ 등) 적절히 사용.';
+    var prompt = context + '\n\n위 데이터로 다음을 답변하세요 (각 1-2줄, 총 5-6줄):\n1) 🎯 이번 달 핵심 문제 (어느 카테고리가 어떻게 어긋났는지, 만약 고정 카테고리 초과면 이미 발생한 거라 "어쩔 수 없음" 명시)\n2) 💡 보정 액션 (구체적 유동 카테고리 + 정확한 절감 금액. 작년/재작년 패턴 활용)\n3) 📊 작년/재작년 대비 두드러진 변화 1-2개\n4) ✨ 잘하고 있는 부분 1개\n\n절대 "일 X만 사용" 같은 일 단위 조언 X. 월 단위로만.';
     var res = await callCoachAPI(prompt, systemPrompt, 1500, 'claude-haiku-4-5');
     var content = res.content || '응답을 받지 못했습니다.';
     var usage = res.usage || {};
