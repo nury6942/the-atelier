@@ -21563,20 +21563,24 @@ function ldgAIPaceStatus(catName, year, month) {
   } else {
     // 유동 카테고리: 자동(고정) 거래는 외삽 X, 변동 거래만 외삽
     var txs = _ledgerData.transactions || [];
+    var appliedRecIds = {}; // 이번 달에 이미 거래로 적용된 recurringId 수집
     txs.forEach(function(t) {
       if (t.excludeFromGoal === true) return;
       if (!t.date || t.date.substring(0,7) !== monthKey) return;
+      if (t.recurringId) appliedRecIds[t.recurringId] = true;
       if (t['대분류'] !== catName) return;
       var isAuto = (t['비고'] === '자동(고정)' || !!t.recurringId);
       if (isAuto) autoTotal += (t['금액'] || 0);
       else manualTotal += (t['금액'] || 0);
     });
-    // 미래 예정 자동 거래 (recurring 항목 중 이번 달 후반에 발생할 것)
+    // 미래 예정 자동 거래 (recurring 중 ① 이번 달 거래로 아직 등록 안 됨 ② dayOfMonth > 오늘)
+    // 이미 등록된 recurring은 자동거래 합계(autoTotal)에 이미 반영되어 있으므로 중복 카운트 방지
     var recurringItems = _ledgerData.recurring || [];
     var currentDay = now.getDate();
     recurringItems.forEach(function(r) {
       if (r['대분류'] !== catName) return;
-      if (r.dayOfMonth <= currentDay) return;
+      if (r.recId && appliedRecIds[r.recId]) return; // 이미 거래로 등록됨 → autoTotal에 반영
+      if (r.dayOfMonth <= currentDay) return; // 이미 지난 날짜인데 등록 안 됨 = 누락 (이번 달 더 안 일어날 듯)
       futureAuto += (r['금액'] || 0);
     });
     extrapolatedManual = manualTotal > 0 ? manualTotal / dayProgress : 0;
