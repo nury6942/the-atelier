@@ -2818,6 +2818,23 @@
             </div>
           </div>
         </div>
+
+        <!-- 월 복사 모달 -->
+        <div id="hub-month-copy-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+              <h3 class="font-bold text-white text-lg font-headline">월 항목 복사</h3>
+              <p id="hub-month-copy-target" class="text-white/70 text-xs mt-0.5"></p>
+            </div>
+            <div class="p-6">
+              <p class="text-sm text-slate-600 mb-3">어느 달에서 항목을 복사할까요?</p>
+              <div id="hub-month-copy-list" class="space-y-2 max-h-[400px] overflow-y-auto"></div>
+            </div>
+            <div class="px-6 pb-5 flex justify-end">
+              <button onclick="closeMonthCopyModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Summary Cards -->
@@ -15894,9 +15911,10 @@
               '<h3 class="font-headline font-bold text-lg text-slate-400">' + MONTHS_KR[idx] + '</h3>' +
               '<span class="text-[9px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-full font-bold uppercase">Pending</span>' +
             '</div>' +
-            '<div class="p-5 flex-grow"><div class="h-24 flex flex-col items-center justify-center gap-3">' +
+            '<div class="p-5 flex-grow"><div class="h-24 flex flex-col items-center justify-center gap-2">' +
               '<span class="material-symbols-outlined text-slate-300 text-3xl">lock</span>' +
               '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">add</span>항목 추가</button>' +
+              '<button onclick="openMonthCopyModal(\'' + monthKey + '\')" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span>다른 월에서 복사</button>' +
             '</div></div>' +
             '<div class="p-4 text-center" style="background:#e7e8e9;">' +
               '<span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">예정</span>' +
@@ -16320,6 +16338,99 @@
     document.getElementById('hub-empty').style.display = 'none';
     renderHubTable(); updateHubStats();
     var result = copied + '개 항목이 ' + hubYear + '년으로 복사되었어요!';
+    if (failed > 0) result += '\n(' + failed + '개 실패 — 콘솔 확인)';
+    alert(result);
+  }
+
+  // 월간 항목 복사: 같은 년도 내 다른 달의 항목을 이 달로 복제
+  var _hubCopyTargetMonth = null;
+  var _MONTHS_KR_FOR_COPY = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+  function openMonthCopyModal(targetMonthKey) {
+    _hubCopyTargetMonth = targetMonthKey;
+    var yr = targetMonthKey.substring(0,4);
+    var monthCounts = {};
+    hubData.forEach(function(row) {
+      var rowYrMonth = (row[0]||'').toString().substring(0,7);
+      if (rowYrMonth.substring(0,4) !== yr) return;
+      monthCounts[rowYrMonth] = (monthCounts[rowYrMonth] || 0) + 1;
+    });
+    var sources = Object.keys(monthCounts).filter(function(m) { return m !== targetMonthKey; }).sort();
+    var targetLabel = _MONTHS_KR_FOR_COPY[parseInt(targetMonthKey.substring(5,7)) - 1];
+    if (sources.length === 0) {
+      alert(yr + '년에 항목이 있는 다른 달이 없어요.\n다른 년도에서 복사하려면 우측 상단의 "이전 년도 복사" 버튼을 사용하세요.');
+      _hubCopyTargetMonth = null;
+      return;
+    }
+    document.getElementById('hub-month-copy-target').textContent = '→ ' + targetLabel + '로 복사';
+    document.getElementById('hub-month-copy-list').innerHTML = sources.map(function(m) {
+      var monthNum = parseInt(m.substring(5,7));
+      var count = monthCounts[m];
+      return '<button onclick="copyMonthItemsTo(\'' + m + '\')" class="w-full text-left px-4 py-3 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 flex items-center justify-between transition-all">' +
+        '<span class="font-bold text-slate-800">' + _MONTHS_KR_FOR_COPY[monthNum-1] + '</span>' +
+        '<span class="text-xs text-slate-500">' + count + '개 항목</span>' +
+      '</button>';
+    }).join('');
+    document.getElementById('hub-month-copy-modal').style.cssText = 'display:flex!important';
+  }
+
+  function closeMonthCopyModal() {
+    document.getElementById('hub-month-copy-modal').style.cssText = 'display:none!important';
+    _hubCopyTargetMonth = null;
+  }
+
+  async function copyMonthItemsTo(srcMonthKey) {
+    // closeMonthCopyModal이 _hubCopyTargetMonth를 null로 만들기 전에 로컬 변수에 저장
+    var targetMonthKey = _hubCopyTargetMonth;
+    if (!targetMonthKey) return;
+    var srcItems = hubData.filter(function(row) {
+      return (row[0]||'').toString().substring(0,7) === srcMonthKey;
+    });
+    if (srcItems.length === 0) {
+      alert('복사할 항목이 없어요.');
+      return;
+    }
+    var existing = hubData.filter(function(row) {
+      return (row[0]||'').toString().substring(0,7) === targetMonthKey;
+    });
+    var srcLabel = _MONTHS_KR_FOR_COPY[parseInt(srcMonthKey.substring(5,7))-1];
+    var tgtLabel = _MONTHS_KR_FOR_COPY[parseInt(targetMonthKey.substring(5,7))-1];
+    var msg;
+    if (existing.length > 0) {
+      msg = tgtLabel + '에 이미 ' + existing.length + '개 항목이 있어요.\n' +
+            srcLabel + '의 ' + srcItems.length + '개 항목을 추가로 복사할까요?\n(기존 항목은 그대로 유지)';
+    } else {
+      msg = srcLabel + '의 ' + srcItems.length + '개 항목을 ' + tgtLabel + '로 복사합니다.\n' +
+            '날짜는 자동으로 ' + tgtLabel + '의 같은 일자로 조정됩니다.\n진행할까요?';
+    }
+    if (!confirm(msg)) return;
+
+    closeMonthCopyModal();
+
+    var targetYr = targetMonthKey.substring(0,4);
+    var targetMo = targetMonthKey.substring(5,7);
+    var lastDayOfTarget = new Date(parseInt(targetYr), parseInt(targetMo), 0).getDate();
+
+    var copied = 0, failed = 0;
+    for (var i = 0; i < srcItems.length; i++) {
+      var src = srcItems[i];
+      var srcDay = parseInt((src[0]||'').toString().substring(8,10)) || 1;
+      var actualDay = Math.min(srcDay, lastDayOfTarget);
+      var newDate = targetYr + '-' + targetMo + '-' + String(actualDay).padStart(2,'0');
+      var newRow = [newDate, src[1]||'', src[2]||'', src[3]||0, src[4]||''];
+      try {
+        var saved = await fbAdd('finance_hub', rowToObj('finance_hub', newRow));
+        hubData.push(newRow.concat([saved._id, src[6]||0]));
+        copied++;
+      } catch(e) {
+        console.error('[FinanceHub] Month copy failed for item', src, e);
+        failed++;
+      }
+    }
+    document.getElementById('hub-table-wrap').style.display = 'block';
+    document.getElementById('hub-empty').style.display = 'none';
+    renderHubTable(); updateHubStats();
+    var result = copied + '개 항목이 ' + tgtLabel + '로 복사되었어요!';
     if (failed > 0) result += '\n(' + failed + '개 실패 — 콘솔 확인)';
     alert(result);
   }
