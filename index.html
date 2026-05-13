@@ -21443,13 +21443,24 @@ function ldgAICurrentMonthTotal(catName, year, month) {
 // 페이스 상태: { status, color, emoji, label, projected }
 function ldgAIPaceStatus(catName, year, month) {
   var budgets = _ledgerData.budgets || {};
+  var cats = _ledgerData.categories || {};
   var monthKey = year + '-' + String(month).padStart(2,'0');
-  // 예산 (카테고리 단위 우선, 없으면 추천)
+  // 예산 계산: ldgRenderCatGrid와 동일한 로직 (카테고리 단위 → 소분류 합 → AI 추천 순)
   var budget = 0;
   var catBudget = budgets[catName];
-  if (catBudget) {
+  if (catBudget && (catBudget.default !== undefined || (catBudget.overrides && Object.keys(catBudget.overrides).length))) {
     budget = catBudget.default || 0;
     if (catBudget.overrides && catBudget.overrides[monthKey] !== undefined) budget = catBudget.overrides[monthKey];
+  } else {
+    var subs = cats[catName] || [];
+    subs.forEach(function(sub) {
+      var bKey = catName + '.' + sub;
+      if (budgets[bKey]) {
+        var bVal = budgets[bKey].default || 0;
+        if (budgets[bKey].overrides && budgets[bKey].overrides[monthKey] !== undefined) bVal = budgets[bKey].overrides[monthKey];
+        budget += bVal;
+      }
+    });
   }
   if (!budget) budget = ldgAIRecommendBudget(catName, year, month) || 0;
   if (!budget) return null;
@@ -21459,9 +21470,16 @@ function ldgAIPaceStatus(catName, year, month) {
   var isCurrentMonth = (year === now.getFullYear() && month === now.getMonth() + 1);
   var daysInMonth = new Date(year, month, 0).getDate();
   var dayProgress = isCurrentMonth ? Math.max(now.getDate(), 1) / daysInMonth : 1.0;
-  var spendRatio = monthTotal / budget;
-  var ratio = dayProgress > 0 ? spendRatio / dayProgress : spendRatio;
-  var projected = isCurrentMonth ? Math.round(monthTotal / dayProgress) : monthTotal;
+  // 고정 카테고리는 페이스 외삽 X (이미 발생한 금액 그대로). 유동 카테고리만 일별 페이스로 추정.
+  var catTypeForPace = ldgGetCatType(catName);
+  var projected;
+  if (catTypeForPace === 'fixed' || !isCurrentMonth) {
+    projected = monthTotal;
+  } else {
+    projected = Math.round(monthTotal / dayProgress);
+  }
+  var spendRatio = budget > 0 ? projected / budget : 0;
+  var ratio = spendRatio; // 고정/유동 모두 projected 기반 비율
 
   var isIncomeSavings = (catName === '수입' || catName === '저축');
   if (isIncomeSavings) {
