@@ -15866,6 +15866,7 @@
       var runningIncome = 0, runningExpense = 0, runningSavings = 0, runningWithdraw = 0;
 
       // 이전 년도들의 항목까지 누적 (자산 연속성 — 예: 2027년 1월은 2026년 12월에서 이어짐)
+      // 저축/출금은 유동 내부 이동이라 runningIncome/Expense에 안 들어감 (체크잔액인 runningBalance만 영향)
       hubData.forEach(function(row) {
         var rowYr = (row[0]||'').toString().substring(0,4);
         if (rowYr && rowYr.length === 4 && rowYr < String(yr)) {
@@ -15900,9 +15901,9 @@
         // 저축(-): 체크→파킹 이동, 출금(+): 파킹에서 체크로 빼옴
         runningBalance += mIncome - mExpense - mSavings + mWithdraw;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
-        // 유동자산 = 기초 유동자산 + (수입+이자 - 지출 - 출금) 누적
-        // 저축은 파킹내부이동이라 영향 없음, 출금은 저축에서 빠져나간거라 유동 감소
-        var liquidAssets = base.cash + (runningIncome - runningExpense - runningWithdraw);
+        // 유동자산 = 기초 유동자산 + (수입+이자 - 지출) 누적
+        // 저축(체크→파킹)과 출금(파킹→체크)은 모두 유동 내부 이동이라 총량 영향 없음
+        var liquidAssets = base.cash + (runningIncome - runningExpense);
         // 비유동자산 = 기초 비유동자산 (고정)
         var nonLiquidAssets = base.savings;
         // 총자산 = 유동 + 비유동
@@ -16367,6 +16368,7 @@
     }
 
     // 월초 유동자산: base.cash + 모든 이전 거래 합 (자동 이자 항목은 제외 — recompute 대상이므로)
+    // 저축(체크→파킹)과 출금(파킹→체크)은 모두 유동 내부 이동이라 영향 없음
     function liquidAtStartOfMonth(monthIdx) {
       var base = getBaseAssets();
       var monthKey = yearStr + '-' + String(monthIdx + 1).padStart(2, '0');
@@ -16379,8 +16381,7 @@
         var t = row[4] || '', a = parseFloat(row[3]) || 0;
         if (t === '수입' || t === '이자') total += a;
         else if (t === '지출') total -= a;
-        else if (t === '출금') total -= a;
-        // 저축은 파킹 내부 이동이라 유동자산 변동 없음
+        // 저축/출금은 유동 내부 이동이라 합산 안 함
       });
       return total;
     }
