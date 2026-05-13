@@ -24306,10 +24306,29 @@ function ldgRestoreDailySlot(date) {
   }, '복원');
 }
 
-// Service Worker 등록
+// Service Worker 등록 (updateViaCache:'none' → SW 파일 자체는 항상 네트워크에서 가져옴)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-atelier/service-worker.js');
+    navigator.serviceWorker.register('/the-atelier/service-worker.js', { updateViaCache: 'none' })
+      .then(function(reg) {
+        // 활성 SW가 새 SW로 교체되면 자동 리로드 (캐시된 옛 코드 → 최신 코드)
+        var refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          if (refreshing) return;
+          refreshing = true;
+          console.log('[SW] 새 버전 활성화 → 자동 새로고침');
+          window.location.reload();
+        });
+        // 주기적으로 업데이트 체크 (1시간마다)
+        setInterval(function() { reg.update().catch(function(){}); }, 60 * 60 * 1000);
+        // 페이지 가시화 시 업데이트 체크 (PWA가 백그라운드에서 복귀)
+        document.addEventListener('visibilitychange', function() {
+          if (document.visibilityState === 'visible') {
+            reg.update().catch(function(){});
+          }
+        });
+      })
+      .catch(function(err) { console.error('[SW] 등록 실패:', err); });
   });
 }
 </script>
