@@ -20938,7 +20938,17 @@ function ldgRenderCatGrid() {
     }
   });
   var html = '';
+  // 카테고리 표시 순서 (사용자 지정)
+  var CATEGORY_ORDER = ['수입','저축','주거비','고정비','교통비','식비','건강/의료비','여행','생필품비','자기계발비','여가비','품의유지비','관계비','경조사비','세금/보험'];
   var catKeys = Object.keys(cats);
+  catKeys.sort(function(a, b) {
+    var ai = CATEGORY_ORDER.indexOf(a);
+    var bi = CATEGORY_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;  // 목록에 없는 카테고리는 뒤로
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
   catKeys.forEach(function(catName) {
     var subs = cats[catName] || [];
     var hasTx = !!catSums[catName];
