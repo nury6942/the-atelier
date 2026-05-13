@@ -21050,11 +21050,17 @@ function ldgRenderCatGrid() {
         : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a';
       var iconColor = p.status === 'danger' ? '#dc2626' : '#d97706';
       var overText = over > 0 ? ('월말 예상 <b>' + ldgFmt(p.projected) + '</b> (예산 ' + ldgFmt(p.budget) + ' 대비 <b style="color:' + iconColor + ';">+' + ldgFmt(over) + '</b>)') : '예산 내 진행';
+      // 시뮬레이션: AI 추천대로 맞추면 연 환산 절약 효과
+      var sim = ldgAISimulateSavingImpact(alert_.catName, _ldgYear, _ldgMonth);
+      var simText = '';
+      if (sim && sim.monthlyDelta > 5000 && sim.annualImpact > 50000) {
+        simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연간 약 <b style="color:#059669;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과 가능 (남은 ' + sim.remainingMonths + '개월 기준)';
+      }
       insightEl.innerHTML = '<div class="rounded-2xl p-4 flex items-start gap-3" style="' + bgStyle + ';">' +
         '<span style="font-size:20px">🤖</span>' +
         '<div class="flex-1">' +
           '<p class="text-xs font-bold text-slate-800 mb-0.5">' + dayInfo + ' · <span style="color:' + iconColor + ';">' + alert_.catName + ' ' + p.label + '</span></p>' +
-          '<p class="text-[11px] text-slate-600 leading-relaxed">' + overText + '</p>' +
+          '<p class="text-[11px] text-slate-600 leading-relaxed">' + overText + simText + '</p>' +
         '</div>' +
       '</div>';
     } else if (isCurrentMonth) {
@@ -21202,13 +21208,15 @@ function ldgRenderCatGrid() {
     } else {
       // 예산 없음 - AI 추천 + 설정 버튼
       var aiRec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
+      var seasonLbl = ldgAISeasonLabel(catName, _ldgMonth);
       html += '<div class="pt-2 border-t border-slate-50 flex items-center justify-between gap-1">';
       html += '<button onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5">' +
           '<span class="material-symbols-outlined" style="font-size:12px">add</span> 예산 설정' +
         '</button>';
       if (aiRec && aiRec > 0) {
-        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5 group" title="2024-2025 같은 달 평균 기반 추천">' +
-          '<span style="font-size:11px">🤖</span> 추천 ' + ldgFmtShort(aiRec) + ' 적용' +
+        var seasonTip = seasonLbl ? ' (이 카테고리 ' + _ldgMonth + '월 패턴: 평월 대비 ' + seasonLbl + ')' : '';
+        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="2024-2025 패턴 + 계절 가중치 기반 추천' + seasonTip + '">' +
+          '<span style="font-size:11px">🤖</span> 추천 ' + ldgFmtShort(aiRec) + (seasonLbl ? ' <span class="text-[9px] opacity-70">' + seasonLbl + '</span>' : '') + ' 적용' +
         '</button>';
       }
       html += '</div>';
@@ -21239,18 +21247,77 @@ function ldgAIHistoricalSameMonth(catName, year, month) {
   return results;
 }
 
-// 추천 예산 (만원 단위 X — 원 단위 반환)
-function ldgAIRecommendBudget(catName, year, month) {
-  var historical = ldgAIHistoricalSameMonth(catName, year, month);
-  if (historical.length === 0) return null;
-  var avg = historical.reduce(function(s,h){return s+h.amount;}, 0) / historical.length;
-  // 가장 최근 연도에 가중치 (1.5배) 둔 평균
-  if (historical.length >= 2) {
-    var older = historical[0].amount;
-    var newer = historical[1].amount;
-    avg = (older * 1 + newer * 1.5) / 2.5;
+// 계절 패턴 분석: 카테고리별 월평균 + 월별 가중치 (excludeFromGoal 제외)
+function ldgAISeasonalAnalysis(catName) {
+  var txs = _ledgerData.transactions || [];
+  var thisYear = new Date().getFullYear();
+  var yearMonthSums = {};
+  for (var y = thisYear - 2; y < thisYear; y++) {
+    yearMonthSums[y] = {};
+    for (var m = 1; m <= 12; m++) yearMonthSums[y][m] = 0;
   }
-  return Math.round(avg);
+  txs.forEach(function(t) {
+    if (t.excludeFromGoal === true) return;
+    if (!t.date || t['대분류'] !== catName) return;
+    var yr = parseInt(t.date.substring(0, 4));
+    var mo = parseInt(t.date.substring(5, 7));
+    if (yearMonthSums[yr] === undefined) return;
+    yearMonthSums[yr][mo] += (t['금액'] || 0);
+  });
+
+  // 각 연도의 월평균 (데이터 있는 달만)
+  var yearMonthlyAvgs = {};
+  Object.keys(yearMonthSums).forEach(function(y) {
+    var total = 0, count = 0;
+    for (var m = 1; m <= 12; m++) {
+      if (yearMonthSums[y][m] > 0) { total += yearMonthSums[y][m]; count++; }
+    }
+    yearMonthlyAvgs[y] = count > 0 ? total / count : 0;
+  });
+
+  // 월별 가중치 (각 달 / 그 해 월평균) 의 평균
+  var monthWeights = {};
+  for (var m = 1; m <= 12; m++) {
+    var sum = 0, cnt = 0;
+    Object.keys(yearMonthSums).forEach(function(y) {
+      if (yearMonthlyAvgs[y] > 0 && yearMonthSums[y][m] > 0) {
+        sum += yearMonthSums[y][m] / yearMonthlyAvgs[y];
+        cnt++;
+      }
+    });
+    monthWeights[m] = cnt > 0 ? sum / cnt : 1.0;
+  }
+
+  // 종합 월평균 (최근 연도 1.5배 가중)
+  var monthlyAvg = 0, wSum = 0;
+  var years = Object.keys(yearMonthlyAvgs).sort();
+  years.forEach(function(y, i) {
+    if (yearMonthlyAvgs[y] > 0) {
+      var w = (i === years.length - 1) ? 1.5 : 1;
+      monthlyAvg += yearMonthlyAvgs[y] * w;
+      wSum += w;
+    }
+  });
+  monthlyAvg = wSum > 0 ? monthlyAvg / wSum : 0;
+
+  return { monthlyAvg: monthlyAvg, monthWeights: monthWeights, dataYears: years };
+}
+
+// 추천 예산 (원 단위) - 계절 패턴 반영
+function ldgAIRecommendBudget(catName, year, month) {
+  var analysis = ldgAISeasonalAnalysis(catName);
+  if (!analysis.monthlyAvg) return null;
+  var weight = analysis.monthWeights[month] || 1.0;
+  return Math.round(analysis.monthlyAvg * weight);
+}
+
+// 시즌 가중치 텍스트 (e.g., "+50% 평월 대비")
+function ldgAISeasonLabel(catName, month) {
+  var analysis = ldgAISeasonalAnalysis(catName);
+  var w = analysis.monthWeights[month];
+  if (!w || Math.abs(w - 1) < 0.1) return ''; // 평월
+  var pct = Math.round((w - 1) * 100);
+  return pct > 0 ? '+' + pct + '%' : pct + '%';
 }
 
 // 카테고리의 이번달 현재 사용 합계 (원) — excludeFromGoal 거래 제외 (페이스 계산용)
@@ -21300,6 +21367,26 @@ function ldgAIPaceStatus(catName, year, month) {
     if (ratio <= 1.1) return { status: 'warning', color: '#f59e0b', emoji: '🟡', label: '주의', projected: projected, budget: budget };
     return { status: 'danger', color: '#ef4444', emoji: '🔴', label: '초과 위험', projected: projected, budget: budget };
   }
+}
+
+// 시뮬레이션: 이 카테고리를 추천대로 맞추면 연 환산 영향 (원 단위)
+// 예: 5월에 식비 추천 45만, 실제 페이스 60만 → 월 15만 절약, 5월~12월 8개월 × 15 = 120만 연간 영향
+function ldgAISimulateSavingImpact(catName, year, month) {
+  var pace = ldgAIPaceStatus(catName, year, month);
+  if (!pace) return null;
+  var rec = ldgAIRecommendBudget(catName, year, month);
+  if (!rec) return null;
+  var monthlyDelta = pace.projected - rec; // + 면 절약 가능, - 면 추가 지출 가능
+  var now = new Date();
+  var isCurYear = (year === now.getFullYear());
+  var remainingMonths = isCurYear ? (12 - now.getMonth()) : 12; // 현재 월 포함
+  return {
+    monthlyDelta: monthlyDelta,
+    remainingMonths: remainingMonths,
+    annualImpact: monthlyDelta * remainingMonths, // 절약 가능액 (+) 또는 추가 필요액 (-)
+    recommended: rec,
+    projected: pace.projected
+  };
 }
 
 // 가장 주의 필요한 카테고리 찾기 (지출 위주, 위험도 높은 순)
