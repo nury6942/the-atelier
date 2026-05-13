@@ -3017,7 +3017,6 @@
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="monthly" onclick="switchLedgerTab('monthly')">월별 뷰</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="annual" onclick="switchLedgerTab('annual')">연간 뷰</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="assets" onclick="switchLedgerTab('assets')">자산</button>
-        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="coach" onclick="switchLedgerTab('coach')">코치</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="settings" onclick="switchLedgerTab('settings')">설정</button>
       </div>
 
@@ -3279,9 +3278,6 @@
           </div>
         </div>
 
-      </div>
-      <div id="ledger-panel-coach" class="ledger-panel" style="display:none">
-        <div id="ldg-coach-content"></div>
       </div>
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
@@ -20468,7 +20464,6 @@ function switchLedgerTab(tab) {
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
   if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
   if (tab === 'assets' && _ledgerData.transactions) ldgRenderAssets();
-  if (tab === 'coach') ldgRenderCoach();
   if (tab === 'settings') ldgRenderSettings();
 }
 
