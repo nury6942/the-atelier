@@ -21239,14 +21239,19 @@ function ldgRenderCatGrid() {
       } else {
         // 유동 지출 카테고리: 월 단위로만 조언
         var remainingBudget = Math.max(pace.budget - totalAmt, 0);
-        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b>' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ' 초과)</span>' : '') + '</p>';
-        if (remainingBudget > 0) {
-          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용 시 예산 OK</p>';
-        } else {
-          html += '<p class="text-[10px] text-slate-600">⚠️ 이미 예산 한도 도달 — 추가 사용 시 초과</p>';
+        var alreadyOver = totalAmt > pace.budget;
+        if (alreadyOver) {
+          // 이미 예산 초과 사용
+          var overNow = totalAmt - pace.budget;
+          html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">⚠️ 이미 예산 <b>+' + ldgFmt(overNow) + '</b> 초과 사용</p>';
+          html += '<p class="text-[10px] text-slate-600">💡 다른 카테고리에서 절감하거나 예산을 상향 조정하세요</p>';
+        } else if (remainingDays > 0) {
+          // 예산 내 사용 중이지만 페이스 빠름
+          html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 현재 페이스로는 월말 <b>' + ldgFmt(pace.projected) + '</b> 예상' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ')</span>' : '') + '</p>';
+          html += '<p class="text-[10px] text-slate-600">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용하면 예산 OK</p>';
         }
         if (over > 0 && pace.projected > 0) {
-          var roundedUp = Math.ceil(pace.projected / 10000) * 10000;
+          var roundedUp = Math.ceil(Math.max(pace.projected, totalAmt) / 10000) * 10000;
           var btnBg = isDangerCat ? 'background:#dc2626;color:white;' : 'background:#d97706;color:white;';
           html += '<button onclick="ldgSetCatBudgetTo(\'' + catNameEsc + '\',' + roundedUp + ')" class="mt-1.5 text-[10px] font-bold px-2 py-1 rounded-lg hover:opacity-90" style="' + btnBg + '">예산 ' + ldgFmtShort(roundedUp) + ' 상향 적용</button>';
         }
@@ -21269,10 +21274,23 @@ function ldgRenderCatGrid() {
       var remaining = budgetTotal - totalAmt;
       var color = remaining >= 0 ? '#10b981' : '#ef4444';
       var pct = Math.min(totalAmt / budgetTotal * 100, 100);
-      html += '<div class="pt-2 border-t border-slate-50 cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 -mb-5 pb-5 rounded-b-2xl transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
-        '<div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + '</span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + (remaining >= 0 ? '+' : '') + ldgFmtShort(remaining) + '</span></div>' +
-        '<div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + (remaining >= 0 ? '#10b981' : '#ef4444') + '"></div></div>' +
+      var remLabel = remaining >= 0 ? '남음' : '초과';
+      var remDisplay = ldgFmtShort(Math.abs(remaining));
+      var aiRecEdit = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
+      var seasonLblEdit = ldgAISeasonLabel(catName, _ldgMonth);
+      html += '<div class="pt-2 border-t border-slate-50">';
+      // 예산 바 (클릭하면 편집)
+      html += '<div class="cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 py-1.5 transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
+        '<div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + ' <span class="text-[9px] text-slate-300">✏️</span></span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + remDisplay + ' ' + remLabel + '</span></div>' +
+        '<div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + color + '"></div></div>' +
       '</div>';
+      // AI 추천 (예산 있어도 표시 - 일관성)
+      if (aiRecEdit && aiRecEdit > 0 && aiRecEdit !== budgetTotal) {
+        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="mt-2 text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="작년/재작년 패턴 + 계절 가중치 + 연간 목표 페이스 반영">' +
+          '<span style="font-size:11px">🤖</span> 추천 ' + ldgFmtShort(aiRecEdit) + (seasonLblEdit ? ' <span class="text-[9px] opacity-70">' + seasonLblEdit + '</span>' : '') + '로 변경' +
+        '</button>';
+      }
+      html += '</div>';
     } else {
       // 예산 없음 - AI 추천 + 설정 버튼
       var aiRec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
@@ -21393,12 +21411,50 @@ function ldgAISeasonalAnalysis(catName) {
   return { monthlyAvg: monthlyAvg, monthWeights: monthWeights, dataYears: years };
 }
 
-// 추천 예산 (원 단위) - 계절 패턴 반영
+// 추천 예산 (원 단위) - 계절 패턴 + 연간 목표 페이스 반영
 function ldgAIRecommendBudget(catName, year, month) {
   var analysis = ldgAISeasonalAnalysis(catName);
   if (!analysis.monthlyAvg) return null;
   var weight = analysis.monthWeights[month] || 1.0;
-  return Math.round(analysis.monthlyAvg * weight);
+  var baseRec = Math.round(analysis.monthlyAvg * weight);
+
+  // 수입/저축은 페이스 보정 X (작년 평균 × 계절 그대로)
+  if (catName === '수입' || catName === '저축') return baseRec;
+
+  // 지출 카테고리: 연간 목표 페이스가 빠르면 추천 감소
+  var goals = ldgLoadGoals();
+  var yearGoal = goals[year] || {};
+  var expenseGoalMan = yearGoal['지출'] || 0;
+  if (!expenseGoalMan) return baseRec;
+  var expenseGoal = expenseGoalMan * 10000;
+
+  // 올해 누적 지출 (자산이동 제외, 수입/저축 제외)
+  var txs = _ledgerData.transactions || [];
+  var ytdExpense = 0;
+  txs.forEach(function(t) {
+    if (t.excludeFromGoal === true) return;
+    if (!t.date || t.date.substring(0,4) !== String(year)) return;
+    var major = t['대분류'];
+    if (major === '수입' || major === '저축') return;
+    ytdExpense += (t['금액'] || 0);
+  });
+  if (ytdExpense <= 0) return baseRec;
+
+  // 목표 페이스 (올해 진행률 기준)
+  var now = new Date();
+  var startYr = new Date(year, 0, 1);
+  var endRef = (year === now.getFullYear()) ? now : new Date(year, 11, 31);
+  var yearProgress = (endRef - startYr) / (365 * 86400000);
+  yearProgress = Math.max(0.01, Math.min(yearProgress, 1));
+  var paceExpected = expenseGoal * yearProgress;
+
+  // 페이스 배율 = 목표 페이스 / 실제 누적
+  // < 1 (실제 > 목표): 너무 많이 씀 → 추천 감소
+  // >= 1 (실제 <= 목표): 페이스 OK → 추천 유지
+  var paceRatio = paceExpected / ytdExpense;
+  var paceMultiplier = Math.min(paceRatio, 1.0);
+
+  return Math.max(Math.round(baseRec * paceMultiplier), 10000);
 }
 
 // 시즌 가중치 텍스트 (e.g., "+50% 평월 대비")
