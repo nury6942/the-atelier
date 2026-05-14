@@ -7311,6 +7311,29 @@
     return dayMap.map(function(d){ return d.date; });
   }
 
+  // ── 당일치기 도시 추출 helper ──
+  // 일정 항목의 city 가 숙박 도시(baseCity)와 다르면 "당일치기 도시"로 간주
+  function _normCityKey(s) {
+    return (s||'').split(',')[0].trim().toLowerCase().replace(/\s+/g,' ');
+  }
+  function _displayCityShort(s) {
+    return (s||'').split(',')[0].trim();
+  }
+  function getDayTripCities(items, baseCity) {
+    if (!items || !items.length) return [];
+    var baseN = _normCityKey(baseCity);
+    var seen = {}; var out = [];
+    items.forEach(function(it) {
+      var raw = (it.city||'').trim();
+      if (!raw) return;
+      var n = _normCityKey(raw);
+      if (!n || n === baseN || seen[n]) return;
+      seen[n] = true;
+      out.push(raw);
+    });
+    return out;
+  }
+
   function renderDayView() {
     var dayMap = getDayMap();
     if (!dayMap.length) {
@@ -7333,11 +7356,23 @@
 
     var cityDesc = entry.cityDesc || '';
     document.getElementById('journey-day-badge').textContent = dayNum + '일차';
-    document.getElementById('journey-day-title').textContent = (cityName || '') + (cityDesc ? ', ' + cityDesc : '');
     document.getElementById('journey-day-date').textContent = dateStr || '';
 
     var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
     items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+
+    // 헤더 타이틀: 숙박 도시 + 당일치기 도시 배지
+    var titleEl = document.getElementById('journey-day-title');
+    if (titleEl) {
+      var baseLabel = (cityName || '') + (cityDesc ? ', ' + cityDesc : '');
+      var dayTrips = getDayTripCities(items, cityName);
+      var lodgeIcon = cityName ? '<span class="material-symbols-outlined align-middle text-indigo-400 mr-1" style="font-size:14px" title="숙박지">hotel</span>' : '';
+      var tripBadges = dayTrips.map(function(c){
+        var safe = String(c).replace(/[<>"']/g, '');
+        return '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 ml-1.5 align-middle" title="당일치기">🚆 ' + _displayCityShort(safe) + ' <span class="opacity-60">(당일)</span></span>';
+      }).join('');
+      titleEl.innerHTML = lodgeIcon + '<span class="align-middle">' + baseLabel + '</span>' + tripBadges;
+    }
 
     // 날씨 배너 업데이트
     if (dateStr) {
@@ -7357,6 +7392,7 @@
       container.innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">이 날의 일정이 없어요</div>';
       return;
     }
+    var baseCityNorm = _normCityKey(cityName);
     container.innerHTML = items.map(function(item, idx) {
       var realIdx = journeyData.indexOf(item);
       var travelHtml = '';
@@ -7371,13 +7407,26 @@
         ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed cursor-pointer" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleDesc(this,'+realIdx+')">' + descText + '</p>'
         : '<p class="text-[11px] text-slate-300 italic mt-1 cursor-pointer hover:text-indigo-400" ondblclick="editScheduleDesc(this,'+realIdx+')">+ 내용 추가 (더블클릭)</p>';
       var timeLabel = item.time ? (item.time + (item.end_time ? '-' + item.end_time : '')) : '';
+      // 일정의 city가 숙박 도시와 다르면 칩 표시 (더블클릭 편집)
+      var itemCityRaw = (item.city||'').trim();
+      var itemCityChip = '';
+      if (itemCityRaw) {
+        var iN = _normCityKey(itemCityRaw);
+        if (iN && iN !== baseCityNorm) {
+          var safeC = itemCityRaw.replace(/[<>"']/g, '');
+          itemCityChip = '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 mr-1.5 align-middle cursor-pointer hover:bg-amber-100" title="더블클릭하여 행선지 변경" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(safeC) + '</span>';
+        }
+      }
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-sky-400 ring-4 ring-white shadow-sm"></div>' +
         (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + '</div>' : '') +
         '<div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
-        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + (item.title||'') + '</h5>' +
-        '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 shrink-0"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + (item.title||'') + '</h5>' +
+        '<div class="flex items-center gap-0.5 shrink-0">' +
+          '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size:14px">location_on</span></button>' +
+          '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+        '</div>' +
         '</div>' +
         descHtml +
         '</div></div>';
@@ -7475,6 +7524,22 @@
       renderDayView();
     });
   }
+  // 일정 도시 편집 (당일치기 행선지) — prompt 기반 간단 편집
+  window.editScheduleCity = function(idx, ev) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    var item = journeyData[idx];
+    if (!item) return;
+    var entry = getDayMap()[currentDayIndex];
+    var baseCity = entry ? entry.cityName : '';
+    var current = item.city || '';
+    var hint = baseCity ? '\n(숙박지: ' + baseCity + ' — 같은 도시면 비우면 OK)' : '';
+    var v = prompt('이 일정의 행선지 도시?' + hint, current);
+    if (v === null) return;
+    var newCity = v.trim() || baseCity || '';
+    item.city = newCity;
+    fbUpdate('journey', item._id, {city: newCity}).catch(function(){});
+    renderDayView();
+  };
 
   function inlineEditTextarea(el, currentValue, saveCallback) {
     if (el.querySelector('textarea')) return;
@@ -7530,7 +7595,11 @@
           '<span class="text-[10px] text-slate-400">-</span>' +
           '<input id="sched-add-end-time" type="text" placeholder="끝 (선택)" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-16 text-center"/>' +
         '</div>' +
-        '<input id="sched-add-title" type="text" placeholder="제목 입력..." class="'+ic+' w-full font-bold text-sm mb-2" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();document.getElementById(\'sched-add-desc\').focus();}"/>' +
+        '<input id="sched-add-title" type="text" placeholder="제목 입력..." class="'+ic+' w-full font-bold text-sm mb-2" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();document.getElementById(\'sched-add-city\').focus();}"/>' +
+        '<div class="flex items-center gap-1 mb-2">' +
+          '<span class="text-[10px] text-amber-600 font-bold">📍</span>' +
+          '<input id="sched-add-city" type="text" placeholder="' + (cityName ? '비우면 숙박지 = ' + cityName : '행선지 도시 (선택)') + '" class="'+ic+' w-full text-[11px] text-amber-700" title="당일치기 등 숙박 도시와 다를 때만 입력"/>' +
+        '</div>' +
         '<textarea id="sched-add-desc" placeholder="내용 입력 (선택)..." rows="2" class="'+ic+' w-full text-xs resize-none" style="line-height:1.5" onkeydown="if(event.key===\'Enter\'&&(event.metaKey||event.ctrlKey)){event.preventDefault();saveScheduleInline();}"></textarea>' +
         '<div class="flex gap-2 justify-end mt-2">' +
           '<button onclick="this.closest(\'.schedule-inline-add\').remove()" class="p-1 text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>' +
@@ -7552,8 +7621,12 @@
     var endTime = document.getElementById('sched-add-end-time').value.trim();
     var title = document.getElementById('sched-add-title').value.trim();
     var desc = document.getElementById('sched-add-desc').value.trim();
+    var cityInputEl = document.getElementById('sched-add-city');
+    var cityInput = cityInputEl ? cityInputEl.value.trim() : '';
     if (!title) { alert('일정 제목을 입력해줘!'); return; }
-    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:div.dataset.city, title:title, description:desc };
+    // city: 사용자가 입력했으면 그 값(당일치기), 아니면 숙박 도시 기본값
+    var cityFinal = cityInput || div.dataset.city || '';
+    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:cityFinal, title:title, description:desc };
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
@@ -7846,6 +7919,10 @@
         ? 'background:linear-gradient(135deg,#6366f1,#a855f7);color:white;'
         : 'background:linear-gradient(135deg,#e0e7ff,#fce7f3);color:#4338ca;';
 
+      // 당일치기 도시 (숙박 도시와 다른 일정 도시들)
+      var dayTrips = getDayTripCities(items, cityName);
+      var baseN2 = _normCityKey(cityName);
+
       var itemsHtml = items.length === 0
         ? '<div class="text-[10px] text-slate-400 py-2 italic text-center">일정 없음</div>'
         : items.map(function(item){
@@ -7853,17 +7930,34 @@
             var endTime = item.end_time ? '-' + item.end_time : '';
             var title = (item.title || '').replace(/</g,'&lt;');
             var desc = (item.description || '').replace(/</g,'&lt;');
+            // 일정 city 가 숙박과 다르면 작은 칩
+            var itemCityRaw = (item.city||'').trim();
+            var cityChip = '';
+            if (itemCityRaw) {
+              var iN = _normCityKey(itemCityRaw);
+              if (iN && iN !== baseN2) {
+                cityChip = '<span class="inline-block text-[9px] font-bold px-1 py-0 rounded bg-amber-100 text-amber-700 mr-1 align-middle">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
+              }
+            }
             return '<div class="py-1.5 px-1 border-b border-slate-100 last:border-b-0">' +
               (time ? '<div class="text-[10px] font-bold text-indigo-600">' + time + endTime + '</div>' : '') +
-              '<div class="text-[11px] font-semibold text-slate-800 leading-tight">' + (title || '(제목 없음)') + '</div>' +
+              '<div class="text-[11px] font-semibold text-slate-800 leading-tight">' + cityChip + (title || '(제목 없음)') + '</div>' +
               (desc ? '<div class="text-[10px] text-slate-500 mt-0.5 leading-snug" style="white-space:pre-line;word-break:keep-all;">' + desc + '</div>' : '') +
             '</div>';
           }).join('');
 
+      // 헤더: 도시명 + 당일치기 작은 라인
+      var headerCityHtml = '<div class="text-xs font-bold mt-0.5">' + dayNum + '일차' + (cityName ? ' · ' + cityName : '') + '</div>';
+      if (dayTrips.length > 0) {
+        var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
+        var dtColor = isCurrent ? 'rgba(255,255,255,0.85)' : '#b45309';
+        headerCityHtml += '<div class="text-[10px] font-bold mt-0.5" style="color:' + dtColor + '" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</div>';
+      }
+
       return '<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col cursor-pointer hover:shadow-md transition-shadow" onclick="jumpToDay(' + actualIdx + ')" title="클릭하여 이 날짜로 점프">' +
         '<div class="px-3 py-2 text-center" style="' + headerBg + '">' +
           '<div class="text-[10px] font-black uppercase tracking-wider opacity-90">' + dateStr + (weekday ? ' (' + weekday + ')' : '') + '</div>' +
-          '<div class="text-xs font-bold mt-0.5">' + dayNum + '일차' + (cityName ? ' · ' + cityName : '') + '</div>' +
+          headerCityHtml +
         '</div>' +
         '<div class="p-2 flex-1 min-h-[120px]">' + itemsHtml + '</div>' +
       '</div>';
