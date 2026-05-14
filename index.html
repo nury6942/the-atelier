@@ -1475,11 +1475,12 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">monitoring</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Money</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-ledger" onclick="navigate('ledger'); return false;">
+    <!-- Daily Ledger / Side Jobs는 Money 페이지 내 탭으로 통합됨 -->
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-ledger" onclick="navigate('ledger'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[20px] transition-colors">wallet</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Daily Ledger</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-income" onclick="navigate('income'); return false;">
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-income" onclick="navigate('income'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[20px] transition-colors">account_balance_wallet</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Side Jobs</span>
     </a>
@@ -2864,6 +2865,21 @@
   <div id="page-finance-hub" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
+      <!-- 탭 (자산 / 가계부 / 부업) -->
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchMoneyTab('asset')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="asset">
+            📊 자산
+          </button>
+          <button onclick="switchMoneyTab('ledger')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="ledger">
+            📒 가계부
+          </button>
+          <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="sidejobs">
+            💼 부업
+          </button>
+        </div>
+      </div>
+
       <!-- Monthly Artifacts Grid -->
       <section class="mb-12 space-y-8">
         <div class="flex items-center gap-4">
@@ -3128,6 +3144,21 @@
   <!-- ===== DAILY LEDGER PAGE ===== -->
   <div id="page-ledger" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
+
+      <!-- 탭 (자산 / 가계부 / 부업) -->
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchMoneyTab('asset')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="asset">
+            📊 자산
+          </button>
+          <button onclick="switchMoneyTab('ledger')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="ledger">
+            📒 가계부
+          </button>
+          <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="sidejobs">
+            💼 부업
+          </button>
+        </div>
+      </div>
 
       <!-- Page Title -->
       <h2 class="atelier-page-h2 mb-6">Daily Ledger</h2>
@@ -4071,6 +4102,21 @@
 
   <div id="page-income" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
+
+      <!-- 탭 (자산 / 가계부 / 부업) -->
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchMoneyTab('asset')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="asset">
+            📊 자산
+          </button>
+          <button onclick="switchMoneyTab('ledger')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="ledger">
+            📒 가계부
+          </button>
+          <button onclick="switchMoneyTab('sidejobs')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="sidejobs">
+            💼 부업
+          </button>
+        </div>
+      </div>
 
       <!-- Sticky Unified Timeline -->
       <div id="work-timeline-section" style="display:none;position:sticky;top:64px;z-index:30;background:white;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 16px 16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);padding:12px 16px;margin:-10px 0 16px;max-height:45vh;overflow:hidden">
@@ -12873,11 +12919,11 @@
     "journey": { "title": "Travel" },
     "finance": { "title": "Travel" },
     "finance-hub": { "title": "Money" },
-    "ledger": { "title": "Daily Ledger" },
+    "ledger": { "title": "Money" },
     "matrix": { "title": "Calendar" },
     "english": { "title": "Annie" },
     "vault": { "title": "Vault" },
-    "income": { "title": "Side Jobs" },
+    "income": { "title": "Money" },
     "planner": { "title": "Calendar" },
     "packing": { "title": "Travel" },
     "reference": { "title": "Memo" }
@@ -12932,6 +12978,14 @@
     else if (tab === 'matrix') navigate('matrix');
   }
   if (typeof window !== 'undefined') window.switchCalendarTab = switchCalendarTab;
+
+  // ── Money/Ledger/SideJobs 통합 탭 ──
+  function switchMoneyTab(tab) {
+    if (tab === 'asset') navigate('finance-hub');
+    else if (tab === 'ledger') navigate('ledger');
+    else if (tab === 'sidejobs') navigate('income');
+  }
+  if (typeof window !== 'undefined') window.switchMoneyTab = switchMoneyTab;
 
   // 미니 요약 업데이트 (Travel 페이지)
   async function updateTravelMiniSummary() {
@@ -12994,6 +13048,8 @@
     if (pageId === 'finance' || pageId === 'packing') activeNavId = 'journey';
     // Year Matrix는 Calendar 사이드바 (nav-planner) 활성 처리
     if (pageId === 'matrix') activeNavId = 'planner';
+    // Daily Ledger / Side Jobs는 Money 사이드바 (nav-finance-hub) 활성 처리
+    if (pageId === 'ledger' || pageId === 'income') activeNavId = 'finance-hub';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
