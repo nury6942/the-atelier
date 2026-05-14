@@ -2592,9 +2592,14 @@
           <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
             <div>
               <h4 class="font-manrope font-bold text-slate-800">🏨 도시별 숙소 예산</h4>
-              <p class="text-[10px] text-slate-400 font-medium mt-0.5">도시별 숙박 일수 기준 예산 가이드 + 실제 사용 비교</p>
+              <p class="text-[10px] text-slate-400 font-medium mt-0.5">Voyage Path 일정 기준 · 도시별 숙박 예산 vs 실제 사용</p>
             </div>
-            <span id="finance-lodging-status" class="text-[10px] text-slate-400 font-medium"></span>
+            <div class="flex items-center gap-2">
+              <span id="finance-lodging-status" class="text-[10px] text-slate-400 font-medium"></span>
+              <button onclick="ldgSyncFromItinerary()" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors" title="Voyage Path 도시 일정 다시 불러오기">
+                <span class="material-symbols-outlined" style="font-size:16px">refresh</span>
+              </button>
+            </div>
           </div>
           <div id="finance-lodging-body" class="p-6"></div>
         </div>
@@ -11213,6 +11218,40 @@
     renderTripLodgingBreakdown();
   }
 
+  // 도시 일정 강제 새로고침: trip_cities + journey 재조회 후 재렌더
+  async function ldgSyncFromItinerary() {
+    var section = document.getElementById('finance-lodging-section');
+    var statusEl = document.getElementById('finance-lodging-status');
+    if (statusEl) statusEl.textContent = '동기화 중…';
+    try {
+      // 1) trip_cities 강제 재조회 (citiesData 캐시 무효화)
+      if (currentFinanceTrip !== 'all') {
+        var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+        if (trip) {
+          var allCities = await fbRead('trip_cities');
+          var freshCities = allCities.filter(function(c){ return c.trip_id === trip._id; });
+          // 전역 citiesData 가 동일 트립일 때만 동기화
+          if (typeof citiesData !== 'undefined' && typeof currentTripId !== 'undefined' && currentTripId === trip._id) {
+            citiesData.length = 0;
+            freshCities.forEach(function(c){ citiesData.push(c); });
+          }
+        }
+      }
+      // 2) journey 재조회
+      var fresh = await fbRead('journey');
+      if (typeof journeyData !== 'undefined') {
+        journeyData.length = 0;
+        fresh.forEach(function(j){ journeyData.push(j); });
+      }
+      await renderTripLodgingBreakdown();
+      if (typeof showSyncToast === 'function') showSyncToast('도시 일정 동기화 완료');
+    } catch(e) {
+      console.error('[ldgSyncFromItinerary]', e);
+      if (statusEl) statusEl.textContent = '동기화 실패';
+    }
+  }
+  if (typeof window !== 'undefined') window.ldgSyncFromItinerary = ldgSyncFromItinerary;
+
   async function renderTripLodgingBreakdown() {
     var section = document.getElementById('finance-lodging-section');
     var bodyEl = document.getElementById('finance-lodging-body');
@@ -11232,14 +11271,31 @@
       }
     } catch(e) { console.error('[LodgingBreakdown] journey load:', e); }
 
+    // trip_cities 로드: Voyage Path 도시 일정이 우선 소스
+    var tripCities = [];
+    try {
+      if (typeof citiesData !== 'undefined' && citiesData && citiesData.length &&
+          typeof currentTripId !== 'undefined' && currentTripId === trip._id) {
+        tripCities = citiesData.slice();
+      } else {
+        var allCities = await fbRead('trip_cities');
+        tripCities = allCities.filter(function(c){ return c.trip_id === trip._id; });
+      }
+      tripCities.sort(function(a,b){
+        var ak = (a.start_date || '') + '|' + String(a.order||0).padStart(4,'0');
+        var bk = (b.start_date || '') + '|' + String(b.order||0).padStart(4,'0');
+        return ak.localeCompare(bk);
+      });
+    } catch(e) { console.error('[LodgingBreakdown] trip_cities load:', e); }
+
     // 이 트립의 숙소들
     var lodgings = jData.filter(function(j) {
       return j.trip_id === trip._id && j.type === '숙소';
     });
 
-    if (lodgings.length === 0) {
+    if (lodgings.length === 0 && tripCities.length === 0) {
       section.style.display = '';
-      bodyEl.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">아직 숙소가 등록되지 않았어요. Travel 페이지에서 숙소를 추가하세요.</div>';
+      bodyEl.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">아직 도시/숙소가 등록되지 않았어요. Travel 페이지에서 추가하세요.</div>';
       if (statusEl) statusEl.textContent = '';
       return;
     }
@@ -11254,20 +11310,21 @@
       else if (trip.budget.accom && trip.budget.days) perNightBudget = parseFloat(trip.budget.accom) / parseFloat(trip.budget.days);
     }
 
-    // 도시별 그룹화
-    var byCity = {}; // { cityName: [lodging, ...] }
+    // 숙소 도시별 그룹화 (대소문자 / 공백 정규화로 매칭 향상)
+    var normCity = function(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,' '); };
+    var byCity = {}; // { normName: { display, items: [], rawNames: Set } }
     lodgings.forEach(function(lo) {
-      var city = (lo.city || '미지정').trim();
-      if (!byCity[city]) byCity[city] = [];
-      byCity[city].push(lo);
+      var raw = (lo.city || '미지정').trim();
+      var key = normCity(raw);
+      if (!byCity[key]) byCity[key] = { display: raw, items: [] };
+      byCity[key].items.push(lo);
     });
 
     // 도시별 1일치 override
     var perDayByCity = (trip.budget && trip.budget.accomPerDayByCity) || {};
 
-    // 각 도시별 분석
-    var cityRows = Object.keys(byCity).map(function(city) {
-      var items = byCity[city];
+    // 도시 row 빌더 (도시명 + 매칭된 숙소들 + 일정 야수)
+    function buildRow(displayCity, items, plannedNights, source) {
       var totalNights = 0;
       var totalSpent = 0;
       var dateRange = '';
@@ -11278,7 +11335,7 @@
         if (ci && co) {
           var nights = Math.max(Math.round((co - ci) / 86400000), 1);
           totalNights += nights;
-        } else {
+        } else if (items.length) {
           totalNights += 1;
         }
         if (ci) {
@@ -11292,18 +11349,21 @@
         var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
         dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
       }
-      // 도시별 1일치: override 있으면 그것, 없으면 트립 1일치
-      var hasCityOverride = perDayByCity[city] !== undefined;
-      var perNight = hasCityOverride ? perDayByCity[city] : perNightBudget;
-      var cityBudget = perNight * totalNights;
+      // 예산 계산 기준: 일정 야수 우선, 없으면 실제 숙소 야수
+      var budgetNights = (plannedNights != null && plannedNights > 0) ? plannedNights : totalNights;
+      var hasCityOverride = perDayByCity[displayCity] !== undefined;
+      var perNight = hasCityOverride ? perDayByCity[displayCity] : perNightBudget;
+      var cityBudget = perNight * budgetNights;
       var remaining = cityBudget - totalSpent;
       var pct = cityBudget > 0 ? Math.min(100, totalSpent / cityBudget * 100) : 0;
       var isOver = totalSpent > cityBudget && cityBudget > 0;
       var noBudget = cityBudget === 0;
       return {
-        city: city,
+        city: displayCity,
         items: items,
         nights: totalNights,
+        plannedNights: plannedNights,
+        budgetNights: budgetNights,
         spent: totalSpent,
         budget: cityBudget,
         perNight: perNight,
@@ -11312,30 +11372,47 @@
         pct: pct,
         isOver: isOver,
         noBudget: noBudget,
-        dateRange: dateRange
+        dateRange: dateRange,
+        source: source // 'itinerary' | 'orphan'
       };
+    }
+
+    // Voyage Path 일정에 있는 도시들 기준으로 row 생성
+    var cityRows = [];
+    var usedKeys = {};
+    tripCities.forEach(function(c) {
+      var key = normCity(c.name);
+      var match = byCity[key];
+      var items = match ? match.items : [];
+      var plannedNights = parseInt(c.nights, 10) || 0;
+      cityRows.push(buildRow(c.name, items, plannedNights, 'itinerary'));
+      if (match) usedKeys[key] = true;
     });
 
-    // 날짜 순 정렬 (가장 먼저 도착하는 도시부터)
-    cityRows.sort(function(a, b) {
-      var ad = a.items[0] && a.items[0].date ? a.items[0].date : '9999';
-      var bd = b.items[0] && b.items[0].date ? b.items[0].date : '9999';
-      return ad.localeCompare(bd);
+    // 일정에 없는 옛 도시 (orphan): 데이터 정리 안내용
+    Object.keys(byCity).forEach(function(key) {
+      if (usedKeys[key]) return;
+      var grp = byCity[key];
+      cityRows.push(buildRow(grp.display, grp.items, null, 'orphan'));
     });
 
-    var totalNights = cityRows.reduce(function(s,r){ return s + r.nights; }, 0);
+    var totalNights = cityRows.reduce(function(s,r){ return s + r.budgetNights; }, 0);
     var totalSpent = cityRows.reduce(function(s,r){ return s + r.spent; }, 0);
     var totalBudget = cityRows.reduce(function(s,r){ return s + r.budget; }, 0);
     var totalRem = totalBudget - totalSpent;
 
     if (statusEl) {
-      statusEl.textContent = '총 ' + totalNights + '박 · 1일치 ' + (perNightBudget ? '₩' + Math.round(perNightBudget).toLocaleString('ko-KR') : '미설정');
+      var orphanCount = cityRows.filter(function(r){return r.source === 'orphan';}).length;
+      var orphanTxt = orphanCount > 0 ? ' · ⚠️ ' + orphanCount + ' 정리 필요' : '';
+      statusEl.textContent = '총 ' + totalNights + '박 · 1일치 ' + (perNightBudget ? '₩' + Math.round(perNightBudget).toLocaleString('ko-KR') : '미설정') + orphanTxt;
     }
 
     var html = '<div class="space-y-3">';
     cityRows.forEach(function(r) {
-      var titleParts = r.items.map(function(lo){ return lo.title || '(이름없음)'; }).join(', ');
-      var barColor = r.isOver ? '#ef4444' : (r.noBudget ? '#94a3b8' : '#3b82f6');
+      var titleParts = r.items.length ? r.items.map(function(lo){ return lo.title || '(이름없음)'; }).join(', ') : '';
+      var isOrphan = r.source === 'orphan';
+      var noLodging = r.items.length === 0;
+      var barColor = r.isOver ? '#ef4444' : (r.noBudget ? '#94a3b8' : (isOrphan ? '#f59e0b' : '#3b82f6'));
       var remColor = r.isOver ? 'text-red-500' : (r.remaining > 0 ? 'text-emerald-600' : 'text-slate-500');
       var remLabel = r.noBudget ? '예산 미설정' : (r.remaining >= 0 ? '₩' + Math.round(r.remaining).toLocaleString('ko-KR') + ' 남음' : '₩' + Math.round(-r.remaining).toLocaleString('ko-KR') + ' 초과');
       var safeCity = _flbSafeCity(r.city);
@@ -11343,15 +11420,30 @@
       var perNightDisplay = r.perNight ? '₩' + Math.round(r.perNight).toLocaleString('ko-KR') : '미설정';
       var overrideBadge = r.hasCityOverride ? '<span class="text-[9px] font-bold text-purple-600 ml-1" title="이 도시 1일치 별도 설정됨">★</span>' : '';
 
-      html += '<div class="border border-slate-200 rounded-xl p-4 hover:border-blue-300 transition-colors">' +
+      // 박수 표시: 일정 야수 vs 실제 야수 불일치 시 둘 다 노출
+      var nightsBadge;
+      if (isOrphan) {
+        nightsBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700" title="Voyage Path 일정에 없는 도시">⚠ 일정 외 ' + r.nights + '박</span>';
+      } else if (r.plannedNights && r.nights && r.plannedNights !== r.nights) {
+        nightsBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700" title="일정 '+r.plannedNights+'박 / 실제 숙소 '+r.nights+'박 — 불일치">📅 ' + r.plannedNights + '박 / 🏨 ' + r.nights + '박</span>';
+      } else if (r.plannedNights && !r.nights) {
+        nightsBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500" title="일정 '+r.plannedNights+'박 · 숙소 미등록">📅 ' + r.plannedNights + '박 · 숙소 ―</span>';
+      } else {
+        nightsBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">' + r.budgetNights + '박</span>';
+      }
+
+      var cardBorderClass = isOrphan ? 'border-amber-200 bg-amber-50/30' : (noLodging ? 'border-dashed border-slate-200' : 'border-slate-200');
+
+      html += '<div class="border ' + cardBorderClass + ' rounded-xl p-4 hover:border-blue-300 transition-colors">' +
         '<div class="flex items-start justify-between mb-2 gap-3">' +
           '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
               '<span class="text-sm font-bold text-slate-900">' + r.city + '</span>' +
-              '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">' + r.nights + '박</span>' +
+              nightsBadge +
               (r.dateRange ? '<span class="text-[10px] text-slate-400 font-medium">' + r.dateRange + '</span>' : '') +
             '</div>' +
-            '<p class="text-[11px] text-slate-500 truncate" title="' + titleParts + '">' + titleParts + '</p>' +
+            (titleParts ? '<p class="text-[11px] text-slate-500 truncate" title="' + titleParts + '">' + titleParts + '</p>'
+                        : '<p class="text-[11px] text-slate-400 italic">아직 숙소 미등록 — Travel 페이지에서 추가하세요</p>') +
           '</div>' +
           '<div class="text-right shrink-0">' +
             '<div class="text-sm font-bold ' + remColor + '">' + remLabel + '</div>' +
@@ -11372,7 +11464,7 @@
       } else {
         html += '<span class="cursor-pointer hover:bg-blue-50/40 px-1 py-0.5 rounded" onclick="ldgStartEditCityBudget(\'' + cityEsc + '\')" title="클릭하여 이 도시 1일치 예산 수정">' +
           '예산 ' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) +
-          (r.perNight ? ' <span class="text-slate-400">(' + perNightDisplay + '×' + r.nights + overrideBadge + ' <span class="text-[9px] text-slate-300">✏️</span>)</span>' : '') +
+          (r.perNight ? ' <span class="text-slate-400">(' + perNightDisplay + '×' + r.budgetNights + overrideBadge + ' <span class="text-[9px] text-slate-300">✏️</span>)</span>' : '') +
         '</span>';
       }
 
