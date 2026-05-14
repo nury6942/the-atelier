@@ -11200,8 +11200,13 @@
 
     section.style.display = '';
 
-    // 1일치 숙소 예산
-    var perNightBudget = parseFloat(trip.budget && trip.budget.accom) || 0;
+    // 1일치 숙소 예산 (저장 구조: accomPerDay=1일치, accom=총액)
+    // 구버전 데이터 호환: accomPerDay 없으면 accom / days로 추정
+    var perNightBudget = 0;
+    if (trip.budget) {
+      if (trip.budget.accomPerDay) perNightBudget = parseFloat(trip.budget.accomPerDay) || 0;
+      else if (trip.budget.accom && trip.budget.days) perNightBudget = parseFloat(trip.budget.accom) / parseFloat(trip.budget.days);
+    }
 
     // 도시별 그룹화
     var byCity = {}; // { cityName: [lodging, ...] }
