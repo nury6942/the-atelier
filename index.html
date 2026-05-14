@@ -13056,6 +13056,7 @@
 
   // 미니 요약 업데이트 (Travel 페이지)
   // Finance 스키마: ['date','description','trip','category','amount','currency','krw_amount']
+  // category 값은 '입금' 또는 세부 카테고리('항공·이동','숙소','식비',등). '입금'이 아니면 지출.
   async function updateTravelMiniSummary() {
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
@@ -13075,28 +13076,39 @@
       var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
       if (!trip || !trip.budget) { el.style.display = 'none'; return; }
       var tripName = trip.name || '';
-      // 예산 총합 (저장 구조: budget = {flight, accom, tour, living, accomPerDay, ...})
+      // 예산 총합
       var b = trip.budget;
       var totalBudget = (parseFloat(b.flight)||0) + (parseFloat(b.accom)||0) + (parseFloat(b.tour)||0) + (parseFloat(b.living)||0);
       if (totalBudget <= 0) { el.style.display = 'none'; return; }
-      // 지출 합: finance.trip === tripName AND category === '지출'
-      // (asset-transfer 제외)
-      var fData = [];
-      try { fData = await fbRead('finance'); } catch(e) {}
-      var spent = fData.filter(function(f){
-        if (!f) return false;
-        if (f.trip !== tripName) return false;
-        if (f.category !== '지출') return false;
-        if (f.excludeFromGoal) return false;
-        return true;
-      }).reduce(function(s,f){
-        // krw_amount 우선, 없으면 amount (이미 KRW이거나 변환 안 됨)
-        var amt = parseFloat(f.krw_amount);
-        if (isNaN(amt) || amt === 0) amt = parseFloat(f.amount) || 0;
-        return s + amt;
-      }, 0);
+
+      // 지출 합: 우선 financeData(이미 로드됨) 사용, 없으면 fbRead
+      // 로직: 예산 페이지의 updateFinanceStats와 동일
+      //   - r[2] === tripName (트립 매칭)
+      //   - r[3] !== '입금' (입금 외 전부 지출)
+      //   - r[4] = amount (이 앱에서 amount가 KRW 값으로 저장됨)
+      var spent = 0;
+      if (typeof financeData !== 'undefined' && financeData.length) {
+        // 배열 형태 (이미 로드됨)
+        financeData.forEach(function(r) {
+          if (!r) return;
+          if (r[2] !== tripName) return;
+          if (r[3] === '입금') return;
+          spent += parseFloat(r[4]) || 0;
+        });
+      } else {
+        // 객체 형태 (fbRead 직접 호출)
+        try {
+          var fData = await fbRead('finance');
+          fData.forEach(function(f) {
+            if (!f) return;
+            if (f.trip !== tripName) return;
+            if (f.category === '입금') return;
+            spent += parseFloat(f.amount) || 0;
+          });
+        } catch(e) { console.warn('finance fbRead 실패:', e); }
+      }
+
       var remain = totalBudget - spent;
-      // 표시
       var fmt = function(n){ return '₩' + Math.round(n).toLocaleString('ko-KR'); };
       var bEl = document.getElementById('travel-mini-budget');
       var sEl = document.getElementById('travel-mini-spent');
