@@ -11310,9 +11310,12 @@
       else if (trip.budget.accom && trip.budget.days) perNightBudget = parseFloat(trip.budget.accom) / parseFloat(trip.budget.days);
     }
 
-    // 숙소 도시별 그룹화 (대소문자 / 공백 정규화로 매칭 향상)
-    var normCity = function(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,' '); };
-    var byCity = {}; // { normName: { display, items: [], rawNames: Set } }
+    // 숙소 도시별 그룹화 (대소문자 / 공백 / 콤마 뒤 국가/주 정규화로 매칭 향상)
+    // 예: "Frankfurt am Main, 독일" ↔ "Frankfurt am Main" 매칭 가능
+    var normCity = function(s){
+      return (s||'').split(',')[0].trim().toLowerCase().replace(/\s+/g,' ');
+    };
+    var byCity = {}; // { normName: { display, items: [] } }
     lodgings.forEach(function(lo) {
       var raw = (lo.city || '미지정').trim();
       var key = normCity(raw);
@@ -11377,23 +11380,33 @@
       };
     }
 
-    // Voyage Path 일정에 있는 도시들 기준으로 row 생성
-    var cityRows = [];
-    var usedKeys = {};
+    // 숙소가 등록된 도시들만 카드로 생성 (일정 정보는 매칭해서 보조 표시)
+    // 일정 도시 빠른 조회용 인덱스
+    var itineraryByKey = {};
     tripCities.forEach(function(c) {
-      var key = normCity(c.name);
-      var match = byCity[key];
-      var items = match ? match.items : [];
-      var plannedNights = parseInt(c.nights, 10) || 0;
-      cityRows.push(buildRow(c.name, items, plannedNights, 'itinerary'));
-      if (match) usedKeys[key] = true;
+      itineraryByKey[normCity(c.name)] = c;
     });
 
-    // 일정에 없는 옛 도시 (orphan): 데이터 정리 안내용
-    Object.keys(byCity).forEach(function(key) {
-      if (usedKeys[key]) return;
+    var cityRows = Object.keys(byCity).map(function(key) {
       var grp = byCity[key];
-      cityRows.push(buildRow(grp.display, grp.items, null, 'orphan'));
+      var itin = itineraryByKey[key];
+      var plannedNights = itin ? (parseInt(itin.nights, 10) || 0) : 0;
+      return buildRow(grp.display, grp.items, plannedNights, itin ? 'itinerary' : 'orphan');
+    });
+
+    // 일정 순서대로 정렬 (일정에 있는 도시 우선, 그 안에서는 일정 순; 일정 외는 마지막)
+    var itinOrder = {};
+    tripCities.forEach(function(c, i){ itinOrder[normCity(c.name)] = i; });
+    cityRows.sort(function(a, b) {
+      var ai = itinOrder[normCity(a.city)];
+      var bi = itinOrder[normCity(b.city)];
+      if (ai != null && bi != null) return ai - bi;
+      if (ai != null) return -1;
+      if (bi != null) return 1;
+      // 둘 다 일정 외 → 첫 체크인 날짜 순
+      var ad = a.items[0] && a.items[0].date ? a.items[0].date : '9999';
+      var bd = b.items[0] && b.items[0].date ? b.items[0].date : '9999';
+      return ad.localeCompare(bd);
     });
 
     var totalNights = cityRows.reduce(function(s,r){ return s + r.budgetNights; }, 0);
