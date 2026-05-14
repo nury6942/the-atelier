@@ -2573,7 +2573,7 @@
   <div id="page-finance" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- 트립 선택 (일정/체크리스트와 통일) -->
+      <!-- 트립 선택 (일정/체크리스트와 통일, 여행 추가는 일정 탭에서만) -->
       <div class="mb-4 flex items-center gap-3">
         <div class="relative" id="finance-dd-wrap">
           <button onclick="toggleFinanceDropdown()" id="finance-dd-btn" class="trip-dd-btn">
@@ -2584,9 +2584,6 @@
             <div id="finance-dd-options" class="py-1"></div>
           </div>
         </div>
-        <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
-          <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
-        </button>
       </div>
 
       <!-- 탭 (일정 / 예산 / 체크리스트) -->
@@ -20806,17 +20803,19 @@ speaker 설정:
   <div id="page-packing" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Trip Selector (Custom Dropdown) -->
-      <div class="relative mb-4" id="pk-dropdown-wrap">
-        <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="trip-dd-btn">
-          <span id="pk-dropdown-label">여행 선택...</span>
-          <span class="material-symbols-outlined text-violet-400 transition-transform" id="pk-dropdown-chevron" style="font-size:20px">expand_more</span>
-        </button>
-        <div id="pk-dropdown-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
-          <div id="pk-dropdown-options" class="py-1"></div>
+      <!-- Trip Selector (일정/예산과 통일된 너비) -->
+      <div class="mb-4 flex items-center gap-3">
+        <div class="relative" id="pk-dropdown-wrap">
+          <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="trip-dd-btn">
+            <span id="pk-dropdown-label">여행 선택...</span>
+            <span class="material-symbols-outlined text-violet-400 transition-transform" id="pk-dropdown-chevron" style="font-size:20px">expand_more</span>
+          </button>
+          <div id="pk-dropdown-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
+            <div id="pk-dropdown-options" class="py-1"></div>
+          </div>
+          <!-- Hidden select for compatibility -->
+          <select id="pk-trip-selector" class="hidden"></select>
         </div>
-        <!-- Hidden select for compatibility -->
-        <select id="pk-trip-selector" class="hidden"></select>
       </div>
 
       <!-- 탭 (일정 / 예산 / 체크리스트) -->
