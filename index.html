@@ -597,8 +597,8 @@
         min-height: auto !important;
       }
       #work-timeline-section button .material-symbols-outlined { font-size: 13px !important; }
-      /* 타임라인 차트 스크롤 영역 */
-      #ut-scroll { max-height: calc(55vh - 70px) !important; }
+      /* 타임라인 차트 스크롤 영역 (모바일에서만 높이 제한) */
+      #ut-scroll { max-height: 60vh !important; overflow-y: auto !important; }
       #work-timeline-chart { min-width: 700px; }
       /* 작품명 sticky 칼럼: 210px → 120px (모바일) */
       #work-timeline-chart div[style*="width:210px"] {
@@ -4118,13 +4118,10 @@
         </div>
       </div>
 
-      <!-- Sticky Unified Timeline -->
-      <div id="work-timeline-section" style="display:none;position:sticky;top:64px;z-index:30;background:white;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 16px 16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);padding:12px 16px;margin:-10px 0 16px;max-height:45vh;overflow:hidden">
-        <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900" style="margin:0">Series Timeline</h2>
-            <button onclick="var b=document.getElementById('ut-body');var i=this.querySelector('span');if(b.style.display==='none'){b.style.display='';i.textContent='expand_less'}else{b.style.display='none';i.textContent='expand_more'}" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-400 transition-all"><span class="material-symbols-outlined" style="font-size:16px">expand_less</span></button>
-          </div>
+      <!-- Series Timeline (일반 섹션) -->
+      <section id="work-timeline-section" style="display:none">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900" style="margin:0">Series Timeline</h2>
           <div class="flex items-center gap-2.5">
             <button onclick="_scrollUtToday()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size:16px">today</span>오늘로</button>
             <button onclick="manualCleanupDuplicates()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-amber-200 text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-300 hover:-translate-y-0.5 transition-all" title="캘린더에서 같은 화 중복 등록된 일정 정리"><span class="material-symbols-outlined" style="font-size:16px">cleaning_services</span>중복 정리</button>
@@ -4132,10 +4129,10 @@
             <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:16px">add</span>새 작품</button>
           </div>
         </div>
-        <div class="rounded-xl border border-slate-100" style="overflow-x:auto;overflow-y:auto;max-height:calc(45vh - 40px);scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
           <div id="work-timeline-chart"></div>
         </div>
-      </div>
+      </section>
 
       <!-- Work Pipeline cards removed — actions integrated into timeline header -->
 
