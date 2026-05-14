@@ -23,12 +23,47 @@
     alert('❌ journeyData 없음'); return;
   }
 
-  // ── 2) 트립 찾기 ──────────────────────────────────────
-  const trips = (typeof financeTrips !== 'undefined' ? financeTrips : []);
-  const trip = trips.find(t => t.name === '2026 독일&이탈리아');
-  if (!trip) { alert('❌ "2026 독일&이탈리아" 트립을 찾을 수 없습니다'); return; }
-  const tripId = trip._id;
-  console.log('🎒 Trip:', trip.name, '|', tripId);
+  // ── 2) 트립 찾기 (여러 경로로 fallback) ──────────────
+  let trip = null;
+  let tripId = null;
+
+  // (a) currentTripId 우선 사용 (Travel 페이지에서 설정됨)
+  if (typeof currentTripId !== 'undefined' && currentTripId) {
+    try {
+      const allTrips = await fbRead('trips');
+      trip = allTrips.find(t => t._id === currentTripId);
+      if (trip) {
+        tripId = trip._id;
+        console.log('🎒 currentTripId로 찾음:', trip.name);
+      }
+    } catch(e) { console.warn('trips fbRead 실패:', e); }
+  }
+
+  // (b) financeTrips 시도 (Money 페이지 다녀왔으면 있음)
+  if (!trip && typeof financeTrips !== 'undefined' && financeTrips.length) {
+    trip = financeTrips.find(t =>
+      (t.name||'').includes('독일') && (t.name||'').includes('이탈리아')
+    );
+    if (trip) { tripId = trip._id; console.log('🎒 financeTrips로 찾음:', trip.name); }
+  }
+
+  // (c) Firestore에서 trips 직접 조회 + 느슨한 이름 매치
+  if (!trip) {
+    try {
+      const allTrips = await fbRead('trips');
+      console.log('📋 전체 트립 목록:', allTrips.map(t => t.name));
+      trip = allTrips.find(t =>
+        (t.name||'').includes('독일') && (t.name||'').includes('이탈리아')
+      );
+      if (trip) { tripId = trip._id; console.log('🎒 fbRead로 찾음:', trip.name); }
+    } catch(e) { console.error('trips 조회 실패:', e); }
+  }
+
+  if (!trip || !tripId) {
+    alert('❌ 트립을 찾을 수 없습니다.\n\n콘솔에서 전체 트립 목록 확인하세요.\n없으면 정확한 트립 이름을 알려주세요.');
+    return;
+  }
+  console.log('✅ 최종 트립:', trip.name, '|', tripId);
 
   // ── 3) 확인 ──────────────────────────────────────────
   const proceed = confirm(
