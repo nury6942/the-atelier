@@ -7790,10 +7790,9 @@
       if (rng0) rng0.textContent = '—';
       return;
     }
-    // 청크 클램프
-    var maxStart = Math.max(0, dayMap.length - WEEK_CHUNK_SIZE);
-    if (currentWeekChunkStart > maxStart) currentWeekChunkStart = maxStart;
+    // 청크 클램프 (마지막 청크는 잔여 일수만큼만 — 5일 안 채워도 그대로)
     if (currentWeekChunkStart < 0) currentWeekChunkStart = 0;
+    if (currentWeekChunkStart >= dayMap.length) currentWeekChunkStart = Math.max(0, dayMap.length - 1);
 
     var chunkEnd = Math.min(currentWeekChunkStart + WEEK_CHUNK_SIZE, dayMap.length);
     var chunk = dayMap.slice(currentWeekChunkStart, chunkEnd);
@@ -7853,15 +7852,16 @@
   }
 
   function prevWeekChunk() {
+    if (currentWeekChunkStart <= 0) return;
     currentWeekChunkStart -= WEEK_CHUNK_SIZE;
     if (currentWeekChunkStart < 0) currentWeekChunkStart = 0;
     renderWeekView();
   }
   function nextWeekChunk() {
     var dayMap = getDayMap();
-    var maxStart = Math.max(0, dayMap.length - WEEK_CHUNK_SIZE);
-    currentWeekChunkStart += WEEK_CHUNK_SIZE;
-    if (currentWeekChunkStart > maxStart) currentWeekChunkStart = maxStart;
+    var nextStart = currentWeekChunkStart + WEEK_CHUNK_SIZE;
+    if (nextStart >= dayMap.length) return; // 더 이상 다음 청크 없음
+    currentWeekChunkStart = nextStart;
     renderWeekView();
   }
   function jumpToDay(idx) {
