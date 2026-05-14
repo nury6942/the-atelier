@@ -2882,8 +2882,8 @@
 
       <!-- Monthly Artifacts Grid -->
       <section class="mb-12 space-y-8">
-        <div class="flex items-center gap-4">
-          <h2 class="text-2xl font-bold font-headline text-slate-900">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
+        <div class="flex items-center gap-4 flex-wrap">
+          <h2 class="atelier-page-h2">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
           <div class="flex items-center gap-1 ml-2">
             <button onclick="switchHubYear(-1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_left</span></button>
             <span id="hub-year-label" class="text-lg font-black font-headline min-w-[48px] text-center" style="color:#6b38d4"></span>
@@ -4121,7 +4121,7 @@
       <!-- Series Timeline (일반 섹션) -->
       <section id="work-timeline-section" style="display:none">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900" style="margin:0">Series Timeline</h2>
+          <h2 class="atelier-page-h2">Series Timeline</h2>
           <div class="flex items-center gap-2.5">
             <button onclick="_scrollUtToday()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size:16px">today</span>오늘로</button>
             <button onclick="manualCleanupDuplicates()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-amber-200 text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-300 hover:-translate-y-0.5 transition-all" title="캘린더에서 같은 화 중복 등록된 일정 정리"><span class="material-symbols-outlined" style="font-size:16px">cleaning_services</span>중복 정리</button>
