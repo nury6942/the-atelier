@@ -1726,33 +1726,36 @@
       <!-- Journey Content (hidden until trip selected) -->
       <div id="journey-content" style="display:none">
 
-        <!-- Trip Header (Violet Voyage Style) -->
-        <section class="mb-10">
-          <div class="mb-6">
-            <span class="text-indigo-600 font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Current Voyage</span>
-            <div class="flex items-center gap-3 mb-3">
-              <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight" id="journey-trip-title">—</h2>
-              <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors" title="여행 정보 수정"><span class="material-symbols-outlined" style="font-size:18px">edit</span></button>
-              <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="여행 삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
+        <!-- Trip Header (Violet Voyage Style) — 좌(여행) / 우(Voyage Path) 2열 -->
+        <section class="mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <!-- 좌: Trip 정보 + 도시 카드 -->
+          <div>
+            <div class="mb-6">
+              <span class="text-indigo-600 font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Current Voyage</span>
+              <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight" id="journey-trip-title">—</h2>
+                <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors" title="여행 정보 수정"><span class="material-symbols-outlined" style="font-size:18px">edit</span></button>
+                <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="여행 삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
+              </div>
+              <div class="flex items-center gap-3 text-slate-500">
+                <span class="material-symbols-outlined text-indigo-600 text-lg">calendar_today</span>
+                <span id="journey-km-badge" class="font-medium text-sm" style="display:none"></span>
+                <span id="journey-days-badge" class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style="display:none"></span>
+              </div>
             </div>
-            <div class="flex items-center gap-3 text-slate-500">
-              <span class="material-symbols-outlined text-indigo-600 text-lg">calendar_today</span>
-              <span id="journey-km-badge" class="font-medium text-sm" style="display:none"></span>
-              <span id="journey-days-badge" class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style="display:none"></span>
-            </div>
+
+            <!-- 도시 카드 그리드 (Violet Voyage) — 2열 컬럼 안에서 -->
+            <div id="journey-city-cards" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
           </div>
 
-          <!-- 도시 카드 그리드 (Violet Voyage) -->
-          <div id="journey-city-cards" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
-
-          <!-- Voyage Path -->
-          <div id="journey-voyage-path" class="mt-10 rounded-xl p-8 flex flex-col md:flex-row items-center gap-8" style="background:#f3f4f5;display:none">
-            <div class="md:w-1/2">
+          <!-- 우: Voyage Path -->
+          <div id="journey-voyage-path" class="rounded-xl p-6 flex flex-col gap-5" style="background:#f3f4f5;display:none">
+            <div>
               <h3 class="text-xl font-bold font-headline mb-3">Voyage Path</h3>
-              <p id="voyage-path-desc" class="text-slate-500 mb-5 leading-relaxed text-sm"></p>
+              <p id="voyage-path-desc" class="text-slate-500 mb-4 leading-relaxed text-sm"></p>
               <div id="voyage-path-badges" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="md:w-1/2 w-full h-56 rounded-xl overflow-hidden bg-slate-200 relative">
+            <div class="w-full h-72 rounded-xl overflow-hidden bg-slate-200 relative">
               <img id="voyage-map-img" src="" alt="Map" class="w-full h-full object-cover" style="display:none"/>
               <div id="voyage-map-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-300/50">
                 <span class="material-symbols-outlined text-5xl text-slate-400 mb-2">map</span>
