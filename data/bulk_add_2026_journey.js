@@ -76,12 +76,20 @@
   const BL = 'Berlin, 독일';
   const PZ = 'Pienza, 시에나 이탈리아';
 
-  // P 헬퍼: pinned 항목용
+  // P 헬퍼: pinned 항목용 (비행/기차/렌트카)
   const P = (date, time, end, city, title, desc) => ({
     date, time, end_time: end, city, title, description: desc || '', pinned: true
   });
   // N 헬퍼: 일반 항목
   const N = (date, time, end, city, title, desc) => ({
+    date, time, end_time: end, city, title, description: desc || ''
+  });
+  // R 헬퍼: 사전 예약 필수 항목 (핑크색)
+  const R = (date, time, end, city, title, desc) => ({
+    date, time, end_time: end, city, title, description: desc || '', reservation: true
+  });
+  // H 헬퍼: 호텔 체크인/체크아웃 (강조 X, 일반 항목)
+  const H = (date, time, end, city, title, desc) => ({
     date, time, end_time: end, city, title, description: desc || ''
   });
 
@@ -95,7 +103,7 @@
       'FRA T3. EU 첫 입국 도장. 짐 찾는 데 보통 20-30분.'),
     N('2026-09-25','17:30','18:30',FF,'🚆 S-Bahn S8/S9 시내 이동 (~15분 + 환승 포함)',
       'FRA Regionalbahnhof에서 탑승. €5.85. Hauptbahnhof 하차 → 시타딘 호텔 도보 5분.'),
-    P('2026-09-25','18:30','19:00',FF,'🏨 시타딘 시티 센터 프랑크푸르트 체크인',
+    H('2026-09-25','18:30','19:00',FF,'🏨 시타딘 시티 센터 프랑크푸르트 체크인',
       'Europa-Allee 23. ☎️ 069-9203850. 짐 풀고 옷 갈아입기.'),
     N('2026-09-25','19:30','21:00',FF,'🏛️ 뢰머광장 (Römerberg) 산책 + 저녁',
       '동화 같은 목조 건물(Ostzeile). Sachsenhausen 지구 Adolf Wagner에서 Apfelwein + Frankfurter Würstchen.'),
@@ -109,7 +117,7 @@
       '€9. 200m 옥상 전망대. 토요일 9:30 오픈. 사진 명소.'),
     N('2026-09-26','10:00','11:00',FF,'🛍️ Kleinmarkthalle 재래시장',
       '토요일 9:30-16:00 영업. 현지 햄·치즈·빵·꽃. 2층에서 작은 식사 가능.'),
-    P('2026-09-26','11:00','11:30',FF,'🏨 시타딘 체크아웃 + 짐 보관',
+    H('2026-09-26','11:00','11:30',FF,'🏨 시타딘 체크아웃 + 짐 보관',
       '체크아웃 11:00 deadline. 호텔에 짐 맡기고 자유 시간.'),
     N('2026-09-26','11:30','13:00',FF,'🍽️ 점심: Apfelwein 또는 시장 푸드',
       'Klein Markthalle 2층 바 또는 인근 Sachsenhausen. 가볍게.'),
@@ -119,7 +127,7 @@
       '⚠️ 대부분 노선이 Leipzig 환승. DB Navigator로 정확한 열차편 사전 확인. 좌석 예약 강추 (€4.50). 1등석이면 DB Lounge 무료 사용 가능.'),
     N('2026-09-26','18:30','19:00',DD,'🚆 Dresden Hbf → 호텔 이동',
       '트램 6번/11번 또는 도보 ~15분. Moxy는 Neustadt 지구.'),
-    P('2026-09-26','19:00','19:30',DD,'🏨 Moxy Dresden Neustadt 체크인',
+    H('2026-09-26','19:00','19:30',DD,'🏨 Moxy Dresden Neustadt 체크인',
       'Dr.-Friedrich-Wolf-Straße 8. ☎️ 0351-89881414.'),
     N('2026-09-26','19:30','20:30',DD,'🌉 Brühl Terrace 야경 산책 (도보 15분)',
       '"유럽의 발코니". 엘베강 위 산책로. 야간 조명 받은 도시 전경.'),
@@ -145,7 +153,7 @@
 
     // ═══ Day 4: 9/28 (월) Dresden → Berlin ═══
     N('2026-09-28','08:00','09:00',DD,'☕ 조식'),
-    P('2026-09-28','09:00','09:30',DD,'🏨 Moxy 체크아웃 + Dresden Hbf 이동',
+    H('2026-09-28','09:00','09:30',DD,'🏨 Moxy 체크아웃 + Dresden Hbf 이동',
       '체크아웃 12:00 deadline이지만 일찍. 트램 또는 도보. 짐 들고 역으로.'),
     P('2026-09-28','09:30','11:30',BL,'🚂 ICE: Dresden → Berlin Hbf (~2h 직행)',
       '직항 ICE 자주 있음. 좌석 예약 €4.50.'),
@@ -157,7 +165,7 @@
       '베를린 명물 커리부어스트. 짭짤한 소시지 + 감자튀김. 빠르고 가볍게.'),
     N('2026-09-28','13:30','15:00',BL,'🚪 Brandenburger Tor + 홀로코스트 추모비',
       '베를린 상징. 무료 외관. 인근 추모비도 5분 거리. 콘크리트 기둥 2,711개.'),
-    P('2026-09-28','15:00','15:30',BL,'🏨 카사 캠퍼 베를린 체크인',
+    H('2026-09-28','15:00','15:30',BL,'🏨 카사 캠퍼 베를린 체크인',
       'Weinmeisterstraße 1, 10178. ☎️ 030-20003410. 짐 풀고 잠시 휴식.'),
     N('2026-09-28','16:00','18:00',BL,'🎨 East Side Gallery (장벽 1.3km 야외)',
       '아티스트 118명 그래피티. ★Fraternal Kiss (브레즈네프-호네커)★. 꿀팁: Oberbaumbrücke 건너 Kreuzberg 쪽에서 사진 찍으면 관광객 없음.'),
@@ -170,8 +178,8 @@
     // ═══ Day 5: 9/29 (화) Berlin 박물관 데이 ═══
     N('2026-09-29','08:00','09:00',BL,'☕ The Barn 모닝커피 (Mitte)',
       '베를린 대표 로스터리. 플랫화이트.'),
-    N('2026-09-29','09:30','11:30',BL,'🏛️ Boros Collection (사전예약 필수!)',
-      '옛 방공호 벙커 개조 현대미술관. 차가운 콘크리트 + 현대 미술. 화-일 운영. 예약 없으면 입장 불가. 가이드 투어 ~90분.'),
+    R('2026-09-29','09:30','11:30',BL,'🎫 Boros Collection (사전예약 필수!)',
+      '옛 방공호 벙커 개조 현대미술관. 차가운 콘크리트 + 현대 미술. 화-일 운영. 가이드 투어 ~90분. https://www.boros.de/en/visit/ 에서 예약.'),
     N('2026-09-29','12:00','13:00',BL,'🏛️ Bauhaus-Archiv (임시관)',
       'Knesebeckstraße 1-2. Kandinsky·Klee·Moholy-Nagy·Breuer 가구 원본. 뮤지엄샵 자체가 보물창고.'),
     N('2026-09-29','13:00','14:00',BL,'🥪 점심: Mogg Deli',
@@ -190,8 +198,8 @@
     // ═══ Day 6: 9/30 (수) Berlin 자유 + 마지막 정리 ═══
     N('2026-09-30','08:30','10:00',BL,'🥐 Father Carpenter 브런치 (Mitte)',
       '시그니처 베네딕트 + 커피. 평일 아침 디자인 숍·갤러리 외관 여유롭게.'),
-    N('2026-09-30','10:00','11:30',BL,'🏛️ Reichstag 돔 (무료, 예약 필수)',
-      'Norman Foster 설계 유리 돔. 무료 오디오가이드 자동 진행. 예약 안 했으면 스킵.'),
+    R('2026-09-30','10:00','11:30',BL,'🎫 Reichstag 돔 (무료, 사전 예약 필수)',
+      'Norman Foster 설계 유리 돔. 무료 오디오가이드 자동 진행. https://visite.bundestag.de 에서 사전 예약 (수일 전).'),
     N('2026-09-30','11:30','13:00',BL,'🌳 Tiergarten 가을 산책',
       '베를린 중앙공원. 10월 단풍. Siegessäule(전승기념탑)까지.'),
     N('2026-09-30','13:00','14:30',BL,'🍝 점심 + Tiergarten 카페'),
@@ -261,8 +269,8 @@
       '⚠️ Santa Caterina 주차장에 주차! 시내 ZTL 절대 금지. 에스컬레이터로 구시가 진입.'),
     N('2026-10-03','10:00','11:30',PZ,'🟥 Piazza del Campo + 광장 산책',
       '조개껍데기 모양 붉은 벽돌 광장. 9개 구역 = 시에나 9인 정부 상징. 광장 바닥에 앉아 Torre del Mangia 올려다보기.'),
-    N('2026-10-03','11:30','13:30',PZ,'⛪ Duomo di Siena ★바닥 모자이크 (10/18까지!)',
-      '★흑백 대리석 줄무늬 고딕 걸작. 56개 대리석 상감 모자이크 바닥 — 매년 8/18~10/18만 전체 공개. 10/3은 OK!★ Piccolomini 도서관 프레스코 필수. OPA SI Pass €15 통합권. Porta del Cielo (천국의 문) 지붕 위 도시 뷰 — 온라인 예약.'),
+    R('2026-10-03','11:30','13:30',PZ,'🎫 Duomo di Siena ★바닥 모자이크★ (사전 예약 권장)',
+      '★흑백 대리석 줄무늬 고딕 걸작. 56개 대리석 상감 모자이크 바닥 — 매년 8/18~10/18만 전체 공개. 10/3은 OK!★ Piccolomini 도서관 프레스코 필수. OPA SI Pass €15 통합권. 🎫 Porta del Cielo (천국의 문) 지붕 위 도시 뷰 — 온라인 사전 예약 필수, 인원 제한. https://operaduomo.siena.it'),
     N('2026-10-03','13:30','15:00',PZ,'🍝 점심 (시에나 시내)',
       'Pici, Ribollita, Pappa al Pomodoro. 광장 근처 트라토리아.'),
     N('2026-10-03','15:00','16:00',PZ,'🍦 젤라또 + 시에나 골목 산책',
