@@ -152,6 +152,22 @@
     .page{animation:fadeIn .18s ease}
     @keyframes fadeIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
+    /* ===== HUB FILTER BUTTONS ===== */
+    .hub-filter-btn {
+      color: #64748b;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+    .hub-filter-btn:hover {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .hub-filter-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+    }
+
     /* ===== TRAVEL TABS (Schedule / Budget) ===== */
     .travel-tab-btn {
       color: #64748b;
@@ -3050,13 +3066,38 @@
 
       <!-- Ledger Table -->
       <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-        <div class="px-8 py-5 flex justify-between items-center" style="background:#f8f9fa;border-bottom:1px solid #f3f4f5;">
+        <div class="px-8 py-5 flex justify-between items-center flex-wrap gap-3" style="background:#f8f9fa;border-bottom:1px solid #f3f4f5;">
           <div>
             <h3 class="font-headline text-lg font-bold text-slate-900">연간 거래 내역</h3>
             <p id="hub-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
           <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
+          </button>
+        </div>
+
+        <!-- 필터 바 -->
+        <div class="px-8 py-3 flex items-center gap-3 flex-wrap" style="background:#fcfcfd;border-bottom:1px solid #f3f4f5;">
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-1">유형</span>
+            <button onclick="setHubFilter('type','all')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="all">전체</button>
+            <button onclick="setHubFilter('type','수입')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="수입">수입</button>
+            <button onclick="setHubFilter('type','지출')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="지출">지출</button>
+            <button onclick="setHubFilter('type','저축')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="저축">저축</button>
+            <button onclick="setHubFilter('type','이자')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="이자">이자</button>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-1">연도</span>
+            <select id="hub-filter-year" onchange="setHubFilter('year', this.value)" class="text-xs font-bold px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 outline-none focus:border-indigo-400">
+              <option value="all">전체</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-1 flex-1 min-w-[180px]">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-1">검색</span>
+            <input id="hub-filter-search" type="text" placeholder="내용 검색..." oninput="setHubFilter('search', this.value)" class="flex-1 text-xs px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 outline-none focus:border-indigo-400 placeholder:text-slate-300"/>
+          </div>
+          <button onclick="resetHubFilters()" class="text-xs text-slate-500 hover:text-indigo-600 px-2 py-1 rounded-lg hover:bg-slate-100 flex items-center gap-1" title="필터 초기화">
+            <span class="material-symbols-outlined" style="font-size:14px">restart_alt</span> 초기화
           </button>
         </div>
 
@@ -3079,6 +3120,35 @@
             </thead>
             <tbody id="hub-tbody" class="text-sm"></tbody>
           </table>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div id="hub-pagination" class="px-8 py-4 flex items-center justify-between flex-wrap gap-3 border-t border-slate-100" style="display:none">
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span>페이지당</span>
+            <select id="hub-page-size" onchange="setHubPageSize(this.value)" class="text-xs font-bold px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 outline-none focus:border-indigo-400">
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="all">전체</option>
+            </select>
+            <span id="hub-page-info" class="ml-3">—</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="hubPageGo(1)" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="첫 페이지">
+              <span class="material-symbols-outlined" style="font-size:16px">first_page</span>
+            </button>
+            <button onclick="hubPagePrev()" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="이전">
+              <span class="material-symbols-outlined" style="font-size:16px">chevron_left</span>
+            </button>
+            <span id="hub-page-current" class="px-3 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 rounded-lg min-w-[60px] text-center">1 / 1</span>
+            <button onclick="hubPageNext()" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="다음">
+              <span class="material-symbols-outlined" style="font-size:16px">chevron_right</span>
+            </button>
+            <button onclick="hubPageGoLast()" class="hub-page-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-400" title="마지막 페이지">
+              <span class="material-symbols-outlined" style="font-size:16px">last_page</span>
+            </button>
+          </div>
         </div>
 
         <div id="hub-empty" style="display:none" class="flex flex-col items-center justify-center py-16 text-slate-400">
@@ -16615,18 +16685,122 @@
     }
   }
 
+  // ── HUB 필터/페이지네이션 상태 ──
+  var _hubFilters = { type: 'all', year: 'all', search: '' };
+  var _hubPageSize = 20;
+  var _hubPage = 1;
+
+  function _hubGetFiltered() {
+    var f = _hubFilters;
+    return (hubData || []).filter(function(row) {
+      var type = row[4] || '';
+      var date = row[0] || '';
+      var desc = row[2] || '';
+      if (f.type !== 'all' && type !== f.type) return false;
+      if (f.year !== 'all') {
+        var yr = (date.split('-')[0] || '');
+        if (yr !== String(f.year)) return false;
+      }
+      if (f.search) {
+        var q = f.search.toLowerCase();
+        if (desc.toLowerCase().indexOf(q) === -1 && date.toLowerCase().indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function setHubFilter(field, value) {
+    _hubFilters[field] = value;
+    _hubPage = 1; // 필터 변경 시 1페이지로
+    renderHubTable();
+  }
+  function resetHubFilters() {
+    _hubFilters = { type: 'all', year: 'all', search: '' };
+    _hubPage = 1;
+    var yEl = document.getElementById('hub-filter-year'); if (yEl) yEl.value = 'all';
+    var sEl = document.getElementById('hub-filter-search'); if (sEl) sEl.value = '';
+    renderHubTable();
+  }
+  function setHubPageSize(v) {
+    _hubPageSize = (v === 'all') ? 999999 : (parseInt(v, 10) || 20);
+    _hubPage = 1;
+    renderHubTable();
+  }
+  function hubPagePrev() { if (_hubPage > 1) { _hubPage--; renderHubTable(); } }
+  function hubPageNext() {
+    var filtered = _hubGetFiltered();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / _hubPageSize));
+    if (_hubPage < totalPages) { _hubPage++; renderHubTable(); }
+  }
+  function hubPageGo(n) { _hubPage = Math.max(1, n); renderHubTable(); }
+  function hubPageGoLast() {
+    var filtered = _hubGetFiltered();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / _hubPageSize));
+    _hubPage = totalPages; renderHubTable();
+  }
+  if (typeof window !== 'undefined') {
+    window.setHubFilter = setHubFilter;
+    window.resetHubFilters = resetHubFilters;
+    window.setHubPageSize = setHubPageSize;
+    window.hubPagePrev = hubPagePrev;
+    window.hubPageNext = hubPageNext;
+    window.hubPageGo = hubPageGo;
+    window.hubPageGoLast = hubPageGoLast;
+  }
+
   function renderHubTable() {
     const tbody = document.getElementById('hub-tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
-    let running = 0;
-    hubData.forEach(function(row, i) {
-      const type = row[4] || '';
-      const amt = parseFloat(row[3]) || 0;
+
+    // 연도 드롭다운 옵션 갱신
+    var yEl = document.getElementById('hub-filter-year');
+    if (yEl) {
+      var years = {};
+      (hubData||[]).forEach(function(r){
+        var y = (r[0]||'').split('-')[0];
+        if (y) years[y] = true;
+      });
+      var yList = Object.keys(years).sort(function(a,b){return b-a;});
+      var curVal = _hubFilters.year;
+      yEl.innerHTML = '<option value="all">전체</option>' + yList.map(function(y){
+        return '<option value="' + y + '"' + (curVal === y ? ' selected' : '') + '>' + y + '</option>';
+      }).join('');
+    }
+
+    // 필터 버튼 활성 상태
+    document.querySelectorAll('.hub-filter-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-filter-type') === _hubFilters.type);
+    });
+
+    // 필터링
+    var filtered = _hubGetFiltered();
+
+    // 누적 잔액은 hubData 전체 기준 (필터와 무관)
+    var runningMap = {};
+    var running = 0;
+    (hubData || []).forEach(function(row, i) {
+      var type = row[4] || '';
+      var amt = parseFloat(row[3]) || 0;
       if (type === '수입' || type === '이자') running += amt;
       else running -= amt;
-      const typeClass = TYPE_COLORS[type] || 'bg-slate-100 text-slate-600 border-slate-200';
-      const isIncome = type === '수입' || type === '이자';
-      const tr = document.createElement('tr');
+      runningMap[i] = running;
+    });
+
+    // 페이지네이션 슬라이스
+    var totalPages = Math.max(1, Math.ceil(filtered.length / _hubPageSize));
+    if (_hubPage > totalPages) _hubPage = totalPages;
+    var startIdx = (_hubPage - 1) * _hubPageSize;
+    var pageItems = filtered.slice(startIdx, startIdx + _hubPageSize);
+
+    pageItems.forEach(function(row) {
+      var i = hubData.indexOf(row); // 원본 인덱스 (편집/삭제용)
+      var type = row[4] || '';
+      var amt = parseFloat(row[3]) || 0;
+      var run = runningMap[i] || 0;
+      var typeClass = TYPE_COLORS[type] || 'bg-slate-100 text-slate-600 border-slate-200';
+      var isIncome = type === '수입' || type === '이자';
+      var tr = document.createElement('tr');
       tr.className = 'hover:bg-indigo-50/30 transition-colors';
       tr.innerHTML =
         '<td class="px-6 py-4 text-slate-500 text-sm">' + (row[0]||'—') + '</td>' +
@@ -16634,14 +16808,37 @@
         '<td class="px-6 py-4 text-slate-600 text-sm">' + (row[2]||'—') + '</td>' +
         '<td class="px-6 py-4 text-right font-black text-sm ' + (isIncome?'text-emerald-600':'text-red-600') + '">' +
           (isIncome?'+':'-') + '₩' + amt.toLocaleString('ko-KR') + '</td>' +
-        '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">₩' + running.toLocaleString('ko-KR') + '</td>' +
+        '<td class="px-6 py-4 text-right font-black text-sm text-slate-700">₩' + run.toLocaleString('ko-KR') + '</td>' +
         '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
         '<button onclick="editHubRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
         '<button onclick="deleteHubRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>' +
         '</div></td>';
       tbody.appendChild(tr);
     });
-    document.getElementById('hub-status').textContent = hubData.length + '개 항목';
+
+    // 상태 / 페이지네이션 UI
+    var totalCount = hubData.length;
+    var fCount = filtered.length;
+    var statusTxt = fCount === totalCount
+      ? totalCount + '개 항목'
+      : fCount + ' / ' + totalCount + '개 (필터됨)';
+    document.getElementById('hub-status').textContent = statusTxt;
+
+    var pgEl = document.getElementById('hub-pagination');
+    if (pgEl) {
+      if (fCount === 0) {
+        pgEl.style.display = 'none';
+      } else {
+        pgEl.style.display = 'flex';
+        var pageInfo = document.getElementById('hub-page-info');
+        if (pageInfo) {
+          var endIdx = Math.min(startIdx + _hubPageSize, fCount);
+          pageInfo.textContent = (startIdx + 1) + '–' + endIdx + ' / ' + fCount;
+        }
+        var pageCur = document.getElementById('hub-page-current');
+        if (pageCur) pageCur.textContent = _hubPage + ' / ' + totalPages;
+      }
+    }
   }
 
   // ===== HUB YEAR SWITCH =====
