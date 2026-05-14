@@ -13055,13 +13055,14 @@
   if (typeof window !== 'undefined') window.switchMoneyTab = switchMoneyTab;
 
   // 미니 요약 업데이트 (Travel 페이지)
+  // Finance 스키마: ['date','description','trip','category','amount','currency','krw_amount']
   async function updateTravelMiniSummary() {
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
     try {
       if (typeof currentTripId === 'undefined' || !currentTripId) { el.style.display = 'none'; return; }
+      // financeTrips 로드 보장
       if (typeof financeTrips === 'undefined' || !financeTrips.length) {
-        // financeTrips 비어있으면 로드 시도
         try {
           var trips = await fbRead('trips');
           if (typeof financeTrips !== 'undefined') {
@@ -13073,16 +13074,27 @@
       if (typeof financeTrips === 'undefined' || !financeTrips.length) { el.style.display = 'none'; return; }
       var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
       if (!trip || !trip.budget) { el.style.display = 'none'; return; }
+      var tripName = trip.name || '';
       // 예산 총합 (저장 구조: budget = {flight, accom, tour, living, accomPerDay, ...})
       var b = trip.budget;
       var totalBudget = (parseFloat(b.flight)||0) + (parseFloat(b.accom)||0) + (parseFloat(b.tour)||0) + (parseFloat(b.living)||0);
       if (totalBudget <= 0) { el.style.display = 'none'; return; }
-      // 지출 합 (finance 컬렉션에서 이 트립의 지출)
+      // 지출 합: finance.trip === tripName AND category === '지출'
+      // (asset-transfer 제외)
       var fData = [];
       try { fData = await fbRead('finance'); } catch(e) {}
       var spent = fData.filter(function(f){
-        return f.trip_id === currentTripId && (f.type === '지출' || f.category === '지출');
-      }).reduce(function(s,f){ return s + (parseFloat(f.amount)||0); }, 0);
+        if (!f) return false;
+        if (f.trip !== tripName) return false;
+        if (f.category !== '지출') return false;
+        if (f.excludeFromGoal) return false;
+        return true;
+      }).reduce(function(s,f){
+        // krw_amount 우선, 없으면 amount (이미 KRW이거나 변환 안 됨)
+        var amt = parseFloat(f.krw_amount);
+        if (isNaN(amt) || amt === 0) amt = parseFloat(f.amount) || 0;
+        return s + amt;
+      }, 0);
       var remain = totalBudget - spent;
       // 표시
       var fmt = function(n){ return '₩' + Math.round(n).toLocaleString('ko-KR'); };
