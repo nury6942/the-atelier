@@ -11166,7 +11166,53 @@
 
   // ===== 도시별 숙소 예산 분석 =====
   // 트립 예산 모달의 "숙소 1일치" × 도시별 숙박 일수 = 도시별 예산 가이드
+  // 사용자가 도시별로 1일치 override 설정 가능 (trip.budget.accomPerDayByCity)
   // 실제 사용은 journey type='숙소' 항목 + finance 거래에서 매칭
+  var _flbEditCity = null; // 인라인 편집 중인 도시명
+
+  function _flbSafeCity(city) {
+    return (city || '').replace(/[^a-zA-Z0-9가-힣]/g, '_');
+  }
+
+  function ldgStartEditCityBudget(city) {
+    _flbEditCity = city;
+    renderTripLodgingBreakdown();
+    setTimeout(function() {
+      var input = document.getElementById('flb-edit-input-' + _flbSafeCity(city));
+      if (input) { input.focus(); input.select(); }
+    }, 50);
+  }
+
+  function ldgCancelEditCityBudget() {
+    _flbEditCity = null;
+    renderTripLodgingBreakdown();
+  }
+
+  async function ldgSaveCityBudget(city) {
+    var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    if (!trip) return;
+    var input = document.getElementById('flb-edit-input-' + _flbSafeCity(city));
+    if (!input) return;
+    var raw = (input.value || '').replace(/[^0-9]/g, '');
+    if (!trip.budget) trip.budget = {};
+    if (!trip.budget.accomPerDayByCity) trip.budget.accomPerDayByCity = {};
+    if (raw === '' || raw === '0') {
+      // 빈 값 → override 제거 (전체 1일치로 폴백)
+      delete trip.budget.accomPerDayByCity[city];
+    } else {
+      trip.budget.accomPerDayByCity[city] = parseInt(raw, 10);
+    }
+    _flbEditCity = null;
+    try {
+      await fbUpdate('trips', trip._id, { budget: trip.budget });
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + city + ' 1일치 예산 저장됨');
+    } catch(e) {
+      console.error('[CityBudget] save:', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
+    }
+    renderTripLodgingBreakdown();
+  }
+
   async function renderTripLodgingBreakdown() {
     var section = document.getElementById('finance-lodging-section');
     var bodyEl = document.getElementById('finance-lodging-body');
@@ -11216,10 +11262,12 @@
       byCity[city].push(lo);
     });
 
+    // 도시별 1일치 override
+    var perDayByCity = (trip.budget && trip.budget.accomPerDayByCity) || {};
+
     // 각 도시별 분석
     var cityRows = Object.keys(byCity).map(function(city) {
       var items = byCity[city];
-      // 일수 = sum of (checkout - checkin) for each lodging
       var totalNights = 0;
       var totalSpent = 0;
       var dateRange = '';
@@ -11244,7 +11292,10 @@
         var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
         dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
       }
-      var cityBudget = perNightBudget * totalNights;
+      // 도시별 1일치: override 있으면 그것, 없으면 트립 1일치
+      var hasCityOverride = perDayByCity[city] !== undefined;
+      var perNight = hasCityOverride ? perDayByCity[city] : perNightBudget;
+      var cityBudget = perNight * totalNights;
       var remaining = cityBudget - totalSpent;
       var pct = cityBudget > 0 ? Math.min(100, totalSpent / cityBudget * 100) : 0;
       var isOver = totalSpent > cityBudget && cityBudget > 0;
@@ -11255,6 +11306,8 @@
         nights: totalNights,
         spent: totalSpent,
         budget: cityBudget,
+        perNight: perNight,
+        hasCityOverride: hasCityOverride,
         remaining: remaining,
         pct: pct,
         isOver: isOver,
@@ -11272,7 +11325,7 @@
 
     var totalNights = cityRows.reduce(function(s,r){ return s + r.nights; }, 0);
     var totalSpent = cityRows.reduce(function(s,r){ return s + r.spent; }, 0);
-    var totalBudget = perNightBudget * totalNights;
+    var totalBudget = cityRows.reduce(function(s,r){ return s + r.budget; }, 0);
     var totalRem = totalBudget - totalSpent;
 
     if (statusEl) {
@@ -11285,10 +11338,15 @@
       var barColor = r.isOver ? '#ef4444' : (r.noBudget ? '#94a3b8' : '#3b82f6');
       var remColor = r.isOver ? 'text-red-500' : (r.remaining > 0 ? 'text-emerald-600' : 'text-slate-500');
       var remLabel = r.noBudget ? '예산 미설정' : (r.remaining >= 0 ? '₩' + Math.round(r.remaining).toLocaleString('ko-KR') + ' 남음' : '₩' + Math.round(-r.remaining).toLocaleString('ko-KR') + ' 초과');
+      var safeCity = _flbSafeCity(r.city);
+      var cityEsc = r.city.replace(/'/g, "\\'");
+      var perNightDisplay = r.perNight ? '₩' + Math.round(r.perNight).toLocaleString('ko-KR') : '미설정';
+      var overrideBadge = r.hasCityOverride ? '<span class="text-[9px] font-bold text-purple-600 ml-1" title="이 도시 1일치 별도 설정됨">★</span>' : '';
+
       html += '<div class="border border-slate-200 rounded-xl p-4 hover:border-blue-300 transition-colors">' +
         '<div class="flex items-start justify-between mb-2 gap-3">' +
           '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center gap-2 mb-1">' +
+            '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
               '<span class="text-sm font-bold text-slate-900">' + r.city + '</span>' +
               '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">' + r.nights + '박</span>' +
               (r.dateRange ? '<span class="text-[10px] text-slate-400 font-medium">' + r.dateRange + '</span>' : '') +
@@ -11299,10 +11357,26 @@
             '<div class="text-sm font-bold ' + remColor + '">' + remLabel + '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="flex justify-between text-[11px] text-slate-500 mb-1.5">' +
-          '<span>지출 ₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</span>' +
-          '<span>예산 ' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) + (perNightBudget ? ' <span class="text-slate-300">(₩' + Math.round(perNightBudget).toLocaleString('ko-KR') + '×' + r.nights + ')</span>' : '') + '</span>' +
-        '</div>' +
+        '<div class="flex justify-between items-center text-[11px] text-slate-500 mb-1.5">' +
+          '<span>지출 ₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</span>';
+
+      // 1일치 편집 UI (인라인) 또는 표시
+      if (_flbEditCity === r.city) {
+        var curVal = r.perNight || '';
+        html += '<span class="flex items-center gap-1">' +
+          '<span class="text-[10px] text-slate-400">1일치</span>' +
+          '<input type="text" id="flb-edit-input-' + safeCity + '" value="' + curVal + '" placeholder="160000" class="w-24 text-[10px] px-1.5 py-0.5 border border-blue-300 rounded outline-none focus:ring-1 focus:ring-blue-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCityBudget(\'' + cityEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCityBudget();}"/>' +
+          '<button onclick="ldgSaveCityBudget(\'' + cityEsc + '\')" class="p-0.5 rounded bg-blue-600 text-white hover:bg-blue-700" title="저장 (Enter)"><span class="material-symbols-outlined" style="font-size:12px">check</span></button>' +
+          '<button onclick="ldgCancelEditCityBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400" title="취소 (Esc)"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+        '</span>';
+      } else {
+        html += '<span class="cursor-pointer hover:bg-blue-50/40 px-1 py-0.5 rounded" onclick="ldgStartEditCityBudget(\'' + cityEsc + '\')" title="클릭하여 이 도시 1일치 예산 수정">' +
+          '예산 ' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) +
+          (r.perNight ? ' <span class="text-slate-400">(' + perNightDisplay + '×' + r.nights + overrideBadge + ' <span class="text-[9px] text-slate-300">✏️</span>)</span>' : '') +
+        '</span>';
+      }
+
+      html += '</div>' +
         '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
           '<div class="h-full transition-all" style="width:' + r.pct + '%;background:' + barColor + '"></div>' +
         '</div>' +
