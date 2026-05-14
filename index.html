@@ -2572,6 +2572,22 @@
   <div id="page-finance" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
+      <!-- 트립 선택 (일정/체크리스트와 통일) -->
+      <div class="mb-4 flex items-center gap-3">
+        <div class="relative" id="finance-dd-wrap">
+          <button onclick="toggleFinanceDropdown()" id="finance-dd-btn" class="trip-dd-btn">
+            <span id="finance-dd-label">전체</span>
+            <span class="material-symbols-outlined text-violet-400 transition-transform" id="finance-dd-chevron" style="font-size:20px">expand_more</span>
+          </button>
+          <div id="finance-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
+            <div id="finance-dd-options" class="py-1"></div>
+          </div>
+        </div>
+        <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
+          <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
+        </button>
+      </div>
+
       <!-- 탭 (일정 / 예산 / 체크리스트) -->
       <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
@@ -2587,10 +2603,9 @@
         </div>
       </div>
 
-      <!-- 트립 예산 카드 -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- 메인 트립 카드 (동적) -->
-        <div id="finance-main-trip" class="lg:col-span-2 p-6 rounded-2xl shadow-sm relative overflow-hidden" style="background:linear-gradient(135deg,rgba(107,56,212,0.85),rgba(132,85,239,0.85));">
+      <!-- 트립 요약 카드 (기존 디자인 유지) -->
+      <section class="mb-8">
+        <div id="finance-main-trip" class="p-6 rounded-2xl shadow-sm relative overflow-hidden" style="background:linear-gradient(135deg,rgba(107,56,212,0.85),rgba(132,85,239,0.85));">
           <img id="finance-trip-bg" src="" class="absolute inset-0 w-full h-full object-cover z-0" style="display:none" onerror="this.style.display='none'"/>
           <div class="absolute inset-0 z-[1]" style="background:linear-gradient(135deg,rgba(107,56,212,0.8),rgba(132,85,239,0.7));"></div>
           <div class="flex justify-between items-start mb-6 relative z-10">
@@ -2606,57 +2621,46 @@
             <div><p class="text-[10px] uppercase font-black text-white/70 tracking-widest mb-1">항목 수</p><p id="finance-item-count" class="text-2xl font-extrabold text-white">0</p></div>
           </div>
         </div>
-
-        <!-- 트립 필터 -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center">
-          <p class="text-sm font-semibold text-slate-600 mb-3">트립 필터</p>
-          <div class="relative" id="finance-dd-wrap">
-            <button onclick="toggleFinanceDropdown()" id="finance-dd-btn" class="trip-dd-btn" style="max-width:100%">
-              <span id="finance-dd-label">전체</span>
-              <span class="material-symbols-outlined text-violet-400 transition-transform" id="finance-dd-chevron" style="font-size:20px">expand_more</span>
-            </button>
-            <div id="finance-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;max-width:100%">
-              <div id="finance-dd-options" class="py-1"></div>
-            </div>
-          </div>
-        </div>
       </section>
 
-      <!-- 예산 vs 지출 -->
-      <section id="finance-budget-section" class="mb-6" style="display:none">
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-            <div>
-              <h4 class="font-manrope font-bold text-slate-800">예산 vs 지출</h4>
-              <p id="finance-budget-status" class="text-[10px] text-slate-400 font-medium mt-0.5">—</p>
-            </div>
-            <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
-              <span class="material-symbols-outlined" style="font-size:14px">edit</span>
-              <span id="finance-budget-edit-label">예산 설정</span>
-            </button>
-          </div>
-          <div id="finance-budget-body" class="p-6"></div>
-        </div>
-      </section>
-
-      <!-- 도시별 숙소 예산 분석 -->
-      <section id="finance-lodging-section" class="mb-6" style="display:none">
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-            <div>
-              <h4 class="font-manrope font-bold text-slate-800">🏨 도시별 숙소 예산</h4>
-              <p class="text-[10px] text-slate-400 font-medium mt-0.5">Voyage Path 일정 기준 · 도시별 숙박 예산 vs 실제 사용</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span id="finance-lodging-status" class="text-[10px] text-slate-400 font-medium"></span>
-              <button onclick="ldgSyncFromItinerary()" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors" title="Voyage Path 도시 일정 다시 불러오기">
-                <span class="material-symbols-outlined" style="font-size:16px">refresh</span>
+      <!-- 예산 vs 지출 + 도시별 숙소 예산 (2열 grid) -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-start">
+        <!-- 예산 vs 지출 -->
+        <section id="finance-budget-section" style="display:none">
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden h-full">
+            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <div>
+                <h4 class="font-manrope font-bold text-slate-800">예산 vs 지출</h4>
+                <p id="finance-budget-status" class="text-[10px] text-slate-400 font-medium mt-0.5">—</p>
+              </div>
+              <button onclick="openBudgetModal()" id="finance-budget-edit-btn" class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-xs hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined" style="font-size:14px">edit</span>
+                <span id="finance-budget-edit-label">예산 설정</span>
               </button>
             </div>
+            <div id="finance-budget-body" class="p-6"></div>
           </div>
-          <div id="finance-lodging-body" class="p-6"></div>
-        </div>
-      </section>
+        </section>
+
+        <!-- 도시별 숙소 예산 분석 -->
+        <section id="finance-lodging-section" style="display:none">
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden h-full">
+            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <div>
+                <h4 class="font-manrope font-bold text-slate-800">🏨 도시별 숙소 예산</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Voyage Path 일정 기준 · 도시별 숙박 예산 vs 실제 사용</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="finance-lodging-status" class="text-[10px] text-slate-400 font-medium"></span>
+                <button onclick="ldgSyncFromItinerary()" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors" title="Voyage Path 도시 일정 다시 불러오기">
+                  <span class="material-symbols-outlined" style="font-size:16px">refresh</span>
+                </button>
+              </div>
+            </div>
+            <div id="finance-lodging-body" class="p-6"></div>
+          </div>
+        </section>
+      </div>
 
       <!-- 카테고리 분석 -->
       <section class="mb-6">
