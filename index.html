@@ -7314,6 +7314,19 @@
     return dayMap.map(function(d){ return d.date; });
   }
 
+  // ── PIN 강조: 시간 고정 항목 (비행/기차/렌트/체크인 등) ──
+  function isPinnedItem(item) {
+    if (!item) return false;
+    if (item.pinned === true) return true;
+    var t = (item.title || '');
+    // 항공/기차/렌트카 이모지 또는 키워드
+    if (/✈️|✈|🚂|🚆|🛬|🛫/.test(t)) return true;
+    if (/\bICE\b|EZY\d+|TW\d+|LH\d+|KE\d+|AZ\d+/.test(t)) return true;
+    if (/픽업|반납|드랍|드롭|Pickup|Drop[- ]?off/i.test(t)) return true;
+    if (/체크[ \-]?인|체크[ \-]?아웃|Check[- ]?in|Check[- ]?out/i.test(t)) return true;
+    return false;
+  }
+
   // ── 당일치기 도시 추출 helper ──
   // 일정 항목의 city 가 숙박 도시(baseCity)와 다르면 "당일치기 도시"로 간주
   function _normCityKey(s) {
@@ -7420,10 +7433,14 @@
           itemCityChip = '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 mr-1.5 align-middle cursor-pointer hover:bg-amber-100" title="더블클릭하여 행선지 변경" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(safeC) + '</span>';
         }
       }
+      var pinned = isPinnedItem(item);
+      var dotColor = pinned ? 'bg-emerald-500' : 'bg-sky-400';
+      var timeColor = pinned ? 'text-emerald-700' : 'text-indigo-600';
+      var cardBg = pinned ? 'bg-emerald-50 border-emerald-300 hover:border-emerald-500' : 'bg-white border-slate-200 hover:border-sky-400';
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
-        '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-sky-400 ring-4 ring-white shadow-sm"></div>' +
-        (item.time ? '<div class="text-[10px] font-black text-indigo-600 uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + '</div>' : '') +
-        '<div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 transition-colors shadow-sm group">' +
+        '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full ' + dotColor + ' ring-4 ring-white shadow-sm"></div>' +
+        (item.time ? '<div class="text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + (pinned ? ' <span class="text-[9px] font-bold px-1 bg-emerald-200 text-emerald-800 rounded ml-1">📌 고정</span>' : '') + '</div>' : '') +
+        '<div class="' + cardBg + ' p-3.5 rounded-xl border transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + (item.title||'') + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
@@ -7933,6 +7950,7 @@
             var endTime = item.end_time ? '-' + item.end_time : '';
             var title = (item.title || '').replace(/</g,'&lt;');
             var desc = (item.description || '').replace(/</g,'&lt;');
+            var pinned = isPinnedItem(item);
             // 일정 city 가 숙박과 다르면 작은 칩
             var itemCityRaw = (item.city||'').trim();
             var cityChip = '';
@@ -7942,8 +7960,10 @@
                 cityChip = '<span class="inline-block text-[9px] font-bold px-1 py-0 rounded bg-amber-100 text-amber-700 mr-1 align-middle">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
               }
             }
-            return '<div class="py-1.5 px-1 border-b border-slate-100 last:border-b-0">' +
-              (time ? '<div class="text-[10px] font-bold text-indigo-600">' + time + endTime + '</div>' : '') +
+            var itemBg = pinned ? 'bg-emerald-50 border-l-2 border-emerald-400 -ml-1 pl-2' : '';
+            var timeC = pinned ? 'text-emerald-700' : 'text-indigo-600';
+            return '<div class="py-1.5 px-1 border-b border-slate-100 last:border-b-0 ' + itemBg + '">' +
+              (time ? '<div class="text-[10px] font-bold ' + timeC + '">' + time + endTime + (pinned ? ' 📌' : '') + '</div>' : '') +
               '<div class="text-[11px] font-semibold text-slate-800 leading-tight">' + cityChip + (title || '(제목 없음)') + '</div>' +
               (desc ? '<div class="text-[10px] text-slate-500 mt-0.5 leading-snug" style="white-space:pre-line;word-break:keep-all;">' + desc + '</div>' : '') +
             '</div>';
