@@ -1755,11 +1755,29 @@
           </div>
         </section>
 
+        <!-- 데스크탑 전용: 주간 그리드 뷰 (엑셀 스타일, lg 이상에서만 표시) -->
+        <section id="journey-week-view" class="hidden lg:block mb-10 bg-slate-50/50 p-5 rounded-3xl border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">전체 일정</span>
+              <span id="journey-week-range" class="text-xs text-slate-500 font-medium">—</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="prevWeekChunk()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400 hover:text-slate-700" title="이전 5일"><span class="material-symbols-outlined" style="font-size:18px">chevron_left</span></button>
+              <span id="journey-week-chunk-label" class="text-[10px] font-bold text-slate-500 px-2">1~5일차</span>
+              <button onclick="nextWeekChunk()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400 hover:text-slate-700" title="다음 5일"><span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></button>
+            </div>
+          </div>
+          <div id="journey-week-grid" class="grid gap-3 overflow-x-auto" style="grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr);">
+            <div class="text-xs text-slate-400 py-2">도시를 추가하면 일차가 자동 생성돼!</div>
+          </div>
+        </section>
+
         <!-- Day Navigator + Content -->
         <div class="grid grid-cols-12 gap-8 mb-10">
 
-          <!-- 일정 (왼쪽) -->
-          <section class="col-span-4 bg-slate-50/50 p-5 rounded-3xl border border-slate-200 shadow-sm">
+          <!-- 일정 (왼쪽) - 모바일/태블릿에서만 표시 (lg 이상에선 위 주간 뷰로 대체) -->
+          <section class="col-span-12 lg:hidden bg-slate-50/50 p-5 rounded-3xl border border-slate-200 shadow-sm">
             <!-- Day Nav -->
             <div class="flex items-center justify-between mb-5">
               <button onclick="prevDay()" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400 hover:text-slate-700">
@@ -1807,8 +1825,8 @@
             </button>
           </section>
 
-          <!-- 오른쪽 -->
-          <div class="col-span-8 space-y-8">
+          <!-- 오른쪽 (모바일 col-span-12, 데스크탑 col-span-12 - 일정이 위로 빠짐) -->
+          <div class="col-span-12 lg:col-span-12 space-y-8">
 
             <!-- 1. 항공편 -->
             <section>
@@ -7277,12 +7295,17 @@
   function renderDayView() {
     var dayMap = getDayMap();
     if (!dayMap.length) {
-      document.getElementById('journey-schedule-list').innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">도시를 추가하면 일차가 자동 생성돼!</div>';
+      var schedListEl = document.getElementById('journey-schedule-list');
+      if (schedListEl) schedListEl.innerHTML = '<div class="pl-6 text-xs text-slate-400 py-2">도시를 추가하면 일차가 자동 생성돼!</div>';
+      if (typeof renderWeekView === 'function') renderWeekView();
       return;
     }
     // Clamp index
     if (currentDayIndex >= dayMap.length) currentDayIndex = dayMap.length - 1;
     if (currentDayIndex < 0) currentDayIndex = 0;
+    // 주간 그리드도 함께 갱신 (데스크탑)
+    syncWeekChunkToCurrentDay();
+    if (typeof renderWeekView === 'function') setTimeout(renderWeekView, 0);
 
     var entry = dayMap[currentDayIndex];
     var dayNum = entry.day;
@@ -7744,6 +7767,107 @@
   function nextDay() {
     var dayMap = getDayMap();
     if (currentDayIndex < dayMap.length - 1) { currentDayIndex++; renderDayView(); }
+  }
+
+  // ── 데스크탑 주간 그리드 뷰 (엑셀 스타일, lg 이상) ──
+  var currentWeekChunkStart = 0;
+  var WEEK_CHUNK_SIZE = 5;
+
+  function syncWeekChunkToCurrentDay() {
+    var chunkOf = Math.floor(currentDayIndex / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
+    currentWeekChunkStart = chunkOf;
+  }
+
+  function renderWeekView() {
+    var grid = document.getElementById('journey-week-grid');
+    if (!grid) return;
+    var dayMap = getDayMap();
+    if (!dayMap.length) {
+      grid.innerHTML = '<div class="text-xs text-slate-400 py-2">도시를 추가하면 일차가 자동 생성돼!</div>';
+      var lbl0 = document.getElementById('journey-week-chunk-label');
+      if (lbl0) lbl0.textContent = '—';
+      var rng0 = document.getElementById('journey-week-range');
+      if (rng0) rng0.textContent = '—';
+      return;
+    }
+    // 청크 클램프
+    var maxStart = Math.max(0, dayMap.length - WEEK_CHUNK_SIZE);
+    if (currentWeekChunkStart > maxStart) currentWeekChunkStart = maxStart;
+    if (currentWeekChunkStart < 0) currentWeekChunkStart = 0;
+
+    var chunkEnd = Math.min(currentWeekChunkStart + WEEK_CHUNK_SIZE, dayMap.length);
+    var chunk = dayMap.slice(currentWeekChunkStart, chunkEnd);
+
+    // 라벨
+    var label = (currentWeekChunkStart + 1) + '~' + chunkEnd + '일차 (' + dayMap.length + '일 중)';
+    var lbl = document.getElementById('journey-week-chunk-label');
+    if (lbl) lbl.textContent = label;
+    var rng = document.getElementById('journey-week-range');
+    if (rng) {
+      var first = chunk[0].date || '';
+      var last = chunk[chunk.length - 1].date || '';
+      rng.textContent = first + (first !== last && last ? ' ~ ' + last : '');
+    }
+
+    grid.innerHTML = chunk.map(function(entry, idx) {
+      var actualIdx = currentWeekChunkStart + idx;
+      var dayNum = entry.day;
+      var dateStr = entry.date;
+      var cityName = entry.cityName || '';
+
+      var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
+      items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+
+      var weekday = '';
+      if (dateStr) {
+        var d = new Date(dateStr);
+        weekday = ['일','월','화','수','목','금','토'][d.getDay()];
+      }
+      var isCurrent = (actualIdx === currentDayIndex);
+      var headerBg = isCurrent
+        ? 'background:linear-gradient(135deg,#6366f1,#a855f7);color:white;'
+        : 'background:linear-gradient(135deg,#e0e7ff,#fce7f3);color:#4338ca;';
+
+      var itemsHtml = items.length === 0
+        ? '<div class="text-[10px] text-slate-400 py-2 italic text-center">일정 없음</div>'
+        : items.map(function(item){
+            var time = item.time || '';
+            var endTime = item.end_time ? '-' + item.end_time : '';
+            var title = (item.title || '').replace(/</g,'&lt;');
+            var desc = (item.description || '').replace(/</g,'&lt;');
+            return '<div class="py-1.5 px-1 border-b border-slate-100 last:border-b-0">' +
+              (time ? '<div class="text-[10px] font-bold text-indigo-600">' + time + endTime + '</div>' : '') +
+              '<div class="text-[11px] font-semibold text-slate-800 leading-tight">' + (title || '(제목 없음)') + '</div>' +
+              (desc ? '<div class="text-[10px] text-slate-500 mt-0.5 leading-snug" style="white-space:pre-line;word-break:keep-all;">' + desc + '</div>' : '') +
+            '</div>';
+          }).join('');
+
+      return '<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col cursor-pointer hover:shadow-md transition-shadow" onclick="jumpToDay(' + actualIdx + ')" title="클릭하여 이 날짜로 점프">' +
+        '<div class="px-3 py-2 text-center" style="' + headerBg + '">' +
+          '<div class="text-[10px] font-black uppercase tracking-wider opacity-90">' + dateStr + (weekday ? ' (' + weekday + ')' : '') + '</div>' +
+          '<div class="text-xs font-bold mt-0.5">' + dayNum + '일차' + (cityName ? ' · ' + cityName : '') + '</div>' +
+        '</div>' +
+        '<div class="p-2 flex-1 min-h-[120px]">' + itemsHtml + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function prevWeekChunk() {
+    currentWeekChunkStart -= WEEK_CHUNK_SIZE;
+    if (currentWeekChunkStart < 0) currentWeekChunkStart = 0;
+    renderWeekView();
+  }
+  function nextWeekChunk() {
+    var dayMap = getDayMap();
+    var maxStart = Math.max(0, dayMap.length - WEEK_CHUNK_SIZE);
+    currentWeekChunkStart += WEEK_CHUNK_SIZE;
+    if (currentWeekChunkStart > maxStart) currentWeekChunkStart = maxStart;
+    renderWeekView();
+  }
+  function jumpToDay(idx) {
+    currentDayIndex = idx;
+    syncWeekChunkToCurrentDay();
+    renderDayView();
   }
 
   function inlineEditTd(td, saveCallback) {
