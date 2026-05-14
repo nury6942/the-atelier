@@ -1495,7 +1495,8 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">payments</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Travel Budget</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-packing" onclick="navigate('packing'); return false;">
+    <!-- Travel Checklist도 Travel 페이지 내 탭으로 통합됨 -->
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-packing" onclick="navigate('packing'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[20px] transition-colors">fact_check</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Travel Checklist</span>
     </a>
@@ -1681,7 +1682,7 @@
         </button>
       </div>
 
-      <!-- 탭 (일정 / 예산) + 미니 요약 -->
+      <!-- 탭 (일정 / 예산 / 체크리스트) + 미니 요약 -->
       <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
           <button onclick="switchTravelTab('schedule')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="schedule">
@@ -1689,6 +1690,9 @@
           </button>
           <button onclick="switchTravelTab('budget')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">
             💰 예산
+          </button>
+          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
+            ✅ 체크리스트
           </button>
         </div>
         <!-- 미니 요약 (예산 상태) -->
@@ -2567,7 +2571,7 @@
   <div id="page-finance" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- 탭 (일정 / 예산) -->
+      <!-- 탭 (일정 / 예산 / 체크리스트) -->
       <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
           <button onclick="switchTravelTab('schedule')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">
@@ -2575,6 +2579,9 @@
           </button>
           <button onclick="switchTravelTab('budget')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="budget">
             💰 예산
+          </button>
+          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
+            ✅ 체크리스트
           </button>
         </div>
       </div>
@@ -12845,7 +12852,7 @@
     "vault": { "title": "Vault" },
     "income": { "title": "Side Jobs" },
     "planner": { "title": "Calendar" },
-    "packing": { "title": "Travel Checklist" },
+    "packing": { "title": "Travel" },
     "reference": { "title": "Memo" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
@@ -12875,6 +12882,19 @@
         }
       } catch(e) {}
       navigate('finance');
+    } else if (tab === 'checklist') {
+      navigate('packing');
+      // Packing 트립 dropdown sync 시도
+      setTimeout(function() {
+        try {
+          if (typeof currentTripId !== 'undefined' && currentTripId &&
+              typeof pkTrips !== 'undefined' && pkTrips.length &&
+              typeof setPkTrip === 'function') {
+            var t = pkTrips.find(function(x){ return x._id === currentTripId; });
+            if (t) setPkTrip(t._id);
+          }
+        } catch(e) {}
+      }, 300);
     }
   }
   if (typeof window !== 'undefined') window.switchTravelTab = switchTravelTab;
@@ -12935,9 +12955,9 @@
     document.querySelectorAll('.nav-item').forEach(n => {
       n.style.background=''; n.style.color=''; n.style.borderLeft='';
     });
-    // Travel과 Travel Budget은 같은 사이드바 (nav-journey) 활성 처리
+    // Travel / Travel Budget / Travel Checklist는 같은 사이드바 (nav-journey) 활성 처리
     let activeNavId = pageId;
-    if (pageId === 'finance') activeNavId = 'journey';
+    if (pageId === 'finance' || pageId === 'packing') activeNavId = 'journey';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
@@ -20698,7 +20718,7 @@ speaker 설정:
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
       <!-- Trip Selector (Custom Dropdown) -->
-      <div class="relative mb-6" id="pk-dropdown-wrap">
+      <div class="relative mb-4" id="pk-dropdown-wrap">
         <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="trip-dd-btn">
           <span id="pk-dropdown-label">여행 선택...</span>
           <span class="material-symbols-outlined text-violet-400 transition-transform" id="pk-dropdown-chevron" style="font-size:20px">expand_more</span>
@@ -20708,6 +20728,21 @@ speaker 설정:
         </div>
         <!-- Hidden select for compatibility -->
         <select id="pk-trip-selector" class="hidden"></select>
+      </div>
+
+      <!-- 탭 (일정 / 예산 / 체크리스트) -->
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">
+            📅 일정
+          </button>
+          <button onclick="switchTravelTab('budget')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">
+            💰 예산
+          </button>
+          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="checklist">
+            ✅ 체크리스트
+          </button>
+        </div>
       </div>
 
       <!-- Hero Section -->
