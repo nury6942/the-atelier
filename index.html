@@ -2586,6 +2586,20 @@
         </div>
       </section>
 
+      <!-- 도시별 숙소 예산 분석 -->
+      <section id="finance-lodging-section" class="mb-6" style="display:none">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+            <div>
+              <h4 class="font-manrope font-bold text-slate-800">🏨 도시별 숙소 예산</h4>
+              <p class="text-[10px] text-slate-400 font-medium mt-0.5">도시별 숙박 일수 기준 예산 가이드 + 실제 사용 비교</p>
+            </div>
+            <span id="finance-lodging-status" class="text-[10px] text-slate-400 font-medium"></span>
+          </div>
+          <div id="finance-lodging-body" class="p-6"></div>
+        </div>
+      </section>
+
       <!-- 카테고리 분석 -->
       <section class="mb-6">
         <div id="finance-category-breakdown" class="flex gap-3 flex-wrap"></div>
@@ -11054,6 +11068,8 @@
   }
 
   function renderTripBudget() {
+    // 도시별 숙소 분석도 동시에 갱신 (트립 선택/변경 시)
+    if (typeof renderTripLodgingBreakdown === 'function') setTimeout(renderTripLodgingBreakdown, 0);
     var section = document.getElementById('finance-budget-section');
     if (!section) return;
     if (currentFinanceTrip === 'all') { section.style.display = 'none'; return; }
@@ -11144,6 +11160,170 @@
       '</div>';
     });
     html += '</div>';
+
+    bodyEl.innerHTML = html;
+  }
+
+  // ===== 도시별 숙소 예산 분석 =====
+  // 트립 예산 모달의 "숙소 1일치" × 도시별 숙박 일수 = 도시별 예산 가이드
+  // 실제 사용은 journey type='숙소' 항목 + finance 거래에서 매칭
+  async function renderTripLodgingBreakdown() {
+    var section = document.getElementById('finance-lodging-section');
+    var bodyEl = document.getElementById('finance-lodging-body');
+    var statusEl = document.getElementById('finance-lodging-status');
+    if (!section || !bodyEl) return;
+    if (currentFinanceTrip === 'all') { section.style.display = 'none'; return; }
+    var trip = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+    if (!trip) { section.style.display = 'none'; return; }
+
+    // journey 데이터 로드 (없으면 fbRead)
+    var jData = [];
+    try {
+      if (typeof journeyData !== 'undefined' && journeyData && journeyData.length) {
+        jData = journeyData;
+      } else {
+        jData = await fbRead('journey');
+      }
+    } catch(e) { console.error('[LodgingBreakdown] journey load:', e); }
+
+    // 이 트립의 숙소들
+    var lodgings = jData.filter(function(j) {
+      return j.trip_id === trip._id && j.type === '숙소';
+    });
+
+    if (lodgings.length === 0) {
+      section.style.display = '';
+      bodyEl.innerHTML = '<div class="text-center py-6 text-xs text-slate-400">아직 숙소가 등록되지 않았어요. Travel 페이지에서 숙소를 추가하세요.</div>';
+      if (statusEl) statusEl.textContent = '';
+      return;
+    }
+
+    section.style.display = '';
+
+    // 1일치 숙소 예산
+    var perNightBudget = parseFloat(trip.budget && trip.budget.accom) || 0;
+
+    // 도시별 그룹화
+    var byCity = {}; // { cityName: [lodging, ...] }
+    lodgings.forEach(function(lo) {
+      var city = (lo.city || '미지정').trim();
+      if (!byCity[city]) byCity[city] = [];
+      byCity[city].push(lo);
+    });
+
+    // 각 도시별 분석
+    var cityRows = Object.keys(byCity).map(function(city) {
+      var items = byCity[city];
+      // 일수 = sum of (checkout - checkin) for each lodging
+      var totalNights = 0;
+      var totalSpent = 0;
+      var dateRange = '';
+      var minDate = null, maxDate = null;
+      items.forEach(function(lo) {
+        var ci = lo.date ? new Date(lo.date + 'T00:00:00') : null;
+        var co = lo.checkout_date ? new Date(lo.checkout_date + 'T00:00:00') : null;
+        if (ci && co) {
+          var nights = Math.max(Math.round((co - ci) / 86400000), 1);
+          totalNights += nights;
+        } else {
+          totalNights += 1;
+        }
+        if (ci) {
+          if (!minDate || ci < minDate) minDate = ci;
+          if (!maxDate || (co || ci) > maxDate) maxDate = co || ci;
+        }
+        var amt = parseFloat(String(lo.amount||'').replace(/[^0-9.]/g,''));
+        if (!isNaN(amt)) totalSpent += amt;
+      });
+      if (minDate && maxDate) {
+        var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+        dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
+      }
+      var cityBudget = perNightBudget * totalNights;
+      var remaining = cityBudget - totalSpent;
+      var pct = cityBudget > 0 ? Math.min(100, totalSpent / cityBudget * 100) : 0;
+      var isOver = totalSpent > cityBudget && cityBudget > 0;
+      var noBudget = cityBudget === 0;
+      return {
+        city: city,
+        items: items,
+        nights: totalNights,
+        spent: totalSpent,
+        budget: cityBudget,
+        remaining: remaining,
+        pct: pct,
+        isOver: isOver,
+        noBudget: noBudget,
+        dateRange: dateRange
+      };
+    });
+
+    // 날짜 순 정렬 (가장 먼저 도착하는 도시부터)
+    cityRows.sort(function(a, b) {
+      var ad = a.items[0] && a.items[0].date ? a.items[0].date : '9999';
+      var bd = b.items[0] && b.items[0].date ? b.items[0].date : '9999';
+      return ad.localeCompare(bd);
+    });
+
+    var totalNights = cityRows.reduce(function(s,r){ return s + r.nights; }, 0);
+    var totalSpent = cityRows.reduce(function(s,r){ return s + r.spent; }, 0);
+    var totalBudget = perNightBudget * totalNights;
+    var totalRem = totalBudget - totalSpent;
+
+    if (statusEl) {
+      statusEl.textContent = '총 ' + totalNights + '박 · 1일치 ' + (perNightBudget ? '₩' + Math.round(perNightBudget).toLocaleString('ko-KR') : '미설정');
+    }
+
+    var html = '<div class="space-y-3">';
+    cityRows.forEach(function(r) {
+      var titleParts = r.items.map(function(lo){ return lo.title || '(이름없음)'; }).join(', ');
+      var barColor = r.isOver ? '#ef4444' : (r.noBudget ? '#94a3b8' : '#3b82f6');
+      var remColor = r.isOver ? 'text-red-500' : (r.remaining > 0 ? 'text-emerald-600' : 'text-slate-500');
+      var remLabel = r.noBudget ? '예산 미설정' : (r.remaining >= 0 ? '₩' + Math.round(r.remaining).toLocaleString('ko-KR') + ' 남음' : '₩' + Math.round(-r.remaining).toLocaleString('ko-KR') + ' 초과');
+      html += '<div class="border border-slate-200 rounded-xl p-4 hover:border-blue-300 transition-colors">' +
+        '<div class="flex items-start justify-between mb-2 gap-3">' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 mb-1">' +
+              '<span class="text-sm font-bold text-slate-900">' + r.city + '</span>' +
+              '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">' + r.nights + '박</span>' +
+              (r.dateRange ? '<span class="text-[10px] text-slate-400 font-medium">' + r.dateRange + '</span>' : '') +
+            '</div>' +
+            '<p class="text-[11px] text-slate-500 truncate" title="' + titleParts + '">' + titleParts + '</p>' +
+          '</div>' +
+          '<div class="text-right shrink-0">' +
+            '<div class="text-sm font-bold ' + remColor + '">' + remLabel + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex justify-between text-[11px] text-slate-500 mb-1.5">' +
+          '<span>지출 ₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</span>' +
+          '<span>예산 ' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) + (perNightBudget ? ' <span class="text-slate-300">(₩' + Math.round(perNightBudget).toLocaleString('ko-KR') + '×' + r.nights + ')</span>' : '') + '</span>' +
+        '</div>' +
+        '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
+          '<div class="h-full transition-all" style="width:' + r.pct + '%;background:' + barColor + '"></div>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // 총합
+    var totalBarPct = totalBudget > 0 ? Math.min(100, totalSpent / totalBudget * 100) : 0;
+    var totalRemColor = totalRem >= 0 ? 'text-emerald-600' : 'text-red-500';
+    html += '<div class="mt-4 pt-4 border-t border-slate-100">' +
+      '<div class="flex justify-between items-baseline mb-2">' +
+        '<span class="text-xs font-bold uppercase tracking-widest text-slate-500">전체 ' + totalNights + '박</span>' +
+        '<div class="text-right">' +
+          '<span class="text-lg font-extrabold ' + totalRemColor + '">' + (totalRem >= 0 ? '₩' : '-₩') + Math.round(Math.abs(totalRem)).toLocaleString('ko-KR') + '</span>' +
+          '<span class="text-xs text-slate-400 ml-2">' + (totalRem >= 0 ? '남음' : '초과') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="flex justify-between text-xs text-slate-500 mb-2">' +
+        '<span>지출 ₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</span>' +
+        '<span>예산 ₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
+      '</div>' +
+      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
+        '<div class="h-full transition-all" style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#ef4444' : '#3b82f6') + '"></div>' +
+      '</div>' +
+    '</div>';
 
     bodyEl.innerHTML = html;
   }
