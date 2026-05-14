@@ -152,6 +152,17 @@
     .page{animation:fadeIn .18s ease}
     @keyframes fadeIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
+    /* ===== TRAVEL TABS (Schedule / Budget) ===== */
+    .travel-tab-btn {
+      color: #64748b;
+      background: transparent;
+    }
+    .travel-tab-btn.travel-tab-active {
+      background: #ffffff;
+      color: #4338ca;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
     /* ===== UNIFIED TRIP DROPDOWN ===== */
     .trip-dd-btn {
       display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
@@ -1479,7 +1490,8 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">explore</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Travel</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-finance" onclick="navigate('finance'); return false;">
+    <!-- Travel Budget은 Travel 페이지 내 탭으로 통합됨 (사이드바에서 숨김) -->
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-finance" onclick="navigate('finance'); return false;" style="display:none">
       <span class="material-symbols-outlined text-[20px] transition-colors">payments</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Travel Budget</span>
     </a>
@@ -1654,7 +1666,7 @@
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
       <!-- Page Intro + Trip Selector -->
-      <div class="mb-6 flex items-center gap-3">
+      <div class="mb-4 flex items-center gap-3">
         <div class="relative" id="journey-dd-wrap">
           <button onclick="toggleJourneyDropdown()" id="journey-dd-btn" class="trip-dd-btn">
             <span id="journey-dd-label">여행 선택...</span>
@@ -1667,6 +1679,26 @@
         <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
           <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
         </button>
+      </div>
+
+      <!-- 탭 (일정 / 예산) + 미니 요약 -->
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="schedule">
+            📅 일정
+          </button>
+          <button onclick="switchTravelTab('budget')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">
+            💰 예산
+          </button>
+        </div>
+        <!-- 미니 요약 (예산 상태) -->
+        <div id="travel-mini-summary" class="text-xs text-slate-500 flex items-center gap-3" style="display:none">
+          <span>총 예산 <span id="travel-mini-budget" class="font-bold text-slate-700">—</span></span>
+          <span class="text-slate-300">·</span>
+          <span>지출 <span id="travel-mini-spent" class="font-bold text-slate-700">—</span></span>
+          <span class="text-slate-300">·</span>
+          <span id="travel-mini-remain" class="font-bold text-emerald-600">—</span>
+        </div>
       </div>
 
       <!-- 도시 관리 패널 -->
@@ -2535,7 +2567,17 @@
   <div id="page-finance" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Page Intro -->
+      <!-- 탭 (일정 / 예산) -->
+      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
+          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">
+            📅 일정
+          </button>
+          <button onclick="switchTravelTab('budget')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="budget">
+            💰 예산
+          </button>
+        </div>
+      </div>
 
       <!-- 트립 예산 카드 -->
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -12795,7 +12837,7 @@
   const pageMeta = {
     "dashboard": { "title": "Dashboard" },
     "journey": { "title": "Travel" },
-    "finance": { "title": "Travel Budget" },
+    "finance": { "title": "Travel" },
     "finance-hub": { "title": "Money" },
     "ledger": { "title": "Daily Ledger" },
     "matrix": { "title": "Year Matrix" },
@@ -12806,6 +12848,86 @@
     "packing": { "title": "Travel Checklist" },
     "reference": { "title": "Memo" }
   };
+  // ── Travel/Travel Budget 통합 탭 ──
+  function switchTravelTab(tab) {
+    if (tab === 'schedule') {
+      // 트립 sync: Finance → Travel
+      try {
+        if (typeof currentFinanceTrip !== 'undefined' && currentFinanceTrip && currentFinanceTrip !== 'all' &&
+            typeof financeTrips !== 'undefined' && financeTrips.length) {
+          var ft = financeTrips.find(function(t){ return t.name === currentFinanceTrip; });
+          if (ft && typeof currentTripId !== 'undefined') {
+            currentTripId = ft._id;
+            try { localStorage.setItem('atelier_current_trip_id', ft._id); } catch(e) {}
+          }
+        }
+      } catch(e) {}
+      navigate('journey');
+    } else if (tab === 'budget') {
+      // 트립 sync: Travel → Finance
+      try {
+        if (typeof currentTripId !== 'undefined' && currentTripId &&
+            typeof financeTrips !== 'undefined' && financeTrips.length) {
+          var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
+          if (trip && typeof currentFinanceTrip !== 'undefined') {
+            currentFinanceTrip = trip.name;
+          }
+        }
+      } catch(e) {}
+      navigate('finance');
+    }
+  }
+  if (typeof window !== 'undefined') window.switchTravelTab = switchTravelTab;
+
+  // 미니 요약 업데이트 (Travel 페이지)
+  async function updateTravelMiniSummary() {
+    var el = document.getElementById('travel-mini-summary');
+    if (!el) return;
+    try {
+      if (typeof currentTripId === 'undefined' || !currentTripId) { el.style.display = 'none'; return; }
+      if (typeof financeTrips === 'undefined' || !financeTrips.length) {
+        // financeTrips 비어있으면 로드 시도
+        try {
+          var trips = await fbRead('trips');
+          if (typeof financeTrips !== 'undefined') {
+            financeTrips.length = 0;
+            trips.forEach(function(t){ financeTrips.push(t); });
+          }
+        } catch(e) {}
+      }
+      if (typeof financeTrips === 'undefined' || !financeTrips.length) { el.style.display = 'none'; return; }
+      var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
+      if (!trip || !trip.budget) { el.style.display = 'none'; return; }
+      // 예산 총합 (저장 구조: budget = {flight, accom, tour, living, accomPerDay, ...})
+      var b = trip.budget;
+      var totalBudget = (parseFloat(b.flight)||0) + (parseFloat(b.accom)||0) + (parseFloat(b.tour)||0) + (parseFloat(b.living)||0);
+      if (totalBudget <= 0) { el.style.display = 'none'; return; }
+      // 지출 합 (finance 컬렉션에서 이 트립의 지출)
+      var fData = [];
+      try { fData = await fbRead('finance'); } catch(e) {}
+      var spent = fData.filter(function(f){
+        return f.trip_id === currentTripId && (f.type === '지출' || f.category === '지출');
+      }).reduce(function(s,f){ return s + (parseFloat(f.amount)||0); }, 0);
+      var remain = totalBudget - spent;
+      // 표시
+      var fmt = function(n){ return '₩' + Math.round(n).toLocaleString('ko-KR'); };
+      var bEl = document.getElementById('travel-mini-budget');
+      var sEl = document.getElementById('travel-mini-spent');
+      var rEl = document.getElementById('travel-mini-remain');
+      if (bEl) bEl.textContent = fmt(totalBudget);
+      if (sEl) sEl.textContent = fmt(spent);
+      if (rEl) {
+        rEl.textContent = (remain >= 0 ? fmt(remain) + ' 남음' : fmt(-remain) + ' 초과');
+        rEl.className = 'font-bold ' + (remain >= 0 ? 'text-emerald-600' : 'text-rose-600');
+      }
+      el.style.display = 'flex';
+    } catch(e) {
+      console.warn('mini summary 실패:', e);
+      el.style.display = 'none';
+    }
+  }
+  if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
+
   function navigate(pageId) {
     document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
     const t = document.getElementById('page-'+pageId);
@@ -12813,7 +12935,10 @@
     document.querySelectorAll('.nav-item').forEach(n => {
       n.style.background=''; n.style.color=''; n.style.borderLeft='';
     });
-    const a = document.getElementById('nav-'+pageId);
+    // Travel과 Travel Budget은 같은 사이드바 (nav-journey) 활성 처리
+    let activeNavId = pageId;
+    if (pageId === 'finance') activeNavId = 'journey';
+    const a = document.getElementById('nav-'+activeNavId);
     if(a) {
       a.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
       a.style.color='#4338ca';
@@ -12829,7 +12954,10 @@
     window.scrollTo(0,0);
     // 페이지별 데이터 로드
     if(pageId==='dashboard') { if(typeof loadDashboard==='function') loadDashboard(); }
-    if(pageId==='journey') { if(typeof loadJourney==='function') loadJourney(); }
+    if(pageId==='journey') {
+      if(typeof loadJourney==='function') loadJourney();
+      setTimeout(function(){ if(typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary(); }, 500);
+    }
     if(pageId==='matrix') { if(typeof loadMatrix==='function') loadMatrix(); }
     if(pageId==='income') { if(typeof loadIncome==='function') loadIncome(); }
     if(pageId==='english') { if(typeof loadEnglish==='function') loadEnglish(); }
