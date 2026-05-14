@@ -7957,17 +7957,115 @@
         headerCityHtml += '<div class="text-[10px] font-bold mt-0.5" style="color:' + dtColor + '" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</div>';
       }
 
-      return '<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow group/wcard">' +
+      // 인라인 추가 폼 (이 카드가 add 모드면 표시)
+      var addFormHtml = '';
+      var cityEsc = (cityName||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      if (_weekAddingDate === dateStr) {
+        var phCity = cityName ? ('비우면 ' + cityName) : '행선지 (선택)';
+        addFormHtml =
+          '<div class="border-t-2 border-indigo-300 p-2 bg-indigo-50/40" onclick="event.stopPropagation()">' +
+            '<div class="flex items-center gap-1 mb-1">' +
+              '<input id="wk-add-time-' + idx + '" type="text" placeholder="09:00" class="w-12 text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+              '<span class="text-[9px] text-slate-400">-</span>' +
+              '<input id="wk-add-end-' + idx + '" type="text" placeholder="끝" class="w-12 text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
+            '</div>' +
+            '<input id="wk-add-title-' + idx + '" type="text" placeholder="제목 입력..." class="w-full text-[11px] font-semibold bg-white border border-indigo-200 rounded px-1.5 py-1 outline-none focus:border-indigo-500 mb-1"/>' +
+            '<div class="flex items-center gap-0.5 mb-1">' +
+              '<span class="text-[9px] text-amber-600 font-bold">📍</span>' +
+              '<input id="wk-add-city-' + idx + '" type="text" placeholder="' + phCity + '" title="당일치기/숙박지와 다를 때만" class="w-full text-[10px] bg-white border border-amber-200 rounded px-1 py-0.5 outline-none focus:border-amber-500 text-amber-700"/>' +
+            '</div>' +
+            '<textarea id="wk-add-desc-' + idx + '" placeholder="내용 (선택, Ctrl+Enter로 저장)" rows="2" class="w-full text-[10px] bg-white border border-indigo-200 rounded px-1.5 py-1 outline-none focus:border-indigo-500 resize-none mb-1" onkeydown="if((event.metaKey||event.ctrlKey)&&event.key===\'Enter\'){event.preventDefault();saveWeekAdd(\'' + dateStr + '\',\'' + cityEsc + '\',' + idx + ')}"></textarea>' +
+            '<div class="flex gap-1 justify-end">' +
+              '<button onclick="cancelWeekAdd()" class="px-2 py-1 rounded text-[10px] font-bold text-slate-500 hover:bg-slate-100">취소</button>' +
+              '<button onclick="saveWeekAdd(\'' + dateStr + '\',\'' + cityEsc + '\',' + idx + ')" class="px-2 py-1 rounded bg-indigo-600 text-white text-[10px] font-bold hover:bg-indigo-700 flex items-center gap-0.5">' +
+                '<span class="material-symbols-outlined" style="font-size:12px">check</span> 저장' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+      } else {
+        addFormHtml =
+          '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="border-t border-slate-100 py-1.5 text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-center gap-1 transition-colors w-full" title="이 날에 일정 추가">' +
+            '<span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가' +
+          '</button>';
+      }
+
+      return '<div class="bg-white rounded-2xl border ' + (_weekAddingDate === dateStr ? 'border-indigo-300 shadow-md' : 'border-slate-200') + ' overflow-hidden flex flex-col hover:shadow-md transition-shadow group/wcard">' +
         '<div class="px-3 py-2 text-center cursor-pointer relative" style="' + headerBg + '" onclick="jumpToDay(' + actualIdx + ')" title="클릭하여 이 날짜 편집 영역으로 이동">' +
           '<div class="text-[10px] font-black uppercase tracking-wider opacity-90">' + dateStr + (weekday ? ' (' + weekday + ')' : '') + '</div>' +
           headerCityHtml +
         '</div>' +
         '<div class="p-2 flex-1 min-h-[120px] cursor-pointer" onclick="jumpToDay(' + actualIdx + ')">' + itemsHtml + '</div>' +
-        '<button onclick="event.stopPropagation();jumpToDay(' + actualIdx + ',true)" class="border-t border-slate-100 py-1.5 text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-center gap-1 transition-colors" title="이 날에 일정 추가">' +
-          '<span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가' +
-        '</button>' +
+        addFormHtml +
       '</div>';
     }).join('');
+
+    // 포커스: 추가 모드면 시간 input에 자동 포커스
+    if (_weekAddingDate) {
+      var chunkPos = chunk.findIndex(function(e){ return e.date === _weekAddingDate; });
+      if (chunkPos >= 0) {
+        setTimeout(function() {
+          var inp = document.getElementById('wk-add-time-' + chunkPos);
+          if (inp) inp.focus();
+        }, 30);
+      }
+    }
+  }
+
+  // ── 주간 카드 인라인 추가 함수들 ──
+  var _weekAddingDate = null;
+  function startWeekAdd(dateStr) {
+    _weekAddingDate = dateStr;
+    renderWeekView();
+  }
+  function cancelWeekAdd() {
+    _weekAddingDate = null;
+    renderWeekView();
+  }
+  async function saveWeekAdd(dateStr, baseCity, idx) {
+    var time = (document.getElementById('wk-add-time-' + idx).value || '').trim();
+    var endTime = (document.getElementById('wk-add-end-' + idx).value || '').trim();
+    var title = (document.getElementById('wk-add-title-' + idx).value || '').trim();
+    var cityInput = (document.getElementById('wk-add-city-' + idx).value || '').trim();
+    var desc = (document.getElementById('wk-add-desc-' + idx).value || '').trim();
+    if (!title) { alert('제목을 입력해주세요!'); return; }
+    var cityFinal = cityInput || baseCity || '';
+    var obj = {
+      trip_id: currentTripId,
+      type: '일정',
+      date: dateStr,
+      time: time,
+      end_time: endTime,
+      city: cityFinal,
+      title: title,
+      description: desc
+    };
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      // 같은 날짜에 연속 추가할 수 있게 유지 — 폼은 다시 빈 상태로
+      renderWeekView();
+      if (typeof renderDayView === 'function') renderDayView();
+      // 추가 후 시간 input에 다시 포커스 → 연속 입력 편리
+      setTimeout(function() {
+        var newIdx = (function() {
+          var dm = getDayMap();
+          var chunkEnd = Math.min(currentWeekChunkStart + WEEK_CHUNK_SIZE, dm.length);
+          var chunk = dm.slice(currentWeekChunkStart, chunkEnd);
+          return chunk.findIndex(function(e){ return e.date === dateStr; });
+        })();
+        if (newIdx >= 0) {
+          var inp = document.getElementById('wk-add-time-' + newIdx);
+          if (inp) inp.focus();
+        }
+      }, 60);
+    } catch(e) {
+      alert('저장 실패: ' + (e.message || e));
+    }
+  }
+  if (typeof window !== 'undefined') {
+    window.startWeekAdd = startWeekAdd;
+    window.cancelWeekAdd = cancelWeekAdd;
+    window.saveWeekAdd = saveWeekAdd;
   }
 
   function prevWeekChunk() {
