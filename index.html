@@ -11650,7 +11650,7 @@
       '</div>' +
     '</div>';
 
-    html += '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">';
+    html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
     Object.keys(BUDGET_GROUPS).forEach(function(g) {
       var cfg = BUDGET_GROUPS[g];
       var b = parseFloat(budget[BUDGET_FIELDS[g]]) || 0;
