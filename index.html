@@ -1743,8 +1743,8 @@
 
       <!-- ═══════ Hero: Greeting + Today's Brief (Stitch Immersive + Bento combined) ═══════ -->
       <section>
-        <div id="dash-brief-card" style="background:linear-gradient(135deg,#f3eaff 0%,#ece2ff 100%);border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(124,58,237,0.05);border:1px solid #d8c9ff;position:relative;overflow:hidden;">
-          <!-- Top: greeting + info chips -->
+        <div id="dash-brief-card" style="background:#ffffff;border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(124,58,237,0.05);border:1px solid #e9d5ff;position:relative;overflow:hidden;">
+          <!-- Top: greeting + info chips (각 칩 다른 파스텔 컬러) -->
           <div class="flex justify-between items-start gap-4 mb-5 flex-wrap" style="position:relative;z-index:10;">
             <div style="flex:1;min-width:260px;">
               <p class="dash-label" style="color:#7c3aed;margin-bottom:8px;">Overview</p>
@@ -1752,17 +1752,17 @@
               <p style="font-size:15px;color:#4a4455;font-weight:500;"><span id="dash-brief-date"></span><span id="dash-brief-tagline" style="color:#6b21a8;font-weight:500;"></span></p>
             </div>
             <div class="flex items-stretch gap-2.5 flex-wrap">
-              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
-                <p class="dash-label" style="color:#7c3aed;margin-bottom:4px;font-size:10px;">오늘 일정</p>
-                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">건</span></p>
+              <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;border:1px solid #c4b5fd;">
+                <p class="dash-label" style="color:#6b21a8;margin-bottom:4px;font-size:10px;">오늘 일정</p>
+                <p style="font-size:22px;font-weight:700;color:#3b0764;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size:13px;font-weight:600;color:#7c3aed;">건</span></p>
               </div>
-              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
-                <p class="dash-label" style="color:#ec4899;margin-bottom:4px;font-size:10px;">작품 진행</p>
-                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">개</span></p>
+              <div style="background:linear-gradient(135deg,#fce7f3 0%,#fbcfe8 100%);border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;border:1px solid #f9a8d4;">
+                <p class="dash-label" style="color:#9d174d;margin-bottom:4px;font-size:10px;">작품 진행</p>
+                <p style="font-size:22px;font-weight:700;color:#831843;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size:13px;font-weight:600;color:#db2777;">개</span></p>
               </div>
-              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
-                <p class="dash-label" style="color:#f59e0b;margin-bottom:4px;font-size:10px;">연차</p>
-                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size:13px;font-weight:600;color:#7b7487;">일</span></p>
+              <div style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;border:1px solid #fcd34d;">
+                <p class="dash-label" style="color:#92400e;margin-bottom:4px;font-size:10px;">연차</p>
+                <p style="font-size:22px;font-weight:700;color:#78350f;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size:13px;font-weight:600;color:#d97706;">일</span></p>
               </div>
             </div>
           </div>
@@ -13531,8 +13531,8 @@
     var contentEl = document.getElementById('dash-brief-content');
     var statusEl = document.getElementById('dash-brief-status');
     if (!contentEl) return;
-    // v3 — JSON 응답 기반 카드 렌더링으로 변경, 옛 캐시 무효화
-    var todayKey = 'atelier_brief_v3_' + new Date().toISOString().split('T')[0];
+    // v4 — 파스텔 컬러 사이클 적용, 옛 캐시 무효화
+    var todayKey = 'atelier_brief_v4_' + new Date().toISOString().split('T')[0];
     // 캐시 확인 (오늘자)
     if (!forceRefresh) {
       try {
@@ -13698,18 +13698,25 @@
           return { icon: emoji, title: (parts[0]||'').trim(), tag: (parts.slice(1).join(' — ')||'').trim() };
         });
       }
-      // 4개 카드 그리드 렌더
+      // 4개 카드 그리드 렌더 — 각 카드 다른 파스텔 컬러 (순서별 사이클)
+      var BRIEF_CARD_PALETTE = [
+        { bg: 'linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%)', iconBg: '#ddd6fe', iconColor: '#7c3aed', border: '#e9d5ff', titleColor: '#3b0764', tagColor: '#6b21a8' },
+        { bg: 'linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%)', iconBg: '#fed7aa', iconColor: '#ea580c', border: '#fdba74', titleColor: '#7c2d12', tagColor: '#9a3412' },
+        { bg: 'linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)', iconBg: '#bbf7d0', iconColor: '#15803d', border: '#86efac', titleColor: '#14532d', tagColor: '#166534' },
+        { bg: 'linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%)', iconBg: '#bfdbfe', iconColor: '#2563eb', border: '#93c5fd', titleColor: '#1e3a8a', tagColor: '#1e40af' }
+      ];
       var html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
-      items.slice(0, 4).forEach(function(item) {
+      items.slice(0, 4).forEach(function(item, idx) {
         var icon = (item.icon || '📌').toString();
         var title = (item.title || '').toString();
         var tag = (item.tag || item.tagline || '').toString();
         if (!title && !tag) return;
-        html += '<div style="background:#ffffff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(124,58,237,0.05);border:1px solid rgba(216,201,255,0.5);">';
-        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + icon + '</div>';
+        var p = BRIEF_CARD_PALETTE[idx % 4];
+        html += '<div style="background:' + p.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid ' + p.border + ';">';
+        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
-        html += '<p style="font-weight:700;color:#1f2937;font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
-        if (tag) html += '<p style="font-size:11.5px;color:#7b7487;line-height:1.35;margin-top:2px;">' + tag + '</p>';
+        html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
+        if (tag) html += '<p style="font-size:11.5px;color:' + p.tagColor + ';line-height:1.35;margin-top:2px;opacity:0.85;">' + tag + '</p>';
         html += '</div></div>';
       });
       html += '</div>';
