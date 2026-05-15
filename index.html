@@ -2475,6 +2475,91 @@
               </div>
             </div>
 
+            <!-- 렌트카 수정 모달 -->
+            <div id="rental-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('rental-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+                <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+                  <div class="flex items-center gap-3 mb-6">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                      <span class="material-symbols-outlined text-lg">edit_square</span>
+                    </div>
+                    <div>
+                      <h4 class="font-headline text-base font-bold text-slate-900">Edit Rental Car</h4>
+                      <p class="text-slate-500 text-[10px]">렌트카 정보를 수정하세요</p>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
+                      <input id="rc-edit-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
+                      <input id="rc-edit-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
+                      <input id="rc-edit-city" type="text" list="rc-edit-city-list" placeholder="예: Pienza" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      <datalist id="rc-edit-city-list"></datalist>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
+                      <input id="rc-edit-drop-city" type="text" list="rc-edit-city-list" placeholder="픽업 도시와 같으면 비워두기" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
+                        <input id="rc-edit-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
+                        <input id="rc-edit-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
+                        <input id="rc-edit-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
+                        <input id="rc-edit-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
+                        <input id="rc-edit-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
+                        <input id="rc-edit-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                      <input id="rc-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                      <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                        <input id="rc-edit-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
+                      <input id="rc-edit-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <div class="md:col-span-2">
+                      <button onclick="saveRentalEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                        수정 저장
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
             <section class="mb-2">
               <div class="mb-4 flex items-center justify-between">
@@ -8887,6 +8972,63 @@
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
+  var _rcEditIdx = null;
+
+  function openRentalEditModal(idx) {
+    var item = journeyData[idx];
+    if (!item) return;
+    _rcEditIdx = idx;
+    // 도시 datalist 갱신
+    var dl = document.getElementById('rc-edit-city-list');
+    if (dl) dl.innerHTML = (citiesData||[]).map(function(c){ return '<option value="'+c.name+'">'; }).join('');
+    var setV = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setV('rc-edit-company', item.title);
+    setV('rc-edit-model', item.description);
+    setV('rc-edit-city', item.city);
+    setV('rc-edit-drop-city', item.drop_city);
+    setV('rc-edit-pickup-date', item.date);
+    setV('rc-edit-pickup-time', item.time);
+    setV('rc-edit-pickup-location', item.pickup_location);
+    setV('rc-edit-drop-date', item.checkout_date);
+    setV('rc-edit-drop-time', item.checkout);
+    setV('rc-edit-drop-location', item.drop_location);
+    setV('rc-edit-payment-date', item.payment_date);
+    setV('rc-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
+    setV('rc-edit-notes', item.notes);
+    openTravelModal('rental-edit-modal-wrap');
+  }
+
+  async function saveRentalEdit() {
+    if (_rcEditIdx === null) return;
+    var item = journeyData[_rcEditIdx];
+    if (!item) return;
+    var company = document.getElementById('rc-edit-company').value.trim();
+    if (!company) { alert('렌트카 회사를 입력해주세요'); return; }
+    var updates = {
+      title: company,
+      description: document.getElementById('rc-edit-model').value.trim(),
+      city: document.getElementById('rc-edit-city').value.trim(),
+      drop_city: document.getElementById('rc-edit-drop-city').value.trim(),
+      date: document.getElementById('rc-edit-pickup-date').value,
+      time: document.getElementById('rc-edit-pickup-time').value.trim(),
+      pickup_location: document.getElementById('rc-edit-pickup-location').value.trim(),
+      checkout_date: document.getElementById('rc-edit-drop-date').value,
+      checkout: document.getElementById('rc-edit-drop-time').value.trim(),
+      drop_location: document.getElementById('rc-edit-drop-location').value.trim(),
+      payment_date: document.getElementById('rc-edit-payment-date').value,
+      amount: document.getElementById('rc-edit-price').value.replace(/,/g,''),
+      notes: document.getElementById('rc-edit-notes').value.trim()
+    };
+    try {
+      await fbUpdate('journey', item._id, updates);
+      Object.assign(journeyData[_rcEditIdx], updates);
+      closeTravelModal('rental-edit-modal-wrap');
+      renderJourneyRental();
+      updateJourneyCost();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 렌트카 수정 완료');
+    } catch(e) { alert('저장 실패: ' + e.message); }
+  }
+
   function renderRentalCard(item, actionBtns) {
     var routeText = (item.pickup_location||'—') + ' → ' + (item.drop_location||'—');
     var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
@@ -10350,6 +10492,11 @@
     // 이동수단도 전용 수정 모달 사용
     if (item.type === '이동수단') {
       openTransportEditModal(idx);
+      return;
+    }
+    // 렌트카도 전용 수정 모달 사용
+    if (item.type === '렌트카') {
+      openRentalEditModal(idx);
       return;
     }
 
