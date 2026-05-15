@@ -1918,6 +1918,8 @@
                 <span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가
               </button>
             </div>
+            <!-- 일자별 가이드 (교통편 / 사전예약 모음 / 기념품 — 자동 표시) -->
+            <div id="day-extra-panel" class="mb-4 space-y-2.5"></div>
             <!-- Timeline -->
             <div id="journey-schedule-list" class="relative border-l-2 border-slate-200 ml-3 space-y-6 py-1 min-h-32">
               <div class="pl-6 text-xs text-slate-400">이 날의 일정이 없어요</div>
@@ -2872,6 +2874,13 @@
               <input id="city-end" type="date" placeholder=""  class="atl-input w-full"/>
             </div>
           </div>
+          </div>
+          <div class="atl-field">
+            <label>🚆 교통편 가이드 <span class="text-[10px] text-slate-400 font-normal">(이 도시 첫날 일정 상단에 자동 표시됨)</span></label>
+            <div class="atl-field-input">
+              <span class="atl-field-icon material-symbols-outlined">directions_transit</span>
+              <textarea id="city-transit-guide" placeholder="예: S-Bahn 편도 1회권 / 약 €6 / 공항→중앙역 한 번만, 시내는 도보" rows="3" class="atl-input w-full" style="resize:vertical;min-height:72px"></textarea>
+            </div>
           </div>
           <div class="atl-info-box"><span class="material-symbols-outlined">info</span><span>여행 추가 시 설정한 기간 안에서만 선택할 수 있어요.</span></div>
         </div>
@@ -7478,11 +7487,13 @@
       document.getElementById('city-start').value = c.start_date||'';
       document.getElementById('city-end').value = c.end_date||'';
       document.getElementById('city-desc').value = c.desc||'';
+      var tg = document.getElementById('city-transit-guide'); if (tg) tg.value = c.transit_guide || '';
     } else {
       document.getElementById('city-name').value = '';
       document.getElementById('city-start').value = '';
       document.getElementById('city-end').value = '';
       document.getElementById('city-desc').value = '';
+      var tg2 = document.getElementById('city-transit-guide'); if (tg2) tg2.value = '';
     }
     document.getElementById('city-modal').style.cssText = 'display:flex!important';
   }
@@ -7509,6 +7520,7 @@
       end_date: endVal,
       nights: nights,
       desc: document.getElementById('city-desc').value.trim(),
+      transit_guide: (document.getElementById('city-transit-guide')||{}).value || '',
       order: startVal || (editingCityIndex !== null ? (citiesData[editingCityIndex].order||0) : citiesData.length),
     };
     if (!obj.name) { alert('도시명을 입력해줘!'); btn.textContent='저장'; btn.disabled=false; return; }
@@ -8186,6 +8198,97 @@
     // 일출/일몰 자동 추가 (도시+날짜 있을 때만, 이미 있으면 스킵)
     if (cityName && dateStr) {
       autoAddSunriseSunset(cityName, dateStr);
+    }
+
+    // ─── 일자별 가이드 패널 (교통편 / 사전예약 모음 / 기념품) ───
+    var extraPanel = document.getElementById('day-extra-panel');
+    if (extraPanel) {
+      var panelHtml = '';
+      // (1) 도시별 교통편 가이드 — 이 도시 첫날일 때만 표시
+      var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
+      if (currentCity && currentCity.transit_guide && dateStr === currentCity.start_date) {
+        var tg = String(currentCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,'<br>');
+        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);border-left-color:#6366f1">' +
+          '<div class="flex items-start gap-3">' +
+            '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size:18px">directions_transit</span>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="flex items-center gap-2 mb-1">' +
+                '<span class="text-[10px] font-black uppercase tracking-widest text-indigo-600">' + cityName + ' 교통편</span>' +
+                '<span class="text-[9px] text-slate-400">이 도시 첫날만 표시</span>' +
+              '</div>' +
+              '<div class="text-[13px] text-slate-700 leading-relaxed">' + tg + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      // (2) 사전 예약 모음 — 이 트립 전체에서 prebook=true 이거나 키워드 일정 중 미완료
+      // 단, 시작 도시 첫날에만 노출 (전체 트립 안내 성격)
+      var firstCityStart = citiesData.length > 0 ? citiesData[0].start_date : '';
+      if (dateStr && firstCityStart && dateStr === firstCityStart) {
+        var prebookItems = journeyData.filter(function(j){
+          if (j.type !== '일정') return false;
+          if (j.prebook === true || j.reservation === true) return true;
+          var combo = ((j.title||'') + ' ' + (j.description||''));
+          return /사전\s*예약|예약\s*필수|예매\s*필수|reservation\s*required|온라인\s*예약/i.test(combo);
+        });
+        if (prebookItems.length > 0) {
+          panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#fff7ed,#fef2f2);border-left-color:#f97316">' +
+            '<div class="flex items-center gap-2 mb-2">' +
+              '<span class="material-symbols-outlined text-orange-600" style="font-size:18px">task_alt</span>' +
+              '<span class="text-[10px] font-black uppercase tracking-widest text-orange-700">사전 예약 체크리스트</span>' +
+              '<span class="text-[9px] text-slate-400">출국 전 미리</span>' +
+            '</div>' +
+            '<ul class="space-y-1.5">' +
+              prebookItems.map(function(p){
+                var when = p.date ? _journeyShortDate(p.date) : '';
+                var city = p.city || '';
+                var note = p.description ? ' <span class="text-[10px] text-slate-500">— ' + String(p.description).replace(/</g,'&lt;').slice(0,80) + '</span>' : '';
+                return '<li class="flex items-start gap-2 text-[12px]">' +
+                  '<span class="text-orange-500 mt-0.5">▸</span>' +
+                  '<span class="flex-1">' +
+                    (when ? '<span class="text-[10px] font-bold text-slate-400 mr-1">[' + when + ']</span>' : '') +
+                    (city ? '<span class="text-[10px] font-bold text-indigo-500 mr-1">' + city + '</span>' : '') +
+                    '<span class="font-bold text-slate-800">' + (p.title||'—') + '</span>' +
+                    note +
+                  '</span>' +
+                '</li>';
+              }).join('') +
+            '</ul>' +
+          '</div>';
+        }
+      }
+      // (3) 기념품 — 같은 도시 또는 같은 날짜의 기념품을 모아서 표시
+      var souvenirs = journeyData.filter(function(j){
+        if (j.type !== '기념품') return false;
+        // 날짜가 있으면 날짜 매칭 우선, 없으면 도시 매칭
+        if (j.date && j.date === dateStr) return true;
+        if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
+        return false;
+      });
+      if (souvenirs.length > 0) {
+        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border-left-color:#10b981">' +
+          '<div class="flex items-center gap-2 mb-2">' +
+            '<span class="material-symbols-outlined text-emerald-600" style="font-size:18px">shopping_bag</span>' +
+            '<span class="text-[10px] font-black uppercase tracking-widest text-emerald-700">이 날 / 이 도시 쇼핑</span>' +
+          '</div>' +
+          '<ul class="space-y-1.5">' +
+            souvenirs.map(function(s){
+              var item = s.description || s.title || '—';
+              var target = s.title && s.description ? s.title : '';
+              var price = s.amount ? ' <span class="text-[10px] text-emerald-600 font-bold">€' + s.amount + '</span>' : '';
+              return '<li class="flex items-start gap-2 text-[12px]">' +
+                '<span class="text-emerald-500 mt-0.5">▸</span>' +
+                '<span class="flex-1">' +
+                  '<span class="font-bold text-slate-800">' + String(item).replace(/</g,'&lt;') + '</span>' +
+                  (target ? ' <span class="text-[10px] text-slate-400">(' + String(target).replace(/</g,'&lt;') + ')</span>' : '') +
+                  price +
+                '</span>' +
+              '</li>';
+            }).join('') +
+          '</ul>' +
+        '</div>';
+      }
+      extraPanel.innerHTML = panelHtml;
     }
 
     var container = document.getElementById('journey-schedule-list');
