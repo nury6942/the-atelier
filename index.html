@@ -21277,9 +21277,10 @@ function showScanResult(r) {
     html += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-violet-600" style="font-size:14px">info</span><span class="text-[11px] font-black text-violet-700 uppercase tracking-wider">예약 상세</span></div>';
     html += '<div class="space-y-1.5">';
     visible.forEach(function(it){
+      var valId = it.id ? ' id="' + it.id + '"' : '';
       html += '<div class="flex justify-between items-baseline gap-2">';
       html += '<span class="text-[10px] text-violet-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">' + it.icon + '</span>' + it.label + '</span>';
-      html += '<span class="text-sm font-bold text-slate-800 text-right">' + it.val + '</span>';
+      html += '<span class="text-sm font-bold text-slate-800 text-right"' + valId + '>' + it.val + '</span>';
       html += '</div>';
     });
     html += '</div></div>';
@@ -21310,8 +21311,12 @@ function showScanResult(r) {
       { icon:'group',            label:'인원',   val: r.guests },
       { icon:'smoke_free',       label:'흡연',   val: r.smoking },
       { icon:'restaurant',       label:'식사',   val: r.meal },
-      { icon:'account_balance_wallet', label:'보증금', val: r.deposit }
+      { icon:'account_balance_wallet', label:'보증금', val: r.deposit, id:'scan-deposit-val' }
     ]);
+    // 보증금이 외화면 → 비동기로 원화 환산해서 옆에 붙임
+    if (r.deposit) {
+      setTimeout(function(){ _appendDepositKrw(r.deposit); }, 50);
+    }
   } else if (r.type === '이동수단') {
     rows.push(row('이름', r.transport_name));
     rows.push(row('루트', r.route));
@@ -21418,6 +21423,67 @@ function applyBookingScan() {
 function _setVal(id, val) {
   var el = document.getElementById(id);
   if (el && val !== undefined && val !== null && val !== '') el.value = val;
+}
+
+// 통화 문자열 파싱: 'EUR 20.00', '€20', '20 USD' → {currency:'EUR', amount:20}
+function _parseCurrencyAmount(str) {
+  if (!str || typeof str !== 'string') return null;
+  var symbolToCode = { '€':'EUR', '$':'USD', '£':'GBP', '¥':'JPY', '₩':'KRW' };
+  var codeMatch = str.match(/\b(EUR|USD|GBP|JPY|CNY|CHF|AUD|CAD|HKD|SGD|THB|KRW|NZD|TWD|VND|IDR|MYR|PHP|INR)\b/i);
+  var symMatch = str.match(/[€$£¥₩]/);
+  var currency = codeMatch ? codeMatch[1].toUpperCase() : (symMatch ? symbolToCode[symMatch[0]] : null);
+  var amountMatch = str.match(/[\d,]+\.?\d*/);
+  if (!currency || !amountMatch) return null;
+  var amount = parseFloat(amountMatch[0].replace(/,/g,''));
+  if (isNaN(amount) || amount === 0) return null;
+  return { currency: currency, amount: amount };
+}
+
+// 보증금 텍스트 옆에 KRW 환산값 추가 (비동기, 환율 조회 후 DOM 업데이트)
+async function _appendDepositKrw(depositStr) {
+  var el = document.getElementById('scan-deposit-val');
+  if (!el) return;
+  var parsed = _parseCurrencyAmount(depositStr);
+  if (!parsed) return;
+  if (parsed.currency === 'KRW') return; // 이미 원화면 변환 불필요
+  // 로딩 표시
+  el.innerHTML = depositStr + ' <span class="text-[10px] text-violet-400 font-normal">(환율 조회중...)</span>';
+  var rate = await _fetchKrwRate(parsed.currency);
+  if (!rate) {
+    el.innerHTML = depositStr + ' <span class="text-[10px] text-rose-400 font-normal">(환율 조회 실패)</span>';
+    return;
+  }
+  var krw = Math.round(parsed.amount * rate);
+  el.innerHTML = depositStr + ' <span class="text-[11px] text-violet-500 font-bold">≈ ₩' + krw.toLocaleString('ko-KR') + '</span>';
+}
+
+// 임의 통화 → KRW 환율 (12시간 캐시, 수수료 1.75% 반영)
+async function _fetchKrwRate(currency) {
+  var key = String(currency || '').toUpperCase();
+  if (!key) return null;
+  if (key === 'KRW') return 1;
+  var markup = (typeof FX_MARKUP_RATE !== 'undefined') ? FX_MARKUP_RATE : 1.0175;
+  var cacheKey = 'atelier_fx_' + key + '_krw';
+  try {
+    var cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (cached && cached.rate && (Date.now() - cached.fetchedAt < 43200000)) {
+      return Math.round(cached.rate * markup);
+    }
+  } catch(e){}
+  try {
+    var res = await fetch('https://api.exchangerate-api.com/v4/latest/' + key);
+    var data = await res.json();
+    if (data && data.rates && data.rates.KRW) {
+      localStorage.setItem(cacheKey, JSON.stringify({ rate: data.rates.KRW, fetchedAt: Date.now() }));
+      return Math.round(data.rates.KRW * markup);
+    }
+  } catch(e) { console.warn('[FX]', key, '→ KRW 실패:', e); }
+  // 폴백: 오래된 캐시
+  try {
+    var old = JSON.parse(localStorage.getItem(cacheKey));
+    if (old && old.rate) return Math.round(old.rate * markup);
+  } catch(e){}
+  return null;
 }
 
 // 예약 스캔 노트에서 노이즈(예약번호/PIN/트립코인/특가/세금/객실수/식사/보증금/무료취소 등) 제거
