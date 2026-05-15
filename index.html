@@ -3071,86 +3071,6 @@
     </div>
 
     <!-- ═══════════════════════════════════ 예약 스캔 모달 ═══ -->
-    <!-- ═══════ 일정 임포트 모달 (Outlook .ics / GTM 엑셀) ═══════ -->
-    <div id="import-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
-      <div class="bg-white w-full max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
-        <!-- 헤더 -->
-        <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-white">upload_file</span>
-            </div>
-            <div>
-              <h2 class="text-white font-bold text-lg">일정 임포트</h2>
-              <p class="text-white/80 text-xs">Outlook .ics · GTM .xlsx · CSV</p>
-            </div>
-          </div>
-          <button onclick="closeImportModal()" class="text-white/70 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        <!-- 스크롤 영역 -->
-        <div class="p-5 overflow-y-auto flex-1 space-y-4">
-          <!-- 가이드 -->
-          <div class="bg-sky-50 border border-sky-100 rounded-xl p-3 text-xs text-sky-800 leading-relaxed">
-            <strong>📥 어떻게 내보내요?</strong><br>
-            • <strong>Outlook 앱</strong>: 일정 → 파일 → 다른 이름으로 저장 → <code>iCalendar 형식 (.ics)</code><br>
-            • <strong>Outlook Web</strong>: 캘린더 → ⚙️ 설정 → 캘린더 → 공유 캘린더 → ICS 다운로드<br>
-            • <strong>GTM 엑셀</strong>: 그대로 .xlsx 파일 업로드 — Claude AI가 컬럼 자동 매핑
-          </div>
-          <!-- 업로드 존 -->
-          <div id="import-drop-zone" onclick="document.getElementById('import-file-input').click()"
-               ondragover="event.preventDefault();this.classList.add('border-sky-400','bg-sky-50')"
-               ondragleave="this.classList.remove('border-sky-400','bg-sky-50')"
-               ondrop="handleImportDrop(event)"
-               class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:border-sky-300 hover:bg-sky-50/50 transition-all">
-            <div id="import-drop-placeholder">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mx-auto mb-2">
-                <span class="material-symbols-outlined text-sky-500" style="font-size:28px">upload_file</span>
-              </div>
-              <p class="text-sm font-bold text-slate-700 mb-1">파일 업로드</p>
-              <p class="text-xs text-slate-400">.ics, .xlsx, .csv · 클릭하거나 드래그</p>
-            </div>
-            <div id="import-file-info" class="hidden flex flex-col items-center gap-1">
-              <span class="material-symbols-outlined text-sky-600" style="font-size:24px">description</span>
-              <span id="import-file-name" class="font-bold text-slate-700 text-sm"></span>
-              <span id="import-file-size" class="text-xs text-slate-400"></span>
-            </div>
-          </div>
-          <input id="import-file-input" type="file" accept=".ics,.xlsx,.xls,.csv" class="hidden" onchange="handleImportFile(event)"/>
-          <!-- 옵션 -->
-          <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-            <label class="flex items-center gap-2 text-xs cursor-pointer">
-              <input type="checkbox" id="import-default-business" class="w-4 h-4 rounded accent-sky-500"/>
-              <span class="text-slate-700 font-bold">카테고리를 모두 '업무'로 설정 (회사일정 자동 인식)</span>
-            </label>
-          </div>
-          <!-- 분석 상태 -->
-          <div id="import-status" class="hidden px-4 py-3 rounded-xl text-xs"></div>
-          <!-- 미리보기 -->
-          <div id="import-preview" class="hidden">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">미리보기 (<span id="import-preview-count">0</span>건)</h3>
-              <div class="text-[10px] text-slate-400">기존 일정과 겹치면 자동 스킵</div>
-            </div>
-            <div id="import-preview-list" class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl bg-slate-50/50"></div>
-          </div>
-        </div>
-        <!-- 푸터 (고정) -->
-        <div class="px-5 py-4 border-t border-slate-100 bg-white flex gap-2 flex-shrink-0 sm:rounded-b-3xl">
-          <button onclick="closeImportModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition-colors">취소</button>
-          <button id="import-analyze-btn" onclick="analyzeImportFile()" disabled class="flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
-            <span class="material-symbols-outlined" style="font-size:16px">auto_awesome</span>
-            <span id="import-analyze-label">파일을 먼저 올려주세요</span>
-          </button>
-          <button id="import-apply-btn" onclick="applyImport()" class="hidden flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#10b981,#059669)">
-            <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>
-            <span id="import-apply-label">N건 일정 추가</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
     <div id="booking-scan-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
       <div class="bg-white w-full max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
         <!-- 헤더 (고정) -->
@@ -4624,6 +4544,86 @@
           <button onclick="closeMatrixModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveMatrixEntry()" id="modal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 일정 임포트 모달 (Outlook .ics / GTM 엑셀) — global, outside all page divs ═══════ -->
+  <div id="import-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
+    <div class="bg-white w-full max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
+      <!-- 헤더 -->
+      <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">upload_file</span>
+          </div>
+          <div>
+            <h2 class="text-white font-bold text-lg">일정 임포트</h2>
+            <p class="text-white/80 text-xs">Outlook .ics · GTM .xlsx · CSV</p>
+          </div>
+        </div>
+        <button onclick="closeImportModal()" class="text-white/70 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <!-- 스크롤 영역 -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-4">
+        <!-- 가이드 -->
+        <div class="bg-sky-50 border border-sky-100 rounded-xl p-3 text-xs text-sky-800 leading-relaxed">
+          <strong>📥 어떻게 내보내요?</strong><br>
+          • <strong>Outlook 앱</strong>: 일정 → 파일 → 다른 이름으로 저장 → <code>iCalendar 형식 (.ics)</code><br>
+          • <strong>Outlook Web</strong>: 캘린더 → ⚙️ 설정 → 캘린더 → 공유 캘린더 → ICS 다운로드<br>
+          • <strong>GTM 엑셀</strong>: 그대로 .xlsx 파일 업로드 — Claude AI가 컬럼 자동 매핑
+        </div>
+        <!-- 업로드 존 -->
+        <div id="import-drop-zone" onclick="document.getElementById('import-file-input').click()"
+             ondragover="event.preventDefault();this.classList.add('border-sky-400','bg-sky-50')"
+             ondragleave="this.classList.remove('border-sky-400','bg-sky-50')"
+             ondrop="handleImportDrop(event)"
+             class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:border-sky-300 hover:bg-sky-50/50 transition-all">
+          <div id="import-drop-placeholder">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mx-auto mb-2">
+              <span class="material-symbols-outlined text-sky-500" style="font-size:28px">upload_file</span>
+            </div>
+            <p class="text-sm font-bold text-slate-700 mb-1">파일 업로드</p>
+            <p class="text-xs text-slate-400">.ics, .xlsx, .csv · 클릭하거나 드래그</p>
+          </div>
+          <div id="import-file-info" class="hidden flex flex-col items-center gap-1">
+            <span class="material-symbols-outlined text-sky-600" style="font-size:24px">description</span>
+            <span id="import-file-name" class="font-bold text-slate-700 text-sm"></span>
+            <span id="import-file-size" class="text-xs text-slate-400"></span>
+          </div>
+        </div>
+        <input id="import-file-input" type="file" accept=".ics,.xlsx,.xls,.csv" class="hidden" onchange="handleImportFile(event)"/>
+        <!-- 옵션 -->
+        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+          <label class="flex items-center gap-2 text-xs cursor-pointer">
+            <input type="checkbox" id="import-default-business" class="w-4 h-4 rounded accent-sky-500"/>
+            <span class="text-slate-700 font-bold">카테고리를 모두 '업무'로 설정 (회사일정 자동 인식)</span>
+          </label>
+        </div>
+        <!-- 분석 상태 -->
+        <div id="import-status" class="hidden px-4 py-3 rounded-xl text-xs"></div>
+        <!-- 미리보기 -->
+        <div id="import-preview" class="hidden">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">미리보기 (<span id="import-preview-count">0</span>건)</h3>
+            <div class="text-[10px] text-slate-400">기존 일정과 겹치면 자동 스킵</div>
+          </div>
+          <div id="import-preview-list" class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl bg-slate-50/50"></div>
+        </div>
+      </div>
+      <!-- 푸터 (고정) -->
+      <div class="px-5 py-4 border-t border-slate-100 bg-white flex gap-2 flex-shrink-0 sm:rounded-b-3xl">
+        <button onclick="closeImportModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition-colors">취소</button>
+        <button id="import-analyze-btn" onclick="analyzeImportFile()" disabled class="flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
+          <span class="material-symbols-outlined" style="font-size:16px">auto_awesome</span>
+          <span id="import-analyze-label">파일을 먼저 올려주세요</span>
+        </button>
+        <button id="import-apply-btn" onclick="applyImport()" class="hidden flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#10b981,#059669)">
+          <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>
+          <span id="import-apply-label">N건 일정 추가</span>
+        </button>
       </div>
     </div>
   </div>
