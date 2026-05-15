@@ -5028,6 +5028,25 @@
         <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px"></div>
       </section>
 
+      <!-- ─── 캘린더용 미니 Series Timeline ─── -->
+      <section id="cal-work-timeline-section" class="bg-white rounded-3xl p-6 shadow-[0px_12px_32px_rgba(25,28,29,0.04)]" style="display:none">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-indigo-500" style="font-size:18px">timeline</span>
+            <h3 class="text-base font-bold text-slate-900 font-headline">Series Timeline</h3>
+            <span class="text-[10px] text-slate-400">변경 시 자동 동기화</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="_scrollCalUtToday()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-all"><span class="material-symbols-outlined" style="font-size:13px">today</span>오늘</button>
+            <button onclick="manualCleanupDuplicates()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-amber-200 text-amber-700 bg-white hover:bg-amber-50 transition-all" title="중복 일정 정리"><span class="material-symbols-outlined" style="font-size:13px">cleaning_services</span>중복 정리</button>
+            <button onclick="openNewWorkModal()" class="px-3 py-1.5 rounded-lg text-white font-bold text-[11px] flex items-center gap-1 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:13px">add</span>새 작품</button>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent;max-height:320px;overflow-y:auto" id="cal-ut-scroll">
+          <div id="cal-work-timeline-chart"></div>
+        </div>
+      </section>
+
       <!-- 날짜 일정 팝업 (모바일) -->
       <div id="day-events-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" style="display:none" onclick="if(event.target===this)closeDayEventsModal()">
         <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[80vh] overflow-y-auto shadow-2xl">
@@ -5774,6 +5793,9 @@
       loadPlannerGoals();
       _loadSeriesMap();
       _loadYearlyBirthdays();
+      // 캘린더 페이지에 미니 Series Timeline도 같이 렌더
+      if (typeof loadWorks === 'function') loadWorks();
+      if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
     } catch(err) {
       console.error('Planner load error:', err);
     }
@@ -16523,6 +16545,18 @@
     Object.keys(updates).forEach(function(k) { w[k] = updates[k]; });
     w.updated_at = new Date().toISOString();
     saveWorks();
+    // ★ 자동 silent 재동기화 — confirmed 작품이면 캘린더 일정 즉시 갱신
+    // 사용자가 매번 "재동기화" 버튼을 누르지 않아도 됨
+    if (w.status === 'confirmed' && typeof removeWorkCalEvents === 'function' && typeof autoAddScheduleToCalendar === 'function') {
+      (async function(){
+        try {
+          await removeWorkCalEvents(id);
+          await autoAddScheduleToCalendar(w);
+          if (typeof renderCalendar === 'function') renderCalendar();
+          if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
+        } catch(e){ console.warn('[updateWork auto-sync]', e); }
+      })();
+    }
   }
 
   function deleteWork(id) {
@@ -16798,11 +16832,16 @@
   }
 
   function renderWorkTimeline() {
+    // Money 페이지의 타임라인 + 캘린더 페이지의 미니 타임라인 둘 다 그림
     var section = document.getElementById('work-timeline-section');
     var chart = document.getElementById('work-timeline-chart');
-    if (!section) return;
-    section.style.display = _works.length > 0 ? '' : 'none';
-    if (_works.length === 0 || !chart) return;
+    var calSection = document.getElementById('cal-work-timeline-section');
+    var calChart = document.getElementById('cal-work-timeline-chart');
+    var hasWorks = _works.length > 0;
+    if (section) section.style.display = hasWorks ? '' : 'none';
+    if (calSection) calSection.style.display = hasWorks ? '' : 'none';
+    if (!hasWorks) return;
+    if (!chart && !calChart) return;
     // Dynamic range from all works
     var today = new Date(); today.setHours(0,0,0,0);
     var rStart = new Date(today); rStart.setMonth(rStart.getMonth() - 2);
@@ -16874,14 +16913,23 @@
         rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:2px;background:#ef4444;opacity:0.4"></div>';
         rowsHtml += '</div></div>';
     });
-    chart.innerHTML = '<div style="min-width:'+dynW+'px;position:relative">' +
+    var chartHtml = '<div style="min-width:'+dynW+'px;position:relative">' +
       '<div class="flex items-stretch" style="height:40px;border-bottom:2px solid #e5e7eb">' +
         '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:210px;position:sticky;left:0;background:white;z-index:8;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
         '<div class="relative flex-1" style="background:#f9fafb;border-radius:0 8px 0 0">' + hHtml + '</div>' +
-      '</div><div id="ut-body">'+rowsHtml+'</div></div>';
-    setTimeout(function() { var sc=document.getElementById('ut-scroll'); if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);} },120);
+      '</div><div>'+rowsHtml+'</div></div>';
+    if (chart) chart.innerHTML = chartHtml;
+    if (calChart) calChart.innerHTML = chartHtml;
+    setTimeout(function() {
+      ['ut-scroll', 'cal-ut-scroll'].forEach(function(scId){
+        var sc=document.getElementById(scId);
+        if(sc){var tp=todayPct/100*dynW; sc.scrollLeft=Math.max(0,tp-sc.offsetWidth/3);}
+      });
+    },120);
   }
   function _scrollUtToday() { var sc=document.getElementById('ut-scroll'); if(!sc) return; var tl=sc.querySelector('[style*="background:#ef4444"]'); if(tl){sc.scrollLeft=Math.max(0,tl.offsetLeft-sc.offsetWidth/3);} }
+  function _scrollCalUtToday() { var sc=document.getElementById('cal-ut-scroll'); if(!sc) return; var tl=sc.querySelector('[style*="background:#ef4444"]'); if(tl){sc.scrollLeft=Math.max(0,tl.offsetLeft-sc.offsetWidth/3);} }
+  window._scrollCalUtToday = _scrollCalUtToday;
 
   function renderMxPipelineGantt() {
     var section = document.getElementById('mx-pipeline-section');
