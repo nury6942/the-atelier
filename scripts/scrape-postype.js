@@ -88,28 +88,47 @@ async function main() {
     // 스크롤로 추가 결과 로드
     await autoScroll(page, 5);
 
-    // ── 2. 사이드바 추출 (연관 검색어 + 추천 태그) ──
+    // ── 2. 사이드바 추출 (연관 검색어 + 추천 태그) — 다중 전략 ──
     const sidebar = await page.evaluate(() => {
       const out = { relatedKeywords: [], recommendedTags: [] };
-      function findSection(headerText) {
-        const headers = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, strong, b, div, span'));
-        const h = headers.find(e => (e.textContent || '').trim() === headerText);
-        if (!h) return null;
-        // 형제 또는 부모 내에서 chip 형태의 a/button 찾기
-        let scope = h.parentElement;
-        while (scope && scope !== document.body) {
-          const chips = Array.from(scope.querySelectorAll('a, button, span'))
-            .map(e => (e.textContent || '').trim())
-            .filter(t => t && t.length > 0 && t.length < 40 && t !== headerText);
-          if (chips.length >= 2 && chips.length <= 30) return chips;
-          scope = scope.parentElement;
-        }
-        return null;
+
+      // Strategy 1: 헤더 텍스트로 정확히 매칭 (관대한 버전 — 직접 자식 텍스트 노드만 확인)
+      function getDirectText(el) {
+        return Array.from(el.childNodes)
+          .filter(n => n.nodeType === 3)
+          .map(n => n.textContent.trim())
+          .join('');
       }
-      const related = findSection('연관 검색어');
-      const tags = findSection('추천 태그');
-      if (related) out.relatedKeywords = related.slice(0, 20);
-      if (tags) out.recommendedTags = tags.slice(0, 20);
+      function findChipsAfterHeader(headerText) {
+        const all = Array.from(document.querySelectorAll('*'));
+        const candidates = all.filter(e => {
+          const t = getDirectText(e);
+          return t === headerText;
+        });
+        for (const h of candidates) {
+          let scope = h.parentElement;
+          while (scope && scope !== document.body) {
+            // chip-like: a/button with short text content
+            const chips = Array.from(scope.querySelectorAll('a, button'))
+              .map(e => (e.textContent || '').trim())
+              .filter(t => t && t.length > 0 && t.length < 40 && t !== headerText);
+            const unique = [...new Set(chips)];
+            if (unique.length >= 3 && unique.length <= 40) return unique;
+            scope = scope.parentElement;
+          }
+        }
+        return [];
+      }
+      out.relatedKeywords = findChipsAfterHeader('연관 검색어').slice(0, 20);
+      out.recommendedTags = findChipsAfterHeader('추천 태그').slice(0, 20);
+
+      // Strategy 2: 어떤 헤더도 못 찾았으면 — 모든 a 태그 중 #으로 시작하는 짧은 것들 모음 (fallback)
+      if (out.recommendedTags.length === 0) {
+        const hashTags = Array.from(document.querySelectorAll('a, span'))
+          .map(e => (e.textContent || '').trim())
+          .filter(t => t.startsWith('#') && t.length < 30);
+        out.recommendedTags = [...new Set(hashTags)].slice(0, 20);
+      }
       return out;
     });
     log('sidebar:', sidebar.relatedKeywords.length, 'kw,', sidebar.recommendedTags.length, 'tags');
@@ -158,43 +177,33 @@ async function main() {
             const e = document.querySelector(`meta[property="${name}"], meta[name="${name}"]`);
             return e ? e.getAttribute('content') || '' : '';
           }
-          function findByLabel(labels) {
-            // 페이지 본문에서 "조회 1,234" 같은 패턴 찾기
-            const body = document.body.innerText;
-            for (const label of labels) {
-              const re = new RegExp(`${label}\\s*([\\d,]+)`);
-              const m = body.match(re);
-              if (m) return parseInt(m[1].replace(/,/g, ''), 10);
-            }
-            return null;
-          }
           const tags = Array.from(document.querySelectorAll('a[href*="/tag"], a[href*="tags="], [class*="tag"], [class*="Tag"]'))
             .map(e => (e.textContent || '').trim())
             .filter(t => t.startsWith('#') || (t.length > 0 && t.length < 30))
             .filter((t, i, arr) => arr.indexOf(t) === i)
             .slice(0, 20);
-          // 19+ 여부: body에 "성인", "19", "adult" 단어 검출
+          // 19+ 여부 (메타+클래스+텍스트)
           const isAdult = /19\+|성인 인증|성인콘텐츠|adult/i.test(document.body.innerText) ||
                           !!document.querySelector('[class*="adult"], [class*="Adult"]');
           // 유료/무료: "유료", "구매" 등 단어
           const bodyText = document.body.innerText;
           const isPaid = /유료|구매|판매|결제|₩|원\s*\/\s*화/.test(bodyText) && !/무료/.test(bodyText.split('\n')[0] || '');
+          // 페이지 본문 일부 — Claude가 후속 분석에 사용 (조회수/좋아요 등 추출용)
+          const bodyTextSample = (bodyText || '').substring(0, 1500);
           return {
             title: meta('og:title') || txt('h1') || document.title,
             url: location.href,
             description: meta('og:description') || meta('description') || '',
-            author: meta('og:article:author') || txt('[class*="author" i] a') || txt('[class*="profile" i] a') || '',
             tags: tags,
-            views: findByLabel(['조회', 'views']),
-            likes: findByLabel(['좋아요', 'likes', '하트']),
-            subscribers: findByLabel(['구독', 'subscribers']),
             isAdult: isAdult,
             isPaid: isPaid,
-            wordCount: findByLabel(['글자수', '자수', '글자']),
-            chapters: findByLabel(['회차', '화']),
+            bodyTextSample: bodyTextSample,
             scrapedAt: new Date().toISOString(),
           };
         });
+        // 작가명은 URL에서 추출 (가장 신뢰할 만함): /@username/post/...
+        const authorMatch = url.match(/\/@([^\/]+)\/post\//);
+        meta.author = authorMatch ? authorMatch[1] : '';
         posts.push(meta);
       } catch (e) {
         log('  ERROR on post:', e.message);

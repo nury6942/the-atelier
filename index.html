@@ -14318,10 +14318,14 @@
       html += section('💰 유료/무료 분포', '유료 <b>' + (m.paidRatio||'?') + '</b> · 무료 <b>' + (m.freeRatio||'?') + '</b><div class="text-[11px] text-slate-500 mt-1">' + (m.note||'') + '</div>');
     }
 
-    // 글자수/회차
-    if (a.lengthPattern) {
-      var l = a.lengthPattern;
-      html += section('📏 글자수·회차 패턴', '평균 글자수 <b>' + (l.avgWordCount||'?') + '</b> · 평균 회차 <b>' + (l.avgChapters||'?') + '</b>' + (l.note?'<div class="text-[11px] text-slate-500 mt-1">' + l.note + '</div>':''));
+    // 캐릭터 유형
+    if (a.characterArchetypes && a.characterArchetypes.length) {
+      var ca = '<div class="space-y-1">';
+      a.characterArchetypes.forEach(function(c){
+        ca += '<div><b>' + (c.archetype||'') + '</b>' + (c.examples?' <span class="text-[11px] text-slate-500">— ' + c.examples + '</span>':'') + '</div>';
+      });
+      ca += '</div>';
+      html += section('🎭 캐릭터 유형 패턴', ca);
     }
 
     // 인기 작가
