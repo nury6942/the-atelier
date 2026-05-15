@@ -21771,6 +21771,7 @@ async function analyzeBookingImage() {
   "rental_payment_status": "렌트카일 때만. '결제 완료' 또는 '결제 예정' 또는 '현장 결제'",
   "rental_insurance": "렌트카일 때만. 보험 종류. 예: '풀커버 보험', '기본 보험', '면책금 0'",
   "rental_options": "렌트카일 때만. 옵션 등. 예: 'GPS, 추가 운전자', 없으면 빈 문자열",
+  "rental_deposit": "렌트카일 때만. 픽업 시 카드 블로킹/보증금 금액 (실제 결제와 별개). 예: 'EUR 100.00' (실 결제가 473이고 블로킹이 573이면 차액 100이 보증금). 없으면 빈 문자열",
   "transport_name": "이동수단명 (기차/버스 등)",
   "route": "출발지 → 목적지",
   "price_krw": 0,
@@ -21796,7 +21797,16 @@ async function analyzeBookingImage() {
 notes는 위 모든 구조화 필드에도 안 들어가는 진짜 특이한 정보(예: "조기 체크인 가능", "공항 셔틀 운영")만 들어갑니다.
 판단이 애매하면 빈 문자열("")로 두세요. 빈 문자열이 노이즈보다 훨씬 낫습니다.
 
-읽을 수 없는 필드는 빈 문자열("")로 설정. price_krw는 한화 금액이 보이면 숫자로, 없으면 0.`;
+읽을 수 없는 필드는 빈 문자열("")로 설정.
+
+★ 가격 추출 규칙 ★
+- price_original: 문서의 메인 통화 표기 그대로 추출. 예: "EUR 473.79", "$320", "₩2,408,480"
+- price_krw: 한화로 명시된 금액이 있을 때만 숫자(쉼표/통화기호 제외)로. 없으면 0
+- 외화만 있고 한화 환산이 문서에 없으면 → price_krw=0, price_original만 채움 (클라이언트가 환율 변환 처리)
+- 렌트카에서 메인 가격과 픽업 시 블로킹 금액이 다르면:
+  · price_original/price_krw = 메인 결제 가격 (예: EUR 473.79)
+  · rental_deposit = 차액 또는 메모의 블로킹 안내 금액 (예: 'EUR 100.00')
+- 메모(notes)에는 블로킹/보증금/결제 안내문 같은 거 절대 넣지 마세요. 그건 deposit/rental_deposit 필드로.`;
 
   // PDF면 document 타입, 이미지면 image 타입
   var isPdf = (_scanImageType === 'application/pdf');
@@ -22168,7 +22178,7 @@ function applyBookingScan() {
     } else if (r.type === '렌트카') {
       // 가로형 Add New Rental Car 모달 사용
       if (typeof openTravelModal === 'function') openTravelModal('rental-add-modal-wrap');
-      setTimeout(function() {
+      setTimeout(async function() {
         // 회사/차종
         _setVal('rc-company', r.rental_company || r.transport_name || r.hotel_name);
         _setVal('rc-model', r.rental_model);
@@ -22186,16 +22196,49 @@ function applyBookingScan() {
         _setVal('rc-payment-date', r.payment_date);
         _setVal('rc-booking-ref', r.rental_booking_ref);
         _setVal('rc-driver', r.rental_driver);
-        if (r.price_krw) _setVal('rc-price', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        // ★ 가격 자동 환산: price_krw 있으면 그대로, 없고 price_original(외화)만 있으면 환율 변환
+        var priceKrw = r.price_krw || 0;
+        var priceLabel = ''; // 외화 표기 (메모에 같이 적기 위해)
+        if (!priceKrw && r.price_original) {
+          var parsed = _parseCurrencyAmount(r.price_original);
+          if (parsed && parsed.currency !== 'KRW') {
+            try {
+              var rate = await _fetchKrwRate(parsed.currency);
+              if (rate) {
+                priceKrw = Math.round(parsed.amount * rate);
+                priceLabel = r.price_original + ' (≈₩' + priceKrw.toLocaleString('ko-KR') + ')';
+              }
+            } catch(e) { console.warn('[rental price fx]', e); }
+          } else if (parsed && parsed.currency === 'KRW') {
+            priceKrw = parsed.amount;
+          }
+        }
+        if (priceKrw) _setVal('rc-price', String(priceKrw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
         // 결제 상태 토글
         if (typeof selectRentalAddPayStatus === 'function' && r.rental_payment_status) {
           var payAllowed = ['결제 예정','결제 완료','현장 결제'];
           if (payAllowed.indexOf(r.rental_payment_status) >= 0) selectRentalAddPayStatus(r.rental_payment_status);
         }
-        // 메모 = 보험 + 옵션 결합 (· 구분)
+        // 보증금/블로킹도 메모에 KRW 환산 같이 표기
+        var depositLabel = '';
+        if (r.rental_deposit) {
+          var dp = _parseCurrencyAmount(r.rental_deposit);
+          if (dp && dp.currency !== 'KRW') {
+            try {
+              var drate = await _fetchKrwRate(dp.currency);
+              if (drate) depositLabel = '보증금/블로킹 ' + r.rental_deposit + ' (≈₩' + Math.round(dp.amount * drate).toLocaleString('ko-KR') + ')';
+              else depositLabel = '보증금/블로킹 ' + r.rental_deposit;
+            } catch(e) { depositLabel = '보증금/블로킹 ' + r.rental_deposit; }
+          } else {
+            depositLabel = '보증금/블로킹 ' + r.rental_deposit;
+          }
+        }
+        // 메모 = 가격 외화 표기 + 보험 + 옵션 + 보증금
         var memoParts = [];
+        if (priceLabel) memoParts.push(priceLabel);
         if (r.rental_insurance) memoParts.push(r.rental_insurance);
         if (r.rental_options) memoParts.push(r.rental_options);
+        if (depositLabel) memoParts.push(depositLabel);
         if (r.notes) memoParts.push(r.notes);
         _setVal('rc-notes', memoParts.join(' · '));
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 렌트카 정보가 자동 입력됐어요 🚗');
