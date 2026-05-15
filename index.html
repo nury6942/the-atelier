@@ -5122,6 +5122,44 @@
         <button onclick="runCalMigration()" class="px-4 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors shrink-0">🔄 마이그레이션</button>
       </div>
 
+      <!-- ═══════ AI 부업 수익 예측 ═══════ -->
+      <section class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100" style="box-shadow:0 8px 24px rgba(124,58,237,0.08)">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#ec4899)">
+              <span class="material-symbols-outlined" style="font-size:20px">insights</span>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900" style="font-family:'Pretendard',sans-serif">부업 수익 예측</h3>
+              <p class="text-[11px] text-slate-500">작품별 트렌드 + AI 분석</p>
+            </div>
+          </div>
+          <button onclick="generateIncomeForecast(true)" class="px-3 py-1.5 rounded-lg text-violet-700 bg-white hover:bg-violet-50 text-xs font-bold flex items-center gap-1 border border-violet-200 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">refresh</span>새로 분석</button>
+        </div>
+        <!-- KPI 카드 3개 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3" style="font-family:'Pretendard',sans-serif">
+          <div class="bg-white rounded-xl p-3.5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">올해 누적</p>
+            <p id="forecast-ytd" class="text-xl font-extrabold text-slate-900">—</p>
+            <p id="forecast-ytd-trend" class="text-[10px] text-slate-500 mt-0.5">전년 동기 대비 —</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">다음 분기 예측</p>
+            <p id="forecast-next-q" class="text-xl font-extrabold text-violet-600">—</p>
+            <p id="forecast-next-q-detail" class="text-[10px] text-slate-500 mt-0.5">—</p>
+          </div>
+          <div class="bg-white rounded-xl p-3.5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">연간 예상</p>
+            <p id="forecast-year-end" class="text-xl font-extrabold text-pink-600">—</p>
+            <p id="forecast-year-end-detail" class="text-[10px] text-slate-500 mt-0.5">—</p>
+          </div>
+        </div>
+        <!-- AI 인사이트 -->
+        <div id="forecast-insights" class="bg-white rounded-xl p-4 text-[13px] text-slate-700 leading-relaxed" style="font-family:'Pretendard',sans-serif">
+          <div class="text-slate-400 italic flex items-center gap-2"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>
+        </div>
+      </section>
+
       <!-- Annual Performance Matrix -->
       <section>
         <header class="mb-6 flex justify-between items-center">
@@ -13978,6 +14016,167 @@
     } catch(e) { console.warn('clipboard:', e); }
   };
 
+  // ═══════════════════════════════════════════════════════
+  // 부업 수익 예측 (AI 분석)
+  // ═══════════════════════════════════════════════════════
+  window.generateIncomeForecast = async function(forceRefresh) {
+    var ytdEl = document.getElementById('forecast-ytd');
+    var ytdTrendEl = document.getElementById('forecast-ytd-trend');
+    var nextQEl = document.getElementById('forecast-next-q');
+    var nextQDetailEl = document.getElementById('forecast-next-q-detail');
+    var yearEl = document.getElementById('forecast-year-end');
+    var yearDetailEl = document.getElementById('forecast-year-end-detail');
+    var insightsEl = document.getElementById('forecast-insights');
+    if (!insightsEl) return;
+
+    // 캐시 (12시간)
+    var cacheKey = 'atelier_income_forecast_v1';
+    if (!forceRefresh) {
+      try {
+        var cached = JSON.parse(localStorage.getItem(cacheKey));
+        if (cached && cached.at && (Date.now() - cached.at < 12*3600000)) {
+          if (ytdEl) ytdEl.textContent = cached.ytd;
+          if (ytdTrendEl) ytdTrendEl.textContent = cached.ytdTrend;
+          if (nextQEl) nextQEl.textContent = cached.nextQ;
+          if (nextQDetailEl) nextQDetailEl.textContent = cached.nextQDetail;
+          if (yearEl) yearEl.textContent = cached.year;
+          if (yearDetailEl) yearDetailEl.textContent = cached.yearDetail;
+          if (insightsEl) insightsEl.innerHTML = cached.insights;
+          return;
+        }
+      } catch(e){}
+    }
+
+    insightsEl.innerHTML = '<div class="text-slate-400 italic flex items-center gap-2"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>';
+
+    // 모든 연도 시리즈 데이터 수집
+    var now = new Date();
+    var thisYr = now.getFullYear();
+    var lastYr = thisYr - 1;
+    var thisMonth = now.getMonth(); // 0-indexed
+
+    function getYrSeries(yr) {
+      try {
+        var key = 'atelier_series_' + yr;
+        return JSON.parse(localStorage.getItem(key)) || [];
+      } catch(e) { return []; }
+    }
+    var seriesThisYr = getYrSeries(thisYr);
+    var seriesLastYr = getYrSeries(lastYr);
+
+    // 월별 수익 합산
+    function totalByMonth(series) {
+      var monthly = new Array(12).fill(0);
+      series.forEach(function(s){
+        for (var m = 0; m < 12; m++) {
+          if (s.monthly && s.monthly[m]) monthly[m] += (s.monthly[m].rev||0);
+        }
+      });
+      return monthly;
+    }
+    var thisYrMonthly = totalByMonth(seriesThisYr);
+    var lastYrMonthly = totalByMonth(seriesLastYr);
+
+    // YTD (올해 누적)
+    var ytdAmt = 0;
+    for (var m = 0; m <= thisMonth; m++) ytdAmt += thisYrMonthly[m];
+    var lastYrSamePeriod = 0;
+    for (var m2 = 0; m2 <= thisMonth; m2++) lastYrSamePeriod += lastYrMonthly[m2];
+    var ytdGrowthPct = lastYrSamePeriod > 0 ? Math.round((ytdAmt - lastYrSamePeriod) / lastYrSamePeriod * 100) : 0;
+
+    // 다음 분기 예측: 다음 3개월의 작년 동기 + 트렌드 보정
+    var nextQAmt = 0;
+    for (var nq = 1; nq <= 3; nq++) {
+      var mIdx = thisMonth + nq;
+      if (mIdx > 11) break;
+      // 작년 같은 달 + 트렌드(%) 적용
+      var lastYrM = lastYrMonthly[mIdx] || 0;
+      var trended = Math.round(lastYrM * (1 + ytdGrowthPct/100));
+      nextQAmt += trended;
+    }
+
+    // 연말 예상 (현재까지 + 남은 달 트렌드 보정 예측)
+    var yearEndAmt = ytdAmt;
+    for (var rm = thisMonth+1; rm < 12; rm++) {
+      var lastYrM2 = lastYrMonthly[rm] || 0;
+      yearEndAmt += Math.round(lastYrM2 * (1 + ytdGrowthPct/100));
+    }
+
+    // 단위 포맷 (시리즈 데이터는 만원 단위)
+    function fmt(amt) {
+      if (!amt) return '₩0';
+      var abs = Math.abs(amt);
+      if (abs >= 10000) return '₩' + (amt / 10000).toFixed(2).replace(/\.?0+$/,'') + '억';
+      return '₩' + Math.round(amt).toLocaleString('ko-KR') + '만';
+    }
+
+    var ytdStr = fmt(ytdAmt);
+    var ytdTrendStr = '전년 동기 ' + (ytdGrowthPct >= 0 ? '+' : '') + ytdGrowthPct + '% (' + fmt(lastYrSamePeriod) + ')';
+    var nextQStr = fmt(nextQAmt);
+    var nextQDetailStr = (thisMonth+2 <= 11 ? '다음 3개월 (' + (thisMonth+2) + '~' + (thisMonth+4) + '월)' : '연내 잔여');
+    var yearStr = fmt(yearEndAmt);
+    var yearDetailStr = thisYr + '년 예상 총수익';
+
+    if (ytdEl) ytdEl.textContent = ytdStr;
+    if (ytdTrendEl) { ytdTrendEl.textContent = ytdTrendStr; ytdTrendEl.style.color = ytdGrowthPct >= 0 ? '#10b981' : '#dc2626'; }
+    if (nextQEl) nextQEl.textContent = nextQStr;
+    if (nextQDetailEl) nextQDetailEl.textContent = nextQDetailStr;
+    if (yearEl) yearEl.textContent = yearStr;
+    if (yearDetailEl) yearDetailEl.textContent = yearDetailStr;
+
+    // AI 인사이트 (Claude로 분석 코멘트)
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) {
+      insightsEl.innerHTML = '<div class="text-amber-700">⚙️ AI 인사이트는 <button onclick="openApiSettingsModal()" class="underline font-bold">API 키 설정</button>이 필요해요.</div>';
+      return;
+    }
+
+    try {
+      // 시리즈별 디테일 데이터 수집
+      var seriesDetail = seriesThisYr.map(function(s){
+        var totalRev = 0, monthsActive = 0;
+        for (var m = 0; m <= thisMonth; m++) {
+          if (s.monthly && s.monthly[m] && s.monthly[m].rev) { totalRev += s.monthly[m].rev; monthsActive++; }
+        }
+        return { name: s.name, total: totalRev, avg: monthsActive ? Math.round(totalRev/monthsActive) : 0 };
+      }).filter(function(s){return s.total > 0;}).sort(function(a,b){return b.total-a.total;});
+
+      var worksData = (typeof _works !== 'undefined' && _works) ? _works.filter(function(w){return w.status==='confirmed';}).map(function(w){
+        return { title: w.title, series: w.series_name, end: w.publish_end };
+      }) : [];
+
+      var prompt = '당신은 부업 작가의 재무 분석가입니다. 아래 데이터를 보고 200자 내 인사이트를 한국어로 작성해주세요.\n\n' +
+        '【' + thisYr + '년 YTD】 ' + ytdStr + ' (' + (thisMonth+1) + '개월)\n' +
+        '【전년 동기】 ' + fmt(lastYrSamePeriod) + ' → 성장률 ' + ytdGrowthPct + '%\n' +
+        '【다음 분기 예측】 ' + nextQStr + '\n' +
+        '【연말 예상】 ' + yearStr + '\n\n' +
+        '【시리즈별 (월평균)】\n' + seriesDetail.map(function(s){return '- ' + s.name + ': 누적 ' + fmt(s.total) + ', 월 ' + fmt(s.avg);}).join('\n') + '\n\n' +
+        '【연재 작품】\n' + worksData.map(function(w){return '- ' + w.title + ' (' + w.series + ', 종료 ' + w.end + ')';}).join('\n') + '\n\n' +
+        '응답 형식 (HTML, 마크다운 X):\n' +
+        '<h4 style="color:#7c3aed;font-weight:800;margin-bottom:6px">💡 인사이트</h4>\n<ul style="padding-left:18px;list-style:disc">\n  <li>핵심 트렌드 (1-2문장)</li>\n  <li>주의 사항 (있으면)</li>\n  <li>실행 가능한 액션 (1-2개)</li>\n</ul>\n\n구체적이고 친근한 톤. 액션은 시리즈명·기간 포함해서 구체적으로.';
+
+      var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
+      if (model.indexOf('opus') >= 0) model = 'claude-opus-4-7';
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: model, max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
+      });
+      if (!res.ok) throw new Error('AI 호출 실패');
+      var data = await res.json();
+      var insightsText = (data.content && data.content[0] && data.content[0].text || '').trim();
+      insightsEl.innerHTML = insightsText;
+      // 캐시
+      try { localStorage.setItem(cacheKey, JSON.stringify({
+        ytd: ytdStr, ytdTrend: ytdTrendStr, nextQ: nextQStr, nextQDetail: nextQDetailStr,
+        year: yearStr, yearDetail: yearDetailStr, insights: insightsText, at: Date.now()
+      })); } catch(e){}
+    } catch(e) {
+      console.error('[forecast]', e);
+      insightsEl.innerHTML = '<div class="text-rose-700">⚠️ ' + (e.message||'분석 실패') + ' <button onclick="generateIncomeForecast(true)" class="underline font-bold ml-1">재시도</button></div>';
+    }
+  };
+
   // Enter로 검색 실행 + Esc로 닫기
   document.addEventListener('DOMContentLoaded', function(){
     var inp = document.getElementById('ai-search-input');
@@ -17587,6 +17786,10 @@
       renderWorkPipeline();
       checkCalMigration();
     } catch(e) { console.error('renderWorkPipeline error:', e); }
+    // AI 부업 수익 예측 (Phase B-4) — 12시간 캐시
+    try {
+      if (typeof generateIncomeForecast === 'function') generateIncomeForecast(false);
+    } catch(e) { console.error('income forecast error:', e); }
   }
 
   function renderIncomeTable() {
