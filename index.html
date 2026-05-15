@@ -8194,7 +8194,13 @@
     document.getElementById('journey-day-badge').textContent = dayNum + '일차';
     document.getElementById('journey-day-date').textContent = dateStr || '';
 
-    var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
+    // 일정 + 시간 있는 기념품 함께 표시
+    var items = journeyData.filter(function(d){
+      if ((d.date||'') !== dateStr) return false;
+      if (d.type === '일정') return true;
+      if (d.type === '기념품' && d.time) return true;
+      return false;
+    });
     items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
 
     // 헤더 타이틀: 숙박 도시 + 당일치기 도시 배지
@@ -8245,9 +8251,10 @@
         '</div>';
       }
       // (2) 사전 예약 미니 패널은 제거 — 일정 카드 자체에서 분홍색 강조 + 권장 예약 시점이 표시됨
-      // (3) 기념품 — 같은 도시 또는 같은 날짜의 기념품 (제목 굵게, 설명 일반, 가격 별도, 전체 표시)
+      // (3) 기념품 — 시간 없는 것만 (시간 있는 건 일정 리스트에 통합됨)
       var souvenirs = journeyData.filter(function(j){
         if (j.type !== '기념품') return false;
+        if (j.time) return false; // 시간 있으면 일정에 들어가므로 제외
         if (j.date && j.date === dateStr) return true;
         if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
         return false;
@@ -8303,11 +8310,17 @@
           itemCityChip = '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 mr-1.5 align-middle cursor-pointer hover:bg-amber-100" title="더블클릭하여 행선지 변경" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(safeC) + '</span>';
         }
       }
-      var pinned = isPinnedItem(item);
-      var reserv = isReservationItem(item);
-      // 우선순위: 예약(핑크) > 시간고정(민트) > 일반
+      var isSouvenir = (item.type === '기념품');
+      var pinned = !isSouvenir && isPinnedItem(item);
+      var reserv = !isSouvenir && isReservationItem(item);
+      // 우선순위: 기념품(보라) > 예약(핑크) > 시간고정(민트) > 일반
       var dotColor, timeColor, cardBg, badgeHtml;
-      if (reserv) {
+      if (isSouvenir) {
+        dotColor = 'bg-purple-500';
+        timeColor = 'text-purple-700';
+        cardBg = 'bg-purple-50 border-purple-300 hover:border-purple-500';
+        badgeHtml = ' <span class="text-[9px] font-bold px-1.5 bg-purple-200 text-purple-800 rounded ml-1">🛍 쇼핑</span>';
+      } else if (reserv) {
         dotColor = 'bg-rose-500';
         timeColor = 'text-rose-700';
         cardBg = 'bg-rose-50 border-rose-300 hover:border-rose-500';
@@ -8323,18 +8336,31 @@
         cardBg = 'bg-white border-slate-200 hover:border-sky-400';
         badgeHtml = '';
       }
+      // 기념품일 때 카드 컨텐츠 다르게
+      var displayTitle, displayDescHtml;
+      if (isSouvenir) {
+        displayTitle = item.description || '쇼핑';
+        var metaParts = [];
+        if (item.location) metaParts.push('📍 ' + item.location);
+        if (item.title) metaParts.push('대상: ' + item.title);
+        if (item.amount) metaParts.push('€' + item.amount);
+        displayDescHtml = metaParts.length ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + metaParts.join(' · ') + '</p>' : '';
+      } else {
+        displayTitle = item.title || '';
+        displayDescHtml = descHtml;
+      }
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full ' + dotColor + ' ring-4 ring-white shadow-sm"></div>' +
         (item.time ? '<div class="text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + badgeHtml + '</div>' : '') +
         '<div class="' + cardBg + ' p-3.5 rounded-xl border transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
-        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + (item.title||'') + '</h5>' +
+        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
           '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size:14px">location_on</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
         '</div>' +
         '</div>' +
-        descHtml +
+        displayDescHtml +
         // 사전 예약 권장 시점 (예약 일정만)
         (function(){
           if (!reserv) return '';
@@ -8819,7 +8845,13 @@
       var dateStr = entry.date;
       var cityName = entry.cityName || '';
 
-      var items = journeyData.filter(function(d){ return d.type === '일정' && (d.date||'') === dateStr; });
+      // 일정 + 시간 있는 기념품(특정 장소 방문)을 함께 표시
+      var items = journeyData.filter(function(d){
+        if ((d.date||'') !== dateStr) return false;
+        if (d.type === '일정') return true;
+        if (d.type === '기념품' && d.time) return true; // 시간 있는 기념품은 일정처럼 끼워넣기
+        return false;
+      });
       items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
 
       var weekday = '';
@@ -8853,9 +8885,10 @@
         '</div>';
       }
       // (2) 사전 예약 미니 패널은 제거 — 일정 카드 자체에 빨간색으로 강조되고 권장 예약 시점도 표시되므로 중복 방지
-      // (3) 쇼핑 가이드 — 이 날짜 또는 이 도시의 기념품 (제목 굵게, 설명 일반, 가격 별도, 전체 표시)
+      // (3) 쇼핑 가이드 — 시간 없는 기념품만 (시간 있는 건 위에서 일정에 통합됨)
       var sourceSouvenirs = journeyData.filter(function(j){
         if (j.type !== '기념품') return false;
+        if (j.time) return false; // 시간 있는 건 일정 리스트에 들어가므로 제외
         if (j.date && j.date === dateStr) return true;
         if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
         return false;
@@ -8864,7 +8897,7 @@
         miniPanelHtml += '<div class="mb-2 p-2.5 rounded-lg border-l-[3px]" style="background:#ecfdf5;border-left-color:#10b981">' +
           '<div class="flex items-center gap-1.5 mb-1.5">' +
             '<span class="material-symbols-outlined text-emerald-600" style="font-size:13px">shopping_bag</span>' +
-            '<span class="text-[9px] font-black uppercase tracking-widest text-emerald-700">쇼핑 ' + sourceSouvenirs.length + '개</span>' +
+            '<span class="text-[9px] font-black uppercase tracking-widest text-emerald-700">쇼핑 ' + sourceSouvenirs.length + '개 (장소 자유)</span>' +
           '</div>' +
           '<ul class="space-y-1.5">' +
             sourceSouvenirs.map(function(s){
@@ -8936,8 +8969,9 @@
             var endTime = item.end_time ? '-' + item.end_time : '';
             var title = (item.title || '').replace(/</g,'&lt;');
             var desc = (item.description || '').replace(/</g,'&lt;');
-            var pinned = isPinnedItem(item);
-            var reserv = isReservationItem(item);
+            var isSouvenir = (item.type === '기념품');
+            var pinned = !isSouvenir && isPinnedItem(item);
+            var reserv = !isSouvenir && isReservationItem(item);
             // 일정 city 가 숙박과 다르면 작은 칩
             var itemCityRaw = (item.city||'').trim();
             var cityChip = '';
@@ -8947,9 +8981,13 @@
                 cityChip = '<span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 mr-1.5 align-middle">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
               }
             }
-            // 우선순위: 예약(핑크) > 시간고정(민트) > 일반
+            // 우선순위: 기념품(보라) > 예약(핑크) > 시간고정(민트) > 일반
             var itemBg, timeC, badge;
-            if (reserv) {
+            if (isSouvenir) {
+              itemBg = 'bg-purple-50 border-l-[3px] border-purple-400 -ml-2 pl-3 pr-2';
+              timeC = 'text-purple-700';
+              badge = ' <span class="text-[10px] ml-0.5">🛍</span>';
+            } else if (reserv) {
               itemBg = 'bg-rose-50 border-l-[3px] border-rose-400 -ml-2 pl-3 pr-2';
               timeC = 'text-rose-700';
               badge = ' <span class="text-[10px] ml-0.5">🎫</span>';
@@ -8962,6 +9000,19 @@
               timeC = 'text-indigo-600';
               badge = '';
             }
+            // 기념품일 때 카드 내용 다르게 (제목 = 품목, 부제 = 장소/대상, 가격 표시)
+            var renderTitle, renderDesc;
+            if (isSouvenir) {
+              renderTitle = (item.description || '쇼핑').replace(/</g,'&lt;');
+              var meta = [];
+              if (item.location) meta.push('📍 ' + String(item.location).replace(/</g,'&lt;'));
+              if (item.title) meta.push('대상: ' + String(item.title).replace(/</g,'&lt;'));
+              if (item.amount) meta.push('€' + item.amount);
+              renderDesc = meta.length ? meta.join(' · ') : '';
+            } else {
+              renderTitle = title;
+              renderDesc = desc;
+            }
             var safeId = (item._id||'').replace(/'/g,"\\'");
             // 사전 예약 일정이면 권장 예약 시점 라인 추가
             var prebookLine = '';
@@ -8971,10 +9022,10 @@
                 prebookLine = '<div class="mt-1.5 px-2 py-1 rounded bg-rose-100/70 border border-rose-200 flex items-center gap-1 text-[10px]"><span class="material-symbols-outlined text-rose-600" style="font-size:11px">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
               }
             }
-            return '<div class="py-3 px-1.5 border-b border-slate-100 last:border-b-0 cursor-pointer hover:bg-indigo-50/30 transition-colors ' + itemBg + '" onclick="event.stopPropagation();startWeekEdit(\'' + safeId + '\')" title="클릭하여 편집">' +
+            return '<div class="py-3 px-1.5 border-b border-slate-100 last:border-b-0 cursor-pointer hover:bg-indigo-50/30 transition-colors ' + itemBg + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               (time ? '<div class="text-[11px] font-bold ' + timeC + ' mb-1.5" style="letter-spacing:0.04em">' + time + endTime + badge + '</div>' : '') +
-              '<div class="text-[13px] font-semibold text-slate-800 mb-1" style="line-height:1.5;letter-spacing:-0.01em">' + cityChip + (title || '(제목 없음)') + '</div>' +
-              (desc ? '<div class="text-[11px] text-slate-500" style="line-height:1.6;letter-spacing:0.01em;white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + desc + '</div>' : '') +
+              '<div class="text-[13px] font-semibold text-slate-800 mb-1" style="line-height:1.5;letter-spacing:-0.01em">' + cityChip + (renderTitle || '(제목 없음)') + '</div>' +
+              (renderDesc ? '<div class="text-[11px] text-slate-500" style="line-height:1.6;letter-spacing:0.01em;white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</div>' : '') +
               prebookLine +
             '</div>';
           }).join('');
@@ -11057,6 +11108,9 @@
       {id:'jf-desc', label:'품목 *', type:'text', placeholder:'예: Marvis 치약 세트'},
       {id:'jf-city', label:'구매 도시', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague'},
       {id:'jf-amount', label:'가격 (€)', type:'text', inputmode:'numeric', placeholder:'예: 24'},
+      {id:'jf-date', label:'방문 날짜', type:'date', placeholder:'특정 날에 가야하면 입력 (선택)'},
+      {id:'jf-time', label:'방문 시간', type:'text', placeholder:'예: 14:00 (입력 시 일정에 표시됨)'},
+      {id:'jf-location', label:'장소', type:'text', placeholder:'예: 토스카나 로컬 가죽 공방 (선택)'},
     ];
     if (type === '항공편') return [
       {id:'jf-title', label:'항공사 *', type:'text', placeholder:'예: Turkish Airline'},
@@ -11987,6 +12041,9 @@
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
       obj.city = (document.getElementById('jf-city')||{}).value||'';
       obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
+      obj.date = (document.getElementById('jf-date')||{}).value||'';
+      obj.time = (document.getElementById('jf-time')||{}).value||'';
+      obj.location = (document.getElementById('jf-location')||{}).value||'';
     } else if (currentJourneyType === '항공편') {
       obj.title = (document.getElementById('jf-title')||{}).value||'';
       obj.description = (document.getElementById('jf-desc')||{}).value||'';
