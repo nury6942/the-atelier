@@ -13513,7 +13513,8 @@
     var contentEl = document.getElementById('dash-brief-content');
     var statusEl = document.getElementById('dash-brief-status');
     if (!contentEl) return;
-    var todayKey = 'atelier_brief_' + new Date().toISOString().split('T')[0];
+    // v2 — 카드형 렌더링으로 변경되어 옛 캐시 무효화
+    var todayKey = 'atelier_brief_v2_' + new Date().toISOString().split('T')[0];
     // 캐시 확인 (오늘자)
     if (!forceRefresh) {
       try {
