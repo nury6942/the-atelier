@@ -1954,10 +1954,44 @@
                     <input id="flt-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
                   <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
+                    <select id="flt-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                      <option value="">선택</option>
+                      <option>이코노미</option>
+                      <option>프리미엄 이코노미</option>
+                      <option>비즈니스</option>
+                      <option>일등석</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
+                    <input id="flt-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
+                    <input id="flt-fare-type" type="text" placeholder="Saver, Standard, Flex" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
+                    <input id="flt-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
+                    <input id="flt-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+                  </div>
+                  <div>
                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
                     <input id="flt-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
                   <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
+                    <select id="flt-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                      <option value="">선택</option>
+                      <option>결제 완료</option>
+                      <option>결제 예정</option>
+                    </select>
+                  </div>
+                  <div class="col-span-2">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
                     <input id="flt-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
                   </div>
@@ -2018,10 +2052,44 @@
               <input id="fe-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
             </div>
             <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
+              <select id="fe-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                <option value="">선택</option>
+                <option>이코노미</option>
+                <option>프리미엄 이코노미</option>
+                <option>비즈니스</option>
+                <option>일등석</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
+              <input id="fe-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
+              <input id="fe-fare-type" type="text" placeholder="Saver, Standard" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
+              <input id="fe-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
+              <input id="fe-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+            </div>
+            <div>
               <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
               <input id="fe-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
             </div>
             <div>
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
+              <select id="fe-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                <option value="">선택</option>
+                <option>결제 완료</option>
+                <option>결제 예정</option>
+              </select>
+            </div>
+            <div class="col-span-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
               <input id="fe-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
             </div>
@@ -2793,13 +2861,20 @@
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined text-indigo-500" style="font-size:24px">photo_camera</span>
               </div>
-              <p class="text-sm font-bold text-slate-700 mb-1">스크린샷 업로드</p>
-              <p class="text-xs text-slate-400">카톡 예약 알림, 항공사/호텔 확인 이메일 스크린샷</p>
+              <p class="text-sm font-bold text-slate-700 mb-1">스크린샷 / PDF 업로드</p>
+              <p class="text-xs text-slate-400">카톡 예약 알림, 항공사/호텔 확인 이메일 · PDF 예약서</p>
               <p class="text-[10px] text-slate-400 mt-1.5">클릭 · 드래그 · <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-mono text-[10px]">Ctrl</kbd> + <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-mono text-[10px]">V</kbd> 붙여넣기</p>
             </div>
             <img id="scan-preview-img" src="" alt="" class="hidden max-h-40 mx-auto rounded-xl object-contain shadow-md"/>
+            <div id="scan-preview-pdf" class="hidden flex flex-col items-center gap-2 py-3">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-100 to-orange-100 flex items-center justify-center">
+                <span class="material-symbols-outlined text-rose-500" style="font-size:30px">picture_as_pdf</span>
+              </div>
+              <div class="text-sm font-bold text-slate-700" id="scan-preview-pdf-name">파일.pdf</div>
+              <div class="text-[10px] text-slate-400">PDF가 첨부됨 · 분석하기를 눌러주세요</div>
+            </div>
           </div>
-          <input id="scan-file-input" type="file" accept="image/*" class="hidden" onchange="handleScanFileSelect(event)"/>
+          <input id="scan-file-input" type="file" accept="image/*,application/pdf" class="hidden" onchange="handleScanFileSelect(event)"/>
 
           <!-- API 키 경고 (미설정 시) -->
           <div id="scan-api-warn" class="hidden px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-700 flex items-start gap-2">
@@ -10181,17 +10256,24 @@
     var item = journeyData[idx];
     // route 파싱: "인천(ICN) → 이스탄불(IST)" → dep="인천(ICN)", arr="이스탄불(IST)"
     var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
-    document.getElementById('fe-airline').value = item.title || '';
-    document.getElementById('fe-code').value = item.city || '';
-    document.getElementById('fe-dep').value = routeParts[0] || '';
-    document.getElementById('fe-arr').value = routeParts[1] || '';
-    document.getElementById('fe-date').value = item.date || '';
-    document.getElementById('fe-time').value = item.time || '';
-    document.getElementById('fe-arrive').value = item.arrive || '';
-    document.getElementById('fe-duration').value = item.duration || '';
-    document.getElementById('fe-baggage').value = item.baggage || '';
-    document.getElementById('fe-payment-date').value = item.payment_date || '';
-    document.getElementById('fe-price').value = item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '';
+    var setV = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setV('fe-airline', item.title);
+    setV('fe-code', item.city);
+    setV('fe-dep', routeParts[0]);
+    setV('fe-arr', routeParts[1]);
+    setV('fe-date', item.date);
+    setV('fe-time', item.time);
+    setV('fe-arrive', item.arrive);
+    setV('fe-duration', item.duration);
+    setV('fe-baggage', item.baggage);
+    setV('fe-seat-class', item.seat_class);
+    setV('fe-seat-number', item.seat_number);
+    setV('fe-fare-type', item.fare_type);
+    setV('fe-pnr', item.pnr);
+    setV('fe-passenger', item.passenger);
+    setV('fe-payment-date', item.payment_date);
+    setV('fe-payment-status', item.payment_status);
+    setV('fe-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
     document.getElementById('flight-edit-modal').style.cssText = 'display:flex!important';
   }
 
@@ -10204,16 +10286,23 @@
     if (_flightEditIdx === null) return;
     var item = journeyData[_flightEditIdx];
     var id = item._id;
+    var getV = function(elId) { var el = document.getElementById(elId); return el ? (el.value||'').trim() : ''; };
     var update = {
-      title: document.getElementById('fe-airline').value.trim(),
-      description: document.getElementById('fe-dep').value.trim() + ' → ' + document.getElementById('fe-arr').value.trim(),
-      city: document.getElementById('fe-code').value.trim(),
+      title: getV('fe-airline'),
+      description: getV('fe-dep') + ' → ' + getV('fe-arr'),
+      city: getV('fe-code'),
       date: document.getElementById('fe-date').value,
-      time: document.getElementById('fe-time').value.trim(),
-      arrive: document.getElementById('fe-arrive').value.trim(),
-      duration: document.getElementById('fe-duration').value.trim(),
-      baggage: document.getElementById('fe-baggage').value.trim(),
+      time: getV('fe-time'),
+      arrive: getV('fe-arrive'),
+      duration: getV('fe-duration'),
+      baggage: getV('fe-baggage'),
+      seat_class: getV('fe-seat-class'),
+      seat_number: getV('fe-seat-number'),
+      fare_type: getV('fe-fare-type'),
+      pnr: getV('fe-pnr'),
+      passenger: getV('fe-passenger'),
       payment_date: document.getElementById('fe-payment-date').value,
+      payment_status: getV('fe-payment-status'),
       amount: document.getElementById('fe-price').value.replace(/[^0-9]/g,'')
     };
     try {
@@ -10227,17 +10316,24 @@
   }
 
   async function saveFlightForm() {
+    var getV = function(elId) { var el = document.getElementById(elId); return el ? (el.value||'').trim() : ''; };
     var obj = {
       trip_id: currentTripId, type: '항공편',
-      title: document.getElementById('flt-airline').value.trim(),
-      description: document.getElementById('flt-dep').value.trim() + ' → ' + document.getElementById('flt-arr').value.trim(),
-      city: document.getElementById('flt-code').value.trim(),
+      title: getV('flt-airline'),
+      description: getV('flt-dep') + ' → ' + getV('flt-arr'),
+      city: getV('flt-code'),
       date: document.getElementById('flt-date').value,
-      time: document.getElementById('flt-time').value.trim(),
-      arrive: document.getElementById('flt-arrive').value.trim(),
-      duration: document.getElementById('flt-duration').value.trim(),
-      baggage: document.getElementById('flt-baggage').value.trim(),
+      time: getV('flt-time'),
+      arrive: getV('flt-arrive'),
+      duration: getV('flt-duration'),
+      baggage: getV('flt-baggage'),
+      seat_class: getV('flt-seat-class'),
+      seat_number: getV('flt-seat-number'),
+      fare_type: getV('flt-fare-type'),
+      pnr: getV('flt-pnr'),
+      passenger: getV('flt-passenger'),
       payment_date: document.getElementById('flt-payment-date').value,
+      payment_status: getV('flt-payment-status'),
       amount: document.getElementById('flt-price').value.replace(/[^0-9]/g,'')
     };
     if (!obj.title) { alert('항공사를 입력해줘!'); return; }
@@ -10245,7 +10341,7 @@
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
-      ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-payment-date','flt-price'].forEach(function(id){document.getElementById(id).value='';});
+      ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-seat-class','flt-seat-number','flt-fare-type','flt-pnr','flt-passenger','flt-payment-date','flt-payment-status','flt-price'].forEach(function(id){var el=document.getElementById(id); if(el) el.value='';});
       renderJourneyFlights();
     } catch(e) { alert('저장 실패'); }
   }
@@ -21116,6 +21212,8 @@ function handleScanFileSelect(event) {
 
 function loadScanFile(file) {
   _scanImageType = file.type || 'image/jpeg';
+  var isPdf = (_scanImageType === 'application/pdf') || /\.pdf$/i.test(file.name||'');
+  if (isPdf) _scanImageType = 'application/pdf';
   var reader = new FileReader();
   reader.onload = function(e) {
     var dataUrl = e.target.result;
@@ -21124,10 +21222,21 @@ function loadScanFile(file) {
     // Show preview
     var placeholder = document.getElementById('scan-drop-placeholder');
     var preview = document.getElementById('scan-preview-img');
+    var pdfPreview = document.getElementById('scan-preview-pdf');
+    var pdfName = document.getElementById('scan-preview-pdf-name');
     if (placeholder) placeholder.style.display = 'none';
-    if (preview) {
-      preview.src = dataUrl;
-      preview.className = 'max-h-48 mx-auto rounded-xl object-contain shadow-md';
+    if (isPdf) {
+      // PDF 미리보기 (이미지 숨기고 PDF 박스 보이기)
+      if (preview) preview.className = 'hidden';
+      if (pdfPreview) pdfPreview.className = 'flex flex-col items-center gap-2 py-3';
+      if (pdfName) pdfName.textContent = file.name || 'document.pdf';
+    } else {
+      // 이미지 미리보기
+      if (pdfPreview) pdfPreview.className = 'hidden';
+      if (preview) {
+        preview.src = dataUrl;
+        preview.className = 'max-h-48 mx-auto rounded-xl object-contain shadow-md';
+      }
     }
     // Enable analyze btn
     var analyzeBtn = document.getElementById('scan-analyze-btn');
@@ -21162,21 +21271,28 @@ async function analyzeBookingImage() {
   if (applyBtns) applyBtns.className = 'hidden flex gap-2';
   analyzeBtn.disabled = true;
 
-  var SCAN_PROMPT = `이 이미지는 여행 예약 확인서입니다. (항공권, 숙소, 기차/버스, 렌트카 등)
-이미지에서 예약 정보를 정확히 추출해 다음 JSON 형식으로만 반환해주세요.
+  var SCAN_PROMPT = `이 문서(이미지 또는 PDF)는 여행 예약 확인서입니다. (항공권, 숙소, 기차/버스, 렌트카 등)
+문서에서 예약 정보를 정확히 추출해 다음 JSON 형식으로만 반환해주세요.
 마크다운, 코드블록, 설명 없이 JSON 오브젝트만 출력하세요.
 
 {
   "type": "항공편 또는 숙소 또는 이동수단 또는 렌트카 중 하나",
-  "airline": "항공사명 (항공편일 때)",
-  "flight_number": "편명 예: KE001",
-  "dep_airport": "출발공항 IATA 코드 예: ICN",
-  "arr_airport": "도착공항 IATA 코드 예: FRA",
+  "airline": "항공사명 (항공편일 때) 예: Tway, Korean Air",
+  "flight_number": "편명 예: KE001, TW403",
+  "dep_airport": "출발공항 IATA 코드+터미널 예: 'ICN (T1)' 또는 'ICN'",
+  "arr_airport": "도착공항 IATA 코드+터미널 예: 'FRA (T2)' 또는 'FRA'",
   "dep_date": "YYYY-MM-DD",
   "dep_time": "HH:MM",
   "arr_time": "HH:MM",
+  "arr_date": "도착일 YYYY-MM-DD (출발일과 다른 경우만 채움)",
   "duration": "비행시간 예: 12H 30M",
-  "baggage": "수하물 예: 23kg",
+  "baggage": "수하물 예: 23kg 또는 '위탁 23kg + 기내 7kg'",
+  "pnr": "예약번호/PNR/예약코드 예: ABC123 (항공편일 때만)",
+  "passenger": "탑승객 이름 (항공편일 때만)",
+  "seat_class": "좌석 등급. '이코노미', '프리미엄 이코노미', '비즈니스', '일등석' 중 하나",
+  "seat_number": "좌석 번호 예: 29A (배정된 경우만)",
+  "fare_type": "운임 종류 예: Saver, Standard, Flex, Promo, Smart",
+  "flight_payment_status": "항공편 결제 상태. '결제 완료', '결제 예정' 중 하나",
   "hotel_name": "숙소명 (숙소일 때)",
   "hotel_city": "도시명",
   "checkin_date": "YYYY-MM-DD",
@@ -21221,20 +21337,19 @@ notes는 위 모든 구조화 필드에도 안 들어가는 진짜 특이한 정
 
 읽을 수 없는 필드는 빈 문자열("")로 설정. price_krw는 한화 금액이 보이면 숫자로, 없으면 0.`;
 
+  // PDF면 document 타입, 이미지면 image 타입
+  var isPdf = (_scanImageType === 'application/pdf');
+  var fileBlock = isPdf
+    ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: _scanImageBase64 } }
+    : { type: 'image',    source: { type: 'base64', media_type: _scanImageType,   data: _scanImageBase64 } };
+
   var requestBody = {
     model: model,
-    max_tokens: 1024,
+    max_tokens: 1500,
     messages: [{
       role: 'user',
       content: [
-        {
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: _scanImageType,
-            data: _scanImageBase64
-          }
-        },
+        fileBlock,
         { type: 'text', text: SCAN_PROMPT }
       ]
     }]
@@ -21332,9 +21447,33 @@ function showScanResult(r) {
     rows.push(row('루트', (r.dep_airport||'') + (r.dep_airport&&r.arr_airport?' → ':'') + (r.arr_airport||'')));
     rows.push(row('탑승일', r.dep_date));
     rows.push(row('출발', r.dep_time));
-    rows.push(row('도착', r.arr_time));
+    rows.push(row('도착', r.arr_time + (r.arr_date && r.arr_date !== r.dep_date ? ' (' + r.arr_date + ')' : '')));
     rows.push(row('비행시간', r.duration));
     rows.push(row('수하물', r.baggage));
+    // 항공편 추가 정보 카드
+    var seatLabel = '';
+    if (r.seat_class) seatLabel = r.seat_class;
+    if (r.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + r.seat_number;
+    detailHtml = detailCard([
+      { icon:'confirmation_number', label:'예약번호', val: r.pnr },
+      { icon:'person',              label:'탑승객',   val: r.passenger },
+      { icon:'airline_seat_recline_normal', label:'좌석', val: seatLabel },
+      { icon:'sell',                label:'운임',     val: r.fare_type }
+    ]);
+    // 항공편 결제 정보
+    if (r.payment_date || r.flight_payment_status) {
+      var fStatusBadge = '';
+      if (r.flight_payment_status) {
+        var fColor = r.flight_payment_status === '결제 완료' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+        fStatusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black ' + fColor + '">' + r.flight_payment_status + '</span>';
+      }
+      detailHtml += '<div class="mt-2 p-3 rounded-xl border border-emerald-200 bg-emerald-50/40">';
+      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size:14px">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
+      detailHtml += '<div class="space-y-1.5">';
+      if (r.payment_date) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
+      if (fStatusBadge) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span>상태</span><span class="text-right">' + fStatusBadge + '</span></div>';
+      detailHtml += '</div></div>';
+    }
   } else if (r.type === '숙소') {
     rows.push(row('숙소명', r.hotel_name));
     rows.push(row('도시', r.hotel_city));
@@ -21419,6 +21558,22 @@ function applyBookingScan() {
         _setVal('flt-arrive', r.arr_time);
         _setVal('flt-duration', r.duration);
         _setVal('flt-baggage', r.baggage);
+        _setVal('flt-seat-number', r.seat_number);
+        _setVal('flt-fare-type', r.fare_type);
+        _setVal('flt-pnr', r.pnr);
+        _setVal('flt-passenger', r.passenger);
+        _setVal('flt-payment-date', r.payment_date);
+        // 좌석 등급/결제 상태는 select라 옵션 매칭만 허용
+        var seatSel = document.getElementById('flt-seat-class');
+        if (seatSel && r.seat_class) {
+          var seatAllowed = ['이코노미','프리미엄 이코노미','비즈니스','일등석'];
+          if (seatAllowed.indexOf(r.seat_class) >= 0) seatSel.value = r.seat_class;
+        }
+        var paySel = document.getElementById('flt-payment-status');
+        if (paySel && r.flight_payment_status) {
+          var payAllowed = ['결제 완료','결제 예정'];
+          if (payAllowed.indexOf(r.flight_payment_status) >= 0) paySel.value = r.flight_payment_status;
+        }
         if (r.price_krw) _setVal('flt-price', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 항공편 정보가 자동 입력됐어요 ✈️');
       }, 300);
