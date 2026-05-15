@@ -1713,10 +1713,15 @@
             ✅ 체크리스트
           </button>
         </div>
-        <!-- 예약 스캔 버튼 -->
-        <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
-          <span class="material-symbols-outlined" style="font-size:14px">document_scanner</span> 예약 스캔
-        </button>
+        <!-- 예약 스캔 + API 설정 버튼 -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+            <span class="material-symbols-outlined" style="font-size:14px">document_scanner</span> 예약 스캔
+          </button>
+          <button onclick="openApiSettingsModal()" title="API 설정" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors" id="travel-api-key-btn">
+            <span class="material-symbols-outlined" style="font-size:15px">key</span>
+          </button>
+        </div>
         <!-- 미니 요약 (예산 상태) -->
         <div id="travel-mini-summary" class="text-xs text-slate-500 flex items-center gap-3" style="display:none">
           <span>총 예산 <span id="travel-mini-budget" class="font-bold text-slate-700">—</span></span>
@@ -7282,6 +7287,7 @@
     loadTripNotes();
     updateJourneyCost();
     updateTravelMiniSummary();
+    if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
   }
 
   function getCurrentTrip() {
@@ -20369,6 +20375,7 @@ function saveApiSettings() {
   showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키 저장 완료!');
   closeApiSettingsModal();
   updateAutoGenButton();
+  if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
 }
 
 function deleteApiKey() {
@@ -20726,6 +20733,19 @@ function openBookingScanModal() {
   resetBookingScan();
   document.getElementById('booking-scan-modal').style.cssText = 'display:flex!important';
   document.addEventListener('paste', _scanPasteHandler);
+}
+
+function _updateTravelApiKeyBtn() {
+  var btn = document.getElementById('travel-api-key-btn');
+  if (!btn) return;
+  var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+  if (apiKey) {
+    btn.className = 'w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors';
+    btn.title = 'API 설정 (키 설정됨)';
+  } else {
+    btn.className = 'w-7 h-7 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-500 hover:text-rose-700 flex items-center justify-center transition-colors';
+    btn.title = 'API 키 미설정 — 클릭해서 설정';
+  }
 }
 
 function closeBookingScanModal() {
