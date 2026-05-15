@@ -2313,6 +2313,74 @@
               </div>
             </div>
 
+            <!-- 이동수단 수정 모달 -->
+            <div id="transport-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('transport-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+                <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
+                  <div class="mb-6">
+                    <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Edit Transport</h4>
+                    <p class="text-slate-500 text-xs mt-0.5">이동 수단 정보를 수정하세요</p>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <!-- 이동 수단명 -->
+                    <div>
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">이동 수단</label>
+                      <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">commute</span>
+                        <input id="tr-edit-type" type="text" placeholder="예: FlixBus, 기차, 택시" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <!-- 루트 -->
+                    <div>
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">루트 (출발 → 도착)</label>
+                      <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">route</span>
+                        <input id="tr-edit-route" type="text" placeholder="예: Frankfurt → Berlin" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <!-- 탑승 날짜 + 시간 -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
+                        <input id="tr-edit-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">시간</label>
+                        <input id="tr-edit-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <!-- 결제일 + 가격 -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
+                        <input id="tr-edit-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
+                        <div class="relative">
+                          <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                          <input id="tr-edit-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 상태 -->
+                    <div class="md:col-span-2">
+                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">예약 상태</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectTransportStatus('확정')" id="tr-edit-status-confirmed" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 확정</button>
+                        <button type="button" onclick="selectTransportStatus('대기 중')" id="tr-edit-status-pending" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">⏳ 대기 중</button>
+                        <button type="button" onclick="selectTransportStatus('취소')" id="tr-edit-status-cancelled" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 취소</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="saveTransportEdit()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <span class="material-symbols-outlined text-sm">check_circle</span> 수정 저장
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- 3-2. 렌트카 (Rental Cars) -->
             <section class="mb-2">
               <div class="flex items-center justify-between mb-4">
@@ -8733,6 +8801,63 @@
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
+  var _trEditIdx = null;
+  var _trEditStatus = '확정';
+
+  function selectTransportStatus(val) {
+    _trEditStatus = val;
+    var ids = { '확정':'tr-edit-status-confirmed', '대기 중':'tr-edit-status-pending', '취소':'tr-edit-status-cancelled' };
+    var colors = { '확정':'ring-indigo-500 text-indigo-600', '대기 중':'ring-amber-500 text-amber-600', '취소':'ring-rose-500 text-rose-600' };
+    Object.keys(ids).forEach(function(k) {
+      var btn = document.getElementById(ids[k]);
+      if (!btn) return;
+      btn.className = k === val
+        ? 'py-2.5 rounded-xl bg-white ring-2 ' + colors[k] + ' text-xs font-bold shadow-sm transition-all'
+        : 'py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-slate-200 transition-all';
+    });
+  }
+
+  function openTransportEditModal(idx) {
+    var item = journeyData[idx];
+    if (!item) return;
+    _trEditIdx = idx;
+    _trEditStatus = item.status || '확정';
+    var setV = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setV('tr-edit-type', item.title);
+    setV('tr-edit-route', item.description);
+    setV('tr-edit-date', item.date);
+    setV('tr-edit-time', item.time);
+    setV('tr-edit-payment-date', item.payment_date);
+    setV('tr-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
+    selectTransportStatus(_trEditStatus);
+    openTravelModal('transport-edit-modal-wrap');
+  }
+
+  async function saveTransportEdit() {
+    if (_trEditIdx === null) return;
+    var item = journeyData[_trEditIdx];
+    if (!item) return;
+    var title = document.getElementById('tr-edit-type').value.trim();
+    if (!title) { alert('이동 수단을 입력해주세요'); return; }
+    var updates = {
+      title: title,
+      description: document.getElementById('tr-edit-route').value.trim(),
+      date: document.getElementById('tr-edit-date').value,
+      time: document.getElementById('tr-edit-time').value.trim(),
+      payment_date: document.getElementById('tr-edit-payment-date').value,
+      amount: document.getElementById('tr-edit-price').value.replace(/,/g,''),
+      status: _trEditStatus
+    };
+    try {
+      await fbUpdate('journey', item._id, updates);
+      Object.assign(journeyData[_trEditIdx], updates);
+      closeTravelModal('transport-edit-modal-wrap');
+      renderJourneyTransport();
+      updateJourneyCost();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이동수단 수정 완료');
+    } catch(e) { alert('저장 실패: ' + e.message); }
+  }
+
   async function saveInlineRental() {
     var company = document.getElementById('rc-company').value.trim();
     if (!company) { alert('렌트카 회사를 입력해줘!'); return; }
@@ -10220,6 +10345,11 @@
     // 숙소도 전용 수정 모달 사용
     if (item.type === '숙소') {
       openStayEditModal(idx);
+      return;
+    }
+    // 이동수단도 전용 수정 모달 사용
+    if (item.type === '이동수단') {
+      openTransportEditModal(idx);
       return;
     }
 
