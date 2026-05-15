@@ -21442,6 +21442,7 @@ async function analyzeBookingImage() {
   "flight_payment_status": "항공편 결제 상태. '결제 완료', '결제 예정' 중 하나",
   "hotel_name": "숙소명 (숙소일 때)",
   "hotel_city": "도시명",
+  "hotel_phone": "숙소 전화번호 예: '+49-69-9203850' (숙소일 때만, 보이면 무조건 추출)",
   "checkin_date": "YYYY-MM-DD",
   "checkout_date": "YYYY-MM-DD",
   "checkin_time": "HH:MM",
@@ -21658,6 +21659,7 @@ function showScanResult(r) {
     rows.push(row('체크인', r.checkin_date + (r.checkin_time ? ' ' + r.checkin_time : '')));
     rows.push(row('체크아웃', r.checkout_date + (r.checkout_time ? ' ' + r.checkout_time : '')));
     rows.push(row('주소', r.address));
+    if (r.hotel_phone) rows.push(row('전화번호', r.hotel_phone));
     rows.push(row('무료취소', r.cancel_policy + (r.cancel_deadline ? ' (~' + r.cancel_deadline + ')' : '')));
     // 예약 상세 카드 — 객실/인원/금연/식사/보증금 + 숙소유형
     var stayTypeVal = r.stay_type ? (r.stay_type === 'Airbnb' ? '🏠 Airbnb' : '🏨 Hotel') : '';
@@ -21774,7 +21776,7 @@ function applyBookingScan() {
         _setVal('stay-city', r.hotel_city);
         _setVal('stay-name', r.hotel_name);
         _setVal('stay-address', r.address);
-        _setVal('stay-phone', '');
+        _setVal('stay-phone', r.hotel_phone || '');
         _setVal('stay-checkin-date', r.checkin_date);
         _setVal('stay-checkout-date', r.checkout_date);
         _setVal('stay-checkin-time', r.checkin_time);
@@ -21800,7 +21802,14 @@ function applyBookingScan() {
         if (r.guests) memoParts.push(r.guests);
         if (r.smoking) memoParts.push(r.smoking);
         if (r.meal) memoParts.push(r.meal);
-        if (r.deposit) memoParts.push('보증금 ' + r.deposit);
+        if (r.deposit) {
+          var depPart = '보증금 ' + r.deposit;
+          // 외화 보증금이고 환산된 KRW가 있으면 같이 표기 (이미 ₩/KRW 표기된 경우는 중복 방지)
+          if (r._depositKrw && !/₩|\bkrw\b|\b원\b/i.test(r.deposit)) {
+            depPart += ' (≈₩' + Number(r._depositKrw).toLocaleString('ko-KR') + ')';
+          }
+          memoParts.push(depPart);
+        }
         if (r.notes) memoParts.push(r.notes);
         _setVal('stay-notes', memoParts.join(' · '));
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 숙소 정보가 자동 입력됐어요 🏨');
@@ -21908,13 +21917,16 @@ function _parseCurrencyAmount(str) {
 }
 
 // 보증금 텍스트 옆에 KRW 환산값 추가 (비동기, 환율 조회 후 DOM 업데이트)
+// 환산 결과를 _scanResult._depositKrw에 저장 → applyBookingScan에서 메모로 활용
 async function _appendDepositKrw(depositStr) {
   var el = document.getElementById('scan-deposit-val');
   if (!el) return;
   var parsed = _parseCurrencyAmount(depositStr);
   if (!parsed) return;
-  if (parsed.currency === 'KRW') return; // 이미 원화면 변환 불필요
-  // 로딩 표시
+  if (parsed.currency === 'KRW') {
+    if (typeof _scanResult === 'object' && _scanResult) _scanResult._depositKrw = parsed.amount;
+    return;
+  }
   el.innerHTML = depositStr + ' <span class="text-[10px] text-violet-400 font-normal">(환율 조회중...)</span>';
   var rate = await _fetchKrwRate(parsed.currency);
   if (!rate) {
@@ -21922,6 +21934,8 @@ async function _appendDepositKrw(depositStr) {
     return;
   }
   var krw = Math.round(parsed.amount * rate);
+  // 환산 결과를 결과 객체에 보관 (메모 저장 시 사용)
+  if (typeof _scanResult === 'object' && _scanResult) _scanResult._depositKrw = krw;
   el.innerHTML = depositStr + ' <span class="text-[11px] text-violet-500 font-bold">≈ ₩' + krw.toLocaleString('ko-KR') + '</span>';
 }
 
