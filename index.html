@@ -4592,8 +4592,9 @@
         <button onclick="_setTrendPlatform('포스타입')" data-trend-platform="포스타입" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">💖 포스타입 (2차창작)</button>
       </div>
 
-      <!-- 모드 선택 (3개 + 1) -->
+      <!-- 모드 선택 (5개) -->
       <div class="px-5 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3" style="font-family:'Pretendard',sans-serif">
+        <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (주 1회)</button>
         <button onclick="_setTrendMode('general')" data-trend-mode="general" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">💡 플랫폼 일반 트렌드</button>
         <button onclick="_setTrendMode('analyze-text')" data-trend-mode="analyze-text" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📝 인기작 텍스트 분석</button>
         <button onclick="_setTrendMode('analyze-image')" data-trend-mode="analyze-image" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📸 스크린샷 분석</button>
@@ -14162,20 +14163,25 @@
     var lbl = document.getElementById('trend-input-label');
     var imgZone = document.getElementById('trend-image-zone');
     var runLbl = document.getElementById('trend-run-label');
+    var runBtn = document.getElementById('trend-run-btn');
+    var counter = document.getElementById('trend-input-counter');
     if (!inp) return;
     var placeholders = {
+      auto: '자동으로 수집된 데이터를 사용합니다. 입력 불필요.',
       general: '입력 없이 바로 분석 가능. 추가 키워드/장르 있으면 적어주세요.\n예: "현대 로맨스, 사내 연애, 까칠한 남주" 같이.',
       'analyze-text': '인기작 정보를 붙여넣어주세요. 여러 작품 포함 가능:\n\n예:\n=== 작품 1 ===\n제목: 그놈의 첫사랑\n별점: 9.7\n조회 1.2M\n소개: ...\n태그: 까칠남주, 츤데레, 첫사랑\n\n=== 작품 2 ===\n...',
       'analyze-image': '이미지 업로드 후 "AI 분석" 클릭. 텍스트 입력은 선택 (추가 컨텍스트 있으면).',
       character: _trendPlatform === '포스타입' ? '2차창작 캐릭터/페어를 적어주세요.\n예: "트와이스 미사나", "BTS 정뷔", "원피스 ZoSan"' : '주인공 캐릭터 설정/장르를 적어주세요.\n예: "재벌가 까칠한 후계자 남주 + 평범한 여주, 사내 비밀 연애"'
     };
     var labels = {
+      auto: '자동 수집 데이터 (주 1회 GitHub Actions)',
       general: '추가 컨텍스트 (선택)',
       'analyze-text': '인기작 데이터 (제목·소개·태그·별점 등)',
       'analyze-image': '컨텍스트 (선택)',
       character: '캐릭터·페어·장르'
     };
     var runLabels = {
+      auto: '다시 불러오기',
       general: '플랫폼 트렌드 분석',
       'analyze-text': '인기작 패턴 추출',
       'analyze-image': '스크린샷 분석',
@@ -14190,7 +14196,164 @@
       var cnt = document.getElementById('trend-input-counter');
       if (cnt) cnt.textContent = (inp.value||'').length + '자';
     };
+
+    // 자동 모드: 입력창 숨기고, 결과 영역에 JSON 자동 로드
+    if (_trendMode === 'auto') {
+      inp.style.display = 'none';
+      if (counter) counter.style.display = 'none';
+      if (imgZone) imgZone.className = 'hidden mt-3';
+      _loadAutoTrend();
+    } else {
+      inp.style.display = '';
+      if (counter) counter.style.display = '';
+    }
   }
+
+  // 자동 트렌드 JSON 로드 + 렌더링
+  window._loadAutoTrend = async function() {
+    var out = document.getElementById('trend-output');
+    if (!out) return;
+    out.innerHTML = '<div class="text-slate-400 italic">자동 수집 데이터 불러오는 중…</div>';
+    try {
+      // 캐시 우회 (commit 직후 새 데이터 받기)
+      var resp = await fetch('data/trends/postype/latest.json?_=' + Date.now());
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          out.innerHTML = '<div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-slate-700">' +
+            '<p class="font-bold mb-2">📭 아직 수집된 데이터가 없어요</p>' +
+            '<p class="mb-2">GitHub Actions가 매주 일요일 09:00 KST에 자동 실행됩니다.</p>' +
+            '<p class="text-[12px] text-slate-500">즉시 실행하려면 GitHub repo → Actions → "postype 트렌드 자동 분석" → Run workflow</p>' +
+            '</div>';
+          return;
+        }
+        throw new Error('HTTP ' + resp.status);
+      }
+      var data = await resp.json();
+      _renderAutoTrend(data);
+    } catch (e) {
+      console.error('[auto-trend] load failed', e);
+      out.innerHTML = '<div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">로드 실패: ' + (e.message || e) + '</div>';
+    }
+  };
+
+  function _renderAutoTrend(data) {
+    var out = document.getElementById('trend-output');
+    if (!out) return;
+    var a = data.analysis || {};
+    if (a.error) {
+      out.innerHTML = '<div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">AI 분석 실패: ' + a.error + '</div>';
+      return;
+    }
+
+    function chip(text, color) {
+      color = color || '#fed7aa';
+      return '<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold mr-1.5 mb-1" style="background:' + color + ';color:#7c2d12">' + text + '</span>';
+    }
+    function section(title, body) {
+      return '<div class="mb-4"><h3 class="text-[13px] font-black text-orange-700 mb-2 pb-1 border-b border-orange-100">' + title + '</h3><div class="text-[12.5px] leading-relaxed text-slate-700">' + body + '</div></div>';
+    }
+
+    var html = '';
+    // 헤더
+    html += '<div class="mb-4 px-3 py-2 bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl border border-orange-100">';
+    html += '<div class="flex justify-between items-center"><span class="text-[11px] font-bold text-orange-700">📅 ' + (data.date || 'N/A') + ' · "' + (data.query || 'N/A') + '"</span>';
+    html += '<span class="text-[10px] text-slate-500">' + (data.stats ? data.stats.successful + '/' + data.stats.totalScraped + ' 작품 수집' : '') + '</span></div>';
+    if (a.summary) html += '<p class="text-[12.5px] text-slate-800 mt-1.5 font-medium">' + a.summary + '</p>';
+    html += '</div>';
+
+    // 액션 가능한 인사이트 (최우선 표시)
+    if (a.actionableInsights && a.actionableInsights.length) {
+      var insightsHtml = '<ul class="space-y-1.5 pl-5 list-disc">';
+      a.actionableInsights.forEach(function(s){ insightsHtml += '<li>' + s + '</li>'; });
+      insightsHtml += '</ul>';
+      html += section('💡 실행 가능한 인사이트', insightsHtml);
+    }
+
+    // 제목 패턴
+    if (a.titlePatterns && a.titlePatterns.length) {
+      var tp = '<div class="space-y-2">';
+      a.titlePatterns.forEach(function(p){
+        tp += '<div class="bg-slate-50 rounded-lg p-2"><div class="font-bold text-[12px] text-slate-800">' + (p.pattern||'') + ' <span class="text-[10px] font-normal text-slate-500">(' + (p.count||'?') + '개)</span></div>';
+        if (p.examples && p.examples.length) {
+          tp += '<div class="text-[11px] text-slate-600 mt-1">예: ' + p.examples.slice(0,3).map(function(e){return '"'+e+'"';}).join(', ') + '</div>';
+        }
+        tp += '</div>';
+      });
+      tp += '</div>';
+      html += section('📝 잘 되는 제목 패턴', tp);
+    }
+
+    // 시놉시스 훅
+    if (a.synopsisHooks && a.synopsisHooks.length) {
+      var sh = '<div class="space-y-1">';
+      a.synopsisHooks.forEach(function(h){
+        sh += '<div class="flex justify-between gap-2"><span><b>' + (h.hook||'') + '</b>' + (h.note?' — ' + h.note:'') + '</span><span class="text-[11px] text-slate-500 whitespace-nowrap">' + (h.frequency||'') + '</span></div>';
+      });
+      sh += '</div>';
+      html += section('🎣 인기 시놉시스 훅', sh);
+    }
+
+    // 태그 분포
+    if (a.tagDistribution && a.tagDistribution.length) {
+      var td = '';
+      a.tagDistribution.slice(0, 20).forEach(function(t){
+        td += chip(t.tag + ' (' + (t.count||0) + ')');
+      });
+      html += section('🏷️ 태그 분포', td);
+    }
+
+    // 인기 페어/그룹
+    if (a.popularPairings && a.popularPairings.length) {
+      var pp = '<div class="space-y-1">';
+      a.popularPairings.forEach(function(p){
+        pp += '<div><b>' + (p.pairing||'') + '</b>' + (p.evidence?' <span class="text-[11px] text-slate-500">— ' + p.evidence + '</span>':'') + '</div>';
+      });
+      pp += '</div>';
+      html += section('👥 인기 페어/그룹', pp);
+    }
+
+    // 수익화 패턴
+    if (a.monetization) {
+      var m = a.monetization;
+      html += section('💰 유료/무료 분포', '유료 <b>' + (m.paidRatio||'?') + '</b> · 무료 <b>' + (m.freeRatio||'?') + '</b><div class="text-[11px] text-slate-500 mt-1">' + (m.note||'') + '</div>');
+    }
+
+    // 글자수/회차
+    if (a.lengthPattern) {
+      var l = a.lengthPattern;
+      html += section('📏 글자수·회차 패턴', '평균 글자수 <b>' + (l.avgWordCount||'?') + '</b> · 평균 회차 <b>' + (l.avgChapters||'?') + '</b>' + (l.note?'<div class="text-[11px] text-slate-500 mt-1">' + l.note + '</div>':''));
+    }
+
+    // 인기 작가
+    if (a.topAuthors && a.topAuthors.length) {
+      var ta = '<div class="space-y-1">';
+      a.topAuthors.forEach(function(au){
+        ta += '<div>' + (au.author||'') + (au.works?' <span class="text-[11px] text-slate-500">— ' + au.works + '작' + (au.totalViews?', 조회 ' + au.totalViews.toLocaleString('ko-KR'):'') + '</span>':'') + '</div>';
+      });
+      ta += '</div>';
+      html += section('⭐ 인기 작가 TOP', ta);
+    }
+
+    // 경고/주의사항
+    if (a.warnings && a.warnings.length) {
+      var w = '<ul class="text-[11.5px] text-slate-500 space-y-0.5 pl-4 list-disc">';
+      a.warnings.forEach(function(s){ w += '<li>' + s + '</li>'; });
+      w += '</ul>';
+      html += section('⚠️ 주의사항', w);
+    }
+
+    // 메타정보 + raw 데이터 토글
+    var meta = data.analysisMeta || {};
+    html += '<div class="mt-4 pt-3 border-t border-slate-100 text-[10.5px] text-slate-400">';
+    html += '생성 ' + (meta.generatedAt || '?') + ' · 모델 ' + (meta.model || '?');
+    html += ' · <a href="' + (data.searchUrl||'#') + '" target="_blank" class="text-orange-600 hover:underline">원본 검색 페이지</a>';
+    html += '</div>';
+
+    out.innerHTML = html;
+  }
+
+  // run 버튼이 auto 모드일 땐 reload로 동작
+  var __origRunTrend = null;
 
   window._trendOnImageSelect = function(event) {
     var file = event.target.files && event.target.files[0];
@@ -14213,6 +14376,11 @@
     var out = document.getElementById('trend-output');
     var btn = document.getElementById('trend-run-btn');
     if (!out) return;
+    // 자동 모드: AI 분석 안 부르고 JSON 다시 로드만
+    if (_trendMode === 'auto') {
+      _loadAutoTrend();
+      return;
+    }
     var apiKey = localStorage.getItem('atelier_anthropic_api_key');
     if (!apiKey) {
       out.innerHTML = '<div class="text-amber-700 p-3 bg-amber-50 rounded-lg">⚙️ <button onclick="openApiSettingsModal()" class="underline font-bold">API 키 설정</button>이 필요해요.</div>';

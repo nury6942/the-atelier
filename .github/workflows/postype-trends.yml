@@ -1,0 +1,75 @@
+name: postype 트렌드 자동 분석
+
+on:
+  # 매주 일요일 09:00 KST (= 일요일 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * 0'
+  # 수동 실행 가능
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: '검색 키워드 (기본 나페스)'
+        required: false
+        default: '나페스'
+      top_n:
+        description: '수집할 작품 수 (기본 20)'
+        required: false
+        default: '20'
+
+permissions:
+  contents: write   # JSON 파일 commit & push 권한
+
+jobs:
+  scrape-and-analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run scraper + analyzer
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          POSTYPE_KEYWORD: ${{ github.event.inputs.keyword || '나페스' }}
+          POSTYPE_TOP_N: ${{ github.event.inputs.top_n || '20' }}
+        run: |
+          mkdir -p data/trends/postype
+          DATE=$(date +%F)
+          OUT="data/trends/postype/${DATE}.json"
+          echo "Output → $OUT"
+          node scripts/scrape-postype.js | node scripts/analyze-trends.js > "$OUT"
+          # latest.json도 함께 갱신 (앱이 항상 같은 경로 fetch 가능)
+          cp "$OUT" data/trends/postype/latest.json
+          echo "DATE=$DATE" >> $GITHUB_ENV
+
+      - name: Show result summary
+        run: |
+          echo "── Result summary ──"
+          node -e "
+            const d = require('./data/trends/postype/latest.json');
+            console.log('Posts scraped:', d.stats.totalScraped);
+            console.log('Related keywords:', d.sidebar.relatedKeywords.length);
+            console.log('Recommended tags:', d.sidebar.recommendedTags.length);
+            if (d.analysis && d.analysis.summary) console.log('Analysis summary:', d.analysis.summary);
+            else if (d.analysis && d.analysis.error) console.log('Analysis error:', d.analysis.error);
+          "
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/trends/postype/
+          if git diff --staged --quiet; then
+            echo "No changes."
+          else
+            git commit -m "📈 postype 트렌드 자동 업데이트 ($DATE)"
+            git push
+          fi
