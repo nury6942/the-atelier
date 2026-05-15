@@ -18,6 +18,14 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ko.js"></script>
   <!-- SheetJS (엑셀 파싱) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Pretendard (한국어 최고 가독성 폰트) -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    /* AI 브리프 카드 — Pretendard 적용 + 더 큰 폰트 */
+    #dash-brief-card, #dash-brief-content { font-family: 'Pretendard', 'Manrope', sans-serif; }
+    #dash-brief-content { font-size: 14px !important; line-height: 1.7 !important; letter-spacing: -0.01em; }
+    #dash-brief-content > div { padding: 4px 0; }
+  </style>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode:"class",
@@ -1602,219 +1610,217 @@
   <div id="page-dashboard" class="page dashboard-page" style="display:block">
     <div class="page-content-wrap px-6 pt-6 pb-16 max-w-[1280px] mx-auto space-y-5">
 
-      <!-- ═══════ Tier 1: AI 데일리 브리프 ═══════ -->
-      <section id="dash-brief-card" class="rounded-2xl p-5 relative overflow-hidden" style="background:linear-gradient(135deg,#ede9fe 0%,#fef3c7 100%);box-shadow:0 8px 24px rgba(107,56,212,0.08)">
-        <div class="flex items-start justify-between mb-2.5">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">
-              <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span>
+      <!-- ═══════ Tier 1: AI 브리프 (8col) + 오늘의 영어 (4col, 보라 그라데이션) ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <!-- AI 데일리 브리프 -->
+        <div id="dash-brief-card" class="md:col-span-8 rounded-2xl p-5 relative overflow-hidden" style="background:linear-gradient(135deg,#ede9fe 0%,#fef3c7 100%);box-shadow:0 8px 24px rgba(107,56,212,0.08)">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">
+                <span class="material-symbols-outlined" style="font-size:20px">auto_awesome</span>
+              </div>
+              <div>
+                <p class="text-xs font-black uppercase tracking-widest text-violet-700">오늘의 브리프</p>
+                <p id="dash-brief-date" class="text-xs text-slate-500"></p>
+              </div>
             </div>
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-violet-700">오늘의 브리프</p>
-              <p id="dash-brief-date" class="text-[10px] text-slate-500"></p>
+            <div class="flex items-center gap-1">
+              <span id="dash-brief-status" class="text-[10px] text-slate-400 px-2"></span>
+              <button onclick="generateDailyBrief(true)" class="p-1.5 rounded-lg hover:bg-white/60 text-violet-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button>
             </div>
           </div>
-          <div class="flex items-center gap-1">
-            <span id="dash-brief-status" class="text-[10px] text-slate-400 px-2"></span>
-            <button onclick="generateDailyBrief(true)" class="p-1.5 rounded-lg hover:bg-white/60 text-violet-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button>
+          <div id="dash-brief-content" class="text-slate-700">
+            <div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>
           </div>
         </div>
-        <div id="dash-brief-content" class="text-[13px] text-slate-700 leading-relaxed">
-          <div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>
+        <!-- 오늘의 영어 표현 (보라 그라데이션) -->
+        <div id="dash-expr-card" class="md:col-span-4 rounded-2xl p-5 cursor-pointer hover:shadow-lg transition-all relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);box-shadow:0 8px 24px rgba(124,58,237,0.25)" onclick="navigate('english')">
+          <div class="absolute top-3 right-3 text-4xl font-headline font-extrabold opacity-20 pointer-events-none text-white">"</div>
+          <div class="flex items-center justify-between mb-2 relative z-10">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-white/90" style="font-size:18px">translate</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-white">오늘의 영어</h3>
+            </div>
+            <button onclick="event.stopPropagation();shuffleDashExpr()" class="p-1 rounded hover:bg-white/20 text-white/80 hover:text-white" title="셔플"><span class="material-symbols-outlined" style="font-size:15px">shuffle</span></button>
+          </div>
+          <p id="dash-expr-en" class="text-base font-bold italic text-white leading-snug mb-1.5 relative z-10" style="font-family:'Pretendard',sans-serif"></p>
+          <p id="dash-expr-kr" class="text-sm text-white/90 mb-2 relative z-10" style="font-family:'Pretendard',sans-serif;letter-spacing:-0.01em"></p>
+          <p id="dash-expr-ctx" class="text-[11px] text-white/70 relative z-10" style="font-family:'Pretendard',sans-serif"></p>
         </div>
       </section>
 
-      <!-- ═══════ Tier 2: 4-컬럼 컴팩트 카드 ═══════ -->
+      <!-- ═══════ Tier 2: 4-컬럼 컴팩트 카드 (폰트 키움) ═══════ -->
       <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <!-- 오늘 일정 -->
-        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('planner')">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">오늘 일정</span>
-            <span class="material-symbols-outlined text-indigo-500" style="font-size:14px">today</span>
+        <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('planner')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">오늘 일정</span>
+            <span class="material-symbols-outlined text-indigo-500" style="font-size:16px">today</span>
           </div>
-          <p class="text-2xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-events-count">0</span><span class="text-xs font-bold text-slate-400 ml-1">건</span></p>
-          <div id="dash-mini-events" class="mt-2 space-y-0.5 text-[10px] text-slate-500"></div>
+          <p class="text-3xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-events-count">0</span><span class="text-sm font-bold text-slate-400 ml-1">건</span></p>
+          <div id="dash-mini-events" class="mt-2 space-y-0.5 text-[12px] text-slate-600" style="font-family:'Pretendard',sans-serif"></div>
         </div>
         <!-- 이번 달 재정 -->
-        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">이번 달 재정</span>
-            <span class="material-symbols-outlined text-emerald-500" style="font-size:14px">trending_up</span>
+        <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">이번 달 재정</span>
+            <span class="material-symbols-outlined text-emerald-500" style="font-size:16px">trending_up</span>
           </div>
-          <p id="dash-net" class="text-2xl font-extrabold leading-tight text-violet-600">₩0</p>
-          <div class="mt-2 space-y-0.5 text-[10px]">
-            <div class="flex justify-between"><span class="text-slate-400">수입</span><span id="dash-income" class="font-bold text-emerald-600">₩0</span></div>
-            <div class="flex justify-between"><span class="text-slate-400">지출</span><span id="dash-expense" class="font-bold text-rose-500">₩0</span></div>
+          <p id="dash-net" class="text-2xl font-extrabold leading-tight text-violet-600" style="font-family:'Pretendard',sans-serif">₩0</p>
+          <div class="mt-2 space-y-0.5 text-[12px]" style="font-family:'Pretendard',sans-serif">
+            <div class="flex justify-between"><span class="text-slate-500">수입</span><span id="dash-income" class="font-bold text-emerald-600">₩0</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">지출</span><span id="dash-expense" class="font-bold text-rose-500">₩0</span></div>
           </div>
         </div>
         <!-- 다음 여행 -->
-        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('journey')">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">다음 여행</span>
-            <span class="material-symbols-outlined text-violet-500" style="font-size:14px">flight_takeoff</span>
+        <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('journey')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">다음 여행</span>
+            <span class="material-symbols-outlined text-violet-500" style="font-size:16px">flight_takeoff</span>
           </div>
-          <p class="text-base font-extrabold text-slate-900 leading-tight truncate" id="dash-mini-trip-name">—</p>
+          <p class="text-base font-extrabold text-slate-900 leading-tight truncate" id="dash-mini-trip-name" style="font-family:'Pretendard',sans-serif">—</p>
           <div class="mt-1">
-            <span id="dash-mini-trip-dday" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">—</span>
+            <span id="dash-mini-trip-dday" class="text-xs font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-700">—</span>
           </div>
-          <div id="dash-mini-trip-extra" class="mt-2 text-[10px] text-slate-500 space-y-0.5"></div>
+          <div id="dash-mini-trip-extra" class="mt-2 text-[12px] text-slate-600 space-y-0.5" style="font-family:'Pretendard',sans-serif"></div>
         </div>
         <!-- 작품 진행 -->
-        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">작품 진행</span>
-            <span class="material-symbols-outlined text-amber-500" style="font-size:14px">edit_note</span>
+        <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">작품 진행</span>
+            <span class="material-symbols-outlined text-amber-500" style="font-size:16px">edit_note</span>
           </div>
-          <p class="text-2xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-works-count">0</span><span class="text-xs font-bold text-slate-400 ml-1">개</span></p>
-          <div id="dash-mini-works" class="mt-2 space-y-0.5 text-[10px] text-slate-500"></div>
+          <p class="text-3xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-works-count">0</span><span class="text-sm font-bold text-slate-400 ml-1">개</span></p>
+          <div id="dash-mini-works" class="mt-2 space-y-0.5 text-[12px] text-slate-600" style="font-family:'Pretendard',sans-serif"></div>
         </div>
       </section>
 
-      <!-- ═══════ Tier 3: 환율 + 회사 일정 ═══════ -->
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <!-- ═══════ Tier 3: 환율 + 회사 일정 + 연차 (3-col) ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <!-- 환율 위젯 -->
         <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-violet-500" style="font-size:16px">currency_exchange</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">환율 (어제 대비)</h3>
+              <span class="material-symbols-outlined text-violet-500" style="font-size:18px">currency_exchange</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-700">환율</h3>
             </div>
-            <span id="dash-fx-updated" class="text-[9px] text-slate-400"></span>
+            <span id="dash-fx-updated" class="text-[10px] text-slate-400"></span>
           </div>
-          <div id="dash-fx-list" class="space-y-1">
-            <div class="text-[10px] text-slate-400 italic">여행지 통화 자동 감지 중...</div>
+          <div id="dash-fx-list" class="space-y-1" style="font-family:'Pretendard',sans-serif">
+            <div class="text-[11px] text-slate-400 italic">로딩 중...</div>
           </div>
         </div>
         <!-- 회사/업무 일정 -->
         <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-sky-500" style="font-size:16px">business_center</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">회사·업무 일정</h3>
+              <span class="material-symbols-outlined text-sky-500" style="font-size:18px">business_center</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-700">회사·업무</h3>
             </div>
             <div class="flex items-center gap-1.5">
-              <span id="dash-biz-count" class="text-[9px] font-bold text-sky-600"></span>
-              <button onclick="openImportModal()" class="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-700 text-[9px] font-bold flex items-center gap-0.5 transition-colors" title="Outlook .ics 또는 GTM 엑셀 임포트">
-                <span class="material-symbols-outlined" style="font-size:11px">upload</span>임포트
+              <span id="dash-biz-count" class="text-[10px] font-bold text-sky-600"></span>
+              <button onclick="openImportModal()" class="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-700 text-[10px] font-bold flex items-center gap-0.5 transition-colors" title="Outlook .ics 또는 GTM 엑셀 임포트">
+                <span class="material-symbols-outlined" style="font-size:12px">upload</span>임포트
               </button>
             </div>
           </div>
-          <div id="dash-biz-list" class="space-y-1 text-[11px]">
-            <div class="text-[10px] text-slate-400 italic">이번 주 업무 일정 없음</div>
+          <div id="dash-biz-list" class="space-y-1 text-[12px]" style="font-family:'Pretendard',sans-serif">
+            <div class="text-[11px] text-slate-400 italic">2주 이내 업무 일정 없음 ✓</div>
           </div>
+        </div>
+        <!-- 연차 (눈에 잘 띄게 위로) -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-amber-600" style="font-size:18px">beach_access</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-amber-800">연차</h3>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span id="dash-vac-remain" class="text-3xl font-extrabold text-amber-700">—</span>
+            <span class="text-xs text-amber-600/70 font-bold">days remaining</span>
+          </div>
+          <div class="w-full h-2 rounded-full overflow-hidden bg-amber-100"><div id="dash-vac-bar" class="h-full rounded-full" style="background:linear-gradient(90deg,#f97316,#fb923c);width:0%"></div></div>
+          <p id="dash-vac-label" class="text-[11px] text-amber-700/70 mt-1.5"></p>
         </div>
       </section>
 
-      <!-- ═══════ Tier 3.5: 뉴스 (국내 + 해외 영어) ═══════ -->
+      <!-- ═══════ Tier 4: 뉴스 (국내 경제/정치 + 해외 영어 + 한글 번역) ═══════ -->
       <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <!-- 국내 뉴스 -->
         <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-rose-500" style="font-size:16px">newspaper</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">🇰🇷 국내 헤드라인</h3>
+              <span class="material-symbols-outlined text-rose-500" style="font-size:18px">newspaper</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-700">🇰🇷 국내 (경제·정치)</h3>
             </div>
-            <span id="dash-news-kr-source" class="text-[9px] text-slate-400">한겨레</span>
+            <span id="dash-news-kr-source" class="text-[10px] text-slate-400">한겨레</span>
           </div>
-          <div id="dash-news-kr" class="space-y-1.5 text-[11px]">
-            <div class="text-[10px] text-slate-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:11px">progress_activity</span>로딩 중...</div>
+          <div id="dash-news-kr" class="space-y-2 text-[12px]" style="font-family:'Pretendard',sans-serif">
+            <div class="text-[11px] text-slate-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:12px">progress_activity</span>로딩 중...</div>
           </div>
         </div>
-        <!-- 해외 뉴스 (영어 — 영어 공부 겸) -->
+        <!-- 해외 영어 뉴스 -->
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-blue-600" style="font-size:16px">public</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-blue-800">🌐 World News (EN)</h3>
+              <span class="material-symbols-outlined text-blue-600" style="font-size:18px">public</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-blue-800">🌐 World News (EN)</h3>
             </div>
-            <span id="dash-news-en-source" class="text-[9px] text-blue-500">BBC</span>
+            <span id="dash-news-en-source" class="text-[10px] text-blue-500">BBC</span>
           </div>
-          <div id="dash-news-en" class="space-y-1.5 text-[11px]">
-            <div class="text-[10px] text-blue-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:11px">progress_activity</span>Loading...</div>
+          <div id="dash-news-en" class="space-y-2 text-[12px]" style="font-family:'Pretendard',sans-serif">
+            <div class="text-[11px] text-blue-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:12px">progress_activity</span>Loading...</div>
           </div>
         </div>
       </section>
 
-      <!-- ═══════ Tier 4: 위클리 뷰 (축소) ═══════ -->
+      <!-- ═══════ Tier 5: 위클리 뷰 ═══════ -->
       <section class="space-y-2.5">
         <div class="flex justify-between items-end px-1">
           <h2 class="text-sm font-black tracking-tight text-slate-700">Week in Review</h2>
-          <span id="dash-week-range" class="font-bold text-[10px] text-violet-600"></span>
+          <span id="dash-week-range" class="font-bold text-[11px] text-violet-600"></span>
         </div>
         <div id="dash-week-grid" class="grid grid-cols-2 md:grid-cols-7 gap-2"></div>
       </section>
 
-      <!-- ═══════ Tier 5: 영어 표현 + 최근 메모 ═══════ -->
+      <!-- ═══════ Tier 6: 최근 메모 + 다음 여행 mini ═══════ -->
       <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <!-- Today's English (압축) -->
-        <div id="dash-expr-card" class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all relative" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('english')">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-rose-500" style="font-size:16px">translate</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">오늘의 영어 표현</h3>
-            </div>
-            <button onclick="event.stopPropagation();shuffleDashExpr()" class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-rose-600" title="셔플"><span class="material-symbols-outlined" style="font-size:14px">shuffle</span></button>
-          </div>
-          <p id="dash-expr-en" class="text-sm font-bold italic text-slate-900 leading-snug mb-1"></p>
-          <p id="dash-expr-kr" class="text-[11px] text-slate-600 mb-1"></p>
-          <p id="dash-expr-ctx" class="text-[10px] text-slate-400"></p>
-        </div>
         <!-- 최근 메모 -->
         <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('memo')">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-amber-500" style="font-size:16px">sticky_note_2</span>
-              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">최근 메모</h3>
+              <span class="material-symbols-outlined text-amber-500" style="font-size:18px">sticky_note_2</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-700">최근 메모</h3>
             </div>
           </div>
-          <div id="dash-memo-list" class="space-y-1 text-[11px]">
-            <div class="text-[10px] text-slate-400 italic">메모 없음</div>
+          <div id="dash-memo-list" class="space-y-1.5 text-[12px]" style="font-family:'Pretendard',sans-serif">
+            <div class="text-[11px] text-slate-400 italic">메모 없음</div>
+          </div>
+        </div>
+        <!-- 다음 여행 mini (hero 대신) -->
+        <div class="bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('journey')">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-violet-600" style="font-size:18px">flight_takeoff</span>
+              <h3 class="text-[13px] font-black uppercase tracking-widest text-violet-700">다음·다음 여행</h3>
+            </div>
+          </div>
+          <div id="dash-travel-next" class="space-y-1">
+            <h3 id="dash-travel-next-name" class="text-base font-extrabold leading-tight text-violet-900" style="font-family:'Pretendard',sans-serif">—</h3>
+            <p id="dash-travel-next-date" class="text-[11px] text-violet-700"></p>
           </div>
         </div>
       </section>
 
-      <!-- ═══════ Tier 6: 다가오는 여행 (큰 hero, 옵션) ═══════ -->
+      <!-- (hidden) Travel hero — 사용자 요청으로 제거. dash-trip-file-input은 호환성 위해 남김 -->
       <input type="file" id="dash-trip-file-input" accept="image/*" style="display:none" onchange="handleTripFileSelect(this.files[0])"/>
-      <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-3">
-        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-xl h-[200px] cursor-pointer" style="box-shadow:0 4px 12px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);"
-             onclick="triggerTripUpload('hero')"
-             ondragover="event.preventDefault();this.style.outline='3px dashed #fff';this.style.outlineOffset='-6px'"
-             ondragleave="this.style.outline=''"
-             ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'hero')">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-          <div class="absolute bottom-4 left-5 text-white z-10">
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 opacity-80">Upcoming Journey</p>
-            <h2 id="dash-travel-name" class="text-2xl font-headline font-extrabold mb-1.5">—</h2>
-            <div id="dash-travel-meta" class="flex items-center gap-3 text-xs"></div>
-          </div>
-          <div id="dash-travel-credit" class="absolute bottom-2 right-3 text-[9px] text-white/40 z-10" style="display:none"></div>
-        </div>
-        <div class="md:col-span-4 flex flex-col">
-          <div id="dash-travel-next" class="p-5 rounded-xl flex-1 flex flex-col justify-end cursor-pointer group h-full" style="background:#c9b3fd;box-shadow:0 4px 12px rgba(25,28,29,0.04)"
-               onclick="triggerTripUpload('next')"
-               ondragover="event.preventDefault();this.style.outline='3px dashed #6b38d4';this.style.outlineOffset='-6px'"
-               ondragleave="this.style.outline=''"
-               ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'next')">
-            <span class="material-symbols-outlined text-2xl mb-1.5" style="color:#544183">flight_takeoff</span>
-            <h3 id="dash-travel-next-name" class="text-base font-headline font-bold leading-tight" style="color:#544183"></h3>
-            <p id="dash-travel-next-date" class="mt-0.5 text-xs" style="color:#4e3b7c"></p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 휴가 진행률 (작게) -->
-      <section class="bg-white rounded-xl p-3.5" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-amber-500" style="font-size:16px">beach_access</span>
-            <span class="text-xs font-black uppercase tracking-widest text-slate-600">연차</span>
-            <span class="text-lg font-extrabold text-slate-900"><span id="dash-vac-remain">—</span></span>
-            <span class="text-[10px] text-slate-400">days remaining</span>
-            <span id="dash-vac-label" class="text-[10px] text-slate-400 ml-1"></span>
-          </div>
-          <div class="flex-1 max-w-xs h-1.5 rounded-full overflow-hidden" style="background:#e7e8e9"><div id="dash-vac-bar" class="h-full rounded-full" style="background:linear-gradient(90deg,#f97316,#fb923c);width:0%"></div></div>
-        </div>
-      </section>
+      <div id="dash-travel-section" style="display:none">
+        <div id="dash-travel-hero"></div>
+        <div id="dash-travel-name"></div>
+        <div id="dash-travel-meta"></div>
+        <div id="dash-travel-credit"></div>
+      </div>
 
       <!-- Footer -->
       <footer class="pt-3 text-center text-slate-400/60 italic font-headline text-[11px]" id="dash-footer"></footer>
@@ -12809,21 +12815,33 @@
   }
 
   function renderDashFinance(rows) {
+    // 이번 달만 필터 (r[0]이 날짜 'YYYY-MM-DD')
+    var now = new Date();
+    var thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
     var income=0, expense=0;
     rows.forEach(function(r) {
+      var date = (r[0]||'').toString();
+      if (!date.startsWith(thisMonth)) return; // 이번 달만
       var amt = parseFloat(r[3])||0;
       var type = r[4]||'';
       if(type==='수입') income+=amt;
       else if(type==='지출') expense+=amt;
     });
+    // 한국식 단위 포맷 (1억 이상이면 1.38억, 그 미만이면 1,234만)
+    function fmtKRW(amt) {
+      if (!amt) return '₩0';
+      var abs = Math.abs(amt);
+      if (abs >= 10000) return '₩' + (amt / 10000).toFixed(2).replace(/\.?0+$/,'') + '억';
+      return '₩' + Math.round(amt).toLocaleString('ko-KR') + '만';
+    }
     var inEl = document.getElementById('dash-income');
     var exEl = document.getElementById('dash-expense');
     var netEl = document.getElementById('dash-net');
-    if (inEl) inEl.textContent = '₩' + Math.round(income).toLocaleString('ko-KR') + '만';
-    if (exEl) exEl.textContent = '₩' + Math.round(expense).toLocaleString('ko-KR') + '만';
+    if (inEl) inEl.textContent = fmtKRW(income);
+    if (exEl) exEl.textContent = fmtKRW(expense);
     var net = income - expense;
     if (netEl) {
-      netEl.textContent = (net>=0?'+':'-') + '₩' + Math.abs(Math.round(net)).toLocaleString('ko-KR') + '만';
+      netEl.textContent = (net>=0?'+':'-') + fmtKRW(Math.abs(net));
       netEl.style.color = net >= 0 ? '#6b38d4' : '#dc2626';
     }
   }
@@ -12913,26 +12931,24 @@
     }
   }
 
-  // ─── 환율 위젯: 여행 통화 자동 감지 + 어제 대비 변동 ───
+  // ─── 환율 위젯: 주요 통화 5개 강제 + 여행 통화 자동 감지 + 어제 대비 변동 ───
   async function renderDashFxWidget(tripDocs, journeyDocs) {
     var listEl = document.getElementById('dash-fx-list');
     var updEl = document.getElementById('dash-fx-updated');
     if (!listEl) return;
-    // 여행 통화 자동 추출 (journey의 price_original / deposit / rental_deposit 등에서)
-    var currencies = {};
+    // 주요 통화 5개 무조건 표시 + journey 데이터에서 추가 통화 감지
+    var currencies = { 'USD': true, 'EUR': true, 'JPY': true, 'GBP': true, 'CAD': true };
     (journeyDocs||[]).forEach(function(j){
       ['amount','deposit','rental_deposit','notes','description'].forEach(function(field){
         var v = j[field];
         if (!v) return;
-        var matches = String(v).match(/(EUR|USD|GBP|JPY|CNY|CHF|AUD|CAD|HKD|SGD|THB|NZD)/gi);
+        var matches = String(v).match(/(EUR|USD|GBP|JPY|CNY|CHF|AUD|CAD|HKD|SGD|THB|NZD|TWD)/gi);
         if (matches) matches.forEach(function(c){ currencies[c.toUpperCase()] = true; });
       });
     });
-    // 기본값: 진행중/예정 트립 국가 추정 (없으면 주요 통화 5개)
-    if (Object.keys(currencies).length === 0) {
-      ['EUR','USD','JPY','GBP'].forEach(function(c){ currencies[c] = true; });
-    }
-    var ccyList = Object.keys(currencies).slice(0, 5); // 최대 5개
+    // 정렬 우선순위 (주요 5개 먼저, 그 다음 추가 통화)
+    var priority = ['USD','EUR','JPY','GBP','CAD','CNY','CHF','AUD','HKD','SGD','THB','NZD','TWD'];
+    var ccyList = priority.filter(function(c){ return currencies[c]; }).slice(0, 7); // 최대 7개
 
     var html = '';
     for (var i = 0; i < ccyList.length; i++) {
@@ -12958,10 +12974,10 @@
         var diffPct = yesterdayRate ? ((diff / yesterdayRate) * 100).toFixed(2) : '0.00';
         var diffColor = diff > 0 ? 'text-rose-500' : (diff < 0 ? 'text-emerald-500' : 'text-slate-400');
         var diffIcon = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
-        html += '<div class="flex items-center justify-between text-[11px] py-1 border-b border-slate-50 last:border-b-0">' +
-          '<span class="font-bold text-slate-700">' + ccy + '</span>' +
-          '<span class="font-bold text-slate-900">₩' + todayRate.toLocaleString('ko-KR') + '</span>' +
-          '<span class="' + diffColor + ' font-bold w-16 text-right">' + (yesterdayRate ? diffIcon + ' ' + Math.abs(diff).toLocaleString('ko-KR') + ' (' + (diff>=0?'+':'') + diffPct + '%)' : '<span class="text-slate-300 italic text-[9px]">변동 추적 중</span>') + '</span>' +
+        html += '<div class="flex items-center justify-between gap-2 text-[12px] py-1.5 border-b border-slate-50 last:border-b-0">' +
+          '<span class="font-extrabold text-slate-700 w-10">' + ccy + '</span>' +
+          '<span class="font-bold text-slate-900 flex-1 text-right">₩' + todayRate.toLocaleString('ko-KR') + '</span>' +
+          '<span class="' + diffColor + ' font-bold text-[11px] text-right whitespace-nowrap">' + (yesterdayRate ? diffIcon + (diff>=0?'+':'') + diffPct + '%' : '<span class="text-slate-300 italic">—</span>') + '</span>' +
         '</div>';
       } catch(e) { console.warn('[fx widget]', ccy, e); }
     }
@@ -13013,13 +13029,13 @@
     }).join('');
   }
 
-  // ─── 뉴스 헤드라인 (국내 + 해외 영어) — rss2json 무료 API + 30분 캐시 ───
+  // ─── 뉴스 헤드라인 (국내 경제+정치 + 해외 영어 + 한글 번역) — rss2json + Claude 번역 + 30분 캐시 ───
   async function renderDashNews() {
     var krEl = document.getElementById('dash-news-kr');
     var enEl = document.getElementById('dash-news-en');
     if (!krEl || !enEl) return;
 
-    var cacheKey = 'atelier_news_cache_v1';
+    var cacheKey = 'atelier_news_cache_v2';
     // 30분 캐시
     try {
       var cached = JSON.parse(localStorage.getItem(cacheKey));
@@ -13030,18 +13046,25 @@
       }
     } catch(e){}
 
-    // 한국 (한겨레), 해외 (BBC) RSS — rss2json.com 무료 우회 (CORS 해결)
-    var krRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.hani.co.kr/rss/');
+    // 한국 경제 + 정치 (한겨레 별도 RSS), 해외 BBC World — rss2json.com CORS 우회
+    var econRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.hani.co.kr/rss/economy/');
+    var politRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.hani.co.kr/rss/politics/');
     var enRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('http://feeds.bbci.co.uk/news/world/rss.xml');
 
     var krItems = [], enItems = [];
     try {
-      var [krRes, enRes] = await Promise.all([
-        fetch(krRss).then(function(r){ return r.json(); }).catch(function(){ return null; }),
+      var [econRes, politRes, enRes] = await Promise.all([
+        fetch(econRss).then(function(r){ return r.json(); }).catch(function(){ return null; }),
+        fetch(politRss).then(function(r){ return r.json(); }).catch(function(){ return null; }),
         fetch(enRss).then(function(r){ return r.json(); }).catch(function(){ return null; })
       ]);
-      if (krRes && krRes.items) krItems = krRes.items.slice(0, 5);
-      if (enRes && enRes.items) enItems = enRes.items.slice(0, 5);
+      var econ = (econRes && econRes.items) ? econRes.items.slice(0,3).map(function(i){ i.section='경제'; return i; }) : [];
+      var polit = (politRes && politRes.items) ? politRes.items.slice(0,3).map(function(i){ i.section='정치'; return i; }) : [];
+      // 두 카테고리를 시간순으로 섞고 상위 5개
+      krItems = econ.concat(polit).sort(function(a,b){ return new Date(b.pubDate||0) - new Date(a.pubDate||0); }).slice(0, 5);
+      enItems = (enRes && enRes.items) ? enRes.items.slice(0, 5) : [];
+      // Claude로 영어 뉴스 한글 번역 (API 키 있으면)
+      if (enItems.length) await _translateNewsHeadlines(enItems);
       // 캐시
       try { localStorage.setItem(cacheKey, JSON.stringify({ kr: krItems, en: enItems, fetchedAt: Date.now() })); } catch(e){}
     } catch(e) { console.warn('[news]', e); }
@@ -13050,14 +13073,49 @@
     _renderNewsList(enEl, enItems, 'en');
   }
 
+  // 영어 헤드라인 한꺼번에 한글 번역 (한 번의 Claude 호출)
+  async function _translateNewsHeadlines(items) {
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) return; // 키 없으면 번역 스킵
+    var titles = items.map(function(i){ return String(i.title||''); });
+    var prompt = '아래 영어 뉴스 헤드라인들을 자연스러운 한국어로 짧게(20자 내) 번역해. JSON 배열로만 응답:\n["번역1","번역2",...]\n\n원문:\n' + JSON.stringify(titles);
+    try {
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+      var text = (data.content && data.content[0] && data.content[0].text || '').trim();
+      var m = text.match(/\[[\s\S]*\]/);
+      if (!m) return;
+      var translations = JSON.parse(m[0]);
+      items.forEach(function(it, i){ if (translations[i]) it.translation = translations[i]; });
+    } catch(e) { console.warn('[translate news]', e); }
+  }
+
   function _renderNewsList(el, items, lang) {
     if (!el) return;
     if (!items || !items.length) {
-      el.innerHTML = '<div class="text-[10px] text-slate-400 italic">뉴스 로드 실패 (네트워크 확인)</div>';
+      el.innerHTML = '<div class="text-[11px] text-slate-400 italic">뉴스 로드 실패 (네트워크 확인)</div>';
       return;
     }
-    el.innerHTML = items.slice(0, 4).map(function(item){
-      var title = String(item.title||'').replace(/<[^>]+>/g, '').replace(/</g,'&lt;').slice(0, 80);
+    el.innerHTML = items.slice(0, 5).map(function(item){
+      var rawTitle = String(item.title||'').replace(/<[^>]+>/g, '');
+      var title = rawTitle.replace(/</g,'&lt;').slice(0, 90);
+      // 짧은 요약 (description에서 첫 문장만)
+      var desc = String(item.description||'').replace(/<[^>]+>/g,'').replace(/</g,'&lt;').trim();
+      if (desc.length > 100) desc = desc.substring(0, 100).split(/[.。]/)[0] + '...';
       var link = item.link || '#';
       var pubDate = item.pubDate ? new Date(item.pubDate) : null;
       var timeAgo = '';
@@ -13067,12 +13125,33 @@
         else if (diffHr < 24) timeAgo = diffHr + '시간 전';
         else timeAgo = Math.floor(diffHr/24) + '일 전';
       }
-      var color = lang === 'en' ? 'text-blue-700 hover:text-blue-900' : 'text-slate-700 hover:text-rose-700';
-      var bullet = lang === 'en' ? '<span class="text-blue-400">▸</span>' : '<span class="text-rose-400">▸</span>';
-      return '<a href="' + link + '" target="_blank" rel="noopener" class="flex items-start gap-1.5 leading-snug hover:underline transition-colors">' +
-        bullet +
-        '<span class="flex-1 ' + color + '">' + title + '</span>' +
-        (timeAgo ? '<span class="text-[9px] text-slate-400 shrink-0 mt-0.5">' + timeAgo + '</span>' : '') +
+      if (lang === 'en') {
+        // 영어 헤드라인 + 한글 번역 (있으면)
+        var trans = item.translation ? '<div class="text-[11px] text-blue-600 mt-0.5 leading-snug">' + String(item.translation).replace(/</g,'&lt;') + '</div>' : '';
+        return '<a href="' + link + '" target="_blank" rel="noopener" class="block hover:underline transition-colors py-1 border-b border-blue-100 last:border-b-0">' +
+          '<div class="flex items-start gap-1.5">' +
+            '<span class="text-blue-400 shrink-0">▸</span>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="text-blue-900 font-medium leading-snug">' + title + '</div>' +
+              trans +
+            '</div>' +
+            (timeAgo ? '<span class="text-[10px] text-blue-400/70 shrink-0 ml-1 mt-0.5">' + timeAgo + '</span>' : '') +
+          '</div>' +
+        '</a>';
+      }
+      // 국내 — 카테고리 뱃지 + 요약
+      var sectionBadge = item.section ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded ' + (item.section === '경제' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700') + ' shrink-0 mr-1">' + item.section + '</span>' : '';
+      return '<a href="' + link + '" target="_blank" rel="noopener" class="block hover:underline transition-colors py-1 border-b border-slate-100 last:border-b-0">' +
+        '<div class="flex items-start gap-1.5">' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-1 flex-wrap">' +
+              sectionBadge +
+              '<span class="text-slate-800 font-medium leading-snug">' + title + '</span>' +
+            '</div>' +
+            (desc ? '<div class="text-[11px] text-slate-500 mt-0.5 leading-snug">' + desc + '</div>' : '') +
+          '</div>' +
+          (timeAgo ? '<span class="text-[10px] text-slate-400 shrink-0 ml-1 mt-0.5">' + timeAgo + '</span>' : '') +
+        '</div>' +
       '</a>';
     }).join('');
   }
