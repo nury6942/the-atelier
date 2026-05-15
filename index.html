@@ -8847,6 +8847,69 @@
       var dayTrips = getDayTripCities(items, cityName);
       var baseN2 = _normCityKey(cityName);
 
+      // ─── 미니 패널 (교통편 / 사전예약 / 쇼핑) 계산 ───
+      var miniPanelHtml = '';
+      // (1) 교통편 가이드 — 이 도시 첫날만
+      var thisCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
+      if (thisCity && thisCity.transit_guide && dateStr === thisCity.start_date) {
+        var tgSafe = String(thisCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,' · ');
+        miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#eef2ff;border-left-color:#6366f1">' +
+          '<div class="flex items-start gap-1.5">' +
+            '<span class="material-symbols-outlined text-indigo-500" style="font-size:13px;margin-top:1px">directions_transit</span>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="text-[9px] font-black uppercase tracking-widest text-indigo-600 mb-0.5">' + cityName + ' 교통편</div>' +
+              '<div class="text-[11px] text-slate-700 leading-snug">' + tgSafe + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      // (2) 사전 예약 체크리스트 — 트립 시작일에만
+      var firstStart = citiesData.length > 0 ? citiesData[0].start_date : '';
+      if (dateStr && firstStart && dateStr === firstStart) {
+        var prebookList = journeyData.filter(function(j){
+          if (j.type !== '일정') return false;
+          if (j.prebook === true || j.reservation === true) return true;
+          var combo = ((j.title||'') + ' ' + (j.description||''));
+          return /사전\s*예약|예약\s*필수|예매\s*필수|reservation\s*required|온라인\s*예약/i.test(combo);
+        });
+        if (prebookList.length > 0) {
+          miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#fff7ed;border-left-color:#f97316">' +
+            '<div class="flex items-center gap-1.5 mb-1">' +
+              '<span class="material-symbols-outlined text-orange-600" style="font-size:13px">task_alt</span>' +
+              '<span class="text-[9px] font-black uppercase tracking-widest text-orange-700">사전 예약 ' + prebookList.length + '건</span>' +
+            '</div>' +
+            '<ul class="space-y-0.5">' +
+              prebookList.map(function(p){
+                var when = p.date ? '<span class="text-[9px] text-slate-400 mr-1">' + _journeyShortDate(p.date) + '</span>' : '';
+                return '<li class="text-[11px] flex items-start gap-1"><span class="text-orange-500">▸</span><span class="flex-1 leading-snug">' + when + '<span class="font-semibold text-slate-800">' + (p.title||'—') + '</span></span></li>';
+              }).join('') +
+            '</ul>' +
+          '</div>';
+        }
+      }
+      // (3) 쇼핑 가이드 — 이 날짜 또는 이 도시의 기념품
+      var sourceSouvenirs = journeyData.filter(function(j){
+        if (j.type !== '기념품') return false;
+        if (j.date && j.date === dateStr) return true;
+        if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
+        return false;
+      });
+      if (sourceSouvenirs.length > 0) {
+        miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#ecfdf5;border-left-color:#10b981">' +
+          '<div class="flex items-center gap-1.5 mb-1">' +
+            '<span class="material-symbols-outlined text-emerald-600" style="font-size:13px">shopping_bag</span>' +
+            '<span class="text-[9px] font-black uppercase tracking-widest text-emerald-700">쇼핑 ' + sourceSouvenirs.length + '개</span>' +
+          '</div>' +
+          '<ul class="space-y-0.5">' +
+            sourceSouvenirs.map(function(s){
+              var label = (s.description || s.title || '—');
+              var price = s.amount ? ' <span class="text-[9px] text-emerald-600 font-bold">€' + s.amount + '</span>' : '';
+              return '<li class="text-[11px] flex items-start gap-1"><span class="text-emerald-500">▸</span><span class="flex-1 leading-snug font-semibold text-slate-800">' + String(label).replace(/</g,'&lt;').slice(0,40) + price + '</span></li>';
+            }).join('') +
+          '</ul>' +
+        '</div>';
+      }
+
       var itemsHtml = items.length === 0
         ? '<div class="text-xs text-slate-400 py-4 italic text-center">일정 없음</div>'
         : items.map(function(item){
@@ -8983,7 +9046,7 @@
           '<div class="text-[11px] font-black uppercase tracking-widest opacity-90">' + dateStr + (weekday ? ' (' + weekday + ')' : '') + '</div>' +
           headerCityHtml +
         '</div>' +
-        '<div class="px-3 py-2 flex-1 min-h-[160px]">' + itemsHtml + '</div>' +
+        '<div class="px-3 py-2 flex-1 min-h-[160px]">' + miniPanelHtml + itemsHtml + '</div>' +
         addFormHtml +
       '</div>';
     }).join('');
