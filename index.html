@@ -11446,6 +11446,71 @@
     if (typeof renderJourneySouvenir==='function') renderJourneySouvenir();
   };
 
+  // ─── 매트릭스 ↔ 작품 동기화 진단/복구 도구 ───
+  // 1) 진단: 어디서 데이터가 끊겼는지 확인
+  window._diagnoseMatrix = function() {
+    if (typeof loadWorks === 'function') loadWorks();
+    var works = (typeof _works !== 'undefined' && _works) ? _works : [];
+    var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
+    var publishingRows = pData.filter(function(r){ return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0; });
+    var matrixYr = (typeof _matrixYear !== 'undefined') ? _matrixYear : new Date().getFullYear();
+
+    console.log('═══════════════════════════════════════════');
+    console.log('📊 매트릭스 동기화 진단');
+    console.log('═══════════════════════════════════════════');
+    console.log('1. 작품 (_works) 총 ' + works.length + '개');
+    console.table(works.map(function(w){
+      return { title: w.title, series: w.series_name, status: w.status||'draft', start: w.publish_start||'-', end: w.publish_end||'-' };
+    }));
+    console.log('2. 캘린더(plannerData)에 \'phase:publishing\' 표시된 일정 ' + publishingRows.length + '개');
+    if (publishingRows.length) {
+      console.table(publishingRows.slice(0,30).map(function(r){
+        return { date: r[0], episode: r[1], notes: (r[4]||'').slice(0,60) };
+      }));
+    } else {
+      console.warn('⚠️ phase:publishing 일정이 0개. 작품이 캘린더에 sync 안 됨 → 매트릭스 에피소드가 비어 있을 것');
+    }
+    console.log('3. 매트릭스(' + matrixYr + ') 시리즈별 월간 데이터');
+    if (typeof getSeriesData === 'function') {
+      getSeriesData(matrixYr).forEach(function(s) {
+        var hasEps = 0;
+        for (var k in s.monthly) if (s.monthly[k] && s.monthly[k].eps) hasEps++;
+        console.log('  ▸', s.name, '— 에피소드 있는 월:', hasEps);
+      });
+    }
+    console.log('═══════════════════════════════════════════');
+    console.log('💡 복구 명령: _fullResyncWorks() — 모든 확정 작품을 캘린더+매트릭스에 강제 재동기화');
+  };
+
+  // 2) 강제 재동기화: 모든 confirmed 작품을 캘린더에 다시 푸시 + 매트릭스 sync
+  window._fullResyncWorks = async function() {
+    if (typeof loadWorks === 'function') loadWorks();
+    var works = (typeof _works !== 'undefined' && _works) ? _works : [];
+    var confirmed = works.filter(function(w){ return w.status === 'confirmed'; });
+    console.log('═══ ' + confirmed.length + '개 확정 작품 재동기화 시작 ═══');
+    if (confirmed.length === 0) {
+      console.warn('⚠️ 확정 작품이 없음. 작품을 확정하지 않았다면 confirmWork(id)로 확정하세요.');
+      console.log('미확정 작품 목록:', works.map(function(w){return w.title + ' (' + (w.status||'draft') + ')';}));
+      return;
+    }
+    var ok = 0, fail = 0;
+    for (var i = 0; i < confirmed.length; i++) {
+      var w = confirmed[i];
+      try {
+        if (typeof removeWorkCalEvents === 'function') await removeWorkCalEvents(w.id);
+        if (typeof autoAddScheduleToCalendar === 'function') await autoAddScheduleToCalendar(w);
+        ok++;
+        console.log('✓', w.title);
+      } catch(e) { fail++; console.error('실패:', w.title, e); }
+    }
+    if (typeof syncCalToMatrix === 'function') syncCalToMatrix();
+    if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
+    if (typeof renderCalendar === 'function') renderCalendar();
+    if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
+    console.log('═══ 완료: ' + ok + '개 sync 성공' + (fail ? ', ' + fail + '개 실패' : '') + ' ═══');
+    if (typeof showSyncToast === 'function') showSyncToast('🔄 ' + ok + '개 작품 재동기화 완료');
+  };
+
   // 중복 기념품 자동 제거 (city + 대상 + 품목 + 가격이 동일하면 중복으로 판단)
   window._dedupeSouvenirs = async function() {
     var arr = (journeyData||[]).filter(function(j){return j.type==='기념품';});
