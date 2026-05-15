@@ -8256,7 +8256,11 @@
         if (j.type !== '기념품') return false;
         if (j.time) return false; // 시간 있으면 일정에 들어가므로 제외
         if (j.date && j.date === dateStr) return true;
-        if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
+        // 도시 부분 매칭
+        if (!j.date && j.city && cityName) {
+          var jn = _normCityKey(j.city), cn = _normCityKey(cityName);
+          if (jn && cn && (jn === cn || jn.indexOf(cn) >= 0 || cn.indexOf(jn) >= 0)) return true;
+        }
         return false;
       });
       if (souvenirs.length > 0) {
@@ -8890,7 +8894,11 @@
         if (j.type !== '기념품') return false;
         if (j.time) return false; // 시간 있는 건 일정 리스트에 들어가므로 제외
         if (j.date && j.date === dateStr) return true;
-        if (!j.date && j.city && _normCityKey(j.city) === _normCityKey(cityName)) return true;
+        // 도시 부분 매칭 ('Frankfurt am Main' ⊃ 'Frankfurt', '독일 드레스덴' ⊃ '드레스덴')
+        if (!j.date && j.city && cityName) {
+          var jn = _normCityKey(j.city), cn = _normCityKey(cityName);
+          if (jn && cn && (jn === cn || jn.indexOf(cn) >= 0 || cn.indexOf(jn) >= 0)) return true;
+        }
         return false;
       });
       if (sourceSouvenirs.length > 0) {
@@ -11398,6 +11406,63 @@
       }
     });
   }
+
+  // ─── 콘솔 도구: 기념품 진단/정리 ───
+  // 현재 기념품 데이터 확인
+  window._listSouvenirs = function() {
+    var arr = (journeyData||[]).filter(function(j){return j.type==='기념품';});
+    console.log('═══ 현재 트립 기념품 ' + arr.length + '개 ═══');
+    console.table(arr.map(function(s){
+      return {
+        city: s.city || '(없음)',
+        대상: s.title || '',
+        품목: (s.description||'').slice(0,50),
+        가격: s.amount || '',
+        장소: s.location || '',
+        date: s.date || '',
+        time: s.time || '',
+        _id: s._id
+      };
+    }));
+    // 도시별 카운트
+    var byCity = {};
+    arr.forEach(function(s){ var c = s.city||'(없음)'; byCity[c] = (byCity[c]||0) + 1; });
+    console.log('도시별:', byCity);
+    // 현재 트립 도시 목록도 출력 (매칭 확인용)
+    console.log('현재 트립 도시:', (citiesData||[]).map(function(c){return c.name;}));
+  };
+
+  // 기념품 city 일괄 수정 (오타/이름 불일치 정정)
+  window._fixSouvenirCity = async function(oldCity, newCity) {
+    var arr = (journeyData||[]).filter(function(j){return j.type==='기념품' && j.city === oldCity;});
+    if (arr.length === 0) { console.log('해당 city 기념품 없음:', oldCity); return; }
+    var ok = 0;
+    for (var i = 0; i < arr.length; i++) {
+      try { await fbUpdate('journey', arr[i]._id, {city: newCity}); arr[i].city = newCity; ok++; } catch(e){}
+    }
+    console.log('✓ ' + ok + '개 city 변경:', oldCity, '→', newCity);
+    if (typeof renderWeekView==='function') renderWeekView();
+    if (typeof renderDayView==='function') renderDayView();
+    if (typeof renderJourneySouvenir==='function') renderJourneySouvenir();
+  };
+
+  // 현재 트립의 모든 기념품 삭제 (중복 추가 등 초기화용)
+  window._clearAllSouvenirs = async function() {
+    if (!confirm('현재 트립의 모든 기념품을 삭제할까요?')) return;
+    var arr = (journeyData||[]).filter(function(j){return j.type==='기념품';});
+    var ok = 0;
+    for (var i = 0; i < arr.length; i++) {
+      try { await fbDelete('journey', arr[i]._id); ok++; } catch(e){}
+    }
+    // journeyData에서도 제거
+    for (var j = journeyData.length - 1; j >= 0; j--) {
+      if (journeyData[j].type === '기념품') journeyData.splice(j, 1);
+    }
+    console.log('✓ ' + ok + '개 기념품 삭제됨');
+    if (typeof renderWeekView==='function') renderWeekView();
+    if (typeof renderDayView==='function') renderDayView();
+    if (typeof renderJourneySouvenir==='function') renderJourneySouvenir();
+  };
 
   // ─── 콘솔 도구: 기념품 일괄 추가 ───
   // 사용: _addSouvenirs([{city,item,target,amount,location,time,date}, ...])
