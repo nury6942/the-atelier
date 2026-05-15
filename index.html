@@ -11482,7 +11482,8 @@
     console.log('💡 복구 명령: _fullResyncWorks() — 모든 확정 작품을 캘린더+매트릭스에 강제 재동기화');
   };
 
-  // 2) 강제 재동기화: 모든 confirmed 작품을 캘린더에 다시 푸시 + 매트릭스 sync
+  // 2) 강제 재동기화: 캘린더의 모든 publishing 일정을 비우고 모든 confirmed 작품으로 재구성
+  // (work_id 마커 없는 옛 일정까지 정리해서 중복 100% 차단)
   window._fullResyncWorks = async function() {
     if (typeof loadWorks === 'function') loadWorks();
     var works = (typeof _works !== 'undefined' && _works) ? _works : [];
@@ -11493,22 +11494,40 @@
       console.log('미확정 작품 목록:', works.map(function(w){return w.title + ' (' + (w.status||'draft') + ')';}));
       return;
     }
+
+    // ▶ 1단계: 캘린더의 모든 publishing/draft/synopsis/revision 작품 관련 일정을 모두 삭제 (work_id 유무 무관)
+    var workNotePattern = /phase:(publishing|draft|synopsis|revision)|work_id:/;
+    var toRemove = [];
+    plannerData.forEach(function(row, idx) {
+      if (workNotePattern.test((row[4]||'').toString())) toRemove.push(idx);
+    });
+    toRemove.sort(function(a, b) { return b - a; });
+    var removedCount = 0;
+    for (var i = 0; i < toRemove.length; i++) {
+      var rid = plannerData[toRemove[i]][7];
+      if (rid) { try { await fbDelete('planner', rid); removedCount++; } catch(e){} }
+      plannerData.splice(toRemove[i], 1);
+    }
+    console.log('🗑️ 기존 작품 일정 ' + removedCount + '개 정리됨 (중복 방지)');
+
+    // ▶ 2단계: 모든 confirmed 작품을 캘린더에 재추가
     var ok = 0, fail = 0;
-    for (var i = 0; i < confirmed.length; i++) {
-      var w = confirmed[i];
+    for (var j = 0; j < confirmed.length; j++) {
+      var w = confirmed[j];
       try {
-        if (typeof removeWorkCalEvents === 'function') await removeWorkCalEvents(w.id);
         if (typeof autoAddScheduleToCalendar === 'function') await autoAddScheduleToCalendar(w);
         ok++;
         console.log('✓', w.title);
       } catch(e) { fail++; console.error('실패:', w.title, e); }
     }
+
+    // ▶ 3단계: 매트릭스 + 캘린더 + 타임라인 갱신
     if (typeof syncCalToMatrix === 'function') syncCalToMatrix();
     if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
     if (typeof renderCalendar === 'function') renderCalendar();
     if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
-    console.log('═══ 완료: ' + ok + '개 sync 성공' + (fail ? ', ' + fail + '개 실패' : '') + ' ═══');
-    if (typeof showSyncToast === 'function') showSyncToast('🔄 ' + ok + '개 작품 재동기화 완료');
+    console.log('═══ 완료: ' + ok + '개 sync' + (fail ? ', ' + fail + '개 실패' : '') + ', 기존 ' + removedCount + '개 정리됨 ═══');
+    if (typeof showSyncToast === 'function') showSyncToast('🔄 ' + ok + '개 작품 재동기화 (중복 ' + removedCount + '개 정리)');
   };
 
   // 중복 기념품 자동 제거 (city + 대상 + 품목 + 가격이 동일하면 중복으로 판단)
