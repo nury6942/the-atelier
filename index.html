@@ -2616,6 +2616,18 @@
                     </div>
                   </div>
                   <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                    <div class="grid grid-cols-3 gap-2">
+                      <button type="button" onclick="selectRentalAddCancel('가능')" id="rc-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                      <button type="button" onclick="selectRentalAddCancel('불가')" id="rc-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                      <button type="button" onclick="selectRentalAddCancel('조건부')" id="rc-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
+                    <input id="rc-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
                     <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
                     <div class="relative">
                       <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
@@ -2715,6 +2727,18 @@
                         <button type="button" onclick="selectRentalEditPayStatus('결제 완료')" id="rc-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
                         <button type="button" onclick="selectRentalEditPayStatus('현장 결제')" id="rc-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🚗 현장</button>
                       </div>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectRentalEditCancel('가능')" id="rc-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                        <button type="button" onclick="selectRentalEditCancel('불가')" id="rc-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                        <button type="button" onclick="selectRentalEditCancel('조건부')" id="rc-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
+                      <input id="rc-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
                     </div>
                     <div class="md:col-span-2">
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
@@ -9152,10 +9176,25 @@
   }
 
   var _rentalAddPayStatus = '결제 예정';
+  var _rentalAddCancel = '가능';
   function selectRentalAddPayStatus(val) {
     _rentalAddPayStatus = val;
     var ids = { '결제 예정':'rc-add-pay-pending', '결제 완료':'rc-add-pay-done', '현장 결제':'rc-add-pay-onsite' };
     var colors = { '결제 예정':'ring-amber-500 text-amber-600', '결제 완료':'ring-emerald-500 text-emerald-600', '현장 결제':'ring-sky-500 text-sky-600' };
+    Object.keys(ids).forEach(function(k) {
+      var btn = document.getElementById(ids[k]);
+      if (!btn) return;
+      if (k === val) {
+        btn.className = 'py-2.5 rounded-xl bg-white ring-2 ' + colors[k] + ' text-xs font-bold shadow-sm transition-all';
+      } else {
+        btn.className = 'py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-slate-200 transition-all';
+      }
+    });
+  }
+  function selectRentalAddCancel(val) {
+    _rentalAddCancel = val;
+    var ids = { '가능':'rc-add-cancel-ok', '불가':'rc-add-cancel-no', '조건부':'rc-add-cancel-cond' };
+    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -9187,6 +9226,8 @@
       payment_status: _rentalAddPayStatus || '',
       booking_ref: getV('rc-booking-ref'),
       driver: getV('rc-driver'),
+      cancel: _rentalAddCancel || '',
+      cancel_date: document.getElementById('rc-cancel-date').value,
       amount: document.getElementById('rc-price').value.replace(/,/g,'').trim(),
       notes: getV('rc-notes'),
       status: '확정'
@@ -9197,18 +9238,34 @@
       await syncJourneyToFinance(saved);
       renderJourneyRental();
       if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
-      ['rc-company','rc-model','rc-city','rc-drop-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes','rc-booking-ref','rc-driver'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      ['rc-company','rc-model','rc-city','rc-drop-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes','rc-booking-ref','rc-driver','rc-cancel-date'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       _rentalAddPayStatus = '결제 예정'; selectRentalAddPayStatus('결제 예정');
+      _rentalAddCancel = '가능'; selectRentalAddCancel('가능');
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
   var _rcEditIdx = null;
   var _rentalEditPayStatus = '결제 예정';
+  var _rentalEditCancel = '가능';
 
   function selectRentalEditPayStatus(val) {
     _rentalEditPayStatus = val;
     var ids = { '결제 예정':'rc-edit-pay-pending', '결제 완료':'rc-edit-pay-done', '현장 결제':'rc-edit-pay-onsite' };
     var colors = { '결제 예정':'ring-amber-500 text-amber-600', '결제 완료':'ring-emerald-500 text-emerald-600', '현장 결제':'ring-sky-500 text-sky-600' };
+    Object.keys(ids).forEach(function(k) {
+      var btn = document.getElementById(ids[k]);
+      if (!btn) return;
+      if (k === val) {
+        btn.className = 'py-2.5 rounded-xl bg-white ring-2 ' + colors[k] + ' text-xs font-bold shadow-sm transition-all';
+      } else {
+        btn.className = 'py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-slate-200 transition-all';
+      }
+    });
+  }
+  function selectRentalEditCancel(val) {
+    _rentalEditCancel = val;
+    var ids = { '가능':'rc-edit-cancel-ok', '불가':'rc-edit-cancel-no', '조건부':'rc-edit-cancel-cond' };
+    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
     Object.keys(ids).forEach(function(k) {
       var btn = document.getElementById(ids[k]);
       if (!btn) return;
@@ -9243,8 +9300,11 @@
     setV('rc-edit-notes', item.notes);
     setV('rc-edit-booking-ref', item.booking_ref);
     setV('rc-edit-driver', item.driver);
+    setV('rc-edit-cancel-date', item.cancel_date);
     _rentalEditPayStatus = item.payment_status || '결제 예정';
     selectRentalEditPayStatus(_rentalEditPayStatus);
+    _rentalEditCancel = item.cancel || '가능';
+    selectRentalEditCancel(_rentalEditCancel);
     openTravelModal('rental-edit-modal-wrap');
   }
 
@@ -9269,6 +9329,8 @@
       payment_status: _rentalEditPayStatus || '',
       booking_ref: (document.getElementById('rc-edit-booking-ref')||{}).value || '',
       driver: (document.getElementById('rc-edit-driver')||{}).value || '',
+      cancel: _rentalEditCancel || '',
+      cancel_date: (document.getElementById('rc-edit-cancel-date')||{}).value || '',
       amount: document.getElementById('rc-edit-price').value.replace(/,/g,''),
       notes: document.getElementById('rc-edit-notes').value.trim()
     };
@@ -9314,6 +9376,16 @@
     var chips = [];
     if (item.booking_ref) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">confirmation_number</span>예약 ' + item.booking_ref + '</span>');
     if (item.driver) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">person</span>' + item.driver + '</span>');
+    // 무료취소 칩 (가능/조건부/불가)
+    if (item.cancel) {
+      var cancelClass = item.cancel === '가능' ? 'bg-emerald-50 text-emerald-700' :
+                        item.cancel === '조건부' ? 'bg-amber-50 text-amber-700' :
+                        'bg-rose-50 text-rose-700';
+      var cancelTxt = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + item.cancel_date : '무료취소 가능') :
+                      item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부 취소') :
+                      '환불 불가';
+      chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 ' + cancelClass + ' rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_busy</span>' + cancelTxt + '</span>');
+    }
     if (item.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_available</span>결제일 ' + item.payment_date + '</span>');
     // 메모를 칩으로 분해
     if (item.notes) {
@@ -21746,8 +21818,8 @@ async function analyzeBookingImage() {
   "checkin_time": "HH:MM",
   "checkout_time": "HH:MM",
   "address": "주소",
-  "cancel_policy": "가능 또는 불가 또는 조건부",
-  "cancel_deadline": "YYYY-MM-DD",
+  "cancel_policy": "무료취소 정책. '가능' / '불가' / '조건부' 중 하나. 숙소·렌트카 모두에 적용 (항공편 제외)",
+  "cancel_deadline": "무료취소 마감일. YYYY-MM-DD. 숙소·렌트카 모두에 적용. 예: 'Free cancellation until 30 Sep 2026' → '2026-09-30'",
   "room_info": "숙소일 때만. 객실 타입+개수+박수. 예: '퀸 사이즈 침대 1개 1박', '트윈룸 2개 2박'",
   "guests": "숙소일 때만. 인원 정보. 예: '성인 2명', '성인 2명, 아동 1명'",
   "smoking": "숙소일 때만. '금연' 또는 '흡연' 또는 빈 문자열",
@@ -22031,6 +22103,7 @@ function showScanResult(r) {
     rows.push(row('픽업 장소', r.rental_pickup_location || (r.route ? r.route.split('→')[0].trim() : '')));
     rows.push(row('반납', (r.rental_drop_date || r.checkout_date || '') + (r.rental_drop_time || r.checkout_time ? ' ' + (r.rental_drop_time || r.checkout_time) : '')));
     rows.push(row('반납 장소', r.rental_drop_location || (r.route ? (r.route.split('→')[1]||'').trim() : '')));
+    if (r.cancel_policy) rows.push(row('무료취소', r.cancel_policy + (r.cancel_deadline ? ' (~' + r.cancel_deadline + ')' : '')));
     // 추가 디테일 카드
     detailHtml = detailCard([
       { icon:'confirmation_number', label:'예약번호', val: r.rental_booking_ref },
@@ -22196,6 +22269,12 @@ function applyBookingScan() {
         _setVal('rc-payment-date', r.payment_date);
         _setVal('rc-booking-ref', r.rental_booking_ref);
         _setVal('rc-driver', r.rental_driver);
+        // 무료취소 마감일 + 정책 토글
+        _setVal('rc-cancel-date', r.cancel_deadline);
+        if (typeof selectRentalAddCancel === 'function' && r.cancel_policy) {
+          var cancelAllowed = ['가능','불가','조건부'];
+          if (cancelAllowed.indexOf(r.cancel_policy) >= 0) selectRentalAddCancel(r.cancel_policy);
+        }
         // ★ 가격 자동 환산: price_krw 있으면 그대로, 없고 price_original(외화)만 있으면 환율 변환
         var priceKrw = r.price_krw || 0;
         var priceLabel = ''; // 외화 표기 (메모에 같이 적기 위해)
