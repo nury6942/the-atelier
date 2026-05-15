@@ -11399,6 +11399,41 @@
     });
   }
 
+  // ─── 콘솔 도구: 기념품 일괄 추가 ───
+  // 사용: _addSouvenirs([{city,item,target,amount,location,time,date}, ...])
+  window._addSouvenirs = async function(list) {
+    if (!Array.isArray(list) || !list.length) {
+      console.log('사용법: _addSouvenirs([{city, item, target, amount, location?, time?, date?}, ...])');
+      return;
+    }
+    var ok = 0, fail = 0;
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      var obj = {
+        trip_id: currentTripId, type: '기념품',
+        title: s.target || '나',
+        description: s.item || '',
+        city: s.city || '',
+        amount: String(s.amount||''),
+        location: s.location || '',
+        time: s.time || '',
+        date: s.date || ''
+      };
+      try {
+        var saved = await fbAdd('journey', obj);
+        journeyData.push(saved);
+        ok++;
+        console.log('✓', s.city, '-', s.item);
+      } catch(e) { fail++; console.error('실패:', s, e); }
+    }
+    if (typeof renderJourneySouvenir === 'function') renderJourneySouvenir();
+    if (typeof renderWeekView === 'function') renderWeekView();
+    if (typeof renderDayView === 'function') renderDayView();
+    if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
+    console.log('═══ 완료: ' + ok + '개 추가됨' + (fail ? ', 실패 ' + fail : ''));
+    if (typeof showSyncToast === 'function') showSyncToast('🛍 ' + ok + '개 기념품 추가됨');
+  };
+
   // ─── 콘솔 도구: 도시 교통편 일괄 입력 ───
   // 사용 예: window._setCityTransit({ Frankfurt: '수단: S-Bahn 편도 €6 · ...', Berlin: '...' })
   window._setCityTransit = async function(map) {
