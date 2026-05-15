@@ -13513,8 +13513,8 @@
     var contentEl = document.getElementById('dash-brief-content');
     var statusEl = document.getElementById('dash-brief-status');
     if (!contentEl) return;
-    // v2 — 카드형 렌더링으로 변경되어 옛 캐시 무효화
-    var todayKey = 'atelier_brief_v2_' + new Date().toISOString().split('T')[0];
+    // v3 — JSON 응답 기반 카드 렌더링으로 변경, 옛 캐시 무효화
+    var todayKey = 'atelier_brief_v3_' + new Date().toISOString().split('T')[0];
     // 캐시 확인 (오늘자)
     if (!forceRefresh) {
       try {
@@ -13615,15 +13615,22 @@
       }
       summary += '\n【이번 달 재정】 수입 ' + income + '만, 지출 ' + expense + '만, 잔액 ' + balance + '만\n';
 
-      var prompt = '당신은 사용자의 개인 비서입니다. 아래 데이터를 보고 사용자가 오늘/이번 주에 가장 신경 써야 할 가장 중요한 3-5개 항목을 한국어 친근한 톤으로 알려주세요.\n\n' +
+      var prompt = '당신은 사용자의 개인 비서입니다. 아래 데이터를 보고 사용자가 오늘/이번 주에 가장 신경 써야 할 항목 4개를 골라 한국어 친근한 톤으로 알려주세요.\n\n' +
+        '응답 형식 — 반드시 아래 JSON 배열만. 다른 텍스트(설명/머리말/```json) 절대 금지:\n' +
+        '[\n' +
+        '  { "icon": "⚡", "title": "내일까지 \'첫사랑 개\' 마감", "tag": "오늘 집중하세요" },\n' +
+        '  { "icon": "⏰", "title": "이번 주 일정 36건", "tag": "놓친 건 없는지 확인" },\n' +
+        '  { "icon": "✈️", "title": "독일 여행 사전예약 2건 안 됨", "tag": "D-133 점검 필요" },\n' +
+        '  { "icon": "💰", "title": "이번 달 잔액 1.38억", "tag": "지출 흐름 점검" }\n' +
+        ']\n\n' +
         '규칙:\n' +
-        '- 마크다운 문법(#, *, **) 절대 사용 금지 — 일반 텍스트로\n' +
-        '- 각 항목은 짧고 행동 지향적으로 (예: "오늘 R 24화 퇴고 마감")\n' +
-        '- 이모지 1개씩 시작 (⚡⏰💰✈️📋 등)\n' +
-        '- 4줄 이내, 각 줄은 30자 이내\n' +
-        '- HTML 태그 사용 가능: <div>, <strong>, <span class="text-rose-600">\n' +
+        '- 정확히 4개 객체 (적게/많게 금지)\n' +
+        '- icon: 단일 이모지 1개만 (가장 어울리는 것 — ⚡⏰💰✈️📋📅🔥💼🎯 등)\n' +
+        '- title: 25자 이내, 구체적 (이름·날짜·숫자 포함)\n' +
+        '- tag: 15자 이내, 행동 지향 (지시/액션)\n' +
+        '- 마크다운/HTML 절대 사용 금지\n' +
         '- 우선순위 높은 것부터\n\n' +
-        '데이터:\n' + summary + '\n\n응답:';
+        '데이터:\n' + summary + '\n\nJSON 배열만 응답:';
 
       var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
       // brief는 항상 빠른 sonnet 사용
@@ -13646,30 +13653,45 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       var data = await res.json();
       var text = (data.content && data.content[0] && data.content[0].text || '').trim();
-      // 각 줄을 아이콘 카드로 렌더 (참고 디자인 스타일)
-      var lines = text.split('\n').filter(function(l){ return l.trim(); });
-      var html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
-      lines.slice(0, 4).forEach(function(l) {
-        var line = l.trim();
-        // HTML 태그가 있으면 제거 (Claude가 가끔 추가)
-        line = line.replace(/<[^>]+>/g, '').replace(/^[-•·\*]\s*/, '').trim();
-        // 선두 이모지 추출 (가변 길이 유니코드)
-        var emoji = '📌';
-        var rest = line;
-        var emojiMatch = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}]+)\s*/u);
-        if (emojiMatch) {
-          emoji = emojiMatch[1];
-          rest = line.substring(emojiMatch[0].length);
+      // JSON 배열 파싱 (Claude가 가끔 ```json``` 래핑하니 정리)
+      var items = [];
+      try {
+        var jsonText = text;
+        var fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (fenceMatch) jsonText = fenceMatch[1].trim();
+        // 배열만 추출
+        var firstBracket = jsonText.indexOf('[');
+        var lastBracket = jsonText.lastIndexOf(']');
+        if (firstBracket !== -1 && lastBracket !== -1) {
+          jsonText = jsonText.substring(firstBracket, lastBracket + 1);
         }
-        // ' — ' 또는 ' - ' 로 분리: title / tagline
-        var parts = rest.split(/\s+[—–\-]\s+/);
-        var title = (parts[0] || '').trim();
-        var tagline = (parts.slice(1).join(' — ') || '').trim();
+        items = JSON.parse(jsonText);
+        if (!Array.isArray(items)) throw new Error('not an array');
+      } catch(parseErr) {
+        // Fallback: 줄 단위 텍스트로 파싱 (옛 방식)
+        console.warn('[Brief] JSON parse failed, fallback to line mode:', parseErr.message);
+        var lines = text.split('\n').filter(function(l){ return l.trim() && !l.trim().match(/^[\[\]\{\}`]/); });
+        items = lines.slice(0, 4).map(function(l) {
+          var line = l.trim().replace(/<[^>]+>/g, '').replace(/^[-•·\*]\s*/, '').trim();
+          var emojiMatch = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]+)\s*/u);
+          var emoji = emojiMatch ? emojiMatch[1] : '📌';
+          var rest = emojiMatch ? line.substring(emojiMatch[0].length) : line;
+          var parts = rest.split(/\s+[—–]\s+/);
+          return { icon: emoji, title: (parts[0]||'').trim(), tag: (parts.slice(1).join(' — ')||'').trim() };
+        });
+      }
+      // 4개 카드 그리드 렌더
+      var html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+      items.slice(0, 4).forEach(function(item) {
+        var icon = (item.icon || '📌').toString();
+        var title = (item.title || '').toString();
+        var tag = (item.tag || item.tagline || '').toString();
+        if (!title && !tag) return;
         html += '<div style="background:#ffffff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(124,58,237,0.05);border:1px solid rgba(216,201,255,0.5);">';
-        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + emoji + '</div>';
+        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
         html += '<p style="font-weight:700;color:#1f2937;font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
-        if (tagline) html += '<p style="font-size:11.5px;color:#7b7487;line-height:1.35;margin-top:2px;">' + tagline + '</p>';
+        if (tag) html += '<p style="font-size:11.5px;color:#7b7487;line-height:1.35;margin-top:2px;">' + tag + '</p>';
         html += '</div></div>';
       });
       html += '</div>';
