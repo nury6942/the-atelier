@@ -13146,34 +13146,44 @@
     // Vault 페이지 제거됨 — 호출처 호환을 위한 no-op
   }
 
-  function renderDashFinance(rows) {
-    // 이번 달만 필터 (r[0]이 날짜 'YYYY-MM-DD')
+  function renderDashFinance(_ignoredHubRows) {
+    // Daily Ledger 트랜잭션 (atelier_ledger_transactions, 원 단위) 사용 — 가장 디테일한 실제 데이터
     var now = new Date();
     var thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    var txs = [];
+    // 1순위: 메모리(_ledgerData.transactions) — Daily Ledger 페이지 진입 시 로드됨
+    if (typeof _ledgerData !== 'undefined' && _ledgerData && Array.isArray(_ledgerData.transactions)) {
+      txs = _ledgerData.transactions;
+    } else {
+      // 2순위: localStorage
+      try { txs = JSON.parse(localStorage.getItem('atelier_ledger_transactions') || '[]'); } catch(e) {}
+    }
     var income=0, expense=0;
-    rows.forEach(function(r) {
-      var date = (r[0]||'').toString();
-      if (!date.startsWith(thisMonth)) return; // 이번 달만
-      var amt = parseFloat(r[3])||0;
-      var type = r[4]||'';
-      if(type==='수입') income+=amt;
-      else if(type==='지출') expense+=amt;
+    txs.forEach(function(t) {
+      var date = (t.date||'').toString();
+      if (!date.startsWith(thisMonth)) return;
+      if (t.excludeFromGoal === true) return; // 자산이동 제외 (Daily Ledger와 동일 로직)
+      var amt = parseFloat(t['금액'] || 0) || 0;
+      var major = t['대분류'] || '';
+      if (major === '수입') income += amt;
+      else if (major !== '저축') expense += amt; // 저축은 내부 이동이라 지출 아님
     });
-    // 한국식 단위 포맷 (1억 이상이면 1.38억, 그 미만이면 1,234만)
-    function fmtKRW(amt) {
-      if (!amt) return '₩0';
-      var abs = Math.abs(amt);
-      if (abs >= 10000) return '₩' + (amt / 10000).toFixed(2).replace(/\.?0+$/,'') + '억';
-      return '₩' + Math.round(amt).toLocaleString('ko-KR') + '만';
+    // 원 → 만으로 변환 후 포맷 (1억 이상이면 X억, 그 미만이면 X만)
+    function fmtKRWFromWon(won) {
+      if (!won) return '₩0';
+      var manVal = won / 10000;
+      var abs = Math.abs(manVal);
+      if (abs >= 10000) return '₩' + (manVal / 10000).toFixed(2).replace(/\.?0+$/,'') + '억';
+      return '₩' + Math.round(manVal).toLocaleString('ko-KR') + '만';
     }
     var inEl = document.getElementById('dash-income');
     var exEl = document.getElementById('dash-expense');
     var netEl = document.getElementById('dash-net');
-    if (inEl) inEl.textContent = fmtKRW(income);
-    if (exEl) exEl.textContent = fmtKRW(expense);
+    if (inEl) inEl.textContent = fmtKRWFromWon(income);
+    if (exEl) exEl.textContent = fmtKRWFromWon(expense);
     var net = income - expense;
     if (netEl) {
-      netEl.textContent = (net>=0?'+':'-') + fmtKRW(Math.abs(net));
+      netEl.textContent = (net>=0?'+':'-') + fmtKRWFromWon(Math.abs(net));
       netEl.style.color = net >= 0 ? '#6b38d4' : '#dc2626';
     }
   }
