@@ -13725,6 +13725,7 @@
     if(pageId==='dashboard') { if(typeof loadDashboard==='function') loadDashboard(); }
     if(pageId==='journey') {
       if(typeof loadJourney==='function') loadJourney();
+      setTimeout(function(){ if(typeof _updateTravelApiKeyBtn==='function') _updateTravelApiKeyBtn(); }, 100);
     }
     if(pageId==='matrix') { if(typeof loadMatrix==='function') loadMatrix(); }
     if(pageId==='income') { if(typeof loadIncome==='function') loadIncome(); }
@@ -20615,20 +20616,24 @@ var _API_MODEL_INFO = {
 };
 
 function openApiSettingsModal() {
+  var modal = document.getElementById('api-settings-modal');
+  if (!modal) return;
   var existing = localStorage.getItem('atelier_anthropic_api_key') || '';
   var input = document.getElementById('api-key-input');
-  input.value = existing; // 기존 키 미리 채워주기
+  if (input) input.value = existing;
   var hint = document.getElementById('api-key-hint');
-  if (existing) {
-    hint.textContent = '✓ 키 저장됨 — 수정하려면 아래에서 변경 후 저장';
-    hint.className = 'text-[10px] text-emerald-600 px-1 font-bold';
-  } else {
-    hint.textContent = '아직 키가 설정되지 않았어요';
-    hint.className = 'text-[10px] text-slate-400 px-1';
+  if (hint) {
+    if (existing) {
+      hint.textContent = '✓ 키 저장됨 — 수정하려면 아래에서 변경 후 저장';
+      hint.className = 'text-[10px] text-emerald-600 px-1 font-bold';
+    } else {
+      hint.textContent = '아직 키가 설정되지 않았어요';
+      hint.className = 'text-[10px] text-slate-400 px-1';
+    }
   }
-  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
-  document.getElementById('api-model-select').value = model;
-  document.getElementById('api-settings-modal').style.cssText = 'display:flex!important';
+  var modelSel = document.getElementById('api-model-select');
+  if (modelSel) modelSel.value = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+  modal.style.cssText = 'display:flex!important';
 }
 
 function closeApiSettingsModal() {
