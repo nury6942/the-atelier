@@ -2129,6 +2129,118 @@
               </div>
             </div>
 
+            <!-- 숙소 수정 모달 (추가 모달과 동일 디자인) -->
+            <div id="stay-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeTravelModal('stay-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+                <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+                  <div class="flex items-center gap-3 mb-6">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                      <span class="material-symbols-outlined text-lg">edit_square</span>
+                    </div>
+                    <div>
+                      <h4 class="font-headline text-base font-bold text-slate-900">Edit Stay</h4>
+                      <p class="text-slate-500 text-[10px]">숙소 정보를 수정하세요</p>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <!-- 도시 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
+                      <div class="relative">
+                        <input id="stay-edit-city" type="text" list="stay-edit-city-list" placeholder="예: Prague" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                        <datalist id="stay-edit-city-list"></datalist>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
+                      </div>
+                    </div>
+                    <!-- 유형 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
+                      <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="selectStayEditType('Hotel')" id="stay-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all">
+                          <span class="material-symbols-outlined text-sm">hotel</span> Hotel
+                        </button>
+                        <button type="button" onclick="selectStayEditType('Airbnb')" id="stay-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
+                          <span class="material-symbols-outlined text-sm">home</span> Airbnb
+                        </button>
+                      </div>
+                    </div>
+                    <!-- 숙소명 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명 *</label>
+                      <input id="stay-edit-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    </div>
+                    <!-- 전화번호 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
+                      <input id="stay-edit-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <!-- 주소 (full width) -->
+                    <div class="md:col-span-2">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
+                      <input id="stay-edit-address" type="text" placeholder="예: Europa-Allee 23, 60327 Frankfurt" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
+                    <!-- 결제일 + 무료취소 마감 -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                        <input id="stay-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
+                        <input id="stay-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                    </div>
+                    <!-- 무료취소 여부 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectStayCancel('가능')" id="stay-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                        <button type="button" onclick="selectStayCancel('불가')" id="stay-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                        <button type="button" onclick="selectStayCancel('조건부')" id="stay-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                      </div>
+                    </div>
+                    <!-- 체크인/아웃 날짜 -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
+                        <input id="stay-edit-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
+                        <input id="stay-edit-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                      </div>
+                    </div>
+                    <!-- 체크인/아웃 시간 -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
+                        <input id="stay-edit-checkin-time" type="text" placeholder="15:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                      <div>
+                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
+                        <input id="stay-edit-checkout-time" type="text" placeholder="11:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                      </div>
+                    </div>
+                    <!-- 가격 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                      <div class="relative">
+                        <input id="stay-edit-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                      </div>
+                    </div>
+                    <!-- 저장 버튼 -->
+                    <div class="flex items-end">
+                      <button onclick="saveStayEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                        수정 저장
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- 3. 도시 간 이동 수단 (Voyages) -->
             <section class="mb-2">
               <div class="flex items-center justify-between mb-4">
@@ -9002,6 +9114,101 @@
   setTimeout(initStayPlacesAutocomplete, 500);
 
   var _stayType = 'Hotel';
+  var _stayEditType = 'Hotel';
+  var _stayEditCancel = '가능';
+  var _stayEditIdx = null;
+
+  function selectStayEditType(type) {
+    _stayEditType = type;
+    var h = document.getElementById('stay-edit-type-hotel');
+    var a = document.getElementById('stay-edit-type-airbnb');
+    if (!h || !a) return;
+    if (type === 'Hotel') {
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all';
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
+    } else {
+      a.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all';
+      h.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all';
+    }
+  }
+
+  function selectStayCancel(val) {
+    _stayEditCancel = val;
+    var ids = { '가능':'stay-edit-cancel-ok', '불가':'stay-edit-cancel-no', '조건부':'stay-edit-cancel-cond' };
+    var colors = { '가능':'ring-indigo-500 text-indigo-600', '불가':'ring-rose-500 text-rose-600', '조건부':'ring-amber-500 text-amber-600' };
+    Object.keys(ids).forEach(function(k) {
+      var btn = document.getElementById(ids[k]);
+      if (!btn) return;
+      if (k === val) {
+        btn.className = 'py-2.5 rounded-xl bg-white ring-2 ' + colors[k] + ' text-xs font-bold shadow-sm transition-all';
+      } else {
+        btn.className = 'py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-slate-200 transition-all';
+      }
+    });
+  }
+
+  function openStayEditModal(idx) {
+    var item = journeyData[idx];
+    if (!item) return;
+    _stayEditIdx = idx;
+    _stayEditType = item.description === 'Airbnb' ? 'Airbnb' : 'Hotel';
+    _stayEditCancel = item.cancel || '가능';
+
+    // 도시 datalist 갱신
+    var dl = document.getElementById('stay-edit-city-list');
+    if (dl) dl.innerHTML = (citiesData||[]).map(function(c){ return '<option value="'+c.name+'">'; }).join('');
+
+    // 필드 채우기
+    var setV = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setV('stay-edit-city', item.city);
+    setV('stay-edit-name', item.title);
+    setV('stay-edit-address', item.address);
+    setV('stay-edit-phone', item.phone);
+    setV('stay-edit-payment-date', item.payment_date);
+    setV('stay-edit-checkin-date', item.date);
+    setV('stay-edit-checkout-date', item.checkout_date);
+    setV('stay-edit-checkin-time', item.checkin);
+    setV('stay-edit-checkout-time', item.checkout);
+    setV('stay-edit-cancel-date', item.cancel_date);
+    setV('stay-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
+
+    selectStayEditType(_stayEditType);
+    selectStayCancel(_stayEditCancel);
+    openTravelModal('stay-edit-modal-wrap');
+  }
+
+  async function saveStayEdit() {
+    if (_stayEditIdx === null) return;
+    var item = journeyData[_stayEditIdx];
+    if (!item) return;
+    var name = document.getElementById('stay-edit-name').value.trim();
+    if (!name) { alert('숙소명을 입력해주세요'); return; }
+    var updates = {
+      city: document.getElementById('stay-edit-city').value.trim(),
+      title: name,
+      address: document.getElementById('stay-edit-address').value.trim(),
+      phone: document.getElementById('stay-edit-phone').value.trim(),
+      payment_date: document.getElementById('stay-edit-payment-date').value,
+      date: document.getElementById('stay-edit-checkin-date').value,
+      checkout_date: document.getElementById('stay-edit-checkout-date').value,
+      checkin: document.getElementById('stay-edit-checkin-time').value.trim(),
+      checkout: document.getElementById('stay-edit-checkout-time').value.trim(),
+      cancel: _stayEditCancel,
+      cancel_date: document.getElementById('stay-edit-cancel-date').value,
+      amount: document.getElementById('stay-edit-price').value.replace(/,/g,''),
+      description: _stayEditType === 'Airbnb' ? 'Airbnb' : ''
+    };
+    try {
+      await fbUpdate('journey', item._id, updates);
+      Object.assign(journeyData[_stayEditIdx], updates);
+      closeTravelModal('stay-edit-modal-wrap');
+      renderJourneyLodging();
+      updateJourneyCost();
+      updateTravelMiniSummary();
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 숙소 수정 완료');
+    } catch(e) { alert('저장 실패: ' + e.message); }
+  }
+
   function selectStayType(type) {
     _stayType = type;
     var hotelBtn = document.getElementById('stay-type-hotel');
@@ -10002,6 +10209,11 @@
     // 항공편은 전용 수정 모달 사용
     if (item.type === '항공편') {
       openFlightEditModal(idx);
+      return;
+    }
+    // 숙소도 전용 수정 모달 사용
+    if (item.type === '숙소') {
+      openStayEditModal(idx);
       return;
     }
 
