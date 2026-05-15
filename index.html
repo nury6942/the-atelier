@@ -2196,6 +2196,15 @@
                         <input id="stay-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
                       </div>
                     </div>
+                    <!-- 결제 상태 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectStayPayStatus('결제 예정')" id="stay-edit-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
+                        <button type="button" onclick="selectStayPayStatus('결제 완료')" id="stay-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
+                        <button type="button" onclick="selectStayPayStatus('현장 결제')" id="stay-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🏨 현장</button>
+                      </div>
+                    </div>
                     <!-- 무료취소 여부 -->
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
@@ -9394,7 +9403,23 @@
   var _stayType = 'Hotel';
   var _stayEditType = 'Hotel';
   var _stayEditCancel = '가능';
+  var _stayEditPayStatus = '결제 예정';
   var _stayEditIdx = null;
+
+  function selectStayPayStatus(val) {
+    _stayEditPayStatus = val;
+    var ids = { '결제 예정':'stay-edit-pay-pending', '결제 완료':'stay-edit-pay-done', '현장 결제':'stay-edit-pay-onsite' };
+    var colors = { '결제 예정':'ring-amber-500 text-amber-600', '결제 완료':'ring-emerald-500 text-emerald-600', '현장 결제':'ring-sky-500 text-sky-600' };
+    Object.keys(ids).forEach(function(k) {
+      var btn = document.getElementById(ids[k]);
+      if (!btn) return;
+      if (k === val) {
+        btn.className = 'py-2.5 rounded-xl bg-white ring-2 ' + colors[k] + ' text-xs font-bold shadow-sm transition-all';
+      } else {
+        btn.className = 'py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-slate-200 transition-all';
+      }
+    });
+  }
 
   function selectStayEditType(type) {
     _stayEditType = type;
@@ -9451,8 +9476,10 @@
     setV('stay-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
     setV('stay-edit-notes', item.notes);
 
+    _stayEditPayStatus = item.payment_status || '결제 예정';
     selectStayEditType(_stayEditType);
     selectStayCancel(_stayEditCancel);
+    selectStayPayStatus(_stayEditPayStatus);
     openTravelModal('stay-edit-modal-wrap');
   }
 
@@ -9476,6 +9503,7 @@
       cancel_date: document.getElementById('stay-edit-cancel-date').value,
       amount: document.getElementById('stay-edit-price').value.replace(/,/g,''),
       notes: (document.getElementById('stay-edit-notes')||{}).value || '',
+      payment_status: _stayEditPayStatus || '',
       description: _stayEditType === 'Airbnb' ? 'Airbnb' : ''
     };
     try {
@@ -10423,10 +10451,12 @@
     ];
     if (type === '숙소') return [
       {id:'jf-city', label:'도시 *', type: cities.length ? 'select_custom' : 'text', options: cities, placeholder:'예: Prague', onchange:'onJourneyCityChange()'},
+      {id:'jf-stay-type', label:'유형', type:'select', options:['Hotel','Airbnb']},
       {id:'jf-title', label:'숙소명 *', type:'text', placeholder:'예: Hotel Josef', autocomplete:'lodging'},
       {id:'jf-address', label:'주소', type:'text', placeholder:'예: Rybná 20, 110 00 Praha'},
       {id:'jf-phone', label:'전화번호', type:'text', placeholder:'예: +420 221 700 111'},
       {id:'jf-payment-date', label:'결제일 *', type:'date'},
+      {id:'jf-payment-status', label:'결제 상태', type:'select', options:['결제 예정','결제 완료','현장 결제']},
       {id:'jf-date', label:'체크인 날짜', type:'date'},
       {id:'jf-checkout-date', label:'체크아웃 날짜', type:'date'},
       {id:'jf-checkin', label:'체크인 시간', type:'text', placeholder:'예: 15:00'},
@@ -11209,6 +11239,7 @@
       obj.address = (document.getElementById('jf-address')||{}).value||'';
       obj.phone = (document.getElementById('jf-phone')||{}).value||'';
       obj.payment_date = (document.getElementById('jf-payment-date')||{}).value||'';
+      obj.payment_status = (document.getElementById('jf-payment-status')||{}).value||'';
       obj.date = (document.getElementById('jf-date')||{}).value||'';
       obj.checkout_date = (document.getElementById('jf-checkout-date')||{}).value||'';
       obj.checkin = (document.getElementById('jf-checkin')||{}).value||'';
@@ -11217,6 +11248,9 @@
       obj.cancel_date = (document.getElementById('jf-cancel-date')||{}).value||'';
       obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
       obj.notes = (document.getElementById('jf-notes')||{}).value||'';
+      // 호텔/Airbnb 마커: description='Airbnb'면 Airbnb, 빈 문자열이면 Hotel (Edit 모달 규칙과 일치)
+      var stayType = (document.getElementById('jf-stay-type')||{}).value||'Hotel';
+      obj.description = stayType === 'Airbnb' ? 'Airbnb' : '';
     }
     try {
       if (editingJourneyIndex !== null) {
@@ -21157,6 +21191,9 @@ async function analyzeBookingImage() {
   "smoking": "숙소일 때만. '금연' 또는 '흡연' 또는 빈 문자열",
   "meal": "숙소일 때만. 식사 포함 여부. 예: '조식 포함', '식사 불포함', '조식+석식 포함'",
   "deposit": "숙소일 때만. 체크인 시 보증금이 있으면 통화+금액. 예: 'EUR 20.00', 없으면 빈 문자열",
+  "payment_date": "숙소일 때만. 결제일/결제 완료일이 명시되어 있으면 YYYY-MM-DD. 없으면 빈 문자열",
+  "payment_status": "숙소일 때만. '결제 완료', '결제 예정', '현장 결제' 중 하나. 모르면 빈 문자열. 단서: '결제 완료', '카드 청구됨', '청구 완료' → 완료. '결제 예정', '체크인 시 결제' → 현장 결제. '결제 예정일' 같은 미래 결제 안내 → 예정.",
+  "stay_type": "숙소일 때만. 'Hotel' 또는 'Airbnb' 중 하나. 호텔 체인/Booking.com/Hotels.com 예약 = Hotel. Airbnb 플랫폼 예약이면 Airbnb. 애매하면 'Hotel'.",
   "transport_name": "이동수단명 (기차/버스 등)",
   "route": "출발지 → 목적지",
   "price_krw": 0,
@@ -21305,14 +21342,37 @@ function showScanResult(r) {
     rows.push(row('체크아웃', r.checkout_date + (r.checkout_time ? ' ' + r.checkout_time : '')));
     rows.push(row('주소', r.address));
     rows.push(row('무료취소', r.cancel_policy + (r.cancel_deadline ? ' (~' + r.cancel_deadline + ')' : '')));
-    // 예약 상세 카드 — 객실/인원/금연/식사/보증금
+    // 예약 상세 카드 — 객실/인원/금연/식사/보증금 + 숙소유형
+    var stayTypeVal = r.stay_type ? (r.stay_type === 'Airbnb' ? '🏠 Airbnb' : '🏨 Hotel') : '';
     detailHtml = detailCard([
+      { icon:'apartment',        label:'유형',   val: stayTypeVal },
       { icon:'bed',              label:'객실',   val: r.room_info },
       { icon:'group',            label:'인원',   val: r.guests },
       { icon:'smoke_free',       label:'흡연',   val: r.smoking },
       { icon:'restaurant',       label:'식사',   val: r.meal },
       { icon:'account_balance_wallet', label:'보증금', val: r.deposit, id:'scan-deposit-val' }
     ]);
+    // 결제 정보 카드 — 결제일/결제상태
+    var statusBadge = '';
+    if (r.payment_status) {
+      var statusColor = r.payment_status === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
+                        r.payment_status === '결제 예정' ? 'bg-amber-100 text-amber-700' :
+                        r.payment_status === '현장 결제' ? 'bg-sky-100 text-sky-700' :
+                        'bg-slate-100 text-slate-600';
+      statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black ' + statusColor + '">' + r.payment_status + '</span>';
+    }
+    if (r.payment_date || r.payment_status) {
+      detailHtml += '<div class="mt-2 p-3 rounded-xl border border-emerald-200 bg-emerald-50/40">';
+      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size:14px">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
+      detailHtml += '<div class="space-y-1.5">';
+      if (r.payment_date) {
+        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
+      }
+      if (statusBadge) {
+        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span>상태</span><span class="text-right">' + statusBadge + '</span></div>';
+      }
+      detailHtml += '</div></div>';
+    }
     // 보증금이 외화면 → 비동기로 원화 환산해서 옆에 붙임
     if (r.deposit) {
       setTimeout(function(){ _appendDepositKrw(r.deposit); }, 50);
@@ -21373,6 +21433,16 @@ function applyBookingScan() {
         _setVal('jf-checkout-date', r.checkout_date);
         _setVal('jf-checkin', r.checkin_time);
         _setVal('jf-checkout', r.checkout_time);
+        _setVal('jf-payment-date', r.payment_date);
+        // 호텔/Airbnb 유형 → select
+        var stayTypeSel = document.getElementById('jf-stay-type');
+        if (stayTypeSel) stayTypeSel.value = (r.stay_type === 'Airbnb') ? 'Airbnb' : 'Hotel';
+        // 결제 상태 → select
+        var payStatusSel = document.getElementById('jf-payment-status');
+        if (payStatusSel && r.payment_status) {
+          var allowed = ['결제 예정','결제 완료','현장 결제'];
+          if (allowed.indexOf(r.payment_status) >= 0) payStatusSel.value = r.payment_status;
+        }
         var cancelSel = document.getElementById('jf-cancel');
         if (cancelSel && r.cancel_policy) {
           var map = {'가능':'가능','불가':'불가','조건부':'조건부'};
@@ -21380,7 +21450,7 @@ function applyBookingScan() {
         }
         _setVal('jf-cancel-date', r.cancel_deadline);
         if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
-        // 메모: 구조화 필드들을 깔끔한 한 줄로 합치기 (객실/인원/금연/식사/보증금 + 추가 노트)
+        // 메모: 폼 필드로 분리된 건 빼고 (유형/결제상태는 select로 들어감), 객실/인원/금연/식사/보증금만 메모로
         var memoParts = [];
         if (r.room_info) memoParts.push(r.room_info);
         if (r.guests) memoParts.push(r.guests);
