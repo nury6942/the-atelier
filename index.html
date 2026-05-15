@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ko.js"></script>
+  <!-- SheetJS (엑셀 파싱) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode:"class",
@@ -1690,7 +1692,12 @@
               <span class="material-symbols-outlined text-sky-500" style="font-size:16px">business_center</span>
               <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">회사·업무 일정</h3>
             </div>
-            <span id="dash-biz-count" class="text-[9px] font-bold text-sky-600"></span>
+            <div class="flex items-center gap-1.5">
+              <span id="dash-biz-count" class="text-[9px] font-bold text-sky-600"></span>
+              <button onclick="openImportModal()" class="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-700 text-[9px] font-bold flex items-center gap-0.5 transition-colors" title="Outlook .ics 또는 GTM 엑셀 임포트">
+                <span class="material-symbols-outlined" style="font-size:11px">upload</span>임포트
+              </button>
+            </div>
           </div>
           <div id="dash-biz-list" class="space-y-1 text-[11px]">
             <div class="text-[10px] text-slate-400 italic">이번 주 업무 일정 없음</div>
@@ -3064,6 +3071,86 @@
     </div>
 
     <!-- ═══════════════════════════════════ 예약 스캔 모달 ═══ -->
+    <!-- ═══════ 일정 임포트 모달 (Outlook .ics / GTM 엑셀) ═══════ -->
+    <div id="import-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
+      <div class="bg-white w-full max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
+        <!-- 헤더 -->
+        <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-white">upload_file</span>
+            </div>
+            <div>
+              <h2 class="text-white font-bold text-lg">일정 임포트</h2>
+              <p class="text-white/80 text-xs">Outlook .ics · GTM .xlsx · CSV</p>
+            </div>
+          </div>
+          <button onclick="closeImportModal()" class="text-white/70 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <!-- 스크롤 영역 -->
+        <div class="p-5 overflow-y-auto flex-1 space-y-4">
+          <!-- 가이드 -->
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-3 text-xs text-sky-800 leading-relaxed">
+            <strong>📥 어떻게 내보내요?</strong><br>
+            • <strong>Outlook 앱</strong>: 일정 → 파일 → 다른 이름으로 저장 → <code>iCalendar 형식 (.ics)</code><br>
+            • <strong>Outlook Web</strong>: 캘린더 → ⚙️ 설정 → 캘린더 → 공유 캘린더 → ICS 다운로드<br>
+            • <strong>GTM 엑셀</strong>: 그대로 .xlsx 파일 업로드 — Claude AI가 컬럼 자동 매핑
+          </div>
+          <!-- 업로드 존 -->
+          <div id="import-drop-zone" onclick="document.getElementById('import-file-input').click()"
+               ondragover="event.preventDefault();this.classList.add('border-sky-400','bg-sky-50')"
+               ondragleave="this.classList.remove('border-sky-400','bg-sky-50')"
+               ondrop="handleImportDrop(event)"
+               class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:border-sky-300 hover:bg-sky-50/50 transition-all">
+            <div id="import-drop-placeholder">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mx-auto mb-2">
+                <span class="material-symbols-outlined text-sky-500" style="font-size:28px">upload_file</span>
+              </div>
+              <p class="text-sm font-bold text-slate-700 mb-1">파일 업로드</p>
+              <p class="text-xs text-slate-400">.ics, .xlsx, .csv · 클릭하거나 드래그</p>
+            </div>
+            <div id="import-file-info" class="hidden flex flex-col items-center gap-1">
+              <span class="material-symbols-outlined text-sky-600" style="font-size:24px">description</span>
+              <span id="import-file-name" class="font-bold text-slate-700 text-sm"></span>
+              <span id="import-file-size" class="text-xs text-slate-400"></span>
+            </div>
+          </div>
+          <input id="import-file-input" type="file" accept=".ics,.xlsx,.xls,.csv" class="hidden" onchange="handleImportFile(event)"/>
+          <!-- 옵션 -->
+          <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+            <label class="flex items-center gap-2 text-xs cursor-pointer">
+              <input type="checkbox" id="import-default-business" class="w-4 h-4 rounded accent-sky-500"/>
+              <span class="text-slate-700 font-bold">카테고리를 모두 '업무'로 설정 (회사일정 자동 인식)</span>
+            </label>
+          </div>
+          <!-- 분석 상태 -->
+          <div id="import-status" class="hidden px-4 py-3 rounded-xl text-xs"></div>
+          <!-- 미리보기 -->
+          <div id="import-preview" class="hidden">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">미리보기 (<span id="import-preview-count">0</span>건)</h3>
+              <div class="text-[10px] text-slate-400">기존 일정과 겹치면 자동 스킵</div>
+            </div>
+            <div id="import-preview-list" class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl bg-slate-50/50"></div>
+          </div>
+        </div>
+        <!-- 푸터 (고정) -->
+        <div class="px-5 py-4 border-t border-slate-100 bg-white flex gap-2 flex-shrink-0 sm:rounded-b-3xl">
+          <button onclick="closeImportModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition-colors">취소</button>
+          <button id="import-analyze-btn" onclick="analyzeImportFile()" disabled class="flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">
+            <span class="material-symbols-outlined" style="font-size:16px">auto_awesome</span>
+            <span id="import-analyze-label">파일을 먼저 올려주세요</span>
+          </button>
+          <button id="import-apply-btn" onclick="applyImport()" class="hidden flex-1 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#10b981,#059669)">
+            <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>
+            <span id="import-apply-label">N건 일정 추가</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="booking-scan-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
       <div class="bg-white w-full max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
         <!-- 헤더 (고정) -->
@@ -13162,6 +13249,304 @@
     }
   }
   window.generateDailyBrief = generateDailyBrief;
+
+  // ═══════════════════════════════════════════════════════
+  // 일정 임포트 (Outlook .ics / GTM .xlsx / .csv) — AI 자동 매핑
+  // ═══════════════════════════════════════════════════════
+  var _importFile = null;
+  var _importParsedEvents = []; // [{date, end_date, title, category, notes}]
+
+  window.openImportModal = function() {
+    var modal = document.getElementById('import-modal');
+    if (!modal) return;
+    _importFile = null; _importParsedEvents = [];
+    document.getElementById('import-file-name').textContent = '';
+    document.getElementById('import-file-size').textContent = '';
+    document.getElementById('import-drop-placeholder').classList.remove('hidden');
+    document.getElementById('import-file-info').classList.add('hidden');
+    document.getElementById('import-preview').classList.add('hidden');
+    document.getElementById('import-status').classList.add('hidden');
+    document.getElementById('import-analyze-btn').disabled = true;
+    document.getElementById('import-analyze-label').textContent = '파일을 먼저 올려주세요';
+    document.getElementById('import-analyze-btn').classList.remove('hidden');
+    document.getElementById('import-apply-btn').classList.add('hidden');
+    document.getElementById('import-file-input').value = '';
+    modal.style.cssText = 'display:flex!important';
+  };
+  window.closeImportModal = function() {
+    var modal = document.getElementById('import-modal');
+    if (modal) modal.style.cssText = 'display:none!important';
+  };
+  window.handleImportDrop = function(event) {
+    event.preventDefault();
+    var dz = document.getElementById('import-drop-zone');
+    if (dz) dz.classList.remove('border-sky-400','bg-sky-50');
+    var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+    if (file) _setImportFile(file);
+  };
+  window.handleImportFile = function(event) {
+    var file = event.target.files && event.target.files[0];
+    if (file) _setImportFile(file);
+  };
+  function _setImportFile(file) {
+    _importFile = file;
+    document.getElementById('import-file-name').textContent = file.name;
+    document.getElementById('import-file-size').textContent = (file.size/1024).toFixed(1) + ' KB';
+    document.getElementById('import-drop-placeholder').classList.add('hidden');
+    document.getElementById('import-file-info').classList.remove('hidden');
+    document.getElementById('import-file-info').className = 'flex flex-col items-center gap-1';
+    document.getElementById('import-analyze-btn').disabled = false;
+    document.getElementById('import-analyze-label').textContent = '분석 + 매핑하기';
+    document.getElementById('import-preview').classList.add('hidden');
+  }
+
+  window.analyzeImportFile = async function() {
+    if (!_importFile) return;
+    var btn = document.getElementById('import-analyze-btn');
+    var status = document.getElementById('import-status');
+    var lbl = document.getElementById('import-analyze-label');
+    btn.disabled = true;
+    lbl.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> 분석 중...';
+    status.className = 'px-4 py-3 rounded-xl text-xs bg-sky-50 text-sky-800';
+    status.textContent = '파일 파싱 중...';
+
+    try {
+      var ext = (_importFile.name||'').toLowerCase().split('.').pop();
+      var events = [];
+      if (ext === 'ics') {
+        events = await _parseIcs(_importFile);
+        status.textContent = '✓ Outlook 표준 형식 — ' + events.length + '건 추출됨';
+      } else if (ext === 'csv' || ext === 'xlsx' || ext === 'xls') {
+        var rows = await _parseSheet(_importFile);
+        if (!rows || !rows.length) throw new Error('엑셀에서 데이터를 찾을 수 없어요');
+        status.textContent = '엑셀 ' + rows.length + '행 발견 — AI로 컬럼 매핑 중...';
+        events = await _mapSheetWithAI(rows);
+        status.textContent = '✓ AI 매핑 완료 — ' + events.length + '건 추출됨';
+      } else {
+        throw new Error('지원하지 않는 파일 형식 (.ics / .xlsx / .csv만 가능)');
+      }
+      if (!events.length) throw new Error('일정을 찾을 수 없어요. 파일 형식 확인 필요.');
+      // 카테고리 기본값
+      var defaultBiz = document.getElementById('import-default-business').checked;
+      if (defaultBiz) events.forEach(function(e){ if (!e.category) e.category = '업무'; });
+      _importParsedEvents = events;
+      _renderImportPreview(events);
+      // 버튼 전환: 분석하기 → 적용하기
+      btn.classList.add('hidden');
+      var applyBtn = document.getElementById('import-apply-btn');
+      applyBtn.classList.remove('hidden');
+      document.getElementById('import-apply-label').textContent = events.length + '건 일정 추가';
+    } catch(e) {
+      console.error('[import]', e);
+      status.className = 'px-4 py-3 rounded-xl text-xs bg-rose-50 text-rose-700';
+      status.textContent = '⚠️ ' + (e.message || '알 수 없는 오류');
+      btn.disabled = false;
+      lbl.textContent = '재시도';
+    }
+  };
+
+  // .ics 파싱 (RFC 5545 간단 구현)
+  async function _parseIcs(file) {
+    var text = await file.text();
+    var events = [];
+    var blocks = text.split(/BEGIN:VEVENT/i).slice(1);
+    blocks.forEach(function(block) {
+      var endIdx = block.search(/END:VEVENT/i);
+      if (endIdx < 0) return;
+      var content = block.substring(0, endIdx);
+      // line continuation: 다음 줄이 공백/탭으로 시작하면 합침
+      content = content.replace(/\r?\n[ \t]/g, '');
+      var get = function(field) {
+        var re = new RegExp('^' + field + '(?:;[^:]*)?:(.+)$', 'm');
+        var m = content.match(re);
+        return m ? m[1].trim() : '';
+      };
+      var summary = get('SUMMARY');
+      var dtstart = get('DTSTART');
+      var dtend = get('DTEND');
+      var desc = get('DESCRIPTION');
+      var loc = get('LOCATION');
+      var date = _icsDateToISO(dtstart);
+      var endDate = _icsDateToISO(dtend);
+      // 종료가 시작과 같거나 +1 day이면 종일 → 종료일 비움
+      if (endDate === date) endDate = '';
+      if (!date && !summary) return;
+      var notes = [desc, loc ? '📍 ' + loc : ''].filter(Boolean).join(' · ');
+      // 카테고리 키워드 감지
+      var cat = '';
+      var combo = (summary + ' ' + desc).toLowerCase();
+      if (/회의|미팅|meeting/i.test(combo)) cat = '업무';
+      else if (/야근/i.test(combo)) cat = '업무';
+      else if (/출장|business\s*trip/i.test(combo)) cat = '업무';
+      else if (/휴가|연차|vacation|leave/i.test(combo)) cat = '연차';
+      events.push({ date: date, end_date: endDate, title: summary || '(제목 없음)', category: cat, notes: notes });
+    });
+    return events;
+  }
+  function _icsDateToISO(s) {
+    if (!s) return '';
+    // YYYYMMDD 또는 YYYYMMDDTHHMMSS
+    var m = s.match(/^(\d{4})(\d{2})(\d{2})/);
+    if (m) return m[1] + '-' + m[2] + '-' + m[3];
+    return '';
+  }
+
+  // 엑셀/CSV 파싱 (SheetJS)
+  async function _parseSheet(file) {
+    if (typeof XLSX === 'undefined') throw new Error('SheetJS 라이브러리 로드 실패');
+    var buf = await file.arrayBuffer();
+    var wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    var sheet = wb.Sheets[wb.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false });
+  }
+
+  // Claude AI로 엑셀 컬럼 자동 매핑 → 일정 배열로 변환
+  async function _mapSheetWithAI(rows) {
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) {
+      // AI 없으면 단순 휴리스틱 매핑
+      return _heuristicMapSheet(rows);
+    }
+    // 처음 3행 + 컬럼명만 추출해서 Claude에게 보냄
+    var sample = rows.slice(0, 5);
+    var columns = Object.keys(rows[0]||{});
+    var prompt = '아래는 회사 GTM(Go-To-Market) 엑셀에서 추출한 데이터입니다. 각 행을 캘린더 일정으로 변환할 수 있게 컬럼 의미를 파악하고, 다음 JSON 배열로만 응답하세요 (다른 설명 X):\n\n' +
+      '[\n' +
+      '  {"date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD or empty", "title": "일정 제목", "category": "업무/미팅/마일스톤/출장 중 하나", "notes": "추가 정보"},\n' +
+      '  ...\n' +
+      ']\n\n' +
+      '규칙:\n' +
+      '- date: 시작일 (필수). 컬럼명 \'시작일/Start/날짜/Date/일자\' 등에서 파악\n' +
+      '- end_date: 종료일 (있으면). 시작과 같으면 빈 문자열\n' +
+      '- title: 일정 제목 (필수). \'제목/이벤트/Activity/Task\' 등\n' +
+      '- category: 키워드로 \'업무/미팅/마일스톤/출장\' 자동 분류\n' +
+      '- notes: 담당자/부서/메모 같은 추가 정보 한 줄로\n' +
+      '- 날짜 없는 행은 제외\n\n' +
+      '컬럼: ' + columns.join(' | ') + '\n\n' +
+      '데이터 (처음 5행):\n' + JSON.stringify(sample, null, 2) + '\n\n' +
+      '전체 ' + rows.length + '행 변환:\n' + JSON.stringify(rows, null, 2);
+
+    var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
+    if (model.indexOf('opus') >= 0) model = 'claude-sonnet-4-6'; // sonnet으로 강제 (저렴)
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!res.ok) throw new Error('AI 매핑 실패 (HTTP ' + res.status + ')');
+    var data = await res.json();
+    var text = (data.content && data.content[0] && data.content[0].text || '').trim();
+    var jm = text.match(/\[[\s\S]*\]/);
+    if (!jm) throw new Error('AI 응답 파싱 실패');
+    var events = JSON.parse(jm[0]);
+    return events.filter(function(e){ return e.date && e.title; });
+  }
+
+  // 휴리스틱 매핑 (API 키 없을 때 fallback)
+  function _heuristicMapSheet(rows) {
+    if (!rows.length) return [];
+    var keys = Object.keys(rows[0]);
+    var dateKey = keys.find(function(k){ return /시작|날짜|date|일자/i.test(k); }) || keys[0];
+    var endKey = keys.find(function(k){ return /종료|end/i.test(k); });
+    var titleKey = keys.find(function(k){ return /제목|이벤트|activity|task|title|일정/i.test(k); }) || keys[1];
+    var noteKey = keys.find(function(k){ return /메모|note|비고|설명/i.test(k); });
+    return rows.map(function(r){
+      var d = r[dateKey];
+      // 날짜 변환 시도
+      var isoDate = '';
+      if (d instanceof Date) isoDate = d.toISOString().split('T')[0];
+      else if (typeof d === 'string') {
+        var m = d.match(/(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+        if (m) isoDate = m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
+      }
+      return {
+        date: isoDate,
+        end_date: '',
+        title: String(r[titleKey]||'(제목 없음)'),
+        category: '',
+        notes: noteKey ? String(r[noteKey]||'') : ''
+      };
+    }).filter(function(e){ return e.date && e.title; });
+  }
+
+  function _renderImportPreview(events) {
+    var listEl = document.getElementById('import-preview-list');
+    var cntEl = document.getElementById('import-preview-count');
+    var prevEl = document.getElementById('import-preview');
+    if (cntEl) cntEl.textContent = events.length;
+    if (listEl) {
+      listEl.innerHTML = events.slice(0, 100).map(function(e, i){
+        var catColor = e.category === '업무' ? 'bg-sky-100 text-sky-700' :
+                       e.category === '미팅' ? 'bg-indigo-100 text-indigo-700' :
+                       e.category === '출장' ? 'bg-amber-100 text-amber-700' :
+                       e.category === '마일스톤' ? 'bg-emerald-100 text-emerald-700' :
+                       'bg-slate-100 text-slate-600';
+        var dateRange = e.date + (e.end_date && e.end_date !== e.date ? '~' + e.end_date : '');
+        return '<div class="flex items-center gap-2 px-3 py-2 border-b border-slate-100 last:border-b-0 text-[11px]">' +
+          '<span class="text-[10px] font-bold text-slate-400 w-24 shrink-0">' + dateRange + '</span>' +
+          (e.category ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded ' + catColor + ' shrink-0">' + e.category + '</span>' : '') +
+          '<span class="flex-1 truncate text-slate-700 font-medium">' + String(e.title).replace(/</g,'&lt;') + '</span>' +
+          (e.notes ? '<span class="text-[9px] text-slate-400 truncate max-w-[120px]">' + String(e.notes).replace(/</g,'&lt;') + '</span>' : '') +
+        '</div>';
+      }).join('') + (events.length > 100 ? '<div class="px-3 py-2 text-[10px] text-slate-400 italic text-center">+ ' + (events.length-100) + '건 더</div>' : '');
+    }
+    if (prevEl) prevEl.classList.remove('hidden');
+  }
+
+  window.applyImport = async function() {
+    if (!_importParsedEvents.length) return;
+    var btn = document.getElementById('import-apply-btn');
+    var status = document.getElementById('import-status');
+    btn.disabled = true;
+    document.getElementById('import-apply-label').innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> 저장 중...';
+    status.className = 'px-4 py-3 rounded-xl text-xs bg-sky-50 text-sky-800';
+    status.textContent = '0/' + _importParsedEvents.length + ' 저장 중...';
+    var ok = 0, skip = 0, fail = 0;
+    // 기존 planner에서 같은 (date, title) 조합 추출 (중복 방지)
+    var existingKeys = {};
+    (plannerData||[]).forEach(function(r){
+      if (r[0] && r[1]) existingKeys[r[0] + '|' + r[1]] = true;
+    });
+    for (var i = 0; i < _importParsedEvents.length; i++) {
+      var e = _importParsedEvents[i];
+      var key = e.date + '|' + e.title;
+      if (existingKeys[key]) { skip++; continue; }
+      var row = [
+        e.date,           // 0: 시작일
+        e.title,          // 1: 제목
+        e.category || '', // 2: 카테고리
+        '',               // 3:
+        e.notes || '',    // 4: 메모
+        e.end_date || '', // 5: 종료일
+        '',               // 6:
+      ];
+      try {
+        var obj = rowToObj('planner', row);
+        var saved = await fbAdd('planner', obj);
+        plannerData.push(row.concat([saved._id]));
+        ok++;
+        if (i % 5 === 0) status.textContent = (i+1) + '/' + _importParsedEvents.length + ' 저장 중...';
+      } catch(err) { console.error('[import save]', err); fail++; }
+    }
+    status.className = 'px-4 py-3 rounded-xl text-xs bg-emerald-50 text-emerald-800';
+    status.textContent = '✅ 추가 ' + ok + '건' + (skip ? ', 중복 스킵 ' + skip + '건' : '') + (fail ? ', 실패 ' + fail + '건' : '');
+    // 캘린더 갱신
+    if (typeof renderCalendar === 'function') renderCalendar();
+    if (typeof loadDashboard === 'function') loadDashboard();
+    setTimeout(function(){
+      closeImportModal();
+      if (typeof showSyncToast === 'function') showSyncToast('📥 ' + ok + '건 일정 임포트 완료');
+    }, 1500);
+  };
 
   let dashMilestones = []; // 캐시
 
