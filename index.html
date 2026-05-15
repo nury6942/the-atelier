@@ -1698,6 +1698,36 @@
         </div>
       </section>
 
+      <!-- ═══════ Tier 3.5: 뉴스 (국내 + 해외 영어) ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- 국내 뉴스 -->
+        <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-rose-500" style="font-size:16px">newspaper</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">🇰🇷 국내 헤드라인</h3>
+            </div>
+            <span id="dash-news-kr-source" class="text-[9px] text-slate-400">한겨레</span>
+          </div>
+          <div id="dash-news-kr" class="space-y-1.5 text-[11px]">
+            <div class="text-[10px] text-slate-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:11px">progress_activity</span>로딩 중...</div>
+          </div>
+        </div>
+        <!-- 해외 뉴스 (영어 — 영어 공부 겸) -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-blue-600" style="font-size:16px">public</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-blue-800">🌐 World News (EN)</h3>
+            </div>
+            <span id="dash-news-en-source" class="text-[9px] text-blue-500">BBC</span>
+          </div>
+          <div id="dash-news-en" class="space-y-1.5 text-[11px]">
+            <div class="text-[10px] text-blue-400 italic flex items-center gap-1"><span class="material-symbols-outlined animate-spin" style="font-size:11px">progress_activity</span>Loading...</div>
+          </div>
+        </div>
+      </section>
+
       <!-- ═══════ Tier 4: 위클리 뷰 (축소) ═══════ -->
       <section class="space-y-2.5">
         <div class="flex justify-between items-end px-1">
@@ -12464,6 +12494,7 @@
       renderDashFxWidget(tripDocs, journeyDocs);
       renderDashBizSchedule(plannerRows, now);
       renderDashRecentMemos(refDocs);
+      renderDashNews();
 
       // ─── AI 데일리 브리프 (자동, 24h 캐시) ───
       generateDailyBrief(false, { plannerRows: plannerRows, hubRows: hubRows, tripDocs: tripDocs, journeyDocs: journeyDocs });
@@ -12892,6 +12923,70 @@
         '<span class="flex-1 truncate text-slate-700">' + title + '</span>' +
         '<span class="text-[10px] text-slate-400 font-medium">' + dateShort + '</span>' +
       '</div>';
+    }).join('');
+  }
+
+  // ─── 뉴스 헤드라인 (국내 + 해외 영어) — rss2json 무료 API + 30분 캐시 ───
+  async function renderDashNews() {
+    var krEl = document.getElementById('dash-news-kr');
+    var enEl = document.getElementById('dash-news-en');
+    if (!krEl || !enEl) return;
+
+    var cacheKey = 'atelier_news_cache_v1';
+    // 30분 캐시
+    try {
+      var cached = JSON.parse(localStorage.getItem(cacheKey));
+      if (cached && cached.fetchedAt && (Date.now() - cached.fetchedAt < 30*60*1000)) {
+        _renderNewsList(krEl, cached.kr, 'ko');
+        _renderNewsList(enEl, cached.en, 'en');
+        return;
+      }
+    } catch(e){}
+
+    // 한국 (한겨레), 해외 (BBC) RSS — rss2json.com 무료 우회 (CORS 해결)
+    var krRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.hani.co.kr/rss/');
+    var enRss = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('http://feeds.bbci.co.uk/news/world/rss.xml');
+
+    var krItems = [], enItems = [];
+    try {
+      var [krRes, enRes] = await Promise.all([
+        fetch(krRss).then(function(r){ return r.json(); }).catch(function(){ return null; }),
+        fetch(enRss).then(function(r){ return r.json(); }).catch(function(){ return null; })
+      ]);
+      if (krRes && krRes.items) krItems = krRes.items.slice(0, 5);
+      if (enRes && enRes.items) enItems = enRes.items.slice(0, 5);
+      // 캐시
+      try { localStorage.setItem(cacheKey, JSON.stringify({ kr: krItems, en: enItems, fetchedAt: Date.now() })); } catch(e){}
+    } catch(e) { console.warn('[news]', e); }
+
+    _renderNewsList(krEl, krItems, 'ko');
+    _renderNewsList(enEl, enItems, 'en');
+  }
+
+  function _renderNewsList(el, items, lang) {
+    if (!el) return;
+    if (!items || !items.length) {
+      el.innerHTML = '<div class="text-[10px] text-slate-400 italic">뉴스 로드 실패 (네트워크 확인)</div>';
+      return;
+    }
+    el.innerHTML = items.slice(0, 4).map(function(item){
+      var title = String(item.title||'').replace(/<[^>]+>/g, '').replace(/</g,'&lt;').slice(0, 80);
+      var link = item.link || '#';
+      var pubDate = item.pubDate ? new Date(item.pubDate) : null;
+      var timeAgo = '';
+      if (pubDate && !isNaN(pubDate)) {
+        var diffHr = Math.floor((Date.now() - pubDate.getTime()) / 3600000);
+        if (diffHr < 1) timeAgo = '방금';
+        else if (diffHr < 24) timeAgo = diffHr + '시간 전';
+        else timeAgo = Math.floor(diffHr/24) + '일 전';
+      }
+      var color = lang === 'en' ? 'text-blue-700 hover:text-blue-900' : 'text-slate-700 hover:text-rose-700';
+      var bullet = lang === 'en' ? '<span class="text-blue-400">▸</span>' : '<span class="text-rose-400">▸</span>';
+      return '<a href="' + link + '" target="_blank" rel="noopener" class="flex items-start gap-1.5 leading-snug hover:underline transition-colors">' +
+        bullet +
+        '<span class="flex-1 ' + color + '">' + title + '</span>' +
+        (timeAgo ? '<span class="text-[9px] text-slate-400 shrink-0 mt-0.5">' + timeAgo + '</span>' : '') +
+      '</a>';
     }).join('');
   }
 
