@@ -9567,11 +9567,10 @@
                     payStatus === '현장 결제' ? 'storefront' : 'payments';
       payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size:11px">' + payIcon + '</span>' + payStatus + '</span>';
     }
-    // 추가 정보 칩 (예약번호 / 운전자 / 메모 분해)
+    // 추가 정보 칩 — 핵심만 (예약번호 / 운전자 / 무료취소 / 결제일)
     var chips = [];
     if (item.booking_ref) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">confirmation_number</span>예약 ' + item.booking_ref + '</span>');
     if (item.driver) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">person</span>' + item.driver + '</span>');
-    // 무료취소 칩 (가능/조건부/불가)
     if (item.cancel) {
       var cancelClass = item.cancel === '가능' ? 'bg-emerald-50 text-emerald-700' :
                         item.cancel === '조건부' ? 'bg-amber-50 text-amber-700' :
@@ -9582,20 +9581,20 @@
       chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 ' + cancelClass + ' rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_busy</span>' + cancelTxt + '</span>');
     }
     if (item.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_available</span>결제일 ' + item.payment_date + '</span>');
-    // 메모를 칩으로 분해
-    if (item.notes) {
-      var memoChips = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
-      memoChips.forEach(function(c){
-        var t = c.trim();
-        if (!t) return;
-        var icon = 'bookmark';
-        if (/보험|insurance|풀커버|면책/i.test(t)) icon = 'verified_user';
-        else if (/gps|네비/i.test(t)) icon = 'navigation';
-        else if (/추가\s*운전자|driver/i.test(t)) icon = 'group';
-        chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">' + icon + '</span>' + t + '</span>');
-      });
-    }
     var chipsRow = chips.length ? '<div class="flex flex-wrap gap-1.5 mt-3 pl-[52px]">' + chips.join('') + '</div>' : '';
+    // 보험/옵션은 별도 박스 (한 줄, 토글 가능)
+    var memoBox = '';
+    if (item.notes) {
+      var notesEsc = String(item.notes).replace(/</g,'&lt;');
+      var nid = (item._id||'').replace(/[^a-zA-Z0-9]/g,'').slice(0,12);
+      memoBox = '<div class="mt-2.5 ml-[52px] rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">' +
+        '<button type="button" onclick="event.stopPropagation();var b=document.getElementById(\'rc-memo-' + nid + '\');var i=document.getElementById(\'rc-memo-ico-' + nid + '\');if(b){var open=b.style.display!==\'none\';b.style.display=open?\'none\':\'block\';if(i)i.textContent=open?\'expand_more\':\'expand_less\';}" class="w-full px-3 py-1.5 flex items-center justify-between text-[10px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">' +
+          '<span class="flex items-center gap-1.5"><span class="material-symbols-outlined" style="font-size:13px">shield</span>보험 · 옵션 상세</span>' +
+          '<span id="rc-memo-ico-' + nid + '" class="material-symbols-outlined" style="font-size:14px">expand_more</span>' +
+        '</button>' +
+        '<div id="rc-memo-' + nid + '" class="px-3 pb-2 pt-1 text-[11px] text-slate-600 leading-relaxed border-t border-slate-100" style="display:none;white-space:pre-line">' + notesEsc + '</div>' +
+      '</div>';
+    }
 
     return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       '<div class="flex items-center gap-4">' +
@@ -9631,6 +9630,7 @@
         '</div>' +
       '</div>' +
       chipsRow +
+      memoBox +
     '</div>';
   }
 
@@ -29646,11 +29646,29 @@ if ('serviceWorker' in navigator) {
         monthSelectorType: 'static',
         // 모달 안에서 잘리지 않도록 body에 직접 붙이기
         appendTo: document.body,
-        // z-index 충돌 방지 (모달의 z-50 위에 떠야 함)
         onOpen: function(selectedDates, dateStr, instance) {
+          // z-index 충돌 방지 (모달의 z-50 위에 떠야 함)
           if (instance.calendarContainer) {
             instance.calendarContainer.style.zIndex = '99999';
+            instance.calendarContainer.style.position = 'absolute';
           }
+          // 부모 모달의 overflow-y:auto 컨테이너를 찾아서 input이 잘 보이는 위치로 스크롤
+          try {
+            var scrollableParent = input.closest('.overflow-y-auto') || input.closest('[style*="overflow-y:auto"]');
+            if (scrollableParent) {
+              var inputRect = input.getBoundingClientRect();
+              var parentRect = scrollableParent.getBoundingClientRect();
+              // input이 부모 하단 50% 아래라면 위로 스크롤해서 input을 위쪽에 위치시킴
+              if (inputRect.bottom > parentRect.top + parentRect.height * 0.5) {
+                var scrollTarget = scrollableParent.scrollTop + (inputRect.top - parentRect.top) - 60;
+                scrollableParent.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                // 스크롤 후 재배치
+                setTimeout(function(){
+                  if (instance && typeof instance._positionCalendar === 'function') instance._positionCalendar();
+                }, 320);
+              }
+            }
+          } catch(e) {}
         }
       });
     } catch(e) { console.warn('[flatpickr]', input.id || '(no id)', e); }
