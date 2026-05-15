@@ -1713,6 +1713,10 @@
             ✅ 체크리스트
           </button>
         </div>
+        <!-- 예약 스캔 버튼 -->
+        <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+          <span class="material-symbols-outlined" style="font-size:14px">document_scanner</span> 예약 스캔
+        </button>
         <!-- 미니 요약 (예산 상태) -->
         <div id="travel-mini-summary" class="text-xs text-slate-500 flex items-center gap-3" style="display:none">
           <span>총 예산 <span id="travel-mini-budget" class="font-bold text-slate-700">—</span></span>
@@ -2474,6 +2478,80 @@
         <div class="atl-modal-footer">
           <button onclick="closeJourneyModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveJourneyEntry()" id="journey-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ 예약 스캔 모달 ═══ -->
+    <div id="booking-scan-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" style="display:none!important">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" style="animation:modalIn 0.2s ease">
+        <!-- 헤더 -->
+        <div class="px-6 py-5 flex items-center justify-between" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+              <span class="material-symbols-outlined text-white" style="font-size:20px">document_scanner</span>
+            </div>
+            <div>
+              <div class="text-white font-black text-base tracking-tight">예약 스캔</div>
+              <div class="text-white/70 text-[10px]">스크린샷 → AI 자동 입력</div>
+            </div>
+          </div>
+          <button onclick="closeBookingScanModal()" class="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors">
+            <span class="material-symbols-outlined" style="font-size:18px">close</span>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <!-- 업로드 존 -->
+          <div id="scan-drop-zone" onclick="document.getElementById('scan-file-input').click()" ondragover="event.preventDefault();this.classList.add('border-indigo-400','bg-indigo-50')" ondragleave="this.classList.remove('border-indigo-400','bg-indigo-50')" ondrop="handleScanDrop(event)" class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/50 transition-all group">
+            <div id="scan-drop-placeholder">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-indigo-500" style="font-size:28px">photo_camera</span>
+              </div>
+              <p class="text-sm font-bold text-slate-700 mb-1">스크린샷 업로드</p>
+              <p class="text-xs text-slate-400">카톡 예약 알림, 항공사/호텔 확인 이메일 스크린샷</p>
+              <p class="text-[10px] text-slate-300 mt-2">클릭하거나 이미지를 드래그하세요</p>
+            </div>
+            <img id="scan-preview-img" src="" alt="" class="hidden max-h-48 mx-auto rounded-xl object-contain shadow-md"/>
+          </div>
+          <input id="scan-file-input" type="file" accept="image/*" class="hidden" onchange="handleScanFileSelect(event)"/>
+
+          <!-- API 키 경고 (미설정 시) -->
+          <div id="scan-api-warn" class="hidden px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-700 flex items-start gap-2">
+            <span class="material-symbols-outlined text-amber-500 flex-shrink-0" style="font-size:16px">warning</span>
+            <span>Anthropic API 키가 필요해요. <button onclick="closeBookingScanModal();openApiSettingsModal()" class="underline font-bold">설정에서 입력</button>하거나 설정 → API 설정을 열어주세요.</span>
+          </div>
+
+          <!-- 분석 결과 -->
+          <div id="scan-result-area" class="hidden">
+            <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">분석 결과</div>
+            <div id="scan-result-content" class="bg-slate-50 rounded-2xl p-4 text-sm space-y-2 border border-slate-100"></div>
+          </div>
+
+          <!-- 로딩 -->
+          <div id="scan-loading" class="hidden text-center py-4">
+            <div class="inline-flex items-center gap-2 text-indigo-600 font-bold text-sm">
+              <div class="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+              AI 분석 중...
+            </div>
+            <p class="text-xs text-slate-400 mt-1">스크린샷에서 예약 정보를 추출하고 있어요</p>
+          </div>
+
+          <!-- 오류 -->
+          <div id="scan-error" class="hidden px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700"></div>
+        </div>
+
+        <!-- 푸터 버튼 -->
+        <div class="px-6 pb-6 flex flex-col gap-2">
+          <button id="scan-analyze-btn" onclick="analyzeBookingImage()" disabled class="w-full py-3 rounded-xl text-white font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all hover:opacity-90" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+            <span class="material-symbols-outlined" style="font-size:16px">auto_awesome</span> 분석하기
+          </button>
+          <div id="scan-apply-btns" class="hidden flex gap-2">
+            <button id="scan-apply-btn" onclick="applyBookingScan()" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 flex items-center justify-center gap-1.5 transition-colors">
+              <span class="material-symbols-outlined" style="font-size:15px">add_circle</span> <span id="scan-apply-label">저장하기</span>
+            </button>
+            <button onclick="resetBookingScan()" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-colors">다시</button>
+          </div>
         </div>
       </div>
     </div>
@@ -20412,6 +20490,330 @@ async function parseAndSaveReview() {
     status.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> 저장 실패: ' + err.message;
   }
 }
+
+// ═══════════════════════════════════════════════════════
+// ✈️  예약 스캔 (Booking Scan) — Claude Vision 자동 입력
+// ═══════════════════════════════════════════════════════
+
+var _scanImageBase64 = null;
+var _scanImageType  = 'image/jpeg';
+var _scanResult     = null;
+
+function openBookingScanModal() {
+  var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+  var warnEl = document.getElementById('scan-api-warn');
+  if (warnEl) warnEl.className = apiKey ? 'hidden' : 'flex px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-700 items-start gap-2';
+  resetBookingScan();
+  document.getElementById('booking-scan-modal').style.cssText = 'display:flex!important';
+}
+
+function closeBookingScanModal() {
+  document.getElementById('booking-scan-modal').style.cssText = 'display:none!important';
+}
+
+function resetBookingScan() {
+  _scanImageBase64 = null;
+  _scanResult = null;
+  var placeholder = document.getElementById('scan-drop-placeholder');
+  var preview = document.getElementById('scan-preview-img');
+  var resultArea = document.getElementById('scan-result-area');
+  var applyBtns = document.getElementById('scan-apply-btns');
+  var analyzeBtn = document.getElementById('scan-analyze-btn');
+  var loadingEl = document.getElementById('scan-loading');
+  var errorEl = document.getElementById('scan-error');
+  var fileInput = document.getElementById('scan-file-input');
+  if (placeholder) placeholder.style.display = '';
+  if (preview) { preview.src = ''; preview.className = 'hidden max-h-48 mx-auto rounded-xl object-contain shadow-md'; }
+  if (resultArea) resultArea.className = 'hidden';
+  if (applyBtns) applyBtns.className = 'hidden flex gap-2';
+  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.style.cssText = ''; }
+  if (loadingEl) loadingEl.className = 'hidden text-center py-4';
+  if (errorEl) errorEl.className = 'hidden px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700';
+  if (fileInput) fileInput.value = '';
+}
+
+function handleScanDrop(event) {
+  event.preventDefault();
+  var dropZone = document.getElementById('scan-drop-zone');
+  if (dropZone) dropZone.classList.remove('border-indigo-400','bg-indigo-50');
+  var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadScanFile(file);
+}
+
+function handleScanFileSelect(event) {
+  var file = event.target.files && event.target.files[0];
+  if (file) loadScanFile(file);
+}
+
+function loadScanFile(file) {
+  _scanImageType = file.type || 'image/jpeg';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    // Extract base64 part only
+    _scanImageBase64 = dataUrl.split(',')[1];
+    // Show preview
+    var placeholder = document.getElementById('scan-drop-placeholder');
+    var preview = document.getElementById('scan-preview-img');
+    if (placeholder) placeholder.style.display = 'none';
+    if (preview) {
+      preview.src = dataUrl;
+      preview.className = 'max-h-48 mx-auto rounded-xl object-contain shadow-md';
+    }
+    // Enable analyze btn
+    var analyzeBtn = document.getElementById('scan-analyze-btn');
+    if (analyzeBtn) analyzeBtn.disabled = false;
+    // Reset previous result
+    var resultArea = document.getElementById('scan-result-area');
+    var applyBtns = document.getElementById('scan-apply-btns');
+    if (resultArea) resultArea.className = 'hidden';
+    if (applyBtns) applyBtns.className = 'hidden flex gap-2';
+    _scanResult = null;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeBookingImage() {
+  if (!_scanImageBase64) { showSyncToast('이미지를 먼저 업로드해주세요'); return; }
+  var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+  if (!apiKey) { showSyncToast('API 키를 먼저 설정해주세요'); openApiSettingsModal(); return; }
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+
+  // UI: 로딩
+  var loadingEl = document.getElementById('scan-loading');
+  var errorEl = document.getElementById('scan-error');
+  var analyzeBtn = document.getElementById('scan-analyze-btn');
+  var resultArea = document.getElementById('scan-result-area');
+  var applyBtns = document.getElementById('scan-apply-btns');
+  loadingEl.className = 'text-center py-4';
+  errorEl.className = 'hidden px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700';
+  if (resultArea) resultArea.className = 'hidden';
+  if (applyBtns) applyBtns.className = 'hidden flex gap-2';
+  analyzeBtn.disabled = true;
+
+  var SCAN_PROMPT = `이 이미지는 여행 예약 확인서입니다. (항공권, 숙소, 기차/버스, 렌트카 등)
+이미지에서 예약 정보를 정확히 추출해 다음 JSON 형식으로만 반환해주세요.
+마크다운, 코드블록, 설명 없이 JSON 오브젝트만 출력하세요.
+
+{
+  "type": "항공편 또는 숙소 또는 이동수단 또는 렌트카 중 하나",
+  "airline": "항공사명 (항공편일 때)",
+  "flight_number": "편명 예: KE001",
+  "dep_airport": "출발공항 IATA 코드 예: ICN",
+  "arr_airport": "도착공항 IATA 코드 예: FRA",
+  "dep_date": "YYYY-MM-DD",
+  "dep_time": "HH:MM",
+  "arr_time": "HH:MM",
+  "duration": "비행시간 예: 12H 30M",
+  "baggage": "수하물 예: 23kg",
+  "hotel_name": "숙소명 (숙소일 때)",
+  "hotel_city": "도시명",
+  "checkin_date": "YYYY-MM-DD",
+  "checkout_date": "YYYY-MM-DD",
+  "checkin_time": "HH:MM",
+  "checkout_time": "HH:MM",
+  "address": "주소",
+  "cancel_policy": "가능 또는 불가 또는 조건부",
+  "cancel_deadline": "YYYY-MM-DD",
+  "transport_name": "이동수단명 (기차/버스 등)",
+  "route": "출발지 → 목적지",
+  "price_krw": 0,
+  "price_original": "원래 통화 금액 예: €320",
+  "notes": "기타 중요 정보"
+}
+
+읽을 수 없는 필드는 빈 문자열("")로 설정. price_krw는 한화 금액이 보이면 숫자로, 없으면 0.`;
+
+  var requestBody = {
+    model: model,
+    max_tokens: 1024,
+    messages: [{
+      role: 'user',
+      content: [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: _scanImageType,
+            data: _scanImageBase64
+          }
+        },
+        { type: 'text', text: SCAN_PROMPT }
+      ]
+    }]
+  };
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!res.ok) {
+      var errBody = {}; try { errBody = await res.json(); } catch(e){}
+      var msg = errBody.error ? errBody.error.message : 'HTTP ' + res.status;
+      throw new Error(msg);
+    }
+
+    var data = await res.json();
+    var text = data.content && data.content[0] && data.content[0].text || '';
+
+    // JSON 파싱
+    var jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('AI 응답에서 JSON을 찾을 수 없어요');
+    _scanResult = JSON.parse(jsonMatch[0]);
+
+    // 결과 표시
+    showScanResult(_scanResult);
+
+  } catch(e) {
+    errorEl.className = 'px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700';
+    errorEl.textContent = '분석 실패: ' + e.message;
+    console.error('[BookingScan]', e);
+  } finally {
+    loadingEl.className = 'hidden text-center py-4';
+    analyzeBtn.disabled = false;
+  }
+}
+
+function showScanResult(r) {
+  var resultArea = document.getElementById('scan-result-area');
+  var resultContent = document.getElementById('scan-result-content');
+  var applyBtns = document.getElementById('scan-apply-btns');
+  var applyLabel = document.getElementById('scan-apply-label');
+
+  var rows = [];
+  var typeLabel = { '항공편':'✈️ 항공편', '숙소':'🏨 숙소', '이동수단':'🚆 이동수단', '렌트카':'🚗 렌트카' }[r.type] || r.type;
+
+  rows.push('<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">' + typeLabel + '</span></div>');
+
+  function row(label, val) {
+    if (!val && val !== 0) return '';
+    return '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-slate-400 flex-shrink-0">' + label + '</span><span class="text-sm font-bold text-slate-800 text-right">' + val + '</span></div>';
+  }
+
+  if (r.type === '항공편') {
+    rows.push(row('항공사', r.airline));
+    rows.push(row('편명', r.flight_number));
+    rows.push(row('루트', (r.dep_airport||'') + (r.dep_airport&&r.arr_airport?' → ':'') + (r.arr_airport||'')));
+    rows.push(row('탑승일', r.dep_date));
+    rows.push(row('출발', r.dep_time));
+    rows.push(row('도착', r.arr_time));
+    rows.push(row('비행시간', r.duration));
+    rows.push(row('수하물', r.baggage));
+  } else if (r.type === '숙소') {
+    rows.push(row('숙소명', r.hotel_name));
+    rows.push(row('도시', r.hotel_city));
+    rows.push(row('체크인', r.checkin_date + (r.checkin_time ? ' ' + r.checkin_time : '')));
+    rows.push(row('체크아웃', r.checkout_date + (r.checkout_time ? ' ' + r.checkout_time : '')));
+    rows.push(row('주소', r.address));
+    rows.push(row('무료취소', r.cancel_policy + (r.cancel_deadline ? ' (~' + r.cancel_deadline + ')' : '')));
+  } else if (r.type === '이동수단') {
+    rows.push(row('이름', r.transport_name));
+    rows.push(row('루트', r.route));
+    rows.push(row('날짜', r.dep_date));
+    rows.push(row('시간', r.dep_time));
+  } else if (r.type === '렌트카') {
+    rows.push(row('업체', r.transport_name || r.hotel_name));
+    rows.push(row('픽업', r.dep_date + (r.dep_time ? ' ' + r.dep_time : '')));
+    rows.push(row('반납', r.checkout_date + (r.checkout_time ? ' ' + r.checkout_time : '')));
+    rows.push(row('장소', r.route));
+  }
+  if (r.price_krw) rows.push(row('가격', '₩' + Number(r.price_krw).toLocaleString('ko-KR')));
+  else if (r.price_original) rows.push(row('가격', r.price_original));
+  if (r.notes) rows.push(row('메모', r.notes));
+
+  resultContent.innerHTML = '<div class="space-y-1.5">' + rows.join('') + '</div>';
+  resultArea.className = '';
+
+  var labelMap = { '항공편':'항공편으로 저장', '숙소':'숙소로 저장', '이동수단':'일정에 추가', '렌트카':'렌트카로 저장' };
+  if (applyLabel) applyLabel.textContent = labelMap[r.type] || '저장하기';
+  if (applyBtns) applyBtns.className = 'flex gap-2';
+}
+
+function applyBookingScan() {
+  if (!_scanResult) return;
+  var r = _scanResult;
+  closeBookingScanModal();
+
+  // 타입별 폼 열기 + 채우기
+  setTimeout(function() {
+    if (r.type === '항공편') {
+      openFlightAddModal();
+      setTimeout(function() {
+        _setVal('flt-airline', r.airline);
+        _setVal('flt-code', r.flight_number);
+        _setVal('flt-dep', r.dep_airport);
+        _setVal('flt-arr', r.arr_airport);
+        _setVal('flt-date', r.dep_date);
+        _setVal('flt-time', r.dep_time);
+        _setVal('flt-arrive', r.arr_time);
+        _setVal('flt-duration', r.duration);
+        _setVal('flt-baggage', r.baggage);
+        if (r.price_krw) _setVal('flt-price', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 항공편 정보가 자동 입력됐어요 ✈️');
+      }, 300);
+
+    } else if (r.type === '숙소') {
+      openJourneyModal('숙소');
+      setTimeout(function() {
+        _setVal('jf-title', r.hotel_name);
+        _setVal('jf-city', r.hotel_city);
+        _setVal('jf-address', r.address);
+        _setVal('jf-date', r.checkin_date);
+        _setVal('jf-checkout-date', r.checkout_date);
+        _setVal('jf-checkin', r.checkin_time);
+        _setVal('jf-checkout', r.checkout_time);
+        var cancelSel = document.getElementById('jf-cancel');
+        if (cancelSel && r.cancel_policy) {
+          var map = {'가능':'가능','불가':'불가','조건부':'조건부'};
+          cancelSel.value = map[r.cancel_policy] || '가능';
+        }
+        _setVal('jf-cancel-date', r.cancel_deadline);
+        if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 숙소 정보가 자동 입력됐어요 🏨');
+      }, 300);
+
+    } else if (r.type === '이동수단') {
+      openJourneyModal('이동수단');
+      setTimeout(function() {
+        _setVal('jf-title', r.transport_name);
+        _setVal('jf-desc', r.route);
+        _setVal('jf-date', r.dep_date);
+        _setVal('jf-time', r.dep_time);
+        if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 이동수단 정보가 자동 입력됐어요 🚆');
+      }, 300);
+
+    } else if (r.type === '렌트카') {
+      openJourneyModal('렌트카');
+      setTimeout(function() {
+        _setVal('jf-title', r.transport_name || r.hotel_name);
+        _setVal('jf-date', r.dep_date);
+        _setVal('jf-time', r.dep_time);
+        _setVal('jf-checkout-date', r.checkout_date);
+        _setVal('jf-checkout', r.checkout_time);
+        _setVal('jf-pickup-location', r.route ? r.route.split('→')[0].trim() : '');
+        _setVal('jf-drop-location', r.route ? (r.route.split('→')[1]||'').trim() : '');
+        if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 렌트카 정보가 자동 입력됐어요 🚗');
+      }, 300);
+    }
+  }, 100);
+}
+
+function _setVal(id, val) {
+  var el = document.getElementById(id);
+  if (el && val !== undefined && val !== null && val !== '') el.value = val;
+}
+
+// ═══════════════════════════════════════════════════════
 
   // ===== VAULT =====
   var vaultData = [];
