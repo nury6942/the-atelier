@@ -7169,6 +7169,7 @@
     renderJourneySouvenir();
     loadTripNotes();
     updateJourneyCost();
+    updateTravelMiniSummary();
   }
 
   function getCurrentTrip() {
@@ -13141,19 +13142,9 @@
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
     try {
-      if (typeof currentTripId === 'undefined' || !currentTripId) { el.style.display = 'none'; return; }
-      // financeTrips 로드 보장
-      if (typeof financeTrips === 'undefined' || !financeTrips.length) {
-        try {
-          var trips = await fbRead('trips');
-          if (typeof financeTrips !== 'undefined') {
-            financeTrips.length = 0;
-            trips.forEach(function(t){ financeTrips.push(t); });
-          }
-        } catch(e) {}
-      }
-      if (typeof financeTrips === 'undefined' || !financeTrips.length) { el.style.display = 'none'; return; }
-      var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
+      if (!currentTripId) { el.style.display = 'none'; return; }
+      // tripsData는 selectTrip() 시점에 이미 로드됨 — financeTrips 불필요
+      var trip = tripsData.find(function(t){ return t._id === currentTripId; });
       if (!trip || !trip.budget) { el.style.display = 'none'; return; }
       var tripName = trip.name || '';
       // 예산 총합
@@ -13239,7 +13230,6 @@
     if(pageId==='dashboard') { if(typeof loadDashboard==='function') loadDashboard(); }
     if(pageId==='journey') {
       if(typeof loadJourney==='function') loadJourney();
-      setTimeout(function(){ if(typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary(); }, 500);
     }
     if(pageId==='matrix') { if(typeof loadMatrix==='function') loadMatrix(); }
     if(pageId==='income') { if(typeof loadIncome==='function') loadIncome(); }
