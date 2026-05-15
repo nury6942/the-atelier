@@ -21922,7 +21922,7 @@ async function analyzeBookingImage() {
   "checkout_time": "HH:MM",
   "address": "주소",
   "cancel_policy": "무료취소 정책. '가능' / '불가' / '조건부' 중 하나. 숙소·렌트카 모두에 적용 (항공편 제외)",
-  "cancel_deadline": "무료취소 마감일. YYYY-MM-DD. 숙소·렌트카 모두에 적용. 예: 'Free cancellation until 30 Sep 2026' → '2026-09-30'",
+  "cancel_deadline": "무료취소 마감일. YYYY-MM-DD 형식으로 정확히 변환. 숙소·렌트카 모두에 적용. 추출 규칙: ① 'Free cancellation until 30 Sep 2026' → '2026-09-30' (직접 명시). ② 'Free cancellation up to 48 hours before pickup' → 픽업 시간에서 48시간 빼서 날짜 계산 (예: 픽업이 2026-10-01 14:00이면 → '2026-09-29'). ③ 'Cancel up to 24h before check-in' → 체크인 시간에서 24시간 빼서 계산. ④ 정책 명시는 있지만 시점이 모호하면 → 픽업/체크인 1일 전으로 보수적 추정. ⑤ 무료취소 자체가 없으면 빈 문자열.",
   "room_info": "숙소일 때만. 객실 타입+개수+박수. 예: '퀸 사이즈 침대 1개 1박', '트윈룸 2개 2박'",
   "guests": "숙소일 때만. 인원 정보. 예: '성인 2명', '성인 2명, 아동 1명'",
   "smoking": "숙소일 때만. '금연' 또는 '흡연' 또는 빈 문자열",
@@ -29503,7 +29503,15 @@ if ('serviceWorker' in navigator) {
         allowInput: true,
         disableMobile: false,
         position: 'auto',
-        monthSelectorType: 'static'
+        monthSelectorType: 'static',
+        // 모달 안에서 잘리지 않도록 body에 직접 붙이기
+        appendTo: document.body,
+        // z-index 충돌 방지 (모달의 z-50 위에 떠야 함)
+        onOpen: function(selectedDates, dateStr, instance) {
+          if (instance.calendarContainer) {
+            instance.calendarContainer.style.zIndex = '99999';
+          }
+        }
       });
     } catch(e) { console.warn('[flatpickr]', input.id || '(no id)', e); }
   }
