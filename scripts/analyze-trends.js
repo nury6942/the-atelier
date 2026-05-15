@@ -54,7 +54,13 @@ function buildPrompt(raw) {
 [수집 데이터]
 ${JSON.stringify(compact, null, 2)}
 
-[출력 형식 — 반드시 아래 구조의 JSON으로만 응답. 다른 텍스트 0]
+[출력 규칙]
+- 응답은 오직 JSON 객체 하나만. 다른 텍스트 절대 금지.
+- 마크다운 코드 블록(\`\`\`json ... \`\`\`)으로 감싸지 마세요. 순수 JSON만.
+- 문자열 안의 줄바꿈은 \\n으로 escape. 큰따옴표는 \\"로 escape.
+- 모든 키와 값은 큰따옴표 사용.
+
+[출력 형식]
 {
   "summary": "1~2문장 요약 — 현재 이 시장의 큰 그림",
   "titlePatterns": [
@@ -125,16 +131,40 @@ async function main() {
     const text = msg.content.find(b => b.type === 'text')?.text || '';
     log('tokens used: in', msg.usage.input_tokens, '/ out', msg.usage.output_tokens);
 
-    // JSON 추출 (Claude가 ```json``` 블록으로 감쌀 수 있음)
-    let analysis;
-    try {
-      const jsonStart = text.indexOf('{');
-      const jsonEnd = text.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) throw new Error('no JSON found');
-      analysis = JSON.parse(text.substring(jsonStart, jsonEnd + 1));
-    } catch (e) {
-      log('failed to parse Claude response as JSON:', e.message);
-      analysis = { error: 'parse_failed', rawText: text };
+    // JSON 추출 — 여러 전략 시도
+    let analysis = null;
+    let parseErrors = [];
+
+    // Strategy 1: ```json ... ``` 마크다운 코드 블록 추출
+    const fenceMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+    const candidates = [];
+    if (fenceMatch) candidates.push(fenceMatch[1].trim());
+    // Strategy 2: 첫 { ~ 마지막 } 사이 (전체)
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      candidates.push(text.substring(firstBrace, lastBrace + 1));
+    }
+    // Strategy 3: 마크다운 fence 안의 { ~ } (위 fence가 있을 때만 의미 있음)
+    if (fenceMatch) {
+      const inner = fenceMatch[1];
+      const fb = inner.indexOf('{');
+      const lb = inner.lastIndexOf('}');
+      if (fb !== -1 && lb !== -1) candidates.push(inner.substring(fb, lb + 1));
+    }
+
+    for (const c of candidates) {
+      try {
+        analysis = JSON.parse(c);
+        break;
+      } catch (e) {
+        parseErrors.push(e.message);
+      }
+    }
+
+    if (!analysis) {
+      log('all JSON parse strategies failed:', parseErrors);
+      analysis = { error: 'parse_failed', parseErrors: parseErrors, rawText: text };
     }
 
     data.analysis = analysis;
