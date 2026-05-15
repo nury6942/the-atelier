@@ -20207,24 +20207,12 @@
     if (fpInstances[inputId]) { try { fpInstances[inputId].destroy(); } catch(e){} delete fpInstances[inputId]; }
     var el = document.getElementById(inputId);
     if (!el || typeof flatpickr === 'undefined') return null;
-    // ─ 기본 onOpen: 모달 안에서 달력 잘리지 않도록 자동 스크롤 ─
+    // 모달/스크롤 무관 — viewport 기준 fixed 배치
     function _defaultOnOpen(selectedDates, dateStr, instance) {
-      if (instance.calendarContainer) {
-        instance.calendarContainer.style.zIndex = '99999';
-        instance.calendarContainer.style.position = 'absolute';
+      if (typeof _positionFlatpickrFixed === 'function') {
+        _positionFlatpickrFixed(instance);
+        setTimeout(function(){ _positionFlatpickrFixed(instance); }, 10);
       }
-      try {
-        var sp = el.closest('.overflow-y-auto') || el.closest('[style*="overflow-y:auto"]');
-        if (sp) {
-          var ir = el.getBoundingClientRect();
-          var pr = sp.getBoundingClientRect();
-          // input이 부모 하단 50% 아래면 → 위로 스크롤
-          if (ir.bottom > pr.top + pr.height * 0.5) {
-            sp.scrollTo({ top: sp.scrollTop + (ir.top - pr.top) - 60, behavior: 'smooth' });
-            setTimeout(function(){ if (instance && typeof instance._positionCalendar === 'function') instance._positionCalendar(); }, 320);
-          }
-        }
-      } catch(e) {}
     }
     var customOpen = options && options.onOpen;
     var config = Object.assign({
@@ -20234,7 +20222,6 @@
       allowInput: true,
       appendTo: document.body
     }, options||{});
-    // 항상 기본 onOpen 호출 + 사용자 onOpen이 있으면 같이 호출
     config.onOpen = function() {
       _defaultOnOpen.apply(this, arguments);
       if (customOpen) { try { customOpen.apply(this, arguments); } catch(e){} }
@@ -29909,6 +29896,49 @@ if ('serviceWorker' in navigator) {
      ═══════════════════════════════════════════════════ -->
 <script>
 (function() {
+  // ─── 캘린더 위치 강제 보정 (모달/스크롤 무관) ───
+  // viewport 기준 fixed로 배치, 화면 경계 자동 boundary 체크
+  // window에 노출 → 다른 스크립트 블록의 initFlatpickr에서도 접근 가능
+  window._positionFlatpickrFixed = function(instance) {
+    if (!instance || !instance.calendarContainer) return;
+    var cal = instance.calendarContainer;
+    var input = instance.input;
+    if (!input) return;
+    cal.style.position = 'fixed';
+    cal.style.zIndex = '99999';
+    cal.style.transform = 'none';
+    // input 좌표 (viewport 기준)
+    var ir = input.getBoundingClientRect();
+    var calH = cal.offsetHeight || 350;
+    var calW = cal.offsetWidth || 280;
+    var vpH = window.innerHeight;
+    var vpW = window.innerWidth;
+    var GAP = 6, PAD = 10;
+    // 기본: input 바로 아래
+    var top = ir.bottom + GAP;
+    var left = ir.left;
+    // 아래로 안 들어가면 input 위로
+    if (top + calH > vpH - PAD) {
+      var topAbove = ir.top - calH - GAP;
+      if (topAbove >= PAD) {
+        top = topAbove;
+      } else {
+        // 위/아래 둘 다 안 들어가면 화면에 맞춰 위쪽 고정 (최소 PAD)
+        top = PAD;
+        // 캘린더 높이가 viewport보다 클 가능성도 처리 (스크롤 가능하게)
+        cal.style.maxHeight = (vpH - PAD * 2) + 'px';
+        cal.style.overflowY = 'auto';
+      }
+    }
+    // 오른쪽 boundary
+    if (left + calW > vpW - PAD) left = vpW - calW - PAD;
+    if (left < PAD) left = PAD;
+    cal.style.top = top + 'px';
+    cal.style.left = left + 'px';
+    cal.style.right = '';
+    cal.style.bottom = '';
+  }
+
   function applyFp(input) {
     if (!input || input._flatpickr) return;
     if (typeof flatpickr !== 'function') return;
@@ -29918,37 +29948,26 @@ if ('serviceWorker' in navigator) {
         dateFormat: 'Y-m-d',
         allowInput: true,
         disableMobile: false,
-        position: 'auto',
         monthSelectorType: 'static',
-        // 모달 안에서 잘리지 않도록 body에 직접 붙이기
         appendTo: document.body,
         onOpen: function(selectedDates, dateStr, instance) {
-          // z-index 충돌 방지 (모달의 z-50 위에 떠야 함)
-          if (instance.calendarContainer) {
-            instance.calendarContainer.style.zIndex = '99999';
-            instance.calendarContainer.style.position = 'absolute';
-          }
-          // 부모 모달의 overflow-y:auto 컨테이너를 찾아서 input이 잘 보이는 위치로 스크롤
-          try {
-            var scrollableParent = input.closest('.overflow-y-auto') || input.closest('[style*="overflow-y:auto"]');
-            if (scrollableParent) {
-              var inputRect = input.getBoundingClientRect();
-              var parentRect = scrollableParent.getBoundingClientRect();
-              // input이 부모 하단 50% 아래라면 위로 스크롤해서 input을 위쪽에 위치시킴
-              if (inputRect.bottom > parentRect.top + parentRect.height * 0.5) {
-                var scrollTarget = scrollableParent.scrollTop + (inputRect.top - parentRect.top) - 60;
-                scrollableParent.scrollTo({ top: scrollTarget, behavior: 'smooth' });
-                // 스크롤 후 재배치
-                setTimeout(function(){
-                  if (instance && typeof instance._positionCalendar === 'function') instance._positionCalendar();
-                }, 320);
-              }
-            }
-          } catch(e) {}
+          // 즉시 + 미세 지연(높이 측정 정확하게) 두 번 위치 보정
+          _positionFlatpickrFixed(instance);
+          setTimeout(function(){ _positionFlatpickrFixed(instance); }, 10);
         }
       });
     } catch(e) { console.warn('[flatpickr]', input.id || '(no id)', e); }
   }
+  // window 리사이즈/스크롤 시 열려있는 캘린더 위치 재보정
+  window.addEventListener('resize', function(){
+    document.querySelectorAll('.flatpickr-calendar.open').forEach(function(cal){
+      if (cal._flatpickr && typeof cal._flatpickr === 'object') return;
+      // calendarContainer는 instance가 입력 element에 있음. 모든 input의 instance 순회.
+      document.querySelectorAll('input[type="text"]').forEach(function(inp){
+        if (inp._flatpickr && inp._flatpickr.isOpen) _positionFlatpickrFixed(inp._flatpickr);
+      });
+    });
+  });
   function applyAll() {
     var inputs = document.querySelectorAll('input[type="date"]');
     inputs.forEach(applyFp);
