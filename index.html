@@ -26126,7 +26126,7 @@ speaker 설정:
         <div id="ref-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar"></div>
       </div>
       <!-- Right Panel: Editor -->
-      <div class="flex-1 flex flex-col overflow-hidden relative" style="background:#f8f9ff;">
+      <div class="flex-1 flex flex-col overflow-hidden relative" style="background:#ffffff;">
         <div id="ref-editor-panel" class="flex-1 flex flex-col min-h-0">
           <div id="ref-editor-empty" class="flex-1 flex items-center justify-center" style="color:#ccc3d8;">
             <div class="text-center">
@@ -26136,7 +26136,7 @@ speaker 설정:
           </div>
           <div id="ref-editor-active" class="flex-1 flex flex-col min-h-0" style="display:none">
             <!-- Editor Toolbar -->
-            <div class="px-6 flex items-center justify-between shrink-0" style="height:56px;background:rgba(248,249,255,0.85);border-bottom:1px solid #dee9fc;backdrop-filter:blur(8px);">
+            <div class="px-6 flex items-center justify-between shrink-0" style="height:56px;background:rgba(255,255,255,0.85);border-bottom:1px solid #dee9fc;backdrop-filter:blur(8px);">
               <div class="flex items-center gap-1">
                 <button id="ref-editor-back-mobile" onclick="closeMemoEdit()" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455;display:none;" title="목록으로"><span class="material-symbols-outlined" style="font-size:20px">arrow_back</span></button>
                 <button onmousedown="event.preventDefault();document.execCommand('bold')" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455" title="Bold"><span class="material-symbols-outlined" style="font-size:20px">format_bold</span></button>
@@ -26151,22 +26151,20 @@ speaker 설정:
               <div class="flex items-center gap-1">
                 <button onclick="toggleRefPin(_refEditingId)" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455" title="고정"><span id="ref-editor-pin-icon" class="material-symbols-outlined" style="font-size:20px">push_pin</span></button>
                 <button onclick="openRefDelModal(_refEditingId)" class="p-2 rounded-lg transition-colors" style="color:rgba(186,26,26,0.7)" onmouseover="this.style.background='#ffdad6';this.style.color='#ba1a1a'" onmouseout="this.style.background='';this.style.color='rgba(186,26,26,0.7)'" title="삭제"><span class="material-symbols-outlined" style="font-size:20px">delete</span></button>
+                <div class="w-px h-6 mx-1" style="background:#ccc3d8"></div>
+                <button onclick="saveRefInline()" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:opacity-90 transition-all active:scale-95" style="background:#7c3aed;color:#ffffff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:12px;font-weight:700;" title="저장 (Ctrl+S)">
+                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">save</span>
+                  <span>저장</span>
+                </button>
               </div>
             </div>
             <!-- Editor Content -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar" style="padding:48px;">
+            <div class="flex-1 overflow-y-auto custom-scrollbar" style="padding:32px 48px 48px;">
               <div class="mx-auto" style="max-width:768px">
-                <p id="ref-editor-date" style="font-size:11px;font-weight:700;color:#7b7487;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:16px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;"></p>
-                <input id="ref-editor-title" type="text" spellcheck="false" placeholder="제목" class="w-full outline-none bg-transparent border-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:32px;font-weight:700;color:#121c2a;letter-spacing:-0.02em;line-height:1.2;margin-bottom:32px;"/>
-                <div id="ref-editor-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor outline-none" data-placeholder="내용을 입력하세요..." style="min-height:400px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:18px;line-height:1.6;color:#4a4455;font-weight:400;"></div>
+                <p id="ref-editor-date" style="font-size:11px;font-weight:700;color:#7b7487;text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;"></p>
+                <input id="ref-editor-title" type="text" spellcheck="false" placeholder="제목" class="w-full outline-none bg-transparent border-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:26px;font-weight:700;color:#121c2a;letter-spacing:-0.01em;line-height:1.25;margin-bottom:20px;"/>
+                <div id="ref-editor-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor outline-none" data-placeholder="내용을 입력하세요..." style="min-height:400px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:14px;line-height:1.7;color:#27313f;font-weight:400;"></div>
               </div>
-            </div>
-            <!-- Floating Save Button -->
-            <div class="absolute z-10" style="bottom:32px;right:48px;">
-              <button onclick="saveRefInline()" class="px-8 py-4 rounded-full font-bold flex items-center gap-3 active:scale-95 transition-all hover:opacity-95" style="background:#7c3aed;color:#ede0ff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:14px;box-shadow:0 12px 32px rgba(124,58,237,0.4);">
-                <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">save</span>
-                <span>저장 (Ctrl+S)</span>
-              </button>
             </div>
           </div>
         </div>
