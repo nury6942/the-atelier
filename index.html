@@ -1860,8 +1860,11 @@
             ✅ 체크리스트
           </button>
         </div>
-        <!-- 예약 스캔 + API 설정 버튼 -->
+        <!-- 예약 스캔 + AI 추천 + API 설정 버튼 -->
         <div class="flex items-center gap-1.5">
+          <button onclick="openTravelRecommendModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#ec4899,#a855f7)">
+            <span class="material-symbols-outlined" style="font-size:14px">auto_awesome</span> AI 추천
+          </button>
           <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
             <span class="material-symbols-outlined" style="font-size:14px">document_scanner</span> 예약 스캔
           </button>
@@ -4550,6 +4553,38 @@
           <button onclick="closeMatrixModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveMatrixEntry()" id="modal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ AI 여행 추천 모달 (global) ═══════ -->
+  <div id="travel-recommend-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
+    <div class="bg-white w-full max-w-3xl sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
+      <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#ec4899,#a855f7,#7c3aed)">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">auto_awesome</span>
+          </div>
+          <div>
+            <h2 class="text-white font-bold text-lg">AI 여행 추천</h2>
+            <p class="text-white/80 text-xs">과거 여행 패턴 분석 → 맞춤 추천</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="generateTravelRecommend(true)" class="p-2 rounded-lg hover:bg-white/20 text-white transition-colors" title="새로 추천 받기"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button>
+          <button onclick="closeTravelRecommendModal()" class="text-white/70 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="p-5 overflow-y-auto flex-1 space-y-4" style="font-family:'Pretendard',sans-serif">
+        <!-- 분석 요약 -->
+        <div id="travel-recommend-summary" class="text-[13px] text-slate-600 bg-slate-50 rounded-xl p-3 hidden"></div>
+        <!-- 추천 결과 -->
+        <div id="travel-recommend-content" class="space-y-3">
+          <div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>여행 패턴 분석 중...</div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-center pt-2">💡 과거 여행지·시기·예산을 분석한 추천. 24시간 캐시됨.</p>
       </div>
     </div>
   </div>
@@ -13625,6 +13660,166 @@
       closeImportModal();
       if (typeof showSyncToast === 'function') showSyncToast('📥 ' + ok + '건 일정 임포트 완료');
     }, 1500);
+  };
+
+  // ═══════════════════════════════════════════════════════
+  // AI 여행 추천 — 과거 여행 데이터 분석
+  // ═══════════════════════════════════════════════════════
+  window.openTravelRecommendModal = function() {
+    var modal = document.getElementById('travel-recommend-modal');
+    if (!modal) return;
+    modal.style.cssText = 'display:flex!important';
+    generateTravelRecommend(false);
+  };
+  window.closeTravelRecommendModal = function() {
+    var modal = document.getElementById('travel-recommend-modal');
+    if (modal) modal.style.cssText = 'display:none!important';
+  };
+
+  window.generateTravelRecommend = async function(forceRefresh) {
+    var contentEl = document.getElementById('travel-recommend-content');
+    var summaryEl = document.getElementById('travel-recommend-summary');
+    if (!contentEl) return;
+    // 캐시 (24h)
+    var cacheKey = 'atelier_travel_recommend_v1';
+    if (!forceRefresh) {
+      try {
+        var cached = JSON.parse(localStorage.getItem(cacheKey));
+        if (cached && cached.html && (Date.now() - cached.at < 24*3600000)) {
+          contentEl.innerHTML = cached.html;
+          if (summaryEl && cached.summary) { summaryEl.innerHTML = cached.summary; summaryEl.classList.remove('hidden'); }
+          return;
+        }
+      } catch(e){}
+    }
+    // API 키
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) {
+      contentEl.innerHTML = '<div class="text-sm text-slate-600 p-4 bg-amber-50 rounded-xl">⚙️ AI 추천을 보려면 <button onclick="openApiSettingsModal()" class="underline font-bold text-violet-700">API 키 설정</button>이 필요해요.</div>';
+      return;
+    }
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>과거 여행 패턴 분석 중...</div>';
+    if (summaryEl) summaryEl.classList.add('hidden');
+
+    try {
+      // 모든 트립 + 도시 + journey 데이터 수집
+      var [trips, allCities, allJourney, allHub] = await Promise.all([
+        fbRead('trips'), fbRead('trip_cities'), fbRead('journey'), fbRead('finance_hub')
+      ]);
+      // 트립별 요약 (이름, 기간, 도시들, 예산)
+      var tripSummaries = trips.map(function(t){
+        var cities = allCities.filter(function(c){return c.trip_id === t._id;}).map(function(c){return c.name;});
+        var journeys = allJourney.filter(function(j){return j.trip_id === t._id;});
+        var totalAmt = 0;
+        journeys.forEach(function(j){ totalAmt += parseFloat(String(j.amount||'').replace(/[^0-9.]/g,''))||0; });
+        // hub에서 trip별 총액
+        var hubAmt = 0;
+        (allHub||[]).forEach(function(h){
+          if ((h.trip||'') === t.name && (h.type||'') === '지출') hubAmt += parseFloat(h.amount||0)||0;
+        });
+        return {
+          name: t.name,
+          start: t.start_date,
+          end: t.end_date,
+          cities: cities,
+          spend_man: Math.round(hubAmt) || Math.round(totalAmt/10000)
+        };
+      });
+
+      // 메모(refCards)에서 여행 취향 힌트 추출 (트립노트 같은 거)
+      var refDocs = await fbRead('refCards').catch(function(){return [];});
+      var preferences = [];
+      (refDocs||[]).forEach(function(r){
+        var content = (r.title||'') + ' ' + (r.body||'');
+        if (/디자인|미술|museum|gallery|건축/i.test(content)) preferences.push('미술관/박물관');
+        if (/카페|coffee|커피/i.test(content)) preferences.push('카페');
+        if (/음식|미식|음식점|restaurant/i.test(content)) preferences.push('미식');
+      });
+      preferences = [...new Set(preferences)];
+
+      // 분석 summary 표시
+      var pastTrips = tripSummaries.filter(function(t){return (t.start||'') < new Date().toISOString().split('T')[0];});
+      var futureTrips = tripSummaries.filter(function(t){return (t.start||'') >= new Date().toISOString().split('T')[0];});
+      var allCitiesFlat = [];
+      tripSummaries.forEach(function(t){ allCitiesFlat = allCitiesFlat.concat(t.cities||[]); });
+      var summaryHtml = '<strong>📊 분석 데이터:</strong> 총 ' + trips.length + '개 여행 (지난 ' + pastTrips.length + ' / 예정 ' + futureTrips.length + '), 방문 도시 ' + new Set(allCitiesFlat).size + '곳';
+      if (preferences.length) summaryHtml += ' · 취향: ' + preferences.join(', ');
+      if (summaryEl) { summaryEl.innerHTML = summaryHtml; summaryEl.classList.remove('hidden'); }
+
+      // Claude 프롬프트
+      var prompt = '당신은 여행 큐레이터입니다. 사용자의 과거 여행 데이터를 분석해서 다음 추천 여행지 3개를 제안하세요.\n\n' +
+        '【과거 여행】\n' +
+        tripSummaries.map(function(t){
+          return '- ' + t.name + ' (' + t.start + '~' + t.end + ', 도시: ' + (t.cities||[]).join('/') + ', 예산: 약 ' + t.spend_man + '만원)';
+        }).join('\n') +
+        '\n\n【사용자 취향】 ' + (preferences.join(', ') || '디자인·건축·미식') + '\n\n' +
+        '응답 형식 — JSON 배열, 다른 설명 금지:\n' +
+        '[\n' +
+        '  {\n' +
+        '    "destination": "도시 또는 지역명 (예: 포르투갈 리스본)",\n' +
+        '    "season": "추천 시기 (예: 2027년 4월)",\n' +
+        '    "duration": "예상 기간 (예: 8박 10일)",\n' +
+        '    "budget": "예상 예산 (예: 350만원)",\n' +
+        '    "reason": "왜 추천 — 사용자 패턴과 연결 (60자 내)",\n' +
+        '    "highlights": ["가야할 곳1", "가야할 곳2", "가야할 곳3"]\n' +
+        '  }\n' +
+        '] (총 3개)\n\n' +
+        '규칙:\n' +
+        '- 과거 가본 도시 제외 (재방문 추천 X)\n' +
+        '- 비슷한 분위기/취향 매칭\n' +
+        '- 시기는 사용자가 보통 여행 가는 월(과거 패턴) 고려\n' +
+        '- 예산도 과거 평균 ±20% 범위로 추천';
+
+      var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
+      if (model.indexOf('opus') >= 0) model = 'claude-opus-4-7'; // 추천은 opus가 더 좋음
+
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({ model: model, max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+      });
+      if (!res.ok) throw new Error('AI 호출 실패 (HTTP ' + res.status + ')');
+      var data = await res.json();
+      var text = (data.content && data.content[0] && data.content[0].text || '').trim();
+      var jm = text.match(/\[[\s\S]*\]/);
+      if (!jm) throw new Error('AI 응답 파싱 실패');
+      var recs = JSON.parse(jm[0]);
+
+      // 카드로 렌더
+      var html = recs.map(function(r, i){
+        var grad = ['#fce7f3,#fbcfe8', '#ede9fe,#ddd6fe', '#dbeafe,#bfdbfe'][i] || '#f1f5f9,#e2e8f0';
+        var iconColor = ['#ec4899','#a855f7','#3b82f6'][i] || '#64748b';
+        var highlights = (r.highlights||[]).map(function(h){ return '<span class="inline-flex items-center gap-0.5 text-[11px] px-2 py-0.5 bg-white/70 rounded-full font-medium text-slate-700">📍 ' + String(h).replace(/</g,'&lt;') + '</span>'; }).join(' ');
+        return '<div class="rounded-2xl p-4 border" style="background:linear-gradient(135deg,' + grad + ');border-color:' + iconColor + '33">' +
+          '<div class="flex items-start justify-between mb-2">' +
+            '<div>' +
+              '<div class="flex items-center gap-1.5 mb-1">' +
+                '<span class="material-symbols-outlined" style="font-size:18px;color:' + iconColor + '">flight_takeoff</span>' +
+                '<h4 class="text-base font-extrabold text-slate-900">' + (r.destination||'—').replace(/</g,'&lt;') + '</h4>' +
+              '</div>' +
+              '<div class="flex items-center gap-3 text-[11px] text-slate-600 font-medium">' +
+                '<span>📅 ' + (r.season||'').replace(/</g,'&lt;') + '</span>' +
+                '<span>⏱ ' + (r.duration||'').replace(/</g,'&lt;') + '</span>' +
+                '<span>💰 ' + (r.budget||'').replace(/</g,'&lt;') + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<span class="text-[10px] font-black text-white px-2 py-0.5 rounded-full" style="background:' + iconColor + '">#' + (i+1) + '</span>' +
+          '</div>' +
+          '<p class="text-[12px] text-slate-700 leading-relaxed mb-2">' + (r.reason||'').replace(/</g,'&lt;') + '</p>' +
+          (highlights ? '<div class="flex flex-wrap gap-1">' + highlights + '</div>' : '') +
+        '</div>';
+      }).join('');
+      contentEl.innerHTML = html;
+      try { localStorage.setItem(cacheKey, JSON.stringify({ html: html, summary: summaryHtml, at: Date.now() })); } catch(e){}
+    } catch(e) {
+      console.error('[travel recommend]', e);
+      contentEl.innerHTML = '<div class="text-sm text-rose-700 p-4 bg-rose-50 rounded-xl">⚠️ ' + (e.message||'추천 생성 실패') + ' <button onclick="generateTravelRecommend(true)" class="underline font-bold ml-1">재시도</button></div>';
+    }
   };
 
   let dashMilestones = []; // 캐시
