@@ -2227,6 +2227,11 @@
                         <input id="stay-edit-checkout-time" type="text" placeholder="11:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                       </div>
                     </div>
+                    <!-- 메모 (full width) -->
+                    <div class="md:col-span-2">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모</label>
+                      <input id="stay-edit-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    </div>
                     <!-- 가격 -->
                     <div>
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
@@ -4223,6 +4228,43 @@
     </div>
   </div>
 
+  <!-- API Settings Modal — global, outside all page divs so display:none on page-english doesn't hide it -->
+  <div id="api-settings-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 flex justify-between items-center">
+        <h3 class="font-bold text-white text-lg font-headline">Anthropic API 설정</h3>
+        <button onclick="closeApiSettingsModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-6 space-y-5">
+        <div class="p-3 rounded-xl bg-blue-50 border border-blue-100">
+          <p class="text-xs text-blue-700 leading-relaxed">리뷰 자동 생성을 위해 Anthropic API 키가 필요해요. 키는 이 브라우저에만 저장되며, 서버로 전송되지 않습니다.<br><a href="https://console.anthropic.com/settings/keys" target="_blank" class="underline font-bold">console.anthropic.com</a>에서 발급받을 수 있어요.</p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">API 키</label>
+          <input id="api-key-input" type="text" autocomplete="off" spellcheck="false" placeholder="sk-ant-api03-..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm font-mono"/>
+          <p id="api-key-hint" class="text-[10px] text-slate-400 px-1"></p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">사용 모델</label>
+          <select id="api-model-select" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm">
+            <option value="claude-opus-4-7">Claude Opus 4.7 (최신, 최고 품질, ~$0.15/회)</option>
+            <option value="claude-opus-4-5">Claude Opus 4.5 (이전 버전, ~$0.10/회)</option>
+            <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (빠르고 저렴, ~$0.03/회)</option>
+          </select>
+          <p class="text-[10px] text-slate-400 px-1">모델은 언제든 바꿀 수 있어요. Opus는 분석이 꼼꼼하고, Sonnet은 빠르고 저렴해요.</p>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="saveApiSettings()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm hover:opacity-90 transition-all">저장</button>
+          <button onclick="deleteApiKey()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all">키 삭제</button>
+          <button onclick="closeApiSettingsModal()" class="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm hover:bg-slate-50 transition-all">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="page-english" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
@@ -4450,43 +4492,6 @@
         </div>
       </div>
 
-    </div>
-
-    <!-- API Settings Modal -->
-    <div id="api-settings-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 flex justify-between items-center">
-          <h3 class="font-bold text-white text-lg font-headline">Anthropic API 설정</h3>
-          <button onclick="closeApiSettingsModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="p-6 space-y-5">
-          <div class="p-3 rounded-xl bg-blue-50 border border-blue-100">
-            <p class="text-xs text-blue-700 leading-relaxed">리뷰 자동 생성을 위해 Anthropic API 키가 필요해요. 키는 이 브라우저에만 저장되며, 서버로 전송되지 않습니다.<br><a href="https://console.anthropic.com/settings/keys" target="_blank" class="underline font-bold">console.anthropic.com</a>에서 발급받을 수 있어요.</p>
-          </div>
-
-          <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">API 키</label>
-            <input id="api-key-input" type="text" autocomplete="off" spellcheck="false" placeholder="sk-ant-api03-..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm font-mono"/>
-            <p id="api-key-hint" class="text-[10px] text-slate-400 px-1"></p>
-          </div>
-
-          <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">사용 모델</label>
-            <select id="api-model-select" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm">
-              <option value="claude-opus-4-7">Claude Opus 4.7 (최신, 최고 품질, ~$0.15/회)</option>
-              <option value="claude-opus-4-5">Claude Opus 4.5 (이전 버전, ~$0.10/회)</option>
-              <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (빠르고 저렴, ~$0.03/회)</option>
-            </select>
-            <p class="text-[10px] text-slate-400 px-1">모델은 언제든 바꿀 수 있어요. Opus는 분석이 꼼꼼하고, Sonnet은 빠르고 저렴해요.</p>
-          </div>
-
-          <div class="flex gap-2">
-            <button onclick="saveApiSettings()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm hover:opacity-90 transition-all">저장</button>
-            <button onclick="deleteApiKey()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all">키 삭제</button>
-            <button onclick="closeApiSettingsModal()" class="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-500 font-bold text-sm hover:bg-slate-50 transition-all">취소</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ENGLISH MODAL -->
@@ -9444,6 +9449,7 @@
     setV('stay-edit-checkout-time', item.checkout);
     setV('stay-edit-cancel-date', item.cancel_date);
     setV('stay-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
+    setV('stay-edit-notes', item.notes);
 
     selectStayEditType(_stayEditType);
     selectStayCancel(_stayEditCancel);
@@ -9469,6 +9475,7 @@
       cancel: _stayEditCancel,
       cancel_date: document.getElementById('stay-edit-cancel-date').value,
       amount: document.getElementById('stay-edit-price').value.replace(/,/g,''),
+      notes: (document.getElementById('stay-edit-notes')||{}).value || '',
       description: _stayEditType === 'Airbnb' ? 'Airbnb' : ''
     };
     try {
@@ -10427,6 +10434,7 @@
       {id:'jf-cancel', label:'무료 취소', type:'select', options:['가능', '불가', '조건부']},
       {id:'jf-cancel-date', label:'무료 취소 마감일', type:'date'},
       {id:'jf-amount', label:'가격 (₩)', type:'text', inputmode:'numeric', placeholder:'예: 150,375', oninput:"this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')"},
+      {id:'jf-notes', label:'메모', type:'text', placeholder:'예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20'},
     ];
     return [];
   }
@@ -11208,6 +11216,7 @@
       obj.cancel = (document.getElementById('jf-cancel')||{}).value||'';
       obj.cancel_date = (document.getElementById('jf-cancel-date')||{}).value||'';
       obj.amount = ((document.getElementById('jf-amount')||{}).value||'').replace(/,/g,'');
+      obj.notes = (document.getElementById('jf-notes')||{}).value||'';
     }
     try {
       if (editingJourneyIndex !== null) {
@@ -21143,12 +21152,35 @@ async function analyzeBookingImage() {
   "address": "주소",
   "cancel_policy": "가능 또는 불가 또는 조건부",
   "cancel_deadline": "YYYY-MM-DD",
+  "room_info": "숙소일 때만. 객실 타입+개수+박수. 예: '퀸 사이즈 침대 1개 1박', '트윈룸 2개 2박'",
+  "guests": "숙소일 때만. 인원 정보. 예: '성인 2명', '성인 2명, 아동 1명'",
+  "smoking": "숙소일 때만. '금연' 또는 '흡연' 또는 빈 문자열",
+  "meal": "숙소일 때만. 식사 포함 여부. 예: '조식 포함', '식사 불포함', '조식+석식 포함'",
+  "deposit": "숙소일 때만. 체크인 시 보증금이 있으면 통화+금액. 예: 'EUR 20.00', 없으면 빈 문자열",
   "transport_name": "이동수단명 (기차/버스 등)",
   "route": "출발지 → 목적지",
   "price_krw": 0,
   "price_original": "원래 통화 금액 예: €320",
-  "notes": "기타 중요 정보"
+  "notes": "특이사항만. 대부분의 경우 빈 문자열('')로 두세요."
 }
+
+★ notes 필드 절대 규칙 (위반 시 분석 실패로 간주) ★
+다음 항목은 notes에 절대로 절대로 포함하지 마세요. 무조건 빈 문자열로 빼야 합니다:
+- 예약번호, 예약 코드, Booking ID, Reservation Number
+- PIN, PIN번호, 비밀번호, 인증번호
+- 트립코인, 마일리지, 포인트, 리워드, 적립
+- 특가, 특가 찬스, 할인 적용, 프로모션, 쿠폰
+- 세금&서비스 비용, 세금 포함, VAT 포함
+- 무료취소 관련 안내 (이미 cancel_policy 필드 있음)
+- 결제 안내, 카드 정보, 결제 마감일
+- 객실 개수/박수 (room_info 필드로 가야 함)
+- 식사/조식 정보 (meal 필드로 가야 함)
+- 보증금 정보 (deposit 필드로 가야 함)
+- 흡연 여부 (smoking 필드로 가야 함)
+- 호텔/숙소의 일반 안내 문구
+
+notes는 위 모든 구조화 필드에도 안 들어가는 진짜 특이한 정보(예: "조기 체크인 가능", "공항 셔틀 운영")만 들어갑니다.
+판단이 애매하면 빈 문자열("")로 두세요. 빈 문자열이 노이즈보다 훨씬 낫습니다.
 
 읽을 수 없는 필드는 빈 문자열("")로 설정. price_krw는 한화 금액이 보이면 숫자로, 없으면 0.`;
 
@@ -21201,6 +21233,11 @@ async function analyzeBookingImage() {
     if (!jsonMatch) throw new Error('AI 응답에서 JSON을 찾을 수 없어요');
     _scanResult = JSON.parse(jsonMatch[0]);
 
+    // notes 노이즈 후처리 (AI가 또 끼워 넣어도 클라이언트에서 거름)
+    if (_scanResult.notes) {
+      _scanResult.notes = _sanitizeScanNotes(_scanResult.notes);
+    }
+
     // 결과 표시
     showScanResult(_scanResult);
 
@@ -21232,6 +21269,25 @@ function showScanResult(r) {
     return '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-slate-400 flex-shrink-0">' + label + '</span><span class="text-sm font-bold text-slate-800 text-right">' + val + '</span></div>';
   }
 
+  // 숙소 예약 상세 카드 (객실/인원/흡연/식사/보증금)
+  function detailCard(items) {
+    var visible = items.filter(function(it){ return it.val; });
+    if (!visible.length) return '';
+    var html = '<div class="mt-3 p-3 rounded-xl border border-violet-200 bg-violet-50/40">';
+    html += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-violet-600" style="font-size:14px">info</span><span class="text-[11px] font-black text-violet-700 uppercase tracking-wider">예약 상세</span></div>';
+    html += '<div class="space-y-1.5">';
+    visible.forEach(function(it){
+      html += '<div class="flex justify-between items-baseline gap-2">';
+      html += '<span class="text-[10px] text-violet-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">' + it.icon + '</span>' + it.label + '</span>';
+      html += '<span class="text-sm font-bold text-slate-800 text-right">' + it.val + '</span>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  var detailHtml = '';
+
   if (r.type === '항공편') {
     rows.push(row('항공사', r.airline));
     rows.push(row('편명', r.flight_number));
@@ -21248,6 +21304,14 @@ function showScanResult(r) {
     rows.push(row('체크아웃', r.checkout_date + (r.checkout_time ? ' ' + r.checkout_time : '')));
     rows.push(row('주소', r.address));
     rows.push(row('무료취소', r.cancel_policy + (r.cancel_deadline ? ' (~' + r.cancel_deadline + ')' : '')));
+    // 예약 상세 카드 — 객실/인원/금연/식사/보증금
+    detailHtml = detailCard([
+      { icon:'bed',              label:'객실',   val: r.room_info },
+      { icon:'group',            label:'인원',   val: r.guests },
+      { icon:'smoke_free',       label:'흡연',   val: r.smoking },
+      { icon:'restaurant',       label:'식사',   val: r.meal },
+      { icon:'account_balance_wallet', label:'보증금', val: r.deposit }
+    ]);
   } else if (r.type === '이동수단') {
     rows.push(row('이름', r.transport_name));
     rows.push(row('루트', r.route));
@@ -21263,7 +21327,7 @@ function showScanResult(r) {
   else if (r.price_original) rows.push(row('가격', r.price_original));
   if (r.notes) rows.push(row('메모', r.notes));
 
-  resultContent.innerHTML = '<div class="space-y-1.5">' + rows.join('') + '</div>';
+  resultContent.innerHTML = '<div class="space-y-1.5">' + rows.join('') + '</div>' + detailHtml;
   resultArea.className = '';
 
   var labelMap = { '항공편':'항공편으로 저장', '숙소':'숙소로 저장', '이동수단':'일정에 추가', '렌트카':'렌트카로 저장' };
@@ -21311,6 +21375,15 @@ function applyBookingScan() {
         }
         _setVal('jf-cancel-date', r.cancel_deadline);
         if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        // 메모: 구조화 필드들을 깔끔한 한 줄로 합치기 (객실/인원/금연/식사/보증금 + 추가 노트)
+        var memoParts = [];
+        if (r.room_info) memoParts.push(r.room_info);
+        if (r.guests) memoParts.push(r.guests);
+        if (r.smoking) memoParts.push(r.smoking);
+        if (r.meal) memoParts.push(r.meal);
+        if (r.deposit) memoParts.push('보증금 ' + r.deposit);
+        if (r.notes) memoParts.push(r.notes);
+        _setVal('jf-notes', memoParts.join(' · '));
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 숙소 정보가 자동 입력됐어요 🏨');
       }, 300);
 
@@ -21345,6 +21418,40 @@ function applyBookingScan() {
 function _setVal(id, val) {
   var el = document.getElementById(id);
   if (el && val !== undefined && val !== null && val !== '') el.value = val;
+}
+
+// 예약 스캔 노트에서 노이즈(예약번호/PIN/트립코인/특가/세금/객실수/식사/보증금/무료취소 등) 제거
+// AI가 또 끼워 넣을 수 있어서 클라이언트에서 한 번 더 거름
+function _sanitizeScanNotes(notes) {
+  if (!notes || typeof notes !== 'string') return '';
+  // 노이즈 키워드 — 한 조각에라도 매칭되면 그 조각 통째로 버림
+  var noiseRegex = new RegExp([
+    '예약\\s*번호', '예약\\s*코드', 'booking\\s*id', 'reservation',
+    '\\bPIN\\b', 'PIN\\s*번호', '비밀번호', '인증번호',
+    '트립\\s*코인', '마일리지', '포인트', '리워드', '적립',
+    '특가', '할인', '프로모션', '쿠폰',
+    '세금', 'VAT', '\\bTAX\\b', '서비스\\s*비용', '서비스\\s*요금',
+    '무료\\s*취소', '취소\\s*규정',
+    '결제\\s*안내', '결제\\s*마감', '결제\\s*수단', '카드\\s*정보',
+    '객실\\s*\\d+\\s*개', '\\d+\\s*박', '\\d+\\s*인실', '\\d+\\s*㎡', '\\d+\\s*m²', '\\d+\\s*m2',
+    '식사\\s*(불)?\\s*포함', '조식\\s*(불)?\\s*포함', '석식\\s*(불)?\\s*포함', '브런치',
+    '보증금', 'deposit',
+    '금연', '흡연',
+    '성인\\s*\\d+\\s*명', '아동\\s*\\d+\\s*명', '어린이\\s*\\d+\\s*명', '유아\\s*\\d+\\s*명',
+    '퀸\\s*사이즈', '킹\\s*사이즈', '트윈', '더블\\s*룸', '싱글\\s*룸', '슬리퍼\\s*객실',
+    '체크인\\s*시', '약\\s*[\\d,]+\\s*원'
+  ].join('|'), 'i');
+  // 쉼표·중점·슬래시·세미콜론·파이프·괄호로 split → 각 조각이 노이즈면 버림
+  var pieces = notes.split(/\s*[,，·、/;|()（）\[\]]\s*/);
+  var clean = pieces.filter(function(p){
+    if (!p) return false;
+    p = p.trim();
+    if (!p) return false;
+    // 숫자만/통화기호만 있는 조각도 제거 (예: "EUR20.00", "-7,100원")
+    if (/^[\s\d,.\-€$₩£¥%]+(원|EUR|USD|KRW|GBP|JPY)?$/i.test(p)) return false;
+    return !noiseRegex.test(p);
+  });
+  return clean.join(', ').trim();
 }
 
 // ═══════════════════════════════════════════════════════
