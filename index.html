@@ -11446,6 +11446,46 @@
     if (typeof renderJourneySouvenir==='function') renderJourneySouvenir();
   };
 
+  // 중복 기념품 자동 제거 (city + 대상 + 품목 + 가격이 동일하면 중복으로 판단)
+  window._dedupeSouvenirs = async function() {
+    var arr = (journeyData||[]).filter(function(j){return j.type==='기념품';});
+    var seen = {}; var toDelete = [];
+    arr.forEach(function(s){
+      var key = (s.city||'') + '|' + (s.title||'') + '|' + (s.description||'') + '|' + (s.amount||'');
+      if (seen[key]) {
+        toDelete.push(s);
+      } else {
+        seen[key] = true;
+      }
+    });
+    if (toDelete.length === 0) {
+      console.log('🎉 중복 없음 (' + arr.length + '개 모두 고유)');
+      if (typeof showSyncToast === 'function') showSyncToast('중복 없음');
+      return;
+    }
+    console.log('🗑️ 중복 ' + toDelete.length + '개 발견 (전체 ' + arr.length + '개 중)');
+    console.table(toDelete.map(function(s){return {city:s.city, 대상:s.title, 품목:(s.description||'').slice(0,40), id:s._id};}));
+    if (!confirm('중복 ' + toDelete.length + '개를 삭제할까요?\n각 항목당 첫 번째만 남고 나머지는 삭제됩니다.')) {
+      console.log('취소됨');
+      return;
+    }
+    var ok = 0, fail = 0;
+    for (var i = 0; i < toDelete.length; i++) {
+      try {
+        await fbDelete('journey', toDelete[i]._id);
+        var idx = journeyData.findIndex(function(j){ return j._id === toDelete[i]._id; });
+        if (idx >= 0) journeyData.splice(idx, 1);
+        ok++;
+      } catch(e) { console.error('삭제 실패:', toDelete[i]._id, e); fail++; }
+    }
+    console.log('✅ ' + ok + '개 삭제 완료' + (fail ? ', 실패 ' + fail : ''));
+    if (typeof renderWeekView === 'function') renderWeekView();
+    if (typeof renderDayView === 'function') renderDayView();
+    if (typeof renderJourneySouvenir === 'function') renderJourneySouvenir();
+    if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
+    if (typeof showSyncToast === 'function') showSyncToast('🧹 중복 ' + ok + '개 삭제됨');
+  };
+
   // 현재 트립의 모든 기념품 삭제 (중복 추가 등 초기화용)
   window._clearAllSouvenirs = async function() {
     if (!confirm('현재 트립의 모든 기념품을 삭제할까요?')) return;
