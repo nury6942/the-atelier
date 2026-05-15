@@ -1584,7 +1584,8 @@
       <h2 id="page-title" class="text-sm font-extrabold tracking-tight text-slate-900 font-headline leading-tight">대시보드</h2>
       <div class="relative hidden lg:block">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-lg">search</span>
-        <input id="global-search-input" class="pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm w-72 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 transition-all placeholder:text-slate-300 outline-none" placeholder="검색... (Ctrl+K)" type="text" autocomplete="off"/>
+        <input id="global-search-input" class="pl-10 pr-20 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm w-80 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 transition-all placeholder:text-slate-300 outline-none" placeholder="검색 또는 AI에게 질문... (Ctrl+K)" type="text" autocomplete="off"/>
+        <button onclick="openAiSearchModal()" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-lg text-white text-[10px] font-bold flex items-center gap-1 hover:opacity-90 transition-opacity" style="background:linear-gradient(135deg,#7c3aed,#ec4899)" title="AI 자연어 검색"><span class="material-symbols-outlined" style="font-size:12px">auto_awesome</span>AI</button>
         <div id="global-search-results" class="absolute left-0 top-full mt-1 w-96 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50" style="display:none;max-height:400px;overflow-y:auto;"></div>
       </div>
     </div>
@@ -4553,6 +4554,35 @@
           <button onclick="closeMatrixModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveMatrixEntry()" id="modal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ AI 자연어 검색 모달 (Cmd+K) — global ═══════ -->
+  <div id="ai-search-modal" class="fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm flex items-start justify-center pt-20" style="display:none!important" onclick="if(event.target===this)closeAiSearchModal()">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden" style="animation:modalIn 0.18s ease;max-height:80vh">
+      <!-- 검색 입력 -->
+      <div class="relative border-b border-slate-100">
+        <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-violet-500" style="font-size:22px">auto_awesome</span>
+        <input id="ai-search-input" type="text" placeholder="자연어로 질문해보세요. 예: 9월 독일에서 가야할 미술관 / 다해 생일 / 다음 사전예약 / 이번달 가장 비싼 지출" class="w-full pl-14 pr-12 py-5 text-base outline-none placeholder:text-slate-400" style="font-family:'Pretendard',sans-serif" autocomplete="off"/>
+        <button onclick="closeAiSearchModal()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <!-- 결과 영역 -->
+      <div id="ai-search-results" class="overflow-y-auto" style="max-height:calc(80vh - 80px);font-family:'Pretendard',sans-serif">
+        <div class="p-6 text-center text-slate-400">
+          <p class="text-sm">자연어 질문을 입력하고 <kbd class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600 font-mono text-xs">Enter</kbd>를 눌러주세요</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 max-w-md mx-auto text-[11px] text-left">
+            <button onclick="_aiSearchExample('9월 독일에서 갈만한 미술관')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">📍 9월 독일에서 갈만한 미술관</button>
+            <button onclick="_aiSearchExample('다음 사전예약 일정')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">📋 다음 사전예약 일정</button>
+            <button onclick="_aiSearchExample('이번 달 가장 비싼 지출')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">💸 이번 달 가장 비싼 지출</button>
+            <button onclick="_aiSearchExample('보로스 컬렉션 일정')" class="p-2 rounded-lg bg-slate-50 hover:bg-violet-50 text-slate-600 hover:text-violet-700 transition-colors">🏛 보로스 컬렉션 일정</button>
+          </div>
+        </div>
+      </div>
+      <!-- 푸터 단축키 안내 -->
+      <div class="px-5 py-2 bg-slate-50 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-100">
+        <span><kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono">Enter</kbd> 검색 · <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono">Esc</kbd> 닫기</span>
+        <span class="text-violet-500 font-bold">Powered by Claude</span>
       </div>
     </div>
   </div>
@@ -13675,6 +13705,108 @@
     var modal = document.getElementById('travel-recommend-modal');
     if (modal) modal.style.cssText = 'display:none!important';
   };
+
+  // ═══════════════════════════════════════════════════════
+  // AI 자연어 검색 (Cmd+K)
+  // ═══════════════════════════════════════════════════════
+  window.openAiSearchModal = function() {
+    var modal = document.getElementById('ai-search-modal');
+    if (!modal) return;
+    modal.style.cssText = 'display:flex!important';
+    setTimeout(function(){ var inp = document.getElementById('ai-search-input'); if (inp) inp.focus(); }, 50);
+  };
+  window.closeAiSearchModal = function() {
+    var modal = document.getElementById('ai-search-modal');
+    if (modal) modal.style.cssText = 'display:none!important';
+  };
+  window._aiSearchExample = function(q) {
+    var inp = document.getElementById('ai-search-input');
+    if (inp) { inp.value = q; inp.focus(); _runAiSearch(q); }
+  };
+
+  async function _runAiSearch(query) {
+    var resultsEl = document.getElementById('ai-search-results');
+    if (!resultsEl) return;
+    if (!query || query.length < 2) return;
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) {
+      resultsEl.innerHTML = '<div class="p-6 text-sm text-amber-700 bg-amber-50">⚙️ AI 검색은 <button onclick="openApiSettingsModal()" class="underline font-bold">API 키 설정</button>이 필요해요.</div>';
+      return;
+    }
+    resultsEl.innerHTML = '<div class="p-6 flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>검색 중...</div>';
+    try {
+      // 모든 데이터 컬렉션을 컴팩트하게 요약
+      var [planner, journey, trips, hub, refs, sessions] = await Promise.all([
+        fbRead('planner'), fbRead('journey'), fbRead('trips'),
+        fbRead('finance_hub'), fbRead('refCards'), fbRead('englishSessions')
+      ]);
+      // 데이터 인덱스 (최근 1년치)
+      var oneYrAgo = new Date(); oneYrAgo.setFullYear(oneYrAgo.getFullYear() - 1);
+      var oneYrStr = oneYrAgo.toISOString().split('T')[0];
+      var ctx = {
+        planner: (planner||[]).filter(function(p){ return (p.date||p.start_date||'') >= oneYrStr; }).slice(0,200).map(function(p){
+          return { date: p.date||p.start_date, end: p.end_date, title: p.title||'', cat: p.category||'', notes: (p.notes||'').slice(0,40) };
+        }),
+        journey: (journey||[]).slice(0,150).map(function(j){
+          return { trip_id: j.trip_id, type: j.type, date: j.date, title: j.title||'', city: j.city||'', desc: (j.description||'').slice(0,40), amount: j.amount||'', payment_status: j.payment_status||'' };
+        }),
+        trips: (trips||[]).map(function(t){ return { id:t._id, name:t.name, start:t.start_date, end:t.end_date }; }),
+        hub: (hub||[]).slice(0,100).map(function(h){ return { date: h.date, desc: (h.description||'').slice(0,30), trip: h.trip||'', cat: h.category||'', amt: h.amount, type: h.type }; }),
+        memos: (refs||[]).slice(0,30).map(function(r){ return { title: r.title||'', body: (r.body||'').slice(0,80) }; }),
+        works: (typeof _works !== 'undefined' && _works) ? _works.map(function(w){ return { title:w.title, series:w.series_name, start:w.publish_start, end:w.publish_end, status:w.status }; }) : []
+      };
+      var todayStr = new Date().toISOString().split('T')[0];
+      var prompt = '당신은 사용자의 The Atelier 데이터를 검색하는 비서입니다. 사용자 질문에 답해주세요.\n\n' +
+        '오늘: ' + todayStr + '\n\n' +
+        '【데이터】\n' + JSON.stringify(ctx) + '\n\n' +
+        '【사용자 질문】\n' + query + '\n\n' +
+        '응답 형식:\n' +
+        '- 데이터를 기반으로 정확히 답함. 데이터에 없으면 "정보 없음"이라 함.\n' +
+        '- HTML 사용 가능: <strong> <ul><li> <a href="javascript:navigate(\'planner\')">텍스트</a>\n' +
+        '- 짧고 구체적 (3-5줄)\n' +
+        '- 관련 일정/항목 발견 시 날짜·제목 같이\n' +
+        '- 마크다운 X, 일반 텍스트로\n\n응답:';
+      var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
+      if (model.indexOf('opus') >= 0) model = 'claude-sonnet-4-6';
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: model, max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
+      });
+      if (!res.ok) throw new Error('AI 호출 실패 (' + res.status + ')');
+      var data = await res.json();
+      var text = (data.content && data.content[0] && data.content[0].text || '').trim();
+      resultsEl.innerHTML = '<div class="p-5 text-[13px] text-slate-800 leading-relaxed" style="font-family:\'Pretendard\',sans-serif">' + text + '</div>';
+    } catch(e) {
+      console.error('[ai search]', e);
+      resultsEl.innerHTML = '<div class="p-5 text-sm text-rose-700">⚠️ ' + (e.message||'검색 실패') + '</div>';
+    }
+  }
+
+  // Enter로 검색 실행 + Esc로 닫기
+  document.addEventListener('DOMContentLoaded', function(){
+    var inp = document.getElementById('ai-search-input');
+    if (inp) {
+      inp.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); _runAiSearch(inp.value.trim()); }
+        else if (e.key === 'Escape') { e.preventDefault(); closeAiSearchModal(); }
+      });
+    }
+    // Cmd+K 단축키 — AI 검색 모달 열기 (기존 input focus 대신)
+    document.addEventListener('keydown', function(e){
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k' && !e.shiftKey) {
+        // 입력 중인 input이 있으면 무시
+        var ae = document.activeElement;
+        if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && ae.id !== 'global-search-input') return;
+        e.preventDefault();
+        openAiSearchModal();
+      }
+      if (e.key === 'Escape') {
+        var sm = document.getElementById('ai-search-modal');
+        if (sm && sm.style.display !== 'none' && getComputedStyle(sm).display !== 'none') closeAiSearchModal();
+      }
+    });
+  });
 
   window.generateTravelRecommend = async function(forceRefresh) {
     var contentEl = document.getElementById('travel-recommend-content');
