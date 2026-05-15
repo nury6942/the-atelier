@@ -23812,9 +23812,11 @@ speaker 설정:
                 <button onmousedown="event.preventDefault();refToggleCode()" title="Code" style="font-size:11px;font-weight:600">&lt;/&gt;</button>
               </div>
             </div>
-            <div class="flex-1 overflow-y-auto px-8 py-4 min-h-0" style="max-width:800px">
-              <input id="ref-editor-title" type="text" placeholder="제목" class="w-full text-2xl font-bold text-slate-900 outline-none mb-3 bg-transparent placeholder:text-slate-300 border-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"/>
-              <div id="ref-editor-body" contenteditable="true" class="ref-editor text-base text-slate-700 outline-none leading-relaxed" data-placeholder="내용을 입력하세요..." style="min-height:300px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"></div>
+            <div class="flex-1 overflow-y-auto px-8 py-4 min-h-0">
+              <div class="mx-auto" style="max-width:1100px">
+                <input id="ref-editor-title" type="text" spellcheck="false" placeholder="제목" class="w-full text-2xl font-bold text-slate-900 outline-none mb-3 bg-transparent placeholder:text-slate-300 border-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"/>
+                <div id="ref-editor-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor text-base text-slate-700 outline-none leading-relaxed" data-placeholder="내용을 입력하세요..." style="min-height:400px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro',sans-serif"></div>
+              </div>
             </div>
             <div class="px-8 py-3 border-t border-slate-100 flex justify-end shrink-0 bg-white">
               <button onclick="saveRefInline()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
@@ -23884,7 +23886,7 @@ speaker 설정:
             <button onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')" title="글머리 기호"><span class="material-symbols-outlined" style="font-size:18px">format_list_bulleted</span></button>
             <button onmousedown="event.preventDefault();document.execCommand('insertOrderedList')" title="번호 리스트"><span class="material-symbols-outlined" style="font-size:18px">format_list_numbered</span></button>
           </div>
-          <div id="ref-input-body" contenteditable="true" class="ref-editor" data-placeholder="내용을 입력하세요..."></div>
+          <div id="ref-input-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor" data-placeholder="내용을 입력하세요..."></div>
         </div>
       </div>
       <div class="px-6 pb-5 flex gap-2 justify-end">
@@ -23947,7 +23949,7 @@ speaker 설정:
           <span class="text-[10px] font-bold text-slate-400 uppercase">코드 모드</span>
         </label>
       </div>
-      <div id="ref-full-body" contenteditable="true" class="ref-editor flex-1 overflow-y-auto" data-placeholder="내용을 입력하세요..." style="min-height:0;border-radius:0;border-left:none;border-right:none"></div>
+      <div id="ref-full-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor flex-1 overflow-y-auto" data-placeholder="내용을 입력하세요..." style="min-height:0;border-radius:0;border-left:none;border-right:none"></div>
       <div class="px-6 py-4 border-t border-slate-100 flex gap-2 justify-end shrink-0">
         <button onclick="closeRefFullModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl">취소</button>
         <button onclick="saveRefFullCard()" class="gradient-primary text-white px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90">저장</button>
