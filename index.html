@@ -4592,11 +4592,10 @@
         <button onclick="_setTrendPlatform('포스타입')" data-trend-platform="포스타입" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">💖 포스타입 (2차창작)</button>
       </div>
 
-      <!-- 모드 선택 (3개로 정리) -->
+      <!-- 모드 선택 (2개로 정리) -->
       <div class="px-5 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3" style="font-family:'Pretendard',sans-serif">
         <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (포타 주 1회)</button>
         <button onclick="_setTrendMode('analyze-text')" data-trend-mode="analyze-text" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📝 직접 분석 (텍스트 + 스크린샷)</button>
-        <button onclick="_setTrendMode('character')" data-trend-mode="character" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">👥 2차창작 캐릭터·페어</button>
       </div>
 
       <!-- 입력 + 결과 -->
@@ -4635,7 +4634,7 @@
       </div>
       <!-- 푸터 안내 -->
       <div class="px-5 py-2 bg-slate-50 text-[10px] text-slate-500 border-t border-slate-100 shrink-0" style="font-family:'Pretendard',sans-serif">
-        💡 <strong>자동 트렌드</strong>는 포타 한정 (주 1회 자동 수집) · <strong>직접 분석</strong>은 네이버/리디/카카오 등 어느 플랫폼이든 텍스트나 캡쳐 붙여넣어 즉시 분석
+        💡 <strong>자동 트렌드</strong>: 포타 한정, 매주 일요일 09:00 KST 자동 수집 → 주간 히스토리 누적 · <strong>직접 분석</strong>: 어느 플랫폼이든 텍스트나 캡쳐 즉시 분석
       </div>
     </div>
   </div>
@@ -14514,6 +14513,8 @@
     // 자동 모드: 입력 컬럼 전체 숨기고 결과 영역을 풀와이드로
     var grid = document.getElementById('trend-grid');
     var inputCol = document.getElementById('trend-input-col');
+    var out = document.getElementById('trend-output');
+    var copyBtn = document.getElementById('trend-copy-btn');
     if (_trendMode === 'auto') {
       if (inputCol) inputCol.style.display = 'none';
       if (grid) grid.style.gridTemplateColumns = '1fr';
@@ -14521,17 +14522,41 @@
     } else {
       if (inputCol) inputCol.style.display = '';
       if (grid) grid.style.gridTemplateColumns = '';
+      // 다른 탭으로 전환 시 출력 클리어 (자동 트렌드 결과가 보이지 않게)
+      if (out) out.innerHTML = '<div class="text-slate-400 italic">왼쪽에 입력하고 \'AI 분석\'을 눌러주세요</div>';
+      if (copyBtn) copyBtn.classList.add('hidden');
+      _trendLastResult = '';
     }
   }
 
-  // 자동 트렌드 JSON 로드 + 렌더링
-  window._loadAutoTrend = async function() {
+  // 자동 트렌드 JSON 로드 + 렌더링 (특정 날짜 지정 가능)
+  var _autoTrendDates = [];
+  var _autoTrendSelectedDate = null;
+
+  window._loadAutoTrend = async function(targetDate) {
     var out = document.getElementById('trend-output');
     if (!out) return;
     out.innerHTML = '<div class="text-slate-400 italic">자동 수집 데이터 불러오는 중…</div>';
+
+    // 1. 히스토리 인덱스 로드 (실패해도 무시 — latest는 fallback으로 시도)
+    if (_autoTrendDates.length === 0) {
+      try {
+        var idxResp = await fetch('data/trends/postype/index.json?_=' + Date.now());
+        if (idxResp.ok) {
+          var idx = await idxResp.json();
+          _autoTrendDates = idx.dates || [];
+        }
+      } catch (e) { console.warn('index.json fetch failed', e); }
+    }
+
+    // 2. 선택된 날짜 결정 (인자 > 마지막 선택 > 최신)
+    var date = targetDate || _autoTrendSelectedDate || (_autoTrendDates[0] || null);
+    _autoTrendSelectedDate = date;
+
+    // 3. 해당 JSON 로드 (date 있으면 그 날짜, 없으면 latest)
+    var url = date ? ('data/trends/postype/' + date + '.json') : 'data/trends/postype/latest.json';
     try {
-      // 캐시 우회 (commit 직후 새 데이터 받기)
-      var resp = await fetch('data/trends/postype/latest.json?_=' + Date.now());
+      var resp = await fetch(url + '?_=' + Date.now());
       if (!resp.ok) {
         if (resp.status === 404) {
           out.innerHTML = '<div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-slate-700">' +
@@ -14549,6 +14574,11 @@
       console.error('[auto-trend] load failed', e);
       out.innerHTML = '<div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">로드 실패: ' + (e.message || e) + '</div>';
     }
+  };
+
+  window._selectAutoTrendDate = function(d) {
+    _autoTrendSelectedDate = d;
+    _loadAutoTrend(d);
   };
 
   function _renderAutoTrend(data) {
@@ -14587,6 +14617,22 @@
     }
 
     var html = '<div class="space-y-4 pb-4">';
+
+    // 히스토리 셀렉터 (날짜가 2개 이상이면 표시)
+    if (_autoTrendDates && _autoTrendDates.length > 1) {
+      html += '<div class="flex items-center gap-2 flex-wrap p-3 rounded-xl bg-slate-50 border border-slate-200">';
+      html += '<span class="text-[11px] font-bold uppercase tracking-wider" style="color:#64748b;">📅 주간 히스토리</span>';
+      _autoTrendDates.slice(0, 12).forEach(function(d) {
+        var active = (d === data.date);
+        html += '<button onclick="_selectAutoTrendDate(\'' + d + '\')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all" style="' +
+          (active ? 'background:#ea580c;color:white;' : 'background:white;color:#475569;border:1px solid #e2e8f0;') +
+          '">' + d.substring(5) + '</button>';
+      });
+      if (_autoTrendDates.length > 12) {
+        html += '<span class="text-[10px] text-slate-400">+' + (_autoTrendDates.length - 12) + ' more</span>';
+      }
+      html += '</div>';
+    }
 
     // 헤더 카드
     html += '<div class="rounded-2xl p-5" style="background:linear-gradient(135deg,#fff7ed 0%,#fce7f3 100%);border:1px solid #fed7aa;">';

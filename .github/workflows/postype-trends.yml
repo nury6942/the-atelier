@@ -49,6 +49,21 @@ jobs:
           node scripts/scrape-postype.js | node scripts/analyze-trends.js > "$OUT"
           # latest.json도 함께 갱신 (앱이 항상 같은 경로 fetch 가능)
           cp "$OUT" data/trends/postype/latest.json
+          # index.json — 주간 히스토리 (전체 날짜 목록)
+          node -e "
+            const fs = require('fs');
+            const dir = 'data/trends/postype';
+            const dates = fs.readdirSync(dir)
+              .filter(f => /^\d{4}-\d{2}-\d{2}\.json\$/.test(f))
+              .map(f => f.replace('.json', ''))
+              .sort((a, b) => b.localeCompare(a));  // 최신 먼저
+            fs.writeFileSync(dir + '/index.json', JSON.stringify({
+              dates: dates,
+              count: dates.length,
+              updated: new Date().toISOString()
+            }, null, 2));
+            console.log('index.json updated:', dates.length, 'dates');
+          "
           echo "DATE=$DATE" >> $GITHUB_ENV
 
       - name: Show result summary
