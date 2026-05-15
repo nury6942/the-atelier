@@ -11341,10 +11341,64 @@
   }
 
   async function deleteJourneyFinance(item) {
-    if (item && item.finance_id) {
-      try { await fbDelete('finance', item.finance_id); } catch(e) { console.error('[deleteJourneyFinance]', e); }
+    if (!item) return;
+    // 1차: finance_id 직접 매칭
+    if (item.finance_id) {
+      try {
+        await fbDelete('finance', item.finance_id);
+        return;
+      } catch(e) { console.warn('[deleteJourneyFinance] finance_id 삭제 실패, journey_id로 재시도:', e); }
+    }
+    // 2차 fallback: journey_id로 finance 검색해서 삭제 (finance_id 연결이 끊긴 경우)
+    if (item._id) {
+      try {
+        var allFinance = await fbRead('finance');
+        var orphans = allFinance.filter(function(f){ return f.journey_id === item._id; });
+        for (var i = 0; i < orphans.length; i++) {
+          try { await fbDelete('finance', orphans[i]._id); } catch(e2) { console.error('[deleteJourneyFinance] orphan 삭제 실패:', e2); }
+        }
+        if (orphans.length) console.log('[deleteJourneyFinance] journey_id 매칭으로', orphans.length, '개 정리됨');
+      } catch(e) { console.error('[deleteJourneyFinance] fallback 검색 실패:', e); }
     }
   }
+
+  // 콘솔 진단: 현재 트립의 finance에서 stale 거래(journey 삭제됐는데 finance에 남은 거래) 찾기
+  // 사용법: window._diagnoseFinanceSync()
+  window._diagnoseFinanceSync = async function(opts) {
+    opts = opts || {};
+    var auto = !!opts.cleanup;
+    var allFinance = await fbRead('finance');
+    var trip = (typeof getCurrentTrip === 'function') ? getCurrentTrip() : null;
+    var tripName = trip ? trip.name : '';
+    var journeyIds = {};
+    (journeyData || []).forEach(function(j){ if (j._id) journeyIds[j._id] = true; });
+    var tripFinance = allFinance.filter(function(f){ return f.trip === tripName; });
+    var stale = tripFinance.filter(function(f){
+      // journey_id가 있는데 현재 journeyData에 해당 journey가 없음 = stale
+      return f.journey_id && !journeyIds[f.journey_id];
+    });
+    var staleTotal = stale.reduce(function(s, f){ return s + (parseFloat(String(f.amount||'').replace(/[^0-9.]/g,''))||0); }, 0);
+    console.log('═══ Finance Sync 진단 (' + tripName + ') ═══');
+    console.log('전체 trip finance 거래:', tripFinance.length, '개');
+    console.log('현재 journey 항목:', Object.keys(journeyIds).length, '개');
+    console.log('Stale finance 거래 (journey 삭제됐는데 남은 거래):', stale.length, '개, 합계 ₩' + staleTotal.toLocaleString('ko-KR'));
+    if (stale.length) {
+      console.table(stale.map(function(f){ return { id: f._id, date: f.date, category: f.category, amount: f.amount, description: (f.description||'').slice(0,40) }; }));
+    }
+    if (auto && stale.length) {
+      if (confirm('Stale finance 거래 ' + stale.length + '개를 삭제할까요?\n합계: ₩' + staleTotal.toLocaleString('ko-KR'))) {
+        var ok = 0;
+        for (var i = 0; i < stale.length; i++) {
+          try { await fbDelete('finance', stale[i]._id); ok++; } catch(e) { console.error('삭제 실패:', e); }
+        }
+        console.log('✅', ok, '개 삭제 완료');
+        if (typeof loadFinance === 'function') await loadFinance();
+        if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
+        showSyncToast('🧹 Stale 거래 ' + ok + '개 정리 완료');
+      }
+    }
+    return { stale: stale, total: staleTotal };
+  };
 
   // 도시 → 날짜 범위 (voyage path stop 데이터에서)
   function getCityDateRange(cityName) {
