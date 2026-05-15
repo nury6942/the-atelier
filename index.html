@@ -10222,18 +10222,40 @@
     var arrCode = routeParts[1] ? routeParts[1].match(/\(([A-Z]{3})\)/)||[] : [];
     var depIata = depCode[1]||routeParts[0]||'';
     var arrIata = arrCode[1]||routeParts[1]||'';
-    var depCity = routeParts[0] ? routeParts[0].replace(/\([^)]*\)/,'').trim() : '';
-    var arrCity = routeParts[1] ? routeParts[1].replace(/\([^)]*\)/,'').trim() : '';
     var isTK = (f.airline||f.title||'').indexOf('Turkish') >= 0;
     var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
     var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
+    // 결제 상태 뱃지
+    var payStatus = f.payment_status || '';
+    var payBadge = '';
+    if (payStatus) {
+      var payClass = payStatus === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
+                     payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
+                     'bg-slate-100 text-slate-600';
+      var payIcon = payStatus === '결제 완료' ? 'check_circle' : 'schedule';
+      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size:11px">' + payIcon + '</span>' + payStatus + '</span>';
+    }
+    // 추가 정보 칩 (PNR / 탑승객 / 좌석 / 운임)
+    var chips = [];
+    if (f.pnr) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">confirmation_number</span>PNR ' + f.pnr + '</span>');
+    if (f.passenger) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">person</span>' + f.passenger + '</span>');
+    var seatLabel = '';
+    if (f.seat_class) seatLabel = f.seat_class;
+    if (f.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + f.seat_number;
+    if (seatLabel) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">airline_seat_recline_normal</span>' + seatLabel + '</span>');
+    if (f.fare_type) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">sell</span>' + f.fare_type + '</span>');
+    if (f.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + f.payment_date + '</span>');
+    var chipsRow = chips.length ? '<div class="flex flex-wrap gap-1.5 mt-3 pl-[56px]">' + chips.join('') + '</div>' : '';
     return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
       '<div class="grid items-center gap-3" style="grid-template-columns:44px minmax(120px,180px) 1fr minmax(90px,140px) 80px;">' +
         // 아이콘
         '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
         // 항공사
         '<div class="min-w-0">' +
-          '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
+          '<div class="flex items-center gap-1.5 flex-wrap">' +
+            '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
+            payBadge +
+          '</div>' +
           '<p class="text-xs text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
         '</div>' +
         // 루트 (고정 중앙)
@@ -10252,7 +10274,7 @@
         '</div>' +
         // 버튼 (고정 너비)
         '<div class="flex gap-1 justify-end">' + deleteHtml + '</div>' +
-      '</div></div>';
+      '</div>' + chipsRow + '</div>';
   }
 
   // 시드 데이터를 Firebase로 마이그레이션 후 수정/삭제
@@ -10344,7 +10366,13 @@
       var actionBtns = '' +
         '<button onclick="editJourneyItem('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
         '<button onclick="deleteJourneyRow('+realIdx+')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>';
-      return flightCard({airline:f.title, route:f.description, flight:f.city, date:f.date, depart:f.time, arrive:f.arrive||'', duration:f.duration||'', baggage:f.baggage||'', price:amt?'₩'+amt.toLocaleString('ko-KR'):'—'}, actionBtns);
+      return flightCard({
+        airline:f.title, route:f.description, flight:f.city, date:f.date,
+        depart:f.time, arrive:f.arrive||'', duration:f.duration||'', baggage:f.baggage||'',
+        price:amt?'₩'+amt.toLocaleString('ko-KR'):'—',
+        pnr:f.pnr, passenger:f.passenger, seat_class:f.seat_class, seat_number:f.seat_number,
+        fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status
+      }, actionBtns);
     }).join('');
 
     container.innerHTML = html || '<p class="text-center text-xs text-slate-400 py-6">항공편을 추가해봐!</p>';
@@ -21310,7 +21338,9 @@ function handleScanDrop(event) {
   var dropZone = document.getElementById('scan-drop-zone');
   if (dropZone) dropZone.classList.remove('border-indigo-400','bg-indigo-50');
   var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) loadScanFile(file);
+  if (!file) return;
+  var ok = file.type.startsWith('image/') || file.type === 'application/pdf' || /\.pdf$/i.test(file.name||'');
+  if (ok) loadScanFile(file);
 }
 
 function handleScanFileSelect(event) {
@@ -21383,8 +21413,17 @@ async function analyzeBookingImage() {
 문서에서 예약 정보를 정확히 추출해 다음 JSON 형식으로만 반환해주세요.
 마크다운, 코드블록, 설명 없이 JSON 오브젝트만 출력하세요.
 
+★★ 항공편 다구간 규칙 ★★
+하나의 예약 안에 왕복(in/out)이나 다구간 항공편이 여러 개 있으면 반드시 "flights" 배열로 모두 추출하세요.
+- 단일 구간: 기존처럼 최상위에 airline/flight_number/... 평탄하게 넣어도 됨
+- 2개 이상 구간: "flights": [ {각 항공편 객체}, {각 항공편 객체} ] 배열로 반환
+- 각 항공편 객체는 airline, flight_number, dep_airport, arr_airport, dep_date, dep_time, arr_time, arr_date, duration, baggage, pnr, passenger, seat_class, seat_number, fare_type, flight_payment_status, price_krw, price_original 를 가짐
+- pnr, passenger 는 예약 전체에 공통이므로 각 flights 객체에도 동일하게 복사해서 넣음
+- 단일 구간이라도 type==='항공편'이면 flights 배열로 1개 짜리 배열로 반환해도 무방
+
 {
   "type": "항공편 또는 숙소 또는 이동수단 또는 렌트카 중 하나",
+  "flights": "(선택) 항공편 다구간이면 각 구간 객체의 배열",
   "airline": "항공사명 (항공편일 때) 예: Tway, Korean Air",
   "flight_number": "편명 예: KE001, TW403",
   "dep_airport": "출발공항 IATA 코드+터미널 예: 'ICN (T1)' 또는 'ICN'",
@@ -21550,24 +21589,55 @@ function showScanResult(r) {
   var detailHtml = '';
 
   if (r.type === '항공편') {
-    rows.push(row('항공사', r.airline));
-    rows.push(row('편명', r.flight_number));
-    rows.push(row('루트', (r.dep_airport||'') + (r.dep_airport&&r.arr_airport?' → ':'') + (r.arr_airport||'')));
-    rows.push(row('탑승일', r.dep_date));
-    rows.push(row('출발', r.dep_time));
-    rows.push(row('도착', r.arr_time + (r.arr_date && r.arr_date !== r.dep_date ? ' (' + r.arr_date + ')' : '')));
-    rows.push(row('비행시간', r.duration));
-    rows.push(row('수하물', r.baggage));
-    // 항공편 추가 정보 카드
-    var seatLabel = '';
-    if (r.seat_class) seatLabel = r.seat_class;
-    if (r.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + r.seat_number;
-    detailHtml = detailCard([
-      { icon:'confirmation_number', label:'예약번호', val: r.pnr },
-      { icon:'person',              label:'탑승객',   val: r.passenger },
-      { icon:'airline_seat_recline_normal', label:'좌석', val: seatLabel },
-      { icon:'sell',                label:'운임',     val: r.fare_type }
-    ]);
+    // 다구간 항공편: r.flights 배열로 들어온 경우
+    var flights = (r.flights && r.flights.length) ? r.flights : [r];
+    if (flights.length > 1) {
+      // 다구간: 각 항공편을 별도 카드로 묶어서 표시
+      rows = ['<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">' + typeLabel + ' × ' + flights.length + '</span><span class="text-[10px] text-slate-500">왕복 · 다구간</span></div>'];
+      flights.forEach(function(seg, idx) {
+        rows.push('<div class="mt-2 p-3 rounded-xl border border-violet-200 bg-violet-50/30">');
+        rows.push('<div class="flex items-center gap-2 mb-2"><span class="text-[10px] font-black text-violet-700">구간 ' + (idx+1) + '</span><span class="text-[10px] text-slate-500">' + (seg.airline||'') + ' ' + (seg.flight_number||'') + '</span></div>');
+        rows.push('<div class="space-y-1.5">');
+        rows.push(row('루트', (seg.dep_airport||'') + (seg.dep_airport&&seg.arr_airport?' → ':'') + (seg.arr_airport||'')));
+        rows.push(row('탑승일', seg.dep_date));
+        rows.push(row('출발/도착', (seg.dep_time||'') + (seg.dep_time&&seg.arr_time?' → ':'') + (seg.arr_time||'') + (seg.arr_date && seg.arr_date !== seg.dep_date ? ' (' + seg.arr_date + ')' : '')));
+        if (seg.duration) rows.push(row('비행시간', seg.duration));
+        if (seg.baggage) rows.push(row('수하물', seg.baggage));
+        var sl = '';
+        if (seg.seat_class) sl = seg.seat_class;
+        if (seg.seat_number) sl = (sl ? sl + ' · ' : '') + seg.seat_number;
+        if (sl) rows.push(row('좌석', sl));
+        if (seg.fare_type) rows.push(row('운임', seg.fare_type));
+        if (seg.price_krw) rows.push(row('가격', '₩' + Number(seg.price_krw).toLocaleString('ko-KR')));
+        rows.push('</div></div>');
+      });
+      // 공통 정보 (PNR/탑승객은 보통 예약 전체에 공통)
+      var commonPnr = r.pnr || (flights[0] && flights[0].pnr);
+      var commonPax = r.passenger || (flights[0] && flights[0].passenger);
+      detailHtml = detailCard([
+        { icon:'confirmation_number', label:'예약번호', val: commonPnr },
+        { icon:'person',              label:'탑승객',   val: commonPax }
+      ]);
+    } else {
+      rows.push(row('항공사', r.airline));
+      rows.push(row('편명', r.flight_number));
+      rows.push(row('루트', (r.dep_airport||'') + (r.dep_airport&&r.arr_airport?' → ':'') + (r.arr_airport||'')));
+      rows.push(row('탑승일', r.dep_date));
+      rows.push(row('출발', r.dep_time));
+      rows.push(row('도착', r.arr_time + (r.arr_date && r.arr_date !== r.dep_date ? ' (' + r.arr_date + ')' : '')));
+      rows.push(row('비행시간', r.duration));
+      rows.push(row('수하물', r.baggage));
+      // 항공편 추가 정보 카드
+      var seatLabel = '';
+      if (r.seat_class) seatLabel = r.seat_class;
+      if (r.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + r.seat_number;
+      detailHtml = detailCard([
+        { icon:'confirmation_number', label:'예약번호', val: r.pnr },
+        { icon:'person',              label:'탑승객',   val: r.passenger },
+        { icon:'airline_seat_recline_normal', label:'좌석', val: seatLabel },
+        { icon:'sell',                label:'운임',     val: r.fare_type }
+      ]);
+    }
     // 항공편 결제 정보
     if (r.payment_date || r.flight_payment_status) {
       var fStatusBadge = '';
@@ -21643,6 +21713,10 @@ function showScanResult(r) {
   resultArea.className = '';
 
   var labelMap = { '항공편':'항공편으로 저장', '숙소':'숙소로 저장', '이동수단':'일정에 추가', '렌트카':'렌트카로 저장' };
+  // 다구간 항공편이면 라벨에 개수 표시
+  if (r.type === '항공편' && r.flights && r.flights.length > 1) {
+    labelMap['항공편'] = r.flights.length + '개 항공편 모두 저장';
+  }
   if (applyLabel) applyLabel.textContent = labelMap[r.type] || '저장하기';
   if (applyBtns) applyBtns.className = 'flex gap-2';
 }
@@ -21655,34 +21729,41 @@ function applyBookingScan() {
   // 타입별 폼 열기 + 채우기
   setTimeout(function() {
     if (r.type === '항공편') {
+      // 다구간 (왕복 등)이면 폼 안 열고 한꺼번에 저장
+      if (r.flights && r.flights.length > 1) {
+        _saveAllFlights(r).catch(function(err){ console.error(err); alert('저장 중 오류: ' + err.message); });
+        return;
+      }
+      // 단일 항공편: 폼 열고 자동 입력
+      var f = (r.flights && r.flights.length === 1) ? r.flights[0] : r;
       openFlightAddModal();
       setTimeout(function() {
-        _setVal('flt-airline', r.airline);
-        _setVal('flt-code', r.flight_number);
-        _setVal('flt-dep', r.dep_airport);
-        _setVal('flt-arr', r.arr_airport);
-        _setVal('flt-date', r.dep_date);
-        _setVal('flt-time', r.dep_time);
-        _setVal('flt-arrive', r.arr_time);
-        _setVal('flt-duration', r.duration);
-        _setVal('flt-baggage', r.baggage);
-        _setVal('flt-seat-number', r.seat_number);
-        _setVal('flt-fare-type', r.fare_type);
-        _setVal('flt-pnr', r.pnr);
-        _setVal('flt-passenger', r.passenger);
-        _setVal('flt-payment-date', r.payment_date);
-        // 좌석 등급/결제 상태는 select라 옵션 매칭만 허용
+        _setVal('flt-airline', f.airline);
+        _setVal('flt-code', f.flight_number);
+        _setVal('flt-dep', f.dep_airport);
+        _setVal('flt-arr', f.arr_airport);
+        _setVal('flt-date', f.dep_date);
+        _setVal('flt-time', f.dep_time);
+        _setVal('flt-arrive', f.arr_time);
+        _setVal('flt-duration', f.duration);
+        _setVal('flt-baggage', f.baggage);
+        _setVal('flt-seat-number', f.seat_number);
+        _setVal('flt-fare-type', f.fare_type);
+        _setVal('flt-pnr', f.pnr || r.pnr);
+        _setVal('flt-passenger', f.passenger || r.passenger);
+        _setVal('flt-payment-date', f.payment_date || r.payment_date);
         var seatSel = document.getElementById('flt-seat-class');
-        if (seatSel && r.seat_class) {
+        if (seatSel && f.seat_class) {
           var seatAllowed = ['이코노미','프리미엄 이코노미','비즈니스','일등석'];
-          if (seatAllowed.indexOf(r.seat_class) >= 0) seatSel.value = r.seat_class;
+          if (seatAllowed.indexOf(f.seat_class) >= 0) seatSel.value = f.seat_class;
         }
         var paySel = document.getElementById('flt-payment-status');
-        if (paySel && r.flight_payment_status) {
+        var payVal = f.flight_payment_status || r.flight_payment_status;
+        if (paySel && payVal) {
           var payAllowed = ['결제 완료','결제 예정'];
-          if (payAllowed.indexOf(r.flight_payment_status) >= 0) paySel.value = r.flight_payment_status;
+          if (payAllowed.indexOf(payVal) >= 0) paySel.value = payVal;
         }
-        if (r.price_krw) _setVal('flt-price', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        if (f.price_krw) _setVal('flt-price', String(f.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 항공편 정보가 자동 입력됐어요 ✈️');
       }, 300);
 
@@ -21756,6 +21837,60 @@ function applyBookingScan() {
 function _setVal(id, val) {
   var el = document.getElementById(id);
   if (el && val !== undefined && val !== null && val !== '') el.value = val;
+}
+
+// 다구간/왕복 항공편 일괄 저장 (폼 안 열고 바로 Firebase에 추가)
+async function _saveAllFlights(r) {
+  if (typeof fbAdd !== 'function' || typeof journeyData === 'undefined') {
+    alert('Travel 페이지에서 실행해주세요'); return;
+  }
+  var flights = r.flights || [];
+  var commonPnr = r.pnr || '';
+  var commonPax = r.passenger || '';
+  var saved = 0, failed = 0;
+  for (var i = 0; i < flights.length; i++) {
+    var f = flights[i];
+    var obj = {
+      trip_id: (typeof currentTripId !== 'undefined') ? currentTripId : '',
+      type: '항공편',
+      title: f.airline || '',
+      description: (f.dep_airport || '') + (f.dep_airport && f.arr_airport ? ' → ' : '') + (f.arr_airport || ''),
+      city: f.flight_number || '',
+      date: f.dep_date || '',
+      time: f.dep_time || '',
+      arrive: f.arr_time || '',
+      duration: f.duration || '',
+      baggage: f.baggage || '',
+      seat_class: f.seat_class || '',
+      seat_number: f.seat_number || '',
+      fare_type: f.fare_type || '',
+      pnr: f.pnr || commonPnr,
+      passenger: f.passenger || commonPax,
+      payment_date: f.payment_date || r.payment_date || '',
+      payment_status: f.flight_payment_status || r.flight_payment_status || '',
+      amount: f.price_krw ? String(f.price_krw) : ''
+    };
+    try {
+      var savedDoc = await fbAdd('journey', obj);
+      journeyData.push(savedDoc);
+      if (typeof syncJourneyToFinance === 'function') await syncJourneyToFinance(savedDoc);
+      saved++;
+    } catch(e) {
+      console.error('[BookingScan] 항공편 저장 실패:', e, obj);
+      failed++;
+    }
+  }
+  // UI 갱신
+  if (typeof renderJourneyFlights === 'function') renderJourneyFlights();
+  if (typeof updateJourneyCost === 'function') updateJourneyCost();
+  if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
+  // 닫고 토스트
+  closeBookingScanModal();
+  if (typeof showSyncToast === 'function') {
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> ' + saved + '개 항공편 저장 완료 ✈️' + (failed ? ' (실패 ' + failed + '개)' : ''));
+  } else {
+    alert(saved + '개 항공편 저장 완료' + (failed ? ' (실패 ' + failed + '개)' : ''));
+  }
 }
 
 // 통화 문자열 파싱: 'EUR 20.00', '€20', '20 USD' → {currency:'EUR', amount:20}
