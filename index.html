@@ -20104,7 +20104,38 @@
     if (fpInstances[inputId]) { try { fpInstances[inputId].destroy(); } catch(e){} delete fpInstances[inputId]; }
     var el = document.getElementById(inputId);
     if (!el || typeof flatpickr === 'undefined') return null;
-    var config = Object.assign({ locale:'ko', dateFormat:'Y-m-d', disableMobile:true, allowInput:true }, options||{});
+    // ─ 기본 onOpen: 모달 안에서 달력 잘리지 않도록 자동 스크롤 ─
+    function _defaultOnOpen(selectedDates, dateStr, instance) {
+      if (instance.calendarContainer) {
+        instance.calendarContainer.style.zIndex = '99999';
+        instance.calendarContainer.style.position = 'absolute';
+      }
+      try {
+        var sp = el.closest('.overflow-y-auto') || el.closest('[style*="overflow-y:auto"]');
+        if (sp) {
+          var ir = el.getBoundingClientRect();
+          var pr = sp.getBoundingClientRect();
+          // input이 부모 하단 50% 아래면 → 위로 스크롤
+          if (ir.bottom > pr.top + pr.height * 0.5) {
+            sp.scrollTo({ top: sp.scrollTop + (ir.top - pr.top) - 60, behavior: 'smooth' });
+            setTimeout(function(){ if (instance && typeof instance._positionCalendar === 'function') instance._positionCalendar(); }, 320);
+          }
+        }
+      } catch(e) {}
+    }
+    var customOpen = options && options.onOpen;
+    var config = Object.assign({
+      locale: 'ko',
+      dateFormat: 'Y-m-d',
+      disableMobile: true,
+      allowInput: true,
+      appendTo: document.body
+    }, options||{});
+    // 항상 기본 onOpen 호출 + 사용자 onOpen이 있으면 같이 호출
+    config.onOpen = function() {
+      _defaultOnOpen.apply(this, arguments);
+      if (customOpen) { try { customOpen.apply(this, arguments); } catch(e){} }
+    };
     fpInstances[inputId] = flatpickr(el, config);
     return fpInstances[inputId];
   }
