@@ -6353,6 +6353,13 @@
       // 캘린더 페이지에 미니 Series Timeline도 같이 렌더
       if (typeof loadWorks === 'function') loadWorks();
       if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
+      // 안전망: 누적된 중복 작품 일정 자동 정리 (idempotent)
+      if (typeof cleanupDuplicateWorkEvents === 'function') {
+        try {
+          var dupCnt = await cleanupDuplicateWorkEvents();
+          if (dupCnt > 0) console.log('[loadPlanner] 자동 중복 정리:', dupCnt, '개');
+        } catch(e) { console.warn('auto dedupe failed', e); }
+      }
     } catch(err) {
       console.error('Planner load error:', err);
     }
@@ -12050,8 +12057,15 @@
     if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
     if (typeof renderCalendar === 'function') renderCalendar();
     if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
-    console.log('═══ 완료: ' + ok + '개 sync' + (fail ? ', ' + fail + '개 실패' : '') + ', 기존 ' + removedCount + '개 정리됨 ═══');
-    if (typeof showSyncToast === 'function') showSyncToast('🔄 ' + ok + '개 작품 재동기화 (중복 ' + removedCount + '개 정리)');
+
+    // ▶ 4단계: 안전망 — 혹시 모를 누적 중복 자동 정리
+    var dupCleaned = 0;
+    if (typeof cleanupDuplicateWorkEvents === 'function') {
+      try { dupCleaned = await cleanupDuplicateWorkEvents(); } catch(e) { console.warn('dedupe failed', e); }
+    }
+
+    console.log('═══ 완료: ' + ok + '개 sync' + (fail ? ', ' + fail + '개 실패' : '') + ', 기존 ' + removedCount + '개 정리됨, 중복 ' + dupCleaned + '개 추가 정리 ═══');
+    if (typeof showSyncToast === 'function') showSyncToast('🔄 ' + ok + '개 작품 재동기화' + (dupCleaned > 0 ? ' (중복 ' + dupCleaned + '개 정리)' : ''));
   };
 
   // 중복 기념품 자동 제거 (city + 대상 + 품목 + 가격이 동일하면 중복으로 판단)
@@ -20540,19 +20554,26 @@
       }
     }
 
-    // plannerData에 추가 + Firestore 저장
+    // plannerData에 추가 + Firestore 저장 (idempotent — 이미 존재하는 항목은 skip)
+    var addedN = 0, skippedN = 0;
     for (var i = 0; i < events.length; i++) {
       var row = events[i];
+      // 중복 체크: date(row[0]) + title(row[1]) + notes(row[4]) 모두 일치하면 skip
+      var existing = plannerData.find(function(r) {
+        return r && r[0] === row[0] && r[1] === row[1] && r[4] === row[4];
+      });
+      if (existing) { skippedN++; continue; }
       try {
         var obj = rowToObj('planner', row);
         var saved = await fbAdd('planner', obj);
         plannerData.push(row.concat([saved._id]));
+        addedN++;
       } catch(e) {
         console.error('[Work Cal] Save error:', e);
       }
     }
     renderCalendar();
-    console.log('[Work Cal] Added', events.length, 'events for', work.title);
+    console.log('[Work Cal]', work.title, '— added:', addedN, 'skipped (dup):', skippedN);
   }
 
   async function removeWorkCalEvents(workId) {
