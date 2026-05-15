@@ -1682,42 +1682,38 @@
 
       <!-- ═══════ Hero: Greeting + Today's Brief (Stitch Immersive + Bento combined) ═══════ -->
       <section>
-        <div id="dash-brief-card" style="background:linear-gradient(135deg,#f3e8ff 0%,#fae8ff 50%,#fce7f3 100%);border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(124,58,237,0.06);border:1px solid #e9d5ff;position:relative;overflow:hidden;">
-          <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.08),transparent 70%);border-radius:50%;pointer-events:none;"></div>
+        <div id="dash-brief-card" style="background:linear-gradient(135deg,#f3eaff 0%,#ece2ff 100%);border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(124,58,237,0.05);border:1px solid #d8c9ff;position:relative;overflow:hidden;">
           <!-- Top: greeting + info chips -->
           <div class="flex justify-between items-start gap-4 mb-5 flex-wrap" style="position:relative;z-index:10;">
             <div style="flex:1;min-width:260px;">
-              <p class="dash-label" style="color:#7c3aed;margin-bottom:6px;">Overview</p>
-              <h2 id="dash-greeting" class="dash-headline-lg" style="margin-bottom:6px;">안녕하세요.</h2>
-              <p id="dash-brief-date" style="font-size:15px;color:#4a4455;font-weight:500;"></p>
+              <p class="dash-label" style="color:#7c3aed;margin-bottom:8px;">Overview</p>
+              <h2 id="dash-greeting" class="dash-headline-lg" style="margin-bottom:8px;">안녕하세요.</h2>
+              <p style="font-size:15px;color:#4a4455;font-weight:500;"><span id="dash-brief-date"></span><span id="dash-brief-tagline" style="color:#6b21a8;font-weight:500;"></span></p>
             </div>
             <div class="flex items-stretch gap-2.5 flex-wrap">
-              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
                 <p class="dash-label" style="color:#7c3aed;margin-bottom:4px;font-size:10px;">오늘 일정</p>
                 <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">건</span></p>
               </div>
-              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
                 <p class="dash-label" style="color:#ec4899;margin-bottom:4px;font-size:10px;">작품 진행</p>
                 <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">개</span></p>
               </div>
-              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+              <div style="background:#ffffff;border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
                 <p class="dash-label" style="color:#f59e0b;margin-bottom:4px;font-size:10px;">연차</p>
                 <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size:13px;font-weight:600;color:#7b7487;">일</span></p>
               </div>
             </div>
           </div>
-          <!-- Bottom: AI brief content -->
-          <div style="position:relative;z-index:10;background:rgba(255,255,255,0.55);border-radius:16px;padding:18px 22px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.7);">
-            <div class="flex justify-between items-start mb-2">
-              <p class="dash-label" style="color:#7c3aed;">Today's Brief</p>
-              <div class="flex items-center gap-1.5">
-                <span id="dash-brief-status" style="font-size:10px;color:#7b7487;"></span>
-                <button onclick="generateDailyBrief(true)" class="p-1 rounded hover:bg-violet-50 transition-colors" style="color:#7c3aed;" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button>
-              </div>
+          <!-- Brief content — rendered as icon cards -->
+          <div class="flex justify-end items-center mb-2" style="position:relative;z-index:10;">
+            <div class="flex items-center gap-1.5">
+              <span id="dash-brief-status" style="font-size:10px;color:#7b7487;"></span>
+              <button onclick="generateDailyBrief(true)" class="p-1 rounded hover:bg-white/60 transition-colors" style="color:#7c3aed;" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button>
             </div>
-            <div id="dash-brief-content" style="color:#27313f;font-size:14px;line-height:1.7;font-family:'Pretendard',sans-serif">
-              <div class="flex items-center gap-2" style="color:#7b7487;"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>
-            </div>
+          </div>
+          <div id="dash-brief-content" style="position:relative;z-index:10;font-family:'Pretendard',sans-serif">
+            <div class="flex items-center gap-2" style="color:#7b7487;font-size:13px;"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>
           </div>
         </div>
       </section>
@@ -12873,6 +12869,13 @@
                    '편안한 저녁이에요. 🌙';
     var greetEl = document.getElementById('dash-greeting');
     if (greetEl) greetEl.textContent = greeting;
+    // 시간대별 영문 태그라인
+    var tagline = hour < 6 ? 'Rest well, recharge.' :
+                  hour < 12 ? 'Your day is looking productive.' :
+                  hour < 18 ? 'Keep the momentum going.' :
+                  'Time to wind down.';
+    var tagEl = document.getElementById('dash-brief-tagline');
+    if (tagEl) tagEl.textContent = ' — ' + tagline;
     // 브리프 날짜 (친근한 형식)
     var bdEl = document.getElementById('dash-brief-date');
     if (bdEl) bdEl.textContent = now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 ' + DAY_KR[now.getDay()];
@@ -13642,9 +13645,33 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       var data = await res.json();
       var text = (data.content && data.content[0] && data.content[0].text || '').trim();
-      // 줄바꿈을 <div>로 변환
+      // 각 줄을 아이콘 카드로 렌더 (참고 디자인 스타일)
       var lines = text.split('\n').filter(function(l){ return l.trim(); });
-      var html = lines.map(function(l){ return '<div class="py-0.5">' + l + '</div>'; }).join('');
+      var html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+      lines.slice(0, 4).forEach(function(l) {
+        var line = l.trim();
+        // HTML 태그가 있으면 제거 (Claude가 가끔 추가)
+        line = line.replace(/<[^>]+>/g, '').replace(/^[-•·\*]\s*/, '').trim();
+        // 선두 이모지 추출 (가변 길이 유니코드)
+        var emoji = '📌';
+        var rest = line;
+        var emojiMatch = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}]+)\s*/u);
+        if (emojiMatch) {
+          emoji = emojiMatch[1];
+          rest = line.substring(emojiMatch[0].length);
+        }
+        // ' — ' 또는 ' - ' 로 분리: title / tagline
+        var parts = rest.split(/\s+[—–\-]\s+/);
+        var title = (parts[0] || '').trim();
+        var tagline = (parts.slice(1).join(' — ') || '').trim();
+        html += '<div style="background:#ffffff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(124,58,237,0.05);border:1px solid rgba(216,201,255,0.5);">';
+        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + emoji + '</div>';
+        html += '<div style="flex:1;min-width:0;">';
+        html += '<p style="font-weight:700;color:#1f2937;font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
+        if (tagline) html += '<p style="font-size:11.5px;color:#7b7487;line-height:1.35;margin-top:2px;">' + tagline + '</p>';
+        html += '</div></div>';
+      });
+      html += '</div>';
       contentEl.innerHTML = html;
       var now = new Date();
       var timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
