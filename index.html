@@ -16390,6 +16390,25 @@
     var series = getSeriesData(_matrixYear);
     // Sort by earliest publish_start across all works
     loadWorks();
+    // ─── 자동 검증: confirmed 작품은 있는데 캘린더에 phase:publishing 일정이 0개면 자동 sync ───
+    // 듀얼 머신 또는 데이터 손실로 캘린더가 비어버린 경우 자동 복구
+    (function _autoMatrixGuard() {
+      try {
+        var hasConfirmed = (_works||[]).some(function(w){ return w.status === 'confirmed' && w.publish_start && w.publish_end; });
+        if (!hasConfirmed) return;
+        var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
+        var publishingCount = pData.filter(function(r){ return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0; }).length;
+        if (publishingCount === 0 && typeof _fullResyncWorks === 'function' && !window._matrixAutoSyncDone) {
+          window._matrixAutoSyncDone = true; // 무한 루프 방지
+          console.log('[Matrix Guard] 확정 작품 있는데 캘린더 publishing 일정 0개 → 자동 sync 시작');
+          _fullResyncWorks().then(function(){
+            console.log('[Matrix Guard] 자동 sync 완료');
+          }).catch(function(e){
+            console.warn('[Matrix Guard] 자동 sync 실패:', e);
+          });
+        }
+      } catch(e) { console.warn('[Matrix Guard] error:', e); }
+    })();
     series.sort(function(a, b) {
       var aMin = '9999', bMin = '9999';
       _works.forEach(function(w) { if ((w.series_id === a.id || w.series_name === a.name) && w.publish_start && w.publish_start < aMin) aMin = w.publish_start; });
