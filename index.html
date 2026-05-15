@@ -1598,118 +1598,189 @@
 
   <div class="pt-16 flex-1">
   <div id="page-dashboard" class="page dashboard-page" style="display:block">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-12">
+    <div class="page-content-wrap px-6 pt-6 pb-16 max-w-[1280px] mx-auto space-y-5">
 
-      <!-- Hero: Expression + Schedule -->
-      <section class="grid grid-cols-1 md:grid-cols-10 gap-6 items-stretch">
-        <!-- Expression Card -->
-        <div id="dash-expr-card" class="md:col-span-6 bg-white rounded-2xl p-10 md:p-14 relative overflow-hidden flex flex-col justify-center cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)" onclick="navigate('english')">
-          <div class="absolute top-8 left-8 text-6xl font-headline font-extrabold opacity-[0.08] pointer-events-none" style="color:#d0bcff">"</div>
-          <button onclick="event.stopPropagation();shuffleDashExpr()" class="absolute top-5 right-5 p-2 rounded-xl hover:bg-[#f3f4f5] transition-all text-[#494454]/40 hover:text-[#6b38d4] z-10" title="셔플"><span class="material-symbols-outlined">shuffle</span></button>
-          <h1 id="dash-expr-en" class="text-xl md:text-2xl font-headline font-bold leading-relaxed tracking-tight text-[#191c1d] mb-6 z-10 italic"></h1>
-          <p id="dash-expr-kr" class="text-sm text-[#494454] mb-3 z-10"></p>
-          <div class="space-y-1 z-10">
-            <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#6b38d4">Today's English Expression</p>
-            <p id="dash-expr-ctx" class="text-[#494454]/60 text-xs"></p>
+      <!-- ═══════ Tier 1: AI 데일리 브리프 ═══════ -->
+      <section id="dash-brief-card" class="rounded-2xl p-5 relative overflow-hidden" style="background:linear-gradient(135deg,#ede9fe 0%,#fef3c7 100%);box-shadow:0 8px 24px rgba(107,56,212,0.08)">
+        <div class="flex items-start justify-between mb-2.5">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">
+              <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span>
+            </div>
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-violet-700">오늘의 브리프</p>
+              <p id="dash-brief-date" class="text-[10px] text-slate-500"></p>
+            </div>
           </div>
-          <div class="absolute bottom-8 right-8 text-6xl font-headline font-extrabold opacity-[0.08] pointer-events-none rotate-180" style="color:#d0bcff">"</div>
+          <div class="flex items-center gap-1">
+            <span id="dash-brief-status" class="text-[10px] text-slate-400 px-2"></span>
+            <button onclick="generateDailyBrief(true)" class="p-1.5 rounded-lg hover:bg-white/60 text-violet-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button>
+          </div>
         </div>
-        <!-- Schedule Card -->
-        <div class="md:col-span-4 bg-[#f3f4f5] rounded-2xl p-8 flex flex-col justify-between" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
-          <div>
-            <div class="flex justify-between items-start mb-8">
-              <div>
-                <p class="text-[#494454] text-xs uppercase tracking-widest font-bold mb-1">Today's Schedule</p>
-                <h2 id="dash-today-label" class="text-2xl font-headline font-bold text-[#191c1d]"></h2>
-              </div>
-              <div class="p-3 rounded-xl" style="background:#8455ef;color:#fff"><span class="material-symbols-outlined">auto_awesome</span></div>
-            </div>
-            <div id="dash-today-events" class="space-y-5">
-              <p class="text-sm text-[#494454]/60">오늘 일정 없음 — 편안한 하루 되세요</p>
-            </div>
-          </div>
-          <button onclick="openPlannerModal()" class="mt-6 w-full py-3.5 rounded-xl text-white font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform" style="background:#6b38d4">
-            <span class="material-symbols-outlined text-sm">add</span> New Event
-          </button>
+        <div id="dash-brief-content" class="text-[13px] text-slate-700 leading-relaxed">
+          <div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>
         </div>
       </section>
 
-      <!-- Week in Review -->
-      <section class="space-y-5">
-        <div class="flex justify-between items-end">
-          <h2 class="text-2xl font-headline font-extrabold tracking-tight text-[#191c1d]">Week in Review</h2>
-          <span id="dash-week-range" class="font-bold text-sm" style="color:#6b38d4"></span>
+      <!-- ═══════ Tier 2: 4-컬럼 컴팩트 카드 ═══════ -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <!-- 오늘 일정 -->
+        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('planner')">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">오늘 일정</span>
+            <span class="material-symbols-outlined text-indigo-500" style="font-size:14px">today</span>
+          </div>
+          <p class="text-2xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-events-count">0</span><span class="text-xs font-bold text-slate-400 ml-1">건</span></p>
+          <div id="dash-mini-events" class="mt-2 space-y-0.5 text-[10px] text-slate-500"></div>
         </div>
-        <div id="dash-week-grid" class="grid grid-cols-2 md:grid-cols-7 gap-4"></div>
+        <!-- 이번 달 재정 -->
+        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">이번 달 재정</span>
+            <span class="material-symbols-outlined text-emerald-500" style="font-size:14px">trending_up</span>
+          </div>
+          <p id="dash-net" class="text-2xl font-extrabold leading-tight text-violet-600">₩0</p>
+          <div class="mt-2 space-y-0.5 text-[10px]">
+            <div class="flex justify-between"><span class="text-slate-400">수입</span><span id="dash-income" class="font-bold text-emerald-600">₩0</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">지출</span><span id="dash-expense" class="font-bold text-rose-500">₩0</span></div>
+          </div>
+        </div>
+        <!-- 다음 여행 -->
+        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('journey')">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">다음 여행</span>
+            <span class="material-symbols-outlined text-violet-500" style="font-size:14px">flight_takeoff</span>
+          </div>
+          <p class="text-base font-extrabold text-slate-900 leading-tight truncate" id="dash-mini-trip-name">—</p>
+          <div class="mt-1">
+            <span id="dash-mini-trip-dday" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">—</span>
+          </div>
+          <div id="dash-mini-trip-extra" class="mt-2 text-[10px] text-slate-500 space-y-0.5"></div>
+        </div>
+        <!-- 작품 진행 -->
+        <div class="bg-white rounded-xl p-3.5 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('income')">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">작품 진행</span>
+            <span class="material-symbols-outlined text-amber-500" style="font-size:14px">edit_note</span>
+          </div>
+          <p class="text-2xl font-extrabold text-slate-900 leading-tight"><span id="dash-mini-works-count">0</span><span class="text-xs font-bold text-slate-400 ml-1">개</span></p>
+          <div id="dash-mini-works" class="mt-2 space-y-0.5 text-[10px] text-slate-500"></div>
+        </div>
       </section>
 
-      <!-- Travel -->
+      <!-- ═══════ Tier 3: 환율 + 회사 일정 ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- 환율 위젯 -->
+        <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-violet-500" style="font-size:16px">currency_exchange</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">환율 (어제 대비)</h3>
+            </div>
+            <span id="dash-fx-updated" class="text-[9px] text-slate-400"></span>
+          </div>
+          <div id="dash-fx-list" class="space-y-1">
+            <div class="text-[10px] text-slate-400 italic">여행지 통화 자동 감지 중...</div>
+          </div>
+        </div>
+        <!-- 회사/업무 일정 -->
+        <div class="bg-white rounded-xl p-4" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sky-500" style="font-size:16px">business_center</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">회사·업무 일정</h3>
+            </div>
+            <span id="dash-biz-count" class="text-[9px] font-bold text-sky-600"></span>
+          </div>
+          <div id="dash-biz-list" class="space-y-1 text-[11px]">
+            <div class="text-[10px] text-slate-400 italic">이번 주 업무 일정 없음</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════ Tier 4: 위클리 뷰 (축소) ═══════ -->
+      <section class="space-y-2.5">
+        <div class="flex justify-between items-end px-1">
+          <h2 class="text-sm font-black tracking-tight text-slate-700">Week in Review</h2>
+          <span id="dash-week-range" class="font-bold text-[10px] text-violet-600"></span>
+        </div>
+        <div id="dash-week-grid" class="grid grid-cols-2 md:grid-cols-7 gap-2"></div>
+      </section>
+
+      <!-- ═══════ Tier 5: 영어 표현 + 최근 메모 ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Today's English (압축) -->
+        <div id="dash-expr-card" class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all relative" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('english')">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-rose-500" style="font-size:16px">translate</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">오늘의 영어 표현</h3>
+            </div>
+            <button onclick="event.stopPropagation();shuffleDashExpr()" class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-rose-600" title="셔플"><span class="material-symbols-outlined" style="font-size:14px">shuffle</span></button>
+          </div>
+          <p id="dash-expr-en" class="text-sm font-bold italic text-slate-900 leading-snug mb-1"></p>
+          <p id="dash-expr-kr" class="text-[11px] text-slate-600 mb-1"></p>
+          <p id="dash-expr-ctx" class="text-[10px] text-slate-400"></p>
+        </div>
+        <!-- 최근 메모 -->
+        <div class="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)" onclick="navigate('memo')">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-amber-500" style="font-size:16px">sticky_note_2</span>
+              <h3 class="text-xs font-black uppercase tracking-widest text-slate-700">최근 메모</h3>
+            </div>
+          </div>
+          <div id="dash-memo-list" class="space-y-1 text-[11px]">
+            <div class="text-[10px] text-slate-400 italic">메모 없음</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════ Tier 6: 다가오는 여행 (큰 hero, 옵션) ═══════ -->
       <input type="file" id="dash-trip-file-input" accept="image/*" style="display:none" onchange="handleTripFileSelect(this.files[0])"/>
-      <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-2xl h-[360px] cursor-pointer" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);"
+      <section id="dash-travel-section" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div id="dash-travel-hero" class="md:col-span-8 group relative overflow-hidden rounded-xl h-[200px] cursor-pointer" style="box-shadow:0 4px 12px rgba(25,28,29,0.04);background:linear-gradient(135deg,#6b38d4,#8455ef);"
              onclick="triggerTripUpload('hero')"
              ondragover="event.preventDefault();this.style.outline='3px dashed #fff';this.style.outlineOffset='-6px'"
              ondragleave="this.style.outline=''"
              ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'hero')">
           <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-          <div class="absolute bottom-8 left-8 text-white z-10">
-            <p class="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Upcoming Journey</p>
-            <h2 id="dash-travel-name" class="text-4xl font-headline font-extrabold mb-3">다음 여행을 계획해보세요</h2>
-            <div id="dash-travel-meta" class="flex items-center gap-4 text-sm"></div>
+          <div class="absolute bottom-4 left-5 text-white z-10">
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 opacity-80">Upcoming Journey</p>
+            <h2 id="dash-travel-name" class="text-2xl font-headline font-extrabold mb-1.5">—</h2>
+            <div id="dash-travel-meta" class="flex items-center gap-3 text-xs"></div>
           </div>
-          <div class="absolute top-4 right-4 px-3 py-1.5 bg-black/40 rounded-lg text-white/50 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center gap-1 pointer-events-none"><span class="material-symbols-outlined" style="font-size:14px">add_photo_alternate</span> 이미지 변경</div>
-          <div id="dash-travel-credit" class="absolute bottom-2 right-4 text-[10px] text-white/40 z-10" style="display:none"></div>
+          <div id="dash-travel-credit" class="absolute bottom-2 right-3 text-[9px] text-white/40 z-10" style="display:none"></div>
         </div>
         <div class="md:col-span-4 flex flex-col">
-          <div id="dash-travel-next" class="p-8 rounded-2xl flex-1 flex flex-col justify-end cursor-pointer group" style="background:#c9b3fd;box-shadow:0px 12px 32px rgba(25,28,29,0.04)"
+          <div id="dash-travel-next" class="p-5 rounded-xl flex-1 flex flex-col justify-end cursor-pointer group h-full" style="background:#c9b3fd;box-shadow:0 4px 12px rgba(25,28,29,0.04)"
                onclick="triggerTripUpload('next')"
                ondragover="event.preventDefault();this.style.outline='3px dashed #6b38d4';this.style.outlineOffset='-6px'"
                ondragleave="this.style.outline=''"
                ondrop="event.preventDefault();this.style.outline='';handleTripFileDrop(event,'next')">
-            <span class="material-symbols-outlined text-3xl mb-3" style="color:#544183">flight_takeoff</span>
-            <h3 id="dash-travel-next-name" class="text-xl font-headline font-bold leading-tight" style="color:#544183"></h3>
-            <p id="dash-travel-next-date" class="mt-1 text-sm" style="color:#4e3b7c"></p>
-            <div class="absolute top-3 right-3 px-2 py-1 bg-black/30 rounded-lg text-white/60 text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 pointer-events-none"><span class="material-symbols-outlined" style="font-size:12px">add_photo_alternate</span></div>
+            <span class="material-symbols-outlined text-2xl mb-1.5" style="color:#544183">flight_takeoff</span>
+            <h3 id="dash-travel-next-name" class="text-base font-headline font-bold leading-tight" style="color:#544183"></h3>
+            <p id="dash-travel-next-date" class="mt-0.5 text-xs" style="color:#4e3b7c"></p>
           </div>
         </div>
       </section>
 
-      <!-- 3-Card Widgets -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Vacation -->
-        <div class="bg-white p-8 rounded-2xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-bold tracking-widest text-[#494454]">VACATION</span>
-            <span class="material-symbols-outlined" style="color:#6b38d4">beach_access</span>
+      <!-- 휴가 진행률 (작게) -->
+      <section class="bg-white rounded-xl p-3.5" style="box-shadow:0 4px 12px rgba(25,28,29,0.04)">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-500" style="font-size:16px">beach_access</span>
+            <span class="text-xs font-black uppercase tracking-widest text-slate-600">연차</span>
+            <span class="text-lg font-extrabold text-slate-900"><span id="dash-vac-remain">—</span></span>
+            <span class="text-[10px] text-slate-400">days remaining</span>
+            <span id="dash-vac-label" class="text-[10px] text-slate-400 ml-1"></span>
           </div>
-          <div class="flex items-baseline gap-2 mb-1">
-            <span id="dash-vac-remain" class="text-4xl font-headline font-extrabold text-[#191c1d]">—</span>
-            <span class="text-[#494454] font-medium text-sm">days remaining</span>
-          </div>
-          <div class="mt-auto pt-5">
-            <div class="w-full h-2 rounded-full overflow-hidden" style="background:#e7e8e9"><div id="dash-vac-bar" class="h-full rounded-full" style="background:#6b38d4;width:0%"></div></div>
-            <p id="dash-vac-label" class="text-xs font-bold text-[#494454] uppercase tracking-wider mt-2"></p>
-          </div>
-        </div>
-        <!-- Finance -->
-        <div class="bg-white p-8 rounded-2xl flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04)">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-bold tracking-widest text-[#494454]">THIS MONTH · FINANCE</span>
-            <span class="material-symbols-outlined" style="color:#6b38d4">trending_up</span>
-          </div>
-          <div class="space-y-1 mb-3">
-            <div class="flex justify-between text-sm"><span class="text-[#494454]">Income</span><span id="dash-income" class="font-bold">₩0</span></div>
-            <div class="flex justify-between text-sm"><span class="text-[#494454]">Expense</span><span id="dash-expense" class="font-bold">₩0</span></div>
-          </div>
-          <div class="mt-auto">
-            <p id="dash-net" class="text-2xl font-headline font-extrabold mb-1" style="color:#6b38d4">₩0</p>
-            <p class="text-xs font-bold text-[#494454] uppercase tracking-wider">net balance this month</p>
-          </div>
+          <div class="flex-1 max-w-xs h-1.5 rounded-full overflow-hidden" style="background:#e7e8e9"><div id="dash-vac-bar" class="h-full rounded-full" style="background:linear-gradient(90deg,#f97316,#fb923c);width:0%"></div></div>
         </div>
       </section>
 
       <!-- Footer -->
-      <footer class="pt-6 text-center text-[#494454]/40 italic font-headline text-sm" id="dash-footer"></footer>
+      <footer class="pt-3 text-center text-slate-400/60 italic font-headline text-[11px]" id="dash-footer"></footer>
 
     </div>
   </div>
@@ -12360,36 +12431,42 @@
 
   async function loadDashboard() {
     var now = new Date();
-    var DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var todayStr = now.toISOString().split('T')[0];
 
-    // Today label
-    document.getElementById('dash-today-label').textContent = DAYS_EN[now.getDay()] + ', ' + MONTHS_EN[now.getMonth()].substring(0,3) + ' ' + now.getDate();
+    // 브리프 날짜
+    var bdEl = document.getElementById('dash-brief-date');
+    if (bdEl) bdEl.textContent = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
     // Footer
-    document.getElementById('dash-footer').textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
+    var ft = document.getElementById('dash-footer');
+    if (ft) ft.textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
 
     try {
-      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs, matrixDocs] = await Promise.all([
-        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'), fbRead('englishSessions'), fbRead('matrix')
+      var [plannerDocs, hubDocs, tripDocs, vaultDocs, sessionDocs, matrixDocs, journeyDocs, refDocs] = await Promise.all([
+        fbRead('planner'), fbRead('finance_hub'), fbRead('trips'), fbRead('vaultExpressions'),
+        fbRead('englishSessions'), fbRead('matrix'), fbRead('journey'), fbRead('refCards')
       ]);
       var plannerRows = plannerDocs.map(function(d){ return objToRow('planner', d); });
       var hubRows = hubDocs.map(function(d){ return objToRow('finance_hub', d); });
 
-      // Expression (from English sessions)
+      // 기존 카드들
       renderDashExpr(sessionDocs);
-      // Today schedule
-      renderDashSchedule(plannerRows, todayStr, tripDocs);
-      // Week
       renderDashWeek(plannerRows, now, todayStr);
-      // Travel
       renderDashTravel(tripDocs, todayStr);
-      // Vacation (pass cached matrix)
       renderDashVacation(matrixDocs);
-      // Vault stats
       renderDashVaultStats(vaultDocs, now);
-      // Finance
       renderDashFinance(hubRows);
+
+      // ─── 새 미니 카드들 ───
+      renderDashMiniEvents(plannerRows, todayStr);
+      renderDashMiniTrip(tripDocs, journeyDocs, todayStr);
+      renderDashMiniWorks();
+      renderDashFxWidget(tripDocs, journeyDocs);
+      renderDashBizSchedule(plannerRows, now);
+      renderDashRecentMemos(refDocs);
+
+      // ─── AI 데일리 브리프 (자동, 24h 캐시) ───
+      generateDailyBrief(false, { plannerRows: plannerRows, hubRows: hubRows, tripDocs: tripDocs, journeyDocs: journeyDocs });
     } catch(err) { console.error('Dashboard load error:', err); }
   }
 
@@ -12621,12 +12698,375 @@
       if(type==='수입') income+=amt;
       else if(type==='지출') expense+=amt;
     });
-    document.getElementById('dash-income').textContent = Math.round(income).toLocaleString('ko-KR') + '만';
-    document.getElementById('dash-expense').textContent = Math.round(expense).toLocaleString('ko-KR') + '만';
+    var inEl = document.getElementById('dash-income');
+    var exEl = document.getElementById('dash-expense');
+    var netEl = document.getElementById('dash-net');
+    if (inEl) inEl.textContent = '₩' + Math.round(income).toLocaleString('ko-KR') + '만';
+    if (exEl) exEl.textContent = '₩' + Math.round(expense).toLocaleString('ko-KR') + '만';
     var net = income - expense;
-    document.getElementById('dash-net').textContent = (net>=0?'+':'') + Math.abs(Math.round(net)).toLocaleString('ko-KR') + '만';
-    document.getElementById('dash-net').style.color = net >= 0 ? '#6b38d4' : '#ba1a1a';
+    if (netEl) {
+      netEl.textContent = (net>=0?'+':'-') + '₩' + Math.abs(Math.round(net)).toLocaleString('ko-KR') + '만';
+      netEl.style.color = net >= 0 ? '#6b38d4' : '#dc2626';
+    }
   }
+
+  // ─── 미니 카드: 오늘 일정 (4-col grid 안) ───
+  function renderDashMiniEvents(plannerRows, todayStr) {
+    var todayEvents = plannerRows.filter(function(r){ return (r[0]||'').toString() === todayStr; });
+    todayEvents.sort(function(a,b){ return (a[1]||'').localeCompare(b[1]||''); });
+    var cntEl = document.getElementById('dash-mini-events-count');
+    var listEl = document.getElementById('dash-mini-events');
+    if (cntEl) cntEl.textContent = todayEvents.length;
+    if (listEl) {
+      if (todayEvents.length === 0) {
+        listEl.innerHTML = '<span class="text-slate-400 italic">일정 없음</span>';
+      } else {
+        listEl.innerHTML = todayEvents.slice(0,3).map(function(r){
+          var safe = String(r[1]||'').replace(/</g,'&lt;').slice(0,30);
+          return '<div class="truncate">▸ ' + safe + '</div>';
+        }).join('') + (todayEvents.length > 3 ? '<div class="text-slate-400">+' + (todayEvents.length-3) + '개</div>' : '');
+      }
+    }
+  }
+
+  // ─── 미니 카드: 다음 여행 D-day + 사전예약 ───
+  function renderDashMiniTrip(tripDocs, journeyDocs, todayStr) {
+    var trips = (tripDocs||[]).slice().sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); });
+    var next = trips.find(function(t){ return (t.start_date||'') >= todayStr; });
+    var nameEl = document.getElementById('dash-mini-trip-name');
+    var ddayEl = document.getElementById('dash-mini-trip-dday');
+    var extraEl = document.getElementById('dash-mini-trip-extra');
+    if (!next) {
+      if (nameEl) nameEl.textContent = '예정 여행 없음';
+      if (ddayEl) { ddayEl.textContent = '—'; ddayEl.className = 'text-[10px] text-slate-400'; }
+      if (extraEl) extraEl.innerHTML = '';
+      return;
+    }
+    if (nameEl) nameEl.textContent = next.name || '—';
+    var diffDays = Math.ceil((new Date(next.start_date) - new Date(todayStr)) / 86400000);
+    if (ddayEl) ddayEl.textContent = diffDays === 0 ? 'D-Day' : 'D-' + diffDays;
+    // 사전 예약 / 결제일 임박 계산
+    var tripJourneys = (journeyDocs||[]).filter(function(j){ return j.trip_id === next._id; });
+    var prebookCount = tripJourneys.filter(function(j){
+      if (j.type !== '일정') return false;
+      var combo = ((j.title||'') + ' ' + (j.description||''));
+      return j.prebook === true || j.reservation === true || /사전\s*예약|예약\s*필수|예매\s*필수/i.test(combo);
+    }).length;
+    var unpaidCount = tripJourneys.filter(function(j){
+      return (j.type === '숙소' || j.type === '항공편' || j.type === '렌트카') && j.payment_status === '결제 예정';
+    }).length;
+    if (extraEl) {
+      var parts = [];
+      if (prebookCount > 0) parts.push('<div>📋 사전예약 ' + prebookCount + '건</div>');
+      if (unpaidCount > 0) parts.push('<div>💳 결제예정 ' + unpaidCount + '건</div>');
+      extraEl.innerHTML = parts.join('') || '<div class="text-slate-400">준비 완료 ✓</div>';
+    }
+  }
+
+  // ─── 미니 카드: 작품 진행 (Series Timeline 연동) ───
+  function renderDashMiniWorks() {
+    if (typeof loadWorks === 'function') loadWorks();
+    var works = (typeof _works !== 'undefined' && _works) ? _works.filter(function(w){ return w.status === 'confirmed'; }) : [];
+    var todayStr = new Date().toISOString().split('T')[0];
+    // 마감 임박: 30일 내 종료
+    var deadlineSoon = works.filter(function(w){
+      if (!w.publish_end) return false;
+      var diff = Math.ceil((new Date(w.publish_end) - new Date(todayStr)) / 86400000);
+      return diff >= 0 && diff <= 30;
+    });
+    // 현재 연재 중
+    var ongoing = works.filter(function(w){
+      return w.publish_start && w.publish_end && w.publish_start <= todayStr && w.publish_end >= todayStr;
+    });
+    var cntEl = document.getElementById('dash-mini-works-count');
+    var listEl = document.getElementById('dash-mini-works');
+    if (cntEl) cntEl.textContent = ongoing.length;
+    if (listEl) {
+      var parts = [];
+      if (deadlineSoon.length) parts.push('<div class="text-rose-500">⏰ 마감임박 ' + deadlineSoon.length + '개</div>');
+      if (ongoing.length) {
+        ongoing.slice(0,2).forEach(function(w){
+          parts.push('<div class="truncate">▸ ' + String(w.title||'').replace(/</g,'&lt;').slice(0,16) + '</div>');
+        });
+      } else if (deadlineSoon.length === 0) {
+        parts.push('<span class="text-slate-400 italic">연재 작품 없음</span>');
+      }
+      listEl.innerHTML = parts.join('');
+    }
+  }
+
+  // ─── 환율 위젯: 여행 통화 자동 감지 + 어제 대비 변동 ───
+  async function renderDashFxWidget(tripDocs, journeyDocs) {
+    var listEl = document.getElementById('dash-fx-list');
+    var updEl = document.getElementById('dash-fx-updated');
+    if (!listEl) return;
+    // 여행 통화 자동 추출 (journey의 price_original / deposit / rental_deposit 등에서)
+    var currencies = {};
+    (journeyDocs||[]).forEach(function(j){
+      ['amount','deposit','rental_deposit','notes','description'].forEach(function(field){
+        var v = j[field];
+        if (!v) return;
+        var matches = String(v).match(/(EUR|USD|GBP|JPY|CNY|CHF|AUD|CAD|HKD|SGD|THB|NZD)/gi);
+        if (matches) matches.forEach(function(c){ currencies[c.toUpperCase()] = true; });
+      });
+    });
+    // 기본값: 진행중/예정 트립 국가 추정 (없으면 주요 통화 5개)
+    if (Object.keys(currencies).length === 0) {
+      ['EUR','USD','JPY','GBP'].forEach(function(c){ currencies[c] = true; });
+    }
+    var ccyList = Object.keys(currencies).slice(0, 5); // 최대 5개
+
+    var html = '';
+    for (var i = 0; i < ccyList.length; i++) {
+      var ccy = ccyList[i];
+      try {
+        var todayRate = await _fetchKrwRate(ccy);
+        if (!todayRate) continue;
+        // 어제 환율 (localStorage 캐시 또는 시뮬레이션)
+        var yesterdayKey = 'atelier_fx_yest_' + ccy;
+        var yesterdayRate = 0;
+        try {
+          var cached = JSON.parse(localStorage.getItem(yesterdayKey));
+          // 캐시가 24시간 이상 된 경우만 어제 값으로 사용
+          if (cached && cached.rate && (Date.now() - cached.fetchedAt > 12*3600000)) {
+            yesterdayRate = cached.rate;
+          }
+        } catch(e){}
+        // 오늘 환율을 어제 슬롯에 저장 (다음에 비교용)
+        if (!yesterdayRate || (Date.now() - JSON.parse(localStorage.getItem(yesterdayKey)||'{}').fetchedAt > 12*3600000)) {
+          localStorage.setItem(yesterdayKey, JSON.stringify({ rate: todayRate, fetchedAt: Date.now() }));
+        }
+        var diff = yesterdayRate ? (todayRate - yesterdayRate) : 0;
+        var diffPct = yesterdayRate ? ((diff / yesterdayRate) * 100).toFixed(2) : '0.00';
+        var diffColor = diff > 0 ? 'text-rose-500' : (diff < 0 ? 'text-emerald-500' : 'text-slate-400');
+        var diffIcon = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
+        html += '<div class="flex items-center justify-between text-[11px] py-1 border-b border-slate-50 last:border-b-0">' +
+          '<span class="font-bold text-slate-700">' + ccy + '</span>' +
+          '<span class="font-bold text-slate-900">₩' + todayRate.toLocaleString('ko-KR') + '</span>' +
+          '<span class="' + diffColor + ' font-bold w-16 text-right">' + (yesterdayRate ? diffIcon + ' ' + Math.abs(diff).toLocaleString('ko-KR') + ' (' + (diff>=0?'+':'') + diffPct + '%)' : '<span class="text-slate-300 italic text-[9px]">변동 추적 중</span>') + '</span>' +
+        '</div>';
+      } catch(e) { console.warn('[fx widget]', ccy, e); }
+    }
+    listEl.innerHTML = html || '<div class="text-[10px] text-slate-400 italic">환율 정보 없음</div>';
+    if (updEl) {
+      var now = new Date();
+      updEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ' 갱신';
+    }
+  }
+
+  // ─── 회사·업무 일정 (planner 카테고리=업무) ───
+  function renderDashBizSchedule(plannerRows, now) {
+    var listEl = document.getElementById('dash-biz-list');
+    var cntEl = document.getElementById('dash-biz-count');
+    if (!listEl) return;
+    // 이번 주 ~ 다음 주 (14일 범위)
+    var todayStr = now.toISOString().split('T')[0];
+    var weekLater = new Date(now); weekLater.setDate(weekLater.getDate() + 14);
+    var weekLaterStr = weekLater.toISOString().split('T')[0];
+    var bizEvents = plannerRows.filter(function(r){
+      var date = (r[0]||'').toString();
+      var cat = (r[2]||'').toString();
+      if (date < todayStr || date > weekLaterStr) return false;
+      // 카테고리 매칭: 업무, 회사, 출장, 야근
+      if (!/업무|회사|출장|야근|미팅|meeting|work/i.test(cat) && !/야근|출장|미팅|회의/i.test(r[1]||'')) return false;
+      return true;
+    });
+    bizEvents.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+    if (cntEl) cntEl.textContent = bizEvents.length > 0 ? bizEvents.length + '건' : '';
+    if (bizEvents.length === 0) {
+      listEl.innerHTML = '<div class="text-[10px] text-slate-400 italic">2주 이내 업무 일정 없음 ✓</div>';
+      return;
+    }
+    listEl.innerHTML = bizEvents.slice(0, 6).map(function(r){
+      var date = (r[0]||'').toString();
+      var title = String(r[1]||'').replace(/</g,'&lt;').slice(0,30);
+      var cat = (r[2]||'');
+      var dateShort = date.substring(5).replace('-','/');
+      var dayDiff = Math.ceil((new Date(date) - new Date(todayStr)) / 86400000);
+      var dlbl = dayDiff === 0 ? '오늘' : (dayDiff === 1 ? '내일' : 'D-' + dayDiff);
+      var catColor = /야근/i.test(cat+title) ? 'bg-rose-100 text-rose-700' :
+                     /출장/i.test(cat+title) ? 'bg-amber-100 text-amber-700' :
+                     'bg-sky-100 text-sky-700';
+      return '<div class="flex items-center gap-2 py-1 border-b border-slate-50 last:border-b-0">' +
+        '<span class="text-[9px] font-bold w-12 ' + catColor + ' px-1.5 py-0.5 rounded text-center">' + dlbl + '</span>' +
+        '<span class="flex-1 truncate text-slate-700">' + title + '</span>' +
+        '<span class="text-[10px] text-slate-400 font-medium">' + dateShort + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ─── 최근 메모 (refCards) ───
+  function renderDashRecentMemos(refDocs) {
+    var listEl = document.getElementById('dash-memo-list');
+    if (!listEl) return;
+    var memos = (refDocs||[]).slice().sort(function(a,b){
+      var ta = (a.updatedAt||a.createdAt||'').toString();
+      var tb = (b.updatedAt||b.createdAt||'').toString();
+      return tb.localeCompare(ta);
+    });
+    if (memos.length === 0) {
+      listEl.innerHTML = '<div class="text-[10px] text-slate-400 italic">메모 없음</div>';
+      return;
+    }
+    listEl.innerHTML = memos.slice(0, 4).map(function(m){
+      var title = String(m.title||'(제목 없음)').replace(/</g,'&lt;').slice(0,28);
+      var pin = m.pinned ? '<span class="material-symbols-outlined text-amber-500" style="font-size:11px">push_pin</span>' : '';
+      return '<div class="flex items-center gap-1.5 truncate"><span class="text-slate-400">▸</span>' + pin + '<span class="truncate text-slate-700">' + title + '</span></div>';
+    }).join('');
+  }
+
+  // ─── AI 데일리 브리프 (Claude API, 24h 캐시) ───
+  async function generateDailyBrief(forceRefresh, prefetched) {
+    var contentEl = document.getElementById('dash-brief-content');
+    var statusEl = document.getElementById('dash-brief-status');
+    if (!contentEl) return;
+    var todayKey = 'atelier_brief_' + new Date().toISOString().split('T')[0];
+    // 캐시 확인 (오늘자)
+    if (!forceRefresh) {
+      try {
+        var cached = JSON.parse(localStorage.getItem(todayKey));
+        if (cached && cached.html) {
+          contentEl.innerHTML = cached.html;
+          if (statusEl) statusEl.textContent = '캐시 · ' + (cached.time||'');
+          return;
+        }
+      } catch(e){}
+    }
+    // API 키 확인
+    var apiKey = localStorage.getItem('atelier_anthropic_api_key');
+    if (!apiKey) {
+      contentEl.innerHTML = '<div class="text-[11px] text-slate-500">⚙️ AI 브리프를 보려면 <button onclick="openApiSettingsModal()" class="underline font-bold text-violet-700">API 키 설정</button>이 필요해요.</div>';
+      return;
+    }
+    // 로딩
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>';
+    if (statusEl) statusEl.textContent = '생성 중';
+
+    // 데이터 수집 (prefetched 있으면 재사용)
+    var p = prefetched || {};
+    try {
+      if (!p.plannerRows) {
+        var [pd, jd, td, hd] = await Promise.all([fbRead('planner'), fbRead('journey'), fbRead('trips'), fbRead('finance_hub')]);
+        p.plannerRows = pd.map(function(d){ return objToRow('planner', d); });
+        p.journeyDocs = jd; p.tripDocs = td;
+        p.hubRows = hd.map(function(d){ return objToRow('finance_hub', d); });
+      }
+      var todayStr = new Date().toISOString().split('T')[0];
+      var dayLater = new Date(); dayLater.setDate(dayLater.getDate() + 14);
+      var horizonStr = dayLater.toISOString().split('T')[0];
+
+      // 다음 여행
+      var nextTrip = (p.tripDocs||[]).slice().sort(function(a,b){return (a.start_date||'').localeCompare(b.start_date||'');})
+        .find(function(t){return (t.start_date||'') >= todayStr;});
+      var tripSummary = nextTrip ? (nextTrip.name + ' (D-' + Math.ceil((new Date(nextTrip.start_date)-new Date(todayStr))/86400000) + ')') : '없음';
+
+      // 사전 예약 / 결제 예정
+      var prebookCount = 0, unpaidCount = 0;
+      var prebookList = [];
+      (p.journeyDocs||[]).forEach(function(j){
+        if (!nextTrip || j.trip_id !== nextTrip._id) return;
+        if (j.type === '일정') {
+          var combo = ((j.title||'') + ' ' + (j.description||''));
+          if (j.prebook === true || j.reservation === true || /사전\s*예약|예약\s*필수/i.test(combo)) {
+            prebookCount++;
+            if (prebookList.length < 5) prebookList.push((j.title||'').slice(0,30) + ' (' + (j.date||'') + ')');
+          }
+        }
+        if ((j.type === '숙소' || j.type === '항공편' || j.type === '렌트카') && j.payment_status === '결제 예정') unpaidCount++;
+      });
+
+      // 이번 주 일정 + 업무
+      var thisWeek = (p.plannerRows||[]).filter(function(r){
+        return (r[0]||'').toString() >= todayStr && (r[0]||'').toString() <= horizonStr;
+      });
+      var bizEvents = thisWeek.filter(function(r){
+        var combo = (r[2]||'') + ' ' + (r[1]||'');
+        return /업무|회사|출장|야근|미팅|회의/i.test(combo);
+      });
+
+      // 작품
+      if (typeof loadWorks === 'function') loadWorks();
+      var works = (typeof _works !== 'undefined' && _works) ? _works.filter(function(w){return w.status==='confirmed';}) : [];
+      var deadlineSoon = works.filter(function(w){
+        if (!w.publish_end) return false;
+        var diff = Math.ceil((new Date(w.publish_end) - new Date(todayStr)) / 86400000);
+        return diff >= 0 && diff <= 30;
+      });
+
+      // 이번 달 재정
+      var income=0, expense=0;
+      (p.hubRows||[]).forEach(function(r){
+        var amt = parseFloat(r[3])||0;
+        if (r[4] === '수입') income += amt;
+        else if (r[4] === '지출') expense += amt;
+      });
+      var balance = income - expense;
+
+      // Claude에 보낼 요약
+      var summary = '날짜: ' + todayStr + '\n\n';
+      summary += '【다음 여행】 ' + tripSummary + '\n';
+      if (prebookCount) summary += '사전 예약 필요: ' + prebookCount + '건 (' + prebookList.join(', ') + ')\n';
+      if (unpaidCount) summary += '결제 예정: ' + unpaidCount + '건\n';
+      summary += '\n【이번 주 일정】 총 ' + thisWeek.length + '건';
+      if (bizEvents.length) summary += ' (업무/야근/출장 ' + bizEvents.length + '건)';
+      summary += '\n';
+      if (bizEvents.length) {
+        summary += bizEvents.slice(0,5).map(function(r){ return '  - ' + r[0] + ' ' + (r[1]||''); }).join('\n') + '\n';
+      }
+      summary += '\n【작품】 연재 중 ' + works.length + '개';
+      if (deadlineSoon.length) summary += ', 30일 내 마감 ' + deadlineSoon.length + '건';
+      summary += '\n';
+      if (deadlineSoon.length) {
+        summary += deadlineSoon.slice(0,3).map(function(w){ return '  - ' + w.title + ' (마감 ' + w.publish_end + ')'; }).join('\n') + '\n';
+      }
+      summary += '\n【이번 달 재정】 수입 ' + income + '만, 지출 ' + expense + '만, 잔액 ' + balance + '만\n';
+
+      var prompt = '당신은 사용자의 개인 비서입니다. 아래 데이터를 보고 사용자가 오늘/이번 주에 가장 신경 써야 할 가장 중요한 3-5개 항목을 한국어 친근한 톤으로 알려주세요.\n\n' +
+        '규칙:\n' +
+        '- 마크다운 문법(#, *, **) 절대 사용 금지 — 일반 텍스트로\n' +
+        '- 각 항목은 짧고 행동 지향적으로 (예: "오늘 R 24화 퇴고 마감")\n' +
+        '- 이모지 1개씩 시작 (⚡⏰💰✈️📋 등)\n' +
+        '- 4줄 이내, 각 줄은 30자 이내\n' +
+        '- HTML 태그 사용 가능: <div>, <strong>, <span class="text-rose-600">\n' +
+        '- 우선순위 높은 것부터\n\n' +
+        '데이터:\n' + summary + '\n\n응답:';
+
+      var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
+      // brief는 항상 빠른 sonnet 사용
+      if (model.indexOf('opus') >= 0) model = 'claude-sonnet-4-6';
+
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: model,
+          max_tokens: 600,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      var text = (data.content && data.content[0] && data.content[0].text || '').trim();
+      // 줄바꿈을 <div>로 변환
+      var lines = text.split('\n').filter(function(l){ return l.trim(); });
+      var html = lines.map(function(l){ return '<div class="py-0.5">' + l + '</div>'; }).join('');
+      contentEl.innerHTML = html;
+      var now = new Date();
+      var timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      try { localStorage.setItem(todayKey, JSON.stringify({ html: html, time: timeStr })); } catch(e){}
+      if (statusEl) statusEl.textContent = timeStr + ' 생성';
+    } catch(e) {
+      console.error('[Daily Brief]', e);
+      contentEl.innerHTML = '<div class="text-[11px] text-rose-600">⚠️ 브리프 생성 실패: ' + (e.message||'알 수 없는 오류') + '. <button onclick="generateDailyBrief(true)" class="underline font-bold ml-1">재시도</button></div>';
+      if (statusEl) statusEl.textContent = '실패';
+    }
+  }
+  window.generateDailyBrief = generateDailyBrief;
 
   let dashMilestones = []; // 캐시
 
