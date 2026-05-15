@@ -8264,19 +8264,19 @@
         return false;
       });
       if (souvenirs.length > 0) {
-        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border-left-color:#10b981">' +
+        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#fff7ed,#fffbeb);border-left-color:#f97316">' +
           '<div class="flex items-center gap-2 mb-2">' +
-            '<span class="material-symbols-outlined text-emerald-600" style="font-size:18px">shopping_bag</span>' +
-            '<span class="text-[10px] font-black uppercase tracking-widest text-emerald-700">이 날 / 이 도시 쇼핑</span>' +
+            '<span class="material-symbols-outlined text-orange-600" style="font-size:18px">shopping_bag</span>' +
+            '<span class="text-[10px] font-black uppercase tracking-widest text-orange-700">이 날 / 이 도시 쇼핑</span>' +
           '</div>' +
           '<ul class="space-y-2">' +
             souvenirs.map(function(s){
               var titleSafe = String(s.title||'').replace(/</g,'&lt;');
               var descSafe = String(s.description||'').replace(/</g,'&lt;');
-              var price = s.amount ? ' <span class="text-[10px] text-emerald-600 font-bold">€' + s.amount + '</span>' : '';
+              var price = s.amount ? ' <span class="text-[10px] text-orange-600 font-bold">€' + s.amount + '</span>' : '';
               var titlePart = titleSafe ? '<span class="font-bold text-slate-900">' + titleSafe + '</span>' : '';
               var descPart = descSafe ? '<span class="text-slate-600"> — ' + descSafe + '</span>' : '';
-              return '<li class="text-[12px] leading-snug pl-3 border-l-2 border-emerald-200">' + titlePart + descPart + price + '</li>';
+              return '<li class="text-[12px] leading-snug pl-3 border-l-2 border-orange-200">' + titlePart + descPart + price + '</li>';
             }).join('') +
           '</ul>' +
         '</div>';
@@ -8317,13 +8317,13 @@
       var isSouvenir = (item.type === '기념품');
       var pinned = !isSouvenir && isPinnedItem(item);
       var reserv = !isSouvenir && isReservationItem(item);
-      // 우선순위: 기념품(보라) > 예약(핑크) > 시간고정(민트) > 일반
+      // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반
       var dotColor, timeColor, cardBg, badgeHtml;
       if (isSouvenir) {
-        dotColor = 'bg-purple-500';
-        timeColor = 'text-purple-700';
-        cardBg = 'bg-purple-50 border-purple-300 hover:border-purple-500';
-        badgeHtml = ' <span class="text-[9px] font-bold px-1.5 bg-purple-200 text-purple-800 rounded ml-1">🛍 쇼핑</span>';
+        dotColor = 'bg-orange-500';
+        timeColor = 'text-orange-700';
+        cardBg = 'bg-orange-50 border-orange-300 hover:border-orange-500';
+        badgeHtml = ' <span class="text-[9px] font-bold px-1.5 bg-orange-200 text-orange-800 rounded ml-1">🛍 쇼핑</span>';
       } else if (reserv) {
         dotColor = 'bg-rose-500';
         timeColor = 'text-rose-700';
@@ -8902,19 +8902,19 @@
         return false;
       });
       if (sourceSouvenirs.length > 0) {
-        miniPanelHtml += '<div class="mb-2 p-2.5 rounded-lg border-l-[3px]" style="background:#ecfdf5;border-left-color:#10b981">' +
+        miniPanelHtml += '<div class="mb-2 p-2.5 rounded-lg border-l-[3px]" style="background:#fff7ed;border-left-color:#f97316">' +
           '<div class="flex items-center gap-1.5 mb-1.5">' +
-            '<span class="material-symbols-outlined text-emerald-600" style="font-size:13px">shopping_bag</span>' +
-            '<span class="text-[9px] font-black uppercase tracking-widest text-emerald-700">쇼핑 ' + sourceSouvenirs.length + '개 (장소 자유)</span>' +
+            '<span class="material-symbols-outlined text-orange-600" style="font-size:13px">shopping_bag</span>' +
+            '<span class="text-[9px] font-black uppercase tracking-widest text-orange-700">쇼핑 ' + sourceSouvenirs.length + '개 (장소 자유)</span>' +
           '</div>' +
           '<ul class="space-y-1.5">' +
             sourceSouvenirs.map(function(s){
               var titleSafe = String(s.title||'').replace(/</g,'&lt;');
               var descSafe = String(s.description||'').replace(/</g,'&lt;');
-              var price = s.amount ? ' <span class="text-[10px] text-emerald-600 font-bold">€' + s.amount + '</span>' : '';
+              var price = s.amount ? ' <span class="text-[10px] text-orange-600 font-bold">€' + s.amount + '</span>' : '';
               var titlePart = titleSafe ? '<span class="font-bold text-slate-900">' + titleSafe + '</span>' : '';
               var descPart = descSafe ? '<span class="text-slate-600"> — ' + descSafe + '</span>' : '';
-              return '<li class="text-[11px] leading-snug pl-2 border-l border-emerald-200">' + titlePart + descPart + price + '</li>';
+              return '<li class="text-[11px] leading-snug pl-2 border-l border-orange-200">' + titlePart + descPart + price + '</li>';
             }).join('') +
           '</ul>' +
         '</div>';
@@ -8989,11 +8989,11 @@
                 cityChip = '<span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 mr-1.5 align-middle">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
               }
             }
-            // 우선순위: 기념품(보라) > 예약(핑크) > 시간고정(민트) > 일반
+            // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반
             var itemBg, timeC, badge;
             if (isSouvenir) {
-              itemBg = 'bg-purple-50 border-l-[3px] border-purple-400 -ml-2 pl-3 pr-2';
-              timeC = 'text-purple-700';
+              itemBg = 'bg-orange-50 border-l-[3px] border-orange-400 -ml-2 pl-3 pr-2';
+              timeC = 'text-orange-700';
               badge = ' <span class="text-[10px] ml-0.5">🛍</span>';
             } else if (reserv) {
               itemBg = 'bg-rose-50 border-l-[3px] border-rose-400 -ml-2 pl-3 pr-2';
