@@ -1687,109 +1687,139 @@
   <div id="page-dashboard" class="page dashboard-page" style="display:block">
     <div class="page-content-wrap max-w-[1280px] mx-auto" style="padding:24px;display:flex;flex-direction:column;gap:24px;">
 
-      <!-- ═══════ Hero: Today's Brief (full width, Stitch-style) ═══════ -->
+      <!-- ═══════ Hero: Greeting + Today's Brief (Stitch Immersive + Bento combined) ═══════ -->
       <section>
-        <div id="dash-brief-card" class="dash-hero">
-          <div class="flex justify-between items-start gap-4 mb-6 flex-wrap">
-            <div class="flex items-center gap-3">
-              <div style="padding:10px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:12px;color:#ffffff;box-shadow:0 4px 12px rgba(124,58,237,0.2);">
-                <span class="material-symbols-outlined" style="font-size:22px">auto_awesome</span>
-              </div>
-              <div>
-                <p class="dash-label" style="color:#7c3aed;margin-bottom:4px;">Today's Brief</p>
-                <h2 id="dash-brief-date" class="dash-headline-lg"></h2>
-              </div>
+        <div id="dash-brief-card" style="background:linear-gradient(135deg,#f3e8ff 0%,#fae8ff 50%,#fce7f3 100%);border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(124,58,237,0.06);border:1px solid #e9d5ff;position:relative;overflow:hidden;">
+          <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.08),transparent 70%);border-radius:50%;pointer-events:none;"></div>
+          <!-- Top: greeting + info chips -->
+          <div class="flex justify-between items-start gap-4 mb-5 flex-wrap" style="position:relative;z-index:10;">
+            <div style="flex:1;min-width:260px;">
+              <p class="dash-label" style="color:#7c3aed;margin-bottom:6px;">Overview</p>
+              <h2 id="dash-greeting" class="dash-headline-lg" style="margin-bottom:6px;">안녕하세요.</h2>
+              <p id="dash-brief-date" style="font-size:15px;color:#4a4455;font-weight:500;"></p>
             </div>
-            <div class="flex items-center gap-2">
-              <span id="dash-brief-status" style="font-size:11px;color:#7b7487;"></span>
-              <button onclick="generateDailyBrief(true)" class="p-2 rounded-lg hover:bg-slate-50 text-violet-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:20px">refresh</span></button>
+            <div class="flex items-stretch gap-2.5 flex-wrap">
+              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+                <p class="dash-label" style="color:#7c3aed;margin-bottom:4px;font-size:10px;">오늘 일정</p>
+                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">건</span></p>
+              </div>
+              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+                <p class="dash-label" style="color:#ec4899;margin-bottom:4px;font-size:10px;">작품 진행</p>
+                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size:13px;font-weight:600;color:#7b7487;">개</span></p>
+              </div>
+              <div style="background:rgba(255,255,255,0.9);border-radius:16px;padding:12px 18px;min-width:96px;text-align:center;box-shadow:0 2px 8px rgba(124,58,237,0.06);">
+                <p class="dash-label" style="color:#f59e0b;margin-bottom:4px;font-size:10px;">연차</p>
+                <p style="font-size:22px;font-weight:700;color:#121c2a;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size:13px;font-weight:600;color:#7b7487;">일</span></p>
+              </div>
             </div>
           </div>
-          <div id="dash-brief-content" style="color:#4a4455;font-size:15px;line-height:1.7;">
-            <div class="flex items-center gap-2" style="color:#7b7487;"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>
+          <!-- Bottom: AI brief content -->
+          <div style="position:relative;z-index:10;background:rgba(255,255,255,0.55);border-radius:16px;padding:18px 22px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.7);">
+            <div class="flex justify-between items-start mb-2">
+              <p class="dash-label" style="color:#7c3aed;">Today's Brief</p>
+              <div class="flex items-center gap-1.5">
+                <span id="dash-brief-status" style="font-size:10px;color:#7b7487;"></span>
+                <button onclick="generateDailyBrief(true)" class="p-1 rounded hover:bg-violet-50 transition-colors" style="color:#7c3aed;" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button>
+              </div>
+            </div>
+            <div id="dash-brief-content" style="color:#27313f;font-size:14px;line-height:1.7;font-family:'Pretendard',sans-serif">
+              <div class="flex items-center gap-2" style="color:#7b7487;"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ═══════ Bento Grid: 4-card row ═══════ -->
+      <!-- ═══════ Bento Grid: 4-card row (통일된 구조) ═══════ -->
+      <!-- 모든 카드 통일 규칙:
+           - 좌측 상단: 아이콘 박스 (8px pad, 10px radius)
+           - 우측 상단: 라벨 (11px, slate-500, uppercase tracked)
+           - 본문 1: 메인 타이틀 (13px, slate-500, 일관)
+           - 본문 2: 메인 값/콘텐츠 (Pretendard, 18px bold slate-900)
+           - 하단: 보조 정보 (12px slate-600) -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <!-- 이번 달 재정 -->
-        <div class="dash-card clickable flex flex-col justify-between" style="min-height:170px;" onclick="navigate('income')">
-          <div class="flex justify-between items-start mb-3">
-            <div style="padding:8px;background:#dcfce7;border-radius:10px;color:#15803d;">
-              <span class="material-symbols-outlined">trending_up</span>
+        <div class="dash-card clickable flex flex-col" style="min-height:180px;" onclick="navigate('income')">
+          <div class="flex justify-between items-start mb-4">
+            <div style="padding:8px;background:#dcfce7;border-radius:10px;color:#15803d;display:flex;">
+              <span class="material-symbols-outlined" style="font-size:20px">trending_up</span>
             </div>
-            <span style="font-size:11px;color:#7b7487;">이번 달</span>
+            <span class="dash-label" style="color:#7b7487;font-size:10px;">이번 달</span>
           </div>
-          <div>
-            <h3 style="font-size:13px;font-weight:500;color:#7b7487;margin-bottom:4px;">재정 순익</h3>
-            <p id="dash-net" style="font-size:24px;font-weight:700;color:#121c2a;line-height:1.3;font-family:'Pretendard',sans-serif">₩0</p>
-          </div>
-          <div style="margin-top:14px;padding-top:14px;border-top:1px solid #d9e3f6;font-size:12px;display:flex;flex-direction:column;gap:4px;font-family:'Pretendard',sans-serif">
+          <h3 style="font-size:13px;font-weight:500;color:#7b7487;margin-bottom:6px;">재정 순익</h3>
+          <p id="dash-net" style="font-size:22px;font-weight:700;color:#121c2a;line-height:1.2;font-family:'Pretendard',sans-serif">₩0</p>
+          <div style="margin-top:auto;padding-top:14px;border-top:1px solid #d9e3f6;font-size:12px;display:flex;flex-direction:column;gap:4px;font-family:'Pretendard',sans-serif">
             <div class="flex justify-between"><span style="color:#7b7487">수입</span><span id="dash-income" style="font-weight:700;color:#15803d">₩0</span></div>
             <div class="flex justify-between"><span style="color:#7b7487">지출</span><span id="dash-expense" style="font-weight:700;color:#dc2626">₩0</span></div>
           </div>
         </div>
 
-        <!-- 다음 여행 (gradient) -->
-        <div class="dash-card clickable relative overflow-hidden flex flex-col justify-between" style="min-height:170px;background:linear-gradient(135deg,#ffffff 0%,#eaddff 100%);" onclick="navigate('journey')">
-          <div style="position:absolute;right:-15px;bottom:-25px;font-size:130px;opacity:0.06;pointer-events:none;">✈️</div>
-          <div style="position:relative;z-index:10;">
-            <div class="flex justify-between items-start mb-3">
-              <div style="padding:8px;background:rgba(124,58,237,0.12);border-radius:10px;color:#7c3aed;">
-                <span class="material-symbols-outlined">flight_takeoff</span>
+        <!-- 다음 여행 -->
+        <div class="dash-card clickable relative overflow-hidden flex flex-col" style="min-height:180px;background:linear-gradient(135deg,#ffffff 0%,#f3e8ff 100%);" onclick="navigate('journey')">
+          <div style="position:absolute;right:-10px;bottom:-30px;font-size:120px;opacity:0.05;pointer-events:none;">✈️</div>
+          <div style="position:relative;z-index:10;display:flex;flex-direction:column;flex:1;">
+            <div class="flex justify-between items-start mb-4">
+              <div style="padding:8px;background:rgba(124,58,237,0.12);border-radius:10px;color:#7c3aed;display:flex;">
+                <span class="material-symbols-outlined" style="font-size:20px">flight_takeoff</span>
               </div>
+              <span id="dash-mini-trip-dday" class="dash-chip" style="font-size:11px;padding:3px 10px;">—</span>
             </div>
-            <h3 style="font-size:13px;font-weight:500;color:#7b7487;margin-bottom:4px;">다음 여행</h3>
-            <p id="dash-mini-trip-name" style="font-size:18px;font-weight:700;color:#121c2a;line-height:1.3;font-family:'Pretendard',sans-serif">—</p>
-            <span id="dash-mini-trip-dday" class="dash-chip mt-2">—</span>
-            <div id="dash-mini-trip-extra" style="margin-top:8px;font-size:12px;color:#4a4455;font-family:'Pretendard',sans-serif"></div>
+            <h3 style="font-size:13px;font-weight:500;color:#7b7487;margin-bottom:6px;">다음 여행</h3>
+            <p id="dash-mini-trip-name" style="font-size:18px;font-weight:700;color:#121c2a;line-height:1.2;font-family:'Pretendard',sans-serif">—</p>
+            <div id="dash-mini-trip-extra" style="margin-top:auto;padding-top:14px;font-size:12px;color:#4a4455;font-family:'Pretendard',sans-serif;display:flex;flex-direction:column;gap:4px;"></div>
           </div>
         </div>
 
         <!-- 작품 진행 -->
-        <div class="dash-card clickable" style="min-height:170px;" onclick="navigate('income')">
-          <div class="flex justify-between items-center mb-4">
-            <h3 style="font-size:13px;font-weight:600;color:#121c2a;">작품 진행</h3>
-            <span style="font-size:11px;color:#7b7487;"><span id="dash-mini-works-count">0</span>개 활성</span>
+        <div class="dash-card clickable flex flex-col" style="min-height:180px;" onclick="navigate('income')">
+          <div class="flex justify-between items-start mb-4">
+            <div style="padding:8px;background:#fef3c7;border-radius:10px;color:#d97706;display:flex;">
+              <span class="material-symbols-outlined" style="font-size:20px">edit_note</span>
+            </div>
+            <span class="dash-label" style="color:#7b7487;font-size:10px;"><span id="dash-mini-works-count">0</span>개 활성</span>
           </div>
-          <div id="dash-mini-works" style="display:flex;flex-direction:column;gap:14px;font-size:12px;font-family:'Pretendard',sans-serif"></div>
+          <h3 style="font-size:13px;font-weight:500;color:#7b7487;margin-bottom:6px;">작품 진행</h3>
+          <div id="dash-mini-works" style="font-size:13px;font-family:'Pretendard',sans-serif;display:flex;flex-direction:column;gap:6px;color:#27313f;flex:1;"></div>
         </div>
 
-        <!-- 오늘 일정 (PURPLE highlight — like Stitch's "Design Critique") -->
-        <div class="dash-card-primary flex flex-col justify-between" style="min-height:170px;" onclick="navigate('planner')">
-          <div style="position:absolute;right:-15px;bottom:-25px;opacity:0.12;pointer-events:none;">
+        <!-- 오늘 일정 (PURPLE highlight) -->
+        <div class="dash-card-primary flex flex-col" style="min-height:180px;padding:24px;" onclick="navigate('planner')">
+          <div style="position:absolute;right:-15px;bottom:-25px;opacity:0.1;pointer-events:none;">
             <span class="material-symbols-outlined" style="font-size:140px;color:#ffffff;">event</span>
           </div>
-          <div style="position:relative;z-index:10;display:flex;flex-direction:column;height:100%;gap:14px;">
-            <div class="flex justify-between items-start">
-              <h3 style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);">오늘 일정</h3>
-              <span style="font-size:13px;font-weight:700;color:#ffffff;"><span id="dash-mini-events-count">0</span>건</span>
+          <div style="position:relative;z-index:10;display:flex;flex-direction:column;flex:1;">
+            <div class="flex justify-between items-start mb-4">
+              <div style="padding:8px;background:rgba(255,255,255,0.18);border-radius:10px;color:#ffffff;display:flex;backdrop-filter:blur(4px);">
+                <span class="material-symbols-outlined" style="font-size:20px">today</span>
+              </div>
+              <span class="dash-label" style="color:rgba(255,255,255,0.85);font-size:10px;"><span id="dash-mini-events-count">0</span>건</span>
             </div>
-            <div id="dash-mini-events" style="background:rgba(255,255,255,0.12);padding:14px;border-radius:12px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);font-size:13px;line-height:1.5;color:#ffffff;flex:1;font-family:'Pretendard',sans-serif"></div>
+            <h3 style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);margin-bottom:6px;">오늘 일정</h3>
+            <div id="dash-mini-events" style="font-size:13px;font-family:'Pretendard',sans-serif;display:flex;flex-direction:column;gap:6px;color:#ffffff;flex:1;"></div>
           </div>
         </div>
       </section>
 
-      <!-- ═══════ Week Review + 2 News (3-col) ═══════ -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-        <!-- Week in Review -->
+      <!-- ═══════ Week in Review (full-width — 7-day cards need room) ═══════ -->
+      <section>
         <div class="dash-card">
           <div class="flex justify-between items-center mb-4">
-            <h3 style="font-size:13px;font-weight:600;color:#121c2a;">Week in Review</h3>
+            <h3 style="font-size:14px;font-weight:600;color:#121c2a;">Week in Review</h3>
             <span id="dash-week-range" style="font-size:11px;font-weight:700;color:#7c3aed;"></span>
           </div>
-          <div id="dash-week-grid" class="grid grid-cols-7 gap-1.5"></div>
+          <div id="dash-week-grid" class="grid grid-cols-7 gap-2"></div>
         </div>
+      </section>
+
+      <!-- ═══════ 2 News (2-col) ═══════ -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <!-- 국내 뉴스 -->
         <div class="dash-card">
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined" style="color:#7c3aed;font-size:20px">newspaper</span>
-              <h3 style="font-size:13px;font-weight:600;color:#121c2a;">🇰🇷 국내 (경제·정치)</h3>
+              <h3 style="font-size:14px;font-weight:600;color:#121c2a;">🇰🇷 국내 (경제·정치)</h3>
             </div>
             <span id="dash-news-kr-source" style="font-size:10px;color:#7b7487;">한겨레</span>
           </div>
@@ -1803,7 +1833,7 @@
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined" style="color:#635b6e;font-size:20px">public</span>
-              <h3 style="font-size:13px;font-weight:600;color:#121c2a;">🌐 World News (EN)</h3>
+              <h3 style="font-size:14px;font-weight:600;color:#121c2a;">🌐 World News (EN)</h3>
             </div>
             <span id="dash-news-en-source" style="font-size:10px;color:#7b7487;">BBC</span>
           </div>
@@ -12983,11 +13013,20 @@
   async function loadDashboard() {
     var now = new Date();
     var MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var DAY_KR = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
     var todayStr = now.toISOString().split('T')[0];
 
-    // 브리프 날짜
+    // 시간대별 인사말
+    var hour = now.getHours();
+    var greeting = hour < 6 ? '편안한 밤 보내세요.' :
+                   hour < 12 ? '좋은 아침이에요. ☀️' :
+                   hour < 18 ? '좋은 오후예요.' :
+                   '편안한 저녁이에요. 🌙';
+    var greetEl = document.getElementById('dash-greeting');
+    if (greetEl) greetEl.textContent = greeting;
+    // 브리프 날짜 (친근한 형식)
     var bdEl = document.getElementById('dash-brief-date');
-    if (bdEl) bdEl.textContent = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    if (bdEl) bdEl.textContent = now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 ' + DAY_KR[now.getDay()];
     // Footer
     var ft = document.getElementById('dash-footer');
     if (ft) ft.textContent = MONTHS_EN[now.getMonth()] + ' ' + now.getFullYear() + ' · Curating everyday moments';
@@ -13019,6 +13058,19 @@
 
       // ─── AI 데일리 브리프 (자동, 24h 캐시) ───
       generateDailyBrief(false, { plannerRows: plannerRows, hubRows: hubRows, tripDocs: tripDocs, journeyDocs: journeyDocs });
+
+      // ─── Hero stat 칩 미러링 (기존 카드 값을 hero에 복사) ───
+      setTimeout(function() {
+        var src1 = document.getElementById('dash-mini-events-count');
+        var dst1 = document.getElementById('dash-hero-events-count');
+        if (src1 && dst1) dst1.textContent = src1.textContent;
+        var src2 = document.getElementById('dash-mini-works-count');
+        var dst2 = document.getElementById('dash-hero-works-count');
+        if (src2 && dst2) dst2.textContent = src2.textContent;
+        var src3 = document.getElementById('dash-vac-remain');
+        var dst3 = document.getElementById('dash-hero-vac');
+        if (src3 && dst3) dst3.textContent = src3.textContent;
+      }, 200);
     } catch(err) { console.error('Dashboard load error:', err); }
   }
 
