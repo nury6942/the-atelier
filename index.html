@@ -4592,23 +4592,21 @@
         <button onclick="_setTrendPlatform('포스타입')" data-trend-platform="포스타입" class="trend-platform-tab px-3 py-2 rounded-t-lg text-xs font-bold transition-colors whitespace-nowrap">💖 포스타입 (2차창작)</button>
       </div>
 
-      <!-- 모드 선택 (5개) -->
+      <!-- 모드 선택 (3개로 정리) -->
       <div class="px-5 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3" style="font-family:'Pretendard',sans-serif">
-        <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (주 1회)</button>
-        <button onclick="_setTrendMode('general')" data-trend-mode="general" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">💡 플랫폼 일반 트렌드</button>
-        <button onclick="_setTrendMode('analyze-text')" data-trend-mode="analyze-text" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📝 인기작 텍스트 분석</button>
-        <button onclick="_setTrendMode('analyze-image')" data-trend-mode="analyze-image" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📸 스크린샷 분석</button>
+        <button onclick="_setTrendMode('auto')" data-trend-mode="auto" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📈 자동 트렌드 (포타 주 1회)</button>
+        <button onclick="_setTrendMode('analyze-text')" data-trend-mode="analyze-text" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">📝 직접 분석 (텍스트 + 스크린샷)</button>
         <button onclick="_setTrendMode('character')" data-trend-mode="character" class="trend-mode-tab px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">👥 2차창작 캐릭터·페어</button>
       </div>
 
       <!-- 입력 + 결과 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-0 flex-1 min-h-0">
         <!-- 입력 영역 -->
-        <div class="p-5 border-r border-slate-100 flex flex-col">
-          <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2" id="trend-input-label">입력</label>
-          <textarea id="trend-input" placeholder="여기에 입력..." spellcheck="false" class="flex-1 w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-[13px] outline-none focus:ring-2 focus:ring-orange-300 resize-none leading-relaxed" style="font-family:'Pretendard',sans-serif;min-height:280px"></textarea>
+        <div class="p-5 border-r border-slate-100 flex flex-col min-h-0">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 shrink-0" id="trend-input-label">입력</label>
+          <textarea id="trend-input" placeholder="여기에 입력..." spellcheck="false" class="flex-1 w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-[13px] outline-none focus:ring-2 focus:ring-orange-300 resize-none leading-relaxed min-h-0" style="font-family:'Pretendard',sans-serif"></textarea>
           <!-- 스크린샷 업로드 영역 (analyze-image 모드일 때만 보임) -->
-          <div id="trend-image-zone" class="hidden mt-3">
+          <div id="trend-image-zone" class="hidden mt-3 shrink-0">
             <div id="trend-image-drop" onclick="document.getElementById('trend-image-input').click()" class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-orange-300 hover:bg-orange-50/50 transition-all">
               <span class="material-symbols-outlined text-orange-400" style="font-size:24px">add_photo_alternate</span>
               <p class="text-xs text-slate-500 mt-1">베스트셀러 스크린샷 (PNG/JPG)</p>
@@ -4616,7 +4614,7 @@
             </div>
             <input id="trend-image-input" type="file" accept="image/*" class="hidden" onchange="_trendOnImageSelect(event)"/>
           </div>
-          <div class="mt-3 flex items-center justify-between">
+          <div class="mt-3 flex items-center justify-between shrink-0">
             <span id="trend-input-counter" class="text-[10px] text-slate-400">0자</span>
             <button id="trend-run-btn" onclick="_runTrendResearch()" class="px-5 py-2 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:opacity-90 transition-all" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">
               <span class="material-symbols-outlined" style="font-size:16px">analytics</span>
@@ -4625,19 +4623,19 @@
           </div>
         </div>
         <!-- 결과 영역 -->
-        <div class="p-5 flex flex-col bg-slate-50/50">
-          <div class="flex items-center justify-between mb-2">
+        <div class="p-5 flex flex-col bg-slate-50/50 min-h-0">
+          <div class="flex items-center justify-between mb-2 shrink-0">
             <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">분석 결과</label>
             <button id="trend-copy-btn" onclick="_copyTrendResult()" class="hidden text-[10px] font-bold text-orange-600 hover:text-orange-800 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:13px">content_copy</span>복사</button>
           </div>
-          <div id="trend-output" class="flex-1 w-full p-3 rounded-xl bg-white border border-slate-200 text-[13px] leading-relaxed overflow-y-auto" style="font-family:'Pretendard',sans-serif;min-height:280px">
+          <div id="trend-output" class="flex-1 w-full p-3 rounded-xl bg-white border border-slate-200 text-[13px] leading-relaxed overflow-y-auto min-h-0" style="font-family:'Pretendard',sans-serif">
             <div class="text-slate-400 italic">플랫폼·모드 선택 후 'AI 분석'을 눌러주세요</div>
           </div>
         </div>
       </div>
       <!-- 푸터 안내 -->
-      <div class="px-5 py-2 bg-slate-50 text-[10px] text-slate-500 border-t border-slate-100" style="font-family:'Pretendard',sans-serif">
-        💡 <strong>일반 트렌드</strong>는 AI 학습 기준 (실시간 X) · <strong>인기작 분석</strong>은 사용자 입력 텍스트 기반 (가장 정확)
+      <div class="px-5 py-2 bg-slate-50 text-[10px] text-slate-500 border-t border-slate-100 shrink-0" style="font-family:'Pretendard',sans-serif">
+        💡 <strong>자동 트렌드</strong>는 포타 한정 (주 1회 자동 수집) · <strong>직접 분석</strong>은 네이버/리디/카카오 등 어느 플랫폼이든 텍스트나 캡쳐 붙여넣어 즉시 분석
       </div>
     </div>
   </div>
@@ -14405,7 +14403,7 @@
   // 웹소설 시장 조사 / 트렌드 분석
   // ═══════════════════════════════════════════════════════
   var _trendPlatform = '포스타입';
-  var _trendMode = 'general';
+  var _trendMode = 'auto';
   var _trendImageBase64 = null;
   var _trendImageType = 'image/jpeg';
   var _trendLastResult = '';
@@ -14415,7 +14413,7 @@
     if (!modal) return;
     modal.style.cssText = 'display:flex!important';
     _setTrendPlatform('포스타입');
-    _setTrendMode('general');
+    _setTrendMode('auto');
     // Ctrl+V로 이미지 붙여넣기
     document.addEventListener('paste', _trendPasteHandler);
   };
@@ -14426,7 +14424,7 @@
   };
 
   function _trendPasteHandler(e) {
-    if (_trendMode !== 'analyze-image') return;
+    if (_trendMode !== 'analyze-text') return;  // 통합된 모드에서만 이미지 paste 처리
     var items = e.clipboardData && e.clipboardData.items;
     if (!items) return;
     for (var i = 0; i < items.length; i++) {
@@ -14475,29 +14473,24 @@
     if (!inp) return;
     var placeholders = {
       auto: '자동으로 수집된 데이터를 사용합니다. 입력 불필요.',
-      general: '입력 없이 바로 분석 가능. 추가 키워드/장르 있으면 적어주세요.\n예: "현대 로맨스, 사내 연애, 까칠한 남주" 같이.',
-      'analyze-text': '인기작 정보를 붙여넣어주세요. 여러 작품 포함 가능:\n\n예:\n=== 작품 1 ===\n제목: 그놈의 첫사랑\n별점: 9.7\n조회 1.2M\n소개: ...\n태그: 까칠남주, 츤데레, 첫사랑\n\n=== 작품 2 ===\n...',
-      'analyze-image': '이미지 업로드 후 "AI 분석" 클릭. 텍스트 입력은 선택 (추가 컨텍스트 있으면).',
+      'analyze-text': '인기작 정보를 텍스트로 붙여넣거나 아래 영역에 스크린샷 업로드. 둘 다 가능.\n\n텍스트 예:\n=== 작품 1 ===\n제목: 그놈의 첫사랑\n별점: 9.7 · 조회 1.2M\n소개: ...\n태그: 까칠남주, 츤데레\n\n=== 작품 2 ===\n...',
       character: _trendPlatform === '포스타입' ? '2차창작 캐릭터/페어를 적어주세요.\n예: "트와이스 미사나", "BTS 정뷔", "원피스 ZoSan"' : '주인공 캐릭터 설정/장르를 적어주세요.\n예: "재벌가 까칠한 후계자 남주 + 평범한 여주, 사내 비밀 연애"'
     };
     var labels = {
       auto: '자동 수집 데이터 (주 1회 GitHub Actions)',
-      general: '추가 컨텍스트 (선택)',
-      'analyze-text': '인기작 데이터 (제목·소개·태그·별점 등)',
-      'analyze-image': '컨텍스트 (선택)',
+      'analyze-text': '인기작 데이터 (텍스트 + 스크린샷 가능)',
       character: '캐릭터·페어·장르'
     };
     var runLabels = {
       auto: '다시 불러오기',
-      general: '플랫폼 트렌드 분석',
-      'analyze-text': '인기작 패턴 추출',
-      'analyze-image': '스크린샷 분석',
+      'analyze-text': '인기작 패턴 분석',
       character: '캐릭터 트렌드 분석'
     };
     inp.placeholder = placeholders[_trendMode] || '입력...';
     if (lbl) lbl.textContent = labels[_trendMode] || '입력';
     if (runLbl) runLbl.textContent = runLabels[_trendMode] || 'AI 분석';
-    if (imgZone) imgZone.className = _trendMode === 'analyze-image' ? 'mt-3' : 'hidden mt-3';
+    // 이미지 업로드 영역: analyze-text 모드에서도 표시 (옵션)
+    if (imgZone) imgZone.className = _trendMode === 'analyze-text' ? 'mt-3 shrink-0' : 'hidden mt-3 shrink-0';
     // 카운터
     inp.oninput = function(){
       var cnt = document.getElementById('trend-input-counter');
@@ -14698,12 +14691,9 @@
       return;
     }
     var userText = (inp.value||'').trim();
-    if (_trendMode === 'analyze-text' && userText.length < 30) {
-      out.innerHTML = '<div class="text-amber-700 p-3 bg-amber-50 rounded-lg">📝 인기작 정보를 30자 이상 입력해주세요.</div>';
-      return;
-    }
-    if (_trendMode === 'analyze-image' && !_trendImageBase64) {
-      out.innerHTML = '<div class="text-amber-700 p-3 bg-amber-50 rounded-lg">📸 스크린샷을 먼저 업로드해주세요.</div>';
+    // 통합된 직접 분석 모드: 텍스트 OR 이미지 OR 둘 다
+    if (_trendMode === 'analyze-text' && userText.length < 30 && !_trendImageBase64) {
+      out.innerHTML = '<div class="text-amber-700 p-3 bg-amber-50 rounded-lg">📝 텍스트(30자 이상) 또는 스크린샷을 입력해주세요.</div>';
       return;
     }
 
@@ -14712,30 +14702,17 @@
 
     // 모드별 프롬프트
     var prompts = {
-      general: '플랫폼: ' + _trendPlatform + '\n\n' +
-        '이 플랫폼의 최근 인기 작품들의 트렌드를 분석해주세요. 한국어로 응답.\n\n' +
-        '추가 컨텍스트: ' + (userText || '없음') + '\n\n' +
-        '응답 형식 (HTML, 마크다운 X):\n' +
-        '<h3 style="color:#ea580c;font-weight:800">🔥 인기 키워드 TOP 10</h3>\n<ul style="padding-left:18px;list-style:disc">키워드별 짧은 설명</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">📊 트렌드 패턴</h3>\n<ul>장르/소재/캐릭터 패턴 5개</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">💡 차별화 포인트</h3>\n<ul>새로운 시도 추천 3개</ul>\n\n' +
-        (_trendPlatform === '포스타입' ? '★ 포스타입은 2차 창작 위주 — 페어/캐릭터별 인기 트로프, 무료/유료 비율, 작가 활동 패턴도 분석.\n' : ''),
       'analyze-text': '플랫폼: ' + _trendPlatform + '\n\n' +
-        '아래는 ' + _trendPlatform + '의 인기작 정보입니다. 공통 패턴을 분석해주세요. 한국어 응답.\n\n' +
-        '【인기작 데이터】\n' + userText + '\n\n' +
+        '아래는 ' + _trendPlatform + '의 인기작 정보입니다. ' +
+        (_trendImageBase64 ? '첨부된 스크린샷과 ' : '') +
+        '텍스트 데이터를 종합 분석해서 공통 패턴을 도출해주세요. 한국어 응답.\n\n' +
+        (userText ? '【사용자 입력】\n' + userText + '\n\n' : '') +
         '응답 형식 (HTML, 마크다운 X):\n' +
         '<h3 style="color:#ea580c;font-weight:800">🔑 공통 키워드 / 태그</h3>\n<ul>빈도순</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">📖 시놉시스 공통 패턴</h3>\n<ul>구조/소재/도입부 패턴</ul>\n' +
+        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">📖 시놉시스/제목 공통 패턴</h3>\n<ul>구조/소재/도입부 패턴 (예시 인용 필수)</ul>\n' +
         '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">👤 캐릭터 특징</h3>\n<ul>남주/여주(또는 페어) 자주 나오는 설정</ul>\n' +
         '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">⭐ 성공 요인 추정</h3>\n<ul>왜 이 작품들이 인기인가</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">💎 차별화 제안</h3>\n<ul>이 패턴을 알고 다르게 가는 방법 3개</ul>',
-      'analyze-image': '플랫폼: ' + _trendPlatform + '\n\n' +
-        '첨부된 스크린샷은 ' + _trendPlatform + ' 베스트셀러/인기작 화면입니다. 이미지에서 작품들의 정보를 읽어내고 패턴을 분석해주세요.\n' +
-        '추가 컨텍스트: ' + (userText || '없음') + '\n\n' +
-        '응답 형식 (HTML, 마크다운 X):\n' +
-        '<h3 style="color:#ea580c;font-weight:800">📋 발견된 작품 목록</h3>\n<ul>제목 + 짧은 정보 (별점/조회수/태그)</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">🔥 인기 키워드</h3>\n<ul>이미지에서 보이는 태그/키워드 빈도순</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">💡 시장 인사이트</h3>\n<ul>이 화면에서 읽히는 트렌드 + 차별화 포인트</ul>',
+        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">💎 차별화 제안</h3>\n<ul>이 패턴을 알고 다르게 가는 방법 3개 (구체적 액션)</ul>',
       character: '플랫폼: ' + _trendPlatform + '\n\n' +
         (_trendPlatform === '포스타입' ?
           '아래 2차 창작 페어/캐릭터의 인기 트로프를 분석해주세요. 한국어 응답.\n\n【대상】 ' + userText + '\n\n' +
@@ -14753,14 +14730,14 @@
     try {
       var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
       var content;
-      if (_trendMode === 'analyze-image' && _trendImageBase64) {
-        // Vision API
+      // 통합 직접 분석: 이미지가 있으면 vision API에 함께 전송
+      if (_trendMode === 'analyze-text' && _trendImageBase64) {
         content = [
           { type: 'image', source: { type: 'base64', media_type: _trendImageType, data: _trendImageBase64 } },
           { type: 'text', text: prompts[_trendMode] }
         ];
       } else {
-        content = prompts[_trendMode] || prompts.general;
+        content = prompts[_trendMode] || prompts['analyze-text'];
       }
       var res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
