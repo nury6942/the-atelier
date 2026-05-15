@@ -125,15 +125,26 @@ async function main() {
   try {
     const msg = await client.messages.create({
       model,
-      max_tokens: 4000,
+      max_tokens: 8000,
       messages: [{ role: 'user', content: prompt }],
     });
     const text = msg.content.find(b => b.type === 'text')?.text || '';
     log('tokens used: in', msg.usage.input_tokens, '/ out', msg.usage.output_tokens);
 
-    // JSON 추출 — 여러 전략 시도
+    // JSON 추출 — 여러 전략 시도 + Claude 흔한 실수 sanitization
     let analysis = null;
     let parseErrors = [];
+
+    // Claude의 흔한 JSON 실수 정리
+    function sanitizeJson(s) {
+      // \'  → '  (Claude가 작은따옴표를 escape하는 실수 — JSON에선 작은따옴표 escape 불필요)
+      let out = s.replace(/\\'/g, "'");
+      // trailing comma 제거: ,] 또는 ,}
+      out = out.replace(/,(\s*[\]}])/g, '$1');
+      // 제어 문자 (탭, 백스페이스 등) 문자열 안에서 escape
+      // — 일반적이지 않으므로 일단 생략. 필요하면 추가.
+      return out;
+    }
 
     // Strategy 1: ```json ... ``` 마크다운 코드 블록 추출
     const fenceMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
@@ -154,12 +165,10 @@ async function main() {
     }
 
     for (const c of candidates) {
-      try {
-        analysis = JSON.parse(c);
-        break;
-      } catch (e) {
-        parseErrors.push(e.message);
-      }
+      // 원본 먼저 시도
+      try { analysis = JSON.parse(c); break; } catch (e) { parseErrors.push('raw: ' + e.message); }
+      // sanitize 후 재시도
+      try { analysis = JSON.parse(sanitizeJson(c)); break; } catch (e) { parseErrors.push('sanitized: ' + e.message); }
     }
 
     if (!analysis) {
