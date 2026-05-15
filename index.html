@@ -26148,14 +26148,10 @@ speaker 설정:
                 <button onmousedown="event.preventDefault();document.execCommand('insertOrderedList')" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455" title="Numbered"><span class="material-symbols-outlined" style="font-size:20px">format_list_numbered</span></button>
                 <button onmousedown="event.preventDefault();refToggleCode()" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455" title="Code"><span class="material-symbols-outlined" style="font-size:20px">code</span></button>
               </div>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-2">
+                <span id="ref-save-status" style="font-size:11px;color:#7b7487;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;transition:opacity 0.3s;"></span>
                 <button onclick="toggleRefPin(_refEditingId)" class="p-2 rounded-lg hover:bg-violet-50 transition-colors" style="color:#4a4455" title="고정"><span id="ref-editor-pin-icon" class="material-symbols-outlined" style="font-size:20px">push_pin</span></button>
                 <button onclick="openRefDelModal(_refEditingId)" class="p-2 rounded-lg transition-colors" style="color:rgba(186,26,26,0.7)" onmouseover="this.style.background='#ffdad6';this.style.color='#ba1a1a'" onmouseout="this.style.background='';this.style.color='rgba(186,26,26,0.7)'" title="삭제"><span class="material-symbols-outlined" style="font-size:20px">delete</span></button>
-                <div class="w-px h-6 mx-1" style="background:#ccc3d8"></div>
-                <button onclick="saveRefInline()" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:opacity-90 transition-all active:scale-95" style="background:#7c3aed;color:#ffffff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:12px;font-weight:700;" title="저장 (Ctrl+S)">
-                  <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">save</span>
-                  <span>저장</span>
-                </button>
               </div>
             </div>
             <!-- Editor Content -->
@@ -26818,6 +26814,13 @@ function closeMemoEdit() {
 }
 
 function selectMemo(id) {
+  // 다른 메모로 전환 전 — 현재 메모 pending 자동 저장 강제 실행
+  if (_refEditingId && _refEditingId !== id && typeof _refAutoSaveTimer !== 'undefined' && _refAutoSaveTimer) {
+    clearTimeout(_refAutoSaveTimer);
+    _refAutoSaveTimer = null;
+    // synchronous-ish flush (await 없이 fire-and-forget)
+    saveRefInline({ silent: true });
+  }
   _refEditingId = id;
   var card = _refCards.find(function(c) { return c._id === id; });
   if (!card) return;
@@ -26848,12 +26851,23 @@ function selectMemo(id) {
   renderRefList(document.getElementById('ref-search').value.trim());
 }
 
-async function saveRefInline() {
+async function saveRefInline(opts) {
+  opts = opts || {};
+  var silent = opts.silent === true;
   var title = document.getElementById('ref-editor-title').value.trim();
-  if (!title) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 제목을 입력하세요'); return; }
+  // 제목이 비어있으면 자동으로 '제목 없음'으로 저장
+  if (!title) title = '제목 없음';
   var el = document.getElementById('ref-editor-body');
   var body = sanitizeHtml(el.innerHTML).trim();
+  // 제목 + 본문 둘 다 비어있으면 저장 스킵 (빈 메모 양산 방지)
+  if (title === '제목 없음' && !body) return;
   var now = new Date();
+  var statusEl = document.getElementById('ref-save-status');
+
+  if (statusEl && silent) {
+    statusEl.textContent = '저장 중...';
+    statusEl.style.opacity = '1';
+  }
 
   try {
     if (_refEditingId) {
@@ -26866,12 +26880,60 @@ async function saveRefInline() {
       _refEditingId = docRef.id;
     }
     renderRefList(document.getElementById('ref-search').value.trim());
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장됨');
+    if (statusEl) {
+      statusEl.textContent = '✓ 저장됨';
+      statusEl.style.color = '#15803d';
+      // 2초 후 페이드아웃
+      clearTimeout(window._refStatusTimer);
+      window._refStatusTimer = setTimeout(function() {
+        if (statusEl) statusEl.style.opacity = '0.5';
+      }, 2000);
+    }
+    if (!silent) showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장됨');
   } catch(e) {
     console.error('[Reference] save error:', e);
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
+    if (statusEl) {
+      statusEl.textContent = '⚠️ 저장 실패';
+      statusEl.style.color = '#dc2626';
+      statusEl.style.opacity = '1';
+    }
+    if (!silent) showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
   }
 }
+
+// 자동 저장 — 1.2초 디바운스
+var _refAutoSaveTimer = null;
+function _refScheduleAutoSave() {
+  // ref-editor-active가 보이지 않으면 자동 저장 X
+  var activeEl = document.getElementById('ref-editor-active');
+  if (!activeEl || activeEl.style.display === 'none') return;
+  if (_refAutoSaveTimer) clearTimeout(_refAutoSaveTimer);
+  var statusEl = document.getElementById('ref-save-status');
+  if (statusEl) {
+    statusEl.textContent = '편집 중...';
+    statusEl.style.color = '#7b7487';
+    statusEl.style.opacity = '1';
+  }
+  _refAutoSaveTimer = setTimeout(function() {
+    saveRefInline({ silent: true });
+  }, 1200);
+}
+
+// 자동 저장 트리거: 제목/본문 입력 시 + 메모 전환 시 강제 저장
+document.addEventListener('DOMContentLoaded', function() {
+  var titleEl = document.getElementById('ref-editor-title');
+  var bodyEl = document.getElementById('ref-editor-body');
+  if (titleEl) titleEl.addEventListener('input', _refScheduleAutoSave);
+  if (bodyEl) bodyEl.addEventListener('input', _refScheduleAutoSave);
+});
+
+// 페이지 떠나기/메모 전환 시 pending auto-save 강제 실행
+window.addEventListener('beforeunload', function() {
+  if (_refAutoSaveTimer) {
+    clearTimeout(_refAutoSaveTimer);
+    saveRefInline({ silent: true });
+  }
+});
 
 function escHtml(s) {
   var d = document.createElement('div');
@@ -26954,6 +27016,12 @@ function openRefModal(editId) {
     selectMemo(editId);
     return;
   }
+  // 새 메모 만들기 전 — 현재 편집 중인 메모 pending 자동 저장 flush
+  if (_refEditingId && typeof _refAutoSaveTimer !== 'undefined' && _refAutoSaveTimer) {
+    clearTimeout(_refAutoSaveTimer);
+    _refAutoSaveTimer = null;
+    saveRefInline({ silent: true });
+  }
   // New memo — open inline editor with empty state
   _refEditingId = null;
   document.getElementById('ref-editor-empty').style.display = 'none';
@@ -26961,6 +27029,8 @@ function openRefModal(editId) {
   document.getElementById('ref-editor-title').value = '';
   document.getElementById('ref-editor-body').innerHTML = '';
   document.getElementById('ref-editor-date').textContent = '새 메모';
+  var statusEl = document.getElementById('ref-save-status');
+  if (statusEl) { statusEl.textContent = ''; statusEl.style.opacity = '1'; }
   var pinIcon = document.getElementById('ref-editor-pin-icon');
   pinIcon.style.fontVariationSettings = "'FILL' 0";
   pinIcon.style.color = '';
