@@ -38,6 +38,7 @@ jobs:
       - name: Run scraper + analyzer
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: claude-sonnet-4-5
           POSTYPE_KEYWORD: ${{ github.event.inputs.keyword || '나페스' }}
           POSTYPE_TOP_N: ${{ github.event.inputs.top_n || '20' }}
         run: |
