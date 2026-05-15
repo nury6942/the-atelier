@@ -9713,28 +9713,67 @@
       if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-8 text-sm text-slate-400">숙소를 추가해봐!</div>'; return; }
       container.innerHTML = fbItems.map(function(item) {
         var realIdx = journeyData.indexOf(item);
-        var cancelColor = item.cancel === '가능' ? 'text-emerald-600' : 'text-rose-600';
+        var cancelColor = item.cancel === '가능' ? 'text-emerald-600' : (item.cancel === '조건부' ? 'text-amber-600' : 'text-rose-600');
         var cancelText = item.cancel === '가능'
           ? (item.cancel_date ? '무료 취소 ~' + item.cancel_date : '무료 취소 가능')
-          : (item.cancel === '불가' ? '환불 불가' : (item.cancel||'—'));
+          : (item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부') : (item.cancel === '불가' ? '환불 불가' : (item.cancel||'—')));
+        // 숙소 유형 뱃지 (description === 'Airbnb' 이면 Airbnb)
+        var isAirbnb = (item.description||'').toLowerCase().indexOf('airbnb') >= 0;
+        var typeBadge = isAirbnb
+          ? '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 text-rose-600 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">home</span>AIRBNB</span>'
+          : '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">hotel</span>HOTEL</span>';
+        // 결제 상태 뱃지
+        var payStatus = item.payment_status || '';
+        var payBadge = '';
+        if (payStatus) {
+          var payClass = payStatus === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
+                         payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
+                         payStatus === '현장 결제' ? 'bg-sky-100 text-sky-700' :
+                         'bg-slate-100 text-slate-600';
+          var payIcon = payStatus === '결제 완료' ? 'check_circle' :
+                        payStatus === '결제 예정' ? 'schedule' :
+                        payStatus === '현장 결제' ? 'storefront' : 'payments';
+          payBadge = '<span class="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined text-xs">' + payIcon + '</span>' + payStatus + '</span>';
+        }
+        // 메모를 칩으로 분해 (객실/인원/금연/식사/보증금 등)
+        var memoChips = '';
+        if (item.notes) {
+          var chips = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
+          if (chips.length) {
+            memoChips = '<div class="flex flex-wrap gap-1.5 pt-1">' + chips.map(function(c){
+              var t = c.trim();
+              var icon = 'bookmark';
+              if (/금연|흡연/.test(t)) icon = 'smoke_free';
+              else if (/식사|조식|석식|브런치/.test(t)) icon = 'restaurant';
+              else if (/보증금|deposit/i.test(t)) icon = 'account_balance_wallet';
+              else if (/성인|아동|어린이|유아|명/.test(t)) icon = 'group';
+              else if (/침대|룸|객실|싱글|더블|트윈|퀸|킹|슬리퍼/.test(t)) icon = 'bed';
+              return '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">' + icon + '</span>' + t + '</span>';
+            }).join('') + '</div>';
+          }
+        }
+        // 결제일 미니 표시
+        var paymentDateRow = item.payment_date
+          ? '<div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</div>'
+          : '';
         return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
           '<div class="flex flex-col md:flex-row justify-between gap-4">' +
-            '<div class="flex-1 space-y-4">' +
-              '<div class="flex flex-wrap items-center gap-3">' +
+            '<div class="flex-1 space-y-3">' +
+              '<div class="flex flex-wrap items-center gap-2.5">' +
                 (item.city ? '<span class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest">' + item.city + '</span>' : '') +
                 '<h4 class="font-headline text-xl font-bold text-slate-900 flex items-center gap-1.5">' + (item.title||'—') + '</h4>' +
-                '<div class="flex items-center gap-2.5">' +
-                  '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">hotel</span>HOTEL</span>' +
-                  (item.phone ? '<span class="text-slate-500 text-[11px] font-medium flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span>' + item.phone + '</span>' : '') +
-                '</div>' +
+                typeBadge +
+                payBadge +
+                (item.phone ? '<span class="text-slate-500 text-[11px] font-medium flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span>' + item.phone + '</span>' : '') +
               '</div>' +
               (item.address ? '<p class="text-[11px] text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">location_on</span>' + item.address + '</p>' : '') +
               '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-1">' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.date||'—') + '</p>' + (item.checkin ? '<p class="text-[11px] text-slate-500">' + item.checkin + '</p>' : '') + '</div>' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.checkout_date||'—') + '</p>' + (item.checkout ? '<p class="text-[11px] text-slate-500">' + item.checkout + '</p>' : '') + '</div>' +
                 '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Cancellation</p><p class="text-[13px] font-semibold ' + cancelColor + ' leading-tight">' + cancelText + '</p></div>' +
-                '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p></div>' +
+                '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' + paymentDateRow + '</div>' +
               '</div>' +
+              memoChips +
             '</div>' +
             '<div class="flex items-start gap-2">' +
               '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
