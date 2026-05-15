@@ -9088,9 +9088,11 @@
     try {
       await fbUpdate('journey', item._id, updates);
       Object.assign(journeyData[_trEditIdx], updates);
+      await syncJourneyToFinance(journeyData[_trEditIdx]);
       closeTravelModal('transport-edit-modal-wrap');
       renderJourneyTransport();
       updateJourneyCost();
+      if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 이동수단 수정 완료');
     } catch(e) { alert('저장 실패: ' + e.message); }
   }
@@ -9174,9 +9176,11 @@
     try {
       await fbUpdate('journey', item._id, updates);
       Object.assign(journeyData[_rcEditIdx], updates);
+      await syncJourneyToFinance(journeyData[_rcEditIdx]);
       closeTravelModal('rental-edit-modal-wrap');
       renderJourneyRental();
       updateJourneyCost();
+      if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 렌트카 수정 완료');
     } catch(e) { alert('저장 실패: ' + e.message); }
   }
@@ -9679,6 +9683,7 @@
     try {
       await fbUpdate('journey', item._id, updates);
       Object.assign(journeyData[_stayEditIdx], updates);
+      await syncJourneyToFinance(journeyData[_stayEditIdx]);
       closeTravelModal('stay-edit-modal-wrap');
       renderJourneyLodging();
       updateJourneyCost();
@@ -10480,6 +10485,7 @@
       await syncJourneyToFinance(item);
       renderJourneyFlights();
       updateJourneyCost();
+      if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
       closeFlightEditModal();
     } catch(err) { alert('저장에 실패했어요.'); }
   }
@@ -11357,14 +11363,47 @@
 
   async function syncJourneyToFinance(item) {
     var amt = parseFloat(String(item.amount||'').replace(/[^0-9.]/g,''));
-    if (!amt || amt === 0) return;
     var tripName = getCurrentTrip() ? getCurrentTrip().name : '';
     if (!tripName) return;
+
+    // 가격이 0/빈 값이면 기존 finance를 정리 (stale 방지)
+    // - finance_id가 있으면 → 그 finance 거래 삭제 (직접 매칭)
+    // - 없어도 → journey_id로 finance에서 추적 매칭 후 삭제 (fallback)
+    if (!amt || amt === 0) {
+      if (item.finance_id) {
+        try {
+          await fbDelete('finance', item.finance_id);
+          await fbUpdate('journey', item._id, { finance_id: '' });
+          item.finance_id = '';
+        } catch(e) { console.warn('[syncJourneyToFinance] 0금액 정리 실패:', e); }
+      } else if (item._id) {
+        try {
+          var allFinance = await fbRead('finance');
+          var matches = allFinance.filter(function(f){ return f.journey_id === item._id; });
+          for (var i = 0; i < matches.length; i++) {
+            try { await fbDelete('finance', matches[i]._id); } catch(e2) {}
+          }
+        } catch(e) {}
+      }
+      return;
+    }
+
+    // 가격이 있으면: 추가 또는 업데이트
     var financeObj = _journeyToFinanceObj(item, tripName);
     try {
       if (item.finance_id) {
         await fbUpdate('finance', item.finance_id, financeObj);
       } else {
+        // finance_id 없어도 journey_id로 매칭되는 finance가 이미 있는지 한 번 확인 (이중 등록 방지)
+        try {
+          var existing = (await fbRead('finance')).find(function(f){ return f.journey_id === item._id; });
+          if (existing) {
+            await fbUpdate('finance', existing._id, financeObj);
+            await fbUpdate('journey', item._id, { finance_id: existing._id });
+            item.finance_id = existing._id;
+            return;
+          }
+        } catch(e) {}
         var finSaved = await fbAdd('finance', financeObj);
         await fbUpdate('journey', item._id, {finance_id: finSaved._id});
         item.finance_id = finSaved._id;
