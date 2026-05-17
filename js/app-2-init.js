@@ -1115,19 +1115,47 @@ function _ldgInjectMobileToggle(isFullView) {
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
-// 무거운 섹션들 DOM에서 비우기 — 메모리 회수
+// 무거운 섹션들 완전 숨기기 + KPI strip 모바일 친화 — 메모리 회수
 function _ldgHideHeavySections() {
-  var heavyIds = [
-    'ldg-calendar', 'ldg-cat-grid', 'ldg-checklist',
-    'ldg-payment-methods', 'ldg-top-cats',
-    'ldg-donut-income', 'ldg-donut-expense', 'ldg-daily-chart',
-    'ldg-annual-goal-wrap'
-  ];
-  heavyIds.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.innerHTML = '';
-  });
-  // 차트 인스턴스 명시적 destroy (있으면)
+  // 1) KPI strip을 모바일용 2-컬럼 그리드로 변환
+  var kpiStrip = document.getElementById('ldg-kpi-strip');
+  if (kpiStrip) {
+    kpiStrip.classList.remove('grid-cols-5');
+    kpiStrip.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:1rem;';
+  }
+  // KPI 카드 자체도 모바일 친화 (작은 패딩)
+  var styleId = 'ldg-mobile-style';
+  if (!document.getElementById(styleId)) {
+    var st = document.createElement('style');
+    st.id = styleId;
+    st.textContent = '#page-ledger #ldg-kpi-strip > div{padding:0.75rem !important;border-radius:0.75rem !important}' +
+      '#page-ledger #ldg-kpi-strip > div p:first-child{font-size:10px !important;margin-bottom:0.25rem !important}' +
+      '#page-ledger #ldg-kpi-strip > div p:last-child{font-size:14px !important;font-weight:700 !important}';
+    document.head.appendChild(st);
+  }
+  // 2) 무거운 섹션 wrapper들 완전 숨기기 (innerHTML 비우기 X, display:none)
+  // 2-1: annual goal widget
+  var annualGoal = document.getElementById('ldg-annual-goal-wrap');
+  if (annualGoal) annualGoal.style.display = 'none';
+  // 2-2: 2-column layout (calendar/payment/checklist + 우측 컬럼)
+  // KPI strip의 형제 중 .grid.grid-cols-2.gap-6.mb-8 다 숨기기
+  var panel = document.getElementById('ledger-panel-monthly');
+  if (panel) {
+    var children = panel.children;
+    for (var i = 0; i < children.length; i++) {
+      var c = children[i];
+      // 1) 월별 네비, KPI strip, 거래 표(tx-table-wrap), 진단 안내 빼고 다 숨기기
+      if (c.id === 'ldg-kpi-strip') continue;
+      if (c.contains(document.getElementById('ldg-tx-body'))) continue;
+      if (c.querySelector && c.querySelector('#ldg-tx-body')) continue;
+      // 월 네비 바: 첫 자식 (.flex.items-center.justify-between.mb-8)
+      if (c.classList && c.classList.contains('flex') && c.classList.contains('justify-between')) continue;
+      // 모바일 토글 버튼은 유지
+      if (c.id === 'ldg-mobile-toggle-wrap') continue;
+      c.style.display = 'none';
+    }
+  }
+  // 3) 차트 인스턴스 명시적 destroy (있으면)
   if (typeof _ldgChartIncome !== 'undefined' && _ldgChartIncome) {
     try { _ldgChartIncome.destroy(); } catch(e){} _ldgChartIncome = null;
   }
