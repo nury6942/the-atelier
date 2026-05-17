@@ -5,15 +5,14 @@
 	let { children } = $props();
 
 	const tabs = [
-		{ href: '/money', label: '가계부', icon: '📓', exact: true },
-		{ href: '/money/assets', label: '자산', icon: '🏦' },
-		{ href: '/money/side-gig', label: '부업', icon: '💼' }
+		{ href: '/money', label: '가계부', icon: '📓', match: ['/money', '/money/year'] },
+		{ href: '/money/assets', label: '자산', icon: '🏦', match: ['/money/assets'] },
+		{ href: '/money/side-gig', label: '부업', icon: '💼', match: ['/money/side-gig'] }
 	];
 
-	function isActive(t: { href: string; exact?: boolean }) {
+	function isActive(t: { href: string; match: string[] }) {
 		const cur = page.url.pathname.replace(base, '') || '/';
-		if (t.exact) return cur === t.href;
-		return cur.startsWith(t.href);
+		return t.match.includes(cur);
 	}
 </script>
 

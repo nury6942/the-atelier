@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { ledger, type Tx } from '$lib/stores/ledger.svelte';
 	import { fmtKRW } from '$lib/utils/format';
+	import { base } from '$app/paths';
 	import TransactionModal from '$lib/components/TransactionModal.svelte';
 
 	let txModalOpen = $state(false);
@@ -126,6 +127,23 @@
 		⚠️ {ledger.error}
 	</div>
 {:else}
+	<!-- ═══ 서브 토글 (월별/연간) ═══ -->
+	<div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+		<div class="flex items-center bg-slate-100 rounded-xl p-1 gap-1">
+			<button
+				class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-violet-700 shadow-sm"
+			>
+				월별 뷰
+			</button>
+			<a
+				href={base + '/money/year'}
+				class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700"
+			>
+				연간 뷰
+			</a>
+		</div>
+	</div>
+
 	<!-- ═══ 월별 헤더 ═══ -->
 	<div class="flex items-center justify-between mb-5">
 		<div>
