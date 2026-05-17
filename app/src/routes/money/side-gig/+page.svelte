@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fbReadCollection } from '$lib/firestore';
+	import { loadWorks, type Work } from '$lib/works';
 	import { fmtKRW } from '$lib/utils/format';
+	import { todayKey } from '$lib/utils/greeting';
 
-	type Work = {
+	type IncomeRow = {
 		id: string;
 		month?: string;
 		work_details?: string;
@@ -13,6 +15,7 @@
 	};
 
 	let works = $state<Work[]>([]);
+	let income = $state<IncomeRow[]>([]);
 	let loading = $state(true);
 	let error = $state('');
 	let year = $state(new Date().getFullYear());
@@ -23,7 +26,9 @@
 		loading = true;
 		error = '';
 		try {
-			works = await fbReadCollection<Work>('income');
+			const [w, inc] = await Promise.all([loadWorks(), fbReadCollection<IncomeRow>('income')]);
+			works = w;
+			income = inc;
 		} catch (e: any) {
 			error = e?.message || '로드 실패';
 		} finally {
@@ -31,47 +36,62 @@
 		}
 	}
 
-	// 올해 데이터만 필터
-	const yearWorks = $derived(works.filter((w) => (w.month || '').startsWith(String(year))));
+	const today = todayKey();
 
-	const stats = $derived.by(() => {
+	function workStatus(w: Work): 'active' | 'upcoming' | 'past' | 'draft' {
+		const s = (w.status || '').toLowerCase();
+		if (s === 'draft' || s.includes('draft')) return 'draft';
+		if (w.publish_start && w.publish_end) {
+			if (today >= w.publish_start && today <= w.publish_end) return 'active';
+			if (today < w.publish_start) return 'upcoming';
+			return 'past';
+		}
+		return 'draft';
+	}
+
+	const confirmedWorks = $derived(works.filter((w) => (w.status || '').toLowerCase() === 'confirmed'));
+
+	const activeWorks = $derived(confirmedWorks.filter((w) => workStatus(w) === 'active'));
+	const upcomingWorks = $derived(confirmedWorks.filter((w) => workStatus(w) === 'upcoming'));
+	const pastWorks = $derived(confirmedWorks.filter((w) => workStatus(w) === 'past'));
+	const draftWorks = $derived(works.filter((w) => (w.status || '').toLowerCase() === 'draft'));
+
+	// 이번 연도 매출 (income 컬렉션)
+	const yearIncome = $derived.by(() => {
+		const filtered = income.filter((r) => (r.month || '').startsWith(String(year)));
 		let total = 0;
-		const byCategory: Record<string, number> = {};
-		const byStatus: Record<string, number> = {};
+		const byCat: Record<string, number> = {};
 		const byMonth: Record<string, number> = {};
-		yearWorks.forEach((w) => {
-			const rev = Number(w.revenue) || 0;
+		filtered.forEach((r) => {
+			const rev = Number(r.revenue) || 0;
 			total += rev;
-			const cat = w.category || '기타';
-			byCategory[cat] = (byCategory[cat] || 0) + rev;
-			const st = w.status || '미지정';
-			byStatus[st] = (byStatus[st] || 0) + 1;
-			if (w.month) byMonth[w.month] = (byMonth[w.month] || 0) + rev;
+			const c = r.category || '기타';
+			byCat[c] = (byCat[c] || 0) + rev;
+			if (r.month) byMonth[r.month] = (byMonth[r.month] || 0) + rev;
 		});
 		return {
 			total,
-			count: yearWorks.length,
-			byCategory: Object.entries(byCategory).sort((a, b) => b[1] - a[1]),
-			byStatus: Object.entries(byStatus).sort((a, b) => b[1] - a[1]),
-			byMonth: Object.entries(byMonth).sort((a, b) => a[0].localeCompare(b[0])),
-			avgPerWork: yearWorks.length > 0 ? total / yearWorks.length : 0
+			items: filtered.length,
+			byCat: Object.entries(byCat).sort((a, b) => b[1] - a[1]),
+			byMonth: Object.entries(byMonth).sort((a, b) => a[0].localeCompare(b[0]))
 		};
 	});
 
-	const maxMonthRev = $derived(Math.max(...stats.byMonth.map((m) => m[1]), 1));
-
-	function statusColor(status: string): { bg: string; text: string } {
-		const s = status.toLowerCase();
-		if (s.includes('완료') || s.includes('confirmed'))
-			return { bg: '#dcfce7', text: '#15803d' };
-		if (s.includes('진행') || s.includes('연재')) return { bg: '#dbeafe', text: '#1d4ed8' };
-		if (s.includes('대기') || s.includes('pending')) return { bg: '#fef3c7', text: '#92400e' };
-		if (s.includes('중단') || s.includes('드롭')) return { bg: '#fee2e2', text: '#b91c1c' };
-		return { bg: '#f1f5f9', text: '#475569' };
-	}
+	const maxMonth = $derived(Math.max(...yearIncome.byMonth.map((m) => m[1]), 1));
 
 	function changeYear(delta: number) {
 		year += delta;
+	}
+
+	function workCard(w: Work) {
+		const status = workStatus(w);
+		const colors = {
+			active: { bg: '#dcfce7', text: '#15803d', label: '연재 중' },
+			upcoming: { bg: '#dbeafe', text: '#1d4ed8', label: '예정' },
+			past: { bg: '#f1f5f9', text: '#475569', label: '종료' },
+			draft: { bg: '#fef3c7', text: '#92400e', label: '기획' }
+		};
+		return colors[status];
 	}
 </script>
 
@@ -87,8 +107,8 @@
 	<!-- 연도 헤더 -->
 	<div class="flex items-center justify-between mb-5 flex-wrap gap-3">
 		<div>
-			<h2 class="text-xl md:text-2xl font-extrabold headline">{year}년 부업 수익</h2>
-			<p class="text-xs text-slate-500">{stats.count}개 작품 · 전체 {works.length}건</p>
+			<h2 class="text-xl md:text-2xl font-extrabold headline">{year}년 부업 현황</h2>
+			<p class="text-xs text-slate-500">전체 작품 {works.length}개 · 확정 {confirmedWorks.length}개</p>
 		</div>
 		<div class="flex items-center gap-1">
 			<button
@@ -107,48 +127,65 @@
 		</div>
 	</div>
 
-	<!-- KPI -->
-	<section class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
-		<div
-			class="bg-white rounded-2xl p-5 border border-violet-200"
-			style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)"
-		>
-			<p class="text-[10px] font-bold text-violet-700 tracking-widest uppercase mb-1">
-				연간 총 수익
-			</p>
-			<p class="text-xl md:text-2xl font-extrabold text-violet-950">{fmtKRW(stats.total)}</p>
+	<!-- 작품 상태 KPI -->
+	<section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+		<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+			<p class="text-[10px] font-bold text-emerald-700 tracking-widest uppercase mb-1">연재 중</p>
+			<p class="text-xl md:text-2xl font-extrabold text-emerald-900">{activeWorks.length}</p>
 		</div>
-		<div class="bg-white rounded-2xl p-5 border border-emerald-200">
-			<p class="text-[10px] font-bold text-emerald-700 tracking-widest uppercase mb-1">작품 수</p>
-			<p class="text-xl md:text-2xl font-extrabold text-emerald-900">{stats.count}</p>
+		<div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+			<p class="text-[10px] font-bold text-blue-700 tracking-widest uppercase mb-1">예정</p>
+			<p class="text-xl md:text-2xl font-extrabold text-blue-900">{upcomingWorks.length}</p>
 		</div>
-		<div class="bg-white rounded-2xl p-5 border border-blue-200">
-			<p class="text-[10px] font-bold text-blue-700 tracking-widest uppercase mb-1">평균 수익</p>
-			<p class="text-xl md:text-2xl font-extrabold text-blue-900">
-				{fmtKRW(Math.round(stats.avgPerWork))}
-			</p>
+		<div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+			<p class="text-[10px] font-bold text-slate-700 tracking-widest uppercase mb-1">종료</p>
+			<p class="text-xl md:text-2xl font-extrabold text-slate-900">{pastWorks.length}</p>
+		</div>
+		<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+			<p class="text-[10px] font-bold text-amber-700 tracking-widest uppercase mb-1">기획</p>
+			<p class="text-xl md:text-2xl font-extrabold text-amber-900">{draftWorks.length}</p>
 		</div>
 	</section>
 
-	<!-- 월별 추이 -->
-	{#if stats.byMonth.length > 0}
+	<!-- 연간 수익 -->
+	<section
+		class="bg-white rounded-2xl p-5 border border-violet-200 mb-5"
+		style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)"
+	>
+		<p class="text-[10px] font-bold text-violet-700 tracking-widest uppercase mb-1">
+			{year}년 총 수익
+		</p>
+		<p class="text-3xl md:text-4xl font-extrabold text-violet-950">
+			{fmtKRW(yearIncome.total)}
+		</p>
+		<p class="text-xs text-violet-700 mt-1">
+			{yearIncome.items}건 기록 · 평균 {yearIncome.items
+				? fmtKRW(Math.round(yearIncome.total / yearIncome.items))
+				: '—'}
+		</p>
+	</section>
+
+	<!-- 월별 수익 -->
+	{#if yearIncome.byMonth.length > 0}
 		<section
 			class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
 			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
 		>
 			<h3 class="text-sm font-bold mb-4 text-slate-800">📊 월별 수익</h3>
 			<div class="flex flex-col gap-2">
-				{#each stats.byMonth as [month, rev]}
-					{@const pct = (rev / maxMonthRev) * 100}
+				{#each yearIncome.byMonth as [month, rev]}
+					{@const pct = (rev / maxMonth) * 100}
 					<div class="flex items-center gap-2">
-						<span class="text-[11px] font-bold text-slate-600 w-14 shrink-0">{month}</span>
+						<span class="text-[11px] font-bold text-slate-600 w-14 shrink-0 font-mono">
+							{month.substring(5)}월
+						</span>
 						<div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
 							<div
 								class="h-full rounded-full"
 								style="width: {pct}%; background: linear-gradient(90deg, #7c3aed, #a855f7)"
 							></div>
 						</div>
-						<span class="text-[11px] font-bold text-slate-700 w-20 text-right shrink-0">
+						<span class="text-[11px] font-bold text-slate-700 w-24 text-right shrink-0">
 							{fmtKRW(rev)}
 						</span>
 					</div>
@@ -157,76 +194,125 @@
 		</section>
 	{/if}
 
-	<!-- 카테고리별 -->
-	{#if stats.byCategory.length > 0}
+	<!-- 연재 중 작품 -->
+	{#if activeWorks.length > 0}
 		<section
 			class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
 			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
 		>
-			<h3 class="text-sm font-bold mb-3 text-slate-800">🏷 카테고리별</h3>
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-				{#each stats.byCategory as [cat, rev]}
-					<div class="bg-slate-50 rounded-xl p-3">
-						<p class="text-[11px] font-bold text-slate-600 mb-1">{cat}</p>
-						<p class="text-sm font-extrabold text-slate-900">{fmtKRW(rev)}</p>
+			<h3 class="text-sm font-bold mb-3 text-slate-800">🟢 연재 중</h3>
+			<div class="flex flex-col gap-2">
+				{#each activeWorks as w}
+					{@const c = workCard(w)}
+					<div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl">
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2 mb-1 flex-wrap">
+								<span
+									class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+									style="background: {c.bg}; color: {c.text}"
+								>
+									{c.label}
+								</span>
+								{#if w.series_name}
+									<span class="text-[10px] text-emerald-700 font-semibold">
+										{w.series_name}
+									</span>
+								{/if}
+								{#if w.platform}
+									<span class="text-[10px] text-slate-500">· {w.platform}</span>
+								{/if}
+							</div>
+							<p class="text-sm font-bold text-slate-900">{w.title || '—'}</p>
+							{#if w.publish_start && w.publish_end}
+								<p class="text-[10px] text-slate-500 mt-0.5">
+									{w.publish_start} ~ {w.publish_end}
+								</p>
+							{/if}
+						</div>
 					</div>
 				{/each}
 			</div>
 		</section>
 	{/if}
 
-	<!-- 작품 목록 -->
-	<section
-		class="bg-white rounded-2xl p-4 border border-slate-100"
-		style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
-	>
-		<h3 class="text-sm font-bold mb-3 text-slate-800">📋 작품 목록</h3>
-		{#if yearWorks.length === 0}
-			<p class="text-xs text-slate-400 italic py-4 text-center">{year}년 작품 없음</p>
-		{:else}
-			<div class="overflow-x-auto">
-				<table class="w-full text-xs">
-					<thead>
-						<tr class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-							<th class="text-left py-2 pr-3">월</th>
-							<th class="text-left py-2 pr-3">작품</th>
-							<th class="text-left py-2 pr-3">카테고리</th>
-							<th class="text-left py-2 pr-3">상태</th>
-							<th class="text-right py-2">수익</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each yearWorks.sort((a, b) => (a.month || '').localeCompare(b.month || '')) as w}
-							{@const sc = statusColor(w.status || '')}
-							<tr class="border-t border-slate-50">
-								<td class="py-2 pr-3 text-slate-500 font-mono">{w.month || '—'}</td>
-								<td class="py-2 pr-3 text-slate-800 font-semibold">
-									{w.work_details || '—'}
-								</td>
-								<td class="py-2 pr-3 text-slate-600">{w.category || '—'}</td>
-								<td class="py-2 pr-3">
-									{#if w.status}
-										<span
-											class="text-[10px] px-2 py-0.5 rounded font-bold"
-											style="background: {sc.bg}; color: {sc.text}"
-										>
-											{w.status}
-										</span>
-									{/if}
-								</td>
-								<td class="py-2 text-right font-extrabold text-slate-900">
-									{w.revenue ? fmtKRW(Number(w.revenue)) : '—'}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+	<!-- 예정 작품 -->
+	{#if upcomingWorks.length > 0}
+		<section
+			class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
+			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+		>
+			<h3 class="text-sm font-bold mb-3 text-slate-800">🔵 예정 작품</h3>
+			<div class="flex flex-col gap-2">
+				{#each upcomingWorks as w}
+					{@const c = workCard(w)}
+					<div class="flex items-start gap-3 p-3 bg-blue-50 rounded-xl">
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2 mb-1 flex-wrap">
+								<span
+									class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+									style="background: {c.bg}; color: {c.text}"
+								>
+									{c.label}
+								</span>
+								{#if w.series_name}
+									<span class="text-[10px] text-blue-700 font-semibold">
+										{w.series_name}
+									</span>
+								{/if}
+								{#if w.publish_start}
+									<span class="text-[10px] text-slate-500">· {w.publish_start} 시작</span>
+								{/if}
+							</div>
+							<p class="text-sm font-bold text-slate-900">{w.title || '—'}</p>
+						</div>
+					</div>
+				{/each}
 			</div>
-		{/if}
-	</section>
+		</section>
+	{/if}
 
-	<!-- 안내 -->
-	<section class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
-		💡 작품 추가/편집은 다음 단계 마이그레이션. main 사이트에서 입력하면 여기서 확인 가능.
-	</section>
+	<!-- 기획/Draft -->
+	{#if draftWorks.length > 0}
+		<section
+			class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
+			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+		>
+			<h3 class="text-sm font-bold mb-3 text-slate-800">📝 기획 중 (Draft)</h3>
+			<div class="flex flex-wrap gap-2">
+				{#each draftWorks as w}
+					<span
+						class="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-amber-100 text-amber-700"
+					>
+						{w.title || '—'}
+					</span>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	<!-- 종료 작품 -->
+	{#if pastWorks.length > 0}
+		<details class="bg-white rounded-2xl p-5 border border-slate-100">
+			<summary class="text-sm font-bold text-slate-800 cursor-pointer">
+				⬜ 종료된 작품 {pastWorks.length}개 (펼치기)
+			</summary>
+			<div class="flex flex-col gap-2 mt-3">
+				{#each pastWorks as w}
+					<div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2 mb-1 flex-wrap">
+								{#if w.series_name}
+									<span class="text-[10px] text-slate-700 font-semibold">{w.series_name}</span>
+								{/if}
+								{#if w.publish_end}
+									<span class="text-[10px] text-slate-500">· {w.publish_end} 종료</span>
+								{/if}
+							</div>
+							<p class="text-sm font-semibold text-slate-700">{w.title || '—'}</p>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</details>
+	{/if}
 {/if}

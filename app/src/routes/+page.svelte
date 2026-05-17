@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { auth } from '$lib/stores/auth.svelte';
 	import { fbReadDoc, fbReadCollection } from '$lib/firestore';
+	import { loadWorks, type Work } from '$lib/works';
 	import { getGreeting, formatToday, todayKey } from '$lib/utils/greeting';
 	import { fmtKRW } from '$lib/utils/format';
 	import { fetchKrwRate, DEFAULT_CURRENCIES } from '$lib/utils/fx';
@@ -47,16 +48,8 @@
 	let todayEvents = $state<PlannerEvent[]>([]);
 	let eventsLoading = $state(true);
 
-	// 작품 진행 (income)
-	type WorkItem = {
-		id: string;
-		month: string;
-		work_details: string;
-		category?: string;
-		status: string;
-		revenue?: number;
-	};
-	let activeWorks = $state<WorkItem[]>([]);
+	// 작품 진행 (works/list)
+	let activeWorks = $state<Work[]>([]);
 	let worksLoading = $state(true);
 
 	// 오늘의 영어 (englishSessions)
@@ -336,16 +329,18 @@
 
 	async function loadActiveWorks() {
 		try {
-			const docs = await fbReadCollection<WorkItem>('income');
-			const thisMonth = todayKey().substring(0, 7);
-			// 이번 달 + 진행 중 작품 (status가 '완료'/'중단' 아닌 것)
-			activeWorks = docs
-				.filter((d) => {
-					const status = (d.status || '').toLowerCase();
-					if (status.includes('완료') || status.includes('중단') || status.includes('드롭'))
-						return false;
-					return (d.month || '').startsWith(thisMonth) || !d.month; // 이번달이거나 month 없는 항목
-				})
+			const today = todayKey();
+			const all = await loadWorks();
+			// confirmed + 연재 중 (publish_start <= today <= publish_end)
+			activeWorks = all
+				.filter((w) => (w.status || '').toLowerCase() === 'confirmed')
+				.filter(
+					(w) =>
+						w.publish_start &&
+						w.publish_end &&
+						w.publish_start <= today &&
+						w.publish_end >= today
+				)
 				.slice(0, 3);
 		} catch (e) {
 			console.error('[works load]', e);
@@ -658,13 +653,13 @@
 			{#if worksLoading}
 				<p class="text-base font-bold text-amber-900 leading-tight opacity-50">...</p>
 			{:else if activeWorks.length === 0}
-				<p class="text-sm text-amber-800 opacity-60">진행 중인 작품 없음</p>
+				<p class="text-sm text-amber-800 opacity-60">연재 중인 작품 없음</p>
 			{:else}
 				<div class="flex flex-col gap-1.5 text-[12px] text-amber-900 flex-1">
 					{#each activeWorks as work}
 						<div class="flex items-center gap-1.5">
 							<span class="w-1 h-1 rounded-full bg-amber-700 shrink-0"></span>
-							<span class="truncate font-semibold">{work.work_details || '제목 없음'}</span>
+							<span class="truncate font-semibold">{work.title || '제목 없음'}</span>
 						</div>
 					{/each}
 				</div>

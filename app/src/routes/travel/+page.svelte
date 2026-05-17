@@ -15,15 +15,36 @@
 		id: string;
 		trip_id?: string;
 		type?: string; // 항공편, 숙소, 이동수단, 렌트카, 티켓, etc.
+		title?: string;
+		name?: string;
 		target_name?: string;
 		description?: string;
 		amount?: number | string;
 		status?: string;
 		time?: string;
+		date?: string;
+		date_end?: string;
+		city?: string;
+		payment_status?: string;
+		cancel?: string;
+		cancel_date?: string;
+		[key: string]: any;
+	};
+
+	type CityItem = {
+		id: string;
+		trip_id?: string;
+		name?: string;
+		start_date?: string;
+		end_date?: string;
+		nights?: number;
+		desc?: string;
+		order?: string;
 	};
 
 	let trips = $state<Trip[]>([]);
 	let journey = $state<Journey[]>([]);
+	let cities = $state<CityItem[]>([]);
 	let loading = $state(true);
 	let error = $state('');
 	let selectedTripId = $state<string>('');
@@ -34,12 +55,14 @@
 		loading = true;
 		error = '';
 		try {
-			const [t, j] = await Promise.all([
+			const [t, j, c] = await Promise.all([
 				fbReadCollection<Trip>('trips'),
-				fbReadCollection<Journey>('journey')
+				fbReadCollection<Journey>('journey'),
+				fbReadCollection<CityItem>('cities')
 			]);
 			trips = t;
 			journey = j;
+			cities = c;
 			// 기본 선택: 진행중 → 가까운 미래 → 가장 최근 과거
 			const today = todayKey();
 			const sorted = [...trips].sort((a, b) => {
@@ -106,6 +129,45 @@
 	const selectedTrip = $derived(trips.find((t) => t.id === selectedTripId));
 
 	const tripJourney = $derived(journey.filter((j) => j.trip_id === selectedTripId));
+	const tripCities = $derived(cities.filter((c) => c.trip_id === selectedTripId));
+
+	// 타입별 그룹화
+	function getByType(type: string): Journey[] {
+		return tripJourney.filter((j) => (j.type || '') === type);
+	}
+
+	const flights = $derived(getByType('항공편'));
+	const lodgings = $derived(getByType('숙소'));
+	const transports = $derived(getByType('이동수단'));
+	const rentals = $derived(getByType('렌트카'));
+	const schedule = $derived(
+		tripJourney
+			.filter((j) => j.type === '일정')
+			.sort((a, b) => {
+				const da = a.date || '';
+				const db = b.date || '';
+				if (da !== db) return da.localeCompare(db);
+				return (a.time || '').localeCompare(b.time || '');
+			})
+	);
+	const souvenirs = $derived(getByType('기념품'));
+	const tickets = $derived(getByType('티켓'));
+
+	// 일정을 날짜별로 그룹
+	const scheduleByDate = $derived.by(() => {
+		const map: Record<string, Journey[]> = {};
+		schedule.forEach((s) => {
+			const d = s.date || '날짜미정';
+			if (!map[d]) map[d] = [];
+			map[d].push(s);
+		});
+		return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
+	});
+
+	// 항목 이름 헬퍼 (title, name, target_name 중 있는 것)
+	function itemName(j: Journey): string {
+		return j.title || j.name || j.target_name || '—';
+	}
 
 	const tripExpense = $derived.by(() => {
 		const byType: Record<string, number> = {};
@@ -327,52 +389,279 @@
 				</section>
 			{/if}
 
-			<!-- 일정 항목 목록 -->
-			<section
-				class="bg-white rounded-2xl p-4 border border-slate-100"
-				style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
-			>
-				<h3 class="text-sm font-bold mb-3 text-slate-800">📋 여행 항목</h3>
-				{#if tripJourney.length === 0}
-					<p class="text-xs text-slate-400 italic py-4 text-center">등록된 항목 없음</p>
-				{:else}
-					<div class="flex flex-col gap-2">
-						{#each tripJourney.sort((a, b) => (a.time || '').localeCompare(b.time || '')) as j}
-							<div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-								<div class="text-xl shrink-0">{typeIcon(j.type || '')}</div>
-								<div class="flex-1 min-w-0">
-									<div class="flex items-center gap-2 mb-0.5 flex-wrap">
-										<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">
-											{j.type || '미분류'}
-										</span>
-										{#if j.time}
-											<span class="text-[10px] text-slate-500 font-mono">{j.time}</span>
+			<!-- 도시 (있으면) -->
+			{#if tripCities.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">🏙️ 방문 도시</h3>
+					<div class="flex flex-wrap gap-2">
+						{#each tripCities.sort((a, b) => (a.start_date || '').localeCompare(b.start_date || '')) as c}
+							<div class="bg-violet-50 px-4 py-2.5 rounded-xl">
+								<p class="text-sm font-bold text-violet-950">{c.name || '—'}</p>
+								{#if c.start_date && c.end_date}
+									<p class="text-[10px] text-violet-700 mt-0.5">
+										{c.start_date.substring(5).replace('-', '/')} ~ {c.end_date
+											.substring(5)
+											.replace('-', '/')}
+										{#if c.nights}
+											· {c.nights}박
 										{/if}
-										{#if j.status}
-											<span class="text-[10px] text-slate-500">· {j.status}</span>
-										{/if}
-									</div>
-									<p class="text-sm font-bold text-slate-800 truncate">
-										{j.target_name || '—'}
-									</p>
-									{#if j.description}
-										<p class="text-xs text-slate-500 truncate">{j.description}</p>
-									{/if}
-								</div>
-								{#if j.amount}
-									<p class="text-sm font-extrabold text-slate-900 shrink-0">
-										{fmtKRW(Number(j.amount))}
 									</p>
 								{/if}
 							</div>
 						{/each}
 					</div>
-				{/if}
-			</section>
+				</section>
+			{/if}
+
+			<!-- 항공편 -->
+			{#if flights.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">✈️ 항공편 {flights.length}건</h3>
+					<div class="flex flex-col gap-2">
+						{#each flights as f}
+							<div class="p-3 bg-sky-50 rounded-xl">
+								<div class="flex items-center justify-between gap-2 flex-wrap">
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-bold text-slate-900">{itemName(f)}</p>
+										{#if f.description}
+											<p class="text-xs text-slate-500 mt-0.5">{f.description}</p>
+										{/if}
+										<div class="flex items-center gap-2 mt-1 flex-wrap">
+											{#if f.date}
+												<span class="text-[10px] text-slate-500 font-mono">{f.date}</span>
+											{/if}
+											{#if f.payment_status}
+												<span class="text-[10px] px-1.5 py-0.5 rounded bg-white text-slate-600 font-bold">
+													{f.payment_status}
+												</span>
+											{/if}
+										</div>
+									</div>
+									{#if f.amount}
+										<p class="text-sm font-extrabold text-slate-900 shrink-0">
+											{fmtKRW(Number(f.amount))}
+										</p>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 숙소 -->
+			{#if lodgings.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">🏨 숙소 {lodgings.length}건</h3>
+					<div class="flex flex-col gap-2">
+						{#each lodgings as l}
+							<div class="p-3 bg-amber-50 rounded-xl">
+								<div class="flex items-center justify-between gap-2 flex-wrap">
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-bold text-slate-900">{itemName(l)}</p>
+										{#if l.description}
+											<p class="text-xs text-slate-500 mt-0.5">{l.description}</p>
+										{/if}
+										<div class="flex items-center gap-2 mt-1 flex-wrap">
+											{#if l.date && l.date_end}
+												<span class="text-[10px] text-slate-500 font-mono">
+													{l.date} ~ {l.date_end}
+												</span>
+											{/if}
+											{#if l.city}
+												<span class="text-[10px] text-slate-500">· {l.city}</span>
+											{/if}
+											{#if l.payment_status}
+												<span class="text-[10px] px-1.5 py-0.5 rounded bg-white text-slate-600 font-bold">
+													{l.payment_status}
+												</span>
+											{/if}
+											{#if l.cancel && l.cancel !== '불가'}
+												<span class="text-[10px] text-emerald-600">취소: {l.cancel}</span>
+											{/if}
+										</div>
+									</div>
+									{#if l.amount}
+										<p class="text-sm font-extrabold text-slate-900 shrink-0">
+											{fmtKRW(Number(l.amount))}
+										</p>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 렌트카 -->
+			{#if rentals.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">🚗 렌트카 {rentals.length}건</h3>
+					<div class="flex flex-col gap-2">
+						{#each rentals as r}
+							<div class="p-3 bg-rose-50 rounded-xl">
+								<div class="flex items-center justify-between gap-2 flex-wrap">
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-bold text-slate-900">{itemName(r)}</p>
+										{#if r.description}
+											<p class="text-xs text-slate-500 mt-0.5">{r.description}</p>
+										{/if}
+										{#if r.date && r.date_end}
+											<p class="text-[10px] text-slate-500 font-mono mt-1">
+												{r.date} ~ {r.date_end}
+											</p>
+										{/if}
+									</div>
+									{#if r.amount}
+										<p class="text-sm font-extrabold text-slate-900 shrink-0">
+											{fmtKRW(Number(r.amount))}
+										</p>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 이동수단 -->
+			{#if transports.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">🚆 이동수단 {transports.length}건</h3>
+					<div class="flex flex-col gap-2">
+						{#each transports as t}
+							<div class="p-3 bg-emerald-50 rounded-xl">
+								<div class="flex items-center justify-between gap-2 flex-wrap">
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-bold text-slate-900">{itemName(t)}</p>
+										{#if t.description}
+											<p class="text-xs text-slate-500 mt-0.5">{t.description}</p>
+										{/if}
+										{#if t.date}
+											<p class="text-[10px] text-slate-500 font-mono mt-1">{t.date}</p>
+										{/if}
+									</div>
+									{#if t.amount}
+										<p class="text-sm font-extrabold text-slate-900 shrink-0">
+											{fmtKRW(Number(t.amount))}
+										</p>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 일정 (날짜별 그룹) -->
+			{#if scheduleByDate.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">📅 일정 ({schedule.length}건)</h3>
+					<div class="flex flex-col gap-4">
+						{#each scheduleByDate as [date, items]}
+							<div>
+								<h4 class="text-[11px] font-bold text-violet-600 uppercase tracking-wider mb-2">
+									{date} · {items.length}건
+								</h4>
+								<div class="flex flex-col gap-1.5">
+									{#each items as s}
+										<div class="flex items-start gap-3 p-2.5 bg-slate-50 rounded-xl">
+											{#if s.time}
+												<span class="text-[11px] font-bold text-slate-600 font-mono w-12 shrink-0 mt-0.5">
+													{s.time}
+												</span>
+											{/if}
+											<div class="flex-1 min-w-0">
+												<p class="text-sm font-semibold text-slate-800">{itemName(s)}</p>
+												{#if s.description}
+													<p class="text-xs text-slate-500 mt-0.5">{s.description}</p>
+												{/if}
+												{#if s.city}
+													<span class="text-[10px] text-slate-400">📍 {s.city}</span>
+												{/if}
+											</div>
+											{#if s.amount}
+												<p class="text-xs font-bold text-slate-700 shrink-0">
+													{fmtKRW(Number(s.amount))}
+												</p>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 티켓 -->
+			{#if tickets.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">🎫 티켓 {tickets.length}건</h3>
+					<div class="flex flex-wrap gap-2">
+						{#each tickets as t}
+							<div class="px-3 py-2 bg-blue-50 rounded-xl">
+								<p class="text-xs font-bold text-blue-900">{itemName(t)}</p>
+								{#if t.amount}
+									<p class="text-[10px] text-blue-700">{fmtKRW(Number(t.amount))}</p>
+								{/if}
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
+
+			<!-- 기념품 -->
+			{#if souvenirs.length > 0}
+				<section
+					class="bg-white rounded-2xl p-5 border border-slate-100 mb-4"
+					style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+				>
+					<h3 class="text-sm font-bold mb-3 text-slate-800">📌 기념품 {souvenirs.length}건</h3>
+					<div class="flex flex-col gap-1.5">
+						{#each souvenirs as s}
+							<div class="flex items-start gap-3 p-2.5 bg-pink-50 rounded-xl">
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold text-slate-800">{itemName(s)}</p>
+									{#if s.description}
+										<p class="text-xs text-slate-500 mt-0.5">{s.description}</p>
+									{/if}
+								</div>
+								{#if s.amount}
+									<p class="text-xs font-bold text-slate-700 shrink-0">
+										{fmtKRW(Number(s.amount))}
+									</p>
+								{/if}
+							</div>
+						{/each}
+					</div>
+				</section>
+			{/if}
 
 			<!-- 안내 -->
 			<section class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
-				💡 여행 항목 추가/편집은 다음 단계. main 사이트에서 입력하면 여기서 확인 가능.
+				💡 여행 항목 편집은 다음 단계. main 사이트에서 입력하면 여기서 확인 가능.
 			</section>
 		{/if}
 	{/if}

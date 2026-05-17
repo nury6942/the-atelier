@@ -1,31 +1,43 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fbReadCollection } from '$lib/firestore';
+	import { fmtKRW } from '$lib/utils/format';
 	import { todayKey } from '$lib/utils/greeting';
 
-	type MatrixRow = {
+	type Lesson = {
 		id: string;
-		date: string;
-		day?: string;
-		work?: string;
-		leave?: string;
-		personal?: string;
-		writing?: string;
-		serial1?: string;
-		english?: string;
-		ai_study?: string;
-		workingout?: string;
+		lesson_name?: string;
+		date?: string;
+		status?: string; // 예정/완료/취소
+		track?: string;
+		fee?: number | string;
+		notes?: string;
 	};
 
-	let data = $state<MatrixRow[]>([]);
+	type Session = {
+		id: string;
+		title?: string;
+		expressions?: Array<{ expr?: string; kr?: string; ex?: string; cat?: string }>;
+		vocabulary?: Array<any>;
+		grammar?: any[];
+		date?: string;
+	};
+
+	let lessons = $state<Lesson[]>([]);
+	let sessions = $state<Session[]>([]);
 	let loading = $state(true);
 	let error = $state('');
-
-	let year = $state(new Date().getFullYear());
+	let selectedSession = $state<Session | null>(null);
 
 	onMount(async () => {
+		loading = true;
 		try {
-			data = await fbReadCollection<MatrixRow>('matrix');
+			const [l, s] = await Promise.all([
+				fbReadCollection<Lesson>('english'),
+				fbReadCollection<Session>('englishSessions')
+			]);
+			lessons = l;
+			sessions = s;
 		} catch (e: any) {
 			error = e?.message || '로드 실패';
 		} finally {
@@ -33,201 +45,264 @@
 		}
 	});
 
-	const yearData = $derived(data.filter((d) => (d.date || '').startsWith(String(year))));
-
-	const fields = [
-		{ key: 'work', label: '업무', icon: '💼', color: '#fce7f3', text: '#9d174d' },
-		{ key: 'leave', label: '연차', icon: '🌴', color: '#ffedd5', text: '#c2410c' },
-		{ key: 'personal', label: '개인', icon: '🏠', color: '#fef3c7', text: '#92400e' },
-		{ key: 'writing', label: '글쓰기', icon: '✍️', color: '#e0f2fe', text: '#0369a1' },
-		{ key: 'serial1', label: '연재', icon: '📖', color: '#dbeafe', text: '#1d4ed8' },
-		{ key: 'english', label: '영어', icon: '🇬🇧', color: '#d9f99d', text: '#3f6212' },
-		{ key: 'ai_study', label: '스터디', icon: '🧠', color: '#ede9fe', text: '#6d28d9' },
-		{ key: 'workingout', label: '운동', icon: '🏃', color: '#bbf7d0', text: '#15803d' }
-	] as const;
+	const today = todayKey();
 
 	const stats = $derived.by(() => {
-		const counts: Record<string, number> = {};
-		fields.forEach((f) => (counts[f.key] = 0));
-		yearData.forEach((d) => {
-			fields.forEach((f) => {
-				const v = (d as any)[f.key];
-				if (v && String(v).trim()) counts[f.key]++;
-			});
+		const completed = lessons.filter((l) => l.status === '완료').length;
+		const upcoming = lessons.filter((l) => l.status === '예정' || !l.status).length;
+		const cancelled = lessons.filter((l) => l.status === '취소').length;
+		let totalFee = 0;
+		lessons.forEach((l) => {
+			if (l.status === '취소') return;
+			const f = typeof l.fee === 'string' ? parseFloat(l.fee.replace(/[^0-9.]/g, '')) : Number(l.fee);
+			if (!isNaN(f)) totalFee += f;
 		});
-		return counts;
+		// 총 표현 학습수
+		let totalExpr = 0;
+		sessions.forEach((s) => {
+			totalExpr += (s.expressions || []).length;
+		});
+		return {
+			completed,
+			upcoming,
+			cancelled,
+			totalFee, // GBP
+			totalExpr,
+			reviewedCount: sessions.length
+		};
 	});
 
-	// 월별 통계
-	const monthlyCounts = $derived.by(() => {
-		const result: Record<string, Record<string, number>> = {};
-		for (let m = 1; m <= 12; m++) {
-			const monthKey = `${year}-${String(m).padStart(2, '0')}`;
-			result[monthKey] = {};
-			fields.forEach((f) => (result[monthKey][f.key] = 0));
-			yearData
-				.filter((d) => d.date.startsWith(monthKey))
-				.forEach((d) => {
-					fields.forEach((f) => {
-						const v = (d as any)[f.key];
-						if (v && String(v).trim()) result[monthKey][f.key]++;
-					});
-				});
-		}
-		return result;
-	});
+	// 정렬된 레슨
+	const sortedLessons = $derived(
+		[...lessons].sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+	);
 
-	const totalDays = $derived(yearData.filter((d) => fields.some((f) => (d as any)[f.key])).length);
-
-	function changeYear(delta: number) {
-		year += delta;
+	// 트라이메스터로 그룹화 (3개월 단위)
+	function getTrimesterKey(dateStr?: string): string {
+		if (!dateStr) return 'Unknown';
+		const m = parseInt(dateStr.split('-')[1]);
+		const y = dateStr.split('-')[0];
+		if (m <= 4) return `${y} Trimester 1 (Jan~Apr)`;
+		if (m <= 8) return `${y} Trimester 2 (May~Aug)`;
+		return `${y} Trimester 3 (Sep~Dec)`;
 	}
 
-	const MONTHS_KR = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+	const groups = $derived.by(() => {
+		const map: Record<string, Lesson[]> = {};
+		sortedLessons.forEach((l) => {
+			const key = getTrimesterKey(l.date);
+			if (!map[key]) map[key] = [];
+			map[key].push(l);
+		});
+		return Object.entries(map);
+	});
+
+	function hasReview(date?: string): boolean {
+		if (!date) return false;
+		return sessions.some((s) => s.id === date || s.date === date);
+	}
+
+	function getSession(date?: string): Session | undefined {
+		if (!date) return undefined;
+		return sessions.find((s) => s.id === date || s.date === date);
+	}
+
+	// 최근 표현 (모든 세션의 expressions 풀에서 최근 10개)
+	const recentExprs = $derived.by(() => {
+		const all: Array<{ expr: string; kr: string; ex: string; cat: string; sessionDate: string }> =
+			[];
+		sessions.forEach((s) => {
+			const d = s.id || s.date || '';
+			(s.expressions || []).forEach((e) => {
+				all.push({
+					expr: e.expr || '',
+					kr: e.kr || '',
+					ex: e.ex || '',
+					cat: e.cat || '',
+					sessionDate: d
+				});
+			});
+		});
+		return all.sort((a, b) => b.sessionDate.localeCompare(a.sessionDate)).slice(0, 10);
+	});
+
+	function statusColor(status?: string): { bg: string; text: string } {
+		if (status === '완료') return { bg: '#e0e7ff', text: '#3730a3' };
+		if (status === '취소') return { bg: '#fee2e2', text: '#b91c1c' };
+		return { bg: '#f1f5f9', text: '#475569' };
+	}
 </script>
 
 <div class="p-4 md:p-8 max-w-[1280px] mx-auto">
-	<h1 class="text-2xl md:text-3xl font-extrabold headline mb-5">Annie</h1>
+	<div class="flex items-center gap-3 mb-1">
+		<h1 class="text-2xl md:text-3xl font-extrabold headline">Annie</h1>
+		<span class="text-xs text-slate-400">— English Lessons</span>
+	</div>
 
 	{#if loading}
 		<div class="text-center py-12">
-			<p class="text-sm text-slate-400">매트릭스 불러오는 중...</p>
+			<p class="text-sm text-slate-400">레슨 데이터 불러오는 중...</p>
 		</div>
 	{:else if error}
 		<div class="bg-rose-50 border border-rose-200 rounded-xl p-4 text-xs text-rose-700">
 			⚠️ {error}
 		</div>
 	{:else}
-		<!-- 연도 헤더 -->
-		<div class="flex items-center justify-between mb-5 flex-wrap gap-3">
-			<div>
-				<h2 class="text-xl md:text-2xl font-extrabold headline">{year}년 활동 매트릭스</h2>
-				<p class="text-xs text-slate-500">{totalDays}일 기록 / {yearData.length}개 항목</p>
+		<!-- KPI -->
+		<section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 mt-4">
+			<div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4">
+				<p class="text-[10px] font-bold text-indigo-700 tracking-widest uppercase mb-1">완료</p>
+				<p class="text-xl md:text-2xl font-extrabold text-indigo-900">
+					{stats.completed}
+					<span class="text-xs font-bold opacity-70">회차</span>
+				</p>
 			</div>
-			<div class="flex items-center gap-1">
-				<button
-					onclick={() => changeYear(-1)}
-					class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold"
-				>
-					‹
-				</button>
-				<span class="px-3 text-xs text-slate-500 min-w-[60px] text-center">{year}</span>
-				<button
-					onclick={() => changeYear(1)}
-					class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm font-bold"
-				>
-					›
-				</button>
+			<div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+				<p class="text-[10px] font-bold text-slate-700 tracking-widest uppercase mb-1">예정</p>
+				<p class="text-xl md:text-2xl font-extrabold text-slate-900">
+					{stats.upcoming}
+					<span class="text-xs font-bold opacity-70">회차</span>
+				</p>
 			</div>
-		</div>
+			<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+				<p class="text-[10px] font-bold text-emerald-700 tracking-widest uppercase mb-1">
+					리뷰 작성
+				</p>
+				<p class="text-xl md:text-2xl font-extrabold text-emerald-900">
+					{stats.reviewedCount}
+				</p>
+			</div>
+			<div class="bg-violet-50 border border-violet-200 rounded-2xl p-4">
+				<p class="text-[10px] font-bold text-violet-700 tracking-widest uppercase mb-1">
+					학습 표현
+				</p>
+				<p class="text-xl md:text-2xl font-extrabold text-violet-900">
+					{stats.totalExpr}
+				</p>
+			</div>
+		</section>
 
-		<!-- 카테고리별 연간 KPI -->
-		<section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-			{#each fields as f}
-				<div
-					class="rounded-2xl p-4 border"
-					style="background: {f.color}; border-color: {f.text}33"
-				>
-					<div class="flex items-center justify-between mb-1">
-						<span class="text-sm">{f.icon}</span>
-						<span class="text-[10px] font-bold tracking-widest uppercase" style="color: {f.text}">
-							{f.label}
-						</span>
+		<!-- 수업료 -->
+		{#if stats.totalFee > 0}
+			<section class="bg-white rounded-2xl p-5 border border-slate-100 mb-5">
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-1">
+							총 수업료 (취소 제외)
+						</p>
+						<p class="text-xl md:text-2xl font-extrabold text-slate-900">
+							£{stats.totalFee.toFixed(0)}
+						</p>
 					</div>
-					<p class="text-2xl font-extrabold" style="color: {f.text}">
-						{stats[f.key]}
-						<span class="text-xs font-bold opacity-70">일</span>
-					</p>
+					<div class="text-right text-xs text-slate-400">
+						{stats.completed + stats.upcoming}회 기준
+					</div>
 				</div>
-			{/each}
-		</section>
+			</section>
+		{/if}
 
-		<!-- 월별 히트맵 -->
-		<section
-			class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
-			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
-		>
-			<h3 class="text-sm font-bold mb-4 text-slate-800">📊 월별 활동 (카테고리별)</h3>
-			<div class="overflow-x-auto">
-				<table class="w-full text-xs min-w-[600px]">
-					<thead>
-						<tr class="text-[10px] font-bold text-slate-400 uppercase">
-							<th class="text-left py-2 pr-2 sticky left-0 bg-white">월</th>
-							{#each fields as f}
-								<th class="text-center px-1 py-2" style="color: {f.text}">
-									{f.icon}
-								</th>
-							{/each}
-						</tr>
-					</thead>
-					<tbody>
-						{#each Array(12) as _, i}
-							{@const m = i + 1}
-							{@const monthKey = `${year}-${String(m).padStart(2, '0')}`}
-							{@const counts = monthlyCounts[monthKey]}
-							<tr class="border-t border-slate-50">
-								<td class="py-2 pr-2 font-bold text-slate-700 sticky left-0 bg-white">
-									{MONTHS_KR[i]}
-								</td>
-								{#each fields as f}
-									{@const count = counts[f.key]}
-									<td class="text-center px-1 py-1">
-										{#if count > 0}
-											<div
-												class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold text-[11px]"
-												style="background: {f.color}; color: {f.text}"
-											>
-												{count}
-											</div>
-										{:else}
-											<span class="text-slate-200">·</span>
-										{/if}
-									</td>
-								{/each}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</section>
+		<!-- 최근 학습 표현 -->
+		{#if recentExprs.length > 0}
+			<section
+				class="bg-white rounded-2xl p-5 border border-slate-100 mb-5"
+				style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
+			>
+				<h3 class="text-sm font-bold mb-3 text-slate-800">💬 최근 학습 표현</h3>
+				<div class="flex flex-col gap-2">
+					{#each recentExprs as expr}
+						<div class="p-3 bg-violet-50 rounded-xl">
+							<div class="flex items-center gap-2 mb-1 flex-wrap">
+								{#if expr.cat}
+									<span
+										class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-200 text-violet-800"
+									>
+										{expr.cat}
+									</span>
+								{/if}
+								<span class="text-[10px] text-slate-400 font-mono">{expr.sessionDate}</span>
+							</div>
+							<p class="text-sm font-bold italic text-violet-950 mb-0.5">{expr.expr}</p>
+							{#if expr.kr}
+								<p class="text-xs text-slate-700">{expr.kr}</p>
+							{/if}
+							{#if expr.ex}
+								<p class="text-xs text-slate-500 italic mt-1">{expr.ex}</p>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			</section>
+		{/if}
 
-		<!-- 최근 항목 -->
+		<!-- 레슨 일정 (트라이메스터별 그룹) -->
 		<section
 			class="bg-white rounded-2xl p-4 border border-slate-100"
 			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
 		>
-			<h3 class="text-sm font-bold mb-3 text-slate-800">📋 최근 활동 (최근 10일)</h3>
-			{#if yearData.length === 0}
-				<p class="text-xs text-slate-400 italic py-4 text-center">{year}년 기록 없음</p>
+			<h3 class="text-sm font-bold mb-3 text-slate-800">📚 레슨 일정</h3>
+			{#if groups.length === 0}
+				<p class="text-xs text-slate-400 italic py-4 text-center">등록된 레슨 없음</p>
 			{:else}
-				{@const recentDays = yearData
-					.filter((d) => fields.some((f) => (d as any)[f.key]))
-					.sort((a, b) => b.date.localeCompare(a.date))
-					.slice(0, 10)}
-				<div class="flex flex-col gap-2">
-					{#each recentDays as row}
-						<div class="flex items-start gap-3 p-2.5 bg-slate-50 rounded-xl">
-							<div class="text-[11px] font-bold text-slate-600 w-20 shrink-0 font-mono">
-								{row.date}
-							</div>
-							<div class="flex-1 flex flex-wrap gap-1.5">
-								{#each fields as f}
-									{@const val = (row as any)[f.key]}
-									{#if val && String(val).trim()}
-										<span
-											class="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-											style="background: {f.color}; color: {f.text}"
-											title={String(val)}
-										>
-											{f.icon} {f.label}
+				<div class="flex flex-col gap-4">
+					{#each groups as [trimester, items]}
+						<div>
+							<h4 class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-2">
+								{trimester} · {items.length}회차
+							</h4>
+							<div class="flex flex-col gap-1.5">
+								{#each items as l, idx}
+									{@const sc = statusColor(l.status)}
+									{@const isReviewed = hasReview(l.date)}
+									{@const isPast = (l.date || '') < today}
+									<div
+										class="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl
+											{l.status === '취소' ? 'opacity-50' : ''}"
+									>
+										<span class="text-xs font-bold text-slate-600 w-12 shrink-0">
+											{idx + 1}회차
 										</span>
-									{/if}
+										<span class="text-xs text-slate-500 font-mono w-24 shrink-0">
+											{l.date || '—'}
+										</span>
+										<span
+											class="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+											style="background: {sc.bg}; color: {sc.text}"
+										>
+											{l.status || '예정'}
+										</span>
+										<span class="flex-1 text-xs text-slate-500 italic truncate">
+											{l.notes || ''}
+										</span>
+										<div class="flex items-center gap-2 shrink-0">
+											{#if l.fee}
+												<span class="text-[11px] font-bold text-slate-700">
+													£{typeof l.fee === 'string'
+														? parseFloat(l.fee.replace(/[^0-9.]/g, '')).toFixed(0)
+														: Number(l.fee).toFixed(0)}
+												</span>
+											{/if}
+											{#if isReviewed}
+												<span
+													class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700"
+												>
+													📝 리뷰 있음
+												</span>
+											{:else if isPast && l.status === '완료'}
+												<span class="text-[10px] text-slate-400">미작성</span>
+											{/if}
+										</div>
+									</div>
 								{/each}
 							</div>
 						</div>
 					{/each}
 				</div>
 			{/if}
+		</section>
+
+		<!-- 안내 -->
+		<section class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+			💡 레슨/리뷰 추가는 다음 단계. main 사이트에서 입력하면 여기서 확인 가능.
 		</section>
 	{/if}
 </div>
