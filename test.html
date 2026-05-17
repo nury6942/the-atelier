@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier Test</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; padding: 40px 20px; background: #f8faff; color: #1e293b; }
+  h1 { color: #7c3aed; margin: 0 0 16px; }
+  .box { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .ok { color: #16a34a; font-weight: 600; }
+  .fail { color: #dc2626; font-weight: 600; }
+  pre { background: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto; }
+  button { background: #7c3aed; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>🧪 Atelier 진단 페이지</h1>
+<div class="box">
+  <p class="ok">✅ 이 페이지가 보인다면 GitHub Pages 연결은 정상이야!</p>
+  <p>= index.html (1.8MB) 자체 문제 거의 확정.</p>
+</div>
+
+<div class="box">
+  <h3>1. CDN 리소스 도달 가능 여부</h3>
+  <div id="cdn-results">테스트 중...</div>
+</div>
+
+<div class="box">
+  <h3>2. 환경 정보</h3>
+  <pre id="env"></pre>
+</div>
+
+<div class="box">
+  <h3>3. 메인 사이트 다시 시도</h3>
+  <button onclick="location.href='/the-atelier/'">메인 페이지 가기</button>
+  <button onclick="location.href='/the-atelier/?nocache=' + Date.now()" style="margin-left:8px;background:#475569">캐시버스트 시도</button>
+</div>
+
+<script>
+// 환경 정보
+document.getElementById('env').textContent = JSON.stringify({
+  ua: navigator.userAgent,
+  platform: navigator.platform,
+  online: navigator.onLine,
+  cookieEnabled: navigator.cookieEnabled,
+  vendor: navigator.vendor,
+  language: navigator.language,
+  viewport: window.innerWidth + 'x' + window.innerHeight,
+  screen: screen.width + 'x' + screen.height,
+  devicePixelRatio: window.devicePixelRatio,
+  sw: 'serviceWorker' in navigator ? 'supported' : 'no',
+  href: location.href,
+}, null, 2);
+
+// CDN 테스트
+var cdnTests = [
+  { name: 'Tailwind CDN', url: 'https://cdn.tailwindcss.com/3.4.17?plugins=forms@0.5.10,container-queries@0.1.1' },
+  { name: 'jsdelivr (flatpickr)', url: 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js' },
+  { name: 'jsdelivr (xlsx 1MB)', url: 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js' },
+  { name: 'Google Fonts CSS', url: 'https://fonts.googleapis.com/css2?family=Manrope&display=swap' },
+  { name: 'Pretendard CDN', url: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css' },
+];
+var results = document.getElementById('cdn-results');
+results.innerHTML = '';
+cdnTests.forEach(function(test) {
+  var row = document.createElement('div');
+  row.style.padding = '6px 0';
+  row.innerHTML = '⏳ ' + test.name + ' …';
+  results.appendChild(row);
+  var t0 = Date.now();
+  fetch(test.url, { method: 'HEAD', mode: 'no-cors' })
+    .then(function() {
+      var dt = Date.now() - t0;
+      row.innerHTML = '<span class="ok">✅</span> ' + test.name + ' (' + dt + 'ms)';
+    })
+    .catch(function(e) {
+      var dt = Date.now() - t0;
+      row.innerHTML = '<span class="fail">❌</span> ' + test.name + ' — ' + e.message + ' (' + dt + 'ms)';
+    });
+});
+</script>
+</body>
+</html>
