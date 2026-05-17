@@ -77,12 +77,9 @@
     .font-headline,.headline{font-family:'Manrope',sans-serif!important}
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
     /* ═══ flatpickr Atelier 보라색 테마 ═══ */
-    /* z-index 최대값 + position:fixed 강제 — 어떤 모달/오버레이도 못 가리고, 스크롤 무관 */
+    /* z-index 최대값 — 어떤 모달/오버레이도 못 가리도록 */
     .flatpickr-calendar { font-family: 'Manrope','Inter',system-ui,sans-serif !important; border-radius: 16px !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
-    .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline {
-      z-index: 2147483647 !important;
-      position: fixed !important;  /* flatpickr 내부 코드가 absolute로 덮어쓰는 걸 차단 */
-    }
+    .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline { z-index: 2147483647 !important; }
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: #6b38d4 !important; }
     .flatpickr-months { background: linear-gradient(135deg,#6b38d4,#8455ef) !important; padding: 12px 8px !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
     .flatpickr-months .flatpickr-month { color: #fff !important; height: auto !important; line-height: 1.4 !important; }
