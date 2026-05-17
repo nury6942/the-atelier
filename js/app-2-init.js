@@ -1,5 +1,9 @@
 // ===== AUTH =====
 
+// 🚨 최상위 디버그 로그 — JS 로드 자체가 되는지 확인
+console.log('🔵 [app-2-init.js] 로드 시작', new Date().toISOString());
+window.__atelier_app2_loaded = true;
+
 // ═══ 모바일 감지 — 차트 건너뛰기 + Chart.js 최적화 ═══
 // iOS Safari 탭 discard (메모리 한계 도달) 방지
 window._isMobile = window.matchMedia('(max-width: 768px)').matches || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
