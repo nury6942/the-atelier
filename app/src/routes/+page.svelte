@@ -5,6 +5,15 @@
 	import { getGreeting, formatToday, todayKey } from '$lib/utils/greeting';
 	import { fmtKRW } from '$lib/utils/format';
 	import { fetchKrwRate, DEFAULT_CURRENCIES } from '$lib/utils/fx';
+	import {
+		generateBrief,
+		getCachedBrief,
+		getApiKey,
+		setApiKey,
+		type BriefItem
+	} from '$lib/ai/brief';
+	import { getThisWeek, weekRangeStr, type WeekDay } from '$lib/utils/week';
+	import { fetchDashNews, type NewsItem } from '$lib/utils/news';
 	import { base } from '$app/paths';
 
 	// ═══ 상태 ═══
@@ -67,6 +76,32 @@
 	let fxRates = $state<FxRate[]>([]);
 	let fxLoading = $state(true);
 
+	// AI 브리프
+	let briefItems = $state<BriefItem[]>([]);
+	let briefLoading = $state(true);
+	let briefError = $state('');
+	let briefStatus = $state('');
+	let needsApiKey = $state(false);
+	let apiKeyModal = $state(false);
+	let apiKeyInput = $state('');
+
+	// Week in Review
+	let week = $state<WeekDay[]>([]);
+	const weekRangeText = $derived(weekRangeStr(week));
+
+	// 뉴스
+	let newsKr = $state<NewsItem[]>([]);
+	let newsEn = $state<NewsItem[]>([]);
+	let newsLoading = $state(true);
+
+	// 브리프 카드 파스텔 컬러 사이클
+	const briefColors = [
+		{ bg: '#ede9fe', text: '#5b21b6', border: '#c4b5fd' },
+		{ bg: '#dcfce7', text: '#15803d', border: '#86efac' },
+		{ bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
+		{ bg: '#fce7f3', text: '#9d174d', border: '#f9a8d4' }
+	];
+
 	// 매분 인사말 새로고침 (시간 바뀌면)
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -80,9 +115,108 @@
 		loadActiveWorks();
 		loadEnglish();
 		loadFx();
+		loadBrief();
+		loadWeekReview();
+		loadNews();
 
 		return () => clearInterval(interval);
 	});
+
+	async function loadBrief() {
+		// 1) 캐시 먼저
+		const cached = getCachedBrief();
+		if (cached) {
+			briefItems = cached.items;
+			briefStatus = `캐시 · ${cached.time}`;
+			briefLoading = false;
+			return;
+		}
+		// 2) API 키 확인
+		if (!getApiKey()) {
+			needsApiKey = true;
+			briefLoading = false;
+			return;
+		}
+		// 3) 생성
+		briefStatus = '생성 중';
+		try {
+			briefItems = await generateBrief();
+			briefStatus =
+				new Date().getHours().toString().padStart(2, '0') +
+				':' +
+				new Date().getMinutes().toString().padStart(2, '0');
+		} catch (e: any) {
+			briefError = e?.message || '생성 실패';
+			briefStatus = '오류';
+		} finally {
+			briefLoading = false;
+		}
+	}
+
+	async function refreshBrief() {
+		briefLoading = true;
+		briefError = '';
+		briefStatus = '생성 중';
+		try {
+			briefItems = await generateBrief();
+			briefStatus =
+				new Date().getHours().toString().padStart(2, '0') +
+				':' +
+				new Date().getMinutes().toString().padStart(2, '0');
+		} catch (e: any) {
+			briefError = e?.message || '생성 실패';
+			briefStatus = '오류';
+		} finally {
+			briefLoading = false;
+		}
+	}
+
+	function saveApiKey() {
+		if (!apiKeyInput.trim()) return;
+		setApiKey(apiKeyInput.trim());
+		apiKeyInput = '';
+		apiKeyModal = false;
+		needsApiKey = false;
+		loadBrief();
+	}
+
+	async function loadWeekReview() {
+		const w = getThisWeek();
+		try {
+			const docs = await fbReadCollection<{
+				date?: string;
+				title?: string;
+				category?: string;
+				color?: string;
+				date_end?: string;
+			}>('planner');
+			// 각 날짜에 해당하는 일정 매핑
+			w.forEach((day) => {
+				day.events = docs
+					.filter((d) => {
+						const start = d.date || '';
+						const end = d.date_end || start;
+						return day.date >= start && day.date <= end;
+					})
+					.map((d) => ({ title: d.title || '', category: d.category, color: d.color }));
+			});
+		} catch (e) {
+			console.error('[week load]', e);
+		}
+		week = w;
+	}
+
+	async function loadNews() {
+		try {
+			const { kr, en } = await fetchDashNews();
+			newsKr = kr;
+			newsEn = en;
+		} catch (e) {
+			console.error('[news load]', e);
+		} finally {
+			newsLoading = false;
+		}
+	}
 
 	async function loadEnglish() {
 		try {
@@ -248,25 +382,117 @@
 </script>
 
 <main class="p-4 md:p-8 max-w-[1280px] mx-auto">
-	<!-- ═══ Hero: 인사말 + Brief ═══ -->
+	<!-- ═══ Hero: 인사말 + AI Brief ═══ -->
 	<section class="mb-6">
 		<div
 			class="bg-white rounded-2xl p-6 md:p-8 border border-violet-100"
 			style="box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05)"
 		>
-			<p class="text-xs font-bold text-violet-600 tracking-widest mb-2 uppercase">Overview</p>
-			<h1 class="text-2xl md:text-3xl font-extrabold mb-2 headline">{greeting}.</h1>
-			<p class="text-sm text-slate-500">{todayStr}</p>
-
-			<!-- Brief placeholder -->
-			<div
-				class="mt-6 pt-6 border-t border-slate-100 flex items-center gap-2 text-xs text-slate-400"
-			>
-				<span>📡</span>
-				<span>AI 브리프는 Week 2에 옮겨질 예정 — 곧 만나요</span>
+			<div class="flex justify-between items-start mb-4">
+				<div>
+					<p class="text-xs font-bold text-violet-600 tracking-widest mb-2 uppercase">
+						Overview
+					</p>
+					<h1 class="text-2xl md:text-3xl font-extrabold mb-2 headline">{greeting}.</h1>
+					<p class="text-sm text-slate-500">{todayStr}</p>
+				</div>
+				<div class="flex items-center gap-1.5 text-[10px] text-slate-400">
+					{#if briefStatus}
+						<span>{briefStatus}</span>
+					{/if}
+					<button
+						onclick={refreshBrief}
+						class="p-1 rounded hover:bg-violet-50 transition-colors text-violet-600"
+						title="새로고침"
+						disabled={briefLoading}
+					>
+						🔄
+					</button>
+				</div>
 			</div>
+
+			<!-- AI 브리프 카드들 -->
+			{#if briefLoading}
+				<div class="text-xs text-slate-400 flex items-center gap-2">
+					<span class="animate-pulse">⏳</span>
+					<span>AI 분석 중...</span>
+				</div>
+			{:else if needsApiKey}
+				<div class="bg-violet-50 rounded-xl p-4 text-xs flex items-center justify-between">
+					<span class="text-violet-700">
+						⚙️ AI 브리프를 보려면 Anthropic API 키 설정이 필요해요
+					</span>
+					<button
+						onclick={() => (apiKeyModal = true)}
+						class="px-3 py-1.5 rounded-lg bg-violet-600 text-white font-bold text-[11px] hover:bg-violet-700"
+					>
+						API 키 설정
+					</button>
+				</div>
+			{:else if briefError}
+				<div class="text-xs text-rose-600 bg-rose-50 rounded-xl p-3">
+					⚠️ {briefError}
+					<button onclick={refreshBrief} class="underline font-bold ml-2">재시도</button>
+				</div>
+			{:else if briefItems.length}
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+					{#each briefItems as item, i}
+						{@const c = briefColors[i % briefColors.length]}
+						<div
+							class="rounded-xl p-3 border"
+							style="background: {c.bg}; border-color: {c.border}"
+						>
+							<div class="text-xl mb-1">{item.icon}</div>
+							<div class="text-[12px] font-bold leading-snug mb-1" style="color: {c.text}">
+								{item.title}
+							</div>
+							<div class="text-[10px] opacity-75" style="color: {c.text}">{item.tag}</div>
+						</div>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	</section>
+
+	<!-- API 키 입력 모달 -->
+	{#if apiKeyModal}
+		<div
+			class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+			onclick={() => (apiKeyModal = false)}
+			role="presentation"
+		>
+			<div
+				class="bg-white rounded-2xl p-6 max-w-md w-full"
+				onclick={(e) => e.stopPropagation()}
+				role="presentation"
+			>
+				<h3 class="text-lg font-bold mb-2 headline">Anthropic API 키</h3>
+				<p class="text-xs text-slate-500 mb-4">
+					Claude API 키를 입력하세요. localStorage에만 저장 (외부 전송 없음).
+				</p>
+				<input
+					bind:value={apiKeyInput}
+					type="password"
+					placeholder="sk-ant-..."
+					class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono outline-none focus:ring-2 focus:ring-violet-400"
+				/>
+				<div class="flex gap-2 mt-4 justify-end">
+					<button
+						onclick={() => (apiKeyModal = false)}
+						class="px-4 py-2 rounded-xl text-xs text-slate-600 hover:bg-slate-50"
+					>
+						취소
+					</button>
+					<button
+						onclick={saveApiKey}
+						class="px-4 py-2 rounded-xl text-xs bg-violet-600 text-white font-bold hover:bg-violet-700"
+					>
+						저장
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<!-- ═══ 영어 + 환율 (실데이터 ✓) ═══ -->
 	<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -486,6 +712,111 @@
 		</a>
 	</section>
 
+	<!-- ═══ Week in Review (7일 카드) ═══ -->
+	<section class="mb-6">
+		<div
+			class="bg-white rounded-2xl p-5 border border-slate-100"
+			style="box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04)"
+		>
+			<div class="flex justify-between items-center mb-4">
+				<h3 class="text-sm font-bold text-slate-800 headline">Week in Review</h3>
+				<span class="text-[11px] font-bold text-violet-600">{weekRangeText}</span>
+			</div>
+			<div class="grid grid-cols-7 gap-1.5 md:gap-2">
+				{#each week as day}
+					<div
+						class="rounded-xl p-2 flex flex-col items-center min-h-[80px] {day.isToday
+							? 'bg-violet-500 text-white shadow-md'
+							: day.isWeekend
+								? 'bg-slate-50 text-slate-400'
+								: 'bg-slate-50 text-slate-700'}"
+					>
+						<p class="text-[10px] font-bold mb-0.5 opacity-80">{day.dayKr}</p>
+						<p class="text-base font-extrabold leading-none mb-1.5">{day.dayNum}</p>
+						<div class="flex flex-wrap justify-center gap-0.5 flex-1 items-start">
+							{#each day.events.slice(0, 4) as ev}
+								<span
+									class="w-1.5 h-1.5 rounded-full"
+									style="background: {ev.color || (day.isToday ? '#fff' : '#a855f7')}"
+									title={ev.title}
+								></span>
+							{/each}
+							{#if day.events.length > 4}
+								<span class="text-[8px] opacity-70">+{day.events.length - 4}</span>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</section>
+
+	<!-- ═══ 뉴스 (국내 + 해외) ═══ -->
+	<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+		<!-- 국내 뉴스 -->
+		<div
+			class="bg-white rounded-2xl p-5 border border-slate-100"
+			style="box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04)"
+		>
+			<div class="flex items-center gap-2 mb-3">
+				<span>🇰🇷</span>
+				<h3 class="text-sm font-bold text-slate-800">국내 뉴스</h3>
+				<span class="text-[10px] text-slate-400 ml-auto">한겨레</span>
+			</div>
+			{#if newsLoading}
+				<p class="text-xs text-slate-400 italic">불러오는 중...</p>
+			{:else if newsKr.length === 0}
+				<p class="text-xs text-slate-400 italic">뉴스 로드 실패</p>
+			{:else}
+				<div class="flex flex-col gap-2.5">
+					{#each newsKr as item}
+						<a
+							href={item.link}
+							target="_blank"
+							rel="noopener"
+							class="block text-[12px] hover:bg-slate-50 -mx-2 px-2 py-1.5 rounded transition-colors"
+						>
+							<span class="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded mr-1.5 bg-violet-100 text-violet-700">
+								{item.section}
+							</span>
+							<span class="text-slate-700 leading-snug">{item.title}</span>
+						</a>
+					{/each}
+				</div>
+			{/if}
+		</div>
+
+		<!-- 해외 뉴스 -->
+		<div
+			class="bg-white rounded-2xl p-5 border border-slate-100"
+			style="box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04)"
+		>
+			<div class="flex items-center gap-2 mb-3">
+				<span>🌐</span>
+				<h3 class="text-sm font-bold text-slate-800">해외 뉴스</h3>
+				<span class="text-[10px] text-slate-400 ml-auto">BBC World</span>
+			</div>
+			{#if newsLoading}
+				<p class="text-xs text-slate-400 italic">불러오는 중...</p>
+			{:else if newsEn.length === 0}
+				<p class="text-xs text-slate-400 italic">뉴스 로드 실패</p>
+			{:else}
+				<div class="flex flex-col gap-2.5">
+					{#each newsEn as item}
+						<a
+							href={item.link}
+							target="_blank"
+							rel="noopener"
+							class="block text-[12px] hover:bg-slate-50 -mx-2 px-2 py-1.5 rounded transition-colors"
+						>
+							<span class="text-slate-700 leading-snug">{item.title}</span>
+						</a>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</section>
+
 	<!-- 진행 안내 -->
 	<section
 		class="bg-white rounded-2xl p-6 border border-slate-100"
@@ -493,7 +824,7 @@
 	>
 		<div class="flex items-center gap-3 mb-3">
 			<span class="text-xl">📊</span>
-			<h2 class="font-bold text-base headline">Week 2 진행 상황</h2>
+			<h2 class="font-bold text-base headline">Week 2 진행 상황 (완료!)</h2>
 		</div>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
 			<div class="flex items-center gap-2 text-slate-600">
@@ -524,16 +855,16 @@
 				<span class="text-emerald-500">✅</span>
 				<span>환율</span>
 			</div>
-			<div class="flex items-center gap-2 text-slate-400">
-				<span>⏳</span>
+			<div class="flex items-center gap-2 text-slate-600">
+				<span class="text-emerald-500">✅</span>
 				<span>AI 브리프 (Claude API)</span>
 			</div>
-			<div class="flex items-center gap-2 text-slate-400">
-				<span>⏳</span>
+			<div class="flex items-center gap-2 text-slate-600">
+				<span class="text-emerald-500">✅</span>
 				<span>Week in Review (7일 카드)</span>
 			</div>
-			<div class="flex items-center gap-2 text-slate-400">
-				<span>⏳</span>
+			<div class="flex items-center gap-2 text-slate-600">
+				<span class="text-emerald-500">✅</span>
 				<span>뉴스 헤드라인 (국내+해외)</span>
 			</div>
 		</div>
