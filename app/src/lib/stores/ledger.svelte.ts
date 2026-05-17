@@ -1,7 +1,7 @@
 // Daily Ledger 데이터 스토어 — Svelte 5 runes
 // Firebase appSettings/ledgerData 단일 문서에서 모든 가계부 데이터 관리
 
-import { fbReadDoc } from '../firestore';
+import { fbMergeDoc, fbReadDoc } from '../firestore';
 import { todayKey } from '../utils/greeting';
 
 export type Tx = {
@@ -94,6 +94,40 @@ function createLedgerStore() {
 		return { income, expense, saving, net: income - expense - saving, txCount: txs.length };
 	}
 
+	function newTxId(): string {
+		return 'txn_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+	}
+
+	async function saveTx(tx: Tx): Promise<void> {
+		// 신규: id 없으면 자동 생성
+		if (!tx.id) tx.id = newTxId();
+		// transactions 배열에 추가/업데이트
+		const txs = [...(state.data.transactions || [])];
+		const idx = txs.findIndex((t) => t.id === tx.id);
+		if (idx >= 0) txs[idx] = tx;
+		else txs.unshift(tx);
+		// 메모리 먼저 업데이트 (즉시 반영)
+		state.data = { ...state.data, transactions: txs };
+		// Firebase 저장
+		await fbMergeDoc('appSettings/ledgerData', { transactions: txs });
+	}
+
+	async function deleteTx(id: string): Promise<void> {
+		const txs = (state.data.transactions || []).filter((t) => t.id !== id);
+		state.data = { ...state.data, transactions: txs };
+		await fbMergeDoc('appSettings/ledgerData', { transactions: txs });
+	}
+
+	function getCategories(): Record<string, string[]> {
+		return state.data.categories || {};
+	}
+
+	function getPaymentMethods(): string[] {
+		const all = state.data.settings?.paymentMethods || [];
+		const disabled = state.data.settings?.disabledPayments || [];
+		return all.filter((p) => !disabled.includes(p));
+	}
+
 	return {
 		get data() { return state.data; },
 		get loading() { return state.loading; },
@@ -105,7 +139,11 @@ function createLedgerStore() {
 		setMonth,
 		getMonthTx,
 		isExpense,
-		getMonthStats
+		getMonthStats,
+		saveTx,
+		deleteTx,
+		getCategories,
+		getPaymentMethods
 	};
 }
 

@@ -2,6 +2,20 @@
 	import { onMount } from 'svelte';
 	import { ledger, type Tx } from '$lib/stores/ledger.svelte';
 	import { fmtKRW } from '$lib/utils/format';
+	import TransactionModal from '$lib/components/TransactionModal.svelte';
+
+	let txModalOpen = $state(false);
+	let editingTx = $state<Tx | null>(null);
+
+	function openAddTx() {
+		editingTx = null;
+		txModalOpen = true;
+	}
+
+	function openEditTx(t: Tx) {
+		editingTx = t;
+		txModalOpen = true;
+	}
 
 	const KO_MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	const KO_MONTH_KR = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -265,19 +279,31 @@
 			class="bg-white rounded-2xl p-4 border border-slate-100"
 			style="box-shadow: 0 1px 4px rgba(0,0,0,0.04)"
 		>
-			<div class="flex items-center justify-between mb-3">
-				<h3 class="text-sm font-bold text-slate-800">📋 거래 내역</h3>
-				<span class="text-[11px] text-slate-400">{monthStats.txCount}건 (최근 30개 표시)</span>
+			<div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
+				<div class="flex items-center gap-2">
+					<h3 class="text-sm font-bold text-slate-800">📋 거래 내역</h3>
+					<span class="text-[11px] text-slate-400">{monthStats.txCount}건 (최근 30개)</span>
+				</div>
+				<button
+					onclick={openAddTx}
+					class="px-3 py-1.5 rounded-xl bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 transition-colors flex items-center gap-1.5"
+				>
+					<span class="text-base leading-none">+</span> 거래 추가
+				</button>
 			</div>
 
 			{#if recentTxs.length === 0}
 				<p class="text-xs text-slate-400 italic py-4 text-center">이번 달 거래 없음</p>
 			{:else}
-				<!-- 모바일: 카드 리스트 -->
+				<!-- 모바일: 카드 리스트 (클릭=편집) -->
 				<div class="md:hidden flex flex-col gap-2">
 					{#each recentTxs as t}
 						{@const isIncome = t.대분류 === '수입'}
-						<div class="bg-slate-50 rounded-xl p-3">
+						<button
+							type="button"
+							onclick={() => openEditTx(t)}
+							class="bg-slate-50 hover:bg-violet-50 transition-colors rounded-xl p-3 text-left"
+						>
 							<div class="flex justify-between items-start mb-1">
 								<div class="flex-1 min-w-0">
 									<div class="flex items-center gap-1.5 mb-0.5">
@@ -303,11 +329,11 @@
 							{#if t.결제수단}
 								<p class="text-[10px] text-slate-400">{t.결제수단}</p>
 							{/if}
-						</div>
+						</button>
 					{/each}
 				</div>
 
-				<!-- 데스크탑: 표 -->
+				<!-- 데스크탑: 표 (클릭=편집) -->
 				<div class="hidden md:block overflow-x-auto">
 					<table class="w-full text-xs">
 						<thead>
@@ -323,7 +349,10 @@
 						<tbody>
 							{#each recentTxs as t}
 								{@const isIncome = t.대분류 === '수입'}
-								<tr class="border-t border-slate-50 hover:bg-slate-50/50">
+								<tr
+									onclick={() => openEditTx(t)}
+									class="border-t border-slate-50 hover:bg-violet-50/50 cursor-pointer"
+								>
 									<td class="py-1.5 pr-3 text-slate-600 font-mono">
 										{(t.date || '').substring(5).replace('-', '/')}
 									</td>
@@ -384,19 +413,26 @@
 					<span class="text-emerald-500">✅</span>
 					<span>거래 내역 (모바일: 카드, 데스크탑: 표)</span>
 				</div>
-				<div class="flex items-center gap-2 text-slate-400">
-					<span>⏳</span>
-					<span>인라인 트랜잭션 입력</span>
+				<div class="flex items-center gap-2 text-slate-600">
+					<span class="text-emerald-500">✅</span>
+					<span>트랜잭션 추가/편집/삭제</span>
 				</div>
 				<div class="flex items-center gap-2 text-slate-400">
 					<span>⏳</span>
-					<span>편집/삭제</span>
+					<span>연간 뷰 (12개월 한눈에)</span>
 				</div>
 				<div class="flex items-center gap-2 text-slate-400">
 					<span>⏳</span>
-					<span>연간 뷰 + 자산 + 부업</span>
+					<span>자산 탭</span>
+				</div>
+				<div class="flex items-center gap-2 text-slate-400">
+					<span>⏳</span>
+					<span>부업 탭</span>
 				</div>
 			</div>
 		</div>
 	</section>
 {/if}
+
+<!-- 트랜잭션 입력/편집 모달 -->
+<TransactionModal bind:open={txModalOpen} tx={editingTx} />
