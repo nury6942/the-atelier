@@ -1,4 +1,21 @@
 // ===== AUTH =====
+
+// ═══ 모바일 Chart.js 최적화 — 애니메이션 비활성화 + hover 비용 절감 ═══
+// 모바일에선 차트 애니메이션이 메인 스레드를 600ms 추가 차단함
+(function(){
+  if (typeof Chart === 'undefined') return;
+  var isMobile = window.matchMedia('(max-width: 768px)').matches || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    Chart.defaults.animation = false;
+    Chart.defaults.animations = { colors: false, x: false, y: false };
+    Chart.defaults.transitions = { active: { animation: { duration: 0 } } };
+    Chart.defaults.responsive = true;
+    Chart.defaults.maintainAspectRatio = true;
+    Chart.defaults.plugins.tooltip.animation = false;
+    console.log('[Atelier] Mobile detected — Chart.js animations disabled');
+  }
+})();
+
 // ===== SIDEBAR TOGGLE =====
 var _sidebarOpen = true;
 function toggleSidebar() {
@@ -981,16 +998,31 @@ function ldgRenderMonthly() {
   var nb = document.getElementById('ldg-next-btn');
   if (nb) nb.textContent = _ldgMonthKo[nextM-1] + ' ›';
 
-  ldgRenderAnnualGoal();
-  ldgRenderKPI();
-  ldgRenderCalendar();
-  ldgRenderPaymentMethods();
-  ldgRenderChecklist();
-  ldgRenderDonuts();
-  ldgRenderTopCats();
-  ldgRenderDailyChart();
-  ldgRenderCatGrid();
-  ldgRenderTxTable();
+  // ═══ 단계별 렌더 — 메인 스레드 차단 방지 (모바일 핵심) ═══
+  // 1단계 (즉시): 핵심 정보 — KPI, 트랜잭션 표
+  function safe(fn) { try { fn(); } catch(e) { console.error('[ldgRender]', fn.name || '?', e); } }
+  safe(ldgRenderAnnualGoal);
+  safe(ldgRenderKPI);
+  safe(ldgRenderTxTable);
+
+  // 2단계 (다음 프레임): 캘린더, 카테고리 그리드, 체크리스트
+  requestAnimationFrame(function(){
+    safe(ldgRenderCalendar);
+    safe(ldgRenderCatGrid);
+    safe(ldgRenderChecklist);
+
+    // 3단계 (50ms 후): 차트 절반 — 메인 스레드에서 가장 무거운 작업 분산
+    setTimeout(function(){
+      safe(ldgRenderPaymentMethods);
+      safe(ldgRenderTopCats);
+    }, 50);
+
+    // 4단계 (120ms 후): 차트 나머지 — 사용자가 이미 페이지 보고 있음
+    setTimeout(function(){
+      safe(ldgRenderDonuts);
+      safe(ldgRenderDailyChart);
+    }, 120);
+  });
 }
 
 // ── 연간 목표 진행도 위젯 ──
