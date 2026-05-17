@@ -1740,6 +1740,20 @@
 </head>
 <body class="overflow-x-hidden" style="overscroll-behavior:none;">
 
+<!-- ?nav= 파라미터로 진입 시 기본 dashboard 깜빡임 방지 (m-ledger.html → 자산/부업) -->
+<script>
+  (function(){
+    try {
+      var nav = new URLSearchParams(location.search).get('nav');
+      if (nav) {
+        var s = document.createElement('style');
+        s.textContent = '#page-dashboard{display:none!important}';
+        document.head.appendChild(s);
+      }
+    } catch(e){}
+  })();
+</script>
+
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background:linear-gradient(135deg,#6b38d4 0%,#4f46e5 50%,#312e81 100%);">
   <div class="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm mx-4 text-center">
