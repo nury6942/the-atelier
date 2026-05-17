@@ -1,11 +1,11 @@
 // ===== AUTH =====
 
-// ═══ 모바일 Chart.js 최적화 — 애니메이션 비활성화 + hover 비용 절감 ═══
-// 모바일에선 차트 애니메이션이 메인 스레드를 600ms 추가 차단함
+// ═══ 모바일 감지 — 차트 건너뛰기 + Chart.js 최적화 ═══
+// iOS Safari 탭 discard (메모리 한계 도달) 방지
+window._isMobile = window.matchMedia('(max-width: 768px)').matches || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 (function(){
   if (typeof Chart === 'undefined') return;
-  var isMobile = window.matchMedia('(max-width: 768px)').matches || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if (isMobile) {
+  if (window._isMobile) {
     Chart.defaults.animation = false;
     Chart.defaults.animations = { colors: false, x: false, y: false };
     Chart.defaults.transitions = { active: { animation: { duration: 0 } } };
@@ -1309,6 +1309,40 @@ function ldgRenderDonuts() {
       expenseByCategory[cat] = (expenseByCategory[cat] || 0) + t['금액'];
     }
   });
+  // 모바일에선 캔버스/Chart.js 대신 텍스트 요약 — 메모리 절약
+  if (window._isMobile) {
+    function renderMobileSummary(canvasId, dataObj, title) {
+      var canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      var labels = Object.keys(dataObj).sort(function(a,b) { return dataObj[b] - dataObj[a]; });
+      var values = labels.map(function(l) { return dataObj[l]; });
+      var total = values.reduce(function(a,b){return a+b;}, 0);
+      var html = '<div style="padding:12px;font-size:11px;line-height:1.6;">';
+      if (labels.length === 0) {
+        html += '<div style="color:#94a3b8;text-align:center;padding:20px 0;">데이터 없음</div>';
+      } else {
+        labels.slice(0, 6).forEach(function(label, i) {
+          var pct = total > 0 ? Math.round(values[i] / total * 100) : 0;
+          html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
+          html += '<span style="color:#475569;">' + label + '</span>';
+          html += '<span style="color:#1e293b;font-weight:600;">' + pct + '%</span>';
+          html += '</div>';
+        });
+      }
+      html += '</div>';
+      // 캔버스 부모를 div로 교체
+      var wrapper = canvas.parentElement;
+      if (wrapper && !wrapper.querySelector('.mobile-donut-summary')) {
+        canvas.style.display = 'none';
+        wrapper.insertAdjacentHTML('beforeend', '<div class="mobile-donut-summary">' + html + '</div>');
+      } else if (wrapper) {
+        wrapper.querySelector('.mobile-donut-summary').innerHTML = html;
+      }
+    }
+    renderMobileSummary('ldg-donut-income', incomeByCategory, '수입');
+    renderMobileSummary('ldg-donut-expense', expenseByCategory, '지출');
+    return;
+  }
   var donutColors = ['#6366f1','#a855f7','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#8b5cf6'];
   function renderDonut(canvasId, dataObj, chartRef) {
     var canvas = document.getElementById(canvasId);
@@ -1396,6 +1430,27 @@ function ldgRenderDailyChart() {
     var d = parseInt(t.date.split('-')[2]);
     if (d >= 1 && d <= daysInMonth) daily[d-1] += t['금액'];
   });
+  // 모바일에선 캔버스 대신 간단 통계 — 메모리 절약
+  if (window._isMobile) {
+    var total = daily.reduce(function(a,b){return a+b;}, 0);
+    var max = Math.max.apply(null, daily);
+    var maxDay = daily.indexOf(max) + 1;
+    var nonZeroDays = daily.filter(function(v){return v>0;}).length;
+    var avg = nonZeroDays > 0 ? total / nonZeroDays : 0;
+    var wrapper = canvas.parentElement;
+    if (wrapper) {
+      canvas.style.display = 'none';
+      var existing = wrapper.querySelector('.mobile-daily-summary');
+      var html = '<div class="mobile-daily-summary" style="padding:12px;font-size:11px;line-height:1.6;">' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">최고 지출일</span><span style="font-weight:700;color:#dc2626;">' + maxDay + '일 · ₩' + ldgFmt(max) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 평균</span><span style="font-weight:700;color:#1e293b;">₩' + ldgFmt(Math.round(avg)) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 일수</span><span style="font-weight:700;color:#1e293b;">' + nonZeroDays + '/' + daysInMonth + '일</span></div>' +
+        '</div>';
+      if (existing) existing.outerHTML = html;
+      else wrapper.insertAdjacentHTML('beforeend', html);
+    }
+    return;
+  }
   var labels = [];
   for (var i = 1; i <= daysInMonth; i++) labels.push(i + '일');
   if (_ldgChartDaily) _ldgChartDaily.destroy();
