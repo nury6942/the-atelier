@@ -321,6 +321,37 @@
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
 
+    /* ===== 페이지 fade-in (브라우저 페이지 전환 매끈하게) ===== */
+    @keyframes app-page-in { from { opacity: 0; } to { opacity: 1; } }
+    body { animation: app-page-in 0.22s ease-out; }
+
+    /* ===== Skeleton (자산 페이지 4-card grid) ===== */
+    @keyframes skel-pulse-app {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 0.92; }
+    }
+    .hub-skel {
+      display: block;
+      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+      background-size: 200% 100%;
+      animation: skel-pulse-app 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    .hub-skel-card {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .hub-skel.skel-h-md { height: 16px; }
+    .hub-skel.skel-h-sm { height: 10px; }
+    .hub-skel.skel-h-bar { height: 12px; }
+    .hub-skel.skel-w-30 { width: 30%; }
+    .hub-skel.skel-w-40 { width: 40%; }
+    .hub-skel.skel-w-60 { width: 60%; }
+    .hub-skel.skel-w-70 { width: 70%; }
+
     /* ===== SIDEBAR TOGGLE ===== */
     #sidebar.sidebar-collapsed { transform: translateX(-100%); }
     #sidebar.sidebar-collapsed + #sidebar-overlay { display: none !important; }
@@ -4014,9 +4045,11 @@
           </button>
         </div>
 
-        <div id="hub-loading" class="flex items-center justify-center py-16 text-slate-400">
-          <span class="material-symbols-outlined mr-2 animate-spin">progress_activity</span>
-          <span class="text-sm">불러오는 중...</span>
+        <div id="hub-loading" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div class="hub-skel-card"><div class="hub-skel skel-h-md skel-w-30 mb-3"></div><div class="hub-skel skel-h-sm skel-w-60 mb-4"></div><div class="hub-skel skel-h-bar mb-2"></div><div class="hub-skel skel-h-bar skel-w-70 mb-2"></div><div class="hub-skel skel-h-bar skel-w-40"></div></div>
+          <div class="hub-skel-card"><div class="hub-skel skel-h-md skel-w-30 mb-3"></div><div class="hub-skel skel-h-sm skel-w-60 mb-4"></div><div class="hub-skel skel-h-bar mb-2"></div><div class="hub-skel skel-h-bar skel-w-70 mb-2"></div><div class="hub-skel skel-h-bar skel-w-40"></div></div>
+          <div class="hub-skel-card"><div class="hub-skel skel-h-md skel-w-30 mb-3"></div><div class="hub-skel skel-h-sm skel-w-60 mb-4"></div><div class="hub-skel skel-h-bar mb-2"></div><div class="hub-skel skel-h-bar skel-w-70 mb-2"></div><div class="hub-skel skel-h-bar skel-w-40"></div></div>
+          <div class="hub-skel-card"><div class="hub-skel skel-h-md skel-w-30 mb-3"></div><div class="hub-skel skel-h-sm skel-w-60 mb-4"></div><div class="hub-skel skel-h-bar mb-2"></div><div class="hub-skel skel-h-bar skel-w-70 mb-2"></div><div class="hub-skel skel-h-bar skel-w-40"></div></div>
         </div>
 
         <div id="hub-table-wrap" style="display:none" class="overflow-x-auto">

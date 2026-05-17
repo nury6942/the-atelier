@@ -14848,7 +14848,7 @@
   };
 
   async function loadHub() {
-    document.getElementById('hub-loading').style.display = 'flex';
+    document.getElementById('hub-loading').style.display = '';  // 클래스의 grid 유지
     document.getElementById('hub-table-wrap').style.display = 'none';
     document.getElementById('hub-empty').style.display = 'none';
     try {
