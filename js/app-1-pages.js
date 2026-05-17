@@ -14530,8 +14530,46 @@
       if (id) { try { await fbDelete('planner', id); } catch(e) {} }
       plannerData.splice(idx, 1);
     }
-    if (toRemove.length > 0) renderCalendar();
-    return toRemove.length;
+    var removedByTitle = toRemove.length;
+
+    // ★ 추가: 같은 작품의 같은 날·같은 phase에 여러 이벤트가 있으면 (stale 누적)
+    //   해당 작품 전체 일정 삭제 후 재생성 → 옛 schedule.start 잔재 제거
+    var workDayPhase = {};
+    plannerData.forEach(function(row, idx) {
+      var notes = (row[4] || '').toString();
+      var widM = notes.match(/work_id:([^|]+)/);
+      var phM = notes.match(/phase:(\w+)/);
+      if (!widM || !phM) return;
+      var key = widM[1] + '|' + (row[0] || '') + '|' + phM[1];
+      if (!workDayPhase[key]) workDayPhase[key] = 0;
+      workDayPhase[key]++;
+    });
+    var worksToResync = new Set();
+    Object.keys(workDayPhase).forEach(function(key) {
+      if (workDayPhase[key] > 1) worksToResync.add(key.split('|')[0]);
+    });
+    var staleRemovedN = 0;
+    if (worksToResync.size > 0) {
+      var workArr = Array.from(worksToResync);
+      for (var wi = 0; wi < workArr.length; wi++) {
+        var wid = workArr[wi];
+        var work = (_works||[]).find(function(w){ return w.id === wid; });
+        if (!work) continue;
+        try {
+          // 해당 작품 events 전부 카운트 후 재생성
+          var beforeCount = plannerData.filter(function(r){ return ((r[4]||'').indexOf('work_id:' + wid) >= 0); }).length;
+          await removeWorkCalEvents(wid);
+          if (work.status === 'confirmed') await autoAddScheduleToCalendar(work);
+          var afterCount = plannerData.filter(function(r){ return ((r[4]||'').indexOf('work_id:' + wid) >= 0); }).length;
+          staleRemovedN += Math.max(0, beforeCount - afterCount);
+        } catch(e) { console.warn('[stale resync]', wid, e); }
+      }
+      console.log('[Dedup] stale schedule 재동기화: 작품', worksToResync.size, '개 / 순삭제', staleRemovedN, '건');
+    }
+
+    var totalRemoved = removedByTitle + staleRemovedN;
+    if (totalRemoved > 0) renderCalendar();
+    return totalRemoved;
   }
   window.cleanupDuplicateWorkEvents = cleanupDuplicateWorkEvents;
 
