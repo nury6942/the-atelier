@@ -998,31 +998,85 @@ function ldgRenderMonthly() {
   var nb = document.getElementById('ldg-next-btn');
   if (nb) nb.textContent = _ldgMonthKo[nextM-1] + ' ›';
 
-  // ═══ 단계별 렌더 — 메인 스레드 차단 방지 (모바일 핵심) ═══
-  // 1단계 (즉시): 핵심 정보 — KPI, 트랜잭션 표
   function safe(fn) { try { fn(); } catch(e) { console.error('[ldgRender]', fn.name || '?', e); } }
+
+  // ═══ 모바일 간소 모드 — DOM 노드 90% 감소로 iOS Safari 탭 죽음 방지 ═══
+  // 사용자가 명시적으로 "전체 보기" 토글하지 않은 한 모바일에선 핵심만 표시
+  var isMobile = window._isMobile || window.matchMedia('(max-width: 768px)').matches;
+  var forceFullView = localStorage.getItem('atelier_ldg_force_full') === 'true';
+
+  if (isMobile && !forceFullView) {
+    // 모바일 간소 모드: KPI + 트랜잭션 표만
+    safe(ldgRenderKPI);
+    safe(ldgRenderTxTable);
+    // 모바일 토글 버튼 추가
+    _ldgInjectMobileToggle(false);
+    // 무거운 섹션 숨기기 (DOM에서 비우기)
+    _ldgHideHeavySections();
+    return;
+  }
+
+  // ═══ 데스크탑 풀 모드 (또는 모바일에서 토글 ON) ═══
+  // 단계별 렌더로 메인 스레드 차단 최소화
   safe(ldgRenderAnnualGoal);
   safe(ldgRenderKPI);
   safe(ldgRenderTxTable);
+  _ldgInjectMobileToggle(true);  // "간소 모드로" 토글
 
-  // 2단계 (다음 프레임): 캘린더, 카테고리 그리드, 체크리스트
   requestAnimationFrame(function(){
     safe(ldgRenderCalendar);
     safe(ldgRenderCatGrid);
     safe(ldgRenderChecklist);
-
-    // 3단계 (50ms 후): 차트 절반 — 메인 스레드에서 가장 무거운 작업 분산
     setTimeout(function(){
       safe(ldgRenderPaymentMethods);
       safe(ldgRenderTopCats);
     }, 50);
-
-    // 4단계 (120ms 후): 차트 나머지 — 사용자가 이미 페이지 보고 있음
     setTimeout(function(){
       safe(ldgRenderDonuts);
       safe(ldgRenderDailyChart);
     }, 120);
   });
+}
+
+// 모바일 토글 버튼 주입 — KPI 위쪽에 표시
+function _ldgInjectMobileToggle(isFullView) {
+  var existing = document.getElementById('ldg-mobile-toggle-wrap');
+  if (existing) existing.remove();
+  var isMobile = window._isMobile || window.matchMedia('(max-width: 768px)').matches;
+  if (!isMobile) return;
+  var kpiContainer = document.getElementById('ldg-kpi') || document.querySelector('[id*="kpi"]');
+  if (!kpiContainer) return;
+  var wrap = document.createElement('div');
+  wrap.id = 'ldg-mobile-toggle-wrap';
+  wrap.style.cssText = 'margin-bottom:10px;text-align:center;';
+  var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
+  var nextState = isFullView ? 'false' : 'true';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size:11px;padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size:9px;color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
+}
+
+// 무거운 섹션들 DOM에서 비우기 — 메모리 회수
+function _ldgHideHeavySections() {
+  var heavyIds = [
+    'ldg-calendar', 'ldg-cat-grid', 'ldg-checklist',
+    'ldg-payment-methods', 'ldg-top-cats',
+    'ldg-donut-income', 'ldg-donut-expense', 'ldg-daily-chart',
+    'ldg-annual-goal-wrap'
+  ];
+  heavyIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+  // 차트 인스턴스 명시적 destroy (있으면)
+  if (typeof _ldgChartIncome !== 'undefined' && _ldgChartIncome) {
+    try { _ldgChartIncome.destroy(); } catch(e){} _ldgChartIncome = null;
+  }
+  if (typeof _ldgChartExpense !== 'undefined' && _ldgChartExpense) {
+    try { _ldgChartExpense.destroy(); } catch(e){} _ldgChartExpense = null;
+  }
+  if (typeof _ldgChartDaily !== 'undefined' && _ldgChartDaily) {
+    try { _ldgChartDaily.destroy(); } catch(e){} _ldgChartDaily = null;
+  }
 }
 
 // ── 연간 목표 진행도 위젯 ──
@@ -2310,27 +2364,45 @@ function ldgRenderTxTable() {
   var html = '';
   // Always show input row at top
   html += ldgInputRowHTML(_ldgEditingId && _ldgEditingId !== 'new' ? (_ledgerData.transactions||[]).find(function(t){return t.id===_ldgEditingId;}) : null);
-  txs.forEach(function(t) {
-    if (_ldgEditingId === t.id) {
-      // Skip — being edited in the input row above
-    } else {
-      var isIncome = t['대분류'] === '수입';
-      var tid = t.id.replace(/'/g,"\\'");
-      var dbl = function(field) { return ' ondblclick="ldgCellEdit(\'' + tid + '\',\'' + field + '\',this)"'; };
-      var clk = ' onclick="ldgRowSelect(\'' + tid + '\',this)"';
-      html += '<tr class="hover:bg-indigo-50/30 transition-colors group" data-tx-id="' + tid + '">';
-      html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600 cursor-pointer"' + clk + dbl('date') + '>' + (t.date||'').substring(5).replace('-','/') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap cursor-pointer"' + clk + dbl('대분류') + '>' + (t['대분류']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
-      html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:200px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
-      var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';
-      html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + assetMarker + (t['비고']||'') + '</td>';
-      html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + tid + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
-      html += '</tr>';
-    }
+
+  // ═══ 모바일 가상 스크롤 — 최근 30개만 렌더 ═══
+  var isMobile = window._isMobile || window.matchMedia('(max-width: 768px)').matches;
+  var renderLimit = isMobile ? 30 : Infinity;
+  var shown = 0;
+  var hidden = 0;
+  var visibleTxs = [];
+  for (var i = 0; i < txs.length; i++) {
+    var t = txs[i];
+    if (_ldgEditingId === t.id) continue;
+    if (shown >= renderLimit) { hidden++; continue; }
+    visibleTxs.push(t);
+    shown++;
+  }
+
+  visibleTxs.forEach(function(t) {
+    var isIncome = t['대분류'] === '수입';
+    var tid = t.id.replace(/'/g,"\\'");
+    var dbl = function(field) { return ' ondblclick="ldgCellEdit(\'' + tid + '\',\'' + field + '\',this)"'; };
+    var clk = ' onclick="ldgRowSelect(\'' + tid + '\',this)"';
+    html += '<tr class="hover:bg-indigo-50/30 transition-colors group" data-tx-id="' + tid + '">';
+    html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600 cursor-pointer"' + clk + dbl('date') + '>' + (t.date||'').substring(5).replace('-','/') + '</td>';
+    html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap cursor-pointer"' + clk + dbl('대분류') + '>' + (t['대분류']||'') + '</td>';
+    html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
+    html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
+    html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
+    html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:200px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
+    var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';
+    html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + assetMarker + (t['비고']||'') + '</td>';
+    html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + tid + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
+    html += '</tr>';
   });
+
+  if (hidden > 0) {
+    html += '<tr><td colspan="8" class="px-4 py-3 text-center bg-slate-50">' +
+      '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'true\');location.reload()" class="text-xs text-violet-700 font-bold underline">' +
+      '+ ' + hidden + '건 더 보기 (전체 보기로 전환)</button></td></tr>';
+  }
+
   body.innerHTML = html;
   setTimeout(function() { ldgInitCustomDDs(); }, 20);
 }
