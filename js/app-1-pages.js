@@ -2236,11 +2236,33 @@
 
   async function loadJourney() {
     try {
+      // ★ 1단계: localStorage 캐시로 즉시 trip 탭 + 선택 (체감속도 개선)
+      try {
+        var rawCache = localStorage.getItem('atelier_snapshot_trips');
+        if (rawCache) {
+          var cached = JSON.parse(rawCache);
+          if (cached && cached.data && cached.data.length > 0) {
+            tripsData = cached.data;
+            renderTripTabs();
+            var closest = findClosestTrip(tripsData);
+            if (closest) {
+              console.log('[loadJourney] 캐시 trip 선택:', closest.name);
+              selectTrip(closest._id); // fire-and-forget, 내부 cache-first
+            }
+          }
+        }
+      } catch(e) { /* cache parse 실패 무시 */ }
+
+      // ★ 2단계: 신선한 데이터 fetch
       const docs = await fbRead('trips');
       tripsData = docs;
       renderTripTabs();
       if (tripsData.length > 0) {
-        selectTrip(findClosestTrip(tripsData)._id);
+        // 이미 선택된 trip이면 skip, 다르면 재선택
+        var closest2 = findClosestTrip(tripsData);
+        if (!currentTripId || currentTripId !== closest2._id) {
+          selectTrip(closest2._id);
+        }
       } else {
         document.getElementById('journey-empty-state').style.display = 'flex';
         document.getElementById('journey-content').style.display = 'none';
@@ -2323,10 +2345,70 @@
     currentTripId = tripId;
     currentDayIndex = 0;
     renderTripTabs();
-    // Load journey items and cities
-    const [journeyDocs] = await Promise.all([fbRead('journey')]);
+
+    // ★ 1단계: localStorage 캐시로 즉시 render (체감속도 개선)
+    try {
+      var rawJ = localStorage.getItem('atelier_snapshot_journey');
+      var rawC = localStorage.getItem('atelier_snapshot_trip_cities');
+      if (rawJ) {
+        var cachedJ = JSON.parse(rawJ);
+        if (cachedJ && cachedJ.data) {
+          journeyData = cachedJ.data.filter(function(d){ return d.trip_id === tripId; });
+        }
+      }
+      if (rawC) {
+        var cachedC = JSON.parse(rawC);
+        if (cachedC && cachedC.data) {
+          citiesData = cachedC.data.filter(function(d){ return d.trip_id === tripId; });
+          var cityCache = getCityCache(tripId);
+          if (cityCache) {
+            citiesData.forEach(function(city) {
+              var c = cityCache.find(function(x){ return x.name === city.name; });
+              if (!c) return;
+              if (!city.start_date && c.start_date) city.start_date = c.start_date;
+              if (!city.end_date && c.end_date) city.end_date = c.end_date;
+              if (!city.desc && c.desc) city.desc = c.desc;
+              if (!city.nights && c.nights) city.nights = c.nights;
+            });
+          }
+          citiesData.sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
+        }
+      }
+      if ((journeyData && journeyData.length > 0) || (citiesData && citiesData.length > 0)) {
+        document.getElementById('journey-empty-state').style.display = 'none';
+        document.getElementById('journey-content').style.display = 'block';
+        renderCityCards();
+        renderTripHeader();
+        renderDayView();
+        renderJourneyTransport();
+        renderJourneyRental();
+        renderJourneyLodging();
+        renderJourneyFlights();
+        renderJourneySouvenir();
+        loadTripNotes();
+        updateJourneyCost();
+        updateTravelMiniSummary();
+        console.log('[selectTrip] 캐시 render: journey=', journeyData.length, ', cities=', citiesData.length);
+      }
+    } catch(e) { /* cache 실패 무시 */ }
+
+    // ★ 2단계: 신선한 데이터 fetch (병렬)
+    const [journeyDocs, citiesDocs] = await Promise.all([fbRead('journey'), fbRead('trip_cities')]);
     journeyData = journeyDocs.filter(function(d){ return d.trip_id === tripId; });
-    await loadCities(tripId);
+    citiesData = citiesDocs.filter(function(d){ return d.trip_id === tripId; });
+    var cityCache2 = getCityCache(tripId);
+    if (cityCache2) {
+      citiesData.forEach(function(city) {
+        var c = cityCache2.find(function(x){ return x.name === city.name; });
+        if (!c) return;
+        if (!city.start_date && c.start_date) city.start_date = c.start_date;
+        if (!city.end_date && c.end_date) city.end_date = c.end_date;
+        if (!city.desc && c.desc) city.desc = c.desc;
+        if (!city.nights && c.nights) city.nights = c.nights;
+      });
+    }
+    citiesData.sort(function(a,b){ return (a.start_date||a.order||'').localeCompare(b.start_date||b.order||''); });
+    saveCityCache(tripId, citiesData);
     document.getElementById('journey-empty-state').style.display = 'none';
     document.getElementById('journey-content').style.display = 'block';
     await seedTripDefaults();
@@ -2341,6 +2423,8 @@
     loadTripNotes();
     updateJourneyCost();
     updateTravelMiniSummary();
+    _refreshStayCityDatalist();
+    _refreshRentalCityDatalist();
     if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
   }
 
