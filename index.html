@@ -70,9 +70,9 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js" as="script">
-  <link rel="preload" href="js/app-2-init.js" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=98" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=98" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=98" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -351,6 +351,25 @@
     .hub-skel.skel-w-40 { width: 40%; }
     .hub-skel.skel-w-60 { width: 60%; }
     .hub-skel.skel-w-70 { width: 70%; }
+
+    /* Calendar 스켈레톤 셀 */
+    .cal-skel-cell {
+      min-height: 96px;
+      padding: 12px;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cal-skel {
+      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+      background-size: 200% 100%;
+      animation: skel-pulse-app 1.4s ease-in-out infinite;
+      border-radius: 4px;
+    }
+    .cal-skel.cal-skel-day { width: 16px; height: 12px; }
+    .cal-skel.cal-skel-event { width: 70%; height: 14px; border-radius: 6px; }
 
     /* ===== SIDEBAR TOGGLE ===== */
     #sidebar.sidebar-collapsed { transform: translateX(-100%); }
@@ -5737,7 +5756,44 @@
           <div class="p-4 cal-day-header">금</div>
           <div class="p-4 cal-day-header text-rose-400">토</div>
         </div>
-        <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px"></div>
+        <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px">
+          <!-- Initial skeleton (renderCalendar이 첫 호출되면 innerHTML로 교체됨) -->
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
+          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+        </div>
       </section>
 
       <!-- ─── 캘린더용 미니 Series Timeline ─── -->
@@ -6087,7 +6143,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js" defer></script>
+<script src="js/app-1-pages.js?v=98" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -6668,13 +6724,13 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js" defer></script>
+<script src="js/app-2-init.js?v=98" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js" defer></script>
+<script src="js/app-3-flatpickr.js?v=98" defer></script>
 
 </body>
 </html>
