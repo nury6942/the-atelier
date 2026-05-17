@@ -306,6 +306,11 @@
 
   async function loadPlanner() {
     try {
+      // ★ 중요: renderCalendar의 auto-dedup이 cache render와 fresh fetch 사이에서
+      //   race condition을 일으켜 작품 일정 이중 등록되는 버그가 있어
+      //   → loadPlanner 시작 시 flag 미리 set, dedup은 _loadPlannerBackground만 담당
+      window._calDedupeRanOnce = true;
+
       // ★ 1단계: localStorage 캐시로 즉시 렌더 (모바일 체감속도 개선)
       try {
         var rawCache = localStorage.getItem('atelier_snapshot_planner');
