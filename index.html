@@ -1558,13 +1558,18 @@
     .flatpickr-months {
       background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
       border-radius: 12px 12px 0 0 !important;
-      padding: 4px 0 !important;
+      padding: 10px 0 !important;
+      min-height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
     }
-    .flatpickr-month { color: #fff !important; }
-    .flatpickr-current-month { color: #fff !important; font-weight: 800; font-size: 13px !important; }
+    .flatpickr-month { color: #fff !important; height: auto !important; line-height: 1.4 !important; flex: 1 !important; }
+    .flatpickr-current-month { color: #fff !important; font-weight: 800 !important; font-size: 14px !important; padding: 0 !important; height: auto !important; line-height: 1.4 !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important; }
     .flatpickr-current-month .numInputWrapper span { border-color: rgba(255,255,255,0.3) !important; }
-    .flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 800 !important; }
-    .flatpickr-current-month .flatpickr-monthDropdown-months { color: #fff !important; background: transparent !important; font-weight: 800 !important; }
+    .flatpickr-current-month .numInputWrapper { color: #fff !important; }
+    .flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 800 !important; font-size: 14px !important; background: transparent !important; }
+    .flatpickr-current-month .cur-month { color: #fff !important; font-weight: 800 !important; font-size: 14px !important; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months { color: #fff !important; background: transparent !important; font-weight: 800 !important; font-size: 14px !important; }
     .flatpickr-prev-month, .flatpickr-next-month { color: rgba(255,255,255,0.8) !important; fill: rgba(255,255,255,0.8) !important; }
     .flatpickr-prev-month:hover, .flatpickr-next-month:hover { color: #fff !important; fill: #fff !important; background: rgba(255,255,255,0.15) !important; border-radius: 8px !important; }
     .flatpickr-weekdays { background: #f8fafc !important; padding: 4px 0 !important; }
