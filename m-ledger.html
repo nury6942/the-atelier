@@ -5,18 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>가계부 — Atelier</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   body {
     font-family: 'Pretendard', -apple-system, sans-serif;
     background: #f8faff;
     color: #1e293b;
-    padding-bottom: 80px;
+    padding-bottom: 100px;
+    overscroll-behavior: none;
   }
+  .headline { font-family: 'Manrope', 'Pretendard', sans-serif; letter-spacing: -0.02em; }
+
+  /* ═══ HEADER — 메인 사이트 톤 ═══ */
   header {
-    background: #fff;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 12px 16px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #f1f5f9;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -25,221 +33,421 @@
     z-index: 10;
   }
   header .back {
-    background: #f1f5f9;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     color: #475569;
     cursor: pointer;
+    transition: all 0.15s;
   }
-  header h1 { font-size: 17px; font-weight: 700; flex: 1; }
-  header .month-nav { display: flex; gap: 4px; align-items: center; font-size: 13px; }
+  header .back:active { background: #f1f5f9; transform: scale(0.95); }
+  header h1 { font-size: 17px; font-weight: 800; flex: 1; font-family: 'Manrope', sans-serif; letter-spacing: -0.02em; }
+  header .month-nav { display: flex; gap: 4px; align-items: center; }
   header .month-nav button {
-    background: #f1f5f9; border: none; width: 30px; height: 30px;
-    border-radius: 8px; font-size: 14px; font-weight: 700; color: #475569;
+    background: #f8fafc; border: 1px solid #f1f5f9; width: 34px; height: 34px;
+    border-radius: 12px; font-size: 16px; font-weight: 700; color: #6d28d9; cursor: pointer;
+    transition: all 0.15s;
   }
-  header .month-nav span { padding: 0 8px; font-weight: 700; color: #1e293b; }
+  header .month-nav button:active { background: #ede9fe; transform: scale(0.95); }
+  header .month-nav span { padding: 0 10px; font-weight: 800; color: #1e293b; font-family: 'Manrope', sans-serif; font-size: 14px; }
 
-  .container { padding: 16px; }
+  .container { padding: 20px 16px; }
 
-  .loading { text-align: center; padding: 40px 16px; color: #94a3b8; font-size: 13px; }
-  .error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 12px; border-radius: 12px; font-size: 12px; }
+  .loading { text-align: center; padding: 60px 16px; color: #94a3b8; font-size: 13px; }
+  .error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 14px; border-radius: 16px; font-size: 12px; }
 
+  /* ═══ KPI 4-CARD — 파스텔 그라데이션 (메인 Bento Grid 톤) ═══ */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 20px;
   }
   .kpi-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
-  .kpi-card .label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .kpi-card .value { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
-  .kpi-card.income { background: #ecfdf5; border-color: #a7f3d0; }
+  .kpi-card .label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .kpi-card .value {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', 'Pretendard', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .kpi-card.income {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border-color: #bbf7d0;
+  }
   .kpi-card.income .label { color: #15803d; }
   .kpi-card.income .value { color: #14532d; }
-  .kpi-card.expense { background: #fef2f2; border-color: #fecaca; }
+  .kpi-card.expense {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #fecaca;
+  }
   .kpi-card.expense .label { color: #b91c1c; }
   .kpi-card.expense .value { color: #7f1d1d; }
-  .kpi-card.saving { background: #eff6ff; border-color: #bfdbfe; }
+  .kpi-card.saving {
+    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+    border-color: #c7d2fe;
+  }
   .kpi-card.saving .label { color: #1d4ed8; }
   .kpi-card.saving .value { color: #1e3a8a; }
-  .kpi-card.net { background: #faf5ff; border-color: #e9d5ff; }
+  .kpi-card.net {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-color: #ddd6fe;
+  }
   .kpi-card.net .label { color: #7c3aed; }
   .kpi-card.net .value { color: #3b0764; }
   .kpi-card.net .value.negative { color: #b91c1c; }
 
+  /* ═══ SECTION TITLE — 메인 톤 ═══ */
   .section-title {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    color: #121c2a;
+    margin-bottom: 10px;
+    margin-top: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Manrope', 'Pretendard', sans-serif;
+    letter-spacing: -0.01em;
   }
-  .section-title .count { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: none; }
+  .section-title .count {
+    font-size: 11px;
+    color: #7c3aed;
+    font-weight: 700;
+    font-family: 'Pretendard', sans-serif;
+  }
 
-  .tx-list { display: flex; flex-direction: column; gap: 6px; }
+  /* ═══ 거래 카드 ═══ */
+  .tx-list { display: flex; flex-direction: column; gap: 8px; }
   .tx-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    padding: 14px;
     display: flex;
     gap: 12px;
     align-items: flex-start;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
   }
-  .tx-card:active { background: #f8fafc; }
+  .tx-card:active { background: #faf5ff; transform: scale(0.99); }
   .tx-card .left { flex: 1; min-width: 0; }
   .tx-card .meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
-  .tx-card .date { font-size: 10px; color: #94a3b8; font-family: ui-monospace, monospace; font-weight: 600; }
+  .tx-card .date {
+    font-size: 10px; color: #94a3b8;
+    font-family: 'Manrope', ui-monospace, monospace;
+    font-weight: 700;
+  }
   .tx-card .cat {
-    font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700;
+    font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 700;
     background: #ede9fe; color: #6d28d9;
   }
-  .tx-card .desc { font-size: 13px; font-weight: 600; color: #334155; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tx-card .pm { font-size: 10px; color: #94a3b8; margin-top: 2px; }
-  .tx-card .amount { font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .tx-card .desc {
+    font-size: 13px; font-weight: 600; color: #1e293b;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .tx-card .pm { font-size: 10px; color: #94a3b8; margin-top: 3px; }
+  .tx-card .amount {
+    font-size: 15px; font-weight: 800; flex-shrink: 0;
+    font-family: 'Manrope', sans-serif;
+  }
   .tx-card .amount.income { color: #16a34a; }
   .tx-card .amount.expense { color: #1e293b; }
 
-  .empty { text-align: center; padding: 40px 16px; color: #94a3b8; font-size: 13px; }
+  .empty { text-align: center; padding: 32px 16px; color: #94a3b8; font-size: 13px; }
 
-  /* 캘린더 그리드 */
-  .cal-wrap { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-  .cal-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
-  .cal-head > div { font-size: 9px; font-weight: 700; color: #94a3b8; text-align: center; padding: 4px 0; }
+  /* ═══ 카드 공통 (캘린더, 막대 그래프, 통계, 체크리스트) ═══ */
+  .card {
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  /* ═══ 일별 캘린더 ═══ */
+  .cal-head {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .cal-head > div {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: center;
+    padding: 6px 0;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: 0.05em;
+  }
   .cal-head > div:first-child { color: #ef4444; }
   .cal-head > div:last-child { color: #3b82f6; }
-  .cal-body { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-  .cal-cell { aspect-ratio: 1; border-radius: 6px; padding: 3px; font-size: 9px; display: flex; flex-direction: column; background: #f8fafc; }
-  .cal-cell.has-spend { background: #ede9fe; }
-  .cal-cell.today { background: #7c3aed; color: #fff; }
+  .cal-body { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-cell {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    padding: 4px;
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    transition: background 0.15s;
+  }
+  .cal-cell.has-spend { background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); }
+  .cal-cell.today {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  }
   .cal-cell.invisible { visibility: hidden; }
-  .cal-cell .day { font-weight: 700; }
-  .cal-cell .amt { font-size: 8px; font-weight: 700; margin-top: auto; }
+  .cal-cell .day {
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+  }
+  .cal-cell .amt {
+    font-size: 9px;
+    font-weight: 800;
+    margin-top: auto;
+    color: #6d28d9;
+    font-family: 'Manrope', sans-serif;
+  }
   .cal-cell.today .amt { color: #fff; }
-  .cal-cell:not(.today):not(.has-spend) { color: #cbd5e1; }
+  .cal-cell:not(.today):not(.has-spend) .day { color: #cbd5e1; }
 
-  /* 막대 그래프 (카테고리/결제수단) */
-  .bar-list { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-  .bar-row { padding: 4px 0; }
-  .bar-row + .bar-row { border-top: 1px solid #f1f5f9; }
-  .bar-row-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  /* ═══ 막대 그래프 ═══ */
+  .bar-row { padding: 8px 0; }
+  .bar-row + .bar-row { border-top: 1px solid #f8fafc; }
+  .bar-row:first-child { padding-top: 0; }
+  .bar-row:last-child { padding-bottom: 0; }
+  .bar-row-head {
+    display: flex; justify-content: space-between;
+    font-size: 12px; margin-bottom: 6px;
+  }
   .bar-row-head .name { font-weight: 600; color: #475569; }
-  .bar-row-head .value { font-weight: 700; color: #1e293b; }
-  .bar-row-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
-  .bar-row-bar > div { height: 100%; background: linear-gradient(90deg, #7c3aed, #a855f7); border-radius: 3px; }
+  .bar-row-head .value {
+    font-weight: 700; color: #1e293b;
+    font-family: 'Manrope', sans-serif;
+  }
+  .bar-row-bar {
+    height: 8px; background: #f1f5f9;
+    border-radius: 100px; overflow: hidden;
+  }
+  .bar-row-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #a855f7, #ec4899);
+    border-radius: 100px;
+  }
 
-  /* 진행도 (연간 목표) */
-  .goal-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-  .goal-row { padding: 6px 0; }
-  .goal-row + .goal-row { border-top: 1px solid #f1f5f9; }
-  .goal-row-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; margin-bottom: 4px; }
-  .goal-row-head .label { color: #64748b; font-weight: 600; }
-  .goal-row-head .pct { font-weight: 800; color: #7c3aed; font-size: 13px; }
-  .goal-row-head .nums { color: #94a3b8; font-size: 10px; }
-  .goal-row-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
-  .goal-row-bar > div { height: 100%; border-radius: 3px; }
+  /* ═══ 연간 목표 progress ═══ */
+  .goal-row { padding: 10px 0; }
+  .goal-row + .goal-row { border-top: 1px solid #f8fafc; }
+  .goal-row:first-child { padding-top: 0; }
+  .goal-row:last-child { padding-bottom: 0; }
+  .goal-row-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 12px; margin-bottom: 6px;
+  }
+  .goal-row-head .label { color: #475569; font-weight: 600; }
+  .goal-row-head .pct {
+    font-weight: 800; color: #7c3aed; font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .goal-row-head .nums {
+    color: #94a3b8; font-size: 10px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .goal-row-bar {
+    height: 8px; background: #f1f5f9;
+    border-radius: 100px; overflow: hidden;
+  }
+  .goal-row-bar > div { height: 100%; border-radius: 100px; transition: width 0.3s; }
   .goal-row.income .goal-row-bar > div { background: linear-gradient(90deg, #10b981, #34d399); }
   .goal-row.expense .goal-row-bar > div { background: linear-gradient(90deg, #ef4444, #f87171); }
   .goal-row.saving .goal-row-bar > div { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
   .goal-row.over .goal-row-bar > div { background: linear-gradient(90deg, #dc2626, #ef4444); }
 
-  /* 통계 카드 */
-  .stat-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-  .stat-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
-  .stat-row + .stat-row { border-top: 1px solid #f1f5f9; }
-  .stat-row .label { color: #64748b; }
-  .stat-row .value { font-weight: 700; color: #1e293b; }
+  /* ═══ 통계 행 ═══ */
+  .stat-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; font-size: 12px;
+  }
+  .stat-row + .stat-row { border-top: 1px solid #f8fafc; }
+  .stat-row:first-child { padding-top: 0; }
+  .stat-row:last-child { padding-bottom: 0; }
+  .stat-row .label { color: #475569; }
+  .stat-row .value {
+    font-weight: 700; color: #1e293b;
+    font-family: 'Manrope', sans-serif;
+  }
 
-  /* 체크리스트 */
-  .check-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-  .check-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-  .check-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
-  .check-item input[type=checkbox] { width: 16px; height: 16px; accent-color: #7c3aed; }
+  /* ═══ 체크리스트 ═══ */
+  .check-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+  .check-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0;
+  }
+  .check-item input[type=checkbox] {
+    width: 18px; height: 18px; accent-color: #7c3aed; cursor: pointer;
+  }
   .check-item .text { flex: 1; font-size: 13px; color: #334155; }
   .check-item .text.done { text-decoration: line-through; color: #94a3b8; }
-  .check-item .del { background: none; border: none; color: #cbd5e1; font-size: 16px; padding: 0 4px; cursor: pointer; }
-  .check-input-row { display: flex; gap: 6px; }
-  .check-input-row input { flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
-  .check-input-row input:focus { border-color: #7c3aed; }
-  .check-input-row button { padding: 8px 12px; background: #ede9fe; color: #6d28d9; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .check-item .del {
+    background: none; border: none; color: #cbd5e1;
+    font-size: 16px; padding: 0 4px; cursor: pointer;
+    transition: color 0.15s;
+  }
+  .check-item .del:active { color: #ef4444; }
+  .check-input-row { display: flex; gap: 6px; margin-top: 4px; }
+  .check-input-row input {
+    flex: 1; padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px; font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .check-input-row input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .check-input-row button {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .check-input-row button:active { transform: scale(0.95); }
 
+  /* ═══ FAB — 거래 추가 버튼 (Stitch 톤 그라데이션) ═══ */
   .fab {
     position: fixed;
     bottom: 24px;
     right: 16px;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
     color: #fff;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 300;
+    line-height: 1;
     border: none;
-    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35), 0 4px 12px rgba(236, 72, 153, 0.2);
     cursor: pointer;
     z-index: 20;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  .fab:active { transform: scale(0.95); }
+  .fab:active {
+    transform: scale(0.92);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  }
 
-  /* Modal */
+  /* ═══ Modal — Stitch 톤 bottom sheet ═══ */
   .modal-bg {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     align-items: flex-end;
     z-index: 50;
   }
   .modal-bg.open { display: flex; }
   .modal {
-    background: #fff;
+    background: #ffffff;
     width: 100%;
     max-height: 92vh;
-    border-radius: 24px 24px 0 0;
-    padding: 20px;
+    border-radius: 28px 28px 0 0;
+    padding: 24px 20px 20px;
     overflow-y: auto;
-    animation: slideUp 0.2s ease-out;
+    animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
   }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
-  .modal label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px; margin-top: 12px; }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal h2 {
+    font-size: 19px; font-weight: 800;
+    margin-bottom: 4px;
+    font-family: 'Manrope', 'Pretendard', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .modal .modal-sub {
+    font-size: 12px; color: #94a3b8;
+    margin-bottom: 20px;
+  }
+  .modal label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: #475569; margin-bottom: 6px; margin-top: 14px;
+    letter-spacing: 0.02em;
+  }
+  .modal label:first-of-type { margin-top: 0; }
   .modal input, .modal select {
-    width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1;
-    border-radius: 10px; font-size: 14px; font-family: inherit; outline: none;
+    width: 100%; padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    font-size: 14px; font-family: 'Pretendard', sans-serif; outline: none;
     background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .modal input:focus, .modal select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
-  .modal .actions { display: flex; gap: 8px; margin-top: 20px; }
+  .modal input:focus, .modal select:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+  }
+  .modal .actions {
+    display: flex; gap: 8px; margin-top: 24px;
+    padding-top: 16px; border-top: 1px solid #f1f5f9;
+  }
   .modal .btn-primary {
-    flex: 1; padding: 12px; background: #7c3aed; color: #fff;
-    border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+    flex: 1; padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff; border: none; border-radius: 14px;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    font-family: 'Pretendard', sans-serif;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
   }
+  .modal .btn-primary:active { transform: scale(0.98); }
   .modal .btn-cancel {
-    padding: 12px 16px; background: #f1f5f9; color: #475569;
-    border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+    padding: 14px 18px;
+    background: #f8fafc; color: #475569;
+    border: 1px solid #f1f5f9;
+    border-radius: 14px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: 'Pretendard', sans-serif;
   }
   .modal .btn-delete {
-    padding: 12px; background: #fef2f2; color: #b91c1c;
-    border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+    padding: 14px;
+    background: #fef2f2; color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
   }
-  .modal .err { background: #fef2f2; color: #b91c1c; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 12px; }
+  .modal .err {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c; padding: 12px;
+    border-radius: 12px; font-size: 12px; margin-top: 14px;
+  }
 </style>
 
 <!-- Firebase -->
@@ -265,11 +473,11 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 
 <header>
   <button class="back" onclick="goBack()" aria-label="뒤로">←</button>
-  <h1>가계부 (모바일)</h1>
+  <h1>Daily Ledger</h1>
   <div class="month-nav">
-    <button onclick="prevMonth()">‹</button>
+    <button onclick="prevMonth()" aria-label="이전 달">‹</button>
     <span id="month-label">2026.5</span>
-    <button onclick="nextMonth()">›</button>
+    <button onclick="nextMonth()" aria-label="다음 달">›</button>
   </div>
 </header>
 
@@ -298,12 +506,12 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
     <!-- 연간 목표 진행도 -->
     <div id="goal-section" style="display:none">
       <div class="section-title"><span>🎯 연간 목표</span><span class="count" id="goal-year-label"></span></div>
-      <div class="goal-card" id="goal-card"></div>
+      <div class="card" id="goal-card"></div>
     </div>
 
     <!-- 일별 지출 캘린더 -->
     <div class="section-title"><span>📅 일별 지출</span><span class="count" id="cal-nospend"></span></div>
-    <div class="cal-wrap">
+    <div class="card">
       <div class="cal-head">
         <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
       </div>
@@ -313,30 +521,30 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
     <!-- 카테고리 Top -->
     <div id="cat-section" style="display:none">
       <div class="section-title"><span>📊 카테고리 Top</span></div>
-      <div class="bar-list" id="cat-bars"></div>
+      <div class="card" id="cat-bars"></div>
     </div>
 
     <!-- 결제수단별 -->
     <div id="pm-section" style="display:none">
       <div class="section-title"><span>💳 결제수단별</span></div>
-      <div class="bar-list" id="pm-bars"></div>
+      <div class="card" id="pm-bars"></div>
     </div>
 
     <!-- 수입/지출 카테고리 % -->
     <div id="donut-section" style="display:none">
       <div class="section-title"><span>📈 카테고리 비중</span></div>
-      <div class="stat-card" id="donut-card"></div>
+      <div class="card" id="donut-card"></div>
     </div>
 
     <!-- 일별 통계 -->
     <div id="daily-stat-section" style="display:none">
       <div class="section-title"><span>📉 지출 통계</span></div>
-      <div class="stat-card" id="daily-stat-card"></div>
+      <div class="card" id="daily-stat-card"></div>
     </div>
 
     <!-- 체크리스트 -->
     <div class="section-title"><span>✓ 이번 달 체크리스트</span></div>
-    <div class="check-card">
+    <div class="card">
       <div class="check-list" id="check-list"></div>
       <div class="check-input-row">
         <input type="text" id="check-input" placeholder="+ 새 항목" onkeydown="if(event.key==='Enter')addCheck()">
@@ -357,7 +565,8 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 <!-- Modal -->
 <div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <h2 id="modal-title">거래 추가</h2>
+    <h2 id="modal-title" class="headline">거래 추가</h2>
+    <p class="modal-sub" id="modal-sub">새 거래 내역 추가</p>
     <label>날짜</label>
     <input type="date" id="m-date">
     <label>대분류</label>
@@ -813,6 +1022,7 @@ function nextMonth() {
 function openModal() {
   _state.editingTx = null;
   document.getElementById('modal-title').textContent = '거래 추가';
+  document.getElementById('modal-sub').textContent = '새 거래 내역 추가';
   document.getElementById('m-del-btn').style.display = 'none';
   document.getElementById('m-date').value = todayKey();
   populateCategories();
@@ -832,6 +1042,7 @@ function editTx(id) {
   if (!tx) return;
   _state.editingTx = tx;
   document.getElementById('modal-title').textContent = '거래 편집';
+  document.getElementById('modal-sub').textContent = '기존 거래 수정 또는 삭제';
   document.getElementById('m-del-btn').style.display = 'block';
   document.getElementById('m-date').value = tx.date || todayKey();
   populateCategories();
