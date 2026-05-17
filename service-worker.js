@@ -1,7 +1,8 @@
-const CACHE_NAME = 'atelier-v83';
+const CACHE_NAME = 'atelier-v84';
 const urlsToCache = [
   '/the-atelier/',
-  '/the-atelier/index.html'
+  '/the-atelier/index.html',
+  '/the-atelier/m-ledger.html'
 ];
 
 self.addEventListener('install', event => {

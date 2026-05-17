@@ -11226,6 +11226,20 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
+    // ═══ 모바일에서 가계부 진입 시 별도 미니 페이지로 리다이렉트 ═══
+    // 메인 사이트는 데스크탑 풀-기능 가정으로 짜여서 모바일에서 무거움
+    // 가계부만 따로 모바일 최적화 페이지로 분리 (다른 페이지는 그대로)
+    if (pageId === 'ledger') {
+      var isMobile = window.matchMedia('(max-width: 1024px)').matches ||
+        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+        ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      // 사용자가 명시적으로 데스크탑 모드 켰으면 우회
+      var forceDesktop = localStorage.getItem('atelier_force_desktop_ledger') === 'true';
+      if (isMobile && !forceDesktop) {
+        window.location.href = './m-ledger.html';
+        return;
+      }
+    }
     document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
     const t = document.getElementById('page-'+pageId);
     if(t) t.style.display='block';
