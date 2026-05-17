@@ -15037,26 +15037,55 @@
   };
 
   async function loadHub() {
-    document.getElementById('hub-loading').style.display = '';  // 클래스의 grid 유지
-    document.getElementById('hub-table-wrap').style.display = 'none';
-    document.getElementById('hub-empty').style.display = 'none';
+    // ★ 1단계: localStorage 캐시로 즉시 render (모바일 체감속도 개선)
+    var cacheRendered = false;
     try {
-      // 기초 자산 Firebase에서 먼저 로드 (다기기 동기화)
-      await loadBaseAssetsFromFirebase();
-      // 1회성 마이그레이션: 사용자 실제 값으로 보정 (유동 705 / 비유동 1,470)
-      await migrateBaseAssetsToUserValues();
-      const docs = await fbRead('finance_hub');
+      var rawCache = localStorage.getItem('atelier_snapshot_finance_hub');
+      if (rawCache) {
+        var cached = JSON.parse(rawCache);
+        if (cached && cached.data && cached.data.length > 0) {
+          hubData = cached.data.map(function(d){ return objToRow('finance_hub', d).concat([d._id, d.order||0]); });
+          document.getElementById('hub-loading').style.display = 'none';
+          document.getElementById('hub-empty').style.display = 'none';
+          document.getElementById('hub-table-wrap').style.display = 'block';
+          renderHubTable();
+          updateHubStats();
+          cacheRendered = true;
+          console.log('[loadHub] 캐시 render (', hubData.length, '건)');
+        }
+      }
+    } catch(e) { /* cache 실패 무시 */ }
+
+    if (!cacheRendered) {
+      document.getElementById('hub-loading').style.display = '';
+      document.getElementById('hub-table-wrap').style.display = 'none';
+      document.getElementById('hub-empty').style.display = 'none';
+    }
+
+    try {
+      // ★ 2단계: 신선한 데이터 fetch (병렬: 기초 자산 + finance_hub)
+      const [_unused1, _unused2, docs] = await Promise.all([
+        loadBaseAssetsFromFirebase(),
+        migrateBaseAssetsToUserValues(),
+        fbRead('finance_hub')
+      ]);
       hubData = docs.map(function(d){ return objToRow('finance_hub', d).concat([d._id, d.order||0]); });
       document.getElementById('hub-loading').style.display = 'none';
       if (hubData.length === 0) {
+        document.getElementById('hub-table-wrap').style.display = 'none';
         document.getElementById('hub-empty').style.display = 'flex';
       } else {
+        document.getElementById('hub-empty').style.display = 'none';
         document.getElementById('hub-table-wrap').style.display = 'block';
         renderHubTable();
         updateHubStats();
       }
     } catch(err) {
-      document.getElementById('hub-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+      if (!cacheRendered) {
+        document.getElementById('hub-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
+      } else {
+        console.warn('[loadHub] fresh fetch 실패, 캐시 유지:', err);
+      }
     }
   }
 
