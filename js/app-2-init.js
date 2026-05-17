@@ -966,8 +966,8 @@ async function loadLedgerData() {
   }
   // ⚠️ 자동 푸시 제거됨 (옛 localStorage 데이터로 Firebase 덮어쓰는 버그 방지)
   // 첫 동기화는 사용자가 편집을 한 번 하면 자동으로 발생 (ldgSaveTx → scheduleLedgerSync)
-  // 명시적으로 Firebase가 비어있는 경우만 안내 로그 출력
-  if (!fbResult.docExists && _ledgerData.transactions && _ledgerData.transactions.length > 0) {
+  // 명시적으로 Firebase가 비어있는 경우만 안내 로그 출력 (모바일에선 Firebase 체크 안 했으므로 스킵)
+  if (!isMobile && !fbResult.docExists && _ledgerData.transactions && _ledgerData.transactions.length > 0) {
     console.log('[LedgerSync] Firebase에 데이터 없음. 편집 시 자동 동기화됩니다. 즉시 동기화하려면 saveLedgerToFirebase() 실행');
   }
   var s = _ledgerData.settings || {}, c = _ledgerData.categories || {};
