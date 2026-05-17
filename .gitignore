@@ -74,3 +74,4 @@ node_modules/
 
 # Claude Code local settings (per-machine)
 .claude/settings.local.json
+index.html.backup

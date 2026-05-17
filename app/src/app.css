@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+/* ═══ Atelier 디자인 토큰 (Stitch Ethos) ═══ */
+@theme {
+	--font-sans:
+		'Pretendard', 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+	--font-headline: 'Manrope', 'Pretendard', sans-serif;
+
+	--color-primary: #7c3aed;
+	--color-primary-dark: #6d28d9;
+	--color-primary-light: #ede9fe;
+	--color-secondary: #8b5cf6;
+	--color-tertiary: #ec4899;
+
+	--color-surface: #ffffff;
+	--color-background: #f8faff;
+	--color-on-surface: #1e293b;
+
+	--radius-card: 1.5rem; /* 24px - rounded-2xl */
+}
+
+html,
+body {
+	font-family: var(--font-sans);
+	background: var(--color-background);
+	color: var(--color-on-surface);
+	-webkit-font-smoothing: antialiased;
+	overscroll-behavior: none;
+}
+
+h1, h2, h3, h4, h5, h6, .headline {
+	font-family: var(--font-headline);
+}
