@@ -419,12 +419,19 @@
       // 캘린더 페이지에 미니 Series Timeline도 같이 렌더
       if (typeof loadWorks === 'function') loadWorks();
       if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
-      // 안전망: 누적된 중복 작품 일정 자동 정리 (idempotent)
+      // 안전망: 누적된 중복 + 삭제된 작품의 고아 일정 자동 정리 (idempotent)
+      // loadWorks가 위에서 이미 호출돼서 _works 채워진 상태
       if (typeof cleanupDuplicateWorkEvents === 'function') {
         try {
           var dupCnt = await cleanupDuplicateWorkEvents();
           if (dupCnt > 0) console.log('[loadPlanner] 자동 중복 정리:', dupCnt, '개');
         } catch(e) { console.warn('auto dedupe failed', e); }
+      }
+      if (typeof cleanupOrphanWorkEvents === 'function') {
+        try {
+          var orphanCnt = await cleanupOrphanWorkEvents();
+          if (orphanCnt > 0) console.log('[loadPlanner] 자동 고아 정리:', orphanCnt, '개');
+        } catch(e) { console.warn('auto orphan cleanup failed', e); }
       }
     } catch(err) {
       console.error('Planner load error:', err);
@@ -434,18 +441,29 @@
   function renderCalendar() {
     const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     _syncCalNavSelects();
-    // ★ 세션 1회 자동 중복 정리 (작품 일정 누적 중복 방지)
+    // ★ 세션 1회 자동 정리: 중복(stale) + 고아(삭제된 작품의 잔재) 둘 다
     if (!window._calDedupeRanOnce && typeof cleanupDuplicateWorkEvents === 'function' && (plannerData||[]).length > 0) {
       window._calDedupeRanOnce = true;
-      cleanupDuplicateWorkEvents().then(function(n) {
-        if (n > 0) {
-          console.log('[CalDedup] 자동 정리: 중복 ' + n + '개 제거');
-          if (typeof showSyncToast === 'function') {
-            showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> 중복 일정 ' + n + '개 자동 정리됨');
+      (async function(){
+        try {
+          var dupN = await cleanupDuplicateWorkEvents();
+          var orphanN = 0;
+          if (typeof cleanupOrphanWorkEvents === 'function') {
+            orphanN = await cleanupOrphanWorkEvents();
           }
-          renderCalendar();
-        }
-      }).catch(function(e) { console.warn('[CalDedup] 실패:', e); });
+          var totalN = (dupN || 0) + (orphanN || 0);
+          if (totalN > 0) {
+            console.log('[CalDedup] 자동 정리: 중복', dupN || 0, '+ 고아', orphanN || 0, '=', totalN, '개');
+            if (typeof showSyncToast === 'function') {
+              var parts = [];
+              if (dupN > 0) parts.push('중복 ' + dupN);
+              if (orphanN > 0) parts.push('삭제된 작품 잔재 ' + orphanN);
+              showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> ' + parts.join(' · ') + ' 자동 정리됨');
+            }
+            renderCalendar();
+          }
+        } catch(e) { console.warn('[CalDedup] 실패:', e); }
+      })();
     }
 
     const grid = document.getElementById('planner-grid');
@@ -14575,6 +14593,11 @@
 
   // 고아 이벤트 정리: work_id가 _works 테이블에 더 이상 없는 일정 삭제
   async function cleanupOrphanWorkEvents() {
+    // ★ 안전장치: _works가 비어있으면(아직 로드 안 됐을 수도) 절대 실행 안 함 — 모든 이벤트 삭제 방지
+    if (!_works || _works.length === 0) {
+      console.warn('[OrphanCleanup] _works 비어있음 → 안전상 스킵');
+      return 0;
+    }
     var validIds = {};
     (_works||[]).forEach(function(w) { if (w && w.id) validIds[w.id] = true; });
     var toRemove = [];
