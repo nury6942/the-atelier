@@ -4,6 +4,65 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Atelier — Journey Master &amp; Portfolio Hub</title>
+  <script>
+    // ═══ 모바일 에러 자동 기록 (head에 inline — 가장 일찍 실행) ═══
+    // 핸드폰에서 콘솔 못 보니까 localStorage에 저장 → 데스크탑에서 확인 가능
+    (function(){
+      var ERR_KEY = '__atelier_errors__';
+      function saveErr(info) {
+        try {
+          var errs = JSON.parse(localStorage.getItem(ERR_KEY) || '[]');
+          errs.unshift({
+            t: new Date().toISOString(),
+            ua: navigator.userAgent.substring(0, 80),
+            url: location.href,
+            ...info
+          });
+          if (errs.length > 30) errs = errs.slice(0, 30);  // 최근 30개만
+          localStorage.setItem(ERR_KEY, JSON.stringify(errs));
+        } catch(e) {}
+      }
+      window.addEventListener('error', function(e){
+        saveErr({
+          type: 'error',
+          msg: e.message || 'unknown',
+          src: (e.filename || '').split('/').pop(),
+          line: e.lineno,
+          col: e.colno,
+          stack: (e.error && e.error.stack || '').substring(0, 500)
+        });
+      });
+      window.addEventListener('unhandledrejection', function(e){
+        saveErr({
+          type: 'promise',
+          msg: (e.reason && e.reason.message) || String(e.reason).substring(0, 200)
+        });
+      });
+      // 메모리 사용량 주기적 체크 (지원되는 브라우저만)
+      if (performance && performance.memory) {
+        setInterval(function(){
+          try {
+            var m = performance.memory;
+            var usedMB = (m.usedJSHeapSize/1048576).toFixed(0);
+            var limitMB = (m.jsHeapSizeLimit/1048576).toFixed(0);
+            // 80% 넘으면 경고 기록
+            if (m.usedJSHeapSize / m.jsHeapSizeLimit > 0.8) {
+              saveErr({ type: 'memory', msg: 'HIGH heap: ' + usedMB + '/' + limitMB + 'MB' });
+            }
+          } catch(e) {}
+        }, 30000);
+      }
+      // 콘솔에서 보는 헬퍼
+      window.showErrors = function(){
+        try {
+          var errs = JSON.parse(localStorage.getItem(ERR_KEY) || '[]');
+          console.table(errs);
+          return errs;
+        } catch(e) { return []; }
+      };
+      window.clearErrors = function(){ localStorage.removeItem(ERR_KEY); };
+    })();
+  </script>
   <link rel="manifest" href="/the-atelier/manifest.json">
   <meta name="theme-color" content="#7c3aed">
   <meta name="apple-mobile-web-app-capable" content="yes">
