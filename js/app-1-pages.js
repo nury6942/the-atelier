@@ -14449,16 +14449,12 @@
     }
 
     // plannerData에 추가 + Firestore 저장 (idempotent — 이미 존재하는 항목은 skip)
-    // ★ work_id가 달라도 date+title+phase가 같으면 중복으로 간주 (다기기/재확정 시 중복 방지)
-    var _phaseOf = function(notes){ var m = (notes||'').match(/phase:(\w+)/); return m ? m[1] : ''; };
-    var rowPhase = _phaseOf(events[0] && events[0][4]);
+    // ★ 동일 date + title이면 중복으로 간주 (work_id/phase 마커 유무 무관 — 옛 데이터까지 잡음)
     var addedN = 0, skippedN = 0;
     for (var i = 0; i < events.length; i++) {
       var row = events[i];
-      var thisPhase = _phaseOf(row[4]);
       var existing = plannerData.find(function(r) {
-        if (!r || r[0] !== row[0] || r[1] !== row[1]) return false;
-        return _phaseOf(r[4]) === thisPhase;
+        return r && r[0] === row[0] && r[1] === row[1];
       });
       if (existing) { skippedN++; continue; }
       try {
@@ -14493,21 +14489,38 @@
     return toRemove.length;
   }
 
+  // 작품 일정 title 패턴 (마커 없는 옛 데이터도 잡기 위함)
+  var _WORK_TITLE_PATTERN = /^(시놉|초고\s*\d+화|퇴고\s*\d+화|\d+화\s*\()/;
+
   // deleteWork 업데이트: 캘린더 일정도 삭제
   async function cleanupDuplicateWorkEvents() {
     var seen = {};
     var toRemove = [];
-    // ★ date + title + phase로 dedup (work_id가 달라도 같은 일정으로 간주)
+    // ★ date + title로 dedup (work_id/phase 마커 유무 무관 — 같은 날 같은 제목이면 중복)
+    //   대상: 마커 있거나, 작품 일정 패턴(시놉/초고N화/퇴고N화/N화(...))의 제목
     plannerData.forEach(function(row, idx) {
       var notes = (row[4] || '').toString();
-      if (notes.indexOf('work_id:') < 0 && notes.indexOf('phase:') < 0) return;
-      var phaseMatch = notes.match(/phase:(\w+)/);
-      var phase = phaseMatch ? phaseMatch[1] : '';
-      var key = (row[0] || '') + '|' + (row[1] || '') + '|' + phase;
+      var title = (row[1] || '').toString();
+      var hasMarker = (notes.indexOf('work_id:') >= 0 || notes.indexOf('phase:') >= 0);
+      var matchesPattern = _WORK_TITLE_PATTERN.test(title);
+      if (!hasMarker && !matchesPattern) return;
+      // 같은 날짜 + 같은 제목 = 중복 (phase 다르더라도 마찬가지: '초고 5화'가 두 번 있으면 안 됨)
+      var key = (row[0] || '') + '|' + title;
       if (seen[key]) {
-        toRemove.push(idx);
+        // 둘 중 마커 있는 쪽을 유지, 없는 쪽 삭제 우선
+        var prevIdx = seen[key];
+        var prevNotes = (plannerData[prevIdx][4] || '').toString();
+        var prevHasMarker = (prevNotes.indexOf('work_id:') >= 0 || prevNotes.indexOf('phase:') >= 0);
+        if (hasMarker && !prevHasMarker) {
+          // 현재 행이 마커 있고 이전 행이 없으면 → 이전 행 삭제, seen 갱신
+          toRemove.push(prevIdx);
+          seen[key] = idx;
+        } else {
+          // 그 외에는 현재 행 삭제
+          toRemove.push(idx);
+        }
       } else {
-        seen[key] = true;
+        seen[key] = idx;
       }
     });
     toRemove.sort(function(a, b) { return b - a; });
