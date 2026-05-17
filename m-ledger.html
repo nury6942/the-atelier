@@ -18,11 +18,9 @@
   }
   .headline { font-family: 'Manrope', 'Pretendard', sans-serif; letter-spacing: -0.02em; }
 
-  /* ═══ HEADER — 메인 사이트 톤 (Money 헤더 + 탭) ═══ */
+  /* ═══ HEADER — 메인 사이트 톤 (햄버거 + Money + 우측 아이콘들 + 탭) ═══ */
   header {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #ffffff;
     border-bottom: 1px solid #f1f5f9;
     position: sticky;
     top: 0;
@@ -32,27 +30,72 @@
     padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
-  .header-top .back {
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
+  .header-top .hamburger {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    gap: 3px;
     color: #475569;
     cursor: pointer;
     transition: all 0.15s;
+    padding: 0;
   }
-  .header-top .back:active { background: #f1f5f9; transform: scale(0.95); }
+  .header-top .hamburger span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #475569;
+    border-radius: 2px;
+  }
+  .header-top .hamburger:active { background: #f8fafc; transform: scale(0.92); }
   .header-top h1 {
-    font-size: 19px; font-weight: 800; flex: 1;
+    font-size: 18px; font-weight: 800; flex: 1;
     font-family: 'Manrope', sans-serif;
     letter-spacing: -0.02em;
+    color: #1e293b;
+  }
+  .header-top .right-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .header-top .icon-btn {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 18px;
+    padding: 0;
+  }
+  .header-top .icon-btn:active { background: #f8fafc; transform: scale(0.92); }
+  .header-top .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
   }
 
   /* ═══ Money 탭 (자산/가계부/부업) ═══ */
@@ -710,8 +753,15 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 
 <header>
   <div class="header-top">
-    <button class="back" onclick="goBack()" aria-label="뒤로">←</button>
+    <button class="hamburger" onclick="goBack()" aria-label="메뉴">
+      <span></span><span></span><span></span>
+    </button>
     <h1>Money</h1>
+    <div class="right-icons">
+      <button class="icon-btn" onclick="goBack()" aria-label="알림">🔔</button>
+      <button class="icon-btn" onclick="goBack()" aria-label="설정">⚙️</button>
+      <button class="avatar" onclick="goBack()" aria-label="프로필">N</button>
+    </div>
   </div>
   <div class="money-tabs">
     <button class="money-tab" onclick="goMoneyTab('asset')">📊 자산</button>
