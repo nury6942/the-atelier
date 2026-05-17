@@ -11249,7 +11249,12 @@
       // 사용자가 명시적으로 데스크탑 모드 켰으면 우회
       var forceDesktop = localStorage.getItem('atelier_force_desktop_ledger') === 'true';
       if (isMobile && !forceDesktop) {
-        window.location.href = './m-ledger.html';
+        // fade-out 후 이동 — 페이지 전환을 매끈하게
+        try {
+          document.body.style.transition = 'opacity 0.16s ease-in';
+          document.body.style.opacity = '0';
+        } catch(e){}
+        setTimeout(function(){ window.location.href = './m-ledger.html'; }, 170);
         return;
       }
     }

@@ -182,6 +182,60 @@
   .loading { text-align: center; padding: 60px 16px; color: #94a3b8; font-size: 13px; }
   .error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 14px; border-radius: 16px; font-size: 12px; }
 
+  /* ═══ Skeleton 로딩 (실제 컨텐츠와 동일한 레이아웃) ═══ */
+  @keyframes skel-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+  .skel { background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: skel-pulse 1.4s ease-in-out infinite; border-radius: 6px; }
+  .skel-kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+  .skel-kpi-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
+  .skel-kpi-card .skel-line-1 { width: 40%; height: 10px; margin-bottom: 12px; }
+  .skel-kpi-card .skel-line-2 { width: 70%; height: 22px; }
+  .skel-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .skel-section .skel-title { width: 30%; height: 14px; margin-bottom: 14px; }
+  .skel-section .skel-bar { width: 100%; height: 8px; margin-bottom: 10px; border-radius: 100px; }
+
+  /* ═══ 컨텐츠 fade-in ═══ */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #content { animation: fade-in 0.25s ease-out; }
+
+  /* ═══ 페이지 fade-in/out ═══ */
+  body { opacity: 0; animation: page-fade-in 0.25s ease-out 0.05s forwards; }
+  @keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  body.is-leaving { animation: fade-out 0.18s ease-in forwards; }
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  /* 토스트 (에러/안내) */
+  .toast-msg {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,23,42,0.92);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 100;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    animation: toast-in 0.3s ease-out;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translate(-50%, -8px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
   /* ═══ KPI — 데스크탑 톤 (흰 카드 + 큰 숫자) ═══ */
   .kpi-grid {
     display: grid;
@@ -802,7 +856,21 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
       <button onclick="nextMonth()" aria-label="다음 달">›</button>
     </div>
   </div>
-  <div id="status" class="loading">불러오는 중...</div>
+  <div id="status">
+    <div class="skel-kpi-grid">
+      <div class="skel-kpi-card"><div class="skel skel-line-1"></div><div class="skel skel-line-2"></div></div>
+      <div class="skel-kpi-card"><div class="skel skel-line-1"></div><div class="skel skel-line-2"></div></div>
+      <div class="skel-kpi-card"><div class="skel skel-line-1"></div><div class="skel skel-line-2"></div></div>
+      <div class="skel-kpi-card"><div class="skel skel-line-1"></div><div class="skel skel-line-2"></div></div>
+    </div>
+    <div class="skel-section">
+      <div class="skel skel-title"></div>
+      <div class="skel skel-bar"></div>
+      <div class="skel skel-bar" style="width:80%"></div>
+      <div class="skel skel-bar" style="width:65%"></div>
+    </div>
+    <div class="skel-section" style="height:120px"></div>
+  </div>
   <div id="content" style="display:none">
     <div class="kpi-grid">
       <div class="kpi-card income">
@@ -958,8 +1026,13 @@ function isExpense(t) {
   return t['대분류'] !== '수입' && t['대분류'] !== '저축';
 }
 
+function _leaveTo(url) {
+  // fade-out 후 이동
+  document.body.classList.add('is-leaving');
+  setTimeout(function(){ window.location.href = url; }, 160);
+}
 function goBack() {
-  window.location.href = './';
+  _leaveTo('./');
 }
 
 // 자산/부업 탭 클릭 — main 사이트로 이동 (URL 파라미터로 페이지 지정)
@@ -969,14 +1042,25 @@ function goMoneyTab(type) {
     sidejob: 'income'
   };
   const target = pageMap[type] || 'finance-hub';
-  window.location.href = './?nav=' + target;
+  _leaveTo('./?nav=' + target);
+}
+
+function showToast(msg, durationMs) {
+  var existing = document.querySelector('.toast-msg');
+  if (existing) existing.remove();
+  var el = document.createElement('div');
+  el.className = 'toast-msg';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  if (durationMs) setTimeout(function(){ el.remove(); }, durationMs);
+  return el;
 }
 
 // Auth + Load
 auth.onAuthStateChanged(async (user) => {
   if (!user || user.email !== ALLOWED_EMAIL) {
-    document.getElementById('status').textContent = '로그인이 필요해요. 메인 사이트에서 로그인 후 다시 오세요.';
-    setTimeout(() => goBack(), 2000);
+    showToast('로그인이 필요해요 — 메인 사이트로 이동');
+    setTimeout(() => goBack(), 1500);
     return;
   }
   await loadData();
@@ -984,7 +1068,7 @@ auth.onAuthStateChanged(async (user) => {
 
 async function loadData() {
   try {
-    document.getElementById('status').textContent = '데이터 불러오는 중...';
+    // 스켈레톤은 유지 — 텍스트로 덮어쓰지 않음
 
     // 1) 즉시 localStorage에서 (이미 메인 사이트에서 캐시됐을 가능성)
     try {
@@ -1003,7 +1087,7 @@ async function loadData() {
     // 2) Firebase에서 메타 (가벼움 — archived 모드면 ~50KB)
     const mainDoc = await db.collection('appSettings').doc('ledgerData').get();
     if (!mainDoc.exists) {
-      document.getElementById('status').textContent = '데이터 없어요. 메인 사이트에서 한 번 입력해보세요.';
+      showToast('데이터가 없어요. 메인 사이트에서 입력해보세요');
       return;
     }
     const d = mainDoc.data();
@@ -1050,7 +1134,7 @@ async function loadData() {
     } catch(e) {}
   } catch(e) {
     console.error('[m-ledger] load error:', e);
-    document.getElementById('status').innerHTML = '<div class="error">로드 실패: ' + (e.message || e) + '</div>';
+    showToast('로드 실패: ' + (e.message || e), 4000);
   }
 }
 
