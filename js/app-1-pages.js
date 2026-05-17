@@ -306,10 +306,45 @@
 
   async function loadPlanner() {
     try {
+      // ★ 1단계: localStorage 캐시로 즉시 렌더 (모바일 체감속도 개선)
+      try {
+        var rawCache = localStorage.getItem('atelier_snapshot_planner');
+        if (rawCache) {
+          var cached = JSON.parse(rawCache);
+          if (cached && cached.data && cached.data.length > 0) {
+            plannerData = cached.data.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+            _initCalNavSelects();
+            renderCalendar();
+            console.log('[loadPlanner] 캐시 렌더 (', plannerData.length, '건) — 백그라운드 fetch 진행');
+          }
+        }
+      } catch(e) { /* cache parse 실패 무시 */ }
+
+      // ★ 2단계: 신선한 데이터 fetch
       const docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
-      // 기존 일정 색상 마이그레이션: CAT_COLOR 기준으로 자동 업데이트
-      // 작품 파이프라인 일정(work_id 포함)은 시리즈 색상 유지 → skip
+
+      // ★ 3단계: 즉시 render — 사용자는 여기까지면 캘린더 보임
+      _initCalNavSelects();
+      renderCalendar();
+      updatePlannerTracks();
+      loadPlannerGoals();
+      _loadSeriesMap();
+      _loadYearlyBirthdays();
+      if (typeof loadWorks === 'function') loadWorks();
+      if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
+
+      // ★ 4단계: 무거운 작업은 백그라운드로 (사용자 대기 X)
+      setTimeout(function(){ _loadPlannerBackground(); }, 0);
+    } catch(err) {
+      console.error('Planner load error:', err);
+    }
+  }
+
+  // 백그라운드 작업: 색상 마이그레이션 + 매트릭스 sync + dedup + orphan cleanup
+  async function _loadPlannerBackground() {
+    try {
+      // 색상 마이그레이션: 작품 파이프라인 일정(work_id 포함)은 시리즈 색상 유지 → skip
       var migrated = 0;
       for (var mi = 0; mi < plannerData.length; mi++) {
         var row = plannerData[mi];
@@ -325,7 +360,10 @@
           } catch(e) { console.error('Color migration error:', e); }
         }
       }
-      if (migrated > 0) console.log('Planner color migrated:', migrated, 'entries');
+      if (migrated > 0) {
+        console.log('Planner color migrated:', migrated, 'entries');
+        renderCalendar(); // 색상 바뀐 거 반영
+      }
       // 캘린더→매트릭스 일괄 동기화 (단일+다일 일정 모두)
       var matrixDocs = await fbRead('matrix');
       matrixData = matrixDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
@@ -409,32 +447,25 @@
           if (cId2) try { await fbUpdate('matrix', cId2, rowToObj('matrix', cRow2)); matrixSynced++; } catch(e) {}
         }
       }
-      if (matrixSynced > 0) console.log('Matrix synced from planner:', matrixSynced, 'entries');
-      _initCalNavSelects();
-      renderCalendar();
-      updatePlannerTracks();
-      loadPlannerGoals();
-      _loadSeriesMap();
-      _loadYearlyBirthdays();
-      // 캘린더 페이지에 미니 Series Timeline도 같이 렌더
-      if (typeof loadWorks === 'function') loadWorks();
-      if (typeof renderWorkTimeline === 'function') renderWorkTimeline();
+      if (matrixSynced > 0) {
+        console.log('Matrix synced from planner:', matrixSynced, 'entries');
+      }
+
       // 안전망: 누적된 중복 + 삭제된 작품의 고아 일정 자동 정리 (idempotent)
-      // loadWorks가 위에서 이미 호출돼서 _works 채워진 상태
       if (typeof cleanupDuplicateWorkEvents === 'function') {
         try {
           var dupCnt = await cleanupDuplicateWorkEvents();
-          if (dupCnt > 0) console.log('[loadPlanner] 자동 중복 정리:', dupCnt, '개');
+          if (dupCnt > 0) console.log('[loadPlanner BG] 자동 중복 정리:', dupCnt, '개');
         } catch(e) { console.warn('auto dedupe failed', e); }
       }
       if (typeof cleanupOrphanWorkEvents === 'function') {
         try {
           var orphanCnt = await cleanupOrphanWorkEvents();
-          if (orphanCnt > 0) console.log('[loadPlanner] 자동 고아 정리:', orphanCnt, '개');
+          if (orphanCnt > 0) console.log('[loadPlanner BG] 자동 고아 정리:', orphanCnt, '개');
         } catch(e) { console.warn('auto orphan cleanup failed', e); }
       }
     } catch(err) {
-      console.error('Planner load error:', err);
+      console.error('Planner background load error:', err);
     }
   }
 
