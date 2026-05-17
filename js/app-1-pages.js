@@ -434,6 +434,19 @@
   function renderCalendar() {
     const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     _syncCalNavSelects();
+    // ★ 세션 1회 자동 중복 정리 (작품 일정 누적 중복 방지)
+    if (!window._calDedupeRanOnce && typeof cleanupDuplicateWorkEvents === 'function' && (plannerData||[]).length > 0) {
+      window._calDedupeRanOnce = true;
+      cleanupDuplicateWorkEvents().then(function(n) {
+        if (n > 0) {
+          console.log('[CalDedup] 자동 정리: 중복 ' + n + '개 제거');
+          if (typeof showSyncToast === 'function') {
+            showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> 중복 일정 ' + n + '개 자동 정리됨');
+          }
+          renderCalendar();
+        }
+      }).catch(function(e) { console.warn('[CalDedup] 실패:', e); });
+    }
 
     const grid = document.getElementById('planner-grid');
     grid.innerHTML = '';
@@ -14424,12 +14437,16 @@
     }
 
     // plannerData에 추가 + Firestore 저장 (idempotent — 이미 존재하는 항목은 skip)
+    // ★ work_id가 달라도 date+title+phase가 같으면 중복으로 간주 (다기기/재확정 시 중복 방지)
+    var _phaseOf = function(notes){ var m = (notes||'').match(/phase:(\w+)/); return m ? m[1] : ''; };
+    var rowPhase = _phaseOf(events[0] && events[0][4]);
     var addedN = 0, skippedN = 0;
     for (var i = 0; i < events.length; i++) {
       var row = events[i];
-      // 중복 체크: date(row[0]) + title(row[1]) + notes(row[4]) 모두 일치하면 skip
+      var thisPhase = _phaseOf(row[4]);
       var existing = plannerData.find(function(r) {
-        return r && r[0] === row[0] && r[1] === row[1] && r[4] === row[4];
+        if (!r || r[0] !== row[0] || r[1] !== row[1]) return false;
+        return _phaseOf(r[4]) === thisPhase;
       });
       if (existing) { skippedN++; continue; }
       try {
@@ -14468,10 +14485,13 @@
   async function cleanupDuplicateWorkEvents() {
     var seen = {};
     var toRemove = [];
+    // ★ date + title + phase로 dedup (work_id가 달라도 같은 일정으로 간주)
     plannerData.forEach(function(row, idx) {
       var notes = (row[4] || '').toString();
-      if (notes.indexOf('work_id:') < 0) return;
-      var key = (row[0] || '') + '|' + (row[1] || '') + '|' + notes;
+      if (notes.indexOf('work_id:') < 0 && notes.indexOf('phase:') < 0) return;
+      var phaseMatch = notes.match(/phase:(\w+)/);
+      var phase = phaseMatch ? phaseMatch[1] : '';
+      var key = (row[0] || '') + '|' + (row[1] || '') + '|' + phase;
       if (seen[key]) {
         toRemove.push(idx);
       } else {
