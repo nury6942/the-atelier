@@ -1740,7 +1740,7 @@
 </head>
 <body class="overflow-x-hidden" style="overscroll-behavior:none;">
 
-<!-- ?nav= 파라미터로 진입 시 기본 dashboard 깜빡임 방지 (m-ledger.html → 자산/부업) -->
+<!-- ?nav= 진입 시 page-dashboard 깜빡임만 차단 (login-screen 처리는 #app-container 직후 별도 스크립트) -->
 <script>
   (function(){
     try {
@@ -1784,6 +1784,22 @@
 
 <!-- APP CONTAINER (hidden until auth) -->
 <div id="app-container" style="display:none">
+
+<!-- 로그인 캐시 있거나 ?nav= 진입이면 login-screen 즉시 숨기고 app-container 보이게 (보라색 깜빡임 차단) -->
+<script>
+  (function(){
+    try {
+      var nav = new URLSearchParams(location.search).get('nav');
+      var wasAuthed = localStorage.getItem('atelier_authed') === 'true';
+      if (nav || wasAuthed) {
+        var ls = document.getElementById('login-screen');
+        var ac = document.getElementById('app-container');
+        if (ls) ls.style.display = 'none';
+        if (ac) ac.style.display = 'block';
+      }
+    } catch(e){}
+  })();
+</script>
 
 <!-- SIDEBAR -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()"></div>

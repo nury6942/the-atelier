@@ -764,11 +764,13 @@ auth.onAuthStateChanged(function(user) {
 
   if (!user) {
     // 로그인 안 됨
+    try { localStorage.removeItem('atelier_authed'); } catch(e){}
     loginScreen.style.display = 'flex';
     deniedScreen.style.display = 'none';
     appContainer.style.display = 'none';
   } else if (user.email && user.email.toLowerCase() === ALLOWED_EMAIL) {
     // 허용된 계정
+    try { localStorage.setItem('atelier_authed', 'true'); } catch(e){}
     loginScreen.style.display = 'none';
     deniedScreen.style.display = 'none';
     appContainer.style.display = '';
