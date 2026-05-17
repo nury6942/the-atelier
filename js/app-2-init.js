@@ -985,7 +985,21 @@ function ldgNextMonth() {
 
 // ── Main render ──
 function ldgRenderMonthly() {
-  if (!_ledgerData.transactions) return;
+  // 📊 진단 로그 — 모바일 가계부 멈춤 원인 추적
+  console.log('[ldgRenderMonthly] 시작', {
+    hasTxs: !!_ledgerData.transactions,
+    txCount: (_ledgerData.transactions || []).length,
+    year: _ldgYear,
+    month: _ldgMonth,
+    isMobile: window._isMobile,
+    forceFullView: localStorage.getItem('atelier_ldg_force_full'),
+    hasKpiStrip: !!document.getElementById('ldg-kpi-strip'),
+    hasTxBody: !!document.getElementById('ldg-tx-body')
+  });
+  if (!_ledgerData.transactions) {
+    console.warn('[ldgRenderMonthly] transactions 없음 — 종료');
+    return;
+  }
   ldgApplyRecurringForMonth(_ldgYear, _ldgMonth);
   var el = document.getElementById('ldg-month-title');
   if (el) el.textContent = _ldgYear + ' ' + _ldgMonthNames[_ldgMonth-1];
@@ -1006,8 +1020,12 @@ function ldgRenderMonthly() {
   var forceFullView = localStorage.getItem('atelier_ldg_force_full') === 'true';
 
   if (isMobile && !forceFullView) {
+    console.log('[ldgRenderMonthly] 모바일 간소 모드');
     // 모바일 간소 모드: KPI + 트랜잭션 표만
     safe(ldgRenderKPI);
+    console.log('[ldgRenderMonthly] KPI 렌더 후', {
+      stripHtml: (document.getElementById('ldg-kpi-strip')||{}).innerHTML?.substring(0,80)
+    });
     safe(ldgRenderTxTable);
     // 모바일 토글 버튼 추가
     _ldgInjectMobileToggle(false);
@@ -1044,8 +1062,12 @@ function _ldgInjectMobileToggle(isFullView) {
   if (existing) existing.remove();
   var isMobile = window._isMobile || window.matchMedia('(max-width: 768px)').matches;
   if (!isMobile) return;
-  var kpiContainer = document.getElementById('ldg-kpi') || document.querySelector('[id*="kpi"]');
-  if (!kpiContainer) return;
+  // 정확한 KPI strip ID 사용
+  var kpiContainer = document.getElementById('ldg-kpi-strip');
+  if (!kpiContainer) {
+    console.warn('[mobile toggle] ldg-kpi-strip 못 찾음');
+    return;
+  }
   var wrap = document.createElement('div');
   wrap.id = 'ldg-mobile-toggle-wrap';
   wrap.style.cssText = 'margin-bottom:10px;text-align:center;';
