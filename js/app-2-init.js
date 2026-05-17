@@ -6,7 +6,20 @@ window.__atelier_app2_loaded = true;
 
 // ═══ 모바일 감지 — 차트 건너뛰기 + Chart.js 최적화 ═══
 // iOS Safari 탭 discard (메모리 한계 도달) 방지
-window._isMobile = window.matchMedia('(max-width: 768px)').matches || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+// 1) viewport 폭 1024px 이하 OR 2) iOS/Android UA OR 3) 터치 디바이스
+window._isMobile = (
+  window.matchMedia('(max-width: 1024px)').matches ||
+  /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+  ('ontouchstart' in window) ||
+  (navigator.maxTouchPoints > 0)
+);
+console.log('🔵 [isMobile detection]', {
+  isMobile: window._isMobile,
+  width: window.innerWidth,
+  ua: navigator.userAgent.substring(0, 80),
+  touch: 'ontouchstart' in window,
+  maxTouch: navigator.maxTouchPoints
+});
 (function(){
   if (typeof Chart === 'undefined') return;
   if (window._isMobile) {
