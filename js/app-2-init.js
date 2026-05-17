@@ -820,9 +820,15 @@ var _ledgerLastFBSync = 0;
 
 // 반환값: { docExists: boolean, loaded: number, txCount: number }
 async function loadLedgerFromFirebase() {
+  console.log('🔵 [loadLedgerFromFirebase] 시작');
   try {
-    if (typeof db === 'undefined' || !db) return { docExists: false, loaded: 0, txCount: 0 };
+    if (typeof db === 'undefined' || !db) {
+      console.warn('[loadLedgerFromFirebase] db 없음');
+      return { docExists: false, loaded: 0, txCount: 0 };
+    }
+    console.log('🔵 [loadLedgerFromFirebase] Firestore doc 요청 중...');
     var doc = await db.collection('appSettings').doc('ledgerData').get();
+    console.log('🔵 [loadLedgerFromFirebase] Firestore doc 받음, exists:', doc.exists);
     if (!doc.exists) return { docExists: false, loaded: 0, txCount: 0 };
     var d = doc.data();
     var keys = ['settings','categories','budgets','recurring','assets','transactions'];
@@ -895,6 +901,7 @@ function scheduleLedgerSync() {
 }
 
 async function loadLedgerData() {
+  console.log('🟢 [loadLedgerData] 시작', { isMobile: window._isMobile });
   var keys = {
     settings: 'atelier_ledger_settings',
     categories: 'atelier_ledger_categories',
@@ -911,8 +918,35 @@ async function loadLedgerData() {
     assets: 'data/ledger/assets-template.json',
     transactions: 'data/ledger/transactions.json'
   };
-  // 1순위: Firebase (다기기 동기화)
-  var fbResult = await loadLedgerFromFirebase();
+
+  // ═══ 모바일 우선순위 역전: localStorage 먼저 → 즉시 렌더 → Firebase 백그라운드 sync ═══
+  var isMobile = window._isMobile || window.matchMedia('(max-width: 768px)').matches;
+  var fbResult = { docExists: false, loaded: 0, txCount: 0 };
+
+  if (isMobile) {
+    console.log('🟢 [loadLedgerData] 모바일 — localStorage 우선');
+    // 1순위 (모바일): localStorage 즉시 로드
+    for (var name in keys) {
+      var stored = localStorage.getItem(keys[name]);
+      if (stored) {
+        try { _ledgerData[name] = JSON.parse(stored); } catch(e) {}
+      }
+    }
+    console.log('🟢 [loadLedgerData] localStorage 로드 완료, tx=' + ((_ledgerData.transactions || []).length));
+    // Firebase는 백그라운드에서 (await 안 함)
+    setTimeout(function() {
+      loadLedgerFromFirebase().then(function(r) {
+        console.log('🟢 [백그라운드 sync] 완료', r);
+        if (r.docExists && r.txCount > 0) {
+          // 데이터 갱신됐으면 다시 렌더 (조용히)
+          if (typeof ldgRenderMonthly === 'function') ldgRenderMonthly();
+        }
+      }).catch(function(e) { console.warn('[백그라운드 sync] 실패', e); });
+    }, 2000);
+  } else {
+    // 1순위 (데스크탑): Firebase 우선
+    fbResult = await loadLedgerFromFirebase();
+  }
   for (var name in keys) {
     // Firebase에서 이미 로드된 경우 스킵
     if (_ledgerData[name] !== undefined && _ledgerData[name] !== null) continue;
