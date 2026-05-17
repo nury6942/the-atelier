@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier Debug</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; padding: 20px; background: #f8faff; }
+  h1 { color: #7c3aed; }
+  .ok { color: #16a34a; font-weight: 600; }
+  .fail { color: #dc2626; font-weight: 600; }
+  pre { background: #1e293b; color: #f8fafc; padding: 12px; border-radius: 8px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .box { background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  button { background: #7c3aed; color: #fff; border: none; padding: 10px 14px; border-radius: 8px; margin-right: 8px; font-size: 13px; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>🔬 Atelier JS 로드 진단</h1>
+
+<div class="box">
+  <h3>JS 파일 로드 상태</h3>
+  <div id="js-results">테스트 중...</div>
+</div>
+
+<div class="box">
+  <h3>전역 함수/변수 존재 여부 (메인 페이지 로드 시 정의되어야 함)</h3>
+  <div id="globals">대기 중...</div>
+  <p style="color:#64748b;font-size:12px">아래 "메인 페이지 가서 검사" 누르면 실제 페이지에서 결과 봐.</p>
+</div>
+
+<div class="box">
+  <h3>액션</h3>
+  <button onclick="location.href='/the-atelier/'">메인 페이지 가기</button>
+  <button onclick="runGlobalCheck()" style="background:#0ea5e9">전역 함수 검사 (이 페이지에서)</button>
+</div>
+
+<div class="box">
+  <h3>지난 에러 (이 페이지 로드된 후 캡처)</h3>
+  <pre id="errors">아직 없음</pre>
+</div>
+
+<script>
+// 에러 캡처
+var errs = [];
+window.addEventListener('error', function(e) {
+  errs.push('❌ ' + e.message + ' @ ' + (e.filename || '?') + ':' + (e.lineno || '?'));
+  document.getElementById('errors').textContent = errs.join('\n');
+});
+window.addEventListener('unhandledrejection', function(e) {
+  errs.push('⚠️ Unhandled: ' + (e.reason && e.reason.message || e.reason));
+  document.getElementById('errors').textContent = errs.join('\n');
+});
+
+// JS 파일 fetch 테스트
+var jsFiles = [
+  'js/app-1-pages.js',
+  'js/app-2-init.js',
+  'js/app-3-flatpickr.js'
+];
+var results = document.getElementById('js-results');
+results.innerHTML = '';
+jsFiles.forEach(function(f) {
+  var row = document.createElement('div');
+  row.style.padding = '6px 0';
+  row.innerHTML = '⏳ ' + f + ' …';
+  results.appendChild(row);
+  var t0 = Date.now();
+  fetch(f)
+    .then(function(r) {
+      var dt = Date.now() - t0;
+      if (r.ok) {
+        return r.text().then(function(t) {
+          row.innerHTML = '<span class="ok">✅</span> ' + f + ' — ' + (t.length / 1024).toFixed(0) + 'KB (' + dt + 'ms)';
+        });
+      } else {
+        row.innerHTML = '<span class="fail">❌</span> ' + f + ' — HTTP ' + r.status + ' (' + dt + 'ms)';
+      }
+    })
+    .catch(function(e) {
+      row.innerHTML = '<span class="fail">❌</span> ' + f + ' — ' + e.message;
+    });
+});
+
+function runGlobalCheck() {
+  // 이 페이지엔 main JS 안 로드돼있으니 기본은 다 없음
+  // 메인 페이지에서 검사하려면 콘솔 코드 따로 줘야 함
+  var fns = ['toggleSidebar', 'navigate', 'fbRead', 'renderDashboard', 'loadLedgerData'];
+  var html = '<p>이 페이지(debug.html)엔 메인 JS 안 로드돼있어서 다 false 나오는 게 정상. 메인 페이지에서 검사해야 함:</p>';
+  fns.forEach(function(fn) {
+    var exists = typeof window[fn] === 'function';
+    html += '<div>' + (exists ? '<span class="ok">✅</span>' : '<span class="fail">❌</span>') + ' ' + fn + ': ' + typeof window[fn] + '</div>';
+  });
+  html += '<br><strong>메인 페이지 콘솔에 붙여넣을 코드:</strong><br>';
+  html += '<pre>' + 'console.log({\n' +
+    fns.map(function(f){ return '  ' + f + ': typeof ' + f; }).join(',\n') +
+    '\n});</pre>';
+  document.getElementById('globals').innerHTML = html;
+}
+</script>
+</body>
+</html>
