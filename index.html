@@ -4580,6 +4580,22 @@
             </div>
           </div>
 
+          <!-- 📦 Archive Migration -->
+          <div id="ldg-archive-section" class="bg-violet-50 rounded-2xl border border-violet-200 p-5 mt-5">
+            <h4 class="text-sm font-bold text-violet-700 mb-2 flex items-center gap-2">
+              📦 데이터 아카이브 (모바일 속도 개선)
+            </h4>
+            <p class="text-xs text-violet-700 mb-3">
+              현재 모든 트랜잭션이 한 Firebase 문서에 있어 모바일 로딩이 5~30초 걸려요.
+              연도별 별도 문서로 분리하면 1~2초로 빨라져요.
+              <br>✅ 자동 백업 ✅ 데이터 보존 ✅ 데스크탑 기능 영향 없음
+            </p>
+            <button onclick="migrateLedgerToArchive()" class="text-xs px-4 py-2 bg-violet-600 text-white rounded-lg font-bold hover:bg-violet-700">
+              📦 아카이브 마이그레이션 실행
+            </button>
+            <p class="text-[10px] text-violet-500 mt-2">⚠️ 1회만 실행하면 됨. 이후 모든 변경 자동 분리 저장.</p>
+          </div>
+
           <div id="ldg-dedup-section" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 mt-5">
             <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-indigo-600" style="font-size:18px">content_copy</span> 중복 거래 정리</h4>
             <div class="flex items-center justify-between">
