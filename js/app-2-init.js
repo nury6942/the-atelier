@@ -783,6 +783,15 @@ auth.onAuthStateChanged(function(user) {
     if (nameEl) nameEl.textContent = displayName;
     var emailEl = document.getElementById('profile-dd-email');
     if (emailEl) emailEl.textContent = user.email;
+    // ═══ URL 파라미터로 페이지 자동 이동 (m-ledger.html의 자산/부업 탭에서 이동 시) ═══
+    try {
+      var navParam = new URLSearchParams(window.location.search).get('nav');
+      if (navParam && typeof navigate === 'function') {
+        // 파라미터 정리 후 navigate
+        history.replaceState({}, '', window.location.pathname);
+        setTimeout(function(){ navigate(navParam); }, 100);
+      }
+    } catch(e) {}
   } else {
     // 비허용 계정
     loginScreen.style.display = 'none';

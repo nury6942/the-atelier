@@ -18,21 +18,23 @@
   }
   .headline { font-family: 'Manrope', 'Pretendard', sans-serif; letter-spacing: -0.02em; }
 
-  /* ═══ HEADER — 메인 사이트 톤 ═══ */
+  /* ═══ HEADER — 메인 사이트 톤 (Money 헤더 + 탭) ═══ */
   header {
-    background: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid #f1f5f9;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
     position: sticky;
     top: 0;
     z-index: 10;
   }
-  header .back {
+  .header-top {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-top .back {
     background: #f8fafc;
     border: 1px solid #f1f5f9;
     width: 40px;
@@ -46,16 +48,82 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  header .back:active { background: #f1f5f9; transform: scale(0.95); }
-  header h1 { font-size: 17px; font-weight: 800; flex: 1; font-family: 'Manrope', sans-serif; letter-spacing: -0.02em; }
-  header .month-nav { display: flex; gap: 4px; align-items: center; }
-  header .month-nav button {
-    background: #f8fafc; border: 1px solid #f1f5f9; width: 34px; height: 34px;
-    border-radius: 12px; font-size: 16px; font-weight: 700; color: #6d28d9; cursor: pointer;
+  .header-top .back:active { background: #f1f5f9; transform: scale(0.95); }
+  .header-top h1 {
+    font-size: 19px; font-weight: 800; flex: 1;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* ═══ Money 탭 (자산/가계부/부업) ═══ */
+  .money-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 12px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .money-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .money-tab.active {
+    background: linear-gradient(135deg, #ede9fe, #f3e8ff);
+    border-color: #c4b5fd;
+    color: #6d28d9;
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.15);
+  }
+  .money-tab:active { transform: scale(0.96); }
+
+  /* ═══ Ledger 서브 헤더 (Daily Ledger + 월 이동) ═══ */
+  .ledger-sub-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+    gap: 12px;
+  }
+  .ledger-sub-header h2 {
+    font-size: 22px; font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .month-nav {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 100px;
+    padding: 4px;
+  }
+  .month-nav button {
+    background: none; border: none;
+    width: 30px; height: 30px;
+    border-radius: 100px;
+    font-size: 16px; font-weight: 700;
+    color: #6d28d9; cursor: pointer;
     transition: all 0.15s;
   }
-  header .month-nav button:active { background: #ede9fe; transform: scale(0.95); }
-  header .month-nav span { padding: 0 10px; font-weight: 800; color: #1e293b; font-family: 'Manrope', sans-serif; font-size: 14px; }
+  .month-nav button:active { background: #ede9fe; transform: scale(0.92); }
+  .month-nav span {
+    padding: 0 12px; font-weight: 800;
+    color: #1e293b;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+  }
 
   .container { padding: 20px 16px; }
 
@@ -641,16 +709,26 @@ const ALLOWED_EMAIL = 'nury6942@gmail.com';
 <body>
 
 <header>
-  <button class="back" onclick="goBack()" aria-label="뒤로">←</button>
-  <h1>Daily Ledger</h1>
-  <div class="month-nav">
-    <button onclick="prevMonth()" aria-label="이전 달">‹</button>
-    <span id="month-label">2026.5</span>
-    <button onclick="nextMonth()" aria-label="다음 달">›</button>
+  <div class="header-top">
+    <button class="back" onclick="goBack()" aria-label="뒤로">←</button>
+    <h1>Money</h1>
+  </div>
+  <div class="money-tabs">
+    <button class="money-tab" onclick="goMoneyTab('asset')">📊 자산</button>
+    <button class="money-tab active">📓 가계부</button>
+    <button class="money-tab" onclick="goMoneyTab('sidejob')">💼 부업</button>
   </div>
 </header>
 
 <div class="container">
+  <div class="ledger-sub-header">
+    <h2 class="headline">Daily Ledger</h2>
+    <div class="month-nav">
+      <button onclick="prevMonth()" aria-label="이전 달">‹</button>
+      <span id="month-label">2026.5</span>
+      <button onclick="nextMonth()" aria-label="다음 달">›</button>
+    </div>
+  </div>
   <div id="status" class="loading">불러오는 중...</div>
   <div id="content" style="display:none">
     <div class="kpi-grid">
@@ -809,6 +887,16 @@ function isExpense(t) {
 
 function goBack() {
   window.location.href = './';
+}
+
+// 자산/부업 탭 클릭 — main 사이트로 이동 (URL 파라미터로 페이지 지정)
+function goMoneyTab(type) {
+  const pageMap = {
+    asset: 'finance-hub',
+    sidejob: 'income'
+  };
+  const target = pageMap[type] || 'finance-hub';
+  window.location.href = './?nav=' + target;
 }
 
 // Auth + Load
