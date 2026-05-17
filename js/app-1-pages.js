@@ -11297,7 +11297,14 @@
     if(pageId==='reference') { if(typeof loadReference==='function') loadReference(); }
   }
   window.addEventListener('DOMContentLoaded', () => {
-    const startPage = localStorage.getItem('atelier-page') || 'dashboard';
+    // ★ URL ?nav= 우선 처리 (m-ledger.html → 자산/부업 탭 복귀 시 무한 리다이렉트 방지)
+    var urlNav = null;
+    try { urlNav = new URLSearchParams(window.location.search).get('nav'); } catch(e){}
+    const startPage = urlNav || localStorage.getItem('atelier-page') || 'dashboard';
+    // nav 파라미터 사용했으면 URL에서 제거 (새로고침 깔끔하게)
+    if (urlNav) {
+      try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+    }
     navigate(startPage);
     if(startPage === 'dashboard') loadDashboard();
     loadIncomeCategories();

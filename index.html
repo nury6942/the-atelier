@@ -330,7 +330,13 @@
     @media (max-width: 768px) {
       #sidebar { box-shadow: 0 0 24px rgba(0,0,0,0.08); }
       #main-wrapper { margin-left: 0 !important; }
-      #main-header { left: 0 !important; }
+      #main-header {
+        left: 0 !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      /* 헤더 우측 아이콘 컨테이너의 gap을 m-ledger.html과 동일하게 */
+      #main-header > div:last-child { gap: 4px !important; }
     }
 
     /* ===== DASHBOARD PAGE — Stitch "Atelier Ethos" Bento Grid ===== */
