@@ -73,8 +73,9 @@
   <link rel="preload" href="js/app-1-pages.js?v=105" as="script">
   <link rel="preload" href="js/app-2-init.js?v=105" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=105" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=107" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
@@ -1883,6 +1884,10 @@
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-reference" onclick="navigate('reference'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">menu_book</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Memo</span>
+    </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-roadmap" onclick="navigate('roadmap'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">route</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Roadmap</span>
     </a>
   </nav>
   <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
@@ -6289,6 +6294,163 @@
   </div>
 
   <!-- ===== WORKSPACE REFERENCE PAGE ===== -->
+  <!-- ═══════ ROADMAP — 노마드 준비 + 수익 파이프라인 ═══════ -->
+  <div id="page-roadmap" class="page" style="display:none;background:#ffffff;">
+    <div class="max-w-[1200px] mx-auto px-8 pt-8 pb-24" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif">
+      <!-- Breadcrumbs + Header Actions -->
+      <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+        <nav class="flex items-center text-[12px] tracking-wider text-slate-500">
+          <span>Personal Archive</span>
+          <span class="mx-2 text-slate-300">/</span>
+          <span>Strategic Planning</span>
+          <span class="mx-2 text-slate-300">/</span>
+          <span class="font-semibold text-violet-700" id="rm-roadmap-title">2026–2027 Roadmap</span>
+        </nav>
+        <div class="flex items-center gap-2">
+          <button onclick="rmOpenPhaseModal(null)" class="px-3 py-1.5 rounded-lg text-violet-700 bg-violet-50 hover:bg-violet-100 text-xs font-bold flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">add</span>Phase 추가</button>
+          <button onclick="rmOpenSettings()" class="p-1.5 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors" title="설정"><span class="material-symbols-outlined" style="font-size:18px">settings</span></button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-12 gap-6">
+        <!-- LEFT — Phases -->
+        <div class="col-span-12 lg:col-span-9 space-y-10">
+          <!-- 1. Horizontal Timeline -->
+          <section>
+            <div id="rm-timeline" class="flex overflow-x-auto pb-4 -mx-2 hide-scrollbar">
+              <div class="flex min-w-max gap-4 px-2" id="rm-timeline-inner">
+                <!-- 동적 생성 -->
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Active Phase Card -->
+          <section id="rm-active-section"></section>
+
+          <!-- 3. Upcoming Phases -->
+          <section class="space-y-2">
+            <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-[0.25em] mb-3">Upcoming Phases</h3>
+            <div id="rm-upcoming-list" class="space-y-1.5"></div>
+          </section>
+        </div>
+
+        <!-- RIGHT — Sidebar -->
+        <div class="col-span-12 lg:col-span-3 space-y-4">
+          <div class="sticky top-20 space-y-4">
+            <!-- Next N Days -->
+            <div id="rm-next-card" class="rounded-2xl p-5 text-white shadow-lg" style="background:linear-gradient(135deg,#630ed4 0%,#7c3aed 100%)">
+              <h4 class="text-base font-bold mb-1">다음 12일</h4>
+              <p id="rm-next-range" class="text-xs text-white/70 mb-4">—</p>
+              <div id="rm-next-items" class="space-y-3 text-sm"></div>
+              <div class="mt-6 pt-4 border-t border-white/20">
+                <p id="rm-quote" class="text-xs italic text-white/80 leading-relaxed">"천 개의 뉴스레터의 여정은 단 하나의 도메인 검색에서 시작된다."</p>
+              </div>
+            </div>
+            <!-- Status Report -->
+            <div class="rounded-2xl p-5 text-white shadow-lg" style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%)">
+              <span class="text-[10px] font-semibold tracking-[0.25em] uppercase opacity-70">Status Report</span>
+              <div class="flex items-baseline gap-2 mt-3">
+                <span id="rm-weeks-remain" class="text-4xl font-bold leading-none">—</span>
+                <span class="text-xs opacity-70">weeks remaining</span>
+              </div>
+              <div class="mt-3 h-[1px] bg-white/20 w-full"></div>
+              <p id="rm-focus" class="mt-3 text-xs leading-relaxed opacity-85">현재 집중: —</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ Roadmap Phase 추가/수정 모달 ═══════ -->
+  <div id="rm-phase-modal" class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[92vh] overflow-y-auto" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif">
+      <div class="px-6 py-5 flex items-center justify-between border-b border-slate-100">
+        <h3 id="rm-modal-title" class="text-base font-bold text-slate-900">Phase 추가</h3>
+        <button onclick="rmClosePhaseModal()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">Phase 번호</label>
+            <input id="rm-f-order" type="number" min="1" max="20" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="1"/>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">짧은 이름</label>
+            <input id="rm-f-name" type="text" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="Foundation"/>
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">제목</label>
+          <input id="rm-f-title" type="text" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="Infrastructure Setup"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">시작일</label>
+            <input id="rm-f-start" type="date" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300"/>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">종료일</label>
+            <input id="rm-f-end" type="date" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300"/>
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">Phase Goal (한 줄)</label>
+          <input id="rm-f-goal" type="text" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="Build infrastructure. No publishing yet."/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">체크리스트 (한 줄에 하나)</label>
+          <textarea id="rm-f-checklist" rows="6" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300 resize-none" placeholder="Decide pen names (3 KR, 3 EN)&#10;Sign up for Maily&#10;Research domain&#10;..." spellcheck="false"></textarea>
+          <p class="text-[10px] text-slate-400 mt-1">완료된 항목은 앞에 <code>✓</code> 또는 <code>[x]</code>를 붙여주세요.</p>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">메모 (선택)</label>
+          <textarea id="rm-f-notes" rows="3" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300 resize-none" placeholder="현재 집중하는 내용..." spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 flex justify-between items-center gap-2">
+        <button id="rm-delete-btn" onclick="rmDeletePhase()" class="px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 text-sm font-bold hidden">삭제</button>
+        <div class="flex gap-2 ml-auto">
+          <button onclick="rmClosePhaseModal()" class="px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-bold">취소</button>
+          <button onclick="rmSavePhase()" class="px-5 py-2 rounded-lg text-white text-sm font-bold" style="background:linear-gradient(135deg,#630ed4,#7c3aed)">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ Roadmap 설정 모달 ═══════ -->
+  <div id="rm-settings-modal" class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif">
+      <div class="px-6 py-5 flex items-center justify-between border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Roadmap 설정</h3>
+        <button onclick="rmCloseSettings()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">Roadmap 제목</label>
+          <input id="rm-s-title" type="text" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="2026–2027 Roadmap"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">목표 인용구</label>
+          <textarea id="rm-s-quote" rows="2" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300 resize-none" placeholder='"천 개의 뉴스레터의 여정은..."'></textarea>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">사이드바 "다음 N일" 기간</label>
+          <input id="rm-s-next-days" type="number" min="3" max="60" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-violet-300" placeholder="12"/>
+        </div>
+        <div class="pt-3 border-t border-slate-100 space-y-2">
+          <button onclick="rmSeedDefault()" class="w-full px-4 py-2 rounded-lg text-violet-700 bg-violet-50 hover:bg-violet-100 text-xs font-bold">기본 5-Phase 시드 (Foundation→Settle) 불러오기</button>
+          <button onclick="rmExportData()" class="w-full px-4 py-2 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 text-xs font-bold">데이터 내보내기 (JSON)</button>
+          <button onclick="rmImportData()" class="w-full px-4 py-2 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 text-xs font-bold">데이터 가져오기 (JSON)</button>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
+        <button onclick="rmCloseSettings()" class="px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-bold">취소</button>
+        <button onclick="rmSaveSettings()" class="px-5 py-2 rounded-lg text-white text-sm font-bold" style="background:linear-gradient(135deg,#630ed4,#7c3aed)">저장</button>
+      </div>
+    </div>
+  </div>
+
   <div id="page-reference" class="page" style="display:none;background:#f8f9ff;">
     <div class="flex h-[calc(100vh-64px)]">
       <!-- Left Panel: Memo List -->
@@ -6731,6 +6893,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=105" defer></script>
+<script src="js/app-4-roadmap.js?v=107" defer></script>
 
 </body>
 </html>

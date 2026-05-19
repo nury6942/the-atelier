@@ -11438,6 +11438,7 @@
     if(pageId==='planner') { if(typeof loadPlanner==='function') loadPlanner(); }
     if(pageId==='packing') { if(typeof pkInit==='function') pkInit(); }
     if(pageId==='reference') { if(typeof loadReference==='function') loadReference(); }
+    if(pageId==='roadmap') { if(typeof loadRoadmap==='function') loadRoadmap(); }
   }
   window.addEventListener('DOMContentLoaded', () => {
     // ★ URL ?nav= 우선 처리 (m-ledger.html → 자산/부업 탭 복귀 시 무한 리다이렉트 방지)
