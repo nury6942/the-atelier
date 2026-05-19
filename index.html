@@ -77,6 +77,7 @@
   <link rel="preload" href="js/daily-actions.js?v=111" as="script">
   <link rel="preload" href="js/daily-guides.js?v=111" as="script">
   <link rel="preload" href="js/app-4-roadmap.js?v=111" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=112" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -4248,11 +4249,19 @@
       <div id="ledger-panel-monthly" class="ledger-panel">
 
         <!-- [1] Month Navigation Bar -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
           <h3 id="ldg-month-title" class="text-xl font-bold text-slate-900">2026 April</h3>
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 flex-wrap">
             <button onclick="ldgPrevMonth()" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors" id="ldg-prev-btn">‹ 3월</button>
             <button onclick="ldgNextMonth()" class="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 transition-colors" id="ldg-next-btn">5월 ›</button>
+            <!-- ═══ 가계부 내보내기 (v1: PC 전용) ═══ -->
+            <button id="ldg-export-mask-toggle" onclick="ldgToggleExportMasking()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-violet-200 text-sm text-violet-700 hover:bg-violet-50 transition-colors" title="마스킹 토글 (한글 첫 글자만 보존, 이후는 ○)">
+              <span class="material-symbols-outlined text-sm" id="ldg-export-mask-icon">lock_open</span>
+              <span id="ldg-export-mask-label">마스킹 OFF</span>
+            </button>
+            <button onclick="ldgExportToClipboard()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-violet-200 text-sm text-violet-700 hover:bg-violet-50 transition-colors" title="가계부 텍스트 복사 (이번 달)">
+              <span class="material-symbols-outlined text-sm">content_copy</span> 복사
+            </button>
             <button onclick="switchLedgerTab('settings')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
               <span class="material-symbols-outlined text-sm">settings</span> 설정
             </button>
@@ -6773,6 +6782,25 @@
     </div>
   </div>
 
+  <!-- ═══ 가계부 내보내기 fallback 모달 (Clipboard API 실패 시) ═══ -->
+  <div id="ldg-export-fallback-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-5" style="display:none">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="ldgCloseExportFallback()"></div>
+    <div class="relative bg-white rounded-[20px] p-6 max-w-[640px] w-full shadow-2xl" style="animation:modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1)">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff)">📋</div>
+        <div>
+          <h3 class="text-[16px] font-bold text-slate-900">텍스트 직접 복사</h3>
+          <p class="text-xs text-slate-500">클립보드 자동 복사 실패 — 아래 텍스트를 Cmd/Ctrl+C로 복사하세요 (전체 선택됨)</p>
+        </div>
+      </div>
+      <textarea id="ldg-export-fallback-textarea" readonly class="w-full h-80 p-3 border border-slate-200 rounded-xl text-xs font-mono text-slate-700 bg-slate-50 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"></textarea>
+      <div class="flex gap-2 mt-4">
+        <button onclick="ldgCloseExportFallback()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all">닫기</button>
+        <button onclick="ldgRetryClipboard()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" style="background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 2px 8px rgba(124,58,237,0.25)">다시 자동 복사</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SETTINGS PANEL -->
   <div id="settings-panel" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center" style="display:none!important">
     <div class="bg-white w-full md:max-w-md md:mx-4 md:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden">
@@ -6905,6 +6933,7 @@
 <script src="js/daily-actions.js?v=111" defer></script>
 <script src="js/daily-guides.js?v=111" defer></script>
 <script src="js/app-4-roadmap.js?v=111" defer></script>
+<script src="js/app-5-ledger-export.js?v=112" defer></script>
 
 </body>
 </html>
