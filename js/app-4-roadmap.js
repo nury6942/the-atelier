@@ -119,16 +119,17 @@
       var isNow = status === 'now';
       var isDone = status === 'done';
       var opacity = isNow ? '' : 'opacity-50 hover:opacity-100 transition-opacity';
-      var dotColor = isNow ? 'bg-violet-600 ring-4 ring-violet-200' :
+      var dotColor = isNow ? 'ring-4 ring-pink-200' :
                      isDone ? 'bg-violet-300' : 'bg-white border border-slate-300';
+      var dotStyle = isNow ? 'background:linear-gradient(135deg,#a855f7,#ec4899)' : '';
       var lineColor = (isDone || isNow) ? 'bg-violet-400' : 'bg-slate-200';
-      var labelColor = isNow ? 'text-violet-700' : 'text-slate-500';
+      var labelColor = isNow ? 'text-pink-600' : 'text-slate-500';
       var titleColor = isNow ? 'text-violet-900' : (isDone ? 'text-slate-500' : 'text-slate-800');
       var label = isNow ? 'NOW' : 'PHASE ' + p.order;
       var isLast = i === phases.length - 1;
       return '<div class="flex flex-col items-start min-w-[140px] cursor-pointer ' + opacity + '" onclick="rmFocusPhase(\'' + p.id + '\')">' +
         '<div class="flex items-center w-full mb-3">' +
-          '<div class="h-3 w-3 rounded-full ' + dotColor + ' shrink-0"></div>' +
+          '<div class="h-3 w-3 rounded-full ' + dotColor + ' shrink-0" style="' + dotStyle + '"></div>' +
           (isLast ? '' : '<div class="h-[1.5px] flex-1 ' + lineColor + ' ml-2"></div>') +
         '</div>' +
         '<span class="text-[10px] font-extrabold uppercase tracking-[0.2em] mb-1 ' + labelColor + '">' + label + '</span>' +
@@ -164,7 +165,7 @@
       '</label>';
     }).join('');
 
-    section.innerHTML = '<div id="rm-active-card" class="rounded-2xl p-8 relative overflow-hidden text-white shadow-xl" style="background:linear-gradient(135deg,#630ed4 0%,#7c3aed 50%,#a855f7 100%)">' +
+    section.innerHTML = '<div id="rm-active-card" class="rounded-2xl p-8 relative overflow-hidden text-white shadow-xl" style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%)">' +
       '<div class="relative z-10">' +
         '<div class="flex justify-between items-start mb-6 flex-wrap gap-4">' +
           '<div class="min-w-0 flex-1">' +
@@ -233,13 +234,13 @@
           (p.title ? '<h4 class="text-base font-bold text-slate-800 mb-1">' + String(p.title).replace(/</g,'&lt;') + '</h4>' : '') +
           (p.goal ? '<p class="text-[13px] italic text-slate-500 mb-4 leading-snug">' + String(p.goal).replace(/</g,'&lt;') + '</p>' : '') +
           '<div class="flex justify-between text-[11px] font-bold mb-2 tracking-wider text-slate-500"><span>진척 · ' + doneCount + '/' + totalCount + '</span><span>' + progress + '%</span></div>' +
-          '<div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden mb-4"><div class="h-full bg-violet-500 transition-all duration-500 rounded-full" style="width:' + progress + '%"></div></div>' +
+          '<div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden mb-4"><div class="h-full transition-all duration-500 rounded-full" style="width:' + progress + '%;background:linear-gradient(90deg,#7c3aed,#ec4899)"></div></div>' +
           '<div class="grid grid-cols-1 md:grid-cols-2 gap-y-0.5 gap-x-8">' + checklistHtml + '</div>' +
         '</div>';
       } else {
         // 미니 진척 바 (접힌 상태에서도 노출)
         bodyHtml = '<div class="px-6 pb-3"><div class="flex items-center gap-3">' +
-          '<div class="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-violet-400 rounded-full" style="width:' + progress + '%"></div></div>' +
+          '<div class="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + progress + '%;background:linear-gradient(90deg,#7c3aed,#ec4899)"></div></div>' +
           '<span class="text-[10px] font-bold text-slate-400">' + progress + '% · ' + doneCount + '/' + totalCount + '</span>' +
         '</div></div>';
       }
