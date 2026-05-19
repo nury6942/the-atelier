@@ -13,6 +13,11 @@
   var LS_CHECKS = 'atelier_roadmap_checks';
   var LS_CONFIG = 'atelier_roadmap_config';
   var LS_EXPANDED = 'atelier_roadmap_expanded';
+  var LS_DAILY_CHECKS = 'atelier_roadmap_daily_checks'; // 일일 액션 체크 (히스토리 유지)
+  var LS_DAILY_GUIDE_OPEN = 'atelier_roadmap_daily_guide_open'; // 가이드 펼침 상태 (날짜별)
+
+  // 현재 보고 있는 날짜 (네비게이션용, 기본 = 오늘)
+  var rmViewDate = null;
 
   // ─── 데이터 액세스 ───
   function rmGetPhases() {
@@ -104,11 +109,235 @@
     var todayStr = new Date().toISOString().split('T')[0];
 
     renderTimeline(phases, todayStr);
+    renderTodayAction(todayStr);
     renderActive(phases, todayStr);
     renderOthers(phases, todayStr);
     renderSidebar(phases, todayStr, config);
   }
   window.loadRoadmap = loadRoadmap;
+
+  // ═══════════════════════════════════════════════════
+  // 일일 액션 ("오늘 할 한 가지" + 클릭 시 가이드 펼침)
+  // ═══════════════════════════════════════════════════
+  function rmGetDailyChecks() {
+    try { return JSON.parse(localStorage.getItem(LS_DAILY_CHECKS)) || {}; }
+    catch(e) { return {}; }
+  }
+  function rmSetDailyCheck(dateStr, done) {
+    var checks = rmGetDailyChecks();
+    if (done) checks[dateStr] = true; else delete checks[dateStr];
+    try { localStorage.setItem(LS_DAILY_CHECKS, JSON.stringify(checks)); } catch(e){}
+  }
+  function rmGetDailyGuideOpen() {
+    try { return JSON.parse(localStorage.getItem(LS_DAILY_GUIDE_OPEN)) || {}; }
+    catch(e) { return {}; }
+  }
+  function rmSetDailyGuideOpen(dateStr, isOpen) {
+    var o = rmGetDailyGuideOpen();
+    if (isOpen) o[dateStr] = true; else delete o[dateStr];
+    try { localStorage.setItem(LS_DAILY_GUIDE_OPEN, JSON.stringify(o)); } catch(e){}
+  }
+
+  function rmFindAction(dateStr) {
+    var arr = window.RM_DAILY_ACTIONS || [];
+    return arr.find(function(a){ return a.date === dateStr; });
+  }
+  function rmFindGuide(dateStr) {
+    var arr = window.RM_DAILY_GUIDES || [];
+    return arr.find(function(g){ return g.date === dateStr; });
+  }
+  function rmFindNextAction(fromDateStr) {
+    var arr = window.RM_DAILY_ACTIONS || [];
+    return arr.find(function(a){ return a.date > fromDateStr; });
+  }
+  function rmFindPrevAction(fromDateStr) {
+    var arr = window.RM_DAILY_ACTIONS || [];
+    var prev = null;
+    for (var i=0; i<arr.length; i++) {
+      if (arr[i].date < fromDateStr) prev = arr[i];
+      else break;
+    }
+    return prev;
+  }
+  function rmFmtDateKR(dateStr) {
+    if (!dateStr) return '';
+    var d = new Date(dateStr + 'T00:00:00');
+    var m = d.getMonth()+1, day = d.getDate();
+    var wd = ['일','월','화','수','목','금','토'][d.getDay()];
+    return m + '월 ' + day + '일 (' + wd + ')';
+  }
+
+  function renderTodayAction(todayStr) {
+    var section = document.getElementById('rm-today-section');
+    if (!section) return;
+
+    // viewDate가 없으면 오늘로 초기화
+    if (!rmViewDate) rmViewDate = todayStr;
+    var viewStr = rmViewDate;
+
+    var action = rmFindAction(viewStr);
+    var checks = rmGetDailyChecks();
+    var isDone = !!checks[viewStr];
+    var openMap = rmGetDailyGuideOpen();
+    var isOpen = !!openMap[viewStr];
+
+    // 좌우 네비 화살표
+    var prevA = rmFindPrevAction(viewStr);
+    var nextA = rmFindNextAction(viewStr);
+    var prevBtn = '<button onclick="rmDailyPrev()" class="p-2 rounded-full hover:bg-white/15 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" ' + (prevA ? '' : 'disabled') + ' title="이전 액션">' +
+      '<span class="material-symbols-outlined text-white" style="font-size:20px">chevron_left</span></button>';
+    var nextBtn = '<button onclick="rmDailyNext()" class="p-2 rounded-full hover:bg-white/15 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" ' + (nextA ? '' : 'disabled') + ' title="다음 액션">' +
+      '<span class="material-symbols-outlined text-white" style="font-size:20px">chevron_right</span></button>';
+    var todayBadge = (viewStr === todayStr)
+      ? '<span class="text-[10px] font-bold tracking-[0.25em] uppercase text-white/70">TODAY · ' + rmFmtDateKR(viewStr) + '</span>'
+      : '<span class="text-[10px] font-bold tracking-[0.25em] uppercase text-white/70">' + rmFmtDateKR(viewStr) + '</span>' +
+        ' <button onclick="rmDailyToday()" class="ml-2 text-[10px] font-bold tracking-wider uppercase text-white/90 underline underline-offset-2 hover:text-white">오늘로</button>';
+
+    // ─── 액션 없음 (주말 등) ───
+    if (!action) {
+      var nextLabel = nextA ? ('다음 액션: ' + rmFmtDateKR(nextA.date) + ' · ' + nextA.title) : '예정된 액션이 없습니다.';
+      section.innerHTML =
+        '<div class="rounded-2xl p-6 md:p-7 text-white shadow-lg relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%)">' +
+          '<div class="flex items-center justify-between mb-4">' +
+            '<div class="flex items-center gap-2 min-w-0">' + prevBtn + todayBadge + '</div>' +
+            '<div class="flex items-center gap-1">' + nextBtn + '</div>' +
+          '</div>' +
+          '<h2 class="text-2xl md:text-3xl font-bold leading-tight mb-2">오늘은 쉬는 날</h2>' +
+          '<p class="text-sm text-white/85">' + String(nextLabel).replace(/</g,'&lt;') + '</p>' +
+        '</div>';
+      return;
+    }
+
+    // ─── 액션 있음 ───
+    var guide = rmFindGuide(viewStr);
+    var hasGuide = !!guide;
+    var checkLabel = isDone ? '완료됨 ✓' : '완료 체크';
+    var checkCls = isDone ? 'bg-white/25 hover:bg-white/30' : 'bg-white text-violet-700 hover:bg-violet-50';
+    var titleCls = isDone ? 'line-through opacity-75' : '';
+
+    // 헤더 + 액션 카드
+    var headerHtml =
+      '<div class="rounded-2xl text-white shadow-lg relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%)">' +
+        // 상단 네비
+        '<div class="px-6 md:px-7 pt-5 flex items-center justify-between">' +
+          '<div class="flex items-center gap-2 min-w-0">' + prevBtn + todayBadge + '</div>' +
+          '<div class="flex items-center gap-1">' + nextBtn + '</div>' +
+        '</div>' +
+        // 클릭 시 가이드 토글
+        '<div class="px-6 md:px-7 pt-3 pb-5 cursor-pointer" onclick="rmToggleDailyGuide()">' +
+          '<div class="flex items-start justify-between gap-4">' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
+                '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm tracking-wider uppercase">Phase ' + action.phase + ' · Week ' + action.week + '</span>' +
+                (action.estimatedTime ? '<span class="text-[10px] font-semibold text-white/80">⏱ ' + String(action.estimatedTime).replace(/</g,'&lt;') + '</span>' : '') +
+              '</div>' +
+              '<h2 class="text-2xl md:text-3xl font-bold leading-tight ' + titleCls + '">' + String(action.title||'').replace(/</g,'&lt;') + '</h2>' +
+              (hasGuide
+                ? '<p class="text-xs text-white/75 mt-2">' + (isOpen ? '가이드 접기' : '카드를 클릭하면 실행 가이드가 펼쳐져요') + ' <span class="material-symbols-outlined align-middle" style="font-size:14px;transform:rotate(' + (isOpen ? '180deg' : '0deg') + ');transition:transform .2s">expand_more</span></p>'
+                : '<p class="text-xs text-white/60 mt-2 italic">가이드 준비 중</p>') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        // 가이드 인라인 펼침
+        (isOpen && hasGuide ? renderGuideBody(guide, viewStr, isDone) : '') +
+        // 하단 완료 체크 버튼 (가이드 닫혀있을 때만; 펼침 상태에선 가이드 안 버튼 사용)
+        (!isOpen ?
+          '<div class="px-6 md:px-7 pb-5">' +
+            '<button onclick="event.stopPropagation(); rmToggleDailyAction(\'' + viewStr + '\')" class="w-full py-2.5 rounded-xl text-sm font-bold tracking-wide transition-colors ' + checkCls + '">' + checkLabel + '</button>' +
+          '</div>' : '') +
+      '</div>';
+
+    section.innerHTML = headerHtml;
+  }
+
+  function renderGuideBody(guide, dateStr, isDone) {
+    function sec(label, contentHtml) {
+      return '<section class="mb-5 last:mb-0">' +
+        '<h4 class="text-[10px] font-extrabold tracking-[0.25em] uppercase text-white/70 mb-2">' + label + '</h4>' +
+        contentHtml +
+      '</section>';
+    }
+    function escape(s) { return String(s||'').replace(/</g,'&lt;'); }
+
+    // 흐름 (번호 매김)
+    var flowHtml = '';
+    if (guide.flow && guide.flow.length) {
+      flowHtml = sec('흐름',
+        '<ol class="space-y-2">' + guide.flow.map(function(step, i){
+          return '<li class="flex gap-3 text-[14px] leading-snug">' +
+            '<span class="shrink-0 w-5 h-5 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center mt-0.5">' + (i+1) + '</span>' +
+            '<span class="text-white/95">' + escape(step) + '</span>' +
+          '</li>';
+        }).join('') + '</ol>');
+    }
+
+    // 결정 포인트 (bullet)
+    var decisionHtml = '';
+    if (guide.decisionPoints && guide.decisionPoints.length) {
+      decisionHtml = sec('결정 포인트',
+        '<ul class="space-y-1.5">' + guide.decisionPoints.map(function(p){
+          return '<li class="flex gap-2 text-[14px] leading-snug text-white/95">' +
+            '<span class="text-white/50 shrink-0">•</span><span>' + escape(p) + '</span>' +
+          '</li>';
+        }).join('') + '</ul>');
+    }
+
+    // 참고 예시 (tone별 그룹)
+    var examplesHtml = '';
+    if (guide.examples && guide.examples.length) {
+      examplesHtml = sec('참고 예시',
+        '<div class="space-y-2">' + guide.examples.map(function(g){
+          return '<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">' +
+            '<span class="text-[11px] font-bold tracking-wider text-white/70 shrink-0">' + escape(g.tone) + '</span>' +
+            (g.items||[]).map(function(it){
+              return '<span class="text-[13px] px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white">' + escape(it) + '</span>';
+            }).join('') +
+          '</div>';
+        }).join('') + '</div>');
+    }
+
+    // 주의
+    var cautionHtml = '';
+    if (guide.caution && guide.caution.length) {
+      cautionHtml = sec('주의',
+        '<ul class="space-y-1.5">' + guide.caution.map(function(c){
+          return '<li class="flex gap-2 text-[14px] leading-snug text-white/95">' +
+            '<span class="text-white/50 shrink-0">⚠</span><span>' + escape(c) + '</span>' +
+          '</li>';
+        }).join('') + '</ul>');
+    }
+
+    // 필요 리소스
+    var resHtml = '';
+    if (guide.resources && guide.resources.length) {
+      resHtml = sec('필요 리소스',
+        '<ul class="space-y-1.5">' + guide.resources.map(function(r){
+          var label = escape(r.label||'');
+          if (r.url) {
+            return '<li class="text-[14px] leading-snug"><a href="' + escape(r.url) + '" target="_blank" rel="noopener" class="text-white underline underline-offset-2 hover:text-white/80">' + label + ' ↗</a></li>';
+          }
+          return '<li class="text-[14px] leading-snug text-white/95">' + label + '</li>';
+        }).join('') + '</ul>');
+    }
+
+    // 다음 액션 예고
+    var nextHtml = '';
+    if (guide.next) {
+      nextHtml = sec('다음 액션 예고',
+        '<p class="text-[14px] leading-snug text-white/95 italic">' + escape(guide.next) + '</p>');
+    }
+
+    // 완료 체크 버튼 (가이드 내부)
+    var checkLabel = isDone ? '완료됨 ✓' : '완료 체크';
+    var checkCls = isDone ? 'bg-white/25 hover:bg-white/30 text-white' : 'bg-white text-violet-700 hover:bg-violet-50';
+
+    return '<div class="px-6 md:px-7 pb-6 pt-2 border-t border-white/20">' +
+      '<div class="pt-5">' +
+        flowHtml + decisionHtml + examplesHtml + cautionHtml + resHtml + nextHtml +
+      '</div>' +
+      '<button onclick="event.stopPropagation(); rmToggleDailyAction(\'' + dateStr + '\')" class="w-full mt-2 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-colors ' + checkCls + '">' + checkLabel + '</button>' +
+    '</div>';
+  }
 
   // 1. 가로 타임라인
   function renderTimeline(phases, todayStr) {
@@ -341,6 +570,72 @@
   // ═══════════════════════════════════════════════════
   // 인터랙션
   // ═══════════════════════════════════════════════════
+  // ─── 일일 액션 인터랙션 ───
+  window.rmDailyPrev = function() {
+    var cur = rmViewDate || new Date().toISOString().split('T')[0];
+    var p = rmFindPrevAction(cur);
+    if (!p) return;
+    rmViewDate = p.date;
+    var todayStr = new Date().toISOString().split('T')[0];
+    renderTodayAction(todayStr);
+  };
+  window.rmDailyNext = function() {
+    var cur = rmViewDate || new Date().toISOString().split('T')[0];
+    var n = rmFindNextAction(cur);
+    if (!n) return;
+    rmViewDate = n.date;
+    var todayStr = new Date().toISOString().split('T')[0];
+    renderTodayAction(todayStr);
+  };
+  window.rmDailyToday = function() {
+    var todayStr = new Date().toISOString().split('T')[0];
+    rmViewDate = todayStr;
+    renderTodayAction(todayStr);
+  };
+  window.rmToggleDailyGuide = function() {
+    var date = rmViewDate || new Date().toISOString().split('T')[0];
+    var openMap = rmGetDailyGuideOpen();
+    var isOpen = !!openMap[date];
+    rmSetDailyGuideOpen(date, !isOpen);
+    var todayStr = new Date().toISOString().split('T')[0];
+    renderTodayAction(todayStr);
+  };
+  window.rmToggleDailyAction = function(dateStr) {
+    var checks = rmGetDailyChecks();
+    var wasDone = !!checks[dateStr];
+    rmSetDailyCheck(dateStr, !wasDone);
+    // 체크되면 가이드 자동 접힘 + 미니 축하 토스트
+    if (!wasDone) {
+      rmSetDailyGuideOpen(dateStr, false);
+      rmShowMiniCelebrate();
+    }
+    var todayStr = new Date().toISOString().split('T')[0];
+    renderTodayAction(todayStr);
+  };
+  function rmShowMiniCelebrate() {
+    var existing = document.getElementById('rm-mini-celebrate');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.id = 'rm-mini-celebrate';
+    t.textContent = '✨ 오늘 한 가지 완료';
+    t.style.cssText = 'position:fixed;left:50%;top:84px;transform:translateX(-50%);' +
+      'background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;' +
+      'padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;' +
+      'box-shadow:0 12px 32px rgba(124,58,237,.35);z-index:9999;' +
+      'opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;' +
+      'font-family:"Plus Jakarta Sans","Pretendard",sans-serif;letter-spacing:.02em';
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){
+      t.style.opacity = '1';
+      t.style.transform = 'translateX(-50%) translateY(4px)';
+    });
+    setTimeout(function(){
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(-4px)';
+      setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    }, 1400);
+  }
+
   window.rmToggleTask = function(taskId) {
     var checks = rmGetChecks();
     checks[taskId] = !checks[taskId];
