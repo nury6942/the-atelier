@@ -473,14 +473,16 @@
       return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
              '-' + String(d.getDate()).padStart(2, '0');
     }
+    var todayStr = ymd(now);
     var cutoff60Str = ymd(new Date(now.getTime() - 60 * 86400000));
     var cutoff30Str = ymd(new Date(now.getTime() - 30 * 86400000));
+    // "최근 60일" = 오늘 - 60일 ~ 오늘 (미래 자동거래 제외)
     var range60 = txs.filter(function (t) {
-      return t && t.date && t.date >= cutoff60Str;
+      return t && t.date && t.date >= cutoff60Str && t.date <= todayStr;
     });
     var useRange30 = range60.length > 300;
     var range = useRange30 ? txs.filter(function (t) {
-      return t && t.date && t.date >= cutoff30Str;
+      return t && t.date && t.date >= cutoff30Str && t.date <= todayStr;
     }) : range60;
     range = range.slice().sort(function (a, b) {
       return (b.date || '').localeCompare(a.date || '');
@@ -523,10 +525,12 @@
       return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
              '-' + String(d.getDate()).padStart(2, '0');
     }
+    var todayStr = ymd(now);
     var cutoff60Str = ymd(new Date(now.getTime() - 60 * 86400000));
-    // 60일 지출, 자동(고정) 제외
+    // 60일 지출, 자동(고정) 제외, 미래 거래 제외
     var pool = txs.filter(function (t) {
-      if (!t || !t.date || t.date < cutoff60Str) return false;
+      if (!t || !t.date) return false;
+      if (t.date < cutoff60Str || t.date > todayStr) return false;
       if (!_isExpense(t)) return false;
       if (t.recurringId || t['비고'] === '자동(고정)') return false;
       return true;
