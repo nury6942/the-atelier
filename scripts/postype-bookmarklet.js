@@ -80,23 +80,53 @@
     });
   };
 
-  // ─── 데이터 수집 ───────────────────────────────────────────────
+  // ─── 데이터 수집 (페이지별 retry + 실패 추적) ──────────────────
   const hint = DAYS >= 60 ? `${DAYS}일 백필 · 1~2분 소요` : `${DAYS}일치 수집`;
   setMsg(hint, '페이지 0');
   const today = new Date();
   const cutoffStr = new Date(today.getTime() - DAYS * 86400000).toISOString().slice(0, 10) + ' 00:00:00';
   const tx = [];
+  const failedPages = [];
+
+  const fetchPage = async (p, retry = 2) => {
+    try {
+      const res = await fetch(`/point/earnings/list?page=${p}`, { credentials: 'include' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return parsePage(await res.text());
+    } catch (e) {
+      if (retry > 0){
+        await new Promise(r => setTimeout(r, 600));
+        return fetchPage(p, retry - 1);
+      }
+      console.warn(`[postype-bookmarklet] page ${p} 실패`, e.message);
+      failedPages.push(p);
+      return [];
+    }
+  };
+
   let stop = false;
-  for (let s = 1; s <= 800 && !stop; s += 6){
+  for (let s = 1; s <= 1500 && !stop; s += 6){
     const pages = Array.from({ length: 6 }, (_, i) => s + i);
-    const out = await Promise.all(pages.map(p => fetch(`/point/earnings/list?page=${p}`, { credentials: 'include' }).then(r => r.text()).then(parsePage)));
-    for (const arr of out) for (const r of arr){
+    const results = await Promise.all(pages.map(fetchPage));
+    for (const arr of results) for (const r of arr){
       if (r.ts && r.ts < cutoffStr) stop = true;
       else if (r.ts) tx.push(r);
     }
-    setMsg('데이터 수집 중…', `~${s + 5}페이지 / ${tx.length}건`);
+    setMsg('데이터 수집 중…', `~${s + 5}페이지 / ${tx.length}건${failedPages.length ? ` · 실패 ${failedPages.length}p` : ''}`);
   }
-  setMsg('집계 중…', `총 ${tx.length}건 수집 완료`);
+
+  // 실패 페이지 한 번 더 일괄 재시도
+  if (failedPages.length){
+    setMsg('실패 페이지 재시도 중…', `${failedPages.length}개`);
+    const retryList = [...failedPages];
+    failedPages.length = 0;
+    const retryResults = await Promise.all(retryList.map(p => fetchPage(p, 2)));
+    for (const arr of retryResults) for (const r of arr){
+      if (r.ts && r.ts >= cutoffStr) tx.push(r);
+    }
+  }
+
+  setMsg('집계 중…', `총 ${tx.length}건 수집${failedPages.length ? ` · 영구실패 ${failedPages.length}p` : ''}`);
 
   // ─── 일별 집계 (채널별 분리) ───────────────────────────────────
   const dailyMap = {};  // key: channelId|date
