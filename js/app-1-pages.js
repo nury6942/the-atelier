@@ -12694,6 +12694,34 @@
     try {
       if (typeof generateIncomeForecast === 'function') generateIncomeForecast(false);
     } catch(e) { console.error('income forecast error:', e); }
+    // ─── 누적 중복 자동 정리 (2026-05-24) ───
+    // plannerData가 충분히 로드된 뒤 한 번 중복/고아 정리
+    // 이전 _autoMatrixGuard race condition으로 쌓인 중복 일정 자동 청소
+    setTimeout(function(){
+      if (!window._incomeDedupeRanOnce && typeof cleanupDuplicateWorkEvents === 'function'
+          && typeof plannerData !== 'undefined' && (plannerData||[]).length > 0) {
+        window._incomeDedupeRanOnce = true;
+        (async function(){
+          try {
+            var dupN = await cleanupDuplicateWorkEvents();
+            var orphanN = 0;
+            if (typeof cleanupOrphanWorkEvents === 'function') {
+              orphanN = await cleanupOrphanWorkEvents();
+            }
+            var totalN = (dupN || 0) + (orphanN || 0);
+            if (totalN > 0) {
+              console.log('[IncomeDedup] 자동 정리: 중복', dupN || 0, '+ 고아', orphanN || 0, '=', totalN, '개');
+              if (typeof showSyncToast === 'function') {
+                var parts = [];
+                if (dupN > 0) parts.push('중복 ' + dupN);
+                if (orphanN > 0) parts.push('고아 ' + orphanN);
+                showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> ' + parts.join(' · ') + ' 자동 정리됨');
+              }
+            }
+          } catch(e) { console.warn('[IncomeDedup] 실패:', e); }
+        })();
+      }
+    }, 1500);
   }
 
   function renderIncomeTable() {
@@ -13037,25 +13065,11 @@
     var series = getSeriesData(_matrixYear);
     // Sort by earliest publish_start across all works
     loadWorks();
-    // ─── 자동 검증: confirmed 작품은 있는데 캘린더에 phase:publishing 일정이 0개면 자동 sync ───
-    // 듀얼 머신 또는 데이터 손실로 캘린더가 비어버린 경우 자동 복구
-    (function _autoMatrixGuard() {
-      try {
-        var hasConfirmed = (_works||[]).some(function(w){ return w.status === 'confirmed' && w.publish_start && w.publish_end; });
-        if (!hasConfirmed) return;
-        var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
-        var publishingCount = pData.filter(function(r){ return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0; }).length;
-        if (publishingCount === 0 && typeof _fullResyncWorks === 'function' && !window._matrixAutoSyncDone) {
-          window._matrixAutoSyncDone = true; // 무한 루프 방지
-          console.log('[Matrix Guard] 확정 작품 있는데 캘린더 publishing 일정 0개 → 자동 sync 시작');
-          _fullResyncWorks().then(function(){
-            console.log('[Matrix Guard] 자동 sync 완료');
-          }).catch(function(e){
-            console.warn('[Matrix Guard] 자동 sync 실패:', e);
-          });
-        }
-      } catch(e) { console.warn('[Matrix Guard] error:', e); }
-    })();
+    // ─── 자동 재동기화 가드 제거됨 (2026-05-24) ───
+    // 이전엔 "confirmed 작품 있는데 publishing 0개면 _fullResyncWorks 자동 호출"
+    // → plannerData가 Firestore에서 로드되기 전에 false negative 판정 → race condition으로 중복 생성
+    // → 멀티 기기에서 각 기기가 독립적으로 trigger되며 Firestore 누적 중복
+    // 캘린더 정말 비어버렸으면 수동으로 "재동기화" 버튼 클릭 (Money 페이지 작품 카드에 이미 존재)
     series.sort(function(a, b) {
       var aMin = '9999', bMin = '9999';
       _works.forEach(function(w) { if ((w.series_id === a.id || w.series_name === a.name) && w.publish_start && w.publish_start < aMin) aMin = w.publish_start; });

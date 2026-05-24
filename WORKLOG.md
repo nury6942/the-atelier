@@ -74,6 +74,13 @@
 ## 2026-05-24 (기기: 아이맥)
 
 ### ✅ 한 일
+- **캘린더 작품 일정 중복 생성 버그 진단 + 수정** — Money 부업 페이지 진입할 때마다 캘린더에 초고/연재 일정이 두 배로 쌓이던 문제. 사용자가 "재동기화" 토스트 자주 본다는 직관에서 출발해서 코드 추적:
+  - **범인**: `renderIncomeMatrix` 안의 `_autoMatrixGuard` IIFE (line 13042-13058). "confirmed 작품 있는데 캘린더 publishing 0개면 자동 복구"라는 의도였는데, `plannerData`가 Firestore에서 완전히 로드되기 전에 체크하면 false negative로 `_fullResyncWorks` trigger → Step 1 삭제는 비어있는 로컬에만 적용되고 Step 2 추가는 모두 진행 → 나중에 Firestore fetch가 옛 이벤트 들고 와서 중복
+  - 멀티 기기(맥북·아이맥·윈도우)에서 각 기기가 독립적으로 trigger돼서 Firestore에 누적되던 구조
+  - **수정**: `_autoMatrixGuard` IIFE 통째로 제거. 캘린더 진짜 비었으면 사용자가 수동 "재동기화" 버튼 클릭 (이미 작품 카드에 있음). 5/17의 `b2effc7`(cache-first race) 픽스와 같은 종류지만 다른 경로
+  - **안전망**: `loadIncome` 끝에 `cleanupDuplicateWorkEvents` + `cleanupOrphanWorkEvents` 1.5초 지연 자동 실행 추가 → 이미 쌓인 중복도 페이지 열면 자동 청소됨
+  - 캐시 `app-1-pages.js?v=105→v=113`, 서비스워커 `atelier-v112→v113`
+
 - **포스타입 트렌드 스크래퍼 정렬 버그 진단 + 수정** — 조회수 1~163짜리 신작이 1·2·3위로 잡히던 문제. Chrome MCP로 직접 검색 페이지 진입해서 두 개 버그 확인:
   1. "인기순" 버튼을 `textContent === '인기순'` 정확 매칭으로 클릭 시도 → SPA에서 셀렉터 불일치로 실패해도 silent fallthrough → 최신순 결과 그대로 수집
   2. 작품 URL 셀렉터 `a[href*="/post/"]`가 검색 페이지 자체 URL(`/search/post`, 80개)까지 잡아서 진짜 작품 URL을 밀어냄
