@@ -5611,7 +5611,13 @@
         <header class="mb-6 flex justify-between items-center flex-wrap gap-3">
           <div>
             <h2 class="text-3xl font-extrabold font-headline tracking-tight text-slate-900">Postype 매출 분석</h2>
-            <p class="text-slate-400 text-sm mt-1">고요한 다락방 · 회차별·시간대·발행 효과 인사이트</p>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+              <select id="postype-channel-select" class="text-sm bg-transparent border-0 font-bold text-indigo-700 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-200 rounded px-1 -mx-1">
+                <option value="bichu-attic">고요한 다락방</option>
+                <option value="hotnncold">요란한 옥탑방</option>
+              </select>
+              <span class="text-slate-400 text-sm">· 회차별·시간대·발행 효과 인사이트</span>
+            </div>
           </div>
           <div class="flex items-center gap-2.5">
             <span id="postype-last-sync" class="text-xs text-slate-400">마지막 동기화: —</span>
@@ -5685,6 +5691,26 @@
           </div>
           <div id="postype-forecast-chart" class="relative" style="height:240px">
             <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-forecast-empty">데이터 없음</div>
+          </div>
+        </div>
+
+        <!-- 연도 비교 (작년 데이터 있을 때만 표시) -->
+        <div id="postype-yoy-comparison" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" style="display:none">
+          <div class="rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-[10px] font-bold uppercase tracking-widest text-purple-700">이번 달 vs 작년 동월</div>
+              <span class="material-symbols-outlined text-purple-400" style="font-size:14px">compare_arrows</span>
+            </div>
+            <div class="text-2xl font-extrabold tracking-tight tabular-nums" id="postype-yoy-month-pct">—</div>
+            <div class="text-[11px] text-slate-500 mt-0.5" id="postype-yoy-month-sub">—</div>
+          </div>
+          <div class="rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-[10px] font-bold uppercase tracking-widest text-purple-700">올해 누적 vs 작년 동기간</div>
+              <span class="material-symbols-outlined text-purple-400" style="font-size:14px">stacked_line_chart</span>
+            </div>
+            <div class="text-2xl font-extrabold tracking-tight tabular-nums" id="postype-yoy-ytd-pct">—</div>
+            <div class="text-[11px] text-slate-500 mt-0.5" id="postype-yoy-ytd-sub">—</div>
           </div>
         </div>
 
@@ -7123,7 +7149,7 @@
 <script src="js/daily-guides.js?v=111" defer></script>
 <script src="js/app-4-roadmap.js?v=111" defer></script>
 <script src="js/app-5-ledger-export.js?v=112" defer></script>
-<script src="js/app-6-postype-analytics.js?v=4" defer></script>
+<script src="js/app-6-postype-analytics.js?v=5" defer></script>
 
 </body>
 </html>

@@ -6,7 +6,7 @@
    ─────────────────────────────────────────────────────────────────── */
 (async () => {
   // ─── 설정 ───────────────────────────────────────────────────────
-  const CHANNEL_ID = 'bichu-attic';
+  // CHANNEL_ID는 거래마다 href에서 자동 추출 (멀티채널 지원)
   const ATELIER_URL = 'https://nury6942.github.io/the-atelier/?postype-bridge=1';
   const ATELIER_ORIGIN = 'https://nury6942.github.io';
 
@@ -73,7 +73,10 @@
       const pm = href.match(/\/post\/(\d+)/);
       const mm = href.match(/\/membership\/(\d+)/);
       const postId = pm ? pm[1] : (mm ? 'mem-' + mm[1] : null);
-      return { type, amount: a ? parseInt(a[1].replace(/,/g, '')) : 0, ts, postId, series, title, href };
+      // channelId 자동 추출 (/@channelId/post/... 또는 /@channelId/membership/...)
+      const cm = href.match(/\/@([^\/]+)\//);
+      const channelId = cm ? cm[1] : null;
+      return { type, amount: a ? parseInt(a[1].replace(/,/g, '')) : 0, ts, postId, series, title, href, channelId };
     });
   };
 
@@ -95,12 +98,15 @@
   }
   setMsg('집계 중…', `총 ${tx.length}건 수집 완료`);
 
-  // ─── 일별 집계 ─────────────────────────────────────────────────
-  const dailyMap = {};
+  // ─── 일별 집계 (채널별 분리) ───────────────────────────────────
+  const dailyMap = {};  // key: channelId|date
   tx.forEach(t => {
+    if (!t.channelId) return;
     const d = t.ts.slice(0, 10);
-    if (!dailyMap[d]){
-      dailyMap[d] = {
+    const k = `${t.channelId}|${d}`;
+    if (!dailyMap[k]){
+      dailyMap[k] = {
+        channelId: t.channelId,
         date: d,
         rev: 0,
         txCount: 0,
@@ -111,7 +117,7 @@
         newPostIds: []
       };
     }
-    const day = dailyMap[d];
+    const day = dailyMap[k];
     day.rev += t.amount;
     day.txCount++;
     if (day.byType[t.type] !== undefined) day.byType[t.type] += t.amount;
@@ -128,20 +134,22 @@
   });
   const dailyArr = Object.values(dailyMap).map(d => Object.assign(d, { generatedAt: new Date().toISOString() }));
 
-  // ─── 포스트별 집계 + 감쇠 곡선 (revByAge) ───────────────────────
-  const postMap = {};
+  // ─── 포스트별 집계 + 감쇠 곡선 (revByAge) (채널별 분리) ─────────
+  const postMap = {};  // key: channelId|postId
   tx.forEach(t => {
-    if (t.type !== 'sale' || !t.postId) return;
-    if (!postMap[t.postId]){
-      postMap[t.postId] = { postId: t.postId, series: t.series, title: t.title, firstTs: t.ts, items: [] };
+    if (t.type !== 'sale' || !t.postId || !t.channelId) return;
+    const k = `${t.channelId}|${t.postId}`;
+    if (!postMap[k]){
+      postMap[k] = { channelId: t.channelId, postId: t.postId, series: t.series, title: t.title, firstTs: t.ts, items: [] };
     }
-    if (t.ts < postMap[t.postId].firstTs) postMap[t.postId].firstTs = t.ts;
-    postMap[t.postId].items.push(t);
+    if (t.ts < postMap[k].firstTs) postMap[k].firstTs = t.ts;
+    postMap[k].items.push(t);
   });
   const postsArr = Object.values(postMap).map(p => {
     const first = new Date(p.firstTs.replace(' ', 'T') + '+09:00');
     const rev = (d) => p.items.filter(i => (new Date(i.ts.replace(' ', 'T') + '+09:00') - first) / 86400000 <= d).reduce((a, b) => a + b.amount, 0);
     return {
+      channelId: p.channelId,
       postId: p.postId,
       series: p.series,
       title: p.title,
@@ -159,11 +167,13 @@
     };
   });
 
-  // ─── 시리즈 메타 ────────────────────────────────────────────────
-  const seriesMap = {};
+  // ─── 시리즈 메타 (채널별 분리) ──────────────────────────────────
+  const seriesMap = {};  // key: channelId|name
   tx.forEach(t => {
-    const k = t.type === 'membership' ? '_멤버십_' : (t.series || '_미분류_');
-    if (!seriesMap[k]) seriesMap[k] = { name: k, posts: new Set(), totalRev: 0, txCount: 0, firstSeen: t.ts, lastSale: t.ts };
+    if (!t.channelId) return;
+    const name = t.type === 'membership' ? '_멤버십_' : (t.series || '_미분류_');
+    const k = `${t.channelId}|${name}`;
+    if (!seriesMap[k]) seriesMap[k] = { channelId: t.channelId, name, posts: new Set(), totalRev: 0, txCount: 0, firstSeen: t.ts, lastSale: t.ts };
     const s = seriesMap[k];
     s.totalRev += t.amount;
     s.txCount++;
@@ -172,6 +182,7 @@
     if (t.ts > s.lastSale) s.lastSale = t.ts;
   });
   const seriesArr = Object.values(seriesMap).map(s => ({
+    channelId: s.channelId,
     name: s.name,
     posts: [...s.posts].sort((a, b) => parseInt(a) - parseInt(b)),
     totalRev: s.totalRev,
@@ -181,6 +192,11 @@
     status: 'active'
   }));
 
+  // 채널별 거래 수 카운트 (요약용)
+  const channelCounts = {};
+  tx.forEach(t => { if (t.channelId) channelCounts[t.channelId] = (channelCounts[t.channelId] || 0) + 1; });
+  const channelSummary = Object.entries(channelCounts).map(([id, n]) => `${id} ${n}건`).join(', ');
+
   // ─── 페이로드 구성 ──────────────────────────────────────────────
   const payload = {
     daily: dailyArr,
@@ -189,11 +205,11 @@
     meta: {
       rangeDays: DAYS,
       fetchedAt: new Date().toISOString(),
-      channelId: CHANNEL_ID
+      channels: channelCounts
     }
   };
 
-  setMsg('atelier로 전송 준비…', `일별 ${dailyArr.length} · 포스트 ${postsArr.length} · 시리즈 ${seriesArr.length}`);
+  setMsg('atelier로 전송 준비…', `${channelSummary || '거래 없음'} · 일별 ${dailyArr.length} · 포스트 ${postsArr.length}`);
 
   // ─── atelier 새 탭 열기 + ready 신호 대기 → postMessage 전송 ────
   const atelierWin = window.open(ATELIER_URL, '_blank');
