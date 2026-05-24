@@ -64,16 +64,51 @@
   let allDailyRaw  = [];  // Firestore 원본 (모든 채널)
   let allPostsRaw  = [];
   let allSeriesRaw = [];
-  let currentChannel = localStorage.getItem('postype_currentChannel') || 'bichu-attic';
+  let currentChannel = localStorage.getItem('postype_currentChannel') || '__all__';
   let currentMonth   = null;
   let decaySeries    = '__all__';
   let isDemoMode     = false;
   let loaded         = false;
 
-  // 채널 필터 적용 후 뷰
-  const allDaily  = () => allDailyRaw.filter(d => d.channelId === currentChannel);
-  const allPosts  = () => allPostsRaw.filter(p => p.channelId === currentChannel);
-  const allSeries = () => allSeriesRaw.filter(s => s.channelId === currentChannel);
+  // ─── 같은 날짜 두 채널 docs 합산 ───────────────────────────────
+  function aggregateDailyByDate(rows){
+    const map = {};
+    rows.forEach(d => {
+      if (!d.date) return;
+      if (!map[d.date]){
+        map[d.date] = {
+          date: d.date,
+          rev: 0, txCount: 0,
+          byType: { sale: 0, membership: 0, support: 0 },
+          byHour: Array(24).fill(0),
+          bySeries: {}, byPriceBucket: {}
+        };
+      }
+      const agg = map[d.date];
+      agg.rev += d.rev || 0;
+      agg.txCount += d.txCount || 0;
+      if (d.byType) Object.entries(d.byType).forEach(([k,v]) => agg.byType[k] = (agg.byType[k]||0) + (v||0));
+      if (Array.isArray(d.byHour)) d.byHour.forEach((v,h) => { agg.byHour[h] += v||0; });
+      if (d.bySeries) Object.entries(d.bySeries).forEach(([k,v]) => {
+        if (!agg.bySeries[k]) agg.bySeries[k] = { rev: 0, cnt: 0 };
+        agg.bySeries[k].rev += (v && v.rev) || 0;
+        agg.bySeries[k].cnt += (v && v.cnt) || 0;
+      });
+      if (d.byPriceBucket) Object.entries(d.byPriceBucket).forEach(([k,v]) => agg.byPriceBucket[k] = (agg.byPriceBucket[k]||0) + (v||0));
+    });
+    return Object.values(map).sort((a,b) => a.date.localeCompare(b.date));
+  }
+
+  // 채널 필터 적용 후 뷰 (__all__ 모드일 때 합산)
+  const allDaily  = () => currentChannel === '__all__'
+    ? aggregateDailyByDate(allDailyRaw)
+    : allDailyRaw.filter(d => d.channelId === currentChannel);
+  const allPosts  = () => currentChannel === '__all__'
+    ? allPostsRaw
+    : allPostsRaw.filter(p => p.channelId === currentChannel);
+  const allSeries = () => currentChannel === '__all__'
+    ? allSeriesRaw
+    : allSeriesRaw.filter(s => s.channelId === currentChannel);
 
   // ─── 헬퍼 ───────────────────────────────────────────────────────
   const KRW       = n => (n || 0).toLocaleString('ko-KR') + '원';
@@ -140,8 +175,15 @@
 
   // ─── 예측 모델 ──────────────────────────────────────────────────
   function buildForecastModel(){
-    const channelMeta = CHANNELS[currentChannel];
-    const ongoing = channelMeta ? channelMeta.ongoing : null;
+    // 합산 모드일 때는 모든 채널의 ongoing 중 첫 번째 (현재는 다락방만 active)
+    let ongoing = null;
+    if (currentChannel === '__all__'){
+      const activeOngoings = Object.values(CHANNELS).filter(c => c.ongoing).map(c => c.ongoing);
+      ongoing = activeOngoings[0] || null;
+    } else {
+      const channelMeta = CHANNELS[currentChannel];
+      ongoing = channelMeta ? channelMeta.ongoing : null;
+    }
 
     let decay = { d1: 0, d3: 0, d7: 0, d14: 0, d30: 0 };
     let longtailDailyRate = 0;
@@ -638,7 +680,13 @@
       const remaining = ongoing.totalEpisodes - ongoing.currentEpisode;
       const finishDate = new Date(ongoing.lastPublishDate + 'T00:00:00');
       finishDate.setDate(finishDate.getDate() + remaining * 7);
-      document.getElementById('postype-ongoing-name').textContent = ongoing.name;
+      // 합산 모드일 때 어느 채널 시리즈인지 표시
+      let channelPrefix = '';
+      if (currentChannel === '__all__'){
+        const ownerChannel = Object.values(CHANNELS).find(c => c.ongoing && c.ongoing.name === ongoing.name);
+        if (ownerChannel) channelPrefix = `${ownerChannel.displayName} · `;
+      }
+      document.getElementById('postype-ongoing-name').textContent = channelPrefix + ongoing.name;
       document.getElementById('postype-ongoing-progress').textContent = `${ongoing.currentEpisode}화 / ${ongoing.totalEpisodes}화`;
       document.getElementById('postype-ongoing-sub').textContent = `남은 ${remaining}화 · 매주 ${dow[ongoing.publishWeekday]} ${ongoing.publishHour}:00 · 완결 ${finishDate.getMonth()+1}/${finishDate.getDate()}`;
     } else {
@@ -650,7 +698,7 @@
       } else {
         document.getElementById('postype-ongoing-name').textContent = '미설정';
         document.getElementById('postype-ongoing-progress').textContent = '—';
-        document.getElementById('postype-ongoing-sub').textContent = '코드의 CHANNELS[' + currentChannel + '].ongoing 설정 필요';
+        document.getElementById('postype-ongoing-sub').textContent = currentChannel === '__all__' ? '연재 중 시리즈 없음' : '코드의 CHANNELS[' + currentChannel + '].ongoing 설정 필요';
       }
     }
     render12MonthChart(model);
@@ -747,14 +795,16 @@
   function setSyncLabel(daily, demo){
     const el = document.getElementById('postype-last-sync');
     if (!el) return;
-    const channelDaily = daily.filter(d => d.channelId === currentChannel);
+    const channelDaily = currentChannel === '__all__' ? daily : daily.filter(d => d.channelId === currentChannel);
     if (demo){
       el.innerHTML = '<span style="background:#f59e0b;color:white;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:bold;letter-spacing:0.05em;margin-right:6px">DEMO</span>더미 데이터';
     } else if (!channelDaily.length){
-      el.textContent = '이 채널 데이터 없음';
+      el.textContent = currentChannel === '__all__' ? '데이터 없음' : '이 채널 데이터 없음';
     } else {
-      const dates = channelDaily.map(d => d.date).sort();
-      el.innerHTML = `데이터: <span class="font-bold text-slate-700">${dates[0]}</span> ~ <span class="font-bold text-slate-700">${dates[dates.length-1]}</span> · 총 ${dates.length}일`;
+      const dates = [...new Set(channelDaily.map(d => d.date))].sort();
+      const uniqueDays = dates.length;
+      const channelInfo = currentChannel === '__all__' ? ` · 모든 채널 합산` : '';
+      el.innerHTML = `데이터: <span class="font-bold text-slate-700">${dates[0]}</span> ~ <span class="font-bold text-slate-700">${dates[dates.length-1]}</span> · ${uniqueDays}일${channelInfo}`;
     }
   }
 
