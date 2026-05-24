@@ -5621,39 +5621,55 @@
           </div>
         </header>
 
-        <!-- KPI 카드 4개 -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">오늘</div>
-            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-today">—</div>
-            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-today-delta">어제 대비 —</div>
+        <!-- 월 네비게이션 -->
+        <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <button id="postype-month-prev" class="w-9 h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all" aria-label="이전 달">
+              <span class="material-symbols-outlined" style="font-size:20px">chevron_left</span>
+            </button>
+            <h3 id="postype-month-label" class="text-2xl font-bold text-slate-900 font-headline tabular-nums min-w-[160px] text-center">—</h3>
+            <button id="postype-month-next" class="w-9 h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all" aria-label="다음 달">
+              <span class="material-symbols-outlined" style="font-size:20px">chevron_right</span>
+            </button>
           </div>
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">어제</div>
-            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-yesterday">—</div>
-            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-yesterday-sub">—</div>
-          </div>
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">7일 합계</div>
-            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-7d">—</div>
-            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-7d-avg">일평균 —</div>
-          </div>
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">30일 합계</div>
-            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-30d">—</div>
-            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-30d-avg">일평균 —</div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="text-xs text-slate-500 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100">
+              <span class="material-symbols-outlined text-amber-600" style="font-size:14px">payments</span>
+              입금 예정: <span id="postype-payment-date" class="font-bold text-slate-800">—</span>
+            </div>
+            <div class="text-xs text-slate-500" id="postype-ytd-label">올해 누적: <span id="postype-ytd-total" class="font-bold text-slate-800">—</span></div>
           </div>
         </div>
 
-        <!-- 일별 매출 차트 (hover) -->
+        <!-- KPI 카드 4개 (월별) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">이번 달 매출</div>
+            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-month-total">—</div>
+            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-month-sub">— 일 / — 건</div>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">일평균</div>
+            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-daily-avg">—</div>
+            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-daily-avg-sub">—</div>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">최고 매출일</div>
+            <div class="text-3xl font-extrabold tracking-tight text-slate-900 mt-2 tabular-nums" id="postype-kpi-peak">—</div>
+            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-peak-date">—</div>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-widest text-slate-500">전월 대비</div>
+            <div class="text-3xl font-extrabold tracking-tight mt-2 tabular-nums" id="postype-kpi-delta">—</div>
+            <div class="text-xs mt-1 text-slate-400" id="postype-kpi-delta-sub">—</div>
+          </div>
+        </div>
+
+        <!-- 일별 매출 차트 (선택한 달) -->
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
           <div class="flex justify-between items-baseline mb-4 flex-wrap gap-2">
-            <h3 class="text-lg font-bold text-slate-900 font-headline">일별 매출 추이</h3>
-            <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-lg text-xs" id="postype-range-tabs">
-              <button data-range="28" class="postype-range-btn px-3 py-1 rounded font-bold bg-white shadow text-slate-900 transition-all">28일</button>
-              <button data-range="90" class="postype-range-btn px-3 py-1 rounded font-bold text-slate-500 hover:text-slate-800 transition-all">90일</button>
-              <button data-range="365" class="postype-range-btn px-3 py-1 rounded font-bold text-slate-500 hover:text-slate-800 transition-all">365일</button>
-            </div>
+            <h3 class="text-lg font-bold text-slate-900 font-headline">일별 매출</h3>
+            <span class="text-xs text-slate-400" id="postype-chart-meta">—</span>
           </div>
           <div id="postype-daily-chart" class="relative" style="height:200px">
             <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-daily-empty">
@@ -7000,7 +7016,7 @@
 <script src="js/daily-guides.js?v=111" defer></script>
 <script src="js/app-4-roadmap.js?v=111" defer></script>
 <script src="js/app-5-ledger-export.js?v=112" defer></script>
-<script src="js/app-6-postype-analytics.js?v=1" defer></script>
+<script src="js/app-6-postype-analytics.js?v=2" defer></script>
 
 </body>
 </html>

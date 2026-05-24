@@ -19,10 +19,21 @@
     if (!confirm('수익 페이지가 아닌데 진행할까요?\n( /point/earnings/list 권장 )')) return;
   }
 
-  // ─── 일수 선택 (Enter = 28일, "90" 입력 = 백필) ─────────────────
-  const input = prompt('수집할 일수?\n\n· 매일 동기화: 그냥 Enter (28일)\n· 첫 백필 또는 긴 트렌드: 90 입력\n· 사용자 지정: 숫자 입력', '28');
+  // ─── 일수 선택 (Enter = 28일, "ytd" = 올해 전체, 숫자 = 그 일수) ─
+  const input = prompt(
+    '동기화 모드?\n\n· 일상 동기화: 그냥 Enter (28일)\n· 올해 1월부터 전체 (첫 백필): ytd\n· 특정 일수: 숫자 입력 (예: 90)',
+    '28'
+  );
   if (input === null) return;  // 사용자가 취소
-  const DAYS = Math.max(1, Math.min(365, parseInt(input) || 28));
+
+  let DAYS;
+  const trimmed = (input || '').trim().toLowerCase();
+  if (trimmed === 'ytd' || trimmed === '올해' || trimmed === 'y'){
+    const yearStart = new Date(new Date().getFullYear(), 0, 1);
+    DAYS = Math.ceil((Date.now() - yearStart.getTime()) / 86400000) + 1;
+  } else {
+    DAYS = Math.max(1, Math.min(400, parseInt(trimmed) || 28));
+  }
 
   // ─── 진행 상황 표시 패널 ───────────────────────────────────────
   const panel = document.createElement('div');
