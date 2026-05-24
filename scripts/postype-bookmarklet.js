@@ -6,7 +6,6 @@
    ─────────────────────────────────────────────────────────────────── */
 (async () => {
   // ─── 설정 ───────────────────────────────────────────────────────
-  const DAYS = 28;
   const CHANNEL_ID = 'bichu-attic';
   const ATELIER_URL = 'https://nury6942.github.io/the-atelier/?postype-bridge=1';
   const ATELIER_ORIGIN = 'https://nury6942.github.io';
@@ -19,6 +18,11 @@
   if (!location.pathname.startsWith('/point/earnings')){
     if (!confirm('수익 페이지가 아닌데 진행할까요?\n( /point/earnings/list 권장 )')) return;
   }
+
+  // ─── 일수 선택 (Enter = 28일, "90" 입력 = 백필) ─────────────────
+  const input = prompt('수집할 일수?\n\n· 매일 동기화: 그냥 Enter (28일)\n· 첫 백필 또는 긴 트렌드: 90 입력\n· 사용자 지정: 숫자 입력', '28');
+  if (input === null) return;  // 사용자가 취소
+  const DAYS = Math.max(1, Math.min(365, parseInt(input) || 28));
 
   // ─── 진행 상황 표시 패널 ───────────────────────────────────────
   const panel = document.createElement('div');
@@ -63,7 +67,8 @@
   };
 
   // ─── 데이터 수집 ───────────────────────────────────────────────
-  setMsg('데이터 수집 중…', '페이지 0');
+  const hint = DAYS >= 60 ? `${DAYS}일 백필 · 1~2분 소요` : `${DAYS}일치 수집`;
+  setMsg(hint, '페이지 0');
   const today = new Date();
   const cutoffStr = new Date(today.getTime() - DAYS * 86400000).toISOString().slice(0, 10) + ' 00:00:00';
   const tx = [];
