@@ -33,6 +33,35 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-24 (기기: 아이맥)
+
+### ✅ 한 일
+- **포스타입 트렌드 스크래퍼 정렬 버그 진단 + 수정** — 조회수 1~163짜리 신작이 1·2·3위로 잡히던 문제. Chrome MCP로 직접 검색 페이지 진입해서 두 개 버그 확인:
+  1. "인기순" 버튼을 `textContent === '인기순'` 정확 매칭으로 클릭 시도 → SPA에서 셀렉터 불일치로 실패해도 silent fallthrough → 최신순 결과 그대로 수집
+  2. 작품 URL 셀렉터 `a[href*="/post/"]`가 검색 페이지 자체 URL(`/search/post`, 80개)까지 잡아서 진짜 작품 URL을 밀어냄
+- **scripts/scrape-postype.js 수정 4건**:
+  - URL에 `&sort=POPULAR` 파라미터 강제 → 클릭 불필요. 정렬 후 "전체 인기순" 텍스트로 검증 (`sortVerified` stat)
+  - 작품 URL 셀렉터를 정규식 `/^\/@[^/]+\/post\/\d+/`로 변경 → search/post URL 완전 배제
+  - 검색결과 카드에서 조회수/좋아요/댓글 미리 추출 (`parseKrCount`로 "1.9만" → 19000 변환)
+  - Sanity check: 상위 5개 평균 조회수 < 2000이면 `process.exit(2)` (`POSTYPE_FORCE=1`로 오버라이드 가능)
+- **테스트 결과**: TOP 5 평균 조회수 **19,600** (1.96만), sortVerified=true, 12/12 성공 — 이전 조회수 1~163과 비교하면 100배 이상 차이
+- **data/trends/postype/{latest,2026-05-24,index}.json 갱신** — 진짜 인기 작품 12개 (본디본딩 23k, 멘카라 블루 21k, 다이다이다이 19k, 환승연애 막내작가 19k 등)
+
+### 🎯 다음 할 일
+- GitHub Actions cron 스크립트(있다면) 확인 — sanity check `exit(2)` 시 알림 받는 구조인지 점검
+- 분석 스크립트 `scripts/analyze-trends.js`도 신규 필드(`viewCount`, `searchRank`)를 활용하게 업데이트 검토
+- 5/20 미완료 항목 이어가기: 가계부 `📋 Claude 공유` 버튼 실사용 + 모바일 export 버튼 추가 결정
+
+### 🚧 막힌 점 / 결정 보류
+- 첫 페이지에서 12개만 잡힘 (`POSTYPE_TOP_N=20` 요청해도). 인기순 정렬이라 상위가 그 정도인 듯 — 추가 페이지 스크래핑 필요한지는 트렌드 분석 품질 보고 판단
+
+### 💭 메모
+- 포스타입 검색 URL에 `sort=POPULAR` 파라미터가 통한다는 건 다른 탭(시리즈 검색 `sort=POPULAR`)에서 우연히 발견 — post 검색에도 동일하게 작동
+- "1.9만"처럼 한국어 만/천 접미사가 붙은 숫자 파싱을 위해 `parseKrCount(raw)` 헬퍼 추가 — 다른 스크레이퍼에서도 재사용 가능
+- Chrome MCP의 `Control_Chrome`은 권한 이슈로 실행 실패 → `Claude_in_Chrome` MCP로 우회 (둘 다 설치돼있었음)
+
+---
+
 ## 2026-05-20 (기기: 윈도우 · 오후 작업)
 
 ### ✅ 한 일

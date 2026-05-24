@@ -48,7 +48,8 @@ async function autoScroll(page, steps = 6) {
 
 async function main() {
   const today = todayStr();
-  const searchUrl = `https://www.postype.com/search/post?keyword=${encodeURIComponent(KEYWORD)}&start_date=${yearStart()}&end_date=${today}&adult=all`;
+  // sort=POPULAR — 인기순 정렬 (URL 파라미터로 강제, UI 클릭보다 안정적)
+  const searchUrl = `https://www.postype.com/search/post?keyword=${encodeURIComponent(KEYWORD)}&start_date=${yearStart()}&end_date=${today}&adult=all&sort=POPULAR`;
   log('search URL:', searchUrl);
 
   const browser = await puppeteer.launch({
@@ -67,23 +68,17 @@ async function main() {
     await page.goto(searchUrl, { waitUntil: 'networkidle2' });
     await new Promise(r => setTimeout(r, RENDER_WAIT));
 
-    // 인기순 정렬 시도 (UI에 "인기순" 버튼 있으면 클릭)
-    try {
-      const clicked = await page.evaluate(() => {
-        const candidates = Array.from(document.querySelectorAll('button, a, span, div'));
-        const t = candidates.find(el => (el.textContent || '').trim() === '인기순');
-        if (t) { t.click(); return true; }
-        return false;
+    // 인기순 정렬은 URL 파라미터로 처리 (sort=POPULAR) — 클릭 불필요
+
+    // 정렬 상태 검증 — "인기순" 표시가 활성화돼 있어야 함
+    const sortVerified = await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button, div, span'));
+      return btns.some(el => {
+        const t = (el.textContent || '').trim();
+        return t === '전체 인기순' || t === '인기순';
       });
-      if (clicked) {
-        log('clicked 인기순 sort');
-        await new Promise(r => setTimeout(r, RENDER_WAIT));
-      } else {
-        log('인기순 button not found, keeping default order');
-      }
-    } catch (e) {
-      log('sort click failed:', e.message);
-    }
+    });
+    log('sort verified (인기순 visible):', sortVerified);
 
     // 스크롤로 추가 결과 로드
     await autoScroll(page, 5);
@@ -133,37 +128,71 @@ async function main() {
     });
     log('sidebar:', sidebar.relatedKeywords.length, 'kw,', sidebar.recommendedTags.length, 'tags');
 
-    // ── 3. 검색 결과 작품 카드 → URL 추출 ──
-    const postLinks = await page.evaluate((maxN) => {
-      // postype 작품 페이지 URL 패턴: https://{username}.postype.com/post/{id} 또는 /@{user}/post/...
-      // a 태그 중 /post/ 포함하고 .postype.com 도메인인 것 찾기
-      const links = Array.from(document.querySelectorAll('a[href*="/post/"]'));
-      const urls = [];
+    // ── 3. 검색 결과 작품 카드 → URL + 조회수/좋아요/댓글 미리 추출 ──
+    // 작품 URL 패턴: /@{username}/post/{id}  (search/post 같은 검색 URL은 제외)
+    const postCards = await page.evaluate((maxN) => {
+      const links = Array.from(document.querySelectorAll('a')).filter(a => {
+        return /^\/@[^\/]+\/post\/\d+/.test(a.pathname || '');
+      });
       const seen = new Set();
+      const cards = [];
       for (const a of links) {
         const href = a.href;
-        if (!href || !href.includes('.postype.com/') || !href.includes('/post/')) continue;
-        if (seen.has(href)) continue;
-        seen.add(href);
-        urls.push(href);
-        if (urls.length >= maxN) break;
-      }
-      return urls;
-    }, TOP_N);
-    log('post links found:', postLinks.length);
+        if (seen.has(a.pathname)) continue;
+        seen.add(a.pathname);
 
-    if (postLinks.length === 0) {
-      log('WARN: no post links found. Page structure may have changed.');
-      // 디버깅용: 페이지 HTML 일부 출력
+        // 카드 컨테이너 찾기 (조회수 표기가 있는 가장 작은 조상)
+        let card = a;
+        for (let d = 0; d < 8; d++) {
+          if (!card.parentElement) break;
+          card = card.parentElement;
+          const txt = card.textContent || '';
+          if (/조회\s*[\d,.\s천만]+/.test(txt) && txt.length > 80) break;
+        }
+        const fullText = (card.textContent || '').replace(/\s+/g, ' ').trim();
+        const viewMatch = fullText.match(/조회\s*([\d,.]+\s*[천만]?)/);
+        const likeMatch = fullText.match(/좋아요\s*([\d,.]+\s*[천만]?)/);
+        const commentMatch = fullText.match(/댓글\s*([\d,.]+\s*[천만]?)/);
+
+        cards.push({
+          url: href,
+          searchRank: cards.length + 1,
+          viewCountRaw: viewMatch ? viewMatch[1].trim() : null,
+          likeCountRaw: likeMatch ? likeMatch[1].trim() : null,
+          commentCountRaw: commentMatch ? commentMatch[1].trim() : null,
+        });
+        if (cards.length >= maxN) break;
+      }
+      return cards;
+    }, TOP_N);
+    log('post cards found:', postCards.length);
+
+    if (postCards.length === 0) {
+      log('WARN: no post cards found. Page structure may have changed.');
       const html = await page.content();
       log('first 2000 chars of HTML:', html.substring(0, 2000));
     }
 
-    // ── 4. 각 작품 페이지 방문해서 메타데이터 추출 ──
+    // "1.9만" → 19000 같은 변환 헬퍼
+    function parseKrCount(raw) {
+      if (!raw) return null;
+      const s = String(raw).replace(/,/g, '').trim();
+      const m = s.match(/^([\d.]+)\s*([천만]?)$/);
+      if (!m) return null;
+      const n = parseFloat(m[1]);
+      if (isNaN(n)) return null;
+      if (m[2] === '만') return Math.round(n * 10000);
+      if (m[2] === '천') return Math.round(n * 1000);
+      return Math.round(n);
+    }
+
+    // ── 4. 각 작품 페이지 방문해서 메타데이터 보강 (시놉시스, 태그 등) ──
+    // 조회수/좋아요는 이미 검색 페이지 카드에서 추출했으므로 여기선 보강용
     const posts = [];
-    for (let i = 0; i < postLinks.length; i++) {
-      const url = postLinks[i];
-      log(`(${i + 1}/${postLinks.length}) ${url}`);
+    for (let i = 0; i < postCards.length; i++) {
+      const card = postCards[i];
+      const url = card.url;
+      log(`(${i + 1}/${postCards.length}) [rank ${card.searchRank}, view ${card.viewCountRaw}] ${url}`);
       try {
         await page.goto(url, { waitUntil: 'networkidle2', timeout: NAV_TIMEOUT });
         await new Promise(r => setTimeout(r, RENDER_WAIT));
@@ -188,7 +217,7 @@ async function main() {
           // 유료/무료: "유료", "구매" 등 단어
           const bodyText = document.body.innerText;
           const isPaid = /유료|구매|판매|결제|₩|원\s*\/\s*화/.test(bodyText) && !/무료/.test(bodyText.split('\n')[0] || '');
-          // 페이지 본문 일부 — Claude가 후속 분석에 사용 (조회수/좋아요 등 추출용)
+          // 페이지 본문 일부 — Claude가 후속 분석에 사용
           const bodyTextSample = (bodyText || '').substring(0, 1500);
           return {
             title: meta('og:title') || txt('h1') || document.title,
@@ -204,15 +233,45 @@ async function main() {
         // 작가명은 URL에서 추출 (가장 신뢰할 만함): /@username/post/...
         const authorMatch = url.match(/\/@([^\/]+)\/post\//);
         meta.author = authorMatch ? authorMatch[1] : '';
+        // 검색 페이지에서 뽑은 조회수/순위 병합
+        meta.searchRank = card.searchRank;
+        meta.viewCountRaw = card.viewCountRaw;
+        meta.viewCount = parseKrCount(card.viewCountRaw);
+        meta.likeCountRaw = card.likeCountRaw;
+        meta.likeCount = parseKrCount(card.likeCountRaw);
+        meta.commentCountRaw = card.commentCountRaw;
+        meta.commentCount = parseKrCount(card.commentCountRaw);
         posts.push(meta);
       } catch (e) {
         log('  ERROR on post:', e.message);
-        posts.push({ url, error: e.message });
+        posts.push({
+          url,
+          searchRank: card.searchRank,
+          viewCountRaw: card.viewCountRaw,
+          viewCount: parseKrCount(card.viewCountRaw),
+          error: e.message,
+        });
       }
       // 예의 차원 딜레이
-      if (i < postLinks.length - 1) {
+      if (i < postCards.length - 1) {
         await new Promise(r => setTimeout(r, POST_DELAY));
       }
+    }
+
+    // ── 5. Sanity check — 상위 5개 평균 조회수가 너무 낮으면 인기순 정렬 실패 의심 ──
+    const SANITY_MIN_AVG_VIEW = parseInt(process.env.POSTYPE_MIN_AVG_VIEW || '2000', 10);
+    const top5Views = posts
+      .slice(0, 5)
+      .map(p => p.viewCount)
+      .filter(v => typeof v === 'number');
+    const top5Avg = top5Views.length > 0
+      ? Math.round(top5Views.reduce((a, b) => a + b, 0) / top5Views.length)
+      : 0;
+    log('top5 avg view:', top5Avg, '(threshold:', SANITY_MIN_AVG_VIEW + ')');
+
+    const sanityPassed = sortVerified && top5Avg >= SANITY_MIN_AVG_VIEW;
+    if (!sanityPassed) {
+      log('SANITY FAIL — sortVerified=' + sortVerified + ', top5Avg=' + top5Avg);
     }
 
     const result = {
@@ -228,8 +287,20 @@ async function main() {
         failed: posts.filter(p => p.error).length,
         adultCount: posts.filter(p => p.isAdult).length,
         paidCount: posts.filter(p => p.isPaid).length,
+        sortVerified: sortVerified,
+        top5AvgView: top5Avg,
+        sanityPassed: sanityPassed,
       },
     };
+
+    // Sanity 실패 시 stderr만 출력하고 exit 1 — latest.json에 잘못된 데이터 안 박히게
+    if (!sanityPassed) {
+      log('ABORT — refusing to write bad data. Use POSTYPE_FORCE=1 to override.');
+      if (process.env.POSTYPE_FORCE !== '1') {
+        process.exit(2);
+      }
+      log('POSTYPE_FORCE=1 detected — writing data anyway.');
+    }
 
     // stdout으로 JSON 출력 (로그는 stderr)
     process.stdout.write(JSON.stringify(result, null, 2));
