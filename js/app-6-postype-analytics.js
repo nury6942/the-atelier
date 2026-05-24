@@ -1,10 +1,7 @@
 /* ───────────────────────────────────────────────────────────────────
-   app-6-postype-analytics.js — Postype 채널 매출 분석 (월별 뷰 + 5위젯)
-   - 사이드잡 부업 탭의 "Postype 매출 분석" 섹션
-   - 좌우 화살표로 월 이동, 입금일 자동 계산, 전월 대비
-   - 차별화 위젯 5종:
-       회차별 매출 곡선 / D1~D30 감쇠 / 발행 시점 효과
-       가격대 분포 / 요일×시간 히트맵
+   app-6-postype-analytics.js — Postype 채널 매출 분석 + 예측
+   - 월별 뷰, 입금일 + 실 입금액(수수료 20%), 12개월 예측
+   - 차별화 위젯 5종 + 감쇠 곡선 시리즈 선택 + 성숙도 필터
    ─────────────────────────────────────────────────────────────────── */
 (function(){
   'use strict';
@@ -14,6 +11,20 @@
   const COLL_DAILY  = 'postypeChannelDaily';
   const COLL_POSTS  = 'postypeChannelPosts';
   const COLL_SERIES = 'postypeChannelSeries';
+
+  // 포스타입 평균 수수료 20% → 실 입금 80%
+  const FEE_RATE = 0.20;
+  const applyFee = amount => Math.round(amount * (1 - FEE_RATE));
+
+  // 진행 중 시리즈 메타 (수동 설정 — 추후 UI로 변경 가능)
+  const ONGOING_SERIES = {
+    name: '물고 뜯기',
+    publishWeekday: 5,    // 0=일, 5=금
+    publishHour: 21,
+    totalEpisodes: 28,
+    currentEpisode: 10,
+    lastPublishDate: '2026-05-22'
+  };
 
   // 2026년 한국 공휴일 (입금일 계산용)
   const KR_HOLIDAYS = new Set([
@@ -31,6 +42,7 @@
   let allPosts     = [];
   let allSeries    = [];
   let currentMonth = null;
+  let decaySeries  = '__all__';  // 감쇠 차트에서 선택된 시리즈
   let isDemoMode   = false;
   let loaded       = false;
 
@@ -40,6 +52,7 @@
   const pad       = n => String(n).padStart(2, '0');
   const todayStr  = () => new Date().toISOString().slice(0,10);
   const thisMonth = () => todayStr().slice(0, 7);
+  const ageDays   = (firstTs) => (Date.now() - new Date(firstTs.replace(' ','T') + '+09:00').getTime()) / 86400000;
 
   function calcPaymentDay(yearMonth){
     const [y, m] = yearMonth.split('-').map(Number);
@@ -47,9 +60,8 @@
     for (let i = 0; i < 7; i++){
       const w   = d.getUTCDay();
       const ymd = d.toISOString().slice(0,10);
-      if (w === 0 || w === 6 || KR_HOLIDAYS.has(ymd)){
-        d.setUTCDate(d.getUTCDate() - 1);
-      } else { break; }
+      if (w === 0 || w === 6 || KR_HOLIDAYS.has(ymd)) d.setUTCDate(d.getUTCDate() - 1);
+      else break;
     }
     return d.toISOString().slice(0,10);
   }
@@ -59,11 +71,13 @@
     if (nM > 12){ nY++; nM = 1; }
     return calcPaymentDay(`${nY}-${pad(nM)}`);
   }
-  const monthLabel = ym => { const [y,m] = ym.split('-').map(Number); return `${y}년 ${m}월`; };
-  const prevMonth  = ym => { const [y,m] = ym.split('-').map(Number); return m === 1 ? `${y-1}-12` : `${y}-${pad(m-1)}`; };
-  const nextMonth  = ym => { const [y,m] = ym.split('-').map(Number); return m === 12 ? `${y+1}-01` : `${y}-${pad(m+1)}`; };
+  const monthLabel  = ym => { const [y,m] = ym.split('-').map(Number); return `${y}년 ${m}월`; };
+  const monthLabelShort = ym => { const [y,m] = ym.split('-').map(Number); return `${m}월`; };
+  const prevMonth   = ym => { const [y,m] = ym.split('-').map(Number); return m === 1 ? `${y-1}-12` : `${y}-${pad(m-1)}`; };
+  const nextMonth   = ym => { const [y,m] = ym.split('-').map(Number); return m === 12 ? `${y+1}-01` : `${y}-${pad(m+1)}`; };
   const daysInMonth = ym => { const [y,m] = ym.split('-').map(Number); return new Date(y, m, 0).getDate(); };
   const isFuture    = ym => ym > thisMonth();
+  const addMonths   = (ym, n) => { let cur = ym; for (let i = 0; i < n; i++) cur = nextMonth(cur); return cur; };
 
   // ─── 더미 데이터 ───────────────────────────────────────────────
   function makeDummyForMonth(yearMonth){
@@ -89,14 +103,114 @@
     try {
       const all = await fbRead(name);
       return all.filter(filter);
-    } catch(e){
-      console.error(`[postype-analytics] fetch ${name} error`, e);
-      return [];
-    }
+    } catch(e){ console.error(`[postype-analytics] fetch ${name} error`, e); return []; }
   }
   const fetchAllDaily  = () => fetchCollection(COLL_DAILY,  d => d.channelId === CHANNEL_ID && d.date).then(a => a.sort((x,y) => x.date.localeCompare(y.date)));
   const fetchAllPosts  = () => fetchCollection(COLL_POSTS,  p => p.channelId === CHANNEL_ID && p.postId);
   const fetchAllSeries = () => fetchCollection(COLL_SERIES, s => s.channelId === CHANNEL_ID && s.name);
+
+  // ─── 예측 모델 ──────────────────────────────────────────────────
+  function buildForecastModel(){
+    // 진행 시리즈의 평균 D1~D30 (성숙도 필터)
+    const ongoing = ONGOING_SERIES;
+    const seriesPosts = allPosts.filter(p => p.series === ongoing.name && p.revByAge && p.firstTs);
+
+    const avgAt = (key, minAge) => {
+      const mature = seriesPosts.filter(p => ageDays(p.firstTs) >= minAge && p.revByAge[key] !== undefined);
+      if (!mature.length) return null;
+      return mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length;
+    };
+
+    const decay = {
+      d1:  avgAt('d1', 1)  || 0,
+      d3:  avgAt('d3', 3)  || 0,
+      d7:  avgAt('d7', 7)  || 0,
+      d14: avgAt('d14', 14) || 0,
+      d30: avgAt('d30', 30) || 0
+    };
+
+    // D30 이후 longtail rate (회차당 일별 매출, D30의 약 1.2% 기본 가정)
+    // 더 정확히: 가장 오래된 회차의 (total - D30) / (현재나이 - 30) 평균
+    const matureFor30 = seriesPosts.filter(p => ageDays(p.firstTs) >= 30 && p.revByAge.d30 !== undefined);
+    let longtailDailyRate = decay.d30 * 0.012;  // 기본 가정
+    if (matureFor30.length){
+      const rates = matureFor30.map(p => {
+        const age = ageDays(p.firstTs);
+        const extra = (p.totalRev || 0) - (p.revByAge.d30 || 0);
+        return age > 30 ? extra / (age - 30) : 0;
+      }).filter(r => r > 0);
+      if (rates.length) longtailDailyRate = rates.reduce((a,b) => a+b, 0) / rates.length;
+    }
+
+    // 회차당 매출 곡선 (발행 후 t일까지 누적)
+    function revAtAge(t){
+      if (t <= 0) return 0;
+      if (t <= 1) return decay.d1 * t;
+      if (t <= 3) return decay.d1 + (decay.d3 - decay.d1) * (t-1)/2;
+      if (t <= 7) return decay.d3 + (decay.d7 - decay.d3) * (t-3)/4;
+      if (t <= 14) return decay.d7 + (decay.d14 - decay.d7) * (t-7)/7;
+      if (t <= 30) return decay.d14 + (decay.d30 - decay.d14) * (t-14)/16;
+      return decay.d30 + (t-30) * longtailDailyRate;
+    }
+
+    // 모든 회차 발행 일정 (기존 + 미래)
+    const existing = seriesPosts
+      .map(p => ({ date: p.firstTs.slice(0,10), type: 'existing' }))
+      .sort((a,b) => a.date.localeCompare(b.date));
+    const lastDate = ongoing.lastPublishDate;
+    const lastEp = ongoing.currentEpisode;
+    const future = [];
+    for (let ep = lastEp + 1; ep <= ongoing.totalEpisodes; ep++){
+      const d = new Date(lastDate + 'T00:00:00');
+      d.setDate(d.getDate() + (ep - lastEp) * 7);
+      future.push({ ep, date: d.toISOString().slice(0,10), type: 'future' });
+    }
+    const allEpisodes = [...existing, ...future];
+
+    // 구작 + 멤버십 longtail (최근 30일 일별 평균)
+    const recentCutoff = new Date(Date.now() - 30*86400000).toISOString().slice(0,10);
+    const recentDaily = allDaily.filter(d => d.date >= recentCutoff);
+    const recentSum = recentDaily.reduce((a,d) => a + (d.rev||0), 0);
+    const ongoingRecentSum = recentDaily.reduce((a,d) => {
+      if (d.bySeries && d.bySeries[ongoing.name]) return a + d.bySeries[ongoing.name].rev;
+      return a;
+    }, 0);
+    const oldWorksDailyAvg = Math.max(0, (recentSum - ongoingRecentSum) / Math.max(recentDaily.length, 1));
+
+    // 월별 예측 (그 달 전체 매출)
+    function predictMonth(yearMonth){
+      const [y, m] = yearMonth.split('-').map(Number);
+      const monthStart = new Date(Date.UTC(y, m-1, 1));
+      const monthEnd   = new Date(Date.UTC(y, m, 0));
+      let total = 0;
+      allEpisodes.forEach(ep => {
+        const pubDate = new Date(ep.date + 'T00:00:00Z');
+        const ageEnd  = (monthEnd - pubDate) / 86400000 + 1;
+        const ageStart = (monthStart - pubDate) / 86400000;
+        if (ageEnd <= 0) return;
+        total += revAtAge(ageEnd) - revAtAge(Math.max(0, ageStart));
+      });
+      total += oldWorksDailyAvg * daysInMonth(yearMonth);
+      return Math.round(total);
+    }
+
+    return { decay, allEpisodes, oldWorksDailyAvg, longtailDailyRate, predictMonth, revAtAge };
+  }
+
+  // ─── 예측: 이번 달 (실측 + 남은 일수 모델) ──────────────────────
+  function predictThisMonth(model){
+    const thisM = thisMonth();
+    const todayD = new Date().getDate();
+    const dim = daysInMonth(thisM);
+    const actual = allDaily
+      .filter(d => d.date.startsWith(thisM) && d.date <= todayStr())
+      .reduce((a,d) => a + (d.rev||0), 0);
+    const modelTotal = model.predictMonth(thisM);
+    const remainingDays = Math.max(0, dim - todayD);
+    const modelDailyAvg = modelTotal / dim;
+    const remainingForecast = modelDailyAvg * remainingDays;
+    return { total: Math.round(actual + remainingForecast), actual, remainingForecast: Math.round(remainingForecast), modelTotal };
+  }
 
   // ─── KPI 4개 렌더 ───────────────────────────────────────────────
   function renderKPIs(monthDaily, prevMonthDaily, ytdTotal){
@@ -104,18 +218,16 @@
     const txCount = monthDaily.reduce((a,d) => a + (d.txCount||0), 0);
     const dayCnt  = monthDaily.length;
     const avg     = dayCnt ? Math.round(sum / dayCnt) : 0;
-
     let peakDay = null, peakRev = 0;
     monthDaily.forEach(d => { if ((d.rev||0) > peakRev){ peakRev = d.rev; peakDay = d.date; } });
-
     const prevSum = prevMonthDaily.reduce((a,d) => a + (d.rev||0), 0);
     const delta   = sum - prevSum;
     const pct     = prevSum ? ((delta / prevSum) * 100) : null;
 
     document.getElementById('postype-kpi-month-total').textContent = KRW(sum);
-    document.getElementById('postype-kpi-month-sub').textContent   = dayCnt ? `${dayCnt}일 / ${txCount.toLocaleString('ko-KR')}건` : '데이터 없음';
+    document.getElementById('postype-kpi-month-sub').textContent   = dayCnt ? `${dayCnt}일 / ${txCount.toLocaleString('ko-KR')}건 · 실수령 ${KRW(applyFee(sum))}` : '데이터 없음';
     document.getElementById('postype-kpi-daily-avg').textContent     = KRW(avg);
-    document.getElementById('postype-kpi-daily-avg-sub').textContent = dayCnt ? `${dayCnt}일 평균` : '—';
+    document.getElementById('postype-kpi-daily-avg-sub').textContent = dayCnt ? `${dayCnt}일 평균 · 실수령 ${KRW(applyFee(avg))}/일` : '—';
     if (peakDay){
       const d = new Date(peakDay + 'T00:00:00Z');
       document.getElementById('postype-kpi-peak').textContent      = KRW(peakRev);
@@ -141,9 +253,10 @@
       dSub.textContent = `${sign}${KRW(delta)} · 전월 ${KRW(prevSum)}`;
     }
     document.getElementById('postype-ytd-total').textContent = KRW(ytdTotal);
+    document.getElementById('postype-ytd-net').textContent   = KRW(applyFee(ytdTotal));
   }
 
-  // ─── 일별 차트 SVG (선택 월) ────────────────────────────────────
+  // ─── 일별 차트 (선택 월) ────────────────────────────────────────
   function renderDailyChart(monthDaily, yearMonth){
     const wrap  = document.getElementById('postype-daily-chart');
     const empty = document.getElementById('postype-daily-empty');
@@ -167,9 +280,8 @@
     const hasAny = full.some(d => d.rev !== null && d.rev > 0);
     if (!hasAny){
       empty.style.display = 'flex';
-      empty.textContent = isFuture(yearMonth) ? '미래 달은 데이터 없음' : '이 달은 아직 데이터가 없어요 · 북마크릿으로 ytd 입력해 백필하세요';
-      wrap.__days = [];
-      meta.textContent = '—';
+      empty.textContent = isFuture(yearMonth) ? '미래 달은 데이터 없음 (예측은 위 차트에서)' : '이 달은 아직 데이터가 없어요 · 북마크릿으로 ytd 입력해 백필';
+      wrap.__days = []; meta.textContent = '—';
       return;
     }
     empty.style.display = 'none';
@@ -178,9 +290,7 @@
     const W = 800, H = 180, PAD = 10;
     const max = Math.max(...full.filter(d => d.rev !== null).map(d => d.rev), 1);
     const xs = full.map((d, i) => (i / Math.max(full.length-1, 1)) * W);
-
-    let path = '';
-    let inPath = false;
+    let path = ''; let inPath = false;
     full.forEach((d, i) => {
       if (d.rev === null){ inPath = false; return; }
       const x = xs[i];
@@ -200,7 +310,7 @@
     wrap.__days = full;
   }
 
-  // ─── 위젯 1: 시리즈 회차별 매출 곡선 (TOP 4) ────────────────────
+  // ─── 위젯 1: 시리즈 회차별 매출 곡선 ────────────────────────────
   function renderSeriesCurves(){
     const wrap = document.getElementById('postype-series-curves');
     if (!wrap) return;
@@ -242,49 +352,72 @@
           <span class="text-[10px] ${trendColor} font-bold whitespace-nowrap">${posts.length}편 · ${trend >= 0 ? '+' : ''}${trend}%</span>
         </div>
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:42px;display:block">
-          <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>
-          ${circles}
+          <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>${circles}
         </svg>
         <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-          <span>1화 ${KRW(first)}</span>
-          <span>${posts.length}화 ${KRW(last)}</span>
+          <span>1화 ${KRW(first)}</span><span>${posts.length}화 ${KRW(last)}</span>
         </div>
       </div>`;
     }).join('');
   }
 
-  // ─── 위젯 2: 발행 후 D1~D30 감쇠 곡선 ───────────────────────────
+  // ─── 위젯 2: D1~D30 감쇠 (시리즈 선택 + 성숙도 필터) ────────────
+  function populateDecaySeriesSelect(){
+    const sel = document.getElementById('postype-decay-series');
+    if (!sel) return;
+    const currentVal = sel.value || '__all__';
+    // TOP 5 (회차 2개 이상)
+    const candidates = [...allSeries]
+      .filter(s => s.name !== '_멤버십_' && s.name !== '_미분류_' && (s.posts || []).length >= 2)
+      .sort((a,b) => (b.totalRev||0) - (a.totalRev||0))
+      .slice(0, 5);
+    sel.innerHTML = '<option value="__all__">전체 평균</option>' + candidates.map(s => `<option value="${s.name}">${s.name} (${(s.posts||[]).length}편)</option>`).join('');
+    sel.value = candidates.find(c => c.name === currentVal) ? currentVal : '__all__';
+    if (!sel.__attached){
+      sel.__attached = true;
+      sel.addEventListener('change', () => {
+        decaySeries = sel.value;
+        renderDecayChart();
+      });
+    }
+  }
   function renderDecayChart(){
     const wrap  = document.getElementById('postype-decay-chart');
     const empty = document.getElementById('postype-decay-empty');
     const meta  = document.getElementById('postype-decay-meta');
     wrap.querySelectorAll('svg').forEach(el => el.remove());
 
-    const withAge = allPosts.filter(p => p.revByAge);
-    if (!withAge.length){
-      if (empty) empty.style.display = 'flex';
-      if (meta) meta.textContent = '데이터 없음';
+    // 시리즈 필터
+    let pool = allPosts.filter(p => p.revByAge && p.firstTs);
+    if (decaySeries !== '__all__') pool = pool.filter(p => p.series === decaySeries);
+
+    if (!pool.length){
+      if (empty){ empty.style.display = 'flex'; empty.textContent = '데이터 없음'; }
+      if (meta) meta.textContent = '—';
+      return;
+    }
+
+    // 성숙도 필터 (각 D 지점마다)
+    const avgAt = (key, minAge) => {
+      const mature = pool.filter(p => ageDays(p.firstTs) >= minAge && p.revByAge[key] !== undefined);
+      if (!mature.length) return null;
+      return { value: Math.round(mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length), n: mature.length };
+    };
+    const points = [
+      { label: 'D1',  ...(avgAt('d1', 1)  || {}) },
+      { label: 'D3',  ...(avgAt('d3', 3)  || {}) },
+      { label: 'D7',  ...(avgAt('d7', 7)  || {}) },
+      { label: 'D14', ...(avgAt('d14', 14) || {}) },
+      { label: 'D30', ...(avgAt('d30', 30) || {}) }
+    ].filter(p => p.value !== undefined);
+
+    if (!points.length){
+      if (empty){ empty.style.display = 'flex'; empty.textContent = '성숙한 회차가 없어요 (D1 이상 1편 필요)'; }
+      if (meta) meta.textContent = '—';
       return;
     }
     if (empty) empty.style.display = 'none';
 
-    const avg = (key) => {
-      const fs = withAge.filter(p => p.revByAge[key] !== undefined && p.revByAge[key] !== null);
-      if (!fs.length) return null;
-      return Math.round(fs.reduce((a, p) => a + p.revByAge[key], 0) / fs.length);
-    };
-    const points = [
-      { label: 'D1',  value: avg('d1') },
-      { label: 'D3',  value: avg('d3') },
-      { label: 'D7',  value: avg('d7') },
-      { label: 'D14', value: avg('d14') },
-      { label: 'D30', value: avg('d30') }
-    ].filter(p => p.value !== null);
-
-    if (!points.length){
-      if (empty) empty.style.display = 'flex';
-      return;
-    }
     const max = Math.max(...points.map(p => p.value), 1);
     const W = 320, H = 180, PADX = 30, PADY = 25;
     const xs = points.map((p, i) => PADX + (i / Math.max(points.length-1, 1)) * (W - PADX*2));
@@ -300,13 +433,16 @@
       `).join('')}
     </svg>`;
     wrap.insertAdjacentHTML('afterbegin', svg);
-    if (meta) meta.textContent = `${withAge.length}편 평균`;
+    if (meta){
+      const seriesName = decaySeries === '__all__' ? '전체' : decaySeries;
+      const cohortInfo = points.map(p => `${p.label} ${p.n}편`).join(' · ');
+      meta.textContent = `${seriesName} · 성숙도별 cohort: ${cohortInfo}`;
+    }
   }
 
   // ─── 위젯 3: 발행 시점 효과 ─────────────────────────────────────
   function renderPubEffect(){
-    const wrap  = document.getElementById('postype-pub-effect');
-    const empty = document.getElementById('postype-pub-empty');
+    const wrap = document.getElementById('postype-pub-effect');
     const withFirst = allPosts.filter(p => p.firstTs && p.revByAge && p.revByAge.d1 !== undefined);
     if (!withFirst.length){
       wrap.innerHTML = '<div class="text-center text-slate-400 text-sm py-8">데이터 없음</div>';
@@ -319,12 +455,10 @@
       if (!parts) return;
       const dt = new Date(Date.UTC(+parts[1], +parts[2]-1, +parts[3]));
       const dowIdx = dt.getUTCDay();
-      byDow[dowIdx].posts++;
-      byDow[dowIdx].total += p.revByAge.d1 || 0;
+      byDow[dowIdx].posts++; byDow[dowIdx].total += p.revByAge.d1 || 0;
       const h = +parts[4];
       const bk = h <= 5 ? '새벽 0-5' : h <= 11 ? '아침 6-11' : h <= 17 ? '오후 12-17' : '저녁 18-23';
-      byBucket[bk].posts++;
-      byBucket[bk].total += p.revByAge.d1 || 0;
+      byBucket[bk].posts++; byBucket[bk].total += p.revByAge.d1 || 0;
     });
     const maxDowTotal = Math.max(...byDow.map(x => x.total));
     const maxBkTotal  = Math.max(...Object.values(byBucket).map(x => x.total));
@@ -346,7 +480,7 @@
       <table class="w-full text-xs"><tbody>${bkRows}</tbody></table>`;
   }
 
-  // ─── 위젯 4: 가격대 분포 (선택 월) ──────────────────────────────
+  // ─── 위젯 4: 가격대 분포 ────────────────────────────────────────
   function renderPriceDist(monthDaily){
     const wrap = document.getElementById('postype-price-dist');
     const meta = document.getElementById('postype-price-meta');
@@ -380,7 +514,7 @@
     wrap.innerHTML = `<table class="w-full text-xs"><tbody>${rows}</tbody></table>`;
   }
 
-  // ─── 위젯 5: 요일×시간 히트맵 (선택 월) ─────────────────────────
+  // ─── 위젯 5: 요일×시간 히트맵 ───────────────────────────────────
   function renderHeatmap(monthDaily){
     const wrap = document.getElementById('postype-heatmap');
     const meta = document.getElementById('postype-heatmap-meta');
@@ -413,6 +547,107 @@
       </div>
       <div class="text-[10px] text-slate-400 mt-2">진할수록 매출↑ · 최댓값 ${KRW(max)}</div>`;
     if (meta) meta.textContent = `${monthDaily.length}일 합산`;
+  }
+
+  // ─── 예측 카드 3개 + 12개월 차트 렌더 ──────────────────────────
+  function renderForecast(){
+    if (!allPosts.length || !allDaily.length){
+      // 데이터 없으면 placeholder
+      ['this','next'].forEach(k => {
+        document.getElementById(`postype-forecast-${k}-total`).textContent = '—';
+        document.getElementById(`postype-forecast-${k}-net`).textContent = '실수령 ≈ —';
+        document.getElementById(`postype-forecast-${k}-sub`).textContent = '데이터 import 후 표시';
+      });
+      document.getElementById('postype-ongoing-name').textContent = '—';
+      document.getElementById('postype-ongoing-progress').textContent = '—';
+      document.getElementById('postype-ongoing-sub').textContent = '데이터 없음';
+      document.getElementById('postype-forecast-empty').style.display = 'flex';
+      return;
+    }
+
+    const model = buildForecastModel();
+
+    // 이번 달 카드
+    const thisM = thisMonth();
+    const thisF = predictThisMonth(model);
+    document.getElementById('postype-forecast-this-total').textContent = KRW(thisF.total);
+    document.getElementById('postype-forecast-this-net').textContent = `실수령 ≈ ${KRW(applyFee(thisF.total))}`;
+    const payDateThis = paymentForMonth(thisM);
+    document.getElementById('postype-forecast-this-sub').textContent = `${monthLabel(thisM)} · 실측 ${KRW(thisF.actual)} + 남은 일수 예측 ${KRW(thisF.remainingForecast)} · 입금 ${payDateThis.slice(5,7)}/${payDateThis.slice(8,10)}`;
+    document.getElementById('postype-payment-amount').textContent = `${KRW(applyFee(thisF.total))}`;
+
+    // 다음 달 카드
+    const nextM = nextMonth(thisM);
+    const nextTotal = model.predictMonth(nextM);
+    document.getElementById('postype-forecast-next-total').textContent = KRW(nextTotal);
+    document.getElementById('postype-forecast-next-net').textContent = `실수령 ≈ ${KRW(applyFee(nextTotal))}`;
+    const payDateNext = paymentForMonth(nextM);
+    document.getElementById('postype-forecast-next-sub').textContent = `${monthLabel(nextM)} 예측 · 입금 ${payDateNext.slice(5,7)}/${payDateNext.slice(8,10)}`;
+
+    // 연재 진행 카드
+    const ongoing = ONGOING_SERIES;
+    const remaining = ongoing.totalEpisodes - ongoing.currentEpisode;
+    const finishDate = new Date(ongoing.lastPublishDate + 'T00:00:00');
+    finishDate.setDate(finishDate.getDate() + remaining * 7);
+    document.getElementById('postype-ongoing-name').textContent = ongoing.name;
+    document.getElementById('postype-ongoing-progress').textContent = `${ongoing.currentEpisode}화 / ${ongoing.totalEpisodes}화`;
+    const finishStr = `${finishDate.getMonth()+1}/${finishDate.getDate()}`;
+    document.getElementById('postype-ongoing-sub').textContent = `남은 ${remaining}화 · 매주 ${dow[ongoing.publishWeekday]} ${ongoing.publishHour}:00 · 완결 예정 ${finishStr}`;
+
+    // 12개월 예측 차트
+    render12MonthChart(model);
+  }
+
+  function render12MonthChart(model){
+    const wrap = document.getElementById('postype-forecast-chart');
+    const empty = document.getElementById('postype-forecast-empty');
+    wrap.querySelectorAll('svg').forEach(el => el.remove());
+    if (empty) empty.style.display = 'none';
+
+    // 이번 달부터 12개월
+    const months = [];
+    let cur = thisMonth();
+    for (let i = 0; i < 12; i++){
+      const isPast = cur < thisMonth();
+      const isCurrent = cur === thisMonth();
+      let actual = null, forecast = null;
+      if (cur === thisMonth()){
+        const thisF = predictThisMonth(model);
+        actual = thisF.actual;
+        forecast = thisF.total;
+      } else if (cur > thisMonth()){
+        forecast = model.predictMonth(cur);
+      }
+      months.push({ ym: cur, actual, forecast });
+      cur = nextMonth(cur);
+    }
+
+    const W = 800, H = 220, PADX = 30, PADY = 30;
+    const max = Math.max(...months.map(m => Math.max(m.actual||0, m.forecast||0)), 1);
+    const barW = (W - PADX*2) / months.length;
+    const innerBarW = barW * 0.6;
+    const barOffset = barW * 0.2;
+
+    const bars = months.map((m, i) => {
+      const x = PADX + i * barW + barOffset;
+      const forecastH = m.forecast ? (m.forecast / max) * (H - PADY*2) : 0;
+      const actualH   = m.actual   ? (m.actual / max) * (H - PADY*2)   : 0;
+      const forecastY = H - PADY - forecastH;
+      const actualY   = H - PADY - actualH;
+      const labelY = H - 10;
+      const valueY = forecastY - 6;
+      return `
+        <rect x="${x}" y="${forecastY}" width="${innerBarW}" height="${forecastH}" fill="#a5b4fc" opacity="0.6" rx="2"/>
+        ${m.actual !== null ? `<rect x="${x}" y="${actualY}" width="${innerBarW}" height="${actualH}" fill="#6366f1" rx="2"/>` : ''}
+        ${m.forecast ? `<text x="${x + innerBarW/2}" y="${valueY}" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">${(m.forecast/10000).toFixed(0)}만</text>` : ''}
+        <text x="${x + innerBarW/2}" y="${labelY}" text-anchor="middle" fill="#94a3b8" font-size="10">${monthLabelShort(m.ym)}</text>
+      `;
+    }).join('');
+
+    wrap.insertAdjacentHTML('afterbegin', `
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
+        ${bars}
+      </svg>`);
   }
 
   // ─── 차트 hover 툴팁 ────────────────────────────────────────────
@@ -460,7 +695,6 @@
     });
   }
 
-  // ─── 동기화 상태 표시 ───────────────────────────────────────────
   function setSyncLabel(daily, demo){
     const el = document.getElementById('postype-last-sync');
     if (!el) return;
@@ -470,13 +704,10 @@
       el.textContent = '마지막 동기화: 없음';
     } else {
       const dates = daily.map(d => d.date).sort();
-      const first = dates[0];
-      const last  = dates[dates.length - 1];
-      el.innerHTML = `데이터: <span class="font-bold text-slate-700">${first}</span> ~ <span class="font-bold text-slate-700">${last}</span> · 총 ${dates.length}일`;
+      el.innerHTML = `데이터: <span class="font-bold text-slate-700">${dates[0]}</span> ~ <span class="font-bold text-slate-700">${dates[dates.length-1]}</span> · 총 ${dates.length}일`;
     }
   }
 
-  // ─── 특정 월 렌더 ───────────────────────────────────────────────
   function renderForMonth(yearMonth){
     document.getElementById('postype-month-label').textContent = monthLabel(yearMonth);
     document.getElementById('postype-payment-date').textContent = (() => {
@@ -484,7 +715,6 @@
       const d = new Date(p + 'T00:00:00Z');
       return `${p.slice(5,7)}월 ${p.slice(8,10)}일 (${dow[d.getUTCDay()]})`;
     })();
-
     const source = isDemoMode ? makeDummyForMonth(yearMonth) : allDaily;
     const monthDaily = source.filter(d => d.date && d.date.startsWith(yearMonth));
     const prevMd    = source.filter(d => d.date && d.date.startsWith(prevMonth(yearMonth)));
@@ -494,10 +724,12 @@
     renderKPIs(monthDaily, prevMd, ytdTotal);
     renderDailyChart(monthDaily, yearMonth);
     renderSeriesCurves();
+    populateDecaySeriesSelect();
     renderDecayChart();
     renderPubEffect();
     renderPriceDist(monthDaily);
     renderHeatmap(monthDaily);
+    renderForecast();
   }
 
   // ─── Firestore upsert ──────────────────────────────────────────
@@ -506,14 +738,12 @@
       return { ok: false, error: 'Firebase 미준비 또는 빈 페이로드' };
     }
     const result = { daily: {added:0,updated:0}, posts: {added:0,updated:0}, series: {added:0,updated:0} };
-
     if (Array.isArray(payload.daily) && payload.daily.length){
       const existing = await fbRead(COLL_DAILY);
       const byDate = {};
       existing.forEach(d => { if (d.channelId === CHANNEL_ID && d.date) byDate[d.date] = d._id; });
       for (const d of payload.daily){
-        const doc = Object.assign({}, d, { channelId: CHANNEL_ID });
-        delete doc._id;
+        const doc = Object.assign({}, d, { channelId: CHANNEL_ID }); delete doc._id;
         if (byDate[d.date]){ await fbUpdate(COLL_DAILY, byDate[d.date], doc); result.daily.updated++; }
         else { await fbAdd(COLL_DAILY, doc); result.daily.added++; }
       }
@@ -523,8 +753,7 @@
       const byId = {};
       existing.forEach(p => { if (p.channelId === CHANNEL_ID && p.postId) byId[p.postId] = p._id; });
       for (const p of payload.posts){
-        const doc = Object.assign({}, p, { channelId: CHANNEL_ID });
-        delete doc._id;
+        const doc = Object.assign({}, p, { channelId: CHANNEL_ID }); delete doc._id;
         if (byId[p.postId]){ await fbUpdate(COLL_POSTS, byId[p.postId], doc); result.posts.updated++; }
         else { await fbAdd(COLL_POSTS, doc); result.posts.added++; }
       }
@@ -534,8 +763,7 @@
       const byName = {};
       existing.forEach(s => { if (s.channelId === CHANNEL_ID && s.name) byName[s.name] = s._id; });
       for (const s of payload.series){
-        const doc = Object.assign({}, s, { channelId: CHANNEL_ID });
-        delete doc._id;
+        const doc = Object.assign({}, s, { channelId: CHANNEL_ID }); delete doc._id;
         if (byName[s.name]){ await fbUpdate(COLL_SERIES, byName[s.name], doc); result.series.updated++; }
         else { await fbAdd(COLL_SERIES, doc); result.series.added++; }
       }
@@ -548,13 +776,11 @@
     if (!el) return;
     el.innerHTML = `<span style="color:${color||'#6366f1'};font-weight:600">${msg}</span>`;
   }
-
   function ensureSideJobVisible(){
     try { if (typeof navigate === 'function') navigate('income'); else if (typeof window.navigate === 'function') window.navigate('income'); } catch(e){}
     setTimeout(() => { try { if (typeof window.switchMoneyTab === 'function') window.switchMoneyTab('sidejobs'); } catch(e){} }, 150);
     setTimeout(() => { const sec = document.getElementById('postype-analytics-section'); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 500);
   }
-
   function setupPostypeBridge(){
     const params  = new URLSearchParams(location.search);
     const isBridge = params.get('postype-bridge') === '1';
@@ -583,9 +809,7 @@
           loaded = false;
           await loadAndRender();
           if (e.source){ try { e.source.postMessage({ type: 'postype-import-done', result: r }, e.origin); } catch(_){} }
-        } else {
-          showBridgeStatus(`❌ 저장 실패: ${res.error}`, '#ef4444');
-        }
+        } else { showBridgeStatus(`❌ 저장 실패: ${res.error}`, '#ef4444'); }
       } catch(err){
         console.error('[postype-bridge] push error', err);
         showBridgeStatus(`❌ 에러: ${err.message}`, '#ef4444');
@@ -600,35 +824,31 @@
     }
   };
 
-  // ─── 메인 로드 + 렌더 ───────────────────────────────────────────
   async function loadAndRender(){
     const [daily, posts, series] = await Promise.all([
-      fetchAllDaily(),
-      fetchAllPosts(),
-      fetchAllSeries()
+      fetchAllDaily(), fetchAllPosts(), fetchAllSeries()
     ]);
     if (daily.length === 0){
-      isDemoMode = true;
-      allDaily   = []; allPosts = []; allSeries = [];
+      isDemoMode = true; allDaily = []; allPosts = []; allSeries = [];
     } else {
-      isDemoMode = false;
-      allDaily   = daily; allPosts = posts; allSeries = series;
+      isDemoMode = false; allDaily = daily; allPosts = posts; allSeries = series;
     }
     setSyncLabel(daily, isDemoMode);
     if (!currentMonth) currentMonth = thisMonth();
     renderForMonth(currentMonth);
   }
 
-  // ─── 디버그 핸들 ────────────────────────────────────────────────
   window.__postypeAnalytics = {
     reload: loadAndRender,
     goMonth: (ym) => { currentMonth = ym; renderForMonth(ym); },
     state: () => ({ allDaily, allPosts, allSeries, currentMonth, isDemoMode }),
     paymentForMonth,
+    ongoingSeries: ONGOING_SERIES,
+    feeRate: FEE_RATE,
+    forecastModel: () => buildForecastModel(),
     channelId: CHANNEL_ID
   };
 
-  // ─── 초기화 ─────────────────────────────────────────────────────
   function init(){
     const section = document.getElementById('postype-analytics-section');
     if (!section) return;
@@ -638,18 +858,12 @@
     const observer = new IntersectionObserver((entries) => {
       for (const e of entries){
         if (e.isIntersecting && !loaded){
-          loaded = true;
-          loadAndRender();
-          observer.disconnect();
+          loaded = true; loadAndRender(); observer.disconnect();
         }
       }
     }, { root: null, threshold: 0.05 });
     observer.observe(section);
   }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();

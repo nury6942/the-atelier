@@ -5635,9 +5635,56 @@
           <div class="flex items-center gap-3 flex-wrap">
             <div class="text-xs text-slate-500 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100">
               <span class="material-symbols-outlined text-amber-600" style="font-size:14px">payments</span>
-              입금 예정: <span id="postype-payment-date" class="font-bold text-slate-800">—</span>
+              <span id="postype-payment-date" class="font-bold text-slate-800">—</span> 입금 ≈ <span id="postype-payment-amount" class="font-bold text-amber-700">—</span>
             </div>
-            <div class="text-xs text-slate-500" id="postype-ytd-label">올해 누적: <span id="postype-ytd-total" class="font-bold text-slate-800">—</span></div>
+            <div class="text-xs text-slate-500" id="postype-ytd-label">올해 누적: <span id="postype-ytd-total" class="font-bold text-slate-800">—</span> <span class="text-slate-400">(실수령 ≈ <span id="postype-ytd-net" class="text-slate-700">—</span>)</span></div>
+          </div>
+        </div>
+
+        <!-- ─── 예측 위젯 (이번/다음 달 + 12개월 차트) ──────────── -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <!-- 이번 달 예상 -->
+          <div class="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-xs font-bold uppercase tracking-widest text-indigo-700">이번 달 예상</div>
+              <span class="material-symbols-outlined text-indigo-400" style="font-size:18px">trending_up</span>
+            </div>
+            <div class="text-3xl font-extrabold tracking-tight text-slate-900 tabular-nums" id="postype-forecast-this-total">—</div>
+            <div class="text-sm font-bold text-amber-700 tabular-nums mt-0.5" id="postype-forecast-this-net">실수령 ≈ —</div>
+            <div class="text-[11px] text-slate-500 mt-2" id="postype-forecast-this-sub">—</div>
+          </div>
+
+          <!-- 다음 달 예상 -->
+          <div class="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-xs font-bold uppercase tracking-widest text-indigo-700">다음 달 예상</div>
+              <span class="material-symbols-outlined text-indigo-400" style="font-size:18px">event_upcoming</span>
+            </div>
+            <div class="text-3xl font-extrabold tracking-tight text-slate-900 tabular-nums" id="postype-forecast-next-total">—</div>
+            <div class="text-sm font-bold text-amber-700 tabular-nums mt-0.5" id="postype-forecast-next-net">실수령 ≈ —</div>
+            <div class="text-[11px] text-slate-500 mt-2" id="postype-forecast-next-sub">—</div>
+          </div>
+
+          <!-- 연재 진행 상태 -->
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-xs font-bold uppercase tracking-widest text-slate-500">진행 중 시리즈</div>
+              <span class="material-symbols-outlined text-slate-400" style="font-size:18px">menu_book</span>
+            </div>
+            <div class="text-lg font-bold text-slate-900 tabular-nums" id="postype-ongoing-name">—</div>
+            <div class="text-2xl font-extrabold tracking-tight text-indigo-600 tabular-nums mt-1" id="postype-ongoing-progress">—</div>
+            <div class="text-[11px] text-slate-500 mt-2" id="postype-ongoing-sub">—</div>
+          </div>
+        </div>
+
+        <!-- 12개월 예측 차트 -->
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+          <div class="flex justify-between items-baseline mb-4 flex-wrap gap-2">
+            <h3 class="text-lg font-bold text-slate-900 font-headline">월별 매출 예측</h3>
+            <span class="text-xs text-slate-400">진한 막대 = 실측 · 흐린 막대 = 예측 · 수수료 20% 가정</span>
+          </div>
+          <div id="postype-forecast-chart" class="relative" style="height:240px">
+            <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-forecast-empty">데이터 없음</div>
           </div>
         </div>
 
@@ -5695,13 +5742,16 @@
 
           <!-- 위젯 2: 발행 후 D1~D30 감쇠 -->
           <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex justify-between items-baseline mb-4">
+            <div class="flex justify-between items-center mb-4 gap-2 flex-wrap">
               <h3 class="text-lg font-bold text-slate-900 font-headline">발행 후 N일 누적 매출</h3>
-              <span class="text-xs text-slate-400" id="postype-decay-meta">평균 감쇠</span>
+              <select id="postype-decay-series" class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200">
+                <option value="__all__">전체 평균</option>
+              </select>
             </div>
             <div id="postype-decay-chart" class="relative" style="height:180px">
               <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-decay-empty">데이터 없음</div>
             </div>
+            <div class="text-[11px] text-slate-400 mt-2" id="postype-decay-meta">—</div>
           </div>
         </div>
 
@@ -7073,7 +7123,7 @@
 <script src="js/daily-guides.js?v=111" defer></script>
 <script src="js/app-4-roadmap.js?v=111" defer></script>
 <script src="js/app-5-ledger-export.js?v=112" defer></script>
-<script src="js/app-6-postype-analytics.js?v=3" defer></script>
+<script src="js/app-6-postype-analytics.js?v=4" defer></script>
 
 </body>
 </html>
