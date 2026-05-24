@@ -32,7 +32,9 @@
     'hotnncold': {
       id: 'hotnncold',
       displayName: '요란한 옥탑방',
-      ongoing: null            // 사용자가 추후 설정 가능
+      ongoing: null,
+      status: 'idle',
+      note: '연재 완결 · 차기작 준비 중 (예정: 2026년 말)'
     }
   };
 
@@ -640,9 +642,16 @@
       document.getElementById('postype-ongoing-progress').textContent = `${ongoing.currentEpisode}화 / ${ongoing.totalEpisodes}화`;
       document.getElementById('postype-ongoing-sub').textContent = `남은 ${remaining}화 · 매주 ${dow[ongoing.publishWeekday]} ${ongoing.publishHour}:00 · 완결 ${finishDate.getMonth()+1}/${finishDate.getDate()}`;
     } else {
-      document.getElementById('postype-ongoing-name').textContent = '미설정';
-      document.getElementById('postype-ongoing-progress').textContent = '—';
-      document.getElementById('postype-ongoing-sub').textContent = '코드의 CHANNELS[' + currentChannel + '].ongoing 설정 필요';
+      const channelMeta = CHANNELS[currentChannel];
+      if (channelMeta && channelMeta.note){
+        document.getElementById('postype-ongoing-name').textContent = '연재 중 시리즈 없음';
+        document.getElementById('postype-ongoing-progress').textContent = '—';
+        document.getElementById('postype-ongoing-sub').textContent = channelMeta.note;
+      } else {
+        document.getElementById('postype-ongoing-name').textContent = '미설정';
+        document.getElementById('postype-ongoing-progress').textContent = '—';
+        document.getElementById('postype-ongoing-sub').textContent = '코드의 CHANNELS[' + currentChannel + '].ongoing 설정 필요';
+      }
     }
     render12MonthChart(model);
   }
