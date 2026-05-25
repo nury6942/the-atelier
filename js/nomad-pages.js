@@ -910,6 +910,363 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-principles', renderPrinciples);
 
+  // ════════════════════════════════════════════════════════════════════
+  // 체크리스트 시스템 (Firebase + localStorage 양방향 동기화)
+  // 컬렉션: appSettings/doc('nomadChecks') → { visa_docs:{}, actions:{}, packing:{} }
+  // ════════════════════════════════════════════════════════════════════
+  var _nomadChecks = {}; // 메모리 캐시: { 'visa_docs': {'0-0':true, ...}, ... }
+  var _nomadChecksLoaded = false;
+
+  function _loadChecksFromCache() {
+    try {
+      var raw = localStorage.getItem('nomad_checks_cache');
+      if (raw) _nomadChecks = JSON.parse(raw) || {};
+    } catch(e){ _nomadChecks = {}; }
+  }
+  function _saveChecksToCache() {
+    try { localStorage.setItem('nomad_checks_cache', JSON.stringify(_nomadChecks)); } catch(e){}
+  }
+  async function _loadChecksFromFirebase() {
+    if (typeof db === 'undefined') return;
+    try {
+      var doc = await db.collection('appSettings').doc('nomadChecks').get();
+      if (doc.exists) {
+        var data = doc.data() || {};
+        // Firebase 값 우선 (다기기 동기화)
+        _nomadChecks = data.checks || {};
+        _saveChecksToCache();
+        // 현재 체크리스트 페이지 보이는 중이면 즉시 재렌더 (다기기 동기화 반영)
+        var content = document.getElementById('nomad-content');
+        if (content && content.querySelector('.nm-checklist') && currentSubPage) {
+          go(currentSubPage);
+        }
+      }
+    } catch(e) { console.warn('[nomad checks] FB load 실패:', e); }
+  }
+  async function _saveChecksToFirebase() {
+    if (typeof db === 'undefined') return;
+    try {
+      await db.collection('appSettings').doc('nomadChecks').set({
+        checks: _nomadChecks,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch(e) { console.warn('[nomad checks] FB save 실패:', e); }
+  }
+
+  // 초기 로드 (Phase 5에서 호출)
+  function initChecks() {
+    if (_nomadChecksLoaded) return;
+    _nomadChecksLoaded = true;
+    _loadChecksFromCache();
+    // 백그라운드 Firebase 동기화
+    setTimeout(_loadChecksFromFirebase, 100);
+  }
+
+  // 토글 (메모리 + localStorage 즉시 + Firebase 백그라운드)
+  function toggleCheck(storageKey, itemKey) {
+    if (!_nomadChecks[storageKey]) _nomadChecks[storageKey] = {};
+    _nomadChecks[storageKey][itemKey] = !_nomadChecks[storageKey][itemKey];
+    _saveChecksToCache();
+    // UI 즉시 업데이트
+    var li = document.querySelector('.nm-checklist li[data-key="' + storageKey + ':' + itemKey + '"]');
+    if (li) li.classList.toggle('is-checked', _nomadChecks[storageKey][itemKey]);
+    // 진행률 업데이트
+    _updateChecklistProgress(storageKey);
+    // Firebase 백그라운드 저장 (debounce 없이 즉시 — 사용자 신뢰성 우선)
+    _saveChecksToFirebase();
+  }
+  window._nomadToggleCheck = toggleCheck;
+
+  function _updateChecklistProgress(storageKey) {
+    var listEl = document.querySelector('.nm-checklist-wrap[data-key="' + storageKey + '"]');
+    if (!listEl) return;
+    var items = listEl.querySelectorAll('.nm-checklist li');
+    var total = items.length;
+    var done = 0;
+    items.forEach(function(li) { if (li.classList.contains('is-checked')) done++; });
+    var pct = total > 0 ? Math.round((done/total) * 100) : 0;
+    var labelEl = listEl.querySelector('.nm-check-progress-label');
+    var barEl = listEl.querySelector('.nm-check-progress-bar');
+    if (labelEl) labelEl.innerHTML = '<span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span>';
+    if (barEl) barEl.style.width = pct + '%';
+  }
+
+  // 체크리스트 빌더
+  function buildChecklist(storageKey, title, groups) {
+    var saved = _nomadChecks[storageKey] || {};
+    var total = groups.reduce(function(a,g){ return a + (g.items||[]).length; }, 0);
+    var done = 0;
+    var html = '<div class="nm-card nm-checklist-wrap" data-key="' + storageKey + '">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">fact_check</span>' +
+      '<h3 class="nm-headline-md">' + title + '</h3>' +
+    '</div>';
+    // 진행률
+    html += '<div class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size:12px;color:var(--nm-text-3);margin-bottom:6px"></div>';
+    html += '<div style="height:6px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom:24px">' +
+      '<div class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:0%;transition:width 0.2s"></div>' +
+    '</div>';
+    groups.forEach(function(group, gi) {
+      var groupName = group.cat || group.when || ('Group ' + gi);
+      html += '<div style="margin-bottom:20px">';
+      html += '<div style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;padding:6px 0;border-bottom:1px solid #f1f5f9">' + groupName + '</div>';
+      html += '<ul class="nm-checklist">';
+      (group.items || []).forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        if (isChecked) done++;
+        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')">' +
+          '<span class="nm-checkbox"></span>' +
+          '<span>' + item + '</span>' +
+        '</li>';
+      });
+      html += '</ul>';
+      html += '</div>';
+    });
+    // 초기 진행률 채우기 (script 즉시 실행)
+    var pct = total > 0 ? Math.round((done/total) * 100) : 0;
+    html = html.replace('class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size:12px;color:var(--nm-text-3);margin-bottom:6px"></div>',
+      'class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size:12px;color:var(--nm-text-3);margin-bottom:6px"><span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span></div>');
+    html = html.replace('class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:0%;transition:width 0.2s"',
+      'class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:' + pct + '%;transition:width 0.2s"');
+    html += '</div>';
+    return html;
+  }
+
+  // ──────── Visa & Documents 페이지 ────────
+  function renderVisa() {
+    initChecks();
+    var html = '';
+    html += pageHeader('Visa & Documents', '비자 · 서류 체크리스트',
+      '셰겐 84/90일 한도 안 · 워홀 베이스캠프');
+
+    // 비자 종합 테이블
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
+      '<h3 class="nm-headline-md">1년 동선 비자 종합</h3>' +
+    '</div>';
+    html += '<table class="nm-table">';
+    html += '<thead><tr><th>국가</th><th>비자</th><th>신청 시점</th><th>체류</th><th>비고</th></tr></thead><tbody>';
+    DATA.VISA_LIST.forEach(function(v) {
+      html += '<tr>' +
+        '<td><strong>' + v.country + '</strong></td>' +
+        '<td><span class="nm-pill" style="' + visaPillClass(v.type) + '">' + v.type + '</span></td>' +
+        '<td style="font-size:13px;color:var(--nm-text-2)">' + v.when + '</td>' +
+        '<td style="font-size:13px;color:var(--nm-text-2)">' + v.stay + '</td>' +
+        '<td style="font-size:12px;color:var(--nm-text-3)">' + v.note + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // 서류 체크리스트
+    html += buildChecklist('visa_docs', '출국 전 서류 체크', DATA.VISA_DOCS);
+
+    return html;
+  }
+  registerPage('nomad-visa', renderVisa);
+
+  // ──────── Working Holiday 페이지 (탭 4개) ────────
+  function _whTab(activeTab) {
+    var tabs = [
+      { id: 'overview', label: '개요' },
+      { id: 'docs',     label: '서류 준비' },
+      { id: 'process',  label: '신청 절차' },
+      { id: 'strategy', label: '활용 전략' },
+    ];
+    var html = '<div style="display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid #f1f5f9;padding-bottom:0">';
+    tabs.forEach(function(t) {
+      var isActive = t.id === activeTab;
+      html += '<button onclick="NOMAD_PAGES.whSetTab(\'' + t.id + '\')" style="background:none;border:none;padding:10px 16px;font-size:14px;font-weight:' + (isActive ? '700' : '500') + ';color:' + (isActive ? 'var(--nm-primary)' : 'var(--nm-text-2)') + ';cursor:pointer;border-bottom:2px solid ' + (isActive ? 'var(--nm-primary)' : 'transparent') + ';margin-bottom:-1px;font-family:Manrope">' + t.label + '</button>';
+    });
+    html += '</div>';
+    return html;
+  }
+  var _whActiveTab = 'overview';
+  function _whContent(tab) {
+    var html = '';
+    if (tab === 'overview') {
+      html += '<div class="nm-card">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">info</span>' +
+        '<h3 class="nm-headline-md">기본 정보</h3>' +
+      '</div>';
+      html += '<table class="nm-table">';
+      var info = [
+        ['정식 명칭', '한·포르투갈 워킹홀리데이 비자'],
+        ['유효 기간', '1년 (입국일부터)'],
+        ['나이 제한', '만 18-34세 (한·포르투갈 협정 기준)'],
+        ['활동 가능', '관광 · 체류 · 일 · 학업 (정규직 X, 시간제 OK)'],
+        ['연간 쿼터', '200명 (한국-포르투갈)'],
+        ['비용', '€90 (환율 변동)'],
+        ['입출국', '1년 안 자유롭게 다회 가능 · 복수사증'],
+      ];
+      html += '<tbody>';
+      info.forEach(function(r) {
+        html += '<tr><td style="width:140px;color:var(--nm-text-3);font-size:13px">' + r[0] + '</td><td><strong>' + r[1] + '</strong></td></tr>';
+      });
+      html += '</tbody></table>';
+      html += '</div>';
+      html += '<div class="nm-quote" style="margin-top:16px">누리 = 1995.11.2생 · 2028.6 출국 시 만 32세 → <strong style="color:var(--nm-primary)">자격 OK</strong></div>';
+    } else if (tab === 'docs') {
+      html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+      html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">description</span>' +
+        '<h3 class="nm-headline-md">준비 서류</h3>' +
+      '</div>';
+      html += '<table class="nm-table"><thead><tr><th>서류</th><th>발급처</th><th>비고</th></tr></thead><tbody>';
+      var docs = [
+        ['여권 사본', '본인', '만료 1년+ 여유'],
+        ['여권 사진 35×45', '사진관', '6개월 이내'],
+        ['비자신청서', '대사관 양식', '영문 또는 포어'],
+        ['범죄경력회보서 영문', '경찰서 / 정부24', '3개월 이내'],
+        ['재정증빙 영문', '주거래은행', '€5,000 이상 권장'],
+        ['항공권 사본', '항공사', '편도 또는 왕복'],
+        ['여행자보험', '보험사', '€30,000+ 보장'],
+        ['자기소개서', '본인 작성', '영문 또는 포어'],
+        ['활동계획서', '본인 작성', '1년 활동 계획'],
+      ];
+      docs.forEach(function(r) {
+        html += '<tr><td><strong>' + r[0] + '</strong></td><td style="font-size:13px;color:var(--nm-text-2)">' + r[1] + '</td><td style="font-size:12px;color:var(--nm-text-3)">' + r[2] + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      html += '</div>';
+    } else if (tab === 'process') {
+      html += '<div class="nm-card">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
+        '<h3 class="nm-headline-md">신청 절차</h3>' +
+      '</div>';
+      var steps = [
+        { when: '2028.1-2', stage: '사전 준비',      title: '서류 수집',                 text: '범죄경력회보서, 재정증빙, 보험, 자기소개서·활동계획서 작성' },
+        { when: '2028.3',   stage: '대사관 방문 예약', title: '이메일 사전 예약',           text: '주한 포르투갈 대사관 (서울 용산구 한남동) · 본인 직접 방문 필수' },
+        { when: '2028.3-4', stage: '신청 + 면접',     title: '대사관 방문 · 서류 제출',     text: '비자 수수료 €90 납부 · 간단 영어/포어 면접 가능' },
+        { when: '2028.4-5', stage: '발급 대기',       title: '처리 2-6주',               text: '여권 수령 후 비자 시작일 = 2028.6.9 입국일' },
+        { when: '2028.6.9', stage: '출국 + 입국',     title: '리스본 도착',              text: '비자 시작일 전 셰겐 입국 X (입국 거부 위험)' },
+        { when: '입국 30일 이내', stage: 'AIMA 등록',  title: '통합이주망명청',           text: 'aima.gov.pt · (+351) 217-115-000' },
+      ];
+      html += '<div style="position:relative;padding-left:24px;border-left:2px solid var(--nm-primary-soft)">';
+      steps.forEach(function(s) {
+        html += '<div style="position:relative;margin-bottom:20px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">';
+        html += '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>';
+        html += '<div style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + s.when + ' · ' + s.stage + '</div>';
+        html += '<div style="font-family:Manrope;font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + s.title + '</div>';
+        html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + s.text + '</p>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    } else if (tab === 'strategy') {
+      html += '<div class="nm-card">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">workspace_premium</span>' +
+        '<h3 class="nm-headline-md">누리 시나리오 · 워홀 활용</h3>' +
+      '</div>';
+      html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:8px">1년 베이스캠프 역할</h4>';
+      html += '<ul class="nm-list-bullet" style="margin-bottom:20px"><li>포르투갈 체류 = 1년 중 약 <strong>2-2.5개월</strong> (6월 + 10-11월)</li><li>셰겐 카운트 회피용 베이스</li><li>복수 입출국 가능</li></ul>';
+      html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:8px">일자리 X · 노마드 베이스만</h4>';
+      html += '<ul class="nm-list-bullet"><li>본업 외 IP·웹소 수익이 메인</li><li>포르투갈에서 일자리 X</li><li>워홀 = <strong>비자 도구로만 사용</strong></li></ul>';
+      html += '</div>';
+      html += '<div class="nm-card" style="margin-top:16px;border-left:3px solid #b91c1c">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="color:#b91c1c">warning</span>' +
+        '<h3 class="nm-headline-md" style="color:#b91c1c">주의</h3>' +
+      '</div>';
+      html += '<ul class="nm-list-bullet"><li>비자 시작일 전 셰겐 입국 시 입국 거부 가능 → <strong>첫 입국 = 반드시 포르투갈</strong></li><li>대사관 방문 = 본인 직접 (대리 X)</li><li>연간 200명 쿼터 = 빨리 신청 권장</li></ul>';
+      html += '</div>';
+    }
+    return html;
+  }
+  function whSetTab(tabId) {
+    _whActiveTab = tabId;
+    var content = document.getElementById('nomad-content');
+    if (content) content.innerHTML = renderWH();
+  }
+  function renderWH() {
+    var html = '';
+    html += pageHeader('Working Holiday · Portugal', '포르투갈 워홀 비자 절차',
+      '만 18-34세 · 누리 자격 OK · 신청 200명 쿼터');
+    html += _whTab(_whActiveTab);
+    html += _whContent(_whActiveTab);
+    return html;
+  }
+  registerPage('nomad-wh', renderWH);
+
+  // ──────── Action Items 페이지 ────────
+  function renderActions() {
+    initChecks();
+    var html = '';
+    html += pageHeader('Action Items', '즉시 액션 · 시간순',
+      '이번 주부터 출국까지 · 체크해가며 진행');
+    var groups = DATA.ACTIONS_BY_PERIOD.map(function(p) {
+      return { cat: p.when, items: p.items };
+    });
+    html += buildChecklist('actions', '액션 체크리스트', groups);
+    return html;
+  }
+  registerPage('nomad-actions', renderActions);
+
+  // ──────── Packing List 페이지 ────────
+  function renderPacking() {
+    initChecks();
+    var html = '';
+    html += pageHeader('Packing List', '장기 노마드 짐 리스트',
+      '캐리어 28인치 23kg + 백팩 8-10kg + 개인 휴대 5kg');
+
+    // 짐 철학
+    html += '<div class="nm-card" style="margin-bottom:16px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">luggage</span>' +
+      '<h3 class="nm-headline-md">짐 철학</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li><strong>3-2-1 원칙:</strong> 3계절 옷 + 2개 가방 + 1년치 짐</li>' +
+      '<li><strong>무게:</strong> 캐리어 23kg / 백팩 8-10kg / 개인 휴대 5kg</li>' +
+      '<li><strong>누리 라인:</strong> 옷·니트는 디자이너 안목 · 책·기념품은 현지 구매</li>' +
+    '</ul>';
+    html += '</div>';
+
+    // 짐 체크리스트
+    var groups = Object.keys(DATA.PACKING).map(function(cat) {
+      return { cat: cat, items: DATA.PACKING[cat] };
+    });
+    html += buildChecklist('packing', '짐 체크리스트', groups);
+
+    // 23kg 초과 시 빼는 순서
+    html += '<div class="nm-card" style="margin-top:16px;border-left:3px solid #c2410c">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:#c2410c">priority_high</span>' +
+      '<h3 class="nm-headline-md" style="color:#c2410c">23kg 초과 시 빼는 순서</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li><strong>1순위 양보:</strong> 다량의 약·영양제 (현지 구매)</li>' +
+      '<li><strong>2순위:</strong> 헤어 기기 (현지 구매)</li>' +
+      '<li><strong>3순위:</strong> 운동복·수영복 일부</li>' +
+      '<li style="color:#b91c1c"><strong>절대 양보 X:</strong> 노트북·태블릿·외장 SSD·여권·서류·1차 옷·신발</li>' +
+    '</ul>';
+    html += '</div>';
+
+    // 한국 보관
+    html += '<div class="nm-card" style="margin-top:16px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">archive</span>' +
+      '<h3 class="nm-headline-md">한국 집 보관 (동생한테)</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li>1년 안 입을 옷·신발</li>' +
+      '<li>책·앨범·기념품</li>' +
+      '<li>본업 자료·디자인 포트폴리오 원본</li>' +
+      '<li>차량 (동생 사용 또는 보관)</li>' +
+    '</ul>';
+    html += '</div>';
+
+    return html;
+  }
+  registerPage('nomad-packing', renderPacking);
+
   // ──────── Sub-sidebar 빌더 ────────
   // NAV → 페이지 내부 좌측 sub-nav HTML
   function buildSubSidebar() {
