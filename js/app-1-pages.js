@@ -11378,42 +11378,28 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
-    // ═══ Nomad Master 페이지 라우팅 (단일 컨테이너 패턴) ═══
-    if (typeof pageId === 'string' && pageId.indexOf('nomad-') === 0) {
+    // ═══ Nomad Master 진입 (페이지 내부에 sub-sidebar로 28개 sub-page 처리) ═══
+    if (pageId === 'nomad-master') {
       document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
       var nomadContainer = document.getElementById('page-nomad');
-      if (nomadContainer) {
-        nomadContainer.style.display = 'block';
-        var content = document.getElementById('nomad-content');
-        if (content && window.NOMAD_PAGES) {
-          content.innerHTML = NOMAD_PAGES.renderPage(pageId);
-        }
-      }
-      // 사이드바 active (nomad 그룹 안의 항목)
+      if (nomadContainer) nomadContainer.style.display = 'block';
+      // 사이드바 active 처리 (메인 사이드바)
       document.querySelectorAll('.nav-item').forEach(n => {
         n.style.background=''; n.style.color=''; n.style.borderLeft='';
-        n.classList.remove('active');
       });
-      var navEl = document.getElementById('nav-' + pageId);
-      if (navEl) navEl.classList.add('active');
-      // 헤더 타이틀
-      var label = pageId;
-      if (window.NOMAD_DATA && NOMAD_DATA.NAV) {
-        for (var gi = 0; gi < NOMAD_DATA.NAV.length; gi++) {
-          var grp = NOMAD_DATA.NAV[gi];
-          for (var ii = 0; ii < (grp.items||[]).length; ii++) {
-            if (grp.items[ii].id === pageId) { label = grp.items[ii].label; break; }
-          }
-        }
+      var navEl = document.getElementById('nav-nomad-master');
+      if (navEl) {
+        navEl.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
+        navEl.style.color='#4338ca';
+        navEl.style.borderLeft='2px solid #6366f1';
       }
-      var titleEl = document.getElementById('page-title');
-      if (titleEl) titleEl.textContent = 'Nomad · ' + label;
-      try { localStorage.setItem('atelier-page', pageId); } catch(e){}
+      try { localStorage.setItem('atelier-page', 'nomad-master'); } catch(e){}
       // 모바일 사이드바 자동 닫힘
       if (window.innerWidth <= 768 && _sidebarOpen) {
         try { toggleSidebar(); } catch(e) {}
       }
-      window.scrollTo(0, 0);
+      // 페이지 내부 sub-sidebar 빌드 + 마지막 sub-page 복원
+      if (window.NOMAD_PAGES) NOMAD_PAGES.enter();
       return;
     }
 
