@@ -13867,10 +13867,10 @@
     var pubStart = new Date(input.publish_start + 'T00:00:00');
     var nomad = !!input.nomad;
 
-    // 1. 시놉: 회사원 = 빈 날 28일, 노마드 = 평일 20일 (주말 휴식)
+    // 1. 시놉: 회사원 = 빈 날 28일, 노마드 = 평일 10일 (회사원 모드보다 짧음 — 풀타임 작업 가능)
     var synStart = new Date(input.start_date + 'T00:00:00');
     var synDays = nomad
-      ? findNextAvailableWeekdays(synStart, 20)
+      ? findNextAvailableWeekdays(synStart, 10)
       : findNextAvailableDays(synStart, 28);
     var synEnd = synDays.length > 0 ? synDays[synDays.length - 1] : synStart;
 
