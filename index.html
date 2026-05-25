@@ -70,16 +70,16 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=118" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=118" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=118" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=118" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=118" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=118" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=118" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=118" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=118" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=118" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=119" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=119" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=119" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=119" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=119" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=119" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=119" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=119" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=119" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=119" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -718,6 +718,23 @@
       .nomad-page .nm-table { font-size: 13px; }
       .nomad-page .nm-table thead th,
       .nomad-page .nm-table tbody td { padding: 10px 8px; }
+    }
+
+    /* Nomad 사이드바 그룹 라벨 */
+    #nomad-nav-body .nomad-nav-group { padding-top: 6px; }
+    #nomad-nav-body .nomad-nav-label {
+      padding: 4px 12px 6px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    #nomad-nav-body .nav-item.active {
+      background: var(--nm-primary-soft, #F5F3FF);
+      color: var(--nm-primary, #7C3AED);
+      font-weight: 600;
     }
 
     /* ════════════════════════════════════════════════════════════════════
@@ -2241,6 +2258,20 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">route</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Roadmap</span>
     </a>
+
+    <!-- ════════ Nomad Master 그룹 ════════ -->
+    <div class="mt-4 mx-3 pt-3 border-t border-slate-100">
+      <button type="button" onclick="toggleNomadNav()" class="w-full flex items-center justify-between px-2 py-1.5 text-slate-400 hover:text-indigo-600 transition-colors">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[16px]">flight_takeoff</span>
+          <span class="font-manrope uppercase tracking-widest text-[10px] font-bold">Nomad Master</span>
+        </div>
+        <span id="nomad-nav-chevron" class="material-symbols-outlined text-[16px] transition-transform">expand_more</span>
+      </button>
+      <div id="nomad-nav-body" class="mt-1 space-y-3" style="display:none">
+        <!-- 그룹별 nav 항목은 nomad-pages.js의 buildNomadSidebar()가 채움 -->
+      </div>
+    </div>
   </nav>
   <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
     <a href="#" class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-600 rounded-xl transition-all">
@@ -6724,7 +6755,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=118" defer></script>
+<script src="js/app-1-pages.js?v=119" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -7494,25 +7525,34 @@
       </div>
     </div>
 
+  <!-- ════════ NOMAD MASTER 페이지 (단일 컨테이너 — JS가 동적으로 내용 채움) ════════ -->
+  <div id="page-nomad" class="page nomad-page" style="display:none">
+    <div class="nm-container">
+      <div id="nomad-content">
+        <!-- nomad-pages.js의 NOMAD_PAGES.renderPage(pageId)가 채움 -->
+      </div>
+    </div>
+  </div>
+
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=118" defer></script>
+<script src="js/app-2-init.js?v=119" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=118" defer></script>
-<script src="js/roadmap-data.js?v=118" defer></script>
-<script src="js/daily-actions.js?v=118" defer></script>
-<script src="js/daily-guides.js?v=118" defer></script>
-<script src="js/app-4-roadmap.js?v=118" defer></script>
-<script src="js/app-5-ledger-export.js?v=118" defer></script>
-<script src="js/app-6-postype-analytics.js?v=118" defer></script>
+<script src="js/app-3-flatpickr.js?v=119" defer></script>
+<script src="js/roadmap-data.js?v=119" defer></script>
+<script src="js/daily-actions.js?v=119" defer></script>
+<script src="js/daily-guides.js?v=119" defer></script>
+<script src="js/app-4-roadmap.js?v=119" defer></script>
+<script src="js/app-5-ledger-export.js?v=119" defer></script>
+<script src="js/app-6-postype-analytics.js?v=119" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=118" defer></script>
-<script src="js/nomad-pages.js?v=118" defer></script>
+<script src="js/nomad-data.js?v=119" defer></script>
+<script src="js/nomad-pages.js?v=119" defer></script>
 
 </body>
 </html>

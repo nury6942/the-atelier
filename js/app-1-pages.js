@@ -11378,6 +11378,45 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
+    // ═══ Nomad Master 페이지 라우팅 (단일 컨테이너 패턴) ═══
+    if (typeof pageId === 'string' && pageId.indexOf('nomad-') === 0) {
+      document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
+      var nomadContainer = document.getElementById('page-nomad');
+      if (nomadContainer) {
+        nomadContainer.style.display = 'block';
+        var content = document.getElementById('nomad-content');
+        if (content && window.NOMAD_PAGES) {
+          content.innerHTML = NOMAD_PAGES.renderPage(pageId);
+        }
+      }
+      // 사이드바 active (nomad 그룹 안의 항목)
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.style.background=''; n.style.color=''; n.style.borderLeft='';
+        n.classList.remove('active');
+      });
+      var navEl = document.getElementById('nav-' + pageId);
+      if (navEl) navEl.classList.add('active');
+      // 헤더 타이틀
+      var label = pageId;
+      if (window.NOMAD_DATA && NOMAD_DATA.NAV) {
+        for (var gi = 0; gi < NOMAD_DATA.NAV.length; gi++) {
+          var grp = NOMAD_DATA.NAV[gi];
+          for (var ii = 0; ii < (grp.items||[]).length; ii++) {
+            if (grp.items[ii].id === pageId) { label = grp.items[ii].label; break; }
+          }
+        }
+      }
+      var titleEl = document.getElementById('page-title');
+      if (titleEl) titleEl.textContent = 'Nomad · ' + label;
+      try { localStorage.setItem('atelier-page', pageId); } catch(e){}
+      // 모바일 사이드바 자동 닫힘
+      if (window.innerWidth <= 768 && _sidebarOpen) {
+        try { toggleSidebar(); } catch(e) {}
+      }
+      window.scrollTo(0, 0);
+      return;
+    }
+
     // ═══ 모바일에서 가계부 진입 시 별도 미니 페이지로 리다이렉트 ═══
     // 메인 사이트는 데스크탑 풀-기능 가정으로 짜여서 모바일에서 무거움
     // 가계부만 따로 모바일 최적화 페이지로 분리 (다른 페이지는 그대로)
