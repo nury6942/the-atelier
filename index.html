@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=115" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=116" as="script">
   <link rel="preload" href="js/app-2-init.js?v=105" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=105" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=111" as="script">
@@ -6376,7 +6376,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=115" defer></script>
+<script src="js/app-1-pages.js?v=116" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -6905,6 +6905,11 @@
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">예상 화수</label><select id="nw-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="nw-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
         </div>
+        <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100 cursor-pointer hover:bg-emerald-50 transition-colors" title="2028년 6월 이후 노마드 라이프 기준: 평일만 1편씩, 주말 휴식">
+          <input id="nw-nomad" type="checkbox" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-300"/>
+          <span class="text-xs font-bold text-emerald-700 flex-1">🌴 노마드 모드</span>
+          <span class="text-[10px] text-emerald-600/80">시놉·초고·퇴고 모두 평일 1편/일, 주말 휴식</span>
+        </label>
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">시작 희망일</label><input id="nw-start-date" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
           <div class="space-y-1"><label class="text-xs font-bold text-indigo-600">🎯 연재 시작일 *</label><input id="nw-publish-start" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-indigo-200 text-sm focus:ring-2 focus:ring-indigo-300"/></div>
@@ -6959,6 +6964,11 @@
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">예상 화수</label><select id="ew-episodes" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option>20</option><option>24</option><option>28</option></select></div>
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="ew-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
         </div>
+        <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100 cursor-pointer hover:bg-emerald-50 transition-colors" title="평일만 1편/일, 주말 휴식. 재계산 또는 캘린더 재동기화 시 이 규칙 적용">
+          <input id="ew-nomad" type="checkbox" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-300"/>
+          <span class="text-xs font-bold text-emerald-700 flex-1">🌴 노마드 모드</span>
+          <span class="text-[10px] text-emerald-600/80">평일 1편/일, 주말 휴식 (시놉·초고·퇴고)</span>
+        </label>
         <div class="border-t border-slate-100 pt-4 mt-2">
           <p class="text-xs font-bold text-slate-500 mb-3">📅 일정 조정</p>
           <div class="grid grid-cols-2 gap-3">

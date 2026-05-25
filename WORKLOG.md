@@ -74,6 +74,16 @@
 ## 2026-05-24 (기기: 아이맥)
 
 ### ✅ 한 일
+- **🌴 노마드 모드 일정 계산 추가** — 2028년 5월 퇴사 + 6월부터 디지털 노마드 라이프 대비. 새 작품/편집 모달에 "노마드 모드" 체크박스 추가. ON 시:
+  - **시놉**: 평일 20일 (회사원 기본 = 빈 날 28일)
+  - **초고**: 평일 1편/일, 주말 휴식 (회사원 = 평일 0.5화/주말 1화)
+  - **퇴고**: 평일 1편/일, 주말 휴식 (회사원 = 빈 날 매일 1편)
+  - 연재는 그대로 (주 1회)
+  - `work.nomad` 플래그로 저장, `autoAddScheduleToCalendar`도 노마드 분기 → 캘린더 이벤트도 주말 비어있게 생성
+  - **수정 함수**: `calculateWorkSchedule`, `autoAddScheduleToCalendar`, `previewWorkSchedule`, `saveNewWork`, `openEditWorkModal`, `saveEditWork`, `recalcEditWork`, `recalcFromPhase`
+  - **신규 헬퍼**: `findNextAvailableWeekdays(fromDate, count)` — 차단일·주말 모두 스킵
+  - 캐시 `app-1-pages.js v=115→v=116`, 서비스워커 `atelier-v115→v116`
+
 - **매트릭스 에피소드 race condition 클리어 버그** (커밋 `69af9cf`) — Annual Matrix 페이지에서 새로고침 후 R/B시리즈의 모든 월 에피소드가 "—"로 사라지는 현상:
   - **범인**: `syncCalToMatrix` 마지막 루프(13680+)가 "monthEps에 없는 월의 eps를 전부 클리어". plannerData가 Firestore에서 fetch되기 전에 호출되면 publishing 이벤트 0개로 인식 → 모든 series.monthly[m].eps 클리어 → saveSeriesData가 빈 series를 Firestore에 저장 → 새로고침마다 빈 데이터 반복
   - **수정**: 함수 진입부에 가드 추가. (a) plannerData 비어있거나 (b) publishing 이벤트 0개인데 confirmed 작품 있음 → race condition으로 판정하고 early return. localStorage·Firestore 어떤 것도 안 건드림

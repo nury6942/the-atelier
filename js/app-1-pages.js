@@ -13845,37 +13845,62 @@
     return cur;
   }
 
+  // 평일만 N일 카운트 (노마드 모드용) — 차단일·주말 모두 스킵
+  function findNextAvailableWeekdays(fromDate, count) {
+    var days = [];
+    var cur = new Date(fromDate.getTime());
+    var safety = 0;
+    while (days.length < count && safety < 1000) {
+      if (!_isWeekend(cur) && !isBlockedDay(_fmtDate(cur))) {
+        days.push(new Date(cur.getTime()));
+      }
+      cur.setDate(cur.getDate() + 1);
+      safety++;
+    }
+    return days;
+  }
+
   function calculateWorkSchedule(input) {
-    // input: { start_date, episodes, publish_day, publish_start(필수-고정) }
+    // input: { start_date, episodes, publish_day, publish_start(필수-고정), nomad }
     var eps = parseInt(input.episodes) || 20;
     var publishDay = parseInt(input.publish_day) || 5;
     var pubStart = new Date(input.publish_start + 'T00:00:00');
+    var nomad = !!input.nomad;
 
-    // 1. 시놉: 빈 날 20일
+    // 1. 시놉: 회사원 = 빈 날 28일, 노마드 = 평일 20일 (주말 휴식)
     var synStart = new Date(input.start_date + 'T00:00:00');
-    var synDays = findNextAvailableDays(synStart, 28);
+    var synDays = nomad
+      ? findNextAvailableWeekdays(synStart, 20)
+      : findNextAvailableDays(synStart, 28);
     var synEnd = synDays.length > 0 ? synDays[synDays.length - 1] : synStart;
 
-    // 2. 초고: 평일 0.5화/일, 주말 1화/일
+    // 2. 초고: 회사원 = 평일 0.5화/주말 1화, 노마드 = 평일 1화/주말 휴식
     var draftStart = new Date(synEnd.getTime());
     draftStart.setDate(draftStart.getDate() + 1);
-    var written = 0;
-    var draftCur = new Date(draftStart.getTime());
     var draftEnd = new Date(draftStart.getTime());
-    var draftSafety = 0;
-    while (written < eps && draftSafety < 500) {
-      if (!isBlockedDay(_fmtDate(draftCur))) {
-        written += _isWeekend(draftCur) ? 1 : 0.5;
+    if (nomad) {
+      var nDraftDays = findNextAvailableWeekdays(draftStart, eps);
+      draftEnd = nDraftDays.length > 0 ? nDraftDays[nDraftDays.length - 1] : draftStart;
+    } else {
+      var written = 0;
+      var draftCur = new Date(draftStart.getTime());
+      var draftSafety = 0;
+      while (written < eps && draftSafety < 500) {
+        if (!isBlockedDay(_fmtDate(draftCur))) {
+          written += _isWeekend(draftCur) ? 1 : 0.5;
+        }
+        draftEnd = new Date(draftCur.getTime());
+        draftCur.setDate(draftCur.getDate() + 1);
+        draftSafety++;
       }
-      draftEnd = new Date(draftCur.getTime());
-      draftCur.setDate(draftCur.getDate() + 1);
-      draftSafety++;
     }
 
-    // 3. 퇴고: 빈 날 eps일
+    // 3. 퇴고: 회사원 = 빈 날 eps일, 노마드 = 평일 eps일 (주말 휴식)
     var revStart = new Date(draftEnd.getTime());
     revStart.setDate(revStart.getDate() + 1);
-    var revDays = findNextAvailableDays(revStart, eps);
+    var revDays = nomad
+      ? findNextAvailableWeekdays(revStart, eps)
+      : findNextAvailableDays(revStart, eps);
     var revEnd = revDays.length > 0 ? revDays[revDays.length - 1] : revStart;
 
     // 4. 연재 시작일 검증: 퇴고 끝 < 연재 시작 필수
@@ -14303,11 +14328,13 @@
     var pubStart = document.getElementById('nw-publish-start').value;
     if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시작일을 선택하세요'); return; }
     if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 선택하세요'); return; }
+    var nomadChk = document.getElementById('nw-nomad');
     _workPreviewResult = calculateWorkSchedule({
       start_date: startDate,
       episodes: document.getElementById('nw-episodes').value,
       publish_day: document.getElementById('nw-publish-day').value,
-      publish_start: pubStart
+      publish_start: pubStart,
+      nomad: nomadChk ? nomadChk.checked : false
     });
     var r = _workPreviewResult;
     if (r.error) {
@@ -14342,6 +14369,7 @@
     try {
       var sel = document.getElementById('nw-series');
       var opt = sel.options[sel.selectedIndex];
+      var nwNomadChk = document.getElementById('nw-nomad');
       var work = {
         id: 'w_' + Date.now(),
         series_id: sel.value,
@@ -14354,6 +14382,7 @@
         phases: _workPreviewResult.phases,
         publish_start: _workPreviewResult.publish_start,
         publish_end: _workPreviewResult.publish_end,
+        nomad: nwNomadChk ? nwNomadChk.checked : false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -14381,6 +14410,8 @@
     document.getElementById('ew-title').value = w.title || '';
     document.getElementById('ew-episodes').value = String(w.total_episodes || 20);
     document.getElementById('ew-publish-day').value = String(w.publish_day || 5);
+    var ewNomadChk = document.getElementById('ew-nomad');
+    if (ewNomadChk) ewNomadChk.checked = !!w.nomad;
     var p = w.phases || {};
     document.getElementById('ew-syn-start').value = p.synopsis ? p.synopsis.start : '';
     document.getElementById('ew-syn-end').value = p.synopsis ? p.synopsis.end : '';
@@ -14407,11 +14438,13 @@
     var pubStart = document.getElementById('ew-pub-start').value;
     if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시놉 시작일을 입력하세요'); return; }
     if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 입력하세요'); return; }
+    var ewNomadChk3 = document.getElementById('ew-nomad');
     var r = calculateWorkSchedule({
       start_date: startDate,
       episodes: document.getElementById('ew-episodes').value,
       publish_day: document.getElementById('ew-publish-day').value,
-      publish_start: pubStart
+      publish_start: pubStart,
+      nomad: ewNomadChk3 ? ewNomadChk3.checked : false
     });
     if (r.error) {
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> ' + r.message);
@@ -14433,20 +14466,31 @@
     var pubStart = document.getElementById('ew-pub-start').value;
     if (!pubStart) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 먼저 입력하세요'); return; }
     var pubDate = new Date(pubStart + 'T00:00:00');
+    var rpNomadChk = document.getElementById('ew-nomad');
+    var rpNomad = rpNomadChk ? rpNomadChk.checked : false;
 
     if (phase === 'draft') {
       var ds = document.getElementById('ew-draft-start').value;
       if (!ds) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 초고 시작일을 입력하세요'); return; }
       // 초고 종료 계산
-      var draftCur = new Date(ds + 'T00:00:00'), written = 0, draftEnd = new Date(draftCur.getTime()), safety = 0;
-      while (written < eps && safety < 500) {
-        if (!isBlockedDay(_fmtDate(draftCur))) written += _isWeekend(draftCur) ? 1 : 0.5;
+      var draftEnd;
+      if (rpNomad) {
+        var nrpDays = findNextAvailableWeekdays(new Date(ds + 'T00:00:00'), eps);
+        draftEnd = nrpDays.length > 0 ? nrpDays[nrpDays.length - 1] : new Date(ds + 'T00:00:00');
+      } else {
+        var draftCur = new Date(ds + 'T00:00:00'), written = 0, safety = 0;
         draftEnd = new Date(draftCur.getTime());
-        draftCur.setDate(draftCur.getDate() + 1); safety++;
+        while (written < eps && safety < 500) {
+          if (!isBlockedDay(_fmtDate(draftCur))) written += _isWeekend(draftCur) ? 1 : 0.5;
+          draftEnd = new Date(draftCur.getTime());
+          draftCur.setDate(draftCur.getDate() + 1); safety++;
+        }
       }
       // 퇴고
       var revStart = new Date(draftEnd.getTime()); revStart.setDate(revStart.getDate() + 1);
-      var revDays = findNextAvailableDays(revStart, eps);
+      var revDays = rpNomad
+        ? findNextAvailableWeekdays(revStart, eps)
+        : findNextAvailableDays(revStart, eps);
       var revEnd = revDays.length > 0 ? revDays[revDays.length - 1] : revStart;
       // 검증
       if (revEnd >= pubDate) {
@@ -14468,7 +14512,9 @@
     if (phase === 'revision') {
       var rs = document.getElementById('ew-rev-start').value;
       if (!rs) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 퇴고 시작일을 입력하세요'); return; }
-      var revDays2 = findNextAvailableDays(new Date(rs + 'T00:00:00'), eps);
+      var revDays2 = rpNomad
+        ? findNextAvailableWeekdays(new Date(rs + 'T00:00:00'), eps)
+        : findNextAvailableDays(new Date(rs + 'T00:00:00'), eps);
       var revEnd2 = revDays2.length > 0 ? revDays2[revDays2.length - 1] : new Date(rs + 'T00:00:00');
       if (revEnd2 >= pubDate) {
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 퇴고(' + _fmtDate(revEnd2) + ')가 연재 시작일을 넘어갑니다!');
@@ -14499,6 +14545,8 @@
     w.title = document.getElementById('ew-title').value.trim();
     w.total_episodes = parseInt(document.getElementById('ew-episodes').value) || 20;
     w.publish_day = parseInt(document.getElementById('ew-publish-day').value) || 5;
+    var ewNomadChk2 = document.getElementById('ew-nomad');
+    w.nomad = ewNomadChk2 ? ewNomadChk2.checked : false;
     w.phases = {
       synopsis: { start: document.getElementById('ew-syn-start').value, end: document.getElementById('ew-syn-end').value },
       draft: { start: document.getElementById('ew-draft-start').value, end: document.getElementById('ew-draft-end').value },
@@ -14555,54 +14603,67 @@
   async function autoAddScheduleToCalendar(work) {
     var cat = '글쓰기';
     var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
-    console.log('[AutoAdd] Start:', work.title, 'series:', work.series_name, 'color:', color);
+    var nomad = !!work.nomad;
+    console.log('[AutoAdd] Start:', work.title, 'series:', work.series_name, 'color:', color, 'nomad:', nomad);
     var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
     var events = [];
     var p = work.phases || {};
     var eps = work.total_episodes || 20;
 
-    // 시놉: start~end 빈 날마다
+    // 시놉: 회사원 = start~end 빈 날마다, 노마드 = 평일만
     if (p.synopsis && p.synopsis.start && p.synopsis.end) {
       var sCur = new Date(p.synopsis.start + 'T00:00:00');
       var sEnd = new Date(p.synopsis.end + 'T00:00:00');
       var sIdx = 0;
       while (sCur <= sEnd) {
         var sds = _fmtDate(sCur);
-        if (!isBlockedDay(sds)) {
+        if (!isBlockedDay(sds) && (!nomad || !_isWeekend(sCur))) {
           events.push([sds, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(sIdx++)]);
         }
         sCur.setDate(sCur.getDate() + 1);
       }
     }
 
-    // 초고: start부터 평일 0.5화 / 주말 1화 누적. eps 다 찰 때까지 계속 (end 넘어도 OK)
+    // 초고: 회사원 = 평일 0.5화/주말 1화 누적, 노마드 = 평일 1화/주말 휴식
     if (p.draft && p.draft.start) {
       var dCur = new Date(p.draft.start + 'T00:00:00');
-      var epNum = 0;
       var dIdx = 0;
       var dSafety = 0;
-      while (Math.ceil(epNum) < eps && dSafety++ < 1000) {
-        var ds = _fmtDate(dCur);
-        if (!isBlockedDay(ds)) {
-          var add = _isWeekend(dCur) ? 1 : 0.5;
-          epNum += add;
-          if (Math.ceil(epNum) <= eps) {
-            var epLabel = '초고 ' + Math.ceil(epNum) + '화';
-            events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+      if (nomad) {
+        var nEp = 0;
+        while (nEp < eps && dSafety++ < 1000) {
+          var ndds = _fmtDate(dCur);
+          if (!isBlockedDay(ndds) && !_isWeekend(dCur)) {
+            nEp++;
+            events.push([ndds, '초고 ' + nEp + '화', cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
           }
+          dCur.setDate(dCur.getDate() + 1);
         }
-        dCur.setDate(dCur.getDate() + 1);
+      } else {
+        var epNum = 0;
+        while (Math.ceil(epNum) < eps && dSafety++ < 1000) {
+          var ds = _fmtDate(dCur);
+          if (!isBlockedDay(ds)) {
+            var add = _isWeekend(dCur) ? 1 : 0.5;
+            epNum += add;
+            if (Math.ceil(epNum) <= eps) {
+              var epLabel = '초고 ' + Math.ceil(epNum) + '화';
+              events.push([ds, epLabel, cat, color, noteBase + '|phase:draft', '', String(dIdx++)]);
+            }
+          }
+          dCur.setDate(dCur.getDate() + 1);
+        }
       }
     }
 
-    // 퇴고: start부터 빈 날마다 1화씩. eps개 다 찰 때까지 계속 (end 넘어도 OK)
+    // 퇴고: 회사원 = start부터 빈 날마다 1화씩, 노마드 = 평일만 1화/일
     if (p.revision && p.revision.start) {
       var rCur = new Date(p.revision.start + 'T00:00:00');
       var rIdx = 0;
       var rSafety = 0;
       while (rIdx < eps && rSafety++ < 500) {
         var rds = _fmtDate(rCur);
-        if (!isBlockedDay(rds)) {
+        if (!isBlockedDay(rds) && (!nomad || !_isWeekend(rCur))) {
           events.push([rds, '퇴고 ' + (rIdx + 1) + '화', cat, color, noteBase + '|phase:revision', '', String(rIdx)]);
           rIdx++;
         }
