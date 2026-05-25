@@ -74,12 +74,20 @@
 ## 2026-05-24 (기기: 아이맥)
 
 ### ✅ 한 일
-- **캘린더 작품 일정 중복 생성 버그 진단 + 수정** — Money 부업 페이지 진입할 때마다 캘린더에 초고/연재 일정이 두 배로 쌓이던 문제. 사용자가 "재동기화" 토스트 자주 본다는 직관에서 출발해서 코드 추적:
+- **매트릭스 에피소드 race condition 클리어 버그** (커밋 `69af9cf`) — Annual Matrix 페이지에서 새로고침 후 R/B시리즈의 모든 월 에피소드가 "—"로 사라지는 현상:
+  - **범인**: `syncCalToMatrix` 마지막 루프(13680+)가 "monthEps에 없는 월의 eps를 전부 클리어". plannerData가 Firestore에서 fetch되기 전에 호출되면 publishing 이벤트 0개로 인식 → 모든 series.monthly[m].eps 클리어 → saveSeriesData가 빈 series를 Firestore에 저장 → 새로고침마다 빈 데이터 반복
+  - **수정**: 함수 진입부에 가드 추가. (a) plannerData 비어있거나 (b) publishing 이벤트 0개인데 confirmed 작품 있음 → race condition으로 판정하고 early return. localStorage·Firestore 어떤 것도 안 건드림
+  - **즉시 복구**: 콘솔에서 `syncCalToMatrix(2025); syncCalToMatrix(2026); syncCalToMatrix(2027); syncCalToMatrix(2028); renderIncomeMatrix();` 1줄로 plannerData publishing 이벤트(67개 살아있음)에서 eps 즉시 복구됨
+  - 캐시 `app-1-pages.js v=114→v=115`, 서비스워커 `atelier-v114→v115`
+
+- **2026-09-28 잘못된 추석 대체공휴일 제거** (커밋 `44990da`) — 한국 공휴일법: 추석/설날은 일요일 겹침만 대체 적용 (토요일은 적용 안 됨). 2026 추석(9/24-9/26)은 토요일과만 겹쳐서 대체 발생 안 함. 다른 공휴일(삼일절·광복절·개천절·한글날·어린이날·부처님오신날·크리스마스)은 토/일 모두 대체 적용되는 점과 구분. 캐시 v=113→v=114
+
+- **캘린더 작품 일정 중복 생성 버그 진단 + 수정** (커밋 `c0ad52d`) — Money 부업 페이지 진입할 때마다 캘린더에 초고/연재 일정이 두 배로 쌓이던 문제. 사용자가 "재동기화" 토스트 자주 본다는 직관에서 출발해서 코드 추적:
   - **범인**: `renderIncomeMatrix` 안의 `_autoMatrixGuard` IIFE (line 13042-13058). "confirmed 작품 있는데 캘린더 publishing 0개면 자동 복구"라는 의도였는데, `plannerData`가 Firestore에서 완전히 로드되기 전에 체크하면 false negative로 `_fullResyncWorks` trigger → Step 1 삭제는 비어있는 로컬에만 적용되고 Step 2 추가는 모두 진행 → 나중에 Firestore fetch가 옛 이벤트 들고 와서 중복
   - 멀티 기기(맥북·아이맥·윈도우)에서 각 기기가 독립적으로 trigger돼서 Firestore에 누적되던 구조
   - **수정**: `_autoMatrixGuard` IIFE 통째로 제거. 캘린더 진짜 비었으면 사용자가 수동 "재동기화" 버튼 클릭 (이미 작품 카드에 있음). 5/17의 `b2effc7`(cache-first race) 픽스와 같은 종류지만 다른 경로
   - **안전망**: `loadIncome` 끝에 `cleanupDuplicateWorkEvents` + `cleanupOrphanWorkEvents` 1.5초 지연 자동 실행 추가 → 이미 쌓인 중복도 페이지 열면 자동 청소됨
-  - 캐시 `app-1-pages.js?v=105→v=113`, 서비스워커 `atelier-v112→v113`
+  - 캐시 `app-1-pages.js v=105→v=113`, 서비스워커 `atelier-v112→v113`
 
 - **포스타입 트렌드 스크래퍼 정렬 버그 진단 + 수정** — 조회수 1~163짜리 신작이 1·2·3위로 잡히던 문제. Chrome MCP로 직접 검색 페이지 진입해서 두 개 버그 확인:
   1. "인기순" 버튼을 `textContent === '인기순'` 정확 매칭으로 클릭 시도 → SPA에서 셀렉터 불일치로 실패해도 silent fallthrough → 최신순 결과 그대로 수집
@@ -93,17 +101,22 @@
 - **data/trends/postype/{latest,2026-05-24,index}.json 갱신** — 진짜 인기 작품 12개 (본디본딩 23k, 멘카라 블루 21k, 다이다이다이 19k, 환승연애 막내작가 19k 등)
 
 ### 🎯 다음 할 일
-- GitHub Actions cron 스크립트(있다면) 확인 — sanity check `exit(2)` 시 알림 받는 구조인지 점검
+- 다른 기기(맥북·윈도우)에서 작업 시 **하드 새로고침 1회 필수** — 오늘 캐시 v112→v115까지 3번 올라감
+- **연차 데이터 사라진 건** — 사용자가 직접 처리 예정 (휴지통 100개에 연차 0개 확인됨, Firestore에서 직접 복구 또는 재입력)
+- GitHub Actions cron 스크립트 — sanity check `exit(2)` 시 알림 받는 구조인지 점검
 - 분석 스크립트 `scripts/analyze-trends.js`도 신규 필드(`viewCount`, `searchRank`)를 활용하게 업데이트 검토
-- 5/20 미완료 항목 이어가기: 가계부 `📋 Claude 공유` 버튼 실사용 + 모바일 export 버튼 추가 결정
+- 5/20 미완료 항목: 가계부 `📋 Claude 공유` 버튼 실사용 + 모바일 export 버튼 추가 결정
+- 한국 공휴일 **2027년 이후 substMap도 추후 사용자 확인** — 일요일 겹침/토요일 겹침 룰 다시 검증 필요
 
 ### 🚧 막힌 점 / 결정 보류
 - 첫 페이지에서 12개만 잡힘 (`POSTYPE_TOP_N=20` 요청해도). 인기순 정렬이라 상위가 그 정도인 듯 — 추가 페이지 스크래핑 필요한지는 트렌드 분석 품질 보고 판단
+- syncCalToMatrix 가드의 부작용: 사용자가 진짜로 모든 publishing 이벤트를 수동 삭제한 경우에도 eps 클리어가 차단됨 (data 보전 우선이라 트레이드오프 받아들임)
 
 ### 💭 메모
 - 포스타입 검색 URL에 `sort=POPULAR` 파라미터가 통한다는 건 다른 탭(시리즈 검색 `sort=POPULAR`)에서 우연히 발견 — post 검색에도 동일하게 작동
 - "1.9만"처럼 한국어 만/천 접미사가 붙은 숫자 파싱을 위해 `parseKrCount(raw)` 헬퍼 추가 — 다른 스크레이퍼에서도 재사용 가능
 - Chrome MCP의 `Control_Chrome`은 권한 이슈로 실행 실패 → `Claude_in_Chrome` MCP로 우회 (둘 다 설치돼있었음)
+- **세 가지 race condition 다 같은 패턴**: 캐시(혹은 비어있는 로컬) 상태에서 자동 실행 → Firestore에 잘못된 빈/중복 데이터 저장 → 새로고침마다 빈 상태 반복. 해결책 공통: "데이터가 정말 비었나 vs 아직 로드 안 됐나"를 휴리스틱으로 구분, 의심되면 SKIP. 5/17 `b2effc7`(cleanupDuplicateWorkEvents), 5/24 `c0ad52d`(_autoMatrixGuard), 5/24 `69af9cf`(syncCalToMatrix) — 같은 종류의 버그를 세 군데에서 잡아냄
 
 ---
 
