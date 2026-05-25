@@ -13626,6 +13626,26 @@
   function syncCalToMatrix(targetYear) {
     var year = targetYear || _matrixYear;
     var yrStr = String(year);
+
+    // ★ 안전장치 (2026-05-24): plannerData가 미로드 상태일 때 eps 자동 클리어 방지
+    //   원인: 이 함수의 마지막 루프(13680+)가 "monthEps에 없는 월의 eps를 전부 클리어"
+    //   → plannerData가 아직 Firestore에서 fetch되기 전 호출되면 모든 eps가 클리어되고
+    //     Firestore에 빈 series가 저장됨 → 새로고침 시마다 빈 상태 반복
+    //   판정: (a) plannerData가 아예 비어있거나
+    //         (b) publishing 이벤트가 0개인데 confirmed 작품이 있음 = 비정상
+    var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
+    var allPublishing = pData.filter(function(r) {
+      return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0;
+    }).length;
+    var hasConfirmedWorks = (typeof _works !== 'undefined' && (_works||[]).some(function(w){
+      return w.status === 'confirmed' && w.publish_start && w.publish_end;
+    }));
+    if (pData.length === 0 || (allPublishing === 0 && hasConfirmedWorks)) {
+      console.warn('[syncCalToMatrix] SKIP — plannerData 미로드 의심 (length=' + pData.length +
+        ', publishing=' + allPublishing + ', confirmedWorks=' + hasConfirmedWorks + ', year=' + year + ')');
+      return;
+    }
+
     var series = getSeriesData(year);
     var evts = getCalEvents();
     series.forEach(function(s) {
