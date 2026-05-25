@@ -70,14 +70,16 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=117" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=105" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=105" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=111" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=111" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=111" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=111" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=112" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=118" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=118" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=118" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=118" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=118" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=118" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=118" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=118" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=118" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=118" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -375,6 +377,352 @@
     }
     .cal-skel.cal-skel-day { width: 16px; height: 12px; }
     .cal-skel.cal-skel-event { width: 70%; height: 14px; border-radius: 6px; }
+
+    /* ════════════════════════════════════════════════════════════════════
+       NOMAD MASTER — Stitch "Modern Atelier" 디자인 시스템
+       모든 룰은 .nomad-page 안에서만 적용 (기존 페이지와 격리)
+       Source: stitch_modern_atelier_ui_redesign/DESIGN.md
+    ════════════════════════════════════════════════════════════════════ */
+
+    /* CSS 변수 (Nomad scope) */
+    .nomad-page {
+      --nm-primary: #7C3AED;
+      --nm-primary-dark: #630ed4;
+      --nm-primary-soft: #F5F3FF;
+      --nm-primary-fixed: #eaddff;
+      --nm-deep-indigo: #312E81;
+      --nm-soft-accent: #4F46E5;
+      --nm-secondary: #5654a8;
+      --nm-tertiary: #7d3d00;
+      --nm-surface: #f8f9ff;
+      --nm-surface-container: #e6eeff;
+      --nm-surface-container-low: #eff4ff;
+      --nm-surface-container-high: #dee9fc;
+      --nm-on-surface: #121c2a;
+      --nm-on-surface-variant: #4a4455;
+      --nm-outline: #7b7487;
+      --nm-outline-variant: #ccc3d8;
+      --nm-text: #1F2937;
+      --nm-text-2: #4a4455;
+      --nm-text-3: #7b7487;
+      --nm-bg: #FFFFFF;
+      --nm-card-bg: #FFFFFF;
+      --nm-shadow-card: 0px 4px 20px rgba(31, 41, 55, 0.04);
+      --nm-shadow-hover: 0px 10px 32px rgba(31, 41, 55, 0.08);
+      --nm-radius-sm: 0.25rem;
+      --nm-radius-md: 0.5rem;
+      --nm-radius-lg: 0.75rem;
+      --nm-radius-full: 9999px;
+      background: var(--nm-bg);
+      font-family: 'Inter', 'Pretendard', sans-serif;
+      color: var(--nm-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 컨테이너 */
+    .nomad-page .nm-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 48px 64px;
+    }
+
+    /* 타이포그래피 */
+    .nomad-page .nm-headline-lg {
+      font-family: 'Manrope', sans-serif;
+      font-size: 32px;
+      line-height: 40px;
+      letter-spacing: -0.01em;
+      font-weight: 700;
+      color: var(--nm-deep-indigo);
+    }
+    .nomad-page .nm-headline-md {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: var(--nm-on-surface);
+    }
+    .nomad-page .nm-display-lg {
+      font-family: 'Manrope', sans-serif;
+      font-size: 48px;
+      line-height: 56px;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      color: var(--nm-deep-indigo);
+    }
+    .nomad-page .nm-body-lg { font-size: 18px; line-height: 28px; font-weight: 400; color: var(--nm-text-2); }
+    .nomad-page .nm-body-md { font-size: 16px; line-height: 24px; font-weight: 400; color: var(--nm-text-2); }
+    .nomad-page .nm-label-md { font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: 0.01em; color: var(--nm-text-2); }
+    .nomad-page .nm-label-sm {
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--nm-text-3);
+      text-transform: uppercase;
+    }
+
+    /* Page Header */
+    .nomad-page .nm-page-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-page-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nm-primary);
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-page-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 36px;
+      line-height: 44px;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-page-sub {
+      font-size: 16px;
+      color: var(--nm-on-surface-variant);
+    }
+
+    /* Card (Bento style) */
+    .nomad-page .nm-card {
+      background: var(--nm-card-bg);
+      border-radius: var(--nm-radius-md);
+      padding: 32px;
+      box-shadow: var(--nm-shadow-card);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nomad-page .nm-card.nm-card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--nm-shadow-hover);
+    }
+    .nomad-page .nm-card-sm { padding: 24px; }
+    .nomad-page .nm-card-lg { padding: 40px; }
+
+    /* Card with left accent (Bento) */
+    .nomad-page .nm-bento {
+      background: #fff;
+      border-radius: var(--nm-radius-md);
+      padding: 24px;
+      box-shadow: var(--nm-shadow-card);
+      border-left: 4px solid var(--nm-primary);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nomad-page .nm-bento:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--nm-shadow-hover);
+    }
+    .nomad-page .nm-bento.accent-accent  { border-left-color: var(--nm-soft-accent); }
+    .nomad-page .nm-bento.accent-secondary { border-left-color: var(--nm-secondary); }
+    .nomad-page .nm-bento.accent-tertiary  { border-left-color: #a15100; }
+    .nomad-page .nm-bento.accent-primary   { border-left-color: var(--nm-primary); }
+
+    /* Pills / Chips */
+    .nomad-page .nm-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: var(--nm-radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--nm-primary-soft);
+      color: var(--nm-primary);
+      letter-spacing: 0.02em;
+    }
+    .nomad-page .nm-pill-soft  { background: var(--nm-surface-container-low); color: var(--nm-on-surface-variant); }
+    .nomad-page .nm-pill-warn  { background: #fff7ed; color: #c2410c; }
+    .nomad-page .nm-pill-good  { background: #ecfdf5; color: #15803d; }
+    .nomad-page .nm-pill-error { background: #fef2f2; color: #b91c1c; }
+
+    /* Buttons */
+    .nomad-page .nm-btn-primary {
+      background: var(--nm-primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--nm-radius-full);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .nomad-page .nm-btn-primary:hover { opacity: 0.9; }
+    .nomad-page .nm-btn-primary:active { transform: scale(0.97); }
+    .nomad-page .nm-btn-ghost {
+      background: transparent;
+      color: var(--nm-text);
+      padding: 10px 20px;
+      border-radius: var(--nm-radius-full);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nomad-page .nm-btn-ghost:hover { background: var(--nm-primary-soft); }
+
+    /* Tables */
+    .nomad-page .nm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .nomad-page .nm-table thead th {
+      background: var(--nm-primary-soft);
+      color: var(--nm-on-surface-variant);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--nm-outline-variant);
+    }
+    .nomad-page .nm-table tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--nm-text);
+    }
+    .nomad-page .nm-table tbody tr:hover { background: var(--nm-surface-container-low); }
+    .nomad-page .nm-table .nm-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+    /* Lists */
+    .nomad-page .nm-list { list-style: none; padding: 0; margin: 0; }
+    .nomad-page .nm-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+      color: var(--nm-text);
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .nomad-page .nm-list li:last-child { border-bottom: none; }
+    .nomad-page .nm-list-bullet li {
+      padding-left: 20px;
+      position: relative;
+      border-bottom: none;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    .nomad-page .nm-list-bullet li::before {
+      content: '•';
+      position: absolute;
+      left: 4px;
+      color: var(--nm-primary);
+      font-weight: 700;
+    }
+
+    /* Checkbox list (체크리스트) */
+    .nomad-page .nm-checklist { list-style: none; padding: 0; margin: 0; }
+    .nomad-page .nm-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      cursor: pointer;
+      color: var(--nm-text);
+      font-size: 14px;
+      line-height: 22px;
+      border-bottom: 1px solid #f8fafc;
+      transition: opacity 0.15s;
+    }
+    .nomad-page .nm-checklist li:last-child { border-bottom: none; }
+    .nomad-page .nm-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--nm-outline-variant);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .nomad-page .nm-checklist li.is-checked .nm-checkbox {
+      background: var(--nm-primary);
+      border-color: var(--nm-primary);
+    }
+    .nomad-page .nm-checklist li.is-checked .nm-checkbox::after {
+      content: '';
+      width: 5px;
+      height: 9px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+    .nomad-page .nm-checklist li.is-checked {
+      color: var(--nm-text-3);
+      text-decoration: line-through;
+    }
+    .nomad-page .nm-checklist li:hover:not(.is-checked) .nm-checkbox {
+      border-color: var(--nm-primary);
+    }
+
+    /* Grid utilities */
+    .nomad-page .nm-grid { display: grid; gap: 24px; }
+    .nomad-page .nm-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .nomad-page .nm-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .nomad-page .nm-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .nomad-page .nm-grid-2-1 { grid-template-columns: 2fr 1fr; }
+
+    /* Section */
+    .nomad-page .nm-section { margin-bottom: 48px; }
+    .nomad-page .nm-section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    /* Material icons inside nomad */
+    .nomad-page .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* Quote / Highlight box */
+    .nomad-page .nm-quote {
+      background: var(--nm-primary-soft);
+      padding: 16px 20px;
+      border-radius: var(--nm-radius-md);
+      color: var(--nm-on-surface-variant);
+      font-style: italic;
+      font-size: 14px;
+      line-height: 22px;
+      margin: 16px 0;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 768px) {
+      .nomad-page .nm-container { padding: 24px 16px; }
+      .nomad-page .nm-page-title { font-size: 26px; line-height: 32px; }
+      .nomad-page .nm-display-lg { font-size: 36px; line-height: 44px; }
+      .nomad-page .nm-headline-lg { font-size: 24px; line-height: 32px; }
+      .nomad-page .nm-grid-2,
+      .nomad-page .nm-grid-3,
+      .nomad-page .nm-grid-4,
+      .nomad-page .nm-grid-2-1 { grid-template-columns: 1fr; }
+      .nomad-page .nm-card { padding: 20px; }
+      .nomad-page .nm-card-lg { padding: 24px; }
+      .nomad-page .nm-bento { padding: 18px; }
+      .nomad-page .nm-table { font-size: 13px; }
+      .nomad-page .nm-table thead th,
+      .nomad-page .nm-table tbody td { padding: 10px 8px; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       NOMAD MASTER 디자인 시스템 끝
+    ════════════════════════════════════════════════════════════════════ */
 
     /* ===== SIDEBAR TOGGLE ===== */
     #sidebar.sidebar-collapsed { transform: translateX(-100%); }
@@ -6376,7 +6724,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=117" defer></script>
+<script src="js/app-1-pages.js?v=118" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -7148,19 +7496,23 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=105" defer></script>
+<script src="js/app-2-init.js?v=118" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=105" defer></script>
-<script src="js/roadmap-data.js?v=111" defer></script>
-<script src="js/daily-actions.js?v=111" defer></script>
-<script src="js/daily-guides.js?v=111" defer></script>
-<script src="js/app-4-roadmap.js?v=111" defer></script>
-<script src="js/app-5-ledger-export.js?v=112" defer></script>
-<script src="js/app-6-postype-analytics.js?v=7" defer></script>
+<script src="js/app-3-flatpickr.js?v=118" defer></script>
+<script src="js/roadmap-data.js?v=118" defer></script>
+<script src="js/daily-actions.js?v=118" defer></script>
+<script src="js/daily-guides.js?v=118" defer></script>
+<script src="js/app-4-roadmap.js?v=118" defer></script>
+<script src="js/app-5-ledger-export.js?v=118" defer></script>
+<script src="js/app-6-postype-analytics.js?v=118" defer></script>
+
+<!-- Nomad Master 모듈 (데이터 + 페이지 렌더링) -->
+<script src="js/nomad-data.js?v=118" defer></script>
+<script src="js/nomad-pages.js?v=118" defer></script>
 
 </body>
 </html>
