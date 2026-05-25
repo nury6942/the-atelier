@@ -293,6 +293,240 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-overview', renderOverview);
 
+  // ──────── 12-Month Voyage 페이지 ────────
+  function visaPillClass(visa) {
+    // 비자 종류에 따라 pill 색 결정
+    if (visa.indexOf('워홀') >= 0) return 'background:#ffe0cd;color:#713700'; // tertiary
+    if (visa.indexOf('셰겐') >= 0) return 'background:#eaddff;color:#5a00c6'; // primary-fixed
+    if (visa === 'ETA' || visa === 'ESTA' || visa === 'eTA' || visa === 'NZeTA') return 'background:#dee9fc;color:#27313f'; // surface-container-high
+    return 'background:#f1f5f9;color:#475569';
+  }
+
+  function renderVoyage() {
+    var voyage = DATA.VOYAGE;
+    var totalBudget = voyage.reduce(function(a,b){ return a + b.cost; }, 0);
+    var oneoff = DATA.BUDGET_ONEOFF;
+    var grandTotal = totalBudget + oneoff.flights + oneoff.visa + oneoff.insurance + oneoff.misc;
+    // 셰겐 일수 합산 (숫자만)
+    var schengenDays = voyage.reduce(function(a, v) {
+      var m = (v.schengen||'').match(/(\d+)/);
+      return a + (m ? parseInt(m[1]) : 0);
+    }, 0);
+
+    var html = '';
+    html += pageHeader('Global Expedition Plan', '12-Month Voyage',
+      '6개 대륙 · 17개 도시 · 셰겐 84/90일 한도 안');
+
+    // 헤더 통계 카드 2개
+    html += '<section class="nm-section">';
+    html += '<div class="nm-grid nm-grid-2" style="margin-bottom:32px">';
+    html += '<div style="background:var(--nm-primary-soft);padding:24px;border-radius:12px">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">총 예산 (1년)</p>' +
+      '<p style="font-family:Manrope;font-size:28px;font-weight:700;color:var(--nm-deep-indigo)">' + fmtMan(grandTotal) + '</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">월별 ' + fmtMan(totalBudget) + ' + 일회성 ' + fmtMan(grandTotal - totalBudget) + '</p>' +
+    '</div>';
+    html += '<div style="background:var(--nm-surface-container-high);padding:24px;border-radius:12px">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">셰겐 일수 (90일 한도)</p>' +
+      '<p style="font-family:Manrope;font-size:28px;font-weight:700;color:' + (schengenDays > 90 ? '#b91c1c' : 'var(--nm-tertiary)') + '">' + schengenDays + ' / 90</p>' +
+      '<div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden">' +
+        '<div style="height:100%;width:' + Math.min(100, (schengenDays/90)*100) + '%;background:' + (schengenDays > 90 ? '#b91c1c' : 'var(--nm-tertiary)') + '"></div>' +
+      '</div>' +
+    '</div>';
+    html += '</div>';
+
+    // Voyage 테이블
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<table class="nm-table">';
+    html += '<thead><tr>' +
+      '<th style="width:90px">시기</th>' +
+      '<th>도시</th>' +
+      '<th>상세</th>' +
+      '<th>비자 / 셰겐</th>' +
+      '<th class="nm-num">예산</th>' +
+      '<th>모드</th>' +
+    '</tr></thead>';
+    html += '<tbody>';
+    voyage.forEach(function(v) {
+      var schengenPill = (v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외')
+        ? '<span class="nm-pill" style="margin-left:4px;background:#fff7ed;color:#c2410c">' + v.schengen + '</span>'
+        : '';
+      var yearLabel = v.year === 2028 ? '' : '\'29 ';
+      html += '<tr>' +
+        '<td><strong style="color:var(--nm-primary);font-size:13px">' + yearLabel + v.month + '</strong></td>' +
+        '<td>' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<span style="width:6px;height:6px;border-radius:50%;background:var(--nm-soft-accent)"></span>' +
+            '<div>' +
+              '<div style="font-family:Manrope;font-weight:600;color:var(--nm-on-surface);font-size:14px">' + v.city + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</td>' +
+        '<td style="font-size:12px;color:var(--nm-text-2);max-width:280px">' + v.detail + '</td>' +
+        '<td>' +
+          '<span class="nm-pill" style="' + visaPillClass(v.visa) + '">' + v.visa + '</span>' +
+          schengenPill +
+        '</td>' +
+        '<td class="nm-num"><strong>₩' + v.cost + '만</strong></td>' +
+        '<td style="font-size:12px;color:var(--nm-text-3)">' + v.mode + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // ────── 2-col: 마일리지 활용 + 엄마 합류 후보 ──────
+    html += '<div class="nm-grid nm-grid-2">';
+
+    // 마일리지 활용
+    html += '<div class="nm-card">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
+        '<h3 class="nm-headline-md">마일리지 활용</h3>' +
+      '</div>' +
+      '<ul class="nm-list-bullet">' +
+        '<li>인천 → 리스본 (출국, 대한항공 마일리지)</li>' +
+        '<li>핼리팩스 → 인천 (귀국, 마일리지)</li>' +
+        '<li>유럽 안 = 라이언에어 · 이지젯 €30-80</li>' +
+        '<li>대륙 간 = 두바이 경유 (말타 → 호바트)</li>' +
+      '</ul>' +
+    '</div>';
+
+    // 엄마 합류 후보
+    html += '<div class="nm-card">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">family_restroom</span>' +
+        '<h3 class="nm-headline-md">엄마 합류 후보</h3>' +
+      '</div>' +
+      '<ul class="nm-list-bullet">' +
+        '<li><strong>2028.9</strong> 스칸디나비아 (북유럽 안전·깨끗)</li>' +
+        '<li><strong>2028.12</strong> 호바트 (호주 여름)</li>' +
+        '<li><strong>2029.3</strong> 뉴질랜드 (자연)</li>' +
+      '</ul>' +
+      '<div class="nm-quote" style="margin-top:16px;font-size:12px">' +
+        '1969년생 · 현행 정년 시 2029 / 65세 법안 통과 시 2033년 퇴직' +
+      '</div>' +
+    '</div>';
+
+    html += '</div>';
+
+    return html;
+  }
+  registerPage('nomad-voyage', renderVoyage);
+
+  // ──────── Budget 페이지 ────────
+  function renderBudget() {
+    var budget = DATA.BUDGET;
+    var oneoff = DATA.BUDGET_ONEOFF;
+    var stayTotal = budget.reduce(function(a,b){ return a + b.stay; }, 0);
+    var lifeTotal = budget.reduce(function(a,b){ return a + b.life; }, 0);
+    var monthlyTotal = budget.reduce(function(a,b){ return a + b.total; }, 0);
+    var oneoffTotal = oneoff.flights + oneoff.visa + oneoff.insurance + oneoff.misc;
+    var grandTotal = monthlyTotal + oneoffTotal;
+    var avgMonth = Math.round(monthlyTotal / 12);
+
+    var html = '';
+    html += pageHeader('Budget', '1년 예산 · 월별 상세',
+      '단위 만 원 · 1만 원 단위 반올림 · 총 ' + fmtMan(grandTotal));
+
+    // 요약 metric cards (4개)
+    html += '<div class="nm-grid nm-grid-4" style="margin-bottom:32px">';
+    html += '<div class="nm-bento accent-primary">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">월별 합계</p>' +
+      '<h4 class="nm-headline-lg">' + fmtMan(monthlyTotal) + '</h4>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:8px">평균 월 ' + fmtMan(avgMonth) + '</p>' +
+    '</div>';
+    html += '<div class="nm-bento accent-secondary">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">숙소 비중</p>' +
+      '<h4 class="nm-headline-lg">' + fmtMan(stayTotal) + '</h4>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:8px">' + Math.round((stayTotal/monthlyTotal)*100) + '% of 월별</p>' +
+    '</div>';
+    html += '<div class="nm-bento accent-tertiary">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">생활비</p>' +
+      '<h4 class="nm-headline-lg">' + fmtMan(lifeTotal) + '</h4>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:8px">' + Math.round((lifeTotal/monthlyTotal)*100) + '% of 월별</p>' +
+    '</div>';
+    html += '<div class="nm-bento accent-accent">' +
+      '<p class="nm-label-sm" style="margin-bottom:8px">일회성 합계</p>' +
+      '<h4 class="nm-headline-lg">' + fmtMan(oneoffTotal) + '</h4>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:8px">항공·비자·보험·예비</p>' +
+    '</div>';
+    html += '</div>';
+
+    // 월별 예산 테이블
+    html += '<section class="nm-section">';
+    html += '<div class="nm-section-head">' +
+      '<h3 class="nm-headline-md">월별 예산</h3>' +
+      '<span class="nm-label-sm" style="color:var(--nm-text-3)">12개월</span>' +
+    '</div>';
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<table class="nm-table">';
+    html += '<thead><tr>' +
+      '<th style="width:100px">시기</th>' +
+      '<th>도시</th>' +
+      '<th class="nm-num">숙소</th>' +
+      '<th class="nm-num">생활비</th>' +
+      '<th class="nm-num">합계</th>' +
+    '</tr></thead>';
+    html += '<tbody>';
+    budget.forEach(function(b) {
+      var isOverAvg = b.total > avgMonth;
+      html += '<tr>' +
+        '<td><strong style="color:var(--nm-primary);font-size:13px">' + b.period + '</strong></td>' +
+        '<td style="font-family:Manrope;font-weight:600;color:var(--nm-on-surface)">' + b.city + '</td>' +
+        '<td class="nm-num" style="color:var(--nm-text-2)">' + b.stay + '</td>' +
+        '<td class="nm-num" style="color:var(--nm-text-2)">' + b.life + '</td>' +
+        '<td class="nm-num"><strong style="color:' + (isOverAvg ? '#c2410c' : 'var(--nm-on-surface)') + '">' + b.total + '</strong></td>' +
+      '</tr>';
+    });
+    // 합계 행
+    html += '<tr style="background:var(--nm-primary-soft);font-weight:700">' +
+      '<td colspan="2" style="color:var(--nm-deep-indigo);font-family:Manrope">월별 합계</td>' +
+      '<td class="nm-num" style="color:var(--nm-deep-indigo)">' + stayTotal + '</td>' +
+      '<td class="nm-num" style="color:var(--nm-deep-indigo)">' + lifeTotal + '</td>' +
+      '<td class="nm-num" style="color:var(--nm-primary)"><strong>' + monthlyTotal + '</strong></td>' +
+    '</tr>';
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // 일회성 비용 카드
+    html += '<section class="nm-section">';
+    html += '<div class="nm-section-head">' +
+      '<h3 class="nm-headline-md">일회성 비용</h3>' +
+      '<span class="nm-label-sm" style="color:var(--nm-text-3)">출국 전 · 1회 결제</span>' +
+    '</div>';
+    html += '<div class="nm-grid nm-grid-4">';
+    var oneoffItems = [
+      { label: '항공권', icon: 'flight', value: oneoff.flights, note: '인천↔리스본·핼리팩스·대륙 간', accent: 'accent' },
+      { label: '비자',   icon: 'badge',  value: oneoff.visa,    note: '워홀 + ETA·ESTA·eTA·NZeTA',  accent: 'secondary' },
+      { label: '보험',   icon: 'health_and_safety', value: oneoff.insurance, note: '장기 여행자보험 1년', accent: 'tertiary' },
+      { label: '예비비', icon: 'savings', value: oneoff.misc,    note: '짐·기기·예비 (소비성 X)',     accent: 'primary' },
+    ];
+    oneoffItems.forEach(function(o) {
+      html += '<div class="nm-bento accent-' + o.accent + '">' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">' +
+          '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">' + o.icon + '</span>' +
+          '<p class="nm-label-sm" style="margin:0">' + o.label + '</p>' +
+        '</div>' +
+        '<h4 class="nm-headline-md">' + fmtMan(o.value) + '</h4>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);margin-top:8px">' + o.note + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</section>';
+
+    // Grand Total
+    html += '<div class="nm-card" style="background:linear-gradient(135deg,var(--nm-primary-soft),var(--nm-surface-container-low));text-align:center;padding:40px">';
+    html += '<p class="nm-label-sm" style="margin-bottom:12px">1년 노마드 총 예산</p>';
+    html += '<h2 class="nm-display-lg" style="margin-bottom:8px">' + fmtMan(grandTotal) + '</h2>';
+    html += '<p style="font-size:13px;color:var(--nm-text-2)">월별 ' + fmtMan(monthlyTotal) + ' + 일회성 ' + fmtMan(oneoffTotal) + '</p>';
+    html += '<p style="font-size:11px;color:var(--nm-text-3);margin-top:12px">예비비 제외 소비성: ' + fmtMan(grandTotal - oneoff.misc) + '</p>';
+    html += '</div>';
+
+    return html;
+  }
+  registerPage('nomad-budget', renderBudget);
+
   // ──────── Sub-sidebar 빌더 ────────
   // NAV → 페이지 내부 좌측 sub-nav HTML
   function buildSubSidebar() {
