@@ -527,6 +527,389 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-budget', renderBudget);
 
+  // ──────── 공통 헬퍼 ────────
+  function trackCard(rows, headers) {
+    var html = '<table class="nm-table"><thead><tr>';
+    headers.forEach(function(h) { html += '<th' + (h.right ? ' class="nm-num"' : '') + '>' + h.label + '</th>'; });
+    html += '</tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr>';
+      r.forEach(function(cell, i) {
+        var isNum = headers[i] && headers[i].right;
+        html += '<td' + (isNum ? ' class="nm-num"' : '') + '>' + cell + '</td>';
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+  }
+
+  // ──────── IP · Webnovel Track 페이지 ────────
+  function renderIPTrack() {
+    var html = '';
+    html += pageHeader('IP · Webnovel Track', '수익 트랙 · 자산 트랙',
+      '메인 게이트 카운트 + 서브 장기 자산');
+
+    // 메인 트랙
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">menu_book</span>' +
+      '<h3 class="nm-headline-md">메인 트랙 · 포스타입 웹소</h3>' +
+      '<span class="nm-pill" style="margin-left:auto">High Priority</span>' +
+    '</div>';
+    html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:12px">B시리즈 중심 (게이트 카운트)</h4>';
+    html += trackCard([
+      ['<strong>2026.5</strong> <span style="color:var(--nm-text-3);font-size:11px">(현재)</span>', '₩200-250만', '<span style="color:var(--nm-text-3);font-size:12px">—</span>'],
+      ['<strong>2027.12</strong> <span style="color:var(--nm-primary);font-size:11px">(게이트)</span>', '<strong style="color:var(--nm-primary)">₩450만</strong>', '<span class="nm-pill" style="font-size:10px">출국 조건</span>'],
+      ['<strong>2027.12</strong> <span style="color:#15803d;font-size:11px">(욕심)</span>', '<strong style="color:#15803d">₩700-800만</strong>', '<span class="nm-pill nm-pill-good" style="font-size:10px">저축 가능</span>'],
+    ], [{label:'시점'}, {label:'월 수익', right:true}, {label:'비고'}]);
+    html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-top:24px;margin-bottom:8px">확장 전략</h4>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li>B시리즈 월 8편+ 페이스</li>' +
+      '<li>2번째 작품 가동 (2026 후반 또는 2027)</li>' +
+      '<li>메이저 웹소 플랫폼 진입 검토 (2027)</li>' +
+    '</ul>';
+    html += '</div>';
+    html += '</section>';
+
+    // 서브 트랙
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-secondary)">analytics</span>' +
+      '<h3 class="nm-headline-md">서브 트랙 · 분석가 N IP</h3>' +
+      '<span class="nm-pill nm-pill-soft" style="margin-left:auto;background:#a7a5ff;color:#393689">Stable</span>' +
+    '</div>';
+    html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:12px">메일리 + 디지털 제품 + 코칭 <span style="font-weight:400;color:var(--nm-text-3);font-size:13px">(게이트 외, 장기 자산)</span></h4>';
+    html += trackCard([
+      ['<strong>1 · Foundation</strong>', '2026.5-6', '필명·도메인·메일리·사이트 1차'],
+      ['<strong>2 · Build</strong>',      '2026.7-8', '콘텐츠 5편 + 도구 MVP'],
+      ['<strong>3 · Protect</strong>',    '2026.9',   '정서 자원 보호'],
+      ['<strong>4 · Launch</strong>',     '2026.10',  '뉴스레터 정식 시작'],
+      ['<strong>5 · Settle</strong>',     '2026.11-12','구독자 100-300명'],
+      ['<strong>6 · Expand</strong>',     '2027.1-3', '사연 받기 + 첫 디지털 제품'],
+      ['<strong>7 · Monetize</strong>',   '2027.4-6', '유료 멤버십 + 1:1 분석'],
+    ], [{label:'Phase'}, {label:'시기'}, {label:'목표'}]);
+    html += '<div class="nm-quote" style="margin-top:16px">예상 기여 (2027.12 시점): <strong>월 ₩100-300만</strong></div>';
+    html += '</div>';
+    html += '</section>';
+
+    // 노마드 동안 운영
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
+      '<h3 class="nm-headline-md">노마드 동안 운영</h3>' +
+    '</div>';
+    html += '<div class="nm-grid nm-grid-3" style="gap:16px">';
+
+    html += '<div style="background:var(--nm-primary-soft);padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-primary);margin-bottom:10px">메인 (웹소)</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>평일 오전 4시간 = 글 작업 (블록 사수)</li>' +
+        '<li>주 2-3편 발행 페이스</li>' +
+        '<li>출국 전 3개월치 콘텐츠 비축</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#e6eeff;padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-secondary);margin-bottom:10px">서브 (IP)</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>평일 1일 = 코딩 데이 (수요일 풀데이)</li>' +
+        '<li>메일리 격주 발행</li>' +
+        '<li>사연 응답 + 1:1 분석 월 2-4건</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#fff7ed;padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:#c2410c;margin-bottom:10px">해외 취업 정찰</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>영문 포트폴리오 + 면접</li>' +
+        '<li>패션 (니트) + 1인 IP 운영자 양쪽 열어둠</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    return html;
+  }
+  registerPage('nomad-ip', renderIPTrack);
+
+  // ──────── Stay Channels 페이지 ────────
+  function renderChannels() {
+    var html = '';
+    html += pageHeader('Stay Channels', '도시별 숙소 채널',
+      'Flatio · Stayz · Furnished Finder · 로컬 · 부엌 + Wi-Fi + 안전 동네 필수');
+
+    // 유럽 채널
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">public</span>' +
+      '<h3 class="nm-headline-md">유럽 6개월 · Flatio 메인</h3>' +
+      '<span class="nm-pill" style="margin-left:auto;background:#eaddff;color:#5a00c6">' + DATA.CHANNELS_EU.length + '개 도시</span>' +
+    '</div>';
+    html += '<table class="nm-table">';
+    html += '<thead><tr><th>도시</th><th>1순위</th><th>2순위</th><th>비고</th></tr></thead><tbody>';
+    DATA.CHANNELS_EU.forEach(function(c) {
+      html += '<tr>' +
+        '<td><strong>' + c.city + '</strong></td>' +
+        '<td><span class="nm-pill">' + c.first + '</span></td>' +
+        '<td style="font-size:13px;color:var(--nm-text-2)">' + c.second + '</td>' +
+        '<td style="font-size:12px;color:var(--nm-text-3)">' + c.note + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // 글로벌 채널
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">public</span>' +
+      '<h3 class="nm-headline-md">호주 · NZ · 미주 6개월 · 로컬 + Furnished Finder</h3>' +
+      '<span class="nm-pill" style="margin-left:auto;background:#eaddff;color:#5a00c6">' + DATA.CHANNELS_GLOBAL.length + '개 도시</span>' +
+    '</div>';
+    html += '<table class="nm-table">';
+    html += '<thead><tr><th>도시</th><th>1순위</th><th>2순위</th><th>비고</th></tr></thead><tbody>';
+    DATA.CHANNELS_GLOBAL.forEach(function(c) {
+      html += '<tr>' +
+        '<td><strong>' + c.city + '</strong></td>' +
+        '<td><span class="nm-pill">' + c.first + '</span></td>' +
+        '<td style="font-size:13px;color:var(--nm-text-2)">' + c.second + '</td>' +
+        '<td style="font-size:12px;color:var(--nm-text-3)">' + c.note + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // 검색·예약 타임라인
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
+      '<h3 class="nm-headline-md">검색 · 예약 타임라인</h3>' +
+    '</div>';
+    var timeline = [
+      { when: '2027.12부터', sub: '출국 6개월 전', text: 'Flatio · Stayz · Furnished Finder 가입 + 검색 시작, 가격 추적' },
+      { when: '2028.3',      sub: '3개월 전',     text: '6-8월 숙소 확정 예약 (포르투갈·아일랜드·덴마크)' },
+      { when: '2028.4',      sub: '2개월 전',     text: '9-11월 숙소 확정 예약 (스칸디나비아·아이슬란드·말타)' },
+      { when: '출국 후',     sub: '노마드 중',    text: '12월 이후 = 5-6주 전 예약 (유연하게)' },
+    ];
+    html += '<div style="display:flex;flex-direction:column;gap:12px">';
+    timeline.forEach(function(t) {
+      html += '<div style="display:flex;gap:16px;padding:14px;background:var(--nm-surface-container-low);border-radius:8px">' +
+        '<div style="min-width:120px">' +
+          '<div style="font-family:Manrope;font-weight:700;color:var(--nm-primary)">' + t.when + '</div>' +
+          '<div style="font-size:11px;color:var(--nm-text-3)">' + t.sub + '</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:var(--nm-text-2);line-height:1.6">' + t.text + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    // 숙소 기준
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">checklist</span>' +
+      '<h3 class="nm-headline-md">숙소 기준 (누리 라인)</h3>' +
+    '</div>';
+    html += '<div class="nm-grid nm-grid-3">';
+
+    html += '<div style="background:#ecfdf5;padding:18px;border-radius:8px;border-left:3px solid #15803d">' +
+      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#15803d;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">필수</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>개인실 (1베드룸 또는 스튜디오)</li>' +
+        '<li>부엌 (집밥 위주)</li>' +
+        '<li>Wi-Fi 50Mbps+</li>' +
+        '<li>안전 동네</li>' +
+        '<li>평점 4.5+</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#fffbeb;padding:18px;border-radius:8px;border-left:3px solid #c2410c">' +
+      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#c2410c;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">양보 가능</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>신축 → 적당 노후 (5-15년)</li>' +
+        '<li>시내 중심 → 외곽 (대중교통 15분)</li>' +
+        '<li>럭셔리 → 깨끗한 기본</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#fef2f2;padding:18px;border-radius:8px;border-left:3px solid #b91c1c">' +
+      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#b91c1c;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">NO</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>호스텔 도미토리</li>' +
+        '<li>위험 동네</li>' +
+        '<li>부엌 X</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    return html;
+  }
+  registerPage('nomad-channels', renderChannels);
+
+  // ──────── Operating Principles 페이지 ────────
+  function renderPrinciples() {
+    var html = '';
+    html += pageHeader('Operating Principles', '노마드 운영 원칙',
+      '거점 + 위성 · 일 70 / 관광 30 · 회복 인정');
+
+    // 거점 + 위성
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">hub</span>' +
+      '<h3 class="nm-headline-md">거점 + 위성 모델</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li>한 도시 최소 <strong>2-4주 거점</strong></li>' +
+      '<li>거점 안에서 <strong>1-3박 위성 여행</strong></li>' +
+      '<li>매일 옮겨다니지 않음 — 이동 = 회복일</li>' +
+    '</ul>';
+    html += '</div>';
+    html += '</section>';
+
+    // 시간 구조
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
+      '<h3 class="nm-headline-md">시간 구조 · 일 70 / 관광 30</h3>' +
+    '</div>';
+    html += '<div class="nm-grid nm-grid-3">';
+
+    html += '<div style="background:var(--nm-primary-soft);padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-primary);margin-bottom:10px">평일 (월-금)</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>오전 9-13시 · <strong>글 작업</strong> (4시간 블록, 절대 사수)</li>' +
+        '<li>점심</li>' +
+        '<li>오후 14-17시 · 현지 체험 / 카페 / 박물관 / 사람 만남</li>' +
+        '<li>저녁 · 운동 + 휴식</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#e6eeff;padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-secondary);margin-bottom:10px">코딩 풀데이 (주 1일, 보통 수요일)</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>오전·오후 <strong>8시간 코딩</strong></li>' +
+        '<li>IP 도구 + 디지털 제품 개발</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div style="background:#fff7ed;padding:18px;border-radius:8px">' +
+      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:#c2410c;margin-bottom:10px">주말</h4>' +
+      '<ul class="nm-list-bullet" style="font-size:13px">' +
+        '<li>토 · 위성 여행 또는 깊은 휴식</li>' +
+        '<li>일 · 휴식 + 다음 주 계획</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    // 도시별 일 비중
+    var workRatio = [
+      ['6월 포르투', '적응 + 글 풀가동', 70],
+      ['7월 아일랜드', '글 + 위성', 60],
+      ['8월 덴마크·노르웨이', '이동 많음', 40], // 30-50 평균
+      ['9월 스웨덴', '글 풀가동', 70],
+      ['9-10월 핀란드', '글 + 디자인 영감', 60],
+      ['10월 아이슬란드', '거의 휴가', 20],
+      ['10-11월 포르투갈', '휴식 + 글 보충', 60],
+      ['11월 말타', '글 + 해변', 60],
+      ['12월 호바트', '글 + 자연', 70],
+      ['1월 애들레이드', '글 + 예술', 70],
+      ['2월 멜버른', '글 풀가동', 75],
+      ['3월 뉴질랜드', '글 + 자연', 60],
+      ['4월 샌디에이고', '글 + 미국 경험', 60],
+      ['5월 핼리팩스', '글 + 마무리', 70],
+    ];
+    var avgRatio = Math.round(workRatio.reduce(function(a,r){return a+r[2];}, 0) / workRatio.length);
+
+    html += '<section class="nm-section">';
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">trending_up</span>' +
+      '<h3 class="nm-headline-md">도시별 일 비중</h3>' +
+      '<span class="nm-pill" style="margin-left:auto">평균 ≈ ' + avgRatio + '%</span>' +
+    '</div>';
+    html += '<table class="nm-table">';
+    html += '<thead><tr><th>시기</th><th>모드</th><th class="nm-num">일 비중</th><th>시각화</th></tr></thead><tbody>';
+    workRatio.forEach(function(r) {
+      var pct = r[2];
+      var color = pct >= 70 ? 'var(--nm-primary)' : pct >= 50 ? 'var(--nm-secondary)' : '#c2410c';
+      html += '<tr>' +
+        '<td><strong>' + r[0] + '</strong></td>' +
+        '<td style="font-size:13px;color:var(--nm-text-2)">' + r[1] + '</td>' +
+        '<td class="nm-num"><strong style="color:' + color + '">' + pct + '%</strong></td>' +
+        '<td style="width:200px"><div style="height:6px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + color + '"></div></div></td>' +
+      '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</section>';
+
+    // 2-col: 산출량 + 이동일
+    html += '<div class="nm-grid nm-grid-2">';
+    html += '<div class="nm-card">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">edit</span>' +
+        '<h3 class="nm-headline-md">산출량 · 주 단위</h3>' +
+      '</div>' +
+      '<ul class="nm-list-bullet">' +
+        '<li>글 초안 · <strong>주 2-3편</strong> (월 8-12편)</li>' +
+        '<li>코딩 풀데이 · 주 1회 (월 4-5회)</li>' +
+        '<li>메일리 발행 · 격주 또는 주 1회</li>' +
+        '<li>디지털 제품 · 분기별 큰 단위</li>' +
+      '</ul>' +
+    '</div>';
+
+    html += '<div class="nm-card">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight</span>' +
+        '<h3 class="nm-headline-md">이동일 = 버리는 날</h3>' +
+      '</div>' +
+      '<ul class="nm-list-bullet">' +
+        '<li>도시 → 도시 이동일 · <strong>일 X, 관광 X</strong></li>' +
+        '<li>회복일로 인정</li>' +
+        '<li>한 달 1-2일 자연스러움</li>' +
+      '</ul>' +
+    '</div>';
+    html += '</div>';
+
+    // 가족 연락
+    html += '<section class="nm-section" style="margin-top:32px">';
+    html += '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">family_restroom</span>' +
+      '<h3 class="nm-headline-md">가족 연락</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">' +
+      '<li>엄마·아빠 <strong>매주 화상통화 1회</strong> (요일 고정)</li>' +
+      '<li>메신저 매일 짧은 인증샷</li>' +
+      '<li>엄마 합류 가능 시기 미리 공유 (9월·12월·3월)</li>' +
+    '</ul>';
+    html += '</div>';
+    html += '</section>';
+
+    return html;
+  }
+  registerPage('nomad-principles', renderPrinciples);
+
   // ──────── Sub-sidebar 빌더 ────────
   // NAV → 페이지 내부 좌측 sub-nav HTML
   function buildSubSidebar() {
