@@ -70,16 +70,17 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=124" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=124" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=124" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=124" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=124" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=124" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=124" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=124" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=124" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=124" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=125" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=125" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=125" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=125" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=125" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=125" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=125" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=125" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=125" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=125" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=125" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -829,6 +830,155 @@
       }
       .nomad-page .nm-subnav-header { padding: 0 16px 12px; margin-bottom: 8px; }
       .nomad-page .nm-main { padding: 24px 16px; }
+    }
+
+    /* ──── City Guide 전용 컴포넌트 ──── */
+    .nomad-page .nm-city-hero {
+      background: linear-gradient(135deg, var(--nm-primary-soft) 0%, #fff 70%);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      border: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-city-hero-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 4px;
+    }
+    .nomad-page .nm-city-hero-country {
+      font-size: 14px;
+      color: var(--nm-text-3);
+      margin-bottom: 20px;
+    }
+    .nomad-page .nm-city-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      padding: 20px 0;
+      border-top: 1px solid rgba(124, 58, 237, 0.15);
+      border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+    }
+    .nomad-page .nm-city-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .nomad-page .nm-city-meta-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--nm-text-3);
+    }
+    .nomad-page .nm-city-meta-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--nm-on-surface);
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-quote {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: #fff;
+      border-left: 3px solid var(--nm-primary);
+      border-radius: 6px;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--nm-on-surface-variant);
+    }
+
+    .nomad-page .nm-divider-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--nm-primary);
+      margin: 40px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--nm-primary-soft);
+    }
+
+    .nomad-page .nm-place-card {
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-place-card:last-child { border-bottom: none; }
+    .nomad-page .nm-place-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nomad-page .nm-place-price {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      background: var(--nm-primary-soft);
+      color: var(--nm-primary);
+      border-radius: 99px;
+      letter-spacing: 0.02em;
+    }
+    .nomad-page .nm-place-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--nm-text-2);
+    }
+
+    .nomad-page .nm-neighborhood-row {
+      display: grid;
+      grid-template-columns: 140px 80px 1fr;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+      align-items: start;
+      font-size: 13px;
+    }
+    .nomad-page .nm-neighborhood-row:last-child { border-bottom: none; }
+    .nomad-page .nm-nbh-name { color: var(--nm-on-surface); }
+    .nomad-page .nm-nbh-desc { color: var(--nm-text-2); line-height: 1.55; }
+    .nomad-page .nm-stars { color: #fbbf24; font-size: 13px; letter-spacing: 1px; }
+
+    .nomad-page .nm-learn-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-learn-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .nomad-page .nm-learn-item:first-child { padding-top: 0; }
+    .nomad-page .nm-learn-h {
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-learn-body {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--nm-text-2);
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-learn-highlight {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--nm-primary);
+      padding: 10px 14px;
+      background: var(--nm-primary-soft);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .nomad-page .nm-city-hero-title { font-size: 28px; }
+      .nomad-page .nm-city-hero { padding: 20px; }
+      .nomad-page .nm-neighborhood-row { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
     }
 
     /* ════════════════════════════════════════════════════════════════════
@@ -6841,7 +6991,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=124" defer></script>
+<script src="js/app-1-pages.js?v=125" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -7638,23 +7788,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=124" defer></script>
+<script src="js/app-2-init.js?v=125" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=124" defer></script>
-<script src="js/roadmap-data.js?v=124" defer></script>
-<script src="js/daily-actions.js?v=124" defer></script>
-<script src="js/daily-guides.js?v=124" defer></script>
-<script src="js/app-4-roadmap.js?v=124" defer></script>
-<script src="js/app-5-ledger-export.js?v=124" defer></script>
-<script src="js/app-6-postype-analytics.js?v=124" defer></script>
+<script src="js/app-3-flatpickr.js?v=125" defer></script>
+<script src="js/roadmap-data.js?v=125" defer></script>
+<script src="js/daily-actions.js?v=125" defer></script>
+<script src="js/daily-guides.js?v=125" defer></script>
+<script src="js/app-4-roadmap.js?v=125" defer></script>
+<script src="js/app-5-ledger-export.js?v=125" defer></script>
+<script src="js/app-6-postype-analytics.js?v=125" defer></script>
 
-<!-- Nomad Master 모듈 (데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=124" defer></script>
-<script src="js/nomad-pages.js?v=124" defer></script>
+<!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
+<script src="js/nomad-data.js?v=125" defer></script>
+<script src="js/nomad-cities.js?v=125" defer></script>
+<script src="js/nomad-pages.js?v=125" defer></script>
 
 </body>
 </html>

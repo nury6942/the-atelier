@@ -1267,6 +1267,252 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-packing', renderPacking);
 
+  // ════════════════════════════════════════════════════════════════════
+  // City Guides — 공통 렌더러 + 섹션 빌더
+  // 데이터는 nomad-cities.js의 window.NOMAD_CITIES 에서 옴
+  // ════════════════════════════════════════════════════════════════════
+
+  // ──── 도시 Hero 카드 ────
+  function _renderHero(h) {
+    var html = '<div class="nm-city-hero">';
+    html += '<div class="nm-city-hero-title">' + h.city + '</div>';
+    html += '<div class="nm-city-hero-country">' + h.country + '</div>';
+    html += '<div class="nm-city-meta">';
+    var meta = [
+      { label:'체류 기간', value:h.dates },
+      { label:'기후',     value:h.weather },
+      { label:'비자',     value:h.visa },
+      { label:'톤',       value:h.vibe },
+      { label:'모드',     value:h.mode },
+    ];
+    meta.forEach(function(m) {
+      if (!m.value) return;
+      html += '<div class="nm-city-meta-item">' +
+        '<div class="nm-city-meta-label">' + m.label + '</div>' +
+        '<div class="nm-city-meta-value">' + m.value + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    if (h.quote) html += '<div class="nm-city-quote">' + h.quote + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  // ──── 섹션 렌더러들 ────
+  function _renderDivider(s) {
+    return '<div class="nm-divider-label">' + s.label + '</div>';
+  }
+
+  function _renderPlaces(s) {
+    var html = '<div class="nm-card">';
+    html += '<div class="nm-section-head" style="margin-bottom:14px">' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+        '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+      '</div>' +
+    '</div>';
+    (s.items || []).forEach(function(p) {
+      html += '<div class="nm-place-card">' +
+        '<div class="nm-place-name">' + p.name + (p.price ? '<span class="nm-place-price">' + p.price + '</span>' : '') + '</div>' +
+        '<div class="nm-place-desc">' + p.desc + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function _renderNeighborhoods(s) {
+    var html = '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    (s.items || []).forEach(function(n) {
+      var starsHtml = '<span class="nm-stars">' + '★'.repeat(n.stars) + '<span style="opacity:0.25">' + '★'.repeat(5 - n.stars) + '</span></span>';
+      html += '<div class="nm-neighborhood-row">' +
+        '<div class="nm-nbh-name"><strong>' + n.name + '</strong></div>' +
+        '<div>' + starsHtml + '</div>' +
+        '<div class="nm-nbh-desc">' + n.desc + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function _renderTable(s) {
+    var html = '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    html += '<table class="nm-table">';
+    html += '<thead><tr>';
+    (s.headers || []).forEach(function(h, i) {
+      var isNum = i >= 2; // 보통 3,4번째부터 숫자
+      html += '<th' + (isNum && s.headers.length >= 4 ? ' class="nm-num"' : '') + '>' + h + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    (s.rows || []).forEach(function(row) {
+      html += '<tr>';
+      row.forEach(function(cell, i) {
+        var isNum = i >= 2 && s.headers.length >= 4;
+        html += '<td' + (isNum ? ' class="nm-num"' : '') + '>' + cell + '</td>';
+      });
+      html += '</tr>';
+    });
+    if (s.footer) {
+      html += '<tr style="background:var(--nm-primary-soft);font-weight:700">';
+      s.footer.forEach(function(cell, i) {
+        var isNum = i >= 2 && s.headers.length >= 4;
+        html += '<td' + (isNum ? ' class="nm-num"' : '') + '>' + cell + '</td>';
+      });
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    if (s.note) html += '<div style="padding:12px 24px;font-size:12px;color:var(--nm-text-3);background:var(--nm-surface-container-low)">' + s.note + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  function _renderList(s) {
+    var html = '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    html += '<ul class="nm-list-bullet">';
+    (s.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+    html += '</ul>';
+    html += '</div>';
+    return html;
+  }
+
+  function _renderLearn(s) {
+    var html = '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    (s.items || []).forEach(function(item) {
+      html += '<div class="nm-learn-item">' +
+        '<h4 class="nm-learn-h">' + item.h + '</h4>' +
+        '<p class="nm-learn-body">' + item.body + '</p>' +
+        (item.highlight ? '<p class="nm-learn-highlight"><strong>' + item.highlight + '</strong></p>' : '') +
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function _renderTimeline(s) {
+    var html = '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    html += '<div style="position:relative;padding-left:24px;border-left:2px solid var(--nm-primary-soft)">';
+    (s.items || []).forEach(function(t) {
+      html += '<div style="position:relative;margin-bottom:18px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">' +
+        '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>' +
+        '<div style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + t.when + '</div>' +
+        '<div style="font-family:Manrope;font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
+        '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + t.text + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  function _renderSubsections(s) {
+    var html = '<div class="nm-card">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
+      '<h3 class="nm-headline-md">' + s.title + '</h3>' +
+    '</div>';
+    (s.items || []).forEach(function(sub) {
+      html += '<div style="margin-bottom:16px">';
+      html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + sub.h + '</h4>';
+      html += '<ul class="nm-list-bullet">';
+      (sub.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+      html += '</ul>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function _renderNote(s) {
+    var color = s.color || 'var(--nm-primary)';
+    return '<div class="nm-card" style="border-left:3px solid ' + color + '">' +
+      (s.title ? '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        (s.icon ? '<span class="material-symbols-outlined" style="color:' + color + '">' + s.icon + '</span>' : '') +
+        '<h3 class="nm-headline-md" style="color:' + color + '">' + s.title + '</h3>' +
+      '</div>' : '') +
+      '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.6">' + s.body + '</p>' +
+    '</div>';
+  }
+
+  var SECTION_RENDERERS = {
+    divider:       _renderDivider,
+    places:        _renderPlaces,
+    neighborhoods: _renderNeighborhoods,
+    table:         _renderTable,
+    list:          _renderList,
+    learn:         _renderLearn,
+    timeline:      _renderTimeline,
+    subsections:   _renderSubsections,
+    note:          _renderNote,
+  };
+
+  // ──── 도시 페이지 렌더 ────
+  function renderCity(cityId) {
+    var cities = window.NOMAD_CITIES || {};
+    var city = cities[cityId];
+    if (!city) {
+      // 데이터 없으면 placeholder
+      var label = cityId;
+      (DATA.NAV || []).forEach(function(g) {
+        (g.items || []).forEach(function(i) { if (i.id === cityId) label = i.label; });
+      });
+      return placeholderPage(cityId, label);
+    }
+
+    var html = '';
+    html += pageHeader('City Guide · ' + (city.monthLabel || ''), city.hero.city, '1년 노마드의 도시 가이드');
+    html += _renderHero(city.hero);
+
+    // 누리한테 의미하는 것
+    if (city.meaning && city.meaning.length) {
+      html += '<div class="nm-card">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">stars</span>' +
+        '<h3 class="nm-headline-md">누리한테 의미하는 것</h3>' +
+      '</div>';
+      html += '<ul class="nm-list-bullet">';
+      city.meaning.forEach(function(m) { html += '<li>' + m + '</li>'; });
+      html += '</ul>';
+      html += '</div>';
+    }
+
+    // 섹션들
+    (city.sections || []).forEach(function(s) {
+      var renderer = SECTION_RENDERERS[s.type];
+      if (renderer) html += renderer(s);
+      else html += '<div class="nm-card" style="color:#b91c1c">Unknown section type: ' + s.type + '</div>';
+    });
+
+    return html;
+  }
+
+  // 17개 도시 ID에 일괄 등록 (데이터 있으면 renderCity, 없으면 placeholder)
+  (DATA.NAV || []).forEach(function(group) {
+    if (group.group !== 'City Guides') return;
+    (group.items || []).forEach(function(item) {
+      registerPage(item.id, function() { return renderCity(item.id); });
+    });
+  });
+
   // ──────── Sub-sidebar 빌더 ────────
   // NAV → 페이지 내부 좌측 sub-nav HTML
   function buildSubSidebar() {
