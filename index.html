@@ -70,17 +70,17 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=125" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=125" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=125" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=125" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=125" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=125" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=125" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=125" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=125" as="script">
-  <link rel="preload" href="js/nomad-cities.js?v=125" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=125" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=126" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=126" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=126" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=126" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=126" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=126" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=126" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=126" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=126" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=126" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=126" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -979,6 +979,510 @@
       .nomad-page .nm-city-hero-title { font-size: 28px; }
       .nomad-page .nm-city-hero { padding: 20px; }
       .nomad-page .nm-neighborhood-row { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Stitch 매거진 컴포넌트 (City Guide v2 — Editorial)
+    ════════════════════════════════════════════════════════════════════ */
+
+    /* ──── Magazine Hero (이미지 또는 그라데이션 배경) ──── */
+    .nomad-page .nm-mag-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.5rem;
+      height: 480px;
+      margin-bottom: 80px;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--nm-shadow-hover);
+    }
+    .nomad-page .nm-mag-hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      transition: transform 1s ease;
+    }
+    .nomad-page .nm-mag-hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .nomad-page .nm-mag-hero-bg.no-img {
+      background: linear-gradient(135deg, var(--nm-deep-indigo) 0%, var(--nm-primary) 50%, var(--nm-soft-accent) 100%);
+    }
+    .nomad-page .nm-mag-hero-bg.no-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    }
+    .nomad-page .nm-mag-hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(49, 46, 129, 0.85) 0%, rgba(49, 46, 129, 0.35) 60%, transparent 100%);
+    }
+    .nomad-page .nm-mag-hero-content {
+      position: relative;
+      z-index: 1;
+      padding: 0 56px;
+      max-width: 720px;
+      color: #fff;
+    }
+    .nomad-page .nm-mag-hero-chips {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .nomad-page .nm-mag-chip {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+    }
+    .nomad-page .nm-mag-hero-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 56px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    .nomad-page .nm-mag-hero-quote {
+      font-family: 'Inter', serif;
+      font-size: 17px;
+      line-height: 1.6;
+      font-style: italic;
+      opacity: 0.95;
+      border-left: 4px solid var(--nm-primary-fixed);
+      padding: 8px 0 8px 20px;
+      max-width: 560px;
+    }
+    .nomad-page .nm-mag-hero-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .nomad-page .nm-mag-hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nomad-page .nm-mag-hero-meta-item .lbl {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .nomad-page .nm-mag-hero-meta-item .val {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* ──── Section Header (매거진 챕터) ──── */
+    .nomad-page .nm-mag-section { margin-bottom: 72px; }
+    .nomad-page .nm-mag-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 0;
+      border: none;
+    }
+    .nomad-page .nm-mag-section-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--nm-deep-indigo);
+    }
+    .nomad-page .nm-mag-section-num {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--nm-on-surface-variant);
+    }
+    .nomad-page .nm-mag-section-num .n {
+      color: var(--nm-primary);
+      font-weight: 700;
+    }
+
+    /* ──── Bento Grid (8 + 4 split) ──── */
+    .nomad-page .nm-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      min-height: 540px;
+    }
+    .nomad-page .nm-bento-main {
+      grid-column: span 8;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--nm-primary) 0%, var(--nm-deep-indigo) 100%);
+      box-shadow: var(--nm-shadow-card);
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .nomad-page .nm-bento-main:hover { transform: translateY(-3px); box-shadow: var(--nm-shadow-hover); }
+    .nomad-page .nm-bento-main img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .nomad-page .nm-bento-main:hover img { transform: scale(1.04); }
+    .nomad-page .nm-bento-main .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      color: #fff;
+    }
+    .nomad-page .nm-bento-main .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-bento-main h4 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .nomad-page .nm-bento-main p {
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 480px;
+      opacity: 0.9;
+    }
+
+    .nomad-page .nm-bento-side {
+      grid-column: span 4;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 24px;
+    }
+    .nomad-page .nm-bento-side-card {
+      background: var(--nm-surface-container-low);
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--nm-shadow-card);
+      transition: transform 0.3s ease;
+    }
+    .nomad-page .nm-bento-side-card:hover { transform: translateY(-2px); }
+    .nomad-page .nm-bento-side-card .nm-bento-icon {
+      color: var(--nm-primary);
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
+    .nomad-page .nm-bento-side-card h4 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 6px;
+    }
+    .nomad-page .nm-bento-side-card p {
+      font-size: 13px;
+      color: var(--nm-text-2);
+      line-height: 1.5;
+    }
+    .nomad-page .nm-bento-side-img {
+      grid-column: span 4;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--nm-soft-accent), var(--nm-primary));
+      box-shadow: var(--nm-shadow-card);
+    }
+    .nomad-page .nm-bento-side-img img { width:100%; height:100%; object-fit:cover; }
+    .nomad-page .nm-bento-side-img .caption {
+      position: absolute;
+      left: 16px; right: 16px; bottom: 16px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(8px);
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+    .nomad-page .nm-bento-side-img .caption .t {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--nm-on-surface);
+    }
+    .nomad-page .nm-bento-side-img .caption .s {
+      font-size: 11px;
+      color: var(--nm-text-3);
+      margin-top: 2px;
+    }
+
+    /* ──── Editorial Split (7 + 5: Experiences + Nomad Mode) ──── */
+    .nomad-page .nm-edit-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 48px;
+    }
+
+    /* Experience 가로 카드 */
+    .nomad-page .nm-exp-card {
+      display: flex;
+      gap: 20px;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nomad-page .nm-exp-card:hover {
+      background: var(--nm-primary-soft);
+      border-color: transparent;
+    }
+    .nomad-page .nm-exp-card + .nm-exp-card { margin-top: 16px; }
+    .nomad-page .nm-exp-thumb {
+      width: 84px; height: 84px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--nm-soft-accent), var(--nm-primary));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .nomad-page .nm-exp-thumb img { width:100%; height:100%; object-fit:cover; }
+    .nomad-page .nm-exp-thumb .material-symbols-outlined { font-size: 32px; opacity: 0.9; }
+    .nomad-page .nm-exp-body { flex: 1; min-width: 0; }
+    .nomad-page .nm-exp-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--nm-deep-indigo);
+      margin-bottom: 4px;
+    }
+    .nomad-page .nm-exp-desc {
+      font-size: 13px;
+      color: var(--nm-text-2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .nomad-page .nm-exp-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nomad-page .nm-exp-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+    .nomad-page .nm-exp-pill.time { background: #a7a5ff; color: #393689; }
+    .nomad-page .nm-exp-pill.price { background: #ffdcc6; color: #713700; }
+
+    /* Nomad Mode 라벤더 사이드 패널 */
+    .nomad-page .nm-nm-panel {
+      background: var(--nm-primary-soft);
+      padding: 36px;
+      border-radius: 20px;
+    }
+    .nomad-page .nm-nm-block { margin-bottom: 28px; }
+    .nomad-page .nm-nm-block:last-child { margin-bottom: 0; }
+    .nomad-page .nm-nm-block-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .nomad-page .nm-nm-block-head .material-symbols-outlined { color: var(--nm-primary); }
+    .nomad-page .nm-nm-block-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--nm-on-surface);
+    }
+    .nomad-page .nm-nm-block-desc {
+      font-size: 14px;
+      color: var(--nm-text-2);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .nomad-page .nm-nm-badges { display: flex; gap: 14px; font-size: 11px; color: var(--nm-text-2); }
+    .nomad-page .nm-nm-badges .b { display: inline-flex; align-items: center; gap: 4px; }
+    .nomad-page .nm-nm-badges .material-symbols-outlined { font-size: 14px; color: var(--nm-text-2); }
+    .nomad-page .nm-nm-list { list-style: none; padding: 0; margin: 0; }
+    .nomad-page .nm-nm-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--nm-text-2);
+    }
+    .nomad-page .nm-nm-list .score {
+      font-size: 12px;
+      color: var(--nm-primary);
+      font-weight: 600;
+    }
+    .nomad-page .nm-nm-divider {
+      height: 1px;
+      background: rgba(124, 58, 237, 0.15);
+      margin: 24px 0;
+    }
+
+    /* ──── Budget intensity 바 ──── */
+    .nomad-page .nm-bg-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .nomad-page .nm-bg-table thead th {
+      background: var(--nm-primary-soft);
+      padding: 14px 24px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nm-on-surface-variant);
+      text-align: left;
+      font-weight: 600;
+    }
+    .nomad-page .nm-bg-table tbody td {
+      padding: 20px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+    .nomad-page .nm-bg-table tbody tr:hover { background: var(--nm-surface-container-low); }
+    .nomad-page .nm-bg-table .nm-bg-cat { font-weight: 700; color: var(--nm-on-surface); }
+    .nomad-page .nm-bg-table .nm-bg-num {
+      color: var(--nm-on-surface-variant);
+      font-variant-numeric: tabular-nums;
+    }
+    .nomad-page .nm-bg-intensity {
+      display: inline-block;
+      width: 100px;
+      height: 8px;
+      background: rgba(124, 58, 237, 0.15);
+      border-radius: 99px;
+      overflow: hidden;
+      position: relative;
+    }
+    .nomad-page .nm-bg-intensity > span {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--nm-primary);
+      border-radius: 99px;
+    }
+    .nomad-page .nm-bg-table tfoot td {
+      padding: 22px 24px;
+      font-weight: 700;
+      color: var(--nm-primary);
+      background: var(--nm-surface-container-low);
+    }
+
+    /* ──── Why City (마지막 분석 + quote 박스) ──── */
+    .nomad-page .nm-why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .nomad-page .nm-why-body {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--nm-text-2);
+    }
+    .nomad-page .nm-why-body p + p { margin-top: 16px; }
+    .nomad-page .nm-why-body strong { color: var(--nm-on-surface); }
+    .nomad-page .nm-why-takeaway {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-why-takeaway .icon-box {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--nm-soft-accent);
+      flex-shrink: 0;
+    }
+    .nomad-page .nm-why-takeaway .t { font-size: 14px; font-weight: 700; color: var(--nm-on-surface); }
+    .nomad-page .nm-why-takeaway .s { font-size: 12px; color: var(--nm-text-3); }
+
+    .nomad-page .nm-why-visual {
+      position: relative;
+      height: 440px;
+    }
+    .nomad-page .nm-why-visual .main-img {
+      width: 100%; height: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--nm-shadow-hover);
+      background: linear-gradient(135deg, var(--nm-deep-indigo) 0%, var(--nm-primary) 100%);
+    }
+    .nomad-page .nm-why-visual .main-img img { width:100%; height:100%; object-fit:cover; }
+    .nomad-page .nm-why-quote {
+      position: absolute;
+      bottom: -28px; left: -28px;
+      background: var(--nm-deep-indigo);
+      color: #fff;
+      padding: 28px;
+      border-radius: 18px;
+      max-width: 260px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+    .nomad-page .nm-why-quote .qmark {
+      font-size: 36px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .nomad-page .nm-why-quote p {
+      font-size: 14px;
+      line-height: 1.5;
+      font-style: italic;
+      opacity: 0.92;
+    }
+
+    /* ──── 모바일 ──── */
+    @media (max-width: 1024px) {
+      .nomad-page .nm-mag-hero { height: 380px; }
+      .nomad-page .nm-mag-hero-title { font-size: 38px; }
+      .nomad-page .nm-mag-hero-content { padding: 0 32px; }
+      .nomad-page .nm-bento-grid { grid-template-columns: 1fr; min-height: 0; }
+      .nomad-page .nm-bento-main { grid-column: span 1; height: 360px; }
+      .nomad-page .nm-bento-side { grid-column: span 1; grid-template-rows: auto auto; }
+      .nomad-page .nm-edit-grid { grid-template-columns: 1fr; gap: 28px; }
+      .nomad-page .nm-why-grid { grid-template-columns: 1fr; gap: 56px; }
+      .nomad-page .nm-why-visual { height: 320px; }
+      .nomad-page .nm-why-quote { position: relative; bottom: 0; left: 0; max-width: 100%; margin-top: 16px; }
+    }
+    @media (max-width: 768px) {
+      .nomad-page .nm-mag-hero { height: 320px; margin-bottom: 48px; }
+      .nomad-page .nm-mag-hero-title { font-size: 30px; }
+      .nomad-page .nm-mag-hero-content { padding: 0 24px; }
+      .nomad-page .nm-mag-hero-quote { font-size: 14px; padding-left: 14px; }
+      .nomad-page .nm-mag-section-title { font-size: 22px; }
+      .nomad-page .nm-mag-section { margin-bottom: 48px; }
+      .nomad-page .nm-bento-main h4 { font-size: 22px; }
+      .nomad-page .nm-bento-main .overlay { padding: 20px; }
+      .nomad-page .nm-nm-panel { padding: 24px; }
+      .nomad-page .nm-bg-table thead th,
+      .nomad-page .nm-bg-table tbody td,
+      .nomad-page .nm-bg-table tfoot td { padding: 12px 14px; font-size: 12px; }
+      .nomad-page .nm-bg-intensity { width: 60px; }
     }
 
     /* ════════════════════════════════════════════════════════════════════
@@ -6991,7 +7495,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=125" defer></script>
+<script src="js/app-1-pages.js?v=126" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -7788,24 +8292,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=125" defer></script>
+<script src="js/app-2-init.js?v=126" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=125" defer></script>
-<script src="js/roadmap-data.js?v=125" defer></script>
-<script src="js/daily-actions.js?v=125" defer></script>
-<script src="js/daily-guides.js?v=125" defer></script>
-<script src="js/app-4-roadmap.js?v=125" defer></script>
-<script src="js/app-5-ledger-export.js?v=125" defer></script>
-<script src="js/app-6-postype-analytics.js?v=125" defer></script>
+<script src="js/app-3-flatpickr.js?v=126" defer></script>
+<script src="js/roadmap-data.js?v=126" defer></script>
+<script src="js/daily-actions.js?v=126" defer></script>
+<script src="js/daily-guides.js?v=126" defer></script>
+<script src="js/app-4-roadmap.js?v=126" defer></script>
+<script src="js/app-5-ledger-export.js?v=126" defer></script>
+<script src="js/app-6-postype-analytics.js?v=126" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=125" defer></script>
-<script src="js/nomad-cities.js?v=125" defer></script>
-<script src="js/nomad-pages.js?v=125" defer></script>
+<script src="js/nomad-data.js?v=126" defer></script>
+<script src="js/nomad-cities.js?v=126" defer></script>
+<script src="js/nomad-pages.js?v=126" defer></script>
 
 </body>
 </html>

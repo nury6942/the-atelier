@@ -23,13 +23,16 @@ window.NOMAD_CITIES = (function(){
       monthLabel: '6월',
       hero: {
         city: '🇵🇹 포르투',
+        tagline: 'The Soul of the Douro',
         country: '포르투갈 · Portugal',
         dates: '2028.6.9 — 7.9 (1달)',
         weather: '18-25°C · 맑음, 건조',
         visa: '포르투갈 워홀 (1년 다회)',
         vibe: '구도시 · 강 · 아줄레주 · 슬로우 시티',
         mode: '글 풀가동 · 적응 70%',
-        quote: '포르투갈 한 단어 = saudade (사우다드) · 그리움과 향수와 사랑과 슬픔이 한 단어. 누리 1년 노마드의 첫 단어.',
+        quote: 'Saudade — 그리움과 향수와 사랑과 슬픔이 한 단어. 누리 1년 노마드의 첫 단어.',
+        image: null,    // 사진 추가하면 hero 배경으로 (지금은 그라데이션 fallback)
+        imageAlt: 'Porto Ribeira at sunset',
       },
       meaning: [
         '1년 노마드의 첫 도시 = 적응 + 페이스 잡기',

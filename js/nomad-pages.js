@@ -1272,29 +1272,246 @@ window.NOMAD_PAGES = (function(){
   // 데이터는 nomad-cities.js의 window.NOMAD_CITIES 에서 옴
   // ════════════════════════════════════════════════════════════════════
 
-  // ──── 도시 Hero 카드 ────
-  function _renderHero(h) {
-    var html = '<div class="nm-city-hero">';
-    html += '<div class="nm-city-hero-title">' + h.city + '</div>';
-    html += '<div class="nm-city-hero-country">' + h.country + '</div>';
-    html += '<div class="nm-city-meta">';
+  // ──── 매거진 Hero (이미지 또는 그라데이션 배경) ────
+  function _renderMagHero(h, monthLabel) {
+    var html = '<section class="nm-mag-hero">';
+    // 배경
+    html += '<div class="nm-mag-hero-bg' + (h.image ? '' : ' no-img') + '">';
+    if (h.image) html += '<img src="' + h.image + '" alt="' + (h.imageAlt || h.city) + '"/>';
+    html += '</div>';
+    // 컨텐츠
+    html += '<div class="nm-mag-hero-content">';
+    html += '<div class="nm-mag-hero-chips">';
+    html += '<span class="nm-mag-chip"><span class="material-symbols-outlined" style="font-size:14px">flag</span>' + h.country + '</span>';
+    html += '<span class="nm-mag-chip">' + (monthLabel ? monthLabel + ' · ' : '') + (h.dates || '') + '</span>';
+    if (h.mode) html += '<span class="nm-mag-chip"><span class="material-symbols-outlined" style="font-size:14px">edit</span>' + h.mode + '</span>';
+    html += '</div>';
+    html += '<h1 class="nm-mag-hero-title">' + h.city + (h.tagline ? '<br><span style="opacity:0.85;font-weight:600">' + h.tagline + '</span>' : '') + '</h1>';
+    if (h.quote) html += '<p class="nm-mag-hero-quote">"' + h.quote + '"</p>';
+    // 메타 (체류기간/기후/비자/톤) - hero 아래쪽
+    html += '<div class="nm-mag-hero-meta">';
     var meta = [
       { label:'체류 기간', value:h.dates },
       { label:'기후',     value:h.weather },
       { label:'비자',     value:h.visa },
       { label:'톤',       value:h.vibe },
-      { label:'모드',     value:h.mode },
     ];
     meta.forEach(function(m) {
       if (!m.value) return;
-      html += '<div class="nm-city-meta-item">' +
-        '<div class="nm-city-meta-label">' + m.label + '</div>' +
-        '<div class="nm-city-meta-value">' + m.value + '</div>' +
+      html += '<div class="nm-mag-hero-meta-item">' +
+        '<span class="lbl">' + m.label + '</span>' +
+        '<span class="val">' + m.value + '</span>' +
       '</div>';
     });
     html += '</div>';
-    if (h.quote) html += '<div class="nm-city-quote">' + h.quote + '</div>';
+    html += '</div>'; // /content
+    html += '</section>';
+    return html;
+  }
+
+  // ──── 매거진 섹션 헤더 (번호 + 타이틀 + subtitle) ────
+  function _magSectionHead(num, title, subtitle) {
+    return '<div class="nm-mag-section-head">' +
+      '<h3 class="nm-mag-section-title">' + title + '</h3>' +
+      (num || subtitle ? '<span class="nm-mag-section-num">' +
+        (num ? '<span class="n">' + num + '</span>' : '') +
+        (num && subtitle ? ' / ' : '') +
+        (subtitle || '') +
+      '</span>' : '') +
+    '</div>';
+  }
+
+  // ──── Magazine: Places (Bento Grid 8+4) ────
+  // landmarks 5개 + 숨은곳 7개를 bento로 변환:
+  // - main(8): landmarks[0] (가장 중요한 장소)
+  // - sideA(4 위): 숨은곳 카드 (텍스트 only)
+  // - sideB(4 아래): landmarks[1] (이미지 + 캡션)
+  function _renderPlacesMag(places, hiddenPlaces, num) {
+    if (!places || !places.length) return '';
+    var main = places[0];
+    var sideB = places[1] || null;
+    var hidden = (hiddenPlaces && hiddenPlaces[0]) || null;
+
+    var html = '<section class="nm-mag-section">';
+    html += _magSectionHead(num || '01', 'Places to Visit', 'Curated Landmarks');
+    html += '<div class="nm-bento-grid">';
+
+    // Main 카드 (8-col)
+    html += '<div class="nm-bento-main">';
+    if (main.image) html += '<img src="' + main.image + '" alt="' + main.name + '"/>';
+    html += '<div class="overlay">';
+    html += '<div class="eyebrow">Designer\'s Choice</div>';
+    html += '<h4>' + main.name.replace(/<[^>]+>/g, '').split('(')[0].trim() + '</h4>';
+    html += '<p>' + main.desc.replace(/<[^>]+>/g, '') + '</p>';
+    html += '</div></div>';
+
+    // Side 카드들 (4-col)
+    html += '<div class="nm-bento-side">';
+    // sideA — hidden gem
+    if (hidden) {
+      html += '<div class="nm-bento-side-card">';
+      html += '<div>';
+      html += '<span class="material-symbols-outlined nm-bento-icon">landscape</span>';
+      html += '<h4>Hidden Spots</h4>';
+      html += '<p>' + hidden.desc.replace(/<[^>]+>/g, '').substring(0, 100) + (hidden.desc.length > 100 ? '…' : '') + '</p>';
+      html += '</div>';
+      html += '<a style="color:var(--nm-primary);font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px;text-decoration:none" href="#">' +
+        '숨은 곳 더 보기 <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span></a>';
+      html += '</div>';
+    }
+    // sideB — 두 번째 랜드마크 (이미지 + 캡션)
+    if (sideB) {
+      html += '<div class="nm-bento-side-img">';
+      if (sideB.image) html += '<img src="' + sideB.image + '" alt="' + sideB.name + '"/>';
+      else html += '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:64px;opacity:0.4"><span class="material-symbols-outlined" style="font-size:64px">photo</span></div>';
+      html += '<div class="caption">';
+      html += '<div class="t">' + sideB.name.split('(')[0].trim() + '</div>';
+      html += '<div class="s">' + sideB.desc.replace(/<[^>]+>/g, '').substring(0, 60) + '…</div>';
+      html += '</div></div>';
+    }
+    html += '</div>'; // /side
+
+    html += '</div></section>';
+
+    // 풀 목록 (랜드마크 + 숨은곳) — bento 아래 expand 목록으로
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px">';
+    html += _renderPlaces({ title: '랜드마크 (전체)', icon: 'landscape', items: places });
+    if (hiddenPlaces && hiddenPlaces.length) {
+      html += _renderPlaces({ title: '숨은 곳', icon: 'explore', items: hiddenPlaces });
+    }
     html += '</div>';
+
+    return html;
+  }
+
+  // ──── Magazine: Experiences + Nomad Mode Split ────
+  function _renderExperiencesSplit(experiences, nomadMode, num) {
+    var html = '<section class="nm-mag-section">';
+    html += '<div class="nm-edit-grid">';
+
+    // Experiences (7-col)
+    html += '<div>';
+    html += _magSectionHead(num || '02', 'Experiences', 'Cultural Immersion');
+    (experiences || []).slice(0, 6).forEach(function(exp) {
+      html += '<div class="nm-exp-card">';
+      html += '<div class="nm-exp-thumb">';
+      if (exp.image) html += '<img src="' + exp.image + '" alt="' + exp.name + '"/>';
+      else html += '<span class="material-symbols-outlined">' + (exp.icon || 'spa') + '</span>';
+      html += '</div>';
+      html += '<div class="nm-exp-body">';
+      html += '<div class="nm-exp-title">' + exp.name + '</div>';
+      html += '<div class="nm-exp-desc">' + exp.desc.replace(/<[^>]+>/g, '').substring(0, 120) + (exp.desc.length > 120 ? '…' : '') + '</div>';
+      if (exp.price || exp.time) {
+        html += '<div class="nm-exp-pills">';
+        if (exp.time) html += '<span class="nm-exp-pill time">' + exp.time + '</span>';
+        if (exp.price) html += '<span class="nm-exp-pill price">' + exp.price + '</span>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    // Nomad Mode (5-col)
+    html += '<div class="nm-nm-panel">';
+    html += '<div style="margin-bottom:24px">';
+    html += '<h3 style="font-family:Manrope;font-size:24px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">Nomad Mode</h3>';
+    html += '<p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--nm-primary);font-weight:700"><span style="color:var(--nm-primary)">' + (num ? num.replace(/[^0-9]/g, '') || '03' : '03') + '</span> / Strategic Productivity</p>';
+    html += '</div>';
+    (nomadMode || []).forEach(function(block, i) {
+      if (i > 0) html += '<div class="nm-nm-divider"></div>';
+      html += '<div class="nm-nm-block">';
+      html += '<div class="nm-nm-block-head">';
+      html += '<span class="material-symbols-outlined">' + (block.icon || 'corporate_fare') + '</span>';
+      html += '<span class="nm-nm-block-title">' + block.title + '</span>';
+      html += '</div>';
+      if (block.desc) html += '<p class="nm-nm-block-desc">' + block.desc + '</p>';
+      if (block.badges && block.badges.length) {
+        html += '<div class="nm-nm-badges">';
+        block.badges.forEach(function(b) {
+          html += '<span class="b"><span class="material-symbols-outlined">' + b.icon + '</span>' + b.text + '</span>';
+        });
+        html += '</div>';
+      }
+      if (block.list && block.list.length) {
+        html += '<ul class="nm-nm-list">';
+        block.list.forEach(function(item) {
+          html += '<li><span>' + item.name + '</span>' + (item.score ? '<span class="score">' + item.score + '</span>' : '') + '</li>';
+        });
+        html += '</ul>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += '</div></section>';
+    return html;
+  }
+
+  // ──── Magazine: Budget Breakdown (intensity 바) ────
+  function _renderBudgetMag(budget, num) {
+    if (!budget) return '';
+    var maxVal = 0;
+    (budget.rows || []).forEach(function(r) { if (r.value > maxVal) maxVal = r.value; });
+    var html = '<section class="nm-mag-section">';
+    html += _magSectionHead(num || '03', 'Budget Breakdown', 'Financial Mastery');
+    html += '<div style="background:#fff;border:1px solid #f1f5f9;border-radius:16px;overflow:hidden;box-shadow:var(--nm-shadow-card)">';
+    html += '<table class="nm-bg-table">';
+    html += '<thead><tr><th>' + (budget.headers || ['카테고리','€/월','원화','강도']).map(function(h, i) { return h; }).join('</th><th>') + '</th></tr></thead>';
+    html += '<tbody>';
+    (budget.rows || []).forEach(function(r) {
+      var intensity = maxVal > 0 ? (r.value / maxVal) : 0;
+      html += '<tr>' +
+        '<td class="nm-bg-cat">' + r.name + (r.sub ? ' <span style="font-weight:400;color:var(--nm-text-3);font-size:12px">· ' + r.sub + '</span>' : '') + '</td>' +
+        '<td>' + r.eur + '</td>' +
+        '<td class="nm-bg-num">' + r.krw + '</td>' +
+        '<td style="text-align:right"><span class="nm-bg-intensity"><span style="width:' + Math.round(intensity * 100) + '%"></span></span></td>' +
+      '</tr>';
+    });
+    html += '</tbody>';
+    if (budget.total) {
+      html += '<tfoot><tr>' +
+        '<td>' + budget.total.name + '</td>' +
+        '<td>' + budget.total.eur + '</td>' +
+        '<td>' + budget.total.krw + '</td>' +
+        '<td style="text-align:right;color:var(--nm-text-3);font-weight:500">' + (budget.total.note || '') + '</td>' +
+      '</tr></tfoot>';
+    }
+    html += '</table></div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── Magazine: Why City (마지막 분석 + quote) ────
+  function _renderWhyCity(why, num) {
+    if (!why) return '';
+    var html = '<section class="nm-mag-section">';
+    html += '<div class="nm-why-grid">';
+    // 왼쪽: 분석 텍스트
+    html += '<div>';
+    html += '<span class="nm-mag-section-num" style="display:block;margin-bottom:16px"><span class="n">' + (num || '05') + '</span> / The Rationale</span>';
+    html += '<h3 style="font-family:Manrope;font-size:36px;font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom:24px;line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
+    html += '<div class="nm-why-body">';
+    (why.paragraphs || []).forEach(function(p) { html += '<p>' + p + '</p>'; });
+    if (why.takeaway) {
+      html += '<div class="nm-why-takeaway">';
+      html += '<div class="icon-box"><span class="material-symbols-outlined">' + (why.takeaway.icon || 'architecture') + '</span></div>';
+      html += '<div><p class="t">' + why.takeaway.title + '</p><p class="s">' + why.takeaway.text + '</p></div>';
+      html += '</div>';
+    }
+    html += '</div></div>';
+    // 오른쪽: 이미지 + quote
+    html += '<div class="nm-why-visual">';
+    html += '<div class="main-img">';
+    if (why.image) html += '<img src="' + why.image + '" alt="' + (why.imageAlt || '') + '"/>';
+    html += '</div>';
+    if (why.quote) {
+      html += '<div class="nm-why-quote">';
+      html += '<div class="qmark">"</div>';
+      html += '<p>' + why.quote + '</p>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div></section>';
     return html;
   }
 
@@ -1465,7 +1682,7 @@ window.NOMAD_PAGES = (function(){
     note:          _renderNote,
   };
 
-  // ──── 도시 페이지 렌더 ────
+  // ──── 도시 페이지 렌더 (Stitch 매거진 스타일 v2) ────
   function renderCity(cityId) {
     var cities = window.NOMAD_CITIES || {};
     var city = cities[cityId];
@@ -1479,28 +1696,164 @@ window.NOMAD_PAGES = (function(){
     }
 
     var html = '';
-    html += pageHeader('City Guide · ' + (city.monthLabel || ''), city.hero.city, '1년 노마드의 도시 가이드');
-    html += _renderHero(city.hero);
 
-    // 누리한테 의미하는 것
+    // 1. 매거진 Hero (이미지 또는 그라데이션)
+    html += _renderMagHero(city.hero, city.monthLabel);
+
+    // 2. 누리한테 의미하는 것 (있으면)
     if (city.meaning && city.meaning.length) {
+      html += '<section class="nm-mag-section">';
+      html += _magSectionHead('00', 'Why This City Matters', 'Nuri\'s Lens');
       html += '<div class="nm-card">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">stars</span>' +
-        '<h3 class="nm-headline-md">누리한테 의미하는 것</h3>' +
-      '</div>';
       html += '<ul class="nm-list-bullet">';
       city.meaning.forEach(function(m) { html += '<li>' + m + '</li>'; });
       html += '</ul>';
-      html += '</div>';
+      html += '</div></section>';
     }
 
-    // 섹션들
-    (city.sections || []).forEach(function(s) {
-      var renderer = SECTION_RENDERERS[s.type];
-      if (renderer) html += renderer(s);
-      else html += '<div class="nm-card" style="color:#b91c1c">Unknown section type: ' + s.type + '</div>';
+    // 섹션 분류: places 첫 번째(랜드마크) + 두 번째(숨은곳) → bento grid
+    // experiences = "EXPERIENCES" divider 이후의 places 타입들
+    // nomadMode = "NOMAD MODE" divider 이후의 places + list
+    // budget = "BUDGET" divider 이후의 table
+    // why = "FOCUS" divider 이후의 learn
+
+    var sections = city.sections || [];
+    var sectionNum = 1;
+    var currentDividerLabel = '';
+    var landmarks = null;
+    var hiddenSpots = null;
+    var experiences = [];
+    var nomadModeBlocks = [];
+    var budgetData = null;
+    var whyData = null;
+    var rawSections = []; // 매거진 패턴에 안 맞는 섹션들 (neighborhoods, learn, timeline, subsections)
+
+    sections.forEach(function(s) {
+      if (s.type === 'divider') {
+        currentDividerLabel = s.label;
+        return;
+      }
+      var inExperiences = /EXPERIENCES/i.test(currentDividerLabel);
+      var inNomadMode = /NOMAD MODE/i.test(currentDividerLabel);
+      var inPeople = /PEOPLE/i.test(currentDividerLabel);
+      var inBudget = /BUDGET/i.test(currentDividerLabel);
+      var inFocus = /FOCUS/i.test(currentDividerLabel);
+      var inLearn = /LEARN/i.test(currentDividerLabel);
+      var inPlaces = /PLACES/i.test(currentDividerLabel);
+
+      if (s.type === 'places' && inPlaces) {
+        if (!landmarks) landmarks = s.items;
+        else if (!hiddenSpots) hiddenSpots = s.items;
+        else rawSections.push(s); // 추가 places는 일반 렌더
+      } else if (s.type === 'places' && inExperiences) {
+        // experiences에 합치기
+        s.items.forEach(function(item) {
+          experiences.push(Object.assign({}, item, { icon: s.icon }));
+        });
+      } else if (s.type === 'places' && inNomadMode) {
+        // nomad mode 블록으로 변환
+        nomadModeBlocks.push({
+          icon: s.icon || 'corporate_fare',
+          title: s.title,
+          list: s.items.slice(0, 4).map(function(p) {
+            return { name: p.name.replace(/<[^>]+>/g, '').substring(0, 28), score: p.price || '' };
+          })
+        });
+      } else if (s.type === 'list' && inNomadMode) {
+        nomadModeBlocks.push({
+          icon: s.icon || 'schedule',
+          title: s.title,
+          desc: (s.items || []).slice(0, 2).map(function(it) { return it.replace(/<[^>]+>/g, ''); }).join(' · ')
+        });
+      } else if (s.type === 'table' && inBudget) {
+        // budget을 magazine 형식으로 변환
+        budgetData = {
+          headers: s.headers,
+          rows: (s.rows || []).map(function(row) {
+            // row: [category, sub, eur, krw]
+            var eurStr = row[2] ? row[2].toString() : '';
+            var numMatch = eurStr.match(/(\d+)/);
+            var value = numMatch ? parseInt(numMatch[1]) : 0;
+            return {
+              name: (row[0] || '').replace(/<[^>]+>/g, ''),
+              sub: (row[1] || '').replace(/<[^>]+>/g, ''),
+              eur: '€' + eurStr,
+              krw: '₩' + (row[3] || '').replace(/<[^>]+>/g, ''),
+              value: value
+            };
+          }),
+          total: s.footer ? {
+            name: (s.footer[0] || '').replace(/<[^>]+>/g, ''),
+            eur: '€' + (s.footer[2] || '').replace(/<[^>]+>/g, ''),
+            krw: '₩' + (s.footer[3] || '').replace(/<[^>]+>/g, ''),
+            note: s.note
+          } : null
+        };
+      } else if (s.type === 'learn' && inFocus) {
+        // why 섹션으로 변환 (첫 1-3개 항목만)
+        var paragraphs = (s.items || []).slice(0, 3).map(function(it) {
+          return '<strong>' + it.h.replace(/^\d+\.\s*/, '') + '</strong> · ' + it.body;
+        });
+        whyData = {
+          cityName: city.hero.city.replace(/^[^a-zA-Z가-힣]+/, ''),
+          paragraphs: paragraphs,
+          takeaway: s.items.length > 0 ? {
+            icon: 'priority_high',
+            title: '핵심 한 줄',
+            text: (s.items[s.items.length - 1].highlight || s.items[s.items.length - 1].body || '').replace(/<[^>]+>/g, '').substring(0, 80)
+          } : null,
+          image: city.hero.image,
+          quote: city.hero.quote
+        };
+        // 나머지 learn 항목들은 raw로
+        if (s.items.length > 3) {
+          rawSections.push({
+            type: 'learn',
+            title: s.title + ' (더 보기)',
+            icon: s.icon,
+            items: s.items.slice(3)
+          });
+        }
+      } else if (s.type === 'learn' && inLearn) {
+        // Learn 섹션은 그대로 (디자이너·작가 안목)
+        rawSections.push(s);
+      } else {
+        // 나머지는 raw (neighborhoods, timeline, subsections, table from daytrips 등)
+        rawSections.push(s);
+      }
     });
+
+    // 3. Places to Visit — bento
+    if (landmarks && landmarks.length) {
+      html += _renderPlacesMag(landmarks, hiddenSpots, '0' + sectionNum++);
+    }
+
+    // 4. Experiences + Nomad Mode (Split)
+    if (experiences.length || nomadModeBlocks.length) {
+      html += _renderExperiencesSplit(experiences, nomadModeBlocks, '0' + sectionNum++);
+    }
+
+    // 5. Raw 섹션들 (neighborhoods, learn, timeline, etc.)
+    if (rawSections.length) {
+      html += '<section class="nm-mag-section">';
+      html += _magSectionHead('0' + sectionNum++, 'Deep Dive', 'Local Intelligence');
+      html += '<div style="display:grid;grid-template-columns:1fr;gap:24px">';
+      rawSections.forEach(function(s) {
+        var renderer = SECTION_RENDERERS[s.type];
+        if (renderer) html += renderer(s);
+      });
+      html += '</div></section>';
+    }
+
+    // 6. Budget — intensity 바
+    if (budgetData) {
+      html += _renderBudgetMag(budgetData, '0' + sectionNum++);
+    }
+
+    // 7. Why City — 마지막 분석 + quote
+    if (whyData) {
+      html += _renderWhyCity(whyData, '0' + sectionNum++);
+    }
 
     return html;
   }
