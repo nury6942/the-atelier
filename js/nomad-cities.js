@@ -3312,6 +3312,256 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 4월 · 샌디에이고 ════════
+    'nomad-city-sandiego': {
+      monthLabel: '4월',
+      hero: {
+        city: '🇺🇸 샌디에이고',
+        tagline: 'Slow Sunny California',
+        country: '미국 캘리포니아 · USA',
+        dates: '2029.4.1 — 4.27 (27일) + NYC 4.28 — 4.30 (3박)',
+        weather: '15-22°C · 봄',
+        visa: 'ESTA',
+        vibe: '해변 + 멕시칸 + 슬로우 + 따듯',
+        mode: '글 + 미국 경험 60/40',
+        quote: '미국 첫 진입. LA·SF 대신 샌디에이고 = 누리 라인 (안전·쾌적·따듯). 뉴욕 = 4일 전 위성 3박.',
+        image: null,
+      },
+      meaning: [
+        '<strong>미국 1번 살아보기</strong> · LA·SF 대신 샌디에이고 선택 (안전·따듯·슬로우)',
+        '인구 140만 · 캘리포니아 2대 · 1년 평균 22°C',
+        '해변·국경·다문화 (멕시코 가까움)',
+        '거점 27일 + 뉴욕 위성 3박 = 미국 동·서부 동시',
+        '한 달 거점 · North Park 또는 Pacific Beach',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'location_city', title:'거점 동네', items:[
+          { name:'North Park · 30th Street',
+            desc:'<strong>누리 톤 1순위.</strong> 크리에이티브 + 카페 + 빈티지 + 노마드. Balboa Park 북쪽. 안전 + 걷기 좋음. Outsite 코리빙 본거지.' },
+          { name:'Hillcrest',
+            desc:'North Park 옆. 더 다양 · LGBTQ+ 친화 · 카페·갤러리. Gather Cowork 위치.' },
+          { name:'Pacific Beach (PB)',
+            desc:'해변 동네. 보드워크 + 서핑 + 카페. 약간 파티 분위기. Downtown Works PB 위치.' },
+          { name:'La Jolla',
+            desc:'고급 + 조용 + 해변 절경. The Living Room Cafe 작업 좋음. 시내에서 차로 20분.' },
+          { name:'Ocean Beach (OB)',
+            desc:'히피·로컬·서핑. Sunset Cliffs · The Template 카페.' },
+        ]},
+
+        { type:'places', icon:'landscape', title:'꼭 갈 곳', items:[
+          { name:'Balboa Park', price:'대부분 무료',
+            desc:'샌디에이고 심장. 1,200에이커. 17개 박물관 + 식물원 + 동물원. 매주 1-2번 가면 한 달 다 못 봄.' },
+          { name:'San Diego Zoo', price:'$70',
+            desc:'세계급 동물원. Balboa Park 안. 1일 통째.' },
+          { name:'La Jolla Cove · Seal Beach',
+            desc:'물개 + 바다사자 + 절벽. 누리 자연 라인.' },
+          { name:'Sunset Cliffs (Ocean Beach)',
+            desc:'샌디에이고 일몰 1순위. 매일 가도 됨. 무료.' },
+          { name:'Coronado Island', price:'페리 $8',
+            desc:'시내에서 페리 15분. Hotel del Coronado + 해변. 반나절.' },
+          { name:'Old Town San Diego',
+            desc:'샌디에이고 발상지. 멕시칸 콜로니얼 + 타코·마가리타.' },
+          { name:'Little Italy Mercato (토요일)',
+            desc:'샌디에이고 최대 파머스 마켓. 매주 토. 누리 = 한 달 살이 단골.' },
+        ]},
+
+        { type:'list', icon:'explore', title:'위성', items:[
+          '<strong>Tijuana (멕시코)</strong> · 트롤리 + 도보 국경 · 당일 · 누리 첫 멕시코',
+          '<strong>Joshua Tree National Park</strong> · 차로 2.5시간 · 사막 + 별 · 1박',
+          '<strong>LA 당일</strong> · Amtrak 기차 2.5시간 · LACMA · Getty · 디자이너 자산',
+          '<strong>Temecula Wine Country</strong> · 차로 1시간 · 캘리포니아 와이너리',
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'Verbatim Books (North Park)',
+            desc:'중고책 보물 가게. 큐레이션 좋음. 작가 누리 1순위.' },
+          { name:'The Book Catapult (South Park)',
+            desc:'독립 서점. 작가 토크 정기. 동네 분위기.' },
+          { name:"Warwick's (La Jolla, 1896)",
+            desc:'미국에서 가장 오래된 독립 서점 (가족 운영). 누리 작가 자산.' },
+          { name:'Bread & Salt (Barrio Logan)',
+            desc:'옛 빵 공장 → 갤러리·아티스트 스튜디오. 라티노 아트 신 중심. 디자이너 누리 자산.' },
+          { name:'Chicano Park (Barrio Logan)',
+            desc:'국가 사적지. 70+ 벽화 (Chicano 무브먼트). 무료. 분석가 N 정체성 글감.' },
+          { name:'Liberty Station (Point Loma)',
+            desc:'옛 해군 훈련소 → 100+ 아트·디자인·푸드 허브. NTC Foundation. 1일 묶음.' },
+          { name:'South Park 동네 산책',
+            desc:'North Park 옆. 더 조용 + 인디. Communal Coffee + 빈티지 가게.' },
+          { name:'Sunset Cliffs Natural Park',
+            desc:'Ocean Beach 옆. 절벽 산책. 일몰 + 글감. 무료.' },
+        ]},
+
+        { type:'places', icon:'checkroom', title:'본업 자산 · 디자인·크래프트', items:[
+          { name:'Mingei International Museum (Balboa Park)', price:'$15',
+            desc:'<strong>본업 누리 1순위.</strong> "Mingei" = 일본 민예 운동. 전 세계 민속 공예·디자인·크래프트. 2021 리노베이션. 누리 본업 (니트·텍스타일) 매칭.' },
+          { name:'San Diego Museum of Art (Balboa Park)', price:'$20',
+            desc:'유럽 + 미국 + 아시아 미술. Balboa Park 묶음.' },
+          { name:'Museum of Contemporary Art San Diego (La Jolla)', price:'$25',
+            desc:'2022 재오픈. 캘리포니아·라티노 컨템포러리. 누리 디자이너 자산.' },
+          { name:'A Ship in the Woods · Visions Art Museum',
+            desc:'Visions = 퀼트·텍스타일 전용 미술관 (Liberty Station). 본업 누리 매칭.' },
+          { name:'North Park · 30th Street 부티크 라인',
+            desc:'Hunt & Gather · Mimi & Red · Pigment. 디자이너 셀렉트 + 빈티지.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'list', icon:'attractions', title:'해볼 것', items:[
+          '<strong>타코 투어</strong> · 샌디에이고 = 미국 타코 수도 · $30-60',
+          '<strong>크래프트 비어 투어</strong> · North Park = 100+ 양조장 (술 X면 패스)',
+          '<strong>휘일 와칭</strong> · 회색고래·돌고래 · $40-50',
+          '<strong>서핑 레슨</strong> · Pacific Beach · $80-120',
+          '<strong>Hot Air Balloon (Del Mar)</strong> · 일출 · $200+',
+        ]},
+
+        { type:'places', icon:'restaurant', title:'음식 · 샌디에이고 라인', items:[
+          { name:'Tacos El Gordo (Chula Vista)', price:'$2-4/타코',
+            desc:'샌디에이고 베스트 타코 후보. 티후아나 스타일. 누리 첫 미국 타코.' },
+          { name:'City Tacos (North Park 외 다수)',
+            desc:'모던 타코. 캐주얼 + 가성비.' },
+          { name:"Hodad's (Ocean Beach, 1969)",
+            desc:'샌디에이고 명물 햄버거. 오베 분위기.' },
+          { name:'The Crack Shack (Little Italy 외)',
+            desc:'치킨 + 에그 전문. 빠른 점심.' },
+          { name:'Lucha Libre Taco Shop (Mission Hills)',
+            desc:'멕시칸 레슬링 테마. 분위기 + 가성비.' },
+          { name:'Convoy District (아시아 음식 거리)',
+            desc:'한식·중식·일식·베트남. 누리 한국 음식 그리울 때.' },
+          { name:'Liberty Public Market (Liberty Station)',
+            desc:'옛 해군 식당 → 푸드홀 + 가판. 30+ 로컬 가게. 누리 점심 단골.' },
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 미국 = 다양성 + 격차',
+            body:'같은 도시 안에 La Jolla (부) ↔ 일부 동네 (격차) 공존. 한국에 없는 사회 구조. 분석가 N 글감.' },
+          { h:'2. 멕시칸 영향 = 캘리포니아 정체성',
+            body:'음식·언어·디자인. Tijuana 당일 = 국경 도시 경험. 작가 누리 = 1번 경험치.' },
+          { h:'3. 서부 해안 = 슬로우 + 캐주얼',
+            body:'NYC 정반대. 같은 미국 안 동·서 격차 보기. 4월 말 NYC 위성으로 직접 비교.' },
+          { h:'4. 미국 디자인 신',
+            body:'LACMA · Getty 당일 가능. 미국 미술관 1번 경험. 본업 자산.' },
+          { h:'5. Mingei = 누리 본업 매칭 폭탄',
+            body:'일본 민예 운동 → 전 세계 민속 공예. 한국 (한복·자수)·아일랜드·노르웨이·아이슬란드 양털 라인 ↔ Mingei = 본업 자산 연결.' },
+          { h:'6. NYC 위성 = 동·서 미국 직접 비교',
+            body:'샌디에이고 (슬로우·따듯·멕시칸) ↔ NYC (빠름·도시·다양). 같은 나라 안 정반대. 분석가 N 글 1편.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'note', icon:'work', title:'코워킹 · 1달',
+          body:'',
+          subsections:[
+            { h:'코워킹', items:[
+              '<strong>Union Cowork (North Park)</strong> · 24/7 · 데일리 $30 · 월 $300-400 · 누리 1순위',
+              '<strong>Hardihood Cowork (North Park, 30th St)</strong> · 크리에이티브 분위기',
+              '<strong>Gather Cowork (Hillcrest)</strong> · 노마드 친화 + 해피아워',
+              '<strong>Downtown Works (다운타운 + PB)</strong> · 24/7 · 월 $250-400',
+              '<strong>NEST Coworking</strong> · 24/7 · 다운타운',
+              '<strong>Public Library (Central + 분관)</strong> · 무료',
+            ]},
+            { h:'카페 (작업 가능)', items:[
+              '<strong>James Coffee</strong> · 스페셜티 본점',
+              '<strong>Holy Matcha (North Park)</strong> · 누리 톤 매칭',
+              "<strong>Lestat's Coffee House</strong> · 24시간",
+              '<strong>The Living Room Cafe (La Jolla)</strong> · 뷰 좋음',
+              '<strong>Communal Coffee (North Park)</strong>',
+            ]},
+          ],
+        },
+
+        { type:'list', icon:'home', title:'한 달 숙소', items:[
+          '<strong>Outsite San Diego (North Park)</strong> · 코리빙 · 월 $1,800-2,500 · 누리 라인 베스트',
+          '<strong>Airbnb 월 단위 (North Park · Hillcrest)</strong> · 스튜디오 월 $1,800-2,800',
+          '<strong>Furnished Finder</strong> · 의료·전문직 대상 가구 포함 임대 · 월 $1,500-2,500',
+          '<strong>HousingAnywhere</strong> · 글로벌 노마드 대상',
+          '<em>샌디에이고 = 미국 안에서 비쌈. 4월 = 봄 (성수기 직전). 6월 이후 더 비쌈.</em>',
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (27일 + NYC 위성 3박)', items:[
+          '<strong>주 1 (1-7일)</strong> · 퀸스타운 → LA → 샌디에이고 + 시차 (16시간) 적응 + North Park 거점 + James Coffee·Communal Coffee 단골 + Balboa Park 첫 방문',
+          '<strong>주 2 (8-14일)</strong> · 글 작업 (도서관·Union Cowork) + Mingei International Museum + La Jolla 1일 + Sunset Cliffs 일몰',
+          '<strong>주말 (13-14일차)</strong> · Tijuana 당일 (멕시코 첫 경험)',
+          '<strong>주 3 (15-21일)</strong> · 글 풀가동 + Bread & Salt + Chicano Park + Liberty Station + LA 당일 (LACMA·Getty)',
+          '<strong>주말 (22-23일차)</strong> · Joshua Tree 1박 (사막·별)',
+          '<strong>주 4 (24-27일)</strong> · 1년 노마드 10개월 회고 + 디지털 제품 마무리 + NYC 짐 준비',
+          '<strong>NYC 위성 (28-30일 = 3박)</strong> · 별도 카드 참고',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 그룹', items:[
+          { h:'페이스북 그룹', items:[
+            '<strong>San Diego Digital Nomads</strong>',
+            '<strong>SD Expats</strong>',
+            '<strong>Female Digital Nomads San Diego</strong> · 여성 한정',
+            '<strong>San Diego Designers Network</strong> · 본업 동종',
+            '<strong>San Diego Knitters & Crafters</strong> · 본업 매칭',
+            '<strong>San Diego Writers Ink</strong> · 작가 모임',
+            '<strong>Korean in San Diego</strong> · 한인 (한국어 그리울 때)',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Creative Mornings San Diego" · 매월 토 아침',
+            '"San Diego International Meetup"',
+            '"San Diego Photography Walks"',
+            '"San Diego Writers Coffee Chat"',
+          ]},
+          { h:'코워킹·본업 이벤트', items:[
+            'Outsite 거주자 정기 이벤트 = 노마드 자동 만남',
+            'Union Cowork (North Park) 해피아워 정기',
+            'Downtown Works 해피아워',
+            'Bread & Salt 갤러리 오프닝 = 라티노 아티스트 직접',
+            'Mingei Museum 워크숍·강연 정기',
+          ]},
+          { h:'이벤트 (4월)', items:[
+            '<strong>San Diego Earth Day Fair</strong> (4월) · Balboa Park · 무료',
+            '<strong>Coachella 잔향</strong> (4월 중순) · LA 인근. 옷·문화',
+            '<strong>Little Italy Mercato</strong> · 매주 토',
+            '<strong>Balboa Park 무료 콘서트·페스티벌</strong> · 정기',
+            '<strong>North Park Festival of Arts</strong> · 5월 초 (살짝 후)',
+          ]},
+          { h:'샌디에이고 특유', items:[
+            '인구 140만. <strong>군대 + 의대·바이오 + 노마드 + 멕시칸 = 4개 도시가 한 곳에.</strong> 한 달 거주 = 카페 단골 자연 형성. 영어 부담 X (스페인어 일부). 누리 = 깊은 친구 2-3명 가능. 안전 + 따뜻 + 슬로우 = 미국 첫 경험 베스트.',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'table', icon:'payments', title:'1달 (숙소 제외, NYC 위성 별도)',
+          headers:['카테고리','세부','월 합계 ($)','₩'],
+          rows:[
+            ['식비', '마트 + 외식 + 타코', '$700-1,000', '96-137만'],
+            ['교통', '트롤리 + 우버 + 1주 렌터카', '$300-500', '41-69만'],
+            ['박물관·체험', 'Balboa Park + Zoo', '$150-250', '21-34만'],
+            ['위성 (Tijuana·LA·Joshua Tree)', '당일 + 1박', '$200-400', '27-55만'],
+            ['코워킹', '월권 또는 도서관', '$0-400', '0-55만'],
+          ],
+          footer:['<strong>합계</strong>', '', '<strong>$1,350-2,550</strong>', '<strong>185-350만</strong>'],
+          note:'미국 = 비쌈. 도서관 활용 시 코워킹 0. 외식 vs 마트 비율이 핵심.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. North Park 거점 강력 추천',
+            body:'누리 톤 (크리에이티브 + 카페 + 노마드) 1순위. PB = 파티 분위기 강함, La Jolla = 너무 조용·고급.' },
+          { h:'2. Balboa Park = 한 달 자산',
+            body:'17개 박물관 무료 일부 + 식물원. 누리 = 매주 1-2번 가도 다 못 봄. 작업 + 산책 + 글감.' },
+          { h:'3. Tijuana 1번 경험',
+            body:'국경 도시 = 한국인이 경험하기 어려운 곳. 트롤리 + 도보 = 안전 경로. 당일.' },
+          { h:'4. 미국 운전 안 한다는 라인 OK',
+            body:'샌디에이고 = 트롤리 + 우버 충분. North Park · Hillcrest · 다운타운 = 도보권. 단 Joshua Tree·Temecula = 렌터카 1-2일 필요.' },
+          { h:'5. NYC 위성 3박 = 4월 마지막 주',
+            body:'4.28-4.30 (3박 4일). 1년 노마드 마지막 도시 경험. 본업 자산 (미국 디자인) + 작가 자산.' },
+          { h:'6. 다음 = 5월 핼리팩스 (캐나다)',
+            body:'NYC 또는 샌디에이고 → 핼리팩스 직항 또는 토론토 경유. 1년 노마드 마지막 거점.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
