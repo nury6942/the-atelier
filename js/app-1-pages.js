@@ -3689,36 +3689,7 @@
         '</div>';
       }
       // (2) 사전 예약 미니 패널은 제거 — 일정 카드 자체에 빨간색으로 강조되고 권장 예약 시점도 표시되므로 중복 방지
-      // (3) 쇼핑 가이드 — 시간 없는 기념품만 (시간 있는 건 위에서 일정에 통합됨)
-      var sourceSouvenirs = journeyData.filter(function(j){
-        if (j.type !== '기념품') return false;
-        if (j.time) return false; // 시간 있는 건 일정 리스트에 들어가므로 제외
-        if (j.date && j.date === dateStr) return true;
-        // 도시 부분 매칭 ('Frankfurt am Main' ⊃ 'Frankfurt', '독일 드레스덴' ⊃ '드레스덴')
-        if (!j.date && j.city && cityName) {
-          var jn = _normCityKey(j.city), cn = _normCityKey(cityName);
-          if (jn && cn && (jn === cn || jn.indexOf(cn) >= 0 || cn.indexOf(jn) >= 0)) return true;
-        }
-        return false;
-      });
-      if (sourceSouvenirs.length > 0) {
-        miniPanelHtml += '<div class="mb-2 p-2.5 rounded-lg border-l-[3px]" style="background:#fff7ed;border-left-color:#f97316">' +
-          '<div class="flex items-center gap-1.5 mb-1.5">' +
-            '<span class="material-symbols-outlined text-orange-600" style="font-size:13px">shopping_bag</span>' +
-            '<span class="text-[9px] font-black uppercase tracking-widest text-orange-700">쇼핑 ' + sourceSouvenirs.length + '개 (장소 자유)</span>' +
-          '</div>' +
-          '<ul class="space-y-1.5">' +
-            sourceSouvenirs.map(function(s){
-              var titleSafe = String(s.title||'').replace(/</g,'&lt;');
-              var descSafe = String(s.description||'').replace(/</g,'&lt;');
-              var price = s.amount ? ' <span class="text-[10px] text-orange-600 font-bold">€' + s.amount + '</span>' : '';
-              var titlePart = titleSafe ? '<span class="font-bold text-slate-900">' + titleSafe + '</span>' : '';
-              var descPart = descSafe ? '<span class="text-slate-600"> — ' + descSafe + '</span>' : '';
-              return '<li class="text-[11px] leading-snug pl-2 border-l border-orange-200">' + titlePart + descPart + price + '</li>';
-            }).join('') +
-          '</ul>' +
-        '</div>';
-      }
+      // (3) 쇼핑 가이드 박스 제거 — Souvenir Checklist 섹션에서 도시별로 묶어 표시되므로 일차 카드 안 중복 제거
 
       var itemsHtml = items.length === 0
         ? '<div class="text-xs text-slate-400 py-4 italic text-center">일정 없음</div>'
@@ -6057,6 +6028,47 @@
     return order.map(function(k) { return groups[k]; });
   }
 
+  // 여행 도시 순서 (citiesData 순서) 기반 city 우선순위
+  function _souvenirCityRank(city) {
+    if (!city) return 9999;
+    var c = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+    var nc = _normCityKey(city);
+    for (var i = 0; i < c.length; i++) {
+      var n = _normCityKey(c[i].name || '');
+      if (!n || !nc) continue;
+      if (n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0) return i;
+    }
+    return 9999;
+  }
+  // 도시별로 다시 sub-group (한 국가 안에서)
+  function _groupSouvenirsByCity(items) {
+    var groups = {};
+    var keys = [];
+    items.forEach(function(it) {
+      var key = String(it.city || '미지정');
+      if (!groups[key]) {
+        groups[key] = { city: key, rank: _souvenirCityRank(key), items: [] };
+        keys.push(key);
+      }
+      groups[key].items.push(it);
+    });
+    // 여행 순서대로 정렬 — citiesData 순서 우선, 그 외는 알파벳/가나다
+    keys.sort(function(a, b) {
+      var ra = groups[a].rank, rb = groups[b].rank;
+      if (ra !== rb) return ra - rb;
+      return a.localeCompare(b, 'ko');
+    });
+    // 각 도시 그룹 안에서 카테고리 정렬
+    keys.forEach(function(k) {
+      groups[k].items.sort(function(a, b) {
+        var ra = _souvenirCatRank(a.title), rb = _souvenirCatRank(b.title);
+        if (ra !== rb) return ra - rb;
+        return String(a.title || '').localeCompare(String(b.title || ''), 'ko');
+      });
+    });
+    return keys.map(function(k) { return groups[k]; });
+  }
+
   function renderJourneySouvenir() {
     var container = document.getElementById('journey-souvenir-list');
     if (!container) return;
@@ -6067,23 +6079,39 @@
       var groupsFb = _groupSouvenirsByCountry(fbItems);
       container.innerHTML = '<div class="j-souvenir-grid">' +
         groupsFb.map(function(g) {
-          var subs = _groupSouvenirsByCategory(g.items);
-          var subsHtml = subs.map(function(sub) {
-            var rowsHtml = sub.items.map(function(item) {
-              var realIdx = journeyData.indexOf(item);
-              var checked = item.status === '완료';
-              return svRowSt(item, checked,
-                'toggleSouvenir(' + realIdx + ',' + !checked + ')',
-                'deleteJourneyRow(' + realIdx + ')',
-                'editJourneyItem(' + realIdx + ')',
-                'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+          // 국가 안에서 도시별 그룹 (여행 순서대로)
+          var cities = _groupSouvenirsByCity(g.items);
+          var citiesHtml = cities.map(function(cityGroup) {
+            // 도시 안에서 카테고리 sub-group
+            var subs = _groupSouvenirsByCategory(cityGroup.items);
+            var subsHtml = subs.map(function(sub) {
+              var rowsHtml = sub.items.map(function(item) {
+                var realIdx = journeyData.indexOf(item);
+                var checked = item.status === '완료';
+                return svRowSt(item, checked,
+                  'toggleSouvenir(' + realIdx + ',' + !checked + ')',
+                  'deleteJourneyRow(' + realIdx + ')',
+                  'editJourneyItem(' + realIdx + ')',
+                  'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+              }).join('');
+              return '<div class="j-souvenir-subgroup">' +
+                '<div class="j-souvenir-subgroup-h">' +
+                  '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
+                  '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+                '</div>' +
+                '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+              '</div>';
             }).join('');
-            return '<div class="j-souvenir-subgroup">' +
-              '<div class="j-souvenir-subgroup-h">' +
-                '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
-                '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+            var orderLabel = (cityGroup.rank < 9999) ? ('STOP ' + (cityGroup.rank + 1)) : '';
+            return '<div class="j-souvenir-cityblock">' +
+              '<div class="j-souvenir-city-h">' +
+                '<div class="j-souvenir-city-h-l">' +
+                  (orderLabel ? '<span class="j-souvenir-city-order">' + orderLabel + '</span>' : '') +
+                  '<span class="j-souvenir-city-name">' + cityGroup.city + '</span>' +
+                '</div>' +
+                '<span class="j-souvenir-city-count">' + cityGroup.items.length + ' items</span>' +
               '</div>' +
-              '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+              subsHtml +
             '</div>';
           }).join('');
           return '<div class="j-souvenir-group">' +
@@ -6092,7 +6120,7 @@
               '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
               '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
             '</h3>' +
-            subsHtml +
+            citiesHtml +
           '</div>';
         }).join('') +
       '</div>';
@@ -6103,22 +6131,36 @@
     var groupsSeed = _groupSouvenirsByCountry(data);
     container.innerHTML = '<div class="j-souvenir-grid">' +
       groupsSeed.map(function(g) {
-        var subs = _groupSouvenirsByCategory(g.items);
-        var subsHtml = subs.map(function(sub) {
-          var rowsHtml = sub.items.map(function(item) {
-            var origIdx = data.indexOf(item);
-            return svRowSt(item, item.checked,
-              'toggleSouvenirLocal(' + origIdx + ')',
-              'deleteSouvenirLocal(' + origIdx + ')',
-              null,
-              'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+        var cities = _groupSouvenirsByCity(g.items);
+        var citiesHtml = cities.map(function(cityGroup) {
+          var subs = _groupSouvenirsByCategory(cityGroup.items);
+          var subsHtml = subs.map(function(sub) {
+            var rowsHtml = sub.items.map(function(item) {
+              var origIdx = data.indexOf(item);
+              return svRowSt(item, item.checked,
+                'toggleSouvenirLocal(' + origIdx + ')',
+                'deleteSouvenirLocal(' + origIdx + ')',
+                null,
+                'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+            }).join('');
+            return '<div class="j-souvenir-subgroup">' +
+              '<div class="j-souvenir-subgroup-h">' +
+                '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
+                '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+              '</div>' +
+              '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+            '</div>';
           }).join('');
-          return '<div class="j-souvenir-subgroup">' +
-            '<div class="j-souvenir-subgroup-h">' +
-              '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
-              '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+          var orderLabel = (cityGroup.rank < 9999) ? ('STOP ' + (cityGroup.rank + 1)) : '';
+          return '<div class="j-souvenir-cityblock">' +
+            '<div class="j-souvenir-city-h">' +
+              '<div class="j-souvenir-city-h-l">' +
+                (orderLabel ? '<span class="j-souvenir-city-order">' + orderLabel + '</span>' : '') +
+                '<span class="j-souvenir-city-name">' + cityGroup.city + '</span>' +
+              '</div>' +
+              '<span class="j-souvenir-city-count">' + cityGroup.items.length + ' items</span>' +
             '</div>' +
-            '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+            subsHtml +
           '</div>';
         }).join('');
         return '<div class="j-souvenir-group">' +
@@ -6127,7 +6169,7 @@
             '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
             '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
           '</h3>' +
-          subsHtml +
+          citiesHtml +
         '</div>';
       }).join('') +
     '</div>';

@@ -6816,6 +6816,50 @@
       display: flex;
       flex-direction: column;
     }
+    /* 도시 그룹 (가장 큰) — 한 국가 안에서 여러 도시별로 묶기 */
+    #page-journey .j-souvenir-cityblock {
+      margin-bottom: 32px;
+    }
+    #page-journey .j-souvenir-cityblock:last-child { margin-bottom: 0; }
+    #page-journey .j-souvenir-city-h {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0 10px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(124,58,237,0.25);
+    }
+    #page-journey .j-souvenir-city-h-l {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    #page-journey .j-souvenir-city-name {
+      font-family: var(--j-font-display);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--j-on-surface);
+    }
+    #page-journey .j-souvenir-city-order {
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: var(--j-primary);
+      background: var(--j-primary-container);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+    #page-journey .j-souvenir-city-count {
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--j-on-surface-variant);
+      letter-spacing: 0.05em;
+    }
+
     /* sub-group (카테고리) 분리 */
     #page-journey .j-souvenir-subgroup {
       margin-bottom: 18px;
