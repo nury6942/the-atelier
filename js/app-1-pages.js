@@ -6001,14 +6001,36 @@
     '</div>';
   }
 
-  // 카테고리(대상) 우선순위 — 찐친 → 동료 → 직장 → 가족 → 나 → 집 → 디자이너픽 → 편집 → ...
+  // 카테고리(대상) 우선순위 — 찐친 → 후배 → 동료 → 직장 → 가족 → 나 → 집 → 소장 → 디자이너 → 편집 → ...
+  var SOUVENIR_CAT_ORDER = ['찐친','후배','동료','직장','가족','나','집','소장','디자이너','편집','음료','기타'];
   function _souvenirCatRank(title) {
     var t = String(title || '');
-    var order = ['찐친','후배','동료','직장','가족','나','집','소장','디자이너','편집','음료','기타'];
-    for (var i = 0; i < order.length; i++) {
-      if (t.indexOf(order[i]) >= 0) return i;
+    for (var i = 0; i < SOUVENIR_CAT_ORDER.length; i++) {
+      if (t.indexOf(SOUVENIR_CAT_ORDER[i]) >= 0) return i;
     }
     return 999;
+  }
+  // primary 카테고리 키 (sub-group 묶음용) — title에서 첫 매칭 키워드
+  function _souvenirPrimaryCat(title) {
+    var t = String(title || '');
+    for (var i = 0; i < SOUVENIR_CAT_ORDER.length; i++) {
+      if (t.indexOf(SOUVENIR_CAT_ORDER[i]) >= 0) return SOUVENIR_CAT_ORDER[i];
+    }
+    return '기타';
+  }
+  // 같은 카테고리 items을 sub-group으로 묶기 (이미 정렬된 배열을 받음)
+  function _groupSouvenirsByCategory(sortedItems) {
+    var subs = [];
+    var cur = null;
+    sortedItems.forEach(function(it) {
+      var cat = _souvenirPrimaryCat(it.title);
+      if (!cur || cur.cat !== cat) {
+        cur = { cat: cat, items: [] };
+        subs.push(cur);
+      }
+      cur.items.push(it);
+    });
+    return subs;
   }
 
   // 도시별로 그룹화 + 국가 추론 + 그룹 안 카테고리 순 정렬
@@ -6045,14 +6067,24 @@
       var groupsFb = _groupSouvenirsByCountry(fbItems);
       container.innerHTML = '<div class="j-souvenir-grid">' +
         groupsFb.map(function(g) {
-          var rowsHtml = g.items.map(function(item) {
-            var realIdx = journeyData.indexOf(item);
-            var checked = item.status === '완료';
-            return svRowSt(item, checked,
-              'toggleSouvenir(' + realIdx + ',' + !checked + ')',
-              'deleteJourneyRow(' + realIdx + ')',
-              'editJourneyItem(' + realIdx + ')',
-              'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+          var subs = _groupSouvenirsByCategory(g.items);
+          var subsHtml = subs.map(function(sub) {
+            var rowsHtml = sub.items.map(function(item) {
+              var realIdx = journeyData.indexOf(item);
+              var checked = item.status === '완료';
+              return svRowSt(item, checked,
+                'toggleSouvenir(' + realIdx + ',' + !checked + ')',
+                'deleteJourneyRow(' + realIdx + ')',
+                'editJourneyItem(' + realIdx + ')',
+                'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+            }).join('');
+            return '<div class="j-souvenir-subgroup">' +
+              '<div class="j-souvenir-subgroup-h">' +
+                '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
+                '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+              '</div>' +
+              '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+            '</div>';
           }).join('');
           return '<div class="j-souvenir-group">' +
             '<h3 class="j-souvenir-group-h">' +
@@ -6060,7 +6092,7 @@
               '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
               '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
             '</h3>' +
-            '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+            subsHtml +
           '</div>';
         }).join('') +
       '</div>';
@@ -6071,14 +6103,23 @@
     var groupsSeed = _groupSouvenirsByCountry(data);
     container.innerHTML = '<div class="j-souvenir-grid">' +
       groupsSeed.map(function(g) {
-        var rowsHtml = g.items.map(function(item, idx) {
-          // seed data는 원본 idx 필요 — 전체 data 배열에서 인덱스 다시 찾기
-          var origIdx = data.indexOf(item);
-          return svRowSt(item, item.checked,
-            'toggleSouvenirLocal(' + origIdx + ')',
-            'deleteSouvenirLocal(' + origIdx + ')',
-            null,
-            'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+        var subs = _groupSouvenirsByCategory(g.items);
+        var subsHtml = subs.map(function(sub) {
+          var rowsHtml = sub.items.map(function(item) {
+            var origIdx = data.indexOf(item);
+            return svRowSt(item, item.checked,
+              'toggleSouvenirLocal(' + origIdx + ')',
+              'deleteSouvenirLocal(' + origIdx + ')',
+              null,
+              'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+          }).join('');
+          return '<div class="j-souvenir-subgroup">' +
+            '<div class="j-souvenir-subgroup-h">' +
+              '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
+              '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
+            '</div>' +
+            '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+          '</div>';
         }).join('');
         return '<div class="j-souvenir-group">' +
           '<h3 class="j-souvenir-group-h">' +
@@ -6086,7 +6127,7 @@
             '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
             '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
           '</h3>' +
-          '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+          subsHtml +
         '</div>';
       }).join('') +
     '</div>';

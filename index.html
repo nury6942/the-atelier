@@ -6816,6 +6816,45 @@
       display: flex;
       flex-direction: column;
     }
+    /* sub-group (카테고리) 분리 */
+    #page-journey .j-souvenir-subgroup {
+      margin-bottom: 18px;
+    }
+    #page-journey .j-souvenir-subgroup:last-child { margin-bottom: 0; }
+    #page-journey .j-souvenir-subgroup-h {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0 8px;
+      margin-bottom: 4px;
+      border-bottom: 1px dashed var(--j-outline-variant);
+    }
+    #page-journey .j-souvenir-subgroup-h-l {
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--j-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #page-journey .j-souvenir-subgroup-h-l::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--j-primary);
+      border-radius: 50%;
+    }
+    #page-journey .j-souvenir-subgroup-count {
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--j-on-surface-variant);
+      letter-spacing: 0.05em;
+    }
     #page-journey .j-souvenir-row {
       display: flex;
       justify-content: space-between;
