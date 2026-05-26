@@ -2104,28 +2104,46 @@
       html = '<div class="j-stop-empty">도시를 추가해봐!</div>';
     } else {
       html = citiesData.map(function(city, i) {
+        // 날짜 포맷 (Atlas 매거진 스타일: "09/25 ~ 09/26" 또는 "Sep 25 → Sep 26")
         var dateRange = '';
         if (city.start_date) dateRange = city.start_date.substring(5).replace('-','/') + ' ~ ' + (city.end_date ? city.end_date.substring(5).replace('-','/') : '');
         var nights = city.nights || 0;
-        var nightsText = nights > 0 ? nights + ' night' + (nights > 1 ? 's' : '') : (city.start_date ? 'Day trip' : '-- nights');
-        var cachedUrl = _cityPhotoCache[city.name] || '';
-        var stopLabel = ordinalStop(i + 1);
+        var nightsText = nights > 0 ? nights + ' Night' + (nights > 1 ? 's' : '') : (city.start_date ? 'Day Trip' : '— Nights');
+        var stopLabel = ordinalStop(i + 1).toUpperCase() + ' STOP';
+        // city id (LS/Firestore 키)
+        var cityKey = city._id || ('idx-' + i);
+        var safeKey = String(cityKey).replace(/'/g, "\\'");
+        // 사용자 업로드 이미지 (window.journeyCityImageGet에서 동기)
+        var img = (window.journeyCityImageGet && window.journeyCityImageGet(cityKey)) || null;
+        var imgEmpty = img ? '' : '<div class="j-stop-img-empty"><span class="material-symbols-outlined">photo_camera</span></div>';
+        var imgEl = img ? '<img class="j-stop-img-src" src="' + img + '" alt="' + (city.name||'') + '">' : '';
+        // 컨트롤
+        var ctrlInner = img
+          ? '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageUpload(\'' + safeKey + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
+            '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageDelete(\'' + safeKey + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
+          : '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageUpload(\'' + safeKey + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
 
-        return '<div class="j-stop-card">' +
+        return '<div class="j-stop-card" ' +
+            'onmouseenter="window.journeyCityImageSetActive && journeyCityImageSetActive(\'' + safeKey + '\')" ' +
+            'onmouseleave="window.journeyCityImageClearActive && journeyCityImageClearActive(\'' + safeKey + '\')">' +
           '<div class="j-stop-img">' +
-            '<div class="j-stop-img-empty"><span class="material-symbols-outlined" style="font-size:28px">photo_camera</span></div>' +
-            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
+            imgEmpty +
+            imgEl +
             '<div class="j-stop-label">' + stopLabel + '</div>' +
-            '<div class="j-stop-actions">' +
-              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정"><span class="material-symbols-outlined">edit</span></button>' +
-              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="danger" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
-            '</div>' +
+            '<input type="file" id="j-stop-file-' + i + '" accept="image/*" style="display:none" data-city-key="' + safeKey + '" onchange="event.stopPropagation();journeyCityImageFileSelected(event,\'' + safeKey + '\')">' +
+            '<div class="j-stop-img-controls' + (img ? '' : ' is-empty') + '">' + ctrlInner + '</div>' +
+            '<div class="j-stop-paste-hint">Ctrl+V로 붙여넣기</div>' +
           '</div>' +
+          '<h3 class="j-stop-name">' + (city.name || '') + '</h3>' +
           '<div class="j-stop-body">' +
-            '<h4 class="j-stop-name">' + city.name + '</h4>' +
-            '<div class="j-stop-meta">' +
-              '<span class="j-stop-dates">' + (dateRange || 'TBD') + '</span>' +
-              '<span class="j-stop-nights"><span class="material-symbols-outlined">bed</span>' + nightsText + '</span>' +
+            '<div class="j-stop-row"><span class="j-stop-k">DATES</span><span class="j-stop-v">' + (dateRange || 'TBD') + '</span></div>' +
+            '<div class="j-stop-row"><span class="j-stop-k">STAY</span><span class="j-stop-v">' + nightsText + '</span></div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">' +
+              '<span class="j-stop-nights-label">★ ' + stopLabel + '</span>' +
+              '<div style="display:flex;gap:4px">' +
+                '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
+                '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
+              '</div>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -2139,8 +2157,11 @@
     '</div>';
 
     container.innerHTML = html;
-    // 비동기 도시 사진 로드
-    setTimeout(loadCityPhotos, 300);
+    // 사용자 업로드 이미지 hydrate (Firestore 백그라운드 fetch)
+    if (typeof window.journeyCityImageHydrateAll === 'function') {
+      window.journeyCityImageHydrateAll();
+    }
+    // (loadCityPhotos 자동 무료 이미지 로드는 제거됨 — 사용자 업로드만 사용)
   }
 
   function openCityModal(idx) {
@@ -2719,10 +2740,10 @@
         summaryEl.style.display = 'none';
       }
     }
-    // Voyage Path
+    // Voyage Path (Hero 우측 카드)
     var vpEl = document.getElementById('journey-voyage-path');
     if (vpEl && citiesData.length > 0) {
-      vpEl.style.display = 'block'; // 새 j-section은 block
+      vpEl.style.display = 'flex'; // j-voyage-card는 flex column
       var cityNames = citiesData.map(function(c){return c.name;});
       document.getElementById('voyage-path-desc').textContent = cityNames.join(' → ') + ' 루트의 여행입니다.';
       var transports = journeyData.filter(function(d){return d.type==='이동수단';});
