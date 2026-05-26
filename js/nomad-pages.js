@@ -2576,58 +2576,307 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-actions', renderActions);
 
-  // ──────── Packing List 페이지 ────────
+  // ──────── Packing List 페이지 (Stitch Magazine Bento Grid 디자인) ────────
+  // 카테고리 메타 (아이콘, 색, bento 위치, 스타일)
+  function packingCatMeta(cat) {
+    var map = {
+      '캐리어 — 옷':           { icon:'checkroom',         bg:'#fff',    accent:'var(--nm-primary)',     style:'normal', span:'col-8' },
+      '캐리어 — 신발':         { icon:'hiking',            bg:'#F5F3FF', accent:'var(--nm-primary)',     style:'mini',   span:'col-4' },
+      '디자인 · 작업 도구':    { icon:'architecture',      bg:'#fff',    accent:'var(--nm-primary)',     style:'normal', span:'col-6' },
+      '백팩 — 기내':           { icon:'backpack',          bg:'var(--nm-deep-indigo)', accent:'#eaddff', style:'dark',   span:'col-6' },
+      '작가 도구':             { icon:'history_edu',       bg:'#fff',    accent:'#7d3d00',                style:'normal', span:'col-4' },
+      '세면 · 뷰티':           { icon:'soap',              bg:'#fff',    accent:'var(--nm-secondary)',    style:'normal', span:'col-4' },
+      '의약 · 건강':           { icon:'medical_services',  bg:'#F5F3FF', accent:'#ba1a1a',                style:'normal', span:'col-4' },
+      '작은 가방 — 개인 휴대': { icon:'badge',             bg:'#fff',    accent:'var(--nm-primary)',      style:'banner', span:'col-12' },
+    };
+    return map[cat] || { icon:'inventory_2', bg:'#fff', accent:'var(--nm-primary)', style:'normal', span:'col-6' };
+  }
+
+  // span → CSS grid-column 매핑 (12-col)
+  function spanCSS(span) {
+    var map = {
+      'col-12': 'grid-column:span 12',
+      'col-8':  'grid-column:span 8',
+      'col-6':  'grid-column:span 6',
+      'col-4':  'grid-column:span 4',
+      'col-3':  'grid-column:span 3',
+    };
+    return map[span] || 'grid-column:span 6';
+  }
+
+  // 단일 packing 카테고리 카드 (Bento 스타일)
+  function buildPackingCategoryCard(storageKey, group, gi) {
+    var saved = _nomadChecks[storageKey] || {};
+    var items = group.items || [];
+    var total = items.length;
+    var done = 0;
+    items.forEach(function(_, ii) { if (saved[gi + '-' + ii]) done++; });
+    var meta = packingCatMeta(group.cat);
+
+    var isDark = (meta.style === 'dark');
+    var isBanner = (meta.style === 'banner');
+    var isMini = (meta.style === 'mini');
+
+    // 색상 변수
+    var titleColor = isDark ? '#fff' : 'var(--nm-deep-indigo)';
+    var bodyColor = isDark ? 'rgba(255,255,255,0.85)' : 'var(--nm-text-2)';
+    var subColor = isDark ? 'rgba(255,255,255,0.6)' : 'var(--nm-text-3)';
+    var hoverBg = isDark ? 'rgba(255,255,255,0.08)' : '#F5F3FF';
+    var border = isDark ? 'rgba(255,255,255,0.12)' : 'var(--nm-surface-container)';
+
+    var html = '<div class="nm-card nm-checklist-wrap" data-key="' + storageKey + '" style="' + spanCSS(meta.span) + ';padding:26px;background:' + meta.bg + ';' + (isDark ? 'color:#fff;' : '') + 'position:relative;overflow:hidden">';
+
+    // dark deco circle
+    if (isDark) {
+      html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(30px)"></div>';
+    }
+
+    html += '<div style="position:relative;z-index:1">';
+    // 헤더
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">';
+    html += '<div style="display:flex;align-items:center;gap:12px">' +
+      '<div style="width:40px;height:40px;border-radius:11px;background:' + (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(124,58,237,0.1)') + ';display:flex;align-items:center;justify-content:center;color:' + meta.accent + ';flex-shrink:0">' +
+        '<span class="material-symbols-outlined" style="font-size:22px">' + meta.icon + '</span>' +
+      '</div>' +
+      '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:' + titleColor + '">' + group.cat + '</h4>' +
+    '</div>';
+    html += '<span class="nm-check-count-inline" style="font-family:Manrope;font-size:11px;font-weight:700;color:' + subColor + ';padding:4px 10px;background:' + (isDark ? 'rgba(255,255,255,0.1)' : 'var(--nm-surface-container-low)') + ';border-radius:99px">' + done + ' / ' + total + '</span>';
+    html += '</div>';
+
+    // hidden progress (auto-update 호환)
+    html += '<div class="nm-check-progress-label" style="display:none"></div>';
+    html += '<div style="display:none"><div class="nm-check-progress-bar"></div></div>';
+
+    // 진행률 미니 bar
+    var pct = total > 0 ? Math.round((done/total) * 100) : 0;
+    html += '<div style="height:3px;background:' + (isDark ? 'rgba(255,255,255,0.12)' : 'var(--nm-surface-container)') + ';border-radius:99px;overflow:hidden;margin-bottom:18px">' +
+      '<div class="nm-check-progress-bar" style="height:100%;background:' + (isDark ? '#fff' : 'var(--nm-primary)') + ';width:' + pct + '%;transition:width 0.2s"></div>' +
+    '</div>';
+
+    // 항목 리스트 (스타일에 따라 다름)
+    if (isMini) {
+      // mini 스타일: 작은 리스트 (check_circle 아이콘 + 짧은 텍스트)
+      html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<li class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">';
+        html += '<span class="material-symbols-outlined" style="font-size:18px;color:' + (isChecked ? meta.accent : 'rgba(122,116,135,0.5)') + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + '">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
+        html += '<span style="font-size:13px;color:' + bodyColor + ';' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
+        html += '</li>';
+      });
+      html += '</ul>';
+    } else if (isBanner) {
+      // banner 스타일: 가로 grid (full-width)
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:8px;border:1px solid transparent;transition:all 0.15s;background:var(--nm-surface-container-low)" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.background=\'#F5F3FF\'" onmouseout="this.style.borderColor=\'transparent\';this.style.background=\'var(--nm-surface-container-low)\'">';
+        html += '<span class="material-symbols-outlined" style="font-size:18px;color:' + (isChecked ? meta.accent : 'rgba(122,116,135,0.4)') + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + ';flex-shrink:0">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
+        html += '<span style="font-size:12px;color:' + bodyColor + ';line-height:1.4;' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
+        html += '</label>';
+      });
+      html += '</div>';
+    } else {
+      // normal/dark 스타일: 2-col 체크박스 grid
+      var cols = items.length > 8 ? '1fr 1fr' : '1fr';
+      html += '<div style="display:grid;grid-template-columns:' + cols + ';gap:6px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;border:1px solid transparent;transition:all 0.15s" onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'transparent\'">';
+        html += '<span class="material-symbols-outlined" style="font-size:17px;color:' + (isChecked ? meta.accent : (isDark ? 'rgba(255,255,255,0.35)' : 'rgba(122,116,135,0.4)')) + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + ';flex-shrink:0;margin-top:1px">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
+        html += '<span style="font-size:12px;color:' + bodyColor + ';line-height:1.45;' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
+        html += '</label>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+    html += '</div>';
+    return html;
+  }
+
   function renderPacking() {
     initChecks();
     var html = '';
-    html += pageHeader('Packing List', '장기 노마드 짐 리스트',
-      '캐리어 28인치 23kg + 백팩 8-10kg + 개인 휴대 5kg');
 
-    // 짐 철학
-    html += '<div class="nm-card" style="margin-bottom:16px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">luggage</span>' +
-      '<h3 class="nm-headline-md">짐 철학</h3>' +
-    '</div>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li><strong>3-2-1 원칙:</strong> 3계절 옷 + 2개 가방 + 1년치 짐</li>' +
-      '<li><strong>무게:</strong> 캐리어 23kg / 백팩 8-10kg / 개인 휴대 5kg</li>' +
-      '<li><strong>누리 라인:</strong> 옷·니트는 디자이너 안목 · 책·기념품은 현지 구매</li>' +
-    '</ul>';
-    html += '</div>';
-
-    // 짐 체크리스트
-    var groups = Object.keys(DATA.PACKING).map(function(cat) {
-      return { cat: cat, items: DATA.PACKING[cat] };
+    // 데이터
+    var packing = DATA.PACKING || {};
+    var categories = Object.keys(packing).map(function(cat, idx) {
+      return { cat: cat, items: packing[cat], gi: idx };
     });
-    html += buildChecklist('packing', '짐 체크리스트', groups);
 
-    // 23kg 초과 시 빼는 순서
-    html += '<div class="nm-card" style="margin-top:16px;border-left:3px solid #c2410c">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-      '<span class="material-symbols-outlined" style="color:#c2410c">priority_high</span>' +
-      '<h3 class="nm-headline-md" style="color:#c2410c">23kg 초과 시 빼는 순서</h3>' +
+    // 글로벌 stat 계산
+    var saved = _nomadChecks['packing'] || {};
+    var totalAll = categories.reduce(function(a,g){ return a + g.items.length; }, 0);
+    var doneAll = 0;
+    categories.forEach(function(g) {
+      g.items.forEach(function(_, ii) { if (saved[g.gi + '-' + ii]) doneAll++; });
+    });
+    var completionPct = totalAll > 0 ? Math.round((doneAll/totalAll) * 100) : 0;
+
+    // D-day → status pill
+    var dDay = daysBetween(todayYMD(), DEPARTURE_DATE);
+    var statusLabel, statusBg, statusColor;
+    if (dDay > 100) {
+      statusLabel = 'Planning · D-' + dDay;
+      statusBg = '#dee9fc'; statusColor = '#5654a8';
+    } else if (dDay > 30) {
+      statusLabel = 'Packing · D-' + dDay;
+      statusBg = '#F5F3FF'; statusColor = 'var(--nm-primary)';
+    } else if (dDay > 7) {
+      statusLabel = 'Final Check · D-' + dDay;
+      statusBg = '#ffe0cd'; statusColor = '#7d3d00';
+    } else if (dDay > 0) {
+      statusLabel = '⚡ Ready for Departure · D-' + dDay;
+      statusBg = '#dcfce7'; statusColor = '#15803d';
+    } else {
+      statusLabel = '🎉 출국 완료';
+      statusBg = '#F5F3FF'; statusColor = 'var(--nm-primary)';
+    }
+
+    // ════════ SECTION 1 · Hero Header (좌 타이틀 + 우 status) ════════
+    html += '<div class="nm-page-header" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
+    html += '<div>' +
+      '<div style="display:flex;align-items:center;gap:8px;color:var(--nm-primary);font-family:Manrope;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:12px">' +
+        '<span class="material-symbols-outlined" style="font-size:16px">luggage</span>' +
+        'Packing List' +
+      '</div>' +
+      '<h1 style="font-family:Manrope;font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.15;margin-bottom:10px">Master Packing List</h1>' +
+      '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.5;max-width:680px;margin:0">장기 노마드 정밀 인벤토리 · 1년 모빌리티 + 글쓰기/디자인 양립. 캐리어 28인치 23kg + 백팩 8-10kg + 휴대 5kg.</p>' +
     '</div>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li><strong>1순위 양보:</strong> 다량의 약·영양제 (현지 구매)</li>' +
-      '<li><strong>2순위:</strong> 헤어 기기 (현지 구매)</li>' +
-      '<li><strong>3순위:</strong> 운동복·수영복 일부</li>' +
-      '<li style="color:#b91c1c"><strong>절대 양보 X:</strong> 노트북·태블릿·외장 SSD·여권·서류·1차 옷·신발</li>' +
-    '</ul>';
+    html += '<div style="background:#F5F3FF;padding:14px 20px;border-radius:12px;display:flex;align-items:center;gap:12px;flex-shrink:0">' +
+      '<span style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-deep-indigo);text-transform:uppercase;letter-spacing:0.08em">Status</span>' +
+      '<span style="background:' + statusBg + ';color:' + statusColor + ';padding:6px 14px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase">' + statusLabel + '</span>' +
+    '</div>';
     html += '</div>';
 
-    // 한국 보관
-    html += '<div class="nm-card" style="margin-top:16px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">archive</span>' +
-      '<h3 class="nm-headline-md">한국 집 보관 (동생한테)</h3>' +
+    // ════════ SECTION 2 · 짐 철학 3 metric ════════
+    html += '<div class="nm-grid nm-grid-3" style="margin-bottom:32px">';
+
+    html += '<div class="nm-card" style="padding:24px;border-left:4px solid var(--nm-primary)">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">looks_3</span>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">3-2-1 원칙</p>' +
+      '</div>' +
+      '<p style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">3계절 옷 · 2개 가방 · 1년치 짐</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px;line-height:1.5">미니멀 + 다용도 + 한 시즌 분량 최적화</p>' +
     '</div>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li>1년 안 입을 옷·신발</li>' +
-      '<li>책·앨범·기념품</li>' +
-      '<li>본업 자료·디자인 포트폴리오 원본</li>' +
-      '<li>차량 (동생 사용 또는 보관)</li>' +
-    '</ul>';
+
+    html += '<div class="nm-card" style="padding:24px;border-left:4px solid var(--nm-secondary)">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-secondary)">scale</span>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">무게 한도</p>' +
+      '</div>' +
+      '<p style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">23kg + 8-10kg + 5kg</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px;line-height:1.5">캐리어 · 백팩 · 개인 휴대 — 항공사 룰 준수</p>' +
+    '</div>';
+
+    html += '<div class="nm-card" style="padding:24px;border-left:4px solid #7d3d00">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:#7d3d00">design_services</span>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">누리 라인</p>' +
+      '</div>' +
+      '<p style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">디자이너 안목 · 현지 보충</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px;line-height:1.5">옷·니트 = 본업 자산 / 책·기념품 = 현지 구매</p>' +
+    '</div>';
+
+    html += '</div>';
+
+    // ════════ SECTION 3 · Bento Grid Packing Categories (12-col) ════════
+    html += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:20px;margin-bottom:32px">';
+    categories.forEach(function(g) {
+      html += buildPackingCategoryCard('packing', g, g.gi);
+    });
+    html += '</div>';
+
+    // ════════ SECTION 4 · 23kg 초과 + 한국 보관 (6/6 split) ════════
+    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
+
+    // LEFT: 23kg 초과 시 빼는 순서
+    html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#fff7ed,#ffe0cd);position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:#7d3d00;opacity:0.08;border-radius:50%;filter:blur(30px)"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      '<span class="material-symbols-outlined" style="color:#c2410c">priority_high</span>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:#5a2900">23kg 초과 시 빼는 순서</h3>' +
+    '</div>';
+    var priority = [
+      { rank:'1순위 양보', text:'다량의 약·영양제 (현지 구매 가능)', color:'#fbbf24' },
+      { rank:'2순위',       text:'헤어 기기 (현지 구매 또는 듀얼볼트)', color:'#f97316' },
+      { rank:'3순위',       text:'운동복·수영복 일부',                color:'#c2410c' },
+    ];
+    html += '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">';
+    priority.forEach(function(p) {
+      html += '<div style="display:flex;gap:14px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.6);border-radius:8px;border-left:3px solid ' + p.color + '">' +
+        '<span style="font-family:Manrope;font-size:11px;font-weight:700;color:' + p.color + ';text-transform:uppercase;letter-spacing:0.06em;min-width:80px">' + p.rank + '</span>' +
+        '<span style="font-size:13px;color:#5a2900;line-height:1.5;flex:1">' + p.text + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+    // 절대 양보 X
+    html += '<div style="padding:16px 18px;background:rgba(186,26,26,0.08);border-left:4px solid #ba1a1a;border-radius:8px">' +
+      '<p style="font-family:Manrope;font-size:11px;font-weight:700;color:#ba1a1a;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">⛔ 절대 양보 X</p>' +
+      '<p style="font-size:13px;color:#5a2900;line-height:1.6">노트북 · 태블릿 · 외장 SSD · 여권 · 서류 · 1차 옷 · 신발</p>' +
+    '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // RIGHT: 한국 집 보관 (deep-indigo)
+    html += '<div class="nm-card nm-card-lg" style="background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(40px)"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<span class="material-symbols-outlined" style="color:#eaddff">archive</span>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:#fff">한국 집 보관</h3>' +
+    '</div>';
+    html += '<p style="font-size:12px;color:rgba(234,221,255,0.75);margin-bottom:22px">동생한테 맡길 짐 · 1년 안 안 쓰는 것 분류</p>';
+    var storageItems = [
+      { icon:'checkroom', text:'1년 안 입을 옷·신발' },
+      { icon:'menu_book', text:'책·앨범·기념품' },
+      { icon:'folder',    text:'본업 자료·디자인 포트폴리오 원본' },
+      { icon:'directions_car', text:'차량 (동생 사용 또는 보관)' },
+    ];
+    html += '<div style="display:flex;flex-direction:column;gap:12px">';
+    storageItems.forEach(function(s) {
+      html += '<div style="display:flex;gap:14px;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid rgba(255,255,255,0.1)">' +
+        '<div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+          '<span class="material-symbols-outlined" style="font-size:18px;color:#eaddff">' + s.icon + '</span>' +
+        '</div>' +
+        '<p style="font-size:13px;color:#fff;line-height:1.5;flex:1">' + s.text + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>'; // /6-6 split
+
+    // ════════ SECTION 5 · Footer Stats Banner ════════
+    html += '<div class="nm-card nm-readiness-global" data-key="packing" data-total="' + totalAll + '" style="padding:24px 32px;background:var(--nm-surface-container-low);border:1px solid var(--nm-surface-container);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">';
+    html += '<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">';
+    html += '<div>' +
+      '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Total Items</p>' +
+      '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-deep-indigo)">' + totalAll + '</p>' +
+    '</div>';
+    html += '<div style="height:36px;width:1px;background:var(--nm-outline-variant);opacity:0.3"></div>';
+    html += '<div>' +
+      '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Categories</p>' +
+      '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-deep-indigo)">' + categories.length + '</p>' +
+    '</div>';
+    html += '<div style="height:36px;width:1px;background:var(--nm-outline-variant);opacity:0.3"></div>';
+    html += '<div>' +
+      '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Completion</p>' +
+      '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-primary)"><span class="nm-readiness-pct">' + completionPct + '%</span> <span style="font-size:13px;color:var(--nm-text-3);font-weight:500"><span class="nm-readiness-done">' + doneAll + ' Completed</span></span></p>' +
+    '</div>';
+    html += '</div>';
+    // Print 버튼
+    html += '<button onclick="window.print()" style="display:flex;align-items:center;gap:8px;padding:12px 22px;background:#fff;color:var(--nm-deep-indigo);border:1px solid var(--nm-surface-container-high);border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\'" onmouseout="this.style.background=\'#fff\';this.style.borderColor=\'var(--nm-surface-container-high)\'">' +
+      '<span class="material-symbols-outlined" style="font-size:18px">print</span>' +
+      'Export PDF Manifest' +
+    '</button>';
     html += '</div>';
 
     return html;
