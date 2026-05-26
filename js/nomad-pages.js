@@ -1345,7 +1345,7 @@ window.NOMAD_PAGES = (function(){
     // Experiences (7-col)
     html += '<div>';
     html += _magSectionHead(num || '02', 'Experiences', 'Cultural Immersion');
-    (experiences || []).slice(0, 6).forEach(function(exp) {
+    (experiences || []).forEach(function(exp) {     // 전체 출력 (slice 제거)
       html += '<div class="nm-exp-card">';
       html += '<div class="nm-exp-thumb">';
       if (exp.image) html += '<img src="' + exp.image + '" alt="' + exp.name + '"/>';
@@ -1353,14 +1353,14 @@ window.NOMAD_PAGES = (function(){
       html += '</div>';
       html += '<div class="nm-exp-body">';
       html += '<div class="nm-exp-title">' + exp.name + '</div>';
-      html += '<div class="nm-exp-desc">' + exp.desc.replace(/<[^>]+>/g, '').substring(0, 120) + (exp.desc.length > 120 ? '…' : '') + '</div>';
+      html += '<div class="nm-exp-desc">' + exp.desc + '</div>';   // 풀 desc (HTML 유지)
       if (exp.price || exp.time) {
         html += '<div class="nm-exp-pills">';
         if (exp.time) html += '<span class="nm-exp-pill time">' + exp.time + '</span>';
         if (exp.price) html += '<span class="nm-exp-pill price">' + exp.price + '</span>';
-        html += '</div>';
+        html += '</div>';                              // pills close
       }
-      html += '</div></div>';
+      html += '</div></div>';                          // body close, card close
     });
     html += '</div>';
 
@@ -1389,6 +1389,14 @@ window.NOMAD_PAGES = (function(){
         html += '<ul class="nm-nm-list">';
         block.list.forEach(function(item) {
           html += '<li><span>' + item.name + '</span>' + (item.score ? '<span class="score">' + item.score + '</span>' : '') + '</li>';
+        });
+        html += '</ul>';
+      }
+      // string 배열 items (list 타입에서 변환됨, 예: 작업 페이스 4항목)
+      if (block.items && block.items.length) {
+        html += '<ul class="nm-nm-list" style="margin-top:4px">';
+        block.items.forEach(function(it) {
+          html += '<li style="display:block;padding:6px 0;line-height:1.5">• ' + it + '</li>';
         });
         html += '</ul>';
       }
@@ -1722,24 +1730,25 @@ window.NOMAD_PAGES = (function(){
         else if (!hiddenSpots) hiddenSpots = s.items;
         else rawSections.push(s); // 추가 places는 일반 렌더
       } else if (s.type === 'places' && inExperiences) {
-        // experiences에 합치기
+        // experiences에 합치기 (전체)
         s.items.forEach(function(item) {
           experiences.push(Object.assign({}, item, { icon: s.icon }));
         });
       } else if (s.type === 'places' && inNomadMode) {
-        // nomad mode 블록으로 변환
+        // nomad mode 블록으로 변환 (전체 항목, 이름 자르지 X)
         nomadModeBlocks.push({
           icon: s.icon || 'corporate_fare',
           title: s.title,
-          list: s.items.slice(0, 4).map(function(p) {
-            return { name: p.name.replace(/<[^>]+>/g, '').substring(0, 28), score: p.price || '' };
+          list: s.items.map(function(p) {
+            return { name: p.name.replace(/<[^>]+>/g, ''), score: p.price || '' };
           })
         });
       } else if (s.type === 'list' && inNomadMode) {
+        // list도 별도 블록 (전체 항목)
         nomadModeBlocks.push({
           icon: s.icon || 'schedule',
           title: s.title,
-          desc: (s.items || []).slice(0, 2).map(function(it) { return it.replace(/<[^>]+>/g, ''); }).join(' · ')
+          items: s.items  // 전체 list 항목 그대로
         });
       } else if (s.type === 'table' && inBudget) {
         // budget을 magazine 형식으로 변환
@@ -1766,30 +1775,8 @@ window.NOMAD_PAGES = (function(){
           } : null
         };
       } else if (s.type === 'learn' && inFocus) {
-        // why 섹션으로 변환 (첫 1-3개 항목만)
-        var paragraphs = (s.items || []).slice(0, 3).map(function(it) {
-          return '<strong>' + it.h.replace(/^\d+\.\s*/, '') + '</strong> · ' + it.body;
-        });
-        whyData = {
-          cityName: city.hero.city.replace(/^[^a-zA-Z가-힣]+/, ''),
-          paragraphs: paragraphs,
-          takeaway: s.items.length > 0 ? {
-            icon: 'priority_high',
-            title: '핵심 한 줄',
-            text: (s.items[s.items.length - 1].highlight || s.items[s.items.length - 1].body || '').replace(/<[^>]+>/g, '').substring(0, 80)
-          } : null,
-          image: city.hero.image,
-          quote: city.hero.quote
-        };
-        // 나머지 learn 항목들은 raw로
-        if (s.items.length > 3) {
-          rawSections.push({
-            type: 'learn',
-            title: s.title + ' (더 보기)',
-            icon: s.icon,
-            items: s.items.slice(3)
-          });
-        }
+        // FOCUS의 learn (다른 도시와 다른 것)은 전체를 raw로 — 정보 손실 X
+        rawSections.push(s);
       } else if (s.type === 'learn' && inLearn) {
         // Learn 섹션은 그대로 (디자이너·작가 안목)
         rawSections.push(s);
@@ -1826,10 +1813,7 @@ window.NOMAD_PAGES = (function(){
       html += _renderBudgetMag(budgetData, '0' + sectionNum++);
     }
 
-    // 7. Why City — 마지막 분석 + quote
-    if (whyData) {
-      html += _renderWhyCity(whyData, '0' + sectionNum++);
-    }
+    // (Why City 컴포넌트 제거 — FOCUS의 learn 6개를 그대로 raw로 출력하므로 정보 손실 X)
 
     return html;
   }
