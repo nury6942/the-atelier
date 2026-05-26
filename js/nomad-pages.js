@@ -1354,150 +1354,335 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-channels', renderChannels);
 
-  // ──────── Operating Principles 페이지 ────────
+  // ──────── Operating Principles 페이지 (Stitch Magazine 디자인) ────────
   function renderPrinciples() {
     var html = '';
+
+    // 도시별 일 비중 데이터 (dashboard 원본 유지)
+    var workRatio = [
+      { period:'6월 포르투',           mode:'적응 + 글 풀가동',  pct:70, flag:'🇵🇹' },
+      { period:'7월 아일랜드',         mode:'글 + 위성',         pct:60, flag:'🇮🇪' },
+      { period:'8월 덴마크·노르웨이',  mode:'이동 많음',         pct:40, flag:'🇩🇰' },
+      { period:'9월 스웨덴',           mode:'글 풀가동',         pct:70, flag:'🇸🇪' },
+      { period:'9-10월 핀란드',        mode:'글 + 디자인 영감',  pct:60, flag:'🇫🇮' },
+      { period:'10월 아이슬란드',      mode:'거의 휴가',         pct:20, flag:'🇮🇸' },
+      { period:'10-11월 포르투갈',     mode:'휴식 + 글 보충',    pct:60, flag:'🇵🇹' },
+      { period:'11월 말타',            mode:'글 + 해변',         pct:60, flag:'🇲🇹' },
+      { period:'12월 호바트',          mode:'글 + 자연',         pct:70, flag:'🇦🇺' },
+      { period:'1월 애들레이드',        mode:'글 + 예술',        pct:70, flag:'🇦🇺' },
+      { period:'2월 멜버른',           mode:'글 풀가동',         pct:75, flag:'🇦🇺' },
+      { period:'3월 뉴질랜드',         mode:'글 + 자연',         pct:60, flag:'🇳🇿' },
+      { period:'4월 샌디에이고',        mode:'글 + 미국 경험',    pct:60, flag:'🇺🇸' },
+      { period:'5월 핼리팩스',         mode:'글 + 마무리',       pct:70, flag:'🇨🇦' },
+    ];
+    var avgRatio = Math.round(workRatio.reduce(function(a,r){return a+r.pct;}, 0) / workRatio.length);
+
+    // Page Header
     html += pageHeader('Operating Principles', '노마드 운영 원칙',
       '거점 + 위성 · 일 70 / 관광 30 · 회복 인정');
 
-    // 거점 + 위성
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">hub</span>' +
-      '<h3 class="nm-headline-md">거점 + 위성 모델</h3>' +
-    '</div>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li>한 도시 최소 <strong>2-4주 거점</strong></li>' +
-      '<li>거점 안에서 <strong>1-3박 위성 여행</strong></li>' +
-      '<li>매일 옮겨다니지 않음 — 이동 = 회복일</li>' +
-    '</ul>';
-    html += '</div>';
-    html += '</section>';
+    // ════════ SECTION 1 · Manifesto Hero (deep-indigo bg, Stitch 카드 풀 확장) ════════
+    html += '<div class="nm-card" style="padding:48px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;margin-bottom:32px">';
+    // blur deco circle
+    html += '<div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:var(--nm-primary);opacity:0.18;border-radius:50%;filter:blur(60px)"></div>';
+    html += '<div style="position:absolute;bottom:-40px;left:-40px;width:180px;height:180px;background:#fbbf24;opacity:0.12;border-radius:50%;filter:blur(50px)"></div>';
 
-    // 시간 구조
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
-      '<h3 class="nm-headline-md">시간 구조 · 일 70 / 관광 30</h3>' +
-    '</div>';
-    html += '<div class="nm-grid nm-grid-3">';
-
-    html += '<div style="background:var(--nm-primary-soft);padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-primary);margin-bottom:10px">평일 (월-금)</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>오전 9-13시 · <strong>글 작업</strong> (4시간 블록, 절대 사수)</li>' +
-        '<li>점심</li>' +
-        '<li>오후 14-17시 · 현지 체험 / 카페 / 박물관 / 사람 만남</li>' +
-        '<li>저녁 · 운동 + 휴식</li>' +
-      '</ul>' +
+    html += '<div style="position:relative;z-index:1">';
+    // 헤더
+    html += '<div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:36px">' +
+      '<div style="width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+        '<span class="material-symbols-outlined" style="font-size:30px;color:#eaddff">precision_manufacturing</span>' +
+      '</div>' +
+      '<div>' +
+        '<h2 style="font-family:Manrope;font-size:28px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px">Operating Principles</h2>' +
+        '<p style="font-size:11px;color:#d2bbff;text-transform:uppercase;letter-spacing:0.18em;font-weight:700">The Efficiency Manifesto</p>' +
+      '</div>' +
     '</div>';
 
-    html += '<div style="background:#e6eeff;padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-secondary);margin-bottom:10px">코딩 풀데이 (주 1일, 보통 수요일)</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>오전·오후 <strong>8시간 코딩</strong></li>' +
-        '<li>IP 도구 + 디지털 제품 개발</li>' +
-      '</ul>' +
+    // 70 / 30 split
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:36px">';
+
+    // 70 · Deep Work
+    html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.05);border-radius:14px;border-left:3px solid #eaddff">' +
+      '<div style="font-family:Manrope;font-size:64px;font-weight:800;color:#eaddff;line-height:1;flex-shrink:0">70</div>' +
+      '<div>' +
+        '<p style="font-family:Manrope;font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deep Work Focus</p>' +
+        '<p style="font-size:12px;color:rgba(234,221,255,0.85);line-height:1.6;margin-bottom:10px">평일 오전 4시간 글 블록 + 수요일 코딩 풀데이. 모든 외부 입력 차단.</p>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<span style="font-size:10px;font-weight:700;background:rgba(234,221,255,0.15);color:#eaddff;padding:3px 9px;border-radius:99px">Writing Block</span>' +
+          '<span style="font-size:10px;font-weight:700;background:rgba(234,221,255,0.15);color:#eaddff;padding:3px 9px;border-radius:99px">Coding Day</span>' +
+        '</div>' +
+      '</div>' +
     '</div>';
 
-    html += '<div style="background:#fff7ed;padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:#c2410c;margin-bottom:10px">주말</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>토 · 위성 여행 또는 깊은 휴식</li>' +
-        '<li>일 · 휴식 + 다음 주 계획</li>' +
-      '</ul>' +
+    // 30 · Travel & Synthesis
+    html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.03);border-radius:14px;border-left:3px solid rgba(234,221,255,0.45)">' +
+      '<div style="font-family:Manrope;font-size:64px;font-weight:800;color:rgba(234,221,255,0.55);line-height:1;flex-shrink:0">30</div>' +
+      '<div>' +
+        '<p style="font-family:Manrope;font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Travel &amp; Synthesis</p>' +
+        '<p style="font-size:12px;color:rgba(234,221,255,0.7);line-height:1.6;margin-bottom:10px">오후 현지 체험 + 주말 위성 + 이동일 회복. 외부 입력 → 글감 변환.</p>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<span style="font-size:10px;font-weight:700;background:rgba(234,221,255,0.08);color:rgba(234,221,255,0.85);padding:3px 9px;border-radius:99px">Field Research</span>' +
+          '<span style="font-size:10px;font-weight:700;background:rgba(234,221,255,0.08);color:rgba(234,221,255,0.85);padding:3px 9px;border-radius:99px">Recovery</span>' +
+        '</div>' +
+      '</div>' +
     '</div>';
 
     html += '</div>';
-    html += '</div>';
-    html += '</section>';
 
-    // 도시별 일 비중
-    var workRatio = [
-      ['6월 포르투', '적응 + 글 풀가동', 70],
-      ['7월 아일랜드', '글 + 위성', 60],
-      ['8월 덴마크·노르웨이', '이동 많음', 40], // 30-50 평균
-      ['9월 스웨덴', '글 풀가동', 70],
-      ['9-10월 핀란드', '글 + 디자인 영감', 60],
-      ['10월 아이슬란드', '거의 휴가', 20],
-      ['10-11월 포르투갈', '휴식 + 글 보충', 60],
-      ['11월 말타', '글 + 해변', 60],
-      ['12월 호바트', '글 + 자연', 70],
-      ['1월 애들레이드', '글 + 예술', 70],
-      ['2월 멜버른', '글 풀가동', 75],
-      ['3월 뉴질랜드', '글 + 자연', 60],
-      ['4월 샌디에이고', '글 + 미국 경험', 60],
-      ['5월 핼리팩스', '글 + 마무리', 70],
-    ];
-    var avgRatio = Math.round(workRatio.reduce(function(a,r){return a+r[2];}, 0) / workRatio.length);
-
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">trending_up</span>' +
-      '<h3 class="nm-headline-md">도시별 일 비중</h3>' +
-      '<span class="nm-pill" style="margin-left:auto">평균 ≈ ' + avgRatio + '%</span>' +
+    // 하단 인용구
+    html += '<div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:24px;display:flex;align-items:flex-start;gap:12px">' +
+      '<span class="material-symbols-outlined" style="color:#d2bbff;font-size:22px;margin-top:-2px">format_quote</span>' +
+      '<p style="font-size:14px;font-style:italic;color:rgba(255,255,255,0.85);line-height:1.6;font-family:Inter">거점은 회로의 닻 · 위성은 영감의 산소. 이동은 글감이지, 일과가 아니다.</p>' +
     '</div>';
-    html += '<table class="nm-table">';
-    html += '<thead><tr><th>시기</th><th>모드</th><th class="nm-num">일 비중</th><th>시각화</th></tr></thead><tbody>';
+
+    html += '</div>';
+    html += '</div>';
+
+    // ════════ SECTION 2 · 8/4 split — 도시별 일 비중 + 거점+위성 모델 ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+
+    // ───── LEFT (8): 도시별 작업 비중 시각화 ─────
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">' +
+      '<div>' +
+        '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">도시별 작업 비중</h4>' +
+        '<p style="font-size:12px;color:var(--nm-text-2)">14개 도시 · 일 비중 70%+ = Focus / 50-70 = Mixed / 50- = Recovery</p>' +
+      '</div>' +
+      '<div style="background:#F5F3FF;color:var(--nm-primary);padding:8px 16px;border-radius:99px;font-family:Manrope;font-size:13px;font-weight:700">평균 ≈ ' + avgRatio + '%</div>' +
+    '</div>';
+
+    // 14 도시 가로 bar
+    html += '<div style="display:flex;flex-direction:column;gap:10px;position:relative">';
     workRatio.forEach(function(r) {
-      var pct = r[2];
-      var color = pct >= 70 ? 'var(--nm-primary)' : pct >= 50 ? 'var(--nm-secondary)' : '#c2410c';
-      html += '<tr>' +
-        '<td><strong>' + r[0] + '</strong></td>' +
-        '<td style="font-size:13px;color:var(--nm-text-2)">' + r[1] + '</td>' +
-        '<td class="nm-num"><strong style="color:' + color + '">' + pct + '%</strong></td>' +
-        '<td style="width:200px"><div style="height:6px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + color + '"></div></div></td>' +
-      '</tr>';
+      var color, bgColor;
+      if (r.pct >= 70)      { color = 'var(--nm-primary)';   bgColor = '#F5F3FF'; }
+      else if (r.pct >= 50) { color = 'var(--nm-secondary)'; bgColor = '#e6eeff'; }
+      else                  { color = '#c2410c';             bgColor = '#fff7ed'; }
+      html += '<div style="display:grid;grid-template-columns:170px 1fr 50px;gap:14px;align-items:center">';
+      // 도시 라벨
+      html += '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="font-size:16px;line-height:1">' + r.flag + '</span>' +
+        '<div>' +
+          '<p style="font-family:Manrope;font-size:12px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + r.period + '</p>' +
+          '<p style="font-size:10px;color:var(--nm-text-3);margin-top:1px">' + r.mode + '</p>' +
+        '</div>' +
+      '</div>';
+      // bar
+      html += '<div style="height:14px;background:' + bgColor + ';border-radius:99px;overflow:hidden;position:relative">' +
+        '<div style="height:100%;width:' + r.pct + '%;background:' + color + ';border-radius:99px;transition:width 0.3s"></div>' +
+      '</div>';
+      // %
+      html += '<div style="font-family:Manrope;font-size:13px;font-weight:700;color:' + color + ';text-align:right">' + r.pct + '%</div>';
+      html += '</div>';
     });
-    html += '</tbody></table>';
+    // 평균 라인 (dashed) — 14 bars 가로질러서 표시
+    html += '</div>';
+
+    html += '</div>';
+
+    // ───── RIGHT (4): 거점 + 위성 모델 ─────
+    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">hub</span>' +
+      '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">거점 + 위성 모델</h4>' +
+    '</div>';
+
+    // SVG 다이어그램
+    html += '<div style="background:linear-gradient(135deg,#F5F3FF,#e6eeff);border-radius:12px;padding:24px;margin-bottom:18px;display:flex;justify-content:center">';
+    html += '<svg viewBox="0 0 200 160" style="width:100%;max-width:220px;height:auto">' +
+      // 연결선 (dashed)
+      '<line x1="100" y1="80" x2="40" y2="30" stroke="var(--nm-primary)" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.5"/>' +
+      '<line x1="100" y1="80" x2="170" y2="35" stroke="var(--nm-primary)" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.5"/>' +
+      '<line x1="100" y1="80" x2="30" y2="125" stroke="var(--nm-primary)" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.5"/>' +
+      '<line x1="100" y1="80" x2="175" y2="130" stroke="var(--nm-primary)" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.5"/>' +
+      // 위성 (작은 원)
+      '<circle cx="40" cy="30" r="10" fill="#fff" stroke="var(--nm-secondary)" stroke-width="2"/>' +
+      '<circle cx="170" cy="35" r="10" fill="#fff" stroke="var(--nm-secondary)" stroke-width="2"/>' +
+      '<circle cx="30" cy="125" r="10" fill="#fff" stroke="var(--nm-secondary)" stroke-width="2"/>' +
+      '<circle cx="175" cy="130" r="10" fill="#fff" stroke="var(--nm-secondary)" stroke-width="2"/>' +
+      // 중앙 거점 (큰 원)
+      '<circle cx="100" cy="80" r="28" fill="var(--nm-primary)" opacity="0.15"/>' +
+      '<circle cx="100" cy="80" r="22" fill="var(--nm-primary)"/>' +
+      '<text x="100" y="85" text-anchor="middle" font-family="Manrope" font-size="12" font-weight="700" fill="#fff">HUB</text>' +
+      // 위성 라벨
+      '<text x="40" y="15" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--nm-text-3)">satellite</text>' +
+      '<text x="170" y="20" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--nm-text-3)">satellite</text>' +
+      '<text x="30" y="148" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--nm-text-3)">satellite</text>' +
+      '<text x="175" y="153" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--nm-text-3)">satellite</text>' +
+    '</svg>';
+    html += '</div>';
+
+    // 3 항목
+    var hubItems = [
+      { icon:'apartment', label:'한 도시 최소', value:'2-4주 거점' },
+      { icon:'explore',   label:'거점 안에서', value:'1-3박 위성' },
+      { icon:'do_not_disturb_on', label:'이동 = 회복일', value:'매일 옮기지 X' },
+    ];
+    html += '<div style="display:flex;flex-direction:column;gap:10px">';
+    hubItems.forEach(function(h) {
+      html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--nm-surface-container-low);border-radius:8px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">' + h.icon + '</span>' +
+        '<div style="flex:1">' +
+          '<p style="font-size:11px;color:var(--nm-text-3)">' + h.label + '</p>' +
+          '<p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo)">' + h.value + '</p>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    html += '</div>'; // /거점+위성
+
+    html += '</div>'; // /8-4 split
+
+    // ════════ SECTION 3 · 시간 구조 (full-width 3 카드) ════════
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">시간 구조 · 일 70 / 관광 30</h3>' +
+    '</div>';
+    html += '<p style="font-size:13px;color:var(--nm-text-2);margin-bottom:24px">한 주 안에서 일·관광·회복 3 모드 분리. 블록 사수가 핵심.</p>';
+
+    html += '<div class="nm-grid nm-grid-3" style="gap:18px">';
+
+    // 평일
+    html += '<div style="padding:24px;border-radius:12px;background:#F5F3FF;border-top:3px solid var(--nm-primary)">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="font-size:20px;color:var(--nm-primary)">calendar_today</span>' +
+        '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-primary)">평일 (월-금)</h4>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">09-13시</p><p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-top:2px">글 작업 4시간 (블록 사수)</p></div>' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">13-14시</p><p style="font-size:13px;color:var(--nm-text-2);margin-top:2px">점심</p></div>' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">14-17시</p><p style="font-size:13px;color:var(--nm-text-2);margin-top:2px">현지 체험 · 카페 · 박물관 · 사람 만남</p></div>' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">저녁</p><p style="font-size:13px;color:var(--nm-text-2);margin-top:2px">운동 + 휴식</p></div>' +
+      '</div>' +
+    '</div>';
+
+    // 수요일 코딩
+    html += '<div style="padding:24px;border-radius:12px;background:#e6eeff;border-top:3px solid var(--nm-secondary)">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="font-size:20px;color:var(--nm-secondary)">code</span>' +
+        '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-secondary)">수요일 = 코딩 풀데이</h4>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">오전·오후</p><p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-top:2px">8시간 코딩</p></div>' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">목표</p><p style="font-size:13px;color:var(--nm-text-2);margin-top:2px">IP 도구 + 디지털 제품 개발</p></div>' +
+        '<div style="margin-top:8px;padding:10px;background:rgba(86,84,168,0.1);border-radius:8px"><p style="font-size:11px;color:var(--nm-secondary);font-weight:600;line-height:1.5">주 1일 · 분석가 N IP 트랙 가속</p></div>' +
+      '</div>' +
+    '</div>';
+
+    // 주말
+    html += '<div style="padding:24px;border-radius:12px;background:#ffe0cd;border-top:3px solid #7d3d00">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="font-size:20px;color:#7d3d00">weekend</span>' +
+        '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:#7d3d00">주말</h4>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">토요일</p><p style="font-family:Manrope;font-size:13px;font-weight:700;color:#5a2900;margin-top:2px">위성 여행 또는 깊은 휴식</p></div>' +
+        '<div><p style="font-size:10px;color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">일요일</p><p style="font-family:Manrope;font-size:13px;font-weight:700;color:#5a2900;margin-top:2px">휴식 + 다음 주 계획</p></div>' +
+        '<div style="margin-top:8px;padding:10px;background:rgba(125,61,0,0.1);border-radius:8px"><p style="font-size:11px;color:#7d3d00;font-weight:600;line-height:1.5">관광 = 일 X · 충전 우선</p></div>' +
+      '</div>' +
+    '</div>';
+
     html += '</div>';
     html += '</section>';
 
-    // 2-col: 산출량 + 이동일
-    html += '<div class="nm-grid nm-grid-2">';
-    html += '<div class="nm-card">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">edit</span>' +
-        '<h3 class="nm-headline-md">산출량 · 주 단위</h3>' +
-      '</div>' +
-      '<ul class="nm-list-bullet">' +
-        '<li>글 초안 · <strong>주 2-3편</strong> (월 8-12편)</li>' +
-        '<li>코딩 풀데이 · 주 1회 (월 4-5회)</li>' +
-        '<li>메일리 발행 · 격주 또는 주 1회</li>' +
-        '<li>디지털 제품 · 분기별 큰 단위</li>' +
-      '</ul>' +
-    '</div>';
+    // ════════ SECTION 4 · 6/6 split — 산출량 + 이동일 ════════
+    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
 
-    html += '<div class="nm-card">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight</span>' +
-        '<h3 class="nm-headline-md">이동일 = 버리는 날</h3>' +
-      '</div>' +
-      '<ul class="nm-list-bullet">' +
-        '<li>도시 → 도시 이동일 · <strong>일 X, 관광 X</strong></li>' +
-        '<li>회복일로 인정</li>' +
-        '<li>한 달 1-2일 자연스러움</li>' +
-      '</ul>' +
+    // 산출량
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">edit_note</span>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">산출량 · 주 단위 관리</h3>' +
     '</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    var outputItems = [
+      { label:'글 초안',      value:'주 2-3편', note:'월 8-12편',   icon:'edit',         color:'var(--nm-primary)' },
+      { label:'코딩 풀데이',  value:'주 1회',   note:'월 4-5회',    icon:'code',         color:'var(--nm-secondary)' },
+      { label:'메일리 발행',  value:'격주 / 1회', note:'2-4편/월',  icon:'mail',         color:'#7d3d00' },
+      { label:'디지털 제품',  value:'분기',    note:'큰 단위 출시', icon:'inventory_2', color:'#15803d' },
+    ];
+    outputItems.forEach(function(o) {
+      html += '<div style="padding:16px;border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid ' + o.color + '">' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+          '<span class="material-symbols-outlined" style="font-size:14px;color:' + o.color + '">' + o.icon + '</span>' +
+          '<p style="font-size:11px;color:var(--nm-text-3);font-weight:600">' + o.label + '</p>' +
+        '</div>' +
+        '<p style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.2">' + o.value + '</p>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);margin-top:4px">' + o.note + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
     html += '</div>';
 
-    // 가족 연락
-    html += '<section class="nm-section" style="margin-top:32px">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+    // 이동일 = 버리는 날
+    html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#fff7ed,#ffe0cd);position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:#7d3d00;opacity:0.08;border-radius:50%;filter:blur(30px)"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+      '<span class="material-symbols-outlined" style="color:#7d3d00">flight</span>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:#5a2900">이동일 = 버리는 날</h3>' +
+    '</div>';
+    html += '<div style="font-family:Manrope;font-size:42px;font-weight:800;color:#7d3d00;line-height:1;margin-bottom:8px">월 1-2일</div>';
+    html += '<p style="font-size:12px;color:#5a2900;font-weight:600;margin-bottom:20px">자연스러운 회복일 · 죄책감 없이 인정</p>';
+    html += '<div style="display:flex;flex-direction:column;gap:10px">';
+    var moveItems = [
+      { icon:'flight_takeoff', text:'도시 → 도시 이동일 = 일 X, 관광 X' },
+      { icon:'self_improvement', text:'회복일로 인정 (글·코딩 시도 X)' },
+      { icon:'event_repeat', text:'한 달 1-2일 발생은 자연스러움' },
+    ];
+    moveItems.forEach(function(m) {
+      html += '<div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:rgba(255,255,255,0.6);border-radius:8px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:#7d3d00;flex-shrink:0">' + m.icon + '</span>' +
+        '<p style="font-size:13px;color:#5a2900;line-height:1.5">' + m.text + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>'; // /6-6 split
+
+    // ════════ SECTION 5 · 가족 연락 (full-width, lavender bg) ════════
+    html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--nm-primary);opacity:0.1;border-radius:50%;filter:blur(40px)"></div>';
+    html += '<div style="position:relative;z-index:1;display:flex;gap:32px;flex-wrap:wrap;align-items:center;justify-content:space-between">';
+
+    html += '<div style="flex:1;min-width:280px">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">family_restroom</span>' +
-      '<h3 class="nm-headline-md">가족 연락</h3>' +
+      '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">가족 연락 룰</h3>' +
     '</div>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li>엄마·아빠 <strong>매주 화상통화 1회</strong> (요일 고정)</li>' +
-      '<li>메신저 매일 짧은 인증샷</li>' +
-      '<li>엄마 합류 가능 시기 미리 공유 (9월·12월·3월)</li>' +
-    '</ul>';
+    html += '<div style="display:flex;flex-direction:column;gap:12px">';
+    var familyItems = [
+      { icon:'videocam',  title:'매주 화상통화 1회',    note:'엄마·아빠 · 요일 고정' },
+      { icon:'chat',      title:'매일 짧은 메신저',     note:'인증샷 위주 · 부담 X' },
+      { icon:'event_available', title:'엄마 합류 시기 공유', note:'2028.9 스칸디 / 12 호바트 / 2029.3 NZ' },
+    ];
+    familyItems.forEach(function(f) {
+      html += '<div style="display:flex;gap:12px;align-items:flex-start">' +
+        '<div style="width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+          '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">' + f.icon + '</span>' +
+        '</div>' +
+        '<div>' +
+          '<p style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-on-surface)">' + f.title + '</p>' +
+          '<p style="font-size:12px;color:var(--nm-text-2);margin-top:2px">' + f.note + '</p>' +
+        '</div>' +
+      '</div>';
+    });
     html += '</div>';
-    html += '</section>';
+    html += '</div>';
+
+    // 버튼 → Voyage 이동
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="padding:14px 24px;background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;gap:8px;flex-shrink:0" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '<span class="material-symbols-outlined" style="font-size:18px">explore</span>' +
+      '엄마 합류 시기 후보 보기' +
+    '</button>';
+
+    html += '</div>';
+    html += '</div>';
 
     return html;
   }
