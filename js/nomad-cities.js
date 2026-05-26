@@ -2327,6 +2327,236 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 12월 · 호바트 ════════
+    'nomad-city-hobart': {
+      monthLabel: '12월',
+      hero: {
+        city: '🇦🇺 호바트',
+        tagline: 'First Southern Hemisphere',
+        country: '호주 태즈매니아 · Australia',
+        dates: '2028.12.1 — 12.31 (31일)',
+        weather: '15-22°C · 호주 여름 시작',
+        visa: '호주 ETA (3개월 다회)',
+        vibe: 'MONA · 와인글래스 베이 · 산',
+        mode: '글 + 자연 70/30',
+        quote: '겨울에서 여름으로. 누리 1년 노마드 첫 남반구. 시간 자체가 뒤집힘.',
+        image: null,
+      },
+      meaning: [
+        '<strong>1년 노마드 첫 남반구 · 여름 모드</strong>',
+        '유럽 6개월 → 호주 = 정반대 환경',
+        'MONA = 누리 디자이너 자산 (호주 최대 사립 미술관)',
+        '한 달 거점 · Stayz 또는 Airbnb 장기',
+        '호주 ETA = 3개월 안에 여러 도시 (호바트·애들레이드·멜버른) 가능',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'museum', title:'MONA · 호주 최대 사립 미술관', items:[
+          { name:'MONA (Museum of Old and New Art)', price:'AU$39 (€24)',
+            desc:'<strong>호바트 1순위.</strong> 11km 북쪽. 3 지하층 · 고대 유물 + 현대 미술. 도발적·논쟁적. 페리 (AU$22) 또는 셔틀. <strong>The O 앱 = 라벨 대신.</strong> 3-5시간 잡기. Moorilla 와이너리 + Faro 식당 + Source 식당 같이.' },
+          { name:'Faro Bar + Restaurant (MONA 안)',
+            desc:'예술과 식사 결합. 비싸지만 1번 가치.' },
+        ]},
+
+        { type:'places', icon:'landscape', title:'호바트 시내', items:[
+          { name:'Salamanca Place + 토요 시장', price:'무료',
+            desc:'19세기 사암 창고 → 갤러리·카페·디자이너. 토요일 = 호주 최대 시장.' },
+          { name:'Battery Point',
+            desc:'19세기 어촌 동네. 산책. 빅토리안 코티지.' },
+          { name:'Mt. Wellington (kunanyi)', price:'버스 AU$30 왕복',
+            desc:'1,271m. 호바트 전경. 차로 30분.' },
+          { name:'Royal Tasmanian Botanical Gardens', price:'무료',
+            desc:'호주 최대 사립 식물원 중 하나. 산책·작업.' },
+          { name:'Tasmanian Museum and Art Gallery (TMAG)', price:'무료',
+            desc:'태즈매니아 역사·자연·미술.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'위성 · 한 달 안 무조건', items:[
+          { name:'Wineglass Bay (Freycinet 국립공원)', price:'차로 2.5시간 · 1박 추천',
+            desc:'<strong>호주 최고 해변 중 하나.</strong> 와인잔 모양 만. 트레일 1.5시간 + 해변. 1박 게스트하우스 추천.' },
+          { name:'Port Arthur 역사 유적', price:'AU$50',
+            desc:'19세기 죄수 식민지. UNESCO. 1.5시간.' },
+          { name:'Bruny Island 당일치기', price:'페리 + 가이드',
+            desc:'치즈·굴·꿀·등대. 누리 = 1일.' },
+          { name:'Bay of Fires (북동)', price:'차로 3시간 · 1박 추천',
+            desc:'주황색 바위 + 흰 모래 + 청록 바다.' },
+          { name:'Cradle Mountain 국립공원', price:'차로 4시간 · 1박',
+            desc:'태즈매니아 자연 정점. 누리 = 1박 추천.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'The Hobart Bookshop (Salamanca Square)',
+            desc:'살라만카 광장 중심. 신간 + 태즈매니아 작가 컬렉션 (Rebe Taylor·Lyndall Ryan 등). 직원 추천 따뜻함. <strong>작가 누리 자산.</strong>' },
+          { name:'Fullers Bookshop (Collins St)',
+            desc:'호바트 가장 사랑받는 독립 서점. 호주 작가 큐레이션. 카페 + 정기 작가 토크.' },
+          { name:'Cracked and Spineless (Murray St)',
+            desc:'중고책 + 희귀본. 노아르·SF·컬트 풍부. 누리 보물 찾기.' },
+          { name:'Five Leaves Left (Victoria St)',
+            desc:'인디 출판 + 내추럴 와인. 책 + 와인 매칭. 누리 톤 진짜.' },
+          { name:'Deja Vu Books (Salamanca arcade)',
+            desc:'아트·크래프트 마켓플레이스 안. 빈티지 + 외국어 + 시·희곡. 분위기 자산.' },
+          { name:'Flywheel (Battery Point) · 디자이너 누리',
+            desc:'1920년대 활판 인쇄기 보유 스테이셔너리 가게. 편지·저널·스크랩북. 누리 본업 + 작가 동시 자산.' },
+          { name:'Miss Arthur (홈웨어)',
+            desc:'옛 군대 훈련소 → 빈티지 + 홈웨어 셀렉트. Flywheel 자매 가게.' },
+          { name:'MidTown Hobart 거리',
+            desc:'미드타운 = 힙스터 거리. Bar Wa Izakaya (사케 바) + Shambles (크래프트 양조장) + 빈티지·바버숍. 누리 톤.' },
+        ]},
+
+        { type:'neighborhoods', icon:'home', title:'동네 (31일 거점)', items:[
+          { name:'Battery Point', stars:'★★★★★',
+            desc:'19세기 어촌 동네. 빅토리안 코티지. Salamanca 도보. <strong>누리 베스트 (조용 + 분위기).</strong>' },
+          { name:"Salamanca + Sullivan's Cove", stars:'★★★★★',
+            desc:'토요 시장 옆. 갤러리·카페·서점. 시내 한복판.' },
+          { name:'North Hobart (NoHo)', stars:'★★★★',
+            desc:'힙스터 · 다이닝 거리 · 인디 영화관. 시내 도보 15분.' },
+          { name:'Sandy Bay', stars:'★★★★',
+            desc:'강변 + 대학 + 가성비. 시내 버스 10분.' },
+          { name:'MidTown (Elizabeth St 일대)', stars:'★★★',
+            desc:'힙스터 업커밍. 작은 가게·크래프트 양조장.' },
+          { name:'New Town · Moonah', stars:'★★★',
+            desc:'가성비 + 로컬. MONA 가는 길.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'places', icon:'wine_bar', title:'음식 · 와인 · 시장', items:[
+          { name:'Salamanca 토요 시장', price:'매주 토 8am-3pm',
+            desc:'호주 최대 시장 중 하나. 300+ 가판. 디자이너·공예가·로컬 푸드.' },
+          { name:'Farm Gate Market (Bathurst St)', price:'매주 일',
+            desc:'일요일 작은 시장. 로컬 생산자 직접. 시장보다 조용.' },
+          { name:'Machine Laundry Cafe (Salamanca Square)',
+            desc:'옛 빨래방 → 카페. 아침 베스트. 호바트 명물.' },
+          { name:'Jackman & McRoss (Battery Point)',
+            desc:'호바트 베스트 브런치 후보. 베이커리·페이스트리.' },
+          { name:'Lark Distillery (1996, Davey St)',
+            desc:'태즈매니아 위스키 부활시킨 곳. 테이스팅 AU$25-40. 누리 = 1번 (술 안 마셔도 분위기).' },
+          { name:'Get Shucked (Bruny Island 또는 Salamanca)',
+            desc:'Bruny Island 굴. 호주 최고 굴 중 하나.' },
+        ]},
+
+        { type:'list', icon:'attractions', title:'그 외 체험', items:[
+          '<strong>kunanyi/Mt Wellington 하이크</strong> · Organ Pipes Track (3시간)',
+          '<strong>Cascade Brewery 투어</strong> · 호주 최고(古) 양조장 (1832). 누리 분위기',
+          '<strong>Dark Mofo 잔향</strong> · 6월 본 행사. 12월 = 차분',
+          '<strong>Female Factory 역사 유적</strong> · 19세기 여성 죄수 식민지. UNESCO. 작가 누리 자산',
+          '<strong>Royal Tasmanian Botanical Gardens 일본 정원</strong> · 무료. 작가 작업',
+          '<strong>Hobart Twilight Market</strong> · 여름 금요일 저녁. 푸드·음악',
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 남반구 시간감',
+            body:'12월 = 여름. 1년 노마드의 시간감 자체가 뒤집힘. 분석가 N 글감.' },
+          { h:'2. MONA = 사립 미술관 모델',
+            body:'1인 컬렉터 (David Walsh, 도박꾼 → 컬렉터)가 만든 미술관. 인구 25만 도시를 미술로 일으킴. <strong>1인 IP의 도시 임팩트 케이스 스터디.</strong>' },
+          { h:'3. 호주 디자인 = 자연 + 실용',
+            body:'Aesop·Country Road·Akin. 자연 영감.' },
+          { h:'4. 태즈매니아 = 호주 안의 다른 호주',
+            body:'본토에서 분리된 섬. 자연 + 작은 도시 + 죄수 식민지 역사. 호주 정체성과 다른 결.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'list', icon:'work', title:'코워킹 · 한 달', items:[
+          '<strong>Co-Lab Hobart</strong> · 데일리 AU$35 · 월 AU$300',
+          '<strong>The Mill House</strong> · 작은 코워킹',
+          '<strong>WorkSpace6</strong> · 시내 중심',
+          '호바트 = 작은 도시 (인구 25만). 카페 + 도서관 위주가 더 자연',
+        ]},
+
+        { type:'places', icon:'local_cafe', title:'카페 · 작업', items:[
+          { name:'Ginger Brown (South Hobart)',
+            desc:'호바트 베스트 카페 후보. 종일 작업.' },
+          { name:'Pigeon Hole (West Hobart)',
+            desc:'스페셜티 + 베이커리. 작가 단골.' },
+          { name:'Born in Brunswick (NoHo)',
+            desc:'North Hobart. 디자이너·노마드. 미니멀.' },
+          { name:'Villino Espresso (Criterion St)',
+            desc:'시내 중심. 빠른 작업. 로컬.' },
+          { name:'Island Espresso (1814 건물)',
+            desc:'호바트 옛 건물 중 하나. 분위기.' },
+          { name:'Tricycle Cafe Bar (Salamanca)',
+            desc:'살라만카 옆. 점심 + 작업.' },
+        ]},
+
+        { type:'places', icon:'menu_book', title:'도서관 · 무료 작업', items:[
+          { name:'State Library of Tasmania (Murray St)', price:'무료',
+            desc:'시내 중심. 빠른 Wi-Fi + 콘센트 + 조용. 누리 글 작업 1순위.' },
+          { name:'Allport Library and Museum (State Library 안)',
+            desc:'희귀본 + 그림 컬렉션. 무료. 분위기 자산.' },
+          { name:'University of Tasmania Library (Sandy Bay)',
+            desc:'대학 도서관. 학생 분위기.' },
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (누리 31일 모드)', items:[
+          '<strong>주 1 (1-7일)</strong> · 발레타 → 호바트 도착 + 시차 + 계절 적응 + Battery Point 거점 + 카페 단골 (Ginger Brown·Machine Laundry)',
+          '<strong>주 2 (8-14일)</strong> · MONA 첫 방문 (3-5시간) + Salamanca 토요 시장 + 글 풀가동 (State Library) + 서점 라운드 (Hobart Bookshop·Fullers)',
+          '<strong>주말 (15-16일차)</strong> · Wineglass Bay 1박 (Freycinet)',
+          '<strong>주 3 (17-23일)</strong> · 글 작업 + MONA 2차 + Bruny Island 당일 + Port Arthur',
+          '<strong>주말 (24-25일차)</strong> · Cradle Mountain 1박',
+          '<strong>주 4 (26-31일)</strong> · 1년 노마드 반환점 회고 + 디지털 제품 작업 + 애들레이드 짐 준비',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 그룹', groups:[
+          { h:'페이스북 그룹', items:[
+            '<strong>Hobart Digital Nomads</strong> · 작은 그룹 (호바트 = 노마드 신생)',
+            '<strong>Hobart Expats</strong>',
+            '<strong>Female Digital Nomads Australia</strong> · 여성 한정',
+            '<strong>Hobart Writers Centre</strong> · 작가 모임',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Hobart International Meetup"',
+            '"Hobart Photography Walks"',
+            '"Tasmania Hiking Group"',
+          ]},
+          { h:'이벤트 (12월)', items:[
+            '<strong>Hobart Twilight Market</strong> · 여름 금요일 저녁',
+            '<strong>Taste of Tasmania</strong> (12월 말-1월 초) · 누리 시기 정확히 겹침. 음식·와인 축제',
+            '<strong>Sydney to Hobart Yacht Race</strong> (12월 26일 출발 → 도착) · 누리 시기 도착 보기 가능',
+            '<strong>Salamanca 토요 시장</strong> · 매주 자동 만남',
+            '<strong>Fullers 작가 토크</strong> · 정기',
+          ]},
+          { h:'호바트 특유', items:[
+            '인구 25만 작은 도시. 1주만 머물러도 카페 단골에서 얼굴 인식. <strong>호주에서 가장 친근한 도시 중 하나.</strong> 영어 부담 X. 누리 = 1달 거점 = 깊은 친구 1-2명 가능.',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'budget', icon:'payments', title:'1달 (숙소 제외)',
+          rows:[
+            { name:'식비', sub:'슈퍼 + 시장 + 외식 가끔', eur:'AU$700-1,000', krw:'62-89만' },
+            { name:'교통', sub:'버스 + 가끔 렌터카', eur:'AU$200-400', krw:'18-36만' },
+            { name:'MONA + 미술관', sub:'2-3회', eur:'AU$120-180', krw:'11-16만' },
+            { name:'위성 (Wineglass+Cradle)', sub:'2-3 위성 1박', eur:'AU$400-700', krw:'36-62만' },
+            { name:'코워킹', sub:'월권', eur:'AU$250-350', krw:'22-31만' },
+          ],
+          total: { eur:'AU$1,670-2,630', krw:'149-234만' },
+          note:'호주 = 유로보다 비쌈. 단위가 AU$. 그래도 숙소 외 1달 = 합리적.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. MONA = 무조건 2-3회 방문',
+            body:'한 번으로 다 못 봄. 입장권 한 달 패스 (AU$59) 추천.' },
+          { h:'2. 12월 = 호주 여름 시작 · 자외선 강함',
+            body:'선크림 SPF 50+ 무조건. 호주 자외선 = 한국의 2-3배.' },
+          { h:'3. Wineglass Bay 1박 + Cradle Mountain 1박',
+            body:'한 달이면 2 위성 무조건.' },
+          { h:'4. 다음 = 1월 애들레이드 (멜버른 성수기 회피)',
+            body:'호바트 → 애들레이드 비행. Jetstar / Virgin Australia. 2시간.' },
+          { h:'5. 누리 첫 남반구 = 적응기',
+            body:'시차 + 계절 뒤집힘. 첫 1주는 글 작업 70%, 적응 30%.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
