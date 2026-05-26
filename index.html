@@ -80,7 +80,7 @@
   <link rel="preload" href="js/app-5-ledger-export.js?v=163" as="script">
   <link rel="preload" href="js/nomad-data.js?v=163" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=165" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=166" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -433,7 +433,7 @@
 
     /* 타이포그래피 */
     .nomad-page .nm-headline-lg {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 32px;
       line-height: 40px;
       letter-spacing: -0.01em;
@@ -441,14 +441,14 @@
       color: var(--nm-deep-indigo);
     }
     .nomad-page .nm-headline-md {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 20px;
       line-height: 28px;
       font-weight: 600;
       color: var(--nm-on-surface);
     }
     .nomad-page .nm-display-lg {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 48px;
       line-height: 56px;
       letter-spacing: -0.02em;
@@ -482,7 +482,7 @@
       margin-bottom: 8px;
     }
     .nomad-page .nm-page-title {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 36px;
       line-height: 44px;
       letter-spacing: -0.02em;
@@ -750,7 +750,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 14px;
       font-weight: 700;
       color: var(--nm-deep-indigo);
@@ -775,7 +775,7 @@
     }
     .nomad-page .nm-subnav-group-head:hover { background: #f1f5f9; color: #64748b; }
     .nomad-page .nm-subnav-group-label {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.1em;
@@ -845,7 +845,7 @@
       border: 1px solid #f1f5f9;
     }
     .nomad-page .nm-city-hero-title {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 36px;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -892,7 +892,7 @@
     }
 
     .nomad-page .nm-divider-label {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.18em;
@@ -909,7 +909,7 @@
     }
     .nomad-page .nm-place-card:last-child { border-bottom: none; }
     .nomad-page .nm-place-name {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 15px;
       font-weight: 600;
       color: var(--nm-deep-indigo);
@@ -957,7 +957,7 @@
     .nomad-page .nm-learn-item:last-child { border-bottom: none; padding-bottom: 0; }
     .nomad-page .nm-learn-item:first-child { padding-top: 0; }
     .nomad-page .nm-learn-h {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 16px;
       font-weight: 700;
       color: var(--nm-deep-indigo);
@@ -1081,7 +1081,7 @@
       margin-bottom: 18px;
     }
     .nomad-page .nm-city-v2-h1 {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 58px;
       font-weight: 800;
       font-style: normal;
@@ -1097,7 +1097,7 @@
       font-size: 16px;
       font-weight: 700;
       color: rgba(255,255,255,0.75);
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       letter-spacing: 0.18em;
       text-transform: uppercase;
       margin-right: 14px;
@@ -1179,7 +1179,7 @@
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       transition: background 0.15s ease;
     }
     .nomad-page .nm-bp-img-ctrl:hover { background: rgba(0,0,0,0.7); }
@@ -1199,7 +1199,7 @@
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.02em;
-      font-family: 'Manrope','Pretendard',sans-serif;
+      font-family: var(--nm-font-h);
       opacity: 0;
       transition: opacity 0.2s ease;
       pointer-events: none;
@@ -1208,6 +1208,10 @@
     /* 국기 등 컬러 이모지 강제 폰트 (Windows Segoe UI Emoji는 국기 미지원) */
     .nomad-page .nm-emoji {
       font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif !important;
+    }
+    /* Manrope + 컬러 이모지 fallback 통합 폰트 스택 (inline style에서 var()로 사용) */
+    .nomad-page {
+      --nm-font-h: 'Manrope', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
     }
 
     /* ──── Hero 이미지 컨트롤 (우상단 글래스 버튼) ──── */
@@ -1241,7 +1245,7 @@
       letter-spacing: 0.02em;
       cursor: pointer;
       transition: background 0.15s ease, transform 0.15s ease;
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
     }
     .nomad-page .nm-city-v2-hero-ctrl:hover {
       background: rgba(255,255,255,0.3);
@@ -1279,7 +1283,7 @@
       font-weight: 700;
       line-height: 1.4;
       margin: 0;
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
     }
 
     /* ──── Quick Highlights (deep-indigo) ──── */
@@ -1357,7 +1361,7 @@
       font-family: 'Inter', sans-serif;
     }
     .nomad-page .nm-city-v2-h2-serif {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-style: normal;
       font-size: 22px;
       font-weight: 800;
@@ -1372,7 +1376,7 @@
       vertical-align: middle;
     }
     .nomad-page .nm-city-v2-h2-serif-large {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-style: normal;
       font-weight: 800;
       font-size: 26px;
@@ -1566,7 +1570,7 @@
       font-size: 22px;
     }
     .nomad-page .nm-city-v2-exp-h {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-style: normal;
       font-weight: 800;
       font-size: 18px;
@@ -1716,7 +1720,7 @@
       .nomad-page .nm-city-v2-people-inner { grid-template-columns: 1fr; }
     }
     .nomad-page .nm-city-v2-people-h {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-style: normal;
       font-weight: 800;
       font-size: 26px;
@@ -1950,7 +1954,7 @@
       gap: 20px;
     }
     .nomad-page .nm-city-v2-footer-h {
-      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-family: var(--nm-font-h);
       font-style: normal;
       font-weight: 800;
       font-size: 18px;
@@ -2245,7 +2249,7 @@
       color: #fff;
     }
     .nomad-page .nm-mag-hero-title {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 36px;            /* 56 → 36 */
       line-height: 1.15;
       font-weight: 700;
@@ -2296,14 +2300,14 @@
       border: none;
     }
     .nomad-page .nm-mag-section-title {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 28px;
       font-weight: 700;
       letter-spacing: -0.015em;
       color: var(--nm-deep-indigo);
     }
     .nomad-page .nm-mag-section-num {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.2em;
@@ -2355,7 +2359,7 @@
       margin-bottom: 4px;
     }
     .nomad-page .nm-bento-main h4 {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 18px;             /* 28 → 18 */
       font-weight: 700;
       margin-bottom: 4px;
@@ -2390,7 +2394,7 @@
       margin-bottom: 8px;
     }
     .nomad-page .nm-bento-side-card h4 {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 15px;             /* 20 → 15 */
       font-weight: 600;
       color: var(--nm-deep-indigo);
@@ -2464,7 +2468,7 @@
     .nomad-page .nm-exp-thumb .material-symbols-outlined { font-size: 32px; opacity: 0.9; }
     .nomad-page .nm-exp-body { flex: 1; min-width: 0; }
     .nomad-page .nm-exp-title {
-      font-family: 'Manrope', sans-serif;
+      font-family: var(--nm-font-h);
       font-size: 17px;
       font-weight: 600;
       color: var(--nm-deep-indigo);
@@ -3980,7 +3984,7 @@
   <style>
     /* Flatpickr Atelier Theme */
     .flatpickr-calendar {
-      font-family: 'Manrope', sans-serif !important;
+      font-family: var(--nm-font-h) !important;
       border-radius: 16px !important;
       border: 1px solid #e2e8f0 !important;
       box-shadow: 0 20px 60px -10px rgba(99,102,241,0.15), 0 8px 24px -4px rgba(0,0,0,0.08) !important;
@@ -9504,7 +9508,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=163" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=165" defer></script>
+<script src="js/nomad-pages.js?v=166" defer></script>
 
 </body>
 </html>

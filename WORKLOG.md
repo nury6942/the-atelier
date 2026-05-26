@@ -33,28 +33,48 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
-## 2026-05-26 (기기: 윈도우)
+## 2026-05-26 (기기: 윈도우 · 2차)
+
+### ✅ 한 일
+- **Backward Plan 체크리스트 인터랙티브화** — 4개 Phase 카드의 5~11개 항목들이 하드코딩 시각 상태(A는 다 체크, 나머지는 다 빈 라디오)였던 걸 **실제 클릭 토글 가능**하게. 기존 `_nomadChecks`/`toggleCheck` 패턴을 그대로 활용 — storageKey=`'backward'`, itemKey=`'A-0'`/`'B-3'` 형식. 신규 `toggleBackwardCheck(phaseId, idx)` 함수 추가(LS 즉시 + 재렌더 + Firestore 백그라운드). `_nmActivateBackward`에 `initChecks()` 호출 추가. 체크 시 취소선 + 60% opacity, 호버 시 라이트 보라 배경
+- **D phase 출국 항목 보존** — D-0 첫 항목(`6.1-7 부여 본가 1주일`)의 `flight_takeoff` 아이콘 + 보라 강조 + 굵게는 체크 안 한 상태에서도 유지. 체크하면 `check_circle`로 전환
+- **국기 이모지 fallback 통합** (Windows Segoe UI Emoji 국기 미지원 문제 완전 해결)
+  - `.nomad-page` 변수 `--nm-font-h: 'Manrope', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif` 추가
+  - `nomad-pages.js`의 **217곳 inline** `font-family:Manrope` / `font-family:Manrope,sans-serif` / `font-family:Manrope"` 모두 → `font-family:var(--nm-font-h)` 일괄 치환
+  - `index.html`의 **30+ CSS 클래스** 폰트 정의도 var로 통일 (`.nm-city-v2-h1`, `.nm-city-v2-h1-code`, eyebrow, stats 등)
+  - 도시 hero "PT" 박스 안에 국기 이모지 prefix 추가 — `<span class="nm-emoji">🇵🇹</span> PT` 형태
+- **파일 변경**: `js/nomad-pages.js`(toggleBackward + isBackwardChecked + initChecks 호출 + LEFT/RIGHT forEach 토글화 + hero 국기 + 폰트 var 치환 217곳), `index.html`(--nm-font-h 변수 정의 + CSS 30+ rule var 통일 + 캐시 v=165→v=166), `service-worker.js`(atelier-v165→v166)
+
+### 🎯 다음 할 일
+- **이미지 fit 모드 옵션** — 현재는 `object-fit:cover` 고정. 인물 사진 등 cover로 잘리는 경우 contain 토글 검토
+- **paste 힌트 텍스트 톤 통일** — "Ctrl+V로 붙여넣기"(phase) vs "Ctrl+V로 이미지 붙여넣기 가능"(도시 hero) 두 군데 톤 통일
+- **체크리스트 진행률 표시** — 각 Phase 카드에 "3/5 완료" 같은 진행률 표시 검토
+- 5/24 잔여: 가계부 `📋 Claude 공유` 모바일 export 버튼, 한국 공휴일 2027년치 추가
+
+### 🚧 막힌 점 / 결정 보류
+- 폰트 var 치환 217곳은 안전한 변경이지만, **모바일에서 한 번 더 시각 회귀 확인 필요** (`m-ledger.html` 등 다른 페이지엔 영향 없음 — `.nomad-page` scope만 변경)
+
+### 💭 메모
+- **CSS variable로 inline style 일괄 통제** 패턴이 깔끔: 217곳 inline `font-family:Manrope`를 `var(--nm-font-h)`로 바꾸니 미래 변경(폰트 추가/순서 조정)도 정의 한 줄만 손보면 됨. 비슷한 패턴으로 색·간격도 var로 옮기면 시즌별 테마 손쉽게 변경 가능
+- **체크리스트 패턴 재사용**: `_nomadChecks` 객체에 카테고리 추가만으로 새 체크리스트 슬롯 만들 수 있음. 'visa_docs', 'actions', 'packing'에 이번에 'backward' 추가. 다음에 또 체크 가능 항목 필요하면 같은 패턴
+
+---
+
+## 2026-05-26 (기기: 윈도우 · 1차)
 
 ### ✅ 한 일
 - **🌴 Backward Plan Phase 이미지 업로드 기능** — 노마드 페이지 → Backward Plan의 4개 Phase 카드(A Foundation / B Building / C Exit / D Departure)에 이미지 박스 추가. 그라데이션 fallback은 유지하면서 우상단 컨트롤로 추가/변경/삭제. **호버 시 컨트롤 노출, 비어있을 땐 "이미지 추가" 버튼 상시 표시**
 - **Ctrl+V 페이스트 지원** — `_activePhaseId` 추적해서 마우스가 올라간 phase에 붙여넣기. 호버 시 좌하단에 "Ctrl+V로 붙여넣기" 힌트 노출. 도시 hero 페이지 기존 paste 핸들러를 확장(같은 `_nmPasteHandler` 안에서 mode 분기 — 'phase' | 'city')
 - **저장소**: localStorage(`atelier_nomad_phase_<id>`) + Firestore(`nomadPhaseImages/<id>` = `{ image, updatedAt }`). 도시 hero와 동일 패턴 그대로 복제 — `_nmProcessImage`(1600px·JPEG 0.82), `_nmApplyPhaseImage`, `_nmActivateBackward`(페이지 진입 시 LS hydrate + 4개 phase Firestore 백그라운드 fetch + 변경 시 재렌더). 메모리 캐시 `_phaseImages = { A,B,C,D }`
-- **국기 이모지 fallback** — Operating Principles 페이지 "도시별 작업 비중" 표(14개 도시)의 국기가 Windows에서 표시 안 되던 문제. `.nm-emoji` 클래스 추가(`font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji' !important`), `r.flag` span에 클래스 부여. Manrope inline font-family가 부모에서 상속되어 Segoe UI Emoji가 국기 미지원이라 안 보이던 것 → emoji 폰트 강제 fallback
+- **국기 이모지 fallback** — Operating Principles 페이지 "도시별 작업 비중" 표(14개 도시)의 국기가 Windows에서 표시 안 되던 문제. `.nm-emoji` 클래스 추가(`font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji' !important`), `r.flag` span에 클래스 부여. (이후 2차 세션에서 전체 var화로 일관성 확장)
 - **파일 변경**: `js/nomad-pages.js`(헬퍼·컨트롤·paste 분기·activeBackward), `index.html`(글래스 컨트롤 + paste-hint + nm-emoji CSS, 캐시 v=163→v=165), `service-worker.js`(atelier-v163→v165)
 
-### 🎯 다음 할 일
-- **이미지 fit 모드 옵션** — 현재는 `object-fit:cover` 고정. 인물 사진 등 cover로 잘리는 경우 contain 토글 검토
-- **다른 위치의 국기 이모지 fallback** — nomad-cities.js의 city 문자열(`'🇮🇪 더블린'` 등)이 nomad-pages.js 여러 곳(헤더, 카드 등)에 inline으로 박혀있음. 표시되는 곳마다 nm-emoji 적용하거나, city 문자열 split해서 국기만 감싸는 헬퍼 작성 검토
-- **paste 힌트 텍스트 톤** — "Ctrl+V로 붙여넣기" 직설적인데, 도시 hero의 힌트 톤("Ctrl+V로 이미지 붙여넣기 가능")과 통일 검토
-- 5/24 잔여: 가계부 `📋 Claude 공유` 모바일 export 버튼, 한국 공휴일 2027년치 추가
-
 ### 🚧 막힌 점 / 결정 보류
-- 사용자가 첫 시도에서 "이미지 안 들어간다"고 했는데, **세션 종료 시점에만 push하는 룰** 때문에 직전 세션의 CSS만 올라간 상태로 라이브에서 동작 안 했음. 룰 자체는 유지하되, 큰 기능 끝낸 직후 임시 커밋/push 하고 다음 세션에서 squash 또는 amend 검토 — 또는 사용자에게 "이번 패치 라이브 적용해볼까요?"라고 push 의향 묻기
+- 사용자가 첫 시도에서 "이미지 안 들어간다"고 했는데, **세션 종료 시점에만 push하는 룰** 때문에 직전 세션의 CSS만 올라간 상태로 라이브에서 동작 안 했음. → 큰 기능 끝낸 직후 push할지 명시적으로 물어보는 패턴으로 옮길 것
 
 ### 💭 메모
-- **국기 이모지 + Windows 함정**: Windows Segoe UI Emoji는 정책상 국기를 글자(KR, PT)로만 표시. Mac/Android는 정상. inline `font-family:Manrope`만 있는 요소는 브라우저 OS fallback으로 가는데 Windows에선 막힘 → 명시적으로 Noto Color Emoji를 inline에 넣어야 함. CSS-only로 inline style을 이기려면 `!important` 또는 inline 자체 수정 필요
-- **paste 동작 조건**: `currentSubPage === 'nomad-backward' && _activePhaseId`. 호버 안 한 상태에서 Ctrl+V는 의도적으로 무시 (도시 hero는 페이지 컨텍스트 자체가 한 도시라 ambiguous하지 않지만, backward는 4 phase가 한 화면에 있어서 호버 추적 필수)
-- 도시 hero와 phase 이미지가 **거의 동일한 패턴**으로 구현됨 — 다음에 또 비슷한 "여러 항목에 이미지 업로드" 필요하면 공통 모듈로 추출 검토 (지금은 두 군데뿐이라 DRY보다 명확성 우선)
+- 도시 hero와 phase 이미지가 **거의 동일한 패턴**으로 구현됨 — 공통 모듈 추출은 두 군데뿐이라 일단 보류
+- **paste 동작 조건**: `currentSubPage === 'nomad-backward' && _activePhaseId`. 호버 안 한 상태에서 Ctrl+V는 의도적으로 무시 (backward는 4 phase가 한 화면에 있어서 호버 추적 필수)
 
 ---
 ## 2026-05-24 (기기: 아이맥 · 오후)
