@@ -3324,26 +3324,33 @@ window.NOMAD_PAGES = (function(){
     return '';
   }
 
-  // ──── v2 Hero — Playfair Display serif + Quick Stats ────
+  // ──── v3 Hero — Full-bleed image/gradient + Glass Stats ────
   function _renderCityHeroV2(h, monthLabel) {
     var code = _cityCountryCode(h);
-    // city 문자열에서 이모지 떼고 한글만
     var cityKr = (h.city || '').replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '').trim();
-    var cityEmoji = ((h.city || '').match(/[\u{1F1E6}-\u{1F1FF}]{2}/gu) || [''])[0];
 
     var html = '<section class="nm-city-v2-hero">';
-    html += '<div class="nm-city-v2-hero-card">';
-    // 우상단 deco
-    html += '<div class="nm-city-v2-hero-deco"><span class="material-symbols-outlined">explore</span></div>';
+    // 배경: 이미지 있으면 img, 없으면 그라데이션 fallback
+    html += '<div class="nm-city-v2-hero-bg">';
+    if (h.image) {
+      html += '<img src="' + h.image + '" alt="' + (h.imageAlt || cityKr) + '"/>';
+    } else {
+      html += '<div class="nm-city-v2-hero-bg-fallback"></div>';
+    }
+    html += '</div>';
+    // 컨텐츠 (어두운 오버레이는 ::after 의사 요소가 처리)
     html += '<div class="nm-city-v2-hero-inner">';
     // eyebrow
     html += '<span class="nm-city-v2-eyebrow">City Guide · ' + (monthLabel || '') + (h.country ? ' · ' + h.country : '') + '</span>';
-    // serif headline
-    html += '<h1 class="nm-city-v2-h1"><span class="nm-city-v2-h1-code">' + code + '</span>' + cityEmoji + ' ' + cityKr + '</h1>';
-    // subtitle quote
+    // headline (sans-serif)
+    html += '<h1 class="nm-city-v2-h1">' +
+      (code ? '<span class="nm-city-v2-h1-code">' + code + '</span>' : '') +
+      cityKr +
+    '</h1>';
+    // tagline + quote
     if (h.tagline) html += '<p class="nm-city-v2-tagline">' + h.tagline + '</p>';
     if (h.quote) html += '<p class="nm-city-v2-quote">"' + h.quote + '"</p>';
-    // Quick Stats 5-card
+    // Glass Stats 5-card
     html += '<div class="nm-city-v2-stats">';
     var stats = [
       { label:'체류 기간', value:h.dates },
@@ -3357,7 +3364,6 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-city-v2-stat"><p class="nm-city-v2-stat-label">' + s.label + '</p>' +
         '<p class="nm-city-v2-stat-value">' + s.value + '</p></div>';
     });
-    html += '</div>';
     html += '</div>';
     html += '</div>';
     html += '</section>';
