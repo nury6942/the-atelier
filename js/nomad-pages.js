@@ -101,7 +101,7 @@ window.NOMAD_PAGES = (function(){
     return DATA.VOYAGE[0];
   }
 
-  // ──────── Overview 페이지 ────────
+  // ──────── Overview 페이지 (Stitch Magazine 디자인) ────────
   function renderOverview() {
     var oneoff = DATA.BUDGET_ONEOFF;
     var monthlyTotal = DATA.BUDGET.reduce(function(a,b){ return a + b.total; }, 0);
@@ -117,22 +117,32 @@ window.NOMAD_PAGES = (function(){
     var doneDays = daysBetween('2026-05-01', todayYMD());
     var progressPct = Math.max(0, Math.min(100, Math.round((doneDays / totalDays) * 100)));
 
+    // Secondary bento용 데이터
+    var packing = DATA.PACKING || {};
+    var packingCategoryCount = Object.keys(packing).length;
+    var packingItemCount = Object.keys(packing).reduce(function(sum, k) {
+      return sum + (packing[k] || []).length;
+    }, 0);
+    var visaList = DATA.VISA_LIST || [];
+    var actions = DATA.ACTIONS_BY_PERIOD || [];
+    var thisWeekActions = (actions[0] && actions[0].items) ? actions[0].items.length : 0;
+
     var html = '';
 
     // Page Header
     html += pageHeader('Voyage Snapshot', '1년 노마드 한눈에',
       '2028.6.9 인천 출국 · 17개 도시 · 6개 대륙');
 
-    // ────── Voyage Snapshot — 4 bento cards ──────
+    // ════════ SECTION 1 · Voyage Snapshot (border-l-4 액센트 + Live Updates) ════════
     html += '<section class="nm-section">';
     html += '<div class="nm-section-head">' +
       '<h3 class="nm-headline-md">Voyage Snapshot</h3>' +
-      '<span class="nm-label-sm" style="color:var(--nm-primary)">' + (dDay > 0 ? 'D-' + dDay : '출국 완료') + '</span>' +
+      '<span class="nm-label-sm" style="color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">Live Updates</span>' +
     '</div>';
     html += '<div class="nm-grid nm-grid-4">';
 
-    // 출국까지
-    html += '<div class="nm-bento accent-accent">' +
+    // 출국까지 — border-l accent-accent (soft-accent 인디고 블루)
+    html += '<div class="nm-bento" style="border-left:4px solid var(--nm-soft-accent)">' +
       '<p class="nm-label-sm" style="margin-bottom:8px">출국까지</p>' +
       '<h4 class="nm-headline-lg">' + (dDay > 0 ? 'D-' + dDay : '🎉') + '</h4>' +
       '<div style="margin-top:16px;height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
@@ -141,8 +151,8 @@ window.NOMAD_PAGES = (function(){
       '<p class="nm-label-sm" style="margin-top:8px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">진행률 ' + progressPct + '% · 2028.6.9 리스본</p>' +
     '</div>';
 
-    // 노마드 게이트
-    html += '<div class="nm-bento accent-secondary">' +
+    // 노마드 게이트 — border-l secondary
+    html += '<div class="nm-bento" style="border-left:4px solid var(--nm-secondary)">' +
       '<p class="nm-label-sm" style="margin-bottom:8px">노마드 게이트</p>' +
       '<h4 class="nm-headline-lg">₩450만</h4>' +
       '<div style="margin-top:16px;display:flex;align-items:center;gap:6px;color:var(--nm-text-2);font-size:12px">' +
@@ -151,15 +161,15 @@ window.NOMAD_PAGES = (function(){
       '</div>' +
     '</div>';
 
-    // 1년 총 예산
-    html += '<div class="nm-bento accent-tertiary">' +
+    // 1년 총 예산 — border-l tertiary
+    html += '<div class="nm-bento" style="border-left:4px solid #ffb784">' +
       '<p class="nm-label-sm" style="margin-bottom:8px">1년 총 예산</p>' +
       '<h4 class="nm-headline-lg">' + fmtMan(grandTotal) + '</h4>' +
       '<p class="nm-label-sm" style="margin-top:16px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">소비성 ' + fmtMan(consumableTotal) + '</p>' +
     '</div>';
 
-    // 총 도시
-    html += '<div class="nm-bento accent-primary">' +
+    // 총 도시 — border-l primary
+    html += '<div class="nm-bento" style="border-left:4px solid var(--nm-primary)">' +
       '<p class="nm-label-sm" style="margin-bottom:8px">총 도시</p>' +
       '<h4 class="nm-headline-lg">17 cities</h4>' +
       '<p class="nm-label-sm" style="margin-top:16px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">유럽 10 · 오세아니아 4 · 미주 3</p>' +
@@ -167,7 +177,7 @@ window.NOMAD_PAGES = (function(){
 
     html += '</div></section>';
 
-    // ────── Phase Progress ──────
+    // ════════ SECTION 2 · Phase Progress ════════
     html += '<section class="nm-section">';
     html += '<div class="nm-card nm-card-lg">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px">';
@@ -180,16 +190,21 @@ window.NOMAD_PAGES = (function(){
     html += '<p class="nm-label-md" style="color:var(--nm-primary);font-weight:700">' + progressPct + '% Complete</p>';
     html += '</div>';
 
-    // 4 step indicator
+    // 4 step indicator (Stitch icon 매핑: done=check / current=sync / upcoming=lock / final=flight_takeoff)
     html += '<div style="position:relative;padding-top:16px">';
     html += '<div style="display:flex;justify-content:space-between;position:relative;z-index:1">';
     PHASE_BOUNDARIES.forEach(function(p, i) {
       var state = i < phase.idx ? 'done' : (i === phase.idx ? 'current' : 'upcoming');
-      var iconName = state === 'done' ? 'check' : (state === 'current' ? p.icon : 'lock');
+      var isFinal = (i === PHASE_BOUNDARIES.length - 1);
+      var iconName;
+      if (state === 'done') iconName = 'check';
+      else if (state === 'current') iconName = 'sync';
+      else if (isFinal) iconName = 'flight_takeoff';
+      else iconName = 'lock';
       var bg = state === 'upcoming' ? 'var(--nm-surface-container)' : 'var(--nm-primary)';
       var color = state === 'upcoming' ? 'var(--nm-on-surface-variant)' : '#fff';
       var ring = state === 'current' ? 'box-shadow:0 0 0 6px var(--nm-primary-fixed);' : '';
-      var opacity = state === 'upcoming' ? 'opacity:0.5;' : '';
+      var opacity = state === 'upcoming' ? 'opacity:0.4;' : '';
       html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;' + opacity + '">' +
         '<div style="width:36px;height:36px;border-radius:50%;background:' + bg + ';color:' + color + ';display:flex;align-items:center;justify-content:center;margin-bottom:10px;' + ring + '">' +
           '<span class="material-symbols-outlined" style="font-size:18px">' + iconName + '</span>' +
@@ -211,14 +226,14 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
     html += '</section>';
 
-    // ────── 2-col: Performance Tracks + Next Destination ──────
-    html += '<div class="nm-grid nm-grid-2-1">';
+    // ════════ SECTION 3 · 8/4 Split — Performance Tracks + Next Destination ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
 
-    // 왼쪽: Performance Tracks
+    // ───── 왼쪽 (8): Performance Tracks ─────
     html += '<div class="nm-card nm-card-lg">';
     html += '<h3 class="nm-headline-md" style="margin-bottom:24px">Performance Tracks</h3>';
 
-    // Main Track
+    // Main Track — primary 액센트
     html += '<div style="background:rgba(245,243,255,0.5);border:1px solid rgba(204,195,216,0.2);border-radius:12px;padding:20px;margin-bottom:16px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">';
     html += '<div>' +
@@ -228,15 +243,16 @@ window.NOMAD_PAGES = (function(){
       '</div>' +
       '<p style="font-size:12px;color:var(--nm-text-3)">B시리즈 · 게이트 평가 핵심 트랙</p>' +
     '</div>';
-    html += '<span class="nm-pill">High Priority</span>';
+    html += '<span class="nm-pill" style="background:var(--nm-primary-fixed);color:#5a00c6">High Priority</span>';
     html += '</div>';
     html += '<div class="nm-grid nm-grid-2" style="gap:12px">';
     html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size:11px;color:var(--nm-text-3);font-weight:600">현재 월 수익</p><p style="font-family:Manrope;font-size:18px;font-weight:600;color:var(--nm-on-surface);margin-top:4px">₩200-250만</p></div>';
     html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size:11px;color:var(--nm-text-3);font-weight:600">2027.12 목표</p><p style="font-family:Manrope;font-size:18px;font-weight:600;color:var(--nm-on-surface);margin-top:4px">월 ₩450만</p></div>';
     html += '</div>';
+    html += '<p style="font-size:11px;color:var(--nm-text-3);margin-top:10px">욕심 라인 = 월 ₩700-800만 도달 시 노마드 + 저축</p>';
     html += '</div>';
 
-    // Sub Track
+    // Sub Track — secondary 액센트
     html += '<div style="background:rgba(230,238,255,0.3);border:1px solid rgba(204,195,216,0.1);border-radius:12px;padding:20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">';
     html += '<div>' +
@@ -246,48 +262,120 @@ window.NOMAD_PAGES = (function(){
       '</div>' +
       '<p style="font-size:12px;color:var(--nm-text-3)">2026.5 Phase 1 진입 → 2027.12 Phase 7 도달</p>' +
     '</div>';
-    html += '<span class="nm-pill nm-pill-soft" style="background:#a7a5ff;color:#393689">Stable</span>';
+    html += '<span class="nm-pill" style="background:#e2dfff;color:#393689">Stable</span>';
     html += '</div>';
     html += '<div class="nm-grid nm-grid-2" style="gap:12px">';
     html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size:11px;color:var(--nm-text-3);font-weight:600">예상 월 수익</p><p style="font-family:Manrope;font-size:18px;font-weight:600;color:var(--nm-on-surface);margin-top:4px">₩100-300만</p></div>';
-    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size:11px;color:var(--nm-text-3);font-weight:600">위치</p><p style="font-family:Manrope;font-size:18px;font-weight:600;color:var(--nm-on-surface);margin-top:4px">장기 자산</p></div>';
+    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size:11px;color:var(--nm-text-3);font-weight:600">포지션</p><p style="font-family:Manrope;font-size:18px;font-weight:600;color:var(--nm-on-surface);margin-top:4px">장기 자산</p></div>';
     html += '</div>';
+    html += '<p style="font-size:11px;color:var(--nm-text-3);margin-top:10px">게이트 외 · 장기 자산 트랙 (글 + 도메인 + 컨설팅)</p>';
     html += '</div>';
 
     html += '</div>'; // /Performance Tracks card
 
-    // 오른쪽: Next Destination
-    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">explore</span>' +
-      '<h3 class="nm-headline-md">다음 거점</h3>' +
+    // ───── 오른쪽 (4): Next Destination 매거진 카드 ─────
+    html += '<div class="nm-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">';
+    // 그라데이션 hero 헤더 (이미지 fallback)
+    html += '<div style="height:160px;position:relative;background:linear-gradient(135deg,#7C3AED 0%,#a78bfa 50%,#fbbf24 100%)">' +
+      '<div style="position:absolute;top:14px;left:14px;display:flex;gap:8px">' +
+        '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-primary);padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.1)">Next Stop</span>' +
+        '<span style="background:var(--nm-deep-indigo);color:#fff;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.15)">' +
+          '<span class="material-symbols-outlined" style="font-size:13px">edit</span>' +
+          (nextCity.mode || '글 풀가동') +
+        '</span>' +
+      '</div>' +
+      '<div style="position:absolute;bottom:14px;left:18px;color:#fff">' +
+        '<div style="font-size:32px;line-height:1">🇵🇹</div>' +
+      '</div>' +
     '</div>';
-    html += '<div style="display:flex;gap:10px;margin-bottom:16px">' +
-      '<span class="nm-pill" style="background:#fff;color:var(--nm-primary);border:1px solid var(--nm-primary-soft)">Next Stop</span>' +
-      '<span class="nm-pill" style="background:var(--nm-deep-indigo);color:#fff">✍️ ' + nextCity.mode + '</span>' +
+    // 카드 본문
+    html += '<div style="padding:20px;flex:1;display:flex;flex-direction:column">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">' +
+      '<h4 style="font-family:Manrope;font-size:20px;font-weight:700;color:var(--nm-on-surface)">' + nextCity.city + '</h4>' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size:18px">location_on</span>' +
     '</div>';
-    html += '<h4 style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-on-surface);margin-bottom:8px">🇵🇹 ' + nextCity.city + '</h4>';
-    html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.6;margin-bottom:24px;flex:1">' + nextCity.detail + '</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #f1f5f9;padding-top:16px">';
-    html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc">' +
-      '<span style="font-size:13px;color:var(--nm-text-3)">도착 예정</span>' +
-      '<span style="font-size:13px;font-weight:600;color:var(--nm-on-surface)">2028.6.9</span>' +
+    html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.6;margin-bottom:20px;flex:1">' + nextCity.detail + '</p>';
+    // 정보 행
+    html += '<div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #f1f5f9">';
+    html += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9">' +
+      '<span style="font-size:12px;color:var(--nm-text-3)">도착 예정</span>' +
+      '<span style="font-size:12px;font-weight:700;color:var(--nm-on-surface);font-family:Manrope">2028.6.9</span>' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc">' +
-      '<span style="font-size:13px;color:var(--nm-text-3)">체류 기간</span>' +
-      '<span style="font-size:13px;font-weight:600;color:var(--nm-on-surface)">30일</span>' +
+    html += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9">' +
+      '<span style="font-size:12px;color:var(--nm-text-3)">체류 기간</span>' +
+      '<span style="font-size:12px;font-weight:700;color:var(--nm-on-surface);font-family:Manrope">30 Days</span>' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:8px 0">' +
-      '<span style="font-size:13px;color:var(--nm-text-3)">예산</span>' +
-      '<span style="font-size:13px;font-weight:600;color:var(--nm-primary)">₩' + nextCity.cost + '만</span>' +
+    html += '<div style="display:flex;justify-content:space-between;padding:10px 0">' +
+      '<span style="font-size:12px;color:var(--nm-text-3)">예산</span>' +
+      '<span style="font-size:12px;font-weight:700;color:var(--nm-primary);font-family:Manrope">₩' + nextCity.cost + '만</span>' +
     '</div>';
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-city-porto\')" style="margin-top:12px;padding:10px;border:1px solid var(--nm-primary);color:var(--nm-primary);background:#fff;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'var(--nm-primary-soft)\'" onmouseout="this.style.background=\'#fff\'">' +
-      '도시 가이드 보기' +
+    html += '</div>';
+    // 버튼
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-city-porto\')" style="margin-top:14px;padding:11px;border:1px solid var(--nm-primary);color:var(--nm-primary);background:#fff;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;font-family:Manrope" onmouseover="this.style.background=\'var(--nm-primary-soft)\'" onmouseout="this.style.background=\'#fff\'">' +
+      'View City Guide' +
     '</button>';
     html += '</div>';
     html += '</div>'; // /Next Destination card
 
     html += '</div>'; // /2-col grid
+
+    // ════════ SECTION 4 · Secondary Bento Grid (4 카드 · 다른 페이지 cross-link) ════════
+    html += '<section class="nm-section">';
+    html += '<div class="nm-section-head">' +
+      '<h3 class="nm-headline-md">Operational Status</h3>' +
+      '<span class="nm-label-sm" style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">Cross-Page Links</span>' +
+    '</div>';
+    html += '<div class="nm-grid nm-grid-4">';
+
+    // Logistics Hub → Packing
+    html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-packing\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:#7d3d00">inventory_2</span>' +
+        '<h5 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-on-surface)">Logistics Hub</h5>' +
+      '</div>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' +
+        '<strong style="color:var(--nm-deep-indigo)">' + packingCategoryCount + ' 카테고리</strong> · ' + packingItemCount + ' 항목' +
+      '</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">캐리어 · 백팩 · 휴대 짐 계획</p>' +
+    '</div>';
+
+    // Visa Status → Visa
+    html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-visa\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-soft-accent)">verified_user</span>' +
+        '<h5 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-on-surface)">Visa Status</h5>' +
+      '</div>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' +
+        '<strong style="color:var(--nm-deep-indigo)">' + visaList.length + '개 비자</strong> · 셰겐 84/90' +
+      '</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">워홀 + ETA·ESTA·eTA·NZeTA</p>' +
+    '</div>';
+
+    // Next Actions → Actions
+    html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-actions\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:#ba1a1a">fact_check</span>' +
+        '<h5 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-on-surface)">Next Actions</h5>' +
+      '</div>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' +
+        '<strong style="color:var(--nm-deep-indigo)">이번 주 ' + thisWeekActions + '개</strong>' +
+      '</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">필명 · 도메인 · 메일리 · 계좌 분리</p>' +
+    '</div>';
+
+    // Webnovel Queue → IPTrack
+    html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-ip\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">menu_book</span>' +
+        '<h5 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-on-surface)">Webnovel Queue</h5>' +
+      '</div>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' +
+        '<strong style="color:var(--nm-deep-indigo)">월 ₩450만</strong> · 게이트 목표' +
+      '</p>' +
+      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">B시리즈 · 메인 트랙</p>' +
+    '</div>';
+
+    html += '</div></section>';
 
     return html;
   }
