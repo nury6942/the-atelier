@@ -2330,16 +2330,248 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-wh', renderWH);
 
-  // ──────── Action Items 페이지 ────────
+  // ──────── Action Items 페이지 (Stitch Magazine 디자인) ────────
+  // 시기별 메타 (아이콘, 색, Phase, 우선순위)
+  function actionPeriodMeta(periodIdx, when) {
+    var meta = [
+      { icon:'schedule',         color:'#7C3AED', phase:'A', priority:'Critical' }, // 이번 주
+      { icon:'today',            color:'#7C3AED', phase:'A', priority:'Critical' }, // 이번 달
+      { icon:'foundation',       color:'#7C3AED', phase:'A', priority:'High' },     // 2026 후반
+      { icon:'sync',             color:'#5654a8', phase:'B', priority:'Mid' },      // 2027 전반
+      { icon:'rocket_launch',    color:'#5654a8', phase:'B', priority:'Mid' },      // 2027 후반
+      { icon:'logout',           color:'#7d3d00', phase:'C', priority:'High' },     // 2028.1-2
+      { icon:'badge',            color:'#7d3d00', phase:'C', priority:'High' },     // 2028.3-4
+      { icon:'luggage',          color:'#7d3d00', phase:'C', priority:'Critical' }, // 2028.5
+      { icon:'flight_takeoff',   color:'#312E81', phase:'D', priority:'Critical' }, // 2028.6 출국
+    ];
+    return meta[periodIdx] || { icon:'task_alt', color:'#7C3AED', phase:'?', priority:'Mid' };
+  }
+
+  function priorityPillStyle(priority) {
+    if (priority === 'Critical') return 'background:rgba(186,26,26,0.1);color:#ba1a1a';
+    if (priority === 'High')     return 'background:#F5F3FF;color:#7C3AED';
+    return 'background:#e6eeff;color:#5654a8'; // Mid
+  }
+
   function renderActions() {
     initChecks();
     var html = '';
-    html += pageHeader('Action Items', '즉시 액션 · 시간순',
-      '이번 주부터 출국까지 · 체크해가며 진행');
-    var groups = DATA.ACTIONS_BY_PERIOD.map(function(p) {
-      return { cat: p.when, items: p.items };
+
+    var periods = DATA.ACTIONS_BY_PERIOD || [];
+    var saved = _nomadChecks['actions'] || {};
+    var totalAll = periods.reduce(function(a,p){ return a + (p.items||[]).length; }, 0);
+    var doneAll = 0;
+    periods.forEach(function(p, gi) {
+      (p.items || []).forEach(function(_, ii) { if (saved[gi + '-' + ii]) doneAll++; });
     });
-    html += buildChecklist('actions', '액션 체크리스트', groups);
+    var active = totalAll - doneAll;
+    var readinessPct = totalAll > 0 ? Math.round((doneAll/totalAll) * 100) : 0;
+
+    // Critical 카운트 = 이번 주/이번 달 + 2028.5 + 2028.6 출국 (시기 0, 1, 7, 8)
+    var critIdx = [0, 1, 7, 8];
+    var critTotal = 0, critDone = 0;
+    critIdx.forEach(function(gi) {
+      var items = periods[gi] && periods[gi].items || [];
+      critTotal += items.length;
+      items.forEach(function(_, ii) { if (saved[gi + '-' + ii]) critDone++; });
+    });
+    var critActive = critTotal - critDone;
+
+    // Phase별 진행률 (A: 0-2 / B: 3-4 / C: 5-7 / D: 8)
+    var phaseGroups = {
+      'A': { idx:[0,1,2], name:'Foundation' },
+      'B': { idx:[3,4],   name:'Build & Gate' },
+      'C': { idx:[5,6,7], name:'Exit' },
+      'D': { idx:[8],     name:'Departure' },
+    };
+    function phaseProgress(idxArr) {
+      var t = 0, d = 0;
+      idxArr.forEach(function(gi) {
+        var items = periods[gi] && periods[gi].items || [];
+        t += items.length;
+        items.forEach(function(_, ii) { if (saved[gi + '-' + ii]) d++; });
+      });
+      return { total:t, done:d, pct:t>0?Math.round((d/t)*100):0 };
+    }
+    var currentPh = currentPhase();
+    var currentPhaseId = currentPh.id;
+
+    // 가장 가까운 미완 액션 찾기
+    var nextCriticalPeriod = null;
+    var nextCriticalItem = null;
+    for (var pi = 0; pi < periods.length; pi++) {
+      var pitems = periods[pi].items || [];
+      for (var ii = 0; ii < pitems.length; ii++) {
+        if (!saved[pi + '-' + ii]) {
+          nextCriticalPeriod = periods[pi];
+          nextCriticalItem = pitems[ii];
+          break;
+        }
+      }
+      if (nextCriticalItem) break;
+    }
+
+    // Page Header
+    html += pageHeader('Action Items', '즉시 액션 · 시간순',
+      '이번 주부터 출국까지 · ' + totalAll + ' 항목 · 체크해가며 진행');
+
+    // ════════ SECTION 1 · Summary Stats (4 metric, border-l-4) ════════
+    html += '<div class="nm-grid nm-grid-4" style="margin-bottom:32px">';
+    var stats = [
+      { label:'Active Tasks',       value:active,    color:'#7C3AED', sub:'진행 중' },
+      { label:'Critical Deadlines', value:critActive,color:'#ba1a1a', sub:'이번 주·달 + 2028.5-6' },
+      { label:'Completed',          value:doneAll,   color:'#5654a8', sub:'전체 ' + totalAll + ' 중' },
+      { label:'Total Forecast',     value:totalAll,  color:'#7b7487', sub:'9 시기 통합' },
+    ];
+    stats.forEach(function(s) {
+      html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding:22px;border-left:4px solid ' + s.color + '">' +
+        '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:8px">' + s.label + '</p>' +
+        '<p style="font-family:Manrope;font-size:32px;font-weight:800;color:' + s.color + ';line-height:1">' + String(s.value).padStart(2, '0') + '</p>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">' + s.sub + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // ════════ SECTION 2 · 8/4 Asymmetric Layout ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="gap:24px">';
+
+    // ───── LEFT (8): Period Timeline ─────
+    html += '<div style="display:flex;flex-direction:column;gap:36px">';
+    periods.forEach(function(period, gi) {
+      var meta = actionPeriodMeta(gi, period.when);
+      var items = period.items || [];
+      var periodDone = 0;
+      items.forEach(function(_, ii) { if (saved[gi + '-' + ii]) periodDone++; });
+      var periodPct = items.length > 0 ? Math.round((periodDone/items.length) * 100) : 0;
+
+      html += '<section class="nm-checklist-wrap" data-key="actions" style="position:relative">';
+
+      // 헤더: 좌측 큰 원형 아이콘 + period name + 진행률
+      html += '<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">';
+      html += '<div style="width:44px;height:44px;border-radius:50%;background:' + meta.color + ';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px ' + meta.color + '40">' +
+        '<span class="material-symbols-outlined" style="font-size:22px">' + meta.icon + '</span>' +
+      '</div>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">' +
+        '<h3 style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-deep-indigo)">' + period.when + '</h3>' +
+        '<span style="background:rgba(124,58,237,0.08);color:var(--nm-text-3);padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;font-family:Manrope">Phase ' + meta.phase + '</span>' +
+      '</div>';
+      html += '<p style="font-size:11px;color:var(--nm-text-3);font-weight:600"><span class="nm-check-count-inline">' + periodDone + ' / ' + items.length + '</span> 완료</p>';
+      html += '</div>';
+      html += '</div>';
+
+      // hidden progress 라벨 (_updateChecklistProgress 호환)
+      html += '<div class="nm-check-progress-label" style="display:none"></div>';
+      html += '<div style="display:none"><div class="nm-check-progress-bar"></div></div>';
+
+      // task cards
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;margin-left:60px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="actions:' + itemKey + '" onclick="_nomadToggleCheck(\'actions\', \'' + itemKey + '\')" style="cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px 18px;background:#fff;border:1px solid var(--nm-surface-container);border-radius:10px;transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.boxShadow=\'0 2px 8px rgba(124,58,237,0.08)\'" onmouseout="this.style.borderColor=\'var(--nm-surface-container)\';this.style.boxShadow=\'none\'">';
+        html += '<div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0">' +
+          '<span class="nm-checkbox" style="flex-shrink:0;margin-top:2px"></span>' +
+          '<span style="font-size:13px;color:var(--nm-on-surface);line-height:1.5;font-weight:500">' + item + '</span>' +
+        '</div>';
+        // 우측 priority pill
+        html += '<span style="padding:3px 10px;border-radius:99px;font-family:Manrope;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;' + priorityPillStyle(meta.priority) + '">' + meta.priority + '</span>';
+        html += '</li>';
+      });
+      html += '</ul>';
+
+      html += '</section>';
+    });
+    html += '</div>'; // /LEFT period timeline
+
+    // ───── RIGHT (4): 사이드바 3 카드 ─────
+    html += '<aside style="display:flex;flex-direction:column;gap:20px">';
+
+    // ① Voyage Readiness (deep-indigo)
+    html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding:28px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(30px)"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:#eaddff">trending_up</span>' +
+      'Voyage Readiness' +
+    '</div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">' +
+      '<span style="font-family:Manrope;font-size:11px;font-weight:700;color:#eaddff;text-transform:uppercase;letter-spacing:0.08em">전체 진행률</span>' +
+      '<span class="nm-readiness-pct" style="font-family:Manrope;font-size:24px;font-weight:800;color:#fff">' + readinessPct + '%</span>' +
+    '</div>';
+    html += '<div style="height:8px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;margin-bottom:6px">' +
+      '<div class="nm-readiness-bar" style="height:100%;width:' + readinessPct + '%;background:#fff;border-radius:99px;transition:width 0.3s"></div>' +
+    '</div>';
+    html += '<p style="font-size:11px;color:rgba(255,255,255,0.7)"><span class="nm-readiness-done">' + doneAll + ' Completed</span> · <span class="nm-readiness-pending">' + active + ' Pending</span></p>';
+    // Phase별 sub-track
+    html += '<div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap:10px">';
+    Object.keys(phaseGroups).forEach(function(phId) {
+      var phData = phaseGroups[phId];
+      var prog = phaseProgress(phData.idx);
+      var isCurrent = (phId === currentPhaseId);
+      var isDone = prog.pct === 100;
+      var icon = isDone ? 'check_circle' : (isCurrent ? 'radio_button_checked' : 'radio_button_unchecked');
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px">' +
+        '<span style="display:flex;align-items:center;gap:8px;color:' + (isCurrent ? '#fff' : 'rgba(255,255,255,0.65)') + ';font-weight:' + (isCurrent ? '700' : '500') + ';font-family:Manrope">' +
+          '<span class="material-symbols-outlined" style="font-size:16px;color:' + (isDone ? '#22c55e' : (isCurrent ? '#eaddff' : 'rgba(255,255,255,0.4)')) + '">' + icon + '</span>' +
+          'Phase ' + phId + ' · ' + phData.name +
+        '</span>' +
+        '<span style="font-family:Manrope;font-size:11px;color:rgba(255,255,255,0.7);font-weight:600">' + prog.done + '/' + prog.total + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // ② Upcoming Critical Date (lavender)
+    if (nextCriticalItem) {
+      html += '<div class="nm-card" style="padding:24px;background:#F5F3FF;border:1px solid var(--nm-primary-fixed)">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+        '<span style="background:#ba1a1a;color:#fff;padding:4px 10px;border-radius:6px;font-family:Manrope;font-size:9px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase">Critical</span>' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size:18px">calendar_today</span>' +
+      '</div>';
+      html += '<h5 style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + nextCriticalPeriod.when + '</h5>';
+      html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5;margin-bottom:18px">다음 미완 액션: <strong style="color:var(--nm-deep-indigo)">' + nextCriticalItem + '</strong></p>';
+      html += '<button onclick="NOMAD_PAGES.go(\'nomad-visa\')" style="width:100%;padding:11px;background:#fff;color:var(--nm-primary);border:1px solid var(--nm-primary);border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'var(--nm-primary)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'#fff\';this.style.color=\'var(--nm-primary)\'">' +
+        'Visa 서류 보기' +
+      '</button>';
+      html += '</div>';
+    }
+
+    // ③ Phase Context Hero (그라데이션)
+    var phaseInfo = {
+      'A': { name:'Foundation',   sub:'IP 구축 + 재무 시스템 셋업',     grad:'linear-gradient(135deg,#7C3AED 0%,#a78bfa 100%)' },
+      'B': { name:'Build & Gate', sub:'본업 자산 안정 + 게이트 평가',   grad:'linear-gradient(135deg,#5654a8 0%,#a7a5ff 100%)' },
+      'C': { name:'Exit',         sub:'퇴사 + 짐 정리 + 비자 발급',    grad:'linear-gradient(135deg,#7d3d00 0%,#fbbf24 100%)' },
+      'D': { name:'Departure',    sub:'출국 + 첫 거점 적응',           grad:'linear-gradient(135deg,#312E81 0%,#7C3AED 100%)' },
+    };
+    var ph = phaseInfo[currentPhaseId] || phaseInfo['A'];
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="min-height:170px;background:' + ph.grad + ';position:relative;padding:24px;display:flex;flex-direction:column;justify-content:space-between">';
+    // 작은 별 deco
+    html += '<svg viewBox="0 0 280 170" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.25">' +
+      '<circle cx="40" cy="40" r="2" fill="#fff"/>' +
+      '<circle cx="100" cy="30" r="1.5" fill="#fff"/>' +
+      '<circle cx="220" cy="50" r="2" fill="#fff"/>' +
+      '<circle cx="150" cy="80" r="1.5" fill="#fff"/>' +
+      '<circle cx="240" cy="110" r="2" fill="#fff"/>' +
+      '<circle cx="60" cy="130" r="1.5" fill="#fff"/>' +
+      '<circle cx="180" cy="140" r="2" fill="#fff"/>' +
+    '</svg>';
+    html += '<div style="position:relative;z-index:1;color:#fff">' +
+      '<p style="font-family:Manrope;font-size:10px;font-weight:700;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px">Current Phase</p>' +
+      '<h4 style="font-family:Manrope;font-size:24px;font-weight:800">Phase ' + currentPhaseId + ' · ' + ph.name + '</h4>' +
+    '</div>';
+    html += '<div style="position:relative;z-index:1">' +
+      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">' + ph.sub + '</span>' +
+    '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</aside>';
+
+    html += '</div>'; // /8-4 split
+
     return html;
   }
   registerPage('nomad-actions', renderActions);
