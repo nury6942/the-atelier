@@ -33,6 +33,58 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-26 (기기: 윈도우 · 5차 — 풀데이 마라톤)
+
+### ✅ 한 일 (큰 작업 두 개)
+
+**1. 🌴 Atlas Phase 2 — Trip 디테일 페이지 4개 + 후속 정비**
+- `atlas-data.js` 전면 재작성 — 4 trip별 `itinerary`(10~11일) + `lodging`(6~7개) + `budget`(9~11항목) + ptoNote + note 모두 정적 데이터로 추가. Wishlist는 사용자 진짜 데이터 8개(Norway/Caucasus/Dolomites/Normandy/Highway 1/Mallorca/Slovenia/Bavaria)로 교체
+- `renderTripDetail(tripId)` — stitch `Master Itinerary Eastern Canada` 디자인: 풀스크린 그라데이션 hero + 국기 + dates + route → day-by-day timeline (dot + line + 활동 + stay icon) → Curated Lodging + Financial Ledger (dark card) + Leave Efficiency + Trip Note
+- 라우팅: `atlasOpenTrip(tripId)` → 디테일 뷰. `atlasBackToAtlas()`로 dashboard 복귀
+- **연도별 그룹화**: Sequence 타임라인 / Gallery / Ledger를 2027 / 2028로 분리. 연도 라벨 + divider + 연도별 subtotal
+- Hero 제목 폰트 축소 (clamp 40-96 → 32-56)
+- **trip별 국기 + 영어 나라명** 추가 (DENMARK & SWEDEN / CANADA / IRELAND / ICELAND). Sequence/Gallery/Ledger 3곳에 표시. 도시 hero "PT" 박스 안에 국기 prefix
+- **Trip 카드 이미지 업로드** (Atlas dashboard + 디테일 hero) — 노마드 phase 패턴 복제. Ctrl+V paste + LS + Firestore `atlasTripImages/{tripId}`
+
+**2. 🗺️ Travel Journey 페이지 stitch 디자인 전체 리디자인 (P1~P5 + 폴리시 + 숙소 이미지)**
+- 디자인 출처: `D:\다운뤄드\stitch_travel` (DESIGN.md + code.html). 사용자 결정: 단계별 천천히, 전체 7섹션 stitch로
+- **P1 — CSS 토큰 시스템** (`#page-journey` scope, `.j-*` 컴포넌트 prefix): editorial-card / time-row / status-tag / tag-pill / accent-dot + line / day-badge / highlight-box. `--j-font-h`, `--j-primary`(#7c3aed) 등 CSS 변수
+- **P2 — Hero + Stops + Voyage Path**: eyebrow CURRENT VOYAGE + 큰 Manrope 제목 + edit/delete j-icon-btn + 우측 큰 보라 dates (Sep 25 — Oct 04 형식) + DAYS j-status-tag. 풀와이드 hero 이미지(그라데이션 fallback) + 업로드 (`journey-hero.js` 신규, `tripCoverImages` Firestore). Stops 그리드(4-col). Voyage Path 카드 (지도 + 보라 pill 배지 항공/버스/기차/렌트카 카운트)
+- **P3 — Daily Log**: 5-col chunk 가로 그리드 → 세로 stack (각 일차가 큰 editorial card). 원형 번호 (현재일 보라 / 외 muted) + 도시명 h3 + 날짜·요일 메타 (한글요일+영문요일) + 당일치기 표시 + N일차 j-status-soft. 시간 슬롯 j-slot (timeline rail + accent-dot, 예약/고정/쇼핑 색 분기). 인라인 편집/추가 폼 그대로 보존
+- **P4 — 항공편/교통/렌트카/숙소 카드 재디자인**: 공통 j-trip-card editorial. 항공편 j-flight-card (ICN→14H ✈→FRA + PNR/탑승객/좌석 tag-pill). 교통/렌트카 j-inter-card (보라 헤더 + 본문 + Date/Time/픽업/드롭 메타 + 칩). 숙소 j-lodge-card (도시+타입+결제상태 라벨 + h3 + 주소·전화 + 우측 큰 보라 가격 + Check-in/out/Cancellation/Type 4-col 메타 + memo 칩)
+- **P5 — Souvenir Checklist**: 도시 → 25+ 국가 자동 추론(`_souvenirCountry`). 그룹 헤더 큰 국기 + 영어 국가명 + 한국어 sub + items count. 2-col @ lg+. 둥근 체크박스 + 카테고리 라벨(보라 italic) + 품목 + 가격(보라 Manrope). 인라인 더블클릭 편집 모두 보존
+- **사용자 피드백 폴리시 (1차)**: Hero 제목 추가 축소(clamp 24-40) + Hero 본문 2-col(좌 이미지 4:3 + 우 Voyage Path 지도, 별도 Voyage Path 섹션 삭제). Stops 카드를 Atlas trip card 매거진 스타일로(aspect 3:4 + 보라 코드 박스 1ST STOP + h3 + DATES/STAY + ★ STOP + edit/delete). **무료 이미지 자동연동(loadCityPhotos) 제거** — 사용자 업로드만(`journey-city-images.js` 신규, `journeyCityImages` Firestore, Ctrl+V paste). Daily Log 데스크탑(lg+) 다시 5-col 가로 그리드 복원, 카드/번호/슬롯 모두 컴팩트화. 모바일은 stack 유지
+- **사용자 피드백 폴리시 (2차) — 숙소 좌측 이미지 복원**: stitch처럼 lg+ 좌측 320px 그레이스케일 이미지 + 우측 본문. 호버 시 grayscale → 컬러 전환 (filter 0.5s ease). 빈 상태는 그라데이션 + hotel 아이콘. **이미지 업로드** (`journey-lodge-images.js` 신규, `journeyLodgeImages` Firestore, Ctrl+V paste)
+- 모든 데이터 ID/바인딩 보존: trip dropdown, 4탭바, AI 추천 / 예약 스캔 / API 키, 미니 요약, 도시 관리 패널, 트립 노트, 인라인 편집/추가 폼, 시드 마이그레이션, 보험·옵션 토글, lodging 취소 토글, 결제상태 분기 모두 그대로
+
+### 📦 신규 파일 (5개)
+- `js/atlas-data.js` (Phase 1에서 신규, Phase 2에서 전면 재작성)
+- `js/atlas-pages.js` (Phase 1에서 신규, Phase 2 디테일 추가)
+- `js/journey-hero.js` (P2)
+- `js/journey-city-images.js` (폴리시 1차)
+- `js/journey-lodge-images.js` (폴리시 2차)
+
+### 🎯 다음 할 일
+- **Travel 예산 / 체크리스트 페이지도 stitch 톤 적용 검토** — 일정 탭만 stitch, 다른 탭들은 기존 디자인이라 톤 충돌
+- **인라인 편집 폼을 stitch 톤으로** — 일정 카드 안 인라인 편집/추가 폼이 옛 디자인. P3에서 보존만 하고 디자인 통일은 안 함
+- **항공편 추가 모달 등 모든 모달**도 stitch 톤으로 통일 검토
+- **Daily Log 5-col에서 일차 카드가 좁아짐** — 긴 도시명/일정 텍스트 줄바꿈 많아질 수 있음. 사용자 사용해보고 chunk size를 4 또는 6으로 조정 검토
+- Trip별 데이터 desc 필드 입력 UI — 현재 트립 모달에 desc 필드 없음. Hero summary에 표시되니까 입력 가능하게 추가 검토
+- Daily Log 이미지(일차별) 추가 검토 — 일차별로도 사진 한 장씩 가능하면 voyage 기록으로 좋을 듯
+
+### 🚧 막힌 점 / 결정 보류
+- **컨텍스트 큰 작업 분할 패턴이 효과적**이었음 — Atlas Phase 1/2, Journey P1~P5 단계로 나눠서 각 세션마다 push. 사용자가 라이브에서 확인하고 다음 단계 결정. "천천히 P1부터" 신호가 정확히 효과적
+- **이미지 업로드 패턴 4개 모듈 양산** — 노마드 phase / atlas trip / journey hero / journey city / journey lodge. 거의 동일 코드 (LS + Firestore + Ctrl+V paste + 리사이즈). DRY 관점에선 공통 모듈 추출이 좋지만 컨텍스트/위험 부담으로 복제 선택. 나중에 안정되면 `js/image-uploader.js` 같은 공통 모듈로 추출 검토
+
+### 💭 메모
+- **사용자 의도 변경 즉시 반영 패턴 검증**: "다 stitch로" → 적용 → "내용 다 들어가야해" 확인 → "stitch에 이미지 있었는데 왜 뺐어" 피드백 → 즉시 복원. 의도 = stitch 디자인 100% 유지하되 atelier 기존 데이터/기능 100% 보존. 둘 사이 절충 없음
+- **Hero 폰트 두 번 줄임**: P2(clamp 40-96 → 32-56) → 폴리시 1차(32-56 → 24-40). 디자이너 시각에서 hero 큰 글자 충분히 작아질 때까지 반복 조정
+- **stitch 디자인의 핵심 = editorial(매거진) 톤**. 1px outline + 보라 액센트 + Manrope display + 충분한 여백. atelier의 기존 indigo+rounded-2xl+shadow와는 다른 어조 — Travel만 톤이 다르지만 stitch 명시 선택이라 OK
+- **여러 시도 후 안정화**: 폰트 사이즈 / 그리드 col 수 / 카드 패딩 미세조정 3~4번 반복. 사용자 라이브 확인 후 피드백 받아서 즉시 조정하는 사이클이 효과적
+- **GitHub Pages 캐시 함정**: v178 → v179 push 했는데 사용자가 "안 뜨는데?" 라이브 확인 결과 정상 배포. 서비스워커가 끈질겨서 Ctrl+Shift+R로도 안 풀림. DevTools "Clear site data"가 정답. 다음에 큰 캐시 변경 후엔 안내 미리 하기
+
+---
+
 ## 2026-05-26 (기기: 윈도우 · 4차)
 
 ### ✅ 한 일
