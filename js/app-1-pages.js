@@ -2101,7 +2101,7 @@
 
     var html = '';
     if (citiesData.length === 0) {
-      html = '<div class="col-span-full text-center text-sm text-slate-400 py-6">도시를 추가해봐!</div>';
+      html = '<div class="j-stop-empty">도시를 추가해봐!</div>';
     } else {
       html = citiesData.map(function(city, i) {
         var dateRange = '';
@@ -2111,31 +2111,31 @@
         var cachedUrl = _cityPhotoCache[city.name] || '';
         var stopLabel = ordinalStop(i + 1);
 
-        return '<div class="group relative flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-md transition-all duration-300" style="box-shadow:0px 2px 8px rgba(25,28,29,0.04);">' +
-          '<div class="relative h-20 overflow-hidden bg-slate-200">' +
-            '<div class="absolute inset-0 flex items-center justify-center text-slate-300 z-0"><span class="material-symbols-outlined text-2xl">photo_camera</span></div>' +
-            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" class="w-full h-full object-cover relative z-[1]" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
-            '<div class="absolute top-1.5 left-1.5 z-[2] bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[7px] font-extrabold tracking-widest uppercase text-indigo-800">' + stopLabel + '</div>' +
-            '<div class="absolute top-1 right-1 z-[2] flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">' +
-              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" class="p-0.5 rounded bg-white/90 text-slate-600 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="p-0.5 rounded bg-white/90 text-slate-600 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
+        return '<div class="j-stop-card">' +
+          '<div class="j-stop-img">' +
+            '<div class="j-stop-img-empty"><span class="material-symbols-outlined" style="font-size:28px">photo_camera</span></div>' +
+            '<img id="city-img-' + i + '" src="' + cachedUrl + '" alt="' + city.name + '" ' + (cachedUrl ? '' : 'style="display:none"') + ' onerror="this.style.display=\'none\'"/>' +
+            '<div class="j-stop-label">' + stopLabel + '</div>' +
+            '<div class="j-stop-actions">' +
+              '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정"><span class="material-symbols-outlined">edit</span></button>' +
+              '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" class="danger" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
             '</div>' +
           '</div>' +
-          '<div class="px-3 py-2">' +
-            '<h4 class="text-xs font-bold font-headline leading-tight text-slate-900">' + city.name + '</h4>' +
-            '<div class="flex items-center justify-between mt-1">' +
-              '<p class="text-[10px] text-slate-400">' + (dateRange || 'TBD') + '</p>' +
-              '<div class="flex items-center gap-1 text-indigo-600"><span class="material-symbols-outlined" style="font-size:12px">bed</span><span class="text-[10px] font-semibold">' + nightsText + '</span></div>' +
+          '<div class="j-stop-body">' +
+            '<h4 class="j-stop-name">' + city.name + '</h4>' +
+            '<div class="j-stop-meta">' +
+              '<span class="j-stop-dates">' + (dateRange || 'TBD') + '</span>' +
+              '<span class="j-stop-nights"><span class="material-symbols-outlined">bed</span>' + nightsText + '</span>' +
             '</div>' +
           '</div>' +
         '</div>';
       }).join('');
     }
 
-    // Add City 카드
-    html += '<div onclick="openCityModal()" class="group flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all cursor-pointer" style="min-height:120px">' +
-      '<div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined text-lg">add_location_alt</span></div>' +
-      '<span class="text-xs font-bold font-headline text-slate-800">Add City</span>' +
+    // Add City 카드 (stitch dashed)
+    html += '<div onclick="openCityModal()" class="j-stop-add">' +
+      '<span class="j-stop-add-icon"><span class="material-symbols-outlined">add_location_alt</span></span>' +
+      '<span class="j-stop-add-label">Add City</span>' +
     '</div>';
 
     container.innerHTML = html;
@@ -2676,40 +2676,74 @@
     }
   };
 
+  function _formatHeroDates(start, end) {
+    // "2026-09-25" → "Sep 25"
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    try {
+      var s = new Date(start), e = new Date(end);
+      return months[s.getMonth()] + ' ' + String(s.getDate()).padStart(2,'0') +
+        ' — ' + months[e.getMonth()] + ' ' + String(e.getDate()).padStart(2,'0');
+    } catch(err) {
+      return start + ' — ' + end;
+    }
+  }
   function renderTripHeader() {
     var trip = getCurrentTrip();
     if (!trip) return;
     document.getElementById('journey-trip-title').textContent = trip.name;
     if (trip.start_date && trip.end_date) {
-      var badge = document.getElementById('journey-km-badge');
-      badge.textContent = trip.start_date + ' — ' + trip.end_date;
-      badge.style.display = 'inline';
-      // Days badge
+      // stitch Hero: 큰 보라 dates (Sep 25 — Oct 04)
+      var datesEl = document.getElementById('journey-trip-dates');
+      if (datesEl) datesEl.textContent = _formatHeroDates(trip.start_date, trip.end_date);
+      // 추가 메타 (yyyy-mm-dd 풀 범위)
+      var kmBadge = document.getElementById('journey-km-badge');
+      if (kmBadge) {
+        kmBadge.textContent = trip.start_date + ' ~ ' + trip.end_date;
+        kmBadge.style.display = 'inline';
+      }
+      // Days 태그
       var daysBadge = document.getElementById('journey-days-badge');
       if (daysBadge) {
         var days = Math.round((new Date(trip.end_date) - new Date(trip.start_date)) / (1000*60*60*24)) + 1;
         daysBadge.textContent = days + ' DAYS';
-        daysBadge.style.display = 'inline';
+        daysBadge.style.display = 'inline-block';
+      }
+    }
+    // 트립 description (있을 때만)
+    var summaryEl = document.getElementById('journey-trip-summary');
+    if (summaryEl) {
+      if (trip.desc) {
+        summaryEl.textContent = trip.desc;
+        summaryEl.style.display = 'block';
+      } else {
+        summaryEl.style.display = 'none';
       }
     }
     // Voyage Path
     var vpEl = document.getElementById('journey-voyage-path');
     if (vpEl && citiesData.length > 0) {
-      vpEl.style.display = 'flex';
+      vpEl.style.display = 'block'; // 새 j-section은 block
       var cityNames = citiesData.map(function(c){return c.name;});
       document.getElementById('voyage-path-desc').textContent = cityNames.join(' → ') + ' 루트의 여행입니다.';
       var transports = journeyData.filter(function(d){return d.type==='이동수단';});
       var flights = journeyData.filter(function(d){return d.type==='항공편';});
       var badges = '';
-      if (flights.length > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">flight_takeoff</span><span class="text-xs font-semibold">항공 ' + flights.length + '편</span></div>';
+      function _pill(icon, text) {
+        return '<span class="j-tag-pill j-tag-pill-accent" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px"><span class="material-symbols-outlined" style="font-size:13px">' + icon + '</span>' + text + '</span>';
+      }
+      if (flights.length > 0) badges += _pill('flight_takeoff', '항공 ' + flights.length + '편');
       var busCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('bus')>=0;}).length;
       var trainCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('기차')>=0||(t.title||'').toLowerCase().indexOf('train')>=0||(t.title||'').toLowerCase().indexOf('express')>=0;}).length;
-      if (busCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">directions_bus</span><span class="text-xs font-semibold">버스 ' + busCount + '편</span></div>';
-      if (trainCount > 0) badges += '<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm"><span class="material-symbols-outlined text-indigo-600 text-sm">train</span><span class="text-xs font-semibold">기차 ' + trainCount + '편</span></div>';
+      var carCount = transports.filter(function(t){var ti=(t.title||'').toLowerCase();return ti.indexOf('차')>=0||ti.indexOf('car')>=0||ti.indexOf('렌트')>=0;}).length;
+      if (busCount > 0) badges += _pill('directions_bus', '버스 ' + busCount + '편');
+      if (trainCount > 0) badges += _pill('train', '기차 ' + trainCount + '편');
+      if (carCount > 0) badges += _pill('directions_car', '렌트카 ' + carCount + '편');
       document.getElementById('voyage-path-badges').innerHTML = badges;
       // 지도 렌더링
       renderVoyageMap();
     }
+    // Hero 이미지 hydrate (trip별 cover)
+    if (typeof window.journeyHeroHydrate === 'function') window.journeyHeroHydrate();
   }
 
   // 도시별 일차 매핑 계산

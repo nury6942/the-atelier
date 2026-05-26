@@ -5553,6 +5553,407 @@
       background: var(--j-line-deep);
       border: 0;
     }
+
+    /* ════════════════════════════════════════════════════════════
+       P2: Hero + Stops + Voyage Path
+       ════════════════════════════════════════════════════════════ */
+    /* Hero */
+    #page-journey .j-hero {
+      margin-bottom: var(--j-section-gap-sm);
+    }
+    #page-journey .j-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 32px;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-hero-grid {
+        grid-template-columns: 2fr 1fr;
+        gap: 48px;
+      }
+    }
+    #page-journey .j-hero-left .j-eyebrow {
+      display: block;
+      margin-bottom: 14px;
+    }
+    #page-journey .j-hero-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    #page-journey .j-hero-title-row .j-display { margin: 0; }
+    #page-journey .j-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--j-surface-container);
+      color: #9aa0a6;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    #page-journey .j-icon-btn:hover {
+      background: var(--j-primary-container);
+      color: var(--j-primary);
+    }
+    #page-journey .j-icon-btn.danger:hover {
+      background: var(--j-danger-soft);
+      color: var(--j-danger-fg);
+    }
+    #page-journey .j-icon-btn .material-symbols-outlined { font-size: 18px; }
+    #page-journey .j-hero-summary {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--j-on-surface-variant);
+      max-width: 540px;
+      margin: 0;
+    }
+    #page-journey .j-hero-right {
+      text-align: left;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-hero-right { text-align: right; }
+    }
+    #page-journey .j-hero-dates {
+      font-family: var(--j-font-display);
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--j-primary);
+      margin: 0 0 8px;
+    }
+    #page-journey .j-hero-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-hero-tags { justify-content: flex-end; }
+    }
+
+    /* Hero Image (풀와이드) */
+    #page-journey .j-hero-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 21 / 9;
+      overflow: hidden;
+      border-radius: var(--j-radius-xl);
+      border: 1px solid var(--j-outline-variant);
+      background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
+    }
+    #page-journey .j-hero-image-src {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #page-journey .j-hero-img-controls {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #page-journey .j-hero-image:hover .j-hero-img-controls,
+    #page-journey .j-hero-img-controls.is-empty {
+      opacity: 1;
+    }
+    #page-journey .j-hero-img-ctrl {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--j-font-body);
+      transition: background 0.15s;
+    }
+    #page-journey .j-hero-img-ctrl:hover { background: rgba(0,0,0,0.75); }
+    #page-journey .j-hero-img-ctrl .material-symbols-outlined { font-size: 14px; }
+    #page-journey .j-hero-paste-hint {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      z-index: 3;
+      padding: 5px 11px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.9);
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: var(--j-font-body);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    #page-journey .j-hero-image:hover .j-hero-paste-hint { opacity: 1; }
+
+    /* Stops Grid */
+    #page-journey .j-stops-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-stops-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      #page-journey .j-stops-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    #page-journey .j-stop-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--j-surface);
+      border: 1px solid var(--j-outline-variant);
+      border-radius: var(--j-radius-xl);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    #page-journey .j-stop-card:hover {
+      border-color: var(--j-primary);
+      transform: translateY(-2px);
+    }
+    #page-journey .j-stop-img {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      background: var(--j-surface-container);
+      overflow: hidden;
+    }
+    #page-journey .j-stop-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #page-journey .j-stop-img-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+    }
+    #page-journey .j-stop-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      padding: 3px 9px;
+      border: 1px solid var(--j-outline-variant);
+      border-radius: var(--j-radius-sm);
+      font-family: var(--j-font-body);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--j-primary);
+    }
+    #page-journey .j-stop-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #page-journey .j-stop-card:hover .j-stop-actions { opacity: 1; }
+    #page-journey .j-stop-actions button {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid var(--j-outline-variant);
+      color: #6b7280;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+    }
+    #page-journey .j-stop-actions button:hover { background: #fff; color: var(--j-primary); }
+    #page-journey .j-stop-actions button.danger:hover { color: var(--j-danger-fg); }
+    #page-journey .j-stop-actions .material-symbols-outlined { font-size: 14px; }
+    #page-journey .j-stop-body {
+      padding: 16px;
+    }
+    #page-journey .j-stop-name {
+      font-family: var(--j-font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--j-on-surface);
+      margin: 0 0 8px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    #page-journey .j-stop-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    #page-journey .j-stop-dates {
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-stop-nights {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--j-primary);
+    }
+    #page-journey .j-stop-nights .material-symbols-outlined { font-size: 12px; }
+    #page-journey .j-stop-add {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--j-surface-container);
+      border: 2px dashed var(--j-outline-variant);
+      border-radius: var(--j-radius-xl);
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 160px;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-stop-add:hover {
+      background: var(--j-surface);
+      border-color: var(--j-primary);
+      color: var(--j-primary);
+    }
+    #page-journey .j-stop-add-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--j-primary-container);
+      color: var(--j-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #page-journey .j-stop-add-label {
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    #page-journey .j-stop-empty {
+      grid-column: 1 / -1;
+      padding: 40px;
+      text-align: center;
+      font-family: var(--j-font-body);
+      font-size: 13px;
+      color: var(--j-on-surface-variant);
+    }
+
+    /* Voyage Path */
+    #page-journey .j-voyage-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      border: 1px solid var(--j-outline-variant);
+      border-radius: var(--j-radius-xl);
+      overflow: hidden;
+      background: var(--j-surface);
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-voyage-card { grid-template-columns: 1fr 1.2fr; }
+    }
+    #page-journey .j-voyage-info {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    #page-journey .j-voyage-info .j-meta { margin-bottom: 8px; }
+    #page-journey .j-voyage-desc {
+      font-family: var(--j-font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--j-on-surface-variant);
+      margin: 0;
+    }
+    #page-journey .j-voyage-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    #page-journey .j-voyage-map {
+      position: relative;
+      min-height: 280px;
+      background: var(--j-surface-container);
+      overflow: hidden;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-voyage-map { min-height: 360px; }
+    }
+    #page-journey .j-voyage-map img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #page-journey .j-voyage-map-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #cbd5e1;
+      background: var(--j-surface-container);
+    }
+    #page-journey .j-voyage-map-placeholder .material-symbols-outlined { font-size: 48px; }
+    #page-journey .j-voyage-map-link {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--j-primary);
+      color: #fff;
+      border-radius: 9999px;
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    #page-journey .j-voyage-map-link:hover { background: var(--j-primary-deep); }
+    #page-journey .j-voyage-map-link .material-symbols-outlined { font-size: 14px; }
   </style>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
@@ -6023,43 +6424,77 @@
       <!-- Journey Content (hidden until trip selected) -->
       <div id="journey-content" style="display:none">
 
-        <!-- Trip Header (Violet Voyage Style) — 좌(여행) / 우(Voyage Path) 2열 -->
-        <section class="mb-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          <!-- 좌: Trip 정보 + 도시 카드 -->
-          <div>
-            <div class="mb-6">
-              <span class="text-indigo-600 font-bold uppercase tracking-[0.2em] text-[10px] mb-2 block">Current Voyage</span>
-              <div class="flex items-center gap-3 mb-3 flex-wrap">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline tracking-tight" id="journey-trip-title">—</h2>
-                <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors" title="여행 정보 수정"><span class="material-symbols-outlined" style="font-size:18px">edit</span></button>
-                <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors" title="여행 삭제"><span class="material-symbols-outlined" style="font-size:18px">delete</span></button>
+        <!-- ════════════════════════════════════════════════════════════
+             Trip Hero (stitch P2) — eyebrow + 큰 제목 + 우측 dates + 풀와이드 이미지
+             ════════════════════════════════════════════════════════════ -->
+        <section class="j-hero j-section">
+          <div class="j-hero-grid">
+            <div class="j-hero-left">
+              <span class="j-eyebrow">Current Voyage</span>
+              <div class="j-hero-title-row">
+                <h1 id="journey-trip-title" class="j-display j-display-xl">—</h1>
+                <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="j-icon-btn" title="여행 정보 수정"><span class="material-symbols-outlined">edit</span></button>
+                <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="j-icon-btn danger" title="여행 삭제"><span class="material-symbols-outlined">delete</span></button>
               </div>
-              <div class="flex items-center gap-3 text-slate-500">
-                <span class="material-symbols-outlined text-indigo-600 text-lg">calendar_today</span>
-                <span id="journey-km-badge" class="font-medium text-sm" style="display:none"></span>
-                <span id="journey-days-badge" class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style="display:none"></span>
+              <p id="journey-trip-summary" class="j-hero-summary" style="display:none"></p>
+            </div>
+            <div class="j-hero-right">
+              <p id="journey-trip-dates" class="j-hero-dates">—</p>
+              <div class="j-hero-tags">
+                <span id="journey-days-badge" class="j-status-tag j-status-primary" style="display:none"></span>
+                <span id="journey-km-badge" class="j-meta" style="display:none"></span>
               </div>
             </div>
-
-            <!-- 도시 카드 그리드 (Violet Voyage) — 2열 컬럼 안에서 -->
-            <div id="journey-city-cards" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
           </div>
-
-          <!-- 우: Voyage Path -->
-          <div id="journey-voyage-path" class="rounded-xl p-6 flex flex-col gap-5" style="background:#f3f4f5;display:none">
-            <div>
-              <h3 class="text-xl font-bold font-headline mb-3">Voyage Path</h3>
-              <p id="voyage-path-desc" class="text-slate-500 mb-4 leading-relaxed text-sm"></p>
-              <div id="voyage-path-badges" class="flex flex-wrap gap-2"></div>
+          <!-- Hero Image (업로드 가능 + 그라데이션 fallback) -->
+          <div id="journey-hero-image" class="j-hero-image"
+               onmouseenter="window.journeyHeroSetActive && journeyHeroSetActive()"
+               onmouseleave="window.journeyHeroClearActive && journeyHeroClearActive()">
+            <img id="journey-hero-img-src" class="j-hero-image-src" alt="" style="display:none">
+            <input type="file" id="journey-hero-file" accept="image/*" style="display:none" onchange="window.journeyHeroFileSelected && journeyHeroFileSelected(event)">
+            <div id="journey-hero-img-controls" class="j-hero-img-controls is-empty">
+              <button class="j-hero-img-ctrl" onclick="window.journeyHeroUpload && journeyHeroUpload()"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>
             </div>
-            <div class="w-full h-72 rounded-xl overflow-hidden bg-slate-200 relative">
-              <img id="voyage-map-img" src="" alt="Map" class="w-full h-full object-cover" style="display:none"/>
-              <div id="voyage-map-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-300/50">
-                <span class="material-symbols-outlined text-5xl text-slate-400 mb-2">map</span>
-                <p id="voyage-map-msg" class="text-xs text-slate-400"></p>
+            <div class="j-hero-paste-hint">Ctrl+V로 붙여넣기</div>
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════
+             Stops 그리드
+             ════════════════════════════════════════════════════════════ -->
+        <section class="j-section">
+          <div class="j-section-head">
+            <h2 class="j-h2">Stops</h2>
+            <div class="j-section-head-line"></div>
+            <button onclick="openCityModal()" class="j-btn-ghost"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">add_location_alt</span> 도시 추가</button>
+          </div>
+          <div id="journey-city-cards" class="j-stops-grid"></div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════
+             Voyage Path (지도)
+             ════════════════════════════════════════════════════════════ -->
+        <section id="journey-voyage-path" class="j-section" style="display:none">
+          <div class="j-section-head">
+            <h2 class="j-h2">Voyage Path</h2>
+            <div class="j-section-head-line"></div>
+          </div>
+          <div class="j-voyage-card">
+            <div class="j-voyage-info">
+              <div>
+                <span class="j-meta">Route Overview</span>
+                <p id="voyage-path-desc" class="j-voyage-desc" style="margin-top:8px"></p>
               </div>
-              <a id="voyage-map-link" href="#" target="_blank" class="absolute bottom-3 right-3 z-10 text-white px-4 py-2 rounded-full font-bold text-xs shadow-lg flex items-center gap-1.5 hover:opacity-90 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);display:none">
-                <span class="material-symbols-outlined" style="font-size:16px">map</span> Interactive View
+              <div id="voyage-path-badges" class="j-voyage-badges"></div>
+            </div>
+            <div class="j-voyage-map">
+              <img id="voyage-map-img" src="" alt="Map" style="display:none"/>
+              <div id="voyage-map-placeholder" class="j-voyage-map-placeholder">
+                <span class="material-symbols-outlined">map</span>
+                <p id="voyage-map-msg" style="font-size:11px;margin:0"></p>
+              </div>
+              <a id="voyage-map-link" href="#" target="_blank" class="j-voyage-map-link" style="display:none">
+                <span class="material-symbols-outlined">map</span> Interactive View
               </a>
             </div>
           </div>
@@ -11008,6 +11443,9 @@
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=4" defer></script>
 <script src="js/atlas-pages.js?v=4" defer></script>
+
+<!-- Journey Hero 이미지 업로드 (P2) -->
+<script src="js/journey-hero.js?v=1" defer></script>
 
 </body>
 </html>
