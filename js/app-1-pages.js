@@ -2150,11 +2150,7 @@
       }).join('');
     }
 
-    // Add City 카드 (stitch dashed)
-    html += '<div onclick="openCityModal()" class="j-stop-add">' +
-      '<span class="j-stop-add-icon"><span class="material-symbols-outlined">add_location_alt</span></span>' +
-      '<span class="j-stop-add-label">Add City</span>' +
-    '</div>';
+    // Add City 카드는 섹션 헤더 우상단 "도시 추가" 버튼이 대신함 (중복 제거)
 
     container.innerHTML = html;
     // 사용자 업로드 이미지 hydrate (Firestore 백그라운드 fetch)
@@ -3610,7 +3606,7 @@
 
   // ── 데스크탑 주간 그리드 뷰 (엑셀 스타일, lg 이상) ──
   var currentWeekChunkStart = 0;
-  var WEEK_CHUNK_SIZE = 5;
+  var WEEK_CHUNK_SIZE = 4;
 
   function syncWeekChunkToCurrentDay() {
     var chunkOf = Math.floor(currentDayIndex / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
@@ -6005,7 +6001,17 @@
     '</div>';
   }
 
-  // 도시별로 그룹화 + 국가 추론
+  // 카테고리(대상) 우선순위 — 찐친 → 동료 → 직장 → 가족 → 나 → 집 → 디자이너픽 → 편집 → ...
+  function _souvenirCatRank(title) {
+    var t = String(title || '');
+    var order = ['찐친','후배','동료','직장','가족','나','집','소장','디자이너','편집','음료','기타'];
+    for (var i = 0; i < order.length; i++) {
+      if (t.indexOf(order[i]) >= 0) return i;
+    }
+    return 999;
+  }
+
+  // 도시별로 그룹화 + 국가 추론 + 그룹 안 카테고리 순 정렬
   function _groupSouvenirsByCountry(items) {
     var groups = {};
     var order = [];
@@ -6017,6 +6023,14 @@
         order.push(key);
       }
       groups[key].items.push(it);
+    });
+    // 각 그룹 안에서 카테고리 우선순위 → 같은 카테고리 안에서 title 알파벳/가나다
+    order.forEach(function(k) {
+      groups[k].items.sort(function(a, b) {
+        var ra = _souvenirCatRank(a.title), rb = _souvenirCatRank(b.title);
+        if (ra !== rb) return ra - rb;
+        return String(a.title || '').localeCompare(String(b.title || ''), 'ko');
+      });
     });
     return order.map(function(k) { return groups[k]; });
   }

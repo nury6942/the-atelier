@@ -5654,12 +5654,14 @@
       width: 100%;
       aspect-ratio: 4 / 3;
       overflow: hidden;
-      border-radius: var(--j-radius-xl);
+      border-radius: 0;
       border: 1px solid var(--j-outline-variant);
       background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
     }
     @media (min-width: 1024px) {
-      #page-journey .j-hero-image { aspect-ratio: 4 / 3; }
+      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 */
+      #page-journey .j-hero-body { align-items: stretch; }
+      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 380px; }
     }
     #page-journey .j-hero-image-src {
       position: absolute;
@@ -5927,7 +5929,7 @@
       display: flex;
       flex-direction: column;
       border: 1px solid var(--j-outline-variant);
-      border-radius: var(--j-radius-xl);
+      border-radius: 0;
       overflow: hidden;
       background: var(--j-surface);
       height: 100%;
@@ -6051,22 +6053,22 @@
     @media (min-width: 1024px) {
       #page-journey .j-daylog-stack {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
       }
     }
 
-    /* 일차 카드 (5-col에선 컴팩트, stack에선 풀) */
+    /* 일차 카드 (4-col에선 컴팩트, stack에선 풀) */
     #page-journey .j-day-card {
       border: 1px solid var(--j-outline-variant);
       background: var(--j-surface);
-      border-radius: var(--j-radius-xl);
+      border-radius: 0;
       padding: 32px 36px;
       transition: border-color 0.2s;
       min-width: 0;
     }
     @media (min-width: 1024px) {
-      #page-journey .j-day-card { padding: 18px 16px; }
+      #page-journey .j-day-card { padding: 20px 18px; }
     }
     #page-journey .j-day-card:hover { border-color: var(--j-primary); }
     #page-journey .j-day-card.is-current { border-color: var(--j-primary); }
@@ -6637,10 +6639,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: grayscale(1);
-      transition: filter 0.5s ease;
     }
-    #page-journey .j-lodge-img:hover .j-lodge-img-src { filter: grayscale(0); }
     #page-journey .j-lodge-img-empty {
       position: absolute;
       inset: 0;
