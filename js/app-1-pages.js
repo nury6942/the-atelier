@@ -4422,41 +4422,55 @@
       '</div>';
     }
 
-    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="flex items-center gap-4">' +
-        // 왼쪽: 아이콘 + 회사명/뱃지
-        '<div class="flex items-center gap-3 w-1/3 min-w-0">' +
-          '<div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0"><span class="material-symbols-outlined text-xl">directions_car</span></div>' +
-          '<div class="min-w-0">' +
-            '<div class="flex items-center gap-2 flex-wrap">' +
-              '<div class="font-bold text-base text-slate-900 truncate">' + (item.title||'—') + '</div>' +
-              payBadge +
-            '</div>' +
-            '<div class="flex items-center gap-1.5 mt-1 flex-wrap">' + cityBadgeHtml + '</div>' +
-            (item.description ? '<div class="text-xs text-slate-500 mt-1 truncate">' + item.description + '</div>' : '') +
-          '</div>' +
+    // stitch 변환: payBadge → j-status-tag
+    var payVar2 = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
+    var payBadgeSt = payStatus ? '<span class="j-status-tag ' + payVar2 + '">' + payStatus + '</span>' : '';
+    var cityRouteSt = '';
+    if (pickupCity && dropCity && pickupCity !== dropCity) {
+      cityRouteSt = '<span class="j-tag-pill j-tag-pill-accent">' + pickupCity + ' → ' + dropCity + '</span>';
+    } else if (pickupCity) {
+      cityRouteSt = '<span class="j-tag-pill j-tag-pill-accent">' + pickupCity + '</span>';
+    }
+    // tag-pill 변환 (chipsRow)
+    var tagPillsSt = chips.map(function(c){
+      return c
+        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill j-tag-pill-accent')
+        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill j-tag-pill-accent')
+        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill')
+        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill');
+    }).join('');
+    var actionsSt = String(actionBtns || '')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
+      .replace(/text-xl/g, '');
+    return '<div class="j-inter-card" style="margin-bottom:16px">' +
+      '<div class="j-inter-head">' +
+        '<div class="j-inter-head-l">' +
+          '<span class="material-symbols-outlined">directions_car</span>' +
+          '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
         '</div>' +
-        // 중앙: 픽업/드롭 (폰트 키움)
-        '<div class="flex-1 grid grid-cols-2 gap-4 px-2">' +
-          '<div>' +
-            '<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">픽업</p>' +
-            '<p class="text-sm font-bold text-slate-900 leading-tight">' + pickup + '</p>' +
-            '<p class="text-xs text-slate-500 truncate mt-0.5">' + (item.pickup_location||'') + '</p>' +
-          '</div>' +
-          '<div>' +
-            '<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">드롭</p>' +
-            '<p class="text-sm font-bold text-slate-900 leading-tight">' + drop + '</p>' +
-            '<p class="text-xs text-slate-500 truncate mt-0.5">' + (item.drop_location||'') + '</p>' +
-          '</div>' +
-        '</div>' +
-        // 오른쪽: 가격 + 버튼
-        '<div class="flex items-center gap-3 shrink-0">' +
-          '<div class="text-right"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + price + '</p></div>' +
-          '<div class="flex gap-1">' + actionBtns + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          payBadgeSt +
         '</div>' +
       '</div>' +
-      chipsRow +
-      memoBox +
+      '<div class="j-inter-body">' +
+        '<div class="j-inter-row">' +
+          '<div>' +
+            (cityRouteSt ? '<div style="margin-bottom:8px">' + cityRouteSt + '</div>' : '') +
+            (item.description ? '<p class="j-inter-meta-sub" style="font-size:12px;margin:0">' + item.description + '</p>' : '') +
+          '</div>' +
+          '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
+            '<p class="j-trip-price" style="font-size:20px">' + price + '</p>' +
+            '<div class="j-trip-actions">' + actionsSt + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="j-inter-meta-grid cols-2">' +
+          '<div><p class="j-inter-meta-l">픽업</p><p class="j-inter-meta-v">' + pickup + '</p>' + (item.pickup_location ? '<p class="j-inter-meta-sub">' + item.pickup_location + '</p>' : '') + '</div>' +
+          '<div><p class="j-inter-meta-l">드롭</p><p class="j-inter-meta-v">' + drop + '</p>' + (item.drop_location ? '<p class="j-inter-meta-sub">' + item.drop_location + '</p>' : '') + '</div>' +
+        '</div>' +
+        (tagPillsSt ? '<div class="j-inter-tags">' + tagPillsSt + '</div>' : '') +
+        memoBox +
+      '</div>' +
     '</div>';
   }
 
@@ -4480,36 +4494,39 @@
 
   function renderTransportCard(item, deleteBtn) {
     var status = item.status||'';
-    var statusCls = status==='확정' ? 'bg-indigo-100 text-indigo-700' : status==='환불 가능' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+    var statusVar = status==='확정' ? 'j-status-primary' : status==='환불 가능' ? 'j-status-success' : 'j-status-warn';
     var icon = (item.title||'').toLowerCase().indexOf('bus') >= 0 ? 'directions_bus' : ((item.title||'').toLowerCase().indexOf('기차') >= 0 || (item.title||'').toLowerCase().indexOf('train') >= 0 || (item.title||'').toLowerCase().indexOf('express') >= 0 || (item.title||'').toLowerCase().indexOf('ec') >= 0 || (item.title||'').toLowerCase().indexOf('le') >= 0) ? 'train' : 'commute';
     var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
-    var leftBorder = status==='환불 가능' ? 'border-left:3px solid #a78bfa;' : 'border-left:3px solid #6b38d4;';
-
-    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="flex items-center">' +
-        // 왼쪽: 아이콘 + 교통수단
-        '<div class="flex items-center gap-3 w-1/3 min-w-0">' +
-          '<div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-indigo-600 shrink-0"><span class="material-symbols-outlined text-xl">' + icon + '</span></div>' +
-          '<div class="min-w-0">' +
-            '<div class="flex items-center gap-2">' +
-              '<span class="font-bold text-sm text-slate-900 truncate">' + (item.title||'—') + '</span>' +
-              (status ? '<span class="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider shrink-0 ' + statusCls + '">' + status + '</span>' : '') +
-            '</div>' +
-            '<div class="flex items-center gap-1 text-xs text-slate-500 mt-0.5 truncate">' +
-              '<span class="font-medium text-slate-700">' + (routeParts[0]||'') + '</span>' +
-              (routeParts.length > 1 ? '<span class="material-symbols-outlined" style="font-size:10px">arrow_forward</span><span class="font-medium text-slate-700">' + routeParts[1] + '</span>' : '') +
-            '</div>' +
+    var actionsSt = String(deleteBtn || '')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
+      .replace(/text-xl/g, '');
+    return '<div class="j-inter-card" style="margin-bottom:16px">' +
+      '<div class="j-inter-head">' +
+        '<div class="j-inter-head-l">' +
+          '<span class="material-symbols-outlined">' + icon + '</span>' +
+          '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          (status ? '<span class="j-status-tag ' + statusVar + '">' + status + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="j-inter-body">' +
+        '<div class="j-inter-row">' +
+          '<div>' +
+            '<p class="j-trip-name" style="font-size:15px;margin-bottom:6px">' +
+              (routeParts[0] || '') +
+              (routeParts.length > 1 ? ' <span style="color:var(--j-on-surface-variant);font-weight:600">→</span> ' + routeParts[1] : '') +
+            '</p>' +
+          '</div>' +
+          '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
+            '<p class="j-trip-price" style="font-size:20px">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
+            '<div class="j-trip-actions">' + actionsSt + '</div>' +
           '</div>' +
         '</div>' +
-        // 중앙: Date + Time
-        '<div class="flex-1 flex items-center justify-center gap-6">' +
-          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Date</p><p class="text-sm font-semibold text-slate-800">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
-          '<div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Time</p><p class="text-sm font-semibold text-slate-800 whitespace-nowrap">' + (item.time||'—') + (item.arrive ? ' - '+item.arrive : '') + '</p></div>' +
-        '</div>' +
-        // 오른쪽: 가격 + 버튼
-        '<div class="flex items-center gap-3 shrink-0">' +
-          '<div class="text-right"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Price</p><p class="text-base font-extrabold text-indigo-600 whitespace-nowrap">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p></div>' +
-          '<div class="flex gap-1">' + deleteBtn + '</div>' +
+        '<div class="j-inter-meta-grid cols-2">' +
+          '<div><p class="j-inter-meta-l">Date</p><p class="j-inter-meta-v">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
+          '<div><p class="j-inter-meta-l">Time</p><p class="j-inter-meta-v">' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p></div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -5033,29 +5050,61 @@
         var paymentDateRow = item.payment_date
           ? '<div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</div>'
           : '';
-        return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-          '<div class="flex flex-col md:flex-row justify-between gap-4">' +
-            '<div class="flex-1 space-y-3">' +
-              '<div class="flex flex-wrap items-center gap-2.5">' +
-                (item.city ? '<span class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest">' + item.city + '</span>' : '') +
-                '<h4 class="font-headline text-xl font-bold text-slate-900 flex items-center gap-1.5">' + (item.title||'—') + '</h4>' +
-                typeBadge +
-                payBadge +
-                (item.phone ? '<span class="text-slate-500 text-[11px] font-medium flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span>' + item.phone + '</span>' : '') +
+        // stitch 변환
+        var typeBadgeSt = isAirbnb
+          ? '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">home</span>AIRBNB</span>'
+          : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">hotel</span>HOTEL</span>';
+        var payBadgeSt = '';
+        if (payStatus) {
+          var payVarL = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
+          payBadgeSt = '<span class="j-status-tag ' + payVarL + '">' + payStatus + '</span>';
+        }
+        // memoChips → j-tag-pill로 (간단)
+        var memoChipsSt = '';
+        if (item.notes) {
+          var chips2 = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
+          if (chips2.length) {
+            memoChipsSt = '<div class="j-lodge-tags">' + chips2.map(function(c){
+              return '<span class="j-tag-pill">' + c.trim() + '</span>';
+            }).join('') + '</div>';
+          }
+        }
+        var cancelClassSt = item.cancel === '가능' ? 'j-lodge-cancel-ok' : (item.cancel === '조건부' ? 'j-lodge-cancel-warn' : 'j-lodge-cancel-danger');
+        var paymentDateRowSt = item.payment_date
+          ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</p>'
+          : '';
+        return '<div class="j-lodge-card">' +
+          '<div class="j-lodge-body">' +
+            '<div class="j-lodge-head">' +
+              '<div class="j-lodge-head-l">' +
+                '<div class="j-lodge-tags-top">' +
+                  (item.city ? '<span class="j-status-tag j-status-primary">' + item.city + '</span>' : '') +
+                  typeBadgeSt +
+                  payBadgeSt +
+                '</div>' +
+                '<h3 class="j-lodge-h3">' + (item.title || '—') + '</h3>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:14px">' +
+                  (item.address ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">location_on</span>' + item.address + '</p>' : '') +
+                  (item.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + item.phone + '</p>' : '') +
+                '</div>' +
               '</div>' +
-              (item.address ? '<p class="text-[11px] text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">location_on</span>' + item.address + '</p>' : '') +
-              '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-1">' +
-                '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.date||'—') + '</p>' + (item.checkin ? '<p class="text-[11px] text-slate-500">' + item.checkin + '</p>' : '') + '</div>' +
-                '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + (item.checkout_date||'—') + '</p>' + (item.checkout ? '<p class="text-[11px] text-slate-500">' + item.checkout + '</p>' : '') + '</div>' +
-                '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Cancellation</p><p class="text-[13px] font-semibold ' + cancelColor + ' leading-tight">' + cancelText + '</p></div>' +
-                '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + (item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' + paymentDateRow + '</div>' +
+              '<div class="j-lodge-head-r">' +
+                '<p class="j-trip-price">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
+                '<p class="j-lodge-rate-meta">Rate</p>' +
+                paymentDateRowSt +
+                '<div class="j-trip-actions" style="margin-top:10px;justify-content:flex-end">' +
+                  '<button onclick="editJourneyItem(' + realIdx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
+                  '<button onclick="deleteJourneyRow(' + realIdx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
+                '</div>' +
               '</div>' +
-              memoChips +
             '</div>' +
-            '<div class="flex items-start gap-2">' +
-              '<button onclick="editJourneyItem(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
-              '<button onclick="deleteJourneyRow(' + realIdx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+            '<div class="j-lodge-meta-grid">' +
+              '<div><p class="j-inter-meta-l">Check-in</p><p class="j-inter-meta-v">' + (item.date || '—') + '</p>' + (item.checkin ? '<p class="j-inter-meta-sub">' + item.checkin + '</p>' : '') + '</div>' +
+              '<div><p class="j-inter-meta-l">Check-out</p><p class="j-inter-meta-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="j-inter-meta-sub">' + item.checkout + '</p>' : '') + '</div>' +
+              '<div><p class="j-inter-meta-l">Cancellation</p><p class="j-inter-meta-v ' + cancelClassSt + '">' + cancelText + '</p></div>' +
+              '<div><p class="j-inter-meta-l">Type</p><p class="j-inter-meta-v">' + (isAirbnb ? 'Airbnb' : 'Hotel') + '</p></div>' +
             '</div>' +
+            memoChipsSt +
           '</div>' +
         '</div>';
       }).join('');
@@ -5072,27 +5121,34 @@
       var rawType = d.type || 'Hotel';
       var baseType = rawType.replace(/\s*\(.*\)/, '');
       var typeIcon = baseType.indexOf('Airbnb') >= 0 ? 'home' : 'hotel';
-      return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-        '<div class="flex flex-col md:flex-row justify-between gap-4">' +
-          '<div class="flex-1 space-y-4">' +
-            '<div class="flex flex-wrap items-center gap-3">' +
-              '<span class="bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest">' + d.city + '</span>' +
-              '<h4 class="font-headline text-xl font-bold text-slate-900 flex items-center gap-1.5">' + d.title + '<span class="material-symbols-outlined text-indigo-600 text-lg" style="font-variation-settings:\'FILL\' 1;">verified</span></h4>' +
-              '<div class="flex items-center gap-2.5">' +
-                '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">' + typeIcon + '</span>' + baseType + '</span>' +
-                (d.phone ? '<span class="text-slate-500 text-[11px] font-medium flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span>' + d.phone + '</span>' : '') +
+      var cancelClassSt2 = cancelOk ? 'j-lodge-cancel-ok' : 'j-lodge-cancel-danger';
+      var isAirbnb2 = baseType.indexOf('Airbnb') >= 0;
+      var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">' + typeIcon + '</span>' + baseType + '</span>';
+      return '<div class="j-lodge-card">' +
+        '<div class="j-lodge-body">' +
+          '<div class="j-lodge-head">' +
+            '<div class="j-lodge-head-l">' +
+              '<div class="j-lodge-tags-top">' +
+                '<span class="j-status-tag j-status-primary">' + d.city + '</span>' +
+                typeBadgeSt2 +
+              '</div>' +
+              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap:6px">' + d.title + '<span class="material-symbols-outlined" style="font-size:18px;color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
+              (d.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + d.phone + '</p>' : '') +
+            '</div>' +
+            '<div class="j-lodge-head-r">' +
+              '<p class="j-trip-price">' + d.price + '</p>' +
+              '<p class="j-lodge-rate-meta">per night</p>' +
+              '<div class="j-trip-actions" style="margin-top:10px;justify-content:flex-end">' +
+                '<button onclick="openLodgingEditModal(' + idx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
+                '<button onclick="deleteLodgingLocal(' + idx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
               '</div>' +
             '</div>' +
-            '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-1">' +
-              '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + shortDate(d.date) + '</p><p class="text-[11px] text-slate-500">' + d.checkin + '</p></div>' +
-              '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p><p class="text-[13px] font-semibold text-slate-900 leading-tight">' + shortDate(d.checkout_date) + '</p><p class="text-[11px] text-slate-500">' + d.checkout + '</p></div>' +
-              '<div><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Cancellation</p><p class="text-[13px] font-semibold ' + cancelColor + ' leading-tight cursor-pointer" onclick="toggleLodgingCancel(' + idx + ')">' + cancelText + '</p></div>' +
-              '<div class="text-right lg:text-left"><p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Rate</p><p class="font-headline text-lg font-extrabold text-slate-900 leading-tight">' + d.price + '</p><p class="text-[11px] text-slate-500">per night</p></div>' +
-            '</div>' +
           '</div>' +
-          '<div class="flex items-start gap-2">' +
-            '<button onclick="openLodgingEditModal(' + idx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
-            '<button onclick="deleteLodgingLocal(' + idx + ')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button>' +
+          '<div class="j-lodge-meta-grid">' +
+            '<div><p class="j-inter-meta-l">Check-in</p><p class="j-inter-meta-v">' + shortDate(d.date) + '</p><p class="j-inter-meta-sub">' + d.checkin + '</p></div>' +
+            '<div><p class="j-inter-meta-l">Check-out</p><p class="j-inter-meta-v">' + shortDate(d.checkout_date) + '</p><p class="j-inter-meta-sub">' + d.checkout + '</p></div>' +
+            '<div><p class="j-inter-meta-l">Cancellation</p><p class="j-inter-meta-v ' + cancelClassSt2 + '" onclick="toggleLodgingCancel(' + idx + ')" style="cursor:pointer">' + cancelText + '</p></div>' +
+            '<div><p class="j-inter-meta-l">Type</p><p class="j-inter-meta-v">' + (isAirbnb2 ? 'Airbnb' : 'Hotel') + '</p></div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -5522,36 +5578,51 @@
     if (seatLabel) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">airline_seat_recline_normal</span>' + seatLabel + '</span>');
     if (f.fare_type) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">sell</span>' + f.fare_type + '</span>');
     if (f.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + f.payment_date + '</span>');
-    var chipsRow = chips.length ? '<div class="flex flex-wrap gap-1.5 mt-3 pl-[56px]">' + chips.join('') + '</div>' : '';
-    return '<div class="bg-white rounded-2xl p-5 hover:shadow-md transition-all" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
-      '<div class="grid items-center gap-3" style="grid-template-columns:44px minmax(120px,180px) 1fr minmax(90px,140px) 80px;">' +
-        // 아이콘
-        '<div class="w-10 h-10 rounded-xl '+iconBg+' flex items-center justify-center"><span class="material-symbols-outlined '+iconColor+'" style="font-size:20px">flight_takeoff</span></div>' +
-        // 항공사
-        '<div class="min-w-0">' +
-          '<div class="flex items-center gap-1.5 flex-wrap">' +
-            '<p class="font-bold text-sm leading-tight text-slate-900 truncate">'+(f.airline||f.title||'')+'</p>' +
-            payBadge +
+    // stitch j-status-tag로 변환 (payBadge / chips)
+    var payTagSt = '';
+    if (payStatus) {
+      var payVar = payStatus === '결제 완료' ? 'j-status-success' : 'j-status-soft';
+      payTagSt = '<span class="j-status-tag ' + payVar + '">' + payStatus + '</span>';
+    }
+    var tagPills = '';
+    if (f.pnr) tagPills += '<span class="j-tag-pill j-tag-pill-accent">PNR ' + f.pnr + '</span>';
+    if (f.passenger) tagPills += '<span class="j-tag-pill j-tag-pill-accent">' + f.passenger + '</span>';
+    var seatLbl2 = '';
+    if (f.seat_class) seatLbl2 = f.seat_class;
+    if (f.seat_number) seatLbl2 = (seatLbl2 ? seatLbl2 + ' · ' : '') + f.seat_number;
+    if (seatLbl2) tagPills += '<span class="j-tag-pill j-tag-pill-accent">' + seatLbl2 + '</span>';
+    if (f.fare_type) tagPills += '<span class="j-tag-pill">' + f.fare_type + '</span>';
+    if (f.payment_date) tagPills += '<span class="j-tag-pill">결제일 ' + f.payment_date + '</span>';
+    // delete/edit 버튼을 stitch j-trip-action-btn으로 변환
+    var actionsSt = String(deleteHtml || '')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
+      .replace(/text-xl/g, '');
+    return '<div class="j-trip-card">' +
+      '<div class="j-flight-card">' +
+        '<div class="j-flight-main">' +
+          '<div class="j-trip-card-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>' +
+          '<div class="j-flight-info">' +
+            '<div class="j-flight-name-row">' +
+              '<p class="j-trip-name">' + (f.airline || f.title || '') + '</p>' +
+              payTagSt +
+              '<span class="j-tag-pill">' + (f.flight || f.city || '') + ' · ' + (f.date || '') + '</span>' +
+            '</div>' +
           '</div>' +
-          '<p class="text-xs text-slate-500 truncate">'+(f.flight||f.city||'')+' · '+(f.date||'')+'</p>' +
+          '<div class="j-flight-route">' +
+            '<div class="j-flight-port"><p class="j-flight-iata">' + depIata + '</p><p class="j-flight-time">' + (f.depart || f.time || '') + '</p></div>' +
+            '<div class="j-flight-duration"><div class="j-flight-duration-line"></div><p class="j-flight-duration-text">' + (f.duration || '') + '</p></div>' +
+            '<div class="j-flight-port"><p class="j-flight-iata">' + arrIata + '</p><p class="j-flight-time">' + (f.arrive || '') + '</p></div>' +
+          '</div>' +
+          '<div style="text-align:right">' +
+            '<p class="j-trip-price">' + (f.price || f.amount || '—') + '</p>' +
+            '<p class="j-trip-price-meta">' + (f.baggage || '') + '</p>' +
+          '</div>' +
+          '<div class="j-trip-actions">' + actionsSt + '</div>' +
         '</div>' +
-        // 루트 (고정 중앙)
-        '<div class="flex items-center justify-center gap-3">' +
-          '<div class="text-center w-12"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+depIata+'</p>' +
-          '<p class="text-xs font-bold text-slate-600">'+(f.depart||f.time||'')+'</p></div>' +
-          '<div class="flex flex-col items-center w-14"><div class="w-full h-px bg-slate-200 relative"><span class="material-symbols-outlined absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-400" style="font-size:12px">flight</span></div>' +
-          '<p class="text-xs text-slate-600 mt-1 font-semibold">'+(f.duration||'')+'</p></div>' +
-          '<div class="text-center w-12"><p class="text-xl font-extrabold tracking-tighter text-slate-900">'+arrIata+'</p>' +
-          '<p class="text-xs font-bold text-slate-600">'+(f.arrive||'')+'</p></div>' +
-        '</div>' +
-        // 가격 (고정 너비, 오른쪽 정렬)
-        '<div class="text-right">' +
-          '<p class="text-base font-bold text-indigo-600 whitespace-nowrap">'+(f.price||f.amount||'—')+'</p>' +
-          '<p class="text-xs text-slate-600">'+(f.baggage||'')+'</p>' +
-        '</div>' +
-        // 버튼 (고정 너비)
-        '<div class="flex gap-1 justify-end">' + deleteHtml + '</div>' +
-      '</div>' + chipsRow + '</div>';
+        (tagPills ? '<div class="j-flight-tags">' + tagPills + '</div>' : '') +
+      '</div>' +
+    '</div>';
   }
 
   // 시드 데이터를 Firebase로 마이그레이션 후 수정/삭제
