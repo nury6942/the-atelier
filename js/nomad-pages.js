@@ -1756,17 +1756,37 @@ window.NOMAD_PAGES = (function(){
   window._nomadToggleCheck = toggleCheck;
 
   function _updateChecklistProgress(storageKey) {
-    var listEl = document.querySelector('.nm-checklist-wrap[data-key="' + storageKey + '"]');
-    if (!listEl) return;
-    var items = listEl.querySelectorAll('.nm-checklist li');
-    var total = items.length;
-    var done = 0;
-    items.forEach(function(li) { if (li.classList.contains('is-checked')) done++; });
-    var pct = total > 0 ? Math.round((done/total) * 100) : 0;
-    var labelEl = listEl.querySelector('.nm-check-progress-label');
-    var barEl = listEl.querySelector('.nm-check-progress-bar');
-    if (labelEl) labelEl.innerHTML = '<span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span>';
-    if (barEl) barEl.style.width = pct + '%';
+    // 모든 wrap (per-category + 통합) 다 업데이트
+    var wraps = document.querySelectorAll('.nm-checklist-wrap[data-key="' + storageKey + '"]');
+    wraps.forEach(function(listEl) {
+      var items = listEl.querySelectorAll('.nm-checklist li');
+      var total = items.length;
+      var done = 0;
+      items.forEach(function(li) { if (li.classList.contains('is-checked')) done++; });
+      var pct = total > 0 ? Math.round((done/total) * 100) : 0;
+      var labelEl = listEl.querySelector('.nm-check-progress-label');
+      var barEl = listEl.querySelector('.nm-check-progress-bar');
+      if (labelEl) labelEl.innerHTML = '<span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span>';
+      if (barEl) barEl.style.width = pct + '%';
+      var countEl = listEl.querySelector('.nm-check-count-inline');
+      if (countEl) countEl.textContent = done + ' / ' + total;
+    });
+    // 글로벌 readiness 인디케이터 (Bento Header용)
+    var globals = document.querySelectorAll('.nm-readiness-global[data-key="' + storageKey + '"]');
+    globals.forEach(function(g) {
+      var totalAll = parseInt(g.getAttribute('data-total')) || 0;
+      var saved = _nomadChecks[storageKey] || {};
+      var doneAll = Object.keys(saved).filter(function(k){ return saved[k]; }).length;
+      var pctAll = totalAll > 0 ? Math.round((doneAll/totalAll) * 100) : 0;
+      var pctEl = g.querySelector('.nm-readiness-pct');
+      var doneEl = g.querySelector('.nm-readiness-done');
+      var pendingEl = g.querySelector('.nm-readiness-pending');
+      var barEl = g.querySelector('.nm-readiness-bar');
+      if (pctEl) pctEl.textContent = pctAll + '%';
+      if (doneEl) doneEl.textContent = doneAll + ' Completed';
+      if (pendingEl) pendingEl.textContent = (totalAll - doneAll) + ' Pending';
+      if (barEl) barEl.style.width = pctAll + '%';
+    });
   }
 
   // 체크리스트 빌더
@@ -1812,36 +1832,228 @@ window.NOMAD_PAGES = (function(){
   }
 
   // ──────── Visa & Documents 페이지 ────────
+  // 국가별 국기 이모지 매핑
+  function visaCountryFlag(country) {
+    if (country.indexOf('포르투갈') >= 0) return '🇵🇹';
+    if (country.indexOf('아일랜드') >= 0) return '🇮🇪';
+    if (country.indexOf('셰겐') >= 0) return '🇪🇺';
+    if (country.indexOf('호주') >= 0) return '🇦🇺';
+    if (country.indexOf('뉴질랜드') >= 0) return '🇳🇿';
+    if (country.indexOf('미국') >= 0) return '🇺🇸';
+    if (country.indexOf('캐나다') >= 0) return '🇨🇦';
+    return '🌍';
+  }
+
+  // VISA_DOCS 카테고리별 아이콘
+  function visaDocsCatIcon(cat) {
+    if (cat.indexOf('신분') >= 0) return 'badge';
+    if (cat.indexOf('공식') >= 0 || cat.indexOf('증명서') >= 0) return 'description';
+    if (cat.indexOf('금융') >= 0) return 'payments';
+    if (cat.indexOf('의료') >= 0 || cat.indexOf('건강') >= 0) return 'medical_services';
+    if (cat.indexOf('백업') >= 0) return 'cloud_upload';
+    return 'fact_check';
+  }
+
+  // 단일 카테고리 체크박스 카드 (Stitch 디자인)
+  function buildVisaCategoryCard(storageKey, group, gi, isFullWidth) {
+    var saved = _nomadChecks[storageKey] || {};
+    var items = group.items || [];
+    var total = items.length;
+    var done = 0;
+    items.forEach(function(_, ii) { if (saved[gi + '-' + ii]) done++; });
+    var pct = total > 0 ? Math.round((done/total) * 100) : 0;
+    var icon = visaDocsCatIcon(group.cat);
+    var gridSpan = isFullWidth ? 'grid-column:1 / -1;' : '';
+
+    var html = '<section class="nm-card nm-checklist-wrap" data-key="' + storageKey + '" style="padding:28px;' + gridSpan + '">';
+    // 헤더: lavender circle 아이콘 + 카테고리 + 진행률
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">';
+    html += '<div style="display:flex;align-items:center;gap:12px">' +
+      '<div style="width:40px;height:40px;border-radius:50%;background:#F5F3FF;display:flex;align-items:center;justify-content:center;color:var(--nm-primary);flex-shrink:0">' +
+        '<span class="material-symbols-outlined" style="font-size:22px">' + icon + '</span>' +
+      '</div>' +
+      '<h3 style="font-family:Manrope;font-size:17px;font-weight:700;color:var(--nm-on-surface)">' + group.cat + '</h3>' +
+    '</div>';
+    html += '<span class="nm-check-count-inline" style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--nm-text-3);padding:5px 10px;background:var(--nm-surface-container-low);border-radius:99px">' + done + ' / ' + total + '</span>';
+    html += '</div>';
+
+    // (per-card 진행률 라벨 + 바 — _updateChecklistProgress가 자동 업데이트)
+    html += '<div class="nm-check-progress-label" style="display:none"></div>';
+    html += '<div style="height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom:18px">' +
+      '<div class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:' + pct + '%;transition:width 0.2s"></div>' +
+    '</div>';
+
+    // 백업 카테고리: 특수 레이아웃 (Cloud Sync Status + 체크박스 2-col)
+    if (isFullWidth && group.cat.indexOf('백업') >= 0) {
+      html += '<div style="display:grid;grid-template-columns:1fr 2fr;gap:18px">';
+      // 왼쪽: Cloud Sync Status 점선 카드
+      html += '<div style="padding:24px;background:var(--nm-surface-container-low);border-radius:14px;border:2px dashed var(--nm-on-surface-variant);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">' +
+        '<span class="material-symbols-outlined" style="font-size:36px;color:var(--nm-primary);margin-bottom:8px">upload_file</span>' +
+        '<p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">Cloud Sync Status</p>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);line-height:1.5">Google Drive · Naver · USB 다중 백업 권장</p>' +
+      '</div>';
+      // 오른쪽: 체크박스 리스트
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="cursor:pointer">' +
+          '<span class="nm-checkbox"></span>' +
+          '<span>' + item + '</span>' +
+        '</li>';
+      });
+      html += '</ul>';
+      html += '</div>';
+    } else {
+      // 일반 카테고리: 단일 컬럼 체크박스 리스트
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">';
+      items.forEach(function(item, ii) {
+        var itemKey = gi + '-' + ii;
+        var isChecked = !!saved[itemKey];
+        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="cursor:pointer">' +
+          '<span class="nm-checkbox"></span>' +
+          '<span>' + item + '</span>' +
+        '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html += '</section>';
+    return html;
+  }
+
   function renderVisa() {
     initChecks();
     var html = '';
-    html += pageHeader('Visa & Documents', '비자 · 서류 체크리스트',
-      '셰겐 84/90일 한도 안 · 워홀 베이스캠프');
 
-    // 비자 종합 테이블
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
-      '<h3 class="nm-headline-md">1년 동선 비자 종합</h3>' +
-    '</div>';
-    html += '<table class="nm-table">';
-    html += '<thead><tr><th>국가</th><th>비자</th><th>신청 시점</th><th>체류</th><th>비고</th></tr></thead><tbody>';
-    DATA.VISA_LIST.forEach(function(v) {
-      html += '<tr>' +
-        '<td><strong>' + v.country + '</strong></td>' +
-        '<td><span class="nm-pill" style="' + visaPillClass(v.type) + '">' + v.type + '</span></td>' +
-        '<td style="font-size:13px;color:var(--nm-text-2)">' + v.when + '</td>' +
-        '<td style="font-size:13px;color:var(--nm-text-2)">' + v.stay + '</td>' +
-        '<td style="font-size:12px;color:var(--nm-text-3)">' + v.note + '</td>' +
-      '</tr>';
+    // 글로벌 readiness 계산
+    var visaDocs = DATA.VISA_DOCS || [];
+    var totalAll = visaDocs.reduce(function(a,g){ return a + (g.items||[]).length; }, 0);
+    var saved = _nomadChecks['visa_docs'] || {};
+    var doneAll = 0;
+    visaDocs.forEach(function(g, gi) {
+      (g.items || []).forEach(function(_, ii) {
+        if (saved[gi + '-' + ii]) doneAll++;
+      });
     });
-    html += '</tbody></table>';
+    var readinessPct = totalAll > 0 ? Math.round((doneAll/totalAll) * 100) : 0;
+    var pending = totalAll - doneAll;
+
+    // 출국까지 D-Day
+    var dDay = daysBetween(todayYMD(), DEPARTURE_DATE);
+    var dDayDisplay = dDay > 0 ? 'D-' + dDay : '🎉 출국 완료';
+
+    // Page Header
+    html += pageHeader('Visa & Documents', '비자 · 서류 체크리스트',
+      '셰겐 84/90일 한도 안 · 워홀 베이스캠프 · 25개 서류 체크');
+
+    // ════════ SECTION 1 · Bento Header (8/4 split) ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+
+    // ───── LEFT (8): Current Status · Readiness ─────
+    html += '<div class="nm-card nm-readiness-global" data-key="visa_docs" data-total="' + totalAll + '" style="padding:36px;background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
+    // 우상단 거대 article 아이콘 deco
+    html += '<div style="position:absolute;right:-30px;bottom:-40px;opacity:0.12;pointer-events:none">' +
+      '<span class="material-symbols-outlined" style="font-size:200px;color:var(--nm-primary)">article</span>' +
+    '</div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<p style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px">Current Status</p>';
+    // 큰 Readiness %
+    html += '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:18px">' +
+      '<h2 class="nm-readiness-pct" style="font-family:Manrope;font-size:52px;font-weight:800;color:var(--nm-deep-indigo);line-height:1">' + readinessPct + '%</h2>' +
+      '<span style="font-size:14px;color:var(--nm-text-2);font-weight:600">Readiness</span>' +
+    '</div>';
+    // progress bar
+    html += '<div style="height:6px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden;margin-bottom:20px;max-width:480px">' +
+      '<div class="nm-readiness-bar" style="height:100%;width:' + readinessPct + '%;background:var(--nm-primary);border-radius:99px;transition:width 0.3s"></div>' +
+    '</div>';
+    // pill 2개
+    html += '<div style="display:flex;gap:10px;flex-wrap:wrap">';
+    html += '<span style="background:#fff;color:var(--nm-deep-indigo);padding:8px 16px;border-radius:99px;font-family:Manrope;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
+      '<span class="material-symbols-outlined" style="font-size:14px;color:#15803d">check_circle</span>' +
+      '<span class="nm-readiness-done">' + doneAll + ' Completed</span>' +
+    '</span>';
+    html += '<span style="background:#fff;color:#b91c1c;padding:8px 16px;border-radius:99px;font-family:Manrope;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
+      '<span class="material-symbols-outlined" style="font-size:14px">warning</span>' +
+      '<span class="nm-readiness-pending">' + pending + ' Pending</span>' +
+    '</span>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // ───── RIGHT (4): Next Renewal (deep-indigo bg) ─────
+    html += '<div class="nm-card" style="padding:36px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between">';
+    html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:var(--nm-primary);opacity:0.18;border-radius:50%;filter:blur(30px)"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<p style="font-family:Manrope;font-size:11px;font-weight:700;color:#d2bbff;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px">Next Critical Step</p>';
+    html += '<h3 style="font-family:Manrope;font-size:22px;font-weight:700;color:#fff;margin-bottom:6px">여권 · 6개월 룰</h3>';
+    html += '<p style="font-size:12px;color:rgba(234,221,255,0.85);margin-bottom:14px;line-height:1.5">출국 시 만료 6개월 이상 필수 · 2029.12 이후</p>';
+    html += '<div style="display:flex;align-items:baseline;gap:6px">' +
+      '<span style="font-family:Manrope;font-size:34px;font-weight:800;color:#eaddff;line-height:1">' + dDayDisplay + '</span>' +
+      '<span style="font-size:11px;color:rgba(234,221,255,0.7)">until departure</span>' +
+    '</div>';
+    html += '</div>';
+    // 버튼 → Actions
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="position:relative;z-index:1;margin-top:24px;width:100%;padding:14px;background:var(--nm-soft-accent);color:#fff;border:none;border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter 0.15s" onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'none\'">' +
+      'Action Items 보기' +
+      '<span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>' +
+    '</button>';
+    html += '</div>';
+
+    html += '</div>'; // /Bento Header
+
+    // ════════ SECTION 2 · 1년 동선 비자 종합 (Visa Map · 카드 grid) ════════
+    html += '<section class="nm-section" style="margin-bottom:32px">';
+    html += '<div class="nm-section-head">' +
+      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap:8px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
+        'Visa Map · 1년 동선 비자 종합' +
+      '</h3>' +
+      '<span class="nm-label-sm" style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">7 영역</span>' +
+    '</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">';
+    DATA.VISA_LIST.forEach(function(v) {
+      var flag = visaCountryFlag(v.country);
+      html += '<div class="nm-card" style="padding:22px;transition:transform 0.15s,box-shadow 0.15s;cursor:default" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 20px rgba(124,58,237,0.1)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">';
+      // 상단: 국기 + visa type pill
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
+        '<span style="font-size:36px;line-height:1">' + flag + '</span>' +
+        '<span style="padding:5px 11px;border-radius:99px;font-size:10px;font-weight:700;font-family:Manrope;' + visaPillClass(v.type) + '">' + v.type + '</span>' +
+      '</div>';
+      // 국가명 + 체류
+      html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px;line-height:1.3">' + v.country + '</h4>';
+      html += '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin-bottom:14px">체류 ' + v.stay + '</p>';
+      // 신청 시점
+      html += '<div style="display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;margin-bottom:10px">' +
+        '<span class="material-symbols-outlined" style="font-size:14px;color:var(--nm-text-3)">calendar_today</span>' +
+        '<span style="font-size:11px;color:var(--nm-text-2);font-weight:600">' + v.when + '</span>' +
+      '</div>';
+      // 비고
+      html += '<p style="font-size:11px;color:var(--nm-text-3);line-height:1.5">' + v.note + '</p>';
+      html += '</div>';
+    });
     html += '</div>';
     html += '</section>';
 
-    // 서류 체크리스트
-    html += buildChecklist('visa_docs', '출국 전 서류 체크', DATA.VISA_DOCS);
+    // ════════ SECTION 3 · 출국 전 서류 체크리스트 (Asymmetric 2-col + 백업 full) ════════
+    html += '<section class="nm-section">';
+    html += '<div class="nm-section-head">' +
+      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap:8px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">fact_check</span>' +
+        '출국 전 서류 체크리스트' +
+      '</h3>' +
+      '<span class="nm-label-sm" style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">' + totalAll + ' 항목 · ' + visaDocs.length + ' 카테고리</span>' +
+    '</div>';
+
+    // 2-col grid (백업은 col-span-2)
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px">';
+    visaDocs.forEach(function(g, gi) {
+      var isFullWidth = (g.cat.indexOf('백업') >= 0);
+      html += buildVisaCategoryCard('visa_docs', g, gi, isFullWidth);
+    });
+    html += '</div>';
+
+    html += '</section>';
 
     return html;
   }
