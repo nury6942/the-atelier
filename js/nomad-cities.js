@@ -3077,6 +3077,241 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 3월 · 뉴질랜드 (퀸스타운) ════════
+    'nomad-city-nz': {
+      monthLabel: '3월',
+      hero: {
+        city: '🇳🇿 퀸스타운',
+        tagline: 'Nature Capital',
+        country: '뉴질랜드 남섬 · New Zealand',
+        dates: '2029.3.1 — 3.31 (31일)',
+        weather: '10-20°C · 가을 시작',
+        visa: 'NZeTA',
+        vibe: '호수 + 산 + 모험 + 와인',
+        mode: '글 60% + 자연 40%',
+        quote: '2025년 비자 변경으로 원격 근무 공식 허용. 1년 노마드 자연 절정. 도시 작지만 노마드 인프라 충분.',
+        image: null,
+      },
+      meaning: [
+        '<strong>2025년 비자 변경</strong> · 방문자 비자로 원격 근무 합법 (해외 클라이언트)',
+        '1년 노마드 자연 절정 (아이슬란드 다음)',
+        '인구 1.5만 (작음) · 호수 + 산 = 글 + 자연 베스트',
+        '도시 모드 (멜버른) → 자연 모드 전환',
+        '한 달 거점 · 시내 또는 Fernhill (조용한 동네)',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'landscape', title:'퀸스타운 시내 + 호수', items:[
+          { name:'Lake Wakatipu',
+            desc:'시내 끼고 있는 호수. 매일 산책. TSS Earnslaw 빈티지 증기선 NZ$95.' },
+          { name:'Skyline Gondola + Luge', price:'NZ$60',
+            desc:'시내 뒷산 곤돌라. 일몰 + 야경. 루지 (썰매) 별도.' },
+          { name:'Queenstown Gardens', price:'무료',
+            desc:'호수 끼고 산책. 디스크 골프 코스. 글 작업 좋음.' },
+          { name:'Fergburger',
+            desc:'퀸스타운 명물 햄버거. 줄 짧으면 한 번.' },
+          { name:'Onsen Hot Pools', price:'NZ$95-115',
+            desc:'계곡 뷰 온천. 누리 휴식 라인 1순위. 1회 예약.' },
+        ]},
+
+        { type:'places', icon:'hiking', title:'위성 · 자연', items:[
+          { name:'Milford Sound', price:'투어 NZ$200-350',
+            desc:'<strong>뉴질랜드 자연 1순위.</strong> 퀸스타운에서 4시간. 1일 투어 또는 1박. 피요르드 + 폭포 + 펭귄·돌고래.' },
+          { name:'Glenorchy', price:'무료',
+            desc:'퀸스타운 40분. 반지의 제왕 촬영지. 산 + 호수. 당일.' },
+          { name:'Wanaka', price:'버스 NZ$30',
+            desc:'1.5시간. 더 조용한 호수 마을. 1박 추천. "That Wanaka Tree" 사진 명소.' },
+          { name:'Mt Cook · Aoraki', price:'투어 또는 자가운전',
+            desc:'뉴질랜드 최고봉 (3,724m). 별 관측 (Dark Sky Reserve). 1박.' },
+          { name:'Arrowtown',
+            desc:'퀸스타운 20분. 19세기 골드러시 마을. 가을 단풍.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'The Remarkable Sweet Shop (Arrowtown)',
+            desc:'옛 골드러시 사탕 가게. 분위기 자산. Arrowtown 묶음.' },
+          { name:'Lakes District Museum & Gallery (Arrowtown)',
+            desc:'옛 광부·중국인 정착촌 역사. 작가 누리 글감.' },
+          { name:'Arrowtown Chinese Settlement',
+            desc:'19세기 중국 광부 정착촌 유적. 무료. 분석가 N 정체성 글감.' },
+          { name:'The Library (시내 위)',
+            desc:'옛 도서관 → 카페·바. 책장 그대로. 누리 작가 분위기.' },
+          { name:'Glenorchy Animal Experience',
+            desc:'Glenorchy 작은 동물 농장. 양·알파카. 누리 디자이너 (니트) = 양털 자연 접촉.' },
+          { name:"Bob's Cove Track",
+            desc:'짧은 트레킹 (1시간). 호수 색깔 가장 예쁜 곳. 관광객 적음.' },
+          { name:'Queenstown Trail (자전거·도보)',
+            desc:'130km 트레일 네트워크. 일부 구간 도보. 가을 단풍.' },
+        ]},
+
+        { type:'neighborhoods', icon:'home', title:'동네 (31일 거점 비교)', items:[
+          { name:'Town Centre (시내)', stars:'★★★★★',
+            desc:'모든 게 도보. 카페·코워킹·호수. 비싸지만 자유. <strong>누리 1순위.</strong>' },
+          { name:'Fernhill', stars:'★★★★★',
+            desc:'호수 뷰 + 조용. 시내 차로 5분 또는 도보 20분. 글 작업 베스트.' },
+          { name:'Arrowtown', stars:'★★★★',
+            desc:'골드러시 마을 + 가을 단풍. 시내 20분. 진짜 슬로우.' },
+          { name:'Frankton', stars:'★★★',
+            desc:'공항 옆. 가성비. 시내 버스 15분.' },
+          { name:'Kelvin Heights', stars:'★★★',
+            desc:'호수 반대편. 차 필수.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'list', icon:'paragliding', title:'해볼 것 · 모험', items:[
+          '<strong>Tandem Paragliding</strong> · 시내 뒷산 · NZ$249 · 일출·일몰 추천',
+          '<strong>White Water Rafting</strong> · Shotover River · NZ$200-250',
+          '<strong>Nevis Bungy</strong> · 134m · NZ$285 · 세계급',
+          '<strong>Routeburn Track</strong> · 1-3일 트레킹 · NZ$80-200',
+          '<strong>Jetboat</strong> · Shotover Jet · NZ$160',
+          '<strong>Lake Wakatipu Cruise</strong> · 일몰 NZ$95',
+          '<em>누리 = 모험 라인 X. 패러글라이딩 1번 + 트레킹 1-2회 + 호수 크루즈 1회 정도면 충분.</em>',
+        ]},
+
+        { type:'list', icon:'wine_bar', title:'와인 + 식문화', items:[
+          '<strong>Central Otago Wine Region</strong> · 피노 누아 본가 · 퀸스타운 인근 70+ 와이너리',
+          '<strong>Gibbston Valley</strong> · 와인 동굴 투어 NZ$45',
+          '<strong>Appellation Wine Tours</strong> · 1일 NZ$220',
+          'Bannockburn · 와이너리 밀집',
+        ]},
+
+        { type:'places', icon:'restaurant', title:'음식 · 퀸스타운 라인', items:[
+          { name:'Fergburger (Shotover St)',
+            desc:'퀸스타운 명물 햄버거. 새벽 4시까지. 평일 점심 노리면 줄 짧음.' },
+          { name:'Fergbaker (Fergburger 옆)',
+            desc:'Ferg 가족 베이커리. 파이·페이스트리. 아침 자주.' },
+          { name:'Mrs Ferg Gelateria',
+            desc:'Ferg 자매 가게. 젤라토. 호수 산책 묶음.' },
+          { name:'Public Kitchen & Bar (Steamer Wharf)',
+            desc:'호수 옆 셰어 플레이트. 누리 = 1번 자체 보상.' },
+          { name:'The Sherwood',
+            desc:'호텔 + 레스토랑 + 카페. 누리 톤 매칭. 자체 농장 식재료.' },
+          { name:'Caribe Latin Kitchen',
+            desc:'남미 음식. 분위기 + 가성비.' },
+          { name:'Provisions of Arrowtown',
+            desc:'Arrowtown 브런치 1순위. 가을 단풍 묶음.' },
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 마오리 문화',
+            body:'뉴질랜드 정체성 = 마오리 + 영국 + 태평양. 도시 이름·지명·인사 (Kia ora). 분석가 N 글감.' },
+          { h:'2. 자연 = 분석가 회로 휴식',
+            body:'1년 노마드 = 도시 11개월 + 자연 1개월. 누리 분석가 회로 = 호수·산 앞에서 잠시 끔. 글 페이스 자연스러워짐.' },
+          { h:'3. 작가 안목 = 풍경 글감',
+            body:'한국에 없는 풍경. 직접 본 게 아니면 못 쓰는 글. 1달 동안 노트 + 사진 모으기.' },
+          { h:'4. 슬로우 → 더 슬로우',
+            body:'포르투갈 슬로우 → 멜버른 도시 페이스 → 퀸스타운 슬로우. 노마드 후반 회복기.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'note', icon:'work', title:'작업 환경 · 작지만 충분',
+          body:'퀸스타운 = 작은 도시 (1.5만), 그래도 노마드 인프라 충분. 인터넷 평균 30Mbps. 아파트 fibre 빠름.',
+          subsections:[
+            { h:'코워킹', items:[
+              '<strong>iMeet</strong> · Camp Street · 데일리 NZ$40+GST · 모던 + 햇볕 좋음',
+              '<strong>Queenstown Coworking</strong> · 호수 뷰',
+              '<strong>The Sherwood</strong> · 호텔 + 코워킹 + 카페',
+            ]},
+            { h:'카페 (작업 가능)', items:[
+              '<strong>Vudu Cafe</strong> · 시내 · 작가 단골',
+              '<strong>Bespoke Kitchen</strong> · 브런치 + WiFi',
+              '<strong>Yonder</strong> · 캐주얼 + 콘센트',
+            ]},
+          ],
+        },
+
+        { type:'list', icon:'menu_book', title:'도서관 · 무료 작업', items:[
+          '<strong>Queenstown Library (Gorge Rd)</strong> · 무료 · WiFi + 콘센트 + 호수 뷰 일부. 누리 1순위 무료 작업.',
+          '<strong>Arrowtown Library</strong> · 작은 동네 도서관. Arrowtown 거점이면.',
+          '<strong>Wanaka Library</strong> · 1박 위성 가면.',
+        ]},
+
+        { type:'list', icon:'home', title:'한 달 숙소', items:[
+          '<strong>시내 (Town Centre)</strong> · 1베드 Airbnb 월 NZ$3,500-5,000 · 모든 게 도보',
+          '<strong>Fernhill</strong> · 호수 뷰 + 조용 · 시내 차로 5분 · 월 NZ$2,800-4,000',
+          '<strong>Frankton</strong> · 공항 근처 · 더 저렴 · 월 NZ$2,500-3,500',
+          '<strong>Arrowtown</strong> · 골드러시 마을 · 한적 + 가을 단풍 · 월 NZ$2,800-4,000',
+          '<em>3월 = 가을 시작 = 비수기 진입. 1-2월 (성수기) 대비 -30%. Booking 빠를수록 좋음.</em>',
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (누리 31일 자연 모드)', items:[
+          '<strong>주 1 (1-7일)</strong> · 멜버른 → 퀸스타운 비행 + 시차 적응 + Town Centre 또는 Fernhill 거점 + 호수 산책 단골 + Vudu·Bespoke 카페 단골',
+          '<strong>주 2 (8-14일)</strong> · 글 작업 (도서관·iMeet) + Glenorchy 당일 + Arrowtown 당일 + Onsen 1회',
+          '<strong>주말 (15-16일차)</strong> · <strong>Milford Sound 1박</strong> (Te Anau 경유)',
+          "<strong>주 3 (17-23일)</strong> · 글 풀가동 + Central Otago 와인 1일 + Bob's Cove 트레킹 + Skyline 곤돌라",
+          '<strong>주말 (24-25일차)</strong> · Wanaka 1박 또는 Mt Cook 1박 (별 관측)',
+          '<strong>주 4 (26-31일)</strong> · 1년 노마드 9개월 회고 + 디지털 제품 작업 + 패러글라이딩 1회 + 미국 짐 정리 (남반구 가을 → 미국 봄)',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 그룹', items:[
+          { h:'페이스북 그룹', items:[
+            '<strong>Queenstown Digital Nomads</strong>',
+            '<strong>Queenstown Expats</strong>',
+            '<strong>Queenstown Locals + Newcomers</strong>',
+            '<strong>Female Digital Nomads NZ</strong> · 여성 한정',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Queenstown International Meetup"',
+            '"Queenstown Hiking & Adventure"',
+            '"Queenstown Photography Walks"',
+          ]},
+          { h:'코워킹·호스텔 이벤트', items:[
+            'iMeet = 정기 노마드 모임',
+            'The Sherwood = 호텔·코워킹·카페 복합 = 사교 자연',
+            'Adventure Queenstown 호스텔 = 단기 노마드 만남',
+          ]},
+          { h:'이벤트 (3월)', items:[
+            '<strong>LUMA Light Festival</strong> (4월 부활절 - 시기 살짝 후) · Queenstown Gardens 라이트 설치',
+            '<strong>Arrowtown Autumn Festival</strong> (4월 초 - 누리 3월 말 단풍 시작)',
+            '<strong>주말 와이너리 이벤트</strong> · 정기',
+            '<strong>로컬 펍 라이브 음악</strong> · The Bunker·Atlas·Pub on Wharf',
+          ]},
+          { h:'퀸스타운 특유', items:[
+            '인구 1.5만 작은 도시. <strong>여행자·노마드·익스팻이 인구의 절반.</strong> 카페·코워킹·트레킹에서 자연 만남. 한 달 거점 = 깊은 친구 1-2명 가능. 영어 부담 X. <strong>자연 모드라 깊은 대화 라인이 자연스러움.</strong>',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'table', icon:'payments', title:'1달 (숙소 제외)',
+          headers:['카테고리','세부','월 합계 (NZ$)','₩'],
+          rows:[
+            ['식비', '마트 + 외식 (비쌈)', 'NZ$1,000-1,400', '82-115만'],
+            ['교통', '도보 + 버스 + 1-2회 렌터카', 'NZ$200-500', '16-41만'],
+            ['박물관·체험·온천', '온천 + 곤돌라 + 패러글라이딩', 'NZ$500-800', '41-66만'],
+            ['위성 (Milford·Wanaka·Mt Cook)', '투어 또는 자가운전', 'NZ$500-1,000', '41-82만'],
+            ['코워킹', '월권 또는 카페', 'NZ$0-400', '0-33만'],
+          ],
+          footer:['<strong>합계</strong>', '', '<strong>NZ$2,200-4,100</strong>', '<strong>180-337만</strong>'],
+          note:'퀸스타운 = 뉴질랜드에서 가장 비쌈. 외식 NZ$25-40/끼. 슈퍼 (New World·Countdown) 활용 필수.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. 자연 모드 = 글 60%, 휴식 40%',
+            body:'멜버른 75% → 퀸스타운 60%. 호수 산책 + 트레킹 = 작업 페이스 일부러 늦추기. 1년 노마드 후반 = 번아웃 회피 라인.' },
+          { h:'2. Milford Sound 무조건',
+            body:'뉴질랜드 자연 1순위. 1일 투어 또는 1박. 누리 1년 노마드 인생샷.' },
+          { h:'3. 와나카·Mt Cook 별 관측',
+            body:'Aoraki Mackenzie Dark Sky Reserve. 세계 최고 별 관측지 중 하나. 1박 추천.' },
+          { h:'4. 가을 단풍 (3월 후반)',
+            body:'Arrowtown 단풍 페스티벌 4월 초. 누리 3월 말 = 단풍 시작 시점.' },
+          { h:'5. 모험은 1-2개만',
+            body:'패러글라이딩 또는 트레킹 1번이면 충분. 누리 = 번지·래프팅 라인 X. 무리 X.' },
+          { h:'6. 다음 = 4월 샌디에이고',
+            body:'퀸스타운 → 오클랜드 1시간 → LA → 샌디에이고. 16-20시간 비행. 마일리지 추천 구간.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
