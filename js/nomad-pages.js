@@ -1232,121 +1232,348 @@ window.NOMAD_PAGES = (function(){
   registerPage('nomad-ip', renderIPTrack);
 
   // ──────── Stay Channels 페이지 ────────
+  // ════════════════════════════════════════════════════════════════════
+  // Nomad Gate — Apple-style Minimal (Stitch v2)
+  // ════════════════════════════════════════════════════════════════════
+  function renderGate() {
+    var html = '';
+
+    // Hero
+    html += '<section style="margin-bottom:48px">';
+    html += '<p style="font-family:Manrope,sans-serif;color:var(--nm-primary);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.16em;margin:0 0 10px">Nomad Gate</p>';
+    html += '<h2 style="font-family:Manrope,sans-serif;font-size:38px;font-weight:800;letter-spacing:-0.015em;color:#0f172a;margin:0 0 12px;line-height:1.15">진입 조건 · 출국 라인</h2>';
+    html += '<p style="font-size:18px;color:var(--nm-text-3);font-weight:400;font-style:italic;margin:0">시기는 부차 · 조건이 본질</p>';
+    html += '<div style="height:1px;background:#f1f5f9;margin-top:32px"></div>';
+    html += '</section>';
+
+    // 3 metric cards
+    html += '<section class="nm-grid nm-grid-3" style="margin-bottom:48px;gap:24px">';
+    var metrics = [
+      { label:'하한선 (출국 확정)', prefix:'월', value:'₩450', sub:'2027.12 평가',         color:'#0f172a' },
+      { label:'욕심 라인',         prefix:'월', value:'₩800', sub:'노마드 동안도 저축 가능', color:'var(--nm-primary)' },
+      { label:'평가 시점',         prefix:'',   value:'2027.12', sub:'3개월 연속 안정',     color:'#0f172a' },
+    ];
+    metrics.forEach(function(m) {
+      html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
+      html += '<p style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 16px">' + m.label + '</p>';
+      html += '<div style="display:flex;align-items:baseline;gap:6px">' +
+        (m.prefix ? '<span style="font-size:18px;font-weight:700;color:var(--nm-primary)">' + m.prefix + '</span>' : '') +
+        '<span style="font-family:Manrope,sans-serif;font-size:38px;font-weight:800;letter-spacing:-0.015em;color:' + m.color + '">' + m.value + '</span>' +
+      '</div>';
+      html += '<p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:18px 0 0">' + m.sub + '</p>';
+      html += '</div>';
+    });
+    html += '</section>';
+
+    // Simulation table
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;overflow:hidden;margin-bottom:48px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="padding:18px 28px;background:#fafafa;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:16px">cloud_sync</span>' +
+      '<h3 style="font-family:Manrope,sans-serif;font-size:13px;font-weight:700;color:#374151;margin:0">1년 노마드 후 자산 시뮬</h3>' +
+    '</div>';
+    html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">';
+    html += '<thead><tr style="background:rgba(248,250,252,0.5)">' +
+      ['시나리오','출국 자산','노마드 비용','노마드 수익 (세후)','귀국 자산'].map(function(h){
+        return '<th style="padding:14px 28px;font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + h + '</th>';
+      }).join('') +
+    '</tr></thead>';
+    html += '<tbody>';
+    var sims = [
+      { sc:'게이트 450 (하한선)', start:'1.5억', cost:'-6,800만', gain:'+4,500만', end:'약 1.3억', pill:{label:'자산 약간 감소',bg:'#f3f4f6',color:'#6b7280'} },
+      { sc:'게이트 600',          start:'1.5억', cost:'-6,800만', gain:'+5,800만', end:'약 1.4억', pill:{label:'거의 그대로',  bg:'#dcfce7',color:'#16a34a'} },
+      { sc:'게이트 800 (욕심)',   start:'1.5억', cost:'-6,800만', gain:'+7,700만', end:'약 1.5억', pill:{label:'저축 가능',    bg:'#f5f3ff',color:'var(--nm-primary)'} },
+    ];
+    sims.forEach(function(s) {
+      html += '<tr style="border-top:1px solid #f8fafc;transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
+      html += '<td style="padding:22px 28px;font-size:13px;font-weight:500;color:#374151">' + s.sc + '</td>';
+      html += '<td style="padding:22px 28px;font-size:13px;color:#374151">' + s.start + '</td>';
+      html += '<td style="padding:22px 28px;font-size:13px;color:#ef4444">' + s.cost + '</td>';
+      html += '<td style="padding:22px 28px;font-size:13px;color:var(--nm-primary)">' + s.gain + '</td>';
+      html += '<td style="padding:22px 28px;font-size:13px;color:#374151"><span style="font-weight:700">' + s.end + '</span> <span style="margin-left:8px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:99px;background:' + s.pill.bg + ';color:' + s.pill.color + '">' + s.pill.label + '</span></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '</section>';
+
+    // Decision tree
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:22px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:16px">flag</span>' +
+      '<h3 style="font-family:Manrope,sans-serif;font-size:13px;font-weight:700;color:#374151;margin:0">결정 트리</h3>' +
+    '</div>';
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px">';
+    var decisions = [
+      { h:'2027.12 게이트 평가 시:', t:'월 ₩450 달성 → 출국 확정' },
+      { h:'미달 시:',                 t:'출국 1년 보류 (2029.6 → 2030.6)' },
+      { h:'욕심 ₩800 도달 시:',       t:'노마드 동안 자산 유지·증가' },
+      { h:'출국 안전망:',             t:'한국 자산 1.5억 + 동생이 집·차 관리 (정리 X)' },
+    ];
+    decisions.forEach(function(d) {
+      html += '<li style="display:flex;align-items:flex-start;gap:14px">' +
+        '<span style="color:var(--nm-primary);margin-top:6px;font-size:18px;line-height:1;flex-shrink:0">•</span>' +
+        '<p style="font-size:14px;line-height:1.55;font-weight:500;color:#374151;margin:0"><span style="font-weight:700;color:#0f172a">' + d.h + '</span> ' + d.t + '</p>' +
+      '</li>';
+    });
+    html += '</ul>';
+    html += '</section>';
+
+    return html;
+  }
+  registerPage('nomad-gate', renderGate);
+
+  // ════════════════════════════════════════════════════════════════════
+  // Backward Plan — Editorial Zigzag Timeline (Stitch v2)
+  // ════════════════════════════════════════════════════════════════════
+  function renderBackward() {
+    var html = '';
+    var phases = DATA.PHASES || [];
+
+    // Phase별 hero 그라데이션 (이미지 fallback)
+    var phaseGrads = {
+      'A': 'linear-gradient(135deg,#fef3c7 0%,#fbbf24 60%,#f59e0b 100%)', // Foundation: warm gold
+      'B': 'linear-gradient(135deg,#dbeafe 0%,#818cf8 60%,#6366f1 100%)', // Build: blue indigo
+      'C': 'linear-gradient(135deg,#fce7f3 0%,#f472b6 60%,#db2777 100%)', // Exit: rose
+      'D': 'linear-gradient(135deg,#a78bfa 0%,#7C3AED 60%,#312E81 100%)', // Departure: violet (active)
+    };
+    var phaseLabelBig = {
+      'A': 'FOUNDATION',
+      'B': 'BUILDING',
+      'C': 'EXIT STRATEGY',
+      'D': 'DEPARTURE',
+    };
+
+    // Hero
+    html += '<section style="padding:48px 0 64px;position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;top:50%;right:-40px;transform:translateY(-50%);width:340px;height:340px;background:rgba(124,58,237,0.06);border-radius:50%;filter:blur(50px);z-index:0"></div>';
+    html += '<div style="position:relative;z-index:1;max-width:880px">';
+    html += '<span style="font-family:Manrope,sans-serif;font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:18px">Strategic Roadmap</span>';
+    html += '<h1 style="font-family:Manrope,sans-serif;font-size:64px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;color:#0f172a;margin:0 0 24px">The Backward Plan</h1>';
+    html += '<p style="font-size:22px;font-weight:400;color:var(--nm-text-2);line-height:1.5;margin:0;max-width:680px">2026.5 → 2028.6 · 25개월 · 출국까지의 큰 그림. 4 Phase로 나눈 정밀 백워드 설계.</p>';
+    html += '</div>';
+    html += '</section>';
+
+    // Editorial Vertical Timeline (zigzag)
+    html += '<section style="position:relative;padding-bottom:64px">';
+    html += '<div style="max-width:1100px;margin:0 auto;position:relative">';
+    // 중앙 line
+    html += '<div class="nm-bp-line" style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent 0%,var(--nm-primary) 15%,var(--nm-primary) 85%,transparent 100%);transform:translateX(-50%);opacity:0.3"></div>';
+
+    phases.forEach(function(p, idx) {
+      var isLeft = (idx % 2 === 0);
+      var isActive = (p.id === 'A'); // 현재 Phase A 진행 중
+      var isFinal = (p.id === 'D');
+      var grad = phaseGrads[p.id] || phaseGrads['A'];
+      var bigLabel = phaseLabelBig[p.id] || p.name;
+      var num = String(idx + 1).padStart(2, '0');
+
+      html += '<div class="nm-bp-row" style="position:relative;margin-bottom:64px;display:flex;align-items:center;gap:48px">';
+
+      if (isLeft) {
+        // LEFT: glass-card
+        html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
+        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
+        // 그라데이션 hero 영역 (이미지 fallback)
+        html += '<div style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden">';
+        html += '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35">' +
+          '<circle cx="80" cy="60" r="2" fill="#fff"/>' +
+          '<circle cx="220" cy="80" r="2.5" fill="#fff"/>' +
+          '<circle cx="260" cy="160" r="2" fill="#fff"/>' +
+          '<circle cx="60" cy="180" r="1.5" fill="#fff"/>' +
+          '<circle cx="160" cy="200" r="2" fill="#fff"/>' +
+        '</svg>';
+        html += '</div>';
+        html += '<div style="display:flex;flex-direction:column;gap:14px">';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<span style="background:rgba(124,58,237,0.1);color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-family:Manrope,sans-serif;font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
+          '<span style="font-family:Manrope,sans-serif;font-size:11px;font-weight:600;color:var(--nm-text-3)">' + p.range + '</span>' +
+        '</div>';
+        html += '<h3 style="font-family:Manrope,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.01em;color:#0f172a;margin:0">' + p.name + '</h3>';
+        html += '<p style="font-family:Manrope,sans-serif;font-size:14px;font-weight:700;color:var(--nm-primary);margin:0;line-height:1.4">' + p.title + '</p>';
+        html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.6;margin:0">' + p.description + '</p>';
+        html += '<ul style="list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:10px">';
+        (p.items || []).forEach(function(it, ii) {
+          var icon = (isActive || p.id === 'A') ? 'check_circle' : (isFinal ? (ii === 0 ? 'flight_takeoff' : 'radio_button_unchecked') : 'radio_button_unchecked');
+          var color = (isActive || p.id === 'A') ? 'var(--nm-primary)' : (isFinal && ii === 0 ? 'var(--nm-primary)' : 'rgba(122,116,135,0.5)');
+          var fill = (isActive || p.id === 'A' || (isFinal && ii === 0)) ? '1' : '0';
+          html += '<li style="display:flex;gap:10px;align-items:flex-start">' +
+            '<span class="material-symbols-outlined" style="color:' + color + ';font-size:17px;flex-shrink:0;margin-top:1px;font-variation-settings:\'FILL\' ' + fill + '">' + icon + '</span>' +
+            '<span style="font-size:13px;color:var(--nm-text-2);line-height:1.5' + (isFinal && ii === 0 ? ';font-weight:700;color:var(--nm-primary)' : '') + '">' + it + '</span>' +
+          '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // CENTER marker
+        html += '<div class="nm-bp-marker" style="position:absolute;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:' + (isFinal ? 'var(--nm-primary)' : '#fff') + ';border:4px solid var(--nm-primary);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:24px;font-weight:800;color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';box-shadow:0 8px 24px rgba(124,58,237,0.18);z-index:2' + (isFinal ? ';transform:translateX(-50%) scale(1.1)' : '') + '">' + num + '</div>';
+
+        // RIGHT: big opacity label
+        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);padding-left:48px">';
+        html += '<h2 style="font-family:Manrope,sans-serif;font-size:56px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;opacity:0.08;margin:0;text-transform:uppercase;line-height:1">' + bigLabel + '</h2>';
+        html += '</div>';
+      } else {
+        // RIGHT side card (zigzag)
+        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);text-align:right;padding-right:48px">';
+        html += '<h2 style="font-family:Manrope,sans-serif;font-size:56px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;opacity:0.08;margin:0;text-transform:uppercase;line-height:1">' + bigLabel + '</h2>';
+        html += '</div>';
+
+        // CENTER marker
+        html += '<div class="nm-bp-marker" style="position:absolute;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:' + (isFinal ? 'var(--nm-primary)' : '#fff') + ';border:4px solid var(--nm-primary);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:24px;font-weight:800;color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';box-shadow:0 8px 24px rgba(124,58,237,0.18);z-index:2' + (isFinal ? ';transform:translateX(-50%) scale(1.1)' : '') + '">' + num + '</div>';
+
+        // RIGHT: glass card
+        html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
+        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
+        html += '<div style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden">';
+        html += '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35">' +
+          '<circle cx="80" cy="60" r="2" fill="#fff"/>' +
+          '<circle cx="220" cy="80" r="2.5" fill="#fff"/>' +
+          '<circle cx="260" cy="160" r="2" fill="#fff"/>' +
+          '<circle cx="60" cy="180" r="1.5" fill="#fff"/>' +
+          '<circle cx="160" cy="200" r="2" fill="#fff"/>' +
+        '</svg>';
+        html += '</div>';
+        html += '<div style="display:flex;flex-direction:column;gap:14px">';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<span style="background:' + (isFinal ? 'var(--nm-primary)' : 'rgba(124,58,237,0.1)') + ';color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';padding:6px 14px;border-radius:99px;font-family:Manrope,sans-serif;font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
+          '<span style="font-family:Manrope,sans-serif;font-size:11px;font-weight:600;color:' + (isFinal ? 'var(--nm-primary)' : 'var(--nm-text-3)') + '">' + p.range + '</span>' +
+        '</div>';
+        html += '<h3 style="font-family:Manrope,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.01em;color:#0f172a;margin:0">' + p.name + '</h3>';
+        html += '<p style="font-family:Manrope,sans-serif;font-size:14px;font-weight:700;color:var(--nm-primary);margin:0;line-height:1.4">' + p.title + '</p>';
+        html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.6;margin:0">' + p.description + '</p>';
+        html += '<ul style="list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:10px">';
+        (p.items || []).forEach(function(it, ii) {
+          var icon = (isFinal && ii === 0) ? 'flight_takeoff' : 'radio_button_unchecked';
+          var color = (isFinal && ii === 0) ? 'var(--nm-primary)' : 'rgba(122,116,135,0.5)';
+          var fill = (isFinal && ii === 0) ? '1' : '0';
+          html += '<li style="display:flex;gap:10px;align-items:flex-start">' +
+            '<span class="material-symbols-outlined" style="color:' + color + ';font-size:17px;flex-shrink:0;margin-top:1px;font-variation-settings:\'FILL\' ' + fill + '">' + icon + '</span>' +
+            '<span style="font-size:13px;color:var(--nm-text-2);line-height:1.5' + (isFinal && ii === 0 ? ';font-weight:700;color:var(--nm-primary)' : '') + '">' + it + '</span>' +
+          '</li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+      }
+
+      html += '</div>'; // /nm-bp-row
+    });
+
+    html += '</div>'; // /timeline wrapper
+    html += '</section>';
+
+    // Bottom CTA
+    html += '<section style="padding:64px 0;text-align:center">';
+    html += '<div style="max-width:560px;margin:0 auto">';
+    html += '<h2 style="font-family:Manrope,sans-serif;font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;margin:0 0 18px">Ready to initiate?</h2>';
+    html += '<p style="font-size:16px;color:var(--nm-text-2);line-height:1.6;margin:0 0 28px">2027.12 게이트 평가까지 페이스 유지. 각 Phase 항목 체크하며 진행.</p>';
+    html += '<div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">';
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="background:var(--nm-primary);color:#fff;padding:16px 32px;border:none;border-radius:99px;font-family:Manrope,sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.25);transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">Action Items 보기</button>';
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-gate\')" style="background:transparent;color:var(--nm-text-2);padding:16px 32px;border:1px solid var(--nm-outline-variant);border-radius:99px;font-family:Manrope,sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#F5F3FF\'" onmouseout="this.style.background=\'transparent\'">Gate 조건 확인</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    return html;
+  }
+  registerPage('nomad-backward', renderBackward);
+
+  // ════════════════════════════════════════════════════════════════════
+  // Stay Channels — Apple Minimal (Stitch v2)
+  // ════════════════════════════════════════════════════════════════════
   function renderChannels() {
     var html = '';
-    html += pageHeader('Stay Channels', '도시별 숙소 채널',
-      'Flatio · Stayz · Furnished Finder · 로컬 · 부엌 + Wi-Fi + 안전 동네 필수');
 
-    // 유럽 채널
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">public</span>' +
-      '<h3 class="nm-headline-md">유럽 6개월 · Flatio 메인</h3>' +
-      '<span class="nm-pill" style="margin-left:auto;background:#eaddff;color:#5a00c6">' + DATA.CHANNELS_EU.length + '개 도시</span>' +
-    '</div>';
-    html += '<table class="nm-table">';
-    html += '<thead><tr><th>도시</th><th>1순위</th><th>2순위</th><th>비고</th></tr></thead><tbody>';
-    DATA.CHANNELS_EU.forEach(function(c) {
-      html += '<tr>' +
-        '<td><strong>' + c.city + '</strong></td>' +
-        '<td><span class="nm-pill">' + c.first + '</span></td>' +
-        '<td style="font-size:13px;color:var(--nm-text-2)">' + c.second + '</td>' +
-        '<td style="font-size:12px;color:var(--nm-text-3)">' + c.note + '</td>' +
-      '</tr>';
-    });
-    html += '</tbody></table>';
-    html += '</div>';
+    // Hero
+    html += '<section style="margin-bottom:40px">';
+    html += '<p style="font-family:Manrope,sans-serif;color:var(--nm-primary);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;margin:0 0 6px">Stay Channels</p>';
+    html += '<h2 style="font-family:Manrope,sans-serif;font-size:38px;font-weight:800;letter-spacing:-0.015em;color:#0f172a;margin:0 0 10px;line-height:1.15">도시별 숙소 채널</h2>';
+    html += '<p style="font-size:15px;color:var(--nm-text-3);font-weight:500;margin:0">Flatio · Stayz · Furnished Finder · 로컬 · 부엌 + Wi-Fi + 안전 동네 필수</p>';
     html += '</section>';
 
-    // 글로벌 채널
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">public</span>' +
-      '<h3 class="nm-headline-md">호주 · NZ · 미주 6개월 · 로컬 + Furnished Finder</h3>' +
-      '<span class="nm-pill" style="margin-left:auto;background:#eaddff;color:#5a00c6">' + DATA.CHANNELS_GLOBAL.length + '개 도시</span>' +
-    '</div>';
-    html += '<table class="nm-table">';
-    html += '<thead><tr><th>도시</th><th>1순위</th><th>2순위</th><th>비고</th></tr></thead><tbody>';
-    DATA.CHANNELS_GLOBAL.forEach(function(c) {
-      html += '<tr>' +
-        '<td><strong>' + c.city + '</strong></td>' +
-        '<td><span class="nm-pill">' + c.first + '</span></td>' +
-        '<td style="font-size:13px;color:var(--nm-text-2)">' + c.second + '</td>' +
-        '<td style="font-size:12px;color:var(--nm-text-3)">' + c.note + '</td>' +
-      '</tr>';
-    });
-    html += '</tbody></table>';
-    html += '</div>';
-    html += '</section>';
-
-    // 검색·예약 타임라인
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
-      '<h3 class="nm-headline-md">검색 · 예약 타임라인</h3>' +
-    '</div>';
-    var timeline = [
-      { when: '2027.12부터', sub: '출국 6개월 전', text: 'Flatio · Stayz · Furnished Finder 가입 + 검색 시작, 가격 추적' },
-      { when: '2028.3',      sub: '3개월 전',     text: '6-8월 숙소 확정 예약 (포르투갈·아일랜드·덴마크)' },
-      { when: '2028.4',      sub: '2개월 전',     text: '9-11월 숙소 확정 예약 (스칸디나비아·아이슬란드·말타)' },
-      { when: '출국 후',     sub: '노마드 중',    text: '12월 이후 = 5-6주 전 예약 (유연하게)' },
-    ];
-    html += '<div style="display:flex;flex-direction:column;gap:12px">';
-    timeline.forEach(function(t) {
-      html += '<div style="display:flex;gap:16px;padding:14px;background:var(--nm-surface-container-low);border-radius:8px">' +
-        '<div style="min-width:120px">' +
-          '<div style="font-family:Manrope;font-weight:700;color:var(--nm-primary)">' + t.when + '</div>' +
-          '<div style="font-size:11px;color:var(--nm-text-3)">' + t.sub + '</div>' +
-        '</div>' +
-        '<div style="font-size:13px;color:var(--nm-text-2);line-height:1.6">' + t.text + '</div>' +
+    // 테이블 헬퍼
+    function renderChannelTable(icon, title, channels) {
+      var h = '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,0.04);margin-bottom:24px">';
+      h += '<div style="padding:18px 26px;background:rgba(248,250,252,0.5);border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">' + icon + '</span>' +
+        '<h3 style="font-family:Manrope,sans-serif;font-size:14px;font-weight:700;color:#374151;margin:0">' + title + '</h3>' +
+        '<span style="margin-left:auto;font-size:11px;color:var(--nm-text-3);font-weight:600">' + channels.length + ' 도시</span>' +
       '</div>';
+      h += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">';
+      h += '<thead><tr style="border-bottom:1px solid #f1f5f9">' +
+        ['도시','1순위','2순위','비고'].map(function(t){
+          return '<th style="padding:14px 24px;font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + t + '</th>';
+        }).join('') +
+      '</tr></thead>';
+      h += '<tbody style="font-size:13px;color:#374151">';
+      channels.forEach(function(c) {
+        h += '<tr style="border-bottom:1px solid #f8fafc;transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
+        h += '<td style="padding:16px 24px;font-weight:500">' + c.city + '</td>';
+        h += '<td style="padding:16px 24px"><span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 12px;border-radius:6px;font-family:Manrope,sans-serif;font-size:11px;font-weight:700">' + c.first + '</span></td>';
+        h += '<td style="padding:16px 24px">' + c.second + '</td>';
+        h += '<td style="padding:16px 24px;color:var(--nm-text-3);font-size:12px">' + c.note + '</td>';
+        h += '</tr>';
+      });
+      h += '</tbody></table></div>';
+      h += '</section>';
+      return h;
+    }
+
+    // 유럽 테이블
+    html += renderChannelTable('public', '유럽 6개월 · FLATIO 메인', DATA.CHANNELS_EU);
+    // 글로벌 테이블
+    html += renderChannelTable('language', '호주 · NZ · 미주 6개월 · 로컬 + FURNISHED FINDER', DATA.CHANNELS_GLOBAL);
+
+    // 검색 · 예약 타임라인
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04);margin-bottom:24px">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:22px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">schedule</span>' +
+      '<h3 style="font-family:Manrope,sans-serif;font-size:16px;font-weight:700;color:#374151;margin:0">검색 · 예약 타임라인</h3>' +
+    '</div>';
+    var tlItems = [
+      { h:'2027.12부터 (출국 6개월 전):', t:'Flatio · Stayz · Furnished Finder 가입 + 검색 시작, 가격 추적' },
+      { h:'2028.3 (3개월 전):',           t:'6-8월 숙소 확정 예약 (포르투갈·아일랜드·덴마크)' },
+      { h:'2028.4 (2개월 전):',           t:'9-11월 숙소 확정 예약 (스칸디나비아·아이슬란드·말타)' },
+      { h:'출국 후:',                       t:'12월 이후 = 노마드 중 5-6주 전 예약 (유연하게)' },
+    ];
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px">';
+    tlItems.forEach(function(t) {
+      html += '<li style="display:flex;align-items:flex-start;gap:14px">' +
+        '<span style="color:var(--nm-primary);margin-top:5px;font-size:14px;line-height:1;flex-shrink:0">•</span>' +
+        '<div><span style="font-weight:700;color:#0f172a">' + t.h + '</span>' +
+        '<span style="color:var(--nm-text-2);margin-left:8px">' + t.t + '</span></div>' +
+      '</li>';
     });
-    html += '</div>';
-    html += '</div>';
+    html += '</ul>';
     html += '</section>';
 
-    // 숙소 기준
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">checklist</span>' +
-      '<h3 class="nm-headline-md">숙소 기준 (누리 라인)</h3>' +
+    // 누리 기준 3-col
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">checklist_rtl</span>' +
+      '<h3 style="font-family:Manrope,sans-serif;font-size:16px;font-weight:700;color:#374151;margin:0">숙소 기준 (누리 라인)</h3>' +
     '</div>';
-    html += '<div class="nm-grid nm-grid-3">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px">';
 
-    html += '<div style="background:#ecfdf5;padding:18px;border-radius:8px;border-left:3px solid #15803d">' +
-      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#15803d;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">필수</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>개인실 (1베드룸 또는 스튜디오)</li>' +
-        '<li>부엌 (집밥 위주)</li>' +
-        '<li>Wi-Fi 50Mbps+</li>' +
-        '<li>안전 동네</li>' +
-        '<li>평점 4.5+</li>' +
-      '</ul>' +
-    '</div>';
-
-    html += '<div style="background:#fffbeb;padding:18px;border-radius:8px;border-left:3px solid #c2410c">' +
-      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#c2410c;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">양보 가능</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>신축 → 적당 노후 (5-15년)</li>' +
-        '<li>시내 중심 → 외곽 (대중교통 15분)</li>' +
-        '<li>럭셔리 → 깨끗한 기본</li>' +
-      '</ul>' +
-    '</div>';
-
-    html += '<div style="background:#fef2f2;padding:18px;border-radius:8px;border-left:3px solid #b91c1c">' +
-      '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:#b91c1c;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">NO</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>호스텔 도미토리</li>' +
-        '<li>위험 동네</li>' +
-        '<li>부엌 X</li>' +
-      '</ul>' +
-    '</div>';
-
-    html += '</div>';
+    var criteria = [
+      { title:'필수',     color:'#0f172a',                   borderColor:'#f1f5f9',           dot:'#94a3b8', items:['개인실 (1베드룸 또는 스튜디오)', '부엌 (집밥 위주)', 'Wi-Fi 50Mbps+', '안전 동네', '평점 4.5+'] },
+      { title:'양보 가능', color:'#0f172a',                   borderColor:'#f1f5f9',           dot:'#94a3b8', items:['신축 → 적당 노후 (5-15년)', '시내 중심 → 외곽 (대중교통 15분)', '럭셔리 → 깨끗한 기본'] },
+      { title:'NO',       color:'#dc2626', titleStyle:'text-transform:uppercase;letter-spacing:0.14em', borderColor:'#fee2e2', dot:'#f87171', itemColor:'rgba(185,28,28,0.85)', items:['호스텔 도미토리', '위험 동네', '부엌 X'] },
+    ];
+    criteria.forEach(function(c) {
+      html += '<div>';
+      html += '<h4 style="font-family:Manrope,sans-serif;font-size:14px;font-weight:700;color:' + c.color + ';border-bottom:2px solid ' + c.borderColor + ';padding-bottom:10px;margin:0 0 18px' + (c.titleStyle ? ';' + c.titleStyle : '') + '">' + c.title + '</h4>';
+      html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px">';
+      c.items.forEach(function(it) {
+        html += '<li style="display:flex;align-items:center;gap:12px;font-size:13px;color:' + (c.itemColor || 'var(--nm-text-2)') + '">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:' + c.dot + ';flex-shrink:0"></span>' +
+          it +
+        '</li>';
+      });
+      html += '</ul>';
+      html += '</div>';
+    });
     html += '</div>';
     html += '</section>';
 
