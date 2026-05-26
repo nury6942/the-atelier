@@ -425,12 +425,12 @@
     html += '<button onclick="switchTravelTab(\'checklist\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">✅ 체크리스트</button>';
     html += '<button onclick="switchTravelTab(\'atlas\')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="atlas">🗺️ Atlas</button>';
     html += '</div>';
-    html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>Back to Atlas</button>';
+    html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>Atlas로 돌아가기</button>';
     html += '</div>';
 
-    // Hero (full-bleed image / gradient fallback) + 이미지 컨트롤
+    // Hero — 잡지 스타일: 풀와이드 이미지(아래로 fade) + 그 아래 텍스트 블록
     var heroImg = _tripImages[trip.id] || null;
-    html += '<section class="atlas-trip-hero" style="background:' + trip.gradient + '"' +
+    html += '<section class="atlas-trip-hero atlas-trip-hero-bleed" style="background:' + trip.gradient + '"' +
       ' onmouseenter="atlasSetActiveTrip(\'' + trip.id + '\')"' +
       ' onmouseleave="atlasClearActiveTrip(\'' + trip.id + '\')">';
     if (heroImg) {
@@ -446,16 +446,18 @@
     }
     html += '</div>';
     html += '<div class="atlas-trip-paste-hint">Ctrl+V로 붙여넣기</div>';
-    html += '<div class="atlas-trip-hero-overlay"></div>';
-    html += '<div class="atlas-trip-hero-inner">';
+    html += '<div class="atlas-trip-hero-fade"></div>';
+    html += '</section>';
+    // Hero text block (이미지 밖)
+    html += '<div class="atlas-trip-hero-text">';
     html += '<div class="atlas-trip-hero-meta">';
     html += '<span class="atlas-trip-hero-flag">' + trip.flags + '</span>';
     html += '<span class="atlas-trip-hero-pill">№ ' + trip.no + ' — ' + _esc(trip.month) + '</span>';
     html += '</div>';
     html += '<h1 class="atlas-trip-hero-h1">' + _esc(trip.title) + '</h1>';
-    html += '<p class="atlas-trip-hero-sub">' + _esc(trip.dates) + ' • ' + trip.nights + ' Nights · ' + trip.days + ' Days</p>';
+    html += '<p class="atlas-trip-hero-sub">' + _esc(trip.dates) + ' • ' + trip.nights + '박 · ' + trip.days + '일</p>';
     html += '<div class="atlas-trip-hero-route">';
-    html += '<span class="atlas-trip-hero-route-tag">Route:</span> ';
+    html += '<span class="atlas-trip-hero-route-tag">루트:</span> ';
     var routeArr = trip.route || [];
     routeArr.forEach(function(city, i) {
       html += '<span>' + _esc(city) + '</span>';
@@ -463,7 +465,6 @@
     });
     html += '</div>';
     html += '</div>';
-    html += '</section>';
 
     // Body: 8/4 split (itinerary + sidebar)
     html += '<div class="atlas-trip-body">';
@@ -471,8 +472,8 @@
     // ── LEFT (8): Daily Narrative ──
     html += '<div class="atlas-trip-main">';
     html += '<div class="atlas-trip-main-head">';
-    html += '<h2 class="atlas-trip-h2">Daily Narrative</h2>';
-    html += '<span class="atlas-trip-meta-r">' + trip.days + ' Days / ' + trip.nights + ' Nights</span>';
+    html += '<h2 class="atlas-trip-h2">일자별 일정</h2>';
+    html += '<span class="atlas-trip-meta-r">' + trip.days + '일 / ' + trip.nights + '박</span>';
     html += '</div>';
     html += '<div class="atlas-day-list">';
     (trip.itinerary || []).forEach(function(d, i) {
@@ -486,10 +487,10 @@
       html += '<div class="atlas-day-content">';
       html += '<div class="atlas-day-head">';
       html += '<h3 class="atlas-day-h3' + (d.hol ? ' atlas-day-h3-hol' : '') + '">' + _esc(d.date) + ' • ' + _renderActivityTitle(d.activity) + '</h3>';
-      html += '<span class="atlas-day-dow">' + _esc(d.dow) + ' • Day ' + _pad(i + 1) + '</span>';
+      html += '<span class="atlas-day-dow">' + _esc(d.dow) + ' • ' + _pad(i + 1) + '일차</span>';
       html += '</div>';
       html += '<p class="atlas-day-act">' + (d.activity || '') + '</p>';
-      html += '<div class="atlas-day-stay"><span class="material-symbols-outlined" style="font-size:14px">' + _stayIcon(d.stay) + '</span>Stay: ' + _esc(d.stay) + '</div>';
+      html += '<div class="atlas-day-stay"><span class="material-symbols-outlined" style="font-size:14px">' + _stayIcon(d.stay) + '</span>숙박: ' + _esc(d.stay) + '</div>';
       html += '</div>';
       html += '</div>';
     });
@@ -501,7 +502,7 @@
 
     // Curated Lodging
     html += '<div class="atlas-side-card">';
-    html += '<h4 class="atlas-side-h">Curated Lodging</h4>';
+    html += '<h4 class="atlas-side-h">숙소 정보</h4>';
     html += '<ul class="atlas-lodge-list">';
     (trip.lodging || []).forEach(function(l) {
       html += '<li class="atlas-lodge-row">';
@@ -514,14 +515,28 @@
     });
     html += '</ul>';
     html += '<div class="atlas-lodge-total">';
-    html += '<span>Subtotal</span><span class="atlas-lodge-total-v">' + _esc(trip.lodgingTotal || '—') + '</span>';
+    html += '<span>합계</span><span class="atlas-lodge-total-v">' + _esc(trip.lodgingTotal || '—') + '</span>';
     html += '</div>';
     html += '</div>';
 
-    // Financial Ledger (dark card)
+    // Financial Ledger (연한 보라 카드)
+    var dailyBudget = trip.days > 0 ? Math.round((trip.own || 0) / trip.days * 10) / 10 : 0;
     html += '<div class="atlas-ledger-card">';
     html += '<div class="atlas-ledger-card-deco"><span class="material-symbols-outlined">account_balance_wallet</span></div>';
-    html += '<h4 class="atlas-ledger-card-h">Financial Ledger</h4>';
+    html += '<h4 class="atlas-ledger-card-h">예산</h4>';
+    // 하루 예산 + 총액 상단 강조
+    html += '<div class="atlas-ledger-card-daily">';
+    html += '<div class="atlas-ledger-card-daily-cell">';
+    html += '<p class="atlas-ledger-card-daily-l">하루 예산</p>';
+    html += '<p class="atlas-ledger-card-daily-v">₩' + dailyBudget + ' 만</p>';
+    html += '<p class="atlas-ledger-card-daily-sub">/ day</p>';
+    html += '</div>';
+    html += '<div class="atlas-ledger-card-daily-cell">';
+    html += '<p class="atlas-ledger-card-daily-l">총액</p>';
+    html += '<p class="atlas-ledger-card-daily-v">₩' + trip.own + ' 만</p>';
+    html += '<p class="atlas-ledger-card-daily-sub">' + trip.days + ' days</p>';
+    html += '</div>';
+    html += '</div>';
     html += '<div class="atlas-ledger-card-rows">';
     (trip.budget || []).forEach(function(b) {
       html += '<div class="atlas-ledger-card-row">';
@@ -530,7 +545,7 @@
       html += '</div>';
     });
     html += '</div>';
-    var grossLabel = trip.paired ? 'If solo (worst case)' : 'Gross Total';
+    var grossLabel = trip.paired ? '솔로 시 (최악)' : '총 비용';
     html += '<div class="atlas-ledger-card-divider"></div>';
     html += '<div class="atlas-ledger-card-gross">';
     html += '<span>' + grossLabel + '</span>';
@@ -544,12 +559,12 @@
       html += '</div>';
     } else if (trip.subsidy && trip.subsidy !== 0) {
       html += '<div class="atlas-ledger-card-subsidies">';
-      var subLabel = trip.paired ? 'Pair share (÷2)' : 'Subsidies';
+      var subLabel = trip.paired ? '페어 share (÷2)' : '보조금';
       html += '<div class="atlas-ledger-card-subsidy"><span>' + subLabel + '</span><span>−' + Math.abs(trip.subsidy) + ' 만</span></div>';
       html += '</div>';
     }
     html += '<div class="atlas-ledger-card-divider"></div>';
-    var ownLabel = trip.paired ? 'Own funds, paired' : 'Net Personal Cost';
+    var ownLabel = trip.paired ? '실 부담 (페어)' : '실 부담';
     html += '<div class="atlas-ledger-card-net">';
     html += '<span class="atlas-ledger-card-net-l">' + ownLabel + '</span>';
     html += '<span class="atlas-ledger-card-net-v">' + trip.own + ' 만원</span>';
@@ -558,13 +573,13 @@
 
     // Leave Efficiency
     html += '<div class="atlas-pto-card">';
-    html += '<div class="atlas-pto-card-head"><span class="material-symbols-outlined">event_available</span><h4>Leave Efficiency</h4></div>';
+    html += '<div class="atlas-pto-card-head"><span class="material-symbols-outlined">event_available</span><h4>휴가</h4></div>';
     html += '<div class="atlas-pto-card-grid">';
-    html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.ptoDays || 0) + '</div><div class="atlas-pto-card-l">PTO Day' + ((trip.ptoDays || 0) === 1 ? '' : 's') + '</div></div>';
+    html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.ptoDays || 0) + '</div><div class="atlas-pto-card-l">PTO 일수</div></div>';
     if (trip.corpLeaveDays) {
-      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.corpLeaveDays) + '</div><div class="atlas-pto-card-l">Corp. Leave</div></div>';
+      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.corpLeaveDays) + '</div><div class="atlas-pto-card-l">회사 휴가</div></div>';
     } else {
-      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.holidayDays || 0) + '</div><div class="atlas-pto-card-l">Holiday' + ((trip.holidayDays || 0) === 1 ? '' : 's') + '</div></div>';
+      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.holidayDays || 0) + '</div><div class="atlas-pto-card-l">공휴일</div></div>';
     }
     html += '</div>';
     html += '<p class="atlas-pto-card-note">' + _esc(trip.ptoNote || '') + '</p>';
@@ -573,7 +588,7 @@
     // Trip Note (optional)
     if (trip.note) {
       html += '<div class="atlas-trip-note">';
-      html += '<p><span class="atlas-trip-note-l">Note:</span> ' + _esc(trip.note) + '</p>';
+      html += '<p><span class="atlas-trip-note-l">메모:</span> ' + _esc(trip.note) + '</p>';
       html += '</div>';
     }
 

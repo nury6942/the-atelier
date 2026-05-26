@@ -4296,13 +4296,25 @@
     }
     #travel-atlas-section .atlas-trip-row {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 2px;
       font-family: 'Inter',sans-serif;
-      font-size: 12px;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
-    #travel-atlas-section .atlas-trip-k { font-weight: 700; color: var(--atlas-ink); }
-    #travel-atlas-section .atlas-trip-v { color: var(--atlas-ink-mute); }
+    #travel-atlas-section .atlas-trip-k {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--atlas-ink-mute);
+    }
+    #travel-atlas-section .atlas-trip-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--atlas-ink);
+    }
     #travel-atlas-section .atlas-trip-route {
       font-family: 'Inter',sans-serif;
       font-size: 10px;
@@ -4733,16 +4745,27 @@
       border-color: var(--atlas-primary);
     }
 
-    /* ──── Trip Hero (full-bleed gradient) ──── */
+    /* ──── Trip Hero — 잡지 스타일 (풀와이드 + 아래 fade + 텍스트 분리) ──── */
     #travel-atlas-section .atlas-trip-hero {
       position: relative;
-      height: 400px;
-      border-radius: 12px;
+      height: 320px;
+      border-radius: 0;
       overflow: hidden;
-      margin-bottom: 32px;
+      margin-bottom: 0;
     }
     @media (min-width: 768px) {
-      #travel-atlas-section .atlas-trip-hero { height: 480px; }
+      #travel-atlas-section .atlas-trip-hero { height: 420px; }
+    }
+    /* 풀와이드 — atlas section padding 무시 (좌우 끝까지) */
+    #travel-atlas-section .atlas-trip-hero-bleed {
+      margin-left: -24px;
+      margin-right: -24px;
+    }
+    @media (min-width: 768px) {
+      #travel-atlas-section .atlas-trip-hero-bleed {
+        margin-left: -48px;
+        margin-right: -48px;
+      }
     }
     #travel-atlas-section .atlas-trip-hero-img {
       position: absolute;
@@ -4752,78 +4775,92 @@
       object-fit: cover;
       display: block;
     }
-    #travel-atlas-section .atlas-trip-hero-overlay {
+    /* 아래로 fade — 이미지가 페이지 배경(흰)으로 자연스럽게 녹아듦 */
+    #travel-atlas-section .atlas-trip-hero-fade {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 65%;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 65%, rgba(255,255,255,1) 100%);
       pointer-events: none;
+      z-index: 2;
     }
-    #travel-atlas-section .atlas-trip-hero-inner {
-      position: absolute;
-      bottom: 36px;
-      left: 36px;
-      right: 36px;
-      color: #fff;
+    /* 텍스트 블록 — hero 이미지 밖, 살짝 겹쳐 올라옴 */
+    #travel-atlas-section .atlas-trip-hero-text {
+      position: relative;
+      z-index: 3;
+      margin-top: -80px;
+      padding: 0 0 32px;
+    }
+    @media (min-width: 768px) {
+      #travel-atlas-section .atlas-trip-hero-text {
+        margin-top: -110px;
+        padding-bottom: 48px;
+      }
     }
     #travel-atlas-section .atlas-trip-hero-meta {
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     #travel-atlas-section .atlas-trip-hero-flag {
-      font-size: 32px;
+      font-size: 36px;
       line-height: 1;
       font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
     #travel-atlas-section .atlas-trip-hero-pill {
       font-family: 'Inter',sans-serif;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: #f5f3ff;
       padding: 6px 14px;
-      border-radius: 4px;
-      color: #fff;
+      border-radius: 2px;
+      color: var(--atlas-primary);
     }
+    /* h1 — 한 줄 안 짤리도록 두 줄 보장 */
     #travel-atlas-section .atlas-trip-hero-h1 {
       font-family: 'Manrope',sans-serif;
-      font-size: clamp(32px, 5vw, 56px);
+      font-size: clamp(26px, 4vw, 44px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.05;
-      margin: 0 0 10px;
-      color: #fff;
+      line-height: 1.1;
+      margin: 0 0 12px;
+      color: var(--atlas-ink);
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      white-space: normal;
     }
     #travel-atlas-section .atlas-trip-hero-sub {
-      font-size: 16px;
-      font-weight: 400;
-      opacity: 0.9;
-      margin: 0 0 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--atlas-ink-mute);
+      margin: 0 0 16px;
     }
     #travel-atlas-section .atlas-trip-hero-route {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 4px 8px;
-      font-size: 13px;
-      opacity: 0.85;
+      font-size: 12px;
+      color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-trip-hero-route-tag {
       font-family: 'Inter',sans-serif;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      font-size: 11px;
+      font-size: 10px;
       margin-right: 6px;
+      color: var(--atlas-primary);
     }
     #travel-atlas-section .atlas-arrow {
-      color: rgba(255,255,255,0.6);
+      color: var(--atlas-primary);
       font-size: 12px;
+      opacity: 0.5;
     }
 
     /* ──── Trip Body (8/4 split) ──── */
@@ -5030,21 +5067,22 @@
       letter-spacing: 0;
     }
 
-    /* Financial Ledger (dark card) */
+    /* Financial Ledger (연한 보라 — atelier 톤) */
     #travel-atlas-section .atlas-ledger-card {
-      background: #1a1c1c;
-      color: #fff;
+      background: #f5f3ff;
+      color: var(--atlas-ink);
       border-radius: 10px;
-      padding: 32px;
+      padding: 28px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(15,23,42,0.15);
+      border: 1px solid rgba(124,58,237,0.15);
     }
     #travel-atlas-section .atlas-ledger-card-deco {
       position: absolute;
       top: 16px;
       right: 16px;
-      opacity: 0.1;
+      opacity: 0.15;
+      color: var(--atlas-primary);
     }
     #travel-atlas-section .atlas-ledger-card-deco .material-symbols-outlined {
       font-size: 64px;
@@ -5055,8 +5093,48 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      color: #d2bbff;
+      color: var(--atlas-primary);
       margin: 0 0 20px;
+    }
+    /* 하루 예산 + 총액 강조 (상단 2-cell) */
+    #travel-atlas-section .atlas-ledger-card-daily {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(124,58,237,0.2);
+    }
+    #travel-atlas-section .atlas-ledger-card-daily-cell {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(124,58,237,0.1);
+    }
+    #travel-atlas-section .atlas-ledger-card-daily-l {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--atlas-ink-mute);
+      margin: 0 0 6px;
+    }
+    #travel-atlas-section .atlas-ledger-card-daily-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--atlas-primary);
+      margin: 0;
+      line-height: 1;
+    }
+    #travel-atlas-section .atlas-ledger-card-daily-sub {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      color: var(--atlas-ink-mute);
+      margin: 4px 0 0;
     }
     #travel-atlas-section .atlas-ledger-card-rows {
       display: flex;
@@ -5069,7 +5147,7 @@
       align-items: flex-start;
       gap: 12px;
       font-size: 12px;
-      opacity: 0.75;
+      color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-ledger-card-l {
       display: flex;
@@ -5077,18 +5155,19 @@
     }
     #travel-atlas-section .atlas-ledger-card-note {
       font-size: 10px;
-      opacity: 0.6;
+      color: var(--atlas-ink-mute);
       margin-top: 2px;
       font-style: italic;
     }
     #travel-atlas-section .atlas-ledger-card-v {
       font-family: 'Inter',sans-serif;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
+      color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-ledger-card-divider {
       height: 1px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(124,58,237,0.2);
       margin: 16px 0;
     }
     #travel-atlas-section .atlas-ledger-card-gross,
@@ -5098,14 +5177,14 @@
       align-items: baseline;
       font-size: 13px;
     }
-    #travel-atlas-section .atlas-ledger-card-gross { font-weight: 600; }
-    #travel-atlas-section .atlas-ledger-card-gross-v { font-weight: 700; }
+    #travel-atlas-section .atlas-ledger-card-gross { font-weight: 700; color: var(--atlas-ink); }
+    #travel-atlas-section .atlas-ledger-card-gross-v { font-weight: 800; color: var(--atlas-ink); }
     #travel-atlas-section .atlas-ledger-card-subsidies {
       display: flex;
       flex-direction: column;
       gap: 6px;
       margin-top: 8px;
-      color: #c3c0ff;
+      color: var(--atlas-primary);
       font-style: italic;
     }
     #travel-atlas-section .atlas-ledger-card-subsidy { font-size: 12px; }
@@ -5117,16 +5196,17 @@
     #travel-atlas-section .atlas-ledger-card-net-l {
       font-family: 'Inter',sans-serif;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.15em;
-      opacity: 0.7;
+      color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-ledger-card-net-v {
       font-family: 'Manrope',sans-serif;
-      font-size: 30px;
-      font-weight: 800;
-      color: #d2bbff;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--atlas-primary);
+      letter-spacing: -0.02em;
     }
 
     /* PTO Card */
@@ -5659,9 +5739,9 @@
       background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
     }
     @media (min-width: 1024px) {
-      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 */
+      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 - 세로 더 줄임 */
       #page-journey .j-hero-body { align-items: stretch; }
-      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 380px; }
+      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 280px; }
     }
     #page-journey .j-hero-image-src {
       position: absolute;
@@ -5855,19 +5935,27 @@
       border-top: 1px solid var(--j-outline-variant);
       padding: 14px 0 0;
     }
+    /* Stops DATES/STAY — 두 줄 + 강조 */
     #page-journey .j-stop-row {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 12px;
       font-family: var(--j-font-body);
-      font-size: 11px;
-      margin-bottom: 6px;
     }
     #page-journey .j-stop-k {
-      font-weight: 700;
-      color: var(--j-on-surface);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--j-on-surface-variant);
     }
     #page-journey .j-stop-v {
-      color: var(--j-on-surface-variant);
+      font-family: var(--j-font-display);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--j-on-surface);
     }
     #page-journey .j-stop-nights-label {
       font-family: var(--j-font-body);
@@ -5957,7 +6045,7 @@
     #page-journey .j-voyage-map {
       position: relative;
       flex: 1;
-      min-height: 240px;
+      min-height: 180px;
       background: var(--j-surface-container);
       overflow: hidden;
     }
@@ -12575,8 +12663,8 @@
 <script src="js/nomad-pages.js?v=168" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
-<script src="js/atlas-data.js?v=4" defer></script>
-<script src="js/atlas-pages.js?v=4" defer></script>
+<script src="js/atlas-data.js?v=5" defer></script>
+<script src="js/atlas-pages.js?v=5" defer></script>
 
 <!-- Journey Hero 이미지 업로드 (P2) -->
 <script src="js/journey-hero.js?v=1" defer></script>
