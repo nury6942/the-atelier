@@ -1,4 +1,5 @@
-const CACHE_NAME = 'atelier-v184';
+// Force CDN cache invalidation — bumping to v185
+const CACHE_NAME = 'atelier-v185';
 const urlsToCache = [
   '/the-atelier/',
   '/the-atelier/index.html',
