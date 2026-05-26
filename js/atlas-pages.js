@@ -158,11 +158,211 @@
     '</div>';
   }
 
-  // trip 클릭 → 디테일 페이지 (Phase 2에서 구현)
+  // ──────── Trip 디테일 페이지 (stitch Master Itinerary Eastern Canada) ────────
+  function renderTripDetail(tripId) {
+    var DATA = window.ATLAS_DATA;
+    if (!DATA) return '';
+    var trip = DATA.findTrip(tripId);
+    if (!trip) return '<p style="padding:40px">Trip not found: ' + _esc(tripId) + '</p>';
+
+    var html = '';
+
+    // 자체 탭바 (atlas active)
+    html += '<div class="mb-6 flex items-center justify-between flex-wrap gap-3">';
+    html += '<div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">';
+    html += '<button onclick="switchTravelTab(\'schedule\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">📅 일정</button>';
+    html += '<button onclick="switchTravelTab(\'budget\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">💰 예산</button>';
+    html += '<button onclick="switchTravelTab(\'checklist\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">✅ 체크리스트</button>';
+    html += '<button onclick="switchTravelTab(\'atlas\')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="atlas">🗺️ Atlas</button>';
+    html += '</div>';
+    html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>Back to Atlas</button>';
+    html += '</div>';
+
+    // Hero (full-bleed gradient)
+    html += '<section class="atlas-trip-hero" style="background:' + trip.gradient + '">';
+    html += '<div class="atlas-trip-hero-overlay"></div>';
+    html += '<div class="atlas-trip-hero-inner">';
+    html += '<div class="atlas-trip-hero-meta">';
+    html += '<span class="atlas-trip-hero-flag">' + trip.flags + '</span>';
+    html += '<span class="atlas-trip-hero-pill">№ ' + trip.no + ' — ' + _esc(trip.month) + '</span>';
+    html += '</div>';
+    html += '<h1 class="atlas-trip-hero-h1">' + _esc(trip.title) + '</h1>';
+    html += '<p class="atlas-trip-hero-sub">' + _esc(trip.dates) + ' • ' + trip.nights + ' Nights · ' + trip.days + ' Days</p>';
+    html += '<div class="atlas-trip-hero-route">';
+    html += '<span class="atlas-trip-hero-route-tag">Route:</span> ';
+    var routeArr = trip.route || [];
+    routeArr.forEach(function(city, i) {
+      html += '<span>' + _esc(city) + '</span>';
+      if (i < routeArr.length - 1) html += ' <span class="atlas-arrow">→</span> ';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    // Body: 8/4 split (itinerary + sidebar)
+    html += '<div class="atlas-trip-body">';
+
+    // ── LEFT (8): Daily Narrative ──
+    html += '<div class="atlas-trip-main">';
+    html += '<div class="atlas-trip-main-head">';
+    html += '<h2 class="atlas-trip-h2">Daily Narrative</h2>';
+    html += '<span class="atlas-trip-meta-r">' + trip.days + ' Days / ' + trip.nights + ' Nights</span>';
+    html += '</div>';
+    html += '<div class="atlas-day-list">';
+    (trip.itinerary || []).forEach(function(d, i) {
+      var isFirst = (i === 0);
+      var isLast = (i === (trip.itinerary || []).length - 1);
+      var dotClass = (isFirst || isLast) ? 'atlas-day-dot atlas-day-dot-solid' : 'atlas-day-dot';
+      html += '<div class="atlas-day-node">';
+      html += '<div class="atlas-day-line">';
+      html += '<span class="' + dotClass + '"></span>';
+      html += '</div>';
+      html += '<div class="atlas-day-content">';
+      html += '<div class="atlas-day-head">';
+      html += '<h3 class="atlas-day-h3' + (d.hol ? ' atlas-day-h3-hol' : '') + '">' + _esc(d.date) + ' • ' + _renderActivityTitle(d.activity) + '</h3>';
+      html += '<span class="atlas-day-dow">' + _esc(d.dow) + ' • Day ' + _pad(i + 1) + '</span>';
+      html += '</div>';
+      html += '<p class="atlas-day-act">' + (d.activity || '') + '</p>';
+      html += '<div class="atlas-day-stay"><span class="material-symbols-outlined" style="font-size:14px">' + _stayIcon(d.stay) + '</span>Stay: ' + _esc(d.stay) + '</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    // ── RIGHT (4): Sidebar ──
+    html += '<aside class="atlas-trip-aside">';
+
+    // Curated Lodging
+    html += '<div class="atlas-side-card">';
+    html += '<h4 class="atlas-side-h">Curated Lodging</h4>';
+    html += '<ul class="atlas-lodge-list">';
+    (trip.lodging || []).forEach(function(l) {
+      html += '<li class="atlas-lodge-row">';
+      html += '<div>';
+      html += '<p class="atlas-lodge-name">' + _esc(l.name) + (l.nights > 1 ? ' <span class="atlas-lodge-nights">×' + l.nights + '</span>' : '') + '</p>';
+      html += '<p class="atlas-lodge-type">' + _esc(l.type) + '</p>';
+      html += '</div>';
+      html += '<span class="atlas-lodge-price">' + _esc(l.price) + '</span>';
+      html += '</li>';
+    });
+    html += '</ul>';
+    html += '<div class="atlas-lodge-total">';
+    html += '<span>Subtotal</span><span class="atlas-lodge-total-v">' + _esc(trip.lodgingTotal || '—') + '</span>';
+    html += '</div>';
+    html += '</div>';
+
+    // Financial Ledger (dark card)
+    html += '<div class="atlas-ledger-card">';
+    html += '<div class="atlas-ledger-card-deco"><span class="material-symbols-outlined">account_balance_wallet</span></div>';
+    html += '<h4 class="atlas-ledger-card-h">Financial Ledger</h4>';
+    html += '<div class="atlas-ledger-card-rows">';
+    (trip.budget || []).forEach(function(b) {
+      html += '<div class="atlas-ledger-card-row">';
+      html += '<span class="atlas-ledger-card-l">' + _esc(b.label) + (b.note ? '<span class="atlas-ledger-card-note">' + _esc(b.note) + '</span>' : '') + '</span>';
+      html += '<span class="atlas-ledger-card-v">' + b.amount + ' 만</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    var grossLabel = trip.paired ? 'If solo (worst case)' : 'Gross Total';
+    html += '<div class="atlas-ledger-card-divider"></div>';
+    html += '<div class="atlas-ledger-card-gross">';
+    html += '<span>' + grossLabel + '</span>';
+    html += '<span class="atlas-ledger-card-gross-v">' + trip.gross + ' 만원</span>';
+    html += '</div>';
+    if (trip.subsidies && trip.subsidies.length) {
+      html += '<div class="atlas-ledger-card-subsidies">';
+      trip.subsidies.forEach(function(s) {
+        html += '<div class="atlas-ledger-card-subsidy"><span>' + _esc(s.label) + '</span><span>' + (s.value > 0 ? '+' : '−') + Math.abs(s.value) + ' 만</span></div>';
+      });
+      html += '</div>';
+    } else if (trip.subsidy && trip.subsidy !== 0) {
+      html += '<div class="atlas-ledger-card-subsidies">';
+      var subLabel = trip.paired ? 'Pair share (÷2)' : 'Subsidies';
+      html += '<div class="atlas-ledger-card-subsidy"><span>' + subLabel + '</span><span>−' + Math.abs(trip.subsidy) + ' 만</span></div>';
+      html += '</div>';
+    }
+    html += '<div class="atlas-ledger-card-divider"></div>';
+    var ownLabel = trip.paired ? 'Own funds, paired' : 'Net Personal Cost';
+    html += '<div class="atlas-ledger-card-net">';
+    html += '<span class="atlas-ledger-card-net-l">' + ownLabel + '</span>';
+    html += '<span class="atlas-ledger-card-net-v">' + trip.own + ' 만원</span>';
+    html += '</div>';
+    html += '</div>';
+
+    // Leave Efficiency
+    html += '<div class="atlas-pto-card">';
+    html += '<div class="atlas-pto-card-head"><span class="material-symbols-outlined">event_available</span><h4>Leave Efficiency</h4></div>';
+    html += '<div class="atlas-pto-card-grid">';
+    html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.ptoDays || 0) + '</div><div class="atlas-pto-card-l">PTO Day' + ((trip.ptoDays || 0) === 1 ? '' : 's') + '</div></div>';
+    if (trip.corpLeaveDays) {
+      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.corpLeaveDays) + '</div><div class="atlas-pto-card-l">Corp. Leave</div></div>';
+    } else {
+      html += '<div class="atlas-pto-card-cell"><div class="atlas-pto-card-num">' + _pad(trip.holidayDays || 0) + '</div><div class="atlas-pto-card-l">Holiday' + ((trip.holidayDays || 0) === 1 ? '' : 's') + '</div></div>';
+    }
+    html += '</div>';
+    html += '<p class="atlas-pto-card-note">' + _esc(trip.ptoNote || '') + '</p>';
+    html += '</div>';
+
+    // Trip Note (optional)
+    if (trip.note) {
+      html += '<div class="atlas-trip-note">';
+      html += '<p><span class="atlas-trip-note-l">Note:</span> ' + _esc(trip.note) + '</p>';
+      html += '</div>';
+    }
+
+    html += '</aside>'; // /sidebar
+    html += '</div>';   // /trip-body
+
+    return html;
+  }
+
+  function _renderActivityTitle(act) {
+    // 첫 문장에서 핵심 단어 추출 (예: "ICN → Montréal direct on Air Canada/Korean Air." → "ICN → Montréal direct")
+    if (!act) return '';
+    // 첫 마침표/물음표/느낌표 전까지
+    var clean = act.replace(/<[^>]*>/g, '');
+    var m = clean.match(/^[^.!?]+/);
+    var t = (m ? m[0] : clean).trim();
+    if (t.length > 50) t = t.slice(0, 50) + '…';
+    return _esc(t);
+  }
+
+  function _stayIcon(stay) {
+    var s = (stay || '').toLowerCase();
+    if (s.indexOf('flight') >= 0) return 'flight_takeoff';
+    if (s.indexOf('home') >= 0) return 'home';
+    return 'hotel';
+  }
+
+  function _pad(n) { return String(n).padStart(2, '0'); }
+
+  // ──────── 라우팅 ────────
+  var _currentTripView = null; // null | 'dashboard' | <tripId>
+
   function atlasOpenTrip(tripId) {
-    if (typeof showSyncToast === 'function') showSyncToast('🔜 Trip 디테일 페이지는 다음 단계에서 구현됩니다 (' + tripId + ')');
+    var atlasSection = document.getElementById('travel-atlas-section');
+    if (!atlasSection) return;
+    _currentTripView = tripId;
+    atlasSection.innerHTML = renderTripDetail(tripId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) {
+      var trip = window.ATLAS_DATA && window.ATLAS_DATA.findTrip(tripId);
+      titleEl.textContent = 'Travel · Atlas · ' + (trip ? trip.title : tripId);
+    }
+  }
+  function atlasBackToAtlas() {
+    var atlasSection = document.getElementById('travel-atlas-section');
+    if (!atlasSection) return;
+    _currentTripView = 'dashboard';
+    atlasSection.innerHTML = renderAtlas();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = 'Travel · Atlas';
   }
   window.atlasOpenTrip = atlasOpenTrip;
+  window.atlasBackToAtlas = atlasBackToAtlas;
 
   // Atlas 탭 표시 (journey 페이지 안에서 호출)
   function showAtlasView() {
