@@ -3744,6 +3744,261 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 5월 · 핼리팩스 ════════
+    'nomad-city-halifax': {
+      monthLabel: '5월',
+      hero: {
+        city: '🇨🇦 핼리팩스',
+        tagline: 'Final Base · 본업 ROI',
+        country: '캐나다 노바스코샤 · Canada',
+        dates: '2029.5.1 — 5.31 (31일)',
+        weather: '10-18°C · 봄',
+        visa: 'eTA',
+        vibe: '항구 + 니트·공예 + 작가 톤 + 조용',
+        mode: '글 마무리 + 본업 자산 70/30',
+        quote: '1년 노마드 마지막 거점. 누리 본업 (니트 디자이너) ↔ 핼리팩스 공예 커뮤니티 직접 매칭. 마무리 = 회복 + 정리 + 자산화.',
+        image: null,
+      },
+      meaning: [
+        '<strong>본업 자산 도시</strong> · 니트웨어·뜨개·홈소잉·업사이클 커뮤니티 형성 중',
+        '인구 45만 · 캐나다 동부 항구 도시 · 작지만 인프라 OK',
+        '1년 노마드 마지막 = 회복 + 자산 정리 + 귀국 준비',
+        '안전 1티어 · 솔로 여성 친화 · 걷기 좋은 도시',
+        '한 달 거점 · North End 또는 Downtown',
+        '<strong>한국 복귀 직전</strong> = 1년 회수 + 다음 단계 계획 정리',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'location_city', title:'거점 동네', items:[
+          { name:'North End (Gottingen Street · Agricola · Hydrostone)',
+            desc:'<strong>누리 톤 1순위.</strong> 핼리팩스 크리에이티브 동네. 카페·갤러리·빈티지샵·뜨개샵. Downtown 도보 15분. Patch Halifax (디자이너 셀렉트샵) 본거지.' },
+          { name:'Downtown · Waterfront',
+            desc:'핼리팩스 심장. Central Library + 4km 보드워크 + 항구. 코워킹 + 카페 + 박물관 다 도보.' },
+          { name:'South End',
+            desc:"대학가 (Dalhousie · King's). 조용 + 가로수 + 빅토리아 건축. 산책 좋음." },
+          { name:'Dartmouth (페리 10분)',
+            desc:'하버 건너편. 더 로컬·저렴. Two If By Sea 페이스트리.' },
+        ]},
+
+        { type:'places', icon:'checkroom', title:'본업 매칭 · 니트·공예 (누리 자산 1순위)', items:[
+          { name:'LK Yarns (Hydrostone)', price:'로컬 양털·실',
+            desc:'<strong>천장까지 실로 가득.</strong> 노바스코샤 로컬 양털 + 글로벌 셀렉트. 누리 = 한국 못 구하는 양털·텍스처 인풋.' },
+          { name:'Patch Halifax',
+            desc:'로컬 디자이너 셀렉트샵. 핼리팩스 니트·패션 신 입구.' },
+          { name:'The Lunenburg Makery (Lunenburg, 위성)',
+            desc:'루넌버그 (UNESCO 헤리티지) 안. 양털·패브릭·크래프트 키트. <strong>워크숍 1번 강력 추천</strong> (CA$80-200).' },
+          { name:'NSCAD University (Nova Scotia College of Art and Design)',
+            desc:'캐나다 최고 미술·디자인 대학 중 하나. 전시·갤러리 일반 입장 가능. 본업 자산.' },
+          { name:'Halifax Crafters Spring Market (5월 후반)',
+            desc:'로컬 공예가 마켓. 누리 시기 정합. 니트·소잉·도자기 다.' },
+          { name:'Inkwell Modern Handmade Boutique & Letterpress',
+            desc:'레터프레스 + 핸드메이드. 디자이너 누리 자산.' },
+        ]},
+
+        { type:'places', icon:'landscape', title:'꼭 갈 곳', items:[
+          { name:'Halifax Central Library', price:'무료',
+            desc:'<strong>누리 작업 공간 1순위.</strong> 2014년 오픈. 중앙 계단 + 옥상 테라스 (항구 뷰). 디자인 상 다수. 매일 가도 됨.' },
+          { name:'Halifax Public Gardens', price:'무료',
+            desc:'빅토리안 정원. 5월 = 봄 꽃. Central Library 도보 5분.' },
+          { name:'Halifax Waterfront Boardwalk', price:'무료',
+            desc:'4km 보드워크. 매일 산책. 항구 + 박물관 + 카페 + 푸드트럭.' },
+          { name:'Art Gallery of Nova Scotia', price:'CA$12',
+            desc:'<strong>Maud Lewis</strong> (캐나다 민속 화가) 실제 집 보관. 작가·디자이너 자산.' },
+          { name:'Citadel Hill (Fort George)', price:'CA$12',
+            desc:'시내 한복판 19세기 요새. 정오 대포. 시내 전망.' },
+          { name:"Halifax Seaport Farmers' Market (토요일)",
+            desc:'북미 최고(古) 파머스 마켓 (1750년). 매주 토. 로컬 + 누리 한 달 살이 단골.' },
+          { name:'Point Pleasant Park', price:'무료',
+            desc:'시내 남쪽 75헥타르 해안 공원. 산책·트레일·바다.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'위성 (1년 노마드 마지막 풍경)', items:[
+          { name:"Peggy's Cove", price:'버스 또는 투어 CA$50-80',
+            desc:'<strong>노바스코샤 아이콘.</strong> 등대 + 화강암 해안. 시내에서 1시간. 당일.' },
+          { name:'Lunenburg', price:'버스 CA$30',
+            desc:'<strong>UNESCO 세계유산.</strong> 1.5시간. 컬러풀한 18세기 항구 마을 + 톨쉽 + The Lunenburg Makery. 1박 강력 추천. 누리 본업 자산.' },
+          { name:'Cape Breton (Cabot Trail)',
+            desc:'차로 4시간. 캐나다 최고 드라이브 코스 중 하나. 2-3박 추천. 5월 = 봄 시작.' },
+          { name:'Annapolis Valley · Wine Country',
+            desc:'차로 1.5시간. 노바스코샤 와이너리. 당일.' },
+          { name:'Mahone Bay',
+            desc:'Lunenburg 가는 길. 3개 교회 + 항구 + 공예 마을. 당일.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:"King's Co-op Bookstore (Dalhousie 캠퍼스 근처)",
+            desc:'대학 협동조합 서점 + 카페. 학생·작가 단골. 누리 작가 자산.' },
+          { name:'Bookmark (Spring Garden Rd)',
+            desc:'독립 서점. 작가 토크 정기. 시내 도보.' },
+          { name:'Halifax Discovery Centre',
+            desc:'과학·디자인 인터랙티브. 학생·로컬 단골.' },
+          { name:'Hydrostone Market (North End)',
+            desc:'옛 동네 안 작은 상점가. 1917 핼리팩스 폭발 후 재건축 구역. 카페·베이커리·디자이너 가게.' },
+          { name:'Maritime Museum of the Atlantic',
+            desc:'타이타닉 + 1917 핼리팩스 폭발 (북미 최대 인공 폭발). Waterfront. 작가 누리 글감.' },
+          { name:'Halifax Seaport (Pier 21 Museum of Immigration)',
+            desc:'캐나다 입국 1순위 항구 (1928-1971). 110만 이민자 입국. 분석가 N 정체성 글감.' },
+          { name:'Africville Museum',
+            desc:'옛 흑인 정착촌 (200년) → 1960년대 강제 철거. 작은 박물관 + 공원. 분석가 N 글감.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'list', icon:'attractions', title:'5월 이벤트 + 해볼 것', items:[
+          '<strong>Halifax Crafters Spring Market</strong> · 5월 후반 · 로컬 공예가 마켓',
+          '<strong>The Lunenburg Makery 워크숍</strong> · 1일 클래스 CA$80-200 · 펠팅·소잉·디자인',
+          '<strong>Whale Watching</strong> · Bay of Fundy · CA$70-100 · 5월 후반부터',
+          '<strong>로컬 양조장 투어</strong> · Garrison · Propeller (술 X면 패스)',
+          '<strong>NSCAD 오픈스튜디오</strong> · 학기말 (5월 초) · 학생 전시 자유 입장',
+          '<strong>해산물 투어</strong> · 랍스터·홍합·오이스터 (CA$40-80)',
+        ]},
+
+        { type:'places', icon:'restaurant', title:'음식 · 핼리팩스 라인', items:[
+          { name:'The Bicycle Thief (Waterfront)',
+            desc:'이탈리안 + 해산물. 핼리팩스 다이닝 클래식. 누리 1번 자체 보상.' },
+          { name:'Two If By Sea (Dartmouth, 페리 끝)',
+            desc:'크로아상 명물. 페리 + 아침 묶음.' },
+          { name:'Edna (North End)',
+            desc:'동네 비스트로. 로컬 식재료. 누리 톤.' },
+          { name:'Battery Park (Dartmouth)',
+            desc:'베스트 비어가든 (술 X면 음식만). 항구 뷰.' },
+          { name:"Tom's Little Havana (Spring Garden)",
+            desc:'작가·로컬 단골 카페·바. 분위기 자산.' },
+          { name:"Salty's (Waterfront)",
+            desc:'랍스터 롤·차우더. 관광객 많지만 1번.' },
+          { name:'Bar Kismet (North End)',
+            desc:'모던 시푸드. 누리 1번 자체 보상.' },
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목 + 자산 회수', items:[
+          { h:'1. 핼리팩스 = 한국 본업 자산 도시',
+            body:'<strong>1년 노마드 진짜 ROI 회수 도시.</strong> 핼리팩스 니트·공예 = 누리 5년차 본업 (MLB 니트팀) 직접 매칭. LK Yarns + Lunenburg Makery + NSCAD = 한국 가서 본업 응용 가능한 인풋.' },
+          { h:'2. 마리타임 공예 톤 = 한국 패션과 다른 결',
+            body:'컬러풀 · 키치 · 패치워크 · 업사이클. 한국 미니멀과 정반대. 디자이너 누리 = 안목 확장.' },
+          { h:'3. Maud Lewis = 작가·디자이너 둘 다 자산',
+            body:'캐나다 민속 화가. 작은 집 안에서 평생 그림. 누리 분석가 N 글감 (작은 삶 + 회로).' },
+          { h:'4. 1년 정리 + 다음 단계 설계',
+            body:'1년 노마드 마지막 = 글 페이스 살짝 늦추고, IP 자산 정리 + 한국 복귀 후 계획 잡기. 메일리 1년 정리 글 + 다음 분기 콘텐츠 계획.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'note', icon:'work', title:'작업 환경',
+          body:'',
+          subsections:[
+            { h:'코워킹', items:[
+              '<strong>Volta</strong> · 핼리팩스 이노베이션 허브 · 다운타운 · 데일리 CA$25-35 · 월 CA$300+',
+              '<strong>CoWork Halifax (Quinpool Road)</strong> · 캐주얼 · 월 CA$250+',
+              '<strong>Regus (Founders Square 등)</strong> · 글로벌 체인 · 데일리 CA$20-30',
+              '<strong>Spaces (1505 Barrington)</strong> · 모던',
+            ]},
+            { h:'도서관 + 카페', items:[
+              '<strong>Halifax Central Library</strong> · 무료 · 옥상 테라스 · 누리 1순위',
+              '<strong>Lion & Bright</strong> · North End · 작업 친화',
+              '<strong>Two If By Sea (Dartmouth)</strong> · 페리 + 페이스트리',
+              '<strong>Java Blend Coffee</strong> · 로컬 로스터',
+              '<strong>Uncommon Grounds</strong> · 시내',
+            ]},
+          ],
+        },
+
+        { type:'list', icon:'home', title:'한 달 숙소', items:[
+          '<strong>North End Airbnb 월</strong> · 1베드 CA$2,000-2,800 · 누리 라인 베스트',
+          '<strong>Downtown · Waterfront</strong> · 월 CA$2,400-3,200 · 모든 게 도보',
+          '<strong>South End</strong> · 월 CA$1,800-2,500 · 조용 + 대학가',
+          '<strong>Furnished Finder</strong> · 가구 포함 중기 임대 · 더 저렴',
+          '<em>5월 = 비수기 끝, 여름 시즌 직전. 6-9월 대비 -20-30% 저렴.</em>',
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (31일 · 1년 마무리 모드)', items:[
+          '<strong>주 1 (1-7일)</strong> · NYC → 핼리팩스 도착 + North End 거점 적응 + Halifax Central Library 자리 정하기 + LK Yarns 첫 방문 + Lion & Bright·Java Blend 카페 단골',
+          "<strong>주 2 (8-14일)</strong> · 글 작업 + Peggy's Cove 당일 + AGNS (Maud Lewis) + Patch Halifax + Inkwell + NSCAD 오픈스튜디오 (5월 초)",
+          '<strong>주말 (15-16일차)</strong> · <strong>Lunenburg 1박 + The Lunenburg Makery 워크숍</strong> (1년 본업 자산 정점)',
+          '<strong>주 3 (17-23일)</strong> · 본업 자산 정리 + Annapolis Valley 당일 + 메일리 1년 회고 글 초안 + 한국 보낼 짐 박스 분류',
+          '<strong>주말 (24-25일차)</strong> · Cape Breton Cabot Trail 2박 (선택) 또는 Mahone Bay 당일 + 회복',
+          '<strong>주 4 (26-31일)</strong> · <strong>1년 노마드 회고 글 메일리 발행</strong> + Halifax Crafters Spring Market (5월 후반) + 한국 우편 발송 + 다음 분기 콘텐츠 시드 + 인천행 비행 준비',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 본업 매칭 강조', items:[
+          { h:'페이스북 그룹', items:[
+            '<strong>Halifax Digital Nomads</strong>',
+            '<strong>Halifax Knitters & Makers</strong> · 본업 매칭 1순위',
+            '<strong>Halifax Designers & Artists</strong> · 본업 동종',
+            '<strong>Female Digital Nomads Canada</strong> · 여성 한정',
+            '<strong>Nova Scotia Crafters</strong> · 공예 커뮤니티',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Halifax Knitters" · 본업 매칭',
+            '"Halifax International Meetup"',
+            '"Halifax Writers Federation"',
+            '"Halifax Photography Walks"',
+          ]},
+          { h:'본업 매칭 직접 만남', items:[
+            '<strong>LK Yarns 정기 뜨개 모임</strong> · 누리 1순위 (가게 안 모임)',
+            '<strong>The Lunenburg Makery 워크숍</strong> · 1일 클래스 + 작가 직접 대화',
+            '<strong>NSCAD 갤러리 오프닝</strong> · 5월 학기말 학생 전시 (자유 입장)',
+            '<strong>Patch Halifax · Inkwell</strong> · 로컬 디자이너 사장 직접',
+            '<strong>Halifax Crafters Spring Market</strong> · 5월 후반 · 로컬 공예가 다 모임',
+          ]},
+          { h:'코워킹 + 일반 이벤트', items:[
+            'Volta 정기 networking · 테크·디자인',
+            "Seaport Farmers' Market (토) · 로컬 단골 만남",
+            "로컬 펍 라이브 음악 · The Carleton·Bearly's House of Blues",
+          ]},
+          { h:'이벤트 (5월)', items:[
+            '<strong>NSCAD 학기말 전시</strong> (5월 초) · 학생 작품 자유 입장',
+            '<strong>Halifax Crafters Spring Market</strong> (5월 후반) · 누리 시기 정합',
+            '<strong>Scotia Festival of Music</strong> (5월 말-6월) · 일부 겹침',
+            '<strong>Whale Watching 시즌 시작</strong> (5월 후반)',
+            '<strong>Lobster 시즌 절정</strong> · 5월',
+          ]},
+          { h:'핼리팩스 특유', items:[
+            '인구 45만. <strong>1년 노마드 마지막 도시 = 깊은 만남 가능 + 본업 매칭 도시.</strong> LK Yarns·Makery·NSCAD = 누리 본업 (니트) 직접 매칭 커뮤니티. 한 달 거주 = 한국 가서도 연결 유지 가능한 친구 2-3명. 안전 + 영어 + 슬로우 + 친근 = 1년 노마드 마무리 베스트.',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'table', icon:'payments', title:'1달 (숙소 제외)',
+          headers:['카테고리','세부','월 합계 (CA$)','₩'],
+          rows:[
+            ['식비', '마켓 + 외식 (해산물)', 'CA$700-1,000', '71-102만'],
+            ['교통', '버스 + 페리 + 1-2회 렌터카', 'CA$200-400', '20-41만'],
+            ['박물관·체험', 'AGNS + Citadel + 워크숍', 'CA$150-300', '15-31만'],
+            ["위성 (Peggy's·Lunenburg·Cabot Trail)", '당일 + 1-2박', 'CA$300-600', '31-61만'],
+            ['본업 자산 (LK Yarns 양털 + 워크숍 + 디자인샵)', '인풋 비용', 'CA$200-500', '20-51만'],
+            ['코워킹', '월권 또는 도서관 무료', 'CA$0-300', '0-31만'],
+          ],
+          footer:['<strong>합계</strong>', '', '<strong>CA$1,550-3,100</strong>', '<strong>158-317만</strong>'],
+          note:'1년 노마드 마지막 도시 = 본업 자산 인풋 비중 큰 게 정상. ROI 확실.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심 · 1년 마무리', items:[
+          { h:'1. 본업 자산 = 1년 노마드 ROI 회수',
+            body:'<strong>핼리팩스 = 누리 본업과 직접 매칭되는 유일한 도시.</strong> LK Yarns 양털 인풋 + Lunenburg Makery 워크숍 1번 + NSCAD 전시 = 한국 가서 본업 응용 가능 자산. 1년 노마드 진짜 ROI.' },
+          { h:'2. North End 거점 강력 추천',
+            body:'누리 톤 (크리에이티브 + 공예) 1순위. Patch Halifax · Lion & Bright · LK Yarns 다 도보권.' },
+          { h:'3. Lunenburg 1박 무조건',
+            body:'UNESCO + 컬러풀 항구 + Makery 워크숍. 핼리팩스에서 1.5시간. 1년 노마드 인생샷 마지막.' },
+          { h:'4. Halifax Central Library = 매일 작업',
+            body:'디자인 상 받은 건물 + 옥상 테라스 + 무료. 누리 1년 노마드 마지막 작업 공간.' },
+          { h:'5. 글 페이스 살짝 늦추기 (70%)',
+            body:'1년 노마드 끝나가는 시점. 메일리 1년 정리 글 1편 + 다음 분기 콘텐츠 시드 + 회복. 무리 X.' },
+          { h:'6. 한국 복귀 준비',
+            body:'5월 셋째 주: 짐 정리 + 한국 보낼 거 (양털·소품·디자인 자료) 별도 박스 우편 발송. 5월 넷째 주: 1년 노마드 회고 글 작성 + 메일리 발행. 핼리팩스 → 토론토 또는 몬트리올 경유 → 인천 · 마일리지 활용.' },
+          { h:'7. 다음 = 한국 복귀 (2029.6)',
+            body:'<strong>1년 노마드 끝. 한국 복귀 = 새 단계 시작.</strong> 본업 비중 조정 검토 + IP 자산 확장 + 다음 분기 결정.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
