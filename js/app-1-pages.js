@@ -3813,22 +3813,53 @@
                 prebookLine = '<div class="mt-1.5 px-2 py-1 rounded bg-rose-100/70 border border-rose-200 flex items-center gap-1 text-[10px]"><span class="material-symbols-outlined text-rose-600" style="font-size:11px">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
               }
             }
-            return '<div class="py-3 px-1.5 border-b border-slate-100 last:border-b-0 cursor-pointer hover:bg-indigo-50/30 transition-colors ' + itemBg + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
-              (time ? '<div class="text-[11px] font-bold ' + timeC + ' mb-1.5" style="letter-spacing:0.04em">' + time + endTime + badge + '</div>' : '') +
-              '<div class="text-[13px] font-semibold text-slate-800 mb-1" style="line-height:1.5;letter-spacing:-0.01em">' + cityChip + (renderTitle || '(제목 없음)') + '</div>' +
-              (renderDesc ? '<div class="text-[11px] text-slate-500" style="line-height:1.6;letter-spacing:0.01em;white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</div>' : '') +
-              prebookLine +
+            // stitch j-slot 디자인
+            var slotClasses = ['j-slot'];
+            if (reserv) slotClasses.push('is-reservation');
+            if (pinned) slotClasses.push('is-pinned');
+            if (isSouvenir) slotClasses.push('is-shopping');
+            return '<div class="' + slotClasses.join(' ') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
+              '<div class="j-slot-time">' + (time ? (time + endTime + badge) : '<span style="opacity:0.5">—</span>') + '</div>' +
+              '<div class="j-slot-body">' +
+                '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p></div>' +
+                (renderDesc ? '<p class="j-slot-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>' : '') +
+                prebookLine +
+              '</div>' +
             '</div>';
           }).join('');
 
-      // 헤더: 도시명 + 당일치기 작은 라인
-      var headerCityHtml = '<div class="text-sm font-bold mt-1" style="letter-spacing:-0.01em">' + dayNum + '일차' + (cityName ? ' · ' + cityName : '') + '</div>';
+      // 헤더: stitch j-day-head — 원형 번호 + 도시명 + 날짜·요일
+      var WEEKDAY_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var weekdayEn = '';
+      if (dateStr) {
+        try { weekdayEn = WEEKDAY_EN[new Date(dateStr).getDay()]; } catch(e) {}
+      }
+      var headerCityHtml = '';
       if (dayTrips.length > 0) {
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
-        var dtColor = isCurrent ? 'rgba(255,255,255,0.85)' : '#b45309';
-        headerCityHtml += '<div class="text-[11px] font-bold mt-1" style="color:' + dtColor + ';letter-spacing:0.02em" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</div>';
+        headerCityHtml = '<p class="j-day-h3-meta" title="당일치기 행선지" style="margin-top:4px;color:#c2410c;font-weight:600">🚆 ' + tripsTxt + ' (당일)</p>';
       }
+      var dayHeadHtml =
+        '<div class="j-day-head">' +
+          '<div class="j-day-head-left">' +
+            '<div class="j-day-num' + (isCurrent ? '' : ' is-muted') + '">' + String(dayNum).padStart(2,'0') + '</div>' +
+            '<div>' +
+              '<h3 class="j-day-h3">' + (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + '</h3>' +
+              '<p class="j-day-h3-meta">' + (dateStr || '—') + (weekday ? ' · ' + weekday + (weekdayEn ? ' (' + weekdayEn + ')' : '') : '') + '</p>' +
+              headerCityHtml +
+            '</div>' +
+          '</div>' +
+          '<div class="j-day-head-tag">' +
+            '<span class="j-status-tag j-status-soft">' + dayNum + '일차</span>' +
+          '</div>' +
+        '</div>';
 
+      // 빈 일정 메시지
+      if (items.length === 0 && !miniPanelHtml) {
+        itemsHtml = '<div class="j-slot-empty">이 날의 일정이 없어요</div>';
+      } else if (items.length === 0) {
+        itemsHtml = '<div class="j-slot-empty">시간 일정 없음</div>';
+      }
       // 인라인 추가 폼 (이 카드가 add 모드면 표시)
       var addFormHtml = '';
       var cityEsc = (cityName||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
@@ -3856,19 +3887,23 @@
           '</div>';
       } else {
         addFormHtml =
-          '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="border-t border-slate-100 py-1.5 text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-center gap-1 transition-colors w-full" title="이 날에 일정 추가">' +
-            '<span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가' +
-          '</button>';
+          '<div class="j-day-add">' +
+            '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="j-day-add-btn" title="이 날에 일정 추가">' +
+              '<span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가' +
+            '</button>' +
+          '</div>';
       }
 
-      return '<div class="bg-white rounded-2xl border ' + (_weekAddingDate === dateStr ? 'border-indigo-300 shadow-md' : 'border-slate-200') + ' overflow-hidden flex flex-col hover:shadow-md transition-shadow group/wcard">' +
-        '<div class="px-4 py-3 text-center relative" style="' + headerBg + '">' +
-          '<div class="text-[11px] font-black uppercase tracking-widest opacity-90">' + dateStr + (weekday ? ' (' + weekday + ')' : '') + '</div>' +
-          headerCityHtml +
-        '</div>' +
-        '<div class="px-3 py-2 flex-1 min-h-[160px]">' + miniPanelHtml + itemsHtml + '</div>' +
-        addFormHtml +
-      '</div>';
+      // stitch j-day-card 통째로
+      var dayCardClasses = ['j-day-card'];
+      if (isCurrent) dayCardClasses.push('is-current');
+      var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
+      return '<div class="' + dayCardClasses.join(' ') + '">' +
+          dayHeadHtml +
+          miniPanelsWrap +
+          '<div class="j-day-timeline">' + itemsHtml + '</div>' +
+          addFormHtml +
+        '</div>';
     }).join('');
 
     // 포커스: 추가 모드면 시간 input에 자동 포커스
