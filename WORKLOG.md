@@ -33,6 +33,82 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-26 (기기: 윈도우 · 6차 — 마라톤 후반전)
+
+### ✅ 한 일 (5차에서 이어서)
+
+**1. Travel Journey 좌측 sticky ToC (sub-nav)**
+- `js/travel-toc.js` 신규 — page-journey 활성 + Atlas 비활성 시 자동 표시. polling으로 토글
+- IntersectionObserver로 스크롤 시 현재 섹션 active 하이라이트 (보라 dot + bold + 살짝 translate)
+- 클릭 시 smooth scroll (top -80px offset)
+- 8개 섹션에 id 추가: trv-hero / trv-stops / journey-week-view / trv-flights / trv-lodging / trv-transport / trv-rental / trv-souvenir
+- **1500px+ 화면에서만 fixed 표시** (메인 사이드바 우측). 그 미만은 숨김 (좁은 화면 컨텐츠 방해 X)
+- editorial 톤 — Inter SF 미니 텍스트 + 보라 dot
+
+**2. Daily Log 쇼핑 박스 제거 + Souvenir 3단계 구조 + 시각 분리**
+- 일차 카드 안 sourceSouvenirs 박스 제거 (Souvenir 섹션에서 도시별로 묶여 보이니 중복)
+- Souvenir: 🇩🇪 GERMANY (국가) → STOP 1 · Frankfurt am Main (도시, 가장 큰 그룹) → • 찐친 (카테고리) → 항목들 — 3단계
+- `_souvenirCityRank`: citiesData 순서(여행 일정) 기반 도시 우선순위
+- `_groupSouvenirsByCity`: 도시별 sub-group (여행 순서 정렬)
+- `_groupSouvenirsByCategory` + 시각 분리 (점선 divider + 보라 dot + count)
+- 카테고리 정렬: 찐친 → 후배 → 동료 → 직장 → 가족 → 나 → 집 → 소장 → 디자이너 → 편집 → 음료 → 기타
+
+**3. UI 폴리시 (사용자 피드백 반영 다회)**
+- Hero 좌우 높이 맞춤 (lg+ align-items:stretch, 이미지 min-height 380→280)
+- Hero 이미지 + Voyage Path 카드 둘 다 **네모 아웃라인** (border-radius 0)
+- Daily Log 카드 네모 아웃라인 + **5칸 → 4칸** (WEEK_CHUNK_SIZE 5→4, padding 살짝 키움)
+- Stops 아래 "Add City" 카드 제거 (섹션 헤더 우상단 버튼이 대신)
+- 숙소 이미지 grayscale 효과 제거 — 항상 컬러로 표시
+- Voyage Path 지도 min-height 240→180 (세로 축소)
+
+**4. Stops/Atlas 카드 DATES/STAY 두 줄 강조**
+- 라벨(작은 보라 uppercase 800) 위, 값(Manrope 14px 700 진한 색) 아래 — 가독성 강조
+- Atlas trip card도 동일 구조
+
+**5. Atlas trip 디테일 잡지 스타일 hero**
+- 풀와이드 — atlas section padding 무시 (좌우 끝까지, negative margin)
+- 아래로 fade — 페이지 흰 배경으로 자연스럽게 녹아듦 (linear-gradient white)
+- 텍스트 블록을 hero 이미지 밖으로 분리 (이미지 아래 -80~-110px 살짝 겹쳐 올라옴)
+- 제목 word-break:keep-all + overflow-wrap → **두 줄 자동** (짤림 방지)
+
+**6. Atlas trip 디테일 4 trip 한글화**
+- itinerary/lodging/budget/note 모두 한글로 번역
+- 영어 지명/명소는 유지 (블루 라군, Ring of Kerry, 셀리알란드포스 등)
+- 행동/설명만 한국어
+- 섹션 라벨도 한글: "일자별 일정" / "숙소 정보" / "예산" / "휴가" / "Atlas로 돌아가기"
+
+**7. Financial Ledger 개선**
+- 검은색 → **연한 보라(#f5f3ff)** atelier 톤
+- **하루 예산 + 총액 상단 강조 2-cell 카드** (₩XX 만/day + ₩XX 만/N days)
+- 모든 텍스트 진한 보라/슬레이트로 대비 강화
+
+**8. 숙소 카드 stitch 좌측 이미지 복원 + Ctrl+V 업로드**
+- lg+ 좌측 320px 고정 이미지 + 우측 본문 (stitch 원본 구조)
+- 사용자 결정으로 grayscale 효과는 제거 (항상 컬러)
+- `js/journey-lodge-images.js` 신규 — 클릭/Ctrl+V paste + LS + Firestore(`journeyLodgeImages`)
+
+### 📦 신규 파일 (이번 세션)
+- `js/travel-toc.js` (좌측 sticky ToC)
+- `js/journey-lodge-images.js` (숙소 좌측 이미지 업로드)
+
+### 🚧 막힌 점 / 결정 보류
+- **GitHub Pages 장애** — 세션 끝나갈 무렵 `Incident with Actions and Pages` (5/26 10:57 UTC)
+  - 우리 모든 push (v183→v184→v185) 정상 (main HEAD에 a7ae952까지)
+  - GitHub Actions 빌드 success ✅
+  - 그러나 GitHub Pages CDN이 옛 v182를 끈질기게 서빙
+  - GitHub raw(main): v185 / GitHub Pages deployed: v182 — **GitHub 측 deploy stuck**
+  - 빈 commit, 강제 rebuild trick 다 시도해도 안 풀림
+  - GitHub Status 페이지에서 인시던트 확인 — 누리님 측 문제 X
+  - 복구되면 자동으로 라이브 반영됨 (별도 작업 X)
+  - 다음 세션 시작 시 라이브 v185 응답 확인 — 안 풀려있으면 GitHub Status 재확인
+
+### 💭 메모
+- **사용자 피드백 즉시 반영 → 시행착오 정상 패턴**: hero 폰트 3번 줄임, Stops 디자인 Atlas 매거진으로 두 번 바꿈, 숙소 이미지 빼버린 거 사용자 지적으로 복원, 사람 손 가야 하는 디테일은 가끔 다시 가야 함
+- **이미지 업로드 모듈 5개 양산**: nomad phase / atlas trip / journey hero / journey city / journey lodge. 거의 동일 코드. 다음에 안정화되면 `js/image-uploader.js` 공통 모듈로 추출 검토
+- **GitHub Pages 캐시 함정 두 번**: 5차에서도 한 번 (해결: Clear site data), 6차에서는 GitHub 측 deploy 자체가 stuck — 사용자 어떻게 해도 안 풀림. CDN 응답 vs main raw 비교로 진단 가능 (`curl raw URL` vs `curl pages URL`). 다음에 같은 증상 시 빠르게 진단
+
+---
+
 ## 2026-05-26 (기기: 윈도우 · 5차 — 풀데이 마라톤)
 
 ### ✅ 한 일 (큰 작업 두 개)
