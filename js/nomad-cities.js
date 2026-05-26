@@ -1792,7 +1792,7 @@ window.NOMAD_CITIES = (function(){
     },
 
     // ════════ 10-11월 · 포르투갈 복귀 (리스본) ════════
-    'nomad-city-portugal-return': {
+    'nomad-city-portugal2': {
       monthLabel: '10-11월',
       hero: {
         city: '🇵🇹 리스본',
