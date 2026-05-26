@@ -2812,6 +2812,271 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 2월 · 멜버른 ════════
+    'nomad-city-melbourne': {
+      monthLabel: '2월',
+      hero: {
+        city: '🇦🇺 멜버른',
+        tagline: 'City to Live, Not Visit',
+        country: '호주 빅토리아 · Australia',
+        dates: '2029.2.1 — 2.28 (28일)',
+        weather: '15-25°C · 늦여름 → 가을',
+        visa: '호주 ETA',
+        vibe: '카페 · 골목 · 예술 · 라네웨이',
+        mode: '글 풀가동 75/25',
+        quote: '누리가 진짜 살아보고 싶었던 도시. 재방문 = 관광 X, 거주 모드. 2025년 글로벌 원격 근무 1위.',
+        image: null,
+      },
+      meaning: [
+        '<strong>재방문 도시</strong> · 시드니·멜버른 가봤음, 멜버른에서 살아보고 싶었음',
+        '호주 오픈 끝난 직후 = 성수기 종료, 가격·붐 모두 ↓',
+        '인구 510만 · 호주 2대 도시 · 라네웨이 + 카페 = 누리 작업 환경 최적',
+        '한 달 거점 · 1베드룸 또는 코리빙 (UKO Carlton·South Melbourne 등)',
+        '가본 곳 다시 가는 거 X · 누리 일상 + 글 풀가동 모드',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'location_city', title:'거점 동네 (살아보기 기준)', items:[
+          { name:'Fitzroy · Collingwood',
+            desc:'<strong>크리에이티브 허브.</strong> 누리 톤 1순위. 빈티지샵 · 갤러리 · 카페 · 그래피티. 멜버른 노마드·프리랜서 모이는 곳. Brunswick Street 중심.' },
+          { name:'Carlton',
+            desc:'이탈리안 동네 · 멜버른 대학교 · Lygon Street. 차분 + 학생 에너지. 카페 + 도서관 가까움.' },
+          { name:'Brunswick',
+            desc:'Fitzroy 북쪽 · 더 로컬 · 카페·바·라이브 음악. 한 달 살이 = Airbnb·Stayz 가성비.' },
+          { name:'South Melbourne · St Kilda',
+            desc:'강 남쪽 · 바닷가 + 마켓 + 한적. UKO 코리빙 있는 동네.' },
+        ]},
+
+        { type:'places', icon:'coffee', title:'일상 · 카페 + 골목', items:[
+          { name:'Proud Mary (Collingwood)', price:'AU$5-25',
+            desc:'스페셜티 커피 본진. 브런치 유명. 주말 줄.' },
+          { name:"Aunty Peg's", price:'AU$5-8',
+            desc:'에스프레소·필터만. 우유 메뉴 X. 커피 진심.' },
+          { name:'Market Lane', price:'AU$5-7',
+            desc:'멜버른 곳곳 지점. 안정된 품질.' },
+          { name:'CBD 라네웨이 (Degraves · Centre Place · Hosier)',
+            desc:'멜버른 정체성. 골목마다 카페 + 그래피티. 누리 작가 = 글감 가득.' },
+          { name:'A Minor Place (Brunswick)',
+            desc:'전 집 개조 카페. WiFi 비번 메뉴에. 노트북 작업 OK.' },
+        ]},
+
+        { type:'places', icon:'museum', title:'문화 · 거주 모드', items:[
+          { name:'State Library of Victoria', price:'무료',
+            desc:'멜버른 도서관. 누리 작업 공간 1순위. 돔 리딩룸 = 누리 글 작업 베스트 스팟. WiFi + 콘센트.' },
+          { name:'NGV (National Gallery of Victoria)', price:'무료',
+            desc:'호주 최대 미술관. 2개 빌딩 (NGV International · Ian Potter Centre). 디자이너 누리 1순위.' },
+          { name:'Queen Victoria Market', price:'무료',
+            desc:'1878년 시장. 매주 1-2회 장보기. 누리 = 집밥 위주 라인.' },
+          { name:'Royal Botanic Gardens',
+            desc:'강 남쪽 38헥타르. 산책 + 작업.' },
+          { name:'ACMI (Australian Centre for Moving Image)', price:'상설 무료',
+            desc:'Federation Square. 영화·게임·디지털 아트. 작가 누리 자산.' },
+        ]},
+
+        { type:'list', icon:'explore', title:'주말 위성 (1-2박)', items:[
+          '<strong>Mornington Peninsula</strong> · 시내 1.5시간. 와이너리 + 핫스프링. 1박',
+          '<strong>Daylesford</strong> · 시내 1.5시간. 온천 마을 + 미네랄 워터',
+          '<strong>Yarra Valley</strong> · 와인 + 자연. 시내 1시간',
+          '<strong>Wilsons Promontory</strong> · 국립공원. 트레킹. 2박+',
+          '<em>그레이트 오션 로드 = 누리 다녀왔음. 재방문 X.</em>',
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'Readings (Carlton, Lygon St)',
+            desc:'호주 최고 독립 서점 후보. 1969년. 카페 + 작가 토크 정기. <strong>작가 누리 1순위 단골.</strong>' },
+          { name:'The Paperback Bookshop (Bourke St)',
+            desc:'밤 늦게까지 (10pm). 작가·심야 작업러 단골.' },
+          { name:'Hill of Content (Bourke St)',
+            desc:'1922년. 멜버른 가장 오래된 서점. 작가 누리 분위기.' },
+          { name:'Mr Kitly (Brunswick)',
+            desc:'디자인 셀렉트 + 갤러리 + 도자. 호주 인디 디자이너 큐레이션. 디자이너 누리 1순위.' },
+          { name:'Third Drawer Down (Fitzroy)',
+            desc:'아티스트 협업 디자인 가게. Yayoi Kusama·David Shrigley 등. 누리 본업 자산.' },
+          { name:'Lily and the Weaver (Fitzroy 인근)',
+            desc:'독립 텍스타일 디자이너. 핸드위빙·니트.' },
+          { name:"Rose Street Artists' Market (Fitzroy, 매주 토·일)",
+            desc:'멜버른 최고 인디 아티스트 마켓. 70+ 아티스트 직접. 누리 본업 매칭.' },
+          { name:'Abbotsford Convent',
+            desc:'옛 수녀원 → 11에이커 아트 허브. 갤러리·스튜디오·카페·인디 마켓. 토 Slow Food Market.' },
+          { name:'South Melbourne Market (1864)',
+            desc:'Queen Vic보다 로컬. 디자이너 가판 + 음식. 수·금·토·일.' },
+        ]},
+
+        { type:'places', icon:'checkroom', title:'본업 자산 · 호주 패션·텍스타일', items:[
+          { name:'RMIT Design Hub Gallery (시내)',
+            desc:'RMIT = 호주 최고 패션·디자인 학교. 학생 + 졸업생 전시 정기. 무료. <strong>본업 누리 1순위 (한국 본업 ↔ 호주 패션 신 매칭).</strong>' },
+          { name:'Craft Victoria (시내 Watson Place)',
+            desc:'호주 컨템포러리 크래프트 본거지. 갤러리 + 매장. 누리 본업 자산.' },
+          { name:'Australian Tapestry Workshop (South Melbourne)',
+            desc:'1976년 설립. 호주 최고(古) 태피스트리 스튜디오. 가이드 투어 + 워크숍 정기. <strong>본업 누리 텍스타일 자산 폭탄.</strong>' },
+          { name:'Gertrude Contemporary (Fitzroy)',
+            desc:'아티스트 스튜디오 + 갤러리. 신진 작가 발굴.' },
+          { name:'호주 로컬 디자이너 매장',
+            desc:'Gorman (Fitzroy) · Alpha60 · Obus · Kuwaii. Brunswick·Fitzroy 산책 = 자연 노출.' },
+          { name:'Fitzroy·Brunswick 빈티지 라인',
+            desc:'Hunter Gatherer · Vintage Garage · Shag · Lost and Found. 누리 빈티지 본업 자산.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'list', icon:'attractions', title:'2월 이벤트', items:[
+          '<strong>Midsumma Festival</strong> · 1월 말 ~ 2월 · LGBTQ+ 예술 페스티벌',
+          '<strong>White Night</strong> · 2월 · 시내 야간 아트 설치',
+          '<strong>Sustainable Living Festival</strong> · 2월 · Fed Square',
+          '<strong>St Kilda Festival</strong> · 2월 둘째주 · 호주 최대 무료 음악 페스티벌',
+        ]},
+
+        { type:'places', icon:'brush', title:'본업 워크숍 · 디자이너 누리', items:[
+          { name:'Australian Tapestry Workshop 워크숍', price:'AU$150-500',
+            desc:'태피스트리 입문·심화 워크숍. 1976년 스튜디오에서 직접. 누리 본업 응용 자산.' },
+          { name:'Craft Victoria 워크숍', price:'AU$60-300',
+            desc:'도자·주얼리·텍스타일·자연 다이 정기 워크숍.' },
+          { name:'RMIT Short Courses (Brunswick·City 캠퍼스)',
+            desc:'패션 일러스트·니트·텍스타일 단기 코스. 누리 본업 직접 매칭.' },
+          { name:'Slow Stitch Club (Brunswick)',
+            desc:'자수·핸드 메이드 모임. 누리 본업 + 사교.' },
+        ]},
+
+        { type:'places', icon:'restaurant', title:'음식 · 멜버른 라인', items:[
+          { name:'Queen Victoria Market (1878)',
+            desc:'시내 한복판. 매주 1-2회 장보기. <strong>Wednesday Night Market</strong> (여름) = 푸드·라이브.' },
+          { name:'Lune Croissanterie (Fitzroy)',
+            desc:'세계 베스트 크루아상. 줄 1시간. 누리 1번 무조건.' },
+          { name:'Cumulus Inc. (Flinders Lane)',
+            desc:'멜버른 다이닝 클래식. Andrew McConnell. 누리 = 1번 자체 보상.' },
+          { name:'Tipo 00 (Little Bourke St)',
+            desc:'멜버른 베스트 파스타. 점심 가성비.' },
+          { name:"Pellegrini's Espresso Bar (1954, Bourke St)",
+            desc:'호주 최초 에스프레소 머신 카페. 클래식 이탈리안. 누리 분위기 자산.' },
+          { name:'Lygon Street (Carlton) 이탈리안 라인',
+            desc:'DOC Pizzeria·Tiamo·Brunetti. 거주 모드 단골.' },
+          { name:'Chinatown (Little Bourke St)',
+            desc:'한식·중식·말레이·일식. 누리 한국 음식 그리울 때.' },
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 카페 문화 = 멜버른 정체성',
+            body:'플랫 화이트 발명지. 바리스타 = 전문직. 라네웨이마다 다른 로스터. 누리 = 카페 비교 자체가 글감.' },
+          { h:'2. 라네웨이 = 그래피티 + 골목 도시 계획',
+            body:'한국 도시와 정반대 구조. 좁은 골목 = 카페·아트. 디자이너 누리 = 공간 설계 자산.' },
+          { h:'3. 호주 패션·니트웨어 신',
+            body:'본업 자산. Carlton·Fitzroy 빈티지샵 + 호주 로컬 디자이너. RMIT 패션 학교 근처 갤러리.' },
+          { h:'4. 한 달 살이 = 진짜 거주 페이스',
+            body:'관광 모드 X. 동네 카페 단골 만들기 · 매주 같은 시장 · 같은 도서관. "여행하는 사람"이 아니라 "사는 사람" 모드.' },
+          { h:'5. 호주 3대 도시 정체성 비교',
+            body:'호바트 (자연·MONA·1인 IP) ↔ 애들레이드 (와인·JamFactory·격자) ↔ 멜버른 (카페·라네웨이·이민). <strong>분석가 N 도시 비교 글감 폭탄.</strong>' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'note', icon:'work', title:'작업 환경 · 멜버른 = 노마드 천국',
+          body:'<strong>2025년 글로벌 원격 근무 1위 도시.</strong> 카페 WiFi 평균 33Mbps · 아파트 NBN 254Mbps · 100+ 코워킹.',
+          subsections:[
+            { h:'코워킹', items:[
+              '<strong>United Co. (Fitzroy)</strong> · 크리에이티브 코워킹 · 데일리 AU$45 · 월 AU$500-700',
+              '<strong>Hub Australia</strong> · CBD + Southbank · 데일리 AU$75 · 월 AU$600+',
+              '<strong>The Cluster</strong> · CBD 뷰 좋음 · 월 AU$650+',
+              '<strong>Yellow Desk</strong> · Collingwood · 캐주얼 · 데일리 AU$40',
+              '<strong>Inspire9 (Richmond)</strong> · 테크·스타트업 신',
+            ]},
+            { h:'도서관', items:[
+              '<strong>State Library of Victoria</strong> · 무료 · 돔 리딩룸 · 누리 1순위',
+              '<strong>City Library (Flinders Lane)</strong> · 무료 · 캐주얼',
+              'RMIT · Melbourne University 도서관 (외부 입장 일부 가능)',
+            ]},
+          ],
+        },
+
+        { type:'list', icon:'home', title:'한 달 숙소 (살아보기 라인)', items:[
+          '<strong>UKO Coliving</strong> · Carlton · South Melbourne · St Kilda 등 · 월 AU$1,800-2,400 · 개인실 + 코워킹 포함',
+          '<strong>Stayz · Airbnb 월 단위</strong> · 1베드룸 Fitzroy·Carlton 월 AU$1,600-2,400',
+          '<strong>HousingAnywhere · Flatmates.com.au</strong> · 로컬 시장 · 더 저렴',
+          '<em>2월 = 성수기 종료. 1월 대비 -20-30%. Stayz·Airbnb 한달 할인 적극.</em>',
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (누리 28일 거주 모드)', items:[
+          '<strong>주 1 (1-7일)</strong> · 애들레이드 → 멜버른 비행 + Fitzroy·Carlton 거점 적응 + Readings·Mr Kitly 단골 + State Library 자리 정하기',
+          "<strong>주 2 (8-14일)</strong> · 글 풀가동 (메일리 발행 2편 목표) + Rose Street Artists' Market (토) + RMIT Design Hub + St Kilda Festival",
+          '<strong>주말 (15-16일차)</strong> · Mornington Peninsula 1박 (온천)',
+          '<strong>주 3 (17-23일)</strong> · <strong>Australian Tapestry Workshop 워크숍</strong> + Craft Victoria + 디지털 제품 작업 + Abbotsford Convent',
+          '<strong>주말 (24-25일차)</strong> · Daylesford 또는 Yarra Valley 당일',
+          '<strong>주 4 (26-28일)</strong> · 호주 3개월 회고 글 작성 + 뉴질랜드 짐 준비 + 단골 카페·도서관 작별 라운드',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 그룹', groups:[
+          { h:'페이스북 그룹', items:[
+            '<strong>Melbourne Digital Nomads</strong> · 호주 최대 노마드 그룹',
+            '<strong>Female Digital Nomads Melbourne</strong> · 여성 한정',
+            '<strong>Melbourne Designers Network</strong> · 본업 동종',
+            '<strong>Melbourne Knitters & Makers</strong> · 본업 매칭',
+            '<strong>Melbourne Writers Network</strong> · 작가 모임',
+            '<strong>Korean in Melbourne</strong> · 한인 모임 (한국어 그리울 때)',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Creative Mornings Melbourne" · 매월 토 아침 무료 강연',
+            '"Melbourne Language Exchange" · 매주',
+            '"Melbourne Photography Walks" · 라네웨이',
+            '"Melbourne Writers Meetup"',
+            '"Slow Stitch Club" · 자수·핸드메이드 (본업 매칭)',
+          ]},
+          { h:'코워킹 + 본업 이벤트', items:[
+            'United Co. (Fitzroy) = 크리에이티브 신 + 정기 네트워킹',
+            'RMIT Design Hub 갤러리 오프닝 = 디자이너 직접',
+            'Craft Victoria 전시 오프닝 = 본업 매칭',
+            'Australian Tapestry Workshop 오픈 데이',
+            "Rose Street Artists' Market 매주 토·일 = 아티스트 직접",
+          ]},
+          { h:'이벤트 (2월)', items:[
+            '<strong>Midsumma Festival</strong> (1월 말-2월) · LGBTQ+ 예술 · 무료 이벤트 다수',
+            '<strong>White Night Melbourne</strong> (2월) · 시내 야간 아트',
+            '<strong>St Kilda Festival</strong> (2월 둘째주) · 호주 최대 무료 음악',
+            '<strong>Sustainable Living Festival</strong> (2월) · Fed Square',
+            '<strong>Melbourne Design Week</strong> 일부 시기 따라 가능',
+            '<strong>Slow Food Market (Abbotsford Convent)</strong> · 매주 토',
+          ]},
+          { h:'멜버른 특유', items:[
+            '인구 510만. <strong>이민자 도시 = 다양 + 친근.</strong> 한 달 거주 = 카페 단골 자연 형성. 영어 부담 X. 누리 = 28일이면 깊은 친구 2-3명 가능. <strong>1년 노마드 중 가장 거주 페이스가 자연스러운 도시.</strong>',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'budget', icon:'payments', title:'1달 (숙소 제외)',
+          rows:[
+            { name:'식비', sub:'마켓 + 외식 + 카페', eur:'AU$900-1,200', krw:'80-107만' },
+            { name:'교통', sub:'Myki 카드 (CBD 무료 트램)', eur:'AU$120-180', krw:'11-16만' },
+            { name:'박물관·체험', sub:'대부분 무료 + 페스티벌', eur:'AU$100-200', krw:'9-18만' },
+            { name:'위성 (1-2회)', sub:'모닝턴·데이즈포드', eur:'AU$200-400', krw:'18-36만' },
+            { name:'코워킹', sub:'월권 또는 도서관 무료', eur:'AU$0-600', krw:'0-53만' },
+          ],
+          total: { eur:'AU$1,320-2,580', krw:'118-230만' },
+          note:'도서관 활용 시 코워킹 비용 0. 멜버른 = State Library 1순위.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. 재방문 = 관광 X, 거주 모드',
+            body:'<strong>가본 곳 다시 가는 거 절대 X.</strong> 동네 카페 단골 · 매주 같은 시장 · 도서관 자리 정해놓기. 일상 만들기가 진짜 목적.' },
+          { h:'2. 글 풀가동 75% = 1년 최고치',
+            body:'1월 애들레이드 70% → 2월 멜버른 75%. 환경 (카페·도서관·코워킹) 최적. 메일리 발행 + 디지털 제품 작업 몰아치기.' },
+          { h:'3. Fitzroy 또는 Carlton 거점 강력 추천',
+            body:'St Kilda · South Melbourne도 OK지만, 누리 톤 (크리에이티브 + 카페) = Fitzroy/Carlton.' },
+          { h:'4. 2월 = 성수기 끝 + 가을 시작',
+            body:'가격 ↓ + 사람 ↓ + 날씨 쾌적. 1년 노마드 동선 설계 잘됐음.' },
+          { h:'5. 본업 자산 = RMIT·로컬 디자이너 신',
+            body:'호주 패션·니트·텍스타일 신 직접 보기. 갤러리 오프닝 · 빈티지샵 · 디자이너 마켓 다 잡기.' },
+          { h:'6. 다음 = 3월 뉴질랜드 (퀸스타운)',
+            body:'멜버른 → 퀸스타운 직항 3시간. 도시 모드 → 자연 모드 전환.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',

@@ -1615,11 +1615,12 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '<div style="position:relative;padding-left:24px;border-left:2px solid var(--nm-primary-soft)">';
     (s.items || []).forEach(function(t) {
+      var bodyText = t.text || t.body || '';
       html += '<div style="position:relative;margin-bottom:18px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">' +
         '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>' +
         '<div style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + t.when + '</div>' +
         '<div style="font-family:Manrope;font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
-        '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + t.text + '</p>' +
+        '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + bodyText + '</p>' +
       '</div>';
     });
     html += '</div>';
@@ -1633,7 +1634,8 @@ window.NOMAD_PAGES = (function(){
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
-    (s.items || []).forEach(function(sub) {
+    var groups = s.items || s.groups || [];
+    groups.forEach(function(sub) {
       html += '<div style="margin-bottom:16px">';
       html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
@@ -1647,13 +1649,27 @@ window.NOMAD_PAGES = (function(){
 
   function _renderNote(s) {
     var color = s.color || 'var(--nm-primary)';
-    return '<div class="nm-card" style="border-left:3px solid ' + color + '">' +
-      (s.title ? '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+    var html = '<div class="nm-card" style="border-left:3px solid ' + color + '">';
+    if (s.title) {
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
         (s.icon ? '<span class="material-symbols-outlined" style="color:' + color + '">' + s.icon + '</span>' : '') +
         '<h3 class="nm-headline-md" style="color:' + color + '">' + s.title + '</h3>' +
-      '</div>' : '') +
-      '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.6">' + s.body + '</p>' +
-    '</div>';
+      '</div>';
+    }
+    if (s.body) {
+      html += '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.6;margin-bottom:14px">' + s.body + '</p>';
+    }
+    var subs = s.subsections || [];
+    subs.forEach(function(sub) {
+      html += '<div style="margin-top:14px">';
+      html += '<h4 style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">' + sub.h + '</h4>';
+      html += '<ul class="nm-list-bullet">';
+      (sub.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+      html += '</ul>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
   }
 
   var SECTION_RENDERERS = {
@@ -1773,6 +1789,28 @@ window.NOMAD_PAGES = (function(){
             name: (s.footer[0] || '').replace(/<[^>]+>/g, ''),
             eur: '€' + (s.footer[2] || '').replace(/<[^>]+>/g, ''),
             krw: '₩' + (s.footer[3] || '').replace(/<[^>]+>/g, ''),
+            note: s.note
+          } : null
+        };
+      } else if (s.type === 'budget' && inBudget) {
+        // 새 스키마: rows = [{name, sub, eur, krw}] + total = {eur, krw}
+        budgetData = {
+          rows: (s.rows || []).map(function(r) {
+            var eurStr = (r.eur || '').toString();
+            var numMatch = eurStr.match(/(\d+)/);
+            var value = numMatch ? parseInt(numMatch[1]) : 0;
+            return {
+              name: (r.name || '').replace(/<[^>]+>/g, ''),
+              sub: (r.sub || '').replace(/<[^>]+>/g, ''),
+              eur: eurStr.indexOf('€') === 0 || eurStr.indexOf('AU$') === 0 ? eurStr : '€' + eurStr,
+              krw: (r.krw || '').toString().indexOf('₩') === 0 ? r.krw : '₩' + (r.krw || ''),
+              value: value
+            };
+          }),
+          total: s.total ? {
+            name: '합계',
+            eur: (s.total.eur || '').toString(),
+            krw: (s.total.krw || '').toString().indexOf('₩') === 0 ? s.total.krw : '₩' + (s.total.krw || ''),
             note: s.note
           } : null
         };
