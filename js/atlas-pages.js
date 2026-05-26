@@ -50,59 +50,83 @@
     html += '</div>';
     html += '</section>';
 
-    // ──────── HORIZONTAL TIMELINE ────────
+    // ──────── HORIZONTAL TIMELINE (연도별 그룹) ────────
+    var byYear = _groupByYear(trips);
     html += '<section class="atlas-section atlas-timeline-section">';
     html += '<div class="atlas-timeline-grid">';
     html += '<div class="atlas-timeline-meta">';
     html += '<h2 class="atlas-h2">The Sequence</h2>';
     html += '<p class="atlas-meta-sub">Chronological progression of expeditions.</p>';
     html += '</div>';
-    html += '<div class="atlas-timeline-line">';
-    trips.forEach(function(tr, i) {
-      html += '<div class="atlas-tl-node' + (tr.isCurrent ? ' is-current' : '') + '">';
-      html += '<span class="atlas-tl-dot"></span>';
-      html += '<div>';
-      html += '<p class="atlas-tl-when">' + _esc(tr.monthShort || tr.month) + '</p>';
-      html += '<p class="atlas-tl-title">' + _esc(tr.title.replace(/^The\s+/, '')) + '</p>';
+    html += '<div class="atlas-timeline-yearwrap">';
+    byYear.forEach(function(group, gi) {
+      html += '<div class="atlas-timeline-year">';
+      html += '<div class="atlas-tl-year-label">' + group.year + '</div>';
+      html += '<div class="atlas-timeline-line">';
+      group.trips.forEach(function(tr, i) {
+        html += '<div class="atlas-tl-node' + (tr.isCurrent ? ' is-current' : '') + '">';
+        html += '<span class="atlas-tl-dot"></span>';
+        html += '<div>';
+        html += '<p class="atlas-tl-when">' + _esc(tr.monthShort || tr.month) + '</p>';
+        html += '<p class="atlas-tl-title">' + _esc(tr.title.replace(/^The\s+/, '')) + '</p>';
+        html += '</div>';
+        html += '</div>';
+        if (i < group.trips.length - 1) html += '<span class="atlas-tl-arrow">→</span>';
+      });
       html += '</div>';
       html += '</div>';
-      if (i < trips.length - 1) html += '<span class="atlas-tl-arrow">→</span>';
+      if (gi < byYear.length - 1) html += '<div class="atlas-tl-year-divider"></div>';
     });
     html += '</div>';
     html += '</div>';
     html += '</section>';
 
-    // ──────── TRIP GALLERY (4 cards) ────────
+    // ──────── TRIP GALLERY (연도별 그룹) ────────
     html += '<section class="atlas-section atlas-gallery-section">';
-    html += '<div class="atlas-gallery">';
-    trips.forEach(function(tr) {
-      html += '<div class="atlas-trip-card" onclick="window.atlasOpenTrip && atlasOpenTrip(\'' + tr.id + '\')">';
-      html += '<div class="atlas-trip-img" style="background:' + tr.gradient + '">';
-      html += '<div class="atlas-trip-flags">' + tr.flags + '</div>';
-      html += '<div class="atlas-trip-code">' + _esc(tr.countryCodes) + '</div>';
+    byYear.forEach(function(group) {
+      html += '<div class="atlas-gallery-year">';
+      html += '<div class="atlas-gallery-year-head">';
+      html += '<span class="atlas-gallery-year-label">' + group.year + '</span>';
+      html += '<span class="atlas-gallery-year-meta">' + group.trips.length + ' Trips · ' + group.days + ' Days · ₩' + group.gross + ' 만 · ' + group.pto + ' PTO</span>';
       html += '</div>';
-      html += '<div class="atlas-trip-body">';
-      html += '<h3 class="atlas-trip-title">' + _esc(tr.cities) + '</h3>';
-      html += '<div class="atlas-trip-row"><span class="atlas-trip-k">DATES</span><span class="atlas-trip-v">' + _esc(tr.dates) + '</span></div>';
-      html += '<div class="atlas-trip-row"><span class="atlas-trip-k">STAY</span><span class="atlas-trip-v">' + tr.days + ' Days · ' + tr.nights + ' Nights</span></div>';
-      html += '<p class="atlas-trip-route">' + _esc((tr.route || []).slice(0, 3).join(' → ')) + '</p>';
+      html += '<div class="atlas-gallery">';
+      group.trips.forEach(function(tr) {
+        html += '<div class="atlas-trip-card" onclick="window.atlasOpenTrip && atlasOpenTrip(\'' + tr.id + '\')">';
+        html += '<div class="atlas-trip-img" style="background:' + tr.gradient + '">';
+        html += '<div class="atlas-trip-flags">' + tr.flags + '</div>';
+        html += '<div class="atlas-trip-code">' + _esc(tr.countryCodes) + '</div>';
+        html += '</div>';
+        html += '<div class="atlas-trip-body">';
+        html += '<h3 class="atlas-trip-title">' + _esc(tr.cities) + '</h3>';
+        html += '<div class="atlas-trip-row"><span class="atlas-trip-k">DATES</span><span class="atlas-trip-v">' + _esc(tr.dates) + '</span></div>';
+        html += '<div class="atlas-trip-row"><span class="atlas-trip-k">STAY</span><span class="atlas-trip-v">' + tr.days + ' Days · ' + tr.nights + ' Nights</span></div>';
+        html += '<p class="atlas-trip-route">' + _esc((tr.route || []).slice(0, 3).join(' → ')) + '</p>';
+        html += '</div>';
+        html += '</div>';
+      });
       html += '</div>';
       html += '</div>';
     });
-    html += '</div>';
     html += '</section>';
 
     // ──────── LEDGER + PTO TRACKER (2-col) ────────
     html += '<section class="atlas-section atlas-ledger-section">';
     html += '<div class="atlas-ledger-grid">';
-    // Ledger
+    // Ledger (연도별 그룹 + subtotal)
     html += '<div class="atlas-ledger">';
     html += '<h4 class="atlas-h4">Travel Investment Ledger</h4>';
     html += '<div class="atlas-ledger-rows">';
-    trips.forEach(function(tr) {
-      html += '<div class="atlas-ledger-row">';
-      html += '<span class="atlas-ledger-name">' + _esc(tr.title) + '</span>';
-      html += '<span class="atlas-ledger-amt">₩' + tr.gross + ' 만</span>';
+    byYear.forEach(function(group, gi) {
+      html += '<div class="atlas-ledger-year-label">' + group.year + '</div>';
+      group.trips.forEach(function(tr) {
+        html += '<div class="atlas-ledger-row">';
+        html += '<span class="atlas-ledger-name">' + _esc(tr.title) + '</span>';
+        html += '<span class="atlas-ledger-amt">₩' + tr.gross + ' 만</span>';
+        html += '</div>';
+      });
+      html += '<div class="atlas-ledger-subtotal">';
+      html += '<span class="atlas-ledger-subtotal-l">' + group.year + ' Subtotal</span>';
+      html += '<span class="atlas-ledger-subtotal-v">₩' + group.gross + ' 만</span>';
       html += '</div>';
     });
     html += '<div class="atlas-ledger-total">';
@@ -156,6 +180,26 @@
       '<span class="atlas-hero-stat-l">' + _esc(label) + '</span>' +
       '<span class="atlas-hero-stat-v">' + _esc(value) + '</span>' +
     '</div>';
+  }
+
+  // trips를 year별로 그룹화 + 연도별 집계
+  function _groupByYear(trips) {
+    var groups = {};
+    var order = [];
+    trips.forEach(function(tr) {
+      var y = tr.year || 0;
+      if (!groups[y]) {
+        groups[y] = { year: y, trips: [], days: 0, gross: 0, own: 0, pto: 0 };
+        order.push(y);
+      }
+      groups[y].trips.push(tr);
+      groups[y].days += tr.days || 0;
+      groups[y].gross += tr.gross || 0;
+      groups[y].own += tr.own || 0;
+      groups[y].pto += tr.ptoDays || 0;
+    });
+    order.sort();
+    return order.map(function(y) { return groups[y]; });
   }
 
   // ──────── Trip 디테일 페이지 (stitch Master Itinerary Eastern Canada) ────────

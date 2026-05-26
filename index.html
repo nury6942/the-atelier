@@ -4113,11 +4113,11 @@
     }
     #travel-atlas-section .atlas-hero-h1 {
       font-family: 'Manrope','Noto Color Emoji',sans-serif;
-      font-size: clamp(40px, 7vw, 96px);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
+      font-size: clamp(32px, 4.5vw, 56px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
       font-weight: 800;
-      margin: 0 0 18px;
+      margin: 0 0 14px;
       color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-hero-amp {
@@ -4507,6 +4507,102 @@
     @media (min-width: 1024px) {
       #travel-atlas-section .atlas-wish-cell { aspect-ratio: auto; padding: 16px 18px 20px; }
       #travel-atlas-section .atlas-wish-note { display: block; margin-top: 8px; }
+      #travel-atlas-section .atlas-wish-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 1280px) {
+      #travel-atlas-section .atlas-wish-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* ──── 연도 그룹 라벨/divider ──── */
+    #travel-atlas-section .atlas-timeline-yearwrap {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    #travel-atlas-section .atlas-timeline-year {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    #travel-atlas-section .atlas-tl-year-label {
+      font-family: 'Manrope',sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--atlas-primary);
+      flex-shrink: 0;
+      padding-right: 18px;
+      border-right: 1px solid var(--atlas-line-soft);
+    }
+    #travel-atlas-section .atlas-tl-year-divider {
+      height: 1px;
+      background: var(--atlas-line-soft);
+      width: 100%;
+    }
+
+    /* ──── 갤러리 연도 헤더 ──── */
+    #travel-atlas-section .atlas-gallery-year { margin-bottom: 48px; }
+    #travel-atlas-section .atlas-gallery-year:last-child { margin-bottom: 0; }
+    #travel-atlas-section .atlas-gallery-year-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--atlas-line);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #travel-atlas-section .atlas-gallery-year-label {
+      font-family: 'Manrope',sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--atlas-ink);
+    }
+    #travel-atlas-section .atlas-gallery-year-meta {
+      font-family: 'Inter',sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--atlas-ink-mute);
+    }
+
+    /* ──── Ledger 연도 라벨 + subtotal ──── */
+    #travel-atlas-section .atlas-ledger-year-label {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--atlas-primary);
+      padding: 14px 0 6px;
+      border-bottom: 1px dashed var(--atlas-line-soft);
+      margin-bottom: 6px;
+    }
+    #travel-atlas-section .atlas-ledger-rows > .atlas-ledger-year-label:first-child {
+      padding-top: 0;
+    }
+    #travel-atlas-section .atlas-ledger-subtotal {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0 0;
+      margin-bottom: 8px;
+      font-family: 'Inter',sans-serif;
+    }
+    #travel-atlas-section .atlas-ledger-subtotal-l {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--atlas-ink-mute);
+    }
+    #travel-atlas-section .atlas-ledger-subtotal-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--atlas-ink);
     }
 
     /* ════════════════════════════════════════════════════════════
@@ -10452,8 +10548,8 @@
 <script src="js/nomad-pages.js?v=168" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
-<script src="js/atlas-data.js?v=2" defer></script>
-<script src="js/atlas-pages.js?v=2" defer></script>
+<script src="js/atlas-data.js?v=3" defer></script>
+<script src="js/atlas-pages.js?v=3" defer></script>
 
 </body>
 </html>

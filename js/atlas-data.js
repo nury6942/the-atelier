@@ -11,6 +11,7 @@
     {
       id: 'scandinavia-2027',
       no: '01',
+      year: 2027,
       title: 'The Scandinavian Spring',
       subtitle: 'Direct to Denmark, slow train to Sweden.',
       cities: 'Copenhagen & Stockholm',
@@ -72,6 +73,7 @@
     {
       id: 'canada-2027',
       no: '02',
+      year: 2027,
       title: 'The Maple Road',
       subtitle: 'Chasing peak foliage from Québec west to Toronto.',
       cities: 'Eastern Canada',
@@ -135,6 +137,7 @@
     {
       id: 'ireland-2028',
       no: '03',
+      year: 2028,
       title: 'The Wild Atlantic Way',
       subtitle: 'Anti-clockwise loop, with one detour into the North.',
       cities: 'Ireland, end to end',
@@ -192,6 +195,7 @@
     {
       id: 'iceland-2028',
       no: '04',
+      year: 2028,
       title: 'The Ring Road',
       subtitle: 'A 1,332 km loop — together, or postponed.',
       cities: 'Iceland, together',
@@ -251,12 +255,14 @@
 
   // ──────── Wishlist (2029+ 후보) ────────
   var WISHLIST = [
-    { no:'01', name:'Norway, deeper',       flag:'🇳🇴',     sub:'Fjords + Aurora',       note:'Bergen → Sognefjord → Lofoten → Tromsø. The Iceland of fjords, on its own terms.' },
-    { no:'02', name:'Caucasus spring',      flag:'🇬🇪 🇦🇲', sub:'Solo, with preparation', note:'Tbilisi wine country and Armenian monasteries. Mountains, hospitality, and no rush.' },
-    { no:'03', name:'Dolomites',            flag:'🇮🇹',     sub:'June–Sept window',       note:"Italy's alpine north — saved for a long summer drive after the snow melts." },
-    { no:'04', name:'Normandy & Brittany',  flag:'🇫🇷',     sub:'Coastal drive',          note:'Étretat cliffs, Mont-Saint-Michel, oyster towns. The other French coast.' },
-    { no:'05', name:'Highway 1',            flag:'🇺🇸',     sub:'SF → LA',                note:'Carmel, Big Sur, Santa Barbara. A classic west-coast drive, finally claimed.' },
-    { no:'06', name:'Slovenia',             flag:'🇸🇮',     sub:'Hidden Alpine',          note:"Lake Bled, Triglav, Ljubljana. Europe's quiet alternative to crowded Switzerland." },
+    { no:'01', name:'Norway',               flag:'🇳🇴',     sub:'Fjords + Aurora',         note:"베르겐, 송네피오르, 게이랑게르, 로포텐 제도, 트롬쇠 오로라. 28년 5월 북유럽 갈 때 빡세서 뺐는데, 피오르 사진 보고 '다음에 꼭' 한 곳." },
+    { no:'02', name:'Georgia & Armenia',    flag:'🇬🇪 🇦🇲', sub:'Caucasus · 2029+',         note:'코카서스 산맥, 와인 발상지, 음식 천국. 안전 측면 좀 빡세서 컨디션 맞을 때 (2029+) 가기로 보류한 곳.' },
+    { no:'03', name:'Dolomites',            flag:'🇮🇹',     sub:'June–Sept window',         note:'알프스 바위산 + 호수, 6~9월 베스트. 26년 토스카나 일정에서 무리 안 하고 뺐던 곳, 따로 일주일 잡고 가기로.' },
+    { no:'04', name:'Normandy & Brittany',  flag:'🇫🇷',     sub:'Coastal drive',            note:'에트르타 코끼리 바위, 몽생미셸, 옹플뢰르. 중세 해안 드라이브.' },
+    { no:'05', name:'Highway 1 (PCH)',      flag:'🇺🇸',     sub:'SF → LA',                  note:'샌프란시스코 → LA, 카멜·빅서·산타바바라. 태평양 끼고 달리는 진리의 루트.' },
+    { no:'06', name:'Mallorca',             flag:'🇪🇸',     sub:'Mediterranean',            note:'지중해 휴양지, 절벽 해안 드라이브, 소예르 같은 오렌지 마을.' },
+    { no:'07', name:'Slovenia',             flag:'🇸🇮',     sub:'Hidden Alpine',            note:'블레드 호수, 트리글라브 국립공원. 유럽 렌터카 여행의 숨은 진주.' },
+    { no:'08', name:'Bavaria',              flag:'🇩🇪',     sub:'Romantic Road',            note:'뮌헨, 노이슈반슈타인 성, 중세 소도시들. 독일 남부 바이에른.' },
   ];
 
   // ──────── 집계 ────────
