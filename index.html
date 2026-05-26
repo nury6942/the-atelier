@@ -5207,6 +5207,352 @@
       font-weight: 700;
       color: var(--atlas-primary);
     }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Travel · Journey — stitch_travel 디자인 토큰 (P1)
+       모든 선택자는 #page-journey scope. 다른 페이지엔 영향 X.
+       P2부터 실제 마크업에 적용. P1만으론 시각 변화 없음.
+       ════════════════════════════════════════════════════════════════════ */
+    #page-journey {
+      /* stitch color palette */
+      --j-primary: #7c3aed;
+      --j-primary-deep: #6b38d4;
+      --j-primary-container: #f5f3ff;
+      --j-on-primary-container: #7c3aed;
+      --j-surface: #ffffff;
+      --j-surface-container: #fafafa;
+      --j-surface-container-low: #ffffff;
+      --j-surface-container-high: #f5f5f5;
+      --j-on-surface: #1a1a1a;
+      --j-on-surface-variant: #666666;
+      --j-outline-variant: #f0f0f0;
+      --j-outline-soft: #f5f5f5;
+      --j-line-deep: #1a1a1a;
+      --j-success-bg: #f0fdf4;
+      --j-success-fg: #15803d;
+      --j-success-border: #dcfce7;
+      --j-warn-bg: #fffbeb;
+      --j-warn-fg: #b45309;
+      --j-warn-border: #fef3c7;
+      --j-danger-fg: #dc2626;
+      --j-danger-soft: #fef2f2;
+
+      /* typography stack */
+      --j-font-display: 'Manrope','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+      --j-font-body: 'Inter','Pretendard','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+
+      /* spacing scale */
+      --j-gutter: 24px;
+      --j-margin: 48px;
+      --j-container-max: 1100px;
+      --j-section-gap: 96px;
+      --j-section-gap-sm: 64px;
+
+      /* shape */
+      --j-radius-sm: 0.125rem;  /* 2px - tags/pills */
+      --j-radius-md: 0.375rem;  /* 6px - inputs */
+      --j-radius-lg: 0.5rem;    /* 8px - small cards */
+      --j-radius-xl: 0.75rem;   /* 12px - large cards */
+    }
+
+    /* ──── 컨테이너 + 섹션 ──── */
+    #page-journey .j-container {
+      max-width: var(--j-container-max);
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    @media (min-width: 768px) {
+      #page-journey .j-container {
+        padding-left: var(--j-margin);
+        padding-right: var(--j-margin);
+      }
+    }
+    #page-journey .j-section { margin-bottom: var(--j-section-gap); }
+    #page-journey .j-section-sm { margin-bottom: var(--j-section-gap-sm); }
+
+    /* ──── 타이포그래피 ──── */
+    #page-journey .j-eyebrow {
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--j-primary);
+    }
+    #page-journey .j-display {
+      font-family: var(--j-font-display);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--j-on-surface);
+    }
+    #page-journey .j-display-xl { font-size: clamp(36px, 5.5vw, 60px); }
+    #page-journey .j-display-lg { font-size: clamp(28px, 4vw, 48px); }
+    #page-journey .j-h2 {
+      font-family: var(--j-font-display);
+      font-size: clamp(24px, 3vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--j-on-surface);
+      margin: 0;
+    }
+    #page-journey .j-h3 {
+      font-family: var(--j-font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--j-on-surface);
+      margin: 0;
+    }
+    #page-journey .j-body {
+      font-family: var(--j-font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-body-lg {
+      font-family: var(--j-font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-meta {
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-num {
+      font-family: var(--j-font-display);
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+
+    /* ──── 카드 (editorial card) ──── */
+    #page-journey .j-card {
+      border: 1px solid var(--j-outline-variant);
+      background: var(--j-surface);
+      border-radius: var(--j-radius-xl);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    #page-journey .j-card-hover:hover {
+      border-color: var(--j-primary);
+    }
+    #page-journey .j-card-pad { padding: 32px; }
+    #page-journey .j-card-pad-sm { padding: 24px; }
+
+    /* ──── 섹션 헤더 (큰 제목 + divider + 보조 버튼) ──── */
+    #page-journey .j-section-head {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    #page-journey .j-section-head-line {
+      flex: 1;
+      height: 1px;
+      background: var(--j-outline-variant);
+    }
+
+    /* ──── 시간대 row (Daily Log timeline) ──── */
+    #page-journey .j-time-row {
+      display: flex;
+      align-items: baseline;
+      gap: 32px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--j-outline-soft);
+      position: relative;
+    }
+    #page-journey .j-time-row:last-child { border-bottom: none; }
+    #page-journey .j-time-col {
+      width: 120px;
+      flex-shrink: 0;
+      font-family: var(--j-font-body);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--j-primary);
+      letter-spacing: -0.01em;
+    }
+    #page-journey .j-time-body { flex: 1; }
+    #page-journey .j-time-title {
+      font-family: var(--j-font-body);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--j-on-surface);
+      margin: 0 0 6px;
+    }
+    #page-journey .j-time-desc {
+      font-family: var(--j-font-body);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--j-on-surface-variant);
+      margin: 0;
+    }
+
+    /* ──── Timeline (accent-dot + line) ──── */
+    #page-journey .j-timeline-rail {
+      position: relative;
+      padding-left: 28px;
+    }
+    #page-journey .j-timeline-dot {
+      position: absolute;
+      left: -32px;
+      top: 22px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid var(--j-primary);
+      background: var(--j-surface);
+      z-index: 2;
+    }
+    #page-journey .j-timeline-line {
+      position: absolute;
+      left: -29px;
+      top: 30px;
+      bottom: -10px;
+      width: 2px;
+      background: #f3f0ff;
+      z-index: 1;
+    }
+
+    /* ──── 태그 (status-tag / tag-pill) ──── */
+    #page-journey .j-status-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: var(--j-radius-sm);
+      line-height: 1.4;
+    }
+    #page-journey .j-status-primary {
+      background: var(--j-primary);
+      color: #fff;
+    }
+    #page-journey .j-status-success {
+      background: var(--j-success-bg);
+      color: var(--j-success-fg);
+      border: 1px solid var(--j-success-border);
+    }
+    #page-journey .j-status-warn {
+      background: var(--j-warn-bg);
+      color: var(--j-warn-fg);
+      border: 1px solid var(--j-warn-border);
+    }
+    #page-journey .j-status-soft {
+      background: var(--j-primary-container);
+      color: var(--j-primary);
+    }
+    #page-journey .j-tag-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--j-outline-variant);
+      color: #888;
+      border-radius: var(--j-radius-sm);
+      background: var(--j-surface);
+      line-height: 1.4;
+    }
+    #page-journey .j-tag-pill-accent {
+      color: var(--j-primary);
+      border-color: rgba(124,58,237,0.2);
+      background: var(--j-primary-container);
+    }
+
+    /* ──── 버튼 ──── */
+    #page-journey .j-btn-primary {
+      background: var(--j-primary);
+      color: #fff;
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--j-radius-sm);
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #page-journey .j-btn-primary:hover { background: var(--j-primary-deep); }
+    #page-journey .j-btn-ghost {
+      background: transparent;
+      color: var(--j-on-surface-variant);
+      padding: 8px 16px;
+      border: 1px solid var(--j-outline-variant);
+      border-radius: 9999px;
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    #page-journey .j-btn-ghost:hover {
+      background: var(--j-surface-container-high);
+      color: var(--j-primary);
+      border-color: var(--j-primary);
+    }
+
+    /* ──── 원형 번호 (Day NN) ──── */
+    #page-journey .j-day-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--j-primary);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--j-font-display);
+      font-size: 22px;
+      font-weight: 900;
+      font-style: italic;
+      flex-shrink: 0;
+    }
+
+    /* ──── 강조 박스 (기념품 / 체크리스트 요약) ──── */
+    #page-journey .j-highlight-box {
+      background: #fcfaff;
+      border: 1px solid rgba(124,58,237,0.1);
+      padding: 28px;
+      border-radius: var(--j-radius-lg);
+    }
+    #page-journey .j-highlight-h {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--j-font-body);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--j-primary);
+      margin: 0 0 16px;
+    }
+
+    /* ──── divider ──── */
+    #page-journey .j-divider {
+      height: 1px;
+      background: var(--j-outline-variant);
+      border: 0;
+    }
+    #page-journey .j-divider-strong {
+      height: 1px;
+      background: var(--j-line-deep);
+      border: 0;
+    }
   </style>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
