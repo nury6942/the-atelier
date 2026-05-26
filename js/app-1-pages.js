@@ -5886,30 +5886,136 @@
     '</div>';
   }
 
+  // 도시 → 국기/국가 추론
+  function _souvenirCountry(city) {
+    var c = (city || '').toLowerCase();
+    if (!c) return { flag:'🌍', name:'기타', kr:'기타' };
+    if (/독일|german|frankfurt|berlin|dresden|munich|münchen|hamburg|stuttgart|bavaria|köln|cologne/.test(c)) return { flag:'🇩🇪', name:'GERMANY', kr:'독일' };
+    if (/이탈리아|italy|italia|pienza|rome|roma|florence|firenze|milan|milano|venice|venezia|naples|napoli|siena|tuscany|toscana/.test(c)) return { flag:'🇮🇹', name:'ITALY', kr:'이탈리아' };
+    if (/일본|japan|tokyo|kyoto|osaka|fukuoka|sapporo|hokkaido|hiroshima/.test(c)) return { flag:'🇯🇵', name:'JAPAN', kr:'일본' };
+    if (/프랑스|france|paris|lyon|marseille|nice|normandy|brittany/.test(c)) return { flag:'🇫🇷', name:'FRANCE', kr:'프랑스' };
+    if (/영국|uk|britain|london|edinburgh|manchester|england/.test(c)) return { flag:'🇬🇧', name:'UNITED KINGDOM', kr:'영국' };
+    if (/스페인|spain|madrid|barcelona|seville|mallorca|valencia/.test(c)) return { flag:'🇪🇸', name:'SPAIN', kr:'스페인' };
+    if (/체코|czech|prague|praha|olomouc|krumlov/.test(c)) return { flag:'🇨🇿', name:'CZECHIA', kr:'체코' };
+    if (/폴란드|poland|warsaw|krakow|kraków|gdansk|oświęcim/.test(c)) return { flag:'🇵🇱', name:'POLAND', kr:'폴란드' };
+    if (/오스트리아|austria|vienna|wien|salzburg/.test(c)) return { flag:'🇦🇹', name:'AUSTRIA', kr:'오스트리아' };
+    if (/크로아티아|croatia|dubrovnik|zagreb|split/.test(c)) return { flag:'🇭🇷', name:'CROATIA', kr:'크로아티아' };
+    if (/덴마크|denmark|copenhagen|aarhus|skagen/.test(c)) return { flag:'🇩🇰', name:'DENMARK', kr:'덴마크' };
+    if (/스웨덴|sweden|stockholm|gothenburg|malmö|malmo/.test(c)) return { flag:'🇸🇪', name:'SWEDEN', kr:'스웨덴' };
+    if (/노르웨이|norway|oslo|bergen|tromsø|tromso|lofoten/.test(c)) return { flag:'🇳🇴', name:'NORWAY', kr:'노르웨이' };
+    if (/핀란드|finland|helsinki|tampere/.test(c)) return { flag:'🇫🇮', name:'FINLAND', kr:'핀란드' };
+    if (/아이슬란드|iceland|reykjavik|reykjavík|vík|akureyri/.test(c)) return { flag:'🇮🇸', name:'ICELAND', kr:'아이슬란드' };
+    if (/아일랜드|ireland|dublin|galway|cork|kilkenny|belfast/.test(c)) return { flag:'🇮🇪', name:'IRELAND', kr:'아일랜드' };
+    if (/포르투갈|portugal|lisbon|lisboa|porto/.test(c)) return { flag:'🇵🇹', name:'PORTUGAL', kr:'포르투갈' };
+    if (/캐나다|canada|montréal|montreal|toronto|québec|quebec|ottawa|halifax/.test(c)) return { flag:'🇨🇦', name:'CANADA', kr:'캐나다' };
+    if (/미국|usa|america|new york|los angeles|san diego|san francisco|chicago|seattle/.test(c)) return { flag:'🇺🇸', name:'USA', kr:'미국' };
+    if (/호주|australia|sydney|melbourne|hobart|adelaide|brisbane/.test(c)) return { flag:'🇦🇺', name:'AUSTRALIA', kr:'호주' };
+    if (/뉴질랜드|new zealand|auckland|queenstown|wellington/.test(c)) return { flag:'🇳🇿', name:'NEW ZEALAND', kr:'뉴질랜드' };
+    if (/말타|malta|valletta/.test(c)) return { flag:'🇲🇹', name:'MALTA', kr:'말타' };
+    if (/슬로베니아|slovenia|ljubljana|bled/.test(c)) return { flag:'🇸🇮', name:'SLOVENIA', kr:'슬로베니아' };
+    if (/스위스|switzerland|zurich|geneva|bern/.test(c)) return { flag:'🇨🇭', name:'SWITZERLAND', kr:'스위스' };
+    return { flag:'🌍', name:(city || '기타').toUpperCase(), kr: city || '기타' };
+  }
+
+  // stitch souvenir row
+  function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn) {
+    var title = (item.title || '').replace(/</g,'&lt;'); // 대상 (가족/동료/나)
+    var desc = (item.description || '').replace(/</g,'&lt;'); // 품목
+    var city = (item.city || '').replace(/</g,'&lt;');
+    var amount = item.amount;
+    // 첫 줄만 메인, 나머지는 sub
+    var descParts = desc.split('\n');
+    var descMain = descParts[0];
+    var descSub = descParts.slice(1).join(' ');
+    var rowCls = checked ? 'j-souvenir-row is-done' : 'j-souvenir-row';
+    var checkInner = checked ? '<span class="material-symbols-outlined">check</span>' : '';
+    return '<div class="' + rowCls + '">' +
+      '<div class="j-souvenir-check ' + (checked ? 'is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
+      '<div class="j-souvenir-info">' +
+        '<span class="j-souvenir-cat"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
+        '<span class="j-souvenir-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + (descMain || '—') + '</span>' +
+        (city ? ' <span style="color:var(--j-on-surface-variant);font-size:11px"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
+        (descSub ? '<span class="j-souvenir-desc">' + descSub + '</span>' : '') +
+      '</div>' +
+      '<span class="j-souvenir-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + '</span>' +
+      '<div class="j-souvenir-actions">' +
+        (editFn ? '<button onclick="' + editFn + '"><span class="material-symbols-outlined">edit_square</span></button>' : '') +
+        '<button class="danger" onclick="' + deleteFn + '"><span class="material-symbols-outlined">delete</span></button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // 도시별로 그룹화 + 국가 추론
+  function _groupSouvenirsByCountry(items) {
+    var groups = {};
+    var order = [];
+    items.forEach(function(it) {
+      var country = _souvenirCountry(it.city || '');
+      var key = country.flag + country.name;
+      if (!groups[key]) {
+        groups[key] = { country: country, items: [] };
+        order.push(key);
+      }
+      groups[key].items.push(it);
+    });
+    return order.map(function(k) { return groups[k]; });
+  }
+
   function renderJourneySouvenir() {
     var container = document.getElementById('journey-souvenir-list');
+    if (!container) return;
+
     if (!isSeedTrip()) {
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
       if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
-      container.innerHTML = fbItems.map(function(item) {
-        var realIdx = journeyData.indexOf(item);
-        var checked = item.status === '완료';
-        return svRow(item.title, item.description, item.city, item.amount, checked,
-          'toggleSouvenir(' + realIdx + ',' + !checked + ')',
-          'deleteJourneyRow(' + realIdx + ')',
-          'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')',
-          'editJourneyItem(' + realIdx + ')');
-      }).join('');
+      var groupsFb = _groupSouvenirsByCountry(fbItems);
+      container.innerHTML = '<div class="j-souvenir-grid">' +
+        groupsFb.map(function(g) {
+          var rowsHtml = g.items.map(function(item) {
+            var realIdx = journeyData.indexOf(item);
+            var checked = item.status === '완료';
+            return svRowSt(item, checked,
+              'toggleSouvenir(' + realIdx + ',' + !checked + ')',
+              'deleteJourneyRow(' + realIdx + ')',
+              'editJourneyItem(' + realIdx + ')',
+              'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+          }).join('');
+          return '<div class="j-souvenir-group">' +
+            '<h3 class="j-souvenir-group-h">' +
+              '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
+              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
+              '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
+            '</h3>' +
+            '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
       return;
     }
     var data = getSouvenirData();
     if (data.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
-    container.innerHTML = data.map(function(item, idx) {
-      return svRow(item.title, item.description, item.city, item.amount, item.checked,
-        'toggleSouvenirLocal(' + idx + ')',
-        'deleteSouvenirLocal(' + idx + ')',
-        'souvenirInlineEdit(this,' + idx + ',\'%FIELD%\')');
-    }).join('');
+    var groupsSeed = _groupSouvenirsByCountry(data);
+    container.innerHTML = '<div class="j-souvenir-grid">' +
+      groupsSeed.map(function(g) {
+        var rowsHtml = g.items.map(function(item, idx) {
+          // seed data는 원본 idx 필요 — 전체 data 배열에서 인덱스 다시 찾기
+          var origIdx = data.indexOf(item);
+          return svRowSt(item, item.checked,
+            'toggleSouvenirLocal(' + origIdx + ')',
+            'deleteSouvenirLocal(' + origIdx + ')',
+            null,
+            'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+        }).join('');
+        return '<div class="j-souvenir-group">' +
+          '<h3 class="j-souvenir-group-h">' +
+            '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
+            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
+            '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
+          '</h3>' +
+          '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
+        '</div>';
+      }).join('') +
+    '</div>';
   }
 
   function updateJourneyCost() {

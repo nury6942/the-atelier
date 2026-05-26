@@ -6609,6 +6609,173 @@
       flex-wrap: wrap;
       gap: 6px;
     }
+
+    /* ════════════════════════════════════════════════════════════
+       P5: Souvenir Checklist (국가/도시별 그룹)
+       ════════════════════════════════════════════════════════════ */
+    #page-journey .j-souvenir-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    @media (min-width: 1024px) {
+      #page-journey .j-souvenir-grid { grid-template-columns: 1fr 1fr; gap: 64px; }
+    }
+    #page-journey .j-souvenir-group { }
+    #page-journey .j-souvenir-group-h {
+      font-family: var(--j-font-display);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--j-on-surface);
+      margin: 0 0 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(124,58,237,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.01em;
+    }
+    #page-journey .j-souvenir-group-h-flag {
+      font-size: 26px;
+      line-height: 1;
+      font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+    }
+    #page-journey .j-souvenir-group-h-meta {
+      margin-left: auto;
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--j-on-surface-variant);
+    }
+    #page-journey .j-souvenir-list {
+      display: flex;
+      flex-direction: column;
+    }
+    #page-journey .j-souvenir-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--j-outline-variant);
+      transition: background 0.15s;
+    }
+    #page-journey .j-souvenir-row:hover { background: rgba(124,58,237,0.02); }
+    #page-journey .j-souvenir-row:last-child { border-bottom: none; }
+    #page-journey .j-souvenir-row.is-done .j-souvenir-name,
+    #page-journey .j-souvenir-row.is-done .j-souvenir-cat,
+    #page-journey .j-souvenir-row.is-done .j-souvenir-desc {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+    #page-journey .j-souvenir-info {
+      flex: 1;
+      min-width: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    #page-journey .j-souvenir-cat {
+      font-family: var(--j-font-body);
+      font-size: 10px;
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--j-primary);
+      margin-right: 8px;
+    }
+    #page-journey .j-souvenir-name {
+      font-family: var(--j-font-body);
+      font-weight: 600;
+      color: var(--j-on-surface);
+    }
+    #page-journey .j-souvenir-desc {
+      display: block;
+      font-family: var(--j-font-body);
+      font-size: 11px;
+      color: var(--j-on-surface-variant);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    #page-journey .j-souvenir-price {
+      font-family: var(--j-font-display);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--j-primary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #page-journey .j-souvenir-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--j-outline-variant);
+      background: var(--j-surface);
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      color: transparent;
+    }
+    #page-journey .j-souvenir-check:hover { border-color: var(--j-primary); }
+    #page-journey .j-souvenir-check.is-checked {
+      background: var(--j-primary);
+      border-color: var(--j-primary);
+      color: #fff;
+    }
+    #page-journey .j-souvenir-check .material-symbols-outlined { font-size: 14px; }
+    #page-journey .j-souvenir-actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #page-journey .j-souvenir-row:hover .j-souvenir-actions { opacity: 1; }
+    #page-journey .j-souvenir-actions button {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: transparent;
+      color: #9aa0a6;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    #page-journey .j-souvenir-actions button:hover {
+      background: var(--j-primary-container);
+      color: var(--j-primary);
+    }
+    #page-journey .j-souvenir-actions button.danger:hover {
+      background: var(--j-danger-soft);
+      color: var(--j-danger-fg);
+    }
+    #page-journey .j-souvenir-actions .material-symbols-outlined { font-size: 14px; }
+
+    /* P5 폴리시 — section 간 간격 통일 + 모바일 hero-image aspect 조정 */
+    @media (max-width: 767px) {
+      #page-journey .j-hero-image {
+        aspect-ratio: 16 / 10;
+      }
+      #page-journey .j-day-card {
+        padding: 24px 20px;
+      }
+      #page-journey .j-day-num {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+      #page-journey .j-trip-card {
+        padding: 20px;
+      }
+    }
   </style>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
