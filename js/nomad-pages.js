@@ -1321,66 +1321,19 @@ window.NOMAD_PAGES = (function(){
     '</div>';
   }
 
-  // ──── Magazine: Places (Bento Grid 8+4) ────
-  // landmarks 5개 + 숨은곳 7개를 bento로 변환:
-  // - main(8): landmarks[0] (가장 중요한 장소)
-  // - sideA(4 위): 숨은곳 카드 (텍스트 only)
-  // - sideB(4 아래): landmarks[1] (이미지 + 캡션)
+  // ──── Magazine: Places (풀 목록만 — 2 컬럼 그리드) ────
+  // 이전: 상단 bento 요약 + 하단 풀 목록 → 중복이라 bento 제거, 풀 목록만 유지
   function _renderPlacesMag(places, hiddenPlaces, num) {
     if (!places || !places.length) return '';
-    var main = places[0];
-    var sideB = places[1] || null;
-    var hidden = (hiddenPlaces && hiddenPlaces[0]) || null;
-
     var html = '<section class="nm-mag-section">';
     html += _magSectionHead(num || '01', 'Places to Visit', 'Curated Landmarks');
-    html += '<div class="nm-bento-grid">';
-
-    // Main 카드 (8-col)
-    html += '<div class="nm-bento-main">';
-    if (main.image) html += '<img src="' + main.image + '" alt="' + main.name + '"/>';
-    html += '<div class="overlay">';
-    html += '<div class="eyebrow">Designer\'s Choice</div>';
-    html += '<h4>' + main.name.replace(/<[^>]+>/g, '').split('(')[0].trim() + '</h4>';
-    html += '<p>' + main.desc.replace(/<[^>]+>/g, '') + '</p>';
-    html += '</div></div>';
-
-    // Side 카드들 (4-col)
-    html += '<div class="nm-bento-side">';
-    // sideA — hidden gem
-    if (hidden) {
-      html += '<div class="nm-bento-side-card">';
-      html += '<div>';
-      html += '<span class="material-symbols-outlined nm-bento-icon">landscape</span>';
-      html += '<h4>Hidden Spots</h4>';
-      html += '<p>' + hidden.desc.replace(/<[^>]+>/g, '').substring(0, 100) + (hidden.desc.length > 100 ? '…' : '') + '</p>';
-      html += '</div>';
-      html += '<a style="color:var(--nm-primary);font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px;text-decoration:none" href="#">' +
-        '숨은 곳 더 보기 <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span></a>';
-      html += '</div>';
-    }
-    // sideB — 두 번째 랜드마크 (이미지 + 캡션)
-    if (sideB) {
-      html += '<div class="nm-bento-side-img">';
-      if (sideB.image) html += '<img src="' + sideB.image + '" alt="' + sideB.name + '"/>';
-      else html += '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:64px;opacity:0.4"><span class="material-symbols-outlined" style="font-size:64px">photo</span></div>';
-      html += '<div class="caption">';
-      html += '<div class="t">' + sideB.name.split('(')[0].trim() + '</div>';
-      html += '<div class="s">' + sideB.desc.replace(/<[^>]+>/g, '').substring(0, 60) + '…</div>';
-      html += '</div></div>';
-    }
-    html += '</div>'; // /side
-
-    html += '</div></section>';
-
-    // 풀 목록 (랜드마크 + 숨은곳) — bento 아래 expand 목록으로
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px">';
-    html += _renderPlaces({ title: '랜드마크 (전체)', icon: 'landscape', items: places });
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">';
+    html += _renderPlaces({ title: '랜드마크', icon: 'landscape', items: places });
     if (hiddenPlaces && hiddenPlaces.length) {
       html += _renderPlaces({ title: '숨은 곳', icon: 'explore', items: hiddenPlaces });
     }
     html += '</div>';
-
+    html += '</section>';
     return html;
   }
 
