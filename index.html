@@ -70,19 +70,19 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=157" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=157" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=157" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=157" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=157" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=157" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=157" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=157" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=157" as="script">
-  <link rel="preload" href="js/nomad-cities.js?v=157" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=157" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=158" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=158" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=158" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=158" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=158" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=158" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=158" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=158" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=158" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=158" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=158" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
@@ -986,7 +986,828 @@
     }
 
     /* ════════════════════════════════════════════════════════════════════
-       Stitch 매거진 컴포넌트 (City Guide v2 — Editorial)
+       City Guide v3 — Editorial Serif (Playfair Display, Stitch v2)
+    ════════════════════════════════════════════════════════════════════ */
+
+    .nomad-page .nm-city-v2-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0;
+      font-family: 'Inter', 'Pretendard', sans-serif;
+      color: #1f2937;
+    }
+    .nomad-page .nm-city-v2-page * {
+      box-sizing: border-box;
+    }
+    .nomad-page .nm-city-v2-section {
+      padding: 24px 0;
+    }
+
+    /* ──── Hero ──── */
+    .nomad-page .nm-city-v2-hero {
+      padding: 0 0 16px;
+    }
+    .nomad-page .nm-city-v2-hero-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    .nomad-page .nm-city-v2-hero-deco {
+      position: absolute;
+      top: -8px;
+      right: -20px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    .nomad-page .nm-city-v2-hero-deco .material-symbols-outlined {
+      font-size: 220px;
+      color: #312E81;
+      transform: rotate(12deg);
+    }
+    .nomad-page .nm-city-v2-hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .nomad-page .nm-city-v2-eyebrow {
+      display: inline-block;
+      padding: 5px 14px;
+      background: #e0e7ff;
+      color: #4338ca;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .nomad-page .nm-city-v2-h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 700;
+      font-style: italic;
+      color: #0f172a;
+      line-height: 1.05;
+      margin: 0 0 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .nomad-page .nm-city-v2-h1-code {
+      font-size: 24px;
+      font-weight: 400;
+      font-style: normal;
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .nomad-page .nm-city-v2-tagline {
+      font-size: 18px;
+      font-weight: 400;
+      color: #64748b;
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 0 12px;
+    }
+    .nomad-page .nm-city-v2-quote {
+      font-size: 14px;
+      font-style: italic;
+      color: #475569;
+      line-height: 1.6;
+      max-width: 720px;
+      padding: 12px 0 4px 16px;
+      border-left: 2px solid #c7d2fe;
+      margin: 0 0 32px;
+    }
+    .nomad-page .nm-city-v2-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .nomad-page .nm-city-v2-stat {
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-city-v2-stat-label {
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 6px;
+    }
+    .nomad-page .nm-city-v2-stat-value {
+      font-size: 13px;
+      color: #312E81;
+      font-weight: 700;
+      line-height: 1.4;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ──── Quick Highlights (deep-indigo) ──── */
+    .nomad-page .nm-city-v2-highlights {
+      background: #312E81;
+      color: #fff;
+      padding: 36px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(49,46,129,0.12);
+    }
+    .nomad-page .nm-city-v2-highlights-h {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .nomad-page .nm-city-v2-highlights-h .material-symbols-outlined {
+      color: #c7d2fe;
+    }
+    .nomad-page .nm-city-v2-highlights-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .nomad-page .nm-city-v2-highlights-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+    .nomad-page .nm-city-v2-highlights-list li .material-symbols-outlined {
+      color: #c7d2fe;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ──── Section h2 (no card wrap) ──── */
+    .nomad-page .nm-city-v2-h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nomad-page .nm-city-v2-h2 .material-symbols-outlined {
+      color: #4f46e5;
+    }
+    .nomad-page .nm-city-v2-num {
+      width: 32px;
+      height: 32px;
+      background: #4f46e5;
+      color: #fff;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+    .nomad-page .nm-city-v2-h2-serif {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 28px;
+    }
+    .nomad-page .nm-city-v2-h2-sub {
+      font-family: 'Inter', sans-serif;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6366f1;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .nomad-page .nm-city-v2-h2-serif-large {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 32px;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    /* ──── Card wrap (white rounded-3xl) ──── */
+    .nomad-page .nm-city-v2-card-wrap {
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    }
+    .nomad-page .nm-city-v2-card-wrap .nm-city-v2-h2 {
+      margin-bottom: 24px;
+    }
+
+    /* ──── Landmarks + Hidden Spots (2-col asymmetric) ──── */
+    .nomad-page .nm-city-v2-places {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 900px) {
+      .nomad-page .nm-city-v2-places { grid-template-columns: 1fr; }
+    }
+    .nomad-page .nm-city-v2-landmark-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .nomad-page .nm-city-v2-landmark {
+      background: #fff;
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px solid #f1f5f9;
+      transition: box-shadow 0.2s;
+    }
+    .nomad-page .nm-city-v2-landmark:hover {
+      box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+    }
+    .nomad-page .nm-city-v2-landmark-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-city-v2-landmark-head h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-v2-landmark-pill {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .nomad-page .nm-city-v2-landmark p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .nomad-page .nm-city-v2-hidden-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .nomad-page .nm-city-v2-hidden-row {
+      background: #fff;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      transition: border-color 0.15s;
+      cursor: default;
+    }
+    .nomad-page .nm-city-v2-hidden-row:hover {
+      border-color: #c7d2fe;
+    }
+    .nomad-page .nm-city-v2-hidden-row h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 3px;
+    }
+    .nomad-page .nm-city-v2-hidden-row p {
+      font-size: 11px;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-v2-hidden-row .material-symbols-outlined {
+      color: #cbd5e1;
+      font-size: 16px;
+      transition: color 0.15s;
+    }
+    .nomad-page .nm-city-v2-hidden-row:hover .material-symbols-outlined {
+      color: #818cf8;
+    }
+
+    /* ──── Neighborhoods Table ──── */
+    .nomad-page .nm-city-v2-table-wrap {
+      overflow-x: auto;
+    }
+    .nomad-page .nm-city-v2-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .nomad-page .nm-city-v2-table thead tr {
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-city-v2-table th {
+      padding: 14px 0;
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .nomad-page .nm-city-v2-table tbody tr {
+      border-bottom: 1px solid #f8fafc;
+    }
+    .nomad-page .nm-city-v2-table td {
+      padding: 18px 0;
+      font-size: 13px;
+      color: #475569;
+      vertical-align: middle;
+    }
+    .nomad-page .nm-city-v2-area-name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: #1e293b !important;
+    }
+    .nomad-page .nm-city-v2-stars {
+      display: flex;
+      gap: 1px;
+    }
+    .nomad-page .nm-city-v2-star {
+      color: #6366f1;
+      font-size: 16px;
+      font-variation-settings: 'FILL' 1;
+    }
+    .nomad-page .nm-city-v2-star-empty {
+      color: #e2e8f8;
+      font-size: 16px;
+    }
+
+    /* ──── Experiences 3-color ──── */
+    .nomad-page .nm-city-v2-exp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .nomad-page .nm-city-v2-exp-card {
+      border-radius: 24px;
+      padding: 32px;
+      border: 1px solid;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    }
+    .nomad-page .nm-city-v2-exp-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+    .nomad-page .nm-city-v2-exp-icon .material-symbols-outlined {
+      font-size: 22px;
+    }
+    .nomad-page .nm-city-v2-exp-h {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 20px;
+      margin: 0 0 22px;
+      line-height: 1.3;
+    }
+    .nomad-page .nm-city-v2-exp-items {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .nomad-page .nm-city-v2-exp-item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .nomad-page .nm-city-v2-exp-item h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-v2-exp-price {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nomad-page .nm-city-v2-exp-item p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ──── Nomad Mode 3-col ──── */
+    .nomad-page .nm-city-v2-nomad-head {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .nomad-page .nm-city-v2-nomad-divider {
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+    .nomad-page .nm-city-v2-nomad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+    }
+    .nomad-page .nm-city-v2-nomad-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .nomad-page .nm-city-v2-nomad-col-h {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nomad-page .nm-city-v2-nomad-col-h .material-symbols-outlined {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+    .nomad-page .nm-city-v2-nomad-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.03);
+      transition: border-color 0.15s;
+    }
+    .nomad-page .nm-city-v2-nomad-card:hover {
+      border-color: #818cf8;
+    }
+    .nomad-page .nm-city-v2-nomad-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .nomad-page .nm-city-v2-nomad-card-head h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-v2-nomad-card-price {
+      font-size: 10px;
+      font-weight: 700;
+      color: #16a34a;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nomad-page .nm-city-v2-nomad-card p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ──── People & Networking (deep-indigo glassmorphic) ──── */
+    .nomad-page .nm-city-v2-people {
+      background: #312E81;
+      color: #fff;
+      border-radius: 24px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .nomad-page .nm-city-v2-people-deco {
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    .nomad-page .nm-city-v2-people-deco .material-symbols-outlined {
+      font-size: 280px;
+      color: #fff;
+    }
+    .nomad-page .nm-city-v2-people-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+    @media (max-width: 900px) {
+      .nomad-page .nm-city-v2-people-inner { grid-template-columns: 1fr; }
+    }
+    .nomad-page .nm-city-v2-people-h {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 28px;
+      color: #fff;
+      margin: 0 0 26px;
+    }
+    .nomad-page .nm-city-v2-people-group {
+      margin-bottom: 26px;
+    }
+    .nomad-page .nm-city-v2-people-group-h {
+      font-size: 10px;
+      font-weight: 700;
+      color: #c7d2fe;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin: 0 0 12px;
+    }
+    .nomad-page .nm-city-v2-people-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .nomad-page .nm-city-v2-people-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.5;
+    }
+    .nomad-page .nm-city-v2-people-list li .material-symbols-outlined {
+      font-size: 14px;
+      color: #818cf8;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .nomad-page .nm-city-v2-people-right {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .nomad-page .nm-city-v2-people-right-h {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 22px;
+    }
+    .nomad-page .nm-city-v2-people-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .nomad-page .nm-city-v2-people-step:last-child {
+      margin-bottom: 0;
+    }
+    .nomad-page .nm-city-v2-people-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #6366f1;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .nomad-page .nm-city-v2-people-step-h {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 3px;
+    }
+    .nomad-page .nm-city-v2-people-step-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ──── Budget Table ──── */
+    .nomad-page .nm-city-v2-budget-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .nomad-page .nm-city-v2-budget-table thead {
+      background: #f8fafc;
+    }
+    .nomad-page .nm-city-v2-budget-table th {
+      padding: 14px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .nomad-page .nm-city-v2-budget-table th:first-child { border-top-left-radius: 12px; }
+    .nomad-page .nm-city-v2-budget-table th:last-child { border-top-right-radius: 12px; }
+    .nomad-page .nm-city-v2-budget-table tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .nomad-page .nm-city-v2-budget-table td {
+      padding: 16px;
+      font-size: 13px;
+      color: #475569;
+      vertical-align: top;
+    }
+    .nomad-page .nm-city-v2-budget-cat {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: #1e293b !important;
+    }
+    .nomad-page .nm-city-v2-budget-sub {
+      font-size: 12px !important;
+      color: #94a3b8 !important;
+    }
+    .nomad-page .nm-city-v2-budget-num {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: #0f172a !important;
+    }
+    .nomad-page .nm-city-v2-budget-total {
+      background: rgba(238,242,255,0.5);
+    }
+    .nomad-page .nm-city-v2-budget-total td {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      color: #312E81 !important;
+      font-size: 14px;
+    }
+    .nomad-page .nm-city-v2-budget-note {
+      font-size: 10px;
+      font-weight: 700;
+      color: #6366f1 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .nomad-page .nm-city-v2-budget-footnote {
+      margin-top: 14px;
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* ──── Closing Focus ──── */
+    .nomad-page .nm-city-v2-focus-section {
+      border-top: 2px solid #f1f5f9;
+      padding-top: 40px;
+      margin-top: 8px;
+    }
+    .nomad-page .nm-city-v2-focus-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin: 0 0 28px;
+    }
+    .nomad-page .nm-city-v2-focus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 32px;
+    }
+    .nomad-page .nm-city-v2-focus-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .nomad-page .nm-city-v2-focus-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .nomad-page .nm-city-v2-focus-item h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+    .nomad-page .nm-city-v2-focus-item p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ──── Deep Dive (raw sections) ──── */
+    .nomad-page .nm-city-v2-deep-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .nomad-page .nm-city-v2-deep-card {
+      /* uses existing SECTION_RENDERERS card styles */
+    }
+
+    /* ──── Footer ──── */
+    .nomad-page .nm-city-v2-footer {
+      margin-top: 40px;
+      background: #0f172a;
+      color: #fff;
+      padding: 40px 48px;
+      border-radius: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .nomad-page .nm-city-v2-footer-h {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+      margin: 0 0 4px;
+    }
+    .nomad-page .nm-city-v2-footer p {
+      font-size: 11px;
+      color: #64748b;
+      margin: 0;
+    }
+    .nomad-page .nm-city-v2-footer-meta {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    /* mobile shrink */
+    @media (max-width: 720px) {
+      .nomad-page .nm-city-v2-hero-card,
+      .nomad-page .nm-city-v2-people,
+      .nomad-page .nm-city-v2-highlights { padding: 28px 20px; }
+      .nomad-page .nm-city-v2-h1 { font-size: 38px; }
+      .nomad-page .nm-city-v2-h2-serif-large { font-size: 26px; }
+      .nomad-page .nm-city-v2-card-wrap { padding: 22px; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Stitch 매거진 컴포넌트 (City Guide v2 — Editorial · 기존 유지)
     ════════════════════════════════════════════════════════════════════ */
 
     /* ──── Magazine Hero (이미지 또는 그라데이션 배경) ──── */
@@ -7499,7 +8320,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=157" defer></script>
+<script src="js/app-1-pages.js?v=158" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -8296,24 +9117,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=157" defer></script>
+<script src="js/app-2-init.js?v=158" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=157" defer></script>
-<script src="js/roadmap-data.js?v=157" defer></script>
-<script src="js/daily-actions.js?v=157" defer></script>
-<script src="js/daily-guides.js?v=157" defer></script>
-<script src="js/app-4-roadmap.js?v=157" defer></script>
-<script src="js/app-5-ledger-export.js?v=157" defer></script>
-<script src="js/app-6-postype-analytics.js?v=157" defer></script>
+<script src="js/app-3-flatpickr.js?v=158" defer></script>
+<script src="js/roadmap-data.js?v=158" defer></script>
+<script src="js/daily-actions.js?v=158" defer></script>
+<script src="js/daily-guides.js?v=158" defer></script>
+<script src="js/app-4-roadmap.js?v=158" defer></script>
+<script src="js/app-5-ledger-export.js?v=158" defer></script>
+<script src="js/app-6-postype-analytics.js?v=158" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=157" defer></script>
-<script src="js/nomad-cities.js?v=157" defer></script>
-<script src="js/nomad-pages.js?v=157" defer></script>
+<script src="js/nomad-data.js?v=158" defer></script>
+<script src="js/nomad-cities.js?v=158" defer></script>
+<script src="js/nomad-pages.js?v=158" defer></script>
 
 </body>
 </html>

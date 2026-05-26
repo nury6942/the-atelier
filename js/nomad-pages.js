@@ -3301,11 +3301,367 @@ window.NOMAD_PAGES = (function(){
   };
 
   // ──── 도시 페이지 렌더 (Stitch 매거진 스타일 v2) ────
+  // ════════════════════════════════════════════════════════════════════
+  // City Guide v2 — Stitch Editorial 디자인 (Playfair Display serif)
+  // 모든 17개 도시에 자동 적용 (renderer 1개 → 도시 데이터 sections 자동 매핑)
+  // ════════════════════════════════════════════════════════════════════
+
+  // 국가 코드 추출 (이모지 국기 + 한글 → 코드)
+  function _cityCountryCode(hero) {
+    var c = hero.country || '';
+    if (c.indexOf('포르투갈') >= 0 || c.indexOf('Portugal') >= 0) return 'pt';
+    if (c.indexOf('아일랜드') >= 0 || c.indexOf('Ireland') >= 0)  return 'ie';
+    if (c.indexOf('덴마크') >= 0 || c.indexOf('Denmark') >= 0)    return 'dk';
+    if (c.indexOf('노르웨이') >= 0 || c.indexOf('Norway') >= 0)   return 'no';
+    if (c.indexOf('스웨덴') >= 0 || c.indexOf('Sweden') >= 0)     return 'se';
+    if (c.indexOf('핀란드') >= 0 || c.indexOf('Finland') >= 0)    return 'fi';
+    if (c.indexOf('아이슬란드') >= 0 || c.indexOf('Iceland') >= 0) return 'is';
+    if (c.indexOf('말타') >= 0 || c.indexOf('Malta') >= 0)        return 'mt';
+    if (c.indexOf('호주') >= 0 || c.indexOf('Australia') >= 0)    return 'au';
+    if (c.indexOf('뉴질랜드') >= 0 || c.indexOf('New Zealand') >= 0) return 'nz';
+    if (c.indexOf('미국') >= 0 || c.indexOf('USA') >= 0)          return 'us';
+    if (c.indexOf('캐나다') >= 0 || c.indexOf('Canada') >= 0)     return 'ca';
+    return '';
+  }
+
+  // ──── v2 Hero — Playfair Display serif + Quick Stats ────
+  function _renderCityHeroV2(h, monthLabel) {
+    var code = _cityCountryCode(h);
+    // city 문자열에서 이모지 떼고 한글만
+    var cityKr = (h.city || '').replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '').trim();
+    var cityEmoji = ((h.city || '').match(/[\u{1F1E6}-\u{1F1FF}]{2}/gu) || [''])[0];
+
+    var html = '<section class="nm-city-v2-hero">';
+    html += '<div class="nm-city-v2-hero-card">';
+    // 우상단 deco
+    html += '<div class="nm-city-v2-hero-deco"><span class="material-symbols-outlined">explore</span></div>';
+    html += '<div class="nm-city-v2-hero-inner">';
+    // eyebrow
+    html += '<span class="nm-city-v2-eyebrow">City Guide · ' + (monthLabel || '') + (h.country ? ' · ' + h.country : '') + '</span>';
+    // serif headline
+    html += '<h1 class="nm-city-v2-h1"><span class="nm-city-v2-h1-code">' + code + '</span>' + cityEmoji + ' ' + cityKr + '</h1>';
+    // subtitle quote
+    if (h.tagline) html += '<p class="nm-city-v2-tagline">' + h.tagline + '</p>';
+    if (h.quote) html += '<p class="nm-city-v2-quote">"' + h.quote + '"</p>';
+    // Quick Stats 5-card
+    html += '<div class="nm-city-v2-stats">';
+    var stats = [
+      { label:'체류 기간', value:h.dates },
+      { label:'날씨',     value:h.weather },
+      { label:'비자',     value:h.visa },
+      { label:'모드',     value:h.mode },
+      { label:'분위기',   value:h.vibe },
+    ];
+    stats.forEach(function(s) {
+      if (!s.value) return;
+      html += '<div class="nm-city-v2-stat"><p class="nm-city-v2-stat-label">' + s.label + '</p>' +
+        '<p class="nm-city-v2-stat-value">' + s.value + '</p></div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Quick Highlights (deep-indigo) ────
+  function _renderCityHighlightsV2(meaning) {
+    if (!meaning || !meaning.length) return '';
+    var html = '<section class="nm-city-v2-section">';
+    html += '<div class="nm-city-v2-highlights">';
+    html += '<h3 class="nm-city-v2-highlights-h"><span class="material-symbols-outlined">auto_awesome</span>누리한테 의미하는 것</h3>';
+    html += '<ul class="nm-city-v2-highlights-list">';
+    meaning.forEach(function(m) {
+      html += '<li><span class="material-symbols-outlined">check_circle</span><span>' + m + '</span></li>';
+    });
+    html += '</ul>';
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Landmarks + Hidden Spots (2-col asymmetric) ────
+  function _renderCityPlacesV2(landmarks, hidden) {
+    if (!landmarks || !landmarks.length) return '';
+    var html = '<section class="nm-city-v2-section nm-city-v2-places">';
+
+    // LEFT: Landmarks (큰 카드 stack)
+    html += '<div class="nm-city-v2-places-col">';
+    html += '<h2 class="nm-city-v2-h2"><span class="nm-city-v2-num">01</span>랜드마크 · 꼭 가볼 곳</h2>';
+    html += '<div class="nm-city-v2-landmark-stack">';
+    landmarks.forEach(function(p, i) {
+      // 자동 pill: index 0 = Iconic / 1 = Heritage / 2 = View / etc.
+      var pills = ['Iconic', 'Heritage', 'View', 'Hidden', 'Local', 'Modern', 'Classic'];
+      var pillLabel = p.price || pills[i % pills.length];
+      html += '<article class="nm-city-v2-landmark">';
+      html += '<div class="nm-city-v2-landmark-head">' +
+        '<h4>' + p.name + '</h4>' +
+        '<span class="nm-city-v2-landmark-pill">' + pillLabel + '</span>' +
+      '</div>';
+      if (p.desc) html += '<p>' + p.desc + '</p>';
+      html += '</article>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    // RIGHT: Hidden Spots (작은 row stack)
+    if (hidden && hidden.length) {
+      html += '<div class="nm-city-v2-places-col">';
+      html += '<h2 class="nm-city-v2-h2"><span class="nm-city-v2-num">02</span>슬로우 · 숨겨진 명소</h2>';
+      html += '<div class="nm-city-v2-hidden-stack">';
+      hidden.forEach(function(p) {
+        html += '<div class="nm-city-v2-hidden-row">' +
+          '<div><h4>' + p.name + '</h4>' + (p.desc ? '<p>' + p.desc + '</p>' : '') + '</div>' +
+          '<span class="material-symbols-outlined">arrow_forward_ios</span>' +
+        '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    }
+
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Neighborhoods (별점 테이블) ────
+  function _renderCityNeighborhoodsV2(neighborhoods) {
+    if (!neighborhoods || !neighborhoods.items || !neighborhoods.items.length) return '';
+    var html = '<section class="nm-city-v2-section">';
+    html += '<div class="nm-city-v2-card-wrap">';
+    html += '<h2 class="nm-city-v2-h2"><span class="material-symbols-outlined">location_on</span>Neighborhood Ratings · 거주 적합성</h2>';
+    html += '<div class="nm-city-v2-table-wrap">';
+    html += '<table class="nm-city-v2-table"><thead><tr>' +
+      '<th>Area Name</th><th>Rating</th><th>Summary</th>' +
+    '</tr></thead><tbody>';
+    neighborhoods.items.forEach(function(n) {
+      var stars = (n.stars || '').toString();
+      var filled = (stars.match(/★/g) || []).length;
+      var empty = 5 - filled;
+      var starHtml = '';
+      for (var i = 0; i < filled; i++) starHtml += '<span class="material-symbols-outlined nm-city-v2-star">star</span>';
+      for (var j = 0; j < empty; j++) starHtml += '<span class="material-symbols-outlined nm-city-v2-star-empty">star</span>';
+      html += '<tr><td class="nm-city-v2-area-name">' + n.name + '</td>' +
+        '<td><div class="nm-city-v2-stars">' + starHtml + '</div></td>' +
+        '<td>' + (n.desc || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Experiences (3-color cards, auto-rotating) ────
+  function _renderCityExperiencesV2(experiencesSections) {
+    if (!experiencesSections || !experiencesSections.length) return '';
+    var colors = [
+      { bg:'#eef2ff', border:'#e0e7ff', iconBg:'#4f46e5', iconShadow:'rgba(79,70,229,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#4338ca' },
+      { bg:'#fffbeb', border:'#fef3c7', iconBg:'#d97706', iconShadow:'rgba(217,119,6,0.25)',  titleColor:'#451a03', subColor:'#92400e', noteColor:'#b45309' },
+      { bg:'#fff1f2', border:'#ffe4e6', iconBg:'#e11d48', iconShadow:'rgba(225,29,72,0.25)',  titleColor:'#4c0519', subColor:'#9f1239', noteColor:'#be123c' },
+      { bg:'#ecfdf5', border:'#d1fae5', iconBg:'#059669', iconShadow:'rgba(5,150,105,0.25)',  titleColor:'#022c22', subColor:'#065f46', noteColor:'#047857' },
+    ];
+    var html = '<section class="nm-city-v2-section">';
+    html += '<h2 class="nm-city-v2-h2 nm-city-v2-h2-serif"><span class="material-symbols-outlined">stars</span>Experiences <span class="nm-city-v2-h2-sub">경험</span></h2>';
+    html += '<div class="nm-city-v2-exp-grid">';
+    experiencesSections.forEach(function(sec, idx) {
+      var c = colors[idx % colors.length];
+      html += '<div class="nm-city-v2-exp-card" style="background:' + c.bg + ';border-color:' + c.border + '">';
+      html += '<div class="nm-city-v2-exp-icon" style="background:' + c.iconBg + ';box-shadow:0 8px 16px ' + c.iconShadow + '">' +
+        '<span class="material-symbols-outlined">' + (sec.icon || 'star') + '</span>' +
+      '</div>';
+      html += '<h3 class="nm-city-v2-exp-h" style="color:' + c.titleColor + '">' + sec.title + '</h3>';
+      html += '<div class="nm-city-v2-exp-items">';
+      (sec.items || []).forEach(function(item) {
+        html += '<div class="nm-city-v2-exp-item">';
+        html += '<div class="nm-city-v2-exp-item-head">' +
+          '<h4 style="color:' + c.subColor + '">' + item.name + '</h4>' +
+          (item.price ? '<span class="nm-city-v2-exp-price" style="color:' + c.noteColor + ';background:rgba(255,255,255,0.6)">' + item.price + '</span>' : '') +
+        '</div>';
+        if (item.desc) html += '<p>' + item.desc + '</p>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Nomad Mode (3-col: Coworking / Cafes / Libraries) ────
+  function _renderCityNomadModeV2(nomadSections) {
+    if (!nomadSections || !nomadSections.length) return '';
+
+    // 키워드별 분류
+    var cowork = [], cafe = [], lib = [], misc = [];
+    nomadSections.forEach(function(s) {
+      var t = (s.title || '').toLowerCase();
+      if (/코워킹|cowork|coworking|work|운영/i.test(t)) cowork.push(s);
+      else if (/카페|cafe|coffee|커피|fika|로스터|roaster/i.test(t)) cafe.push(s);
+      else if (/도서관|library/i.test(t)) lib.push(s);
+      else misc.push(s);
+    });
+
+    var columns = [
+      { icon:'desktop_mac', label:'Coworking',          sections:cowork },
+      { icon:'coffee',      label:'Work-friendly Cafes', sections:cafe },
+      { icon:'menu_book',   label:'Libraries',           sections:lib },
+    ];
+    if (misc.length) columns.push({ icon:'event_note', label:'Other', sections:misc });
+
+    var html = '<section class="nm-city-v2-section">';
+    html += '<div class="nm-city-v2-nomad-head">';
+    html += '<h2 class="nm-city-v2-h2-serif-large">Nomad Mode <span class="nm-city-v2-h2-sub">노마드 모드</span></h2>';
+    html += '<div class="nm-city-v2-nomad-divider"></div>';
+    html += '</div>';
+    html += '<div class="nm-city-v2-nomad-grid">';
+    columns.forEach(function(col) {
+      if (!col.sections.length) return;
+      html += '<div class="nm-city-v2-nomad-col">';
+      html += '<h3 class="nm-city-v2-nomad-col-h"><span class="material-symbols-outlined">' + col.icon + '</span>' + col.label + '</h3>';
+      col.sections.forEach(function(sec) {
+        (sec.items || []).forEach(function(item) {
+          html += '<div class="nm-city-v2-nomad-card">';
+          html += '<div class="nm-city-v2-nomad-card-head"><h4>' + item.name + '</h4>' +
+            (item.price ? '<span class="nm-city-v2-nomad-card-price">' + item.price + '</span>' : '') +
+          '</div>';
+          if (item.desc) html += '<p>' + item.desc + '</p>';
+          html += '</div>';
+        });
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 People & Networking (deep-indigo glassmorphic) ────
+  function _renderCityPeopleV2(peopleSections, timeline) {
+    if (!peopleSections.length && !timeline) return '';
+    var html = '<section class="nm-city-v2-section">';
+    html += '<div class="nm-city-v2-people">';
+    html += '<div class="nm-city-v2-people-deco"><span class="material-symbols-outlined">groups</span></div>';
+    html += '<div class="nm-city-v2-people-inner">';
+
+    // LEFT
+    html += '<div class="nm-city-v2-people-left">';
+    html += '<h2 class="nm-city-v2-people-h">People &amp; Networking</h2>';
+    peopleSections.forEach(function(sec) {
+      // subsections 타입 처리
+      var groups = sec.items || sec.groups || [];
+      groups.forEach(function(g) {
+        html += '<div class="nm-city-v2-people-group">';
+        html += '<h4 class="nm-city-v2-people-group-h">' + (g.h || '') + '</h4>';
+        html += '<ul class="nm-city-v2-people-list">';
+        (g.items || []).forEach(function(it) {
+          html += '<li><span class="material-symbols-outlined">group</span><span>' + it + '</span></li>';
+        });
+        html += '</ul>';
+        html += '</div>';
+      });
+    });
+    html += '</div>';
+
+    // RIGHT (glassmorphic): timeline 또는 부가 정보
+    if (timeline && timeline.items && timeline.items.length) {
+      html += '<div class="nm-city-v2-people-right">';
+      html += '<h3 class="nm-city-v2-people-right-h">' + (timeline.title || '누리한테 자연스러운 사교 루트') + '</h3>';
+      timeline.items.forEach(function(t, i) {
+        html += '<div class="nm-city-v2-people-step">' +
+          '<span class="nm-city-v2-people-step-num">' + (i + 1) + '</span>' +
+          '<div>' +
+            '<p class="nm-city-v2-people-step-h">' + (t.when || '') + (t.title ? ' · ' + t.title : '') + '</p>' +
+            '<p class="nm-city-v2-people-step-text">' + (t.text || t.body || '') + '</p>' +
+          '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Budget (proper table with € + ₩) ────
+  function _renderCityBudgetV2(budgetData) {
+    if (!budgetData || !budgetData.rows || !budgetData.rows.length) return '';
+    var html = '<section class="nm-city-v2-section">';
+    html += '<div class="nm-city-v2-card-wrap">';
+    html += '<h2 class="nm-city-v2-h2"><span class="material-symbols-outlined">payments</span>1달 생활비 예산 · 최소 가이드</h2>';
+    html += '<div class="nm-city-v2-table-wrap">';
+    html += '<table class="nm-city-v2-budget-table"><thead><tr>' +
+      '<th>카테고리</th><th>세부 내역</th><th>월 합계 (€)</th><th>원화 환산 (₩)</th>' +
+    '</tr></thead><tbody>';
+    budgetData.rows.forEach(function(r) {
+      html += '<tr><td class="nm-city-v2-budget-cat">' + r.name + '</td>' +
+        '<td class="nm-city-v2-budget-sub">' + (r.sub || '') + '</td>' +
+        '<td class="nm-city-v2-budget-num">' + r.eur + '</td>' +
+        '<td class="nm-city-v2-budget-num">' + r.krw + '</td></tr>';
+    });
+    if (budgetData.total) {
+      html += '<tr class="nm-city-v2-budget-total"><td>1달 합계</td>' +
+        '<td>' + (budgetData.total.note ? '<span class="nm-city-v2-budget-note">' + budgetData.total.note + '</span>' : '(숙소 제외)') + '</td>' +
+        '<td class="nm-city-v2-budget-num">' + budgetData.total.eur + '</td>' +
+        '<td class="nm-city-v2-budget-num">' + budgetData.total.krw + '</td></tr>';
+    }
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '<p class="nm-city-v2-budget-footnote">※ 위 금액은 숙소비 제외한 순수 생활비. 숙소는 거주 형태에 따라 별도.</p>';
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Closing Focus (2-col numbered) ────
+  function _renderCityFocusV2(focusSections) {
+    if (!focusSections.length) return '';
+    var html = '<section class="nm-city-v2-section nm-city-v2-focus-section">';
+    html += '<h3 class="nm-city-v2-focus-eyebrow">Next Step Focus · 핵심</h3>';
+    html += '<div class="nm-city-v2-focus-grid">';
+    focusSections.forEach(function(sec) {
+      (sec.items || []).forEach(function(item, idx) {
+        // h에서 번호 추출 (예: "1. ..." 또는 "1)" )
+        var match = (item.h || '').match(/^(\d+)/);
+        var num = match ? match[1] : (idx + 1);
+        var title = (item.h || '').replace(/^\d+[\.\)]\s*/, '');
+        html += '<div class="nm-city-v2-focus-item">';
+        html += '<div class="nm-city-v2-focus-num">' + num + '</div>';
+        html += '<div><h4>' + title + '</h4><p>' + (item.body || '') + '</p></div>';
+        html += '</div>';
+      });
+    });
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ──── v2 Deep Dive (기타 raw 섹션: timeline 제외, learn from LEARN, list, table, note, places 추가 등) ────
+  function _renderCityDeepDiveV2(rawSections) {
+    if (!rawSections.length) return '';
+    var html = '<section class="nm-city-v2-section">';
+    html += '<h3 class="nm-city-v2-focus-eyebrow">Deep Dive · Local Intelligence</h3>';
+    html += '<div class="nm-city-v2-deep-grid">';
+    rawSections.forEach(function(s) {
+      var renderer = SECTION_RENDERERS[s.type];
+      if (renderer) {
+        html += '<div class="nm-city-v2-deep-card">' + renderer(s) + '</div>';
+      }
+    });
+    html += '</div>';
+    html += '</section>';
+    return html;
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // renderCity v2 — 메인 디스패처
+  // ════════════════════════════════════════════════════════════════════
   function renderCity(cityId) {
     var cities = window.NOMAD_CITIES || {};
     var city = cities[cityId];
     if (!city) {
-      // 데이터 없으면 placeholder
       var label = cityId;
       (DATA.NAV || []).forEach(function(g) {
         (g.items || []).forEach(function(i) { if (i.id === cityId) label = i.label; });
@@ -3313,164 +3669,130 @@ window.NOMAD_PAGES = (function(){
       return placeholderPage(cityId, label);
     }
 
-    var html = '';
-
-    // 1. 매거진 Hero (이미지 또는 그라데이션)
-    html += _renderMagHero(city.hero, city.monthLabel);
-
-    // 2. 누리한테 의미하는 것 (있으면)
-    if (city.meaning && city.meaning.length) {
-      html += '<section class="nm-mag-section">';
-      html += _magSectionHead('00', 'Why This City Matters', 'Nuri\'s Lens');
-      html += '<div class="nm-card">';
-      html += '<ul class="nm-list-bullet">';
-      city.meaning.forEach(function(m) { html += '<li>' + m + '</li>'; });
-      html += '</ul>';
-      html += '</div></section>';
-    }
-
-    // 섹션 분류: places 첫 번째(랜드마크) + 두 번째(숨은곳) → bento grid
-    // experiences = "EXPERIENCES" divider 이후의 places 타입들
-    // nomadMode = "NOMAD MODE" divider 이후의 places + list
-    // budget = "BUDGET" divider 이후의 table
-    // why = "FOCUS" divider 이후의 learn
-
     var sections = city.sections || [];
-    var sectionNum = 1;
     var currentDividerLabel = '';
-    var landmarks = null;
-    var hiddenSpots = null;
-    var experiences = [];
-    var nomadModeBlocks = [];
+    var landmarks = null, hiddenSpots = null;
+    var neighborhoods = null;
+    var experiencesSections = [];
+    var nomadSections = [];
+    var peopleSections = [];
+    var peopleTimeline = null;
     var budgetData = null;
-    var whyData = null;
-    var rawSections = []; // 매거진 패턴에 안 맞는 섹션들 (neighborhoods, learn, timeline, subsections)
+    var focusSections = [];
+    var deepSections = [];
 
     sections.forEach(function(s) {
       if (s.type === 'divider') {
         currentDividerLabel = s.label;
         return;
       }
+      var inPlaces = /PLACES/i.test(currentDividerLabel);
       var inExperiences = /EXPERIENCES/i.test(currentDividerLabel);
+      var inLearn = /LEARN/i.test(currentDividerLabel);
       var inNomadMode = /NOMAD MODE/i.test(currentDividerLabel);
       var inPeople = /PEOPLE/i.test(currentDividerLabel);
       var inBudget = /BUDGET/i.test(currentDividerLabel);
       var inFocus = /FOCUS/i.test(currentDividerLabel);
-      var inLearn = /LEARN/i.test(currentDividerLabel);
-      var inPlaces = /PLACES/i.test(currentDividerLabel);
 
       if (s.type === 'places' && inPlaces) {
         if (!landmarks) landmarks = s.items;
         else if (!hiddenSpots) hiddenSpots = s.items;
-        else rawSections.push(s); // 추가 places는 일반 렌더
-      } else if (s.type === 'places' && inExperiences) {
-        // experiences에 합치기 (전체)
-        s.items.forEach(function(item) {
-          experiences.push(Object.assign({}, item, { icon: s.icon }));
-        });
-      } else if (s.type === 'places' && inNomadMode) {
-        // nomad mode 블록으로 변환 (전체 항목, 이름 자르지 X)
-        nomadModeBlocks.push({
-          icon: s.icon || 'corporate_fare',
-          title: s.title,
-          list: s.items.map(function(p) {
-            return { name: p.name.replace(/<[^>]+>/g, ''), score: p.price || '' };
-          })
-        });
-      } else if (s.type === 'list' && inNomadMode) {
-        // list도 별도 블록 (전체 항목)
-        nomadModeBlocks.push({
-          icon: s.icon || 'schedule',
-          title: s.title,
-          items: s.items  // 전체 list 항목 그대로
-        });
+        else deepSections.push(s);
+      } else if (s.type === 'neighborhoods' && inPlaces) {
+        neighborhoods = s;
+      } else if (s.type === 'neighborhoods') {
+        // 다른 divider 안에 있더라도 neighborhoods는 별도 섹션
+        neighborhoods = s;
+      } else if ((s.type === 'places' || s.type === 'list' || s.type === 'table' || s.type === 'note') && inExperiences) {
+        experiencesSections.push(s);
+      } else if ((s.type === 'places' || s.type === 'list' || s.type === 'note') && inNomadMode) {
+        nomadSections.push(s);
+      } else if (s.type === 'subsections' && inPeople) {
+        peopleSections.push(s);
+      } else if (s.type === 'timeline' && inPeople) {
+        peopleTimeline = s;
       } else if (s.type === 'table' && inBudget) {
-        // budget을 magazine 형식으로 변환
         budgetData = {
-          headers: s.headers,
           rows: (s.rows || []).map(function(row) {
-            // row: [category, sub, eur, krw]
             var eurStr = row[2] ? row[2].toString() : '';
-            var numMatch = eurStr.match(/(\d+)/);
-            var value = numMatch ? parseInt(numMatch[1]) : 0;
             return {
               name: (row[0] || '').replace(/<[^>]+>/g, ''),
               sub: (row[1] || '').replace(/<[^>]+>/g, ''),
-              eur: '€' + eurStr,
-              krw: '₩' + (row[3] || '').replace(/<[^>]+>/g, ''),
-              value: value
+              eur: eurStr,
+              krw: (row[3] || '').toString().replace(/<[^>]+>/g, ''),
             };
           }),
           total: s.footer ? {
-            name: (s.footer[0] || '').replace(/<[^>]+>/g, ''),
-            eur: '€' + (s.footer[2] || '').replace(/<[^>]+>/g, ''),
-            krw: '₩' + (s.footer[3] || '').replace(/<[^>]+>/g, ''),
+            eur: (s.footer[2] || '').toString().replace(/<[^>]+>/g, ''),
+            krw: (s.footer[3] || '').toString().replace(/<[^>]+>/g, ''),
             note: s.note
           } : null
         };
       } else if (s.type === 'budget' && inBudget) {
-        // 새 스키마: rows = [{name, sub, eur, krw}] + total = {eur, krw}
         budgetData = {
           rows: (s.rows || []).map(function(r) {
-            var eurStr = (r.eur || '').toString();
-            var numMatch = eurStr.match(/(\d+)/);
-            var value = numMatch ? parseInt(numMatch[1]) : 0;
             return {
               name: (r.name || '').replace(/<[^>]+>/g, ''),
               sub: (r.sub || '').replace(/<[^>]+>/g, ''),
-              eur: eurStr.indexOf('€') === 0 || eurStr.indexOf('AU$') === 0 ? eurStr : '€' + eurStr,
-              krw: (r.krw || '').toString().indexOf('₩') === 0 ? r.krw : '₩' + (r.krw || ''),
-              value: value
+              eur: (r.eur || ''),
+              krw: (r.krw || ''),
             };
           }),
           total: s.total ? {
-            name: '합계',
-            eur: (s.total.eur || '').toString(),
-            krw: (s.total.krw || '').toString().indexOf('₩') === 0 ? s.total.krw : '₩' + (s.total.krw || ''),
+            eur: (s.total.eur || ''),
+            krw: (s.total.krw || ''),
             note: s.note
           } : null
         };
       } else if (s.type === 'learn' && inFocus) {
-        // FOCUS의 learn (다른 도시와 다른 것)은 전체를 raw로 — 정보 손실 X
-        rawSections.push(s);
-      } else if (s.type === 'learn' && inLearn) {
-        // Learn 섹션은 그대로 (디자이너·작가 안목)
-        rawSections.push(s);
+        focusSections.push(s);
       } else {
-        // 나머지는 raw (neighborhoods, timeline, subsections, table from daytrips 등)
-        rawSections.push(s);
+        // LEARN의 learn, 다른 timeline, daytrips table, 추가 list 등
+        deepSections.push(s);
       }
     });
 
-    // 3. Places to Visit — bento
-    if (landmarks && landmarks.length) {
-      html += _renderPlacesMag(landmarks, hiddenSpots, '0' + sectionNum++);
-    }
+    var html = '';
+    html += '<div class="nm-city-v2-page">';
 
-    // 4. Experiences + Nomad Mode (Split)
-    if (experiences.length || nomadModeBlocks.length) {
-      html += _renderExperiencesSplit(experiences, nomadModeBlocks, '0' + sectionNum++);
-    }
+    // 1. Hero (Playfair serif + Quick Stats)
+    html += _renderCityHeroV2(city.hero, city.monthLabel);
 
-    // 5. Raw 섹션들 (neighborhoods, learn, timeline, etc.)
-    if (rawSections.length) {
-      html += '<section class="nm-mag-section">';
-      html += _magSectionHead('0' + sectionNum++, 'Deep Dive', 'Local Intelligence');
-      html += '<div style="display:grid;grid-template-columns:1fr;gap:24px">';
-      rawSections.forEach(function(s) {
-        var renderer = SECTION_RENDERERS[s.type];
-        if (renderer) html += renderer(s);
-      });
-      html += '</div></section>';
-    }
+    // 2. Quick Highlights (deep-indigo)
+    html += _renderCityHighlightsV2(city.meaning);
 
-    // 6. Budget — intensity 바
-    if (budgetData) {
-      html += _renderBudgetMag(budgetData, '0' + sectionNum++);
-    }
+    // 3. Landmarks + Hidden Spots (2-col asymmetric)
+    html += _renderCityPlacesV2(landmarks, hiddenSpots);
 
-    // (Why City 컴포넌트 제거 — FOCUS의 learn 6개를 그대로 raw로 출력하므로 정보 손실 X)
+    // 4. Neighborhood Ratings (별점 테이블)
+    html += _renderCityNeighborhoodsV2(neighborhoods);
 
+    // 5. Experiences (3-color)
+    html += _renderCityExperiencesV2(experiencesSections);
+
+    // 6. Nomad Mode (3-col)
+    html += _renderCityNomadModeV2(nomadSections);
+
+    // 7. People & Networking (deep-indigo + glassmorphic)
+    html += _renderCityPeopleV2(peopleSections, peopleTimeline);
+
+    // 8. Deep Dive (LEARN + 기타)
+    html += _renderCityDeepDiveV2(deepSections);
+
+    // 9. Budget (table)
+    html += _renderCityBudgetV2(budgetData);
+
+    // 10. Closing Focus (2-col numbered)
+    html += _renderCityFocusV2(focusSections);
+
+    // 11. Footer
+    html += '<footer class="nm-city-v2-footer">' +
+      '<div><h2 class="nm-city-v2-footer-h">Nomad Master Edition</h2>' +
+      '<p>1년 노마드 · 17 도시 · 누리 안목 한 권</p></div>' +
+      '<div class="nm-city-v2-footer-meta">' + (city.monthLabel || '') + ' · ' + (city.hero && city.hero.country || '') + '</div>' +
+    '</footer>';
+
+    html += '</div>'; // /nm-city-v2-page
     return html;
   }
 
