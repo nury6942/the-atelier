@@ -6962,6 +6962,80 @@
     }
     #page-journey .j-souvenir-actions .material-symbols-outlined { font-size: 14px; }
 
+    /* ════════════════════════════════════════════════════════════
+       Travel Journey ToC — sticky 좌측 sub-nav (editorial 톤)
+       메인 사이드바 옆에 fixed. 1500px+ 화면에서만 표시.
+       ════════════════════════════════════════════════════════════ */
+    .j-toc {
+      position: fixed;
+      top: 90px;
+      width: 150px;
+      z-index: 30;
+      display: none;
+      font-family: 'Inter','Pretendard',sans-serif;
+    }
+    /* 1500px+에서 메인 사이드바 우측에 표시 */
+    @media (min-width: 1500px) {
+      .j-toc { display: block; left: 252px; }
+    }
+    @media (min-width: 1700px) {
+      .j-toc { left: 268px; }
+    }
+    .j-toc-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin: 0 0 14px 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .j-toc-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .j-toc-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.15s;
+      cursor: pointer;
+    }
+    .j-toc-link:hover { color: #7c3aed; }
+    .j-toc-link .j-toc-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .j-toc-link.is-active {
+      color: #7c3aed;
+      font-weight: 800;
+    }
+    .j-toc-link.is-active .j-toc-dot {
+      background: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.18);
+    }
+    .j-toc-link .j-toc-label {
+      transition: transform 0.2s;
+    }
+    .j-toc-link.is-active .j-toc-label {
+      transform: translateX(2px);
+    }
+
     /* P5 폴리시 — section 간 간격 통일 + 모바일 hero-image aspect 조정 */
     @media (max-width: 767px) {
       #page-journey .j-hero-image {
@@ -7452,7 +7526,7 @@
         <!-- ════════════════════════════════════════════════════════════
              Trip Hero (stitch P2/P5) — 상단 메타 + 본문 이미지 + Voyage Path 2-col
              ════════════════════════════════════════════════════════════ -->
-        <section class="j-hero j-section">
+        <section id="trv-hero" class="j-hero j-section">
           <div class="j-hero-grid">
             <div class="j-hero-left">
               <span class="j-eyebrow">Current Voyage</span>
@@ -7508,7 +7582,7 @@
         <!-- ════════════════════════════════════════════════════════════
              Stops 그리드 (Atlas 매거진 스타일 + Ctrl+V 이미지)
              ════════════════════════════════════════════════════════════ -->
-        <section class="j-section">
+        <section id="trv-stops" class="j-section">
           <div class="j-section-head">
             <h2 class="j-h2">Stops</h2>
             <div class="j-section-head-line"></div>
@@ -7546,7 +7620,7 @@
         </section>
 
         <!-- 데스크탑 전용: Daily Log (stitch P3 editorial 카드 stack, lg 이상) -->
-        <section id="journey-week-view" class="hidden lg:block j-section">
+        <section id="journey-week-view" data-toc-target="trv-daily" class="hidden lg:block j-section">
           <div class="j-section-head">
             <h2 class="j-h2">The Daily Log</h2>
             <div class="j-section-head-line"></div>
@@ -7623,7 +7697,7 @@
           <div class="col-span-12 lg:col-span-12 space-y-8">
 
             <!-- 1. 항공편 -->
-            <section>
+            <section id="trv-flights">
               <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
                 <button onclick="openFlightAddModal()" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
@@ -7830,7 +7904,7 @@
     </div>
 
             <!-- 2. 숙소 정보 (Curated Stays) -->
-            <section class="mb-2">
+            <section id="trv-lodging" class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
                 <button onclick="openTravelModal('stay-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>숙소 추가</button>
@@ -8084,7 +8158,7 @@
             </div>
 
             <!-- 3. 도시 간 이동 수단 (Voyages) -->
-            <section class="mb-2">
+            <section id="trv-transport" class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
                 <div class="flex items-center gap-3">
@@ -8219,7 +8293,7 @@
             </div>
 
             <!-- 3-2. 렌트카 (Rental Cars) -->
-            <section class="mb-2">
+            <section id="trv-rental" class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">렌트카</h3>
                 <button onclick="openTravelModal('rental-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>렌트카 추가</button>
@@ -8454,7 +8528,7 @@
             </div>
 
             <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
-            <section class="mb-2">
+            <section id="trv-souvenir" class="mb-2">
               <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">Souvenir Checklist</h3>
                 <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>기념품 추가</button>
@@ -12466,6 +12540,8 @@
 <script src="js/journey-city-images.js?v=1" defer></script>
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
+<!-- Travel Journey ToC (좌측 sticky sub-nav) -->
+<script src="js/travel-toc.js?v=1" defer></script>
 
 </body>
 </html>
