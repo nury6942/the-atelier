@@ -18,7 +18,7 @@ window.NOMAD_DATA = (function(){
       { id: 'nomad-budget',     icon: 'payments',  label: 'Budget' },
     ]},
     { group: 'Tracks', items: [
-      { id: 'nomad-ip',         icon: 'menu_book', label: 'IP · Webnovel' },
+      { id: 'nomad-ip',         icon: 'menu_book', label: '소설' },
       { id: 'nomad-channels',   icon: 'home_work', label: 'Stay Channels' },
       { id: 'nomad-principles', icon: 'rule',      label: 'Operating Principles' },
     ]},

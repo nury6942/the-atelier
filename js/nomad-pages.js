@@ -239,7 +239,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div>' +
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
         '<span style="width:8px;height:8px;border-radius:50%;background:var(--nm-primary)"></span>' +
-        '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:var(--nm-deep-indigo)">Main Track · 포스타입 웹소</h4>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:var(--nm-deep-indigo)">Main Track · 소설</h4>' +
       '</div>' +
       '<p style="font-size:12px;color:var(--nm-text-3)">B시리즈 · 게이트 평가 핵심 트랙</p>' +
     '</div>';
@@ -363,11 +363,11 @@ window.NOMAD_PAGES = (function(){
       '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">필명 · 도메인 · 메일리 · 계좌 분리</p>' +
     '</div>';
 
-    // Webnovel Queue → IPTrack
+    // 소설 Queue → IPTrack
     html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-ip\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
         '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">menu_book</span>' +
-        '<h5 style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:var(--nm-on-surface)">Webnovel Queue</h5>' +
+        '<h5 style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:var(--nm-on-surface)">소설 큐</h5>' +
       '</div>' +
       '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' +
         '<strong style="color:var(--nm-deep-indigo)">월 ₩450만</strong> · 게이트 목표' +
@@ -939,7 +939,7 @@ window.NOMAD_PAGES = (function(){
     return html;
   }
 
-  // ──────── IP · Webnovel Track 페이지 ────────
+  // ──────── 소설 트랙 페이지 ────────
   function renderIPTrack() {
     var html = '';
 
@@ -971,7 +971,7 @@ window.NOMAD_PAGES = (function(){
     else if (today >= '2027-04-01') activePhase = 7;
 
     // Page Header
-    html += pageHeader('IP · Webnovel Track', '수익 트랙 · 자산 트랙',
+    html += pageHeader('소설 트랙', '수익 트랙 · 자산 트랙',
       '메인 게이트 카운트 + 서브 장기 자산');
 
     // ════════ SECTION 1 · Hero Stats Row (3 카드) ════════
@@ -980,7 +980,7 @@ window.NOMAD_PAGES = (function(){
     // ① Active Track
     html += '<div class="nm-card" style="padding:28px">' +
       '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Active Track</p>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size:24px;font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom:16px">포스타입 웹소</h3>' +
+      '<h3 style="font-family:var(--nm-font-h);font-size:24px;font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom:16px">소설</h3>' +
       '<div style="display:flex;align-items:center;gap:8px">' +
         '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,0.18);animation:nm-pulse 1.5s infinite"></span>' +
         '<span style="font-family:var(--nm-font-h);font-size:13px;color:var(--nm-on-surface);font-weight:600">B시리즈 · 현재 ₩200-250만/월</span>' +
@@ -1012,11 +1012,11 @@ window.NOMAD_PAGES = (function(){
     // ════════ SECTION 2 · 8/4 split — Revenue Goals + 노마드 동안 운영 ════════
     html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
 
-    // ───── LEFT (8): Postype Webnovel Revenue Goals ─────
+    // ───── LEFT (8): 소설 매출 목표 ─────
     html += '<div class="nm-card nm-card-lg">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px">' +
       '<div>' +
-        '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">Postype Webnovel Revenue Goals</h4>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">소설 매출 목표</h4>' +
         '<p style="font-size:13px;color:var(--nm-text-2)">B시리즈 중심 · 게이트 카운트 핵심 트랙</p>' +
       '</div>' +
       '<span style="background:#F5F3FF;color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700">High Priority</span>' +
@@ -1056,7 +1056,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low)">' +
       '<span class="material-symbols-outlined" style="color:#7d3d00;font-size:24px;margin-bottom:8px">rocket_launch</span>' +
       '<h5 style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">확장 전략</h5>' +
-      '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5"><strong>2번째 작품</strong> (2026 후반/2027) · 메이저 웹소 플랫폼 진입 검토</p>' +
+      '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5"><strong>2번째 작품</strong> (2026 후반/2027) · 메이저 소설 플랫폼 진입 검토</p>' +
     '</div>';
     html += '</div>';
 
@@ -1070,7 +1070,7 @@ window.NOMAD_PAGES = (function(){
     '</div>';
 
     var operationModes = [
-      { title:'메인 (웹소)', bg:'#F5F3FF', accent:'var(--nm-primary)', icon:'menu_book',
+      { title:'메인 (소설)', bg:'#F5F3FF', accent:'var(--nm-primary)', icon:'menu_book',
         items:['평일 오전 4시간 글 (블록 사수)', '주 2-3편 발행 페이스', '출국 전 3개월치 콘텐츠 비축'] },
       { title:'서브 (IP)', bg:'#e6eeff', accent:'var(--nm-secondary)', icon:'analytics',
         items:['평일 1일 = 코딩 (수요일 풀데이)', '메일리 격주 발행', '사연 + 1:1 월 2-4건'] },
@@ -2547,7 +2547,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div>' +
       '<h5 style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">일자리 X · 비자 도구</h5>' +
       '<ul style="list-style:none;padding:0;margin:0;font-size:12px;color:var(--nm-text-2);line-height:1.7">' +
-        '<li>· 본업 외 IP·웹소 수익이 메인</li>' +
+        '<li>· 본업 외 소설 수익이 메인</li>' +
         '<li>· 포르투갈에서 일자리 X</li>' +
         '<li>· 워홀 = <strong>비자 도구로만 사용</strong></li>' +
       '</ul>' +
