@@ -3552,9 +3552,11 @@ window.NOMAD_PAGES = (function(){
   }
 
   // ──── v3 Hero — Full-bleed image/gradient + Glass Stats ────
-  function _renderCityHeroV2(h, monthLabel) {
+  function _renderCityHeroV2(h, monthLabel, cityId) {
     var code = _cityCountryCode(h);
     var cityKr = (h.city || '').replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '').trim();
+    var hasImage = !!h.image;
+    var safeId = String(cityId || '').replace(/'/g, "\\'");
 
     var html = '<section class="nm-city-v2-hero">';
     // 배경: 이미지 있으면 img, 없으면 그라데이션 fallback
@@ -3565,6 +3567,20 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-city-v2-hero-bg-fallback"></div>';
     }
     html += '</div>';
+    // 이미지 컨트롤 (우상단 글래스 버튼) + 숨겨진 파일 input
+    if (cityId) {
+      var controlsCls = hasImage ? '' : 'is-empty';
+      html += '<div class="nm-city-v2-hero-controls ' + controlsCls + '">';
+      if (hasImage) {
+        html += '<button class="nm-city-v2-hero-ctrl" onclick="NOMAD_PAGES.heroImageUpload(\'' + safeId + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>';
+        html += '<button class="nm-city-v2-hero-ctrl" onclick="NOMAD_PAGES.heroImageDelete(\'' + safeId + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>';
+      } else {
+        html += '<button class="nm-city-v2-hero-ctrl" onclick="NOMAD_PAGES.heroImageUpload(\'' + safeId + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
+      }
+      html += '<input type="file" id="nm-hero-file-' + safeId + '" accept="image/*" style="display:none" onchange="NOMAD_PAGES.heroImageFileSelected(event, \'' + safeId + '\')"/>';
+      html += '</div>';
+      html += '<div class="nm-city-v2-hero-paste-hint">Ctrl+V로 이미지 붙여넣기 가능</div>';
+    }
     // 컨텐츠 (어두운 오버레이는 ::after 의사 요소가 처리)
     html += '<div class="nm-city-v2-hero-inner">';
     // eyebrow
@@ -3902,6 +3918,9 @@ window.NOMAD_PAGES = (function(){
       return placeholderPage(cityId, label);
     }
 
+    // LS 캐시에서 hero 이미지 즉시 머지 (Firestore 백그라운드는 _nmActivateCity에서)
+    _nmInjectHeroImageFromLS(cityId);
+
     var sections = city.sections || [];
     var currentDividerLabel = '';
     var landmarks = null, hiddenSpots = null;
@@ -3989,7 +4008,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-city-v2-page">';
 
     // 1. Hero (Playfair serif + Quick Stats)
-    html += _renderCityHeroV2(city.hero, city.monthLabel);
+    html += _renderCityHeroV2(city.hero, city.monthLabel, cityId);
 
     // 2. Quick Highlights (deep-indigo)
     html += _renderCityHighlightsV2(city.meaning);
@@ -4103,11 +4122,207 @@ window.NOMAD_PAGES = (function(){
     }
   }
 
+  // ════════════════════════════════════════════════════════════
+  // Hero 이미지: 업로드 / 클립보드 페이스트 / 저장 / 로드
+  // — LS 캐시: atelier_nomad_hero_{cityId}
+  // — Firestore: nomadCityImages/{cityId} = { image, updatedAt }
+  // ════════════════════════════════════════════════════════════
+  var _currentCityId = null;
+  var _nmCityIdSet = null; // City Guides 그룹의 cityId Set (도시 페이지 판별용)
+
+  function _nmGetCityIdSet() {
+    if (_nmCityIdSet) return _nmCityIdSet;
+    _nmCityIdSet = {};
+    (DATA.NAV || []).forEach(function(group) {
+      if (group.group !== 'City Guides') return;
+      (group.items || []).forEach(function(item) { _nmCityIdSet[item.id] = true; });
+    });
+    return _nmCityIdSet;
+  }
+  function _nmIsCityPage(subPageId) {
+    return !!_nmGetCityIdSet()[subPageId];
+  }
+
+  function _nmGetHeroImageLS(cityId) {
+    try { return localStorage.getItem('atelier_nomad_hero_' + cityId) || null; }
+    catch(e) { return null; }
+  }
+  function _nmSetHeroImageLS(cityId, dataUrl) {
+    try {
+      if (dataUrl) localStorage.setItem('atelier_nomad_hero_' + cityId, dataUrl);
+      else localStorage.removeItem('atelier_nomad_hero_' + cityId);
+    } catch(e) {}
+  }
+  function _nmInjectHeroImageFromLS(cityId) {
+    var cities = window.NOMAD_CITIES || {};
+    var city = cities[cityId];
+    if (!city || !city.hero) return;
+    var cached = _nmGetHeroImageLS(cityId);
+    if (cached) city.hero.image = cached;
+  }
+
+  function _nmLoadHeroImageFB(cityId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve(null);
+    return db.collection('nomadCityImages').doc(cityId).get().then(function(doc) {
+      if (doc.exists) return doc.data().image || null;
+      return null;
+    }).catch(function(e) { console.warn('[nm-hero] FB load failed', e); return null; });
+  }
+  function _nmSaveHeroImageFB(cityId, dataUrl) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('nomadCityImages').doc(cityId).set({
+      image: dataUrl,
+      updatedAt: Date.now()
+    }).catch(function(e) { console.warn('[nm-hero] FB save failed', e); });
+  }
+  function _nmDeleteHeroImageFB(cityId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('nomadCityImages').doc(cityId).delete()
+      .catch(function(e) { console.warn('[nm-hero] FB delete failed', e); });
+  }
+
+  // 이미지 리사이즈(최대 폭 1600) + JPEG 압축 (품질 0.82, 너무 크면 0.7로 재시도)
+  function _nmProcessImage(fileOrBlob) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var maxW = 1600;
+          var w = img.width, h = img.height;
+          if (w > maxW) {
+            h = Math.round(h * maxW / w);
+            w = maxW;
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          if (dataUrl.length > 900000) {
+            dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          }
+          resolve(dataUrl);
+        };
+        img.onerror = function() { reject(new Error('이미지 디코딩 실패')); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() { reject(new Error('파일 읽기 실패')); };
+      reader.readAsDataURL(fileOrBlob);
+    });
+  }
+
+  // 이미지 적용: 메모리 데이터 + LS 저장 + 화면 갱신 + (백그라운드) Firestore 저장
+  function _nmApplyHeroImage(cityId, dataUrl) {
+    var cities = window.NOMAD_CITIES || {};
+    var city = cities[cityId];
+    if (!city || !city.hero) return;
+    city.hero.image = dataUrl;
+    _nmSetHeroImageLS(cityId, dataUrl);
+    if (_currentCityId === cityId) {
+      var content = document.getElementById('nomad-content');
+      if (content) content.innerHTML = renderPage(cityId);
+    }
+    if (typeof showSyncToast === 'function') showSyncToast('🖼 이미지 저장됨');
+    _nmSaveHeroImageFB(cityId, dataUrl);
+  }
+
+  function heroImageUpload(cityId) {
+    var input = document.getElementById('nm-hero-file-' + cityId);
+    if (input) input.click();
+  }
+  function heroImageFileSelected(e, cityId) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 파일만 받을 수 있어요');
+      return;
+    }
+    _nmProcessImage(file).then(function(dataUrl) {
+      _nmApplyHeroImage(cityId, dataUrl);
+    }).catch(function(err) {
+      console.error('[nm-hero] upload failed', err);
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+    });
+    e.target.value = ''; // 같은 파일 다시 선택 가능하게
+  }
+  function heroImageDelete(cityId) {
+    if (!confirm('이미지를 삭제할까요?')) return;
+    var cities = window.NOMAD_CITIES || {};
+    var city = cities[cityId];
+    if (!city || !city.hero) return;
+    city.hero.image = null;
+    _nmSetHeroImageLS(cityId, null);
+    if (_currentCityId === cityId) {
+      var content = document.getElementById('nomad-content');
+      if (content) content.innerHTML = renderPage(cityId);
+    }
+    if (typeof showSyncToast === 'function') showSyncToast('🗑 이미지 삭제됨');
+    _nmDeleteHeroImageFB(cityId);
+  }
+
+  // 글로벌 paste 리스너 — 도시 페이지에서만 동작
+  function _nmPasteHandler(e) {
+    if (!_currentCityId) return;
+    if (!_nmIsCityPage(_currentCityId)) return;
+    var ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+    var items = (e.clipboardData || {}).items || [];
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.kind === 'file' && it.type && it.type.indexOf('image/') === 0) {
+        e.preventDefault();
+        var blob = it.getAsFile();
+        if (!blob) return;
+        _nmProcessImage(blob).then(function(dataUrl) {
+          _nmApplyHeroImage(_currentCityId, dataUrl);
+        }).catch(function(err) {
+          console.error('[nm-hero] paste failed', err);
+          if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+        });
+        return;
+      }
+    }
+  }
+  var _nmPasteRegistered = false;
+  function _nmRegisterPasteHandler() {
+    if (_nmPasteRegistered) return;
+    document.addEventListener('paste', _nmPasteHandler);
+    _nmPasteRegistered = true;
+  }
+
+  // 도시 페이지 진입 시: 현재 cityId 캐시 + LS 머지 + paste 리스너 + Firestore 백그라운드 fetch
+  function _nmActivateCity(cityId) {
+    var changed = (_currentCityId !== cityId);
+    _currentCityId = cityId;
+    _nmRegisterPasteHandler();
+    if (!changed) return; // 같은 도시 반복 진입 시 Firestore 재요청 안 함
+    _nmLoadHeroImageFB(cityId).then(function(remote) {
+      if (!remote) return;
+      var cached = _nmGetHeroImageLS(cityId);
+      if (cached === remote) return;
+      _nmSetHeroImageLS(cityId, remote);
+      var cities = window.NOMAD_CITIES || {};
+      if (cities[cityId] && cities[cityId].hero) cities[cityId].hero.image = remote;
+      if (_currentCityId === cityId) {
+        var content = document.getElementById('nomad-content');
+        if (content) content.innerHTML = renderPage(cityId);
+      }
+    });
+  }
+
   // ──────── Sub-page 라우팅 ────────
   // 페이지 내부 항목 클릭 시 호출. URL은 안 바뀌고 #nomad-content만 교체.
   function go(subPageId) {
     if (!subPageId) return;
     currentSubPage = subPageId;
+    // 도시 페이지면 진입 활성화 (Firestore 백그라운드 fetch + paste 리스너)
+    if (_nmIsCityPage(subPageId)) {
+      _nmActivateCity(subPageId);
+    } else {
+      _currentCityId = null;
+    }
     var content = document.getElementById('nomad-content');
     if (content) {
       content.innerHTML = renderPage(subPageId);
@@ -4147,5 +4362,9 @@ window.NOMAD_PAGES = (function(){
     toggleGroup: toggleGroup,
     go: go,
     enter: enter,
+    // Hero 이미지 컨트롤 (도시 페이지에서 onclick으로 호출)
+    heroImageUpload: heroImageUpload,
+    heroImageFileSelected: heroImageFileSelected,
+    heroImageDelete: heroImageDelete,
   };
 })();
