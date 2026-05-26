@@ -1456,7 +1456,13 @@ window.NOMAD_PAGES = (function(){
     html += _magSectionHead(num || '03', 'Budget Breakdown', 'Financial Mastery');
     html += '<div style="background:#fff;border:1px solid #f1f5f9;border-radius:16px;overflow:hidden;box-shadow:var(--nm-shadow-card)">';
     html += '<table class="nm-bg-table">';
-    html += '<thead><tr><th>' + (budget.headers || ['카테고리','€/월','원화','강도']).map(function(h, i) { return h; }).join('</th><th>') + '</th></tr></thead>';
+    // 헤더는 바디 4개 칼럼에 맞춰 고정 (카테고리·세부 합친 cell / EUR / KRW / intensity)
+    html += '<thead><tr>' +
+      '<th>카테고리</th>' +
+      '<th>월 합계 (€)</th>' +
+      '<th>원화 환산</th>' +
+      '<th style="text-align:right">강도</th>' +
+    '</tr></thead>';
     html += '<tbody>';
     (budget.rows || []).forEach(function(r) {
       var intensity = maxVal > 0 ? (r.value / maxVal) : 0;
