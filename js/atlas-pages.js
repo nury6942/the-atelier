@@ -14,6 +14,190 @@
     });
   }
 
+  // ════════════════════════════════════════════════════════════
+  // Trip 이미지 (도시 hero / 노마드 phase 동일 패턴)
+  // — LS: atelier_atlas_trip_img_{tripId}
+  // — Firestore: atlasTripImages/{tripId} = { image, updatedAt }
+  // ════════════════════════════════════════════════════════════
+  var _tripImages = {};
+  var _tripImagesHydrated = false;
+  var _activeTripId = null; // 호버 중인 trip (Ctrl+V 대상)
+
+  function _atlasGetImageLS(tripId) {
+    try { return localStorage.getItem('atelier_atlas_trip_img_' + tripId) || null; }
+    catch(e) { return null; }
+  }
+  function _atlasSetImageLS(tripId, dataUrl) {
+    try {
+      if (dataUrl) localStorage.setItem('atelier_atlas_trip_img_' + tripId, dataUrl);
+      else localStorage.removeItem('atelier_atlas_trip_img_' + tripId);
+    } catch(e) {}
+  }
+  function _atlasHydrateImagesFromLS() {
+    if (_tripImagesHydrated) return;
+    var DATA = window.ATLAS_DATA;
+    if (!DATA) return;
+    (DATA.TRIPS || []).forEach(function(tr) {
+      var cached = _atlasGetImageLS(tr.id);
+      if (cached) _tripImages[tr.id] = cached;
+    });
+    _tripImagesHydrated = true;
+  }
+  function _atlasLoadImageFB(tripId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve(null);
+    return db.collection('atlasTripImages').doc(tripId).get().then(function(doc) {
+      if (doc.exists) return doc.data().image || null;
+      return null;
+    }).catch(function(e) { console.warn('[atlas-img] FB load failed', e); return null; });
+  }
+  function _atlasSaveImageFB(tripId, dataUrl) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('atlasTripImages').doc(tripId).set({
+      image: dataUrl,
+      updatedAt: Date.now()
+    }).catch(function(e) { console.warn('[atlas-img] FB save failed', e); });
+  }
+  function _atlasDeleteImageFB(tripId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('atlasTripImages').doc(tripId).delete()
+      .catch(function(e) { console.warn('[atlas-img] FB delete failed', e); });
+  }
+
+  // 이미지 리사이즈 (도시 hero 동일)
+  function _atlasProcessImage(fileOrBlob) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var maxW = 1600;
+          var w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          if (dataUrl.length > 900000) dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(dataUrl);
+        };
+        img.onerror = function() { reject(new Error('이미지 디코딩 실패')); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() { reject(new Error('파일 읽기 실패')); };
+      reader.readAsDataURL(fileOrBlob);
+    });
+  }
+
+  function _atlasApplyImage(tripId, dataUrl) {
+    _tripImages[tripId] = dataUrl || null;
+    _atlasSetImageLS(tripId, dataUrl);
+    // dashboard에서만 재렌더 (trip 디테일 페이지가 활성이면 안 건드림)
+    if (_currentTripView !== tripId) {
+      var atlasSection = document.getElementById('travel-atlas-section');
+      if (atlasSection && (!_currentTripView || _currentTripView === 'dashboard')) {
+        atlasSection.innerHTML = renderAtlas();
+      }
+    } else {
+      // 디테일 페이지가 활성이면 그 페이지 재렌더 (hero 이미지)
+      var atlasSection2 = document.getElementById('travel-atlas-section');
+      if (atlasSection2) atlasSection2.innerHTML = renderTripDetail(tripId);
+    }
+    if (typeof showSyncToast === 'function') {
+      showSyncToast(dataUrl ? '🖼 Trip 이미지 저장됨' : '🗑 Trip 이미지 삭제됨');
+    }
+    if (dataUrl) _atlasSaveImageFB(tripId, dataUrl);
+    else _atlasDeleteImageFB(tripId);
+  }
+
+  function tripImageUpload(tripId) {
+    var input = document.getElementById('atlas-trip-file-' + tripId);
+    if (input) input.click();
+  }
+  function tripImageFileSelected(e, tripId) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 파일만 받을 수 있어요');
+      return;
+    }
+    _atlasProcessImage(file).then(function(dataUrl) {
+      _atlasApplyImage(tripId, dataUrl);
+    }).catch(function(err) {
+      console.error('[atlas-img] upload failed', err);
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+    });
+    e.target.value = '';
+  }
+  function tripImageDelete(tripId) {
+    if (!confirm('Trip 이미지를 삭제할까요?')) return;
+    _atlasApplyImage(tripId, null);
+  }
+  function _setActiveTrip(tripId) { _activeTripId = tripId; }
+  function _clearActiveTrip(tripId) {
+    if (_activeTripId === tripId) _activeTripId = null;
+  }
+  window.atlasTripImageUpload = tripImageUpload;
+  window.atlasTripImageFileSelected = tripImageFileSelected;
+  window.atlasTripImageDelete = tripImageDelete;
+  window.atlasSetActiveTrip = _setActiveTrip;
+  window.atlasClearActiveTrip = _clearActiveTrip;
+
+  // paste 핸들러 (atlas 활성 시 호버 trip에 적용)
+  function _atlasPasteHandler(e) {
+    var ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+    var atlasSection = document.getElementById('travel-atlas-section');
+    if (!atlasSection || atlasSection.style.display === 'none') return;
+    if (!_activeTripId) return;
+    var items = (e.clipboardData || {}).items || [];
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.kind === 'file' && it.type && it.type.indexOf('image/') === 0) {
+        e.preventDefault();
+        var blob = it.getAsFile();
+        if (!blob) return;
+        var target = _activeTripId;
+        _atlasProcessImage(blob).then(function(dataUrl) {
+          _atlasApplyImage(target, dataUrl);
+        }).catch(function(err) {
+          console.error('[atlas-img] paste failed', err);
+          if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+        });
+        return;
+      }
+    }
+  }
+  var _atlasPasteRegistered = false;
+  function _atlasRegisterPaste() {
+    if (_atlasPasteRegistered) return;
+    document.addEventListener('paste', _atlasPasteHandler);
+    _atlasPasteRegistered = true;
+  }
+
+  // backward Firestore fetch (백그라운드)
+  function _atlasActivateImages() {
+    _atlasHydrateImagesFromLS();
+    _atlasRegisterPaste();
+    var DATA = window.ATLAS_DATA;
+    if (!DATA) return;
+    (DATA.TRIPS || []).forEach(function(tr) {
+      _atlasLoadImageFB(tr.id).then(function(remote) {
+        if (!remote) return;
+        if (_tripImages[tr.id] === remote) return;
+        _tripImages[tr.id] = remote;
+        _atlasSetImageLS(tr.id, remote);
+        // dashboard 재렌더 (활성 시)
+        var atlasSection = document.getElementById('travel-atlas-section');
+        if (atlasSection && atlasSection.style.display !== 'none' &&
+            (!_currentTripView || _currentTripView === 'dashboard')) {
+          atlasSection.innerHTML = renderAtlas();
+        }
+      });
+    });
+  }
+
   function renderAtlas() {
     var DATA = window.ATLAS_DATA || { TRIPS: [], WISHLIST: [], totals: function(){ return { trips:0,days:0,pto:0,gross:0,own:0,countries:0 }; } };
     var trips = DATA.TRIPS || [];
@@ -67,7 +251,7 @@
         html += '<div class="atlas-tl-node' + (tr.isCurrent ? ' is-current' : '') + '">';
         html += '<span class="atlas-tl-dot"></span>';
         html += '<div>';
-        html += '<p class="atlas-tl-when">' + _esc(tr.monthShort || tr.month) + '</p>';
+        html += '<p class="atlas-tl-when">' + _esc(tr.monthShort || tr.month) + ' · <span class="nm-emoji">' + tr.flags + '</span> ' + _esc(tr.country) + '</p>';
         html += '<p class="atlas-tl-title">' + _esc(tr.title.replace(/^The\s+/, '')) + '</p>';
         html += '</div>';
         html += '</div>';
@@ -91,12 +275,31 @@
       html += '</div>';
       html += '<div class="atlas-gallery">';
       group.trips.forEach(function(tr) {
-        html += '<div class="atlas-trip-card" onclick="window.atlasOpenTrip && atlasOpenTrip(\'' + tr.id + '\')">';
-        html += '<div class="atlas-trip-img" style="background:' + tr.gradient + '">';
-        html += '<div class="atlas-trip-flags">' + tr.flags + '</div>';
+        var img = _tripImages[tr.id] || null;
+        html += '<div class="atlas-trip-card" ' +
+          'onmouseenter="atlasSetActiveTrip(\'' + tr.id + '\')" ' +
+          'onmouseleave="atlasClearActiveTrip(\'' + tr.id + '\')">';
+        html += '<div class="atlas-trip-img" style="background:' + tr.gradient + '" onclick="window.atlasOpenTrip && atlasOpenTrip(\'' + tr.id + '\')">';
+        if (img) {
+          html += '<img class="atlas-trip-img-src" src="' + img + '" alt="">';
+        }
         html += '<div class="atlas-trip-code">' + _esc(tr.countryCodes) + '</div>';
+        html += '<div class="atlas-trip-flags nm-emoji">' + tr.flags + '</div>';
+        // 이미지 컨트롤 (호버 시 표시 + 빈 박스는 항상 표시)
+        html += '<input type="file" id="atlas-trip-file-' + tr.id + '" accept="image/*" style="display:none" onchange="atlasTripImageFileSelected(event,\'' + tr.id + '\')">';
+        html += '<div class="atlas-trip-img-controls' + (img ? '' : ' is-empty') + '" onclick="event.stopPropagation()">';
+        if (img) {
+          html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageUpload(\'' + tr.id + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>';
+          html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageDelete(\'' + tr.id + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>';
+        } else {
+          html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageUpload(\'' + tr.id + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
+        }
         html += '</div>';
-        html += '<div class="atlas-trip-body">';
+        html += '<div class="atlas-trip-paste-hint">Ctrl+V로 붙여넣기</div>';
+        html += '</div>';
+        // 카드 본문
+        html += '<div class="atlas-trip-body" onclick="window.atlasOpenTrip && atlasOpenTrip(\'' + tr.id + '\')">';
+        html += '<div class="atlas-trip-country"><span class="nm-emoji">' + tr.flags + '</span> ' + _esc(tr.country) + '</div>';
         html += '<h3 class="atlas-trip-title">' + _esc(tr.cities) + '</h3>';
         html += '<div class="atlas-trip-row"><span class="atlas-trip-k">DATES</span><span class="atlas-trip-v">' + _esc(tr.dates) + '</span></div>';
         html += '<div class="atlas-trip-row"><span class="atlas-trip-k">STAY</span><span class="atlas-trip-v">' + tr.days + ' Days · ' + tr.nights + ' Nights</span></div>';
@@ -120,7 +323,10 @@
       html += '<div class="atlas-ledger-year-label">' + group.year + '</div>';
       group.trips.forEach(function(tr) {
         html += '<div class="atlas-ledger-row">';
+        html += '<div class="atlas-ledger-name-wrap">';
+        html += '<span class="atlas-ledger-country"><span class="nm-emoji">' + tr.flags + '</span> ' + _esc(tr.country) + '</span>';
         html += '<span class="atlas-ledger-name">' + _esc(tr.title) + '</span>';
+        html += '</div>';
         html += '<span class="atlas-ledger-amt">₩' + tr.gross + ' 만</span>';
         html += '</div>';
       });
@@ -222,8 +428,24 @@
     html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>Back to Atlas</button>';
     html += '</div>';
 
-    // Hero (full-bleed gradient)
-    html += '<section class="atlas-trip-hero" style="background:' + trip.gradient + '">';
+    // Hero (full-bleed image / gradient fallback) + 이미지 컨트롤
+    var heroImg = _tripImages[trip.id] || null;
+    html += '<section class="atlas-trip-hero" style="background:' + trip.gradient + '"' +
+      ' onmouseenter="atlasSetActiveTrip(\'' + trip.id + '\')"' +
+      ' onmouseleave="atlasClearActiveTrip(\'' + trip.id + '\')">';
+    if (heroImg) {
+      html += '<img class="atlas-trip-hero-img" src="' + heroImg + '" alt="">';
+    }
+    html += '<input type="file" id="atlas-trip-file-' + trip.id + '" accept="image/*" style="display:none" onchange="atlasTripImageFileSelected(event,\'' + trip.id + '\')">';
+    html += '<div class="atlas-trip-img-controls' + (heroImg ? '' : ' is-empty') + '">';
+    if (heroImg) {
+      html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageUpload(\'' + trip.id + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>';
+      html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageDelete(\'' + trip.id + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>';
+    } else {
+      html += '<button class="atlas-trip-img-ctrl" onclick="atlasTripImageUpload(\'' + trip.id + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
+    }
+    html += '</div>';
+    html += '<div class="atlas-trip-paste-hint">Ctrl+V로 붙여넣기</div>';
     html += '<div class="atlas-trip-hero-overlay"></div>';
     html += '<div class="atlas-trip-hero-inner">';
     html += '<div class="atlas-trip-hero-meta">';
@@ -412,8 +634,13 @@
   function showAtlasView() {
     var atlasSection = document.getElementById('travel-atlas-section');
     if (!atlasSection) return;
+    _currentTripView = 'dashboard';
+    _atlasHydrateImagesFromLS();
+    _atlasRegisterPaste();
     atlasSection.innerHTML = renderAtlas();
     atlasSection.style.display = 'block';
+    // Firestore 백그라운드 fetch (변경 시 자동 재렌더)
+    _atlasActivateImages();
     // 페이지 헤더 타이틀
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Atlas';

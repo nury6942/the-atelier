@@ -4568,6 +4568,109 @@
       color: var(--atlas-ink-mute);
     }
 
+    /* ──── Trip 카드 이미지 + 컨트롤 ──── */
+    #travel-atlas-section .atlas-trip-img {
+      cursor: pointer;
+    }
+    #travel-atlas-section .atlas-trip-img-src {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #travel-atlas-section .atlas-trip-img-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    #travel-atlas-section .atlas-trip-img:hover .atlas-trip-img-controls,
+    #travel-atlas-section .atlas-trip-img-controls.is-empty {
+      opacity: 1;
+    }
+    #travel-atlas-section .atlas-trip-img-ctrl {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Manrope','Pretendard',sans-serif;
+      transition: background 0.15s;
+    }
+    #travel-atlas-section .atlas-trip-img-ctrl:hover { background: rgba(0,0,0,0.75); }
+    #travel-atlas-section .atlas-trip-img-ctrl .material-symbols-outlined { font-size: 14px; }
+    #travel-atlas-section .atlas-trip-paste-hint {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 3;
+      padding: 4px 9px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.9);
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: 'Manrope','Pretendard',sans-serif;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    #travel-atlas-section .atlas-trip-img:hover .atlas-trip-paste-hint { opacity: 1; }
+
+    /* ──── Trip 카드 본문 country 라벨 ──── */
+    #travel-atlas-section .atlas-trip-country {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--atlas-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ──── Ledger 국가 라벨 ──── */
+    #travel-atlas-section .atlas-ledger-name-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    #travel-atlas-section .atlas-ledger-country {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--atlas-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* atlas section 안에서도 nm-emoji 폰트 강제 */
+    #travel-atlas-section .nm-emoji {
+      font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif !important;
+    }
+
     /* ──── Ledger 연도 라벨 + subtotal ──── */
     #travel-atlas-section .atlas-ledger-year-label {
       font-family: 'Inter',sans-serif;
@@ -4641,10 +4744,19 @@
     @media (min-width: 768px) {
       #travel-atlas-section .atlas-trip-hero { height: 480px; }
     }
+    #travel-atlas-section .atlas-trip-hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     #travel-atlas-section .atlas-trip-hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
+      pointer-events: none;
     }
     #travel-atlas-section .atlas-trip-hero-inner {
       position: absolute;
@@ -10548,8 +10660,8 @@
 <script src="js/nomad-pages.js?v=168" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
-<script src="js/atlas-data.js?v=3" defer></script>
-<script src="js/atlas-pages.js?v=3" defer></script>
+<script src="js/atlas-data.js?v=4" defer></script>
+<script src="js/atlas-pages.js?v=4" defer></script>
 
 </body>
 </html>
