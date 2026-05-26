@@ -4070,6 +4070,444 @@
       color: #cbd5e1 !important; opacity: 0.5 !important;
     }
     .flatpickr-day.flatpickr-disabled:hover { background: transparent !important; cursor: not-allowed; }
+
+    /* ════════════════════════════════════════════════════════════
+       Atlas — 미래 여행 계획 (stitch Travel Atlas Vibrant Color)
+       ════════════════════════════════════════════════════════════ */
+    #travel-atlas-section {
+      --atlas-primary: #630ed4;
+      --atlas-vivid: #7C3AED;
+      --atlas-deep: #6B38D4;
+      --atlas-ink: #1a1c1c;
+      --atlas-ink-mute: #4a4455;
+      --atlas-line: #1a1a1a;
+      --atlas-line-soft: #e5e5e5;
+      --atlas-surface: #f9f9f9;
+      --atlas-surface-low: #f3f3f4;
+      font-family: 'Inter','Pretendard','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+      color: var(--atlas-ink);
+      background: #fff;
+    }
+    #travel-atlas-section .atlas-hero {
+      padding: 32px 0 48px;
+      border-bottom: 1px solid var(--atlas-line);
+    }
+    #travel-atlas-section .atlas-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: end;
+    }
+    @media (min-width: 1024px) {
+      #travel-atlas-section .atlas-hero-grid { grid-template-columns: 2fr 1fr; }
+      #travel-atlas-section .atlas-hero-right { text-align: right; }
+    }
+    #travel-atlas-section .atlas-eyebrow {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--atlas-ink-mute);
+      margin: 0 0 16px;
+    }
+    #travel-atlas-section .atlas-hero-h1 {
+      font-family: 'Manrope','Noto Color Emoji',sans-serif;
+      font-size: clamp(40px, 7vw, 96px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      margin: 0 0 18px;
+      color: var(--atlas-ink);
+    }
+    #travel-atlas-section .atlas-hero-amp {
+      color: var(--atlas-vivid);
+      font-weight: 800;
+    }
+    #travel-atlas-section .atlas-hero-tagline {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--atlas-ink-mute);
+      max-width: 540px;
+      margin: 0;
+    }
+    #travel-atlas-section .atlas-hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #travel-atlas-section .atlas-hero-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 24px;
+    }
+    @media (min-width: 1024px) {
+      #travel-atlas-section .atlas-hero-stat { justify-content: flex-end; }
+    }
+    #travel-atlas-section .atlas-hero-stat-l {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--atlas-ink-mute);
+    }
+    #travel-atlas-section .atlas-hero-stat-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--atlas-ink);
+    }
+    #travel-atlas-section .atlas-section { margin-top: 64px; }
+    #travel-atlas-section .atlas-h2 {
+      font-family: 'Manrope',sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--atlas-ink);
+      margin: 0;
+    }
+    #travel-atlas-section .atlas-h2-border {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--atlas-line);
+      margin-bottom: 36px;
+      font-size: 28px;
+    }
+    #travel-atlas-section .atlas-meta-sub {
+      font-size: 14px;
+      color: var(--atlas-ink-mute);
+      margin: 6px 0 0;
+    }
+
+    /* ──── Timeline ──── */
+    #travel-atlas-section .atlas-timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      border-bottom: 1px solid var(--atlas-line-soft);
+      padding-bottom: 36px;
+    }
+    @media (min-width: 768px) {
+      #travel-atlas-section .atlas-timeline-grid { grid-template-columns: 1fr 3fr; }
+    }
+    #travel-atlas-section .atlas-timeline-line {
+      display: flex;
+      gap: 36px;
+      overflow-x: auto;
+      align-items: center;
+      padding-bottom: 6px;
+    }
+    #travel-atlas-section .atlas-timeline-line::-webkit-scrollbar { display: none; }
+    #travel-atlas-section .atlas-tl-node {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    #travel-atlas-section .atlas-tl-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--atlas-line-soft);
+      flex-shrink: 0;
+    }
+    #travel-atlas-section .atlas-tl-node.is-current .atlas-tl-dot { background: var(--atlas-primary); }
+    #travel-atlas-section .atlas-tl-when {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--atlas-ink-mute);
+      margin: 0;
+    }
+    #travel-atlas-section .atlas-tl-title {
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--atlas-ink);
+      margin: 2px 0 0;
+    }
+    #travel-atlas-section .atlas-tl-arrow {
+      color: var(--atlas-ink-mute);
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+
+    /* ──── Trip Gallery ──── */
+    #travel-atlas-section .atlas-gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 768px) {
+      #travel-atlas-section .atlas-gallery { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 1280px) {
+      #travel-atlas-section .atlas-gallery { grid-template-columns: repeat(4, 1fr); }
+    }
+    #travel-atlas-section .atlas-trip-card {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    #travel-atlas-section .atlas-trip-card:hover { transform: translateY(-4px); }
+    #travel-atlas-section .atlas-trip-img {
+      aspect-ratio: 3 / 4;
+      position: relative;
+      border: 1px solid var(--atlas-line-soft);
+      margin-bottom: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+    }
+    #travel-atlas-section .atlas-trip-flags {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      font-size: 36px;
+      line-height: 1;
+      font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+    }
+    #travel-atlas-section .atlas-trip-code {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(255,255,255,0.95);
+      padding: 4px 11px;
+      border: 1px solid var(--atlas-line);
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--atlas-primary);
+      letter-spacing: 0.05em;
+    }
+    #travel-atlas-section .atlas-trip-title {
+      font-family: 'Manrope',sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--atlas-ink);
+      margin: 0 0 12px;
+    }
+    #travel-atlas-section .atlas-trip-body {
+      border-top: 1px solid var(--atlas-line-soft);
+      padding-top: 14px;
+    }
+    #travel-atlas-section .atlas-trip-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Inter',sans-serif;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    #travel-atlas-section .atlas-trip-k { font-weight: 700; color: var(--atlas-ink); }
+    #travel-atlas-section .atlas-trip-v { color: var(--atlas-ink-mute); }
+    #travel-atlas-section .atlas-trip-route {
+      font-family: 'Inter',sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--atlas-primary);
+      margin: 14px 0 0;
+    }
+
+    /* ──── Ledger + PTO Tracker ──── */
+    #travel-atlas-section .atlas-ledger-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      border-top: 1px solid var(--atlas-line);
+      padding-top: 48px;
+    }
+    @media (min-width: 1024px) {
+      #travel-atlas-section .atlas-ledger-grid { grid-template-columns: 1fr 1fr; }
+    }
+    #travel-atlas-section .atlas-h4 {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--atlas-ink-mute);
+      margin: 0 0 32px;
+    }
+    #travel-atlas-section .atlas-h4-light { color: var(--atlas-ink-mute); }
+    #travel-atlas-section .atlas-ledger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--atlas-line-soft);
+    }
+    #travel-atlas-section .atlas-ledger-name {
+      font-family: 'Manrope',sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--atlas-ink);
+    }
+    #travel-atlas-section .atlas-ledger-amt {
+      font-family: 'Inter',sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    #travel-atlas-section .atlas-ledger-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      margin-top: 4px;
+    }
+    #travel-atlas-section .atlas-ledger-total-l {
+      font-family: 'Inter',sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    #travel-atlas-section .atlas-ledger-total-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--atlas-primary);
+    }
+    #travel-atlas-section .atlas-ledger-net {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #1a1c1c;
+      color: #f6f4ef;
+      margin-top: 12px;
+    }
+    #travel-atlas-section .atlas-ledger-net-l {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+    }
+    #travel-atlas-section .atlas-ledger-net-v {
+      font-family: 'Manrope',sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    #travel-atlas-section .atlas-pto {
+      background: var(--atlas-surface-low);
+      padding: 32px;
+      border: 1px solid var(--atlas-line);
+      position: relative;
+    }
+    #travel-atlas-section .atlas-pto::after {
+      content: '';
+      position: absolute;
+      top: 8px; left: 8px; right: -8px; bottom: -8px;
+      background: #e8e8e8;
+      z-index: -1;
+      border: 1px solid var(--atlas-line);
+    }
+    #travel-atlas-section .atlas-pto-big {
+      font-family: 'Manrope',sans-serif;
+      font-size: 80px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--atlas-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    #travel-atlas-section .atlas-pto-big-l {
+      font-family: 'Inter',sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--atlas-ink);
+      margin-bottom: 16px;
+    }
+    #travel-atlas-section .atlas-pto-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--atlas-ink);
+      margin: 0 0 36px;
+    }
+    #travel-atlas-section .atlas-pto-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-family: 'Inter',sans-serif;
+      font-size: 12px;
+    }
+    #travel-atlas-section .atlas-pto-row-bar {
+      width: 120px;
+      height: 4px;
+      background: #e8e8e8;
+      display: inline-block;
+      overflow: hidden;
+    }
+    #travel-atlas-section .atlas-pto-row-bar > span {
+      display: block;
+      height: 100%;
+      background: var(--atlas-primary);
+    }
+
+    /* ──── Wishlist ──── */
+    #travel-atlas-section .atlas-wish-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      #travel-atlas-section .atlas-wish-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      #travel-atlas-section .atlas-wish-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    #travel-atlas-section .atlas-wish-cell {
+      border: 1px solid var(--atlas-line-soft);
+      padding: 18px;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    #travel-atlas-section .atlas-wish-cell:hover { background: var(--atlas-surface); }
+    #travel-atlas-section .atlas-wish-no {
+      font-family: 'Inter',sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--atlas-ink-mute);
+      letter-spacing: 0.05em;
+    }
+    #travel-atlas-section .atlas-wish-flag {
+      font-size: 22px;
+      line-height: 1;
+      font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+    }
+    #travel-atlas-section .atlas-wish-name {
+      font-family: 'Manrope',sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--atlas-ink);
+      letter-spacing: 0.02em;
+    }
+    #travel-atlas-section .atlas-wish-note {
+      font-size: 10px;
+      color: var(--atlas-ink-mute);
+      line-height: 1.4;
+      margin: 0;
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      #travel-atlas-section .atlas-wish-cell { aspect-ratio: auto; padding: 16px 18px 20px; }
+      #travel-atlas-section .atlas-wish-note { display: block; margin-top: 8px; }
+    }
   </style>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ&libraries=places" async defer></script>
@@ -4494,6 +4932,9 @@
           </button>
           <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
             ✅ 체크리스트
+          </button>
+          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
+            🗺️ Atlas
           </button>
         </div>
         <!-- 예약 스캔 + AI 추천 + API 설정 버튼 -->
@@ -5907,6 +6348,9 @@
       </div>
     </div>
 
+    <!-- Atlas (미래 여행 계획) 섹션 — switchTravelTab('atlas')로 활성화 -->
+    <div id="travel-atlas-section" class="px-8 pt-8 pb-20 max-w-[1280px] mx-auto" style="display:none"></div>
+
   </div>
 
   <div id="page-finance" class="page" style="display:none">
@@ -5936,6 +6380,9 @@
           </button>
           <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
             ✅ 체크리스트
+          </button>
+          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
+            🗺️ Atlas
           </button>
         </div>
       </div>
@@ -8727,6 +9174,9 @@
           <button onclick="switchTravelTab('checklist')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="checklist">
             ✅ 체크리스트
           </button>
+          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
+            🗺️ Atlas
+          </button>
         </div>
       </div>
 
@@ -9509,6 +9959,10 @@
 <script src="js/nomad-data.js?v=168" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
 <script src="js/nomad-pages.js?v=168" defer></script>
+
+<!-- Atlas (미래 여행 계획) 모듈 -->
+<script src="js/atlas-data.js?v=1" defer></script>
+<script src="js/atlas-pages.js?v=1" defer></script>
 
 </body>
 </html>

@@ -11257,6 +11257,22 @@
   };
   // ── Travel/Travel Budget 통합 탭 ──
   function switchTravelTab(tab) {
+    // Atlas 탭 진입/이탈 처리 — 모든 분기에서 hide 호출
+    if (tab !== 'atlas' && typeof window.hideAtlasView === 'function') {
+      window.hideAtlasView();
+    }
+    if (tab === 'atlas') {
+      // journey 페이지로 이동 후 atlas section 표시 + page-content-wrap hide
+      navigate('journey');
+      setTimeout(function() {
+        var page = document.getElementById('page-journey');
+        if (!page) return;
+        var contentWrap = page.querySelector('.page-content-wrap');
+        if (contentWrap) contentWrap.style.display = 'none';
+        if (typeof window.showAtlasView === 'function') window.showAtlasView();
+      }, 50);
+      return;
+    }
     if (tab === 'schedule') {
       // 트립 sync: Finance → Travel
       try {
