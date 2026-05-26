@@ -33,6 +33,62 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-26 (기기: 윈도우 · 4차)
+
+### ✅ 한 일
+- **🗺️ Travel · Atlas 탭 Phase 1** — 미래 여행 계획 dashboard. Travel 페이지 안에 4번째 탭 'Atlas' 추가. stitch `Travel Atlas 2027-2028 Vibrant Color` 디자인 그대로
+  - **레이아웃**: hero (Atlas & Almanac + 5 stats: Year Range / Total Volume / Duration / Countries / PTO Days) → horizontal timeline (4 trip sequence) → trip gallery 4 cards → Financial Ledger + PTO Efficiency Tracker (offset 카드, 2-col) → Wishlist 6 cells (Patagonia / Kyoto / Alps / Tuscany / Socotra / Lofoten)
+  - **데이터**: `travel_atlas_2027_2028.html`에서 추출한 4 trip 정적 데이터 — Scandinavian Spring(5/27, 9N·11D, ₩539만), Maple Road(10/27, 9N·11D, ₩333만 자비), Wild Atlantic Way(5/28, 9N·10D, ₩566만), Ring Road(10/28, 9N·11D, ₩690만). 총 4 trip · 43일 · 12 PTO · ₩2,375만 gross
+  - **trip 이미지**: 우선 그라데이션 fallback (각 trip별 색조). Phase 2에서 사용자 업로드 패턴(노마드 phase 이미지처럼) 추가 예정
+  - **탭바 통합**: journey/finance/packing 3개 페이지의 탭바 모두에 '🗺️ Atlas' 4번째 버튼 추가. `switchTravelTab('atlas')`에서 `navigate('journey')` + `page-content-wrap` hide + atlas section show
+  - **신규 파일**: `js/atlas-data.js` (4 trip + Wishlist + totals 헬퍼), `js/atlas-pages.js` (renderAtlas + showAtlasView/hideAtlasView)
+  - **CSS**: `#travel-atlas-section` scoped 437줄 (stitch 컬러 #630ed4 primary / #7C3AED accent, Manrope+Inter 폰트 체계, card-offset PTO 박스, 반응형 4-col gallery)
+  - **트립 카드 클릭**: 현재는 toast 안내만, Phase 2에서 trip별 디테일 페이지 (stitch Master Itinerary Eastern Canada 디자인) 연결 예정
+  - 캐시 service-worker v=168 → v=169
+
+### 🎯 다음 할 일 — Phase 2
+- **Trip 디테일 페이지 4개** — stitch `Master Itinerary Eastern Canada` 디자인을 4 trip 모두에 동일 적용 (대용량 작업)
+  - hero (풀스크린 그라데이션 + 국기 + 라벨 + dates)
+  - day-by-day itinerary 타임라인 (도트 + 라인 + 날짜 + 활동 + stay)
+  - sidebar: Curated Lodging 카드 + Financial Ledger (검은 카드) + PTO Details + Trip Note
+  - 데이터 출처: `travel_atlas_2027_2028.html`에 모두 들어있음 (호텔별 가격·박수, 예산 10+ 항목, PTO 상세)
+- **라우팅**: `atlasOpenTrip(tripId)` → 디테일 페이지 표시. Back to Dashboard 버튼
+- **이미지 업로드**: 노마드 Phase 이미지와 같은 패턴 — Firestore `travelAtlasImages/<tripId>` + LS + paste 핸들러
+- **Wishlist 항목 추가/편집** UI 검토
+
+### 🚧 막힌 점 / 결정 보류
+- **탭바 3 곳 동기화 부담** — journey/finance/packing 각 페이지에 같은 탭바가 따로 있어서, Atlas 같은 새 탭 추가하려면 3 곳 모두 수정. 추후 탭바를 공통 컴포넌트로 추출하면 좋을 듯
+- **`page-content-wrap` 토글 방식**의 부작용 가능성 — atlas 탭에서 다른 탭으로 갈 때 `display: ''`로 복구하는데, journey 페이지 외 finance/packing에선 page-content-wrap이 다른 구조라 OK이지만 미래에 atelier 페이지 변경 시 검증 필요
+
+### 💭 메모
+- **stitch Tailwind 디자인을 vanilla CSS로 옮긴 패턴** — Tailwind config 그대로는 못 가져오니까 stitch의 디자인 토큰(색·폰트·간격)을 `#travel-atlas-section` scoped CSS variable로 빼서 적용. nomad의 `--nm-font-h` 패턴과 비슷
+- **`atlas-data.js`를 별도 파일로 분리한 이유** — 4 trip 데이터가 정적이지만 양이 많아서 (~140줄). atlas-pages.js와 분리해서 수정 시 데이터/렌더 logic 충돌 없게. 사용자가 trip 데이터만 만지고 싶을 때 명확
+- **Phase 1/2 분리한 이유** — Phase 1 dashboard만으로도 ~440줄 CSS + ~150줄 JS + HTML 변경. Phase 2는 4 trip × 디테일 데이터(10일+ 일정 각각) → 한 세션에 다 끝내면 컨텍스트 부족. 분리해서 안전하게
+
+---
+
+## 2026-05-26 (기기: 윈도우 · 3차)
+
+### ✅ 한 일
+- **사이드바 City Guides 17개 라벨 통일** — 한글 "6월 · 포르투" 형식을 `🇵🇹 PORTO`처럼 **국기 + 영어 도시명**으로. 다른 사이드바 항목(Overview/Nomad Gate/Backward Plan 등)이 모두 영어인데 City Guides만 한글이라 톤 깨졌던 것
+  - 매핑: PORTO·DUBLIN·GALWAY·COPENHAGEN·BERGEN·STOCKHOLM·HELSINKI·REYKJAVIK·PORTO II·VALLETTA·HOBART·ADELAIDE·MELBOURNE·QUEENSTOWN·SAN DIEGO·NEW YORK·HALIFAX
+  - "10-11월 · 포르투갈 복귀" → `🇵🇹 PORTO II` (재방문 표시), "3월 · 뉴질랜드" → `🇳🇿 QUEENSTOWN` (도시 단위 통일)
+- **IP · Webnovel 사이드바 라벨 원복** — 직전 세션에서 "소설"로 바꿨던 거 다시 `IP · Webnovel`로. 다른 사이드바 항목들이 다 영어라 한 항목만 한글이면 어색. 페이지 본문도 같이 원복 (Postype Webnovel / Main Track · Webnovel / Webnovel Queue / 메인 (웹소) / 메이저 웹소 플랫폼 / IP·웹소 수익)
+- **City Guide 본문 한글 섹션 제목 → 영어 통일**
+  - hero stats 5개: 체류 기간/날씨/비자/모드/분위기 → **DURATION / WEATHER / VISA / MODE / VIBE**
+  - "누리한테 의미하는 것" → **Why This City**
+  - "랜드마크 · 꼭 가볼 곳" → **Landmarks · Must See**
+  - "슬로우 · 숨겨진 명소" → **Hidden Gems · Slow**
+  - "1달 생활비 예산 · 최소 가이드" → **Monthly Budget · Minimal Guide**
+- **건드리지 않은 곳** (이미 영어+한글 페어 디자인이라 의도된 듯): "Experiences · 경험" / "Nomad Mode · 노마드 모드" / "Next Step Focus · 핵심" / "Neighborhood Ratings · 거주 적합성"
+- **파일 변경**: `js/nomad-data.js` (City Guides 17 라벨), `js/nomad-pages.js` (페이지 본문 + City Guide 섹션 제목), `index.html` (캐시 v=167 → v=168), `service-worker.js` (atelier-v167 → v168)
+
+### 💭 메모
+- **3번 왔다갔다한 결과** — 1) "포스타입 웹소" 어색하다 → "소설"로 통일, 2) 사이드바 한 항목만 한글이라 어색 → "IP · Webnovel" 원복, 3) City Guides 사이드바도 한글이라 어색 → 국기+영어. 디자이너 시각에서 **사이드바는 한글/영어 혼용이 가장 어색**한 위치 — 한 번에 통일성 결정해야
+- **국기 이모지 fallback**이 var 시스템 덕분에 사이드바에서 정상 작동 — `--nm-font-h: 'Manrope', 'Noto Color Emoji', ...` 폰트 체인이 글로벌하게 깔려있어서 `🇵🇹 PORTO` 같은 텍스트도 자연스럽게 표시
+
+---
+
 ## 2026-05-26 (기기: 윈도우 · 2차)
 
 ### ✅ 한 일
