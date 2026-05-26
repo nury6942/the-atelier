@@ -942,92 +942,290 @@ window.NOMAD_PAGES = (function(){
   // ──────── IP · Webnovel Track 페이지 ────────
   function renderIPTrack() {
     var html = '';
+
+    // 게이트 진행률 계산 (현재 ₩200-250 중간값 225 / 게이트 ₩450 = 50%)
+    var currentRevenue = 225;
+    var gateRevenue = 450;
+    var greedRevenue = 750; // 700-800 중간
+    var gatePct = Math.round((currentRevenue / gateRevenue) * 100);
+    var greedPct = Math.round((currentRevenue / greedRevenue) * 100);
+
+    // Phase 데이터
+    var phases = [
+      { num:1, name:'Foundation', when:'2026.5-6',   goal:'필명·도메인·메일리·사이트 1차' },
+      { num:2, name:'Build',      when:'2026.7-8',   goal:'콘텐츠 5편 + 도구 MVP' },
+      { num:3, name:'Protect',    when:'2026.9',     goal:'정서 자원 보호' },
+      { num:4, name:'Launch',     when:'2026.10',    goal:'뉴스레터 정식 시작' },
+      { num:5, name:'Settle',     when:'2026.11-12', goal:'구독자 100-300명' },
+      { num:6, name:'Expand',     when:'2027.1-3',   goal:'사연 받기 + 첫 디지털 제품' },
+      { num:7, name:'Monetize',   when:'2027.4-6',   goal:'유료 멤버십 + 1:1 분석' },
+    ];
+    // 현재 위치 (오늘 기준 active phase 번호 — 2026.5 = Phase 1)
+    var today = todayYMD();
+    var activePhase = 1;
+    if (today >= '2026-07-01' && today < '2026-09-01') activePhase = 2;
+    else if (today >= '2026-09-01' && today < '2026-10-01') activePhase = 3;
+    else if (today >= '2026-10-01' && today < '2026-11-01') activePhase = 4;
+    else if (today >= '2026-11-01' && today < '2027-01-01') activePhase = 5;
+    else if (today >= '2027-01-01' && today < '2027-04-01') activePhase = 6;
+    else if (today >= '2027-04-01') activePhase = 7;
+
+    // Page Header
     html += pageHeader('IP · Webnovel Track', '수익 트랙 · 자산 트랙',
       '메인 게이트 카운트 + 서브 장기 자산');
 
-    // 메인 트랙
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">menu_book</span>' +
-      '<h3 class="nm-headline-md">메인 트랙 · 포스타입 웹소</h3>' +
-      '<span class="nm-pill" style="margin-left:auto">High Priority</span>' +
-    '</div>';
-    html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:12px">B시리즈 중심 (게이트 카운트)</h4>';
-    html += trackCard([
-      ['<strong>2026.5</strong> <span style="color:var(--nm-text-3);font-size:11px">(현재)</span>', '₩200-250만', '<span style="color:var(--nm-text-3);font-size:12px">—</span>'],
-      ['<strong>2027.12</strong> <span style="color:var(--nm-primary);font-size:11px">(게이트)</span>', '<strong style="color:var(--nm-primary)">₩450만</strong>', '<span class="nm-pill" style="font-size:10px">출국 조건</span>'],
-      ['<strong>2027.12</strong> <span style="color:#15803d;font-size:11px">(욕심)</span>', '<strong style="color:#15803d">₩700-800만</strong>', '<span class="nm-pill nm-pill-good" style="font-size:10px">저축 가능</span>'],
-    ], [{label:'시점'}, {label:'월 수익', right:true}, {label:'비고'}]);
-    html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-top:24px;margin-bottom:8px">확장 전략</h4>';
-    html += '<ul class="nm-list-bullet">' +
-      '<li>B시리즈 월 8편+ 페이스</li>' +
-      '<li>2번째 작품 가동 (2026 후반 또는 2027)</li>' +
-      '<li>메이저 웹소 플랫폼 진입 검토 (2027)</li>' +
-    '</ul>';
-    html += '</div>';
-    html += '</section>';
+    // ════════ SECTION 1 · Hero Stats Row (3 카드) ════════
+    html += '<div class="nm-grid nm-grid-3" style="gap:20px;margin-bottom:32px">';
 
-    // 서브 트랙
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-secondary)">analytics</span>' +
-      '<h3 class="nm-headline-md">서브 트랙 · 분석가 N IP</h3>' +
-      '<span class="nm-pill nm-pill-soft" style="margin-left:auto;background:#a7a5ff;color:#393689">Stable</span>' +
+    // ① Active Track
+    html += '<div class="nm-card" style="padding:28px">' +
+      '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Active Track</p>' +
+      '<h3 style="font-family:Manrope;font-size:24px;font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom:16px">포스타입 웹소</h3>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,0.18);animation:nm-pulse 1.5s infinite"></span>' +
+        '<span style="font-family:Manrope;font-size:13px;color:var(--nm-on-surface);font-weight:600">B시리즈 · 현재 ₩200-250만/월</span>' +
+      '</div>' +
     '</div>';
-    html += '<h4 style="font-family:Manrope;font-size:16px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:12px">메일리 + 디지털 제품 + 코칭 <span style="font-weight:400;color:var(--nm-text-3);font-size:13px">(게이트 외, 장기 자산)</span></h4>';
-    html += trackCard([
-      ['<strong>1 · Foundation</strong>', '2026.5-6', '필명·도메인·메일리·사이트 1차'],
-      ['<strong>2 · Build</strong>',      '2026.7-8', '콘텐츠 5편 + 도구 MVP'],
-      ['<strong>3 · Protect</strong>',    '2026.9',   '정서 자원 보호'],
-      ['<strong>4 · Launch</strong>',     '2026.10',  '뉴스레터 정식 시작'],
-      ['<strong>5 · Settle</strong>',     '2026.11-12','구독자 100-300명'],
-      ['<strong>6 · Expand</strong>',     '2027.1-3', '사연 받기 + 첫 디지털 제품'],
-      ['<strong>7 · Monetize</strong>',   '2027.4-6', '유료 멤버십 + 1:1 분석'],
-    ], [{label:'Phase'}, {label:'시기'}, {label:'목표'}]);
-    html += '<div class="nm-quote" style="margin-top:16px">예상 기여 (2027.12 시점): <strong>월 ₩100-300만</strong></div>';
-    html += '</div>';
-    html += '</section>';
 
-    // 노마드 동안 운영
-    html += '<section class="nm-section">';
-    html += '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
+    // ② Gate Achievement (primary-container bg)
+    html += '<div class="nm-card" style="padding:28px;background:var(--nm-primary);color:#fff;position:relative;overflow:hidden">' +
+      '<div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(20px)"></div>' +
+      '<div style="position:relative;z-index:1">' +
+        '<p style="font-size:10px;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Gate Achievement</p>' +
+        '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;margin-bottom:16px">출국 게이트 ₩450만/월</h3>' +
+        '<div style="display:flex;align-items:flex-end;gap:6px">' +
+          '<span style="font-family:Manrope;font-size:44px;font-weight:800;line-height:1">' + gatePct + '%</span>' +
+          '<span style="font-size:11px;margin-bottom:8px;color:rgba(255,255,255,0.85)">Target<br>Achievement</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    // ③ Core Principle (border-l-4 deep-indigo)
+    html += '<div class="nm-card" style="padding:28px;border-left:4px solid var(--nm-deep-indigo)">' +
+      '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Core Principle</p>' +
+      '<h3 style="font-family:Manrope;font-size:24px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.2;margin-bottom:12px">70/30 Ratio</h3>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">Deep Work vs Travel · 글쓰기와 노마드 균형</p>' +
+    '</div>';
+
+    html += '</div>';
+
+    // ════════ SECTION 2 · 8/4 split — Revenue Goals + 노마드 동안 운영 ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+
+    // ───── LEFT (8): Postype Webnovel Revenue Goals ─────
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px">' +
+      '<div>' +
+        '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">Postype Webnovel Revenue Goals</h4>' +
+        '<p style="font-size:13px;color:var(--nm-text-2)">B시리즈 중심 · 게이트 카운트 핵심 트랙</p>' +
+      '</div>' +
+      '<span style="background:#F5F3FF;color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700">High Priority</span>' +
+    '</div>';
+
+    // Tier 1 progress: 게이트 트랙
+    html += '<div style="margin-bottom:24px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<span style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.1em">Tier 1 · 게이트 트랙 (출국 조건)</span>' +
+      '<span style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-on-surface)">₩' + currentRevenue + '만 / ₩' + gateRevenue + '만</span>' +
+    '</div>';
+    html += '<div style="height:10px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
+      '<div style="height:100%;width:' + gatePct + '%;background:var(--nm-primary);border-radius:99px;transition:width 0.3s"></div>' +
+    '</div>';
+    html += '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">현재 ₩200-250만 → 2027.12 게이트 ₩450만 (출국 조건)</p>';
+    html += '</div>';
+
+    // Tier 2 progress: 욕심 트랙
+    html += '<div style="margin-bottom:32px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<span style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">Tier 2 · 욕심 트랙 (저축 가능)</span>' +
+      '<span style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-on-surface)">₩' + currentRevenue + '만 / ₩700-800만</span>' +
+    '</div>';
+    html += '<div style="height:10px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
+      '<div style="height:100%;width:' + greedPct + '%;background:var(--nm-secondary);border-radius:99px;transition:width 0.3s"></div>' +
+    '</div>';
+    html += '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">달성 시 노마드 + 저축 동시 가능</p>';
+    html += '</div>';
+
+    // 하단 2 metric (확장 전략)
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:24px;border-top:1px solid var(--nm-surface-container)">';
+    html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low)">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:24px;margin-bottom:8px">trending_up</span>' +
+      '<h5 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">발행 페이스</h5>' +
+      '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5">B시리즈 <strong>월 8편+</strong> 페이스 · 주 2-3편 발행</p>' +
+    '</div>';
+    html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low)">' +
+      '<span class="material-symbols-outlined" style="color:#7d3d00;font-size:24px;margin-bottom:8px">rocket_launch</span>' +
+      '<h5 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">확장 전략</h5>' +
+      '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5"><strong>2번째 작품</strong> (2026 후반/2027) · 메이저 웹소 플랫폼 진입 검토</p>' +
+    '</div>';
+    html += '</div>';
+
+    html += '</div>'; // /Revenue Goals
+
+    // ───── RIGHT (4): 노마드 동안 운영 (3 모드 압축) ─────
+    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;gap:14px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
-      '<h3 class="nm-headline-md">노마드 동안 운영</h3>' +
-    '</div>';
-    html += '<div class="nm-grid nm-grid-3" style="gap:16px">';
-
-    html += '<div style="background:var(--nm-primary-soft);padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-primary);margin-bottom:10px">메인 (웹소)</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>평일 오전 4시간 = 글 작업 (블록 사수)</li>' +
-        '<li>주 2-3편 발행 페이스</li>' +
-        '<li>출국 전 3개월치 콘텐츠 비축</li>' +
-      '</ul>' +
+      '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">노마드 동안 운영</h4>' +
     '</div>';
 
-    html += '<div style="background:#e6eeff;padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-secondary);margin-bottom:10px">서브 (IP)</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>평일 1일 = 코딩 데이 (수요일 풀데이)</li>' +
-        '<li>메일리 격주 발행</li>' +
-        '<li>사연 응답 + 1:1 분석 월 2-4건</li>' +
-      '</ul>' +
+    var operationModes = [
+      { title:'메인 (웹소)', bg:'#F5F3FF', accent:'var(--nm-primary)', icon:'menu_book',
+        items:['평일 오전 4시간 글 (블록 사수)', '주 2-3편 발행 페이스', '출국 전 3개월치 콘텐츠 비축'] },
+      { title:'서브 (IP)', bg:'#e6eeff', accent:'var(--nm-secondary)', icon:'analytics',
+        items:['평일 1일 = 코딩 (수요일 풀데이)', '메일리 격주 발행', '사연 + 1:1 월 2-4건'] },
+      { title:'해외 취업 정찰', bg:'#ffe0cd', accent:'#7d3d00', icon:'travel_explore',
+        items:['영문 포트폴리오 + 면접', '패션 (니트) + 1인 IP 양쪽 열어둠'] },
+    ];
+    operationModes.forEach(function(m) {
+      html += '<div style="padding:14px 16px;border-radius:10px;background:' + m.bg + ';border-left:3px solid ' + m.accent + '">';
+      html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+        '<span class="material-symbols-outlined" style="font-size:14px;color:' + m.accent + '">' + m.icon + '</span>' +
+        '<h5 style="font-family:Manrope;font-size:12px;font-weight:700;color:' + m.accent + '">' + m.title + '</h5>' +
+      '</div>';
+      html += '<ul style="list-style:none;padding:0;margin:0">';
+      m.items.forEach(function(it) {
+        html += '<li style="font-size:11px;color:var(--nm-text-2);line-height:1.5;padding-left:10px;position:relative;margin-bottom:3px">' +
+          '<span style="position:absolute;left:0;color:' + m.accent + '">·</span>' + it +
+        '</li>';
+      });
+      html += '</ul>';
+      html += '</div>';
+    });
+    html += '</div>'; // /노마드 운영
+
+    html += '</div>'; // /8-4 split
+
+    // ════════ SECTION 3 · Analyst N IP Phases (full-width 7 카드) ════════
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
+    html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">' +
+      '<div style="width:44px;height:44px;border-radius:50%;background:rgba(124,58,237,0.12);display:flex;align-items:center;justify-content:center">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
+      '</div>' +
+      '<div>' +
+        '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">분석가 N IP Development Phases</h4>' +
+        '<p style="font-size:12px;color:var(--nm-text-3);margin-top:2px">서브 트랙 · 메일리 + 디지털 제품 + 코칭 · 게이트 외 장기 자산</p>' +
+      '</div>' +
     '</div>';
 
-    html += '<div style="background:#fff7ed;padding:18px;border-radius:8px">' +
-      '<h4 style="font-family:Manrope;font-size:14px;font-weight:700;color:#c2410c;margin-bottom:10px">해외 취업 정찰</h4>' +
-      '<ul class="nm-list-bullet" style="font-size:13px">' +
-        '<li>영문 포트폴리오 + 면접</li>' +
-        '<li>패션 (니트) + 1인 IP 운영자 양쪽 열어둠</li>' +
-      '</ul>' +
-    '</div>';
+    // 7 Phase 카드 grid (responsive)
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px">';
+    phases.forEach(function(p) {
+      var state = p.num < activePhase ? 'done' : (p.num === activePhase ? 'active' : 'lock');
+      var cardStyle, badgeStyle, iconHtml, opacity = '', extraRing = '';
 
+      if (state === 'done') {
+        cardStyle = 'background:#F5F3FF;border:1px solid rgba(124,58,237,0.15)';
+        badgeStyle = 'background:rgba(124,58,237,0.2);color:var(--nm-primary)';
+        iconHtml = '<span class="material-symbols-outlined" style="color:#16a34a;font-variation-settings:\'FILL\' 1">check_circle</span>';
+        opacity = 'opacity:0.7';
+      } else if (state === 'active') {
+        cardStyle = 'background:#fff;border:2px solid var(--nm-primary);box-shadow:0 0 0 4px rgba(124,58,237,0.08), 0 8px 24px rgba(124,58,237,0.15);transform:scale(1.03);position:relative;z-index:1';
+        badgeStyle = 'background:var(--nm-primary);color:#fff';
+        iconHtml = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--nm-primary);box-shadow:0 0 0 4px rgba(124,58,237,0.25);animation:nm-pulse 1.5s infinite"></span>';
+      } else {
+        cardStyle = 'background:var(--nm-surface-container-low);border:1px solid transparent';
+        badgeStyle = 'background:rgba(122,116,135,0.15);color:var(--nm-text-3)';
+        iconHtml = '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size:18px">lock</span>';
+        opacity = 'opacity:0.55';
+      }
+
+      html += '<div style="padding:18px;border-radius:12px;' + cardStyle + ';' + opacity + ';transition:transform 0.2s">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
+        '<span style="padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;font-family:Manrope;' + badgeStyle + '">Phase 0' + p.num + '</span>' +
+        iconHtml +
+      '</div>';
+      html += '<h5 style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">' + p.name + '</h5>';
+      html += '<p style="font-size:10px;color:var(--nm-primary);font-weight:600;font-family:Manrope;margin-bottom:8px">' + p.when + '</p>';
+      html += '<p style="font-size:11px;color:var(--nm-text-2);line-height:1.5">' + p.goal + '</p>';
+      html += '</div>';
+    });
     html += '</div>';
-    html += '</div>';
+
+    // 하단 footer
+    html += '<div style="margin-top:20px;padding:16px 20px;background:linear-gradient(135deg,var(--nm-primary-soft),var(--nm-surface-container-low));border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+      '<div>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:2px">예상 기여 (2027.12 시점)</p>' +
+        '<p style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">월 ₩100-300만</p>' +
+      '</div>' +
+      '<span style="font-size:11px;color:var(--nm-text-2);font-style:italic">게이트 외 · 노마드 후에도 장기 운영</span>' +
+    '</div>';
+
     html += '</section>';
+
+    // ════════ SECTION 4 · 6/6 split — Writing Velocity + Current Hub ════════
+    html += '<div class="nm-grid nm-grid-2" style="gap:24px">';
+
+    // ───── LEFT: Weekly Writing Velocity ─────
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface);margin-bottom:6px">Weekly Writing Velocity</h4>';
+    html += '<p style="font-size:12px;color:var(--nm-text-2);margin-bottom:24px">주간 작업 페이스 · 평일 오전 글 블록 + 수요일 코딩 데이</p>';
+
+    // 7-day bar chart
+    var weekdays = [
+      { day:'Mon', label:'월', height:50, color:'var(--nm-primary)', opacity:0.45, tip:'글 블록 4h' },
+      { day:'Tue', label:'화', height:95, color:'var(--nm-primary)', opacity:1,    tip:'글 4h + 발행' },
+      { day:'Wed', label:'수', height:100,color:'var(--nm-secondary)', opacity:0.9, tip:'코딩 풀데이' },
+      { day:'Thu', label:'목', height:90, color:'var(--nm-primary)', opacity:0.9, tip:'글 4h + 발행' },
+      { day:'Fri', label:'금', height:55, color:'var(--nm-primary)', opacity:0.5, tip:'글 블록 4h' },
+      { day:'Sat', label:'토', height:35, color:'var(--nm-secondary)', opacity:0.45, tip:'Synthesis · 사연 응답' },
+      { day:'Sun', label:'일', height:25, color:'var(--nm-secondary)', opacity:0.3, tip:'휴식' },
+    ];
+    html += '<div style="height:170px;background:var(--nm-surface-container-low);border-radius:10px;padding:14px 12px;display:flex;align-items:flex-end;gap:10px;position:relative">';
+    weekdays.forEach(function(d, i) {
+      html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%">' +
+        '<div style="flex:1;width:100%;display:flex;align-items:flex-end;position:relative">' +
+          '<div title="' + d.label + ': ' + d.tip + '" style="width:100%;height:' + d.height + '%;background:' + d.color + ';opacity:' + d.opacity + ';border-radius:6px 6px 0 0;transition:opacity 0.15s;cursor:pointer" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'' + d.opacity + '\'"></div>' +
+        '</div>' +
+        '<span style="font-size:10px;color:var(--nm-text-3);font-weight:600;margin-top:5px">' + d.label + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // 하단 범례
+    html += '<div style="margin-top:16px;display:flex;justify-content:space-between;font-size:11px;color:var(--nm-text-3);font-weight:600">' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-primary);border-radius:2px"></span> Writing Block</span>' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-secondary);border-radius:2px"></span> Coding / Synthesis</span>' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-text-3);opacity:0.3;border-radius:2px"></span> Mobility / Rest</span>' +
+    '</div>';
+    html += '</div>';
+
+    // ───── RIGHT: Current Hub ─────
+    var hubName = '서울 (출국 전)';
+    var hubSub = 'Deep Work Station · 노마드 전 거점';
+    if (today >= DEPARTURE_DATE) {
+      hubName = '포르투 (출국 후 첫 거점)';
+      hubSub = 'Workation Hub A · 워홀 베이스';
+    }
+
+    html += '<div class="nm-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">';
+    html += '<div style="padding:24px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--nm-surface-container)">' +
+      '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">현재 거점: ' + hubName + '</h4>' +
+      '<div style="display:flex;align-items:center;gap:6px;color:var(--nm-primary);font-size:11px;font-weight:600">' +
+        '<span class="material-symbols-outlined" style="font-size:14px">wifi</span>' +
+        '<span>Gigabit Secure</span>' +
+      '</div>' +
+    '</div>';
+    // 그라데이션 hero (이미지 fallback)
+    html += '<div style="flex:1;min-height:200px;position:relative;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%)">';
+    // 점멸 그리드 deco
+    html += '<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3">';
+    for (var gx = 0; gx < 9; gx++) {
+      for (var gy = 0; gy < 5; gy++) {
+        var op = 0.3 + Math.random() * 0.6;
+        html += '<rect x="' + (gx * 48 + 10) + '" y="' + (gy * 42 + 10) + '" width="3" height="3" fill="rgba(255,255,255,' + op + ')" rx="1"/>';
+      }
+    }
+    html += '</svg>';
+    // 하단 overlay
+    html += '<div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(49,46,129,0.95), transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px 28px;color:#fff">' +
+      '<p style="font-family:Manrope;font-size:14px;font-weight:700;margin-bottom:4px">Deep Work Station 01</p>' +
+      '<p style="font-size:12px;color:rgba(255,255,255,0.75)">' + hubSub + '</p>' +
+    '</div>';
+    html += '</div>';
+    html += '</div>'; // /Current Hub
+
+    html += '</div>'; // /6-6 split
 
     return html;
   }
