@@ -70,17 +70,17 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=127" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=127" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=127" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=127" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=127" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=127" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=127" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=127" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=127" as="script">
-  <link rel="preload" href="js/nomad-cities.js?v=127" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=127" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=128" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=128" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=128" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=128" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=128" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=128" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=128" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=128" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=128" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=128" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=128" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -989,12 +989,12 @@
     .nomad-page .nm-mag-hero {
       position: relative;
       overflow: hidden;
-      border-radius: 1.5rem;
-      padding: 36px 0;
-      margin-bottom: 80px;
+      border-radius: 1.25rem;
+      padding: 18px 0;            /* 36 → 18 (절반) */
+      margin-bottom: 64px;
       display: flex;
       align-items: center;
-      min-height: 280px;
+      /* min-height 제거 — 콘텐츠 크기에 맞춤 */
       box-shadow: var(--nm-shadow-hover);
     }
     .nomad-page .nm-mag-hero-bg {
@@ -1032,8 +1032,8 @@
     }
     .nomad-page .nm-mag-hero-chips {
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 8px;
+      margin-bottom: 12px;        /* 24 → 12 */
       flex-wrap: wrap;
     }
     .nomad-page .nm-mag-chip {
@@ -1051,26 +1051,26 @@
     }
     .nomad-page .nm-mag-hero-title {
       font-family: 'Manrope', sans-serif;
-      font-size: 56px;
-      line-height: 1.1;
+      font-size: 36px;            /* 56 → 36 */
+      line-height: 1.15;
       font-weight: 700;
       letter-spacing: -0.025em;
-      margin-bottom: 24px;
+      margin-bottom: 12px;        /* 24 → 12 */
     }
     .nomad-page .nm-mag-hero-quote {
       font-family: 'Inter', serif;
-      font-size: 17px;
-      line-height: 1.6;
+      font-size: 14px;            /* 17 → 14 */
+      line-height: 1.5;
       font-style: italic;
       opacity: 0.95;
-      border-left: 4px solid var(--nm-primary-fixed);
-      padding: 8px 0 8px 20px;
+      border-left: 3px solid var(--nm-primary-fixed);
+      padding: 4px 0 4px 14px;    /* slimmer */
       max-width: 560px;
     }
     .nomad-page .nm-mag-hero-meta {
       display: flex;
-      gap: 24px;
-      margin-top: 28px;
+      gap: 18px;                  /* 24 → 18 */
+      margin-top: 16px;           /* 28 → 16 */
       flex-wrap: wrap;
     }
     .nomad-page .nm-mag-hero-meta-item {
@@ -1124,8 +1124,8 @@
     .nomad-page .nm-bento-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 24px;
-      min-height: 320px;          /* 540 → 320 (세로 줄임) */
+      gap: 20px;
+      min-height: 180px;          /* 320 → 180 (절반) */
     }
     .nomad-page .nm-bento-main {
       grid-column: span 8;
@@ -1149,25 +1149,25 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 32px;
+      padding: 18px 20px;          /* 32 → 18/20 */
       color: #fff;
     }
     .nomad-page .nm-bento-main .eyebrow {
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       opacity: 0.8;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .nomad-page .nm-bento-main h4 {
       font-family: 'Manrope', sans-serif;
-      font-size: 28px;
+      font-size: 18px;             /* 28 → 18 */
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
     .nomad-page .nm-bento-main p {
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 12px;             /* 14 → 12 */
+      line-height: 1.45;
       max-width: 480px;
       opacity: 0.9;
     }
@@ -1176,12 +1176,12 @@
       grid-column: span 4;
       display: grid;
       grid-template-rows: 1fr 1fr;
-      gap: 24px;
+      gap: 16px;
     }
     .nomad-page .nm-bento-side-card {
       background: var(--nm-surface-container-low);
-      border-radius: 16px;
-      padding: 28px;
+      border-radius: 12px;
+      padding: 16px;               /* 28 → 16 */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -1191,20 +1191,20 @@
     .nomad-page .nm-bento-side-card:hover { transform: translateY(-2px); }
     .nomad-page .nm-bento-side-card .nm-bento-icon {
       color: var(--nm-primary);
-      font-size: 32px;
-      margin-bottom: 14px;
+      font-size: 22px;             /* 32 → 22 */
+      margin-bottom: 8px;
     }
     .nomad-page .nm-bento-side-card h4 {
       font-family: 'Manrope', sans-serif;
-      font-size: 20px;
+      font-size: 15px;             /* 20 → 15 */
       font-weight: 600;
       color: var(--nm-deep-indigo);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .nomad-page .nm-bento-side-card p {
-      font-size: 13px;
+      font-size: 12px;             /* 13 → 12 */
       color: var(--nm-text-2);
-      line-height: 1.5;
+      line-height: 1.45;
     }
     .nomad-page .nm-bento-side-img {
       grid-column: span 4;
@@ -7494,7 +7494,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=127" defer></script>
+<script src="js/app-1-pages.js?v=128" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -8291,24 +8291,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=127" defer></script>
+<script src="js/app-2-init.js?v=128" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=127" defer></script>
-<script src="js/roadmap-data.js?v=127" defer></script>
-<script src="js/daily-actions.js?v=127" defer></script>
-<script src="js/daily-guides.js?v=127" defer></script>
-<script src="js/app-4-roadmap.js?v=127" defer></script>
-<script src="js/app-5-ledger-export.js?v=127" defer></script>
-<script src="js/app-6-postype-analytics.js?v=127" defer></script>
+<script src="js/app-3-flatpickr.js?v=128" defer></script>
+<script src="js/roadmap-data.js?v=128" defer></script>
+<script src="js/daily-actions.js?v=128" defer></script>
+<script src="js/daily-guides.js?v=128" defer></script>
+<script src="js/app-4-roadmap.js?v=128" defer></script>
+<script src="js/app-5-ledger-export.js?v=128" defer></script>
+<script src="js/app-6-postype-analytics.js?v=128" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=127" defer></script>
-<script src="js/nomad-cities.js?v=127" defer></script>
-<script src="js/nomad-pages.js?v=127" defer></script>
+<script src="js/nomad-data.js?v=128" defer></script>
+<script src="js/nomad-cities.js?v=128" defer></script>
+<script src="js/nomad-pages.js?v=128" defer></script>
 
 </body>
 </html>
