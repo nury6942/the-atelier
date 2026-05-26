@@ -2059,128 +2059,273 @@ window.NOMAD_PAGES = (function(){
   }
   registerPage('nomad-visa', renderVisa);
 
-  // ──────── Working Holiday 페이지 (탭 4개) ────────
-  function _whTab(activeTab) {
-    var tabs = [
-      { id: 'overview', label: '개요' },
-      { id: 'docs',     label: '서류 준비' },
-      { id: 'process',  label: '신청 절차' },
-      { id: 'strategy', label: '활용 전략' },
-    ];
-    var html = '<div style="display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid #f1f5f9;padding-bottom:0">';
-    tabs.forEach(function(t) {
-      var isActive = t.id === activeTab;
-      html += '<button onclick="NOMAD_PAGES.whSetTab(\'' + t.id + '\')" style="background:none;border:none;padding:10px 16px;font-size:14px;font-weight:' + (isActive ? '700' : '500') + ';color:' + (isActive ? 'var(--nm-primary)' : 'var(--nm-text-2)') + ';cursor:pointer;border-bottom:2px solid ' + (isActive ? 'var(--nm-primary)' : 'transparent') + ';margin-bottom:-1px;font-family:Manrope">' + t.label + '</button>';
-    });
-    html += '</div>';
-    return html;
-  }
-  var _whActiveTab = 'overview';
-  function _whContent(tab) {
-    var html = '';
-    if (tab === 'overview') {
-      html += '<div class="nm-card">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">info</span>' +
-        '<h3 class="nm-headline-md">기본 정보</h3>' +
-      '</div>';
-      html += '<table class="nm-table">';
-      var info = [
-        ['정식 명칭', '한·포르투갈 워킹홀리데이 비자'],
-        ['유효 기간', '1년 (입국일부터)'],
-        ['나이 제한', '만 18-34세 (한·포르투갈 협정 기준)'],
-        ['활동 가능', '관광 · 체류 · 일 · 학업 (정규직 X, 시간제 OK)'],
-        ['연간 쿼터', '200명 (한국-포르투갈)'],
-        ['비용', '€90 (환율 변동)'],
-        ['입출국', '1년 안 자유롭게 다회 가능 · 복수사증'],
-      ];
-      html += '<tbody>';
-      info.forEach(function(r) {
-        html += '<tr><td style="width:140px;color:var(--nm-text-3);font-size:13px">' + r[0] + '</td><td><strong>' + r[1] + '</strong></td></tr>';
-      });
-      html += '</tbody></table>';
-      html += '</div>';
-      html += '<div class="nm-quote" style="margin-top:16px">누리 = 1995.11.2생 · 2028.6 출국 시 만 32세 → <strong style="color:var(--nm-primary)">자격 OK</strong></div>';
-    } else if (tab === 'docs') {
-      html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-      html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">description</span>' +
-        '<h3 class="nm-headline-md">준비 서류</h3>' +
-      '</div>';
-      html += '<table class="nm-table"><thead><tr><th>서류</th><th>발급처</th><th>비고</th></tr></thead><tbody>';
-      var docs = [
-        ['여권 사본', '본인', '만료 1년+ 여유'],
-        ['여권 사진 35×45', '사진관', '6개월 이내'],
-        ['비자신청서', '대사관 양식', '영문 또는 포어'],
-        ['범죄경력회보서 영문', '경찰서 / 정부24', '3개월 이내'],
-        ['재정증빙 영문', '주거래은행', '€5,000 이상 권장'],
-        ['항공권 사본', '항공사', '편도 또는 왕복'],
-        ['여행자보험', '보험사', '€30,000+ 보장'],
-        ['자기소개서', '본인 작성', '영문 또는 포어'],
-        ['활동계획서', '본인 작성', '1년 활동 계획'],
-      ];
-      docs.forEach(function(r) {
-        html += '<tr><td><strong>' + r[0] + '</strong></td><td style="font-size:13px;color:var(--nm-text-2)">' + r[1] + '</td><td style="font-size:12px;color:var(--nm-text-3)">' + r[2] + '</td></tr>';
-      });
-      html += '</tbody></table>';
-      html += '</div>';
-    } else if (tab === 'process') {
-      html += '<div class="nm-card">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
-        '<h3 class="nm-headline-md">신청 절차</h3>' +
-      '</div>';
-      var steps = [
-        { when: '2028.1-2', stage: '사전 준비',      title: '서류 수집',                 text: '범죄경력회보서, 재정증빙, 보험, 자기소개서·활동계획서 작성' },
-        { when: '2028.3',   stage: '대사관 방문 예약', title: '이메일 사전 예약',           text: '주한 포르투갈 대사관 (서울 용산구 한남동) · 본인 직접 방문 필수' },
-        { when: '2028.3-4', stage: '신청 + 면접',     title: '대사관 방문 · 서류 제출',     text: '비자 수수료 €90 납부 · 간단 영어/포어 면접 가능' },
-        { when: '2028.4-5', stage: '발급 대기',       title: '처리 2-6주',               text: '여권 수령 후 비자 시작일 = 2028.6.9 입국일' },
-        { when: '2028.6.9', stage: '출국 + 입국',     title: '리스본 도착',              text: '비자 시작일 전 셰겐 입국 X (입국 거부 위험)' },
-        { when: '입국 30일 이내', stage: 'AIMA 등록',  title: '통합이주망명청',           text: 'aima.gov.pt · (+351) 217-115-000' },
-      ];
-      html += '<div style="position:relative;padding-left:24px;border-left:2px solid var(--nm-primary-soft)">';
-      steps.forEach(function(s) {
-        html += '<div style="position:relative;margin-bottom:20px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">';
-        html += '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>';
-        html += '<div style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + s.when + ' · ' + s.stage + '</div>';
-        html += '<div style="font-family:Manrope;font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + s.title + '</div>';
-        html += '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + s.text + '</p>';
-        html += '</div>';
-      });
-      html += '</div>';
-      html += '</div>';
-    } else if (tab === 'strategy') {
-      html += '<div class="nm-card">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">workspace_premium</span>' +
-        '<h3 class="nm-headline-md">누리 시나리오 · 워홀 활용</h3>' +
-      '</div>';
-      html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:8px">1년 베이스캠프 역할</h4>';
-      html += '<ul class="nm-list-bullet" style="margin-bottom:20px"><li>포르투갈 체류 = 1년 중 약 <strong>2-2.5개월</strong> (6월 + 10-11월)</li><li>셰겐 카운트 회피용 베이스</li><li>복수 입출국 가능</li></ul>';
-      html += '<h4 style="font-family:Manrope;font-size:14px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:8px">일자리 X · 노마드 베이스만</h4>';
-      html += '<ul class="nm-list-bullet"><li>본업 외 IP·웹소 수익이 메인</li><li>포르투갈에서 일자리 X</li><li>워홀 = <strong>비자 도구로만 사용</strong></li></ul>';
-      html += '</div>';
-      html += '<div class="nm-card" style="margin-top:16px;border-left:3px solid #b91c1c">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:#b91c1c">warning</span>' +
-        '<h3 class="nm-headline-md" style="color:#b91c1c">주의</h3>' +
-      '</div>';
-      html += '<ul class="nm-list-bullet"><li>비자 시작일 전 셰겐 입국 시 입국 거부 가능 → <strong>첫 입국 = 반드시 포르투갈</strong></li><li>대사관 방문 = 본인 직접 (대리 X)</li><li>연간 200명 쿼터 = 빨리 신청 권장</li></ul>';
-      html += '</div>';
-    }
-    return html;
-  }
-  function whSetTab(tabId) {
-    _whActiveTab = tabId;
-    var content = document.getElementById('nomad-content');
-    if (content) content.innerHTML = renderWH();
-  }
+  // ──────── Working Holiday 페이지 (Stitch Magazine 디자인 · 탭 제거) ────────
   function renderWH() {
     var html = '';
-    html += pageHeader('Working Holiday · Portugal', '포르투갈 워홀 비자 절차',
-      '만 18-34세 · 누리 자격 OK · 신청 200명 쿼터');
-    html += _whTab(_whActiveTab);
-    html += _whContent(_whActiveTab);
+
+    // 데이터
+    var basicInfo = [
+      { label:'정식 명칭', value:'한·포르투갈 워킹홀리데이 비자', icon:'verified' },
+      { label:'유효 기간', value:'1년 (입국일부터)',           icon:'event' },
+      { label:'나이 제한', value:'만 18-34세 (한·포르투갈 협정)', icon:'cake' },
+      { label:'활동 가능', value:'관광·체류·일·학업 (정규직 X, 시간제 OK)', icon:'work' },
+      { label:'연간 쿼터', value:'200명 (한국-포르투갈)',       icon:'groups' },
+      { label:'비용',     value:'€90 (환율 변동)',           icon:'payments' },
+      { label:'입출국',   value:'1년 안 자유롭게 다회 · 복수사증', icon:'flight' },
+    ];
+
+    var requiredDocs = [
+      { name:'여권 사본',             from:'본인',           note:'만료 1년+ 여유' },
+      { name:'여권 사진 35×45',       from:'사진관',         note:'6개월 이내' },
+      { name:'비자신청서',            from:'대사관 양식',     note:'영문 또는 포어' },
+      { name:'범죄경력회보서 영문',     from:'경찰서 / 정부24', note:'3개월 이내' },
+      { name:'재정증빙 영문',          from:'주거래은행',     note:'€5,000 이상 권장' },
+      { name:'항공권 사본',            from:'항공사',         note:'편도 또는 왕복' },
+      { name:'여행자보험',            from:'보험사',         note:'€30,000+ 보장' },
+      { name:'자기소개서',            from:'본인 작성',       note:'영문 또는 포어' },
+      { name:'활동계획서',            from:'본인 작성',       note:'1년 활동 계획' },
+    ];
+
+    var processSteps = [
+      { num:1, when:'2028.1-2',       stage:'사전 준비',        title:'서류 수집',                 text:'범죄경력회보서, 재정증빙, 보험, 자기소개서·활동계획서 작성' },
+      { num:2, when:'2028.3',         stage:'대사관 방문 예약',   title:'이메일 사전 예약',           text:'주한 포르투갈 대사관 (서울 용산구 한남동) · 본인 직접 방문 필수' },
+      { num:3, when:'2028.3-4',       stage:'신청 + 면접',      title:'대사관 방문 · 서류 제출',     text:'비자 수수료 €90 납부 · 간단 영어/포어 면접 가능' },
+      { num:4, when:'2028.4-5',       stage:'발급 대기',        title:'처리 2-6주',               text:'여권 수령 후 비자 시작일 = 2028.6.9 입국일' },
+      { num:5, when:'2028.6.9',       stage:'출국 + 입국',       title:'리스본 도착',              text:'비자 시작일 전 셰겐 입국 X (입국 거부 위험)' },
+      { num:6, when:'입국 30일 이내', stage:'AIMA 등록',         title:'통합이주망명청',           text:'aima.gov.pt · (+351) 217-115-000', isFinal:true },
+    ];
+
+    // ════════ SECTION 1 · Hero Header ════════
+    html += '<div class="nm-page-header" style="padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;color:var(--nm-primary);font-family:Manrope;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="font-size:16px">flight_takeoff</span>' +
+      'Immigration & Residency' +
+    '</div>';
+    html += '<h1 style="font-family:Manrope;font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.15;margin-bottom:14px">포르투갈 워킹홀리데이 · Visto de Residência</h1>';
+    html += '<p style="font-size:15px;color:var(--nm-text-2);line-height:1.6;max-width:780px;margin-bottom:18px">1년 베이스캠프 비자 — 셰겐 카운트 회피 + 복수 입출국 + 노마드 거점 확보. 200명 연간 쿼터 안에서 누리 1년 동선의 핵심 인프라.</p>';
+    // 누리 자격 inline pill
+    html += '<div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#F5F3FF;color:var(--nm-primary);border-radius:99px;font-family:Manrope;font-size:13px;font-weight:700">' +
+      '<span class="material-symbols-outlined" style="font-size:16px;color:#15803d">check_circle</span>' +
+      '누리 1995.11.2생 · 2028.6 출국 시 만 32세 · 자격 OK' +
+    '</div>';
+    html += '</div>';
+
+    // ════════ SECTION 2 · 8/4 split — Visa Overview + Quick Facts ════════
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+
+    // LEFT: Visa Overview
+    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;justify-content:space-between">';
+    html += '<div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">' +
+      '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">Visa Overview</h4>' +
+      '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 12px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:700;letter-spacing:0.06em">ACTIVE TRACK</span>' +
+    '</div>';
+    // 3 metric inline
+    html += '<div class="nm-grid nm-grid-3" style="gap:20px">';
+    var overviewMetrics = [
+      { label:'Duration',  value:'1년',     sub:'Non-renewable' },
+      { label:'Entry',     value:'Multiple', sub:'복수사증 · 셰겐 액세스' },
+      { label:'Processing', value:'2-6주',   sub:'대사관 → 발급 대기' },
+    ];
+    overviewMetrics.forEach(function(m) {
+      html += '<div>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em">' + m.label + '</p>' +
+        '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-deep-indigo)">' + m.value + '</p>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">' + m.sub + '</p>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    // 하단 info card
+    html += '<div style="margin-top:32px;padding:18px 20px;background:#F5F3FF;border-radius:12px;display:flex;align-items:flex-start;gap:14px">' +
+      '<div style="width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
+        '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">info</span>' +
+      '</div>' +
+      '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.6;font-style:italic">"워홀 ≠ D7 비자. 월 수입 증명이 필요 없고, <strong style="color:var(--nm-deep-indigo);font-style:normal">일시금 재정증빙 €5,000만</strong> 있으면 됨. 1년 베이스캠프 + 셰겐 회피 + 복수 입출국 = 노마드 핵심 도구."</p>' +
+    '</div>';
+    html += '</div>';
+
+    // RIGHT: Quick Facts (deep-indigo)
+    html += '<div class="nm-card nm-card-lg" style="background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column">';
+    html += '<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(40px)"></div>';
+    html += '<div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between">';
+    html += '<div>';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">' +
+      '<span class="material-symbols-outlined" style="color:#eaddff">flag</span>' +
+      '<h4 style="font-family:Manrope;font-size:17px;font-weight:700;color:#fff">Quick Facts</h4>' +
+    '</div>';
+    // 큰 숫자 200
+    html += '<div style="text-align:center;padding:14px 0 20px">' +
+      '<p style="font-family:Manrope;font-size:64px;font-weight:800;color:#eaddff;line-height:1">200</p>' +
+      '<p style="font-size:10px;color:rgba(234,221,255,0.7);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;font-weight:700">annual quota · 한·포 협정</p>' +
+    '</div>';
+    // 추가 stats
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.1)">';
+    html += '<div style="text-align:center"><p style="font-family:Manrope;font-size:20px;font-weight:700;color:#fff">€90</p><p style="font-size:10px;color:rgba(234,221,255,0.7);margin-top:2px">비자 수수료</p></div>';
+    html += '<div style="text-align:center"><p style="font-family:Manrope;font-size:20px;font-weight:700;color:#fff">18-34</p><p style="font-size:10px;color:rgba(234,221,255,0.7);margin-top:2px">자격 연령</p></div>';
+    html += '</div>';
+    html += '</div>';
+    // 버튼
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-visa\')" style="margin-top:24px;width:100%;padding:12px;background:#fff;color:var(--nm-deep-indigo);border:none;border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.background=\'#eaddff\'" onmouseout="this.style.background=\'#fff\'">' +
+      '전체 비자 종합 보기' +
+      '<span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>' +
+    '</button>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>'; // /Visa Overview + Quick Facts
+
+    // ════════ SECTION 3 · Basic Info (7 metric grid full-width) ════════
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">info</span>' +
+        '<h3 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">Basic Info</h3>' +
+      '</div>' +
+      '<span style="font-size:11px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:600">한·포르투갈 협정 · 7 항목</span>' +
+    '</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">';
+    basicInfo.forEach(function(b) {
+      html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid var(--nm-primary)">';
+      html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+        '<span class="material-symbols-outlined" style="font-size:16px;color:var(--nm-primary)">' + b.icon + '</span>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">' + b.label + '</p>' +
+      '</div>';
+      html += '<p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-deep-indigo);line-height:1.4">' + b.value + '</p>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</section>';
+
+    // ════════ SECTION 4 · 6/6 split — Required Documentation + Phased Strategy ════════
+    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
+
+    // LEFT: Required Documentation
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">description</span>' +
+        '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">Required Documentation</h4>' +
+      '</div>' +
+      '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 11px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:700">9 docs</span>' +
+    '</div>';
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">';
+    requiredDocs.forEach(function(d) {
+      html += '<li style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:10px;border:1px solid transparent;transition:all 0.15s;cursor:default" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.transform=\'translateX(3px)\'" onmouseout="this.style.background=\'var(--nm-surface-container-low)\';this.style.borderColor=\'transparent\';this.style.transform=\'none\'">';
+      html += '<div style="display:flex;gap:12px;flex:1;min-width:0">' +
+        '<div style="width:30px;height:30px;border-radius:7px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+          '<span class="material-symbols-outlined" style="font-size:16px;color:var(--nm-primary)">description</span>' +
+        '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<p style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + d.name + '</p>' +
+          '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">' + d.from + ' · ' + d.note + '</p>' +
+        '</div>' +
+      '</div>';
+      html += '</li>';
+    });
+    html += '</ul>';
+    html += '</div>';
+
+    // RIGHT: Phased Strategy
+    html += '<div class="nm-card nm-card-lg">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
+        '<h4 style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-on-surface)">Phased Strategy</h4>' +
+      '</div>' +
+      '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 11px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:700">6 steps</span>' +
+    '</div>';
+    // 6 단계 timeline
+    html += '<div style="position:relative">';
+    html += '<div style="position:absolute;left:15px;top:0;bottom:0;width:2px;background:var(--nm-surface-container)"></div>';
+    processSteps.forEach(function(s, i) {
+      var isLast = (i === processSteps.length - 1);
+      var stepBg = s.isFinal ? 'var(--nm-deep-indigo)' : 'var(--nm-primary)';
+      var stepIcon = s.isFinal ? 'check_circle' : '';
+      html += '<div style="position:relative;padding-left:48px;' + (isLast ? '' : 'padding-bottom:18px') + '">';
+      html += '<div style="position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:' + stepBg + ';color:#fff;display:flex;align-items:center;justify-content:center;font-family:Manrope;font-size:13px;font-weight:700;box-shadow:0 0 0 4px #fff,0 0 0 5px ' + stepBg + '">';
+      if (stepIcon) html += '<span class="material-symbols-outlined" style="font-size:18px">' + stepIcon + '</span>';
+      else html += s.num;
+      html += '</div>';
+      html += '<div style="padding-top:4px">';
+      html += '<p style="font-family:Manrope;font-size:11px;font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">' + s.when + ' · ' + s.stage + '</p>';
+      html += '<p style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">' + s.title + '</p>';
+      html += '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5">' + s.text + '</p>';
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>'; // /6-6 split
+
+    // ════════ SECTION 5 · Strategic Advice (full-width, 1/3 + 2/3) ════════
+    html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
+    html += '<div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:var(--nm-primary);opacity:0.1;border-radius:50%;filter:blur(50px)"></div>';
+    html += '<div style="position:relative;z-index:1;display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 2fr);gap:32px;align-items:flex-start">';
+
+    // LEFT (1/3): 그라데이션 hero (포르투 톤)
+    html += '<div style="background:linear-gradient(135deg,#7C3AED 0%,#a78bfa 50%,#fbbf24 100%);border-radius:14px;min-height:220px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:20px;box-shadow:0 8px 24px rgba(124,58,237,0.2)">';
+    // 작은 deco 별
+    html += '<svg viewBox="0 0 200 180" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;opacity:0.25">' +
+      '<circle cx="40" cy="40" r="2" fill="#fff"/>' +
+      '<circle cx="80" cy="60" r="1.5" fill="#fff"/>' +
+      '<circle cx="160" cy="30" r="2.5" fill="#fff"/>' +
+      '<circle cx="120" cy="100" r="1.5" fill="#fff"/>' +
+      '<circle cx="180" cy="90" r="2" fill="#fff"/>' +
+      '<circle cx="30" cy="120" r="1.5" fill="#fff"/>' +
+      '<circle cx="100" cy="150" r="2" fill="#fff"/>' +
+    '</svg>';
+    html += '<div style="position:relative;z-index:1">' +
+      '<div style="font-size:42px;line-height:1;margin-bottom:12px">🇵🇹</div>' +
+      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-family:Manrope;font-size:11px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">리스본 워홀 베이스</span>' +
+    '</div>';
+    html += '</div>';
+
+    // RIGHT (2/3): Nomad Strategy
+    html += '<div>';
+    html += '<h4 style="font-family:Manrope;font-size:20px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:18px">Nomad Strategy · Why Working Holiday?</h4>';
+    // 2-col 인사이트
+    html += '<div class="nm-grid nm-grid-2" style="gap:18px;margin-bottom:18px">';
+    html += '<div>' +
+      '<h5 style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">1년 베이스캠프 활용</h5>' +
+      '<ul style="list-style:none;padding:0;margin:0;font-size:12px;color:var(--nm-text-2);line-height:1.7">' +
+        '<li>· 포르투갈 체류 = 1년 중 <strong>2-2.5개월</strong> (6월 + 10-11월)</li>' +
+        '<li>· 셰겐 카운트 회피용 베이스</li>' +
+        '<li>· 복수 입출국 가능</li>' +
+      '</ul>' +
+    '</div>';
+    html += '<div>' +
+      '<h5 style="font-family:Manrope;font-size:13px;font-weight:700;color:var(--nm-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">일자리 X · 비자 도구</h5>' +
+      '<ul style="list-style:none;padding:0;margin:0;font-size:12px;color:var(--nm-text-2);line-height:1.7">' +
+        '<li>· 본업 외 IP·웹소 수익이 메인</li>' +
+        '<li>· 포르투갈에서 일자리 X</li>' +
+        '<li>· 워홀 = <strong>비자 도구로만 사용</strong></li>' +
+      '</ul>' +
+    '</div>';
+    html += '</div>';
+    // 주의 박스
+    html += '<div style="padding:16px 18px;background:rgba(186,26,26,0.06);border-left:4px solid #ba1a1a;border-radius:10px;margin-bottom:18px">';
+    html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+      '<span class="material-symbols-outlined" style="font-size:16px;color:#ba1a1a">warning</span>' +
+      '<h5 style="font-family:Manrope;font-size:13px;font-weight:700;color:#ba1a1a">주의 · Critical</h5>' +
+    '</div>';
+    html += '<ul style="list-style:none;padding:0;margin:0;font-size:12px;color:var(--nm-text-2);line-height:1.7">' +
+      '<li>· 비자 시작일 전 셰겐 입국 시 입국 거부 가능 → <strong style="color:#ba1a1a">첫 입국 반드시 포르투갈</strong></li>' +
+      '<li>· 대사관 방문 = 본인 직접 (대리 X)</li>' +
+      '<li>· 연간 200명 쿼터 = 빨리 신청 권장</li>' +
+    '</ul>';
+    html += '</div>';
+    // 버튼
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="display:flex;align-items:center;gap:8px;padding:12px 22px;background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:Manrope;font-size:13px;font-weight:700;cursor:pointer;transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+      '12-Month Voyage 동선 보기' +
+      '<span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>' +
+    '</button>';
+    html += '</div>';
+
+    html += '</div>';
+    html += '</div>';
+
     return html;
   }
   registerPage('nomad-wh', renderWH);
