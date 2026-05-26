@@ -390,6 +390,57 @@ window.NOMAD_PAGES = (function(){
     return 'background:#f1f5f9;color:#475569';
   }
 
+  // 모드별 아이콘 매핑 (Voyage 테이블 모드 셀)
+  function voyageModeIcon(mode) {
+    if (mode.indexOf('풀가동') >= 0) return 'edit_square';
+    if (mode.indexOf('해변') >= 0) return 'beach_access';
+    if (mode.indexOf('자연') >= 0) return 'forest';
+    if (mode.indexOf('예술') >= 0) return 'palette';
+    if (mode.indexOf('휴가') >= 0) return 'spa';
+    if (mode.indexOf('이동') >= 0) return 'sync_alt';
+    if (mode.indexOf('위성') >= 0) return 'orbit';
+    if (mode.indexOf('미국') >= 0) return 'public';
+    if (mode.indexOf('마무리') >= 0) return 'flag';
+    return 'edit';
+  }
+
+  // 도시별 서브 라벨 (국가 · 역할)
+  function voyageCityNode(city) {
+    var map = {
+      '포르투': { country: 'Portugal', node: '워홀 베이스 A' },
+      '더블린 + 골웨이': { country: 'Ireland', node: '아란·모헤어 위성' },
+      '코펜하겐 + 베르겐': { country: 'Denmark · Norway', node: '디자인 + 피요르드' },
+      '스톡홀름 + 헬싱키': { country: 'Sweden · Finland', node: '북유럽 풀가동' },
+      '레이캬비크 + 포르투갈 복귀': { country: 'Iceland · Portugal', node: '오로라 + 워홀 B' },
+      '포르투갈 + 발레타': { country: 'Portugal · Malta', node: '워홀 B + 지중해' },
+      '호바트': { country: 'Australia · Tasmania', node: '남반구 첫 거점' },
+      '애들레이드': { country: 'Australia · SA', node: '바로사 와인' },
+      '멜버른': { country: 'Australia · VIC', node: '살아보기' },
+      '뉴질랜드': { country: 'New Zealand', node: '자연 모드' },
+      '샌디에이고 + 뉴욕(3박)': { country: 'USA · West + East', node: '미국 경험' },
+      '핼리팩스': { country: 'Canada · NS', node: '니트·공예 마무리' },
+    };
+    return map[city] || { country: '', node: '' };
+  }
+
+  // 도시 → city guide ID 매핑 (행 클릭 시 이동)
+  function voyageCityToPageId(city) {
+    if (city.indexOf('포르투') >= 0 && city.indexOf('갈') < 0) return 'nomad-city-porto';
+    if (city.indexOf('포르투갈') >= 0) return 'nomad-city-portugal2';
+    if (city.indexOf('더블린') >= 0) return 'nomad-city-dublin';
+    if (city.indexOf('코펜하겐') >= 0) return 'nomad-city-copenhagen';
+    if (city.indexOf('스톡홀름') >= 0) return 'nomad-city-stockholm';
+    if (city.indexOf('레이캬비크') >= 0) return 'nomad-city-reykjavik';
+    if (city.indexOf('발레타') >= 0) return 'nomad-city-valletta';
+    if (city.indexOf('호바트') >= 0) return 'nomad-city-hobart';
+    if (city.indexOf('애들레이드') >= 0) return 'nomad-city-adelaide';
+    if (city.indexOf('멜버른') >= 0) return 'nomad-city-melbourne';
+    if (city.indexOf('뉴질랜드') >= 0) return 'nomad-city-nz';
+    if (city.indexOf('샌디에이고') >= 0) return 'nomad-city-sandiego';
+    if (city.indexOf('핼리팩스') >= 0) return 'nomad-city-halifax';
+    return null;
+  }
+
   function renderVoyage() {
     var voyage = DATA.VOYAGE;
     var totalBudget = voyage.reduce(function(a,b){ return a + b.cost; }, 0);
@@ -400,102 +451,210 @@ window.NOMAD_PAGES = (function(){
       var m = (v.schengen||'').match(/(\d+)/);
       return a + (m ? parseInt(m[1]) : 0);
     }, 0);
+    var schengenPct = Math.min(100, (schengenDays/90)*100);
+    var schengenColor = schengenDays > 90 ? '#b91c1c' : (schengenDays > 75 ? '#c2410c' : 'var(--nm-tertiary)');
 
     var html = '';
-    html += pageHeader('Global Expedition Plan', '12-Month Voyage',
-      '6개 대륙 · 17개 도시 · 셰겐 84/90일 한도 안');
 
-    // 헤더 통계 카드 2개
-    html += '<section class="nm-section">';
-    html += '<div class="nm-grid nm-grid-2" style="margin-bottom:32px">';
-    html += '<div style="background:var(--nm-primary-soft);padding:24px;border-radius:12px">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">총 예산 (1년)</p>' +
-      '<p style="font-family:Manrope;font-size:28px;font-weight:700;color:var(--nm-deep-indigo)">' + fmtMan(grandTotal) + '</p>' +
-      '<p style="font-size:11px;color:var(--nm-text-3);margin-top:6px">월별 ' + fmtMan(totalBudget) + ' + 일회성 ' + fmtMan(grandTotal - totalBudget) + '</p>' +
+    // ════════ SECTION 1 · Header (좌측 타이틀 + 우측 2 metric 인라인) ════════
+    html += '<div class="nm-page-header" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
+    html += '<div>' +
+      '<div class="nm-page-eyebrow">Global Expedition Plan</div>' +
+      '<div style="font-family:Manrope;font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.1;margin:8px 0 6px">June 2028 — May 2029</div>' +
+      '<div class="nm-page-sub" style="margin:0">6개 대륙 · 17개 도시 · 1년 마스터 동선</div>' +
     '</div>';
-    html += '<div style="background:var(--nm-surface-container-high);padding:24px;border-radius:12px">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">셰겐 일수 (90일 한도)</p>' +
-      '<p style="font-family:Manrope;font-size:28px;font-weight:700;color:' + (schengenDays > 90 ? '#b91c1c' : 'var(--nm-tertiary)') + '">' + schengenDays + ' / 90</p>' +
-      '<div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden">' +
-        '<div style="height:100%;width:' + Math.min(100, (schengenDays/90)*100) + '%;background:' + (schengenDays > 90 ? '#b91c1c' : 'var(--nm-tertiary)') + '"></div>' +
+    html += '<div style="display:flex;gap:12px;flex-shrink:0">';
+    html += '<div style="background:var(--nm-primary-soft);padding:18px 22px;border-radius:12px;min-width:170px">' +
+      '<p class="nm-label-sm" style="margin-bottom:6px;color:var(--nm-text-2)">Total Budget (Est.)</p>' +
+      '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:var(--nm-deep-indigo)">' + fmtMan(grandTotal) + '</p>' +
+    '</div>';
+    html += '<div style="background:var(--nm-surface-container-high);padding:18px 22px;border-radius:12px;min-width:170px">' +
+      '<p class="nm-label-sm" style="margin-bottom:6px;color:var(--nm-text-2)">Schengen Days Used</p>' +
+      '<p style="font-family:Manrope;font-size:22px;font-weight:700;color:' + schengenColor + '">' + schengenDays + ' / 90</p>' +
+      '<div style="margin-top:6px;height:3px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden">' +
+        '<div style="height:100%;width:' + schengenPct + '%;background:' + schengenColor + '"></div>' +
       '</div>' +
     '</div>';
     html += '</div>';
+    html += '</div>';
 
-    // Voyage 테이블
+    // ════════ SECTION 2 · 3-col 레이아웃 (flex-grow 테이블 + w-80 사이드 레일) ════════
+    html += '<div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:flex-start">';
+
+    // ───── LEFT: Itinerary Table ─────
     html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<table class="nm-table">';
-    html += '<thead><tr>' +
-      '<th style="width:90px">시기</th>' +
-      '<th>도시</th>' +
-      '<th>상세</th>' +
-      '<th>비자 / 셰겐</th>' +
-      '<th class="nm-num">예산</th>' +
-      '<th>모드</th>' +
-    '</tr></thead>';
+    html += '<table class="nm-table" style="width:100%;border-collapse:collapse">';
+    html += '<thead>' +
+      '<tr style="background:#F5F3FF">' +
+        '<th style="padding:14px 20px;text-align:left;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;width:90px">Month</th>' +
+        '<th style="padding:14px 20px;text-align:left;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">City & Node</th>' +
+        '<th style="padding:14px 20px;text-align:left;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Detail</th>' +
+        '<th style="padding:14px 20px;text-align:left;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Visa / Schengen</th>' +
+        '<th style="padding:14px 20px;text-align:right;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Budget</th>' +
+        '<th style="padding:14px 20px;text-align:left;font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Work Mode</th>' +
+      '</tr>' +
+    '</thead>';
     html += '<tbody>';
-    voyage.forEach(function(v) {
-      var schengenPill = (v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외')
-        ? '<span class="nm-pill" style="margin-left:4px;background:#fff7ed;color:#c2410c">' + v.schengen + '</span>'
+
+    // 분기 분리선 헬퍼
+    function quarterRow(label) {
+      return '<tr><td colspan="6" style="padding:10px 20px;background:var(--nm-surface-container-low);font-family:Manrope;font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.12em;text-transform:uppercase;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9">' + label + '</td></tr>';
+    }
+
+    // EUROPE LOOP 분기 라벨 시작
+    html += quarterRow('Europe Loop · June — November 2028');
+
+    voyage.forEach(function(v, i) {
+      // 분기 전환 (12월 = DOWN UNDER 시작, 4월 = AMERICAS & RETURN 시작)
+      if (v.month === '12월') html += quarterRow('Down Under · December 2028 — March 2029');
+      if (v.month === '4월' && v.year === 2029) html += quarterRow('Americas & Return · April — May 2029');
+
+      var node = voyageCityNode(v.city);
+      var modeIcon = voyageModeIcon(v.mode);
+      var pageId = voyageCityToPageId(v.city);
+      var yearLabel = v.year === 2028 ? '\'28' : '\'29';
+      var clickAttrs = pageId
+        ? ' style="cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'" onclick="NOMAD_PAGES.go(\'' + pageId + '\')"'
         : '';
-      var yearLabel = v.year === 2028 ? '' : '\'29 ';
-      html += '<tr>' +
-        '<td><strong style="color:var(--nm-primary);font-size:13px">' + yearLabel + v.month + '</strong></td>' +
-        '<td>' +
-          '<div style="display:flex;align-items:center;gap:8px">' +
-            '<span style="width:6px;height:6px;border-radius:50%;background:var(--nm-soft-accent)"></span>' +
-            '<div>' +
-              '<div style="font-family:Manrope;font-weight:600;color:var(--nm-on-surface);font-size:14px">' + v.city + '</div>' +
-            '</div>' +
+
+      // visa pill
+      var visaPill = '<span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;' + visaPillClass(v.visa) + '">' + v.visa + '</span>';
+      // schengen pill (있을 때만)
+      var schengenPill = '';
+      if (v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외') {
+        schengenPill = ' <span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;background:#fff7ed;color:#c2410c;margin-left:4px">' + v.schengen + '</span>';
+      } else if (v.schengen === '외' || v.schengen === '셰겐 외') {
+        schengenPill = ' <span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:500;background:#f1f5f9;color:#475569;margin-left:4px">Non-Sch</span>';
+      }
+
+      html += '<tr' + clickAttrs + '>';
+      // Month
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;font-family:Manrope;font-weight:700;color:var(--nm-primary);font-size:13px">' + yearLabel + ' ' + v.month + '</td>';
+      // City & Node
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9">' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:var(--nm-soft-accent);flex-shrink:0"></span>' +
+          '<div>' +
+            '<div style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + v.city + '</div>' +
+            (node.country ? '<div style="font-size:11px;color:var(--nm-text-3);margin-top:2px">' + node.country + (node.node ? ' · ' + node.node : '') + '</div>' : '') +
           '</div>' +
-        '</td>' +
-        '<td style="font-size:12px;color:var(--nm-text-2);max-width:280px">' + v.detail + '</td>' +
-        '<td>' +
-          '<span class="nm-pill" style="' + visaPillClass(v.visa) + '">' + v.visa + '</span>' +
-          schengenPill +
-        '</td>' +
-        '<td class="nm-num"><strong>₩' + v.cost + '만</strong></td>' +
-        '<td style="font-size:12px;color:var(--nm-text-3)">' + v.mode + '</td>' +
-      '</tr>';
+        '</div>' +
+      '</td>';
+      // Detail
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;font-size:12px;color:var(--nm-text-2);max-width:240px;line-height:1.5">' + v.detail + '</td>';
+      // Visa
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;white-space:nowrap">' + visaPill + schengenPill + '</td>';
+      // Budget
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:Manrope;font-weight:700;color:var(--nm-on-surface);font-size:13px">₩' + v.cost + '만</td>';
+      // Mode
+      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+          '<span class="material-symbols-outlined" style="font-size:16px;color:var(--nm-text-3)">' + modeIcon + '</span>' +
+          '<span style="font-size:12px;color:var(--nm-text-2);font-weight:500">' + v.mode + '</span>' +
+        '</div>' +
+      '</td>';
+      html += '</tr>';
     });
+
     html += '</tbody></table>';
     html += '</div>';
-    html += '</section>';
 
-    // ────── 2-col: 마일리지 활용 + 엄마 합류 후보 ──────
-    html += '<div class="nm-grid nm-grid-2">';
+    // ───── RIGHT: 사이드 레일 (3 카드) ─────
+    html += '<aside style="display:flex;flex-direction:column;gap:20px">';
 
-    // 마일리지 활용
-    html += '<div class="nm-card">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
-        '<h3 class="nm-headline-md">마일리지 활용</h3>' +
-      '</div>' +
-      '<ul class="nm-list-bullet">' +
-        '<li>인천 → 리스본 (출국, 대한항공 마일리지)</li>' +
-        '<li>핼리팩스 → 인천 (귀국, 마일리지)</li>' +
-        '<li>유럽 안 = 라이언에어 · 이지젯 €30-80</li>' +
-        '<li>대륙 간 = 두바이 경유 (말타 → 호바트)</li>' +
-      '</ul>' +
+    // ① 마일리지 활용 (lavender + border-l-4)
+    html += '<div class="nm-card" style="padding:22px">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+      '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">Mileage Strategy</h4>' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">air</span>' +
     '</div>';
-
-    // 엄마 합류 후보
-    html += '<div class="nm-card">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary)">family_restroom</span>' +
-        '<h3 class="nm-headline-md">엄마 합류 후보</h3>' +
-      '</div>' +
-      '<ul class="nm-list-bullet">' +
-        '<li><strong>2028.9</strong> 스칸디나비아 (북유럽 안전·깨끗)</li>' +
-        '<li><strong>2028.12</strong> 호바트 (호주 여름)</li>' +
-        '<li><strong>2029.3</strong> 뉴질랜드 (자연)</li>' +
-      '</ul>' +
-      '<div class="nm-quote" style="margin-top:16px;font-size:12px">' +
-        '1969년생 · 현행 정년 시 2029 / 65세 법안 통과 시 2033년 퇴직' +
-      '</div>' +
+    html += '<div style="padding:14px 16px;background:#F5F3FF;border-radius:10px;border-left:4px solid var(--nm-primary);margin-bottom:16px">' +
+      '<p class="nm-label-sm" style="margin-bottom:4px;color:var(--nm-text-3)">대한항공 마일리지</p>' +
+      '<p style="font-family:Manrope;font-size:15px;font-weight:700;color:var(--nm-deep-indigo)">출국·귀국 보너스 좌석 활용</p>' +
     '</div>';
-
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px">';
+    var mileageItems = [
+      { icon:'flight_takeoff', text:'인천 → 리스본 (출국, 대한항공 마일리지)' },
+      { icon:'flight_land',    text:'핼리팩스 → 인천 (귀국, 마일리지)' },
+      { icon:'connecting_airports', text:'유럽 안 = 라이언에어 · 이지젯 €30-80' },
+      { icon:'public',         text:'대륙 간 = 두바이 경유 (말타 → 호바트)' },
+    ];
+    mileageItems.forEach(function(m) {
+      html += '<li style="display:flex;gap:10px;align-items:flex-start">' +
+        '<div style="width:24px;height:24px;border-radius:6px;background:rgba(124,58,237,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
+          '<span class="material-symbols-outlined" style="font-size:14px;color:var(--nm-primary)">' + m.icon + '</span>' +
+        '</div>' +
+        '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5;margin:0">' + m.text + '</p>' +
+      '</li>';
+    });
+    html += '</ul>';
     html += '</div>';
+
+    // ② 엄마 합류 후보 (deco circle + checklist)
+    html += '<div class="nm-card" style="padding:22px;position:relative;overflow:hidden">';
+    // deco circle
+    html += '<div style="position:absolute;top:-40px;right:-40px;width:96px;height:96px;background:#ffe0cd;opacity:0.4;border-radius:50%"></div>';
+    html += '<div style="position:relative;z-index:1">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+      '<h4 style="font-family:Manrope;font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">Family Integration</h4>' +
+      '<span class="material-symbols-outlined" style="color:#7d3d00">family_restroom</span>' +
+    '</div>';
+    // 아바타 + 이름
+    html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">' +
+      '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffdcc6,#ffb784);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 0 2px rgba(125,61,0,0.15)">👩</div>' +
+      '<div>' +
+        '<p style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--nm-on-surface);margin:0">엄마 합류 후보</p>' +
+        '<p style="font-size:11px;color:var(--nm-text-3);margin:2px 0 0">1969년생 · 정년 2029(현행) / 2033(65세)</p>' +
+      '</div>' +
+    '</div>';
+    // 체크박스 후보 시기 (localStorage 저장 X · UI만 — 추후 확장 가능)
+    html += '<div style="padding:14px;background:var(--nm-surface-container-low);border-radius:10px">' +
+      '<p style="font-size:11px;font-weight:700;color:var(--nm-text-2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">합류 후보 시기</p>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">';
+    var familyCandidates = [
+      { when:'2028.9', label:'스칸디나비아', note:'북유럽 · 안전 · 깨끗' },
+      { when:'2028.12', label:'호바트',     note:'호주 · 여름' },
+      { when:'2029.3',  label:'뉴질랜드',    note:'자연' },
+    ];
+    familyCandidates.forEach(function(c) {
+      html += '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">' +
+        '<input type="checkbox" style="margin-top:3px;width:14px;height:14px;accent-color:var(--nm-primary);flex-shrink:0">' +
+        '<div>' +
+          '<span style="font-family:Manrope;font-size:12px;font-weight:700;color:var(--nm-deep-indigo)">' + c.when + ' · ' + c.label + '</span>' +
+          '<p style="font-size:11px;color:var(--nm-text-3);margin:2px 0 0">' + c.note + '</p>' +
+        '</div>' +
+      '</label>';
+    });
+    html += '</div></div>';
+    html += '</div>';
+    html += '</div>';
+
+    // ③ Voyage Trajectory View (그라데이션 + 캡션)
+    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
+    html += '<div style="height:170px;position:relative;background:linear-gradient(135deg,#312E81 0%,#7C3AED 45%,#a78bfa 80%,#fbbf24 100%)">' +
+      // 가짜 trajectory lines (정적 점들로 표현)
+      '<svg viewBox="0 0 320 170" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.5">' +
+        '<path d="M 40 130 Q 80 60 130 80 T 220 70 T 290 100" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none" stroke-dasharray="3,3"/>' +
+        '<circle cx="40" cy="130" r="4" fill="rgba(255,255,255,0.85)"/>' +
+        '<circle cx="130" cy="80" r="4" fill="rgba(255,255,255,0.85)"/>' +
+        '<circle cx="220" cy="70" r="4" fill="rgba(255,255,255,0.85)"/>' +
+        '<circle cx="290" cy="100" r="4" fill="rgba(255,255,255,0.85)"/>' +
+      '</svg>' +
+      '<div style="position:absolute;bottom:14px;left:18px">' +
+        '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">Voyage Trajectory View</span>' +
+      '</div>' +
+    '</div>';
+    html += '<div style="padding:18px 20px">' +
+      '<div style="display:flex;justify-content:space-between;gap:12px">' +
+        '<div><p style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">17</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">cities</p></div>' +
+        '<div><p style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">6</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">continents</p></div>' +
+        '<div><p style="font-family:Manrope;font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">365</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">days</p></div>' +
+      '</div>' +
+    '</div>';
+    html += '</div>';
+
+    html += '</aside>';
+    html += '</div>'; // /3-col grid
 
     return html;
   }
