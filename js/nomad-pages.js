@@ -1482,11 +1482,17 @@ window.NOMAD_PAGES = (function(){
   }
 
   // ──── Magazine: Why City (마지막 분석 + quote) ────
+  // 이미지 있으면 좌 텍스트 + 우 이미지+quote 박스 (2-col)
+  // 이미지 없으면 텍스트 단독 + quote는 텍스트 끝에 인디고 카드로
   function _renderWhyCity(why, num) {
     if (!why) return '';
+    var hasImage = !!why.image;
+
     var html = '<section class="nm-mag-section">';
-    html += '<div class="nm-why-grid">';
-    // 왼쪽: 분석 텍스트
+    if (hasImage) {
+      html += '<div class="nm-why-grid">';
+    }
+    // 왼쪽 (또는 단독): 분석 텍스트
     html += '<div>';
     html += '<span class="nm-mag-section-num" style="display:block;margin-bottom:16px"><span class="n">' + (num || '05') + '</span> / The Rationale</span>';
     html += '<h3 style="font-family:Manrope;font-size:36px;font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom:24px;line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
@@ -1498,20 +1504,31 @@ window.NOMAD_PAGES = (function(){
       html += '<div><p class="t">' + why.takeaway.title + '</p><p class="s">' + why.takeaway.text + '</p></div>';
       html += '</div>';
     }
-    html += '</div></div>';
-    // 오른쪽: 이미지 + quote
-    html += '<div class="nm-why-visual">';
-    html += '<div class="main-img">';
-    if (why.image) html += '<img src="' + why.image + '" alt="' + (why.imageAlt || '') + '"/>';
-    html += '</div>';
-    if (why.quote) {
-      html += '<div class="nm-why-quote">';
-      html += '<div class="qmark">"</div>';
-      html += '<p>' + why.quote + '</p>';
-      html += '</div>';
+    // 이미지 없으면 quote를 인디고 인라인 카드로
+    if (!hasImage && why.quote) {
+      html += '<div style="margin-top:32px;background:var(--nm-deep-indigo);color:#fff;padding:24px 28px;border-radius:14px;display:flex;gap:16px;align-items:flex-start;max-width:580px">' +
+        '<span style="font-size:32px;line-height:1;opacity:0.85">"</span>' +
+        '<p style="font-size:14px;line-height:1.6;font-style:italic;opacity:0.95;margin:0">' + why.quote + '</p>' +
+      '</div>';
     }
-    html += '</div>';
-    html += '</div></section>';
+    html += '</div></div>';
+
+    // 오른쪽: 이미지 + 떠있는 quote (이미지 있을 때만)
+    if (hasImage) {
+      html += '<div class="nm-why-visual">';
+      html += '<div class="main-img">';
+      html += '<img src="' + why.image + '" alt="' + (why.imageAlt || '') + '"/>';
+      html += '</div>';
+      if (why.quote) {
+        html += '<div class="nm-why-quote">';
+        html += '<div class="qmark">"</div>';
+        html += '<p>' + why.quote + '</p>';
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '</div>'; // /nm-why-grid
+    }
+    html += '</section>';
     return html;
   }
 
