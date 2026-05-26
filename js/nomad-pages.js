@@ -1428,7 +1428,9 @@ window.NOMAD_PAGES = (function(){
     (budget.rows || []).forEach(function(r) {
       var intensity = maxVal > 0 ? (r.value / maxVal) : 0;
       html += '<tr>' +
-        '<td class="nm-bg-cat">' + r.name + (r.sub ? ' <span style="font-weight:400;color:var(--nm-text-3);font-size:12px">· ' + r.sub + '</span>' : '') + '</td>' +
+        '<td class="nm-bg-cat">' + r.name +
+          (r.sub ? '<div style="font-weight:400;color:var(--nm-text-3);font-size:11px;margin-top:2px;line-height:1.3">' + r.sub + '</div>' : '') +
+        '</td>' +
         '<td>' + r.eur + '</td>' +
         '<td class="nm-bg-num">' + r.krw + '</td>' +
         '<td style="text-align:right"><span class="nm-bg-intensity"><span style="width:' + Math.round(intensity * 100) + '%"></span></span></td>' +

@@ -70,17 +70,17 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=135" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=135" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=135" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=135" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=135" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=135" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=135" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=135" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=135" as="script">
-  <link rel="preload" href="js/nomad-cities.js?v=135" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=135" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=136" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=136" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=136" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=136" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=136" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=136" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=136" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=136" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=136" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=136" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=136" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -1058,13 +1058,13 @@
       margin-bottom: 12px;        /* 24 → 12 */
     }
     .nomad-page .nm-mag-hero-quote {
-      font-family: 'Inter', serif;
-      font-size: 14px;            /* 17 → 14 */
+      font-family: 'Inter', 'Pretendard', sans-serif;
+      font-size: 14px;
       line-height: 1.5;
-      font-style: italic;
-      opacity: 0.95;
+      font-weight: 400;
+      opacity: 0.92;
       border-left: 3px solid var(--nm-primary-fixed);
-      padding: 4px 0 4px 14px;    /* slimmer */
+      padding: 4px 0 4px 14px;
       max-width: 560px;
     }
     .nomad-page .nm-mag-hero-meta {
@@ -1358,9 +1358,10 @@
       font-weight: 600;
     }
     .nomad-page .nm-bg-table tbody td {
-      padding: 20px 24px;
+      padding: 12px 20px;            /* 20px → 12px 행 높이 축소 */
       border-bottom: 1px solid #f1f5f9;
-      font-size: 14px;
+      font-size: 13px;
+      vertical-align: top;           /* 카테고리 2줄일 때 위에 정렬 */
     }
     .nomad-page .nm-bg-table tbody tr:hover { background: var(--nm-surface-container-low); }
     .nomad-page .nm-bg-table .nm-bg-cat { font-weight: 700; color: var(--nm-on-surface); }
@@ -7494,7 +7495,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=135" defer></script>
+<script src="js/app-1-pages.js?v=136" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -8291,24 +8292,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=135" defer></script>
+<script src="js/app-2-init.js?v=136" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=135" defer></script>
-<script src="js/roadmap-data.js?v=135" defer></script>
-<script src="js/daily-actions.js?v=135" defer></script>
-<script src="js/daily-guides.js?v=135" defer></script>
-<script src="js/app-4-roadmap.js?v=135" defer></script>
-<script src="js/app-5-ledger-export.js?v=135" defer></script>
-<script src="js/app-6-postype-analytics.js?v=135" defer></script>
+<script src="js/app-3-flatpickr.js?v=136" defer></script>
+<script src="js/roadmap-data.js?v=136" defer></script>
+<script src="js/daily-actions.js?v=136" defer></script>
+<script src="js/daily-guides.js?v=136" defer></script>
+<script src="js/app-4-roadmap.js?v=136" defer></script>
+<script src="js/app-5-ledger-export.js?v=136" defer></script>
+<script src="js/app-6-postype-analytics.js?v=136" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=135" defer></script>
-<script src="js/nomad-cities.js?v=135" defer></script>
-<script src="js/nomad-pages.js?v=135" defer></script>
+<script src="js/nomad-data.js?v=136" defer></script>
+<script src="js/nomad-cities.js?v=136" defer></script>
+<script src="js/nomad-pages.js?v=136" defer></script>
 
 </body>
 </html>
