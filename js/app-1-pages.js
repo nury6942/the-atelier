@@ -5094,7 +5094,26 @@
         var paymentDateRowSt = item.payment_date
           ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</p>'
           : '';
+        // 이미지 영역 (사용자 업로드 + Ctrl+V)
+        var lodgeKey = String(item._id || ('lodge-fb-' + realIdx));
+        var safeLodgeKey = lodgeKey.replace(/'/g, "\\'");
+        var lodgeImg = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey)) || null;
+        var lodgeImgEmpty = lodgeImg ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
+        var lodgeImgEl = lodgeImg ? '<img class="j-lodge-img-src" src="' + lodgeImg + '" alt="' + (item.title || '').replace(/"/g,'') + '">' : '';
+        var lodgeCtrl = lodgeImg
+          ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + safeLodgeKey + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
+            '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + safeLodgeKey + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
+          : '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + safeLodgeKey + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
         return '<div class="j-lodge-card">' +
+          '<div class="j-lodge-img" ' +
+              'onmouseenter="window.journeyLodgeImageSetActive && journeyLodgeImageSetActive(\'' + safeLodgeKey + '\')" ' +
+              'onmouseleave="window.journeyLodgeImageClearActive && journeyLodgeImageClearActive(\'' + safeLodgeKey + '\')">' +
+            lodgeImgEmpty +
+            lodgeImgEl +
+            '<input type="file" accept="image/*" style="display:none" data-lodge-key="' + safeLodgeKey + '" onchange="journeyLodgeImageFileSelected(event,\'' + safeLodgeKey + '\')">' +
+            '<div class="j-lodge-img-controls' + (lodgeImg ? '' : ' is-empty') + '">' + lodgeCtrl + '</div>' +
+            '<div class="j-lodge-paste-hint">Ctrl+V로 붙여넣기</div>' +
+          '</div>' +
           '<div class="j-lodge-body">' +
             '<div class="j-lodge-head">' +
               '<div class="j-lodge-head-l">' +
@@ -5129,6 +5148,7 @@
           '</div>' +
         '</div>';
       }).join('');
+      if (typeof window.journeyLodgeImageHydrateAll === 'function') window.journeyLodgeImageHydrateAll();
       return;
     }
 
@@ -5145,7 +5165,25 @@
       var cancelClassSt2 = cancelOk ? 'j-lodge-cancel-ok' : 'j-lodge-cancel-danger';
       var isAirbnb2 = baseType.indexOf('Airbnb') >= 0;
       var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">' + typeIcon + '</span>' + baseType + '</span>';
+      // 이미지 영역 (사용자 업로드 + Ctrl+V)
+      var lodgeKey2 = String('lodge-seed-' + idx);
+      var lodgeImg2 = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey2)) || null;
+      var lodgeImgEmpty2 = lodgeImg2 ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
+      var lodgeImgEl2 = lodgeImg2 ? '<img class="j-lodge-img-src" src="' + lodgeImg2 + '" alt="' + (d.title || '').replace(/"/g,'') + '">' : '';
+      var lodgeCtrl2 = lodgeImg2
+        ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + lodgeKey2 + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
+          '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + lodgeKey2 + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
+        : '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + lodgeKey2 + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
       return '<div class="j-lodge-card">' +
+        '<div class="j-lodge-img" ' +
+            'onmouseenter="window.journeyLodgeImageSetActive && journeyLodgeImageSetActive(\'' + lodgeKey2 + '\')" ' +
+            'onmouseleave="window.journeyLodgeImageClearActive && journeyLodgeImageClearActive(\'' + lodgeKey2 + '\')">' +
+          lodgeImgEmpty2 +
+          lodgeImgEl2 +
+          '<input type="file" accept="image/*" style="display:none" data-lodge-key="' + lodgeKey2 + '" onchange="journeyLodgeImageFileSelected(event,\'' + lodgeKey2 + '\')">' +
+          '<div class="j-lodge-img-controls' + (lodgeImg2 ? '' : ' is-empty') + '">' + lodgeCtrl2 + '</div>' +
+          '<div class="j-lodge-paste-hint">Ctrl+V로 붙여넣기</div>' +
+        '</div>' +
         '<div class="j-lodge-body">' +
           '<div class="j-lodge-head">' +
             '<div class="j-lodge-head-l">' +
@@ -5174,6 +5212,7 @@
         '</div>' +
       '</div>';
     }).join('');
+    if (typeof window.journeyLodgeImageHydrateAll === 'function') window.journeyLodgeImageHydrateAll();
   }
 
 

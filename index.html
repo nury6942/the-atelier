@@ -6600,7 +6600,7 @@
       gap: 6px;
     }
 
-    /* 숙소 카드 */
+    /* 숙소 카드 (stitch: 좌측 이미지 + 우측 본문) */
     #page-journey .j-lodge-card {
       border: 1px solid var(--j-outline-variant);
       border-radius: var(--j-radius-xl);
@@ -6608,9 +6608,103 @@
       background: var(--j-surface);
       transition: border-color 0.2s;
       margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 1024px) {
+      #page-journey .j-lodge-card { flex-direction: row; }
     }
     #page-journey .j-lodge-card:hover { border-color: var(--j-primary); }
-    #page-journey .j-lodge-body { padding: 28px; }
+    /* 좌측 이미지 영역 (lg에선 320px 고정) */
+    #page-journey .j-lodge-img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
+      overflow: hidden;
+    }
+    @media (min-width: 1024px) {
+      #page-journey .j-lodge-img {
+        width: 320px;
+        aspect-ratio: auto;
+      }
+    }
+    #page-journey .j-lodge-img-src {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(1);
+      transition: filter 0.5s ease;
+    }
+    #page-journey .j-lodge-img:hover .j-lodge-img-src { filter: grayscale(0); }
+    #page-journey .j-lodge-img-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+    }
+    #page-journey .j-lodge-img-empty .material-symbols-outlined { font-size: 48px; }
+    #page-journey .j-lodge-img-controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #page-journey .j-lodge-img:hover .j-lodge-img-controls,
+    #page-journey .j-lodge-img-controls.is-empty {
+      opacity: 1;
+    }
+    #page-journey .j-lodge-img-ctrl {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--j-font-body);
+      transition: background 0.15s;
+    }
+    #page-journey .j-lodge-img-ctrl:hover { background: rgba(0,0,0,0.75); }
+    #page-journey .j-lodge-img-ctrl .material-symbols-outlined { font-size: 13px; }
+    #page-journey .j-lodge-paste-hint {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      z-index: 3;
+      padding: 4px 9px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.9);
+      border-radius: 9999px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: var(--j-font-body);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    #page-journey .j-lodge-img:hover .j-lodge-paste-hint { opacity: 1; }
+    /* 본문 영역 */
+    #page-journey .j-lodge-body { padding: 28px; flex: 1; min-width: 0; }
     #page-journey .j-lodge-head {
       display: flex;
       justify-content: space-between;
@@ -12332,6 +12426,8 @@
 <script src="js/journey-hero.js?v=1" defer></script>
 <!-- Journey City (Stops) 이미지 업로드 (P5+) -->
 <script src="js/journey-city-images.js?v=1" defer></script>
+<!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
+<script src="js/journey-lodge-images.js?v=1" defer></script>
 
 </body>
 </html>
