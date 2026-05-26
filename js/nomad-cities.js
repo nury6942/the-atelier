@@ -3562,6 +3562,188 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 4월 위성 · 뉴욕 ════════
+    'nomad-city-nyc': {
+      monthLabel: '4월 위성',
+      hero: {
+        city: '🇺🇸 뉴욕',
+        tagline: '3-Night Satellite',
+        country: '미국 동부 · USA',
+        dates: '2029.4.28 — 4.30 (3박 4일)',
+        weather: '13-19°C · 봄 + 벚꽃',
+        visa: 'ESTA (샌디에이고 그대로)',
+        vibe: '아이콘 + 밀도 + 예술 + 디자인',
+        mode: '관광 + 작가·디자이너 자산',
+        quote: "1년 노마드 동·서부 대비. 짧지만 누리한테 '미국 1번 경험' 핵심 자산. 4월 = 벚꽃 + 봄 = 최적 시즌.",
+        image: null,
+      },
+      meaning: [
+        '<strong>한 달 X, 위성 3박</strong> · 뉴욕 한 달 살이 = 누리 1년 동선 안 맞음 (비용·동선·페이스)',
+        '4월 = 봄 + 벚꽃 (Brooklyn Botanic Garden Sakura Matsuri 4월 말)',
+        '관광 모드 OK · 글 작업 X · 일 X · 인풋만',
+        '샌디에이고 (서부 슬로우) ↔ 뉴욕 (동부 밀도) 직접 대비',
+        '3박 = 아이콘 + 동네 1-2개 + 박물관 1-2개. 그 이상은 무리',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'subsections', icon:'today', title:'3일 동선', items:[
+          { h:'Day 1 · Midtown + Central Park (가볍게)', items:[
+            '<strong>오전</strong> · 호텔 체크인 · Central Park 산책 (벚꽃) · Sheep Meadow · The Mall',
+            '<strong>점심</strong> · Upper West Side 또는 Magnolia Bakery',
+            '<strong>오후</strong> · The Met (메트로폴리탄 미술관) · 디자이너·작가 자산 1순위 · $30',
+            '<strong>저녁</strong> · Times Square 야경 · 가볍게 산책 + 에너지만 확인',
+          ]},
+          { h:'Day 2 · 다운타운 + 브루클린 (메인)', items:[
+            '<strong>오전</strong> · 9/11 Memorial (무료) + Oculus · One World Observatory 또는 외부 산책',
+            '<strong>점심</strong> · Chelsea Market (푸드홀)',
+            '<strong>오후</strong> · The High Line (옛 철도 → 공원) 산책 · 첼시 갤러리 한두 곳',
+            '<strong>늦은 오후</strong> · Brooklyn Bridge 도보 횡단 (Brooklyn → Manhattan 방향, 스카이라인 정면) · 일몰 맞추기',
+            '<strong>저녁</strong> · DUMBO 또는 Lower East Side 저녁',
+          ]},
+          { h:'Day 3 · 누리 톤 동네 + 벚꽃', items:[
+            '<strong>오전</strong> · Brooklyn Botanic Garden · Cherry Esplanade 벚꽃 · 4월 말 = 막 절정 후 잔향 · $18',
+            '<strong>점심</strong> · Williamsburg 또는 Fort Greene 브런치',
+            '<strong>오후</strong> · MoMA (현대미술) · 디자이너 누리 자산 · $30',
+            '<strong>저녁</strong> · Greenwich Village 또는 West Village 골목 산책 + 저녁',
+            '<strong>옵션</strong> · 브로드웨이 또는 오프브로드웨이 1편 ($50-200) · 누리 작가 라인이면 1번',
+          ]},
+          { h:'Day 4 · 출발 (반나절)', items:[
+            '<strong>오전</strong> · SoHo 또는 NoLita 카페 + 빈티지샵 · 본업 자산 (니트·패션)',
+            '<strong>점심</strong> · 공항 출발 · JFK 또는 LGA',
+            '<em>샌디에이고로 복귀 또는 핼리팩스 직행 (동선에 따라).</em>',
+          ]},
+        ]},
+
+        { type:'places', icon:'landscape', title:'꼭 가는 곳 (3박 우선순위)', items:[
+          { name:'The Met (Metropolitan Museum)', price:'$30',
+            desc:'<strong>1순위.</strong> 세계 4대 미술관. 2-3시간만 잡아도 됨. 디자이너·작가 자산.' },
+          { name:'MoMA', price:'$30',
+            desc:'<strong>2순위.</strong> 현대 미술 + 디자인 컬렉션. 누리 본업 (니트·패션·텍스타일) 라인.' },
+          { name:'Central Park', price:'무료',
+            desc:'맨해튼 심장. 4월 벚꽃 + 잔디. 매일 1번씩.' },
+          { name:'Brooklyn Bridge', price:'무료',
+            desc:'도보 횡단. Brooklyn → Manhattan 방향. 일몰.' },
+          { name:'The High Line', price:'무료',
+            desc:'옛 철도 → 공원. 첼시·미트패킹·허드슨야드 연결.' },
+          { name:'9/11 Memorial', price:'무료 (박물관 별도 $33)',
+            desc:'두 폭포 + 이름들. 박물관은 시간 있으면 추가.' },
+          { name:'Brooklyn Botanic Garden', price:'$18',
+            desc:'4월 벚꽃 절정. Cherry Esplanade. Sakura Matsuri 페스티벌.' },
+        ]},
+
+        { type:'places', icon:'checkroom', title:'본업 자산 · 패션·텍스타일·디자인', items:[
+          { name:'MoMA Design Store (SoHo + Midtown)', price:'무료 입장',
+            desc:'<strong>본업 누리 1순위.</strong> MoMA 큐레이션 디자인 매장. 작은 디자이너 협업 제품. 누리 = MoMA 본관 + Design Store 묶음.' },
+          { name:'The Museum at FIT (Fashion Institute)', price:'무료',
+            desc:'패션 + 텍스타일 전용 박물관. 50,000+ 의상 컬렉션. <strong>누리 본업 직접 매칭.</strong> Chelsea.' },
+          { name:'Cooper Hewitt Smithsonian Design Museum (UES)', price:'$22',
+            desc:'미국 유일 디자인 박물관. 텍스타일·웨어러블·산업 디자인. 누리 본업 자산.' },
+          { name:'Garment District (Midtown, 7th Ave 일대)',
+            desc:'옛 뉴욕 패션 산업 본거지. 패브릭 가게 (Mood Fabrics·B&J Fabrics) + 트림. 누리 = 본업 패브릭 자산.' },
+          { name:'Purl Soho (SoHo)',
+            desc:'뉴욕 양털·뜨개 1순위. 큐레이션 + 패턴 + 워크숍. <strong>누리 본업 직접 매칭. 양털 자산 라인 NYC 추가.</strong>' },
+          { name:'Knitty City (Upper West Side)',
+            desc:'동네 양털 가게. 작가·작업러 단골. Central Park 가는 길.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'Strand Bookstore (Union Square, 1927)',
+            desc:'<strong>"18 Miles of Books".</strong> 미국 최고 독립 서점. 2.5백만 권. 누리 작가 자산 1순위.' },
+          { name:'McNally Jackson (NoLita)',
+            desc:'독립 서점. 카페 + 작가 토크. 누리 톤 매칭.' },
+          { name:'Housing Works Bookstore Cafe (SoHo)',
+            desc:'중고책 + 자선 + 카페. 분위기 자산.' },
+          { name:'SoHo · NoLita 빈티지 라인',
+            desc:"What Goes Around Comes Around · INA · Beacon's Closet. 본업 누리 빈티지 자산." },
+          { name:'Williamsburg 빈티지·디자이너 (Brooklyn)',
+            desc:'10 Ft Single by Stella Dallas + Awoke Vintage. Brooklyn 본업 자산.' },
+          { name:'The Frick Collection (UES)',
+            desc:'옛 저택 → 미술관. 작은 규모 + 깊이. 누리 = Met보다 진하게.' },
+          { name:'Whitney Museum (Meatpacking)', price:'$30',
+            desc:'미국 미술 전문. High Line 옆. Met·MoMA 다음 3순위.' },
+          { name:'Stonewall National Monument (West Village)',
+            desc:'LGBTQ+ 인권 운동 발상지. 무료. 분석가 N 글감.' },
+        ]},
+
+        { type:'list', icon:'local_dining', title:'음식 · 누리 라인', items:[
+          '<strong>Chelsea Market</strong> · 푸드홀 + 카페 · 점심 1번',
+          "<strong>Joe's Pizza (Greenwich Village)</strong> · 슬라이스 $5 · 빠른 한 끼",
+          "<strong>Grimaldi's 또는 Juliana's (DUMBO)</strong> · 정통 피자",
+          '<strong>Magnolia Bakery</strong> · 컵케이크 · 작가 누리 라인 (Sex and the City 레퍼런스)',
+          '<strong>Russ & Daughters Cafe (Lower East Side)</strong> · 베이글 + 록스',
+          "<strong>Katz's Delicatessen</strong> · 파스트라미 샌드위치 · 한 번",
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 동·서부 격차 = 같은 나라 다른 두 세계',
+            body:'샌디에이고 (서부 슬로우 · 멕시칸 · 따듯) ↔ NYC (동부 밀도 · 다민족 · 빠름). 분석가 N 글감.' },
+          { h:'2. 본업 자산 = 패션 · 니트 · 디자인 신',
+            body:'NYC = 글로벌 패션 도시. MoMA 디자인 컬렉션 + SoHo·NoLita 빈티지샵. 짧아도 인풋.' },
+          { h:'3. 작가 자산 = 도시 글감 폭발',
+            body:'한국에 없는 밀도·다양성. 노트 + 사진. 분석가 N 시리즈 1-2편 후에 NYC 배경.' },
+          { h:'4. 짧으면 짧게 = 무리 X',
+            body:'3박 = 아이콘 + 동네 1-2 + 박물관 1-2 = 충분. 더 욕심 X.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'subsections', icon:'shield', title:'안전 동네 · 호텔 위치', items:[
+          { h:'추천 동네 (호텔)', items:[
+            '<strong>Midtown West (Times Square 근처)</strong> · 안전 · 모든 곳 도보·지하철 가까움 · $200-400/박',
+            '<strong>Upper West Side</strong> · 조용 + Central Park · The Met 도보 · $200-350/박',
+            '<strong>Lower Manhattan (Financial District)</strong> · 주말 저렴 · 다운타운 도보',
+            '<strong>Brooklyn (Williamsburg · DUMBO)</strong> · 트렌디 + 저렴 · 맨해튼 지하철 10-20분',
+          ]},
+          { h:'피할 동네 (밤 X)', items:[
+            'South Bronx 일부',
+            'East New York (Brooklyn)',
+            '일부 Harlem 외곽 밤',
+          ]},
+          { h:'일반 주의', items:[
+            '지하철 = 낮 OK · 밤 11시 이후 일부 노선 X · 우버 활용',
+            '가방 = 앞으로 · 핸드폰 = 사람 많은 곳 주의',
+            '혼자 밤 산책 = 안전 동네만 (Times Sq · Midtown · West Village)',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'table', icon:'payments', title:'3박 4일 (NYC 위성)',
+          headers:['카테고리','세부','합계 ($)','₩'],
+          rows:[
+            ['숙소', 'Midtown 또는 Brooklyn 3박', '$600-1,000', '82-137만'],
+            ['식비', '외식 + 푸드홀', '$250-400', '34-55만'],
+            ['교통', '지하철 + 우버 + 공항', '$100-150', '14-21만'],
+            ['박물관·체험', 'Met + MoMA + Botanic Garden', '$100-150', '14-21만'],
+            ['옵션 (브로드웨이)', '1편', '$50-200', '7-27만'],
+            ['비행기 (샌디에이고 ↔ NYC)', '왕복 또는 NYC→핼리팩스 단일', '$350-500', '48-69만'],
+          ],
+          footer:['<strong>합계</strong>', '', '<strong>$1,450-2,400</strong>', '<strong>200-330만</strong>'],
+          note:'NYC = 미국 안에서 가장 비쌈. 3박 = 충분. 더 길면 비용 폭발.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. 동·서부 대비 = 1년 노마드 자산',
+            body:'샌디에이고 27일 + NYC 3박 = 같은 나라 두 세계. 누리 분석가 N 글감 1순위.' },
+          { h:'2. 4월 = 봄 + 벚꽃 = 최적',
+            body:'NYC 4월 = 12-18°C, 비 적당, 벚꽃 절정. 12월·1월 (춥고 비싸고 혼잡) 회피.' },
+          { h:'3. 호텔 위치 = Midtown 또는 Upper West Side',
+            body:'3박 = 위치가 시간 관리. Midtown West = Times Sq + 지하철 허브. Upper West Side = 조용 + Met 도보.' },
+          { h:'4. The Met + MoMA = 무조건',
+            body:'2-3시간씩만 잡아도 됨. 디자이너·작가 자산 1순위.' },
+          { h:'5. 무리 X',
+            body:'3박 = 가벼운 페이스. 1년 노마드 끝나가는 시점 = 체력 관리 우선. 보는 거보다 분위기 느끼는 거가 우선.' },
+          { h:'6. 다음 = 5월 핼리팩스',
+            body:'NYC → 핼리팩스 직항 약 2시간. 또는 샌디에이고 복귀 후 핼리팩스. 1년 노마드 마지막 거점.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
