@@ -479,7 +479,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // ════════ SECTION 2 · 3-col 레이아웃 (flex-grow 테이블 + w-80 사이드 레일) ════════
-    html += '<div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:flex-start">';
+    html += '<div class="nm-voyage-main-grid">';
 
     // ───── LEFT: Itinerary Table ─────
     html += '<div class="nm-card" style="padding:0;overflow:hidden">';
@@ -1686,7 +1686,7 @@ window.NOMAD_PAGES = (function(){
       if (r.pct >= 70)      { color = 'var(--nm-primary)';   bgColor = '#F5F3FF'; }
       else if (r.pct >= 50) { color = 'var(--nm-secondary)'; bgColor = '#e6eeff'; }
       else                  { color = '#c2410c';             bgColor = '#fff7ed'; }
-      html += '<div style="display:grid;grid-template-columns:170px 1fr 50px;gap:14px;align-items:center">';
+      html += '<div class="nm-principles-bar-row">';
       // 도시 라벨
       html += '<div style="display:flex;align-items:center;gap:8px">' +
         '<span style="font-size:16px;line-height:1">' + r.flag + '</span>' +
@@ -3013,7 +3013,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // ════════ SECTION 3 · Bento Grid Packing Categories (12-col) ════════
-    html += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:20px;margin-bottom:32px">';
+    html += '<div class="nm-packing-bento-grid">';
     categories.forEach(function(g) {
       html += buildPackingCategoryCard('packing', g, g.gi);
     });

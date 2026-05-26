@@ -70,17 +70,17 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=160" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=160" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=160" as="script">
-  <link rel="preload" href="js/roadmap-data.js?v=160" as="script">
-  <link rel="preload" href="js/daily-actions.js?v=160" as="script">
-  <link rel="preload" href="js/daily-guides.js?v=160" as="script">
-  <link rel="preload" href="js/app-4-roadmap.js?v=160" as="script">
-  <link rel="preload" href="js/app-5-ledger-export.js?v=160" as="script">
-  <link rel="preload" href="js/nomad-data.js?v=160" as="script">
-  <link rel="preload" href="js/nomad-cities.js?v=160" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=160" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=161" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=161" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=161" as="script">
+  <link rel="preload" href="js/roadmap-data.js?v=161" as="script">
+  <link rel="preload" href="js/daily-actions.js?v=161" as="script">
+  <link rel="preload" href="js/daily-guides.js?v=161" as="script">
+  <link rel="preload" href="js/app-4-roadmap.js?v=161" as="script">
+  <link rel="preload" href="js/app-5-ledger-export.js?v=161" as="script">
+  <link rel="preload" href="js/nomad-data.js?v=161" as="script">
+  <link rel="preload" href="js/nomad-cities.js?v=161" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=161" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -1863,6 +1863,202 @@
       .nomad-page .nm-city-v2-h1 { font-size: 38px; }
       .nomad-page .nm-city-v2-h2-serif-large { font-size: 22px; }
       .nomad-page .nm-city-v2-card-wrap { padding: 22px; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Phase 8 · Nomad 페이지 모바일 반응형 (12 페이지 + City Guide v3)
+    ════════════════════════════════════════════════════════════════════ */
+
+    /* ──── Voyage 3-col main layout (메인 테이블 + 사이드 레일) ──── */
+    .nomad-page .nm-voyage-main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    @media (max-width: 1024px) {
+      .nomad-page .nm-voyage-main-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* ──── Operating Principles 도시별 일 비중 bar row ──── */
+    .nomad-page .nm-principles-bar-row {
+      display: grid;
+      grid-template-columns: 170px 1fr 50px;
+      gap: 14px;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .nomad-page .nm-principles-bar-row {
+        grid-template-columns: 1fr 50px;
+        gap: 8px 12px;
+        grid-template-areas:
+          'label pct'
+          'bar bar';
+      }
+      .nomad-page .nm-principles-bar-row > *:nth-child(1) { grid-area: label; }
+      .nomad-page .nm-principles-bar-row > *:nth-child(2) { grid-area: bar; }
+      .nomad-page .nm-principles-bar-row > *:nth-child(3) { grid-area: pct; }
+    }
+
+    /* ──── Packing 12-col Bento Grid ──── */
+    .nomad-page .nm-packing-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 1024px) {
+      .nomad-page .nm-packing-bento-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+      }
+      /* col-8 / col-4 / col-12는 6-col 그리드에서 다시 매핑 */
+      .nomad-page .nm-packing-bento-grid .nm-card[style*="span 8"],
+      .nomad-page .nm-packing-bento-grid .nm-card[style*="span 6"] {
+        grid-column: span 6 !important;
+      }
+      .nomad-page .nm-packing-bento-grid .nm-card[style*="span 4"] {
+        grid-column: span 3 !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .nomad-page .nm-packing-bento-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .nomad-page .nm-packing-bento-grid .nm-card[style*="grid-column:"] {
+        grid-column: span 1 !important;
+      }
+    }
+
+    /* ──── Backward Plan Zigzag Timeline ──── */
+    @media (max-width: 768px) {
+      .nomad-page .nm-bp-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        padding-left: 56px;
+      }
+      .nomad-page .nm-bp-card-wrap,
+      .nomad-page .nm-bp-label-wrap {
+        flex: 1 1 100% !important;
+        padding: 0 !important;
+        text-align: left !important;
+      }
+      /* BIG opacity-10 deco 라벨은 모바일에서 숨김 (공간 차지만 함) */
+      .nomad-page .nm-bp-label-wrap { display: none !important; }
+      /* 마커 = 왼쪽 고정 (가운데 line에 맞춤) */
+      .nomad-page .nm-bp-marker {
+        left: 0 !important;
+        transform: none !important;
+        position: absolute !important;
+        top: 8px !important;
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 18px !important;
+      }
+      /* 가운데 line → 좌측 24px로 이동 (마커 48px 가운데) */
+      .nomad-page .nm-bp-line {
+        left: 24px !important;
+        transform: none !important;
+      }
+    }
+
+    /* ──── City Guide v3 Hero — 모바일 margin 보정 ──── */
+    /* nm-main 패딩이 모바일에서 24px 16px → hero margin도 맞춤 */
+    @media (max-width: 1024px) {
+      .nomad-page .nm-city-v2-hero {
+        margin: -24px -16px 20px !important;
+      }
+    }
+
+    /* ──── City Guide v3 stats grid — 모바일 압축 ──── */
+    @media (max-width: 640px) {
+      .nomad-page .nm-city-v2-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .nomad-page .nm-city-v2-stat { padding: 14px 12px; }
+      .nomad-page .nm-city-v2-stat-value { font-size: 12px; }
+    }
+
+    /* ──── 인라인 큰 폰트 모바일 축소 (페이지 헤더들) ──── */
+    @media (max-width: 640px) {
+      /* Nomad Gate / Backward Plan / Stay Channels hero 38-64px 축소 */
+      .nomad-page h1[style*="font-size:64px"],
+      .nomad-page h2[style*="font-size:38px"],
+      .nomad-page h2[style*="font-size:36px"] {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+      }
+      /* Hero display 56-58px → 32px */
+      .nomad-page h1[style*="font-size:58px"],
+      .nomad-page h1[style*="font-size:56px"] {
+        font-size: 32px !important;
+        line-height: 1.15 !important;
+      }
+      /* big metric numbers */
+      .nomad-page span[style*="font-size:64px"],
+      .nomad-page p[style*="font-size:52px"] {
+        font-size: 40px !important;
+      }
+      .nomad-page span[style*="font-size:44px"],
+      .nomad-page p[style*="font-size:38px"] {
+        font-size: 28px !important;
+      }
+    }
+
+    /* ──── 인라인 padding 큰 카드 모바일 축소 ──── */
+    @media (max-width: 640px) {
+      .nomad-page .nm-card-lg[style*="padding:48px"],
+      .nomad-page .nm-card[style*="padding:48px"],
+      .nomad-page section[style*="padding:48px"] {
+        padding: 24px !important;
+      }
+      .nomad-page div[style*="padding:36px"],
+      .nomad-page div[style*="padding:32px"] {
+        padding: 22px !important;
+      }
+    }
+
+    /* ──── 데일리 inline split (Voyage/Visa/WH/Budget header) ──── */
+    @media (max-width: 768px) {
+      /* flex-wrap:wrap 사용 중인 split 헤더가 모바일에서 stack 잘 되도록 보장 */
+      .nomad-page .nm-page-header[style*="display:flex"] {
+        flex-wrap: wrap !important;
+      }
+    }
+
+    /* ──── 좁은 화면에서 horizontally-scrollable 큰 테이블 ──── */
+    @media (max-width: 640px) {
+      .nomad-page table { font-size: 12px !important; }
+      .nomad-page table th,
+      .nomad-page table td {
+        padding: 10px 12px !important;
+      }
+      /* 테이블 wrapper 가로 스크롤 보장 */
+      .nomad-page .nm-card[style*="overflow:hidden"],
+      .nomad-page section[style*="overflow:hidden"] {
+        overflow-x: auto !important;
+      }
+    }
+
+    /* ────IP·Webnovel Phase 7카드 grid 모바일 ──── */
+    @media (max-width: 640px) {
+      /* auto-fit minmax(150px,1fr) 이미 자동 — but cell 크기 조정 */
+      .nomad-page div[style*="minmax(150px,1fr)"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    /* ──── 사이드 레일 카드 (Voyage trajectory etc) 모바일에서 width 자연 ──── */
+    @media (max-width: 1024px) {
+      .nomad-page aside[style*="flex-direction:column"] {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
     }
 
     /* ════════════════════════════════════════════════════════════════════
@@ -8379,7 +8575,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=160" defer></script>
+<script src="js/app-1-pages.js?v=161" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -9176,24 +9372,24 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=160" defer></script>
+<script src="js/app-2-init.js?v=161" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=160" defer></script>
-<script src="js/roadmap-data.js?v=160" defer></script>
-<script src="js/daily-actions.js?v=160" defer></script>
-<script src="js/daily-guides.js?v=160" defer></script>
-<script src="js/app-4-roadmap.js?v=160" defer></script>
-<script src="js/app-5-ledger-export.js?v=160" defer></script>
-<script src="js/app-6-postype-analytics.js?v=160" defer></script>
+<script src="js/app-3-flatpickr.js?v=161" defer></script>
+<script src="js/roadmap-data.js?v=161" defer></script>
+<script src="js/daily-actions.js?v=161" defer></script>
+<script src="js/daily-guides.js?v=161" defer></script>
+<script src="js/app-4-roadmap.js?v=161" defer></script>
+<script src="js/app-5-ledger-export.js?v=161" defer></script>
+<script src="js/app-6-postype-analytics.js?v=161" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
-<script src="js/nomad-data.js?v=160" defer></script>
-<script src="js/nomad-cities.js?v=160" defer></script>
-<script src="js/nomad-pages.js?v=160" defer></script>
+<script src="js/nomad-data.js?v=161" defer></script>
+<script src="js/nomad-cities.js?v=161" defer></script>
+<script src="js/nomad-pages.js?v=161" defer></script>
 
 </body>
 </html>
