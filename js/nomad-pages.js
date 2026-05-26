@@ -1328,6 +1328,9 @@ window.NOMAD_PAGES = (function(){
     var html = '';
     var phases = DATA.PHASES || [];
 
+    // LS hydrate (Firestore 백그라운드는 _nmActivateBackward에서)
+    _nmHydratePhaseImagesFromLS();
+
     // Phase별 hero 그라데이션 (이미지 fallback)
     var phaseGrads = {
       'A': 'linear-gradient(135deg,#fef3c7 0%,#fbbf24 60%,#f59e0b 100%)', // Foundation: warm gold
@@ -1335,6 +1338,37 @@ window.NOMAD_PAGES = (function(){
       'C': 'linear-gradient(135deg,#fce7f3 0%,#f472b6 60%,#db2777 100%)', // Exit: rose
       'D': 'linear-gradient(135deg,#a78bfa 0%,#7C3AED 60%,#312E81 100%)', // Departure: violet (active)
     };
+
+    // 이미지 박스 헬퍼 (LEFT/RIGHT 공통)
+    function buildImgBox(phaseId, grad) {
+      var img = _phaseImages[phaseId] || null;
+      var h = '<div class="nm-bp-phase-imgbox" style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden"' +
+        ' onmouseenter="NOMAD_PAGES._setActivePhase(\'' + phaseId + '\')"' +
+        ' onmouseleave="NOMAD_PAGES._clearActivePhase(\'' + phaseId + '\')">';
+      if (img) {
+        h += '<img src="' + img + '" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">';
+      } else {
+        h += '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35">' +
+          '<circle cx="80" cy="60" r="2" fill="#fff"/>' +
+          '<circle cx="220" cy="80" r="2.5" fill="#fff"/>' +
+          '<circle cx="260" cy="160" r="2" fill="#fff"/>' +
+          '<circle cx="60" cy="180" r="1.5" fill="#fff"/>' +
+          '<circle cx="160" cy="200" r="2" fill="#fff"/>' +
+        '</svg>';
+      }
+      h += '<input type="file" id="nm-bp-file-' + phaseId + '" accept="image/*" style="display:none" onchange="NOMAD_PAGES.phaseImageFileSelected(event,\'' + phaseId + '\')">';
+      h += '<div class="nm-bp-paste-hint">Ctrl+V로 붙여넣기</div>';
+      h += '<div class="nm-bp-img-controls' + (img ? '' : ' is-empty') + '">';
+      if (img) {
+        h += '<button class="nm-bp-img-ctrl" onclick="NOMAD_PAGES.phaseImageUpload(\'' + phaseId + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>';
+        h += '<button class="nm-bp-img-ctrl" onclick="NOMAD_PAGES.phaseImageDelete(\'' + phaseId + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>';
+      } else {
+        h += '<button class="nm-bp-img-ctrl" onclick="NOMAD_PAGES.phaseImageUpload(\'' + phaseId + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
+      }
+      h += '</div>';
+      h += '</div>';
+      return h;
+    }
     var phaseLabelBig = {
       'A': 'FOUNDATION',
       'B': 'BUILDING',
@@ -1372,16 +1406,8 @@ window.NOMAD_PAGES = (function(){
         // LEFT: glass-card
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
         html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        // 그라데이션 hero 영역 (이미지 fallback)
-        html += '<div style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden">';
-        html += '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35">' +
-          '<circle cx="80" cy="60" r="2" fill="#fff"/>' +
-          '<circle cx="220" cy="80" r="2.5" fill="#fff"/>' +
-          '<circle cx="260" cy="160" r="2" fill="#fff"/>' +
-          '<circle cx="60" cy="180" r="1.5" fill="#fff"/>' +
-          '<circle cx="160" cy="200" r="2" fill="#fff"/>' +
-        '</svg>';
-        html += '</div>';
+        // Phase 이미지 박스 (업로드 가능, fallback = 그라데이션 + SVG dots)
+        html += buildImgBox(p.id, grad);
         html += '<div style="display:flex;flex-direction:column;gap:14px">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<span style="background:rgba(124,58,237,0.1);color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-family:Manrope,sans-serif;font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
@@ -1424,15 +1450,7 @@ window.NOMAD_PAGES = (function(){
         // RIGHT: glass card
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
         html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        html += '<div style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden">';
-        html += '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.35">' +
-          '<circle cx="80" cy="60" r="2" fill="#fff"/>' +
-          '<circle cx="220" cy="80" r="2.5" fill="#fff"/>' +
-          '<circle cx="260" cy="160" r="2" fill="#fff"/>' +
-          '<circle cx="60" cy="180" r="1.5" fill="#fff"/>' +
-          '<circle cx="160" cy="200" r="2" fill="#fff"/>' +
-        '</svg>';
-        html += '</div>';
+        html += buildImgBox(p.id, grad);
         html += '<div style="display:flex;flex-direction:column;gap:14px">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<span style="background:' + (isFinal ? 'var(--nm-primary)' : 'rgba(124,58,237,0.1)') + ';color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';padding:6px 14px;border-radius:99px;font-family:Manrope,sans-serif;font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
@@ -1689,7 +1707,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-principles-bar-row">';
       // 도시 라벨
       html += '<div style="display:flex;align-items:center;gap:8px">' +
-        '<span style="font-size:16px;line-height:1">' + r.flag + '</span>' +
+        '<span class="nm-emoji" style="font-size:16px;line-height:1">' + r.flag + '</span>' +
         '<div>' +
           '<p style="font-family:Manrope;font-size:12px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + r.period + '</p>' +
           '<p style="font-size:10px;color:var(--nm-text-3);margin-top:1px">' + r.mode + '</p>' +
@@ -4262,12 +4280,125 @@ window.NOMAD_PAGES = (function(){
     _nmDeleteHeroImageFB(cityId);
   }
 
-  // 글로벌 paste 리스너 — 도시 페이지에서만 동작
+  // ════════════════════════════════════════════════════════════
+  // Backward Plan Phase 이미지 (도시 hero와 동일 패턴, 4 phase 한 번에)
+  // — LS 캐시: atelier_nomad_phase_{phaseId}
+  // — Firestore: nomadPhaseImages/{phaseId} = { image, updatedAt }
+  // ════════════════════════════════════════════════════════════
+  var _phaseImages = {}; // 메모리 캐시: { A: dataUrl, B: dataUrl, ... }
+  var _phaseImagesHydrated = false;
+  var _activePhaseId = null; // 호버 중인 phase (Ctrl+V 대상)
+
+  function _nmGetPhaseImageLS(phaseId) {
+    try { return localStorage.getItem('atelier_nomad_phase_' + phaseId) || null; }
+    catch(e) { return null; }
+  }
+  function _nmSetPhaseImageLS(phaseId, dataUrl) {
+    try {
+      if (dataUrl) localStorage.setItem('atelier_nomad_phase_' + phaseId, dataUrl);
+      else localStorage.removeItem('atelier_nomad_phase_' + phaseId);
+    } catch(e) {}
+  }
+  function _nmHydratePhaseImagesFromLS() {
+    if (_phaseImagesHydrated) return;
+    (DATA.PHASES || []).forEach(function(p) {
+      var cached = _nmGetPhaseImageLS(p.id);
+      if (cached) _phaseImages[p.id] = cached;
+    });
+    _phaseImagesHydrated = true;
+  }
+  function _nmLoadPhaseImageFB(phaseId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve(null);
+    return db.collection('nomadPhaseImages').doc(phaseId).get().then(function(doc) {
+      if (doc.exists) return doc.data().image || null;
+      return null;
+    }).catch(function(e) { console.warn('[nm-phase] FB load failed', e); return null; });
+  }
+  function _nmSavePhaseImageFB(phaseId, dataUrl) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('nomadPhaseImages').doc(phaseId).set({
+      image: dataUrl,
+      updatedAt: Date.now()
+    }).catch(function(e) { console.warn('[nm-phase] FB save failed', e); });
+  }
+  function _nmDeletePhaseImageFB(phaseId) {
+    if (typeof db === 'undefined' || !db) return Promise.resolve();
+    return db.collection('nomadPhaseImages').doc(phaseId).delete()
+      .catch(function(e) { console.warn('[nm-phase] FB delete failed', e); });
+  }
+
+  function _nmApplyPhaseImage(phaseId, dataUrl) {
+    _phaseImages[phaseId] = dataUrl || null;
+    _nmSetPhaseImageLS(phaseId, dataUrl);
+    if (currentSubPage === 'nomad-backward') {
+      var content = document.getElementById('nomad-content');
+      if (content) content.innerHTML = renderPage('nomad-backward');
+    }
+    if (typeof showSyncToast === 'function') {
+      showSyncToast(dataUrl ? '🖼 Phase 이미지 저장됨' : '🗑 Phase 이미지 삭제됨');
+    }
+    if (dataUrl) _nmSavePhaseImageFB(phaseId, dataUrl);
+    else _nmDeletePhaseImageFB(phaseId);
+  }
+
+  function phaseImageUpload(phaseId) {
+    var input = document.getElementById('nm-bp-file-' + phaseId);
+    if (input) input.click();
+  }
+  function phaseImageFileSelected(e, phaseId) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 파일만 받을 수 있어요');
+      return;
+    }
+    _nmProcessImage(file).then(function(dataUrl) {
+      _nmApplyPhaseImage(phaseId, dataUrl);
+    }).catch(function(err) {
+      console.error('[nm-phase] upload failed', err);
+      if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+    });
+    e.target.value = '';
+  }
+  function phaseImageDelete(phaseId) {
+    if (!confirm('Phase 이미지를 삭제할까요?')) return;
+    _nmApplyPhaseImage(phaseId, null);
+  }
+
+  // backward 페이지 진입 시 4개 phase 이미지 Firestore 로드 (백그라운드)
+  function _nmActivateBackward() {
+    _nmHydratePhaseImagesFromLS();
+    _nmRegisterPasteHandler(); // Ctrl+V로 호버 phase에 붙여넣기
+    var phases = (DATA.PHASES || []).map(function(p) { return p.id; });
+    phases.forEach(function(pid) {
+      _nmLoadPhaseImageFB(pid).then(function(remote) {
+        if (!remote) return;
+        if (_phaseImages[pid] === remote) return;
+        _phaseImages[pid] = remote;
+        _nmSetPhaseImageLS(pid, remote);
+        if (currentSubPage === 'nomad-backward') {
+          var content = document.getElementById('nomad-content');
+          if (content) content.innerHTML = renderPage('nomad-backward');
+        }
+      });
+    });
+  }
+
+  // 글로벌 paste 리스너 — 도시 페이지(hero) 또는 Backward Plan(호버 phase)에서 동작
   function _nmPasteHandler(e) {
-    if (!_currentCityId) return;
-    if (!_nmIsCityPage(_currentCityId)) return;
     var ae = document.activeElement;
     if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+
+    // 어디에 적용할지 분기
+    var mode = null; // 'city' | 'phase'
+    if (currentSubPage === 'nomad-backward' && _activePhaseId) {
+      mode = 'phase';
+    } else if (_currentCityId && _nmIsCityPage(_currentCityId)) {
+      mode = 'city';
+    } else {
+      return;
+    }
+
     var items = (e.clipboardData || {}).items || [];
     for (var i = 0; i < items.length; i++) {
       var it = items[i];
@@ -4275,15 +4406,30 @@ window.NOMAD_PAGES = (function(){
         e.preventDefault();
         var blob = it.getAsFile();
         if (!blob) return;
-        _nmProcessImage(blob).then(function(dataUrl) {
-          _nmApplyHeroImage(_currentCityId, dataUrl);
-        }).catch(function(err) {
-          console.error('[nm-hero] paste failed', err);
-          if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
-        });
+        if (mode === 'phase') {
+          var targetPhase = _activePhaseId; // 클로저 캡쳐
+          _nmProcessImage(blob).then(function(dataUrl) {
+            _nmApplyPhaseImage(targetPhase, dataUrl);
+          }).catch(function(err) {
+            console.error('[nm-phase] paste failed', err);
+            if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+          });
+        } else {
+          _nmProcessImage(blob).then(function(dataUrl) {
+            _nmApplyHeroImage(_currentCityId, dataUrl);
+          }).catch(function(err) {
+            console.error('[nm-hero] paste failed', err);
+            if (typeof showSyncToast === 'function') showSyncToast('이미지 처리 실패');
+          });
+        }
         return;
       }
     }
+  }
+
+  function _setActivePhase(phaseId) { _activePhaseId = phaseId; }
+  function _clearActivePhase(phaseId) {
+    if (_activePhaseId === phaseId) _activePhaseId = null;
   }
   var _nmPasteRegistered = false;
   function _nmRegisterPasteHandler() {
@@ -4322,6 +4468,10 @@ window.NOMAD_PAGES = (function(){
       _nmActivateCity(subPageId);
     } else {
       _currentCityId = null;
+    }
+    // Backward Plan 페이지 진입 시 phase 이미지 백그라운드 로드
+    if (subPageId === 'nomad-backward') {
+      _nmActivateBackward();
     }
     var content = document.getElementById('nomad-content');
     if (content) {
@@ -4366,5 +4516,11 @@ window.NOMAD_PAGES = (function(){
     heroImageUpload: heroImageUpload,
     heroImageFileSelected: heroImageFileSelected,
     heroImageDelete: heroImageDelete,
+    // Backward Plan Phase 이미지 컨트롤
+    phaseImageUpload: phaseImageUpload,
+    phaseImageFileSelected: phaseImageFileSelected,
+    phaseImageDelete: phaseImageDelete,
+    _setActivePhase: _setActivePhase,
+    _clearActivePhase: _clearActivePhase,
   };
 })();

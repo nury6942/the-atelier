@@ -80,7 +80,7 @@
   <link rel="preload" href="js/app-5-ledger-export.js?v=163" as="script">
   <link rel="preload" href="js/nomad-data.js?v=163" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=163" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=165" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -419,7 +419,7 @@
       --nm-radius-lg: 0.75rem;
       --nm-radius-full: 9999px;
       background: var(--nm-bg);
-      font-family: 'Inter', 'Pretendard', sans-serif;
+      font-family: 'Inter', 'Pretendard', 'Noto Color Emoji', sans-serif;
       color: var(--nm-text);
       -webkit-font-smoothing: antialiased;
     }
@@ -1150,6 +1150,66 @@
       border: none;
       text-align: center;
     }
+    /* ──── Backward Plan Phase 이미지 박스 컨트롤 ──── */
+    .nomad-page .nm-bp-img-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .nomad-page .nm-bp-phase-imgbox:hover .nm-bp-img-controls,
+    .nomad-page .nm-bp-img-controls.is-empty {
+      opacity: 1;
+    }
+    .nomad-page .nm-bp-img-ctrl {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
+      transition: background 0.15s ease;
+    }
+    .nomad-page .nm-bp-img-ctrl:hover { background: rgba(0,0,0,0.7); }
+    .nomad-page .nm-bp-img-ctrl .material-symbols-outlined { font-size: 14px; }
+    /* Backward Plan 이미지 박스: 호버 시 Ctrl+V 힌트 */
+    .nomad-page .nm-bp-paste-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      z-index: 3;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.9);
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: 'Manrope','Pretendard',sans-serif;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .nomad-page .nm-bp-phase-imgbox:hover .nm-bp-paste-hint { opacity: 1; }
+    /* 국기 등 컬러 이모지 강제 폰트 (Windows Segoe UI Emoji는 국기 미지원) */
+    .nomad-page .nm-emoji {
+      font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif !important;
+    }
+
     /* ──── Hero 이미지 컨트롤 (우상단 글래스 버튼) ──── */
     .nomad-page .nm-city-v2-hero-controls {
       position: absolute;
@@ -9444,7 +9504,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=163" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=163" defer></script>
+<script src="js/nomad-pages.js?v=165" defer></script>
 
 </body>
 </html>

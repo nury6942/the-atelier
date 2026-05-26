@@ -33,6 +33,30 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-26 (기기: 윈도우)
+
+### ✅ 한 일
+- **🌴 Backward Plan Phase 이미지 업로드 기능** — 노마드 페이지 → Backward Plan의 4개 Phase 카드(A Foundation / B Building / C Exit / D Departure)에 이미지 박스 추가. 그라데이션 fallback은 유지하면서 우상단 컨트롤로 추가/변경/삭제. **호버 시 컨트롤 노출, 비어있을 땐 "이미지 추가" 버튼 상시 표시**
+- **Ctrl+V 페이스트 지원** — `_activePhaseId` 추적해서 마우스가 올라간 phase에 붙여넣기. 호버 시 좌하단에 "Ctrl+V로 붙여넣기" 힌트 노출. 도시 hero 페이지 기존 paste 핸들러를 확장(같은 `_nmPasteHandler` 안에서 mode 분기 — 'phase' | 'city')
+- **저장소**: localStorage(`atelier_nomad_phase_<id>`) + Firestore(`nomadPhaseImages/<id>` = `{ image, updatedAt }`). 도시 hero와 동일 패턴 그대로 복제 — `_nmProcessImage`(1600px·JPEG 0.82), `_nmApplyPhaseImage`, `_nmActivateBackward`(페이지 진입 시 LS hydrate + 4개 phase Firestore 백그라운드 fetch + 변경 시 재렌더). 메모리 캐시 `_phaseImages = { A,B,C,D }`
+- **국기 이모지 fallback** — Operating Principles 페이지 "도시별 작업 비중" 표(14개 도시)의 국기가 Windows에서 표시 안 되던 문제. `.nm-emoji` 클래스 추가(`font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji' !important`), `r.flag` span에 클래스 부여. Manrope inline font-family가 부모에서 상속되어 Segoe UI Emoji가 국기 미지원이라 안 보이던 것 → emoji 폰트 강제 fallback
+- **파일 변경**: `js/nomad-pages.js`(헬퍼·컨트롤·paste 분기·activeBackward), `index.html`(글래스 컨트롤 + paste-hint + nm-emoji CSS, 캐시 v=163→v=165), `service-worker.js`(atelier-v163→v165)
+
+### 🎯 다음 할 일
+- **이미지 fit 모드 옵션** — 현재는 `object-fit:cover` 고정. 인물 사진 등 cover로 잘리는 경우 contain 토글 검토
+- **다른 위치의 국기 이모지 fallback** — nomad-cities.js의 city 문자열(`'🇮🇪 더블린'` 등)이 nomad-pages.js 여러 곳(헤더, 카드 등)에 inline으로 박혀있음. 표시되는 곳마다 nm-emoji 적용하거나, city 문자열 split해서 국기만 감싸는 헬퍼 작성 검토
+- **paste 힌트 텍스트 톤** — "Ctrl+V로 붙여넣기" 직설적인데, 도시 hero의 힌트 톤("Ctrl+V로 이미지 붙여넣기 가능")과 통일 검토
+- 5/24 잔여: 가계부 `📋 Claude 공유` 모바일 export 버튼, 한국 공휴일 2027년치 추가
+
+### 🚧 막힌 점 / 결정 보류
+- 사용자가 첫 시도에서 "이미지 안 들어간다"고 했는데, **세션 종료 시점에만 push하는 룰** 때문에 직전 세션의 CSS만 올라간 상태로 라이브에서 동작 안 했음. 룰 자체는 유지하되, 큰 기능 끝낸 직후 임시 커밋/push 하고 다음 세션에서 squash 또는 amend 검토 — 또는 사용자에게 "이번 패치 라이브 적용해볼까요?"라고 push 의향 묻기
+
+### 💭 메모
+- **국기 이모지 + Windows 함정**: Windows Segoe UI Emoji는 정책상 국기를 글자(KR, PT)로만 표시. Mac/Android는 정상. inline `font-family:Manrope`만 있는 요소는 브라우저 OS fallback으로 가는데 Windows에선 막힘 → 명시적으로 Noto Color Emoji를 inline에 넣어야 함. CSS-only로 inline style을 이기려면 `!important` 또는 inline 자체 수정 필요
+- **paste 동작 조건**: `currentSubPage === 'nomad-backward' && _activePhaseId`. 호버 안 한 상태에서 Ctrl+V는 의도적으로 무시 (도시 hero는 페이지 컨텍스트 자체가 한 도시라 ambiguous하지 않지만, backward는 4 phase가 한 화면에 있어서 호버 추적 필수)
+- 도시 hero와 phase 이미지가 **거의 동일한 패턴**으로 구현됨 — 다음에 또 비슷한 "여러 항목에 이미지 업로드" 필요하면 공통 모듈로 추출 검토 (지금은 두 군데뿐이라 DRY보다 명확성 우선)
+
+---
 ## 2026-05-24 (기기: 아이맥 · 오후)
 
 ### ✅ 한 일
