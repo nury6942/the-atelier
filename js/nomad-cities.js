@@ -2557,6 +2557,261 @@ window.NOMAD_CITIES = (function(){
       ],
     },
 
+    // ════════ 1월 · 애들레이드 ════════
+    'nomad-city-adelaide': {
+      monthLabel: '1월',
+      hero: {
+        city: '🇦🇺 애들레이드',
+        tagline: 'Capital of Wine',
+        country: '호주 남호주 · Australia',
+        dates: '2029.1.1 — 1.31 (31일)',
+        weather: '22-30°C · 한여름',
+        visa: '호주 ETA',
+        vibe: '와인 · 노스트라다무스 · 페스티벌',
+        mode: '글 + 위성 70/30',
+        quote: '멜버른 1월 성수기 피하기 위해 애들레이드 선택. 더 조용 + 와인 자산 + 사람 적음.',
+        image: null,
+      },
+      meaning: [
+        '<strong>멜버른 1월 성수기 회피</strong> (Australian Open + 휴가 시즌)',
+        '인구 130만 · 멜버른보다 작고 조용',
+        'Barossa Valley · McLaren Vale · Adelaide Hills 와인 산지 집중',
+        '1월 = Adelaide Fringe Festival (호주 최대 예술 페스티벌, 2-3월) 직전',
+        '한 달 거점 · Stayz 또는 Airbnb 장기',
+      ],
+      sections: [
+        { type:'divider', label:'PLACES' },
+
+        { type:'places', icon:'landscape', title:'애들레이드 시내', items:[
+          { name:'Adelaide Central Market', price:'무료',
+            desc:'남반구 가장 큰 식품 시장 중 하나. 1869년. 누리 = 매주 와인·치즈·과일.' },
+          { name:'Art Gallery of South Australia', price:'무료',
+            desc:'호주 미술 + 원주민 아트.' },
+          { name:'South Australian Museum', price:'무료',
+            desc:'호주 원주민·자연사·태평양.' },
+          { name:'Adelaide Botanic Gardens', price:'무료',
+            desc:'시내 50헥타르. 산책·작업.' },
+          { name:'North Terrace',
+            desc:'박물관·미술관·도서관 일렬. 1일 다 가능.' },
+          { name:'Glenelg 해변', price:'트램 무료 (시내 → Glenelg)',
+            desc:'시내 → 해변 30분 트램. 무료. 일몰 베스트.' },
+        ]},
+
+        { type:'places', icon:'wine_bar', title:'와인 위성 · 본업 X but 안목 자산', items:[
+          { name:'Barossa Valley', price:'투어 AU$150-250',
+            desc:'<strong>호주 와인 1순위.</strong> 시내에서 1시간. 150개 와이너리 + 80개 셀러 도어. 시라즈·카베르네 본가. 1일 또는 1박. 누리 = 술 안 마셔도 풍경 + 디자인 자산.' },
+          { name:'McLaren Vale', price:'투어 AU$120-200',
+            desc:'시내 남쪽 40분. 70개 셀러 도어. 바라사보다 조용.' },
+          { name:'Adelaide Hills',
+            desc:'시내 동쪽 30분. 쿨 클라이밋 와인 + Hahndorf (독일 마을).' },
+          { name:'Seppeltsfield Wines (1851)', price:'AU$30-100 테이스팅',
+            desc:'바라사 1851년 와이너리. "Centennial Cellar" = 1878년부터 매년 빈티지 보관.' },
+        ]},
+
+        { type:'list', icon:'explore', title:'그 외 위성', items:[
+          '<strong>Kangaroo Island</strong> · 페리 1시간. 호주 야생 동물 천국. 1박 추천. AU$200-400',
+          '<strong>Flinders Ranges</strong> · 차로 5시간. 호주 아웃백 입문. 1박+',
+          '<strong>Murray River</strong> · 시내 동쪽 1.5시간. 보트 + 카누',
+        ]},
+
+        { type:'places', icon:'checkroom', title:'본업 자산 · JamFactory + 디자인·크래프트', items:[
+          { name:'JamFactory (West End, Morphett St)', price:'무료 입장 · 워크숍 별도',
+            desc:'<strong>본업 누리 1순위.</strong> 1979년 설립. 50년 가까운 호주 컨템포러리 크래프트·디자인 비영리. 글래스블로잉 + 도자 + 주얼리 + 금속·가구 스튜디오 (실시간 작업 보기). GalleryOne + GalleryTwo + 매장. <strong>워크숍 정기 (글래스·도자·주얼리). 데일리 가이드 투어 (mid-morning).</strong>' },
+          { name:'JamFactory Seppeltsfield (Barossa)', price:'무료 입장',
+            desc:'바라사 1851년 와이너리 안 두 번째 지점. 누리 = 바라사 투어 묶음.' },
+          { name:'Re-Space Studio (Bowden)',
+            desc:'지속가능 패션 스튜디오. <strong>mending·업사이클·슬로우 패션 워크숍.</strong> 누리 본업 (MLB 니트) ↔ 지속가능 모델 매칭. 한국 본업 미래 모델.' },
+          { name:'Adelaide Central Plaza · JamFactory shop',
+            desc:'JamFactory 시내 매장 (Rundle Mall). 작은 작품 구매.' },
+        ]},
+
+        { type:'places', icon:'explore', title:'숨은 곳 · 작가·디자이너 누리', items:[
+          { name:'Adelaide Laneways (시내)',
+            desc:'Leigh St·Peel St·Topham Mall·Ebenezer Place. 멜버른 골목과 다른 결. 스트리트 아트 + 카페·바 + 부티크.' },
+          { name:'West End Creative Precinct',
+            desc:'JamFactory + Lion Arts Centre + Mercury Cinema + Nexus Arts + Anne & Gordon Samstag Museum of Art. 누리 = 1일 다 묶음.' },
+          { name:'Lion Arts Centre',
+            desc:'JamFactory 옆. 갤러리 + 극장 + 영화관 복합. Mercury Cinema = 아트하우스.' },
+          { name:'Anne & Gordon Samstag Museum of Art (UniSA)',
+            desc:'대학 부속 컨템포러리 갤러리. 무료. 디자이너 누리 자산.' },
+          { name:'North Adelaide Heritage Walk',
+            desc:'19세기 빅토리안 동네. 작가 산책 + 글감.' },
+          { name:'Adelaide Botanic Garden 안 Bicentennial Conservatory',
+            desc:'호주 최대 단일 유리 온실. Guy Maestri 설계.' },
+          { name:'Imprints Booksellers (Hindley St)',
+            desc:'애들레이드 독립 서점 1순위. 작가 토크 정기. 누리 작가 자산.' },
+          { name:'Dymocks Adelaide + Matilda Bookshop (Stirling)',
+            desc:'시내 + Adelaide Hills 작은 서점. Stirling = Adelaide Hills 가는 길.' },
+        ]},
+
+        { type:'neighborhoods', icon:'home', title:'동네 (31일 거점)', items:[
+          { name:'CBD (시내 중심)', stars:'★★★★★',
+            desc:'Central Market + JamFactory + 박물관 도보. 트램 무료 존. <strong>누리 베스트.</strong>' },
+          { name:'North Adelaide', stars:'★★★★★',
+            desc:"강 건너 옛 동네. O'Connell St 카페·식당. 시내 도보 15분 또는 무료 트램." },
+          { name:'Bowden', stars:'★★★★',
+            desc:'업커밍 크리에이티브 동네. Re-Space Studio + 디자이너 신. 시내 트램 10분.' },
+          { name:'Norwood (East)', stars:'★★★★',
+            desc:'The Parade 카페·부티크. 시내 동쪽 5분.' },
+          { name:'Unley · Hyde Park', stars:'★★★',
+            desc:'King William Rd 부티크. 가족·조용.' },
+          { name:'Glenelg', stars:'★★★',
+            desc:'해변. 시내 트램 30분. 휴양 모드면.' },
+        ]},
+
+        { type:'divider', label:'EXPERIENCES' },
+
+        { type:'list', icon:'attractions', title:'이벤트 · 1월', items:[
+          '<strong>Tour Down Under</strong> · 1월 중순 · 호주 최대 사이클 레이스',
+          '<strong>Adelaide Fringe Festival</strong> · 2-3월 (살짝 후) · 호주 최대 예술 페스티벌',
+          '<strong>Adelaide Central Market 가이드 투어</strong> · AU$30',
+          '<strong>원주민 문화 투어</strong> · Kaurna 원주민 (애들레이드 = Kaurna 땅)',
+        ]},
+
+        { type:'places', icon:'brush', title:'본업 워크숍 · 디자이너 누리', items:[
+          { name:'JamFactory 글래스블로잉 워크숍', price:'AU$150-400',
+            desc:'<strong>1순위.</strong> 1-2시간 입문 또는 1-2일 깊이. 누리 = 한국 못 하는 글래스 직접 체험. 본업 자산 폭탄.' },
+          { name:'JamFactory 도자·주얼리 워크숍', price:'AU$80-300',
+            desc:'도자 + 주얼리 정기. 영문. 사전 예약.' },
+          { name:'Re-Space Studio 슬로우 패션 워크숍', price:'AU$60-150',
+            desc:'Mending·업사이클·자수. 누리 본업 (니트) 지속가능 응용.' },
+          { name:'Photography Walk (애들레이드 골목)', price:'AU$50-100',
+            desc:'시내 골목·스트리트 아트. 작가 누리 자산.' },
+        ]},
+
+        { type:'places', icon:'restaurant', title:'음식 · 와인 · 시장', items:[
+          { name:'Adelaide Central Market (1869)', price:'무료 입장',
+            desc:'남반구 가장 큰 식품 시장 중 하나. 250개 가판. 누리 = 매주 식재료 + 점심.' },
+          { name:'Gouger Street (Central Market 옆)',
+            desc:'아시아 음식 거리. 한식·중식·말레이·일식. 누리 = 한국 음식 그리울 때.' },
+          { name:'Peel Street (시내 라네이)',
+            desc:'힙스터 바·다이닝. Press Food & Wine·Pink Moon Saloon. 누리 술 안 마셔도 음식 OK.' },
+          { name:"Lucia's Pizza & Spaghetti Bar (Central Market, 1957)",
+            desc:'애들레이드 명물. 시장 안. 점심.' },
+          { name:'Hahndorf (Adelaide Hills) 독일 마을',
+            desc:'호주 최고(古) 독일 정착촌 (1839). 소시지·프레첼·맥주. Adelaide Hills 가는 길 1번.' },
+          { name:'Africola (East End)',
+            desc:'남아공 셰프 Duncan Welgemoed. 호주 베스트 후보. 비싸지만 1번.' },
+        ]},
+
+        { type:'divider', label:'LEARN' },
+
+        { type:'learn', icon:'school', title:'누리 안목', items:[
+          { h:'1. 호주 와인 = 신세계 디자인',
+            body:'유럽 (옛 세계) ↔ 호주 (신세계) 와인 라벨·브랜딩 비교. 디자이너 누리 = 패키징 자산.' },
+          { h:'2. JamFactory = 50년 비영리 디자인 모델',
+            body:'1979년 시작. <strong>호주 정부 + 비영리 + 작가 직접 판매 결합.</strong> 누리 1인 IP ↔ 작가 네트워크 결합 모델 케이스 스터디. Made in Adelaide 브랜드.' },
+          { h:'3. Kaurna 원주민 + 식민 + 다문화',
+            body:'도시 정체성 충돌. 분석가 N 글감. Adelaide = "Tarndanya" (Kaurna 이름).' },
+          { h:'4. 슬로우 + 조용 = 멜버른과 다른 페이스',
+            body:'호주 도시들의 페이스 비교. 한 달 살이로 적응.' },
+          { h:'5. 격자 도시 계획 = 1837 William Light',
+            body:'리스본 (1755 Pombal) ↔ 발레타 (1566 기사단) ↔ 애들레이드 (1837 Light) = 3대 계획 도시 비교 자산.' },
+        ]},
+
+        { type:'divider', label:'NOMAD MODE' },
+
+        { type:'list', icon:'work', title:'코워킹 · 1달', items:[
+          '<strong>Hub Adelaide</strong> · 데일리 AU$40 · 월 AU$450',
+          '<strong>The Mill</strong> · 크리에이티브 코워킹 + 디자이너 신',
+          '<strong>WOTSO Adelaide</strong> · 글로벌 체인',
+          '<strong>State Library of South Australia</strong> · 무료 (밑 도서관 섹션 참고)',
+        ]},
+
+        { type:'places', icon:'local_cafe', title:'카페 · 작업', items:[
+          { name:'Bar Nine (Field St)',
+            desc:'애들레이드 스페셜티 1순위. 자체 로스팅. 누리 단골.' },
+          { name:'Please Say Please (Topham Mall)',
+            desc:'힙스터 골목. 작업 + 점심.' },
+          { name:'Exchange Coffee (Vardon Ave)',
+            desc:'동네 스페셜티. 종일 작업.' },
+          { name:'Adelaide Coffee Roasters (Currie St)',
+            desc:'자체 로스팅. 빠른 작업.' },
+          { name:'My Kingdom for a Horse (Norwood)',
+            desc:'Norwood 동네. 아침 + 작업.' },
+        ]},
+
+        { type:'places', icon:'menu_book', title:'도서관 · 무료 작업', items:[
+          { name:'State Library of South Australia (North Terrace)', price:'무료',
+            desc:'<strong>1순위.</strong> Mortlock Wing = 호주 가장 아름다운 도서관 후보. 1884년 빅토리안 인테리어. 무료 Wi-Fi + 콘센트.' },
+          { name:'Adelaide City Library (Rundle Place)',
+            desc:'시립 도서관. 모던. 빠른 Wi-Fi.' },
+          { name:'Barr Smith Library (University of Adelaide)',
+            desc:'대학 도서관. North Terrace.' },
+        ]},
+
+        { type:'list', icon:'schedule', title:'작업 페이스 (누리 31일 모드)', items:[
+          '<strong>주 1 (1-7일)</strong> · 호바트 → 애들레이드 비행 + CBD 또는 North Adelaide 거점 적응 + Adelaide Central Market 단골 + 카페 (Bar Nine) 단골',
+          '<strong>주 2 (8-14일)</strong> · <strong>JamFactory 첫 방문 + 글래스 워크숍 예약</strong> + Art Gallery of SA + State Library 작업 + Tour Down Under (1월 중순)',
+          '<strong>주말 (15-16일차)</strong> · Barossa Valley 1박 (JamFactory Seppeltsfield 동시)',
+          '<strong>주 3 (17-23일)</strong> · 글 풀가동 + JamFactory 워크숍 + Adelaide Hills 당일 (Hahndorf) + Re-Space Studio',
+          '<strong>주말 (24-25일차)</strong> · Kangaroo Island 1박 (페리 + 야생 동물)',
+          '<strong>주 4 (26-31일)</strong> · 1년 7개월 회고 + 디지털 제품 작업 + 멜버른 짐 준비',
+        ]},
+
+        { type:'divider', label:'PEOPLE' },
+
+        { type:'subsections', icon:'groups', title:'커뮤니티 · 그룹', groups:[
+          { h:'페이스북 그룹', items:[
+            '<strong>Adelaide Digital Nomads</strong>',
+            '<strong>Adelaide Designers Network</strong> · 본업 동종',
+            '<strong>Female Digital Nomads Australia</strong>',
+            '<strong>Adelaide Knitters & Crafters</strong> · 본업 매칭',
+            '<strong>Adelaide Writers Centre</strong> · 작가 모임',
+          ]},
+          { h:'Meetup.com', items:[
+            '"Adelaide International Meetup" · 익스팻 + 노마드',
+            '"Adelaide Creative Mornings" · 매월 토 아침',
+            '"Adelaide Photography Walks"',
+          ]},
+          { h:'코워킹 + 본업 이벤트', items:[
+            'JamFactory 오프닝·갤러리 = 디자이너 직접',
+            'Hub Adelaide = 정기 네트워킹',
+            'Lion Arts Centre 행사 = 작가·아티스트 신',
+          ]},
+          { h:'이벤트 (1월)', items:[
+            '<strong>Tour Down Under</strong> (1월 중순) · 사이클 레이스 + 파티',
+            '<strong>Adelaide Central Market 이벤트</strong> · 정기',
+            '<strong>JamFactory 갤러리 오프닝</strong> · 정기',
+            '<strong>Glenelg 일몰 모임</strong> · 무료',
+            '<strong>Adelaide Fringe Festival 예고편</strong> (1월 말 시작 일부)',
+          ]},
+          { h:'애들레이드 특유', items:[
+            '인구 130만 작은 수도. <strong>"Adelaide of Light"</strong> = 격자 도시 + 정원 띠 (시 전체 둘러싼 공원). 멜버른보다 조용 + 친근. 영어 + 한 달 거점 = 깊은 친구 1-2명 가능.',
+          ]},
+        ]},
+
+        { type:'divider', label:'BUDGET' },
+
+        { type:'budget', icon:'payments', title:'1달 (숙소 제외)',
+          rows:[
+            { name:'식비', sub:'중앙시장 + 외식', eur:'AU$700-950', krw:'62-85만' },
+            { name:'교통', sub:'대중교통 (트램·버스)', eur:'AU$150-250', krw:'13-22만' },
+            { name:'박물관·체험', sub:'대부분 무료 + 페스티벌', eur:'AU$80-150', krw:'7-13만' },
+            { name:'와인 투어 + 위성', sub:'바라사·맥라렌·캥거루 아일랜드', eur:'AU$500-900', krw:'45-80만' },
+            { name:'코워킹', sub:'월권', eur:'AU$300-450', krw:'27-40만' },
+          ],
+          total: { eur:'AU$1,730-2,700', krw:'154-240만' },
+          note:'호주 = 비쌈. 박물관 무료 + 트램 무료 존 = 가성비 포인트.',
+        },
+
+        { type:'divider', label:'FOCUS' },
+
+        { type:'learn', icon:'priority_high', title:'핵심', items:[
+          { h:'1. 멜버른 1월 회피 = OK 선택',
+            body:'멜버른 = 1월 = 호주 오픈 테니스 + 휴가 시즌. 가격 +30%, 사람 많음. 애들레이드 = 한적.' },
+          { h:'2. 와인 = 술 안 마셔도 OK',
+            body:'풍경 + 디자인 + 사람 만남. 누리 = 셀러 도어 방문 자체가 자산.' },
+          { h:'3. Kangaroo Island 1박 = 무조건',
+            body:'호주 야생 (캥거루·코알라·바다사자) 천국. 1박이 진짜.' },
+          { h:'4. 자외선 + 더위 대응',
+            body:'1월 = 35°C+ 가능. 선크림·모자·물병 매일.' },
+          { h:'5. 다음 = 2월 멜버른',
+            body:'멜버른 비행 1시간. 호주 오픈 끝나면 멜버른 = 누리한테 진짜 살아보기.' },
+        ]},
+      ],
+    },
+
     // ════════ 6월 · 포르투 ════════
     'nomad-city-porto': {
       monthLabel: '6월',
