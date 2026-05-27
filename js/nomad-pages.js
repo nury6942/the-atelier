@@ -838,10 +838,40 @@ window.NOMAD_PAGES = (function(){
 
       function stripStrong(s) { return (s == null ? '' : String(s)).replace(/<\/?strong>/gi, ''); }
 
+      // 헤더에서 통화 기호 추출 ("월 합계 (€)" → "€", "11일 (DKK)" → "DKK ")
+      function detectCurrency(sec) {
+        if (sec.type === 'table' && sec.headers && sec.headers[2]) {
+          var m = String(sec.headers[2]).match(/\(([^)]+)\)/);
+          if (m) {
+            var c = m[1].trim();
+            if (c === '€' || c === '$' || c === 'A$' || c === 'NZ$') return c;
+            if (c === 'CA$') return 'C$';
+            return c + ' '; // DKK, NOK, SEK 등은 prefix + space
+          }
+        }
+        return '';
+      }
+      // bare 숫자에만 통화 prefix 붙이기 (이미 € $ ₩ DKK 등이 있으면 그대로)
+      function prefixAmt(amt, cur) {
+        if (!amt || !cur) return amt || '';
+        var s = String(amt).trim();
+        if (/^([€$₩£¥]|C\$|A\$|NZ\$|DKK|NOK|SEK|ISK|CHF|GBP|USD|EUR|KRW|JPY)/i.test(s)) return s;
+        if (/^\s*\d/.test(s)) return cur + s;
+        return s;
+      }
+      function prefixKrw(krw) {
+        if (!krw) return '';
+        var s = String(krw).trim();
+        if (s.indexOf('₩') === 0) return s;
+        if (/^\s*\d/.test(s)) return '₩' + s;
+        return s;
+      }
+
       function renderBudgetBlock(cityKr, sec, idx) {
         // rows를 통합 4-tuple로 정규화
         var rows = [];
         var totalAmt = '', totalKrw = '';
+        var cur = detectCurrency(sec);
         if (sec.type === 'budget' && sec.rows) {
           rows = sec.rows.map(function(r) {
             return { name: r.name || '', sub: r.sub || '', amt: r.eur || '', krw: r.krw || '' };
@@ -862,28 +892,41 @@ window.NOMAD_PAGES = (function(){
         if (rows.length === 0) return '';
 
         var titleSuffix = sec.title ? ' · ' + sec.title : '';
-        var out = '<div style="margin-top:' + (idx === 0 ? '0' : '20px') + '">';
-        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--nm-outline-variant);gap:12px;flex-wrap:wrap">' +
-          '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + cityKr + titleSuffix + '</p>' +
-          ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size:11px;color:var(--nm-text-3);margin:0">합계 ' + totalAmt + (totalKrw ? ' / ' + totalKrw : '') + '</p>' : '') +
+        var out = '<div style="margin-top:' + (idx === 0 ? '0' : '24px') + '">';
+        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--nm-outline-variant);gap:12px;flex-wrap:wrap">' +
+          '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin:0">📍 ' + cityKr + titleSuffix + '</p>' +
+          ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size:12px;color:var(--nm-text-3);margin:0">합계 ' + prefixAmt(totalAmt, cur) + (totalKrw ? ' / ' + prefixKrw(totalKrw) : '') + '</p>' : '') +
         '</div>';
         out += '<table style="width:100%;border-collapse:collapse">';
         rows.forEach(function(r) {
           out += '<tr>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-on-surface)">' + r.name + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-size:11px;color:var(--nm-text-2)">' + r.sub + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + r.amt + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + r.krw + '</td>' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">' + r.name + '</td>' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-size:12px;color:var(--nm-text-2)">' + r.sub + '</td>' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + prefixAmt(r.amt, cur) + '</td>' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + prefixKrw(r.krw) + '</td>' +
           '</tr>';
         });
         out += '</table>';
         if (sec.note) {
-          out += '<p style="font-size:10px;color:var(--nm-text-3);font-style:italic;margin:4px 0 0;line-height:1.5">※ ' + sec.note + '</p>';
+          out += '<p style="font-size:11px;color:var(--nm-text-3);font-style:italic;margin:6px 0 0;line-height:1.55">※ ' + sec.note + '</p>';
         }
         out += '</div>';
         return out;
       }
 
+      // ── 1. 숙소 row (맨 위) ──
+      var stayKr = b.stay ? '₩' + b.stay + '만' : '';
+      if (stayKr) {
+        inner += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border:1px solid var(--nm-outline-variant);border-radius:8px;margin-bottom:18px">' +
+          '<div style="display:flex;align-items:center;gap:10px">' +
+            '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">hotel</span>' +
+            '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-on-surface);margin:0">숙소 (Stay)' + (b.city ? '<span style="font-size:12px;color:var(--nm-text-3);font-weight:500;margin-left:8px">· ' + b.city + '</span>' : '') + '</p>' +
+          '</div>' +
+          '<p style="font-family:var(--nm-font-h);font-size:15px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + stayKr + '</p>' +
+        '</div>';
+      }
+
+      // ── 2. 도시별 생활비 분해 ──
       cityIds.forEach(function(cid) {
         var city = ALL_CITIES[cid];
         if (!city || !city.sections) return;
@@ -901,9 +944,18 @@ window.NOMAD_PAGES = (function(){
           }
         });
       });
-      if (!anyFound) {
-        inner = '<p style="font-size:11px;color:var(--nm-text-3);text-align:center;padding:12px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
+      if (!anyFound && !stayKr) {
+        inner = '<p style="font-size:12px;color:var(--nm-text-3);text-align:center;padding:16px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
       }
+
+      // ── 3. Subtotal (맨 아래) ──
+      if (b.total) {
+        inner += '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(135deg,#F5F3FF,#e6eeff);border-radius:10px;margin-top:20px;border-left:3px solid var(--nm-primary)">' +
+          '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.1em;margin:0">Monthly Subtotal</p>' +
+          '<p style="font-family:var(--nm-font-h);font-size:18px;font-weight:800;color:var(--nm-deep-indigo);margin:0">₩' + b.total + '만</p>' +
+        '</div>';
+      }
+
       return inner;
     }
 
@@ -921,10 +973,8 @@ window.NOMAD_PAGES = (function(){
     html += '<thead>' +
       '<tr style="background:#F5F3FF">' +
         '<th style="width:36px"></th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Stay (숙소)</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Living (생활비)</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Monthly Subtotal</th>' +
+        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
+        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Monthly Subtotal</th>' +
       '</tr>' +
     '</thead>';
     html += '<tbody>';
@@ -944,13 +994,11 @@ window.NOMAD_PAGES = (function(){
             '</div>' +
           '</div>' +
         '</td>' +
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;color:var(--nm-text-2)">₩' + b.stay + '만</td>' +
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;color:var(--nm-text-2)">₩' + b.life + '만</td>' +
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
+        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:17px;font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
       '</tr>';
       // Sub-row: 도시별 상세 (default 펼침)
       html += '<tr id="' + rowId + '" style="background:#fbfaff">' +
-        '<td colspan="5" style="padding:16px 24px 20px 76px;border-bottom:1px solid var(--nm-outline-variant)">' +
+        '<td colspan="3" style="padding:16px 24px 20px 76px;border-bottom:1px solid var(--nm-outline-variant)">' +
           _buildBudgetDetail(b) +
         '</td>' +
       '</tr>';
@@ -958,12 +1006,10 @@ window.NOMAD_PAGES = (function(){
     html += '<tr style="background:var(--nm-surface-container-low);border-top:2px solid var(--nm-primary)">' +
       '<td></td>' +
       '<td style="padding:18px 20px">' +
-        '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary)">12개월 합계</p>' +
-        '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">월 평균 ₩' + avgMonth + '만</p>' +
+        '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-primary)">12개월 합계</p>' +
+        '<p style="font-size:12px;color:var(--nm-text-3);margin-top:2px">월 평균 ₩' + avgMonth + '만 · 숙소 ₩' + stayTotal + '만 + 생활비 ₩' + lifeTotal + '만</p>' +
       '</td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">₩' + stayTotal + '만</td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">₩' + lifeTotal + '만</td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:17px;font-weight:800;color:var(--nm-primary)">₩' + monthlyTotal + '만</td>' +
+      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:19px;font-weight:800;color:var(--nm-primary)">₩' + monthlyTotal + '만</td>' +
     '</tr>';
     html += '</tbody></table>';
     html += '</div>';
