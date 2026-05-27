@@ -829,6 +829,33 @@ window.NOMAD_PAGES = (function(){
     // City Guide의 budget 데이터는 두 포맷으로 존재:
     //  A) type:'budget' + rows:[{name,sub,eur,krw}] + total:{eur,krw}
     //  B) type:'table' + icon:'payments' + rows:[[name,sub,amt,krw]] + footer:[..,amt,krw]
+    // 도시별 숙소 (₩만, 시즌별 분리 지원). 합쳐서 BUDGET.stay 합과 일치.
+    var STAY_PER_CITY_MAN = {
+      'nomad-city-porto':      { _default: 165 },
+      'nomad-city-dublin':     { _default: 190 },
+      'nomad-city-galway':     { _default: 210 },
+      'nomad-city-copenhagen': { _default: 260 },
+      'nomad-city-bergen':     { _default: 210 },
+      'nomad-city-stockholm':  { _default: 235 },
+      'nomad-city-helsinki':   { '2028.9': 235, '2028.10': 60 },
+      'nomad-city-reykjavik':  { _default: 160 },
+      'nomad-city-portugal2':  { '2028.10': 250, '2028.11': 90 },
+      'nomad-city-valletta':   { _default: 180 },
+      'nomad-city-hobart':     { _default: 280 },
+      'nomad-city-adelaide':   { _default: 300 },
+      'nomad-city-melbourne':  { _default: 320 },
+      'nomad-city-nz':         { _default: 250 },
+      'nomad-city-sandiego':   { _default: 310 },
+      'nomad-city-nyc':        { _default: 70 },
+      'nomad-city-halifax':    { _default: 300 },
+    };
+    function _stayForCity(cid, period) {
+      var m = STAY_PER_CITY_MAN[cid];
+      if (!m) return 0;
+      if (period && m[period] != null) return m[period];
+      return m._default || 0;
+    }
+
     function _buildBudgetDetail(b) {
       var ALL_CITIES = window.NOMAD_CITIES || {};
       var cityIds = b.cityIds || [];
@@ -951,37 +978,30 @@ window.NOMAD_PAGES = (function(){
         return out;
       }
 
-      // 첫 블록에만 stay 행 prepend (다중 도시일 때 한 번만)
-      var stayInjected = false;
+      // 도시별로 그 도시의 숙소만 그 도시 첫 블록에 prepend
       cityIds.forEach(function(cid) {
         var city = ALL_CITIES[cid];
         if (!city || !city.sections) return;
         var cityKr = (city.hero && city.hero.city) || cid;
+        var stayForThisCity = _stayForCity(cid, b.period);
+        var injectedForCity = false;
         // 같은 도시 안의 모든 budget 데이터를 수집 (레이캬비크처럼 2개 있는 경우 대응)
         city.sections.forEach(function(s) {
           if (!s || !s.rows) return;
           var isBudget = (s.type === 'budget') || (s.type === 'table' && s.icon === 'payments');
           if (!isBudget) return;
-          var stayThisBlock = (!stayInjected && b.stay) ? b.stay : null;
+          var stayThisBlock = (!injectedForCity && stayForThisCity) ? stayForThisCity : null;
           var rendered = renderBudgetBlock(cityKr, s, blockIdx, stayThisBlock);
           if (rendered) {
             inner += rendered;
             anyFound = true;
             blockIdx++;
-            if (stayThisBlock) stayInjected = true;
+            if (stayThisBlock) injectedForCity = true;
           }
         });
       });
       if (!anyFound) {
         inner = '<p style="font-size:12px;color:var(--nm-text-3);text-align:center;padding:16px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
-      }
-
-      // ── 3. Subtotal (맨 아래) ──
-      if (b.total) {
-        inner += '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(135deg,#F5F3FF,#e6eeff);border-radius:10px;margin-top:20px;border-left:3px solid var(--nm-primary)">' +
-          '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.1em;margin:0">Monthly Subtotal</p>' +
-          '<p style="font-family:var(--nm-font-h);font-size:18px;font-weight:800;color:var(--nm-deep-indigo);margin:0">₩' + b.total + '만</p>' +
-        '</div>';
       }
 
       return inner;
