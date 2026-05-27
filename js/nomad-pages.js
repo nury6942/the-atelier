@@ -844,12 +844,41 @@ window.NOMAD_PAGES = (function(){
           var m = String(sec.headers[2]).match(/\(([^)]+)\)/);
           if (m) {
             var c = m[1].trim();
-            if (c === '€' || c === '$' || c === 'A$' || c === 'NZ$') return c;
-            if (c === 'CA$') return 'C$';
+            if (c === '€' || c === '$' || c === 'A$' || c === 'AU$' || c === 'NZ$') return c;
+            if (c === 'CA$') return 'CA$';
             return c + ' '; // DKK, NOK, SEK 등은 prefix + space
           }
         }
+        // type:'budget' — 첫 row의 eur 값에서 통화 prefix 감지
+        if (sec.type === 'budget' && sec.rows && sec.rows[0]) {
+          var v = String(sec.rows[0].eur || '').trim();
+          if (v.indexOf('AU$') === 0) return 'AU$';
+          if (v.indexOf('NZ$') === 0) return 'NZ$';
+          if (v.indexOf('CA$') === 0) return 'CA$';
+          if (v.indexOf('A$') === 0) return 'A$';
+          if (v.indexOf('C$') === 0) return 'CA$';
+          if (v.indexOf('€') === 0) return '€';
+          if (v.indexOf('$') === 0) return '$';
+        }
         return '';
+      }
+      // ₩만 → 현지 통화 환산 (대략)
+      function krwManToLocal(krwMan, cur) {
+        if (!krwMan || !cur) return '';
+        var key = String(cur).trim();
+        var rates = {
+          '€':1500, '$':1400, 'A$':900, 'AU$':900, 'NZ$':850,
+          'C$':1000, 'CA$':1000,
+          'DKK':200, 'NOK':130, 'SEK':135, 'ISK':10,
+          'GBP':1750, 'CHF':1550, 'JPY':9
+        };
+        var rate = rates[key];
+        if (!rate) return '';
+        var local = (krwMan * 10000) / rate;
+        // 가독성 위해 반올림 (큰 값은 100단위, 작은 값은 50단위, 외환 단위는 1000단위)
+        if (rate >= 1000) local = Math.round(local / 10) * 10;
+        else local = Math.round(local / 100) * 100;
+        return '≈ ' + cur + local.toLocaleString();
       }
       // bare 숫자에만 통화 prefix 붙이기 (이미 € $ ₩ DKK 등이 있으면 그대로)
       function prefixAmt(amt, cur) {
@@ -893,7 +922,8 @@ window.NOMAD_PAGES = (function(){
 
         // 숙소 row를 맨 앞에 prepend (해당 블록에 stay 들어가는 경우만)
         if (stayKrwManOpt) {
-          rows = [{ name:'숙소', sub:'Stay · 월 임대료 · 워홀 베이스', amt:'—', krw:stayKrwManOpt + '만', isStay:true }].concat(rows);
+          var stayLocal = krwManToLocal(stayKrwManOpt, cur);
+          rows = [{ name:'숙소', sub:'월 임대료', amt:stayLocal, krw:stayKrwManOpt + '만' }].concat(rows);
         }
 
         // 제목에서 "(숙소 제외)" 같은 suffix 제거
@@ -906,10 +936,8 @@ window.NOMAD_PAGES = (function(){
         '</div>';
         out += '<table style="width:100%;border-collapse:collapse">';
         rows.forEach(function(r) {
-          var rowBg = r.isStay ? 'background:#F5F3FF' : '';
-          var nameColor = r.isStay ? 'color:var(--nm-primary)' : 'color:var(--nm-on-surface)';
-          out += '<tr style="' + rowBg + '">' +
-            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:13px;font-weight:700;' + nameColor + '">' + r.name + '</td>' +
+          out += '<tr>' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">' + r.name + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-size:12px;color:var(--nm-text-2)">' + r.sub + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + prefixAmt(r.amt, cur) + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + prefixKrw(r.krw) + '</td>' +
