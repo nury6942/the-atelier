@@ -786,19 +786,62 @@ window.NOMAD_PAGES = (function(){
 
     html += '</div>'; // /Summary 8/4
 
-    // ════════ SECTION 2 · 12-City Cost Breakdown 표 (요약) ════════
+    // 도시별 상세 예산 sub-row 빌더 (Cost Breakdown 표 안에서 사용)
+    function _buildBudgetDetail(b) {
+      var ALL_CITIES = window.NOMAD_CITIES || {};
+      var cityIds = b.cityIds || [];
+      var inner = '';
+      var anyFound = false;
+      cityIds.forEach(function(cid, ci) {
+        var city = ALL_CITIES[cid];
+        if (!city || !city.sections) return;
+        var budgetSec = null;
+        for (var i = 0; i < city.sections.length; i++) {
+          if (city.sections[i].type === 'budget') { budgetSec = city.sections[i]; break; }
+        }
+        if (!budgetSec || !budgetSec.rows) return;
+        anyFound = true;
+        var cityKr = (city.hero && city.hero.city) || cid;
+        inner += '<div style="margin-top:' + (ci === 0 ? '0' : '20px') + '">';
+        inner += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--nm-outline-variant)">' +
+          '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + cityKr + (budgetSec.title ? ' · ' + budgetSec.title : '') + '</p>' +
+          (budgetSec.total ? '<p style="font-family:var(--nm-font-h);font-size:11px;color:var(--nm-text-3);margin:0">합계 ' + (budgetSec.total.eur || '') + ' / ' + (budgetSec.total.krw || '') + '</p>' : '') +
+        '</div>';
+        inner += '<table style="width:100%;border-collapse:collapse">';
+        budgetSec.rows.forEach(function(r) {
+          inner += '<tr>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-on-surface)">' + (r.name || '') + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-size:11px;color:var(--nm-text-2)">' + (r.sub || '') + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + (r.eur || '') + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + (r.krw || '') + '</td>' +
+          '</tr>';
+        });
+        inner += '</table>';
+        if (budgetSec.note) {
+          inner += '<p style="font-size:10px;color:var(--nm-text-3);font-style:italic;margin:4px 0 0;line-height:1.5">※ ' + budgetSec.note + '</p>';
+        }
+        inner += '</div>';
+      });
+      if (!anyFound) {
+        inner = '<p style="font-size:11px;color:var(--nm-text-3);text-align:center;padding:12px;font-style:italic;margin:0">City Guide에 이 도시의 budget section을 추가하면 자동 표시됩니다 (식비/교통/체험/코워킹 등)</p>';
+      }
+      return inner;
+    }
+
+    // ════════ SECTION 2 · 12-City Cost Breakdown — 표 안에 도시별 상세 통합 ════════
     html += '<section class="nm-card" style="padding:0;overflow:hidden;margin-bottom:32px">';
     html += '<div style="padding:20px 24px;border-bottom:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
       '<h2 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">12-City Cost Breakdown</h2>' +
       '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--nm-text-3);font-weight:600">' +
+        '<span>각 행 클릭 = 도시별 상세 예산 펼치기/접기</span>' +
         '<span style="width:10px;height:10px;background:var(--nm-primary);border-radius:50%;display:inline-block"></span>' +
-        'High Accuracy · 단위 만 원' +
       '</div>' +
     '</div>';
     html += '<div style="overflow-x:auto">';
     html += '<table style="width:100%;border-collapse:collapse">';
     html += '<thead>' +
       '<tr style="background:#F5F3FF">' +
+        '<th style="width:36px"></th>' +
         '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
         '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Stay (숙소)</th>' +
         '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Living (생활비)</th>' +
@@ -806,9 +849,13 @@ window.NOMAD_PAGES = (function(){
       '</tr>' +
     '</thead>';
     html += '<tbody>';
-    budget.forEach(function(b) {
+    budget.forEach(function(b, idx) {
       var meta = budgetCityMeta(b.city);
-      html += '<tr style="transition:background 0.15s" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'">' +
+      var rowId = 'budget-detail-' + idx;
+      var chevId = rowId + '-chev';
+      // 메인 row (클릭 시 sub-row 토글)
+      html += '<tr style="transition:background 0.15s;cursor:pointer" onclick="(function(){var d=document.getElementById(\'' + rowId + '\');var c=document.getElementById(\'' + chevId + '\');if(d){var open=d.style.display!==\'none\';d.style.display=open?\'none\':\'table-row\';if(c)c.textContent=open?\'expand_more\':\'expand_less\';}})()" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'">' +
+        '<td style="padding:16px 8px;border-bottom:1px solid #f1f5f9;text-align:center"><span id="' + chevId + '" class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">expand_less</span></td>' +
         '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9">' +
           '<div style="display:flex;align-items:center;gap:14px">' +
             '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + meta.flag + '</div>' +
@@ -822,8 +869,15 @@ window.NOMAD_PAGES = (function(){
         '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;color:var(--nm-text-2)">₩' + b.life + '만</td>' +
         '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
       '</tr>';
+      // Sub-row: 도시별 상세 (default 펼침)
+      html += '<tr id="' + rowId + '" style="background:#fbfaff">' +
+        '<td colspan="5" style="padding:16px 24px 20px 76px;border-bottom:1px solid var(--nm-outline-variant)">' +
+          _buildBudgetDetail(b) +
+        '</td>' +
+      '</tr>';
     });
     html += '<tr style="background:var(--nm-surface-container-low);border-top:2px solid var(--nm-primary)">' +
+      '<td></td>' +
       '<td style="padding:18px 20px">' +
         '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary)">12개월 합계</p>' +
         '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">월 평균 ₩' + avgMonth + '만</p>' +
@@ -836,14 +890,9 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
     html += '</section>';
 
-    // ════════ SECTION 2-B · 도시별 상세 예산 (City Guide budget rows 그대로) ════════
-    html += '<section style="margin-bottom:32px">';
-    html += '<div style="padding:0 4px 18px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--nm-outline-variant);margin-bottom:24px">' +
-      '<h2 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo);margin:0">도시별 상세 예산</h2>' +
-      '<p style="font-size:11px;color:var(--nm-text-3);margin:0">City Guides에서 도시별로 작성한 카테고리 그대로 (식비/교통/체험/코워킹 등)</p>' +
-    '</div>';
-    // 각 BUDGET row 마다 도시(들)의 budget section 표시
+    // SECTION 2-B 별도 섹션 제거됨 — Cost Breakdown 표 안에 통합 (아래 _buildDetail 헬퍼 사용)
     var CITIES = window.NOMAD_CITIES || {};
+    /* 이전 별도 섹션 코드 비활성화
     budget.forEach(function(b) {
       var meta = budgetCityMeta(b.city);
       // 헤더
@@ -919,6 +968,7 @@ window.NOMAD_PAGES = (function(){
       html += '</div>';
     });
     html += '</section>';
+    */
 
     // ════════ SECTION 3 · 2-col bottom (Cash Flow + 엄마 합류) ════════
     html += '<div class="nm-grid nm-grid-2" style="gap:24px">';
