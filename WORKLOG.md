@@ -33,6 +33,98 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-05-28 (기기: 윈도우 · 회사)
+
+### ✅ 한 일
+
+**1. 아이맥 작업 (2026-05-27) Windows로 sync**
+- `git pull` — 어제 아이맥에서 작업한 15개 커밋 받음
+- Travel 페이지 큰 작업: 2027 캐나다 8박 10일 재구성, 덴마크&스웨덴 Finnair 매칭, 트립닷컴 호텔 추천 + Google 폴백, 도시 한·영 병기
+- Atlas → Travel 트립 마이그레이션 함수
+- 모든 장소 자동 구글맵 / 플랫폼 자동 외부링크
+- Annie 회차 삭제 기능 (default 회차 포함)
+- 7개 nomad 페이지 헤더 `pageHeader()` 헬퍼로 통일
+
+**2. Annie 수업 트래커 크로스-디바이스 sync 버그 픽스 ⭐**
+- 문제: 회차 삭제(deletedDefaults)/상태 변경(statusOverrides)이 localStorage에만 저장돼서 다른 기기에서 안 보임
+- 해결: Firestore `englishMeta/state` 문서 신설
+  ```
+  { deletedDefaults: {...}, statusOverrides: {...}, _updatedAt }
+  ```
+- `loadEnglishMetaFromFirebase()` — page load 시 FB와 LS를 **union 합집합** (deletedDefaults 모든 디바이스 삭제 합치고, status는 FB 우선), merged 결과를 LS·FB 양쪽에 push
+- `saveEnglishMetaToFirebase()` — 변경 시 LS 전체 상태를 FB로 set
+- `setEnglishDeletedDefault` / `setEnglishStatus` / `_undeleteEnglishDefault` 모두 LS 업데이트 직후 FB sync
+- `loadEnglish()` 시작부에 `await loadEnglishMetaFromFirebase()` 추가
+
+### 🎯 다음 할 일
+
+- **집 가서 아이맥 열기** — 어제 아이맥에서 삭제한 회차들이 iMac LS에만 있음. 아이맥에서 Annie 페이지 열면 자동으로 FB에 union 합쳐서 push됨 → 모든 기기 동기화 완성
+- 회사 윈도우에서 오늘 삭제한 회차는 이미 FB에 올라가 있음 (아이맥 LS와 union 됨)
+
+### 🚧 막힌 점 / 결정 보류
+
+- (없음)
+
+### 💭 메모
+
+- **Sync 전략 = Union 합집합**: 삭제는 sticky (한 번 삭제하면 어느 기기에서든 안 보임). undelete는 `_undeleteEnglishDefault('YYYY-MM-DD')` 콘솔에서 수동 가능
+- 첫 sync 시 시나리오: 어느 기기든 먼저 새 코드 로드하는 쪽이 자기 LS를 FB에 올림 → 다른 기기 로드 시 union → 모든 deletion 보존
+- 캐시 v224, app-1-pages v176
+
+---
+
+## 2026-05-27 (기기: 윈도우 + 아이맥 · 마라톤 디자인 + Travel 작업)
+
+### ✅ 한 일
+
+**Stitch Editorial 디자인 적용 (윈도우, 낮)**
+- **12-Month Voyage → Travel Atlas 2028-2029 Clean White Editorial**
+  - 3 region (Europe Loop / Down Under / Americas & Return) 분할
+  - 수직 라벨 "MASTER ITINERARY"
+  - Sticky Mileage Strategy / Family Integration / Voyage Trajectory 사이드바
+- **Stay Channels → Comprehensive Nomad Housing Guide**
+  - 좌측 사이드바 → 본문 안에 2x2 Strategy 그리드 통합
+  - Global Nomad Alternatives 5카드 (Housing Anywhere / Coliving / Anyplace / Sabbatical Homes / Outsite) + 국기 + 사이트 링크
+  - 22개 플랫폼 외부링크 자동 처리 (STAY_URL 맵)
+  - 누리한테 짚을 거 섹션 제거
+- **Nomad Essentials 신규 페이지** (Logistics 그룹에 추가)
+  - 13 numbered sections (01 Money ~ 13 Packing & Arrival)
+  - 38개 플랫폼 NE_URL 맵 + neLink/neTitleLink/neSplitLink 헬퍼
+  - 다크 Nuri Priority 5 카드
+
+**Budget 페이지 대수술**
+- 12-City Cost Breakdown 표에 도시별 상세 budget 통합 (펼침 sub-row)
+- Stay/Living 컬럼 제거 → 메인 행은 City + Monthly Subtotal만
+- 펼침 영역: 숙소 행이 분해 테이블 첫 행으로 통합 (별도 카드 X, "숙소 제외" 제거)
+- 도시별 stay 분리 — 17개 도시 + period 분리 (헬싱키 9/10월, 포르투갈 복귀 10/11월) → 합계 ₩4,075만 정확히 맞음
+- 통화 자동 prefix (€ $ A$ NZ$ C$ DKK NOK SEK ₩) + ≈ 표기로 환산 (₩만 → 현지 통화)
+
+**폴리시 다회**
+- 폰트 사이즈 절반 축소 (hero · section 헤더)
+- max-width:1280 적용 (오른쪽 빈공간 제거)
+- 도시명 옆 국기 추가 (12 행 모두)
+- align-items:flex-start로 메트릭 박스 위로 정렬
+- Aviation Strategy 패딩 48 → 28
+- height:100% 전역 제거 → Section 11 (Body & Mind) 전용 `ne-grid-equal` 클래스로 동일 높이
+
+**Travel 작업 (아이맥, 밤)**
+- 2027 덴마크&스웨덴 + 캐나다 항공편/숙소/Daily Log 전체 재구성
+- 트립닷컴 검색 + Google 호텔 검색 폴백
+- Atlas → Travel 트립 마이그레이션
+- 모든 장소 자동 구글맵 링크
+
+### 🎯 다음 할 일 (이어서)
+
+- Annie sync 버그 (다음 세션에서 해결 — 5-28에 완료됨)
+
+### 💭 메모
+
+- Stitch 디자인 3개 모두 처음에 `#nm-page-content` 셀렉터로 스코프해서 0 스타일 적용됨 → 실제 컨테이너 `#nomad-content`로 일괄 치환 (204건)
+- height:100% 전역 적용은 sibling-with-subgrid 케이스에서 sub-grid 만큼 카드 부풀림 → opt-in 클래스로 전환
+- 캐시 v205 → v223
+
+---
+
 ## 2026-05-26 (기기: 윈도우 · 6차 — 마라톤 후반전)
 
 ### ✅ 한 일 (5차에서 이어서)
