@@ -2324,9 +2324,11 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-col-6{grid-column:span 6}' +
       '#nomad-content .ne-col-12{grid-column:span 12}' +
       '@media (max-width:960px){#nomad-content .ne-col-8,#nomad-content .ne-col-6{grid-column:span 12}}' +
-      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding:24px;background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column;height:100%}' +
+      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding:22px;background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
       '#nomad-content .ne-card:hover{border-color:rgba(124,58,237,0.3)}' +
-      '#nomad-content .ne-grid12{align-items:stretch}' +
+      '#nomad-content .ne-grid-equal{align-items:stretch}' +
+      '#nomad-content .ne-grid-equal > [class*="ne-col-"]{display:flex;flex-direction:column}' +
+      '#nomad-content .ne-grid-equal .ne-card{flex:1}' +
       '#nomad-content .ne-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}' +
       '#nomad-content .ne-card-title-row{display:flex;align-items:center;gap:12px}' +
       '#nomad-content .ne-card-title-row .material-symbols-outlined{color:var(--nm-primary);transition:transform 0.15s}' +
@@ -2347,12 +2349,12 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-sub-label{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase;display:block;margin-bottom:8px;opacity:0.7}' +
       '#nomad-content .ne-sub-name{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 6px;display:block}' +
       '#nomad-content .ne-sub-desc{font-size:13px;color:#4a4455;line-height:1.55;margin:6px 0 0}' +
-      '#nomad-content .ne-aviation{background:var(--nm-primary);color:#fff;padding:48px;position:relative;overflow:hidden}' +
-      '#nomad-content .ne-aviation::after{content:"";position:absolute;top:-80px;right:-80px;width:240px;height:240px;background:#fff;opacity:0.08;border-radius:50%;filter:blur(40px)}' +
+      '#nomad-content .ne-aviation{background:var(--nm-primary);color:#fff;padding:28px;position:relative;overflow:hidden}' +
+      '#nomad-content .ne-aviation::after{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:#fff;opacity:0.06;border-radius:50%;filter:blur(30px)}' +
       '#nomad-content .ne-aviation > *{position:relative;z-index:1}' +
-      '#nomad-content .ne-aviation .material-symbols-outlined{color:#fff !important;font-size:28px;margin-bottom:20px;display:block}' +
-      '#nomad-content .ne-aviation h4{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#fff;margin:0 0 28px}' +
-      '#nomad-content .ne-aviation .row{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.2)}' +
+      '#nomad-content .ne-aviation .material-symbols-outlined{color:#fff !important;font-size:24px;margin-bottom:14px;display:block}' +
+      '#nomad-content .ne-aviation h4{font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#fff;margin:0 0 20px}' +
+      '#nomad-content .ne-aviation .row{padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.2)}' +
       '#nomad-content .ne-aviation .row:last-child{border-bottom:none}' +
       '#nomad-content .ne-aviation .row-label{display:block;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:6px}' +
       '#nomad-content .ne-aviation .row-val{font-family:var(--nm-font-h);font-size:15px;font-weight:500;color:#fff;display:block}' +
@@ -2748,7 +2750,7 @@ window.NOMAD_PAGES = (function(){
       '<h3 class="ne-section-h">11. Body &amp; Mind</h3>' +
       '<span class="ne-section-meta">정신 · 체력 자원</span>' +
     '</div>';
-    html += '<div class="ne-grid12">';
+    html += '<div class="ne-grid12 ne-grid-equal">';
     var bodyMind = [
       { icon:'self_improvement', name:'Calm / Insight Timer',     desc:'명상 (Insight Timer = 무료 옵션 많음). 누리 = 비행 시차 · 낯선 도시 적응에 도움.' },
       { icon:'restaurant',       name:'MyFitnessPal / Cronometer', desc:'누리 집밥파 = 영양 균형 체크. 외식 적은 환경에서 <strong>단백질 · 비타민 부족 가능</strong>.' },
