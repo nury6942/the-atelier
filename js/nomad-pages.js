@@ -1709,27 +1709,78 @@ window.NOMAD_PAGES = (function(){
   function renderChannels() {
     var html = '';
 
-    // 도시별 채널 데이터 보강 (1순위·2순위 외 누리한테 짚을 점)
+    // ── 플랫폼 → URL 매핑 (실제 사이트 링크용) ──
+    var STAY_URL = {
+      'Flatio':              'https://www.flatio.com',
+      'Housing Anywhere':    'https://housinganywhere.com',
+      'Coliving.com':        'https://coliving.com',
+      'Anyplace':            'https://www.anyplace.com',
+      'Sabbatical Homes':    'https://www.sabbaticalhomes.com',
+      'Outsite':             'https://www.outsite.co',
+      'Outsite Lisbon':      'https://www.outsite.co/coliving-lisbon',
+      'Daft.ie':             'https://www.daft.ie',
+      'SpareRoom':           'https://www.spareroom.com',
+      'Booking':             'https://www.booking.com',
+      'Booking.com':         'https://www.booking.com',
+      'Airbnb':              'https://www.airbnb.com',
+      'Sonder':              'https://www.sonder.com',
+      'Locke Apt':           'https://www.lockeliving.com',
+      'Spotahome':           'https://www.spotahome.com',
+      'Idealista':           'https://www.idealista.pt',
+      'Idealista (로컬)':     'https://www.idealista.pt',
+      'Stayz':               'https://www.stayz.com.au',
+      'Furnished Property':  'https://www.furnishedproperty.com.au',
+      'Bookabach':           'https://www.bookabach.co.nz',
+      'HouseMe':             'https://www.houseme.co.nz',
+      'Furnished Finder':    'https://www.furnishedfinder.com',
+      'Blueground':          'https://www.theblueground.com',
+      'Mintlist':            'https://mintlist.com',
+      'Kijiji':              'https://www.kijiji.ca',
+    };
+
+    function linkPill(name, styleStr) {
+      var url = STAY_URL[name];
+      var inner = '<span class="stay-pill" style="' + styleStr + '">' + name + '</span>';
+      if (url) return '<a href="' + url + '" target="_blank" rel="noopener" style="text-decoration:none">' + inner + '</a>';
+      return inner;
+    }
+    function linkText(name) {
+      // 텍스트형 (Secondary 셀, 슬래시로 분리된 여러 플랫폼)
+      // 한글 "(로컬)", "(코리빙)" 같은 suffix가 붙어도 매칭되도록 strip
+      var trimmed = name.replace(/\s*\(.+?\)\s*$/, '').trim();
+      var url = STAY_URL[trimmed] || STAY_URL[name];
+      if (url) {
+        return '<a href="' + url + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:#ccc3d8;text-underline-offset:3px">' + name + '</a>';
+      }
+      return name;
+    }
+    function linkSecondary(s) {
+      // "Sonder / Booking" → 각각 링크화
+      if (!s) return '';
+      return s.split('/').map(function(p){ return linkText(p.trim()); }).join(' / ');
+    }
+
+    // 도시별 채널 데이터 (flag + 1순위 + 2순위)
     var euChannels = [
-      { city:'포르투 (1달)',       primary:'Flatio',           pBg:'flatio',   secondary:'Idealista (로컬)',           note:'Visa-ready 계약 가능' },
-      { city:'더블린 (14일)',      primary:'Daft.ie',          pBg:'local',    secondary:'SpareRoom / Booking',        note:'IE #1 로컬 채널' },
-      { city:'골웨이 (14일)',      primary:'Daft.ie',          pBg:'local',    secondary:'Airbnb / SpareRoom',         note:'7개월 전 예약 필요' },
-      { city:'코펜하겐 (11일)',    primary:'Locke Apt',        pBg:'design',   secondary:'Sonder / Booking',           note:'디자인 호텔 하이브리드' },
-      { city:'베르겐 (8일)',       primary:'Booking',          pBg:'local',    secondary:'게스트하우스',                note:'짧은 체류 = 호텔 OK' },
-      { city:'스톡홀름 (20일)',    primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome / Housing Anywhere', note:'중장기 효율' },
-      { city:'헬싱키 (20일)',      primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome',                   note:'Oodi 도서관 근처' },
-      { city:'레이캬비크 (7일)',    primary:'Booking.com',      pBg:'local',    secondary:'Airbnb / 로컬 호스텔',         note:'성수기 가격 주의' },
-      { city:'포르투갈 복귀 (1달)', primary:'Flatio',           pBg:'flatio',   secondary:'Outsite Lisbon / Idealista', note:'워홀 베이스캠프' },
-      { city:'발레타 (18일)',      primary:'Spotahome',        pBg:'local',    secondary:'Airbnb 주간',                 note:'작은 시장' },
+      { city:'포르투 (1달)',       flag:'🇵🇹', primary:'Flatio',           pBg:'flatio',   secondary:'Idealista (로컬)',           note:'Visa-ready 계약 가능' },
+      { city:'더블린 (14일)',      flag:'🇮🇪', primary:'Daft.ie',          pBg:'local',    secondary:'SpareRoom / Booking',        note:'IE #1 로컬 채널' },
+      { city:'골웨이 (14일)',      flag:'🇮🇪', primary:'Daft.ie',          pBg:'local',    secondary:'Airbnb / SpareRoom',         note:'7개월 전 예약 필요' },
+      { city:'코펜하겐 (11일)',    flag:'🇩🇰', primary:'Locke Apt',        pBg:'design',   secondary:'Sonder / Booking',           note:'디자인 호텔 하이브리드' },
+      { city:'베르겐 (8일)',       flag:'🇳🇴', primary:'Booking',          pBg:'local',    secondary:'게스트하우스',                note:'짧은 체류 = 호텔 OK' },
+      { city:'스톡홀름 (20일)',    flag:'🇸🇪', primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome / Housing Anywhere', note:'중장기 효율' },
+      { city:'헬싱키 (20일)',      flag:'🇫🇮', primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome',                   note:'Oodi 도서관 근처' },
+      { city:'레이캬비크 (7일)',    flag:'🇮🇸', primary:'Booking.com',      pBg:'local',    secondary:'Airbnb / 로컬 호스텔',         note:'성수기 가격 주의' },
+      { city:'포르투갈 복귀 (1달)', flag:'🇵🇹', primary:'Flatio',           pBg:'flatio',   secondary:'Outsite Lisbon / Idealista', note:'워홀 베이스캠프' },
+      { city:'발레타 (18일)',      flag:'🇲🇹', primary:'Spotahome',        pBg:'local',    secondary:'Airbnb 주간',                 note:'작은 시장' },
     ];
 
     var globalChannels = [
-      { city:'호바트 (1달)',       primary:'Stayz',            pBg:'flatio',   secondary:'Furnished Property / Airbnb', note:'Airbnb 월 20-40% 할인' },
-      { city:'멜버른 (1달)',       primary:'Furnished Property', pBg:'flatio', secondary:'Stayz / Airbnb',              note:'호주 전문 가구 매물' },
-      { city:'애들레이드 (1달)',   primary:'Stayz',            pBg:'flatio',   secondary:'Airbnb 월할인',               note:'호주 표준 로컬' },
-      { city:'뉴질랜드 (1달)',     primary:'Bookabach',        pBg:'design',   secondary:'HouseMe / Airbnb',            note:'HouseMe = 가구 포함 장기' },
-      { city:'샌디에이고 (1달)',   primary:'Furnished Finder', pBg:'us',       secondary:'Blueground / Sonder',         note:'미국 노마드 · 수수료 없음' },
-      { city:'핼리팩스 (1달)',     primary:'Mintlist',         pBg:'us',       secondary:'Kijiji / Furnished Finder',  note:'캐나다 노마드 직접 거래' },
+      { city:'호바트 (1달)',       flag:'🇦🇺', primary:'Stayz',            pBg:'flatio',   secondary:'Furnished Property / Airbnb', note:'Airbnb 월 20-40% 할인' },
+      { city:'멜버른 (1달)',       flag:'🇦🇺', primary:'Furnished Property', pBg:'flatio', secondary:'Stayz / Airbnb',              note:'호주 전문 가구 매물' },
+      { city:'애들레이드 (1달)',   flag:'🇦🇺', primary:'Stayz',            pBg:'flatio',   secondary:'Airbnb 월할인',               note:'호주 표준 로컬' },
+      { city:'뉴질랜드 (1달)',     flag:'🇳🇿', primary:'Bookabach',        pBg:'design',   secondary:'HouseMe / Airbnb',            note:'HouseMe = 가구 포함 장기' },
+      { city:'샌디에이고 (1달)',   flag:'🇺🇸', primary:'Furnished Finder', pBg:'us',       secondary:'Blueground / Sonder',         note:'미국 노마드 · 수수료 없음' },
+      { city:'핼리팩스 (1달)',     flag:'🇨🇦', primary:'Mintlist',         pBg:'us',       secondary:'Kijiji / Furnished Finder',  note:'캐나다 노마드 직접 거래' },
     ];
 
     // 정책 옵션 (Tailwind 색을 명시적으로 매핑)
@@ -1785,7 +1836,11 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding:14px 12px;border-bottom:1px solid #ccc3d8}' +
       '#nomad-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size:15px;color:#141b2b;vertical-align:top}' +
       '#nomad-content .stay-tbl tbody tr:hover{background:#f1f3ff}' +
-      '#nomad-content .stay-tbl .stay-city{font-weight:600}' +
+      '#nomad-content .stay-tbl .stay-city{font-weight:600;white-space:nowrap}' +
+      '#nomad-content .stay-tbl .stay-city-flag{font-size:18px;margin-right:6px;vertical-align:-2px}' +
+      '#nomad-content .stay-alt-flags{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:8px 12px;background:#f5f3ff;border-radius:6px}' +
+      '#nomad-content .stay-alt-flags-emoji{font-size:18px;line-height:1;letter-spacing:2px}' +
+      '#nomad-content .stay-alt-flags-label{font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:#4a4455;letter-spacing:0.02em}' +
       '#nomad-content .stay-pill{display:inline-block;padding:5px 12px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-family:var(--nm-font-h)}' +
       '#nomad-content .stay-secondary{color:#4a4455;font-size:13px}' +
       '#nomad-content .stay-remark{font-family:var(--nm-font-h);font-size:13px;color:#5d5d67;letter-spacing:-0.005em}' +
@@ -1844,8 +1899,8 @@ window.NOMAD_PAGES = (function(){
       '<div class="stay-side-card stay-side-card-purple">' +
         '<p class="stay-side-card-body" style="margin-bottom:12px">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
         '<ul class="stay-side-card-list bold">' +
-          '<li>• Flatio</li>' +
-          '<li>• Housing Anywhere</li>' +
+          '<li>• <a href="' + STAY_URL['Flatio'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none">Flatio <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
+          '<li>• <a href="' + STAY_URL['Housing Anywhere'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none">Housing Anywhere <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
         '</ul>' +
       '</div>' +
     '</section>';
@@ -1865,13 +1920,13 @@ window.NOMAD_PAGES = (function(){
       '<div style="display:flex;flex-direction:column;gap:14px">' +
         '<div class="stay-side-card">' +
           '<span class="stay-side-card-label gray">Short-Term (1-2 Weeks)</span>' +
-          '<p class="stay-side-card-body" style="margin-bottom:8px">Booking · Airbnb · Sonder</p>' +
-          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">더블린 · 골웨이 · 코펜 · 베르겐 · 레이캬비크 · 발레타</p>' +
+          '<p class="stay-side-card-body" style="margin-bottom:8px">' + linkText('Booking') + ' · ' + linkText('Airbnb') + ' · ' + linkText('Sonder') + '</p>' +
+          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">🇮🇪 더블린 · 🇮🇪 골웨이 · 🇩🇰 코펜 · 🇳🇴 베르겐 · 🇮🇸 레이캬비크 · 🇲🇹 발레타</p>' +
         '</div>' +
         '<div class="stay-side-card">' +
           '<span class="stay-side-card-label gray">Long-Term (1 Month+)</span>' +
-          '<p class="stay-side-card-body" style="margin-bottom:8px">Flatio · Housing Anywhere · Outsite</p>' +
-          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">포르투 · 호바트 · 애들레이드 · 멜버른 · NZ · 샌디에이고 · 핼리팩스</p>' +
+          '<p class="stay-side-card-body" style="margin-bottom:8px">' + linkText('Flatio') + ' · ' + linkText('Housing Anywhere') + ' · ' + linkText('Outsite') + '</p>' +
+          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">🇵🇹 포르투 · 🇦🇺 호바트 · 🇦🇺 애들레이드 · 🇦🇺 멜버른 · 🇳🇿 NZ · 🇺🇸 샌디에이고 · 🇨🇦 핼리팩스</p>' +
         '</div>' +
       '</div>' +
     '</section>';
@@ -1914,25 +1969,35 @@ window.NOMAD_PAGES = (function(){
       '</div>';
     html += '<div class="stay-alt-grid">';
     var alts = [
-      { name:'Housing Anywhere',  desc:'30+ 국가, 유럽 강함 (네덜란드·독일·스페인·이탈리아). Flatio처럼 검증된 호스트 + 법적 임대 계약서.',
+      { name:'Housing Anywhere', flags:'🇳🇱 🇩🇪 🇪🇸 🇮🇹', flagLabel:'30+ 국가 · 유럽 강함',
+        desc:'네덜란드·독일·스페인·이탈리아 강함. Flatio처럼 검증된 호스트 + 법적 임대 계약서.',
         tag:'BEST FOR: 유럽 비자 대안',
         nuri:'<strong>누리 적용:</strong> 더블린·코펜하겐·스톡홀름·헬싱키에서 Flatio 대안.' },
-      { name:'Coliving.com',      desc:'60+ 국가. 코리빙 (코워킹 + 숙소 결합). 다른 노마드를 자동으로 만나게 됨.',
+      { name:'Coliving.com',     flags:'🌍', flagLabel:'60+ 국가',
+        desc:'코리빙 (코워킹 + 숙소 결합). 다른 노마드를 자동으로 만나게 됨.',
         tag:'BEST FOR: 커뮤니티',
         nuri:'<strong>누리 적용:</strong> 사회 자원 부담 적은 1-2 도시에서 시험 (포르투 추천).' },
-      { name:'Anyplace',          desc:'글로벌 (미국·유럽 강함). <strong>워크스페이스 인증된 매물만</strong> — 책상·의자·조명·모니터 보장. 단점: 비쌈.',
+      { name:'Anyplace',         flags:'🇺🇸 🇪🇺', flagLabel:'글로벌 · 미국·유럽 강함',
+        desc:'<strong>워크스페이스 인증된 매물만</strong> — 책상·의자·조명·모니터 보장. 단점: 비쌈.',
         tag:'BEST FOR: 작업 효율',
         nuri:'<strong>누리 적용:</strong> 글 작업 풀가동 도시 (스톡홀름·멜버른·핼리팩스).' },
-      { name:'Sabbatical Homes',  desc:'학자·전문직 안식년 대상. 진짜 누군가의 집 (홈스왑 비슷). 시세 저렴.',
+      { name:'Sabbatical Homes', flags:'🌍', flagLabel:'학자·전문직 대상 · 글로벌',
+        desc:'안식년 대상. 진짜 누군가의 집 (홈스왑 비슷). 시세 저렴.',
         tag:'BEST FOR: 한 달+ 거점',
         nuri:'<strong>누리 적용:</strong> 한 달+ 거점 도시 (포르투갈·멜버른).' },
-      { name:'Outsite',           desc:'25+ 도시 (리스본·발리·바르셀로나·뉴욕·LA 등). 노마드 전용 코리빙 체인. 멤버십 가능.',
+      { name:'Outsite',          flags:'🇵🇹 🇮🇩 🇪🇸 🇺🇸', flagLabel:'25+ 도시 (리스본·발리·바르셀로나·뉴욕·LA)',
+        desc:'노마드 전용 코리빙 체인. 멤버십 가능.',
         tag:'BEST FOR: 프리미엄 + 커뮤니티',
         nuri:'<strong>누리 적용:</strong> 포르투갈 복귀 시 (Outsite Lisbon).' },
     ];
     alts.forEach(function(a, i) {
+      var url = STAY_URL[a.name];
+      var titleHTML = url
+        ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none">' + a.name + ' <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;opacity:0.6">open_in_new</span></a>'
+        : a.name;
       html += '<div class="stay-alt-card"' + (i === 4 ? ' style="grid-column:1 / -1"' : '') + '>' +
-        '<h4>' + a.name + '</h4>' +
+        '<h4>' + titleHTML + '</h4>' +
+        '<div class="stay-alt-flags"><span class="stay-alt-flags-emoji">' + a.flags + '</span><span class="stay-alt-flags-label">' + a.flagLabel + '</span></div>' +
         '<p>' + a.desc + '</p>' +
         '<span class="stay-alt-tag">' + a.tag + '</span>' +
         '<p class="stay-alt-nuri">' + a.nuri + '</p>' +
@@ -1956,9 +2021,9 @@ window.NOMAD_PAGES = (function(){
     '</tr></thead><tbody>';
     euChannels.forEach(function(c) {
       html += '<tr>' +
-        '<td class="stay-city">' + c.city + '</td>' +
-        '<td><span class="stay-pill" style="' + pillStyle(c.pBg) + '">' + c.primary + '</span></td>' +
-        '<td class="stay-secondary">' + c.secondary + '</td>' +
+        '<td class="stay-city"><span class="stay-city-flag">' + c.flag + '</span> ' + c.city + '</td>' +
+        '<td>' + linkPill(c.primary, pillStyle(c.pBg)) + '</td>' +
+        '<td class="stay-secondary">' + linkSecondary(c.secondary) + '</td>' +
         '<td class="stay-remark">' + c.note + '</td>' +
       '</tr>';
     });
@@ -1980,9 +2045,9 @@ window.NOMAD_PAGES = (function(){
     '</tr></thead><tbody>';
     globalChannels.forEach(function(c) {
       html += '<tr>' +
-        '<td class="stay-city">' + c.city + '</td>' +
-        '<td><span class="stay-pill" style="' + pillStyle(c.pBg) + '">' + c.primary + '</span></td>' +
-        '<td class="stay-secondary">' + c.secondary + '</td>' +
+        '<td class="stay-city"><span class="stay-city-flag">' + c.flag + '</span> ' + c.city + '</td>' +
+        '<td>' + linkPill(c.primary, pillStyle(c.pBg)) + '</td>' +
+        '<td class="stay-secondary">' + linkSecondary(c.secondary) + '</td>' +
         '<td class="stay-remark">' + c.note + '</td>' +
       '</tr>';
     });
@@ -1996,23 +2061,48 @@ window.NOMAD_PAGES = (function(){
         '<span class="stay-h-meta">LOCAL SPECIALISTS</span>' +
       '</div>';
     html += '<div class="stay-regional">';
+    function regItem(platform, desc) {
+      var url = STAY_URL[platform];
+      var linked = url
+        ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--nm-primary);font-weight:700;text-decoration:none">' + platform + ' <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.55">open_in_new</span></a>'
+        : '<strong>' + platform + '</strong>';
+      return '<li>• ' + linked + ' — ' + desc + '</li>';
+    }
     var regional = [
       { flag:'🇦🇺', name:'호주',
-        items:['<strong>Stayz</strong> — 호주 로컬 베스트', '<strong>Airbnb 장기 할인</strong> — 월 20-40% 자동', '<strong>Furnished Property</strong> — 호주 전문 가구 매물'] },
+        items:[
+          regItem('Stayz', '호주 로컬 베스트'),
+          regItem('Airbnb', '장기 할인 (월 20-40% 자동)'),
+          regItem('Furnished Property', '호주 전문 가구 매물'),
+        ] },
       { flag:'🇳🇿', name:'뉴질랜드',
-        items:['<strong>Bookabach</strong> — NZ 로컬 (NZ판 Stayz)', '<strong>HouseMe</strong> — 가구 포함 장기 매물'] },
+        items:[
+          regItem('Bookabach', 'NZ 로컬 (NZ판 Stayz)'),
+          regItem('HouseMe', '가구 포함 장기 매물'),
+        ] },
       { flag:'🇺🇸', name:'미국',
-        items:['<strong>Furnished Finder</strong> — 의료진·노마드용, 수수료 없음', '<strong>Blueground</strong> — 도시 럭셔리 (LA·NY·SF·시카고)', '<strong>Sonder</strong> — 호텔+아파트 하이브리드, 한 달 할인'] },
+        items:[
+          regItem('Furnished Finder', '의료진·노마드용 · 수수료 없음'),
+          regItem('Blueground', '도시 럭셔리 (LA·NY·SF·시카고)'),
+          regItem('Sonder', '호텔+아파트 하이브리드 · 한 달 할인'),
+        ] },
       { flag:'🇨🇦', name:'캐나다 (핼리팩스)',
-        items:['<strong>Mintlist</strong> — 캐나다 노마드 장기', '<strong>Kijiji</strong> — 캐나다 크레이그리스트, 직거래 가능', '<strong>Furnished Finder</strong> — 캐나다도 일부 커버'] },
+        items:[
+          regItem('Mintlist', '캐나다 노마드 장기'),
+          regItem('Kijiji', '캐나다 크레이그리스트 · 직거래'),
+          regItem('Furnished Finder', '캐나다도 일부 커버'),
+        ] },
       { flag:'🇮🇪', name:'영국·아일랜드 (더블린·골웨이)',
-        items:['<strong>SpareRoom</strong> — 유럽 1티어 (룸·플랫·셰어)', '<strong>Daft.ie</strong> — 아일랜드 로컬 1순위'] },
+        items:[
+          regItem('SpareRoom', '유럽 1티어 (룸·플랫·셰어)'),
+          regItem('Daft.ie', '아일랜드 로컬 1순위'),
+        ] },
     ];
     regional.forEach(function(r) {
       html += '<div class="stay-regional-card">' +
         '<h5><span class="flag">' + r.flag + '</span>' + r.name + '</h5>' +
         '<ul>' +
-          r.items.map(function(it){ return '<li>• ' + it + '</li>'; }).join('') +
+          r.items.join('') +
         '</ul>' +
       '</div>';
     });
