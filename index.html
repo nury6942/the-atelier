@@ -80,7 +80,7 @@
   <link rel="preload" href="js/app-5-ledger-export.js?v=163" as="script">
   <link rel="preload" href="js/nomad-data.js?v=172" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=188" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=189" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -494,6 +494,36 @@
       font-size: 16px;
       color: var(--nm-on-surface-variant);
     }
+
+    /* Auto-link (City Guide) — 장소 이름 → 구글맵 / 플랫폼 → 사이트 */
+    .nomad-page .nm-maps-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dashed currentColor;
+      transition: color 0.15s, border-color 0.15s;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+    .nomad-page .nm-maps-link:hover {
+      color: var(--nm-primary);
+      border-bottom-color: var(--nm-primary);
+    }
+    .nomad-page .nm-maps-icon {
+      font-size: 13px !important;
+      opacity: 0.5;
+      transform: translateY(2px);
+      margin-left: 1px;
+    }
+    .nomad-page .nm-maps-link:hover .nm-maps-icon { opacity: 1; }
+    .nomad-page .nm-ext-link {
+      color: var(--nm-primary);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--nm-primary);
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .nomad-page .nm-ext-link:hover { opacity: 0.75; }
 
     /* Card (Bento style) */
     .nomad-page .nm-card {
@@ -12632,7 +12662,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=188" defer></script>
+<script src="js/nomad-pages.js?v=189" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=5" defer></script>

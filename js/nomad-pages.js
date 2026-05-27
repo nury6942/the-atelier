@@ -23,6 +23,64 @@ window.NOMAD_PAGES = (function(){
     '</div>';
   }
 
+  // ──────── City Guide 링크 자동화 (Google Maps + 플랫폼) ────────
+  // 현재 렌더 중인 도시 이름 (renderCity에서 set, 헬퍼가 read)
+  var _currentCityName = '';
+
+  function _stripTags(s) {
+    return (s || '').toString().replace(/<[^>]+>/g, '').trim();
+  }
+
+  // 장소 이름을 구글맵 검색 링크로 감싸기. item.url 있으면 그 URL 우선 사용.
+  function nmMapsLink(name, urlOverride) {
+    if (!name) return '';
+    var clean = _stripTags(name);
+    if (!clean) return name;
+    var href = urlOverride || ('https://www.google.com/maps/search/?api=1&query=' +
+      encodeURIComponent(clean + (_currentCityName ? ', ' + _currentCityName : '')));
+    var icon = urlOverride ? 'open_in_new' : 'place';
+    return '<a href="' + href + '" target="_blank" rel="noopener" class="nm-maps-link">' +
+      name + '<span class="material-symbols-outlined nm-maps-icon">' + icon + '</span></a>';
+  }
+
+  // desc 텍스트 내 잘 알려진 플랫폼 이름을 자동 링크화
+  var _platformMap = [
+    { regex: /\bHousingAnywhere\b/g,      url: 'https://housinganywhere.com' },
+    { regex: /\bColiving\.com\b/gi,       url: 'https://coliving.com' },
+    { regex: /\bMeetup\.com\b/gi,         url: 'https://www.meetup.com' },
+    { regex: /\bBooking\b/g,              url: 'https://www.booking.com' },
+    { regex: /\bAirbnb\b/g,               url: 'https://www.airbnb.com' },
+    { regex: /\bFlatio\b/g,               url: 'https://www.flatio.com' },
+    { regex: /\bStayz\b/g,                url: 'https://www.stayz.com.au' },
+    { regex: /\bFlatmates\.com\.au\b/gi,  url: 'https://flatmates.com.au' },
+    { regex: /\bLocke\b/g,                url: 'https://www.lockeliving.com' },
+    { regex: /\bDART\b/g,                 url: 'https://www.irishrail.ie/en-ie/dart' },
+    { regex: /\bWise\b(?!\s*(?:안목|선택|결정|판단))/g, url: 'https://wise.com' },
+    { regex: /\bRevolut\b/g,              url: 'https://www.revolut.com' },
+    { regex: /\bPayoneer\b/g,             url: 'https://www.payoneer.com' },
+    { regex: /\bNomad\s+List\b/gi,        url: 'https://nomadlist.com' },
+    { regex: /\bRemote\s+OK\b/gi,         url: 'https://remoteok.com' },
+    { regex: /\bSafetyWing\b/g,           url: 'https://safetywing.com' },
+    { regex: /\bWorldNomads\b/g,          url: 'https://www.worldnomads.com' },
+  ];
+
+  function nmLinkify(text) {
+    if (!text) return text || '';
+    var out = String(text);
+    // 이미 <a> 안에 있는 문자열은 건드리지 않게 — 분할 후 처리
+    var parts = out.split(/(<a [^>]*>.*?<\/a>)/g);
+    for (var i = 0; i < parts.length; i++) {
+      // 짝수 인덱스만 평문 (<a> 매치는 홀수)
+      if (i % 2 === 1) continue;
+      _platformMap.forEach(function(p) {
+        parts[i] = parts[i].replace(p.regex, function(m) {
+          return '<a href="' + p.url + '" target="_blank" rel="noopener" class="nm-ext-link">' + m + '</a>';
+        });
+      });
+    }
+    return parts.join('');
+  }
+
   function placeholderPage(id, title) {
     return pageHeader('Nomad Master', title, '곧 구현 예정 · Phase 진행 중') +
       '<div class="nm-card"><p style="color:var(--nm-text-3); text-align:center; padding:60px 0;">' +
@@ -4601,8 +4659,8 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     (s.items || []).forEach(function(p) {
       html += '<div class="nm-place-card">' +
-        '<div class="nm-place-name">' + p.name + (p.price ? '<span class="nm-place-price">' + p.price + '</span>' : '') + '</div>' +
-        '<div class="nm-place-desc">' + p.desc + '</div>' +
+        '<div class="nm-place-name">' + nmMapsLink(p.name, p.url) + (p.price ? '<span class="nm-place-price">' + p.price + '</span>' : '') + '</div>' +
+        '<div class="nm-place-desc">' + nmLinkify(p.desc) + '</div>' +
       '</div>';
     });
     html += '</div>';
@@ -4618,9 +4676,9 @@ window.NOMAD_PAGES = (function(){
     (s.items || []).forEach(function(n) {
       var starsHtml = '<span class="nm-stars">' + '★'.repeat(n.stars) + '<span style="opacity:0.25">' + '★'.repeat(5 - n.stars) + '</span></span>';
       html += '<div class="nm-neighborhood-row">' +
-        '<div class="nm-nbh-name"><strong>' + n.name + '</strong></div>' +
+        '<div class="nm-nbh-name"><strong>' + nmMapsLink(n.name, n.url) + '</strong></div>' +
         '<div>' + starsHtml + '</div>' +
-        '<div class="nm-nbh-desc">' + n.desc + '</div>' +
+        '<div class="nm-nbh-desc">' + nmLinkify(n.desc) + '</div>' +
       '</div>';
     });
     html += '</div>';
@@ -4669,7 +4727,7 @@ window.NOMAD_PAGES = (function(){
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
     html += '<ul class="nm-list-bullet">';
-    (s.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+    (s.items || []).forEach(function(it) { html += '<li>' + nmLinkify(it) + '</li>'; });
     html += '</ul>';
     html += '</div>';
     return html;
@@ -4684,8 +4742,8 @@ window.NOMAD_PAGES = (function(){
     (s.items || []).forEach(function(item) {
       html += '<div class="nm-learn-item">' +
         '<h4 class="nm-learn-h">' + item.h + '</h4>' +
-        '<p class="nm-learn-body">' + item.body + '</p>' +
-        (item.highlight ? '<p class="nm-learn-highlight"><strong>' + item.highlight + '</strong></p>' : '') +
+        '<p class="nm-learn-body">' + nmLinkify(item.body) + '</p>' +
+        (item.highlight ? '<p class="nm-learn-highlight"><strong>' + nmLinkify(item.highlight) + '</strong></p>' : '') +
       '</div>';
     });
     html += '</div>';
@@ -4705,7 +4763,7 @@ window.NOMAD_PAGES = (function(){
         '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>' +
         '<div style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + t.when + '</div>' +
         '<div style="font-family:var(--nm-font-h);font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
-        '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + bodyText + '</p>' +
+        '<p style="font-size:13px;color:var(--nm-text-2);line-height:1.5">' + nmLinkify(bodyText) + '</p>' +
       '</div>';
     });
     html += '</div>';
@@ -4724,7 +4782,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="margin-bottom:16px">';
       html += '<h4 style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
-      (sub.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+      (sub.items || []).forEach(function(it) { html += '<li>' + nmLinkify(it) + '</li>'; });
       html += '</ul>';
       html += '</div>';
     });
@@ -4742,14 +4800,14 @@ window.NOMAD_PAGES = (function(){
       '</div>';
     }
     if (s.body) {
-      html += '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.6;margin-bottom:14px">' + s.body + '</p>';
+      html += '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.6;margin-bottom:14px">' + nmLinkify(s.body) + '</p>';
     }
     var subs = s.subsections || [];
     subs.forEach(function(sub) {
       html += '<div style="margin-top:14px">';
       html += '<h4 style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
-      (sub.items || []).forEach(function(it) { html += '<li>' + it + '</li>'; });
+      (sub.items || []).forEach(function(it) { html += '<li>' + nmLinkify(it) + '</li>'; });
       html += '</ul>';
       html += '</div>';
     });
@@ -4892,10 +4950,10 @@ window.NOMAD_PAGES = (function(){
       var pillLabel = p.price || pills[i % pills.length];
       html += '<article class="nm-city-v2-landmark">';
       html += '<div class="nm-city-v2-landmark-head">' +
-        '<h4>' + p.name + '</h4>' +
+        '<h4>' + nmMapsLink(p.name, p.url) + '</h4>' +
         '<span class="nm-city-v2-landmark-pill">' + pillLabel + '</span>' +
       '</div>';
-      if (p.desc) html += '<p>' + p.desc + '</p>';
+      if (p.desc) html += '<p>' + nmLinkify(p.desc) + '</p>';
       html += '</article>';
     });
     html += '</div>';
@@ -4908,7 +4966,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-city-v2-hidden-stack">';
       hidden.forEach(function(p) {
         html += '<div class="nm-city-v2-hidden-row">' +
-          '<div><h4>' + p.name + '</h4>' + (p.desc ? '<p>' + p.desc + '</p>' : '') + '</div>' +
+          '<div><h4>' + nmMapsLink(p.name, p.url) + '</h4>' + (p.desc ? '<p>' + nmLinkify(p.desc) + '</p>' : '') + '</div>' +
           '<span class="material-symbols-outlined">arrow_forward_ios</span>' +
         '</div>';
       });
@@ -4937,9 +4995,9 @@ window.NOMAD_PAGES = (function(){
       var starHtml = '';
       for (var i = 0; i < filled; i++) starHtml += '<span class="material-symbols-outlined nm-city-v2-star">star</span>';
       for (var j = 0; j < empty; j++) starHtml += '<span class="material-symbols-outlined nm-city-v2-star-empty">star</span>';
-      html += '<tr><td class="nm-city-v2-area-name">' + n.name + '</td>' +
+      html += '<tr><td class="nm-city-v2-area-name">' + nmMapsLink(n.name, n.url) + '</td>' +
         '<td><div class="nm-city-v2-stars">' + starHtml + '</div></td>' +
-        '<td>' + (n.desc || '') + '</td></tr>';
+        '<td>' + nmLinkify(n.desc || '') + '</td></tr>';
     });
     html += '</tbody></table>';
     html += '</div>';
@@ -4971,10 +5029,10 @@ window.NOMAD_PAGES = (function(){
       (sec.items || []).forEach(function(item) {
         html += '<div class="nm-city-v2-exp-item">';
         html += '<div class="nm-city-v2-exp-item-head">' +
-          '<h4 style="color:' + c.subColor + '">' + item.name + '</h4>' +
+          '<h4 style="color:' + c.subColor + '">' + nmMapsLink(item.name, item.url) + '</h4>' +
           (item.price ? '<span class="nm-city-v2-exp-price" style="color:' + c.noteColor + ';background:rgba(255,255,255,0.6)">' + item.price + '</span>' : '') +
         '</div>';
-        if (item.desc) html += '<p>' + item.desc + '</p>';
+        if (item.desc) html += '<p>' + nmLinkify(item.desc) + '</p>';
         html += '</div>';
       });
       html += '</div>';
@@ -5019,10 +5077,10 @@ window.NOMAD_PAGES = (function(){
       col.sections.forEach(function(sec) {
         (sec.items || []).forEach(function(item) {
           html += '<div class="nm-city-v2-nomad-card">';
-          html += '<div class="nm-city-v2-nomad-card-head"><h4>' + item.name + '</h4>' +
+          html += '<div class="nm-city-v2-nomad-card-head"><h4>' + nmMapsLink(item.name, item.url) + '</h4>' +
             (item.price ? '<span class="nm-city-v2-nomad-card-price">' + item.price + '</span>' : '') +
           '</div>';
-          if (item.desc) html += '<p>' + item.desc + '</p>';
+          if (item.desc) html += '<p>' + nmLinkify(item.desc) + '</p>';
           html += '</div>';
         });
       });
@@ -5052,7 +5110,7 @@ window.NOMAD_PAGES = (function(){
         html += '<h4 class="nm-city-v2-people-group-h">' + (g.h || '') + '</h4>';
         html += '<ul class="nm-city-v2-people-list">';
         (g.items || []).forEach(function(it) {
-          html += '<li><span class="material-symbols-outlined">group</span><span>' + it + '</span></li>';
+          html += '<li><span class="material-symbols-outlined">group</span><span>' + nmLinkify(it) + '</span></li>';
         });
         html += '</ul>';
         html += '</div>';
@@ -5168,6 +5226,10 @@ window.NOMAD_PAGES = (function(){
 
     // LS 캐시에서 hero 이미지 즉시 머지 (Firestore 백그라운드는 _nmActivateCity에서)
     _nmInjectHeroImageFromLS(cityId);
+
+    // 도시명 set (장소 → 구글맵 검색 시 컨텍스트로 사용)
+    var heroCity = (city.hero && city.hero.city || '').replace(/[\u{1F1E6}-\u{1F1FF}]{2}/gu, '').trim();
+    _currentCityName = heroCity;
 
     var sections = city.sections || [];
     var currentDividerLabel = '';
