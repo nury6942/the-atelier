@@ -6629,6 +6629,20 @@
       }
       console.log('[Migrate] 기념품 생성:', soufAdded);
 
+      // ★ localStorage 스냅샷 갱신 (새로고침 후에도 새 trip 보이게)
+      //   원인: fbAdd는 Firestore에만 쓰고 snapshot 갱신은 fbRead 시점에만 일어남
+      //   → 마이그레이션 직후 새로고침하면 옛 스냅샷(2개)으로 잠깐 보였다가 fbRead 후 4개로 갱신됨
+      //   → 사용자가 그 사이에 새 trip 못 찾는 문제 해결을 위해 즉시 스냅샷 갱신
+      try {
+        localStorage.setItem('atelier_snapshot_trips', JSON.stringify({
+          data: tripsData, ts: new Date().toISOString()
+        }));
+        console.log('[Migrate] trips 스냅샷 갱신:', tripsData.length, '개');
+      } catch(e) {
+        // QuotaExceeded 같은 에러 — 사용자 데이터는 Firestore에 있으니 안전
+        console.warn('[Migrate] 스냅샷 갱신 실패 (Firestore에는 정상 저장됨):', e.message);
+      }
+
       alert('✅ ' + newTripName + ' 마이그레이션 완료\n\n' +
         '· trip 1개\n· 도시 ' + cities.length + '개\n· 일정 ' + itinAdded + '개\n' +
         '· 숙소 ' + lodgeAdded + '개\n· 기념품 ' + soufAdded + '개\n\n' +
