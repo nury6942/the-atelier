@@ -483,6 +483,30 @@ window.NOMAD_PAGES = (function(){
       '</div>';
     }
 
+    // 도시명 → 국기 (다중 도시는 여러 국기 연결)
+    function voyageFlags(city) {
+      var c = city;
+      // 포르투갈 복귀 / 포르투갈 + ... → 포르투갈, 포르투(단독)도 PT
+      if (c.indexOf('레이캬비크') >= 0 && c.indexOf('포르투갈') >= 0) return '🇮🇸 🇵🇹';
+      if (c.indexOf('포르투갈') >= 0 && c.indexOf('발레타') >= 0) return '🇵🇹 🇲🇹';
+      if (c.indexOf('더블린') >= 0 && c.indexOf('골웨이') >= 0) return '🇮🇪';
+      if (c.indexOf('코펜') >= 0 && c.indexOf('베르겐') >= 0) return '🇩🇰 🇳🇴';
+      if (c.indexOf('스톡홀름') >= 0 && c.indexOf('헬싱키') >= 0) return '🇸🇪 🇫🇮';
+      if (c.indexOf('샌디에이고') >= 0 || c.indexOf('뉴욕') >= 0) return '🇺🇸';
+      if (c.indexOf('포르투') >= 0) return '🇵🇹'; // 단독 포르투/포르투갈
+      if (c.indexOf('더블린') >= 0 || c.indexOf('골웨이') >= 0) return '🇮🇪';
+      if (c.indexOf('레이캬비크') >= 0) return '🇮🇸';
+      if (c.indexOf('발레타') >= 0) return '🇲🇹';
+      if (c.indexOf('호바트') >= 0 || c.indexOf('애들레이드') >= 0 || c.indexOf('멜버른') >= 0) return '🇦🇺';
+      if (c.indexOf('뉴질랜드') >= 0) return '🇳🇿';
+      if (c.indexOf('핼리팩스') >= 0) return '🇨🇦';
+      if (c.indexOf('헬싱키') >= 0) return '🇫🇮';
+      if (c.indexOf('스톡홀름') >= 0) return '🇸🇪';
+      if (c.indexOf('코펜') >= 0) return '🇩🇰';
+      if (c.indexOf('베르겐') >= 0) return '🇳🇴';
+      return '';
+    }
+
     function regionTable(rows) {
       var out = '';
       // 헤더 (Editorial column labels)
@@ -498,13 +522,14 @@ window.NOMAD_PAGES = (function(){
         var modeIcon = voyageModeIcon(v.mode);
         var pageId = voyageCityToPageId(v.city);
         var yearLabel = v.year === 2028 ? '‘28' : '‘29';
+        var flags = voyageFlags(v.city);
         var clickAttrs = pageId
           ? ' role="link" tabindex="0" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'' + pageId + '\')"'
           : '';
         out += '<div class="atl-row atl-row-body"' + clickAttrs + '>' +
           '<div class="atl-cell atl-month">' + yearLabel + ' ' + v.month + '</div>' +
           '<div class="atl-cell atl-city">' +
-            '<h3 class="atl-city-name">' + v.city + '</h3>' +
+            '<h3 class="atl-city-name">' + (flags ? '<span class="atl-flag">' + flags + '</span> ' : '') + v.city + '</h3>' +
             (node.country ? '<p class="atl-city-sub">' + node.country + (node.node ? ' · ' + node.node : '') + '</p>' : '') +
             '<p class="atl-city-detail">' + v.detail + '</p>' +
           '</div>' +
@@ -521,10 +546,11 @@ window.NOMAD_PAGES = (function(){
     // ════════ Editorial CSS (Travel Atlas) ════════
     html += '<style>' +
       '#nomad-content .atl-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
-      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:64px}' +
+      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:40px}' +
       '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
-      '#nomad-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;color:#141b2b;margin:0 0 24px}' +
-      '#nomad-content .atl-lede{font-size:16px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
+      '#nomad-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 14px}' +
+      '#nomad-content .atl-lede{font-size:12px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
+      '#nomad-content .atl-lede .en{display:block;margin-top:2px;color:#7b7487;font-size:11px;font-style:italic}' +
       '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap:14px;min-width:280px;max-width:320px}' +
       '#nomad-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;justify-content:space-between;align-items:center}' +
       '#nomad-content .atl-metric-label{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom:8px}' +
@@ -536,15 +562,16 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-region{margin-bottom:80px}' +
       '#nomad-content .atl-region:last-child{margin-bottom:0}' +
       '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;flex-wrap:wrap}' +
-      '#nomad-content .atl-region-h{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#141b2b;letter-spacing:-0.01em;margin:0}' +
-      '#nomad-content .atl-region-range{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
+      '#nomad-content .atl-region-h{font-family:var(--nm-font-h);font-size:18px;font-weight:500;color:#141b2b;letter-spacing:-0.005em;margin:0}' +
+      '#nomad-content .atl-region-range{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
       '#nomad-content .atl-row{display:grid;grid-template-columns:78px 1fr 96px 96px 44px;gap:16px;padding:28px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
       '#nomad-content .atl-row-head{padding:16px 8px;border-bottom:1px solid #ccc3d8;margin-bottom:8px}' +
       '#nomad-content .atl-row-head .atl-cell{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#7b7487}' +
       '#nomad-content .atl-row-body[role="link"]:hover{background:rgba(99,14,212,0.04)}' +
       '#nomad-content .atl-cell{font-size:14px;line-height:1.4}' +
       '#nomad-content .atl-month{font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#141b2b;opacity:0.3;letter-spacing:-0.01em}' +
-      '#nomad-content .atl-city-name{font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:#141b2b;line-height:1.3;margin:0 0 4px}' +
+      '#nomad-content .atl-city-name{font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:#141b2b;line-height:1.3;margin:0 0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}' +
+      '#nomad-content .atl-flag{font-size:18px;line-height:1;letter-spacing:2px}' +
       '#nomad-content .atl-city-sub{font-size:13px;color:#4a4455;margin:0 0 8px;line-height:1.4}' +
       '#nomad-content .atl-city-detail{font-size:13px;color:var(--nm-primary);font-style:italic;line-height:1.5;margin:0}' +
       '#nomad-content .atl-budget{font-family:var(--nm-font-h);font-size:15px;font-weight:500;letter-spacing:-0.01em;color:#141b2b;text-align:right}' +
@@ -584,7 +611,9 @@ window.NOMAD_PAGES = (function(){
     html += '<div style="max-width:720px">' +
       '<p class="atl-eyebrow">Global Expedition Plan</p>' +
       '<h1 class="atl-title">June 2028 — May 2029</h1>' +
-      '<p class="atl-lede">6개 대륙 · 17개 도시 · 1년 마스터 동선. A curated itinerary navigating the intersections of culture, strategy, and leisure.</p>' +
+      '<p class="atl-lede">6개 대륙 · 17개 도시 · 1년 마스터 동선' +
+        '<span class="en">A curated itinerary navigating the intersections of culture, strategy, and leisure.</span>' +
+      '</p>' +
     '</div>';
     html += '<div class="atl-metrics">' +
       '<div class="atl-metric">' +
