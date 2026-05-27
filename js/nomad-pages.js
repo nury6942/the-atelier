@@ -546,8 +546,8 @@ window.NOMAD_PAGES = (function(){
     // ════════ Editorial CSS (Travel Atlas) ════════
     html += '<style>' +
       '#nomad-content .atl-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
-      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:40px}' +
-      '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
+      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:16px}' +
+      '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:10px}' +
       '#nomad-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 14px}' +
       '#nomad-content .atl-lede{font-size:12px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
       '#nomad-content .atl-lede .en{display:block;margin-top:2px;color:#7b7487;font-size:11px;font-style:italic}' +
@@ -559,9 +559,9 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-metric-icon{font-size:28px !important;color:var(--nm-primary)}' +
       '#nomad-content .atl-grid{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start}' +
       '#nomad-content .atl-aside-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;color:#7b7487;opacity:0.4;position:sticky;top:120px}' +
-      '#nomad-content .atl-region{margin-bottom:80px}' +
+      '#nomad-content .atl-region{margin-bottom:56px}' +
       '#nomad-content .atl-region:last-child{margin-bottom:0}' +
-      '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;flex-wrap:wrap}' +
+      '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;flex-wrap:wrap}' +
       '#nomad-content .atl-region-h{font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#141b2b;letter-spacing:-0.005em;margin:0}' +
       '#nomad-content .atl-region-range{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
       '#nomad-content .atl-row{display:grid;grid-template-columns:78px 1fr 96px 96px 44px;gap:16px;padding:28px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
