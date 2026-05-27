@@ -787,43 +787,83 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /Summary 8/4
 
     // 도시별 상세 예산 sub-row 빌더 (Cost Breakdown 표 안에서 사용)
+    // City Guide의 budget 데이터는 두 포맷으로 존재:
+    //  A) type:'budget' + rows:[{name,sub,eur,krw}] + total:{eur,krw}
+    //  B) type:'table' + icon:'payments' + rows:[[name,sub,amt,krw]] + footer:[..,amt,krw]
     function _buildBudgetDetail(b) {
       var ALL_CITIES = window.NOMAD_CITIES || {};
       var cityIds = b.cityIds || [];
       var inner = '';
       var anyFound = false;
-      cityIds.forEach(function(cid, ci) {
-        var city = ALL_CITIES[cid];
-        if (!city || !city.sections) return;
-        var budgetSec = null;
-        for (var i = 0; i < city.sections.length; i++) {
-          if (city.sections[i].type === 'budget') { budgetSec = city.sections[i]; break; }
+      var blockIdx = 0;
+
+      function stripStrong(s) { return (s == null ? '' : String(s)).replace(/<\/?strong>/gi, ''); }
+
+      function renderBudgetBlock(cityKr, sec, idx) {
+        // rows를 통합 4-tuple로 정규화
+        var rows = [];
+        var totalAmt = '', totalKrw = '';
+        if (sec.type === 'budget' && sec.rows) {
+          rows = sec.rows.map(function(r) {
+            return { name: r.name || '', sub: r.sub || '', amt: r.eur || '', krw: r.krw || '' };
+          });
+          if (sec.total) { totalAmt = sec.total.eur || ''; totalKrw = sec.total.krw || ''; }
+        } else if (sec.type === 'table' && sec.rows) {
+          rows = sec.rows.map(function(r) {
+            if (Array.isArray(r)) {
+              return { name: stripStrong(r[0]), sub: stripStrong(r[1]), amt: stripStrong(r[2]), krw: stripStrong(r[3]) };
+            }
+            return { name: r.name || '', sub: r.sub || '', amt: r.amt || r.eur || '', krw: r.krw || '' };
+          });
+          if (Array.isArray(sec.footer) && sec.footer.length >= 4) {
+            totalAmt = stripStrong(sec.footer[2]);
+            totalKrw = stripStrong(sec.footer[3]);
+          }
         }
-        if (!budgetSec || !budgetSec.rows) return;
-        anyFound = true;
-        var cityKr = (city.hero && city.hero.city) || cid;
-        inner += '<div style="margin-top:' + (ci === 0 ? '0' : '20px') + '">';
-        inner += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--nm-outline-variant)">' +
-          '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + cityKr + (budgetSec.title ? ' · ' + budgetSec.title : '') + '</p>' +
-          (budgetSec.total ? '<p style="font-family:var(--nm-font-h);font-size:11px;color:var(--nm-text-3);margin:0">합계 ' + (budgetSec.total.eur || '') + ' / ' + (budgetSec.total.krw || '') + '</p>' : '') +
+        if (rows.length === 0) return '';
+
+        var titleSuffix = sec.title ? ' · ' + sec.title : '';
+        var out = '<div style="margin-top:' + (idx === 0 ? '0' : '20px') + '">';
+        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--nm-outline-variant);gap:12px;flex-wrap:wrap">' +
+          '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + cityKr + titleSuffix + '</p>' +
+          ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size:11px;color:var(--nm-text-3);margin:0">합계 ' + totalAmt + (totalKrw ? ' / ' + totalKrw : '') + '</p>' : '') +
         '</div>';
-        inner += '<table style="width:100%;border-collapse:collapse">';
-        budgetSec.rows.forEach(function(r) {
-          inner += '<tr>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-on-surface)">' + (r.name || '') + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-size:11px;color:var(--nm-text-2)">' + (r.sub || '') + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + (r.eur || '') + '</td>' +
-            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + (r.krw || '') + '</td>' +
+        out += '<table style="width:100%;border-collapse:collapse">';
+        rows.forEach(function(r) {
+          out += '<tr>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-on-surface)">' + r.name + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;font-size:11px;color:var(--nm-text-2)">' + r.sub + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + r.amt + '</td>' +
+            '<td style="padding:6px 8px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:11px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + r.krw + '</td>' +
           '</tr>';
         });
-        inner += '</table>';
-        if (budgetSec.note) {
-          inner += '<p style="font-size:10px;color:var(--nm-text-3);font-style:italic;margin:4px 0 0;line-height:1.5">※ ' + budgetSec.note + '</p>';
+        out += '</table>';
+        if (sec.note) {
+          out += '<p style="font-size:10px;color:var(--nm-text-3);font-style:italic;margin:4px 0 0;line-height:1.5">※ ' + sec.note + '</p>';
         }
-        inner += '</div>';
+        out += '</div>';
+        return out;
+      }
+
+      cityIds.forEach(function(cid) {
+        var city = ALL_CITIES[cid];
+        if (!city || !city.sections) return;
+        var cityKr = (city.hero && city.hero.city) || cid;
+        // 같은 도시 안의 모든 budget 데이터를 수집 (레이캬비크처럼 2개 있는 경우 대응)
+        city.sections.forEach(function(s) {
+          if (!s || !s.rows) return;
+          var isBudget = (s.type === 'budget') || (s.type === 'table' && s.icon === 'payments');
+          if (!isBudget) return;
+          var rendered = renderBudgetBlock(cityKr, s, blockIdx);
+          if (rendered) {
+            inner += rendered;
+            anyFound = true;
+            blockIdx++;
+          }
+        });
       });
       if (!anyFound) {
-        inner = '<p style="font-size:11px;color:var(--nm-text-3);text-align:center;padding:12px;font-style:italic;margin:0">City Guide에 이 도시의 budget section을 추가하면 자동 표시됩니다 (식비/교통/체험/코워킹 등)</p>';
+        inner = '<p style="font-size:11px;color:var(--nm-text-3);text-align:center;padding:12px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
       }
       return inner;
     }
