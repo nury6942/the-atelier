@@ -1836,6 +1836,21 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding:14px 12px;border-bottom:1px solid #ccc3d8}' +
       '#nomad-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size:15px;color:#141b2b;vertical-align:top}' +
       '#nomad-content .stay-tbl tbody tr:hover{background:#f1f3ff}' +
+      '#nomad-content .stay-strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}' +
+      '@media (max-width:760px){#nomad-content .stay-strategy-grid{grid-template-columns:1fr}}' +
+      '#nomad-content .stay-strategy-card{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:flex;flex-direction:column;gap:14px}' +
+      '#nomad-content .stay-strategy-purple{background:rgba(234,221,255,0.3);border-color:rgba(124,58,237,0.18)}' +
+      '#nomad-content .stay-strategy-h{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 6px;display:flex;align-items:center;gap:10px}' +
+      '#nomad-content .stay-strategy-h .material-symbols-outlined{color:var(--nm-primary);font-size:22px}' +
+      '#nomad-content .stay-strategy-label{display:block;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom:6px}' +
+      '#nomad-content .stay-strategy-label.gray{color:#5d5d67}' +
+      '#nomad-content .stay-strategy-label.err{color:#ba1a1a}' +
+      '#nomad-content .stay-strategy-body{font-size:14px;line-height:1.55;color:#4a4455;margin:0}' +
+      '#nomad-content .stay-strategy-body strong{color:#141b2b;font-weight:600}' +
+      '#nomad-content .stay-strategy-cities{font-family:var(--nm-font-h);font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.55}' +
+      '#nomad-content .stay-strategy-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:14px;color:#4a4455;line-height:1.55}' +
+      '#nomad-content .stay-strategy-block{padding-top:12px;border-top:1px dashed #ccc3d8}' +
+      '#nomad-content .stay-strategy-block:first-of-type{padding-top:0;border-top:none}' +
       '#nomad-content .stay-tbl .stay-city{font-weight:600;white-space:nowrap}' +
       '#nomad-content .stay-tbl .stay-city-flag{font-size:18px;margin-right:6px;vertical-align:-2px}' +
       '#nomad-content .stay-alt-flags{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:8px 12px;background:#f5f3ff;border-radius:6px}' +
@@ -1887,78 +1902,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
     html += '</header>';
 
-    // ────── Asymmetric Canvas: Sidebar + Main ──────
-    html += '<div class="stay-canvas">';
-
-    // ─── Sidebar ───
-    html += '<aside class="stay-sidebar">';
-
-    // Visa-Ready Contracts
-    html += '<section>' +
-      '<h3 class="stay-side-h"><span class="material-symbols-outlined">verified</span>Visa-Ready Contracts</h3>' +
-      '<div class="stay-side-card stay-side-card-purple">' +
-        '<p class="stay-side-card-body" style="margin-bottom:12px">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
-        '<ul class="stay-side-card-list bold">' +
-          '<li>• <a href="' + STAY_URL['Flatio'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none">Flatio <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
-          '<li>• <a href="' + STAY_URL['Housing Anywhere'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none">Housing Anywhere <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
-        '</ul>' +
-      '</div>' +
-    '</section>';
-
-    // Golden Timeline
-    html += '<section>' +
-      '<h3 class="stay-side-h"><span class="material-symbols-outlined">timer</span>Golden Timeline</h3>' +
-      '<div class="stay-side-card">' +
-        '<span class="stay-side-card-label">Reservation Tip</span>' +
-        '<p class="stay-side-card-body"><strong>6개월 전 예약</strong> = 옵션 多 + 가격 안정. 누리: 출국 6개월 전부터 후보 잡기.</p>' +
-      '</div>' +
-    '</section>';
-
-    // Duration Strategy
-    html += '<section>' +
-      '<h3 class="stay-side-h"><span class="material-symbols-outlined">category</span>Duration Strategy</h3>' +
-      '<div style="display:flex;flex-direction:column;gap:14px">' +
-        '<div class="stay-side-card">' +
-          '<span class="stay-side-card-label gray">Short-Term (1-2 Weeks)</span>' +
-          '<p class="stay-side-card-body" style="margin-bottom:8px">' + linkText('Booking') + ' · ' + linkText('Airbnb') + ' · ' + linkText('Sonder') + '</p>' +
-          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">🇮🇪 더블린 · 🇮🇪 골웨이 · 🇩🇰 코펜 · 🇳🇴 베르겐 · 🇮🇸 레이캬비크 · 🇲🇹 발레타</p>' +
-        '</div>' +
-        '<div class="stay-side-card">' +
-          '<span class="stay-side-card-label gray">Long-Term (1 Month+)</span>' +
-          '<p class="stay-side-card-body" style="margin-bottom:8px">' + linkText('Flatio') + ' · ' + linkText('Housing Anywhere') + ' · ' + linkText('Outsite') + '</p>' +
-          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">🇵🇹 포르투 · 🇦🇺 호바트 · 🇦🇺 애들레이드 · 🇦🇺 멜버른 · 🇳🇿 NZ · 🇺🇸 샌디에이고 · 🇨🇦 핼리팩스</p>' +
-        '</div>' +
-      '</div>' +
-    '</section>';
-
-    // Stay Criteria
-    html += '<section class="stay-side-card">' +
-      '<h3 class="stay-side-h"><span class="material-symbols-outlined">rule</span>Stay Criteria</h3>' +
-      '<div style="display:flex;flex-direction:column;gap:18px">' +
-        '<div>' +
-          '<span class="stay-side-card-label gray">Mandatory</span>' +
-          '<ul class="stay-side-card-list">' +
-            '<li>• 개인실 (1BR 또는 스튜디오)</li>' +
-            '<li>• 풀 키친 (집밥)</li>' +
-            '<li>• Wi-Fi 50Mbps+</li>' +
-            '<li>• 워크스페이스 인증</li>' +
-            '<li>• User Rating 4.5+</li>' +
-          '</ul>' +
-        '</div>' +
-        '<div>' +
-          '<span class="stay-side-card-label err">Strict No</span>' +
-          '<ul class="stay-side-card-list" style="opacity:0.8">' +
-            '<li>• 호스텔 도미토리</li>' +
-            '<li>• 위험 동네</li>' +
-            '<li>• 공유 부엌</li>' +
-          '</ul>' +
-        '</div>' +
-      '</div>' +
-    '</section>';
-
-    html += '</aside>';
-
-    // ─── Main Content ───
+    // ────── Single-column Main Content ──────
     html += '<div style="display:flex;flex-direction:column;gap:80px">';
 
     // ───── Section 1: Global Nomad Alternatives ─────
@@ -2003,6 +1947,72 @@ window.NOMAD_PAGES = (function(){
         '<p class="stay-alt-nuri">' + a.nuri + '</p>' +
       '</div>';
     });
+    html += '</div>';
+    html += '</section>';
+
+    // ───── Section 1.5: Strategy Grid (4 cards, 2x2) ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">Strategy &amp; Criteria</h3>' +
+        '<span class="stay-h-meta">PLANNING ESSENTIALS</span>' +
+      '</div>';
+    html += '<div class="stay-strategy-grid">';
+
+    // Card 1: Visa-Ready Contracts
+    html += '<div class="stay-strategy-card stay-strategy-purple">' +
+      '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">verified</span>Visa-Ready Contracts</h4>' +
+      '<p class="stay-strategy-body" style="margin-bottom:14px">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
+      '<ul class="stay-strategy-list">' +
+        '<li>• <a href="' + STAY_URL['Flatio'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none;font-weight:600">Flatio <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
+        '<li>• <a href="' + STAY_URL['Housing Anywhere'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none;font-weight:600">Housing Anywhere <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
+      '</ul>' +
+    '</div>';
+
+    // Card 2: Golden Timeline
+    html += '<div class="stay-strategy-card">' +
+      '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">timer</span>Golden Timeline</h4>' +
+      '<span class="stay-strategy-label">Reservation Tip</span>' +
+      '<p class="stay-strategy-body"><strong>6개월 전 예약</strong> = 옵션 많음 + 가격 안정. 누리 = 출국 6개월 전부터 후보 잡기.</p>' +
+    '</div>';
+
+    // Card 3: Duration Strategy
+    html += '<div class="stay-strategy-card">' +
+      '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">category</span>Duration Strategy</h4>' +
+      '<div class="stay-strategy-block">' +
+        '<span class="stay-strategy-label gray">Short-Term (1-2 Weeks)</span>' +
+        '<p class="stay-strategy-body" style="margin-bottom:6px">' + linkText('Booking') + ' · ' + linkText('Airbnb') + ' · ' + linkText('Sonder') + '</p>' +
+        '<p class="stay-strategy-cities">🇮🇪 더블린 · 🇮🇪 골웨이 · 🇩🇰 코펜 · 🇳🇴 베르겐 · 🇮🇸 레이캬비크 · 🇲🇹 발레타</p>' +
+      '</div>' +
+      '<div class="stay-strategy-block">' +
+        '<span class="stay-strategy-label gray">Long-Term (1 Month+)</span>' +
+        '<p class="stay-strategy-body" style="margin-bottom:6px">' + linkText('Flatio') + ' · ' + linkText('Housing Anywhere') + ' · ' + linkText('Outsite') + '</p>' +
+        '<p class="stay-strategy-cities">🇵🇹 포르투 · 🇦🇺 호바트 · 🇦🇺 애들레이드 · 🇦🇺 멜버른 · 🇳🇿 NZ · 🇺🇸 샌디에이고 · 🇨🇦 핼리팩스</p>' +
+      '</div>' +
+    '</div>';
+
+    // Card 4: Stay Criteria
+    html += '<div class="stay-strategy-card">' +
+      '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">rule</span>Stay Criteria</h4>' +
+      '<div class="stay-strategy-block">' +
+        '<span class="stay-strategy-label gray">Mandatory</span>' +
+        '<ul class="stay-strategy-list">' +
+          '<li>• 개인실 (1BR 또는 스튜디오)</li>' +
+          '<li>• 풀 키친 (집밥)</li>' +
+          '<li>• Wi-Fi 50Mbps+</li>' +
+          '<li>• 워크스페이스 인증</li>' +
+          '<li>• User Rating 4.5+</li>' +
+        '</ul>' +
+      '</div>' +
+      '<div class="stay-strategy-block">' +
+        '<span class="stay-strategy-label err">Strict No</span>' +
+        '<ul class="stay-strategy-list" style="opacity:0.85">' +
+          '<li>• 호스텔 도미토리</li>' +
+          '<li>• 위험 동네</li>' +
+          '<li>• 공유 부엌</li>' +
+        '</ul>' +
+      '</div>' +
+    '</div>';
+
     html += '</div>';
     html += '</section>';
 
@@ -2109,57 +2119,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
     html += '</section>';
 
-    // ───── Section 5: 누리한테 짚을 거 ─────
-    html += '<section class="stay-section">' +
-      '<div class="stay-rule">' +
-        '<h3 class="stay-h">누리한테 짚을 거</h3>' +
-        '<span class="stay-h-meta">NURI-SPECIFIC NOTES</span>' +
-      '</div>';
-    html += '<div class="stay-tips">';
-    // Tip 1
-    html += '<div class="stay-tip">' +
-      '<div class="stay-tip-num">01</div>' +
-      '<div class="stay-tip-content">' +
-        '<h4>비자용 임대 계약서 = Flatio · Housing Anywhere</h4>' +
-        '<p><strong>포르투갈 워홀 신청 시</strong> 임대 계약서 = 주소 증명. Flatio · Housing Anywhere만 법적 계약서 제공. Airbnb · Booking은 X.</p>' +
-      '</div>' +
-    '</div>';
-    // Tip 2
-    html += '<div class="stay-tip">' +
-      '<div class="stay-tip-num">02</div>' +
-      '<div class="stay-tip-content">' +
-        '<h4>단기 (1-2주) vs 한 달+ 채널 다름</h4>' +
-        '<p><strong>단기 (1-2주):</strong> Booking 아파트호텔 / Airbnb / Sonder</p>' +
-        '<p><strong>한 달+:</strong> Flatio / Housing Anywhere / Outsite / Sabbatical Homes</p>' +
-        '<div class="stay-tip-list">' +
-          '<p style="margin:0 0 4px"><strong>누리 일정 매핑:</strong></p>' +
-          '<ul>' +
-            '<li>• <strong>단기:</strong> 더블린(14d) · 골웨이(14d) · 코펜하겐(11d) · 베르겐(8d) · 레이캬비크(7d) · 발레타(18d) → Airbnb · Booking 위주</li>' +
-            '<li>• <strong>한 달+:</strong> 포르투갈 6달 · 호바트 · 애들레이드 · 멜버른 · NZ · 샌디에이고 · 핼리팩스 → Flatio · 로컬 채널</li>' +
-          '</ul>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-    // Tip 3
-    html += '<div class="stay-tip">' +
-      '<div class="stay-tip-num">03</div>' +
-      '<div class="stay-tip-content">' +
-        '<h4>시즌 + 사전 예약</h4>' +
-        '<p><strong>6개월 전 예약</strong> = 옵션 많음 + 가격 안정</p>' +
-        '<div class="stay-tip-list">' +
-          '<ul>' +
-            '<li>• 포르투 (2028.6) → <strong>2027.12-2028.1</strong> 예약</li>' +
-            '<li>• 멜버른 (2029.2) → <strong>2028.8-9</strong> 예약</li>' +
-            '<li>• 누리 = 한국에서 미리 다 잡고 가는 게 정신적으로 편함</li>' +
-          '</ul>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-    html += '</div>';
-    html += '</section>';
-
     html += '</div>'; // /main content
-    html += '</div>'; // /stay-canvas
 
     html += '</div>'; // /stay-wrap
 
