@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=167" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=168" as="script">
   <link rel="preload" href="js/app-2-init.js?v=163" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -8172,6 +8172,8 @@
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
                 <button onclick="openTravelModal('stay-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>숙소 추가</button>
               </div>
+              <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
+              <div id="journey-lodging-recs" style="display:none"></div>
               <div id="journey-lodging-list" class="flex flex-col gap-4"></div>
             </section>
 
@@ -11889,7 +11891,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=167" defer></script>
+<script src="js/app-1-pages.js?v=168" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

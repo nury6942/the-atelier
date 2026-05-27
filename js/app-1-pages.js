@@ -5050,7 +5050,160 @@
     } catch(err) { alert('저장에 실패했어요.'); }
   }
 
+  // ════════════════════════════════════════════════════════════════════
+  // 트립닷컴 호텔 추천 (큐레이션) — trip name 매칭
+  // 가격: 1박 기준 ₩ 만원, 사용자 취향(Citadines·Moxy·Casa Camper) 기반:
+  //   디자인 부띠크 + 모던 미니멀 + 중심가 + 4★ 캘리버
+  // ════════════════════════════════════════════════════════════════════
+  var _LODGING_RECS = {
+    '2027 덴마크&스웨덴': [
+      {
+        city: 'Copenhagen', nights: 3, budget: '20만/박',
+        options: [
+          { name:'Manon Les Suites by Guldsmeden', type:'에코 부띠크', price:'₩28~38만',
+            location:'Nørreport · 시내 중심', rating:'★4.6',
+            why:'에코럭셔리 + 자연 소재 + 빛 가득한 라운지 풀. 뉘하운/티볼리 도보 10분. 누리 디자이너 안목 가장 맞는 곳' },
+          { name:'Hotel SP34 by Brøchner', type:'디자인 부띠크', price:'₩22~30만',
+            location:'Latin Quarter · 시내', rating:'★4.5',
+            why:'Brøchner Hotels 시그니처 디자인 + 와인 시간 무료. Citadines급 실용성 + 부띠크 감각' },
+          { name:'CitizenM Copenhagen Radhuspladsen', type:'모던 미니멀', price:'₩17~22만',
+            location:'시청 광장 · 중심', rating:'★4.4',
+            why:'Moxy 좋아하면 100% 취향. 컴팩트 스마트룸 + 24h 라운지. 예산 절약 옵션' },
+        ],
+      },
+      {
+        city: 'Aarhus', nights: 1, budget: '13만',
+        options: [
+          { name:'Hotel Oasia Aarhus', type:'디자인 부띠크', price:'₩14~18만',
+            location:'중앙역 도보 5분', rating:'★4.4',
+            why:'덴마크 디자인 톤 + ARoS 미술관 도보 거리. 예산 살짝 초과지만 1박이라 OK' },
+          { name:'CABINN Aarhus Hotel', type:'미니멀 버짓', price:'₩10~14만',
+            location:'대성당 인근 · 시내', rating:'★4.2',
+            why:'노르딕 버짓 체인. 깔끔하고 위치 좋음. 예산 딱 맞는 1박 옵션' },
+        ],
+      },
+      {
+        city: 'Skagen', nights: 1, budget: '15만',
+        options: [
+          { name:'Color Hotel Skagen', type:'코스탈 디자인', price:'₩16~22만',
+            location:'항구 도보 3분', rating:'★4.3',
+            why:'스카겐 옐로우 모티프 + 발코니에서 바다. 두 바다 만나는 그렌엔 가깝' },
+          { name:'Skagen Strand Holiday Center', type:'비치 코티지', price:'₩13~18만',
+            location:'Hulsig 해변 · 차로 10분', rating:'★4.4',
+            why:'독채 코티지 분위기. 작가 누리 글 쓰기 좋은 조용한 환경' },
+          { name:"Brøndums Hotel", type:'헤리티지', price:'₩20~28만',
+            location:'시내 중심 · 박물관 거리', rating:'★4.5',
+            why:'스카겐 화가 학파가 묵었던 1830년 호텔. 누리 글감 자산 (예산 초과지만 가치 있음)' },
+        ],
+      },
+      {
+        city: 'Malmö', nights: 1, budget: '18만',
+        options: [
+          { name:'Story Hotel Studio Malmö', type:'디자인 부띠크', price:'₩18~25만',
+            location:'중앙역 도보 3분', rating:'★4.5',
+            why:'Story Hotels = 스웨디시 부띠크 체인. Casa Camper 비슷한 인디 감각. 기차 동선 최적' },
+          { name:'Moxy Malmö', type:'모던 미니멀', price:'₩13~18만',
+            location:'중앙역 도보 5분', rating:'★4.3',
+            why:'Moxy Dresden 좋았으면 같은 톤. 예산 가성비' },
+          { name:'Mayfair Hotel Tunneln', type:'헤리티지 부띠크', price:'₩20~28만',
+            location:'구시가 · Lilla Torg', rating:'★4.5',
+            why:'14세기 건물 + 모던 인테리어. 광장 도보 1분' },
+        ],
+      },
+      {
+        city: 'Stockholm', nights: 2, budget: '22만/박',
+        options: [
+          { name:'Miss Clara by Nobis', type:'디자인 부띠크', price:'₩22~30만',
+            location:'Norrmalm · 중심가', rating:'★4.6',
+            why:'1910년 학교 건물을 부띠크로. Casa Camper 같은 인디 감각 + 빌딩 자체가 작품. 1순위 추천' },
+          { name:'Hotel With Urban Deli', type:'디자인 부띠크', price:'₩20~28만',
+            location:'Birger Jarlsgatan · 쇼핑가', rating:'★4.5',
+            why:'스웨디시 디자인 풀가동 + 1층에 Urban Deli 마켓. 누리 톤 100%' },
+          { name:'Story Hotel Riddargatan', type:'부띠크 인디', price:'₩20~28만',
+            location:'Östermalm', rating:'★4.4',
+            why:'Story Hotels 스톡홀름 본점. 갤러리·뮤직 인디 톤. 감라 스탄 트램 5분' },
+        ],
+      },
+      {
+        city: '박솔름 (Archipelago)', nights: 1, budget: '20만',
+        options: [
+          { name:'Sands Hotell Sandhamn', type:'군도 디자인 호텔', price:'₩22~32만',
+            location:'산드함 메인 항구', rating:'★4.4',
+            why:'군도 1번지 호텔. 바다뷰 + 노르딕 사우나. 예산 살짝 초과지만 1박짜리 특별 경험' },
+          { name:'Sandhamns Värdshus', type:'헤리티지 인',  price:'₩18~25만',
+            location:'산드함 게스트하우스', rating:'★4.5',
+            why:'1672년 손님 환영 시작한 역사적 인. 군도 분위기 가장 진함' },
+        ],
+      },
+    ],
+  };
+
+  function _tripcomSearchUrl(name, city) {
+    var q = encodeURIComponent(name + ' ' + city);
+    // 사용자 alliance link 형식 따라가기 (referral 유지)
+    return 'https://kr.trip.com/hotels/list?keyword=' + q + '&allianceid=14887&sid=1621818';
+  }
+
+  function _renderLodgingRecs() {
+    var el = document.getElementById('journey-lodging-recs');
+    if (!el) return;
+    // 현재 trip name 찾기
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip) { el.style.display = 'none'; return; }
+    var recs = _LODGING_RECS[trip.name];
+    if (!recs || !recs.length) { el.style.display = 'none'; return; }
+
+    var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
+        '<span class="material-symbols-outlined" style="color:#6b38d4;font-size:22px">recommend</span>' +
+        '<h4 style="font-family:var(--j-font-h,Manrope);font-size:14px;font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
+        '<span style="font-size:10px;font-weight:600;color:#8b5cf6;background:#fff;padding:2px 8px;border-radius:99px">예산·취향·동선 종합</span>' +
+      '</div>' +
+      '<p style="font-size:11px;color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
+
+    recs.forEach(function(cityRec) {
+      html += '<div style="margin-bottom:18px">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#1e1b4b">' + cityRec.city + '</span>' +
+        '<span style="font-size:10px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + '</span>' +
+      '</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">';
+      cityRec.options.forEach(function(opt, oi) {
+        var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city);
+        var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+          rankBadge +
+          '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
+            '<h5 style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
+            '<span style="font-size:10px;font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
+            '<span style="font-size:10px;color:#9ca3af">·</span>' +
+            '<span style="font-size:11px;font-weight:700;color:#0f172a">' + opt.price + '</span>' +
+            (opt.rating ? '<span style="font-size:10px;color:#9ca3af">·</span><span style="font-size:10px;color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
+          '</div>' +
+          '<p style="font-size:11px;color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px;color:#a78bfa">location_on</span>' + opt.location + '</p>' +
+          '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
+          '<div style="display:flex;gap:6px">' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" style="flex:1;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
+          '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    el.innerHTML = html;
+    el.style.display = '';
+  }
+
   function renderJourneyLodging() {
+    // 추천 숙소 섹션 (큐레이션 있는 trip만 표시)
+    _renderLodgingRecs();
+
     var container = document.getElementById('journey-lodging-list');
     if (!container) return;
 
