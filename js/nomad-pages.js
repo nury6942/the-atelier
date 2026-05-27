@@ -81,6 +81,81 @@ window.NOMAD_PAGES = (function(){
     return parts.join('');
   }
 
+  // 부모 헤더 컨텍스트(페이스북·Meetup·이벤트·펍 등) 기반으로 적절한 검색/지도 링크 라우팅
+  // subsection.items[i].items[] 같은 문자열 리스트에 사용
+  function nmSubsectionItemLink(itemText, parentHeader) {
+    if (!itemText) return itemText || '';
+    var hLower = (parentHeader || '').toLowerCase();
+    var textLower = String(itemText).toLowerCase();
+
+    // 1. 링크 타입 결정 (헤더 우선, fallback으로 항목 내 키워드)
+    var linkType;
+    if (/페이스북|facebook/.test(hLower) || /페이스북|facebook/.test(textLower)) linkType = 'fb';
+    else if (/meetup/.test(hLower) || /meetup/.test(textLower)) linkType = 'meetup';
+    else if (/이벤트|event|페스티벌|festival|마켓|market|축제/.test(hLower)) linkType = 'search';
+    else linkType = 'maps'; // 펍·기타 모두 Maps 기본
+
+    // 2. 이름 추출 — 첫 <strong>...</strong> 우선, 없으면 첫 phrase (·, = 앞)
+    var nameMatch = String(itemText).match(/<strong>([^<]+)<\/strong>/);
+    var name, displayPattern, wrappedInStrong = false;
+
+    if (nameMatch) {
+      name = nameMatch[1].trim();
+      displayPattern = nameMatch[0];
+      wrappedInStrong = true;
+    } else {
+      var firstPhrase = String(itemText).split(/[·=]/)[0].trim();
+      firstPhrase = firstPhrase.replace(/^["']|["']$/g, ''); // 따옴표 제거
+      // 영문 글자가 있거나 짧으면 링크 가치 있는 것으로 간주
+      if (firstPhrase && (/[A-Za-z]/.test(firstPhrase) || firstPhrase.length < 24)) {
+        name = firstPhrase;
+        displayPattern = firstPhrase;
+      } else {
+        // 링크할 만한 이름 없음 — 일반 linkify만 적용
+        return nmLinkify(itemText);
+      }
+    }
+
+    // 3. URL 생성
+    var url, icon;
+    switch (linkType) {
+      case 'fb':
+        url = 'https://www.facebook.com/search/groups/?q=' + encodeURIComponent(name);
+        icon = 'open_in_new';
+        break;
+      case 'meetup':
+        url = 'https://www.meetup.com/find/?keywords=' + encodeURIComponent(name) +
+          (_currentCityName ? '&location=' + encodeURIComponent(_currentCityName) : '');
+        icon = 'open_in_new';
+        break;
+      case 'search':
+        url = 'https://www.google.com/search?q=' + encodeURIComponent(name + (_currentCityName ? ' ' + _currentCityName : ''));
+        icon = 'open_in_new';
+        break;
+      case 'maps':
+      default:
+        url = 'https://www.google.com/maps/search/?api=1&query=' +
+          encodeURIComponent(name + (_currentCityName ? ', ' + _currentCityName : ''));
+        icon = 'place';
+    }
+
+    // 4. 링크 HTML
+    var linkHtml = '<a href="' + url + '" target="_blank" rel="noopener" class="nm-maps-link">' +
+      name + '<span class="material-symbols-outlined nm-maps-icon">' + icon + '</span></a>';
+
+    // 5. 원본에 삽입 (strong 안이면 strong 그대로 유지)
+    var out;
+    if (wrappedInStrong) {
+      out = String(itemText).replace(displayPattern, '<strong>' + linkHtml + '</strong>');
+    } else {
+      // 첫 occurrence만 교체 (split[0]은 항상 itemText 시작)
+      out = String(itemText).replace(displayPattern, linkHtml);
+    }
+
+    // 6. 나머지 텍스트는 일반 linkify
+    return nmLinkify(out);
+  }
+
   function placeholderPage(id, title) {
     return pageHeader('Nomad Master', title, '곧 구현 예정 · Phase 진행 중') +
       '<div class="nm-card"><p style="color:var(--nm-text-3); text-align:center; padding:60px 0;">' +
@@ -4782,7 +4857,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="margin-bottom:16px">';
       html += '<h4 style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
-      (sub.items || []).forEach(function(it) { html += '<li>' + nmLinkify(it) + '</li>'; });
+      (sub.items || []).forEach(function(it) { html += '<li>' + nmSubsectionItemLink(it, sub.h) + '</li>'; });
       html += '</ul>';
       html += '</div>';
     });
@@ -4807,7 +4882,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="margin-top:14px">';
       html += '<h4 style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
-      (sub.items || []).forEach(function(it) { html += '<li>' + nmLinkify(it) + '</li>'; });
+      (sub.items || []).forEach(function(it) { html += '<li>' + nmSubsectionItemLink(it, sub.h) + '</li>'; });
       html += '</ul>';
       html += '</div>';
     });
@@ -5110,7 +5185,7 @@ window.NOMAD_PAGES = (function(){
         html += '<h4 class="nm-city-v2-people-group-h">' + (g.h || '') + '</h4>';
         html += '<ul class="nm-city-v2-people-list">';
         (g.items || []).forEach(function(it) {
-          html += '<li><span class="material-symbols-outlined">group</span><span>' + nmLinkify(it) + '</span></li>';
+          html += '<li><span class="material-symbols-outlined">group</span><span>' + nmSubsectionItemLink(it, g.h) + '</span></li>';
         });
         html += '</ul>';
         html += '</div>';
