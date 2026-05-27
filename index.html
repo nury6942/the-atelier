@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=163" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=164" as="script">
   <link rel="preload" href="js/app-2-init.js?v=163" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5559,6 +5559,28 @@
       background: var(--j-primary-container);
       color: var(--j-primary);
     }
+    /* Auto-link (Travel Journey) — 장소·주소 자동 구글맵 */
+    #page-journey .j-maps-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dashed currentColor;
+      transition: color 0.15s, border-color 0.15s;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+    #page-journey .j-maps-link:hover {
+      color: var(--j-primary);
+      border-bottom-color: var(--j-primary);
+    }
+    #page-journey .j-maps-icon {
+      font-size: 13px !important;
+      opacity: 0.5;
+      transform: translateY(2px);
+      margin-left: 1px;
+    }
+    #page-journey .j-maps-link:hover .j-maps-icon { opacity: 1; }
+
     #page-journey .j-tag-pill {
       display: inline-block;
       padding: 3px 8px;
@@ -11845,7 +11867,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=163" defer></script>
+<script src="js/app-1-pages.js?v=164" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

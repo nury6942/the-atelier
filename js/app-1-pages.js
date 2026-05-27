@@ -2970,6 +2970,32 @@
     return out;
   }
 
+  // ──────── Travel 자동 구글맵 링크 헬퍼 ────────
+  // 장소/주소 이름을 구글맵 검색 링크로 감싸기
+  // city를 컨텍스트로 추가하면 검색 정확도 향상
+  function _trvMapsLink(name, city) {
+    if (!name) return name || '';
+    var nameClean = String(name).replace(/<[^>]+>/g, '').trim();
+    if (!nameClean || nameClean === '—' || nameClean === '-') return name;
+    // 너무 일반적인 제목은 링크 안 함 (시간 슬롯, 일반 활동 등)
+    if (/^(기상|준비|이동|휴식|체크인|체크아웃|취침|아침|점심|저녁|식사|쇼핑)\s*[-—:·]?\s*/.test(nameClean) &&
+        nameClean.length < 12) return name;
+    var q = encodeURIComponent(nameClean + (city ? ', ' + city : ''));
+    var href = 'https://www.google.com/maps/search/?api=1&query=' + q;
+    return '<a href="' + href + '" target="_blank" rel="noopener" class="j-maps-link" onclick="event.stopPropagation()">' +
+      name + '<span class="material-symbols-outlined j-maps-icon">place</span></a>';
+  }
+  // 주소 전체를 구글맵으로 — name 없이 address 검색
+  function _trvMapsAddr(address) {
+    if (!address) return address || '';
+    var addrClean = String(address).replace(/<[^>]+>/g, '').trim();
+    if (!addrClean) return address;
+    var q = encodeURIComponent(addrClean);
+    var href = 'https://www.google.com/maps/search/?api=1&query=' + q;
+    return '<a href="' + href + '" target="_blank" rel="noopener" class="j-maps-link" onclick="event.stopPropagation()">' +
+      address + '<span class="material-symbols-outlined j-maps-icon">place</span></a>';
+  }
+
   function renderDayView() {
     var dayMap = getDayMap();
     if (!dayMap.length) {
@@ -3142,15 +3168,17 @@
       }
       // 기념품일 때 카드 컨텐츠 다르게
       var displayTitle, displayDescHtml;
+      // Daily Log 카드 도시 컨텍스트: item.city 우선, 없으면 baseCity (숙박 도시)
+      var dlCityCtx = (item.city && item.city.trim()) || cityName || '';
       if (isSouvenir) {
-        displayTitle = item.description || '쇼핑';
+        displayTitle = _trvMapsLink(item.description || '쇼핑', dlCityCtx);
         var metaParts = [];
-        if (item.location) metaParts.push('📍 ' + item.location);
+        if (item.location) metaParts.push('📍 ' + _trvMapsLink(item.location, dlCityCtx));
         if (item.title) metaParts.push('대상: ' + item.title);
         if (item.amount) metaParts.push('€' + item.amount);
         displayDescHtml = metaParts.length ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + metaParts.join(' · ') + '</p>' : '';
       } else {
-        displayTitle = item.title || '';
+        displayTitle = _trvMapsLink(item.title || '', dlCityCtx);
         displayDescHtml = descHtml;
       }
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
@@ -4453,8 +4481,8 @@
           '</div>' +
         '</div>' +
         '<div class="j-inter-meta-grid cols-2">' +
-          '<div><p class="j-inter-meta-l">픽업</p><p class="j-inter-meta-v">' + pickup + '</p>' + (item.pickup_location ? '<p class="j-inter-meta-sub">' + item.pickup_location + '</p>' : '') + '</div>' +
-          '<div><p class="j-inter-meta-l">드롭</p><p class="j-inter-meta-v">' + drop + '</p>' + (item.drop_location ? '<p class="j-inter-meta-sub">' + item.drop_location + '</p>' : '') + '</div>' +
+          '<div><p class="j-inter-meta-l">픽업</p><p class="j-inter-meta-v">' + pickup + '</p>' + (item.pickup_location ? '<p class="j-inter-meta-sub">' + _trvMapsLink(item.pickup_location, pickupCity || '') + '</p>' : '') + '</div>' +
+          '<div><p class="j-inter-meta-l">드롭</p><p class="j-inter-meta-v">' + drop + '</p>' + (item.drop_location ? '<p class="j-inter-meta-sub">' + _trvMapsLink(item.drop_location, dropCity || pickupCity || '') + '</p>' : '') + '</div>' +
         '</div>' +
         (tagPillsSt ? '<div class="j-inter-tags">' + tagPillsSt + '</div>' : '') +
         memoBox +
@@ -4484,7 +4512,13 @@
     var status = item.status||'';
     var statusVar = status==='확정' ? 'j-status-primary' : status==='환불 가능' ? 'j-status-success' : 'j-status-warn';
     var icon = (item.title||'').toLowerCase().indexOf('bus') >= 0 ? 'directions_bus' : ((item.title||'').toLowerCase().indexOf('기차') >= 0 || (item.title||'').toLowerCase().indexOf('train') >= 0 || (item.title||'').toLowerCase().indexOf('express') >= 0 || (item.title||'').toLowerCase().indexOf('ec') >= 0 || (item.title||'').toLowerCase().indexOf('le') >= 0) ? 'train' : 'commute';
-    var routeParts = (item.description||'').split('→').map(function(s){return s.trim();});
+    var routePartsRaw = (item.description||'').split('→').map(function(s){return s.trim();});
+    // 각 역/터미널 이름을 구글맵 검색 링크로 감싸기 ("to" 접두사 제거 + Hbf, Station 등 키워드 보존)
+    var routeParts = routePartsRaw.map(function(p){
+      if (!p) return p;
+      var clean = p.replace(/^to\s+/i, '').replace(/^->\s*/, '').replace(/^-+\s*/, '').trim();
+      return clean ? _trvMapsLink(p, '') : p;
+    });
     var actionsSt = String(deleteBtn || '')
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
@@ -5089,9 +5123,9 @@
                   typeBadgeSt +
                   payBadgeSt +
                 '</div>' +
-                '<h3 class="j-lodge-h3">' + (item.title || '—') + '</h3>' +
+                '<h3 class="j-lodge-h3">' + (item.title ? _trvMapsLink(item.title, item.city || '') : '—') + '</h3>' +
                 '<div style="display:flex;flex-wrap:wrap;gap:14px">' +
-                  (item.address ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">location_on</span>' + item.address + '</p>' : '') +
+                  (item.address ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">location_on</span>' + _trvMapsAddr(item.address) + '</p>' : '') +
                   (item.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + item.phone + '</p>' : '') +
                 '</div>' +
               '</div>' +
@@ -5956,11 +5990,14 @@
     var descSub = descParts.slice(1).join(' ');
     var rowCls = checked ? 'j-souvenir-row is-done' : 'j-souvenir-row';
     var checkInner = checked ? '<span class="material-symbols-outlined">check</span>' : '';
+    // descMain에서 첫 product 이름만 추출 — "Apfelwein 사과주 (Possmann · Höhl 브랜드)" → 첫 phrase 검색
+    // 너무 일반적인 품목명은 링크 안 함
+    var descMainLinked = descMain && descMain !== '—' ? _trvMapsLink(descMain, city) : (descMain || '—');
     return '<div class="' + rowCls + '">' +
       '<div class="j-souvenir-check ' + (checked ? 'is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
       '<div class="j-souvenir-info">' +
         '<span class="j-souvenir-cat"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
-        '<span class="j-souvenir-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + (descMain || '—') + '</span>' +
+        '<span class="j-souvenir-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</span>' +
         (city ? ' <span style="color:var(--j-on-surface-variant);font-size:11px"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
         (descSub ? '<span class="j-souvenir-desc">' + descSub + '</span>' : '') +
       '</div>' +
