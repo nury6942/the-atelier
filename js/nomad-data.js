@@ -129,40 +129,21 @@ window.NOMAD_DATA = (function(){
   ];
 
   // ──────── BUDGET (월별 예산, 단위: 만 원) ────────
-  // 일관 비율로 life 분해: 식비 50% / 시내 교통 15% / 관광 15% / 통신·유심 10% / 기타 10%
-  // 실제 도시별 비율 다르면 개별 조정 가능
-  function _splitLife(life) {
-    return {
-      food:      Math.round(life * 0.50),
-      transit:   Math.round(life * 0.15),
-      activity:  Math.round(life * 0.15),
-      comm:      Math.round(life * 0.10),
-      misc:      Math.round(life * 0.10),
-    };
-  }
+  // BUDGET: 월별 통합 (stay + life + total). 도시별 상세 카테고리는 NOMAD_CITIES의 budget section에 직접 정의됨.
   var BUDGET = [
-    { period: '2028.6',  city: '포르투',                              stay: 165, life: 117, total: 282 },
-    { period: '2028.7',  city: '더블린 + 골웨이',                      stay: 400, life: 176, total: 576 },
-    { period: '2028.8',  city: '코펜하겐 + 베르겐',                    stay: 470, life: 170, total: 640 },
-    { period: '2028.9',  city: '스톡홀름 + 헬싱키',                    stay: 470, life: 180, total: 650 },
-    { period: '2028.10', city: '헬싱키 + 레이캬비크 + 포르투갈',        stay: 470, life: 168, total: 638 },
-    { period: '2028.11', city: '포르투갈 + 발레타',                    stay: 270, life: 130, total: 400 },
-    { period: '2028.12', city: '호바트',                              stay: 280, life:  94, total: 374 },
-    { period: '2029.1',  city: '애들레이드',                          stay: 300, life: 107, total: 407 },
-    { period: '2029.2',  city: '멜버른',                              stay: 320, life: 110, total: 430 },
-    { period: '2029.3',  city: '뉴질랜드',                            stay: 250, life: 126, total: 376 },
-    { period: '2029.4',  city: '샌디에이고 (+뉴욕 3박)',                stay: 380, life: 100, total: 480 },
-    { period: '2029.5',  city: '핼리팩스',                            stay: 300, life: 110, total: 410 },
+    { period: '2028.6',  city: '포르투',                              stay: 165, life: 117, total: 282, cityIds:['nomad-city-porto'] },
+    { period: '2028.7',  city: '더블린 + 골웨이',                      stay: 400, life: 176, total: 576, cityIds:['nomad-city-dublin','nomad-city-galway'] },
+    { period: '2028.8',  city: '코펜하겐 + 베르겐',                    stay: 470, life: 170, total: 640, cityIds:['nomad-city-copenhagen','nomad-city-bergen'] },
+    { period: '2028.9',  city: '스톡홀름 + 헬싱키',                    stay: 470, life: 180, total: 650, cityIds:['nomad-city-stockholm','nomad-city-helsinki'] },
+    { period: '2028.10', city: '헬싱키 + 레이캬비크 + 포르투갈',        stay: 470, life: 168, total: 638, cityIds:['nomad-city-helsinki','nomad-city-reykjavik','nomad-city-portugal2'] },
+    { period: '2028.11', city: '포르투갈 + 발레타',                    stay: 270, life: 130, total: 400, cityIds:['nomad-city-portugal2','nomad-city-valletta'] },
+    { period: '2028.12', city: '호바트',                              stay: 280, life:  94, total: 374, cityIds:['nomad-city-hobart'] },
+    { period: '2029.1',  city: '애들레이드',                          stay: 300, life: 107, total: 407, cityIds:['nomad-city-adelaide'] },
+    { period: '2029.2',  city: '멜버른',                              stay: 320, life: 110, total: 430, cityIds:['nomad-city-melbourne'] },
+    { period: '2029.3',  city: '뉴질랜드',                            stay: 250, life: 126, total: 376, cityIds:['nomad-city-nz'] },
+    { period: '2029.4',  city: '샌디에이고 (+뉴욕 3박)',                stay: 380, life: 100, total: 480, cityIds:['nomad-city-sandiego','nomad-city-nyc'] },
+    { period: '2029.5',  city: '핼리팩스',                            stay: 300, life: 110, total: 410, cityIds:['nomad-city-halifax'] },
   ];
-  // 각 row에 분해 카테고리 자동 추가
-  BUDGET.forEach(function(b) {
-    var split = _splitLife(b.life);
-    b.food     = split.food;
-    b.transit  = split.transit;
-    b.activity = split.activity;
-    b.comm     = split.comm;
-    b.misc     = split.misc;
-  });
 
   // 일회성 비용 (월별 외)
   var BUDGET_ONEOFF = {
