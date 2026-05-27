@@ -6615,6 +6615,196 @@
     return groups;
   }
 
+  // ════════════════════════════════════════════════════════════════════
+  // 2027 덴마크&스웨덴 Daily Log 정밀화 (Germany&Italy 형식)
+  // 콘솔에서 호출: _enrichDanmarkSwedenDailyLog()
+  // - 기존 12개 단순 entries 삭제
+  // - ~90개 시간 슬롯 detailed entries 추가
+  // - 동선 최적화: 5/15 헬싱외르 먼저 → 루이지애나 (북쪽 → 남쪽 순)
+  // ════════════════════════════════════════════════════════════════════
+  var _DK_SE_DETAILED_LOG = [
+    // ──────── 5/12 (수) 출국일 ────────
+    { date:'2027-05-12', time:'09:00', end_time:'18:00', city:'Seoul',      title:'✍️ 마지막 근무일',           description:'주요 인계 마무리 + 동료 인사. 점심 가볍게.' },
+    { date:'2027-05-12', time:'18:00', end_time:'19:30', city:'Seoul',      title:'🏠 집 → 짐 최종 점검',       description:'캐리어 23kg 한도 확인 + 휴대 5kg 분리. 여권·신용카드·Wise 카드 별도 보관.' },
+    { date:'2027-05-12', time:'19:30', end_time:'21:30', city:'Seoul',      title:'🚌 인천공항 이동',           description:'리무진 버스 또는 공항철도 직통. T2 도착 후 SAS 카운터 (체크인 마감 22:45).' },
+    { date:'2027-05-12', time:'21:30', end_time:'23:30', city:'Incheon',    title:'🛂 면세점 + SAS 라운지',     description:'스타얼라이언스 라운지 사용 가능. 식사 + Wise 외화 환전 확인.' },
+    { date:'2027-05-12', time:'23:45', end_time:'06:05', city:'Incheon→Copenhagen', title:'✈️ SAS SK936 ICN → CPH 직항 (11H 20M)', description:'좌석 미리 체크인. 안대·목베개·압박양말. 도착 시각 = 현지 5/13 06:05.' },
+
+    // ──────── 5/13 (목 · 노동절 ✦) 코펜하겐 도착 + 클래식 ────────
+    { date:'2027-05-13', time:'06:05', end_time:'07:30', city:'Copenhagen', title:'🛂 입국심사 + 짐 찾기',      description:'CPH 공항 도착. 쉥겐 입국 도장. 짐 찾기 보통 20분.' },
+    { date:'2027-05-13', time:'07:30', end_time:'08:30', city:'Copenhagen', title:'🚇 메트로 M2 시내 이동',     description:'CPH 공항역 → Kongens Nytorv (15분, DKK 36). City Pass 24h 추천 (€16).' },
+    { date:'2027-05-13', time:'08:30', end_time:'09:30', city:'Copenhagen', title:'🏨 호텔 짐 보관 (체크인 15:00)', description:'프론트에 짐 맡기기. 정식 체크인은 오후. 화장실 + 옷 갈아입기.' },
+    { date:'2027-05-13', time:'09:30', end_time:'11:00', city:'Copenhagen', title:'☕ 카페 모르겐 — 노르딕 브런치', description:'Restaurant Schønnemann (스뫼레브뢰) 또는 Atelier September. 진한 커피로 시차 충격 완화.' },
+    { date:'2027-05-13', time:'11:00', end_time:'13:00', city:'Copenhagen', title:'🚢 Nyhavn 운하 + 보트 투어',  description:'17세기 컬러풀 운하. 1시간 보트 투어 (DKK 110) — 코펜하겐 360도 첫인상.' },
+    { date:'2027-05-13', time:'13:00', end_time:'14:30', city:'Copenhagen', title:'🥗 점심 — SMØR Smørrebrød',  description:'덴마크 전통 오픈 샌드위치 + 스나프스. 누리 작가 안목 자산.' },
+    { date:'2027-05-13', time:'15:00', end_time:'16:00', city:'Copenhagen', title:'🏨 호텔 정식 체크인 + 휴식',   description:'15:00 체크인. 시차로 잠깐 누워 1시간 휴식 추천.' },
+    { date:'2027-05-13', time:'16:30', end_time:'19:00', city:'Copenhagen', title:'🎢 Tivoli Gardens 낮→저녁',  description:'1843년 세계 2번째 오래된 놀이공원. 낮 입장 → 저녁 조명 켜지는 마법의 순간 관찰. 입장권 €25.' },
+    { date:'2027-05-13', time:'19:00', end_time:'21:00', city:'Copenhagen', title:'🍝 저녁 — Bæst (이태리/노르딕)', description:'코펜하겐 베스트 피자. Nørrebro 동네. 예약 필수 (오후 8시 이전).' },
+
+    // ──────── 5/14 (금) 코펜하겐 디자인 & 역사 ────────
+    { date:'2027-05-14', time:'08:00', end_time:'09:00', city:'Copenhagen', title:'☕ 호텔 조식',               description:'덴마크식 페이스트리 (Wienerbrød) + 진한 커피.' },
+    { date:'2027-05-14', time:'09:30', end_time:'11:00', city:'Copenhagen', title:'🏰 로젠보르 성 + 정원',       description:'17세기 르네상스 성 + 왕실 보석 컬렉션. 입장 €17. 정원은 무료, 시민 쉼터.' },
+    { date:'2027-05-14', time:'11:00', end_time:'12:30', city:'Copenhagen', title:'🪑 Designmuseum Danmark',     description:'<strong>디자이너 누리 1순위.</strong> Wegner·Jacobsen·Klint 의자 + 덴마크 디자인 역사. €17.' },
+    { date:'2027-05-14', time:'12:30', end_time:'14:00', city:'Copenhagen', title:'🥘 점심 — Torvehallerne 마켓', description:'중앙 시장 푸드 홀. Hallernes Smørrebrød (오픈 샌드위치) 또는 Coffee Collective. €15-25.' },
+    { date:'2027-05-14', time:'14:00', end_time:'16:00', city:'Copenhagen', title:'🎨 디자인 디스트릭트 산책',     description:'Frederiksgade · Sankt Annæ Plads · Bredgade. Hay, Stelton, Søstrene Grene 매장 들리기.' },
+    { date:'2027-05-14', time:'16:00', end_time:'17:30', city:'Copenhagen', title:'🌿 Christiania 자유 도시',    description:'1971년 자치 공동체. Pusher Street 사진 금지. 평화로운 골목 분위기.' },
+    { date:'2027-05-14', time:'17:30', end_time:'19:00', city:'Copenhagen', title:'🛍 호텔 복귀 / 휴식',         description:'발 쉬기 + 다음 날 짐 살짝 정리.' },
+    { date:'2027-05-14', time:'19:30', end_time:'21:30', city:'Copenhagen', title:'🍽 저녁 — Apollo Bar',       description:'갤러리 안 비스트로. 작가·디자이너 단골. €30-50.' },
+
+    // ──────── 5/15 (토) 헬싱외르 + 루이지애나 [동선 최적화: 멀리 먼저] ────────
+    { date:'2027-05-15', time:'08:00', end_time:'09:00', city:'Copenhagen', title:'☕ 호텔 조식 + 출발 준비',     description:'당일치기 가벼운 가방만. 따뜻한 옷 (해안 바람).' },
+    { date:'2027-05-15', time:'09:00', end_time:'09:50', city:'Copenhagen→Helsingør', title:'🚆 DSB 기차 코펜하겐 → 헬싱외르', description:'København H → Helsingør St. 약 45분, DKK 108. Øresund 해안선 따라 북쪽으로.' },
+    { date:'2027-05-15', time:'10:00', end_time:'12:30', city:'Helsingør',  title:'🏰 Kronborg Castle (햄릿의 성)', description:'UNESCO. 셰익스피어 햄릿 무대. 지하 카타콤 + 왕실 홀. €17. 오디오 가이드 필수.' },
+    { date:'2027-05-15', time:'12:30', end_time:'14:00', city:'Helsingør',  title:'🦞 점심 — Café Olai',         description:'헬싱외르 항구 옆 해산물 카페. 신선한 굴 + 새우 샌드위치. €25-35.' },
+    { date:'2027-05-15', time:'14:00', end_time:'14:15', city:'Helsingør→Humlebæk', title:'🚆 헬싱외르 → 휴믈레벡', description:'기차 12분. DKK 36. 루이지애나가 휴믈레벡 역에서 도보 10분.' },
+    { date:'2027-05-15', time:'14:15', end_time:'17:30', city:'Humlebæk',   title:'🎨 Louisiana 현대미술관',     description:'<strong>1순위 추천.</strong> 정원 · 헨리 무어 조각 · 자코메티 · Olafur Eliasson 상설. 바다 뷰 카페테리아. €17. 정원 산책 따로 1시간 잡기.' },
+    { date:'2027-05-15', time:'17:30', end_time:'18:30', city:'Humlebæk→Copenhagen', title:'🚆 휴믈레벡 → 코펜하겐', description:'기차 35분. 잘 자리잡고 노을 보기.' },
+    { date:'2027-05-15', time:'19:00', end_time:'21:00', city:'Copenhagen', title:'🍽 저녁 — Höst',              description:'노르딕 모던 — 단풍 가지 인테리어 + 4코스 메뉴. 예약 필수. €60-80.' },
+
+    // ──────── 5/16 (일) 코펜하겐 → 오르후스 ────────
+    { date:'2027-05-16', time:'08:00', end_time:'09:00', city:'Copenhagen', title:'☕ 호텔 조식 + 체크아웃',      description:'짐 정리. 체크아웃 11:00 이전.' },
+    { date:'2027-05-16', time:'09:00', end_time:'10:00', city:'Copenhagen', title:'🚇 호텔 → København H 중앙역', description:'메트로 또는 도보 (위치별). 큰 짐 보관 lockers (역 지하) 사용 가능.' },
+    { date:'2027-05-16', time:'10:00', end_time:'13:00', city:'Copenhagen→Aarhus', title:'🚆 DSB 기차 København H → Aarhus H', description:'직행 IC 기차 약 3시간 (Storebælt 다리). DKK 379 (사전 예약 시 절반). 좌석 예약 필수.' },
+    { date:'2027-05-16', time:'13:00', end_time:'14:00', city:'Aarhus',     title:'🥪 점심 — St. Pauls Apothek',  description:'1920년 약국을 카페로. 오르후스 인디 분위기. €15-25.' },
+    { date:'2027-05-16', time:'14:00', end_time:'15:00', city:'Aarhus',     title:'🏨 Hotel Oasia 체크인',       description:'중앙역 도보 5분. 노르딕 디자인 부띠크.' },
+    { date:'2027-05-16', time:'15:00', end_time:'17:30', city:'Aarhus',     title:'🌈 ARoS Aarhus 미술관',       description:'<strong>핵심.</strong> 옥상 Olafur Eliasson "Your Rainbow Panorama" (360도 무지개 통로). 9층 박물관. €16. 누리 디자이너 시간 충분히.' },
+    { date:'2027-05-16', time:'17:30', end_time:'19:00', city:'Aarhus',     title:'🏘 Den Gamle By 옛 마을',     description:'16-19세기 거리 재현 — 살아있는 박물관. 일몰 시간 사진 좋음. €19.' },
+    { date:'2027-05-16', time:'19:00', end_time:'21:00', city:'Aarhus',     title:'🍷 저녁 — Restaurant ET',     description:'와인 바 + 노르딕 비스트로. 오르후스 맛집. €30-50.' },
+
+    // ──────── 5/17 (월) 오르후스 → 스카겐 (렌터카 픽업) ────────
+    { date:'2027-05-17', time:'08:00', end_time:'09:00', city:'Aarhus',     title:'☕ 호텔 조식',                description:'든든하게. 운전 + 야외 활동 종일.' },
+    { date:'2027-05-17', time:'09:00', end_time:'10:00', city:'Aarhus',     title:'🚗 Europcar 렌터카 픽업',      description:'오르후스 중앙역점. 예약 확인 + 보험 옵션 (Super CDW 추천). 국제운전면허증 필수.' },
+    { date:'2027-05-17', time:'10:00', end_time:'12:00', city:'Aarhus→Skagen', title:'🛣 운전 오르후스 → 스카겐',  description:'약 210km · 2시간 · 모터웨이 E45. 도중 Aalborg 휴게소.' },
+    { date:'2027-05-17', time:'12:00', end_time:'13:30', city:'Skagen',     title:'🦞 점심 — Pakhuset 또는 De 2 Have', description:'스카겐 항구 옆 해산물 식당. 큰 새우 샌드위치 + 화이트 와인. €25-35.' },
+    { date:'2027-05-17', time:'13:30', end_time:'14:30', city:'Skagen',     title:'🏨 스카겐 B&B 체크인',         description:'Brøndums Hotel 또는 Color Hotel Skagen. 짐 두고 가벼운 가방만.' },
+    { date:'2027-05-17', time:'14:30', end_time:'16:30', city:'Skagen',     title:'🌊 Grenen 두 바다 만나는 곳', description:'북해(Skagerrak) + 발틱(Kattegat) 만나는 모래톱. 트랙터 카트 또는 도보 (왕복 40분). 양 바다에 한 발씩 담그기.' },
+    { date:'2027-05-17', time:'16:30', end_time:'17:30', city:'Skagen',     title:'🏜 Råbjerg Mile 이동 사구',    description:'유럽 최대 이동 사구. 차로 15분. 노을 시간 사진. (대안: Det Grå Fyr 등대)' },
+    { date:'2027-05-17', time:'17:30', end_time:'18:30', city:'Skagen',     title:'🎨 옐로우 하우스 거리 산책',    description:'Vesterhavet 화가 학파 자취 — Anchers Hus 박물관 외관, 옐로우 + 화이트 트림 전통 건축.' },
+    { date:'2027-05-17', time:'19:00', end_time:'21:00', city:'Skagen',     title:'🍽 저녁 — Brøndums Hotel 다이닝', description:'1830년 호텔 식당. 19세기 화가 단골. 정통 덴마크 요리 + 분위기. €40-60.' },
+
+    // ──────── 5/18 (화) 스카겐 → 오르후스 → 코펜하겐 → 말뫼 [이동 빡빡] ────────
+    { date:'2027-05-18', time:'07:00', end_time:'08:00', city:'Skagen',     title:'☕ B&B 조식 + 체크아웃',       description:'일찍 출발. 새벽 안개 그렌엔 사진 옵션.' },
+    { date:'2027-05-18', time:'08:00', end_time:'10:00', city:'Skagen→Aarhus', title:'🛣 운전 스카겐 → 오르후스',   description:'2시간. 출근시간 피해 일찍 출발.' },
+    { date:'2027-05-18', time:'10:00', end_time:'10:30', city:'Aarhus',     title:'🚗 Europcar 차 반납',         description:'오르후스 중앙역점. 연료 풀 + 사진 찍어두기 (분쟁 방지).' },
+    { date:'2027-05-18', time:'10:30', end_time:'11:30', city:'Aarhus',     title:'☕ 카페 휴식 + 짐 정리',       description:'중앙역 인근 Lillehof Café. 노트북 글쓰기 1시간 가능.' },
+    { date:'2027-05-18', time:'11:30', end_time:'14:30', city:'Aarhus→Copenhagen', title:'🚆 기차 Aarhus → København H', description:'IC 3시간. 좌석 예약 필수. 점심은 차내 또는 코펜하겐 도착 후.' },
+    { date:'2027-05-18', time:'14:30', end_time:'15:30', city:'Copenhagen', title:'🥖 코펜하겐 중앙역 점심',       description:'Sankt Peders Bageri 또는 역사내 카페. 짐 보관 필요시 lockers.' },
+    { date:'2027-05-18', time:'15:30', end_time:'16:00', city:'Copenhagen→Malmö', title:'🌉 기차 코펜하겐 → 말뫼',   description:'35분, 외레순 다리 건너기. DKK 105. 다리 통과 사진.' },
+    { date:'2027-05-18', time:'16:00', end_time:'17:00', city:'Malmö',      title:'🏨 말뫼 호텔 체크인',           description:'Story Hotel Studio 또는 Moxy. 중앙역 도보 5분.' },
+    { date:'2027-05-18', time:'17:00', end_time:'19:00', city:'Malmö',      title:'🏛 시내 산책 — Stortorget · Lilla Torg', description:'중세 광장 + 카페 거리. 가볍게 첫인상. 운하 산책.' },
+    { date:'2027-05-18', time:'19:00', end_time:'21:00', city:'Malmö',      title:'🍽 저녁 — Bord 13 또는 Mrs Saigon', description:'Bord 13 = 스웨디시 모던 / Mrs Saigon = 베트남 퓨전. €25-45.' },
+
+    // ──────── 5/19 (수) 말뫼 오전 + 스톡홀름 이동 ────────
+    { date:'2027-05-19', time:'08:00', end_time:'09:00', city:'Malmö',      title:'☕ 호텔 조식',                description:'든든히. 이동 + 도착 후 가볍게.' },
+    { date:'2027-05-19', time:'09:00', end_time:'10:30', city:'Malmö',      title:'🏗 Turning Torso + Västra Hamnen', description:'Calatrava 디자인 트위스트 타워 (외관). 신항만 워터프론트 산책.' },
+    { date:'2027-05-19', time:'10:30', end_time:'11:30', city:'Malmö',      title:'🎨 Form/Design Center',       description:'스웨디시 디자인 전시 + 숍. 누리 디자이너 자산. 무료.' },
+    { date:'2027-05-19', time:'11:30', end_time:'12:30', city:'Malmö',      title:'🥘 점심 — Saltimporten Canteen', description:'해변 컨테이너 캔틴. 매일 메뉴 바뀜. €15-20. 인기 많아 미리.' },
+    { date:'2027-05-19', time:'12:30', end_time:'13:30', city:'Malmö',      title:'🧳 호텔 짐 픽업 + 중앙역',     description:'체크아웃 + 중앙역 이동.' },
+    { date:'2027-05-19', time:'13:30', end_time:'17:30', city:'Malmö→Stockholm', title:'🚆 SJ X2000 Malmö → Stockholm', description:'고속 기차 약 4시간 30분. SEK 1,200 (사전 예약 절반). 1등석 좌석 추천 (콘센트 + 와이드 시트).' },
+    { date:'2027-05-19', time:'17:30', end_time:'18:30', city:'Stockholm',  title:'🏨 스톡홀름 호텔 체크인',       description:'Miss Clara by Nobis (1순위) 또는 Story Hotel. Norrmalm 중심가.' },
+    { date:'2027-05-19', time:'19:00', end_time:'21:00', city:'Stockholm',  title:'🍽 저녁 — Operakällarens Bakficka', description:'오페라하우스 안 비스트로. 클래식 스웨디시. €40-60. 야경 좋음.' },
+
+    // ──────── 5/20 (목) 스톡홀름 클래식 ────────
+    { date:'2027-05-20', time:'08:00', end_time:'09:00', city:'Stockholm',  title:'☕ 호텔 조식',                description:'풀가동 날.' },
+    { date:'2027-05-20', time:'09:30', end_time:'12:00', city:'Stockholm',  title:'🏰 Gamla Stan 구시가지',      description:'왕궁 위병 교대식 12:15 (꼭). Stortorget · 좁은 골목 · Mårten Trotzigs gränd (90cm 골목).' },
+    { date:'2027-05-20', time:'12:00', end_time:'13:00', city:'Stockholm',  title:'🥘 점심 — Pharmarium 또는 Under Kastanjen', description:'감라 스탄 내 클래식. €25-40.' },
+    { date:'2027-05-20', time:'13:30', end_time:'16:00', city:'Stockholm',  title:'⛵ Vasa Museum',               description:'<strong>1순위.</strong> 1628년 침몰선 1:1 복원 (98% 원형). 세계에서 가장 잘 보존된 17세기 배. SEK 200.' },
+    { date:'2027-05-20', time:'16:30', end_time:'18:00', city:'Stockholm',  title:'📸 Fotografiska',             description:'사진 전시 + Södermalm 옥상 카페 (도시 뷰). 누리 작가·디자이너 자산. SEK 195.' },
+    { date:'2027-05-20', time:'18:00', end_time:'19:30', city:'Stockholm',  title:'🛍 호텔 복귀 / 휴식',         description:'발 쉬기.' },
+    { date:'2027-05-20', time:'19:30', end_time:'21:30', city:'Stockholm',  title:'🍣 저녁 — Sushi Sho',         description:'스웨덴 최고 스시 오마카세. 예약 2-3주 전 필수. €60-100.' },
+
+    // ──────── 5/21 (금) 박솔름(군도) 이동 ────────
+    { date:'2027-05-21', time:'08:00', end_time:'09:00', city:'Stockholm',  title:'☕ 호텔 조식',                description:'1박 가방 챙기기 (메인 짐은 호텔 보관).' },
+    { date:'2027-05-21', time:'09:30', end_time:'11:00', city:'Stockholm',  title:'🎵 ABBA Museum (Djurgården)', description:'<strong>누리 디자이너 관심.</strong> 인터랙티브 + 의상 컬렉션. SEK 295. 사전 예약.' },
+    { date:'2027-05-21', time:'11:00', end_time:'12:30', city:'Stockholm',  title:'🌿 점심 — Rosendals Trädgård', description:'Djurgården 유기농 정원 카페. 사워도우 + 가든 샐러드. 평화로움.' },
+    { date:'2027-05-21', time:'13:00', end_time:'14:00', city:'Stockholm',  title:'⚓ 호텔 → Strömkajen 부두',    description:'중심가에서 도보 또는 트램. 짐 일부 (1박 가방).' },
+    { date:'2027-05-21', time:'14:00', end_time:'16:30', city:'Stockholm→Sandhamn', title:'⛵ Cinderella 보트 → Sandhamn', description:'2시간 30분 군도 크루즈. SEK 220. 갑판에서 1만개 섬 풍경.' },
+    { date:'2027-05-21', time:'16:30', end_time:'17:30', city:'Sandhamn',   title:'🏨 군도 게스트하우스 체크인',   description:'Sands Hotell 또는 Sandhamns Värdshus. 짐 정리.' },
+    { date:'2027-05-21', time:'17:30', end_time:'19:00', city:'Sandhamn',   title:'🏘 산드함 산책',               description:'옛 어부 마을 + 항구 + 빨간 보트 하우스. 노을 사진.' },
+    { date:'2027-05-21', time:'19:00', end_time:'21:00', city:'Sandhamn',   title:'🍽 저녁 — Sandhamns Värdshus',  description:'1672년 시작한 역사적 인. 발틱 해산물 + 군도 분위기. €40-60.' },
+
+    // ──────── 5/22 (토) 박솔름 → 스톡홀름 → 출국 [동선 조정: 시청 OR 드로트닝홀름 택1] ────────
+    { date:'2027-05-22', time:'07:00', end_time:'08:00', city:'Sandhamn',   title:'☕ 게스트하우스 조식',         description:'아침 식사 + 체크아웃.' },
+    { date:'2027-05-22', time:'08:00', end_time:'09:00', city:'Sandhamn',   title:'📸 일출 산책 + 작가 자산',     description:'아침 안개 + 어부 항구 사진. 누리 작가 글감.' },
+    { date:'2027-05-22', time:'09:00', end_time:'11:30', city:'Sandhamn→Stockholm', title:'⛵ Cinderella 보트 복귀',  description:'2시간 30분. 갑판에서 마지막 군도 풍경.' },
+    { date:'2027-05-22', time:'11:30', end_time:'12:30', city:'Stockholm',  title:'🧳 호텔 짐 픽업 + 점심',       description:'시청 인근 카페. Brunkebergstorg 광장.' },
+    { date:'2027-05-22', time:'12:30', end_time:'14:30', city:'Stockholm',  title:'🏛 Stockholm City Hall 투어',  description:'<strong>시간 제약상 권장.</strong> 노벨상 만찬 홀. 영어 가이드 12:00 or 14:00 (45분). SEK 130. 시청 vs 드로트닝홀름 둘 다는 시간 부족 — 시청 추천 (시내).' },
+    { date:'2027-05-22', time:'14:30', end_time:'16:00', city:'Stockholm',  title:'🏰 옵션: Drottningholm 궁전', description:'(대안) 페리/지하철 1시간. UNESCO. 가려면 시청 스킵. 일정 빡빡하면 다음 여행 때.' },
+    { date:'2027-05-22', time:'16:00', end_time:'16:30', city:'Stockholm',  title:'🚆 Arlanda Express 공항 이동', description:'중앙역 → ARN 20분, SEK 320. 미리 예약 시 할인.' },
+    { date:'2027-05-22', time:'16:30', end_time:'18:30', city:'Arlanda',    title:'🛂 ARN 체크인 + 면세',         description:'국제선 카운터. Tax-free 환급 카운터 (스웨덴 VAT 25%).' },
+    { date:'2027-05-22', time:'18:30', end_time:'06:00', city:'Stockholm→Incheon', title:'✈️ 출발 → 경유 → 인천', description:'SAS·Finnair·Lufthansa 경유. 약 13-15시간. 시차 시계 KST로 맞추기.' },
+
+    // ──────── 5/23 (일) 인천 도착 + 회복 ────────
+    { date:'2027-05-23', time:'06:00', end_time:'07:30', city:'Incheon',    title:'🛬 인천 도착 + 입국',          description:'한국 입국심사 + 짐 찾기. 자가용/리무진/택시.' },
+    { date:'2027-05-23', time:'07:30', end_time:'10:00', city:'Seoul',      title:'🏠 집 도착 + 짐 풀기',         description:'세탁 + 기념품 정리. 가벼운 식사. 잠.' },
+    { date:'2027-05-23', time:'14:00', end_time:'17:00', city:'Seoul',      title:'😴 시차 회복 낮잠',            description:'시차 8시간. 낮잠 2-3시간 → 저녁 가볍게 → 23시 취침 권장.' },
+  ];
+
+  window._enrichDanmarkSwedenDailyLog = async function() {
+    var tripName = '2027 덴마크&스웨덴';
+    var trip = (tripsData || []).find(function(t){ return t.name === tripName; });
+    if (!trip) { alert('"' + tripName + '" trip을 못 찾았어. 먼저 _migrateAtlasTrip("scandinavia-2027") 실행해줘.'); return; }
+
+    // 기존 일정 entries 조회
+    var existing = (journeyData || []).filter(function(d){ return d.trip_id === trip._id && d.type === '일정'; });
+    var msg = '"' + tripName + '" Daily Log 정밀화\n\n' +
+      '• 기존 일정 ' + existing.length + '개 삭제\n' +
+      '• 새 시간 슬롯 ' + _DK_SE_DETAILED_LOG.length + '개 추가\n' +
+      '(12일 × 6-9개 슬롯)\n\n진행할까?';
+    if (!confirm(msg)) return;
+
+    try {
+      // 1. 기존 일정 삭제
+      var deleted = 0;
+      for (var di = 0; di < existing.length; di++) {
+        try {
+          await fbDelete('journey', existing[di]._id);
+          deleted++;
+        } catch(e) { console.warn('[Enrich] delete 실패:', e); }
+      }
+      // 메모리에서도 제거
+      journeyData = (journeyData || []).filter(function(d){
+        return !(d.trip_id === trip._id && d.type === '일정');
+      });
+      console.log('[Enrich] 기존 일정 삭제:', deleted);
+
+      // 2. 새 detailed entries 추가
+      var added = 0;
+      for (var ai = 0; ai < _DK_SE_DETAILED_LOG.length; ai++) {
+        var slot = _DK_SE_DETAILED_LOG[ai];
+        try {
+          var saved = await fbAdd('journey', {
+            trip_id: trip._id, type: '일정',
+            date: slot.date, time: slot.time, end_time: slot.end_time,
+            city: slot.city, title: slot.title, description: slot.description,
+          });
+          journeyData.push(saved);
+          added++;
+        } catch(e) { console.warn('[Enrich] add 실패:', e); }
+      }
+      console.log('[Enrich] 새 슬롯 추가:', added);
+
+      // 3. 스냅샷 갱신
+      try {
+        localStorage.setItem('atelier_snapshot_journey', JSON.stringify({
+          data: journeyData, ts: new Date().toISOString()
+        }));
+      } catch(e) { console.warn('[Enrich] snapshot 갱신 실패:', e.message); }
+
+      alert('✅ Daily Log 정밀화 완료\n\n· 삭제: ' + deleted + '개\n· 추가: ' + added + '개\n\n페이지 새로고침 후 확인.');
+
+      // 4. 현재 trip이면 즉시 재렌더
+      if (currentTripId === trip._id) {
+        renderDayView();
+      } else {
+        selectTrip(trip._id);
+      }
+    } catch (e) {
+      console.error('[Enrich] 실패:', e);
+      alert('정밀화 중 에러: ' + e.message);
+    }
+  };
+
   window._migrateAtlasTrip = async function(atlasId) {
     if (!window.ATLAS_DATA || !window.ATLAS_DATA.TRIPS) {
       alert('ATLAS_DATA가 로드되지 않았어요. Atlas 페이지 한 번 방문 후 다시 시도해줘.');
