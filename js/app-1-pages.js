@@ -5193,7 +5193,7 @@
         options: [
           { name:'Miss Clara by Nobis', type:'디자인 부띠크', price:'₩22~30만',
             location:'Norrmalm · 중심가', rating:'★4.6',
-            why:'1910년 학교 건물을 부띠크로. Casa Camper 같은 인디 감각 + 빌딩 자체가 작품. 1순위 추천' },
+            why:'1910년 학교 건물을 부띠크로. Casa Camper 같은 인디 감각 + 빌딩 자체가 작품. 1순위 추천. 5/21 짐 보관 + 공항 이동 편함' },
           { name:'Hotel With Urban Deli', type:'디자인 부띠크', price:'₩20~28만',
             location:'Birger Jarlsgatan · 쇼핑가', rating:'★4.5',
             why:'스웨디시 디자인 풀가동 + 1층에 Urban Deli 마켓. 누리 톤 100%' },
@@ -5202,18 +5202,8 @@
             why:'Story Hotels 스톡홀름 본점. 갤러리·뮤직 인디 톤. 감라 스탄 트램 5분' },
         ],
       },
-      {
-        city: 'Sandhamn (Archipelago)', cityKr: '박솔름', nights: 1, budget: '20만',
-        checkIn: '2027-05-21', checkOut: '2027-05-22',
-        options: [
-          { name:'Sands Hotell Sandhamn', type:'군도 디자인 호텔', price:'₩22~32만',
-            location:'산드함 메인 항구', rating:'★4.4',
-            why:'군도 1번지 호텔. 바다뷰 + 노르딕 사우나. 예산 살짝 초과지만 1박짜리 특별 경험' },
-          { name:'Sandhamns Värdshus', type:'헤리티지 인',  price:'₩18~25만',
-            location:'산드함 게스트하우스', rating:'★4.5',
-            why:'1672년 손님 환영 시작한 역사적 인. 군도 분위기 가장 진함' },
-        ],
-      },
+      // Sandhamn 1박 제거 — Finnair 1순위 항공편 (5/21 19:30 ARN 출발) 매칭상 일정 단축
+      // 박솔름은 다음 스톡홀름 방문 때 (Drottningholm은 5/21 오전에 대체)
     ],
   };
 
@@ -6879,31 +6869,23 @@
     { date:'2027-05-20', time:'18:00', end_time:'19:30', city:'Stockholm',  title:'🛍 호텔 복귀 / 휴식',         description:'발 쉬기.' },
     { date:'2027-05-20', time:'19:30', end_time:'21:30', city:'Stockholm',  title:'🍣 저녁 — Sushi Sho',         description:'스웨덴 최고 스시 오마카세. 예약 2-3주 전 필수. €60-100.' },
 
-    // ──────── 5/21 (금) 박솔름(군도) 이동 ────────
-    { date:'2027-05-21', time:'08:00', end_time:'09:00', city:'Stockholm',  title:'☕ 호텔 조식',                description:'1박 가방 챙기기 (메인 짐은 호텔 보관).' },
-    { date:'2027-05-21', time:'09:30', end_time:'11:00', city:'Stockholm',  title:'🎵 ABBA Museum (Djurgården)', description:'<strong>누리 디자이너 관심.</strong> 인터랙티브 + 의상 컬렉션. SEK 295. 사전 예약.' },
-    { date:'2027-05-21', time:'11:00', end_time:'12:30', city:'Stockholm',  title:'🌿 점심 — Rosendals Trädgård', description:'Djurgården 유기농 정원 카페. 사워도우 + 가든 샐러드. 평화로움.' },
-    { date:'2027-05-21', time:'13:00', end_time:'14:00', city:'Stockholm',  title:'⚓ 호텔 → Strömkajen 부두',    description:'중심가에서 도보 또는 트램. 짐 일부 (1박 가방).' },
-    { date:'2027-05-21', time:'14:00', end_time:'16:30', city:'Stockholm→Sandhamn', title:'⛵ Cinderella 보트 → Sandhamn', description:'2시간 30분 군도 크루즈. SEK 220. 갑판에서 1만개 섬 풍경.' },
-    { date:'2027-05-21', time:'16:30', end_time:'17:30', city:'Sandhamn',   title:'🏨 군도 게스트하우스 체크인',   description:'Sands Hotell 또는 Sandhamns Värdshus. 짐 정리.' },
-    { date:'2027-05-21', time:'17:30', end_time:'19:00', city:'Sandhamn',   title:'🏘 산드함 산책',               description:'옛 어부 마을 + 항구 + 빨간 보트 하우스. 노을 사진.' },
-    { date:'2027-05-21', time:'19:00', end_time:'21:00', city:'Sandhamn',   title:'🍽 저녁 — Sandhamns Värdshus',  description:'1672년 시작한 역사적 인. 발틱 해산물 + 군도 분위기. €40-60.' },
+    // ──────── 5/21 (금) 스톡홀름 마지막 날 + 저녁 비행기 [Finnair 1순위 19:30 ARN] ────────
+    { date:'2027-05-21', time:'08:00', end_time:'09:00', city:'Stockholm',  title:'☕ 호텔 조식 + 짐 정리',       description:'마지막 날 — 체크아웃 짐은 호텔 보관 (저녁 픽업).' },
+    { date:'2027-05-21', time:'09:30', end_time:'11:30', city:'Stockholm',  title:'🏰 Drottningholm Palace',     description:'<strong>UNESCO 왕궁.</strong> 페리(여름) 또는 지하철 17번선 + 버스. 약 50분. 정원 + 차이니스 파빌리온 + 궁궐 투어. SEK 140. 영어 가이드 11:00.' },
+    { date:'2027-05-21', time:'11:30', end_time:'12:30', city:'Stockholm',  title:'🚇 시내 복귀',                 description:'페리 또는 지하철. 시청 부근 도착.' },
+    { date:'2027-05-21', time:'12:30', end_time:'13:30', city:'Stockholm',  title:'🥘 점심 — 시청 인근 카페',     description:'Brunkebergstorg 또는 감라스탄 마지막 식사. 클래식 미트볼 (Kötbullar) 추천.' },
+    { date:'2027-05-21', time:'13:30', end_time:'15:00', city:'Stockholm',  title:'🏛 Stockholm City Hall 투어',  description:'노벨상 만찬 홀 + 황금의 방 (1,800만 모자이크 타일). 영어 가이드 14:00 (45분, SEK 130). 사전 예약 추천.' },
+    { date:'2027-05-21', time:'15:00', end_time:'16:30', city:'Stockholm',  title:'🛍 마지막 쇼핑 — Granit·Iittala·NK', description:'Hötorget·Norrmalm에 디자인 매장 몰림. 짐 보낼 거 마지막 정리. 면세 환급 영수증 챙기기.' },
+    { date:'2027-05-21', time:'16:30', end_time:'17:00', city:'Stockholm',  title:'🧳 호텔 짐 픽업 + 중앙역',     description:'호텔에서 짐 받고 중앙역으로. T-Centralen.' },
+    { date:'2027-05-21', time:'17:00', end_time:'17:30', city:'Stockholm→Arlanda', title:'🚄 Arlanda Express 공항', description:'중앙역 → ARN 20분, SEK 320 (사전 예약 -25%). 가장 빠름.' },
+    { date:'2027-05-21', time:'17:30', end_time:'19:30', city:'Arlanda',    title:'🛂 ARN 체크인 + 면세 + Tax-free 환급', description:'Finnair AY808 카운터. Tax-free 환급 카운터 (스웨덴 VAT 25% — 영수증 SEK 200+ 구매 분). 라운지 (Plaza Premium 또는 항공사 라운지).' },
+    { date:'2027-05-21', time:'19:30', end_time:'21:30', city:'Stockholm→Helsinki', title:'✈️ Finnair AY808 ARN → HEL', description:'<strong>1순위 추천 항공편.</strong> 1H 30M, 스웨덴 → 핀란드. 가벼운 기내식.' },
+    { date:'2027-05-21', time:'22:30', end_time:'13:30', city:'Helsinki→Incheon', title:'✈️ Finnair AY041 HEL → ICN', description:'HEL 환승 1H + 본 비행 10H. 도착 시각 = 한국 5/22 13:30 (토요일). 시차 시계 KST로 맞추기.' },
 
-    // ──────── 5/22 (토) 박솔름 → 스톡홀름 → 출국 [동선 조정: 시청 OR 드로트닝홀름 택1] ────────
-    { date:'2027-05-22', time:'07:00', end_time:'08:00', city:'Sandhamn',   title:'☕ 게스트하우스 조식',         description:'아침 식사 + 체크아웃.' },
-    { date:'2027-05-22', time:'08:00', end_time:'09:00', city:'Sandhamn',   title:'📸 일출 산책 + 작가 자산',     description:'아침 안개 + 어부 항구 사진. 누리 작가 글감.' },
-    { date:'2027-05-22', time:'09:00', end_time:'11:30', city:'Sandhamn→Stockholm', title:'⛵ Cinderella 보트 복귀',  description:'2시간 30분. 갑판에서 마지막 군도 풍경.' },
-    { date:'2027-05-22', time:'11:30', end_time:'12:30', city:'Stockholm',  title:'🧳 호텔 짐 픽업 + 점심',       description:'시청 인근 카페. Brunkebergstorg 광장.' },
-    { date:'2027-05-22', time:'12:30', end_time:'14:30', city:'Stockholm',  title:'🏛 Stockholm City Hall 투어',  description:'<strong>시간 제약상 권장.</strong> 노벨상 만찬 홀. 영어 가이드 12:00 or 14:00 (45분). SEK 130. 시청 vs 드로트닝홀름 둘 다는 시간 부족 — 시청 추천 (시내).' },
-    { date:'2027-05-22', time:'14:30', end_time:'16:00', city:'Stockholm',  title:'🏰 옵션: Drottningholm 궁전', description:'(대안) 페리/지하철 1시간. UNESCO. 가려면 시청 스킵. 일정 빡빡하면 다음 여행 때.' },
-    { date:'2027-05-22', time:'16:00', end_time:'16:30', city:'Stockholm',  title:'🚆 Arlanda Express 공항 이동', description:'중앙역 → ARN 20분, SEK 320. 미리 예약 시 할인.' },
-    { date:'2027-05-22', time:'16:30', end_time:'18:30', city:'Arlanda',    title:'🛂 ARN 체크인 + 면세',         description:'국제선 카운터. Tax-free 환급 카운터 (스웨덴 VAT 25%).' },
-    { date:'2027-05-22', time:'18:30', end_time:'06:00', city:'Stockholm→Incheon', title:'✈️ 출발 → 경유 → 인천', description:'SAS·Finnair·Lufthansa 경유. 약 13-15시간. 시차 시계 KST로 맞추기.' },
-
-    // ──────── 5/23 (일) 인천 도착 + 회복 ────────
-    { date:'2027-05-23', time:'06:00', end_time:'07:30', city:'Incheon',    title:'🛬 인천 도착 + 입국',          description:'한국 입국심사 + 짐 찾기. 자가용/리무진/택시.' },
-    { date:'2027-05-23', time:'07:30', end_time:'10:00', city:'Seoul',      title:'🏠 집 도착 + 짐 풀기',         description:'세탁 + 기념품 정리. 가벼운 식사. 잠.' },
-    { date:'2027-05-23', time:'14:00', end_time:'17:00', city:'Seoul',      title:'😴 시차 회복 낮잠',            description:'시차 8시간. 낮잠 2-3시간 → 저녁 가볍게 → 23시 취침 권장.' },
+    // ──────── 5/22 (토) 인천 도착 + 회복 ────────
+    { date:'2027-05-22', time:'13:30', end_time:'15:00', city:'Incheon',    title:'🛬 ICN 도착 + 입국심사',       description:'한국 입국 + 짐 찾기. 자가용/리무진/택시. 토요일 오후라 도로 여유.' },
+    { date:'2027-05-22', time:'15:00', end_time:'17:00', city:'Seoul',      title:'🏠 집 도착 + 짐 풀기',         description:'세탁기 돌리기 + 기념품 정리. 식료품 환불 영수증 보관 (필요시).' },
+    { date:'2027-05-22', time:'17:00', end_time:'20:00', city:'Seoul',      title:'😴 시차 회복 낮잠',            description:'시차 7시간. 낮잠 2-3시간 → 가벼운 저녁 → 23시 취침. 일요일 휴식 후 월요일 출근.' },
   ];
 
   window._enrichDanmarkSwedenDailyLog = async function() {
@@ -6913,10 +6895,21 @@
 
     // 기존 일정 entries 조회
     var existing = (journeyData || []).filter(function(d){ return d.trip_id === trip._id && d.type === '일정'; });
-    var msg = '"' + tripName + '" Daily Log 정밀화\n\n' +
+    // Sandhamn 관련 city/lodging 조회 (재구성으로 제거 대상)
+    var sandhamnCities = (citiesData || []).filter(function(c){
+      return c.trip_id === trip._id && /sandhamn|박솔름|archipelago|군도/i.test(c.name || '');
+    });
+    var sandhamnLodging = (journeyData || []).filter(function(d){
+      return d.trip_id === trip._id && d.type === '숙소' && /sandhamn|박솔름|archipelago|군도/i.test((d.city || '') + ' ' + (d.title || ''));
+    });
+
+    var msg = '"' + tripName + '" 일정 재구성\n\n' +
+      '• Finnair 1순위 항공편 (5/21 19:30 ARN → 5/22 13:30 ICN) 매칭\n' +
       '• 기존 일정 ' + existing.length + '개 삭제\n' +
-      '• 새 시간 슬롯 ' + _DK_SE_DETAILED_LOG.length + '개 추가\n' +
-      '(12일 × 6-9개 슬롯)\n\n진행할까?';
+      '• 새 시간 슬롯 ' + _DK_SE_DETAILED_LOG.length + '개 추가 (11일)\n' +
+      '• Sandhamn 도시 ' + sandhamnCities.length + '개 삭제\n' +
+      '• Sandhamn 숙소 ' + sandhamnLodging.length + '개 삭제\n' +
+      '• Trip 종료일 → 2027-05-22 (토)\n\n진행할까?';
     if (!confirm(msg)) return;
 
     try {
@@ -6928,11 +6921,37 @@
           deleted++;
         } catch(e) { console.warn('[Enrich] delete 실패:', e); }
       }
-      // 메모리에서도 제거
       journeyData = (journeyData || []).filter(function(d){
         return !(d.trip_id === trip._id && d.type === '일정');
       });
       console.log('[Enrich] 기존 일정 삭제:', deleted);
+
+      // 1-b. Sandhamn 도시 삭제
+      var citiesDel = 0;
+      for (var ci = 0; ci < sandhamnCities.length; ci++) {
+        try { await fbDelete('trip_cities', sandhamnCities[ci]._id); citiesDel++; } catch(e) {}
+      }
+      citiesData = (citiesData || []).filter(function(c){
+        return !(c.trip_id === trip._id && /sandhamn|박솔름|archipelago|군도/i.test(c.name || ''));
+      });
+      console.log('[Enrich] Sandhamn 도시 삭제:', citiesDel);
+
+      // 1-c. Sandhamn 숙소 삭제
+      var lodgeDel = 0;
+      for (var li = 0; li < sandhamnLodging.length; li++) {
+        try { await fbDelete('journey', sandhamnLodging[li]._id); lodgeDel++; } catch(e) {}
+      }
+      journeyData = (journeyData || []).filter(function(d){
+        return !(d.trip_id === trip._id && d.type === '숙소' && /sandhamn|박솔름|archipelago|군도/i.test((d.city || '') + ' ' + (d.title || '')));
+      });
+      console.log('[Enrich] Sandhamn 숙소 삭제:', lodgeDel);
+
+      // 1-d. Trip 종료일 업데이트 (5/22로)
+      try {
+        await fbUpdate('trips', trip._id, { end_date: '2027-05-22' });
+        trip.end_date = '2027-05-22';
+        console.log('[Enrich] trip 종료일 → 2027-05-22');
+      } catch(e) { console.warn('[Enrich] trip 종료일 갱신 실패:', e); }
 
       // 2. 새 detailed entries 추가
       var added = 0;
@@ -6950,24 +6969,29 @@
       }
       console.log('[Enrich] 새 슬롯 추가:', added);
 
-      // 3. 스냅샷 갱신
+      // 3. 스냅샷 갱신 (journey + trip_cities + trips)
       try {
-        localStorage.setItem('atelier_snapshot_journey', JSON.stringify({
-          data: journeyData, ts: new Date().toISOString()
-        }));
+        localStorage.setItem('atelier_snapshot_journey', JSON.stringify({ data: journeyData, ts: new Date().toISOString() }));
+        localStorage.setItem('atelier_snapshot_trip_cities', JSON.stringify({ data: citiesData, ts: new Date().toISOString() }));
+        localStorage.setItem('atelier_snapshot_trips', JSON.stringify({ data: tripsData, ts: new Date().toISOString() }));
       } catch(e) { console.warn('[Enrich] snapshot 갱신 실패:', e.message); }
 
-      alert('✅ Daily Log 정밀화 완료\n\n· 삭제: ' + deleted + '개\n· 추가: ' + added + '개\n\n페이지 새로고침 후 확인.');
+      alert('✅ 일정 재구성 완료\n\n' +
+        '· 일정 삭제: ' + deleted + '개\n· 새 슬롯: ' + added + '개\n' +
+        '· Sandhamn 도시: ' + citiesDel + '개 제거\n· Sandhamn 숙소: ' + lodgeDel + '개 제거\n' +
+        '· 종료일 → 2027-05-22 (토)\n\n페이지 새로고침 후 확인.');
 
       // 4. 현재 trip이면 즉시 재렌더
       if (currentTripId === trip._id) {
+        renderCityCards();
         renderDayView();
+        renderJourneyLodging();
       } else {
         selectTrip(trip._id);
       }
     } catch (e) {
       console.error('[Enrich] 실패:', e);
-      alert('정밀화 중 에러: ' + e.message);
+      alert('재구성 중 에러: ' + e.message);
     }
   };
 
