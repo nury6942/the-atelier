@@ -606,15 +606,11 @@ window.NOMAD_PAGES = (function(){
 
     html += '<div class="atl-wrap">';
 
-    // ────── Hero Header ──────
-    html += '<header class="atl-header">';
-    html += '<div style="max-width:720px">' +
-      '<p class="atl-eyebrow">Global Expedition Plan</p>' +
-      '<h1 class="atl-title">June 2028 — May 2029</h1>' +
-      '<p class="atl-lede">6개 대륙 · 17개 도시 · 1년 마스터 동선' +
-        '<span class="en">A curated itinerary navigating the intersections of culture, strategy, and leisure.</span>' +
-      '</p>' +
-    '</div>';
+    // ────── 통일된 페이지 헤더 ──────
+    html += pageHeader('12-Month Voyage', 'June 2028 — May 2029', '6개 대륙 · 17개 도시 · 1년 마스터 동선');
+
+    // ────── Hero Metrics ──────
+    html += '<header class="atl-header" style="display:flex;justify-content:flex-end;margin-bottom:32px">';
     html += '<div class="atl-metrics">' +
       '<div class="atl-metric">' +
         '<div><p class="atl-metric-label">Total Budget (Est.)</p><p class="atl-metric-value">' + fmtMan(grandTotal) + '</p></div>' +
@@ -1568,12 +1564,7 @@ window.NOMAD_PAGES = (function(){
     var html = '';
 
     // Hero
-    html += '<section style="margin-bottom:48px">';
-    html += '<p style="font-family:var(--nm-font-h);color:var(--nm-primary);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.16em;margin:0 0 10px">Nomad Gate</p>';
-    html += '<h2 style="font-family:var(--nm-font-h);font-size:38px;font-weight:800;letter-spacing:-0.015em;color:#0f172a;margin:0 0 12px;line-height:1.15">진입 조건 · 출국 라인</h2>';
-    html += '<p style="font-size:18px;color:var(--nm-text-3);font-weight:400;font-style:italic;margin:0">시기는 부차 · 조건이 본질</p>';
-    html += '<div style="height:1px;background:#f1f5f9;margin-top:32px"></div>';
-    html += '</section>';
+    html += pageHeader('Nomad Gate', '진입 조건 · 출국 라인', '시기는 부차 · 조건이 본질');
 
     // 3 metric cards
     html += '<section class="nm-grid nm-grid-3" style="margin-bottom:48px;gap:24px">';
@@ -1705,14 +1696,8 @@ window.NOMAD_PAGES = (function(){
       'D': 'DEPARTURE',
     };
 
-    // Hero — 폰트 축소 + 설명문 제거
-    html += '<section style="padding:32px 0 40px;position:relative;overflow:hidden">';
-    html += '<div style="position:absolute;top:50%;right:-40px;transform:translateY(-50%);width:340px;height:340px;background:rgba(124,58,237,0.06);border-radius:50%;filter:blur(50px);z-index:0"></div>';
-    html += '<div style="position:relative;z-index:1;max-width:880px">';
-    html += '<span style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:14px">Strategic Roadmap</span>';
-    html += '<h1 style="font-family:var(--nm-font-h);font-size:clamp(28px, 4vw, 40px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#0f172a;margin:0">The Backward Plan</h1>';
-    html += '</div>';
-    html += '</section>';
+    // Hero — 통일 헤더
+    html += pageHeader('Backward Plan', 'The Backward Plan', '4 Phases · 출국 역산 전략 로드맵');
 
     // Editorial Vertical Timeline (zigzag)
     html += '<section style="position:relative;padding-bottom:64px">';
@@ -2003,26 +1988,19 @@ window.NOMAD_PAGES = (function(){
 
     html += '<div class="stay-wrap">';
 
-    // ────── Hero ──────
-    html += '<header style="margin-bottom:64px">';
-    html += '<p class="stay-eyebrow">Global Expedition Plan</p>';
-    html += '<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end">';
-    html += '<div>' +
-      '<h2 class="stay-title">Stay Channels</h2>' +
-      '<p class="stay-subtitle">도시별 숙소 채널 전략</p>' +
-      '<p class="stay-tagline">Nomadic Housing · Local Specialists · Legal Compliance</p>' +
+    // ────── 통일된 페이지 헤더 ──────
+    html += pageHeader('Stay Channels', '도시별 숙소 채널 전략', 'Nomadic Housing · Local Specialists · Legal Compliance');
+
+    // ────── Phase 메트릭 ──────
+    html += '<header style="margin-bottom:64px;display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-end">';
+    html += '<div class="stay-metric">' +
+      '<span class="stay-metric-label">Europe Phase</span>' +
+      '<span class="stay-metric-value">10 Cities</span>' +
     '</div>';
-    html += '<div style="display:flex;gap:16px;flex-wrap:wrap">' +
-      '<div class="stay-metric">' +
-        '<span class="stay-metric-label">Europe Phase</span>' +
-        '<span class="stay-metric-value">10 Cities</span>' +
-      '</div>' +
-      '<div class="stay-metric">' +
-        '<span class="stay-metric-label">Global Phase</span>' +
-        '<span class="stay-metric-value">6 Cities</span>' +
-      '</div>' +
+    html += '<div class="stay-metric">' +
+      '<span class="stay-metric-label">Global Phase</span>' +
+      '<span class="stay-metric-value">6 Cities</span>' +
     '</div>';
-    html += '</div>';
     html += '</header>';
 
     // ────── Single-column Main Content ──────
@@ -2399,19 +2377,8 @@ window.NOMAD_PAGES = (function(){
 
     html += '<div class="ne-wrap">';
 
-    // ════════ Hero ════════
-    html += '<section class="ne-hero">';
-    html += '<div>' +
-      '<span class="ne-eyebrow">Essential Guide · 2028 Departure</span>' +
-      '<h2 class="ne-title">Nomad Essentials:<br/>Tools &amp; Community</h2>' +
-      '<p class="ne-lede">디지털 노마드의 1년 — 자유롭지만 치밀한 준비. 전 세계 어디서든 생산성을 유지하고 현지인처럼 생활하기 위해 선별된 최고의 툴과 커뮤니티 가이드.</p>' +
-    '</div>';
-    html += '<div class="ne-hero-image">' +
-      '<span class="badge">DEPARTURE 2028.6</span>' +
-      '<span class="material-symbols-outlined icon">travel_explore</span>' +
-      '<div class="ne-overlay"></div>' +
-    '</div>';
-    html += '</section>';
+    // ════════ 통일된 페이지 헤더 ════════
+    html += pageHeader('Nomad Essentials', 'Tools & Community', '디지털 노마드의 1년 — 자유롭지만 치밀한 준비를 위한 툴과 커뮤니티 가이드');
 
     // ════════ Sections ════════
     html += '<div class="ne-sections">';
@@ -3609,20 +3576,14 @@ window.NOMAD_PAGES = (function(){
       { num:6, when:'입국 30일 이내', stage:'AIMA 등록',         title:'통합이주망명청',           text:'aima.gov.pt · (+351) 217-115-000', isFinal:true },
     ];
 
-    // ════════ SECTION 1 · Hero Header ════════
-    html += '<div class="nm-page-header" style="padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;color:var(--nm-primary);font-family:var(--nm-font-h);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px">' +
-      '<span class="material-symbols-outlined" style="font-size:16px">flight_takeoff</span>' +
-      'Immigration & Residency' +
-    '</div>';
-    html += '<h1 style="font-family:var(--nm-font-h);font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.15;margin-bottom:14px">포르투갈 워킹홀리데이 · Visto de Residência</h1>';
-    html += '<p style="font-size:15px;color:var(--nm-text-2);line-height:1.6;max-width:780px;margin-bottom:18px">1년 베이스캠프 비자 — 셰겐 카운트 회피 + 복수 입출국 + 노마드 거점 확보. 200명 연간 쿼터 안에서 누리 1년 동선의 핵심 인프라.</p>';
-    // 누리 자격 inline pill
-    html += '<div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#F5F3FF;color:var(--nm-primary);border-radius:99px;font-family:var(--nm-font-h);font-size:13px;font-weight:700">' +
+    // ════════ 통일된 페이지 헤더 ════════
+    html += pageHeader('Working Holiday', '포르투갈 워킹홀리데이 · Visto de Residência',
+      '1년 베이스캠프 비자 — 셰겐 카운트 회피 + 복수 입출국 + 노마드 거점 확보');
+    // 누리 자격 inline pill (헤더 아래)
+    html += '<div style="margin-bottom:32px"><div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#F5F3FF;color:var(--nm-primary);border-radius:99px;font-family:var(--nm-font-h);font-size:13px;font-weight:700">' +
       '<span class="material-symbols-outlined" style="font-size:16px;color:#15803d">check_circle</span>' +
       '누리 1995.11.2생 · 2028.6 출국 시 만 32세 · 자격 OK' +
-    '</div>';
-    html += '</div>';
+    '</div></div>';
 
     // ════════ SECTION 2 · 8/4 split — Visa Overview + Quick Facts ════════
     html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
@@ -4251,21 +4212,15 @@ window.NOMAD_PAGES = (function(){
       statusBg = '#F5F3FF'; statusColor = 'var(--nm-primary)';
     }
 
-    // ════════ SECTION 1 · Hero Header (좌 타이틀 + 우 status) ════════
-    html += '<div class="nm-page-header" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
-    html += '<div>' +
-      '<div style="display:flex;align-items:center;gap:8px;color:var(--nm-primary);font-family:var(--nm-font-h);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:12px">' +
-        '<span class="material-symbols-outlined" style="font-size:16px">luggage</span>' +
-        'Packing List' +
+    // ════════ 통일된 페이지 헤더 + Status pill ════════
+    html += pageHeader('Packing List', 'Master Packing List',
+      '장기 노마드 정밀 인벤토리 · 캐리어 28인치 23kg + 백팩 8-10kg + 휴대 5kg');
+    html += '<div style="margin-bottom:32px;display:flex;justify-content:flex-end">' +
+      '<div style="background:#F5F3FF;padding:14px 20px;border-radius:12px;display:flex;align-items:center;gap:12px">' +
+        '<span style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-deep-indigo);text-transform:uppercase;letter-spacing:0.08em">Status</span>' +
+        '<span style="background:' + statusBg + ';color:' + statusColor + ';padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase">' + statusLabel + '</span>' +
       '</div>' +
-      '<h1 style="font-family:var(--nm-font-h);font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.15;margin-bottom:10px">Master Packing List</h1>' +
-      '<p style="font-size:14px;color:var(--nm-text-2);line-height:1.5;max-width:680px;margin:0">장기 노마드 정밀 인벤토리 · 1년 모빌리티 + 글쓰기/디자인 양립. 캐리어 28인치 23kg + 백팩 8-10kg + 휴대 5kg.</p>' +
     '</div>';
-    html += '<div style="background:#F5F3FF;padding:14px 20px;border-radius:12px;display:flex;align-items:center;gap:12px;flex-shrink:0">' +
-      '<span style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-deep-indigo);text-transform:uppercase;letter-spacing:0.08em">Status</span>' +
-      '<span style="background:' + statusBg + ';color:' + statusColor + ';padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase">' + statusLabel + '</span>' +
-    '</div>';
-    html += '</div>';
 
     // ════════ SECTION 2 · 짐 철학 3 metric ════════
     html += '<div class="nm-grid nm-grid-3" style="margin-bottom:32px">';
