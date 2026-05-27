@@ -6015,7 +6015,173 @@
     } catch(e) { alert('삭제 실패'); }
   }
 
+  // ════════════════════════════════════════════════════════════════════
+  // 항공편 추천 큐레이션 (Google Flights · Skyscanner · Trip.com 링크)
+  // 가격은 1인 왕복/편도 기준 만원, 시즌·시점에 따라 변동
+  // ════════════════════════════════════════════════════════════════════
+  var _FLIGHT_RECS = {
+    '2027 덴마크&스웨덴': {
+      outbound: {
+        label: '🛫 출국 · 인천(ICN) → 코펜하겐(CPH)',
+        date: '2027-05-12',
+        from: 'ICN', to: 'CPH', fromName: 'Seoul Incheon', toName: 'Copenhagen',
+        options: [
+          { airline:'SAS Scandinavian (SK)', flightNo:'SK936', type:'직항',
+            schedule:'ICN 23:45 → CPH 06:05 (+1)', duration:'11H 20M',
+            stops:'0회 (직항)', price:'₩130~180만',
+            why:'유일한 직항 + 야간 비행 (자연스러운 적응). SAS Eurobonus 마일 한국 대한항공 환승 가능' },
+          { airline:'Korean Air (KE)', flightNo:'KE925', type:'직항',
+            schedule:'ICN 12:55 → CPH 17:10', duration:'11H 15M',
+            stops:'0회 (직항)', price:'₩150~210만',
+            why:'주간 비행, 도착 후 저녁 일정 가능. 한국 출국 편함. 항공사 신뢰 + 마일' },
+          { airline:'Finnair (AY)',  flightNo:'AY42 + AY667', type:'1회 경유 (헬싱키)',
+            schedule:'ICN → HEL → CPH', duration:'15~17H',
+            stops:'1회 (HEL 1.5H)', price:'₩90~140만',
+            why:'경유 짧음 + 가격 저렴. 헬싱키 공항 깔끔. 발틱 가는 사람한테 인기' },
+        ],
+      },
+      ret: {
+        label: '🛬 귀국 · 스톡홀름(ARN) → 인천(ICN)',
+        date: '2027-05-22',
+        from: 'ARN', to: 'ICN', fromName: 'Stockholm Arlanda', toName: 'Seoul Incheon',
+        options: [
+          { airline:'Finnair (AY)', flightNo:'AY808 + AY041', type:'1회 경유 (헬싱키)',
+            schedule:'ARN 19:30 → HEL 21:30 → ICN 13:30 (+1)', duration:'14~15H',
+            stops:'1회 (HEL 1.5H)', price:'₩100~160만',
+            why:'<strong>1순위.</strong> ARN 직항 사실상 없음. HEL 경유가 가장 짧음. 일정상 18:30 출발 편 적합' },
+          { airline:'SAS (SK)', flightNo:'SK985 + KE/OZ', type:'1회 경유 (코펜하겐 또는 프랑크푸르트)',
+            schedule:'ARN → CPH/FRA → ICN', duration:'15~18H',
+            stops:'1회', price:'₩120~180만',
+            why:'스타얼라이언스 마일 사용 가능. 코펜하겐 경유면 짧음 (1H)' },
+          { airline:'Lufthansa (LH)', flightNo:'LH2417 + LH712', type:'1회 경유 (프랑크푸르트)',
+            schedule:'ARN → FRA → ICN', duration:'16~18H',
+            stops:'1회 (FRA 2H)', price:'₩130~190만',
+            why:'경유시간 여유. FRA 라운지 좋음 (한국인 라운지 별도)' },
+        ],
+      },
+    },
+    '2027 캐나다 여행': {
+      outbound: {
+        label: '🛫 출국 · 인천(ICN) → 몬트리올(YUL)',
+        date: '2027-09-26',
+        from: 'ICN', to: 'YUL', fromName: 'Seoul Incheon', toName: 'Montréal',
+        options: [
+          { airline:'Korean Air (KE)', flightNo:'KE073', type:'직항',
+            schedule:'ICN 09:50 → YUL 11:35 (같은날)', duration:'13H 45M',
+            stops:'0회 (직항)', price:'₩180~250만',
+            why:'<strong>1순위.</strong> 도착 후 시차 적응 풀데이 가능. 한국 출국·서비스 편함' },
+          { airline:'Air Canada (AC)', flightNo:'AC064', type:'직항',
+            schedule:'ICN 21:10 → YUL 21:50 (같은날)', duration:'14H',
+            stops:'0회 (직항)', price:'₩170~240만',
+            why:'야간 비행. 도착 후 호텔 직행 + 다음날 풀가동. 5-Yr corp. perk 사용 시 추천' },
+          { airline:'Asiana → 경유', flightNo:'OZ→파트너', type:'1회 경유',
+            schedule:'ICN → 시카고/뉴욕 → YUL', duration:'17~20H',
+            stops:'1회', price:'₩130~190만',
+            why:'경유 길지만 가격 저렴. 5-Yr corp. perk 항공권 보조금 적용 시 가성비 극대' },
+        ],
+      },
+      ret: {
+        label: '🛬 귀국 · 토론토(YYZ) → 인천(ICN)',
+        date: '2027-10-05',
+        from: 'YYZ', to: 'ICN', fromName: 'Toronto Pearson', toName: 'Seoul Incheon',
+        options: [
+          { airline:'Korean Air (KE)', flightNo:'KE074', type:'직항',
+            schedule:'YYZ 22:30 → ICN 05:00 (+2)', duration:'14H 30M',
+            stops:'0회 (직항)', price:'₩180~250만',
+            why:'<strong>1순위.</strong> 야간 비행으로 도착 일찍, 다음날 출근 가능 (월요일 도착)' },
+          { airline:'Asiana (OZ)', flightNo:'OZ262', type:'직항',
+            schedule:'YYZ 23:45 → ICN 06:25 (+2)', duration:'15H',
+            stops:'0회 (직항)', price:'₩170~240만',
+            why:'스타얼라이언스. KE 매진 시 백업 옵션' },
+          { airline:'Air Canada (AC)', flightNo:'AC063', type:'직항',
+            schedule:'YYZ 14:35 → ICN 17:55 (+1)', duration:'14H 20M',
+            stops:'0회 (직항)', price:'₩170~250만',
+            why:'주간 비행. 5-Yr corp. perk 사용 추천. 다음날 저녁 도착 → 화요일 출근' },
+        ],
+      },
+    },
+  };
+
+  // 검색 사이트별 URL 생성
+  function _googleFlightsUrl(from, to, date) {
+    // YYYY-MM-DD 그대로 사용
+    var q = encodeURIComponent('Flights from ' + from + ' to ' + to + ' on ' + date);
+    return 'https://www.google.com/travel/flights?q=' + q;
+  }
+  function _skyscannerUrl(from, to, date) {
+    // YYMMDD 형식 (예: 270512)
+    var d = date.replace(/-/g, '').substring(2);
+    return 'https://www.skyscanner.co.kr/transport/flights/' + from.toLowerCase() + '/' + to.toLowerCase() + '/' + d + '/?adultsv2=1';
+  }
+  function _tripcomFlightUrl(from, to, date) {
+    return 'https://kr.trip.com/flights/showfaresearch?dcity=' + from.toLowerCase() +
+      '&acity=' + to.toLowerCase() + '&ddate=' + date + '&class=y&adult=1&allianceid=14887&sid=1621818';
+  }
+
+  function _renderFlightRecs() {
+    var el = document.getElementById('journey-flight-recs');
+    if (!el) return;
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip) { el.style.display = 'none'; return; }
+    var recs = _FLIGHT_RECS[trip.name];
+    if (!recs) { el.style.display = 'none'; return; }
+
+    var html = '<div style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #bfdbfe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">' +
+        '<span class="material-symbols-outlined" style="color:#0369a1;font-size:22px">flight</span>' +
+        '<h4 style="font-family:var(--j-font-h,Manrope);font-size:14px;font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
+        '<span style="font-size:10px;font-weight:600;color:#0284c7;background:#fff;padding:2px 8px;border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
+      '</div>' +
+      '<p style="font-size:11px;color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
+
+    ['outbound', 'ret'].forEach(function(key) {
+      var leg = recs[key];
+      if (!leg) return;
+      html += '<div style="margin-bottom:18px">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#0c4a6e">' + leg.label + '</span>' +
+        '<span style="font-size:10px;font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding:2px 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
+      '</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px">';
+      leg.options.forEach(function(opt, oi) {
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var gflUrl = _googleFlightsUrl(leg.from, leg.to, leg.date);
+        var skyUrl = _skyscannerUrl(leg.from, leg.to, leg.date);
+        var tripUrl = _tripcomFlightUrl(leg.from, leg.to, leg.date);
+        html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+          rankBadge +
+          '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
+            '<h5 style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
+            '<span style="font-size:10px;font-weight:600;color:#0284c7">' + opt.type + '</span>' +
+            '<span style="font-size:10px;color:#9ca3af">·</span>' +
+            '<span style="font-size:11px;font-weight:700;color:#0f172a">' + opt.duration + '</span>' +
+            '<span style="font-size:10px;color:#9ca3af">·</span>' +
+            '<span style="font-size:11px;font-weight:700;color:#0c4a6e">' + opt.price + '</span>' +
+          '</div>' +
+          '<p style="font-size:11px;color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
+          '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
+          '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
+            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">flight</span>Google</a>' +
+            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">search</span>Skyscanner</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>Trip</a>' +
+          '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>';
+    el.innerHTML = html;
+    el.style.display = '';
+  }
+
   function renderJourneyFlights() {
+    // 항공편 추천 섹션 (큐레이션 있는 trip만 표시)
+    _renderFlightRecs();
+
     var container = document.getElementById('journey-flight-list');
     var totalEl = document.getElementById('journey-flight-total');
     if (!container) return;
