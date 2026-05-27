@@ -5739,9 +5739,9 @@
       background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
     }
     @media (min-width: 1024px) {
-      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 - 세로 더 줄임 */
+      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 - 2/3 크기 */
       #page-journey .j-hero-body { align-items: stretch; }
-      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 280px; }
+      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 190px; }
     }
     #page-journey .j-hero-image-src {
       position: absolute;
@@ -6045,14 +6045,15 @@
     #page-journey .j-voyage-map {
       position: relative;
       flex: 1;
-      min-height: 180px;
+      min-height: 120px;
       background: var(--j-surface-container);
       overflow: hidden;
     }
     #page-journey .j-voyage-map img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background: var(--j-surface-container);
     }
     #page-journey .j-voyage-map-placeholder {
       position: absolute;
