@@ -867,7 +867,7 @@ window.NOMAD_PAGES = (function(){
         return s;
       }
 
-      function renderBudgetBlock(cityKr, sec, idx) {
+      function renderBudgetBlock(cityKr, sec, idx, stayKrwManOpt) {
         // rows를 통합 4-tuple로 정규화
         var rows = [];
         var totalAmt = '', totalKrw = '';
@@ -889,18 +889,27 @@ window.NOMAD_PAGES = (function(){
             totalKrw = stripStrong(sec.footer[3]);
           }
         }
-        if (rows.length === 0) return '';
+        if (rows.length === 0 && !stayKrwManOpt) return '';
 
-        var titleSuffix = sec.title ? ' · ' + sec.title : '';
+        // 숙소 row를 맨 앞에 prepend (해당 블록에 stay 들어가는 경우만)
+        if (stayKrwManOpt) {
+          rows = [{ name:'숙소', sub:'Stay · 월 임대료 · 워홀 베이스', amt:'—', krw:stayKrwManOpt + '만', isStay:true }].concat(rows);
+        }
+
+        // 제목에서 "(숙소 제외)" 같은 suffix 제거
+        var cleanTitle = (sec.title || '').replace(/\s*\([^)]*숙소[^)]*\)\s*/g, '').replace(/\s*\([^)]*stay[^)]*\)\s*/gi, '').trim();
+        var titleSuffix = cleanTitle ? ' · ' + cleanTitle : '';
         var out = '<div style="margin-top:' + (idx === 0 ? '0' : '24px') + '">';
         out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--nm-outline-variant);gap:12px;flex-wrap:wrap">' +
           '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-deep-indigo);margin:0">📍 ' + cityKr + titleSuffix + '</p>' +
-          ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size:12px;color:var(--nm-text-3);margin:0">합계 ' + prefixAmt(totalAmt, cur) + (totalKrw ? ' / ' + prefixKrw(totalKrw) : '') + '</p>' : '') +
+          ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size:12px;color:var(--nm-text-3);margin:0">생활비 합계 ' + prefixAmt(totalAmt, cur) + (totalKrw ? ' / ' + prefixKrw(totalKrw) : '') + '</p>' : '') +
         '</div>';
         out += '<table style="width:100%;border-collapse:collapse">';
         rows.forEach(function(r) {
-          out += '<tr>' +
-            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">' + r.name + '</td>' +
+          var rowBg = r.isStay ? 'background:#F5F3FF' : '';
+          var nameColor = r.isStay ? 'color:var(--nm-primary)' : 'color:var(--nm-on-surface)';
+          out += '<tr style="' + rowBg + '">' +
+            '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size:13px;font-weight:700;' + nameColor + '">' + r.name + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;font-size:12px;color:var(--nm-text-2)">' + r.sub + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + prefixAmt(r.amt, cur) + '</td>' +
             '<td style="padding:9px 10px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:600;color:var(--nm-primary);white-space:nowrap">' + prefixKrw(r.krw) + '</td>' +
@@ -914,19 +923,8 @@ window.NOMAD_PAGES = (function(){
         return out;
       }
 
-      // ── 1. 숙소 row (맨 위) ──
-      var stayKr = b.stay ? '₩' + b.stay + '만' : '';
-      if (stayKr) {
-        inner += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#fff;border:1px solid var(--nm-outline-variant);border-radius:8px;margin-bottom:18px">' +
-          '<div style="display:flex;align-items:center;gap:10px">' +
-            '<span class="material-symbols-outlined" style="font-size:18px;color:var(--nm-primary)">hotel</span>' +
-            '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-on-surface);margin:0">숙소 (Stay)' + (b.city ? '<span style="font-size:12px;color:var(--nm-text-3);font-weight:500;margin-left:8px">· ' + b.city + '</span>' : '') + '</p>' +
-          '</div>' +
-          '<p style="font-family:var(--nm-font-h);font-size:15px;font-weight:700;color:var(--nm-deep-indigo);margin:0">' + stayKr + '</p>' +
-        '</div>';
-      }
-
-      // ── 2. 도시별 생활비 분해 ──
+      // 첫 블록에만 stay 행 prepend (다중 도시일 때 한 번만)
+      var stayInjected = false;
       cityIds.forEach(function(cid) {
         var city = ALL_CITIES[cid];
         if (!city || !city.sections) return;
@@ -936,15 +934,17 @@ window.NOMAD_PAGES = (function(){
           if (!s || !s.rows) return;
           var isBudget = (s.type === 'budget') || (s.type === 'table' && s.icon === 'payments');
           if (!isBudget) return;
-          var rendered = renderBudgetBlock(cityKr, s, blockIdx);
+          var stayThisBlock = (!stayInjected && b.stay) ? b.stay : null;
+          var rendered = renderBudgetBlock(cityKr, s, blockIdx, stayThisBlock);
           if (rendered) {
             inner += rendered;
             anyFound = true;
             blockIdx++;
+            if (stayThisBlock) stayInjected = true;
           }
         });
       });
-      if (!anyFound && !stayKr) {
+      if (!anyFound) {
         inner = '<p style="font-size:12px;color:var(--nm-text-3);text-align:center;padding:16px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
       }
 
