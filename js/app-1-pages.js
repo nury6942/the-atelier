@@ -18312,10 +18312,51 @@
     return stored ? JSON.parse(stored) : {};
   }
 
+  // ===== Cross-device sync (Firestore englishMeta/state) =====
+  // - 매번 load 시 FB와 LS를 union 합집합 → LS·FB 둘 다 최신화
+  // - 매 변경 시 LS 업데이트 후 FB로 push
+  async function loadEnglishMetaFromFirebase() {
+    try {
+      var docRef = db.collection('englishMeta').doc('state');
+      var doc = await docRef.get();
+      var lsDeleted = getEnglishDeletedDefaults();
+      var lsStatus = getEnglishStatusOverrides();
+      var fbDeleted = (doc.exists && doc.data().deletedDefaults) || {};
+      var fbStatus = (doc.exists && doc.data().statusOverrides) || {};
+      // Union (deletedDefaults는 모든 디바이스의 삭제 합집합)
+      var mergedDeleted = Object.assign({}, fbDeleted, lsDeleted);
+      // statusOverrides는 FB 우선 (가장 최근 중앙 저장 상태)
+      var mergedStatus = Object.assign({}, lsStatus, fbStatus);
+      // LS 갱신
+      localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(mergedDeleted));
+      localStorage.setItem(LS_ENGLISH_STATUS_KEY, JSON.stringify(mergedStatus));
+      // FB와 다르면 FB에도 push
+      var fbStr = JSON.stringify({d: fbDeleted, s: fbStatus});
+      var mergedStr = JSON.stringify({d: mergedDeleted, s: mergedStatus});
+      if (fbStr !== mergedStr) {
+        await docRef.set({
+          deletedDefaults: mergedDeleted,
+          statusOverrides: mergedStatus,
+          _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    } catch(e) { console.warn('English meta load error:', e); }
+  }
+  async function saveEnglishMetaToFirebase() {
+    try {
+      await db.collection('englishMeta').doc('state').set({
+        deletedDefaults: getEnglishDeletedDefaults(),
+        statusOverrides: getEnglishStatusOverrides(),
+        _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e) { console.warn('English meta save error:', e); }
+  }
+
   function setEnglishDeletedDefault(date) {
     var d = getEnglishDeletedDefaults();
     d[date] = true;
     localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(d));
+    saveEnglishMetaToFirebase(); // FB sync (fire-and-forget)
   }
 
   // 복구용 (콘솔에서 호출 가능)
@@ -18323,6 +18364,7 @@
     var d = getEnglishDeletedDefaults();
     delete d[date];
     localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(d));
+    saveEnglishMetaToFirebase(); // FB sync
     if (typeof loadEnglish === 'function') loadEnglish();
   };
   window._listDeletedEnglishDefaults = function() {
@@ -18334,6 +18376,7 @@
     var overrides = getEnglishStatusOverrides();
     overrides[date] = status;
     localStorage.setItem(LS_ENGLISH_STATUS_KEY, JSON.stringify(overrides));
+    saveEnglishMetaToFirebase(); // FB sync
     // englishData 내 해당 날짜 행 상태도 즉시 반영
     englishData.forEach(function(row) {
       if (row[1] === date) row[2] = status;
@@ -18436,6 +18479,7 @@
     await fetchGbpKrwRate();
     await migrateEnglishFee30();
     await cleanupTestReviewData();
+    await loadEnglishMetaFromFirebase(); // cross-device sync: 삭제·상태 메타 동기화
     document.getElementById('english-loading').style.display = 'flex';
     document.getElementById('english-table-wrap').style.display = 'none';
     document.getElementById('english-empty').style.display = 'none';
