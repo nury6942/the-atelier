@@ -5975,6 +5975,86 @@
     } catch(e) { alert('저장에 실패했어요.'); }
   }
 
+  // ===== 항공사 로고 (gstatic CDN, 항공사명 → IATA 매핑) =====
+  var AIRLINE_IATA = {
+    // 한국
+    'korean air':'KE', '대한항공':'KE', 'kal':'KE',
+    'asiana':'OZ', '아시아나':'OZ',
+    'jeju air':'7C', '제주항공':'7C',
+    'jin air':'LJ', '진에어':'LJ',
+    "t'way":'TW', 'tway':'TW', 't way':'TW', '티웨이':'TW',
+    'air busan':'BX', '에어부산':'BX',
+    'air seoul':'RS', '에어서울':'RS',
+    // 유럽 메이저
+    'lufthansa':'LH', '루프트한자':'LH',
+    'air france':'AF', '에어프랑스':'AF',
+    'klm':'KL',
+    'british airways':'BA', '브리티시 에어웨이':'BA',
+    'iberia':'IB', '이베리아':'IB',
+    'sas':'SK', 'scandinavian':'SK', '스칸디나비아':'SK',
+    'finnair':'AY', '핀에어':'AY',
+    'norwegian':'DY', '노르위지안':'DY',
+    'turkish':'TK', '터키항공':'TK',
+    'ita airways':'AZ', 'alitalia':'AZ', 'ita':'AZ',
+    'aer lingus':'EI', '에어 링거스':'EI',
+    'tap':'TP', 'tap portugal':'TP', 'tap air portugal':'TP',
+    'lot':'LO', 'lot polish':'LO',
+    // 유럽 저가
+    'ryanair':'FR', '라이언에어':'FR',
+    'easyjet':'U2', 'easy jet':'U2', '이지젯':'U2',
+    'wizz air':'W6', 'wizz':'W6', '위즈':'W6',
+    'vueling':'VY',
+    'transavia':'HV',
+    // 중동
+    'emirates':'EK', '에미레이트':'EK',
+    'qatar':'QR', '카타르':'QR',
+    'etihad':'EY', '에티하드':'EY',
+    // 아시아
+    'singapore':'SQ', '싱가포르 에어':'SQ',
+    'japan airlines':'JL', 'jal':'JL', '일본항공':'JL',
+    'ana':'NH', 'all nippon':'NH',
+    'air china':'CA', '중국국제':'CA',
+    'china airlines':'CI',
+    'eva':'BR', 'eva air':'BR', '에바항공':'BR',
+    'cathay':'CX', '캐세이':'CX',
+    'thai':'TG', '타이항공':'TG',
+    // 오세아니아
+    'qantas':'QF', '콴타스':'QF',
+    'jetstar':'JQ', '젯스타':'JQ',
+    'virgin australia':'VA',
+    'air new zealand':'NZ', '에어 뉴질랜드':'NZ',
+    // 북미
+    'united':'UA', '유나이티드':'UA',
+    'delta':'DL', '델타':'DL',
+    'american airlines':'AA', 'american':'AA', '아메리칸':'AA',
+    'air canada':'AC', '에어캐나다':'AC',
+    'westjet':'WS', '웨스트젯':'WS',
+    'alaska':'AS', '알래스카 에어':'AS',
+    'jetblue':'B6',
+  };
+  function airlineIataFor(name, flightNum) {
+    var s = String(name || '').toLowerCase().trim();
+    if (s) {
+      // 우선 정확히 일치, 그다음 포함 검사
+      if (AIRLINE_IATA[s]) return AIRLINE_IATA[s];
+      for (var k in AIRLINE_IATA) {
+        if (s.indexOf(k) >= 0) return AIRLINE_IATA[k];
+      }
+    }
+    // fallback: 편명 2글자 prefix (TW403 → TW)
+    var fn = String(flightNum || '').toUpperCase();
+    var m2 = fn.match(/^([A-Z]{2})\d/);
+    if (m2) return m2[1];
+    return '';
+  }
+  function airlineLogoHTML(name, flightNum) {
+    var iata = airlineIataFor(name, flightNum);
+    if (!iata) return '<span class="material-symbols-outlined">flight_takeoff</span>';
+    var url = 'https://www.gstatic.com/flights/airline_logos/70px/' + iata + '.png';
+    // 로드 실패 시 비행기 아이콘으로 폴백
+    return '<img src="' + url + '" alt="' + (name||iata) + '" style="width:38px;height:38px;object-fit:contain;border-radius:6px;background:#fff" onerror="this.outerHTML=\'<span class=\\\'material-symbols-outlined\\\'>flight_takeoff</span>\'"/>';
+  }
+
   function flightCard(f, deleteHtml) {
     var routeParts = (f.route||f.description||'').split('→').map(function(s){return s.trim();});
     var depCode = routeParts[0] ? routeParts[0].match(/\(([A-Z]{3})\)/)||[] : [];
@@ -6027,7 +6107,7 @@
     return '<div class="j-trip-card">' +
       '<div class="j-flight-card">' +
         '<div class="j-flight-main">' +
-          '<div class="j-trip-card-icon"><span class="material-symbols-outlined">flight_takeoff</span></div>' +
+          '<div class="j-trip-card-icon">' + airlineLogoHTML(f.airline || f.title || '', f.flight || f.city || '') + '</div>' +
           '<div class="j-flight-info">' +
             '<div class="j-flight-name-row">' +
               '<p class="j-trip-name">' + (f.airline || f.title || '') + '</p>' +
