@@ -5205,6 +5205,98 @@
       // Sandhamn 1박 제거 — Finnair 1순위 항공편 (5/21 19:30 ARN 출발) 매칭상 일정 단축
       // 박솔름은 다음 스톡홀름 방문 때 (Drottningholm은 5/21 오전에 대체)
     ],
+    '2027 캐나다 여행': [
+      {
+        city: 'Montréal', cityKr: '몬트리올', nights: 2, budget: '22만/박',
+        checkIn: '2027-09-24', checkOut: '2027-09-26',
+        options: [
+          { name:'Hotel Le Germain Montréal', type:'디자인 부띠크', price:'₩22~32만',
+            location:'Vieux-Montréal · 구시가지', rating:'★4.7',
+            why:'Le Germain = 캐나디안 디자인 부띠크 체인. Citadines급 실용 + Casa Camper급 디자인. Old Montreal 도보권. 1순위' },
+          { name:'Hotel William Gray', type:'부띠크', price:'₩22~32만',
+            location:'Old Port · St-Paul St', rating:'★4.6',
+            why:'19세기 건물 + 모던 인테리어. 옥상 바 + 사우나. 누리 디자이너 안목 매칭' },
+          { name:'Hôtel Birks Montréal', type:'헤리티지 5★', price:'₩30~45만',
+            location:'Phillips Square · 다운타운', rating:'★4.7',
+            why:'1894년 보석상 건물을 럭셔리 호텔로. 5-Yr corp. perk 사용 시 추천 (회사 보조)' },
+        ],
+      },
+      {
+        city: 'Charlevoix', cityKr: '샤를부아', nights: 1, budget: '15만',
+        checkIn: '2027-09-26', checkOut: '2027-09-27',
+        options: [
+          { name:'Hôtel & Spa Le Germain Charlevoix', type:'디자인 농장 호텔', price:'₩28~38만',
+            location:'Baie-Saint-Paul · 산뷰', rating:'★4.7',
+            why:'<strong>1순위.</strong> Le Germain Charlevoix = 농장 부지 위 부띠크. 단풍 절경 산뷰. 예산 살짝 초과지만 1박 특별 경험' },
+          { name:'Hôtel La Ferme', type:'헤리티지 부띠크', price:'₩22~32만',
+            location:'Baie-Saint-Paul · 마을 중심', rating:'★4.6',
+            why:'1900년대 농장 5채를 호텔로. 로컬 식재료 다이닝. 누리 작가 자산' },
+          { name:'Auberge des 3 Canards', type:'산뷰 부띠크', price:'₩18~28만',
+            location:'Pointe-au-Pic · St. Lawrence 강뷰', rating:'★4.5',
+            why:'강 + 단풍 풍경. 클래식 캐나디안 인. 예산 딱 맞음' },
+        ],
+      },
+      {
+        city: 'Québec City', cityKr: '퀘벡 시티', nights: 2, budget: '25만/박',
+        checkIn: '2027-09-27', checkOut: '2027-09-29',
+        options: [
+          { name:'Hôtel Le Germain Québec', type:'디자인 부띠크', price:'₩22~32만',
+            location:'Quartier Petit Champlain · 구도시', rating:'★4.7',
+            why:'<strong>1순위.</strong> Le Germain 퀘벡 본점. 17세기 건물 + 모던 부띠크. 구도시 핵심 위치. Le Germain 체인 패턴' },
+          { name:'Hôtel 71', type:'디자인 호텔', price:'₩22~32만',
+            location:'Old Port · 강가', rating:'★4.6',
+            why:'19세기 은행 건물 + 모던 인테리어. 강뷰 + 구도시 도보권' },
+          { name:'Fairmont Le Château Frontenac', type:'캐슬 5★', price:'₩40~60만',
+            location:'Old Quebec 상부 · 랜드마크', rating:'★4.7',
+            why:'세계에서 가장 사진 많이 찍힌 호텔. 5-Yr corp. perk 사용 시 인생샷. 평소엔 외관만 봐도 충분' },
+        ],
+      },
+      {
+        city: 'Ottawa', cityKr: '오타와', nights: 1, budget: '18만',
+        checkIn: '2027-09-29', checkOut: '2027-09-30',
+        options: [
+          { name:'Andaz Ottawa ByWard Market', type:'Hyatt 부띠크', price:'₩22~32만',
+            location:'ByWard Market · 의회 도보', rating:'★4.5',
+            why:'<strong>1순위.</strong> Hyatt 부띠크 라인. 옥상 바 (의회 뷰). 마켓 + 다운타운 위치 최적' },
+          { name:'The Metcalfe Hotel', type:'헤리티지 부띠크', price:'₩18~28만',
+            location:'Sparks St · 의회 인근', rating:'★4.5',
+            why:'클래식 부띠크. 의회 도보 5분. 가격 가성비' },
+          { name:'Lord Elgin Hotel', type:'클래식 4★', price:'₩18~28만',
+            location:'Elgin St · 의회 광장 인근', rating:'★4.4',
+            why:'1941년 헤리티지. 의회·국립갤러리 도보. 캐나디안 클래식' },
+        ],
+      },
+      {
+        city: 'Algonquin', cityKr: '알곤퀸', nights: 1, budget: '20만',
+        checkIn: '2027-09-30', checkOut: '2027-10-01',
+        options: [
+          { name:'Killarney Lodge on Lake of Two Rivers', type:'클래식 캐빈', price:'₩22~32만',
+            location:'Algonquin Park 내 호수가', rating:'★4.7',
+            why:'<strong>1순위.</strong> 공원 내 호수 캐빈. 단풍 절정 시기 호숫가 일출 = 누리 작가 자산. 예약 6개월 전 필수' },
+          { name:'Arowhon Pines Resort', type:'럭셔리 캐빈', price:'₩30~50만',
+            location:'Algonquin 깊은 곳 · 카누 출발지', rating:'★4.8',
+            why:'1934년 시작, 캐나디안 자연 럭셔리. 카누·낚시·정찬 포함. 예산 초과지만 1박 가치 있음' },
+          { name:'Bartlett Lodge', type:'보트 접근 캐빈', price:'₩28~38만',
+            location:'Cache Lake · 보트로만 접근', rating:'★4.6',
+            why:'1917년 호숫가 로지. 보트 픽업 = 진정한 wilderness 경험' },
+        ],
+      },
+      {
+        city: 'Toronto', cityKr: '토론토', nights: 1, budget: '20만',
+        checkIn: '2027-10-01', checkOut: '2027-10-02',
+        options: [
+          { name:'The Drake Hotel', type:'인디 디자인 부띠크', price:'₩22~32만',
+            location:'West Queen West · 디자이너 동네', rating:'★4.5',
+            why:'<strong>1순위.</strong> 토론토 인디 신 중심. Casa Camper급 부띠크 + 디자인 매장 거리. 누리 안목 100%' },
+          { name:'1 Hotel Toronto', type:'바이오필릭 럭셔리', price:'₩30~45만',
+            location:'Yorkville · 럭셔리 쇼핑가', rating:'★4.6',
+            why:'Bjork 콜라보 인테리어. 친환경 럭셔리. 5-Yr corp. perk 활용. 공항 가는 길 편함' },
+          { name:'The Annex Hotel', type:'모던 미니멀', price:'₩18~28만',
+            location:'The Annex · 대학가', rating:'★4.5',
+            why:'Moxy급 모던 미니멀. 키오스크 셀프 체크인. 가격 가성비' },
+        ],
+      },
+    ],
   };
 
   function _tripcomSearchUrl(name, city, checkIn, checkOut) {
@@ -6053,40 +6145,40 @@
     '2027 캐나다 여행': {
       outbound: {
         label: '🛫 출국 · 인천(ICN) → 몬트리올(YUL)',
-        date: '2027-09-26',
+        date: '2027-09-24',
         from: 'ICN', to: 'YUL', fromName: 'Seoul Incheon', toName: 'Montréal',
         options: [
           { airline:'Korean Air (KE)', flightNo:'KE073', type:'직항',
-            schedule:'ICN 09:50 → YUL 11:35 (같은날)', duration:'13H 45M',
+            schedule:'ICN 09:50 → YUL 11:35 (같은날 · 금)', duration:'13H 45M',
             stops:'0회 (직항)', price:'₩180~250만',
-            why:'<strong>1순위.</strong> 도착 후 시차 적응 풀데이 가능. 한국 출국·서비스 편함' },
+            why:'<strong>1순위.</strong> 도착 후 풀 오후 가능 (Old Montreal 산책). 한국 출국·서비스 편함. 단 출국일 PTO 필요' },
           { airline:'Air Canada (AC)', flightNo:'AC064', type:'직항',
-            schedule:'ICN 21:10 → YUL 21:50 (같은날)', duration:'14H',
+            schedule:'ICN 21:10 → YUL 21:50 (같은날 · 금)', duration:'14H',
             stops:'0회 (직항)', price:'₩170~240만',
-            why:'야간 비행. 도착 후 호텔 직행 + 다음날 풀가동. 5-Yr corp. perk 사용 시 추천' },
-          { airline:'Asiana → 경유', flightNo:'OZ→파트너', type:'1회 경유',
+            why:'야간 비행. 금요일 정상 근무 후 공항 직행 가능. 도착 다음날 (토)부터 풀가동' },
+          { airline:'Asiana → 경유', flightNo:'OZ→스타얼라이언스 파트너', type:'1회 경유',
             schedule:'ICN → 시카고/뉴욕 → YUL', duration:'17~20H',
             stops:'1회', price:'₩130~190만',
-            why:'경유 길지만 가격 저렴. 5-Yr corp. perk 항공권 보조금 적용 시 가성비 극대' },
+            why:'경유 길지만 가격 저렴. 5-Yr corp. 항공권 보조 적용 시 가성비 극대' },
         ],
       },
       ret: {
         label: '🛬 귀국 · 토론토(YYZ) → 인천(ICN)',
-        date: '2027-10-05',
+        date: '2027-10-02',
         from: 'YYZ', to: 'ICN', fromName: 'Toronto Pearson', toName: 'Seoul Incheon',
         options: [
-          { airline:'Korean Air (KE)', flightNo:'KE074', type:'직항',
-            schedule:'YYZ 22:30 → ICN 05:00 (+2)', duration:'14H 30M',
-            stops:'0회 (직항)', price:'₩180~250만',
-            why:'<strong>1순위.</strong> 야간 비행으로 도착 일찍, 다음날 출근 가능 (월요일 도착)' },
-          { airline:'Asiana (OZ)', flightNo:'OZ262', type:'직항',
-            schedule:'YYZ 23:45 → ICN 06:25 (+2)', duration:'15H',
-            stops:'0회 (직항)', price:'₩170~240만',
-            why:'스타얼라이언스. KE 매진 시 백업 옵션' },
           { airline:'Air Canada (AC)', flightNo:'AC063', type:'직항',
-            schedule:'YYZ 14:35 → ICN 17:55 (+1)', duration:'14H 20M',
+            schedule:'YYZ 14:35 → ICN 17:55 (+1 · 일)', duration:'14H 20M',
             stops:'0회 (직항)', price:'₩170~250만',
-            why:'주간 비행. 5-Yr corp. perk 사용 추천. 다음날 저녁 도착 → 화요일 출근' },
+            why:'<strong>1순위.</strong> 10/3 (일) 17:55 도착 → 사용자 일정 정확 매칭. 5-Yr corp. perk 사용 가장 효율. 일요일 도착으로 월요일 출근 가능' },
+          { airline:'Korean Air (KE)', flightNo:'KE074 (주간편)', type:'직항',
+            schedule:'YYZ 12:55 → ICN 16:40 (+1 · 일)', duration:'14H 45M',
+            stops:'0회 (직항)', price:'₩180~260만',
+            why:'10/3 (일) 도착. KE 마일 사용 시 우선. 항공편 시각 사전 확인 (요일별 시각 다를 수 있음)' },
+          { airline:'Air Canada (AC)', flightNo:'AC061 (경유 옵션)', type:'1회 경유',
+            schedule:'YYZ → 밴쿠버(YVR) → ICN', duration:'15~17H',
+            stops:'1회', price:'₩150~210만',
+            why:'밴쿠버 경유 옵션. 마일 사용 시 또는 직항 매진 시 백업' },
         ],
       },
     },
@@ -6991,6 +7083,203 @@
       }
     } catch (e) {
       console.error('[Enrich] 실패:', e);
+      alert('재구성 중 에러: ' + e.message);
+    }
+  };
+
+  // ════════════════════════════════════════════════════════════════════
+  // 2027 캐나다 여행 Daily Log 정밀화 (Germany&Italy 형식)
+  // 콘솔에서 호출: _enrichCanadaDailyLog()
+  // - 새 날짜: 9/24 출국 → 10/3 인천 도착 (10일)
+  // - KE073 + AC063 1순위 항공편 매칭
+  // - Mont-Tremblant 1박 제거 (8박)
+  // ════════════════════════════════════════════════════════════════════
+  var _CA_DETAILED_LOG = [
+    // ──────── 9/24 (금) Day 0 출국 + 몬트리올 도착 ────────
+    { date:'2027-09-24', time:'06:30', end_time:'07:30', city:'Seoul',     title:'🏠 집 출발 → 인천공항',         description:'KE073 09:50 출발이라 1시간 전 체크인 마감 (08:50). 06:30 집 출발 → 07:30 ICN 도착 권장. PTO 추천.' },
+    { date:'2027-09-24', time:'07:30', end_time:'09:00', city:'Incheon',   title:'🛂 ICN T2 체크인 + 면세',       description:'Korean Air 카운터 (T2). KE 마일 우대 라운지. 짐 부치고 면세점 라스트 쇼핑.' },
+    { date:'2027-09-24', time:'09:50', end_time:'11:35', city:'Incheon→Montréal', title:'✈️ Korean Air KE073 ICN → YUL (직항 13H 45M)', description:'<strong>1순위 항공편.</strong> 같은날 도착 (캐나다 동부 EDT, 한국 -13H). 비행 중 점심 + 영화 + 가벼운 수면.' },
+    { date:'2027-09-24', time:'11:35', end_time:'12:30', city:'Montréal',  title:'🛂 YUL 입국 + 짐 찾기',         description:'캐나다 입국심사 (전자입국 ArriveCAN 사전 등록 가능). 면세 한도 확인.' },
+    { date:'2027-09-24', time:'12:30', end_time:'13:30', city:'Montréal',  title:'🚌 공항 → 시내 (747 버스 또는 우버)', description:'YUL 747 익스프레스 버스 (구도시까지 약 45분, CAD 11). 우버 약 CAD 45. STM 트랜짓 패스 고려.' },
+    { date:'2027-09-24', time:'13:30', end_time:'14:30', city:'Montréal',  title:'🏨 호텔 짐 보관 (체크인 15:00)', description:'Hôtel Le Germain Montréal 등 부띠크. 프론트 짐 맡기고 가벼운 가방만.' },
+    { date:'2027-09-24', time:'14:30', end_time:'16:00', city:'Montréal',  title:'🥪 점심 — Schwartz\'s 또는 La Banquise', description:'몬트리올 클래식. Schwartz = 스모크 미트 샌드위치 (1928년~), La Banquise = 푸틴. CAD 15-20.' },
+    { date:'2027-09-24', time:'16:00', end_time:'18:00', city:'Montréal',  title:'⛪ Vieux-Montréal + Notre-Dame Basilica', description:'올드 몬트리올 산책 + 노트르담 대성당 (CAD 15, 매시간 가이드 투어). 르네상스 건축 + 푸른 스테인드 글래스.' },
+    { date:'2027-09-24', time:'18:00', end_time:'19:00', city:'Montréal',  title:'🛏 호텔 정식 체크인 + 휴식',     description:'15:00 이후 체크인. 시차 -13시간 (한국 23:00) — 잠깐 누워서 30분 휴식.' },
+    { date:'2027-09-24', time:'19:30', end_time:'21:30', city:'Montréal',  title:'🍷 저녁 — Joe Beef 또는 Au Pied de Cochon', description:'Joe Beef = 캐나디안 모던 셰프 다이닝 (Anthony Bourdain 추천), Au Pied de Cochon = 푸아그라 푸틴 등 강력한 캐나디안. CAD 80-150. 예약 필수.' },
+
+    // ──────── 9/25 (토) Day 1 몬트리올 풀데이 ────────
+    { date:'2027-09-25', time:'08:00', end_time:'09:00', city:'Montréal',  title:'☕ 호텔 조식 또는 카페',         description:'Café Olimpico (1970년~), Café Myriade, Pikolo Espresso. 진한 몬트리올 커피.' },
+    { date:'2027-09-25', time:'09:30', end_time:'12:00', city:'Montréal',  title:'🎨 Musée des Beaux-Arts',       description:'몬트리올 미술관 — 캐나디안 + 인디안 아트 + 유럽 클래식. CAD 24. 누리 디자이너 안목 자산.' },
+    { date:'2027-09-25', time:'12:00', end_time:'13:30', city:'Montréal',  title:'🥪 점심 — Marché Jean-Talon',   description:'북미 최대 야외 마켓. 가을 단풍시즌 = 신선한 사과·메이플시럽 시식. 즉석 식사 부스.' },
+    { date:'2027-09-25', time:'13:30', end_time:'15:30', city:'Montréal',  title:'🌳 Mont Royal 산책',            description:'단풍 절정 + 도시 파노라마 뷰. 정상 Belvédère Kondiaronk 도보 30분. 다람쥐 가득.' },
+    { date:'2027-09-25', time:'15:30', end_time:'17:30', city:'Montréal',  title:'🏘 Mile End 동네 산책',         description:'<strong>누리 디자이너 핵심.</strong> 힙스터·작가 동네. Drawn & Quarterly 만화책방, Fairmount Bagel (24h 베이글). 카페 + 빈티지 숍.' },
+    { date:'2027-09-25', time:'17:30', end_time:'19:00', city:'Montréal',  title:'🛍 Saint-Laurent Boulevard',    description:'몬트리올 메인 거리. Roots 플래그십, Aldo, 캐나디안 디자이너 매장.' },
+    { date:'2027-09-25', time:'19:30', end_time:'21:30', city:'Montréal',  title:'🍝 저녁 — Maison Publique',     description:'Mile End 비스트로 (Jamie Oliver 제자 셰프). 캐나디안 + 영국 영향. CAD 60-100.' },
+
+    // ──────── 9/26 (일) Day 2 몬트리올 → 샤를부아 (렌터카 픽업) ────────
+    { date:'2027-09-26', time:'08:00', end_time:'09:00', city:'Montréal',  title:'☕ 호텔 조식 + 체크아웃',        description:'든든히. 운전 + 단풍 드라이브 풀데이.' },
+    { date:'2027-09-26', time:'09:00', end_time:'10:00', city:'Montréal',  title:'🚗 렌터카 픽업 (Europcar/Hertz)', description:'다운타운 또는 공항 지점. 국제운전면허증 필수. 단풍시즌 SUV 추천 (시야 + 짐 공간). 풀커버 보험.' },
+    { date:'2027-09-26', time:'10:00', end_time:'13:30', city:'Montréal→Charlevoix', title:'🛣 운전 몬트리올 → 샤를부아', description:'A-20E → A-40E → Route 138 따라 St. Lawrence 강 따라 약 380km · 3.5시간. <strong>단풍 드라이브 본격 시작.</strong> 도중 휴게소 사진 멈춤.' },
+    { date:'2027-09-26', time:'13:30', end_time:'14:30', city:'Charlevoix', title:'🦞 점심 — Baie-Saint-Paul 카페',  description:'Le Saint-Pub 또는 Mouton Noir. 로컬 사이다 + 캐나디안 수프. 마을 중심 카페 거리.' },
+    { date:'2027-09-26', time:'14:30', end_time:'16:00', city:'Charlevoix', title:'🎨 Baie-Saint-Paul 아트 갤러리 거리', description:'<strong>누리 디자이너 자산.</strong> 30+ 갤러리 (Galerie d\'art Iris 등). Cirque du Soleil 발상지. 캐나디안 풍경화.' },
+    { date:'2027-09-26', time:'16:00', end_time:'17:00', city:'Charlevoix', title:'🏨 Hôtel Le Germain Charlevoix 체크인', description:'농장 부지 위 디자인 부띠크. 단풍 산뷰 발코니. 스파 옵션.' },
+    { date:'2027-09-26', time:'17:00', end_time:'19:00', city:'Charlevoix', title:'🌅 일몰 — Cap-à-l\'Aigle 라이트하우스', description:'St. Lawrence 강 + 단풍 + 일몰. 누리 작가 글감 자산. 차로 20분.' },
+    { date:'2027-09-26', time:'19:00', end_time:'21:00', city:'Charlevoix', title:'🍽 저녁 — Le Germain 다이닝 또는 Le Saint-Pub', description:'호텔 다이닝 = 로컬 농장 식재료 + 큰 와인 셀렉션. 또는 마을 펍 분위기.' },
+
+    // ──────── 9/27 (월) Day 3 샤를부아 → 퀘벡 시티 ────────
+    { date:'2027-09-27', time:'08:00', end_time:'09:30', city:'Charlevoix', title:'☕ 호텔 조식 + 산책',           description:'농장 부지 산책. 새벽 안개 + 단풍 사진.' },
+    { date:'2027-09-27', time:'10:00', end_time:'11:30', city:'Charlevoix→Québec', title:'🛣 운전 샤를부아 → 퀘벡', description:'Route 138 W 따라 약 100km · 1.5시간. 단풍 절경 강변 도로. 도중 Île aux Coudres 페리 옵션.' },
+    { date:'2027-09-27', time:'11:30', end_time:'12:30', city:'Québec City', title:'🏨 호텔 체크인 + 짐 정리',      description:'Hôtel Le Germain Québec 또는 Hôtel 71. Quartier Petit Champlain 부근. 차는 호텔 발레 (도시 운전 비추).' },
+    { date:'2027-09-27', time:'12:30', end_time:'14:00', city:'Québec City', title:'🥘 점심 — Aux Anciens Canadiens', description:'17세기 가옥에서 정통 퀘벡 요리. 사슴고기·뚜르티에르·메이플 디저트. CAD 40-60.' },
+    { date:'2027-09-27', time:'14:00', end_time:'17:00', city:'Québec City', title:'🏰 Vieux-Québec 구도시 + Château Frontenac', description:'<strong>UNESCO.</strong> 북미 유일 성벽 도시. Château Frontenac 외관 (세계 최다 사진 호텔). Dufferin Terrace 산책.' },
+    { date:'2027-09-27', time:'17:00', end_time:'18:30', city:'Québec City', title:'🛒 Quartier Petit Champlain 쇼핑', description:'북미 최오래된 상업 거리 (1608년). 부띠크·캐나디안 디자이너 매장. Place Royale.' },
+    { date:'2027-09-27', time:'19:00', end_time:'21:00', city:'Québec City', title:'🍷 저녁 — Restaurant Légende',  description:'퀘벡 boréal cuisine (북부 자연 식재료). 단풍나무 시럽 디저트 명작. CAD 80-120.' },
+
+    // ──────── 9/28 (화) Day 4 퀘벡 풀데이 + 오를레앙 섬 ────────
+    { date:'2027-09-28', time:'08:00', end_time:'09:00', city:'Québec City', title:'☕ 호텔 조식',                  description:'본격 풀데이 준비.' },
+    { date:'2027-09-28', time:'09:30', end_time:'11:30', city:'Québec City', title:'🏛 Plains of Abraham + 시테델', description:'영국·프랑스 전쟁 사적지. 광활한 공원 + 시테델 (북미 최대 군사 요새).' },
+    { date:'2027-09-28', time:'11:30', end_time:'13:00', city:'Québec City', title:'🚇 푸니쿨라 + Lower Town',      description:'상부도시 → 하부도시 (Place Royale). 푸니쿨라 CAD 5 또는 Breakneck Stairs.' },
+    { date:'2027-09-28', time:'13:00', end_time:'14:30', city:'Québec City', title:'🥖 점심 — Le Lapin Sauté',     description:'Petit Champlain 부띠크 비스트로. 토끼·연어 캐나디안. CAD 30-45.' },
+    { date:'2027-09-28', time:'14:30', end_time:'18:00', city:'Île d\'Orléans', title:'🍎 Île d\'Orléans 일주 드라이브', description:'<strong>가을 핵심.</strong> 다리 건너 1시간 일주. 사과 농장 (Cassis Monna), 와이너리, 메이플 시럽 농장. 단풍 + 강 풍경.' },
+    { date:'2027-09-28', time:'18:00', end_time:'19:00', city:'Québec City', title:'🚗 퀘벡 시티 복귀 + 호텔',       description:'발레에 차 반납. 잠깐 휴식.' },
+    { date:'2027-09-28', time:'19:30', end_time:'21:30', city:'Québec City', title:'🍽 저녁 — Aux 2 Violons',      description:'성벽 안 와인 바 + 비스트로. 작은 식당 분위기. 예약 추천. CAD 60-100.' },
+
+    // ──────── 9/29 (수) Day 5 퀘벡 → 오타와 (Mont-Tremblant 패스, 직행) ────────
+    { date:'2027-09-29', time:'07:30', end_time:'08:30', city:'Québec City', title:'☕ 호텔 조식 + 체크아웃',        description:'장거리 운전일 — 일찍 출발.' },
+    { date:'2027-09-29', time:'08:30', end_time:'13:00', city:'Québec→Ottawa', title:'🛣 운전 퀘벡 → 오타와',        description:'A-40 → A-417 따라 약 470km · 4.5시간. (Mont-Tremblant 패스 — 단풍은 알곤퀸이 더 핵심) 도중 Petit-Saut 휴게소.' },
+    { date:'2027-09-29', time:'13:00', end_time:'14:00', city:'Ottawa',     title:'🥪 점심 — ByWard Market 푸드',  description:'오타와 도착 후 ByWard Market — 1826년 시작 캐나다 최오래된 마켓. 노점 + 푸드코트.' },
+    { date:'2027-09-29', time:'14:00', end_time:'15:00', city:'Ottawa',     title:'🏨 Andaz Ottawa 체크인',        description:'ByWard Market 옆 부띠크. 옥상 바 (의회 뷰).' },
+    { date:'2027-09-29', time:'15:00', end_time:'17:00', city:'Ottawa',     title:'🏛 Parliament Hill + 의회 투어', description:'캐나다 의회 (네오 고딕). 무료 가이드 투어 (45분, 예약 권장). 평화의 탑 + 의회 도서관.' },
+    { date:'2027-09-29', time:'17:00', end_time:'18:30', city:'Ottawa',     title:'🎨 National Gallery of Canada', description:'<strong>누리 디자이너 1순위.</strong> 캐나디안 + 인디안 + 유럽 클래식. Maman 거대 거미 조각 (Louise Bourgeois). 일몰 시간 멋짐. CAD 20.' },
+    { date:'2027-09-29', time:'19:00', end_time:'21:00', city:'Ottawa',     title:'🍷 저녁 — Beckta Dining',        description:'오타와 모던 다이닝. 캐나디안 식재료 + 와인. CAD 80-120.' },
+
+    // ──────── 9/30 (목) Day 6 오타와 → 알곤퀸 [단풍 절정 핵심] ────────
+    { date:'2027-09-30', time:'07:30', end_time:'08:30', city:'Ottawa',     title:'☕ 호텔 조식 + 체크아웃',        description:'단풍 절정 풀데이.' },
+    { date:'2027-09-30', time:'08:30', end_time:'11:30', city:'Ottawa→Algonquin', title:'🛣 운전 오타와 → Algonquin', description:'Highway 17 W + 60 따라 약 270km · 3시간. <strong>단풍 절정 드라이브.</strong> 도중 Pembroke 휴게소.' },
+    { date:'2027-09-30', time:'11:30', end_time:'12:30', city:'Algonquin', title:'🏨 Killarney Lodge 체크인',      description:'<strong>1순위.</strong> Lake of Two Rivers 호숫가 캐빈. 예약 6개월 전 필수.' },
+    { date:'2027-09-30', time:'12:30', end_time:'13:30', city:'Algonquin', title:'🥘 점심 — 로지 다이닝',           description:'대부분 로지는 패키지 식사 포함. 가을 메뉴 (펌프킨 수프 + 와일드 라이스).' },
+    { date:'2027-09-30', time:'13:30', end_time:'16:30', city:'Algonquin', title:'🥾 Algonquin Park 하이킹 — Track and Tower Trail', description:'<strong>핵심 트레일.</strong> 7.7km · 3시간. 정상에서 호수 + 단풍 파노라마. 단풍 절정 시기 최고 사진 포인트.' },
+    { date:'2027-09-30', time:'16:30', end_time:'18:00', city:'Algonquin', title:'🛶 호수 카누 또는 산책',          description:'Killarney Lodge에서 카누 무료 대여. 호수 위에서 단풍 360도. 호숫가 사슴·무스 자주 출현.' },
+    { date:'2027-09-30', time:'18:00', end_time:'19:30', city:'Algonquin', title:'🌅 일몰 + 캠프파이어',           description:'로지 호숫가 일몰. 캠프파이어 (포함). 누리 작가 영감 자산 만점.' },
+    { date:'2027-09-30', time:'19:30', end_time:'21:30', city:'Algonquin', title:'🍽 저녁 — 로지 정찬',             description:'4코스 캐나디안 + 와인. 단풍 시즌 특별 메뉴 (사슴 + 메이플 디저트).' },
+
+    // ──────── 10/1 (금) Day 7 알곤퀸 → 토론토 ────────
+    { date:'2027-10-01', time:'07:00', end_time:'08:30', city:'Algonquin', title:'🌅 일출 호숫가 + 조식',          description:'<strong>1박 가치 핵심.</strong> 일출 안개 + 호수 + 단풍 = 캐나다 1년 노마드 최고 풍경 후보.' },
+    { date:'2027-10-01', time:'09:00', end_time:'12:00', city:'Algonquin→Toronto', title:'🛣 운전 알곤퀸 → 토론토',  description:'Highway 60 → 11 → 400 South 약 280km · 3시간. 도중 Huntsville 또는 Barrie 휴게.' },
+    { date:'2027-10-01', time:'12:00', end_time:'13:30', city:'Toronto',   title:'🥪 점심 — Kensington Market',    description:'토론토 보헤미안 동네 — 빈티지 + 다문화 음식 거리. 자메이카 패티, 멕시칸 타코, 카리브 식당. CAD 15-25.' },
+    { date:'2027-10-01', time:'13:30', end_time:'14:30', city:'Toronto',   title:'🚗 차 반납 + 호텔 체크인',        description:'시내 Hertz/Europcar 또는 공항 반납. The Drake Hotel 등 체크인.' },
+    { date:'2027-10-01', time:'14:30', end_time:'17:00', city:'Toronto',   title:'🏗 CN Tower + Ripley\'s Aquarium', description:'CN Tower (553m, 세계 4번째) — EdgeWalk 옵션. 입장 CAD 43. 또는 Ripley\'s Aquarium 옆.' },
+    { date:'2027-10-01', time:'17:00', end_time:'18:30', city:'Toronto',   title:'🏭 Distillery District',         description:'<strong>누리 디자이너 1순위.</strong> 빅토리안 위스키 증류소 → 갤러리·디자인 매장·카페 거리. 가스등 분위기.' },
+    { date:'2027-10-01', time:'19:00', end_time:'21:30', city:'Toronto',   title:'🍷 저녁 — Alo Restaurant',       description:'토론토 No.1 (캐나다 베스트). 프렌치-캐나디안 8코스 테이스팅. CAD 200+. 예약 1-2개월 전. 대안: Edulis, Bar Raval.' },
+
+    // ──────── 10/2 (토) Day 8 토론토 오전 + AC063 출국 ────────
+    { date:'2027-10-02', time:'07:30', end_time:'08:30', city:'Toronto',   title:'☕ 호텔 조식 + 짐 정리',          description:'체크아웃 짐 보관 (대부분 호텔 가능). 오전만 토론토.' },
+    { date:'2027-10-02', time:'09:00', end_time:'10:30', city:'Toronto',   title:'🛍 St. Lawrence Market',         description:'캐나다 No.1 푸드 마켓 (1803년~). 토요일 = 풍성. Peameal Bacon Sandwich 명물 (CAD 8). 마지막 캐나디안 식재료 쇼핑.' },
+    { date:'2027-10-02', time:'10:30', end_time:'11:30', city:'Toronto',   title:'🏃 토론토 워터프론트 산책',        description:'Harbourfront → Sugar Beach → Toronto Islands 페리 옵션 (시간 되면). 마지막 도시 풍경.' },
+    { date:'2027-10-02', time:'11:30', end_time:'12:30', city:'Toronto',   title:'🧳 호텔 짐 픽업 + 점심',          description:'마지막 점심 — Bymark 또는 Khao San Road. 짐 챙기고 공항 이동.' },
+    { date:'2027-10-02', time:'12:30', end_time:'13:30', city:'Toronto→Airport', title:'🚆 UP Express 공항 이동',     description:'Union Station → YYZ 25분 (CAD 12.35). 우버 약 CAD 60 (러시아워).' },
+    { date:'2027-10-02', time:'13:30', end_time:'14:35', city:'Toronto Pearson', title:'🛂 YYZ 체크인 + 면세',       description:'Air Canada 카운터 (T1). 면세 (CAD 한도 KRW 80만 정도). 라운지 옵션.' },
+    { date:'2027-10-02', time:'14:35', end_time:'17:55', city:'Toronto→Incheon', title:'✈️ Air Canada AC063 YYZ → ICN', description:'<strong>1순위 항공편.</strong> 직항 14H 20M. 시차 +13 = 한국 5/2 03:55 → 5/3 17:55 도착. 기내식 + 영화 + 수면.' },
+
+    // ──────── 10/3 (일) Day 9 인천 도착 + 회복 ────────
+    { date:'2027-10-03', time:'17:55', end_time:'19:00', city:'Incheon',   title:'🛬 ICN 도착 + 입국',             description:'일요일 저녁 도착. 입국심사 + 짐 찾기 보통 30-40분.' },
+    { date:'2027-10-03', time:'19:00', end_time:'20:30', city:'Seoul',     title:'🏠 집 도착 + 짐 풀기',           description:'리무진 또는 택시. 세탁기 돌리기. 메이플 시럽 + 캐나디안 굿즈 정리.' },
+    { date:'2027-10-03', time:'20:30', end_time:'22:30', city:'Seoul',     title:'🍜 가벼운 저녁 + 회복',           description:'시차 -13시간 (오히려 한국 시차 따라가기 쉬움 — 동향 여행). 23:00 취침 권장. 월요일 정상 출근 가능.' },
+  ];
+
+  window._enrichCanadaDailyLog = async function() {
+    var tripName = '2027 캐나다 여행';
+    var trip = (tripsData || []).find(function(t){ return t.name === tripName; });
+    if (!trip) { alert('"' + tripName + '" trip을 못 찾았어. 먼저 _migrateAtlasTrip("canada-2027") 실행해줘.'); return; }
+
+    // 기존 일정·도시·숙소 조회
+    var existing = (journeyData || []).filter(function(d){ return d.trip_id === trip._id && d.type === '일정'; });
+    var allCities = (citiesData || []).filter(function(c){ return c.trip_id === trip._id; });
+    var allLodging = (journeyData || []).filter(function(d){ return d.trip_id === trip._id && d.type === '숙소'; });
+    // Mont-Tremblant 도시·숙소 제거 대상
+    var tremblantCities = allCities.filter(function(c){ return /tremblant|몽트랑블랑/i.test(c.name || ''); });
+    var tremblantLodging = allLodging.filter(function(d){ return /tremblant|몽트랑블랑/i.test((d.city || '') + ' ' + (d.title || '')); });
+
+    var msg = '"' + tripName + '" 전체 재구성\n\n' +
+      '• 새 날짜: 2027-09-24 ~ 2027-10-03 (10일)\n' +
+      '• KE073 + AC063 1순위 항공편 매칭\n' +
+      '• Mont-Tremblant 1박 제거\n\n' +
+      '• 기존 일정 ' + existing.length + '개 삭제\n' +
+      '• 새 시간 슬롯 ' + _CA_DETAILED_LOG.length + '개 추가 (10일)\n' +
+      '• Mont-Tremblant 도시 ' + tremblantCities.length + '개 제거\n' +
+      '• Mont-Tremblant 숙소 ' + tremblantLodging.length + '개 제거\n' +
+      '• Trip 날짜 → 2027-09-24 ~ 2027-10-03\n\n진행할까?';
+    if (!confirm(msg)) return;
+
+    try {
+      // 1. 기존 일정 삭제
+      var deleted = 0;
+      for (var di = 0; di < existing.length; di++) {
+        try { await fbDelete('journey', existing[di]._id); deleted++; } catch(e) {}
+      }
+      journeyData = (journeyData || []).filter(function(d){
+        return !(d.trip_id === trip._id && d.type === '일정');
+      });
+
+      // 1-b. Mont-Tremblant 도시·숙소 삭제
+      var citiesDel = 0, lodgeDel = 0;
+      for (var ci = 0; ci < tremblantCities.length; ci++) {
+        try { await fbDelete('trip_cities', tremblantCities[ci]._id); citiesDel++; } catch(e) {}
+      }
+      for (var li = 0; li < tremblantLodging.length; li++) {
+        try { await fbDelete('journey', tremblantLodging[li]._id); lodgeDel++; } catch(e) {}
+      }
+      citiesData = (citiesData || []).filter(function(c){
+        return !(c.trip_id === trip._id && /tremblant|몽트랑블랑/i.test(c.name || ''));
+      });
+      journeyData = (journeyData || []).filter(function(d){
+        return !(d.trip_id === trip._id && d.type === '숙소' && /tremblant|몽트랑블랑/i.test((d.city || '') + ' ' + (d.title || '')));
+      });
+
+      // 1-c. Trip 날짜 업데이트
+      try {
+        await fbUpdate('trips', trip._id, { start_date: '2027-09-24', end_date: '2027-10-03' });
+        trip.start_date = '2027-09-24';
+        trip.end_date = '2027-10-03';
+      } catch(e) { console.warn('[CanadaEnrich] trip 날짜 갱신 실패:', e); }
+
+      // 2. 새 detailed entries 추가
+      var added = 0;
+      for (var ai = 0; ai < _CA_DETAILED_LOG.length; ai++) {
+        var slot = _CA_DETAILED_LOG[ai];
+        try {
+          var saved = await fbAdd('journey', {
+            trip_id: trip._id, type: '일정',
+            date: slot.date, time: slot.time, end_time: slot.end_time,
+            city: slot.city, title: slot.title, description: slot.description,
+          });
+          journeyData.push(saved);
+          added++;
+        } catch(e) { console.warn('[CanadaEnrich] add 실패:', e); }
+      }
+
+      // 3. 스냅샷 갱신
+      try {
+        localStorage.setItem('atelier_snapshot_journey', JSON.stringify({ data: journeyData, ts: new Date().toISOString() }));
+        localStorage.setItem('atelier_snapshot_trip_cities', JSON.stringify({ data: citiesData, ts: new Date().toISOString() }));
+        localStorage.setItem('atelier_snapshot_trips', JSON.stringify({ data: tripsData, ts: new Date().toISOString() }));
+      } catch(e) { console.warn('[CanadaEnrich] snapshot 갱신 실패:', e.message); }
+
+      alert('✅ 캐나다 재구성 완료\n\n' +
+        '· 일정 삭제: ' + deleted + '개 · 새 슬롯: ' + added + '개\n' +
+        '· Mont-Tremblant 도시 ' + citiesDel + ' · 숙소 ' + lodgeDel + ' 제거\n' +
+        '· Trip 날짜: 2027-09-24 ~ 2027-10-03\n\n페이지 새로고침 후 확인.');
+
+      if (currentTripId === trip._id) {
+        renderCityCards();
+        renderDayView();
+        renderJourneyLodging();
+        renderJourneyFlights();
+      } else {
+        selectTrip(trip._id);
+      }
+    } catch (e) {
+      console.error('[CanadaEnrich] 실패:', e);
       alert('재구성 중 에러: ' + e.message);
     }
   };
