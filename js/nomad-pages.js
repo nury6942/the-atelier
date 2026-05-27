@@ -520,25 +520,25 @@ window.NOMAD_PAGES = (function(){
 
     // ════════ Editorial CSS (Travel Atlas) ════════
     html += '<style>' +
-      '#nomad-content .atl-wrap{background:#ffffff;padding:0 0 48px}' +
-      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:80px}' +
+      '#nomad-content .atl-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
+      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:64px}' +
       '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
       '#nomad-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;color:#141b2b;margin:0 0 24px}' +
       '#nomad-content .atl-lede{font-size:16px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
-      '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap:16px;min-width:320px}' +
+      '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap:14px;min-width:280px;max-width:320px}' +
       '#nomad-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;justify-content:space-between;align-items:center}' +
       '#nomad-content .atl-metric-label{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom:8px}' +
       '#nomad-content .atl-metric-value{font-family:var(--nm-font-h);font-size:28px;font-weight:600;color:var(--nm-primary);letter-spacing:-0.01em}' +
       '#nomad-content .atl-metric-value.err{color:' + schengenColor + '}' +
       '#nomad-content .atl-metric-icon{font-size:28px !important;color:var(--nm-primary)}' +
-      '#nomad-content .atl-grid{display:grid;grid-template-columns:1fr 320px;gap:48px;align-items:start}' +
+      '#nomad-content .atl-grid{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start}' +
       '#nomad-content .atl-aside-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;color:#7b7487;opacity:0.4;position:sticky;top:120px}' +
       '#nomad-content .atl-region{margin-bottom:80px}' +
       '#nomad-content .atl-region:last-child{margin-bottom:0}' +
       '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;flex-wrap:wrap}' +
       '#nomad-content .atl-region-h{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#141b2b;letter-spacing:-0.01em;margin:0}' +
       '#nomad-content .atl-region-range{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
-      '#nomad-content .atl-row{display:grid;grid-template-columns:90px 1fr 110px 110px 60px;gap:24px;padding:32px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
+      '#nomad-content .atl-row{display:grid;grid-template-columns:78px 1fr 96px 96px 44px;gap:16px;padding:28px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
       '#nomad-content .atl-row-head{padding:16px 8px;border-bottom:1px solid #ccc3d8;margin-bottom:8px}' +
       '#nomad-content .atl-row-head .atl-cell{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#7b7487}' +
       '#nomad-content .atl-row-body[role="link"]:hover{background:rgba(99,14,212,0.04)}' +
@@ -601,10 +601,7 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '</header>';
 
-    // ────── 2-col Grid (vertical label / main / aside) ──────
-    html += '<div style="display:grid;grid-template-columns:24px 1fr;gap:24px;align-items:start">';
-    html += '<aside style="display:none" class="atl-vlabel-wrap"></aside>';
-
+    // ────── Main grid (content + aside) ──────
     html += '<div class="atl-grid">';
 
     // ─── Main Itinerary ───
@@ -695,7 +692,6 @@ window.NOMAD_PAGES = (function(){
 
     html += '</aside>';
     html += '</div>'; // /atl-grid
-    html += '</div>'; // /outer grid
 
     html += '</div>'; // /atl-wrap
 
@@ -1749,7 +1745,7 @@ window.NOMAD_PAGES = (function(){
 
     // ════════ Stay Channels CSS (Comprehensive) ════════
     html += '<style>' +
-      '#nomad-content .stay-wrap{background:#ffffff;padding:0 0 48px}' +
+      '#nomad-content .stay-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
       '#nomad-content .stay-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
       '#nomad-content .stay-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1;color:#141b2b;margin:0}' +
       '#nomad-content .stay-subtitle{font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#4a4455;margin:16px 0 4px}' +
@@ -2089,7 +2085,7 @@ window.NOMAD_PAGES = (function(){
 
     // ── CSS ──
     html += '<style>' +
-      '#nomad-content .ne-wrap{background:#ffffff;padding:0 0 64px}' +
+      '#nomad-content .ne-wrap{background:#ffffff;padding:0 0 64px;max-width:1280px;margin:0 auto}' +
       '#nomad-content .ne-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
       '#nomad-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1;color:#141b2b;margin:0 0 24px}' +
       '#nomad-content .ne-lede{font-size:16px;line-height:1.7;color:#4a4455;max-width:640px;margin:0}' +
