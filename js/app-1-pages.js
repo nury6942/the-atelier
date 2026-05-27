@@ -2095,6 +2095,79 @@
     });
   }
 
+  // ════════════════════════════════════════════════════════════════════
+  // 도시 한·영 병기 매핑 (Stops 카드 + 다른 곳에서 재사용)
+  // 우선 정확 매칭 → 못 찾으면 첫 단어로 부분 매칭 (예: "스카겐 B&B" → "Skagen")
+  // ════════════════════════════════════════════════════════════════════
+  var _CITY_KR_TO_EN = {
+    // Germany 2026
+    '프랑크푸르트': 'Frankfurt am Main',
+    '드레스덴':     'Dresden',
+    '베를린':       'Berlin',
+    // Italy 2026
+    '피엔자':       'Pienza',
+    '로마':         'Rome',
+    '피사':         'Pisa',
+    '피렌체':       'Florence',
+    '베네치아':     'Venice',
+    '밀라노':       'Milan',
+    // Denmark 2027
+    '코펜하겐':     'Copenhagen',
+    '오르후스':     'Aarhus',
+    '스카겐':       'Skagen',
+    '말뫼':         'Malmö',
+    // Sweden 2027
+    '스톡홀름':     'Stockholm',
+    '박솔름':       'Sandhamn',
+    '산드함':       'Sandhamn',
+    // Canada 2027
+    '몬트리올':     'Montréal',
+    '샤를부아':     'Charlevoix',
+    '퀘벡 시티':    'Québec City',
+    '퀘벡':         'Québec City',
+    '몽트랑블랑':   'Mont-Tremblant',
+    '오타와':       'Ottawa',
+    '알곤퀸':       'Algonquin',
+    '토론토':       'Toronto',
+    // Czech & Croatia 2026
+    '프라하':       'Prague',
+    '체스키 크룸로프':'Český Krumlov',
+    '두브로브니크': 'Dubrovnik',
+    '자그레브':     'Zagreb',
+    '플리트비체':   'Plitvice',
+    '스플리트':     'Split',
+    // Ireland 2028 (예비)
+    '더블린':       'Dublin',
+    '코크':         'Cork',
+    '킬케니':       'Kilkenny',
+    '킬라니':       'Killarney',
+    '골웨이':       'Galway',
+    '슬라이고':     'Sligo',
+    '벨파스트':     'Belfast',
+  };
+
+  // 한국어 도시명 → 영어. 매핑 못 찾으면 빈 문자열.
+  function _cityEn(krName) {
+    if (!krName) return '';
+    var clean = String(krName).trim();
+    if (_CITY_KR_TO_EN[clean]) return _CITY_KR_TO_EN[clean];
+    // 첫 단어로 부분 매칭 ("스카겐 B&B" → "스카겐")
+    var firstWord = clean.split(/[\s·]/)[0];
+    if (firstWord !== clean && _CITY_KR_TO_EN[firstWord]) return _CITY_KR_TO_EN[firstWord];
+    // 영문이 이미 있는지 (이미 영어면 그대로 반환)
+    if (/^[A-Za-z]/.test(clean)) return clean;
+    return '';
+  }
+
+  // 한·영 병기 디스플레이: "코펜하겐 · Copenhagen" 또는 "Copenhagen" (영어만 있을 때)
+  function _cityBilingual(name) {
+    if (!name) return '';
+    var en = _cityEn(name);
+    if (!en) return name; // 매핑 못 찾으면 원본 그대로
+    if (en === name) return name; // 이미 영어
+    return name + ' · ' + en;
+  }
+
   function renderCityCards() {
     var container = document.getElementById('journey-city-cards');
     if (!container) return;
@@ -2134,7 +2207,7 @@
             '<div class="j-stop-img-controls' + (img ? '' : ' is-empty') + '">' + ctrlInner + '</div>' +
             '<div class="j-stop-paste-hint">Ctrl+V로 붙여넣기</div>' +
           '</div>' +
-          '<h3 class="j-stop-name">' + (city.name || '') + '</h3>' +
+          '<h3 class="j-stop-name">' + _cityBilingual(city.name || '') + '</h3>' +
           '<div class="j-stop-body">' +
             '<div class="j-stop-row"><span class="j-stop-k">DATES</span><span class="j-stop-v">' + (dateRange || 'TBD') + '</span></div>' +
             '<div class="j-stop-row"><span class="j-stop-k">STAY</span><span class="j-stop-v">' + nightsText + '</span></div>' +
@@ -5058,7 +5131,8 @@
   var _LODGING_RECS = {
     '2027 덴마크&스웨덴': [
       {
-        city: 'Copenhagen', nights: 3, budget: '20만/박',
+        city: 'Copenhagen', cityKr: '코펜하겐', nights: 3, budget: '20만/박',
+        checkIn: '2027-05-13', checkOut: '2027-05-16',
         options: [
           { name:'Manon Les Suites by Guldsmeden', type:'에코 부띠크', price:'₩28~38만',
             location:'Nørreport · 시내 중심', rating:'★4.6',
@@ -5072,7 +5146,8 @@
         ],
       },
       {
-        city: 'Aarhus', nights: 1, budget: '13만',
+        city: 'Aarhus', cityKr: '오르후스', nights: 1, budget: '13만',
+        checkIn: '2027-05-16', checkOut: '2027-05-17',
         options: [
           { name:'Hotel Oasia Aarhus', type:'디자인 부띠크', price:'₩14~18만',
             location:'중앙역 도보 5분', rating:'★4.4',
@@ -5083,7 +5158,8 @@
         ],
       },
       {
-        city: 'Skagen', nights: 1, budget: '15만',
+        city: 'Skagen', cityKr: '스카겐', nights: 1, budget: '15만',
+        checkIn: '2027-05-17', checkOut: '2027-05-18',
         options: [
           { name:'Color Hotel Skagen', type:'코스탈 디자인', price:'₩16~22만',
             location:'항구 도보 3분', rating:'★4.3',
@@ -5097,7 +5173,8 @@
         ],
       },
       {
-        city: 'Malmö', nights: 1, budget: '18만',
+        city: 'Malmö', cityKr: '말뫼', nights: 1, budget: '18만',
+        checkIn: '2027-05-18', checkOut: '2027-05-19',
         options: [
           { name:'Story Hotel Studio Malmö', type:'디자인 부띠크', price:'₩18~25만',
             location:'중앙역 도보 3분', rating:'★4.5',
@@ -5111,7 +5188,8 @@
         ],
       },
       {
-        city: 'Stockholm', nights: 2, budget: '22만/박',
+        city: 'Stockholm', cityKr: '스톡홀름', nights: 2, budget: '22만/박',
+        checkIn: '2027-05-19', checkOut: '2027-05-21',
         options: [
           { name:'Miss Clara by Nobis', type:'디자인 부띠크', price:'₩22~30만',
             location:'Norrmalm · 중심가', rating:'★4.6',
@@ -5125,7 +5203,8 @@
         ],
       },
       {
-        city: '박솔름 (Archipelago)', nights: 1, budget: '20만',
+        city: 'Sandhamn (Archipelago)', cityKr: '박솔름', nights: 1, budget: '20만',
+        checkIn: '2027-05-21', checkOut: '2027-05-22',
         options: [
           { name:'Sands Hotell Sandhamn', type:'군도 디자인 호텔', price:'₩22~32만',
             location:'산드함 메인 항구', rating:'★4.4',
@@ -5138,10 +5217,19 @@
     ],
   };
 
-  function _tripcomSearchUrl(name, city) {
-    var q = encodeURIComponent(name + ' ' + city);
-    // 사용자 alliance link 형식 따라가기 (referral 유지)
-    return 'https://kr.trip.com/hotels/list?keyword=' + q + '&allianceid=14887&sid=1621818';
+  function _tripcomSearchUrl(name, city, checkIn, checkOut) {
+    // Trip.com Korea 호텔 검색 — 호텔명·도시·날짜 함께 넘기면 검색 결과 페이지로 직접 진입
+    // cityName + searchValue + checkIn/checkOut 조합이 가장 정확
+    var params = [
+      'cityName=' + encodeURIComponent(city || ''),
+      'searchValue=' + encodeURIComponent(name + ' ' + (city || '')),
+      'searchType=H', // Hotel search
+    ];
+    if (checkIn)  params.push('checkIn='  + checkIn);
+    if (checkOut) params.push('checkOut=' + checkOut);
+    // 사용자 alliance referral 유지
+    params.push('allianceid=14887', 'sid=1621818');
+    return 'https://kr.trip.com/hotels/list?' + params.join('&');
   }
 
   function _renderLodgingRecs() {
@@ -5162,14 +5250,20 @@
       '<p style="font-size:11px;color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
     recs.forEach(function(cityRec) {
+      // 한·영 병기 (cityKr 있으면 그것 우선, 없으면 매핑)
+      var cityDisplay = cityRec.cityKr ? (cityRec.cityKr + ' · ' + cityRec.city) : cityRec.city;
+      var dateRange = (cityRec.checkIn && cityRec.checkOut)
+        ? ' · ' + cityRec.checkIn.substring(5).replace('-','/') + ' ~ ' + cityRec.checkOut.substring(5).replace('-','/')
+        : '';
       html += '<div style="margin-bottom:18px">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
-        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#1e1b4b">' + cityRec.city + '</span>' +
-        '<span style="font-size:10px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + '</span>' +
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
+        '<span style="font-size:10px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">';
       cityRec.options.forEach(function(opt, oi) {
-        var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city);
+        // 트립닷컴 URL — 호텔명·도시·체크인/아웃 모두 전달 → 검색 결과 페이지로 직접 진입
+        var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
         var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
