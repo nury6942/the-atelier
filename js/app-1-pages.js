@@ -17101,11 +17101,34 @@
   ];
 
   var LS_ENGLISH_STATUS_KEY = 'atelier_english_status';
+  var LS_ENGLISH_DELETED_KEY = 'atelier_english_deleted_defaults'; // 사용자가 삭제한 default 회차 날짜 set
 
   function getEnglishStatusOverrides() {
     var stored = localStorage.getItem(LS_ENGLISH_STATUS_KEY);
     return stored ? JSON.parse(stored) : {};
   }
+
+  function getEnglishDeletedDefaults() {
+    var stored = localStorage.getItem(LS_ENGLISH_DELETED_KEY);
+    return stored ? JSON.parse(stored) : {};
+  }
+
+  function setEnglishDeletedDefault(date) {
+    var d = getEnglishDeletedDefaults();
+    d[date] = true;
+    localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(d));
+  }
+
+  // 복구용 (콘솔에서 호출 가능)
+  window._undeleteEnglishDefault = function(date) {
+    var d = getEnglishDeletedDefaults();
+    delete d[date];
+    localStorage.setItem(LS_ENGLISH_DELETED_KEY, JSON.stringify(d));
+    if (typeof loadEnglish === 'function') loadEnglish();
+  };
+  window._listDeletedEnglishDefaults = function() {
+    return Object.keys(getEnglishDeletedDefaults());
+  };
 
   function setEnglishStatus(date, status) {
     // localStorage에 저장 (기본값 행)
@@ -17128,10 +17151,11 @@
   function getEnglishDefaults() {
     var today = new Date().toISOString().split('T')[0];
     var overrides = getEnglishStatusOverrides();
+    var deleted = getEnglishDeletedDefaults();
     var fbDates = {};
     englishData.forEach(function(r){ if(r[1]) fbDates[r[1]] = true; });
     return ENGLISH_DEFAULTS
-      .filter(function(d){ return !fbDates[d[1]]; })
+      .filter(function(d){ return !fbDates[d[1]] && !deleted[d[1]]; })
       .map(function(d){
         var status = overrides[d[1]] || (d[1] <= today ? '완료' : '예정');
         return [d[0], d[1], status, '', '£30', '', '__default__'];
@@ -17344,9 +17368,13 @@
           '<td class="px-6 py-4 text-right font-bold text-slate-700">' + (row[4] ? '£' + parseFloat(row[4].toString().replace(/[^0-9.]/g,'')).toFixed(0) + krwSub(parseFloat(row[4].toString().replace(/[^0-9.]/g,''))) : '—') + '</td>' +
           '<td class="px-6 py-4 text-sm text-slate-500 italic">' + (row[5]||'—') + '</td>' +
           '<td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1">' +
-          (row[6] === '__default__' ? '' :
-          '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
-          '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>') +
+          (row[6] === '__default__'
+            // default 회차: 삭제만 가능 (편집은 의미 없음 — ENGLISH_DEFAULTS 정적)
+            ? '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors" title="이 회차 삭제 (이후 회차 자동 재번호)"><span class="material-symbols-outlined text-sm">delete</span></button>'
+            // 일반 회차: 편집 + 삭제
+            : '<button onclick="editEnglishRow(' + i + ')" class="p-1 hover:bg-indigo-100 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>' +
+              '<button onclick="deleteEnglishRow(' + i + ')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>'
+          ) +
           '</div></td>';
         tbody.appendChild(tr);
       });
@@ -17489,10 +17517,22 @@
   function editEnglishRow(i) { openEnglishModal(i); }
 
   async function deleteEnglishRow(i) {
+    var row = englishData[i];
+    if (!row) return;
+    var date = row[1] || '';
+    var label = row[0] || (date ? date : '회차');
+    if (!confirm('"' + label + '" (' + date + ')를 삭제할까요?\n\n이후 회차 번호가 자동으로 당겨집니다.')) return;
     try {
-      const id = englishData[i][6];
-      await fbDelete('english', id);
-      englishData.splice(i, 1);
+      const id = row[6];
+      if (id === '__default__') {
+        // default 회차: LS의 deleted set에 추가하고 메모리에서도 제거
+        if (date) setEnglishDeletedDefault(date);
+        englishData.splice(i, 1);
+      } else {
+        // 일반 (Firestore) 회차
+        await fbDelete('english', id);
+        englishData.splice(i, 1);
+      }
       renderEnglishTable();
       updateEnglishStats();
       if (englishData.length === 0) {
