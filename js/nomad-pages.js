@@ -786,58 +786,77 @@ window.NOMAD_PAGES = (function(){
 
     html += '</div>'; // /Summary 8/4
 
-    // ════════ SECTION 2 · 12-City Cost Breakdown 테이블 ════════
+    // 카테고리별 합계 (Summary Projection용)
+    var foodTotal     = budget.reduce(function(a,b){ return a + (b.food||0); }, 0);
+    var transitTotal  = budget.reduce(function(a,b){ return a + (b.transit||0); }, 0);
+    var activityTotal = budget.reduce(function(a,b){ return a + (b.activity||0); }, 0);
+    var commTotal     = budget.reduce(function(a,b){ return a + (b.comm||0); }, 0);
+    var miscTotal     = budget.reduce(function(a,b){ return a + (b.misc||0); }, 0);
+
+    // ════════ SECTION 2 · 12-City Cost Breakdown 세부 ════════
     html += '<section class="nm-card" style="padding:0;overflow:hidden;margin-bottom:32px">';
-    // 테이블 헤더
     html += '<div style="padding:20px 24px;border-bottom:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
-      '<h2 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">12-City Cost Breakdown</h2>' +
+      '<h2 style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">월별 예산 — 세부 분해</h2>' +
       '<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--nm-text-3);font-weight:600">' +
         '<span style="width:10px;height:10px;background:var(--nm-primary);border-radius:50%;display:inline-block"></span>' +
-        'High Accuracy · 단위 만 원' +
+        '단위 만 원 · 생활비 분해는 추정 비율(실제값 알려주면 조정)' +
       '</div>' +
     '</div>';
-    // 테이블
     html += '<div style="overflow-x:auto">';
-    html += '<table style="width:100%;border-collapse:collapse">';
+    html += '<table style="width:100%;border-collapse:collapse;min-width:900px">';
+    function _th(label) {
+      return '<th style="padding:12px 14px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap">' + label + '</th>';
+    }
+    function _td(val, accent) {
+      return '<td style="padding:14px 14px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:12px;color:' + (accent ? 'var(--nm-deep-indigo);font-weight:700' : 'var(--nm-text-2)') + ';white-space:nowrap">₩' + val + '</td>';
+    }
     html += '<thead>' +
       '<tr style="background:#F5F3FF">' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Stay (숙소)</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Living (생활비)</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Monthly Subtotal</th>' +
+        '<th style="padding:12px 16px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.08em;text-transform:uppercase;min-width:200px">Month / City</th>' +
+        _th('숙소') +
+        _th('식비') +
+        _th('시내 교통') +
+        _th('관광') +
+        _th('통신·유심') +
+        _th('기타') +
+        '<th style="padding:12px 16px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-primary);letter-spacing:0.08em;text-transform:uppercase;background:#ede0ff;white-space:nowrap">월 소계</th>' +
       '</tr>' +
     '</thead>';
     html += '<tbody>';
     budget.forEach(function(b) {
       var meta = budgetCityMeta(b.city);
       html += '<tr style="transition:background 0.15s" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'">' +
-        // Month / City
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9">' +
-          '<div style="display:flex;align-items:center;gap:14px">' +
-            '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + meta.flag + '</div>' +
+        '<td style="padding:14px 16px;border-bottom:1px solid #f1f5f9">' +
+          '<div style="display:flex;align-items:center;gap:12px">' +
+            '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + meta.flag + '</div>' +
             '<div>' +
-              '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + b.period + ' · ' + b.city + '</p>' +
-              (meta.sub ? '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">' + meta.sub + '</p>' : '') +
+              '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + b.period + ' · ' + b.city + '</p>' +
+              (meta.sub ? '<p style="font-size:10px;color:var(--nm-text-3);margin-top:1px">' + meta.sub + '</p>' : '') +
             '</div>' +
           '</div>' +
         '</td>' +
-        // Stay
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;color:var(--nm-text-2)">₩' + b.stay + '만</td>' +
-        // Living
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:13px;color:var(--nm-text-2)">₩' + b.life + '만</td>' +
-        // Subtotal (primary 색 강조)
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
+        _td(b.stay + '만') +
+        _td(b.food + '만') +
+        _td(b.transit + '만') +
+        _td(b.activity + '만') +
+        _td(b.comm + '만') +
+        _td(b.misc + '만') +
+        '<td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size:15px;font-weight:800;color:var(--nm-primary);white-space:nowrap;background:#fbfaff">₩' + b.total + '만</td>' +
       '</tr>';
     });
-    // Summary Projection 행 (평균 + 합계)
+    // 합계 행
     html += '<tr style="background:var(--nm-surface-container-low);border-top:2px solid var(--nm-primary)">' +
-      '<td style="padding:18px 20px">' +
-        '<p style="font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-primary)">Summary Projection</p>' +
-        '<p style="font-size:11px;color:var(--nm-text-3);margin-top:2px">12개월 평균 / 합계</p>' +
+      '<td style="padding:16px 16px">' +
+        '<p style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-primary)">12개월 합계</p>' +
+        '<p style="font-size:10px;color:var(--nm-text-3);margin-top:1px">avg 월 ₩' + avgMonth + '만</p>' +
       '</td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">avg ₩' + avgStay + '만 <span style="font-size:11px;color:var(--nm-text-3);font-weight:500">/ 합 ₩' + stayTotal + '만</span></td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:13px;font-weight:700;color:var(--nm-on-surface)">avg ₩' + avgLife + '만 <span style="font-size:11px;color:var(--nm-text-3);font-weight:500">/ 합 ₩' + lifeTotal + '만</span></td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:17px;font-weight:800;color:var(--nm-primary)">avg ₩' + avgMonth + '만 <span style="font-size:11px;color:var(--nm-text-3);font-weight:500">/ 합 ₩' + monthlyTotal + '만</span></td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + stayTotal + '만</td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + foodTotal + '만</td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + transitTotal + '만</td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + activityTotal + '만</td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + commTotal + '만</td>' +
+      '<td style="padding:16px 14px;text-align:right;font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-on-surface);white-space:nowrap">₩' + miscTotal + '만</td>' +
+      '<td style="padding:16px 16px;text-align:right;font-family:var(--nm-font-h);font-size:16px;font-weight:800;color:var(--nm-primary);white-space:nowrap;background:#ede0ff">₩' + monthlyTotal + '만</td>' +
     '</tr>';
     html += '</tbody></table>';
     html += '</div>';
@@ -1376,13 +1395,12 @@ window.NOMAD_PAGES = (function(){
       'D': 'DEPARTURE',
     };
 
-    // Hero
-    html += '<section style="padding:48px 0 64px;position:relative;overflow:hidden">';
+    // Hero — 폰트 축소 + 설명문 제거
+    html += '<section style="padding:32px 0 40px;position:relative;overflow:hidden">';
     html += '<div style="position:absolute;top:50%;right:-40px;transform:translateY(-50%);width:340px;height:340px;background:rgba(124,58,237,0.06);border-radius:50%;filter:blur(50px);z-index:0"></div>';
     html += '<div style="position:relative;z-index:1;max-width:880px">';
-    html += '<span style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:18px">Strategic Roadmap</span>';
-    html += '<h1 style="font-family:var(--nm-font-h);font-size:64px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;color:#0f172a;margin:0 0 24px">The Backward Plan</h1>';
-    html += '<p style="font-size:22px;font-weight:400;color:var(--nm-text-2);line-height:1.5;margin:0;max-width:680px">2026.5 → 2028.6 · 25개월 · 출국까지의 큰 그림. 4 Phase로 나눈 정밀 백워드 설계.</p>';
+    html += '<span style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary);letter-spacing:0.18em;text-transform:uppercase;display:block;margin-bottom:14px">Strategic Roadmap</span>';
+    html += '<h1 style="font-family:var(--nm-font-h);font-size:clamp(28px, 4vw, 40px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#0f172a;margin:0">The Backward Plan</h1>';
     html += '</div>';
     html += '</section>';
 
@@ -1403,11 +1421,9 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-bp-row" style="position:relative;margin-bottom:64px;display:flex;align-items:center;gap:48px">';
 
       if (isLeft) {
-        // LEFT: glass-card
+        // LEFT: glass-card (이미지 박스 제거 — 사용자 요청)
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
         html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        // Phase 이미지 박스 (업로드 가능, fallback = 그라데이션 + SVG dots)
-        html += buildImgBox(p.id, grad);
         html += '<div style="display:flex;flex-direction:column;gap:14px">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<span style="background:rgba(124,58,237,0.1);color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
@@ -1449,10 +1465,9 @@ window.NOMAD_PAGES = (function(){
         // CENTER marker
         html += '<div class="nm-bp-marker" style="position:absolute;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:' + (isFinal ? 'var(--nm-primary)' : '#fff') + ';border:4px solid var(--nm-primary);display:flex;align-items:center;justify-content:center;font-family:var(--nm-font-h);font-size:24px;font-weight:800;color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';box-shadow:0 8px 24px rgba(124,58,237,0.18);z-index:2' + (isFinal ? ';transform:translateX(-50%) scale(1.1)' : '') + '">' + num + '</div>';
 
-        // RIGHT: glass card
+        // RIGHT: glass card (이미지 박스 제거 — 사용자 요청)
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
         html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        html += buildImgBox(p.id, grad);
         html += '<div style="display:flex;flex-direction:column;gap:14px">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<span style="background:' + (isFinal ? 'var(--nm-primary)' : 'rgba(124,58,237,0.1)') + ';color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size:11px;font-weight:700">Phase ' + p.id + '</span>' +
