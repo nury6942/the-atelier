@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=165" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=166" as="script">
   <link rel="preload" href="js/app-2-init.js?v=163" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -325,6 +325,28 @@
     .trip-dd-opt.active {
       background: linear-gradient(135deg, #6b38d4, #8455ef);
       color: #fff; font-weight: 700;
+    }
+    /* 진행 중 — 옅은 amber 액센트 */
+    .trip-dd-opt.ongoing:not(.active) {
+      color: #b45309;
+      background: #fef3c7;
+    }
+    .trip-dd-opt.ongoing:not(.active):hover { background: #fde68a; }
+    /* 미래 — 진한 보라 */
+    .trip-dd-opt.future:not(.active) {
+      color: #5b21b6;
+      font-weight: 600;
+    }
+    /* 과거 — 회색 + opacity */
+    .trip-dd-opt.past:not(.active) {
+      color: #94a3b8;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+    .trip-dd-opt.past:not(.active):hover { opacity: 1; color: #64748b; }
+    .trip-dd-opt .dd-meta {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      margin-left: 8px; opacity: 0.7;
     }
     .trip-dd-opt .dd-actions { display: none; gap: 2px; }
     .trip-dd-opt:hover .dd-actions { display: flex; }
@@ -11867,7 +11889,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=165" defer></script>
+<script src="js/app-1-pages.js?v=166" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

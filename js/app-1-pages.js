@@ -2257,6 +2257,25 @@
     return trips[0];
   }
 
+  // 선택된 trip ID를 결정 — 우선순위:
+  //   1. currentTripId가 이미 set 되어있고 그 trip이 trips 안에 있으면 유지
+  //   2. localStorage 'atelier_current_trip_id'에 저장된 값이 유효하면 사용
+  //   3. findClosestTrip 결과
+  function _resolveTripIdToSelect(trips) {
+    if (!trips || !trips.length) return null;
+    if (currentTripId && trips.some(function(t){ return t._id === currentTripId; })) {
+      return currentTripId;
+    }
+    try {
+      var savedId = localStorage.getItem('atelier_current_trip_id');
+      if (savedId && trips.some(function(t){ return t._id === savedId; })) {
+        return savedId;
+      }
+    } catch(e) {}
+    var closest = findClosestTrip(trips);
+    return closest ? closest._id : null;
+  }
+
   async function loadJourney() {
     try {
       // ★ 1단계: localStorage 캐시로 즉시 trip 탭 + 선택 (체감속도 개선)
@@ -2267,10 +2286,11 @@
           if (cached && cached.data && cached.data.length > 0) {
             tripsData = cached.data;
             renderTripTabs();
-            var closest = findClosestTrip(tripsData);
-            if (closest) {
-              console.log('[loadJourney] 캐시 trip 선택:', closest.name);
-              selectTrip(closest._id); // fire-and-forget, 내부 cache-first
+            var selId = _resolveTripIdToSelect(tripsData);
+            if (selId) {
+              var resolved = tripsData.find(function(t){ return t._id === selId; });
+              console.log('[loadJourney] 캐시 trip 선택:', resolved ? resolved.name : selId);
+              selectTrip(selId); // fire-and-forget, 내부 cache-first
             }
           }
         }
@@ -2281,10 +2301,9 @@
       tripsData = docs;
       renderTripTabs();
       if (tripsData.length > 0) {
-        // 이미 선택된 trip이면 skip, 다르면 재선택
-        var closest2 = findClosestTrip(tripsData);
-        if (!currentTripId || currentTripId !== closest2._id) {
-          selectTrip(closest2._id);
+        var selId2 = _resolveTripIdToSelect(tripsData);
+        if (selId2 && selId2 !== currentTripId) {
+          selectTrip(selId2);
         }
       } else {
         document.getElementById('journey-empty-state').style.display = 'flex';
@@ -2345,10 +2364,20 @@
     if (!optEl) return;
     if (!tripsData.length) { optEl.innerHTML = '<div class="px-5 py-3 text-sm text-slate-400">여행을 추가해봐!</div>'; return; }
     var sorted = _tripSortForDropdown(tripsData);
+    var today = new Date().toISOString().split('T')[0];
     optEl.innerHTML = sorted.map(function(t) {
       var isActive = t._id === currentTripId;
-      return '<button onclick="selectTripFromDd(\'' + t._id + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + '">' +
-        '<span class="truncate">' + t.name + '</span>' +
+      // 상태 판정
+      var isOngoing = t.start_date && t.end_date && t.start_date <= today && t.end_date >= today;
+      var isFuture = t.start_date && t.start_date > today;
+      var isPast = t.end_date && t.end_date < today;
+      var stateClass = isOngoing ? 'ongoing' : isFuture ? 'future' : isPast ? 'past' : '';
+      var metaLabel = isOngoing ? '진행 중' : isFuture ? '예정' : isPast ? '지난 여행' : '';
+      return '<button onclick="selectTripFromDd(\'' + t._id + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + (stateClass ? ' ' + stateClass : '') + '">' +
+        '<span class="truncate flex items-center gap-2">' +
+          '<span>' + t.name + '</span>' +
+          (metaLabel && !isActive ? '<span class="dd-meta">' + metaLabel + '</span>' : '') +
+        '</span>' +
         '<span class="dd-actions">' +
           '<span onclick="event.stopPropagation();openEditTripModal(\'' + t._id + '\')" class="material-symbols-outlined hover:text-violet-600 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">edit</span>' +
           '<span onclick="event.stopPropagation();deleteTripEntry(\'' + t._id + '\')" class="material-symbols-outlined hover:text-rose-400 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">delete</span>' +
@@ -2367,6 +2396,8 @@
   async function selectTrip(tripId) {
     currentTripId = tripId;
     currentDayIndex = 0;
+    // 탭 간 컨텍스트 유지 — 마지막 선택 trip ID를 LS에 저장
+    try { if (tripId) localStorage.setItem('atelier_current_trip_id', tripId); } catch(e) {}
     renderTripTabs();
 
     // ★ 1단계: localStorage 캐시로 즉시 render (체감속도 개선)
@@ -10053,8 +10084,27 @@
       financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
       document.getElementById('finance-loading').style.display = 'none';
       buildFinanceTripFilters();
-      // Auto-select closest upcoming trip
-      var defaultTrip = getDefaultFinanceTrip(financeTrips);
+      // ★ 컨텍스트 유지: Travel에서 선택된 trip → Finance에도 동일 trip 자동 선택
+      //   우선순위: (1) 이미 set된 currentFinanceTrip (탭 sync에서 이미 갱신됨)
+      //             (2) atelier_current_trip_id LS의 trip ID → name 매핑
+      //             (3) findClosest fallback
+      var defaultTrip = null;
+      // (1) currentFinanceTrip이 'all' 아닌 유효한 trip이면 유지
+      if (currentFinanceTrip && currentFinanceTrip !== 'all' &&
+          financeTrips.some(function(t){ return t.name === currentFinanceTrip; })) {
+        defaultTrip = currentFinanceTrip;
+      } else {
+        // (2) Travel에서 마지막 선택된 trip ID로 매핑
+        try {
+          var savedId = localStorage.getItem('atelier_current_trip_id');
+          if (savedId) {
+            var matched = financeTrips.find(function(t){ return t._id === savedId; });
+            if (matched) defaultTrip = matched.name;
+          }
+        } catch(e) {}
+      }
+      // (3) fallback
+      if (!defaultTrip) defaultTrip = getDefaultFinanceTrip(financeTrips);
       filterFinanceByTrip(defaultTrip);
     } catch(err) {
       document.getElementById('finance-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
