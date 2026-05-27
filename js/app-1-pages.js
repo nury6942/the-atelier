@@ -5218,18 +5218,22 @@
   };
 
   function _tripcomSearchUrl(name, city, checkIn, checkOut) {
-    // Trip.com Korea 호텔 검색 — 호텔명·도시·날짜 함께 넘기면 검색 결과 페이지로 직접 진입
-    // cityName + searchValue + checkIn/checkOut 조합이 가장 정확
+    // Trip.com Korea 호텔 검색 — 도시 + 체크인/체크아웃 날짜만 넘김
+    // (searchValue로 호텔명 넘기면 너무 엄격해서 0개 결과 나옴 → 도시 리스트에서 사용자가 찾기)
     var params = [
       'cityName=' + encodeURIComponent(city || ''),
-      'searchValue=' + encodeURIComponent(name + ' ' + (city || '')),
       'searchType=H', // Hotel search
     ];
     if (checkIn)  params.push('checkIn='  + checkIn);
     if (checkOut) params.push('checkOut=' + checkOut);
-    // 사용자 alliance referral 유지
     params.push('allianceid=14887', 'sid=1621818');
     return 'https://kr.trip.com/hotels/list?' + params.join('&');
+  }
+
+  // Google 검색으로 트립닷컴 특정 호텔 페이지 찾기 (보조 옵션)
+  function _googleTripUrl(name, city) {
+    var q = encodeURIComponent(name + ' ' + (city || '') + ' site:kr.trip.com');
+    return 'https://www.google.com/search?q=' + q;
   }
 
   function _renderLodgingRecs() {
@@ -5279,9 +5283,10 @@
           '</div>' +
           '<p style="font-size:11px;color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px;color:#a78bfa">location_on</span>' + opt.location + '</p>' +
           '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
-          '<div style="display:flex;gap:6px">' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" style="flex:1;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
-            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
+          '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">search</span>이 호텔</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
           '</div>' +
         '</div>';
       });
