@@ -2133,30 +2133,77 @@ window.NOMAD_PAGES = (function(){
   function renderEssentials() {
     var html = '';
 
+    // ── 플랫폼 URL 맵 ──
+    var NE_URL = {
+      'Wise':'https://wise.com', 'Revolut':'https://www.revolut.com', 'Payoneer':'https://www.payoneer.com',
+      'SafetyWing':'https://safetywing.com', 'Genki':'https://genki.world',
+      'Skyscanner':'https://www.skyscanner.com', 'Google Flights':'https://www.google.com/flights',
+      'Hopper':'https://www.hopper.com', 'Rome2Rio':'https://www.rome2rio.com',
+      'Airalo':'https://www.airalo.com', 'Yoho Mobile':'https://www.yohomobile.com',
+      'Nomad List':'https://nomadlist.com', 'Coworker':'https://www.coworker.com',
+      'Workfrom':'https://workfrom.co', 'Croissant':'https://www.getcroissant.com',
+      'Notion':'https://www.notion.so', 'Cal.com':'https://cal.com', 'Loom':'https://www.loom.com', 'Grammarly':'https://www.grammarly.com',
+      'NordVPN':'https://nordvpn.com', 'ProtonVPN':'https://protonvpn.com',
+      'Authy':'https://authy.com', '1Password':'https://1password.com',
+      'Nomad List Slack':'https://nomadlist.com/slack', 'Nomad List Slack/Discord':'https://nomadlist.com/slack',
+      'Couchsurfing Events':'https://www.couchsurfing.com/events', 'Couchsurfing':'https://www.couchsurfing.com',
+      'Meetup.com':'https://www.meetup.com', 'Meetup':'https://www.meetup.com',
+      'Bumble BFF':'https://bumble.com/bff', 'InterNations':'https://www.internations.org',
+      '우리는 디지털노마드다':'https://www.facebook.com/groups/digitalnomadkorea',
+      '노마드인서울':'https://nomadinseoul.com',
+      'KakaoTalk':'https://www.kakaocorp.com/page/service/service/KakaoTalk',
+      '카카오뱅크':'https://www.kakaobank.com', '토스':'https://toss.im',
+      'Calm':'https://www.calm.com', 'Insight Timer':'https://insighttimer.com',
+      'MyFitnessPal':'https://www.myfitnesspal.com', 'Cronometer':'https://cronometer.com',
+      'Fitbod':'https://fitbod.me', 'Centr':'https://centr.com',
+      '대한항공 SKYPASS':'https://www.koreanair.com/kr/ko/skypass',
+      '대한항공 스카이패스':'https://www.koreanair.com/kr/ko/skypass',
+      '아시아나 클럽 카드':'https://flyasiana.com/C/KR/KO/customer/mileage',
+      '아시아나 마일리지':'https://flyasiana.com/C/KR/KO/customer/mileage',
+    };
+    // 링크 헬퍼 (인라인 텍스트, 슬래시로 구분된 묶음 처리)
+    function neLink(name) {
+      var trimmed = name.replace(/\s*\(.+?\)\s*$/, '').trim();
+      var url = NE_URL[trimmed] || NE_URL[name];
+      if (!url) return name;
+      return '<a href="' + url + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(124,58,237,0.4);text-underline-offset:3px">' + name + '</a>';
+    }
+    // 카드 타이틀용 (보라색 + open_in_new 아이콘)
+    function neTitleLink(name) {
+      var url = NE_URL[name];
+      if (!url) return name;
+      return '<a href="' + url + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">' + name + ' <span class="material-symbols-outlined" style="font-size:13px;vertical-align:-1px;opacity:0.5">open_in_new</span></a>';
+    }
+    // "Calm / Insight Timer" 같은 슬래시 묶음 분리
+    function neSplitLink(s) {
+      return s.split('/').map(function(p){ return neLink(p.trim()); }).join(' / ');
+    }
+
     // ── CSS ──
     html += '<style>' +
       '#nomad-content .ne-wrap{background:#ffffff;padding:0 0 64px;max-width:1280px;margin:0 auto}' +
       '#nomad-content .ne-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;display:inline-block;border-left:2px solid var(--nm-primary);padding-left:14px;margin-bottom:24px}' +
-      '#nomad-content .ne-hero{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:end;margin-bottom:96px}' +
+      '#nomad-content .ne-hero{display:grid;grid-template-columns:1fr 260px;gap:32px;align-items:end;margin-bottom:56px}' +
       '@media (max-width:960px){#nomad-content .ne-hero{grid-template-columns:1fr}}' +
-      '#nomad-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(44px,6vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;color:#141b2b;margin:0 0 32px}' +
-      '#nomad-content .ne-lede{font-size:16px;line-height:1.65;color:#4a4455;max-width:600px;margin:0}' +
+      '#nomad-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 16px}' +
+      '#nomad-content .ne-lede{font-size:13px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
       '#nomad-content .ne-hero-image{aspect-ratio:16/10;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%);border:1px solid #e5e7eb;position:relative;overflow:hidden}' +
       '#nomad-content .ne-hero-image::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18) 0%,transparent 60%)}' +
-      '#nomad-content .ne-hero-image .icon{position:absolute;bottom:24px;left:24px;color:rgba(255,255,255,0.85);font-size:64px !important}' +
+      '#nomad-content .ne-hero-image .icon{position:absolute;bottom:18px;left:18px;color:rgba(255,255,255,0.85);font-size:40px !important}' +
       '#nomad-content .ne-hero-image .badge{position:absolute;top:24px;right:24px;color:#fff;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.16em;background:rgba(255,255,255,0.14);backdrop-filter:blur(6px);padding:6px 12px;border:1px solid rgba(255,255,255,0.22)}' +
       '#nomad-content .ne-overlay{position:absolute;inset:0;background:rgba(124,58,237,0.06);mix-blend-mode:multiply}' +
-      '#nomad-content .ne-sections{display:flex;flex-direction:column;gap:80px}' +
-      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding-bottom:24px;margin-bottom:40px;gap:16px;flex-wrap:wrap}' +
-      '#nomad-content .ne-section-h{font-family:var(--nm-font-h);font-size:clamp(32px,4.5vw,48px);font-weight:600;letter-spacing:-0.01em;color:#141b2b;margin:0;line-height:1.05}' +
+      '#nomad-content .ne-sections{display:flex;flex-direction:column;gap:56px}' +
+      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding-bottom:14px;margin-bottom:24px;gap:16px;flex-wrap:wrap}' +
+      '#nomad-content .ne-section-h{font-family:var(--nm-font-h);font-size:clamp(16px,2vw,22px);font-weight:600;letter-spacing:-0.005em;color:#141b2b;margin:0;line-height:1.2}' +
       '#nomad-content .ne-section-meta{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase}' +
       '#nomad-content .ne-grid12{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}' +
       '#nomad-content .ne-col-8{grid-column:span 8}' +
       '#nomad-content .ne-col-6{grid-column:span 6}' +
       '#nomad-content .ne-col-12{grid-column:span 12}' +
       '@media (max-width:960px){#nomad-content .ne-col-8,#nomad-content .ne-col-6{grid-column:span 12}}' +
-      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding:32px;background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
+      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding:24px;background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column;height:100%}' +
       '#nomad-content .ne-card:hover{border-color:rgba(124,58,237,0.3)}' +
+      '#nomad-content .ne-grid12{align-items:stretch}' +
       '#nomad-content .ne-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}' +
       '#nomad-content .ne-card-title-row{display:flex;align-items:center;gap:12px}' +
       '#nomad-content .ne-card-title-row .material-symbols-outlined{color:var(--nm-primary);transition:transform 0.15s}' +
@@ -2251,10 +2298,10 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Wise — Primary Finance Tool</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">payments</span><h4 class="ne-card-title">Wise (구 TransferWise)</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">payments</span><h4 class="ne-card-title">' + neTitleLink('Wise') + ' <span style="font-family:Inter;font-size:11px;font-weight:500;color:#5d5d67;margin-left:4px">(구 TransferWise)</span></h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body">다중 통화 계좌 (USD·EUR·GBP·AUD·NZD·CAD 등 다 보유). 환전 = <strong>진짜 시장 환율</strong> — 한국 은행보다 2-4% 싸짐. 1년 노마드 = <strong>Wise 안 쓰면 환전 손실 ₩200-400만 차이</strong>. 누리 = 출국 6개월 전 (2027.12) 미리 만들기 + 유로·달러 미리 사두기.</p>' +
@@ -2268,12 +2315,12 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-grid3">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Backup · Daily Card</span>' +
-      '<span class="ne-sub-name">Revolut</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Revolut') + '</span>' +
       '<p class="ne-sub-desc">Wise 보조용 (일상 결제 카드). 위치 기반 보안 (도난 시 자동 차단). 무료 ATM 인출 55,000곳.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Business</span>' +
-      '<span class="ne-sub-name">Payoneer</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Payoneer') + '</span>' +
       '<p class="ne-sub-desc">해외 클라이언트 수령용 (포스타입은 X, 영문 콘텐츠 클라이언트 생기면). 노마드 후반부 필요할 수도.</p>' +
     '</div>';
     html += '<div class="ne-sub-card" style="background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)">' +
@@ -2293,10 +2340,10 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Nomad Health Coverage</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">health_and_safety</span><h4 class="ne-card-title">SafetyWing</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">health_and_safety</span><h4 class="ne-card-title">' + neTitleLink('SafetyWing') + '</h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body">노마드 표준. <strong>$56/4주 (약 ₩7-8만)</strong>. 한국 영토 밖 어디든 커버. 가입 = 이미 출국한 후도 OK (한국에서 잊고 가도 됨). <strong>누리 1년 = 약 ₩100만 보험비</strong> (예산 ₩130만 안에 들어옴).</p>' +
@@ -2309,7 +2356,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-grid2">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Alternative</span>' +
-      '<span class="ne-sub-name">Genki</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Genki') + '</span>' +
       '<p class="ne-sub-desc">유럽 베이스. €37.50/월 (약 ₩5-6만). 의료비 더 넓은 커버, 단 짐 분실 등 여행 보장 X. 1년 = 약 ₩72만 (더 쌈).</p>' +
     '</div>';
     html += '<div class="ne-sub-card" style="background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)">' +
@@ -2329,14 +2376,14 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Flight &amp; Transit</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-aviation">' +
       '<span class="material-symbols-outlined">flight</span>' +
       '<h4>Aviation Strategy</h4>' +
-      '<div class="row"><span class="row-label">Main Search ⭐</span><span class="row-val">Skyscanner / Google Flights</span></div>' +
-      '<div class="row"><span class="row-label">Price Prediction</span><span class="row-val">Hopper · AI 예측 "지금 사라 vs 기다려라"</span></div>' +
-      '<div class="row"><span class="row-label">Multi-Modal</span><span class="row-val">Rome2Rio · 비행·기차·버스·페리·우버 비교</span></div>' +
-      '<div class="row"><span class="row-label">Flexible Dates</span><span class="row-val">Google Flights · "이 달에 가장 싼 날"</span></div>' +
+      '<div class="row"><span class="row-label">Main Search ⭐</span><span class="row-val">' + neLink('Skyscanner') + ' / ' + neLink('Google Flights') + '</span></div>' +
+      '<div class="row"><span class="row-label">Price Prediction</span><span class="row-val">' + neLink('Hopper') + ' · AI 예측 "지금 사라 vs 기다려라"</span></div>' +
+      '<div class="row"><span class="row-label">Multi-Modal</span><span class="row-val">' + neLink('Rome2Rio') + ' · 비행·기차·버스·페리·우버 비교</span></div>' +
+      '<div class="row"><span class="row-label">Flexible Dates</span><span class="row-val">' + neLink('Google Flights') + ' · "이 달에 가장 싼 날"</span></div>' +
       '<p class="nuri"><strong>누리 활용:</strong> Hopper로 셰겐 → 호주 비행 같은 큰 건 한 달+ 전부터 모니터링. Rome2Rio로 더블린 ↔ 골웨이, 코펜 ↔ 베르겐 같은 거 비교.</p>' +
     '</div>';
     html += '</div>';
@@ -2350,10 +2397,10 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Data &amp; Network</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">wifi</span><h4 class="ne-card-title">Airalo (eSIM)</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">wifi</span><h4 class="ne-card-title">' + neTitleLink('Airalo') + ' <span style="font-family:Inter;font-size:11px;font-weight:500;color:#5d5d67;margin-left:4px">(eSIM)</span></h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body"><strong>200+ 국가 커버.</strong> 도착 즉시 데이터 연결 (Wi-Fi 못 찾아 헤맬 일 X). 국가별 패키지: <strong>유럽 30일 €15-25, 호주 30일 $25</strong>. 누리 = 한국 SKT/KT/LG 로밍 절대 X (한 달 ₩20-50만 무지막지함). eSIM 필수.</p>' +
@@ -2366,7 +2413,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-grid2">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Alternative</span>' +
-      '<span class="ne-sub-name">Yoho Mobile</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Yoho Mobile') + '</span>' +
       '<p class="ne-sub-desc">Airalo 대안. 유럽 다국가 패키지 강함.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
@@ -2386,10 +2433,10 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Location Intelligence</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">location_city</span><h4 class="ne-card-title">Nomad List</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">location_city</span><h4 class="ne-card-title">' + neTitleLink('Nomad List') + '</h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body"><strong>nomadlist.com</strong> — 도시별 인터넷 속도·생활비·안전도·날씨·노마드 수 다 데이터. 멤버십 <strong>$99/년 (1회 결제)</strong>. 누리 = 의미 있음. <strong>각 도시 출발 전 30분 검색 = 정보 자산 정점.</strong></p>' +
@@ -2402,12 +2449,12 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-grid2">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Coworking</span>' +
-      '<span class="ne-sub-name">Coworker</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Coworker') + '</span>' +
       '<p class="ne-sub-desc">coworker.com · 전 세계 코워킹 검색 + 리뷰. 데이패스 미리 예약 가능.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Cafe Work</span>' +
-      '<span class="ne-sub-name">Workfrom + Croissant</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('Workfrom') + ' + ' + neTitleLink('Croissant') + '</span>' +
       '<p class="ne-sub-desc">카페 작업 가능 여부 + 소켓·Wi-Fi 등급. 누리 한 달 거점 도시에서 진짜 도움됨.</p>' +
     '</div>';
     html += '</div>';
@@ -2429,9 +2476,13 @@ window.NOMAD_PAGES = (function(){
       { name:'Grammarly', cat:'AI',       desc:'영문 글 작성 시 (누리 중급 영어 보강).' },
     ];
     tools.forEach(function(t) {
+      var url = NE_URL[t.name];
+      var nameHTML = url
+        ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">' + t.name + ' <span class="material-symbols-outlined" style="font-size:13px;vertical-align:-1px;opacity:0.5">open_in_new</span></a>'
+        : t.name;
       html += '<div class="ne-tool">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
-          '<span class="ne-tool-name">' + t.name + '</span>' +
+          '<span class="ne-tool-name">' + nameHTML + '</span>' +
           '<span class="ne-tool-cat">' + t.cat + '</span>' +
         '</div>' +
         '<p class="ne-tool-desc">' + t.desc + '</p>' +
@@ -2450,7 +2501,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card" style="background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">vpn_key</span><h4 class="ne-card-title">NordVPN <span style="font-family:Inter;font-size:11px;font-weight:500;color:#5d5d67;margin-left:8px">또는 ProtonVPN</span></h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">vpn_key</span><h4 class="ne-card-title">' + neTitleLink('NordVPN') + ' <span style="font-family:Inter;font-size:11px;font-weight:500;color:#5d5d67;margin-left:8px">또는 ' + neTitleLink('ProtonVPN') + '</span></h4></div>' +
         '<span class="ne-chip">⭐ 무조건</span>' +
       '</div>' +
       '<p class="ne-card-body">$3-5/월 · 카페 Wi-Fi 보안 (해킹·도난 방지) + 한국 사이트 접속 (포스타입·은행) — 일부 한국 사이트는 한국 IP만 허용. <strong>누리 = 포스타입 작가 활동 = 한국 IP 필요한 순간 있음.</strong></p>' +
@@ -2464,7 +2515,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">password</span><h4 class="ne-card-title">Authy / 1Password</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">password</span><h4 class="ne-card-title">' + neTitleLink('Authy') + ' / ' + neTitleLink('1Password') + '</h4></div>' +
       '</div>' +
       '<p class="ne-card-body">2단계 인증 백업 (폰 잃어버려도 복구) + 비밀번호 관리. <strong>누리 = 폰 잃어버리면 1년 노마드 망함.</strong> 무조건 백업.</p>' +
       '<div class="ne-card-tags">' +
@@ -2483,7 +2534,7 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">International Networks</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<ul class="ne-list">';
     var globals = [
       { name:'Nomad List Slack/Discord', meta:'멤버십 = 도시별 채널 · 도착 즉시 만남 잡기' },
@@ -2493,7 +2544,7 @@ window.NOMAD_PAGES = (function(){
       { name:'InterNations',             meta:'익스팻 큰 커뮤니티 · 30대+ 전문직 위주' },
     ];
     globals.forEach(function(g) {
-      html += '<li class="ne-list-row"><div><div class="name">' + g.name + '</div><div class="meta">' + g.meta + '</div></div><span class="dot"></span></li>';
+      html += '<li class="ne-list-row"><div><div class="name">' + neLink(g.name) + '</div><div class="meta">' + g.meta + '</div></div><span class="dot"></span></li>';
     });
     html += '</ul>';
     html += '</div>';
@@ -2507,17 +2558,17 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Local Connections</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card">';
     html += '<div class="ne-sub-grid2" style="margin-top:0">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Facebook ⭐ 1순위</span>' +
-      '<span class="ne-sub-name" style="font-style:italic">우리는 디지털노마드다</span>' +
+      '<span class="ne-sub-name" style="font-style:italic">' + neTitleLink('우리는 디지털노마드다') + '</span>' +
       '<p class="ne-sub-desc">한국 노마드 가장 큰 그룹 · 정보 + 만남 · 한국어로 질문 가능.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">Seoul Based</span>' +
-      '<span class="ne-sub-name" style="font-style:italic">노마드인서울</span>' +
+      '<span class="ne-sub-name" style="font-style:italic">' + neTitleLink('노마드인서울') + '</span>' +
       '<p class="ne-sub-desc">nomadinseoul.com · 사이드프로젝트·해외취업·리모트워크 · 누리 IP 결.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
@@ -2546,13 +2597,13 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-grid12">';
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card">' +
-      '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">chat</span><h4 class="ne-card-title">KakaoTalk + 한국 폰번호</h4></div></div>' +
+      '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">chat</span><h4 class="ne-card-title">' + neTitleLink('KakaoTalk') + ' + 한국 폰번호</h4></div></div>' +
       '<p class="ne-card-body">본업·가족·친구 연락. 한국 통신사 <strong>알뜰폰 정기결제</strong>로 폰번호 유지 (월 ₩1-2만).</p>' +
     '</div>';
     html += '</div>';
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card">' +
-      '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">account_balance</span><h4 class="ne-card-title">카카오뱅크 / 토스</h4></div></div>' +
+      '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">account_balance</span><h4 class="ne-card-title">' + neTitleLink('카카오뱅크') + ' / ' + neTitleLink('토스') + '</h4></div></div>' +
       '<p class="ne-card-body">한국 계좌 관리 · 노마드 중 한국 자산 (저축·투자) 운용. 해외 환전은 Wise로.</p>' +
     '</div>';
     html += '</div>';
@@ -2581,9 +2632,9 @@ window.NOMAD_PAGES = (function(){
       { icon:'fitness_center',   name:'Fitbod / Centr',           desc:'호텔방 운동 (장비 X). 누리 = <strong>체력 한정형이라 운동 필수</strong>.' },
     ];
     bodyMind.forEach(function(b) {
-      html += '<div class="ne-col-' + (12 / bodyMind.length | 0) + '" style="grid-column:span 4">';
+      html += '<div class="ne-col-4" style="grid-column:span 4">';
       html += '<div class="ne-card">' +
-        '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">' + b.icon + '</span><h4 class="ne-card-title">' + b.name + '</h4></div></div>' +
+        '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">' + b.icon + '</span><h4 class="ne-card-title">' + neSplitLink(b.name) + '</h4></div></div>' +
         '<p class="ne-card-body">' + b.desc + '</p>' +
       '</div>';
       html += '</div>';
@@ -2598,10 +2649,10 @@ window.NOMAD_PAGES = (function(){
       '<span class="ne-section-meta">Loyalty Strategy · 지금부터 적립</span>' +
     '</div>';
     html += '<div class="ne-grid12">';
-    html += '<div class="ne-col-8">';
+    html += '<div class="ne-col-12">';
     html += '<div class="ne-card" style="background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">flight_takeoff</span><h4 class="ne-card-title">대한항공 스카이패스 / 아시아나 마일리지</h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">flight_takeoff</span><h4 class="ne-card-title">' + neTitleLink('대한항공 스카이패스') + ' / ' + neTitleLink('아시아나 마일리지') + '</h4></div>' +
         '<span class="ne-chip">2026.5 시작</span>' +
       '</div>' +
       '<p class="ne-card-body">누리 본업 인센티브 일부 = 신용카드 항공 마일리지 적립. <strong>출국 시 마일리지 비행 = 1-2회 사용</strong> (예산 ₩550만 안에 박혀 있음).</p>' +
@@ -2609,12 +2660,12 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-sub-grid2">';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">추천 카드 (2026-2027 적립용)</span>' +
-      '<span class="ne-sub-name">대한항공 SKYPASS 카드</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('대한항공 SKYPASS') + ' 카드</span>' +
       '<p class="ne-sub-desc">연회비 ₩5-10만 · 1년 적립 = 항공권 1매 가치.</p>' +
     '</div>';
     html += '<div class="ne-sub-card">' +
       '<span class="ne-sub-label">또는</span>' +
-      '<span class="ne-sub-name">아시아나 클럽 카드</span>' +
+      '<span class="ne-sub-name">' + neTitleLink('아시아나 클럽 카드') + '</span>' +
       '<p class="ne-sub-desc"><strong>2027.12까지 적립 완료 → 출국 시 마일리지 비행 가능.</strong></p>' +
     '</div>';
     html += '</div>';
