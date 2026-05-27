@@ -25,6 +25,7 @@ window.NOMAD_DATA = (function(){
     { group: 'Logistics', items: [
       { id: 'nomad-visa',       icon: 'badge',          label: 'Visa & Documents' },
       { id: 'nomad-wh',         icon: 'flight_takeoff', label: 'Working Holiday' },
+      { id: 'nomad-essentials', icon: 'inventory_2',    label: 'Nomad Essentials' },
       { id: 'nomad-actions',    icon: 'fact_check',     label: 'Action Items' },
       { id: 'nomad-packing',    icon: 'luggage',        label: 'Packing List' },
     ]},

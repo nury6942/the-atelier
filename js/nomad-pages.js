@@ -442,219 +442,262 @@ window.NOMAD_PAGES = (function(){
   }
 
   function renderVoyage() {
+    // ──────── Travel Atlas 2028-2029 (Clean White Editorial) ────────
     var voyage = DATA.VOYAGE;
     var totalBudget = voyage.reduce(function(a,b){ return a + b.cost; }, 0);
     var oneoff = DATA.BUDGET_ONEOFF;
     var grandTotal = totalBudget + oneoff.flights + oneoff.visa + oneoff.insurance + oneoff.misc;
-    // 셰겐 일수 합산 (숫자만)
+    // 셰겐 일수 합산
     var schengenDays = voyage.reduce(function(a, v) {
       var m = (v.schengen||'').match(/(\d+)/);
       return a + (m ? parseInt(m[1]) : 0);
     }, 0);
     var schengenPct = Math.min(100, (schengenDays/90)*100);
-    var schengenColor = schengenDays > 90 ? '#b91c1c' : (schengenDays > 75 ? '#c2410c' : 'var(--nm-tertiary)');
+    var schengenColor = schengenDays > 90 ? '#b91c1c' : (schengenDays > 75 ? '#c2410c' : '#ba1a1a');
+
+    // region 분류
+    var regionEurope = [], regionDown = [], regionAmericas = [];
+    voyage.forEach(function(v) {
+      if (v.year === 2028 && v.month !== '12월') regionEurope.push(v);
+      else if (v.month === '12월' || (v.year === 2029 && ['1월','2월','3월'].indexOf(v.month) >= 0)) regionDown.push(v);
+      else regionAmericas.push(v);
+    });
+
+    // 도시 → 국가 매핑 + region별 모드/배지/아이콘
+    function rowBadges(v) {
+      // visa 배지 (큰 컬러 박스 + days subtext)
+      var visaText = v.visa;
+      var daysText = '';
+      if (v.schengen === 'X') {
+        daysText = '';
+      } else if (v.schengen === '외' || v.schengen === '셰겐 외') {
+        daysText = 'Non-Sch';
+      } else {
+        daysText = v.schengen;
+      }
+      var visaBg = visaPillClass(v.visa); // background:xxx;color:xxx
+      var daysColor = (v.schengen && v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외') ? '#ba1a1a' : '#7b7487';
+      return '<div style="display:flex;flex-direction:column;gap:4px">' +
+        '<span style="display:inline-block;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:0.04em;border-radius:4px;width:fit-content;' + visaBg + '">' + visaText + '</span>' +
+        (daysText ? '<span style="font-size:10px;font-weight:700;color:' + daysColor + ';letter-spacing:0.04em">' + daysText + '</span>' : '') +
+      '</div>';
+    }
+
+    function regionTable(rows) {
+      var out = '';
+      // 헤더 (Editorial column labels)
+      out += '<div class="atl-row atl-row-head">' +
+        '<div class="atl-cell atl-month">Month</div>' +
+        '<div class="atl-cell atl-city">City &amp; Node</div>' +
+        '<div class="atl-cell atl-visa">Visa / Days</div>' +
+        '<div class="atl-cell atl-budget">Budget</div>' +
+        '<div class="atl-cell atl-mode">Mode</div>' +
+      '</div>';
+      rows.forEach(function(v) {
+        var node = voyageCityNode(v.city);
+        var modeIcon = voyageModeIcon(v.mode);
+        var pageId = voyageCityToPageId(v.city);
+        var yearLabel = v.year === 2028 ? '‘28' : '‘29';
+        var clickAttrs = pageId
+          ? ' role="link" tabindex="0" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'' + pageId + '\')"'
+          : '';
+        out += '<div class="atl-row atl-row-body"' + clickAttrs + '>' +
+          '<div class="atl-cell atl-month">' + yearLabel + ' ' + v.month + '</div>' +
+          '<div class="atl-cell atl-city">' +
+            '<h3 class="atl-city-name">' + v.city + '</h3>' +
+            (node.country ? '<p class="atl-city-sub">' + node.country + (node.node ? ' · ' + node.node : '') + '</p>' : '') +
+            '<p class="atl-city-detail">' + v.detail + '</p>' +
+          '</div>' +
+          '<div class="atl-cell atl-visa">' + rowBadges(v) + '</div>' +
+          '<div class="atl-cell atl-budget">₩' + v.cost + '만</div>' +
+          '<div class="atl-cell atl-mode"><span class="material-symbols-outlined" style="font-size:20px;color:#7b7487">' + modeIcon + '</span></div>' +
+        '</div>';
+      });
+      return out;
+    }
 
     var html = '';
 
-    // ════════ SECTION 1 · Header (좌측 타이틀 + 우측 2 metric 인라인) ════════
-    html += '<div class="nm-page-header" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid var(--nm-surface-container);margin-bottom:32px">';
-    html += '<div>' +
-      '<div class="nm-page-eyebrow">Global Expedition Plan</div>' +
-      '<div style="font-family:var(--nm-font-h);font-size:36px;font-weight:800;color:var(--nm-deep-indigo);line-height:1.1;margin:8px 0 6px">June 2028 — May 2029</div>' +
-      '<div class="nm-page-sub" style="margin:0">6개 대륙 · 17개 도시 · 1년 마스터 동선</div>' +
+    // ════════ Editorial CSS (Travel Atlas) ════════
+    html += '<style>' +
+      '#nm-page-content .atl-wrap{background:#ffffff;padding:0 0 48px}' +
+      '#nm-page-content .atl-header{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:80px}' +
+      '#nm-page-content .atl-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
+      '#nm-page-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;color:#141b2b;margin:0 0 24px}' +
+      '#nm-page-content .atl-lede{font-size:16px;line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
+      '#nm-page-content .atl-metrics{display:flex;flex-direction:column;gap:16px;min-width:320px}' +
+      '#nm-page-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;justify-content:space-between;align-items:center}' +
+      '#nm-page-content .atl-metric-label{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom:8px}' +
+      '#nm-page-content .atl-metric-value{font-family:var(--nm-font-h);font-size:28px;font-weight:600;color:var(--nm-primary);letter-spacing:-0.01em}' +
+      '#nm-page-content .atl-metric-value.err{color:' + schengenColor + '}' +
+      '#nm-page-content .atl-metric-icon{font-size:28px !important;color:var(--nm-primary)}' +
+      '#nm-page-content .atl-grid{display:grid;grid-template-columns:1fr 320px;gap:48px;align-items:start}' +
+      '#nm-page-content .atl-aside-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;color:#7b7487;opacity:0.4;position:sticky;top:120px}' +
+      '#nm-page-content .atl-region{margin-bottom:80px}' +
+      '#nm-page-content .atl-region:last-child{margin-bottom:0}' +
+      '#nm-page-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;flex-wrap:wrap}' +
+      '#nm-page-content .atl-region-h{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#141b2b;letter-spacing:-0.01em;margin:0}' +
+      '#nm-page-content .atl-region-range{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
+      '#nm-page-content .atl-row{display:grid;grid-template-columns:90px 1fr 110px 110px 60px;gap:24px;padding:32px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
+      '#nm-page-content .atl-row-head{padding:16px 8px;border-bottom:1px solid #ccc3d8;margin-bottom:8px}' +
+      '#nm-page-content .atl-row-head .atl-cell{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#7b7487}' +
+      '#nm-page-content .atl-row-body[role="link"]:hover{background:rgba(99,14,212,0.04)}' +
+      '#nm-page-content .atl-cell{font-size:14px;line-height:1.4}' +
+      '#nm-page-content .atl-month{font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#141b2b;opacity:0.3;letter-spacing:-0.01em}' +
+      '#nm-page-content .atl-city-name{font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:#141b2b;line-height:1.3;margin:0 0 4px}' +
+      '#nm-page-content .atl-city-sub{font-size:13px;color:#4a4455;margin:0 0 8px;line-height:1.4}' +
+      '#nm-page-content .atl-city-detail{font-size:13px;color:var(--nm-primary);font-style:italic;line-height:1.5;margin:0}' +
+      '#nm-page-content .atl-budget{font-family:var(--nm-font-h);font-size:15px;font-weight:500;letter-spacing:-0.01em;color:#141b2b;text-align:right}' +
+      '#nm-page-content .atl-mode{text-align:right}' +
+      '#nm-page-content .atl-aside{display:flex;flex-direction:column;gap:32px;position:sticky;top:24px}' +
+      '#nm-page-content .atl-aside-card{background:#fff;border:1px solid #ccc3d8;padding:24px}' +
+      '#nm-page-content .atl-aside-card h4{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 16px;display:flex;justify-content:space-between;align-items:flex-start}' +
+      '#nm-page-content .atl-aside-pill{background:#eaddff;padding:14px 16px;border-radius:4px;margin-bottom:16px}' +
+      '#nm-page-content .atl-aside-pill p:first-child{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5a00c6;margin:0 0 4px}' +
+      '#nm-page-content .atl-aside-pill p:last-child{font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:var(--nm-primary);margin:0}' +
+      '#nm-page-content .atl-aside-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}' +
+      '#nm-page-content .atl-aside-list li{display:flex;gap:12px;align-items:flex-start;font-size:13px;color:#4a4455;line-height:1.5}' +
+      '#nm-page-content .atl-aside-list .material-symbols-outlined{font-size:16px !important;color:var(--nm-primary);margin-top:2px;flex-shrink:0}' +
+      '#nm-page-content .atl-trajectory{position:relative;aspect-ratio:1/1;background:#293040;overflow:hidden}' +
+      '#nm-page-content .atl-trajectory .atl-traj-overlay{position:absolute;inset:0;background:linear-gradient(to top,#293040 0%,transparent 60%)}' +
+      '#nm-page-content .atl-trajectory-svg{position:absolute;inset:0;width:100%;height:100%;opacity:0.45}' +
+      '#nm-page-content .atl-traj-content{position:absolute;bottom:24px;left:24px;right:24px}' +
+      '#nm-page-content .atl-traj-content h4{color:#fff;font-family:var(--nm-font-h);font-size:22px;font-weight:500;margin:0 0 12px;display:block}' +
+      '#nm-page-content .atl-traj-stats{display:flex;justify-content:space-between;color:rgba(255,255,255,0.7)}' +
+      '#nm-page-content .atl-traj-stats > div{text-align:center}' +
+      '#nm-page-content .atl-traj-stats .num{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#fff;display:block}' +
+      '#nm-page-content .atl-traj-stats .lab{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}' +
+      '#nm-page-content .atl-traj-btn{position:absolute;top:24px;left:24px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);color:#fff;font-family:var(--nm-font-h);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.2)}' +
+      '@media (max-width:1024px){' +
+        '#nm-page-content .atl-grid{grid-template-columns:1fr}' +
+        '#nm-page-content .atl-aside{position:static}' +
+        '#nm-page-content .atl-row{grid-template-columns:80px 1fr;gap:16px;padding:24px 0}' +
+        '#nm-page-content .atl-row .atl-visa,#nm-page-content .atl-row .atl-budget,#nm-page-content .atl-row .atl-mode{grid-column:2;text-align:left;display:flex;align-items:center;gap:12px;margin-top:8px}' +
+        '#nm-page-content .atl-row-head{display:none}' +
+      '}' +
+    '</style>';
+
+    html += '<div class="atl-wrap">';
+
+    // ────── Hero Header ──────
+    html += '<header class="atl-header">';
+    html += '<div style="max-width:720px">' +
+      '<p class="atl-eyebrow">Global Expedition Plan</p>' +
+      '<h1 class="atl-title">June 2028 — May 2029</h1>' +
+      '<p class="atl-lede">6개 대륙 · 17개 도시 · 1년 마스터 동선. A curated itinerary navigating the intersections of culture, strategy, and leisure.</p>' +
     '</div>';
-    html += '<div style="display:flex;gap:12px;flex-shrink:0">';
-    html += '<div style="background:var(--nm-primary-soft);padding:18px 22px;border-radius:12px;min-width:170px">' +
-      '<p class="nm-label-sm" style="margin-bottom:6px;color:var(--nm-text-2)">Total Budget (Est.)</p>' +
-      '<p style="font-family:var(--nm-font-h);font-size:22px;font-weight:700;color:var(--nm-deep-indigo)">' + fmtMan(grandTotal) + '</p>' +
-    '</div>';
-    html += '<div style="background:var(--nm-surface-container-high);padding:18px 22px;border-radius:12px;min-width:170px">' +
-      '<p class="nm-label-sm" style="margin-bottom:6px;color:var(--nm-text-2)">Schengen Days Used</p>' +
-      '<p style="font-family:var(--nm-font-h);font-size:22px;font-weight:700;color:' + schengenColor + '">' + schengenDays + ' / 90</p>' +
-      '<div style="margin-top:6px;height:3px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden">' +
-        '<div style="height:100%;width:' + schengenPct + '%;background:' + schengenColor + '"></div>' +
+    html += '<div class="atl-metrics">' +
+      '<div class="atl-metric">' +
+        '<div><p class="atl-metric-label">Total Budget (Est.)</p><p class="atl-metric-value">' + fmtMan(grandTotal) + '</p></div>' +
+        '<span class="material-symbols-outlined atl-metric-icon">payments</span>' +
+      '</div>' +
+      '<div class="atl-metric" style="display:block">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+          '<p class="atl-metric-label" style="margin:0">Schengen Days Used</p>' +
+          '<p class="atl-metric-value err" style="font-size:24px">' + schengenDays + ' / 90</p>' +
+        '</div>' +
+        '<div style="height:2px;background:#ccc3d8;overflow:hidden"><div style="height:100%;width:' + schengenPct + '%;background:' + schengenColor + '"></div></div>' +
       '</div>' +
     '</div>';
-    html += '</div>';
-    html += '</div>';
+    html += '</header>';
 
-    // ════════ SECTION 2 · 3-col 레이아웃 (flex-grow 테이블 + w-80 사이드 레일) ════════
-    html += '<div class="nm-voyage-main-grid">';
+    // ────── 2-col Grid (vertical label / main / aside) ──────
+    html += '<div style="display:grid;grid-template-columns:24px 1fr;gap:24px;align-items:start">';
+    html += '<aside style="display:none" class="atl-vlabel-wrap"></aside>';
 
-    // ───── LEFT: Itinerary Table ─────
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<table class="nm-table" style="width:100%;border-collapse:collapse">';
-    html += '<thead>' +
-      '<tr style="background:#F5F3FF">' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;width:90px">Month</th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">City & Node</th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Detail</th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Visa / Schengen</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Budget</th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Work Mode</th>' +
-      '</tr>' +
-    '</thead>';
-    html += '<tbody>';
+    html += '<div class="atl-grid">';
 
-    // 분기 분리선 헬퍼
-    function quarterRow(label) {
-      return '<tr><td colspan="6" style="padding:10px 20px;background:var(--nm-surface-container-low);font-family:var(--nm-font-h);font-size:10px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.12em;text-transform:uppercase;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9">' + label + '</td></tr>';
-    }
+    // ─── Main Itinerary ───
+    html += '<div>';
 
-    // EUROPE LOOP 분기 라벨 시작
-    html += quarterRow('Europe Loop · June — November 2028');
-
-    voyage.forEach(function(v, i) {
-      // 분기 전환 (12월 = DOWN UNDER 시작, 4월 = AMERICAS & RETURN 시작)
-      if (v.month === '12월') html += quarterRow('Down Under · December 2028 — March 2029');
-      if (v.month === '4월' && v.year === 2029) html += quarterRow('Americas & Return · April — May 2029');
-
-      var node = voyageCityNode(v.city);
-      var modeIcon = voyageModeIcon(v.mode);
-      var pageId = voyageCityToPageId(v.city);
-      var yearLabel = v.year === 2028 ? '\'28' : '\'29';
-      var clickAttrs = pageId
-        ? ' style="cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'" onclick="NOMAD_PAGES.go(\'' + pageId + '\')"'
-        : '';
-
-      // visa pill
-      var visaPill = '<span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;' + visaPillClass(v.visa) + '">' + v.visa + '</span>';
-      // schengen pill (있을 때만)
-      var schengenPill = '';
-      if (v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외') {
-        schengenPill = ' <span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;background:#fff7ed;color:#c2410c;margin-left:4px">' + v.schengen + '</span>';
-      } else if (v.schengen === '외' || v.schengen === '셰겐 외') {
-        schengenPill = ' <span style="display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:500;background:#f1f5f9;color:#475569;margin-left:4px">Non-Sch</span>';
-      }
-
-      html += '<tr' + clickAttrs + '>';
-      // Month
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;font-family:var(--nm-font-h);font-weight:700;color:var(--nm-primary);font-size:13px">' + yearLabel + ' ' + v.month + '</td>';
-      // City & Node
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9">' +
-        '<div style="display:flex;align-items:center;gap:10px">' +
-          '<span style="width:8px;height:8px;border-radius:50%;background:var(--nm-soft-accent);flex-shrink:0"></span>' +
-          '<div>' +
-            '<div style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + v.city + '</div>' +
-            (node.country ? '<div style="font-size:11px;color:var(--nm-text-3);margin-top:2px">' + node.country + (node.node ? ' · ' + node.node : '') + '</div>' : '') +
-          '</div>' +
-        '</div>' +
-      '</td>';
-      // Detail
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;font-size:12px;color:var(--nm-text-2);max-width:240px;line-height:1.5">' + v.detail + '</td>';
-      // Visa
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;white-space:nowrap">' + visaPill + schengenPill + '</td>';
-      // Budget
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-weight:700;color:var(--nm-on-surface);font-size:13px">₩' + v.cost + '만</td>';
-      // Mode
-      html += '<td style="padding:18px 20px;border-bottom:1px solid #f1f5f9">' +
-        '<div style="display:flex;align-items:center;gap:6px">' +
-          '<span class="material-symbols-outlined" style="font-size:16px;color:var(--nm-text-3)">' + modeIcon + '</span>' +
-          '<span style="font-size:12px;color:var(--nm-text-2);font-weight:500">' + v.mode + '</span>' +
-        '</div>' +
-      '</td>';
-      html += '</tr>';
-    });
-
-    html += '</tbody></table>';
-    html += '</div>';
-
-    // ───── RIGHT: 사이드 레일 (3 카드) ─────
-    html += '<aside style="display:flex;flex-direction:column;gap:20px">';
-
-    // ① 마일리지 활용 (lavender + border-l-4)
-    html += '<div class="nm-card" style="padding:22px">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
-      '<h4 style="font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">Mileage Strategy</h4>' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary)">air</span>' +
-    '</div>';
-    html += '<div style="padding:14px 16px;background:#F5F3FF;border-radius:10px;border-left:4px solid var(--nm-primary);margin-bottom:16px">' +
-      '<p class="nm-label-sm" style="margin-bottom:4px;color:var(--nm-text-3)">대한항공 마일리지</p>' +
-      '<p style="font-family:var(--nm-font-h);font-size:15px;font-weight:700;color:var(--nm-deep-indigo)">출국·귀국 보너스 좌석 활용</p>' +
-    '</div>';
-    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px">';
-    var mileageItems = [
-      { icon:'flight_takeoff', text:'인천 → 리스본 (출국, 대한항공 마일리지)' },
-      { icon:'flight_land',    text:'핼리팩스 → 인천 (귀국, 마일리지)' },
-      { icon:'connecting_airports', text:'유럽 안 = 라이언에어 · 이지젯 €30-80' },
-      { icon:'public',         text:'대륙 간 = 두바이 경유 (말타 → 호바트)' },
-    ];
-    mileageItems.forEach(function(m) {
-      html += '<li style="display:flex;gap:10px;align-items:flex-start">' +
-        '<div style="width:24px;height:24px;border-radius:6px;background:rgba(124,58,237,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
-          '<span class="material-symbols-outlined" style="font-size:14px;color:var(--nm-primary)">' + m.icon + '</span>' +
-        '</div>' +
-        '<p style="font-size:12px;color:var(--nm-text-2);line-height:1.5;margin:0">' + m.text + '</p>' +
-      '</li>';
-    });
-    html += '</ul>';
-    html += '</div>';
-
-    // ② 엄마 합류 후보 (deco circle + checklist)
-    html += '<div class="nm-card" style="padding:22px;position:relative;overflow:hidden">';
-    // deco circle
-    html += '<div style="position:absolute;top:-40px;right:-40px;width:96px;height:96px;background:#ffe0cd;opacity:0.4;border-radius:50%"></div>';
-    html += '<div style="position:relative;z-index:1">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
-      '<h4 style="font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:var(--nm-deep-indigo)">Family Integration</h4>' +
-      '<span class="material-symbols-outlined" style="color:#7d3d00">family_restroom</span>' +
-    '</div>';
-    // 아바타 + 이름
-    html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">' +
-      '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffdcc6,#ffb784);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 0 2px rgba(125,61,0,0.15)">👩</div>' +
-      '<div>' +
-        '<p style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:var(--nm-on-surface);margin:0">엄마 합류 후보</p>' +
-        '<p style="font-size:11px;color:var(--nm-text-3);margin:2px 0 0">1969년생 · 정년 2029(현행) / 2033(65세)</p>' +
+    // Europe Loop
+    html += '<section class="atl-region">' +
+      '<div class="atl-region-head">' +
+        '<h2 class="atl-region-h">Europe Loop</h2>' +
+        '<span class="atl-region-range">June — November 2028</span>' +
       '</div>' +
-    '</div>';
-    // 체크박스 후보 시기 (localStorage 저장 X · UI만 — 추후 확장 가능)
-    html += '<div style="padding:14px;background:var(--nm-surface-container-low);border-radius:10px">' +
-      '<p style="font-size:11px;font-weight:700;color:var(--nm-text-2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">합류 후보 시기</p>' +
-      '<div style="display:flex;flex-direction:column;gap:10px">';
-    var familyCandidates = [
-      { when:'2028.9', label:'스칸디나비아', note:'북유럽 · 안전 · 깨끗' },
-      { when:'2028.12', label:'호바트',     note:'호주 · 여름' },
-      { when:'2029.3',  label:'뉴질랜드',    note:'자연' },
-    ];
-    familyCandidates.forEach(function(c) {
-      html += '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">' +
-        '<input type="checkbox" style="margin-top:3px;width:14px;height:14px;accent-color:var(--nm-primary);flex-shrink:0">' +
-        '<div>' +
-          '<span style="font-family:var(--nm-font-h);font-size:12px;font-weight:700;color:var(--nm-deep-indigo)">' + c.when + ' · ' + c.label + '</span>' +
-          '<p style="font-size:11px;color:var(--nm-text-3);margin:2px 0 0">' + c.note + '</p>' +
-        '</div>' +
-      '</label>';
-    });
-    html += '</div></div>';
-    html += '</div>';
-    html += '</div>';
+      regionTable(regionEurope) +
+    '</section>';
 
-    // ③ Voyage Trajectory View (그라데이션 + 캡션)
-    html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="height:170px;position:relative;background:linear-gradient(135deg,#312E81 0%,#7C3AED 45%,#a78bfa 80%,#fbbf24 100%)">' +
-      // 가짜 trajectory lines (정적 점들로 표현)
-      '<svg viewBox="0 0 320 170" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.5">' +
-        '<path d="M 40 130 Q 80 60 130 80 T 220 70 T 290 100" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none" stroke-dasharray="3,3"/>' +
-        '<circle cx="40" cy="130" r="4" fill="rgba(255,255,255,0.85)"/>' +
-        '<circle cx="130" cy="80" r="4" fill="rgba(255,255,255,0.85)"/>' +
-        '<circle cx="220" cy="70" r="4" fill="rgba(255,255,255,0.85)"/>' +
-        '<circle cx="290" cy="100" r="4" fill="rgba(255,255,255,0.85)"/>' +
+    // Down Under
+    html += '<section class="atl-region">' +
+      '<div class="atl-region-head">' +
+        '<h2 class="atl-region-h">Down Under</h2>' +
+        '<span class="atl-region-range">December 2028 — March 2029</span>' +
+      '</div>' +
+      regionTable(regionDown) +
+    '</section>';
+
+    // Americas & Return
+    html += '<section class="atl-region">' +
+      '<div class="atl-region-head">' +
+        '<h2 class="atl-region-h">Americas &amp; Return</h2>' +
+        '<span class="atl-region-range">April — May 2029</span>' +
+      '</div>' +
+      regionTable(regionAmericas) +
+    '</section>';
+
+    html += '</div>'; // /main
+
+    // ─── Sidebar ───
+    html += '<aside class="atl-aside">';
+
+    // Mileage Strategy
+    html += '<div class="atl-aside-card">' +
+      '<h4>Mileage Strategy <span class="material-symbols-outlined" style="font-size:20px !important;color:var(--nm-primary)">auto_awesome</span></h4>' +
+      '<div class="atl-aside-pill">' +
+        '<p>KOREAN AIR</p>' +
+        '<p>출국·귀국 보너스 좌석 활용</p>' +
+      '</div>' +
+      '<ul class="atl-aside-list">' +
+        '<li><span class="material-symbols-outlined">flight_takeoff</span><span>인천 → 리스본 (출국, 대한항공 마일리지)</span></li>' +
+        '<li><span class="material-symbols-outlined">flight_land</span><span>핼리팩스 → 인천 (귀국, 마일리지)</span></li>' +
+        '<li><span class="material-symbols-outlined">connecting_airports</span><span>유럽 안 = 라이언에어 · 이지젯 €30-80</span></li>' +
+        '<li><span class="material-symbols-outlined">public</span><span>대륙 간 = 두바이 경유 (말타 → 호바트)</span></li>' +
+      '</ul>' +
+    '</div>';
+
+    // Family Integration
+    html += '<div class="atl-aside-card">' +
+      '<h4>Family Integration <span class="material-symbols-outlined" style="font-size:20px !important;color:#7d3d00">family_restroom</span></h4>' +
+      '<div class="atl-aside-pill" style="background:#ffdcc6">' +
+        '<p style="color:#713700">합류 후보</p>' +
+        '<p style="color:#7d3d00">엄마 (1969년생)</p>' +
+      '</div>' +
+      '<ul class="atl-aside-list">' +
+        '<li><span class="material-symbols-outlined" style="color:#7d3d00 !important">event</span><span><strong>2028.9</strong> 스칸디나비아 · 북유럽 · 안전 · 깨끗</span></li>' +
+        '<li><span class="material-symbols-outlined" style="color:#7d3d00 !important">event</span><span><strong>2028.12</strong> 호바트 · 호주 · 여름</span></li>' +
+        '<li><span class="material-symbols-outlined" style="color:#7d3d00 !important">event</span><span><strong>2029.3</strong> 뉴질랜드 · 자연</span></li>' +
+      '</ul>' +
+    '</div>';
+
+    // Voyage Trajectory (Map Card)
+    html += '<div class="atl-trajectory">' +
+      '<svg viewBox="0 0 320 320" preserveAspectRatio="none" class="atl-trajectory-svg">' +
+        '<defs><radialGradient id="atlGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.5)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient></defs>' +
+        '<path d="M 40 220 Q 90 140 150 160 T 220 130 T 280 180" stroke="rgba(210,187,255,0.6)" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>' +
+        '<circle cx="40" cy="220" r="6" fill="url(#atlGlow)"/><circle cx="40" cy="220" r="3" fill="#d2bbff"/>' +
+        '<circle cx="150" cy="160" r="6" fill="url(#atlGlow)"/><circle cx="150" cy="160" r="3" fill="#d2bbff"/>' +
+        '<circle cx="220" cy="130" r="6" fill="url(#atlGlow)"/><circle cx="220" cy="130" r="3" fill="#d2bbff"/>' +
+        '<circle cx="280" cy="180" r="6" fill="url(#atlGlow)"/><circle cx="280" cy="180" r="3" fill="#d2bbff"/>' +
       '</svg>' +
-      '<div style="position:absolute;bottom:14px;left:18px">' +
-        '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">Voyage Trajectory View</span>' +
+      '<div class="atl-traj-overlay"></div>' +
+      '<button class="atl-traj-btn" onclick="event.stopPropagation()">View Interactive Map</button>' +
+      '<div class="atl-traj-content">' +
+        '<h4>Voyage Trajectory</h4>' +
+        '<div class="atl-traj-stats">' +
+          '<div><span class="num">17</span><span class="lab">Cities</span></div>' +
+          '<div><span class="num">6</span><span class="lab">Continents</span></div>' +
+          '<div><span class="num">365</span><span class="lab">Days</span></div>' +
+        '</div>' +
       '</div>' +
     '</div>';
-    html += '<div style="padding:18px 20px">' +
-      '<div style="display:flex;justify-content:space-between;gap:12px">' +
-        '<div><p style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">17</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">cities</p></div>' +
-        '<div><p style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">6</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">continents</p></div>' +
-        '<div><p style="font-family:var(--nm-font-h);font-size:18px;font-weight:700;color:var(--nm-deep-indigo)">365</p><p style="font-size:10px;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">days</p></div>' +
-      '</div>' +
-    '</div>';
-    html += '</div>';
 
     html += '</aside>';
-    html += '</div>'; // /3-col grid
+    html += '</div>'; // /atl-grid
+    html += '</div>'; // /outer grid
+
+    html += '</div>'; // /atl-wrap
 
     return html;
   }
@@ -1665,106 +1708,888 @@ window.NOMAD_PAGES = (function(){
   registerPage('nomad-backward', renderBackward);
 
   // ════════════════════════════════════════════════════════════════════
-  // Stay Channels — Apple Minimal (Stitch v2)
+  // Stay Channels — Comprehensive Nomad Housing Guide (Stitch v3)
   // ════════════════════════════════════════════════════════════════════
   function renderChannels() {
     var html = '';
 
-    // Hero
-    html += '<section style="margin-bottom:40px">';
-    html += '<p style="font-family:var(--nm-font-h);color:var(--nm-primary);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;margin:0 0 6px">Stay Channels</p>';
-    html += '<h2 style="font-family:var(--nm-font-h);font-size:38px;font-weight:800;letter-spacing:-0.015em;color:#0f172a;margin:0 0 10px;line-height:1.15">도시별 숙소 채널</h2>';
-    html += '<p style="font-size:15px;color:var(--nm-text-3);font-weight:500;margin:0">Flatio · Stayz · Furnished Finder · 로컬 · 부엌 + Wi-Fi + 안전 동네 필수</p>';
-    html += '</section>';
+    // 도시별 채널 데이터 보강 (1순위·2순위 외 누리한테 짚을 점)
+    var euChannels = [
+      { city:'포르투 (1달)',       primary:'Flatio',           pBg:'flatio',   secondary:'Idealista (로컬)',           note:'Visa-ready 계약 가능' },
+      { city:'더블린 (14일)',      primary:'Daft.ie',          pBg:'local',    secondary:'SpareRoom / Booking',        note:'IE #1 로컬 채널' },
+      { city:'골웨이 (14일)',      primary:'Daft.ie',          pBg:'local',    secondary:'Airbnb / SpareRoom',         note:'7개월 전 예약 필요' },
+      { city:'코펜하겐 (11일)',    primary:'Locke Apt',        pBg:'design',   secondary:'Sonder / Booking',           note:'디자인 호텔 하이브리드' },
+      { city:'베르겐 (8일)',       primary:'Booking',          pBg:'local',    secondary:'게스트하우스',                note:'짧은 체류 = 호텔 OK' },
+      { city:'스톡홀름 (20일)',    primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome / Housing Anywhere', note:'중장기 효율' },
+      { city:'헬싱키 (20일)',      primary:'Flatio',           pBg:'flatio',   secondary:'Spotahome',                   note:'Oodi 도서관 근처' },
+      { city:'레이캬비크 (7일)',    primary:'Booking.com',      pBg:'local',    secondary:'Airbnb / 로컬 호스텔',         note:'성수기 가격 주의' },
+      { city:'포르투갈 복귀 (1달)', primary:'Flatio',           pBg:'flatio',   secondary:'Outsite Lisbon / Idealista', note:'워홀 베이스캠프' },
+      { city:'발레타 (18일)',      primary:'Spotahome',        pBg:'local',    secondary:'Airbnb 주간',                 note:'작은 시장' },
+    ];
 
-    // 테이블 헬퍼
-    function renderChannelTable(icon, title, channels) {
-      var h = '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,0.04);margin-bottom:24px">';
-      h += '<div style="padding:18px 26px;background:rgba(248,250,252,0.5);border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px">' +
-        '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">' + icon + '</span>' +
-        '<h3 style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:#374151;margin:0">' + title + '</h3>' +
-        '<span style="margin-left:auto;font-size:11px;color:var(--nm-text-3);font-weight:600">' + channels.length + ' 도시</span>' +
-      '</div>';
-      h += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">';
-      h += '<thead><tr style="border-bottom:1px solid #f1f5f9">' +
-        ['도시','1순위','2순위','비고'].map(function(t){
-          return '<th style="padding:14px 24px;font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + t + '</th>';
-        }).join('') +
-      '</tr></thead>';
-      h += '<tbody style="font-size:13px;color:#374151">';
-      channels.forEach(function(c) {
-        h += '<tr style="border-bottom:1px solid #f8fafc;transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
-        h += '<td style="padding:16px 24px;font-weight:500">' + c.city + '</td>';
-        h += '<td style="padding:16px 24px"><span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 12px;border-radius:6px;font-family:var(--nm-font-h);font-size:11px;font-weight:700">' + c.first + '</span></td>';
-        h += '<td style="padding:16px 24px">' + c.second + '</td>';
-        h += '<td style="padding:16px 24px;color:var(--nm-text-3);font-size:12px">' + c.note + '</td>';
-        h += '</tr>';
-      });
-      h += '</tbody></table></div>';
-      h += '</section>';
-      return h;
+    var globalChannels = [
+      { city:'호바트 (1달)',       primary:'Stayz',            pBg:'flatio',   secondary:'Furnished Property / Airbnb', note:'Airbnb 월 20-40% 할인' },
+      { city:'멜버른 (1달)',       primary:'Furnished Property', pBg:'flatio', secondary:'Stayz / Airbnb',              note:'호주 전문 가구 매물' },
+      { city:'애들레이드 (1달)',   primary:'Stayz',            pBg:'flatio',   secondary:'Airbnb 월할인',               note:'호주 표준 로컬' },
+      { city:'뉴질랜드 (1달)',     primary:'Bookabach',        pBg:'design',   secondary:'HouseMe / Airbnb',            note:'HouseMe = 가구 포함 장기' },
+      { city:'샌디에이고 (1달)',   primary:'Furnished Finder', pBg:'us',       secondary:'Blueground / Sonder',         note:'미국 노마드 · 수수료 없음' },
+      { city:'핼리팩스 (1달)',     primary:'Mintlist',         pBg:'us',       secondary:'Kijiji / Furnished Finder',  note:'캐나다 노마드 직접 거래' },
+    ];
+
+    // 정책 옵션 (Tailwind 색을 명시적으로 매핑)
+    function pillStyle(kind) {
+      switch (kind) {
+        case 'flatio': return 'background:#eaddff;color:#25005a';
+        case 'design': return 'background:#ffdcc6;color:#713700';
+        case 'local':  return 'background:#e3e1ed;color:#46464f';
+        case 'us':     return 'background:#dce2f7;color:#27313f';
+        default:       return 'background:#f1f5f9;color:#475569';
+      }
     }
 
-    // 유럽 테이블
-    html += renderChannelTable('public', '유럽 6개월 · FLATIO 메인', DATA.CHANNELS_EU);
-    // 글로벌 테이블
-    html += renderChannelTable('language', '호주 · NZ · 미주 6개월 · 로컬 + FURNISHED FINDER', DATA.CHANNELS_GLOBAL);
+    // ════════ Stay Channels CSS (Comprehensive) ════════
+    html += '<style>' +
+      '#nm-page-content .stay-wrap{background:#ffffff;padding:0 0 48px}' +
+      '#nm-page-content .stay-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
+      '#nm-page-content .stay-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1;color:#141b2b;margin:0}' +
+      '#nm-page-content .stay-subtitle{font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#4a4455;margin:16px 0 4px}' +
+      '#nm-page-content .stay-tagline{font-size:14px;color:#5d5d67;margin:0}' +
+      '#nm-page-content .stay-metric{padding:24px;border-radius:12px;border:1px solid #ccc3d8;background:#fff;min-width:160px}' +
+      '#nm-page-content .stay-metric-label{display:block;font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;margin-bottom:8px}' +
+      '#nm-page-content .stay-metric-value{display:block;font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#141b2b}' +
+      '#nm-page-content .stay-canvas{display:grid;grid-template-columns:280px 1fr;gap:48px;align-items:start}' +
+      '@media (max-width:1024px){#nm-page-content .stay-canvas{grid-template-columns:1fr}}' +
+      '#nm-page-content .stay-sidebar{display:flex;flex-direction:column;gap:32px;position:sticky;top:24px}' +
+      '@media (max-width:1024px){#nm-page-content .stay-sidebar{position:static}}' +
+      '#nm-page-content .stay-side-h{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 16px;display:flex;align-items:center;gap:8px}' +
+      '#nm-page-content .stay-side-h .material-symbols-outlined{color:var(--nm-primary)}' +
+      '#nm-page-content .stay-side-card{padding:20px;border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
+      '#nm-page-content .stay-side-card-purple{background:rgba(234,221,255,0.35);border-color:rgba(124,58,237,0.15)}' +
+      '#nm-page-content .stay-side-card-label{display:block;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom:8px}' +
+      '#nm-page-content .stay-side-card-label.gray{color:#5d5d67}' +
+      '#nm-page-content .stay-side-card-label.err{color:#ba1a1a}' +
+      '#nm-page-content .stay-side-card-body{font-size:14px;color:#4a4455;line-height:1.5;margin:0}' +
+      '#nm-page-content .stay-side-card-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:14px;color:#4a4455}' +
+      '#nm-page-content .stay-side-card-list.bold{color:var(--nm-primary);font-weight:600}' +
+      '#nm-page-content .stay-rule{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #ccc3d8;padding-bottom:16px;margin-bottom:32px}' +
+      '#nm-page-content .stay-h{font-family:var(--nm-font-h);font-size:28px;font-weight:500;color:#141b2b;margin:0;letter-spacing:-0.005em}' +
+      '#nm-page-content .stay-h-meta{font-family:var(--nm-font-h);font-size:13px;font-weight:500;color:#5d5d67;letter-spacing:-0.01em}' +
+      '#nm-page-content .stay-section{margin-bottom:80px}' +
+      '#nm-page-content .stay-section:last-child{margin-bottom:0}' +
+      '#nm-page-content .stay-alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}' +
+      '@media (max-width:720px){#nm-page-content .stay-alt-grid{grid-template-columns:1fr}}' +
+      '#nm-page-content .stay-alt-card{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;transition:border-color 0.15s}' +
+      '#nm-page-content .stay-alt-card:hover{border-color:var(--nm-primary)}' +
+      '#nm-page-content .stay-alt-card h4{font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:var(--nm-primary);margin:0 0 8px}' +
+      '#nm-page-content .stay-alt-card p{font-size:14px;color:#4a4455;line-height:1.5;margin:0 0 12px}' +
+      '#nm-page-content .stay-alt-card .stay-alt-tag{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;color:#5d5d67}' +
+      '#nm-page-content .stay-alt-card .stay-alt-nuri{margin-top:10px;padding-top:10px;border-top:1px dashed #ccc3d8;font-size:13px;color:#4a4455;line-height:1.5}' +
+      '#nm-page-content .stay-alt-card .stay-alt-nuri strong{color:#141b2b}' +
+      '#nm-page-content .stay-tbl{width:100%;text-align:left;border-collapse:separate;border-spacing:0}' +
+      '#nm-page-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding:14px 12px;border-bottom:1px solid #ccc3d8}' +
+      '#nm-page-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size:15px;color:#141b2b;vertical-align:top}' +
+      '#nm-page-content .stay-tbl tbody tr:hover{background:#f1f3ff}' +
+      '#nm-page-content .stay-tbl .stay-city{font-weight:600}' +
+      '#nm-page-content .stay-pill{display:inline-block;padding:5px 12px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-family:var(--nm-font-h)}' +
+      '#nm-page-content .stay-secondary{color:#4a4455;font-size:13px}' +
+      '#nm-page-content .stay-remark{font-family:var(--nm-font-h);font-size:13px;color:#5d5d67;letter-spacing:-0.005em}' +
+      '#nm-page-content .stay-regional{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}' +
+      '#nm-page-content .stay-regional-card{padding:20px;border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
+      '#nm-page-content .stay-regional-card h5{font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 10px;display:flex;align-items:center;gap:8px}' +
+      '#nm-page-content .stay-regional-card h5 .flag{font-size:18px}' +
+      '#nm-page-content .stay-regional-card ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}' +
+      '#nm-page-content .stay-regional-card li{font-size:13px;color:#4a4455;line-height:1.5}' +
+      '#nm-page-content .stay-regional-card li strong{color:#141b2b}' +
+      '#nm-page-content .stay-tips{display:flex;flex-direction:column;gap:20px}' +
+      '#nm-page-content .stay-tip{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:flex-start}' +
+      '@media (max-width:560px){#nm-page-content .stay-tip{grid-template-columns:1fr}}' +
+      '#nm-page-content .stay-tip-num{font-family:var(--nm-font-h);font-size:48px;font-weight:600;color:var(--nm-primary);line-height:1;opacity:0.25;letter-spacing:-0.02em;min-width:60px}' +
+      '#nm-page-content .stay-tip-content h4{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 8px}' +
+      '#nm-page-content .stay-tip-content p{font-size:14px;color:#4a4455;line-height:1.6;margin:0 0 6px}' +
+      '#nm-page-content .stay-tip-content p strong{color:#141b2b}' +
+      '#nm-page-content .stay-tip-content .stay-tip-list{margin-top:8px;padding-top:8px;border-top:1px dashed #ccc3d8}' +
+      '#nm-page-content .stay-tip-content ul{margin:8px 0 0 0;padding:0;list-style:none}' +
+      '#nm-page-content .stay-tip-content li{font-size:13px;color:#4a4455;line-height:1.6;margin-bottom:4px}' +
+    '</style>';
 
-    // 검색 · 예약 타임라인
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04);margin-bottom:24px">';
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:22px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">schedule</span>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:#374151;margin:0">검색 · 예약 타임라인</h3>' +
+    html += '<div class="stay-wrap">';
+
+    // ────── Hero ──────
+    html += '<header style="margin-bottom:64px">';
+    html += '<p class="stay-eyebrow">Global Expedition Plan</p>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end">';
+    html += '<div>' +
+      '<h2 class="stay-title">Stay Channels</h2>' +
+      '<p class="stay-subtitle">도시별 숙소 채널 전략</p>' +
+      '<p class="stay-tagline">Nomadic Housing · Local Specialists · Legal Compliance</p>' +
     '</div>';
-    var tlItems = [
-      { h:'2027.12부터 (출국 6개월 전):', t:'Flatio · Stayz · Furnished Finder 가입 + 검색 시작, 가격 추적' },
-      { h:'2028.3 (3개월 전):',           t:'6-8월 숙소 확정 예약 (포르투갈·아일랜드·덴마크)' },
-      { h:'2028.4 (2개월 전):',           t:'9-11월 숙소 확정 예약 (스칸디나비아·아이슬란드·말타)' },
-      { h:'출국 후:',                       t:'12월 이후 = 노마드 중 5-6주 전 예약 (유연하게)' },
-    ];
-    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px">';
-    tlItems.forEach(function(t) {
-      html += '<li style="display:flex;align-items:flex-start;gap:14px">' +
-        '<span style="color:var(--nm-primary);margin-top:5px;font-size:14px;line-height:1;flex-shrink:0">•</span>' +
-        '<div><span style="font-weight:700;color:#0f172a">' + t.h + '</span>' +
-        '<span style="color:var(--nm-text-2);margin-left:8px">' + t.t + '</span></div>' +
-      '</li>';
-    });
-    html += '</ul>';
-    html += '</section>';
-
-    // 누리 기준 3-col
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:18px">checklist_rtl</span>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size:16px;font-weight:700;color:#374151;margin:0">숙소 기준 (누리 라인)</h3>' +
+    html += '<div style="display:flex;gap:16px;flex-wrap:wrap">' +
+      '<div class="stay-metric">' +
+        '<span class="stay-metric-label">Europe Phase</span>' +
+        '<span class="stay-metric-value">10 Cities</span>' +
+      '</div>' +
+      '<div class="stay-metric">' +
+        '<span class="stay-metric-label">Global Phase</span>' +
+        '<span class="stay-metric-value">6 Cities</span>' +
+      '</div>' +
     '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px">';
+    html += '</div>';
+    html += '</header>';
 
-    var criteria = [
-      { title:'필수',     color:'#0f172a',                   borderColor:'#f1f5f9',           dot:'#94a3b8', items:['개인실 (1베드룸 또는 스튜디오)', '부엌 (집밥 위주)', 'Wi-Fi 50Mbps+', '안전 동네', '평점 4.5+'] },
-      { title:'양보 가능', color:'#0f172a',                   borderColor:'#f1f5f9',           dot:'#94a3b8', items:['신축 → 적당 노후 (5-15년)', '시내 중심 → 외곽 (대중교통 15분)', '럭셔리 → 깨끗한 기본'] },
-      { title:'NO',       color:'#dc2626', titleStyle:'text-transform:uppercase;letter-spacing:0.14em', borderColor:'#fee2e2', dot:'#f87171', itemColor:'rgba(185,28,28,0.85)', items:['호스텔 도미토리', '위험 동네', '부엌 X'] },
+    // ────── Asymmetric Canvas: Sidebar + Main ──────
+    html += '<div class="stay-canvas">';
+
+    // ─── Sidebar ───
+    html += '<aside class="stay-sidebar">';
+
+    // Visa-Ready Contracts
+    html += '<section>' +
+      '<h3 class="stay-side-h"><span class="material-symbols-outlined">verified</span>Visa-Ready Contracts</h3>' +
+      '<div class="stay-side-card stay-side-card-purple">' +
+        '<p class="stay-side-card-body" style="margin-bottom:12px">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
+        '<ul class="stay-side-card-list bold">' +
+          '<li>• Flatio</li>' +
+          '<li>• Housing Anywhere</li>' +
+        '</ul>' +
+      '</div>' +
+    '</section>';
+
+    // Golden Timeline
+    html += '<section>' +
+      '<h3 class="stay-side-h"><span class="material-symbols-outlined">timer</span>Golden Timeline</h3>' +
+      '<div class="stay-side-card">' +
+        '<span class="stay-side-card-label">Reservation Tip</span>' +
+        '<p class="stay-side-card-body"><strong>6개월 전 예약</strong> = 옵션 多 + 가격 안정. 누리: 출국 6개월 전부터 후보 잡기.</p>' +
+      '</div>' +
+    '</section>';
+
+    // Duration Strategy
+    html += '<section>' +
+      '<h3 class="stay-side-h"><span class="material-symbols-outlined">category</span>Duration Strategy</h3>' +
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+        '<div class="stay-side-card">' +
+          '<span class="stay-side-card-label gray">Short-Term (1-2 Weeks)</span>' +
+          '<p class="stay-side-card-body" style="margin-bottom:8px">Booking · Airbnb · Sonder</p>' +
+          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">더블린 · 골웨이 · 코펜 · 베르겐 · 레이캬비크 · 발레타</p>' +
+        '</div>' +
+        '<div class="stay-side-card">' +
+          '<span class="stay-side-card-label gray">Long-Term (1 Month+)</span>' +
+          '<p class="stay-side-card-body" style="margin-bottom:8px">Flatio · Housing Anywhere · Outsite</p>' +
+          '<p style="font-size:12px;color:var(--nm-primary);font-weight:600;margin:0;line-height:1.5">포르투 · 호바트 · 애들레이드 · 멜버른 · NZ · 샌디에이고 · 핼리팩스</p>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+
+    // Stay Criteria
+    html += '<section class="stay-side-card">' +
+      '<h3 class="stay-side-h"><span class="material-symbols-outlined">rule</span>Stay Criteria</h3>' +
+      '<div style="display:flex;flex-direction:column;gap:18px">' +
+        '<div>' +
+          '<span class="stay-side-card-label gray">Mandatory</span>' +
+          '<ul class="stay-side-card-list">' +
+            '<li>• 개인실 (1BR 또는 스튜디오)</li>' +
+            '<li>• 풀 키친 (집밥)</li>' +
+            '<li>• Wi-Fi 50Mbps+</li>' +
+            '<li>• 워크스페이스 인증</li>' +
+            '<li>• User Rating 4.5+</li>' +
+          '</ul>' +
+        '</div>' +
+        '<div>' +
+          '<span class="stay-side-card-label err">Strict No</span>' +
+          '<ul class="stay-side-card-list" style="opacity:0.8">' +
+            '<li>• 호스텔 도미토리</li>' +
+            '<li>• 위험 동네</li>' +
+            '<li>• 공유 부엌</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+
+    html += '</aside>';
+
+    // ─── Main Content ───
+    html += '<div style="display:flex;flex-direction:column;gap:80px">';
+
+    // ───── Section 1: Global Nomad Alternatives ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">Global Nomad Alternatives</h3>' +
+        '<span class="stay-h-meta">5 PLATFORMS · Flatio급</span>' +
+      '</div>';
+    html += '<div class="stay-alt-grid">';
+    var alts = [
+      { name:'Housing Anywhere',  desc:'30+ 국가, 유럽 강함 (네덜란드·독일·스페인·이탈리아). Flatio처럼 검증된 호스트 + 법적 임대 계약서.',
+        tag:'BEST FOR: 유럽 비자 대안',
+        nuri:'<strong>누리 적용:</strong> 더블린·코펜하겐·스톡홀름·헬싱키에서 Flatio 대안.' },
+      { name:'Coliving.com',      desc:'60+ 국가. 코리빙 (코워킹 + 숙소 결합). 다른 노마드를 자동으로 만나게 됨.',
+        tag:'BEST FOR: 커뮤니티',
+        nuri:'<strong>누리 적용:</strong> 사회 자원 부담 적은 1-2 도시에서 시험 (포르투 추천).' },
+      { name:'Anyplace',          desc:'글로벌 (미국·유럽 강함). <strong>워크스페이스 인증된 매물만</strong> — 책상·의자·조명·모니터 보장. 단점: 비쌈.',
+        tag:'BEST FOR: 작업 효율',
+        nuri:'<strong>누리 적용:</strong> 글 작업 풀가동 도시 (스톡홀름·멜버른·핼리팩스).' },
+      { name:'Sabbatical Homes',  desc:'학자·전문직 안식년 대상. 진짜 누군가의 집 (홈스왑 비슷). 시세 저렴.',
+        tag:'BEST FOR: 한 달+ 거점',
+        nuri:'<strong>누리 적용:</strong> 한 달+ 거점 도시 (포르투갈·멜버른).' },
+      { name:'Outsite',           desc:'25+ 도시 (리스본·발리·바르셀로나·뉴욕·LA 등). 노마드 전용 코리빙 체인. 멤버십 가능.',
+        tag:'BEST FOR: 프리미엄 + 커뮤니티',
+        nuri:'<strong>누리 적용:</strong> 포르투갈 복귀 시 (Outsite Lisbon).' },
     ];
-    criteria.forEach(function(c) {
-      html += '<div>';
-      html += '<h4 style="font-family:var(--nm-font-h);font-size:14px;font-weight:700;color:' + c.color + ';border-bottom:2px solid ' + c.borderColor + ';padding-bottom:10px;margin:0 0 18px' + (c.titleStyle ? ';' + c.titleStyle : '') + '">' + c.title + '</h4>';
-      html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px">';
-      c.items.forEach(function(it) {
-        html += '<li style="display:flex;align-items:center;gap:12px;font-size:13px;color:' + (c.itemColor || 'var(--nm-text-2)') + '">' +
-          '<span style="width:6px;height:6px;border-radius:50%;background:' + c.dot + ';flex-shrink:0"></span>' +
-          it +
-        '</li>';
-      });
-      html += '</ul>';
-      html += '</div>';
+    alts.forEach(function(a, i) {
+      html += '<div class="stay-alt-card"' + (i === 4 ? ' style="grid-column:1 / -1"' : '') + '>' +
+        '<h4>' + a.name + '</h4>' +
+        '<p>' + a.desc + '</p>' +
+        '<span class="stay-alt-tag">' + a.tag + '</span>' +
+        '<p class="stay-alt-nuri">' + a.nuri + '</p>' +
+      '</div>';
     });
     html += '</div>';
     html += '</section>';
 
+    // ───── Section 2: Europe Phase Table ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">Europe Phase — Flatio &amp; Local</h3>' +
+        '<span class="stay-h-meta">DESTINATION SPECIFICS</span>' +
+      '</div>';
+    html += '<div style="overflow-x:auto"><table class="stay-tbl">';
+    html += '<thead><tr>' +
+      '<th>City</th>' +
+      '<th>Primary Channel</th>' +
+      '<th>Secondary</th>' +
+      '<th>Remarks</th>' +
+    '</tr></thead><tbody>';
+    euChannels.forEach(function(c) {
+      html += '<tr>' +
+        '<td class="stay-city">' + c.city + '</td>' +
+        '<td><span class="stay-pill" style="' + pillStyle(c.pBg) + '">' + c.primary + '</span></td>' +
+        '<td class="stay-secondary">' + c.secondary + '</td>' +
+        '<td class="stay-remark">' + c.note + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '</section>';
+
+    // ───── Section 3: Global Phase Table ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">Global Phase — AU, US &amp; CA</h3>' +
+        '<span class="stay-h-meta">REGIONAL SPECIALISTS</span>' +
+      '</div>';
+    html += '<div style="overflow-x:auto"><table class="stay-tbl">';
+    html += '<thead><tr>' +
+      '<th>City</th>' +
+      '<th>Primary Channel</th>' +
+      '<th>Secondary</th>' +
+      '<th>Remarks</th>' +
+    '</tr></thead><tbody>';
+    globalChannels.forEach(function(c) {
+      html += '<tr>' +
+        '<td class="stay-city">' + c.city + '</td>' +
+        '<td><span class="stay-pill" style="' + pillStyle(c.pBg) + '">' + c.primary + '</span></td>' +
+        '<td class="stay-secondary">' + c.secondary + '</td>' +
+        '<td class="stay-remark">' + c.note + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '</section>';
+
+    // ───── Section 4: 지역별 1티어 보강 채널 ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">지역별 1티어 채널</h3>' +
+        '<span class="stay-h-meta">LOCAL SPECIALISTS</span>' +
+      '</div>';
+    html += '<div class="stay-regional">';
+    var regional = [
+      { flag:'🇦🇺', name:'호주',
+        items:['<strong>Stayz</strong> — 호주 로컬 베스트', '<strong>Airbnb 장기 할인</strong> — 월 20-40% 자동', '<strong>Furnished Property</strong> — 호주 전문 가구 매물'] },
+      { flag:'🇳🇿', name:'뉴질랜드',
+        items:['<strong>Bookabach</strong> — NZ 로컬 (NZ판 Stayz)', '<strong>HouseMe</strong> — 가구 포함 장기 매물'] },
+      { flag:'🇺🇸', name:'미국',
+        items:['<strong>Furnished Finder</strong> — 의료진·노마드용, 수수료 없음', '<strong>Blueground</strong> — 도시 럭셔리 (LA·NY·SF·시카고)', '<strong>Sonder</strong> — 호텔+아파트 하이브리드, 한 달 할인'] },
+      { flag:'🇨🇦', name:'캐나다 (핼리팩스)',
+        items:['<strong>Mintlist</strong> — 캐나다 노마드 장기', '<strong>Kijiji</strong> — 캐나다 크레이그리스트, 직거래 가능', '<strong>Furnished Finder</strong> — 캐나다도 일부 커버'] },
+      { flag:'🇮🇪', name:'영국·아일랜드 (더블린·골웨이)',
+        items:['<strong>SpareRoom</strong> — 유럽 1티어 (룸·플랫·셰어)', '<strong>Daft.ie</strong> — 아일랜드 로컬 1순위'] },
+    ];
+    regional.forEach(function(r) {
+      html += '<div class="stay-regional-card">' +
+        '<h5><span class="flag">' + r.flag + '</span>' + r.name + '</h5>' +
+        '<ul>' +
+          r.items.map(function(it){ return '<li>• ' + it + '</li>'; }).join('') +
+        '</ul>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '</section>';
+
+    // ───── Section 5: 누리한테 짚을 거 ─────
+    html += '<section class="stay-section">' +
+      '<div class="stay-rule">' +
+        '<h3 class="stay-h">누리한테 짚을 거</h3>' +
+        '<span class="stay-h-meta">NURI-SPECIFIC NOTES</span>' +
+      '</div>';
+    html += '<div class="stay-tips">';
+    // Tip 1
+    html += '<div class="stay-tip">' +
+      '<div class="stay-tip-num">01</div>' +
+      '<div class="stay-tip-content">' +
+        '<h4>비자용 임대 계약서 = Flatio · Housing Anywhere</h4>' +
+        '<p><strong>포르투갈 워홀 신청 시</strong> 임대 계약서 = 주소 증명. Flatio · Housing Anywhere만 법적 계약서 제공. Airbnb · Booking은 X.</p>' +
+      '</div>' +
+    '</div>';
+    // Tip 2
+    html += '<div class="stay-tip">' +
+      '<div class="stay-tip-num">02</div>' +
+      '<div class="stay-tip-content">' +
+        '<h4>단기 (1-2주) vs 한 달+ 채널 다름</h4>' +
+        '<p><strong>단기 (1-2주):</strong> Booking 아파트호텔 / Airbnb / Sonder</p>' +
+        '<p><strong>한 달+:</strong> Flatio / Housing Anywhere / Outsite / Sabbatical Homes</p>' +
+        '<div class="stay-tip-list">' +
+          '<p style="margin:0 0 4px"><strong>누리 일정 매핑:</strong></p>' +
+          '<ul>' +
+            '<li>• <strong>단기:</strong> 더블린(14d) · 골웨이(14d) · 코펜하겐(11d) · 베르겐(8d) · 레이캬비크(7d) · 발레타(18d) → Airbnb · Booking 위주</li>' +
+            '<li>• <strong>한 달+:</strong> 포르투갈 6달 · 호바트 · 애들레이드 · 멜버른 · NZ · 샌디에이고 · 핼리팩스 → Flatio · 로컬 채널</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    // Tip 3
+    html += '<div class="stay-tip">' +
+      '<div class="stay-tip-num">03</div>' +
+      '<div class="stay-tip-content">' +
+        '<h4>시즌 + 사전 예약</h4>' +
+        '<p><strong>6개월 전 예약</strong> = 옵션 많음 + 가격 안정</p>' +
+        '<div class="stay-tip-list">' +
+          '<ul>' +
+            '<li>• 포르투 (2028.6) → <strong>2027.12-2028.1</strong> 예약</li>' +
+            '<li>• 멜버른 (2029.2) → <strong>2028.8-9</strong> 예약</li>' +
+            '<li>• 누리 = 한국에서 미리 다 잡고 가는 게 정신적으로 편함</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    html += '</div>'; // /main content
+    html += '</div>'; // /stay-canvas
+
+    html += '</div>'; // /stay-wrap
+
     return html;
   }
   registerPage('nomad-channels', renderChannels);
+
+  // ════════════════════════════════════════════════════════════════════
+  // Nomad Essentials — Clean White Editorial Guide
+  // ════════════════════════════════════════════════════════════════════
+  function renderEssentials() {
+    var html = '';
+
+    // ── CSS ──
+    html += '<style>' +
+      '#nm-page-content .ne-wrap{background:#ffffff;padding:0 0 64px}' +
+      '#nm-page-content .ne-eyebrow{font-family:var(--nm-font-h);font-size:12px;font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
+      '#nm-page-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1;color:#141b2b;margin:0 0 24px}' +
+      '#nm-page-content .ne-lede{font-size:16px;line-height:1.7;color:#4a4455;max-width:640px;margin:0}' +
+      '#nm-page-content .ne-hero{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:end;margin-bottom:80px}' +
+      '@media (max-width:960px){#nm-page-content .ne-hero{grid-template-columns:1fr}}' +
+      '#nm-page-content .ne-hero-image{aspect-ratio:16/10;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%);border:1px solid #ccc3d8;position:relative;overflow:hidden;border-radius:4px}' +
+      '#nm-page-content .ne-hero-image::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18) 0%,transparent 60%)}' +
+      '#nm-page-content .ne-hero-image .badge{position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.25)}' +
+      '#nm-page-content .ne-hero-image .icon{position:absolute;bottom:24px;left:24px;color:rgba(255,255,255,0.85);font-size:64px !important}' +
+      '#nm-page-content .ne-section-h-row{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #ccc3d8;padding-bottom:16px;margin-bottom:32px;gap:16px;flex-wrap:wrap}' +
+      '#nm-page-content .ne-section-h{font-family:var(--nm-font-h);font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:-0.01em;color:#141b2b;margin:0}' +
+      '#nm-page-content .ne-section-meta{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase}' +
+      '#nm-page-content .ne-mini-h{display:flex;align-items:center;gap:8px;margin-bottom:24px}' +
+      '#nm-page-content .ne-mini-h .ne-rule{width:32px;height:1px;background:var(--nm-primary)}' +
+      '#nm-page-content .ne-mini-h h3{font-family:var(--nm-font-h);font-size:24px;font-weight:500;color:#141b2b;margin:0;letter-spacing:-0.005em}' +
+      '#nm-page-content .ne-top5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:80px}' +
+      '@media (max-width:960px){#nm-page-content .ne-top5{grid-template-columns:repeat(2,1fr)}}' +
+      '#nm-page-content .ne-top5 .ne-t5-card{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;transition:background 0.18s,color 0.18s;cursor:default}' +
+      '#nm-page-content .ne-top5 .ne-t5-card .ne-t5-num{font-family:var(--nm-font-h);font-size:32px;font-weight:600;opacity:0.3;letter-spacing:-0.01em;line-height:1;margin-bottom:24px}' +
+      '#nm-page-content .ne-top5 .ne-t5-card h4{font-family:var(--nm-font-h);font-size:20px;font-weight:600;margin:0 0 6px;color:#141b2b}' +
+      '#nm-page-content .ne-top5 .ne-t5-card p{font-size:13px;line-height:1.5;color:#4a4455;margin:0}' +
+      '#nm-page-content .ne-top5 .ne-t5-card:hover{background:#7c3aed;color:#fff}' +
+      '#nm-page-content .ne-top5 .ne-t5-card:hover h4,#nm-page-content .ne-top5 .ne-t5-card:hover p,#nm-page-content .ne-top5 .ne-t5-card:hover .ne-t5-num{color:#fff}' +
+      '#nm-page-content .ne-top5 .ne-t5-card.feature{background:var(--nm-primary);color:#fff;grid-column:span 2}' +
+      '@media (max-width:960px){#nm-page-content .ne-top5 .ne-t5-card.feature{grid-column:span 2}}' +
+      '#nm-page-content .ne-top5 .ne-t5-card.feature .ne-t5-num{font-size:48px;opacity:0.25;color:#fff}' +
+      '#nm-page-content .ne-top5 .ne-t5-card.feature h4{font-size:24px;color:#fff;margin-bottom:8px}' +
+      '#nm-page-content .ne-top5 .ne-t5-card.feature p{color:rgba(255,255,255,0.85);font-size:14px}' +
+      '#nm-page-content .ne-grid{display:grid;grid-template-columns:1fr 280px;gap:48px;align-items:start}' +
+      '@media (max-width:1280px){#nm-page-content .ne-grid{grid-template-columns:1fr}}' +
+      '#nm-page-content .ne-main{display:flex;flex-direction:column;gap:80px;min-width:0}' +
+      '#nm-page-content .ne-card{padding:24px;border:1px solid #ccc3d8;background:#fff;transition:background 0.15s}' +
+      '#nm-page-content .ne-card:hover{background:#fafafa}' +
+      '#nm-page-content .ne-card-purple{background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)}' +
+      '#nm-page-content .ne-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px}' +
+      '#nm-page-content .ne-card-name{font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:#141b2b;margin:0}' +
+      '#nm-page-content .ne-card-body{font-size:14px;line-height:1.6;color:#4a4455;margin:0}' +
+      '#nm-page-content .ne-card-body strong{color:#141b2b}' +
+      '#nm-page-content .ne-priority-pill{font-family:var(--nm-font-h);font-size:9px;font-weight:700;letter-spacing:0.1em;padding:4px 10px;background:rgba(124,58,237,0.1);color:var(--nm-primary);border-radius:4px;text-transform:uppercase;white-space:nowrap}' +
+      '#nm-page-content .ne-icon-mini{padding:6px;background:#f5f5f7;border-radius:4px;color:var(--nm-primary);font-size:20px !important}' +
+      '#nm-page-content .ne-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}' +
+      '@media (max-width:560px){#nm-page-content .ne-mini-grid{grid-template-columns:1fr}}' +
+      '#nm-page-content .ne-mini-card{padding:16px;border:1px solid #ccc3d8}' +
+      '#nm-page-content .ne-mini-card-label{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.12em;color:#4a4455;text-transform:uppercase;display:block;margin-bottom:6px}' +
+      '#nm-page-content .ne-mini-card-name{font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;display:block}' +
+      '#nm-page-content .ne-mini-card-desc{font-size:12px;color:#4a4455;line-height:1.5;margin:6px 0 0}' +
+      '#nm-page-content .ne-2col{display:grid;grid-template-columns:1fr 1fr;gap:32px}' +
+      '@media (max-width:760px){#nm-page-content .ne-2col{grid-template-columns:1fr}}' +
+      '#nm-page-content .ne-ground{background:#fafafa;border-top:1px solid #ccc3d8;border-bottom:1px solid #ccc3d8;padding:48px;margin:0 -24px}' +
+      '#nm-page-content .ne-ground-grid{display:grid;grid-template-columns:1fr 2fr;gap:32px;align-items:center}' +
+      '@media (max-width:960px){#nm-page-content .ne-ground-grid{grid-template-columns:1fr}}' +
+      '#nm-page-content .ne-ground h3{font-family:var(--nm-font-h);font-size:clamp(32px,4vw,40px);font-weight:600;color:#141b2b;line-height:1.05;margin:0 0 14px}' +
+      '#nm-page-content .ne-ground p{font-size:14px;line-height:1.6;color:#4a4455;margin:0}' +
+      '#nm-page-content .ne-list{list-style:none;padding:0;margin:0}' +
+      '#nm-page-content .ne-list li{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #ccc3d8;font-size:14px;color:#141b2b;transition:padding 0.15s,background 0.15s}' +
+      '#nm-page-content .ne-list li:last-child{border-bottom:none}' +
+      '#nm-page-content .ne-list li:hover{background:#7c3aed;color:#fff;padding-left:12px;padding-right:12px;margin-left:-12px;margin-right:-12px}' +
+      '#nm-page-content .ne-list li:hover .ne-list-meta{color:rgba(255,255,255,0.85)}' +
+      '#nm-page-content .ne-list-meta{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.1em;color:#4a4455;text-transform:uppercase}' +
+      '#nm-page-content .ne-list-name{font-weight:500}' +
+      '#nm-page-content .ne-aside{display:flex;flex-direction:column;gap:48px;position:sticky;top:24px}' +
+      '@media (max-width:1280px){#nm-page-content .ne-aside{position:static}}' +
+      '#nm-page-content .ne-aside-card-purple{background:var(--nm-primary);color:#fff;padding:32px}' +
+      '#nm-page-content .ne-aside-card-purple h4{font-family:var(--nm-font-h);font-size:22px;font-weight:500;color:#fff;margin:0 0 24px;display:flex;align-items:center;gap:10px}' +
+      '#nm-page-content .ne-aside-card-purple .material-symbols-outlined{color:#fff !important;font-size:24px}' +
+      '#nm-page-content .ne-aside-card-purple .ne-aside-row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.2)}' +
+      '#nm-page-content .ne-aside-card-purple .ne-aside-row:last-child{border-bottom:none}' +
+      '#nm-page-content .ne-aside-card-purple .ne-aside-row-label{display:block;font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;opacity:0.7;margin-bottom:4px}' +
+      '#nm-page-content .ne-aside-card-purple .ne-aside-row-name{font-size:14px;color:#fff}' +
+      '#nm-page-content .ne-aside-h{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.2em;border-bottom:1px solid #ccc3d8;padding-bottom:8px;color:#4a4455;text-transform:uppercase;margin-bottom:24px}' +
+      '#nm-page-content .ne-aside-item{margin-bottom:24px}' +
+      '#nm-page-content .ne-aside-item h5{font-family:var(--nm-font-h);font-size:18px;font-weight:600;font-style:italic;color:var(--nm-primary);margin:0 0 6px}' +
+      '#nm-page-content .ne-aside-item p,#nm-page-content .ne-aside-item ul{font-size:13px;line-height:1.6;color:#4a4455;margin:0}' +
+      '#nm-page-content .ne-aside-item ul{list-style:none;padding:0}' +
+      '#nm-page-content .ne-aside-item li{padding:2px 0}' +
+      '#nm-page-content .ne-aside-image{height:240px;background:linear-gradient(135deg,#293040,#7c3aed);position:relative;overflow:hidden;border:1px solid #ccc3d8}' +
+      '#nm-page-content .ne-aside-image::before{content:"EXPEDITION";writing-mode:vertical-rl;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--nm-font-h);font-size:42px;font-weight:600;color:rgba(255,255,255,0.15);letter-spacing:0.04em}' +
+      '#nm-page-content .ne-prio{margin-top:80px;background:#141b2b;color:#fff;padding:48px;position:relative;overflow:hidden}' +
+      '#nm-page-content .ne-prio::after{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:var(--nm-primary);opacity:0.2;filter:blur(60px);border-radius:50%}' +
+      '#nm-page-content .ne-prio-eyebrow{font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.2em;color:#d2bbff;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1}' +
+      '#nm-page-content .ne-prio-h{font-family:var(--nm-font-h);font-size:clamp(28px,4vw,40px);font-weight:600;color:#fff;line-height:1.1;margin:0 0 32px;position:relative;z-index:1}' +
+      '#nm-page-content .ne-prio-list{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px}' +
+      '#nm-page-content .ne-prio-item{display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:center;padding:18px;background:rgba(255,255,255,0.05);border-left:3px solid #d2bbff}' +
+      '#nm-page-content .ne-prio-item .num{font-family:var(--nm-font-h);font-size:28px;font-weight:600;color:#d2bbff;line-height:1}' +
+      '#nm-page-content .ne-prio-item .tool{font-family:var(--nm-font-h);font-size:16px;font-weight:600;color:#fff;margin:0}' +
+      '#nm-page-content .ne-prio-item .why{font-size:12px;color:rgba(255,255,255,0.7);margin:4px 0 0;line-height:1.5}' +
+      '#nm-page-content .ne-prio-item .tag{font-family:var(--nm-font-h);font-size:10px;font-weight:700;letter-spacing:0.12em;color:#d2bbff;text-transform:uppercase;white-space:nowrap}' +
+      '#nm-page-content .ne-prio-foot{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.15);font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;position:relative;z-index:1}' +
+      '#nm-page-content .ne-prio-foot strong{color:#fff}' +
+    '</style>';
+
+    html += '<div class="ne-wrap">';
+
+    // ────── Hero ──────
+    html += '<section class="ne-hero">';
+    html += '<div>' +
+      '<p class="ne-eyebrow">Essential Guide · 2028 Departure</p>' +
+      '<h1 class="ne-title">Nomad Essentials:<br/>Tools &amp; Community</h1>' +
+      '<p class="ne-lede">디지털 노마드의 1년 — 자유롭지만 치밀한 준비. 전 세계 어디서든 생산성을 유지하고 현지인처럼 생활하기 위해 선별된 최고의 툴과 커뮤니티 가이드.</p>' +
+    '</div>';
+    html += '<div class="ne-hero-image">' +
+      '<span class="badge">DEPARTURE 2028.6</span>' +
+      '<span class="material-symbols-outlined icon">travel_explore</span>' +
+    '</div>';
+    html += '</section>';
+
+    // ────── Top 5 Essentials Bento ──────
+    html += '<div class="ne-mini-h"><span class="ne-rule"></span><h3>Top 5 Essentials</h3></div>';
+    html += '<section class="ne-top5">';
+    html += '<div class="ne-t5-card feature">' +
+      '<div class="ne-t5-num">01</div>' +
+      '<div><h4>Wise (와이즈)</h4><p>2-4% 환전 수수료 절약 + 멀티 커런시 계좌 필수. 1년 ₩200-400만 차이.</p></div>' +
+    '</div>';
+    html += '<div class="ne-t5-card"><div class="ne-t5-num">02</div><h4>SafetyWing</h4><p>$56/4주 · 노마드 표준 보험</p></div>';
+    html += '<div class="ne-t5-card"><div class="ne-t5-num">03</div><h4>Airalo</h4><p>200+ 국가 eSIM · 한국 로밍 X</p></div>';
+    html += '<div class="ne-t5-card"><div class="ne-t5-num">04</div><h4>Nomad List</h4><p>$99/년 · 도시 정보 자산</p></div>';
+    html += '<div class="ne-t5-card"><div class="ne-t5-num">05</div><h4>NordVPN</h4><p>$3-5/월 · 한국 IP + Wi-Fi 보안</p></div>';
+    html += '</section>';
+
+    // ────── Main + Sidebar Grid ──────
+    html += '<div class="ne-grid">';
+
+    // ─── Main Content ───
+    html += '<div class="ne-main">';
+
+    // ═══ 01. Finance & Safety ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">01. Finance &amp; Safety</h3>' +
+        '<span class="ne-section-meta">Logistics &amp; Protection</span>' +
+      '</div>';
+    html += '<div class="ne-2col">';
+
+    // Money Management
+    html += '<div>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">' +
+        '<span class="material-symbols-outlined ne-icon-mini">payments</span>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#141b2b;margin:0">Money Management</h4>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+        '<div class="ne-card">' +
+          '<div class="ne-card-head"><h5 class="ne-card-name">Wise</h5><span class="ne-priority-pill">High Priority</span></div>' +
+          '<p class="ne-card-body">다중 통화 계좌 (USD·EUR·GBP·AUD·NZD·CAD 등). 환전 = <strong>진짜 시장 환율</strong> — 한국 은행보다 2-4% 싸짐. 1년 노마드 = <strong>₩200-400만 차이</strong>. 누리 = <strong>2027.12 미리 만들기 + 유로·달러 미리 사두기</strong>.</p>' +
+        '</div>' +
+        '<div class="ne-mini-grid">' +
+          '<div class="ne-mini-card">' +
+            '<span class="ne-mini-card-label">Daily Card</span>' +
+            '<span class="ne-mini-card-name">Revolut</span>' +
+            '<p class="ne-mini-card-desc">Wise 보조용 · 일상 결제 · 위치 기반 보안 · 무료 ATM 55,000곳</p>' +
+          '</div>' +
+          '<div class="ne-mini-card">' +
+            '<span class="ne-mini-card-label">Business</span>' +
+            '<span class="ne-mini-card-name">Payoneer</span>' +
+            '<p class="ne-mini-card-desc">해외 클라이언트 수령용 · 노마드 후반부 영문 콘텐츠 클라이언트 생기면</p>' +
+          '</div>' +
+        '</div>' +
+        '<p style="font-size:13px;color:#4a4455;background:rgba(124,58,237,0.06);padding:12px 14px;border-left:3px solid var(--nm-primary);margin:0;line-height:1.6"><strong>조합:</strong> Wise = 큰돈·환전·해외계좌, Revolut = 일상 결제. 둘 다 만들기.</p>' +
+      '</div>' +
+    '</div>';
+
+    // Insurance
+    html += '<div>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">' +
+        '<span class="material-symbols-outlined ne-icon-mini">health_and_safety</span>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#141b2b;margin:0">Insurance</h4>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+        '<div class="ne-card">' +
+          '<div class="ne-card-head"><h5 class="ne-card-name">SafetyWing</h5><span class="ne-priority-pill">High Priority</span></div>' +
+          '<p class="ne-card-body"><strong>$56/4주 (₩7-8만)</strong> · 노마드 표준. 한국 영토 밖 어디든 커버. 가입 = 출국 후도 OK. 누리 1년 = <strong>약 ₩100만</strong> (예산 ₩130만 안).</p>' +
+        '</div>' +
+        '<div class="ne-mini-card">' +
+          '<span class="ne-mini-card-label">Alternative</span>' +
+          '<span class="ne-mini-card-name">Genki</span>' +
+          '<p class="ne-mini-card-desc">유럽 베이스 · €37.50/월 (₩5-6만) · 의료비 더 넓음, 짐 분실 등 X · 1년 ₩72만</p>' +
+        '</div>' +
+        '<p style="font-size:13px;color:#4a4455;background:rgba(124,58,237,0.06);padding:12px 14px;border-left:3px solid var(--nm-primary);margin:0;line-height:1.6"><strong>SafetyWing이 표준.</strong> 누리는 SafetyWing 추천.</p>' +
+      '</div>' +
+    '</div>';
+
+    html += '</div>'; // /2col
+    html += '</section>';
+
+    // ═══ Life on the Ground (Connectivity + City Info) ═══
+    html += '<section class="ne-ground">';
+    html += '<div class="ne-ground-grid">';
+    html += '<div><h3>Life on<br/>the Ground</h3><p>어디서나 연결되고, 최적의 도시를 선택하는 노하우. 통신 + 도시 정보 + 코워킹.</p></div>';
+    html += '<div class="ne-mini-grid">';
+    // Connectivity
+    html += '<div class="ne-card" style="background:#fff">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:28px;margin-bottom:12px;display:block">wifi</span>' +
+      '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 8px">Connectivity</h4>' +
+      '<p class="ne-card-body" style="margin-bottom:14px"><strong>Airalo (eSIM)</strong> 1순위 — 200+ 국가, 유럽 30일 €15-25, 호주 30일 $25. <strong>Yoho Mobile</strong> 대안 (유럽 다국가 패키지 강함). 누리 = <strong>한국 SKT/KT/LG 로밍 절대 X</strong> (월 ₩20-50만).</p>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<span style="font-size:10px;font-weight:700;color:#4a4455;border:1px solid #ccc3d8;padding:3px 8px;border-radius:99px">eSIM</span>' +
+        '<span style="font-size:10px;font-weight:700;color:#4a4455;border:1px solid #ccc3d8;padding:3px 8px;border-radius:99px">한국번호 유지</span>' +
+      '</div>' +
+      '<p style="font-size:12px;color:#5d5d67;margin:10px 0 0;line-height:1.5;font-style:italic">한국폰 번호 = 선불 유심 / 알뜰폰 정기결제로 유지. 본업·가족 연락용.</p>' +
+    '</div>';
+    // City Info
+    html += '<div class="ne-card" style="background:#fff">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size:28px;margin-bottom:12px;display:block">location_city</span>' +
+      '<h4 style="font-family:var(--nm-font-h);font-size:18px;font-weight:600;color:#141b2b;margin:0 0 8px">City Info</h4>' +
+      '<p class="ne-card-body" style="margin-bottom:14px"><strong>Nomad List ($99/년)</strong> = 인터넷·생활비·안전도·날씨 데이터. <strong>Coworker</strong> = 코워킹 검색 + 데이패스 예약. <strong>Workfrom + Croissant</strong> = 카페 작업 + 소켓·Wi-Fi 등급.</p>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<span style="font-size:10px;font-weight:700;color:#4a4455;border:1px solid #ccc3d8;padding:3px 8px;border-radius:99px">CAFE MAP</span>' +
+        '<span style="font-size:10px;font-weight:700;color:#4a4455;border:1px solid #ccc3d8;padding:3px 8px;border-radius:99px">STATS</span>' +
+      '</div>' +
+      '<p style="font-size:12px;color:#5d5d67;margin:10px 0 0;line-height:1.5;font-style:italic">각 도시 출발 전 30분 검색 = 정보 자산 정점.</p>' +
+    '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    // ═══ 02. Digital HQ (Workspace + Security + Aviation) ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">02. Digital HQ</h3>' +
+        '<span class="ne-section-meta">Productivity · Privacy · Mobility</span>' +
+      '</div>';
+    html += '<div class="ne-2col">';
+
+    // Workspace Tools
+    html += '<div>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">' +
+        '<span class="material-symbols-outlined ne-icon-mini">work</span>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#141b2b;margin:0">Workspace Tools</h4>' +
+      '</div>' +
+      '<ul class="ne-list">' +
+        '<li><span class="ne-list-name">Notion</span><span class="ne-list-meta">All-in-one Docs · $0-10/월</span></li>' +
+        '<li><span class="ne-list-name">Cal.com / Calendly</span><span class="ne-list-meta">시간대 자동 변환</span></li>' +
+        '<li><span class="ne-list-name">Loom</span><span class="ne-list-meta">90초 비동기 영상</span></li>' +
+        '<li><span class="ne-list-name">Grammarly</span><span class="ne-list-meta">영문 글 보강</span></li>' +
+      '</ul>' +
+      '<p style="font-size:12px;color:#5d5d67;margin:14px 0 0;line-height:1.6;font-style:italic">누리 = 분석가 N 콘텐츠 캘린더 + 글감 메모 + 도시별 자산을 Notion에. Loom = 한국 본업 인수인계 + 노마드 중 의사소통.</p>' +
+    '</div>';
+
+    // Security
+    html += '<div>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">' +
+        '<span class="material-symbols-outlined ne-icon-mini">security</span>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:500;color:#141b2b;margin:0">Security</h4>' +
+      '</div>' +
+      '<div class="ne-card ne-card-purple">' +
+        '<h5 class="ne-card-name" style="margin-bottom:8px">NordVPN <span style="font-size:11px;color:var(--nm-primary);font-weight:500">또는 ProtonVPN</span></h5>' +
+        '<p class="ne-card-body">$3-5/월 · 카페 Wi-Fi 보안 + 한국 사이트 접속 (포스타입·은행). 누리 = <strong>무조건 필요</strong> (포스타입 작가 활동 = 한국 IP 필요한 순간 있음).</p>' +
+      '</div>' +
+      '<div class="ne-card" style="margin-top:14px">' +
+        '<h5 class="ne-card-name" style="margin-bottom:8px">Authy / 1Password</h5>' +
+        '<p class="ne-card-body">2단계 인증 백업 + 비밀번호 관리. 누리 = <strong>폰 잃어버리면 1년 노마드 망함.</strong> 무조건 백업.</p>' +
+      '</div>' +
+    '</div>';
+
+    html += '</div>'; // /2col
+    html += '</section>';
+
+    // ═══ 03. People & Belonging ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">03. People &amp; Belonging</h3>' +
+        '<span class="ne-section-meta">Global &amp; Local Networks</span>' +
+      '</div>';
+    html += '<div class="ne-2col">';
+
+    // Global Community
+    html += '<div class="ne-card" style="padding:32px">' +
+      '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:var(--nm-primary);margin:0 0 20px">Global Community</h4>' +
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid #ccc3d8">' +
+          '<div><p style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 2px">Nomad List Slack/Discord</p><p style="font-size:12px;color:#4a4455;margin:0">멤버십 = 도시별 채널 · 도착 즉시 만남 잡기</p></div>' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:6px"></span>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid #ccc3d8">' +
+          '<div><p style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 2px">Couchsurfing Events</p><p style="font-size:12px;color:#4a4455;margin:0">숙소 X · 무료 언어 교환·산책·식사 모임</p></div>' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:6px"></span>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid #ccc3d8">' +
+          '<div><p style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 2px">Meetup.com</p><p style="font-size:12px;color:#4a4455;margin:0">도시별 주제별 모임 (작가·디자이너·노마드)</p></div>' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:6px"></span>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid #ccc3d8">' +
+          '<div><p style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 2px">Bumble BFF</p><p style="font-size:12px;color:#4a4455;margin:0">여성 친구 찾기 · 안전한 사회 만남 · 누리 결</p></div>' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:6px"></span>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">' +
+          '<div><p style="font-family:var(--nm-font-h);font-size:14px;font-weight:600;color:#141b2b;margin:0 0 2px">InterNations</p><p style="font-size:12px;color:#4a4455;margin:0">익스팻 큰 커뮤니티 · 30대+ 전문직 위주</p></div>' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:6px"></span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    // Korean Nomad Communities
+    html += '<div class="ne-card" style="padding:32px">' +
+      '<h4 style="font-family:var(--nm-font-h);font-size:20px;font-weight:600;color:#141b2b;margin:0 0 20px">Korean Nomad Communities</h4>' +
+      '<div style="display:flex;flex-direction:column;gap:12px">' +
+        '<div class="ne-card" style="padding:14px;margin:0">' +
+          '<span class="ne-mini-card-label">Facebook ⭐ 1순위</span>' +
+          '<span class="ne-mini-card-name" style="font-style:italic">우리는 디지털노마드다</span>' +
+          '<p class="ne-mini-card-desc">한국 노마드 가장 큰 그룹 · 정보 + 만남 · 한국어 질문 OK</p>' +
+        '</div>' +
+        '<div class="ne-card" style="padding:14px;margin:0">' +
+          '<span class="ne-mini-card-label">Seoul Based</span>' +
+          '<span class="ne-mini-card-name" style="font-style:italic">노마드인서울</span>' +
+          '<p class="ne-mini-card-desc">nomadinseoul.com · 사이드프로젝트·해외취업·리모트워크 · 누리 IP 결</p>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px">' +
+          '<div class="ne-card" style="flex:1;padding:12px;margin:0;text-align:center">' +
+            '<span class="ne-mini-card-label" style="display:block;margin-bottom:4px">Open Kakao</span>' +
+            '<p style="font-size:11px;color:#4a4455;margin:0;line-height:1.4">"디지털 노마드" · "포르투갈 워홀" 검색 · 도시별 채팅방</p>' +
+          '</div>' +
+          '<div class="ne-card" style="flex:1;padding:12px;margin:0;text-align:center">' +
+            '<span class="ne-mini-card-label" style="display:block;margin-bottom:4px">Naver Cafe</span>' +
+            '<p style="font-size:11px;color:#4a4455;margin:0;line-height:1.4">"디지털노마드" · "포르투갈 워홀" 카페 · 비자 후기</p>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:6px;padding:14px;background:rgba(124,58,237,0.06);border-left:3px solid var(--nm-primary)">' +
+          '<p style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.1em;color:var(--nm-primary);text-transform:uppercase;margin:0 0 4px">누리한테 직접 짚을 거</p>' +
+          '<p style="font-size:12px;color:#141b2b;line-height:1.6;margin:0"><strong>분석가 N IP가 자라면, 누리 자체가 한국 노마드 커뮤니티의 자산이 됨.</strong> 1년 노마드 콘텐츠 = 다음 노마드 지망자들이 보러 오는 자산. <strong>흡수만 X · 줄 수 있는 입장 의식</strong>.</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    html += '</div>'; // /2col
+    html += '</section>';
+
+    // ═══ 04. Korea Connection ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">04. Korea Connection</h3>' +
+        '<span class="ne-section-meta">Stay Anchored Home</span>' +
+      '</div>';
+    html += '<div class="ne-2col">';
+    html += '<div class="ne-card">' +
+      '<div class="ne-card-head"><h5 class="ne-card-name">KakaoTalk + 한국 폰번호</h5></div>' +
+      '<p class="ne-card-body">본업·가족·친구 연락. 한국 통신사 <strong>알뜰폰 정기결제</strong>로 폰번호 유지 (월 ₩1-2만).</p>' +
+    '</div>';
+    html += '<div class="ne-card">' +
+      '<div class="ne-card-head"><h5 class="ne-card-name">카카오뱅크 / 토스</h5></div>' +
+      '<p class="ne-card-body">한국 계좌 관리 · 노마드 중 한국 자산 (저축·투자) 운용. 해외 환전은 Wise로.</p>' +
+    '</div>';
+    html += '</div>';
+    html += '<div class="ne-card ne-card-purple" style="margin-top:16px">' +
+      '<div class="ne-card-head"><h5 class="ne-card-name">한국 부동산세·종합소득세 ⚠</h5><span class="ne-priority-pill">2027.12 까지</span></div>' +
+      '<p class="ne-card-body"><strong>회계사 미리 확인.</strong> 1년 해외 거주 시 <strong>거주자 vs 비거주자 판단</strong> = 세금 영향 큼. 누리 = 1.5억 자산 + 본업 + 부업 → 세무 전문가 한 번 상담 필수.</p>' +
+    '</div>';
+    html += '</section>';
+
+    // ═══ 05. Body & Mind ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">05. Body &amp; Mind</h3>' +
+        '<span class="ne-section-meta">정신 · 체력 자원</span>' +
+      '</div>';
+    html += '<div class="ne-mini-grid" style="grid-template-columns:repeat(3,1fr)">';
+    html += '<div class="ne-card">' +
+      '<span class="material-symbols-outlined ne-icon-mini" style="margin-bottom:10px">self_improvement</span>' +
+      '<h5 class="ne-card-name" style="margin-bottom:8px">Calm / Insight Timer</h5>' +
+      '<p class="ne-card-body">명상 (Insight Timer = 무료 옵션 많음). 누리 = 비행 시차·낯선 도시 적응에 도움.</p>' +
+    '</div>';
+    html += '<div class="ne-card">' +
+      '<span class="material-symbols-outlined ne-icon-mini" style="margin-bottom:10px">restaurant</span>' +
+      '<h5 class="ne-card-name" style="margin-bottom:8px">MyFitnessPal / Cronometer</h5>' +
+      '<p class="ne-card-body">누리 집밥파 = 영양 균형 체크. 외식 적은 환경에서 <strong>단백질·비타민 부족 가능</strong>.</p>' +
+    '</div>';
+    html += '<div class="ne-card">' +
+      '<span class="material-symbols-outlined ne-icon-mini" style="margin-bottom:10px">fitness_center</span>' +
+      '<h5 class="ne-card-name" style="margin-bottom:8px">Fitbod / Centr</h5>' +
+      '<p class="ne-card-body">호텔방 운동 (장비 X). 누리 = <strong>체력 한정형이라 운동 필수</strong>.</p>' +
+    '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    // ═══ 06. Mileage & Cards ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">06. Mileage &amp; Cards</h3>' +
+        '<span class="ne-section-meta">지금부터 적립</span>' +
+      '</div>';
+    html += '<div class="ne-card ne-card-purple" style="margin-bottom:16px">' +
+      '<div class="ne-card-head"><h5 class="ne-card-name">대한항공 스카이패스 / 아시아나 마일리지</h5><span class="ne-priority-pill">2026.5 시작</span></div>' +
+      '<p class="ne-card-body">누리 본업 인센티브 일부 = 신용카드 항공 마일리지 적립. <strong>출국 시 마일리지 비행 1-2회 사용</strong> (예산 ₩550만 안에 박혀 있음).</p>' +
+    '</div>';
+    html += '<div class="ne-card">' +
+      '<div class="ne-card-head"><h5 class="ne-card-name">SKYPASS / 아시아나 클럽 카드</h5></div>' +
+      '<p class="ne-card-body">연회비 ₩5-10만 · 1년 적립 = 항공권 1매 가치. <strong>2027.12까지 적립 완료 → 출국 시 마일리지 비행.</strong></p>' +
+    '</div>';
+    html += '</section>';
+
+    // ═══ 07. Packing & Arrival Routine ═══
+    html += '<section>' +
+      '<div class="ne-section-h-row">' +
+        '<h3 class="ne-section-h">07. Packing &amp; Arrival</h3>' +
+        '<span class="ne-section-meta">출발 전 + 도착 즉시</span>' +
+      '</div>';
+    html += '<div class="ne-2col">';
+    // Packing
+    html += '<div class="ne-card">' +
+      '<h5 class="ne-card-name" style="margin-bottom:12px">노마드 표준 짐</h5>' +
+      '<ul style="list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:8px">' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5">• <strong>캐리어 1 (28인치) + 백팩 1</strong> (작업용 · 가벼움)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5">• 옷 = 미니멀 · <strong>10일치 × 워시 가능</strong></li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5">• 누리 패딩 = <strong>진공 압축팩</strong> 사용</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5">• 노트북 + 외장 모니터 (휴대용) + 노이즈 캔슬링 헤드폰</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5">• 멀티 어댑터 + 배터리</li>' +
+      '</ul>' +
+      '<p style="font-family:var(--nm-font-h);font-size:11px;font-weight:700;letter-spacing:0.12em;color:#ba1a1a;text-transform:uppercase;margin:0 0 8px">빼야 할 것</p>' +
+      '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;opacity:0.85">— 두꺼운 책 (Kindle로)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;opacity:0.85">— 노트 (Notion으로)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;opacity:0.85">— 화장품 풀세트 (현지 조달)</li>' +
+      '</ul>' +
+    '</div>';
+    // Arrival Routine
+    html += '<div class="ne-card">' +
+      '<h5 class="ne-card-name" style="margin-bottom:12px">도착 즉시 루틴</h5>' +
+      '<ol style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;counter-reset:item">' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative;counter-increment:item"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">01</span><strong>eSIM 활성</strong> (도착 즉시, 비행기 안에서)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">02</span><strong>숙소 체크인 + Wi-Fi 속도 테스트</strong> (fast.com)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">03</span>로컬 슈퍼·시장 위치 확인 (Google Maps 저장)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">04</span>로컬 약국·병원 1곳 저장</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">05</span>카페·도서관 1곳 확인 (작업 베스트)</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">06</span>Nomad List 도시 채널 가입</li>' +
+        '<li style="font-size:13px;color:#4a4455;line-height:1.5;padding-left:24px;position:relative"><span style="position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size:11px;font-weight:700;color:var(--nm-primary)">07</span><strong>첫 주 1번 만남 잡기</strong> (Meetup · Bumble BFF)</li>' +
+      '</ol>' +
+    '</div>';
+    html += '</div>';
+    html += '</section>';
+
+    html += '</div>'; // /ne-main
+
+    // ─── Aside (Sidebar) ───
+    html += '<aside class="ne-aside">';
+
+    // Aviation Strategy (purple card)
+    html += '<div class="ne-aside-card-purple">' +
+      '<h4><span class="material-symbols-outlined">flight</span>Aviation Strategy</h4>' +
+      '<div class="ne-aside-row"><span class="ne-aside-row-label">Main Search</span><span class="ne-aside-row-name">Skyscanner ⭐</span></div>' +
+      '<div class="ne-aside-row"><span class="ne-aside-row-label">Flexible Dates</span><span class="ne-aside-row-name">Google Flights</span></div>' +
+      '<div class="ne-aside-row"><span class="ne-aside-row-label">Price Prediction</span><span class="ne-aside-row-name">Hopper · AI 예측</span></div>' +
+      '<div class="ne-aside-row"><span class="ne-aside-row-label">Multi-Modal</span><span class="ne-aside-row-name">Rome2Rio · 모든 교통수단</span></div>' +
+      '<div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.15);font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6">' +
+        '<strong>누리 활용:</strong> Hopper로 셰겐 → 호주 같은 큰 건 한 달+ 전부터 모니터링. Rome2Rio로 더블린 ↔ 골웨이, 코펜 ↔ 베르겐 비교.' +
+      '</div>' +
+    '</div>';
+
+    // Strategic Logistics
+    html += '<div>' +
+      '<h4 class="ne-aside-h">Strategic Logistics</h4>' +
+      '<div class="ne-aside-item">' +
+        '<h5>Mileage Strategy</h5>' +
+        '<p>KAL SKYPASS · 출국·귀국 보너스 좌석 · 2026-2027 신용카드 적립.</p>' +
+      '</div>' +
+      '<div class="ne-aside-item">' +
+        '<h5>Minimalist Packing</h5>' +
+        '<ul>' +
+          '<li>— 28" 캐리어 + 백팩 1</li>' +
+          '<li>— Merino 베이스 레이어</li>' +
+          '<li>— 진공 압축팩 (패딩용)</li>' +
+        '</ul>' +
+      '</div>' +
+      '<div class="ne-aside-item">' +
+        '<h5>Arrival Routine</h5>' +
+        '<p>eSIM → 숙소 Wi-Fi 속도 → 슈퍼·약국 → 카페·도서관 → 첫 만남.</p>' +
+      '</div>' +
+    '</div>';
+
+    // Visual Accent
+    html += '<div class="ne-aside-image"></div>';
+
+    html += '</aside>';
+    html += '</div>'; // /ne-grid
+
+    // ────── 우선순위 5개 (다크 카드) ──────
+    html += '<section class="ne-prio">';
+    html += '<p class="ne-prio-eyebrow">Nuri Priority — 진짜 1순위만</p>';
+    html += '<h3 class="ne-prio-h">누리한테 가장 중요한 5개</h3>';
+    html += '<div class="ne-prio-list">';
+    var prio = [
+      { num:'01', tool:'Wise + Revolut',          why:'환전 ₩200-400만 차이',                                tag:'돈' },
+      { num:'02', tool:'SafetyWing',              why:'1년 ₩100만 · 무조건',                                  tag:'보험' },
+      { num:'03', tool:'Airalo eSIM',             why:'한국 로밍 ₩20-50만/달 vs €15-25/달',                  tag:'통신' },
+      { num:'04', tool:'Nomad List 멤버십',        why:'$99/년 · 도시 정보 자산',                              tag:'정보' },
+      { num:'05', tool:'NordVPN',                 why:'$3-5/월 · 한국 사이트 접속 + Wi-Fi 보안',             tag:'보안' },
+    ];
+    prio.forEach(function(p) {
+      html += '<div class="ne-prio-item">' +
+        '<span class="num">' + p.num + '</span>' +
+        '<div><p class="tool">' + p.tool + '</p><p class="why">' + p.why + '</p></div>' +
+        '<span class="tag">' + p.tag + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+    html += '<p class="ne-prio-foot"><strong>= 출국 6개월 전 (2027.12) 다 세팅.</strong> 1년 노마드 펀드 ₩200만 안에 다 들어옴.</p>';
+    html += '</section>';
+
+    html += '</div>'; // /ne-wrap
+
+    return html;
+  }
+  registerPage('nomad-essentials', renderEssentials);
 
   // ──────── Operating Principles 페이지 (Stitch Magazine 디자인) ────────
   function renderPrinciples() {
