@@ -5739,15 +5739,13 @@
       background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
     }
     @media (min-width: 1024px) {
-      /* Hero 2-col: max-height 강제로 카드 전체 높이 컴팩트하게 */
+      /* Hero 2-col: 좌(이미지) + 우(Voyage 가로 분할) */
       #page-journey .j-hero-body { align-items: stretch; }
       #page-journey .j-hero-image {
         aspect-ratio: auto;
         height: 100%;
-        min-height: 180px;
-        max-height: 260px;
+        min-height: 240px;
       }
-      #page-journey .j-voyage-card { max-height: 260px; }
     }
     #page-journey .j-hero-image-src {
       position: absolute;
@@ -5810,6 +5808,42 @@
       pointer-events: none;
     }
     #page-journey .j-hero-image:hover .j-hero-paste-hint { opacity: 1; }
+    /* 이미지 위치 조정 4-방향 패드 */
+    #page-journey .j-hero-pos-pad {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      z-index: 4;
+      display: grid;
+      grid-template-columns: repeat(3, 28px);
+      grid-template-rows: repeat(3, 28px);
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #page-journey .j-hero-image:hover .j-hero-pos-pad { opacity: 1; }
+    #page-journey .j-hero-pos-pad .j-pos-btn {
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.15s;
+    }
+    #page-journey .j-hero-pos-pad .j-pos-btn:hover { background: rgba(124,58,237,0.85); }
+    #page-journey .j-hero-pos-pad .j-pos-btn .material-symbols-outlined { font-size: 16px; }
+    /* 3x3 grid 위치 */
+    #page-journey .j-pos-up    { grid-column: 2; grid-row: 1; }
+    #page-journey .j-pos-left  { grid-column: 1; grid-row: 2; }
+    #page-journey .j-pos-center{ grid-column: 2; grid-row: 2; }
+    #page-journey .j-pos-right { grid-column: 3; grid-row: 2; }
+    #page-journey .j-pos-down  { grid-column: 2; grid-row: 3; }
 
     /* Stops Grid (Atlas trip card 매거진 스타일) */
     #page-journey .j-stops-grid {
@@ -6018,10 +6052,10 @@
       color: var(--j-on-surface-variant);
     }
 
-    /* Voyage Path (Hero 옆 컴팩트) */
+    /* Voyage Path — 좌(지도) + 우(텍스트) 가로 분할 */
     #page-journey .j-voyage-card {
       display: flex;
-      flex-direction: column;
+      flex-direction: row-reverse; /* 좌:지도, 우:텍스트 → 시각상: 텍스트 우, 지도 좌 */
       border: 1px solid var(--j-outline-variant);
       border-radius: 0;
       overflow: hidden;
@@ -6029,11 +6063,13 @@
       height: 100%;
     }
     #page-journey .j-voyage-info {
-      padding: 14px 18px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      flex-shrink: 0;
+      flex: 0 0 38%;
+      max-width: 200px;
+      border-left: 1px solid var(--j-outline-variant);
     }
     #page-journey .j-voyage-info .j-meta { font-size: 9px; }
     #page-journey .j-voyage-info .j-voyage-desc { font-size: 12px; line-height: 1.4; }
@@ -6057,14 +6093,14 @@
     #page-journey .j-voyage-map {
       position: relative;
       flex: 1;
-      min-height: 120px;
+      min-height: 240px;
       background: var(--j-surface-container);
       overflow: hidden;
     }
     #page-journey .j-voyage-map img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       background: var(--j-surface-container);
     }
     #page-journey .j-voyage-map-placeholder {
@@ -7699,6 +7735,14 @@
               <input type="file" id="journey-hero-file" accept="image/*" style="display:none" onchange="window.journeyHeroFileSelected && journeyHeroFileSelected(event)">
               <div id="journey-hero-img-controls" class="j-hero-img-controls is-empty">
                 <button class="j-hero-img-ctrl" onclick="window.journeyHeroUpload && journeyHeroUpload()"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>
+              </div>
+              <!-- 이미지 위치 조정 4-방향 패드 (이미지 있을 때만 표시) -->
+              <div id="journey-hero-pos-pad" class="j-hero-pos-pad" style="display:none" title="이미지 위치 조정">
+                <button class="j-pos-btn j-pos-up" onclick="window.journeyHeroMove && journeyHeroMove(0,-1)" title="위로"><span class="material-symbols-outlined">keyboard_arrow_up</span></button>
+                <button class="j-pos-btn j-pos-left" onclick="window.journeyHeroMove && journeyHeroMove(-1,0)" title="왼쪽"><span class="material-symbols-outlined">keyboard_arrow_left</span></button>
+                <button class="j-pos-btn j-pos-center" onclick="window.journeyHeroResetPos && journeyHeroResetPos()" title="중앙 리셋"><span class="material-symbols-outlined">center_focus_strong</span></button>
+                <button class="j-pos-btn j-pos-right" onclick="window.journeyHeroMove && journeyHeroMove(1,0)" title="오른쪽"><span class="material-symbols-outlined">keyboard_arrow_right</span></button>
+                <button class="j-pos-btn j-pos-down" onclick="window.journeyHeroMove && journeyHeroMove(0,1)" title="아래로"><span class="material-symbols-outlined">keyboard_arrow_down</span></button>
               </div>
               <div class="j-hero-paste-hint">Ctrl+V로 붙여넣기</div>
             </div>
@@ -12680,7 +12724,7 @@
 <script src="js/atlas-pages.js?v=5" defer></script>
 
 <!-- Journey Hero 이미지 업로드 (P2) -->
-<script src="js/journey-hero.js?v=1" defer></script>
+<script src="js/journey-hero.js?v=2" defer></script>
 <!-- Journey City (Stops) 이미지 업로드 (P5+) -->
 <script src="js/journey-city-images.js?v=1" defer></script>
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->

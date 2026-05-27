@@ -8,7 +8,42 @@
   'use strict';
 
   var _cache = {};   // tripId -> dataUrl
+  var _pos = {};     // tripId -> { x: 50, y: 50 } (%)
   var _hover = false;
+
+  function _getPosLS(tid) {
+    try {
+      var raw = localStorage.getItem('atelier_journey_hero_pos_' + tid);
+      if (!raw) return null;
+      var p = JSON.parse(raw);
+      return (p && typeof p.x === 'number' && typeof p.y === 'number') ? p : null;
+    } catch(e) { return null; }
+  }
+  function _setPosLS(tid, pos) {
+    try {
+      if (pos) localStorage.setItem('atelier_journey_hero_pos_' + tid, JSON.stringify(pos));
+      else localStorage.removeItem('atelier_journey_hero_pos_' + tid);
+    } catch(e) {}
+  }
+  function _getPos(tid) {
+    if (_pos[tid]) return _pos[tid];
+    var ls = _getPosLS(tid);
+    if (ls) { _pos[tid] = ls; return ls; }
+    return { x: 50, y: 50 };
+  }
+  function _savePos(tid, pos) {
+    _pos[tid] = pos;
+    _setPosLS(tid, pos);
+    // Firestore에 image와 함께 저장 (덮어쓰기 안 되게 image도 같이)
+    if (typeof db !== 'undefined' && db) {
+      db.collection('tripCoverImages').doc(tid).set({
+        image: _cache[tid] || null,
+        posX: pos.x,
+        posY: pos.y,
+        updatedAt: Date.now()
+      }, { merge: true }).catch(function(e){ console.warn('[journey-hero] pos save failed', e); });
+    }
+  }
 
   function _getLS(tid) {
     try { return localStorage.getItem('atelier_journey_hero_' + tid) || null; }
@@ -21,11 +56,14 @@
     } catch(e) {}
   }
   function _loadFB(tid) {
-    if (typeof db === 'undefined' || !db) return Promise.resolve(null);
+    if (typeof db === 'undefined' || !db) return Promise.resolve({image:null, pos:null});
     return db.collection('tripCoverImages').doc(tid).get().then(function(doc) {
-      if (doc.exists) return doc.data().image || null;
-      return null;
-    }).catch(function(e) { console.warn('[journey-hero] FB load failed', e); return null; });
+      if (!doc.exists) return { image: null, pos: null };
+      var d = doc.data() || {};
+      var pos = (typeof d.posX === 'number' && typeof d.posY === 'number')
+        ? { x: d.posX, y: d.posY } : null;
+      return { image: d.image || null, pos: pos };
+    }).catch(function(e) { console.warn('[journey-hero] FB load failed', e); return {image:null, pos:null}; });
   }
   function _saveFB(tid, url) {
     if (typeof db === 'undefined' || !db) return Promise.resolve();
@@ -69,28 +107,58 @@
     var trip = _currentTrip();
     var imgEl = document.getElementById('journey-hero-img-src');
     var ctrlEl = document.getElementById('journey-hero-img-controls');
+    var padEl = document.getElementById('journey-hero-pos-pad');
     if (!imgEl || !ctrlEl) return;
     var url = trip ? _cache[trip._id] : null;
+    var pos = trip ? _getPos(trip._id) : { x: 50, y: 50 };
     if (url) {
       imgEl.src = url;
       imgEl.style.display = 'block';
+      imgEl.style.objectPosition = pos.x + '% ' + pos.y + '%';
       ctrlEl.classList.remove('is-empty');
       ctrlEl.innerHTML =
         '<button class="j-hero-img-ctrl" onclick="journeyHeroUpload()" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
         '<button class="j-hero-img-ctrl" onclick="journeyHeroDelete()" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>';
+      if (padEl) padEl.style.display = 'grid';
     } else {
       imgEl.removeAttribute('src');
       imgEl.style.display = 'none';
+      imgEl.style.objectPosition = '';
       ctrlEl.classList.add('is-empty');
       ctrlEl.innerHTML =
         '<button class="j-hero-img-ctrl" onclick="journeyHeroUpload()"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
+      if (padEl) padEl.style.display = 'none';
     }
   }
+
+  // 이미지 위치 조정 (5%씩 이동)
+  window.journeyHeroMove = function(dx, dy) {
+    var trip = _currentTrip();
+    if (!trip || !trip._id) return;
+    if (!_cache[trip._id]) return; // 이미지 없으면 무시
+    var cur = _getPos(trip._id);
+    var step = 5;
+    var nx = Math.max(0, Math.min(100, cur.x + dx * step));
+    var ny = Math.max(0, Math.min(100, cur.y + dy * step));
+    _savePos(trip._id, { x: nx, y: ny });
+    _render();
+  };
+  window.journeyHeroResetPos = function() {
+    var trip = _currentTrip();
+    if (!trip || !trip._id) return;
+    _savePos(trip._id, { x: 50, y: 50 });
+    _render();
+  };
   function _apply(url) {
     var trip = _currentTrip();
     if (!trip || !trip._id) return;
     _cache[trip._id] = url || null;
     _setLS(trip._id, url);
+    if (!url) {
+      // 삭제 시 position도 reset
+      _pos[trip._id] = { x: 50, y: 50 };
+      _setPosLS(trip._id, null);
+    }
     _render();
     if (typeof showSyncToast === 'function') {
       showSyncToast(url ? '🖼 Trip 이미지 저장됨' : '🗑 Trip 이미지 삭제됨');
@@ -102,19 +170,33 @@
   window.journeyHeroHydrate = function() {
     var trip = _currentTrip();
     if (!trip || !trip._id) return;
-    // LS 즉시 적용
+    // LS 즉시 적용 (image + position)
     if (_cache[trip._id] === undefined) {
       var ls = _getLS(trip._id);
       if (ls) _cache[trip._id] = ls;
     }
+    if (!_pos[trip._id]) {
+      var posLs = _getPosLS(trip._id);
+      if (posLs) _pos[trip._id] = posLs;
+    }
     _render();
     // Firestore 백그라운드 fetch (변경 시 재렌더)
-    _loadFB(trip._id).then(function(remote) {
-      if (!remote) return;
-      if (_cache[trip._id] === remote) return;
-      _cache[trip._id] = remote;
-      _setLS(trip._id, remote);
-      _render();
+    _loadFB(trip._id).then(function(data) {
+      var changed = false;
+      if (data.image && _cache[trip._id] !== data.image) {
+        _cache[trip._id] = data.image;
+        _setLS(trip._id, data.image);
+        changed = true;
+      }
+      if (data.pos) {
+        var cur = _pos[trip._id];
+        if (!cur || cur.x !== data.pos.x || cur.y !== data.pos.y) {
+          _pos[trip._id] = data.pos;
+          _setPosLS(trip._id, data.pos);
+          changed = true;
+        }
+      }
+      if (changed) _render();
     });
   };
   window.journeyHeroUpload = function() {
