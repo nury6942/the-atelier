@@ -5739,9 +5739,15 @@
       background: linear-gradient(135deg, #f5f3ff 0%, #c4b5fd 50%, #7c3aed 100%);
     }
     @media (min-width: 1024px) {
-      /* Hero 2-col: 좌(이미지) + 우(Voyage Path) 높이 맞춤 - 2/3 크기 */
+      /* Hero 2-col: max-height 강제로 카드 전체 높이 컴팩트하게 */
       #page-journey .j-hero-body { align-items: stretch; }
-      #page-journey .j-hero-image { aspect-ratio: auto; height: 100%; min-height: 190px; }
+      #page-journey .j-hero-image {
+        aspect-ratio: auto;
+        height: 100%;
+        min-height: 180px;
+        max-height: 260px;
+      }
+      #page-journey .j-voyage-card { max-height: 260px; }
     }
     #page-journey .j-hero-image-src {
       position: absolute;
@@ -6023,11 +6029,17 @@
       height: 100%;
     }
     #page-journey .j-voyage-info {
-      padding: 20px 22px;
+      padding: 14px 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       flex-shrink: 0;
+    }
+    #page-journey .j-voyage-info .j-meta { font-size: 9px; }
+    #page-journey .j-voyage-info .j-voyage-desc { font-size: 12px; line-height: 1.4; }
+    #page-journey .j-voyage-info .j-tag-pill {
+      padding: 4px 9px;
+      font-size: 9px;
     }
     #page-journey .j-voyage-info .j-meta { margin-bottom: 8px; }
     #page-journey .j-voyage-desc {
