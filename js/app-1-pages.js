@@ -6275,6 +6275,220 @@
   function closeTripModal() {
     document.getElementById('trip-modal').style.cssText = 'display:none!important';
   }
+  // ════════════════════════════════════════════════════════════════════
+  // Atlas → Travel 마이그레이션 (2027 스칸디나비아 + 2027 캐나다)
+  // 콘솔에서 호출: _migrateAtlasTrip('scandinavia-2027') / _migrateAtlasTrip('canada-2027')
+  // ════════════════════════════════════════════════════════════════════
+  var _ATLAS_TRIP_NAME = {
+    'scandinavia-2027': '2027 덴마크&스웨덴',
+    'canada-2027':      '2027 캐나다 여행',
+    'ireland-2028':     '2028 아일랜드',
+  };
+
+  // 기념품 시드 (Germany&Italy 패턴: title=대상, description=품목 설명, city, amount=€범위, status)
+  var _ATLAS_SOUVENIRS = {
+    'scandinavia-2027': [
+      { title:'찐친·집',    description:'Royal Copenhagen Blue Fluted 머그/접시 — 200년 전통 덴마크 도자기 명품', city:'Copenhagen', amount:'40~120' },
+      { title:'찐친',       description:'Stelton Cylinda Line 보온병 — Arne Jacobsen 1967 디자인, 스칸디 모던 클래식', city:'Copenhagen', amount:'60~150' },
+      { title:'동료',       description:'Lakrids by Bülow 감초 초콜릿 — 덴마크 시그니처 디저트, 짭짤 달콤 균형', city:'Copenhagen', amount:'15~30' },
+      { title:'나·디자이너',description:'Hay 미니 디자인 키링·액세서리 — 덴마크 미니멀 디자인 브랜드', city:'Copenhagen', amount:'15~40' },
+      { title:'가족',       description:'Georg Jensen 액세서리/실버 — 1904년 코펜하겐 창립, 모던 클래식', city:'Copenhagen', amount:'80~300' },
+      { title:'나·집',      description:'Søstrene Grene 스테이셔너리/홈데코 — 작가 누리 안목 자산', city:'Copenhagen', amount:'5~30' },
+      { title:'나·소장',    description:'ARoS 미술관 아트북/포스터 — Olafur Eliasson 작품 컬렉션', city:'오르후스', amount:'20~50' },
+      { title:'동료',       description:'Skagen 시계 (덴마크 디자인) — 미니멀 와치, 본고장 의미', city:'Skagen', amount:'100~200' },
+      { title:'찐친·후배',  description:'Iittala Aalto 글래스 — 스칸디 디자인 본가, 스톡홀름에서도 구매 가능', city:'Stockholm', amount:'30~80' },
+      { title:'디자이너',   description:'Marimekko Unikko 파우치·스카프 — 핀란드 디자인 본격, 누리 작업 자산', city:'Stockholm', amount:'30~100' },
+      { title:'나·집',      description:'Granit 미니멀 홈오피스 굿즈 — 스웨디시 미니멀, 누리 작업실 자산', city:'Stockholm', amount:'5~25' },
+      { title:'가족',       description:'Polkagris 페퍼민트 스틱 (Gränna 특산) — 스웨덴 전통 캔디', city:'Stockholm', amount:'5~10' },
+      { title:'찐친',       description:'Klippan 라피 양털 무릎 담요 — 스웨디시 100년 전통 텍스타일', city:'Stockholm', amount:'60~120' },
+      { title:'나·소장',    description:'ABBA Museum 한정 굿즈 — LP/티셔츠/포스터', city:'Stockholm', amount:'20~50' },
+    ],
+    'canada-2027': [
+      { title:'찐친·동료', description:'Maple Syrup Grade A Dark — 캐나다 No.1, 진짜 메이플 풍미, 한국보다 저렴', city:'Montréal', amount:'15~30' },
+      { title:'찐친·후배', description:'Pure Maple Cookies (Maison Orphée) — 캐나디안 클래식 디저트, 패키지 예쁨', city:'Montréal', amount:'8~15' },
+      { title:'가족',      description:"Hudson's Bay 멀티스트라이프 담요 — 1670년 모피 회사 클래식, 캐나다 아이콘", city:'Toronto', amount:'100~300' },
+      { title:'나',        description:'Roots 가죽 가방/지갑 — 1973년 토론토 창립, 캐나디안 가죽 클래식', city:'Toronto', amount:'60~250' },
+      { title:'동료',      description:'Tim Hortons 머그/원두 — 캐나디안 아이콘 (오타와에서 사면 의미)', city:'Ottawa', amount:'10~25' },
+      { title:'찐친·집',   description:'Inuit Soapstone 카드·엽서 (미니어처) — 캐나다 원주민 아트', city:'Toronto', amount:'10~30' },
+      { title:'나·집',     description:'Saje 에센셜 오일 — 캐나디언 웰니스 브랜드, 자연 향', city:'Montréal', amount:'15~40' },
+      { title:'가족',      description:'Lululemon (캐나다 발산지) — 한국보다 저렴, 사이즈 폭넓음', city:'Toronto', amount:'50~150' },
+      { title:'동료',      description:'Cabot Trail 메이플 슈가 캔디 — 노바스코샤 특산, 작은 선물', city:'Montréal', amount:'5~12' },
+      { title:'나·소장',   description:'The Maple Reader 아트북 — 캐나다 풍경 사진집 (퀘벡 출판)', city:'Québec City', amount:'30~60' },
+      { title:'찐친',      description:'Mountain Equipment Co-op (MEC) 미니 백팩 — 캐나디안 아웃도어 브랜드', city:'Ottawa', amount:'40~80' },
+      { title:'디자이너',  description:'Algonquin Park 단풍 한정 굿즈 — 모티프 키링·머그', city:'알곤퀸', amount:'10~30' },
+      { title:'가족',      description:'BeaverTails 빵 (몬트리올 명물) — 패키지 인증샷용', city:'Montréal', amount:'5~10' },
+    ],
+  };
+
+  // Atlas itinerary에서 stay 문자열 ("코펜하겐 · 2박") → 도시명·일수 파싱
+  function _atlasParseStay(stayStr) {
+    if (!stayStr) return { city: '', nights: 0 };
+    var s = String(stayStr).trim();
+    // 무시할 패턴
+    if (/^(기내|집)$/i.test(s)) return { city: '', nights: 0, transit: true };
+    var m = s.match(/^([^·]+?)(?:\s*·\s*(\d+)박)?$/);
+    if (!m) return { city: s, nights: 0 };
+    return { city: m[1].trim(), nights: parseInt(m[2]) || 0 };
+  }
+
+  // Atlas 날짜 ("05.12") + year → "2027-05-12"
+  function _atlasDate(yearMD, year) {
+    if (!yearMD) return '';
+    var m = String(yearMD).match(/^(\d{2})\.(\d{2})$/);
+    if (!m) return '';
+    return year + '-' + m[1] + '-' + m[2];
+  }
+
+  // 도시 그룹 추출 (연속된 같은 도시 묶기, start/end_date 계산)
+  function _atlasGroupCities(atlas) {
+    var groups = [];
+    var cur = null;
+    atlas.itinerary.forEach(function(d) {
+      var parsed = _atlasParseStay(d.stay);
+      if (parsed.transit || !parsed.city) return; // 기내·집 스킵
+      var date = _atlasDate(d.date, atlas.year);
+      if (cur && cur.name === parsed.city) {
+        cur.end_date = date;
+      } else {
+        cur = { name: parsed.city, start_date: date, end_date: date };
+        groups.push(cur);
+      }
+    });
+    groups.forEach(function(g, i) {
+      var s = new Date(g.start_date + 'T00:00:00');
+      var e = new Date(g.end_date + 'T00:00:00');
+      g.nights = Math.max(1, Math.round((e - s) / 86400000) + 1);
+      g.order = String(i + 1).padStart(2, '0');
+    });
+    return groups;
+  }
+
+  window._migrateAtlasTrip = async function(atlasId) {
+    if (!window.ATLAS_DATA || !window.ATLAS_DATA.TRIPS) {
+      alert('ATLAS_DATA가 로드되지 않았어요. Atlas 페이지 한 번 방문 후 다시 시도해줘.');
+      return;
+    }
+    var atlas = window.ATLAS_DATA.TRIPS.find(function(t){ return t.id === atlasId; });
+    if (!atlas) { alert('Atlas trip 못 찾음: ' + atlasId); return; }
+    var newTripName = _ATLAS_TRIP_NAME[atlasId] || atlas.title;
+
+    // 이미 마이그레이션됐는지 체크
+    var existing = (tripsData || []).find(function(t){ return t.name === newTripName; });
+    if (existing) {
+      if (!confirm('"' + newTripName + '"는 이미 존재해. 그래도 다시 마이그레이션할까? (중복 데이터 생성됨)')) return;
+    }
+
+    // 카운트 계산 + 확인 다이얼로그
+    var cities = _atlasGroupCities(atlas);
+    var itinCount = atlas.itinerary.length;
+    var lodgingCount = (atlas.lodging || []).length;
+    var souvenirs = _ATLAS_SOUVENIRS[atlasId] || [];
+    var msg = newTripName + ' 마이그레이션 시작?\n\n' +
+      '· 도시: ' + cities.length + '개\n' +
+      '· 일정: ' + itinCount + '일\n' +
+      '· 숙소: ' + lodgingCount + '개\n' +
+      '· 기념품: ' + souvenirs.length + '개\n\n' +
+      '(비행기·기차·교통은 제외 — 사용자가 직접 추가)';
+    if (!confirm(msg)) return;
+
+    var startDate = _atlasDate(atlas.itinerary[0].date, atlas.year);
+    var endDate = _atlasDate(atlas.itinerary[atlas.itinerary.length - 1].date, atlas.year);
+
+    try {
+      // 1. trips
+      var tripObj = { name: newTripName, start_date: startDate, end_date: endDate };
+      var savedTrip = await fbAdd('trips', tripObj);
+      var tripId = savedTrip._id;
+      tripsData.push(savedTrip);
+      console.log('[Migrate] trip 생성:', newTripName, tripId);
+
+      // 2. trip_cities
+      for (var ci = 0; ci < cities.length; ci++) {
+        var c = cities[ci];
+        await fbAdd('trip_cities', {
+          trip_id: tripId, name: c.name,
+          start_date: c.start_date, end_date: c.end_date,
+          nights: c.nights, desc: '', transit_guide: '', order: c.order,
+        });
+      }
+      console.log('[Migrate] cities 생성:', cities.length);
+
+      // 3. journey 일정 (itinerary)
+      var itinAdded = 0;
+      for (var ii = 0; ii < atlas.itinerary.length; ii++) {
+        var d = atlas.itinerary[ii];
+        var date = _atlasDate(d.date, atlas.year);
+        var stayParsed = _atlasParseStay(d.stay);
+        if (!date) continue;
+        // <i> 태그 제거, 마침표는 보존
+        var cleanActivity = String(d.activity || '').replace(/<\/?i>/g, '').trim();
+        await fbAdd('journey', {
+          trip_id: tripId, type: '일정', date: date,
+          city: stayParsed.city || '',
+          title: cleanActivity.substring(0, 80),
+          description: cleanActivity.length > 80 ? cleanActivity : '',
+        });
+        itinAdded++;
+      }
+      console.log('[Migrate] 일정 생성:', itinAdded);
+
+      // 4. journey 숙소 (lodging)
+      // Atlas lodging 항목 → 첫 등장일을 check-in으로 매핑
+      var cityCheckin = {};
+      cities.forEach(function(c){ cityCheckin[c.name] = c; });
+      var lodgeAdded = 0;
+      for (var li = 0; li < (atlas.lodging || []).length; li++) {
+        var lg = atlas.lodging[li];
+        var info = cityCheckin[lg.name];
+        if (!info) continue;
+        // 가격 (예: "20 만 / 박" or "13 만") → 원화 숫자 추출
+        var priceNum = parseInt(String(lg.price || '').replace(/[^0-9]/g,'')) || 0;
+        priceNum = priceNum * 10000; // 만원 → 원
+        var perNight = /\/\s*박/.test(lg.price);
+        var totalPrice = perNight ? priceNum * lg.nights : priceNum;
+        await fbAdd('journey', {
+          trip_id: tripId, type: '숙소',
+          city: lg.name,
+          title: lg.name + ' ' + lg.type,
+          date: info.start_date, checkout_date: info.end_date,
+          checkin: '15:00', checkout: '11:00',
+          amount: totalPrice,
+          cancel: '가능',
+          payment_status: '결제 예정',
+          notes: lg.type + (perNight ? ' · ' + lg.nights + '박' : ''),
+        });
+        lodgeAdded++;
+      }
+      console.log('[Migrate] 숙소 생성:', lodgeAdded);
+
+      // 5. journey 기념품
+      var soufAdded = 0;
+      for (var si = 0; si < souvenirs.length; si++) {
+        var sv = souvenirs[si];
+        await fbAdd('journey', {
+          trip_id: tripId, type: '기념품',
+          city: sv.city,
+          title: sv.title, description: sv.description,
+          amount: sv.amount,
+          status: '예정',
+        });
+        soufAdded++;
+      }
+      console.log('[Migrate] 기념품 생성:', soufAdded);
+
+      alert('✅ ' + newTripName + ' 마이그레이션 완료\n\n' +
+        '· trip 1개\n· 도시 ' + cities.length + '개\n· 일정 ' + itinAdded + '개\n' +
+        '· 숙소 ' + lodgeAdded + '개\n· 기념품 ' + soufAdded + '개\n\n' +
+        '드롭다운에서 "' + newTripName + '" 선택해서 확인해줘.');
+
+      // 새 trip으로 즉시 전환
+      selectTrip(tripId);
+    } catch (e) {
+      console.error('[Migrate] 실패:', e);
+      alert('마이그레이션 중 에러 발생: ' + e.message + '\n\n콘솔 확인.');
+    }
+  };
+
   async function saveTripEntry() {
     var obj = {
       name: document.getElementById('trip-name').value,
