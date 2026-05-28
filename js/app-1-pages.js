@@ -20324,26 +20324,47 @@ function updateReviewApiKeyUI() {
   }
 }
 
-async function saveInlineApiKey() {
+function saveInlineApiKey() {
   var input = document.getElementById('review-inline-apikey');
   var hint = document.getElementById('review-inline-apikey-hint');
-  if (!input) return;
+  if (!input) { console.error('[ApiKey] inline input not found'); return; }
   var key = input.value.trim();
-  if (!key) { if (hint) hint.textContent = '키를 입력해주세요'; input.focus(); return; }
-  if (!key.startsWith('sk-ant-')) { if (hint) hint.textContent = '키 형식이 올바르지 않아요 (sk-ant-... 으로 시작)'; return; }
-  localStorage.setItem('atelier_anthropic_api_key', key);
-  if (!localStorage.getItem('atelier_anthropic_model')) {
-    localStorage.setItem('atelier_anthropic_model', 'claude-opus-4-7');
+  console.log('[ApiKey] save attempt, length=' + key.length + ', starts=' + key.substring(0,7));
+
+  if (!key) {
+    if (hint) { hint.textContent = '⚠ 키를 입력해주세요'; hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold'; }
+    input.focus();
+    return;
   }
-  // Sync to Firestore so other devices pick it up automatically
+  if (!key.startsWith('sk-ant-')) {
+    if (hint) { hint.textContent = '⚠ 키 형식이 올바르지 않아요 — "sk-ant-"로 시작해야 함 (현재: "' + key.substring(0,10) + '...")'; hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold'; }
+    return;
+  }
+
+  // 1) localStorage 즉시 저장 (이건 무조건 성공)
   try {
-    await syncApiKeyToFirestore();
-    if (hint) { hint.textContent = '✓ 저장 완료 — 모든 기기에서 자동 동기화됩니다'; hint.className = 'text-[10px] text-emerald-700 mt-2 px-1 font-bold'; }
+    localStorage.setItem('atelier_anthropic_api_key', key);
+    if (!localStorage.getItem('atelier_anthropic_model')) {
+      localStorage.setItem('atelier_anthropic_model', 'claude-opus-4-7');
+    }
+    console.log('[ApiKey] localStorage saved OK');
   } catch (e) {
-    if (hint) { hint.textContent = '⚠ 이 기기에만 저장됨 (Firestore 동기화 실패)'; hint.className = 'text-[10px] text-amber-700 mt-2 px-1'; }
+    console.error('[ApiKey] localStorage failed:', e);
+    if (hint) { hint.textContent = '⚠ 브라우저 저장 실패: ' + e.message; hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold'; }
+    return;
   }
+
+  // 2) 즉시 UI 갱신 (Firestore 기다리지 말고)
   input.value = '';
-  setTimeout(function() { updateReviewApiKeyUI(); updateAutoGenButton(); }, 800);
+  updateReviewApiKeyUI();
+  updateAutoGenButton();
+  if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
+  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키 저장 완료!');
+
+  // 3) Firestore는 진짜 백그라운드 (실패해도 무방)
+  syncApiKeyToFirestore()
+    .then(function() { console.log('[ApiKey] Firestore synced OK'); })
+    .catch(function(e) { console.warn('[ApiKey] Firestore sync failed (이 기기에는 저장됨):', e.message); });
 }
 
 function resetInlineApiKey() {
