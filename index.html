@@ -233,6 +233,13 @@
       --radius-full:    9999px; /* pill / 완전 둥근. 99/999/9999 통합 */
     }
 
+    /* ════════════════════════════════════════════════════════════════
+       Phase 7 — 숫자/금액/시간에 JetBrains Mono 자동 적용 (2026-05-28)
+       Tailwind .tabular-nums 클래스 element 전체에 var(--font-mono)
+       (= JetBrains Mono) 강제 → 28개 KPI/금액 표시 자동 업그레이드
+       ════════════════════════════════════════════════════════════════ */
+    .tabular-nums { font-family: var(--font-mono); }
+
     /* AI 브리프 카드 — Pretendard 적용 + 더 큰 폰트 */
     #dash-brief-card, #dash-brief-content { font-family: 'Pretendard', 'Manrope', sans-serif; }
     #dash-brief-content { font-size: var(--font-size-body) !important; line-height: 1.7 !important; letter-spacing: -0.01em; }
@@ -278,7 +285,7 @@
           "inverse-primary":"#c7d2fe","surface-tint":"var(--indigo-500)"
         },
         borderRadius:{"DEFAULT":"0.5rem","sm":"0.125rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","3xl":"2rem","full":"9999px"},
-        fontFamily:{"headline":["Manrope","sans-serif"],"body":["Inter","sans-serif"],"label":["Inter","sans-serif"],"manrope":["Manrope","sans-serif"]}
+        fontFamily:{"headline":["Manrope","sans-serif"],"body":["Inter","sans-serif"],"label":["Inter","sans-serif"],"manrope":["Manrope","sans-serif"],"mono":["JetBrains Mono","SF Mono","Consolas","monospace"]}
       }}
     }
   </script>
@@ -10353,22 +10360,22 @@
             <div class="space-y-5">
               <div>
                 <label class="text-xs font-semibold text-slate-600 mb-1.5 block">💰 수입 목표</label>
-                <div class="flex items-center gap-2"><input id="ldg-goal-income" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <div class="flex items-center gap-2"><input id="ldg-goal-income" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum';font-family:var(--font-mono)" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
                 <p id="ldg-goal-income-hint" class="text-[10px] text-slate-400 mt-1"></p>
                 <div class="mt-3 pl-3 border-l-2 border-slate-100">
                   <label class="text-[11px] font-semibold text-slate-500 mb-1 block">└ 💼 부업 목표 (선택)</label>
-                  <div class="flex items-center gap-2"><input id="ldg-goal-sidegig" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                  <div class="flex items-center gap-2"><input id="ldg-goal-sidegig" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum';font-family:var(--font-mono)" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
                   <p id="ldg-goal-sidegig-hint" class="text-[10px] text-slate-400 mt-1"></p>
                 </div>
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-600 mb-1.5 block">🏦 저축 목표</label>
-                <div class="flex items-center gap-2"><input id="ldg-goal-saving" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <div class="flex items-center gap-2"><input id="ldg-goal-saving" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum';font-family:var(--font-mono)" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
                 <p id="ldg-goal-saving-hint" class="text-[10px] text-slate-400 mt-1"></p>
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-600 mb-1.5 block">💸 지출 목표 (이하)</label>
-                <div class="flex items-center gap-2"><input id="ldg-goal-expense" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum'" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
+                <div class="flex items-center gap-2"><input id="ldg-goal-expense" type="text" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-3 text-right focus:ring-2 focus:ring-indigo-300 outline-none" style="font-feature-settings:'tnum';font-family:var(--font-mono)" placeholder="0" oninput="ldgFormatAmount(this);ldgGoalCalc()"/><span class="text-xs text-slate-400">원</span></div>
                 <p id="ldg-goal-expense-hint" class="text-[10px] text-slate-400 mt-1"></p>
               </div>
               <div id="ldg-goal-warn" class="text-[10px] text-amber-600 font-semibold" style="display:none"></div>
