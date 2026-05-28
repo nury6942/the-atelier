@@ -19951,14 +19951,24 @@ function openSessionDetail(dateId) {
 
   // 01 Summary
   var sum = s.summary || {};
-  var sec1 = '<h4 class="text-base font-bold text-slate-800 mb-3">' + (sum.heading||'') + '</h4>' +
-    '<div class="text-sm text-slate-600 leading-relaxed mb-2">' + (sum.p1||'') + '</div>' +
-    '<div class="text-sm text-slate-600 leading-relaxed">' + (sum.p2||'') + '</div>' + krBox(sum.kr);
+  var sec1 = '<h4 class="review-h4 mb-4">' + (sum.heading||'') + '</h4>' +
+    '<p class="review-summary-text mb-3">' + (sum.p1||'') + '</p>' +
+    '<p class="review-summary-text">' + (sum.p2||'') + '</p>' + krBox(sum.kr);
 
   // 02 Expressions
   var exprs = s.expressions || [];
-  var sec2 = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b border-slate-100"><th class="text-left py-2 px-3 text-[10px] font-bold uppercase text-slate-400">Category</th><th class="text-left py-2 px-3 text-[10px] font-bold uppercase text-slate-400">Expression</th><th class="text-left py-2 px-3 text-[10px] font-bold uppercase text-slate-400">의미</th><th class="text-left py-2 px-3 text-[10px] font-bold uppercase text-slate-400">Example</th></tr></thead><tbody>' +
-    exprs.map(function(ex){ return '<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="py-2 px-3 text-xs text-indigo-600 font-bold">' + (ex.cat||'') + '</td><td class="py-2 px-3 font-semibold">' + (ex.expr||'') + '</td><td class="py-2 px-3 text-slate-500">' + (ex.kr||'') + '</td><td class="py-2 px-3 text-xs text-slate-400 italic">' + (ex.ex||'') + '</td></tr>'; }).join('') +
+  var sec2 = '<div class="overflow-x-auto"><table class="w-full review-expr-table"><thead><tr class="border-b-2 border-indigo-100">' +
+    '<th class="text-left py-3 px-3 review-expr-th">Category</th>' +
+    '<th class="text-left py-3 px-3 review-expr-th">Expression</th>' +
+    '<th class="text-left py-3 px-3 review-expr-th">의미</th>' +
+    '<th class="text-left py-3 px-3 review-expr-th">Example</th>' +
+    '</tr></thead><tbody>' +
+    exprs.map(function(ex){ return '<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">' +
+      '<td class="py-3 px-3 review-expr-cat">' + (ex.cat||'') + '</td>' +
+      '<td class="py-3 px-3 review-expr-en">' + (ex.expr||'') + '</td>' +
+      '<td class="py-3 px-3 review-expr-kr">' + (ex.kr||'') + '</td>' +
+      '<td class="py-3 px-3 review-expr-ex">' + (ex.ex||'') + '</td>' +
+    '</tr>'; }).join('') +
     '</tbody></table></div>' + krBox(s.expressionsKr);
 
   // 03 Upgrades
