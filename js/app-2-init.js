@@ -1395,7 +1395,7 @@ function _ldgInjectMobileToggle(isFullView) {
   wrap.style.cssText = 'margin-bottom:10px;text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size:11px;padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size:9px;color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size:9px;color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
@@ -1413,8 +1413,8 @@ function _ldgHideHeavySections() {
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = '#page-ledger #ldg-kpi-strip > div{padding:0.75rem !important;border-radius:0.75rem !important}' +
-      '#page-ledger #ldg-kpi-strip > div p:first-child{font-size:10px !important;margin-bottom:0.25rem !important}' +
-      '#page-ledger #ldg-kpi-strip > div p:last-child{font-size:14px !important;font-weight:700 !important}';
+      '#page-ledger #ldg-kpi-strip > div p:first-child{font-size: var(--font-size-tiny) !important;margin-bottom:0.25rem !important}' +
+      '#page-ledger #ldg-kpi-strip > div p:last-child{font-size: var(--font-size-body) !important;font-weight:700 !important}';
     document.head.appendChild(st);
   }
   // 2) 무거운 섹션 wrapper들 완전 숨기기 (innerHTML 비우기 X, display:none)
@@ -1743,7 +1743,7 @@ function ldgRenderDonuts() {
       var labels = Object.keys(dataObj).sort(function(a,b) { return dataObj[b] - dataObj[a]; });
       var values = labels.map(function(l) { return dataObj[l]; });
       var total = values.reduce(function(a,b){return a+b;}, 0);
-      var html = '<div style="padding:12px;font-size:11px;line-height:1.6;">';
+      var html = '<div style="padding:12px;font-size: var(--font-size-micro);line-height:1.6;">';
       if (labels.length === 0) {
         html += '<div style="color:#94a3b8;text-align:center;padding:20px 0;">데이터 없음</div>';
       } else {
@@ -1867,7 +1867,7 @@ function ldgRenderDailyChart() {
     if (wrapper) {
       canvas.style.display = 'none';
       var existing = wrapper.querySelector('.mobile-daily-summary');
-      var html = '<div class="mobile-daily-summary" style="padding:12px;font-size:11px;line-height:1.6;">' +
+      var html = '<div class="mobile-daily-summary" style="padding:12px;font-size: var(--font-size-micro);line-height:1.6;">' +
         '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">최고 지출일</span><span style="font-weight:700;color:#dc2626;">' + maxDay + '일 · ₩' + ldgFmt(max) + '</span></div>' +
         '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 평균</span><span style="font-weight:700;color:#1e293b;">₩' + ldgFmt(Math.round(avg)) + '</span></div>' +
         '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 일수</span><span style="font-weight:700;color:#1e293b;">' + nonZeroDays + '/' + daysInMonth + '일</span></div>' +
@@ -1925,7 +1925,7 @@ function ldgRenderCatGrid() {
       var fixedNames = rebalance.fixedOver.map(function(f){ return f.cat + ' +' + ldgFmtShort(f.over); }).join(', ');
       var html = '<div class="rounded-2xl p-4" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca;">' +
         '<div class="flex items-start gap-3 mb-2">' +
-          '<span style="font-size:20px">🤖</span>' +
+          '<span style="font-size: var(--font-size-h2-lg)">🤖</span>' +
           '<div class="flex-1">' +
             '<p class="text-xs font-bold text-slate-800">' + dayInfo + ' · <span style="color:#dc2626;">고정 지출 초과로 약 ' + ldgFmt(rebalance.totalOver) + ' 부족</span></p>' +
             '<p class="text-[11px] text-slate-600 mt-0.5">' + fixedNames + ' (이미 발생/예정. 추가 절감 어려움)</p>' +
@@ -1959,7 +1959,7 @@ function ldgRenderCatGrid() {
         simText = ' 💡 <b>AI 추천 ' + ldgFmt(sim.recommended) + '</b>로 맞추면 연 약 <b style="color:#059669;">+' + ldgFmt(sim.annualImpact) + ' 저축</b> 효과';
       }
       insightEl.innerHTML = '<div class="rounded-2xl p-4 flex items-start gap-3" style="' + bgStyle + ';">' +
-        '<span style="font-size:20px">🤖</span>' +
+        '<span style="font-size: var(--font-size-h2-lg)">🤖</span>' +
         '<div class="flex-1">' +
           '<p class="text-xs font-bold text-slate-800 mb-0.5">' + dayInfo + ' · <span style="color:' + iconColor + ';">' + alert_.catName + ' ' + p.label + '</span></p>' +
           '<p class="text-[11px] text-slate-600 leading-relaxed">' + overText + simText + '</p>' +
@@ -1967,7 +1967,7 @@ function ldgRenderCatGrid() {
       '</div>';
     } else if (isCurrentMonth) {
       insightEl.innerHTML = '<div class="rounded-2xl p-4 flex items-start gap-3" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;">' +
-        '<span style="font-size:20px">🤖</span>' +
+        '<span style="font-size: var(--font-size-h2-lg)">🤖</span>' +
         '<div class="flex-1">' +
           '<p class="text-xs font-bold text-slate-800 mb-0.5">' + dayInfo + ' · <span style="color:#16a34a;">전 카테고리 안정 페이스</span></p>' +
           '<p class="text-[11px] text-slate-600">이대로만 가면 이번 달 잘 마무리됩니다.</p>' +
@@ -2163,8 +2163,8 @@ function ldgRenderCatGrid() {
           '<span class="text-[10px] text-slate-400 shrink-0">예산</span>' +
           '<input type="text" id="ldg-cat-budget-input-' + safeCatId + '" value="' + curVal + '" placeholder="만원" class="flex-1 min-w-0 text-[10px] px-1.5 py-0.5 border border-indigo-200 rounded outline-none focus:ring-1 focus:ring-indigo-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCatBudget(\'' + catNameEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCatBudget();}"/>' +
           '<span class="text-[10px] text-slate-400 shrink-0">만</span>' +
-          '<button onclick="ldgSaveCatBudget(\'' + catNameEsc + '\')" class="p-0.5 rounded bg-indigo-600 text-white shrink-0" title="저장"><span class="material-symbols-outlined" style="font-size:12px">check</span></button>' +
-          '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+          '<button onclick="ldgSaveCatBudget(\'' + catNameEsc + '\')" class="p-0.5 rounded bg-indigo-600 text-white shrink-0" title="저장"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span></button>' +
+          '<button onclick="ldgCancelEditCatBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400 shrink-0" title="취소"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
         '</div>' +
       '</div>';
     } else if (hasBudget && budgetTotal === 0) {
@@ -2196,7 +2196,7 @@ function ldgRenderCatGrid() {
       // AI 추천 (예산 있어도 표시 - 일관성). 추천 = 0이면 표시 X (이미 목표 초과)
       if (aiRecEdit && aiRecEdit > 0 && aiRecEdit !== budgetTotal) {
         html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="mt-2 text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="올해 목표(' + ldgFmtShort((ldgLoadGoals()[_ldgYear]||{})['지출']*10000||0) + ') 달성을 위한 카테고리 분배 추천">' +
-          '<span style="font-size:11px">🤖</span> 추천 ' + ldgFmtShort(aiRecEdit) + '로 변경' +
+          '<span style="font-size: var(--font-size-micro)">🤖</span> 추천 ' + ldgFmtShort(aiRecEdit) + '로 변경' +
         '</button>';
       }
       html += '</div>';
@@ -2205,11 +2205,11 @@ function ldgRenderCatGrid() {
       var aiRec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
       html += '<div class="pt-2 border-t border-slate-50 flex items-center justify-between gap-1">';
       html += '<button onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5">' +
-          '<span class="material-symbols-outlined" style="font-size:12px">add</span> 예산 설정' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">add</span> 예산 설정' +
         '</button>';
       if (aiRec && aiRec > 0) {
         html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="올해 목표(' + ldgFmtShort((ldgLoadGoals()[_ldgYear]||{})['지출']*10000||0) + ') 달성을 위한 카테고리 분배 추천">' +
-          '<span style="font-size:11px">🤖</span> 추천 ' + ldgFmtShort(aiRec) + ' 적용' +
+          '<span style="font-size: var(--font-size-micro)">🤖</span> 추천 ' + ldgFmtShort(aiRec) + ' 적용' +
         '</button>';
       }
       html += '</div>';
@@ -2905,7 +2905,7 @@ function ldgBuildDD(wrapperId, options, onChange) {
         if (opt.value === curVal) selIdx = i;
         var div = document.createElement('div');
         div.className = 'ldg-dd-opt' + (opt.value === curVal ? ' selected' : '');
-        div.innerHTML = opt.label + (opt.value === curVal ? ' <span class="material-symbols-outlined" style="font-size:14px">check</span>' : '');
+        div.innerHTML = opt.label + (opt.value === curVal ? ' <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">check</span>' : '');
         div.onclick = function(ev) { ev.stopPropagation(); selectOpt(opt); };
         panel.appendChild(div);
       });
@@ -3648,7 +3648,7 @@ function ldgRenderAssetMatrix() {
       html += '<tr class="border-b border-slate-50 group">';
       html += '<td class="px-3 py-1.5 sticky left-0 z-10 bg-white"></td>';
       html += '<td class="px-3 py-1.5 sticky left-[70px] z-10 bg-white text-slate-600 flex items-center gap-1"><span ondblclick="ldgEditAssetName(\'' + grp.key + '\',' + idx + ')" class="cursor-pointer">' + item['소분류'] + '</span>' +
-        '<button onclick="ldgDelAssetItem(\'' + grp.key + '\',' + idx + ')" class="text-slate-200 hover:text-red-400 opacity-0 group-hover:opacity-100 ml-auto shrink-0"><span class="material-symbols-outlined" style="font-size:12px">close</span></button></td>';
+        '<button onclick="ldgDelAssetItem(\'' + grp.key + '\',' + idx + ')" class="text-slate-200 hover:text-red-400 opacity-0 group-hover:opacity-100 ml-auto shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button></td>';
       for (var m = 0; m < 12; m++) {
         var val = ldgGetAssetMonthVal(item, m);
         var cellBg = grp.auto ? 'background:#f7f1ff;' : '';
@@ -5347,7 +5347,7 @@ function ldgRenderInsightCard(content, usage, cachedAt) {
   // Convert markdown-like formatting to HTML
   var htmlContent = (content||'').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
   el.innerHTML = '<div class="bg-white rounded-2xl border-l-4 border-l-indigo-500 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5">' +
-    '<div class="flex items-center justify-between mb-3"><p class="text-xs font-bold text-slate-700">🤖 AI 분석</p><div class="flex items-center gap-2"><span class="text-[10px] text-slate-400">' + agoText + '</span><button onclick="ldgLoadAIInsight(true)" class="text-slate-400 hover:text-indigo-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size:16px">refresh</span></button></div></div>' +
+    '<div class="flex items-center justify-between mb-3"><p class="text-xs font-bold text-slate-700">🤖 AI 분석</p><div class="flex items-center gap-2"><span class="text-[10px] text-slate-400">' + agoText + '</span><button onclick="ldgLoadAIInsight(true)" class="text-slate-400 hover:text-indigo-600 transition-colors" title="새로고침"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">refresh</span></button></div></div>' +
     '<div class="text-xs text-slate-600 leading-relaxed">' + htmlContent + '</div>' +
     (usageText ? '<p class="text-[10px] text-slate-300 mt-3 border-t border-slate-100 pt-2">' + usageText + '</p>' : '') +
     '</div>';
@@ -5577,7 +5577,7 @@ async function ldgRunAIDeepAnalysis() {
   // 캐시 확인 (같은 달은 1회만)
   var cacheKey = 'atelier_ai_deep_' + _ldgYear + '-' + String(_ldgMonth).padStart(2,'0');
   resultEl.style.display = 'block';
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> Claude 분석 중...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-body)">progress_activity</span> Claude 분석 중...'; }
   try {
     var context = ldgPrepareAIContext();
     var systemPrompt = '당신은 한국어로 답하는 직설적이고 친근한 재무 코치입니다. 2년치 가계부 데이터를 분석해 올해 목표 달성을 도와야 합니다.\n\n[필수 규칙]\n1. **월 단위로만 사고**: 사용자는 "일 단위"로 예산 관리하지 않습니다. "하루 4만으로 줄이세요" 같은 일 단위 조언은 절대 금지. 항상 "이번 달 X만으로", "다음 달부터 Y만으로" 같이 월 단위로.\n2. **카테고리 타입 이해**: 고정 카테고리(주거비/고정비/세금/보험)가 초과되면 → 그 카테고리는 이미 발생하거나 자동이체라 추가 절감이 어려움. 대신 **유동 카테고리에서 보정 제안**. (예: "세금/보험이 +137만 늘었으니 품위유지비/관계비/여가비/식비 같은 유동 카테고리에서 보정")\n3. **구체적 액션**: "줄이세요" X. "품위유지비를 작년 평균 30만 → 이번달 15만으로 줄이면 -15만 보정" 처럼 정확한 카테고리 + 정확한 금액.\n4. 인사말 X, 서론 X, 바로 본론. 짧은 불릿 포인트. 최대 6줄.\n5. 만원 단위 숫자. 이모지(📊🎯💡⚠️✨ 등) 적절히 사용.';
@@ -5593,7 +5593,7 @@ async function ldgRunAIDeepAnalysis() {
   } catch (e) {
     resultEl.innerHTML = '<div class="rounded-2xl p-4 bg-rose-50 border border-rose-200 text-xs text-rose-700">❌ 분석 실패: ' + (e.message || e) + '<br><span class="text-[10px] text-rose-500">설정 → AI 코치 설정에서 토큰을 확인해주세요.</span></div>';
   } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size:13px">🤖</span> AI 깊은 분석 다시 실행'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size: var(--font-size-body-sm)">🤖</span> AI 깊은 분석 다시 실행'; }
   }
 }
 
@@ -5622,7 +5622,7 @@ function ldgRenderAIDeepResult(content, usage, costKrw, fromCache, at) {
   var atDate = at ? new Date(at).toLocaleString('ko-KR') : new Date().toLocaleString('ko-KR');
   resultEl.innerHTML = '<div class="rounded-2xl p-4 mt-2" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;">' +
     '<div class="flex items-start gap-3">' +
-      '<span style="font-size:22px">🤖</span>' +
+      '<span style="font-size: var(--font-size-h1)">🤖</span>' +
       '<div class="flex-1">' +
         '<div class="flex items-center justify-between mb-2">' +
           '<p class="text-xs font-bold text-purple-900">Claude Haiku 깊은 분석' + (fromCache ? ' <span class="text-[9px] text-slate-400 font-normal">(캐시됨)</span>' : '') + '</p>' +

@@ -185,9 +185,9 @@
     var prevA = rmFindPrevAction(viewStr);
     var nextA = rmFindNextAction(viewStr);
     var prevBtn = '<button onclick="rmDailyPrev()" class="p-1.5 rounded-full hover:bg-violet-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-400 hover:text-violet-600" ' + (prevA ? '' : 'disabled') + ' title="이전 액션">' +
-      '<span class="material-symbols-outlined" style="font-size:20px">chevron_left</span></button>';
+      '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">chevron_left</span></button>';
     var nextBtn = '<button onclick="rmDailyNext()" class="p-1.5 rounded-full hover:bg-violet-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-400 hover:text-violet-600" ' + (nextA ? '' : 'disabled') + ' title="다음 액션">' +
-      '<span class="material-symbols-outlined" style="font-size:20px">chevron_right</span></button>';
+      '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">chevron_right</span></button>';
     // 날짜 라벨 (그라데이션 텍스트)
     var dateLabel = (viewStr === todayStr ? 'TODAY · ' : '') + rmFmtDateKR(viewStr);
     var dateBadge = '<span class="text-[10px] font-extrabold tracking-[0.25em] uppercase" style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + dateLabel + '</span>';
@@ -235,7 +235,7 @@
           '</div>' +
           '<h2 class="text-2xl md:text-3xl font-bold leading-tight ' + titleCls + '">' + String(action.title||'').replace(/</g,'&lt;') + '</h2>' +
           (hasGuide
-            ? '<p class="text-xs text-slate-500 mt-2 flex items-center gap-1">' + (isOpen ? '가이드 접기' : '카드를 클릭하면 실행 가이드가 펼쳐져요') + '<span class="material-symbols-outlined" style="font-size:14px;transform:rotate(' + (isOpen ? '180deg' : '0deg') + ');transition:transform .2s">expand_more</span></p>'
+            ? '<p class="text-xs text-slate-500 mt-2 flex items-center gap-1">' + (isOpen ? '가이드 접기' : '카드를 클릭하면 실행 가이드가 펼쳐져요') + '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);transform:rotate(' + (isOpen ? '180deg' : '0deg') + ');transition:transform .2s">expand_more</span></p>'
             : '<p class="text-xs text-slate-400 mt-2 italic">가이드 준비 중</p>') +
         '</div>' +
         // 가이드 인라인 펼침
@@ -621,7 +621,7 @@
     t.textContent = '✨ 오늘 한 가지 완료';
     t.style.cssText = 'position:fixed;left:50%;top:84px;transform:translateX(-50%);' +
       'background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;' +
-      'padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;' +
+      'padding:10px 18px;border-radius:999px;font-size: var(--font-size-body-sm);font-weight:700;' +
       'box-shadow:0 12px 32px rgba(124,58,237,.35);z-index:9999;' +
       'opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;' +
       'font-family:"Plus Jakarta Sans","Pretendard",sans-serif;letter-spacing:.02em';

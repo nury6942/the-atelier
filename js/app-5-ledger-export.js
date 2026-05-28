@@ -632,7 +632,7 @@
       t.style.cssText =
         'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
         'background:#1e293b;color:#fff;padding:12px 20px;border-radius:12px;' +
-        'font-size:13px;font-weight:700;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.15);' +
+        'font-size: var(--font-size-body-sm);font-weight:700;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.15);' +
         'animation:slideUp 0.25s ease-out';
       document.body.appendChild(t);
       setTimeout(function () { t.remove(); }, 2500);

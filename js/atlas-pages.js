@@ -425,7 +425,7 @@
     html += '<button onclick="switchTravelTab(\'checklist\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">✅ 체크리스트</button>';
     html += '<button onclick="switchTravelTab(\'atlas\')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="atlas">🗺️ Atlas</button>';
     html += '</div>';
-    html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>Atlas로 돌아가기</button>';
+    html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">arrow_back</span>Atlas로 돌아가기</button>';
     html += '</div>';
 
     // Hero — 잡지 스타일: 풀와이드 이미지(아래로 fade) + 그 아래 텍스트 블록
@@ -490,7 +490,7 @@
       html += '<span class="atlas-day-dow">' + _esc(d.dow) + ' • ' + _pad(i + 1) + '일차</span>';
       html += '</div>';
       html += '<p class="atlas-day-act">' + (d.activity || '') + '</p>';
-      html += '<div class="atlas-day-stay"><span class="material-symbols-outlined" style="font-size:14px">' + _stayIcon(d.stay) + '</span>숙박: ' + _esc(d.stay) + '</div>';
+      html += '<div class="atlas-day-stay"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">' + _stayIcon(d.stay) + '</span>숙박: ' + _esc(d.stay) + '</div>';
       html += '</div>';
       html += '</div>';
     });

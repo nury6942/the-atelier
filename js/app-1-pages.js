@@ -135,7 +135,7 @@
           '<div class="flex items-center gap-3 flex-1">' +
           '<button data-gid="' + g._id + '" onclick="toggleGoalStatus(this.dataset.gid)" class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ' +
           (g.status==='완료' ? 'bg-teal-500 border-teal-500 text-white' : 'border-slate-300 hover:border-indigo-400') + '">' +
-          (g.status==='완료' ? '<span class="material-symbols-outlined text-xs" style="font-size:12px">check</span>' : '') +
+          (g.status==='완료' ? '<span class="material-symbols-outlined text-xs" style="font-size: var(--font-size-meta)">check</span>' : '') +
           '</button>' +
           '<span class="text-sm font-semibold text-slate-700 ' + (g.status==='완료'?'line-through text-slate-400':'') + '">' + (g.goal||'') + '</span>' +
           '</div>' +
@@ -900,10 +900,10 @@
     self.container.innerHTML =
       '<button type="button" id="' + trigId + '" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="' + (cfg.ariaLabel||'선택') + '"' +
       ' class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[var(--lavender-deep)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--lavender-deep)]/30 focus:border-[var(--lavender-deep)]/40 transition-all text-left cursor-pointer">' +
-      (cfg.icon ? '<span class="material-symbols-outlined" style="font-size:18px;color:#94a3b8">' + cfg.icon + '</span>' : '') +
+      (cfg.icon ? '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#94a3b8">' + cfg.icon + '</span>' : '') +
       '<span id="' + cfg.id + '-dot" class="w-2.5 h-2.5 rounded-full shrink-0" style="' + (cfg.options[0].dot ? 'background:' + cfg.options[0].dot : 'display:none') + '"></span>' +
       '<span id="' + cfg.id + '-label" class="flex-1 text-sm font-bold text-[#1d1a23]"></span>' +
-      '<span class="material-symbols-outlined text-slate-400" style="font-size:16px">expand_more</span>' +
+      '<span class="material-symbols-outlined text-slate-400" style="font-size: var(--font-size-h3)">expand_more</span>' +
       '</button>' +
       '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="bg-white rounded-xl shadow-lg border border-slate-100 p-1" style="display:none;list-style:none;margin:0;padding:4px;position:fixed;z-index:9999"></ul>';
 
@@ -928,12 +928,12 @@
         var isFocused = i === self.focusIdx;
         var bg = isFocused ? 'background:var(--lavender-deep);color:#fff;' : (isSelected && !isFocused ? '' : '');
         var dotBorder = isFocused ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
-        var prefix = opt.emoji ? '<span style="font-size:13px;margin-right:2px">' + opt.emoji + '</span> ' : '';
+        var prefix = opt.emoji ? '<span style="font-size: var(--font-size-body-sm);margin-right:2px">' + opt.emoji + '</span> ' : '';
         var dotHtml = opt.dot ? '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' : '';
         html += '<li role="option" id="' + self.id + '-opt-' + i + '" aria-selected="' + isSelected + '" data-idx="' + i + '"' +
           ' class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer" style="' + bg + '">' +
           dotHtml + prefix + '<span class="text-sm font-bold">' + opt.label + '</span>' +
-          (isSelected ? '<span class="material-symbols-outlined ml-auto" style="font-size:16px">check</span>' : '') +
+          (isSelected ? '<span class="material-symbols-outlined ml-auto" style="font-size: var(--font-size-h3)">check</span>' : '') +
           '</li>';
       }
       self.popover.innerHTML = html;
@@ -1491,7 +1491,7 @@
             '<p class="text-sm font-bold ' + textCls + ' break-words">' + (icon ? icon + ' ' : '') + (ev[1]||'') + rangeText + '</p>' +
             '<p class="text-[10px] text-slate-500 mt-0.5">' + (ev[2]||'') + '</p>' +
           '</div>' +
-          '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ');closeDayEventsModal();" class="p-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>' +
+          '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ');closeDayEventsModal();" class="p-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button>' +
         '</div>';
       }).join('');
     }
@@ -1732,7 +1732,7 @@
       var dateLabel = d.date + ' (' + dayName + ')';
       var extra = '';
       if (isWeekend) extra = '<span class="text-red-400 font-bold">' + (d.dayOfWeek === 0 ? '일' : '토') + '</span>';
-      if (holidayName) extra = '<span class="text-orange-500 font-bold flex items-center gap-0.5"><span style="font-size:11px">&#x1F6A9;</span> ' + holidayName + '</span>';
+      if (holidayName) extra = '<span class="text-orange-500 font-bold flex items-center gap-0.5"><span style="font-size: var(--font-size-micro)">&#x1F6A9;</span> ' + holidayName + '</span>';
 
       html += '<div class="' + rowClass + '">';
       html += '<span class="font-medium text-slate-600">' + dateLabel + ' — <strong class="text-slate-800">' + title + '</strong></span>';
@@ -2214,8 +2214,8 @@
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">' +
               '<span class="j-stop-nights-label">★ ' + stopLabel + '</span>' +
               '<div style="display:flex;gap:4px">' +
-                '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-                '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
+                '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
+                '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -2452,8 +2452,8 @@
           (metaLabel && !isActive ? '<span class="dd-meta">' + metaLabel + '</span>' : '') +
         '</span>' +
         '<span class="dd-actions">' +
-          '<span onclick="event.stopPropagation();openEditTripModal(\'' + t._id + '\')" class="material-symbols-outlined hover:text-violet-600 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">edit</span>' +
-          '<span onclick="event.stopPropagation();deleteTripEntry(\'' + t._id + '\')" class="material-symbols-outlined hover:text-rose-400 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size:16px;cursor:pointer">delete</span>' +
+          '<span onclick="event.stopPropagation();openEditTripModal(\'' + t._id + '\')" class="material-symbols-outlined hover:text-violet-600 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size: var(--font-size-h3);cursor:pointer">edit</span>' +
+          '<span onclick="event.stopPropagation();deleteTripEntry(\'' + t._id + '\')" class="material-symbols-outlined hover:text-rose-400 rounded p-0.5' + (isActive ? ' text-white/70 hover:text-white' : ' text-slate-400') + '" style="font-size: var(--font-size-h3);cursor:pointer">delete</span>' +
         '</span>' +
       '</button>';
     }).join('');
@@ -2850,7 +2850,7 @@
       var flights = journeyData.filter(function(d){return d.type==='항공편';});
       var badges = '';
       function _pill(icon, text) {
-        return '<span class="j-tag-pill j-tag-pill-accent" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px"><span class="material-symbols-outlined" style="font-size:13px">' + icon + '</span>' + text + '</span>';
+        return '<span class="j-tag-pill j-tag-pill-accent" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">' + icon + '</span>' + text + '</span>';
       }
       if (flights.length > 0) badges += _pill('flight_takeoff', '항공 ' + flights.length + '편');
       var busCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('bus')>=0;}).length;
@@ -3138,7 +3138,7 @@
     if (titleEl) {
       var baseLabel = (cityName || '') + (cityDesc ? ', ' + cityDesc : '');
       var dayTrips = getDayTripCities(items, cityName);
-      var lodgeIcon = cityName ? '<span class="material-symbols-outlined align-middle text-indigo-400 mr-1" style="font-size:14px" title="숙박지">hotel</span>' : '';
+      var lodgeIcon = cityName ? '<span class="material-symbols-outlined align-middle text-indigo-400 mr-1" style="font-size: var(--font-size-body)" title="숙박지">hotel</span>' : '';
       var tripBadges = dayTrips.map(function(c){
         var safe = String(c).replace(/[<>"']/g, '');
         return '<span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 ml-1.5 align-middle" title="당일치기">🚆 ' + _displayCityShort(safe) + ' <span class="opacity-60">(당일)</span></span>';
@@ -3169,7 +3169,7 @@
         var tg = String(currentCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,'<br>');
         panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);border-left-color:#6366f1">' +
           '<div class="flex items-start gap-3">' +
-            '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size:18px">directions_transit</span>' +
+            '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
             '<div class="flex-1 min-w-0">' +
               '<div class="flex items-center gap-2 mb-1">' +
                 '<span class="text-[10px] font-black uppercase tracking-widest text-indigo-600">' + cityName + ' 교통편</span>' +
@@ -3196,7 +3196,7 @@
       if (souvenirs.length > 0) {
         panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#fff7ed,#fffbeb);border-left-color:#f97316">' +
           '<div class="flex items-center gap-2 mb-2">' +
-            '<span class="material-symbols-outlined text-orange-600" style="font-size:18px">shopping_bag</span>' +
+            '<span class="material-symbols-outlined text-orange-600" style="font-size: var(--font-size-h2)">shopping_bag</span>' +
             '<span class="text-[10px] font-black uppercase tracking-widest text-orange-700">이 날 / 이 도시 쇼핑</span>' +
           '</div>' +
           '<ul class="space-y-2">' +
@@ -3226,7 +3226,7 @@
       if (idx > 0) {
         var prev = items[idx - 1];
         if (prev.lat && prev.lng && item.lat && item.lng) {
-          travelHtml = '<div id="travel-' + idx + '" class="relative pl-6 my-1"><div class="ml-1 flex items-center gap-1.5 text-[10px] text-slate-400 py-1"><span class="material-symbols-outlined" style="font-size:13px">more_vert</span><span class="italic">이동 시간 계산 중...</span></div></div>';
+          travelHtml = '<div id="travel-' + idx + '" class="relative pl-6 my-1"><div class="ml-1 flex items-center gap-1.5 text-[10px] text-slate-400 py-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">more_vert</span><span class="italic">이동 시간 계산 중...</span></div></div>';
         }
       }
       var descText = item.description || '';
@@ -3292,8 +3292,8 @@
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
-          '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size:14px">location_on</span></button>' +
-          '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+          '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">location_on</span></button>' +
+          '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
         '</div>' +
         '</div>' +
         displayDescHtml +
@@ -3302,7 +3302,7 @@
           if (!reserv) return '';
           var info = _getPrebookLeadInfo(item);
           if (!info || !info.recDate) return '';
-          return '<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-rose-100/70 border border-rose-200 flex items-center gap-1.5 text-[11px]"><span class="material-symbols-outlined text-rose-600" style="font-size:13px">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
+          return '<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-rose-100/70 border border-rose-200 flex items-center gap-1.5 text-[11px]"><span class="material-symbols-outlined text-rose-600" style="font-size: var(--font-size-body-sm)">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
         })() +
         '</div></div>';
     }).join('');
@@ -3320,7 +3320,7 @@
         var modeText = result.mode === 'walk' ? '도보' : '대중교통';
         el.innerHTML = '<div class="relative pl-6 my-1">' +
           '<div class="ml-1 flex items-center gap-1.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
-          '<span class="material-symbols-outlined" style="font-size:14px">' + icon + '</span>' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">' + icon + '</span>' +
           '<span>' + modeText + ' ' + result.duration + ' (' + result.distance + ')</span>' +
           '</div></div>';
       });
@@ -3477,8 +3477,8 @@
         '</div>' +
         '<textarea id="sched-add-desc" placeholder="내용 입력 (선택)..." rows="2" class="'+ic+' w-full text-xs resize-none" style="line-height:1.5" onkeydown="if(event.key===\'Enter\'&&(event.metaKey||event.ctrlKey)){event.preventDefault();saveScheduleInline();}"></textarea>' +
         '<div class="flex gap-2 justify-end mt-2">' +
-          '<button onclick="this.closest(\'.schedule-inline-add\').remove()" class="p-1 text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>' +
-          '<button onclick="saveScheduleInline()" class="p-1 text-indigo-400 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size:16px">check</span></button>' +
+          '<button onclick="this.closest(\'.schedule-inline-add\').remove()" class="p-1 text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">close</span></button>' +
+          '<button onclick="saveScheduleInline()" class="p-1 text-indigo-400 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">check</span></button>' +
         '</div>' +
       '</div>';
     container.appendChild(div);
@@ -3812,7 +3812,7 @@
         var tgSafe = String(thisCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,' · ');
         miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#eef2ff;border-left-color:#6366f1">' +
           '<div class="flex items-start gap-1.5">' +
-            '<span class="material-symbols-outlined text-indigo-500" style="font-size:13px;margin-top:1px">directions_transit</span>' +
+            '<span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-body-sm);margin-top:1px">directions_transit</span>' +
             '<div class="flex-1 min-w-0">' +
               '<div class="text-[9px] font-black uppercase tracking-widest text-indigo-600 mb-0.5">' + cityName + ' 교통편</div>' +
               '<div class="text-[11px] text-slate-700 leading-snug">' + tgSafe + '</div>' +
@@ -3869,7 +3869,7 @@
                   '<div class="flex gap-1">' +
                     '<button onclick="cancelWeekEdit()" class="px-2 py-1 rounded text-[10px] font-bold text-slate-500 hover:bg-slate-100">취소</button>' +
                     '<button onclick="saveWeekEdit(\'' + iid + '\')" class="px-2 py-1 rounded bg-indigo-600 text-white text-[10px] font-bold hover:bg-indigo-700 flex items-center gap-0.5">' +
-                      '<span class="material-symbols-outlined" style="font-size:12px">check</span> 저장' +
+                      '<span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span> 저장' +
                     '</button>' +
                   '</div>' +
                 '</div>' +
@@ -3930,7 +3930,7 @@
             if (reserv) {
               var info = _getPrebookLeadInfo(item);
               if (info && info.recDate) {
-                prebookLine = '<div class="mt-1.5 px-2 py-1 rounded bg-rose-100/70 border border-rose-200 flex items-center gap-1 text-[10px]"><span class="material-symbols-outlined text-rose-600" style="font-size:11px">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
+                prebookLine = '<div class="mt-1.5 px-2 py-1 rounded bg-rose-100/70 border border-rose-200 flex items-center gap-1 text-[10px]"><span class="material-symbols-outlined text-rose-600" style="font-size: var(--font-size-micro)">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
               }
             }
             // stitch j-slot 디자인
@@ -4001,7 +4001,7 @@
             '<div class="flex gap-1 justify-end">' +
               '<button onclick="cancelWeekAdd()" class="px-2 py-1 rounded text-[10px] font-bold text-slate-500 hover:bg-slate-100">취소</button>' +
               '<button onclick="saveWeekAdd(\'' + dateStr + '\',\'' + cityEsc + '\',' + idx + ')" class="px-2 py-1 rounded bg-indigo-600 text-white text-[10px] font-bold hover:bg-indigo-700 flex items-center gap-0.5">' +
-                '<span class="material-symbols-outlined" style="font-size:12px">check</span> 저장' +
+                '<span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span> 저장' +
               '</button>' +
             '</div>' +
           '</div>';
@@ -4009,7 +4009,7 @@
         addFormHtml =
           '<div class="j-day-add">' +
             '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="j-day-add-btn" title="이 날에 일정 추가">' +
-              '<span class="material-symbols-outlined" style="font-size:14px">add</span> 일정 추가' +
+              '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 일정 추가' +
             '</button>' +
           '</div>';
       }
@@ -4511,12 +4511,12 @@
       var payIcon = payStatus === '결제 완료' ? 'check_circle' :
                     payStatus === '결제 예정' ? 'schedule' :
                     payStatus === '현장 결제' ? 'storefront' : 'payments';
-      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size:11px">' + payIcon + '</span>' + payStatus + '</span>';
+      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + payIcon + '</span>' + payStatus + '</span>';
     }
     // 추가 정보 칩 — 핵심만 (예약번호 / 운전자 / 무료취소 / 결제일)
     var chips = [];
-    if (item.booking_ref) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">confirmation_number</span>예약 ' + item.booking_ref + '</span>');
-    if (item.driver) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">person</span>' + item.driver + '</span>');
+    if (item.booking_ref) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">confirmation_number</span>예약 ' + item.booking_ref + '</span>');
+    if (item.driver) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">person</span>' + item.driver + '</span>');
     if (item.cancel) {
       var cancelClass = item.cancel === '가능' ? 'bg-emerald-50 text-emerald-700' :
                         item.cancel === '조건부' ? 'bg-amber-50 text-amber-700' :
@@ -4524,9 +4524,9 @@
       var cancelTxt = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + item.cancel_date : '무료취소 가능') :
                       item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부 취소') :
                       '환불 불가';
-      chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 ' + cancelClass + ' rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_busy</span>' + cancelTxt + '</span>');
+      chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 ' + cancelClass + ' rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event_busy</span>' + cancelTxt + '</span>');
     }
-    if (item.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size:12px">event_available</span>결제일 ' + item.payment_date + '</span>');
+    if (item.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event_available</span>결제일 ' + item.payment_date + '</span>');
     var chipsRow = chips.length ? '<div class="flex flex-wrap gap-1.5 mt-3 pl-[52px]">' + chips.join('') + '</div>' : '';
     // 보험/옵션은 별도 박스 (한 줄, 토글 가능)
     var memoBox = '';
@@ -4535,8 +4535,8 @@
       var nid = (item._id||'').replace(/[^a-zA-Z0-9]/g,'').slice(0,12);
       memoBox = '<div class="mt-2.5 ml-[52px] rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">' +
         '<button type="button" onclick="event.stopPropagation();var b=document.getElementById(\'rc-memo-' + nid + '\');var i=document.getElementById(\'rc-memo-ico-' + nid + '\');if(b){var open=b.style.display!==\'none\';b.style.display=open?\'none\':\'block\';if(i)i.textContent=open?\'expand_more\':\'expand_less\';}" class="w-full px-3 py-1.5 flex items-center justify-between text-[10px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">' +
-          '<span class="flex items-center gap-1.5"><span class="material-symbols-outlined" style="font-size:13px">shield</span>보험 · 옵션 상세</span>' +
-          '<span id="rc-memo-ico-' + nid + '" class="material-symbols-outlined" style="font-size:14px">expand_more</span>' +
+          '<span class="flex items-center gap-1.5"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">shield</span>보험 · 옵션 상세</span>' +
+          '<span id="rc-memo-ico-' + nid + '" class="material-symbols-outlined" style="font-size: var(--font-size-body)">expand_more</span>' +
         '</button>' +
         '<div id="rc-memo-' + nid + '" class="px-3 pb-2 pt-1 text-[11px] text-slate-600 leading-relaxed border-t border-slate-100" style="display:none;white-space:pre-line">' + notesEsc + '</div>' +
       '</div>';
@@ -4577,10 +4577,10 @@
         '<div class="j-inter-row">' +
           '<div>' +
             (cityRouteSt ? '<div style="margin-bottom:8px">' + cityRouteSt + '</div>' : '') +
-            (item.description ? '<p class="j-inter-meta-sub" style="font-size:12px;margin:0">' + item.description + '</p>' : '') +
+            (item.description ? '<p class="j-inter-meta-sub" style="font-size: var(--font-size-meta);margin:0">' + item.description + '</p>' : '') +
           '</div>' +
           '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
-            '<p class="j-trip-price" style="font-size:20px">' + price + '</p>' +
+            '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + price + '</p>' +
             '<div class="j-trip-actions">' + actionsSt + '</div>' +
           '</div>' +
         '</div>' +
@@ -4646,7 +4646,7 @@
             '</p>' +
           '</div>' +
           '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
-            '<p class="j-trip-price" style="font-size:20px">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
+            '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
             '<div class="j-trip-actions">' + actionsSt + '</div>' +
           '</div>' +
         '</div>' +
@@ -4842,8 +4842,8 @@
       '<td class="px-2 py-2"><input data-lf="cancel_date" type="date" value="'+(d.cancel_date||'')+'" class="'+ic+'"/></td>' +
       '<td class="px-2 py-2"><input data-lf="price" value="'+(d.price||'')+'" class="'+ic+' text-right"/></td>' +
       '<td class="px-2 py-2 bg-white sticky right-0"><div class="flex gap-0.5">' +
-        '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size:13px">check</span></button>' +
-        '<button onclick="renderJourneyLodging()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500"><span class="material-symbols-outlined" style="font-size:13px">close</span></button>' +
+        '<button onclick="saveInlineLodging('+idx+')" class="p-1 bg-indigo-100 hover:bg-indigo-200 rounded text-indigo-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">check</span></button>' +
+        '<button onclick="renderJourneyLodging()" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">close</span></button>' +
       '</div></td>';
     initInlineDatePickers(tr);
     tr.querySelector('input').focus();
@@ -5329,11 +5329,11 @@
 
     var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size:22px">recommend</span>' +
-        '<h4 style="font-family:var(--j-font-h,Manrope);font-size:14px;font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
-        '<span style="font-size:10px;font-weight:600;color:#8b5cf6;background:#fff;padding:2px 8px;border-radius:99px">예산·취향·동선 종합</span>' +
+        '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
+        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding:2px 8px;border-radius:99px">예산·취향·동선 종합</span>' +
       '</div>' +
-      '<p style="font-size:11px;color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
+      '<p style="font-size: var(--font-size-micro);color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
     recs.forEach(function(cityRec) {
       // 한·영 병기 (cityKr 있으면 그것 우선, 없으면 매핑)
@@ -5343,8 +5343,8 @@
         : '';
       html += '<div style="margin-bottom:18px">';
       html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
-        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size:10px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
+        '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">';
       cityRec.options.forEach(function(opt, oi) {
@@ -5355,20 +5355,20 @@
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
-            '<h5 style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
+            '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
-            '<span style="font-size:10px;color:#9ca3af">·</span>' +
-            '<span style="font-size:11px;font-weight:700;color:#0f172a">' + opt.price + '</span>' +
-            (opt.rating ? '<span style="font-size:10px;color:#9ca3af">·</span><span style="font-size:10px;color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
+            '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
+            '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
+            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.price + '</span>' +
+            (opt.rating ? '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span><span style="font-size: var(--font-size-tiny);color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
           '</div>' +
-          '<p style="font-size:11px;color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px;color:#a78bfa">location_on</span>' + opt.location + '</p>' +
-          '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
-            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">search</span>이 호텔</a>' +
-            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>이 호텔</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">place</span>지도</a>' +
           '</div>' +
         '</div>';
       });
@@ -5429,18 +5429,18 @@
               else if (/보증금|deposit/i.test(t)) icon = 'account_balance_wallet';
               else if (/성인|아동|어린이|유아|명/.test(t)) icon = 'group';
               else if (/침대|룸|객실|싱글|더블|트윈|퀸|킹|슬리퍼/.test(t)) icon = 'bed';
-              return '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">' + icon + '</span>' + t + '</span>';
+              return '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + icon + '</span>' + t + '</span>';
             }).join('') + '</div>';
           }
         }
         // 결제일 미니 표시
         var paymentDateRow = item.payment_date
-          ? '<div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</div>'
+          ? '<div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + item.payment_date + '</div>'
           : '';
         // stitch 변환
         var typeBadgeSt = isAirbnb
-          ? '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">home</span>AIRBNB</span>'
-          : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">hotel</span>HOTEL</span>';
+          ? '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">home</span>AIRBNB</span>'
+          : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">hotel</span>HOTEL</span>';
         var payBadgeSt = '';
         if (payStatus) {
           var payVarL = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
@@ -5458,7 +5458,7 @@
         }
         var cancelClassSt = item.cancel === '가능' ? 'j-lodge-cancel-ok' : (item.cancel === '조건부' ? 'j-lodge-cancel-warn' : 'j-lodge-cancel-danger');
         var paymentDateRowSt = item.payment_date
-          ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + item.payment_date + '</p>'
+          ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + item.payment_date + '</p>'
           : '';
         // 이미지 영역 (사용자 업로드 + Ctrl+V)
         var lodgeKey = String(item._id || ('lodge-fb-' + realIdx));
@@ -5530,7 +5530,7 @@
       var typeIcon = baseType.indexOf('Airbnb') >= 0 ? 'home' : 'hotel';
       var cancelClassSt2 = cancelOk ? 'j-lodge-cancel-ok' : 'j-lodge-cancel-danger';
       var isAirbnb2 = baseType.indexOf('Airbnb') >= 0;
-      var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:11px">' + typeIcon + '</span>' + baseType + '</span>';
+      var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + typeIcon + '</span>' + baseType + '</span>';
       // 이미지 영역 (사용자 업로드 + Ctrl+V)
       var lodgeKey2 = String('lodge-seed-' + idx);
       var lodgeImg2 = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey2)) || null;
@@ -5557,7 +5557,7 @@
                 '<span class="j-status-tag j-status-primary">' + d.city + '</span>' +
                 typeBadgeSt2 +
               '</div>' +
-              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap:6px">' + d.title + '<span class="material-symbols-outlined" style="font-size:18px;color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
+              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap:6px">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
               (d.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + d.phone + '</p>' : '') +
             '</div>' +
             '<div class="j-lodge-head-r">' +
@@ -5898,8 +5898,8 @@
     }
   }
 
-  var _savBtn = '<button onclick="saveFixedRow(this,\'TYPE\')" class="p-1 text-indigo-400 hover:text-indigo-600 transition-colors" title="저장"><span class="material-symbols-outlined" style="font-size:14px">check</span></button>';
-  var _canBtn = '<button onclick="this.closest(\'tr\').querySelectorAll(\'input,select\').forEach(function(i){i.value=\'\'})" class="p-1 text-slate-300 hover:text-slate-500 transition-colors" title="초기화"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>';
+  var _savBtn = '<button onclick="saveFixedRow(this,\'TYPE\')" class="p-1 text-indigo-400 hover:text-indigo-600 transition-colors" title="저장"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">check</span></button>';
+  var _canBtn = '<button onclick="this.closest(\'tr\').querySelectorAll(\'input,select\').forEach(function(i){i.value=\'\'})" class="p-1 text-slate-300 hover:text-slate-500 transition-colors" title="초기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">close</span></button>';
   function _actCol(type) { return '<td class="px-1 py-1"><div class="flex gap-0">' + _savBtn.replace('TYPE',type) + _canBtn + '</div></td>'; }
   function _onEnter(type) { return ' onkeydown="if(event.key===\'Enter\')saveFixedRow(this,\''+type+'\')"'; }
 
@@ -6072,18 +6072,18 @@
                      payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
                      'bg-slate-100 text-slate-600';
       var payIcon = payStatus === '결제 완료' ? 'check_circle' : 'schedule';
-      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size:11px">' + payIcon + '</span>' + payStatus + '</span>';
+      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + payIcon + '</span>' + payStatus + '</span>';
     }
     // 추가 정보 칩 (PNR / 탑승객 / 좌석 / 운임)
     var chips = [];
-    if (f.pnr) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">confirmation_number</span>PNR ' + f.pnr + '</span>');
-    if (f.passenger) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">person</span>' + f.passenger + '</span>');
+    if (f.pnr) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">confirmation_number</span>PNR ' + f.pnr + '</span>');
+    if (f.passenger) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">person</span>' + f.passenger + '</span>');
     var seatLabel = '';
     if (f.seat_class) seatLabel = f.seat_class;
     if (f.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + f.seat_number;
-    if (seatLabel) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">airline_seat_recline_normal</span>' + seatLabel + '</span>');
-    if (f.fare_type) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">sell</span>' + f.fare_type + '</span>');
-    if (f.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size:11px">event_available</span>결제일 ' + f.payment_date + '</span>');
+    if (seatLabel) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">airline_seat_recline_normal</span>' + seatLabel + '</span>');
+    if (f.fare_type) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">sell</span>' + f.fare_type + '</span>');
+    if (f.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + f.payment_date + '</span>');
     // stitch j-status-tag로 변환 (payBadge / chips)
     var payTagSt = '';
     if (payStatus) {
@@ -6290,19 +6290,19 @@
 
     var html = '<div style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #bfdbfe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">' +
-        '<span class="material-symbols-outlined" style="color:#0369a1;font-size:22px">flight</span>' +
-        '<h4 style="font-family:var(--j-font-h,Manrope);font-size:14px;font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
-        '<span style="font-size:10px;font-weight:600;color:#0284c7;background:#fff;padding:2px 8px;border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
+        '<span class="material-symbols-outlined" style="color:#0369a1;font-size: var(--font-size-h1)">flight</span>' +
+        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding:2px 8px;border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
       '</div>' +
-      '<p style="font-size:11px;color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
+      '<p style="font-size: var(--font-size-micro);color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
 
     ['outbound', 'ret'].forEach(function(key) {
       var leg = recs[key];
       if (!leg) return;
       html += '<div style="margin-bottom:18px">';
       html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
-        '<span style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:800;color:#0c4a6e">' + leg.label + '</span>' +
-        '<span style="font-size:10px;font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding:2px 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
+        '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#0c4a6e">' + leg.label + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding:2px 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px">';
       leg.options.forEach(function(opt, oi) {
@@ -6313,21 +6313,21 @@
         html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
-            '<h5 style="font-family:var(--j-font-h,Manrope);font-size:13px;font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
+            '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
-            '<span style="font-size:10px;font-weight:600;color:#0284c7">' + opt.type + '</span>' +
-            '<span style="font-size:10px;color:#9ca3af">·</span>' +
-            '<span style="font-size:11px;font-weight:700;color:#0f172a">' + opt.duration + '</span>' +
-            '<span style="font-size:10px;color:#9ca3af">·</span>' +
-            '<span style="font-size:11px;font-weight:700;color:#0c4a6e">' + opt.price + '</span>' +
+            '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7">' + opt.type + '</span>' +
+            '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
+            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.duration + '</span>' +
+            '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
+            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0c4a6e">' + opt.price + '</span>' +
           '</div>' +
-          '<p style="font-size:11px;color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
-          '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">flight</span>Google</a>' +
-            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">search</span>Skyscanner</a>' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>Trip</a>' +
+            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">flight</span>Google</a>' +
+            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>Skyscanner</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Trip</a>' +
           '</div>' +
         '</div>';
       });
@@ -6551,8 +6551,8 @@
         '</div>' +
         '<div class="col-span-2 flex justify-end items-center gap-1">' +
           statusHtml +
-          (editFn ? '<button onclick="' + editFn + '" class="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined" style="font-size:16px">edit_square</span></button>' : '') +
-          '<button onclick="' + deleteFn + '" class="p-1.5 rounded-lg bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>' +
+          (editFn ? '<button onclick="' + editFn + '" class="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">edit_square</span></button>' : '') +
+          '<button onclick="' + deleteFn + '" class="p-1.5 rounded-lg bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -6609,7 +6609,7 @@
       '<div class="j-souvenir-info">' +
         '<span class="j-souvenir-cat"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
         '<span class="j-souvenir-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</span>' +
-        (city ? ' <span style="color:var(--j-on-surface-variant);font-size:11px"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
+        (city ? ' <span style="color:var(--j-on-surface-variant);font-size: var(--font-size-micro)"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
         (descSub ? '<span class="j-souvenir-desc">' + descSub + '</span>' : '') +
       '</div>' +
       '<span class="j-souvenir-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + '</span>' +
@@ -6765,7 +6765,7 @@
           return '<div class="j-souvenir-group">' +
             '<h3 class="j-souvenir-group-h">' +
               '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
+              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left:6px">(' + g.country.kr + ')</span></span>' +
               '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
             '</h3>' +
             citiesHtml +
@@ -6814,7 +6814,7 @@
         return '<div class="j-souvenir-group">' +
           '<h3 class="j-souvenir-group-h">' +
             '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size:14px;margin-left:6px">(' + g.country.kr + ')</span></span>' +
+            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left:6px">(' + g.country.kr + ')</span></span>' +
             '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
           '</h3>' +
           citiesHtml +
@@ -9472,7 +9472,7 @@
     }
     listEl.innerHTML = memos.slice(0, 4).map(function(m){
       var title = String(m.title||'(제목 없음)').replace(/</g,'&lt;').slice(0,28);
-      var pin = m.pinned ? '<span class="material-symbols-outlined text-amber-500" style="font-size:11px">push_pin</span>' : '';
+      var pin = m.pinned ? '<span class="material-symbols-outlined text-amber-500" style="font-size: var(--font-size-micro)">push_pin</span>' : '';
       return '<div class="flex items-center gap-1.5 truncate"><span class="text-slate-400">▸</span>' + pin + '<span class="truncate text-slate-700">' + title + '</span></div>';
     }).join('');
   }
@@ -9502,7 +9502,7 @@
       return;
     }
     // 로딩
-    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>';
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-body)">progress_activity</span>분석 중...</div>';
     if (statusEl) statusEl.textContent = '생성 중';
 
     // 데이터 수집 (prefetched 있으면 재사용)
@@ -9664,7 +9664,7 @@
         if (!title && !tag) return;
         var p = BRIEF_CARD_PALETTE[idx % 4];
         html += '<div style="background:' + p.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid ' + p.border + ';">';
-        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;">' + icon + '</div>';
+        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2);line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
         html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
         if (tag) html += '<p style="font-size:11.5px;color:' + p.tagColor + ';line-height:1.35;margin-top:2px;opacity:0.85;">' + tag + '</p>';
@@ -9740,7 +9740,7 @@
     var status = document.getElementById('import-status');
     var lbl = document.getElementById('import-analyze-label');
     btn.disabled = true;
-    lbl.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> 분석 중...';
+    lbl.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-body)">progress_activity</span> 분석 중...';
     status.className = 'px-4 py-3 rounded-xl text-xs bg-sky-50 text-sky-800';
     status.textContent = '파일 파싱 중...';
 
@@ -9941,7 +9941,7 @@
     var btn = document.getElementById('import-apply-btn');
     var status = document.getElementById('import-status');
     btn.disabled = true;
-    document.getElementById('import-apply-label').innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span> 저장 중...';
+    document.getElementById('import-apply-label').innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-body)">progress_activity</span> 저장 중...';
     status.className = 'px-4 py-3 rounded-xl text-xs bg-sky-50 text-sky-800';
     status.textContent = '0/' + _importParsedEvents.length + ' 저장 중...';
     var ok = 0, skip = 0, fail = 0;
@@ -10023,7 +10023,7 @@
       resultsEl.innerHTML = '<div class="p-6 text-sm text-amber-700 bg-amber-50">⚙️ AI 검색은 <button onclick="openApiSettingsModal()" class="underline font-bold">API 키 설정</button>이 필요해요.</div>';
       return;
     }
-    resultsEl.innerHTML = '<div class="p-6 flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>검색 중...</div>';
+    resultsEl.innerHTML = '<div class="p-6 flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-h3)">progress_activity</span>검색 중...</div>';
     try {
       // 모든 데이터 컬렉션을 컴팩트하게 요약
       var [planner, journey, trips, hub, refs, sessions] = await Promise.all([
@@ -10269,7 +10269,7 @@
       return '<div class="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.03)]">' +
         '<div class="px-5 py-3 border-b" style="background:linear-gradient(90deg,' + opts.gradientFrom + ',' + opts.gradientTo + ');border-color:' + opts.borderColor + ';">' +
           '<h3 class="text-[14px] font-black flex items-center gap-2" style="color:' + opts.titleColor + ';">' +
-            '<span style="font-size:16px">' + opts.icon + '</span>' + opts.title +
+            '<span style="font-size: var(--font-size-h3)">' + opts.icon + '</span>' + opts.title +
             (opts.count !== undefined ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(255,255,255,0.6);color:' + opts.titleColor + ';">' + opts.count + '</span>' : '') +
           '</h3>' +
         '</div>' +
@@ -10298,7 +10298,7 @@
     // 헤더 카드
     html += '<div class="rounded-2xl p-5" style="background:linear-gradient(135deg,#fff7ed 0%,#fce7f3 100%);border:1px solid #fed7aa;">';
     html += '<div class="flex items-start gap-3 mb-2.5">';
-    html += '<div style="font-size:24px;line-height:1">📅</div>';
+    html += '<div style="font-size: var(--font-size-h1-lg);line-height:1">📅</div>';
     html += '<div class="flex-1 min-w-0">';
     html += '<div class="text-[11px] font-black uppercase tracking-wider" style="color:#c2410c;">' + (data.date || 'N/A') + ' · "' + (data.query || 'N/A') + '"</div>';
     html += '<div class="text-[10.5px] mt-0.5" style="color:#94a3b8;">' + (data.stats ? data.stats.successful + '/' + data.stats.totalScraped + ' 작품 분석 · ' + (data.stats.paidCount || 0) + ' 유료 · ' + (data.stats.adultCount || 0) + ' 19+' : '') + '</div>';
@@ -10523,7 +10523,7 @@
       return;
     }
 
-    out.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>분석 중...</div>';
+    out.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-h3)">progress_activity</span>분석 중...</div>';
     if (btn) btn.disabled = true;
 
     // 모드별 프롬프트
@@ -10625,7 +10625,7 @@
       } catch(e){}
     }
 
-    insightsEl.innerHTML = '<div class="text-slate-400 italic flex items-center gap-2"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>';
+    insightsEl.innerHTML = '<div class="text-slate-400 italic flex items-center gap-2"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-body)">progress_activity</span>분석 중...</div>';
 
     // 모든 연도 시리즈 데이터 수집
     var now = new Date();
@@ -10802,7 +10802,7 @@
       contentEl.innerHTML = '<div class="text-sm text-slate-600 p-4 bg-amber-50 rounded-xl">⚙️ AI 추천을 보려면 <button onclick="openApiSettingsModal()" class="underline font-bold text-violet-700">API 키 설정</button>이 필요해요.</div>';
       return;
     }
-    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size:16px">progress_activity</span>과거 여행 패턴 분석 중...</div>';
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-h3)">progress_activity</span>과거 여행 패턴 분석 중...</div>';
     if (summaryEl) summaryEl.classList.add('hidden');
 
     try {
@@ -10903,7 +10903,7 @@
           '<div class="flex items-start justify-between mb-2">' +
             '<div>' +
               '<div class="flex items-center gap-1.5 mb-1">' +
-                '<span class="material-symbols-outlined" style="font-size:18px;color:' + iconColor + '">flight_takeoff</span>' +
+                '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:' + iconColor + '">flight_takeoff</span>' +
                 '<h4 class="text-base font-extrabold text-slate-900">' + (r.destination||'—').replace(/</g,'&lt;') + '</h4>' +
               '</div>' +
               '<div class="flex items-center gap-3 text-[11px] text-slate-600 font-medium">' +
@@ -10946,7 +10946,7 @@
           var statusCls = MILESTONE_STATUS[r[2]] || MILESTONE_STATUS['예정'];
           var id = r[3]||''; // _id is at index 3
           return '<div class="flex items-center gap-2 group py-1">' +
-            '<button data-mid="'+id+'" onclick="toggleDashGoal(this.dataset.mid)" class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all '+(r[2]==='완료'?'bg-teal-500 border-teal-500 text-white':'border-slate-300 hover:border-indigo-400')+'">'+(r[2]==='완료'?'<span class="material-symbols-outlined" style="font-size:10px">check</span>':'')+
+            '<button data-mid="'+id+'" onclick="toggleDashGoal(this.dataset.mid)" class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all '+(r[2]==='완료'?'bg-teal-500 border-teal-500 text-white':'border-slate-300 hover:border-indigo-400')+'">'+(r[2]==='완료'?'<span class="material-symbols-outlined" style="font-size: var(--font-size-tiny)">check</span>':'')+
             '</button>' +
             '<span class="text-xs font-semibold text-slate-700 flex-1 '+(r[2]==='완료'?'line-through text-slate-400':'')+'">'+(r[1]||'')+'</span>' +
             '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all shrink-0">' +
@@ -11512,7 +11512,7 @@
       '<td class="px-4 py-2 text-right text-xs text-slate-300">—</td>' +
       '<td class="px-4 py-2 text-center">' +
         '<input type="hidden" id="fir-trip" value="'+tripVal+'"/>' +
-        '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
+        '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span></button>' +
       '</td>';
     tbody.appendChild(tr);
     initInlineDatePickers(tr);
@@ -12032,8 +12032,8 @@
         html += '<span class="flex items-center gap-1">' +
           '<span class="text-[10px] text-slate-400">1일치</span>' +
           '<input type="text" id="flb-edit-input-' + safeCity + '" value="' + curVal + '" placeholder="160000" class="w-24 text-[10px] px-1.5 py-0.5 border border-blue-300 rounded outline-none focus:ring-1 focus:ring-blue-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCityBudget(\'' + cityEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCityBudget();}"/>' +
-          '<button onclick="ldgSaveCityBudget(\'' + cityEsc + '\')" class="p-0.5 rounded bg-blue-600 text-white hover:bg-blue-700" title="저장 (Enter)"><span class="material-symbols-outlined" style="font-size:12px">check</span></button>' +
-          '<button onclick="ldgCancelEditCityBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400" title="취소 (Esc)"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+          '<button onclick="ldgSaveCityBudget(\'' + cityEsc + '\')" class="p-0.5 rounded bg-blue-600 text-white hover:bg-blue-700" title="저장 (Enter)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span></button>' +
+          '<button onclick="ldgCancelEditCityBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400" title="취소 (Esc)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
         '</span>';
       } else {
         html += '<span class="cursor-pointer hover:bg-blue-50/40 px-1 py-0.5 rounded" onclick="ldgStartEditCityBudget(\'' + cityEsc + '\')" title="클릭하여 이 도시 1일치 예산 수정">' +
@@ -13654,10 +13654,10 @@
       html += '<td class="p-0 text-center align-middle">' +
         (hasData
           ? '<div class="flex items-center justify-center gap-0.5 py-1">' +
-            '<button onclick="editMatrixRow(' + i + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-            '<button onclick="deleteMatrixRow(' + i + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+            '<button onclick="editMatrixRow(' + i + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">edit</span></button>' +
+            '<button onclick="deleteMatrixRow(' + i + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
             '</div>'
-          : '<button onclick="openMatrixModalForDate(\'' + d.date + '\')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-200 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined" style="font-size:14px">add</span></button>'
+          : '<button onclick="openMatrixModalForDate(\'' + d.date + '\')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-200 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span></button>'
         ) + '</td>';
 
       tr.innerHTML = html;
@@ -14845,8 +14845,8 @@
           '<div><div class="font-bold text-sm text-'+c+'-600">'+s.name+'</div>' +
           '<div class="text-[11px] uppercase tracking-tighter text-slate-400">에피소드</div></div>' +
           '<div class="flex gap-0.5 opacity-0 group-hover:opacity-100 ml-auto">' +
-            '<button onclick="editSeries('+si+')" class="p-0.5 hover:bg-'+c+'-100 rounded text-slate-300 hover:text-'+c+'-600"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-            '<button onclick="deleteSeries('+si+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button>' +
+            '<button onclick="editSeries('+si+')" class="p-0.5 hover:bg-'+c+'-100 rounded text-slate-300 hover:text-'+c+'-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
+            '<button onclick="deleteSeries('+si+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button>' +
           '</div></div></td>';
       for (var m=0;m<12;m++) {
         var d = s.monthly[m];
@@ -14910,7 +14910,7 @@
       // 월별 수익 합계
       html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(107,56,212,0.03)">' +
         '<td class="p-2 border-l-4 border-indigo-500 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
-          '<span class="material-symbols-outlined text-indigo-600" style="font-size:14px">summarize</span>' +
+          '<span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-body)">summarize</span>' +
           '<div><div class="font-bold text-xs text-indigo-700">전체 합산</div>' +
           '<div class="text-[10px] uppercase tracking-tighter text-indigo-400">월별 수익</div></div>' +
         '</div></td>';
@@ -14931,7 +14931,7 @@
       html += '</tr>';
     }
     html += '<tr><td colspan="13" class="p-3 text-center">' +
-      '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size:14px">add</span> 시리즈 추가</button>' +
+      '<button onclick="addNewSeries()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mx-auto"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 시리즈 추가</button>' +
       '</td></tr>';
     tbody.innerHTML = html;
     initMatrixEditing();
@@ -15175,8 +15175,8 @@
             'class="mt-1 bg-'+c+'-100 border-l-2 border-'+c+'-500 p-1 rounded-sm cursor-grab hover:bg-'+c+'-200 transition-colors group/ev relative'+selCls+'">' +
             '<p class="text-[11px] font-bold text-'+c+'-700 truncate pr-7">'+ev.episode+(ev.series?' ('+ev.series.charAt(0)+')':'')+'</p>' +
             '<div class="absolute right-0.5 top-0.5 flex gap-px opacity-0 group-hover/ev:opacity-100 transition-opacity">' +
-              '<button onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="수정"><span class="material-symbols-outlined" style="font-size:10px">edit</span></button>' +
-              '<button onclick="event.stopPropagation();quickDeleteCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:10px">close</span></button>' +
+              '<button onclick="event.stopPropagation();editCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-indigo-600" title="수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-tiny)">edit</span></button>' +
+              '<button onclick="event.stopPropagation();quickDeleteCalEvent('+ev.idx+')" class="p-0.5 bg-white/80 rounded hover:bg-white text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-tiny)">close</span></button>' +
             '</div></div>';
         });
       }
@@ -15888,10 +15888,10 @@
         rowsHtml += '<div class="flex items-stretch" style="height:38px;border-bottom:1px solid #f3f4f6">';
         var isDraft = w.status !== 'confirmed';
         var actBtns = '<div class="shrink-0 flex gap-0.5 opacity-40 group-hover:opacity-100 transition-opacity">' +
-          (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span></button>' :
-                     '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size:12px">sync</span></button>') +
-          '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-          '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size:12px">delete</span></button></div>';
+          (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span></button>' :
+                     '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">sync</span></button>') +
+          '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
+          '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
         rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
           '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left:4px;flex-shrink:0"></span>' +
           '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
@@ -17239,7 +17239,7 @@
 
       el.innerHTML =
         '<div class="flex items-center gap-2 text-xs font-bold" style="color:' + color + '">' +
-          '<span class="material-symbols-outlined" style="font-size:14px">' + icon + '</span>' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">' + icon + '</span>' +
           '<span>' + meta.label + ': ' + pct + '%</span>' +
         '</div>' +
         '<div class="mt-1.5 h-1.5 rounded-full bg-slate-100 overflow-hidden">' +
@@ -17537,8 +17537,8 @@
             '</div>' +
             '<div class="p-5 flex-grow"><div class="h-24 flex flex-col items-center justify-center gap-2">' +
               '<span class="material-symbols-outlined text-slate-300 text-3xl">lock</span>' +
-              '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">add</span>항목 추가</button>' +
-              '<button onclick="openMonthCopyModal(\'' + monthKey + '\')" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span>다른 월에서 복사</button>' +
+              '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span>항목 추가</button>' +
+              '<button onclick="openMonthCopyModal(\'' + monthKey + '\')" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_copy</span>다른 월에서 복사</button>' +
             '</div></div>' +
             '<div class="p-4 text-center" style="background:#e7e8e9;">' +
               '<span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">예정</span>' +
@@ -17562,13 +17562,13 @@
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
           return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
-            '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size:10px" title="드래그로 순서 변경">⋮⋮</td>' +
+            '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size: var(--font-size-tiny)" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
             '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
             '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
-              '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button>' +
+              '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
             '</div></td></tr>';
         }).join('');
 
@@ -17600,12 +17600,12 @@
                 '<input type="text" placeholder="항목 입력" class="flex-1 min-w-0 px-1.5 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-il-desc-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
                 '<select class="w-12 px-0.5 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-il-type-' + monthKey + '" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"><option value="지출" selected>지출</option><option value="수입">수입</option><option value="저축">저축</option><option value="출금">출금</option><option value="이자">이자</option></select>' +
                 '<input type="text" placeholder="금액" class="w-10 px-1 py-1 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-il-amt-' + monthKey + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInline(\'' + monthKey + '\')},function(){cancelHubInline(\'' + monthKey + '\')})"/>' +
-                '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:13px">check</span></button>' +
-                '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:13px">close</span></button>' +
+                '<button onclick="saveHubInline(\'' + monthKey + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">check</span></button>' +
+                '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">close</span></button>' +
               '</div>' +
             '</div>' +
             '<button onclick="showHubInline(\'' + monthKey + '\')" class="mt-2 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all" style="border:1px dashed #e1e3e4;">' +
-              '<span class="material-symbols-outlined" style="font-size:14px">add</span> 추가' +
+              '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 추가' +
             '</button>' +
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
@@ -17778,8 +17778,8 @@
             '<input type="text" value="' + desc.replace(/"/g,'&quot;') + '" class="flex-1 min-w-0 px-1.5 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300" id="hub-edit-desc-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
             '<select class="w-12 px-0.5 py-1 rounded bg-white text-[11px] border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-edit-type-' + idx + '" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"><option value="지출"' + (type==='지출'?' selected':'') + '>지출</option><option value="수입"' + (type==='수입'?' selected':'') + '>수입</option><option value="저축"' + (type==='저축'?' selected':'') + '>저축</option><option value="출금"' + (type==='출금'?' selected':'') + '>출금</option><option value="이자"' + (type==='이자'?' selected':'') + '>이자</option></select>' +
             '<input type="text" value="' + amt.toLocaleString('ko-KR') + '" class="w-10 px-1 py-1 rounded bg-white text-[11px] text-right border-none focus:ring-1 focus:ring-indigo-300 shrink-0" id="hub-edit-amt-' + idx + '" inputmode="numeric" oninput="hubFormatAmt(this)" onkeydown="hubInlineKey(event,function(){saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')},function(){updateHubStats()})"/>' +
-            '<button onclick="saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:13px">check</span></button>' +
-            '<button onclick="updateHubStats()" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size:13px">close</span></button>' +
+            '<button onclick="saveHubInlineEdit(' + idx + ',\'' + monthKey + '\',\'' + firestoreId + '\')" class="p-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">check</span></button>' +
+            '<button onclick="updateHubStats()" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">close</span></button>' +
           '</div>' +
         '</div>' +
       '</td>';
@@ -18592,7 +18592,7 @@
     }
     var hasReview = engSessionsData.some(function(s){ return s._id === normalized; });
     if (hasReview) {
-      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">bar_chart</span>리뷰 보기</button>';
+      return '<button onclick="event.stopPropagation();openSessionDetailFromTracker(\'' + normalized + '\')" class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">bar_chart</span>리뷰 보기</button>';
     }
     return '<span class="text-xs text-slate-300">미작성</span>';
   }
@@ -19128,7 +19128,7 @@
           '<div class="flex items-center gap-3"><div class="bg-indigo-100/60 p-2 rounded-xl text-indigo-600"><span class="material-symbols-outlined">'+(cat.icon||'star')+'</span></div>' +
           '<h4 class="text-lg font-bold text-slate-900 font-headline">'+cat.category+'</h4></div>' +
           '<div class="flex items-center gap-2"><span class="text-[10px] font-bold bg-slate-200 px-2.5 py-1 rounded-full text-slate-600">'+done+'/'+items.length+'</span>' +
-          '<button onclick="pkDeleteCategory('+ci+')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button></div>' +
+          '<button onclick="pkDeleteCategory('+ci+')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button></div>' +
         '</div>' +
         '<div class="space-y-2.5">' +
           items.map(function(item, ii) {
@@ -19137,13 +19137,13 @@
             return '<div class="flex items-center gap-4 bg-white p-4 rounded-2xl hover:bg-white/60 transition-all group shadow-sm">' +
               '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleItem('+ci+','+ii+',this.checked)" class="w-5 h-5 rounded-lg border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
               '<span class="flex-1 text-slate-800 font-medium '+cls+'">'+item.name+'</span>' +
-              '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.group\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size:14px">edit</span></button>' +
-              '<button onclick="event.preventDefault();pkDeleteItem('+ci+','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:14px">close</span></button>' +
+              '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.group\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">edit</span></button>' +
+              '<button onclick="event.preventDefault();pkDeleteItem('+ci+','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">close</span></button>' +
             '</div>';
           }).join('') +
         '</div>' +
         '<button onclick="pkOpenItemModal('+ci+')" class="mt-4 w-full py-3 border-2 border-dashed border-slate-200 rounded-2xl text-[10px] font-bold text-slate-400 hover:border-indigo-300 hover:text-indigo-600 transition-all flex items-center justify-center gap-1">' +
-          '<span class="material-symbols-outlined" style="font-size:14px">add</span> 아이템 추가</button>' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 아이템 추가</button>' +
       '</div>';
     }).join('');
   }
@@ -19184,11 +19184,11 @@
         var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
         var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius:6px;' : '';
         return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
-          '<span draggable="true" class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size:12px" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
+          '<span draggable="true" class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size: var(--font-size-meta)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
           '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
-          '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size:12px">edit</span></button>' +
-          '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size:12px">close</span></button>' +
+          '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
+          '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
         '</div>';
       }).join('');
 
@@ -19198,8 +19198,8 @@
           '<div class="col-span-1 text-center md:text-left">' +
             '<div class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">'+mon+'</div><div class="text-xl font-extrabold text-slate-900 leading-none">'+day+'</div>' +
             '<div class="flex gap-0.5 mt-2 justify-center md:justify-start">' +
-              '<button onclick="pkCopyDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 text-slate-300 hover:text-indigo-500 transition-colors" title="이 날 아이템 복사"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span></button>' +
-              '<button onclick="pkPasteDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 transition-colors'+ (_pkClipboard ? ' text-indigo-500' : ' text-slate-200 cursor-not-allowed') +'" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size:14px">content_paste</span></button>' +
+              '<button onclick="pkCopyDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 text-slate-300 hover:text-indigo-500 transition-colors" title="이 날 아이템 복사"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_copy</span></button>' +
+              '<button onclick="pkPasteDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 transition-colors'+ (_pkClipboard ? ' text-indigo-500' : ' text-slate-200 cursor-not-allowed') +'" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_paste</span></button>' +
             '</div>' +
           '</div>' +
           '<div class="col-span-2 flex flex-col items-center justify-center" id="pk-wx-'+idx+'"><span class="material-symbols-outlined text-slate-300">cloud</span><span class="text-[11px] font-semibold text-slate-400">...</span></div>' +
@@ -19208,7 +19208,7 @@
             '<div class="space-y-1.5">'+itemsHtml+'</div>' +
             '<div class="mt-2 flex gap-2">' +
               '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')"/>' +
-              '<button onclick="pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="px-2 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined" style="font-size:16px">add</span></button>' +
+              '<button onclick="pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="px-2 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span></button>' +
             '</div>' +
           '</div>' +
         '</div></div>';
@@ -19584,7 +19584,7 @@
   function pkRenderIconPicker() {
     document.getElementById('pk-icon-picker').innerHTML = PK_ICONS.map(function(ic,i){
       var cls=i===0?'p-2 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-indigo-300':'p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';
-      return '<button type="button" onclick="pkPickIcon(this,\''+ic+'\')" class="'+cls+'"><span class="material-symbols-outlined" style="font-size:18px">'+ic+'</span></button>';
+      return '<button type="button" onclick="pkPickIcon(this,\''+ic+'\')" class="'+cls+'"><span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">'+ic+'</span></button>';
     }).join('');
   }
   function pkPickIcon(btn,icon) { _pkCatIcon=icon; document.querySelectorAll('#pk-icon-picker button').forEach(function(b){b.className='p-2 rounded-xl bg-slate-50 text-slate-500 border-2 border-transparent hover:border-indigo-300';}); btn.className='p-2 rounded-xl bg-indigo-50 text-indigo-600 border-2 border-indigo-300'; }
@@ -19640,7 +19640,7 @@
     if (!confirm('기본 패킹 템플릿 (12개 카테고리)을 추가할까요?')) return;
     var btn = document.getElementById('pk-btn-template');
     btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:18px">progress_activity</span> 추가 중...';
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-h2)">progress_activity</span> 추가 중...';
     try {
       for (var i = 0; i < PK_TEMPLATE.length; i++) {
         var tpl = PK_TEMPLATE[i];
@@ -19650,15 +19650,15 @@
       }
       pkRenderCategories();
       pkRenderProgress();
-      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span> 추가 완료!';
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">check_circle</span> 추가 완료!';
       setTimeout(function() {
         btn.disabled = false;
-        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">playlist_add</span> 템플릿 불러오기';
       }, 2000);
     } catch (err) {
       alert('추가 실패: ' + err.message);
       btn.disabled = false;
-      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">playlist_add</span> 템플릿 불러오기';
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">playlist_add</span> 템플릿 불러오기';
     }
   }
 
@@ -20491,7 +20491,7 @@ function updateAutoGenButton() {
   if (!hasKey) {
     btn.disabled = true;
     btn.className = 'w-full py-3 rounded-xl bg-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed mb-2';
-    hint.innerHTML = '<span class="material-symbols-outlined text-sm" style="font-size:12px">settings</span> <a onclick="openApiSettingsModal()" class="underline cursor-pointer">API 키를 먼저 설정해주세요</a>';
+    hint.innerHTML = '<span class="material-symbols-outlined text-sm" style="font-size: var(--font-size-meta)">settings</span> <a onclick="openApiSettingsModal()" class="underline cursor-pointer">API 키를 먼저 설정해주세요</a>';
   } else {
     btn.disabled = false;
     btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
@@ -21138,12 +21138,12 @@ function showScanResult(r) {
     var visible = items.filter(function(it){ return it.val; });
     if (!visible.length) return '';
     var html = '<div class="mt-3 p-3 rounded-xl border border-violet-200 bg-violet-50/40">';
-    html += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-violet-600" style="font-size:14px">info</span><span class="text-[11px] font-black text-violet-700 uppercase tracking-wider">예약 상세</span></div>';
+    html += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-violet-600" style="font-size: var(--font-size-body)">info</span><span class="text-[11px] font-black text-violet-700 uppercase tracking-wider">예약 상세</span></div>';
     html += '<div class="space-y-1.5">';
     visible.forEach(function(it){
       var valId = it.id ? ' id="' + it.id + '"' : '';
       html += '<div class="flex justify-between items-baseline gap-2">';
-      html += '<span class="text-[10px] text-violet-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">' + it.icon + '</span>' + it.label + '</span>';
+      html += '<span class="text-[10px] text-violet-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">' + it.icon + '</span>' + it.label + '</span>';
       html += '<span class="text-sm font-bold text-slate-800 text-right"' + valId + '>' + it.val + '</span>';
       html += '</div>';
     });
@@ -21211,10 +21211,10 @@ function showScanResult(r) {
         fStatusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black ' + fColor + '">' + r.flight_payment_status + '</span>';
       }
       detailHtml += '<div class="mt-2 p-3 rounded-xl border border-emerald-200 bg-emerald-50/40">';
-      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size:14px">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
+      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size: var(--font-size-body)">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
       detailHtml += '<div class="space-y-1.5">';
-      if (r.payment_date) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
-      if (fStatusBadge) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span>상태</span><span class="text-right">' + fStatusBadge + '</span></div>';
+      if (r.payment_date) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
+      if (fStatusBadge) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span>상태</span><span class="text-right">' + fStatusBadge + '</span></div>';
       detailHtml += '</div></div>';
     }
   } else if (r.type === '숙소') {
@@ -21246,13 +21246,13 @@ function showScanResult(r) {
     }
     if (r.payment_date || r.payment_status) {
       detailHtml += '<div class="mt-2 p-3 rounded-xl border border-emerald-200 bg-emerald-50/40">';
-      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size:14px">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
+      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size: var(--font-size-body)">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
       detailHtml += '<div class="space-y-1.5">';
       if (r.payment_date) {
-        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
+        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
       }
       if (statusBadge) {
-        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span>상태</span><span class="text-right">' + statusBadge + '</span></div>';
+        detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span>상태</span><span class="text-right">' + statusBadge + '</span></div>';
       }
       detailHtml += '</div></div>';
     }
@@ -21291,10 +21291,10 @@ function showScanResult(r) {
         rStatusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black ' + rColor + '">' + r.rental_payment_status + '</span>';
       }
       detailHtml += '<div class="mt-2 p-3 rounded-xl border border-emerald-200 bg-emerald-50/40">';
-      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size:14px">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
+      detailHtml += '<div class="flex items-center gap-1.5 mb-2"><span class="material-symbols-outlined text-emerald-600" style="font-size: var(--font-size-body)">payments</span><span class="text-[11px] font-black text-emerald-700 uppercase tracking-wider">결제 정보</span></div>';
       detailHtml += '<div class="space-y-1.5">';
-      if (r.payment_date) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
-      if (rStatusBadge) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:12px">check_circle</span>상태</span><span class="text-right">' + rStatusBadge + '</span></div>';
+      if (r.payment_date) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event</span>결제일</span><span class="text-sm font-bold text-slate-800 text-right">' + r.payment_date + '</span></div>';
+      if (rStatusBadge) detailHtml += '<div class="flex justify-between items-baseline gap-2"><span class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span>상태</span><span class="text-right">' + rStatusBadge + '</span></div>';
       detailHtml += '</div></div>';
     }
   }
@@ -22257,7 +22257,7 @@ speaker 설정:
       html += '<div class="px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50">' + cat + ' (' + groups[cat].length + ')</div>';
       groups[cat].forEach(function(r) {
         html += '<button onclick="searchNavigate(\'' + r.page + '\');document.getElementById(\'global-search-results\').style.display=\'none\';document.getElementById(\'global-search-input\').value=\'\';" class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-indigo-50 transition-colors">' +
-          '<span class="material-symbols-outlined text-indigo-400" style="font-size:18px">' + r.icon + '</span>' +
+          '<span class="material-symbols-outlined text-indigo-400" style="font-size: var(--font-size-h2)">' + r.icon + '</span>' +
           '<div class="min-w-0 flex-1"><p class="text-sm font-medium text-slate-800 truncate">' + r.title + '</p><p class="text-[10px] text-slate-400 truncate">' + r.sub + '</p></div>' +
           '<span class="text-[9px] text-slate-300">' + r.page + '</span></button>';
       });
