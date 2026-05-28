@@ -14451,10 +14451,8 @@
       renderWorkPipeline();
       checkCalMigration();
     } catch(e) { console.error('renderWorkPipeline error:', e); }
-    // AI 부업 수익 예측 (Phase B-4) — 12시간 캐시
-    try {
-      if (typeof generateIncomeForecast === 'function') generateIncomeForecast(false);
-    } catch(e) { console.error('income forecast error:', e); }
+    // AI 부업 수익 예측 — UI 제거됨 (2026-05-28). 자동 호출 비활성화.
+    // 필요시 generateIncomeForecast() 글로벌 함수는 그대로 유지 (UI 없으면 early-exit).
     // ─── 누적 중복 자동 정리 (2026-05-24) ───
     // plannerData가 충분히 로드된 뒤 한 번 중복/고아 정리
     // 이전 _autoMatrixGuard race condition으로 쌓인 중복 일정 자동 청소

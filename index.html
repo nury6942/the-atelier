@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=177" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=178" as="script">
   <link rel="preload" href="js/app-2-init.js?v=163" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11081,44 +11081,6 @@
         <button onclick="runCalMigration()" class="px-4 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors shrink-0">🔄 마이그레이션</button>
       </div>
 
-      <!-- ═══════ AI 부업 수익 예측 ═══════ -->
-      <section class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100" style="box-shadow:0 8px 24px rgba(124,58,237,0.08)">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#ec4899)">
-              <span class="material-symbols-outlined" style="font-size:20px">insights</span>
-            </div>
-            <div>
-              <h3 class="text-base font-extrabold text-slate-900" style="font-family:'Pretendard',sans-serif">부업 수익 예측</h3>
-              <p class="text-[11px] text-slate-500">작품별 트렌드 + AI 분석</p>
-            </div>
-          </div>
-          <button onclick="generateIncomeForecast(true)" class="px-3 py-1.5 rounded-lg text-violet-700 bg-white hover:bg-violet-50 text-xs font-bold flex items-center gap-1 border border-violet-200 transition-colors"><span class="material-symbols-outlined" style="font-size:14px">refresh</span>새로 분석</button>
-        </div>
-        <!-- KPI 카드 3개 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3" style="font-family:'Pretendard',sans-serif">
-          <div class="bg-white rounded-xl p-3.5">
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">올해 누적</p>
-            <p id="forecast-ytd" class="text-xl font-extrabold text-slate-900">—</p>
-            <p id="forecast-ytd-trend" class="text-[10px] text-slate-500 mt-0.5">전년 동기 대비 —</p>
-          </div>
-          <div class="bg-white rounded-xl p-3.5">
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">다음 분기 예측</p>
-            <p id="forecast-next-q" class="text-xl font-extrabold text-violet-600">—</p>
-            <p id="forecast-next-q-detail" class="text-[10px] text-slate-500 mt-0.5">—</p>
-          </div>
-          <div class="bg-white rounded-xl p-3.5">
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">연간 예상</p>
-            <p id="forecast-year-end" class="text-xl font-extrabold text-pink-600">—</p>
-            <p id="forecast-year-end-detail" class="text-[10px] text-slate-500 mt-0.5">—</p>
-          </div>
-        </div>
-        <!-- AI 인사이트 -->
-        <div id="forecast-insights" class="bg-white rounded-xl p-4 text-[13px] text-slate-700 leading-relaxed" style="font-family:'Pretendard',sans-serif">
-          <div class="text-slate-400 italic flex items-center gap-2"><span class="material-symbols-outlined animate-spin" style="font-size:14px">progress_activity</span>분석 중...</div>
-        </div>
-      </section>
-
       <!-- Annual Performance Matrix -->
       <section>
         <header class="mb-6 flex justify-between items-center">
@@ -11893,7 +11855,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=177" defer></script>
+<script src="js/app-1-pages.js?v=178" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
