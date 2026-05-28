@@ -1392,10 +1392,10 @@ function _ldgInjectMobileToggle(isFullView) {
   }
   var wrap = document.createElement('div');
   wrap.id = 'ldg-mobile-toggle-wrap';
-  wrap.style.cssText = 'margin-bottom:10px;text-align:center;';
+  wrap.style.cssText = 'margin-bottom: var(--space-2-5);text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
@@ -1743,9 +1743,9 @@ function ldgRenderDonuts() {
       var labels = Object.keys(dataObj).sort(function(a,b) { return dataObj[b] - dataObj[a]; });
       var values = labels.map(function(l) { return dataObj[l]; });
       var total = values.reduce(function(a,b){return a+b;}, 0);
-      var html = '<div style="padding:12px;font-size: var(--font-size-micro);line-height:1.6;">';
+      var html = '<div style="padding: var(--space-3);font-size: var(--font-size-micro);line-height:1.6;">';
       if (labels.length === 0) {
-        html += '<div style="color:#94a3b8;text-align:center;padding:20px 0;">데이터 없음</div>';
+        html += '<div style="color:#94a3b8;text-align:center;padding: var(--space-5) 0;">데이터 없음</div>';
       } else {
         labels.slice(0, 6).forEach(function(label, i) {
           var pct = total > 0 ? Math.round(values[i] / total * 100) : 0;
@@ -1867,10 +1867,10 @@ function ldgRenderDailyChart() {
     if (wrapper) {
       canvas.style.display = 'none';
       var existing = wrapper.querySelector('.mobile-daily-summary');
-      var html = '<div class="mobile-daily-summary" style="padding:12px;font-size: var(--font-size-micro);line-height:1.6;">' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">최고 지출일</span><span style="font-weight:700;color:#dc2626;">' + maxDay + '일 · ₩' + ldgFmt(max) + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 평균</span><span style="font-weight:700;color:#1e293b;">₩' + ldgFmt(Math.round(avg)) + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:#475569;">지출 일수</span><span style="font-weight:700;color:#1e293b;">' + nonZeroDays + '/' + daysInMonth + '일</span></div>' +
+      var html = '<div class="mobile-daily-summary" style="padding: var(--space-3);font-size: var(--font-size-micro);line-height:1.6;">' +
+        '<div style="display:flex;justify-content:space-between;padding: var(--space-1) 0;"><span style="color:#475569;">최고 지출일</span><span style="font-weight:700;color:#dc2626;">' + maxDay + '일 · ₩' + ldgFmt(max) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding: var(--space-1) 0;"><span style="color:#475569;">지출 평균</span><span style="font-weight:700;color:#1e293b;">₩' + ldgFmt(Math.round(avg)) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding: var(--space-1) 0;"><span style="color:#475569;">지출 일수</span><span style="font-weight:700;color:#1e293b;">' + nonZeroDays + '/' + daysInMonth + '일</span></div>' +
         '</div>';
       if (existing) existing.outerHTML = html;
       else wrapper.insertAdjacentHTML('beforeend', html);

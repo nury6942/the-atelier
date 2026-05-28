@@ -655,8 +655,8 @@
         var bgColor = colorParts.find(function(c){ return c.startsWith('bg-'); }) || 'bg-indigo-100';
         var textColor = colorParts.find(function(c){ return c.startsWith('text-'); }) || 'text-indigo-700';
 
-        var ml = blockStart ? 'margin-left:0;padding-left:8px;' : 'margin-left:-13px;padding-left:0;';
-        var mr = blockEnd ? 'margin-right:0;padding-right:8px;' : 'margin-right:-13px;padding-right:0;';
+        var ml = blockStart ? 'margin-left:0;padding-left: var(--space-2);' : 'margin-left:-13px;padding-left:0;';
+        var mr = blockEnd ? 'margin-right:0;padding-right: var(--space-2);' : 'margin-right:-13px;padding-right:0;';
 
         return '<div class="mt-1 ' + bgColor + ' flex items-center overflow-visible cursor-grab" ' +
           'style="height:26px;' + rl + rr + ml + mr + 'position:relative;z-index:5;" ' +
@@ -905,7 +905,7 @@
       '<span id="' + cfg.id + '-label" class="flex-1 text-sm font-bold text-[#1d1a23]"></span>' +
       '<span class="material-symbols-outlined text-slate-400" style="font-size: var(--font-size-h3)">expand_more</span>' +
       '</button>' +
-      '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="bg-white rounded-xl shadow-lg border border-slate-100 p-1" style="display:none;list-style:none;margin:0;padding:4px;position:fixed;z-index:9999"></ul>';
+      '<ul id="' + popId + '" role="listbox" aria-label="' + (cfg.ariaLabel||'목록') + '" class="bg-white rounded-xl shadow-lg border border-slate-100 p-1" style="display:none;list-style:none;margin:0;padding: var(--space-1);position:fixed;z-index:9999"></ul>';
 
     self.trigger = document.getElementById(trigId);
     self.popover = document.getElementById(popId);
@@ -928,7 +928,7 @@
         var isFocused = i === self.focusIdx;
         var bg = isFocused ? 'background:var(--lavender-deep);color:#fff;' : (isSelected && !isFocused ? '' : '');
         var dotBorder = isFocused ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
-        var prefix = opt.emoji ? '<span style="font-size: var(--font-size-body-sm);margin-right:2px">' + opt.emoji + '</span> ' : '';
+        var prefix = opt.emoji ? '<span style="font-size: var(--font-size-body-sm);margin-right: var(--space-0-5)">' + opt.emoji + '</span> ' : '';
         var dotHtml = opt.dot ? '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' : '';
         html += '<li role="option" id="' + self.id + '-opt-' + i + '" aria-selected="' + isSelected + '" data-idx="' + i + '"' +
           ' class="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer" style="' + bg + '">' +
@@ -2211,9 +2211,9 @@
           '<div class="j-stop-body">' +
             '<div class="j-stop-row"><span class="j-stop-k">DATES</span><span class="j-stop-v">' + (dateRange || 'TBD') + '</span></div>' +
             '<div class="j-stop-row"><span class="j-stop-k">STAY</span><span class="j-stop-v">' + nightsText + '</span></div>' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-top: var(--space-2-5)">' +
               '<span class="j-stop-nights-label">★ ' + stopLabel + '</span>' +
-              '<div style="display:flex;gap:4px">' +
+              '<div style="display:flex;gap: var(--space-1)">' +
                 '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
                 '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button>' +
               '</div>' +
@@ -2850,7 +2850,7 @@
       var flights = journeyData.filter(function(d){return d.type==='항공편';});
       var badges = '';
       function _pill(icon, text) {
-        return '<span class="j-tag-pill j-tag-pill-accent" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">' + icon + '</span>' + text + '</span>';
+        return '<span class="j-tag-pill j-tag-pill-accent" style="display:inline-flex;align-items:center;gap:5px;padding: var(--space-1-5) var(--space-3)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">' + icon + '</span>' + text + '</span>';
       }
       if (flights.length > 0) badges += _pill('flight_takeoff', '항공 ' + flights.length + '편');
       var busCount = transports.filter(function(t){return (t.title||'').toLowerCase().indexOf('bus')>=0;}).length;
@@ -3957,7 +3957,7 @@
       var headerCityHtml = '';
       if (dayTrips.length > 0) {
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
-        headerCityHtml = '<p class="j-day-h3-meta" title="당일치기 행선지" style="margin-top:4px;color:#c2410c;font-weight:600">🚆 ' + tripsTxt + ' (당일)</p>';
+        headerCityHtml = '<p class="j-day-h3-meta" title="당일치기 행선지" style="margin-top: var(--space-1);color:#c2410c;font-weight:600">🚆 ' + tripsTxt + ' (당일)</p>';
       }
       var dayHeadHtml =
         '<div class="j-day-head">' +
@@ -4563,23 +4563,23 @@
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
       .replace(/text-xl/g, '');
-    return '<div class="j-inter-card" style="margin-bottom:16px">' +
+    return '<div class="j-inter-card" style="margin-bottom: var(--space-4)">' +
       '<div class="j-inter-head">' +
         '<div class="j-inter-head-l">' +
           '<span class="material-symbols-outlined">directions_car</span>' +
           '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
           payBadgeSt +
         '</div>' +
       '</div>' +
       '<div class="j-inter-body">' +
         '<div class="j-inter-row">' +
           '<div>' +
-            (cityRouteSt ? '<div style="margin-bottom:8px">' + cityRouteSt + '</div>' : '') +
+            (cityRouteSt ? '<div style="margin-bottom: var(--space-2)">' + cityRouteSt + '</div>' : '') +
             (item.description ? '<p class="j-inter-meta-sub" style="font-size: var(--font-size-meta);margin:0">' + item.description + '</p>' : '') +
           '</div>' +
-          '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
+          '<div style="text-align:right;display:flex;align-items:center;gap: var(--space-3)">' +
             '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + price + '</p>' +
             '<div class="j-trip-actions">' + actionsSt + '</div>' +
           '</div>' +
@@ -4627,25 +4627,25 @@
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
       .replace(/text-xl/g, '');
-    return '<div class="j-inter-card" style="margin-bottom:16px">' +
+    return '<div class="j-inter-card" style="margin-bottom: var(--space-4)">' +
       '<div class="j-inter-head">' +
         '<div class="j-inter-head-l">' +
           '<span class="material-symbols-outlined">' + icon + '</span>' +
           '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
           (status ? '<span class="j-status-tag ' + statusVar + '">' + status + '</span>' : '') +
         '</div>' +
       '</div>' +
       '<div class="j-inter-body">' +
         '<div class="j-inter-row">' +
           '<div>' +
-            '<p class="j-trip-name" style="font-size: var(--font-size-body-lg);margin-bottom:6px">' +
+            '<p class="j-trip-name" style="font-size: var(--font-size-body-lg);margin-bottom: var(--space-1-5)">' +
               (routeParts[0] || '') +
               (routeParts.length > 1 ? ' <span style="color:var(--j-on-surface-variant);font-weight:600">→</span> ' + routeParts[1] : '') +
             '</p>' +
           '</div>' +
-          '<div style="text-align:right;display:flex;align-items:center;gap:12px">' +
+          '<div style="text-align:right;display:flex;align-items:center;gap: var(--space-3)">' +
             '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
             '<div class="j-trip-actions">' + actionsSt + '</div>' +
           '</div>' +
@@ -5327,11 +5327,11 @@
     var recs = _LODGING_RECS[trip.name];
     if (!recs || !recs.length) { el.style.display = 'none'; return; }
 
-    var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
+    var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding:2px 8px;border-radius:99px">예산·취향·동선 종합</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius:99px">예산·취향·동선 종합</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
@@ -5341,34 +5341,34 @@
       var dateRange = (cityRec.checkIn && cityRec.checkOut)
         ? ' · ' + cityRec.checkIn.substring(5).replace('-','/') + ' ~ ' + cityRec.checkOut.substring(5).replace('-','/')
         : '';
-      html += '<div style="margin-bottom:18px">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+      html += '<div style="margin-bottom: var(--space-4-5)">';
+      html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:2px 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
       '</div>';
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap: var(--space-2-5)">';
       cityRec.options.forEach(function(opt, oi) {
         // 트립닷컴 URL — 호텔명·도시·체크인/아웃 모두 전달 → 검색 결과 페이지로 직접 진입
         var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
-          '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
+          '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
+          '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
             '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
             '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
             '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.price + '</span>' +
             (opt.rating ? '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span><span style="font-size: var(--font-size-tiny);color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
           '</div>' +
-          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
-            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>이 호텔</a>' +
-            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">place</span>지도</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>이 호텔</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">place</span>지도</a>' +
           '</div>' +
         '</div>';
       });
@@ -5439,8 +5439,8 @@
           : '';
         // stitch 변환
         var typeBadgeSt = isAirbnb
-          ? '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">home</span>AIRBNB</span>'
-          : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">hotel</span>HOTEL</span>';
+          ? '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">home</span>AIRBNB</span>'
+          : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">hotel</span>HOTEL</span>';
         var payBadgeSt = '';
         if (payStatus) {
           var payVarL = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
@@ -5458,7 +5458,7 @@
         }
         var cancelClassSt = item.cancel === '가능' ? 'j-lodge-cancel-ok' : (item.cancel === '조건부' ? 'j-lodge-cancel-warn' : 'j-lodge-cancel-danger');
         var paymentDateRowSt = item.payment_date
-          ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + item.payment_date + '</p>'
+          ? '<p class="j-inter-meta-sub" style="display:inline-flex;align-items:center;gap: var(--space-1);margin-top: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + item.payment_date + '</p>'
           : '';
         // 이미지 영역 (사용자 업로드 + Ctrl+V)
         var lodgeKey = String(item._id || ('lodge-fb-' + realIdx));
@@ -5489,7 +5489,7 @@
                   payBadgeSt +
                 '</div>' +
                 '<h3 class="j-lodge-h3">' + (item.title ? _trvMapsLink(item.title, item.city || '') : '—') + '</h3>' +
-                '<div style="display:flex;flex-wrap:wrap;gap:14px">' +
+                '<div style="display:flex;flex-wrap:wrap;gap: var(--space-3-5)">' +
                   (item.address ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">location_on</span>' + _trvMapsAddr(item.address) + '</p>' : '') +
                   (item.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + item.phone + '</p>' : '') +
                 '</div>' +
@@ -5498,7 +5498,7 @@
                 '<p class="j-trip-price">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
                 '<p class="j-lodge-rate-meta">Rate</p>' +
                 paymentDateRowSt +
-                '<div class="j-trip-actions" style="margin-top:10px;justify-content:flex-end">' +
+                '<div class="j-trip-actions" style="margin-top: var(--space-2-5);justify-content:flex-end">' +
                   '<button onclick="editJourneyItem(' + realIdx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
                   '<button onclick="deleteJourneyRow(' + realIdx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
                 '</div>' +
@@ -5530,7 +5530,7 @@
       var typeIcon = baseType.indexOf('Airbnb') >= 0 ? 'home' : 'hotel';
       var cancelClassSt2 = cancelOk ? 'j-lodge-cancel-ok' : 'j-lodge-cancel-danger';
       var isAirbnb2 = baseType.indexOf('Airbnb') >= 0;
-      var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + typeIcon + '</span>' + baseType + '</span>';
+      var typeBadgeSt2 = '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + typeIcon + '</span>' + baseType + '</span>';
       // 이미지 영역 (사용자 업로드 + Ctrl+V)
       var lodgeKey2 = String('lodge-seed-' + idx);
       var lodgeImg2 = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey2)) || null;
@@ -5557,13 +5557,13 @@
                 '<span class="j-status-tag j-status-primary">' + d.city + '</span>' +
                 typeBadgeSt2 +
               '</div>' +
-              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap:6px">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
+              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
               (d.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + d.phone + '</p>' : '') +
             '</div>' +
             '<div class="j-lodge-head-r">' +
               '<p class="j-trip-price">' + d.price + '</p>' +
               '<p class="j-lodge-rate-meta">per night</p>' +
-              '<div class="j-trip-actions" style="margin-top:10px;justify-content:flex-end">' +
+              '<div class="j-trip-actions" style="margin-top: var(--space-2-5);justify-content:flex-end">' +
                 '<button onclick="openLodgingEditModal(' + idx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
                 '<button onclick="deleteLodgingLocal(' + idx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
               '</div>' +
@@ -6288,34 +6288,34 @@
     var recs = _FLIGHT_RECS[trip.name];
     if (!recs) { el.style.display = 'none'; return; }
 
-    var html = '<div style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #bfdbfe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">' +
+    var html = '<div style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #bfdbfe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5);flex-wrap:wrap">' +
         '<span class="material-symbols-outlined" style="color:#0369a1;font-size: var(--font-size-h1)">flight</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding:2px 8px;border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
 
     ['outbound', 'ret'].forEach(function(key) {
       var leg = recs[key];
       if (!leg) return;
-      html += '<div style="margin-bottom:18px">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">' +
+      html += '<div style="margin-bottom: var(--space-4-5)">';
+      html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#0c4a6e">' + leg.label + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding:2px 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding: var(--space-0-5) 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
       '</div>';
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px">';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap: var(--space-2-5)">';
       leg.options.forEach(function(opt, oi) {
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-nano);font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         var gflUrl = _googleFlightsUrl(leg.from, leg.to, leg.date);
         var skyUrl = _skyscannerUrl(leg.from, leg.to, leg.date);
         var tripUrl = _tripcomFlightUrl(leg.from, leg.to, leg.date);
         html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
-          '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
+          '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">' +
+          '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
             '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7">' + opt.type + '</span>' +
             '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
             '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.duration + '</span>' +
@@ -6325,9 +6325,9 @@
           '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">flight</span>Google</a>' +
-            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>Skyscanner</a>' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Trip</a>' +
+            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">flight</span>Google</a>' +
+            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>Skyscanner</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Trip</a>' +
           '</div>' +
         '</div>';
       });
@@ -6765,7 +6765,7 @@
           return '<div class="j-souvenir-group">' +
             '<h3 class="j-souvenir-group-h">' +
               '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left:6px">(' + g.country.kr + ')</span></span>' +
+              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left: var(--space-1-5)">(' + g.country.kr + ')</span></span>' +
               '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
             '</h3>' +
             citiesHtml +
@@ -6814,7 +6814,7 @@
         return '<div class="j-souvenir-group">' +
           '<h3 class="j-souvenir-group-h">' +
             '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left:6px">(' + g.country.kr + ')</span></span>' +
+            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left: var(--space-1-5)">(' + g.country.kr + ')</span></span>' +
             '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
           '</h3>' +
           citiesHtml +
@@ -9663,11 +9663,11 @@
         var tag = (item.tag || item.tagline || '').toString();
         if (!title && !tag) return;
         var p = BRIEF_CARD_PALETTE[idx % 4];
-        html += '<div style="background:' + p.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid ' + p.border + ';">';
+        html += '<div style="background:' + p.bg + ';border-radius:14px;padding: var(--space-3-5) var(--space-4);display:flex;align-items:center;gap: var(--space-3);border:1px solid ' + p.border + ';">';
         html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2);line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
         html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size: var(--font-size-body);line-height:1.35;margin:0;">' + title + '</p>';
-        if (tag) html += '<p style="font-size: var(--font-size-meta);color:' + p.tagColor + ';line-height:1.35;margin-top:2px;opacity:0.85;">' + tag + '</p>';
+        if (tag) html += '<p style="font-size: var(--font-size-meta);color:' + p.tagColor + ';line-height:1.35;margin-top: var(--space-0-5);opacity:0.85;">' + tag + '</p>';
         html += '</div></div>';
       });
       html += '</div>';
@@ -10535,18 +10535,18 @@
         (userText ? '【사용자 입력】\n' + userText + '\n\n' : '') +
         '응답 형식 (HTML, 마크다운 X):\n' +
         '<h3 style="color:#ea580c;font-weight:800">🔑 공통 키워드 / 태그</h3>\n<ul>빈도순</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">📖 시놉시스/제목 공통 패턴</h3>\n<ul>구조/소재/도입부 패턴 (예시 인용 필수)</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">👤 캐릭터 특징</h3>\n<ul>남주/여주(또는 페어) 자주 나오는 설정</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">⭐ 성공 요인 추정</h3>\n<ul>왜 이 작품들이 인기인가</ul>\n' +
-        '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">💎 차별화 제안</h3>\n<ul>이 패턴을 알고 다르게 가는 방법 3개 (구체적 액션)</ul>',
+        '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">📖 시놉시스/제목 공통 패턴</h3>\n<ul>구조/소재/도입부 패턴 (예시 인용 필수)</ul>\n' +
+        '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">👤 캐릭터 특징</h3>\n<ul>남주/여주(또는 페어) 자주 나오는 설정</ul>\n' +
+        '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">⭐ 성공 요인 추정</h3>\n<ul>왜 이 작품들이 인기인가</ul>\n' +
+        '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">💎 차별화 제안</h3>\n<ul>이 패턴을 알고 다르게 가는 방법 3개 (구체적 액션)</ul>',
       character: '플랫폼: ' + _trendPlatform + '\n\n' +
         (_trendPlatform === '포스타입' ?
           '아래 2차 창작 페어/캐릭터의 인기 트로프를 분석해주세요. 한국어 응답.\n\n【대상】 ' + userText + '\n\n' +
           '응답 형식 (HTML, 마크다운 X):\n' +
           '<h3 style="color:#ea580c;font-weight:800">💖 이 페어의 인기 트로프</h3>\n<ul>자주 보이는 관계 설정 (소꿉친구, 적대→연인, ABO 등)</ul>\n' +
-          '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">🎭 캐릭터 해석 패턴</h3>\n<ul>"공/수" 또는 "Top/Bottom" 분배, 성격 해석 트렌드</ul>\n' +
-          '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">📝 인기 장르/소재</h3>\n<ul>학원물/판타지/현대/사극 등 + 자주 쓰이는 클리셰</ul>\n' +
-          '<h3 style="color:#ea580c;font-weight:800;margin-top:12px">⭐ 차별화 제안</h3>\n<ul>같은 페어 다른 작품 대비 새로운 방향 3개</ul>'
+          '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">🎭 캐릭터 해석 패턴</h3>\n<ul>"공/수" 또는 "Top/Bottom" 분배, 성격 해석 트렌드</ul>\n' +
+          '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">📝 인기 장르/소재</h3>\n<ul>학원물/판타지/현대/사극 등 + 자주 쓰이는 클리셰</ul>\n' +
+          '<h3 style="color:#ea580c;font-weight:800;margin-top: var(--space-3)">⭐ 차별화 제안</h3>\n<ul>같은 페어 다른 작품 대비 새로운 방향 3개</ul>'
         :
           '아래 캐릭터 설정/장르가 ' + _trendPlatform + '에서 통할지 분석해주세요.\n\n【설정】 ' + userText + '\n\n' +
           '응답 형식 (HTML):\n<h3>📈 현재 시장 적합성</h3>\n<h3>🔥 비슷한 인기작</h3>\n<h3>⚠️ 진부할 수 있는 요소</h3>\n<h3>💎 강화 포인트</h3>'
@@ -10731,7 +10731,7 @@
         '【시리즈별 (월평균)】\n' + seriesDetail.map(function(s){return '- ' + s.name + ': 누적 ' + fmt(s.total) + ', 월 ' + fmt(s.avg);}).join('\n') + '\n\n' +
         '【연재 작품】\n' + worksData.map(function(w){return '- ' + w.title + ' (' + w.series + ', 종료 ' + w.end + ')';}).join('\n') + '\n\n' +
         '응답 형식 (HTML, 마크다운 X):\n' +
-        '<h4 style="color:#7c3aed;font-weight:800;margin-bottom:6px">💡 인사이트</h4>\n<ul style="padding-left:18px;list-style:disc">\n  <li>핵심 트렌드 (1-2문장)</li>\n  <li>주의 사항 (있으면)</li>\n  <li>실행 가능한 액션 (1-2개)</li>\n</ul>\n\n구체적이고 친근한 톤. 액션은 시리즈명·기간 포함해서 구체적으로.';
+        '<h4 style="color:#7c3aed;font-weight:800;margin-bottom: var(--space-1-5)">💡 인사이트</h4>\n<ul style="padding-left: var(--space-4-5);list-style:disc">\n  <li>핵심 트렌드 (1-2문장)</li>\n  <li>주의 사항 (있으면)</li>\n  <li>실행 가능한 액션 (1-2개)</li>\n</ul>\n\n구체적이고 친근한 톤. 액션은 시리즈명·기간 포함해서 구체적으로.';
 
       var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
       if (model.indexOf('opus') >= 0) model = 'claude-opus-4-7';
@@ -14906,7 +14906,7 @@
         monthlyTotals.push(mTotal);
       }
       // 구분선
-      html += '<tr><td colspan="13" class="p-0"><div class="border-t-2 border-indigo-200" style="margin:4px 0"></div></td></tr>';
+      html += '<tr><td colspan="13" class="p-0"><div class="border-t-2 border-indigo-200" style="margin: var(--space-1) 0"></div></td></tr>';
       // 월별 수익 합계
       html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(107,56,212,0.03)">' +
         '<td class="p-2 border-l-4 border-indigo-500 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
@@ -15893,7 +15893,7 @@
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
           '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
         rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
-          '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left:4px;flex-shrink:0"></span>' +
+          '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left: var(--space-1);flex-shrink:0"></span>' +
           '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
           '<span class="truncate flex-1 min-w-0">'+w.title+'</span>' + actBtns + '</div>';
         rowsHtml += '<div class="relative flex-1" style="height:38px">';
@@ -16019,7 +16019,7 @@
       if (sWorks.length === 0) return;
       hasRows = true;
       var sColor = scMap[s.color] || '#6366f1';
-      rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom:6px">';
+      rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom: var(--space-1-5)">';
       rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
       rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius:4px">';
       sWorks.forEach(function(w) {
@@ -16064,7 +16064,7 @@
     var dynWidth = Math.max(500, totalMonths * 70);
     el.innerHTML = '<div style="overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent;-webkit-overflow-scrolling:touch" id="nw-tl-scroll">' +
       '<div style="min-width:' + dynWidth + 'px;position:relative">' +
-      '<div class="relative" style="height:16px;margin-left:60px;margin-bottom:4px;border-bottom:1px dashed #e5e7eb">' + mHtml + '</div>' +
+      '<div class="relative" style="height:16px;margin-left:60px;margin-bottom: var(--space-1);border-bottom:1px dashed #e5e7eb">' + mHtml + '</div>' +
       '<div class="relative">' + rowsHtml + '</div>' +
       '<div class="text-[9px] text-slate-400 text-center mt-3 pt-2" style="border-top:1px solid #f3f4f6">🔍 퇴고 종료 = 시놉 시작 기준 · 🏁 연재 종료 · 빨간 선 = 오늘</div></div></div>';
     // Auto-scroll to today

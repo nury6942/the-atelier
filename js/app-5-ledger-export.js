@@ -631,7 +631,7 @@
       t.textContent = msg;
       t.style.cssText =
         'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
-        'background:#1e293b;color:#fff;padding:12px 20px;border-radius:12px;' +
+        'background:#1e293b;color:#fff;padding: var(--space-3) var(--space-5);border-radius:12px;' +
         'font-size: var(--font-size-body-sm);font-weight:700;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.15);' +
         'animation:slideUp 0.25s ease-out';
       document.body.appendChild(t);

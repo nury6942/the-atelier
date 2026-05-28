@@ -276,19 +276,19 @@ window.NOMAD_PAGES = (function(){
 
     // 출국까지 — border-l accent-accent (soft-accent 인디고 블루)
     html += '<div class="nm-bento" style="border-left:4px solid var(--nm-soft-accent)">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">출국까지</p>' +
+      '<p class="nm-label-sm" style="margin-bottom: var(--space-2)">출국까지</p>' +
       '<h4 class="nm-headline-lg">' + (dDay > 0 ? 'D-' + dDay : '🎉') + '</h4>' +
-      '<div style="margin-top:16px;height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
+      '<div style="margin-top: var(--space-4);height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
         '<div style="height:100%;width:' + progressPct + '%;background:var(--nm-soft-accent)"></div>' +
       '</div>' +
-      '<p class="nm-label-sm" style="margin-top:8px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">진행률 ' + progressPct + '% · 2028.6.9 리스본</p>' +
+      '<p class="nm-label-sm" style="margin-top: var(--space-2);text-transform:none;letter-spacing:0;color:var(--nm-text-3)">진행률 ' + progressPct + '% · 2028.6.9 리스본</p>' +
     '</div>';
 
     // 노마드 게이트 — border-l secondary
     html += '<div class="nm-bento" style="border-left:4px solid var(--nm-secondary)">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">노마드 게이트</p>' +
+      '<p class="nm-label-sm" style="margin-bottom: var(--space-2)">노마드 게이트</p>' +
       '<h4 class="nm-headline-lg">₩450만</h4>' +
-      '<div style="margin-top:16px;display:flex;align-items:center;gap:6px;color:var(--nm-text-2);font-size: var(--font-size-meta)">' +
+      '<div style="margin-top: var(--space-4);display:flex;align-items:center;gap: var(--space-1-5);color:var(--nm-text-2);font-size: var(--font-size-meta)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:#15803d">trending_up</span>' +
         '월 본업 외 수익 · 욕심 ₩800만' +
       '</div>' +
@@ -296,16 +296,16 @@ window.NOMAD_PAGES = (function(){
 
     // 1년 총 예산 — border-l tertiary
     html += '<div class="nm-bento" style="border-left:4px solid #ffb784">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">1년 총 예산</p>' +
+      '<p class="nm-label-sm" style="margin-bottom: var(--space-2)">1년 총 예산</p>' +
       '<h4 class="nm-headline-lg">' + fmtMan(grandTotal) + '</h4>' +
-      '<p class="nm-label-sm" style="margin-top:16px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">소비성 ' + fmtMan(consumableTotal) + '</p>' +
+      '<p class="nm-label-sm" style="margin-top: var(--space-4);text-transform:none;letter-spacing:0;color:var(--nm-text-3)">소비성 ' + fmtMan(consumableTotal) + '</p>' +
     '</div>';
 
     // 총 도시 — border-l primary
     html += '<div class="nm-bento" style="border-left:4px solid var(--nm-primary)">' +
-      '<p class="nm-label-sm" style="margin-bottom:8px">총 도시</p>' +
+      '<p class="nm-label-sm" style="margin-bottom: var(--space-2)">총 도시</p>' +
       '<h4 class="nm-headline-lg">17 cities</h4>' +
-      '<p class="nm-label-sm" style="margin-top:16px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">유럽 10 · 오세아니아 4 · 미주 3</p>' +
+      '<p class="nm-label-sm" style="margin-top: var(--space-4);text-transform:none;letter-spacing:0;color:var(--nm-text-3)">유럽 10 · 오세아니아 4 · 미주 3</p>' +
     '</div>';
 
     html += '</div></section>';
@@ -313,10 +313,10 @@ window.NOMAD_PAGES = (function(){
     // ════════ SECTION 2 · Phase Progress ════════
     html += '<section class="nm-section">';
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom: var(--space-8)">';
     html += '<div>' +
       '<h3 class="nm-headline-md">Phase Progress</h3>' +
-      '<p class="nm-label-sm" style="margin-top:4px;text-transform:none;letter-spacing:0;color:var(--nm-text-3)">' +
+      '<p class="nm-label-sm" style="margin-top: var(--space-1);text-transform:none;letter-spacing:0;color:var(--nm-text-3)">' +
         '현재: <strong style="color:var(--nm-primary)">Phase ' + phase.id + ' · ' + phase.name + '</strong>' +
       '</p>' +
     '</div>';
@@ -324,7 +324,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // 4 step indicator (Stitch icon 매핑: done=check / current=sync / upcoming=lock / final=flight_takeoff)
-    html += '<div style="position:relative;padding-top:16px">';
+    html += '<div style="position:relative;padding-top: var(--space-4)">';
     html += '<div style="display:flex;justify-content:space-between;position:relative;z-index:1">';
     PHASE_BOUNDARIES.forEach(function(p, i) {
       var state = i < phase.idx ? 'done' : (i === phase.idx ? 'current' : 'upcoming');
@@ -339,11 +339,11 @@ window.NOMAD_PAGES = (function(){
       var ring = state === 'current' ? 'box-shadow:0 0 0 6px var(--nm-primary-fixed);' : '';
       var opacity = state === 'upcoming' ? 'opacity:0.4;' : '';
       html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;' + opacity + '">' +
-        '<div style="width:36px;height:36px;border-radius:50%;background:' + bg + ';color:' + color + ';display:flex;align-items:center;justify-content:center;margin-bottom:10px;' + ring + '">' +
+        '<div style="width:36px;height:36px;border-radius:50%;background:' + bg + ';color:' + color + ';display:flex;align-items:center;justify-content:center;margin-bottom: var(--space-2-5);' + ring + '">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">' + iconName + '</span>' +
         '</div>' +
         '<span class="nm-label-sm" style="text-transform:none;letter-spacing:0;font-weight:' + (state === 'current' ? '700' : '500') + ';color:' + (state === 'current' ? 'var(--nm-primary)' : 'var(--nm-text-2)') + '">' + p.name + '</span>' +
-        '<span class="nm-label-sm" style="margin-top:2px;color:var(--nm-text-3);font-size: var(--font-size-tiny);letter-spacing:0;text-transform:none">' + p.start.substring(0,7) + ' ~ ' + p.end.substring(0,7) + '</span>' +
+        '<span class="nm-label-sm" style="margin-top: var(--space-0-5);color:var(--nm-text-3);font-size: var(--font-size-tiny);letter-spacing:0;text-transform:none">' + p.start.substring(0,7) + ' ~ ' + p.end.substring(0,7) + '</span>' +
       '</div>';
     });
     html += '</div>';
@@ -353,24 +353,24 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '</div>';
 
-    html += '<div class="nm-quote" style="margin-top:24px">' +
+    html += '<div class="nm-quote" style="margin-top: var(--space-6)">' +
       '<strong>현재 위치:</strong> Phase ' + phase.id + ' (' + phase.name + ') 진입. 이번 주 = 필명 + 도메인 + 메일리.' +
     '</div>';
     html += '</div>';
     html += '</section>';
 
     // ════════ SECTION 3 · 8/4 Split — Performance Tracks + Next Destination ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // ───── 왼쪽 (8): Performance Tracks ─────
     html += '<div class="nm-card nm-card-lg">';
-    html += '<h3 class="nm-headline-md" style="margin-bottom:24px">Performance Tracks</h3>';
+    html += '<h3 class="nm-headline-md" style="margin-bottom: var(--space-6)">Performance Tracks</h3>';
 
     // Main Track — primary 액센트
-    html += '<div style="background:rgba(245,243,255,0.5);border:1px solid rgba(204,195,216,0.2);border-radius:12px;padding:20px;margin-bottom:16px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">';
+    html += '<div style="background:rgba(245,243,255,0.5);border:1px solid rgba(204,195,216,0.2);border-radius:12px;padding: var(--space-5);margin-bottom: var(--space-4)">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-4)">';
     html += '<div>' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-1)">' +
         '<span style="width:8px;height:8px;border-radius:50%;background:var(--nm-primary)"></span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-deep-indigo)">Main Track · Webnovel</h4>' +
       '</div>' +
@@ -378,18 +378,18 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '<span class="nm-pill" style="background:var(--nm-primary-fixed);color:#5a00c6">High Priority</span>';
     html += '</div>';
-    html += '<div class="nm-grid nm-grid-2" style="gap:12px">';
-    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">현재 월 수익</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top:4px">₩200-250만</p></div>';
-    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">2027.12 목표</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top:4px">월 ₩450만</p></div>';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-3)">';
+    html += '<div style="background:#fff;border-radius:8px;padding: var(--space-3-5)"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">현재 월 수익</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top: var(--space-1)">₩200-250만</p></div>';
+    html += '<div style="background:#fff;border-radius:8px;padding: var(--space-3-5)"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">2027.12 목표</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top: var(--space-1)">월 ₩450만</p></div>';
     html += '</div>';
-    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:10px">욕심 라인 = 월 ₩700-800만 도달 시 노마드 + 저축</p>';
+    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-2-5)">욕심 라인 = 월 ₩700-800만 도달 시 노마드 + 저축</p>';
     html += '</div>';
 
     // Sub Track — secondary 액센트
-    html += '<div style="background:rgba(230,238,255,0.3);border:1px solid rgba(204,195,216,0.1);border-radius:12px;padding:20px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">';
+    html += '<div style="background:rgba(230,238,255,0.3);border:1px solid rgba(204,195,216,0.1);border-radius:12px;padding: var(--space-5)">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-4)">';
     html += '<div>' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-1)">' +
         '<span style="width:8px;height:8px;border-radius:50%;background:var(--nm-secondary)"></span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-deep-indigo)">Sub Track · 분석가 N IP</h4>' +
       '</div>' +
@@ -397,11 +397,11 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '<span class="nm-pill" style="background:#e2dfff;color:#393689">Stable</span>';
     html += '</div>';
-    html += '<div class="nm-grid nm-grid-2" style="gap:12px">';
-    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">예상 월 수익</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top:4px">₩100-300만</p></div>';
-    html += '<div style="background:#fff;border-radius:8px;padding:14px"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">포지션</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top:4px">장기 자산</p></div>';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-3)">';
+    html += '<div style="background:#fff;border-radius:8px;padding: var(--space-3-5)"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">예상 월 수익</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top: var(--space-1)">₩100-300만</p></div>';
+    html += '<div style="background:#fff;border-radius:8px;padding: var(--space-3-5)"><p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">포지션</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:var(--nm-on-surface);margin-top: var(--space-1)">장기 자산</p></div>';
     html += '</div>';
-    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:10px">게이트 외 · 장기 자산 트랙 (글 + 도메인 + 컨설팅)</p>';
+    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-2-5)">게이트 외 · 장기 자산 트랙 (글 + 도메인 + 컨설팅)</p>';
     html += '</div>';
 
     html += '</div>'; // /Performance Tracks card
@@ -410,9 +410,9 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">';
     // 그라데이션 hero 헤더 (이미지 fallback)
     html += '<div style="height:160px;position:relative;background:linear-gradient(135deg,#7C3AED 0%,#a78bfa 50%,#fbbf24 100%)">' +
-      '<div style="position:absolute;top:14px;left:14px;display:flex;gap:8px">' +
+      '<div style="position:absolute;top:14px;left:14px;display:flex;gap: var(--space-2)">' +
         '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-primary);padding:5px 12px;border-radius:99px;font-size: var(--font-size-micro);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.1)">Next Stop</span>' +
-        '<span style="background:var(--nm-deep-indigo);color:#fff;padding:5px 12px;border-radius:99px;font-size: var(--font-size-micro);font-weight:600;display:flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.15)">' +
+        '<span style="background:var(--nm-deep-indigo);color:#fff;padding:5px 12px;border-radius:99px;font-size: var(--font-size-micro);font-weight:600;display:flex;align-items:center;gap: var(--space-1);box-shadow:0 1px 3px rgba(0,0,0,0.15)">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">edit</span>' +
           (nextCity.mode || '글 풀가동') +
         '</span>' +
@@ -422,29 +422,29 @@ window.NOMAD_PAGES = (function(){
       '</div>' +
     '</div>';
     // 카드 본문
-    html += '<div style="padding:20px;flex:1;display:flex;flex-direction:column">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">' +
+    html += '<div style="padding: var(--space-5);flex:1;display:flex;flex-direction:column">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-2)">' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:var(--nm-on-surface)">' + nextCity.city + '</h4>' +
       '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size: var(--font-size-h2)">location_on</span>' +
     '</div>';
-    html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.6;margin-bottom:20px;flex:1">' + nextCity.detail + '</p>';
+    html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.6;margin-bottom: var(--space-5);flex:1">' + nextCity.detail + '</p>';
     // 정보 행
     html += '<div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #f1f5f9">';
-    html += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9">' +
+    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom:1px solid #f1f5f9">' +
       '<span style="font-size: var(--font-size-meta);color:var(--nm-text-3)">도착 예정</span>' +
       '<span style="font-size: var(--font-size-meta);font-weight:700;color:var(--nm-on-surface);font-family:var(--nm-font-h)">2028.6.9</span>' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9">' +
+    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom:1px solid #f1f5f9">' +
       '<span style="font-size: var(--font-size-meta);color:var(--nm-text-3)">체류 기간</span>' +
       '<span style="font-size: var(--font-size-meta);font-weight:700;color:var(--nm-on-surface);font-family:var(--nm-font-h)">30 Days</span>' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:10px 0">' +
+    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0">' +
       '<span style="font-size: var(--font-size-meta);color:var(--nm-text-3)">예산</span>' +
       '<span style="font-size: var(--font-size-meta);font-weight:700;color:var(--nm-primary);font-family:var(--nm-font-h)">₩' + nextCity.cost + '만</span>' +
     '</div>';
     html += '</div>';
     // 버튼
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-city-porto\')" style="margin-top:14px;padding:11px;border:1px solid var(--nm-primary);color:var(--nm-primary);background:#fff;border-radius:10px;font-size: var(--font-size-body-sm);font-weight:600;cursor:pointer;transition:background 0.15s;font-family:var(--nm-font-h)" onmouseover="this.style.background=\'var(--nm-primary-soft)\'" onmouseout="this.style.background=\'#fff\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-city-porto\')" style="margin-top: var(--space-3-5);padding:11px;border:1px solid var(--nm-primary);color:var(--nm-primary);background:#fff;border-radius:10px;font-size: var(--font-size-body-sm);font-weight:600;cursor:pointer;transition:background 0.15s;font-family:var(--nm-font-h)" onmouseover="this.style.background=\'var(--nm-primary-soft)\'" onmouseout="this.style.background=\'#fff\'">' +
       'View City Guide' +
     '</button>';
     html += '</div>';
@@ -462,50 +462,50 @@ window.NOMAD_PAGES = (function(){
 
     // Logistics Hub → Packing
     html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-packing\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7d3d00">inventory_2</span>' +
         '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:var(--nm-on-surface)">Logistics Hub</h5>' +
       '</div>' +
       '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' +
         '<strong style="color:var(--nm-deep-indigo)">' + packingCategoryCount + ' 카테고리</strong> · ' + packingItemCount + ' 항목' +
       '</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">캐리어 · 백팩 · 휴대 짐 계획</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">캐리어 · 백팩 · 휴대 짐 계획</p>' +
     '</div>';
 
     // Visa Status → Visa
     html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-visa\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-soft-accent)">verified_user</span>' +
         '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:var(--nm-on-surface)">Visa Status</h5>' +
       '</div>' +
       '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' +
         '<strong style="color:var(--nm-deep-indigo)">' + visaList.length + '개 비자</strong> · 셰겐 84/90' +
       '</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">워홀 + ETA·ESTA·eTA·NZeTA</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">워홀 + ETA·ESTA·eTA·NZeTA</p>' +
     '</div>';
 
     // Next Actions → Actions
     html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-actions\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#ba1a1a">fact_check</span>' +
         '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:var(--nm-on-surface)">Next Actions</h5>' +
       '</div>' +
       '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' +
         '<strong style="color:var(--nm-deep-indigo)">이번 주 ' + thisWeekActions + '개</strong>' +
       '</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">필명 · 도메인 · 메일리 · 계좌 분리</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">필명 · 도메인 · 메일리 · 계좌 분리</p>' +
     '</div>';
 
     // Webnovel Queue → IPTrack
     html += '<div class="nm-bento" style="cursor:pointer" onclick="NOMAD_PAGES.go(\'nomad-ip\')" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">menu_book</span>' +
         '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:var(--nm-on-surface)">Webnovel Queue</h5>' +
       '</div>' +
       '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' +
         '<strong style="color:var(--nm-deep-indigo)">월 ₩450만</strong> · 게이트 목표' +
       '</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">B시리즈 · 메인 트랙</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">B시리즈 · 메인 트랙</p>' +
     '</div>';
 
     html += '</div></section>';
@@ -610,8 +610,8 @@ window.NOMAD_PAGES = (function(){
       }
       var visaBg = visaPillClass(v.visa); // background:xxx;color:xxx
       var daysColor = (v.schengen && v.schengen !== 'X' && v.schengen !== '외' && v.schengen !== '셰겐 외') ? '#ba1a1a' : '#7b7487';
-      return '<div style="display:flex;flex-direction:column;gap:4px">' +
-        '<span style="display:inline-block;padding:4px 10px;font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.04em;border-radius:4px;width:fit-content;' + visaBg + '">' + visaText + '</span>' +
+      return '<div style="display:flex;flex-direction:column;gap: var(--space-1)">' +
+        '<span style="display:inline-block;padding: var(--space-1) var(--space-2-5);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.04em;border-radius:4px;width:fit-content;' + visaBg + '">' + visaText + '</span>' +
         (daysText ? '<span style="font-size: var(--font-size-tiny);font-weight:700;color:' + daysColor + ';letter-spacing:0.04em">' + daysText + '</span>' : '') +
       '</div>';
     }
@@ -679,14 +679,14 @@ window.NOMAD_PAGES = (function(){
     // ════════ Editorial CSS (Travel Atlas) ════════
     html += '<style>' +
       '#nomad-content .atl-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
-      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:16px}' +
-      '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:10px}' +
+      '#nomad-content .atl-header{display:flex;justify-content:space-between;align-items:flex-start;gap: var(--space-6);flex-wrap:wrap;margin-bottom: var(--space-4)}' +
+      '#nomad-content .atl-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom: var(--space-2-5)}' +
       '#nomad-content .atl-title{font-family:var(--nm-font-h);font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 14px}' +
       '#nomad-content .atl-lede{font-size: var(--font-size-meta);line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
-      '#nomad-content .atl-lede .en{display:block;margin-top:2px;color:#7b7487;font-size: var(--font-size-micro);font-style:italic}' +
-      '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap:14px;min-width:280px;max-width:320px}' +
-      '#nomad-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;justify-content:space-between;align-items:center}' +
-      '#nomad-content .atl-metric-label{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom:8px}' +
+      '#nomad-content .atl-lede .en{display:block;margin-top: var(--space-0-5);color:#7b7487;font-size: var(--font-size-micro);font-style:italic}' +
+      '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap: var(--space-3-5);min-width:280px;max-width:320px}' +
+      '#nomad-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding: var(--space-6);display:flex;justify-content:space-between;align-items:center}' +
+      '#nomad-content .atl-metric-label{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom: var(--space-2)}' +
       '#nomad-content .atl-metric-value{font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:600;color:var(--nm-primary);letter-spacing:-0.01em}' +
       '#nomad-content .atl-metric-value.err{color:' + schengenColor + '}' +
       '#nomad-content .atl-metric-icon{font-size: var(--font-size-display-md) !important;color:var(--nm-primary)}' +
@@ -694,30 +694,30 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-aside-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.3em;color:#7b7487;opacity:0.4;position:sticky;top:120px}' +
       '#nomad-content .atl-region{margin-bottom:56px}' +
       '#nomad-content .atl-region:last-child{margin-bottom:0}' +
-      '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;flex-wrap:wrap}' +
+      '#nomad-content .atl-region-head{display:flex;align-items:baseline;gap: var(--space-4);margin-bottom: var(--space-4-5);flex-wrap:wrap}' +
       '#nomad-content .atl-region-h{font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:500;color:#141b2b;letter-spacing:-0.005em;margin:0}' +
       '#nomad-content .atl-region-range{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4a4455;opacity:0.5}' +
-      '#nomad-content .atl-row{display:grid;grid-template-columns:78px 1fr 96px 96px 44px;gap:16px;padding:28px 8px;border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
-      '#nomad-content .atl-row-head{padding:16px 8px;border-bottom:1px solid #ccc3d8;margin-bottom:8px}' +
+      '#nomad-content .atl-row{display:grid;grid-template-columns:78px 1fr 96px 96px 44px;gap: var(--space-4);padding: var(--space-7) var(--space-2);border-bottom:1px solid #ccc3d8;align-items:flex-start;transition:background 0.18s}' +
+      '#nomad-content .atl-row-head{padding: var(--space-4) var(--space-2);border-bottom:1px solid #ccc3d8;margin-bottom: var(--space-2)}' +
       '#nomad-content .atl-row-head .atl-cell{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#7b7487}' +
       '#nomad-content .atl-row-body[role="link"]:hover{background:rgba(99,14,212,0.04)}' +
       '#nomad-content .atl-cell{font-size: var(--font-size-body);line-height:1.4}' +
       '#nomad-content .atl-month{font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:500;color:#141b2b;opacity:0.3;letter-spacing:-0.01em}' +
-      '#nomad-content .atl-city-name{font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:#141b2b;line-height:1.3;margin:0 0 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}' +
+      '#nomad-content .atl-city-name{font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:#141b2b;line-height:1.3;margin:0 0 4px;display:flex;align-items:center;gap: var(--space-1-5);flex-wrap:wrap}' +
       '#nomad-content .atl-flag{font-size: var(--font-size-body);line-height:1;letter-spacing:1px}' +
       '#nomad-content .atl-city-sub{font-size: var(--font-size-body-sm);color:#4a4455;margin:0 0 8px;line-height:1.4}' +
       '#nomad-content .atl-city-detail{font-size: var(--font-size-body-sm);color:var(--nm-primary);font-style:italic;line-height:1.5;margin:0}' +
       '#nomad-content .atl-budget{font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:500;letter-spacing:-0.01em;color:#141b2b;text-align:right}' +
       '#nomad-content .atl-mode{text-align:right}' +
-      '#nomad-content .atl-aside{display:flex;flex-direction:column;gap:32px;position:sticky;top:24px}' +
-      '#nomad-content .atl-aside-card{background:#fff;border:1px solid #ccc3d8;padding:24px}' +
+      '#nomad-content .atl-aside{display:flex;flex-direction:column;gap: var(--space-8);position:sticky;top:24px}' +
+      '#nomad-content .atl-aside-card{background:#fff;border:1px solid #ccc3d8;padding: var(--space-6)}' +
       '#nomad-content .atl-aside-card h4{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 16px;display:flex;justify-content:space-between;align-items:flex-start}' +
-      '#nomad-content .atl-aside-pill{background:#eaddff;padding:14px 16px;border-radius:4px;margin-bottom:16px}' +
+      '#nomad-content .atl-aside-pill{background:#eaddff;padding: var(--space-3-5) var(--space-4);border-radius:4px;margin-bottom: var(--space-4)}' +
       '#nomad-content .atl-aside-pill p:first-child{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5a00c6;margin:0 0 4px}' +
       '#nomad-content .atl-aside-pill p:last-child{font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:var(--nm-primary);margin:0}' +
-      '#nomad-content .atl-aside-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}' +
-      '#nomad-content .atl-aside-list li{display:flex;gap:12px;align-items:flex-start;font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.5}' +
-      '#nomad-content .atl-aside-list .material-symbols-outlined{font-size: var(--font-size-h3) !important;color:var(--nm-primary);margin-top:2px;flex-shrink:0}' +
+      '#nomad-content .atl-aside-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-3)}' +
+      '#nomad-content .atl-aside-list li{display:flex;gap: var(--space-3);align-items:flex-start;font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.5}' +
+      '#nomad-content .atl-aside-list .material-symbols-outlined{font-size: var(--font-size-h3) !important;color:var(--nm-primary);margin-top: var(--space-0-5);flex-shrink:0}' +
       '#nomad-content .atl-trajectory{position:relative;aspect-ratio:1/1;background:#293040;overflow:hidden}' +
       '#nomad-content .atl-trajectory .atl-traj-overlay{position:absolute;inset:0;background:linear-gradient(to top,#293040 0%,transparent 60%)}' +
       '#nomad-content .atl-trajectory-svg{position:absolute;inset:0;width:100%;height:100%;opacity:0.45}' +
@@ -727,12 +727,12 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-traj-stats > div{text-align:center}' +
       '#nomad-content .atl-traj-stats .num{font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:500;color:#fff;display:block}' +
       '#nomad-content .atl-traj-stats .lab{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase}' +
-      '#nomad-content .atl-traj-btn{position:absolute;top:24px;left:24px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.2)}' +
+      '#nomad-content .atl-traj-btn{position:absolute;top:24px;left:24px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding: var(--space-1-5) var(--space-3);border-radius:99px;border:1px solid rgba(255,255,255,0.2)}' +
       '@media (max-width:1024px){' +
         '#nomad-content .atl-grid{grid-template-columns:1fr}' +
         '#nomad-content .atl-aside{position:static}' +
-        '#nomad-content .atl-row{grid-template-columns:80px 1fr;gap:16px;padding:24px 0}' +
-        '#nomad-content .atl-row .atl-visa,#nomad-content .atl-row .atl-budget,#nomad-content .atl-row .atl-mode{grid-column:2;text-align:left;display:flex;align-items:center;gap:12px;margin-top:8px}' +
+        '#nomad-content .atl-row{grid-template-columns:80px 1fr;gap: var(--space-4);padding: var(--space-6) 0}' +
+        '#nomad-content .atl-row .atl-visa,#nomad-content .atl-row .atl-budget,#nomad-content .atl-row .atl-mode{grid-column:2;text-align:left;display:flex;align-items:center;gap: var(--space-3);margin-top: var(--space-2)}' +
         '#nomad-content .atl-row-head{display:none}' +
       '}' +
     '</style>';
@@ -743,14 +743,14 @@ window.NOMAD_PAGES = (function(){
     html += pageHeader('12-Month Voyage', 'June 2028 — May 2029', '6개 대륙 · 17개 도시 · 1년 마스터 동선');
 
     // ────── Hero Metrics ──────
-    html += '<header class="atl-header" style="display:flex;justify-content:flex-end;margin-bottom:32px">';
+    html += '<header class="atl-header" style="display:flex;justify-content:flex-end;margin-bottom: var(--space-8)">';
     html += '<div class="atl-metrics">' +
       '<div class="atl-metric">' +
         '<div><p class="atl-metric-label">Total Budget (Est.)</p><p class="atl-metric-value">' + fmtMan(grandTotal) + '</p></div>' +
         '<span class="material-symbols-outlined atl-metric-icon">payments</span>' +
       '</div>' +
       '<div class="atl-metric" style="display:block">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-3)">' +
           '<p class="atl-metric-label" style="margin:0">Schengen Days Used</p>' +
           '<p class="atl-metric-value err" style="font-size: var(--font-size-h1-lg)">' + schengenDays + ' / 90</p>' +
         '</div>' +
@@ -900,21 +900,21 @@ window.NOMAD_PAGES = (function(){
       '단위 만 원 · 1만 원 단위 반올림 · 총 ' + fmtMan(grandTotal));
 
     // ════════ SECTION 1 · Summary 8/4 split ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // ───── LEFT (8): Total Budget Summary ─────
     html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;justify-content:space-between">';
     // 헤더
     html += '<div>';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">' +
-      '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);display:flex;align-items:center;gap:8px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-6)">' +
+      '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">account_balance_wallet</span>' +
         'Total Budget Summary' +
       '</h2>' +
       '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 12px;border-radius:99px;font-size: var(--font-size-micro);font-weight:700">2028 — 2029</span>' +
     '</div>';
     // 4 metric inline grid
-    html += '<div class="nm-grid nm-grid-4" style="gap:20px">';
+    html += '<div class="nm-grid nm-grid-4" style="gap: var(--space-5)">';
     var summaryItems = [
       { label:'12개월 살림',    value:monthlyTotal,    note:'숙소 + 생활비' },
       { label:'항공·비자·보험', value:oneoff.flights + oneoff.visa + oneoff.insurance, note:'비행 ' + oneoff.flights + ' + 비자 ' + oneoff.visa + ' + 보험 ' + oneoff.insurance },
@@ -931,33 +931,33 @@ window.NOMAD_PAGES = (function(){
     ];
     summaryItems.forEach(function(s) {
       html += '<div>' +
-        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em">' + s.label + '</p>' +
+        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600;margin-bottom: var(--space-1);text-transform:uppercase;letter-spacing:0.04em">' + s.label + '</p>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:var(--nm-deep-indigo)">₩' + s.value.toLocaleString() + '만</p>' +
-        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);margin-top:4px;line-height:1.4">' + s.note + '</p>' +
+        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);margin-top: var(--space-1);line-height:1.4">' + s.note + '</p>' +
       '</div>';
     });
     html += '</div>';
     html += '</div>';
     // 하단 separator + Aggregate Total
-    html += '<div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">';
+    html += '<div style="margin-top: var(--space-8);padding-top: var(--space-6);border-top:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap: var(--space-4)">';
     html += '<div>' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:6px">Aggregate Total Requirement</p>' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom: var(--space-1-5)">Aggregate Total Requirement</p>' +
       '<p style="font-family:var(--nm-font-h);font-size:38px;font-weight:800;color:var(--nm-primary);line-height:1">' + fmtMan(grandTotal) + '</p>' +
     '</div>';
     html += '<div style="text-align:right">' +
-      '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);display:flex;align-items:center;justify-content:flex-end;gap:4px;font-weight:600">' +
+      '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);display:flex;align-items:center;justify-content:flex-end;gap: var(--space-1);font-weight:600">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:var(--nm-tertiary)">shield</span>' +
         '소비성 (회수 X)' +
       '</p>' +
-      '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top:4px">' + fmtMan(consumable) + ' = 총 − 비상금</p>' +
+      '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top: var(--space-1)">' + fmtMan(consumable) + ' = 총 − 비상금</p>' +
     '</div>';
     html += '</div>';
     html += '</div>';
 
     // ───── RIGHT (4): Revenue Simulation 3 시나리오 ─────
-    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;gap:14px">';
-    html += '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">Revenue Simulation</h2>';
-    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-bottom:6px">월 본업 외 수익 시나리오 → 1년 환산</p>';
+    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;gap: var(--space-3-5)">';
+    html += '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1)">Revenue Simulation</h2>';
+    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-bottom: var(--space-1-5)">월 본업 외 수익 시나리오 → 1년 환산</p>';
 
     var scenarios = [
       { key:'floor',  label:'Floor · 게이트',  monthly:450, yearly:5400, bg:'var(--nm-surface-container-low)', border:'#7b7487', textColor:'var(--nm-on-surface)', barColor:'#7b7487', barPct:60 },
@@ -965,8 +965,8 @@ window.NOMAD_PAGES = (function(){
       { key:'greed',  label:'Greed · 욕심',    monthly:800, yearly:9600, bg:'#ffdcc6',                          border:'#7d3d00',           textColor:'#7d3d00',           barColor:'#7d3d00',           barPct:100 },
     ];
     scenarios.forEach(function(s) {
-      html += '<div style="padding:14px 16px;border-radius:10px;background:' + s.bg + ';border-left:4px solid ' + s.border + ';transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+      html += '<div style="padding: var(--space-3-5) var(--space-4);border-radius:10px;background:' + s.bg + ';border-left:4px solid ' + s.border + ';transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-1)">' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:' + s.textColor + '">' + s.label + '</span>' +
         '<span style="font-size: var(--font-size-micro);color:var(--nm-text-2);font-weight:600">월 ₩' + s.monthly + '만</span>' +
       '</div>';
@@ -974,7 +974,7 @@ window.NOMAD_PAGES = (function(){
         '<span style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em">1년 자산</span>' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:' + s.textColor + '">₩' + s.yearly.toLocaleString() + '만</span>' +
       '</div>';
-      html += '<div style="margin-top:6px;height:3px;background:rgba(255,255,255,0.6);border-radius:99px;overflow:hidden">' +
+      html += '<div style="margin-top: var(--space-1-5);height:3px;background:rgba(255,255,255,0.6);border-radius:99px;overflow:hidden">' +
         '<div style="height:100%;width:' + s.barPct + '%;background:' + s.barColor + '"></div>' +
       '</div>';
       html += '</div>';
@@ -1115,7 +1115,7 @@ window.NOMAD_PAGES = (function(){
         var cleanTitle = (sec.title || '').replace(/\s*\([^)]*숙소[^)]*\)\s*/g, '').replace(/\s*\([^)]*stay[^)]*\)\s*/gi, '').trim();
         var titleSuffix = cleanTitle ? ' · ' + cleanTitle : '';
         var out = '<div style="margin-top:' + (idx === 0 ? '0' : '24px') + '">';
-        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--nm-outline-variant);gap:12px;flex-wrap:wrap">' +
+        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom: var(--space-2-5);padding-bottom: var(--space-2);border-bottom:1px dashed var(--nm-outline-variant);gap: var(--space-3);flex-wrap:wrap">' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-deep-indigo);margin:0">📍 ' + cityKr + titleSuffix + '</p>' +
           ((totalAmt || totalKrw) ? '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-meta);color:var(--nm-text-3);margin:0">생활비 합계 ' + prefixAmt(totalAmt, cur) + (totalKrw ? ' / ' + prefixKrw(totalKrw) : '') + '</p>' : '') +
         '</div>';
@@ -1130,7 +1130,7 @@ window.NOMAD_PAGES = (function(){
         });
         out += '</table>';
         if (sec.note) {
-          out += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-style:italic;margin:6px 0 0;line-height:1.55">※ ' + sec.note + '</p>';
+          out += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-style:italic;margin: var(--space-1-5) 0 0;line-height:1.55">※ ' + sec.note + '</p>';
         }
         out += '</div>';
         return out;
@@ -1159,17 +1159,17 @@ window.NOMAD_PAGES = (function(){
         });
       });
       if (!anyFound) {
-        inner = '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);text-align:center;padding:16px;font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
+        inner = '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);text-align:center;padding: var(--space-4);font-style:italic;margin:0">City Guide에 이 도시의 budget 데이터가 아직 없습니다</p>';
       }
 
       return inner;
     }
 
     // ════════ SECTION 2 · 12-City Cost Breakdown — 표 안에 도시별 상세 통합 ════════
-    html += '<section class="nm-card" style="padding:0;overflow:hidden;margin-bottom:32px">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+    html += '<section class="nm-card" style="padding:0;overflow:hidden;margin-bottom: var(--space-8)">';
+    html += '<div style="padding: var(--space-5) var(--space-6);border-bottom:1px solid var(--nm-surface-container);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap: var(--space-3)">' +
       '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">12-City Cost Breakdown</h2>' +
-      '<div style="display:flex;align-items:center;gap:8px;font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">' +
         '<span>각 행 클릭 = 도시별 상세 예산 펼치기/접기</span>' +
         '<span style="width:10px;height:10px;background:var(--nm-primary);border-radius:50%;display:inline-block"></span>' +
       '</div>' +
@@ -1179,8 +1179,8 @@ window.NOMAD_PAGES = (function(){
     html += '<thead>' +
       '<tr style="background:#F5F3FF">' +
         '<th style="width:36px"></th>' +
-        '<th style="padding:14px 20px;text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
-        '<th style="padding:14px 20px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Monthly Subtotal</th>' +
+        '<th style="padding: var(--space-3-5) var(--space-5);text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Month / City</th>' +
+        '<th style="padding: var(--space-3-5) var(--space-5);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase">Monthly Subtotal</th>' +
       '</tr>' +
     '</thead>';
     html += '<tbody>';
@@ -1190,32 +1190,32 @@ window.NOMAD_PAGES = (function(){
       var chevId = rowId + '-chev';
       // 메인 row (클릭 시 sub-row 토글)
       html += '<tr style="transition:background 0.15s;cursor:pointer" onclick="(function(){var d=document.getElementById(\'' + rowId + '\');var c=document.getElementById(\'' + chevId + '\');if(d){var open=d.style.display!==\'none\';d.style.display=open?\'none\':\'table-row\';if(c)c.textContent=open?\'expand_more\':\'expand_less\';}})()" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'">' +
-        '<td style="padding:16px 8px;border-bottom:1px solid #f1f5f9;text-align:center"><span id="' + chevId + '" class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">expand_less</span></td>' +
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9">' +
-          '<div style="display:flex;align-items:center;gap:14px">' +
+        '<td style="padding: var(--space-4) var(--space-2);border-bottom:1px solid #f1f5f9;text-align:center"><span id="' + chevId + '" class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">expand_less</span></td>' +
+        '<td style="padding: var(--space-4) var(--space-5);border-bottom:1px solid #f1f5f9">' +
+          '<div style="display:flex;align-items:center;gap: var(--space-3-5)">' +
             '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2-lg);flex-shrink:0">' + meta.flag + '</div>' +
             '<div>' +
               '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + b.period + ' · ' + b.city + '</p>' +
-              (meta.sub ? '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:2px">' + meta.sub + '</p>' : '') +
+              (meta.sub ? '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-0-5)">' + meta.sub + '</p>' : '') +
             '</div>' +
           '</div>' +
         '</td>' +
-        '<td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
+        '<td style="padding: var(--space-4) var(--space-5);border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
       '</tr>';
       // Sub-row: 도시별 상세 (default 펼침)
       html += '<tr id="' + rowId + '" style="background:#fbfaff">' +
-        '<td colspan="3" style="padding:16px 24px 20px 76px;border-bottom:1px solid var(--nm-outline-variant)">' +
+        '<td colspan="3" style="padding: var(--space-4) var(--space-6) var(--space-5) 76px;border-bottom:1px solid var(--nm-outline-variant)">' +
           _buildBudgetDetail(b) +
         '</td>' +
       '</tr>';
     });
     html += '<tr style="background:var(--nm-surface-container-low);border-top:2px solid var(--nm-primary)">' +
       '<td></td>' +
-      '<td style="padding:18px 20px">' +
+      '<td style="padding: var(--space-4-5) var(--space-5)">' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-primary)">12개월 합계</p>' +
-        '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top:2px">월 평균 ₩' + avgMonth + '만 · 숙소 ₩' + stayTotal + '만 + 생활비 ₩' + lifeTotal + '만</p>' +
+        '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top: var(--space-0-5)">월 평균 ₩' + avgMonth + '만 · 숙소 ₩' + stayTotal + '만 + 생활비 ₩' + lifeTotal + '만</p>' +
       '</td>' +
-      '<td style="padding:18px 20px;text-align:right;font-family:var(--nm-font-h);font-size:19px;font-weight:800;color:var(--nm-primary)">₩' + monthlyTotal + '만</td>' +
+      '<td style="padding: var(--space-4-5) var(--space-5);text-align:right;font-family:var(--nm-font-h);font-size:19px;font-weight:800;color:var(--nm-primary)">₩' + monthlyTotal + '만</td>' +
     '</tr>';
     html += '</tbody></table>';
     html += '</div>';
@@ -1227,18 +1227,18 @@ window.NOMAD_PAGES = (function(){
     budget.forEach(function(b) {
       var meta = budgetCityMeta(b.city);
       // 헤더
-      html += '<div class="nm-card" style="margin-bottom:18px;padding:24px 28px">';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap">' +
-        '<div style="display:flex;align-items:center;gap:14px">' +
+      html += '<div class="nm-card" style="margin-bottom: var(--space-4-5);padding: var(--space-6) var(--space-7)">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap: var(--space-3);margin-bottom: var(--space-4-5);flex-wrap:wrap">' +
+        '<div style="display:flex;align-items:center;gap: var(--space-3-5)">' +
           '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h1);flex-shrink:0">' + meta.flag + '</div>' +
           '<div>' +
             '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface);margin:0;line-height:1.3">' + b.period + ' · ' + b.city + '</p>' +
-            (meta.sub ? '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin:2px 0 0">' + meta.sub + '</p>' : '') +
+            (meta.sub ? '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin: var(--space-0-5) 0 0">' + meta.sub + '</p>' : '') +
           '</div>' +
         '</div>' +
         '<div style="text-align:right">' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);color:var(--nm-text-3);margin:0;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">월 소계</p>' +
-          '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:800;color:var(--nm-primary);margin:2px 0 0">₩' + b.total + '만</p>' +
+          '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:800;color:var(--nm-primary);margin: var(--space-0-5) 0 0">₩' + b.total + '만</p>' +
         '</div>' +
       '</div>';
       // 각 city의 budget section
@@ -1254,7 +1254,7 @@ window.NOMAD_PAGES = (function(){
         // 도시별 sub-header (cityIds 여러 개일 때만 표시)
         if (cityIds.length > 1) {
           var cityKr = (city.hero && city.hero.city) || cid;
-          html += '<div style="margin:' + (ci === 0 ? '0' : '20px') + ' 0 12px;padding-bottom:8px;border-bottom:1px dashed var(--nm-outline-variant);display:flex;justify-content:space-between;align-items:baseline">' +
+          html += '<div style="margin:' + (ci === 0 ? '0' : '20px') + ' 0 12px;padding-bottom: var(--space-2);border-bottom:1px dashed var(--nm-outline-variant);display:flex;justify-content:space-between;align-items:baseline">' +
             '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin:0">' + cityKr + (budgetSec.title ? ' · ' + budgetSec.title : '') + '</p>' +
             (budgetSec.total ? '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);color:var(--nm-text-3);margin:0">합계 ' + (budgetSec.total.eur || '') + ' / ' + (budgetSec.total.krw || '') + '</p>' : '') +
           '</div>';
@@ -1263,38 +1263,38 @@ window.NOMAD_PAGES = (function(){
         html += '<div style="overflow-x:auto">';
         html += '<table style="width:100%;border-collapse:collapse;font-size: var(--font-size-body-sm)">';
         html += '<thead><tr>' +
-          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">카테고리</th>' +
-          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">세부 내역</th>' +
-          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">€</th>' +
-          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">₩</th>' +
+          '<th style="padding: var(--space-2) var(--space-3);text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">카테고리</th>' +
+          '<th style="padding: var(--space-2) var(--space-3);text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">세부 내역</th>' +
+          '<th style="padding: var(--space-2) var(--space-3);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">€</th>' +
+          '<th style="padding: var(--space-2) var(--space-3);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">₩</th>' +
         '</tr></thead><tbody>';
         budgetSec.rows.forEach(function(r) {
           html += '<tr>' +
-            '<td style="padding:10px 12px;border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface)">' + (r.name || '') + '</td>' +
-            '<td style="padding:10px 12px;border-bottom:1px dashed #f1f5f9;font-size: var(--font-size-meta);color:var(--nm-text-2)">' + (r.sub || '') + '</td>' +
-            '<td style="padding:10px 12px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + (r.eur || '') + '</td>' +
-            '<td style="padding:10px 12px;border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:600;color:var(--nm-primary);white-space:nowrap">' + (r.krw || '') + '</td>' +
+            '<td style="padding: var(--space-2-5) var(--space-3);border-bottom:1px dashed #f1f5f9;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface)">' + (r.name || '') + '</td>' +
+            '<td style="padding: var(--space-2-5) var(--space-3);border-bottom:1px dashed #f1f5f9;font-size: var(--font-size-meta);color:var(--nm-text-2)">' + (r.sub || '') + '</td>' +
+            '<td style="padding: var(--space-2-5) var(--space-3);border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:600;color:var(--nm-deep-indigo);white-space:nowrap">' + (r.eur || '') + '</td>' +
+            '<td style="padding: var(--space-2-5) var(--space-3);border-bottom:1px dashed #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:600;color:var(--nm-primary);white-space:nowrap">' + (r.krw || '') + '</td>' +
           '</tr>';
         });
         // 합계 행 (도시별)
         if (cityIds.length === 1 && budgetSec.total) {
           html += '<tr style="background:#F5F3FF">' +
-            '<td style="padding:12px 12px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary)">' + (budgetSec.title || '합계') + '</td>' +
-            '<td style="padding:12px 12px;font-size: var(--font-size-micro);color:var(--nm-text-3)">' + (budgetSec.note || '') + '</td>' +
-            '<td style="padding:12px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary);white-space:nowrap">' + (budgetSec.total.eur || '') + '</td>' +
-            '<td style="padding:12px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary);white-space:nowrap">' + (budgetSec.total.krw || '') + '</td>' +
+            '<td style="padding: var(--space-3) var(--space-3);font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary)">' + (budgetSec.title || '합계') + '</td>' +
+            '<td style="padding: var(--space-3) var(--space-3);font-size: var(--font-size-micro);color:var(--nm-text-3)">' + (budgetSec.note || '') + '</td>' +
+            '<td style="padding: var(--space-3) var(--space-3);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary);white-space:nowrap">' + (budgetSec.total.eur || '') + '</td>' +
+            '<td style="padding: var(--space-3) var(--space-3);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:800;color:var(--nm-primary);white-space:nowrap">' + (budgetSec.total.krw || '') + '</td>' +
           '</tr>';
         }
         html += '</tbody></table>';
         html += '</div>';
         // note (도시 1개일 때 위 합계 행에서 처리, 여러 도시면 별도)
         if (cityIds.length > 1 && budgetSec.note) {
-          html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-style:italic;margin:6px 0 0;line-height:1.5">※ ' + budgetSec.note + '</p>';
+          html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-style:italic;margin: var(--space-1-5) 0 0;line-height:1.5">※ ' + budgetSec.note + '</p>';
         }
       });
       // 매칭되는 city budget 없을 때 안내
       if (cityIds.length === 0 || cityIds.every(function(cid){ return !CITIES[cid]; })) {
-        html += '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);text-align:center;padding:16px;font-style:italic">이 도시의 상세 예산은 City Guides에서 작성하면 자동 표시됩니다.</p>';
+        html += '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);text-align:center;padding: var(--space-4);font-style:italic">이 도시의 상세 예산은 City Guides에서 작성하면 자동 표시됩니다.</p>';
       }
       html += '</div>';
     });
@@ -1302,21 +1302,21 @@ window.NOMAD_PAGES = (function(){
     */
 
     // ════════ SECTION 3 · 2-col bottom (Cash Flow + 엄마 합류) ════════
-    html += '<div class="nm-grid nm-grid-2" style="gap:24px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-6)">';
 
     // ───── LEFT: Cash Flow Projection ─────
     html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;justify-content:space-between">';
     html += '<div>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">Cash Flow Projection</h3>' +
-      '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5;margin-bottom:24px">12개월 월별 지출 시각화. 막대 길이 = 해당 월 합계 비율.</p>' +
+      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1-5)">Cash Flow Projection</h3>' +
+      '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5;margin-bottom: var(--space-6)">12개월 월별 지출 시각화. 막대 길이 = 해당 월 합계 비율.</p>' +
     '</div>';
     // 12 바 차트
-    html += '<div style="height:170px;background:var(--nm-surface-container-low);border-radius:10px;padding:16px 14px;display:flex;align-items:flex-end;gap:8px">';
+    html += '<div style="height:170px;background:var(--nm-surface-container-low);border-radius:10px;padding: var(--space-4) var(--space-3-5);display:flex;align-items:flex-end;gap: var(--space-2)">';
     budget.forEach(function(b) {
       var hPct = Math.round((b.total / maxTotal) * 100);
       // 색상: 최대 = primary 진하게, 평균 이상 = primary 중간, 평균 이하 = primary 옅게
       var opacity = b.total === maxTotal ? '1' : (b.total > avgMonth ? '0.7' : '0.4');
-      html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%">' +
+      html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap: var(--space-1);height:100%">' +
         '<div style="flex:1;width:100%;display:flex;align-items:flex-end">' +
           '<div title="' + b.period + ' ₩' + b.total + '만" style="width:100%;height:' + hPct + '%;background:var(--nm-primary);opacity:' + opacity + ';border-radius:4px 4px 0 0;transition:opacity 0.15s;cursor:pointer" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'' + opacity + '\'"></div>' +
         '</div>' +
@@ -1325,15 +1325,15 @@ window.NOMAD_PAGES = (function(){
     });
     html += '</div>';
     // 메모
-    html += '<div style="margin-top:16px;display:flex;justify-content:space-between;gap:12px;font-size: var(--font-size-micro)">' +
+    html += '<div style="margin-top: var(--space-4);display:flex;justify-content:space-between;gap: var(--space-3);font-size: var(--font-size-micro)">' +
       '<div>' +
         '<p style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">최고 월</p>' +
-        '<p style="color:var(--nm-deep-indigo);font-family:var(--nm-font-h);font-weight:700;margin-top:2px">' + maxMonth.period + ' · ₩' + maxMonth.total + '만</p>' +
+        '<p style="color:var(--nm-deep-indigo);font-family:var(--nm-font-h);font-weight:700;margin-top: var(--space-0-5)">' + maxMonth.period + ' · ₩' + maxMonth.total + '만</p>' +
         '<p style="color:var(--nm-text-3);font-size: var(--font-size-tiny)">' + maxMonth.city + '</p>' +
       '</div>' +
       '<div style="text-align:right">' +
         '<p style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">최저 월</p>' +
-        '<p style="color:var(--nm-deep-indigo);font-family:var(--nm-font-h);font-weight:700;margin-top:2px">' + minMonth.period + ' · ₩' + minMonth.total + '만</p>' +
+        '<p style="color:var(--nm-deep-indigo);font-family:var(--nm-font-h);font-weight:700;margin-top: var(--space-0-5)">' + minMonth.period + ' · ₩' + minMonth.total + '만</p>' +
         '<p style="color:var(--nm-text-3);font-size: var(--font-size-tiny)">' + minMonth.city + '</p>' +
       '</div>' +
     '</div>';
@@ -1344,31 +1344,31 @@ window.NOMAD_PAGES = (function(){
     // deco circle (blur)
     html += '<div style="position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;background:var(--nm-primary);opacity:0.25;border-radius:50%;filter:blur(40px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:8px">' +
+    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#fff;margin-bottom: var(--space-1-5);display:flex;align-items:center;gap: var(--space-2)">' +
       '<span class="material-symbols-outlined" style="color:#eaddff">family_restroom</span>' +
       '엄마 합류 예산 (별도)' +
     '</h3>';
-    html += '<p style="font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.7);margin-bottom:20px">1년 노마드 중 엄마 합류 시 추가 예산 구조 — 누리 본 예산과 분리.</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">';
+    html += '<p style="font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.7);margin-bottom: var(--space-5)">1년 노마드 중 엄마 합류 시 추가 예산 구조 — 누리 본 예산과 분리.</p>';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-3-5);margin-bottom: var(--space-6)">';
     var momItems = [
       { icon:'flight',     title:'왕복 항공권',           note:'₩200-300만 · 엄마 본인 결제' },
       { icon:'bed',        title:'누리 숙소 2인 사용 OK', note:'추가비 X (Flatio·Airbnb 2인 동일가)' },
       { icon:'restaurant', title:'엄마 식비·관광',         note:'별도 정산 (현지 1일 ₩5-10만 예상)' },
     ];
     momItems.forEach(function(m) {
-      html += '<div style="display:flex;gap:14px;align-items:flex-start">' +
+      html += '<div style="display:flex;gap: var(--space-3-5);align-items:flex-start">' +
         '<div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#eaddff">' + m.icon + '</span>' +
         '</div>' +
         '<div>' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:#fff">' + m.title + '</p>' +
-          '<p style="font-size: var(--font-size-meta);color:rgba(255,255,255,0.65);margin-top:2px;line-height:1.5">' + m.note + '</p>' +
+          '<p style="font-size: var(--font-size-meta);color:rgba(255,255,255,0.65);margin-top: var(--space-0-5);line-height:1.5">' + m.note + '</p>' +
         '</div>' +
       '</div>';
     });
     html += '</div>';
     // 버튼
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="width:100%;padding:12px;background:#fff;color:var(--nm-deep-indigo);border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#eaddff\'" onmouseout="this.style.background=\'#fff\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="width:100%;padding: var(--space-3);background:#fff;color:var(--nm-deep-indigo);border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#eaddff\'" onmouseout="this.style.background=\'#fff\'">' +
       '엄마 합류 시기 후보 보기 →' +
     '</button>';
     html += '</div>';
@@ -1433,87 +1433,87 @@ window.NOMAD_PAGES = (function(){
       '메인 게이트 카운트 + 서브 장기 자산');
 
     // ════════ SECTION 1 · Hero Stats Row (3 카드) ════════
-    html += '<div class="nm-grid nm-grid-3" style="gap:20px;margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-3" style="gap: var(--space-5);margin-bottom: var(--space-8)">';
 
     // ① Active Track
-    html += '<div class="nm-card" style="padding:28px">' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Active Track</p>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom:16px">Postype Webnovel</h3>' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
+    html += '<div class="nm-card" style="padding: var(--space-7)">' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom: var(--space-2)">Active Track</p>' +
+      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-primary);line-height:1.2;margin-bottom: var(--space-4)">Postype Webnovel</h3>' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,0.18);animation:nm-pulse 1.5s infinite"></span>' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);color:var(--nm-on-surface);font-weight:600">B시리즈 · 현재 ₩200-250만/월</span>' +
       '</div>' +
     '</div>';
 
     // ② Gate Achievement (primary-container bg)
-    html += '<div class="nm-card" style="padding:28px;background:var(--nm-primary);color:#fff;position:relative;overflow:hidden">' +
+    html += '<div class="nm-card" style="padding: var(--space-7);background:var(--nm-primary);color:#fff;position:relative;overflow:hidden">' +
       '<div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(20px)"></div>' +
       '<div style="position:relative;z-index:1">' +
-        '<p style="font-size: var(--font-size-tiny);color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Gate Achievement</p>' +
-        '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;margin-bottom:16px">출국 게이트 ₩450만/월</h3>' +
-        '<div style="display:flex;align-items:flex-end;gap:6px">' +
+        '<p style="font-size: var(--font-size-tiny);color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom: var(--space-2)">Gate Achievement</p>' +
+        '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;margin-bottom: var(--space-4)">출국 게이트 ₩450만/월</h3>' +
+        '<div style="display:flex;align-items:flex-end;gap: var(--space-1-5)">' +
           '<span style="font-family:var(--nm-font-h);font-size:44px;font-weight:800;line-height:1">' + gatePct + '%</span>' +
-          '<span style="font-size: var(--font-size-micro);margin-bottom:8px;color:rgba(255,255,255,0.85)">Target<br>Achievement</span>' +
+          '<span style="font-size: var(--font-size-micro);margin-bottom: var(--space-2);color:rgba(255,255,255,0.85)">Target<br>Achievement</span>' +
         '</div>' +
       '</div>' +
     '</div>';
 
     // ③ Core Principle (border-l-4 deep-indigo)
-    html += '<div class="nm-card" style="padding:28px;border-left:4px solid var(--nm-deep-indigo)">' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:8px">Core Principle</p>' +
-      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-deep-indigo);line-height:1.2;margin-bottom:12px">70/30 Ratio</h3>' +
+    html += '<div class="nm-card" style="padding: var(--space-7);border-left:4px solid var(--nm-deep-indigo)">' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom: var(--space-2)">Core Principle</p>' +
+      '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-deep-indigo);line-height:1.2;margin-bottom: var(--space-3)">70/30 Ratio</h3>' +
       '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">Deep Work vs Travel · 글쓰기와 노마드 균형</p>' +
     '</div>';
 
     html += '</div>';
 
     // ════════ SECTION 2 · 8/4 split — Revenue Goals + 노마드 동안 운영 ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // ───── LEFT (8): Postype Webnovel Revenue Goals ─────
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-7)">' +
       '<div>' +
-        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">Postype Webnovel Revenue Goals</h4>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">Postype Webnovel Revenue Goals</h4>' +
         '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2)">B시리즈 중심 · 게이트 카운트 핵심 트랙</p>' +
       '</div>' +
-      '<span style="background:#F5F3FF;color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-size: var(--font-size-micro);font-weight:700">High Priority</span>' +
+      '<span style="background:#F5F3FF;color:var(--nm-primary);padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-size: var(--font-size-micro);font-weight:700">High Priority</span>' +
     '</div>';
 
     // Tier 1 progress: 게이트 트랙
-    html += '<div style="margin-bottom:24px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    html += '<div style="margin-bottom: var(--space-6)">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-2)">' +
       '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.1em">Tier 1 · 게이트 트랙 (출국 조건)</span>' +
       '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface)">₩' + currentRevenue + '만 / ₩' + gateRevenue + '만</span>' +
     '</div>';
     html += '<div style="height:10px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
       '<div style="height:100%;width:' + gatePct + '%;background:var(--nm-primary);border-radius:99px;transition:width 0.3s"></div>' +
     '</div>';
-    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">현재 ₩200-250만 → 2027.12 게이트 ₩450만 (출국 조건)</p>';
+    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">현재 ₩200-250만 → 2027.12 게이트 ₩450만 (출국 조건)</p>';
     html += '</div>';
 
     // Tier 2 progress: 욕심 트랙
-    html += '<div style="margin-bottom:32px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    html += '<div style="margin-bottom: var(--space-8)">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-2)">' +
       '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">Tier 2 · 욕심 트랙 (저축 가능)</span>' +
       '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface)">₩' + currentRevenue + '만 / ₩700-800만</span>' +
     '</div>';
     html += '<div style="height:10px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden">' +
       '<div style="height:100%;width:' + greedPct + '%;background:var(--nm-secondary);border-radius:99px;transition:width 0.3s"></div>' +
     '</div>';
-    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">달성 시 노마드 + 저축 동시 가능</p>';
+    html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">달성 시 노마드 + 저축 동시 가능</p>';
     html += '</div>';
 
     // 하단 2 metric (확장 전략)
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:24px;border-top:1px solid var(--nm-surface-container)">';
-    html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low)">' +
-      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h1-lg);margin-bottom:8px">trending_up</span>' +
-      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">발행 페이스</h5>' +
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap: var(--space-4);padding-top: var(--space-6);border-top:1px solid var(--nm-surface-container)">';
+    html += '<div style="padding: var(--space-4-5);border-radius:10px;background:var(--nm-surface-container-low)">' +
+      '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h1-lg);margin-bottom: var(--space-2)">trending_up</span>' +
+      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">발행 페이스</h5>' +
       '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);line-height:1.5">B시리즈 <strong>월 8편+</strong> 페이스 · 주 2-3편 발행</p>' +
     '</div>';
-    html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low)">' +
-      '<span class="material-symbols-outlined" style="color:#7d3d00;font-size: var(--font-size-h1-lg);margin-bottom:8px">rocket_launch</span>' +
-      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">확장 전략</h5>' +
+    html += '<div style="padding: var(--space-4-5);border-radius:10px;background:var(--nm-surface-container-low)">' +
+      '<span class="material-symbols-outlined" style="color:#7d3d00;font-size: var(--font-size-h1-lg);margin-bottom: var(--space-2)">rocket_launch</span>' +
+      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">확장 전략</h5>' +
       '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);line-height:1.5"><strong>2번째 작품</strong> (2026 후반/2027) · 메이저 웹소 플랫폼 진입 검토</p>' +
     '</div>';
     html += '</div>';
@@ -1521,8 +1521,8 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /Revenue Goals
 
     // ───── RIGHT (4): 노마드 동안 운영 (3 모드 압축) ─────
-    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;gap:14px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+    html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;gap: var(--space-3-5)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-1)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-deep-indigo)">노마드 동안 운영</h4>' +
     '</div>';
@@ -1536,14 +1536,14 @@ window.NOMAD_PAGES = (function(){
         items:['영문 포트폴리오 + 면접', '패션 (니트) + 1인 IP 양쪽 열어둠'] },
     ];
     operationModes.forEach(function(m) {
-      html += '<div style="padding:14px 16px;border-radius:10px;background:' + m.bg + ';border-left:3px solid ' + m.accent + '">';
-      html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+      html += '<div style="padding: var(--space-3-5) var(--space-4);border-radius:10px;background:' + m.bg + ';border-left:3px solid ' + m.accent + '">';
+      html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:' + m.accent + '">' + m.icon + '</span>' +
         '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;color:' + m.accent + '">' + m.title + '</h5>' +
       '</div>';
       html += '<ul style="list-style:none;padding:0;margin:0">';
       m.items.forEach(function(it) {
-        html += '<li style="font-size: var(--font-size-micro);color:var(--nm-text-2);line-height:1.5;padding-left:10px;position:relative;margin-bottom:3px">' +
+        html += '<li style="font-size: var(--font-size-micro);color:var(--nm-text-2);line-height:1.5;padding-left: var(--space-2-5);position:relative;margin-bottom:3px">' +
           '<span style="position:absolute;left:0;color:' + m.accent + '">·</span>' + it +
         '</li>';
       });
@@ -1555,19 +1555,19 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /8-4 split
 
     // ════════ SECTION 3 · Analyst N IP Phases (full-width 7 카드) ════════
-    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
-    html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">' +
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom: var(--space-8)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-3-5);margin-bottom: var(--space-6)">' +
       '<div style="width:44px;height:44px;border-radius:50%;background:rgba(124,58,237,0.12);display:flex;align-items:center;justify-content:center">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
       '</div>' +
       '<div>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">분석가 N IP Development Phases</h4>' +
-        '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top:2px">서브 트랙 · 메일리 + 디지털 제품 + 코칭 · 게이트 외 장기 자산</p>' +
+        '<p style="font-size: var(--font-size-meta);color:var(--nm-text-3);margin-top: var(--space-0-5)">서브 트랙 · 메일리 + 디지털 제품 + 코칭 · 게이트 외 장기 자산</p>' +
       '</div>' +
     '</div>';
 
     // 7 Phase 카드 grid (responsive)
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap: var(--space-3-5)">';
     phases.forEach(function(p) {
       var state = p.num < activePhase ? 'done' : (p.num === activePhase ? 'active' : 'lock');
       var cardStyle, badgeStyle, iconHtml, opacity = '', extraRing = '';
@@ -1588,22 +1588,22 @@ window.NOMAD_PAGES = (function(){
         opacity = 'opacity:0.55';
       }
 
-      html += '<div style="padding:18px;border-radius:12px;' + cardStyle + ';' + opacity + ';transition:transform 0.2s">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
+      html += '<div style="padding: var(--space-4-5);border-radius:12px;' + cardStyle + ';' + opacity + ';transition:transform 0.2s">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-2-5)">' +
         '<span style="padding:3px 8px;border-radius:4px;font-size: var(--font-size-nano);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--nm-font-h);' + badgeStyle + '">Phase 0' + p.num + '</span>' +
         iconHtml +
       '</div>';
-      html += '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">' + p.name + '</h5>';
-      html += '<p style="font-size: var(--font-size-tiny);color:var(--nm-primary);font-weight:600;font-family:var(--nm-font-h);margin-bottom:8px">' + p.when + '</p>';
+      html += '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">' + p.name + '</h5>';
+      html += '<p style="font-size: var(--font-size-tiny);color:var(--nm-primary);font-weight:600;font-family:var(--nm-font-h);margin-bottom: var(--space-2)">' + p.when + '</p>';
       html += '<p style="font-size: var(--font-size-micro);color:var(--nm-text-2);line-height:1.5">' + p.goal + '</p>';
       html += '</div>';
     });
     html += '</div>';
 
     // 하단 footer
-    html += '<div style="margin-top:20px;padding:16px 20px;background:linear-gradient(135deg,var(--nm-primary-soft),var(--nm-surface-container-low));border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+    html += '<div style="margin-top: var(--space-5);padding: var(--space-4) var(--space-5);background:linear-gradient(135deg,var(--nm-primary-soft),var(--nm-surface-container-low));border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap: var(--space-3)">' +
       '<div>' +
-        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:2px">예상 기여 (2027.12 시점)</p>' +
+        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom: var(--space-0-5)">예상 기여 (2027.12 시점)</p>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-deep-indigo)">월 ₩100-300만</p>' +
       '</div>' +
       '<span style="font-size: var(--font-size-micro);color:var(--nm-text-2);font-style:italic">게이트 외 · 노마드 후에도 장기 운영</span>' +
@@ -1612,12 +1612,12 @@ window.NOMAD_PAGES = (function(){
     html += '</section>';
 
     // ════════ SECTION 4 · 6/6 split — Writing Velocity + Current Hub ════════
-    html += '<div class="nm-grid nm-grid-2" style="gap:24px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-6)">';
 
     // ───── LEFT: Weekly Writing Velocity ─────
     html += '<div class="nm-card nm-card-lg">';
-    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom:6px">Weekly Writing Velocity</h4>';
-    html += '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);margin-bottom:24px">주간 작업 페이스 · 평일 오전 글 블록 + 수요일 코딩 데이</p>';
+    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1-5)">Weekly Writing Velocity</h4>';
+    html += '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);margin-bottom: var(--space-6)">주간 작업 페이스 · 평일 오전 글 블록 + 수요일 코딩 데이</p>';
 
     // 7-day bar chart
     var weekdays = [
@@ -1629,7 +1629,7 @@ window.NOMAD_PAGES = (function(){
       { day:'Sat', label:'토', height:35, color:'var(--nm-secondary)', opacity:0.45, tip:'Synthesis · 사연 응답' },
       { day:'Sun', label:'일', height:25, color:'var(--nm-secondary)', opacity:0.3, tip:'휴식' },
     ];
-    html += '<div style="height:170px;background:var(--nm-surface-container-low);border-radius:10px;padding:14px 12px;display:flex;align-items:flex-end;gap:10px;position:relative">';
+    html += '<div style="height:170px;background:var(--nm-surface-container-low);border-radius:10px;padding: var(--space-3-5) var(--space-3);display:flex;align-items:flex-end;gap: var(--space-2-5);position:relative">';
     weekdays.forEach(function(d, i) {
       html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%">' +
         '<div style="flex:1;width:100%;display:flex;align-items:flex-end;position:relative">' +
@@ -1641,10 +1641,10 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // 하단 범례
-    html += '<div style="margin-top:16px;display:flex;justify-content:space-between;font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-primary);border-radius:2px"></span> Writing Block</span>' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-secondary);border-radius:2px"></span> Coding / Synthesis</span>' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--nm-text-3);opacity:0.3;border-radius:2px"></span> Mobility / Rest</span>' +
+    html += '<div style="margin-top: var(--space-4);display:flex;justify-content:space-between;font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">' +
+      '<span style="display:flex;align-items:center;gap: var(--space-1)"><span style="width:10px;height:10px;background:var(--nm-primary);border-radius:2px"></span> Writing Block</span>' +
+      '<span style="display:flex;align-items:center;gap: var(--space-1)"><span style="width:10px;height:10px;background:var(--nm-secondary);border-radius:2px"></span> Coding / Synthesis</span>' +
+      '<span style="display:flex;align-items:center;gap: var(--space-1)"><span style="width:10px;height:10px;background:var(--nm-text-3);opacity:0.3;border-radius:2px"></span> Mobility / Rest</span>' +
     '</div>';
     html += '</div>';
 
@@ -1657,9 +1657,9 @@ window.NOMAD_PAGES = (function(){
     }
 
     html += '<div class="nm-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">';
-    html += '<div style="padding:24px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--nm-surface-container)">' +
+    html += '<div style="padding: var(--space-6) var(--space-7);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--nm-surface-container)">' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">현재 거점: ' + hubName + '</h4>' +
-      '<div style="display:flex;align-items:center;gap:6px;color:var(--nm-primary);font-size: var(--font-size-micro);font-weight:600">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-1-5);color:var(--nm-primary);font-size: var(--font-size-micro);font-weight:600">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">wifi</span>' +
         '<span>Gigabit Secure</span>' +
       '</div>' +
@@ -1676,8 +1676,8 @@ window.NOMAD_PAGES = (function(){
     }
     html += '</svg>';
     // 하단 overlay
-    html += '<div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(49,46,129,0.95), transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px 28px;color:#fff">' +
-      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;margin-bottom:4px">Deep Work Station 01</p>' +
+    html += '<div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(49,46,129,0.95), transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding: var(--space-6) var(--space-7);color:#fff">' +
+      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;margin-bottom: var(--space-1)">Deep Work Station 01</p>' +
       '<p style="font-size: var(--font-size-meta);color:rgba(255,255,255,0.75)">' + hubSub + '</p>' +
     '</div>';
     html += '</div>';
@@ -1700,34 +1700,34 @@ window.NOMAD_PAGES = (function(){
     html += pageHeader('Nomad Gate', '진입 조건 · 출국 라인', '시기는 부차 · 조건이 본질');
 
     // 3 metric cards
-    html += '<section class="nm-grid nm-grid-3" style="margin-bottom:48px;gap:24px">';
+    html += '<section class="nm-grid nm-grid-3" style="margin-bottom: var(--space-12);gap: var(--space-6)">';
     var metrics = [
       { label:'하한선 (출국 확정)', prefix:'월', value:'₩450', sub:'2027.12 평가',         color:'#0f172a' },
       { label:'욕심 라인',         prefix:'월', value:'₩800', sub:'노마드 동안도 저축 가능', color:'var(--nm-primary)' },
       { label:'평가 시점',         prefix:'',   value:'2027.12', sub:'3개월 연속 안정',     color:'#0f172a' },
     ];
     metrics.forEach(function(m) {
-      html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
+      html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding: var(--space-8);transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
       html += '<p style="font-size: var(--font-size-micro);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 16px">' + m.label + '</p>';
-      html += '<div style="display:flex;align-items:baseline;gap:6px">' +
+      html += '<div style="display:flex;align-items:baseline;gap: var(--space-1-5)">' +
         (m.prefix ? '<span style="font-size: var(--font-size-h2);font-weight:700;color:var(--nm-primary)">' + m.prefix + '</span>' : '') +
         '<span style="font-family:var(--nm-font-h);font-size:38px;font-weight:800;letter-spacing:-0.015em;color:' + m.color + '">' + m.value + '</span>' +
       '</div>';
-      html += '<p style="font-size: var(--font-size-micro);font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:18px 0 0">' + m.sub + '</p>';
+      html += '<p style="font-size: var(--font-size-micro);font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin: var(--space-4-5) 0 0">' + m.sub + '</p>';
       html += '</div>';
     });
     html += '</section>';
 
     // Simulation table
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;overflow:hidden;margin-bottom:48px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
-    html += '<div style="padding:18px 28px;background:#fafafa;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;overflow:hidden;margin-bottom: var(--space-12);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="padding: var(--space-4-5) var(--space-7);background:#fafafa;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap: var(--space-2)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h3)">cloud_sync</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#374151;margin:0">1년 노마드 후 자산 시뮬</h3>' +
     '</div>';
     html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">';
     html += '<thead><tr style="background:rgba(248,250,252,0.5)">' +
       ['시나리오','출국 자산','노마드 비용','노마드 수익 (세후)','귀국 자산'].map(function(h){
-        return '<th style="padding:14px 28px;font-size: var(--font-size-tiny);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + h + '</th>';
+        return '<th style="padding: var(--space-3-5) var(--space-7);font-size: var(--font-size-tiny);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + h + '</th>';
       }).join('') +
     '</tr></thead>';
     html += '<tbody>';
@@ -1738,23 +1738,23 @@ window.NOMAD_PAGES = (function(){
     ];
     sims.forEach(function(s) {
       html += '<tr style="border-top:1px solid #f8fafc;transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
-      html += '<td style="padding:22px 28px;font-size: var(--font-size-body-sm);font-weight:500;color:#374151">' + s.sc + '</td>';
-      html += '<td style="padding:22px 28px;font-size: var(--font-size-body-sm);color:#374151">' + s.start + '</td>';
-      html += '<td style="padding:22px 28px;font-size: var(--font-size-body-sm);color:#ef4444">' + s.cost + '</td>';
-      html += '<td style="padding:22px 28px;font-size: var(--font-size-body-sm);color:var(--nm-primary)">' + s.gain + '</td>';
-      html += '<td style="padding:22px 28px;font-size: var(--font-size-body-sm);color:#374151"><span style="font-weight:700">' + s.end + '</span> <span style="margin-left:8px;font-size: var(--font-size-tiny);font-weight:600;padding:3px 9px;border-radius:99px;background:' + s.pill.bg + ';color:' + s.pill.color + '">' + s.pill.label + '</span></td>';
+      html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);font-weight:500;color:#374151">' + s.sc + '</td>';
+      html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:#374151">' + s.start + '</td>';
+      html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:#ef4444">' + s.cost + '</td>';
+      html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:var(--nm-primary)">' + s.gain + '</td>';
+      html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:#374151"><span style="font-weight:700">' + s.end + '</span> <span style="margin-left: var(--space-2);font-size: var(--font-size-tiny);font-weight:600;padding:3px 9px;border-radius:99px;background:' + s.pill.bg + ';color:' + s.pill.color + '">' + s.pill.label + '</span></td>';
       html += '</tr>';
     });
     html += '</tbody></table></div>';
     html += '</section>';
 
     // Decision tree
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:22px">' +
+    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding: var(--space-8);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-5-5)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h3)">flag</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#374151;margin:0">결정 트리</h3>' +
     '</div>';
-    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px">';
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-3-5)">';
     var decisions = [
       { h:'2027.12 게이트 평가 시:', t:'월 ₩450 달성 → 출국 확정' },
       { h:'미달 시:',                 t:'출국 1년 보류 (2029.6 → 2030.6)' },
@@ -1762,8 +1762,8 @@ window.NOMAD_PAGES = (function(){
       { h:'출국 안전망:',             t:'한국 자산 1.5억 + 동생이 집·차 관리 (정리 X)' },
     ];
     decisions.forEach(function(d) {
-      html += '<li style="display:flex;align-items:flex-start;gap:14px">' +
-        '<span style="color:var(--nm-primary);margin-top:6px;font-size: var(--font-size-h2);line-height:1;flex-shrink:0">•</span>' +
+      html += '<li style="display:flex;align-items:flex-start;gap: var(--space-3-5)">' +
+        '<span style="color:var(--nm-primary);margin-top: var(--space-1-5);font-size: var(--font-size-h2);line-height:1;flex-shrink:0">•</span>' +
         '<p style="font-size: var(--font-size-body);line-height:1.55;font-weight:500;color:#374151;margin:0"><span style="font-weight:700;color:#0f172a">' + d.h + '</span> ' + d.t + '</p>' +
       '</li>';
     });
@@ -1795,7 +1795,7 @@ window.NOMAD_PAGES = (function(){
     // 이미지 박스 헬퍼 (LEFT/RIGHT 공통)
     function buildImgBox(phaseId, grad) {
       var img = _phaseImages[phaseId] || null;
-      var h = '<div class="nm-bp-phase-imgbox" style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom:22px;position:relative;overflow:hidden"' +
+      var h = '<div class="nm-bp-phase-imgbox" style="aspect-ratio:4/3;border-radius:16px;background:' + grad + ';margin-bottom: var(--space-5-5);position:relative;overflow:hidden"' +
         ' onmouseenter="NOMAD_PAGES._setActivePhase(\'' + phaseId + '\')"' +
         ' onmouseleave="NOMAD_PAGES._clearActivePhase(\'' + phaseId + '\')">';
       if (img) {
@@ -1846,28 +1846,28 @@ window.NOMAD_PAGES = (function(){
       var bigLabel = phaseLabelBig[p.id] || p.name;
       var num = String(idx + 1).padStart(2, '0');
 
-      html += '<div class="nm-bp-row" style="position:relative;margin-bottom:64px;display:flex;align-items:center;gap:48px">';
+      html += '<div class="nm-bp-row" style="position:relative;margin-bottom:64px;display:flex;align-items:center;gap: var(--space-12)">';
 
       if (isLeft) {
         // LEFT: glass-card (이미지 박스 제거 — 사용자 요청)
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
-        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        html += '<div style="display:flex;flex-direction:column;gap:14px">';
+        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding: var(--space-7);border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
+        html += '<div style="display:flex;flex-direction:column;gap: var(--space-3-5)">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
-          '<span style="background:rgba(124,58,237,0.1);color:var(--nm-primary);padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700">Phase ' + p.id + '</span>' +
+          '<span style="background:rgba(124,58,237,0.1);color:var(--nm-primary);padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700">Phase ' + p.id + '</span>' +
           '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:600;color:var(--nm-text-3)">' + p.range + '</span>' +
         '</div>';
         html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:800;letter-spacing:-0.01em;color:#0f172a;margin:0">' + p.name + '</h3>';
         html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-primary);margin:0;line-height:1.4">' + p.title + '</p>';
         html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.6;margin:0">' + p.description + '</p>';
-        html += '<ul style="list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:6px">';
+        html += '<ul style="list-style:none;padding:0;margin: var(--space-3-5) 0 0;display:flex;flex-direction:column;gap: var(--space-1-5)">';
         (p.items || []).forEach(function(it, ii) {
           var checked = isBackwardChecked(p.id, ii);
           var isDepart = (isFinal && ii === 0); // D phase 첫 항목 = 출국
           var icon = checked ? 'check_circle' : (isDepart ? 'flight_takeoff' : 'radio_button_unchecked');
           var color = checked ? 'var(--nm-primary)' : (isDepart ? 'var(--nm-primary)' : 'rgba(122,116,135,0.5)');
           var fill = (checked || isDepart) ? '1' : '0';
-          html += '<li onclick="NOMAD_PAGES.toggleBackwardCheck(\'' + p.id + '\',' + ii + ')" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;user-select:none;padding:6px 8px;margin:0 -8px;border-radius:8px;transition:background 0.15s" onmouseover="this.style.background=\'rgba(124,58,237,0.06)\'" onmouseout="this.style.background=\'transparent\'">' +
+          html += '<li onclick="NOMAD_PAGES.toggleBackwardCheck(\'' + p.id + '\',' + ii + ')" style="display:flex;gap: var(--space-2-5);align-items:flex-start;cursor:pointer;user-select:none;padding: var(--space-1-5) var(--space-2);margin:0 -8px;border-radius:8px;transition:background 0.15s" onmouseover="this.style.background=\'rgba(124,58,237,0.06)\'" onmouseout="this.style.background=\'transparent\'">' +
             '<span class="material-symbols-outlined" style="color:' + color + ';font-size: var(--font-size-h2);flex-shrink:0;margin-top:1px;font-variation-settings:\'FILL\' ' + fill + '">' + icon + '</span>' +
             '<span style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5' + (isDepart ? ';font-weight:700;color:var(--nm-primary)' : '') + (checked ? ';text-decoration:line-through;opacity:0.55' : '') + '">' + it + '</span>' +
           '</li>';
@@ -1881,12 +1881,12 @@ window.NOMAD_PAGES = (function(){
         html += '<div class="nm-bp-marker" style="position:absolute;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:' + (isFinal ? 'var(--nm-primary)' : '#fff') + ';border:4px solid var(--nm-primary);display:flex;align-items:center;justify-content:center;font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:800;color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';box-shadow:0 8px 24px rgba(124,58,237,0.18);z-index:2' + (isFinal ? ';transform:translateX(-50%) scale(1.1)' : '') + '">' + num + '</div>';
 
         // RIGHT: big opacity label
-        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);padding-left:48px">';
+        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);padding-left: var(--space-12)">';
         html += '<h2 style="font-family:var(--nm-font-h);font-size:56px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;opacity:0.08;margin:0;text-transform:uppercase;line-height:1">' + bigLabel + '</h2>';
         html += '</div>';
       } else {
         // RIGHT side card (zigzag)
-        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);text-align:right;padding-right:48px">';
+        html += '<div class="nm-bp-label-wrap" style="flex:0 0 calc(50% - 32px);text-align:right;padding-right: var(--space-12)">';
         html += '<h2 style="font-family:var(--nm-font-h);font-size:56px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;opacity:0.08;margin:0;text-transform:uppercase;line-height:1">' + bigLabel + '</h2>';
         html += '</div>';
 
@@ -1895,23 +1895,23 @@ window.NOMAD_PAGES = (function(){
 
         // RIGHT: glass card (이미지 박스 제거 — 사용자 요청)
         html += '<div class="nm-bp-card-wrap" style="flex:0 0 calc(50% - 32px)">';
-        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding:28px;border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
-        html += '<div style="display:flex;flex-direction:column;gap:14px">';
+        html += '<div style="background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,0.05);padding: var(--space-7);border-radius:24px;box-shadow:0 10px 30px rgba(15,23,42,0.06);transition:transform 0.5s' + (isFinal ? ';border:2px solid rgba(124,58,237,0.2)' : '') + '" onmouseover="this.style.transform=\'translateY(-6px)\'" onmouseout="this.style.transform=\'none\'">';
+        html += '<div style="display:flex;flex-direction:column;gap: var(--space-3-5)">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between">' +
-          '<span style="background:' + (isFinal ? 'var(--nm-primary)' : 'rgba(124,58,237,0.1)') + ';color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700">Phase ' + p.id + '</span>' +
+          '<span style="background:' + (isFinal ? 'var(--nm-primary)' : 'rgba(124,58,237,0.1)') + ';color:' + (isFinal ? '#fff' : 'var(--nm-primary)') + ';padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700">Phase ' + p.id + '</span>' +
           '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:600;color:' + (isFinal ? 'var(--nm-primary)' : 'var(--nm-text-3)') + '">' + p.range + '</span>' +
         '</div>';
         html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:800;letter-spacing:-0.01em;color:#0f172a;margin:0">' + p.name + '</h3>';
         html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-primary);margin:0;line-height:1.4">' + p.title + '</p>';
         html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.6;margin:0">' + p.description + '</p>';
-        html += '<ul style="list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:6px">';
+        html += '<ul style="list-style:none;padding:0;margin: var(--space-3-5) 0 0;display:flex;flex-direction:column;gap: var(--space-1-5)">';
         (p.items || []).forEach(function(it, ii) {
           var checked = isBackwardChecked(p.id, ii);
           var isDepart = (isFinal && ii === 0);
           var icon = checked ? 'check_circle' : (isDepart ? 'flight_takeoff' : 'radio_button_unchecked');
           var color = checked ? 'var(--nm-primary)' : (isDepart ? 'var(--nm-primary)' : 'rgba(122,116,135,0.5)');
           var fill = (checked || isDepart) ? '1' : '0';
-          html += '<li onclick="NOMAD_PAGES.toggleBackwardCheck(\'' + p.id + '\',' + ii + ')" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;user-select:none;padding:6px 8px;margin:0 -8px;border-radius:8px;transition:background 0.15s" onmouseover="this.style.background=\'rgba(124,58,237,0.06)\'" onmouseout="this.style.background=\'transparent\'">' +
+          html += '<li onclick="NOMAD_PAGES.toggleBackwardCheck(\'' + p.id + '\',' + ii + ')" style="display:flex;gap: var(--space-2-5);align-items:flex-start;cursor:pointer;user-select:none;padding: var(--space-1-5) var(--space-2);margin:0 -8px;border-radius:8px;transition:background 0.15s" onmouseover="this.style.background=\'rgba(124,58,237,0.06)\'" onmouseout="this.style.background=\'transparent\'">' +
             '<span class="material-symbols-outlined" style="color:' + color + ';font-size: var(--font-size-h2);flex-shrink:0;margin-top:1px;font-variation-settings:\'FILL\' ' + fill + '">' + icon + '</span>' +
             '<span style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5' + (isDepart ? ';font-weight:700;color:var(--nm-primary)' : '') + (checked ? ';text-decoration:line-through;opacity:0.55' : '') + '">' + it + '</span>' +
           '</li>';
@@ -1933,9 +1933,9 @@ window.NOMAD_PAGES = (function(){
     html += '<div style="max-width:560px;margin:0 auto">';
     html += '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-2xl);font-weight:800;letter-spacing:-0.02em;color:#0f172a;margin:0 0 18px">Ready to initiate?</h2>';
     html += '<p style="font-size: var(--font-size-h3);color:var(--nm-text-2);line-height:1.6;margin:0 0 28px">2027.12 게이트 평가까지 페이스 유지. 각 Phase 항목 체크하며 진행.</p>';
-    html += '<div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">';
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="background:var(--nm-primary);color:#fff;padding:16px 32px;border:none;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.25);transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">Action Items 보기</button>';
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-gate\')" style="background:transparent;color:var(--nm-text-2);padding:16px 32px;border:1px solid var(--nm-outline-variant);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#F5F3FF\'" onmouseout="this.style.background=\'transparent\'">Gate 조건 확인</button>';
+    html += '<div style="display:flex;justify-content:center;gap: var(--space-3-5);flex-wrap:wrap">';
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="background:var(--nm-primary);color:#fff;padding: var(--space-4) var(--space-8);border:none;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.25);transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">Action Items 보기</button>';
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-gate\')" style="background:transparent;color:var(--nm-text-2);padding: var(--space-4) var(--space-8);border:1px solid var(--nm-outline-variant);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'#F5F3FF\'" onmouseout="this.style.background=\'transparent\'">Gate 조건 확인</button>';
     html += '</div>';
     html += '</div>';
     html += '</section>';
@@ -2038,85 +2038,85 @@ window.NOMAD_PAGES = (function(){
     // ════════ Stay Channels CSS (Comprehensive) ════════
     html += '<style>' +
       '#nomad-content .stay-wrap{background:#ffffff;padding:0 0 48px;max-width:1280px;margin:0 auto}' +
-      '#nomad-content .stay-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom:16px}' +
+      '#nomad-content .stay-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;margin-bottom: var(--space-4)}' +
       '#nomad-content .stay-title{font-family:var(--nm-font-h);font-size:clamp(48px,7vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1;color:#141b2b;margin:0}' +
-      '#nomad-content .stay-subtitle{font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:500;color:#4a4455;margin:16px 0 4px}' +
+      '#nomad-content .stay-subtitle{font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:500;color:#4a4455;margin: var(--space-4) 0 4px}' +
       '#nomad-content .stay-tagline{font-size: var(--font-size-body);color:#5d5d67;margin:0}' +
-      '#nomad-content .stay-metric{padding:24px;border-radius:12px;border:1px solid #ccc3d8;background:#fff;min-width:160px}' +
-      '#nomad-content .stay-metric-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;margin-bottom:8px}' +
+      '#nomad-content .stay-metric{padding: var(--space-6);border-radius:12px;border:1px solid #ccc3d8;background:#fff;min-width:160px}' +
+      '#nomad-content .stay-metric-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;margin-bottom: var(--space-2)}' +
       '#nomad-content .stay-metric-value{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:500;color:#141b2b}' +
-      '#nomad-content .stay-canvas{display:grid;grid-template-columns:280px 1fr;gap:48px;align-items:start}' +
+      '#nomad-content .stay-canvas{display:grid;grid-template-columns:280px 1fr;gap: var(--space-12);align-items:start}' +
       '@media (max-width:1024px){#nomad-content .stay-canvas{grid-template-columns:1fr}}' +
-      '#nomad-content .stay-sidebar{display:flex;flex-direction:column;gap:32px;position:sticky;top:24px}' +
+      '#nomad-content .stay-sidebar{display:flex;flex-direction:column;gap: var(--space-8);position:sticky;top:24px}' +
       '@media (max-width:1024px){#nomad-content .stay-sidebar{position:static}}' +
-      '#nomad-content .stay-side-h{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 16px;display:flex;align-items:center;gap:8px}' +
+      '#nomad-content .stay-side-h{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 16px;display:flex;align-items:center;gap: var(--space-2)}' +
       '#nomad-content .stay-side-h .material-symbols-outlined{color:var(--nm-primary)}' +
-      '#nomad-content .stay-side-card{padding:20px;border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
+      '#nomad-content .stay-side-card{padding: var(--space-5);border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
       '#nomad-content .stay-side-card-purple{background:rgba(234,221,255,0.35);border-color:rgba(124,58,237,0.15)}' +
-      '#nomad-content .stay-side-card-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom:8px}' +
+      '#nomad-content .stay-side-card-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom: var(--space-2)}' +
       '#nomad-content .stay-side-card-label.gray{color:#5d5d67}' +
       '#nomad-content .stay-side-card-label.err{color:#ba1a1a}' +
       '#nomad-content .stay-side-card-body{font-size: var(--font-size-body);color:#4a4455;line-height:1.5;margin:0}' +
-      '#nomad-content .stay-side-card-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size: var(--font-size-body);color:#4a4455}' +
+      '#nomad-content .stay-side-card-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-1-5);font-size: var(--font-size-body);color:#4a4455}' +
       '#nomad-content .stay-side-card-list.bold{color:var(--nm-primary);font-weight:600}' +
-      '#nomad-content .stay-rule{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #ccc3d8;padding-bottom:16px;margin-bottom:32px}' +
+      '#nomad-content .stay-rule{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #ccc3d8;padding-bottom: var(--space-4);margin-bottom: var(--space-8)}' +
       '#nomad-content .stay-h{font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:500;color:#141b2b;margin:0;letter-spacing:-0.005em}' +
       '#nomad-content .stay-h-meta{font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:500;color:#5d5d67;letter-spacing:-0.01em}' +
       '#nomad-content .stay-section{margin-bottom:80px}' +
       '#nomad-content .stay-section:last-child{margin-bottom:0}' +
-      '#nomad-content .stay-alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}' +
+      '#nomad-content .stay-alt-grid{display:grid;grid-template-columns:1fr 1fr;gap: var(--space-6)}' +
       '@media (max-width:720px){#nomad-content .stay-alt-grid{grid-template-columns:1fr}}' +
-      '#nomad-content .stay-alt-card{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;transition:border-color 0.15s}' +
+      '#nomad-content .stay-alt-card{padding: var(--space-6);border:1px solid #ccc3d8;border-radius:12px;background:#fff;transition:border-color 0.15s}' +
       '#nomad-content .stay-alt-card:hover{border-color:var(--nm-primary)}' +
       '#nomad-content .stay-alt-card h4{font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:600;color:var(--nm-primary);margin:0 0 8px}' +
       '#nomad-content .stay-alt-card p{font-size: var(--font-size-body);color:#4a4455;line-height:1.5;margin:0 0 12px}' +
       '#nomad-content .stay-alt-card .stay-alt-tag{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#5d5d67}' +
-      '#nomad-content .stay-alt-card .stay-alt-nuri{margin-top:10px;padding-top:10px;border-top:1px dashed #ccc3d8;font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.5}' +
+      '#nomad-content .stay-alt-card .stay-alt-nuri{margin-top: var(--space-2-5);padding-top: var(--space-2-5);border-top:1px dashed #ccc3d8;font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.5}' +
       '#nomad-content .stay-alt-card .stay-alt-nuri strong{color:#141b2b}' +
       '#nomad-content .stay-tbl{width:100%;text-align:left;border-collapse:separate;border-spacing:0}' +
-      '#nomad-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding:14px 12px;border-bottom:1px solid #ccc3d8}' +
-      '#nomad-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size: var(--font-size-body-lg);color:#141b2b;vertical-align:top}' +
+      '#nomad-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding: var(--space-3-5) var(--space-3);border-bottom:1px solid #ccc3d8}' +
+      '#nomad-content .stay-tbl tbody td{padding: var(--space-5) var(--space-3);border-bottom:1px solid rgba(204,195,216,0.3);font-size: var(--font-size-body-lg);color:#141b2b;vertical-align:top}' +
       '#nomad-content .stay-tbl tbody tr:hover{background:#f1f3ff}' +
-      '#nomad-content .stay-strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}' +
+      '#nomad-content .stay-strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap: var(--space-6)}' +
       '@media (max-width:760px){#nomad-content .stay-strategy-grid{grid-template-columns:1fr}}' +
-      '#nomad-content .stay-strategy-card{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:flex;flex-direction:column;gap:14px}' +
+      '#nomad-content .stay-strategy-card{padding: var(--space-6);border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:flex;flex-direction:column;gap: var(--space-3-5)}' +
       '#nomad-content .stay-strategy-purple{background:rgba(234,221,255,0.3);border-color:rgba(124,58,237,0.18)}' +
-      '#nomad-content .stay-strategy-h{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 6px;display:flex;align-items:center;gap:10px}' +
+      '#nomad-content .stay-strategy-h{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 6px;display:flex;align-items:center;gap: var(--space-2-5)}' +
       '#nomad-content .stay-strategy-h .material-symbols-outlined{color:var(--nm-primary);font-size: var(--font-size-h1)}' +
-      '#nomad-content .stay-strategy-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom:6px}' +
+      '#nomad-content .stay-strategy-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--nm-primary);margin-bottom: var(--space-1-5)}' +
       '#nomad-content .stay-strategy-label.gray{color:#5d5d67}' +
       '#nomad-content .stay-strategy-label.err{color:#ba1a1a}' +
       '#nomad-content .stay-strategy-body{font-size: var(--font-size-body);line-height:1.55;color:#4a4455;margin:0}' +
       '#nomad-content .stay-strategy-body strong{color:#141b2b;font-weight:600}' +
       '#nomad-content .stay-strategy-cities{font-family:var(--nm-font-h);font-size: var(--font-size-meta);color:var(--nm-primary);font-weight:600;margin:0;line-height:1.55}' +
-      '#nomad-content .stay-strategy-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size: var(--font-size-body);color:#4a4455;line-height:1.55}' +
-      '#nomad-content .stay-strategy-block{padding-top:12px;border-top:1px dashed #ccc3d8}' +
+      '#nomad-content .stay-strategy-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-1-5);font-size: var(--font-size-body);color:#4a4455;line-height:1.55}' +
+      '#nomad-content .stay-strategy-block{padding-top: var(--space-3);border-top:1px dashed #ccc3d8}' +
       '#nomad-content .stay-strategy-block:first-of-type{padding-top:0;border-top:none}' +
       '#nomad-content .stay-tbl .stay-city{font-weight:600;white-space:nowrap}' +
-      '#nomad-content .stay-tbl .stay-city-flag{font-size: var(--font-size-h2);margin-right:6px;vertical-align:-2px}' +
-      '#nomad-content .stay-alt-flags{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:8px 12px;background:#f5f3ff;border-radius:6px}' +
+      '#nomad-content .stay-tbl .stay-city-flag{font-size: var(--font-size-h2);margin-right: var(--space-1-5);vertical-align:-2px}' +
+      '#nomad-content .stay-alt-flags{display:flex;align-items:center;gap: var(--space-2-5);margin:0 0 12px;padding: var(--space-2) var(--space-3);background:#f5f3ff;border-radius:6px}' +
       '#nomad-content .stay-alt-flags-emoji{font-size: var(--font-size-h2);line-height:1;letter-spacing:2px}' +
       '#nomad-content .stay-alt-flags-label{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:600;color:#4a4455;letter-spacing:0.02em}' +
       '#nomad-content .stay-pill{display:inline-block;padding:5px 12px;border-radius:99px;font-size: var(--font-size-tiny);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-family:var(--nm-font-h)}' +
       '#nomad-content .stay-secondary{color:#4a4455;font-size: var(--font-size-body-sm)}' +
       '#nomad-content .stay-remark{font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);color:#5d5d67;letter-spacing:-0.005em}' +
-      '#nomad-content .stay-regional{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}' +
-      '#nomad-content .stay-regional-card{padding:20px;border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
-      '#nomad-content .stay-regional-card h5{font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:#141b2b;margin:0 0 10px;display:flex;align-items:center;gap:8px}' +
+      '#nomad-content .stay-regional{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap: var(--space-5)}' +
+      '#nomad-content .stay-regional-card{padding: var(--space-5);border:1px solid #ccc3d8;border-radius:12px;background:#fff}' +
+      '#nomad-content .stay-regional-card h5{font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:600;color:#141b2b;margin:0 0 10px;display:flex;align-items:center;gap: var(--space-2)}' +
       '#nomad-content .stay-regional-card h5 .flag{font-size: var(--font-size-h2)}' +
-      '#nomad-content .stay-regional-card ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}' +
+      '#nomad-content .stay-regional-card ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-1-5)}' +
       '#nomad-content .stay-regional-card li{font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.5}' +
       '#nomad-content .stay-regional-card li strong{color:#141b2b}' +
-      '#nomad-content .stay-tips{display:flex;flex-direction:column;gap:20px}' +
-      '#nomad-content .stay-tip{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:flex-start}' +
+      '#nomad-content .stay-tips{display:flex;flex-direction:column;gap: var(--space-5)}' +
+      '#nomad-content .stay-tip{padding: var(--space-6);border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap: var(--space-5);align-items:flex-start}' +
       '@media (max-width:560px){#nomad-content .stay-tip{grid-template-columns:1fr}}' +
       '#nomad-content .stay-tip-num{font-family:var(--nm-font-h);font-size: var(--font-size-hero);font-weight:600;color:var(--nm-primary);line-height:1;opacity:0.25;letter-spacing:-0.02em;min-width:60px}' +
       '#nomad-content .stay-tip-content h4{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 8px}' +
       '#nomad-content .stay-tip-content p{font-size: var(--font-size-body);color:#4a4455;line-height:1.6;margin:0 0 6px}' +
       '#nomad-content .stay-tip-content p strong{color:#141b2b}' +
-      '#nomad-content .stay-tip-content .stay-tip-list{margin-top:8px;padding-top:8px;border-top:1px dashed #ccc3d8}' +
-      '#nomad-content .stay-tip-content ul{margin:8px 0 0 0;padding:0;list-style:none}' +
-      '#nomad-content .stay-tip-content li{font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.6;margin-bottom:4px}' +
+      '#nomad-content .stay-tip-content .stay-tip-list{margin-top: var(--space-2);padding-top: var(--space-2);border-top:1px dashed #ccc3d8}' +
+      '#nomad-content .stay-tip-content ul{margin: var(--space-2) 0 0 0;padding:0;list-style:none}' +
+      '#nomad-content .stay-tip-content li{font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.6;margin-bottom: var(--space-1)}' +
     '</style>';
 
     html += '<div class="stay-wrap">';
@@ -2125,7 +2125,7 @@ window.NOMAD_PAGES = (function(){
     html += pageHeader('Stay Channels', '도시별 숙소 채널 전략', 'Nomadic Housing · Local Specialists · Legal Compliance');
 
     // ────── Phase 메트릭 ──────
-    html += '<header style="margin-bottom:64px;display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-end">';
+    html += '<header style="margin-bottom:64px;display:flex;gap: var(--space-4);flex-wrap:wrap;justify-content:flex-end">';
     html += '<div class="stay-metric">' +
       '<span class="stay-metric-label">Europe Phase</span>' +
       '<span class="stay-metric-value">10 Cities</span>' +
@@ -2195,7 +2195,7 @@ window.NOMAD_PAGES = (function(){
     // Card 1: Visa-Ready Contracts
     html += '<div class="stay-strategy-card stay-strategy-purple">' +
       '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">verified</span>Visa-Ready Contracts</h4>' +
-      '<p class="stay-strategy-body" style="margin-bottom:14px">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
+      '<p class="stay-strategy-body" style="margin-bottom: var(--space-3-5)">합법적인 <strong>주소 증명</strong>이 가능한 채널 (비자/워홀 신청용):</p>' +
       '<ul class="stay-strategy-list">' +
         '<li>• <a href="' + STAY_URL['Flatio'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none;font-weight:600">Flatio <span class="material-symbols-outlined" style="font-size: var(--font-size-meta);vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
         '<li>• <a href="' + STAY_URL['Housing Anywhere'] + '" target="_blank" rel="noopener" style="color:var(--nm-primary);text-decoration:none;font-weight:600">Housing Anywhere <span class="material-symbols-outlined" style="font-size: var(--font-size-meta);vertical-align:-1px;opacity:0.6">open_in_new</span></a></li>' +
@@ -2214,12 +2214,12 @@ window.NOMAD_PAGES = (function(){
       '<h4 class="stay-strategy-h"><span class="material-symbols-outlined">category</span>Duration Strategy</h4>' +
       '<div class="stay-strategy-block">' +
         '<span class="stay-strategy-label gray">Short-Term (1-2 Weeks)</span>' +
-        '<p class="stay-strategy-body" style="margin-bottom:6px">' + linkText('Booking') + ' · ' + linkText('Airbnb') + ' · ' + linkText('Sonder') + '</p>' +
+        '<p class="stay-strategy-body" style="margin-bottom: var(--space-1-5)">' + linkText('Booking') + ' · ' + linkText('Airbnb') + ' · ' + linkText('Sonder') + '</p>' +
         '<p class="stay-strategy-cities">🇮🇪 더블린 · 🇮🇪 골웨이 · 🇩🇰 코펜 · 🇳🇴 베르겐 · 🇮🇸 레이캬비크 · 🇲🇹 발레타</p>' +
       '</div>' +
       '<div class="stay-strategy-block">' +
         '<span class="stay-strategy-label gray">Long-Term (1 Month+)</span>' +
-        '<p class="stay-strategy-body" style="margin-bottom:6px">' + linkText('Flatio') + ' · ' + linkText('Housing Anywhere') + ' · ' + linkText('Outsite') + '</p>' +
+        '<p class="stay-strategy-body" style="margin-bottom: var(--space-1-5)">' + linkText('Flatio') + ' · ' + linkText('Housing Anywhere') + ' · ' + linkText('Outsite') + '</p>' +
         '<p class="stay-strategy-cities">🇵🇹 포르투 · 🇦🇺 호바트 · 🇦🇺 애들레이드 · 🇦🇺 멜버른 · 🇳🇿 NZ · 🇺🇸 샌디에이고 · 🇨🇦 핼리팩스</p>' +
       '</div>' +
     '</div>';
@@ -2416,95 +2416,95 @@ window.NOMAD_PAGES = (function(){
     // ── CSS ──
     html += '<style>' +
       '#nomad-content .ne-wrap{background:#ffffff;padding:0 0 64px;max-width:1280px;margin:0 auto}' +
-      '#nomad-content .ne-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;display:inline-block;border-left:2px solid var(--nm-primary);padding-left:14px;margin-bottom:24px}' +
-      '#nomad-content .ne-hero{display:grid;grid-template-columns:1fr 260px;gap:32px;align-items:end;margin-bottom:56px}' +
+      '#nomad-content .ne-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;letter-spacing:0.2em;color:var(--nm-primary);text-transform:uppercase;display:inline-block;border-left:2px solid var(--nm-primary);padding-left: var(--space-3-5);margin-bottom: var(--space-6)}' +
+      '#nomad-content .ne-hero{display:grid;grid-template-columns:1fr 260px;gap: var(--space-8);align-items:end;margin-bottom:56px}' +
       '@media (max-width:960px){#nomad-content .ne-hero{grid-template-columns:1fr}}' +
       '#nomad-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 16px}' +
       '#nomad-content .ne-lede{font-size: var(--font-size-body-sm);line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
       '#nomad-content .ne-hero-image{aspect-ratio:16/10;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%);border:1px solid #e5e7eb;position:relative;overflow:hidden}' +
       '#nomad-content .ne-hero-image::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18) 0%,transparent 60%)}' +
       '#nomad-content .ne-hero-image .icon{position:absolute;bottom:18px;left:18px;color:rgba(255,255,255,0.85);font-size:40px !important}' +
-      '#nomad-content .ne-hero-image .badge{position:absolute;top:24px;right:24px;color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(255,255,255,0.14);backdrop-filter:blur(6px);padding:6px 12px;border:1px solid rgba(255,255,255,0.22)}' +
+      '#nomad-content .ne-hero-image .badge{position:absolute;top:24px;right:24px;color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(255,255,255,0.14);backdrop-filter:blur(6px);padding: var(--space-1-5) var(--space-3);border:1px solid rgba(255,255,255,0.22)}' +
       '#nomad-content .ne-overlay{position:absolute;inset:0;background:rgba(124,58,237,0.06);mix-blend-mode:multiply}' +
       '#nomad-content .ne-sections{display:flex;flex-direction:column;gap:56px}' +
-      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding-bottom:14px;margin-bottom:24px;gap:16px;flex-wrap:wrap}' +
+      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding-bottom: var(--space-3-5);margin-bottom: var(--space-6);gap: var(--space-4);flex-wrap:wrap}' +
       '#nomad-content .ne-section-h{font-family:var(--nm-font-h);font-size:clamp(16px,2vw,22px);font-weight:600;letter-spacing:-0.005em;color:#141b2b;margin:0;line-height:1.2}' +
       '#nomad-content .ne-section-meta{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase}' +
-      '#nomad-content .ne-grid12{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}' +
+      '#nomad-content .ne-grid12{display:grid;grid-template-columns:repeat(12,1fr);gap: var(--space-6)}' +
       '#nomad-content .ne-col-8{grid-column:span 8}' +
       '#nomad-content .ne-col-6{grid-column:span 6}' +
       '#nomad-content .ne-col-12{grid-column:span 12}' +
       '@media (max-width:960px){#nomad-content .ne-col-8,#nomad-content .ne-col-6{grid-column:span 12}}' +
-      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding:22px;background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
+      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding: var(--space-5-5);background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
       '#nomad-content .ne-card:hover{border-color:rgba(124,58,237,0.3)}' +
       '#nomad-content .ne-grid-equal{align-items:stretch}' +
       '#nomad-content .ne-grid-equal > [class*="ne-col-"]{display:flex;flex-direction:column}' +
       '#nomad-content .ne-grid-equal .ne-card{flex:1}' +
-      '#nomad-content .ne-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}' +
-      '#nomad-content .ne-card-title-row{display:flex;align-items:center;gap:12px}' +
+      '#nomad-content .ne-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-5);gap: var(--space-3)}' +
+      '#nomad-content .ne-card-title-row{display:flex;align-items:center;gap: var(--space-3)}' +
       '#nomad-content .ne-card-title-row .material-symbols-outlined{color:var(--nm-primary);transition:transform 0.15s}' +
       '#nomad-content .ne-card:hover .ne-card-title-row .material-symbols-outlined{transform:scale(1.1)}' +
       '#nomad-content .ne-card-title{font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:600;color:#141b2b;margin:0}' +
-      '#nomad-content .ne-chip{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(124,58,237,0.1);color:var(--nm-primary);padding:4px 10px;text-transform:uppercase;white-space:nowrap}' +
+      '#nomad-content .ne-chip{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(124,58,237,0.1);color:var(--nm-primary);padding: var(--space-1) var(--space-2-5);text-transform:uppercase;white-space:nowrap}' +
       '#nomad-content .ne-card-body{font-size: var(--font-size-body);line-height:1.65;color:#4a4455;margin:0 0 24px;flex:1}' +
       '#nomad-content .ne-card-body strong{color:#141b2b;font-weight:600}' +
-      '#nomad-content .ne-card-tags{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px;border-top:1px solid #e5e7eb}' +
-      '#nomad-content .ne-card-tag{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.12em;color:#4a4455;background:#f5f5f7;padding:4px 10px;text-transform:uppercase}' +
+      '#nomad-content .ne-card-tags{display:flex;flex-wrap:wrap;gap: var(--space-2);padding-top: var(--space-4);border-top:1px solid #e5e7eb}' +
+      '#nomad-content .ne-card-tag{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.12em;color:#4a4455;background:#f5f5f7;padding: var(--space-1) var(--space-2-5);text-transform:uppercase}' +
       '#nomad-content .ne-card-tag.outline{background:#fff;border:1px solid #e5e7eb}' +
-      '#nomad-content .ne-sub-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}' +
-      '#nomad-content .ne-sub-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:24px}' +
-      '#nomad-content .ne-sub-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}' +
+      '#nomad-content .ne-sub-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap: var(--space-6);margin-top: var(--space-6)}' +
+      '#nomad-content .ne-sub-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap: var(--space-6);margin-top: var(--space-6)}' +
+      '#nomad-content .ne-sub-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap: var(--space-4)}' +
       '@media (max-width:760px){#nomad-content .ne-sub-grid3,#nomad-content .ne-sub-grid2{grid-template-columns:1fr}#nomad-content .ne-sub-grid4{grid-template-columns:repeat(2,1fr)}}' +
-      '#nomad-content .ne-sub-card{border:1px solid #e5e7eb;padding:24px;background:#fff;transition:background 0.15s}' +
+      '#nomad-content .ne-sub-card{border:1px solid #e5e7eb;padding: var(--space-6);background:#fff;transition:background 0.15s}' +
       '#nomad-content .ne-sub-card:hover{background:#fafafa}' +
-      '#nomad-content .ne-sub-label{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase;display:block;margin-bottom:8px;opacity:0.7}' +
+      '#nomad-content .ne-sub-label{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase;display:block;margin-bottom: var(--space-2);opacity:0.7}' +
       '#nomad-content .ne-sub-name{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 6px;display:block}' +
-      '#nomad-content .ne-sub-desc{font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.55;margin:6px 0 0}' +
-      '#nomad-content .ne-aviation{background:var(--nm-primary);color:#fff;padding:28px;position:relative;overflow:hidden}' +
+      '#nomad-content .ne-sub-desc{font-size: var(--font-size-body-sm);color:#4a4455;line-height:1.55;margin: var(--space-1-5) 0 0}' +
+      '#nomad-content .ne-aviation{background:var(--nm-primary);color:#fff;padding: var(--space-7);position:relative;overflow:hidden}' +
       '#nomad-content .ne-aviation::after{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:#fff;opacity:0.06;border-radius:50%;filter:blur(30px)}' +
       '#nomad-content .ne-aviation > *{position:relative;z-index:1}' +
-      '#nomad-content .ne-aviation .material-symbols-outlined{color:#fff !important;font-size: var(--font-size-h1-lg);margin-bottom:14px;display:block}' +
+      '#nomad-content .ne-aviation .material-symbols-outlined{color:#fff !important;font-size: var(--font-size-h1-lg);margin-bottom: var(--space-3-5);display:block}' +
       '#nomad-content .ne-aviation h4{font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:500;color:#fff;margin:0 0 20px}' +
       '#nomad-content .ne-aviation .row{padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.2)}' +
       '#nomad-content .ne-aviation .row:last-child{border-bottom:none}' +
-      '#nomad-content .ne-aviation .row-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:6px}' +
+      '#nomad-content .ne-aviation .row-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom: var(--space-1-5)}' +
       '#nomad-content .ne-aviation .row-val{font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:500;color:#fff;display:block}' +
-      '#nomad-content .ne-aviation .nuri{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.18);font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.85);line-height:1.6}' +
+      '#nomad-content .ne-aviation .nuri{margin-top: var(--space-6);padding-top: var(--space-5);border-top:1px solid rgba(255,255,255,0.18);font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.85);line-height:1.6}' +
       '#nomad-content .ne-aviation .nuri strong{color:#fff;font-weight:600}' +
-      '#nomad-content .ne-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}' +
+      '#nomad-content .ne-tools{display:grid;grid-template-columns:repeat(4,1fr);gap: var(--space-4)}' +
       '@media (max-width:960px){#nomad-content .ne-tools{grid-template-columns:repeat(2,1fr)}}' +
       '@media (max-width:560px){#nomad-content .ne-tools{grid-template-columns:1fr}}' +
-      '#nomad-content .ne-tool{padding:24px;border:1px solid #e5e7eb;display:flex;flex-direction:column;justify-content:space-between;gap:24px;transition:background 0.15s,color 0.15s;min-height:120px}' +
+      '#nomad-content .ne-tool{padding: var(--space-6);border:1px solid #e5e7eb;display:flex;flex-direction:column;justify-content:space-between;gap: var(--space-6);transition:background 0.15s,color 0.15s;min-height:120px}' +
       '#nomad-content .ne-tool:hover{background:var(--nm-primary);color:#fff}' +
       '#nomad-content .ne-tool:hover .ne-tool-name,#nomad-content .ne-tool:hover .ne-tool-cat{color:#fff}' +
       '#nomad-content .ne-tool-name{font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:500;color:#141b2b;margin:0}' +
       '#nomad-content .ne-tool-cat{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase;opacity:0.6}' +
       '#nomad-content .ne-tool-desc{font-size: var(--font-size-meta);line-height:1.5;color:#4a4455;margin:0}' +
       '#nomad-content .ne-tool:hover .ne-tool-desc{color:rgba(255,255,255,0.85)}' +
-      '#nomad-content .ne-list{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap:12px}' +
-      '#nomad-content .ne-list-row{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;background:#fafafa;border:1px solid #e5e7eb;transition:background 0.15s}' +
+      '#nomad-content .ne-list{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap: var(--space-3)}' +
+      '#nomad-content .ne-list-row{display:flex;justify-content:space-between;align-items:center;padding: var(--space-4-5) var(--space-5);background:#fafafa;border:1px solid #e5e7eb;transition:background 0.15s}' +
       '#nomad-content .ne-list-row:hover{background:#fff;border-color:rgba(124,58,237,0.3)}' +
       '#nomad-content .ne-list-row .name{font-size: var(--font-size-body-lg);font-weight:500;color:#141b2b}' +
       '#nomad-content .ne-list-row .meta{font-size: var(--font-size-meta);color:#4a4455}' +
       '#nomad-content .ne-list-row .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}' +
-      '#nomad-content .ne-callout{margin-top:14px;padding:14px 16px;background:rgba(124,58,237,0.06);border-left:3px solid var(--nm-primary);font-size: var(--font-size-body-sm);color:#141b2b;line-height:1.6}' +
+      '#nomad-content .ne-callout{margin-top: var(--space-3-5);padding: var(--space-3-5) var(--space-4);background:rgba(124,58,237,0.06);border-left:3px solid var(--nm-primary);font-size: var(--font-size-body-sm);color:#141b2b;line-height:1.6}' +
       '#nomad-content .ne-callout strong{color:#141b2b}' +
-      '#nomad-content .ne-callout-warn{margin-top:14px;padding:14px 16px;background:rgba(186,26,26,0.05);border-left:3px solid #ba1a1a;font-size: var(--font-size-body-sm);color:#141b2b;line-height:1.6}' +
-      '#nomad-content .ne-numlist{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap:12px;counter-reset:nri}' +
+      '#nomad-content .ne-callout-warn{margin-top: var(--space-3-5);padding: var(--space-3-5) var(--space-4);background:rgba(186,26,26,0.05);border-left:3px solid #ba1a1a;font-size: var(--font-size-body-sm);color:#141b2b;line-height:1.6}' +
+      '#nomad-content .ne-numlist{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap: var(--space-3);counter-reset:nri}' +
       '#nomad-content .ne-numlist li{counter-increment:nri;padding-left:34px;position:relative;font-size: var(--font-size-body);color:#4a4455;line-height:1.65}' +
       '#nomad-content .ne-numlist li::before{content:counter(nri,decimal-leading-zero);position:absolute;left:0;top:0;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);letter-spacing:0.05em}' +
       '#nomad-content .ne-numlist li strong{color:#141b2b;font-weight:600}' +
       '#nomad-content .ne-prio{margin-top:96px;background:#141b2b;color:#fff;padding:56px 48px;position:relative;overflow:hidden}' +
       '#nomad-content .ne-prio::after{content:"";position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:var(--nm-primary);opacity:0.22;filter:blur(70px);border-radius:50%}' +
-      '#nomad-content .ne-prio-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.22em;color:#d2bbff;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1}' +
+      '#nomad-content .ne-prio-eyebrow{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.22em;color:#d2bbff;text-transform:uppercase;margin-bottom: var(--space-3-5);position:relative;z-index:1}' +
       '#nomad-content .ne-prio-h{font-family:var(--nm-font-h);font-size:clamp(32px,4vw,48px);font-weight:600;color:#fff;line-height:1.05;margin:0 0 36px;position:relative;z-index:1}' +
-      '#nomad-content .ne-prio-list{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px}' +
-      '#nomad-content .ne-prio-item{display:grid;grid-template-columns:64px 1fr auto;gap:20px;align-items:center;padding:20px 24px;background:rgba(255,255,255,0.05);border-left:3px solid #d2bbff}' +
+      '#nomad-content .ne-prio-list{position:relative;z-index:1;display:flex;flex-direction:column;gap: var(--space-3-5)}' +
+      '#nomad-content .ne-prio-item{display:grid;grid-template-columns:64px 1fr auto;gap: var(--space-5);align-items:center;padding: var(--space-5) var(--space-6);background:rgba(255,255,255,0.05);border-left:3px solid #d2bbff}' +
       '#nomad-content .ne-prio-item .num{font-family:var(--nm-font-h);font-size: var(--font-size-display-lg);font-weight:600;color:#d2bbff;line-height:1;letter-spacing:-0.01em}' +
       '#nomad-content .ne-prio-item .tool{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#fff;margin:0}' +
-      '#nomad-content .ne-prio-item .why{font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.7);margin:4px 0 0;line-height:1.5}' +
+      '#nomad-content .ne-prio-item .why{font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.7);margin: var(--space-1) 0 0;line-height:1.5}' +
       '#nomad-content .ne-prio-item .tag{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#d2bbff;text-transform:uppercase;white-space:nowrap}' +
-      '#nomad-content .ne-prio-foot{margin-top:28px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.15);font-size: var(--font-size-body);color:rgba(255,255,255,0.78);line-height:1.65;position:relative;z-index:1}' +
+      '#nomad-content .ne-prio-foot{margin-top: var(--space-7);padding-top: var(--space-5-5);border-top:1px solid rgba(255,255,255,0.15);font-size: var(--font-size-body);color:rgba(255,255,255,0.78);line-height:1.65;position:relative;z-index:1}' +
       '#nomad-content .ne-prio-foot strong{color:#fff;font-weight:600}' +
     '</style>';
 
@@ -2526,7 +2526,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">payments</span><h4 class="ne-card-title">' + neTitleLink('Wise') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left:4px">(구 TransferWise)</span></h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">payments</span><h4 class="ne-card-title">' + neTitleLink('Wise') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left: var(--space-1)">(구 TransferWise)</span></h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body">다중 통화 계좌 (USD·EUR·GBP·AUD·NZD·CAD 등 다 보유). 환전 = <strong>진짜 시장 환율</strong> — 한국 은행보다 2-4% 싸짐. 1년 노마드 = <strong>Wise 안 쓰면 환전 손실 ₩200-400만 차이</strong>. 누리 = 출국 6개월 전 (2027.12) 미리 만들기 + 유로·달러 미리 사두기.</p>' +
@@ -2625,7 +2625,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-12">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">wifi</span><h4 class="ne-card-title">' + neTitleLink('Airalo') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left:4px">(eSIM)</span></h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">wifi</span><h4 class="ne-card-title">' + neTitleLink('Airalo') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left: var(--space-1)">(eSIM)</span></h4></div>' +
         '<span class="ne-chip">⭐ 1순위</span>' +
       '</div>' +
       '<p class="ne-card-body"><strong>200+ 국가 커버.</strong> 도착 즉시 데이터 연결 (Wi-Fi 못 찾아 헤맬 일 X). 국가별 패키지: <strong>유럽 30일 €15-25, 호주 30일 $25</strong>. 누리 = 한국 SKT/KT/LG 로밍 절대 X (한 달 ₩20-50만 무지막지함). eSIM 필수.</p>' +
@@ -2706,7 +2706,7 @@ window.NOMAD_PAGES = (function(){
         ? '<a href="' + url + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">' + t.name + ' <span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm);vertical-align:-1px;opacity:0.5">open_in_new</span></a>'
         : t.name;
       html += '<div class="ne-tool">' +
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap: var(--space-2)">' +
           '<span class="ne-tool-name">' + nameHTML + '</span>' +
           '<span class="ne-tool-cat">' + t.cat + '</span>' +
         '</div>' +
@@ -2726,7 +2726,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card" style="background:rgba(124,58,237,0.05);border-color:rgba(124,58,237,0.2)">' +
       '<div class="ne-card-head">' +
-        '<div class="ne-card-title-row"><span class="material-symbols-outlined">vpn_key</span><h4 class="ne-card-title">' + neTitleLink('NordVPN') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left:8px">또는 ' + neTitleLink('ProtonVPN') + '</span></h4></div>' +
+        '<div class="ne-card-title-row"><span class="material-symbols-outlined">vpn_key</span><h4 class="ne-card-title">' + neTitleLink('NordVPN') + ' <span style="font-family:Inter;font-size: var(--font-size-micro);font-weight:500;color:#5d5d67;margin-left: var(--space-2)">또는 ' + neTitleLink('ProtonVPN') + '</span></h4></div>' +
         '<span class="ne-chip">⭐ 무조건</span>' +
       '</div>' +
       '<p class="ne-card-body">$3-5/월 · 카페 Wi-Fi 보안 (해킹·도난 방지) + 한국 사이트 접속 (포스타입·은행) — 일부 한국 사이트는 한국 IP만 허용. <strong>누리 = 포스타입 작가 활동 = 한국 IP 필요한 순간 있음.</strong></p>' +
@@ -2807,7 +2807,7 @@ window.NOMAD_PAGES = (function(){
       '<p class="ne-sub-desc">네이버 카페 · 한국인 정보 + 비자 후기 풍부.</p>' +
     '</div>';
     html += '</div>';
-    html += '<div class="ne-callout" style="margin-top:20px"><strong>누리한테 직접 짚을 거:</strong> 분석가 N IP가 자라면, 누리 자체가 한국 노마드 커뮤니티의 자산이 됨. 1년 노마드 콘텐츠 = 다음 노마드 지망자들이 보러 오는 자산. <strong>흡수만 X · 줄 수 있는 입장 의식</strong>.</div>';
+    html += '<div class="ne-callout" style="margin-top: var(--space-5)"><strong>누리한테 직접 짚을 거:</strong> 분석가 N IP가 자라면, 누리 자체가 한국 노마드 커뮤니티의 자산이 됨. 1년 노마드 콘텐츠 = 다음 노마드 지망자들이 보러 오는 자산. <strong>흡수만 X · 줄 수 있는 입장 의식</strong>.</div>';
     html += '</div>';
     html += '</div>';
     html += '</div>';
@@ -2909,7 +2909,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="ne-col-6">';
     html += '<div class="ne-card">' +
       '<div class="ne-card-head"><div class="ne-card-title-row"><span class="material-symbols-outlined">luggage</span><h4 class="ne-card-title">노마드 표준 짐</h4></div></div>' +
-      '<ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:10px">' +
+      '<ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap: var(--space-2-5)">' +
         '<li style="font-size: var(--font-size-body);color:#4a4455;line-height:1.55">• <strong style="color:#141b2b">캐리어 1 (28인치) + 백팩 1</strong> (작업용 · 가벼움)</li>' +
         '<li style="font-size: var(--font-size-body);color:#4a4455;line-height:1.55">• 옷 = 미니멀 · <strong style="color:#141b2b">10일치 × 워시 가능</strong></li>' +
         '<li style="font-size: var(--font-size-body);color:#4a4455;line-height:1.55">• 누리 패딩 = <strong style="color:#141b2b">진공 압축팩</strong> 사용</li>' +
@@ -2996,33 +2996,33 @@ window.NOMAD_PAGES = (function(){
       '거점 + 위성 · 일 70 / 관광 30 · 회복 인정');
 
     // ════════ SECTION 1 · Manifesto Hero (deep-indigo bg, Stitch 카드 풀 확장) ════════
-    html += '<div class="nm-card" style="padding:48px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;margin-bottom:32px">';
+    html += '<div class="nm-card" style="padding: var(--space-12);background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;margin-bottom: var(--space-8)">';
     // blur deco circle
     html += '<div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:var(--nm-primary);opacity:0.18;border-radius:50%;filter:blur(60px)"></div>';
     html += '<div style="position:absolute;bottom:-40px;left:-40px;width:180px;height:180px;background:#fbbf24;opacity:0.12;border-radius:50%;filter:blur(50px)"></div>';
 
     html += '<div style="position:relative;z-index:1">';
     // 헤더
-    html += '<div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:36px">' +
+    html += '<div style="display:flex;align-items:flex-start;gap: var(--space-4-5);margin-bottom:36px">' +
       '<div style="width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
         '<span class="material-symbols-outlined" style="font-size:30px;color:#eaddff">precision_manufacturing</span>' +
       '</div>' +
       '<div>' +
-        '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px">Operating Principles</h2>' +
+        '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:800;color:#fff;line-height:1.15;margin-bottom: var(--space-1-5)">Operating Principles</h2>' +
         '<p style="font-size: var(--font-size-micro);color:#d2bbff;text-transform:uppercase;letter-spacing:0.18em;font-weight:700">The Efficiency Manifesto</p>' +
       '</div>' +
     '</div>';
 
     // 70 / 30 split
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:36px">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap: var(--space-8);margin-bottom:36px">';
 
     // 70 · Deep Work
-    html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.05);border-radius:14px;border-left:3px solid #eaddff">' +
+    html += '<div style="display:flex;gap: var(--space-5);padding: var(--space-6);background:rgba(255,255,255,0.05);border-radius:14px;border-left:3px solid #eaddff">' +
       '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:#eaddff;line-height:1;flex-shrink:0">70</div>' +
       '<div>' +
-        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom:8px">Deep Work Focus</p>' +
-        '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.85);line-height:1.6;margin-bottom:10px">평일 오전 4시간 글 블록 + 수요일 코딩 풀데이. 모든 외부 입력 차단.</p>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom: var(--space-2)">Deep Work Focus</p>' +
+        '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.85);line-height:1.6;margin-bottom: var(--space-2-5)">평일 오전 4시간 글 블록 + 수요일 코딩 풀데이. 모든 외부 입력 차단.</p>' +
+        '<div style="display:flex;gap: var(--space-1-5);flex-wrap:wrap">' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.15);color:#eaddff;padding:3px 9px;border-radius:99px">Writing Block</span>' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.15);color:#eaddff;padding:3px 9px;border-radius:99px">Coding Day</span>' +
         '</div>' +
@@ -3030,12 +3030,12 @@ window.NOMAD_PAGES = (function(){
     '</div>';
 
     // 30 · Travel & Synthesis
-    html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.03);border-radius:14px;border-left:3px solid rgba(234,221,255,0.45)">' +
+    html += '<div style="display:flex;gap: var(--space-5);padding: var(--space-6);background:rgba(255,255,255,0.03);border-radius:14px;border-left:3px solid rgba(234,221,255,0.45)">' +
       '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:rgba(234,221,255,0.55);line-height:1;flex-shrink:0">30</div>' +
       '<div>' +
-        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom:8px">Travel &amp; Synthesis</p>' +
-        '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.7);line-height:1.6;margin-bottom:10px">오후 현지 체험 + 주말 위성 + 이동일 회복. 외부 입력 → 글감 변환.</p>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom: var(--space-2)">Travel &amp; Synthesis</p>' +
+        '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.7);line-height:1.6;margin-bottom: var(--space-2-5)">오후 현지 체험 + 주말 위성 + 이동일 회복. 외부 입력 → 글감 변환.</p>' +
+        '<div style="display:flex;gap: var(--space-1-5);flex-wrap:wrap">' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.08);color:rgba(234,221,255,0.85);padding:3px 9px;border-radius:99px">Field Research</span>' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.08);color:rgba(234,221,255,0.85);padding:3px 9px;border-radius:99px">Recovery</span>' +
         '</div>' +
@@ -3045,7 +3045,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // 하단 인용구
-    html += '<div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:24px;display:flex;align-items:flex-start;gap:12px">' +
+    html += '<div style="border-top:1px solid rgba(255,255,255,0.1);padding-top: var(--space-6);display:flex;align-items:flex-start;gap: var(--space-3)">' +
       '<span class="material-symbols-outlined" style="color:#d2bbff;font-size: var(--font-size-h1);margin-top:-2px">format_quote</span>' +
       '<p style="font-size: var(--font-size-body);font-style:italic;color:rgba(255,255,255,0.85);line-height:1.6;font-family:Inter">거점은 회로의 닻 · 위성은 영감의 산소. 이동은 글감이지, 일과가 아니다.</p>' +
     '</div>';
@@ -3054,20 +3054,20 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // ════════ SECTION 2 · 8/4 split — 도시별 일 비중 + 거점+위성 모델 ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // ───── LEFT (8): 도시별 작업 비중 시각화 ─────
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-6);flex-wrap:wrap;gap: var(--space-3)">' +
       '<div>' +
-        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">도시별 작업 비중</h4>' +
+        '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1)">도시별 작업 비중</h4>' +
         '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2)">14개 도시 · 일 비중 70%+ = Focus / 50-70 = Mixed / 50- = Recovery</p>' +
       '</div>' +
-      '<div style="background:#F5F3FF;color:var(--nm-primary);padding:8px 16px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700">평균 ≈ ' + avgRatio + '%</div>' +
+      '<div style="background:#F5F3FF;color:var(--nm-primary);padding: var(--space-2) var(--space-4);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700">평균 ≈ ' + avgRatio + '%</div>' +
     '</div>';
 
     // 14 도시 가로 bar
-    html += '<div style="display:flex;flex-direction:column;gap:10px;position:relative">';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-2-5);position:relative">';
     workRatio.forEach(function(r) {
       var color, bgColor;
       if (r.pct >= 70)      { color = 'var(--nm-primary)';   bgColor = '#F5F3FF'; }
@@ -3075,7 +3075,7 @@ window.NOMAD_PAGES = (function(){
       else                  { color = '#c2410c';             bgColor = '#fff7ed'; }
       html += '<div class="nm-principles-bar-row">';
       // 도시 라벨
-      html += '<div style="display:flex;align-items:center;gap:8px">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="nm-emoji" style="font-size: var(--font-size-h3);line-height:1">' + r.flag + '</span>' +
         '<div>' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + r.period + '</p>' +
@@ -3097,13 +3097,13 @@ window.NOMAD_PAGES = (function(){
 
     // ───── RIGHT (4): 거점 + 위성 모델 ─────
     html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">hub</span>' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-deep-indigo)">거점 + 위성 모델</h4>' +
     '</div>';
 
     // SVG 다이어그램
-    html += '<div style="background:linear-gradient(135deg,#F5F3FF,#e6eeff);border-radius:12px;padding:24px;margin-bottom:18px;display:flex;justify-content:center">';
+    html += '<div style="background:linear-gradient(135deg,#F5F3FF,#e6eeff);border-radius:12px;padding: var(--space-6);margin-bottom: var(--space-4-5);display:flex;justify-content:center">';
     html += '<svg viewBox="0 0 200 160" style="width:100%;max-width:220px;height:auto">' +
       // 연결선 (dashed)
       '<line x1="100" y1="80" x2="40" y2="30" stroke="var(--nm-primary)" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.5"/>' +
@@ -3133,9 +3133,9 @@ window.NOMAD_PAGES = (function(){
       { icon:'explore',   label:'거점 안에서', value:'1-3박 위성' },
       { icon:'do_not_disturb_on', label:'이동 = 회복일', value:'매일 옮기지 X' },
     ];
-    html += '<div style="display:flex;flex-direction:column;gap:10px">';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-2-5)">';
     hubItems.forEach(function(h) {
-      html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--nm-surface-container-low);border-radius:8px">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-3);padding: var(--space-2-5) var(--space-3);background:var(--nm-surface-container-low);border-radius:8px">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">' + h.icon + '</span>' +
         '<div style="flex:1">' +
           '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3)">' + h.label + '</p>' +
@@ -3150,52 +3150,52 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /8-4 split
 
     // ════════ SECTION 3 · 시간 구조 (full-width 3 카드) ════════
-    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom: var(--space-8)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-1-5)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">schedule</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">시간 구조 · 일 70 / 관광 30</h3>' +
     '</div>';
-    html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-bottom:24px">한 주 안에서 일·관광·회복 3 모드 분리. 블록 사수가 핵심.</p>';
+    html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-bottom: var(--space-6)">한 주 안에서 일·관광·회복 3 모드 분리. 블록 사수가 핵심.</p>';
 
-    html += '<div class="nm-grid nm-grid-3" style="gap:18px">';
+    html += '<div class="nm-grid nm-grid-3" style="gap: var(--space-4-5)">';
 
     // 평일
-    html += '<div style="padding:24px;border-radius:12px;background:#F5F3FF;border-top:3px solid var(--nm-primary)">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+    html += '<div style="padding: var(--space-6);border-radius:12px;background:#F5F3FF;border-top:3px solid var(--nm-primary)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg);color:var(--nm-primary)">calendar_today</span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-primary)">평일 (월-금)</h4>' +
       '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px">' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">09-13시</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-top:2px">글 작업 4시간 (블록 사수)</p></div>' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">13-14시</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top:2px">점심</p></div>' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">14-17시</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top:2px">현지 체험 · 카페 · 박물관 · 사람 만남</p></div>' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">저녁</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top:2px">운동 + 휴식</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap: var(--space-2-5)">' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">09-13시</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-top: var(--space-0-5)">글 작업 4시간 (블록 사수)</p></div>' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">13-14시</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top: var(--space-0-5)">점심</p></div>' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">14-17시</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top: var(--space-0-5)">현지 체험 · 카페 · 박물관 · 사람 만남</p></div>' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">저녁</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top: var(--space-0-5)">운동 + 휴식</p></div>' +
       '</div>' +
     '</div>';
 
     // 수요일 코딩
-    html += '<div style="padding:24px;border-radius:12px;background:#e6eeff;border-top:3px solid var(--nm-secondary)">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+    html += '<div style="padding: var(--space-6);border-radius:12px;background:#e6eeff;border-top:3px solid var(--nm-secondary)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg);color:var(--nm-secondary)">code</span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-secondary)">수요일 = 코딩 풀데이</h4>' +
       '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px">' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">오전·오후</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-top:2px">8시간 코딩</p></div>' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">목표</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top:2px">IP 도구 + 디지털 제품 개발</p></div>' +
-        '<div style="margin-top:8px;padding:10px;background:rgba(86,84,168,0.1);border-radius:8px"><p style="font-size: var(--font-size-micro);color:var(--nm-secondary);font-weight:600;line-height:1.5">주 1일 · 분석가 N IP 트랙 가속</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap: var(--space-2-5)">' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">오전·오후</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-top: var(--space-0-5)">8시간 코딩</p></div>' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">목표</p><p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);margin-top: var(--space-0-5)">IP 도구 + 디지털 제품 개발</p></div>' +
+        '<div style="margin-top: var(--space-2);padding: var(--space-2-5);background:rgba(86,84,168,0.1);border-radius:8px"><p style="font-size: var(--font-size-micro);color:var(--nm-secondary);font-weight:600;line-height:1.5">주 1일 · 분석가 N IP 트랙 가속</p></div>' +
       '</div>' +
     '</div>';
 
     // 주말
-    html += '<div style="padding:24px;border-radius:12px;background:#ffe0cd;border-top:3px solid #7d3d00">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+    html += '<div style="padding: var(--space-6);border-radius:12px;background:#ffe0cd;border-top:3px solid #7d3d00">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg);color:#7d3d00">weekend</span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:#7d3d00">주말</h4>' +
       '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px">' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">토요일</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#5a2900;margin-top:2px">위성 여행 또는 깊은 휴식</p></div>' +
-        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">일요일</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#5a2900;margin-top:2px">휴식 + 다음 주 계획</p></div>' +
-        '<div style="margin-top:8px;padding:10px;background:rgba(125,61,0,0.1);border-radius:8px"><p style="font-size: var(--font-size-micro);color:#7d3d00;font-weight:600;line-height:1.5">관광 = 일 X · 충전 우선</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap: var(--space-2-5)">' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">토요일</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#5a2900;margin-top: var(--space-0-5)">위성 여행 또는 깊은 휴식</p></div>' +
+        '<div><p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">일요일</p><p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#5a2900;margin-top: var(--space-0-5)">휴식 + 다음 주 계획</p></div>' +
+        '<div style="margin-top: var(--space-2);padding: var(--space-2-5);background:rgba(125,61,0,0.1);border-radius:8px"><p style="font-size: var(--font-size-micro);color:#7d3d00;font-weight:600;line-height:1.5">관광 = 일 X · 충전 우선</p></div>' +
       '</div>' +
     '</div>';
 
@@ -3203,15 +3203,15 @@ window.NOMAD_PAGES = (function(){
     html += '</section>';
 
     // ════════ SECTION 4 · 6/6 split — 산출량 + 이동일 ════════
-    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-6);margin-bottom: var(--space-8)">';
 
     // 산출량
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">edit_note</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">산출량 · 주 단위 관리</h3>' +
     '</div>';
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap: var(--space-3)">';
     var outputItems = [
       { label:'글 초안',      value:'주 2-3편', note:'월 8-12편',   icon:'edit',         color:'var(--nm-primary)' },
       { label:'코딩 풀데이',  value:'주 1회',   note:'월 4-5회',    icon:'code',         color:'var(--nm-secondary)' },
@@ -3219,13 +3219,13 @@ window.NOMAD_PAGES = (function(){
       { label:'디지털 제품',  value:'분기',    note:'큰 단위 출시', icon:'inventory_2', color:'#15803d' },
     ];
     outputItems.forEach(function(o) {
-      html += '<div style="padding:16px;border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid ' + o.color + '">' +
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+      html += '<div style="padding: var(--space-4);border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid ' + o.color + '">' +
+        '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2)">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:' + o.color + '">' + o.icon + '</span>' +
           '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600">' + o.label + '</p>' +
         '</div>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-deep-indigo);line-height:1.2">' + o.value + '</p>' +
-        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);margin-top:4px">' + o.note + '</p>' +
+        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);margin-top: var(--space-1)">' + o.note + '</p>' +
       '</div>';
     });
     html += '</div>';
@@ -3235,20 +3235,20 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#fff7ed,#ffe0cd);position:relative;overflow:hidden">';
     html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:#7d3d00;opacity:0.08;border-radius:50%;filter:blur(30px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       '<span class="material-symbols-outlined" style="color:#7d3d00">flight</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#5a2900">이동일 = 버리는 날</h3>' +
     '</div>';
-    html += '<div style="font-family:var(--nm-font-h);font-size:42px;font-weight:800;color:#7d3d00;line-height:1;margin-bottom:8px">월 1-2일</div>';
-    html += '<p style="font-size: var(--font-size-meta);color:#5a2900;font-weight:600;margin-bottom:20px">자연스러운 회복일 · 죄책감 없이 인정</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:10px">';
+    html += '<div style="font-family:var(--nm-font-h);font-size:42px;font-weight:800;color:#7d3d00;line-height:1;margin-bottom: var(--space-2)">월 1-2일</div>';
+    html += '<p style="font-size: var(--font-size-meta);color:#5a2900;font-weight:600;margin-bottom: var(--space-5)">자연스러운 회복일 · 죄책감 없이 인정</p>';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-2-5)">';
     var moveItems = [
       { icon:'flight_takeoff', text:'도시 → 도시 이동일 = 일 X, 관광 X' },
       { icon:'self_improvement', text:'회복일로 인정 (글·코딩 시도 X)' },
       { icon:'event_repeat', text:'한 달 1-2일 발생은 자연스러움' },
     ];
     moveItems.forEach(function(m) {
-      html += '<div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:rgba(255,255,255,0.6);border-radius:8px">' +
+      html += '<div style="display:flex;gap: var(--space-2-5);align-items:flex-start;padding: var(--space-2-5);background:rgba(255,255,255,0.6);border-radius:8px">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7d3d00;flex-shrink:0">' + m.icon + '</span>' +
         '<p style="font-size: var(--font-size-body-sm);color:#5a2900;line-height:1.5">' + m.text + '</p>' +
       '</div>';
@@ -3262,27 +3262,27 @@ window.NOMAD_PAGES = (function(){
     // ════════ SECTION 5 · 가족 연락 (full-width, lavender bg) ════════
     html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
     html += '<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--nm-primary);opacity:0.1;border-radius:50%;filter:blur(40px)"></div>';
-    html += '<div style="position:relative;z-index:1;display:flex;gap:32px;flex-wrap:wrap;align-items:center;justify-content:space-between">';
+    html += '<div style="position:relative;z-index:1;display:flex;gap: var(--space-8);flex-wrap:wrap;align-items:center;justify-content:space-between">';
 
     html += '<div style="flex:1;min-width:280px">';
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">family_restroom</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">가족 연락 룰</h3>' +
     '</div>';
-    html += '<div style="display:flex;flex-direction:column;gap:12px">';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-3)">';
     var familyItems = [
       { icon:'videocam',  title:'매주 화상통화 1회',    note:'엄마·아빠 · 요일 고정' },
       { icon:'chat',      title:'매일 짧은 메신저',     note:'인증샷 위주 · 부담 X' },
       { icon:'event_available', title:'엄마 합류 시기 공유', note:'2028.9 스칸디 / 12 호바트 / 2029.3 NZ' },
     ];
     familyItems.forEach(function(f) {
-      html += '<div style="display:flex;gap:12px;align-items:flex-start">' +
+      html += '<div style="display:flex;gap: var(--space-3);align-items:flex-start">' +
         '<div style="width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">' + f.icon + '</span>' +
         '</div>' +
         '<div>' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-on-surface)">' + f.title + '</p>' +
-          '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);margin-top:2px">' + f.note + '</p>' +
+          '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);margin-top: var(--space-0-5)">' + f.note + '</p>' +
         '</div>' +
       '</div>';
     });
@@ -3290,7 +3290,7 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // 버튼 → Voyage 이동
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="padding:14px 24px;background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;gap:8px;flex-shrink:0" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="padding: var(--space-3-5) var(--space-6);background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;gap: var(--space-2);flex-shrink:0" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">explore</span>' +
       '엄마 합류 시기 후보 보기' +
     '</button>';
@@ -3409,19 +3409,19 @@ window.NOMAD_PAGES = (function(){
     var total = groups.reduce(function(a,g){ return a + (g.items||[]).length; }, 0);
     var done = 0;
     var html = '<div class="nm-card nm-checklist-wrap" data-key="' + storageKey + '">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary)">fact_check</span>' +
       '<h3 class="nm-headline-md">' + title + '</h3>' +
     '</div>';
     // 진행률
-    html += '<div class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom:6px"></div>';
-    html += '<div style="height:6px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom:24px">' +
+    html += '<div class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom: var(--space-1-5)"></div>';
+    html += '<div style="height:6px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom: var(--space-6)">' +
       '<div class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:0%;transition:width 0.2s"></div>' +
     '</div>';
     groups.forEach(function(group, gi) {
       var groupName = group.cat || group.when || ('Group ' + gi);
-      html += '<div style="margin-bottom:20px">';
-      html += '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;padding:6px 0;border-bottom:1px solid #f1f5f9">' + groupName + '</div>';
+      html += '<div style="margin-bottom: var(--space-5)">';
+      html += '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom: var(--space-1-5);padding: var(--space-1-5) 0;border-bottom:1px solid #f1f5f9">' + groupName + '</div>';
       html += '<ul class="nm-checklist">';
       (group.items || []).forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
@@ -3437,8 +3437,8 @@ window.NOMAD_PAGES = (function(){
     });
     // 초기 진행률 채우기 (script 즉시 실행)
     var pct = total > 0 ? Math.round((done/total) * 100) : 0;
-    html = html.replace('class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom:6px"></div>',
-      'class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom:6px"><span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span></div>');
+    html = html.replace('class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom: var(--space-1-5)"></div>',
+      'class="nm-check-progress-label" style="display:flex;justify-content:space-between;font-size: var(--font-size-meta);color:var(--nm-text-3);margin-bottom: var(--space-1-5)"><span>' + done + ' / ' + total + ' 완료</span><span>' + pct + '%</span></div>');
     html = html.replace('class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:0%;transition:width 0.2s"',
       'class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:' + pct + '%;transition:width 0.2s"');
     html += '</div>';
@@ -3479,10 +3479,10 @@ window.NOMAD_PAGES = (function(){
     var icon = visaDocsCatIcon(group.cat);
     var gridSpan = isFullWidth ? 'grid-column:1 / -1;' : '';
 
-    var html = '<section class="nm-card nm-checklist-wrap" data-key="' + storageKey + '" style="padding:28px;' + gridSpan + '">';
+    var html = '<section class="nm-card nm-checklist-wrap" data-key="' + storageKey + '" style="padding: var(--space-7);' + gridSpan + '">';
     // 헤더: lavender circle 아이콘 + 카테고리 + 진행률
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">';
-    html += '<div style="display:flex;align-items:center;gap:12px">' +
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom: var(--space-4-5)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-3)">' +
       '<div style="width:40px;height:40px;border-radius:50%;background:#F5F3FF;display:flex;align-items:center;justify-content:center;color:var(--nm-primary);flex-shrink:0">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h1)">' + icon + '</span>' +
       '</div>' +
@@ -3493,21 +3493,21 @@ window.NOMAD_PAGES = (function(){
 
     // (per-card 진행률 라벨 + 바 — _updateChecklistProgress가 자동 업데이트)
     html += '<div class="nm-check-progress-label" style="display:none"></div>';
-    html += '<div style="height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom:18px">' +
+    html += '<div style="height:4px;background:var(--nm-surface-container);border-radius:99px;overflow:hidden;margin-bottom: var(--space-4-5)">' +
       '<div class="nm-check-progress-bar" style="height:100%;background:var(--nm-primary);width:' + pct + '%;transition:width 0.2s"></div>' +
     '</div>';
 
     // 백업 카테고리: 특수 레이아웃 (Cloud Sync Status + 체크박스 2-col)
     if (isFullWidth && group.cat.indexOf('백업') >= 0) {
-      html += '<div style="display:grid;grid-template-columns:1fr 2fr;gap:18px">';
+      html += '<div style="display:grid;grid-template-columns:1fr 2fr;gap: var(--space-4-5)">';
       // 왼쪽: Cloud Sync Status 점선 카드
-      html += '<div style="padding:24px;background:var(--nm-surface-container-low);border-radius:14px;border:2px dashed var(--nm-on-surface-variant);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">' +
-        '<span class="material-symbols-outlined" style="font-size: var(--font-size-display-2xl);color:var(--nm-primary);margin-bottom:8px">upload_file</span>' +
-        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">Cloud Sync Status</p>' +
+      html += '<div style="padding: var(--space-6);background:var(--nm-surface-container-low);border-radius:14px;border:2px dashed var(--nm-on-surface-variant);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">' +
+        '<span class="material-symbols-outlined" style="font-size: var(--font-size-display-2xl);color:var(--nm-primary);margin-bottom: var(--space-2)">upload_file</span>' +
+        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1)">Cloud Sync Status</p>' +
         '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);line-height:1.5">Google Drive · Naver · USB 다중 백업 권장</p>' +
       '</div>';
       // 오른쪽: 체크박스 리스트
-      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">';
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-1-5)">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
@@ -3520,7 +3520,7 @@ window.NOMAD_PAGES = (function(){
       html += '</div>';
     } else {
       // 일반 카테고리: 단일 컬럼 체크박스 리스트
-      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">';
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-1-5)">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
@@ -3562,7 +3562,7 @@ window.NOMAD_PAGES = (function(){
       '셰겐 84/90일 한도 안 · 워홀 베이스캠프 · 25개 서류 체크');
 
     // ════════ SECTION 1 · Bento Header (8/4 split) ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // ───── LEFT (8): Current Status · Readiness ─────
     html += '<div class="nm-card nm-readiness-global" data-key="visa_docs" data-total="' + totalAll + '" style="padding:36px;background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
@@ -3571,23 +3571,23 @@ window.NOMAD_PAGES = (function(){
       '<span class="material-symbols-outlined" style="font-size:200px;color:var(--nm-primary)">article</span>' +
     '</div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px">Current Status</p>';
+    html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.12em;margin-bottom: var(--space-2-5)">Current Status</p>';
     // 큰 Readiness %
-    html += '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:baseline;gap: var(--space-2-5);margin-bottom: var(--space-4-5)">' +
       '<h2 class="nm-readiness-pct" style="font-family:var(--nm-font-h);font-size:52px;font-weight:800;color:var(--nm-deep-indigo);line-height:1">' + readinessPct + '%</h2>' +
       '<span style="font-size: var(--font-size-body);color:var(--nm-text-2);font-weight:600">Readiness</span>' +
     '</div>';
     // progress bar
-    html += '<div style="height:6px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden;margin-bottom:20px;max-width:480px">' +
+    html += '<div style="height:6px;background:rgba(255,255,255,0.5);border-radius:99px;overflow:hidden;margin-bottom: var(--space-5);max-width:480px">' +
       '<div class="nm-readiness-bar" style="height:100%;width:' + readinessPct + '%;background:var(--nm-primary);border-radius:99px;transition:width 0.3s"></div>' +
     '</div>';
     // pill 2개
-    html += '<div style="display:flex;gap:10px;flex-wrap:wrap">';
-    html += '<span style="background:#fff;color:var(--nm-deep-indigo);padding:8px 16px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
+    html += '<div style="display:flex;gap: var(--space-2-5);flex-wrap:wrap">';
+    html += '<span style="background:#fff;color:var(--nm-deep-indigo);padding: var(--space-2) var(--space-4);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;display:flex;align-items:center;gap: var(--space-1-5);box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:#15803d">check_circle</span>' +
       '<span class="nm-readiness-done">' + doneAll + ' Completed</span>' +
     '</span>';
-    html += '<span style="background:#fff;color:#b91c1c;padding:8px 16px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
+    html += '<span style="background:#fff;color:#b91c1c;padding: var(--space-2) var(--space-4);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-meta);font-weight:700;display:flex;align-items:center;gap: var(--space-1-5);box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">warning</span>' +
       '<span class="nm-readiness-pending">' + pending + ' Pending</span>' +
     '</span>';
@@ -3599,16 +3599,16 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-card" style="padding:36px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between">';
     html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:var(--nm-primary);opacity:0.18;border-radius:50%;filter:blur(30px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:#d2bbff;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px">Next Critical Step</p>';
-    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:#fff;margin-bottom:6px">여권 · 6개월 룰</h3>';
-    html += '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.85);margin-bottom:14px;line-height:1.5">출국 시 만료 6개월 이상 필수 · 2029.12 이후</p>';
-    html += '<div style="display:flex;align-items:baseline;gap:6px">' +
+    html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:#d2bbff;text-transform:uppercase;letter-spacing:0.12em;margin-bottom: var(--space-2-5)">Next Critical Step</p>';
+    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:#fff;margin-bottom: var(--space-1-5)">여권 · 6개월 룰</h3>';
+    html += '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.85);margin-bottom: var(--space-3-5);line-height:1.5">출국 시 만료 6개월 이상 필수 · 2029.12 이후</p>';
+    html += '<div style="display:flex;align-items:baseline;gap: var(--space-1-5)">' +
       '<span style="font-family:var(--nm-font-h);font-size:34px;font-weight:800;color:#eaddff;line-height:1">' + dDayDisplay + '</span>' +
       '<span style="font-size: var(--font-size-micro);color:rgba(234,221,255,0.7)">until departure</span>' +
     '</div>';
     html += '</div>';
     // 버튼 → Actions
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="position:relative;z-index:1;margin-top:24px;width:100%;padding:14px;background:var(--nm-soft-accent);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter 0.15s" onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'none\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="position:relative;z-index:1;margin-top: var(--space-6);width:100%;padding: var(--space-3-5);background:var(--nm-soft-accent);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap: var(--space-2);transition:filter 0.15s" onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'none\'">' +
       'Action Items 보기' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">arrow_forward</span>' +
     '</button>';
@@ -3617,28 +3617,28 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /Bento Header
 
     // ════════ SECTION 2 · 1년 동선 비자 종합 (Visa Map · 카드 grid) ════════
-    html += '<section class="nm-section" style="margin-bottom:32px">';
+    html += '<section class="nm-section" style="margin-bottom: var(--space-8)">';
     html += '<div class="nm-section-head">' +
-      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap:8px">' +
+      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">flight_takeoff</span>' +
         'Visa Map · 1년 동선 비자 종합' +
       '</h3>' +
       '<span class="nm-label-sm" style="color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em">7 영역</span>' +
     '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap: var(--space-4)">';
     DATA.VISA_LIST.forEach(function(v) {
       var flag = visaCountryFlag(v.country);
-      html += '<div class="nm-card" style="padding:22px;transition:transform 0.15s,box-shadow 0.15s;cursor:default" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 20px rgba(124,58,237,0.1)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">';
+      html += '<div class="nm-card" style="padding: var(--space-5-5);transition:transform 0.15s,box-shadow 0.15s;cursor:default" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 20px rgba(124,58,237,0.1)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">';
       // 상단: 국기 + visa type pill
-      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-3-5)">' +
         '<span style="font-size: var(--font-size-display-2xl);line-height:1">' + flag + '</span>' +
         '<span style="padding:5px 11px;border-radius:99px;font-size: var(--font-size-tiny);font-weight:700;font-family:var(--nm-font-h);' + visaPillClass(v.type) + '">' + v.type + '</span>' +
       '</div>';
       // 국가명 + 체류
-      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px;line-height:1.3">' + v.country + '</h4>';
-      html += '<p style="font-size: var(--font-size-meta);color:var(--nm-primary);font-weight:600;margin-bottom:14px">체류 ' + v.stay + '</p>';
+      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1);line-height:1.3">' + v.country + '</h4>';
+      html += '<p style="font-size: var(--font-size-meta);color:var(--nm-primary);font-weight:600;margin-bottom: var(--space-3-5)">체류 ' + v.stay + '</p>';
       // 신청 시점
-      html += '<div style="display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;margin-bottom:10px">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);padding: var(--space-2) 0;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;margin-bottom: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:var(--nm-text-3)">calendar_today</span>' +
         '<span style="font-size: var(--font-size-micro);color:var(--nm-text-2);font-weight:600">' + v.when + '</span>' +
       '</div>';
@@ -3652,7 +3652,7 @@ window.NOMAD_PAGES = (function(){
     // ════════ SECTION 3 · 출국 전 서류 체크리스트 (Asymmetric 2-col + 백업 full) ════════
     html += '<section class="nm-section">';
     html += '<div class="nm-section-head">' +
-      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap:8px">' +
+      '<h3 class="nm-headline-md" style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">fact_check</span>' +
         '출국 전 서류 체크리스트' +
       '</h3>' +
@@ -3660,7 +3660,7 @@ window.NOMAD_PAGES = (function(){
     '</div>';
 
     // 2-col grid (백업은 col-span-2)
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap: var(--space-5)">';
     visaDocs.forEach(function(g, gi) {
       var isFullWidth = (g.cat.indexOf('백업') >= 0);
       html += buildVisaCategoryCard('visa_docs', g, gi, isFullWidth);
@@ -3713,23 +3713,23 @@ window.NOMAD_PAGES = (function(){
     html += pageHeader('Working Holiday', '포르투갈 워킹홀리데이 · Visto de Residência',
       '1년 베이스캠프 비자 — 셰겐 카운트 회피 + 복수 입출국 + 노마드 거점 확보');
     // 누리 자격 inline pill (헤더 아래)
-    html += '<div style="margin-bottom:32px"><div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#F5F3FF;color:var(--nm-primary);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700">' +
+    html += '<div style="margin-bottom: var(--space-8)"><div style="display:inline-flex;align-items:center;gap: var(--space-2);padding: var(--space-2) var(--space-4);background:#F5F3FF;color:var(--nm-primary);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:#15803d">check_circle</span>' +
       '누리 1995.11.2생 · 2028.6 출국 시 만 32세 · 자격 OK' +
     '</div></div>';
 
     // ════════ SECTION 2 · 8/4 split — Visa Overview + Quick Facts ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="margin-bottom: var(--space-8)">';
 
     // LEFT: Visa Overview
     html += '<div class="nm-card nm-card-lg" style="display:flex;flex-direction:column;justify-content:space-between">';
     html += '<div>';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom: var(--space-6)">' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">Visa Overview</h4>' +
       '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 12px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.06em">ACTIVE TRACK</span>' +
     '</div>';
     // 3 metric inline
-    html += '<div class="nm-grid nm-grid-3" style="gap:20px">';
+    html += '<div class="nm-grid nm-grid-3" style="gap: var(--space-5)">';
     var overviewMetrics = [
       { label:'Duration',  value:'1년',     sub:'Non-renewable' },
       { label:'Entry',     value:'Multiple', sub:'복수사증 · 셰겐 액세스' },
@@ -3737,15 +3737,15 @@ window.NOMAD_PAGES = (function(){
     ];
     overviewMetrics.forEach(function(m) {
       html += '<div>' +
-        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em">' + m.label + '</p>' +
+        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);font-weight:600;margin-bottom: var(--space-1);text-transform:uppercase;letter-spacing:0.06em">' + m.label + '</p>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:var(--nm-deep-indigo)">' + m.value + '</p>' +
-        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:2px">' + m.sub + '</p>' +
+        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-0-5)">' + m.sub + '</p>' +
       '</div>';
     });
     html += '</div>';
     html += '</div>';
     // 하단 info card
-    html += '<div style="margin-top:32px;padding:18px 20px;background:#F5F3FF;border-radius:12px;display:flex;align-items:flex-start;gap:14px">' +
+    html += '<div style="margin-top: var(--space-8);padding: var(--space-4-5) var(--space-5);background:#F5F3FF;border-radius:12px;display:flex;align-items:flex-start;gap: var(--space-3-5)">' +
       '<div style="width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">info</span>' +
       '</div>' +
@@ -3758,23 +3758,23 @@ window.NOMAD_PAGES = (function(){
     html += '<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(40px)"></div>';
     html += '<div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:space-between">';
     html += '<div>';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-6)">' +
       '<span class="material-symbols-outlined" style="color:#eaddff">flag</span>' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#fff">Quick Facts</h4>' +
     '</div>';
     // 큰 숫자 200
-    html += '<div style="text-align:center;padding:14px 0 20px">' +
+    html += '<div style="text-align:center;padding: var(--space-3-5) 0 20px">' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:#eaddff;line-height:1">200</p>' +
-      '<p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;font-weight:700">annual quota · 한·포 협정</p>' +
+      '<p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);text-transform:uppercase;letter-spacing:0.12em;margin-top: var(--space-1);font-weight:700">annual quota · 한·포 협정</p>' +
     '</div>';
     // 추가 stats
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.1)">';
-    html += '<div style="text-align:center"><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:#fff">€90</p><p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);margin-top:2px">비자 수수료</p></div>';
-    html += '<div style="text-align:center"><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:#fff">18-34</p><p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);margin-top:2px">자격 연령</p></div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap: var(--space-3);padding-top: var(--space-4-5);border-top:1px solid rgba(255,255,255,0.1)">';
+    html += '<div style="text-align:center"><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:#fff">€90</p><p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);margin-top: var(--space-0-5)">비자 수수료</p></div>';
+    html += '<div style="text-align:center"><p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:#fff">18-34</p><p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);margin-top: var(--space-0-5)">자격 연령</p></div>';
     html += '</div>';
     html += '</div>';
     // 버튼
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-visa\')" style="margin-top:24px;width:100%;padding:12px;background:#fff;color:var(--nm-deep-indigo);border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.background=\'#eaddff\'" onmouseout="this.style.background=\'#fff\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-visa\')" style="margin-top: var(--space-6);width:100%;padding: var(--space-3);background:#fff;color:var(--nm-deep-indigo);border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap: var(--space-2)" onmouseover="this.style.background=\'#eaddff\'" onmouseout="this.style.background=\'#fff\'">' +
       '전체 비자 종합 보기' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">arrow_forward</span>' +
     '</button>';
@@ -3784,18 +3784,18 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /Visa Overview + Quick Facts
 
     // ════════ SECTION 3 · Basic Info (7 metric grid full-width) ════════
-    html += '<section class="nm-card nm-card-lg" style="margin-bottom:32px">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">' +
-      '<div style="display:flex;align-items:center;gap:10px">' +
+    html += '<section class="nm-card nm-card-lg" style="margin-bottom: var(--space-8)">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom: var(--space-6)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">info</span>' +
         '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">Basic Info</h3>' +
       '</div>' +
       '<span style="font-size: var(--font-size-micro);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:600">한·포르투갈 협정 · 7 항목</span>' +
     '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap: var(--space-3-5)">';
     basicInfo.forEach(function(b) {
-      html += '<div style="padding:18px;border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid var(--nm-primary)">';
-      html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+      html += '<div style="padding: var(--space-4-5);border-radius:10px;background:var(--nm-surface-container-low);border-left:3px solid var(--nm-primary)">';
+      html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:var(--nm-primary)">' + b.icon + '</span>' +
         '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">' + b.label + '</p>' +
       '</div>';
@@ -3806,27 +3806,27 @@ window.NOMAD_PAGES = (function(){
     html += '</section>';
 
     // ════════ SECTION 4 · 6/6 split — Required Documentation + Phased Strategy ════════
-    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-6);margin-bottom: var(--space-8)">';
 
     // LEFT: Required Documentation
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-5)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">description</span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">Required Documentation</h4>' +
       '</div>' +
       '<span style="background:#F5F3FF;color:var(--nm-primary);padding:5px 11px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700">9 docs</span>' +
     '</div>';
-    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">';
+    html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-2)">';
     requiredDocs.forEach(function(d) {
-      html += '<li style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:10px;border:1px solid transparent;transition:all 0.15s;cursor:default" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.transform=\'translateX(3px)\'" onmouseout="this.style.background=\'var(--nm-surface-container-low)\';this.style.borderColor=\'transparent\';this.style.transform=\'none\'">';
-      html += '<div style="display:flex;gap:12px;flex:1;min-width:0">' +
+      html += '<li style="display:flex;align-items:flex-start;justify-content:space-between;gap: var(--space-3);padding: var(--space-3-5) var(--space-4);background:var(--nm-surface-container-low);border-radius:10px;border:1px solid transparent;transition:all 0.15s;cursor:default" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.transform=\'translateX(3px)\'" onmouseout="this.style.background=\'var(--nm-surface-container-low)\';this.style.borderColor=\'transparent\';this.style.transform=\'none\'">';
+      html += '<div style="display:flex;gap: var(--space-3);flex:1;min-width:0">' +
         '<div style="width:30px;height:30px;border-radius:7px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:var(--nm-primary)">description</span>' +
         '</div>' +
         '<div style="flex:1;min-width:0">' +
           '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface);line-height:1.3">' + d.name + '</p>' +
-          '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:2px">' + d.from + ' · ' + d.note + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-0-5)">' + d.from + ' · ' + d.note + '</p>' +
         '</div>' +
       '</div>';
       html += '</li>';
@@ -3836,8 +3836,8 @@ window.NOMAD_PAGES = (function(){
 
     // RIGHT: Phased Strategy
     html += '<div class="nm-card nm-card-lg">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-6)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         '<span class="material-symbols-outlined" style="color:var(--nm-primary)">timeline</span>' +
         '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-on-surface)">Phased Strategy</h4>' +
       '</div>' +
@@ -3850,14 +3850,14 @@ window.NOMAD_PAGES = (function(){
       var isLast = (i === processSteps.length - 1);
       var stepBg = s.isFinal ? 'var(--nm-deep-indigo)' : 'var(--nm-primary)';
       var stepIcon = s.isFinal ? 'check_circle' : '';
-      html += '<div style="position:relative;padding-left:48px;' + (isLast ? '' : 'padding-bottom:18px') + '">';
+      html += '<div style="position:relative;padding-left: var(--space-12);' + (isLast ? '' : 'padding-bottom: var(--space-4-5)') + '">';
       html += '<div style="position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:' + stepBg + ';color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;box-shadow:0 0 0 4px #fff,0 0 0 5px ' + stepBg + '">';
       if (stepIcon) html += '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">' + stepIcon + '</span>';
       else html += s.num;
       html += '</div>';
-      html += '<div style="padding-top:4px">';
-      html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">' + s.when + ' · ' + s.stage + '</p>';
-      html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">' + s.title + '</p>';
+      html += '<div style="padding-top: var(--space-1)">';
+      html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom: var(--space-1)">' + s.when + ' · ' + s.stage + '</p>';
+      html += '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1)">' + s.title + '</p>';
       html += '<p style="font-size: var(--font-size-meta);color:var(--nm-text-2);line-height:1.5">' + s.text + '</p>';
       html += '</div>';
       html += '</div>';
@@ -3870,10 +3870,10 @@ window.NOMAD_PAGES = (function(){
     // ════════ SECTION 5 · Strategic Advice (full-width, 1/3 + 2/3) ════════
     html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#F5F3FF,#e2dfff);position:relative;overflow:hidden">';
     html += '<div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:var(--nm-primary);opacity:0.1;border-radius:50%;filter:blur(50px)"></div>';
-    html += '<div style="position:relative;z-index:1;display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 2fr);gap:32px;align-items:flex-start">';
+    html += '<div style="position:relative;z-index:1;display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 2fr);gap: var(--space-8);align-items:flex-start">';
 
     // LEFT (1/3): 그라데이션 hero (포르투 톤)
-    html += '<div style="background:linear-gradient(135deg,#7C3AED 0%,#a78bfa 50%,#fbbf24 100%);border-radius:14px;min-height:220px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:20px;box-shadow:0 8px 24px rgba(124,58,237,0.2)">';
+    html += '<div style="background:linear-gradient(135deg,#7C3AED 0%,#a78bfa 50%,#fbbf24 100%);border-radius:14px;min-height:220px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding: var(--space-5);box-shadow:0 8px 24px rgba(124,58,237,0.2)">';
     // 작은 deco 별
     html += '<svg viewBox="0 0 200 180" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;opacity:0.25">' +
       '<circle cx="40" cy="40" r="2" fill="#fff"/>' +
@@ -3885,18 +3885,18 @@ window.NOMAD_PAGES = (function(){
       '<circle cx="100" cy="150" r="2" fill="#fff"/>' +
     '</svg>';
     html += '<div style="position:relative;z-index:1">' +
-      '<div style="font-size:42px;line-height:1;margin-bottom:12px">🇵🇹</div>' +
-      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">리스본 워홀 베이스</span>' +
+      '<div style="font-size:42px;line-height:1;margin-bottom: var(--space-3)">🇵🇹</div>' +
+      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">리스본 워홀 베이스</span>' +
     '</div>';
     html += '</div>';
 
     // RIGHT (2/3): Nomad Strategy
     html += '<div>';
-    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:18px">Nomad Strategy · Why Working Holiday?</h4>';
+    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2-lg);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-4-5)">Nomad Strategy · Why Working Holiday?</h4>';
     // 2-col 인사이트
-    html += '<div class="nm-grid nm-grid-2" style="gap:18px;margin-bottom:18px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-4-5);margin-bottom: var(--space-4-5)">';
     html += '<div>' +
-      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">1년 베이스캠프 활용</h5>' +
+      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-primary);margin-bottom: var(--space-2);text-transform:uppercase;letter-spacing:0.06em">1년 베이스캠프 활용</h5>' +
       '<ul style="list-style:none;padding:0;margin:0;font-size: var(--font-size-meta);color:var(--nm-text-2);line-height:1.7">' +
         '<li>· 포르투갈 체류 = 1년 중 <strong>2-2.5개월</strong> (6월 + 10-11월)</li>' +
         '<li>· 셰겐 카운트 회피용 베이스</li>' +
@@ -3904,7 +3904,7 @@ window.NOMAD_PAGES = (function(){
       '</ul>' +
     '</div>';
     html += '<div>' +
-      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">일자리 X · 비자 도구</h5>' +
+      '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-primary);margin-bottom: var(--space-2);text-transform:uppercase;letter-spacing:0.06em">일자리 X · 비자 도구</h5>' +
       '<ul style="list-style:none;padding:0;margin:0;font-size: var(--font-size-meta);color:var(--nm-text-2);line-height:1.7">' +
         '<li>· 본업 외 IP·웹소 수익이 메인</li>' +
         '<li>· 포르투갈에서 일자리 X</li>' +
@@ -3913,8 +3913,8 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '</div>';
     // 주의 박스
-    html += '<div style="padding:16px 18px;background:rgba(186,26,26,0.06);border-left:4px solid #ba1a1a;border-radius:10px;margin-bottom:18px">';
-    html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">' +
+    html += '<div style="padding: var(--space-4) var(--space-4-5);background:rgba(186,26,26,0.06);border-left:4px solid #ba1a1a;border-radius:10px;margin-bottom: var(--space-4-5)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2)">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:#ba1a1a">warning</span>' +
       '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#ba1a1a">주의 · Critical</h5>' +
     '</div>';
@@ -3925,7 +3925,7 @@ window.NOMAD_PAGES = (function(){
     '</ul>';
     html += '</div>';
     // 버튼
-    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="display:flex;align-items:center;gap:8px;padding:12px 22px;background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
+    html += '<button onclick="NOMAD_PAGES.go(\'nomad-voyage\')" style="display:flex;align-items:center;gap: var(--space-2);padding: var(--space-3) var(--space-5-5);background:var(--nm-deep-indigo);color:#fff;border:none;border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">' +
       '12-Month Voyage 동선 보기' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">arrow_forward</span>' +
     '</button>';
@@ -4024,7 +4024,7 @@ window.NOMAD_PAGES = (function(){
       '이번 주부터 출국까지 · ' + totalAll + ' 항목 · 체크해가며 진행');
 
     // ════════ SECTION 1 · Summary Stats (4 metric, border-l-4) ════════
-    html += '<div class="nm-grid nm-grid-4" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-4" style="margin-bottom: var(--space-8)">';
     var stats = [
       { label:'Active Tasks',       value:active,    color:'#7C3AED', sub:'진행 중' },
       { label:'Critical Deadlines', value:critActive,color:'#ba1a1a', sub:'이번 주·달 + 2028.5-6' },
@@ -4032,16 +4032,16 @@ window.NOMAD_PAGES = (function(){
       { label:'Total Forecast',     value:totalAll,  color:'#7b7487', sub:'9 시기 통합' },
     ];
     stats.forEach(function(s) {
-      html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding:22px;border-left:4px solid ' + s.color + '">' +
-        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:8px">' + s.label + '</p>' +
+      html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding: var(--space-5-5);border-left:4px solid ' + s.color + '">' +
+        '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom: var(--space-2)">' + s.label + '</p>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-display-lg);font-weight:800;color:' + s.color + ';line-height:1">' + String(s.value).padStart(2, '0') + '</p>' +
-        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px">' + s.sub + '</p>' +
+        '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5)">' + s.sub + '</p>' +
       '</div>';
     });
     html += '</div>';
 
     // ════════ SECTION 2 · 8/4 Asymmetric Layout ════════
-    html += '<div class="nm-grid nm-grid-2-1" style="gap:24px">';
+    html += '<div class="nm-grid nm-grid-2-1" style="gap: var(--space-6)">';
 
     // ───── LEFT (8): Period Timeline ─────
     html += '<div style="display:flex;flex-direction:column;gap:36px">';
@@ -4055,12 +4055,12 @@ window.NOMAD_PAGES = (function(){
       html += '<section class="nm-checklist-wrap" data-key="actions" style="position:relative">';
 
       // 헤더: 좌측 큰 원형 아이콘 + period name + 진행률
-      html += '<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">';
+      html += '<div style="display:flex;align-items:center;gap: var(--space-4);margin-bottom: var(--space-5)">';
       html += '<div style="width:44px;height:44px;border-radius:50%;background:' + meta.color + ';color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px ' + meta.color + '40">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h1)">' + meta.icon + '</span>' +
       '</div>';
       html += '<div style="flex:1;min-width:0">';
-      html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-2);flex-wrap:wrap;margin-bottom: var(--space-1)">' +
         '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">' + period.when + '</h3>' +
         '<span style="background:rgba(124,58,237,0.08);color:var(--nm-text-3);padding:3px 9px;border-radius:99px;font-size: var(--font-size-tiny);font-weight:700;font-family:var(--nm-font-h)">Phase ' + meta.phase + '</span>' +
       '</div>';
@@ -4073,13 +4073,13 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="display:none"><div class="nm-check-progress-bar"></div></div>';
 
       // task cards
-      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;margin-left:60px">';
+      html += '<ul class="nm-checklist" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-2);margin-left:60px">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
-        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="actions:' + itemKey + '" onclick="_nomadToggleCheck(\'actions\', \'' + itemKey + '\')" style="cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px 18px;background:#fff;border:1px solid var(--nm-surface-container);border-radius:10px;transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.boxShadow=\'0 2px 8px rgba(124,58,237,0.08)\'" onmouseout="this.style.borderColor=\'var(--nm-surface-container)\';this.style.boxShadow=\'none\'">';
-        html += '<div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0">' +
-          '<span class="nm-checkbox" style="flex-shrink:0;margin-top:2px"></span>' +
+        html += '<li class="' + (isChecked ? 'is-checked' : '') + '" data-key="actions:' + itemKey + '" onclick="_nomadToggleCheck(\'actions\', \'' + itemKey + '\')" style="cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap: var(--space-3-5);padding: var(--space-3-5) var(--space-4-5);background:#fff;border:1px solid var(--nm-surface-container);border-radius:10px;transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.boxShadow=\'0 2px 8px rgba(124,58,237,0.08)\'" onmouseout="this.style.borderColor=\'var(--nm-surface-container)\';this.style.boxShadow=\'none\'">';
+        html += '<div style="display:flex;align-items:flex-start;gap: var(--space-3);flex:1;min-width:0">' +
+          '<span class="nm-checkbox" style="flex-shrink:0;margin-top: var(--space-0-5)"></span>' +
           '<span style="font-size: var(--font-size-body-sm);color:var(--nm-on-surface);line-height:1.5;font-weight:500">' + item + '</span>' +
         '</div>';
         // 우측 priority pill
@@ -4093,34 +4093,34 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /LEFT period timeline
 
     // ───── RIGHT (4): 사이드바 3 카드 ─────
-    html += '<aside style="display:flex;flex-direction:column;gap:20px">';
+    html += '<aside style="display:flex;flex-direction:column;gap: var(--space-5)">';
 
     // ① Voyage Readiness (deep-indigo)
-    html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding:28px;background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden">';
+    html += '<div class="nm-card nm-readiness-global" data-key="actions" data-total="' + totalAll + '" style="padding: var(--space-7);background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden">';
     html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(30px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px">' +
+    html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:#fff;margin-bottom: var(--space-4-5);display:flex;align-items:center;gap: var(--space-2)">' +
       '<span class="material-symbols-outlined" style="color:#eaddff">trending_up</span>' +
       'Voyage Readiness' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom: var(--space-2-5)">' +
       '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:#eaddff;text-transform:uppercase;letter-spacing:0.08em">전체 진행률</span>' +
       '<span class="nm-readiness-pct" style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:800;color:#fff">' + readinessPct + '%</span>' +
     '</div>';
-    html += '<div style="height:8px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;margin-bottom:6px">' +
+    html += '<div style="height:8px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;margin-bottom: var(--space-1-5)">' +
       '<div class="nm-readiness-bar" style="height:100%;width:' + readinessPct + '%;background:#fff;border-radius:99px;transition:width 0.3s"></div>' +
     '</div>';
     html += '<p style="font-size: var(--font-size-micro);color:rgba(255,255,255,0.7)"><span class="nm-readiness-done">' + doneAll + ' Completed</span> · <span class="nm-readiness-pending">' + active + ' Pending</span></p>';
     // Phase별 sub-track
-    html += '<div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap:10px">';
+    html += '<div style="margin-top: var(--space-6);padding-top: var(--space-5);border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap: var(--space-2-5)">';
     Object.keys(phaseGroups).forEach(function(phId) {
       var phData = phaseGroups[phId];
       var prog = phaseProgress(phData.idx);
       var isCurrent = (phId === currentPhaseId);
       var isDone = prog.pct === 100;
       var icon = isDone ? 'check_circle' : (isCurrent ? 'radio_button_checked' : 'radio_button_unchecked');
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size: var(--font-size-meta)">' +
-        '<span style="display:flex;align-items:center;gap:8px;color:' + (isCurrent ? '#fff' : 'rgba(255,255,255,0.65)') + ';font-weight:' + (isCurrent ? '700' : '500') + ';font-family:var(--nm-font-h)">' +
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap: var(--space-2-5);font-size: var(--font-size-meta)">' +
+        '<span style="display:flex;align-items:center;gap: var(--space-2);color:' + (isCurrent ? '#fff' : 'rgba(255,255,255,0.65)') + ';font-weight:' + (isCurrent ? '700' : '500') + ';font-family:var(--nm-font-h)">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:' + (isDone ? '#22c55e' : (isCurrent ? '#eaddff' : 'rgba(255,255,255,0.4)')) + '">' + icon + '</span>' +
           'Phase ' + phId + ' · ' + phData.name +
         '</span>' +
@@ -4133,13 +4133,13 @@ window.NOMAD_PAGES = (function(){
 
     // ② Upcoming Critical Date (lavender)
     if (nextCriticalItem) {
-      html += '<div class="nm-card" style="padding:24px;background:#F5F3FF;border:1px solid var(--nm-primary-fixed)">';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
-        '<span style="background:#ba1a1a;color:#fff;padding:4px 10px;border-radius:6px;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:800;letter-spacing:0.1em;text-transform:uppercase">Critical</span>' +
+      html += '<div class="nm-card" style="padding: var(--space-6);background:#F5F3FF;border:1px solid var(--nm-primary-fixed)">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom: var(--space-3-5)">' +
+        '<span style="background:#ba1a1a;color:#fff;padding: var(--space-1) var(--space-2-5);border-radius:6px;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:800;letter-spacing:0.1em;text-transform:uppercase">Critical</span>' +
         '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size: var(--font-size-h2)">calendar_today</span>' +
       '</div>';
-      html += '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + nextCriticalPeriod.when + '</h5>';
-      html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5;margin-bottom:18px">다음 미완 액션: <strong style="color:var(--nm-deep-indigo)">' + nextCriticalItem + '</strong></p>';
+      html += '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-2)">' + nextCriticalPeriod.when + '</h5>';
+      html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5;margin-bottom: var(--space-4-5)">다음 미완 액션: <strong style="color:var(--nm-deep-indigo)">' + nextCriticalItem + '</strong></p>';
       html += '<button onclick="NOMAD_PAGES.go(\'nomad-visa\')" style="width:100%;padding:11px;background:#fff;color:var(--nm-primary);border:1px solid var(--nm-primary);border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background=\'var(--nm-primary)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'#fff\';this.style.color=\'var(--nm-primary)\'">' +
         'Visa 서류 보기' +
       '</button>';
@@ -4155,7 +4155,7 @@ window.NOMAD_PAGES = (function(){
     };
     var ph = phaseInfo[currentPhaseId] || phaseInfo['A'];
     html += '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="min-height:170px;background:' + ph.grad + ';position:relative;padding:24px;display:flex;flex-direction:column;justify-content:space-between">';
+    html += '<div style="min-height:170px;background:' + ph.grad + ';position:relative;padding: var(--space-6);display:flex;flex-direction:column;justify-content:space-between">';
     // 작은 별 deco
     html += '<svg viewBox="0 0 280 170" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.25">' +
       '<circle cx="40" cy="40" r="2" fill="#fff"/>' +
@@ -4167,11 +4167,11 @@ window.NOMAD_PAGES = (function(){
       '<circle cx="180" cy="140" r="2" fill="#fff"/>' +
     '</svg>';
     html += '<div style="position:relative;z-index:1;color:#fff">' +
-      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px">Current Phase</p>' +
+      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:0.12em;margin-bottom: var(--space-1-5)">Current Phase</p>' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:800">Phase ' + currentPhaseId + ' · ' + ph.name + '</h4>' +
     '</div>';
     html += '<div style="position:relative;z-index:1">' +
-      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">' + ph.sub + '</span>' +
+      '<span style="background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);color:var(--nm-deep-indigo);padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.15)">' + ph.sub + '</span>' +
     '</div>';
     html += '</div>';
     html += '</div>';
@@ -4241,14 +4241,14 @@ window.NOMAD_PAGES = (function(){
 
     html += '<div style="position:relative;z-index:1">';
     // 헤더
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">';
-    html += '<div style="display:flex;align-items:center;gap:12px">' +
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-4-5)">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-3)">' +
       '<div style="width:40px;height:40px;border-radius:11px;background:' + (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(124,58,237,0.1)') + ';display:flex;align-items:center;justify-content:center;color:' + meta.accent + ';flex-shrink:0">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h1)">' + meta.icon + '</span>' +
       '</div>' +
       '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:' + titleColor + '">' + group.cat + '</h4>' +
     '</div>';
-    html += '<span class="nm-check-count-inline" style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:' + subColor + ';padding:4px 10px;background:' + (isDark ? 'rgba(255,255,255,0.1)' : 'var(--nm-surface-container-low)') + ';border-radius:99px">' + done + ' / ' + total + '</span>';
+    html += '<span class="nm-check-count-inline" style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:' + subColor + ';padding: var(--space-1) var(--space-2-5);background:' + (isDark ? 'rgba(255,255,255,0.1)' : 'var(--nm-surface-container-low)') + ';border-radius:99px">' + done + ' / ' + total + '</span>';
     html += '</div>';
 
     // hidden progress (auto-update 호환)
@@ -4257,18 +4257,18 @@ window.NOMAD_PAGES = (function(){
 
     // 진행률 미니 bar
     var pct = total > 0 ? Math.round((done/total) * 100) : 0;
-    html += '<div style="height:3px;background:' + (isDark ? 'rgba(255,255,255,0.12)' : 'var(--nm-surface-container)') + ';border-radius:99px;overflow:hidden;margin-bottom:18px">' +
+    html += '<div style="height:3px;background:' + (isDark ? 'rgba(255,255,255,0.12)' : 'var(--nm-surface-container)') + ';border-radius:99px;overflow:hidden;margin-bottom: var(--space-4-5)">' +
       '<div class="nm-check-progress-bar" style="height:100%;background:' + (isDark ? '#fff' : 'var(--nm-primary)') + ';width:' + pct + '%;transition:width 0.2s"></div>' +
     '</div>';
 
     // 항목 리스트 (스타일에 따라 다름)
     if (isMini) {
       // mini 스타일: 작은 리스트 (check_circle 아이콘 + 짧은 텍스트)
-      html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">';
+      html += '<ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap: var(--space-2)">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
-        html += '<li class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">';
+        html += '<li class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap: var(--space-2-5);cursor:pointer;padding: var(--space-1-5) 0">';
         html += '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:' + (isChecked ? meta.accent : 'rgba(122,116,135,0.5)') + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + '">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
         html += '<span style="font-size: var(--font-size-body-sm);color:' + bodyColor + ';' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
         html += '</li>';
@@ -4276,11 +4276,11 @@ window.NOMAD_PAGES = (function(){
       html += '</ul>';
     } else if (isBanner) {
       // banner 스타일: 가로 grid (full-width)
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap: var(--space-2-5)">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
-        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:8px;border:1px solid transparent;transition:all 0.15s;background:var(--nm-surface-container-low)" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.background=\'#F5F3FF\'" onmouseout="this.style.borderColor=\'transparent\';this.style.background=\'var(--nm-surface-container-low)\'">';
+        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:center;gap: var(--space-2-5);cursor:pointer;padding: var(--space-2-5) var(--space-3);border-radius:8px;border:1px solid transparent;transition:all 0.15s;background:var(--nm-surface-container-low)" onmouseover="this.style.borderColor=\'var(--nm-primary-fixed)\';this.style.background=\'#F5F3FF\'" onmouseout="this.style.borderColor=\'transparent\';this.style.background=\'var(--nm-surface-container-low)\'">';
         html += '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:' + (isChecked ? meta.accent : 'rgba(122,116,135,0.4)') + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + ';flex-shrink:0">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
         html += '<span style="font-size: var(--font-size-meta);color:' + bodyColor + ';line-height:1.4;' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
         html += '</label>';
@@ -4289,11 +4289,11 @@ window.NOMAD_PAGES = (function(){
     } else {
       // normal/dark 스타일: 2-col 체크박스 grid
       var cols = items.length > 8 ? '1fr 1fr' : '1fr';
-      html += '<div style="display:grid;grid-template-columns:' + cols + ';gap:6px">';
+      html += '<div style="display:grid;grid-template-columns:' + cols + ';gap: var(--space-1-5)">';
       items.forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
         var isChecked = !!saved[itemKey];
-        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;border:1px solid transparent;transition:all 0.15s" onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'transparent\'">';
+        html += '<label class="nm-checklist" data-key="' + storageKey + ':' + itemKey + '" onclick="_nomadToggleCheck(\'' + storageKey + '\', \'' + itemKey + '\')" style="display:flex;align-items:flex-start;gap: var(--space-2-5);cursor:pointer;padding: var(--space-2) var(--space-2-5);border-radius:8px;border:1px solid transparent;transition:all 0.15s" onmouseover="this.style.background=\'' + hoverBg + '\'" onmouseout="this.style.background=\'transparent\'">';
         html += '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:' + (isChecked ? meta.accent : (isDark ? 'rgba(255,255,255,0.35)' : 'rgba(122,116,135,0.4)')) + ';font-variation-settings:\'FILL\' ' + (isChecked ? '1' : '0') + ';flex-shrink:0;margin-top:1px">' + (isChecked ? 'check_circle' : 'radio_button_unchecked') + '</span>';
         html += '<span style="font-size: var(--font-size-meta);color:' + bodyColor + ';line-height:1.45;' + (isChecked ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + item + '</span>';
         html += '</label>';
@@ -4348,41 +4348,41 @@ window.NOMAD_PAGES = (function(){
     // ════════ 통일된 페이지 헤더 + Status pill ════════
     html += pageHeader('Packing List', 'Master Packing List',
       '장기 노마드 정밀 인벤토리 · 캐리어 28인치 23kg + 백팩 8-10kg + 휴대 5kg');
-    html += '<div style="margin-bottom:32px;display:flex;justify-content:flex-end">' +
-      '<div style="background:#F5F3FF;padding:14px 20px;border-radius:12px;display:flex;align-items:center;gap:12px">' +
+    html += '<div style="margin-bottom: var(--space-8);display:flex;justify-content:flex-end">' +
+      '<div style="background:#F5F3FF;padding: var(--space-3-5) var(--space-5);border-radius:12px;display:flex;align-items:center;gap: var(--space-3)">' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-deep-indigo);text-transform:uppercase;letter-spacing:0.08em">Status</span>' +
-        '<span style="background:' + statusBg + ';color:' + statusColor + ';padding:6px 14px;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:800;letter-spacing:0.06em;text-transform:uppercase">' + statusLabel + '</span>' +
+        '<span style="background:' + statusBg + ';color:' + statusColor + ';padding: var(--space-1-5) var(--space-3-5);border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:800;letter-spacing:0.06em;text-transform:uppercase">' + statusLabel + '</span>' +
       '</div>' +
     '</div>';
 
     // ════════ SECTION 2 · 짐 철학 3 metric ════════
-    html += '<div class="nm-grid nm-grid-3" style="margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-3" style="margin-bottom: var(--space-8)">';
 
-    html += '<div class="nm-card" style="padding:24px;border-left:4px solid var(--nm-primary)">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+    html += '<div class="nm-card" style="padding: var(--space-6);border-left:4px solid var(--nm-primary)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">looks_3</span>' +
         '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">3-2-1 원칙</p>' +
       '</div>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">3계절 옷 · 2개 가방 · 1년치 짐</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px;line-height:1.5">미니멀 + 다용도 + 한 시즌 분량 최적화</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5);line-height:1.5">미니멀 + 다용도 + 한 시즌 분량 최적화</p>' +
     '</div>';
 
-    html += '<div class="nm-card" style="padding:24px;border-left:4px solid var(--nm-secondary)">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+    html += '<div class="nm-card" style="padding: var(--space-6);border-left:4px solid var(--nm-secondary)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-secondary)">scale</span>' +
         '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">무게 한도</p>' +
       '</div>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">23kg + 8-10kg + 5kg</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px;line-height:1.5">캐리어 · 백팩 · 개인 휴대 — 항공사 룰 준수</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5);line-height:1.5">캐리어 · 백팩 · 개인 휴대 — 항공사 룰 준수</p>' +
     '</div>';
 
-    html += '<div class="nm-card" style="padding:24px;border-left:4px solid #7d3d00">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+    html += '<div class="nm-card" style="padding: var(--space-6);border-left:4px solid #7d3d00">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7d3d00">design_services</span>' +
         '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700">누리 라인</p>' +
       '</div>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo);line-height:1.3">디자이너 안목 · 현지 보충</p>' +
-      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top:6px;line-height:1.5">옷·니트 = 본업 자산 / 책·기념품 = 현지 구매</p>' +
+      '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);margin-top: var(--space-1-5);line-height:1.5">옷·니트 = 본업 자산 / 책·기념품 = 현지 구매</p>' +
     '</div>';
 
     html += '</div>';
@@ -4395,13 +4395,13 @@ window.NOMAD_PAGES = (function(){
     html += '</div>';
 
     // ════════ SECTION 4 · 23kg 초과 + 한국 보관 (6/6 split) ════════
-    html += '<div class="nm-grid nm-grid-2" style="gap:24px;margin-bottom:32px">';
+    html += '<div class="nm-grid nm-grid-2" style="gap: var(--space-6);margin-bottom: var(--space-8)">';
 
     // LEFT: 23kg 초과 시 빼는 순서
     html += '<div class="nm-card nm-card-lg" style="background:linear-gradient(135deg,#fff7ed,#ffe0cd);position:relative;overflow:hidden">';
     html += '<div style="position:absolute;bottom:-30px;right:-30px;width:140px;height:140px;background:#7d3d00;opacity:0.08;border-radius:50%;filter:blur(30px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       '<span class="material-symbols-outlined" style="color:#c2410c">priority_high</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#5a2900">23kg 초과 시 빼는 순서</h3>' +
     '</div>';
@@ -4410,17 +4410,17 @@ window.NOMAD_PAGES = (function(){
       { rank:'2순위',       text:'헤어 기기 (현지 구매 또는 듀얼볼트)', color:'#f97316' },
       { rank:'3순위',       text:'운동복·수영복 일부',                color:'#c2410c' },
     ];
-    html += '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-2-5);margin-bottom: var(--space-4-5)">';
     priority.forEach(function(p) {
-      html += '<div style="display:flex;gap:14px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.6);border-radius:8px;border-left:3px solid ' + p.color + '">' +
+      html += '<div style="display:flex;gap: var(--space-3-5);align-items:flex-start;padding: var(--space-3) var(--space-3-5);background:rgba(255,255,255,0.6);border-radius:8px;border-left:3px solid ' + p.color + '">' +
         '<span style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:' + p.color + ';text-transform:uppercase;letter-spacing:0.06em;min-width:80px">' + p.rank + '</span>' +
         '<span style="font-size: var(--font-size-body-sm);color:#5a2900;line-height:1.5;flex:1">' + p.text + '</span>' +
       '</div>';
     });
     html += '</div>';
     // 절대 양보 X
-    html += '<div style="padding:16px 18px;background:rgba(186,26,26,0.08);border-left:4px solid #ba1a1a;border-radius:8px">' +
-      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:#ba1a1a;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">⛔ 절대 양보 X</p>' +
+    html += '<div style="padding: var(--space-4) var(--space-4-5);background:rgba(186,26,26,0.08);border-left:4px solid #ba1a1a;border-radius:8px">' +
+      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:#ba1a1a;text-transform:uppercase;letter-spacing:0.08em;margin-bottom: var(--space-1-5)">⛔ 절대 양보 X</p>' +
       '<p style="font-size: var(--font-size-body-sm);color:#5a2900;line-height:1.6">노트북 · 태블릿 · 외장 SSD · 여권 · 서류 · 1차 옷 · 신발</p>' +
     '</div>';
     html += '</div>';
@@ -4430,20 +4430,20 @@ window.NOMAD_PAGES = (function(){
     html += '<div class="nm-card nm-card-lg" style="background:var(--nm-deep-indigo);color:#fff;position:relative;overflow:hidden">';
     html += '<div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:var(--nm-primary);opacity:0.2;border-radius:50%;filter:blur(40px)"></div>';
     html += '<div style="position:relative;z-index:1">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-1-5)">' +
       '<span class="material-symbols-outlined" style="color:#eaddff">archive</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:#fff">한국 집 보관</h3>' +
     '</div>';
-    html += '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.75);margin-bottom:22px">동생한테 맡길 짐 · 1년 안 안 쓰는 것 분류</p>';
+    html += '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.75);margin-bottom: var(--space-5-5)">동생한테 맡길 짐 · 1년 안 안 쓰는 것 분류</p>';
     var storageItems = [
       { icon:'checkroom', text:'1년 안 입을 옷·신발' },
       { icon:'menu_book', text:'책·앨범·기념품' },
       { icon:'folder',    text:'본업 자료·디자인 포트폴리오 원본' },
       { icon:'directions_car', text:'차량 (동생 사용 또는 보관)' },
     ];
-    html += '<div style="display:flex;flex-direction:column;gap:12px">';
+    html += '<div style="display:flex;flex-direction:column;gap: var(--space-3)">';
     storageItems.forEach(function(s) {
-      html += '<div style="display:flex;gap:14px;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid rgba(255,255,255,0.1)">' +
+      html += '<div style="display:flex;gap: var(--space-3-5);align-items:center;padding: var(--space-3) var(--space-3-5);background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid rgba(255,255,255,0.1)">' +
         '<div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#eaddff">' + s.icon + '</span>' +
         '</div>' +
@@ -4457,25 +4457,25 @@ window.NOMAD_PAGES = (function(){
     html += '</div>'; // /6-6 split
 
     // ════════ SECTION 5 · Footer Stats Banner ════════
-    html += '<div class="nm-card nm-readiness-global" data-key="packing" data-total="' + totalAll + '" style="padding:24px 32px;background:var(--nm-surface-container-low);border:1px solid var(--nm-surface-container);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">';
-    html += '<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">';
+    html += '<div class="nm-card nm-readiness-global" data-key="packing" data-total="' + totalAll + '" style="padding: var(--space-6) var(--space-8);background:var(--nm-surface-container-low);border:1px solid var(--nm-surface-container);display:flex;align-items:center;justify-content:space-between;gap: var(--space-6);flex-wrap:wrap">';
+    html += '<div style="display:flex;align-items:center;gap: var(--space-8);flex-wrap:wrap">';
     html += '<div>' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Total Items</p>' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom: var(--space-1)">Total Items</p>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:var(--nm-deep-indigo)">' + totalAll + '</p>' +
     '</div>';
     html += '<div style="height:36px;width:1px;background:var(--nm-outline-variant);opacity:0.3"></div>';
     html += '<div>' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Categories</p>' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom: var(--space-1)">Categories</p>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:var(--nm-deep-indigo)">' + categories.length + '</p>' +
     '</div>';
     html += '<div style="height:36px;width:1px;background:var(--nm-outline-variant);opacity:0.3"></div>';
     html += '<div>' +
-      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">Completion</p>' +
+      '<p style="font-size: var(--font-size-tiny);color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom: var(--space-1)">Completion</p>' +
       '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-h1);font-weight:700;color:var(--nm-primary)"><span class="nm-readiness-pct">' + completionPct + '%</span> <span style="font-size: var(--font-size-body-sm);color:var(--nm-text-3);font-weight:500"><span class="nm-readiness-done">' + doneAll + ' Completed</span></span></p>' +
     '</div>';
     html += '</div>';
     // Print 버튼
-    html += '<button onclick="window.print()" style="display:flex;align-items:center;gap:8px;padding:12px 22px;background:#fff;color:var(--nm-deep-indigo);border:1px solid var(--nm-surface-container-high);border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\'" onmouseout="this.style.background=\'#fff\';this.style.borderColor=\'var(--nm-surface-container-high)\'">' +
+    html += '<button onclick="window.print()" style="display:flex;align-items:center;gap: var(--space-2);padding: var(--space-3) var(--space-5-5);background:#fff;color:var(--nm-deep-indigo);border:1px solid var(--nm-surface-container-high);border-radius:10px;font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background=\'#F5F3FF\';this.style.borderColor=\'var(--nm-primary-fixed)\'" onmouseout="this.style.background=\'#fff\';this.style.borderColor=\'var(--nm-surface-container-high)\'">' +
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">print</span>' +
       'Export PDF Manifest' +
     '</button>';
@@ -4545,7 +4545,7 @@ window.NOMAD_PAGES = (function(){
     if (!places || !places.length) return '';
     var html = '<section class="nm-mag-section">';
     html += _magSectionHead(num || '01', 'Places to Visit', 'Curated Landmarks');
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap: var(--space-6)">';
     html += _renderPlaces({ title: '랜드마크', icon: 'landscape', items: places });
     if (hiddenPlaces && hiddenPlaces.length) {
       html += _renderPlaces({ title: '숨은 곳', icon: 'explore', items: hiddenPlaces });
@@ -4584,8 +4584,8 @@ window.NOMAD_PAGES = (function(){
 
     // Nomad Mode (5-col)
     html += '<div class="nm-nm-panel">';
-    html += '<div style="margin-bottom:24px">';
-    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">Nomad Mode</h3>';
+    html += '<div style="margin-bottom: var(--space-6)">';
+    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1-5)">Nomad Mode</h3>';
     html += '<p style="font-size: var(--font-size-micro);letter-spacing:0.15em;text-transform:uppercase;color:var(--nm-primary);font-weight:700"><span style="color:var(--nm-primary)">' + (num ? num.replace(/[^0-9]/g, '') || '03' : '03') + '</span> / Strategic Productivity</p>';
     html += '</div>';
     (nomadMode || []).forEach(function(block, i) {
@@ -4612,9 +4612,9 @@ window.NOMAD_PAGES = (function(){
       }
       // string 배열 items (list 타입에서 변환됨, 예: 작업 페이스 4항목)
       if (block.items && block.items.length) {
-        html += '<ul class="nm-nm-list" style="margin-top:4px">';
+        html += '<ul class="nm-nm-list" style="margin-top: var(--space-1)">';
         block.items.forEach(function(it) {
-          html += '<li style="display:block;padding:6px 0;line-height:1.5">• ' + it + '</li>';
+          html += '<li style="display:block;padding: var(--space-1-5) 0;line-height:1.5">• ' + it + '</li>';
         });
         html += '</ul>';
       }
@@ -4647,7 +4647,7 @@ window.NOMAD_PAGES = (function(){
       var intensity = maxVal > 0 ? (r.value / maxVal) : 0;
       html += '<tr>' +
         '<td class="nm-bg-cat">' + r.name +
-          (r.sub ? '<div style="font-weight:400;color:var(--nm-text-3);font-size: var(--font-size-micro);margin-top:2px;line-height:1.3">' + r.sub + '</div>' : '') +
+          (r.sub ? '<div style="font-weight:400;color:var(--nm-text-3);font-size: var(--font-size-micro);margin-top: var(--space-0-5);line-height:1.3">' + r.sub + '</div>' : '') +
         '</td>' +
         '<td>' + r.eur + '</td>' +
         '<td class="nm-bg-num">' + r.krw + '</td>' +
@@ -4681,8 +4681,8 @@ window.NOMAD_PAGES = (function(){
     }
     // 왼쪽 (또는 단독): 분석 텍스트
     html += '<div>';
-    html += '<span class="nm-mag-section-num" style="display:block;margin-bottom:16px"><span class="n">' + (num || '05') + '</span> / The Rationale</span>';
-    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-2xl);font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom:24px;line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
+    html += '<span class="nm-mag-section-num" style="display:block;margin-bottom: var(--space-4)"><span class="n">' + (num || '05') + '</span> / The Rationale</span>';
+    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-2xl);font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom: var(--space-6);line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
     html += '<div class="nm-why-body">';
     (why.paragraphs || []).forEach(function(p) { html += '<p>' + p + '</p>'; });
     if (why.takeaway) {
@@ -4693,7 +4693,7 @@ window.NOMAD_PAGES = (function(){
     }
     // 이미지 없으면 quote를 인디고 인라인 카드로
     if (!hasImage && why.quote) {
-      html += '<div style="margin-top:32px;background:var(--nm-deep-indigo);color:#fff;padding:24px 28px;border-radius:14px;display:flex;gap:16px;align-items:flex-start;max-width:580px">' +
+      html += '<div style="margin-top: var(--space-8);background:var(--nm-deep-indigo);color:#fff;padding: var(--space-6) var(--space-7);border-radius:14px;display:flex;gap: var(--space-4);align-items:flex-start;max-width:580px">' +
         '<span style="font-size: var(--font-size-display-lg);line-height:1;opacity:0.85">"</span>' +
         '<p style="font-size: var(--font-size-body);line-height:1.6;font-style:italic;opacity:0.95;margin:0">' + why.quote + '</p>' +
       '</div>';
@@ -4726,8 +4726,8 @@ window.NOMAD_PAGES = (function(){
 
   function _renderPlaces(s) {
     var html = '<div class="nm-card">';
-    html += '<div class="nm-section-head" style="margin-bottom:14px">' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
+    html += '<div class="nm-section-head" style="margin-bottom: var(--space-3-5)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
         (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
         '<h3 class="nm-headline-md">' + s.title + '</h3>' +
       '</div>' +
@@ -4744,7 +4744,7 @@ window.NOMAD_PAGES = (function(){
 
   function _renderNeighborhoods(s) {
     var html = '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
@@ -4762,7 +4762,7 @@ window.NOMAD_PAGES = (function(){
 
   function _renderTable(s) {
     var html = '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px">' +
+    html += '<div style="padding: var(--space-5) var(--space-6);border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap: var(--space-2)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
@@ -4790,14 +4790,14 @@ window.NOMAD_PAGES = (function(){
       html += '</tr>';
     }
     html += '</tbody></table>';
-    if (s.note) html += '<div style="padding:12px 24px;font-size: var(--font-size-meta);color:var(--nm-text-3);background:var(--nm-surface-container-low)">' + s.note + '</div>';
+    if (s.note) html += '<div style="padding: var(--space-3) var(--space-6);font-size: var(--font-size-meta);color:var(--nm-text-3);background:var(--nm-surface-container-low)">' + s.note + '</div>';
     html += '</div>';
     return html;
   }
 
   function _renderList(s) {
     var html = '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-3-5)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
@@ -4810,7 +4810,7 @@ window.NOMAD_PAGES = (function(){
 
   function _renderLearn(s) {
     var html = '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
@@ -4827,17 +4827,17 @@ window.NOMAD_PAGES = (function(){
 
   function _renderTimeline(s) {
     var html = '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
-    html += '<div style="position:relative;padding-left:24px;border-left:2px solid var(--nm-primary-soft)">';
+    html += '<div style="position:relative;padding-left: var(--space-6);border-left:2px solid var(--nm-primary-soft)">';
     (s.items || []).forEach(function(t) {
       var bodyText = t.text || t.body || '';
-      html += '<div style="position:relative;margin-bottom:18px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">' +
+      html += '<div style="position:relative;margin-bottom: var(--space-4-5);padding: var(--space-3-5) var(--space-4);background:var(--nm-surface-container-low);border-radius:8px">' +
         '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>' +
-        '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + t.when + '</div>' +
-        '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
+        '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom: var(--space-0-5)">' + t.when + '</div>' +
+        '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:600;color:var(--nm-deep-indigo);margin-bottom: var(--space-1)">' + t.title + '</div>' +
         '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' + nmLinkify(bodyText) + '</p>' +
       '</div>';
     });
@@ -4848,14 +4848,14 @@ window.NOMAD_PAGES = (function(){
 
   function _renderSubsections(s) {
     var html = '<div class="nm-card">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">' +
+    html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-4-5)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
     var groups = s.items || s.groups || [];
     groups.forEach(function(sub) {
-      html += '<div style="margin-bottom:16px">';
-      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + sub.h + '</h4>';
+      html += '<div style="margin-bottom: var(--space-4)">';
+      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-2)">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
       (sub.items || []).forEach(function(it) { html += '<li>' + nmSubsectionItemLink(it, sub.h) + '</li>'; });
       html += '</ul>';
@@ -4869,18 +4869,18 @@ window.NOMAD_PAGES = (function(){
     var color = s.color || 'var(--nm-primary)';
     var html = '<div class="nm-card" style="border-left:3px solid ' + color + '">';
     if (s.title) {
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5)">' +
         (s.icon ? '<span class="material-symbols-outlined" style="color:' + color + '">' + s.icon + '</span>' : '') +
         '<h3 class="nm-headline-md" style="color:' + color + '">' + s.title + '</h3>' +
       '</div>';
     }
     if (s.body) {
-      html += '<p style="font-size: var(--font-size-body);color:var(--nm-text-2);line-height:1.6;margin-bottom:14px">' + nmLinkify(s.body) + '</p>';
+      html += '<p style="font-size: var(--font-size-body);color:var(--nm-text-2);line-height:1.6;margin-bottom: var(--space-3-5)">' + nmLinkify(s.body) + '</p>';
     }
     var subs = s.subsections || [];
     subs.forEach(function(sub) {
-      html += '<div style="margin-top:14px">';
-      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:6px">' + sub.h + '</h4>';
+      html += '<div style="margin-top: var(--space-3-5)">';
+      html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-bottom: var(--space-1-5)">' + sub.h + '</h4>';
       html += '<ul class="nm-list-bullet">';
       (sub.items || []).forEach(function(it) { html += '<li>' + nmSubsectionItemLink(it, sub.h) + '</li>'; });
       html += '</ul>';
