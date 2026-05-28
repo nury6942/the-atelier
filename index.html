@@ -8244,9 +8244,12 @@
     /* 1500px+에서 메인 사이드바 우측에 표시 */
     @media (min-width: 1500px) {
       .j-toc { display: block; left: 240px; }
+      /* 메인 콘텐츠를 ToC 너비만큼 비켜줌 (ToC가 메인 콘텐츠 영역 위에 겹치지 않게) */
+      #page-journey { padding-left: 150px; }
     }
     @media (min-width: 1700px) {
       .j-toc { left: 256px; }
+      #page-journey { padding-left: 160px; }
     }
     .j-toc-eyebrow {
       font-size: var(--font-size-tiny);
