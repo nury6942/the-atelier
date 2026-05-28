@@ -13019,17 +13019,18 @@
       navigate('finance');
     } else if (tab === 'checklist') {
       navigate('packing');
-      // Packing 트립 dropdown sync 시도
+      // Packing 트립 dropdown sync 시도 — pkInit이 fbRead 비동기라 500ms로 안전 마진
+      // 함수명 selectPkTrip (이전 setPkTrip 오타로 sync no-op이었음)
       setTimeout(function() {
         try {
           if (typeof currentTripId !== 'undefined' && currentTripId &&
               typeof pkTrips !== 'undefined' && pkTrips.length &&
-              typeof setPkTrip === 'function') {
+              typeof selectPkTrip === 'function') {
             var t = pkTrips.find(function(x){ return x._id === currentTripId; });
-            if (t) setPkTrip(t._id);
+            if (t) selectPkTrip(t._id, t.name);
           }
         } catch(e) {}
-      }, 300);
+      }, 500);
     }
   }
   if (typeof window !== 'undefined') window.switchTravelTab = switchTravelTab;
