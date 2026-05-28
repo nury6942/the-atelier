@@ -19939,7 +19939,7 @@ function openSessionDetail(dateId) {
 
   function krBox(text) {
     if (!text) return '';
-    return '<div class="mt-4 p-4 rounded-xl" style="background:rgba(107,56,212,0.06);"><p class="text-sm text-slate-700 leading-relaxed">' + text + '</p></div>';
+    return '<div class="mt-5 p-5 rounded-xl border-l-4 border-indigo-400" style="background:rgba(107,56,212,0.06);"><p class="review-krbox-text">' + text + '</p></div>';
   }
 
   function sectionCard(num, enTitle, krTitle, contentHtml) {
@@ -19963,58 +19963,60 @@ function openSessionDetail(dateId) {
 
   // 03 Upgrades
   var upgs = s.upgrades || [];
-  var sec3 = '<div class="space-y-4">' + upgs.map(function(u){
-    return '<div class="p-4 rounded-xl bg-slate-50">' +
-      '<div class="flex items-start gap-2 mb-2"><span class="text-rose-500 text-sm">❌</span><span class="text-sm text-slate-600 line-through">' + (u.bad||'') + '</span></div>' +
-      '<div class="flex items-start gap-2 mb-2"><span class="text-slate-400 text-sm">✔</span><span class="text-sm text-slate-700">' + (u.ok||'') + '</span></div>' +
-      '<div class="flex items-start gap-2 mb-2"><span class="text-indigo-500 text-sm">💎</span><span class="text-sm font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">' + (u.gem||'') + '</span></div>' +
-      (u.note ? '<p class="text-xs text-slate-500 mt-2">' + u.note + '</p>' : '') +
-      (u.noteKr ? '<p class="text-xs text-slate-400">' + u.noteKr + '</p>' : '') +
+  var sec3 = '<div class="space-y-5">' + upgs.map(function(u){
+    return '<div class="p-5 rounded-xl bg-slate-50 review-upgrade-card">' +
+      '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-rose-500 text-base mt-0.5">❌</span><span class="review-upgrade-bad line-through">' + (u.bad||'') + '</span></div>' +
+      '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span></div>' +
+      '<div class="flex items-start gap-2.5 mb-3"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span></div>' +
+      (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
+      (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
     '</div>';
   }).join('') + '</div>' + krBox(s.upgradesKr);
 
   // 04 Grammar
   var grams = s.grammar || [];
-  var sec4 = '<div class="space-y-4">' + grams.map(function(g){
-    return '<div class="p-4 rounded-xl bg-slate-50">' +
-      '<h4 class="font-bold text-sm text-slate-800 mb-1">' + (g.title||'') + '</h4>' +
-      '<p class="text-xs text-slate-500 mb-2"><span class="font-bold">Rule:</span> ' + (g.rule||'') + '</p>' +
-      '<ul class="list-disc pl-5 space-y-1">' + (g.examples||[]).map(function(ex){ return '<li class="text-sm text-slate-600">' + ex + '</li>'; }).join('') + '</ul>' +
+  var sec4 = '<div class="space-y-5">' + grams.map(function(g){
+    return '<div class="p-5 rounded-xl bg-slate-50">' +
+      '<h4 class="review-h4 mb-2">' + (g.title||'') + '</h4>' +
+      '<p class="review-rule mb-3"><span class="font-bold text-indigo-700">Rule:</span> <span class="text-slate-800">' + (g.rule||'') + '</span></p>' +
+      '<ul class="list-disc pl-5 space-y-1.5">' + (g.examples||[]).map(function(ex){ return '<li class="review-list-item">' + ex + '</li>'; }).join('') + '</ul>' +
     '</div>';
   }).join('') + '</div>' + krBox(s.grammarKr);
 
   // 05 Convo Skills
   var cs = s.convoSkills || {};
   var sec5 = '';
-  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-4"><h4 class="text-sm font-bold text-slate-700 mb-2">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-1">' + cs.followups.map(function(f){ return '<li class="text-sm text-slate-600">' + f + '</li>'; }).join('') + '</ul></div>';
-  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-4"><h4 class="text-sm font-bold text-slate-700 mb-2">Richer Reactions</h4><table class="w-full text-sm"><thead><tr class="border-b border-slate-100"><th class="text-left py-2 text-[10px] font-bold uppercase text-slate-400">Feeling</th><th class="text-left py-2 text-[10px] font-bold uppercase text-slate-400">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-50"><td class="py-2 text-slate-500">' + (r.feel||'') + '</td><td class="py-2 font-medium">' + (r.say||'') + '</td></tr>'; }).join('') + '</tbody></table></div>';
-  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-4"><h4 class="text-sm font-bold text-slate-700 mb-2">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-1">' + cs.starters.map(function(st){ return '<li class="text-sm text-slate-600">' + st + '</li>'; }).join('') + '</ul></div>';
+  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-1.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + f + '</li>'; }).join('') + '</ul></div>';
+  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + '</td><td class="py-3 review-table-en">' + (r.say||'') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-1.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + st + '</li>'; }).join('') + '</ul></div>';
   sec5 += krBox(cs.kr);
 
   // 06 Vocab
   var vsets = s.vocabSets || [];
   var sec6 = vsets.map(function(vs){
-    return '<div class="mb-5"><h4 class="font-bold text-sm text-slate-800 mb-1">' + (vs.topic||'') + ' <span class="text-slate-400 font-normal">' + (vs.topicKr||'') + '</span></h4>' +
-      '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">' + (vs.words||[]).map(function(w){
-        return '<div class="p-3 rounded-xl bg-slate-50"><p class="font-bold text-sm text-slate-900">' + (w.word||'') + '</p><p class="text-xs text-slate-500">' + (w.mean||'') + '</p>' +
-          (w.coll ? '<p class="text-[10px] text-indigo-500 italic mt-1">' + w.coll + '</p>' : '') +
-          (w.ex ? '<p class="text-[10px] text-slate-400 mt-1">' + w.ex + '</p>' : '') + '</div>';
+    return '<div class="mb-7"><h4 class="review-h4 mb-3 pb-2 border-b border-slate-200">' + (vs.topic||'') + ' <span class="review-topic-kr">' + (vs.topicKr||'') + '</span></h4>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">' + (vs.words||[]).map(function(w){
+        return '<div class="p-4 rounded-xl bg-slate-50 review-vocab-card">' +
+          '<p class="review-vocab-word">' + (w.word||'') + '</p>' +
+          '<p class="review-vocab-mean">' + (w.mean||'') + '</p>' +
+          (w.coll ? '<p class="review-vocab-coll">' + w.coll + '</p>' : '') +
+          (w.ex ? '<p class="review-vocab-ex">' + w.ex + '</p>' : '') + '</div>';
       }).join('') + '</div></div>';
   }).join('') + krBox(s.vocabKr);
 
   // 07 Drills
   var drills = s.drills || [];
   var sec7 = drills.map(function(d){
-    return '<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 mb-2">' + (d.title||'') + '</h4>' +
-      '<ol class="list-decimal pl-5 space-y-2">' + (d.items||[]).map(function(it){
-        return '<li class="text-sm"><span class="text-slate-700">' + (it.q||'') + '</span> <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs">' + (it.a||'') + '</span></li>';
+    return '<div class="mb-5"><h4 class="review-h4 mb-3">' + (d.title||'') + '</h4>' +
+      '<ol class="list-decimal pl-5 space-y-3">' + (d.items||[]).map(function(it){
+        return '<li class="review-drill-li"><span class="review-drill-q">' + (it.q||'') + '</span> <span class="review-drill-a">' + (it.a||'') + '</span></li>';
       }).join('') + '</ol></div>';
   }).join('') + krBox(s.drillsKr);
 
   // 08 Goals
   var goals = s.goals || [];
   var sec8 = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' + goals.map(function(g, gi){
-    return '<div class="p-4 rounded-xl bg-slate-50"><div class="flex items-start gap-3"><span class="text-2xl font-extrabold text-indigo-200 font-headline">' + String(gi+1).padStart(2,'0') + '</span><div><h4 class="font-bold text-sm text-slate-800">' + (g.title||'') + '</h4><p class="text-xs text-slate-500 mt-1">' + (g.desc||'') + '</p></div></div></div>';
+    return '<div class="p-5 rounded-xl bg-slate-50"><div class="flex items-start gap-3"><span class="text-3xl font-extrabold text-indigo-300 font-headline leading-none">' + String(gi+1).padStart(2,'0') + '</span><div class="flex-1"><h4 class="review-h4 mb-1.5">' + (g.title||'') + '</h4><p class="review-goal-desc">' + (g.desc||'') + '</p></div></div></div>';
   }).join('') + '</div>' + krBox(s.goalsKr);
 
   // Tabs
