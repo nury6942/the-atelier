@@ -4640,7 +4640,7 @@
       '<div class="j-inter-body">' +
         '<div class="j-inter-row">' +
           '<div>' +
-            '<p class="j-trip-name" style="font-size:15px;margin-bottom:6px">' +
+            '<p class="j-trip-name" style="font-size: var(--font-size-body-lg);margin-bottom:6px">' +
               (routeParts[0] || '') +
               (routeParts.length > 1 ? ' <span style="color:var(--j-on-surface-variant);font-weight:600">→</span> ' + routeParts[1] : '') +
             '</p>' +
@@ -5351,7 +5351,7 @@
         // 트립닷컴 URL — 호텔명·도시·체크인/아웃 모두 전달 → 검색 결과 페이지로 직접 진입
         var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
@@ -6306,7 +6306,7 @@
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px">';
       leg.options.forEach(function(opt, oi) {
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-nano);font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         var gflUrl = _googleFlightsUrl(leg.from, leg.to, leg.date);
         var skyUrl = _skyscannerUrl(leg.from, leg.to, leg.date);
         var tripUrl = _tripcomFlightUrl(leg.from, leg.to, leg.date);
@@ -9666,8 +9666,8 @@
         html += '<div style="background:' + p.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid ' + p.border + ';">';
         html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2);line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
-        html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size:13.5px;line-height:1.35;margin:0;">' + title + '</p>';
-        if (tag) html += '<p style="font-size:11.5px;color:' + p.tagColor + ';line-height:1.35;margin-top:2px;opacity:0.85;">' + tag + '</p>';
+        html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size: var(--font-size-body);line-height:1.35;margin:0;">' + title + '</p>';
+        if (tag) html += '<p style="font-size: var(--font-size-meta);color:' + p.tagColor + ';line-height:1.35;margin-top:2px;opacity:0.85;">' + tag + '</p>';
         html += '</div></div>';
       });
       html += '</div>';
@@ -10258,7 +10258,7 @@
       var main = dashIdx > 0 ? text.substring(0, dashIdx).trim() : text;
       var body = dashIdx > 0 ? text.substring(dashIdx + 1).trim() : '';
       // 단일 따옴표로 감싼 예시들을 하이라이트
-      var bodyHl = body.replace(/'([^']{1,80})'/g, '<span class="inline-block px-1.5 py-0.5 mx-0.5 my-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-800 font-medium text-[12.5px]">"$1"</span>');
+      var bodyHl = body.replace(/'([^']{1,80})'/g, '<span class="inline-block px-1.5 py-0.5 mx-0.5 my-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-800 font-medium text-[13px]">"$1"</span>');
       var html = '<div class="font-bold text-[14px] text-slate-900 leading-snug mb-1.5">' + main + '</div>';
       if (body) html += '<div class="text-[13px] text-slate-600 leading-relaxed">' + bodyHl + '</div>';
       return html;
@@ -10301,7 +10301,7 @@
     html += '<div style="font-size: var(--font-size-h1-lg);line-height:1">📅</div>';
     html += '<div class="flex-1 min-w-0">';
     html += '<div class="text-[11px] font-black uppercase tracking-wider" style="color:#c2410c;">' + (data.date || 'N/A') + ' · "' + (data.query || 'N/A') + '"</div>';
-    html += '<div class="text-[10.5px] mt-0.5" style="color:#94a3b8;">' + (data.stats ? data.stats.successful + '/' + data.stats.totalScraped + ' 작품 분석 · ' + (data.stats.paidCount || 0) + ' 유료 · ' + (data.stats.adultCount || 0) + ' 19+' : '') + '</div>';
+    html += '<div class="text-[11px] mt-0.5" style="color:#94a3b8;">' + (data.stats ? data.stats.successful + '/' + data.stats.totalScraped + ' 작품 분석 · ' + (data.stats.paidCount || 0) + ' 유료 · ' + (data.stats.adultCount || 0) + ' 19+' : '') + '</div>';
     html += '</div></div>';
     if (a.summary) html += '<p class="text-[14px] leading-relaxed font-medium" style="color:#1e293b;">' + a.summary + '</p>';
     html += '</div>';
@@ -10330,13 +10330,13 @@
       a.titlePatterns.forEach(function(p) {
         tp += '<div class="rounded-xl p-3.5 border" style="background:#faf5ff;border-color:#e9d5ff;">';
         tp += '<div class="flex items-baseline justify-between gap-2 mb-2">';
-        tp += '<span class="font-bold text-[13.5px]" style="color:#581c87;">' + (p.pattern || '') + '</span>';
+        tp += '<span class="font-bold text-[14px]" style="color:#581c87;">' + (p.pattern || '') + '</span>';
         if (p.count) tp += '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:#e9d5ff;color:#6b21a8;">' + p.count + '개</span>';
         tp += '</div>';
         if (p.examples && p.examples.length) {
           tp += '<div class="space-y-1">';
           p.examples.slice(0, 4).forEach(function(e) {
-            tp += '<div class="text-[12.5px] pl-3 border-l-2" style="color:#475569;border-color:#c4b5fd;">"' + e + '"</div>';
+            tp += '<div class="text-[13px] pl-3 border-l-2" style="color:#475569;border-color:#c4b5fd;">"' + e + '"</div>';
           });
           tp += '</div>';
         }
@@ -10357,10 +10357,10 @@
       a.synopsisHooks.forEach(function(h) {
         sh += '<div class="flex items-start gap-3 p-2.5 rounded-lg" style="background:#fff7ed;">';
         sh += '<div class="flex-1 min-w-0">';
-        sh += '<div class="font-bold text-[13.5px]" style="color:#9a3412;">' + (h.hook || '') + '</div>';
+        sh += '<div class="font-bold text-[14px]" style="color:#9a3412;">' + (h.hook || '') + '</div>';
         if (h.note) sh += '<div class="text-[12px] mt-0.5" style="color:#64748b;">' + h.note + '</div>';
         sh += '</div>';
-        if (h.frequency) sh += '<span class="text-[10.5px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap" style="background:#fed7aa;color:#9a3412;">' + h.frequency + '</span>';
+        if (h.frequency) sh += '<span class="text-[11px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap" style="background:#fed7aa;color:#9a3412;">' + h.frequency + '</span>';
         sh += '</div>';
       });
       sh += '</div>';
@@ -10377,7 +10377,7 @@
       var pp = '<div class="space-y-2">';
       a.popularPairings.forEach(function(p) {
         pp += '<div class="p-2.5 rounded-lg" style="background:#eff6ff;">';
-        pp += '<div class="font-bold text-[13.5px]" style="color:#1e40af;">' + (p.pairing || '') + '</div>';
+        pp += '<div class="font-bold text-[14px]" style="color:#1e40af;">' + (p.pairing || '') + '</div>';
         if (p.evidence) pp += '<div class="text-[12px] mt-0.5" style="color:#475569;">' + p.evidence + '</div>';
         pp += '</div>';
       });
@@ -10395,7 +10395,7 @@
       var ca = '<div class="space-y-2">';
       a.characterArchetypes.forEach(function(c) {
         ca += '<div class="p-2.5 rounded-lg" style="background:#fdf4ff;">';
-        ca += '<div class="font-bold text-[13.5px]" style="color:#86198f;">' + (c.archetype || '') + '</div>';
+        ca += '<div class="font-bold text-[14px]" style="color:#86198f;">' + (c.archetype || '') + '</div>';
         if (c.examples) ca += '<div class="text-[12px] mt-0.5" style="color:#64748b;">' + c.examples + '</div>';
         ca += '</div>';
       });
@@ -10427,7 +10427,7 @@
     if (a.tagDistribution && a.tagDistribution.length) {
       var td = '<div class="flex flex-wrap gap-1.5">';
       a.tagDistribution.slice(0, 18).forEach(function(t) {
-        td += '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11.5px] font-semibold" style="background:#fef3c7;color:#854d0e;">' + (t.tag || '') + (t.count ? '<span style="color:#a16207;font-weight:400;">·' + t.count + '</span>' : '') + '</span>';
+        td += '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold" style="background:#fef3c7;color:#854d0e;">' + (t.tag || '') + (t.count ? '<span style="color:#a16207;font-weight:400;">·' + t.count + '</span>' : '') + '</span>';
       });
       td += '</div>';
       sideBySide += sectionCard({
@@ -10472,7 +10472,7 @@
 
     // 메타정보
     var metaInfo = data.analysisMeta || {};
-    html += '<div class="pt-2 text-[10.5px] text-center" style="color:#94a3b8;">';
+    html += '<div class="pt-2 text-[11px] text-center" style="color:#94a3b8;">';
     html += '생성: ' + (metaInfo.generatedAt || '?').substring(0, 16).replace('T', ' ') + ' · 모델: ' + (metaInfo.model || '?');
     html += ' · <a href="' + (data.searchUrl || '#') + '" target="_blank" style="color:#ea580c;text-decoration:underline;">원본 검색 페이지 ↗</a>';
     html += '</div>';

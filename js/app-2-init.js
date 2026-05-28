@@ -239,7 +239,7 @@ function renderRefList(filter) {
   });
 
   if (cards.length === 0) {
-    list.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size:36px">edit_note</span><p class="text-xs">' + (filter ? '검색 결과 없음' : '메모가 없습니다') + '</p></div>';
+    list.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="material-symbols-outlined mb-2 block" style="font-size: var(--font-size-display-2xl)">edit_note</span><p class="text-xs">' + (filter ? '검색 결과 없음' : '메모가 없습니다') + '</p></div>';
     return;
   }
 
@@ -1395,7 +1395,7 @@ function _ldgInjectMobileToggle(isFullView) {
   wrap.style.cssText = 'margin-bottom:10px;text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size:9px;color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding:6px 12px;border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top:4px;">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 

@@ -687,9 +687,9 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-metrics{display:flex;flex-direction:column;gap:14px;min-width:280px;max-width:320px}' +
       '#nomad-content .atl-metric{background:#fff;border:1px solid #ccc3d8;padding:24px;display:flex;justify-content:space-between;align-items:center}' +
       '#nomad-content .atl-metric-label{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.16em;color:#4a4455;text-transform:uppercase;margin-bottom:8px}' +
-      '#nomad-content .atl-metric-value{font-family:var(--nm-font-h);font-size:28px;font-weight:600;color:var(--nm-primary);letter-spacing:-0.01em}' +
+      '#nomad-content .atl-metric-value{font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:600;color:var(--nm-primary);letter-spacing:-0.01em}' +
       '#nomad-content .atl-metric-value.err{color:' + schengenColor + '}' +
-      '#nomad-content .atl-metric-icon{font-size:28px !important;color:var(--nm-primary)}' +
+      '#nomad-content .atl-metric-icon{font-size: var(--font-size-display-md) !important;color:var(--nm-primary)}' +
       '#nomad-content .atl-grid{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start}' +
       '#nomad-content .atl-aside-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.3em;color:#7b7487;opacity:0.4;position:sticky;top:120px}' +
       '#nomad-content .atl-region{margin-bottom:56px}' +
@@ -707,7 +707,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-flag{font-size: var(--font-size-body);line-height:1;letter-spacing:1px}' +
       '#nomad-content .atl-city-sub{font-size: var(--font-size-body-sm);color:#4a4455;margin:0 0 8px;line-height:1.4}' +
       '#nomad-content .atl-city-detail{font-size: var(--font-size-body-sm);color:var(--nm-primary);font-style:italic;line-height:1.5;margin:0}' +
-      '#nomad-content .atl-budget{font-family:var(--nm-font-h);font-size:15px;font-weight:500;letter-spacing:-0.01em;color:#141b2b;text-align:right}' +
+      '#nomad-content .atl-budget{font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:500;letter-spacing:-0.01em;color:#141b2b;text-align:right}' +
       '#nomad-content .atl-mode{text-align:right}' +
       '#nomad-content .atl-aside{display:flex;flex-direction:column;gap:32px;position:sticky;top:24px}' +
       '#nomad-content .atl-aside-card{background:#fff;border:1px solid #ccc3d8;padding:24px}' +
@@ -727,7 +727,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .atl-traj-stats > div{text-align:center}' +
       '#nomad-content .atl-traj-stats .num{font-family:var(--nm-font-h);font-size: var(--font-size-h1-lg);font-weight:500;color:#fff;display:block}' +
       '#nomad-content .atl-traj-stats .lab{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase}' +
-      '#nomad-content .atl-traj-btn{position:absolute;top:24px;left:24px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);color:#fff;font-family:var(--nm-font-h);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.2)}' +
+      '#nomad-content .atl-traj-btn{position:absolute;top:24px;left:24px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.2)}' +
       '@media (max-width:1024px){' +
         '#nomad-content .atl-grid{grid-template-columns:1fr}' +
         '#nomad-content .atl-aside{position:static}' +
@@ -1263,10 +1263,10 @@ window.NOMAD_PAGES = (function(){
         html += '<div style="overflow-x:auto">';
         html += '<table style="width:100%;border-collapse:collapse;font-size: var(--font-size-body-sm)">';
         html += '<thead><tr>' +
-          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size:9px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">카테고리</th>' +
-          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size:9px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">세부 내역</th>' +
-          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size:9px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">€</th>' +
-          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size:9px;font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">₩</th>' +
+          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">카테고리</th>' +
+          '<th style="padding:8px 12px;text-align:left;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant)">세부 내역</th>' +
+          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">€</th>' +
+          '<th style="padding:8px 12px;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:700;color:var(--nm-text-3);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--nm-outline-variant);white-space:nowrap">₩</th>' +
         '</tr></thead><tbody>';
         budgetSec.rows.forEach(function(r) {
           html += '<tr>' +
@@ -1320,7 +1320,7 @@ window.NOMAD_PAGES = (function(){
         '<div style="flex:1;width:100%;display:flex;align-items:flex-end">' +
           '<div title="' + b.period + ' ₩' + b.total + '만" style="width:100%;height:' + hPct + '%;background:var(--nm-primary);opacity:' + opacity + ';border-radius:4px 4px 0 0;transition:opacity 0.15s;cursor:pointer" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'' + opacity + '\'"></div>' +
         '</div>' +
-        '<span style="font-size:9px;color:var(--nm-text-3);font-weight:600">' + b.period.split('.')[1] + '월</span>' +
+        '<span style="font-size: var(--font-size-nano);color:var(--nm-text-3);font-weight:600">' + b.period.split('.')[1] + '월</span>' +
       '</div>';
     });
     html += '</div>';
@@ -1590,7 +1590,7 @@ window.NOMAD_PAGES = (function(){
 
       html += '<div style="padding:18px;border-radius:12px;' + cardStyle + ';' + opacity + ';transition:transform 0.2s">';
       html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
-        '<span style="padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--nm-font-h);' + badgeStyle + '">Phase 0' + p.num + '</span>' +
+        '<span style="padding:3px 8px;border-radius:4px;font-size: var(--font-size-nano);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--nm-font-h);' + badgeStyle + '">Phase 0' + p.num + '</span>' +
         iconHtml +
       '</div>';
       html += '<h5 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-on-surface);margin-bottom:4px">' + p.name + '</h5>';
@@ -1931,7 +1931,7 @@ window.NOMAD_PAGES = (function(){
     // Bottom CTA
     html += '<section style="padding:64px 0;text-align:center">';
     html += '<div style="max-width:560px;margin:0 auto">';
-    html += '<h2 style="font-family:var(--nm-font-h);font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;margin:0 0 18px">Ready to initiate?</h2>';
+    html += '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-2xl);font-weight:800;letter-spacing:-0.02em;color:#0f172a;margin:0 0 18px">Ready to initiate?</h2>';
     html += '<p style="font-size: var(--font-size-h3);color:var(--nm-text-2);line-height:1.6;margin:0 0 28px">2027.12 게이트 평가까지 페이스 유지. 각 Phase 항목 체크하며 진행.</p>';
     html += '<div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">';
     html += '<button onclick="NOMAD_PAGES.go(\'nomad-actions\')" style="background:var(--nm-primary);color:#fff;padding:16px 32px;border:none;border-radius:99px;font-family:var(--nm-font-h);font-size: var(--font-size-body);font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.25);transition:transform 0.15s" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">Action Items 보기</button>';
@@ -2060,7 +2060,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .stay-side-card-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size: var(--font-size-body);color:#4a4455}' +
       '#nomad-content .stay-side-card-list.bold{color:var(--nm-primary);font-weight:600}' +
       '#nomad-content .stay-rule{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #ccc3d8;padding-bottom:16px;margin-bottom:32px}' +
-      '#nomad-content .stay-h{font-family:var(--nm-font-h);font-size:28px;font-weight:500;color:#141b2b;margin:0;letter-spacing:-0.005em}' +
+      '#nomad-content .stay-h{font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:500;color:#141b2b;margin:0;letter-spacing:-0.005em}' +
       '#nomad-content .stay-h-meta{font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:500;color:#5d5d67;letter-spacing:-0.01em}' +
       '#nomad-content .stay-section{margin-bottom:80px}' +
       '#nomad-content .stay-section:last-child{margin-bottom:0}' +
@@ -2075,7 +2075,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .stay-alt-card .stay-alt-nuri strong{color:#141b2b}' +
       '#nomad-content .stay-tbl{width:100%;text-align:left;border-collapse:separate;border-spacing:0}' +
       '#nomad-content .stay-tbl thead th{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#5d5d67;padding:14px 12px;border-bottom:1px solid #ccc3d8}' +
-      '#nomad-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size:15px;color:#141b2b;vertical-align:top}' +
+      '#nomad-content .stay-tbl tbody td{padding:20px 12px;border-bottom:1px solid rgba(204,195,216,0.3);font-size: var(--font-size-body-lg);color:#141b2b;vertical-align:top}' +
       '#nomad-content .stay-tbl tbody tr:hover{background:#f1f3ff}' +
       '#nomad-content .stay-strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}' +
       '@media (max-width:760px){#nomad-content .stay-strategy-grid{grid-template-columns:1fr}}' +
@@ -2110,7 +2110,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .stay-tips{display:flex;flex-direction:column;gap:20px}' +
       '#nomad-content .stay-tip{padding:24px;border:1px solid #ccc3d8;border-radius:12px;background:#fff;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:flex-start}' +
       '@media (max-width:560px){#nomad-content .stay-tip{grid-template-columns:1fr}}' +
-      '#nomad-content .stay-tip-num{font-family:var(--nm-font-h);font-size:48px;font-weight:600;color:var(--nm-primary);line-height:1;opacity:0.25;letter-spacing:-0.02em;min-width:60px}' +
+      '#nomad-content .stay-tip-num{font-family:var(--nm-font-h);font-size: var(--font-size-hero);font-weight:600;color:var(--nm-primary);line-height:1;opacity:0.25;letter-spacing:-0.02em;min-width:60px}' +
       '#nomad-content .stay-tip-content h4{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 8px}' +
       '#nomad-content .stay-tip-content p{font-size: var(--font-size-body);color:#4a4455;line-height:1.6;margin:0 0 6px}' +
       '#nomad-content .stay-tip-content p strong{color:#141b2b}' +
@@ -2468,7 +2468,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-aviation .row{padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.2)}' +
       '#nomad-content .ne-aviation .row:last-child{border-bottom:none}' +
       '#nomad-content .ne-aviation .row-label{display:block;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:6px}' +
-      '#nomad-content .ne-aviation .row-val{font-family:var(--nm-font-h);font-size:15px;font-weight:500;color:#fff;display:block}' +
+      '#nomad-content .ne-aviation .row-val{font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:500;color:#fff;display:block}' +
       '#nomad-content .ne-aviation .nuri{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.18);font-size: var(--font-size-body-sm);color:rgba(255,255,255,0.85);line-height:1.6}' +
       '#nomad-content .ne-aviation .nuri strong{color:#fff;font-weight:600}' +
       '#nomad-content .ne-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}' +
@@ -2484,7 +2484,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-list{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap:12px}' +
       '#nomad-content .ne-list-row{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;background:#fafafa;border:1px solid #e5e7eb;transition:background 0.15s}' +
       '#nomad-content .ne-list-row:hover{background:#fff;border-color:rgba(124,58,237,0.3)}' +
-      '#nomad-content .ne-list-row .name{font-size:15px;font-weight:500;color:#141b2b}' +
+      '#nomad-content .ne-list-row .name{font-size: var(--font-size-body-lg);font-weight:500;color:#141b2b}' +
       '#nomad-content .ne-list-row .meta{font-size: var(--font-size-meta);color:#4a4455}' +
       '#nomad-content .ne-list-row .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}' +
       '#nomad-content .ne-callout{margin-top:14px;padding:14px 16px;background:rgba(124,58,237,0.06);border-left:3px solid var(--nm-primary);font-size: var(--font-size-body-sm);color:#141b2b;line-height:1.6}' +
@@ -3008,7 +3008,7 @@ window.NOMAD_PAGES = (function(){
         '<span class="material-symbols-outlined" style="font-size:30px;color:#eaddff">precision_manufacturing</span>' +
       '</div>' +
       '<div>' +
-        '<h2 style="font-family:var(--nm-font-h);font-size:28px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px">Operating Principles</h2>' +
+        '<h2 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-md);font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px">Operating Principles</h2>' +
         '<p style="font-size: var(--font-size-micro);color:#d2bbff;text-transform:uppercase;letter-spacing:0.18em;font-weight:700">The Efficiency Manifesto</p>' +
       '</div>' +
     '</div>';
@@ -3018,9 +3018,9 @@ window.NOMAD_PAGES = (function(){
 
     // 70 · Deep Work
     html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.05);border-radius:14px;border-left:3px solid #eaddff">' +
-      '<div style="font-family:var(--nm-font-h);font-size:64px;font-weight:800;color:#eaddff;line-height:1;flex-shrink:0">70</div>' +
+      '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:#eaddff;line-height:1;flex-shrink:0">70</div>' +
       '<div>' +
-        '<p style="font-family:var(--nm-font-h);font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Deep Work Focus</p>' +
+        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom:8px">Deep Work Focus</p>' +
         '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.85);line-height:1.6;margin-bottom:10px">평일 오전 4시간 글 블록 + 수요일 코딩 풀데이. 모든 외부 입력 차단.</p>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.15);color:#eaddff;padding:3px 9px;border-radius:99px">Writing Block</span>' +
@@ -3031,9 +3031,9 @@ window.NOMAD_PAGES = (function(){
 
     // 30 · Travel & Synthesis
     html += '<div style="display:flex;gap:20px;padding:24px;background:rgba(255,255,255,0.03);border-radius:14px;border-left:3px solid rgba(234,221,255,0.45)">' +
-      '<div style="font-family:var(--nm-font-h);font-size:64px;font-weight:800;color:rgba(234,221,255,0.55);line-height:1;flex-shrink:0">30</div>' +
+      '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:rgba(234,221,255,0.55);line-height:1;flex-shrink:0">30</div>' +
       '<div>' +
-        '<p style="font-family:var(--nm-font-h);font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Travel &amp; Synthesis</p>' +
+        '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:700;color:#fff;margin-bottom:8px">Travel &amp; Synthesis</p>' +
         '<p style="font-size: var(--font-size-meta);color:rgba(234,221,255,0.7);line-height:1.6;margin-bottom:10px">오후 현지 체험 + 주말 위성 + 이동일 회복. 외부 입력 → 글감 변환.</p>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
           '<span style="font-size: var(--font-size-tiny);font-weight:700;background:rgba(234,221,255,0.08);color:rgba(234,221,255,0.85);padding:3px 9px;border-radius:99px">Field Research</span>' +
@@ -3502,7 +3502,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="display:grid;grid-template-columns:1fr 2fr;gap:18px">';
       // 왼쪽: Cloud Sync Status 점선 카드
       html += '<div style="padding:24px;background:var(--nm-surface-container-low);border-radius:14px;border:2px dashed var(--nm-on-surface-variant);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">' +
-        '<span class="material-symbols-outlined" style="font-size:36px;color:var(--nm-primary);margin-bottom:8px">upload_file</span>' +
+        '<span class="material-symbols-outlined" style="font-size: var(--font-size-display-2xl);color:var(--nm-primary);margin-bottom:8px">upload_file</span>' +
         '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:var(--nm-deep-indigo);margin-bottom:4px">Cloud Sync Status</p>' +
         '<p style="font-size: var(--font-size-micro);color:var(--nm-text-3);line-height:1.5">Google Drive · Naver · USB 다중 백업 권장</p>' +
       '</div>';
@@ -3631,7 +3631,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div class="nm-card" style="padding:22px;transition:transform 0.15s,box-shadow 0.15s;cursor:default" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 20px rgba(124,58,237,0.1)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">';
       // 상단: 국기 + visa type pill
       html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
-        '<span style="font-size:36px;line-height:1">' + flag + '</span>' +
+        '<span style="font-size: var(--font-size-display-2xl);line-height:1">' + flag + '</span>' +
         '<span style="padding:5px 11px;border-radius:99px;font-size: var(--font-size-tiny);font-weight:700;font-family:var(--nm-font-h);' + visaPillClass(v.type) + '">' + v.type + '</span>' +
       '</div>';
       // 국가명 + 체류
@@ -3764,7 +3764,7 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     // 큰 숫자 200
     html += '<div style="text-align:center;padding:14px 0 20px">' +
-      '<p style="font-family:var(--nm-font-h);font-size:64px;font-weight:800;color:#eaddff;line-height:1">200</p>' +
+      '<p style="font-family:var(--nm-font-h);font-size: var(--font-size-hero-lg);font-weight:800;color:#eaddff;line-height:1">200</p>' +
       '<p style="font-size: var(--font-size-tiny);color:rgba(234,221,255,0.7);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;font-weight:700">annual quota · 한·포 협정</p>' +
     '</div>';
     // 추가 stats
@@ -4135,7 +4135,7 @@ window.NOMAD_PAGES = (function(){
     if (nextCriticalItem) {
       html += '<div class="nm-card" style="padding:24px;background:#F5F3FF;border:1px solid var(--nm-primary-fixed)">';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
-        '<span style="background:#ba1a1a;color:#fff;padding:4px 10px;border-radius:6px;font-family:var(--nm-font-h);font-size:9px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase">Critical</span>' +
+        '<span style="background:#ba1a1a;color:#fff;padding:4px 10px;border-radius:6px;font-family:var(--nm-font-h);font-size: var(--font-size-nano);font-weight:800;letter-spacing:0.1em;text-transform:uppercase">Critical</span>' +
         '<span class="material-symbols-outlined" style="color:var(--nm-text-3);font-size: var(--font-size-h2)">calendar_today</span>' +
       '</div>';
       html += '<h5 style="font-family:var(--nm-font-h);font-size:17px;font-weight:700;color:var(--nm-deep-indigo);margin-bottom:8px">' + nextCriticalPeriod.when + '</h5>';
@@ -4682,7 +4682,7 @@ window.NOMAD_PAGES = (function(){
     // 왼쪽 (또는 단독): 분석 텍스트
     html += '<div>';
     html += '<span class="nm-mag-section-num" style="display:block;margin-bottom:16px"><span class="n">' + (num || '05') + '</span> / The Rationale</span>';
-    html += '<h3 style="font-family:var(--nm-font-h);font-size:36px;font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom:24px;line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
+    html += '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-display-2xl);font-weight:700;letter-spacing:-0.02em;color:var(--nm-deep-indigo);margin-bottom:24px;line-height:1.1">Why ' + (why.cityName || '?') + '</h3>';
     html += '<div class="nm-why-body">';
     (why.paragraphs || []).forEach(function(p) { html += '<p>' + p + '</p>'; });
     if (why.takeaway) {
@@ -4837,7 +4837,7 @@ window.NOMAD_PAGES = (function(){
       html += '<div style="position:relative;margin-bottom:18px;padding:14px 16px;background:var(--nm-surface-container-low);border-radius:8px">' +
         '<div style="position:absolute;left:-32px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--nm-primary);border:3px solid #fff;box-shadow:0 0 0 1px var(--nm-primary)"></div>' +
         '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-primary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px">' + t.when + '</div>' +
-        '<div style="font-family:var(--nm-font-h);font-size:15px;font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
+        '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-body-lg);font-weight:600;color:var(--nm-deep-indigo);margin-bottom:4px">' + t.title + '</div>' +
         '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.5">' + nmLinkify(bodyText) + '</p>' +
       '</div>';
     });

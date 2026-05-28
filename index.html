@@ -209,6 +209,14 @@
       --font-size-h1-lg:      24px;  /* 빈도 18회 — H1 큼직 */
       --font-size-display-lg: 32px;  /* 32px+ display 강조 */
 
+      /* ── 12-extra. 폰트 사이즈 outlier 토큰 (2.5단계 추가) ── */
+      --font-size-nano:        9px;  /* chip/badge 미니 라벨 */
+      --font-size-body-lg:    15px;  /* body(14)와 h3(16) 중간 */
+      --font-size-display-md: 28px;  /* display(26)와 display-lg(32) 중간 */
+      --font-size-display-2xl:36px;  /* hero 직전 강조 */
+      --font-size-hero:       48px;  /* hero 표제 */
+      --font-size-hero-lg:    64px;  /* hero 대표제 */
+
       /* ── 13. 라디우스 확장 ── */
       /* 진단: 4/10/24px 빈도 높은데 토큰 없음 */
       --radius-xs:      4px;   /* 소형 chip */
@@ -358,7 +366,7 @@
     /* Our unified intro h2 — consistent style */
     .atelier-page-h2{
       font-family:'Manrope',sans-serif!important;
-      font-size:1.5rem!important;
+      font-size: var(--font-size-h1-lg)!important;
       font-weight:800!important;
       color:var(--slate-900)!important;
       letter-spacing:-0.02em!important;
@@ -425,7 +433,7 @@
       width: 100%; max-width: 360px;
       background: #fff; border: 1.5px solid #a78bfa; border-radius: 0.75rem;
       padding: 0.75rem 1.25rem;
-      font-size: 0.875rem; font-weight: 600; color: var(--slate-800);
+      font-size: var(--font-size-body); font-weight: 600; color: var(--slate-800);
       cursor: pointer; transition: all 0.15s;
     }
     .trip-dd-btn:hover { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(107,56,212,0.12); }
@@ -442,7 +450,7 @@
       display: flex; align-items: center; justify-content: space-between;
       width: 100%; text-align: left;
       padding: 0.75rem 1.25rem;
-      font-size: 0.875rem; font-weight: 500; color: var(--slate-600);
+      font-size: var(--font-size-body); font-weight: 500; color: var(--slate-600);
       border: none; background: none; cursor: pointer; transition: all 0.1s;
     }
     .trip-dd-opt:hover { background: #f5f3ff; }
@@ -595,7 +603,7 @@
     }
     .nomad-page .nm-display-lg {
       font-family: var(--nm-font-h);
-      font-size: 48px;
+      font-size: var(--font-size-hero);
       line-height: 56px;
       letter-spacing: -0.02em;
       font-weight: 700;
@@ -629,7 +637,7 @@
     }
     .nomad-page .nm-page-title {
       font-family: var(--nm-font-h);
-      font-size: 36px;
+      font-size: var(--font-size-display-2xl);
       line-height: 44px;
       letter-spacing: -0.02em;
       font-weight: 700;
@@ -887,7 +895,7 @@
     @media (max-width: 768px) {
       .nomad-page .nm-container { padding: 24px 16px; }
       .nomad-page .nm-page-title { font-size: var(--font-size-display); line-height: 32px; }
-      .nomad-page .nm-display-lg { font-size: 36px; line-height: 44px; }
+      .nomad-page .nm-display-lg { font-size: var(--font-size-display-2xl); line-height: 44px; }
       .nomad-page .nm-headline-lg { font-size: var(--font-size-h1-lg); line-height: 32px; }
       .nomad-page .nm-grid-2,
       .nomad-page .nm-grid-3,
@@ -1022,7 +1030,7 @@
     }
     .nomad-page .nm-city-hero-title {
       font-family: var(--nm-font-h);
-      font-size: 36px;
+      font-size: var(--font-size-display-2xl);
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--nm-deep-indigo);
@@ -1086,7 +1094,7 @@
     .nomad-page .nm-place-card:last-child { border-bottom: none; }
     .nomad-page .nm-place-name {
       font-family: var(--nm-font-h);
-      font-size: 15px;
+      font-size: var(--font-size-body-lg);
       font-weight: 600;
       color: var(--nm-deep-indigo);
       margin-bottom: 6px;
@@ -1156,7 +1164,7 @@
     }
 
     @media (max-width: 768px) {
-      .nomad-page .nm-city-hero-title { font-size: 28px; }
+      .nomad-page .nm-city-hero-title { font-size: var(--font-size-display-md); }
       .nomad-page .nm-city-hero { padding: 20px; }
       .nomad-page .nm-neighborhood-row { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
     }
@@ -1606,7 +1614,7 @@
     }
     .nomad-page .nm-city-v2-landmark-head h4 {
       font-family: 'Inter', sans-serif;
-      font-size: 15px;
+      font-size: var(--font-size-body-lg);
       font-weight: 700;
       color: var(--slate-900);
       margin: 0;
@@ -1617,7 +1625,7 @@
       color: #4338ca;
       padding: 3px 9px;
       border-radius: 4px;
-      font-size: 9px;
+      font-size: var(--font-size-nano);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -2093,7 +2101,7 @@
     }
     .nomad-page .nm-city-v2-focus-item h4 {
       font-family: 'Inter', sans-serif;
-      font-size: 15px;
+      font-size: var(--font-size-body-lg);
       font-weight: 700;
       color: var(--slate-900);
       margin: 0 0 8px;
@@ -2282,10 +2290,10 @@
     /* ──── 인라인 큰 폰트 모바일 축소 (페이지 헤더들) ──── */
     @media (max-width: 640px) {
       /* Nomad Gate / Backward Plan / Stay Channels hero 38-64px 축소 */
-      .nomad-page h1[style*="font-size:64px"],
+      .nomad-page h1[style*="font-size: var(--font-size-hero-lg)"],
       .nomad-page h2[style*="font-size:38px"],
-      .nomad-page h2[style*="font-size:36px"] {
-        font-size: 28px !important;
+      .nomad-page h2[style*="font-size: var(--font-size-display-2xl)"] {
+        font-size: var(--font-size-display-md) !important;
         line-height: 1.2 !important;
       }
       /* Hero display 56-58px → 32px */
@@ -2295,13 +2303,13 @@
         line-height: 1.15 !important;
       }
       /* big metric numbers */
-      .nomad-page span[style*="font-size:64px"],
+      .nomad-page span[style*="font-size: var(--font-size-hero-lg)"],
       .nomad-page p[style*="font-size:52px"] {
         font-size: 40px !important;
       }
       .nomad-page span[style*="font-size:44px"],
       .nomad-page p[style*="font-size:38px"] {
-        font-size: 28px !important;
+        font-size: var(--font-size-display-md) !important;
       }
     }
 
@@ -2426,7 +2434,7 @@
     }
     .nomad-page .nm-mag-hero-title {
       font-family: var(--nm-font-h);
-      font-size: 36px;            /* 56 → 36 */
+      font-size: var(--font-size-display-2xl);            /* 56 → 36 */
       line-height: 1.15;
       font-weight: 700;
       letter-spacing: -0.025em;
@@ -2477,7 +2485,7 @@
     }
     .nomad-page .nm-mag-section-title {
       font-family: var(--nm-font-h);
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
       font-weight: 700;
       letter-spacing: -0.015em;
       color: var(--nm-deep-indigo);
@@ -2571,7 +2579,7 @@
     }
     .nomad-page .nm-bento-side-card h4 {
       font-family: var(--nm-font-h);
-      font-size: 15px;             /* 20 → 15 */
+      font-size: var(--font-size-body-lg);             /* 20 → 15 */
       font-weight: 600;
       color: var(--nm-deep-indigo);
       margin-bottom: 4px;
@@ -2822,7 +2830,7 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.18);
     }
     .nomad-page .nm-why-quote .qmark {
-      font-size: 36px;
+      font-size: var(--font-size-display-2xl);
       opacity: 0.9;
       margin-bottom: 8px;
       line-height: 1;
@@ -2963,7 +2971,7 @@
       transition: all 0.3s;
     }
     .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
-    .cal-nav-select { padding:8px 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size:15px; font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .cal-nav-select { padding:8px 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size: var(--font-size-body-lg); font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
     .cal-nav-select:hover { border-color:#a5b4fc; background:#f5f3ff; }
     .cal-nav-select:focus { outline:none; border-color:var(--indigo-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
     .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
@@ -2985,13 +2993,13 @@
     .calendar-page #planner-grid { overflow: visible; }
 
     /* ===== 트립 노트 렌더 스타일 ===== */
-    .prose-tn h2 { font-size: 1.125rem; font-weight: 800; color: var(--slate-800); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e7ff; }
+    .prose-tn h2 { font-size: var(--font-size-h2); font-weight: 800; color: var(--slate-800); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e7ff; }
     .prose-tn h2:first-child { margin-top: 0; }
     .prose-tn h3 { font-size: 0.95rem; font-weight: 700; color: #4338ca; margin: 1rem 0 0.5rem; }
-    .prose-tn p { color: var(--slate-700); line-height: 1.65; margin: 0.5rem 0; font-size: 0.875rem; }
+    .prose-tn p { color: var(--slate-700); line-height: 1.65; margin: 0.5rem 0; font-size: var(--font-size-body); }
     .prose-tn ul { list-style: none; padding-left: 0; margin: 0.5rem 0; }
     .prose-tn ul ul { padding-left: 1.5rem; margin: 0.25rem 0; }
-    .prose-tn li { color: var(--slate-700); line-height: 1.6; margin: 0.25rem 0; padding-left: 1.25rem; position: relative; font-size: 0.875rem; }
+    .prose-tn li { color: var(--slate-700); line-height: 1.6; margin: 0.25rem 0; padding-left: 1.25rem; position: relative; font-size: var(--font-size-body); }
     .prose-tn li::before { content: '•'; color: #818cf8; position: absolute; left: 0.25rem; font-weight: bold; }
     .prose-tn li.tn-checkbox { padding-left: 1.75rem; }
     .prose-tn li.tn-checkbox::before { content: ''; }
@@ -3010,7 +3018,7 @@
       .calendar-page #planner-grid > div {
         min-height: 72px; padding: 3px 2px;
       }
-      .calendar-page .cal-day-header { padding: 0.35rem 0.2rem !important; font-size: 9px; }
+      .calendar-page .cal-day-header { padding: 0.35rem 0.2rem !important; font-size: var(--font-size-nano); }
 
       /* 일자 숫자 모바일에서 작게 */
       .calendar-page #planner-grid > div > span[class*="font-bold"][class*="text-sm"] {
@@ -3032,7 +3040,7 @@
       .calendar-page #planner-grid > div > div[data-pidx],
       .calendar-page #planner-grid > div > div.mt-1,
       .calendar-page #planner-grid > div > div[class*="mt-1.5"] {
-        font-size: 9px !important;
+        font-size: var(--font-size-nano) !important;
         padding: 1px 3px !important;
         margin-top: 1px !important;
         margin-bottom: 1px !important;
@@ -3049,7 +3057,7 @@
         text-shadow: none !important;
       }
       .calendar-page #planner-grid > div > div[data-pidx] span.truncate {
-        font-size: 9px !important;
+        font-size: var(--font-size-nano) !important;
         line-height: 1.3 !important;
       }
       /* 호버 시만 보이는 편집/삭제 버튼은 모바일에서 숨김 (호버 없음) */
@@ -3097,8 +3105,8 @@
       }
       /* 헤더 카드: 연간 매트릭스 + 연차 트래커 */
       #page-matrix .grid.grid-cols-1 { gap: 0.75rem !important; margin-bottom: 1rem !important; }
-      #page-matrix h2 { font-size: 1.25rem !important; }
-      #page-matrix h2 + div span#matrix-year-label { font-size: 1.25rem !important; min-width: 50px !important; }
+      #page-matrix h2 { font-size: var(--font-size-h2-lg) !important; }
+      #page-matrix h2 + div span#matrix-year-label { font-size: var(--font-size-h2-lg) !important; min-width: 50px !important; }
 
       /* Pipeline section: 부모에 overflow-x:auto 줘야 페이지 안 깨짐 */
       #mx-pipeline-section {
@@ -3179,7 +3187,7 @@
         flex-wrap: wrap; gap: 8px !important; margin-bottom: 0.5rem;
       }
       #page-finance-hub section.mb-12 h2 {
-        font-size: 1.125rem !important; flex: 1 1 100%;
+        font-size: var(--font-size-h2) !important; flex: 1 1 100%;
       }
       /* 가운데 구분선 (flex-grow h-[1px]) 모바일에선 숨김 */
       #page-finance-hub section.mb-12 > div.flex.items-center.gap-4 > div.flex-grow {
@@ -3192,14 +3200,14 @@
         white-space: nowrap;
       }
       /* 연도 네비 작게 */
-      #page-finance-hub #hub-year-label { font-size: 1rem !important; min-width: 40px !important; }
+      #page-finance-hub #hub-year-label { font-size: var(--font-size-h3) !important; min-width: 40px !important; }
 
       /* Monthly Artifacts 카드 grid 1열 */
       #hub-monthly-grid { gap: 1rem !important; }
 
       /* Summary cards 패딩/폰트 축소 */
       #page-finance-hub section.mb-10 > div.grid > div { padding: 1.25rem !important; border-radius: 1rem !important; }
-      #page-finance-hub section.mb-10 .text-2xl { font-size: 1.25rem !important; }
+      #page-finance-hub section.mb-10 .text-2xl { font-size: var(--font-size-h2-lg) !important; }
     }
 
     /* ===== Travel Budget 모바일 대응 ===== */
@@ -3209,17 +3217,17 @@
       }
       /* 보라색 메인 트립 카드 - 큰 숫자 (₩11,478,871 8자리) 폰트 축소 */
       #finance-main-trip { padding: 1rem !important; }
-      #finance-main-trip h3 { font-size: 1rem !important; }
-      #finance-main-trip .text-2xl { font-size: 1rem !important; line-height: 1.2 !important; }
+      #finance-main-trip h3 { font-size: var(--font-size-h3) !important; }
+      #finance-main-trip .text-2xl { font-size: var(--font-size-h3) !important; line-height: 1.2 !important; }
       #finance-main-trip .grid { gap: 0.75rem !important; margin-top: 0.5rem; }
-      #finance-main-trip .text-[10px] { font-size: 9px !important; }
+      #finance-main-trip .text-[10px] { font-size: var(--font-size-nano) !important; }
       /* 트립 필터 카드 패딩 축소 */
       #finance-dd-wrap { font-size: var(--font-size-meta) !important; }
 
       /* 예산 vs 지출 섹션 */
       #finance-budget-section .px-6.py-4 { padding: 0.75rem !important; }
       #finance-budget-body { padding: 0.75rem !important; }
-      #finance-budget-body .text-2xl { font-size: 1.125rem !important; }
+      #finance-budget-body .text-2xl { font-size: var(--font-size-h2) !important; }
       /* 카테고리 4개 카드 작은 화면에서도 2열 유지, 폰트만 작게 */
       #finance-budget-body .grid.grid-cols-2 > div { padding: 0.75rem !important; }
       #finance-budget-body .grid.grid-cols-2 .text-sm { font-size: var(--font-size-meta) !important; }
@@ -3269,7 +3277,7 @@
       #page-finance > div > div.bg-white > div.px-6.py-4 {
         padding: 0.75rem !important; flex-wrap: wrap; gap: 4px !important;
       }
-      #page-finance #finance-status { font-size: 9px !important; }
+      #page-finance #finance-status { font-size: var(--font-size-nano) !important; }
     }
 
     /* ===== Daily Ledger 모바일 대응 ===== */
@@ -3289,7 +3297,7 @@
       #page-ledger #ledger-panel-monthly > div.flex.items-center.justify-between.mb-8:first-child {
         flex-wrap: wrap; gap: 6px !important; margin-bottom: 1rem !important;
       }
-      #page-ledger #ldg-month-title { font-size: 1rem !important; }
+      #page-ledger #ldg-month-title { font-size: var(--font-size-h3) !important; }
       #page-ledger #ledger-panel-monthly button { padding: 4px 8px !important; font-size: var(--font-size-micro) !important; }
       /* KPI strip: 5컬럼 → 2컬럼 (모바일) */
       #page-ledger #ldg-kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 1rem !important; }
@@ -3304,7 +3312,7 @@
       #page-ledger #ledger-panel-monthly .bg-white.rounded-2xl { padding: 1rem !important; border-radius: 1rem !important; }
       /* 캘린더 day header 작게 */
       #page-ledger #ldg-calendar { gap: 1px !important; }
-      #page-ledger #ldg-calendar > div { font-size: 9px !important; padding: 2px !important; }
+      #page-ledger #ldg-calendar > div { font-size: var(--font-size-nano) !important; padding: 2px !important; }
       /* 카테고리 그리드 5컬럼 → 2컬럼 */
       #page-ledger #ldg-cat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
       #page-ledger #ldg-cat-grid > div { padding: 0.75rem !important; font-size: var(--font-size-micro) !important; }
@@ -3324,7 +3332,7 @@
       }
       /* Sticky 타임라인 컨테이너 */
       #work-timeline-section { padding: 0.75rem !important; max-height: 55vh !important; }
-      #work-timeline-section h2 { font-size: 1.125rem !important; }
+      #work-timeline-section h2 { font-size: var(--font-size-h2) !important; }
       /* 헤더 줄바꿈 + 버튼 작게 (높이 압축) */
       #work-timeline-section > div.flex.items-center.justify-between.mb-3 {
         gap: 6px !important; margin-bottom: 8px !important;
@@ -3362,7 +3370,7 @@
       }
 
       /* Series Growth Correlation 헤더 */
-      #page-income section h2 { font-size: 1.25rem !important; }
+      #page-income section h2 { font-size: var(--font-size-h2-lg) !important; }
       #page-income section header { flex-wrap: wrap; gap: 8px !important; }
       #page-income #growth-year-subtitle { font-size: var(--font-size-micro) !important; }
       #page-income #growth-chart-legend { font-size: var(--font-size-tiny) !important; gap: 6px !important; flex-wrap: wrap; }
@@ -3376,7 +3384,7 @@
       #page-income #matrix-year-subtitle { font-size: var(--font-size-micro) !important; }
       #page-income #income-matrix-year-label { padding: 0 8px !important; font-size: var(--font-size-micro) !important; }
       /* Sync Active 배지 작게 */
-      #page-income span.inline-flex.items-center.px-3 { padding: 2px 6px !important; font-size: 9px !important; }
+      #page-income span.inline-flex.items-center.px-3 { padding: 2px 6px !important; font-size: var(--font-size-nano) !important; }
     }
 
     /* ===== Travel 페이지 모바일 대응 ===== */
@@ -3518,7 +3526,7 @@
         justify-content: flex-end !important; display: flex !important;
       }
       /* 통일 폰트 */
-      #journey-flight-list > div p.font-bold.text-sm { font-size: 15px !important; }
+      #journey-flight-list > div p.font-bold.text-sm { font-size: var(--font-size-body-lg) !important; }
       #journey-flight-list > div p.text-xs { font-size: var(--font-size-meta) !important; }
       #journey-flight-list > div p.text-xl { font-size: var(--font-size-h2) !important; }
       #journey-flight-list > div p.text-base { font-size: var(--font-size-h3) !important; font-weight: 700 !important; }
@@ -3596,7 +3604,7 @@
         width: 100% !important;
       }
       /* 폰트 */
-      #journey-transport-list .font-bold.text-sm { font-size: 15px !important; }
+      #journey-transport-list .font-bold.text-sm { font-size: var(--font-size-body-lg) !important; }
       #journey-transport-list .text-xs { font-size: var(--font-size-meta) !important; }
       #journey-transport-list .text-\[9px\] { font-size: var(--font-size-tiny) !important; }
       #journey-transport-list p.text-base { font-size: var(--font-size-h2) !important; }
@@ -3629,10 +3637,10 @@
       /* 도시 카드 그리드 (4 col → 3 col 모바일) */
       #journey-city-cards { grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
       /* 트립 헤더 */
-      #journey-trip-title { font-size: 1.5rem !important; }
+      #journey-trip-title { font-size: var(--font-size-h1-lg) !important; }
       /* 항공편 합계 카드 */
       #journey-flight-total > div { padding: 0.75rem 1rem !important; }
-      #journey-flight-total .text-xl { font-size: 1rem !important; }
+      #journey-flight-total .text-xl { font-size: var(--font-size-h3) !important; }
     }
 
     /* ===== Annie Review Detail 모바일 대응 ===== */
@@ -3640,12 +3648,12 @@
       /* 세션 리포트 타이틀: 너무 커서 단어마다 줄바꿈되던 문제 */
       #eng-detail-content h2.text-3xl,
       #eng-detail-content h2.text-4xl {
-        font-size: 1.25rem !important;
+        font-size: var(--font-size-h2-lg) !important;
         line-height: 1.25 !important;
         word-break: keep-all !important;
         overflow-wrap: break-word !important;
       }
-      #eng-detail-content .text-xl { font-size: 1rem !important; }
+      #eng-detail-content .text-xl { font-size: var(--font-size-h3) !important; }
       #eng-detail-content section { margin-bottom: 1.25rem !important; }
       #eng-detail-content .bg-white { padding: 1rem !important; border-radius: 1rem !important; }
 
@@ -3660,7 +3668,7 @@
       }
       /* Category(1번째) 좁게, expression(2번째) 보통, 의미(3번째) 넓게, example(4번째) 보통 */
       #eng-detail-content table th:nth-child(1),
-      #eng-detail-content table td:nth-child(1) { width: 56px !important; font-size: 9px !important; }
+      #eng-detail-content table td:nth-child(1) { width: 56px !important; font-size: var(--font-size-nano) !important; }
       #eng-detail-content table th:nth-child(2),
       #eng-detail-content table td:nth-child(2) { width: 28% !important; font-size: var(--font-size-body-sm) !important; }
       #eng-detail-content table th:nth-child(3),
@@ -3676,7 +3684,7 @@
         line-height: 1.4 !important;
       }
       /* 헤더 폰트 작게 */
-      #eng-detail-content table thead th { font-size: 9px !important; }
+      #eng-detail-content table thead th { font-size: var(--font-size-nano) !important; }
       /* 가로 스크롤 방지 (overflow-x:auto 무력화) */
       #eng-detail-content .overflow-x-auto { overflow-x: visible !important; }
 
@@ -3688,7 +3696,7 @@
 
       /* Tab nav scroll 영역 작게 */
       #eng-tab-nav button { padding: 4px 8px !important; }
-      #eng-tab-nav .eng-tab-num { font-size: 1rem !important; }
+      #eng-tab-nav .eng-tab-num { font-size: var(--font-size-h3) !important; }
       #eng-tab-nav .eng-tab-label { font-size: var(--font-size-tiny) !important; }
     }
 
@@ -3714,7 +3722,7 @@
         text-align: left !important;
       }
       .pk-day-card .grid.grid-cols-1 > div:nth-child(1) .text-xl {
-        font-size: 1.125rem !important;
+        font-size: var(--font-size-h2) !important;
       }
       /* 2번째: 날씨 아이콘 - 모바일에선 숨김 */
       .pk-day-card .grid.grid-cols-1 > div:nth-child(2) {
@@ -3725,7 +3733,7 @@
         grid-row: 1; grid-column: 2;
       }
       .pk-day-card .grid.grid-cols-1 > div:nth-child(3) .text-sm {
-        font-size: 0.875rem !important; font-weight: 700 !important;
+        font-size: var(--font-size-body) !important; font-weight: 700 !important;
       }
       /* 4번째: 아이템 + 입력 - 두 칼럼 모두 차지 */
       .pk-day-card .grid.grid-cols-1 > div:nth-child(4) {
@@ -3735,9 +3743,9 @@
       .pk-day-card input[id^="pk-outfit-input"] { font-size: var(--font-size-body-sm) !important; padding: 6px 10px !important; }
       /* 카테고리 카드도 폰트/패딩 축소 */
       #pk-category-list > div { padding: 1rem !important; border-radius: 1.25rem !important; }
-      #pk-category-list h4 { font-size: 1rem !important; }
+      #pk-category-list h4 { font-size: var(--font-size-h3) !important; }
       /* 진행률 카드 */
-      #page-packing #pk-progress-pct { font-size: 1.5rem !important; }
+      #page-packing #pk-progress-pct { font-size: var(--font-size-h1-lg) !important; }
     }
 
     /* ===== Memo (Reference) 모바일 대응 ===== */
@@ -3757,7 +3765,7 @@
       }
       /* 에디터 내부 padding 축소 */
       #ref-editor-active .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
-      #ref-editor-active input#ref-editor-title { font-size: 1.25rem !important; }
+      #ref-editor-active input#ref-editor-title { font-size: var(--font-size-h2-lg) !important; }
       /* 뒤로가기 버튼 (모바일에서만 표시) */
       #ref-editor-back-mobile { display: inline-flex !important; }
     }
@@ -3773,11 +3781,11 @@
       /* Top stats: 1열로 (랜덤 카드 + 진행률 카드) */
       #page-english .grid.md\:grid-cols-3 { grid-template-columns: 1fr !important; gap: 0.75rem !important; margin-bottom: 1rem !important; }
       #page-english #eng-random-card { padding: 1.25rem !important; }
-      #page-english h3#eng-rand-title { font-size: 1rem !important; }
+      #page-english h3#eng-rand-title { font-size: var(--font-size-h3) !important; }
       /* 진행률 카드 작게 */
       #page-english div[aria-label="세션 진행률"] { padding: 1rem !important; gap: 1rem !important; }
       #page-english div[aria-label="세션 진행률"] > div.relative { width: 90px !important; height: 90px !important; }
-      #page-english #english-progress-pct { font-size: 1.5rem !important; }
+      #page-english #english-progress-pct { font-size: var(--font-size-h1-lg) !important; }
       /* 수업 트래커 헤더 */
       #page-english #page-english > div.bg-white .px-6.py-4.flex.justify-between {
         padding: 0.75rem !important; flex-wrap: wrap; gap: 6px !important;
@@ -3791,20 +3799,20 @@
       #english-table-wrap th { font-size: var(--font-size-tiny) !important; padding: 8px 10px !important; }
       #english-table-wrap td { font-size: var(--font-size-micro) !important; padding: 10px !important; }
       /* 상태 버튼 작게 */
-      #english-table-wrap td button { padding: 2px 6px !important; font-size: 9px !important; }
+      #english-table-wrap td button { padding: 2px 6px !important; font-size: var(--font-size-nano) !important; }
       /* 리뷰 추가 버튼 작게 */
       #page-english button[onclick*="openReviewCreateModal"] { padding: 5px 10px !important; font-size: var(--font-size-tiny) !important; }
     }
 
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
-    .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
+    .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: var(--font-size-body-sm); transition: all 0.15s; }
     .vault-filter-chip:hover { background: #d9dadb; }
     .vault-filter-chip.active { background: var(--lavender-deep); color: #fff; }
     .vault-card { background: #fff; border-radius: 1.5rem; padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
     .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
     .vault-model-radio { cursor: pointer; }
-    .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: 0.75rem; background: #e7e8e9; font-size: 0.8125rem; font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
+    .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: 0.75rem; background: #e7e8e9; font-size: var(--font-size-body-sm); font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
     .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: var(--lavender-deep); color: #fff; }
     .vault-ai-item { background: #fff; border-radius: 1rem; padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
     .vault-ai-item:hover { border-color: rgba(107,56,212,0.3); }
@@ -3914,7 +3922,7 @@
     .ref-popover .cp-dot.active { border-color:#7c3aed; }
     .ref-popover .fs-opt { padding:4px 12px; border-radius:6px; cursor:pointer; font-size: var(--font-size-body-sm); color:var(--slate-600); white-space:nowrap; }
     .ref-popover .fs-opt:hover { background:#ede9fe; color:#7c3aed; }
-    .ref-editor { background:transparent; border:none; border-radius:0; padding:0; font-size:15px; line-height:1.8; color:#1d1d1f; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
+    .ref-editor { background:transparent; border:none; border-radius:0; padding:0; font-size: var(--font-size-body-lg); line-height:1.8; color:#1d1d1f; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
     .ref-editor:focus { border-color:transparent; box-shadow:none; }
     #ref-input-body { background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding:12px 16px; font-size: var(--font-size-body); line-height:1.6; color:var(--slate-700); }
     #ref-input-body:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
@@ -3959,7 +3967,7 @@
     padding: 1.25rem 1.5rem;
   }
   .atl-modal-hero-tag {
-    font-size: 9px;
+    font-size: var(--font-size-nano);
     font-weight: 900;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -3980,7 +3988,7 @@
     border-bottom: 1px solid var(--slate-100);
   }
   .atl-modal-header h3 {
-    font-size: 1rem;
+    font-size: var(--font-size-h3);
     font-weight: 800;
     color: var(--slate-900);
     letter-spacing: -0.01em;
@@ -4038,7 +4046,7 @@
     border: 1.5px solid var(--slate-200);
     border-radius: 0.75rem;
     padding: 0.625rem 0.875rem;
-    font-size: 0.8125rem;
+    font-size: var(--font-size-body-sm);
     color: var(--slate-800);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
@@ -4057,12 +4065,12 @@
     display: flex;
     align-items: flex-start;
     gap: 0.625rem;
-    font-size: 0.75rem;
+    font-size: var(--font-size-meta);
     color: var(--slate-500);
     line-height: 1.5;
   }
   .atl-info-box .material-symbols-outlined {
-    font-size: 1rem;
+    font-size: var(--font-size-h3);
     color: #818cf8;
     flex-shrink: 0;
     margin-top: 1px;
@@ -4076,7 +4084,7 @@
   }
   .atl-btn-cancel {
     padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
+    font-size: var(--font-size-body-sm);
     font-weight: 600;
     color: var(--slate-500);
     border-radius: 0.625rem;
@@ -4088,7 +4096,7 @@
   .atl-btn-cancel:hover { background: var(--slate-100); }
   .atl-btn-save {
     padding: 0.5rem 1.5rem;
-    font-size: 0.8125rem;
+    font-size: var(--font-size-body-sm);
     font-weight: 800;
     color: #fff;
     border-radius: 0.625rem;
@@ -4347,7 +4355,7 @@
       padding-bottom: 16px;
       border-bottom: 1px solid var(--atlas-line);
       margin-bottom: 36px;
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
     }
     #travel-atlas-section .atlas-meta-sub {
       font-size: var(--font-size-body);
@@ -4441,7 +4449,7 @@
       position: absolute;
       bottom: 16px;
       left: 16px;
-      font-size: 36px;
+      font-size: var(--font-size-display-2xl);
       line-height: 1;
       font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
       filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
@@ -4714,7 +4722,7 @@
     }
     #travel-atlas-section .atlas-tl-year-label {
       font-family: 'Manrope',sans-serif;
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--atlas-primary);
@@ -4982,7 +4990,7 @@
       margin-bottom: 14px;
     }
     #travel-atlas-section .atlas-trip-hero-flag {
-      font-size: 36px;
+      font-size: var(--font-size-display-2xl);
       line-height: 1;
       font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
     }
@@ -5060,7 +5068,7 @@
     }
     #travel-atlas-section .atlas-trip-h2 {
       font-family: 'Manrope',sans-serif;
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
       font-weight: 700;
       color: var(--atlas-ink);
       margin: 0;
@@ -5261,7 +5269,7 @@
       color: var(--atlas-primary);
     }
     #travel-atlas-section .atlas-ledger-card-deco .material-symbols-outlined {
-      font-size: 64px;
+      font-size: var(--font-size-hero-lg);
     }
     #travel-atlas-section .atlas-ledger-card-h {
       font-family: 'Inter',sans-serif;
@@ -5379,7 +5387,7 @@
     }
     #travel-atlas-section .atlas-ledger-card-net-v {
       font-family: 'Manrope',sans-serif;
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
       font-weight: 900;
       color: var(--atlas-primary);
       letter-spacing: -0.02em;
@@ -5424,7 +5432,7 @@
     }
     #travel-atlas-section .atlas-pto-card-num {
       font-family: 'Manrope',sans-serif;
-      font-size: 28px;
+      font-size: var(--font-size-display-md);
       font-weight: 800;
       color: var(--atlas-primary);
       line-height: 1;
@@ -5636,7 +5644,7 @@
     #page-journey .j-time-body { flex: 1; }
     #page-journey .j-time-title {
       font-family: var(--j-font-body);
-      font-size: 15px;
+      font-size: var(--font-size-body-lg);
       font-weight: 700;
       color: var(--j-on-surface);
       margin: 0 0 6px;
@@ -6088,7 +6096,7 @@
       justify-content: center;
       color: rgba(255,255,255,0.7);
     }
-    #page-journey .j-stop-img-empty .material-symbols-outlined { font-size: 36px; }
+    #page-journey .j-stop-img-empty .material-symbols-outlined { font-size: var(--font-size-display-2xl); }
     #page-journey .j-stop-label {
       position: absolute;
       top: 14px;
@@ -6150,7 +6158,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
       border-radius: 9999px;
-      font-size: 9px;
+      font-size: var(--font-size-nano);
       font-weight: 600;
       letter-spacing: 0.02em;
       font-family: var(--j-font-body);
@@ -6269,11 +6277,11 @@
       max-width: 200px;
       border-left: 1px solid var(--j-outline-variant);
     }
-    #page-journey .j-voyage-info .j-meta { font-size: 9px; }
+    #page-journey .j-voyage-info .j-meta { font-size: var(--font-size-nano); }
     #page-journey .j-voyage-info .j-voyage-desc { font-size: var(--font-size-meta); line-height: 1.4; }
     #page-journey .j-voyage-info .j-tag-pill {
       padding: 4px 9px;
-      font-size: 9px;
+      font-size: var(--font-size-nano);
     }
     #page-journey .j-voyage-info .j-meta { margin-bottom: 8px; }
     #page-journey .j-voyage-desc {
@@ -6312,7 +6320,7 @@
       color: var(--slate-300);
       background: var(--j-surface-container);
     }
-    #page-journey .j-voyage-map-placeholder .material-symbols-outlined { font-size: 48px; }
+    #page-journey .j-voyage-map-placeholder .material-symbols-outlined { font-size: var(--font-size-hero); }
     #page-journey .j-voyage-map-link {
       position: absolute;
       bottom: 14px;
@@ -6440,7 +6448,7 @@
       flex-shrink: 0;
     }
     @media (min-width: 1024px) {
-      #page-journey .j-day-num { width: 40px; height: 40px; font-size: 15px; }
+      #page-journey .j-day-num { width: 40px; height: 40px; font-size: var(--font-size-body-lg); }
       #page-journey .j-day-head { gap: 8px; margin-bottom: 14px; }
       #page-journey .j-day-head-left { gap: 10px; }
       #page-journey .j-day-h3 { font-size: var(--font-size-body-sm); margin-bottom: 2px; }
@@ -6621,7 +6629,7 @@
     #page-journey .j-slot.is-reservation .j-slot-title { color: var(--j-primary); }
     #page-journey .j-slot.is-shopping .j-slot-title-row::after {
       content: '🛍 쇼핑';
-      font-size: 9px;
+      font-size: var(--font-size-nano);
       font-weight: 800;
       background: #fed7aa;
       color: #9a3412;
@@ -6910,7 +6918,7 @@
     #page-journey .j-inter-meta-grid.cols-2 { grid-template-columns: 1fr 1fr; }
     #page-journey .j-inter-meta-l {
       font-family: var(--j-font-body);
-      font-size: 9px;
+      font-size: var(--font-size-nano);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.12em;
@@ -6983,7 +6991,7 @@
       justify-content: center;
       color: rgba(255,255,255,0.7);
     }
-    #page-journey .j-lodge-img-empty .material-symbols-outlined { font-size: 48px; }
+    #page-journey .j-lodge-img-empty .material-symbols-outlined { font-size: var(--font-size-hero); }
     #page-journey .j-lodge-img-controls {
       position: absolute;
       top: 12px;
@@ -7028,7 +7036,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
       border-radius: 9999px;
-      font-size: 9px;
+      font-size: var(--font-size-nano);
       font-weight: 600;
       letter-spacing: 0.02em;
       font-family: var(--j-font-body);
@@ -7627,7 +7635,7 @@
             <div style="flex:1;min-width:260px;">
               <p class="dash-label" style="color:#7c3aed;margin-bottom:8px;">Overview</p>
               <h2 id="dash-greeting" class="dash-headline-lg" style="margin-bottom:8px;">안녕하세요.</h2>
-              <p style="font-size:15px;color:#4a4455;font-weight:500;"><span id="dash-brief-date"></span><span id="dash-brief-tagline" style="color:#6b21a8;font-weight:500;"></span></p>
+              <p style="font-size: var(--font-size-body-lg);color:#4a4455;font-weight:500;"><span id="dash-brief-date"></span><span id="dash-brief-tagline" style="color:#6b21a8;font-weight:500;"></span></p>
             </div>
             <div class="flex items-stretch gap-2.5 flex-wrap">
               <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border-radius:16px;padding:12px 18px;min-width:88px;text-align:center;border:1px solid #c4b5fd;">
@@ -7870,7 +7878,7 @@
             <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">document_scanner</span> 예약 스캔
           </button>
           <button onclick="openApiSettingsModal()" title="API 설정" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors" id="travel-api-key-btn">
-            <span class="material-symbols-outlined" style="font-size:15px">key</span>
+            <span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">key</span>
           </button>
         </div>
         <!-- 미니 요약 (예산 상태) -->
@@ -9041,7 +9049,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeCityModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveCityEntry()" id="city-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveCityEntry()" id="city-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -9088,7 +9096,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeTripModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveTripEntry()" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveTripEntry()" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -9112,7 +9120,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeJourneyModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveJourneyEntry()" id="journey-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveJourneyEntry()" id="journey-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -9192,7 +9200,7 @@
           </button>
           <div id="scan-apply-btns" class="hidden flex gap-2">
             <button id="scan-apply-btn" onclick="applyBookingScan()" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 flex items-center justify-center gap-1.5 transition-colors">
-              <span class="material-symbols-outlined" style="font-size:15px">add_circle</span> <span id="scan-apply-label">저장하기</span>
+              <span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">add_circle</span> <span id="scan-apply-label">저장하기</span>
             </button>
             <button onclick="resetBookingScan()" class="px-4 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-colors">다시</button>
           </div>
@@ -9522,7 +9530,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeFinanceModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveFinanceEntry()" id="fin-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveFinanceEntry()" id="fin-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -9600,7 +9608,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeBudgetModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveBudget()" id="budget-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveBudget()" id="budget-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -9935,7 +9943,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeHubModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveHubEntry()" id="hub-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveHubEntry()" id="hub-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -10621,7 +10629,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeMatrixModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveMatrixEntry()" id="modal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveMatrixEntry()" id="modal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -10797,7 +10805,7 @@
              class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:border-sky-300 hover:bg-sky-50/50 transition-all">
           <div id="import-drop-placeholder">
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mx-auto mb-2">
-              <span class="material-symbols-outlined text-sky-500" style="font-size:28px">upload_file</span>
+              <span class="material-symbols-outlined text-sky-500" style="font-size: var(--font-size-display-md)">upload_file</span>
             </div>
             <p class="text-sm font-bold text-slate-700 mb-1">파일 업로드</p>
             <p class="text-xs text-slate-400">.ics, .xlsx, .csv · 클릭하거나 드래그</p>
@@ -11036,7 +11044,7 @@
                    class="mb-5 border-2 border-dashed border-violet-200 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/50 transition-all"
                    style="min-height:130px;padding:24px 16px"
                    onclick="document.getElementById('review-file-input').click()">
-                <span class="material-symbols-outlined text-violet-300 mb-2" style="font-size:36px">upload_file</span>
+                <span class="material-symbols-outlined text-violet-300 mb-2" style="font-size: var(--font-size-display-2xl)">upload_file</span>
                 <p class="text-sm font-bold text-slate-600">수업 녹음 트랜스크립트 파일을 여기로 드래그하세요</p>
                 <p class="text-[10px] text-slate-400 mt-1">.txt 파일 또는 직접 복사한 텍스트 모두 가능</p>
                 <p class="text-[10px] text-violet-500 font-bold mt-2 underline">또는 파일 선택</p>
@@ -11133,7 +11141,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeEnglishModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveEnglishEntry()" id="english-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveEnglishEntry()" id="english-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -11607,7 +11615,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeIncomeModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveIncomeEntry()" id="income-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveIncomeEntry()" id="income-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -11839,9 +11847,9 @@
           </div>
         </div>
         <div class="atl-modal-footer">
-          <button onclick="deletePlannerFromModal()" id="planner-delete-btn" class="atl-btn-cancel" style="display:none;color:#e11d48;border-color:#fecdd3"><span class="material-symbols-outlined" style="font-size:15px">delete</span> 삭제</button>
+          <button onclick="deletePlannerFromModal()" id="planner-delete-btn" class="atl-btn-cancel" style="display:none;color:#e11d48;border-color:#fecdd3"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">delete</span> 삭제</button>
           <button onclick="closePlannerModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="savePlannerEntry()" id="planner-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="savePlannerEntry()" id="planner-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -11954,7 +11962,7 @@
         <div class="atl-modal-footer">
           <button onclick="closeSeriesModal()" class="atl-btn-cancel">취소</button>
           <button onclick="saveSeriesEntries()" id="series-save-btn" class="atl-btn-save" disabled>
-            <span class="material-symbols-outlined" style="font-size:15px">playlist_add_check</span>
+            <span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">playlist_add_check</span>
             <span id="series-save-label">일정 추가</span>
           </button>
         </div>
@@ -12312,7 +12320,7 @@
         <div id="ref-editor-panel" class="flex-1 flex flex-col min-h-0">
           <div id="ref-editor-empty" class="flex-1 flex items-center justify-center" style="color:#ccc3d8;">
             <div class="text-center">
-              <span class="material-symbols-outlined mb-3 block" style="font-size:48px;color:#ccc3d8;">edit_note</span>
+              <span class="material-symbols-outlined mb-3 block" style="font-size: var(--font-size-hero);color:#ccc3d8;">edit_note</span>
               <p style="font-size: var(--font-size-body);color:#7b7487;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;">메모를 선택하거나 새로 만드세요</p>
             </div>
           </div>
@@ -12341,7 +12349,7 @@
               <div class="mx-auto" style="max-width:768px">
                 <p id="ref-editor-date" style="font-size: var(--font-size-micro);font-weight:700;color:#7b7487;text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;"></p>
                 <input id="ref-editor-title" type="text" spellcheck="false" placeholder="제목" class="w-full outline-none bg-transparent border-none shadow-none focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-none" style="font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size: var(--font-size-display);font-weight:700;color:#121c2a;letter-spacing:-0.01em;line-height:1.25;margin-bottom:20px;"/>
-                <div id="ref-editor-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor outline-none" data-placeholder="내용을 입력하세요..." style="min-height:400px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:15px;line-height:1.9;color:#27313f;font-weight:400;"></div>
+                <div id="ref-editor-body" contenteditable="true" spellcheck="false" onfocus="this.setAttribute('spellcheck','true')" onblur="this.setAttribute('spellcheck','false')" class="ref-editor outline-none" data-placeholder="내용을 입력하세요..." style="min-height:400px;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size: var(--font-size-body-lg);line-height:1.9;color:#27313f;font-weight:400;"></div>
               </div>
             </div>
           </div>
@@ -12375,7 +12383,7 @@
             <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline"><u>U</u></button>
             <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
             <span class="tb-sep"></span>
-            <button onmousedown="event.preventDefault();refTogglePop('fs-pop-s')" title="폰트 크기" style="font-size: var(--font-size-body-sm);font-weight:700">A<span style="font-size:9px">▾</span>
+            <button onmousedown="event.preventDefault();refTogglePop('fs-pop-s')" title="폰트 크기" style="font-size: var(--font-size-body-sm);font-weight:700">A<span style="font-size: var(--font-size-nano)">▾</span>
               <div class="ref-popover" id="fs-pop-s" style="width:90px;flex-direction:column;gap:2px">
                 <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('1')">작게</div>
                 <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('3')">보통</div>
@@ -12433,7 +12441,7 @@
           <button onmousedown="event.preventDefault();document.execCommand('underline')" title="Underline"><u>U</u></button>
           <button onmousedown="event.preventDefault();document.execCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
           <span class="tb-sep"></span>
-          <button onmousedown="event.preventDefault();refTogglePop('fs-pop-f')" title="폰트 크기" style="font-size: var(--font-size-body-sm);font-weight:700">A<span style="font-size:9px">▾</span>
+          <button onmousedown="event.preventDefault();refTogglePop('fs-pop-f')" title="폰트 크기" style="font-size: var(--font-size-body-sm);font-weight:700">A<span style="font-size: var(--font-size-nano)">▾</span>
             <div class="ref-popover" id="fs-pop-f" style="width:90px;flex-direction:column;gap:2px">
               <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('1')">작게</div>
               <div class="fs-opt" onmousedown="event.stopPropagation();refFontSize('3')">보통</div>
@@ -12720,7 +12728,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeIncomeGoalModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveIncomeGoal()" id="income-goal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveIncomeGoal()" id="income-goal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
@@ -12747,7 +12755,7 @@
         </div>
         <div class="atl-modal-footer">
           <button onclick="closeGoalModal()" class="atl-btn-cancel">취소</button>
-          <button onclick="saveGoalEntry()" id="goal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size:15px">save</span> 저장</button>
+          <button onclick="saveGoalEntry()" id="goal-save-btn" class="atl-btn-save"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">save</span> 저장</button>
         </div>
       </div>
     </div>
