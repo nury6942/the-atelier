@@ -230,6 +230,7 @@
       --radius-xs:      4px;   /* 소형 chip */
       --radius-md-plus: 10px;  /* input 표준 */
       --radius-2xl:     24px;  /* dash card 표준 */
+      --radius-full:    9999px; /* pill / 완전 둥근. 99/999/9999 통합 */
     }
 
     /* AI 브리프 카드 — Pretendard 적용 + 더 큰 폰트 */
@@ -289,7 +290,7 @@
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
     /* ═══ flatpickr Atelier 보라색 테마 ═══ */
     /* z-index 최대값 — 어떤 모달/오버레이도 못 가리도록 */
-    .flatpickr-calendar { font-family: 'Manrope','Inter',system-ui,sans-serif !important; border-radius: 16px !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
+    .flatpickr-calendar { font-family: 'Manrope','Inter',system-ui,sans-serif !important; border-radius: var(--radius-xl) !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
     .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline { z-index: 2147483647 !important; }
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: var(--lavender-deep) !important; }
     .flatpickr-months { background: linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft)) !important; padding: var(--space-3) var(--space-2) !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
@@ -307,7 +308,7 @@
     .flatpickr-weekdays { background: #fff !important; padding: var(--space-2) 0 4px !important; border-bottom: 1px solid var(--slate-100); }
     .flatpickr-weekday { color: var(--lavender-deep) !important; font-weight: 700 !important; font-size: var(--font-size-micro) !important; }
     .flatpickr-days { padding: var(--space-1-5) !important; }
-    .flatpickr-day { border-radius: 10px !important; font-weight: 600 !important; color: var(--slate-700); margin: 1px; }
+    .flatpickr-day { border-radius: var(--radius-md-plus) !important; font-weight: 600 !important; color: var(--slate-700); margin: 1px; }
     .flatpickr-day:hover:not(.selected):not(.flatpickr-disabled) { background: #f3e8ff !important; color: var(--lavender-deep) !important; }
     .flatpickr-day.today { border-color: #c4b5fd !important; color: var(--lavender-deep) !important; }
     .flatpickr-day.today:hover { background: #ede9fe !important; }
@@ -381,22 +382,22 @@
     }
 
     /* Ledger column filter buttons */
-    .ldg-cf-btn{display:inline-flex;align-items:center;padding:1px 2px;border-radius:4px;color:var(--slate-400);cursor:pointer;border:none;background:none;vertical-align:middle;transition:all .1s}
+    .ldg-cf-btn{display:inline-flex;align-items:center;padding:1px 2px;border-radius: var(--radius-xs);color:var(--slate-400);cursor:pointer;border:none;background:none;vertical-align:middle;transition:all .1s}
     .ldg-cf-btn:hover,.ldg-cf-btn.active{color:#5b3cdd;background:#f7f1ff}
-    .ldg-cf-panel{position:absolute;left:0;top:100%;margin-top: var(--space-1);background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;z-index:999;padding: var(--space-2) 0;min-width:180px;max-height:280px;overflow-y:auto}
+    .ldg-cf-panel{position:absolute;left:0;top:100%;margin-top: var(--space-1);background:#fff;border-radius: var(--radius-lg);box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;z-index:999;padding: var(--space-2) 0;min-width:180px;max-height:280px;overflow-y:auto}
     .ldg-cf-panel label{display:flex;align-items:center;gap: var(--space-2);padding:5px 12px;font-size: var(--font-size-micro);color:#1c1a24;cursor:pointer;transition:background .1s}
     .ldg-cf-panel label:hover{background:#f7f1ff}
     .ldg-cf-panel .cf-actions{display:flex;gap: var(--space-2);padding: var(--space-1-5) var(--space-3);border-bottom:1px solid var(--slate-100);margin-bottom: var(--space-1);font-size: var(--font-size-tiny)}
     /* Ledger custom dropdown */
     .ldg-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap: var(--space-1);
-      padding: var(--space-1) var(--space-2);border-radius:8px;background:#f7f1ff;border:1.5px solid transparent;
+      padding: var(--space-1) var(--space-2);border-radius: var(--radius-md);background:#f7f1ff;border:1.5px solid transparent;
       font-size: var(--font-size-meta);color:#1c1a24;cursor:pointer;min-height:28px;transition:all .15s;white-space:nowrap}
     .ldg-dd-trigger:hover,.ldg-dd-trigger.open{border-color:#5b3cdd;background:#ede9fe}
     .ldg-dd-trigger .dd-placeholder{color:var(--slate-400)}
     .ldg-dd-trigger .dd-chevron{font-size: var(--font-size-body);color:var(--slate-400);transition:transform .15s}
     .ldg-dd-trigger.open .dd-chevron{transform:rotate(180deg)}
     .ldg-dd-panel{position:absolute;left:0;top:100%;margin-top: var(--space-1);width:max-content;min-width:100%;
-      background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;
+      background:#fff;border-radius: var(--radius-lg);box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;
       z-index:999;max-height:260px;overflow-y:auto;padding: var(--space-1) 0;animation:ldgDdIn .12s ease}
     @keyframes ldgDdIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
     .ldg-dd-opt{padding: var(--space-1-5) var(--space-3);font-size: var(--font-size-meta);color:#1c1a24;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s}
@@ -439,7 +440,7 @@
     .trip-dd-btn {
       display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
       width: 100%; max-width: 360px;
-      background: #fff; border: 1.5px solid #a78bfa; border-radius: 0.75rem;
+      background: #fff; border: 1.5px solid #a78bfa; border-radius: var(--radius-lg);
       padding: 0.75rem 1.25rem;
       font-size: var(--font-size-body); font-weight: 600; color: var(--slate-800);
       cursor: pointer; transition: all 0.15s;
@@ -449,7 +450,7 @@
     .trip-dd-panel {
       position: absolute; left: 0; top: 100%; margin-top: var(--space-1);
       width: 100%; max-width: 360px;
-      background: #fff; border-radius: 0.75rem;
+      background: #fff; border-radius: var(--radius-lg);
       box-shadow: 0 12px 36px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
       border: 1px solid var(--slate-100); overflow: hidden; z-index: 50;
       transition: all 0.15s; transform-origin: top;
@@ -505,12 +506,12 @@
       background: linear-gradient(90deg, var(--slate-100) 0%, var(--slate-200) 50%, var(--slate-100) 100%);
       background-size: 200% 100%;
       animation: skel-pulse-app 1.4s ease-in-out infinite;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
     }
     .hub-skel-card {
       background: #ffffff;
       border: 1px solid var(--slate-100);
-      border-radius: 1rem;
+      border-radius: var(--radius-xl);
       padding: 1.25rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
@@ -536,10 +537,10 @@
       background: linear-gradient(90deg, var(--slate-100) 0%, var(--slate-200) 50%, var(--slate-100) 100%);
       background-size: 200% 100%;
       animation: skel-pulse-app 1.4s ease-in-out infinite;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
     }
     .cal-skel.cal-skel-day { width: 16px; height: 12px; }
-    .cal-skel.cal-skel-event { width: 70%; height: 14px; border-radius: 6px; }
+    .cal-skel.cal-skel-event { width: 70%; height: 14px; border-radius: var(--radius-sm); }
 
     /* ════════════════════════════════════════════════════════════════════
        NOMAD MASTER — Stitch "Modern Atelier" 디자인 시스템
@@ -837,7 +838,7 @@
       width: 18px;
       height: 18px;
       border: 1.5px solid var(--nm-outline-variant);
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       flex-shrink: 0;
       margin-top: 1px;
       display: inline-flex;
@@ -961,7 +962,7 @@
       justify-content: space-between;
       padding: var(--space-1-5) var(--space-2-5);
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       color: var(--slate-400);
       transition: background 0.15s;
     }
@@ -988,7 +989,7 @@
       align-items: center;
       gap: var(--space-2-5);
       padding: 7px 12px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       color: var(--slate-600);
       font-size: var(--font-size-body-sm);
       font-weight: 500;
@@ -1031,7 +1032,7 @@
     /* ──── City Guide 전용 컴포넌트 ──── */
     .nomad-page .nm-city-hero {
       background: linear-gradient(135deg, var(--nm-primary-soft) 0%, #fff 70%);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       padding: var(--space-8);
       margin-bottom: var(--space-6);
       border: 1px solid var(--slate-100);
@@ -1076,7 +1077,7 @@
       padding: var(--space-3-5) var(--space-4-5);
       background: #fff;
       border-left: 3px solid var(--nm-primary);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       font-style: italic;
       font-size: var(--font-size-body);
       line-height: 1.6;
@@ -1119,7 +1120,7 @@
       padding: 3px 9px;
       background: var(--nm-primary-soft);
       color: var(--nm-primary);
-      border-radius: 99px;
+      border-radius: var(--radius-full);
       letter-spacing: 0.02em;
     }
     .nomad-page .nm-place-desc {
@@ -1167,7 +1168,7 @@
       color: var(--nm-primary);
       padding: var(--space-2-5) var(--space-3-5);
       background: var(--nm-primary-soft);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       margin-top: var(--space-2);
     }
 
@@ -1265,7 +1266,7 @@
       -webkit-backdrop-filter: blur(12px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 99px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-micro);
       font-weight: 700;
       letter-spacing: 0.18em;
@@ -1296,7 +1297,7 @@
       vertical-align: middle;
       padding: var(--space-1) var(--space-3);
       background: rgba(255,255,255,0.12);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       border: 1px solid rgba(255,255,255,0.2);
     }
     .nomad-page .nm-city-v2-tagline {
@@ -1367,7 +1368,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-micro);
       font-weight: 600;
       cursor: pointer;
@@ -1387,7 +1388,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-tiny);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -1431,7 +1432,7 @@
       -webkit-backdrop-filter: blur(14px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-meta);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -1483,7 +1484,7 @@
       background: #312E81;
       color: #fff;
       padding: 36px;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       box-shadow: 0 10px 30px rgba(49,46,129,0.12);
     }
     .nomad-page .nm-city-v2-highlights-h {
@@ -1513,7 +1514,7 @@
       gap: var(--space-3);
       padding: var(--space-3-5) var(--space-4);
       background: rgba(255,255,255,0.08);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       font-size: var(--font-size-body-sm);
       font-weight: 400;
       line-height: 1.55;
@@ -1544,7 +1545,7 @@
       height: 32px;
       background: var(--indigo-600);
       color: #fff;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1580,7 +1581,7 @@
     /* ──── Card wrap (white rounded-3xl) ──── */
     .nomad-page .nm-city-v2-card-wrap {
       background: #fff;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-8);
       border: 1px solid var(--slate-100);
       box-shadow: 0 1px 3px rgba(15,23,42,0.04);
@@ -1606,7 +1607,7 @@
     .nomad-page .nm-city-v2-landmark {
       background: #fff;
       padding: var(--space-5-5);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--slate-100);
       transition: box-shadow 0.2s;
     }
@@ -1632,7 +1633,7 @@
       background: #e0e7ff;
       color: #4338ca;
       padding: 3px 9px;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       font-size: var(--font-size-nano);
       font-weight: 700;
       text-transform: uppercase;
@@ -1654,7 +1655,7 @@
     .nomad-page .nm-city-v2-hidden-row {
       background: #fff;
       padding: var(--space-3-5) var(--space-4-5);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       border: 1px solid var(--slate-100);
       display: flex;
       justify-content: space-between;
@@ -1743,7 +1744,7 @@
       gap: var(--space-6);
     }
     .nomad-page .nm-city-v2-exp-card {
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-8);
       border: 1px solid;
       box-shadow: 0 1px 3px rgba(15,23,42,0.04);
@@ -1791,7 +1792,7 @@
     }
     .nomad-page .nm-city-v2-exp-price {
       padding: var(--space-0-5) var(--space-2);
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       font-size: var(--font-size-tiny);
       font-weight: 700;
       white-space: nowrap;
@@ -1844,7 +1845,7 @@
     .nomad-page .nm-city-v2-nomad-card {
       background: #fff;
       padding: var(--space-5);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--slate-100);
       box-shadow: 0 1px 3px rgba(15,23,42,0.03);
       transition: border-color 0.15s;
@@ -1885,7 +1886,7 @@
     .nomad-page .nm-city-v2-people {
       background: #312E81;
       color: #fff;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-12);
       position: relative;
       overflow: hidden;
@@ -1956,7 +1957,7 @@
     .nomad-page .nm-city-v2-people-right {
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(20px);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       padding: var(--space-7);
       border: 1px solid rgba(255,255,255,0.1);
     }
@@ -2138,7 +2139,7 @@
       background: var(--slate-900);
       color: #fff;
       padding: 40px 48px;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -2432,7 +2433,7 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: var(--space-1-5) var(--space-3-5);
-      border-radius: 99px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-meta);
       font-weight: 500;
       display: inline-flex;
@@ -2522,7 +2523,7 @@
       grid-column: span 8;
       position: relative;
       overflow: hidden;
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       background: linear-gradient(135deg, var(--nm-primary) 0%, var(--nm-deep-indigo) 100%);
       box-shadow: var(--nm-shadow-card);
       cursor: pointer;
@@ -2571,7 +2572,7 @@
     }
     .nomad-page .nm-bento-side-card {
       background: var(--nm-surface-container-low);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: var(--space-4);               /* 28 → 16 */
       display: flex;
       flex-direction: column;
@@ -2601,7 +2602,7 @@
       grid-column: span 4;
       position: relative;
       overflow: hidden;
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       background: linear-gradient(135deg, var(--nm-soft-accent), var(--nm-primary));
       box-shadow: var(--nm-shadow-card);
     }
@@ -2612,7 +2613,7 @@
       background: rgba(255,255,255,0.94);
       backdrop-filter: blur(8px);
       padding: var(--space-3) var(--space-3-5);
-      border-radius: 10px;
+      border-radius: var(--radius-md-plus);
     }
     .nomad-page .nm-bento-side-img .caption .t {
       font-size: var(--font-size-body-sm);
@@ -2637,7 +2638,7 @@
       display: flex;
       gap: var(--space-5);
       padding: var(--space-4-5);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       border: 1px solid var(--slate-100);
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
@@ -2649,7 +2650,7 @@
     .nomad-page .nm-exp-card + .nm-exp-card { margin-top: var(--space-4); }
     .nomad-page .nm-exp-thumb {
       width: 84px; height: 84px;
-      border-radius: 10px;
+      border-radius: var(--radius-md-plus);
       overflow: hidden;
       flex-shrink: 0;
       background: linear-gradient(135deg, var(--nm-soft-accent), var(--nm-primary));
@@ -2677,7 +2678,7 @@
       font-size: var(--font-size-micro);
       font-weight: 600;
       padding: 3px 9px;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       letter-spacing: 0.02em;
     }
     .nomad-page .nm-exp-pill.time { background: #a7a5ff; color: #393689; }
@@ -2765,7 +2766,7 @@
       width: 100px;
       height: 8px;
       background: rgba(124, 58, 237, 0.15);
-      border-radius: 99px;
+      border-radius: var(--radius-full);
       overflow: hidden;
       position: relative;
     }
@@ -2773,7 +2774,7 @@
       position: absolute;
       left: 0; top: 0; bottom: 0;
       background: var(--nm-primary);
-      border-radius: 99px;
+      border-radius: var(--radius-full);
     }
     .nomad-page .nm-bg-table tfoot td {
       padding: var(--space-5-5) var(--space-6);
@@ -2821,7 +2822,7 @@
     }
     .nomad-page .nm-why-visual .main-img {
       width: 100%; height: 100%;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       overflow: hidden;
       box-shadow: var(--nm-shadow-hover);
       background: linear-gradient(135deg, var(--nm-deep-indigo) 0%, var(--nm-primary) 100%);
@@ -2904,7 +2905,7 @@
     /* Bento 카드 공통 */
     .dash-card {
       background: #ffffff;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-6);
       box-shadow: 0px 4px 20px rgba(0,0,0,0.04);
       border: 1px solid #d9e3f6;
@@ -2916,7 +2917,7 @@
     /* Hero — Today's Brief */
     .dash-hero {
       background: #ffffff;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-8);
       box-shadow: 0px 4px 20px rgba(0,0,0,0.04);
       border: 1px solid #d9e3f6;
@@ -2942,7 +2943,7 @@
     .dash-chip {
       display: inline-flex; align-items: center;
       padding: var(--space-1) var(--space-3);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-meta);
       font-weight: 700;
       background: #eaddff;
@@ -2952,7 +2953,7 @@
     .dash-card-primary {
       background: #7c3aed;
       color: #ffffff;
-      border-radius: 24px;
+      border-radius: var(--radius-2xl);
       padding: var(--space-6);
       box-shadow: 0 8px 32px rgba(124,58,237,0.25);
       border: 1px solid #7c3aed;
@@ -2973,13 +2974,13 @@
     /* ===== CALENDAR PAGE — Digital Curator Style ===== */
     .calendar-page .font-headline, .calendar-page h2, .calendar-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .cal-stat-card {
-      background: #fff; padding: 1.25rem; border-radius: 0.75rem;
+      background: #fff; padding: 1.25rem; border-radius: var(--radius-lg);
       box-shadow: 0px 12px 32px rgba(25,28,29,0.02);
       border: 1px solid rgba(203,195,215,0.1);
       transition: all 0.3s;
     }
     .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
-    .cal-nav-select { padding: var(--space-2) 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size: var(--font-size-body-lg); font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .cal-nav-select { padding: var(--space-2) 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius: var(--radius-md-plus); background:#fff; font-size: var(--font-size-body-lg); font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
     .cal-nav-select:hover { border-color:#a5b4fc; background:#f5f3ff; }
     .cal-nav-select:focus { outline:none; border-color:var(--indigo-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
     .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
@@ -3016,7 +3017,7 @@
     .prose-tn strong { color: var(--slate-800); font-weight: 700; }
     .prose-tn hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
     .prose-tn em { color: #6b7280; font-style: italic; }
-    .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.85em; }
+    .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: var(--radius-xs); font-family: ui-monospace, monospace; font-size: 0.85em; }
     .prose-tn .tn-empty { color: var(--slate-400); font-style: italic; padding: 2rem 0; text-align: center; }
 
     /* ===== 캘린더 모바일 대응 ===== */
@@ -3103,7 +3104,7 @@
       .calendar-page section button .material-symbols-outlined { font-size: var(--font-size-body) !important; }
 
       /* 오늘 셀 outline 줄임 */
-      .calendar-page #planner-grid > div[style*="outline"] { border-radius: 6px !important; }
+      .calendar-page #planner-grid > div[style*="outline"] { border-radius: var(--radius-sm) !important; }
     }
 
     /* ===== Year Matrix 모바일 대응 ===== */
@@ -3214,7 +3215,7 @@
       #hub-monthly-grid { gap: 1rem !important; }
 
       /* Summary cards 패딩/폰트 축소 */
-      #page-finance-hub section.mb-10 > div.grid > div { padding: 1.25rem !important; border-radius: 1rem !important; }
+      #page-finance-hub section.mb-10 > div.grid > div { padding: 1.25rem !important; border-radius: var(--radius-xl) !important; }
       #page-finance-hub section.mb-10 .text-2xl { font-size: var(--font-size-h2-lg) !important; }
     }
 
@@ -3317,7 +3318,7 @@
       /* 도넛 캔버스 크게 (이제 1행 1개라 공간 여유) */
       #page-ledger div.relative.w-36.h-36 { width: 160px !important; height: 160px !important; }
       /* 카드 패딩 축소 */
-      #page-ledger #ledger-panel-monthly .bg-white.rounded-2xl { padding: 1rem !important; border-radius: 1rem !important; }
+      #page-ledger #ledger-panel-monthly .bg-white.rounded-2xl { padding: 1rem !important; border-radius: var(--radius-xl) !important; }
       /* 캘린더 day header 작게 */
       #page-ledger #ldg-calendar { gap: 1px !important; }
       #page-ledger #ldg-calendar > div { font-size: var(--font-size-nano) !important; padding: var(--space-0-5) !important; }
@@ -3383,7 +3384,7 @@
       #page-income #growth-year-subtitle { font-size: var(--font-size-micro) !important; }
       #page-income #growth-chart-legend { font-size: var(--font-size-tiny) !important; gap: var(--space-1-5) !important; flex-wrap: wrap; }
       #page-income .bg-white.rounded-2xl,
-      #page-income .bg-white.rounded-xl { padding: 1rem !important; border-radius: 1rem !important; }
+      #page-income .bg-white.rounded-xl { padding: 1rem !important; border-radius: var(--radius-xl) !important; }
 
       /* Annual Matrix 테이블: 가로 스크롤 + min-width */
       #income-annual-matrix { min-width: 800px !important; }
@@ -3503,7 +3504,7 @@
          row3: 액션 버튼들 */
       #journey-flight-list > div {
         padding: 1rem !important;
-        border-radius: 1rem !important;
+        border-radius: var(--radius-xl) !important;
       }
       #journey-flight-list > div > div[style*="grid-template-columns"] {
         display: grid !important;
@@ -3524,7 +3525,7 @@
         gap: var(--space-2) !important;
         padding: var(--space-2) var(--space-1) !important;
         background: rgba(107,56,212,0.04);
-        border-radius: 8px;
+        border-radius: var(--radius-md);
       }
       #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(4) {
         grid-area: price !important; width: auto !important; text-align: right !important;
@@ -3546,7 +3547,7 @@
       #journey-flight-list * { word-break: keep-all; overflow-wrap: break-word; }
 
       /* === 숙소 카드: 폰트 키움 + 통일 === */
-      #journey-lodging-list > div { padding: 1rem !important; border-radius: 1rem !important; }
+      #journey-lodging-list > div { padding: 1rem !important; border-radius: var(--radius-xl) !important; }
       #journey-lodging-list .flex-wrap.items-center.gap-3 { gap: var(--space-2) !important; }
       /* 호텔명 - 메인 타이틀 */
       #journey-lodging-list h4.font-headline {
@@ -3586,7 +3587,7 @@
 
       /* === 이동수단/렌트카 카드: 3개 자식을 세로로 stack === */
       #journey-transport-list > div,
-      #journey-rental-list > div { padding: 1rem !important; border-radius: 1rem !important; }
+      #journey-rental-list > div { padding: 1rem !important; border-radius: var(--radius-xl) !important; }
       /* 카드 안의 .flex.items-center를 column으로 */
       #journey-transport-list > div > div.flex.items-center {
         display: flex !important;
@@ -3602,7 +3603,7 @@
       #journey-transport-list > div > div.flex.items-center > div.flex-1 {
         justify-content: space-between !important;
         background: rgba(107,56,212,0.04);
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         padding: var(--space-2) var(--space-3) !important;
         gap: var(--space-3) !important;
       }
@@ -3663,7 +3664,7 @@
       }
       #eng-detail-content .text-xl { font-size: var(--font-size-h3) !important; }
       #eng-detail-content section { margin-bottom: 1.25rem !important; }
-      #eng-detail-content .bg-white { padding: 1rem !important; border-radius: 1rem !important; }
+      #eng-detail-content .bg-white { padding: 1rem !important; border-radius: var(--radius-xl) !important; }
 
       /* Expressions 테이블: 의미(한글) 컬럼 가독성 개선 */
       #eng-detail-content table { table-layout: fixed !important; width: 100% !important; }
@@ -3814,15 +3815,15 @@
 
     /* ===== VAULT PAGE ===== */
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
-    .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: var(--font-size-body-sm); transition: all 0.15s; }
+    .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: var(--radius-full); background: #e7e8e9; color: #494454; font-weight: 600; font-size: var(--font-size-body-sm); transition: all 0.15s; }
     .vault-filter-chip:hover { background: #d9dadb; }
     .vault-filter-chip.active { background: var(--lavender-deep); color: #fff; }
-    .vault-card { background: #fff; border-radius: 1.5rem; padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
+    .vault-card { background: #fff; border-radius: var(--radius-2xl); padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
     .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
     .vault-model-radio { cursor: pointer; }
-    .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: 0.75rem; background: #e7e8e9; font-size: var(--font-size-body-sm); font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
+    .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: var(--radius-lg); background: #e7e8e9; font-size: var(--font-size-body-sm); font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
     .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: var(--lavender-deep); color: #fff; }
-    .vault-ai-item { background: #fff; border-radius: 1rem; padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
+    .vault-ai-item { background: #fff; border-radius: var(--radius-xl); padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
     .vault-ai-item:hover { border-color: rgba(107,56,212,0.3); }
 
     /* Review drop zone active state */
@@ -3844,7 +3845,7 @@
     #eng-detail-content section > .bg-white .text-sm { font-size: 0.875em; }
     #eng-detail-content section > .bg-white .text-base { font-size: 1em; }
     /* Button styles */
-    .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius:8px; font-size: var(--font-size-body-sm); font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:var(--slate-400); }
+    .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius: var(--radius-md); font-size: var(--font-size-body-sm); font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:var(--slate-400); }
     .review-font-btn:hover { background:#ede9fe; }
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
 
@@ -3854,7 +3855,7 @@
     #page-reference .ref-page-header { font-family: 'Plus Jakarta Sans', 'Pretendard', sans-serif; }
     .ref-list-item {
       padding: var(--space-3-5) var(--space-4);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
       margin-bottom: var(--space-1);
@@ -3900,7 +3901,7 @@
     .ref-list-item .ref-li-active-chip {
       display: inline-block;
       padding: var(--space-0-5) var(--space-2);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       background: rgba(124,58,237,0.12);
       color: #7c3aed;
       font-size: var(--font-size-tiny);
@@ -3919,25 +3920,25 @@
     }
     .ref-list-item .ref-li-pin { color:#7c3aed; font-size: var(--font-size-body); margin-right: var(--space-0-5); vertical-align:middle; }
     .ref-toolbar { display:flex; gap: var(--space-0-5); align-items:center; flex-wrap:wrap; }
-    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size: var(--font-size-body); color:var(--slate-500); display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
+    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius: var(--radius-sm); cursor:pointer; font-size: var(--font-size-body); color:var(--slate-500); display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
     .ref-toolbar button:hover { background:#ede9fe; color:#7c3aed; }
     .ref-toolbar .tb-sep { width:1px; height:20px; background:var(--slate-200); margin:0 4px; flex-shrink:0; }
     .ref-toolbar .tb-color-bar { position:absolute; bottom:4px; left:8px; right:8px; height:3px; border-radius:1px; }
-    .ref-popover { position:absolute; top:100%; left:0; z-index:10; background:#fff; border:1px solid var(--slate-200); border-radius:10px; padding: var(--space-2); box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none; }
+    .ref-popover { position:absolute; top:100%; left:0; z-index:10; background:#fff; border:1px solid var(--slate-200); border-radius: var(--radius-md-plus); padding: var(--space-2); box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none; }
     .ref-popover.open { display:flex; gap: var(--space-1-5); flex-wrap:wrap; }
     .ref-popover .cp-dot { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all .1s; }
     .ref-popover .cp-dot:hover { transform:scale(1.2); }
     .ref-popover .cp-dot.active { border-color:#7c3aed; }
-    .ref-popover .fs-opt { padding: var(--space-1) var(--space-3); border-radius:6px; cursor:pointer; font-size: var(--font-size-body-sm); color:var(--slate-600); white-space:nowrap; }
+    .ref-popover .fs-opt { padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); cursor:pointer; font-size: var(--font-size-body-sm); color:var(--slate-600); white-space:nowrap; }
     .ref-popover .fs-opt:hover { background:#ede9fe; color:#7c3aed; }
     .ref-editor { background:transparent; border:none; border-radius:0; padding:0; font-size: var(--font-size-body-lg); line-height:1.8; color:#1d1d1f; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
     .ref-editor:focus { border-color:transparent; box-shadow:none; }
-    #ref-input-body { background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding: var(--space-3) var(--space-4); font-size: var(--font-size-body); line-height:1.6; color:var(--slate-700); }
+    #ref-input-body { background:var(--slate-50); border:1px solid var(--slate-200); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); font-size: var(--font-size-body); line-height:1.6; color:var(--slate-700); }
     #ref-input-body:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
     .ref-editor:empty::before { content:attr(data-placeholder); color:var(--slate-400); pointer-events:none; }
     .ref-editor::-webkit-scrollbar { width:4px; }
     .ref-editor::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
-    .ref-editor code { background:var(--slate-100); padding: var(--space-0-5) var(--space-1-5); border-radius:4px; font-family:'Fira Code',monospace; font-size:0.9em; }
+    .ref-editor code { background:var(--slate-100); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-xs); font-family:'Fira Code',monospace; font-size:0.9em; }
     .ref-card-body code { background:var(--slate-100); padding:1px 4px; border-radius:3px; font-family:'Fira Code',monospace; font-size:0.9em; }
     .ref-editor ul, .ref-card-body ul { list-style-type:disc; padding-left: var(--space-6); margin: var(--space-1) 0; }
     .ref-editor ol, .ref-card-body ol { list-style-type:decimal; padding-left: var(--space-6); margin: var(--space-1) 0; }
@@ -3950,7 +3951,7 @@
   /* ===== MODAL DESIGN SYSTEM ===== */
   .atl-modal-inner {
     background: #fff;
-    border-radius: 1.5rem;
+    border-radius: var(--radius-2xl);
     box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08);
     width: 100%;
     max-width: 480px;
@@ -4007,7 +4008,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     transition: background 0.15s;
     color: var(--slate-400);
     cursor: pointer;
@@ -4052,7 +4053,7 @@
     width: 100%;
     background: var(--slate-50);
     border: 1.5px solid var(--slate-200);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-lg);
     padding: 0.625rem 0.875rem;
     font-size: var(--font-size-body-sm);
     color: var(--slate-800);
@@ -4095,7 +4096,7 @@
     font-size: var(--font-size-body-sm);
     font-weight: 600;
     color: var(--slate-500);
-    border-radius: 0.625rem;
+    border-radius: var(--radius-md-plus);
     transition: background 0.15s;
     background: none;
     border: none;
@@ -4107,7 +4108,7 @@
     font-size: var(--font-size-body-sm);
     font-weight: 800;
     color: #fff;
-    border-radius: 0.625rem;
+    border-radius: var(--radius-md-plus);
     background: linear-gradient(135deg, var(--indigo-500), #818cf8);
     border: none;
     cursor: pointer;
@@ -4177,7 +4178,7 @@
     /* Flatpickr Atelier Theme */
     .flatpickr-calendar {
       font-family: var(--nm-font-h) !important;
-      border-radius: 16px !important;
+      border-radius: var(--radius-xl) !important;
       border: 1px solid var(--slate-200) !important;
       box-shadow: 0 20px 60px -10px rgba(99,102,241,0.15), 0 8px 24px -4px rgba(0,0,0,0.08) !important;
       overflow: hidden;
@@ -4185,7 +4186,7 @@
     }
     .flatpickr-months {
       background: linear-gradient(135deg, var(--indigo-500), #8b5cf6) !important;
-      border-radius: 12px 12px 0 0 !important;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
       padding: var(--space-2-5) 0 !important;
       min-height: 40px !important;
       position: relative !important;
@@ -4232,11 +4233,11 @@
     .flatpickr-current-month .flatpickr-monthDropdown-months { color: #fff !important; background: transparent !important; font-weight: 800 !important; font-size: var(--font-size-body) !important; }
     .flatpickr-current-month .flatpickr-monthDropdown-months option { color: var(--slate-800) !important; background: #fff !important; }
     .flatpickr-prev-month, .flatpickr-next-month { color: rgba(255,255,255,0.8) !important; fill: rgba(255,255,255,0.8) !important; }
-    .flatpickr-prev-month:hover, .flatpickr-next-month:hover { color: #fff !important; fill: #fff !important; background: rgba(255,255,255,0.15) !important; border-radius: 8px !important; }
+    .flatpickr-prev-month:hover, .flatpickr-next-month:hover { color: #fff !important; fill: #fff !important; background: rgba(255,255,255,0.15) !important; border-radius: var(--radius-md) !important; }
     .flatpickr-weekdays { background: var(--slate-50) !important; padding: var(--space-1) 0 !important; }
     span.flatpickr-weekday { color: var(--indigo-500) !important; font-weight: 800 !important; font-size: var(--font-size-tiny) !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
     .flatpickr-day {
-      border-radius: 10px !important;
+      border-radius: var(--radius-md-plus) !important;
       font-size: var(--font-size-meta) !important;
       font-weight: 600 !important;
       color: var(--slate-700) !important;
@@ -4808,7 +4809,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-micro);
       font-weight: 600;
       cursor: pointer;
@@ -4827,7 +4828,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-tiny);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -4922,7 +4923,7 @@
       padding: var(--space-2) var(--space-3-5);
       background: transparent;
       border: 1px solid var(--atlas-line-soft);
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       font-family: 'Inter',sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
@@ -5184,7 +5185,7 @@
     #travel-atlas-section .atlas-side-card {
       background: #fff;
       border: 1px solid var(--atlas-line-soft);
-      border-radius: 10px;
+      border-radius: var(--radius-md-plus);
       padding: var(--space-7);
       box-shadow: 0 1px 3px rgba(15,23,42,0.04);
     }
@@ -5263,7 +5264,7 @@
     #travel-atlas-section .atlas-ledger-card {
       background: #f5f3ff;
       color: var(--atlas-ink);
-      border-radius: 10px;
+      border-radius: var(--radius-md-plus);
       padding: var(--space-7);
       position: relative;
       overflow: hidden;
@@ -5299,7 +5300,7 @@
     }
     #travel-atlas-section .atlas-ledger-card-daily-cell {
       background: #fff;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: var(--space-4);
       text-align: center;
       border: 1px solid rgba(124,58,237,0.1);
@@ -5405,7 +5406,7 @@
     #travel-atlas-section .atlas-pto-card {
       background: var(--atlas-surface-low);
       border: 1px solid var(--atlas-line-soft);
-      border-radius: 10px;
+      border-radius: var(--radius-md-plus);
       padding: var(--space-7);
     }
     #travel-atlas-section .atlas-pto-card-head {
@@ -5434,7 +5435,7 @@
     #travel-atlas-section .atlas-pto-card-cell {
       background: #fff;
       border: 1px solid var(--atlas-line-soft);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       padding: var(--space-3-5);
       text-align: center;
     }
@@ -5784,7 +5785,7 @@
       color: var(--j-on-surface-variant);
       padding: var(--space-2) var(--space-4);
       border: 1px solid var(--j-outline-variant);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-family: var(--j-font-body);
       font-size: var(--font-size-tiny);
       font-weight: 700;
@@ -5883,7 +5884,7 @@
     #page-journey .j-icon-btn {
       width: 36px;
       height: 36px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       background: var(--j-surface-container);
       color: #9aa0a6;
       border: none;
@@ -5993,7 +5994,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-micro);
       font-weight: 600;
       cursor: pointer;
@@ -6012,7 +6013,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-tiny);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -6042,7 +6043,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -6146,7 +6147,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-tiny);
       font-weight: 600;
       cursor: pointer;
@@ -6165,7 +6166,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-nano);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -6340,7 +6341,7 @@
       padding: var(--space-2) var(--space-4);
       background: var(--j-primary);
       color: #fff;
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-family: var(--j-font-body);
       font-size: var(--font-size-micro);
       font-weight: 700;
@@ -6361,7 +6362,7 @@
     #page-journey .j-week-nav-btn {
       width: 32px;
       height: 32px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       background: var(--j-surface);
       border: 1px solid var(--j-outline-variant);
       color: var(--j-on-surface-variant);
@@ -6671,7 +6672,7 @@
       padding: var(--space-2-5) var(--space-6);
       background: transparent;
       border: 1px solid var(--j-outline-variant);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-family: var(--j-font-body);
       font-size: var(--font-size-tiny);
       font-weight: 700;
@@ -6756,7 +6757,7 @@
     #page-journey .j-trip-action-btn {
       width: 36px;
       height: 36px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       background: var(--j-surface-container);
       color: #9aa0a6;
       border: none;
@@ -7024,7 +7025,7 @@
       -webkit-backdrop-filter: blur(10px);
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-tiny);
       font-weight: 600;
       cursor: pointer;
@@ -7043,7 +7044,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       color: rgba(255,255,255,0.9);
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: var(--font-size-nano);
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -7337,7 +7338,7 @@
     #page-journey .j-souvenir-actions button {
       width: 28px;
       height: 28px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       background: transparent;
       color: #9aa0a6;
       border: none;
@@ -7637,7 +7638,7 @@
 
       <!-- ═══════ Hero: Greeting + Today's Brief (Stitch Immersive + Bento combined) ═══════ -->
       <section>
-        <div id="dash-brief-card" style="background:#ffffff;border-radius:24px;padding: var(--space-8);box-shadow:0 4px 20px rgba(124,58,237,0.05);border:1px solid #e9d5ff;position:relative;overflow:hidden;">
+        <div id="dash-brief-card" style="background:#ffffff;border-radius: var(--radius-2xl);padding: var(--space-8);box-shadow:0 4px 20px rgba(124,58,237,0.05);border:1px solid #e9d5ff;position:relative;overflow:hidden;">
           <!-- Top: greeting + info chips (각 칩 다른 파스텔 컬러) -->
           <div class="flex justify-between items-start gap-4 mb-5 flex-wrap" style="position:relative;z-index:10;">
             <div style="flex:1;min-width:260px;">
@@ -7646,15 +7647,15 @@
               <p style="font-size: var(--font-size-body-lg);color:#4a4455;font-weight:500;"><span id="dash-brief-date"></span><span id="dash-brief-tagline" style="color:#6b21a8;font-weight:500;"></span></p>
             </div>
             <div class="flex items-stretch gap-2.5 flex-wrap">
-              <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border-radius:16px;padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #c4b5fd;">
+              <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #c4b5fd;">
                 <p class="dash-label" style="color:#6b21a8;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">오늘 일정</p>
                 <p style="font-size: var(--font-size-h1);font-weight:700;color:#3b0764;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#7c3aed;">건</span></p>
               </div>
-              <div style="background:linear-gradient(135deg,#fce7f3 0%,#fbcfe8 100%);border-radius:16px;padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #f9a8d4;">
+              <div style="background:linear-gradient(135deg,#fce7f3 0%,#fbcfe8 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #f9a8d4;">
                 <p class="dash-label" style="color:#9d174d;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">작품 진행</p>
                 <p style="font-size: var(--font-size-h1);font-weight:700;color:#831843;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#db2777;">개</span></p>
               </div>
-              <div style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius:16px;padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #fcd34d;">
+              <div style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #fcd34d;">
                 <p class="dash-label" style="color:#92400e;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">연차</p>
                 <p style="font-size: var(--font-size-h1);font-weight:700;color:#78350f;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#d97706;">일</span></p>
               </div>
@@ -7677,7 +7678,7 @@
       <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <!-- 오늘의 영어 (보라 그라데이션 — 디자인 포인트) -->
-        <div id="dash-expr-card" class="relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);border-radius:24px;padding: var(--space-6);color:#ffffff;box-shadow:0 8px 24px rgba(124,58,237,0.22);cursor:pointer;transition:transform 0.15s;" onclick="navigate('english')">
+        <div id="dash-expr-card" class="relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);border-radius: var(--radius-2xl);padding: var(--space-6);color:#ffffff;box-shadow:0 8px 24px rgba(124,58,237,0.22);cursor:pointer;transition:transform 0.15s;" onclick="navigate('english')">
           <div style="position:absolute;top:12px;right:18px;font-size:72px;font-weight:800;opacity:0.16;pointer-events:none;line-height:1;">"</div>
           <div class="flex justify-between items-center mb-2 relative z-10">
             <div class="flex items-center gap-1.5">
@@ -7692,10 +7693,10 @@
         </div>
 
         <!-- 환율 (블루 그라데이션 — 짝이 되는 디자인 포인트) -->
-        <div style="background:linear-gradient(135deg,#eff6ff 0%,#e0e7ff 100%);border-radius:24px;padding: var(--space-6);border:1px solid #c7d2fe;box-shadow:0 4px 20px rgba(99,102,241,0.05);">
+        <div style="background:linear-gradient(135deg,#eff6ff 0%,#e0e7ff 100%);border-radius: var(--radius-2xl);padding: var(--space-6);border:1px solid #c7d2fe;box-shadow:0 4px 20px rgba(99,102,241,0.05);">
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-              <div style="padding: var(--space-2);background:rgba(99,102,241,0.15);border-radius:10px;color:var(--indigo-600);display:flex;">
+              <div style="padding: var(--space-2);background:rgba(99,102,241,0.15);border-radius: var(--radius-md-plus);color:var(--indigo-600);display:flex;">
                 <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">currency_exchange</span>
               </div>
               <h3 style="font-size: var(--font-size-body-sm);font-weight:600;color:#1e1b4b;">환율</h3>
@@ -7714,7 +7715,7 @@
         <!-- 이번 달 재정 (연한 그린 그라데이션) -->
         <div class="dash-card clickable flex flex-col" style="min-height:180px;background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border:1px solid #bbf7d0;" onclick="navigate('income')">
           <div class="flex justify-between items-start mb-4">
-            <div style="padding: var(--space-2);background:#dcfce7;border-radius:10px;color:#15803d;display:flex;">
+            <div style="padding: var(--space-2);background:#dcfce7;border-radius: var(--radius-md-plus);color:#15803d;display:flex;">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">trending_up</span>
             </div>
             <span class="dash-label" style="color:#15803d;font-size: var(--font-size-tiny);">이번 달</span>
@@ -7732,7 +7733,7 @@
           <div style="position:absolute;right:-10px;bottom:-30px;font-size:120px;opacity:0.07;pointer-events:none;">✈️</div>
           <div style="position:relative;z-index:10;display:flex;flex-direction:column;flex:1;">
             <div class="flex justify-between items-start mb-4">
-              <div style="padding: var(--space-2);background:rgba(124,58,237,0.15);border-radius:10px;color:#7c3aed;display:flex;">
+              <div style="padding: var(--space-2);background:rgba(124,58,237,0.15);border-radius: var(--radius-md-plus);color:#7c3aed;display:flex;">
                 <span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">flight_takeoff</span>
               </div>
               <span id="dash-mini-trip-dday" class="dash-chip" style="font-size: var(--font-size-micro);padding:3px 10px;background:#ddd6fe;color:#5b21b6;">—</span>
@@ -7746,7 +7747,7 @@
         <!-- 작품 진행 (앰버 그라데이션) -->
         <div class="dash-card clickable flex flex-col" style="min-height:180px;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);border:1px solid #fde68a;" onclick="navigate('income')">
           <div class="flex justify-between items-start mb-4">
-            <div style="padding: var(--space-2);background:#fde68a;border-radius:10px;color:#b45309;display:flex;">
+            <div style="padding: var(--space-2);background:#fde68a;border-radius: var(--radius-md-plus);color:#b45309;display:flex;">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">edit_note</span>
             </div>
             <span class="dash-label" style="color:#b45309;font-size: var(--font-size-tiny);"><span id="dash-mini-works-count">0</span>개 활성</span>
@@ -7762,7 +7763,7 @@
           </div>
           <div style="position:relative;z-index:10;display:flex;flex-direction:column;flex:1;">
             <div class="flex justify-between items-start mb-4">
-              <div style="padding: var(--space-2);background:rgba(255,255,255,0.18);border-radius:10px;color:#ffffff;display:flex;backdrop-filter:blur(4px);">
+              <div style="padding: var(--space-2);background:rgba(255,255,255,0.18);border-radius: var(--radius-md-plus);color:#ffffff;display:flex;backdrop-filter:blur(4px);">
                 <span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">today</span>
               </div>
               <span class="dash-label" style="color:rgba(255,255,255,0.85);font-size: var(--font-size-tiny);"><span id="dash-mini-events-count">0</span>건</span>
@@ -10578,7 +10579,7 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-auto hide-scrollbar" style="max-height:calc(100vh - 220px); display:none; border-radius:10px; border:1px solid #e7e0ed; box-shadow:0 1px 3px rgba(0,0,0,0.04)" id="matrix-table-wrap">
+        <div class="overflow-auto hide-scrollbar" style="max-height:calc(100vh - 220px); display:none; border-radius: var(--radius-md-plus); border:1px solid #e7e0ed; box-shadow:0 1px 3px rgba(0,0,0,0.04)" id="matrix-table-wrap">
           <table class="w-full border-collapse">
             <thead class="sticky top-0 z-20" style="background:#f8f1fe">
               <tr>
@@ -10628,7 +10629,7 @@
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="m-date" type="date" placeholder="" onchange="autoFillMatrixDay()" class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="m-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
           <div style="display:flex;align-items:center;gap: var(--space-2);padding:0 2px">
             <span style="font-size: var(--font-size-micro);font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:.1em">요일</span>
-            <span id="m-day-display" style="font-size: var(--font-size-body-sm);font-weight:800;color:var(--indigo-500);background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:8px;padding: var(--space-1) var(--space-3-5)">—</span>
+            <span id="m-day-display" style="font-size: var(--font-size-body-sm);font-weight:800;color:var(--indigo-500);background:#eef2ff;border:1.5px solid #c7d2fe;border-radius: var(--radius-md);padding: var(--space-1) var(--space-3-5)">—</span>
             <input id="m-day" type="hidden"/>
           </div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>업무</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">work</span><select id="m-work" class="atl-input w-full bg-white"><option value="">—</option><option>출근</option><option>재택</option><option>출장</option><option>반차(오전)</option><option>반차(오후)</option><option>연차</option><option>병가</option><option>휴일근무</option></select></div></div>          <div class="atl-field"><label>연차</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">beach_access</span><select id="m-leave" class="atl-input w-full bg-white"><option value="">—</option><option>0.5 (반차)</option><option>1.0 (연차)</option><option>2.0</option><option>3.0</option><option>5.0</option></select></div></div></div>

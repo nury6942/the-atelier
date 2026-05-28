@@ -797,7 +797,7 @@
     if (!el) return;
     const channelDaily = currentChannel === '__all__' ? daily : daily.filter(d => d.channelId === currentChannel);
     if (demo){
-      el.innerHTML = '<span style="background:#f59e0b;color:white;padding: var(--space-0-5) var(--space-1-5);border-radius:4px;font-size: var(--font-size-tiny);font-weight:bold;letter-spacing:0.05em;margin-right: var(--space-1-5)">DEMO</span>더미 데이터';
+      el.innerHTML = '<span style="background:#f59e0b;color:white;padding: var(--space-0-5) var(--space-1-5);border-radius: var(--radius-xs);font-size: var(--font-size-tiny);font-weight:bold;letter-spacing:0.05em;margin-right: var(--space-1-5)">DEMO</span>더미 데이터';
     } else if (!channelDaily.length){
       el.textContent = currentChannel === '__all__' ? '데이터 없음' : '이 채널 데이터 없음';
     } else {

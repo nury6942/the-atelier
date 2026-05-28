@@ -1395,7 +1395,7 @@ function _ldgInjectMobileToggle(isFullView) {
   wrap.style.cssText = 'margin-bottom: var(--space-2-5);text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius:8px;background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
@@ -1412,7 +1412,7 @@ function _ldgHideHeavySections() {
   if (!document.getElementById(styleId)) {
     var st = document.createElement('style');
     st.id = styleId;
-    st.textContent = '#page-ledger #ldg-kpi-strip > div{padding:0.75rem !important;border-radius:0.75rem !important}' +
+    st.textContent = '#page-ledger #ldg-kpi-strip > div{padding:0.75rem !important;border-radius: var(--radius-lg) !important}' +
       '#page-ledger #ldg-kpi-strip > div p:first-child{font-size: var(--font-size-tiny) !important;margin-bottom:0.25rem !important}' +
       '#page-ledger #ldg-kpi-strip > div p:last-child{font-size: var(--font-size-body) !important;font-weight:700 !important}';
     document.head.appendChild(st);

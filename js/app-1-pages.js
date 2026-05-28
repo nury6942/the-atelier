@@ -645,9 +645,9 @@
         var blockEnd = isLast || isMonthEnd || isWeekEnd;
         var showTitle = blockStart;
 
-        var rl = blockStart ? 'border-radius:6px 0 0 6px;' : 'border-radius:0;';
+        var rl = blockStart ? 'border-radius: var(--radius-sm) 0 0 6px;' : 'border-radius:0;';
         var rr = blockEnd ? 'border-radius:0 6px 6px 0;' : '';
-        if (blockStart && blockEnd) { rl = 'border-radius:6px;'; rr = ''; }
+        if (blockStart && blockEnd) { rl = 'border-radius: var(--radius-sm);'; rr = ''; }
         else if (!blockStart && blockEnd) { rl = 'border-radius:0 6px 6px 0;'; rr = ''; }
         else if (!blockStart && !blockEnd) { rl = 'border-radius:0;'; rr = ''; }
 
@@ -2214,8 +2214,8 @@
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-top: var(--space-2-5)">' +
               '<span class="j-stop-nights-label">★ ' + stopLabel + '</span>' +
               '<div style="display:flex;gap: var(--space-1)">' +
-                '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
-                '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius:4px;color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button>' +
+                '<button onclick="event.stopPropagation();editCityEntry(' + i + ')" title="수정" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius: var(--radius-xs);color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
+                '<button onclick="event.stopPropagation();deleteCityEntry(' + i + ')" title="삭제" style="background:transparent;border:1px solid var(--j-outline-variant);width:24px;height:24px;border-radius: var(--radius-xs);color:#6b7280;cursor:pointer;display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -5331,7 +5331,7 @@
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius:99px">예산·취향·동선 종합</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
@@ -5344,15 +5344,15 @@
       html += '<div style="margin-bottom: var(--space-4-5)">';
       html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius:99px">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap: var(--space-2-5)">';
       cityRec.options.forEach(function(opt, oi) {
         // 트립닷컴 URL — 호텔명·도시·체크인/아웃 모두 전달 → 검색 결과 페이지로 직접 진입
         var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
-        html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius: var(--radius-full);letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
@@ -5366,9 +5366,9 @@
           '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
-            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>이 호텔</a>' +
-            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">place</span>지도</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>이 호텔</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">place</span>지도</a>' +
           '</div>' +
         '</div>';
       });
@@ -6052,7 +6052,7 @@
     if (!iata) return '<span class="material-symbols-outlined">flight_takeoff</span>';
     var url = 'https://www.gstatic.com/flights/airline_logos/70px/' + iata + '.png';
     // 로드 실패 시 비행기 아이콘으로 폴백
-    return '<img src="' + url + '" alt="' + (name||iata) + '" style="width:38px;height:38px;object-fit:contain;border-radius:6px;background:#fff" onerror="this.outerHTML=\'<span class=\\\'material-symbols-outlined\\\'>flight_takeoff</span>\'"/>';
+    return '<img src="' + url + '" alt="' + (name||iata) + '" style="width:38px;height:38px;object-fit:contain;border-radius: var(--radius-sm);background:#fff" onerror="this.outerHTML=\'<span class=\\\'material-symbols-outlined\\\'>flight_takeoff</span>\'"/>';
   }
 
   function flightCard(f, deleteHtml) {
@@ -6292,7 +6292,7 @@
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5);flex-wrap:wrap">' +
         '<span class="material-symbols-outlined" style="color:#0369a1;font-size: var(--font-size-h1)">flight</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#075985;letter-spacing:-0.01em;margin:0">항공편 추천 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius:99px">Google Flights · Skyscanner · Trip.com</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#0284c7;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">Google Flights · Skyscanner · Trip.com</span>' +
       '</div>' +
       '<p style="font-size: var(--font-size-micro);color:#0369a1;margin:0 0 16px;font-style:italic">가격은 평균 시세 기준 (시즌·예약 시점에 따라 변동). 출국 60-90일 전 예약 추천.</p>';
 
@@ -6302,15 +6302,15 @@
       html += '<div style="margin-bottom: var(--space-4-5)">';
       html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#0c4a6e">' + leg.label + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding: var(--space-0-5) 7px;border-radius:99px">' + leg.date.substring(5).replace('-','/') + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#0284c7;background:rgba(2,132,199,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + leg.date.substring(5).replace('-','/') + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap: var(--space-2-5)">';
       leg.options.forEach(function(opt, oi) {
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius: var(--radius-full);letter-spacing:0.05em">⭐ 1순위</span>' : '';
         var gflUrl = _googleFlightsUrl(leg.from, leg.to, leg.date);
         var skyUrl = _skyscannerUrl(leg.from, leg.to, leg.date);
         var tripUrl = _tripcomFlightUrl(leg.from, leg.to, leg.date);
-        html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+        html += '<div style="position:relative;background:#fff;border:1px solid #bfdbfe;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(2,132,199,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#0c4a6e;margin:0;flex:1">' + opt.airline + (opt.flightNo ? ' · ' + opt.flightNo : '') + '</h5>' +
@@ -6325,9 +6325,9 @@
           '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">flight</span>Google</a>' +
-            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>Skyscanner</a>' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Trip</a>' +
+            '<a href="' + gflUrl + '" target="_blank" rel="noopener" title="Google Flights에서 검색" style="flex:1;min-width:80px;background:linear-gradient(135deg,#0369a1,#0284c7);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">flight</span>Google</a>' +
+            '<a href="' + skyUrl + '" target="_blank" rel="noopener" title="Skyscanner에서 검색" style="flex:1;min-width:80px;background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">search</span>Skyscanner</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="Trip.com에서 검색" style="background:#fff;border:1px solid #bfdbfe;color:#0369a1;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Trip</a>' +
           '</div>' +
         '</div>';
       });
@@ -9664,7 +9664,7 @@
         if (!title && !tag) return;
         var p = BRIEF_CARD_PALETTE[idx % 4];
         html += '<div style="background:' + p.bg + ';border-radius:14px;padding: var(--space-3-5) var(--space-4);display:flex;align-items:center;gap: var(--space-3);border:1px solid ' + p.border + ';">';
-        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2);line-height:1;">' + icon + '</div>';
+        html += '<div style="flex-shrink:0;width:38px;height:38px;border-radius: var(--radius-md-plus);background:' + p.iconBg + ';display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2);line-height:1;">' + icon + '</div>';
         html += '<div style="flex:1;min-width:0;">';
         html += '<p style="font-weight:700;color:' + p.titleColor + ';font-size: var(--font-size-body);line-height:1.35;margin:0;">' + title + '</p>';
         if (tag) html += '<p style="font-size: var(--font-size-meta);color:' + p.tagColor + ';line-height:1.35;margin-top: var(--space-0-5);opacity:0.85;">' + tag + '</p>';
@@ -16021,7 +16021,7 @@
       var sColor = scMap[s.color] || '#6366f1';
       rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom: var(--space-1-5)">';
       rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
-      rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius:4px">';
+      rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius: var(--radius-xs)">';
       sWorks.forEach(function(w) {
         var p = w.phases || {};
         // Prep phase bars (top row, small)
@@ -19182,7 +19182,7 @@
         var cls = item.checked ? 'line-through opacity-50' : '';
         var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
         var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
-        var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius:6px;' : '';
+        var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius: var(--radius-sm);' : '';
         return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
           '<span draggable="true" class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size: var(--font-size-meta)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
