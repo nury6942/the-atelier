@@ -20294,22 +20294,110 @@ function openReviewCreateModal() {
   document.getElementById('review-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('review-title').value = '';
   document.getElementById('review-transcript').value = '';
-  document.getElementById('review-json').value = '';
-  var status = document.getElementById('review-parse-status');
-  status.className = 'hidden mb-4 p-3 rounded-xl text-sm font-bold flex items-center gap-2';
-  status.innerHTML = '';
   // Reset auto-generate UI
   document.getElementById('review-loading-overlay').className = 'hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center';
   document.getElementById('review-auto-error').className = 'hidden mb-4 p-4 rounded-xl bg-rose-50 border border-rose-100';
-  // Collapse manual section
-  _manualReviewOpen = false;
-  var manualSec = document.getElementById('review-manual-section');
-  if (manualSec) { manualSec.style.display = 'none'; manualSec.style.transition = ''; manualSec.style.maxHeight = ''; manualSec.style.opacity = ''; }
-  var chevron = document.getElementById('review-manual-chevron');
-  if (chevron) chevron.style.transform = '';
+  // Refresh API key UI state (inline card vs OK indicator)
+  updateReviewApiKeyUI();
   updateAutoGenButton();
   document.getElementById('eng-review-modal').style.cssText = 'display:flex!important';
 }
+
+// ===== Inline API key card UI state =====
+function updateReviewApiKeyUI() {
+  var card = document.getElementById('review-apikey-card');
+  var ok = document.getElementById('review-apikey-ok');
+  if (!card || !ok) return;
+  var hasKey = !!localStorage.getItem('atelier_anthropic_api_key');
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+  var info = (_API_MODEL_INFO && _API_MODEL_INFO[model]) || { label: model, cost: '' };
+  if (hasKey) {
+    card.classList.add('hidden');
+    ok.classList.remove('hidden');
+    var modelEl = document.getElementById('review-apikey-ok-model');
+    if (modelEl) modelEl.textContent = '· ' + info.label;
+  } else {
+    card.classList.remove('hidden');
+    ok.classList.add('hidden');
+    var hint = document.getElementById('review-inline-apikey-hint');
+    if (hint) hint.textContent = '';
+  }
+}
+
+async function saveInlineApiKey() {
+  var input = document.getElementById('review-inline-apikey');
+  var hint = document.getElementById('review-inline-apikey-hint');
+  if (!input) return;
+  var key = input.value.trim();
+  if (!key) { if (hint) hint.textContent = '키를 입력해주세요'; input.focus(); return; }
+  if (!key.startsWith('sk-ant-')) { if (hint) hint.textContent = '키 형식이 올바르지 않아요 (sk-ant-... 으로 시작)'; return; }
+  localStorage.setItem('atelier_anthropic_api_key', key);
+  if (!localStorage.getItem('atelier_anthropic_model')) {
+    localStorage.setItem('atelier_anthropic_model', 'claude-opus-4-7');
+  }
+  // Sync to Firestore so other devices pick it up automatically
+  try {
+    await syncApiKeyToFirestore();
+    if (hint) { hint.textContent = '✓ 저장 완료 — 모든 기기에서 자동 동기화됩니다'; hint.className = 'text-[10px] text-emerald-700 mt-2 px-1 font-bold'; }
+  } catch (e) {
+    if (hint) { hint.textContent = '⚠ 이 기기에만 저장됨 (Firestore 동기화 실패)'; hint.className = 'text-[10px] text-amber-700 mt-2 px-1'; }
+  }
+  input.value = '';
+  setTimeout(function() { updateReviewApiKeyUI(); updateAutoGenButton(); }, 800);
+}
+
+function resetInlineApiKey() {
+  if (!confirm('현재 저장된 API 키를 지우고 새로 입력할까요?\n(Firestore에서도 삭제됩니다)')) return;
+  localStorage.removeItem('atelier_anthropic_api_key');
+  syncApiKeyToFirestore().catch(function(){});
+  updateReviewApiKeyUI();
+  updateAutoGenButton();
+}
+
+// ===== Firestore <-> localStorage 동기화 =====
+async function syncApiKeyToFirestore() {
+  if (typeof db === 'undefined' && typeof window.db === 'undefined') return;
+  var dbRef = (typeof db !== 'undefined') ? db : window.db;
+  var key = localStorage.getItem('atelier_anthropic_api_key') || '';
+  var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
+  await dbRef.collection('atelier_settings').doc('api').set({
+    apiKey: key,
+    model: model,
+    _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
+async function loadApiKeyFromFirestore() {
+  try {
+    if (typeof db === 'undefined' && typeof window.db === 'undefined') return;
+    var dbRef = (typeof db !== 'undefined') ? db : window.db;
+    var snap = await dbRef.collection('atelier_settings').doc('api').get();
+    if (!snap.exists) return;
+    var data = snap.data() || {};
+    if (data.apiKey) localStorage.setItem('atelier_anthropic_api_key', data.apiKey);
+    if (data.model)  localStorage.setItem('atelier_anthropic_model', data.model);
+    // Refresh any open UI
+    if (typeof updateReviewApiKeyUI === 'function') updateReviewApiKeyUI();
+    if (typeof updateAutoGenButton === 'function') updateAutoGenButton();
+    if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
+  } catch(e) { console.warn('[Settings] Firestore load failed:', e.message); }
+}
+
+// 페이지 로드 직후 1회 자동 동기화
+(function() {
+  function tryLoad() {
+    if (typeof firebase === 'undefined' || (typeof db === 'undefined' && typeof window.db === 'undefined')) {
+      setTimeout(tryLoad, 400);
+      return;
+    }
+    loadApiKeyFromFirestore();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryLoad);
+  } else {
+    tryLoad();
+  }
+})();
 
 function closeReviewCreateModal() {
   document.getElementById('eng-review-modal').style.cssText = 'display:none!important';
@@ -20482,7 +20570,7 @@ function closeApiSettingsModal() {
   document.getElementById('api-settings-modal').style.cssText = 'display:none!important';
 }
 
-function saveApiSettings() {
+async function saveApiSettings() {
   var key = document.getElementById('api-key-input').value.trim();
   var model = document.getElementById('api-model-select').value;
   if (!key) {
@@ -20496,17 +20584,22 @@ function saveApiSettings() {
   }
   localStorage.setItem('atelier_anthropic_api_key', key);
   localStorage.setItem('atelier_anthropic_model', model);
-  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키 저장 완료!');
+  // Sync to Firestore (cross-device)
+  try { await syncApiKeyToFirestore(); } catch(e){}
+  showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키 저장 + 모든 기기 동기화 완료!');
   closeApiSettingsModal();
   updateAutoGenButton();
+  if (typeof updateReviewApiKeyUI === 'function') updateReviewApiKeyUI();
   if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
 }
 
-function deleteApiKey() {
+async function deleteApiKey() {
   localStorage.removeItem('atelier_anthropic_api_key');
+  try { await syncApiKeyToFirestore(); } catch(e){}
   showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> API 키가 삭제되었습니다');
   closeApiSettingsModal();
   updateAutoGenButton();
+  if (typeof updateReviewApiKeyUI === 'function') updateReviewApiKeyUI();
 }
 
 function updateAutoGenButton() {
@@ -20517,9 +20610,10 @@ function updateAutoGenButton() {
   var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
   var info = _API_MODEL_INFO[model] || _API_MODEL_INFO['claude-opus-4-7'];
   if (!hasKey) {
-    btn.disabled = true;
-    btn.className = 'w-full py-3 rounded-xl bg-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed mb-2';
-    hint.innerHTML = '<span class="material-symbols-outlined text-sm" style="font-size: var(--font-size-meta)">settings</span> <a onclick="openApiSettingsModal()" class="underline cursor-pointer">API 키를 먼저 설정해주세요</a>';
+    // 인라인 카드가 위에 보이므로 별도 안내 안 함
+    btn.disabled = false; // 클릭하면 카드 강조 애니메이션
+    btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
+    hint.textContent = '';
   } else {
     btn.disabled = false;
     btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
@@ -20535,7 +20629,25 @@ async function autoGenerateReview() {
   if (!transcript) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 트랜스크립트를 입력하세요'); return; }
 
   var apiKey = localStorage.getItem('atelier_anthropic_api_key');
-  if (!apiKey) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> API 키를 먼저 설정해주세요'); return; }
+  if (!apiKey) {
+    // 인라인 API 키 카드로 시선 유도 (별도 모달 X)
+    var card = document.getElementById('review-apikey-card');
+    if (card) {
+      card.classList.remove('hidden');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // 살짝 흔들기 + 입력 포커스
+      card.animate([
+        { transform: 'translateX(0)' }, { transform: 'translateX(-4px)' },
+        { transform: 'translateX(4px)' }, { transform: 'translateX(-3px)' },
+        { transform: 'translateX(3px)' }, { transform: 'translateX(0)' }
+      ], { duration: 400, easing: 'ease-out' });
+      setTimeout(function() {
+        var input = document.getElementById('review-inline-apikey');
+        if (input) input.focus();
+      }, 300);
+    }
+    return;
+  }
   var model = localStorage.getItem('atelier_anthropic_model') || 'claude-opus-4-7';
 
   // Step A: UI 로딩 상태
@@ -20585,23 +20697,23 @@ async function autoGenerateReview() {
       var status = res.status;
 
       if (status === 401) {
-        errMsg = 'API 키가 유효하지 않아요. 키를 다시 확인해주세요.';
-        errActions = '<button onclick="openApiSettingsModal()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">설정 열기</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errMsg = 'API 키가 유효하지 않아요. 새 키를 입력해주세요.';
+        errActions = '<button onclick="resetInlineApiKey()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">새 키 입력</button>';
       } else if (status === 429) {
         errMsg = '잠시 후 다시 시도해주세요 (요청이 너무 많아요).';
-        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button>';
       } else if (status === 400) {
         errMsg = '스크립트가 너무 길거나 형식에 문제가 있어요. 내용을 확인해주세요.';
-        errActions = '<button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errActions = '';
       } else if (status === 402 || (errBody.error && errBody.error.type === 'insufficient_quota')) {
         errMsg = 'Anthropic 크레딧이 부족하거나 월 한도에 도달했어요.';
-        errActions = '<a href="https://console.anthropic.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 text-xs font-bold">콘솔 열기</a><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errActions = '<a href="https://console.anthropic.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 text-xs font-bold">콘솔 열기</a>';
       } else if (status === 404) {
-        errMsg = '선택한 모델을 사용할 수 없어요. 다른 모델로 변경해보세요.';
-        errActions = '<button onclick="openApiSettingsModal()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">설정 열기</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errMsg = '선택한 모델을 사용할 수 없어요. 설정에서 다른 모델로 변경해보세요.';
+        errActions = '<button onclick="openApiSettingsModal()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">모델 변경</button>';
       } else {
         errMsg = 'Anthropic 서버 오류예요. 잠시 후 다시 시도해주세요. (HTTP ' + status + ')';
-        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>';
+        errActions = '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button>';
       }
 
       console.error('[API] Error ' + status + ':', errBody.error ? errBody.error.message : 'Unknown');
@@ -20625,7 +20737,7 @@ async function autoGenerateReview() {
       console.error('[AutoReview] 응답이 max_tokens(32000)에 도달해도 잘림. 응답 길이:', responseText.length);
       showAutoError(
         '수업이 너무 길어 한 번에 처리하기 어려워요. 트랜스크립트를 반으로 나눠 시도해주세요.',
-        '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>',
+        '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button>',
         responseText
       );
       return;
@@ -20633,7 +20745,7 @@ async function autoGenerateReview() {
 
   } catch(e) {
     console.error('[API] Network error:', e.message);
-    showAutoError('인터넷 연결을 확인해주세요.', '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button><button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>');
+    showAutoError('인터넷 연결을 확인해주세요.', '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button>');
     return;
   }
 
@@ -20714,7 +20826,7 @@ async function autoGenerateReview() {
     await loadEnglish();
     setTimeout(function(){ closeReviewCreateModal(); }, 800);
   } catch(err) {
-    showAutoError('Firestore 저장 실패: ' + err.message, '<button onclick="copyReviewPrompt()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">수동으로 생성</button>');
+    showAutoError('Firestore 저장 실패: ' + err.message, '<button onclick="autoGenerateReview()" class="px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 text-xs font-bold">다시 시도</button>');
   }
 }
 
