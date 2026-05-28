@@ -596,7 +596,7 @@
       });
 
       let dayNum = '<span class="';
-      if (isToday) dayNum += 'inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold shadow-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef)';
+      if (isToday) dayNum += 'inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold shadow-sm" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))';
       else if (isHoliday || isWeekend) dayNum += 'font-bold text-sm" style="color:#8B1A1A';
       else dayNum += 'font-bold text-sm text-[#191c1d]';
       dayNum += '">' + d + '</span>';
@@ -899,7 +899,7 @@
     var popId = cfg.id + '-popover';
     self.container.innerHTML =
       '<button type="button" id="' + trigId + '" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="' + (cfg.ariaLabel||'선택') + '"' +
-      ' class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#6b38d4]/40 focus:outline-none focus:ring-2 focus:ring-[#6b38d4]/30 focus:border-[#6b38d4]/40 transition-all text-left cursor-pointer">' +
+      ' class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[var(--lavender-deep)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--lavender-deep)]/30 focus:border-[var(--lavender-deep)]/40 transition-all text-left cursor-pointer">' +
       (cfg.icon ? '<span class="material-symbols-outlined" style="font-size:18px;color:#94a3b8">' + cfg.icon + '</span>' : '') +
       '<span id="' + cfg.id + '-dot" class="w-2.5 h-2.5 rounded-full shrink-0" style="' + (cfg.options[0].dot ? 'background:' + cfg.options[0].dot : 'display:none') + '"></span>' +
       '<span id="' + cfg.id + '-label" class="flex-1 text-sm font-bold text-[#1d1a23]"></span>' +
@@ -926,7 +926,7 @@
         var opt = self.options[i];
         var isSelected = opt.value === current;
         var isFocused = i === self.focusIdx;
-        var bg = isFocused ? 'background:#6b38d4;color:#fff;' : (isSelected && !isFocused ? '' : '');
+        var bg = isFocused ? 'background:var(--lavender-deep);color:#fff;' : (isSelected && !isFocused ? '' : '');
         var dotBorder = isFocused ? 'border:2px solid rgba(255,255,255,0.6);' : 'border:2px solid transparent;';
         var prefix = opt.emoji ? '<span style="font-size:13px;margin-right:2px">' + opt.emoji + '</span> ' : '';
         var dotHtml = opt.dot ? '<span class="w-3 h-3 rounded-full shrink-0" style="background:' + opt.dot + ';' + dotBorder + '"></span>' : '';
@@ -946,7 +946,7 @@
           items.forEach(function(el) {
             var idx = parseInt(el.dataset.idx);
             if (idx === self.focusIdx) {
-              el.style.background = '#6b38d4'; el.style.color = '#fff';
+              el.style.background = 'var(--lavender-deep)'; el.style.color = '#fff';
             } else {
               el.style.background = ''; el.style.color = '';
             }
@@ -5329,7 +5329,7 @@
 
     var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding:20px 22px;margin-bottom:24px">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
-        '<span class="material-symbols-outlined" style="color:#6b38d4;font-size:22px">recommend</span>' +
+        '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size:22px">recommend</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size:14px;font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
         '<span style="font-size:10px;font-weight:600;color:#8b5cf6;background:#fff;padding:2px 8px;border-radius:99px">예산·취향·동선 종합</span>' +
       '</div>' +
@@ -5351,7 +5351,7 @@
         // 트립닷컴 URL — 호텔명·도시·체크인/아웃 모두 전달 → 검색 결과 페이지로 직접 진입
         var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
-        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
+        var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.05em">⭐ 1순위</span>' : '';
         html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius:12px;padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
@@ -5366,9 +5366,9 @@
           '<p style="font-size:11px;color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px;color:#a78bfa">location_on</span>' + opt.location + '</p>' +
           '<p style="font-size:11px;color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
-            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,#6b38d4,#8455ef);color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
-            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">search</span>이 호텔</a>' +
-            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:#6b38d4;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
+            '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px"><span class="material-symbols-outlined" style="font-size:12px">open_in_new</span>트립닷컴</a>' +
+            '<a href="' + _googleTripUrl(opt.name, cityRec.city) + '" target="_blank" rel="noopener" title="Google로 이 호텔의 트립닷컴 페이지 직접 찾기" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">search</span>이 호텔</a>' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="구글 지도" style="background:#fff;border:1px solid #ddd6fe;color:var(--lavender-deep);font-size:10px;font-weight:700;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:3px"><span class="material-symbols-outlined" style="font-size:12px">place</span>지도</a>' +
           '</div>' +
         '</div>';
       });
@@ -6527,7 +6527,7 @@
     var statusHtml = checked
       ? '<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white cursor-pointer" onclick="' + checkFn + '"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1;">check</span></div>'
       : '<div class="w-6 h-6 rounded-full border-2 border-slate-300 cursor-pointer hover:border-indigo-400 transition-colors" onclick="' + checkFn + '"></div>';
-    return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;">' +
+    return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid var(--lavender-deep);">' +
       '<div class="grid grid-cols-12 items-start gap-2">' +
         '<div class="col-span-3 flex items-center gap-2">' +
           '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
@@ -8942,7 +8942,7 @@
       return;
     }
     el.innerHTML = todayEvents.slice(0,3).map(function(ev){
-      return '<div class="flex items-center gap-4"><div class="w-2 h-10 rounded-full" style="background:#6b38d4"></div><div><h3 class="font-headline font-bold text-[#191c1d]">' + (ev[1]||'') + '</h3><p class="text-xs text-[#494454]">' + (ev[2]||'') + '</p></div></div>';
+      return '<div class="flex items-center gap-4"><div class="w-2 h-10 rounded-full" style="background:var(--lavender-deep)"></div><div><h3 class="font-headline font-bold text-[#191c1d]">' + (ev[1]||'') + '</h3><p class="text-xs text-[#494454]">' + (ev[2]||'') + '</p></div></div>';
     }).join('') + ddays.map(function(dd){
       return '<div class="flex items-center gap-4"><div class="w-2 h-10 rounded-full" style="background:#a76500"></div><div><h3 class="font-headline font-bold text-[#191c1d]">' + dd.name + ' D-' + dd.diff + '</h3><p class="text-xs text-[#494454]">Check travel preparation</p></div></div>';
     }).join('');
@@ -8968,7 +8968,7 @@
       var isToday = ds === todayStr;
       var evts = rows.filter(function(r){ var s=(r[0]||'').toString(),e=(r[5]||'').toString(); if(e&&e>s) return ds>=s&&ds<=e; return s===ds; });
       if (isToday) {
-        return '<div class="p-5 rounded-2xl space-y-3 ring-4" style="background:#8455ef;ring-color:rgba(107,56,212,0.1);box-shadow:0 8px 24px rgba(107,56,212,0.2)"><div class="text-center"><p class="text-xs font-bold text-white/80 uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-white">'+d.getDate()+'</p></div>' +
+        return '<div class="p-5 rounded-2xl space-y-3 ring-4" style="background:var(--lavender-deep-soft);ring-color:rgba(107,56,212,0.1);box-shadow:0 8px 24px rgba(107,56,212,0.2)"><div class="text-center"><p class="text-xs font-bold text-white/80 uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-white">'+d.getDate()+'</p></div>' +
           evts.slice(0,2).map(function(ev){ return '<div class="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-bold text-white truncate">'+ev[1]+'</div>'; }).join('') + '</div>';
       }
       return '<div class="bg-white p-5 rounded-2xl space-y-3" style="box-shadow:0px 12px 32px rgba(25,28,29,0.02)"><div class="text-center"><p class="text-xs font-bold text-[#494454] uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-[#191c1d]">'+d.getDate()+'</p></div>' +
@@ -9066,7 +9066,7 @@
       if (t.imageUrl) {
         heroEl.style.background = 'url(' + t.imageUrl + ') center/cover no-repeat';
       } else {
-        heroEl.style.background = 'linear-gradient(135deg,#6b38d4,#8455ef)';
+        heroEl.style.background = 'linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))';
       }
     }
     if (creditEl) creditEl.style.display = 'none';
@@ -9143,7 +9143,7 @@
     var net = income - expense;
     if (netEl) {
       netEl.textContent = (net>=0?'+':'-') + fmtKRWFromWon(Math.abs(net));
-      netEl.style.color = net >= 0 ? '#6b38d4' : '#dc2626';
+      netEl.style.color = net >= 0 ? 'var(--lavender-deep)' : '#dc2626';
     }
   }
 
@@ -13586,7 +13586,7 @@
         monthTr.className = 'sticky top-0 z-10';
         monthTr.style.backgroundColor = '#f3eeff';
         monthTr.innerHTML = '<td colspan="10" class="px-5 py-2" style="border-top:1px solid #e9d5ff;border-bottom:1px solid #e9d5ff;">' +
-          '<span class="text-[11px] font-black uppercase tracking-widest" style="color:#6b38d4">' +
+          '<span class="text-[11px] font-black uppercase tracking-widest" style="color:var(--lavender-deep)">' +
           matrixYear + '년 ' + MONTHS_KR[monthNum] + '</span></td>';
         tbody.appendChild(monthTr);
       }
@@ -15160,7 +15160,7 @@
       var isSelDate = _calSelectedDate===dateStr;
       // 오늘: 보라 동그라미 + 날짜 숫자 흰색
       var todayHtml = isToday
-        ? '<span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-sm font-bold" style="background:linear-gradient(135deg,#6b38d4,#8455ef)">' + d2 + '</span>'
+        ? '<span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-sm font-bold" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))">' + d2 + '</span>'
         : '<span class="text-sm font-medium ' + (isSun?'text-rose-400':'text-slate-600') + '">' + d2 + '</span>';
       var cellBorder = isSelDate ? ' ring-2 ring-indigo-400 ring-inset' : '';
       var evtHtml = '';
@@ -17344,10 +17344,10 @@
       var barW = maxVal > 0 ? Math.round(amt/maxVal*100) : 0;
       return '<div>' +
         '<div class="flex items-center justify-between mb-1.5">' +
-          '<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:#6b38d4"></div><span class="font-bold text-sm text-slate-800">' + name + '</span></div>' +
+          '<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:var(--lavender-deep)"></div><span class="font-bold text-sm text-slate-800">' + name + '</span></div>' +
           '<span class="font-headline font-black text-sm text-slate-700">' + Math.round(amt) + '만 <span class="text-slate-400 font-medium">' + pct + '%</span></span>' +
         '</div>' +
-        '<div class="h-2 rounded-full overflow-hidden" style="background:#f3f4f5"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(135deg,#6b38d4,#8455ef)"></div></div>' +
+        '<div class="h-2 rounded-full overflow-hidden" style="background:#f3f4f5"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))"></div></div>' +
       '</div>';
     }).join('');
     // 총 지출 요약
@@ -17575,10 +17575,10 @@
         var activeBorder = isActive ? 'border:2px solid rgba(107,56,212,0.2);' : '';
         var headerBg = isActive ? 'background:rgba(107,56,212,0.05);' : 'background:#f8f9fa;';
         var badge = isActive ?
-          '<span class="text-[9px] text-white px-2.5 py-1 rounded-full font-bold uppercase" style="background:#6b38d4;">Active</span>' :
-          '<span class="text-[9px] px-2.5 py-1 rounded-full font-bold uppercase" style="background:rgba(107,56,212,0.1);color:#6b38d4;">Completed</span>';
-        var footerStyle = isActive ? 'background:#6b38d4;color:white;' : 'background:rgba(107,56,212,0.05);';
-        var balColor = isActive ? 'color:white;' : 'color:#6b38d4;';
+          '<span class="text-[9px] text-white px-2.5 py-1 rounded-full font-bold uppercase" style="background:var(--lavender-deep);">Active</span>' :
+          '<span class="text-[9px] px-2.5 py-1 rounded-full font-bold uppercase" style="background:rgba(107,56,212,0.1);color:var(--lavender-deep);">Completed</span>';
+        var footerStyle = isActive ? 'background:var(--lavender-deep);color:white;' : 'background:rgba(107,56,212,0.05);';
+        var balColor = isActive ? 'color:white;' : 'color:var(--lavender-deep);';
         var balLabel = isActive ? 'color:rgba(255,255,255,0.7);' : 'color:#94a3b8;';
 
         return '<div class="bg-white rounded-3xl overflow-hidden flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);' + activeBorder + '">' +
@@ -17619,7 +17619,7 @@
             '</div>' +
             '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(107,56,212,0.12)') + ';">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산</span>' +
-              '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:#6b38d4;') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
+              '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:var(--lavender-deep);') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
           '</div></div>';
       }).join('');
@@ -17702,7 +17702,7 @@
     e.dataTransfer.dropEffect = 'move';
     document.querySelectorAll('.hub-drag-row').forEach(function(r){ r.style.borderTop = ''; });
     var tr = e.target.closest('tr');
-    if (tr && tr.classList.contains('hub-drag-row')) tr.style.borderTop = '2px solid #6b38d4';
+    if (tr && tr.classList.contains('hub-drag-row')) tr.style.borderTop = '2px solid var(--lavender-deep)';
   }
 
   async function hubDrop(e, targetIdx) {
@@ -19749,12 +19749,12 @@ function renderEnglishSessions() {
       var cambLabel = pct >= 78 ? 'C1' : pct >= 65 ? 'B2+' : pct >= 55 ? 'B2' : pct >= 45 ? 'B1+' : 'B1';
       return '<div class="flex items-center gap-2">' +
         '<span class="text-[9px] font-bold text-slate-400 w-16 uppercase">' + label + '</span>' +
-        '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div></div>' +
+        '<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));"></div></div>' +
         '<span class="text-[9px] font-bold text-indigo-600 w-8">' + cambLabel + '</span>' +
       '</div>';
     }
 
-    return '<div class="bg-white rounded-2xl p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid #6b38d4;" onclick="openSessionDetail(\'' + s._id + '\')">' +
+    return '<div class="bg-white rounded-2xl p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid var(--lavender-deep);" onclick="openSessionDetail(\'' + s._id + '\')">' +
       '<div class="flex gap-5">' +
         '<div class="shrink-0 text-center pt-1">' +
           '<p class="text-2xl font-extrabold text-slate-900 font-headline leading-none">' + String(dateObj.getDate()).padStart(2,'0') + '</p>' +
@@ -19894,7 +19894,7 @@ function openSessionDetail(dateId) {
     var pct = val || 0;
     var camb = cambridgeLabel(pct, skill);
     return '<div class="flex-1"><div class="flex justify-between mb-1"><span class="text-xs font-bold text-slate-600">' + label + '</span><span class="text-xs font-bold text-indigo-600">' + camb + ' (' + pct + ')</span></div>' +
-      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,#6b38d4,#8455ef);"></div></div></div>';
+      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + pct + '%;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));"></div></div></div>';
   }
 
   function krBox(text) {
@@ -21668,9 +21668,9 @@ function _sanitizeScanNotes(notes) {
   var _vaultHighlightIdx = -1;
 
   var VAULT_CAT_STYLE = {
-    work: 'background:rgba(107,56,212,0.1);color:#6b38d4',
+    work: 'background:rgba(107,56,212,0.1);color:var(--lavender-deep)',
     life: 'background:rgba(201,179,253,0.3);color:#544183',
-    study: 'background:rgba(107,56,212,0.1);color:#6b38d4',
+    study: 'background:rgba(107,56,212,0.1);color:var(--lavender-deep)',
     emotions: 'background:rgba(201,179,253,0.3);color:#544183',
     insights: 'background:rgba(255,220,187,0.4);color:#673d00'
   };
@@ -21711,7 +21711,7 @@ function _sanitizeScanNotes(notes) {
       '<p class="text-[10px] font-bold uppercase tracking-wider ' + (isDark ? 'text-white/50' : 'text-[#494454]/60') + ' mb-2">💬 Context</p>' +
       convo.map(function(t) {
         var isMe = (t.speaker||'').toLowerCase() === 'me';
-        var spkColor = isDark ? (isMe ? 'text-white' : 'text-white/70') : (isMe ? 'text-[#6b38d4]' : 'text-[#494454]');
+        var spkColor = isDark ? (isMe ? 'text-white' : 'text-white/70') : (isMe ? 'text-[var(--lavender-deep)]' : 'text-[#494454]');
         var textColor = isDark ? 'text-white/90' : 'text-[#191c1d]';
         var krColor = isDark ? 'text-white/50' : 'text-[#494454]/60';
         return '<div>' +
@@ -21916,7 +21916,7 @@ function _sanitizeScanNotes(notes) {
       var catStyle = VAULT_CAT_STYLE;
       preview.innerHTML = _vaultBulkParsed.map(function(d, i) {
         var cs = catStyle[d.category] || catStyle.work;
-        return '<div class="p-3 rounded-xl bg-[#f3f4f5] flex items-start gap-3"><span class="text-xs font-bold text-[#6b38d4] shrink-0 mt-0.5">' + (i+1) + '</span><div class="flex-1 min-w-0"><span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase mb-1" style="' + cs + '">' + d.category + '</span><p class="text-sm font-bold text-[#191c1d] truncate">' + d.english + '</p><p class="text-xs text-[#494454]">' + d.korean + '</p>' + (d.context ? '<p class="text-[10px] text-[#494454]/60 mt-1">' + d.context + '</p>' : '') + '</div></div>';
+        return '<div class="p-3 rounded-xl bg-[#f3f4f5] flex items-start gap-3"><span class="text-xs font-bold text-[var(--lavender-deep)] shrink-0 mt-0.5">' + (i+1) + '</span><div class="flex-1 min-w-0"><span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase mb-1" style="' + cs + '">' + d.category + '</span><p class="text-sm font-bold text-[#191c1d] truncate">' + d.english + '</p><p class="text-xs text-[#494454]">' + d.korean + '</p>' + (d.context ? '<p class="text-[10px] text-[#494454]/60 mt-1">' + d.context + '</p>' : '') + '</div></div>';
       }).join('');
       preview.style.display = 'block';
     }
@@ -22136,7 +22136,7 @@ speaker 설정:
     container.innerHTML = _vaultAiResults.map(function(r, i) {
       var cs = VAULT_CAT_STYLE[r.category] || VAULT_CAT_STYLE.work;
       return '<div class="vault-ai-item flex items-start gap-3">' +
-        '<input type="checkbox" ' + (r._checked ? 'checked' : '') + ' onchange="_vaultAiResults['+i+']._checked=this.checked;updateVaultAiSaveBtn()" class="mt-1.5 accent-[#6b38d4]"/>' +
+        '<input type="checkbox" ' + (r._checked ? 'checked' : '') + ' onchange="_vaultAiResults['+i+']._checked=this.checked;updateVaultAiSaveBtn()" class="mt-1.5 accent-[var(--lavender-deep)]"/>' +
         '<div class="flex-1 min-w-0">' +
           '<div class="flex items-center gap-2 mb-1"><span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style="' + cs + '">' + (r.category||'work') + '</span></div>' +
           '<p class="text-sm font-bold text-[#191c1d]">"' + (r.english||'') + '"</p>' +

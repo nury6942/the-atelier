@@ -258,7 +258,7 @@
           "tertiary-container":"#e1bee7","on-secondary-container":"#0d47a1",
           "on-primary-container":"#312e81","on-tertiary-container":"#4a148c",
           "on-secondary":"#ffffff","on-tertiary":"#ffffff",
-          "inverse-primary":"#c7d2fe","surface-tint":"#6366f1"
+          "inverse-primary":"#c7d2fe","surface-tint":"var(--indigo-500)"
         },
         borderRadius:{"DEFAULT":"0.5rem","sm":"0.125rem","lg":"0.75rem","xl":"1rem","2xl":"1.5rem","3xl":"2rem","full":"9999px"},
         fontFamily:{"headline":["Manrope","sans-serif"],"body":["Inter","sans-serif"],"label":["Inter","sans-serif"],"manrope":["Manrope","sans-serif"]}
@@ -267,7 +267,7 @@
   </script>
   <style>
     *{box-sizing:border-box}
-    body{font-family:'Inter','Noto Color Emoji',sans-serif;background:#fff;color:#1e293b}
+    body{font-family:'Inter','Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800)}
     h1,h2,h3,h4{font-family:'Manrope','Noto Color Emoji',sans-serif}
     .font-headline,.headline{font-family:'Manrope',sans-serif!important}
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
@@ -275,45 +275,45 @@
     /* z-index 최대값 — 어떤 모달/오버레이도 못 가리도록 */
     .flatpickr-calendar { font-family: 'Manrope','Inter',system-ui,sans-serif !important; border-radius: 16px !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
     .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline { z-index: 2147483647 !important; }
-    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: #6b38d4 !important; }
-    .flatpickr-months { background: linear-gradient(135deg,#6b38d4,#8455ef) !important; padding: 12px 8px !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
+    .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: var(--lavender-deep) !important; }
+    .flatpickr-months { background: linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft)) !important; padding: 12px 8px !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
     .flatpickr-months .flatpickr-month { color: #fff !important; height: auto !important; line-height: 1.4 !important; }
     .flatpickr-current-month { padding: 0 !important; font-weight: 700 !important; }
     .flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 700 !important; }
     .flatpickr-current-month .flatpickr-monthDropdown-months { color: #fff !important; background: transparent !important; font-weight: 700 !important; border: none; }
-    .flatpickr-current-month .flatpickr-monthDropdown-months option { color: #1e293b; background: #fff; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months option { color: var(--slate-800); background: #fff; }
     .flatpickr-prev-month, .flatpickr-next-month { color: #fff !important; padding: 8px !important; fill: #fff !important; }
     .flatpickr-prev-month svg, .flatpickr-next-month svg { fill: #fff !important; }
     .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #f3e8ff !important; }
     .numInputWrapper:hover { background: rgba(255,255,255,0.15) !important; }
     .numInputWrapper span.arrowUp:after { border-bottom-color: #fff !important; }
     .numInputWrapper span.arrowDown:after { border-top-color: #fff !important; }
-    .flatpickr-weekdays { background: #fff !important; padding: 8px 0 4px !important; border-bottom: 1px solid #f1f5f9; }
-    .flatpickr-weekday { color: #6b38d4 !important; font-weight: 700 !important; font-size: 11px !important; }
+    .flatpickr-weekdays { background: #fff !important; padding: 8px 0 4px !important; border-bottom: 1px solid var(--slate-100); }
+    .flatpickr-weekday { color: var(--lavender-deep) !important; font-weight: 700 !important; font-size: 11px !important; }
     .flatpickr-days { padding: 6px !important; }
-    .flatpickr-day { border-radius: 10px !important; font-weight: 600 !important; color: #334155; margin: 1px; }
-    .flatpickr-day:hover:not(.selected):not(.flatpickr-disabled) { background: #f3e8ff !important; color: #6b38d4 !important; }
-    .flatpickr-day.today { border-color: #c4b5fd !important; color: #6b38d4 !important; }
+    .flatpickr-day { border-radius: 10px !important; font-weight: 600 !important; color: var(--slate-700); margin: 1px; }
+    .flatpickr-day:hover:not(.selected):not(.flatpickr-disabled) { background: #f3e8ff !important; color: var(--lavender-deep) !important; }
+    .flatpickr-day.today { border-color: #c4b5fd !important; color: var(--lavender-deep) !important; }
     .flatpickr-day.today:hover { background: #ede9fe !important; }
-    .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.endRange { background: #6b38d4 !important; border-color: #6b38d4 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(107,56,212,0.35) !important; }
-    .flatpickr-day.inRange { background: #ede9fe !important; border-color: #ede9fe !important; color: #6b38d4 !important; box-shadow: none !important; }
-    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: #cbd5e1 !important; }
-    .flatpickr-day.flatpickr-disabled { color: #e2e8f0 !important; }
-    .flatpickr-time { border-top: 1px solid #f1f5f9 !important; }
-    .flatpickr-time input { color: #6b38d4 !important; font-weight: 700 !important; }
-    .flatpickr-time .flatpickr-am-pm { color: #6b38d4 !important; font-weight: 700 !important; }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--lavender-deep) !important; border-color: var(--lavender-deep) !important; color: #fff !important; box-shadow: 0 4px 10px rgba(107,56,212,0.35) !important; }
+    .flatpickr-day.inRange { background: #ede9fe !important; border-color: #ede9fe !important; color: var(--lavender-deep) !important; box-shadow: none !important; }
+    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--slate-300) !important; }
+    .flatpickr-day.flatpickr-disabled { color: var(--slate-200) !important; }
+    .flatpickr-time { border-top: 1px solid var(--slate-100) !important; }
+    .flatpickr-time input { color: var(--lavender-deep) !important; font-weight: 700 !important; }
+    .flatpickr-time .flatpickr-am-pm { color: var(--lavender-deep) !important; font-weight: 700 !important; }
     .no-scrollbar::-webkit-scrollbar,.hide-scrollbar::-webkit-scrollbar{display:none}
     .fixed-input-row input,.fixed-input-row select{border-radius:0;border-top:0;border-left:0;border-right:0;}
     .fixed-input-row select{background:transparent;cursor:pointer;}
     .fixed-input-row input:focus,.fixed-input-row select:focus{background:rgba(107,56,212,0.06);}
     .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     .ldg-row-selected td{background-color:rgba(99,102,241,0.12)!important}
-    .ldg-row-selected td:first-child{border-left:3px solid #6366f1!important;padding-left:calc(1rem - 3px)!important}
-    .gradient-primary{background:linear-gradient(135deg,#6366f1 0%,#a855f7 100%)}
+    .ldg-row-selected td:first-child{border-left:3px solid var(--indigo-500)!important;padding-left:calc(1rem - 3px)!important}
+    .gradient-primary{background:linear-gradient(135deg,var(--indigo-500) 0%,#a855f7 100%)}
     .gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
     .bg-gradient-soft{background:linear-gradient(135deg,#C7D2FE 0%,#DDD6FE 100%)}
     .gradient-secondary{background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%)}
-    .text-gradient-primary{background:linear-gradient(135deg,#6366F1 0%,#A855F7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .text-gradient-primary{background:linear-gradient(135deg,var(--indigo-500) 0%,#A855F7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .pastel-shadow{box-shadow:0 10px 25px -5px rgba(100,116,139,.08)}
     .glass-panel,.glass-effect{background:rgba(255,255,255,.8);backdrop-filter:blur(8px)}
     .active-gradient,.purple-blue-gradient{background:linear-gradient(90deg,#B2EBF2 0%,#E1BEE7 100%)}
@@ -322,11 +322,11 @@
 
     /* ── UNIFIED DESIGN OVERRIDES ── */
     /* Card borders: all pages use same subtle border */
-    .page [class*="border-slate-400"]{border-color:#e2e8f0!important}
-    .page .divide-slate-400>*+*,.page .divide-slate-300>*+*{border-color:#e2e8f0!important}
+    .page [class*="border-slate-400"]{border-color:var(--slate-200)!important}
+    .page .divide-slate-400>*+*,.page .divide-slate-300>*+*{border-color:var(--slate-200)!important}
     /* Table/section bg headers */
-    .page .bg-slate-100{background-color:#f8fafc!important}
-    .page .bg-slate-200{background-color:#f1f5f9!important}
+    .page .bg-slate-100{background-color:var(--slate-50)!important}
+    .page .bg-slate-200{background-color:var(--slate-100)!important}
 
     /* ── MATRIX TABLE BORDERS ── */
     #matrix-table-wrap table {
@@ -335,8 +335,8 @@
     }
     #matrix-table-wrap th,
     #matrix-table-wrap td {
-      border-right: 1px solid #f1f5f9 !important;
-      border-bottom: 1px solid #f1f5f9 !important;
+      border-right: 1px solid var(--slate-100) !important;
+      border-bottom: 1px solid var(--slate-100) !important;
       border-top: none !important;
       border-left: none !important;
     }
@@ -360,24 +360,24 @@
       font-family:'Manrope',sans-serif!important;
       font-size:1.5rem!important;
       font-weight:800!important;
-      color:#0f172a!important;
+      color:var(--slate-900)!important;
       letter-spacing:-0.02em!important;
     }
 
     /* Ledger column filter buttons */
-    .ldg-cf-btn{display:inline-flex;align-items:center;padding:1px 2px;border-radius:4px;color:#94a3b8;cursor:pointer;border:none;background:none;vertical-align:middle;transition:all .1s}
+    .ldg-cf-btn{display:inline-flex;align-items:center;padding:1px 2px;border-radius:4px;color:var(--slate-400);cursor:pointer;border:none;background:none;vertical-align:middle;transition:all .1s}
     .ldg-cf-btn:hover,.ldg-cf-btn.active{color:#5b3cdd;background:#f7f1ff}
     .ldg-cf-panel{position:absolute;left:0;top:100%;margin-top:4px;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;z-index:999;padding:8px 0;min-width:180px;max-height:280px;overflow-y:auto}
     .ldg-cf-panel label{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:11px;color:#1c1a24;cursor:pointer;transition:background .1s}
     .ldg-cf-panel label:hover{background:#f7f1ff}
-    .ldg-cf-panel .cf-actions{display:flex;gap:8px;padding:6px 12px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;font-size:10px}
+    .ldg-cf-panel .cf-actions{display:flex;gap:8px;padding:6px 12px;border-bottom:1px solid var(--slate-100);margin-bottom:4px;font-size:10px}
     /* Ledger custom dropdown */
     .ldg-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:4px;
       padding:4px 8px;border-radius:8px;background:#f7f1ff;border:1.5px solid transparent;
       font-size:12px;color:#1c1a24;cursor:pointer;min-height:28px;transition:all .15s;white-space:nowrap}
     .ldg-dd-trigger:hover,.ldg-dd-trigger.open{border-color:#5b3cdd;background:#ede9fe}
-    .ldg-dd-trigger .dd-placeholder{color:#94a3b8}
-    .ldg-dd-trigger .dd-chevron{font-size:14px;color:#94a3b8;transition:transform .15s}
+    .ldg-dd-trigger .dd-placeholder{color:var(--slate-400)}
+    .ldg-dd-trigger .dd-chevron{font-size:14px;color:var(--slate-400);transition:transform .15s}
     .ldg-dd-trigger.open .dd-chevron{transform:rotate(180deg)}
     .ldg-dd-panel{position:absolute;left:0;top:100%;margin-top:4px;width:max-content;min-width:100%;
       background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);border:1px solid #ebe9f5;
@@ -394,23 +394,23 @@
 
     /* ===== HUB FILTER BUTTONS ===== */
     .hub-filter-btn {
-      color: #64748b;
+      color: var(--slate-500);
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--slate-200);
     }
     .hub-filter-btn:hover {
-      background: #f1f5f9;
-      color: #334155;
+      background: var(--slate-100);
+      color: var(--slate-700);
     }
     .hub-filter-btn.active {
-      background: #4f46e5;
+      background: var(--indigo-600);
       color: #ffffff;
-      border-color: #4f46e5;
+      border-color: var(--indigo-600);
     }
 
     /* ===== TRAVEL TABS (Schedule / Budget) ===== */
     .travel-tab-btn {
-      color: #64748b;
+      color: var(--slate-500);
       background: transparent;
     }
     .travel-tab-btn.travel-tab-active {
@@ -425,7 +425,7 @@
       width: 100%; max-width: 360px;
       background: #fff; border: 1.5px solid #a78bfa; border-radius: 0.75rem;
       padding: 0.75rem 1.25rem;
-      font-size: 0.875rem; font-weight: 600; color: #1e293b;
+      font-size: 0.875rem; font-weight: 600; color: var(--slate-800);
       cursor: pointer; transition: all 0.15s;
     }
     .trip-dd-btn:hover { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(107,56,212,0.12); }
@@ -435,19 +435,19 @@
       width: 100%; max-width: 360px;
       background: #fff; border-radius: 0.75rem;
       box-shadow: 0 12px 36px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
-      border: 1px solid #f1f5f9; overflow: hidden; z-index: 50;
+      border: 1px solid var(--slate-100); overflow: hidden; z-index: 50;
       transition: all 0.15s; transform-origin: top;
     }
     .trip-dd-opt {
       display: flex; align-items: center; justify-content: space-between;
       width: 100%; text-align: left;
       padding: 0.75rem 1.25rem;
-      font-size: 0.875rem; font-weight: 500; color: #475569;
+      font-size: 0.875rem; font-weight: 500; color: var(--slate-600);
       border: none; background: none; cursor: pointer; transition: all 0.1s;
     }
     .trip-dd-opt:hover { background: #f5f3ff; }
     .trip-dd-opt.active {
-      background: linear-gradient(135deg, #6b38d4, #8455ef);
+      background: linear-gradient(135deg, var(--lavender-deep), var(--lavender-deep-soft));
       color: #fff; font-weight: 700;
     }
     /* 진행 중 — 옅은 amber 액센트 */
@@ -463,11 +463,11 @@
     }
     /* 과거 — 회색 + opacity */
     .trip-dd-opt.past:not(.active) {
-      color: #94a3b8;
+      color: var(--slate-400);
       opacity: 0.7;
       font-weight: 400;
     }
-    .trip-dd-opt.past:not(.active):hover { opacity: 1; color: #64748b; }
+    .trip-dd-opt.past:not(.active):hover { opacity: 1; color: var(--slate-500); }
     .trip-dd-opt .dd-meta {
       font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
       margin-left: 8px; opacity: 0.7;
@@ -486,14 +486,14 @@
     }
     .hub-skel {
       display: block;
-      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+      background: linear-gradient(90deg, var(--slate-100) 0%, var(--slate-200) 50%, var(--slate-100) 100%);
       background-size: 200% 100%;
       animation: skel-pulse-app 1.4s ease-in-out infinite;
       border-radius: 6px;
     }
     .hub-skel-card {
       background: #ffffff;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       border-radius: 1rem;
       padding: 1.25rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
@@ -510,14 +510,14 @@
     .cal-skel-cell {
       min-height: 96px;
       padding: 12px;
-      border-right: 1px solid #f1f5f9;
-      border-bottom: 1px solid #f1f5f9;
+      border-right: 1px solid var(--slate-100);
+      border-bottom: 1px solid var(--slate-100);
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
     .cal-skel {
-      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+      background: linear-gradient(90deg, var(--slate-100) 0%, var(--slate-200) 50%, var(--slate-100) 100%);
       background-size: 200% 100%;
       animation: skel-pulse-app 1.4s ease-in-out infinite;
       border-radius: 4px;
@@ -617,7 +617,7 @@
     .nomad-page .nm-page-header {
       margin-bottom: 40px;
       padding-bottom: 24px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
     }
     .nomad-page .nm-page-eyebrow {
       font-size: 12px;
@@ -771,7 +771,7 @@
     }
     .nomad-page .nm-table tbody td {
       padding: 14px 16px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
       color: var(--nm-text);
     }
     .nomad-page .nm-table tbody tr:hover { background: var(--nm-surface-container-low); }
@@ -813,7 +813,7 @@
       color: var(--nm-text);
       font-size: 14px;
       line-height: 22px;
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: 1px solid var(--slate-50);
       transition: opacity 0.15s;
     }
     .nomad-page .nm-checklist li:last-child { border-bottom: none; }
@@ -909,7 +909,7 @@
     }
     .nomad-page .nm-subnav {
       background: #fafbfc;
-      border-right: 1px solid #f1f5f9;
+      border-right: 1px solid var(--slate-100);
       padding: 28px 0;
       position: sticky;
       top: 64px;
@@ -919,7 +919,7 @@
     }
     .nomad-page .nm-subnav-header {
       padding: 0 24px 18px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
       margin-bottom: 12px;
     }
     .nomad-page .nm-subnav-title {
@@ -946,10 +946,10 @@
       padding: 6px 10px;
       cursor: pointer;
       border-radius: 6px;
-      color: #94a3b8;
+      color: var(--slate-400);
       transition: background 0.15s;
     }
-    .nomad-page .nm-subnav-group-head:hover { background: #f1f5f9; color: #64748b; }
+    .nomad-page .nm-subnav-group-head:hover { background: var(--slate-100); color: var(--slate-500); }
     .nomad-page .nm-subnav-group-label {
       font-family: var(--nm-font-h);
       font-size: 10px;
@@ -973,15 +973,15 @@
       gap: 10px;
       padding: 7px 12px;
       border-radius: 6px;
-      color: #475569;
+      color: var(--slate-600);
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
       text-decoration: none;
     }
-    .nomad-page .nm-subnav-item:hover { background: #f1f5f9; color: var(--nm-deep-indigo); }
-    .nomad-page .nm-subnav-item .material-symbols-outlined { font-size: 17px; color: #94a3b8; }
+    .nomad-page .nm-subnav-item:hover { background: var(--slate-100); color: var(--nm-deep-indigo); }
+    .nomad-page .nm-subnav-item .material-symbols-outlined { font-size: 17px; color: var(--slate-400); }
     .nomad-page .nm-subnav-item.active {
       background: var(--nm-primary-soft);
       color: var(--nm-primary);
@@ -1005,7 +1005,7 @@
         top: 0;
         height: auto;
         border-right: none;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--slate-100);
         padding: 16px 0;
       }
       .nomad-page .nm-subnav-header { padding: 0 16px 12px; margin-bottom: 8px; }
@@ -1018,7 +1018,7 @@
       border-radius: 16px;
       padding: 32px;
       margin-bottom: 24px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
     }
     .nomad-page .nm-city-hero-title {
       font-family: var(--nm-font-h);
@@ -1081,7 +1081,7 @@
 
     .nomad-page .nm-place-card {
       padding: 14px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
     }
     .nomad-page .nm-place-card:last-child { border-bottom: none; }
     .nomad-page .nm-place-name {
@@ -1117,7 +1117,7 @@
       grid-template-columns: 140px 80px 1fr;
       gap: 16px;
       padding: 12px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
       align-items: start;
       font-size: 13px;
     }
@@ -1128,7 +1128,7 @@
 
     .nomad-page .nm-learn-item {
       padding: 16px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
     }
     .nomad-page .nm-learn-item:last-child { border-bottom: none; padding-bottom: 0; }
     .nomad-page .nm-learn-item:first-child { padding-top: 0; }
@@ -1514,19 +1514,19 @@
       font-family: 'Inter', sans-serif;
       font-size: 22px;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--slate-900);
       margin: 0 0 24px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
     .nomad-page .nm-city-v2-h2 .material-symbols-outlined {
-      color: #4f46e5;
+      color: var(--indigo-600);
     }
     .nomad-page .nm-city-v2-num {
       width: 32px;
       height: 32px;
-      background: #4f46e5;
+      background: var(--indigo-600);
       color: #fff;
       border-radius: 8px;
       display: inline-flex;
@@ -1547,7 +1547,7 @@
       font-style: normal;
       font-size: 12px;
       font-weight: 700;
-      color: #6366f1;
+      color: var(--indigo-500);
       margin-left: 8px;
       vertical-align: middle;
     }
@@ -1556,7 +1556,7 @@
       font-style: normal;
       font-weight: 800;
       font-size: 26px;
-      color: #0f172a;
+      color: var(--slate-900);
       margin: 0;
       letter-spacing: -0.01em;
     }
@@ -1566,7 +1566,7 @@
       background: #fff;
       border-radius: 24px;
       padding: 32px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       box-shadow: 0 1px 3px rgba(15,23,42,0.04);
     }
     .nomad-page .nm-city-v2-card-wrap .nm-city-v2-h2 {
@@ -1591,7 +1591,7 @@
       background: #fff;
       padding: 22px;
       border-radius: 16px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       transition: box-shadow 0.2s;
     }
     .nomad-page .nm-city-v2-landmark:hover {
@@ -1608,7 +1608,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--slate-900);
       margin: 0;
       line-height: 1.4;
     }
@@ -1626,7 +1626,7 @@
     }
     .nomad-page .nm-city-v2-landmark p {
       font-size: 13px;
-      color: #64748b;
+      color: var(--slate-500);
       line-height: 1.6;
       margin: 0;
     }
@@ -1639,7 +1639,7 @@
       background: #fff;
       padding: 14px 18px;
       border-radius: 12px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -1654,17 +1654,17 @@
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--slate-800);
       margin: 0 0 3px;
     }
     .nomad-page .nm-city-v2-hidden-row p {
       font-size: 11px;
-      color: #94a3b8;
+      color: var(--slate-400);
       margin: 0;
       line-height: 1.4;
     }
     .nomad-page .nm-city-v2-hidden-row .material-symbols-outlined {
-      color: #cbd5e1;
+      color: var(--slate-300);
       font-size: 16px;
       transition: color 0.15s;
     }
@@ -1682,36 +1682,36 @@
       text-align: left;
     }
     .nomad-page .nm-city-v2-table thead tr {
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
     }
     .nomad-page .nm-city-v2-table th {
       padding: 14px 0;
       font-size: 10px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
     .nomad-page .nm-city-v2-table tbody tr {
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: 1px solid var(--slate-50);
     }
     .nomad-page .nm-city-v2-table td {
       padding: 18px 0;
       font-size: 13px;
-      color: #475569;
+      color: var(--slate-600);
       vertical-align: middle;
     }
     .nomad-page .nm-city-v2-area-name {
       font-family: 'Inter', sans-serif;
       font-weight: 700;
-      color: #1e293b !important;
+      color: var(--slate-800) !important;
     }
     .nomad-page .nm-city-v2-stars {
       display: flex;
       gap: 1px;
     }
     .nomad-page .nm-city-v2-star {
-      color: #6366f1;
+      color: var(--indigo-500);
       font-size: 16px;
       font-variation-settings: 'FILL' 1;
     }
@@ -1783,7 +1783,7 @@
     }
     .nomad-page .nm-city-v2-exp-item p {
       font-size: 12px;
-      color: #64748b;
+      color: var(--slate-500);
       line-height: 1.55;
       margin: 0;
     }
@@ -1798,7 +1798,7 @@
     .nomad-page .nm-city-v2-nomad-divider {
       flex: 1;
       height: 1px;
-      background: #e2e8f0;
+      background: var(--slate-200);
     }
     .nomad-page .nm-city-v2-nomad-grid {
       display: grid;
@@ -1813,7 +1813,7 @@
     .nomad-page .nm-city-v2-nomad-col-h {
       font-size: 11px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-transform: uppercase;
       letter-spacing: 0.14em;
       margin: 0 0 6px;
@@ -1823,13 +1823,13 @@
     }
     .nomad-page .nm-city-v2-nomad-col-h .material-symbols-outlined {
       font-size: 16px;
-      color: #94a3b8;
+      color: var(--slate-400);
     }
     .nomad-page .nm-city-v2-nomad-card {
       background: #fff;
       padding: 20px;
       border-radius: 16px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       box-shadow: 0 1px 3px rgba(15,23,42,0.03);
       transition: border-color 0.15s;
     }
@@ -1847,7 +1847,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--slate-800);
       margin: 0;
       line-height: 1.4;
     }
@@ -1860,7 +1860,7 @@
     }
     .nomad-page .nm-city-v2-nomad-card p {
       font-size: 12px;
-      color: #64748b;
+      color: var(--slate-500);
       line-height: 1.55;
       margin: 0;
     }
@@ -1964,7 +1964,7 @@
       width: 26px;
       height: 26px;
       border-radius: 50%;
-      background: #6366f1;
+      background: var(--indigo-500);
       color: #fff;
       display: flex;
       align-items: center;
@@ -1995,40 +1995,40 @@
       text-align: left;
     }
     .nomad-page .nm-city-v2-budget-table thead {
-      background: #f8fafc;
+      background: var(--slate-50);
     }
     .nomad-page .nm-city-v2-budget-table th {
       padding: 14px 16px;
       font-size: 10px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
     .nomad-page .nm-city-v2-budget-table th:first-child { border-top-left-radius: 12px; }
     .nomad-page .nm-city-v2-budget-table th:last-child { border-top-right-radius: 12px; }
     .nomad-page .nm-city-v2-budget-table tbody tr {
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
     }
     .nomad-page .nm-city-v2-budget-table td {
       padding: 16px;
       font-size: 13px;
-      color: #475569;
+      color: var(--slate-600);
       vertical-align: top;
     }
     .nomad-page .nm-city-v2-budget-cat {
       font-family: 'Inter', sans-serif;
       font-weight: 700;
-      color: #1e293b !important;
+      color: var(--slate-800) !important;
     }
     .nomad-page .nm-city-v2-budget-sub {
       font-size: 12px !important;
-      color: #94a3b8 !important;
+      color: var(--slate-400) !important;
     }
     .nomad-page .nm-city-v2-budget-num {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
-      color: #0f172a !important;
+      color: var(--slate-900) !important;
     }
     .nomad-page .nm-city-v2-budget-total {
       background: rgba(238,242,255,0.5);
@@ -2042,27 +2042,27 @@
     .nomad-page .nm-city-v2-budget-note {
       font-size: 10px;
       font-weight: 700;
-      color: #6366f1 !important;
+      color: var(--indigo-500) !important;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
     .nomad-page .nm-city-v2-budget-footnote {
       margin-top: 14px;
       font-size: 10px;
-      color: #94a3b8;
+      color: var(--slate-400);
       font-weight: 500;
     }
 
     /* ──── Closing Focus ──── */
     .nomad-page .nm-city-v2-focus-section {
-      border-top: 2px solid #f1f5f9;
+      border-top: 2px solid var(--slate-100);
       padding-top: 40px;
       margin-top: 8px;
     }
     .nomad-page .nm-city-v2-focus-eyebrow {
       font-size: 11px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-transform: uppercase;
       letter-spacing: 0.14em;
       margin: 0 0 28px;
@@ -2081,7 +2081,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: #0f172a;
+      background: var(--slate-900);
       color: #fff;
       display: flex;
       align-items: center;
@@ -2095,13 +2095,13 @@
       font-family: 'Inter', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--slate-900);
       margin: 0 0 8px;
       line-height: 1.4;
     }
     .nomad-page .nm-city-v2-focus-item p {
       font-size: 13px;
-      color: #64748b;
+      color: var(--slate-500);
       line-height: 1.65;
       margin: 0;
     }
@@ -2119,7 +2119,7 @@
     /* ──── Footer ──── */
     .nomad-page .nm-city-v2-footer {
       margin-top: 40px;
-      background: #0f172a;
+      background: var(--slate-900);
       color: #fff;
       padding: 40px 48px;
       border-radius: 24px;
@@ -2140,13 +2140,13 @@
     }
     .nomad-page .nm-city-v2-footer p {
       font-size: 11px;
-      color: #64748b;
+      color: var(--slate-500);
       margin: 0;
     }
     .nomad-page .nm-city-v2-footer-meta {
       font-size: 11px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-transform: uppercase;
       letter-spacing: 0.14em;
     }
@@ -2622,7 +2622,7 @@
       gap: 20px;
       padding: 18px;
       border-radius: 12px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid var(--slate-100);
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
@@ -2734,7 +2734,7 @@
     }
     .nomad-page .nm-bg-table tbody td {
       padding: 12px 20px;            /* 20px → 12px 행 높이 축소 */
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--slate-100);
       font-size: 13px;
       vertical-align: top;           /* 카테고리 2줄일 때 위에 정렬 */
     }
@@ -2786,7 +2786,7 @@
       gap: 16px;
       margin-top: 24px;
       padding-top: 24px;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid var(--slate-100);
     }
     .nomad-page .nm-why-takeaway .icon-box {
       width: 48px; height: 48px;
@@ -2965,7 +2965,7 @@
     .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
     .cal-nav-select { padding:8px 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size:15px; font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
     .cal-nav-select:hover { border-color:#a5b4fc; background:#f5f3ff; }
-    .cal-nav-select:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
+    .cal-nav-select:focus { outline:none; border-color:var(--indigo-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
     .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
     .cal-day-header {
       border-right: 1px solid rgba(203,195,215,0.15);
@@ -2985,23 +2985,23 @@
     .calendar-page #planner-grid { overflow: visible; }
 
     /* ===== 트립 노트 렌더 스타일 ===== */
-    .prose-tn h2 { font-size: 1.125rem; font-weight: 800; color: #1e293b; margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e7ff; }
+    .prose-tn h2 { font-size: 1.125rem; font-weight: 800; color: var(--slate-800); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e7ff; }
     .prose-tn h2:first-child { margin-top: 0; }
     .prose-tn h3 { font-size: 0.95rem; font-weight: 700; color: #4338ca; margin: 1rem 0 0.5rem; }
-    .prose-tn p { color: #334155; line-height: 1.65; margin: 0.5rem 0; font-size: 0.875rem; }
+    .prose-tn p { color: var(--slate-700); line-height: 1.65; margin: 0.5rem 0; font-size: 0.875rem; }
     .prose-tn ul { list-style: none; padding-left: 0; margin: 0.5rem 0; }
     .prose-tn ul ul { padding-left: 1.5rem; margin: 0.25rem 0; }
-    .prose-tn li { color: #334155; line-height: 1.6; margin: 0.25rem 0; padding-left: 1.25rem; position: relative; font-size: 0.875rem; }
+    .prose-tn li { color: var(--slate-700); line-height: 1.6; margin: 0.25rem 0; padding-left: 1.25rem; position: relative; font-size: 0.875rem; }
     .prose-tn li::before { content: '•'; color: #818cf8; position: absolute; left: 0.25rem; font-weight: bold; }
     .prose-tn li.tn-checkbox { padding-left: 1.75rem; }
     .prose-tn li.tn-checkbox::before { content: ''; }
-    .prose-tn li.tn-checkbox input[type="checkbox"] { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; cursor: pointer; accent-color: #6366f1; }
-    .prose-tn li.tn-checkbox.checked > .tn-text { text-decoration: line-through; color: #94a3b8; }
-    .prose-tn strong { color: #1e293b; font-weight: 700; }
+    .prose-tn li.tn-checkbox input[type="checkbox"] { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--indigo-500); }
+    .prose-tn li.tn-checkbox.checked > .tn-text { text-decoration: line-through; color: var(--slate-400); }
+    .prose-tn strong { color: var(--slate-800); font-weight: 700; }
     .prose-tn hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
     .prose-tn em { color: #6b7280; font-style: italic; }
-    .prose-tn code { background: #f1f5f9; padding: 0.1em 0.4em; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.85em; }
-    .prose-tn .tn-empty { color: #94a3b8; font-style: italic; padding: 2rem 0; text-align: center; }
+    .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.85em; }
+    .prose-tn .tn-empty { color: var(--slate-400); font-style: italic; padding: 2rem 0; text-align: center; }
 
     /* ===== 캘린더 모바일 대응 ===== */
     @media (max-width: 768px) {
@@ -3667,7 +3667,7 @@
       #eng-detail-content table td:nth-child(3) {
         width: 30% !important;
         font-size: 12px !important;
-        color: #334155 !important;
+        color: var(--slate-700) !important;
         line-height: 1.5 !important;
       }
       #eng-detail-content table th:nth-child(4),
@@ -3800,12 +3800,12 @@
     .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: 9999px; background: #e7e8e9; color: #494454; font-weight: 600; font-size: 0.8125rem; transition: all 0.15s; }
     .vault-filter-chip:hover { background: #d9dadb; }
-    .vault-filter-chip.active { background: #6b38d4; color: #fff; }
+    .vault-filter-chip.active { background: var(--lavender-deep); color: #fff; }
     .vault-card { background: #fff; border-radius: 1.5rem; padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
     .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
     .vault-model-radio { cursor: pointer; }
     .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: 0.75rem; background: #e7e8e9; font-size: 0.8125rem; font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
-    .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: #6b38d4; color: #fff; }
+    .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: var(--lavender-deep); color: #fff; }
     .vault-ai-item { background: #fff; border-radius: 1rem; padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
     .vault-ai-item:hover { border-color: rgba(107,56,212,0.3); }
 
@@ -3828,7 +3828,7 @@
     #eng-detail-content section > .bg-white .text-sm { font-size: 0.875em; }
     #eng-detail-content section > .bg-white .text-base { font-size: 1em; }
     /* Button styles */
-    .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:#94a3b8; }
+    .review-font-btn { min-width:36px; height:32px; border:1px solid #c4b5fd; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; background:transparent; color:var(--slate-400); }
     .review-font-btn:hover { background:#ede9fe; }
     .review-font-btn.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
 
@@ -3903,26 +3903,26 @@
     }
     .ref-list-item .ref-li-pin { color:#7c3aed; font-size:14px; margin-right:2px; vertical-align:middle; }
     .ref-toolbar { display:flex; gap:2px; align-items:center; flex-wrap:wrap; }
-    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:#64748b; display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
+    .ref-toolbar button { width:32px; height:32px; border:none; background:transparent; border-radius:6px; cursor:pointer; font-size:14px; color:var(--slate-500); display:flex; align-items:center; justify-content:center; transition:all .15s; position:relative; }
     .ref-toolbar button:hover { background:#ede9fe; color:#7c3aed; }
-    .ref-toolbar .tb-sep { width:1px; height:20px; background:#e2e8f0; margin:0 4px; flex-shrink:0; }
+    .ref-toolbar .tb-sep { width:1px; height:20px; background:var(--slate-200); margin:0 4px; flex-shrink:0; }
     .ref-toolbar .tb-color-bar { position:absolute; bottom:4px; left:8px; right:8px; height:3px; border-radius:1px; }
-    .ref-popover { position:absolute; top:100%; left:0; z-index:10; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none; }
+    .ref-popover { position:absolute; top:100%; left:0; z-index:10; background:#fff; border:1px solid var(--slate-200); border-radius:10px; padding:8px; box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none; }
     .ref-popover.open { display:flex; gap:6px; flex-wrap:wrap; }
     .ref-popover .cp-dot { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all .1s; }
     .ref-popover .cp-dot:hover { transform:scale(1.2); }
     .ref-popover .cp-dot.active { border-color:#7c3aed; }
-    .ref-popover .fs-opt { padding:4px 12px; border-radius:6px; cursor:pointer; font-size:13px; color:#475569; white-space:nowrap; }
+    .ref-popover .fs-opt { padding:4px 12px; border-radius:6px; cursor:pointer; font-size:13px; color:var(--slate-600); white-space:nowrap; }
     .ref-popover .fs-opt:hover { background:#ede9fe; color:#7c3aed; }
     .ref-editor { background:transparent; border:none; border-radius:0; padding:0; font-size:15px; line-height:1.8; color:#1d1d1f; outline:none; min-height:150px; overflow-y:auto; word-break:break-word; }
     .ref-editor:focus { border-color:transparent; box-shadow:none; }
-    #ref-input-body { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:#334155; }
+    #ref-input-body { background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.6; color:var(--slate-700); }
     #ref-input-body:focus { border-color:#a5b4fc; box-shadow:0 0 0 2px rgba(165,180,252,0.3); }
-    .ref-editor:empty::before { content:attr(data-placeholder); color:#94a3b8; pointer-events:none; }
+    .ref-editor:empty::before { content:attr(data-placeholder); color:var(--slate-400); pointer-events:none; }
     .ref-editor::-webkit-scrollbar { width:4px; }
     .ref-editor::-webkit-scrollbar-thumb { background:#cbc3d7; border-radius:2px; }
-    .ref-editor code { background:#f1f5f9; padding:2px 6px; border-radius:4px; font-family:'Fira Code',monospace; font-size:0.9em; }
-    .ref-card-body code { background:#f1f5f9; padding:1px 4px; border-radius:3px; font-family:'Fira Code',monospace; font-size:0.9em; }
+    .ref-editor code { background:var(--slate-100); padding:2px 6px; border-radius:4px; font-family:'Fira Code',monospace; font-size:0.9em; }
+    .ref-card-body code { background:var(--slate-100); padding:1px 4px; border-radius:3px; font-family:'Fira Code',monospace; font-size:0.9em; }
     .ref-editor ul, .ref-card-body ul { list-style-type:disc; padding-left:24px; margin:4px 0; }
     .ref-editor ol, .ref-card-body ol { list-style-type:decimal; padding-left:24px; margin:4px 0; }
     .ref-editor li, .ref-card-body li { line-height:1.6; margin:2px 0; }
@@ -3977,12 +3977,12 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 1.5rem 0.9rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--slate-100);
   }
   .atl-modal-header h3 {
     font-size: 1rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--slate-900);
     letter-spacing: -0.01em;
   }
   .atl-modal-close {
@@ -3993,12 +3993,12 @@
     justify-content: center;
     border-radius: 0.5rem;
     transition: background 0.15s;
-    color: #94a3b8;
+    color: var(--slate-400);
     cursor: pointer;
     background: none;
     border: none;
   }
-  .atl-modal-close:hover { background: #f1f5f9; color: #475569; }
+  .atl-modal-close:hover { background: var(--slate-100); color: var(--slate-600); }
   .atl-modal-body {
     padding: 1.25rem 1.5rem;
     display: flex;
@@ -4023,7 +4023,7 @@
   .atl-field-icon {
     position: absolute;
     left: 12px;
-    color: #94a3b8;
+    color: var(--slate-400);
     font-size: 16px;
     pointer-events: none;
     z-index: 1;
@@ -4034,12 +4034,12 @@
   }
   .atl-input {
     width: 100%;
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
+    background: var(--slate-50);
+    border: 1.5px solid var(--slate-200);
     border-radius: 0.75rem;
     padding: 0.625rem 0.875rem;
     font-size: 0.8125rem;
-    color: #1e293b;
+    color: var(--slate-800);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
   }
@@ -4048,17 +4048,17 @@
     box-shadow: 0 0 0 3px rgba(129,140,248,0.12);
     background: #fff;
   }
-  .atl-input::placeholder { color: #cbd5e1; }
+  .atl-input::placeholder { color: var(--slate-300); }
   .atl-info-box {
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
+    background: var(--slate-50);
+    border: 1.5px solid var(--slate-200);
     border-radius: 0.875rem;
     padding: 0.75rem 1rem;
     display: flex;
     align-items: flex-start;
     gap: 0.625rem;
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--slate-500);
     line-height: 1.5;
   }
   .atl-info-box .material-symbols-outlined {
@@ -4072,27 +4072,27 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.625rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--slate-100);
   }
   .atl-btn-cancel {
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #64748b;
+    color: var(--slate-500);
     border-radius: 0.625rem;
     transition: background 0.15s;
     background: none;
     border: none;
     cursor: pointer;
   }
-  .atl-btn-cancel:hover { background: #f1f5f9; }
+  .atl-btn-cancel:hover { background: var(--slate-100); }
   .atl-btn-save {
     padding: 0.5rem 1.5rem;
     font-size: 0.8125rem;
     font-weight: 800;
     color: #fff;
     border-radius: 0.625rem;
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, var(--indigo-500), #818cf8);
     border: none;
     cursor: pointer;
     display: flex;
@@ -4106,21 +4106,21 @@
   .atl-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
   .atl-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
   /* Hero backgrounds per modal type */
-  .hero-journey   { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); }
+  .hero-journey   { background: linear-gradient(135deg, #0ea5e9 0%, var(--indigo-500) 100%); }
   .hero-trip      { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 60%, #ec4899 100%); }
   .hero-city      { background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%); }
   .hero-lodging   { background: linear-gradient(135deg, #f97316 0%, #fbbf24 100%); }
-  .hero-transport { background: linear-gradient(135deg, #334155 0%, #6366f1 100%); }
+  .hero-transport { background: linear-gradient(135deg, var(--slate-700) 0%, var(--indigo-500) 100%); }
   .hero-souvenir  { background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); }
   .hero-schedule  { background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%); }
   .hero-finance   { background: linear-gradient(135deg, #10b981 0%, #0d9488 100%); }
-  .hero-hub       { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-  .hero-matrix    { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
-  .hero-english   { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); }
-  .hero-income    { background: linear-gradient(135deg, #10b981 0%, #6366f1 100%); }
-  .hero-planner   { background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); }
+  .hero-hub       { background: linear-gradient(135deg, var(--indigo-500) 0%, #a855f7 100%); }
+  .hero-matrix    { background: linear-gradient(135deg, var(--slate-800) 0%, var(--slate-700) 100%); }
+  .hero-english   { background: linear-gradient(135deg, #0ea5e9 0%, var(--indigo-500) 100%); }
+  .hero-income    { background: linear-gradient(135deg, #10b981 0%, var(--indigo-500) 100%); }
+  .hero-planner   { background: linear-gradient(135deg, var(--indigo-500) 0%, #ec4899 100%); }
   .hero-goal      { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
-  .hero-goal-income { background: linear-gradient(135deg, #10b981 0%, #6366f1 100%); }
+  .hero-goal-income { background: linear-gradient(135deg, #10b981 0%, var(--indigo-500) 100%); }
 
   /* Hero decorative elements */
   .hero-deco {
@@ -4162,13 +4162,13 @@
     .flatpickr-calendar {
       font-family: var(--nm-font-h) !important;
       border-radius: 16px !important;
-      border: 1px solid #e2e8f0 !important;
+      border: 1px solid var(--slate-200) !important;
       box-shadow: 0 20px 60px -10px rgba(99,102,241,0.15), 0 8px 24px -4px rgba(0,0,0,0.08) !important;
       overflow: hidden;
       padding: 4px;
     }
     .flatpickr-months {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+      background: linear-gradient(135deg, var(--indigo-500), #8b5cf6) !important;
       border-radius: 12px 12px 0 0 !important;
       padding: 10px 0 !important;
       min-height: 40px !important;
@@ -4214,36 +4214,36 @@
     }
     .flatpickr-current-month .numInputWrapper span { border-color: rgba(255,255,255,0.3) !important; }
     .flatpickr-current-month .flatpickr-monthDropdown-months { color: #fff !important; background: transparent !important; font-weight: 800 !important; font-size: 14px !important; }
-    .flatpickr-current-month .flatpickr-monthDropdown-months option { color: #1e293b !important; background: #fff !important; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months option { color: var(--slate-800) !important; background: #fff !important; }
     .flatpickr-prev-month, .flatpickr-next-month { color: rgba(255,255,255,0.8) !important; fill: rgba(255,255,255,0.8) !important; }
     .flatpickr-prev-month:hover, .flatpickr-next-month:hover { color: #fff !important; fill: #fff !important; background: rgba(255,255,255,0.15) !important; border-radius: 8px !important; }
-    .flatpickr-weekdays { background: #f8fafc !important; padding: 4px 0 !important; }
-    span.flatpickr-weekday { color: #6366f1 !important; font-weight: 800 !important; font-size: 10px !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
+    .flatpickr-weekdays { background: var(--slate-50) !important; padding: 4px 0 !important; }
+    span.flatpickr-weekday { color: var(--indigo-500) !important; font-weight: 800 !important; font-size: 10px !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
     .flatpickr-day {
       border-radius: 10px !important;
       font-size: 12px !important;
       font-weight: 600 !important;
-      color: #334155 !important;
+      color: var(--slate-700) !important;
       height: 34px !important;
       line-height: 34px !important;
     }
-    .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: #4f46e5 !important; }
+    .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: var(--indigo-600) !important; }
     .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-      border-color: #6366f1 !important;
+      background: linear-gradient(135deg, var(--indigo-500), #8b5cf6) !important;
+      border-color: var(--indigo-500) !important;
       color: #fff !important;
       font-weight: 800 !important;
     }
     .flatpickr-day.inRange {
       background: #eef2ff !important;
       border-color: #e0e7ff !important;
-      color: #4f46e5 !important;
+      color: var(--indigo-600) !important;
       box-shadow: -5px 0 0 #eef2ff, 5px 0 0 #eef2ff !important;
     }
-    .flatpickr-day.today { border-color: #6366f1 !important; color: #6366f1 !important; font-weight: 800 !important; }
-    .flatpickr-day.today:hover { background: #6366f1 !important; color: #fff !important; }
+    .flatpickr-day.today { border-color: var(--indigo-500) !important; color: var(--indigo-500) !important; font-weight: 800 !important; }
+    .flatpickr-day.today:hover { background: var(--indigo-500) !important; color: #fff !important; }
     .flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-      color: #cbd5e1 !important; opacity: 0.5 !important;
+      color: var(--slate-300) !important; opacity: 0.5 !important;
     }
     .flatpickr-day.flatpickr-disabled:hover { background: transparent !important; cursor: not-allowed; }
 
@@ -5472,7 +5472,7 @@
     #page-journey {
       /* stitch color palette */
       --j-primary: var(--lavender-600);
-      --j-primary-deep: #6b38d4;
+      --j-primary-deep: var(--lavender-deep);
       --j-primary-container: var(--lavender-50);
       --j-on-primary-container: var(--lavender-600);
       --j-surface: white;
@@ -6309,7 +6309,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      color: #cbd5e1;
+      color: var(--slate-300);
       background: var(--j-surface-container);
     }
     #page-journey .j-voyage-map-placeholder .material-symbols-outlined { font-size: 48px; }
@@ -7365,7 +7365,7 @@
       font-weight: 700;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #94a3b8;
+      color: var(--slate-400);
       margin: 0 0 14px 12px;
       padding-bottom: 12px;
       border-bottom: 1px solid #e5e7eb;
@@ -7386,7 +7386,7 @@
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #94a3b8;
+      color: var(--slate-400);
       text-decoration: none;
       transition: color 0.15s;
       cursor: pointer;
@@ -7396,7 +7396,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: #cbd5e1;
+      background: var(--slate-300);
       transition: all 0.2s;
       flex-shrink: 0;
     }
@@ -7453,9 +7453,9 @@
 </script>
 
 <!-- LOGIN SCREEN -->
-<div id="login-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background:linear-gradient(135deg,#6b38d4 0%,#4f46e5 50%,#312e81 100%);">
+<div id="login-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background:linear-gradient(135deg,var(--lavender-deep) 0%,var(--indigo-600) 50%,#312e81 100%);">
   <div class="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm mx-4 text-center">
-    <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center text-white shadow-lg" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+    <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center text-white shadow-lg" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
       <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1">palette</span>
     </div>
     <h1 class="text-2xl font-black text-slate-900 tracking-tight font-headline mb-1">The Atelier</h1>
@@ -7469,7 +7469,7 @@
 </div>
 
 <!-- ACCESS DENIED SCREEN -->
-<div id="access-denied-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="display:none;background:linear-gradient(135deg,#6b38d4 0%,#4f46e5 50%,#312e81 100%);">
+<div id="access-denied-screen" class="fixed inset-0 z-[9999] flex items-center justify-center" style="display:none;background:linear-gradient(135deg,var(--lavender-deep) 0%,var(--indigo-600) 50%,#312e81 100%);">
   <div class="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm mx-4 text-center">
     <span class="material-symbols-outlined text-5xl text-rose-400 mb-4 block">lock</span>
     <h2 class="text-xl font-black text-slate-900 tracking-tight font-headline mb-2">접근 권한이 없습니다</h2>
@@ -7601,7 +7601,7 @@
       <button class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">notifications</span></button>
       <button onclick="openSettingsPanel()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors rounded-xl"><span class="material-symbols-outlined">settings</span></button>
       <div class="relative ml-2" id="profile-dd-wrap">
-        <button onclick="toggleProfileDropdown()" class="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm border-2 border-white/60 hover:shadow-md transition-all" style="background:linear-gradient(135deg,#7c3aed,#6366f1);" id="profile-avatar">N</button>
+        <button onclick="toggleProfileDropdown()" class="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm border-2 border-white/60 hover:shadow-md transition-all" style="background:linear-gradient(135deg,#7c3aed,var(--indigo-500));" id="profile-avatar">N</button>
         <div id="profile-dd-panel" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50" style="display:none">
           <div class="px-4 py-3 bg-slate-50 border-b border-slate-100">
             <p id="profile-dd-name" class="text-sm font-bold text-slate-800">Nuri</p>
@@ -7679,15 +7679,15 @@
         <div style="background:linear-gradient(135deg,#eff6ff 0%,#e0e7ff 100%);border-radius:24px;padding:24px;border:1px solid #c7d2fe;box-shadow:0 4px 20px rgba(99,102,241,0.05);">
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-              <div style="padding:8px;background:rgba(99,102,241,0.15);border-radius:10px;color:#4f46e5;display:flex;">
+              <div style="padding:8px;background:rgba(99,102,241,0.15);border-radius:10px;color:var(--indigo-600);display:flex;">
                 <span class="material-symbols-outlined" style="font-size:18px">currency_exchange</span>
               </div>
               <h3 style="font-size:13px;font-weight:600;color:#1e1b4b;">환율</h3>
             </div>
-            <span id="dash-fx-updated" style="font-size:10px;color:#6366f1;"></span>
+            <span id="dash-fx-updated" style="font-size:10px;color:var(--indigo-500);"></span>
           </div>
           <div id="dash-fx-list" style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-family:'Pretendard',sans-serif">
-            <div style="font-size:11px;color:#6366f1;font-style:italic;">로딩 중...</div>
+            <div style="font-size:11px;color:var(--indigo-500);font-style:italic;">로딩 중...</div>
           </div>
         </div>
       </section>
@@ -7866,7 +7866,7 @@
           <button onclick="openTravelRecommendModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#ec4899,#a855f7)">
             <span class="material-symbols-outlined" style="font-size:14px">auto_awesome</span> AI 추천
           </button>
-          <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+          <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,var(--indigo-600))">
             <span class="material-symbols-outlined" style="font-size:14px">document_scanner</span> 예약 스캔
           </button>
           <button onclick="openApiSettingsModal()" title="API 설정" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors" id="travel-api-key-btn">
@@ -8087,7 +8087,7 @@
             <section id="trv-flights">
               <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">항공편</h3>
-                <button onclick="openFlightAddModal()" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
+                <button onclick="openFlightAddModal()" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>항공편 추가</button>
               </div>
               <!-- 항공편 추천 큐레이션 — trip 매칭 시 자동 표시 -->
               <div id="journey-flight-recs" style="display:none"></div>
@@ -8296,7 +8296,7 @@
             <section id="trv-lodging" class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">숙소 정보</h3>
-                <button onclick="openTravelModal('stay-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>숙소 추가</button>
+                <button onclick="openTravelModal('stay-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>숙소 추가</button>
               </div>
               <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
               <div id="journey-lodging-recs" style="display:none"></div>
@@ -8309,7 +8309,7 @@
                 <button onclick="closeTravelModal('stay-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
               <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
                 <div class="flex items-center gap-3 mb-6">
-                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                     <span class="material-symbols-outlined text-lg">add_business</span>
                   </div>
                   <div>
@@ -8413,7 +8413,7 @@
                     <input id="stay-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
                   <div class="md:col-span-2 flex items-end">
-                    <button onclick="saveInlineStay();closeTravelModal('stay-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <button onclick="saveInlineStay();closeTravelModal('stay-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                       숙소 등록
                     </button>
                   </div>
@@ -8428,7 +8428,7 @@
                 <button onclick="closeTravelModal('stay-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
                 <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
                   <div class="flex items-center gap-3 mb-6">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                       <span class="material-symbols-outlined text-lg">edit_square</span>
                     </div>
                     <div>
@@ -8539,7 +8539,7 @@
                     </div>
                     <!-- 저장 버튼 -->
                     <div class="flex items-end">
-                      <button onclick="saveStayEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                      <button onclick="saveStayEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                         수정 저장
                       </button>
                     </div>
@@ -8554,7 +8554,7 @@
                 <h3 class="text-lg font-black tracking-tight text-slate-900">도시 간 이동 수단</h3>
                 <div class="flex items-center gap-3">
                   <span id="transport-count" class="text-sm font-medium text-indigo-600"></span>
-                  <button onclick="openTravelModal('transport-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>이동수단 추가</button>
+                  <button onclick="openTravelModal('transport-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>이동수단 추가</button>
                 </div>
               </div>
               <div id="journey-transport-list" class="flex flex-col gap-4"></div>
@@ -8608,7 +8608,7 @@
                     </div>
                   </div>
                 </div>
-                <button onclick="saveInlineTransport();closeTravelModal('transport-add-modal-wrap')" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                <button onclick="saveInlineTransport();closeTravelModal('transport-add-modal-wrap')" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                   <span class="material-symbols-outlined text-sm">check_circle</span> Confirm Voyage
                 </button>
               </div>
@@ -8676,7 +8676,7 @@
                       </div>
                     </div>
                   </div>
-                  <button onclick="saveTransportEdit()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                  <button onclick="saveTransportEdit()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                     <span class="material-symbols-outlined text-sm">check_circle</span> 수정 저장
                   </button>
                 </div>
@@ -8687,7 +8687,7 @@
             <section id="trv-rental" class="mb-2">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">렌트카</h3>
-                <button onclick="openTravelModal('rental-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>렌트카 추가</button>
+                <button onclick="openTravelModal('rental-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>렌트카 추가</button>
               </div>
               <div id="journey-rental-list" class="flex flex-col gap-4"></div>
             </section>
@@ -8698,7 +8698,7 @@
                 <button onclick="closeTravelModal('rental-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
               <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
                 <div class="flex items-center gap-3 mb-6">
-                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                     <span class="material-symbols-outlined text-lg">directions_car</span>
                   </div>
                   <div>
@@ -8796,7 +8796,7 @@
                     <input id="rc-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                   </div>
                   <div class="md:col-span-2">
-                    <button onclick="saveInlineRental();closeTravelModal('rental-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <button onclick="saveInlineRental();closeTravelModal('rental-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                       렌트카 등록
                     </button>
                   </div>
@@ -8811,7 +8811,7 @@
                 <button onclick="closeTravelModal('rental-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
                 <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
                   <div class="flex items-center gap-3 mb-6">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                       <span class="material-symbols-outlined text-lg">edit_square</span>
                     </div>
                     <div>
@@ -8909,7 +8909,7 @@
                       <input id="rc-edit-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                     </div>
                     <div class="md:col-span-2">
-                      <button onclick="saveRentalEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                      <button onclick="saveRentalEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                         수정 저장
                       </button>
                     </div>
@@ -8922,7 +8922,7 @@
             <section id="trv-souvenir" class="mb-2">
               <div class="mb-4 flex items-center justify-between">
                 <h3 class="text-lg font-black tracking-tight text-slate-900">Souvenir Checklist</h3>
-                <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>기념품 추가</button>
+                <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="px-4 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 2px 8px rgba(107,56,212,0.25)"><span class="material-symbols-outlined" style="font-size:14px">add</span>기념품 추가</button>
               </div>
               <!-- Grid Header -->
               <div class="grid grid-cols-12 px-5 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -8962,7 +8962,7 @@
                     <input id="sv-price" type="text" placeholder="예상 가격" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
                   </div>
                 </div>
-                <button onclick="saveInlineSouvenir();closeTravelModal('souvenir-add-modal-wrap')" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+                <button onclick="saveInlineSouvenir();closeTravelModal('souvenir-add-modal-wrap')" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                   Add to Collection
                 </button>
               </div>
@@ -9121,7 +9121,7 @@
     <div id="booking-scan-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" style="display:none!important">
       <div class="bg-white w-full max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col" style="animation:modalIn 0.2s ease;max-height:92vh">
         <!-- 헤더 (고정) -->
-        <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+        <div class="px-6 py-5 flex items-center justify-between flex-shrink-0 sm:rounded-t-3xl rounded-t-3xl" style="background:linear-gradient(135deg,#7c3aed,var(--indigo-600))">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
               <span class="material-symbols-outlined text-white" style="font-size:20px">document_scanner</span>
@@ -9186,7 +9186,7 @@
 
         <!-- 푸터 버튼 (항상 하단 고정) -->
         <div class="px-5 py-4 flex flex-col gap-2 border-t border-slate-100 flex-shrink-0 bg-white sm:rounded-b-3xl">
-          <button id="scan-analyze-btn" onclick="analyzeBookingImage()" disabled class="w-full py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+          <button id="scan-analyze-btn" onclick="analyzeBookingImage()" disabled class="w-full py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all" style="background:linear-gradient(135deg,#7c3aed,var(--indigo-600))">
             <span class="material-symbols-outlined" style="font-size:16px">auto_awesome</span>
             <span id="scan-analyze-label">이미지를 먼저 올려주세요</span>
           </button>
@@ -9227,7 +9227,7 @@
         <button onclick="closeLodgingEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
         <div class="p-6 md:p-8" style="background:#f3f4f5;">
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
               <span class="material-symbols-outlined text-lg">edit_square</span>
             </div>
             <div>
@@ -9300,7 +9300,7 @@
             </div>
             <div class="md:col-span-2 flex items-end gap-3 pt-2">
               <button onclick="closeLodgingEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-white/50 rounded-2xl transition-colors">취소</button>
-              <button onclick="saveLodgingEdit()" class="flex-1 py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+              <button onclick="saveLodgingEdit()" class="flex-1 py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
                 <span class="material-symbols-outlined" style="font-size:18px">save</span> 저장
               </button>
             </div>
@@ -9630,7 +9630,7 @@
           <h2 class="atelier-page-h2">Monthly Artifacts <span class="text-sm font-normal text-slate-400">(단위: 만원)</span></h2>
           <div class="flex items-center gap-1 ml-2">
             <button onclick="switchHubYear(-1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_left</span></button>
-            <span id="hub-year-label" class="text-lg font-black font-headline min-w-[48px] text-center" style="color:#6b38d4"></span>
+            <span id="hub-year-label" class="text-lg font-black font-headline min-w-[48px] text-center" style="color:var(--lavender-deep)"></span>
             <button onclick="switchHubYear(1)" class="p-1 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-slate-400" style="font-size:20px">chevron_right</span></button>
           </div>
           <div class="flex-grow h-[1px]" style="background:#e7e8e9;"></div>
@@ -9646,7 +9646,7 @@
           <button onclick="openBaseAssetModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 transition-all text-slate-500 border border-slate-200">
             <span class="material-symbols-outlined text-sm">settings</span> 기초 자산
           </button>
-          <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
           </button>
         </div>
@@ -9656,7 +9656,7 @@
         <!-- 기초 자산 모달 -->
         <div id="base-asset-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
           <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
-            <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <div class="px-6 py-4" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
               <h3 class="font-bold text-white text-lg font-headline">기초 자산 설정</h3>
             </div>
             <div class="p-6 space-y-4">
@@ -9673,7 +9673,7 @@
               </div>
             </div>
             <div class="px-6 pb-6 flex gap-2">
-              <button onclick="saveBaseAsset()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+              <button onclick="saveBaseAsset()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">저장</button>
               <button onclick="closeBaseAssetModal()" class="py-2.5 px-5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
             </div>
           </div>
@@ -9682,7 +9682,7 @@
         <!-- 월 복사 모달 -->
         <div id="hub-month-copy-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
           <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+            <div class="px-6 py-4" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
               <h3 class="font-bold text-white text-lg font-headline">월 항목 복사</h3>
               <p id="hub-month-copy-target" class="text-white/70 text-xs mt-0.5"></p>
             </div>
@@ -9733,7 +9733,7 @@
       <!-- Goal Setting Modal -->
       <div id="goal-setting-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
-          <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <div class="px-6 py-4" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
             <h3 id="goal-modal-title" class="font-bold text-white text-lg font-headline">목표 설정</h3>
           </div>
           <div class="p-6 space-y-4">
@@ -9747,7 +9747,7 @@
             <button onclick="deleteGoalValue()" id="goal-modal-delete-btn" class="text-xs text-slate-400 hover:text-rose-500 transition-colors px-1" style="display:none">목표 삭제</button>
           </div>
           <div class="px-6 pb-6 flex gap-2">
-            <button onclick="saveGoalValue()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+            <button onclick="saveGoalValue()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">저장</button>
             <button onclick="closeGoalModal()" class="py-2.5 px-5 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
           </div>
         </div>
@@ -9799,7 +9799,7 @@
             <h3 class="font-headline text-lg font-bold text-slate-900">연간 거래 내역</h3>
             <p id="hub-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
-          <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+          <button onclick="openHubModal()" class="text-white px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
             <span class="material-symbols-outlined text-sm">add</span> 항목 추가
           </button>
         </div>
@@ -10008,7 +10008,7 @@
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
               <div class="flex items-center justify-between mb-4">
                 <h4 class="font-bold text-slate-800 text-sm" id="ldg-cal-title">4월 지출 캘린더</h4>
-                <span class="text-xs font-semibold" id="ldg-cal-nospend" style="color:#6366f1"></span>
+                <span class="text-xs font-semibold" id="ldg-cal-nospend" style="color:var(--indigo-500)"></span>
               </div>
               <div id="ldg-calendar" class="grid grid-cols-7 gap-1"></div>
             </div>
@@ -10131,7 +10131,7 @@
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-sm font-bold text-slate-800">월별 흐름도</h4>
             <div class="flex items-center gap-4 text-[10px]">
-              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#6366f1"></span> 수입</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:var(--indigo-500)"></span> 수입</span>
               <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#eae0b5"></span> 저축</span>
               <span class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#f4a6a6"></span> 지출</span>
               <span class="flex items-center gap-1"><span class="w-6 border-t-2 border-indigo-600"></span> 저축률</span>
@@ -10526,7 +10526,7 @@
             <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#7c3aed"></span>시놉</span>
             <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#3b82f6"></span>초고</span>
             <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#eab308"></span>퇴고</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#94a3b8"></span>휴식</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:var(--slate-400)"></span>휴식</span>
             <span class="flex items-center gap-1"><span class="w-2.5 h-1.5 rounded-sm" style="background:#22c55e"></span>연재</span>
           </div>
         </div>
@@ -10566,16 +10566,16 @@
           <table class="w-full border-collapse">
             <thead class="sticky top-0 z-20" style="background:#f8f1fe">
               <tr>
-                <th class="w-28 whitespace-nowrap text-left" style="padding:10px 10px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em">날짜</th>
-                <th class="w-14" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">요일</th>
-                <th class="w-36" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">업무</th>
-                <th class="w-24" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연차</th>
-                <th class="w-36" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">개인</th>
-                <th class="w-36" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">글쓰기</th>
-                <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연재</th>
-                <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">영어</th>
-                <th class="w-28" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">스터디</th>
-                <th class="w-16" style="padding:10px 6px;color:#6b38d4;font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">관리</th>
+                <th class="w-28 whitespace-nowrap text-left" style="padding:10px 10px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em">날짜</th>
+                <th class="w-14" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">요일</th>
+                <th class="w-36" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">업무</th>
+                <th class="w-24" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연차</th>
+                <th class="w-36" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">개인</th>
+                <th class="w-36" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">글쓰기</th>
+                <th class="w-28" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">연재</th>
+                <th class="w-28" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">영어</th>
+                <th class="w-28" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">스터디</th>
+                <th class="w-16" style="padding:10px 6px;color:var(--lavender-deep);font-weight:600;font-size:13px;letter-spacing:0.03em;text-align:center">관리</th>
               </tr>
             </thead>
             <tbody id="matrix-tbody" class="text-sm text-slate-700">
@@ -10611,8 +10611,8 @@
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>시작 날짜 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_today</span><input id="m-date" type="date" placeholder="" onchange="autoFillMatrixDay()" class="atl-input w-full"/></div></div>          <div class="atl-field"><label>종료 날짜</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">event_available</span><input id="m-date-end" type="date" placeholder=""  class="atl-input w-full"/></div></div></div>
           <div style="display:flex;align-items:center;gap:8px;padding:0 2px">
-            <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.1em">요일</span>
-            <span id="m-day-display" style="font-size:13px;font-weight:800;color:#6366f1;background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:4px 14px">—</span>
+            <span style="font-size:11px;font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:.1em">요일</span>
+            <span id="m-day-display" style="font-size:13px;font-weight:800;color:var(--indigo-500);background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:4px 14px">—</span>
             <input id="m-day" type="hidden"/>
           </div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>업무</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">work</span><select id="m-work" class="atl-input w-full bg-white"><option value="">—</option><option>출근</option><option>재택</option><option>출장</option><option>반차(오전)</option><option>반차(오후)</option><option>연차</option><option>병가</option><option>휴일근무</option></select></div></div>          <div class="atl-field"><label>연차</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">beach_access</span><select id="m-leave" class="atl-input w-full bg-white"><option value="">—</option><option>0.5 (반차)</option><option>1.0 (연차)</option><option>2.0</option><option>3.0</option><option>5.0</option></select></div></div></div>
@@ -10896,7 +10896,7 @@
           <p id="eng-rand-example" class="text-xs text-slate-400 italic mb-3" style="display:none"></p>
           <div id="eng-rand-badges" class="flex gap-2 flex-wrap"></div>
         </div>
-        <div class="p-6 rounded-2xl flex items-center gap-6 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4,#4F46E5);box-shadow:0 12px 32px rgba(107,56,212,0.25);" aria-label="세션 진행률">
+        <div class="p-6 rounded-2xl flex items-center gap-6 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--indigo-600));box-shadow:0 12px 32px rgba(107,56,212,0.25);" aria-label="세션 진행률">
           <!-- 원형 진행률 -->
           <div class="relative shrink-0" style="width:120px;height:120px;">
             <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
@@ -11005,7 +11005,7 @@
             <p class="text-sm text-slate-600 mb-3">다음 수업들이 이미 저장되어 있습니다:</p>
             <div id="eng-dup-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto"></div>
             <div class="flex gap-2">
-              <button onclick="resolveSessionDups('overwrite')" class="flex-1 py-2 rounded-xl text-sm font-bold text-white" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">덮어쓰기</button>
+              <button onclick="resolveSessionDups('overwrite')" class="flex-1 py-2 rounded-xl text-sm font-bold text-white" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">덮어쓰기</button>
               <button onclick="resolveSessionDups('skip')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">건너뛰기</button>
               <button onclick="resolveSessionDups('cancel')" class="flex-1 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100">취소</button>
             </div>
@@ -11166,7 +11166,7 @@
             <button onclick="manualCleanupDuplicates()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-amber-200 text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-300 hover:-translate-y-0.5 transition-all" title="캘린더에서 같은 화 중복 등록된 일정 정리"><span class="material-symbols-outlined" style="font-size:16px">cleaning_services</span>중복 정리</button>
             <button onclick="openExistingWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size:16px">library_books</span>연재 중</button>
             <button onclick="openTrendResearchModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 text-white hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 2px 8px rgba(239,68,68,0.25)" title="플랫폼별 시장 트렌드 분석"><span class="material-symbols-outlined" style="font-size:16px">trending_up</span>시장 조사</button>
-            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:16px">add</span>새 작품</button>
+            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:16px">add</span>새 작품</button>
           </div>
         </div>
         <div class="rounded-xl border border-slate-200 bg-white shadow-sm" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
@@ -11310,7 +11310,7 @@
           </div>
           <div class="flex items-center gap-2.5">
             <span id="postype-last-sync" class="text-xs text-slate-400">마지막 동기화: —</span>
-            <button id="postype-sync-btn" onclick="syncPostypeAnalytics()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">
+            <button id="postype-sync-btn" onclick="syncPostypeAnalytics()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">
               <span class="material-symbols-outlined" style="font-size:16px">sync</span>오늘 데이터 가져오기
             </button>
           </div>
@@ -11602,7 +11602,7 @@
         </div>
         <div class="atl-modal-body">
           <div class="atl-grid-2">          <div class="atl-field"><label>월 *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">calendar_month</span><select id="i-month"  class="atl-input w-full bg-white"><option>1월</option><option>2월</option><option>3월</option><option>4월</option><option>5월</option><option>6월</option><option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option></select></div></div>          <div class="atl-field"><label>카테고리</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">category</span><select id="i-cat" class="atl-input w-full bg-white"><option>— 선택 —</option></select></div></div></div>
-                    <div class="atl-field"><label>작업 내용</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">edit_note</span><div style="display:flex;align-items:center;gap:8px"><select id="i-details-from" class="atl-input flex-1 bg-white"><option value="">— 선택 —</option><option value="1화">1화</option><option value="2화">2화</option><option value="3화">3화</option><option value="4화">4화</option><option value="5화">5화</option><option value="6화">6화</option><option value="7화">7화</option><option value="8화">8화</option><option value="9화">9화</option><option value="10화">10화</option><option value="11화">11화</option><option value="12화">12화</option><option value="13화">13화</option><option value="14화">14화</option><option value="15화">15화</option><option value="16화">16화</option><option value="17화">17화</option><option value="18화">18화</option><option value="19화">19화</option><option value="20화">20화</option><option value="21화">21화</option><option value="22화">22화</option><option value="23화">23화</option><option value="24화">24화</option><option value="25화">25화</option><option value="26화">26화</option><option value="27화">27화</option><option value="28화">28화</option><option value="29화">29화</option><option value="30화">30화</option></select><span style="color:#94a3b8;font-size:12px;font-weight:700;flex-shrink:0">~</span><select id="i-details-to" class="atl-input flex-1 bg-white"><option value="">— 선택 —</option><option value="1화">1화</option><option value="2화">2화</option><option value="3화">3화</option><option value="4화">4화</option><option value="5화">5화</option><option value="6화">6화</option><option value="7화">7화</option><option value="8화">8화</option><option value="9화">9화</option><option value="10화">10화</option><option value="11화">11화</option><option value="12화">12화</option><option value="13화">13화</option><option value="14화">14화</option><option value="15화">15화</option><option value="16화">16화</option><option value="17화">17화</option><option value="18화">18화</option><option value="19화">19화</option><option value="20화">20화</option><option value="21화">21화</option><option value="22화">22화</option><option value="23화">23화</option><option value="24화">24화</option><option value="25화">25화</option><option value="26화">26화</option><option value="27화">27화</option><option value="28화">28화</option><option value="29화">29화</option><option value="30화">30화</option></select></div><input id="i-details" type="hidden"/></div></div>
+                    <div class="atl-field"><label>작업 내용</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">edit_note</span><div style="display:flex;align-items:center;gap:8px"><select id="i-details-from" class="atl-input flex-1 bg-white"><option value="">— 선택 —</option><option value="1화">1화</option><option value="2화">2화</option><option value="3화">3화</option><option value="4화">4화</option><option value="5화">5화</option><option value="6화">6화</option><option value="7화">7화</option><option value="8화">8화</option><option value="9화">9화</option><option value="10화">10화</option><option value="11화">11화</option><option value="12화">12화</option><option value="13화">13화</option><option value="14화">14화</option><option value="15화">15화</option><option value="16화">16화</option><option value="17화">17화</option><option value="18화">18화</option><option value="19화">19화</option><option value="20화">20화</option><option value="21화">21화</option><option value="22화">22화</option><option value="23화">23화</option><option value="24화">24화</option><option value="25화">25화</option><option value="26화">26화</option><option value="27화">27화</option><option value="28화">28화</option><option value="29화">29화</option><option value="30화">30화</option></select><span style="color:var(--slate-400);font-size:12px;font-weight:700;flex-shrink:0">~</span><select id="i-details-to" class="atl-input flex-1 bg-white"><option value="">— 선택 —</option><option value="1화">1화</option><option value="2화">2화</option><option value="3화">3화</option><option value="4화">4화</option><option value="5화">5화</option><option value="6화">6화</option><option value="7화">7화</option><option value="8화">8화</option><option value="9화">9화</option><option value="10화">10화</option><option value="11화">11화</option><option value="12화">12화</option><option value="13화">13화</option><option value="14화">14화</option><option value="15화">15화</option><option value="16화">16화</option><option value="17화">17화</option><option value="18화">18화</option><option value="19화">19화</option><option value="20화">20화</option><option value="21화">21화</option><option value="22화">22화</option><option value="23화">23화</option><option value="24화">24화</option><option value="25화">25화</option><option value="26화">26화</option><option value="27화">27화</option><option value="28화">28화</option><option value="29화">29화</option><option value="30화">30화</option></select></div><input id="i-details" type="hidden"/></div></div>
                     <div class="atl-grid-2">          <div class="atl-field"><label>상태</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">check_circle</span><select id="i-status"  class="atl-input w-full bg-white"><option>완료</option><option>진행 중</option><option>미수령</option></select></div></div>          <div class="atl-field"><label>금액 (₩) *</label><div class="atl-field-input"><span class="atl-field-icon material-symbols-outlined">payments</span><input id="i-revenue" type="text" placeholder="예: 460,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')" class="atl-input w-full"/></div></div></div>
         </div>
         <div class="atl-modal-footer">
@@ -11660,10 +11660,10 @@
               <span id="cal-special-used" class="font-black text-pink-600">0</span>
               <span class="text-xs text-slate-400">일</span>
             </div>
-            <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,#6b38d4,#8455ef);box-shadow:0 8px 20px rgba(107,56,212,0.2);">
+            <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 8px 20px rgba(107,56,212,0.2);">
               <span class="material-symbols-outlined text-sm">add</span> 일정 추가
             </button>
-            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[#6b38d4]/30 text-[#6b38d4] hover:bg-[#6b38d4]/5 shadow-sm">
+            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[var(--lavender-deep)]/30 text-[var(--lavender-deep)] hover:bg-[var(--lavender-deep)]/5 shadow-sm">
               <span class="material-symbols-outlined text-sm">edit_note</span> 새 작품
             </button>
           </div>
@@ -11728,7 +11728,7 @@
           <div class="flex items-center gap-1.5">
             <button onclick="_scrollCalUtToday()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-all"><span class="material-symbols-outlined" style="font-size:13px">today</span>오늘</button>
             <button onclick="manualCleanupDuplicates()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-amber-200 text-amber-700 bg-white hover:bg-amber-50 transition-all" title="중복 일정 정리"><span class="material-symbols-outlined" style="font-size:13px">cleaning_services</span>중복 정리</button>
-            <button onclick="openNewWorkModal()" class="px-3 py-1.5 rounded-lg text-white font-bold text-[11px] flex items-center gap-1 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:13px">add</span>새 작품</button>
+            <button onclick="openNewWorkModal()" class="px-3 py-1.5 rounded-lg text-white font-bold text-[11px] flex items-center gap-1 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size:13px">add</span>새 작품</button>
           </div>
         </div>
         <div class="rounded-xl border border-slate-200" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent;max-height:320px;overflow-y:auto" id="cal-ut-scroll">
@@ -12020,7 +12020,7 @@
 
       <!-- Hero Section -->
       <section class="mb-10">
-        <div class="rounded-3xl p-8 md:p-10 relative overflow-hidden hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#6b38d4 0%,#7c3aed 40%,#4f46e5 100%);box-shadow:0 20px 40px rgba(107,56,212,0.3);">
+        <div class="rounded-3xl p-8 md:p-10 relative overflow-hidden hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep) 0%,#7c3aed 40%,var(--indigo-600) 100%);box-shadow:0 20px 40px rgba(107,56,212,0.3);">
           <div class="absolute -top-16 -left-16 w-48 h-48 rounded-full" style="background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,transparent 70%);"></div>
           <div class="absolute -bottom-20 -right-20 w-64 h-64 rounded-full" style="background:radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%);"></div>
           <div class="absolute top-0 right-0 p-8 opacity-[0.08]"><span class="material-symbols-outlined" style="font-size:100px">fact_check</span></div>
@@ -12389,7 +12389,7 @@
                 <div class="cp-dot" style="background:#e53e3e" onmousedown="event.stopPropagation();refTextColor('#e53e3e')"></div>
                 <div class="cp-dot" style="background:#3182ce" onmousedown="event.stopPropagation();refTextColor('#3182ce')"></div>
                 <div class="cp-dot" style="background:#38a169" onmousedown="event.stopPropagation();refTextColor('#38a169')"></div>
-                <div class="cp-dot" style="background:#6b38d4" onmousedown="event.stopPropagation();refTextColor('#6b38d4')"></div>
+                <div class="cp-dot" style="background:var(--lavender-deep)" onmousedown="event.stopPropagation();refTextColor('var(--lavender-deep)')"></div>
                 <div class="cp-dot" style="background:#718096" onmousedown="event.stopPropagation();refTextColor('#718096')"></div>
               </div>
             </button>
@@ -12400,7 +12400,7 @@
                 <div class="cp-dot" style="background:#dbeafe" onmousedown="event.stopPropagation();refBgColor('#dbeafe')"></div>
                 <div class="cp-dot" style="background:#d1fae5" onmousedown="event.stopPropagation();refBgColor('#d1fae5')"></div>
                 <div class="cp-dot" style="background:#ede9fe" onmousedown="event.stopPropagation();refBgColor('#ede9fe')"></div>
-                <div class="cp-dot" style="background:#fff;border-color:#e2e8f0" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
+                <div class="cp-dot" style="background:#fff;border-color:var(--slate-200)" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
               </div>
             </button>
             <span class="tb-sep"></span>
@@ -12447,7 +12447,7 @@
               <div class="cp-dot" style="background:#e53e3e" onmousedown="event.stopPropagation();refTextColor('#e53e3e')"></div>
               <div class="cp-dot" style="background:#3182ce" onmousedown="event.stopPropagation();refTextColor('#3182ce')"></div>
               <div class="cp-dot" style="background:#38a169" onmousedown="event.stopPropagation();refTextColor('#38a169')"></div>
-              <div class="cp-dot" style="background:#6b38d4" onmousedown="event.stopPropagation();refTextColor('#6b38d4')"></div>
+              <div class="cp-dot" style="background:var(--lavender-deep)" onmousedown="event.stopPropagation();refTextColor('var(--lavender-deep)')"></div>
               <div class="cp-dot" style="background:#718096" onmousedown="event.stopPropagation();refTextColor('#718096')"></div>
             </div>
           </button>
@@ -12458,7 +12458,7 @@
               <div class="cp-dot" style="background:#dbeafe" onmousedown="event.stopPropagation();refBgColor('#dbeafe')"></div>
               <div class="cp-dot" style="background:#d1fae5" onmousedown="event.stopPropagation();refBgColor('#d1fae5')"></div>
               <div class="cp-dot" style="background:#ede9fe" onmousedown="event.stopPropagation();refBgColor('#ede9fe')"></div>
-              <div class="cp-dot" style="background:#fff;border-color:#e2e8f0" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
+              <div class="cp-dot" style="background:#fff;border-color:var(--slate-200)" onmousedown="event.stopPropagation();refBgColor('transparent')" title="해제"></div>
             </div>
           </button>
           <span class="tb-sep"></span>
@@ -12498,7 +12498,7 @@
   <!-- New Work Modal (global) -->
   <div id="new-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden" style="max-height:90vh;overflow-y:auto">
-      <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+      <div class="px-6 py-4" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
         <h3 class="font-bold text-white text-lg font-headline">🎬 새 작품 추가</h3>
         <p class="text-white/70 text-xs mt-0.5">자동 스케줄 계산 → 캘린더 일괄 입력</p>
       </div>
@@ -12528,7 +12528,7 @@
       <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;border-radius:0 0 16px 16px;padding-top:16px">
         <button onclick="closeNewWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
         <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
-        <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">💾 초안 저장</button>
+        <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">💾 초안 저장</button>
       </div>
     </div>
   </div>
@@ -12560,7 +12560,7 @@
   <!-- Edit Work Modal (global) -->
   <div id="edit-work-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" style="max-height:90vh;overflow-y:auto">
-      <div class="px-6 py-4" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">
+      <div class="px-6 py-4" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
         <h3 id="ew-modal-title" class="font-bold text-white text-lg font-headline">작품 편집</h3>
       </div>
       <div class="p-6 space-y-4">
@@ -12592,7 +12592,7 @@
         </div>
       </div>
       <div class="px-6 pb-6 flex gap-2">
-        <button onclick="saveEditWork()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,#6b38d4,#8455ef);">저장</button>
+        <button onclick="saveEditWork()" class="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">저장</button>
         <button onclick="closeEditWorkModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm">취소</button>
       </div>
     </div>
@@ -12609,7 +12609,7 @@
       <p id="atl-confirm-msg" class="text-sm text-slate-500 text-center leading-relaxed mb-6" style="white-space:pre-line"></p>
       <div class="flex gap-2">
         <button onclick="cancelAtlConfirm()" class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all" id="atl-confirm-cancel">취소</button>
-        <button onclick="doAtlConfirm()" class="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" id="atl-confirm-ok" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">확인</button>
+        <button onclick="doAtlConfirm()" class="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" id="atl-confirm-ok" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">확인</button>
       </div>
     </div>
   </div>
