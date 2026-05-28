@@ -19113,37 +19113,59 @@
     // Daily Outfit Planner 아이템
     pkOutfits.forEach(function(o){ (o.items||[]).forEach(function(it){ total++; if(it.checked) checked++; }); });
     var pct = total>0 ? Math.round(checked/total*100) : 0;
-    document.getElementById('pk-progress-pct').innerHTML = pct+'% <span class="text-lg font-medium text-white/60">Complete</span>';
-    document.getElementById('pk-progress-count').textContent = checked+' of '+total+' items packed';
-    document.getElementById('pk-progress-bar').style.width = pct+'%';
+    var pctEl = document.getElementById('pk-progress-pct');
+    var countEl = document.getElementById('pk-progress-count');
+    var barEl = document.getElementById('pk-progress-bar');
+    if (pctEl) pctEl.textContent = '('+pct+'%)';
+    if (countEl) countEl.textContent = checked+' of '+total+' items packed';
+    if (barEl) barEl.style.width = pct+'%';
+    // Update editorial date range meta if present
+    var rangeEl = document.getElementById('pk-section-range');
+    if (rangeEl) {
+      var trip = pkTrips.find(function(t){return t._id===pkTripId;});
+      if (trip && trip.start_date && trip.end_date) {
+        var s = new Date(trip.start_date+'T00:00:00');
+        var e = new Date(trip.end_date+'T00:00:00');
+        var fmt = function(d){ return d.toLocaleString('en',{month:'short'}).toUpperCase()+' '+String(d.getDate()).padStart(2,'0'); };
+        rangeEl.textContent = fmt(s)+' — '+fmt(e);
+      } else {
+        rangeEl.textContent = '— DATES —';
+      }
+    }
   }
 
   function pkRenderCategories() {
     var container = document.getElementById('pk-category-list');
-    if (pkData.length===0) { container.innerHTML='<div class="text-center py-8 text-sm text-slate-400">카테고리를 추가해봐!</div>'; return; }
+    if (pkData.length===0) {
+      container.innerHTML = '<div class="pk-cat" style="grid-column:1/-1"><div class="pk-cat-empty">카테고리를 추가해봐!</div></div>';
+      return;
+    }
     container.innerHTML = pkData.map(function(cat, ci) {
       var items = cat.items||[], done = items.filter(function(it){return it.checked;}).length;
-      return '<div class="bg-slate-50 rounded-3xl p-6" style="box-shadow: var(--shadow-card);">' +
-        '<div class="flex justify-between items-center mb-5 px-2">' +
-          '<div class="flex items-center gap-3"><div class="bg-indigo-100/60 p-2 rounded-xl text-indigo-600"><span class="material-symbols-outlined">'+(cat.icon||'star')+'</span></div>' +
-          '<h4 class="text-lg font-bold text-slate-900 font-headline">'+cat.category+'</h4></div>' +
-          '<div class="flex items-center gap-2"><span class="text-[10px] font-bold bg-slate-200 px-2.5 py-1 rounded-full text-slate-600">'+done+'/'+items.length+'</span>' +
-          '<button onclick="pkDeleteCategory('+ci+')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button></div>' +
-        '</div>' +
-        '<div class="space-y-2.5">' +
-          items.map(function(item, ii) {
-            var cls = item.checked ? 'line-through opacity-50' : '';
-            var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
-            return '<div class="flex items-center gap-4 bg-white p-4 rounded-2xl hover:bg-white/60 transition-all group shadow-sm">' +
-              '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleItem('+ci+','+ii+',this.checked)" class="w-5 h-5 rounded-lg border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
-              '<span class="flex-1 text-slate-800 font-medium '+cls+'">'+item.name+'</span>' +
-              '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.group\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">edit</span></button>' +
-              '<button onclick="event.preventDefault();pkDeleteItem('+ci+','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">close</span></button>' +
+      var itemsHtml = items.length === 0
+        ? '<div class="pk-cat-empty">아이템 없음</div>'
+        : items.map(function(item, ii) {
+            var cls = item.checked ? 'checked' : '';
+            return '<div class="pk-item-row group">' +
+              '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleItem('+ci+','+ii+',this.checked)" class="pk-checkbox"/>' +
+              '<span class="pk-item-name '+cls+' flex-1">'+item.name+'</span>' +
+              '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
+              '<button onclick="event.preventDefault();pkDeleteItem('+ci+','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
             '</div>';
-          }).join('') +
+          }).join('');
+      return '<div class="pk-cat">' +
+        '<div class="pk-cat-header">' +
+          '<div class="pk-cat-title-wrap">' +
+            '<span class="material-symbols-outlined pk-cat-icon">'+(cat.icon||'star')+'</span>' +
+            '<h4 class="pk-cat-h">'+cat.category+'</h4>' +
+          '</div>' +
+          '<div class="pk-cat-meta-wrap">' +
+            '<span class="pk-cat-meta">'+done+' / '+items.length+'</span>' +
+            '<button onclick="pkDeleteCategory('+ci+')" class="pk-cat-del" title="카테고리 삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">delete</span></button>' +
+          '</div>' +
         '</div>' +
-        '<button onclick="pkOpenItemModal('+ci+')" class="mt-4 w-full py-3 border-2 border-dashed border-slate-200 rounded-2xl text-[10px] font-bold text-slate-400 hover:border-indigo-300 hover:text-indigo-600 transition-all flex items-center justify-center gap-1">' +
-          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 아이템 추가</button>' +
+        '<div class="pk-cat-items">'+itemsHtml+'</div>' +
+        '<button onclick="pkOpenItemModal('+ci+')" class="pk-add-item-btn"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">add</span> 아이템 추가</button>' +
       '</div>';
     }).join('');
   }
@@ -19174,41 +19196,41 @@
     dates.forEach(function(date,idx){
       var city=getCity(date);
       var dateStr=pkFmtDate(date);
-      var mon=date.toLocaleString('en',{month:'short'}), day=String(date.getDate()).padStart(2,'0');
+      var mon=date.toLocaleString('en',{month:'short'}).toUpperCase(), day=String(date.getDate()).padStart(2,'0');
       var outfit = getOutfit(dateStr);
       var items = outfit ? (outfit.items||[]) : [];
 
       var itemsHtml = items.map(function(item, ii){
-        var cls = item.checked ? 'line-through opacity-50' : '';
-        var bg = item.checked ? 'bg-indigo-200' : 'bg-slate-100';
+        var cls = item.checked ? 'checked' : '';
         var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
-        var selStyle = isSel ? 'background:rgba(99,102,241,0.08);border-radius: var(--radius-sm);' : '';
-        return '<div class="flex items-center gap-2.5 group py-0.5 pk-item-row" style="'+selStyle+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
-          '<span draggable="true" class="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-50 hover:opacity-100 shrink-0" style="font-size: var(--font-size-meta)" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
-          '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="w-5 h-5 rounded border-none '+bg+' text-indigo-600 focus:ring-0 cursor-pointer"/>' +
-          '<span class="text-sm text-slate-800 '+cls+' flex-1">'+item.name+ ((_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="text-[9px] font-bold text-indigo-400 ml-1">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '') +'</span>' +
-          '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.flex-1\'))" class="p-0.5 hover:bg-indigo-50 rounded text-slate-300 hover:text-indigo-500 opacity-40 group-hover:opacity-100 transition-all" title="수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
-          '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
+        var badge = (_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="pk-item-badge">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '';
+        return '<div class="pk-item-row group'+(isSel?' selected':'')+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
+          '<span draggable="true" class="material-symbols-outlined pk-drag" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
+          '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="pk-checkbox"/>' +
+          '<span class="pk-item-name '+cls+' flex-1">'+item.name+badge+'</span>' +
+          '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
+          '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
         '</div>';
       }).join('');
 
       var isActive = _pkActiveDate === dateStr;
-      html+='<div class="bg-white rounded-2xl shadow-sm p-4 md:p-5 hover:shadow-md transition-all pk-day-card'+(isActive?' ring-2 ring-indigo-200':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
-        '<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">' +
-          '<div class="col-span-1 text-center md:text-left">' +
-            '<div class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">'+mon+'</div><div class="text-xl font-extrabold text-slate-900 leading-none">'+day+'</div>' +
-            '<div class="flex gap-0.5 mt-2 justify-center md:justify-start">' +
-              '<button onclick="pkCopyDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 text-slate-300 hover:text-indigo-500 transition-colors" title="이 날 아이템 복사"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_copy</span></button>' +
-              '<button onclick="pkPasteDay(\''+dateStr+'\')" class="p-1 rounded hover:bg-indigo-50 transition-colors'+ (_pkClipboard ? ' text-indigo-500' : ' text-slate-200 cursor-not-allowed') +'" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_paste</span></button>' +
+      html+='<div class="pk-day-card'+(isActive?' active':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
+        '<div class="pk-day-grid">' +
+          '<div>' +
+            '<div class="pk-day-date-month">'+mon+'</div>' +
+            '<div class="pk-day-date-day">'+day+'</div>' +
+            '<div class="pk-day-actions">' +
+              '<button onclick="event.stopPropagation();pkCopyDay(\''+dateStr+'\')" class="pk-day-act-btn" title="복사"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_copy</span></button>' +
+              '<button onclick="event.stopPropagation();pkPasteDay(\''+dateStr+'\')" class="pk-day-act-btn" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_paste</span></button>' +
             '</div>' +
           '</div>' +
-          '<div class="col-span-2 flex flex-col items-center justify-center" id="pk-wx-'+idx+'"><span class="material-symbols-outlined text-slate-300">cloud</span><span class="text-[11px] font-semibold text-slate-400">...</span></div>' +
-          '<div class="col-span-2"><div class="text-sm font-bold text-slate-800">'+(city||'-')+'</div></div>' +
-          '<div class="col-span-7">' +
-            '<div class="space-y-1.5">'+itemsHtml+'</div>' +
-            '<div class="mt-2 flex gap-2">' +
-              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-200 border-0" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')"/>' +
-              '<button onclick="pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="px-2 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span></button>' +
+          '<div class="pk-day-wx" id="pk-wx-'+idx+'"><span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span></div>' +
+          '<div class="pk-day-body">' +
+            '<div class="pk-day-city">'+(city||'—')+'</div>' +
+            '<div class="pk-day-items">'+itemsHtml+'</div>' +
+            '<div class="pk-day-input-row">' +
+              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
+              '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
             '</div>' +
           '</div>' +
         '</div></div>';

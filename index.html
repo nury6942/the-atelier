@@ -3762,6 +3762,509 @@
       #eng-tab-nav .eng-tab-label { font-size: var(--font-size-tiny) !important; }
     }
 
+    /* ════════════════════════════════════════════════════════════════
+       Travel Checklist — Editorial Redesign (stitch_checklist)
+       Adopted: 2026-05-28 · Atelier Ethos Editorial
+       Sharp corners · Hairline borders · Noto Serif KR titles ·
+       JetBrains Mono labels · Asymmetric grid
+       ════════════════════════════════════════════════════════════════ */
+    #page-packing .pk-hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-12);
+      align-items: end;
+      padding: var(--space-8) 0 var(--space-6);
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: var(--space-6);
+    }
+    #page-packing .pk-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-meta);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin: 0 0 var(--space-3) 0;
+    }
+    #page-packing .pk-title {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-hero);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+      color: var(--slate-900);
+      margin: 0;
+    }
+    #page-packing .pk-hero-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: var(--font-size-body-lg);
+      line-height: 1.55;
+      color: var(--slate-600);
+      padding-left: var(--space-5);
+      border-left: 1px solid var(--slate-300);
+    }
+
+    /* Progress strip */
+    #page-packing .pk-progress-section {
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: var(--space-12);
+    }
+    #page-packing .pk-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-3);
+    }
+    #page-packing .pk-progress-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-meta);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+    }
+    #page-packing .pk-progress-right {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    #page-packing .pk-progress-count {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-meta);
+      color: var(--slate-700);
+      letter-spacing: 0.04em;
+    }
+    #page-packing .pk-progress-pct {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-meta);
+      color: var(--lavender-deep);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    #page-packing .pk-template-btn {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate-700);
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--slate-300);
+      border-radius: 0;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-template-btn:hover {
+      border-color: var(--lavender-deep);
+      color: var(--lavender-deep);
+      background: var(--lavender-50);
+    }
+    #page-packing .pk-progress-track {
+      height: 2px;
+      background: var(--slate-200);
+      width: 100%;
+      overflow: hidden;
+    }
+    #page-packing .pk-progress-fill {
+      height: 100%;
+      background: var(--lavender-deep);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    /* Empty state */
+    #page-packing .pk-empty {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      color: var(--slate-400);
+      border: 1px solid var(--slate-200);
+      margin: var(--space-6) 0;
+    }
+    #page-packing .pk-empty-title {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-h2-lg);
+      color: var(--slate-700);
+      margin: var(--space-4) 0 var(--space-1) 0;
+    }
+    #page-packing .pk-empty-sub {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-body);
+      color: var(--slate-500);
+      margin: 0;
+    }
+
+    /* Main editorial layout */
+    #page-packing .pk-main { display: block; }
+    #page-packing .pk-section { margin-bottom: var(--space-12); }
+    #page-packing .pk-section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: var(--space-6);
+    }
+    #page-packing .pk-section-h {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-display-md);
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      font-weight: 600;
+      color: var(--slate-900);
+      margin: 0;
+    }
+    #page-packing .pk-section-meta {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-meta);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+    }
+
+    /* Daily planner — editorial rows */
+    #page-packing .pk-daily { display: flex; flex-direction: column; }
+    #page-packing .pk-daily-empty {
+      text-align: center;
+      padding: var(--space-8) 0;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-body);
+      color: var(--slate-400);
+    }
+    #page-packing .pk-day-card {
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--slate-200);
+      cursor: default;
+      transition: background 0.15s ease;
+    }
+    #page-packing .pk-day-card:last-child { border-bottom: none; }
+    #page-packing .pk-day-card.active { background: var(--lavender-50); }
+    #page-packing .pk-day-card .pk-day-grid {
+      display: grid;
+      grid-template-columns: 80px 60px 1fr;
+      gap: var(--space-5);
+      align-items: start;
+    }
+    #page-packing .pk-day-date-month {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: var(--space-1);
+    }
+    #page-packing .pk-day-date-day {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-display-md);
+      line-height: 1;
+      color: var(--slate-900);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    #page-packing .pk-day-actions {
+      display: flex; gap: var(--space-0-5); margin-top: var(--space-2);
+    }
+    #page-packing .pk-day-act-btn {
+      background: transparent; border: none; padding: var(--space-1);
+      color: var(--slate-300); cursor: pointer; transition: color 0.15s ease;
+    }
+    #page-packing .pk-day-act-btn:hover { color: var(--lavender-deep); }
+    #page-packing .pk-day-act-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #page-packing .pk-day-wx {
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-1);
+      color: var(--slate-400);
+    }
+    #page-packing .pk-day-wx-temp {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.06em;
+      color: var(--slate-500);
+    }
+    #page-packing .pk-day-body { min-width: 0; }
+    #page-packing .pk-day-city {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-700);
+      margin-bottom: var(--space-3);
+    }
+    #page-packing .pk-day-items {
+      display: flex; flex-direction: column; gap: var(--space-1);
+    }
+    #page-packing .pk-item-row {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-1-5) var(--space-2);
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    #page-packing .pk-item-row:hover { background: var(--slate-50); }
+    #page-packing .pk-item-row.selected { background: var(--lavender-50); }
+    #page-packing .pk-item-row .pk-drag {
+      color: var(--slate-300);
+      cursor: grab;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      font-size: var(--font-size-meta) !important;
+    }
+    #page-packing .pk-item-row:hover .pk-drag { opacity: 0.7; }
+    #page-packing .pk-checkbox {
+      width: 16px; height: 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--slate-400);
+      border-radius: 0;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-checkbox:checked {
+      background: var(--lavender-deep);
+      border-color: var(--lavender-deep);
+    }
+    #page-packing .pk-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px; top: 1px;
+      width: 5px; height: 9px;
+      border: solid white;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+    #page-packing .pk-item-name {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-body);
+      color: var(--slate-800);
+      min-width: 0;
+      word-break: break-word;
+    }
+    #page-packing .pk-item-name.checked {
+      color: var(--slate-400);
+      text-decoration: none;
+    }
+    #page-packing .pk-item-badge {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-nano);
+      letter-spacing: 0.06em;
+      color: var(--lavender-deep);
+      margin-left: var(--space-1);
+      font-weight: 600;
+    }
+    #page-packing .pk-item-action {
+      background: transparent; border: none;
+      color: var(--slate-300);
+      cursor: pointer;
+      opacity: 0;
+      padding: var(--space-0-5) var(--space-1);
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-item-row:hover .pk-item-action { opacity: 0.7; }
+    #page-packing .pk-item-action:hover { color: var(--lavender-deep); opacity: 1; }
+    #page-packing .pk-item-action.danger:hover { color: var(--danger); }
+    #page-packing .pk-day-input-row {
+      display: flex; gap: var(--space-2);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px dashed var(--slate-200);
+    }
+    #page-packing .pk-day-input {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-body);
+      color: var(--slate-800);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--slate-300);
+      border-radius: 0;
+      padding: var(--space-1-5) 0;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    #page-packing .pk-day-input:focus { border-bottom-color: var(--lavender-deep); }
+    #page-packing .pk-day-input::placeholder { color: var(--slate-400); }
+    #page-packing .pk-day-input-btn {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate-700);
+      padding: var(--space-1-5) var(--space-3);
+      border: 1px solid var(--slate-300);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-day-input-btn:hover {
+      border-color: var(--lavender-deep);
+      color: var(--lavender-deep);
+    }
+
+    /* Categories — bento grid */
+    #page-packing .pk-categories-section { }
+    #page-packing .pk-cat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--slate-200);
+      border: 1px solid var(--slate-200);
+      margin-bottom: var(--space-6);
+    }
+    #page-packing .pk-cat {
+      background: var(--surface-container-lowest, #ffffff);
+      padding: var(--space-6);
+      display: flex; flex-direction: column;
+    }
+    #page-packing .pk-cat-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--slate-200);
+      margin-bottom: var(--space-4);
+    }
+    #page-packing .pk-cat-title-wrap {
+      display: flex; align-items: center; gap: var(--space-2-5);
+    }
+    #page-packing .pk-cat-icon {
+      color: var(--lavender-deep);
+      font-size: var(--font-size-h2) !important;
+    }
+    #page-packing .pk-cat-h {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-h1-lg);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--slate-900);
+      font-weight: 600;
+      margin: 0;
+    }
+    #page-packing .pk-cat-meta-wrap {
+      display: flex; align-items: center; gap: var(--space-2);
+    }
+    #page-packing .pk-cat-meta {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.12em;
+      color: var(--slate-500);
+    }
+    #page-packing .pk-cat-del {
+      background: transparent; border: none;
+      color: var(--slate-300);
+      cursor: pointer;
+      padding: var(--space-0-5);
+      transition: color 0.15s ease;
+    }
+    #page-packing .pk-cat-del:hover { color: var(--danger); }
+    #page-packing .pk-cat-items {
+      display: flex; flex-direction: column;
+      gap: var(--space-0-5);
+      margin-bottom: var(--space-4);
+    }
+    #page-packing .pk-cat-empty {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-meta);
+      color: var(--slate-400);
+      padding: var(--space-3) 0;
+      text-align: center;
+    }
+    #page-packing .pk-add-item-btn {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      padding: var(--space-3) 0;
+      border: none;
+      border-top: 1px dashed var(--slate-300);
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--space-1-5);
+      margin-top: auto;
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-add-item-btn:hover {
+      color: var(--lavender-deep);
+      border-top-color: var(--lavender-deep);
+    }
+    #page-packing .pk-add-cat-btn {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-700);
+      padding: var(--space-5) 0;
+      border: 1px solid var(--slate-300);
+      border-radius: 0;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--space-2);
+      transition: all 0.15s ease;
+    }
+    #page-packing .pk-add-cat-btn:hover {
+      border-color: var(--lavender-deep);
+      color: var(--lavender-deep);
+      background: var(--lavender-50);
+    }
+
+    /* Ready CTA footer */
+    #page-packing .pk-ready {
+      margin-top: var(--space-12);
+      padding: var(--space-6) 0;
+      border-top: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
+    }
+    #page-packing .pk-ready-title {
+      font-family: var(--font-serif);
+      font-size: var(--font-size-h1-lg);
+      letter-spacing: -0.01em;
+      color: var(--slate-900);
+      font-weight: 600;
+      margin: 0 0 var(--space-2) 0;
+    }
+    #page-packing .pk-ready-sub {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-body);
+      line-height: 1.55;
+      color: var(--slate-600);
+      margin: 0;
+    }
+
+    /* Mobile fallbacks for editorial layout */
+    @media (max-width: 768px) {
+      #page-packing .pk-hero {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+        padding: var(--space-5) 0 var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+      #page-packing .pk-title { font-size: var(--font-size-display-md); }
+      #page-packing .pk-hero-quote {
+        font-size: var(--font-size-body);
+        padding-left: var(--space-3);
+      }
+      #page-packing .pk-section-h { font-size: var(--font-size-h1-lg); }
+      #page-packing .pk-cat-grid { grid-template-columns: 1fr; }
+      #page-packing .pk-cat { padding: var(--space-4); }
+      #page-packing .pk-day-card .pk-day-grid {
+        grid-template-columns: 60px 1fr;
+        gap: var(--space-3);
+      }
+      #page-packing .pk-day-wx { display: none; }
+      #page-packing .pk-section { margin-bottom: var(--space-8); }
+      #page-packing .pk-ready { margin-top: var(--space-8); }
+    }
+
     /* ===== Travel Checklist (Daily Outfit Planner) 모바일 대응 ===== */
     @media (max-width: 768px) {
       #page-packing .page-content-wrap,
@@ -12049,7 +12552,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=178" defer></script>
+<script src="js/app-1-pages.js?v=179" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -12088,71 +12591,72 @@
         </div>
       </div>
 
-      <!-- Hero Section -->
-      <section class="mb-10">
-        <div class="rounded-3xl p-8 md:p-10 relative overflow-hidden hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep) 0%,#7c3aed 40%,var(--indigo-600) 100%);box-shadow:0 20px 40px rgba(107,56,212,0.3);">
-          <div class="absolute -top-16 -left-16 w-48 h-48 rounded-full" style="background:radial-gradient(circle,rgba(255,255,255,0.12) 0%,transparent 70%);"></div>
-          <div class="absolute -bottom-20 -right-20 w-64 h-64 rounded-full" style="background:radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%);"></div>
-          <div class="absolute top-0 right-0 p-8 opacity-[0.08]"><span class="material-symbols-outlined" style="font-size:100px">fact_check</span></div>
-          <div class="relative z-10">
-            <span class="text-[10px] font-bold tracking-[0.15em] text-white/70 uppercase mb-2 block">Trip Preparation</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-6 tracking-tight font-headline">Packing Checklist</h2>
-            <div class="flex flex-col md:flex-row md:items-end gap-6 md:gap-12">
-              <div class="flex-1">
-                <div class="flex justify-between items-end mb-3">
-                  <span id="pk-progress-pct" class="text-3xl font-black text-white">0% <span class="text-lg font-medium text-white/60">Complete</span></span>
-                  <span id="pk-progress-count" class="text-sm font-medium text-white/70">0 of 0 items packed</span>
-                </div>
-                <div class="h-3 w-full rounded-full overflow-hidden" style="background:rgba(255,255,255,0.15);">
-                  <div id="pk-progress-bar" class="h-full rounded-full transition-all duration-1000" style="width:0%;background:rgba(255,255,255,0.85);box-shadow:0 0 12px rgba(255,255,255,0.4);"></div>
-                </div>
-              </div>
-              <button onclick="pkImportTemplate()" id="pk-btn-template" class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-indigo-700 bg-white hover:bg-white/90 active:scale-95 transition-all shadow-lg whitespace-nowrap">
-                <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">playlist_add</span> 템플릿 불러오기
-              </button>
-            </div>
-          </div>
+      <!-- ═══ Editorial Hero (stitch_checklist design + Atelier tokens) ═══ -->
+      <header class="pk-hero">
+        <div class="pk-hero-text">
+          <p class="pk-eyebrow">TRIP PREPARATION</p>
+          <h1 class="pk-title">Packing Checklist</h1>
+        </div>
+        <div class="pk-hero-quote">
+          "The art of packing is a ritual of selection—distilling one's life into a single vessel for the journey ahead."
+        </div>
+      </header>
+
+      <!-- ═══ Progress Bar (editorial caps style) ═══ -->
+      <section class="pk-progress-section">
+        <div class="pk-progress-row">
+          <span class="pk-progress-label">COMPLETION PROGRESS</span>
+          <span class="pk-progress-right">
+            <span id="pk-progress-count" class="pk-progress-count">0 of 0 items packed</span>
+            <span id="pk-progress-pct" class="pk-progress-pct">(0%)</span>
+            <button onclick="pkImportTemplate()" id="pk-btn-template" class="pk-template-btn">
+              <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">playlist_add</span> 템플릿 불러오기
+            </button>
+          </span>
+        </div>
+        <div class="pk-progress-track">
+          <div id="pk-progress-bar" class="pk-progress-fill"></div>
         </div>
       </section>
 
       <!-- Empty State -->
-      <div id="pk-empty" class="flex flex-col items-center justify-center py-24 text-slate-400" style="display:none">
-        <span class="material-symbols-outlined text-6xl mb-4 opacity-30">luggage</span>
-        <p class="text-lg font-semibold mb-1">여행을 선택해주세요</p>
-        <p class="text-sm opacity-60">상단 드롭다운에서 여행을 선택하면 패킹 체크리스트가 표시됩니다.</p>
+      <div id="pk-empty" class="pk-empty" style="display:none">
+        <span class="material-symbols-outlined" style="font-size:64px;opacity:0.3;margin-bottom:var(--space-4)">luggage</span>
+        <p class="pk-empty-title">여행을 선택해주세요</p>
+        <p class="pk-empty-sub">상단 드롭다운에서 여행을 선택하면 패킹 체크리스트가 표시됩니다.</p>
       </div>
 
-      <!-- Main Content Grid -->
-      <div id="pk-main" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" style="display:none">
-        <!-- Left Column: Daily Outfit Planner -->
-        <div class="lg:col-span-2 space-y-8">
-          <div class="bg-slate-50 rounded-3xl p-6" style="box-shadow: var(--shadow-card);">
-            <div class="flex justify-between items-center mb-6 px-2">
-              <div class="flex items-center gap-3">
-                <div class="bg-indigo-100/60 p-2 rounded-xl text-indigo-600"><span class="material-symbols-outlined">calendar_month</span></div>
-                <h3 class="text-xl font-bold text-slate-900 font-headline">Daily Outfit Planner</h3>
-              </div>
-            </div>
-            <div class="hidden md:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3" style="border-bottom:1px solid rgba(203,195,215,0.15);">
-              <div class="col-span-1">Date</div>
-              <div class="col-span-2 text-center">Weather</div>
-              <div class="col-span-2">City</div>
-              <div class="col-span-7">Outfit &amp; Items</div>
-            </div>
-            <div id="pk-daily-planner" class="space-y-3">
-              <div class="text-center py-8 text-sm text-slate-400">여행을 선택해주세요</div>
-            </div>
+      <!-- ═══ Main Editorial Layout ═══ -->
+      <div id="pk-main" class="pk-main" style="display:none">
+
+        <!-- Daily Outfit Planner -->
+        <section class="pk-section">
+          <header class="pk-section-header">
+            <h2 class="pk-section-h">Daily Outfit Planner</h2>
+            <span class="pk-section-meta" id="pk-section-range">— DATES —</span>
+          </header>
+          <div id="pk-daily-planner" class="pk-daily">
+            <div class="pk-daily-empty">여행을 선택해주세요</div>
+          </div>
+        </section>
+
+        <!-- Categories — Bento Editorial Grid -->
+        <section class="pk-categories-section">
+          <div id="pk-category-list" class="pk-cat-grid"></div>
+          <button onclick="pkOpenCategoryModal()" class="pk-add-cat-btn">
+            <span class="material-symbols-outlined" style="font-size:var(--font-size-h2)">add</span>
+            <span>CATEGORY 추가</span>
+          </button>
+        </section>
+
+        <!-- Ready to depart? Footer CTA -->
+        <div class="pk-ready">
+          <div>
+            <h4 class="pk-ready-title">Ready to depart?</h4>
+            <p class="pk-ready-sub">모든 문서가 오프라인에 동기화되어 있어요. 활짝 열린 길이 기다리고 있습니다.</p>
           </div>
         </div>
 
-        <!-- Right Column: Categories -->
-        <div class="space-y-8">
-          <div id="pk-category-list" class="space-y-8"></div>
-          <button onclick="pkOpenCategoryModal()" class="w-full py-8 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center text-slate-400 hover:bg-indigo-50/50 hover:border-indigo-300 hover:text-indigo-600 transition-all group">
-            <span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">library_add</span>
-            <span class="font-semibold">카테고리 추가</span>
-          </button>
-        </div>
       </div>
     </div>
 
