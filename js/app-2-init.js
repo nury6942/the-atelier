@@ -1275,7 +1275,7 @@ function loadLedger() {
 }
 
 // ── Helpers ──
-function ldgFmt(n) { return '₩ ' + Math.abs(n).toLocaleString('ko-KR'); }
+function ldgFmt(n) { return '<span class="num-mono">₩ ' + Math.abs(n).toLocaleString('ko-KR') + '</span>'; }
 function ldgFmtShort(n) {
   var abs = Math.abs(n);
   if (abs >= 1000000) return (abs/10000).toFixed(0) + '만';
@@ -1749,7 +1749,7 @@ function ldgRenderDonuts() {
       } else {
         labels.slice(0, 6).forEach(function(label, i) {
           var pct = total > 0 ? Math.round(values[i] / total * 100) : 0;
-          html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
+          html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom: 1px solid var(--slate-100);">';
           html += '<span style="color:#475569;">' + label + '</span>';
           html += '<span style="color:#1e293b;font-weight:600;">' + pct + '%</span>';
           html += '</div>';

@@ -231,6 +231,13 @@
       --radius-md-plus: 10px;  /* input 표준 */
       --radius-2xl:     24px;  /* dash card 표준 */
       --radius-full:    9999px; /* pill / 완전 둥근. 99/999/9999 통합 */
+
+      /* ── 14. Shadow 토큰 (Phase C — 카드 그림자 통일) ── */
+      --shadow-card:       0px 12px 32px rgba(25, 28, 29, 0.04); /* dash card 표준 */
+      --shadow-card-sm:    0px 4px 16px rgba(25, 28, 29, 0.04);  /* 작은 카드 */
+      --shadow-card-hover: 0px 10px 32px rgba(31, 41, 55, 0.08); /* hover 강조 */
+      --shadow-button:     0 2px 8px rgba(99, 102, 241, 0.25);   /* CTA 강조 */
+      --shadow-focus:      0 0 0 3px rgba(99, 102, 241, 0.12);   /* focus ring */
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -239,9 +246,11 @@
        (= JetBrains Mono) 강제 → 28개 KPI/금액 표시 자동 업그레이드
        ════════════════════════════════════════════════════════════════ */
     .tabular-nums { font-family: var(--font-mono); }
+    /* 금액 포맷 함수 (ldgFmt, fmtMan, KRW)가 자동 래핑 — Ledger·노마드·사이드잡 */
+    .num-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
     /* AI 브리프 카드 — Pretendard 적용 + 더 큰 폰트 */
-    #dash-brief-card, #dash-brief-content { font-family: 'Pretendard', 'Manrope', sans-serif; }
+    #dash-brief-card, #dash-brief-content { font-family: 'Pretendard', 'Manrope', 'Pretendard', sans-serif; }
     #dash-brief-content { font-size: var(--font-size-body) !important; line-height: 1.7 !important; letter-spacing: -0.01em; }
     #dash-brief-content > div { padding: var(--space-1) 0; }
   </style>
@@ -291,13 +300,13 @@
   </script>
   <style>
     *{box-sizing:border-box}
-    body{font-family:'Inter','Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800)}
-    h1,h2,h3,h4{font-family:'Manrope','Noto Color Emoji',sans-serif}
-    .font-headline,.headline{font-family:'Manrope',sans-serif!important}
+    body{font-family:'Inter', 'Pretendard', 'Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800)}
+    h1,h2,h3,h4{font-family:'Manrope', 'Pretendard', 'Noto Color Emoji',sans-serif}
+    .font-headline,.headline{font-family:'Manrope', 'Pretendard', sans-serif!important}
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
     /* ═══ flatpickr Atelier 보라색 테마 ═══ */
     /* z-index 최대값 — 어떤 모달/오버레이도 못 가리도록 */
-    .flatpickr-calendar { font-family: 'Manrope','Inter',system-ui,sans-serif !important; border-radius: var(--radius-xl) !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
+    .flatpickr-calendar { font-family: 'Manrope', 'Pretendard', 'Inter',system-ui,sans-serif !important; border-radius: var(--radius-xl) !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
     .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline { z-index: 2147483647 !important; }
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: var(--lavender-deep) !important; }
     .flatpickr-months { background: linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft)) !important; padding: var(--space-3) var(--space-2) !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
@@ -381,7 +390,7 @@
 
     /* Our unified intro h2 — consistent style */
     .atelier-page-h2{
-      font-family:'Manrope',sans-serif!important;
+      font-family:'Manrope', 'Pretendard', sans-serif!important;
       font-size: var(--font-size-h1-lg)!important;
       font-weight:800!important;
       color:var(--slate-900)!important;
@@ -1121,7 +1130,7 @@
       flex-wrap: wrap;
     }
     .nomad-page .nm-place-price {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       padding: 3px 9px;
@@ -1411,7 +1420,7 @@
     }
     /* Manrope + 컬러 이모지 fallback 통합 폰트 스택 (inline style에서 var()로 사용) */
     .nomad-page {
-      --nm-font-h: 'Manrope', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+      --nm-font-h: 'Manrope', 'Pretendard', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
     }
 
     /* ──── Hero 이미지 컨트롤 (우상단 글래스 버튼) ──── */
@@ -1495,7 +1504,7 @@
       box-shadow: 0 10px 30px rgba(49,46,129,0.12);
     }
     .nomad-page .nm-city-v2-highlights-h {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-h3);
       font-weight: 700;
       margin: 0 0 22px;
@@ -1535,7 +1544,7 @@
 
     /* ──── Section h2 (no card wrap) ──── */
     .nomad-page .nm-city-v2-h2 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-h1);
       font-weight: 700;
       color: var(--slate-900);
@@ -1558,7 +1567,7 @@
       justify-content: center;
       font-size: var(--font-size-meta);
       font-weight: 700;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
     }
     .nomad-page .nm-city-v2-h2-serif {
       font-family: var(--nm-font-h);
@@ -1567,7 +1576,7 @@
       font-weight: 800;
     }
     .nomad-page .nm-city-v2-h2-sub {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-style: normal;
       font-size: var(--font-size-meta);
       font-weight: 700;
@@ -1629,7 +1638,7 @@
       margin-bottom: var(--space-2);
     }
     .nomad-page .nm-city-v2-landmark-head h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-lg);
       font-weight: 700;
       color: var(--slate-900);
@@ -1675,7 +1684,7 @@
       border-color: #c7d2fe;
     }
     .nomad-page .nm-city-v2-hidden-row h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-sm);
       font-weight: 700;
       color: var(--slate-800);
@@ -1726,7 +1735,7 @@
       vertical-align: middle;
     }
     .nomad-page .nm-city-v2-area-name {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 700;
       color: var(--slate-800) !important;
     }
@@ -1791,7 +1800,7 @@
       margin-bottom: var(--space-1);
     }
     .nomad-page .nm-city-v2-exp-item h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-sm);
       font-weight: 700;
       margin: 0;
@@ -1868,7 +1877,7 @@
       margin-bottom: var(--space-2);
     }
     .nomad-page .nm-city-v2-nomad-card-head h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body);
       font-weight: 700;
       color: var(--slate-800);
@@ -1969,7 +1978,7 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
     .nomad-page .nm-city-v2-people-right-h {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-h3);
       font-weight: 700;
       color: #fff;
@@ -1996,10 +2005,10 @@
       font-size: var(--font-size-micro);
       font-weight: 700;
       flex-shrink: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
     }
     .nomad-page .nm-city-v2-people-step-h {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-sm);
       font-weight: 700;
       color: #fff;
@@ -2041,7 +2050,7 @@
       vertical-align: top;
     }
     .nomad-page .nm-city-v2-budget-cat {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 700;
       color: var(--slate-800) !important;
     }
@@ -2050,7 +2059,7 @@
       color: var(--slate-400) !important;
     }
     .nomad-page .nm-city-v2-budget-num {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 600;
       color: var(--slate-900) !important;
     }
@@ -2058,7 +2067,7 @@
       background: rgba(238,242,255,0.5);
     }
     .nomad-page .nm-city-v2-budget-total td {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 800;
       color: #312E81 !important;
       font-size: var(--font-size-body);
@@ -2110,13 +2119,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 700;
       font-size: var(--font-size-body);
       flex-shrink: 0;
     }
     .nomad-page .nm-city-v2-focus-item h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-lg);
       font-weight: 700;
       color: var(--slate-900);
@@ -2979,7 +2988,7 @@
     .dash-news-item .news-time { font-size: var(--font-size-tiny); color: #7b7487; margin-top: var(--space-1); }
 
     /* ===== CALENDAR PAGE — Digital Curator Style ===== */
-    .calendar-page .font-headline, .calendar-page h2, .calendar-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
+    .calendar-page .font-headline, .calendar-page h2, .calendar-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', 'Pretendard', sans-serif; }
     .cal-stat-card {
       background: #fff; padding: 1.25rem; border-radius: var(--radius-lg);
       box-shadow: 0px 12px 32px rgba(25,28,29,0.02);
@@ -2989,7 +2998,7 @@
     .cal-stat-card:hover { box-shadow: 0px 12px 32px rgba(25,28,29,0.08); }
     .cal-nav-select { padding: var(--space-2) 30px 8px 14px; border:1.5px solid #e5e7eb; border-radius: var(--radius-md-plus); background:#fff; font-size: var(--font-size-body-lg); font-weight:700; color:#1f2937; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
     .cal-nav-select:hover { border-color:#a5b4fc; background:#f5f3ff; }
-    .cal-nav-select:focus { outline:none; border-color:var(--indigo-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
+    .cal-nav-select:focus { outline:none; border-color:var(--indigo-500); box-shadow: var(--shadow-focus); }
     .cal-grid-border { border-top: 1px solid rgba(203,195,215,0.15); border-left: 1px solid rgba(203,195,215,0.15); }
     .cal-day-header {
       border-right: 1px solid rgba(203,195,215,0.15);
@@ -3022,7 +3031,7 @@
     .prose-tn li.tn-checkbox input[type="checkbox"] { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--indigo-500); }
     .prose-tn li.tn-checkbox.checked > .tn-text { text-decoration: line-through; color: var(--slate-400); }
     .prose-tn strong { color: var(--slate-800); font-weight: 700; }
-    .prose-tn hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+    .prose-tn hr { border: none; border-top: 1px solid var(--slate-200); margin: 1.5rem 0; }
     .prose-tn em { color: #6b7280; font-style: italic; }
     .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: var(--radius-xs); font-family: ui-monospace, monospace; font-size: 0.85em; }
     .prose-tn .tn-empty { color: var(--slate-400); font-style: italic; padding: 2rem 0; text-align: center; }
@@ -3821,11 +3830,11 @@
     }
 
     /* ===== VAULT PAGE ===== */
-    .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif; }
+    .vault-page .font-headline, .vault-page h1, .vault-page h2, .vault-page h3 { font-family: 'Plus Jakarta Sans', 'Manrope', 'Pretendard', sans-serif; }
     .vault-filter-chip { padding: 0.5rem 1.25rem; border-radius: var(--radius-full); background: #e7e8e9; color: #494454; font-weight: 600; font-size: var(--font-size-body-sm); transition: all 0.15s; }
     .vault-filter-chip:hover { background: #d9dadb; }
     .vault-filter-chip.active { background: var(--lavender-deep); color: #fff; }
-    .vault-card { background: #fff; border-radius: var(--radius-2xl); padding: 2rem; box-shadow: 0px 12px 32px rgba(25,28,29,0.04); transition: all 0.3s; cursor: pointer; }
+    .vault-card { background: #fff; border-radius: var(--radius-2xl); padding: 2rem; box-shadow: var(--shadow-card); transition: all 0.3s; cursor: pointer; }
     .vault-card:hover { transform: translateY(-4px); box-shadow: 0px 16px 40px rgba(25,28,29,0.08); }
     .vault-model-radio { cursor: pointer; }
     .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: var(--radius-lg); background: #e7e8e9; font-size: var(--font-size-body-sm); font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
@@ -4303,7 +4312,7 @@
       #travel-atlas-section .atlas-hero-right { text-align: right; }
     }
     #travel-atlas-section .atlas-eyebrow {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       text-transform: uppercase;
@@ -4312,7 +4321,7 @@
       margin: 0 0 16px;
     }
     #travel-atlas-section .atlas-hero-h1 {
-      font-family: 'Manrope','Noto Color Emoji',sans-serif;
+      font-family: 'Manrope', 'Pretendard', 'Noto Color Emoji',sans-serif;
       font-size: clamp(32px, 4.5vw, 56px);
       line-height: 1.05;
       letter-spacing: -0.03em;
@@ -4346,7 +4355,7 @@
       #travel-atlas-section .atlas-hero-stat { justify-content: flex-end; }
     }
     #travel-atlas-section .atlas-hero-stat-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       text-transform: uppercase;
@@ -4354,14 +4363,14 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-hero-stat-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h1);
       font-weight: 600;
       color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-section { margin-top: 64px; }
     #travel-atlas-section .atlas-h2 {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h1-lg);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -4413,7 +4422,7 @@
     }
     #travel-atlas-section .atlas-tl-node.is-current .atlas-tl-dot { background: var(--atlas-primary); }
     #travel-atlas-section .atlas-tl-when {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 600;
       text-transform: uppercase;
@@ -4422,7 +4431,7 @@
       margin: 0;
     }
     #travel-atlas-section .atlas-tl-title {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-sm);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -4477,14 +4486,14 @@
       background: rgba(255,255,255,0.95);
       padding: var(--space-1) 11px;
       border: 1px solid var(--atlas-line);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       color: var(--atlas-primary);
       letter-spacing: 0.05em;
     }
     #travel-atlas-section .atlas-trip-title {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h2-lg);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -4498,7 +4507,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-0-5);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       margin-bottom: var(--space-2-5);
     }
     #travel-atlas-section .atlas-trip-k {
@@ -4509,14 +4518,14 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-trip-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-body);
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-trip-route {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 700;
       text-transform: uppercase;
@@ -4537,7 +4546,7 @@
       #travel-atlas-section .atlas-ledger-grid { grid-template-columns: 1fr 1fr; }
     }
     #travel-atlas-section .atlas-h4 {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       text-transform: uppercase;
@@ -4555,13 +4564,13 @@
       border-bottom: 1px solid var(--atlas-line-soft);
     }
     #travel-atlas-section .atlas-ledger-name {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h2);
       font-weight: 700;
       color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-ledger-amt {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body-sm);
       font-weight: 700;
     }
@@ -4573,14 +4582,14 @@
       margin-top: var(--space-1);
     }
     #travel-atlas-section .atlas-ledger-total-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-meta);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
     #travel-atlas-section .atlas-ledger-total-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h1-lg);
       font-weight: 700;
       color: var(--atlas-primary);
@@ -4594,7 +4603,7 @@
       margin-top: var(--space-3);
     }
     #travel-atlas-section .atlas-ledger-net-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       text-transform: uppercase;
@@ -4602,7 +4611,7 @@
       opacity: 0.7;
     }
     #travel-atlas-section .atlas-ledger-net-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h2);
       font-weight: 700;
     }
@@ -4622,7 +4631,7 @@
       border: 1px solid var(--atlas-line);
     }
     #travel-atlas-section .atlas-pto-big {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: 80px;
       font-weight: 800;
       line-height: 1;
@@ -4633,7 +4642,7 @@
       gap: var(--space-2);
     }
     #travel-atlas-section .atlas-pto-big-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-meta);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -4650,7 +4659,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: var(--space-3);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-meta);
     }
     #travel-atlas-section .atlas-pto-row-bar {
@@ -4690,7 +4699,7 @@
     }
     #travel-atlas-section .atlas-wish-cell:hover { background: var(--atlas-surface); }
     #travel-atlas-section .atlas-wish-no {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       color: var(--atlas-ink-mute);
@@ -4702,7 +4711,7 @@
       font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
     }
     #travel-atlas-section .atlas-wish-name {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-body);
       font-weight: 700;
       text-transform: uppercase;
@@ -4737,7 +4746,7 @@
       gap: var(--space-5);
     }
     #travel-atlas-section .atlas-tl-year-label {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-display-md);
       font-weight: 800;
       letter-spacing: -0.02em;
@@ -4766,14 +4775,14 @@
       flex-wrap: wrap;
     }
     #travel-atlas-section .atlas-gallery-year-label {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-display-lg);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--atlas-ink);
     }
     #travel-atlas-section .atlas-gallery-year-meta {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-meta);
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -4848,7 +4857,7 @@
 
     /* ──── Trip 카드 본문 country 라벨 ──── */
     #travel-atlas-section .atlas-trip-country {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       letter-spacing: 0.12em;
@@ -4867,7 +4876,7 @@
       gap: var(--space-0-5);
     }
     #travel-atlas-section .atlas-ledger-country {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 700;
       letter-spacing: 0.12em;
@@ -4885,7 +4894,7 @@
 
     /* ──── Ledger 연도 라벨 + subtotal ──── */
     #travel-atlas-section .atlas-ledger-year-label {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 700;
       text-transform: uppercase;
@@ -4904,7 +4913,7 @@
       align-items: baseline;
       padding: var(--space-3) 0 0;
       margin-bottom: var(--space-2);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
     }
     #travel-atlas-section .atlas-ledger-subtotal-l {
       font-size: var(--font-size-micro);
@@ -4914,7 +4923,7 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-ledger-subtotal-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h3);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -4931,7 +4940,7 @@
       background: transparent;
       border: 1px solid var(--atlas-line-soft);
       border-radius: var(--radius-md);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       letter-spacing: 0.05em;
@@ -5011,7 +5020,7 @@
       font-family: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
     }
     #travel-atlas-section .atlas-trip-hero-pill {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       letter-spacing: 0.2em;
@@ -5023,7 +5032,7 @@
     }
     /* h1 — 한 줄 안 짤리도록 두 줄 보장 */
     #travel-atlas-section .atlas-trip-hero-h1 {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: clamp(26px, 4vw, 44px);
       font-weight: 800;
       letter-spacing: -0.02em;
@@ -5049,7 +5058,7 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-trip-hero-route-tag {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -5083,14 +5092,14 @@
       margin-bottom: 36px;
     }
     #travel-atlas-section .atlas-trip-h2 {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-display-md);
       font-weight: 700;
       color: var(--atlas-ink);
       margin: 0;
     }
     #travel-atlas-section .atlas-trip-meta-r {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       text-transform: uppercase;
@@ -5142,7 +5151,7 @@
       flex-wrap: wrap;
     }
     #travel-atlas-section .atlas-day-h3 {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h2);
       font-weight: 600;
       color: var(--atlas-ink);
@@ -5153,7 +5162,7 @@
       color: var(--atlas-primary);
     }
     #travel-atlas-section .atlas-day-dow {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       letter-spacing: 0.12em;
@@ -5175,7 +5184,7 @@
       display: inline-flex;
       align-items: center;
       gap: var(--space-1-5);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 500;
       letter-spacing: 0.08em;
@@ -5197,7 +5206,7 @@
       box-shadow: 0 1px 3px rgba(15,23,42,0.04);
     }
     #travel-atlas-section .atlas-side-h {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       text-transform: uppercase;
@@ -5215,21 +5224,21 @@
       gap: var(--space-3);
     }
     #travel-atlas-section .atlas-lodge-name {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-body);
       font-weight: 700;
       color: var(--atlas-ink);
       margin: 0;
     }
     #travel-atlas-section .atlas-lodge-nights {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 600;
       color: var(--atlas-primary);
       margin-left: var(--space-1);
     }
     #travel-atlas-section .atlas-lodge-type {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 500;
       letter-spacing: 0.08em;
@@ -5238,7 +5247,7 @@
       margin: var(--space-0-5) 0 0;
     }
     #travel-atlas-section .atlas-lodge-price {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-meta);
       font-weight: 600;
       color: var(--atlas-primary);
@@ -5251,7 +5260,7 @@
       padding-top: var(--space-4);
       margin-top: var(--space-1);
       border-top: 1px solid var(--atlas-line-soft);
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       text-transform: uppercase;
@@ -5259,7 +5268,7 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-lodge-total-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h2);
       font-weight: 700;
       color: var(--atlas-ink);
@@ -5288,7 +5297,7 @@
       font-size: var(--font-size-hero-lg);
     }
     #travel-atlas-section .atlas-ledger-card-h {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       text-transform: uppercase;
@@ -5313,7 +5322,7 @@
       border: 1px solid rgba(124,58,237,0.1);
     }
     #travel-atlas-section .atlas-ledger-card-daily-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 800;
       text-transform: uppercase;
@@ -5322,7 +5331,7 @@
       margin: 0 0 6px;
     }
     #travel-atlas-section .atlas-ledger-card-daily-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-h1);
       font-weight: 900;
       letter-spacing: -0.02em;
@@ -5331,7 +5340,7 @@
       line-height: 1;
     }
     #travel-atlas-section .atlas-ledger-card-daily-sub {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       color: var(--atlas-ink-mute);
       margin: var(--space-1) 0 0;
@@ -5360,7 +5369,7 @@
       font-style: italic;
     }
     #travel-atlas-section .atlas-ledger-card-v {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-weight: 700;
       white-space: nowrap;
       color: var(--atlas-ink);
@@ -5394,7 +5403,7 @@
       align-items: baseline;
     }
     #travel-atlas-section .atlas-ledger-card-net-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 800;
       text-transform: uppercase;
@@ -5402,7 +5411,7 @@
       color: var(--atlas-ink-mute);
     }
     #travel-atlas-section .atlas-ledger-card-net-v {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-display-md);
       font-weight: 900;
       color: var(--atlas-primary);
@@ -5426,7 +5435,7 @@
       color: var(--atlas-primary);
     }
     #travel-atlas-section .atlas-pto-card-head h4 {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-micro);
       font-weight: 700;
       text-transform: uppercase;
@@ -5447,14 +5456,14 @@
       text-align: center;
     }
     #travel-atlas-section .atlas-pto-card-num {
-      font-family: 'Manrope',sans-serif;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
       font-size: var(--font-size-display-md);
       font-weight: 800;
       color: var(--atlas-primary);
       line-height: 1;
     }
     #travel-atlas-section .atlas-pto-card-l {
-      font-family: 'Inter',sans-serif;
+      font-family: 'Inter', 'Pretendard', sans-serif;
       font-size: var(--font-size-tiny);
       font-weight: 600;
       text-transform: uppercase;
@@ -5518,7 +5527,7 @@
       --j-danger-soft: #fef2f2;
 
       /* typography stack */
-      --j-font-display: 'Manrope','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+      --j-font-display: 'Manrope', 'Pretendard', 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
       --j-font-body: 'Inter','Pretendard','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
 
       /* spacing scale */
@@ -7392,7 +7401,7 @@
       color: var(--slate-400);
       margin: 0 0 14px 12px;
       padding-bottom: var(--space-3);
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid var(--slate-200);
     }
     .j-toc-list {
       list-style: none;
@@ -7656,15 +7665,15 @@
             <div class="flex items-stretch gap-2.5 flex-wrap">
               <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #c4b5fd;">
                 <p class="dash-label" style="color:#6b21a8;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">오늘 일정</p>
-                <p style="font-size: var(--font-size-h1);font-weight:700;color:#3b0764;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#7c3aed;">건</span></p>
+                <p style="font-size: var(--font-size-h1);font-weight:700;color:#3b0764;font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif;line-height:1;"><span id="dash-hero-events-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#7c3aed;">건</span></p>
               </div>
               <div style="background:linear-gradient(135deg,#fce7f3 0%,#fbcfe8 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #f9a8d4;">
                 <p class="dash-label" style="color:#9d174d;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">작품 진행</p>
-                <p style="font-size: var(--font-size-h1);font-weight:700;color:#831843;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#db2777;">개</span></p>
+                <p style="font-size: var(--font-size-h1);font-weight:700;color:#831843;font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif;line-height:1;"><span id="dash-hero-works-count">0</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#db2777;">개</span></p>
               </div>
               <div style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius: var(--radius-xl);padding: var(--space-3) var(--space-4-5);min-width:88px;text-align:center;border:1px solid #fcd34d;">
                 <p class="dash-label" style="color:#92400e;margin-bottom: var(--space-1);font-size: var(--font-size-tiny);">연차</p>
-                <p style="font-size: var(--font-size-h1);font-weight:700;color:#78350f;font-family:'Plus Jakarta Sans',sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#d97706;">일</span></p>
+                <p style="font-size: var(--font-size-h1);font-weight:700;color:#78350f;font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif;line-height:1;"><span id="dash-hero-vac">—</span><span style="font-size: var(--font-size-body-sm);font-weight:600;color:#d97706;">일</span></p>
               </div>
             </div>
           </div>
@@ -7845,7 +7854,7 @@
       </div>
 
       <!-- Footer -->
-      <footer id="dash-footer" style="padding-top: var(--space-2);text-align:center;font-style:italic;color:rgba(123,116,135,0.5);font-size: var(--font-size-micro);font-family:'Plus Jakarta Sans',sans-serif"></footer>
+      <footer id="dash-footer" style="padding-top: var(--space-2);text-align:center;font-style:italic;color:rgba(123,116,135,0.5);font-size: var(--font-size-micro);font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif"></footer>
 
     </div>
   </div>
@@ -9724,7 +9733,7 @@
       <!-- Summary Cards -->
       <section class="mb-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">account_balance_wallet</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 수입</h3>
@@ -9735,7 +9744,7 @@
               <span class="material-symbols-outlined" style="font-size:80px">account_balance</span>
             </div>
           </div>
-          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">savings</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 총 저축</h3>
@@ -9743,7 +9752,7 @@
               <div id="hub-goal-savings" class="mt-4 cursor-pointer rounded-lg px-2 py-1.5 -mx-2 hover:bg-indigo-50/60 transition-colors" onclick="openGoalModal('savings')"></div>
             </div>
           </div>
-          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+          <div class="bg-white p-8 rounded-3xl relative overflow-hidden group" style="box-shadow: var(--shadow-card);">
             <div class="relative z-10">
               <span class="material-symbols-outlined text-indigo-600 mb-4 block">flag</span>
               <h3 class="text-slate-500 text-sm font-medium mb-1">연간 지출</h3>
@@ -9778,14 +9787,14 @@
       </div>
 
       <!-- Savings & Asset Composition (Memory Bloom) -->
-      <section class="bg-white rounded-3xl p-10 relative overflow-hidden mb-12" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+      <section class="bg-white rounded-3xl p-10 relative overflow-hidden mb-12" style="box-shadow: var(--shadow-card);">
         <div class="absolute -left-12 -bottom-12 w-96 h-96 bg-indigo-100/30 rounded-full blur-3xl -z-10"></div>
         <div class="grid lg:grid-cols-2 gap-12 items-start">
           <div>
             <span class="text-[10px] font-bold text-indigo-600 tracking-[0.3em] uppercase mb-4 block">Vault Analysis</span>
             <h2 class="text-3xl font-extrabold font-headline tracking-tighter mb-4">저축 & 자산 구성</h2>
             <p class="text-slate-500 mb-8 leading-relaxed text-sm">월별 누적 저축 현황과 자산 배분 전략을 한눈에 확인하세요.</p>
-            <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 px-1 mb-3" style="border-bottom:1px solid #f3f4f5;"></div>
+            <div id="hub-chart" class="h-40 flex items-end justify-between gap-1.5 px-1 mb-3" style="border-bottom: 1px solid var(--slate-100);"></div>
             <div class="flex justify-between text-[9px] text-slate-400 uppercase tracking-widest font-semibold px-1">
               <span>1월</span><span>2월</span><span>3월</span><span>4월</span><span>5월</span><span>6월</span>
               <span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span>
@@ -9817,8 +9826,8 @@
       </section>
 
       <!-- Ledger Table -->
-      <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
-        <div class="px-8 py-5 flex justify-between items-center flex-wrap gap-3" style="background:#f8f9fa;border-bottom:1px solid #f3f4f5;">
+      <div class="bg-white rounded-3xl overflow-hidden" style="box-shadow: var(--shadow-card);">
+        <div class="px-8 py-5 flex justify-between items-center flex-wrap gap-3" style="background:#f8f9fa;border-bottom: 1px solid var(--slate-100);">
           <div>
             <h3 class="font-headline text-lg font-bold text-slate-900">연간 거래 내역</h3>
             <p id="hub-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
@@ -9829,7 +9838,7 @@
         </div>
 
         <!-- 필터 바 -->
-        <div class="px-8 py-3 flex items-center gap-3 flex-wrap" style="background:#fcfcfd;border-bottom:1px solid #f3f4f5;">
+        <div class="px-8 py-3 flex items-center gap-3 flex-wrap" style="background:#fcfcfd;border-bottom: 1px solid var(--slate-100);">
           <div class="flex items-center gap-1">
             <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-1">유형</span>
             <button onclick="setHubFilter('type','all')" class="hub-filter-btn px-3 py-1 rounded-lg text-xs font-bold transition-all" data-filter-type="all">전체</button>
@@ -11190,7 +11199,7 @@
             <button onclick="manualCleanupDuplicates()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-amber-200 text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-300 hover:-translate-y-0.5 transition-all" title="캘린더에서 같은 화 중복 등록된 일정 정리"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">cleaning_services</span>중복 정리</button>
             <button onclick="openExistingWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 hover:-translate-y-0.5 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">library_books</span>연재 중</button>
             <button onclick="openTrendResearchModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-1.5 text-white hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 2px 8px rgba(239,68,68,0.25)" title="플랫폼별 시장 트렌드 분석"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">trending_up</span>시장 조사</button>
-            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span>새 작품</button>
+            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow: var(--shadow-button)"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span>새 작품</button>
           </div>
         </div>
         <div class="rounded-xl border border-slate-200 bg-white shadow-sm" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent" id="ut-scroll">
@@ -11334,7 +11343,7 @@
           </div>
           <div class="flex items-center gap-2.5">
             <span id="postype-last-sync" class="text-xs text-slate-400">마지막 동기화: —</span>
-            <button id="postype-sync-btn" onclick="syncPostypeAnalytics()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">
+            <button id="postype-sync-btn" onclick="syncPostypeAnalytics()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow: var(--shadow-button)">
               <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">sync</span>오늘 데이터 가져오기
             </button>
           </div>
@@ -11752,7 +11761,7 @@
           <div class="flex items-center gap-1.5">
             <button onclick="_scrollCalUtToday()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-all"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">today</span>오늘</button>
             <button onclick="manualCleanupDuplicates()" class="px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 border border-amber-200 text-amber-700 bg-white hover:bg-amber-50 transition-all" title="중복 일정 정리"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">cleaning_services</span>중복 정리</button>
-            <button onclick="openNewWorkModal()" class="px-3 py-1.5 rounded-lg text-white font-bold text-[11px] flex items-center gap-1 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">add</span>새 작품</button>
+            <button onclick="openNewWorkModal()" class="px-3 py-1.5 rounded-lg text-white font-bold text-[11px] flex items-center gap-1 hover:-translate-y-0.5 transition-all" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow: var(--shadow-button)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">add</span>새 작품</button>
           </div>
         </div>
         <div class="rounded-xl border border-slate-200" style="overflow-x:auto;scrollbar-width:thin;scrollbar-color:#c7d2fe transparent;max-height:320px;overflow-y:auto" id="cal-ut-scroll">
@@ -12080,7 +12089,7 @@
       <div id="pk-main" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" style="display:none">
         <!-- Left Column: Daily Outfit Planner -->
         <div class="lg:col-span-2 space-y-8">
-          <div class="bg-slate-50 rounded-3xl p-6" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">
+          <div class="bg-slate-50 rounded-3xl p-6" style="box-shadow: var(--shadow-card);">
             <div class="flex justify-between items-center mb-6 px-2">
               <div class="flex items-center gap-3">
                 <div class="bg-indigo-100/60 p-2 rounded-xl text-indigo-600"><span class="material-symbols-outlined">calendar_month</span></div>
@@ -12552,7 +12561,7 @@
       <div class="px-6 pb-6 flex gap-2 justify-end" style="background:#fafafa;border-top:1px solid #f3f4f6;border-radius:0 0 16px 16px;padding-top: var(--space-4)">
         <button onclick="closeNewWorkModal()" class="px-5 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">취소</button>
         <button onclick="previewWorkSchedule()" class="px-5 py-2.5 rounded-xl font-bold text-sm border-[1.5px] border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center gap-1.5">📅 스케줄 계산</button>
-        <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">💾 초안 저장</button>
+        <button onclick="saveNewWork()" id="nw-save-btn" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:shadow-lg hover:-translate-y-px active:translate-y-0 transition-all flex items-center gap-1.5" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow: var(--shadow-button)">💾 초안 저장</button>
       </div>
     </div>
   </div>
@@ -12633,7 +12642,7 @@
       <p id="atl-confirm-msg" class="text-sm text-slate-500 text-center leading-relaxed mb-6" style="white-space:pre-line"></p>
       <div class="flex gap-2">
         <button onclick="cancelAtlConfirm()" class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all" id="atl-confirm-cancel">취소</button>
-        <button onclick="doAtlConfirm()" class="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" id="atl-confirm-ok" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow:0 2px 8px rgba(99,102,241,0.25)">확인</button>
+        <button onclick="doAtlConfirm()" class="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:-translate-y-0.5" id="atl-confirm-ok" style="background:linear-gradient(135deg,var(--indigo-500),#8b5cf6);box-shadow: var(--shadow-button)">확인</button>
       </div>
     </div>
   </div>

@@ -111,7 +111,7 @@
     : allSeriesRaw.filter(s => s.channelId === currentChannel);
 
   // ─── 헬퍼 ───────────────────────────────────────────────────────
-  const KRW       = n => (n || 0).toLocaleString('ko-KR') + '원';
+  const KRW       = n => '<span class="num-mono">' + (n || 0).toLocaleString('ko-KR') + '원</span>';
   const dow       = ['일','월','화','수','목','금','토'];
   const pad       = n => String(n).padStart(2, '0');
   const todayStr  = () => new Date().toISOString().slice(0,10);

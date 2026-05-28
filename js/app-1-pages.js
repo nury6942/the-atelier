@@ -6527,7 +6527,7 @@
     var statusHtml = checked
       ? '<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white cursor-pointer" onclick="' + checkFn + '"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:\'FILL\' 1;">check</span></div>'
       : '<div class="w-6 h-6 rounded-full border-2 border-slate-300 cursor-pointer hover:border-indigo-400 transition-colors" onclick="' + checkFn + '"></div>';
-    return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid var(--lavender-deep);">' +
+    return '<div class="bg-white rounded-2xl p-3 hover:bg-slate-50 transition-colors group" style="box-shadow: var(--shadow-card-sm);border-left:3px solid var(--lavender-deep);">' +
       '<div class="grid grid-cols-12 items-start gap-2">' +
         '<div class="col-span-3 flex items-center gap-2">' +
           '<div class="w-2 h-2 rounded-full ' + dotCls + '"></div>' +
@@ -15765,14 +15765,14 @@
     var MO = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 
     // Month header
-    var headerHtml = '<div class="flex" style="border-bottom:1px solid #f1f5f9">' +
+    var headerHtml = '<div class="flex" style="border-bottom: 1px solid var(--slate-100)">' +
       '<div class="shrink-0 p-2 text-[10px] font-bold text-slate-400" style="width:140px"></div>';
     for (var mi = 0; mi < 12; mi++) {
       var mStart = new Date(yr, mi, 1);
       var mEnd = new Date(yr, mi + 1, 0);
       var mDays = mEnd.getDate();
       var pct = (mDays / totalDays * 100).toFixed(2);
-      headerHtml += '<div class="text-center text-[10px] font-bold text-slate-400 py-2" style="width:' + pct + '%;border-left:1px solid #f1f5f9">' + MO[mi] + '월</div>';
+      headerHtml += '<div class="text-center text-[10px] font-bold text-slate-400 py-2" style="width:' + pct + '%;border-left: 1px solid var(--slate-100)">' + MO[mi] + '월</div>';
     }
     headerHtml += '</div>';
 
@@ -15796,7 +15796,7 @@
         allPhases.push('_publishing');
       }
 
-      rowsHtml += '<div class="flex items-center" style="border-bottom:1px solid #f8fafc;height:36px">';
+      rowsHtml += '<div class="flex items-center" style="border-bottom: 1px solid var(--slate-50);height:36px">';
       // Label
       rowsHtml += '<div class="shrink-0 px-3 py-1 text-[11px] font-bold text-slate-700 truncate" style="width:140px" title="' + (w.title || '') + ' (' + (w.series_name || '') + ')">' +
         '<span class="text-slate-400">' + (w.series_name ? w.series_name.charAt(0) : '') + '</span> ' + (w.title || '') + '</div>';
@@ -15872,7 +15872,7 @@
     for (var mi=0;mi<months.length;mi++) {
       var mm = months[mi], nextP = mi<months.length-1 ? months[mi+1].p : 100;
       var mw = nextP - mm.p; var isYr = mm.m===0;
-      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;justify-content:center;padding:0 6px' + (isYr?';background:rgba(99,102,241,0.06)':'') + '">' +
+      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-right: 1px solid var(--slate-200);display:flex;flex-direction:column;justify-content:center;padding:0 6px' + (isYr?';background:rgba(99,102,241,0.06)':'') + '">' +
         (isYr?'<span class="text-[9px] font-black text-indigo-600">'+mm.y+'</span>':'') +
         '<span class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
     }
@@ -15892,7 +15892,7 @@
                      '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">sync</span></button>') +
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
           '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
-        rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
+        rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right: 1px solid var(--slate-200);box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
           '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left: var(--space-1);flex-shrink:0"></span>' +
           '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
           '<span class="truncate flex-1 min-w-0">'+w.title+'</span>' + actBtns + '</div>';
@@ -15919,7 +15919,7 @@
     });
     var chartHtml = '<div style="min-width:'+dynW+'px;position:relative">' +
       '<div class="flex items-stretch" style="height:40px;border-bottom:2px solid #e5e7eb">' +
-        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:210px;position:sticky;left:0;background:white;z-index:8;border-right:1px solid #e5e7eb;box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
+        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:210px;position:sticky;left:0;background:white;z-index:8;border-right: 1px solid var(--slate-200);box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
         '<div class="relative flex-1" style="background:#f9fafb;border-radius:0 8px 0 0">' + hHtml + '</div>' +
       '</div><div>'+rowsHtml+'</div></div>';
     if (chart) chart.innerHTML = chartHtml;
@@ -17561,7 +17561,7 @@
           var dateDay = (mi.row[0]||'').substring(8,10);
           var balColor = itemRunning < 0 ? 'color:#ef4444;' : 'color:#94a3b8;';
           var firestoreId = mi.row[5] || '';
-          return '<tr style="border-top:1px solid #f3f4f5;" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
+          return '<tr style="border-top: 1px solid var(--slate-100);" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size: var(--font-size-tiny)" title="드래그로 순서 변경">⋮⋮</td>' +
             '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
             '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
@@ -17581,8 +17581,8 @@
         var balColor = isActive ? 'color:white;' : 'color:var(--lavender-deep);';
         var balLabel = isActive ? 'color:rgba(255,255,255,0.7);' : 'color:#94a3b8;';
 
-        return '<div class="bg-white rounded-3xl overflow-hidden flex flex-col" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);' + activeBorder + '">' +
-          '<div class="px-6 py-4 flex justify-between items-center" style="' + headerBg + 'border-bottom:1px solid #f3f4f5;">' +
+        return '<div class="bg-white rounded-3xl overflow-hidden flex flex-col" style="box-shadow: var(--shadow-card);' + activeBorder + '">' +
+          '<div class="px-6 py-4 flex justify-between items-center" style="' + headerBg + 'border-bottom: 1px solid var(--slate-100);">' +
             '<h3 class="font-headline font-bold text-lg">' + MONTHS_KR[idx] + '</h3>' + badge +
           '</div>' +
           '<div class="p-5 flex-grow">' +
@@ -19123,7 +19123,7 @@
     if (pkData.length===0) { container.innerHTML='<div class="text-center py-8 text-sm text-slate-400">카테고리를 추가해봐!</div>'; return; }
     container.innerHTML = pkData.map(function(cat, ci) {
       var items = cat.items||[], done = items.filter(function(it){return it.checked;}).length;
-      return '<div class="bg-slate-50 rounded-3xl p-6" style="box-shadow:0px 12px 32px rgba(25,28,29,0.04);">' +
+      return '<div class="bg-slate-50 rounded-3xl p-6" style="box-shadow: var(--shadow-card);">' +
         '<div class="flex justify-between items-center mb-5 px-2">' +
           '<div class="flex items-center gap-3"><div class="bg-indigo-100/60 p-2 rounded-xl text-indigo-600"><span class="material-symbols-outlined">'+(cat.icon||'star')+'</span></div>' +
           '<h4 class="text-lg font-bold text-slate-900 font-headline">'+cat.category+'</h4></div>' +
@@ -19315,7 +19315,7 @@
     input.type = 'text';
     input.value = oldName;
     input.className = 'text-sm text-slate-900 flex-1 px-2 py-1 rounded-lg border-2 border-indigo-400 outline-none bg-white';
-    input.style.cssText = 'box-shadow:0 0 0 3px rgba(99,102,241,0.12);min-width:0';
+    input.style.cssText = 'box-shadow: var(--shadow-focus);min-width:0';
     spanEl.replaceWith(input);
     input.focus();
     input.select();
@@ -19354,7 +19354,7 @@
     var input = document.createElement('input');
     input.type = 'text'; input.value = oldName;
     input.className = 'flex-1 text-sm text-slate-900 px-2 py-1 rounded-lg border-2 border-indigo-400 outline-none bg-white';
-    input.style.cssText = 'box-shadow:0 0 0 3px rgba(99,102,241,0.12);min-width:0';
+    input.style.cssText = 'box-shadow: var(--shadow-focus);min-width:0';
     spanEl.replaceWith(input);
     input.focus(); input.select();
     var done = false;
@@ -19754,7 +19754,7 @@ function renderEnglishSessions() {
       '</div>';
     }
 
-    return '<div class="bg-white rounded-2xl p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);border-left:3px solid var(--lavender-deep);" onclick="openSessionDetail(\'' + s._id + '\')">' +
+    return '<div class="bg-white rounded-2xl p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow: var(--shadow-card-sm);border-left:3px solid var(--lavender-deep);" onclick="openSessionDetail(\'' + s._id + '\')">' +
       '<div class="flex gap-5">' +
         '<div class="shrink-0 text-center pt-1">' +
           '<p class="text-2xl font-extrabold text-slate-900 font-headline leading-none">' + String(dateObj.getDate()).padStart(2,'0') + '</p>' +
@@ -19905,7 +19905,7 @@ function openSessionDetail(dateId) {
   function sectionCard(num, enTitle, krTitle, contentHtml) {
     return '<section class="mb-8" id="eng-sec-' + num + '">' +
       '<div class="flex items-center gap-3 mb-4"><span class="text-3xl font-extrabold text-indigo-200 font-headline">' + String(num).padStart(2,'0') + '</span><div><h3 class="text-lg font-bold text-slate-900">' + enTitle + '</h3><p class="text-xs text-slate-400">' + krTitle + '</p></div></div>' +
-      '<div class="bg-white rounded-2xl p-6" style="box-shadow:0px 4px 16px rgba(25,28,29,0.04);">' + contentHtml + '</div>' +
+      '<div class="bg-white rounded-2xl p-6" style="box-shadow: var(--shadow-card-sm);">' + contentHtml + '</div>' +
     '</section>';
   }
 

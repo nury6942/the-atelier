@@ -224,7 +224,7 @@ window.NOMAD_PAGES = (function(){
     return Object.assign({}, PHASE_BOUNDARIES[0], { idx: 0, status: 'before' });
   }
   function fmtMan(n) { // 만 원 단위 한국식 포맷
-    return '₩' + Number(n).toLocaleString('ko-KR') + '만';
+    return '<span class="num-mono">₩' + Number(n).toLocaleString('ko-KR') + '만</span>';
   }
   function getNextCity() {
     // 출국 후엔 VOYAGE 중 미래 도시, 출국 전엔 VOYAGE[0]
@@ -429,12 +429,12 @@ window.NOMAD_PAGES = (function(){
     '</div>';
     html += '<p style="font-size: var(--font-size-body-sm);color:var(--nm-text-2);line-height:1.6;margin-bottom: var(--space-5);flex:1">' + nextCity.detail + '</p>';
     // 정보 행
-    html += '<div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #f1f5f9">';
-    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom:1px solid #f1f5f9">' +
+    html += '<div style="display:flex;flex-direction:column;gap:0;border-top: 1px solid var(--slate-100)">';
+    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom: 1px solid var(--slate-100)">' +
       '<span style="font-size: var(--font-size-meta);color:var(--nm-text-3)">도착 예정</span>' +
       '<span style="font-size: var(--font-size-meta);font-weight:700;color:var(--nm-on-surface);font-family:var(--nm-font-h)">2028.6.9</span>' +
     '</div>';
-    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom:1px solid #f1f5f9">' +
+    html += '<div style="display:flex;justify-content:space-between;padding: var(--space-2-5) 0;border-bottom: 1px solid var(--slate-100)">' +
       '<span style="font-size: var(--font-size-meta);color:var(--nm-text-3)">체류 기간</span>' +
       '<span style="font-size: var(--font-size-meta);font-weight:700;color:var(--nm-on-surface);font-family:var(--nm-font-h)">30 Days</span>' +
     '</div>';
@@ -1190,8 +1190,8 @@ window.NOMAD_PAGES = (function(){
       var chevId = rowId + '-chev';
       // 메인 row (클릭 시 sub-row 토글)
       html += '<tr style="transition:background 0.15s;cursor:pointer" onclick="(function(){var d=document.getElementById(\'' + rowId + '\');var c=document.getElementById(\'' + chevId + '\');if(d){var open=d.style.display!==\'none\';d.style.display=open?\'none\':\'table-row\';if(c)c.textContent=open?\'expand_more\':\'expand_less\';}})()" onmouseover="this.style.background=\'#fafafa\'" onmouseout="this.style.background=\'#fff\'">' +
-        '<td style="padding: var(--space-4) var(--space-2);border-bottom:1px solid #f1f5f9;text-align:center"><span id="' + chevId + '" class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">expand_less</span></td>' +
-        '<td style="padding: var(--space-4) var(--space-5);border-bottom:1px solid #f1f5f9">' +
+        '<td style="padding: var(--space-4) var(--space-2);border-bottom: 1px solid var(--slate-100);text-align:center"><span id="' + chevId + '" class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--nm-primary)">expand_less</span></td>' +
+        '<td style="padding: var(--space-4) var(--space-5);border-bottom: 1px solid var(--slate-100)">' +
           '<div style="display:flex;align-items:center;gap: var(--space-3-5)">' +
             '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#F5F3FF,#dee9fc);display:flex;align-items:center;justify-content:center;font-size: var(--font-size-h2-lg);flex-shrink:0">' + meta.flag + '</div>' +
             '<div>' +
@@ -1200,7 +1200,7 @@ window.NOMAD_PAGES = (function(){
             '</div>' +
           '</div>' +
         '</td>' +
-        '<td style="padding: var(--space-4) var(--space-5);border-bottom:1px solid #f1f5f9;text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
+        '<td style="padding: var(--space-4) var(--space-5);border-bottom: 1px solid var(--slate-100);text-align:right;font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:700;color:var(--nm-deep-indigo)">₩' + b.total + '만</td>' +
       '</tr>';
       // Sub-row: 도시별 상세 (default 펼침)
       html += '<tr id="' + rowId + '" style="background:#fbfaff">' +
@@ -1707,7 +1707,7 @@ window.NOMAD_PAGES = (function(){
       { label:'평가 시점',         prefix:'',   value:'2027.12', sub:'3개월 연속 안정',     color:'#0f172a' },
     ];
     metrics.forEach(function(m) {
-      html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius: var(--radius-2xl);padding: var(--space-8);transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
+      html += '<div style="background:#fff;border: 1px solid var(--slate-200);border-radius: var(--radius-2xl);padding: var(--space-8);transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
       html += '<p style="font-size: var(--font-size-micro);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 16px">' + m.label + '</p>';
       html += '<div style="display:flex;align-items:baseline;gap: var(--space-1-5)">' +
         (m.prefix ? '<span style="font-size: var(--font-size-h2);font-weight:700;color:var(--nm-primary)">' + m.prefix + '</span>' : '') +
@@ -1719,8 +1719,8 @@ window.NOMAD_PAGES = (function(){
     html += '</section>';
 
     // Simulation table
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius: var(--radius-2xl);overflow:hidden;margin-bottom: var(--space-12);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
-    html += '<div style="padding: var(--space-4-5) var(--space-7);background:#fafafa;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap: var(--space-2)">' +
+    html += '<section style="background:#fff;border: 1px solid var(--slate-200);border-radius: var(--radius-2xl);overflow:hidden;margin-bottom: var(--space-12);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<div style="padding: var(--space-4-5) var(--space-7);background:#fafafa;border-bottom: 1px solid var(--slate-100);display:flex;align-items:center;gap: var(--space-2)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h3)">cloud_sync</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#374151;margin:0">1년 노마드 후 자산 시뮬</h3>' +
     '</div>';
@@ -1737,7 +1737,7 @@ window.NOMAD_PAGES = (function(){
       { sc:'게이트 800 (욕심)',   start:'1.5억', cost:'-6,800만', gain:'+7,700만', end:'약 1.5억', pill:{label:'저축 가능',    bg:'#f5f3ff',color:'var(--nm-primary)'} },
     ];
     sims.forEach(function(s) {
-      html += '<tr style="border-top:1px solid #f8fafc;transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
+      html += '<tr style="border-top: 1px solid var(--slate-50);transition:background 0.15s" onmouseover="this.style.background=\'rgba(248,250,252,0.5)\'" onmouseout="this.style.background=\'transparent\'">';
       html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);font-weight:500;color:#374151">' + s.sc + '</td>';
       html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:#374151">' + s.start + '</td>';
       html += '<td style="padding: var(--space-5-5) var(--space-7);font-size: var(--font-size-body-sm);color:#ef4444">' + s.cost + '</td>';
@@ -1749,7 +1749,7 @@ window.NOMAD_PAGES = (function(){
     html += '</section>';
 
     // Decision tree
-    html += '<section style="background:#fff;border:1px solid #e5e7eb;border-radius: var(--radius-2xl);padding: var(--space-8);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
+    html += '<section style="background:#fff;border: 1px solid var(--slate-200);border-radius: var(--radius-2xl);padding: var(--space-8);box-shadow:0 1px 3px rgba(15,23,42,0.04)">';
     html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-5-5)">' +
       '<span class="material-symbols-outlined" style="color:var(--nm-primary);font-size: var(--font-size-h3)">flag</span>' +
       '<h3 style="font-family:var(--nm-font-h);font-size: var(--font-size-body-sm);font-weight:700;color:#374151;margin:0">결정 트리</h3>' +
@@ -2421,13 +2421,13 @@ window.NOMAD_PAGES = (function(){
       '@media (max-width:960px){#nomad-content .ne-hero{grid-template-columns:1fr}}' +
       '#nomad-content .ne-title{font-family:var(--nm-font-h);font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;color:#141b2b;margin:0 0 16px}' +
       '#nomad-content .ne-lede{font-size: var(--font-size-body-sm);line-height:1.6;color:#4a4455;max-width:560px;margin:0}' +
-      '#nomad-content .ne-hero-image{aspect-ratio:16/10;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%);border:1px solid #e5e7eb;position:relative;overflow:hidden}' +
+      '#nomad-content .ne-hero-image{aspect-ratio:16/10;background:linear-gradient(135deg,#312E81 0%,#7C3AED 50%,#a78bfa 100%);border: 1px solid var(--slate-200);position:relative;overflow:hidden}' +
       '#nomad-content .ne-hero-image::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18) 0%,transparent 60%)}' +
       '#nomad-content .ne-hero-image .icon{position:absolute;bottom:18px;left:18px;color:rgba(255,255,255,0.85);font-size:40px !important}' +
       '#nomad-content .ne-hero-image .badge{position:absolute;top:24px;right:24px;color:#fff;font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(255,255,255,0.14);backdrop-filter:blur(6px);padding: var(--space-1-5) var(--space-3);border:1px solid rgba(255,255,255,0.22)}' +
       '#nomad-content .ne-overlay{position:absolute;inset:0;background:rgba(124,58,237,0.06);mix-blend-mode:multiply}' +
       '#nomad-content .ne-sections{display:flex;flex-direction:column;gap:56px}' +
-      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding-bottom: var(--space-3-5);margin-bottom: var(--space-6);gap: var(--space-4);flex-wrap:wrap}' +
+      '#nomad-content .ne-section-h-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom: 1px solid var(--slate-200);padding-bottom: var(--space-3-5);margin-bottom: var(--space-6);gap: var(--space-4);flex-wrap:wrap}' +
       '#nomad-content .ne-section-h{font-family:var(--nm-font-h);font-size:clamp(16px,2vw,22px);font-weight:600;letter-spacing:-0.005em;color:#141b2b;margin:0;line-height:1.2}' +
       '#nomad-content .ne-section-meta{font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase}' +
       '#nomad-content .ne-grid12{display:grid;grid-template-columns:repeat(12,1fr);gap: var(--space-6)}' +
@@ -2435,7 +2435,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-col-6{grid-column:span 6}' +
       '#nomad-content .ne-col-12{grid-column:span 12}' +
       '@media (max-width:960px){#nomad-content .ne-col-8,#nomad-content .ne-col-6{grid-column:span 12}}' +
-      '#nomad-content .ne-card{border:1px solid #e5e7eb;padding: var(--space-5-5);background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
+      '#nomad-content .ne-card{border: 1px solid var(--slate-200);padding: var(--space-5-5);background:#fff;transition:border-color 0.15s;display:flex;flex-direction:column}' +
       '#nomad-content .ne-card:hover{border-color:rgba(124,58,237,0.3)}' +
       '#nomad-content .ne-grid-equal{align-items:stretch}' +
       '#nomad-content .ne-grid-equal > [class*="ne-col-"]{display:flex;flex-direction:column}' +
@@ -2448,14 +2448,14 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-chip{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.16em;background:rgba(124,58,237,0.1);color:var(--nm-primary);padding: var(--space-1) var(--space-2-5);text-transform:uppercase;white-space:nowrap}' +
       '#nomad-content .ne-card-body{font-size: var(--font-size-body);line-height:1.65;color:#4a4455;margin:0 0 24px;flex:1}' +
       '#nomad-content .ne-card-body strong{color:#141b2b;font-weight:600}' +
-      '#nomad-content .ne-card-tags{display:flex;flex-wrap:wrap;gap: var(--space-2);padding-top: var(--space-4);border-top:1px solid #e5e7eb}' +
+      '#nomad-content .ne-card-tags{display:flex;flex-wrap:wrap;gap: var(--space-2);padding-top: var(--space-4);border-top: 1px solid var(--slate-200)}' +
       '#nomad-content .ne-card-tag{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.12em;color:#4a4455;background:#f5f5f7;padding: var(--space-1) var(--space-2-5);text-transform:uppercase}' +
-      '#nomad-content .ne-card-tag.outline{background:#fff;border:1px solid #e5e7eb}' +
+      '#nomad-content .ne-card-tag.outline{background:#fff;border: 1px solid var(--slate-200)}' +
       '#nomad-content .ne-sub-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap: var(--space-6);margin-top: var(--space-6)}' +
       '#nomad-content .ne-sub-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap: var(--space-6);margin-top: var(--space-6)}' +
       '#nomad-content .ne-sub-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap: var(--space-4)}' +
       '@media (max-width:760px){#nomad-content .ne-sub-grid3,#nomad-content .ne-sub-grid2{grid-template-columns:1fr}#nomad-content .ne-sub-grid4{grid-template-columns:repeat(2,1fr)}}' +
-      '#nomad-content .ne-sub-card{border:1px solid #e5e7eb;padding: var(--space-6);background:#fff;transition:background 0.15s}' +
+      '#nomad-content .ne-sub-card{border: 1px solid var(--slate-200);padding: var(--space-6);background:#fff;transition:background 0.15s}' +
       '#nomad-content .ne-sub-card:hover{background:#fafafa}' +
       '#nomad-content .ne-sub-label{font-family:var(--nm-font-h);font-size: var(--font-size-tiny);font-weight:700;letter-spacing:0.14em;color:#4a4455;text-transform:uppercase;display:block;margin-bottom: var(--space-2);opacity:0.7}' +
       '#nomad-content .ne-sub-name{font-family:var(--nm-font-h);font-size: var(--font-size-h2);font-weight:600;color:#141b2b;margin:0 0 6px;display:block}' +
@@ -2474,7 +2474,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-tools{display:grid;grid-template-columns:repeat(4,1fr);gap: var(--space-4)}' +
       '@media (max-width:960px){#nomad-content .ne-tools{grid-template-columns:repeat(2,1fr)}}' +
       '@media (max-width:560px){#nomad-content .ne-tools{grid-template-columns:1fr}}' +
-      '#nomad-content .ne-tool{padding: var(--space-6);border:1px solid #e5e7eb;display:flex;flex-direction:column;justify-content:space-between;gap: var(--space-6);transition:background 0.15s,color 0.15s;min-height:120px}' +
+      '#nomad-content .ne-tool{padding: var(--space-6);border: 1px solid var(--slate-200);display:flex;flex-direction:column;justify-content:space-between;gap: var(--space-6);transition:background 0.15s,color 0.15s;min-height:120px}' +
       '#nomad-content .ne-tool:hover{background:var(--nm-primary);color:#fff}' +
       '#nomad-content .ne-tool:hover .ne-tool-name,#nomad-content .ne-tool:hover .ne-tool-cat{color:#fff}' +
       '#nomad-content .ne-tool-name{font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:500;color:#141b2b;margin:0}' +
@@ -2482,7 +2482,7 @@ window.NOMAD_PAGES = (function(){
       '#nomad-content .ne-tool-desc{font-size: var(--font-size-meta);line-height:1.5;color:#4a4455;margin:0}' +
       '#nomad-content .ne-tool:hover .ne-tool-desc{color:rgba(255,255,255,0.85)}' +
       '#nomad-content .ne-list{padding:0;list-style:none;margin:0;display:flex;flex-direction:column;gap: var(--space-3)}' +
-      '#nomad-content .ne-list-row{display:flex;justify-content:space-between;align-items:center;padding: var(--space-4-5) var(--space-5);background:#fafafa;border:1px solid #e5e7eb;transition:background 0.15s}' +
+      '#nomad-content .ne-list-row{display:flex;justify-content:space-between;align-items:center;padding: var(--space-4-5) var(--space-5);background:#fafafa;border: 1px solid var(--slate-200);transition:background 0.15s}' +
       '#nomad-content .ne-list-row:hover{background:#fff;border-color:rgba(124,58,237,0.3)}' +
       '#nomad-content .ne-list-row .name{font-size: var(--font-size-body-lg);font-weight:500;color:#141b2b}' +
       '#nomad-content .ne-list-row .meta{font-size: var(--font-size-meta);color:#4a4455}' +
@@ -3421,7 +3421,7 @@ window.NOMAD_PAGES = (function(){
     groups.forEach(function(group, gi) {
       var groupName = group.cat || group.when || ('Group ' + gi);
       html += '<div style="margin-bottom: var(--space-5)">';
-      html += '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom: var(--space-1-5);padding: var(--space-1-5) 0;border-bottom:1px solid #f1f5f9">' + groupName + '</div>';
+      html += '<div style="font-family:var(--nm-font-h);font-size: var(--font-size-micro);font-weight:700;color:var(--nm-text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom: var(--space-1-5);padding: var(--space-1-5) 0;border-bottom: 1px solid var(--slate-100)">' + groupName + '</div>';
       html += '<ul class="nm-checklist">';
       (group.items || []).forEach(function(item, ii) {
         var itemKey = gi + '-' + ii;
@@ -3638,7 +3638,7 @@ window.NOMAD_PAGES = (function(){
       html += '<h4 style="font-family:var(--nm-font-h);font-size: var(--font-size-h3);font-weight:700;color:var(--nm-on-surface);margin-bottom: var(--space-1);line-height:1.3">' + v.country + '</h4>';
       html += '<p style="font-size: var(--font-size-meta);color:var(--nm-primary);font-weight:600;margin-bottom: var(--space-3-5)">체류 ' + v.stay + '</p>';
       // 신청 시점
-      html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);padding: var(--space-2) 0;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;margin-bottom: var(--space-2-5)">' +
+      html += '<div style="display:flex;align-items:center;gap: var(--space-1-5);padding: var(--space-2) 0;border-top: 1px solid var(--slate-100);border-bottom: 1px solid var(--slate-100);margin-bottom: var(--space-2-5)">' +
         '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:var(--nm-text-3)">calendar_today</span>' +
         '<span style="font-size: var(--font-size-micro);color:var(--nm-text-2);font-weight:600">' + v.when + '</span>' +
       '</div>';
@@ -4633,7 +4633,7 @@ window.NOMAD_PAGES = (function(){
     (budget.rows || []).forEach(function(r) { if (r.value > maxVal) maxVal = r.value; });
     var html = '<section class="nm-mag-section">';
     html += _magSectionHead(num || '03', 'Budget Breakdown', 'Financial Mastery');
-    html += '<div style="background:#fff;border:1px solid #f1f5f9;border-radius: var(--radius-xl);overflow:hidden;box-shadow:var(--nm-shadow-card)">';
+    html += '<div style="background:#fff;border: 1px solid var(--slate-100);border-radius: var(--radius-xl);overflow:hidden;box-shadow:var(--nm-shadow-card)">';
     html += '<table class="nm-bg-table">';
     // 헤더는 바디 4개 칼럼에 맞춰 고정 (카테고리·세부 합친 cell / EUR / KRW / intensity)
     html += '<thead><tr>' +
@@ -4762,7 +4762,7 @@ window.NOMAD_PAGES = (function(){
 
   function _renderTable(s) {
     var html = '<div class="nm-card" style="padding:0;overflow:hidden">';
-    html += '<div style="padding: var(--space-5) var(--space-6);border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap: var(--space-2)">' +
+    html += '<div style="padding: var(--space-5) var(--space-6);border-bottom: 1px solid var(--slate-100);display:flex;align-items:center;gap: var(--space-2)">' +
       (s.icon ? '<span class="material-symbols-outlined" style="color:var(--nm-primary)">' + s.icon + '</span>' : '') +
       '<h3 class="nm-headline-md">' + s.title + '</h3>' +
     '</div>';
