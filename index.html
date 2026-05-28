@@ -493,9 +493,9 @@
       50% { opacity: 0.55; transform: scale(0.9); }
     }
     .nomad-page {
-      --nm-primary: #7C3AED;
+      --nm-primary: var(--lavender-600);
       --nm-primary-dark: #630ed4;
-      --nm-primary-soft: #F5F3FF;
+      --nm-primary-soft: var(--lavender-50);
       --nm-primary-fixed: #eaddff;
       --nm-deep-indigo: #312E81;
       --nm-soft-accent: #4F46E5;
@@ -512,13 +512,13 @@
       --nm-text: #1F2937;
       --nm-text-2: #4a4455;
       --nm-text-3: #7b7487;
-      --nm-bg: #FFFFFF;
-      --nm-card-bg: #FFFFFF;
+      --nm-bg: white;
+      --nm-card-bg: white;
       --nm-shadow-card: 0px 4px 20px rgba(31, 41, 55, 0.04);
       --nm-shadow-hover: 0px 10px 32px rgba(31, 41, 55, 0.08);
       --nm-radius-sm: 0.25rem;
-      --nm-radius-md: 0.5rem;
-      --nm-radius-lg: 0.75rem;
+      --nm-radius-md: var(--radius-md);
+      --nm-radius-lg: var(--radius-lg);
       --nm-radius-full: 9999px;
       background: var(--nm-bg);
       font-family: 'Inter', 'Pretendard', 'Noto Color Emoji', sans-serif;
@@ -4208,7 +4208,7 @@
        ════════════════════════════════════════════════════════════ */
     #travel-atlas-section {
       --atlas-primary: #630ed4;
-      --atlas-vivid: #7C3AED;
+      --atlas-vivid: var(--lavender-600);
       --atlas-deep: #6B38D4;
       --atlas-ink: #1a1c1c;
       --atlas-ink-mute: #4a4455;
@@ -5427,13 +5427,13 @@
        ════════════════════════════════════════════════════════════════════ */
     #page-journey {
       /* stitch color palette */
-      --j-primary: #7c3aed;
+      --j-primary: var(--lavender-600);
       --j-primary-deep: #6b38d4;
-      --j-primary-container: #f5f3ff;
-      --j-on-primary-container: #7c3aed;
-      --j-surface: #ffffff;
+      --j-primary-container: var(--lavender-50);
+      --j-on-primary-container: var(--lavender-600);
+      --j-surface: white;
       --j-surface-container: #fafafa;
-      --j-surface-container-low: #ffffff;
+      --j-surface-container-low: white;
       --j-surface-container-high: #f5f5f5;
       --j-on-surface: #1a1a1a;
       --j-on-surface-variant: #666666;
@@ -5446,7 +5446,7 @@
       --j-warn-bg: #fffbeb;
       --j-warn-fg: #b45309;
       --j-warn-border: #fef3c7;
-      --j-danger-fg: #dc2626;
+      --j-danger-fg: var(--danger);
       --j-danger-soft: #fef2f2;
 
       /* typography stack */
@@ -5454,17 +5454,17 @@
       --j-font-body: 'Inter','Pretendard','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
 
       /* spacing scale */
-      --j-gutter: 24px;
-      --j-margin: 48px;
+      --j-gutter: var(--space-6);
+      --j-margin: var(--space-12);
       --j-container-max: 1100px;
       --j-section-gap: 96px;
       --j-section-gap-sm: 64px;
 
       /* shape */
       --j-radius-sm: 0.125rem;  /* 2px - tags/pills */
-      --j-radius-md: 0.375rem;  /* 6px - inputs */
-      --j-radius-lg: 0.5rem;    /* 8px - small cards */
-      --j-radius-xl: 0.75rem;   /* 12px - large cards */
+      --j-radius-md: var(--radius-sm);  /* 6px - inputs */
+      --j-radius-lg: var(--radius-md);    /* 8px - small cards */
+      --j-radius-xl: var(--radius-lg);   /* 12px - large cards */
     }
 
     /* ──── 컨테이너 + 섹션 ──── */
