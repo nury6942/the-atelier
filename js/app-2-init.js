@@ -6296,26 +6296,37 @@ function ldgRestoreDailySlot(date) {
 }
 
 // Service Worker 등록 (updateViaCache:'none' → SW 파일 자체는 항상 네트워크에서 가져옴)
+// 자동 새로고침 제거 (사용자 작업 중 갑작스러운 reload 방지)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/the-atelier/service-worker.js', { updateViaCache: 'none' })
       .then(function(reg) {
-        // 활성 SW가 새 SW로 교체되면 자동 리로드 (캐시된 옛 코드 → 최신 코드)
-        var refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', function() {
-          if (refreshing) return;
-          refreshing = true;
-          console.log('[SW] 새 버전 활성화 → 자동 새로고침');
-          window.location.reload();
+        // 새 SW 발견 시 → 자동 reload 대신 토스트로 안내 (사용자가 직접 새로고침)
+        var updateToastShown = false;
+        function showUpdateToast() {
+          if (updateToastShown) return;
+          updateToastShown = true;
+          var t = document.createElement('div');
+          t.id = 'sw-update-toast';
+          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#7c3aed,#6366f1);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(107,56,212,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
+          t.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>새 버전이 있어요. 클릭해서 업데이트</span>';
+          t.onclick = function() { window.location.reload(); };
+          document.body.appendChild(t);
+        }
+        // 새로 설치된 SW가 대기 중이면 안내
+        if (reg.waiting) showUpdateToast();
+        // 업데이트 발견 시 → 설치 완료되면 안내
+        reg.addEventListener('updatefound', function() {
+          var newSW = reg.installing;
+          if (!newSW) return;
+          newSW.addEventListener('statechange', function() {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateToast();
+            }
+          });
         });
-        // 주기적으로 업데이트 체크 (1시간마다)
+        // 1시간마다 백그라운드 체크 (reload 없음, 그냥 새 SW 다운로드만)
         setInterval(function() { reg.update().catch(function(){}); }, 60 * 60 * 1000);
-        // 페이지 가시화 시 업데이트 체크 (PWA가 백그라운드에서 복귀)
-        document.addEventListener('visibilitychange', function() {
-          if (document.visibilityState === 'visible') {
-            reg.update().catch(function(){});
-          }
-        });
       })
       .catch(function(err) { console.error('[SW] 등록 실패:', err); });
   });
