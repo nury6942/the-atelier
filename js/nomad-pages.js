@@ -224,7 +224,7 @@ window.NOMAD_PAGES = (function(){
     return Object.assign({}, PHASE_BOUNDARIES[0], { idx: 0, status: 'before' });
   }
   function fmtMan(n) { // 만 원 단위 한국식 포맷
-    return '<span class="num-mono">₩' + Number(n).toLocaleString('ko-KR') + '만</span>';
+    return '₩' + Number(n).toLocaleString('ko-KR') + '만';
   }
   function getNextCity() {
     // 출국 후엔 VOYAGE 중 미래 도시, 출국 전엔 VOYAGE[0]

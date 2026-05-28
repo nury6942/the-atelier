@@ -1275,7 +1275,7 @@ function loadLedger() {
 }
 
 // ── Helpers ──
-function ldgFmt(n) { return '<span class="num-mono">₩ ' + Math.abs(n).toLocaleString('ko-KR') + '</span>'; }
+function ldgFmt(n) { return '₩ ' + Math.abs(n).toLocaleString('ko-KR'); }
 function ldgFmtShort(n) {
   var abs = Math.abs(n);
   if (abs >= 1000000) return (abs/10000).toFixed(0) + '만';

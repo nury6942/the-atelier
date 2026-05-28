@@ -245,9 +245,13 @@
        Tailwind .tabular-nums 클래스 element 전체에 var(--font-mono)
        (= JetBrains Mono) 강제 → 28개 KPI/금액 표시 자동 업그레이드
        ════════════════════════════════════════════════════════════════ */
-    .tabular-nums { font-family: var(--font-mono); }
-    /* 금액 포맷 함수 (ldgFmt, fmtMan, KRW)가 자동 래핑 — Ledger·노마드·사이드잡 */
-    .num-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    /* 숫자 표기 — Manrope + tabular + 약간 타이트한 letter-spacing
+       (m-ledger.html 스타일 참고 — 누리님 선호 폰트) */
+    .tabular-nums {
+      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
 
     /* AI 브리프 카드 — Pretendard 적용 + 더 큰 폰트 */
     #dash-brief-card, #dash-brief-content { font-family: 'Pretendard', 'Manrope', 'Pretendard', sans-serif; }
