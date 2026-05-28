@@ -70,7 +70,7 @@
   <meta name="apple-mobile-web-app-title" content="Atelier">
   <link rel="apple-touch-icon" href="/the-atelier/icons/icon-192.png">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=186" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=187" as="script">
   <link rel="preload" href="js/app-2-init.js?v=164" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -3879,6 +3879,252 @@
     #page-packing .pk-template-btn:hover {
       background: var(--lavender-700);
       border-color: var(--lavender-700);
+    }
+    /* 편집 버튼 — ghost 변형 */
+    #page-packing .pk-template-btn-ghost {
+      background: transparent;
+      color: var(--lavender-deep);
+      border-color: var(--slate-200);
+    }
+    #page-packing .pk-template-btn-ghost:hover {
+      background: var(--lavender-50);
+      border-color: var(--lavender-300);
+    }
+    /* ──── 템플릿 편집 패널 ──── */
+    #page-packing .pk-tpl-editor {
+      margin-top: var(--space-4);
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-2);
+      padding: var(--space-6);
+      box-shadow: 0 4px 16px rgba(15,23,42,0.04);
+    }
+    #page-packing .pk-tpl-editor-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--slate-100);
+      margin-bottom: var(--space-5);
+    }
+    #page-packing .pk-tpl-editor-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--lavender-deep);
+      font-weight: 700;
+      margin: 0 0 var(--space-1);
+    }
+    #page-packing .pk-tpl-editor-h {
+      font-size: var(--font-size-h2);
+      font-weight: 800;
+      color: var(--slate-900);
+      margin: 0 0 var(--space-1);
+      letter-spacing: -0.01em;
+    }
+    #page-packing .pk-tpl-editor-sub {
+      font-size: var(--font-size-micro);
+      color: var(--slate-500);
+      margin: 0;
+    }
+    #page-packing .pk-tpl-icon-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-2);
+      color: var(--slate-500);
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    #page-packing .pk-tpl-icon-btn:hover {
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+    #page-packing .pk-tpl-cats {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    /* 카테고리 카드 */
+    #page-packing .pk-tpl-cat {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-2);
+      padding: var(--space-4);
+    }
+    #page-packing .pk-tpl-cat-head {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+      align-items: center;
+    }
+    #page-packing .pk-tpl-cat-icon-select {
+      width: 56px;
+      padding: var(--space-2);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-1-5);
+      background: white;
+      font-size: var(--font-size-body);
+      cursor: pointer;
+      flex-shrink: 0;
+      text-align: center;
+    }
+    #page-packing .pk-tpl-cat-name-input {
+      flex: 1;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-1-5);
+      background: white;
+      font-size: var(--font-size-body);
+      font-weight: 700;
+      color: var(--slate-900);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #page-packing .pk-tpl-cat-name-input:focus {
+      border-color: var(--lavender-deep);
+    }
+    #page-packing .pk-tpl-cat-delete {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-1-5);
+      color: var(--slate-400);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    #page-packing .pk-tpl-cat-delete:hover {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+    #page-packing .pk-tpl-items {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1-5);
+      margin-bottom: var(--space-2);
+    }
+    #page-packing .pk-tpl-item-row {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    #page-packing .pk-tpl-item-input {
+      flex: 1;
+      padding: var(--space-1-5) var(--space-3);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--space-1);
+      background: white;
+      font-size: var(--font-size-micro);
+      color: var(--slate-700);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #page-packing .pk-tpl-item-input:focus {
+      border-color: var(--lavender-deep);
+    }
+    #page-packing .pk-tpl-item-delete {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: var(--space-1);
+      color: var(--slate-400);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    #page-packing .pk-tpl-item-delete:hover {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    #page-packing .pk-tpl-add-item {
+      background: transparent;
+      border: 1px dashed var(--slate-300);
+      border-radius: var(--space-1);
+      color: var(--slate-500);
+      font-size: var(--font-size-micro);
+      padding: var(--space-1-5) var(--space-3);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    #page-packing .pk-tpl-add-item:hover {
+      background: white;
+      color: var(--lavender-deep);
+      border-color: var(--lavender-deep);
+      border-style: solid;
+    }
+    /* 하단 액션 바 */
+    #page-packing .pk-tpl-actions {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--slate-100);
+      flex-wrap: wrap;
+    }
+    #page-packing .pk-tpl-actions-spacer { flex: 1; }
+    #page-packing .pk-tpl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--space-1-5);
+      font-size: var(--font-size-micro);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+    #page-packing .pk-tpl-btn-primary {
+      background: var(--lavender-deep);
+      color: white;
+      border-color: var(--lavender-deep);
+    }
+    #page-packing .pk-tpl-btn-primary:hover {
+      background: var(--lavender-700);
+      border-color: var(--lavender-700);
+    }
+    #page-packing .pk-tpl-btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    #page-packing .pk-tpl-btn-secondary {
+      background: var(--lavender-50);
+      color: var(--lavender-deep);
+      border-color: var(--lavender-200, #ddd6fe);
+    }
+    #page-packing .pk-tpl-btn-secondary:hover {
+      background: var(--lavender-100, #ede9fe);
+    }
+    #page-packing .pk-tpl-btn-ghost {
+      background: transparent;
+      color: var(--slate-500);
+      border-color: var(--slate-200);
+    }
+    #page-packing .pk-tpl-btn-ghost:hover {
+      background: var(--slate-100);
+      color: var(--slate-700);
     }
     #page-packing .pk-progress-track {
       height: 4px;
@@ -12861,7 +13107,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=186" defer></script>
+<script src="js/app-1-pages.js?v=187" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -12921,7 +13167,37 @@
             <button onclick="pkImportTemplate()" id="pk-btn-template" class="pk-template-btn">
               <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">playlist_add</span> 템플릿 불러오기
             </button>
+            <button onclick="pkOpenTemplateEditor()" id="pk-btn-template-edit" class="pk-template-btn pk-template-btn-ghost" title="템플릿 편집">
+              <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">edit_note</span> 편집
+            </button>
           </span>
+        </div>
+        <!-- 템플릿 편집 패널 (인라인, 토글) -->
+        <div id="pk-template-editor" class="pk-tpl-editor" style="display:none">
+          <div class="pk-tpl-editor-head">
+            <div>
+              <p class="pk-tpl-editor-eyebrow">Template Editor</p>
+              <h3 class="pk-tpl-editor-h">패킹 템플릿 수정</h3>
+              <p class="pk-tpl-editor-sub">카테고리·항목 자유롭게 추가/수정. 저장하면 다른 기기와 자동 동기화.</p>
+            </div>
+            <button onclick="pkCloseTemplateEditor()" class="pk-tpl-icon-btn" title="닫기">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div id="pk-tpl-cats" class="pk-tpl-cats"></div>
+          <div class="pk-tpl-actions">
+            <button onclick="pkAddTemplateCategory()" class="pk-tpl-btn pk-tpl-btn-secondary">
+              <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">add</span> 카테고리 추가
+            </button>
+            <button onclick="pkResetTemplateToDefault()" class="pk-tpl-btn pk-tpl-btn-ghost" title="기본값으로 복원">
+              <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">restore</span> 기본값
+            </button>
+            <span class="pk-tpl-actions-spacer"></span>
+            <button onclick="pkCloseTemplateEditor()" class="pk-tpl-btn pk-tpl-btn-ghost">취소</button>
+            <button onclick="pkSaveTemplate()" id="pk-tpl-save-btn" class="pk-tpl-btn pk-tpl-btn-primary">
+              <span class="material-symbols-outlined" style="font-size:var(--font-size-body)">check</span> 저장
+            </button>
+          </div>
         </div>
         <div class="pk-progress-track">
           <div id="pk-progress-bar" class="pk-progress-fill"></div>

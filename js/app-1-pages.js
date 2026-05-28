@@ -19010,6 +19010,10 @@
   }
 
   async function pkInit() {
+    // 템플릿 Firebase 로드 (백그라운드 — trips 로드와 병렬)
+    if (typeof pkLoadTemplateFromFirebase === 'function') {
+      pkLoadTemplateFromFirebase().catch(function(){});
+    }
     pkTrips = await fbRead('trips');
     var trips = pkTrips;
     // 커스텀 드롭다운 렌더링
@@ -19661,7 +19665,8 @@
   }
 
   // ===== Packing Template Import =====
-  var PK_TEMPLATE = [
+  // 기본 템플릿 (Firebase에서 사용자 커스텀 못 받으면 fallback)
+  var PK_TEMPLATE_DEFAULT = [
     { category: '잠옷/수영복', icon: 'checkroom', items: ['잠옷 1','잠옷 2','잠옷 3','수영복'] },
     { category: '신발', icon: 'steps', items: ['가호 운동화','메쉬 운동화 (신기)'] },
     { category: '가방', icon: 'shopping_bag', items: ['아코크 가방'] },
@@ -19675,6 +19680,242 @@
     { category: '돈', icon: 'payments', items: ['환전 (캐쉬)','비상용 체크 & 신용카드'] },
     { category: '보험', icon: 'shield', items: ['마이뱅크'] }
   ];
+
+  // 사용 가능한 아이콘 옵션 (이모지 표시 + material symbol name 저장)
+  var PK_TPL_ICON_OPTIONS = [
+    { name: 'checkroom',     emoji: '👕' },
+    { name: 'steps',         emoji: '👟' },
+    { name: 'shopping_bag',  emoji: '🛍️' },
+    { name: 'star',          emoji: '⭐' },
+    { name: 'spa',           emoji: '🧴' },
+    { name: 'brush',         emoji: '💄' },
+    { name: 'luggage',       emoji: '🧳' },
+    { name: 'devices',       emoji: '💻' },
+    { name: 'flight',        emoji: '✈️' },
+    { name: 'payments',      emoji: '💳' },
+    { name: 'shield',        emoji: '🛡️' },
+    { name: 'medication',    emoji: '💊' },
+    { name: 'restaurant',    emoji: '🍽️' },
+    { name: 'beach_access',  emoji: '🏖️' },
+    { name: 'hiking',        emoji: '🥾' },
+    { name: 'water_drop',    emoji: '💧' },
+    { name: 'cable',         emoji: '🔌' },
+    { name: 'book',          emoji: '📖' },
+    { name: 'card_giftcard', emoji: '🎁' },
+    { name: 'pets',          emoji: '🐾' }
+  ];
+
+  // 현재 사용 중인 템플릿 (Firebase에서 로드한 사용자 커스텀, 없으면 default)
+  var PK_TEMPLATE = JSON.parse(JSON.stringify(PK_TEMPLATE_DEFAULT));
+  // 편집 모드용 임시 복사본
+  var _pkTplDraft = null;
+  var _pkTplLoaded = false;
+
+  // ── Firebase load (appSettings/pkTemplate) ──
+  async function pkLoadTemplateFromFirebase() {
+    if (_pkTplLoaded) return PK_TEMPLATE;
+    try {
+      if (typeof db === 'undefined') return PK_TEMPLATE;
+      var doc = await db.collection('appSettings').doc('pkTemplate').get();
+      if (doc.exists) {
+        var data = doc.data() || {};
+        if (Array.isArray(data.template) && data.template.length > 0) {
+          PK_TEMPLATE = data.template;
+        }
+      }
+      _pkTplLoaded = true;
+      try { localStorage.setItem('atelier_pk_template_cache', JSON.stringify(PK_TEMPLATE)); } catch(e) {}
+    } catch (err) {
+      console.warn('[pkTemplate] FB load 실패:', err);
+      // LS 캐시 fallback
+      try {
+        var raw = localStorage.getItem('atelier_pk_template_cache');
+        if (raw) {
+          var cached = JSON.parse(raw);
+          if (Array.isArray(cached) && cached.length > 0) PK_TEMPLATE = cached;
+        }
+      } catch(e) {}
+    }
+    return PK_TEMPLATE;
+  }
+
+  async function pkSaveTemplateToFirebase(template) {
+    if (typeof db === 'undefined') return;
+    try {
+      await db.collection('appSettings').doc('pkTemplate').set({
+        template: template,
+        _updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (err) {
+      console.warn('[pkTemplate] FB save 실패:', err);
+      throw err;
+    }
+  }
+
+  // ── 편집 패널 ──
+  function pkOpenTemplateEditor() {
+    // 현재 PK_TEMPLATE을 deep clone해서 draft에 보관 (취소 시 원복)
+    _pkTplDraft = JSON.parse(JSON.stringify(PK_TEMPLATE));
+    pkRenderTemplateEditor();
+    var panel = document.getElementById('pk-template-editor');
+    if (panel) {
+      panel.style.display = 'block';
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function pkCloseTemplateEditor() {
+    _pkTplDraft = null;
+    var panel = document.getElementById('pk-template-editor');
+    if (panel) panel.style.display = 'none';
+  }
+
+  function _pkIconOptionsHtml(selectedName) {
+    var html = '';
+    for (var i = 0; i < PK_TPL_ICON_OPTIONS.length; i++) {
+      var o = PK_TPL_ICON_OPTIONS[i];
+      var sel = (o.name === selectedName) ? ' selected' : '';
+      html += '<option value="' + o.name + '"' + sel + '>' + o.emoji + ' ' + o.name + '</option>';
+    }
+    // selected 가 옵션 목록에 없으면 (legacy) 맨 위에 추가
+    if (selectedName && !PK_TPL_ICON_OPTIONS.some(function(o){ return o.name === selectedName; })) {
+      html = '<option value="' + selectedName + '" selected>📦 ' + selectedName + '</option>' + html;
+    }
+    return html;
+  }
+
+  function pkRenderTemplateEditor() {
+    var wrap = document.getElementById('pk-tpl-cats');
+    if (!wrap || !_pkTplDraft) return;
+    var html = '';
+    for (var ci = 0; ci < _pkTplDraft.length; ci++) {
+      var cat = _pkTplDraft[ci];
+      html += '<div class="pk-tpl-cat" data-ci="' + ci + '">';
+      // 헤더 (아이콘 + 이름 + 삭제)
+      html += '<div class="pk-tpl-cat-head">';
+      html += '<select class="pk-tpl-cat-icon-select" onchange="pkUpdateTemplateCategoryIcon(' + ci + ', this.value)">' +
+        _pkIconOptionsHtml(cat.icon) +
+      '</select>';
+      html += '<input type="text" class="pk-tpl-cat-name-input" value="' + (cat.category || '').replace(/"/g,'&quot;') + '" onchange="pkUpdateTemplateCategoryName(' + ci + ', this.value)" placeholder="카테고리 이름">';
+      html += '<button class="pk-tpl-cat-delete" onclick="pkRemoveTemplateCategory(' + ci + ')" title="카테고리 삭제"><span class="material-symbols-outlined">delete_outline</span></button>';
+      html += '</div>';
+      // 항목 리스트
+      html += '<div class="pk-tpl-items">';
+      var items = cat.items || [];
+      for (var ii = 0; ii < items.length; ii++) {
+        html += '<div class="pk-tpl-item-row">';
+        html += '<input type="text" class="pk-tpl-item-input" value="' + (items[ii] || '').replace(/"/g,'&quot;') + '" onchange="pkUpdateTemplateItem(' + ci + ',' + ii + ', this.value)" placeholder="항목 이름">';
+        html += '<button class="pk-tpl-item-delete" onclick="pkRemoveTemplateItem(' + ci + ',' + ii + ')" title="삭제"><span class="material-symbols-outlined">close</span></button>';
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '<button class="pk-tpl-add-item" onclick="pkAddTemplateItem(' + ci + ')"><span class="material-symbols-outlined" style="font-size:var(--font-size-micro)">add</span> 항목 추가</button>';
+      html += '</div>';
+    }
+    if (_pkTplDraft.length === 0) {
+      html = '<p style="text-align:center;color:var(--slate-400);padding:var(--space-6);font-size:var(--font-size-micro)">카테고리가 없습니다. 아래 "+ 카테고리 추가" 버튼으로 시작하세요.</p>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  function pkAddTemplateCategory() {
+    if (!_pkTplDraft) _pkTplDraft = [];
+    _pkTplDraft.push({ category: '새 카테고리', icon: 'star', items: [] });
+    pkRenderTemplateEditor();
+  }
+
+  function pkRemoveTemplateCategory(ci) {
+    if (!_pkTplDraft || !_pkTplDraft[ci]) return;
+    if (!confirm('"' + (_pkTplDraft[ci].category || '카테고리') + '" 를 삭제할까요?')) return;
+    _pkTplDraft.splice(ci, 1);
+    pkRenderTemplateEditor();
+  }
+
+  function pkUpdateTemplateCategoryName(ci, name) {
+    if (!_pkTplDraft || !_pkTplDraft[ci]) return;
+    _pkTplDraft[ci].category = name || '';
+  }
+  function pkUpdateTemplateCategoryIcon(ci, icon) {
+    if (!_pkTplDraft || !_pkTplDraft[ci]) return;
+    _pkTplDraft[ci].icon = icon || 'star';
+  }
+
+  function pkAddTemplateItem(ci) {
+    if (!_pkTplDraft || !_pkTplDraft[ci]) return;
+    if (!Array.isArray(_pkTplDraft[ci].items)) _pkTplDraft[ci].items = [];
+    _pkTplDraft[ci].items.push('');
+    pkRenderTemplateEditor();
+    // 새로 추가된 input에 focus
+    setTimeout(function() {
+      var cards = document.querySelectorAll('#pk-tpl-cats .pk-tpl-cat');
+      if (cards[ci]) {
+        var inputs = cards[ci].querySelectorAll('.pk-tpl-item-input');
+        var last = inputs[inputs.length - 1];
+        if (last) last.focus();
+      }
+    }, 30);
+  }
+
+  function pkRemoveTemplateItem(ci, ii) {
+    if (!_pkTplDraft || !_pkTplDraft[ci] || !_pkTplDraft[ci].items) return;
+    _pkTplDraft[ci].items.splice(ii, 1);
+    pkRenderTemplateEditor();
+  }
+
+  function pkUpdateTemplateItem(ci, ii, value) {
+    if (!_pkTplDraft || !_pkTplDraft[ci] || !_pkTplDraft[ci].items) return;
+    _pkTplDraft[ci].items[ii] = value || '';
+  }
+
+  function pkResetTemplateToDefault() {
+    if (!confirm('템플릿을 누리님 기본 12개 카테고리로 되돌릴까요?\n(저장하기 전에는 적용 안 됨)')) return;
+    _pkTplDraft = JSON.parse(JSON.stringify(PK_TEMPLATE_DEFAULT));
+    pkRenderTemplateEditor();
+  }
+
+  async function pkSaveTemplate() {
+    if (!_pkTplDraft) return;
+    var btn = document.getElementById('pk-tpl-save-btn');
+    // 빈 값 정리: 카테고리 이름·항목 빈 거 제거
+    var cleaned = _pkTplDraft
+      .map(function(cat) {
+        return {
+          category: (cat.category || '').trim() || '카테고리',
+          icon: cat.icon || 'star',
+          items: (cat.items || []).map(function(s){ return (s||'').trim(); }).filter(function(s){ return !!s; })
+        };
+      })
+      .filter(function(cat) { return cat.category && cat.items.length > 0; });
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:var(--font-size-body)">progress_activity</span> 저장 중...'; }
+    try {
+      await pkSaveTemplateToFirebase(cleaned);
+      PK_TEMPLATE = cleaned;
+      try { localStorage.setItem('atelier_pk_template_cache', JSON.stringify(PK_TEMPLATE)); } catch(e) {}
+      if (btn) { btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:var(--font-size-body)">check_circle</span> 저장 완료'; }
+      setTimeout(function() {
+        pkCloseTemplateEditor();
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:var(--font-size-body)">check</span> 저장'; }
+      }, 800);
+    } catch (err) {
+      alert('저장 실패: ' + (err.message || err));
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:var(--font-size-body)">check</span> 저장'; }
+    }
+  }
+
+  // 전역 노출
+  if (typeof window !== 'undefined') {
+    window.pkOpenTemplateEditor = pkOpenTemplateEditor;
+    window.pkCloseTemplateEditor = pkCloseTemplateEditor;
+    window.pkAddTemplateCategory = pkAddTemplateCategory;
+    window.pkRemoveTemplateCategory = pkRemoveTemplateCategory;
+    window.pkUpdateTemplateCategoryName = pkUpdateTemplateCategoryName;
+    window.pkUpdateTemplateCategoryIcon = pkUpdateTemplateCategoryIcon;
+    window.pkAddTemplateItem = pkAddTemplateItem;
+    window.pkRemoveTemplateItem = pkRemoveTemplateItem;
+    window.pkUpdateTemplateItem = pkUpdateTemplateItem;
+    window.pkResetTemplateToDefault = pkResetTemplateToDefault;
+    window.pkSaveTemplate = pkSaveTemplate;
+  }
 
   async function pkImportTemplate() {
     if (!pkTripId) { alert('여행을 먼저 선택해줘!'); return; }
