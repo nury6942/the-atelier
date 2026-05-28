@@ -13233,8 +13233,20 @@
       var key = 'atelier_backup_' + collectionName;
       var existing = JSON.parse(localStorage.getItem(key) || '[]');
       existing.push({action: action, data: data, ts: new Date().toISOString()});
-      if (existing.length > 50) existing = existing.slice(-50);
-      localStorage.setItem(key, JSON.stringify(existing));
+      if (existing.length > 20) existing = existing.slice(-20); // 50 → 20 reduced
+      try {
+        localStorage.setItem(key, JSON.stringify(existing));
+      } catch(quotaErr) {
+        // quota 초과 → 모든 atelier_backup_* 삭제 후 재시도
+        console.warn('[Backup] quota exceeded, purging old backups');
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && (k.indexOf('atelier_backup_') === 0 || k === 'atelier_trash' || k.indexOf('atelier_snapshot_') === 0)) {
+            localStorage.removeItem(k);
+          }
+        }
+        try { localStorage.setItem(key, JSON.stringify(existing.slice(-5))); } catch(e2){}
+      }
     } catch(e){}
   }
   function trashBeforeDelete(collectionName, id) {
@@ -20324,12 +20336,55 @@ function updateReviewApiKeyUI() {
   }
 }
 
+// localStorage 용량 정리 — 백업/스냅샷/캐시 등 비필수 데이터 삭제
+function cleanupLocalStorageForSpace() {
+  var deletedKeys = [];
+  var totalFreedKB = 0;
+  // 우선순위 1: 백업 (가장 큰 용량 차지, Firestore에 원본 있음)
+  var backupKeys = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k) continue;
+    if (k.indexOf('atelier_backup_') === 0 ||
+        k === 'atelier_trash' ||
+        k.indexOf('atelier_snapshot_') === 0 ||
+        k.indexOf('atelier_city_cache_') === 0 ||
+        k.indexOf('atelier_news_cache_') === 0 ||
+        k.indexOf('atelier_wx_') === 0) {
+      backupKeys.push(k);
+    }
+  }
+  backupKeys.forEach(function(k) {
+    try {
+      var size = (localStorage.getItem(k) || '').length;
+      localStorage.removeItem(k);
+      deletedKeys.push(k);
+      totalFreedKB += Math.round(size / 1024);
+    } catch(e){}
+  });
+  console.log('[Storage Cleanup] Deleted ' + deletedKeys.length + ' keys, freed ~' + totalFreedKB + ' KB');
+  console.log('[Storage Cleanup] Deleted:', deletedKeys);
+  return { count: deletedKeys.length, freedKB: totalFreedKB };
+}
+
+// localStorage 사용량 측정 (디버깅용)
+function getLocalStorageSize() {
+  var total = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!k) continue;
+    total += (k.length + (localStorage.getItem(k) || '').length) * 2; // UTF-16 = 2 bytes
+  }
+  return Math.round(total / 1024);
+}
+
 function saveInlineApiKey() {
   var input = document.getElementById('review-inline-apikey');
   var hint = document.getElementById('review-inline-apikey-hint');
   if (!input) { console.error('[ApiKey] inline input not found'); return; }
   var key = input.value.trim();
   console.log('[ApiKey] save attempt, length=' + key.length + ', starts=' + key.substring(0,7));
+  console.log('[ApiKey] localStorage usage before save: ' + getLocalStorageSize() + ' KB');
 
   if (!key) {
     if (hint) { hint.textContent = '⚠ 키를 입력해주세요'; hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold'; }
@@ -20341,17 +20396,35 @@ function saveInlineApiKey() {
     return;
   }
 
-  // 1) localStorage 즉시 저장 (이건 무조건 성공)
-  try {
+  // 1) localStorage 즉시 저장 — quota 초과 시 자동 정리 후 재시도
+  function trySave() {
     localStorage.setItem('atelier_anthropic_api_key', key);
     if (!localStorage.getItem('atelier_anthropic_model')) {
       localStorage.setItem('atelier_anthropic_model', 'claude-opus-4-7');
     }
+  }
+  try {
+    trySave();
     console.log('[ApiKey] localStorage saved OK');
   } catch (e) {
-    console.error('[ApiKey] localStorage failed:', e);
-    if (hint) { hint.textContent = '⚠ 브라우저 저장 실패: ' + e.message; hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold'; }
-    return;
+    console.warn('[ApiKey] First attempt failed (quota):', e.message);
+    console.log('[ApiKey] Running cleanup...');
+    var result = cleanupLocalStorageForSpace();
+    if (hint) {
+      hint.textContent = '🧹 저장 공간 정리 중... (' + result.count + '개 항목, ~' + result.freedKB + 'KB 확보)';
+      hint.className = 'text-[11px] text-amber-700 mt-2 px-1';
+    }
+    try {
+      trySave();
+      console.log('[ApiKey] localStorage saved OK after cleanup');
+    } catch (e2) {
+      console.error('[ApiKey] Still failing after cleanup:', e2);
+      if (hint) {
+        hint.textContent = '⚠ 저장 공간 부족 — 브라우저 데이터 정리가 필요해요. 콘솔(F12)에서 localStorage.clear() 실행 후 다시 시도해주세요.';
+        hint.className = 'text-[11px] text-rose-700 mt-2 px-1 font-bold';
+      }
+      return;
+    }
   }
 
   // 2) 즉시 UI 갱신 (Firestore 기다리지 말고)
