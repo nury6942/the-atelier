@@ -300,7 +300,21 @@
   </script>
   <style>
     *{box-sizing:border-box}
-    body{font-family:'Inter', 'Pretendard', 'Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800)}
+    body{font-family:'Inter', 'Pretendard', 'Noto Color Emoji',sans-serif;background:#fff;color:var(--slate-800);line-height:1.55}
+    /* Phase E — 살짝 더 여유 (line-height 미세 증가 + 헤딩 후 호흡) */
+    h1,h2,h3,h4{margin-block-end:var(--space-2)}
+    section + section { margin-top: var(--space-6); }
+    /* Phase F — Calendar/Matrix 가시성 폴리시
+       오늘/연차/공휴일 셀의 hover/focus 강조, 부드러운 transition */
+    .calendar-page td, .calendar-page .day-cell { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+    .calendar-page td:hover, .calendar-page .day-cell:hover {
+      box-shadow: 0 2px 12px rgba(107, 56, 212, 0.10);
+      position: relative; z-index: 2;
+    }
+    /* Matrix 셀 — 호버 시 살짝 부각 */
+    #income-annual-matrix tbody td:hover {
+      box-shadow: inset 0 0 0 1px var(--lavender-200);
+    }
     h1,h2,h3,h4{font-family:'Manrope', 'Pretendard', 'Noto Color Emoji',sans-serif}
     .font-headline,.headline{font-family:'Manrope', 'Pretendard', sans-serif!important}
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
@@ -391,10 +405,29 @@
     /* Our unified intro h2 — consistent style */
     .atelier-page-h2{
       font-family:'Manrope', 'Pretendard', sans-serif!important;
-      font-size: var(--font-size-h1-lg)!important;
+      font-size: var(--font-size-display)!important; /* 24 → 26px display 톤 */
       font-weight:800!important;
       color:var(--slate-900)!important;
-      letter-spacing:-0.02em!important;
+      letter-spacing:-0.025em!important;
+      line-height:1.15!important;
+      margin-bottom: var(--space-2)!important;
+    }
+    /* Phase D — 페이지 헤더 보강: eyebrow + hero 컨테이너 (점진 적용) */
+    .atelier-page-hero { margin-bottom: var(--space-8); }
+    .atelier-page-eyebrow {
+      display: inline-block;
+      font-family: 'Manrope', 'Pretendard', sans-serif;
+      font-size: var(--font-size-micro);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--lavender-600);
+      margin-bottom: var(--space-2);
+    }
+    .atelier-page-subtitle {
+      font-size: var(--font-size-body);
+      color: var(--slate-500);
+      margin-top: var(--space-1);
     }
 
     /* Ledger column filter buttons */
