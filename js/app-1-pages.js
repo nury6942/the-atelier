@@ -19156,7 +19156,7 @@
       return '<div class="pk-cat">' +
         '<div class="pk-cat-header">' +
           '<div class="pk-cat-title-wrap">' +
-            '<span class="material-symbols-outlined pk-cat-icon">'+(cat.icon||'star')+'</span>' +
+            '<span class="pk-cat-icon-wrap"><span class="material-symbols-outlined pk-cat-icon">'+(cat.icon||'star')+'</span></span>' +
             '<h4 class="pk-cat-h">'+cat.category+'</h4>' +
           '</div>' +
           '<div class="pk-cat-meta-wrap">' +
@@ -19193,10 +19193,15 @@
     pkOutfits.forEach(function(o) { if (o.trip_id !== pkTripId) return; (o.items||[]).forEach(function(item) { var n = (item.name||'').trim(); if (n) _pkNameCount[n] = (_pkNameCount[n]||0) + 1; }); });
 
     var html='';
+    var DOW_KR = ['일','월','화','수','목','금','토'];
+    var DOW_EN = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
     dates.forEach(function(date,idx){
       var city=getCity(date);
       var dateStr=pkFmtDate(date);
       var mon=date.toLocaleString('en',{month:'short'}).toUpperCase(), day=String(date.getDate()).padStart(2,'0');
+      var dowIdx = date.getDay();
+      var dow = DOW_EN[dowIdx];
+      var isWeekend = (dowIdx === 0 || dowIdx === 6);
       var outfit = getOutfit(dateStr);
       var items = outfit ? (outfit.items||[]) : [];
 
@@ -19219,6 +19224,7 @@
           '<div>' +
             '<div class="pk-day-date-month">'+mon+'</div>' +
             '<div class="pk-day-date-day">'+day+'</div>' +
+            '<div class="pk-day-date-dow'+(isWeekend?' weekend':'')+'">'+dow+'</div>' +
             '<div class="pk-day-actions">' +
               '<button onclick="event.stopPropagation();pkCopyDay(\''+dateStr+'\')" class="pk-day-act-btn" title="복사"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_copy</span></button>' +
               '<button onclick="event.stopPropagation();pkPasteDay(\''+dateStr+'\')" class="pk-day-act-btn" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_paste</span></button>' +
@@ -19583,7 +19589,7 @@
         var ds=pkFmtDate(e.date), wx=wm[ds];
         var el=document.getElementById('pk-wx-'+e.idx); if(!el||!wx) return;
         var info=pkWxInfo(wx.code);
-        el.innerHTML='<span class="material-symbols-outlined '+info.cls+' mb-0.5">'+info.icon+'</span><span class="text-[11px] font-semibold text-slate-400">'+wx.hi+'°/'+wx.lo+'°</span>';
+        el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span><span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>';
       });
     } catch(e){ console.warn('PK weather error:',e); }
   }
