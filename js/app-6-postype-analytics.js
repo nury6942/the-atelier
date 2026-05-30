@@ -274,7 +274,20 @@
       return Math.round(total);
     }
 
-    return { decay, allEpisodes, oldWorksDailyAvg, recentDailyAvg, dowWeight, longtailDailyRate, predictMonth, revAtAge, ongoing };
+    // 구조 모델 월 총액(연재 감쇠 + 구작)은 유지하되, 그 달의 요일 구성(주말 수 등)을 반영.
+    // 완전한 달은 요일 분포가 거의 균등 → factor ≈ 1, 주말이 많은 달만 살짝 ↑.
+    function predictMonthDow(yearMonth){
+      const baseTotal = predictMonth(yearMonth);
+      const [yy, mm] = yearMonth.split('-').map(Number);
+      const dimm = daysInMonth(yearMonth);
+      let weightSum = 0;
+      for (let day = 1; day <= dimm; day++) weightSum += dowWeight[new Date(yy, mm-1, day).getDay()];
+      const avgW = dowWeight.reduce((a,b) => a+b, 0) / 7;          // 7요일 평균 (보통 ≈ 1)
+      const factor = avgW > 0 ? (weightSum / dimm) / avgW : 1;     // 균등월 = 1, 주말 많은 달 > 1
+      return Math.round(baseTotal * factor);
+    }
+
+    return { decay, allEpisodes, oldWorksDailyAvg, recentDailyAvg, dowWeight, longtailDailyRate, predictMonth, predictMonthDow, revAtAge, ongoing };
   }
 
   function predictThisMonth(model){
@@ -698,7 +711,7 @@
     document.getElementById('postype-payment-amount').textContent = KRW(applyFee(thisF.total));
 
     const nextM = nextMonth(thisM);
-    const nextTotal = model.predictMonth(nextM);
+    const nextTotal = model.predictMonthDow(nextM);
     document.getElementById('postype-forecast-next-total').textContent = KRW(nextTotal);
     document.getElementById('postype-forecast-next-net').textContent = `실수령 ≈ ${KRW(applyFee(nextTotal))}`;
     const payN = paymentForMonth(nextM);
@@ -745,7 +758,7 @@
         const f = predictThisMonth(model);
         actual = f.actual; forecast = f.total;
       } else {
-        forecast = model.predictMonth(cur);
+        forecast = model.predictMonthDow(cur);
       }
       months.push({ ym: cur, actual, forecast });
       cur = nextMonth(cur);
