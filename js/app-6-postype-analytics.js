@@ -242,6 +242,21 @@
       return a;
     }, 0) : 0;
     const oldWorksDailyAvg = Math.max(0, (recentSum - ongoingRecentSum) / Math.max(recentDaily.length, 1));
+    // 현재 페이스 = 최근 30일 전체(연재작+구작) 실측 일평균 — 모델 과소평가 대신 실측 추세 앵커
+    const recentDailyAvg = recentSum / Math.max(recentDaily.length, 1);
+
+    // ─── 요일별 가중치 (최근 8주 실측) — 금요일 발행 후 토/일 피크, 목 바닥 같은 주간 패턴 캡처 ───
+    const dowCutoff = new Date(Date.now() - 56*86400000).toISOString().slice(0,10);
+    const dowSum = Array(7).fill(0), dowCnt = Array(7).fill(0);
+    allDaily().filter(d => d.date >= dowCutoff && d.date <= todayStr()).forEach(d => {
+      const wd = new Date(d.date + 'T00:00:00').getDay();  // 로컬(KST) 요일
+      dowSum[wd] += (d.rev || 0); dowCnt[wd]++;
+    });
+    const dowAvg = dowSum.map((s, i) => dowCnt[i] ? s / dowCnt[i] : 0);
+    const observed = dowAvg.filter((_, i) => dowCnt[i]);
+    const dowOverall = observed.length ? observed.reduce((a, b) => a + b, 0) / observed.length : 0;
+    // 가중치: 그 요일 평균 / 전체 평균 (데이터 없는 요일은 1 = 중립)
+    const dowWeight = dowAvg.map((a, i) => (dowCnt[i] && dowOverall > 0) ? a / dowOverall : 1);
 
     function predictMonth(yearMonth){
       const [y, m] = yearMonth.split('-').map(Number);
@@ -259,7 +274,7 @@
       return Math.round(total);
     }
 
-    return { decay, allEpisodes, oldWorksDailyAvg, longtailDailyRate, predictMonth, revAtAge, ongoing };
+    return { decay, allEpisodes, oldWorksDailyAvg, recentDailyAvg, dowWeight, longtailDailyRate, predictMonth, revAtAge, ongoing };
   }
 
   function predictThisMonth(model){
@@ -267,17 +282,24 @@
     const now = new Date();
     const todayD = now.getDate();
     const dim = daysInMonth(thisM);
+    const [y, mo] = thisM.split('-').map(Number);
     // 이번 달 실측 = 이번 달 모든 거래 합 (KPI 매출 카드와 동일, 지금 시각까지 누적)
     const actual = allDaily()
       .filter(d => d.date.startsWith(thisM))
       .reduce((a,d) => a + (d.rev||0), 0);
     const modelTotal = model.predictMonth(thisM);
-    const modelDailyAvg = modelTotal / dim;
-    // 오늘은 아직 진행 중 — 지난 시간은 이미 actual에 들어있고, '남은 시간'만 예측에 더함.
-    // 남은 일수(소수) = 오늘 남은 시간 비율 + 오늘 이후 남은 완전한 날들
+    // 남은 기간을 '요일 패턴'으로 예측: 현재 페이스(base) × 그날 요일 가중치.
+    // base 가 0이면(데이터 없음) 모델 일평균으로 폴백.
+    const base = model.recentDailyAvg > 0 ? model.recentDailyAvg : (modelTotal / dim);
+    const w = model.dowWeight || Array(7).fill(1);
+    // 오늘은 진행 중 — 지난 시간은 이미 actual에, '남은 시간'만 예측에 더함
     const dayElapsed = (now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds()) / 86400;
-    const remainingDays = Math.max(0, (dim - todayD) + (1 - dayElapsed));
-    const remainingForecast = modelDailyAvg * remainingDays;
+    let remainingForecast = 0;
+    for (let day = todayD; day <= dim; day++){
+      const wd = new Date(y, mo-1, day).getDay();        // 로컬 요일
+      const dayPred = base * (w[wd] != null ? w[wd] : 1);
+      remainingForecast += (day === todayD) ? dayPred * (1 - dayElapsed) : dayPred;
+    }
     // 예상은 이미 확정된 실측보다 작을 수 없음 (남은 시간 예측만 더함)
     const total = Math.max(Math.round(actual + remainingForecast), actual);
     return { total, actual, remainingForecast: Math.round(remainingForecast), modelTotal };
