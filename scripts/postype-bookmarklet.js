@@ -19,20 +19,37 @@
     if (!confirm('수익 페이지가 아닌데 진행할까요?\n( /point/earnings/list 권장 )')) return;
   }
 
-  // ─── 일수 선택 (Enter = 28일, "ytd" = 올해 전체, 숫자 = 그 일수) ─
+  // ─── 동기화 범위 선택 ────────────────────────────────────────────
+  //  · Enter (기본) = 이번 달만 (이번 달 1일 00:00 ~ 지금) — 일상 동기화
+  //  · ytd          = 올해 1월 1일부터 전체 (첫 백필 / 연초용)
+  //  · 숫자          = 최근 N일치 (예: 90)
+  //  cutoff 를 "일수"가 아니라 "날짜 경계"로 잡아 지난 달 기록은 다시 안 긁음.
   const input = prompt(
-    '동기화 모드?\n\n· 일상 동기화: 그냥 Enter (28일)\n· 올해 1월부터 전체 (첫 백필): ytd\n· 특정 일수: 숫자 입력 (예: 90)',
-    '28'
+    '동기화 범위?\n\n· 이번 달만 (기본): 그냥 Enter\n· 올해 1월부터 전체 (첫 백필): ytd\n· 최근 N일: 숫자 입력 (예: 90)',
+    ''
   );
   if (input === null) return;  // 사용자가 취소
 
-  let DAYS;
+  const pad = n => String(n).padStart(2, '0');
+  const now = new Date();
   const trimmed = (input || '').trim().toLowerCase();
+
+  let DAYS, cutoffStr, modeLabel;
   if (trimmed === 'ytd' || trimmed === '올해' || trimmed === 'y'){
-    const yearStart = new Date(new Date().getFullYear(), 0, 1);
-    DAYS = Math.ceil((Date.now() - yearStart.getTime()) / 86400000) + 1;
+    // 올해 1월 1일 00:00:00 (KST 로컬 기준)
+    cutoffStr = `${now.getFullYear()}-01-01 00:00:00`;
+    DAYS = Math.ceil((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / 86400000) + 1;
+    modeLabel = `올해 전체 (${now.getFullYear()})`;
+  } else if (trimmed === '' || trimmed === 'month' || trimmed === 'm' || trimmed === '이번달' || trimmed === '이번 달'){
+    // 이번 달 1일 00:00:00 ~ 지금 (KST 로컬 기준)
+    cutoffStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01 00:00:00`;
+    DAYS = Math.ceil((now.getTime() - new Date(now.getFullYear(), now.getMonth(), 1).getTime()) / 86400000) + 1;
+    modeLabel = `이번 달 (${now.getFullYear()}-${pad(now.getMonth() + 1)})`;
   } else {
+    // 최근 N일치
     DAYS = Math.max(1, Math.min(400, parseInt(trimmed) || 28));
+    cutoffStr = new Date(now.getTime() - DAYS * 86400000).toISOString().slice(0, 10) + ' 00:00:00';
+    modeLabel = `최근 ${DAYS}일`;
   }
 
   // ─── 진행 상황 표시 패널 ───────────────────────────────────────
@@ -81,10 +98,9 @@
   };
 
   // ─── 데이터 수집 (페이지별 retry + 실패 추적) ──────────────────
-  const hint = DAYS >= 60 ? `${DAYS}일 백필 · 1~2분 소요` : `${DAYS}일치 수집`;
+  const hint = DAYS >= 60 ? `${modeLabel} 백필 · 1~2분 소요` : `${modeLabel} 수집`;
   setMsg(hint, '페이지 0');
-  const today = new Date();
-  const cutoffStr = new Date(today.getTime() - DAYS * 86400000).toISOString().slice(0, 10) + ' 00:00:00';
+  // cutoffStr 은 위 범위 선택 블록에서 이미 계산됨 (이번 달 1일 / 올해 1월 1일 / 최근 N일)
   const tx = [];
   const failedPages = [];
 
