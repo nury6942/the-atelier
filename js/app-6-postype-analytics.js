@@ -264,17 +264,21 @@
 
   function predictThisMonth(model){
     const thisM = thisMonth();
-    const todayD = new Date().getDate();
+    const now = new Date();
+    const todayD = now.getDate();
     const dim = daysInMonth(thisM);
-    // 이번 달 실측 = 이번 달 모든 거래 합 (거래는 과거에만 발생하므로 KPI 매출 카드와 동일)
+    // 이번 달 실측 = 이번 달 모든 거래 합 (KPI 매출 카드와 동일, 지금 시각까지 누적)
     const actual = allDaily()
       .filter(d => d.date.startsWith(thisM))
       .reduce((a,d) => a + (d.rev||0), 0);
     const modelTotal = model.predictMonth(thisM);
-    const remainingDays = Math.max(0, dim - todayD);
     const modelDailyAvg = modelTotal / dim;
+    // 오늘은 아직 진행 중 — 지난 시간은 이미 actual에 들어있고, '남은 시간'만 예측에 더함.
+    // 남은 일수(소수) = 오늘 남은 시간 비율 + 오늘 이후 남은 완전한 날들
+    const dayElapsed = (now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds()) / 86400;
+    const remainingDays = Math.max(0, (dim - todayD) + (1 - dayElapsed));
     const remainingForecast = modelDailyAvg * remainingDays;
-    // 예상은 이미 확정된 실측보다 작을 수 없음 (남은 날 예측만 더함)
+    // 예상은 이미 확정된 실측보다 작을 수 없음 (남은 시간 예측만 더함)
     const total = Math.max(Math.round(actual + remainingForecast), actual);
     return { total, actual, remainingForecast: Math.round(remainingForecast), modelTotal };
   }
