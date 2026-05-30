@@ -114,7 +114,7 @@
   const KRW       = n => (n || 0).toLocaleString('ko-KR') + '원';
   const dow       = ['일','월','화','수','목','금','토'];
   const pad       = n => String(n).padStart(2, '0');
-  const todayStr  = () => new Date().toISOString().slice(0,10);
+  const todayStr  = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };  // 로컬(KST) 기준 — UTC 밀림 방지
   const thisMonth = () => todayStr().slice(0, 7);
   const ageDays   = (firstTs) => (Date.now() - new Date(firstTs.replace(' ','T') + '+09:00').getTime()) / 86400000;
 
@@ -266,14 +266,17 @@
     const thisM = thisMonth();
     const todayD = new Date().getDate();
     const dim = daysInMonth(thisM);
+    // 이번 달 실측 = 이번 달 모든 거래 합 (거래는 과거에만 발생하므로 KPI 매출 카드와 동일)
     const actual = allDaily()
-      .filter(d => d.date.startsWith(thisM) && d.date <= todayStr())
+      .filter(d => d.date.startsWith(thisM))
       .reduce((a,d) => a + (d.rev||0), 0);
     const modelTotal = model.predictMonth(thisM);
     const remainingDays = Math.max(0, dim - todayD);
     const modelDailyAvg = modelTotal / dim;
     const remainingForecast = modelDailyAvg * remainingDays;
-    return { total: Math.round(actual + remainingForecast), actual, remainingForecast: Math.round(remainingForecast), modelTotal };
+    // 예상은 이미 확정된 실측보다 작을 수 없음 (남은 날 예측만 더함)
+    const total = Math.max(Math.round(actual + remainingForecast), actual);
+    return { total, actual, remainingForecast: Math.round(remainingForecast), modelTotal };
   }
 
   // ─── KPI ────────────────────────────────────────────────────────
