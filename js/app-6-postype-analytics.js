@@ -118,26 +118,6 @@
   const thisMonth = () => todayStr().slice(0, 7);
   const ageDays   = (firstTs) => (Date.now() - new Date(firstTs.replace(' ','T') + '+09:00').getTime()) / 86400000;
 
-  // ─── Annual Matrix(사이드잡) 연동 ──────────────────────────────
-  // 사용자가 직접 큐레이션한 시리즈별 월 수익 = 가장 신뢰할 만한 미래 예측치.
-  // localStorage 'atelier_series_{year}' 에 시리즈 배열로 저장됨. monthly[월idx].rev 는 원 단위.
-  function matrixMonthRevenue(yearMonth){
-    try {
-      const [y, m] = yearMonth.split('-').map(Number);
-      const raw = localStorage.getItem('atelier_series_' + y);
-      if (!raw) return null;
-      const series = JSON.parse(raw);
-      if (!Array.isArray(series) || !series.length) return null;
-      const idx = m - 1;
-      let totalWon = 0, has = false;
-      series.forEach(s => {
-        const cell = (s.monthly || {})[idx];
-        if (cell && cell.rev){ totalWon += (parseFloat(cell.rev) || 0); has = true; }
-      });
-      return has ? totalWon : null;  // 원 단위, 데이터 없으면 null
-    } catch(e){ return null; }
-  }
-
   function calcPaymentDay(yearMonth){
     const [y, m] = yearMonth.split('-').map(Number);
     let d = new Date(Date.UTC(y, m-1, 10));
@@ -294,20 +274,16 @@
       return Math.round(total);
     }
 
-    // 미래 달 예측: ① Annual Matrix에 사용자가 직접 입력한 그 달 수익이 있으면 그 값 그대로
-    // (사용자가 못박은 최종 예상이라 요일 보정 안 함), ② 없으면 구조 모델 + 요일 구성(주말 수) 보정.
+    // 구조 모델 월 총액(연재 감쇠 + 구작)은 유지하되, 그 달의 요일 구성(주말 수 등)을 반영.
+    // 완전한 달은 요일 분포가 거의 균등 → factor ≈ 1, 주말이 많은 달만 살짝 ↑.
     function predictMonthDow(yearMonth){
-      // 매트릭스는 전체 합산값이므로 전체 보기(__all__)에서만 우선 적용
-      const matrixWon = currentChannel === '__all__' ? matrixMonthRevenue(yearMonth) : null;
-      if (matrixWon != null && matrixWon > 0) return Math.round(matrixWon);
-      // 폴백: 구조 모델 월 총액에 요일 분포 factor (균등월 = 1, 주말 많은 달 > 1)
       const baseTotal = predictMonth(yearMonth);
       const [yy, mm] = yearMonth.split('-').map(Number);
       const dimm = daysInMonth(yearMonth);
       let weightSum = 0;
       for (let day = 1; day <= dimm; day++) weightSum += dowWeight[new Date(yy, mm-1, day).getDay()];
-      const avgW = dowWeight.reduce((a,b) => a+b, 0) / 7;
-      const factor = avgW > 0 ? (weightSum / dimm) / avgW : 1;
+      const avgW = dowWeight.reduce((a,b) => a+b, 0) / 7;          // 7요일 평균 (보통 ≈ 1)
+      const factor = avgW > 0 ? (weightSum / dimm) / avgW : 1;     // 균등월 = 1, 주말 많은 달 > 1
       return Math.round(baseTotal * factor);
     }
 
@@ -325,11 +301,9 @@
       .filter(d => d.date.startsWith(thisM))
       .reduce((a,d) => a + (d.rev||0), 0);
     const modelTotal = model.predictMonth(thisM);
-    // 남은 기간을 '요일 패턴'으로 예측: 일평균(base) × 그날 요일 가중치.
-    // base = max(매트릭스 목표 페이스, 최근 실측 페이스). 실측이 좋으면 실측, 목표가 높으면 목표.
-    const matrixWon = currentChannel === '__all__' ? matrixMonthRevenue(thisM) : null;
-    const pace = model.recentDailyAvg > 0 ? model.recentDailyAvg : (modelTotal / dim);
-    const base = (matrixWon != null && matrixWon > 0) ? Math.max(matrixWon / dim, pace) : pace;
+    // 남은 기간을 '요일 패턴'으로 예측: 현재 페이스(base) × 그날 요일 가중치.
+    // base 가 0이면(데이터 없음) 모델 일평균으로 폴백.
+    const base = model.recentDailyAvg > 0 ? model.recentDailyAvg : (modelTotal / dim);
     const w = model.dowWeight || Array(7).fill(1);
     // 오늘은 진행 중 — 지난 시간은 이미 actual에, '남은 시간'만 예측에 더함
     const dayElapsed = (now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds()) / 86400;
