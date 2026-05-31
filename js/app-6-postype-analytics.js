@@ -174,8 +174,21 @@
   const fetchAllSeries = () => fetchCollection(COLL_SERIES, s => s.channelId && s.name);
 
   // ─── 예측 모델 ──────────────────────────────────────────────────
+  // 예측 모델 튜닝 상수 (조정 가능) ───────────────────────────────
+  //  LONGTAIL: 한 회차가 발행 당월(100%) 이후 매달 버는 비율 (사용자 입력: "서서히 감소")
+  //  NEW_SERIES_*: 8월 시작하는 R시리즈 등 신작 — 막 키우는 채널이라 보수적으로
+  const LONGTAIL      = [1, 0.4, 0.2, 0.1, 0.05];
+  const FREE_EPISODES = 3;        // 물고뜯기 1~3화 무료 (매출 없음)
+  const NEW_SERIES_E0 = 40000;    // R시리즈 회차당 첫달 매출 (보수)
+  const NEW_SERIES_PUB = { '2026-08':4, '2026-09':4, '2026-10':4, '2026-11':4, '2026-12':4 };
+
   function buildForecastModel(){
-    // 합산 모드일 때는 모든 채널의 ongoing 중 첫 번째 (현재는 다락방만 active)
+    const posts    = allPosts();
+    const dailyArr = allDaily();
+    const lf = m => m < LONGTAIL.length ? LONGTAIL[m] : 0.03;
+    const monthDiff = (a, b) => { const [ay,am]=a.split('-').map(Number), [by,bm]=b.split('-').map(Number); return (by-ay)*12+(bm-am); };
+
+    // ── 연재 중 시리즈 (UI 표시 + 발행 스케줄 기준, CHANNELS 기반) ──
     let ongoing = null;
     if (currentChannel === '__all__'){
       const activeOngoings = Object.values(CHANNELS).filter(c => c.ongoing).map(c => c.ongoing);
@@ -185,109 +198,82 @@
       ongoing = channelMeta ? channelMeta.ongoing : null;
     }
 
-    let decay = { d1: 0, d3: 0, d7: 0, d14: 0, d30: 0 };
-    let longtailDailyRate = 0;
-    let allEpisodes = [];
-
-    if (ongoing){
-      const seriesPosts = allPosts().filter(p => p.series === ongoing.name && p.revByAge && p.firstTs);
-      const avgAt = (key, minAge) => {
-        const mature = seriesPosts.filter(p => ageDays(p.firstTs) >= minAge && p.revByAge[key] !== undefined);
-        if (!mature.length) return null;
-        return mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length;
-      };
-      decay = {
-        d1: avgAt('d1', 1) || 0, d3: avgAt('d3', 3) || 0,
-        d7: avgAt('d7', 7) || 0, d14: avgAt('d14', 14) || 0,
-        d30: avgAt('d30', 30) || 0
-      };
-      const matureFor30 = seriesPosts.filter(p => ageDays(p.firstTs) >= 30 && p.revByAge.d30 !== undefined);
-      longtailDailyRate = decay.d30 * 0.012;
-      if (matureFor30.length){
-        const rates = matureFor30.map(p => {
-          const age = ageDays(p.firstTs);
-          const extra = (p.totalRev || 0) - (p.revByAge.d30 || 0);
-          return age > 30 ? extra / (age - 30) : 0;
-        }).filter(r => r > 0);
-        if (rates.length) longtailDailyRate = rates.reduce((a,b) => a+b, 0) / rates.length;
-      }
-      const existing = seriesPosts
-        .map(p => ({ date: p.firstTs.slice(0,10), type: 'existing' }))
-        .sort((a,b) => a.date.localeCompare(b.date));
-      const future = [];
-      for (let ep = ongoing.currentEpisode + 1; ep <= ongoing.totalEpisodes; ep++){
-        const d = new Date(ongoing.lastPublishDate + 'T00:00:00');
-        d.setDate(d.getDate() + (ep - ongoing.currentEpisode) * 7);
-        future.push({ ep, date: d.toISOString().slice(0,10), type: 'future' });
-      }
-      allEpisodes = [...existing, ...future];
-    }
-
-    function revAtAge(t){
-      if (t <= 0) return 0;
-      if (t <= 1) return decay.d1 * t;
-      if (t <= 3) return decay.d1 + (decay.d3 - decay.d1) * (t-1)/2;
-      if (t <= 7) return decay.d3 + (decay.d7 - decay.d3) * (t-3)/4;
-      if (t <= 14) return decay.d7 + (decay.d14 - decay.d7) * (t-7)/7;
-      if (t <= 30) return decay.d14 + (decay.d30 - decay.d14) * (t-14)/16;
-      return decay.d30 + (t-30) * longtailDailyRate;
-    }
-
-    // 구작 + 멤버십 longtail (최근 30일)
-    const recentCutoff = new Date(Date.now() - 30*86400000).toISOString().slice(0,10);
-    const recentDaily = allDaily().filter(d => d.date >= recentCutoff);
-    const recentSum = recentDaily.reduce((a,d) => a + (d.rev||0), 0);
-    const ongoingRecentSum = ongoing ? recentDaily.reduce((a,d) => {
-      if (d.bySeries && d.bySeries[ongoing.name]) return a + d.bySeries[ongoing.name].rev;
-      return a;
-    }, 0) : 0;
-    const oldWorksDailyAvg = Math.max(0, (recentSum - ongoingRecentSum) / Math.max(recentDaily.length, 1));
-    // 현재 페이스 = 최근 30일 전체(연재작+구작) 실측 일평균 — 모델 과소평가 대신 실측 추세 앵커
-    const recentDailyAvg = recentSum / Math.max(recentDaily.length, 1);
-
-    // ─── 요일별 가중치 (최근 8주 실측) — 금요일 발행 후 토/일 피크, 목 바닥 같은 주간 패턴 캡처 ───
+    // ── 요일별 가중치 (최근 8주 실측) — 토/일 피크, 목 바닥 같은 주간 패턴 ──
     const dowCutoff = new Date(Date.now() - 56*86400000).toISOString().slice(0,10);
     const dowSum = Array(7).fill(0), dowCnt = Array(7).fill(0);
-    allDaily().filter(d => d.date >= dowCutoff && d.date <= todayStr()).forEach(d => {
+    dailyArr.filter(d => d.date >= dowCutoff && d.date <= todayStr()).forEach(d => {
       const wd = new Date(d.date + 'T00:00:00').getDay();  // 로컬(KST) 요일
       dowSum[wd] += (d.rev || 0); dowCnt[wd]++;
     });
     const dowAvg = dowSum.map((s, i) => dowCnt[i] ? s / dowCnt[i] : 0);
     const observed = dowAvg.filter((_, i) => dowCnt[i]);
     const dowOverall = observed.length ? observed.reduce((a, b) => a + b, 0) / observed.length : 0;
-    // 가중치: 그 요일 평균 / 전체 평균 (데이터 없는 요일은 1 = 중립)
     const dowWeight = dowAvg.map((a, i) => (dowCnt[i] && dowOverall > 0) ? a / dowOverall : 1);
 
-    function predictMonth(yearMonth){
-      const [y, m] = yearMonth.split('-').map(Number);
-      const monthStart = new Date(Date.UTC(y, m-1, 1));
-      const monthEnd   = new Date(Date.UTC(y, m, 0));
-      let total = 0;
-      allEpisodes.forEach(ep => {
-        const pubDate = new Date(ep.date + 'T00:00:00Z');
-        const ageEnd  = (monthEnd - pubDate) / 86400000 + 1;
-        const ageStart = (monthStart - pubDate) / 86400000;
-        if (ageEnd <= 0) return;
-        total += revAtAge(ageEnd) - revAtAge(Math.max(0, ageStart));
-      });
-      total += oldWorksDailyAvg * daysInMonth(yearMonth);
-      return Math.round(total);
-    }
+    // ── 최근 30일 실측 일평균 (진행 중 달 예측용 현재 페이스) ──
+    const recentCutoff = new Date(Date.now() - 30*86400000).toISOString().slice(0,10);
+    const recentDaily = dailyArr.filter(d => d.date >= recentCutoff);
+    const recentDailyAvg = recentDaily.reduce((a,d)=>a+(d.rev||0),0) / Math.max(recentDaily.length, 1);
 
-    // 구조 모델 월 총액(연재 감쇠 + 구작)은 유지하되, 그 달의 요일 구성(주말 수 등)을 반영.
-    // 완전한 달은 요일 분포가 거의 균등 → factor ≈ 1, 주말이 많은 달만 살짝 ↑.
+    // ─────────────────────────────────────────────────────────────
+    //  누적 회차 모델
+    //  월매출 = 연재작 회차 누적 + 멤버십(고정) + 기타 baseline + 신작(R, 8월~)
+    //  · 회차당 첫 30일 매출 E0 = 본격 유료회차(첫날 매출 큰 회차) 실측 평균
+    //  · 회차가 매주 쌓이고 각 회차는 longtail 만큼 다음 달들에도 매출 → 누적 우상향
+    //  · 연재작은 완결화수(totalEpisodes)에서 신작 중단 → 이후 longtail만 남아 감소
+    // ─────────────────────────────────────────────────────────────
+    let E0 = 90000;
+    const ongoingPub = {};   // 'YYYY-MM' → 그 달 발행 회차 수 (과거 실측 + 미래 매주)
+    if (ongoing){
+      const sp = posts.filter(p => p.series === ongoing.name && p.revByAge && p.firstTs);
+      const core = sp.filter(p => (p.revByAge.d1||0) > 20000 && p.revByAge.d30 != null);  // 본격 유료회차
+      if (core.length) E0 = Math.round(core.reduce((a,p)=>a+(p.revByAge.d30||0),0)/core.length);
+      core.forEach(p => { const m=(p.firstTs||'').slice(0,7); if(m) ongoingPub[m]=(ongoingPub[m]||0)+1; });
+      // 최신 회차번호(제목에서) + 최신 발행일 → 미래 회차를 매주 1화씩 완결까지 추가
+      const epNum = p => { const mm=(p.title||'').match(/(\d+)\s*화/); return mm?parseInt(mm[1]):0; };
+      let maxEp = 0, lastDate = ongoing.lastPublishDate || todayStr();
+      sp.forEach(p => { const n=epNum(p); if(n>maxEp) maxEp=n; const dt=(p.firstTs||'').slice(0,10); if(dt>lastDate) lastDate=dt; });
+      if (!maxEp) maxEp = core.length + FREE_EPISODES;
+      let cur = new Date(lastDate + 'T00:00:00');
+      for (let ep = maxEp + 1; ep <= (ongoing.totalEpisodes||0); ep++){
+        cur = new Date(cur.getTime() + 7*86400000);
+        const m = `${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
+        ongoingPub[m] = (ongoingPub[m]||0) + 1;
+      }
+    }
+    const ongoingRev = ym => { let t=0; for(const pm in ongoingPub){ const md=monthDiff(pm,ym); if(md>=0) t+=ongoingPub[pm]*E0*lf(md); } return t; };
+
+    // 멤버십 (최근 완전월 실측) — 고정 수입
+    const memByMonth = {};
+    dailyArr.forEach(x => { const m=(x.date||'').slice(0,7); if(m) memByMonth[m]=(memByMonth[m]||0)+((x.byType&&x.byType.membership)||0); });
+    const memKeys = Object.keys(memByMonth).sort();
+    const membership = memKeys.length ? memByMonth[memKeys[memKeys.length-1]] : 0;
+
+    // 기타 baseline = 이번 달 실측 − 연재작 모델분 − 멤버십 (다른 작품들 + 구작, 현 수준 유지 가정)
+    const baseM = thisMonth();
+    const baseActual = dailyArr.filter(x=>(x.date||'').startsWith(baseM)).reduce((a,x)=>a+(x.rev||0),0);
+    const otherBaseline = Math.max(0, baseActual - ongoingRev(baseM) - membership);
+
+    // 신작 R시리즈 (8월~, 보수): 회차당 매출 작게, 매주. 전체 보기에서만 합산.
+    const newSeriesPub = (currentChannel === '__all__') ? NEW_SERIES_PUB : {};
+    const newSeriesRev = ym => { let t=0; for(const pm in newSeriesPub){ const md=monthDiff(pm,ym); if(md>=0) t+=newSeriesPub[pm]*NEW_SERIES_E0*lf(md); } return t; };
+
+    function predictMonth(yearMonth){
+      return Math.round(ongoingRev(yearMonth) + membership + otherBaseline + newSeriesRev(yearMonth));
+    }
+    // 월 총액에 그 달 요일 구성(주말 수) 반영 — 균등월 factor≈1, 주말 많은 달만 ±몇 %
     function predictMonthDow(yearMonth){
-      const baseTotal = predictMonth(yearMonth);
+      const base = predictMonth(yearMonth);
       const [yy, mm] = yearMonth.split('-').map(Number);
       const dimm = daysInMonth(yearMonth);
       let weightSum = 0;
       for (let day = 1; day <= dimm; day++) weightSum += dowWeight[new Date(yy, mm-1, day).getDay()];
-      const avgW = dowWeight.reduce((a,b) => a+b, 0) / 7;          // 7요일 평균 (보통 ≈ 1)
-      const factor = avgW > 0 ? (weightSum / dimm) / avgW : 1;     // 균등월 = 1, 주말 많은 달 > 1
-      return Math.round(baseTotal * factor);
+      const avgW = dowWeight.reduce((a,b) => a+b, 0) / 7;
+      const factor = avgW > 0 ? (weightSum / dimm) / avgW : 1;
+      return Math.round(base * factor);
     }
 
-    return { decay, allEpisodes, oldWorksDailyAvg, recentDailyAvg, dowWeight, longtailDailyRate, predictMonth, predictMonthDow, revAtAge, ongoing };
+    return { dowWeight, recentDailyAvg, membership, otherBaseline, E0, ongoingPub, predictMonth, predictMonthDow, ongoing };
   }
 
   function predictThisMonth(model){
