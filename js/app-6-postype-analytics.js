@@ -112,6 +112,7 @@
 
   // ─── 헬퍼 ───────────────────────────────────────────────────────
   const KRW       = n => (n || 0).toLocaleString('ko-KR') + '원';
+  const round100  = n => Math.round((n || 0) / 100) * 100;   // 포인트 단위(100P) 정렬 — 평균값의 1원 단위 노이즈 제거
   const dow       = ['일','월','화','수','목','금','토'];
   const pad       = n => String(n).padStart(2, '0');
   const todayStr  = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };  // 로컬(KST) 기준 — UTC 밀림 방지
@@ -472,8 +473,11 @@
       return;
     }
     const postById = Object.fromEntries(posts.map(p => [p.postId, p]));
+    const epNum = p => { const m = (p.title || '').match(/(\d+)\s*화/); return m ? parseInt(m[1]) : null; };
     wrap.innerHTML = top.map(s => {
-      const ps = (s.posts || []).map(id => postById[id]).filter(Boolean);
+      // 제목의 실제 회차 번호로 정렬 (postId 순서가 회차 순서와 어긋날 수 있음)
+      const ps = (s.posts || []).map(id => postById[id]).filter(Boolean)
+        .sort((a, b) => { const na = epNum(a), nb = epNum(b); return (na != null && nb != null) ? na - nb : 0; });
       if (ps.length < 2) return '';
       const max = Math.max(...ps.map(p => p.totalRev || 0), 1);
       const W = 100, H = 50;
@@ -482,6 +486,9 @@
       const last  = ps[ps.length-1].totalRev || 0;
       const trend = first > 0 ? Math.round((last - first) / first * 100) : 0;
       const tc = trend >= 0 ? 'text-emerald-600' : 'text-rose-600';
+      // 라벨 = 제목에서 뽑은 실제 회차 번호. 무료 회차는 매출 데이터가 없어 빠지므로 첫 유료 회차부터 표시됨.
+      const firstEp = epNum(ps[0]) != null ? epNum(ps[0]) + '화' : '첫 편';
+      const lastEp  = epNum(ps[ps.length-1]) != null ? epNum(ps[ps.length-1]) + '화' : ps.length + '편';
       const circles = ps.map((p, i) => `<circle cx="${(i/Math.max(ps.length-1,1))*W}" cy="${H - ((p.totalRev||0)/max)*(H-4) - 2}" r="1.5" fill="#6366f1"/>`).join('');
       return `<div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
         <div class="flex justify-between items-baseline mb-1.5">
@@ -492,7 +499,7 @@
           <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>${circles}
         </svg>
         <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-          <span>1화 ${KRW(first)}</span><span>${ps.length}화 ${KRW(last)}</span>
+          <span>${firstEp} ${KRW(first)}</span><span>${lastEp} ${KRW(last)}</span>
         </div>
       </div>`;
     }).join('');
@@ -529,7 +536,7 @@
     const avgAt = (key, minAge) => {
       const mature = pool.filter(p => ageDays(p.firstTs) >= minAge && p.revByAge[key] !== undefined);
       if (!mature.length) return null;
-      return { value: Math.round(mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length), n: mature.length };
+      return { value: round100(mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length), n: mature.length };
     };
     const points = [
       { label: 'D1',  ...(avgAt('d1', 1)  || {}) },
@@ -588,12 +595,12 @@
     const maxBT = Math.max(...Object.values(byBk).map(x => x.total));
     const dowRows = dow.map((d, i) => {
       const v = byDow[i];
-      const avg = v.posts ? Math.round(v.total / v.posts) : 0;
+      const avg = v.posts ? round100(v.total / v.posts) : 0;
       const isMax = v.posts > 0 && v.total === maxDT;
       return `<tr ${isMax ? 'class="bg-indigo-50"' : ''}><td class="px-2 py-1.5 ${isMax ? 'text-indigo-700 font-bold' : 'text-slate-700'}">${d}</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${v.posts}편</td><td class="px-2 py-1.5 text-right tabular-nums font-bold ${isMax ? 'text-indigo-600' : 'text-slate-800'}">${KRW(avg)}</td></tr>`;
     }).join('');
     const bkRows = Object.entries(byBk).map(([k, v]) => {
-      const avg = v.posts ? Math.round(v.total / v.posts) : 0;
+      const avg = v.posts ? round100(v.total / v.posts) : 0;
       const isMax = v.posts > 0 && v.total === maxBT;
       return `<tr ${isMax ? 'class="bg-indigo-50"' : ''}><td class="px-2 py-1.5 ${isMax ? 'text-indigo-700 font-bold' : 'text-slate-700'}">${k}</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${v.posts}편</td><td class="px-2 py-1.5 text-right tabular-nums font-bold ${isMax ? 'text-indigo-600' : 'text-slate-800'}">${KRW(avg)}</td></tr>`;
     }).join('');
