@@ -216,6 +216,19 @@
     const recentDaily = dailyArr.filter(d => d.date >= recentCutoff);
     const recentDailyAvg = recentDaily.reduce((a,d)=>a+(d.rev||0),0) / Math.max(recentDaily.length, 1);
 
+    // ── 시간대 매출 분포 (저녁 피크 반영) — 하루 중 특정 시각까지 누적된 '매출' 비율 ──
+    // 진행 중인 오늘의 '남은 시간 예측'을 시계 비율이 아니라 실제 매출 곡선으로 계산하기 위함.
+    const hourlyTotal = Array(24).fill(0);
+    dailyArr.forEach(d => { if (Array.isArray(d.byHour)) d.byHour.forEach((v,h) => hourlyTotal[h] += v||0); });
+    const hourlySum = hourlyTotal.reduce((a,b)=>a+b,0);
+    const elapsedRevFraction = (when) => {
+      if (hourlySum <= 0) return (when.getHours()*3600 + when.getMinutes()*60) / 86400;  // 폴백: 시계 비율
+      let acc = 0; const h = when.getHours();
+      for (let i = 0; i < h; i++) acc += hourlyTotal[i];
+      acc += (hourlyTotal[h] || 0) * (when.getMinutes() / 60);
+      return Math.min(1, acc / hourlySum);
+    };
+
     // ─────────────────────────────────────────────────────────────
     //  누적 회차 모델
     //  월매출 = 연재작 회차 누적 + 멤버십(고정) + 기타 baseline + 신작(R, 8월~)
@@ -274,7 +287,7 @@
       return Math.round(base * factor);
     }
 
-    return { dowWeight, recentDailyAvg, membership, otherBaseline, E0, ongoingPub, predictMonth, predictMonthDow, ongoing };
+    return { dowWeight, recentDailyAvg, elapsedRevFraction, membership, otherBaseline, E0, ongoingPub, predictMonth, predictMonthDow, ongoing };
   }
 
   function predictThisMonth(model){
@@ -292,8 +305,10 @@
     // base 가 0이면(데이터 없음) 모델 일평균으로 폴백.
     const base = model.recentDailyAvg > 0 ? model.recentDailyAvg : (modelTotal / dim);
     const w = model.dowWeight || Array(7).fill(1);
-    // 오늘은 진행 중 — 지난 시간은 이미 actual에, '남은 시간'만 예측에 더함
-    const dayElapsed = (now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds()) / 86400;
+    // 오늘은 진행 중 — 지난 시간은 이미 actual에, '남은 시간'만 예측에 더함.
+    // 시계 비율이 아니라 실제 시간대 매출 분포(저녁 피크)로 '지나간 매출 비율'을 계산.
+    const dayElapsed = model.elapsedRevFraction ? model.elapsedRevFraction(now)
+      : (now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds()) / 86400;
     let remainingForecast = 0;
     for (let day = todayD; day <= dim; day++){
       const wd = new Date(y, mo-1, day).getDay();        // 로컬 요일
