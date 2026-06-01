@@ -2185,29 +2185,40 @@ function ldgRenderCatGrid() {
       var pct = Math.min(totalAmt / budgetTotal * 100, 100);
       var remLabel = remaining >= 0 ? '남음' : '초과';
       var remDisplay = ldgFmtShort(Math.abs(remaining));
-      var aiRecEdit = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
+      var aiRecEdit = ldgAIRecommendForDisplay(catName, _ldgYear, _ldgMonth, budgetTotal);
+      var isIncSav = (catName === '수입' || catName === '저축');
       html += '<div class="pt-2 border-t border-slate-50">';
       // 예산 바 (클릭하면 편집)
       html += '<div class="cursor-pointer hover:bg-indigo-50/20 -mx-5 px-5 py-1.5 transition-colors" onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" title="클릭하여 예산 수정">' +
         '<div class="flex justify-between text-[10px] font-medium mb-1"><span class="text-slate-400">예산 ' + ldgFmtShort(budgetTotal) + ' <span class="text-[9px] text-slate-300">✏️</span></span><span style="color:' + color + ';font-weight:700;font-feature-settings:\'tnum\'">' + remDisplay + ' ' + remLabel + '</span></div>' +
         '<div class="w-full h-1 bg-slate-100 rounded-full"><div class="h-full rounded-full" style="width:' + pct + '%;background:' + color + '"></div></div>' +
       '</div>';
-      // AI 추천 (예산 있어도 표시 - 일관성). 추천 = 0이면 표시 X (이미 목표 초과)
-      if (aiRecEdit && aiRecEdit > 0 && aiRecEdit !== budgetTotal) {
-        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="mt-2 text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="올해 목표(' + ldgFmtShort((ldgLoadGoals()[_ldgYear]||{})['지출']*10000||0) + ') 달성을 위한 카테고리 분배 추천">' +
-          '<span style="font-size: var(--font-size-micro)">🤖</span> 추천 ' + ldgFmtShort(aiRecEdit) + '로 변경' +
+      // 절약 추천 — 지출은 '줄이기'만, 수입/저축은 '목표 페이스'. (늘리라는 지출 추천은 구조적으로 안 나옴)
+      if (aiRecEdit && aiRecEdit > 0) {
+        var saveAmt = budgetTotal - aiRecEdit; // 지출: 양수면 절약 가능액
+        var recLabel = isIncSav
+          ? '🎯 목표 ' + ldgFmtShort(aiRecEdit) + '로'
+          : '💡 ' + ldgFmtShort(aiRecEdit) + '로 줄이기 <span class="text-[9px] text-slate-400">(과거 최저)</span>';
+        var recTitle = isIncSav
+          ? '과거 같은 달 평균 페이스'
+          : ('과거 같은 달 가장 적게 쓴 수준(' + ldgFmt(aiRecEdit) + ')으로 절약 목표 — 약 ' + ldgFmt(Math.max(saveAmt,0)) + ' 절약');
+        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="mt-2 text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="' + recTitle + '">' +
+          '<span style="font-size: var(--font-size-micro)">🤖</span> ' + recLabel +
         '</button>';
       }
       html += '</div>';
     } else {
-      // 예산 미설정 - AI 추천 + 설정 버튼
-      var aiRec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
+      // 예산 미설정 - 절약선 제안 + 설정 버튼
+      var aiRec = ldgAIRecommendForDisplay(catName, _ldgYear, _ldgMonth, null);
       html += '<div class="pt-2 border-t border-slate-50 flex items-center justify-between gap-1">';
       html += '<button onclick="ldgStartEditCatBudget(\'' + catNameEsc + '\')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5">' +
           '<span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">add</span> 예산 설정' +
         '</button>';
       if (aiRec && aiRec > 0) {
-        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="올해 목표(' + ldgFmtShort((ldgLoadGoals()[_ldgYear]||{})['지출']*10000||0) + ') 달성을 위한 카테고리 분배 추천">' +
+        var recTitle2 = (catName === '수입' || catName === '저축')
+          ? '과거 같은 달 평균 페이스'
+          : ('과거 같은 달 가장 적게 쓴 수준(' + ldgFmt(aiRec) + ')을 절약 목표 예산으로 제안');
+        html += '<button onclick="ldgApplyAIRecommendBudget(\'' + catNameEsc + '\')" class="text-[10px] text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-0.5" title="' + recTitle2 + '">' +
           '<span style="font-size: var(--font-size-micro)">🤖</span> 추천 ' + ldgFmtShort(aiRec) + ' 적용' +
         '</button>';
       }
@@ -2314,112 +2325,64 @@ function ldgAISeasonalAnalysis(catName) {
   });
   monthlyAvg = wSum > 0 ? monthlyAvg / wSum : 0;
 
-  return { monthlyAvg: monthlyAvg, monthWeights: monthWeights, dataYears: years };
+  return { monthlyAvg: monthlyAvg, monthWeights: monthWeights, dataYears: years, yearMonthSums: yearMonthSums };
 }
 
-// 추천 예산 (원 단위) - "올해 목표 - 누적 - 사용자 override 커밋 = 가용 풀 → 미커밋 슬롯에 작년 비중으로 분배"
-// 사용자 요구: 사용자가 명시적으로 설정한 월별 override는 "커밋"으로 존중하고 남은 풀만 재분배
+// 특정 카테고리의 "특정 달" 과거 실제 사용액들 (작년·재작년 같은 달, 0 제외)
+function ldgAIHistoryForMonth(catName, month) {
+  var an = ldgAISeasonalAnalysis(catName);
+  var vals = [];
+  Object.keys(an.yearMonthSums || {}).forEach(function(y) {
+    var v = an.yearMonthSums[y][month];
+    if (v && v > 0) vals.push(v);
+  });
+  return vals; // 예: [작년 그달, 재작년 그달] 중 데이터 있는 것만
+}
+
+// ── 추천 예산 = "지출 절약선" (원 단위) ──
+// 철학(2026-06-01 사용자 합의): 추천은 '절약 목표'다. 절대 현재보다 늘리라고 하지 않는다.
+//   • 지출 카테고리: 과거 같은 달 실제 사용액 중 '가장 적게 썼던 달' = 절약선.
+//     - 현재 예산이 절약선보다 높을 때만 "이만큼으로 줄여보세요" 추천 (낮추기).
+//     - 이미 절약선 이하로 쓰고/잡고 있으면 추천 안 띄움(null) — 이미 잘하고 있음.
+//   • 수입/저축: '더 모으는 게 목표'라 과거 평균 페이스를 목표로 제시(예외적으로 상향 OK).
+//   • 과거 데이터 없으면 추측 안 함(null).
 function ldgAIRecommendBudget(catName, year, month) {
-  // 수입/저축은 작년/재작년 같은 달 평균 × 계절 가중치 그대로
+  // 수입/저축: 더 많을수록 좋음 → 과거 같은 달 평균 페이스 (계절 가중)
   if (catName === '수입' || catName === '저축') {
     var an = ldgAISeasonalAnalysis(catName);
     if (!an.monthlyAvg) return null;
     return Math.round(an.monthlyAvg * (an.monthWeights[month] || 1.0));
   }
 
-  // 지출 카테고리: 목표 기반 분배
-  var goals = ldgLoadGoals();
-  var yearGoal = goals[year] || {};
-  var expenseGoalMan = yearGoal['지출'] || 0;
+  // 지출: 과거 같은 달 실제 사용액들 중 최저(=절약선)
+  var hist = ldgAIHistoryForMonth(catName, month);
+  if (hist.length === 0) return null; // 근거 데이터 없음 → 추천 안 함
+  var savingLine = Math.min.apply(null, hist);   // 가장 절약했던 달 수준
+  // 10,000원(만원) 단위로 깔끔하게 내림
+  savingLine = Math.floor(savingLine / 10000) * 10000;
+  if (savingLine <= 0) return null;
+  return savingLine;
+}
 
-  // 목표 미설정 → 폴백: 작년 평균
-  if (!expenseGoalMan) {
-    var anB = ldgAISeasonalAnalysis(catName);
-    if (!anB.monthlyAvg) return null;
-    return Math.round(anB.monthlyAvg * (anB.monthWeights[month] || 1.0));
+// 현재 예산(원) 대비 추천이 '의미있는 절약(낮추기)'인지 판단해서 표시할 추천값 반환.
+// 늘리는 추천은 절대 하지 않으므로, 추천 < 현재예산 일 때만 값을 준다.
+// budgetTotal 미설정(null)이면 절약선 자체를 제안값으로 사용.
+function ldgAIRecommendForDisplay(catName, year, month, budgetTotal) {
+  var rec = ldgAIRecommendBudget(catName, year, month);
+  if (rec == null || rec <= 0) return null;
+  if (catName === '수입' || catName === '저축') {
+    // 수입/저축은 기존처럼 목표 페이스 제시 (현재와 다르면)
+    if (budgetTotal != null && Math.abs(rec - budgetTotal) < 10000) return null;
+    return rec;
   }
-  var expenseGoal = expenseGoalMan * 10000;
-
-  // 올해 누적 지출 (자산이동 제외, 수입/저축 제외)
-  var txs = _ledgerData.transactions || [];
-  var ytdExpense = 0;
-  txs.forEach(function(t) {
-    if (t.excludeFromGoal === true) return;
-    if (!t.date || t.date.substring(0,4) !== String(year)) return;
-    var major = t['대분류'];
-    if (major === '수입' || major === '저축') return;
-    ytdExpense += (t['금액'] || 0);
-  });
-
-  // 사용자 명시적 override 합산 (현재월 + 미래월, 추천 슬롯 catName/month 만 제외)
-  // major-level override 우선, 없으면 sub-level override 합산. default는 커밋 아님(유동).
-  var cats = _ledgerData.categories || {};
-  var budgetsObj = _ledgerData.budgets || {};
-  function overrideFor(c, m) {
-    var mk = String(year) + '-' + (m < 10 ? '0' + m : String(m));
-    var cb = budgetsObj[c];
-    if (cb && cb.overrides && cb.overrides[mk] !== undefined) {
-      return cb.overrides[mk];
-    }
-    var subs = cats[c] || [];
-    var tot = 0, any = false;
-    subs.forEach(function(sub) {
-      var bk = c + '.' + sub;
-      if (budgetsObj[bk] && budgetsObj[bk].overrides && budgetsObj[bk].overrides[mk] !== undefined) {
-        any = true;
-        tot += budgetsObj[bk].overrides[mk];
-      }
-    });
-    return any ? tot : null;
+  // 지출: 현재 예산이 있으면 그보다 '낮을 때만' 추천(=줄이기). 같거나 높으면 안 띄움.
+  if (budgetTotal != null && budgetTotal > 0) {
+    if (rec >= budgetTotal) return null;        // 늘리거나 동일 → 표시 안 함
+    if (budgetTotal - rec < 10000) return null; // 1만원 미만 차이는 노이즈
+    return rec;
   }
-
-  var committedOverrides = 0;
-  var committedSlots = {};  // "cat|month" -> true
-  Object.keys(cats).forEach(function(c) {
-    if (c === '수입' || c === '저축') return;
-    for (var m = month; m <= 12; m++) {
-      if (c === catName && m === month) continue; // 추천 대상 슬롯은 풀에 포함
-      var ov = overrideFor(c, m);
-      if (ov !== null) {
-        committedOverrides += ov;
-        committedSlots[c + '|' + m] = true;
-      }
-    }
-  });
-
-  // 가용 풀 = 목표 - 누적 - 커밋된 override (음수 보호)
-  var available = Math.max(expenseGoal - ytdExpense - committedOverrides, 0);
-  if (available <= 0) return 0;
-
-  // 미커밋 슬롯들 사이에서 작년 패턴 기반 비중 분배
-  var thisAn = ldgAISeasonalAnalysis(catName);
-  if (!thisAn.monthlyAvg) {
-    // 이 카테고리 작년 데이터 없음 → 미커밋 슬롯 수로 균등 분배 (보수적)
-    var uncommittedCount = 0;
-    Object.keys(cats).forEach(function(c) {
-      if (c === '수입' || c === '저축') return;
-      for (var m = month; m <= 12; m++) {
-        if (!committedSlots[c + '|' + m]) uncommittedCount++;
-      }
-    });
-    return uncommittedCount > 0 ? Math.round(available / uncommittedCount) : 0;
-  }
-  var thisSlotWeight = thisAn.monthlyAvg * (thisAn.monthWeights[month] || 1.0);
-
-  // 모든 미커밋 슬롯의 가중치 합 (cat × 미래월 전체)
-  var totalUncommittedWeight = 0;
-  Object.keys(cats).forEach(function(c) {
-    if (c === '수입' || c === '저축') return;
-    var a = ldgAISeasonalAnalysis(c);
-    if (!a.monthlyAvg) return;
-    for (var m = month; m <= 12; m++) {
-      if (committedSlots[c + '|' + m]) continue;
-      totalUncommittedWeight += a.monthlyAvg * (a.monthWeights[m] || 1.0);
-    }
-  });
-  if (totalUncommittedWeight === 0) return Math.round(available * 0.1);
-
-  return Math.max(Math.round(available * thisSlotWeight / totalUncommittedWeight), 0);
+  // 예산 미설정: 절약선을 첫 제안값으로
+  return rec;
 }
 
 // 시즌 가중치 텍스트 (e.g., "+50% 평월 대비")
@@ -2646,7 +2609,18 @@ function ldgSetCatBudgetTo(catName, amountWon) {
 
 // AI 추천 예산을 이번 달에 바로 적용
 function ldgApplyAIRecommendBudget(catName) {
-  var rec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth);
+  // 현재 예산을 반영한 표시값과 동일하게 적용 (칩에 보이는 값 = 적용되는 값)
+  var curBudget = null;
+  try {
+    var cb = (_ledgerData.budgets || {})[catName];
+    if (cb) {
+      var mk = ldgMonthKey();
+      curBudget = (cb.overrides && cb.overrides[mk] !== undefined) ? cb.overrides[mk]
+                : (cb.default || null);
+    }
+  } catch(e) {}
+  var rec = ldgAIRecommendForDisplay(catName, _ldgYear, _ldgMonth, curBudget);
+  if (rec == null) rec = ldgAIRecommendBudget(catName, _ldgYear, _ldgMonth); // 폴백
   if (!rec || rec <= 0) { alert('추천할 데이터가 부족해요.'); return; }
   if (!_ledgerData.budgets) _ledgerData.budgets = {};
   if (!_ledgerData.budgets[catName]) _ledgerData.budgets[catName] = { default: 0, overrides: {} };
