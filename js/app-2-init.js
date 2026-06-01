@@ -3382,16 +3382,19 @@ function ldgToggleExcludeFromGoal(txId) {
 function ldgDuplicateTx(txId) {
   var m = document.getElementById('ldg-tx-menu'); if (m) m.remove();
   var txs = _ledgerData.transactions;
-  var orig = txs.find(function(t) { return t.id === txId; });
+  var orig = (txs || []).find(function(t) { return t.id === txId; });
   if (!orig) return;
-  var now = new Date();
-  var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
   var dup = JSON.parse(JSON.stringify(orig));
   dup.id = 'txn_' + Date.now();
-  dup.date = todayStr;
+  // 복제본은 원본과 같은 날짜 — 보던 달에 바로 보이게. (옛 버그: 오늘 날짜로 박혀 다른 달로 사라짐 → 안 보여서 여러 번 복제 → 중복 쌓임)
+  dup.date = orig.date;
+  // 자동(고정) 연결 끊기 — 안 끊으면 중복제거 로직이 복제본을 삭제해버림
+  delete dup.recurringId;
+  if (dup['비고'] === '자동(고정)') dup['비고'] = '';
   txs.push(dup);
-  ldgSaveTx();
-  ldgRenderMonthly();
+  try { ldgSaveTx(); } catch(e) { console.error('[ldgDuplicateTx] save 실패', e); }
+  try { ldgRenderMonthly(); } catch(e) { console.error('[ldgDuplicateTx] render 실패', e); try { ldgRenderTxTable(); } catch(_e){} }
+  if (typeof ldgFlashToast === 'function') ldgFlashToast('거래가 복제되었습니다', 'success');
 }
 
 function ldgDeleteTx(txId) {
@@ -3404,28 +3407,37 @@ function ldgCancelDelete() {
   document.getElementById('ldg-delete-modal').style.display = 'none';
 }
 function ldgConfirmDelete() {
-  if (_ldgDeleteTarget) {
-    var tx = _ledgerData.transactions.find(function(t) { return t.id === _ldgDeleteTarget; });
-    if (tx && tx.date) {
-      var recId = tx.recurringId;
-      // If no recurringId but is auto-generated, best-effort match to find recurring item
-      if (!recId && tx['비고'] === '자동(고정)') {
-        ldgEnsureRecurringIds();
-        var day = parseInt(tx.date.split('-')[2]) || 0;
-        var items = _ledgerData.recurring || [];
-        var match = items.find(function(r) {
-          return r['대분류'] === tx['대분류'] && r['소분류'] === tx['소분류'] && r.dayOfMonth === day;
-        });
-        if (match) recId = match.recId;
+  try {
+    if (_ldgDeleteTarget) {
+      var tx = _ledgerData.transactions.find(function(t) { return t.id === _ldgDeleteTarget; });
+      // 자동(고정) 거래면 이번 달 재생성 skip 기록 — 단, 이 로직이 throw해도 삭제 자체는 진행되게 try로 격리
+      if (tx && tx.date) {
+        try {
+          var recId = tx.recurringId;
+          if (!recId && tx['비고'] === '자동(고정)') {
+            ldgEnsureRecurringIds();
+            var day = parseInt(tx.date.split('-')[2]) || 0;
+            var items = _ledgerData.recurring || [];
+            var match = items.find(function(r) {
+              return r['대분류'] === tx['대분류'] && r['소분류'] === tx['소분류'] && r.dayOfMonth === day;
+            });
+            if (match) recId = match.recId;
+          }
+          if (recId) ldgAddSkipped(recId, tx.date.substring(0,7));
+        } catch(e) { console.error('[ldgConfirmDelete] recurring skip 처리 실패(무시하고 삭제 진행)', e); }
       }
-      if (recId) ldgAddSkipped(recId, tx.date.substring(0,7));
+      _ledgerData.transactions = _ledgerData.transactions.filter(function(t) { return t.id !== _ldgDeleteTarget; });
+      ldgSaveTx();
     }
-    _ledgerData.transactions = _ledgerData.transactions.filter(function(t) { return t.id !== _ldgDeleteTarget; });
-    ldgSaveTx();
+  } catch(e) {
+    console.error('[ldgConfirmDelete] 삭제 실패', e);
+    if (typeof ldgFlashToast === 'function') ldgFlashToast('삭제 중 오류: ' + (e && e.message ? e.message : e));
   }
   _ldgDeleteTarget = null;
-  document.getElementById('ldg-delete-modal').style.display = 'none';
-  ldgRenderMonthly();
+  var modal = document.getElementById('ldg-delete-modal');
+  if (modal) modal.style.display = 'none';
+  // 무거운 렌더가 throw해도 거래표는 반드시 갱신 (삭제된 줄 즉시 사라지게)
+  try { ldgRenderMonthly(); } catch(e) { console.error('[ldgConfirmDelete] render 실패 — 표만 갱신', e); try { ldgRenderTxTable(); } catch(_e){} }
 }
 
 // ── Filter/Sort toggles ──
