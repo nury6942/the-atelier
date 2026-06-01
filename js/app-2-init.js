@@ -985,17 +985,36 @@ function _groupTxByYear(txs) {
 }
 
 // 트랜잭션 sharded 저장 (연도별 문서)
-async function _saveTxShardedToFirebase() {
+// force=true 면 가드 무시하고 강제 저장 (복구/의도적 대량삭제 때만)
+async function _saveTxShardedToFirebase(force) {
   if (typeof db === 'undefined' || !db) return { saved: 0, error: null };
   var byYear = _groupTxByYear(_ledgerData.transactions);
   var ts = new Date().toISOString();
   var saved = 0;
   var errors = [];
+  var blocked = [];
   for (var year in byYear) {
     try {
+      var newCount = byYear[year].length;
+      // 🔒 안전장치 2: 클라우드보다 거래 수가 급감하면 덮어쓰기 거부 (실수로 적은 데이터가 많은 데이터를 덮는 사고 방지)
+      if (!force) {
+        try {
+          var existing = await db.collection('ledgerTransactions').doc(year).get();
+          if (existing.exists) {
+            var oldCount = (existing.data() || {}).count || ((existing.data() || {}).items || []).length;
+            // 절반 미만으로 줄면서 5건 이상 사라지면 의심 → 차단
+            if (oldCount >= 10 && newCount < oldCount * 0.5 && (oldCount - newCount) >= 5) {
+              blocked.push(year + '(' + oldCount + '→' + newCount + ' 차단됨)');
+              console.error('[LedgerSync] 🚫 ' + year + ' 거래 급감 감지 (' + oldCount + '→' + newCount + ') — 덮어쓰기 차단. 의도적이면 _saveTxShardedToFirebase(true)');
+              if (typeof ldgFlashToast === 'function') ldgFlashToast(year + '년 거래가 급감해 동기화를 막았어요 (' + oldCount + '→' + newCount + '건). 정상이면 설정에서 강제 저장하세요.');
+              continue;
+            }
+          }
+        } catch(ge) { console.warn('[LedgerSync] 가드 확인 실패(' + year + ') — 안전을 위해 저장 진행', ge); }
+      }
       await db.collection('ledgerTransactions').doc(year).set({
         items: byYear[year],
-        count: byYear[year].length,
+        count: newCount,
         updatedAt: ts
       });
       saved++;
@@ -1003,8 +1022,10 @@ async function _saveTxShardedToFirebase() {
       errors.push(year + ': ' + (e.message || e));
     }
   }
-  return { saved: saved, error: errors.length ? errors.join('; ') : null };
+  var errStr = errors.concat(blocked.length ? ['차단: ' + blocked.join(', ')] : []).join('; ');
+  return { saved: saved, error: errStr || null, blocked: blocked };
 }
+window._saveTxShardedToFirebase = _saveTxShardedToFirebase;
 
 // 트랜잭션 sharded 로드 — 옵션으로 특정 연도만 가능
 async function _loadTxShardedFromFirebase(opts) {
@@ -1117,6 +1138,13 @@ window.migrateLedgerToArchive = migrateLedgerToArchive;
 async function saveLedgerToFirebase() {
   try {
     if (typeof db === 'undefined' || !db) return false;
+    // 🔒 안전장치 1: 로그인된 허용 계정이 아니면 절대 클라우드에 쓰지 않음.
+    // (프리뷰/미인증/localhost 환경에서 합성 데이터가 실데이터를 덮는 사고 방지 — 2026-06-01)
+    try {
+      var _u = (typeof auth !== 'undefined' && auth && auth.currentUser) ? auth.currentUser : null;
+      var _ok = _u && _u.email && typeof ALLOWED_EMAIL !== 'undefined' && _u.email.toLowerCase() === ALLOWED_EMAIL;
+      if (!_ok) { console.warn('[LedgerSync] 미인증 — Firebase 저장 차단 (로컬에만 저장됨)'); return false; }
+    } catch(e) { console.warn('[LedgerSync] 인증 확인 실패 — 저장 차단', e); return false; }
     var goalsStored = {};
     try { goalsStored = JSON.parse(localStorage.getItem('atelier_ledger_goals')) || {}; } catch(e) {}
 

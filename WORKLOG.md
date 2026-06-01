@@ -82,8 +82,15 @@
 - 프리뷰 검증: 일반복제 같은달 표시 / 자동복제 dedup생존 / 자동삭제 재생성안됨 모두 통과
 - 참고: 삭제 코드 자체는 일반·자동 모두 격리 환경에서 정상 작동했음. 사용자 "삭제 안 됨"은 복제버그로 생긴 중복행 때문일 가능성 큼
 
+**6. 🚨 동기화 사고 + 재발방지 안전장치 2종 (중요)**
+- 사고: Claude가 the-atelier를 로컬 프리뷰로 띄워 가계부 버그를 재현하며 합성 테스트 데이터로 `ldgSaveTx()` 호출 → 800ms 자동 sync(`saveLedgerToFirebase`)가 **인증 체크 없이** 클라우드 2026 거래문서를 덮어씀. 사용자가 5/17 이후 추가한 ~20건 유실. 복구는 사용자가 포기(재입력 선택).
+- 안전장치 1 (`saveLedgerToFirebase`): 로그인된 ALLOWED_EMAIL 계정이 아니면 Firebase 저장 자체를 차단. 프리뷰/미인증/localhost에서 실데이터 못 덮음.
+- 안전장치 2 (`_saveTxShardedToFirebase`): 연도별 저장 시 클라우드 기존 count보다 절반 미만+5건 이상 급감하면 덮어쓰기 거부 + 토스트 경고. `_saveTxShardedToFirebase(true)`로 강제 가능(복구/의도적 대량삭제용).
+- node --check 문법검증만 하고 push (프리뷰 재현이 사고 원인이므로 프리뷰 검증 금지 — memory feedback_no_preview_shared_firebase 참조)
+
 ### 🎯 다음 할 일
-- 이어서 Money 페이지 후속 작업 (전 세션 v252까지 회차 누적 기반 예측 모델 개편함)
+- 사용자가 5월 가계부 + 어제 캘린더(맥북 입력분) 재입력 예정. 안전장치 덕에 이제 안전하게 입력 가능
+- (선택) 설정 패널에 "강제 동기화" 버튼 — 안전장치2가 정상 대량삭제를 막을 때 사용자가 수동 우회할 UI
 
 ### 💭 메모
 - 누리님 요청: **앞으로 the-atelier 작업은 로컬 preview/mock 검증 단계 생략하고 바로 push** → GitHub Pages에서 직접 확인. 토큰 절약 차원. 메모리에 `feedback_no_local_preview.md`로 저장함
