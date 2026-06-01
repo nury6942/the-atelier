@@ -44,6 +44,9 @@
 - 수정 b: 화면 상단에 빨간 토스트 — "필수 항목을 입력해주세요: 대분류, 결제수단" 식으로 어떤 칸이 빠졌는지 명시
 - 수정 c: `_ldgEditingId`가 ghost 값일 때 update 매치 실패하면 그냥 끝나던 부분 → 새 거래로 폴백
 - 토스트 헬퍼 `ldgFlashToast()` 신규 추가 (인라인, 별도 lib 없이)
+- 3차 원인 (필수 다 채웠는데도 안 됐던 진짜 회귀): 드롭다운 옵션 클릭 시 hidden input (`ldg-in-major/minor/payment`) 동기화가 깨져있었음 → `ldgSaveInput`이 hidden만 읽어서 "비어있다" 판단 → silent fail
+- 수정 d: `selectOpt()`에 `data-field` 기반 hidden input 직접 동기화 추가 (onChange 콜백 의존 X)
+- 수정 e: `ldgSaveInput`에 `_readDD()` 헬퍼 — hidden 비면 드롭다운 `dataset.value`를 fallback. 어느 경로로 망가져도 등록 가능
 
 **2. 거래 내역 테이블 컬럼 너비 재배분**
 - 스크린샷에서 날짜 칸이 좁아 "2026-0"으로 잘려보임 + 세부사항이 과도하게 큼

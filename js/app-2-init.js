@@ -2880,8 +2880,13 @@ function ldgBuildDD(wrapperId, options, onChange) {
   }
   function selectOpt(opt) {
     wrap.dataset.value = opt.value;
+    // Direct sync to hidden input (data-field) — onChange 콜백에 의존하지 않고 항상 보장
+    var fieldId = wrap.dataset.field;
+    if (fieldId) { var hidden = document.getElementById(fieldId); if (hidden) hidden.value = opt.value; }
     trigger.querySelector('.dd-label').textContent = opt.label;
     trigger.querySelector('.dd-label').classList.remove('dd-placeholder');
+    // 입력 누락 강조 클래스 제거 (선택했으니까)
+    wrap.classList.remove('ldg-miss');
     closeDD();
     if (onChange) onChange(opt.value);
   }
@@ -3210,12 +3215,19 @@ function ldgInputKey(e, idx) {
 }
 
 function ldgSaveInput() {
+  // hidden input value를 우선 읽되, 비었으면 드롭다운 dataset.value를 fallback으로 사용
+  // (드롭다운 선택이 hidden과 동기화 안 됐던 회귀 케이스 방어)
+  function _readDD(hiddenId, ddId) {
+    var v = ((document.getElementById(hiddenId) || {}).value || '').trim();
+    if (!v) { var dd = document.getElementById(ddId); if (dd) v = (dd.dataset.value || '').trim(); }
+    return v;
+  }
   var date = (document.getElementById('ldg-in-date') || {}).value || '';
-  var major = (document.getElementById('ldg-in-major') || {}).value || '';
-  var minor = (document.getElementById('ldg-in-minor') || {}).value || '';
+  var major = _readDD('ldg-in-major', 'ldg-dd-major');
+  var minor = _readDD('ldg-in-minor', 'ldg-dd-minor');
   var amtStr = (document.getElementById('ldg-in-amount') || {}).value || '';
   var amount = parseInt(amtStr.replace(/[^0-9]/g, '')) || 0;
-  var payment = (document.getElementById('ldg-in-payment') || {}).value || '';
+  var payment = _readDD('ldg-in-payment', 'ldg-dd-payment');
   var detail = (document.getElementById('ldg-in-detail') || {}).value || '';
   var note = (document.getElementById('ldg-in-note') || {}).value || '';
   // Check required fields — focus first empty one AND flag visually + toast
