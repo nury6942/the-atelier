@@ -108,6 +108,12 @@
 - 검증: 데스크탑 로드는 Firebase 우선(loadLedgerData 1268), Firebase 받으면 localStorage 스킵 → 거래 로컬 미저장이어도 새로고침 정상. 로드 경로의 localStorage setItem은 이미 try/catch
 - 진단 방법: 사용자 콘솔에서 ldgSaveInput 후킹 + saveLedgerToFirebase 직접 호출로 메모리/클라우드 건수 추적 → 저장경로 정상 확인 후 에러로그로 quota 특정 (추측 0, 실측 100%)
 
+**10. 가계부 카테고리 카드 경고박스 제거, 예산 추천 칩만 유지**
+- 사용자 요청: 카드 안 빨강/노랑 경고박스("이미 예산 초과 사용", "고정 지출이라 절감 어려움", "예산 N 상향 적용" 버튼)가 가독성 낮고 실데이터 분석 신뢰 안 감 → 삭제
+- `ldgRenderCatGrid`의 AI 액션 박스 블록(약 65줄) 통째 제거. "🤖 추천 N로 변경" 보라색 칩(ldgApplyAIRecommendBudget)은 유지
+- 상단 인사이트 배너는 이미 죽은코드(insightEl=null), ldgRenderAnnualGoal(목표 진행도 바)은 경고박스 아니라 유지
+- 잔존 헬퍼 ldgSetCatBudgetTo는 호출처 없어졌지만 무해, 남겨둠
+
 ### 🎯 다음 할 일
 - 사용자가 5월 가계부 재입력 — 이제 quota 에러 없이 클라우드 저장됨
 - (선택) 설정 패널에 "강제 동기화" 버튼 — 안전장치2가 정상 대량삭제를 막을 때 사용자가 수동 우회할 UI

@@ -2151,73 +2151,9 @@ function ldgRenderCatGrid() {
     var safeCatId = catName.replace(/[^a-zA-Z0-9가-힣]/g, '_');
     var catNameEsc = catName.replace(/'/g, "\\'");
 
-    // ── AI 액션 박스 (페이스 주의/위험일 때만 카드 안에 직접 표시) ──
-    // 예산 0 (사용자가 명시적으로 "안 쓰겠다"고 설정) 은 액션 박스 표시 X
-    if (pace && hasTx && (pace.status === 'warning' || pace.status === 'danger') && (!hasBudget || budgetTotal > 0)) {
-      var nowAct = new Date();
-      var isCurMoAct = (_ldgYear === nowAct.getFullYear() && _ldgMonth === nowAct.getMonth() + 1);
-      var daysInMAct = new Date(_ldgYear, _ldgMonth, 0).getDate();
-      var dayN = isCurMoAct ? nowAct.getDate() : daysInMAct;
-      var remainingDays = Math.max(daysInMAct - dayN, 0);
-      var isDangerCat = pace.status === 'danger';
-      var isIncSavCat = (catName === '수입' || catName === '저축');
-      var catTypeBox = ldgGetCatType(catName);
-      var bgCls = isDangerCat ? 'background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fecaca;'
-                              : 'background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;';
-      var iconClr = isDangerCat ? '#dc2626' : '#d97706';
-      var over = Math.max(pace.projected - pace.budget, 0);
-
-      html += '<div class="rounded-xl p-2.5 mb-3" style="' + bgCls + '">';
-      if (isIncSavCat) {
-        // 수입/저축: 부족 메시지 (월 단위)
-        var shortfall = Math.max(pace.budget - pace.projected, 0);
-        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 이 페이스면 <b>' + ldgFmt(pace.projected) + '</b> 예상 <span class="font-normal">(목표 ' + ldgFmt(pace.budget) + ')</span></p>';
-        if (shortfall > 0) {
-          html += '<p class="text-[10px] text-slate-600">💡 이번 달 <b>' + ldgFmt(shortfall) + '</b> 부족 — 다음 달부터 보강 필요</p>';
-        }
-      } else if (catTypeBox === 'fixed') {
-        // 고정 지출 카테고리 (주거비/고정비/세금/보험): 이미 발생 또는 자동, 일별 조절 X
-        html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📌 <b>' + ldgFmt(totalAmt) + '</b> 발생' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ' 초과)</span>' : '') + '</p>';
-        html += '<p class="text-[10px] text-slate-600">이 카테고리는 고정 지출이라 이번 달 추가 절감이 어려워요.</p>';
-        if (over > 0) {
-          html += '<p class="text-[10px] text-slate-600 mt-1">💡 <b>유동 카테고리</b>에서 약 <b>' + ldgFmt(over) + '</b> 절감으로 보정 권장 (인사이트 배너 참고)</p>';
-          var roundedUpF = Math.ceil(totalAmt / 10000) * 10000;
-          var btnBgF = isDangerCat ? 'background:#dc2626;color:white;' : 'background:#d97706;color:white;';
-          html += '<button onclick="ldgSetCatBudgetTo(\'' + catNameEsc + '\',' + roundedUpF + ')" class="mt-1.5 text-[10px] font-bold px-2 py-1 rounded-lg hover:opacity-90" style="' + btnBgF + '">예산 ' + ldgFmtShort(roundedUpF) + ' 상향 적용</button>';
-        }
-      } else {
-        // 유동 지출 카테고리: 월 단위로만 조언
-        var remainingBudget = Math.max(pace.budget - totalAmt, 0);
-        var alreadyOver = totalAmt > pace.budget;
-        if (alreadyOver) {
-          // 이미 예산 초과 사용
-          var overNow = totalAmt - pace.budget;
-          html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">⚠️ 이미 예산 <b>+' + ldgFmt(overNow) + '</b> 초과 사용</p>';
-          html += '<p class="text-[10px] text-slate-600">💡 다른 카테고리에서 절감하거나 예산을 상향 조정하세요</p>';
-        } else if (remainingDays > 0) {
-          // 예산 내 사용 중이지만 페이스 빠름
-          html += '<p class="text-[10px] font-bold mb-1" style="color:' + iconClr + ';">📍 현재 페이스로는 월말 <b>' + ldgFmt(pace.projected) + '</b> 예상' + (over > 0 ? ' <span class="font-normal">(예산 +' + ldgFmt(over) + ')</span>' : '') + '</p>';
-          // 페이스 분해 정보 (어떻게 이 숫자가 나왔는지 표시)
-          if (pace.breakdown) {
-            var bd = pace.breakdown;
-            var parts = [];
-            if (bd.autoTotal > 0) parts.push('자동 ' + ldgFmt(bd.autoTotal));
-            if (bd.extrapolatedManual > 0) parts.push('변동 외삽 ' + ldgFmt(bd.extrapolatedManual) + ' (현재 ' + ldgFmt(bd.manualTotal) + ')');
-            if (bd.futureAuto > 0) parts.push('미래자동 ' + ldgFmt(bd.futureAuto));
-            if (parts.length) {
-              html += '<p class="text-[9px] text-slate-400 mt-0.5">= ' + parts.join(' + ') + '</p>';
-            }
-          }
-          html += '<p class="text-[10px] text-slate-600 mt-1">💡 남은 ' + remainingDays + '일 동안 총 <b>' + ldgFmt(remainingBudget) + '</b> 이내로 사용하면 예산 OK</p>';
-        }
-        if (over > 0 && pace.projected > 0) {
-          var roundedUp = Math.ceil(Math.max(pace.projected, totalAmt) / 10000) * 10000;
-          var btnBg = isDangerCat ? 'background:#dc2626;color:white;' : 'background:#d97706;color:white;';
-          html += '<button onclick="ldgSetCatBudgetTo(\'' + catNameEsc + '\',' + roundedUp + ')" class="mt-1.5 text-[10px] font-bold px-2 py-1 rounded-lg hover:opacity-90" style="' + btnBg + '">예산 ' + ldgFmtShort(roundedUp) + ' 상향 적용</button>';
-        }
-      }
-      html += '</div>';
-    }
+    // ── AI 액션 박스(경고/상향 적용) 제거됨 (2026-06-01 사용자 요청) ──
+    // 카드 안 빨강/노랑 경고 박스는 가독성 낮고 실데이터 분석 신뢰도 낮아 삭제.
+    // "🤖 추천 N로 변경" 칩(아래 예산 섹션)만 유지.
     if (_ldgBudgetEditingCat === catName) {
       // 인라인 편집 모드
       var curVal = hasBudget ? Math.round(budgetTotal / 10000) : ''; // 만원 단위
