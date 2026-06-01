@@ -123,6 +123,12 @@
 - 신규 `ldgAIHistoryForMonth`(동월 과거 실사용 배열), `ldgAIRecommendForDisplay`(현재예산 반영, 줄이기일 때만 값). 칩 라벨 "💡 N로 줄이기 (과거 최저)" / 수입·저축 "🎯 목표 N로"
 - 적용 함수도 display 기준으로 통일(칩 값=적용 값). 프리뷰 5케이스 검증(저장함수 미호출, 계산만): 늘리기 모순 케이스 모두 '추천 안뜸' 확인
 
+**12. Nomad Master 12-Month Voyage 레이아웃 — Europe Loop 위로 끌어올림**
+- 사용자 요청: Europe Loop 표가 너무 아래에 있음 → 우측 Total Budget 카드와 같은 높이에서 시작하게
+- 원인: 본문 상단의 Hero Metrics(`atl-header`, Total Budget+Schengen 카드)가 `justify-content:flex-end`로 본문 오른쪽에 큰 자리를 차지해 Europe Loop를 아래로 밀어냄
+- 수정: 본문의 Hero Metrics 블록 제거 → 우측 aside 최상단(Mileage Strategy 앞)으로 이동. atl-metrics는 min-width 280px라 aside 폭에 그대로 맞음. Europe Loop가 제목 바로 아래로 올라옴
+- 순수 레이아웃 변경(데이터/저장 무관), node --check 통과
+
 ### 🎯 다음 할 일
 - 사용자가 5월 가계부 재입력 — 이제 quota 에러 없이 클라우드 저장됨
 - (선택) 예산 추천을 소분류 단위까지 세분화, '왜 이 추천인지' 한 줄 근거 표시

@@ -742,24 +742,8 @@ window.NOMAD_PAGES = (function(){
     // ────── 통일된 페이지 헤더 ──────
     html += pageHeader('12-Month Voyage', 'June 2028 — May 2029', '6개 대륙 · 17개 도시 · 1년 마스터 동선');
 
-    // ────── Hero Metrics ──────
-    html += '<header class="atl-header" style="display:flex;justify-content:flex-end;margin-bottom: var(--space-8)">';
-    html += '<div class="atl-metrics">' +
-      '<div class="atl-metric">' +
-        '<div><p class="atl-metric-label">Total Budget (Est.)</p><p class="atl-metric-value">' + fmtMan(grandTotal) + '</p></div>' +
-        '<span class="material-symbols-outlined atl-metric-icon">payments</span>' +
-      '</div>' +
-      '<div class="atl-metric" style="display:block">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-3)">' +
-          '<p class="atl-metric-label" style="margin:0">Schengen Days Used</p>' +
-          '<p class="atl-metric-value err" style="font-size: var(--font-size-h1-lg)">' + schengenDays + ' / 90</p>' +
-        '</div>' +
-        '<div style="height:2px;background:#ccc3d8;overflow:hidden"><div style="height:100%;width:' + schengenPct + '%;background:' + schengenColor + '"></div></div>' +
-      '</div>' +
-    '</div>';
-    html += '</header>';
-
     // ────── Main grid (content + aside) ──────
+    // (Hero Metrics는 우측 aside 맨 위로 이동 — 본문 Europe Loop가 제목 바로 아래 오도록)
     html += '<div class="atl-grid">';
 
     // ─── Main Itinerary ───
@@ -796,6 +780,19 @@ window.NOMAD_PAGES = (function(){
 
     // ─── Sidebar ───
     html += '<aside class="atl-aside">';
+
+    // Hero Metrics (Total Budget + Schengen) — 본문에서 이동해 우측 최상단에 배치
+    html += '<div class="atl-metric">' +
+        '<div><p class="atl-metric-label">Total Budget (Est.)</p><p class="atl-metric-value">' + fmtMan(grandTotal) + '</p></div>' +
+        '<span class="material-symbols-outlined atl-metric-icon">payments</span>' +
+      '</div>';
+    html += '<div class="atl-metric" style="display:block">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom: var(--space-3)">' +
+          '<p class="atl-metric-label" style="margin:0">Schengen Days Used</p>' +
+          '<p class="atl-metric-value err" style="font-size: var(--font-size-h1-lg)">' + schengenDays + ' / 90</p>' +
+        '</div>' +
+        '<div style="height:2px;background:#ccc3d8;overflow:hidden"><div style="height:100%;width:' + schengenPct + '%;background:' + schengenColor + '"></div></div>' +
+      '</div>';
 
     // Mileage Strategy
     html += '<div class="atl-aside-card">' +
