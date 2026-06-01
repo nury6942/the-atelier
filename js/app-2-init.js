@@ -2762,7 +2762,7 @@ function ldgRenderTxTable() {
     html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
     html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
     html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
-    html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:200px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
+    html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:100px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
     var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';
     html += '<td class="px-3 py-1.5 text-xs text-slate-400 cursor-pointer"' + clk + dbl('비고') + '>' + assetMarker + (t['비고']||'') + '</td>';
     html += '<td class="px-2 py-1.5 relative"><button onclick="ldgShowTxMenu(event,\'' + tid + '\')" class="text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined text-sm">more_horiz</span></button></td>';
@@ -2817,7 +2817,10 @@ function ldgInputRowHTML(tx) {
     '<td class="px-3 py-1"><div class="ldg-custom-dd" id="ldg-dd-payment" data-field="ldg-in-payment" data-value="' + pm.replace(/"/g,'&quot;') + '"></div><input type="hidden" id="ldg-in-payment" value="' + pm.replace(/"/g,'&quot;') + '"/></td>' +
     '<td class="px-3 py-1"><input type="text" id="ldg-in-detail" value="' + detail.replace(/"/g,'&quot;') + '" placeholder="세부사항" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,5)"/></td>' +
     '<td class="px-3 py-1"><input type="text" id="ldg-in-note" value="' + note.replace(/"/g,'&quot;') + '" placeholder="비고" class="text-xs border border-slate-200 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-indigo-300 outline-none" onkeydown="ldgInputKey(event,6)"/></td>' +
-    '<td class="px-2 py-1"><button onclick="ldgCancelInput()" class="text-slate-400 hover:text-red-400"><span class="material-symbols-outlined text-sm">close</span></button></td>' +
+    '<td class="px-2 py-1"><div class="flex items-center justify-center gap-0.5">' +
+      '<button onclick="ldgSaveInput()" class="p-1 rounded-md text-indigo-600 hover:bg-indigo-100 transition-colors" title="저장 (Enter)"><span class="material-symbols-outlined text-base">check</span></button>' +
+      '<button onclick="ldgCancelInput()" class="p-1 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="취소 (Esc)"><span class="material-symbols-outlined text-base">close</span></button>' +
+    '</div></td>' +
     '</tr>';
 }
 
