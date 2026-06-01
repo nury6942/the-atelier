@@ -1298,11 +1298,17 @@ function ldgSaveTx() {
 // ── Month navigation ──
 function ldgPrevMonth() {
   _ldgMonth--; if (_ldgMonth < 1) { _ldgMonth = 12; _ldgYear--; }
-  ldgRenderMonthly();
+  try { ldgRenderMonthly(); } catch(e) {
+    console.error('[ldgPrevMonth] render 실패', e);
+    if (typeof ldgFlashToast === 'function') ldgFlashToast('월 전환 중 오류 — 콘솔 확인');
+  }
 }
 function ldgNextMonth() {
   _ldgMonth++; if (_ldgMonth > 12) { _ldgMonth = 1; _ldgYear++; }
-  ldgRenderMonthly();
+  try { ldgRenderMonthly(); } catch(e) {
+    console.error('[ldgNextMonth] render 실패', e);
+    if (typeof ldgFlashToast === 'function') ldgFlashToast('월 전환 중 오류 — 콘솔 확인');
+  }
 }
 
 // ── Main render ──
@@ -1322,7 +1328,7 @@ function ldgRenderMonthly() {
     console.warn('[ldgRenderMonthly] transactions 없음 — 종료');
     return;
   }
-  ldgApplyRecurringForMonth(_ldgYear, _ldgMonth);
+  // ① 타이틀·prev/next 버튼은 무조건 먼저 갱신 — 아래 단계가 throw해도 사용자는 월 전환이 됐음을 본다
   var el = document.getElementById('ldg-month-title');
   if (el) el.textContent = _ldgYear + ' ' + _ldgMonthNames[_ldgMonth-1];
   var prevM = _ldgMonth - 1, prevY = _ldgYear;
@@ -1335,6 +1341,9 @@ function ldgRenderMonthly() {
   if (nb) nb.textContent = _ldgMonthKo[nextM-1] + ' ›';
 
   function safe(fn) { try { fn(); } catch(e) { console.error('[ldgRender]', fn.name || '?', e); } }
+
+  // ② recurring 적용도 safe — 여기서 throw하면 종전엔 render 전체가 멎었음 (월 전환 안 됨의 진짜 원인)
+  safe(function _applyRecurring(){ ldgApplyRecurringForMonth(_ldgYear, _ldgMonth); });
 
   // ═══ 모바일 간소 모드 — DOM 노드 90% 감소로 iOS Safari 탭 죽음 방지 ═══
   // 사용자가 명시적으로 "전체 보기" 토글하지 않은 한 모바일에선 핵심만 표시

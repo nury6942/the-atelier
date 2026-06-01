@@ -48,6 +48,12 @@
 - 수정 d: `selectOpt()`에 `data-field` 기반 hidden input 직접 동기화 추가 (onChange 콜백 의존 X)
 - 수정 e: `ldgSaveInput`에 `_readDD()` 헬퍼 — hidden 비면 드롭다운 `dataset.value`를 fallback. 어느 경로로 망가져도 등록 가능
 
+**2. Money 월 prev/next 버튼이 안 넘어가던 문제 픽스**
+- 원인: `ldgRenderMonthly()`에서 `ldgApplyRecurringForMonth(_ldgYear, _ldgMonth)`가 `safe()` wrap 밖에 있어서, 거기서 throw하면 title/버튼 텍스트 업데이트 이전에 함수 중단됨 → 사용자는 "5월 눌렀는데 그대로 6월"로 봄
+- 수정 a: title·prev/next 버튼 텍스트 업데이트를 함수 최상단으로 이동 (어느 단계가 깨져도 헤더는 갱신)
+- 수정 b: `ldgApplyRecurringForMonth`도 `safe()`로 감싸기 — 종전 render 전체를 멎게 만들던 단일 실패 지점 제거
+- 수정 c: `ldgPrevMonth`/`ldgNextMonth`에 try/catch + 실패 시 토스트 — silent fail 방지
+
 **2. 거래 내역 테이블 컬럼 너비 재배분**
 - 스크린샷에서 날짜 칸이 좁아 "2026-0"으로 잘려보임 + 세부사항이 과도하게 큼
 - `index.html` `<th>` 8개 너비 재조정 (합계 910px 유지):
