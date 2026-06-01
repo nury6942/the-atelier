@@ -69,6 +69,12 @@
   - **세부사항 200→100** (요청대로 1/2), 비고 130 유지, action 40→60 (저장+취소 두 버튼 수용)
 - `app-2-init.js`의 데이터 행 `<td>` max-width도 200→100으로 동기화
 
+**4. 가계부 카테고리/결제수단 표준 순서 1회 정렬**
+- 누리님 외부 마스터 표(구글시트 등) 기준으로 대분류·소분류·결제수단 순서를 코드에 `LDG_CANON_CATEGORIES`/`LDG_CANON_PAYMENTS`로 박음
+- `ldgApplyCanonicalOrder()` — `loadLedgerData()` 완료 시 1회 실행 (settings._canonOrderV1 플래그로 가드). 비파괴: 표준 순서로 맞추되 사용자가 추가했던 항목은 삭제 안 하고 뒤에 보존
+- 드롭다운·설정표·결제수단 전부 `_ledgerData.categories`/`settings.paymentMethods` 키 순서를 읽으므로 한 번 정렬로 모든 표시 위치 반영
+- 프리뷰 검증: 뒤섞인 데이터+사용자추가항목으로 돌려서 표준순서/비파괴/멱등성 확인
+
 ### 🎯 다음 할 일
 - 이어서 Money 페이지 후속 작업 (전 세션 v252까지 회차 누적 기반 예측 모델 개편함)
 

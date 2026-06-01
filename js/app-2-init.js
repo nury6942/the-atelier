@@ -1258,6 +1258,8 @@ async function loadLedgerData() {
   var catCount = Object.keys(c).length, subCount = 0;
   for (var k in c) subCount += (c[k] || []).length;
   console.log('[DailyLedger] Loaded:\n  - settings: { year: ' + (s.year||'?') + ', paymentMethods: ' + ((s.paymentMethods||[]).length) + '개 }\n  - categories: ' + catCount + ' 대분류, ' + subCount + ' 소분류\n  - budgets: ' + Object.keys(_ledgerData.budgets||{}).length + ' 카테고리\n  - recurring: ' + (_ledgerData.recurring||[]).length + ' 항목\n  - assets-template: ' + Object.keys(_ledgerData.assets||{}).length + ' 분류\n  - transactions: ' + (_ledgerData.transactions||[]).length.toLocaleString() + ' 건');
+  // 표준 카테고리/결제수단 순서 1회 정렬 (외부 마스터 표 기준) — 적용 시 표·드롭다운 모두 반영
+  try { ldgApplyCanonicalOrder(false); } catch(e) { console.error('[canonOrder] 적용 중 오류', e); }
   // 월별 뷰는 항상 오늘 날짜 기준 월로 시작 (자동 고정 거래로 미래 월로 점프하는 문제 방지)
   var _today = new Date();
   _ldgYear = _today.getFullYear();
@@ -4237,6 +4239,55 @@ function ldgRenderMinorCats() {
       '<button onclick="ldgDeleteMinor(' + i + ')" class="text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-sm">close</span></button>' +
       '</div>';
   }).join('');
+}
+
+// ── 표준 카테고리/결제수단 순서 1회성 정렬 (외부 마스터 표 기준, 2026-06) ──
+// 비파괴: 표준 순서대로 맞추되, 사용자가 따로 추가한 항목은 삭제하지 않고 뒤에 보존.
+// settings._canonOrderV1 플래그로 1회만 실행 (이후 사용자의 수동 정렬을 존중).
+var LDG_CANON_CATEGORIES = {
+  '수입': ['월급','부업','상여금','투자','환급','보험','계','연말정산','이자','기타'],
+  '저축': ['계','저축','적금','예금','주택청약','기타'],
+  '주거비': ['대출이자','관리비','가스비','정수기','수리비','기타'],
+  '고정비': ['통신비','할머니용돈','정기구독','기부','기타'],
+  '교통비': ['주유비','주차비','톨비','택시','대중교통','기차','차량유지비','기타'],
+  '식비': ['식재료비','외식비','간식/카페','배달','편의점','기타'],
+  '건강/의료비': ['병원비','약값','영양제','운동','기타'],
+  '여행': ['비행기','숙소','경비','렌트카','준비','기타'],
+  '생필품비': ['주방/욕실','소모품','기타'],
+  '자기계발비': ['영어 강의','도서','기타'],
+  '여가비': ['영화','공연','기타 취미'],
+  '품위유지비': ['의류','미용실','피부','잡화','기타'],
+  '관계비': ['선물','모임','기타'],
+  '경조사비': ['축의금','부의금','명절','기타'],
+  '세금/보험': ['건강보험','미래에셋보험','자동차세','재산세','자동차보험','운전자보험','종합소득세','기타']
+};
+var LDG_CANON_PAYMENTS = ['신한카드','현대카드','체크카드','현금/이체'];
+
+function ldgApplyCanonicalOrder(force) {
+  _ledgerData.settings = _ledgerData.settings || {};
+  if (!force && _ledgerData.settings._canonOrderV1) return false; // 이미 1회 적용됨
+  var cur = _ledgerData.categories || {};
+  var newCats = {};
+  // 1) 표준 순서대로 대분류 + 소분류 배치 (소분류도 표준 우선, 사용자 추가분은 뒤 보존)
+  Object.keys(LDG_CANON_CATEGORIES).forEach(function(major){
+    var merged = [];
+    LDG_CANON_CATEGORIES[major].forEach(function(s){ if (merged.indexOf(s) < 0) merged.push(s); });
+    (Array.isArray(cur[major]) ? cur[major] : []).forEach(function(s){ if (merged.indexOf(s) < 0) merged.push(s); });
+    newCats[major] = merged;
+  });
+  // 2) 표준에 없지만 사용자가 갖고 있던 대분류는 뒤에 그대로 보존 (삭제 X)
+  Object.keys(cur).forEach(function(major){ if (!newCats[major]) newCats[major] = cur[major]; });
+  _ledgerData.categories = newCats;
+  // 3) 결제수단 순서
+  var newPay = [];
+  LDG_CANON_PAYMENTS.forEach(function(p){ if (newPay.indexOf(p) < 0) newPay.push(p); });
+  (_ledgerData.settings.paymentMethods || []).forEach(function(p){ if (newPay.indexOf(p) < 0) newPay.push(p); });
+  _ledgerData.settings.paymentMethods = newPay;
+  _ledgerData.settings._canonOrderV1 = true;
+  try { ldgSaveCats(); } catch(e) { console.error('[canonOrder] ldgSaveCats 실패', e); }
+  try { ldgSaveSettings(); } catch(e) { console.error('[canonOrder] ldgSaveSettings 실패', e); }
+  console.log('[canonOrder] 표준 카테고리 순서 적용 완료');
+  return true;
 }
 
 // Drag reorder - major
