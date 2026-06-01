@@ -3218,27 +3218,39 @@ function ldgSaveInput() {
   var payment = (document.getElementById('ldg-in-payment') || {}).value || '';
   var detail = (document.getElementById('ldg-in-detail') || {}).value || '';
   var note = (document.getElementById('ldg-in-note') || {}).value || '';
-  // Check required fields and focus first empty one
+  // Check required fields — focus first empty one AND flag visually + toast
   var missing = [];
-  if (!date) missing.push('ldg-in-date');
-  if (!major) missing.push('ldg-dd-major');
-  if (!minor) missing.push('ldg-dd-minor');
-  if (!amount) missing.push('ldg-in-amount');
-  if (!payment) missing.push('ldg-dd-payment');
-  if (missing.length) { ldgFocusField(missing[0]); return; }
+  if (!date) missing.push({id:'ldg-in-date', label:'날짜'});
+  if (!major) missing.push({id:'ldg-dd-major', label:'대분류'});
+  if (!minor) missing.push({id:'ldg-dd-minor', label:'소분류'});
+  if (!amount) missing.push({id:'ldg-in-amount', label:'금액'});
+  if (!payment) missing.push({id:'ldg-dd-payment', label:'결제수단'});
+  // Clear any previous miss highlights
+  ['ldg-in-date','ldg-dd-major','ldg-dd-minor','ldg-in-amount','ldg-dd-payment'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('ldg-miss');
+  });
+  if (missing.length) {
+    missing.forEach(function(m){ var el = document.getElementById(m.id); if (el) el.classList.add('ldg-miss'); });
+    ldgFocusField(missing[0].id);
+    ldgFlashToast('필수 항목을 입력해주세요: ' + missing.map(function(m){return m.label;}).join(', '));
+    return;
+  }
   var txs = _ledgerData.transactions;
+  var updated = false;
   if (_ldgEditingId && _ldgEditingId !== 'new') {
-    // Update existing
     for (var i = 0; i < txs.length; i++) {
       if (txs[i].id === _ldgEditingId) {
         txs[i].date = date; txs[i]['대분류'] = major; txs[i]['소분류'] = minor;
         txs[i]['금액'] = amount; txs[i]['결제수단'] = payment;
         txs[i]['세부사항'] = detail; txs[i]['비고'] = note;
+        updated = true;
         break;
       }
     }
-  } else {
-    // New transaction
+  }
+  if (!updated) {
+    // New transaction (also fallback when _ldgEditingId points to a ghost tx)
     var newId = 'txn_' + Date.now();
     txs.push({ id: newId, date: date, '대분류': major, '소분류': minor, '금액': amount, '결제수단': payment, '세부사항': detail, '비고': note });
   }
@@ -3247,6 +3259,19 @@ function ldgSaveInput() {
   _ldgEditingId = null; // Reset to blank input row
   ldgRenderMonthly();
   setTimeout(function() { ldgInitCustomDDs(); }, 30);
+}
+
+// 필수 입력 누락 시 화면 상단에 잠깐 떴다 사라지는 토스트
+function ldgFlashToast(msg) {
+  var existing = document.getElementById('ldg-flash-toast');
+  if (existing) existing.remove();
+  var t = document.createElement('div');
+  t.id = 'ldg-flash-toast';
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#dc2626;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(220,38,38,0.3);z-index:99999;opacity:0;transition:opacity 0.2s';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){ t.style.opacity = '1'; });
+  setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ if (t.parentNode) t.remove(); }, 250); }, 2200);
 }
 
 function ldgCancelInput() {

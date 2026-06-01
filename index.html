@@ -457,6 +457,10 @@
     .ldg-dd-opt:hover{background:#f7f1ff}
     .ldg-dd-opt.selected{background:#5b3cdd;color:#fff}
     .ldg-dd-opt.selected:hover{background:#4f35c5}
+    /* Missing required field highlight (Money 입력 행) */
+    .ldg-miss{box-shadow:0 0 0 2px #dc2626 inset, 0 0 0 4px rgba(220,38,38,0.15)!important;border-color:#dc2626!important;animation:ldgMissShake 0.35s ease}
+    .ldg-miss .ldg-dd-trigger{border-color:#dc2626!important;background:#fef2f2!important}
+    @keyframes ldgMissShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 
     /* Page fade transition */
     .page{animation:fadeIn .18s ease}
