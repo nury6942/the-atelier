@@ -54,6 +54,14 @@
 - 수정 b: `ldgApplyRecurringForMonth`도 `safe()`로 감싸기 — 종전 render 전체를 멎게 만들던 단일 실패 지점 제거
 - 수정 c: `ldgPrevMonth`/`ldgNextMonth`에 try/catch + 실패 시 토스트 — silent fail 방지
 
+**3. 가계부 등록 끝까지 안 되던 문제 — 등록/렌더 분리 + 에러 가시화 ⭐⭐**
+- 격리 프리뷰에서 저장 로직·드롭다운 클릭 경로 모두 정상 작동 확인 → 실제 환경에서 **저장 후 무거운 렌더(차트 등)가 throw하면 ldgSaveInput 전체가 중단돼 표가 안 그려짐** = 사용자는 "등록 안 됨"으로 봄 (실제론 LS엔 저장됐을 수 있음)
+- 방어 ①: `_ledgerData.transactions`가 배열 아니면 빈 배열로 복구 (아카이브/싱크 타이밍 방어)
+- 방어 ②: `ldgSaveTx()`·`ldgRenderMonthly()`를 각각 try/catch. 무거운 렌더 실패해도 `ldgRenderTxTable()` fallback으로 새 줄은 반드시 표시
+- 방어 ③: 성공 시 초록 토스트("거래가 등록되었습니다"), 어느 단계든 throw하면 **에러 메시지를 토스트로 노출** → 다음에 또 안 되면 화면에 원인이 바로 뜸
+- `ldgFlashToast(msg, type)` — success(초록)/error(빨강) 지원
+- 프리뷰 3케이스 검증: 정상 등록 / 필수 누락 / 렌더 강제 throw 모두 의도대로 동작
+
 **2. 거래 내역 테이블 컬럼 너비 재배분**
 - 스크린샷에서 날짜 칸이 좁아 "2026-0"으로 잘려보임 + 세부사항이 과도하게 큼
 - `index.html` `<th>` 8개 너비 재조정 (합계 910px 유지):

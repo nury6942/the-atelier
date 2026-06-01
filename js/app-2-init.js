@@ -3257,7 +3257,10 @@ function ldgSaveInput() {
     ldgFlashToast('필수 항목을 입력해주세요: ' + missing.map(function(m){return m.label;}).join(', '));
     return;
   }
+  // 방어 ①: transactions가 배열이 아니면(아카이브/싱크 타이밍 이슈 등) 빈 배열로 복구
+  if (!Array.isArray(_ledgerData.transactions)) _ledgerData.transactions = [];
   var txs = _ledgerData.transactions;
+  var isNew = false;
   var updated = false;
   if (_ldgEditingId && _ldgEditingId !== 'new') {
     for (var i = 0; i < txs.length; i++) {
@@ -3274,25 +3277,43 @@ function ldgSaveInput() {
     // New transaction (also fallback when _ldgEditingId points to a ghost tx)
     var newId = 'txn_' + Date.now();
     txs.push({ id: newId, date: date, '대분류': major, '소분류': minor, '금액': amount, '결제수단': payment, '세부사항': detail, '비고': note });
+    isNew = true;
   }
   _ldgLastSavedDate = date;
-  ldgSaveTx();
   _ldgEditingId = null; // Reset to blank input row
-  ldgRenderMonthly();
-  setTimeout(function() { ldgInitCustomDDs(); }, 30);
+
+  // 방어 ②: 영속화/렌더를 각각 try/catch — 한 단계가 throw해도 "등록 자체"는 성공 처리하고 표는 갱신
+  try { ldgSaveTx(); }
+  catch (e) { console.error('[ldgSaveInput] ldgSaveTx 실패', e); ldgFlashToast('저장 중 오류: ' + (e && e.message ? e.message : e)); }
+
+  var rendered = false;
+  try { ldgRenderMonthly(); rendered = true; }
+  catch (e) { console.error('[ldgSaveInput] ldgRenderMonthly 실패 — 표만 갱신 시도', e); }
+  if (!rendered) {
+    // 무거운 ldgRenderMonthly가 실패해도 거래 표는 반드시 다시 그려서 새 줄이 보이게
+    try { ldgRenderTxTable(); } catch (e2) { console.error('[ldgSaveInput] ldgRenderTxTable도 실패', e2); ldgFlashToast('화면 갱신 오류 — 새로고침 해보세요'); }
+  }
+
+  // 방어 ③: 성공 피드백 (초록 토스트) — 사용자가 등록됐는지 즉시 알 수 있게
+  if (isNew) ldgFlashToast('거래가 등록되었습니다', 'success');
+
+  setTimeout(function() { try { ldgInitCustomDDs(); } catch(e) {} }, 30);
 }
 
-// 필수 입력 누락 시 화면 상단에 잠깐 떴다 사라지는 토스트
-function ldgFlashToast(msg) {
+// 화면 상단에 잠깐 떴다 사라지는 토스트. type: 'error'(기본, 빨강) | 'success'(초록)
+function ldgFlashToast(msg, type) {
   var existing = document.getElementById('ldg-flash-toast');
   if (existing) existing.remove();
+  var isSuccess = type === 'success';
+  var bg = isSuccess ? '#16a34a' : '#dc2626';
+  var shadow = isSuccess ? 'rgba(22,163,74,0.3)' : 'rgba(220,38,38,0.3)';
   var t = document.createElement('div');
   t.id = 'ldg-flash-toast';
   t.textContent = msg;
-  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#dc2626;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(220,38,38,0.3);z-index:99999;opacity:0;transition:opacity 0.2s';
+  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:' + bg + ';color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px ' + shadow + ';z-index:99999;opacity:0;transition:opacity 0.2s';
   document.body.appendChild(t);
   requestAnimationFrame(function(){ t.style.opacity = '1'; });
-  setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ if (t.parentNode) t.remove(); }, 250); }, 2200);
+  setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ if (t.parentNode) t.remove(); }, 250); }, isSuccess ? 1600 : 2400);
 }
 
 function ldgCancelInput() {
