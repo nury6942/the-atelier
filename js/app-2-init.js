@@ -3059,17 +3059,30 @@ function ldgRowPaste() {
   _ledgerData.transactions = _ledgerData.transactions || [];
   _ledgerData.transactions.push(dup);
   ldgSaveTx();
+
+  // 붙여넣은 행이 현재 보는 달과 다르면 그 달로 이동해야 화면에 보인다
+  if (dup.date && dup.date.length >= 7) {
+    var py = parseInt(dup.date.substring(0,4), 10);
+    var pm = parseInt(dup.date.substring(5,7), 10);
+    if (py && pm && (py !== _ldgYear || pm !== _ldgMonth)) { _ldgYear = py; _ldgMonth = pm; }
+  }
+
+  // ✅ 표를 즉시(동기) 다시 그려서 새 행이 바로 보이게. 무거운 ldgRenderMonthly의 비동기 단계 레이스 회피.
+  try { ldgRenderTxTable(); } catch(e) { console.error('[ldgRowPaste] 표 렌더 실패', e); }
+  // KPI/차트 등 나머지는 뒤이어 갱신 (실패해도 표는 이미 떴음)
+  try { ldgRenderMonthly(); } catch(e) { console.error('[ldgRowPaste] 전체 렌더 실패(표는 이미 갱신됨)', e); }
+
   ldgCellToast('행 붙여넣음: ' + (dup.date||'') + ' · ' + (dup['대분류']||'') + ' › ' + (dup['소분류']||'') + ' (날짜 변경하려면 더블 클릭)');
-  ldgRenderMonthly();
-  // Re-select the new row after re-render
-  setTimeout(function() {
+
+  // 새 행 재선택 — 동기 렌더 직후라 이미 DOM에 있음. rAF로 한 번만 더 보강.
+  requestAnimationFrame(function() {
     var newTr = document.querySelector('tr[data-tx-id="' + dup.id + '"]');
     if (newTr) {
       newTr.classList.add('ldg-row-selected');
       _ldgSelectedRow = { txId: dup.id, tr: newTr };
       newTr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
-  }, 50);
+  });
 }
 
 (function() {
@@ -3092,11 +3105,32 @@ function ldgRowPaste() {
   });
   document.addEventListener('paste', function(e) {
     if (_ldgCellEditingTx) return;
-    if (!_ldgRowClipboard) return;
     var tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-    e.preventDefault();
-    ldgRowPaste();
+    // 가계부 페이지에서 행이 선택돼 있거나 내부 클립보드가 있을 때만 가로챔
+    var onLedger = !!document.getElementById('ldg-tx-body');
+    if (!onLedger) return;
+    // 1) 내부 클립보드가 있으면 그걸로 붙여넣기 (앱 안에서 복사한 경우)
+    if (_ldgRowClipboard) { e.preventDefault(); ldgRowPaste(); return; }
+    // 2) 내부 클립보드가 없어도 OS 클립보드의 탭 구분 텍스트를 파싱해서 붙여넣기 (다른 곳에서 Ctrl+C 한 경우)
+    var text = '';
+    try { text = (e.clipboardData || window.clipboardData).getData('text/plain') || ''; } catch(_) {}
+    if (text && text.indexOf('\t') >= 0) {
+      var parts = text.split('\n')[0].split('\t');
+      if (parts.length >= 4) {
+        e.preventDefault();
+        _ldgRowClipboard = {
+          date: (parts[0]||'').trim(),
+          '대분류': (parts[1]||'').trim(),
+          '소분류': (parts[2]||'').trim(),
+          '금액': parseInt(String(parts[3]||'').replace(/[^0-9]/g,'')) || 0,
+          '결제수단': (parts[4]||'').trim(),
+          '세부사항': (parts[5]||'').trim(),
+          '비고': (parts[6]||'').trim()
+        };
+        ldgRowPaste();
+      }
+    }
   });
   document.addEventListener('keydown', function(e) {
     if (_ldgCellEditingTx) return;

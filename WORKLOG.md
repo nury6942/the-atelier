@@ -88,6 +88,13 @@
 - 안전장치 2 (`_saveTxShardedToFirebase`): 연도별 저장 시 클라우드 기존 count보다 절반 미만+5건 이상 급감하면 덮어쓰기 거부 + 토스트 경고. `_saveTxShardedToFirebase(true)`로 강제 가능(복구/의도적 대량삭제용).
 - node --check 문법검증만 하고 push (프리뷰 재현이 사고 원인이므로 프리뷰 검증 금지 — memory feedback_no_preview_shared_firebase 참조)
 
+**7. 가계부 행 복사→붙여넣기(Ctrl+C/V) 새로고침해야 뜨던 문제 — 진짜 수정**
+- 재현 확정(사용자): 행 클릭 → Ctrl+C → Ctrl+V, 붙여넣은 행이 안 뜨고 새로고침하면 "같은 날짜 자리(중간)"에 나타남
+- 원인: `ldgRowPaste`가 데이터엔 push했지만 화면 갱신을 무거운 `ldgRenderMonthly`(rAF+setTimeout 비동기 단계로 쪼개짐)에 맡기고, 50ms setTimeout 재선택과 레이스 → 표 재정렬/재그리기가 그 순간 안 됨. 새로고침하면 정렬되어 보임
+- 수정: 붙여넣기 직후 `ldgRenderTxTable()`을 **즉시 동기 호출**(새 행 바로 표시), 그 뒤 `ldgRenderMonthly`는 보조로. 재선택은 setTimeout→requestAnimationFrame
+- 추가: 붙여넣은 행이 현재 보는 달과 다르면 그 달로 자동 이동. paste 핸들러가 내부 클립보드 없을 때 OS 클립보드 탭구분 텍스트도 파싱(외부 복사 붙여넣기 지원)
+- node --check 통과, push (프리뷰 검증 안 함 — sync 사고 방지)
+
 ### 🎯 다음 할 일
 - 사용자가 5월 가계부 + 어제 캘린더(맥북 입력분) 재입력 예정. 안전장치 덕에 이제 안전하게 입력 가능
 - (선택) 설정 패널에 "강제 동기화" 버튼 — 안전장치2가 정상 대량삭제를 막을 때 사용자가 수동 우회할 UI
