@@ -1328,8 +1328,24 @@ function ldgGetMonthTx() {
 }
 function ldgIsExpense(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축'; }
 function ldgSaveTx() {
-  ldgBackupBeforeSave('atelier_ledger_transactions');
-  localStorage.setItem('atelier_ledger_transactions', JSON.stringify(_ledgerData.transactions));
+  // ⚠️ 거래가 수천 건이면 localStorage(약 5MB)를 초과해 setItem이 QuotaExceededError를 던진다.
+  // archived 모드에선 Firebase 연도별 문서가 본체이므로 localStorage 통짜 저장은 불필요.
+  // 핵심: 로컬 저장이 실패해도 Firebase 동기화(scheduleLedgerSync)는 무조건 실행되게 분리한다.
+  var isArchived = localStorage.getItem('atelier_ledger_archived') === 'true';
+  if (!isArchived) {
+    // legacy 모드만 로컬 백업 + 통짜 저장 시도 (실패해도 throw하지 않음)
+    try { ldgBackupBeforeSave('atelier_ledger_transactions'); } catch(e) { console.warn('[ldgSaveTx] 백업 실패(무시)', e); }
+    try {
+      localStorage.setItem('atelier_ledger_transactions', JSON.stringify(_ledgerData.transactions));
+    } catch(e) {
+      console.error('[ldgSaveTx] localStorage 저장 실패 — Firebase로만 저장됩니다', e);
+      if (e && e.name === 'QuotaExceededError') {
+        try { localStorage.removeItem('atelier_ledger_transactions'); } catch(_) {}
+      }
+      if (typeof ldgFlashToast === 'function') ldgFlashToast('로컬 저장 한도 초과 — 클라우드에만 저장됩니다 (정상)');
+    }
+  }
+  // Firebase 동기화는 항상 실행 (이게 진짜 본체 저장)
   scheduleLedgerSync();
 }
 

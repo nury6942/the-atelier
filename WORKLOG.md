@@ -101,8 +101,15 @@
 - 수정: ① index.html에서 `window.ALLOWED_EMAIL` 전역 노출 ② 안전장치1을 느슨하게 — `currentUser`가 "아예 없을 때만" 차단(프리뷰/localhost), 로그인 사용자 있으면 통과. 이메일 비교는 ALLOWED_EMAIL을 읽을 수 있을 때만, 불일치 시 차단. 모호하면 통과(정상 저장 우선)
 - 교훈: 데이터 저장 경로에 '차단' 가드 넣을 땐 정상 케이스를 막지 않는지 변수 스코프까지 확인할 것
 
+**9. 🎯 "추가하면 새로고침 시 사라짐"의 진짜 근본 원인 — localStorage QuotaExceededError**
+- 사용자 콘솔에서 실제 에러 포착: `QuotaExceededError: Setting 'atelier_ledger_transactions' exceeded the quota` (거래 2940건 → localStorage ~5MB 초과)
+- 연쇄: `ldgSaveTx`의 `localStorage.setItem`이 throw → 그 다음 줄 `scheduleLedgerSync()`(Firebase 저장) 실행 못 함 → 메모리엔 들어가 화면엔 잠깐 보이지만 클라우드 미반영 → 새로고침 시 옛 데이터 로드 → 추가분 사라짐. **그동안의 등록/복제/붙여넣기 "사라짐" 증상 다수가 이 뿌리**
+- 수정: `ldgSaveTx`에서 archived 모드면 거래 localStorage 통짜 저장 안 함(Firebase 연도별 문서가 본체). legacy 모드만 저장하되 try/catch로 감싸 실패해도 throw 안 함. **localStorage 실패와 무관하게 `scheduleLedgerSync()`는 항상 실행**
+- 검증: 데스크탑 로드는 Firebase 우선(loadLedgerData 1268), Firebase 받으면 localStorage 스킵 → 거래 로컬 미저장이어도 새로고침 정상. 로드 경로의 localStorage setItem은 이미 try/catch
+- 진단 방법: 사용자 콘솔에서 ldgSaveInput 후킹 + saveLedgerToFirebase 직접 호출로 메모리/클라우드 건수 추적 → 저장경로 정상 확인 후 에러로그로 quota 특정 (추측 0, 실측 100%)
+
 ### 🎯 다음 할 일
-- 사용자가 5월 가계부 + 어제 캘린더(맥북 입력분) 재입력 예정. 안전장치 덕에 이제 안전하게 입력 가능
+- 사용자가 5월 가계부 재입력 — 이제 quota 에러 없이 클라우드 저장됨
 - (선택) 설정 패널에 "강제 동기화" 버튼 — 안전장치2가 정상 대량삭제를 막을 때 사용자가 수동 우회할 UI
 
 ### 💭 메모
