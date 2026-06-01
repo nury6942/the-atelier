@@ -5289,6 +5289,7 @@
     window.auth = firebase.auth();
     window.storage = firebase.storage();
     var ALLOWED_EMAIL = 'nury6942@gmail.com';
+    window.ALLOWED_EMAIL = ALLOWED_EMAIL;  // 외부 js(app-2-init 등)에서 안전하게 참조
   </script>
   <!-- Flatpickr custom datepicker -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

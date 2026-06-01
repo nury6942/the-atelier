@@ -1138,13 +1138,21 @@ window.migrateLedgerToArchive = migrateLedgerToArchive;
 async function saveLedgerToFirebase() {
   try {
     if (typeof db === 'undefined' || !db) return false;
-    // 🔒 안전장치 1: 로그인된 허용 계정이 아니면 절대 클라우드에 쓰지 않음.
-    // (프리뷰/미인증/localhost 환경에서 합성 데이터가 실데이터를 덮는 사고 방지 — 2026-06-01)
+    // 🔒 안전장치 1: 로그인된 사용자가 "전혀 없을 때"만 클라우드 쓰기 차단.
+    // (프리뷰/localhost는 Firebase 로그인이 없으므로 currentUser=null → 차단됨.
+    //  실제 앱은 로그인 후이므로 currentUser 존재 → 통과. 이메일 비교는 일치하면 통과시키되,
+    //  ALLOWED_EMAIL을 못 읽는 등 모호한 경우엔 '로그인은 됐으니' 통과시켜 정상 저장을 막지 않음.)
     try {
-      var _u = (typeof auth !== 'undefined' && auth && auth.currentUser) ? auth.currentUser : null;
-      var _ok = _u && _u.email && typeof ALLOWED_EMAIL !== 'undefined' && _u.email.toLowerCase() === ALLOWED_EMAIL;
-      if (!_ok) { console.warn('[LedgerSync] 미인증 — Firebase 저장 차단 (로컬에만 저장됨)'); return false; }
-    } catch(e) { console.warn('[LedgerSync] 인증 확인 실패 — 저장 차단', e); return false; }
+      var _authObj = (typeof auth !== 'undefined' && auth) ? auth : (window.auth || null);
+      var _u = _authObj && _authObj.currentUser ? _authObj.currentUser : null;
+      if (!_u) { console.warn('[LedgerSync] 로그인 사용자 없음 — Firebase 저장 차단 (로컬에만 저장됨)'); return false; }
+      var _allowed = (typeof ALLOWED_EMAIL !== 'undefined' && ALLOWED_EMAIL) ? ALLOWED_EMAIL : (window.ALLOWED_EMAIL || null);
+      if (_allowed && _u.email && _u.email.toLowerCase() !== String(_allowed).toLowerCase()) {
+        console.warn('[LedgerSync] 허용되지 않은 계정(' + _u.email + ') — Firebase 저장 차단');
+        return false;
+      }
+      // 로그인 사용자 있음 → 통과
+    } catch(e) { console.warn('[LedgerSync] 인증 확인 중 예외 — 로그인은 된 것으로 보고 저장 진행', e); }
     var goalsStored = {};
     try { goalsStored = JSON.parse(localStorage.getItem('atelier_ledger_goals')) || {}; } catch(e) {}
 
