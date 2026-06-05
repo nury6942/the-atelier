@@ -189,7 +189,9 @@
     const lf = m => m < LONGTAIL.length ? LONGTAIL[m] : 0.03;
     const monthDiff = (a, b) => { const [ay,am]=a.split('-').map(Number), [by,bm]=b.split('-').map(Number); return (by-ay)*12+(bm-am); };
 
-    // ── 연재 중 시리즈 (UI 표시 + 발행 스케줄 기준, CHANNELS 기반) ──
+    // ── 연재 중 시리즈 (CHANNELS 메타 + 실측 데이터로 동기화) ──
+    // CHANNELS에는 'name'·'totalEpisodes'·'publishWeekday' 같은 정적 메타만 신뢰,
+    // currentEpisode·lastPublishDate는 posts에서 자동 추출 (하드코딩 stale 방지)
     let ongoing = null;
     if (currentChannel === '__all__'){
       const activeOngoings = Object.values(CHANNELS).filter(c => c.ongoing).map(c => c.ongoing);
@@ -197,6 +199,13 @@
     } else {
       const channelMeta = CHANNELS[currentChannel];
       ongoing = channelMeta ? channelMeta.ongoing : null;
+    }
+    if (ongoing){
+      const sp0 = posts.filter(p => p.series === ongoing.name && p.firstTs);
+      const epNum0 = p => { const mm=(p.title||'').match(/(\d+)\s*화/); return mm?parseInt(mm[1]):0; };
+      let maxEp = 0, lastDate = '';
+      sp0.forEach(p => { const n=epNum0(p); if(n>maxEp) maxEp=n; const dt=(p.firstTs||'').slice(0,10); if(dt>lastDate) lastDate=dt; });
+      if (maxEp > 0) ongoing = Object.assign({}, ongoing, { currentEpisode: maxEp, lastPublishDate: lastDate || ongoing.lastPublishDate });
     }
 
     // ── 요일별 가중치 (최근 8주 실측) — 토/일 피크, 목 바닥 같은 주간 패턴 ──
@@ -743,20 +752,46 @@
       return;
     }
     const model = buildForecastModel();
-    const thisM = thisMonth();
-    const thisF = predictThisMonth(model);
-    document.getElementById('postype-forecast-this-total').textContent = KRW(thisF.total);
-    document.getElementById('postype-forecast-this-net').textContent = `실수령 ≈ ${KRW(applyFee(thisF.total))}`;
-    const payT = paymentForMonth(thisM);
-    document.getElementById('postype-forecast-this-sub').textContent = `${monthLabel(thisM)} · 실측 ${KRW(thisF.actual)} + 잔여 ${KRW(thisF.remainingForecast)} · 입금 ${payT.slice(5,7)}/${payT.slice(8,10)}`;
-    document.getElementById('postype-payment-amount').textContent = KRW(applyFee(thisF.total));
+    // 헤더에서 선택한 달 기준으로 카드 표시 (5월 보면 5월 카드, 6월 보면 6월 카드)
+    const selM = currentMonth || thisMonth();
+    const nowM = thisMonth();
+    let selTotal, selSub;
+    if (selM < nowM){
+      // 과거 달: 이미 끝난 달 → 실측이 곧 최종
+      const selActual = allDaily().filter(d => d.date && d.date.startsWith(selM)).reduce((a,d)=>a+(d.rev||0), 0);
+      selTotal = selActual;
+      selSub = `${monthLabel(selM)} · 실측 ${KRW(selActual)} · 완료된 달`;
+    } else if (selM === nowM){
+      // 진행 중 이번 달: 실측 + 남은 시간 예측
+      const f = predictThisMonth(model);
+      selTotal = f.total;
+      selSub = `${monthLabel(selM)} · 실측 ${KRW(f.actual)} + 잔여 ${KRW(f.remainingForecast)}`;
+    } else {
+      // 미래 달
+      selTotal = model.predictMonthDow(selM);
+      selSub = `${monthLabel(selM)} 예측`;
+    }
+    const payT = paymentForMonth(selM);
+    document.getElementById('postype-forecast-this-total').textContent = KRW(selTotal);
+    document.getElementById('postype-forecast-this-net').textContent = `실수령 ≈ ${KRW(applyFee(selTotal))}`;
+    document.getElementById('postype-forecast-this-sub').textContent = `${selSub} · 입금 ${payT.slice(5,7)}/${payT.slice(8,10)}`;
+    document.getElementById('postype-payment-amount').textContent = KRW(applyFee(selTotal));
 
-    const nextM = nextMonth(thisM);
-    const nextTotal = model.predictMonthDow(nextM);
+    // "다음 달 예상" = 선택 달의 다음 달
+    const nextM = nextMonth(selM);
+    let nextTotal;
+    if (nextM < nowM){
+      nextTotal = allDaily().filter(d => d.date && d.date.startsWith(nextM)).reduce((a,d)=>a+(d.rev||0), 0);
+    } else if (nextM === nowM){
+      nextTotal = predictThisMonth(model).total;
+    } else {
+      nextTotal = model.predictMonthDow(nextM);
+    }
     document.getElementById('postype-forecast-next-total').textContent = KRW(nextTotal);
     document.getElementById('postype-forecast-next-net').textContent = `실수령 ≈ ${KRW(applyFee(nextTotal))}`;
     const payN = paymentForMonth(nextM);
-    document.getElementById('postype-forecast-next-sub').textContent = `${monthLabel(nextM)} 예측 · 입금 ${payN.slice(5,7)}/${payN.slice(8,10)}`;
+    const nextLabel = nextM < nowM ? '실측' : (nextM === nowM ? '진행 중' : '예측');
+    document.getElementById('postype-forecast-next-sub').textContent = `${monthLabel(nextM)} ${nextLabel} · 입금 ${payN.slice(5,7)}/${payN.slice(8,10)}`;
 
     const ongoing = model.ongoing;
     if (ongoing){
