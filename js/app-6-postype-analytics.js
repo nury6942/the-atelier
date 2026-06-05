@@ -321,16 +321,22 @@
   }
 
   // ─── KPI ────────────────────────────────────────────────────────
-  function renderKPIs(monthDaily, prevMonthDaily, ytdTotal){
+  function renderKPIs(monthDaily, prevMonthDaily, ytdTotal, yearMonth){
     const sum     = monthDaily.reduce((a,d) => a + (d.rev||0), 0);
     const txCount = monthDaily.reduce((a,d) => a + (d.txCount||0), 0);
     const dayCnt  = monthDaily.length;
     const avg     = dayCnt ? Math.round(sum / dayCnt) : 0;
     let peakDay = null, peakRev = 0;
     monthDaily.forEach(d => { if ((d.rev||0) > peakRev){ peakRev = d.rev; peakDay = d.date; } });
-    const prevSum = prevMonthDaily.reduce((a,d) => a + (d.rev||0), 0);
+    // 전월 대비: 진행 중 달이면 '같은 날짜까지' 잘라서 비교 (1~오늘 vs 1~오늘)
+    // 완료된 과거 달이면 전월 전체와 비교 (기존 동작)
+    const isCurrentMonth = (yearMonth === thisMonth());
+    const cutoffDay = isCurrentMonth ? new Date().getDate() : 99;
+    const prevSliced = prevMonthDaily.filter(d => parseInt(d.date.slice(8,10)) <= cutoffDay);
+    const prevSum = prevSliced.reduce((a,d) => a + (d.rev||0), 0);
     const delta   = sum - prevSum;
     const pct     = prevSum ? ((delta / prevSum) * 100) : null;
+    const prevLabel = isCurrentMonth ? `전월 동기간(1~${cutoffDay}일)` : '전월';
 
     document.getElementById('postype-kpi-month-total').textContent = KRW(sum);
     document.getElementById('postype-kpi-month-sub').textContent   = dayCnt ? `${dayCnt}일 / ${txCount.toLocaleString('ko-KR')}건 · 실수령 ${KRW(applyFee(sum))}` : '데이터 없음';
@@ -358,7 +364,7 @@
       const sign = delta >= 0 ? '+' : '';
       dEl.textContent = `${sign}${pct.toFixed(1)}%`;
       dEl.className = 'text-3xl font-extrabold tracking-tight mt-2 tabular-nums ' + (delta >= 0 ? 'text-emerald-600' : 'text-rose-600');
-      dSub.textContent = `${sign}${KRW(delta)} · 전월 ${KRW(prevSum)}`;
+      dSub.textContent = `${sign}${KRW(delta)} · ${prevLabel} ${KRW(prevSum)}`;
     }
     document.getElementById('postype-ytd-total').textContent = KRW(ytdTotal);
     document.getElementById('postype-ytd-net').textContent   = KRW(applyFee(ytdTotal));
@@ -419,7 +425,7 @@
   }
 
   // ─── 일별 차트 ──────────────────────────────────────────────────
-  function renderDailyChart(monthDaily, yearMonth){
+  function renderDailyChart(monthDaily, prevMonthDaily, yearMonth){
     const wrap  = document.getElementById('postype-daily-chart');
     const empty = document.getElementById('postype-daily-empty');
     const meta  = document.getElementById('postype-chart-meta');
@@ -428,6 +434,9 @@
 
     const dim = daysInMonth(yearMonth);
     const map = Object.fromEntries(monthDaily.map(d => [d.date, d.rev || 0]));
+    // 전월 = 'day(1~31)' 키로 매핑해서 같은 날짜 비교 (28일 등 일수 다른 달 대응)
+    const prevMap = {};
+    (prevMonthDaily || []).forEach(d => { prevMap[parseInt(d.date.slice(8,10))] = d.rev || 0; });
     const today = new Date();
     const lastDay = (yearMonth === thisMonth()) ? today.getDate() : dim;
     const full = [];
@@ -435,21 +444,35 @@
     for (let day = 1; day <= dim; day++){
       const ds = `${y}-${pad(m)}-${pad(day)}`;
       const dt = new Date(Date.UTC(y, m-1, day));
-      full.push({ date: ds, rev: day <= lastDay ? (map[ds] || 0) : null, dow: dow[dt.getUTCDay()], day });
+      full.push({
+        date: ds, day, dow: dow[dt.getUTCDay()],
+        rev: day <= lastDay ? (map[ds] || 0) : null,
+        prevRev: prevMap[day] != null ? prevMap[day] : null
+      });
     }
     const hasAny = full.some(d => d.rev !== null && d.rev > 0);
-    if (!hasAny){
+    const hasPrev = full.some(d => d.prevRev !== null && d.prevRev > 0);
+    if (!hasAny && !hasPrev){
       empty.style.display = 'flex';
       empty.textContent = isFuture(yearMonth) ? '미래 달 데이터 없음 (예측은 위 차트에서)' : '이 달 데이터 없음 · 북마크릿 ytd로 백필';
       wrap.__days = []; meta.textContent = '—';
       return;
     }
     empty.style.display = 'none';
-    meta.textContent = `${dim}일 중 ${full.filter(d => d.rev !== null).length}일 표시`;
+    // 메타 라벨: 같은 날짜까지 누적 합 비교
+    const sumThis = full.filter(d => d.rev !== null).reduce((a,d)=>a+d.rev, 0);
+    const sumPrevTillCutoff = full.filter(d => d.day <= lastDay && d.prevRev !== null).reduce((a,d)=>a+d.prevRev, 0);
+    const isCurr = (yearMonth === thisMonth());
+    const cutoffLbl = isCurr ? `1~${lastDay}일` : '전월 동월';
+    meta.textContent = hasPrev
+      ? `이번달 ${KRW(sumThis)} · 전월 동기간 ${KRW(sumPrevTillCutoff)} (${cutoffLbl})`
+      : `${dim}일 중 ${full.filter(d => d.rev !== null).length}일 표시`;
 
     const W = 800, H = 180, PAD = 10;
-    const max = Math.max(...full.filter(d => d.rev !== null).map(d => d.rev), 1);
+    const allVals = full.flatMap(d => [d.rev, d.prevRev]).filter(v => v !== null);
+    const max = Math.max(...allVals, 1);
     const xs = full.map((d, i) => (i / Math.max(full.length-1, 1)) * W);
+    // 이번달 path
     let path = ''; let inPath = false;
     full.forEach((d, i) => {
       if (d.rev === null){ inPath = false; return; }
@@ -460,10 +483,20 @@
     });
     const filled = full.map((d, i) => d.rev !== null ? [xs[i], H - PAD - (d.rev / max) * (H - PAD*2)] : null).filter(Boolean);
     const area = filled.length ? `M${filled[0][0]},${H} L${filled.map(p => p.join(',')).join(' L')} L${filled[filled.length-1][0]},${H} Z` : '';
+    // 전월 path (점선, 슬레이트)
+    let prevPath = ''; let inPrev = false;
+    full.forEach((d, i) => {
+      if (d.prevRev === null){ inPrev = false; return; }
+      const x = xs[i];
+      const yy = H - PAD - (d.prevRev / max) * (H - PAD*2);
+      prevPath += (inPrev ? ` L${x},${yy}` : `M${x},${yy}`);
+      inPrev = true;
+    });
     wrap.insertAdjacentHTML('afterbegin', `
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block">
         <defs><linearGradient id="postype-area-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.25"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
         ${area ? `<path d="${area}" fill="url(#postype-area-grad)"/>` : ''}
+        ${prevPath ? `<path d="${prevPath}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" stroke-linejoin="round" opacity="0.7"/>` : ''}
         <path d="${path}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
       </svg>`);
     wrap.__days = full;
@@ -806,7 +839,9 @@
       const x    = e.clientX - rect.left;
       const idx  = Math.max(0, Math.min(days.length-1, Math.round(x / rect.width * (days.length-1))));
       const d    = days[idx];
-      const label = d.rev === null ? `${d.day}일 (${d.dow}) · 미래` : `${d.day}일 (${d.dow}) · ${KRW(d.rev)}`;
+      const curStr = d.rev === null ? '미래' : KRW(d.rev);
+      const prevStr = (d.prevRev != null) ? ` · 전월 ${KRW(d.prevRev)}` : '';
+      const label = `${d.day}일 (${d.dow}) · ${curStr}${prevStr}`;
       tt.textContent = label;
       tt.style.display = 'block';
       tt.style.left = Math.min(Math.max(x + 12, 8), rect.width - 200) + 'px';
@@ -872,8 +907,8 @@
     const ytdTotal  = source.filter(d => d.date && d.date.startsWith(thisYear)).reduce((a,d) => a + (d.rev||0), 0);
 
     renderYoYComparison();
-    renderKPIs(monthDaily, prevMd, ytdTotal);
-    renderDailyChart(monthDaily, yearMonth);
+    renderKPIs(monthDaily, prevMd, ytdTotal, yearMonth);
+    renderDailyChart(monthDaily, prevMd, yearMonth);
     renderSeriesCurves();
     populateDecaySeriesSelect();
     renderDecayChart();
