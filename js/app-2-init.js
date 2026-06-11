@@ -1349,6 +1349,20 @@ function ldgSaveTx() {
   scheduleLedgerSync();
 }
 
+// ── 전월비 '같은 날짜까지' 비교용 컷오프 일자 ──
+// 지금 보고 있는 달(_ldgYear/_ldgMonth)이 '진행 중인 현재 달'이면, 전월도 오늘 일자까지만 비교한다.
+// (예: 오늘 6/11 → 5월도 5/11까지만 합산해 공정 비교)
+// 보고 있는 달이 이미 끝난 과거 달이면 컷 없음(0 반환 = 전월 전체 비교).
+// prevY/prevM: 비교 대상(전월)의 연·월. 전월 말일을 넘지 않도록 보정.
+function ldgPrevCompareCutDay(prevY, prevM) {
+  var now = new Date();
+  var isViewingCurrentMonth = (_ldgYear === now.getFullYear() && _ldgMonth === now.getMonth() + 1);
+  if (!isViewingCurrentMonth) return 0; // 과거 달 보는 중 → 전월 전체와 비교
+  var today = now.getDate();
+  var prevMonthLastDay = new Date(prevY, prevM, 0).getDate(); // prevM의 말일 (1-indexed month라 그대로)
+  return Math.min(today, prevMonthLastDay);
+}
+
 // ── Month navigation ──
 function ldgPrevMonth() {
   _ldgMonth--; if (_ldgMonth < 1) { _ldgMonth = 12; _ldgYear--; }
@@ -1666,12 +1680,39 @@ function ldgRenderKPI() {
   });
   var remaining = income - expense - saving;
   var savingRate = income > 0 ? (saving / income * 100) : 0;
+
+  // ── 전월 동일날짜까지(month-to-date) 합계 — 공정 비교용 ──
+  var prevM = _ldgMonth - 1, prevY = _ldgYear;
+  if (prevM < 1) { prevM = 12; prevY--; }
+  var prevKey = prevY + '-' + String(prevM).padStart(2,'0');
+  var prevCutDay = ldgPrevCompareCutDay(prevY, prevM); // 0이면 컷 없음
+  var pInc = 0, pExp = 0, pSav = 0;
+  (_ledgerData.transactions || []).forEach(function(t) {
+    if (!t.date || t.date.substring(0,7) !== prevKey) return;
+    var dd = parseInt(t.date.substring(8,10)) || 0;
+    if (prevCutDay && dd > prevCutDay) return;
+    if (t['대분류'] === '수입') pInc += t['금액'];
+    else if (t['대분류'] === '저축') pSav += t['금액'];
+    else pExp += t['금액'];
+  });
+  // 전월비 한 줄 HTML 생성. goodUp=true면 증가가 좋음(수입/저축), false면 감소가 좋음(지출)
+  function momLine(cur, prev, goodUp) {
+    if (cur === 0 && prev === 0) return '';
+    var diff = cur - prev;
+    var color = diff === 0 ? '#94a3b8' : (((diff > 0) === goodUp) ? '#10b981' : '#ef4444');
+    var arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '─');
+    var label = (_ldgYear === new Date().getFullYear() && _ldgMonth === new Date().getMonth()+1)
+      ? '전월 동일' : '전월비';
+    var txt = diff === 0 ? (label + ' ─') : (arrow + ' ' + label + ' ' + (diff > 0 ? '+' : '') + diff.toLocaleString('ko-KR'));
+    return '<p class="text-[10px] mt-1" style="color:' + color + ';font-feature-settings:\'tnum\'">' + txt + '</p>';
+  }
+
   var strip = document.getElementById('ldg-kpi-strip');
   if (!strip) return;
   strip.innerHTML =
-    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총수입</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(income) + '</p></div>' +
-    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총지출</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(expense) + '</p></div>' +
-    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총저축</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(saving) + '</p></div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총수입</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(income) + '</p>' + momLine(income, pInc, true) + '</div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총지출</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(expense) + '</p>' + momLine(expense, pExp, false) + '</div>' +
+    '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">총저축</p><p class="text-lg font-bold text-slate-900" style="font-feature-settings:\'tnum\'">' + ldgFmt(saving) + '</p>' + momLine(saving, pSav, true) + '</div>' +
     '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"><p class="text-xs text-slate-500 mb-1">잔여현금</p><p class="text-lg font-bold ' + (remaining >= 0 ? 'text-slate-900' : 'text-red-500') + '" style="font-feature-settings:\'tnum\'">' + (remaining >= 0 ? '' : '-') + ldgFmt(remaining) + '</p></div>' +
     '<div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border-l-4 border-l-indigo-500"><p class="text-xs text-slate-500 mb-1">저축률</p><p class="text-lg font-bold text-indigo-600" style="font-feature-settings:\'tnum\'">' + savingRate.toFixed(1) + '%</p></div>';
 }
@@ -2052,13 +2093,17 @@ function ldgRenderCatGrid() {
     if (!catSums[major]) catSums[major] = {};
     catSums[major][minor] = (catSums[major][minor] || 0) + t['금액'];
   });
-  // Previous month totals by 대분류
+  // Previous month totals by 대분류 — 같은 날짜까지만(month-to-date) 공정 비교
   var prevM = _ldgMonth - 1, prevY = _ldgYear;
   if (prevM < 1) { prevM = 12; prevY--; }
   var prevKey = prevY + '-' + String(prevM).padStart(2,'0');
+  // 이번 달이 '진행 중'이면 전월도 오늘 일자까지만 자른다. 과거 달을 보고 있으면 컷 없음(전월 전체).
+  var prevCutDay = ldgPrevCompareCutDay(prevY, prevM);
   var prevCatTotals = {};
   (_ledgerData.transactions || []).forEach(function(t) {
     if (t.date && t.date.substring(0,7) === prevKey) {
+      var dd = parseInt(t.date.substring(8,10)) || 0;
+      if (prevCutDay && dd > prevCutDay) return; // 같은 날짜 이후는 제외
       prevCatTotals[t['대분류']] = (prevCatTotals[t['대분류']] || 0) + t['금액'];
     }
   });
@@ -2135,8 +2180,9 @@ function ldgRenderCatGrid() {
       else if ((diff > 0) === isGoodUp) diffColor = '#10b981';
       else diffColor = '#ef4444';
       var arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '');
-      var diffText = diff === 0 ? '전월비 ─' : arrow + ' 전월비 ' + (diff > 0 ? '+' : '') + diff.toLocaleString('ko-KR');
-      html += '<p class="text-[10px] text-right mt-0.5" style="color:' + diffColor + ';font-feature-settings:\'tnum\'">' + diffText + '</p>';
+      var momLabelCat = (prevCutDay > 0) ? '전월 동일' : '전월비'; // 진행 중인 달이면 같은 날짜까지 비교임을 표시
+      var diffText = diff === 0 ? (momLabelCat + ' ─') : arrow + ' ' + momLabelCat + ' ' + (diff > 0 ? '+' : '') + diff.toLocaleString('ko-KR');
+      html += '<p class="text-[10px] text-right mt-0.5" style="color:' + diffColor + ';font-feature-settings:\'tnum\'" title="' + (prevCutDay > 0 ? ('전월 1일~' + prevCutDay + '일까지 누적과 비교 (진행 중인 달 공정 비교)') : '전월 전체와 비교') + '">' + diffText + '</p>';
     }
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
