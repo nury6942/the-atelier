@@ -17531,9 +17531,10 @@
         // 저축(-): 체크→파킹 이동, 출금(+): 파킹에서 체크로 빼옴
         runningBalance += mIncome - mExpense - mSavings + mWithdraw;
         runningIncome += mIncome; runningExpense += mExpense; runningSavings += mSavings; runningWithdraw += mWithdraw;
-        // 유동자산 = 기초 유동자산 + (수입+이자 - 지출) 누적
-        // 저축(체크→파킹)과 출금(파킹→체크)은 모두 유동 내부 이동이라 총량 영향 없음
-        var liquidAssets = base.cash + (runningIncome - runningExpense);
+        // 유동자산 = 기초 유동자산 + 수입+이자 + 저축 - 지출 - 출금 (누적)
+        // 사용자 모델(2026-06): 저축(파킹통장 모으기)도 '내 유동자산을 늘리는 행위'로 본다.
+        //   수입/저축 → +, 지출 → -, 출금(파킹→체크, 이미 저축으로 잡힌 돈을 도로 빼옴) → - (이중계산 방지)
+        var liquidAssets = base.cash + (runningIncome + runningSavings - runningExpense - runningWithdraw);
         // 비유동자산 = 기초 비유동자산 (고정)
         var nonLiquidAssets = base.savings;
         // 총자산 = 유동 + 비유동
