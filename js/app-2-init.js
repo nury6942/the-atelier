@@ -3633,15 +3633,29 @@ function ldgComputeAutoValues(year) {
 
   ['현금자산','부채'].forEach(function(group) {
     (ad[group] || []).forEach(function(item) {
-      if (!item['자동'] || !item['매핑']) return;
-      var mapTx = txByMonthMap[item['매핑']] || [0,0,0,0,0,0,0,0,0,0,0,0];
+      if (!item['자동']) return;
+      // 매핑 키 결정 (우선순위):
+      //  1) 명시적 매핑이 설정돼 있으면 그대로 (하위호환)
+      //  2) 없으면 자동: 현금자산은 '저축.{항목소분류}', 부채는 '저축.{항목소분류} 상환'
+      //     → 자산 항목 이름을 저축 거래의 소분류와 똑같이 만들면 자동으로 연결됨
+      //     (예: 자산 '파킹통장' ↔ 가계부 저축>파킹통장 거래)
+      var sub = item['소분류'] || '';
+      var key = item['매핑'];
+      if (!key) {
+        key = (group === '부채') ? ('저축.' + sub + ' 상환') : ('저축.' + sub);
+      }
+      var mapTx = txByMonthMap[key] || [0,0,0,0,0,0,0,0,0,0,0,0];
+      // 부채인데 '... 상환' 거래가 없으면 '저축.{소분류}' 로도 한 번 더 시도 (이름 자유도↑)
+      if (group === '부채' && !txByMonthMap[key] && txByMonthMap['저축.' + sub]) {
+        mapTx = txByMonthMap['저축.' + sub];
+      }
       var init = item['초기값'] || 0;
       var bal = init;
       for (var m = 0; m < 12; m++) {
         if (group === '부채') {
-          bal = bal - mapTx[m]; // Subtract repayments
+          bal = bal - mapTx[m]; // 상환액만큼 부채 감소
         } else {
-          bal = bal + mapTx[m]; // Accumulate savings
+          bal = bal + mapTx[m]; // 저축액 누적
         }
         item['월별'][m] = bal;
       }
