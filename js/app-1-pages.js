@@ -5299,15 +5299,37 @@
     ],
   };
 
+  // 트립닷컴 도시 고유번호(cityId) 맵 — 글자만 넘기면 0개 결과가 나와서
+  // 반드시 city=<번호>를 함께 넘겨야 도시가 정확히 잡힌다. (2026-06 검증 완료)
+  var _TRIP_CITY = {
+    'Copenhagen':  { id: 260,   name: 'Copenhagen' },
+    'Aarhus':      { id: 3324,  name: 'Aarhus' },
+    'Skagen':      { id: 38086, name: 'Skagen' },
+    'Malmö':       { id: 3747,  name: 'Malmo' },
+    'Stockholm':   { id: 420,   name: 'Stockholm' },
+    'Montréal':    { id: 759,   name: 'Montreal' },
+    'Charlevoix':  { id: 35546, name: 'Baie-Saint-Paul' }, // Le Germain Charlevoix 실제 위치
+    'Québec City': { id: 3441,  name: 'Quebec City' },
+    'Ottawa':      { id: 760,   name: 'Ottawa' },
+    'Algonquin':   { id: 26623, name: 'Algonquin' },
+    'Toronto':     { id: 461,   name: 'Toronto' },
+  };
+
   function _tripcomSearchUrl(name, city, checkIn, checkOut) {
-    // Trip.com Korea 호텔 검색 — 도시 + 체크인/체크아웃 날짜만 넘김
-    // (searchValue로 호텔명 넘기면 너무 엄격해서 0개 결과 나옴 → 도시 리스트에서 사용자가 찾기)
-    var params = [
-      'cityName=' + encodeURIComponent(city || ''),
-      'searchType=H', // Hotel search
-    ];
-    if (checkIn)  params.push('checkIn='  + checkIn);
-    if (checkOut) params.push('checkOut=' + checkOut);
+    // Trip.com Korea 호텔 검색 — city=<번호> + 소문자 checkin/checkout 필수.
+    // (cityName 글자만으론 도시 매칭 실패 → 0개. checkIn 대문자도 무시됨)
+    var info = _TRIP_CITY[city];
+    var params = [];
+    if (info) {
+      params.push('city=' + info.id);
+      params.push('cityName=' + encodeURIComponent(info.name));
+    } else {
+      // 맵에 없는 새 도시 — 글자만 넘김 (작은 도시면 0개 가능, 맵에 추가 필요)
+      params.push('cityName=' + encodeURIComponent(city || ''));
+    }
+    if (checkIn)  params.push('checkin='  + checkIn);
+    if (checkOut) params.push('checkout=' + checkOut);
+    params.push('adult=2', 'children=0');
     params.push('allianceid=14887', 'sid=1621818');
     return 'https://kr.trip.com/hotels/list?' + params.join('&');
   }
