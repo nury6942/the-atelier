@@ -5390,6 +5390,86 @@
     return 'https://www.google.com/search?q=' + q;
   }
 
+  // 도시 간 이동 큐레이션 (조사 2026-06) — 추천 루트 + Rome2Rio 실시간 비교 버튼.
+  // 가격·시각표는 시간 지나면 옛날 값 될 수 있어 Rome2Rio 버튼으로 라이브 확인 권장.
+  var _TRANSIT_RECS = {
+    '2027 덴마크&스웨덴': [
+      { fromKr:'코펜하겐', from:'Copenhagen', toKr:'오르후스', to:'Aarhus',
+        mode:'🚆 기차 (DSB 인터시티)', dur:'약 2시간 50분', price:'€30~60 (미리 €15~)',
+        detail:'København H → Aarhus H 직통. 매시간, 하루 약 27편. 환승 없음.' },
+      { fromKr:'오르후스', from:'Aarhus', toKr:'스카겐', to:'Skagen',
+        mode:'🚆 기차 (환승 1회)', dur:'약 3시간 30분~4시간', price:'€25~40',
+        detail:'Aarhus H → Aalborg/Frederikshavn → Skagen. Frederikshavn에서 Nordjyske 지역열차 환승(37분).' },
+      { fromKr:'스카겐', from:'Skagen', toKr:'말뫼', to:'Malmö',
+        mode:'🚆 장거리 기차 / ✈️ 고려', dur:'기차 약 8시간 / 차 5시간 30분', price:'€65~110',
+        detail:'직통 없음 — 최장 구간. Aalborg·코펜하겐 경유. 일정 빡빡하면 Aalborg(AAL)발 항공편 + 외레순 기차 조합 고려.' },
+      { fromKr:'말뫼', from:'Malmö', toKr:'스톡홀름', to:'Stockholm',
+        mode:'🚆 SJ 고속열차 (Snabbtåg)', dur:'약 4시간 25분', price:'€20~60 (평균 €49)',
+        detail:'Malmö C → Stockholm C 직통. 매시간, 하루 14편. 미리 예약할수록 저렴.' },
+    ],
+    '2027 캐나다 여행': [
+      { fromKr:'몬트리올', from:'Montreal', toKr:'샤를부아', to:'Baie-Saint-Paul',
+        mode:'🚌 Intercar 버스 / 🚗 렌터카', dur:'버스 약 5시간 / 차 4시간 15분', price:'버스 $30~',
+        detail:'Intercar 시외버스 직통 1일 1회 (퀘벡시티 경유). 346km. 샤를부아 일대는 차가 편함.' },
+      { fromKr:'샤를부아', from:'Baie-Saint-Paul', toKr:'퀘벡 시티', to:'Quebec City',
+        mode:'🚌 Intercar 버스 / 🚗 렌터카', dur:'약 1시간 20~45분', price:'$16~20',
+        detail:'Intercar 직통 1일 1회. 관광열차 Train de Charlevoix도 운행(경치 좋음). 91km.' },
+      { fromKr:'퀘벡 시티', from:'Quebec City', toKr:'오타와', to:'Ottawa',
+        mode:'🚆 VIA Rail 기차', dur:'약 5시간 10분~5시간 50분', price:'$40~ (평균 $76)',
+        detail:'VIA Rail (몬트리올 경유), 하루 여러 편. 375km. 기차가 버스보다 빠르고 편함.' },
+      { fromKr:'오타와', from:'Ottawa', toKr:'알곤퀸', to:'Algonquin Park',
+        mode:'🚗 렌터카 (사실상 필수)', dur:'약 3시간 40분', price:'$35~60 (연료)',
+        detail:'대중교통 거의 없음 (Parkbus 비정규). 공원 내 이동에도 차 필요 → 렌터카 권장.' },
+      { fromKr:'알곤퀸', from:'Algonquin Park', toKr:'토론토', to:'Toronto',
+        mode:'🚗 렌터카 / 🚌 Parkbus(주말)', dur:'차 3시간 40분 / 버스 4시간 25분', price:'차 $40~60 · 버스 $109',
+        detail:'Parkbus 주말 1일 1회 (West Gate ↔ 토론토 34 Asquith). 286km. 차가 유연.' },
+    ],
+  };
+
+  function _rome2rioUrl(from, to) {
+    return 'https://www.rome2rio.com/s/' + encodeURIComponent(from) + '/' + encodeURIComponent(to);
+  }
+
+  function _renderTransitRecs() {
+    var el = document.getElementById('journey-transit-recs');
+    if (!el) return;
+    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
+    if (!trip) { el.style.display = 'none'; return; }
+    var legs = _TRANSIT_RECS[trip.name];
+    if (!legs || !legs.length) { el.style.display = 'none'; return; }
+
+    var html = '<div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+      '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
+        '<span class="material-symbols-outlined" style="color:#4f46e5;font-size: var(--font-size-h1)">route</span>' +
+        '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#3730a3;letter-spacing:-0.01em;margin:0">도시 간 이동 큐레이션</h4>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#6366f1;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
+      '</div>' +
+      '<p style="font-size: var(--font-size-micro);color:#4f46e5;margin:0 0 16px;font-style:italic">추천 루트 + 소요시간·대략 가격. "Rome2Rio" 버튼으로 실시간 시각표·전체 옵션 비교</p>';
+
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap: var(--space-2-5)">';
+    legs.forEach(function(leg){
+      var r2r = _rome2rioUrl(leg.from, leg.to);
+      html += '<div style="background:#fff;border:1px solid #c7d2fe;border-radius: var(--radius-lg);padding:13px 14px 11px">' +
+        '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-2);flex-wrap:wrap">' +
+          '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + leg.fromKr + '</span>' +
+          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body);color:#818cf8">arrow_forward</span>' +
+          '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + leg.toKr + '</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
+          '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#4338ca;background:rgba(99,102,241,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + leg.mode + '</span>' +
+          '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + leg.dur + '</span>' +
+          '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
+          '<span style="font-size: var(--font-size-tiny);color:#64748b">' + leg.price + '</span>' +
+        '</div>' +
+        '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + leg.detail + '</p>' +
+        '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
+      '</div>';
+    });
+    html += '</div></div>';
+    el.innerHTML = html;
+    el.style.display = '';
+  }
+
   function _renderLodgingRecs() {
     var el = document.getElementById('journey-lodging-recs');
     if (!el) return;
@@ -5454,7 +5534,8 @@
   }
 
   function renderJourneyLodging() {
-    // 추천 숙소 섹션 (큐레이션 있는 trip만 표시)
+    // 도시 간 이동 + 추천 숙소 섹션 (큐레이션 있는 trip만 표시)
+    _renderTransitRecs();
     _renderLodgingRecs();
 
     var container = document.getElementById('journey-lodging-list');

@@ -54,16 +54,27 @@
 - 미등록 3곳(Moxy Malmö · Hôtel La Ferme · Bartlett Lodge)은 도시 목록으로 자동 폴백
 - 검증: Manon Les Suites / Brøndums / Miss Clara / Killarney / Auberge des 3 Canards 등 상세 페이지 + 날짜 정상
 
+**Travel — "도시 간 이동 큐레이션" 블록 신설 (Rome2Rio) ⭐⭐**
+- 누리 요청: 도시→도시 어떤 기차/버스 타는지 (GPT는 Rome2Rio로 해줌)
+- 일정 화면 상단(호텔 큐레이션 위)에 새 블록. `_TRANSIT_RECS` 데이터 + `_renderTransitRecs()` + `_rome2rioUrl()`
+- 각 구간 카드: 출발→도착, 추천 수단·소요시간·대략 가격·한줄설명 + "Rome2Rio 실시간 비교" 버튼 (rome2rio.com/s/{from}/{to})
+- 9개 구간 조사: 코펜→오르후스(DSB 2:50), 오르후스→스카겐(환승), 스카겐→말뫼(최장 8h), 말뫼→스톡홀름(SJ 4:25) / 몬트리올→샤를부아→퀘벡→오타와→알곤퀸→토론토
+- index.html에 `journey-transit-recs` div 추가, renderJourneyLodging()에서 호출
+
 ### 🎯 다음 할 일
 - (선택) 카드의 고정 가격이 라이브와 차이 큼 (예: Aarhus 카드 ₩14~18만 vs 실제 ₩19~39만). 라이브 가격 끌어오려면 API 작업 필요 — 추후 검토
 - (선택) 미등록 3곳(Moxy Malmö·La Ferme·Bartlett Lodge) 트립닷컴 재등록되면 _TRIP_HOTEL에 추가
+- (선택) 교통편: 당일치기 구간(코펜↔헬싱외르↔Humlebæk) + 공항→호텔도 _TRANSIT_RECS에 추가 가능
+- (검토) GPT처럼 Rome2Rio 카드를 앱에 직접 렌더하려면 Rome2Rio 유료 API 필요 — 현재는 딥링크 버튼 방식
 
 ### 🚧 막힌 점 / 결정 보류
 - `_TRIP_CITY`/`_TRIP_HOTEL` 맵에 없는 새 도시·호텔 추가 시 각각 cityId/hotelId를 맵에 한 줄 넣어야 함 (없으면 도시 목록/글자검색으로 폴백)
+- Rome2Rio는 앱 내 임베드 = 유료 API. 무료로는 딥링크 버튼이 최선 (GPT는 공식 Rome2Rio 커넥터라 챗에 카드 렌더 가능)
 
 ### 💭 메모
 - "트립닷컴 유지 + 도시번호 추가" 방식 선택 (어필리에이트 살리려고). 구글호텔/부킹닷컴 교체안도 후보였으나 보류
 - cityId는 트립닷컴 SEO URL 패턴 `{도시}-hotels-list-{번호}/`의 끝 숫자에서 확보
+- 교통편 가격/시각표는 옛날 값 될 수 있어 인라인은 대략치 + Rome2Rio 버튼으로 라이브 확인 구조
 
 ---
 
