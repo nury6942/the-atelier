@@ -5315,23 +5315,73 @@
     'Toronto':     { id: 461,   name: 'Toronto' },
   };
 
+  // 추천 호텔별 트립닷컴 고유번호(hotelId) — 있으면 그 호텔 상세 페이지로 직행.
+  // 없는 호텔(예: Moxy Malmö는 트립닷컴 미등록)은 도시 목록으로 폴백. (2026-06 검증)
+  var _TRIP_HOTEL = {
+    // 코펜하겐
+    'Manon Les Suites by Guldsmeden': 744878,
+    'Hotel SP34 by Brøchner': 2215652,
+    'CitizenM Copenhagen Radhuspladsen': 21868597,
+    // 오르후스
+    'Hotel Oasia Aarhus': 2546737,
+    'CABINN Aarhus Hotel': 2134940,
+    // 스카겐
+    'Color Hotel Skagen': 3119125,
+    'Skagen Strand Holiday Center': 21858369,
+    'Brøndums Hotel': 9864128,
+    // 말뫼
+    'Story Hotel Studio Malmö': 12144330,
+    'Mayfair Hotel Tunneln': 2195519,
+    // 스톡홀름
+    'Miss Clara by Nobis': 3180065,
+    'Hotel With Urban Deli': 9034508,
+    'Story Hotel Riddargatan': 3792860,
+    // 몬트리올
+    'Hotel Le Germain Montréal': 2166294,
+    'Hotel William Gray': 9107140,
+    'Hôtel Birks Montréal': 21850544,
+    // 샤를부아 (Hôtel La Ferme는 트립닷컴 미등록 → 도시 목록 폴백)
+    'Hôtel & Spa Le Germain Charlevoix': 3173604,
+    'Auberge des 3 Canards': 3107654,
+    // 퀘벡 시티
+    'Hôtel Le Germain Québec': 3453244,
+    'Hôtel 71': 3106884,
+    'Fairmont Le Château Frontenac': 2195315,
+    // 오타와
+    'Andaz Ottawa ByWard Market': 8991881,
+    'The Metcalfe Hotel': 2204789,
+    'Lord Elgin Hotel': 2194999,
+    // 알곤퀸 (Bartlett Lodge는 트립닷컴 미등록 → 도시 목록 폴백)
+    'Killarney Lodge on Lake of Two Rivers': 25011815,
+    'Arowhon Pines Resort': 9221939,
+    // 토론토
+    'The Drake Hotel': 3146713,
+    '1 Hotel Toronto': 85464817,
+    'The Annex Hotel': 26411651,
+  };
+
   function _tripcomSearchUrl(name, city, checkIn, checkOut) {
-    // Trip.com Korea 호텔 검색 — city=<번호> + 소문자 checkin/checkout 필수.
-    // (cityName 글자만으론 도시 매칭 실패 → 0개. checkIn 대문자도 무시됨)
+    // 날짜·인원·어필리에이트 공통 쿼리 (소문자 checkin/checkout 필수)
+    var qs = [];
+    if (checkIn)  qs.push('checkin='  + checkIn);
+    if (checkOut) qs.push('checkout=' + checkOut);
+    qs.push('adult=2', 'children=0', 'allianceid=14887', 'sid=1621818');
+
     var info = _TRIP_CITY[city];
-    var params = [];
-    if (info) {
-      params.push('city=' + info.id);
-      params.push('cityName=' + encodeURIComponent(info.name));
-    } else {
-      // 맵에 없는 새 도시 — 글자만 넘김 (작은 도시면 0개 가능, 맵에 추가 필요)
-      params.push('cityName=' + encodeURIComponent(city || ''));
+    var hid = _TRIP_HOTEL[name];
+
+    // 1순위: 호텔 고유번호가 있으면 그 호텔 상세 페이지로 바로 진입
+    if (hid && info) {
+      var slug = info.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      return 'https://kr.trip.com/hotels/' + slug + '-hotel-detail-' + hid + '/?' + qs.join('&');
     }
-    if (checkIn)  params.push('checkin='  + checkIn);
-    if (checkOut) params.push('checkout=' + checkOut);
-    params.push('adult=2', 'children=0');
-    params.push('allianceid=14887', 'sid=1621818');
-    return 'https://kr.trip.com/hotels/list?' + params.join('&');
+    // 2순위: 도시번호로 도시 호텔 목록 (city=<번호> 없으면 0개라서 필수)
+    if (info) {
+      return 'https://kr.trip.com/hotels/list?city=' + info.id +
+             '&cityName=' + encodeURIComponent(info.name) + '&' + qs.join('&');
+    }
+    // 폴백: 맵에 없는 새 도시 — 글자만 (작은 도시면 0개 가능, 맵에 추가 필요)
+    return 'https://kr.trip.com/hotels/list?cityName=' + encodeURIComponent(city || '') + '&' + qs.join('&');
   }
 
   // Google 검색으로 트립닷컴 특정 호텔 페이지 찾기 (보조 옵션)

@@ -45,11 +45,21 @@
 - cityId (2026-06 실제 트립닷컴에서 검증): 코펜하겐 260 · 오르후스 3324 · 스카겐 38086 · 말뫼 3747 · 스톡홀름 420 · 몬트리올 759 · 샤를부아(Baie-Saint-Paul) 35546 · 퀘벡시티 3441 · 오타와 760 · 알곤퀸 26623 · 토론토 461
 - 검증: 0개였던 Aarhus → 66개 결과 정상 (CABINN Aarhus 등 큐레이션 호텔 포함)
 
+**Travel — "트립닷컴" 버튼을 도시 목록 → 추천 호텔 상세 페이지 직행으로 업그레이드 ⭐⭐**
+- 누리 요청: 도시 목록 화면 말고 "내가 추천한 그 호텔" 상세 페이지로 바로 가고 싶음
+- `_TRIP_HOTEL` 맵 추가 (추천 호텔 → 트립닷컴 hotelId). `_tripcomSearchUrl()` 재작성:
+  1순위 호텔번호 있으면 `{도시}-hotel-detail-{hotelId}/?checkin=...` 직행 → 2순위 도시 목록 → 폴백 글자검색
+- URL 슬러그는 hotelId가 실제 해석해서 너그러움 (algonquin→Killarney, baie-saint-paul→La Malbaie 3 Canards 검증됨)
+- 호텔번호 확보: 덴마크&스웨덴 13/14, 캐나다 15/18 (총 28곳)
+- 미등록 3곳(Moxy Malmö · Hôtel La Ferme · Bartlett Lodge)은 도시 목록으로 자동 폴백
+- 검증: Manon Les Suites / Brøndums / Miss Clara / Killarney / Auberge des 3 Canards 등 상세 페이지 + 날짜 정상
+
 ### 🎯 다음 할 일
 - (선택) 카드의 고정 가격이 라이브와 차이 큼 (예: Aarhus 카드 ₩14~18만 vs 실제 ₩19~39만). 라이브 가격 끌어오려면 API 작업 필요 — 추후 검토
+- (선택) 미등록 3곳(Moxy Malmö·La Ferme·Bartlett Lodge) 트립닷컴 재등록되면 _TRIP_HOTEL에 추가
 
 ### 🚧 막힌 점 / 결정 보류
-- `_TRIP_CITY` 맵에 없는 새 도시를 추가하면 글자 fallback이라 작은 도시는 0개 가능 → 새 도시 추가 시 cityId도 맵에 한 줄 넣어야 함
+- `_TRIP_CITY`/`_TRIP_HOTEL` 맵에 없는 새 도시·호텔 추가 시 각각 cityId/hotelId를 맵에 한 줄 넣어야 함 (없으면 도시 목록/글자검색으로 폴백)
 
 ### 💭 메모
 - "트립닷컴 유지 + 도시번호 추가" 방식 선택 (어필리에이트 살리려고). 구글호텔/부킹닷컴 교체안도 후보였으나 보류
