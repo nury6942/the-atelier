@@ -8707,6 +8707,10 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">route</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Roadmap</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-jobhunt" onclick="navigate('jobhunt'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">work</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Job Hunt</span>
+    </a>
 
     <!-- Nomad Master — 단일 항목 (페이지 안에서 sub-sidebar로 28개 sub-page) -->
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-nomad-master" onclick="navigate('nomad-master'); return false;">
@@ -13915,6 +13919,11 @@
     </div>
 
   <!-- ════════ NOMAD MASTER 페이지 — 내부 sub-sidebar + 메인 콘텐츠 ════════ -->
+  <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
+    <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
+  </div>
+
   <div id="page-nomad" class="page nomad-page" style="display:none">
     <div class="nm-layout">
       <!-- 좌측 sub-sidebar (페이지 내부) -->

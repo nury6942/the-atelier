@@ -12972,7 +12972,8 @@
     "income": { "title": "Money" },
     "planner": { "title": "Calendar" },
     "packing": { "title": "Travel" },
-    "reference": { "title": "Memo" }
+    "reference": { "title": "Memo" },
+    "jobhunt": { "title": "Job Hunt" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
   function switchTravelTab(tab) {
