@@ -179,7 +179,7 @@
 <div id="jh-mount" style="display:none"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
@@ -187,12 +187,13 @@
     apiKey: "AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ",
     authDomain: "the-atelier-99b8c.firebaseapp.com",
     projectId: "the-atelier-99b8c",
+    databaseURL: "https://the-atelier-99b8c-default-rtdb.firebaseio.com",
     storageBucket: "the-atelier-99b8c.firebasestorage.app",
     messagingSenderId: "820580020945",
     appId: "1:820580020945:web:d8d8d284e9e21e83eccbf0"
   };
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const db = firebase.database();
   const auth = firebase.auth();
   const ALLOWED_EMAIL = 'nury6942@gmail.com';
 
@@ -236,12 +237,12 @@
   auth.onAuthStateChanged(async function(user){
     if(!user || user.email !== ALLOWED_EMAIL){ show('jh-gate'); return; }
     try{
-      var doc = await db.collection('appSettings').doc('jobHuntData').get();
-      if(!doc.exists || !doc.data().html){
-        document.getElementById('jh-error-msg').textContent='아직 데이터가 없어요. (시드 필요)';
+      var snap = await db.ref('jobHuntData/html').get();
+      if(!snap.exists() || !snap.val()){
+        document.getElementById('jh-error-msg').textContent='아직 데이터가 없어요. (업로드 필요)';
         show('jh-error'); return;
       }
-      jhRender(doc.data().html);
+      jhRender(snap.val());
     }catch(e){
       document.getElementById('jh-error-msg').textContent='불러오기 실패: '+(e && e.message ? e.message : e);
       show('jh-error');

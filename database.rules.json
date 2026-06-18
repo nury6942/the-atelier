@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "jobHuntData": {
+      ".read": "auth != null && auth.token.email === 'nury6942@gmail.com'",
+      ".write": false
+    }
+  }
+}
