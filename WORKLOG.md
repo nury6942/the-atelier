@@ -37,6 +37,14 @@
 
 ### ✅ 한 일
 
+**Travel — 숙소 큐레이션 11개 도시 전체 재서치/업데이트 ⭐⭐**
+- 누리 요청: 여행 일정(2027 5월 덴마크&스웨덴 / 9~10월 캐나다)은 그대로, 오늘 시점 기준 실제 예약 가능·가격 맞는 숙소로 누리 기준(디자인 부띠크·모던 미니멀·중심가·4★·작가 감성 자산) 재큐레이션
+- 11개 도시 병렬 리서치 에이전트(general-purpose, 웹서치) 동시 실행 → 각 도시 2~3개 호텔 + 트립닷컴 hotelId 확보
+- `_LODGING_RECS` 30개 호텔 전면 교체, `_TRIP_HOTEL` 매핑 전면 갱신. 날짜(checkIn/checkOut)는 기존 일정 유지
+- 주요 교체: 코펜(Manon 빠지고 SP34/25hours/citizenM), 오르후스(SOFS구Guldsmeden/Oasia/Villa Provence), 말뫼(Moxy 폐업 확인→MJ's/Mazetti), 샤를부아(La Ferme가 Le Germain으로 리브랜딩 확인), 알곤퀸(Bartlett/Killarney/Arowhon, 1인 올인클루시브 가격 명시), 토론토(Drake/Anndore/Gladstone) 등
+- 한계 명시: 호텔 실시간 요금은 변동 커서 가격은 현실적 범위 추정치, 최종은 트립닷컴 버튼으로 확인 (기존 구조 유지). 알곤퀸 로지는 1인 올인클루시브라 가격 높음을 why에 표기
+- node --check 통과
+
 **Travel — "도시 간 이동 큐레이션" 블록 위치 이동**
 - 문제: 이동 큐레이션 블록(`journey-transit-recs`)이 "숙소 정보" 섹션 안 헤더 바로 아래에 렌더돼 위치 미스
 - 수정: index.html에서 그 div를 "숙소 정보"(trv-lodging)에서 빼서 "도시 간 이동 수단"(trv-transport) 섹션 헤더 아래로 이동
