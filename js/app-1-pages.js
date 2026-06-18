@@ -20359,19 +20359,35 @@ function openSessionDetail(dateId) {
     '<p class="review-summary-text mb-3">' + (sum.p1||'') + '</p>' +
     '<p class="review-summary-text">' + (sum.p2||'') + '</p>' + krBox(sum.kr);
 
+  // 빈도 뱃지 헬퍼 (실생활 흔함 정도)
+  function freqBadge(freq) {
+    if (!freq) return '';
+    var map = {
+      '매우 흔함': 'background:#dcfce7;color:#15803d',
+      '흔함':      'background:#e0e7ff;color:#4338ca',
+      '상황별':    'background:#fef9c3;color:#a16207',
+      '문어체':    'background:#f3e8ff;color:#7e22ce',
+      '드묾':      'background:#fee2e2;color:#b91c1c'
+    };
+    var st = map[freq] || 'background:#f1f5f9;color:#475569';
+    return '<span style="' + st + ';font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;white-space:nowrap">' + freq + '</span>';
+  }
+
   // 02 Expressions
   var exprs = s.expressions || [];
   var sec2 = '<div class="overflow-x-auto"><table class="w-full review-expr-table"><thead><tr class="border-b-2 border-indigo-100">' +
     '<th class="text-left py-3 px-3 review-expr-th">Category</th>' +
     '<th class="text-left py-3 px-3 review-expr-th">Expression</th>' +
+    '<th class="text-left py-3 px-3 review-expr-th">빈도</th>' +
     '<th class="text-left py-3 px-3 review-expr-th">의미</th>' +
     '<th class="text-left py-3 px-3 review-expr-th">Example</th>' +
     '</tr></thead><tbody>' +
     exprs.map(function(ex){ return '<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">' +
       '<td class="py-3 px-3 review-expr-cat">' + (ex.cat||'') + '</td>' +
       '<td class="py-3 px-3 review-expr-en">' + (ex.expr||'') + '</td>' +
+      '<td class="py-3 px-3">' + freqBadge(ex.freq) + '</td>' +
       '<td class="py-3 px-3 review-expr-kr">' + (ex.kr||'') + '</td>' +
-      '<td class="py-3 px-3 review-expr-ex">' + (ex.ex||'') + '</td>' +
+      '<td class="py-3 px-3 review-expr-ex">' + (ex.ex||'') + (ex.exKr ? '<br><span class="review-expr-kr" style="font-size:12px;color:#64748b">' + ex.exKr + '</span>' : '') + '</td>' +
     '</tr>'; }).join('') +
     '</tbody></table></div>' + krBox(s.expressionsKr);
 
@@ -20380,8 +20396,10 @@ function openSessionDetail(dateId) {
   var sec3 = '<div class="space-y-5">' + upgs.map(function(u){
     return '<div class="p-5 rounded-xl bg-slate-50 review-upgrade-card">' +
       '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-rose-500 text-base mt-0.5">❌</span><span class="review-upgrade-bad line-through">' + (u.bad||'') + '</span></div>' +
-      '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span></div>' +
-      '<div class="flex items-start gap-2.5 mb-3"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span></div>' +
+      '<div class="flex items-start gap-2.5 mb-1"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span></div>' +
+      (u.okKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:10px">' + u.okKr + '</p>' : '') +
+      '<div class="flex items-start gap-2.5 mb-1"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span>' + (u.freq ? ' ' + freqBadge(u.freq) : '') + '</div>' +
+      (u.gemKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:6px">' + u.gemKr + '</p>' : '') +
       (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
       (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
     '</div>';
@@ -20392,17 +20410,21 @@ function openSessionDetail(dateId) {
   var sec4 = '<div class="space-y-5">' + grams.map(function(g){
     return '<div class="p-5 rounded-xl bg-slate-50">' +
       '<h4 class="review-h4 mb-2">' + (g.title||'') + '</h4>' +
-      '<p class="review-rule mb-3"><span class="font-bold text-indigo-700">Rule:</span> <span class="text-slate-800">' + (g.rule||'') + '</span></p>' +
+      '<p class="review-rule mb-1"><span class="font-bold text-indigo-700">Rule:</span> <span class="text-slate-800">' + (g.rule||'') + '</span></p>' +
+      (g.ruleKr ? '<p class="review-note-kr mb-3">' + g.ruleKr + '</p>' : '<div class="mb-3"></div>') +
       '<ul class="list-disc pl-5 space-y-1.5">' + (g.examples||[]).map(function(ex){ return '<li class="review-list-item">' + ex + '</li>'; }).join('') + '</ul>' +
     '</div>';
   }).join('') + '</div>' + krBox(s.grammarKr);
 
   // 05 Convo Skills
   var cs = s.convoSkills || {};
+  // 문자열/객체 둘 다 호환 (옛 데이터 = 문자열, 새 데이터 = {en,kr})
+  function enOf(x){ return (x && typeof x === 'object') ? (x.en||'') : (x||''); }
+  function krOf(x){ return (x && typeof x === 'object') ? (x.kr||'') : ''; }
   var sec5 = '';
-  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-1.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + f + '</li>'; }).join('') + '</ul></div>';
-  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + '</td><td class="py-3 review-table-en">' + (r.say||'') + '</td></tr>'; }).join('') + '</tbody></table></div>';
-  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-1.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + st + '</li>'; }).join('') + '</ul></div>';
+  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + enOf(f) + (krOf(f) ? '<br><span class="review-note-kr">' + krOf(f) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
+  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + (r.feelKr ? ' <span style="color:#94a3b8;font-size:11px">' + r.feelKr + '</span>' : '') + '</td><td class="py-3 review-table-en">' + (r.say||'') + (r.kr ? '<br><span class="review-note-kr">' + r.kr + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + enOf(st) + (krOf(st) ? '<br><span class="review-note-kr">' + krOf(st) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
   sec5 += krBox(cs.kr);
 
   // 06 Vocab
@@ -20411,21 +20433,41 @@ function openSessionDetail(dateId) {
     return '<div class="mb-7"><h4 class="review-h4 mb-3 pb-2 border-b border-slate-200">' + (vs.topic||'') + ' <span class="review-topic-kr">' + (vs.topicKr||'') + '</span></h4>' +
       '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">' + (vs.words||[]).map(function(w){
         return '<div class="p-4 rounded-xl bg-slate-50 review-vocab-card">' +
-          '<p class="review-vocab-word">' + (w.word||'') + '</p>' +
+          '<div class="flex items-center justify-between gap-2 mb-0.5"><p class="review-vocab-word" style="margin:0">' + (w.word||'') + '</p>' + freqBadge(w.freq) + '</div>' +
           '<p class="review-vocab-mean">' + (w.mean||'') + '</p>' +
           (w.coll ? '<p class="review-vocab-coll">' + w.coll + '</p>' : '') +
-          (w.ex ? '<p class="review-vocab-ex">' + w.ex + '</p>' : '') + '</div>';
+          (w.syn ? '<p style="font-size:12px;color:#475569;margin-top:4px"><span style="color:#16a34a;font-weight:700">유의어</span> ' + w.syn + '</p>' : '') +
+          (w.ant && w.ant !== '—' ? '<p style="font-size:12px;color:#475569;margin-top:2px"><span style="color:#dc2626;font-weight:700">반대어</span> ' + w.ant + '</p>' : '') +
+          (w.ex ? '<p class="review-vocab-ex">' + w.ex + (w.exKr ? '<br><span style="color:#94a3b8">' + w.exKr + '</span>' : '') + '</p>' : '') + '</div>';
       }).join('') + '</div></div>';
   }).join('') + krBox(s.vocabKr);
 
-  // 07 Drills
+  // 07 Drills — 인터랙티브 (입력 + 채점 + 정답 토글)
+  // 정답 데이터를 전역에 저장해 채점 함수가 참조
   var drills = s.drills || [];
-  var sec7 = drills.map(function(d){
-    return '<div class="mb-5"><h4 class="review-h4 mb-3">' + (d.title||'') + '</h4>' +
-      '<ol class="list-decimal pl-5 space-y-3">' + (d.items||[]).map(function(it){
-        return '<li class="review-drill-li"><span class="review-drill-q">' + (it.q||'') + '</span> <span class="review-drill-a">' + (it.a||'') + '</span></li>';
-      }).join('') + '</ol></div>';
-  }).join('') + krBox(s.drillsKr);
+  window._engDrillData = drills;
+  var di = 0; // 전체 문항 인덱스 (입력 id 매칭용)
+  var sec7 = drills.map(function(d, dIdx){
+    var itemsHtml = (d.items||[]).map(function(it){
+      var id = 'drill-' + dIdx + '-' + (di++);
+      return '<li class="review-drill-li" style="margin-bottom:14px">' +
+        '<div class="review-drill-q" style="margin-bottom:6px">' + (it.q||'') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<input type="text" id="' + id + '" data-answer="' + (it.a||'').replace(/"/g,'&quot;') + '" data-explain="' + (it.explainKr||'').replace(/"/g,'&quot;') + '" placeholder="여기에 답 입력…" ' +
+            'class="text-sm px-3 py-1.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-300" style="min-width:240px;flex:1" ' +
+            'onkeydown="if(event.key===\'Enter\'){event.preventDefault();gradeDrillItem(\'' + id + '\')}"/>' +
+          '<button onclick="gradeDrillItem(\'' + id + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors whitespace-nowrap">채점</button>' +
+          '<button onclick="toggleDrillAnswer(\'' + id + '\')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors whitespace-nowrap">정답 보기</button>' +
+        '</div>' +
+        '<div id="' + id + '-result" class="text-xs mt-1.5" style="display:none"></div>' +
+      '</li>';
+    }).join('');
+    return '<div class="mb-6"><h4 class="review-h4 mb-1">' + (d.title||'') + '</h4>' +
+      '<p style="font-size:12px;color:#94a3b8;margin:0 0 12px">답을 입력하고 <b>채점</b>을 누르세요. 모르면 <b>정답 보기</b>.</p>' +
+      '<ol class="list-decimal pl-5">' + itemsHtml + '</ol></div>';
+  }).join('') +
+  (drills.length ? '<button onclick="gradeAllDrills()" class="mb-4 text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft))">전체 채점하기</button><div id="drill-score-summary" class="mb-2 text-sm font-bold text-indigo-700" style="display:none"></div>' : '') +
+  krBox(s.drillsKr);
 
   // 08 Goals
   var goals = s.goals || [];
@@ -20580,13 +20622,15 @@ Analyze the transcript below from an English tutoring session with a native spea
 
 === QUALITY REQUIREMENTS (CRITICAL — FOLLOW EXACTLY) ===
 
-- Analyze in English first, then add a Korean explanation in every *Kr field.
-- When improving sentences, don't just correct them — UPGRADE to C1 level (more advanced vocab/grammar) while keeping natural spoken English.
-- Extract 12–20 useful expressions the tutor (not Nuri) actually used, categorized.
-- Provide 6–10 "upgrade" entries with original / natural B2 / C1 upgrade / note.
-- Identify 4–6 grammar patterns Nuri struggles with, each with rule + 2–3 examples.
-- Topic vocab sets: 2–3 topics, each with 5–8 C1-level words.
-- Drills: 2–3 formats (fill-in-blank, reorder, C1 replacement).
+- BILINGUAL ALWAYS: every English item MUST carry a Korean gloss or explanation. Never leave an English expression, upgrade, follow-up question, reaction, starter, grammar example, or vocab word without Korean. Korean is for understanding, not decoration.
+- REAL-LIFE FREQUENCY IS THE #1 FILTER. We target C1 / IELTS / PTE, BUT only for language native speakers ACTUALLY use in everyday life. If a "fancy" word is technically C1 but rarely spoken (textbook-ish, stiff, or only written), DROP it or clearly mark it as 문어체/드묾. Prefer what a real native says casually. Tag frequency on expressions, upgrades, and vocab.
+- FREQUENCY SCALE (use these exact Korean labels): "매우 흔함" (daily, everyone says it), "흔함" (common in conversation), "상황별" (common in specific contexts), "문어체" (mostly written/formal), "드묾" (rare/showy — avoid unless special).
+- When improving sentences, don't just correct them — UPGRADE to C1 level (more advanced vocab/grammar) while keeping natural spoken English a real person would actually say.
+- Extract 12–20 useful expressions the tutor (not Nuri) actually used, categorized. Each needs Korean meaning + frequency.
+- Provide 6–10 "upgrade" entries with original / natural B2 / C1 upgrade / note + Korean for the natural version + frequency of the C1 gem.
+- Identify 4–6 grammar patterns Nuri struggles with, each with rule + 2–3 examples. Add Korean to the rule.
+- Topic vocab sets: 2–3 topics, each with 5–8 words. Each word needs: Korean meaning, collocations, synonym(s), antonym (or "—" if none), frequency, and a natural example. Favor genuinely useful everyday words over obscure ones.
+- Drills: 2–3 formats (fill-in-blank, reorder, C1 replacement). Each item needs the answer AND a short Korean explanation of why.
 - Goals: 3 specific, actionable next-class goals.
 - All Kr fields: warm, tutor-like tone with <b> emphasis on key points.
 - All English fields may include inline HTML: <strong>, <b>, <i>, <s>, <br>. PRESERVE these — they are intentional formatting.
@@ -20616,7 +20660,7 @@ sessionsData["{{DATE}}"] = {
   },
 
   expressions: [
-    { cat: "Idiom", expr: "expression in English", kr: "한글 뜻 / 쓰임", ex: "natural example sentence in English." }
+    { cat: "Idiom", expr: "expression in English", kr: "한글 뜻 / 쓰임", ex: "natural example sentence in English.", exKr: "예문 한글 뜻.", freq: "흔함" }
   ],
   expressionsKr: "이 중 가장 중요한 표현 4–6개를 <b>볼드</b>로 꼽고, 왜 외워야 하는지(시험/실생활) 설명. 튜터가 직접 가르쳐준 단어가 있으면 반드시 언급.",
 
@@ -20624,7 +20668,10 @@ sessionsData["{{DATE}}"] = {
     {
       bad: "Nuri's original sentence in quotes.",
       ok: "Natural B2 version — how a native would actually say it conversationally.",
+      okKr: "자연스러운 버전의 한글 뜻.",
       gem: "C1 upgrade — more sophisticated but still natural. Use C1 structures (inversion, 'rather than', 'what X is Y', etc.)",
+      gemKr: "C1 업그레이드 문장의 한글 뜻.",
+      freq: "흔함",
       note: "Short English explanation of WHY the upgrade is better (grammar/vocab/structure/nuance).",
       noteKr: "한글로 짧게 설명. 핵심 패턴은 <b>볼드</b>."
     }
@@ -20635,6 +20682,7 @@ sessionsData["{{DATE}}"] = {
     {
       title: "Issue 01 · descriptive name",
       rule: "Short English rule. May include <i>italics</i> for formulas.",
+      ruleKr: "규칙의 한글 설명. 핵심은 <b>볼드</b>.",
       examples: [
         "Example 1 with <s>wrong</s> → <b>correct</b>",
         "Example 2 (positive reinforcement, C1-friendly).",
@@ -20646,18 +20694,18 @@ sessionsData["{{DATE}}"] = {
 
   convoSkills: {
     followups: [
-      "Better follow-up question 1 with optional <i>italic nuance</i>.",
-      "Better follow-up question 2."
+      { en: "Better follow-up question 1 with optional <i>italic nuance</i>.", kr: "이 질문의 한글 뜻." },
+      { en: "Better follow-up question 2.", kr: "이 질문의 한글 뜻." }
     ],
     reactions: [
-      { feel: "shock", say: "You're kidding! / No way! / That's wild." },
-      { feel: "sympathy", say: "..." },
-      { feel: "agreement", say: "..." },
-      { feel: "warmth", say: "..." }
+      { feel: "shock", feelKr: "놀람", say: "You're kidding! / No way! / That's wild.", kr: "한글 뜻/쓰임" },
+      { feel: "sympathy", feelKr: "공감", say: "...", kr: "..." },
+      { feel: "agreement", feelKr: "동의", say: "...", kr: "..." },
+      { feel: "warmth", feelKr: "따뜻함", say: "...", kr: "..." }
     ],
     starters: [
-      "From my point of view, …",
-      "When it comes to …"
+      { en: "From my point of view, …", kr: "내 관점에서는 …" },
+      { en: "When it comes to …", kr: "~에 관해서라면 …" }
     ],
     kr: "왜 이런 starter를 쓰면 답변 품질이 올라가는지 설명. 구체적 실천 tip 포함."
   },
@@ -20667,29 +20715,32 @@ sessionsData["{{DATE}}"] = {
       topic: "Topic 1 · English Topic Name",
       topicKr: "한글 주제명",
       words: [
-        { word: "vocabulary", mean: "한글 뜻", coll: "collocation 1 / collocation 2 / collocation 3", ex: "Natural example sentence." }
+        { word: "vocabulary", mean: "한글 뜻", coll: "collocation 1 / collocation 2 / collocation 3", syn: "synonym1 / synonym2", ant: "antonym (or —)", freq: "흔함", ex: "Natural example sentence.", exKr: "예문 한글 뜻." }
       ]
     }
   ],
-  vocabKr: "IELTS/PTE 시험 연계해서 어떤 단어가 특히 중요한지 설명. <b>볼드</b>로 핵심 단어 강조.",
+  vocabKr: "IELTS/PTE 시험 연계해서 어떤 단어가 특히 중요한지 설명. <b>볼드</b>로 핵심 단어 강조. 실생활 빈도가 낮은 단어는 솔직히 '시험용'이라고 짚어주기.",
 
   drills: [
     {
       title: "Drill A · Format name (articles / prepositions / etc.)",
+      type: "fill",
       items: [
-        { q: "Question with ____ blank.", a: "answer" }
+        { q: "Question with ____ blank.", a: "answer", explainKr: "왜 이 답인지 짧은 한글 해설." }
       ]
     },
     {
       title: "Drill B · Reorder to sound natural",
+      type: "reorder",
       items: [
-        { q: "scrambled / words / to / reorder", a: "Unscrambled natural sentence." }
+        { q: "scrambled / words / to / reorder", a: "Unscrambled natural sentence.", explainKr: "어순 포인트 한글 해설." }
       ]
     },
     {
       title: "Drill C · Replace with a C1 version",
+      type: "replace",
       items: [
-        { q: "basic expression", a: "C1 upgrade / alternative" }
+        { q: "basic expression", a: "C1 upgrade / alternative", explainKr: "왜 이게 더 나은지 한글 해설." }
       ]
     }
   ],
@@ -21355,6 +21406,63 @@ function showAutoError(msg, actionsHtml, rawText) {
     rawEl.className = 'hidden w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none';
   }
   updateAutoGenButton();
+}
+
+// ===== DRILL 채점 (인터랙티브 연습 문제) =====
+// 답 비교: 대소문자·앞뒤공백·문장부호·중복공백 무시해서 관대하게 채점
+function _normAnswer(s) {
+  return (s||'').toLowerCase().trim()
+    .replace(/[.,!?;:"'()‘’“”]/g, '')
+    .replace(/\s+/g, ' ');
+}
+function gradeDrillItem(id) {
+  var input = document.getElementById(id);
+  if (!input) return false;
+  var correct = input.getAttribute('data-answer') || '';
+  var explain = input.getAttribute('data-explain') || '';
+  var result = document.getElementById(id + '-result');
+  var ok = _normAnswer(input.value) === _normAnswer(correct) && input.value.trim() !== '';
+  if (result) {
+    result.style.display = 'block';
+    if (ok) {
+      input.style.borderColor = '#16a34a';
+      result.innerHTML = '<span style="color:#16a34a;font-weight:700">✓ 정답!</span>' + (explain ? ' <span style="color:#64748b">' + explain + '</span>' : '');
+    } else {
+      input.style.borderColor = '#dc2626';
+      result.innerHTML = '<span style="color:#dc2626;font-weight:700">✗ 다시</span> <span style="color:#475569">정답: <b>' + correct + '</b></span>' + (explain ? '<br><span style="color:#64748b">' + explain + '</span>' : '');
+    }
+  }
+  return ok;
+}
+function toggleDrillAnswer(id) {
+  var input = document.getElementById(id);
+  if (!input) return;
+  var correct = input.getAttribute('data-answer') || '';
+  var explain = input.getAttribute('data-explain') || '';
+  var result = document.getElementById(id + '-result');
+  if (!result) return;
+  if (result.style.display === 'block' && result.getAttribute('data-shown') === '1') {
+    result.style.display = 'none'; result.setAttribute('data-shown', '0');
+  } else {
+    result.style.display = 'block'; result.setAttribute('data-shown', '1');
+    result.innerHTML = '<span style="color:#4338ca;font-weight:700">정답:</span> <span style="color:#1e293b"><b>' + correct + '</b></span>' + (explain ? '<br><span style="color:#64748b">' + explain + '</span>' : '');
+  }
+}
+function gradeAllDrills() {
+  var drills = window._engDrillData || [];
+  var total = 0, right = 0, di = 0;
+  drills.forEach(function(d, dIdx){
+    (d.items||[]).forEach(function(){
+      var id = 'drill-' + dIdx + '-' + (di++);
+      if (document.getElementById(id)) { total++; if (gradeDrillItem(id)) right++; }
+    });
+  });
+  var summary = document.getElementById('drill-score-summary');
+  if (summary && total) {
+    summary.style.display = 'block';
+    var pct = Math.round(right/total*100);
+    summary.innerHTML = '점수: ' + right + ' / ' + total + ' (' + pct + '%)' + (pct === 100 ? ' 🎉 완벽!' : pct >= 70 ? ' 👍 좋아요' : ' 💪 복습 추천');
+  }
 }
 
 function copyReviewPrompt() {

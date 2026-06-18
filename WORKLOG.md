@@ -37,6 +37,13 @@
 
 ### ✅ 한 일
 
+**Annie 영어 리뷰 프롬프트 + 렌더 대폭 개편 ⭐⭐⭐**
+- 누리 요청: ①영어만 나오는 항목에 한국어 설명/뜻 항상 병기 ②Vocab에 유의어·반대어·실생활 흔함도 추가(지금 collocation만) ③Drills 답 숨기고 입력칸+채점버튼+정답토글 인터랙티브화 ④전반적으로 C1/IELTS이되 '실생활 빈도' 최우선 포커스
+- 프롬프트(`REVIEW_PROMPT_TEMPLATE`): 품질지침에 "BILINGUAL ALWAYS" + "REAL-LIFE FREQUENCY가 #1 필터" 추가. 빈도 5단계 한글 라벨(매우흔함/흔함/상황별/문어체/드묾). 스키마에 필드 추가 — expressions(exKr,freq), upgrades(okKr,gemKr,freq), grammar(ruleKr), convoSkills followups/reactions/starters를 {en,kr} 객체로, vocabSets.words(syn,ant,freq,exKr), drills(type, items.explainKr)
+- 렌더(openSessionDetail): freqBadge() 헬퍼(색상별 빈도칩), 02 예문한글+빈도열, 03 자연/C1 한글+빈도, 04 ruleKr, 05 convo 객체호환(enOf/krOf, 옛 문자열 데이터도 안깨짐), 06 유의어(초록)·반대어(빨강)·빈도칩·예문한글
+- 07 Drills 인터랙티브 전면 재작성: 문항별 input + 채점/정답보기 버튼 + 결과영역, '전체 채점하기' + 점수 요약. 전역함수 gradeDrillItem/toggleDrillAnswer/gradeAllDrills 신규. 답 비교는 대소문자·문장부호·공백 무시 관대채점
+- node --check 통과. ※기존 리뷰는 새 필드 없어 추가정보 미표시(방어코드로 안깨짐), 새 수업 리뷰부터 완전 적용
+
 **Travel — 숙소 큐레이션 11개 도시 전체 재서치/업데이트 ⭐⭐**
 - 누리 요청: 여행 일정(2027 5월 덴마크&스웨덴 / 9~10월 캐나다)은 그대로, 오늘 시점 기준 실제 예약 가능·가격 맞는 숙소로 누리 기준(디자인 부띠크·모던 미니멀·중심가·4★·작가 감성 자산) 재큐레이션
 - 11개 도시 병렬 리서치 에이전트(general-purpose, 웹서치) 동시 실행 → 각 도시 2~3개 호텔 + 트립닷컴 hotelId 확보
