@@ -33,6 +33,17 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-06-17 (기기: 윈도우 · 회사)
+
+### ✅ 한 일
+
+**Travel — "도시 간 이동 큐레이션" 블록 위치 이동**
+- 문제: 이동 큐레이션 블록(`journey-transit-recs`)이 "숙소 정보" 섹션 안 헤더 바로 아래에 렌더돼 위치 미스
+- 수정: index.html에서 그 div를 "숙소 정보"(trv-lodging)에서 빼서 "도시 간 이동 수단"(trv-transport) 섹션 헤더 아래로 이동
+- `_renderTransitRecs()`는 getElementById('journey-transit-recs') ID로만 찾으므로 JS 수정 불필요 — div 위치만 옮기면 그대로 작동
+
+---
+
 ## 2026-06-17 (기기: 아이맥)
 
 ### ✅ 한 일
