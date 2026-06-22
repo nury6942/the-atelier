@@ -37,6 +37,14 @@
 
 ### ✅ 한 일
 
+**사이드잡(포스타입) 일별 매출 차트 — 전월 비교를 '요일 매칭'으로 + 휴일 표시 ⭐⭐**
+- 누리 지적: 전월 비교가 같은 '날짜'끼리라 틀림. 매출은 요일(금~일↑, 평일↓)에 좌우되므로 같은 '요일'끼리 비교해야 함. 5월 1일=금, 6월 1일=월이라 어긋남
+- 방식: N번째 같은 요일 매칭 (6/1=6월 첫째 월요일 → 5월 첫째 월요일 5/4와 비교). `buildWeekdayPrevMap()` 신규
+- 휴일: `KR_HOLIDAY_NAMES` 맵(2025~27 공휴일+대체) 추가. 차트에 주말 배경음영 + 공휴일 세로점선/점, 툴팁에 휴일명·전월 매칭 날짜 표시
+- 적용처: renderDailyChart(점선=요일매칭 전월), renderKPIs(전월대비%도 요일매칭 누적), 메타라벨 '전월 같은요일'
+- 주의: 파일 42줄에 기존 KR_HOLIDAYS(Set, 영업일계산용)가 있어 이름 KR_HOLIDAY_NAMES로 분리(중복선언 에러 회피)
+- Node 단위테스트: 6/1(월)→5/4(월), 6/5(금)→5/1(금) 요일 일치 확인
+
 **Annie 영어 리뷰 프롬프트 + 렌더 대폭 개편 ⭐⭐⭐**
 - 누리 요청: ①영어만 나오는 항목에 한국어 설명/뜻 항상 병기 ②Vocab에 유의어·반대어·실생활 흔함도 추가(지금 collocation만) ③Drills 답 숨기고 입력칸+채점버튼+정답토글 인터랙티브화 ④전반적으로 C1/IELTS이되 '실생활 빈도' 최우선 포커스
 - 프롬프트(`REVIEW_PROMPT_TEMPLATE`): 품질지침에 "BILINGUAL ALWAYS" + "REAL-LIFE FREQUENCY가 #1 필터" 추가. 빈도 5단계 한글 라벨(매우흔함/흔함/상황별/문어체/드묾). 스키마에 필드 추가 — expressions(exKr,freq), upgrades(okKr,gemKr,freq), grammar(ruleKr), convoSkills followups/reactions/starters를 {en,kr} 객체로, vocabSets.words(syn,ant,freq,exKr), drills(type, items.explainKr)

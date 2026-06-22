@@ -144,6 +144,58 @@
   const isFuture        = ym => ym > thisMonth();
   const lastYearMonth   = ym => { const [y,m] = ym.split('-').map(Number); return `${y-1}-${pad(m)}`; };
 
+  // ─── 한국 공휴일 (매출이 휴일에 오르는 경향 반영해 차트에 표시) ───
+  // 대체공휴일 포함. 음력 기념일은 양력 환산값. 필요 시 연도 추가.
+  const KR_HOLIDAY_NAMES = {
+    '2025-01-01':'신정','2025-01-28':'설날','2025-01-29':'설날','2025-01-30':'설날',
+    '2025-03-01':'삼일절','2025-03-03':'대체공휴일','2025-05-05':'어린이날·부처님오신날','2025-05-06':'대체공휴일',
+    '2025-06-06':'현충일','2025-08-15':'광복절','2025-10-03':'개천절','2025-10-06':'추석','2025-10-07':'추석','2025-10-08':'추석',
+    '2025-10-09':'한글날','2025-12-25':'성탄절',
+    '2026-01-01':'신정','2026-02-16':'설날','2026-02-17':'설날','2026-02-18':'설날',
+    '2026-03-01':'삼일절','2026-03-02':'대체공휴일','2026-05-05':'어린이날','2026-05-24':'부처님오신날','2026-05-25':'대체공휴일',
+    '2026-06-06':'현충일','2026-08-15':'광복절','2026-08-17':'대체공휴일','2026-09-24':'추석','2026-09-25':'추석','2026-09-26':'추석',
+    '2026-10-03':'개천절','2026-10-05':'대체공휴일','2026-10-09':'한글날','2026-12-25':'성탄절',
+    '2027-01-01':'신정','2027-02-06':'설날','2027-02-07':'설날','2027-02-08':'설날','2027-02-09':'대체공휴일',
+    '2027-03-01':'삼일절','2027-05-05':'어린이날','2027-05-13':'부처님오신날','2027-06-06':'현충일',
+    '2027-08-15':'광복절','2027-08-16':'대체공휴일','2027-09-14':'추석','2027-09-15':'추석','2027-09-16':'추석',
+    '2027-10-03':'개천절','2027-10-04':'대체공휴일','2027-10-09':'한글날','2027-10-11':'대체공휴일','2027-12-25':'성탄절'
+  };
+  const holidayName = ds => KR_HOLIDAY_NAMES[ds] || null;
+  // 주말(토·일) 또는 공휴일이면 '쉬는 날'
+  const isRestDay = (ds, dowIdx) => (dowIdx === 0 || dowIdx === 6 || !!KR_HOLIDAY_NAMES[ds]);
+
+  // ─── 요일 매칭 전월 매출 ───────────────────────────────────────
+  // 같은 날짜가 아니라 'N번째 같은 요일'끼리 비교한다.
+  // (예: 6/1=6월의 첫째 월요일 → 5월의 첫째 월요일 매출과 비교)
+  // 매출은 요일(금~일↑ 평일↓)에 좌우되므로 요일을 맞춰야 추이 비교가 의미 있음.
+  // 반환: { [thisDateStr]: {prevRev, prevDate} }
+  function buildWeekdayPrevMap(monthDaily, prevMonthDaily, yearMonth){
+    const [y, m] = yearMonth.split('-').map(Number);
+    const dim = daysInMonth(yearMonth);
+    // 전월 매출을 (요일 → [그 요일의 날짜순 매출])로 그룹화
+    const prevByDow = [[],[],[],[],[],[],[]]; // 0=일 … 6=토
+    const prevRevByDate = Object.fromEntries((prevMonthDaily||[]).map(d => [d.date, d.rev||0]));
+    const pYM = prevMonth(yearMonth);
+    const [py, pm] = pYM.split('-').map(Number);
+    const pdim = daysInMonth(pYM);
+    for (let day = 1; day <= pdim; day++){
+      const ds = `${py}-${pad(pm)}-${pad(day)}`;
+      const wd = new Date(Date.UTC(py, pm-1, day)).getUTCDay();
+      prevByDow[wd].push({ date: ds, rev: prevRevByDate[ds] != null ? prevRevByDate[ds] : null });
+    }
+    // 이번 달 각 날짜에 대해, 같은 요일의 N번째 전월 날짜를 매칭
+    const dowCount = [0,0,0,0,0,0,0];
+    const out = {};
+    for (let day = 1; day <= dim; day++){
+      const ds = `${y}-${pad(m)}-${pad(day)}`;
+      const wd = new Date(Date.UTC(y, m-1, day)).getUTCDay();
+      const nth = dowCount[wd]; dowCount[wd]++;
+      const match = prevByDow[wd][nth]; // 전월의 같은 요일 N번째 (없으면 undefined)
+      out[ds] = match ? { prevRev: match.rev, prevDate: match.date } : { prevRev: null, prevDate: null };
+    }
+    return out;
+  }
+
   // ─── 더미 데이터 ───────────────────────────────────────────────
   function makeDummyForMonth(yearMonth){
     const dim = daysInMonth(yearMonth);
@@ -337,15 +389,18 @@
     const avg     = dayCnt ? Math.round(sum / dayCnt) : 0;
     let peakDay = null, peakRev = 0;
     monthDaily.forEach(d => { if ((d.rev||0) > peakRev){ peakRev = d.rev; peakDay = d.date; } });
-    // 전월 대비: 진행 중 달이면 '같은 날짜까지' 잘라서 비교 (1~오늘 vs 1~오늘)
-    // 완료된 과거 달이면 전월 전체와 비교 (기존 동작)
+    // 전월 대비: '요일 매칭'(N번째 같은 요일)으로 비교 — 매출이 요일에 좌우되므로.
+    // 진행 중 달이면 오늘까지의 날짜에 대응하는 전월 같은 요일들만 합산.
     const isCurrentMonth = (yearMonth === thisMonth());
     const cutoffDay = isCurrentMonth ? new Date().getDate() : 99;
-    const prevSliced = prevMonthDaily.filter(d => parseInt(d.date.slice(8,10)) <= cutoffDay);
-    const prevSum = prevSliced.reduce((a,d) => a + (d.rev||0), 0);
+    const wdPrevK = buildWeekdayPrevMap(monthDaily, prevMonthDaily, yearMonth);
+    let prevSum = 0;
+    Object.keys(wdPrevK).forEach(ds => {
+      if (parseInt(ds.slice(8,10)) <= cutoffDay && wdPrevK[ds].prevRev != null) prevSum += wdPrevK[ds].prevRev;
+    });
     const delta   = sum - prevSum;
     const pct     = prevSum ? ((delta / prevSum) * 100) : null;
-    const prevLabel = isCurrentMonth ? `전월 동기간(1~${cutoffDay}일)` : '전월';
+    const prevLabel = isCurrentMonth ? `전월 같은요일(1~${cutoffDay}일)` : '전월 같은요일';
 
     document.getElementById('postype-kpi-month-total').textContent = KRW(sum);
     document.getElementById('postype-kpi-month-sub').textContent   = dayCnt ? `${dayCnt}일 / ${txCount.toLocaleString('ko-KR')}건 · 실수령 ${KRW(applyFee(sum))}` : '데이터 없음';
@@ -443,9 +498,8 @@
 
     const dim = daysInMonth(yearMonth);
     const map = Object.fromEntries(monthDaily.map(d => [d.date, d.rev || 0]));
-    // 전월 = 'day(1~31)' 키로 매핑해서 같은 날짜 비교 (28일 등 일수 다른 달 대응)
-    const prevMap = {};
-    (prevMonthDaily || []).forEach(d => { prevMap[parseInt(d.date.slice(8,10))] = d.rev || 0; });
+    // 전월 = '요일 매칭'(N번째 같은 요일)으로 비교 — 매출이 요일에 좌우되므로
+    const wdPrev = buildWeekdayPrevMap(monthDaily, prevMonthDaily, yearMonth);
     const today = new Date();
     const lastDay = (yearMonth === thisMonth()) ? today.getDate() : dim;
     const full = [];
@@ -453,10 +507,15 @@
     for (let day = 1; day <= dim; day++){
       const ds = `${y}-${pad(m)}-${pad(day)}`;
       const dt = new Date(Date.UTC(y, m-1, day));
+      const wdIdx = dt.getUTCDay();
+      const pm = wdPrev[ds] || {};
       full.push({
-        date: ds, day, dow: dow[dt.getUTCDay()],
+        date: ds, day, dow: dow[wdIdx], dowIdx: wdIdx,
         rev: day <= lastDay ? (map[ds] || 0) : null,
-        prevRev: prevMap[day] != null ? prevMap[day] : null
+        prevRev: pm.prevRev != null ? pm.prevRev : null,
+        prevDate: pm.prevDate || null,
+        holiday: holidayName(ds),
+        rest: isRestDay(ds, wdIdx)
       });
     }
     const hasAny = full.some(d => d.rev !== null && d.rev > 0);
@@ -474,7 +533,7 @@
     const isCurr = (yearMonth === thisMonth());
     const cutoffLbl = isCurr ? `1~${lastDay}일` : '전월 동월';
     meta.textContent = hasPrev
-      ? `이번달 ${KRW(sumThis)} · 전월 동기간 ${KRW(sumPrevTillCutoff)} (${cutoffLbl})`
+      ? `이번달 ${KRW(sumThis)} · 전월 같은요일 ${KRW(sumPrevTillCutoff)} (${cutoffLbl}, 요일 정렬)`
       : `${dim}일 중 ${full.filter(d => d.rev !== null).length}일 표시`;
 
     const W = 800, H = 180, PAD = 10;
@@ -501,9 +560,25 @@
       prevPath += (inPrev ? ` L${x},${yy}` : `M${x},${yy}`);
       inPrev = true;
     });
+    // 주말 배경 음영 (토·일) — 매출이 오르는 경향이라 시각적 기준선
+    const colW = full.length > 1 ? W / (full.length - 1) : W;
+    const weekendBands = full.map((d, i) => {
+      if (d.dowIdx !== 0 && d.dowIdx !== 6) return '';
+      const cx = xs[i];
+      return `<rect x="${(cx - colW/2).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${H}" fill="#6366f1" opacity="0.04"/>`;
+    }).join('');
+    // 공휴일 마커 — 세로 점선 + 상단 점
+    const holidayMarks = full.map((d, i) => {
+      if (!d.holiday) return '';
+      const cx = xs[i].toFixed(1);
+      return `<line x1="${cx}" y1="0" x2="${cx}" y2="${H}" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2,3" opacity="0.55"/>` +
+             `<circle cx="${cx}" cy="6" r="2.5" fill="#f43f5e"/>`;
+    }).join('');
     wrap.insertAdjacentHTML('afterbegin', `
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block">
         <defs><linearGradient id="postype-area-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.25"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+        ${weekendBands}
+        ${holidayMarks}
         ${area ? `<path d="${area}" fill="url(#postype-area-grad)"/>` : ''}
         ${prevPath ? `<path d="${prevPath}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" stroke-linejoin="round" opacity="0.7"/>` : ''}
         <path d="${path}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
@@ -875,8 +950,11 @@
       const idx  = Math.max(0, Math.min(days.length-1, Math.round(x / rect.width * (days.length-1))));
       const d    = days[idx];
       const curStr = d.rev === null ? '미래' : KRW(d.rev);
-      const prevStr = (d.prevRev != null) ? ` · 전월 ${KRW(d.prevRev)}` : '';
-      const label = `${d.day}일 (${d.dow}) · ${curStr}${prevStr}`;
+      // 전월 같은 요일 매칭 (날짜 다름) — 비교 기준 명시
+      const prevDayLbl = d.prevDate ? `${parseInt(d.prevDate.slice(8,10))}일` : '';
+      const prevStr = (d.prevRev != null) ? ` · 전월 ${prevDayLbl}(같은요일) ${KRW(d.prevRev)}` : '';
+      const holiStr = d.holiday ? ` 🔴${d.holiday}` : '';
+      const label = `${d.day}일 (${d.dow})${holiStr} · ${curStr}${prevStr}`;
       tt.textContent = label;
       tt.style.display = 'block';
       tt.style.left = Math.min(Math.max(x + 12, 8), rect.width - 200) + 'px';
