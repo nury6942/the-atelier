@@ -12579,6 +12579,23 @@
           </div>
         </div>
 
+        <!-- 월별 매출 추이 (올해 vs 작년 같은 달) -->
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+          <div class="flex justify-between items-baseline mb-4 flex-wrap gap-2">
+            <h3 class="text-lg font-bold text-slate-900 font-headline">월별 매출 추이</h3>
+            <span class="text-xs text-slate-400" id="postype-monthly-meta">—</span>
+          </div>
+          <div id="postype-monthly-chart" class="relative" style="height:200px">
+            <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-monthly-empty">데이터 없음</div>
+            <div id="postype-monthly-tooltip" class="absolute bg-slate-900 text-white text-xs px-2.5 py-1.5 rounded-md pointer-events-none" style="display:none;white-space:nowrap;z-index:10"></div>
+            <div id="postype-monthly-vline" class="absolute top-0 bottom-0 w-px bg-indigo-400 pointer-events-none" style="display:none"></div>
+          </div>
+          <div class="flex items-center gap-4 mt-3 text-[11px] text-slate-400">
+            <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 h-[2px] rounded bg-indigo-500"></span>올해</span>
+            <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 border-t-2 border-dashed border-slate-400"></span>작년 같은 달</span>
+          </div>
+        </div>
+
         <!-- ─── 차별화 위젯 ─────────────────────────────── -->
         <!-- 위젯 1: 시리즈 회차별 매출 곡선 (전체 폭) -->
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
