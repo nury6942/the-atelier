@@ -66,7 +66,6 @@
   let allSeriesRaw = [];
   let currentChannel = localStorage.getItem('postype_currentChannel') || '__all__';
   let currentMonth   = null;
-  let decaySeries    = '__all__';
   let isDemoMode     = false;
   let loaded         = false;
 
@@ -593,15 +592,15 @@
     const series = allSeries();
     const posts = allPosts();
     if (!series.length || !posts.length){
-      wrap.innerHTML = '<div class="col-span-2 text-center text-slate-400 text-sm py-12">데이터 없음</div>';
+      wrap.innerHTML = '<div class="col-span-full text-center text-slate-400 text-sm py-12">데이터 없음</div>';
       return;
     }
     const top = [...series]
       .filter(s => s.name !== '_멤버십_' && s.name !== '_미분류_' && (s.posts || []).length >= 2)
       .sort((a, b) => (b.totalRev||0) - (a.totalRev||0))
-      .slice(0, 4);
+      .slice(0, 8);
     if (!top.length){
-      wrap.innerHTML = '<div class="col-span-2 text-center text-slate-400 text-sm py-12">회차 2개 이상인 시리즈가 없어요</div>';
+      wrap.innerHTML = '<div class="col-span-full text-center text-slate-400 text-sm py-12">회차 2개 이상인 시리즈가 없어요</div>';
       return;
     }
     const postById = Object.fromEntries(posts.map(p => [p.postId, p]));
@@ -611,170 +610,44 @@
       const ps = (s.posts || []).map(id => postById[id]).filter(Boolean)
         .sort((a, b) => { const na = epNum(a), nb = epNum(b); return (na != null && nb != null) ? na - nb : 0; });
       if (ps.length < 2) return '';
-      const max = Math.max(...ps.map(p => p.totalRev || 0), 1);
+      const revs = ps.map(p => p.totalRev || 0);
+      const max = Math.max(...revs, 1);
+      const minRev = Math.min(...revs);
+      const maxRev = Math.max(...revs);
+      const avgRev = Math.round(revs.reduce((a, b) => a + b, 0) / revs.length);
+      const peakIdx = revs.indexOf(maxRev);
+      const peakEp = epNum(ps[peakIdx]) != null ? epNum(ps[peakIdx]) + '화' : (peakIdx + 1) + '편';
       const W = 100, H = 50;
-      const points = ps.map((p, i) => `${(i/Math.max(ps.length-1,1))*W},${H - ((p.totalRev||0)/max)*(H-4) - 2}`).join(' ');
-      const first = ps[0].totalRev || 0;
-      const last  = ps[ps.length-1].totalRev || 0;
+      const cx = i => (i / Math.max(ps.length - 1, 1)) * W;
+      const cy = i => H - (revs[i] / max) * (H - 4) - 2;
+      const points = ps.map((p, i) => `${cx(i)},${cy(i)}`).join(' ');
+      const first = revs[0];
+      const last  = revs[revs.length - 1];
       const trend = first > 0 ? Math.round((last - first) / first * 100) : 0;
       const tc = trend >= 0 ? 'text-emerald-600' : 'text-rose-600';
       // 라벨 = 제목에서 뽑은 실제 회차 번호. 무료 회차는 매출 데이터가 없어 빠지므로 첫 유료 회차부터 표시됨.
       const firstEp = epNum(ps[0]) != null ? epNum(ps[0]) + '화' : '첫 편';
-      const lastEp  = epNum(ps[ps.length-1]) != null ? epNum(ps[ps.length-1]) + '화' : ps.length + '편';
-      const circles = ps.map((p, i) => `<circle cx="${(i/Math.max(ps.length-1,1))*W}" cy="${H - ((p.totalRev||0)/max)*(H-4) - 2}" r="1.5" fill="#6366f1"/>`).join('');
+      const lastEp  = epNum(ps[ps.length - 1]) != null ? epNum(ps[ps.length - 1]) + '화' : ps.length + '편';
+      const circles = ps.map((p, i) => `<circle cx="${cx(i)}" cy="${cy(i)}" r="${i === peakIdx ? 2.4 : 1.5}" fill="${i === peakIdx ? '#f59e0b' : '#6366f1'}"/>`).join('');
       return `<div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
         <div class="flex justify-between items-baseline mb-1.5">
           <span class="text-xs font-bold text-slate-800 truncate" style="max-width:60%">${s.name}</span>
           <span class="text-[10px] ${tc} font-bold whitespace-nowrap">${ps.length}편 · ${trend >= 0 ? '+' : ''}${trend}%</span>
         </div>
-        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:42px;display:block">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:46px;display:block">
           <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>${circles}
         </svg>
         <div class="flex justify-between text-[10px] text-slate-400 mt-1">
           <span>${firstEp} ${KRW(first)}</span><span>${lastEp} ${KRW(last)}</span>
         </div>
+        <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-2 pt-2 border-t border-slate-100 text-[10px]">
+          <div class="flex justify-between gap-1"><span class="text-slate-400">피크</span><span class="font-bold text-amber-600 tabular-nums">${peakEp}</span></div>
+          <div class="flex justify-between gap-1"><span class="text-slate-400">평균</span><span class="font-bold text-slate-700 tabular-nums">${KRW(avgRev)}</span></div>
+          <div class="flex justify-between gap-1"><span class="text-slate-400">최고</span><span class="font-bold text-slate-700 tabular-nums">${KRW(maxRev)}</span></div>
+          <div class="flex justify-between gap-1"><span class="text-slate-400">최저</span><span class="font-bold text-slate-700 tabular-nums">${KRW(minRev)}</span></div>
+        </div>
       </div>`;
     }).join('');
-  }
-
-  // ─── 위젯 2: 감쇠 곡선 ─────────────────────────────────────────
-  function populateDecaySeriesSelect(){
-    const sel = document.getElementById('postype-decay-series');
-    if (!sel) return;
-    const currentVal = sel.value || '__all__';
-    const candidates = [...allSeries()]
-      .filter(s => s.name !== '_멤버십_' && s.name !== '_미분류_' && (s.posts || []).length >= 2)
-      .sort((a,b) => (b.totalRev||0) - (a.totalRev||0))
-      .slice(0, 5);
-    sel.innerHTML = '<option value="__all__">전체 평균</option>' + candidates.map(s => `<option value="${s.name}">${s.name} (${(s.posts||[]).length}편)</option>`).join('');
-    sel.value = candidates.find(c => c.name === currentVal) ? currentVal : '__all__';
-    if (!sel.__attached){
-      sel.__attached = true;
-      sel.addEventListener('change', () => { decaySeries = sel.value; renderDecayChart(); });
-    }
-  }
-  function renderDecayChart(){
-    const wrap  = document.getElementById('postype-decay-chart');
-    const empty = document.getElementById('postype-decay-empty');
-    const meta  = document.getElementById('postype-decay-meta');
-    wrap.querySelectorAll('svg').forEach(el => el.remove());
-    let pool = allPosts().filter(p => p.revByAge && p.firstTs);
-    if (decaySeries !== '__all__') pool = pool.filter(p => p.series === decaySeries);
-    if (!pool.length){
-      if (empty){ empty.style.display = 'flex'; empty.textContent = '데이터 없음'; }
-      if (meta) meta.textContent = '—';
-      return;
-    }
-    const avgAt = (key, minAge) => {
-      const mature = pool.filter(p => ageDays(p.firstTs) >= minAge && p.revByAge[key] !== undefined);
-      if (!mature.length) return null;
-      return { value: round100(mature.reduce((a,p) => a + p.revByAge[key], 0) / mature.length), n: mature.length };
-    };
-    const points = [
-      { label: 'D1',  ...(avgAt('d1', 1)  || {}) },
-      { label: 'D3',  ...(avgAt('d3', 3)  || {}) },
-      { label: 'D7',  ...(avgAt('d7', 7)  || {}) },
-      { label: 'D14', ...(avgAt('d14', 14) || {}) },
-      { label: 'D30', ...(avgAt('d30', 30) || {}) }
-    ].filter(p => p.value !== undefined);
-    if (!points.length){
-      if (empty){ empty.style.display = 'flex'; empty.textContent = '성숙한 회차가 없어요'; }
-      if (meta) meta.textContent = '—';
-      return;
-    }
-    if (empty) empty.style.display = 'none';
-    const max = Math.max(...points.map(p => p.value), 1);
-    const W = 320, H = 180, PADX = 30, PADY = 25;
-    const xs = points.map((p, i) => PADX + (i / Math.max(points.length-1, 1)) * (W - PADX*2));
-    const ys = points.map(p => H - PADY - (p.value / max) * (H - PADY*2));
-    const path = xs.map((x, i) => `${i ? 'L' : 'M'}${x},${ys[i]}`).join(' ');
-    const svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
-      <path d="${path}" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round"/>
-      ${points.map((p, i) => `
-        <circle cx="${xs[i]}" cy="${ys[i]}" r="3.5" fill="#10b981"/>
-        <text x="${xs[i]}" y="${ys[i] - 8}" text-anchor="middle" fill="#475569" font-size="10" font-weight="600">${KRW(p.value)}</text>
-        <text x="${xs[i]}" y="${H - 6}" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700">${p.label}</text>
-      `).join('')}
-    </svg>`;
-    wrap.insertAdjacentHTML('afterbegin', svg);
-    if (meta){
-      const sn = decaySeries === '__all__' ? '전체' : decaySeries;
-      meta.textContent = `${sn} · ${points.map(p => `${p.label} ${p.n}편`).join(' · ')}`;
-    }
-  }
-
-  // ─── 위젯 3: 발행 시점 효과 ─────────────────────────────────────
-  function renderPubEffect(){
-    const wrap = document.getElementById('postype-pub-effect');
-    const wf = allPosts().filter(p => p.firstTs && p.revByAge && p.revByAge.d1 !== undefined);
-    if (!wf.length){
-      wrap.innerHTML = '<div class="text-center text-slate-400 text-sm py-8">데이터 없음</div>';
-      return;
-    }
-    const byDow = Array(7).fill().map(() => ({ posts: 0, total: 0 }));
-    const byBk  = { '새벽 0-5': {posts:0,total:0}, '아침 6-11': {posts:0,total:0}, '오후 12-17': {posts:0,total:0}, '저녁 18-23': {posts:0,total:0} };
-    wf.forEach(p => {
-      const parts = p.firstTs.match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):/);
-      if (!parts) return;
-      const dt = new Date(Date.UTC(+parts[1], +parts[2]-1, +parts[3]));
-      const dowIdx = dt.getUTCDay();
-      byDow[dowIdx].posts++; byDow[dowIdx].total += p.revByAge.d1 || 0;
-      const h = +parts[4];
-      const bk = h <= 5 ? '새벽 0-5' : h <= 11 ? '아침 6-11' : h <= 17 ? '오후 12-17' : '저녁 18-23';
-      byBk[bk].posts++; byBk[bk].total += p.revByAge.d1 || 0;
-    });
-    const maxDT = Math.max(...byDow.map(x => x.total));
-    const maxBT = Math.max(...Object.values(byBk).map(x => x.total));
-    const dowRows = dow.map((d, i) => {
-      const v = byDow[i];
-      const avg = v.posts ? round100(v.total / v.posts) : 0;
-      const isMax = v.posts > 0 && v.total === maxDT;
-      return `<tr ${isMax ? 'class="bg-indigo-50"' : ''}><td class="px-2 py-1.5 ${isMax ? 'text-indigo-700 font-bold' : 'text-slate-700'}">${d}</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${v.posts}편</td><td class="px-2 py-1.5 text-right tabular-nums font-bold ${isMax ? 'text-indigo-600' : 'text-slate-800'}">${KRW(avg)}</td></tr>`;
-    }).join('');
-    const bkRows = Object.entries(byBk).map(([k, v]) => {
-      const avg = v.posts ? round100(v.total / v.posts) : 0;
-      const isMax = v.posts > 0 && v.total === maxBT;
-      return `<tr ${isMax ? 'class="bg-indigo-50"' : ''}><td class="px-2 py-1.5 ${isMax ? 'text-indigo-700 font-bold' : 'text-slate-700'}">${k}</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${v.posts}편</td><td class="px-2 py-1.5 text-right tabular-nums font-bold ${isMax ? 'text-indigo-600' : 'text-slate-800'}">${KRW(avg)}</td></tr>`;
-    }).join('');
-    wrap.innerHTML = `
-      <div class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 px-2">요일별 24h 평균</div>
-      <table class="w-full text-xs mb-3"><tbody>${dowRows}</tbody></table>
-      <div class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 px-2">시간대별 24h 평균</div>
-      <table class="w-full text-xs"><tbody>${bkRows}</tbody></table>`;
-  }
-
-  // ─── 위젯 4: 가격대 분포 ────────────────────────────────────────
-  function renderPriceDist(monthDaily){
-    const wrap = document.getElementById('postype-price-dist');
-    const meta = document.getElementById('postype-price-meta');
-    const merged = {};
-    monthDaily.forEach(d => {
-      if (!d.byPriceBucket) return;
-      Object.entries(d.byPriceBucket).forEach(([p, c]) => { merged[p] = (merged[p] || 0) + c; });
-    });
-    if (!Object.keys(merged).length){
-      wrap.innerHTML = '<div class="text-center text-slate-400 text-sm py-8">데이터 없음</div>';
-      if (meta) meta.textContent = '—';
-      return;
-    }
-    const buckets = { '500P': 0, '600~700P': 0, '800~1000P': 0, '1500P+': 0, '2500P+ (묶음)': 0 };
-    Object.entries(merged).forEach(([p, c]) => {
-      const v = parseInt(p);
-      if (v === 500) buckets['500P'] += c;
-      else if (v <= 700) buckets['600~700P'] += c;
-      else if (v <= 1000) buckets['800~1000P'] += c;
-      else if (v < 2500) buckets['1500P+'] += c;
-      else buckets['2500P+ (묶음)'] += c;
-    });
-    const total = Object.values(buckets).reduce((a, b) => a + b, 0);
-    const bundlePct = total ? (buckets['2500P+ (묶음)'] / total * 100).toFixed(1) : 0;
-    if (meta) meta.textContent = `묶음 ${bundlePct}%`;
-    const rows = Object.entries(buckets).map(([k, c]) => {
-      const pct = total ? (c / total * 100).toFixed(1) : 0;
-      const isBundle = k.includes('묶음');
-      return `<tr><td class="px-2 py-1.5 ${isBundle ? 'text-amber-700 font-bold' : 'text-slate-700'}">${k}</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${c}건</td><td class="px-2 py-1.5 text-right tabular-nums text-slate-500">${pct}%</td><td class="px-2 py-1.5" style="width:90px"><div class="h-1.5 bg-slate-100 rounded overflow-hidden"><div style="width:${pct}%;height:100%;background:${isBundle ? 'linear-gradient(90deg,#f59e0b,#fbbf24)' : 'linear-gradient(90deg,#6366f1,#a5b4fc)'}"></div></div></td></tr>`;
-    }).join('');
-    wrap.innerHTML = `<table class="w-full text-xs"><tbody>${rows}</tbody></table>`;
   }
 
   // ─── 위젯 5: 히트맵 ────────────────────────────────────────────
@@ -985,7 +858,6 @@
       currentChannel = sel.value;
       localStorage.setItem('postype_currentChannel', currentChannel);
       currentMonth = thisMonth();  // 채널 바뀌면 현재월로 리셋
-      decaySeries = '__all__';
       renderForMonth(currentMonth);
     });
   }
@@ -1023,10 +895,6 @@
     renderKPIs(monthDaily, prevMd, ytdTotal, yearMonth);
     renderDailyChart(monthDaily, prevMd, yearMonth);
     renderSeriesCurves();
-    populateDecaySeriesSelect();
-    renderDecayChart();
-    renderPubEffect();
-    renderPriceDist(monthDaily);
     renderHeatmap(monthDaily);
     renderForecast();
     setSyncLabel(allDailyRaw, isDemoMode);

@@ -12579,55 +12579,15 @@
           </div>
         </div>
 
-        <!-- ─── 차별화 위젯 (5단계) ─────────────────────────────── -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <!-- 위젯 1: 시리즈 회차별 매출 곡선 -->
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex justify-between items-baseline mb-4">
-              <h3 class="text-lg font-bold text-slate-900 font-headline">시리즈 회차별 매출</h3>
-              <span class="text-xs text-slate-400">TOP 4 · 회차 이탈률</span>
-            </div>
-            <div id="postype-series-curves" class="grid grid-cols-2 gap-3">
-              <div class="col-span-2 text-center text-slate-400 text-sm py-12" id="postype-series-empty">데이터 없음</div>
-            </div>
+        <!-- ─── 차별화 위젯 ─────────────────────────────── -->
+        <!-- 위젯 1: 시리즈 회차별 매출 곡선 (전체 폭) -->
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+          <div class="flex justify-between items-baseline mb-4">
+            <h3 class="text-lg font-bold text-slate-900 font-headline">시리즈 회차별 매출</h3>
+            <span class="text-xs text-slate-400">TOP 8 · 회차별 추이</span>
           </div>
-
-          <!-- 위젯 2: 발행 후 D1~D30 감쇠 -->
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex justify-between items-center mb-4 gap-2 flex-wrap">
-              <h3 class="text-lg font-bold text-slate-900 font-headline">발행 후 N일 누적 매출</h3>
-              <select id="postype-decay-series" class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200">
-                <option value="__all__">전체 평균</option>
-              </select>
-            </div>
-            <div id="postype-decay-chart" class="relative" style="height:180px">
-              <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm" id="postype-decay-empty">데이터 없음</div>
-            </div>
-            <div class="text-[11px] text-slate-400 mt-2" id="postype-decay-meta">—</div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <!-- 위젯 3: 발행 시점 효과 -->
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex justify-between items-baseline mb-4">
-              <h3 class="text-lg font-bold text-slate-900 font-headline">발행 시점 효과</h3>
-              <span class="text-xs text-slate-400">24h 매출 평균</span>
-            </div>
-            <div id="postype-pub-effect">
-              <div class="text-center text-slate-400 text-sm py-8" id="postype-pub-empty">데이터 없음</div>
-            </div>
-          </div>
-
-          <!-- 위젯 4: 가격대 분포 -->
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="flex justify-between items-baseline mb-4">
-              <h3 class="text-lg font-bold text-slate-900 font-headline">가격대 분포</h3>
-              <span class="text-xs text-slate-400" id="postype-price-meta">묶음 비중</span>
-            </div>
-            <div id="postype-price-dist">
-              <div class="text-center text-slate-400 text-sm py-8" id="postype-price-empty">데이터 없음</div>
-            </div>
+          <div id="postype-series-curves" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="col-span-full text-center text-slate-400 text-sm py-12" id="postype-series-empty">데이터 없음</div>
           </div>
         </div>
 
