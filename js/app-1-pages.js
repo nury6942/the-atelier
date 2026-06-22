@@ -20392,8 +20392,27 @@ function openSessionDetail(dateId) {
     '</tbody></table></div>' + krBox(s.expressionsKr);
 
   // 03 Upgrades
+  // 💎 C1 표현이 어려울 때 펼쳐보는 상세 해설 — gemMeaningKr(문장 전체 뜻) + gemBreakdown([{chunk, meaning}])
+  function gemBreakdownHtml(u, ui){
+    var bd = Array.isArray(u.gemBreakdown) ? u.gemBreakdown : [];
+    if (!bd.length && !u.gemMeaningKr) return '';
+    var id = 'gembd-' + ui;
+    var rows = bd.map(function(b){
+      return '<div class="flex gap-3 py-2 border-b border-indigo-50" style="align-items:baseline">' +
+        '<span style="min-width:38%;font-weight:700;color:#4338ca;font-size:13px">' + (b.chunk||'') + '</span>' +
+        '<span class="review-note-kr" style="margin:0;font-size:13px">' + (b.meaning||'') + '</span>' +
+      '</div>';
+    }).join('');
+    return '<div style="margin-left:26px;margin-top:10px">' +
+      '<button id="' + id + '-btn" onclick="toggleGemBreakdown(\'' + id + '\')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">unfold_more</span>표현 뜯어보기</button>' +
+      '<div id="' + id + '" style="display:none;margin-top:8px" class="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100">' +
+        (u.gemMeaningKr ? '<p class="review-note-kr" style="margin:0 0 10px;font-weight:600;color:#4338ca">' + u.gemMeaningKr + '</p>' : '') +
+        rows +
+      '</div>' +
+    '</div>';
+  }
   var upgs = s.upgrades || [];
-  var sec3 = '<div class="space-y-5">' + upgs.map(function(u){
+  var sec3 = '<div class="space-y-5">' + upgs.map(function(u, ui){
     return '<div class="p-5 rounded-xl bg-slate-50 review-upgrade-card">' +
       '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-rose-500 text-base mt-0.5">❌</span><span class="review-upgrade-bad line-through">' + (u.bad||'') + '</span></div>' +
       '<div class="flex items-start gap-2.5 mb-1"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span></div>' +
@@ -20402,6 +20421,7 @@ function openSessionDetail(dateId) {
       (u.gemKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:6px">' + u.gemKr + '</p>' : '') +
       (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
       (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
+      gemBreakdownHtml(u, ui) +
     '</div>';
   }).join('') + '</div>' + krBox(s.upgradesKr);
 
@@ -20513,6 +20533,16 @@ function openSessionDetail(dateId) {
   window.scrollTo({top: 0, behavior: 'smooth'});
   // 스크롤 스파이 초기화
   setTimeout(initEngScrollSpy, 300);
+}
+
+// 💎 표현 뜯어보기 토글 (Upgrades 상세 해설 접기/펴기)
+function toggleGemBreakdown(id){
+  var el = document.getElementById(id);
+  var btn = document.getElementById(id + '-btn');
+  if (!el) return;
+  var open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  if (btn) btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">' + (open ? 'unfold_more' : 'unfold_less') + '</span>' + (open ? '표현 뜯어보기' : '접기');
 }
 
 // ===== REVIEW FONT SIZE =====
