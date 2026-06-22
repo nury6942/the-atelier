@@ -585,7 +585,7 @@
     wrap.__days = full;
   }
 
-  // ─── 월별 매출 추이 (올해 vs 작년 같은 달, 월별 실측) ───────────
+  // ─── 월별 매출 추이 (전체 기간 월별 총 매출 연속 추이) ───────────
   function renderMonthlyTrend(){
     const wrap  = document.getElementById('postype-monthly-chart');
     const empty = document.getElementById('postype-monthly-empty');
@@ -594,91 +594,74 @@
     const old = wrap.querySelector('svg');
     if (old) old.remove();
 
-    const year     = parseInt((currentMonth || thisMonth()).slice(0, 4));
-    const lastYear = year - 1;
-    const nowYM    = thisMonth();
-    // 월별 합계 (전체 기간) — 작년 같은 달 비교용으로 과거까지 누적
+    const nowYM = thisMonth();
+    // 월별 총 매출 합계 (전체 기간)
     const sumByYM = {};
     allDaily().forEach(d => { if (d.date){ const k = d.date.slice(0,7); sumByYM[k] = (sumByYM[k] || 0) + (d.rev || 0); } });
-
-    const months = [];
-    for (let m = 1; m <= 12; m++){
-      const ym  = `${year}-${pad(m)}`;
-      const pym = `${lastYear}-${pad(m)}`;
-      const isFutureMonth = ym > nowYM;                    // 아직 안 온 달은 실측 없음
-      months.push({
-        m, ym,
-        rev:     isFutureMonth ? null : (sumByYM[ym]  != null ? sumByYM[ym]  : null),
-        prevRev: sumByYM[pym] != null ? sumByYM[pym] : null,
-        partial: ym === nowYM
-      });
-    }
-
-    const hasThis = months.some(d => d.rev !== null && d.rev > 0);
-    const hasPrev = months.some(d => d.prevRev !== null && d.prevRev > 0);
-    if (!hasThis && !hasPrev){
-      if (empty){ empty.style.display = 'flex'; empty.textContent = `${year}년 데이터 없음`; }
+    const keys = Object.keys(sumByYM).filter(k => k <= nowYM).sort();   // 미래(오입력) 제외, 오름차순
+    if (!keys.length){
+      if (empty){ empty.style.display = 'flex'; empty.textContent = '데이터 없음'; }
       if (meta) meta.textContent = '—';
       wrap.__months = [];
       return;
     }
     if (empty) empty.style.display = 'none';
 
-    // 메타: 올해 누적 vs 작년 '같은 기간'(올해 데이터 있는 달까지)
-    const sumThis     = months.filter(d => d.rev !== null).reduce((a,d) => a + d.rev, 0);
-    const sumPrevSame = months.filter(d => d.rev !== null && d.prevRev !== null).reduce((a,d) => a + d.prevRev, 0);
-    if (meta){
-      if (sumPrevSame > 0){
-        const pct = (sumThis - sumPrevSame) / sumPrevSame * 100;
-        meta.textContent = `${year} ${KRW(sumThis)} · 작년 동기간 ${KRW(sumPrevSame)} (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)`;
-      } else {
-        meta.textContent = `${year} 누적 ${KRW(sumThis)}`;
-      }
+    // 첫 데이터 달 ~ 이번 달까지 모든 달 채우기 (빈 달은 null → 점은 없고 선은 가로로 이어짐)
+    const firstYM = keys[0];
+    const nextYM = ym => { let [yy, mm] = ym.split('-').map(Number); mm++; if (mm > 12){ mm = 1; yy++; } return `${yy}-${pad(mm)}`; };
+    const months = [];
+    for (let cur = firstYM; cur <= nowYM; cur = nextYM(cur)){
+      months.push({ ym: cur, rev: sumByYM[cur] != null ? sumByYM[cur] : null, partial: cur === nowYM });
     }
 
-    const W = 800, H = 180, PADX = 6, PADY = 14;
-    const allVals = months.flatMap(d => [d.rev, d.prevRev]).filter(v => v !== null);
-    const max = Math.max(...allVals, 1);
-    const xAt = i => PADX + (i / 11) * (W - PADX * 2);
+    const present = months.filter(d => d.rev !== null);
+    const total   = present.reduce((a, d) => a + d.rev, 0);
+    const avg     = present.length ? Math.round(total / present.length) : 0;
+    const peak    = present.reduce((a, d) => d.rev > a.rev ? d : a, present[0]);
+    const ymLbl   = ym => { const [y, m] = ym.split('-'); return `${y.slice(2)}.${m}`; };
+    if (meta){
+      meta.textContent = `${ymLbl(firstYM)}~${ymLbl(nowYM)} · ${present.length}개월 · 월평균 ${KRW(avg)} · 최고 ${ymLbl(peak.ym)} ${KRW(peak.rev)}`;
+    }
+
+    const W = 800, H = 180, PADX = 6, PADY = 16;
+    const max = Math.max(...present.map(d => d.rev), 1);
+    const xAt = i => PADX + (months.length > 1 ? i / (months.length - 1) : 0.5) * (W - PADX * 2);
     const yAt = v => H - PADY - (v / max) * (H - PADY * 2);
 
+    // 존재하는 달만 한 줄로 (빈 달은 가로 간격으로만 반영)
+    const pts = months.map((d, i) => d.rev !== null ? { x: xAt(i), y: yAt(d.rev) } : null).filter(Boolean);
+
     // 부드러운 곡선 (Catmull-Rom → 3차 베지어)
-    const smoothPath = pts => {
-      if (!pts.length) return '';
-      if (pts.length === 1) return `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
-      let dd = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
-      for (let i = 0; i < pts.length - 1; i++){
-        const p0 = pts[i-1] || pts[i], p1 = pts[i], p2 = pts[i+1], p3 = pts[i+2] || p2;
+    const smoothPath = ps => {
+      if (!ps.length) return '';
+      if (ps.length === 1) return `M${ps[0].x.toFixed(1)},${ps[0].y.toFixed(1)}`;
+      let dd = `M${ps[0].x.toFixed(1)},${ps[0].y.toFixed(1)}`;
+      for (let i = 0; i < ps.length - 1; i++){
+        const p0 = ps[i-1] || ps[i], p1 = ps[i], p2 = ps[i+1], p3 = ps[i+2] || p2;
         const c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
         const c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
         dd += ` C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
       }
       return dd;
     };
-    // null 끊김을 연속 구간으로 분리
-    const segsOf = key => {
-      const segs = []; let cur = [];
-      months.forEach((d, i) => {
-        if (d[key] === null){ if (cur.length){ segs.push(cur); cur = []; } return; }
-        cur.push({ x: xAt(i), y: yAt(d[key]) });
-      });
-      if (cur.length) segs.push(cur);
-      return segs;
-    };
+    const linePath = smoothPath(pts);
+    const areaPath = pts.length ? `${linePath} L${pts[pts.length-1].x.toFixed(1)},${H} L${pts[0].x.toFixed(1)},${H} Z` : '';
 
-    const thisSegs = segsOf('rev');
-    const thisPath = thisSegs.map(smoothPath).join(' ');
-    const prevPath = segsOf('prevRev').map(smoothPath).join(' ');
-    const areaPath = thisSegs.map(seg => seg.length
-      ? `${smoothPath(seg)} L${seg[seg.length-1].x.toFixed(1)},${H} L${seg[0].x.toFixed(1)},${H} Z`
-      : '').join(' ');
+    // 끝점(진행 중인 이번 달) 할로우 마커
+    let endDot = '';
+    const lastM = months[months.length - 1];
+    if (lastM && lastM.rev !== null && pts.length){
+      const p = pts[pts.length - 1];
+      endDot = `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#fff" stroke="#6366f1" stroke-width="2"/>`;
+    }
 
     wrap.insertAdjacentHTML('afterbegin', `
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block">
         <defs><linearGradient id="postype-monthly-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.22"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
         ${areaPath ? `<path d="${areaPath}" fill="url(#postype-monthly-grad)"/>` : ''}
-        ${prevPath ? `<path d="${prevPath}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" stroke-linejoin="round" opacity="0.7"/>` : ''}
-        ${thisPath ? `<path d="${thisPath}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>` : ''}
+        ${linePath ? `<path d="${linePath}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>` : ''}
+        ${endDot}
       </svg>`);
     wrap.__months = months;
   }
@@ -948,17 +931,22 @@
       const x    = e.clientX - rect.left;
       const idx  = Math.max(0, Math.min(months.length-1, Math.round(x / rect.width * (months.length-1))));
       const d    = months[idx];
-      const curStr = d.rev === null ? '미래' : KRW(d.rev);
-      let prevStr = '';
-      if (d.prevRev != null){
-        prevStr = ` · 작년 ${KRW(d.prevRev)}`;
-        if (d.rev !== null && d.prevRev > 0){
-          const pct = (d.rev - d.prevRev) / d.prevRev * 100;
-          prevStr += ` (${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%)`;
+      const [yy, mm] = d.ym.split('-');
+      if (d.rev === null){
+        tt.textContent = `${yy}.${mm} · 데이터 없음`;
+      } else {
+        // 직전(데이터 있는) 달 대비 증감
+        let momStr = '';
+        for (let j = idx - 1; j >= 0; j--){
+          if (months[j].rev !== null && months[j].rev > 0){
+            const pct = (d.rev - months[j].rev) / months[j].rev * 100;
+            momStr = ` (전월 ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%)`;
+            break;
+          }
         }
+        const partialStr = d.partial ? ' · 진행 중' : '';
+        tt.textContent = `${yy}.${mm} · ${KRW(d.rev)}${momStr}${partialStr}`;
       }
-      const partialStr = (d.partial && d.rev !== null) ? ' · 진행 중' : '';
-      tt.textContent = `${d.m}월 · ${curStr}${prevStr}${partialStr}`;
       tt.style.display = 'block';
       tt.style.left = Math.min(Math.max(x + 12, 8), rect.width - 200) + 'px';
       tt.style.top  = '8px';
