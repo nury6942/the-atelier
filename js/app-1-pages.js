@@ -20658,6 +20658,7 @@ Analyze the transcript below from an English tutoring session with a native spea
 - When improving sentences, don't just correct them — UPGRADE to C1 level (more advanced vocab/grammar) while keeping natural spoken English a real person would actually say.
 - Extract 12–20 useful expressions the tutor (not Nuri) actually used, categorized. Each needs Korean meaning + frequency.
 - Provide 6–10 "upgrade" entries with original / natural B2 / C1 upgrade / note + Korean for the natural version + frequency of the C1 gem.
+- For EACH upgrade's C1 gem, ALSO produce a learner-friendly breakdown so Nuri never has to look it up in GPT/dictionary: gemMeaningKr = the whole gem sentence in natural Korean (1–2 sentences); gemBreakdown = an array of 3–6 { chunk, meaning } items pulling out the tricky or C1-flavored pieces (phrasal verbs, collocations, idioms, grammar patterns like "tend to + V"). "meaning" = Korean sense + nuance; for easily-confused polysemes, contrast explicitly (e.g., "come across as" = gives an impression, NOT "encounter by chance"; "back home" = in one's home country, NOT behind the house). If the gem's structure is non-trivial, make the FIRST item { chunk: "문장 구조", meaning: "주어 … / 동사구 … / 대시 뒤 …" }. Use an empty array [] only for genuinely simple gems.
 - Identify 4–6 grammar patterns Nuri struggles with, each with rule + 2–3 examples. Add Korean to the rule.
 - Topic vocab sets: 2–3 topics, each with 5–8 words. Each word needs: Korean meaning, collocations, synonym(s), antonym (or "—" if none), frequency, and a natural example. Favor genuinely useful everyday words over obscure ones.
 - Drills: 2–3 formats (fill-in-blank, reorder, C1 replacement). Each item needs the answer AND a short Korean explanation of why.
@@ -20701,6 +20702,11 @@ sessionsData["{{DATE}}"] = {
       okKr: "자연스러운 버전의 한글 뜻.",
       gem: "C1 upgrade — more sophisticated but still natural. Use C1 structures (inversion, 'rather than', 'what X is Y', etc.)",
       gemKr: "C1 업그레이드 문장의 한글 뜻.",
+      gemMeaningKr: "💎 gem 문장 전체를 자연스러운 한국어로 옮긴 1~2문장 (학습자가 한눈에 의미 파악).",
+      gemBreakdown: [
+        { chunk: "문장 구조", meaning: "복잡한 문장이면 주어 / 동사구 / 대시 뒤 식으로 한 줄 분해. 단순하면 이 항목은 빼도 됨." },
+        { chunk: "표현/구 (구동사·콜로케이션·관용구·문법패턴)", meaning: "한국어 뜻 + 뉘앙스. 헷갈리는 다의어는 'A가 아니라 B'로 구분. 직역과 실제 뜻이 다르면 둘 다. 총 3~6개." }
+      ],
       freq: "흔함",
       note: "Short English explanation of WHY the upgrade is better (grammar/vocab/structure/nuance).",
       noteKr: "한글로 짧게 설명. 핵심 패턴은 <b>볼드</b>."

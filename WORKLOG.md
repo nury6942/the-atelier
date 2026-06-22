@@ -55,17 +55,19 @@
 - 메타: `첫달~이번달 · N개월 · 월평균 · 최고 YY.MM 금액`
 - 검증: `node --check` OK, YoY 잔재(prevRev 등) 월별함수에서 grep 0건
 
-**Annie 영어 레슨 리뷰 — 💎 C1 표현 상세 해설(접기/펴기) 렌더러 추가**
+**Annie 영어 레슨 리뷰 — 💎 C1 표현 상세 해설(접기/펴기) 추가 (렌더러 + 프롬프트 둘 다)**
 - 배경: 누리가 💎 C1 표현이 안 와닿으면 따로 GPT한테 구문 분해를 물어봄 → 리뷰 안에서 끝내고 싶음
-- 구조 확인: 리뷰 생성 **프롬프트는 레포에 없음**(외부 ChatGPT/Claude에서 `var sessionsData={…}` .js 생성 → 영어레슨 페이지 업로드 → Firestore `englishSessions` → `app-1-pages.js` 렌더). 스키마 필드가 렌더러에만 존재, 디스크 grep 0건
-- 렌더러 확장(`app-1-pages.js` sec3): 각 upgrade에 **"표현 뜯어보기" 토글** 추가 — `gemMeaningKr`(문장 전체 뜻) + `gemBreakdown`([{chunk, meaning}]) 표시. `toggleGemBreakdown()` 추가. **하위호환**(필드 없으면 안 뜸)
-- 검증: `node --check` OK
-- ⏭ 남은 일: 누리가 **외부 프롬프트에 추가 지시문 붙여넣기**(gemMeaningKr/gemBreakdown 생성하도록) → 리뷰 1개 재생성·업로드해서 확인
+- 구조: 리뷰는 **앱 내 자동 생성** — '리뷰 직접 추가' 모달에서 트랜스크립트 붙여넣기 → Claude(Opus 4.7) 호출 → `var sessionsData={…}` 생성 → Firestore `englishSessions` → `app-1-pages.js` 렌더
+- **프롬프트 위치 = `app-1-pages.js`의 `REVIEW_PROMPT_TEMPLATE` (≈20649~20800)** ⚠️(처음에 "레포에 없음"이라 잘못 판단했음 — 실제로 코드 안 in-app 생성 플로우에 있었음)
+- 렌더러 확장(sec3): 각 upgrade에 **"표현 뜯어보기" 토글** — `gemMeaningKr`(문장 전체 뜻) + `gemBreakdown`([{chunk, meaning}]) 표시, `toggleGemBreakdown()`. 하위호환(필드 없으면 안 뜸)
+- 프롬프트 수정: 품질 요구사항에 gem breakdown 지시문 1줄 + 스키마에 `gemMeaningKr`/`gemBreakdown` 필드 추가 (다의어 'A가 아니라 B' 구분, 복잡하면 첫 항목=문장 구조)
+- 검증: `node --check` OK (백틱 템플릿 안 깨짐), 필드 grep 일치
+- ⏭ 남은 일: 라이브에서 트랜스크립트로 리뷰 1개 자동 생성 → Upgrades에서 "표현 뜯어보기" 펼쳐 확인 (API 호출이라 누리가 직접)
 
 ### 🎯 다음 할 일
 - 라이브에서 위젯1 4열 레이아웃 + 카드 통계 시인성 눈으로 확인 (KRW 큰 값일 때 통계 셀 줄바꿈 여부)
 - 월별 추이: 라이브에서 전체 기간 한 줄 흐름 + 끝점 할로우 마커 확인 (진행 중 이번 달 dip이 거슬리면 끝점 제외 옵션 고려)
-- Annie 리뷰: 외부 프롬프트에 gemMeaningKr/gemBreakdown 추가 지시문 반영(누리) → 새 리뷰로 "표현 뜯어보기" 동작 확인. 프롬프트 본문 받으면 Claude가 직접 통합 가능
+- Annie 리뷰: 새 트랜스크립트로 리뷰 1개 생성해서 "표현 뜯어보기" 동작/품질 확인 (기존 리뷰엔 필드 없어서 안 뜸 — 재생성해야 보임)
 
 ### 💭 메모
 - the-atelier는 공유 Firebase + 무인증 자동 sync라 **로컬 preview 금지** → GitHub Pages에서 직접 확인
