@@ -48,6 +48,14 @@
 - 흐름: [소스 복사] → [NotebookLM 열기] → 새 노트북 붙여넣기 → 오디오 생성 → mp3/링크 회수 (기존 버튼)
 - 검증: node --check OK
 
+**Annie 리뷰 → 오디오 오버뷰 프롬프트 자동 생성 (접기) ⭐**
+- 누리 요청: NotebookLM 오디오 오버뷰에 넣을 프롬프트를 매번 복붙하기 귀찮음 → 접기로 숨겨달라
+- 진단: 누리가 준 프롬프트는 소스 설명("BBC...on AI")·GROUP 표현이 세션별이라 통째 고정 불가 → 스마트 자동채움 채택
+- `engBuildNblmPrompt(dateId)` — 고정 지침(1타 강사·한국어 40/60·반복3회·리캡·페이싱)은 그대로, 소스줄=세션 title/subtitle, GROUP=expressions의 cat별 자동 묶음
+- NotebookLM 박스에 `<details>` 접기 + [프롬프트 복사] 버튼. `_esEscHtml`/`_esCopyText` 헬퍼 추가
+- 캐시버스트: english-study.js v7→v8, SW v257→v258
+- 검증: node --check OK
+
 ### 🎯 다음 할 일
 - (선택) 완전 자동 원하면 유료 "NotebookLM 스타일" 음성 API(AutoContent 등) + Firebase Function 검토
 - (이전) 교통편 큐레이션 블록 위치 옮기기 (현재 "숙소 정보" 아래 → 일정 상단/페이지 최상단 후보)

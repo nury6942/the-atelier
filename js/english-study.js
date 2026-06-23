@@ -639,6 +639,18 @@ function annieAudioHtml(s, dateId){
   if (!hasAudio && !hasLink){
     inner += '<p class="text-xs text-slate-400 leading-relaxed"><b>자동화 흐름:</b> ① <b>소스 복사</b> → ② <b>NotebookLM 열기</b> → 새 노트북 만들고 붙여넣기(Cmd+V) → 오디오 생성 → ③ 받은 mp3를 <b>올리거나(앱에서 바로 재생)</b> 공유 링크를 <b>붙이기(새 탭)</b>. 파일은 이 박스로 <b>끌어다 놓아도</b> 돼요.</p>';
   }
+  // 오디오 오버뷰 프롬프트 (이 세션 자동 생성) — 접기로 숨김
+  var nblmPrompt = engBuildNblmPrompt(dateId);
+  inner += '<details class="mt-3" style="border:1px solid #ede9fe;border-radius:12px;overflow:hidden">' +
+    '<summary style="cursor:pointer;list-style:none;padding:10px 14px;font-size:13px;font-weight:700;color:#6d28d9;background:rgba(139,92,246,0.06);display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined" style="font-size:18px">tune</span>오디오 오버뷰 프롬프트 (이 세션 자동 생성 · 펼쳐서 복사)</summary>' +
+    '<div style="padding:12px 14px">' +
+      '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
+        '<button onclick="engCopyNblmPrompt(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">content_copy</span>프롬프트 복사</button>' +
+        '<span class="text-[11px] text-slate-400">NotebookLM → 오디오 오버뷰 → 맞춤설정에 붙여넣기</span>' +
+      '</div>' +
+      '<pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.55;color:#475569;background:#f8fafc;border:1px solid #eef2ff;border-radius:8px;padding:12px;max-height:280px;overflow:auto;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace">' + _esEscHtml(nblmPrompt) + '</pre>' +
+    '</div>' +
+  '</details>';
   inner += '<input type="file" id="annie-audio-file-' + dateId + '" accept="audio/*" style="display:none" onchange="annieAudioUpload(\'' + dateId + '\', this.files && this.files[0])"/>';
   return '<div id="annie-audio-box-' + dateId + '" class="mb-8 p-5 rounded-2xl border border-violet-100" style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(99,102,241,0.04))" ondragover="annieAudioDragOver(event)" ondragleave="annieAudioDragLeave(event)" ondrop="annieAudioDrop(event,\'' + dateId + '\')">' + inner + '</div>';
 }
@@ -799,6 +811,89 @@ window.engCopyNotebookSource = async function(dateId){
 
 window.engOpenNotebookLM = function(){
   window.open('https://notebooklm.google.com/', '_blank', 'noopener');
+};
+
+// ── NotebookLM 오디오 오버뷰 프롬프트 (세션 자동 채움) ──────────
+// 고정 지침(1타 강사 스타일·한국어 40/60·반복·리캡·페이싱)은 그대로,
+// 소스 설명 + GROUP 표현 목록은 그 세션 데이터(expressions cat별)로 채운다.
+function _esEscHtml(t){
+  return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function engBuildNblmPrompt(dateId){
+  var s = (typeof engSessionsData !== 'undefined') ? engSessionsData.find(function(x){ return x._id === dateId; }) : null;
+  if (!s) return '';
+  var strip = _esStripTags;
+  var title = strip(s.title) || 'this lesson';
+
+  // GROUP 자동 생성 — expressions를 cat(테마)별로 묶어 표현 나열
+  var exprs = s.expressions || [];
+  var order = [], byCat = {};
+  exprs.forEach(function(ex){
+    var cat = strip(ex.cat) || '기타';
+    if (!byCat[cat]) { byCat[cat] = []; order.push(cat); }
+    if (ex.expr) byCat[cat].push('"' + strip(ex.expr) + '"');
+  });
+  var groupText = order.length
+    ? order.map(function(cat, i){ return 'GROUP ' + (i+1) + ' — ' + cat + ':\n' + byCat[cat].join(', '); }).join('\n\n')
+    : '(이 세션에 추출된 표현이 없습니다 — 트랜스크립트에서 직접 골라 가르쳐 주세요.)';
+
+  var srcLine = 'This source is an English transcript titled "' + title + '".';
+  if (s.subtitle) srcLine += '\n' + strip(s.subtitle);
+
+  return [
+    srcLine,
+    '',
+    'I am a KOREAN learner studying English for overseas job interviews (intermediate-advanced level). I want to learn AS MANY useful expressions as possible from this source — do not trim the list down for me.',
+    '',
+    'CRITICAL INSTRUCTION ABOUT LANGUAGE:',
+    '- The hosts must speak primarily in KOREAN (about 40% Korean / 60% English).',
+    '- ALL explanations, nuance, and teaching must be in KOREAN so I understand instantly.',
+    '- The English portion should be the target expressions themselves, the exact quotes from the transcript, and the example sentences.',
+    '- Pattern for each expression: say the English expression -> explain what it means IN KOREAN -> explain the nuance IN KOREAN -> give an English example sentence -> briefly explain that sentence IN KOREAN.',
+    '',
+    'DO NOT summarize the discussion. This is an ENGLISH VOCABULARY LESSON.',
+    '',
+    'TEACHING STYLE — very important:',
+    '- Teach like a top Korean "1타 강사" (star instructor): energetic, warm, memorable.',
+    '- NEVER mention an expression just once and move on. For EACH expression, repeat the English phrase at least 3 times across the explanation, come back to it, and reinforce it so it actually sticks.',
+    '- Explain WHY a Korean learner would NOT naturally produce this phrase, and how it differs from how we would say it in Korean.',
+    '- Keep the energy high and conversational, like two Korean teachers getting excited about good expressions.',
+    '',
+    'CONTENT — teach ALL of the following items (do not cut any), grouped. For each group, introduce IN KOREAN why this group matters:',
+    '',
+    groupText,
+    '',
+    'ENDING — full review, NOT a shortlist:',
+    '- Do a rapid-fire recap that goes back through EVERY expression taught in this lesson, in order, group by group.',
+    '- For each one: say the English phrase, then a 3-5 word Korean reminder of its meaning. Keep it fast and rhythmic so the whole list cycles through my memory one more time.',
+    '- Korean intro for this section, e.g. "자, 오늘 배운 거 하나도 빠짐없이 싹 다시 갑니다. 빠르게 갈 테니까 따라오세요."',
+    '- Do NOT pick just a few favorites — review the complete list.',
+    '',
+    'PACING:',
+    '- Speak slowly during teaching. Pause between expressions.',
+    '- Pronounce every English phrase clearly and slowly enough for me to shadow.'
+  ].join('\n');
+}
+window.engBuildNblmPrompt = engBuildNblmPrompt;
+
+async function _esCopyText(text, okMsg){
+  var done = function(){ if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + okMsg); };
+  try { await navigator.clipboard.writeText(text); done(); }
+  catch(e){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); done();
+    } catch(e2){ window.prompt('아래 내용을 복사하세요 (Cmd+C → Enter):', text); }
+  }
+}
+
+window.engCopyNblmPrompt = function(dateId){
+  var t = engBuildNblmPrompt(dateId);
+  if (!t){ if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 프롬프트를 만들 수 없어요'); return; }
+  _esCopyText(t, '프롬프트 복사됨! NotebookLM 오디오 오버뷰 맞춤설정에 붙여넣으세요');
 };
 
 window.annieAudioPick = function(dateId){ var el = document.getElementById('annie-audio-file-' + dateId); if (el) el.click(); };
