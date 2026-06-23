@@ -64,7 +64,17 @@
 - 검증: `node --check` OK (백틱 템플릿 안 깨짐), 필드 grep 일치
 - ⏭ 남은 일: 라이브에서 트랜스크립트로 리뷰 1개 자동 생성 → Upgrades에서 "표현 뜯어보기" 펼쳐 확인 (API 호출이라 누리가 직접)
 
+**ENGLISH 페이지 개편 — ANNIE | STUDY 분리 (1단계 골격) 🚧 진행 중**
+- 목표: 사이드바 `Annie`→`English`, 페이지 안에 **ANNIE(기존 회화 리뷰)** + **STUDY(유튜브 뉴스/인터뷰 1타 강사 정리)** 탭 분리. STUDY엔 **오디오 듣기**(브라우저 무료 TTS, 영/한 번갈아 강의모드)가 핵심 요구
+- STUDY 포맷 = 누리가 다른 클로드창에서 만든 **"1타 강사" 양식**: AI가 콘텐츠마다 그룹 자동 분류 + 표현별 **빈도⭐ + 직역→뜻 + 비유로 외우기 + 한국인밋밋vs원어민 + 본문인용 + 예문폭탄(3~4,상황태그) + 관련/변형 + 입담** + 보너스 꿀단어
+- 스키마 설계: `groups[{title, why, items[{expr, stars, freqLabel, literal, meaning, image, contrast, source, examples[{en,kr,tag}], related[], warning, outro}]}]` + `bonus[]`. 저장은 별도 컬렉션 `englishStudy`(예정), 생성=Opus 4.7 재사용
+- **1단계(완료)**: 네비 English 개명 + `pageMeta` 타이틀 + page-english에 ANNIE/STUDY 토글, 기존 콘텐츠 `#eng-annie-view`로 감쌈(무수정), `#eng-study-view` 골격(목록/빈상태/상세) 추가, `switchEngTab()` + STUDY 스텁 함수. ANNIE는 그대로 동작
+- 검증: `node --check` OK, HTML div 균형 확인(annie-view 닫힘→study-view→모달)
+
 ### 🎯 다음 할 일
+- **ENGLISH STUDY 2단계**: `STUDY_PROMPT_TEMPLATE`(1타 강사 포맷) 작성 → 스터디 추가 모달(제목/출처/스크립트) + 생성 함수 + `englishStudy` 저장/목록(`loadEnglishStudy`/`openStudyCreateModal` 실제 연결)
+- **ENGLISH STUDY 3단계**: 상세 렌더러(그룹/빈도⭐/예문폭탄/입담/접기) + **오디오 버튼**(🔊 문장별 + ▶ 전체 강의모드, Web Speech API 영/한 번갈아)
+- 라이브에서 English 탭 전환(ANNIE↔STUDY) + ANNIE 정상 동작 확인
 - 라이브에서 위젯1 4열 레이아웃 + 카드 통계 시인성 눈으로 확인 (KRW 큰 값일 때 통계 셀 줄바꿈 여부)
 - 월별 추이: 라이브에서 전체 기간 한 줄 흐름 + 끝점 할로우 마커 확인 (진행 중 이번 달 dip이 거슬리면 끝점 제외 옵션 고려)
 - Annie 리뷰: 새 트랜스크립트로 리뷰 1개 생성해서 "표현 뜯어보기" 동작/품질 확인 (기존 리뷰엔 필드 없어서 안 뜸 — 재생성해야 보임)

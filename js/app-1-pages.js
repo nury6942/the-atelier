@@ -13126,7 +13126,7 @@
     "finance-hub": { "title": "Money" },
     "ledger": { "title": "Money" },
     "matrix": { "title": "Calendar" },
-    "english": { "title": "Annie" },
+    "english": { "title": "ENGLISH" },
     "vault": { "title": "Vault" },
     "income": { "title": "Money" },
     "planner": { "title": "Calendar" },
@@ -18729,6 +18729,7 @@
   }
 
   async function loadEnglish() {
+    if (typeof window.switchEngTab === 'function') window.switchEngTab(localStorage.getItem('atelier_eng_tab') || 'annie');
     await fetchGbpKrwRate();
     await migrateEnglishFee30();
     await cleanupTestReviewData();
@@ -18755,6 +18756,31 @@
       document.getElementById('english-loading').innerHTML = '<span class="text-rose-400 text-sm">데이터를 불러올 수 없어요.</span>';
     }
   }
+
+  // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
+  window.switchEngTab = function(tab){
+    var annie = document.getElementById('eng-annie-view');
+    var study = document.getElementById('eng-study-view');
+    var ba = document.getElementById('eng-tab-annie');
+    var bs = document.getElementById('eng-tab-study');
+    if (!annie || !study) return;
+    var isStudy = tab === 'study';
+    annie.style.display = isStudy ? 'none' : 'block';
+    study.style.display = isStudy ? 'block' : 'none';
+    [ba, bs].forEach(function(b){ if (b){ b.style.background = ''; b.style.color = '#64748b'; b.style.boxShadow = ''; } });
+    var active = isStudy ? bs : ba;
+    if (active){ active.style.background = '#fff'; active.style.color = '#4338ca'; active.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }
+    try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
+    if (isStudy && typeof loadEnglishStudy === 'function') loadEnglishStudy();
+  };
+  // STUDY 파이프라인(생성/저장/렌더/오디오)은 다음 단계에서 연결 — 지금은 골격만
+  if (!window.openStudyCreateModal) window.openStudyCreateModal = function(){
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">construction</span> STUDY 생성은 다음 단계에서 연결돼요');
+  };
+  if (!window.closeStudyDetail) window.closeStudyDetail = function(){
+    var d = document.getElementById('eng-study-detail-view');
+    if (d) d.style.display = 'none';
+  };
 
   function getReviewBtn(dateStr) {
     if (!dateStr) return '<span class="text-xs text-slate-300">—</span>';

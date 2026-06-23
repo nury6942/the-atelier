@@ -8683,7 +8683,7 @@
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-english" onclick="navigate('english'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">translate</span>
-      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Annie</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">English</span>
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-journey" onclick="navigate('journey'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">explore</span>
@@ -12030,6 +12030,15 @@
 
       <!-- Page Intro -->
 
+      <!-- ══ ANNIE | STUDY 탭 ══ -->
+      <div class="flex items-center gap-1 mb-6 p-1 bg-slate-100 rounded-2xl w-fit">
+        <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all inline-flex items-center gap-1.5" style="color:#64748b">🎙 ANNIE</button>
+        <button id="eng-tab-study" onclick="switchEngTab('study')" class="px-5 py-2 rounded-xl text-sm font-bold transition-all inline-flex items-center gap-1.5" style="color:#64748b">📺 STUDY</button>
+      </div>
+
+      <!-- ══════════ ANNIE 뷰 (회화 수업 리뷰 — 기존) ══════════ -->
+      <div id="eng-annie-view">
+
       <!-- Top Stats -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div id="eng-random-card" class="md:col-span-2 section-tint-purple p-8 rounded-2xl border border-indigo-100 relative overflow-hidden">
@@ -12141,6 +12150,39 @@
           </button>
         </div>
         <div id="eng-detail-content" class="pt-2"></div>
+      </div>
+
+      </div><!-- /eng-annie-view -->
+
+      <!-- ══════════ STUDY 뷰 (콘텐츠 스터디 — 신규) ══════════ -->
+      <div id="eng-study-view" style="display:none">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+            <div>
+              <h4 class="font-manrope font-bold text-slate-800">콘텐츠 스터디</h4>
+              <p class="text-[10px] text-slate-400 font-medium mt-0.5">유튜브 뉴스·인터뷰 스크립트를 1타 강사 포맷으로 정리</p>
+            </div>
+            <button onclick="openStudyCreateModal()" class="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-sm">add</span> 스터디 추가
+            </button>
+          </div>
+          <div id="eng-study-list" class="p-5" style="display:none"></div>
+          <div id="eng-study-empty" class="flex flex-col items-center justify-center py-12 text-slate-400">
+            <span class="material-symbols-outlined text-4xl mb-3 text-slate-200">smart_display</span>
+            <p class="text-sm font-medium">아직 스터디가 없어요</p>
+            <p class="text-xs mt-1">"스터디 추가"로 유튜브 스크립트를 정리해봐!</p>
+          </div>
+        </div>
+
+        <!-- STUDY 상세 보기 -->
+        <div id="eng-study-detail-view" style="display:none">
+          <div class="mb-4">
+            <button onclick="closeStudyDetail()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-full text-sm font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-lg">
+              <span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">arrow_back</span> 목록으로
+            </button>
+          </div>
+          <div id="eng-study-detail-content" class="pt-2"></div>
+        </div>
       </div>
 
       <!-- Duplicate Modal -->
