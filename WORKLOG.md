@@ -78,6 +78,11 @@
   - HTML: 스터디 추가 모달(`#eng-study-modal`) + 목록카드 `#eng-study-listcard` + 스크립트 태그. app-1 캐시 v187→v188
 - 검증: `node --check` 양쪽 OK, 배선 grep 일치. (생성은 API 호출이라 누리가 라이브에서 직접 테스트)
 
+**ANNIE 리뷰에도 오디오 이식 (요청)**
+- 오디오 큐 재생기 `_esEnqueue` 공통화 + `engSpeakSession(id)` 추가(english-study.js) — engSessionsData에서 세션 찾아 Expressions/Upgrades(ok·gem)/Convo(reactions·starters)/Vocab 영어를 영/한 번갈아 재생
+- ANNIE 렌더러(app-1-pages.js): `spk()` 헬퍼(=`_esSpk` 재사용, 미로드 graceful) → Expressions(표현·예문)·Upgrades(✔자연·💎C1)·Convo(followup·reaction·starter)·Vocab(단어)에 🔊 8곳 + 헤더에 ▶전체듣기/⏹. closeSessionDetail에서 정지
+- 캐시 v188→v189, english-study v1→v2. `node --check` OK
+
 ### 🎯 다음 할 일
 - **라이브 STUDY 테스트**: STUDY 탭 → 스터디 추가 → 유튜브 스크립트 붙여넣기 → ✨생성 → 1타 강사 포맷·오디오(🔊/전체듣기) 동작·품질 확인
 - 프롬프트 톤/예문 밀도 조절은 결과 보고 (STUDY_PROMPT_TEMPLATE에서)

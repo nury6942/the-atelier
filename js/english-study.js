@@ -426,6 +426,12 @@ window.engSpeakStudy = function(id){
       });
     });
   });
+  _esEnqueue(q);
+};
+
+// 공통 큐 재생기 (영/한 번갈아 utterance 큐잉)
+function _esEnqueue(q){
+  if (!('speechSynthesis' in window) || !q.length) return;
   q.forEach(function(pair, i){
     var u = new SpeechSynthesisUtterance(_esStripHtml(pair[0]));
     u.lang = pair[1];
@@ -434,4 +440,33 @@ window.engSpeakStudy = function(id){
     window.speechSynthesis.speak(u);
   });
   _esStartKeepAlive();
+}
+
+// ANNIE 리뷰 전체 듣기 — Expressions/Upgrades/Convo/Vocab 영어를 영/한 번갈아 강의처럼
+window.engSpeakSession = function(id){
+  var s = (typeof engSessionsData !== 'undefined' && engSessionsData) ? engSessionsData.find(function(x){ return x._id === id; }) : null;
+  if (!s || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  var enOf = function(x){ return (x && typeof x === 'object') ? (x.en || '') : (x || ''); };
+  var q = [];
+  if (s.title) q.push([s.title, 'en-US']);
+  (s.expressions || []).forEach(function(ex){
+    if (ex.expr) q.push([ex.expr, 'en-US']);
+    if (ex.kr) q.push([ex.kr, 'ko-KR']);
+    if (ex.ex) q.push([ex.ex, 'en-US']);
+  });
+  (s.upgrades || []).forEach(function(u){
+    if (u.ok) q.push([u.ok, 'en-US']);
+    if (u.gem) q.push([u.gem, 'en-US']);
+  });
+  var cs = s.convoSkills || {};
+  (cs.reactions || []).forEach(function(r){ if (r.say) q.push([r.say, 'en-US']); });
+  (cs.starters || []).forEach(function(st){ var e = enOf(st); if (e) q.push([e, 'en-US']); });
+  (s.vocabSets || []).forEach(function(vs){
+    (vs.words || []).forEach(function(w){
+      if (w.word) q.push([w.word, 'en-US']);
+      if (w.mean) q.push([w.mean, 'ko-KR']);
+    });
+  });
+  _esEnqueue(q);
 };

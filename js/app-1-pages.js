@@ -20399,6 +20399,9 @@ function openSessionDetail(dateId) {
     return '<span style="' + st + ';font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;white-space:nowrap">' + freq + '</span>';
   }
 
+  // 🔊 음성 버튼 (english-study.js의 _esSpk 재사용 — 미로드 시 graceful)
+  function spk(t){ return (typeof _esSpk === 'function') ? _esSpk(t, 'en-US') : ''; }
+
   // 02 Expressions
   var exprs = s.expressions || [];
   var sec2 = '<div class="overflow-x-auto"><table class="w-full review-expr-table"><thead><tr class="border-b-2 border-indigo-100">' +
@@ -20410,10 +20413,10 @@ function openSessionDetail(dateId) {
     '</tr></thead><tbody>' +
     exprs.map(function(ex){ return '<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">' +
       '<td class="py-3 px-3 review-expr-cat">' + (ex.cat||'') + '</td>' +
-      '<td class="py-3 px-3 review-expr-en">' + (ex.expr||'') + '</td>' +
+      '<td class="py-3 px-3 review-expr-en">' + (ex.expr||'') + ' ' + spk(ex.expr) + '</td>' +
       '<td class="py-3 px-3">' + freqBadge(ex.freq) + '</td>' +
       '<td class="py-3 px-3 review-expr-kr">' + (ex.kr||'') + '</td>' +
-      '<td class="py-3 px-3 review-expr-ex">' + (ex.ex||'') + (ex.exKr ? '<br><span class="review-expr-kr" style="font-size:12px;color:#64748b">' + ex.exKr + '</span>' : '') + '</td>' +
+      '<td class="py-3 px-3 review-expr-ex">' + (ex.ex||'') + ' ' + spk(ex.ex) + (ex.exKr ? '<br><span class="review-expr-kr" style="font-size:12px;color:#64748b">' + ex.exKr + '</span>' : '') + '</td>' +
     '</tr>'; }).join('') +
     '</tbody></table></div>' + krBox(s.expressionsKr);
 
@@ -20441,9 +20444,9 @@ function openSessionDetail(dateId) {
   var sec3 = '<div class="space-y-5">' + upgs.map(function(u, ui){
     return '<div class="p-5 rounded-xl bg-slate-50 review-upgrade-card">' +
       '<div class="flex items-start gap-2.5 mb-2.5"><span class="text-rose-500 text-base mt-0.5">❌</span><span class="review-upgrade-bad line-through">' + (u.bad||'') + '</span></div>' +
-      '<div class="flex items-start gap-2.5 mb-1"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span></div>' +
+      '<div class="flex items-start gap-2.5 mb-1"><span class="text-emerald-500 text-base mt-0.5">✔</span><span class="review-upgrade-ok">' + (u.ok||'') + '</span> ' + spk(u.ok) + '</div>' +
       (u.okKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:10px">' + u.okKr + '</p>' : '') +
-      '<div class="flex items-start gap-2.5 mb-1"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span>' + (u.freq ? ' ' + freqBadge(u.freq) : '') + '</div>' +
+      '<div class="flex items-start gap-2.5 mb-1"><span class="text-indigo-500 text-base mt-0.5">💎</span><span class="review-upgrade-gem">' + (u.gem||'') + '</span> ' + spk(u.gem) + (u.freq ? ' ' + freqBadge(u.freq) : '') + '</div>' +
       (u.gemKr ? '<p class="review-note-kr" style="margin-left:26px;margin-bottom:6px">' + u.gemKr + '</p>' : '') +
       (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
       (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
@@ -20468,9 +20471,9 @@ function openSessionDetail(dateId) {
   function enOf(x){ return (x && typeof x === 'object') ? (x.en||'') : (x||''); }
   function krOf(x){ return (x && typeof x === 'object') ? (x.kr||'') : ''; }
   var sec5 = '';
-  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + enOf(f) + (krOf(f) ? '<br><span class="review-note-kr">' + krOf(f) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
-  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + (r.feelKr ? ' <span style="color:#94a3b8;font-size:11px">' + r.feelKr + '</span>' : '') + '</td><td class="py-3 review-table-en">' + (r.say||'') + (r.kr ? '<br><span class="review-note-kr">' + r.kr + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
-  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + enOf(st) + (krOf(st) ? '<br><span class="review-note-kr">' + krOf(st) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
+  if (cs.followups && cs.followups.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Follow-up Questions</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.followups.map(function(f){ return '<li class="review-list-item">' + enOf(f) + ' ' + spk(enOf(f)) + (krOf(f) ? '<br><span class="review-note-kr">' + krOf(f) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
+  if (cs.reactions && cs.reactions.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">Richer Reactions</h4><table class="w-full"><thead><tr class="border-b border-slate-200"><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Feeling</th><th class="text-left py-2 text-[11px] font-bold uppercase text-indigo-600 tracking-wider">Try saying</th></tr></thead><tbody>' + cs.reactions.map(function(r){ return '<tr class="border-b border-slate-100"><td class="py-3 review-table-kr">' + (r.feel||'') + (r.feelKr ? ' <span style="color:#94a3b8;font-size:11px">' + r.feelKr + '</span>' : '') + '</td><td class="py-3 review-table-en">' + (r.say||'') + ' ' + spk(r.say) + (r.kr ? '<br><span class="review-note-kr">' + r.kr + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  if (cs.starters && cs.starters.length) sec5 += '<div class="mb-5"><h4 class="review-h4 mb-3">C1 Sentence Starters</h4><ul class="list-disc pl-5 space-y-2.5">' + cs.starters.map(function(st){ return '<li class="review-list-item">' + enOf(st) + ' ' + spk(enOf(st)) + (krOf(st) ? '<br><span class="review-note-kr">' + krOf(st) + '</span>' : '') + '</li>'; }).join('') + '</ul></div>';
   sec5 += krBox(cs.kr);
 
   // 06 Vocab
@@ -20479,7 +20482,7 @@ function openSessionDetail(dateId) {
     return '<div class="mb-7"><h4 class="review-h4 mb-3 pb-2 border-b border-slate-200">' + (vs.topic||'') + ' <span class="review-topic-kr">' + (vs.topicKr||'') + '</span></h4>' +
       '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">' + (vs.words||[]).map(function(w){
         return '<div class="p-4 rounded-xl bg-slate-50 review-vocab-card">' +
-          '<div class="flex items-center justify-between gap-2 mb-0.5"><p class="review-vocab-word" style="margin:0">' + (w.word||'') + '</p>' + freqBadge(w.freq) + '</div>' +
+          '<div class="flex items-center justify-between gap-2 mb-0.5"><p class="review-vocab-word" style="margin:0">' + (w.word||'') + ' ' + spk(w.word) + '</p>' + freqBadge(w.freq) + '</div>' +
           '<p class="review-vocab-mean">' + (w.mean||'') + '</p>' +
           (w.coll ? '<p class="review-vocab-coll">' + w.coll + '</p>' : '') +
           (w.syn ? '<p style="font-size:12px;color:#475569;margin-top:4px"><span style="color:#16a34a;font-weight:700">유의어</span> ' + w.syn + '</p>' : '') +
@@ -20536,6 +20539,10 @@ function openSessionDetail(dateId) {
     '<h2 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight mb-2">' + titleHtml + '</h2>' +
     '<p class="text-sm text-slate-500">' + (s.subtitle||'') + '</p></div>' +
     '<div class="flex items-center gap-3">' +
+    '<div class="flex items-center gap-1.5">' +
+    '<button onclick="engSpeakSession(\'' + dateId + '\')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 transition-all shadow-sm"><span class="material-symbols-outlined" style="font-size:16px">play_arrow</span>전체 듣기</button>' +
+    '<button onclick="engStopSpeak()" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all" title="정지"><span class="material-symbols-outlined" style="font-size:16px">stop</span></button>' +
+    '</div>' +
     '<div class="flex gap-1" id="review-font-btns">' +
     '<button onclick="setReviewFontSize(\'small\')" data-size="small" class="review-font-btn" title="작게">A-</button>' +
     '<button onclick="setReviewFontSize(\'medium\')" data-size="medium" class="review-font-btn" title="기본">A</button>' +
@@ -20644,6 +20651,7 @@ function initEngScrollSpy() {
 }
 
 function closeSessionDetail() {
+  if (typeof engStopSpeak === 'function') engStopSpeak();
   _currentSessionId = null;
   // 뒤로가기 버튼 숨기기
   var backBtn = document.getElementById('eng-back-btn');
