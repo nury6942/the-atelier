@@ -68,12 +68,19 @@
 - 목표: 사이드바 `Annie`→`English`, 페이지 안에 **ANNIE(기존 회화 리뷰)** + **STUDY(유튜브 뉴스/인터뷰 1타 강사 정리)** 탭 분리. STUDY엔 **오디오 듣기**(브라우저 무료 TTS, 영/한 번갈아 강의모드)가 핵심 요구
 - STUDY 포맷 = 누리가 다른 클로드창에서 만든 **"1타 강사" 양식**: AI가 콘텐츠마다 그룹 자동 분류 + 표현별 **빈도⭐ + 직역→뜻 + 비유로 외우기 + 한국인밋밋vs원어민 + 본문인용 + 예문폭탄(3~4,상황태그) + 관련/변형 + 입담** + 보너스 꿀단어
 - 스키마 설계: `groups[{title, why, items[{expr, stars, freqLabel, literal, meaning, image, contrast, source, examples[{en,kr,tag}], related[], warning, outro}]}]` + `bonus[]`. 저장은 별도 컬렉션 `englishStudy`(예정), 생성=Opus 4.7 재사용
-- **1단계(완료)**: 네비 English 개명 + `pageMeta` 타이틀 + page-english에 ANNIE/STUDY 토글, 기존 콘텐츠 `#eng-annie-view`로 감쌈(무수정), `#eng-study-view` 골격(목록/빈상태/상세) 추가, `switchEngTab()` + STUDY 스텁 함수. ANNIE는 그대로 동작
-- 검증: `node --check` OK, HTML div 균형 확인(annie-view 닫힘→study-view→모달)
+- **1단계(완료)**: 네비 English 개명 + `pageMeta` 타이틀 + page-english에 ANNIE/STUDY 토글, 기존 콘텐츠 `#eng-annie-view`로 감쌈(무수정), `#eng-study-view` 골격 + `switchEngTab()` + STUDY 스텁
+- 🐞 1단계 직후 버그: 감싸면서 리뷰 상세 열기 로직(`openSessionDetail` 등 3곳)이 `.page-content-wrap` 직속자식 숨기던 게 `#eng-annie-view`째 숨겨 화면 텅 빔 → 대상 `#eng-annie-view`로 변경해 fix(`04a9532`). **데이터 손실 아님(표시 버그)**
+- **2단계(완료)**: STUDY 전 기능 **신규 파일 `js/english-study.js`**에 구현 (app-1 뒤에서 로드해 스텁 override)
+  - `STUDY_PROMPT_TEMPLATE`(1타 강사 포맷, `studyData["id"]={…}` 출력), `autoGenerateStudy`(Opus 4.7, ANNIE 생성 흐름 미러), Firestore `englishStudy` 저장
+  - `loadEnglishStudy`/`renderStudyList`(카드)/`openStudyDetail`/`closeStudyDetail`/`deleteStudy`
+  - `renderStudyDetail`: 그룹·빈도⭐·직역→뜻·🧠비유·🇰🇷↔🇬🇧대비·📍본문·🎯예문폭탄(상황태그)·💡관련·⚠️주의·🔁입담·🍯보너스
+  - **오디오(무료 Web Speech)**: 문장별 🔊(`engSpeakBtn`) + ▶전체듣기(`engSpeakStudy`, 영/한 번갈아 큐) + ⏹정지. Chrome 15초 끊김 방지 keep-alive 포함
+  - HTML: 스터디 추가 모달(`#eng-study-modal`) + 목록카드 `#eng-study-listcard` + 스크립트 태그. app-1 캐시 v187→v188
+- 검증: `node --check` 양쪽 OK, 배선 grep 일치. (생성은 API 호출이라 누리가 라이브에서 직접 테스트)
 
 ### 🎯 다음 할 일
-- **ENGLISH STUDY 2단계**: `STUDY_PROMPT_TEMPLATE`(1타 강사 포맷) 작성 → 스터디 추가 모달(제목/출처/스크립트) + 생성 함수 + `englishStudy` 저장/목록(`loadEnglishStudy`/`openStudyCreateModal` 실제 연결)
-- **ENGLISH STUDY 3단계**: 상세 렌더러(그룹/빈도⭐/예문폭탄/입담/접기) + **오디오 버튼**(🔊 문장별 + ▶ 전체 강의모드, Web Speech API 영/한 번갈아)
+- **라이브 STUDY 테스트**: STUDY 탭 → 스터디 추가 → 유튜브 스크립트 붙여넣기 → ✨생성 → 1타 강사 포맷·오디오(🔊/전체듣기) 동작·품질 확인
+- 프롬프트 톤/예문 밀도 조절은 결과 보고 (STUDY_PROMPT_TEMPLATE에서)
 - 라이브에서 English 탭 전환(ANNIE↔STUDY) + ANNIE 정상 동작 확인
 - 라이브에서 위젯1 4열 레이아웃 + 카드 통계 시인성 눈으로 확인 (KRW 큰 값일 때 통계 셀 줄바꿈 여부)
 - 월별 추이: 라이브에서 전체 기간 한 줄 흐름 + 끝점 할로우 마커 확인 (진행 중 이번 달 dip이 거슬리면 끝점 제외 옵션 고려)

@@ -12156,7 +12156,7 @@
 
       <!-- ══════════ STUDY 뷰 (콘텐츠 스터디 — 신규) ══════════ -->
       <div id="eng-study-view" style="display:none">
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+        <div id="eng-study-listcard" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
           <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
             <div>
               <h4 class="font-manrope font-bold text-slate-800">콘텐츠 스터디</h4>
@@ -12280,6 +12280,51 @@
                 <textarea id="review-auto-error-raw" class="hidden w-full mt-3 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none" rows="6"></textarea>
               </div>
 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDY Create Modal -->
+      <div id="eng-study-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+          <div class="px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 flex justify-between items-center">
+            <h3 class="font-bold text-white text-lg font-headline">스터디 추가</h3>
+            <button onclick="closeStudyCreateModal()" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div class="p-6 overflow-y-auto flex-1 space-y-5">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">제목</label>
+                <input id="study-title" type="text" placeholder="예: BBC — AI와 일자리" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm"/>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">출처 (유튜브 URL·채널)</label>
+                <input id="study-source" type="text" placeholder="예: BBC News / youtu.be/..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm"/>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">날짜</label>
+              <input id="study-date" type="date" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-violet-300 text-sm" style="max-width:220px"/>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-violet-500" style="font-size:14px">content_paste</span>
+                스크립트 붙여넣기 *
+              </label>
+              <textarea id="study-transcript" rows="12" placeholder="MacWhisper로 딴 유튜브 뉴스·인터뷰 스크립트를 여기에 붙여넣으세요 (Ctrl/Cmd+V)" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-violet-200 focus:bg-white focus:ring-2 focus:ring-violet-300 focus:border-violet-400 text-sm resize-none font-mono leading-relaxed" style="min-height:240px"></textarea>
+            </div>
+            <button onclick="autoGenerateStudy()" id="study-auto-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200">✨ 1타 강사 정리 생성</button>
+            <p id="study-api-hint" class="text-[10px] text-slate-400 text-center"></p>
+
+            <div id="study-loading-overlay" class="hidden p-6 rounded-xl bg-violet-50 border border-violet-100 text-center">
+              <span class="material-symbols-outlined text-violet-400 text-3xl mb-2 animate-spin block">progress_activity</span>
+              <p class="text-sm font-bold text-violet-700">Claude가 1타 강사 모드로 정리 중...</p>
+              <p class="text-[10px] text-violet-400 mt-1">30초~1분 소요</p>
+            </div>
+            <div id="study-auto-error" class="hidden p-4 rounded-xl bg-rose-50 border border-rose-100">
+              <p id="study-auto-error-msg" class="text-sm font-bold text-rose-700 mb-2"></p>
+              <textarea id="study-auto-error-raw" class="hidden w-full mt-2 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none" rows="6"></textarea>
             </div>
           </div>
         </div>
@@ -13132,7 +13177,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=187" defer></script>
+<script src="js/app-1-pages.js?v=188" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -13981,6 +14026,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=163" defer></script>
+<script src="js/english-study.js?v=1" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>
