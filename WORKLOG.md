@@ -83,7 +83,16 @@
 - ANNIE 렌더러(app-1-pages.js): `spk()` 헬퍼(=`_esSpk` 재사용, 미로드 graceful) → Expressions(표현·예문)·Upgrades(✔자연·💎C1)·Convo(followup·reaction·starter)·Vocab(단어)에 🔊 8곳 + 헤더에 ▶전체듣기/⏹. closeSessionDetail에서 정지
 - 캐시 v188→v189, english-study v1→v2. `node --check` OK
 
+**ANNIE 리뷰 — NotebookLM 오디오 탑재 (업로드 플레이어 + 공유 링크)**
+- 결정: NotebookLM iframe 임베드 불가(구글 차단) → ① 공유링크 버튼(새 탭) ② mp3 업로드→인앱 `<audio>` 플레이어, **둘 다** 구현
+- Firebase Storage 이미 켜짐(`window.storage`, 버킷 the-atelier-99b8c.firebasestorage.app) → `annie-audio/{dateId}.{ext}` 업로드 → `getDownloadURL` → 세션 doc에 `audioUrl` 저장. 링크는 `notebookUrl`
+- english-study.js: `annieAudioHtml(s,dateId)`(상단 🎧 블록) + `annieAudioUpload`(드래그/클릭, 80MB제한, 권한오류 시 Storage 규칙 안내) + `annieSetNotebook`(prompt) + `annieRemoveAudio`. 저장 후 `openSessionDetail` 재렌더
+- app-1-pages.js: 레벨바 아래에 `annieAudioHtml` 삽입(graceful). 캐시 app-1 v190 / english-study v3
+- ⚠️ **누리 액션**: 업로드가 권한오류 나면 Firebase 콘솔→Storage→Rules에 `match /annie-audio/{f} { allow read, write: if true; }` 게시 필요 (알럿으로도 안내됨)
+- 검증: `node --check` 양쪽 OK, 배선 grep 일치
+
 ### 🎯 다음 할 일
+- **ANNIE 오디오 탑재 테스트**: 리뷰 열기 → 🎧 영역에서 mp3 드래그/올리기(권한오류면 규칙 게시) → 플레이어 재생 / 노트북 링크 버튼 확인
 - **라이브 STUDY 테스트**: STUDY 탭 → 스터디 추가 → 유튜브 스크립트 붙여넣기 → ✨생성 → 1타 강사 포맷·오디오(🔊/전체듣기) 동작·품질 확인
 - 프롬프트 톤/예문 밀도 조절은 결과 보고 (STUDY_PROMPT_TEMPLATE에서)
 - 라이브에서 English 탭 전환(ANNIE↔STUDY) + ANNIE 정상 동작 확인

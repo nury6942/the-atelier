@@ -20551,6 +20551,7 @@ function openSessionDetail(dateId) {
     '<div class="flex gap-2"><button onclick="alert(\'편집 기능은 추후 지원 예정\')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
     '<button onclick="deleteSessionFromDetail(\'' + dateId + '\')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div></div></div>' +
     '<div class="flex gap-4 mb-8">' + lvBarFull(lv.fluency,'Fluency','fluency') + lvBarFull(lv.vocab,'Vocabulary','vocab') + lvBarFull(lv.grammar,'Grammar','grammar') + lvBarFull(lv.interaction,'Interaction','interaction') + '</div>' +
+    (typeof annieAudioHtml === 'function' ? annieAudioHtml(s, dateId) : '') +
     tabHtml +
     sectionCard(1,'Summary','총평',sec1) +
     sectionCard(2,'Expressions','유용한 표현',sec2) +

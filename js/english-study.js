@@ -470,3 +470,99 @@ window.engSpeakSession = function(id){
   });
   _esEnqueue(q);
 };
+
+// ═══════════════════════════════════════════════════════════
+//  ANNIE 리뷰 — NotebookLM 오디오 오버뷰
+//  업로드 mp3(Firebase Storage) → 인앱 플레이어 / 공유 링크 → 새 탭 버튼
+//  세션 doc(englishSessions)에 audioUrl / notebookUrl 필드로 저장.
+// ═══════════════════════════════════════════════════════════
+function annieAudioHtml(s, dateId){
+  var hasAudio = !!(s && s.audioUrl);
+  var hasLink = !!(s && s.notebookUrl);
+  var setBtns =
+    '<button onclick="annieAudioPick(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:15px">upload</span>' + (hasAudio ? '오디오 교체' : '오디오 올리기') + '</button>' +
+    '<button onclick="annieSetNotebook(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:15px">link</span>' + (hasLink ? '링크 수정' : '노트북 링크') + '</button>';
+  var inner =
+    '<div class="flex items-center justify-between gap-3 mb-3 flex-wrap">' +
+      '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-violet-500">headphones</span><span class="text-sm font-bold text-slate-800">NotebookLM 오디오 오버뷰</span></div>' +
+      '<div class="flex items-center gap-2 flex-wrap">' + setBtns + '</div>' +
+    '</div>';
+  if (hasAudio){
+    inner += '<audio controls preload="none" src="' + s.audioUrl + '" style="width:100%;height:42px;border-radius:10px"></audio>' +
+      '<div class="text-right mt-1"><button onclick="annieRemoveAudio(\'' + dateId + '\')" class="text-[11px] text-slate-400 hover:text-rose-500 underline">오디오 삭제</button></div>';
+  }
+  if (hasLink){
+    inner += '<a href="' + s.notebookUrl + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-violet-600 text-white text-sm font-bold hover:bg-violet-700 transition-all shadow-sm"><span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>NotebookLM에서 듣기</a>';
+  }
+  if (!hasAudio && !hasLink){
+    inner += '<p class="text-xs text-slate-400 leading-relaxed">NotebookLM에서 받은 mp3를 <b>올리거나(앱에서 바로 재생)</b> 공유 링크를 <b>붙이면(새 탭)</b> 여기서 들을 수 있어요. 받은 파일을 이 박스로 <b>끌어다 놓아도</b> 돼요.</p>';
+  }
+  inner += '<input type="file" id="annie-audio-file-' + dateId + '" accept="audio/*" style="display:none" onchange="annieAudioUpload(\'' + dateId + '\', this.files && this.files[0])"/>';
+  return '<div id="annie-audio-box-' + dateId + '" class="mb-8 p-5 rounded-2xl border border-violet-100" style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(99,102,241,0.04))" ondragover="annieAudioDragOver(event)" ondragleave="annieAudioDragLeave(event)" ondrop="annieAudioDrop(event,\'' + dateId + '\')">' + inner + '</div>';
+}
+window.annieAudioHtml = annieAudioHtml;
+
+window.annieAudioPick = function(dateId){ var el = document.getElementById('annie-audio-file-' + dateId); if (el) el.click(); };
+window.annieAudioDragOver = function(e){ e.preventDefault(); if (e.currentTarget) e.currentTarget.style.outline = '2px dashed #8b5cf6'; };
+window.annieAudioDragLeave = function(e){ if (e.currentTarget) e.currentTarget.style.outline = ''; };
+window.annieAudioDrop = function(e, dateId){
+  e.preventDefault();
+  if (e.currentTarget) e.currentTarget.style.outline = '';
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) annieAudioUpload(dateId, f);
+};
+
+window.annieAudioUpload = async function(dateId, file){
+  if (!file) return;
+  if (!/audio\//.test(file.type) && !/\.(mp3|m4a|wav|aac|ogg)$/i.test(file.name)){
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 오디오 파일만 올릴 수 있어요');
+    return;
+  }
+  if (!window.storage){ alert('Firebase Storage가 초기화되지 않았어요.'); return; }
+  if (file.size > 80 * 1024 * 1024){ if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 파일이 너무 커요 (80MB 이하)'); return; }
+  if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">upload</span> 오디오 업로드 중...');
+  try {
+    var ext = (file.name.split('.').pop() || 'mp3').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp3';
+    var ref = window.storage.ref('annie-audio/' + dateId + '.' + ext);
+    await ref.put(file);
+    var url = await ref.getDownloadURL();
+    await db.collection('englishSessions').doc(dateId).set({ audioUrl: url }, { merge: true });
+    var s = (typeof engSessionsData !== 'undefined') ? engSessionsData.find(function(x){ return x._id === dateId; }) : null;
+    if (s) s.audioUrl = url;
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 오디오 추가됐어요!');
+    if (typeof openSessionDetail === 'function') openSessionDetail(dateId);
+  } catch(err){
+    console.error('[annieAudio] upload failed', err);
+    var denied = err && (err.code === 'storage/unauthorized' || /unauthor|permission|denied/i.test(err.message || ''));
+    if (denied){
+      alert('Storage 쓰기 권한이 막혀 있어요.\n\nFirebase 콘솔 → Storage → Rules 에 아래를 붙여넣고 게시(Publish):\n\nrules_version = "2";\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /annie-audio/{f} {\n      allow read, write: if true;\n    }\n  }\n}');
+    } else {
+      alert('업로드 실패: ' + (err && err.message ? err.message : '알 수 없는 오류'));
+    }
+  }
+};
+
+window.annieSetNotebook = async function(dateId){
+  var s = (typeof engSessionsData !== 'undefined') ? engSessionsData.find(function(x){ return x._id === dateId; }) : null;
+  var cur = (s && s.notebookUrl) || '';
+  var url = window.prompt('NotebookLM 공유 링크를 붙여넣으세요 (비우면 삭제):', cur);
+  if (url === null) return;
+  url = url.trim();
+  try {
+    await db.collection('englishSessions').doc(dateId).set({ notebookUrl: url }, { merge: true });
+    if (s) s.notebookUrl = url;
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (url ? '링크 저장됨' : '링크 삭제됨'));
+    if (typeof openSessionDetail === 'function') openSessionDetail(dateId);
+  } catch(err){ alert('저장 실패: ' + (err && err.message ? err.message : '')); }
+};
+
+window.annieRemoveAudio = async function(dateId){
+  if (!window.confirm('오디오를 삭제할까요?')) return;
+  try {
+    await db.collection('englishSessions').doc(dateId).set({ audioUrl: '' }, { merge: true });
+    var s = (typeof engSessionsData !== 'undefined') ? engSessionsData.find(function(x){ return x._id === dateId; }) : null;
+    if (s) s.audioUrl = '';
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 오디오 삭제됨');
+    if (typeof openSessionDetail === 'function') openSessionDetail(dateId);
+  } catch(err){ alert('삭제 실패: ' + (err && err.message ? err.message : '')); }
+};
