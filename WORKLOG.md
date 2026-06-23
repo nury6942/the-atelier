@@ -96,6 +96,7 @@
 - `renderStudyDetail` 전면 재작성: 흰 카드 + **진한 네이비 본문(#0b1c30)·보조(#454654)** + 대문자 섹션 라벨(MEANING/REAL-WORLD EXAMPLES) + 앰버 비유 pro-tip + 큰 볼드 예문(18px) + 유의어/주의 2열 + 인디고 outro 알약. 색은 Stitch 토큰 hex 인라인
 - 헬퍼 추가: `_ESC`(팔레트), `_esStarRow`(머티리얼 별), `_esSpkBig`/`_esSpkSm`(스피커), `_esFreqChips`, `_esStudyCard`, `_esPracticeStreak`
 - 신규: **Practice Challenge**(예문 빈칸+정답보기, 실데이터 cloze) + **Study Streak**(localStorage 연속일, 실측). 폰트 Be Vietnam Pro + Noto Sans KR 추가, english-study v3→v4
+- 후속(피드백 "폰트 너무 큼"): 모든 인라인 `font-size:Npx` → `calc(Npx * var(--es-scale,1))` 일괄 래핑(sed, 다른 영역은 fallback 1로 무영향). 루트 `#es-detail-root`에 `--es-scale` 세팅 + 헤더에 **A-/A/A+ 컨트롤**(`setStudyFontSize`, localStorage `atelier_study_font_size`). 기본 medium=0.8(=ANNIE 느낌), small=0.68, large=1.0. english-study v4→v5
 - 검증: `node --check` OK
 
 ### 🎯 다음 할 일
