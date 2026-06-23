@@ -91,7 +91,15 @@
 - ⚠️ **누리 액션**: 업로드가 권한오류 나면 Firebase 콘솔→Storage→Rules에 `match /annie-audio/{f} { allow read, write: if true; }` 게시 필요 (알럿으로도 안내됨)
 - 검증: `node --check` 양쪽 OK, 배선 grep 일치
 
+**STUDY 상세 — Stitch "Linguistic Clarity" 디자인으로 전면 교체 (가시성)**
+- 문제: 기존 STUDY 렌더가 연회색 텍스트라 가시성 최악 → 누리가 Stitch로 재디자인(`D:\다운뤄드\stitch_ui_visibility_refinement`: code.html/DESIGN.md/screen.png) 받아옴
+- `renderStudyDetail` 전면 재작성: 흰 카드 + **진한 네이비 본문(#0b1c30)·보조(#454654)** + 대문자 섹션 라벨(MEANING/REAL-WORLD EXAMPLES) + 앰버 비유 pro-tip + 큰 볼드 예문(18px) + 유의어/주의 2열 + 인디고 outro 알약. 색은 Stitch 토큰 hex 인라인
+- 헬퍼 추가: `_ESC`(팔레트), `_esStarRow`(머티리얼 별), `_esSpkBig`/`_esSpkSm`(스피커), `_esFreqChips`, `_esStudyCard`, `_esPracticeStreak`
+- 신규: **Practice Challenge**(예문 빈칸+정답보기, 실데이터 cloze) + **Study Streak**(localStorage 연속일, 실측). 폰트 Be Vietnam Pro + Noto Sans KR 추가, english-study v3→v4
+- 검증: `node --check` OK
+
 ### 🎯 다음 할 일
+- **STUDY 새 디자인 라이브 확인**: 가시성 OK인지, Practice 빈칸/정답·Streak 동작, 폰트 적용
 - **ANNIE 오디오 탑재 테스트**: 리뷰 열기 → 🎧 영역에서 mp3 드래그/올리기(권한오류면 규칙 게시) → 플레이어 재생 / 노트북 링크 버튼 확인
 - **라이브 STUDY 테스트**: STUDY 탭 → 스터디 추가 → 유튜브 스크립트 붙여넣기 → ✨생성 → 1타 강사 포맷·오디오(🔊/전체듣기) 동작·품질 확인
 - 프롬프트 톤/예문 밀도 조절은 결과 보고 (STUDY_PROMPT_TEMPLATE에서)

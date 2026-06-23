@@ -290,95 +290,212 @@ function _esSpk(text, lang){
   return '<button class="es-spk align-middle text-violet-400 hover:text-violet-600" data-text="' + _esEscAttr(_esStripHtml(text)) + '" data-lang="' + (lang || 'en-US') + '" onclick="engSpeakBtn(this)" title="듣기"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">volume_up</span></button>';
 }
 
+// ── Stitch "Linguistic Clarity" 팔레트 (가시성 우선) ──────────
+var _ESC = {
+  text: '#0b1c30', sub: '#454654', outline: '#757686', outlineV: '#c5c5d7',
+  primary: '#2036bd', primaryFixed: '#dfe0ff',
+  surf: '#f8f9ff', surfLow: '#eff4ff', surfC: '#e5eeff', surfHigh: '#dce9ff',
+  amber: '#855300', onAmber: '#684000',
+  emerald: '#005438', emeraldContainer: '#006f4b', onEmerald: '#68f5b8',
+  error: '#ba1a1a'
+};
+var _ESFONT = "font-family:'Be Vietnam Pro','Noto Sans KR',system-ui,sans-serif";
+
+function _esStarRow(n, sz){
+  n = Math.max(0, Math.min(5, parseInt(n) || 0));
+  var o = '';
+  for (var i = 0; i < n; i++) o += '<span class="material-symbols-outlined" style="font-size:' + (sz || 18) + 'px;color:' + _ESC.amber + ';font-variation-settings:\'FILL\' 1">star</span>';
+  return o ? '<span class="inline-flex items-center" style="flex-shrink:0">' + o + '</span>' : '';
+}
+function _esSpkBig(text){
+  if (!text) return '';
+  return '<button onclick="engSpeakBtn(this)" data-text="' + _esEscAttr(_esStripHtml(text)) + '" data-lang="en-US" title="듣기" style="width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;background:' + _ESC.primaryFixed + ';color:' + _ESC.primary + ';flex-shrink:0;border:none;cursor:pointer"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:\'FILL\' 1">volume_up</span></button>';
+}
+function _esSpkSm(text){
+  if (!text) return '';
+  return '<button onclick="engSpeakBtn(this)" data-text="' + _esEscAttr(_esStripHtml(text)) + '" data-lang="en-US" title="듣기" style="vertical-align:middle;color:' + _ESC.primary + ';opacity:0.55;border:none;background:none;cursor:pointer;padding:0 2px"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">volume_up</span></button>';
+}
+function _esFreqChips(label){
+  return String(label || '').split(',').map(function(t){
+    t = t.trim(); if (!t) return '';
+    return '<span style="padding:4px 12px;background:' + _ESC.surfHigh + ';border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:0.03em;color:' + _ESC.sub + '">' + t + '</span>';
+  }).join('');
+}
+function _esLabel(txt){
+  return '<div style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:' + _ESC.sub + '">' + txt + '</div>';
+}
+
+// 표현 카드 (Stitch study-card)
+function _esStudyCard(it){
+  var C = _ESC;
+  var h = '<article style="background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(197,197,215,0.4);box-shadow:0 4px 20px rgba(0,0,0,0.04);margin-bottom:24px">';
+  h += '<div class="flex flex-wrap items-center justify-between gap-3" style="margin-bottom:20px">' +
+    '<div class="flex items-center gap-3" style="flex-wrap:wrap">' +
+      '<span style="font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;color:' + C.primary + '">' + (it.expr || '') + '</span>' +
+      _esSpkBig(it.expr) +
+      (it.stars ? _esStarRow(it.stars, 22) : '') +
+    '</div>' +
+    (it.freqLabel ? '<div class="flex flex-wrap gap-2">' + _esFreqChips(it.freqLabel) + '</div>' : '') +
+  '</div>';
+  if (it.literal || it.meaning){
+    h += '<div style="margin-bottom:20px;padding:16px 0;border-top:1px solid rgba(197,197,215,0.25);border-bottom:1px solid rgba(197,197,215,0.25)">' +
+      _esLabel('Meaning') +
+      '<p style="font-size:18px;line-height:1.6;margin:8px 0 0">' +
+        (it.literal ? '<span style="color:' + C.sub + '">직역: ' + it.literal + '</span> <span style="color:' + C.outline + '">→</span> ' : '') +
+        '<span style="font-weight:700;color:' + C.text + '">' + (it.meaning || '') + '</span>' +
+      '</p>' +
+    '</div>';
+  }
+  if (it.image){
+    h += '<div class="flex gap-4" style="background:rgba(255,221,184,0.35);border-left:4px solid ' + C.amber + ';padding:18px 20px;border-radius:0 12px 12px 0;margin-bottom:20px">' +
+      '<span class="material-symbols-outlined" style="color:' + C.amber + ';font-size:28px;flex-shrink:0">psychology</span>' +
+      '<p style="font-size:16px;line-height:1.6;color:' + C.onAmber + ';margin:0">' + it.image + '</p>' +
+    '</div>';
+  }
+  if (it.contrast || it.source){
+    h += '<div style="background:' + C.surfLow + ';border-radius:12px;padding:16px;margin-bottom:20px">';
+    if (it.contrast) h += '<div class="flex items-start gap-3" style="margin-bottom:' + (it.source ? '10px' : '0') + '"><span style="font-size:20px;flex-shrink:0">🇰🇷↔🇺🇸</span><p style="font-size:16px;line-height:1.6;color:' + C.text + ';margin:0">' + it.contrast + '</p></div>';
+    if (it.source) h += '<div class="flex items-start gap-2" style="color:' + C.sub + ';opacity:0.85"><span class="material-symbols-outlined" style="font-size:16px;padding-top:2px;flex-shrink:0">format_quote</span><p style="font-size:14px;font-style:italic;line-height:1.5;margin:0">' + it.source + '</p></div>';
+    h += '</div>';
+  }
+  if ((it.examples || []).length){
+    h += '<div style="margin-bottom:24px">' + _esLabel('Real-World Examples');
+    it.examples.forEach(function(ex){
+      h += '<div style="padding-left:16px;border-left:2px solid ' + C.surfHigh + ';margin-top:14px">' +
+        '<div class="flex items-start gap-3">' +
+          '<span class="material-symbols-outlined" style="color:' + C.error + ';font-size:20px;font-variation-settings:\'FILL\' 1;padding-top:2px;flex-shrink:0">adjust</span>' +
+          '<p style="font-size:18px;line-height:1.5;font-weight:700;color:' + C.text + ';margin:0">' + (ex.en || '') + ' ' + _esSpkSm(ex.en) + (ex.tag ? ' <span style="font-size:10px;font-weight:700;background:' + C.surfC + ';color:' + C.sub + ';padding:2px 8px;border-radius:6px;vertical-align:middle">' + ex.tag + '</span>' : '') + '</p>' +
+        '</div>' +
+        (ex.kr ? '<p style="font-size:16px;line-height:1.6;color:' + C.sub + ';margin:4px 0 0 32px">' + ex.kr + '</p>' : '') +
+      '</div>';
+    });
+    h += '</div>';
+  }
+  if ((it.related || []).length || it.warning){
+    h += '<div class="grid md:grid-cols-2 gap-6" style="background:' + C.surf + ';padding:20px;border-radius:12px;border:1px solid rgba(197,197,215,0.4)">';
+    h += '<div>';
+    if ((it.related || []).length){
+      h += '<div class="flex items-center gap-2" style="font-weight:700;color:' + C.text + ';margin-bottom:12px"><span class="material-symbols-outlined" style="color:' + C.amber + '">lightbulb</span>같은 뜻 / 유의어</div><ul style="margin:0;padding:0;list-style:none">';
+      it.related.forEach(function(r){
+        h += '<li style="font-size:14px;line-height:1.6;color:' + C.text + ';margin-bottom:8px"><strong style="color:' + C.primary + '">' + (r.label || '') + '</strong>' + (r.note ? ' <span style="color:' + C.sub + '">— ' + r.note + '</span>' : '') + '</li>';
+      });
+      h += '</ul>';
+    }
+    h += '</div><div>';
+    if (it.warning){
+      h += '<div class="flex items-center gap-2" style="font-weight:700;color:' + C.text + ';margin-bottom:12px"><span class="material-symbols-outlined" style="color:' + C.error + '">warning</span>사용 시 주의사항</div><p style="font-size:14px;line-height:1.6;color:' + C.sub + ';margin:0">' + it.warning + '</p>';
+    }
+    h += '</div></div>';
+  }
+  if (it.outro){
+    h += '<div class="flex items-center justify-center" style="margin-top:24px;padding-top:24px;border-top:1px dashed ' + C.outlineV + '"><div class="inline-flex items-center gap-2" style="background:' + C.primary + ';color:#fff;padding:10px 24px;border-radius:9999px;max-width:100%"><span class="material-symbols-outlined">loop</span><p style="font-size:15px;font-weight:700;margin:0">' + it.outro + '</p></div></div>';
+  }
+  h += '</article>';
+  return h;
+}
+
+// 학습 스트릭 (localStorage, 실제 연속일)
+function _esRecordStudyDay(){
+  try {
+    var key = 'atelier_eng_study_days';
+    var today = new Date().toISOString().slice(0, 10);
+    var days = JSON.parse(localStorage.getItem(key) || '[]');
+    if (days.indexOf(today) < 0){ days.push(today); days = days.slice(-90); localStorage.setItem(key, JSON.stringify(days)); }
+    var set = {}; days.forEach(function(d){ set[d] = 1; });
+    var streak = 0, d = new Date(today + 'T00:00:00');
+    while (set[d.toISOString().slice(0, 10)]){ streak++; d.setDate(d.getDate() - 1); }
+    return streak;
+  } catch(e){ return 1; }
+}
+
+// Practice Challenge + Streak (벤토)
+function _esPracticeStreak(s){
+  var C = _ESC, pe = null;
+  (s.groups || []).forEach(function(g){
+    (g.items || []).forEach(function(it){
+      if (pe || !it.expr) return;
+      var exs = it.examples || [], match = null;
+      for (var i = 0; i < exs.length; i++){
+        if (exs[i].en && exs[i].en.toLowerCase().indexOf(String(it.expr).toLowerCase().split(' ')[0]) >= 0){ match = exs[i]; break; }
+      }
+      if (!match) match = exs[0];
+      if (match && match.en) pe = { expr: it.expr, en: match.en, kr: match.kr || '' };
+    });
+  });
+  var H = '<section class="grid grid-cols-1 md:grid-cols-3 gap-6" style="margin-top:48px">';
+  if (pe){
+    var rx = new RegExp(String(pe.expr).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    var cloze = pe.en.replace(rx, '________');
+    var pid = 'es-practice-' + (s._id || 'x');
+    H += '<div class="md:col-span-2" style="background:' + C.surfC + ';border-radius:16px;padding:24px;position:relative;overflow:hidden">' +
+      '<h4 style="font-size:20px;font-weight:600;color:' + C.text + ';margin:0 0 8px">Practice Challenge</h4>' +
+      '<p style="font-size:14px;color:' + C.sub + ';margin:0 0 16px">빈칸을 <strong style="color:' + C.primary + '">' + pe.expr + '</strong> 로 채워보세요.</p>' +
+      '<div style="background:#fff;padding:16px;border-radius:8px;font-family:monospace;font-size:14px;line-height:1.6;border:1px solid ' + C.outlineV + ';color:' + C.text + '">"' + cloze + '"</div>' +
+      '<div id="' + pid + '-ans" style="display:none;margin-top:12px;font-size:14px;line-height:1.6;color:' + C.emerald + '"><strong>정답:</strong> ' + pe.en + ' ' + _esSpkSm(pe.en) + (pe.kr ? '<br><span style="color:' + C.sub + '">' + pe.kr + '</span>' : '') + '</div>' +
+      '<div class="flex gap-3" style="margin-top:16px"><button onclick="var a=document.getElementById(\'' + pid + '-ans\');a.style.display=a.style.display===\'none\'?\'block\':\'none\'" style="background:' + C.primary + ';color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:700;border:none;cursor:pointer">정답 보기</button></div>' +
+      '<span class="material-symbols-outlined" style="position:absolute;right:-16px;bottom:-16px;font-size:120px;color:' + C.primary + ';opacity:0.08;pointer-events:none">school</span>' +
+    '</div>';
+  } else {
+    H += '<div class="md:col-span-2"></div>';
+  }
+  var streak = _esRecordStudyDay();
+  H += '<div class="flex flex-col justify-center items-center" style="background:' + C.emeraldContainer + ';color:' + C.onEmerald + ';border-radius:16px;padding:24px;text-align:center">' +
+    '<span class="material-symbols-outlined" style="font-size:40px;margin-bottom:8px;font-variation-settings:\'FILL\' 1">workspace_premium</span>' +
+    '<h4 style="font-size:20px;font-weight:600;margin:0 0 4px">Study Streak</h4>' +
+    '<p style="font-size:30px;font-weight:700;margin:0 0 16px">' + streak + ' Day' + (streak === 1 ? '' : 's') + '</p>' +
+    '<div style="width:100%;background:rgba(104,245,184,0.25);border-radius:9999px;height:8px"><div style="background:' + C.onEmerald + ';width:' + Math.round(Math.min(streak, 7) / 7 * 100) + '%;height:100%;border-radius:9999px"></div></div>' +
+  '</div></section>';
+  return H;
+}
+
 function renderStudyDetail(s){
-  var H = '';
+  var C = _ESC;
+  var H = '<div style="' + _ESFONT + ';color:' + C.text + '">';
   // 헤더 + 전체 듣기
-  H += '<div class="flex justify-between items-start gap-4 mb-6 flex-wrap">' +
+  H += '<div class="flex justify-between items-start gap-4 flex-wrap" style="margin-bottom:40px">' +
     '<div>' +
-      '<p class="text-xs font-bold text-violet-600 uppercase tracking-wider mb-2">Content Study · ' + (s.date || '') + (s.sourceType ? ' · ' + s.sourceType : '') + '</p>' +
-      '<h2 class="text-3xl font-extrabold font-headline text-slate-900 tracking-tight mb-2">' + (s.title || 'Untitled') + '</h2>' +
-      (s.subtitle ? '<p class="text-sm text-slate-500">' + s.subtitle + '</p>' : '') +
-      (s.source ? '<p class="text-xs text-slate-400 mt-1">' + s.source + '</p>' : '') +
+      '<p style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:' + C.primary + ';margin:0 0 8px">Content Study · ' + (s.date || '') + (s.sourceType ? ' · ' + s.sourceType : '') + '</p>' +
+      '<h2 style="font-size:32px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;color:' + C.text + ';margin:0 0 8px">' + (s.title || 'Untitled') + '</h2>' +
+      (s.subtitle ? '<p style="font-size:16px;line-height:1.6;color:' + C.sub + ';margin:0;max-width:680px">' + s.subtitle + '</p>' : '') +
+      (s.source ? '<p style="font-size:14px;color:' + C.outline + ';margin:4px 0 0">' + s.source + '</p>' : '') +
     '</div>' +
     '<div class="flex items-center gap-2 shrink-0">' +
-      '<button onclick="engSpeakStudy(\'' + s._id + '\')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-violet-600 text-white text-sm font-bold hover:bg-violet-700 transition-all shadow"><span class="material-symbols-outlined" style="font-size:18px">play_arrow</span>전체 듣기</button>' +
-      '<button onclick="engStopSpeak()" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all" title="정지"><span class="material-symbols-outlined" style="font-size:18px">stop</span></button>' +
+      '<button onclick="engSpeakStudy(\'' + s._id + '\')" class="inline-flex items-center gap-1.5" style="padding:8px 16px;border-radius:9999px;background:' + C.primary + ';color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer"><span class="material-symbols-outlined" style="font-size:18px">play_arrow</span>전체 듣기</button>' +
+      '<button onclick="engStopSpeak()" class="inline-flex items-center justify-center" style="width:40px;height:40px;border-radius:9999px;background:' + C.surfHigh + ';color:' + C.sub + ';border:none;cursor:pointer" title="정지"><span class="material-symbols-outlined" style="font-size:18px">stop</span></button>' +
     '</div>' +
   '</div>';
 
-  if (s.intro) H += '<div class="mb-6 p-4 rounded-xl border-l-4 border-violet-400" style="background:rgba(139,92,246,0.06)"><p class="text-sm text-slate-700 leading-relaxed">' + s.intro + '</p></div>';
+  if (s.intro) H += '<div style="margin-bottom:40px;padding:20px;border-radius:12px;border-left:4px solid ' + C.primary + ';background:' + C.surfLow + '"><p style="font-size:16px;line-height:1.6;color:' + C.text + ';margin:0">' + s.intro + '</p></div>';
 
   (s.groups || []).forEach(function(g, gi){
-    H += '<section class="mb-8">' +
-      '<div class="mb-4">' +
-        '<h3 class="text-lg font-bold text-slate-900 font-headline flex items-center gap-2"><span class="text-violet-300 font-extrabold">' + String(gi + 1).padStart(2, '0') + '</span>' + (g.title || '') + '</h3>' +
-        (g.why ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + g.why + '</p>' : '') +
-      '</div>';
-
-    (g.items || []).forEach(function(it){
-      H += '<div class="bg-white rounded-2xl border border-slate-100 p-5 mb-4" style="box-shadow:var(--shadow-card-sm)">';
-      // 표현 + 별점
-      H += '<div class="flex items-center gap-2 flex-wrap mb-2">' +
-        '<span class="text-lg font-bold text-slate-900">' + (it.expr || '') + '</span>' +
-        _esSpk(it.expr, 'en-US') +
-        (it.stars ? '<span class="text-sm" title="' + _esEscAttr(it.freqLabel || '') + '">' + _esStars(it.stars) + '</span>' : '') +
-        (it.freqLabel ? '<span class="text-[11px] text-slate-400">' + it.freqLabel + '</span>' : '') +
-      '</div>';
-      // 직역 → 뜻
-      if (it.literal || it.meaning){
-        H += '<p class="text-sm text-slate-700 mb-2">' +
-          (it.literal ? '<span class="text-slate-400">직역:</span> ' + it.literal + ' <span class="text-slate-300">→</span> ' : '') +
-          '<span class="font-bold">' + (it.meaning || '') + '</span></p>';
-      }
-      if (it.image) H += '<div class="text-sm text-slate-600 leading-relaxed mb-2 p-3 rounded-lg bg-amber-50/60 border border-amber-100">🧠 ' + it.image + '</div>';
-      if (it.contrast) H += '<p class="text-sm text-slate-600 leading-relaxed mb-2">🇰🇷↔🇬🇧 ' + it.contrast + '</p>';
-      if (it.source) H += '<p class="text-xs text-slate-400 italic mb-2 pl-3 border-l-2 border-slate-200">📍 ' + it.source + '</p>';
-      // 예문 폭탄
-      if ((it.examples || []).length){
-        H += '<div class="space-y-1.5 mb-1 mt-2">';
-        it.examples.forEach(function(ex){
-          H += '<div class="flex items-start gap-2 text-sm">' +
-            '<span class="text-violet-400 mt-0.5">🎯</span>' +
-            '<div class="flex-1">' +
-              '<span class="text-slate-800">' + (ex.en || '') + '</span> ' + _esSpk(ex.en, 'en-US') +
-              (ex.tag ? ' <span class="text-[9px] font-bold bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded-full align-middle">' + ex.tag + '</span>' : '') +
-              (ex.kr ? '<br><span class="text-xs text-slate-500">' + ex.kr + '</span>' : '') +
-            '</div>' +
-          '</div>';
-        });
-        H += '</div>';
-      }
-      // 관련/변형
-      if ((it.related || []).length){
-        H += '<div class="mt-2 pt-2 border-t border-slate-100">';
-        it.related.forEach(function(r){
-          H += '<p class="text-xs text-slate-600 mb-0.5">💡 <b>' + (r.label || '') + '</b>' + (r.note ? ' — ' + r.note : '') + '</p>';
-        });
-        H += '</div>';
-      }
-      if (it.warning) H += '<p class="text-xs text-amber-700 mt-2">⚠️ ' + it.warning + '</p>';
-      if (it.outro) H += '<p class="text-sm text-violet-700 font-medium mt-3 pt-2 border-t border-violet-50">🔁 ' + it.outro + '</p>';
-      H += '</div>';
-    });
-    H += '</section>';
+    H += '<header style="margin-bottom:24px;' + (gi ? 'margin-top:48px' : '') + '">' +
+      '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
+        '<span style="font-size:30px;font-weight:700;color:' + C.primary + ';opacity:0.4">' + String(gi + 1).padStart(2, '0') + '</span>' +
+        '<h3 style="font-size:24px;line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">' + (g.title || '') + '</h3>' +
+      '</div>' +
+      (g.why ? '<p style="font-size:16px;line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">' + g.why + '</p>' : '') +
+    '</header>';
+    (g.items || []).forEach(function(it){ H += _esStudyCard(it); });
   });
 
-  // 보너스 꿀단어
   if ((s.bonus || []).length){
-    H += '<section class="mb-8">' +
-      '<h3 class="text-lg font-bold text-slate-900 font-headline mb-3">🍯 보너스 꿀단어</h3>' +
-      '<div class="bg-white rounded-2xl border border-slate-100 p-5" style="box-shadow:var(--shadow-card-sm)">';
-    s.bonus.forEach(function(b){
-      H += '<div class="flex items-start gap-2 py-2 border-b border-slate-50">' +
-        '<span class="font-bold text-slate-800 shrink-0">' + (b.expr || '') + '</span>' + _esSpk(b.expr, 'en-US') +
-        (b.stars ? '<span class="text-xs shrink-0">' + _esStars(b.stars) + '</span>' : '') +
-        '<div class="text-sm text-slate-600">' + (b.meaning || '') +
-          (b.ex ? ' <span class="text-slate-400">· ' + b.ex + '</span> ' + _esSpk(b.ex, 'en-US') + (b.exKr ? ' <span class="text-xs text-slate-400">' + b.exKr + '</span>' : '') : '') +
+    H += '<section style="margin-top:48px">' +
+      '<h3 style="font-size:24px;font-weight:700;color:' + C.text + ';margin:0 0 16px">🍯 보너스 꿀단어</h3>' +
+      '<div style="background:#fff;border-radius:16px;padding:24px;border:1px solid rgba(197,197,215,0.4);box-shadow:0 4px 20px rgba(0,0,0,0.04)">';
+    s.bonus.forEach(function(b, bi){
+      H += '<div class="flex items-start gap-2" style="padding:12px 0;' + (bi ? 'border-top:1px solid rgba(197,197,215,0.25)' : '') + '">' +
+        '<span style="font-weight:700;color:' + C.primary + ';flex-shrink:0;font-size:16px">' + (b.expr || '') + '</span>' + _esSpkSm(b.expr) +
+        (b.stars ? _esStarRow(b.stars, 14) : '') +
+        '<div style="font-size:15px;line-height:1.6;color:' + C.text + '">' + (b.meaning || '') +
+          (b.ex ? ' <span style="color:' + C.sub + '">· ' + b.ex + '</span>' + _esSpkSm(b.ex) + (b.exKr ? ' <span style="font-size:13px;color:' + C.sub + '">' + b.exKr + '</span>' : '') : '') +
         '</div>' +
       '</div>';
     });
     H += '</div></section>';
   }
+
+  H += _esPracticeStreak(s);
+  H += '</div>';
   return H;
 }
 
