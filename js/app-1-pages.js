@@ -18800,7 +18800,7 @@
 
   function openSessionDetailFromTracker(dateId) {
     // 수업 트래커 + 기타 UI 숨기고 상세 뷰 열기
-    var pageWrap = document.querySelector('#page-english .page-content-wrap');
+    var pageWrap = document.getElementById('eng-annie-view');
     if (pageWrap) {
       Array.from(pageWrap.children).forEach(function(child) {
         if (child.id !== 'eng-detail-view') child.style.display = 'none';
@@ -20340,7 +20340,7 @@ function openSessionDetail(dateId) {
   if (!session) return;
 
   // Hide all sections, show detail
-  var pageWrap = document.querySelector('#page-english .page-content-wrap');
+  var pageWrap = document.getElementById('eng-annie-view');
   if (pageWrap) { Array.from(pageWrap.children).forEach(function(child) { if (child.id !== 'eng-detail-view') child.style.display = 'none'; }); }
   document.getElementById('eng-detail-view').style.display = 'block';
   var backBtn = document.getElementById('eng-back-btn');
@@ -20654,7 +20654,7 @@ function closeSessionDetail() {
   _pendingSessionUpload = null;
   // 상세 뷰 숨기기 + 모든 섹션 복원 (모달은 제외)
   document.getElementById('eng-detail-view').style.display = 'none';
-  var pageWrap = document.querySelector('#page-english .page-content-wrap');
+  var pageWrap = document.getElementById('eng-annie-view');
   var _skipRestore = {'eng-detail-view':1,'eng-dup-modal':1,'eng-review-modal':1,'api-settings-modal':1};
   if (pageWrap) {
     Array.from(pageWrap.children).forEach(function(child) { if (!_skipRestore[child.id]) child.style.display = ''; });
