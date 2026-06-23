@@ -10,14 +10,14 @@ Your job: mine the transcript for the expressions WORTH STEALING and teach each 
 
 === TEACHING STYLE (CRITICAL — THIS IS THE WHOLE POINT) ===
 - Group the expressions into 3–6 themed categories YOU choose for THIS content. Good recurring themes (use when they fit, but adapt freely): "한국어 직역으로는 안 나오는 관용구", "한 단어가 한 문장을 이긴다 — 고급 압축 어휘", "비유 한 방으로 머리에 박는 표현", "토론·회의에서 내 의견 꺼낼 때 쓰는 문장 틀". Each group gets a short "왜 중요한지" hook in instructor voice (the "why").
-- For EACH expression, in warm Korean instructor voice (NOT just one-line meaning):
+- For EACH expression, write like a top instructor LECTURING out loud — flowing, warm, full of banter. Do NOT compress each field into one terse line; explain generously and conversationally (이 "풀어쓰는 깊이"가 머리에 박히게 하는 #1 요소다. 짧은 사전 항목이 아니라 1타 강사 강의처럼):
   · stars: 빈도 별점 integer 1–5 (5=초고빈도/매일, 4=꽤 흔함, 3=상황별, 2=글·격식, 1=드묾·showy). freqLabel: short note ("꽤 흔함, 직장 영어 단골").
   · literal(직역) → meaning(진짜 뜻). When literal hides the meaning, that contrast IS the lesson.
-  · image: 그림·장면으로 외우게 하라. ("누가 너를 수영장 한가운데 풍덩 던졌어 — 튜브도 강습도 없어…")
-  · contrast: 한국인이 흔히 하는 밋밋한 표현 vs 원어민의 이 표현. ("한국인은 'I had to figure it out alone' — 원어민은 sink or swim 한 방.") 없으면 "".
+  · image: 그림·장면으로 외우게 하라 — **2~4문장**으로 생생하게, 질문도 던지며. ("그림 그려봐. 새 직장 첫날, 어색해서 의자에 엉거주춤 걸터앉아 있어. 근데 몇 주 지나면? 의자 쫙 당겨서 발을 책상 밑에 쭉 뻗고 편하게 앉지. 그게 자리 잡았다는 거야.") 절대 한 줄로 끝내지 마라.
+  · contrast: 한국인이 흔히 하는 밋밋한 표현 vs 원어민의 이 표현 + **왜 더 센지·뉘앙스 차이까지 추론**해라 (그냥 "A→B"로 끝내지 말 것). ("한국인은 '교육 시스템이 느리다'를 'the system is slow'라고 정적으로 말해. 원어민은 'the system hasn't caught up' — 못 따라잡았다고 동적으로 표현해. 이 감각 차이가 중요해.") Nuri 상황(이직·디자인·면접)에 닿는 **개인 멘트**도 자연스럽게 끼워라 ("너 이직 준비하잖아, 이거 진짜 쓸 일 많아."). 없으면 "".
   · source: 본문(transcript)에서 이 표현이 나온 부분 인용. 없으면 "".
-  · examples: 예문 폭탄 3–4개. 각 {en, kr, tag}. Nuri 삶(패션 디자이너·이직·면접·포트폴리오)에 맞는 예문을 적극적으로 섞어라. tag = 상황("면접","디자인","이직","일상","회의") 또는 "".
-  · related: 비슷한 표현·변형·반대말·전치사 따라 뜻 갈리는 것 [{label, note}]. note에 빈도(⭐)나 미국식/영국식 적어주면 좋음. 없으면 [].
+  · examples: 예문 폭탄 3–4개. 각 {en, kr, tag}. Nuri 삶(패션 디자이너·이직·면접·포트폴리오)에 맞는 예문을 적극적으로 섞어라. tag = 상황("면접","디자인","이직","일상","회의") 또는 "". **kr 끝에 가르칠 포인트가 있으면 짧은 코멘트를 붙여라** ("...했어요. — 이렇게 쓰면 면접관이 '오' 한다", "...야. — 같은 표현인데 전치사 붙으면 뜻이 갈려!").
+  · related: 비슷한 표현·변형·반대말 [{label, note}]. **전치사·용법 따라 뜻이 갈리는 건 적극적으로 갈라서 가르쳐라** (예: catch up with=못 따라잡다 / catch up=근황 나누다 / catch up on=밀린 거 보충 — 셋 다 별도 항목으로). note = 한 줄 뜻·뉘앙스 + 빈도(⭐) + 미국식/영국식. 없으면 [].
   · warning: 영국식/미국식, 격식 차이 등 주의 한 줄. 없으면 "".
   · outro: 1타 강사 마무리 한 마디 ("자 다시. sink or swim. 가라앉든 헤엄치든. 입에 붙었지?"). 없으면 "".
 - bonus: 본문에서 그냥 지나치기 아까운 꿀단어 3–6개를 간단히.
@@ -44,8 +44,8 @@ studyData["{{ID}}"] = {
           freqLabel: "꽤 흔함, 직장 영어 단골",
           literal: "직역",
           meaning: "진짜 뜻",
-          image: "그림·장면으로 외우게 하는 설명.",
-          contrast: "한국인 밋밋 표현 vs 원어민 표현 대비.",
+          image: "그림·장면으로 외우게 하는 2~4문장. 질문도 던지며 생생하게, 절대 한 줄로 끝내지 말 것.",
+          contrast: "한국인 밋밋 표현 vs 원어민 표현 + 왜 더 센지 뉘앙스 추론 + Nuri(이직·디자인·면접) 개인 멘트.",
           source: "본문 인용.",
           examples: [
             { en: "Natural example sentence.", kr: "예문 한글 뜻.", tag: "면접" },

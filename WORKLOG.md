@@ -99,7 +99,10 @@
 - 후속(피드백 "폰트 너무 큼"): 모든 인라인 `font-size:Npx` → `calc(Npx * var(--es-scale,1))` 일괄 래핑(sed, 다른 영역은 fallback 1로 무영향). 루트 `#es-detail-root`에 `--es-scale` 세팅 + 헤더에 **A-/A/A+ 컨트롤**(`setStudyFontSize`, localStorage `atelier_study_font_size`). 기본 medium=0.8(=ANNIE 느낌), small=0.68, large=1.0. english-study v4→v5
 - 검증: `node --check` OK
 
+- 후속2(피드백 "원래 클로드 챗 출력이 더 푸짐"): 진단 — 표현 개수는 비슷(~25)하나 챗은 줄글로 길게(비유 장면 2~4문장+질문, 뉘앙스 추론, 개인 멘트, 예문별 코멘트, 전치사 용법 분리)인데 STUDY 프롬프트가 필드를 한 줄로 압축시킴. `STUDY_PROMPT_TEMPLATE` 6곳 보강: 깊이 우선 지시 + image 2~4문장·질문 + contrast 뉘앙스추론+개인멘트 + examples kr 코멘트 + related 전치사 분리(catch up with/on). 스키마 예시값도 길게. english-study v5→v6. (기존 스터디는 안 바뀜 — 재생성해야 적용)
+
 ### 🎯 다음 할 일
+- **STUDY 재생성으로 깊이 확인**: 새 트랜스크립트로 1개 생성 → image/contrast/예문 코멘트가 챗만큼 푸짐한지. 부족하면 프롬프트 더 강하게
 - **STUDY 새 디자인 라이브 확인**: 가시성 OK인지, Practice 빈칸/정답·Streak 동작, 폰트 적용
 - **ANNIE 오디오 탑재 테스트**: 리뷰 열기 → 🎧 영역에서 mp3 드래그/올리기(권한오류면 규칙 게시) → 플레이어 재생 / 노트북 링크 버튼 확인
 - **라이브 STUDY 테스트**: STUDY 탭 → 스터디 추가 → 유튜브 스크립트 붙여넣기 → ✨생성 → 1타 강사 포맷·오디오(🔊/전체듣기) 동작·품질 확인
