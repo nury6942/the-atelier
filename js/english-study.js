@@ -620,7 +620,9 @@ function annieAudioHtml(s, dateId){
   var hasAudio = !!(s && s.audioUrl);
   var hasLink = !!(s && s.notebookUrl);
   var setBtns =
-    '<button onclick="annieAudioPick(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">upload</span>' + (hasAudio ? '오디오 교체' : '오디오 올리기') + '</button>' +
+    '<button onclick="engCopyNotebookSource(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 inline-flex items-center gap-1" title="이 리뷰 8개 섹션을 NotebookLM에 붙여넣을 형태로 클립보드에 복사"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">content_copy</span>소스 복사</button>' +
+    '<button onclick="engOpenNotebookLM()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 inline-flex items-center gap-1" title="NotebookLM 새 탭으로 열기 → 새 노트북 만들고 붙여넣기(Cmd+V)"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">open_in_new</span>NotebookLM 열기</button>' +
+    '<button onclick="annieAudioPick(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">upload</span>' + (hasAudio ? '오디오 교체' : '오디오 올리기') + '</button>' +
     '<button onclick="annieSetNotebook(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">link</span>' + (hasLink ? '링크 수정' : '노트북 링크') + '</button>';
   var inner =
     '<div class="flex items-center justify-between gap-3 mb-3 flex-wrap">' +
@@ -635,12 +637,169 @@ function annieAudioHtml(s, dateId){
     inner += '<a href="' + s.notebookUrl + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-violet-600 text-white text-sm font-bold hover:bg-violet-700 transition-all shadow-sm"><span class="material-symbols-outlined" style="font-size:calc(18px * var(--es-scale, 1))">open_in_new</span>NotebookLM에서 듣기</a>';
   }
   if (!hasAudio && !hasLink){
-    inner += '<p class="text-xs text-slate-400 leading-relaxed">NotebookLM에서 받은 mp3를 <b>올리거나(앱에서 바로 재생)</b> 공유 링크를 <b>붙이면(새 탭)</b> 여기서 들을 수 있어요. 받은 파일을 이 박스로 <b>끌어다 놓아도</b> 돼요.</p>';
+    inner += '<p class="text-xs text-slate-400 leading-relaxed"><b>자동화 흐름:</b> ① <b>소스 복사</b> → ② <b>NotebookLM 열기</b> → 새 노트북 만들고 붙여넣기(Cmd+V) → 오디오 생성 → ③ 받은 mp3를 <b>올리거나(앱에서 바로 재생)</b> 공유 링크를 <b>붙이기(새 탭)</b>. 파일은 이 박스로 <b>끌어다 놓아도</b> 돼요.</p>';
   }
   inner += '<input type="file" id="annie-audio-file-' + dateId + '" accept="audio/*" style="display:none" onchange="annieAudioUpload(\'' + dateId + '\', this.files && this.files[0])"/>';
   return '<div id="annie-audio-box-' + dateId + '" class="mb-8 p-5 rounded-2xl border border-violet-100" style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(99,102,241,0.04))" ondragover="annieAudioDragOver(event)" ondragleave="annieAudioDragLeave(event)" ondrop="annieAudioDrop(event,\'' + dateId + '\')">' + inner + '</div>';
 }
 window.annieAudioHtml = annieAudioHtml;
+
+// ── NotebookLM 소스 자동 생성 ─────────────────────────────
+// 세션 리포트 8개 섹션을 NotebookLM에 붙여넣을 플레인 텍스트로 변환.
+function _esStripTags(t){
+  if (!t) return '';
+  return String(t)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .trim();
+}
+
+function engBuildNotebookSource(dateId){
+  var s = (typeof engSessionsData !== 'undefined') ? engSessionsData.find(function(x){ return x._id === dateId; }) : null;
+  if (!s) return '';
+  var L = [], strip = _esStripTags;
+  function enOf(x){ return (x && typeof x === 'object') ? (x.en||'') : (x||''); }
+  function krOf(x){ return (x && typeof x === 'object') ? (x.kr||'') : ''; }
+
+  L.push('# ' + (s.title || 'Untitled'));
+  if (s.subtitle) L.push(strip(s.subtitle));
+  L.push('세션 날짜: ' + dateId);
+  var lv = s.level || {};
+  L.push('레벨 — Fluency ' + (lv.fluency||'-') + ' / Vocab ' + (lv.vocab||'-') + ' / Grammar ' + (lv.grammar||'-') + ' / Interaction ' + (lv.interaction||'-'));
+  L.push('');
+
+  var sum = s.summary || {};
+  L.push('## 01. Summary (총평)');
+  if (sum.heading) L.push('### ' + strip(sum.heading));
+  if (sum.p1) L.push(strip(sum.p1));
+  if (sum.p2) L.push(strip(sum.p2));
+  if (sum.kr) L.push('[KR] ' + strip(sum.kr));
+  L.push('');
+
+  var exprs = s.expressions || [];
+  if (exprs.length){
+    L.push('## 02. Expressions (유용한 표현)');
+    exprs.forEach(function(ex){
+      L.push('- [' + strip(ex.cat) + '] ' + strip(ex.expr) + (ex.freq ? ' (' + ex.freq + ')' : '') + ' — ' + strip(ex.kr));
+      if (ex.ex) L.push('  예: ' + strip(ex.ex) + (ex.exKr ? ' / ' + strip(ex.exKr) : ''));
+    });
+    if (s.expressionsKr) L.push('[KR] ' + strip(s.expressionsKr));
+    L.push('');
+  }
+
+  var upgs = s.upgrades || [];
+  if (upgs.length){
+    L.push('## 03. Upgrades (문장 업그레이드)');
+    upgs.forEach(function(u){
+      if (u.bad) L.push('- (X) ' + strip(u.bad));
+      if (u.ok)  L.push('  (O) ' + strip(u.ok) + (u.okKr ? ' — ' + strip(u.okKr) : ''));
+      if (u.gem) L.push('  (gem) ' + strip(u.gem) + (u.gemKr ? ' — ' + strip(u.gemKr) : ''));
+      if (u.note) L.push('  ' + strip(u.note));
+      if (u.noteKr) L.push('  ' + strip(u.noteKr));
+    });
+    if (s.upgradesKr) L.push('[KR] ' + strip(s.upgradesKr));
+    L.push('');
+  }
+
+  var grams = s.grammar || [];
+  if (grams.length){
+    L.push('## 04. Grammar (문법)');
+    grams.forEach(function(g){
+      L.push('### ' + strip(g.title));
+      if (g.rule) L.push('Rule: ' + strip(g.rule));
+      if (g.ruleKr) L.push(strip(g.ruleKr));
+      (g.examples||[]).forEach(function(ex){ L.push('  - ' + strip(ex)); });
+    });
+    if (s.grammarKr) L.push('[KR] ' + strip(s.grammarKr));
+    L.push('');
+  }
+
+  var cs = s.convoSkills || {};
+  if ((cs.followups&&cs.followups.length) || (cs.reactions&&cs.reactions.length) || (cs.starters&&cs.starters.length)){
+    L.push('## 05. Convo Skills (대화 스킬)');
+    if (cs.followups && cs.followups.length){
+      L.push('### Follow-up Questions');
+      cs.followups.forEach(function(f){ L.push('- ' + strip(enOf(f)) + (krOf(f) ? ' (' + strip(krOf(f)) + ')' : '')); });
+    }
+    if (cs.reactions && cs.reactions.length){
+      L.push('### Richer Reactions');
+      cs.reactions.forEach(function(r){ L.push('- ' + strip(r.feel) + (r.feelKr ? ' (' + strip(r.feelKr) + ')' : '') + ' -> ' + strip(r.say) + (r.kr ? ' (' + strip(r.kr) + ')' : '')); });
+    }
+    if (cs.starters && cs.starters.length){
+      L.push('### C1 Sentence Starters');
+      cs.starters.forEach(function(st){ L.push('- ' + strip(enOf(st)) + (krOf(st) ? ' (' + strip(krOf(st)) + ')' : '')); });
+    }
+    if (cs.kr) L.push('[KR] ' + strip(cs.kr));
+    L.push('');
+  }
+
+  var vsets = s.vocabSets || [];
+  if (vsets.length){
+    L.push('## 06. Vocab (어휘)');
+    vsets.forEach(function(vs){
+      L.push('### ' + strip(vs.topic) + (vs.topicKr ? ' (' + strip(vs.topicKr) + ')' : ''));
+      (vs.words||[]).forEach(function(w){
+        var line = '- ' + strip(w.word) + ': ' + strip(w.mean);
+        if (w.coll) line += ' | ' + strip(w.coll);
+        if (w.syn) line += ' | 유의어: ' + strip(w.syn);
+        L.push(line);
+        if (w.ex) L.push('  예: ' + strip(w.ex) + (w.exKr ? ' / ' + strip(w.exKr) : ''));
+      });
+    });
+    if (s.vocabKr) L.push('[KR] ' + strip(s.vocabKr));
+    L.push('');
+  }
+
+  var drills = s.drills || [];
+  if (drills.length){
+    L.push('## 07. Drills (연습 문제)');
+    drills.forEach(function(d){
+      L.push('### ' + strip(d.title));
+      (d.items||[]).forEach(function(it, i){
+        L.push((i+1) + '. ' + strip(it.q));
+        if (it.a) L.push('   정답: ' + strip(it.a) + (it.explainKr ? ' — ' + strip(it.explainKr) : ''));
+      });
+    });
+    if (s.drillsKr) L.push('[KR] ' + strip(s.drillsKr));
+    L.push('');
+  }
+
+  var goals = s.goals || [];
+  if (goals.length){
+    L.push('## 08. Next Goals (다음 목표)');
+    goals.forEach(function(g, i){ L.push((i+1) + '. ' + strip(g.title) + (g.desc ? ' — ' + strip(g.desc) : '')); });
+    if (s.goalsKr) L.push('[KR] ' + strip(s.goalsKr));
+  }
+
+  return L.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+window.engBuildNotebookSource = engBuildNotebookSource;
+
+window.engCopyNotebookSource = async function(dateId){
+  var text = engBuildNotebookSource(dateId);
+  if (!text){ if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 복사할 내용을 못 찾았어요'); return; }
+  var ok = function(){ if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 소스 복사됨! NotebookLM에 붙여넣으세요 (Cmd+V)'); };
+  try {
+    await navigator.clipboard.writeText(text);
+    ok();
+  } catch(e){
+    // 클립보드 권한 막혔을 때 폴백
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); ok();
+    } catch(e2){
+      window.prompt('아래 내용을 복사하세요 (Cmd+C → Enter):', text);
+    }
+  }
+};
+
+window.engOpenNotebookLM = function(){
+  window.open('https://notebooklm.google.com/', '_blank', 'noopener');
+};
 
 window.annieAudioPick = function(dateId){ var el = document.getElementById('annie-audio-file-' + dateId); if (el) el.click(); };
 window.annieAudioDragOver = function(e){ e.preventDefault(); if (e.currentTarget) e.currentTarget.style.outline = '2px dashed #8b5cf6'; };

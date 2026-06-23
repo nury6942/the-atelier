@@ -33,6 +33,31 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-06-23 (기기: 아이맥)
+
+### ✅ 한 일
+
+**Annie 리뷰 → NotebookLM 반자동 연결 ⭐**
+- 누리 요청: 리뷰 끝나면 NotebookLM 자동 생성/연결하고 싶음 (효율화)
+- 진단: 완전 자동(앱이 노트북 생성+오디오)은 개인용 불가 — 공식 API는 기업 전용, 비공식 라이브러리는 구글 쿠키 서버 저장 필요 + 잘 깨짐. 임베드도 구글이 iframe 차단. → **반자동** 채택
+- 구현 (`js/english-study.js`):
+  - `engBuildNotebookSource(dateId)` — 세션 8개 섹션(summary/expressions/upgrades/grammar/convoSkills/vocabSets/drills/goals + 각 KR)을 NotebookLM용 플레인 텍스트로 변환. `_esStripTags`로 HTML 태그·엔티티 제거
+  - `engCopyNotebookSource()` — 클립보드 복사 (navigator.clipboard → textarea → prompt 3단 폴백)
+  - `engOpenNotebookLM()` — notebooklm.google.com 새 탭
+  - NotebookLM 박스에 [소스 복사] [NotebookLM 열기] 버튼 2개 추가 + 안내문구 갱신
+- 흐름: [소스 복사] → [NotebookLM 열기] → 새 노트북 붙여넣기 → 오디오 생성 → mp3/링크 회수 (기존 버튼)
+- 검증: node --check OK
+
+### 🎯 다음 할 일
+- (선택) 완전 자동 원하면 유료 "NotebookLM 스타일" 음성 API(AutoContent 등) + Firebase Function 검토
+- (이전) 교통편 큐레이션 블록 위치 옮기기 (현재 "숙소 정보" 아래 → 일정 상단/페이지 최상단 후보)
+
+### 💭 메모
+- NotebookLM: 2026년 공식 Enterprise API는 있으나 개인 가입 불가. 임베드 불가(구글 차단). 반자동(소스복사+딥링크)이 무료·무유지보수 최선
+- 오늘 같은 세션에서 여행 작업(트립닷컴 호텔 직행 + Rome2Rio 교통편)도 완료·푸시됨 (커밋 c3e3d46·3dbfa2d·f6868f7)
+
+---
+
 ## 2026-06-22 (기기: 윈도우 · 회사)
 
 ### ✅ 한 일
