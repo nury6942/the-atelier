@@ -12683,10 +12683,17 @@
         <!-- ─── 차별화 위젯 ─────────────────────────────── -->
         <!-- 위젯 1: 시리즈 회차별 매출 곡선 (전체 폭) -->
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
-          <div class="flex justify-between items-baseline mb-4">
+          <div class="flex justify-between items-baseline mb-2">
             <h3 class="text-lg font-bold text-slate-900 font-headline">시리즈 회차별 매출</h3>
             <span class="text-xs text-slate-400">TOP 8 · 회차별 추이</span>
           </div>
+          <p class="text-[11px] text-slate-400 mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span><b class="text-slate-500">가로</b> 회차(첫화→막화)</span>
+            <span><b class="text-slate-500">세로</b> 회차별 매출</span>
+            <span class="inline-flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full" style="background:#f59e0b"></span>피크 회차</span>
+            <span class="text-slate-300">·</span>
+            <span>전체 기간 누적 (이번달 아님)</span>
+          </p>
           <div id="postype-series-curves" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="col-span-full text-center text-slate-400 text-sm py-12" id="postype-series-empty">데이터 없음</div>
           </div>
@@ -14025,7 +14032,7 @@
 <script src="js/daily-guides.js?v=163" defer></script>
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
-<script src="js/app-6-postype-analytics.js?v=163" defer></script>
+<script src="js/app-6-postype-analytics.js?v=164" defer></script>
 <script src="js/english-study.js?v=8" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->

@@ -713,7 +713,7 @@
       return `<div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
         <div class="flex justify-between items-baseline mb-1.5">
           <span class="text-xs font-bold text-slate-800 truncate" style="max-width:60%">${s.name}</span>
-          <span class="text-[10px] ${tc} font-bold whitespace-nowrap">${ps.length}편 · ${trend >= 0 ? '+' : ''}${trend}%</span>
+          <span class="text-[10px] ${tc} font-bold whitespace-nowrap" title="첫 회차 대비 마지막 회차 증감 (${firstEp} → ${lastEp})">${ps.length}편 · ${trend >= 0 ? '+' : ''}${trend}%</span>
         </div>
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:46px;display:block">
           <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>${circles}
