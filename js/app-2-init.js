@@ -3492,7 +3492,7 @@ function ldgRenderPastePreview() {
   var cancN = rows.filter(function(r){ return r.cancelled; }).length;
   var needN = rows.filter(function(r){ return r.include && (!r.major || !r.minor); }).length;
   var pmethods = (_ledgerData.settings || {}).paymentMethods || [];
-  var pmSel = '<select id="ldg-paste-pm" class="text-xs border border-slate-200 rounded px-2 py-1">' +
+  var pmSel = '<select id="ldg-paste-pm" class="text-xs border border-slate-200 rounded py-1" style="min-width:88px;padding-left:8px;padding-right:24px">' +
     pmethods.map(function(p){ return '<option value="' + p + '"' + (p === '신한카드' ? ' selected' : '') + '>' + p + '</option>'; }).join('') + '</select>';
 
   var html = '<div class="flex items-center justify-between flex-wrap gap-2 mb-3 mt-3">' +
@@ -3512,8 +3512,8 @@ function ldgRenderPastePreview() {
       '<td class="px-2 py-1 whitespace-nowrap text-slate-500">' + r.date.substring(5) + '</td>' +
       '<td class="px-2 py-1 text-slate-800">' + r.merchant.replace(/</g, '&lt;') + (r.foreign ? ' <span class="text-slate-400">(' + r.foreign + ')</span>' : '') + '</td>' +
       '<td class="px-2 py-1 text-right font-semibold whitespace-nowrap">₩' + r.amount.toLocaleString('ko-KR') + '</td>' +
-      '<td class="px-2 py-1"><select class="text-xs border border-slate-200 rounded px-2 py-0.5" style="min-width:96px" onchange="ldgPasteSetMajor(' + i + ',this.value)">' + _ldgCatOptions(r.major) + '</select></td>' +
-      '<td class="px-2 py-1"><select id="ldg-paste-sub-' + i + '" class="text-xs border border-slate-200 rounded px-2 py-0.5" style="min-width:110px" onchange="ldgPasteSetMinor(' + i + ',this.value)">' + _ldgSubOptions(r.major, r.minor) + '</select></td>' +
+      '<td class="px-2 py-1"><select class="text-xs border border-slate-200 rounded py-0.5" style="min-width:92px;padding-left:8px;padding-right:24px" onchange="ldgPasteSetMajor(' + i + ',this.value)">' + _ldgCatOptions(r.major) + '</select></td>' +
+      '<td class="px-2 py-1"><select id="ldg-paste-sub-' + i + '" class="text-xs border border-slate-200 rounded py-0.5" style="min-width:120px;padding-left:8px;padding-right:24px" onchange="ldgPasteSetMinor(' + i + ',this.value)">' + _ldgSubOptions(r.major, r.minor) + '</select></td>' +
       '<td class="px-2 py-1">' + badge + '</td></tr>';
   });
   html += '</tbody></table></div>';
