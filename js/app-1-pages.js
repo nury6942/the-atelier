@@ -16408,6 +16408,46 @@
   }
 
   function recalcEditWork() {
+    // ── 비지 모드면 초고 주말/퇴고 금토일로 재계산해서 모달 필드를 채운다 (연재일 제안 포함) ──
+    var ewBusyR = document.getElementById('ew-busy');
+    if (ewBusyR && ewBusyR.checked) {
+      var bEps = parseInt(document.getElementById('ew-episodes').value) || 20;
+      var bFrom = Math.max(1, parseInt((document.getElementById('ew-busy-from') || {}).value) || 1);
+      var bDraftStartV = document.getElementById('ew-draft-start').value;
+      if (!bDraftStartV) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 초고 시작일을 입력하세요'); return; }
+      var bPubDay = parseInt(document.getElementById('ew-publish-day').value) || 6;
+      // 초고 배치 시작점: N화부터면 (N-1)화 다음날, 아니면 초고 시작일
+      var bPlaceStart;
+      if (bFrom > 1 && _editWorkId) {
+        var bwid = 'work_id:' + _editWorkId;
+        var bprev = plannerData.filter(function(r){ if (!(r && (r[4]||'').indexOf(bwid) >= 0 && (r[4]||'').indexOf('phase:draft') >= 0)) return false; var m = (r[1]||'').match(/초고\s*(\d+)화/); return m && parseInt(m[1]) === bFrom - 1; }).sort(function(a,b){ return (b[0]||'').localeCompare(a[0]||''); })[0];
+        if (bprev) { bPlaceStart = new Date(bprev[0] + 'T00:00:00'); bPlaceStart.setDate(bPlaceStart.getDate() + 1); }
+        else bPlaceStart = new Date(bDraftStartV + 'T00:00:00');
+      } else {
+        bPlaceStart = new Date(bDraftStartV + 'T00:00:00');
+      }
+      var bDraft = _placeBusyEps(bPlaceStart, bEps - (bFrom - 1), _busyDraftDow, bFrom);
+      var bDraftEnd = bDraft.length ? bDraft[bDraft.length - 1].date : bPlaceStart;
+      var bRevStart = new Date(bDraftEnd.getTime()); bRevStart.setDate(bRevStart.getDate() + 1);
+      var bRev = _placeBusyEps(bRevStart, bEps, _busyRevDow, 1);
+      var bRevEnd = bRev.length ? bRev[bRev.length - 1].date : bRevStart;
+      // 연재일: 기존 값이 퇴고 끝보다 뒤면 유지, 아니면 다음 연재요일로 제안
+      var bTarget = document.getElementById('ew-pub-start').value;
+      var bPub = null, bKept = false;
+      if (bTarget) { var bt = new Date(bTarget + 'T00:00:00'); if (bt > bRevEnd) { bPub = bt; bKept = true; } }
+      if (!bPub) { bPub = new Date(bRevEnd.getTime()); bPub.setDate(bPub.getDate() + 1); var bsf = 0; while (bPub.getDay() !== bPubDay && bsf++ < 14) bPub.setDate(bPub.getDate() + 1); }
+      var bRestStart = new Date(bRevEnd.getTime()); bRestStart.setDate(bRestStart.getDate() + 1);
+      var bRestEnd = new Date(bPub.getTime()); bRestEnd.setDate(bRestEnd.getDate() - 1);
+      if (bFrom <= 1) document.getElementById('ew-draft-start').value = _fmtDate(bPlaceStart);
+      document.getElementById('ew-draft-end').value = _fmtDate(bDraftEnd);
+      document.getElementById('ew-rev-start').value = _fmtDate(bRevStart);
+      document.getElementById('ew-rev-end').value = _fmtDate(bRevEnd);
+      document.getElementById('ew-rest-start').value = _fmtDate(bRestStart);
+      document.getElementById('ew-rest-end').value = _fmtDate(bRestEnd);
+      document.getElementById('ew-pub-start').value = _fmtDate(bPub);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 비지 재계산 — 연재 시작일 ' + (bKept ? '유지: ' : '제안: ') + _fmtDate(bPub) + ' (직접 바꿔도 돼요)');
+      return;
+    }
     var startDate = document.getElementById('ew-syn-start').value;
     var pubStart = document.getElementById('ew-pub-start').value;
     if (!startDate) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 시놉 시작일을 입력하세요'); return; }
@@ -16749,10 +16789,15 @@
     revPlaced.forEach(function(x) { events.push([_fmtDate(x.date), '퇴고 ' + x.ep + '화', cat, color, noteBase + '|phase:revision', '', String(x.ep - 1)]); });
     var revEnd = revPlaced.length ? revPlaced[revPlaced.length - 1].date : revStart;
 
-    // 연재: 퇴고 끝 다음날 이후 첫 연재요일부터 주 1회
+    // 연재: 사용자가 지정한 연재일(work.publish_start)이 퇴고 끝보다 뒤면 그대로 존중,
+    //       아니면 퇴고 끝 다음날 이후 첫 연재요일로 자동 제안
     var pubDay = work.publish_day || 6;
-    var pubStart = new Date(revEnd.getTime()); pubStart.setDate(pubStart.getDate() + 1);
-    var s2 = 0; while (pubStart.getDay() !== pubDay && s2++ < 14) pubStart.setDate(pubStart.getDate() + 1);
+    var pubStart = null;
+    if (work.publish_start) { var _tp = new Date(work.publish_start + 'T00:00:00'); if (_tp > revEnd) pubStart = _tp; }
+    if (!pubStart) {
+      pubStart = new Date(revEnd.getTime()); pubStart.setDate(pubStart.getDate() + 1);
+      var s2 = 0; while (pubStart.getDay() !== pubDay && s2++ < 14) pubStart.setDate(pubStart.getDate() + 1);
+    }
     var pCur = new Date(pubStart.getTime()), pubEnd = new Date(pubStart.getTime()), epPub = 1;
     while (epPub <= eps) {
       events.push([_fmtDate(pCur), epPub + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0']);
