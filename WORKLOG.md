@@ -37,6 +37,15 @@
 
 ### ✅ 한 일
 
+**시리즈 Annual Matrix — 에피소드 오류 진단 + 실시간 sync + 예방장치 ⭐⭐**
+- 증상: 매트릭스 화수가 들쭉날쭉(1월 2~22화 등), 캘린더 수정해도 반영 안 됨
+- 진단: 캘린더/플래너 발행이벤트가 0개 → 매트릭스가 옛 죽은 값(localStorage) 표시. 안전장치(15574)가 이벤트 0개면 sync 건너뛰어 잔재 안 지워짐. 진짜 소스는 _works(확정 작품). `_fullResyncWorks()`로 1차 복구
+- 근본: 캘린더 저장(savePlannerEntry)이 연차매트릭스(syncPlannerToMatrix)만 부르고 시리즈매트릭스(syncCalToMatrix)는 안 부름 → 실시간 반영 안 됨
+- Fix #1: `_afterCalEditSyncSeries(row)` 헬퍼 추가 — 발행이벤트일 때만 해당 연도 syncCalToMatrix+renderIncomeMatrix. 4곳 연결(저장/삭제/붙여넣기/드래그이동). 옛 잔재도 자동 청소됨
+- 예방: 매트릭스 헤더에 상시 [재동기화] 버튼 + "확정 작품 있는데 발행이벤트 0개" 감지 시 노란 경고 배너 (index.html + renderIncomeMatrix)
+- 캐시버스트: app-1-pages.js v190→v192(preload v187도 v192로 정합), SW v259→v261
+- 검증: node --check OK
+
 **Annie 리뷰 → NotebookLM 반자동 연결 ⭐**
 - 누리 요청: 리뷰 끝나면 NotebookLM 자동 생성/연결하고 싶음 (효율화)
 - 진단: 완전 자동(앱이 노트북 생성+오디오)은 개인용 불가 — 공식 API는 기업 전용, 비공식 라이브러리는 구글 쿠키 서버 저장 필요 + 잘 깨짐. 임베드도 구글이 iframe 차단. → **반자동** 채택

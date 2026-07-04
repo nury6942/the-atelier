@@ -1296,6 +1296,18 @@
     await deletePlannerRow(idx);
   }
 
+  // 캘린더 직접 수정 → 시리즈 Annual Matrix 실시간 동기화 (2026-06-23)
+  // 발행(연재) 이벤트가 추가/수정/삭제/이동될 때만 해당 연도 매트릭스를 다시 계산.
+  function _afterCalEditSyncSeries(row) {
+    try {
+      if (!row) return;
+      if (typeof _isPublishingEvent === 'function' && !_isPublishingEvent(row[1], row[4])) return;
+      var yr = parseInt(((row[0]||'')+'').slice(0,4)) || (typeof _matrixYear !== 'undefined' ? _matrixYear : new Date().getFullYear());
+      if (typeof syncCalToMatrix === 'function') syncCalToMatrix(yr);
+      if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
+    } catch(e) { console.error('[series matrix sync]', e); }
+  }
+
   async function savePlannerEntry() {
     const btn = document.getElementById('planner-save-btn');
     btn.textContent = '저장 중...'; btn.disabled = true;
@@ -1372,6 +1384,7 @@
       closePlannerModal();
       try { await syncPlannerToMatrix(row); renderMatrixTable(); updateLeaveTracker(); } catch(e) { console.error('Matrix sync:', e); }
       try { detectWorkImpact(row); } catch(e) {}
+      _afterCalEditSyncSeries(row);
     } catch(err) { console.error('Planner save error:', err); alert('저장에 실패했어요: ' + err.message); }
     finally { btn.textContent = '저장'; btn.disabled = false; }
   }
@@ -1402,6 +1415,7 @@
       plannerData.splice(i, 1);
       renderCalendar();
       updatePlannerTracks();
+      _afterCalEditSyncSeries(row);
     } catch(err) { alert('삭제에 실패했어요.'); }
   }
 
@@ -1558,6 +1572,7 @@
       try { await syncPlannerToMatrix(savedRow); } catch(e){}
       renderCalendar();
       updatePlannerTracks();
+      _afterCalEditSyncSeries(savedRow);
       showPlannerToast('✅ ' + targetDate + '에 붙이기 완료!');
     } catch(err) { alert('붙이기에 실패했어요.'); }
   }
@@ -2007,6 +2022,7 @@
       }
       renderCalendar();
       updatePlannerTracks();
+      _afterCalEditSyncSeries(plannerData[idx]);
     } catch(err) { alert('이동에 실패했어요.'); }
   }
 
@@ -15002,6 +15018,27 @@
     // → plannerData가 Firestore에서 로드되기 전에 false negative 판정 → race condition으로 중복 생성
     // → 멀티 기기에서 각 기기가 독립적으로 trigger되며 Firestore 누적 중복
     // 캘린더 정말 비어버렸으면 수동으로 "재동기화" 버튼 클릭 (Money 페이지 작품 카드에 이미 존재)
+
+    // ─── 동기화 끊김 감지 배너 (2026-06-23) ───
+    // "그 해에 걸친 확정 작품은 있는데 발행 이벤트가 0개" = 매트릭스가 옛 죽은 값을 보여주는 상태.
+    // 조용히 틀린 값 보여주는 대신 노란 배너로 경고 + [재동기화] 버튼 노출. (auto-run은 race 위험이라 안 함)
+    (function(){
+      var banner = document.getElementById('matrix-desync-banner');
+      if (!banner) return;
+      var yStr = '' + _matrixYear;
+      var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
+      var planLoaded = pData.length > 0; // 초기 로드 중 오탐 방지
+      var pubForYear = pData.filter(function(r){
+        return ((r[4]||'')+'').indexOf('phase:publishing') >= 0 && (((r[0]||'')+'').slice(0,4) === yStr);
+      }).length;
+      var ws = (typeof _works !== 'undefined' && _works) ? _works : [];
+      var confForYear = ws.filter(function(w){
+        return w.status === 'confirmed' && w.publish_start && w.publish_end &&
+               (''+w.publish_start).slice(0,4) <= yStr && (''+w.publish_end).slice(0,4) >= yStr;
+      }).length;
+      banner.style.display = (planLoaded && confForYear > 0 && pubForYear === 0) ? 'flex' : 'none';
+    })();
+
     series.sort(function(a, b) {
       var aMin = '9999', bMin = '9999';
       _works.forEach(function(w) { if ((w.series_id === a.id || w.series_name === a.name) && w.publish_start && w.publish_start < aMin) aMin = w.publish_start; });
