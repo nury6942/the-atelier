@@ -16399,7 +16399,9 @@
     document.getElementById('edit-work-modal').style.cssText = 'display:flex!important';
     setTimeout(function() {
       ['ew-syn-start','ew-syn-end','ew-draft-start','ew-draft-end','ew-rev-start','ew-rev-end','ew-rest-start','ew-rest-end','ew-pub-start'].forEach(function(id) { initSimpleDatePicker(id); });
-    }, 100);
+      // 비지 모드면 실제 일정(퇴고 종료·연재일 제안)을 즉시 계산해 필드에 반영 — 모달이 옛 값 보여주는 것 방지
+      if (w.busy) { try { recalcEditWork(); } catch(e) {} }
+    }, 120);
   }
 
   function closeEditWorkModal() {
@@ -16730,8 +16732,8 @@
 
   // ═══ 비지 모드 재배치 ═══ (2026-06-23)
   // 초고: 주말(토·일)만 1편/일. 퇴고: 금·토·일 1편/일. 시놉·초고 1~(fromEp-1)는 유지.
-  function _busyDraftDow(d) { return d === 0 || d === 6; }            // 일·토
-  function _busyRevDow(d)   { return d === 5 || d === 6 || d === 0; }  // 금·토·일
+  function _busyDraftDow(d) { return d === 0 || d === 6; }                       // 일·토
+  function _busyRevDow(d)   { return d === 4 || d === 5 || d === 6 || d === 0; }  // 목·금·토·일
   function _placeBusyEps(startDate, count, dowOk, startEp) {
     var out = [], cur = new Date(startDate.getTime()), ep = startEp, safety = 0;
     while (out.length < count && safety++ < 3000) {
@@ -16792,9 +16794,11 @@
     // 연재: 사용자가 지정한 연재일(work.publish_start)이 퇴고 끝보다 뒤면 그대로 존중,
     //       아니면 퇴고 끝 다음날 이후 첫 연재요일로 자동 제안
     var pubDay = work.publish_day || 6;
-    var pubStart = null;
-    if (work.publish_start) { var _tp = new Date(work.publish_start + 'T00:00:00'); if (_tp > revEnd) pubStart = _tp; }
+    var _origPub = work.publish_start;
+    var pubStart = null, _pubBumped = false;
+    if (_origPub) { var _tp = new Date(_origPub + 'T00:00:00'); if (_tp > revEnd) pubStart = _tp; }
     if (!pubStart) {
+      _pubBumped = !!_origPub;
       pubStart = new Date(revEnd.getTime()); pubStart.setDate(pubStart.getDate() + 1);
       var s2 = 0; while (pubStart.getDay() !== pubDay && s2++ < 14) pubStart.setDate(pubStart.getDate() + 1);
     }
@@ -16830,6 +16834,9 @@
       if (typeof syncCalToMatrix === 'function') syncCalToMatrix(parseInt((work.publish_start || '').slice(0, 4)) || _matrixYear);
       if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
     } catch(e) {}
+    if (_pubBumped && typeof showSyncToast === 'function') {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 연재일이 퇴고 종료(' + _fmtDate(revEnd) + ')보다 앞서서 ' + _fmtDate(pubStart) + '로 조정됐어요');
+    }
     console.log('[busy] rescheduled', work.title, 'fromEp', fromEp, '→ 초고', _fmtDate(placeStart), '~', _fmtDate(draftEnd), '· 연재', _fmtDate(pubStart));
   }
 
