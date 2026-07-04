@@ -3410,6 +3410,38 @@ function _ldgTxExists(date, amount, normM) {
   });
 }
 
+// 가맹점 이름 키워드로 카테고리 1차 추정 (과거 학습에 없을 때 폴백).
+// minor는 후보 여러 개를 두고 실제 존재하는 첫 번째만 사용 → 없는 카테고리는 안 채움.
+var _LDG_CAT_RULES = [
+  { kw: /아워홈/, major: '식비', minor: ['구내식당', '회사식당', '외식비'] },
+  { kw: /커피|카페|coffee|스타벅스|스벅|투썸|이디야|컴포즈|메가|빽다방|폴바셋|블루보틀|커피빈|할리스|엔젤리너스|뚜레쥬르|파리바게|파리크라상|베이커리/i, major: '식비', minor: ['간식/카페', '카페', '커피', '디저트'] },
+  { kw: /주유|오일뱅크|칼텍스|에스오일|s-?oil|sk에너지|gs칼텍스|현대오일|주유소/i, major: '교통비', minor: ['주유비', '기름값', '유류비'] },
+  { kw: /우아한형제들|배민|배달의민족|요기요|쿠팡이츠|배달/i, major: '식비', minor: ['배달', '배달음식', '외식비'] },
+  { kw: /gs25|씨유|세븐일레븐|이마트24|편의점|미니스톱|\bcu\b/i, major: '식비', minor: ['편의점', '간식/카페', '외식비'] },
+  { kw: /김밥|분식|국밥|면관|식당|백반|한식|중식|일식|맛집|소풍|칼국수|국수/i, major: '식비', minor: ['외식비', '점심', '식사'] },
+  { kw: /다이소|이케아|버킷플레이스|오늘의집|마트|프라임마트|아성다이소/i, major: '생활비', minor: ['생활용품', '가구', '잡화', '생활'] },
+  { kw: /백화점|신세계|롯데백화점|현대백화점|무신사|지그재그|에이블리|올리브영/i, major: '쇼핑', minor: ['의류', '패션', '쇼핑'] },
+  { kw: /쿠팡|11번가|지마켓|옥션|위메프|티몬|컬리|마켓컬리|네이버페이/i, major: '쇼핑', minor: ['온라인쇼핑', '생활용품', '쇼핑'] },
+  { kw: /아로마티카|화장품|코스메틱|뷰티/i, major: '뷰티', minor: ['화장품', '스킨케어', '뷰티'] },
+  { kw: /anthropic|claude|netflix|넷플릭스|스포티파이|유튜브|구독|멤버십/i, major: '구독', minor: ['구독료', '소프트웨어', '구독'] },
+  { kw: /항공|에어|항공권|대한항공|아시아나|제주항공|트리니티항공/i, major: '여행', minor: ['항공권', '교통', '여행'] }
+];
+function _ldgGuessCategory(merchant) {
+  var cats = _ledgerData.categories || {};
+  var m = merchant || '';
+  for (var r = 0; r < _LDG_CAT_RULES.length; r++) {
+    if (!_LDG_CAT_RULES[r].kw.test(m)) continue;
+    var major = _LDG_CAT_RULES[r].major;
+    if (!cats[major]) continue; // 그녀 카테고리에 없는 대분류면 스킵
+    var subs = cats[major] || [], minor = '';
+    for (var j = 0; j < _LDG_CAT_RULES[r].minor.length; j++) {
+      if (subs.indexOf(_LDG_CAT_RULES[r].minor[j]) >= 0) { minor = _LDG_CAT_RULES[r].minor[j]; break; }
+    }
+    return { major: major, minor: minor };
+  }
+  return null;
+}
+
 function ldgTogglePasteImport() {
   var p = document.getElementById('ldg-paste-panel');
   if (!p) return;
@@ -3427,8 +3459,10 @@ function ldgPreviewPaste() {
     var normM = _ldgNormMerchant(p.merchant);
     var dup = _ldgTxExists(p.date, p.amount, normM);
     var m = learn[normM] || null;
+    var guessed = false;
+    if (!m) { var g = _ldgGuessCategory(p.merchant); if (g) { m = g; guessed = true; } }
     return { date: p.date, merchant: p.merchant, amount: p.amount, cancelled: p.cancelled, foreign: p.foreign,
-      dup: dup, matched: !!m, major: m ? m.major : '', minor: m ? m.minor : '', include: !p.cancelled && !dup };
+      dup: dup, matched: !!m && !guessed, guessed: guessed, major: m ? m.major : '', minor: m ? m.minor : '', include: !p.cancelled && !dup };
   });
   ldgRenderPastePreview();
 }
@@ -3469,15 +3503,15 @@ function ldgRenderPastePreview() {
   html += '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="text-[10px] text-slate-400 uppercase"><tr>' +
     '<th class="px-2 py-1 w-8"></th><th class="px-2 py-1">날짜</th><th class="px-2 py-1">가맹점</th><th class="px-2 py-1 text-right">금액</th><th class="px-2 py-1">대분류</th><th class="px-2 py-1">소분류</th><th class="px-2 py-1">상태</th></tr></thead><tbody>';
   rows.forEach(function(r, i) {
-    var badge = r.cancelled ? '<span class="text-rose-500">취소</span>' : r.dup ? '<span class="text-amber-600">중복</span>' : r.matched ? '<span class="text-emerald-600">자동</span>' : '<span class="text-slate-400">신규</span>';
+    var badge = r.cancelled ? '<span class="text-rose-500">취소</span>' : r.dup ? '<span class="text-amber-600">중복</span>' : r.matched ? '<span class="text-emerald-600">자동</span>' : r.guessed ? '<span class="text-indigo-500">추정</span>' : '<span class="text-slate-400">신규</span>';
     var dim = (r.cancelled || !r.include) ? ' style="opacity:0.45"' : '';
     html += '<tr class="border-t border-slate-50"' + dim + '>' +
       '<td class="px-2 py-1"><input type="checkbox" ' + (r.include ? 'checked' : '') + ' ' + (r.cancelled ? 'disabled' : '') + ' onchange="ldgPasteToggleRow(' + i + ',this.checked)"/></td>' +
       '<td class="px-2 py-1 whitespace-nowrap text-slate-500">' + r.date.substring(5) + '</td>' +
       '<td class="px-2 py-1 text-slate-800">' + r.merchant.replace(/</g, '&lt;') + (r.foreign ? ' <span class="text-slate-400">(' + r.foreign + ')</span>' : '') + '</td>' +
       '<td class="px-2 py-1 text-right font-semibold whitespace-nowrap">₩' + r.amount.toLocaleString('ko-KR') + '</td>' +
-      '<td class="px-2 py-1"><select class="text-xs border border-slate-200 rounded px-1 py-0.5" onchange="ldgPasteSetMajor(' + i + ',this.value)">' + _ldgCatOptions(r.major) + '</select></td>' +
-      '<td class="px-2 py-1"><select id="ldg-paste-sub-' + i + '" class="text-xs border border-slate-200 rounded px-1 py-0.5" onchange="ldgPasteSetMinor(' + i + ',this.value)">' + _ldgSubOptions(r.major, r.minor) + '</select></td>' +
+      '<td class="px-2 py-1"><select class="text-xs border border-slate-200 rounded px-2 py-0.5" style="min-width:96px" onchange="ldgPasteSetMajor(' + i + ',this.value)">' + _ldgCatOptions(r.major) + '</select></td>' +
+      '<td class="px-2 py-1"><select id="ldg-paste-sub-' + i + '" class="text-xs border border-slate-200 rounded px-2 py-0.5" style="min-width:110px" onchange="ldgPasteSetMinor(' + i + ',this.value)">' + _ldgSubOptions(r.major, r.minor) + '</select></td>' +
       '<td class="px-2 py-1">' + badge + '</td></tr>';
   });
   html += '</tbody></table></div>';
