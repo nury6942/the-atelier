@@ -16380,6 +16380,12 @@
     document.getElementById('ew-publish-day').value = String(w.publish_day || 5);
     var ewNomadChk = document.getElementById('ew-nomad');
     if (ewNomadChk) ewNomadChk.checked = !!w.nomad;
+    var ewBusyChk = document.getElementById('ew-busy');
+    if (ewBusyChk) ewBusyChk.checked = !!w.busy;
+    var ewBusyFrom = document.getElementById('ew-busy-from');
+    if (ewBusyFrom) ewBusyFrom.value = String(w.busyFromEp || 1);
+    var ewBusyWrap = document.getElementById('ew-busy-from-wrap');
+    if (ewBusyWrap) ewBusyWrap.style.display = w.busy ? 'flex' : 'none';
     var p = w.phases || {};
     document.getElementById('ew-syn-start').value = p.synopsis ? p.synopsis.start : '';
     document.getElementById('ew-syn-end').value = p.synopsis ? p.synopsis.end : '';
@@ -16515,6 +16521,10 @@
     w.publish_day = parseInt(document.getElementById('ew-publish-day').value) || 5;
     var ewNomadChk2 = document.getElementById('ew-nomad');
     w.nomad = ewNomadChk2 ? ewNomadChk2.checked : false;
+    var ewBusyChk2 = document.getElementById('ew-busy');
+    w.busy = ewBusyChk2 ? ewBusyChk2.checked : false;
+    var ewBusyFromEl = document.getElementById('ew-busy-from');
+    w.busyFromEp = w.busy ? (parseInt(ewBusyFromEl && ewBusyFromEl.value) || 1) : 1;
     w.phases = {
       synopsis: { start: document.getElementById('ew-syn-start').value, end: document.getElementById('ew-syn-end').value },
       draft: { start: document.getElementById('ew-draft-start').value, end: document.getElementById('ew-draft-end').value },
@@ -16528,13 +16538,18 @@
       w.publish_end = _fmtDate(pe);
     }
     w.updated_at = new Date().toISOString();
-    // 항상 기존 캘린더 일정 삭제 (draft든 confirmed든 안전하게)
-    var removed = await removeWorkCalEvents(w.id);
-    console.log('[EditWork] Removed', removed, 'old events, status:', w.status);
-    // 확정 상태면 새 일정 재생성
-    if (w.status === 'confirmed') {
-      await autoAddScheduleToCalendar(w);
-      console.log('[EditWork] Re-added calendar events');
+    if (w.busy && w.status === 'confirmed') {
+      // 비지 모드: 부분 삭제 + 초고 주말/퇴고 금토일 재배치 (시놉·초고 1~(N-1) 유지)
+      await rescheduleBusy(w, w.busyFromEp);
+      console.log('[EditWork] busy reschedule from ep', w.busyFromEp);
+    } else {
+      // 기존 흐름: 전체 삭제 후 재생성
+      var removed = await removeWorkCalEvents(w.id);
+      console.log('[EditWork] Removed', removed, 'old events, status:', w.status);
+      if (w.status === 'confirmed') {
+        await autoAddScheduleToCalendar(w);
+        console.log('[EditWork] Re-added calendar events');
+      }
     }
     saveWorks();
     closeEditWorkModal();
@@ -16671,6 +16686,106 @@
     }
     renderCalendar();
     console.log('[Work Cal]', work.title, '— added:', addedN, 'skipped (dup):', skippedN);
+  }
+
+  // ═══ 비지 모드 재배치 ═══ (2026-06-23)
+  // 초고: 주말(토·일)만 1편/일. 퇴고: 금·토·일 1편/일. 시놉·초고 1~(fromEp-1)는 유지.
+  function _busyDraftDow(d) { return d === 0 || d === 6; }            // 일·토
+  function _busyRevDow(d)   { return d === 5 || d === 6 || d === 0; }  // 금·토·일
+  function _placeBusyEps(startDate, count, dowOk, startEp) {
+    var out = [], cur = new Date(startDate.getTime()), ep = startEp, safety = 0;
+    while (out.length < count && safety++ < 3000) {
+      if (dowOk(cur.getDay()) && !isBlockedDay(_fmtDate(cur))) { out.push({ ep: ep, date: new Date(cur.getTime()) }); ep++; }
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+
+  async function rescheduleBusy(work, fromEp) {
+    fromEp = Math.max(1, parseInt(fromEp) || 1);
+    var eps = work.total_episodes || 20;
+    var cat = '글쓰기';
+    var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
+    var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
+    var wid = 'work_id:' + work.id;
+    function isMine(r) { return r && (r[4] || '').indexOf(wid) >= 0; }
+    function draftEp(r) { var m = (r[1] || '').match(/초고\s*(\d+)화/); return m ? parseInt(m[1]) : 0; }
+    var pd = (work.phases && work.phases.draft) || {};
+
+    // 1) 초고 fromEp 시작점: (fromEp-1)화 다음날, 없으면 초고 시작일
+    var placeStart;
+    if (fromEp > 1) {
+      var prev = plannerData.filter(function(r) { return isMine(r) && (r[4] || '').indexOf('phase:draft') >= 0 && draftEp(r) === fromEp - 1; })
+        .sort(function(a, b) { return (b[0] || '').localeCompare(a[0] || ''); })[0];
+      var base = prev ? new Date(prev[0] + 'T00:00:00') : new Date((pd.start || work.publish_start || _fmtDate(new Date())) + 'T00:00:00');
+      placeStart = new Date(base.getTime()); placeStart.setDate(placeStart.getDate() + 1);
+    } else {
+      placeStart = new Date((pd.start || _fmtDate(new Date())) + 'T00:00:00');
+    }
+
+    // 2) 삭제: 초고 fromEp 이상 + 퇴고 전체 + 연재 전체 (시놉·초고 1~(fromEp-1)는 유지)
+    var rm = [];
+    plannerData.forEach(function(r, i) {
+      if (!isMine(r)) return;
+      var notes = r[4] || '';
+      if (notes.indexOf('phase:revision') >= 0 || notes.indexOf('phase:publishing') >= 0) { rm.push(i); return; }
+      if (notes.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) rm.push(i);
+    });
+    rm.sort(function(a, b) { return b - a; });
+    for (var ri = 0; ri < rm.length; ri++) {
+      var rr = plannerData[rm[ri]], id = rr && rr[7];
+      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
+      plannerData.splice(rm[ri], 1);
+    }
+
+    // 3) 새 이벤트 생성
+    var events = [];
+    var draftPlaced = _placeBusyEps(placeStart, eps - (fromEp - 1), _busyDraftDow, fromEp);
+    draftPlaced.forEach(function(x, k) { events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String(fromEp - 1 + k)]); });
+    var draftEnd = draftPlaced.length ? draftPlaced[draftPlaced.length - 1].date : placeStart;
+
+    var revStart = new Date(draftEnd.getTime()); revStart.setDate(revStart.getDate() + 1);
+    var revPlaced = _placeBusyEps(revStart, eps, _busyRevDow, 1);
+    revPlaced.forEach(function(x) { events.push([_fmtDate(x.date), '퇴고 ' + x.ep + '화', cat, color, noteBase + '|phase:revision', '', String(x.ep - 1)]); });
+    var revEnd = revPlaced.length ? revPlaced[revPlaced.length - 1].date : revStart;
+
+    // 연재: 퇴고 끝 다음날 이후 첫 연재요일부터 주 1회
+    var pubDay = work.publish_day || 6;
+    var pubStart = new Date(revEnd.getTime()); pubStart.setDate(pubStart.getDate() + 1);
+    var s2 = 0; while (pubStart.getDay() !== pubDay && s2++ < 14) pubStart.setDate(pubStart.getDate() + 1);
+    var pCur = new Date(pubStart.getTime()), pubEnd = new Date(pubStart.getTime()), epPub = 1;
+    while (epPub <= eps) {
+      events.push([_fmtDate(pCur), epPub + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0']);
+      pubEnd = new Date(pCur.getTime());
+      pCur.setDate(pCur.getDate() + 7); epPub++;
+    }
+
+    // 4) 저장 (중복 스킵)
+    for (var i = 0; i < events.length; i++) {
+      var row = events[i];
+      if (plannerData.find(function(r) { return r && r[0] === row[0] && r[1] === row[1]; })) continue;
+      try { var saved = await fbAdd('planner', rowToObj('planner', row)); plannerData.push(row.concat([saved._id])); } catch(e) { console.error('[busy] save', e); }
+    }
+
+    // 5) work 갱신
+    work.phases = work.phases || {};
+    work.phases.draft = work.phases.draft || {};
+    if (fromEp <= 1) work.phases.draft.start = _fmtDate(placeStart);
+    work.phases.draft.end = _fmtDate(draftEnd);
+    work.phases.revision = { start: _fmtDate(revStart), end: _fmtDate(revEnd) };
+    var restStart = new Date(revEnd.getTime()); restStart.setDate(restStart.getDate() + 1);
+    var restEnd = new Date(pubStart.getTime()); restEnd.setDate(restEnd.getDate() - 1);
+    work.phases.rest = { start: _fmtDate(restStart), end: _fmtDate(restEnd) };
+    work.publish_start = _fmtDate(pubStart);
+    work.publish_end = _fmtDate(pubEnd);
+    work.busy = true; work.busyFromEp = fromEp;
+
+    renderCalendar();
+    try {
+      if (typeof syncCalToMatrix === 'function') syncCalToMatrix(parseInt((work.publish_start || '').slice(0, 4)) || _matrixYear);
+      if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
+    } catch(e) {}
+    console.log('[busy] rescheduled', work.title, 'fromEp', fromEp, '→ 초고', _fmtDate(placeStart), '~', _fmtDate(draftEnd), '· 연재', _fmtDate(pubStart));
   }
 
   async function removeWorkCalEvents(workId) {
