@@ -3357,20 +3357,32 @@ function _ldgNormMerchant(s) {
 }
 
 function _ldgParseCardPaste(text) {
+  // 금액줄(N원)을 기준으로 앞뒤를 보고 신한/현대 양식을 자동 구분.
+  //  신한: [가맹점] [N원] [YYYY.MM.DD HH:MM 본인 …]  (날짜가 금액 뒤, 해외는 그 다음줄 USD)
+  //  현대: [가맹점] [… 26. 6. 30 · 일시불 · 적립예정] [N원]  (날짜가 금액 앞, 2자리 연도)
   var lines = (text || '').split(/\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean);
-  var dateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}:\d{2})\s+(.*)$/;
   var amountRe = /^([\d,]+)원$/;
+  var shinhanDateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+\d{2}:\d{2}\s+/;
+  var hyundaiDateRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})/;
   var foreignRe = /^[A-Z]{3}\s+[\d,.]+$/;
   var out = [];
   for (var i = 0; i < lines.length; i++) {
-    var dm = dateRe.exec(lines[i]);
-    if (!dm) continue;
-    var am = amountRe.exec(lines[i - 1] || '');
+    var am = amountRe.exec(lines[i]);
     if (!am) continue;
     var amount = parseInt(am[1].replace(/,/g, ''), 10) || 0;
-    var cancelled = /승인취소|거래취소/.test(dm[5]);
-    var foreign = foreignRe.test(lines[i + 1] || '') ? lines[i + 1] : '';
-    out.push({ date: dm[1] + '-' + dm[2] + '-' + dm[3], merchant: lines[i - 2] || '', amount: amount, cancelled: cancelled, foreign: foreign });
+    var sh = shinhanDateRe.exec(lines[i + 1] || '');
+    if (sh) {
+      out.push({ date: sh[1] + '-' + sh[2] + '-' + sh[3], merchant: lines[i - 1] || '', amount: amount,
+        cancelled: /취소/.test(lines[i + 1]), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '' });
+      continue;
+    }
+    var hy = hyundaiDateRe.exec(lines[i - 1] || '');
+    if (hy) {
+      var mo = ('0' + hy[2]).slice(-2), da = ('0' + hy[3]).slice(-2);
+      out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount,
+        cancelled: /취소/.test(lines[i - 1]), foreign: '' });
+      continue;
+    }
   }
   return out;
 }
