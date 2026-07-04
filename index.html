@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
   <link rel="preload" href="js/app-1-pages.js?v=192" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=164" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=165" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
@@ -11211,6 +11211,7 @@
           <div class="px-6 py-3 flex items-center justify-between border-b border-slate-100">
             <span class="text-xs font-bold text-slate-500">거래 내역</span>
             <div class="flex items-center gap-2">
+              <button onclick="ldgTogglePasteImport()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 inline-flex items-center gap-1" title="카드앱 이용내역을 복사해서 붙여넣으면 자동으로 가계부에 등록"><span class="material-symbols-outlined" style="font-size:15px">content_paste</span>붙여넣기 가져오기</button>
               <div class="relative">
                 <input id="ldg-tx-search" type="text" placeholder="검색..." class="text-xs px-3 py-1.5 pl-8 border border-slate-200 rounded-lg w-40 focus:ring-2 focus:ring-indigo-300 outline-none" oninput="ldgRenderTxTable()"/>
                 <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-300 text-sm">search</span>
@@ -11220,6 +11221,13 @@
                 <span class="material-symbols-outlined text-sm">swap_vert</span>
               </button>
             </div>
+          </div>
+          <div id="ldg-paste-panel" style="display:none" class="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
+            <div class="flex items-start gap-3 flex-wrap">
+              <textarea id="ldg-paste-input" rows="4" placeholder="신한/현대카드 앱 → 이용내역을 복사해서 여기에 붙여넣으세요 (가맹점 / 금액 / 날짜 3줄 형식). 취소건·중복은 자동으로 걸러줍니다." class="flex-1 min-w-[280px] text-xs border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-300" style="resize:vertical"></textarea>
+              <button onclick="ldgPreviewPaste()" class="text-sm font-bold px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 whitespace-nowrap"><span class="material-symbols-outlined align-middle" style="font-size:16px">visibility</span> 미리보기</button>
+            </div>
+            <div id="ldg-paste-preview"></div>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left" id="ldg-tx-table">
@@ -14026,7 +14034,7 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=164" defer></script>
+<script src="js/app-2-init.js?v=165" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을

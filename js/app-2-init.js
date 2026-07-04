@@ -3344,6 +3344,164 @@ function ldgSaveInput() {
   setTimeout(function() { try { ldgInitCustomDDs(); } catch(e) {} }, 30);
 }
 
+// ═══════════════════════════════════════════════════════════
+//  가계부 — 카드 내역 붙여넣기 가져오기 (신한/현대 카드 앱 복붙)
+//  형식: [가맹점] / [N,NNN원] / [YYYY.MM.DD HH:MM 본인 491* 일시불 신용 (상태)]
+//  해외건은 4번째 줄(USD 100.00). 승인취소/거래취소는 자동 제외.
+//  분류는 과거 가계부(세부사항→대분류/소분류) 학습으로 자동 배정.
+// ═══════════════════════════════════════════════════════════
+var _ldgPasteRows = [];
+
+function _ldgNormMerchant(s) {
+  return (s || '').replace(/\(주\)|㈜|\(株\)|주식회사|유한회사|\(유\)/g, '').replace(/\s+/g, '').toLowerCase().trim();
+}
+
+function _ldgParseCardPaste(text) {
+  var lines = (text || '').split(/\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean);
+  var dateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}:\d{2})\s+(.*)$/;
+  var amountRe = /^([\d,]+)원$/;
+  var foreignRe = /^[A-Z]{3}\s+[\d,.]+$/;
+  var out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var dm = dateRe.exec(lines[i]);
+    if (!dm) continue;
+    var am = amountRe.exec(lines[i - 1] || '');
+    if (!am) continue;
+    var amount = parseInt(am[1].replace(/,/g, ''), 10) || 0;
+    var cancelled = /승인취소|거래취소/.test(dm[5]);
+    var foreign = foreignRe.test(lines[i + 1] || '') ? lines[i + 1] : '';
+    out.push({ date: dm[1] + '-' + dm[2] + '-' + dm[3], merchant: lines[i - 2] || '', amount: amount, cancelled: cancelled, foreign: foreign });
+  }
+  return out;
+}
+
+function _ldgBuildCatLearnMap() {
+  var freq = {};
+  (_ledgerData.transactions || []).forEach(function(t) {
+    var m = _ldgNormMerchant(t['세부사항'] || '');
+    if (!m || !t['대분류'] || !t['소분류']) return;
+    var k = t['대분류'] + '|' + t['소분류'];
+    (freq[m] = freq[m] || {})[k] = (freq[m][k] || 0) + 1;
+  });
+  var best = {};
+  Object.keys(freq).forEach(function(m) {
+    var top = null, tc = -1;
+    Object.keys(freq[m]).forEach(function(k) { if (freq[m][k] > tc) { tc = freq[m][k]; top = k; } });
+    if (top) { var sp = top.split('|'); best[m] = { major: sp[0], minor: sp[1] }; }
+  });
+  return best;
+}
+
+function _ldgTxExists(date, amount, normM) {
+  return (_ledgerData.transactions || []).some(function(t) {
+    return t.date === date && (t['금액'] || 0) === amount && _ldgNormMerchant(t['세부사항'] || '') === normM;
+  });
+}
+
+function ldgTogglePasteImport() {
+  var p = document.getElementById('ldg-paste-panel');
+  if (!p) return;
+  p.style.display = (!p.style.display || p.style.display === 'none') ? 'block' : 'none';
+}
+
+function ldgPreviewPaste() {
+  var ta = document.getElementById('ldg-paste-input');
+  var box = document.getElementById('ldg-paste-preview');
+  if (!ta || !box) return;
+  var parsed = _ldgParseCardPaste(ta.value);
+  if (!parsed.length) { box.innerHTML = '<p class="text-xs text-slate-400 py-3">인식된 거래가 없어요. 카드앱 이용내역을 그대로 붙여넣어 주세요.</p>'; return; }
+  var learn = _ldgBuildCatLearnMap();
+  _ldgPasteRows = parsed.map(function(p) {
+    var normM = _ldgNormMerchant(p.merchant);
+    var dup = _ldgTxExists(p.date, p.amount, normM);
+    var m = learn[normM] || null;
+    return { date: p.date, merchant: p.merchant, amount: p.amount, cancelled: p.cancelled, foreign: p.foreign,
+      dup: dup, matched: !!m, major: m ? m.major : '', minor: m ? m.minor : '', include: !p.cancelled && !dup };
+  });
+  ldgRenderPastePreview();
+}
+
+function _ldgCatOptions(sel) {
+  var cats = _ledgerData.categories || {};
+  return '<option value="">—</option>' + Object.keys(cats).map(function(c) {
+    return '<option value="' + c + '"' + (c === sel ? ' selected' : '') + '>' + c + '</option>';
+  }).join('');
+}
+function _ldgSubOptions(major, sel) {
+  var subs = (_ledgerData.categories || {})[major] || [];
+  return '<option value="">—</option>' + subs.map(function(s) {
+    return '<option value="' + s + '"' + (s === sel ? ' selected' : '') + '>' + s + '</option>';
+  }).join('');
+}
+
+function ldgRenderPastePreview() {
+  var box = document.getElementById('ldg-paste-preview');
+  if (!box) return;
+  var rows = _ldgPasteRows;
+  var incl = rows.filter(function(r){ return r.include; });
+  var inclTotal = incl.reduce(function(s, r){ return s + r.amount; }, 0);
+  var dupN = rows.filter(function(r){ return r.dup; }).length;
+  var cancN = rows.filter(function(r){ return r.cancelled; }).length;
+  var needN = rows.filter(function(r){ return r.include && (!r.major || !r.minor); }).length;
+  var pmethods = (_ledgerData.settings || {}).paymentMethods || [];
+  var pmSel = '<select id="ldg-paste-pm" class="text-xs border border-slate-200 rounded px-2 py-1">' +
+    pmethods.map(function(p){ return '<option value="' + p + '"' + (p === '신한카드' ? ' selected' : '') + '>' + p + '</option>'; }).join('') + '</select>';
+
+  var html = '<div class="flex items-center justify-between flex-wrap gap-2 mb-3 mt-3">' +
+    '<div class="text-xs text-slate-600">인식 <b>' + rows.length + '</b>건 · 추가 대상 <b class="text-indigo-600">' + incl.length + '</b>건 · 합계 <b>₩' + inclTotal.toLocaleString('ko-KR') + '</b>' +
+      (cancN ? ' · <span class="text-slate-400">취소 ' + cancN + '건 제외</span>' : '') +
+      (dupN ? ' · <span class="text-amber-600">중복 ' + dupN + '건</span>' : '') + '</div>' +
+    '<div class="flex items-center gap-2 text-xs text-slate-500">결제수단 ' + pmSel + '</div></div>';
+  if (needN) html += '<div class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mb-2">🆕 새 가맹점 ' + needN + '건은 분류를 골라주세요 (다음부턴 자동 기억돼요)</div>';
+
+  html += '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="text-[10px] text-slate-400 uppercase"><tr>' +
+    '<th class="px-2 py-1 w-8"></th><th class="px-2 py-1">날짜</th><th class="px-2 py-1">가맹점</th><th class="px-2 py-1 text-right">금액</th><th class="px-2 py-1">대분류</th><th class="px-2 py-1">소분류</th><th class="px-2 py-1">상태</th></tr></thead><tbody>';
+  rows.forEach(function(r, i) {
+    var badge = r.cancelled ? '<span class="text-rose-500">취소</span>' : r.dup ? '<span class="text-amber-600">중복</span>' : r.matched ? '<span class="text-emerald-600">자동</span>' : '<span class="text-slate-400">신규</span>';
+    var dim = (r.cancelled || !r.include) ? ' style="opacity:0.45"' : '';
+    html += '<tr class="border-t border-slate-50"' + dim + '>' +
+      '<td class="px-2 py-1"><input type="checkbox" ' + (r.include ? 'checked' : '') + ' ' + (r.cancelled ? 'disabled' : '') + ' onchange="ldgPasteToggleRow(' + i + ',this.checked)"/></td>' +
+      '<td class="px-2 py-1 whitespace-nowrap text-slate-500">' + r.date.substring(5) + '</td>' +
+      '<td class="px-2 py-1 text-slate-800">' + r.merchant.replace(/</g, '&lt;') + (r.foreign ? ' <span class="text-slate-400">(' + r.foreign + ')</span>' : '') + '</td>' +
+      '<td class="px-2 py-1 text-right font-semibold whitespace-nowrap">₩' + r.amount.toLocaleString('ko-KR') + '</td>' +
+      '<td class="px-2 py-1"><select class="text-xs border border-slate-200 rounded px-1 py-0.5" onchange="ldgPasteSetMajor(' + i + ',this.value)">' + _ldgCatOptions(r.major) + '</select></td>' +
+      '<td class="px-2 py-1"><select id="ldg-paste-sub-' + i + '" class="text-xs border border-slate-200 rounded px-1 py-0.5" onchange="ldgPasteSetMinor(' + i + ',this.value)">' + _ldgSubOptions(r.major, r.minor) + '</select></td>' +
+      '<td class="px-2 py-1">' + badge + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  html += '<div class="flex justify-end mt-3"><button onclick="ldgConfirmPasteImport()" class="text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,#6366f1,#a855f7)"><span class="material-symbols-outlined align-middle" style="font-size:16px">add</span> ' + incl.length + '건 가계부에 추가</button></div>';
+  box.innerHTML = html;
+}
+
+function ldgPasteToggleRow(i, on) { if (_ldgPasteRows[i]) _ldgPasteRows[i].include = on; ldgRenderPastePreview(); }
+function ldgPasteSetMajor(i, v) {
+  if (!_ldgPasteRows[i]) return;
+  _ldgPasteRows[i].major = v; _ldgPasteRows[i].minor = '';
+  var sub = document.getElementById('ldg-paste-sub-' + i);
+  if (sub) sub.innerHTML = _ldgSubOptions(v, '');
+}
+function ldgPasteSetMinor(i, v) { if (_ldgPasteRows[i]) _ldgPasteRows[i].minor = v; }
+
+function ldgConfirmPasteImport() {
+  var pm = (document.getElementById('ldg-paste-pm') || {}).value || '신한카드';
+  var toAdd = _ldgPasteRows.filter(function(r){ return r.include && !r.cancelled; });
+  var bad = toAdd.filter(function(r){ return !r.major || !r.minor; });
+  if (bad.length) { ldgFlashToast(bad.length + '건의 분류(대분류/소분류)를 먼저 골라주세요'); return; }
+  if (!toAdd.length) { ldgFlashToast('추가할 거래가 없어요'); return; }
+  if (!Array.isArray(_ledgerData.transactions)) _ledgerData.transactions = [];
+  var base = Date.now();
+  toAdd.forEach(function(r, k) {
+    _ledgerData.transactions.push({ id: 'txn_' + (base + k), date: r.date, '대분류': r.major, '소분류': r.minor,
+      '금액': r.amount, '결제수단': pm, '세부사항': r.merchant, '비고': r.foreign ? ('카드 가져오기 · ' + r.foreign) : '카드 가져오기' });
+  });
+  try { ldgSaveTx(); } catch(e) { console.error('[paste import] save 실패', e); ldgFlashToast('저장 오류: ' + (e && e.message || e)); return; }
+  _ldgPasteRows = [];
+  var ta = document.getElementById('ldg-paste-input'); if (ta) ta.value = '';
+  var box = document.getElementById('ldg-paste-preview'); if (box) box.innerHTML = '';
+  try { ldgRenderMonthly(); } catch(e) {}
+  ldgFlashToast(toAdd.length + '건 추가 완료!', 'success');
+}
+
 // 화면 상단에 잠깐 떴다 사라지는 토스트. type: 'error'(기본, 빨강) | 'success'(초록)
 function ldgFlashToast(msg, type) {
   var existing = document.getElementById('ldg-flash-toast');
