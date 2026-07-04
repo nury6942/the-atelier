@@ -3363,7 +3363,8 @@ function _ldgParseCardPaste(text) {
   var lines = (text || '').split(/\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean);
   var amountRe = /^([\d,]+)원$/;
   var shinhanDateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+\d{2}:\d{2}\s+/;
-  var hyundaiDateRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})/;
+  var hyTimeRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})(\d{2}):(\d{2})/; // 현대 신형: 날짜 뒤에 시간이 붙음 (26. 7. 3 + 12:36 = 312:36)
+  var hyDateRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})/;                 // 현대 구형: 시간 없음 (폴백)
   var foreignRe = /^[A-Z]{3}\s+[\d,.]+$/;
   var out = [];
   for (var i = 0; i < lines.length; i++) {
@@ -3376,11 +3377,12 @@ function _ldgParseCardPaste(text) {
         cancelled: /취소/.test(lines[i + 1]), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '' });
       continue;
     }
-    var hy = hyundaiDateRe.exec(lines[i - 1] || '');
+    var hline = lines[i - 1] || '';
+    var hy = hyTimeRe.exec(hline) || hyDateRe.exec(hline);
     if (hy) {
       var mo = ('0' + hy[2]).slice(-2), da = ('0' + hy[3]).slice(-2);
       out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount,
-        cancelled: /취소/.test(lines[i - 1]), foreign: '' });
+        cancelled: /취소/.test(hline), foreign: '' });
       continue;
     }
   }
