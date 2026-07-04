@@ -2099,12 +2099,15 @@ function ldgRenderCatGrid() {
   var prevKey = prevY + '-' + String(prevM).padStart(2,'0');
   // 이번 달이 '진행 중'이면 전월도 오늘 일자까지만 자른다. 과거 달을 보고 있으면 컷 없음(전월 전체).
   var prevCutDay = ldgPrevCompareCutDay(prevY, prevM);
-  var prevCatTotals = {};
+  var prevCatTotals = {};       // 전월 '같은 날짜까지'(month-to-date, 공정 비교)
+  var prevCatTotalsFull = {};   // 전월 '한 달 전체'
   (_ledgerData.transactions || []).forEach(function(t) {
     if (t.date && t.date.substring(0,7) === prevKey) {
+      var major = t['대분류'];
+      prevCatTotalsFull[major] = (prevCatTotalsFull[major] || 0) + t['금액'];
       var dd = parseInt(t.date.substring(8,10)) || 0;
       if (prevCutDay && dd > prevCutDay) return; // 같은 날짜 이후는 제외
-      prevCatTotals[t['대분류']] = (prevCatTotals[t['대분류']] || 0) + t['금액'];
+      prevCatTotals[major] = (prevCatTotals[major] || 0) + t['금액'];
     }
   });
   var html = '';
@@ -2168,21 +2171,25 @@ function ldgRenderCatGrid() {
     }
     html += '<div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' + opacity + '">';
     html += '<div class="mb-3"><div class="flex justify-between items-start gap-2"><div class="flex items-center gap-1.5 flex-1 min-w-0"><p class="text-sm font-bold text-slate-900">' + catName + '</p>' + paceBadge + '</div><p class="text-xs text-slate-900 font-bold shrink-0" style="font-feature-settings:\'tnum\'">' + (totalAmt > 0 ? ldgFmt(totalAmt) : '—') + '</p></div>';
-    // Previous month comparison
+    // Previous month comparison — 전월 동일(공정) + 전월 전체 둘 다 표시
     var prevTotal = prevCatTotals[catName] || 0;
-    var diff = totalAmt - prevTotal;
-    if (totalAmt === 0 && prevTotal === 0) {
-      // Both zero — skip
+    var prevTotalFull = prevCatTotalsFull[catName] || 0;
+    var isGoodUp = (catName === '수입' || catName === '저축');
+    var cmpLine = function(prevVal, label, tip) {
+      if (totalAmt === 0 && prevVal === 0) return '';
+      var d = totalAmt - prevVal;
+      var color = (d === 0) ? '#94a3b8' : (((d > 0) === isGoodUp) ? '#10b981' : '#ef4444');
+      var arrow = d > 0 ? '▲' : (d < 0 ? '▼' : '');
+      var txt = (d === 0) ? (label + ' ─') : (arrow + ' ' + label + ' ' + (d > 0 ? '+' : '') + d.toLocaleString('ko-KR'));
+      return '<p class="text-[10px] text-right mt-0.5" style="color:' + color + ';font-feature-settings:\'tnum\'" title="' + tip + '">' + txt + '</p>';
+    };
+    if (prevCutDay > 0) {
+      // 진행 중인 달: 같은 날짜까지(공정) + 지난달 전체 둘 다
+      html += cmpLine(prevTotal, '전월 동일', '전월 1일~' + prevCutDay + '일까지 누적과 비교 (진행 중인 달 공정 비교)');
+      html += cmpLine(prevTotalFull, '전월 전체', '지난달 한 달 전체와 비교');
     } else {
-      var isGoodUp = (catName === '수입' || catName === '저축');
-      var diffColor;
-      if (diff === 0) diffColor = '#94a3b8';
-      else if ((diff > 0) === isGoodUp) diffColor = '#10b981';
-      else diffColor = '#ef4444';
-      var arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '');
-      var momLabelCat = (prevCutDay > 0) ? '전월 동일' : '전월비'; // 진행 중인 달이면 같은 날짜까지 비교임을 표시
-      var diffText = diff === 0 ? (momLabelCat + ' ─') : arrow + ' ' + momLabelCat + ' ' + (diff > 0 ? '+' : '') + diff.toLocaleString('ko-KR');
-      html += '<p class="text-[10px] text-right mt-0.5" style="color:' + diffColor + ';font-feature-settings:\'tnum\'" title="' + (prevCutDay > 0 ? ('전월 1일~' + prevCutDay + '일까지 누적과 비교 (진행 중인 달 공정 비교)') : '전월 전체와 비교') + '">' + diffText + '</p>';
+      // 이미 끝난 과거 달: 전월 전체 한 줄이면 충분 (동일=전체)
+      html += cmpLine(prevTotalFull, '전월비', '전월 전체와 비교');
     }
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
