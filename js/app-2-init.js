@@ -3358,6 +3358,7 @@ function ldgSaveInput() {
 //  분류는 과거 가계부(세부사항→대분류/소분류) 학습으로 자동 배정.
 // ═══════════════════════════════════════════════════════════
 var _ldgPasteRows = [];
+var _ldgPastePM = '신한카드'; // 붙여넣은 내역에서 감지한 결제수단(카드) 기본값
 
 function _ldgNormMerchant(s) {
   return (s || '').replace(/\(주\)|㈜|\(株\)|주식회사|유한회사|\(유\)/g, '').replace(/\s+/g, '').toLowerCase().trim();
@@ -3380,7 +3381,7 @@ function _ldgParseCardPaste(text) {
     var amount = parseInt(am[1].replace(/,/g, ''), 10) || 0;
     var sh = shinhanDateRe.exec(lines[i + 1] || '');
     if (sh) {
-      out.push({ date: sh[1] + '-' + sh[2] + '-' + sh[3], merchant: lines[i - 1] || '', amount: amount,
+      out.push({ date: sh[1] + '-' + sh[2] + '-' + sh[3], merchant: lines[i - 1] || '', amount: amount, card: '신한카드',
         cancelled: /취소/.test(lines[i + 1]), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '' });
       continue;
     }
@@ -3388,7 +3389,7 @@ function _ldgParseCardPaste(text) {
     var hy = hyTimeRe.exec(hline) || hyDateRe.exec(hline);
     if (hy) {
       var mo = ('0' + hy[2]).slice(-2), da = ('0' + hy[3]).slice(-2);
-      out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount,
+      out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount, card: '현대카드',
         cancelled: /취소/.test(hline), foreign: '' });
       continue;
     }
@@ -3463,6 +3464,10 @@ function ldgPreviewPaste() {
   if (!ta || !box) return;
   var parsed = _ldgParseCardPaste(ta.value);
   if (!parsed.length) { box.innerHTML = '<p class="text-xs text-slate-400 py-3">인식된 거래가 없어요. 카드앱 이용내역을 그대로 붙여넣어 주세요.</p>'; return; }
+  // 붙여넣은 내역의 카드 종류 감지 → 결제수단 기본값 (더 많은 쪽)
+  var _pmCnt = {};
+  parsed.forEach(function(p){ if (p.card) _pmCnt[p.card] = (_pmCnt[p.card] || 0) + 1; });
+  _ldgPastePM = ((_pmCnt['현대카드'] || 0) > (_pmCnt['신한카드'] || 0)) ? '현대카드' : '신한카드';
   var learn = _ldgBuildCatLearnMap();
   _ldgPasteRows = parsed.map(function(p) {
     var normM = _ldgNormMerchant(p.merchant);
@@ -3499,8 +3504,9 @@ function ldgRenderPastePreview() {
   var cancN = rows.filter(function(r){ return r.cancelled; }).length;
   var needN = rows.filter(function(r){ return r.include && (!r.major || !r.minor); }).length;
   var pmethods = (_ledgerData.settings || {}).paymentMethods || [];
+  var pmDefault = (pmethods.indexOf(_ldgPastePM) >= 0) ? _ldgPastePM : (pmethods.indexOf('신한카드') >= 0 ? '신한카드' : (pmethods[0] || ''));
   var pmSel = '<select id="ldg-paste-pm" class="text-xs border border-slate-200 rounded py-1" style="min-width:88px;padding-left:8px;padding-right:24px">' +
-    pmethods.map(function(p){ return '<option value="' + p + '"' + (p === '신한카드' ? ' selected' : '') + '>' + p + '</option>'; }).join('') + '</select>';
+    pmethods.map(function(p){ return '<option value="' + p + '"' + (p === pmDefault ? ' selected' : '') + '>' + p + '</option>'; }).join('') + '</select>';
 
   var html = '<div class="flex items-center justify-between flex-wrap gap-2 mb-3 mt-3">' +
     '<div class="text-xs text-slate-600">인식 <b>' + rows.length + '</b>건 · 추가 대상 <b class="text-indigo-600">' + incl.length + '</b>건 · 합계 <b>₩' + inclTotal.toLocaleString('ko-KR') + '</b>' +
