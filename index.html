@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=195" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=196" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -13198,7 +13198,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=195" defer></script>
+<script src="js/app-1-pages.js?v=196" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -13821,12 +13821,12 @@
           <div class="space-y-1"><label class="text-xs font-bold text-slate-500">연재 요일</label><select id="ew-publish-day" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-300"><option value="5">금요일</option><option value="6">토요일</option></select></div>
         </div>
         <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100 cursor-pointer hover:bg-emerald-50 transition-colors" title="평일만 1편/일, 주말 휴식. 재계산 또는 캘린더 재동기화 시 이 규칙 적용">
-          <input id="ew-nomad" type="checkbox" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-300" onchange="if(this.checked){var b=document.getElementById('ew-busy');if(b)b.checked=false;var w=document.getElementById('ew-busy-from-wrap');if(w)w.style.display='none';}"/>
+          <input id="ew-nomad" type="checkbox" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-300" onchange="if(this.checked){var b=document.getElementById('ew-busy');if(b)b.checked=false;var r=document.getElementById('ew-reverse');if(r)r.checked=false;var w=document.getElementById('ew-busy-from-wrap');if(w)w.style.display='none';}"/>
           <span class="text-xs font-bold text-emerald-700 flex-1">🌴 노마드 모드</span>
           <span class="text-[10px] text-emerald-600/80">평일 1편/일, 주말 휴식 (시놉·초고·퇴고)</span>
         </label>
         <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber-50/60 border border-amber-100 cursor-pointer hover:bg-amber-50 transition-colors mt-2" title="평일 바빠서 주말에만: 초고 토·일 1편, 퇴고 목·금·토·일 1편. 저장 시 적용">
-          <input id="ew-busy" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-300" onchange="var w=document.getElementById('ew-busy-from-wrap'); if(w) w.style.display=this.checked?'flex':'none'; if(this.checked){var n=document.getElementById('ew-nomad');if(n)n.checked=false; recalcEditWork();}"/>
+          <input id="ew-busy" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-300" onchange="var w=document.getElementById('ew-busy-from-wrap'); if(w) w.style.display=this.checked?'flex':'none'; if(this.checked){var n=document.getElementById('ew-nomad');if(n)n.checked=false;var r=document.getElementById('ew-reverse');if(r)r.checked=false; recalcEditWork();}"/>
           <span class="text-xs font-bold text-amber-700 flex-1">💼 비지 모드</span>
           <span class="text-[10px] text-amber-600/80">초고 주말만 · 퇴고 목·금·토·일</span>
         </label>
@@ -13835,6 +13835,11 @@
           <input id="ew-busy-from" type="number" min="1" value="1" onchange="recalcEditWork()" class="w-16 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-center outline-none focus:ring-2 focus:ring-amber-300"/>
           <span class="text-[10px] text-slate-400">1=전체 · 예: 7이면 1~6화 그대로, 7화부터 비지</span>
         </div>
+        <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 cursor-pointer hover:bg-sky-50 transition-colors mt-2" title="연재 시작일을 고정하고, 그 날짜에 맞춰 초고·퇴고를 역산. 마감에 맞춰 작업일(주 며칠) 자동 조절">
+          <input id="ew-reverse" type="checkbox" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-300" onchange="if(this.checked){var n=document.getElementById('ew-nomad');if(n)n.checked=false;var b=document.getElementById('ew-busy');if(b)b.checked=false;var w=document.getElementById('ew-busy-from-wrap');if(w)w.style.display='none';recalcEditWork();}"/>
+          <span class="text-xs font-bold text-sky-700 flex-1">🎯 역산 모드 (연재일 고정)</span>
+          <span class="text-[10px] text-sky-600/80" id="ew-reverse-info">연재일 맞춰 작업일 자동</span>
+        </label>
         <div class="border-t border-slate-100 pt-4 mt-2">
           <p class="text-xs font-bold text-slate-500 mb-3">📅 일정 조정</p>
           <div class="grid grid-cols-2 gap-3">
