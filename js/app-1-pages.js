@@ -15764,8 +15764,8 @@
   function _isEventBlocking(cat, title) {
     // 여행: 무조건 차단
     if (cat === '여행') return true;
-    // 업무 + "야근": 차단
-    if (cat === '업무' && title.indexOf('야근') >= 0) return true;
+    // "야근": 집필 불가 → 차단 (카테고리 무관 — "PLM - 야근" 등 업무 아닌 카테고리도 잡음)
+    if (title.indexOf('야근') >= 0 || cat.indexOf('야근') >= 0) return true;
     // 제목에 "차단" 키워드: 모든 카테고리 차단
     if (title.indexOf('차단') >= 0) return true;
     return false;
