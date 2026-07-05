@@ -15766,8 +15766,8 @@
     if (cat === '여행') return true;
     // "야근": 집필 불가 → 차단 (카테고리 무관 — "PLM - 야근" 등 업무 아닌 카테고리도 잡음)
     if (title.indexOf('야근') >= 0 || cat.indexOf('야근') >= 0) return true;
-    // 제목에 "차단" 키워드: 모든 카테고리 차단
-    if (title.indexOf('차단') >= 0) return true;
+    // "차단" 키워드: 업무·여행·연차 등 무엇이든 제목/카테고리에 있으면 무조건 차단
+    if (title.indexOf('차단') >= 0 || cat.indexOf('차단') >= 0) return true;
     return false;
   }
 
