@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=196" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=197" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -13198,7 +13198,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=196" defer></script>
+<script src="js/app-1-pages.js?v=197" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -13833,10 +13833,10 @@
         <div id="ew-busy-from-wrap" class="items-center gap-2 mt-2 px-1" style="display:none">
           <label class="text-[11px] font-bold text-slate-500 whitespace-nowrap">몇 화부터?</label>
           <input id="ew-busy-from" type="number" min="1" value="1" onchange="recalcEditWork()" class="w-16 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-center outline-none focus:ring-2 focus:ring-amber-300"/>
-          <span class="text-[10px] text-slate-400">1=전체 · 예: 7이면 1~6화 그대로, 7화부터 비지</span>
+          <span class="text-[10px] text-slate-400">1=전체 · 예: 8이면 1~7화 그대로, 8화부터 재계산 (비지·역산 공용)</span>
         </div>
         <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 cursor-pointer hover:bg-sky-50 transition-colors mt-2" title="연재 시작일을 고정하고, 그 날짜에 맞춰 초고·퇴고를 역산. 마감에 맞춰 작업일(주 며칠) 자동 조절">
-          <input id="ew-reverse" type="checkbox" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-300" onchange="if(this.checked){var n=document.getElementById('ew-nomad');if(n)n.checked=false;var b=document.getElementById('ew-busy');if(b)b.checked=false;var w=document.getElementById('ew-busy-from-wrap');if(w)w.style.display='none';recalcEditWork();}"/>
+          <input id="ew-reverse" type="checkbox" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-300" onchange="if(this.checked){var n=document.getElementById('ew-nomad');if(n)n.checked=false;var b=document.getElementById('ew-busy');if(b)b.checked=false;var w=document.getElementById('ew-busy-from-wrap');if(w)w.style.display='flex';recalcEditWork();}"/>
           <span class="text-xs font-bold text-sky-700 flex-1">🎯 역산 모드 (연재일 고정)</span>
           <span class="text-[10px] text-sky-600/80" id="ew-reverse-info">연재일 맞춰 작업일 자동</span>
         </label>

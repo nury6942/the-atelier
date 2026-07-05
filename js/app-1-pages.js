@@ -16420,7 +16420,14 @@
       var rvPub = document.getElementById('ew-pub-start').value;
       if (!rvPub) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 먼저 입력하세요 (역산 기준)'); return; }
       var rvPubDay = parseInt(document.getElementById('ew-publish-day').value) || 6;
-      var rvr = _computeReverseSchedule(rvDraftStart, rvEps, rvPub, rvPubDay);
+      var rvFrom = Math.max(1, parseInt((document.getElementById('ew-busy-from') || {}).value) || 1);
+      var rvPrev = null;
+      if (rvFrom > 1 && _editWorkId) {
+        var rvwid = 'work_id:' + _editWorkId;
+        var rvp = plannerData.filter(function(r){ if (!(r && (r[4]||'').indexOf(rvwid) >= 0 && (r[4]||'').indexOf('phase:draft') >= 0)) return false; var m = (r[1]||'').match(/초고\s*(\d+)화/); return m && parseInt(m[1]) === rvFrom - 1; }).sort(function(a, b){ return (b[0]||'').localeCompare(a[0]||''); })[0];
+        if (rvp) rvPrev = rvp[0];
+      }
+      var rvr = _computeReverseSchedule(rvDraftStart, rvEps, rvPub, rvPubDay, rvFrom, rvPrev);
       var rvInfo = document.getElementById('ew-reverse-info');
       if (!rvr.fits) {
         if (rvInfo) rvInfo.textContent = '⚠️ 매일 써도 못 맞춤';
@@ -16594,10 +16601,11 @@
     var ewBusyChk2 = document.getElementById('ew-busy');
     w.busy = ewBusyChk2 ? ewBusyChk2.checked : false;
     var ewBusyFromEl = document.getElementById('ew-busy-from');
-    w.busyFromEp = w.busy ? (parseInt(ewBusyFromEl && ewBusyFromEl.value) || 1) : 1;
+    var _fromEpVal = parseInt(ewBusyFromEl && ewBusyFromEl.value) || 1;
     var ewRevChk2 = document.getElementById('ew-reverse');
     w.reverse = ewRevChk2 ? ewRevChk2.checked : false;
     if (w.reverse) w.busy = false; // 역산과 비지는 상호배타
+    w.busyFromEp = (w.busy || w.reverse) ? _fromEpVal : 1; // 비지·역산 공용 "N화부터"
     w.phases = {
       synopsis: { start: document.getElementById('ew-syn-start').value, end: document.getElementById('ew-syn-end').value },
       draft: { start: document.getElementById('ew-draft-start').value, end: document.getElementById('ew-draft-end').value },
@@ -16612,9 +16620,9 @@
     }
     w.updated_at = new Date().toISOString();
     if (w.reverse && w.status === 'confirmed') {
-      // 역산 모드: 연재일 고정 → 초고·퇴고 자동 밀도로 역산 재배치
-      await rescheduleReverse(w);
-      console.log('[EditWork] reverse reschedule, pub', w.publish_start);
+      // 역산 모드: 연재일 고정 → 초고·퇴고 자동 밀도로 역산 재배치 (N화부터 유지)
+      await rescheduleReverse(w, w.busyFromEp);
+      console.log('[EditWork] reverse reschedule, pub', w.publish_start, 'fromEp', w.busyFromEp);
     } else if (w.busy && w.status === 'confirmed') {
       // 비지 모드: 부분 삭제 + 초고 주말/퇴고 목금토일 재배치 (시놉·초고 1~(N-1) 유지)
       await rescheduleBusy(w, w.busyFromEp);
@@ -16885,25 +16893,30 @@
     { dows: [2, 3, 4, 5, 6, 0],     label: '화·수·목·금·토·일' },
     { dows: [1, 2, 3, 4, 5, 6, 0],  label: '매일' }
   ];
-  function _computeReverseSchedule(draftStartStr, eps, publishStartStr, publishDay) {
+  // fromEp>1이면 초고 1~(fromEp-1)은 유지(prevDraftDateStr=그 마지막화 날짜), 초고 fromEp~ + 퇴고만 역산 대상.
+  function _computeReverseSchedule(draftStartStr, eps, publishStartStr, publishDay, fromEp, prevDraftDateStr) {
+    fromEp = Math.max(1, fromEp || 1);
     var pub = new Date(publishStartStr + 'T00:00:00');
-    var draftStart = new Date(draftStartStr + 'T00:00:00');
+    var draftStart;
+    if (fromEp > 1 && prevDraftDateStr) { draftStart = new Date(prevDraftDateStr + 'T00:00:00'); draftStart.setDate(draftStart.getDate() + 1); }
+    else { draftStart = new Date(draftStartStr + 'T00:00:00'); }
+    var draftCount = eps - (fromEp - 1);
     for (var L = 0; L < _REVERSE_LEVELS.length; L++) {
       var dset = _REVERSE_LEVELS[L].dows;
       var okFn = (function(s){ return function(d){ return s.indexOf(d) >= 0; }; })(dset);
-      var dP = _placeBusyEps(draftStart, eps, okFn, 1);
+      var dP = _placeBusyEps(draftStart, draftCount, okFn, fromEp);
       var dEnd = dP.length ? dP[dP.length - 1].date : draftStart;
       var rS = new Date(dEnd.getTime()); rS.setDate(rS.getDate() + 1);
       var rP = _placeBusyEps(rS, eps, okFn, 1);
       var rEnd = rP.length ? rP[rP.length - 1].date : rS;
       if (rEnd < pub) {
-        return { fits: true, level: L, label: _REVERSE_LEVELS[L].label, days: dset.length,
-          draftPlaced: dP, draftEnd: dEnd, revStart: rS, revPlaced: rP, revEnd: rEnd };
+        return { fits: true, level: L, label: _REVERSE_LEVELS[L].label, days: dset.length, fromEp: fromEp,
+          draftPlaced: dP, draftStart: draftStart, draftEnd: dEnd, revStart: rS, revPlaced: rP, revEnd: rEnd };
       }
     }
     // 매일 써도 안 맞음 → 최소 연재일 제안
     var okAll = function(){ return true; };
-    var dP2 = _placeBusyEps(draftStart, eps, okAll, 1);
+    var dP2 = _placeBusyEps(draftStart, draftCount, okAll, fromEp);
     var dE2 = dP2.length ? dP2[dP2.length - 1].date : draftStart;
     var rS2 = new Date(dE2.getTime()); rS2.setDate(rS2.getDate() + 1);
     var rP2 = _placeBusyEps(rS2, eps, okAll, 1);
@@ -16913,28 +16926,39 @@
     return { fits: false, minPublish: minPub };
   }
 
-  async function rescheduleReverse(work) {
+  async function rescheduleReverse(work, fromEp) {
+    fromEp = Math.max(1, parseInt(fromEp) || 1);
     var eps = work.total_episodes || 20;
     var cat = '글쓰기';
     var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
     var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
     var wid = 'work_id:' + work.id;
     function isMine(r){ return r && (r[4] || '').indexOf(wid) >= 0; }
+    function draftEp(r){ var m = (r[1] || '').match(/초고\s*(\d+)화/); return m ? parseInt(m[1]) : 0; }
     var pd = (work.phases && work.phases.draft) || {};
     var draftStartStr = pd.start || _fmtDate(new Date());
-    var rr = _computeReverseSchedule(draftStartStr, eps, work.publish_start, work.publish_day || 6);
+    // fromEp>1이면 (fromEp-1)화 날짜 찾기 (초고 1~(fromEp-1) 유지)
+    var prevDate = null;
+    if (fromEp > 1) {
+      var prev = plannerData.filter(function(r){ return isMine(r) && (r[4]||'').indexOf('phase:draft') >= 0 && draftEp(r) === fromEp - 1; }).sort(function(a, b){ return (b[0]||'').localeCompare(a[0]||''); })[0];
+      if (prev) prevDate = prev[0];
+    }
+    var rr = _computeReverseSchedule(draftStartStr, eps, work.publish_start, work.publish_day || 6, fromEp, prevDate);
     if (!rr.fits) {
       if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재일이 너무 일러 역산 불가 — 최소 ' + _fmtDate(rr.minPublish) + '. 일정 변경 안 됨');
       return;
     }
-    // 삭제: 이 작품의 초고·퇴고·연재 전부
+    // 삭제: 초고 fromEp 이상 + 퇴고 전체 + 연재 전체 (초고 1~(fromEp-1)는 유지)
     var rm = [];
-    plannerData.forEach(function(r, i){ if (!isMine(r)) return; var n = r[4] || ''; if (n.indexOf('phase:draft') >= 0 || n.indexOf('phase:revision') >= 0 || n.indexOf('phase:publishing') >= 0) rm.push(i); });
+    plannerData.forEach(function(r, i){ if (!isMine(r)) return; var n = r[4] || '';
+      if (n.indexOf('phase:revision') >= 0 || n.indexOf('phase:publishing') >= 0) { rm.push(i); return; }
+      if (n.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) rm.push(i);
+    });
     rm.sort(function(a, b){ return b - a; });
     for (var ri = 0; ri < rm.length; ri++){ var rr2 = plannerData[rm[ri]], id = rr2 && rr2[7]; if (id){ try { await fbDelete('planner', id); } catch(e){} } plannerData.splice(rm[ri], 1); }
     // 이벤트 생성
     var events = [];
-    rr.draftPlaced.forEach(function(x, k){ events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String(k)]); });
+    rr.draftPlaced.forEach(function(x, k){ events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String((rr.fromEp - 1) + k)]); });
     rr.revPlaced.forEach(function(x){ events.push([_fmtDate(x.date), '퇴고 ' + x.ep + '화', cat, color, noteBase + '|phase:revision', '', String(x.ep - 1)]); });
     var pCur = new Date(work.publish_start + 'T00:00:00'), pubEnd = new Date(pCur.getTime()), ep = 1;
     while (ep <= eps){ events.push([_fmtDate(pCur), ep + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0']); pubEnd = new Date(pCur.getTime()); pCur.setDate(pCur.getDate() + 7); ep++; }
