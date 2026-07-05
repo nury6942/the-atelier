@@ -16434,6 +16434,7 @@
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 이 연재일은 매일 써도 못 맞춰요. 최소 연재일: ' + _fmtDate(rvr.minPublish));
         return;
       }
+      if (rvFrom <= 1) document.getElementById('ew-draft-start').value = _fmtDate(rvr.draftStart);
       document.getElementById('ew-draft-end').value = _fmtDate(rvr.draftEnd);
       document.getElementById('ew-rev-start').value = _fmtDate(rvr.revStart);
       document.getElementById('ew-rev-end').value = _fmtDate(rvr.revEnd);
@@ -16893,35 +16894,50 @@
     { dows: [2, 3, 4, 5, 6, 0],     label: '화·수·목·금·토·일' },
     { dows: [1, 2, 3, 4, 5, 6, 0],  label: '매일' }
   ];
-  // fromEp>1이면 초고 1~(fromEp-1)은 유지(prevDraftDateStr=그 마지막화 날짜), 초고 fromEp~ + 퇴고만 역산 대상.
+  // endDate부터 거꾸로 dowOk인 날마다 count개 배치 (오름차순 반환, ep 오름차순)
+  function _placeBusyEpsBackward(endDate, count, dowOk, endEp) {
+    var out = [], cur = new Date(endDate.getTime()), ep = endEp, safety = 0;
+    while (out.length < count && safety++ < 6000) {
+      if (dowOk(cur.getDay()) && !isBlockedDay(_fmtDate(cur))) { out.unshift({ ep: ep, date: new Date(cur.getTime()) }); ep--; }
+      cur.setDate(cur.getDate() - 1);
+    }
+    return out;
+  }
+
+  // 역산: 연재 시작일 '전주'까지 퇴고 완료 + 앞으로 안 몰고 펼침.
+  // 연재일 전주(publish-7)부터 거꾸로 배치. fromEp>1이면 초고 1~(fromEp-1) 유지.
+  // earliest(초고 시작 하한) 지키는 '가장 가벼운(=가장 펼쳐진)' 카덴스 선택.
   function _computeReverseSchedule(draftStartStr, eps, publishStartStr, publishDay, fromEp, prevDraftDateStr) {
     fromEp = Math.max(1, fromEp || 1);
     var pub = new Date(publishStartStr + 'T00:00:00');
-    var draftStart;
-    if (fromEp > 1 && prevDraftDateStr) { draftStart = new Date(prevDraftDateStr + 'T00:00:00'); draftStart.setDate(draftStart.getDate() + 1); }
-    else { draftStart = new Date(draftStartStr + 'T00:00:00'); }
     var draftCount = eps - (fromEp - 1);
+    var revEndTarget = new Date(pub.getTime()); revEndTarget.setDate(revEndTarget.getDate() - 7); // 연재 시작일 전주
+    var earliest;
+    if (fromEp > 1 && prevDraftDateStr) { earliest = new Date(prevDraftDateStr + 'T00:00:00'); earliest.setDate(earliest.getDate() + 1); }
+    else { earliest = new Date(draftStartStr + 'T00:00:00'); }
     for (var L = 0; L < _REVERSE_LEVELS.length; L++) {
       var dset = _REVERSE_LEVELS[L].dows;
       var okFn = (function(s){ return function(d){ return s.indexOf(d) >= 0; }; })(dset);
-      var dP = _placeBusyEps(draftStart, draftCount, okFn, fromEp);
-      var dEnd = dP.length ? dP[dP.length - 1].date : draftStart;
-      var rS = new Date(dEnd.getTime()); rS.setDate(rS.getDate() + 1);
-      var rP = _placeBusyEps(rS, eps, okFn, 1);
-      var rEnd = rP.length ? rP[rP.length - 1].date : rS;
-      if (rEnd < pub) {
+      var rP = _placeBusyEpsBackward(revEndTarget, eps, okFn, eps);
+      if (rP.length < eps) continue;
+      var revStart = rP[0].date, revEnd = rP[rP.length - 1].date;
+      var dEndT = new Date(revStart.getTime()); dEndT.setDate(dEndT.getDate() - 1);
+      var dP = _placeBusyEpsBackward(dEndT, draftCount, okFn, eps);
+      if (dP.length < draftCount) continue;
+      var draftStart = dP[0].date, draftEnd = dP[dP.length - 1].date;
+      if (draftStart >= earliest) {
         return { fits: true, level: L, label: _REVERSE_LEVELS[L].label, days: dset.length, fromEp: fromEp,
-          draftPlaced: dP, draftStart: draftStart, draftEnd: dEnd, revStart: rS, revPlaced: rP, revEnd: rEnd };
+          draftPlaced: dP, draftStart: draftStart, draftEnd: draftEnd, revStart: revStart, revPlaced: rP, revEnd: revEnd };
       }
     }
-    // 매일 써도 안 맞음 → 최소 연재일 제안
+    // 매일 써도 (연재 전주까지) earliest 안에 못 넣음 → earliest부터 매일 forward로 최소 연재일 제안
     var okAll = function(){ return true; };
-    var dP2 = _placeBusyEps(draftStart, draftCount, okAll, fromEp);
-    var dE2 = dP2.length ? dP2[dP2.length - 1].date : draftStart;
+    var dP2 = _placeBusyEps(earliest, draftCount, okAll, fromEp);
+    var dE2 = dP2.length ? dP2[dP2.length - 1].date : earliest;
     var rS2 = new Date(dE2.getTime()); rS2.setDate(rS2.getDate() + 1);
     var rP2 = _placeBusyEps(rS2, eps, okAll, 1);
     var rE2 = rP2.length ? rP2[rP2.length - 1].date : rS2;
-    var minPub = new Date(rE2.getTime()); minPub.setDate(minPub.getDate() + 1);
+    var minPub = new Date(rE2.getTime()); minPub.setDate(minPub.getDate() + 7); // 퇴고 끝 + 최소 1주
     var s = 0; while (minPub.getDay() !== publishDay && s++ < 14) minPub.setDate(minPub.getDate() + 1);
     return { fits: false, minPublish: minPub };
   }
@@ -16965,6 +16981,7 @@
     for (var i = 0; i < events.length; i++){ var row = events[i]; if (plannerData.find(function(r){ return r && r[0] === row[0] && r[1] === row[1]; })) continue; try { var sv = await fbAdd('planner', rowToObj('planner', row)); plannerData.push(row.concat([sv._id])); } catch(e){} }
     // work 갱신
     work.phases = work.phases || {}; work.phases.draft = work.phases.draft || {};
+    if (fromEp <= 1) work.phases.draft.start = _fmtDate(rr.draftStart);
     work.phases.draft.end = _fmtDate(rr.draftEnd);
     work.phases.revision = { start: _fmtDate(rr.revStart), end: _fmtDate(rr.revEnd) };
     var restStart = new Date(rr.revEnd.getTime()); restStart.setDate(restStart.getDate() + 1);
