@@ -2408,6 +2408,48 @@
   }
   window.importCitiesFromFile = importCitiesFromFile;
 
+  // ── 경로 최적화 (nearest-neighbor, Haversine 거리) ────────────────
+  function _haversineKm(a, b) {
+    var R = 6371, toRad = function(d){ return d * Math.PI / 180; };
+    var dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
+    var s = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+  }
+  async function optimizeCityRoute() {
+    if (citiesData.length < 3) { alert('도시가 3개 이상일 때 최적화가 의미있어요.'); return; }
+    if (!confirm('지점들을 지리적으로 가까운 순서로 다시 정렬할까요?\n(날짜가 정해진 여행은 다시 열 때 날짜순으로 돌아갑니다)')) return;
+    await Promise.all(citiesData.map(function(c){ return ensureCityCoord(c); }));
+    var withCoord = citiesData.filter(function(c){ return typeof c.lat === 'number' && typeof c.lng === 'number'; });
+    var without = citiesData.filter(function(c){ return !(typeof c.lat === 'number' && typeof c.lng === 'number'); });
+    if (withCoord.length < 3) { alert('좌표를 찾은 도시가 부족해요.'); return; }
+    // nearest-neighbor: 첫 지점에서 시작해 가장 가까운 순으로
+    var remaining = withCoord.slice();
+    var route = [remaining.shift()];
+    while (remaining.length) {
+      var last = route[route.length - 1], bi = 0, bd = Infinity;
+      for (var i = 0; i < remaining.length; i++) {
+        var d = _haversineKm(last, remaining[i]);
+        if (d < bd) { bd = d; bi = i; }
+      }
+      route.push(remaining.splice(bi, 1)[0]);
+    }
+    var total = 0;
+    for (var k = 1; k < route.length; k++) total += _haversineKm(route[k-1], route[k]);
+    // 적용 + order 영구 저장 (zero-pad 문자열 → 사전순 유지)
+    citiesData = route.concat(without);
+    for (var m = 0; m < citiesData.length; m++) {
+      var c = citiesData[m], ord = ('000' + m).slice(-3);
+      c.order = ord;
+      if (c._id) { try { await fbUpdate('trip_cities', c._id, {order: ord}); } catch(e){} }
+    }
+    saveCityCache(currentTripId, citiesData);
+    renderCityCards();
+    renderTripHeader(); // 지도/경로선 갱신
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">route</span> 경로 최적화 · 총 ' + Math.round(total) + 'km');
+  }
+  window.optimizeCityRoute = optimizeCityRoute;
+
   // ===== JOURNEY: FIREBASE INTEGRATION =====
   let tripsData = [];
   let journeyData = [];
