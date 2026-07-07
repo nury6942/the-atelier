@@ -2324,6 +2324,90 @@
     } catch(err) { alert('삭제에 실패했어요.'); }
   }
 
+  // ── 지점 가져오기 (구글 My Maps / GPX / KML / GeoJSON) ────────────
+  function _parsePlacesFromText(text, fname) {
+    var pts = [];
+    var lower = (fname || '').toLowerCase();
+    // JSON / GeoJSON
+    if (lower.endsWith('.geojson') || lower.endsWith('.json') || /^\s*[\{\[]/.test(text)) {
+      try {
+        var j = JSON.parse(text);
+        var feats = j.features || (j.type === 'Feature' ? [j] : []);
+        feats.forEach(function(f) {
+          var g = f.geometry; if (!g || g.type !== 'Point' || !g.coordinates) return;
+          var p = f.properties || {};
+          pts.push({ name: p.name || p.title || p.Name || '', lng: +g.coordinates[0], lat: +g.coordinates[1] });
+        });
+        if (pts.length) return pts;
+      } catch(e) { /* XML로 폴백 */ }
+    }
+    // XML (GPX / KML)
+    var doc;
+    try { doc = new DOMParser().parseFromString(text, 'application/xml'); } catch(e) { return pts; }
+    if (doc.querySelector('parsererror')) return pts;
+    // GPX: wpt / rtept / trkpt (lat/lon 속성)
+    doc.querySelectorAll('wpt, rtept, trkpt').forEach(function(w) {
+      var lat = parseFloat(w.getAttribute('lat')), lng = parseFloat(w.getAttribute('lon'));
+      if (isNaN(lat) || isNaN(lng)) return;
+      var nm = w.querySelector('name');
+      pts.push({ name: nm ? nm.textContent.trim() : '', lat: lat, lng: lng });
+    });
+    // KML: Placemark > Point > coordinates (lng,lat[,alt])
+    doc.querySelectorAll('Placemark').forEach(function(pm) {
+      var coordEl = pm.querySelector('Point > coordinates');
+      if (!coordEl) return;
+      var parts = coordEl.textContent.trim().split(/[\s,]+/).map(parseFloat);
+      if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
+      var nmEl = pm.querySelector('name');
+      pts.push({ name: nmEl ? nmEl.textContent.trim() : '', lng: parts[0], lat: parts[1] });
+    });
+    return pts;
+  }
+
+  async function importCitiesFromFile(event) {
+    var file = event.target.files && event.target.files[0];
+    event.target.value = ''; // 같은 파일 재선택 허용
+    if (!file) return;
+    if (!currentTripId) { alert('먼저 여행을 선택하거나 추가해줘!'); return; }
+    if (file.name.toLowerCase().endsWith('.kmz')) {
+      alert('KMZ는 압축을 풀어서 .kml 파일로 넣어줘! (KMZ = 압축된 KML)');
+      return;
+    }
+    var text;
+    try { text = await file.text(); } catch(e) { alert('파일을 읽지 못했어요.'); return; }
+    var pts = _parsePlacesFromText(text, file.name).filter(function(p) {
+      return typeof p.lat === 'number' && typeof p.lng === 'number' && !isNaN(p.lat) && !isNaN(p.lng);
+    });
+    var anon = 0;
+    pts.forEach(function(p) { if (!p.name) p.name = 'Point ' + (++anon); });
+    // 이미 있는 도시명 제외 (중복 방지)
+    var existing = {};
+    citiesData.forEach(function(c) { existing[(c.name || '').toLowerCase()] = true; });
+    var fresh = pts.filter(function(p) { return !existing[p.name.toLowerCase()]; });
+    if (fresh.length === 0) { alert(pts.length ? '가져올 새 지점이 없어요 (이미 다 있음).' : '파일에서 지점을 찾지 못했어요.'); return; }
+    if (!confirm(fresh.length + '개 지점을 이 여행에 가져올까요?' + (pts.length !== fresh.length ? '\n(중복 ' + (pts.length - fresh.length) + '개 제외)' : ''))) return;
+
+    var added = 0;
+    for (var i = 0; i < fresh.length; i++) {
+      var p = fresh[i];
+      try {
+        var saved = await fbAdd('trip_cities', {
+          trip_id: currentTripId, name: p.name,
+          start_date: '', end_date: '', nights: 0, desc: '', transit_guide: '',
+          lat: p.lat, lng: p.lng, order: citiesData.length
+        });
+        citiesData.push(saved);
+        added++;
+      } catch(e) {}
+    }
+    saveCityCache(currentTripId, citiesData);
+    renderCityCards();
+    if (typeof renderDayView === 'function') renderDayView();
+    renderTripHeader(); // 지도/Voyage Path 갱신
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">upload_file</span> ' + added + '개 지점 가져옴');
+  }
+  window.importCitiesFromFile = importCitiesFromFile;
+
   // ===== JOURNEY: FIREBASE INTEGRATION =====
   let tripsData = [];
   let journeyData = [];

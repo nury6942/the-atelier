@@ -9141,6 +9141,8 @@
           <div class="j-section-head">
             <h2 class="j-h2">Stops</h2>
             <div class="j-section-head-line"></div>
+            <button onclick="document.getElementById('city-import-file').click()" class="j-btn-ghost" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body);vertical-align:middle">upload_file</span> 가져오기</button>
+            <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
             <button onclick="openCityModal()" class="j-btn-ghost"><span class="material-symbols-outlined" style="font-size: var(--font-size-body);vertical-align:middle">add_location_alt</span> 도시 추가</button>
           </div>
           <div id="journey-city-cards" class="j-stops-grid"></div>
