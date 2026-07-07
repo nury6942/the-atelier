@@ -2227,6 +2227,7 @@
           '<div class="j-stop-body">' +
             '<div class="j-stop-row"><span class="j-stop-k">DATES</span><span class="j-stop-v">' + (dateRange || 'TBD') + '</span></div>' +
             '<div class="j-stop-row"><span class="j-stop-k">STAY</span><span class="j-stop-v">' + nightsText + '</span></div>' +
+            '<div class="j-stop-row j-stop-weather" id="j-stop-weather-' + i + '"><span class="j-stop-k">WEATHER</span><span class="j-stop-v" style="color:#cbd5e1">…</span></div>' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-top: var(--space-2-5)">' +
               '<span class="j-stop-nights-label">★ ' + stopLabel + '</span>' +
               '<div style="display:flex;gap: var(--space-1)">' +
@@ -2247,6 +2248,8 @@
       window.journeyCityImageHydrateAll();
     }
     // (loadCityPhotos 자동 무료 이미지 로드는 제거됨 — 사용자 업로드만 사용)
+    // 도시별 날씨 예보 hydrate (Open-Meteo, 무료)
+    hydrateCityWeather();
   }
 
   function openCityModal(idx) {
@@ -2996,6 +2999,87 @@
       mapLink.href = 'https://www.google.com/maps/dir/' + citiesData.map(function(c){ return encodeURIComponent(normalizeCityQuery(c.name)); }).join('/');
       mapLink.style.display = 'flex';
     }
+  }
+
+  // ── 도시 날씨 (Open-Meteo, 무료·키없음) ─────────────────────────
+  // 좌표 확보 (없으면 geocode 후 Firestore에 1회 저장) — 지도/날씨 공용
+  async function ensureCityCoord(city) {
+    if (typeof city.lat === 'number' && typeof city.lng === 'number') return true;
+    var geo = await geocodeCity(city.name);
+    if (!geo) return false;
+    city.lat = geo.lat; city.lng = geo.lng;
+    if (city._id) { try { await fbUpdate('trip_cities', city._id, {lat: geo.lat, lng: geo.lng}); } catch(e){} }
+    return true;
+  }
+
+  // WMO weather_code → [이모지, 한글 라벨]
+  var _wxCodeMap = {
+    0:['☀️','맑음'], 1:['🌤️','대체로 맑음'], 2:['⛅','구름 조금'], 3:['☁️','흐림'],
+    45:['🌫️','안개'], 48:['🌫️','안개'],
+    51:['🌦️','이슬비'], 53:['🌦️','이슬비'], 55:['🌦️','이슬비'],
+    56:['🌧️','어는 이슬비'], 57:['🌧️','어는 이슬비'],
+    61:['🌧️','비'], 63:['🌧️','비'], 65:['🌧️','강한 비'],
+    66:['🌧️','어는 비'], 67:['🌧️','어는 비'],
+    71:['🌨️','눈'], 73:['🌨️','눈'], 75:['❄️','강한 눈'], 77:['🌨️','싸락눈'],
+    80:['🌦️','소나기'], 81:['🌦️','소나기'], 82:['⛈️','강한 소나기'],
+    85:['🌨️','눈 소나기'], 86:['🌨️','눈 소나기'],
+    95:['⛈️','뇌우'], 96:['⛈️','뇌우'], 99:['⛈️','뇌우/우박']
+  };
+  function _wxLabel(code) { return _wxCodeMap[code] || ['🌡️','']; }
+
+  var _wxCache = {};
+  async function fetchCityWeather(city) {
+    if (typeof city.lat !== 'number' || typeof city.lng !== 'number') return null;
+    var key = city.lat.toFixed(2) + ',' + city.lng.toFixed(2) + '|' + (city.start_date||'') + '|' + (city.end_date||'');
+    if (_wxCache[key] !== undefined) return _wxCache[key];
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + city.lat + '&longitude=' + city.lng +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min&current=temperature_2m,weather_code&timezone=auto&forecast_days=16';
+    var out = null;
+    try {
+      var r = await fetch(url);
+      var j = await r.json();
+      var daily = (j && j.daily) || {};
+      var times = daily.time || [];
+      // 체류 날짜가 예보창(오늘~16일) 안이면 그 기간의 최고/최저 + 대표 날씨
+      if (city.start_date && times.length) {
+        var s = times.indexOf(city.start_date);
+        if (s >= 0) {
+          var e = city.end_date ? times.indexOf(city.end_date) : s;
+          if (e < s) e = s;
+          var maxT = -999, minT = 999, codes = {};
+          for (var k = s; k <= e; k++) {
+            if (daily.temperature_2m_max[k] > maxT) maxT = daily.temperature_2m_max[k];
+            if (daily.temperature_2m_min[k] < minT) minT = daily.temperature_2m_min[k];
+            var c = daily.weather_code[k]; codes[c] = (codes[c]||0) + 1;
+          }
+          var domCode = Object.keys(codes).sort(function(a,b){ return codes[b]-codes[a]; })[0];
+          var lab = _wxLabel(+domCode);
+          out = { html: lab[0] + ' ' + Math.round(maxT) + '° / ' + Math.round(minT) + '° <span style="color:#94a3b8">' + lab[1] + '</span>' };
+        }
+      }
+      // 폴백: 현재 날씨 (체류일이 예보창 밖이거나 미정)
+      if (!out && j && j.current) {
+        var lab2 = _wxLabel(j.current.weather_code);
+        out = { html: lab2[0] + ' 현재 ' + Math.round(j.current.temperature_2m) + '° <span style="color:#94a3b8">' + lab2[1] + '</span>' };
+      }
+    } catch(e) {}
+    _wxCache[key] = out;
+    return out;
+  }
+
+  function hydrateCityWeather() {
+    citiesData.forEach(function(city, i) {
+      var el = document.getElementById('j-stop-weather-' + i);
+      if (!el) return;
+      var vEl = el.querySelector('.j-stop-v');
+      ensureCityCoord(city).then(function(ok) {
+        if (!ok) { el.style.display = 'none'; return; }
+        return fetchCityWeather(city).then(function(w) {
+          if (!w) { el.style.display = 'none'; return; }
+          if (vEl) { vEl.innerHTML = w.html; vEl.style.color = ''; }
+        });
+      }).catch(function(){ el.style.display = 'none'; });
+    });
   }
 
   function getDayMap() {
