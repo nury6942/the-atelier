@@ -89,6 +89,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ko.js"></script>
+  <!-- Leaflet (인터랙티브 지도, 무료 OSM/CARTO 타일 — 키 불필요) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- SheetJS (엑셀 파싱) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Pretendard (한국어 최고 가독성 폰트) -->
@@ -7442,6 +7445,27 @@
       object-fit: cover;
       background: var(--j-surface-container);
     }
+    /* Leaflet 인터랙티브 지도 마운트 */
+    #page-journey #voyage-map-leaflet {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: var(--j-surface-container);
+    }
+    #page-journey .j-voyage-map-link { z-index: 1000; } /* Leaflet 패널 위로 */
+    #page-journey .leaflet-container { font: inherit; background: var(--j-surface-container); }
+    /* 번호 핀 (라벤더 브랜드색) */
+    .voyage-pin-inner {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--j-primary, #7c3aed);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; line-height: 1;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(60, 20, 120, 0.35);
+    }
+    .leaflet-popup-content { font-size: 12px; }
     #page-journey .j-voyage-map-placeholder {
       position: absolute;
       inset: 0;
@@ -9097,7 +9121,7 @@
                 <div id="voyage-path-badges" class="j-voyage-badges"></div>
               </div>
               <div class="j-voyage-map">
-                <img id="voyage-map-img" src="" alt="Map" style="display:none"/>
+                <div id="voyage-map-leaflet"></div>
                 <div id="voyage-map-placeholder" class="j-voyage-map-placeholder">
                   <span class="material-symbols-outlined">map</span>
                   <p id="voyage-map-msg" style="font-size: var(--font-size-micro);margin:0"></p>

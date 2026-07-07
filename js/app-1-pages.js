@@ -2883,77 +2883,119 @@
     if (typeof window.journeyHeroHydrate === 'function') window.journeyHeroHydrate();
   }
 
-  // 도시별 일차 매핑 계산
-  var _voyageMapCache = {};
+  // ── 인터랙티브 지도 (Leaflet + 무료 CARTO 타일) ──────────────────
+  var _leafletMap = null;      // L.Map 인스턴스 (1회 생성 후 재사용)
+  var _leafletLayer = null;    // 마커+경로선 레이어 (매 렌더 교체)
+
+  // 도시명 → 좌표. Google Geocoder 우선, 실패 시 Nominatim(무료·키없음)
+  async function geocodeCity(name) {
+    var q = normalizeCityQuery(name);
+    if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+      try {
+        var g = await new Promise(function(resolve) {
+          new google.maps.Geocoder().geocode({address: q}, function(results, status) {
+            if (status === 'OK' && results[0]) resolve({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+            else resolve(null);
+          });
+        });
+        if (g) return g;
+      } catch(e) {}
+    }
+    try {
+      var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), {headers: {'Accept': 'application/json'}});
+      var j = await r.json();
+      if (j && j[0]) return {lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon)};
+    } catch(e) {}
+    return null;
+  }
+
   async function renderVoyageMap() {
-    var mapEl = document.getElementById('voyage-map-img');
+    var mount = document.getElementById('voyage-map-leaflet');
     var mapPh = document.getElementById('voyage-map-placeholder');
     var mapMsg = document.getElementById('voyage-map-msg');
     var mapLink = document.getElementById('voyage-map-link');
-    if (!mapEl || citiesData.length < 2) {
-      if (mapMsg) mapMsg.textContent = citiesData.length < 2 ? '도시를 2개 이상 추가하면 지도가 표시됩니다' : '';
+    if (!mount) return;
+    if (citiesData.length < 1) {
+      if (mapMsg) mapMsg.textContent = '도시를 추가하면 지도가 표시됩니다';
+      if (mapPh) mapPh.style.display = 'flex';
+      return;
+    }
+    if (typeof L === 'undefined') {
+      if (mapMsg) mapMsg.textContent = '지도 로딩 실패 (오프라인?)';
+      if (mapPh) mapPh.style.display = 'flex';
       return;
     }
 
-    var MAPS_KEY = 'AIzaSyCdVHmS40id2qOMm6sYdHp9I4loW22lgaQ';
-    // 캐시 키
-    var cacheKey = citiesData.map(function(c){return c.name;}).join('|');
-    if (_voyageMapCache[cacheKey]) {
-      mapEl.src = _voyageMapCache[cacheKey].url;
-      mapEl.style.display = 'block';
-      if (mapPh) mapPh.style.display = 'none';
-      if (mapLink) { mapLink.href = _voyageMapCache[cacheKey].link; mapLink.style.display = 'flex'; }
-      return;
+    // 지도 인스턴스 생성 (await 이전 = 동시호출 경합 방지)
+    if (!_leafletMap) {
+      _leafletMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      }).addTo(_leafletMap);
     }
 
     if (mapMsg) mapMsg.textContent = '지도를 불러오는 중...';
 
-    // 좌표 수집 (Places API geocode)
+    // 좌표 확보: 없으면 geocode 후 Firestore에 1회 영구 저장
     var coords = [];
-    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-      var geocoder = new google.maps.Geocoder();
-      for (var ci = 0; ci < citiesData.length; ci++) {
-        var city = citiesData[ci];
-        try {
-          var result = await new Promise(function(resolve) {
-            var q = normalizeCityQuery(city.name);
-            geocoder.geocode({address: q}, function(results, status) {
-              if (status === 'OK' && results[0]) resolve({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
-              else resolve(null);
-            });
-          });
-          if (result) coords.push(result);
-        } catch(e) {}
+    for (var ci = 0; ci < citiesData.length; ci++) {
+      var city = citiesData[ci];
+      var lat = city.lat, lng = city.lng;
+      if (typeof lat !== 'number' || typeof lng !== 'number') {
+        var geo = await geocodeCity(city.name);
+        if (geo) {
+          lat = geo.lat; lng = geo.lng;
+          city.lat = lat; city.lng = lng;
+          if (city._id) { try { await fbUpdate('trip_cities', city._id, {lat: lat, lng: lng}); } catch(e){} }
+        }
+      }
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        coords.push({lat: lat, lng: lng, name: city.name, start: city.start_date, end: city.end_date, idx: ci + 1});
       }
     }
 
-    if (coords.length < 2) {
-      // 좌표 수집 실패 → 도시명 기반 폴백
-      var markers = citiesData.map(function(c,i){ return 'markers=color:0x6b38d4%7Clabel:' + (i+1) + '%7C' + encodeURIComponent(normalizeCityQuery(c.name)); }).join('&');
-      var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=800x400&scale=2&maptype=roadmap&' + markers + '&key=' + MAPS_KEY + '&style=feature:all%7Csaturation:-80';
-    } else {
-      // 좌표 기반 마커 + path
-      var markers2 = coords.map(function(c,i){ return 'markers=color:0x6b38d4%7Clabel:' + (i+1) + '%7C' + c.lat + ',' + c.lng; }).join('&');
-      var pathCoords = coords.map(function(c){ return c.lat+','+c.lng; }).join('%7C');
-      var mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=800x400&scale=2&maptype=roadmap&' + markers2 + '&path=color:0x8B5CF6CC%7Cweight:3%7C' + pathCoords + '&key=' + MAPS_KEY + '&style=feature:all%7Csaturation:-80';
+    if (coords.length < 1) {
+      if (mapMsg) mapMsg.textContent = '도시 좌표를 찾지 못했어요';
+      if (mapPh) mapPh.style.display = 'flex';
+      return;
+    }
+    if (mapPh) mapPh.style.display = 'none';
+
+    // 마커+경로선 다시 그리기
+    if (_leafletLayer) _leafletMap.removeLayer(_leafletLayer);
+    _leafletLayer = L.layerGroup().addTo(_leafletMap);
+
+    var latlngs = [];
+    coords.forEach(function(c) {
+      latlngs.push([c.lat, c.lng]);
+      var icon = L.divIcon({
+        className: 'voyage-pin',
+        html: '<div class="voyage-pin-inner">' + c.idx + '</div>',
+        iconSize: [26, 26], iconAnchor: [13, 13]
+      });
+      var dateStr = c.start ? (c.start + (c.end && c.end !== c.start ? ' ~ ' + c.end : '')) : '';
+      var popup = '<strong>' + c.name + '</strong>' + (dateStr ? '<br><span style="color:#7c3aed">' + dateStr + '</span>' : '');
+      L.marker([c.lat, c.lng], {icon: icon}).bindPopup(popup).addTo(_leafletLayer);
+    });
+    if (latlngs.length > 1) {
+      L.polyline(latlngs, {color: '#7c3aed', weight: 3, opacity: 0.85, dashArray: '6 8'}).addTo(_leafletLayer);
     }
 
-    // Interactive View 링크
-    var dirUrl = 'https://www.google.com/maps/dir/' + citiesData.map(function(c){ return encodeURIComponent(normalizeCityQuery(c.name)); }).join('/');
+    // 화면 맞춤 (숨김 컨테이너 대응 위해 invalidateSize 후 재fit)
+    var bounds = L.latLngBounds(latlngs);
+    var fitOpts = { padding: [40, 40], maxZoom: 10 };
+    _leafletMap.fitBounds(bounds, fitOpts);
+    setTimeout(function() {
+      if (!_leafletMap) return;
+      _leafletMap.invalidateSize();
+      _leafletMap.fitBounds(bounds, fitOpts);
+    }, 250);
 
-    _voyageMapCache[cacheKey] = {url: mapUrl, link: dirUrl};
-
-    mapEl.src = mapUrl;
-    mapEl.onload = function() {
-      mapEl.style.display = 'block';
-      if (mapPh) mapPh.style.display = 'none';
-      if (mapLink) { mapLink.href = dirUrl; mapLink.style.display = 'flex'; }
-    };
-    mapEl.onerror = function() {
-      mapEl.style.display = 'none';
-      if (mapPh) mapPh.style.display = 'flex';
-      if (mapMsg) mapMsg.textContent = 'Static Maps API를 활성화해주세요';
-    };
+    // 구글맵 길찾기 링크 유지
+    if (mapLink) {
+      mapLink.href = 'https://www.google.com/maps/dir/' + citiesData.map(function(c){ return encodeURIComponent(normalizeCityQuery(c.name)); }).join('/');
+      mapLink.style.display = 'flex';
+    }
   }
 
   function getDayMap() {
