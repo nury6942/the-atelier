@@ -217,6 +217,7 @@
   // ===== PLANNER: GOOGLE SHEETS INTEGRATION =====
   let plannerData = [];
   let editingPlannerIndex = null;
+  let editingPlannerId = null;  // ★ (2026-07-15) 모달이 열린 동안 목록이 바뀌어도 문서 ID로 재해석
   let plannerYear = new Date().getFullYear();
   let plannerMonth = new Date().getMonth(); // 0-indexed
 
@@ -330,6 +331,14 @@
       const docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
       if (typeof window._markPlannerFresh === 'function') window._markPlannerFresh();
+      // ★ (2026-07-15) fetch 시작 후 저장된 일정 복원 — 통째 교체로 증발하던 틈 메움
+      (window.__recentPlannerAdds || []).forEach(function(a) {
+        if (Date.now() - a.t > 60000) return;
+        if (!plannerData.some(function(r){ return r[7] === a.id; })) {
+          plannerData.push(objToRow('planner', a.obj).concat([a.id]));
+          console.log('[loadPlanner] 최근 저장분 복원:', a.id);
+        }
+      });
 
       // ★ 3단계: 즉시 render — 사용자는 여기까지면 캘린더 보임
       _initCalNavSelects();
@@ -466,6 +475,13 @@
     }
   }
 
+  // ★ (2026-07-15) 클릭 시점 ID→인덱스 해석: 렌더 후 목록이 바뀌어도(백그라운드 fetch 등)
+  //   화면에 박힌 번호가 아니라 문서 ID로 그 순간의 올바른 일정을 찾음 — 오수정/오삭제 원천 차단.
+  window._pi = function(docId) {
+    for (var i = 0; i < (plannerData || []).length; i++) { if (plannerData[i] && plannerData[i][7] === docId) return i; }
+    return -1;
+  };
+
   function renderCalendar() {
     const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     _syncCalNavSelects();
@@ -552,9 +568,9 @@
         e.preventDefault();
         e.stopPropagation();
         this.classList.remove('bg-indigo-100', 'border-indigo-300');
-        var dragIdx = parseInt(e.dataTransfer.getData('text/plain'));
+        var dragIdx = _dragIdxFromPayload(e.dataTransfer.getData('text/plain'));
         var newDate = this.dataset.date;
-        if (!isNaN(dragIdx) && newDate) {
+        if (dragIdx >= 0 && plannerData[dragIdx] && newDate) {
           if (plannerCtrlDrag) {
             copiedPlannerEvent = plannerData[dragIdx].slice(0, 7);
             pastePlannerEvent(newDate);
@@ -589,17 +605,19 @@
           var pubCls = isPub ? 'mt-1.5 mb-1.5 text-[12px] px-3 py-1.5 rounded-full font-black border-l-4 flex items-center justify-between gap-1 cursor-grab text-white' : 'mt-1 text-[13px] px-1.5 py-1 rounded-md font-bold truncate border-l-2 flex items-center justify-between gap-1 cursor-grab';
           var pubInline = isPub ? 'box-shadow:0 2px 6px rgba(0,0,0,0.18),0 0 0 2px white;text-shadow:0 1px 2px rgba(0,0,0,0.25);z-index:2;position:relative' : '';
           var pubPrefix = isPub ? '🎯 ' : '';
+          // ★ (2026-07-15) 인덱스 하드코딩 → 클릭 시점 ID 해석 (_pi). ID 없는 행만 인덱스 폴백.
+          var idxRef = docId ? "_pi('" + docId + "')" : String(realIdx);
           return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#6366f1') + ';border-left-color:rgba(0,0,0,0.2)' : '') + '" ' +
             'data-pidx="' + realIdx + '" ' +
-            'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
+            'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRef + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
             'ondragleave="this.classList.remove(\'ring-2\',\'ring-indigo-400\')" ' +
-            'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + realIdx + ')" ' +
-            'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
+            'ondrop="event.preventDefault();event.stopPropagation();this.classList.remove(\'ring-2\',\'ring-indigo-400\');reorderPlannerEvent(event,' + idxRef + ')" ' +
+            'onclick="event.stopPropagation();selectPlannerEvent(' + idxRef + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + idxRef + ')">' +
             '<span class="truncate">' + pubPrefix + (ev[1]||'') + '</span>' +
             '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
-            '<button onclick="event.stopPropagation();openPlannerModal(' + realIdx + ')" class="text-current">✎</button>' +
-            '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ')" class="text-current">×</button>' +
+            '<button onclick="event.stopPropagation();openPlannerModal(' + idxRef + ')" class="text-current">✎</button>' +
+            '<button onclick="event.stopPropagation();deletePlannerRow(' + idxRef + ')" class="text-current">×</button>' +
             seriesBtn +
             '</div></div>';
         }
@@ -627,11 +645,12 @@
         var ml = blockStart ? 'margin-left:0;padding-left: var(--space-2);' : 'margin-left:-13px;padding-left:0;';
         var mr = blockEnd ? 'margin-right:0;padding-right: var(--space-2);' : 'margin-right:-13px;padding-right:0;';
 
+        var idxRefR = (ev[7]) ? "_pi('" + ev[7] + "')" : String(realIdx);
         return '<div class="mt-1 ' + bgColor + ' flex items-center overflow-visible cursor-grab" ' +
           'style="height:26px;' + rl + rr + ml + mr + 'position:relative;z-index:5;" ' +
           'data-pidx="' + realIdx + '" ' +
-          'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + realIdx + ')" ondragend="plannerDragEnd(event)" ' +
-          'onclick="event.stopPropagation();selectPlannerEvent(' + realIdx + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + realIdx + ')">' +
+          'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRefR + ')" ondragend="plannerDragEnd(event)" ' +
+          'onclick="event.stopPropagation();selectPlannerEvent(' + idxRefR + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + idxRefR + ')">' +
           (showTitle
             ? '<span class="text-[13px] font-bold truncate whitespace-nowrap ' + textColor + '" style="padding:0 4px">' + (ev[1]||'') + '</span>'
             : '') +
@@ -1180,7 +1199,10 @@
   }
 
   function openPlannerModal(idx, prefillDate) {
+    // ★ (2026-07-15) stale 인덱스 가드 — 목록이 바뀐 뒤의 클릭이 엉뚱한 일정을 열지 않게
+    if (idx !== undefined && idx !== null && (idx < 0 || !plannerData[idx])) { renderCalendar(); return; }
     editingPlannerIndex = (idx !== undefined && idx !== null) ? idx : null;
+    editingPlannerId = (editingPlannerIndex !== null && plannerData[editingPlannerIndex]) ? (plannerData[editingPlannerIndex][7] || null) : null;
     document.getElementById('planner-modal-title').textContent = editingPlannerIndex !== null ? '일정 수정' : '일정 추가';
     var delBtn = document.getElementById('planner-delete-btn');
     if (delBtn) delBtn.style.display = (editingPlannerIndex !== null) ? '' : 'none';
@@ -1253,16 +1275,20 @@
   function closePlannerModal() {
     document.getElementById('planner-modal').style.cssText = 'display:none!important';
     editingPlannerIndex = null;
+    editingPlannerId = null;
   }
 
   async function deletePlannerFromModal() {
     if (editingPlannerIndex === null) return;
-    var row = plannerData[editingPlannerIndex];
+    // ★ (2026-07-15) 문서 ID로 재해석 후 삭제 (stale 인덱스로 엉뚱한 일정 삭제 방지)
+    var idx = editingPlannerId ? window._pi(editingPlannerId) : editingPlannerIndex;
+    if (idx < 0 || !plannerData[idx]) { closePlannerModal(); renderCalendar(); return; }
+    var row = plannerData[idx];
     var title = (row && row[1]) || '이 일정';
     if (!confirm('"' + title + '"을(를) 삭제할까요?')) return;
-    var idx = editingPlannerIndex;
+    idx = editingPlannerId ? window._pi(editingPlannerId) : idx;  // confirm 대기 후 재해석
     closePlannerModal();
-    await deletePlannerRow(idx);
+    if (idx >= 0) await deletePlannerRow(idx);
   }
 
   // 캘린더 직접 수정 → 시리즈 Annual Matrix 실시간 동기화 (2026-06-23)
@@ -1280,6 +1306,17 @@
   async function savePlannerEntry() {
     const btn = document.getElementById('planner-save-btn');
     btn.textContent = '저장 중...'; btn.disabled = true;
+    // ★ (2026-07-15) 모달이 열린 동안 목록이 바뀌었을 수 있음 — 문서 ID로 인덱스 재해석.
+    //   '열었을 때 번호'로 저장해 엉뚱한 일정을 덮어쓰던 사고 차단.
+    if (editingPlannerIndex !== null && editingPlannerId) {
+      var _ri = window._pi(editingPlannerId);
+      if (_ri < 0) {
+        btn.textContent = '저장'; btn.disabled = false;
+        alert('이 일정이 다른 기기/화면에서 변경됐어요. 캘린더를 새로 그렸으니 다시 시도해줘.');
+        closePlannerModal(); renderCalendar(); return;
+      }
+      editingPlannerIndex = _ri;
+    }
     const pCat = document.getElementById('p-category').value;
     var dateVal = document.getElementById('p-date').value;
     // 같은 날짜 이벤트 중 최대 order + 1
@@ -1361,27 +1398,31 @@
   async function deletePlannerRow(i) {
     try {
       var row = plannerData[i];
+      if (!row) { renderCalendar(); return; }  // ★ (2026-07-15) 목록이 바뀐 뒤의 stale 클릭 가드
       const id = row[7];
-      // 매트릭스에서 해당 날짜 범위의 카테고리 데이터도 삭제
       var matrixField = PLANNER_TO_MATRIX[row[2]];
       if ((row[2]||'').trim() === '글쓰기' && _isPublishingEvent(row[1], row[4])) matrixField = 'serial1';
+      await fbDelete('planner', id);
+      plannerData.splice(i, 1);
+      // ★ (2026-07-15) 매트릭스 셀 통째 비우기 → 남은 일정 기준 재계산
+      //   (같은 날 같은 카테고리에 다른 일정이 있어도 셀이 비워지던 오폭 수정)
       if (matrixField) {
-        var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-        var fieldIdx = FIELDS.indexOf(matrixField);
+        var fieldIdx = _MATRIX_FIELDS.indexOf(matrixField);
         var startD = new Date(row[0] + 'T00:00:00');
         var endD = new Date((row[5]||row[0]) + 'T00:00:00');
         for (var d = new Date(startD); d <= endD; d.setDate(d.getDate()+1)) {
           var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
           var mRow = matrixData.find(function(r){return r[0]===ds;});
           if (mRow && fieldIdx > 0) {
-            mRow[fieldIdx] = '';
-            var mId = mRow[10]||mRow[9];
-            if (mId) try { await fbUpdate('matrix', mId, rowToObj('matrix', mRow)); } catch(e){}
+            var newVal = computeMatrixCell(ds, fieldIdx);
+            if (mRow[fieldIdx] !== newVal) {
+              mRow[fieldIdx] = newVal;
+              var mId = mRow[10]||mRow[9];
+              if (mId) try { await fbUpdate('matrix', mId, rowToObj('matrix', mRow)); } catch(e){}
+            }
           }
         }
       }
-      await fbDelete('planner', id);
-      plannerData.splice(i, 1);
       renderCalendar();
       updatePlannerTracks();
       _afterCalEditSyncSeries(row);
@@ -1394,9 +1435,18 @@
     e.stopPropagation();
     // Ctrl 누른 채 드래그 → 복사 모드
     plannerCtrlDrag = e.ctrlKey || e.metaKey;
-    e.dataTransfer.setData('text/plain', String(idx));
+    // ★ (2026-07-15) 드래그 중 목록이 바뀌어도 안전하게 — payload에 인덱스 대신 문서 ID
+    var row = plannerData[idx];
+    var payload = (row && row[7]) ? ('pid:' + row[7]) : String(idx);
+    e.dataTransfer.setData('text/plain', payload);
     e.dataTransfer.effectAllowed = plannerCtrlDrag ? 'copy' : 'move';
     e.target.classList.add('opacity-50');
+  }
+  // 드롭 payload → 현재 시점 인덱스 (pid:문서ID 또는 레거시 숫자)
+  function _dragIdxFromPayload(payload) {
+    if ((payload || '').indexOf('pid:') === 0) return window._pi(payload.slice(4));
+    var n = parseInt(payload);
+    return isNaN(n) ? -1 : n;
   }
 
   function plannerDragEnd(e) {
@@ -1461,6 +1511,7 @@
     } else {
       listEl.innerHTML = events.map(function(ev) {
         var realIdx = plannerData.indexOf(ev);
+        var idxRefD = (ev[7]) ? "_pi('" + ev[7] + "')" : String(realIdx);  // ★ (2026-07-15) ID 해석
         var color = COLOR_MAP[ev[3]] || COLOR_MAP['blue'];
         var bg = (color.split(' ').find(function(c){return c.startsWith('bg-');}) || 'bg-indigo-100');
         var textCls = (color.split(' ').find(function(c){return c.startsWith('text-');}) || 'text-indigo-700');
@@ -1469,12 +1520,12 @@
         var rangeText = (end && end > start) ? ' (' + start.slice(5).replace('-','/') + ' ~ ' + end.slice(5).replace('-','/') + ')' : '';
         var isPub = ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||'');
         var icon = isPub ? '🎯' : (ev[2] === '생일' ? '🎂' : '');
-        return '<div class="flex items-center gap-3 p-3 rounded-xl ' + bg + ' cursor-pointer hover:opacity-80 transition" onclick="closeDayEventsModal();openPlannerModal(' + realIdx + ')">' +
+        return '<div class="flex items-center gap-3 p-3 rounded-xl ' + bg + ' cursor-pointer hover:opacity-80 transition" onclick="closeDayEventsModal();openPlannerModal(' + idxRefD + ')">' +
           '<div class="flex-1 min-w-0">' +
             '<p class="text-sm font-bold ' + textCls + ' break-words">' + (icon ? icon + ' ' : '') + (ev[1]||'') + rangeText + '</p>' +
             '<p class="text-[10px] text-slate-500 mt-0.5">' + (ev[2]||'') + '</p>' +
           '</div>' +
-          '<button onclick="event.stopPropagation();deletePlannerRow(' + realIdx + ');closeDayEventsModal();" class="p-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button>' +
+          '<button onclick="event.stopPropagation();deletePlannerRow(' + idxRefD + ');closeDayEventsModal();" class="p-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">delete</span></button>' +
         '</div>';
       }).join('');
     }
@@ -1931,8 +1982,8 @@
   }
 
   async function reorderPlannerEvent(e, targetIdx) {
-    var dragIdx = parseInt(e.dataTransfer.getData('text/plain'));
-    if (isNaN(dragIdx) || dragIdx === targetIdx) return;
+    var dragIdx = _dragIdxFromPayload(e.dataTransfer.getData('text/plain'));
+    if (dragIdx < 0 || dragIdx === targetIdx) return;
     var dragRow = plannerData[dragIdx];
     var targetRow = plannerData[targetIdx];
     if (!dragRow || !targetRow) return;
@@ -1961,6 +2012,7 @@
   }
 
   async function dropPlannerEvent(idx, newDate) {
+    if (idx < 0 || !plannerData[idx]) return;  // ★ (2026-07-15) stale 드롭 가드
     if (plannerData[idx][0] === newDate) return; // 같은 날짜면 무시
     try {
       const id = plannerData[idx][7];
@@ -1979,12 +2031,17 @@
       if (matrixField) {
         var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
         var fIdx = FIELDS.indexOf(matrixField);
-        // 이전 날짜 범위 클리어
+        // 이전 날짜 범위: ★ (2026-07-15) 통째 비우기 → 남은 일정 기준 재계산
+        //   (같은 날 같은 카테고리의 다른 일정 표기까지 지워지던 오폭 수정.
+        //    메모리상 날짜 이동이 이미 반영돼 재계산에서 이 일정은 자동 제외됨)
         var oldS = new Date(oldStart+'T00:00:00'), oldE = new Date((oldEnd||oldStart)+'T00:00:00');
         for (var od=new Date(oldS);od<=oldE;od.setDate(od.getDate()+1)){
           var ods=od.getFullYear()+'-'+String(od.getMonth()+1).padStart(2,'0')+'-'+String(od.getDate()).padStart(2,'0');
           var omr=matrixData.find(function(r){return r[0]===ods;});
-          if(omr&&fIdx>0){omr[fIdx]='';var oid=omr[10]||omr[9];if(oid)try{await fbUpdate('matrix',oid,rowToObj('matrix',omr));}catch(e){}}
+          if(omr&&fIdx>0){
+            var recalc=computeMatrixCell(ods,fIdx);
+            if(omr[fIdx]!==recalc){omr[fIdx]=recalc;var oid=omr[10]||omr[9];if(oid)try{await fbUpdate('matrix',oid,rowToObj('matrix',omr));}catch(e){}}
+          }
         }
         // 새 날짜 범위 추가
         try { await syncPlannerToMatrix(plannerData[idx]); } catch(e){}
@@ -8340,19 +8397,21 @@
       return;
     }
 
-    // ▶ 1단계: 캘린더의 모든 publishing/draft/synopsis/revision 작품 관련 일정을 모두 삭제 (work_id 유무 무관)
+    // ▶ 1단계: 캘린더의 모든 작품 관련 일정 삭제 — ★ (2026-07-15) 행참조+배치 방식
+    if (typeof ensureFreshPlanner === 'function') await ensureFreshPlanner(0);
     var workNotePattern = /phase:(publishing|draft|synopsis|revision)|work_id:/;
-    var toRemove = [];
-    plannerData.forEach(function(row, idx) {
-      if (workNotePattern.test((row[4]||'').toString())) toRemove.push(idx);
+    var rowsToRemove = plannerData.filter(function(row) {
+      return workNotePattern.test((row[4]||'').toString());
     });
-    toRemove.sort(function(a, b) { return b - a; });
     var removedCount = 0;
-    for (var i = 0; i < toRemove.length; i++) {
-      var rid = plannerData[toRemove[i]][7];
-      if (rid) { try { await fbDelete('planner', rid); removedCount++; } catch(e){} }
-      plannerData.splice(toRemove[i], 1);
+    for (var i = 0; i < rowsToRemove.length; i += 400) {
+      var batch = db.batch();
+      rowsToRemove.slice(i, i + 400).forEach(function(r) { if (r[7]) { batch.delete(db.collection('planner').doc(r[7])); removedCount++; } });
+      try { await batch.commit(); } catch(e) { console.error('[fullResync] batch delete 실패', e); }
     }
+    if (typeof _forgetRecentAdds === 'function') _forgetRecentAdds(rowsToRemove.map(function(r){ return r[7]; }).filter(Boolean));
+    var rmSet = new Set(rowsToRemove);
+    plannerData = plannerData.filter(function(r) { return !rmSet.has(r); });
     console.log('🗑️ 기존 작품 일정 ' + removedCount + '개 정리됨 (중복 방지)');
 
     // ▶ 2단계: 모든 confirmed 작품을 캘린더에 재추가
@@ -13102,42 +13161,87 @@
     if (!MATRIX_TO_PLANNER[f]) MATRIX_TO_PLANNER[f] = k;
   });
 
+  var _MATRIX_FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
+
+  // ★ 공용 (2026-07-15): 특정 날짜의 매트릭스 매핑 칸 "기대값" = 그 날짜에 걸친
+  //   캘린더 일정 제목들의 join. 벌크 동기화(loadPlanner/loadMatrix)와 동일 규칙
+  //   (연차 '1.0 ' prefix + 주말/공휴일 스킵, 다일 일정 포함) — 구현 불일치로
+  //   저장할 때와 로드할 때 값이 달라지던 문제의 근원 제거.
+  function computeMatrixCell(dateStr, fieldIdx) {
+    var vals = [];
+    (plannerData || []).forEach(function(r) {
+      if (!r || !r[0] || !r[1]) return;
+      var cat = (r[2] || '').trim();
+      var f = PLANNER_TO_MATRIX[cat];
+      if (cat === '글쓰기' && _isPublishingEvent(r[1], r[4])) f = 'serial1';
+      if (!f || _MATRIX_FIELDS.indexOf(f) !== fieldIdx) return;
+      var end = r[5] || r[0];
+      if (dateStr < r[0] || dateStr > end) return;
+      var v = r[1];
+      if (cat === '연차') {
+        var d = new Date(dateStr + 'T00:00:00');
+        var hol = getKoreanHolidays(d.getFullYear());
+        if (d.getDay() === 0 || d.getDay() === 6 || hol[dateStr]) return;
+        v = '1.0 ' + r[1];
+      }
+      vals.push(v);
+    });
+    return vals.join(', ');
+  }
+
   async function syncMatrixToPlanner(matrixRow) {
     var date = matrixRow[0];
     if (!date) return;
-    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-    // 매트릭스의 각 필드를 캘린더에 동기화
-    for (var fi = 2; fi < FIELDS.length; fi++) {
-      var val = matrixRow[fi];
-      var catName = MATRIX_TO_PLANNER[FIELDS[fi]];
+    // ★ 안전화 (2026-07-15):
+    //   ① 작품 일정(work_id/phase 마커)은 절대 건드리지 않음 — 매트릭스 셀 저장이
+    //      연재 이벤트 제목을 덮어쓰거나 지우던 사고 차단
+    //   ② 셀 값이 '캘린더에서 파생된 기대값'과 같으면 스킵 — 다른 셀만 고쳐도
+    //      전 필드가 재동기화되며 "A, B" joined 문자열이 이벤트로 역류하던 증식 차단
+    //   ③ 다일 일정은 기간 전체로 매칭 (시작일만 비교해 중간 날짜에 복제 생성되던 버그)
+    var isWorkEvt = function(r) { var n = (r[4] || '') + ''; return n.indexOf('work_id:') >= 0 || n.indexOf('phase:') >= 0; };
+    for (var fi = 2; fi < _MATRIX_FIELDS.length; fi++) {
+      var val = (matrixRow[fi] || '').toString().trim();
+      var catName = MATRIX_TO_PLANNER[_MATRIX_FIELDS[fi]];
       if (!catName) continue;
-      // 해당 날짜+카테고리의 기존 캘린더 일정 찾기
-      var existingIdx = -1;
-      for (var pi = 0; pi < plannerData.length; pi++) {
-        if (plannerData[pi][0] === date && plannerData[pi][2] === catName) { existingIdx = pi; break; }
-      }
+      if (val === computeMatrixCell(date, fi)) continue;  // ② 파생값 그대로면 변경 아님
+      // 해당 날짜(기간 포함)+카테고리의 일반(비작품) 일정만 후보로
+      var candidates = plannerData.filter(function(r) {
+        if (!r || r[2] !== catName || isWorkEvt(r)) return false;
+        var end = r[5] || r[0];
+        return date >= r[0] && date <= end;
+      });
+      // ★ 다일 일정 보호: 이 날짜에 '시작'하는 일정만 수정/삭제 대상.
+      //   기간 중간 날짜의 셀 편집으로 5일짜리 일정이 통째 개명/삭제되던 버그 방지.
+      var sameDay = candidates.filter(function(r) { return r[0] === date; });
       if (val) {
         var color = CAT_COLOR[catName] || 'slate';
-        if (existingIdx >= 0) {
-          // 업데이트
-          if (plannerData[existingIdx][1] !== val) {
-            plannerData[existingIdx][1] = val;
-            var pid = plannerData[existingIdx][7];
-            if (pid) try { await fbUpdate('planner', pid, {title: val}); } catch(e){}
+        if (sameDay.length > 0) {
+          var target = sameDay[0];
+          if (target[1] !== val) {
+            target[1] = val;
+            var pid = target[7];
+            if (pid) try { await fbUpdate('planner', pid, { title: val }); } catch(e) {}
           }
+        } else if (candidates.length > 0) {
+          // 다일 일정이 걸쳐 있을 뿐 — 개명도 신규 생성도 하지 않음 (no-op)
         } else {
-          // 새로 추가
-          var newRow = [date, val, catName, color, '', '', ''];
+          var newRow = [date, val, catName, color, '', '', '0'];
           try {
             var saved = await fbAdd('planner', rowToObj('planner', newRow));
             plannerData.push(newRow.concat([saved._id]));
-          } catch(e){}
+          } catch(e) {}
         }
-      } else if (existingIdx >= 0) {
-        // 값이 빈칸이면 캘린더에서 삭제
-        var pid = plannerData[existingIdx][7];
-        if (pid) try { await fbDelete('planner', pid); } catch(e){}
-        plannerData.splice(existingIdx, 1);
+      } else {
+        // 빈칸 = 이 날짜에서 시작하는 '단일' 일정만 삭제 (다일 일정·작품 일정 보호)
+        var delTargets = sameDay.filter(function(r) { return !r[5] || r[5] === r[0]; });
+        for (var ci = 0; ci < delTargets.length; ci++) {
+          var pid2 = delTargets[ci][7];
+          if (pid2) try { await fbDelete('planner', pid2); } catch(e) {}
+        }
+        if (delTargets.length) {
+          var delSet = new Set(delTargets);
+          plannerData = plannerData.filter(function(r) { return !delSet.has(r); });
+        }
       }
     }
   }
@@ -13161,11 +13265,12 @@
     }
     if (!startDate || !matrixField) return;
 
-    var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-    var fieldIdx = FIELDS.indexOf(matrixField);
+    var fieldIdx = _MATRIX_FIELDS.indexOf(matrixField);
     if (fieldIdx <= 0) return;
 
     // 시작일~종료일 모든 날짜에 대해 매트릭스 동기화
+    // ★ (2026-07-15) 제목 단독 덮어쓰기 → computeMatrixCell(그 날짜 전체 일정 join)로 통일.
+    //   벌크 동기화와 같은 규칙이라 로드할 때마다 값이 되돌아가던 불일치 제거.
     var cur = new Date(startDate + 'T00:00:00');
     var end = new Date(endDate + 'T00:00:00');
     var days = ['일','월','화','수','목','금','토'];
@@ -13173,15 +13278,18 @@
     try {
       while (cur <= end) {
         var dateStr = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+        var cellVal = computeMatrixCell(dateStr, fieldIdx);
         var existing = matrixData.find(function(r){ return r[0] === dateStr; });
         if (existing) {
-          existing[fieldIdx] = title;
-          var existId = existing[10] || existing[9];
-          if (existId) await fbUpdate('matrix', existId, rowToObj('matrix', existing));
-        } else {
+          if (existing[fieldIdx] !== cellVal) {
+            existing[fieldIdx] = cellVal;
+            var existId = existing[10] || existing[9];
+            if (existId) await fbUpdate('matrix', existId, rowToObj('matrix', existing));
+          }
+        } else if (cellVal) {
           var dayName = days[cur.getDay()];
           var newRow = [dateStr, dayName, '', '', '', '', '', '', '', ''];
-          newRow[fieldIdx] = title;
+          newRow[fieldIdx] = cellVal;
           var saved = await fbAdd('matrix', rowToObj('matrix', newRow));
           matrixData.push(newRow.concat([saved._id]));
         }
@@ -13673,6 +13781,12 @@
     const ref = await db.collection(collectionName).add(rowObj);
     rowObj._id = ref.id;
     backupToLocalStorage(collectionName, 'add', rowObj);
+    // ★ (2026-07-15) 방금 추가한 planner 문서 기록 — 진행 중이던 fetch 결과(요청 시점
+    //   스냅샷)가 plannerData를 통째 교체하면서 이 문서를 증발시키던 틈을 메움
+    if (collectionName === 'planner') {
+      window.__recentPlannerAdds = (window.__recentPlannerAdds || []).filter(function(a){ return Date.now() - a.t < 60000; });
+      window.__recentPlannerAdds.push({ t: Date.now(), id: ref.id, obj: rowObj });
+    }
     return rowObj;
   }
 
@@ -13686,6 +13800,17 @@
   async function fbDelete(collectionName, id) {
     await trashBeforeDelete(collectionName, id);
     await db.collection(collectionName).doc(id).delete();
+    // ★ (2026-07-15) 최근 저장분 복원 목록에서도 제거 — 삭제 직후 캘린더 재진입 시
+    //   fbAdd 안전망(__recentPlannerAdds)이 삭제된 문서를 부활시키던 버그 방지
+    if (collectionName === 'planner' && window.__recentPlannerAdds) {
+      window.__recentPlannerAdds = window.__recentPlannerAdds.filter(function(a) { return a.id !== id; });
+    }
+  }
+  // 배치 삭제 경로용 동일 정리
+  function _forgetRecentAdds(ids) {
+    if (!window.__recentPlannerAdds || !ids || !ids.length) return;
+    var s = new Set(ids);
+    window.__recentPlannerAdds = window.__recentPlannerAdds.filter(function(a) { return !s.has(a.id); });
   }
 
   // Convert array row to object based on collection schema
@@ -14243,6 +14368,9 @@
     const btn = document.getElementById('modal-save-btn');
     btn.textContent = '저장 중...';
     btn.disabled = true;
+    // ★ (2026-07-15) 편집 시 serial1(연재)·workingout 값 보존 — 무조건 ''로 밀어
+    //   연재 표시가 지워지던 버그 수정. 모달에 없는 필드는 기존 값 유지.
+    var _existingMx = (editingRowIndex !== null) ? matrixData[editingRowIndex] : null;
     const row = [
       document.getElementById('m-date').value,
       document.getElementById('m-day').value,
@@ -14250,15 +14378,22 @@
       document.getElementById('m-leave').value,
       document.getElementById('m-personal').value,
       document.getElementById('m-writing').value,
-      '',
+      _existingMx ? (_existingMx[6] || '') : '',
       document.getElementById('m-english').value,
       document.getElementById('m-ai').value,
-      '',
+      _existingMx ? (_existingMx[9] || '') : '',
     ];
+    // ★ (2026-07-15) 날짜를 바꿔 저장하면 연재 표기(serial1)는 날짜에 종속된 파생값이라
+    //   이월하지 않고 새 날짜 기준으로 재계산 (workingout도 이월 안 함)
+    if (_existingMx && row[0] !== _existingMx[0]) {
+      row[6] = computeMatrixCell(row[0], 6);
+      row[9] = '';
+    }
     try {
       var dateEnd = document.getElementById('m-date-end') ? document.getElementById('m-date-end').value : '';
       if (editingRowIndex !== null) {
-        const id = matrixData[editingRowIndex][9] || matrixData[editingRowIndex][10];
+        // ★ (2026-07-15) _id는 [10] — [9](workingout)를 ID로 오인하던 버그 수정
+        const id = matrixData[editingRowIndex][10] || matrixData[editingRowIndex][9];
         await fbUpdate('matrix', id, rowToObj('matrix', row));
         matrixData[editingRowIndex] = row.concat([id]);
       } else if (dateEnd && dateEnd > row[0]) {
@@ -14568,7 +14703,10 @@
   // 메모리 기반 planner→matrix 동기화 (Firestore 재읽기 없음)
   async function syncMatrixFromMemory() {
     var FIELDS = ['date','day','work','leave','personal','writing','serial1','english','ai_study','workingout'];
-    var MAPPED_FIELDS = [2,3,4,5,7,8];
+    // ★ (2026-07-15) serial1(6) 포함 + 연재 이벤트 serial1 오버라이드 — 다른 벌크 동기화
+    //   (loadPlanner/loadMatrix)·computeMatrixCell과 규칙 불일치로 연재 제목이 writing 칸에
+    //   섞여 저장 시 오염되던 버그 수정
+    var MAPPED_FIELDS = [2,3,4,5,6,7,8];
     var dayNames = ['일','월','화','수','목','금','토'];
     // plannerData에서 날짜별/필드별 그룹화
     var pByDate = {};
@@ -14576,6 +14714,7 @@
       var sRow = plannerData[si];
       var sEnd = sRow[5] || sRow[0];
       var sField = PLANNER_TO_MATRIX[(sRow[2]||'').trim()];
+      if ((sRow[2]||'').trim() === '글쓰기' && _isPublishingEvent(sRow[1], sRow[4])) sField = 'serial1';
       if (!sRow[0] || !sField || !sRow[1]) continue;
       var sFIdx = FIELDS.indexOf(sField);
       if (sFIdx <= 0) continue;
@@ -15908,11 +16047,67 @@
     return _works;
   }
 
+  // ═══ works 저장 — 작품별 병합 + 삭제 묘비 (2026-07-15) ═══
+  //   문제였던 것: works 전체가 문서 하나에 통째 저장(last-write-wins)이라,
+  //   낡은 기기가 저장하면 다른 기기가 방금 만든/고친 작품이 목록째 사라졌음.
+  //   해결: 저장 전 클라우드와 '작품별로'(updated_at 최신 승리) 병합.
+  //   삭제는 묘비(deleted: {id: 삭제시각})로 기록해 낡은 기기의 병합에서 부활 방지.
+  function _mergeWorks(localArr, cloudArr, tombs) {
+    var byId = {};
+    (cloudArr || []).forEach(function(w) { if (w && w.id) byId[w.id] = w; });
+    (localArr || []).forEach(function(w) {
+      if (!w || !w.id) return;
+      var c = byId[w.id];
+      if (!c || (w.updated_at || '') >= (c.updated_at || '')) byId[w.id] = w;
+    });
+    return Object.values(byId).filter(function(w) {
+      var dt = tombs[w.id];
+      return !(dt && dt >= (w.updated_at || ''));  // 삭제가 마지막 수정보다 뒤면 제외
+    });
+  }
+  function _worksTombs() { try { return JSON.parse(localStorage.getItem('atelier_works_deleted') || '{}'); } catch(e) { return {}; } }
+
   function saveWorks() {
     var ts = new Date().toISOString();
     localStorage.setItem('atelier_works', JSON.stringify(_works));
     localStorage.setItem('atelier_works_ts', ts);
-    try { db.collection('works').doc('list').set({ data: JSON.stringify(_works), updatedAt: ts }); } catch(e) {}
+    // ★ (2026-07-15) push 직렬화 — 동시 실행 경합으로 묘비가 stale 캡처본으로
+    //   덮여 삭제 작품이 부활하던 문제 방지
+    _worksPushChain = _worksPushChain.then(function() { return _pushWorksMerged(); }).catch(function() {});
+  }
+  var _worksPushChain = Promise.resolve();
+  // ★ 묘비는 구버전 코드가 절대 안 건드리는 별도 문서(works/deleted)에 보관.
+  //   (구버전 saveWorks가 works/list를 통째 set하면 list 안의 deleted 필드는 날아가므로)
+  async function _pushWorksMerged() {
+    try {
+      var tombs = _worksTombs();
+      var docs = await Promise.all([
+        db.collection('works').doc('list').get(),
+        db.collection('works').doc('deleted').get()
+      ]);
+      var doc = docs[0], tombDoc = docs[1];
+      var cloudWorks = [], cloudTombs = {};
+      if (doc.exists && doc.data().data) {
+        try { cloudWorks = JSON.parse(doc.data().data) || []; } catch(e) {}
+        cloudTombs = doc.data().deleted || {};
+      }
+      if (tombDoc.exists && tombDoc.data().tombs) {
+        var td = tombDoc.data().tombs;
+        Object.keys(td).forEach(function(id) { if (!cloudTombs[id] || td[id] > cloudTombs[id]) cloudTombs[id] = td[id]; });
+      }
+      // await 후 로컬 묘비 재읽기 (그 사이 deleteWork가 기록했을 수 있음) + 3원 max 병합
+      var tombsNow = _worksTombs();
+      Object.keys(tombsNow).forEach(function(id) { if (!tombs[id] || tombsNow[id] > tombs[id]) tombs[id] = tombsNow[id]; });
+      Object.keys(cloudTombs).forEach(function(id) { if (!tombs[id] || cloudTombs[id] > tombs[id]) tombs[id] = cloudTombs[id]; });
+      var merged = _mergeWorks(_works, cloudWorks, tombs);
+      var ts2 = new Date().toISOString();
+      _works = merged;
+      localStorage.setItem('atelier_works', JSON.stringify(merged));
+      localStorage.setItem('atelier_works_ts', ts2);
+      localStorage.setItem('atelier_works_deleted', JSON.stringify(tombs));
+      await db.collection('works').doc('deleted').set({ tombs: tombs, updatedAt: ts2 });
+      await db.collection('works').doc('list').set({ data: JSON.stringify(merged), updatedAt: ts2, deleted: tombs });
+    } catch(e) { console.warn('[saveWorks] 클라우드 병합 실패 — 다음 저장 때 재시도', e); }
   }
 
   function getWorkById(id) { return _works.find(function(w) { return w.id === id; }); }
@@ -15921,17 +16116,29 @@
   async function syncAllFromCloud() {
     console.log('[Sync] 클라우드 동기화 시작...');
     try {
-      // Works
-      var wDoc = await db.collection('works').doc('list').get();
+      // Works — ★ (2026-07-15) 문서 통째 LWW → 작품별 병합 (낡은 쪽이 최신 작품을 지우지 못하게)
+      var wDocs = await Promise.all([
+        db.collection('works').doc('list').get(),
+        db.collection('works').doc('deleted').get()
+      ]);
+      var wDoc = wDocs[0], wTombDoc = wDocs[1];
       if (wDoc.exists && wDoc.data().data) {
-        var rts = wDoc.data().updatedAt || '';
-        var lts = localStorage.getItem('atelier_works_ts') || '';
-        if (!lts || rts > lts) {
-          _works = JSON.parse(wDoc.data().data);
-          localStorage.setItem('atelier_works', wDoc.data().data);
-          localStorage.setItem('atelier_works_ts', rts);
-          console.log('[Sync] works ' + _works.length + '개 로드');
+        var cloudArr = [];
+        try { cloudArr = JSON.parse(wDoc.data().data) || []; } catch(e) {}
+        var tombsSync = _worksTombs();
+        var cloudTombsSync = wDoc.data().deleted || {};
+        if (wTombDoc.exists && wTombDoc.data().tombs) {
+          var wtd = wTombDoc.data().tombs;
+          Object.keys(wtd).forEach(function(id) { if (!cloudTombsSync[id] || wtd[id] > cloudTombsSync[id]) cloudTombsSync[id] = wtd[id]; });
         }
+        Object.keys(cloudTombsSync).forEach(function(id) { if (!tombsSync[id] || cloudTombsSync[id] > tombsSync[id]) tombsSync[id] = cloudTombsSync[id]; });
+        var localArr = [];
+        try { localArr = JSON.parse(localStorage.getItem('atelier_works') || '[]'); } catch(e) {}
+        _works = _mergeWorks(localArr, cloudArr, tombsSync);
+        localStorage.setItem('atelier_works', JSON.stringify(_works));
+        localStorage.setItem('atelier_works_ts', new Date().toISOString());
+        localStorage.setItem('atelier_works_deleted', JSON.stringify(tombsSync));
+        console.log('[Sync] works ' + _works.length + '개 병합 로드');
       }
       // Cal events
       var ceDoc = await db.collection('side_cal_events').doc('list').get();
@@ -15989,6 +16196,12 @@
   }
 
   function deleteWork(id) {
+    // ★ 삭제 묘비 기록 (2026-07-15): 낡은 기기의 병합에서 삭제된 작품이 부활하는 것 방지
+    try {
+      var tombs = _worksTombs();
+      tombs[id] = new Date().toISOString();
+      localStorage.setItem('atelier_works_deleted', JSON.stringify(tombs));
+    } catch(e) {}
     _works = _works.filter(function(w) { return w.id !== id; });
     saveWorks();
   }
@@ -16869,12 +17082,14 @@
       await rescheduleBusy(w, w.busyFromEp);
       console.log('[EditWork] busy reschedule from ep', w.busyFromEp);
     } else {
-      // 기존 흐름: 전체 삭제 후 재생성
-      var removed = await removeWorkCalEvents(w.id);
-      console.log('[EditWork] Removed', removed, 'old events, status:', w.status);
+      // ★ (2026-07-15) 확정 작품은 원자적 통째 교체(autoAdd 내부에서 처리 — 별도 삭제 불필요).
+      //   미확정이면 일정만 제거.
       if (w.status === 'confirmed') {
         await autoAddScheduleToCalendar(w);
-        console.log('[EditWork] Re-added calendar events');
+        console.log('[EditWork] 일정 원자 교체 완료');
+      } else {
+        var removed = await removeWorkCalEvents(w.id);
+        console.log('[EditWork] Removed', removed, 'events (미확정)');
       }
     }
     saveWorks();
@@ -16897,15 +17112,20 @@
   }
 
   function resyncWorkCal(id) {
+    if (_workSaving) return;  // ★ (2026-07-15) 이중 실행 가드 — 없어서 동시 재동기화 경합 가능했음
     var w = getWorkById(id);
     if (!w) return;
     showConfirm({ icon:'🔄', title:'캘린더 재동기화', message:'"' + (w.title||'') + '"의 캘린더 일정을\n새로 동기화할까요?\n\n기존 일정 삭제 후 다시 생성됩니다.', confirmText:'재동기화', onConfirm: async function() {
-      await removeWorkCalEvents(id);
-      await autoAddScheduleToCalendar(w);
-      var dups = await cleanupDuplicateWorkEvents();
-      renderWorkPipeline();
-      var msg = '"' + w.title + '" 재동기화 완료' + (dups > 0 ? ' (중복 ' + dups + '개 정리)' : '');
-      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + msg);
+      if (_workSaving) return;
+      _workSaving = true;
+      try {
+        // ★ 원자 교체(마커 있는 일정) + 마커 없는 레거시 중복 정리 (안전화된 dedup)
+        await autoAddScheduleToCalendar(w);
+        var dups = 0;
+        try { dups = await cleanupDuplicateWorkEvents(); } catch(e) {}
+        renderWorkPipeline();
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 재동기화 완료' + (dups > 0 ? ' (중복 ' + dups + '개 정리)' : ''));
+      } finally { _workSaving = false; }
     }});
   }
 
@@ -16995,26 +17215,10 @@
       }
     }
 
-    // plannerData에 추가 + Firestore 저장 (idempotent — 이미 존재하는 항목은 skip)
-    // ★ 동일 date + title이면 중복으로 간주 (work_id/phase 마커 유무 무관 — 옛 데이터까지 잡음)
-    var addedN = 0, skippedN = 0;
-    for (var i = 0; i < events.length; i++) {
-      var row = events[i];
-      var existing = plannerData.find(function(r) {
-        return r && r[0] === row[0] && r[1] === row[1];
-      });
-      if (existing) { skippedN++; continue; }
-      try {
-        var obj = rowToObj('planner', row);
-        var saved = await fbAdd('planner', obj);
-        plannerData.push(row.concat([saved._id]));
-        addedN++;
-      } catch(e) {
-        console.error('[Work Cal] Save error:', e);
-      }
-    }
-    renderCalendar();
-    console.log('[Work Cal]', work.title, '— added:', addedN, 'skipped (dup):', skippedN);
+    // ★ (2026-07-15) 원자적 재생성: 이 작품의 기존 일정 전체를 새 일정 세트로 통째 교체.
+    //   결정적 ID라 중복 불가능, 배치 커밋이라 반쪽 상태 불가능. 호출 전 별도 삭제 불필요.
+    var res = await replaceWorkEvents(work.id, events);
+    console.log('[Work Cal]', work.title, '— 생성/갱신:', res.added, '잔재 정리:', res.removed);
   }
 
   // ═══ 비지 모드 재배치 ═══ (2026-06-23)
@@ -17031,6 +17235,7 @@
   }
 
   async function rescheduleBusy(work, fromEp) {
+    await ensureFreshPlanner(3000);  // ★ (2026-07-15) 유지분 수집 전 최신화 — 내부 replaceWorkEvents(3000)와 같은 스냅샷 보장
     fromEp = Math.max(1, parseInt(fromEp) || 1);
     var eps = work.total_episodes || 20;
     var cat = '글쓰기';
@@ -17052,23 +17257,18 @@
       placeStart = new Date((pd.start || _fmtDate(new Date())) + 'T00:00:00');
     }
 
-    // 2) 삭제: 초고 fromEp 이상 + 퇴고 전체 + 연재 전체 (시놉·초고 1~(fromEp-1)는 유지)
-    var rm = [];
-    plannerData.forEach(function(r, i) {
+    // 2) 유지분 수집: 시놉 전체 + 초고 1~(fromEp-1) — 삭제 대신 새 세트에 포함시켜 원자 교체
+    //    ★ (2026-07-15) 부분 삭제→부분 추가의 반쪽 상태 위험 제거
+    var events = [];
+    plannerData.forEach(function(r) {
       if (!isMine(r)) return;
       var notes = r[4] || '';
-      if (notes.indexOf('phase:revision') >= 0 || notes.indexOf('phase:publishing') >= 0) { rm.push(i); return; }
-      if (notes.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) rm.push(i);
+      if (notes.indexOf('phase:revision') >= 0 || notes.indexOf('phase:publishing') >= 0) return;
+      if (notes.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) return;
+      events.push([r[0], r[1], r[2], r[3], r[4], r[5] || '', r[6] || '0']);  // 유지 (시놉·초고 1~N-1)
     });
-    rm.sort(function(a, b) { return b - a; });
-    for (var ri = 0; ri < rm.length; ri++) {
-      var rr = plannerData[rm[ri]], id = rr && rr[7];
-      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
-      plannerData.splice(rm[ri], 1);
-    }
 
     // 3) 새 이벤트 생성
-    var events = [];
     var draftPlaced = _placeBusyEps(placeStart, eps - (fromEp - 1), _busyDraftDow, fromEp);
     draftPlaced.forEach(function(x, k) { events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String(fromEp - 1 + k)]); });
     var draftEnd = draftPlaced.length ? draftPlaced[draftPlaced.length - 1].date : placeStart;
@@ -17096,12 +17296,8 @@
       pCur.setDate(pCur.getDate() + 7); epPub++;
     }
 
-    // 4) 저장 (중복 스킵)
-    for (var i = 0; i < events.length; i++) {
-      var row = events[i];
-      if (plannerData.find(function(r) { return r && r[0] === row[0] && r[1] === row[1]; })) continue;
-      try { var saved = await fbAdd('planner', rowToObj('planner', row)); plannerData.push(row.concat([saved._id])); } catch(e) { console.error('[busy] save', e); }
-    }
+    // 4) 원자 교체 (유지분 + 신규분 = 이 작품의 전체 새 일정 세트)
+    await replaceWorkEvents(work.id, events);
 
     // 5) work 갱신
     work.phases = work.phases || {};
@@ -17186,6 +17382,7 @@
   }
 
   async function rescheduleReverse(work, fromEp) {
+    await ensureFreshPlanner(3000);  // ★ (2026-07-15) 유지분 수집 전 최신화 — 내부 replaceWorkEvents(3000)와 같은 스냅샷 보장
     fromEp = Math.max(1, parseInt(fromEp) || 1);
     var eps = work.total_episodes || 20;
     var cat = '글쓰기';
@@ -17207,21 +17404,18 @@
       if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재일이 너무 일러 역산 불가 — 최소 ' + _fmtDate(rr.minPublish) + '. 일정 변경 안 됨');
       return;
     }
-    // 삭제: 초고 fromEp 이상 + 퇴고 전체 + 연재 전체 (초고 1~(fromEp-1)는 유지)
-    var rm = [];
-    plannerData.forEach(function(r, i){ if (!isMine(r)) return; var n = r[4] || '';
-      if (n.indexOf('phase:revision') >= 0 || n.indexOf('phase:publishing') >= 0) { rm.push(i); return; }
-      if (n.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) rm.push(i);
-    });
-    rm.sort(function(a, b){ return b - a; });
-    for (var ri = 0; ri < rm.length; ri++){ var rr2 = plannerData[rm[ri]], id = rr2 && rr2[7]; if (id){ try { await fbDelete('planner', id); } catch(e){} } plannerData.splice(rm[ri], 1); }
-    // 이벤트 생성
+    // ★ (2026-07-15) 원자 교체: 유지분(시놉 + 초고 1~(fromEp-1)) + 신규분을 한 세트로.
     var events = [];
+    plannerData.forEach(function(r){ if (!isMine(r)) return; var n = r[4] || '';
+      if (n.indexOf('phase:revision') >= 0 || n.indexOf('phase:publishing') >= 0) return;
+      if (n.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) return;
+      events.push([r[0], r[1], r[2], r[3], r[4], r[5] || '', r[6] || '0']);
+    });
     rr.draftPlaced.forEach(function(x, k){ events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String((rr.fromEp - 1) + k)]); });
     rr.revPlaced.forEach(function(x){ events.push([_fmtDate(x.date), '퇴고 ' + x.ep + '화', cat, color, noteBase + '|phase:revision', '', String(x.ep - 1)]); });
     var pCur = new Date(work.publish_start + 'T00:00:00'), pubEnd = new Date(pCur.getTime()), ep = 1;
     while (ep <= eps){ events.push([_fmtDate(pCur), ep + '화 (' + (work.series_name || '') + ')', cat, color, noteBase + '|phase:publishing', '', '0']); pubEnd = new Date(pCur.getTime()); pCur.setDate(pCur.getDate() + 7); ep++; }
-    for (var i = 0; i < events.length; i++){ var row = events[i]; if (plannerData.find(function(r){ return r && r[0] === row[0] && r[1] === row[1]; })) continue; try { var sv = await fbAdd('planner', rowToObj('planner', row)); plannerData.push(row.concat([sv._id])); } catch(e){} }
+    await replaceWorkEvents(work.id, events);
     // work 갱신
     work.phases = work.phases || {}; work.phases.draft = work.phases.draft || {};
     if (fromEp <= 1) work.phases.draft.start = _fmtDate(rr.draftStart);
@@ -17244,7 +17438,9 @@
   var _plannerFetchedAt = 0;
   async function ensureFreshPlanner(maxAgeMs) {
     var age = Date.now() - _plannerFetchedAt;
-    if ((plannerData || []).length > 0 && age < (maxAgeMs || 15000)) return;
+    // ★ (2026-07-15) 0 전달 시 강제 리프레시 — `0 || 15000` 함정 수정
+    var limit = (maxAgeMs === undefined || maxAgeMs === null) ? 15000 : maxAgeMs;
+    if ((plannerData || []).length > 0 && age < limit) return;
     try {
       var docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
@@ -17253,6 +17449,63 @@
     } catch(e) { console.warn('[ensureFreshPlanner] 실패 — 기존 메모리 유지', e); }
   }
   window._markPlannerFresh = function(){ _plannerFetchedAt = Date.now(); };
+
+  // ═══════════════════════════════════════════════════════════════
+  // ★ 원자적 작품 일정 재생성 엔진 (2026-07-15)
+  //   문제였던 것: 수십 건을 하나씩 삭제→하나씩 추가하는 동안 새로고침/네트워크 단절이
+  //   끼어들면 반쪽 상태(삭제만 됨 = 유실 / 추가만 겹침 = 중복)로 남았음.
+  //   해결:
+  //   · 결정적 문서 ID(we_{작품}_{phase}_{순번}) — 같은 일정은 항상 같은 주소라
+  //     재생성이 몇 번 반복돼도 중복이 "구조적으로" 불가능 (덮어쓰기만 됨)
+  //   · Firestore WriteBatch — 생성/삭제가 한 커밋으로 묶여 반쪽 상태가 없음
+  //     (생성 배치 먼저, 삭제 배치 나중 — 끊겨도 최악이 '옛 일정 잠깐 남음'이며 유실은 없음)
+  // ═══════════════════════════════════════════════════════════════
+  async function replaceWorkEvents(workId, newRows) {
+    await ensureFreshPlanner(3000);
+    var oldRows = plannerData.filter(function(r) {
+      return ((r[4] || '').toString()).indexOf('work_id:' + workId) >= 0;
+    });
+    // 결정적 ID 부여 (phase별 순번)
+    var seqByPhase = {};
+    var newDocs = newRows.map(function(row) {
+      var ph = ((((row[4] || '') + '').match(/phase:(\w+)/)) || [])[1] || 'etc';
+      var seq = seqByPhase[ph] = (seqByPhase[ph] || 0) + 1;
+      return { id: 'we_' + workId + '_' + ph + '_' + seq, row: row };
+    });
+    var newIds = {};
+    newDocs.forEach(function(d) { newIds[d.id] = true; });
+    var staleIds = [];
+    oldRows.forEach(function(r) { if (r[7] && !newIds[r[7]]) staleIds.push(r[7]); });
+    // 배치 커밋: set 먼저 → delete 나중 (청크 400)
+    var ops = [];
+    newDocs.forEach(function(d) { ops.push({ t: 's', id: d.id, obj: rowToObj('planner', d.row) }); });
+    staleIds.forEach(function(id) { ops.push({ t: 'd', id: id }); });
+    for (var i = 0; i < ops.length; i += 400) {
+      var batch = db.batch();
+      ops.slice(i, i + 400).forEach(function(op) {
+        var ref = db.collection('planner').doc(op.id);
+        if (op.t === 's') { op.obj._createdAt = firebase.firestore.FieldValue.serverTimestamp(); batch.set(ref, op.obj); }
+        else batch.delete(ref);
+      });
+      await batch.commit();
+    }
+    // ★ (2026-07-15) 생성분을 최근 저장 목록에 기록(진행 중 fetch의 통째 교체로부터 보호),
+    //   삭제분은 목록에서 제거(부활 방지)
+    window.__recentPlannerAdds = (window.__recentPlannerAdds || []).filter(function(a) { return Date.now() - a.t < 60000; });
+    newDocs.forEach(function(d) {
+      window.__recentPlannerAdds.push({ t: Date.now(), id: d.id, obj: rowToObj('planner', d.row) });
+    });
+    _forgetRecentAdds(staleIds);
+    // 메모리 갱신 (동일 ID가 이미 있으면 중복 push 방지)
+    var oldSet = new Set(oldRows);
+    plannerData = plannerData.filter(function(r) { return !oldSet.has(r); });
+    newDocs.forEach(function(d) {
+      if (!plannerData.some(function(r) { return r[7] === d.id; })) plannerData.push(d.row.concat([d.id]));
+    });
+    renderCalendar();
+    console.log('[replaceWorkEvents]', workId, '— 생성/갱신', newDocs.length, '건, 잔재 삭제', staleIds.length, '건 (원자 커밋)');
+    return { added: newDocs.length, removed: staleIds.length };
+  }
 
   async function removeWorkCalEvents(workId) {
     await ensureFreshPlanner();

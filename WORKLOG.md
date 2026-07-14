@@ -33,6 +33,36 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-07-15 (기기: 맥북 · 동기화 2단계 구조 수술 + 적대적 리뷰)
+
+### ✅ 한 일
+
+**동기화 구조 2단계 — "일정을 아무리 바꿔도 안 꼬이는" 구조 수술 (app-1-pages.js)**
+- **원자적 작품 일정 엔진 `replaceWorkEvents`**: 결정적 문서 ID(we_{작품}_{phase}_{순번}) + Firestore WriteBatch. 재생성이 몇 번 반복돼도 중복 불가능(같은 주소 덮어쓰기), 중간에 끊겨도 반쪽 상태 없음(set 배치 먼저→delete 배치 나중). autoAdd/saveEditWork/resyncWorkCal/rescheduleBusy/rescheduleReverse/_fullResyncWorks 전부 이 엔진 경유
+- **works 저장 재설계**: 통문서 LWW → 작품별 updated_at 병합(_mergeWorks) + 삭제 묘비. 묘비는 구버전 코드가 못 건드리는 별도 문서(works/deleted)에 보관, push는 프로미스 체인으로 직렬화
+- **syncMatrixToPlanner 안전화**: 작품 마커 이벤트 절대 불가침 + computeMatrixCell 파생값 비교로 무변경 스킵("A, B" 증식 차단) + 다일 일정 보호(시작일 매칭만 수정, 단일 일정만 삭제)
+- **computeMatrixCell 공용화**: 단건/벌크/셀재계산 전부 한 구현 — 저장할 때와 로드할 때 값이 달라 서로 되돌리던 불일치 제거. syncMatrixFromMemory도 serial1 규칙 통일
+- **캘린더 UI ID화**: onclick/드래그/모달이 '렌더 시점 번호' 대신 클릭 시점 문서 ID 해석(_pi). 모달 저장/삭제도 editingPlannerId로 재해석 — 엉뚱한 일정 수정/삭제 원천 차단
+- **증발/부활 틈새 봉합**: fbAdd 최근 저장 목록(__recentPlannerAdds)으로 fetch 통째 교체에서 복원, fbDelete/배치삭제는 그 목록에서 제거(삭제 부활 방지)
+- **기타**: dropPlannerEvent·deletePlannerRow 매트릭스 셀 재계산(통째 비우기 오폭 수정), saveMatrixEntry _id [10] 우선 + serial1/workingout 보존 + 날짜 변경 시 재계산, ensureFreshPlanner(0) 강제 리프레시 수정
+
+**적대적 리뷰로 push 전 12건 잡음**: 구현 후 4관점(원자성/호출자 회귀/병합/매트릭스 셀) 멀티에이전트 리뷰 → 16건 발견 → 코드 재검증으로 12건 확정 → 전부 수정 후 배포. (다일 일정 파괴, 삭제 일정 부활, 묘비 경합 등 신규 버그를 배포 전에 차단)
+- 캐시: app-1-pages v201→v202, SW v279→v280
+
+### 🎯 다음 할 일
+- 누리 실사용 관찰: 일정 수시 변경 시 유실/중복 재발 여부 (재발 시 그 케이스가 3단계 입력)
+- 장기: 매트릭스 매핑 칸 완전 파생화(영속 제거), 묘비 90일 prune
+
+### 🚧 막힌 점 / 결정 보류
+- (없음)
+
+### 💭 메모
+- 구버전 혼용 주의: 다른 기기(아이맥/윈도우)는 다음 접속 때 SW가 새 코드 로드. 혼용 창에서 works 저장 시 구버전이 doc-LWW로 덮을 수 있으나 묘비 별도 문서 + 병합 push가 다음 저장에서 복원
+- 중복 정리는 수동 버튼 + 재동기화 버튼에만 연결 (자동 실행 없음)
+
+---
+
+
 ## 2026-07-14 (기기: 맥북 · 동기화 구조 감사 + 사고 차단 패치 1단계)
 
 ### ✅ 한 일
