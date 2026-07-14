@@ -329,6 +329,7 @@
       // ★ 2단계: 신선한 데이터 fetch
       const docs = await fbRead('planner');
       plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+      if (typeof window._markPlannerFresh === 'function') window._markPlannerFresh();
 
       // ★ 3단계: 즉시 render — 사용자는 여기까지면 캘린더 보임
       _initCalNavSelects();
@@ -457,19 +458,9 @@
         console.log('Matrix synced from planner:', matrixSynced, 'entries');
       }
 
-      // 안전망: 누적된 중복 + 삭제된 작품의 고아 일정 자동 정리 (idempotent)
-      if (typeof cleanupDuplicateWorkEvents === 'function') {
-        try {
-          var dupCnt = await cleanupDuplicateWorkEvents();
-          if (dupCnt > 0) console.log('[loadPlanner BG] 자동 중복 정리:', dupCnt, '개');
-        } catch(e) { console.warn('auto dedupe failed', e); }
-      }
-      if (typeof cleanupOrphanWorkEvents === 'function') {
-        try {
-          var orphanCnt = await cleanupOrphanWorkEvents();
-          if (orphanCnt > 0) console.log('[loadPlanner BG] 자동 고아 정리:', orphanCnt, '개');
-        } catch(e) { console.warn('auto orphan cleanup failed', e); }
-      }
+      // ★ 자동 중복/고아 정리 제거 (2026-07-14): stale한 _works/plannerData 기준으로
+      //   다른 기기가 방금 만든 일정을 '고아'로 오판해 삭제하던 유실 사고의 발화점.
+      //   정리는 캘린더의 수동 '중복 정리' 버튼(manualCleanupDuplicates)으로만 실행.
     } catch(err) {
       console.error('Planner background load error:', err);
     }
@@ -478,30 +469,8 @@
   function renderCalendar() {
     const MONTHS_KR = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     _syncCalNavSelects();
-    // ★ 세션 1회 자동 정리: 중복(stale) + 고아(삭제된 작품의 잔재) 둘 다
-    if (!window._calDedupeRanOnce && typeof cleanupDuplicateWorkEvents === 'function' && (plannerData||[]).length > 0) {
-      window._calDedupeRanOnce = true;
-      (async function(){
-        try {
-          var dupN = await cleanupDuplicateWorkEvents();
-          var orphanN = 0;
-          if (typeof cleanupOrphanWorkEvents === 'function') {
-            orphanN = await cleanupOrphanWorkEvents();
-          }
-          var totalN = (dupN || 0) + (orphanN || 0);
-          if (totalN > 0) {
-            console.log('[CalDedup] 자동 정리: 중복', dupN || 0, '+ 고아', orphanN || 0, '=', totalN, '개');
-            if (typeof showSyncToast === 'function') {
-              var parts = [];
-              if (dupN > 0) parts.push('중복 ' + dupN);
-              if (orphanN > 0) parts.push('삭제된 작품 잔재 ' + orphanN);
-              showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> ' + parts.join(' · ') + ' 자동 정리됨');
-            }
-            renderCalendar();
-          }
-        } catch(e) { console.warn('[CalDedup] 실패:', e); }
-      })();
-    }
+    // ★ 세션 1회 자동 정리 제거 (2026-07-14): 로드 미완료 상태에서 삭제가 돌던 유실 발화점.
+    //   수동 '중복 정리' 버튼(manualCleanupDuplicates)으로만 실행.
 
     const grid = document.getElementById('planner-grid');
     grid.innerHTML = '';
@@ -13125,8 +13094,13 @@
   };
 
   // 매트릭스 필드 → 캘린더 카테고리 역매핑
+  // ★ 첫 매핑 우선 (2026-07-14): '생일'→'personal'이 '개인'을 덮어써서
+  //   personal 셀 저장 시 '생일' 카테고리 복제 이벤트가 증식하던 버그 수정.
   var MATRIX_TO_PLANNER = {};
-  Object.keys(PLANNER_TO_MATRIX).forEach(function(k){ MATRIX_TO_PLANNER[PLANNER_TO_MATRIX[k]] = k; });
+  Object.keys(PLANNER_TO_MATRIX).forEach(function(k){
+    var f = PLANNER_TO_MATRIX[k];
+    if (!MATRIX_TO_PLANNER[f]) MATRIX_TO_PLANNER[f] = k;
+  });
 
   async function syncMatrixToPlanner(matrixRow) {
     var date = matrixRow[0];
@@ -13678,17 +13652,18 @@
       }
     } catch(e){}
   }
-  function trashBeforeDelete(collectionName, id) {
+  async function trashBeforeDelete(collectionName, id) {
+    // ★ async/await 화 (2026-07-14): 백업이 끝나기 전에 삭제가 진행돼
+    //   빠른 연속 삭제 시 휴지통에 안 남던 문제 — fbDelete가 백업 완료를 기다림.
     try {
       var trashKey = 'atelier_trash';
       var trash = JSON.parse(localStorage.getItem(trashKey) || '[]');
-      db.collection(collectionName).doc(id).get().then(function(doc) {
-        if (doc.exists) {
-          trash.push({collection: collectionName, id: id, data: doc.data(), deletedAt: new Date().toISOString()});
-          if (trash.length > 100) trash = trash.slice(-100);
-          localStorage.setItem(trashKey, JSON.stringify(trash));
-        }
-      });
+      var doc = await db.collection(collectionName).doc(id).get();
+      if (doc.exists) {
+        trash.push({collection: collectionName, id: id, data: doc.data(), deletedAt: new Date().toISOString()});
+        if (trash.length > 100) trash = trash.slice(-100);
+        localStorage.setItem(trashKey, JSON.stringify(trash));
+      }
     } catch(e){}
   }
 
@@ -13709,7 +13684,7 @@
 
   // Delete a doc by id
   async function fbDelete(collectionName, id) {
-    trashBeforeDelete(collectionName, id);
+    await trashBeforeDelete(collectionName, id);
     await db.collection(collectionName).doc(id).delete();
   }
 
@@ -13787,6 +13762,7 @@
       var [mDocs, pDocs] = await Promise.all([fbRead('matrix'), fbRead('planner')]);
       matrixData = mDocs.map(function(d){ return objToRow('matrix', d).concat([d._id]); });
       plannerData = pDocs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+      if (typeof window._markPlannerFresh === 'function') window._markPlannerFresh();
 
       // ★ 중복 매트릭스 행 병합 (같은 날짜에 여러 행이 있으면 값 있는 것 우선)
       var _mxSeen = {};
@@ -14894,34 +14870,8 @@
     } catch(e) { console.error('renderWorkPipeline error:', e); }
     // AI 부업 수익 예측 — UI 제거됨 (2026-05-28). 자동 호출 비활성화.
     // 필요시 generateIncomeForecast() 글로벌 함수는 그대로 유지 (UI 없으면 early-exit).
-    // ─── 누적 중복 자동 정리 (2026-05-24) ───
-    // plannerData가 충분히 로드된 뒤 한 번 중복/고아 정리
-    // 이전 _autoMatrixGuard race condition으로 쌓인 중복 일정 자동 청소
-    setTimeout(function(){
-      if (!window._incomeDedupeRanOnce && typeof cleanupDuplicateWorkEvents === 'function'
-          && typeof plannerData !== 'undefined' && (plannerData||[]).length > 0) {
-        window._incomeDedupeRanOnce = true;
-        (async function(){
-          try {
-            var dupN = await cleanupDuplicateWorkEvents();
-            var orphanN = 0;
-            if (typeof cleanupOrphanWorkEvents === 'function') {
-              orphanN = await cleanupOrphanWorkEvents();
-            }
-            var totalN = (dupN || 0) + (orphanN || 0);
-            if (totalN > 0) {
-              console.log('[IncomeDedup] 자동 정리: 중복', dupN || 0, '+ 고아', orphanN || 0, '=', totalN, '개');
-              if (typeof showSyncToast === 'function') {
-                var parts = [];
-                if (dupN > 0) parts.push('중복 ' + dupN);
-                if (orphanN > 0) parts.push('고아 ' + orphanN);
-                showSyncToast('<span class="material-symbols-outlined text-sm mr-1">cleaning_services</span> ' + parts.join(' · ') + ' 자동 정리됨');
-              }
-            }
-          } catch(e) { console.warn('[IncomeDedup] 실패:', e); }
-        })();
-      }
-    }, 1500);
+    // ★ 부업 탭 자동 중복/고아 정리 제거 (2026-07-14): stale 데이터 기준 자동 삭제가
+    //   유실 사고의 발화점이라 수동 '중복 정리' 버튼으로만 실행.
   }
 
   function renderIncomeTable() {
@@ -15069,8 +15019,15 @@
         db.collection('income_series').doc(String(year)).get().then(function(doc) {
           if (doc.exists && doc.data().data) {
             localStorage.setItem(key, doc.data().data);
+            localStorage.setItem(key + '_ts', doc.data().updatedAt || '');
             console.log('[Series] Restored from Firebase for year', year);
-            location.reload();
+            // ★ location.reload() 제거 (2026-07-14): 작품 저장 등 쓰기 작업 도중
+            //   리로드가 끼어들면 절반만 저장된 채 끊기던 문제 — 화면만 다시 그림.
+            try {
+              if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
+              if (typeof renderGrowthChart === 'function') renderGrowthChart();
+              if (typeof updateIncomeBottomStats === 'function') updateIncomeBottomStats();
+            } catch(e){}
           }
         });
       } catch(e){}
@@ -15144,9 +15101,11 @@
   }
   function saveSeriesData(d, yr) {
     var year = yr || _matrixYear;
+    var ts = new Date().toISOString();
     localStorage.setItem(seriesKeyForYear(year), JSON.stringify(d));
+    localStorage.setItem(seriesKeyForYear(year) + '_ts', ts);  // LWW 비교용 (2026-07-14)
     // Firebase에도 백업
-    try { db.collection('income_series').doc(String(year)).set({data: JSON.stringify(d), updatedAt: new Date().toISOString()}); } catch(e){}
+    try { db.collection('income_series').doc(String(year)).set({data: JSON.stringify(d), updatedAt: ts}); } catch(e){}
   }
 
   function getCalEvents() {
@@ -15297,6 +15256,9 @@
       _works.forEach(function(w) { if ((w.series_id === b.id || w.series_name === b.name) && w.publish_start && w.publish_start < bMin) bMin = w.publish_start; });
       return aMin.localeCompare(bMin);
     });
+    // ★ 화면 정렬 순서 기록 (2026-07-14): 핸들러(edit/delete/셀편집)가 정렬 전
+    //   저장 순서 인덱스로 접근해 엉뚱한 시리즈를 수정/삭제하던 버그 — id로 찾도록 순서표 저장.
+    _incomeSeriesOrder = series.map(function(s){ return s.id; });
     var curMonth = (new Date().getFullYear() === _matrixYear) ? new Date().getMonth() : -1;
     var html = '';
     series.forEach(function(s, si) {
@@ -15425,12 +15387,22 @@
     renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
 
+  // 화면(정렬 후) 인덱스 → 실제 시리즈 객체 해석. 순서표는 renderIncomeMatrix가 기록.
+  var _incomeSeriesOrder = [];
+  function _seriesBySi(data, si) {
+    var sid = _incomeSeriesOrder[si];
+    var s = sid ? data.find(function(x){ return x.id === sid; }) : null;
+    return s || data[si];
+  }
+
   function editSeries(si) {
     var data = getSeriesData();
-    var oldName = data[si].name;
+    var target = _seriesBySi(data, si);
+    if (!target) return;
+    var oldName = target.name;
     var name = prompt('시리즈 이름 수정:', oldName);
     if (!name || name === oldName) return;
-    data[si].name = name;
+    target.name = name;
     saveSeriesData(data);
     // 다른 연도에도 이름 변경 반영 + Scheduler 이벤트도 업데이트
     for (var yr = 2024; yr <= 2030; yr++) {
@@ -15453,7 +15425,9 @@
 
   function deleteSeries(si) {
     var data = getSeriesData();
-    var seriesName = data[si].name;
+    var target = _seriesBySi(data, si);
+    if (!target) return;
+    var seriesName = target.name;
     if (!confirm('"' + seriesName + '" 시리즈를 현재 연도에서 삭제할까요?\n(다른 연도 데이터는 유지됩니다)')) return;
     // 관련 캘린더 이벤트: 현재 연도 것만 삭제
     var yrStr = String(_matrixYear);
@@ -15461,7 +15435,7 @@
       return !(e.series === seriesName && (e.date||'').startsWith(yrStr));
     });
     saveCalEvents(evts);
-    data.splice(si, 1);
+    data.splice(data.indexOf(target), 1);
     saveSeriesData(data);
     renderGrowthChart(); renderIncomeMatrix(); /* cal removed */ updateIncomeBottomStats();
   }
@@ -15484,7 +15458,7 @@
 
   function startCellEdit(td, si, month, field) {
     var data = getSeriesData();
-    var s = data[si];
+    var s = _seriesBySi(data, si);
     if (!s) return;
     var mKey = String(month);
     var mData = s.monthly && s.monthly[mKey];
@@ -15514,7 +15488,7 @@
       var val = input.value.trim();
       if (doSave) {
         var data2 = getSeriesData();
-        var s2 = data2[si];
+        var s2 = _seriesBySi(data2, si);
         if (!s2) return;
         if (!s2.monthly) s2.monthly = {};
         if (!s2.monthly[mKey]) s2.monthly[mKey] = {eps:'',rev:0,target:0};
@@ -15854,15 +15828,20 @@
     //   판정: (a) plannerData가 아예 비어있거나
     //         (b) publishing 이벤트가 0개인데 confirmed 작품이 있음 = 비정상
     var pData = (typeof plannerData !== 'undefined' && plannerData) ? plannerData : [];
-    var allPublishing = pData.filter(function(r) {
-      return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0;
+    // ★ 가드 연도 스코프 (2026-07-14): 기존엔 전체 연도 publishing 개수로 판정해서
+    //   "2026 이벤트만 있는 상태로 2027 매트릭스 열람" 시 가드를 통과해 2027 eps가 클리어됐음.
+    //   이제 '이 연도'의 publishing 이벤트 수 vs '이 연도에 연재가 걸친' confirmed 작품으로 판정.
+    var yearPublishing = pData.filter(function(r) {
+      return ((r[4]||'').toString()).indexOf('phase:publishing') >= 0 &&
+             ((r[0]||'').toString()).startsWith(yrStr);
     }).length;
-    var hasConfirmedWorks = (typeof _works !== 'undefined' && (_works||[]).some(function(w){
-      return w.status === 'confirmed' && w.publish_start && w.publish_end;
+    var hasConfirmedWorksThisYear = (typeof _works !== 'undefined' && (_works||[]).some(function(w){
+      if (w.status !== 'confirmed' || !w.publish_start || !w.publish_end) return false;
+      return w.publish_start.slice(0,4) <= yrStr && w.publish_end.slice(0,4) >= yrStr;
     }));
-    if (pData.length === 0 || (allPublishing === 0 && hasConfirmedWorks)) {
+    if (pData.length === 0 || (yearPublishing === 0 && hasConfirmedWorksThisYear)) {
       console.warn('[syncCalToMatrix] SKIP — plannerData 미로드 의심 (length=' + pData.length +
-        ', publishing=' + allPublishing + ', confirmedWorks=' + hasConfirmedWorks + ', year=' + year + ')');
+        ', publishing(' + yrStr + ')=' + yearPublishing + ', confirmedWorks=' + hasConfirmedWorksThisYear + ')');
       return;
     }
 
@@ -15882,7 +15861,8 @@
       plannerData.forEach(function(row) {
         var notes = (row[4]||'').toString();
         if (notes.indexOf('phase:publishing') < 0) return;
-        if (notes.indexOf('series_id:' + s.id) < 0 && (row[1]||'').indexOf('(' + s.name + ')') < 0) return;
+        // ★ series_id 경계 매칭 (2026-07-14): 's_1'이 's_17…'의 접두사로 오매칭되던 버그.
+        if (('|' + notes + '|').indexOf('series_id:' + s.id + '|') < 0 && (row[1]||'').indexOf('(' + s.name + ')') < 0) return;
         var d = (row[0]||'').toString();
         if (!d.startsWith(yrStr)) return;
         var m = new Date(d+'T00:00:00').getMonth();
@@ -15907,11 +15887,12 @@
         }
       }
 
-      // 캘린더 이벤트가 없어진 월: eps 클리어 (rev는 유지)
+      // 캘린더 이벤트가 없어진 월: eps 클리어 (rev·target은 유지)
       for (var m2 in s.monthly) {
         if (!monthEps[m2]) {
           s.monthly[m2].eps = '';
-          if (!s.monthly[m2].rev) delete s.monthly[m2];
+          // ★ target 검사 추가 (2026-07-14): 목표만 적어둔 월 객체가 통삭제되던 버그.
+          if (!s.monthly[m2].rev && !s.monthly[m2].target) delete s.monthly[m2];
         }
       }
     });
@@ -15970,8 +15951,15 @@
         var sDoc = await db.collection('income_series').doc(String(sy)).get();
         if (sDoc.exists && sDoc.data().data) {
           var sk = seriesKeyForYear(sy);
-          localStorage.setItem(sk, sDoc.data().data);
-          console.log('[Sync] series ' + sy + ' 로드');
+          // ★ LWW 비교 추가 (2026-07-14): 기존엔 무조건 덮어써서 아직 클라우드에
+          //   못 올라간 로컬 편집이 로그인 시마다 소리 없이 사라졌음.
+          var srts = sDoc.data().updatedAt || '';
+          var slts = localStorage.getItem(sk + '_ts') || '';
+          if (!slts || srts > slts) {
+            localStorage.setItem(sk, sDoc.data().data);
+            localStorage.setItem(sk + '_ts', srts);
+            console.log('[Sync] series ' + sy + ' 로드');
+          }
         }
       }
       console.log('[Sync] ✅ 동기화 완료');
@@ -16922,6 +16910,9 @@
   }
 
   async function autoAddScheduleToCalendar(work) {
+    // ★ (2026-07-14) 중복검사가 메모리 스냅샷 기준이라 stale이면 스케줄이 한 벌 더
+    //   생성되던 사고 방지 — 시작 전에 서버 기준으로 plannerData를 신선하게.
+    await ensureFreshPlanner();
     var cat = '글쓰기';
     var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
     var nomad = !!work.nomad;
@@ -17247,23 +17238,38 @@
     console.log('[reverse] rescheduled', work.title, '→ 카덴스', rr.label, '초고', draftStartStr, '~', _fmtDate(rr.draftEnd), '연재', work.publish_start);
   }
 
+  // ★ 작품 일정 변경 전 안전장치 (2026-07-14): 메모리 plannerData가 비었거나 오래됐으면
+  //   Firestore에서 새로 읽는다. 삭제·중복검사가 stale 스냅샷 기준으로 돌던 것이
+  //   "최근 일정 통째 유실 + 스케줄 한 벌 더 생성" 사고의 근본 원인.
+  var _plannerFetchedAt = 0;
+  async function ensureFreshPlanner(maxAgeMs) {
+    var age = Date.now() - _plannerFetchedAt;
+    if ((plannerData || []).length > 0 && age < (maxAgeMs || 15000)) return;
+    try {
+      var docs = await fbRead('planner');
+      plannerData = docs.map(function(d){ return objToRow('planner', d).concat([d._id]); });
+      _plannerFetchedAt = Date.now();
+      console.log('[ensureFreshPlanner] planner 재로드:', plannerData.length, '건');
+    } catch(e) { console.warn('[ensureFreshPlanner] 실패 — 기존 메모리 유지', e); }
+  }
+  window._markPlannerFresh = function(){ _plannerFetchedAt = Date.now(); };
+
   async function removeWorkCalEvents(workId) {
-    var toRemove = [];
-    plannerData.forEach(function(row, idx) {
-      var notes = (row[4] || '').toString();
-      if (notes.indexOf('work_id:' + workId) >= 0) toRemove.push(idx);
+    await ensureFreshPlanner();
+    // ★ ID 기반 삭제 (2026-07-14): 인덱스 splice가 await 사이에 어긋나며
+    //   무관한 일정을 지우던 버그 수정 — 행 참조로 수집해 문서 ID로 삭제.
+    var rowsToRemove = plannerData.filter(function(row) {
+      return ((row[4] || '').toString()).indexOf('work_id:' + workId) >= 0;
     });
-    console.log('[RemoveWorkCal] Found', toRemove.length, 'events for work_id:', workId, 'in', plannerData.length, 'total');
-    // 역순으로 삭제 (인덱스 안 밀리게)
-    toRemove.sort(function(a, b) { return b - a; });
-    for (var i = 0; i < toRemove.length; i++) {
-      var idx = toRemove[i];
-      var id = plannerData[idx][7];
+    console.log('[RemoveWorkCal] Found', rowsToRemove.length, 'events for work_id:', workId, 'in', plannerData.length, 'total');
+    for (var i = 0; i < rowsToRemove.length; i++) {
+      var id = rowsToRemove[i][7];
       if (id) { try { await fbDelete('planner', id); } catch(e) { console.error('[RemoveWorkCal] fbDelete failed for', id, e); } }
-      plannerData.splice(idx, 1);
     }
-    if (toRemove.length > 0) renderCalendar();
-    return toRemove.length;
+    var removeSet = new Set(rowsToRemove);
+    plannerData = plannerData.filter(function(r) { return !removeSet.has(r); });
+    if (rowsToRemove.length > 0) renderCalendar();
+    return rowsToRemove.length;
   }
 
   // 작품 일정 title 패턴 (마커 없는 옛 데이터도 잡기 위함)
@@ -17271,11 +17277,13 @@
 
   // deleteWork 업데이트: 캘린더 일정도 삭제
   async function cleanupDuplicateWorkEvents() {
+    await ensureFreshPlanner();
+    // ★ ID/행참조 기반으로 재작성 (2026-07-14): 인덱스 splice 어긋남 + 0번 행 falsy 버그 수정.
     var seen = {};
     var toRemove = [];
     // ★ date + title로 dedup (work_id/phase 마커 유무 무관 — 같은 날 같은 제목이면 중복)
     //   대상: 마커 있거나, 작품 일정 패턴(시놉/초고N화/퇴고N화/N화(...))의 제목
-    plannerData.forEach(function(row, idx) {
+    plannerData.forEach(function(row) {
       var notes = (row[4] || '').toString();
       var title = (row[1] || '').toString();
       var hasMarker = (notes.indexOf('work_id:') >= 0 || notes.indexOf('phase:') >= 0);
@@ -17285,28 +17293,27 @@
       var key = (row[0] || '') + '|' + title;
       if (seen[key]) {
         // 둘 중 마커 있는 쪽을 유지, 없는 쪽 삭제 우선
-        var prevIdx = seen[key];
-        var prevNotes = (plannerData[prevIdx][4] || '').toString();
+        var prevRow = seen[key];
+        var prevNotes = (prevRow[4] || '').toString();
         var prevHasMarker = (prevNotes.indexOf('work_id:') >= 0 || prevNotes.indexOf('phase:') >= 0);
         if (hasMarker && !prevHasMarker) {
           // 현재 행이 마커 있고 이전 행이 없으면 → 이전 행 삭제, seen 갱신
-          toRemove.push(prevIdx);
-          seen[key] = idx;
+          toRemove.push(prevRow);
+          seen[key] = row;
         } else {
           // 그 외에는 현재 행 삭제
-          toRemove.push(idx);
+          toRemove.push(row);
         }
       } else {
-        seen[key] = idx;
+        seen[key] = row;
       }
     });
-    toRemove.sort(function(a, b) { return b - a; });
     for (var i = 0; i < toRemove.length; i++) {
-      var idx = toRemove[i];
-      var id = plannerData[idx][7];
+      var id = toRemove[i][7];
       if (id) { try { await fbDelete('planner', id); } catch(e) {} }
-      plannerData.splice(idx, 1);
     }
+    var dupSet = new Set(toRemove);
+    plannerData = plannerData.filter(function(r) { return !dupSet.has(r); });
     var removedByTitle = toRemove.length;
 
     // ★ 추가: 같은 작품의 같은 날·같은 phase에 여러 이벤트가 있으면 (stale 누적)
@@ -17357,23 +17364,31 @@
       console.warn('[OrphanCleanup] _works 비어있음 → 안전상 스킵');
       return 0;
     }
+    await ensureFreshPlanner();
+    // ★ stale 로컬 보호 (2026-07-14): 다른 기기가 방금 만든 작품을 '고아'로 오판해
+    //   일정을 통삭제하던 사고 방지 — 로컬 _works와 클라우드 works의 ID '합집합'만 유효로 인정.
+    //   클라우드 확인이 실패하면 삭제 자체를 포기 (안전 우선).
     var validIds = {};
     (_works||[]).forEach(function(w) { if (w && w.id) validIds[w.id] = true; });
-    var toRemove = [];
-    plannerData.forEach(function(row, idx) {
-      var notes = (row[4] || '').toString();
-      var m = notes.match(/work_id:([^|]+)/);
-      if (!m) return;
-      var wid = m[1];
-      if (!validIds[wid]) toRemove.push(idx);
-    });
-    toRemove.sort(function(a, b) { return b - a; });
-    for (var i = 0; i < toRemove.length; i++) {
-      var idx = toRemove[i];
-      var id = plannerData[idx][7];
-      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
-      plannerData.splice(idx, 1);
+    try {
+      var wDoc = await db.collection('works').doc('list').get();
+      if (wDoc.exists && wDoc.data().data) {
+        JSON.parse(wDoc.data().data).forEach(function(w){ if (w && w.id) validIds[w.id] = true; });
+      }
+    } catch(e) {
+      console.warn('[OrphanCleanup] 클라우드 works 확인 실패 → 안전상 스킵', e);
+      return 0;
     }
+    var toRemove = plannerData.filter(function(row) {
+      var m = ((row[4] || '').toString()).match(/work_id:([^|]+)/);
+      return m && !validIds[m[1]];
+    });
+    for (var i = 0; i < toRemove.length; i++) {
+      var id = toRemove[i][7];
+      if (id) { try { await fbDelete('planner', id); } catch(e) {} }
+    }
+    var orphanSet = new Set(toRemove);
+    plannerData = plannerData.filter(function(r) { return !orphanSet.has(r); });
     if (toRemove.length > 0) renderCalendar();
     return toRemove.length;
   }

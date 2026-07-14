@@ -33,6 +33,44 @@
 
 <!-- 새 세션은 이 아래에 추가됩니다. 가장 최근이 맨 위. -->
 
+## 2026-07-14 (기기: 맥북 · 동기화 구조 감사 + 사고 차단 패치 1단계)
+
+### ✅ 한 일
+
+**Calendar↔Series Timeline↔Annual Matrix 동기화 구조 전체 감사 (멀티에이전트 6개, 교차 검증)**
+- 증상: 일정 저장 → 시리즈 일정 변경/동기화 → 최근 일정 유실 + 중복 + 오류 다발
+- 근본 원인 3개 확정:
+  1. 페이지 로드마다 자동 실행되던 중복/고아 정리 3곳이 **로드 미완료(stale) 데이터 기준으로 삭제** — 다른 기기가 방금 만든 일정을 '고아'로 오판해 통삭제
+  2. 삭제/수정이 **배열 인덱스 기준**이라 await 사이에 인덱스가 밀리면 무관한 일정 오삭제
+  3. 매트릭스↔캘린더 왕복 동기화 불일치 — '개인'→'생일' 역매핑 충돌로 복제 증식, joined 제목 역류, syncCalToMatrix 가드 구멍(연도 미스코프·target 미검사·series_id 접두사 오매칭)
+
+**사고 차단 패치 1단계 적용 (app-1-pages.js)**
+- 자동 정리 3곳 제거 (loadPlanner BG / renderCalendar 세션1회 / 부업탭 1.5초 타이머) → 수동 '중복 정리' 버튼만 유지
+- ensureFreshPlanner() 신설: 작품 일정 삭제/생성 전 Firestore에서 planner 강제 재로드 (15초 TTL)
+- removeWorkCalEvents / cleanupDuplicateWorkEvents / cleanupOrphanWorkEvents → 인덱스 splice 대신 행참조+문서ID 기반 삭제로 재작성 (0번 행 falsy 버그도 수정)
+- cleanupOrphanWorkEvents: 로컬 _works + 클라우드 works ID 합집합으로만 고아 판정, 클라우드 확인 실패 시 삭제 포기
+- MATRIX_TO_PLANNER 역매핑 첫 매핑 우선 ('생일'이 '개인' 덮어쓰던 버그)
+- syncCalToMatrix: 가드 연도 스코프 + eps 클리어 시 target 보존 + series_id 경계 매칭
+- Income Matrix: 정렬 후 화면 인덱스 ↔ 저장 순서 불일치로 엉뚱한 시리즈 수정/삭제되던 버그 → _incomeSeriesOrder(id 순서표) 경유로 해석
+- income_series 클라우드 복원에 updatedAt LWW 비교 추가 (무조건 덮어쓰기 제거)
+- getSeriesData의 location.reload() 제거 (쓰기 도중 리로드 폭탄), saveSeriesData에 로컬 _ts 기록
+- trashBeforeDelete await화 (백업 완료 전 삭제 진행되던 문제)
+- 캐시: app-1-pages v200→v201, SW v278→v279
+
+### 🎯 다음 할 일
+- **2단계 (구조 재설계, 별도 세션):** ① 매트릭스 매핑 칸(work/leave/personal/writing/serial1 등)과 income_series eps를 "저장된 복사본"이 아닌 렌더 시점 계산으로 전환 → 왕복 동기화(syncPlannerToMatrix/syncMatrixToPlanner/Phase A·B) 제거 ② 작품 일정에 결정적 ID + set(merge) upsert ③ works 통문서 → 작품당 1문서 (LWW 통삭제 제거)
+- Annual Matrix ↔ 캘린더 데이터 불일치 해소 보류 중: 캘린더(R 1~5월·12월)와 매트릭스(R 8월~) 중 어느 쪽이 맞는지 누리 확인 후 sync 방향 결정
+
+### 🚧 막힌 점 / 결정 보류
+- (없음 — 1단계는 회귀 위험 낮은 국소 패치로 한정)
+
+### 💭 메모
+- 진단 상세는 이 커밋 메시지와 멀티에이전트 감사 결과 참고. 공통 뿌리 = "로드 완료를 확인하지 않은 자동 쓰기 + 메모리 스냅샷을 진실로 간주하는 삭제/중복검사"
+- 자동 정리가 사라졌으므로 중복이 보이면 캘린더의 '중복 정리' 버튼을 수동 실행 (이제 서버 기준으로 안전하게 동작)
+
+---
+
+
 ## 2026-06-23 (기기: 아이맥)
 
 ### ✅ 한 일
