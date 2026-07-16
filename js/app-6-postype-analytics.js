@@ -666,7 +666,36 @@
     wrap.__months = months;
   }
 
-  // ─── 위젯 1: 시리즈 회차별 곡선 ─────────────────────────────────
+  // ─── 위젯 1: 시리즈 회차별 매출 — 카드 + 클릭 상세 분석 (2026-07-15 전면 재설계) ───
+  let _seriesDetailOpen = null;
+  window.togglePostypeSeriesDetail = function(name){
+    _seriesDetailOpen = (_seriesDetailOpen === name) ? null : name;
+    renderSeriesCurves();
+    if (_seriesDetailOpen){
+      setTimeout(() => { const el = document.getElementById('postype-series-detail'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 60);
+    }
+  };
+
+  const _fmtShort = v => v >= 10000 ? ((v/10000) >= 100 ? Math.round(v/10000) : (v/10000).toFixed(1)) + '만' : Math.round(v/1000) + 'k';
+
+  function _seriesEpisodes(s, postById){
+    const epNum = p => { const m = (p.title || '').match(/(\d+)\s*화/); return m ? parseInt(m[1]) : null; };
+    return (s.posts || []).map(id => postById[id]).filter(Boolean)
+      .sort((a, b) => { const na = epNum(a), nb = epNum(b); return (na != null && nb != null) ? na - nb : ((a.firstTs||'').localeCompare(b.firstTs||'')); })
+      .map(p => {
+        const n = epNum(p);
+        return {
+          ep: n, label: n != null ? n + '화' : (p.title || '?'),
+          date: (p.firstTs || '').slice(0, 10),
+          rev: p.totalRev || 0,
+          tx: p.txCount || 0,
+          unit: p.txCount ? Math.round((p.totalRev || 0) / p.txCount / 100) * 100 : 0,
+          d1: p.revByAge ? p.revByAge.d1 : null,
+          d7: p.revByAge ? p.revByAge.d7 : null
+        };
+      });
+  }
+
   function renderSeriesCurves(){
     const wrap = document.getElementById('postype-series-curves');
     if (!wrap) return;
@@ -685,51 +714,134 @@
       return;
     }
     const postById = Object.fromEntries(posts.map(p => [p.postId, p]));
-    const epNum = p => { const m = (p.title || '').match(/(\d+)\s*화/); return m ? parseInt(m[1]) : null; };
-    wrap.innerHTML = top.map(s => {
-      // 제목의 실제 회차 번호로 정렬 (postId 순서가 회차 순서와 어긋날 수 있음)
-      const ps = (s.posts || []).map(id => postById[id]).filter(Boolean)
-        .sort((a, b) => { const na = epNum(a), nb = epNum(b); return (na != null && nb != null) ? na - nb : 0; });
-      if (ps.length < 2) return '';
-      const revs = ps.map(p => p.totalRev || 0);
+
+    let html = '';
+    top.forEach(s => {
+      const eps = _seriesEpisodes(s, postById);
+      if (eps.length < 2) return;
+      const revs = eps.map(e => e.rev);
       const max = Math.max(...revs, 1);
-      const minRev = Math.min(...revs);
-      const maxRev = Math.max(...revs);
-      const avgRev = Math.round(revs.reduce((a, b) => a + b, 0) / revs.length);
-      const peakIdx = revs.indexOf(maxRev);
-      const peakEp = epNum(ps[peakIdx]) != null ? epNum(ps[peakIdx]) + '화' : (peakIdx + 1) + '편';
-      const W = 100, H = 50;
-      const cx = i => (i / Math.max(ps.length - 1, 1)) * W;
+      const total = revs.reduce((a, b) => a + b, 0);
+      const avgRev = Math.round(total / eps.length);
+      const peakIdx = revs.indexOf(Math.max(...revs));
+      const peak = eps[peakIdx];
+      // 추세: 최근 3화 평균 vs 그 이전 평균 (첫화→막화 단순 비교의 왜곡 제거)
+      let trendHtml = '';
+      if (eps.length >= 5){
+        const recAvg = revs.slice(-3).reduce((a, b) => a + b, 0) / 3;
+        const prevArr = revs.slice(0, -3);
+        const prevAvg = prevArr.reduce((a, b) => a + b, 0) / prevArr.length;
+        if (prevAvg > 0){
+          const pct = Math.round((recAvg - prevAvg) / prevAvg * 100);
+          trendHtml = '<span class="' + (pct >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' font-bold" title="최근 3화 평균 ' + KRW(Math.round(recAvg)) + ' vs 이전 회차 평균 ' + KRW(Math.round(prevAvg)) + '">' + (pct >= 0 ? '▲' : '▼') + Math.abs(pct) + '%</span> <span class="text-slate-400">최근3화</span>';
+        }
+      }
+      const period = (eps[0].date && eps[eps.length-1].date)
+        ? eps[0].date.slice(5).replace('-', '/') + '~' + eps[eps.length-1].date.slice(5).replace('-', '/') : '';
+      const isOpen = _seriesDetailOpen === s.name;
+      const nameAttr = s.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const W = 100, H = 44;
+      const cx = i => (i / Math.max(eps.length - 1, 1)) * W;
       const cy = i => H - (revs[i] / max) * (H - 4) - 2;
-      const points = ps.map((p, i) => `${cx(i)},${cy(i)}`).join(' ');
-      const first = revs[0];
-      const last  = revs[revs.length - 1];
-      const trend = first > 0 ? Math.round((last - first) / first * 100) : 0;
-      const tc = trend >= 0 ? 'text-emerald-600' : 'text-rose-600';
-      // 라벨 = 제목에서 뽑은 실제 회차 번호. 무료 회차는 매출 데이터가 없어 빠지므로 첫 유료 회차부터 표시됨.
-      const firstEp = epNum(ps[0]) != null ? epNum(ps[0]) + '화' : '첫 편';
-      const lastEp  = epNum(ps[ps.length - 1]) != null ? epNum(ps[ps.length - 1]) + '화' : ps.length + '편';
-      const circles = ps.map((p, i) => `<circle cx="${cx(i)}" cy="${cy(i)}" r="${i === peakIdx ? 2.4 : 1.5}" fill="${i === peakIdx ? '#f59e0b' : '#6366f1'}"/>`).join('');
-      return `<div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
-        <div class="flex justify-between items-baseline mb-1.5">
-          <span class="text-xs font-bold text-slate-800 truncate" style="max-width:60%">${s.name}</span>
-          <span class="text-[10px] ${tc} font-bold whitespace-nowrap" title="첫 회차 대비 마지막 회차 증감 (${firstEp} → ${lastEp})">${ps.length}편 · ${trend >= 0 ? '+' : ''}${trend}%</span>
-        </div>
-        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:46px;display:block">
-          <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="1.5"/>${circles}
-        </svg>
-        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-          <span>${firstEp} ${KRW(first)}</span><span>${lastEp} ${KRW(last)}</span>
-        </div>
-        <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-2 pt-2 border-t border-slate-100 text-[10px]">
-          <div class="flex justify-between gap-1"><span class="text-slate-400">피크</span><span class="font-bold text-amber-600 tabular-nums">${peakEp}</span></div>
-          <div class="flex justify-between gap-1"><span class="text-slate-400">평균</span><span class="font-bold text-slate-700 tabular-nums">${KRW(avgRev)}</span></div>
-          <div class="flex justify-between gap-1"><span class="text-slate-400">최고</span><span class="font-bold text-slate-700 tabular-nums">${KRW(maxRev)}</span></div>
-          <div class="flex justify-between gap-1"><span class="text-slate-400">최저</span><span class="font-bold text-slate-700 tabular-nums">${KRW(minRev)}</span></div>
-        </div>
-      </div>`;
-    }).join('');
+      const points = eps.map((e, i) => cx(i) + ',' + cy(i)).join(' ');
+      const circles = eps.map((e, i) =>
+        '<circle cx="' + cx(i) + '" cy="' + cy(i) + '" r="' + (i === peakIdx ? 2.4 : 1.3) + '" fill="' + (i === peakIdx ? '#f59e0b' : '#6366f1') + '"><title>' + e.label + ' ' + KRW(e.rev) + '</title></circle>').join('');
+      html += '<div onclick="togglePostypeSeriesDetail(\'' + nameAttr + '\')" class="rounded-lg border ' + (isOpen ? 'border-indigo-300 ring-2 ring-indigo-100' : 'border-slate-100') + ' bg-slate-50/50 p-3 cursor-pointer hover:border-indigo-200 transition-all">' +
+        '<div class="flex justify-between items-baseline mb-0.5">' +
+          '<span class="text-xs font-bold text-slate-800 truncate" style="max-width:62%">' + s.name + '</span>' +
+          '<span class="text-[10px] text-slate-400 whitespace-nowrap">' + eps[0].label + '~' + eps[eps.length-1].label + ' · ' + eps.length + '편</span>' +
+        '</div>' +
+        '<div class="text-[10px] text-slate-400 mb-1.5">' + period + ' · 총 <b class="text-slate-600">' + KRW(total) + '</b> · 회차평균 <b class="text-slate-600">' + KRW(avgRev) + '</b></div>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" style="width:100%;height:42px;display:block">' +
+          '<polyline points="' + points + '" fill="none" stroke="#6366f1" stroke-width="1.5"/>' + circles +
+        '</svg>' +
+        '<div class="flex justify-between items-center mt-1.5 pt-1.5 border-t border-slate-100 text-[10px]">' +
+          '<span><span class="text-slate-400">피크</span> <b class="text-amber-600">' + peak.label + '</b> <span class="text-slate-500 tabular-nums">' + KRW(peak.rev) + '</span></span>' +
+          (trendHtml ? '<span>' + trendHtml + '</span>' : '') +
+        '</div>' +
+        '<div class="text-center text-[10px] ' + (isOpen ? 'text-indigo-500' : 'text-slate-300') + ' mt-1.5 font-bold">' + (isOpen ? '▲ 닫기' : '▼ 회차별 상세') + '</div>' +
+      '</div>';
+      if (isOpen) html += _seriesDetailHtml(s.name, eps, peakIdx);
+    });
+    wrap.innerHTML = html;
   }
+
+  function _seriesDetailHtml(name, eps, peakIdx){
+    const revs = eps.map(e => e.rev);
+    const max = Math.max(...revs, 1);
+    const total = revs.reduce((a, b) => a + b, 0);
+    const totalTx = eps.reduce((a, e) => a + e.tx, 0);
+    const minIdx = revs.indexOf(Math.min(...revs));
+    const avgUnit = totalTx ? Math.round(total / totalTx / 100) * 100 : 0;
+
+    const chips = [
+      ['연재 기간', eps[0].date + ' ~ ' + eps[eps.length-1].date],
+      ['수집 회차', eps[0].label + '~' + eps[eps.length-1].label + ' (' + eps.length + '편)'],
+      ['총 매출', KRW(total)],
+      ['총 판매', totalTx.toLocaleString('ko-KR') + '건'],
+      ['회차당 평균', KRW(Math.round(total / eps.length))],
+      ['평균 구매액', KRW(avgUnit)],
+      ['최고', eps[peakIdx].label + ' · ' + KRW(eps[peakIdx].rev)],
+      ['최저', eps[minIdx].label + ' · ' + KRW(eps[minIdx].rev)]
+    ].map(c => '<div class="bg-white rounded-lg border border-slate-100 px-3 py-2"><div class="text-[9px] uppercase tracking-wider text-slate-400">' + c[0] + '</div><div class="text-xs font-bold text-slate-700 tabular-nums mt-0.5">' + c[1] + '</div></div>').join('');
+
+    const W = 800, H = 240, PL = 46, PR = 8, PT = 14, PB = 26;
+    const innerW = W - PL - PR, innerH = H - PT - PB;
+    const n = eps.length;
+    const bw = Math.min(innerW / n * 0.62, 34);
+    const gridLines = [0.25, 0.5, 0.75, 1].map(f => {
+      const y = PT + innerH - innerH * f;
+      return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="2,3"/>' +
+        '<text x="' + (PL - 6) + '" y="' + (y + 3) + '" text-anchor="end" fill="#94a3b8" font-size="9">' + _fmtShort(max * f) + '</text>';
+    }).join('');
+    const showEvery = n > 20 ? 2 : 1;
+    const bars = eps.map((e, i) => {
+      const x = PL + (i + 0.5) / n * innerW - bw / 2;
+      const h = (e.rev / max) * innerH;
+      const y = PT + innerH - h;
+      const isPeak = i === peakIdx;
+      const prev = i > 0 ? eps[i-1].rev : null;
+      const pct = (prev && prev > 0) ? Math.round((e.rev - prev) / prev * 100) : null;
+      return '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + Math.max(h, 1) + '" rx="2" fill="' + (isPeak ? '#f59e0b' : '#6366f1') + '" opacity="' + (isPeak ? 1 : 0.85) + '">' +
+          '<title>' + e.label + ' (' + e.date + ')&#10;매출 ' + KRW(e.rev) + ' · ' + e.tx + '건 · 평균 ' + KRW(e.unit) + (pct != null ? '&#10;전화 대비 ' + (pct >= 0 ? '+' : '') + pct + '%' : '') + '</title>' +
+        '</rect>' +
+        (n <= 24 ? '<text x="' + (x + bw/2) + '" y="' + (y - 3) + '" text-anchor="middle" fill="#64748b" font-size="8" font-weight="600">' + _fmtShort(e.rev) + '</text>' : '') +
+        (i % showEvery === 0 ? '<text x="' + (x + bw/2) + '" y="' + (H - 8) + '" text-anchor="middle" fill="#94a3b8" font-size="9">' + (e.ep != null ? e.ep : '') + '</text>' : '');
+    }).join('');
+
+    const fmtN = v => v == null ? '<span class="text-slate-300">—</span>' : Math.round(v).toLocaleString('ko-KR');
+    const rows = eps.map((e, i) => {
+      const prev = i > 0 ? eps[i-1].rev : null;
+      const pct = (prev && prev > 0) ? Math.round((e.rev - prev) / prev * 100) : null;
+      const pctHtml = pct == null ? '<span class="text-slate-300">—</span>' :
+        '<span class="' + (pct >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' font-bold">' + (pct >= 0 ? '+' : '') + pct + '%</span>';
+      return '<tr class="' + (i === peakIdx ? 'bg-amber-50' : '') + ' border-b border-slate-50 hover:bg-slate-50">' +
+        '<td class="px-2 py-1.5 font-bold ' + (i === peakIdx ? 'text-amber-600' : 'text-slate-700') + '">' + e.label + (i === peakIdx ? ' 👑' : '') + '</td>' +
+        '<td class="px-2 py-1.5 text-slate-500 whitespace-nowrap">' + e.date + '</td>' +
+        '<td class="px-2 py-1.5 text-right font-bold text-slate-800 tabular-nums">' + e.rev.toLocaleString('ko-KR') + '</td>' +
+        '<td class="px-2 py-1.5 text-right text-slate-500 tabular-nums">' + e.tx + '</td>' +
+        '<td class="px-2 py-1.5 text-right text-slate-500 tabular-nums">' + fmtN(e.unit) + '</td>' +
+        '<td class="px-2 py-1.5 text-right text-slate-500 tabular-nums">' + fmtN(e.d1) + '</td>' +
+        '<td class="px-2 py-1.5 text-right text-slate-500 tabular-nums">' + fmtN(e.d7) + '</td>' +
+        '<td class="px-2 py-1.5 text-right tabular-nums">' + pctHtml + '</td>' +
+      '</tr>';
+    }).join('');
+
+    return '<div id="postype-series-detail" class="rounded-xl border border-indigo-100 bg-white p-4" style="grid-column:1/-1" onclick="event.stopPropagation()">' +
+      '<div class="text-sm font-black text-slate-800 mb-3">' + name + ' — 회차별 상세</div>' +
+      '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">' + chips + '</div>' +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block" class="mb-4">' + gridLines + bars + '</svg>' +
+      '<div class="overflow-x-auto"><table class="w-full text-[11px]" style="min-width:560px">' +
+        '<thead><tr class="text-left text-slate-400 border-b border-slate-200">' +
+          '<th class="px-2 py-1.5 font-semibold">회차</th><th class="px-2 py-1.5 font-semibold">발행일</th>' +
+          '<th class="px-2 py-1.5 font-semibold text-right">매출(원)</th><th class="px-2 py-1.5 font-semibold text-right">판매(건)</th>' +
+          '<th class="px-2 py-1.5 font-semibold text-right">평균 구매액</th><th class="px-2 py-1.5 font-semibold text-right">첫날</th>' +
+          '<th class="px-2 py-1.5 font-semibold text-right">첫 7일</th><th class="px-2 py-1.5 font-semibold text-right">전화 대비</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="text-[10px] text-slate-400 mt-2">매출 = 전체 기간 누적 · 첫날/첫 7일 = 발행 후 24시간/7일 누적 매출 · 평균 구매액 = 매출 ÷ 판매 건수 (묶음 구매 포함) · 무료 회차는 판매 데이터가 없어 표시되지 않음</p>' +
+    '</div>';
+  }
+
 
   // ─── 위젯 5: 히트맵 ────────────────────────────────────────────
   function renderHeatmap(monthDaily){
