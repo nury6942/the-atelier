@@ -1166,22 +1166,46 @@
     if (Array.isArray(payload.posts) && payload.posts.length){
       const existing = await fbRead(COLL_POSTS);
       const byKey = {};
-      existing.forEach(p => { if (p.channelId && p.postId) byKey[`${p.channelId}|${p.postId}`] = p._id; });
+      existing.forEach(p => { if (p.channelId && p.postId) byKey[`${p.channelId}|${p.postId}`] = p; });
       for (const p of payload.posts){
         const doc = Object.assign({}, p); delete doc._id;
         const k = `${doc.channelId}|${doc.postId}`;
-        if (byKey[k]){ await fbUpdate(COLL_POSTS, byKey[k], doc); result.posts.updated++; }
+        const old = byKey[k];
+        if (old){
+          // ★ (2026-07-15) 부분 기간 동기화가 통계를 후퇴시키지 않게 병합:
+          //   '이번 달만' 동기화 시 그 기간 거래만으로 계산된 부분값이 전체 누적을
+          //   덮어써서 회차 통계(누적·발행일·첫날/7일)가 망가지던 버그 수정.
+          //   누적(totalRev/txCount)은 max, 발행 정보(firstTs/revByAge)는 더 이른 기록 우선.
+          if (old.firstTs && doc.firstTs && old.firstTs < doc.firstTs){
+            doc.firstTs = old.firstTs;
+            if (old.revByAge) doc.revByAge = old.revByAge;
+          }
+          doc.totalRev = Math.max(doc.totalRev || 0, old.totalRev || 0);
+          doc.txCount  = Math.max(doc.txCount  || 0, old.txCount  || 0);
+          if (!doc.series && old.series) doc.series = old.series;
+          if (!doc.title && old.title) doc.title = old.title;
+          await fbUpdate(COLL_POSTS, old._id, doc); result.posts.updated++;
+        }
         else { await fbAdd(COLL_POSTS, doc); result.posts.added++; }
       }
     }
     if (Array.isArray(payload.series) && payload.series.length){
       const existing = await fbRead(COLL_SERIES);
       const byKey = {};
-      existing.forEach(s => { if (s.channelId && s.name) byKey[`${s.channelId}|${s.name}`] = s._id; });
+      existing.forEach(s => { if (s.channelId && s.name) byKey[`${s.channelId}|${s.name}`] = s; });
       for (const s of payload.series){
         const doc = Object.assign({}, s); delete doc._id;
         const k = `${doc.channelId}|${doc.name}`;
-        if (byKey[k]){ await fbUpdate(COLL_SERIES, byKey[k], doc); result.series.updated++; }
+        const old = byKey[k];
+        if (old){
+          // ★ 시리즈도 동일 병합: 누적 max · 기간 min/max · 회차 목록 합집합
+          doc.totalRev = Math.max(doc.totalRev || 0, old.totalRev || 0);
+          doc.txCount  = Math.max(doc.txCount  || 0, old.txCount  || 0);
+          if (old.firstSeen && (!doc.firstSeen || old.firstSeen < doc.firstSeen)) doc.firstSeen = old.firstSeen;
+          if (old.lastSale  && (!doc.lastSale  || old.lastSale  > doc.lastSale))  doc.lastSale  = old.lastSale;
+          doc.posts = [...new Set([...(old.posts || []), ...(doc.posts || [])])];
+          await fbUpdate(COLL_SERIES, old._id, doc); result.series.updated++;
+        }
         else { await fbAdd(COLL_SERIES, doc); result.series.added++; }
       }
     }

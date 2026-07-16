@@ -19,38 +19,82 @@
     if (!confirm('수익 페이지가 아닌데 진행할까요?\n( /point/earnings/list 권장 )')) return;
   }
 
-  // ─── 동기화 범위 선택 ────────────────────────────────────────────
-  //  · Enter (기본) = 이번 달만 (이번 달 1일 00:00 ~ 지금) — 일상 동기화
-  //  · ytd          = 올해 1월 1일부터 전체 (첫 백필 / 연초용)
-  //  · 숫자          = 최근 N일치 (예: 90)
-  //  cutoff 를 "일수"가 아니라 "날짜 경계"로 잡아 지난 달 기록은 다시 안 긁음.
-  const input = prompt(
-    '동기화 범위?\n\n· 이번 달만 (기본): 그냥 Enter\n· 올해 1월부터 전체 (첫 백필): ytd\n· 최근 N일: 숫자 입력 (예: 90)',
-    ''
-  );
-  if (input === null) return;  // 사용자가 취소
-
+  // ─── 동기화 범위 선택 — 버튼 패널 (2026-07-15: prompt → UI) ─────
+  //  · 이번 달 / 지난달 / 특정 월만(월 그리드) / 올해 전체 / 최근 N일
+  //  · 특정 월은 [그 달 1일 00:00, 다음 달 1일 00:00) 범위만 수집 —
+  //    마감 놓친 지난달만 다시 동기화 가능
   const pad = n => String(n).padStart(2, '0');
   const now = new Date();
-  const trimmed = (input || '').trim().toLowerCase();
+  const monthRange = (y, m) => {  // m: 0-base
+    const cutoff = `${y}-${pad(m + 1)}-01 00:00:00`;
+    const ny = m === 11 ? y + 1 : y, nm = m === 11 ? 0 : m + 1;
+    const isCurrent = (y === now.getFullYear() && m === now.getMonth());
+    return {
+      cutoffStr: cutoff,
+      upperStr: isCurrent ? null : `${ny}-${pad(nm + 1)}-01 00:00:00`,
+      DAYS: new Date(y, m + 1, 0).getDate(),
+      modeLabel: isCurrent ? `이번 달 (${m + 1}월)` : `${y}년 ${m + 1}월만`
+    };
+  };
 
-  let DAYS, cutoffStr, modeLabel;
-  if (trimmed === 'ytd' || trimmed === '올해' || trimmed === 'y'){
-    // 올해 1월 1일 00:00:00 (KST 로컬 기준)
-    cutoffStr = `${now.getFullYear()}-01-01 00:00:00`;
-    DAYS = Math.ceil((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / 86400000) + 1;
-    modeLabel = `올해 전체 (${now.getFullYear()})`;
-  } else if (trimmed === '' || trimmed === 'month' || trimmed === 'm' || trimmed === '이번달' || trimmed === '이번 달'){
-    // 이번 달 1일 00:00:00 ~ 지금 (KST 로컬 기준)
-    cutoffStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01 00:00:00`;
-    DAYS = Math.ceil((now.getTime() - new Date(now.getFullYear(), now.getMonth(), 1).getTime()) / 86400000) + 1;
-    modeLabel = `이번 달 (${now.getFullYear()}-${pad(now.getMonth() + 1)})`;
-  } else {
-    // 최근 N일치
-    DAYS = Math.max(1, Math.min(400, parseInt(trimmed) || 28));
-    cutoffStr = new Date(now.getTime() - DAYS * 86400000).toISOString().slice(0, 10) + ' 00:00:00';
-    modeLabel = `최근 ${DAYS}일`;
-  }
+  const chooseRange = () => new Promise((resolve) => {
+    const Y = now.getFullYear(), M = now.getMonth();
+    const BTN  = 'border:1px solid #2e2e38;background:#1a1a21;color:#e8e8ec;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s';
+    const PRIM = 'border:1px solid #6366f1;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%';
+    const MBTN = 'border:1px solid #2e2e38;background:#16161c;color:#c7c7d1;border-radius:8px;padding:7px 0;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex:1;min-width:44px';
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:999998;background:rgba(8,8,12,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-family:-apple-system,Pretendard,sans-serif';
+    let monthBtns = '';
+    for (let m = 0; m <= M; m++) monthBtns += `<button data-m="${m}" style="${MBTN}${m === M ? ';border-color:#6366f1;color:#a5b4fc' : ''}">${m + 1}월</button>`;
+    const prevY = M === 0 ? Y - 1 : Y, prevM = M === 0 ? 11 : M - 1;
+    ov.innerHTML = `
+      <div style="background:#0f0f12;color:#e8e8ec;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:24px;width:340px;max-width:92vw">
+        <div style="font-weight:700;font-size:11px;color:#8b8b98;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">atelier 동기화</div>
+        <div style="font-weight:800;font-size:16px;margin-bottom:16px">어느 범위를 가져올까요?</div>
+        <button data-act="this" style="${PRIM}">이번 달 (${M + 1}월 1일 ~ 지금)</button>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button data-act="prev" style="${BTN};flex:1">지난달 (${prevM + 1}월)</button>
+          <button data-act="ytd" style="${BTN};flex:1">올해 전체</button>
+        </div>
+        <div style="font-size:11px;color:#8b8b98;margin:16px 0 6px;font-weight:600">특정 월만 다시 동기화 (${Y})</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${monthBtns}</div>
+        <div style="display:flex;gap:8px;margin-top:16px;align-items:center">
+          <span style="font-size:12px;color:#8b8b98;white-space:nowrap">최근</span>
+          <input id="ps-days" type="number" min="1" max="400" placeholder="90" style="width:64px;background:#16161c;border:1px solid #2e2e38;border-radius:8px;color:#e8e8ec;padding:8px;font-size:13px;text-align:center;font-family:inherit">
+          <span style="font-size:12px;color:#8b8b98">일</span>
+          <button data-act="days" style="${BTN};flex:1">가져오기</button>
+        </div>
+        <button data-act="cancel" style="border:0;background:none;color:#6b6b78;font-size:12px;font-weight:600;cursor:pointer;width:100%;margin-top:14px;padding:6px;font-family:inherit">취소</button>
+      </div>`;
+    document.body.appendChild(ov);
+    const done = v => { ov.remove(); resolve(v); };
+    ov.addEventListener('click', e => {
+      if (e.target === ov) return done(null);
+      const b = e.target.closest('button');
+      if (!b) return;
+      const act = b.dataset.act, m = b.dataset.m;
+      if (act === 'cancel') return done(null);
+      if (act === 'this') return done(monthRange(Y, M));
+      if (act === 'prev') return done(monthRange(prevY, prevM));
+      if (m !== undefined) return done(monthRange(Y, parseInt(m)));
+      if (act === 'ytd') return done({
+        cutoffStr: `${Y}-01-01 00:00:00`, upperStr: null,
+        DAYS: Math.ceil((now.getTime() - new Date(Y, 0, 1).getTime()) / 86400000) + 1,
+        modeLabel: `올해 전체 (${Y})`
+      });
+      if (act === 'days'){
+        const n = Math.max(1, Math.min(400, parseInt(document.getElementById('ps-days').value) || 28));
+        return done({
+          cutoffStr: new Date(now.getTime() - n * 86400000).toISOString().slice(0, 10) + ' 00:00:00',
+          upperStr: null, DAYS: n, modeLabel: `최근 ${n}일`
+        });
+      }
+    });
+  });
+
+  const range = await chooseRange();
+  if (!range) return;  // 취소
+  const DAYS = range.DAYS, cutoffStr = range.cutoffStr, upperStr = range.upperStr, modeLabel = range.modeLabel;
 
   // ─── 진행 상황 표시 패널 ───────────────────────────────────────
   const panel = document.createElement('div');
@@ -120,13 +164,15 @@
     }
   };
 
+  // 특정 월 동기화: 최신→과거로 페이지를 넘기므로 upper(다음 달 1일) 이후 거래는
+  // 건너뛰며 계속 진행하고, cutoff(그 달 1일) 이전 거래를 만나면 종료.
   let stop = false;
   for (let s = 1; s <= 1500 && !stop; s += 6){
     const pages = Array.from({ length: 6 }, (_, i) => s + i);
     const results = await Promise.all(pages.map(fetchPage));
     for (const arr of results) for (const r of arr){
       if (r.ts && r.ts < cutoffStr) stop = true;
-      else if (r.ts) tx.push(r);
+      else if (r.ts && (!upperStr || r.ts < upperStr)) tx.push(r);
     }
     setMsg('데이터 수집 중…', `~${s + 5}페이지 / ${tx.length}건${failedPages.length ? ` · 실패 ${failedPages.length}p` : ''}`);
   }
@@ -138,7 +184,7 @@
     failedPages.length = 0;
     const retryResults = await Promise.all(retryList.map(p => fetchPage(p, 2)));
     for (const arr of retryResults) for (const r of arr){
-      if (r.ts && r.ts >= cutoffStr) tx.push(r);
+      if (r.ts && r.ts >= cutoffStr && (!upperStr || r.ts < upperStr)) tx.push(r);
     }
   }
 
@@ -250,6 +296,7 @@
     series: seriesArr,
     meta: {
       rangeDays: DAYS,
+      mode: modeLabel,
       fetchedAt: new Date().toISOString(),
       channels: channelCounts
     }
