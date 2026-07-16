@@ -666,14 +666,11 @@
     wrap.__months = months;
   }
 
-  // ─── 위젯 1: 시리즈 회차별 매출 — 카드 + 클릭 상세 분석 (2026-07-15 전면 재설계) ───
   let _seriesDetailOpen = null;
   window.togglePostypeSeriesDetail = function(name){
-    _seriesDetailOpen = (_seriesDetailOpen === name) ? null : name;
+    if (_seriesDetailOpen === name) return;
+    _seriesDetailOpen = name;
     renderSeriesCurves();
-    if (_seriesDetailOpen){
-      setTimeout(() => { const el = document.getElementById('postype-series-detail'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 60);
-    }
   };
 
   const _fmtShort = v => v >= 10000 ? ((v/10000) >= 100 ? Math.round(v/10000) : (v/10000).toFixed(1)) + '만' : Math.round(v/1000) + 'k';
@@ -696,6 +693,8 @@
       });
   }
 
+  // ─── 위젯 1: 시리즈 순위 테이블 + 선택 상세 (2026-07-15 v2 — 카드 그리드의
+  //     제목 잘림·그리드 깨짐 문제로 마스터-디테일 구조로 재설계) ───
   function renderSeriesCurves(){
     const wrap = document.getElementById('postype-series-curves');
     if (!wrap) return;
@@ -705,65 +704,80 @@
       wrap.innerHTML = '<div class="col-span-full text-center text-slate-400 text-sm py-12">데이터 없음</div>';
       return;
     }
-    const top = [...series]
+    const postById = Object.fromEntries(posts.map(p => [p.postId, p]));
+    const items = [...series]
       .filter(s => s.name !== '_멤버십_' && s.name !== '_미분류_' && (s.posts || []).length >= 2)
       .sort((a, b) => (b.totalRev||0) - (a.totalRev||0))
-      .slice(0, 8);
-    if (!top.length){
+      .slice(0, 8)
+      .map(s => {
+        const eps = _seriesEpisodes(s, postById);
+        if (eps.length < 2) return null;
+        const revs = eps.map(e => e.rev);
+        const total = revs.reduce((a, b) => a + b, 0);
+        const totalTx = eps.reduce((a, e) => a + e.tx, 0);
+        const peakIdx = revs.indexOf(Math.max(...revs));
+        let trendPct = null, recAvg = 0, prevAvg = 0;
+        if (eps.length >= 5){
+          recAvg = revs.slice(-3).reduce((a, b) => a + b, 0) / 3;
+          const prevArr = revs.slice(0, -3);
+          prevAvg = prevArr.reduce((a, b) => a + b, 0) / prevArr.length;
+          if (prevAvg > 0) trendPct = Math.round((recAvg - prevAvg) / prevAvg * 100);
+        }
+        return { name: s.name, eps, revs, total, totalTx, peakIdx, trendPct, recAvg, prevAvg };
+      })
+      .filter(Boolean);
+    if (!items.length){
       wrap.innerHTML = '<div class="col-span-full text-center text-slate-400 text-sm py-12">회차 2개 이상인 시리즈가 없어요</div>';
       return;
     }
-    const postById = Object.fromEntries(posts.map(p => [p.postId, p]));
+    if (!_seriesDetailOpen || !items.some(x => x.name === _seriesDetailOpen)) _seriesDetailOpen = items[0].name;
 
-    let html = '';
-    top.forEach(s => {
-      const eps = _seriesEpisodes(s, postById);
-      if (eps.length < 2) return;
-      const revs = eps.map(e => e.rev);
+    const rows = items.map((it, idx) => {
+      const isSel = it.name === _seriesDetailOpen;
+      const eps = it.eps, revs = it.revs, n = eps.length;
       const max = Math.max(...revs, 1);
-      const total = revs.reduce((a, b) => a + b, 0);
-      const avgRev = Math.round(total / eps.length);
-      const peakIdx = revs.indexOf(Math.max(...revs));
-      const peak = eps[peakIdx];
-      // 추세: 최근 3화 평균 vs 그 이전 평균 (첫화→막화 단순 비교의 왜곡 제거)
-      let trendHtml = '';
-      if (eps.length >= 5){
-        const recAvg = revs.slice(-3).reduce((a, b) => a + b, 0) / 3;
-        const prevArr = revs.slice(0, -3);
-        const prevAvg = prevArr.reduce((a, b) => a + b, 0) / prevArr.length;
-        if (prevAvg > 0){
-          const pct = Math.round((recAvg - prevAvg) / prevAvg * 100);
-          trendHtml = '<span class="' + (pct >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' font-bold" title="최근 3화 평균 ' + KRW(Math.round(recAvg)) + ' vs 이전 회차 평균 ' + KRW(Math.round(prevAvg)) + '">' + (pct >= 0 ? '▲' : '▼') + Math.abs(pct) + '%</span> <span class="text-slate-400">최근3화</span>';
-        }
-      }
-      const period = (eps[0].date && eps[eps.length-1].date)
-        ? eps[0].date.slice(5).replace('-', '/') + '~' + eps[eps.length-1].date.slice(5).replace('-', '/') : '';
-      const isOpen = _seriesDetailOpen === s.name;
-      const nameAttr = s.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-      const W = 100, H = 44;
-      const cx = i => (i / Math.max(eps.length - 1, 1)) * W;
-      const cy = i => H - (revs[i] / max) * (H - 4) - 2;
-      const points = eps.map((e, i) => cx(i) + ',' + cy(i)).join(' ');
-      const circles = eps.map((e, i) =>
-        '<circle cx="' + cx(i) + '" cy="' + cy(i) + '" r="' + (i === peakIdx ? 2.4 : 1.3) + '" fill="' + (i === peakIdx ? '#f59e0b' : '#6366f1') + '"><title>' + e.label + ' ' + KRW(e.rev) + '</title></circle>').join('');
-      html += '<div onclick="togglePostypeSeriesDetail(\'' + nameAttr + '\')" class="rounded-lg border ' + (isOpen ? 'border-indigo-300 ring-2 ring-indigo-100' : 'border-slate-100') + ' bg-slate-50/50 p-3 cursor-pointer hover:border-indigo-200 transition-all">' +
-        '<div class="flex justify-between items-baseline mb-0.5">' +
-          '<span class="text-xs font-bold text-slate-800 truncate" style="max-width:62%">' + s.name + '</span>' +
-          '<span class="text-[10px] text-slate-400 whitespace-nowrap">' + eps[0].label + '~' + eps[eps.length-1].label + ' · ' + eps.length + '편</span>' +
-        '</div>' +
-        '<div class="text-[10px] text-slate-400 mb-1.5">' + period + ' · 총 <b class="text-slate-600">' + KRW(total) + '</b> · 회차평균 <b class="text-slate-600">' + KRW(avgRev) + '</b></div>' +
-        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" style="width:100%;height:42px;display:block">' +
-          '<polyline points="' + points + '" fill="none" stroke="#6366f1" stroke-width="1.5"/>' + circles +
-        '</svg>' +
-        '<div class="flex justify-between items-center mt-1.5 pt-1.5 border-t border-slate-100 text-[10px]">' +
-          '<span><span class="text-slate-400">피크</span> <b class="text-amber-600">' + peak.label + '</b> <span class="text-slate-500 tabular-nums">' + KRW(peak.rev) + '</span></span>' +
-          (trendHtml ? '<span>' + trendHtml + '</span>' : '') +
-        '</div>' +
-        '<div class="text-center text-[10px] ' + (isOpen ? 'text-indigo-500' : 'text-slate-300') + ' mt-1.5 font-bold">' + (isOpen ? '▲ 닫기' : '▼ 회차별 상세') + '</div>' +
-      '</div>';
-      if (isOpen) html += _seriesDetailHtml(s.name, eps, peakIdx);
-    });
-    wrap.innerHTML = html;
+      const peak = eps[it.peakIdx];
+      const period = (eps[0].date && eps[n-1].date)
+        ? eps[0].date.slice(2).replace(/-/g, '.') + ' ~ ' + eps[n-1].date.slice(2).replace(/-/g, '.') : '';
+      const SW = 96, SH = 26;
+      const scx = i => 3 + (i / Math.max(n - 1, 1)) * (SW - 6);
+      const scy = i => SH - 2 - (revs[i] / max) * (SH - 6);
+      const pts = eps.map((e, i) => scx(i) + ',' + scy(i)).join(' ');
+      const spark = '<svg viewBox="0 0 ' + SW + ' ' + SH + '" style="width:' + SW + 'px;height:' + SH + 'px;display:block">' +
+        '<polyline points="' + pts + '" fill="none" stroke="' + (isSel ? '#6366f1' : '#a5b4fc') + '" stroke-width="1.5"/>' +
+        '<circle cx="' + scx(it.peakIdx) + '" cy="' + scy(it.peakIdx) + '" r="2.4" fill="#f59e0b"/></svg>';
+      const trendHtml = it.trendPct == null ? '<span class="text-slate-300">—</span>' :
+        '<span class="' + (it.trendPct >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' font-bold" title="최근 3화 평균 ' + KRW(Math.round(it.recAvg)) + ' vs 이전 평균 ' + KRW(Math.round(it.prevAvg)) + '">' + (it.trendPct >= 0 ? '▲' : '▼') + Math.abs(it.trendPct) + '%</span>';
+      const nameAttr = it.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return '<tr onclick="togglePostypeSeriesDetail(\'' + nameAttr + '\')" class="cursor-pointer border-b border-slate-50 transition-colors ' + (isSel ? 'bg-indigo-50/70' : 'hover:bg-slate-50') + '">' +
+        '<td class="px-3 py-2.5 text-slate-300 font-bold tabular-nums">' + (idx + 1) + '</td>' +
+        '<td class="px-2 py-2.5" style="min-width:150px">' +
+          '<div class="text-xs font-bold ' + (isSel ? 'text-indigo-700' : 'text-slate-800') + '">' + it.name + (isSel ? ' <span class="text-[9px] font-black text-indigo-400 align-middle">▼ 아래 상세</span>' : '') + '</div>' +
+          '<div class="text-[10px] text-slate-400 mt-0.5">' + eps[0].label + '~' + eps[n-1].label + ' · ' + n + '편 · ' + period + '</div>' +
+        '</td>' +
+        '<td class="px-2 py-2.5 text-right font-bold text-slate-800 tabular-nums whitespace-nowrap">' + KRW(it.total) + '</td>' +
+        '<td class="px-2 py-2.5 text-right text-slate-500 tabular-nums whitespace-nowrap">' + KRW(Math.round(it.total / n)) + '</td>' +
+        '<td class="px-2 py-2.5 text-right text-slate-500 tabular-nums whitespace-nowrap">' + (it.totalTx ? KRW(Math.round(it.total / it.totalTx / 100) * 100) : '—') + '</td>' +
+        '<td class="px-2 py-2.5 whitespace-nowrap"><b class="text-amber-600">' + peak.label + '</b> <span class="text-slate-500 text-[10px] tabular-nums">' + KRW(peak.rev) + '</span></td>' +
+        '<td class="px-2 py-2.5 text-right whitespace-nowrap">' + trendHtml + '</td>' +
+        '<td class="px-3 py-2.5">' + spark + '</td>' +
+      '</tr>';
+    }).join('');
+
+    const sel = items.find(x => x.name === _seriesDetailOpen);
+    wrap.innerHTML = '<div style="grid-column:1/-1">' +
+      '<div class="overflow-x-auto rounded-xl border border-slate-100">' +
+        '<table class="w-full text-[11px]" style="min-width:680px">' +
+          '<thead><tr class="text-left text-slate-400 bg-slate-50/60 border-b border-slate-100">' +
+            '<th class="px-3 py-2 font-semibold">#</th><th class="px-2 py-2 font-semibold">시리즈</th>' +
+            '<th class="px-2 py-2 font-semibold text-right">총 매출</th><th class="px-2 py-2 font-semibold text-right">회차 평균</th>' +
+            '<th class="px-2 py-2 font-semibold text-right">평균 구매액</th><th class="px-2 py-2 font-semibold">피크</th>' +
+            '<th class="px-2 py-2 font-semibold text-right">최근 3화</th><th class="px-3 py-2 font-semibold">추이</th>' +
+          '</tr></thead><tbody>' + rows + '</tbody>' +
+        '</table>' +
+      '</div>' +
+      (sel ? _seriesDetailHtml(sel.name, sel.eps, sel.peakIdx) : '') +
+    '</div>';
   }
 
   function _seriesDetailHtml(name, eps, peakIdx){
@@ -827,7 +841,7 @@
       '</tr>';
     }).join('');
 
-    return '<div id="postype-series-detail" class="rounded-xl border border-indigo-100 bg-white p-4" style="grid-column:1/-1" onclick="event.stopPropagation()">' +
+    return '<div id="postype-series-detail" class="rounded-xl border border-indigo-100 bg-white p-4 mt-3">' +
       '<div class="text-sm font-black text-slate-800 mb-3">' + name + ' — 회차별 상세</div>' +
       '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">' + chips + '</div>' +
       '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;display:block" class="mb-4">' + gridLines + bars + '</svg>' +
