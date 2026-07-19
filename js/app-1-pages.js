@@ -16843,6 +16843,10 @@
     if (ewBusyWrap) ewBusyWrap.style.display = w.busy ? 'flex' : 'none';
     var ewRevChk = document.getElementById('ew-reverse');
     if (ewRevChk) ewRevChk.checked = !!w.reverse;
+    var ewRevSyn = document.getElementById('ew-reverse-syn');
+    if (ewRevSyn) ewRevSyn.checked = !!w.reverseSyn;
+    var ewRevSynWrap = document.getElementById('ew-reverse-syn-wrap');
+    if (ewRevSynWrap) ewRevSynWrap.style.display = w.reverse ? 'flex' : 'none';
     var p = w.phases || {};
     document.getElementById('ew-syn-start').value = p.synopsis ? p.synopsis.start : '';
     document.getElementById('ew-syn-end').value = p.synopsis ? p.synopsis.end : '';
@@ -17060,6 +17064,8 @@
     var _fromEpVal = parseInt(ewBusyFromEl && ewBusyFromEl.value) || 1;
     var ewRevChk2 = document.getElementById('ew-reverse');
     w.reverse = ewRevChk2 ? ewRevChk2.checked : false;
+    var ewRevSyn2 = document.getElementById('ew-reverse-syn');
+    w.reverseSyn = w.reverse && !!(ewRevSyn2 && ewRevSyn2.checked);  // 시놉까지 역산 배치
     if (w.reverse) w.busy = false; // 역산과 비지는 상호배타
     w.busyFromEp = (w.busy || w.reverse) ? _fromEpVal : 1; // 비지·역산 공용 "N화부터"
     w.phases = {
@@ -17406,13 +17412,36 @@
       if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재일이 너무 일러 역산 불가 — 최소 ' + _fmtDate(rr.minPublish) + '. 일정 변경 안 됨');
       return;
     }
-    // ★ (2026-07-15) 원자 교체: 유지분(시놉 + 초고 1~(fromEp-1)) + 신규분을 한 세트로.
+    // ★ (2026-07-15) 원자 교체: 유지분 + 신규분을 한 세트로.
+    //   시놉 역산(reverseSyn)이면 기존 시놉도 버리고 새로 배치 ('몇 화부터'=1일 때만).
+    var synReverse = !!work.reverseSyn && fromEp <= 1;
     var events = [];
     plannerData.forEach(function(r){ if (!isMine(r)) return; var n = r[4] || '';
       if (n.indexOf('phase:revision') >= 0 || n.indexOf('phase:publishing') >= 0) return;
       if (n.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) return;
+      if (synReverse && n.indexOf('phase:synopsis') >= 0) return;
       events.push([r[0], r[1], r[2], r[3], r[4], r[5] || '', r[6] || '0']);
     });
+
+    // ★ 시놉 역산 배치: 초고 시작 전날에 끝나도록, 기존 시놉 기간(일수) 유지 (없으면 28일)
+    var synWin = null;
+    if (synReverse){
+      var ps0 = (work.phases && work.phases.synopsis) || {};
+      var synDur = 28;
+      if (ps0.start && ps0.end){
+        var sd = Math.round((new Date(ps0.end + 'T00:00:00') - new Date(ps0.start + 'T00:00:00')) / 86400000) + 1;
+        if (sd >= 1 && sd <= 365) synDur = sd;
+      }
+      var synEnd = new Date(rr.draftStart.getTime()); synEnd.setDate(synEnd.getDate() - 1);
+      var synStart = new Date(synEnd.getTime()); synStart.setDate(synStart.getDate() - (synDur - 1));
+      synWin = { start: synStart, end: synEnd };
+      var sCur = new Date(synStart.getTime()), sIdx = 0;
+      while (sCur <= synEnd){
+        var sds = _fmtDate(sCur);
+        if (!isBlockedDay(sds)) events.push([sds, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(sIdx++)]);
+        sCur.setDate(sCur.getDate() + 1);
+      }
+    }
     rr.draftPlaced.forEach(function(x, k){ events.push([_fmtDate(x.date), '초고 ' + x.ep + '화', cat, color, noteBase + '|phase:draft', '', String((rr.fromEp - 1) + k)]); });
     rr.revPlaced.forEach(function(x){ events.push([_fmtDate(x.date), '퇴고 ' + x.ep + '화', cat, color, noteBase + '|phase:revision', '', String(x.ep - 1)]); });
     var pCur = new Date(work.publish_start + 'T00:00:00'), pubEnd = new Date(pCur.getTime()), ep = 1;
@@ -17420,6 +17449,7 @@
     await replaceWorkEvents(work.id, events);
     // work 갱신
     work.phases = work.phases || {}; work.phases.draft = work.phases.draft || {};
+    if (synWin) work.phases.synopsis = { start: _fmtDate(synWin.start), end: _fmtDate(synWin.end) };  // 시놉 역산 결과 반영
     if (fromEp <= 1) work.phases.draft.start = _fmtDate(rr.draftStart);
     work.phases.draft.end = _fmtDate(rr.draftEnd);
     work.phases.revision = { start: _fmtDate(rr.revStart), end: _fmtDate(rr.revEnd) };
@@ -17430,7 +17460,7 @@
     work.reverse = true; work.busy = false; work.nomad = false;
     renderCalendar();
     try { if (typeof syncCalToMatrix === 'function') syncCalToMatrix(parseInt((work.publish_start || '').slice(0, 4)) || _matrixYear); if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix(); } catch(e){}
-    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 역산 완료 — ' + rr.label + ' 작업 (주 ' + rr.days + '일)');
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 역산 완료' + (synWin ? ' (시놉 ' + _fmtDate(synWin.start) + '~' + _fmtDate(synWin.end) + ' 포함)' : '') + ' — ' + rr.label + ' 작업 (주 ' + rr.days + '일)');
     console.log('[reverse] rescheduled', work.title, '→ 카덴스', rr.label, '초고', draftStartStr, '~', _fmtDate(rr.draftEnd), '연재', work.publish_start);
   }
 
