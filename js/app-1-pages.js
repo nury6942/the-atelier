@@ -525,6 +525,10 @@
         return false;
       });
       events.sort(function(a, b) {
+        // ★ 데드라인은 무조건 최상단 (기간 일정보다도 위)
+        var aDl = a[2] === '데드라인' ? 1 : 0;
+        var bDl = b[2] === '데드라인' ? 1 : 0;
+        if (aDl !== bDl) return bDl - aDl;
         var aRange = (a[5] && a[5] > a[0]) ? 1 : 0;
         var bRange = (b[5] && b[5] > b[0]) ? 1 : 0;
         if (aRange !== bRange) return bRange - aRange;
