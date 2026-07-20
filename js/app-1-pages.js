@@ -233,13 +233,15 @@
     'birthday': 'bg-[#facc15] text-[#1d1a23] border-[#facc15]/40',
     'pink':    'bg-pink-100 text-pink-700 border-pink-200',
     'fuchsia': 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200',
+    // 데드라인: 유일하게 솔리드 형광 (나머지는 파스텔) — 한눈에 튀게
+    'deadline':'bg-[#FF3B00] text-white border-[#FF3B00] font-black',
   };
   const CAT_TRACK = {
     '글쓰기':'writing','영어':'english','스터디':'study',
     '업무':'work','개인':'personal','연차':'vacation'
   };
   const CAT_COLOR = {
-    '업무':'rose','연차':'cyan','특별휴가':'pink','개인':'fuchsia','글쓰기':'sky',
+    '업무':'rose','데드라인':'deadline','연차':'cyan','특별휴가':'pink','개인':'fuchsia','글쓰기':'sky',
     '영어':'lime','스터디':'violet','생일':'birthday'
   };
 
@@ -1062,6 +1064,7 @@
     ariaLabel: '카테고리 선택',
     options: [
       { value: '업무',  dot: '#f43f5e', label: '업무' },
+      { value: '데드라인', dot: '#FF3B00', label: '데드라인', emoji: '🚨' },
       { value: '연차',  dot: '#06b6d4', label: '연차' },
       { value: '특별휴가', dot: '#ec4899', label: '특별휴가', emoji: '🎁' },
       { value: '개인',  dot: '#d946ef', label: '개인' },
