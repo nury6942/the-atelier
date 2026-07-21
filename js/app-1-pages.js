@@ -8679,8 +8679,18 @@
     }
   }
 
-  // ===== 일회성 일정 일괄 등록 (2026 독일&이탈리아) — 콘솔에서 importGermanyItaly2026() 실행 =====
+  // ===== [DEPRECATED 2026-07-21] 일회성 일정 일괄 등록 (2026 독일&이탈리아) =====
+  // 이 함수의 일정은 10/4~10/13 기준이지만 내용이 구버전이고,
+  // 2026-07-21 리베이스(data/rebase_2026_journey_oct.js)로 대체되었습니다.
+  // 실행하면 현재 일정과 중복 생성됩니다. 콘솔에서 실수로 호출되는 것을 막기 위해 가드를 둡니다.
   window.importGermanyItaly2026 = async function() {
+    if (!confirm(
+      '⛔ 폐기된 함수입니다 (DEPRECATED 2026-07-21)\n\n' +
+      '이 일정은 구버전이며, 현재 트립은 data/rebase_2026_journey_oct.js 로\n' +
+      '10/4~10/12 기준 98개 일정이 이미 등록되어 있습니다.\n\n' +
+      '실행하면 일정이 중복 생성됩니다.\n\n' +
+      '그래도 실행하시겠습니까? (권장: 아니오)'
+    )) { console.log('⛔ importGermanyItaly2026: 폐기된 함수 — 실행 취소됨'); return; }
     var trip = (typeof tripsData !== 'undefined' ? tripsData : []).find(function(t){return t.name==='2026 독일&이탈리아';})
             || (typeof financeTrips !== 'undefined' ? financeTrips : []).find(function(t){return t.name==='2026 독일&이탈리아';})
             || (typeof getCurrentTrip === 'function' && getCurrentTrip() && getCurrentTrip().name === '2026 독일&이탈리아' ? getCurrentTrip() : null);
