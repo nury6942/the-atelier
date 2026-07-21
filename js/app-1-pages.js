@@ -503,6 +503,26 @@
     const isCurrentMonth = today.getFullYear() === plannerYear && today.getMonth() === plannerMonth;
     const holidays = getKoreanHolidays(plannerYear);
 
+    // ★ (2026-07-21) 연속(기간) 일정 레인 배정 — 같은 일정은 어느 날짜 칸에서든
+    //   항상 같은 줄에 오도록 월 렌더 시 한 번 줄 번호를 확정 (바 끊김 방지)
+    var _rangeLanes = new Map();
+    (function(){
+      var ranges = plannerData.filter(function(r){ var s=(r[0]||'').toString(), e=(r[5]||'').toString(); return e && e > s; });
+      ranges.sort(function(a,b){ var c=(a[0]||'').toString().localeCompare((b[0]||'').toString()); if (c) return c; return ((b[5]||'').toString()).localeCompare((a[5]||'').toString()); });
+      var laneIntervals = [];
+      ranges.forEach(function(r){
+        var s=(r[0]||'').toString(), e=(r[5]||'').toString();
+        var lane = 0;
+        for (;; lane++){
+          var ivs = laneIntervals[lane] || [];
+          var clash = ivs.some(function(iv){ return s <= iv[1] && e >= iv[0]; });
+          if (!clash) break;
+        }
+        (laneIntervals[lane] = laneIntervals[lane] || []).push([s, e]);
+        _rangeLanes.set(r, lane);
+      });
+    })();
+
     function buildDayCell(yr, mn, d, gridIdx, isOutMonth) {
       const dateStr = yr + '-' + String(mn+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
       const dayOfWeek = gridIdx % 7;
@@ -524,14 +544,18 @@
         }
         return false;
       });
-      events.sort(function(a, b) {
-        // ★ 데드라인은 무조건 최상단 (기간 일정보다도 위)
+      // ★ (2026-07-21) 연속 일정은 레인(고정 줄)으로, 단일 일정은 그 아래로 분리
+      //   — 연속 바가 날짜마다 위아래로 널뛰며 끊겨 보이던 문제 해결
+      var rangeEvts = [], singleEvts = [];
+      events.forEach(function(r){
+        var s = (r[0]||'').toString(), e = (r[5]||'').toString();
+        (e && e > s ? rangeEvts : singleEvts).push(r);
+      });
+      singleEvts.sort(function(a, b) {
+        // 데드라인은 단일 일정 중 무조건 최상단
         var aDl = a[2] === '데드라인' ? 1 : 0;
         var bDl = b[2] === '데드라인' ? 1 : 0;
         if (aDl !== bDl) return bDl - aDl;
-        var aRange = (a[5] && a[5] > a[0]) ? 1 : 0;
-        var bRange = (b[5] && b[5] > b[0]) ? 1 : 0;
-        if (aRange !== bRange) return bRange - aRange;
         if (a[2] === '업무' && b[2] !== '업무') return -1;
         if (a[2] !== '업무' && b[2] === '업무') return 1;
         return (parseInt(a[6])||0) - (parseInt(b[6])||0);
@@ -595,7 +619,7 @@
       dayNum += '">' + d + '</span>';
       if (isHoliday) dayNum += '<span class="text-[8px] font-bold ml-1" style="color:#8B1A1A">' + holidayName + '</span>';
 
-      const eventHtml = events.map(function(ev, ei) {
+      function renderEvt(ev) {
         const realIdx = plannerData.indexOf(ev);
         const color = COLOR_MAP[ev[3]] || COLOR_MAP['blue'];
         var start = (ev[0]||'').toString();
@@ -663,7 +687,19 @@
             ? '<span class="text-[13px] font-bold truncate whitespace-nowrap ' + textColor + '" style="padding:0 4px">' + (ev[1]||'') + '</span>'
             : '') +
           '</div>';
-      }).join('');
+      }
+
+      // 레인 슬롯 조립: 이 날짜에 걸친 연속 일정을 배정된 줄에, 빈 줄은 투명 스페이서로
+      var laneSlots = [];
+      rangeEvts.forEach(function(ev){
+        var ln = _rangeLanes.get(ev); if (ln == null) ln = 0;
+        laneSlots[ln] = ev;
+      });
+      var barsHtml = '';
+      for (var li = 0; li < laneSlots.length; li++) {
+        barsHtml += laneSlots[li] ? renderEvt(laneSlots[li]) : '<div class="mt-1" style="height:26px"></div>';
+      }
+      const eventHtml = barsHtml + singleEvts.map(renderEvt).join('');
 
       cell.innerHTML = dayNum + eventHtml;
       return cell;
