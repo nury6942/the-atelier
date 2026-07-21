@@ -571,7 +571,8 @@
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
       if (isOutMonth) {
         cell.style.background = 'rgba(243,244,245,0.4)';
-        cell.style.opacity = '0.5';
+        // ★ 셀 통째로 반투명하게 하면 연속 바가 월 경계에서 색이 꺾여 끊겨 보임 →
+        //   날짜 숫자·단일 일정만 흐리게 하고, 연속 바는 원색 유지
       }
       // 공휴일은 어떤 일정이 들어오든 무조건 빨간 배경 유지 (연차/특별/오늘과 그라데이션 결합)
       else if (isHoliday) {
@@ -618,6 +619,7 @@
       else dayNum += 'font-bold text-sm text-[#191c1d]';
       dayNum += '">' + d + '</span>';
       if (isHoliday) dayNum += '<span class="text-[8px] font-bold ml-1" style="color:#8B1A1A">' + holidayName + '</span>';
+      if (isOutMonth) dayNum = '<span style="opacity:0.45">' + dayNum + '</span>';
 
       function renderEvt(ev) {
         const realIdx = plannerData.indexOf(ev);
@@ -639,7 +641,7 @@
           var pubPrefix = isPub ? '🎯 ' : '';
           // ★ (2026-07-15) 인덱스 하드코딩 → 클릭 시점 ID 해석 (_pi). ID 없는 행만 인덱스 폴백.
           var idxRef = docId ? "_pi('" + docId + "')" : String(realIdx);
-          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#6366f1') + ';border-left-color:rgba(0,0,0,0.2)' : '') + '" ' +
+          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#6366f1') + ';border-left-color:rgba(0,0,0,0.2)' : '') + (isOutMonth ? ';opacity:0.5' : '') + '" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRef + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
@@ -657,11 +659,10 @@
         var dayOfWeekR = gridIdx % 7;
         var isWeekStart = dayOfWeekR === 0;
         var isWeekEnd = dayOfWeekR === 6;
-        var isMonthStart = !isOutMonth && d === 1;
-        var isMonthEnd = !isOutMonth && d === daysInMonth;
-
-        var blockStart = isFirst || isMonthStart || isWeekStart;
-        var blockEnd = isLast || isMonthEnd || isWeekEnd;
+        // ★ (2026-07-21) 월 경계에선 캡을 만들지 않음 — 달이 바뀌어도 바가 그대로 이어짐.
+        //   줄바꿈이 실제로 일어나는 주 경계에서만 끝처리 (레이아웃상 불가피)
+        var blockStart = isFirst || isWeekStart;
+        var blockEnd = isLast || isWeekEnd;
         var showTitle = blockStart;
 
         var rl = blockStart ? 'border-radius: var(--radius-sm) 0 0 6px;' : 'border-radius:0;';
