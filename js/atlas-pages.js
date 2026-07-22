@@ -207,14 +207,8 @@
     var html = '';
 
     // ──────── ATLAS 자체 탭바 (외부 탭바와 동일 디자인, atlas active) ────────
-    html += '<div class="mb-6 flex items-center justify-between flex-wrap gap-3">';
-    html += '<div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">';
-    html += '<button onclick="switchTravelTab(\'schedule\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">📅 일정</button>';
-    html += '<button onclick="switchTravelTab(\'budget\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">💰 예산</button>';
-    html += '<button onclick="switchTravelTab(\'checklist\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">✅ 체크리스트</button>';
-    html += '<button onclick="switchTravelTab(\'atlas\')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="atlas">🗺️ Atlas</button>';
-    html += '</div>';
-    html += '</div>';
+    // ★ (2026-07-22) 공용 탭바 사용 — 4개 탭 디자인/위치 통일
+    html += (window._travelTabsHtml ? window._travelTabsHtml('atlas') : '');
 
     // ──────── HERO ────────
     html += '<section class="atlas-hero">';
@@ -418,13 +412,9 @@
     var html = '';
 
     // 자체 탭바 (atlas active)
-    html += '<div class="mb-6 flex items-center justify-between flex-wrap gap-3">';
-    html += '<div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">';
-    html += '<button onclick="switchTravelTab(\'schedule\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">📅 일정</button>';
-    html += '<button onclick="switchTravelTab(\'budget\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">💰 예산</button>';
-    html += '<button onclick="switchTravelTab(\'checklist\')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">✅ 체크리스트</button>';
-    html += '<button onclick="switchTravelTab(\'atlas\')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="atlas">🗺️ Atlas</button>';
-    html += '</div>';
+    // ★ (2026-07-22) 공용 탭바 + 뒤로가기
+    html += '<div class="flex items-center justify-between flex-wrap gap-3" style="border-bottom:1px solid #e2e8f0">';
+    html += (window._travelTabsHtml ? window._travelTabsHtml('atlas').replace('class="trav-tabs"', 'class="trav-tabs" style="border-bottom:none;flex:1"') : '');
     html += '<button onclick="atlasBackToAtlas()" class="atlas-back-btn"><span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">arrow_back</span>Atlas로 돌아가기</button>';
     html += '</div>';
 
