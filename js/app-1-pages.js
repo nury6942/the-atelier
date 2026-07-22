@@ -2284,7 +2284,9 @@
             '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageDelete(\'' + safeKey + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
           : '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageUpload(\'' + safeKey + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
 
-        return '<div class="j-stop-card" ' +
+        var safeName = (city.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return '<div class="j-stop-card" style="cursor:pointer" title="클릭하면 이 도시의 Daily Log로 이동" ' +
+            'onclick="window.journeyStopJump && journeyStopJump(\'' + safeName + '\')" ' +
             'onmouseenter="window.journeyCityImageSetActive && journeyCityImageSetActive(\'' + safeKey + '\')" ' +
             'onmouseleave="window.journeyCityImageClearActive && journeyCityImageClearActive(\'' + safeKey + '\')">' +
           '<div class="j-stop-img">' +
@@ -4079,6 +4081,25 @@
   // ── 데스크탑 주간 그리드 뷰 (엑셀 스타일, lg 이상) ──
   var currentWeekChunkStart = 0;
   var WEEK_CHUNK_SIZE = 4;
+
+  // ★ (2026-07-22) Stops 카드 클릭 → 해당 도시의 Daily Log 구간으로 점프
+  //   (예쁘게 만들어놓고 클릭해도 아무 반응 없던 기능 미완 해소)
+  window.journeyStopJump = function(cityName) {
+    try {
+      var dayMap = getDayMap();
+      var idx = dayMap.findIndex(function(e) { return e.cityName === cityName; });
+      if (idx >= 0) {
+        currentDayIndex = idx;
+        currentWeekChunkStart = Math.floor(idx / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
+        if (typeof renderWeekView === 'function') renderWeekView();
+      }
+      var sec = document.getElementById('journey-week-view');
+      if (sec) {
+        var top = sec.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      }
+    } catch(e) { console.warn('[stopJump]', e); }
+  };
 
   function syncWeekChunkToCurrentDay() {
     var chunkOf = Math.floor(currentDayIndex / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
@@ -12078,7 +12099,7 @@
     var balEl = document.getElementById('finance-main-balance');
     if (balEl) {
       balEl.textContent = (balance < 0 ? '-' : '') + '₩' + Math.round(Math.abs(balance)).toLocaleString('ko-KR');
-      balEl.style.color = balance < 0 ? '#fecaca' : '#fff';
+      balEl.style.color = balance < 0 ? '#e11d48' : '#0f172a';  // 에디토리얼 밴드(밝은 배경)용
     }
     document.getElementById('finance-main-label').textContent = '총 지출';
     document.getElementById('finance-item-count').textContent = financeFiltered.length;

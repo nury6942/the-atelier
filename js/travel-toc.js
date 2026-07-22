@@ -80,16 +80,43 @@
     });
   }
 
+  // ★ (2026-07-22) 고정 좌표(left:240px) → 실측 기반 동적 배치.
+  //   사이드바 접힘/펼침·창 너비에 자동 대응, 들어갈 공간 없으면 숨김.
+  //   (기존 방식은 사이드바 상태에 따라 겹치거나 잘렸고, 보정용 padding-left가
+  //    Atlas까지 밀어 탭마다 너비가 달라 보이던 원인)
+  function _position() {
+    if (!_tocEl) return;
+    var wrap = document.querySelector('#page-journey .page-content-wrap');
+    if (!wrap) return;
+    var r = wrap.getBoundingClientRect();
+    var sbRight = 0;
+    var sb = document.getElementById('sidebar');
+    if (sb) {
+      var sr = sb.getBoundingClientRect();
+      if (sr.width > 50 && sr.right > 0) sbRight = sr.right;
+    }
+    var left = r.left - 148;
+    if (left >= sbRight + 12 && window.innerWidth >= 1280) {
+      _tocEl.style.display = 'block';
+      _tocEl.style.left = left + 'px';
+    } else {
+      _tocEl.style.display = 'none';
+    }
+  }
+
   function activate() {
     if (_tocEl) return;
     _tocEl = _build();
     document.body.appendChild(_tocEl);
     _tocEl.addEventListener('click', _onClick);
+    _position();
+    window.addEventListener('resize', _position);
     // 페이지 렌더 후 observer 시작 (data 로드 대기)
     setTimeout(_observeSections, 200);
     setTimeout(_observeSections, 1500); // 늦게 그려지는 섹션 (item 렌더 후) 대응
   }
   function deactivate() {
+    window.removeEventListener('resize', _position);
     if (_tocEl) { _tocEl.remove(); _tocEl = null; }
     if (_observer) { _observer.disconnect(); _observer = null; }
   }
@@ -110,6 +137,7 @@
 
     if (isVisible && !atlasOn) {
       if (!_tocEl) activate();
+      else _position();
     } else {
       if (_tocEl) deactivate();
     }
