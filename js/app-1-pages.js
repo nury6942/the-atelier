@@ -2323,7 +2323,9 @@
     }
     // (loadCityPhotos 자동 무료 이미지 로드는 제거됨 — 사용자 업로드만 사용)
     // 도시별 날씨 예보 hydrate (Open-Meteo, 무료)
+    window._journeyRainDays = [];
     hydrateCityWeather();
+    setTimeout(function() { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); }, 4000);
   }
 
   function openCityModal(idx) {
@@ -3247,10 +3249,17 @@
           var e = city.end_date ? times.indexOf(city.end_date) : s;
           if (e < s) e = s;
           var maxT = -999, minT = 999, codes = {};
+          var RAIN_CODES = {51:1,53:1,55:1,56:1,57:1,61:1,63:1,65:1,66:1,67:1,80:1,81:1,82:1,95:1,96:1,99:1};
           for (var k = s; k <= e; k++) {
             if (daily.temperature_2m_max[k] > maxT) maxT = daily.temperature_2m_max[k];
             if (daily.temperature_2m_min[k] < minT) minT = daily.temperature_2m_min[k];
             var c = daily.weather_code[k]; codes[c] = (codes[c]||0) + 1;
+            // ★ (2026-07-22) 체류 중 비/뇌우 예보일 수집 → Overview 배지
+            if (RAIN_CODES[c]) {
+              window._journeyRainDays = window._journeyRainDays || [];
+              var rlbl = (city.name || '') + ' ' + (times[k] || '').slice(5).replace('-', '/');
+              if (window._journeyRainDays.indexOf(rlbl) < 0) window._journeyRainDays.push(rlbl);
+            }
           }
           var domCode = Object.keys(codes).sort(function(a,b){ return codes[b]-codes[a]; })[0];
           var lab = _wxLabel(+domCode);
@@ -13582,6 +13591,85 @@
   }
   try { renderTravelChrome(); } catch(e) { console.warn('travel chrome', e); }
 
+  // ═══ Travel 섹션 접기/펼치기 + Overview 스냅샷 밴드 (2026-07-22 Phase C) ═══
+  window.trvToggleSec = function(secId, forceCollapsed) {
+    var sec = document.getElementById(secId);
+    if (!sec) return;
+    var collapsed = (forceCollapsed === undefined) ? sec.getAttribute('data-collapsed') !== '1' : forceCollapsed;
+    sec.setAttribute('data-collapsed', collapsed ? '1' : '0');
+    Array.prototype.forEach.call(sec.children, function(ch) {
+      if (ch.classList && ch.classList.contains('trv-sec-head')) return;
+      if (collapsed) {
+        // 원래 보이던 것만 접었다 기억 (recs처럼 원래 숨김이던 요소는 건드리지 않음)
+        if (ch.style.display !== 'none') { ch.setAttribute('data-trv-hidden', '1'); ch.style.display = 'none'; }
+      } else if (ch.getAttribute('data-trv-hidden') === '1') {
+        ch.style.display = ''; ch.removeAttribute('data-trv-hidden');
+      }
+    });
+    var chev = document.getElementById(secId + '-chev');
+    if (chev) chev.textContent = collapsed ? 'expand_more' : 'expand_less';
+    try {
+      var m = JSON.parse(localStorage.getItem('trv_collapsed') || '{}');
+      m[secId] = collapsed;
+      localStorage.setItem('trv_collapsed', JSON.stringify(m));
+    } catch(e) {}
+  };
+  window.trvRestoreCollapsed = function() {
+    try {
+      var m = JSON.parse(localStorage.getItem('trv_collapsed') || '{}');
+      Object.keys(m).forEach(function(k) { if (m[k]) window.trvToggleSec(k, true); });
+    } catch(e) {}
+  };
+
+  window.trvJumpSec = function(id) {
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    if (sec.getAttribute('data-collapsed') === '1') window.trvToggleSec(id, false);
+    var top = sec.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  };
+
+  // Overview: 여행의 핵심 숫자 한눈에 + 칩 클릭 → 섹션 점프
+  window.renderJourneyOverview = function() {
+    var el = document.getElementById('journey-overview');
+    if (!el) return;
+    try {
+      var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+      var cities = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+      if (!cities.length && !jd.length) { el.style.display = 'none'; return; }
+      var cnt = function(t) { return jd.filter(function(d) { return d.type === t; }).length; };
+      var domCnt = function(id) { var c = document.getElementById(id); return c ? c.children.length : 0; };
+      var nights = 0;
+      cities.forEach(function(c) {
+        if (c.start_date && c.end_date) nights += Math.max(0, Math.round((new Date(c.end_date + 'T00:00:00') - new Date(c.start_date + 'T00:00:00')) / 86400000));
+      });
+      var souvenirs = jd.filter(function(d) { return d.type === '기념품'; });
+      var souvDone = souvenirs.filter(function(sv) { return sv.done || sv.purchased || sv.checked; }).length;
+      var flights = Math.max(cnt('항공편'), domCnt('journey-flight-list'));
+      var lodging = domCnt('journey-lodging-list');
+      var transit = Math.max(cnt('이동수단'), domCnt('journey-transport-list'));
+      var rental = domCnt('journey-rental-list');
+      var rain = window._journeyRainDays || [];
+      var chips = [
+        ['Stops', cities.length + '개 도시', nights ? nights + '박' : '', 'trv-stops', ''],
+        ['Flights', flights + '편', '', 'trv-flights', ''],
+        ['Lodging', lodging + '곳', '', 'trv-lodging', ''],
+        ['Transit', transit + '건', '', 'trv-transport', ''],
+        ['Rental', rental + '건', '', 'trv-rental', ''],
+        ['Souvenir', souvDone + '/' + souvenirs.length, '구매 완료', 'trv-souvenir', ''],
+        rain.length
+          ? ['Weather', '☔ 비 예보 ' + rain.length + '일', rain.slice(0, 2).join(' · '), 'trv-stops', 'warn']
+          : ['Weather', '☀️ 예보 무난', '체류 기간 기준', 'trv-stops', '']
+      ];
+      el.innerHTML = chips.map(function(c) {
+        return '<div class="trv-ov-chip' + (c[4] === 'warn' ? ' is-warn' : '') + '" onclick="trvJumpSec(\'' + c[3] + '\')" title="클릭하면 해당 섹션으로 이동">' +
+          '<p class="trv-ov-l">' + c[0] + '</p><div class="trv-ov-v">' + c[1] + '</div>' +
+          (c[2] ? '<div class="trv-ov-sub">' + c[2] + '</div>' : '') + '</div>';
+      }).join('');
+      el.style.display = 'grid';
+    } catch(e) { console.warn('[overview]', e); }
+  };
+
   function switchTravelTab(tab) {
     // Atlas 탭 진입/이탈 처리 — 모든 분기에서 hide 호출
     if (tab !== 'atlas' && typeof window.hideAtlasView === 'function') {
@@ -13661,6 +13749,8 @@
   // Finance 스키마: ['date','description','trip','category','amount','currency','krw_amount']
   // category 값은 '입금' 또는 세부 카테고리('항공·이동','숙소','식비',등). '입금'이 아니면 지출.
   async function updateTravelMiniSummary() {
+    try { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); } catch(e) {}
+    try { if (typeof window.trvRestoreCollapsed === 'function') window.trvRestoreCollapsed(); } catch(e) {}
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
     try {
