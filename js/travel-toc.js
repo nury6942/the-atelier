@@ -6,15 +6,12 @@
 (function() {
   'use strict';
 
+  // ★ (2026-07-22) 장부 5종은 Records 패널 하나로 통합 — TOC도 4개로 압축
   var SECTIONS = [
     { id: 'trv-hero',      label: 'Voyage' },
     { id: 'trv-stops',     label: 'Stops' },
     { id: 'journey-week-view', label: 'Daily Log' },
-    { id: 'trv-flights',   label: 'Flights' },
-    { id: 'trv-lodging',   label: 'Lodging' },
-    { id: 'trv-transport', label: 'Transit' },
-    { id: 'trv-rental',    label: 'Rental' },
-    { id: 'trv-souvenir',  label: 'Souvenir' },
+    { id: 'trv-ledger',    label: 'Records' },
   ];
 
   var _tocEl = null;

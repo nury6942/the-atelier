@@ -3598,6 +3598,16 @@
       var isSouvenir = (item.type === '기념품');
       var pinned = !isSouvenir && isPinnedItem(item);
       var reserv = !isSouvenir && isReservationItem(item);
+      // ★ (2026-07-22) 실내/정기휴무 플래그 — 비 오는 날 실내 대안 + 휴무일 충돌 감지
+      var indoorB = !isSouvenir && item.indoor === true;
+      var closedTxt = (!isSouvenir && item.closed) ? String(item.closed) : '';
+      var closedClash = false;
+      if (closedTxt && item.date) {
+        try {
+          var _wdCh = ['일','월','화','수','목','금','토'][new Date(item.date + 'T00:00:00').getDay()];
+          closedClash = closedTxt.indexOf(_wdCh) >= 0;
+        } catch(e) {}
+      }
       // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반
       var dotColor, timeColor, cardBg, badgeHtml;
       if (isSouvenir) {
@@ -3621,6 +3631,10 @@
         cardBg = 'bg-white border-slate-200 hover:border-sky-400';
         badgeHtml = '';
       }
+      if (indoorB) badgeHtml += ' <span class="text-[9px] font-bold px-1.5 bg-indigo-100 text-indigo-700 rounded ml-1">🏠 실내</span>';
+      if (closedTxt) badgeHtml += closedClash
+        ? ' <span class="text-[9px] font-black px-1.5 bg-rose-600 text-white rounded ml-1" title="이 일정 날짜가 정기휴무 요일과 겹칩니다!">⚠️ ' + closedTxt + ' 휴무 겹침!</span>'
+        : ' <span class="text-[9px] font-bold px-1.5 bg-amber-100 text-amber-700 rounded ml-1">⛔ ' + closedTxt + ' 휴무</span>';
       // 기념품일 때 카드 컨텐츠 다르게
       var displayTitle, displayDescHtml;
       // Daily Log 카드 도시 컨텍스트: item.city 우선, 없으면 baseCity (숙박 도시)
@@ -3641,8 +3655,9 @@
         (item.time ? '<div class="text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + badgeHtml + '</div>' : '') +
         '<div class="' + cardBg + ' p-3.5 rounded-xl border transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
-        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + '</h5>' +
+        '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
+          '<button onclick="editScheduleFlags(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600" title="플래그: 예약필수·실내·정기휴무"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">flag</span></button>' +
           '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">location_on</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
         '</div>' +
@@ -3679,6 +3694,39 @@
   }
 
   // ===== 일정 인라인 편집/추가 =====
+  // ★ (2026-07-22) 기존 일정의 플래그(예약/실내/휴무) 인라인 편집
+  window.editScheduleFlags = function(idx) {
+    var item = journeyData[idx];
+    if (!item) return;
+    var card = document.querySelector('[data-schedule-idx="' + idx + '"]');
+    if (!card) return;
+    var old = card.querySelector('.sched-flags-edit');
+    if (old) { old.remove(); return; }
+    var div = document.createElement('div');
+    div.className = 'sched-flags-edit mt-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-3 flex-wrap text-[11px]';
+    div.innerHTML =
+      '<label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="sf-res-' + idx + '" type="checkbox" class="w-3.5 h-3.5 rounded"' + (isReservationItem(item) ? ' checked' : '') + '/>🎫 예약</label>' +
+      '<label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="sf-in-' + idx + '" type="checkbox" class="w-3.5 h-3.5 rounded"' + (item.indoor === true ? ' checked' : '') + '/>🏠 실내</label>' +
+      '<span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔<input id="sf-cl-' + idx + '" type="text" value="' + String(item.closed || '').replace(/"/g, '&quot;') + '" placeholder="휴무 요일" class="w-16 border-0 border-b border-amber-300 bg-transparent px-1 text-[11px] outline-none"/></span>' +
+      '<button onclick="saveScheduleFlags(' + idx + ')" class="ml-auto px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold text-[10px]">저장</button>';
+    card.appendChild(div);
+  };
+  window.saveScheduleFlags = async function(idx) {
+    var item = journeyData[idx];
+    if (!item || !item._id) return;
+    var upd = {
+      reservation: !!(document.getElementById('sf-res-' + idx) || {}).checked,
+      indoor: !!(document.getElementById('sf-in-' + idx) || {}).checked,
+      closed: ((document.getElementById('sf-cl-' + idx) || {}).value || '').trim()
+    };
+    try {
+      await fbUpdate('journey', item._id, upd);
+      Object.assign(item, upd);
+      renderDayView();
+      if (typeof renderWeekView === 'function') try { renderWeekView(); } catch(e) {}
+    } catch(e) { alert('플래그 저장 실패'); }
+  };
+
   function editScheduleTime(el, idx) {
     if (el.querySelector('input')) return;
     var origHtml = el.innerHTML;
@@ -3827,6 +3875,11 @@
           '<input id="sched-add-city" type="text" placeholder="' + (cityName ? '비우면 숙박지 = ' + cityName : '행선지 도시 (선택)') + '" class="'+ic+' w-full text-[11px] text-amber-700" title="당일치기 등 숙박 도시와 다를 때만 입력"/>' +
         '</div>' +
         '<textarea id="sched-add-desc" placeholder="내용 입력 (선택)..." rows="2" class="'+ic+' w-full text-xs resize-none" style="line-height:1.5" onkeydown="if(event.key===\'Enter\'&&(event.metaKey||event.ctrlKey)){event.preventDefault();saveScheduleInline();}"></textarea>' +
+        '<div class="flex items-center gap-3 mt-1.5 mb-0.5 flex-wrap text-[11px]">' +
+          '<label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="sched-add-reserve" type="checkbox" class="w-3.5 h-3.5 rounded"/>🎫 예약 필수</label>' +
+          '<label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="sched-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>' +
+          '<span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔ 휴무<input id="sched-add-closed" type="text" placeholder="예: 월" class="'+ic+' w-16 text-[11px] text-amber-700" title="정기휴무 요일 (예: 월 / 월,화)"/></span>' +
+        '</div>' +
         '<div class="flex gap-2 justify-end mt-2">' +
           '<button onclick="this.closest(\'.schedule-inline-add\').remove()" class="p-1 text-slate-300 hover:text-slate-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">close</span></button>' +
           '<button onclick="saveScheduleInline()" class="p-1 text-indigo-400 hover:text-indigo-600"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">check</span></button>' +
@@ -3852,7 +3905,11 @@
     if (!title) { alert('일정 제목을 입력해줘!'); return; }
     // city: 사용자가 입력했으면 그 값(당일치기), 아니면 숙박 도시 기본값
     var cityFinal = cityInput || div.dataset.city || '';
-    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:cityFinal, title:title, description:desc };
+    var resChk = document.getElementById('sched-add-reserve');
+    var indChk = document.getElementById('sched-add-indoor');
+    var clsInp = document.getElementById('sched-add-closed');
+    var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:cityFinal, title:title, description:desc,
+      reservation: !!(resChk && resChk.checked), indoor: !!(indChk && indChk.checked), closed: (clsInp && clsInp.value.trim()) || '' };
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
@@ -4044,6 +4101,7 @@
       var data = await res.json();
       if (data.daily && data.daily.time && data.daily.time.length > 0) {
         var w = {
+          date: dateStr,
           code: data.daily.weathercode[0],
           tempMax: Math.round(data.daily.temperature_2m_max[0]),
           tempMin: Math.round(data.daily.temperature_2m_min[0]),
@@ -4076,6 +4134,13 @@
     var extraParts = [];
     if (w.rain !== null) extraParts.push('💧 ' + w.rain + '%');
     extraParts.push('💨 ' + w.wind + 'km/h');
+    // ★ (2026-07-22) 비 예보인 날 → 실내(🏠) 일정 추천 안내
+    var _RAIN_SET = {51:1,53:1,55:1,56:1,57:1,61:1,63:1,65:1,66:1,67:1,80:1,81:1,82:1,95:1,96:1,99:1};
+    if (_RAIN_SET[w.code] || (w.rain !== null && w.rain >= 60)) {
+      var _inN = 0;
+      try { _inN = journeyData.filter(function(d) { return d.type === '일정' && d.date === w.date && d.indoor === true; }).length; } catch(e) {}
+      extraParts.push('<span style="color:#e11d48;font-weight:800">☔ 비 예보 — ' + (_inN > 0 ? '실내 일정 ' + _inN + '개 준비됨' : '실내(🏠) 일정 추천') + '</span>');
+    }
     document.getElementById('weather-extra').innerHTML = extraParts.join(' · ');
   }
 
@@ -13617,14 +13682,53 @@
   window.trvRestoreCollapsed = function() {
     try {
       var m = JSON.parse(localStorage.getItem('trv_collapsed') || '{}');
-      Object.keys(m).forEach(function(k) { if (m[k]) window.trvToggleSec(k, true); });
+      Object.keys(m).forEach(function(k) { if (m[k] && (window._trvLedgerIds || []).indexOf(k) < 0) window.trvToggleSec(k, true); });
     } catch(e) {}
   };
 
+  // ═══ Records 장부 패널 (2026-07-22): 항공/숙소/이동/렌트/기념품 탭 전환 ═══
+  window._trvLedgerIds = ['trv-flights', 'trv-lodging', 'trv-transport', 'trv-rental', 'trv-souvenir'];
+  var _TRV_LEDGER_LABEL = { 'trv-flights': 'Flights', 'trv-lodging': 'Lodging', 'trv-transport': 'Transit', 'trv-rental': 'Rental', 'trv-souvenir': 'Souvenir' };
+  window.trvLedgerShow = function(secId) {
+    try { localStorage.setItem('trv_ledger_tab', secId); } catch(e) {}
+    window.renderLedgerTabs();
+  };
+  window.renderLedgerTabs = function() {
+    var nav = document.getElementById('trv-ledger-tabs');
+    if (!nav) return;
+    var active = 'trv-flights';
+    try { active = localStorage.getItem('trv_ledger_tab') || 'trv-flights'; } catch(e) {}
+    if (window._trvLedgerIds.indexOf(active) < 0) active = 'trv-flights';
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var domCnt = function(id) { var c = document.getElementById(id); return c ? c.children.length : 0; };
+    var counts = {
+      'trv-flights': Math.max(jd.filter(function(d) { return d.type === '항공편'; }).length, domCnt('journey-flight-list')),
+      'trv-lodging': domCnt('journey-lodging-list'),
+      'trv-transport': Math.max(jd.filter(function(d) { return d.type === '이동수단'; }).length, domCnt('journey-transport-list')),
+      'trv-rental': domCnt('journey-rental-list'),
+      'trv-souvenir': jd.filter(function(d) { return d.type === '기념품'; }).length
+    };
+    nav.innerHTML = window._trvLedgerIds.map(function(id) {
+      return '<button class="trv-ltab' + (id === active ? ' is-active' : '') + '" onclick="trvLedgerShow(\'' + id + '\')">' +
+        _TRV_LEDGER_LABEL[id] + '<span class="cnt">' + (counts[id] || 0) + '</span></button>';
+    }).join('');
+    window._trvLedgerIds.forEach(function(id) {
+      var sec = document.getElementById(id);
+      if (!sec) return;
+      sec.style.display = (id === active) ? '' : 'none';
+      if (id === active && sec.getAttribute('data-collapsed') === '1') window.trvToggleSec(id, false);
+    });
+  };
+
   window.trvJumpSec = function(id) {
-    var sec = document.getElementById(id);
+    var scrollTargetId = id;
+    if (window._trvLedgerIds.indexOf(id) >= 0) {
+      window.trvLedgerShow(id);          // 장부 항목이면 탭 전환 후
+      scrollTargetId = 'trv-ledger';     // 패널 위치(항상 같은 자리)로 이동
+    }
+    var sec = document.getElementById(scrollTargetId);
     if (!sec) return;
-    if (sec.getAttribute('data-collapsed') === '1') window.trvToggleSec(id, false);
+    if (sec.getAttribute('data-collapsed') === '1') window.trvToggleSec(scrollTargetId, false);
     var top = sec.getBoundingClientRect().top + window.scrollY - 80;
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   };
@@ -13751,6 +13855,7 @@
   async function updateTravelMiniSummary() {
     try { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); } catch(e) {}
     try { if (typeof window.trvRestoreCollapsed === 'function') window.trvRestoreCollapsed(); } catch(e) {}
+    try { if (typeof window.renderLedgerTabs === 'function') window.renderLedgerTabs(); } catch(e) {}
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
     try {

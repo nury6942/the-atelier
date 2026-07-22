@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=212" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=213" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5462,6 +5462,16 @@
       color:#0f172a; line-height:1.15; font-variant-numeric:tabular-nums; }
     .trv-ov-sub { font-size:10px; color:#94a3b8; margin-top:3px; }
     .trv-ov-chip.is-warn { border-color:#fcd34d; background:#fffdf5; }
+    .trv-ledger-tabs { display:flex; gap:24px; border-bottom:1px solid var(--gray-200,#e2e8f0); margin-bottom:22px; flex-wrap:wrap; }
+    .trv-ltab { border:none; background:none; cursor:pointer; padding:8px 2px 11px; margin-bottom:-1px;
+      font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.12em; color:#94a3b8; border-bottom:2px solid transparent;
+      display:inline-flex; align-items:center; gap:7px; transition:color .15s, border-color .15s; }
+    .trv-ltab:hover { color:#334155; }
+    .trv-ltab.is-active { color:#0f172a; border-bottom-color:#7c3aed; }
+    .trv-ltab .cnt { font-family:'Manrope','Pretendard',sans-serif; background:#f1f5f9; border-radius:99px;
+      padding:1px 7px; font-size:10px; font-weight:800; color:#64748b; letter-spacing:0; }
+    .trv-ltab.is-active .cnt { background:#ede9fe; color:#6d28d9; }
 
     #travel-atlas-section .atlas-hero {
       padding: var(--space-8) 0 48px;
@@ -9298,11 +9308,20 @@
           <!-- 오른쪽 (모바일 col-span-12, 데스크탑 col-span-12 - 일정이 위로 빠짐) -->
           <div class="col-span-12 lg:col-span-12 space-y-8">
 
+            <!-- ═══ Records 장부 패널 (2026-07-22 IA 재구조): 항공/숙소/이동/렌트/기념품을
+                 탭 하나로 묶어 '한 두루마리 스크롤' 해소 — 항상 같은 자리에서 전환 ═══ -->
+            <section id="trv-ledger" style="margin-bottom:-8px">
+              <div class="trv-sec-head" style="border-bottom:none;padding-bottom:0;margin-bottom:6px">
+                <div><p class="trv-sec-eyebrow">Records</p><h3 class="trv-sec-title">예약 &amp; 체크리스트</h3></div>
+              </div>
+              <nav id="trv-ledger-tabs" class="trv-ledger-tabs"></nav>
+            </section>
+
             <!-- 1. 항공편 -->
             <section id="trv-flights">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Flights</p><h3 class="trv-sec-title">항공편</h3></div>
-                <div class="trv-sec-actions"><button onclick="trvToggleSec('trv-flights')" class="trav-act" style="padding:8px 10px" title="접기/펼치기"><span class="material-symbols-outlined" id="trv-flights-chev">expand_less</span></button><button onclick="openFlightAddModal()" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions"><button onclick="openFlightAddModal()" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
               <!-- 항공편 추천 큐레이션 — trip 매칭 시 자동 표시 -->
               <div id="journey-flight-recs" style="display:none"></div>
@@ -9511,7 +9530,7 @@
             <section id="trv-lodging" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Lodging</p><h3 class="trv-sec-title">숙소</h3></div>
-                <div class="trv-sec-actions"><button onclick="trvToggleSec('trv-lodging')" class="trav-act" style="padding:8px 10px" title="접기/펼치기"><span class="material-symbols-outlined" id="trv-lodging-chev">expand_less</span></button><button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions"><button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
               <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
               <div id="journey-lodging-recs" style="display:none"></div>
@@ -9764,11 +9783,10 @@
             </div>
 
             <!-- 3. 도시 간 이동 수단 (Voyages) -->
-            <div class="trv-2col">
             <section id="trv-transport" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Transit</p><h3 class="trv-sec-title">도시 간 이동</h3></div>
-                <div class="trv-sec-actions"><span id="transport-count" class="text-xs font-semibold text-slate-400"></span><button onclick="trvToggleSec('trv-transport')" class="trav-act" style="padding:8px 10px" title="접기/펼치기"><span class="material-symbols-outlined" id="trv-transport-chev">expand_less</span></button><button onclick="openTravelModal('transport-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions"><span id="transport-count" class="text-xs font-semibold text-slate-400"></span><button onclick="openTravelModal('transport-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               
               </div>
               <!-- 도시 간 이동 (큐레이션) — trip 매칭 시 자동 표시. 숙소 섹션에서 이 섹션으로 이동(2026-06-17) -->
@@ -9903,11 +9921,10 @@
             <section id="trv-rental" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Rental</p><h3 class="trv-sec-title">렌트카</h3></div>
-                <div class="trv-sec-actions"><button onclick="trvToggleSec('trv-rental')" class="trav-act" style="padding:8px 10px" title="접기/펼치기"><span class="material-symbols-outlined" id="trv-rental-chev">expand_less</span></button><button onclick="openTravelModal('rental-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions"><button onclick="openTravelModal('rental-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
               <div id="journey-rental-list" class="flex flex-col gap-4"></div>
             </section>
-            </div><!-- /trv-2col -->
 
             <!-- 렌트카 추가 모달 -->
             <div id="rental-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
@@ -10139,7 +10156,7 @@
             <section id="trv-souvenir" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Souvenir</p><h3 class="trv-sec-title">기념품 체크리스트</h3></div>
-                <div class="trv-sec-actions"><button onclick="trvToggleSec('trv-souvenir')" class="trav-act" style="padding:8px 10px" title="접기/펼치기"><span class="material-symbols-outlined" id="trv-souvenir-chev">expand_less</span></button><button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions"><button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
               <!-- Grid Header -->
               <div class="grid grid-cols-12 px-5 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -13253,7 +13270,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=212" defer></script>
+<script src="js/app-1-pages.js?v=213" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -14119,7 +14136,7 @@
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
-<script src="js/travel-toc.js?v=2" defer></script>
+<script src="js/travel-toc.js?v=3" defer></script>
 
 </body>
 </html>
