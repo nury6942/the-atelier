@@ -7753,11 +7753,30 @@
       z-index: 2;
     }
     #page-journey .j-slot.is-reservation::before {
-      background: var(--j-primary);
+      background: #f43f5e;
+      border-color: #f43f5e;
     }
     #page-journey .j-slot.is-pinned::before {
       background: #10b981;
       border-color: #10b981;
+    }
+    #page-journey .j-slot.is-pinned {
+      background: #ecfdf5;
+      box-shadow: inset 3px 0 0 #10b981;
+      padding-left: 12px;
+      border-radius: 6px;
+    }
+    #page-journey .j-slot.is-reservation {
+      background: #fff1f2;
+      box-shadow: inset 3px 0 0 #f43f5e;
+      padding-left: 12px;
+      border-radius: 6px;
+    }
+    #page-journey .j-slot.is-shopping {
+      background: #fff7ed;
+      box-shadow: inset 3px 0 0 #fb923c;
+      padding-left: 12px;
+      border-radius: 6px;
     }
     #page-journey .j-slot-time {
       width: 120px;
@@ -7783,7 +7802,7 @@
       color: var(--j-on-surface);
       margin: 0;
     }
-    #page-journey .j-slot.is-reservation .j-slot-title { color: var(--j-primary); }
+    #page-journey .j-slot.is-reservation .j-slot-title { color: #be123c; }
     #page-journey .j-slot.is-shopping .j-slot-title-row::after {
       content: '🛍 쇼핑';
       font-size: var(--font-size-nano);

@@ -267,18 +267,17 @@
     '② Palazzetto Rosso 시에나 — 10/8 1박 ★신규★ (94% 매진, 방1개! 급함)',
     '③ GARAGE47 피엔차 — 10/9~10/12 재예약 (난방 확인)',
     '④ 프랑크푸르트 호텔 — 10/4 1박 재예약',
-    '⑤ 드레스덴 Moxy — 취소 (수수료 확인)',
-    '⑥ EasyJet BER→PSA 10/8 12:05 — ★신규 예약★ + 위탁수하물',
-    '⑦ 렌트카 — PSA 픽업 10/8 → FCO 반납 10/12, 오토매틱, 비포장조항 없는 회사',
-    '⑧ ICE Frankfurt→Berlin 10/5 오후 — 재예약 (도착역 확인)',
-    '⑨ 라이히스타크 돔 — visite.bundestag.de 사전예약 (10/6, 무료, 여권)',
-    '⑩ 시에나 두오모 — operaduomo.siena.it 시간지정 예약 (10/9, 공개기간 혼잡)',
-    '⑪ ARCHITECT@WORK — berlin.architectatwork.de 사전등록 (10/7)',
-    '⑫ Palazzo Contucci — ☎️+39 0578 757006 사전확인 (10/10, 수확철)',
+    '⑤ EasyJet BER→PSA 10/8 12:05 — ★신규 예약★ + 위탁수하물',
+    '⑥ 렌트카 — PSA 픽업 10/8 → FCO 반납 10/12, 오토매틱, 비포장조항 없는 회사',
+    '⑦ ICE Frankfurt→Berlin 10/5 오후 — 재예약 (도착역 확인)',
+    '⑧ 라이히스타크 돔 — visite.bundestag.de 사전예약 (10/6, 무료, 여권)',
+    '⑨ 시에나 두오모 — operaduomo.siena.it 시간지정 예약 (10/9, 공개기간 혼잡)',
+    '⑩ ARCHITECT@WORK — berlin.architectatwork.de 사전등록 (10/7)',
+    '⑪ Palazzo Contucci — ☎️+39 0578 757006 사전확인 (10/10, 수확철)',
   ];
   console.log('\n' + '═'.repeat(58) + '\n📋 재예약/사전예약 체크리스트\n' + '═'.repeat(58));
   TODO.forEach(t=>console.log('  '+t));
   console.log('═'.repeat(58));
   console.log('\n✅ v2 재구성 완료 — 일정 ' + ok + '개 (실패 ' + fail + ')');
-  alert('✅ v2 재구성 완료!\n\n· 피사 하강 루트 (시에나1박 → 피엔차3박)\n· 데사우 삭제, 베를린 3박\n· 몬탈치노·크레테세네시 추가\n· 일정 ' + ok + '개 (실패 ' + fail + ')\n\n⚠️ 콘솔 체크리스트 12건 확인.\n특히 ② 시에나는 94% 매진 — 지금 예약!\n\n새로고침하세요.');
+  alert('✅ v2 재구성 완료!\n\n· 피사 하강 루트 (시에나1박 → 피엔차3박)\n· 데사우 삭제, 베를린 3박\n· 몬탈치노·크레테세네시 추가\n· 일정 ' + ok + '개 (실패 ' + fail + ')\n\n⚠️ 콘솔 체크리스트 11건 확인.\n특히 ② 시에나는 94% 매진 — 지금 예약!\n\n새로고침하세요.');
 })();
