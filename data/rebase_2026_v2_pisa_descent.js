@@ -1,31 +1,29 @@
 // ═══════════════════════════════════════════════════════════════
-// ATELIER: 2026 독일&이탈리아 — 전체 재구성 v2 (피사 하강 루트)
+// ATELIER: 2026 독일&이탈리아 — 최종 재구성 (로마 왕복)
 // ───────────────────────────────────────────────────────────────
-// v1(로마 도착) → v2(피사 도착) 대규모 변경. 패치가 아니라 통째 재구성.
+// 로마 IN/OUT 왕복 + 산 퀴리코 4박 거점. 패치가 아니라 통째 재구성.
 //
 // 확정된 변경 (사용자 결정):
-//   1) 이탈리아 입국: 로마(FCO) → ★피사(PSA)★, EasyJet 10/8 12:05→14:00
-//      · 비행기값 절반(수화물 포함 ~15만 vs 로마 ~30만)
-//      · 낮 도착이라 "북→남 하강" 실현 가능
+//   1) 이탈리아 입국/출국: ★로마(FCO) 왕복★, 라이언에어 10/8 12:20→14:30
+//      · 렌터카 로마 왕복이라 편도료 없음(피사 편도 대비 ~₩37만 절약)
+//      · 로마 도착 → 3H 북상 → 산 퀴리코
 //   2) ★데사우 바우하우스 당일치기 삭제★ (미술관 순례 < 거리·샵·자연 선호)
 //      → 베를린 4박 → 3박 (10/5,6,7 / 10/8 오전 출국)
-//   3) ★시에나 1박 추가★ (10/8) — 거점 아니라 하강 경유 1박.
-//      해질녘 당일치기 관광객 빠진 뒤 골목·아페리티보·사람구경
+//   3) 시에나는 ★당일치기★ (10/9) — 숙박 취소, 산 퀴리코서 당일 왕복
 //   4) ★크레테 세네시★(10/9 남하 드라이브) + ★몬탈치노★(10/11) 추가
-//   5) 토스카나 3박 → 4박 (시에나 1 + 산 퀴리코 3)
-//   6) 렌트카: FCO 왕복 → ★PSA 픽업 → FCO 반납★ (편도)
+//   5) 토스카나 4박 = 산 퀴리코 La Scala 통짜(시에나 1박 흡수)
+//   6) 렌트카: ★Sixt 로마 FCO 왕복★ (Grande Panda, 오토, Smart Protection 면책금0)
 //   7) 베를린: 유대인박물관·노이에 나치오날갈레리 둘 다 유지(사용자 요청)
 //      + 비키니 베를린·템펠호퍼 등 거리·샵·공원 콘텐츠 보강
 //
-// 하강 루트 (전부 낮 이동):
-//   피사공항 →(1.5H)→ 시에나[1박] →크레테세네시→ 산 퀴리코[3박]
-//   →오르비에토→ 로마 FCO 출국
+// 루트 (로마 왕복):
+//   베를린 →✈️→ 로마 FCO →(3H)→ 산 퀴리코[4박, 정중앙 거점]
+//   →당일치기(시에나·피엔차·몬탈치노·바뇨비뇨니·몬테풀차노)→ 오르비에토 →로마 FCO 출국
 //
 // 숙소 (전부 재예약 필요, 무료취소/미결제 전제):
 //   · 프랑크푸르트  10/4~10/5 (1박)
 //   · Casa Camper 베를린  10/5~10/8 (★3박★)
-//   · La Terrazza Sul Campo 시에나  10/8~10/9 (1박) [신규, 전용욕실]
-//   · La Scala 1572 산 퀴리코  10/9~10/12 (3박) [예약완료, 아파트 통째 82㎡]
+//   · La Scala 1572 산 퀴리코  10/8~10/12 (★4박★) [예약완료, 아파트 통째 82㎡, 시에나 흡수]
 //
 // 사용: Travel 페이지 "2026 독일&이탈리아" 활성 → F12 → Console →
 //       붙여넣기 → Enter → confirm 3번 → 새로고침
@@ -60,13 +58,12 @@
   const CITY_PLAN = [
     { match:/frankfurt|프랑크푸르트/i, name:'Frankfurt am Main, 독일', start:'2026-10-04', end:'2026-10-05', nights:1, order:1, desc:'입국 도시. 도착 저녁 뢰머광장 + 이튿날 오전 반나절.' },
     { match:/berlin|베를린/i,          name:'Berlin, 독일',            start:'2026-10-05', end:'2026-10-08', nights:3, order:2, desc:'건축·거리·샵·공원. 미테·크로이츠베르크·프렌츨라우어베르크 걷기 중심.' },
-    { match:/siena|시에나/i,           name:SI_NAME,                   start:'2026-10-08', end:'2026-10-09', nights:1, order:3, desc:'피사에서 남하 첫 밤. 해질녘 골목·캄포 아페리티보·사람구경.' },
-    { match:/pienza|피엔차|montepulciano|몬테풀차노|quirico|퀴리코|scala|orcia/i, name:'San Quirico d\'Orcia, 시에나 이탈리아', start:'2026-10-09', end:'2026-10-12', nights:3, order:4, desc:'발도르차 정중앙 거점(La Scala 1572). 사이프러스 길·바뇨비뇨니·피엔차·몬탈치노·몬테풀차노 당일치기.' },
+    { match:/pienza|피엔차|montepulciano|몬테풀차노|quirico|퀴리코|scala|orcia/i, name:'San Quirico d\'Orcia, 시에나 이탈리아', start:'2026-10-08', end:'2026-10-12', nights:4, order:3, desc:'발도르차 정중앙 거점(La Scala 1572, 4박). 시에나·사이프러스 길·바뇨비뇨니·피엔차·몬탈치노·몬테풀차노 당일치기.' },
   ];
-  if (confirm('1단계: 도시(Stops)를 재구성할까요?\n\n프랑크푸르트1박 · 베를린3박 · 시에나1박(신규) · 산퀴리코3박\n(드레스덴은 이미 삭제됨)')) {
+  if (confirm('1단계: 도시(Stops)를 재구성할까요?\n\n프랑크푸르트1박 · 베를린3박 · 산퀴리코4박\n(시에나·드레스덴 삭제됨)')) {
     try {
       const allC = await fbRead('trip_cities'); const mine = allC.filter(c => c.trip_id === tripId);
-      for (const c of mine) if (/dresden|드레스덴/i.test(c.name||'')) { try { await fbDelete('trip_cities', c._id); console.log('🗑️ 도시 삭제:', c.name); } catch(e){} }
+      for (const c of mine) if (/dresden|드레스덴/i.test(c.name||'') || /^Siena,/i.test(c.name||'')) { try { await fbDelete('trip_cities', c._id); console.log('🗑️ 도시 삭제:', c.name); } catch(e){} }
       for (const p of CITY_PLAN) {
         const hit = mine.find(c => p.match.test(c.name||'') && !/dresden|드레스덴/i.test(c.name||''));
         const payload = { name:p.name, start_date:p.start, end_date:p.end, nights:p.nights, order:p.order, desc:p.desc };
@@ -138,31 +135,29 @@
     N('2026-10-07','17:45','18:29',BL,'✏️ 모듈러 (Moritzplatz) + 일몰','전 세계 디자이너 대형 문구/재료점. 종이·아크릴·가공재료. Voo에서 도보 8분. 일몰 18:29.'),
     N('2026-10-07','19:00','21:00',BL,'🍜 마지막 베를린 저녁 + 짐 정리','Monsieur Vuong(쌀국수) 또는 Burgermeister. 내일 오전 출국 — 짐 다 싸기. 액체·와인 위탁 원칙.'),
 
-    // ═══ Day 5 — 10/8 (목) 베를린 → 피사 → 시에나  [시에나 일몰 18:43] ═══
-    N('2026-10-08','07:00','07:45',BL,'☀️ 기상 + 마지막 짐 점검'),
-    N('2026-10-08','07:45','08:15',BL,'🥐 빠른 조식 (To-go OK)'),
-    P('2026-10-08','08:15','08:45',BL,'🏨 Casa Camper 체크아웃','비행 위해 일찍.'),
-    N('2026-10-08','08:45','09:45',BL,'🚆 → BER 공항 (S9/FEX 약 45분)','€4.40. 캐리어 여유 있게.'),
-    N('2026-10-08','09:45','11:45',BL,'🛫 BER 체크인 + 보안 + 게이트','⚠️ 액체 100ml. 쉥겐→쉥겐, 게이트 직행.'),
-    R('2026-10-08','12:05','14:00',SI,'✈️ EasyJet BER → 피사 PSA (1H 55M) — ⚠️ 미예약','❗예약 필요. 라이언에어/이지젯 낮편. 수화물 별도 구매 필수(9일 캐리어).\n\n※ 로마 대신 피사: 비행기값 절반 + 낮 도착이라 시에나부터 북→남 하강 가능. 단 렌트카는 피사→로마 편도(수수료 부활, 감수).'),
-    N('2026-10-08','14:00','14:45',SI,'🛬 PSA 도착 + 짐 찾기','EU 내 이동이라 빠름. 렌터카 센터로.'),
-    R('2026-10-08','14:45','15:30',SI,'🚗 렌트카 픽업 (피사 PSA) — ⚠️ 재예약 필요','❗구 예약은 로마/피사 혼재. ★피사 픽업 → 로마 반납 편도★로 재예약. 오토매틱 반드시 지정.\n픽업 시: 360도 영상 + 연료 사진. "Full to Full." 국제운전면허증+여권+본인 신용카드.'),
-    P('2026-10-08','15:30','17:00',SI,'🛣️ 드라이브: 피사 → 시에나 (약 1H 30M / 130km)','수페르스트라다. 시에나 근접 시 ⚠️ ZTL 절대 진입 금지.'),
-    N('2026-10-08','17:00','17:30',SI,'🅿️ Santa Caterina 주차 + 구시가 진입','24시간 커버드, 1박 최대 €35. ★에스컬레이터로 구시가 직행★. (Hotel Athena 선택 시 자체 무료차고라 이 단계 스킵)'),
-    N('2026-10-08','17:30','18:00',SI,'🏨 La Terrazza Sul Campo 체크인','⚠️ 신규 예약. 📍★Piazza del Campo 바로 위★ 9.6점, 전용욕실, €145. 문 열면 광장.\n(안전대안: La Barriera di San Lorenzo €137 — 무료취소+4실+조식)'),
-    N('2026-10-08','18:00','18:43',SI,'🌇 캄포광장 + 골목 해질녘 산책','★당일치기 관광객 빠진 시에나★ Piazza del Campo 조개모양 붉은 광장에 앉기. 일몰 18:43. Via di Città 부티크 구경.'),
-    N('2026-10-08','19:00','21:00',SI,'🍷 아페리티보 + 저녁 (사람구경)','Via Banchi di Sopra / Via Pantaneto 바·트라토리아. Pici, 시에나 요리. ★걸어서 숙소 복귀 = 와인 곁들여도 OK★.'),
+    // ═══ Day 5 — 10/8 (목) 베를린 → 로마(FCO) → 산 퀴리코  [산퀴리코 일몰 18:40] ═══
+    N('2026-10-08','07:30','08:15',BL,'☀️ 기상 + 마지막 짐 점검'),
+    N('2026-10-08','08:15','08:45',BL,'🥐 빠른 조식 (To-go OK)'),
+    P('2026-10-08','08:45','09:15',BL,'🏨 Casa Camper 체크아웃','비행 위해 일찍.'),
+    N('2026-10-08','09:15','10:15',BL,'🚆 → BER 공항 (S9/FEX 약 45분)','€4.40. 캐리어 여유 있게.'),
+    N('2026-10-08','10:15','12:20',BL,'🛫 BER 체크인 + 보안 + 게이트','⚠️ 액체 100ml. 쉥겐→쉥겐, 게이트 직행.'),
+    P('2026-10-08','12:20','14:30',PZ,'✈️ 라이언에어 BER → 로마 FCO (2H 10M)','✅ 예약 확정(₩187,552). 낮 도착이라 오늘 안에 토스카나까지. ⚠️ 위탁수하물 포함 확인.\n※ 로마 왕복(FCO 픽업/반납)이라 렌터카 편도료 없음 — 피사 편도 대비 ~₩37만 절약.'),
+    N('2026-10-08','14:30','15:20',PZ,'🛬 FCO 도착 + 짐 찾기','EU 내 이동이라 빠름. Rental Car Center로.'),
+    P('2026-10-08','15:20','16:00',PZ,'🚗 렌터카 픽업 (로마 FCO) — Sixt Grande Panda','✅ 예약 완료(Sixt, 오토, Smart Protection 면책금0, 픽업시결제=무료취소). 픽업 시 360도 영상+연료 사진. 국제운전면허증+여권+본인 신용카드. ⚠️ 포장도로만.'),
+    P('2026-10-08','16:00','18:30',PZ,'🛣️ 드라이브: FCO → 산 퀴리코 (약 3H / 227km)','A1 Autostrada del Sole 북상 → Chiusi-Chianciano 나들목 → SP146. 중간 Autogrill 휴게소 한 번. 통행료 편도 €15~20. ⚠️ 마을 ZTL 진입 금지.'),
+    N('2026-10-08','18:30','19:00',PZ,'🏨 La Scala 1572 체크인 (산 퀴리코, 4박)','✅ 예약 완료(무료취소 10/2까지). ★아파트 통째 82㎡ 2베드룸, 전용주방·욕실2, 구시가 150m★ 9.7점. 뒷문 나가면 2분 무료주차(평지). 긴 이동일이니 짐 풀고 쉬기.'),
+    N('2026-10-08','19:30','21:00',PZ,'🍽️ 산 퀴리코 첫 저녁 (도보)','★차 두고 걸어서★ Via Dante Alighieri 메인 골목·트라토리아(Al Vecchio Forno 등). 첫날이라 가볍게. 로컬 분위기, 덜 붐빔.'),
 
-    // ═══ Day 6 — 10/9 (금) 시에나 → 크레테세네시 → 산 퀴리코  [일몰 18:40] ═══
-    N('2026-10-09','07:30','08:30',SI,'🌅 새벽 시에나 골목 + 텅 빈 캄포','★관광객 오기 전, 로컬만 있는 아침★ 골목 사진. 카페 콜라치오네.'),
-    N('2026-10-09','08:30','09:00',SI,'☕ 조식 + 체크아웃'),
-    R('2026-10-09','10:00','11:30',SI,'🎫 Duomo di Siena ★바닥 모자이크 공개★','금 10:00~19:00(오픈 맞춰 입장). ★scopertura 8/18~11/15 — 56개 대리석 상감 바닥 전면 공개, 평소 덮여있음★. 금요일이라 일요일 미사 제약 없음. Piccolomini 도서관 포함. OPA SI PASS €16. ⚠️ 공개기간 최다 혼잡, 온라인 시간지정 예약 권장.'),
-    N('2026-10-09','11:30','12:30',SI,'🛍️ Via di Città + Via Stalloreggi','부티크·가죽·도자기 + 공방·아틀리에. 누리 골목.'),
-    N('2026-10-09','12:30','13:30',SI,'🍝 시에나 점심'),
-    P('2026-10-09','13:30','15:20',PZ,'🚗 시에나 → 크레테 세네시 → 산 퀴리코 (약 1H 20M, 경치길)','★발도르차 초록과 완전 다른 회색 점토 황무지★ 아시아노 방향 SP438. 차로 달리는 뷰 맛집 — 렌트카 살린 보람. 사진 정차. 남하해서 산 퀴리코로.'),
-    N('2026-10-09','15:20','16:00',PZ,'🏨 La Scala 1572 체크인 (산 퀴리코, 3박)','✅ 예약 완료(무료취소 10/2까지). ★아파트 통째 82㎡ 2베드룸, 전용주방·욕실2, 구시가 150m★ 9.7점. 뒷문 나가면 2분 무료주차(평지). ※ 실내 한 층 계단 여부만 호스트 Carola에게 확인.'),
-    N('2026-10-09','16:20','18:40',PZ,'🌅 사이프러스 길 일몰 (SP146, 숙소 바로 옆) — 일몰 18:40','★토스카나 엽서의 그 사이프러스 길★ 산 퀴리코~피엔차 사이, 숙소서 차 5분. 황금빛 지그재그. 도착 첫날 하이라이트 — 산 퀴리코 거점이라 코앞. ⚠️ 비탈레타 흙길 주의.'),
-    N('2026-10-09','19:00','20:30',PZ,'🍽️ 산 퀴리코 첫 저녁 (도보)','★차 두고 걸어서★ Via Dante Alighieri 메인 골목·트라토리아(Al Vecchio Forno 등). 로컬 분위기, 덜 붐빔.'),
+    // ═══ Day 6 — 10/9 (금) 시에나 당일치기 + 사이프러스 일몰  [일몰 18:38] ═══
+    N('2026-10-09','08:00','09:00',PZ,'☕ 산 퀴리코 조식','La Scala 전용주방(자가) 또는 메인 골목 카페 콜라치오네.'),
+    P('2026-10-09','09:00','10:10',PZ,'🚗 산 퀴리코 → 시에나 (약 1H)','⚠️ Santa Caterina 주차장에 주차! 시내 ZTL 절대 진입 금지(벌금). 에스컬레이터로 구시가 진입.\n💡 여유되면 아시아노 방향 크레테 세네시(회색 점토 황무지) 경치길로 우회 가능.'),
+    N('2026-10-09','10:10','11:30',PZ,'🟥 Piazza del Campo + 광장 산책','조개껍데기 모양 붉은 벽돌 광장. 9개 구획 = 시에나 9인 정부 상징. 바닥이 중앙으로 오목. 앉아서 Torre del Mangia 올려다보기.'),
+    R('2026-10-09','11:30','13:30',PZ,'🎫 Duomo di Siena ★바닥 모자이크 공개★','금 10:00~19:00. ★scopertura 8/18~11/15 — 56개 대리석 상감 바닥 전면 공개, 평소 덮여있음★. 금요일이라 일요일 미사 제약 없음. Piccolomini 도서관 포함. OPA SI PASS €16. ⚠️ 공개기간 최다 혼잡, 온라인 시간지정 예약 권장.'),
+    N('2026-10-09','13:30','14:45',PZ,'🍝 시에나 점심','Pici, Ribollita, Pappa al Pomodoro. 광장 근처 트라토리아.'),
+    N('2026-10-09','14:45','16:00',PZ,'🛍️ Via di Città + Via Stalloreggi + 젤라또','부티크·가죽·도자기 + 공방·아틀리에. Grom/Kopa Kabana 젤라또. 누리 골목.'),
+    P('2026-10-09','16:00','17:10',PZ,'🚗 산 퀴리코 복귀 (약 1H)'),
+    N('2026-10-09','17:20','18:38',PZ,'🌅 사이프러스 길 일몰 (SP146, 숙소 옆) — 일몰 18:38','★토스카나 엽서의 그 사이프러스 길★ 산 퀴리코~피엔차 사이, 숙소서 차 5분. 황금빛 지그재그. 복귀길에 잠깐 나가 사진. ⚠️ 비탈레타 흙길 주의.'),
+    N('2026-10-09','19:00','20:30',PZ,'🍽️ 산 퀴리코 저녁 (도보)','메인 골목 트라토리아. 차 두고 걸어서.'),
 
     // ═══ Day 7 — 10/10 (토) 피엔차 + 몬테풀차노 (동쪽 날)  [일몰 18:38] ═══
     N('2026-10-10','08:00','09:00',PZ,'☕ 산 퀴리코 조식','La Scala 전용주방(자가) 또는 메인 골목 카페 코르네토+에스프레소.'),
@@ -199,7 +194,7 @@
     N('2026-10-12','15:45','16:20',PZ,'☕ 마지막 젤라또/카페 여유','서두르지 않아도 됨. 오르비에토 전망 즐기기.'),
     P('2026-10-12','16:20','18:10',PZ,'🚗 오르비에토 → FCO (약 1H 50M)','A1 남하. ZTL 걱정 없음. 톨 있음. 넉넉히 잡아도 이 정도.'),
     N('2026-10-12','18:10','18:30',PZ,'⛽ 공항 근처 주유 (Benzina!)','⚠️ Benzina(휘발유)만! Gasolio(디젤) 금지. Full to Full 정산용. 영수증 챙기기.'),
-    P('2026-10-12','18:30','18:50',PZ,'🚗 렌트카 반납 (FCO, 약 10~20분)','Rental Car Center. 직원 인스펙션 + "Damage-free receipt". 360도 영상. ※ 피사→로마 편도.'),
+    P('2026-10-12','18:30','18:50',PZ,'🚗 렌트카 반납 (FCO, 약 10~20분)','Sixt Rental Car Center. 직원 인스펙션 + "Damage-free receipt". 360도 영상. ※ 로마 FCO 왕복(픽업=반납 동일).'),
     N('2026-10-12','18:50','19:05',PZ,'🚆 셔틀/도보 → T3'),
     R('2026-10-12','19:05','20:00',PZ,'🧾 Tax Refund(세관 도장) + 짐 부치기','⚠️ ★택스리펀 줄이 유일한 변수★ — 도착 즉시 세관 스탬프 → 환급 카운터 → bag drop. 온라인 체크인 완료라 짐만 부치면 됨. 환급품(와인·치즈·Marvis) 개봉 전 + 영수증 원본.'),
     N('2026-10-12','20:00','20:45',PZ,'🛂 보안 + 게이트','EU 출국. 마지막 에스프레소.'),
@@ -226,37 +221,35 @@
     { title:'Casa Camper Berlin', address:'Weinmeisterstraße 1, 10178 Berlin', phone:'030-20003410', city:BL,
       date:'2026-10-05', checkout_date:'2026-10-08', payment_status:'결제 예정',
       notes:'⚠️ 재예약 필요. 구 2박 → ★3박★ (10/5~10/8). U8 Weinmeisterstraße 역 바로 위. 데사우 삭제로 4박→3박.' }, '숙소·Casa Camper 10/5~8 (3박)');
-  await up(lodgings.find(r=>/pienza|피엔차|montepulciano|몬테풀차노|garage|바냐이아|바그나이아|아그리투리스모|corso|enrico|pulcinella/i.test(hay(r))),
+  await up(lodgings.find(r=>/pienza|피엔차|montepulciano|몬테풀차노|garage|바냐이아|바그나이아|아그리투리스모|corso|enrico|pulcinella|scala|quirico|퀴리코/i.test(hay(r))),
     { title:'Apartment La Scala 1572 (산 퀴리코 도르치아)', address:'Via Poliziano 15, 53027 San Quirico d\'Orcia SI', city:PZ,
-      date:'2026-10-09', checkout_date:'2026-10-12', payment_status:'결제 예정',
-      notes:"✅ 예약 완료(무료취소 10/2까지, 현장결제·카드불요). ★아파트 통째 82㎡ 2베드룸, 전용주방·전용욕실 2개, 구시가 150m★ 9.7점(위치 10·청결 9.9·편안함 10).\n주차: 뒷문 나가면 2분 무료주차장, 평지. ※ 실내 한 층 계단 여부만 호스트 Carola에게 확인(별로면 무료취소하고 La Casetta del Pian delle Noci로).\n산 퀴리코 = 발도르차 정중앙 거점 — 피엔차14·바뇨11·몬탈21·몬테32분." }, '숙소·La Scala 1572 산퀴리코 10/9~12');
+      date:'2026-10-08', checkout_date:'2026-10-12', payment_status:'결제 예정',
+      notes:"✅ 예약 완료(★4박★ 10/8~10/12, 무료취소, 현장결제·카드불요). 로마 왕복으로 바꾸며 시에나 1박 흡수 → 산 퀴리코 4박.\n★아파트 통째 82㎡ 2베드룸, 전용주방·전용욕실 2개, 구시가 150m★ 9.7점. 뒷문 2분 무료주차(평지).\n산 퀴리코 = 발도르차 정중앙 거점 — 시에나·피엔차·몬탈치노·바뇨비뇨니 당일치기." }, '숙소·La Scala 1572 산퀴리코 10/8~12 (4박)');
 
-  // 시에나 숙소 — 없으면 신규 생성
-  let siena = lodgings.find(r=>/siena|시에나|palazzetto|athena|ravizza/i.test(hay(r)));
-  const sienaPayload = { trip_id:tripId, type:'숙소', title:'La Terrazza Sul Campo – Rooms Only (시에나)',
-    address:'Piazza del Campo, 53100 Siena', city:SI, date:'2026-10-08', checkout_date:'2026-10-09',
-    payment_status:'결제 예정',
-    notes:'⚠️ 신규 예약 (전용욕실 87% 매진, 급함!). ★Piazza del Campo 바로 위★ 9.6점(452), 전용욕실. €145≈₩245k. 문 열면 사람구경.\n안전대안(무료취소·4실 남음): La Barriera di San Lorenzo €137(9.4, 조식 포함, 캄포 0.7km).\n주차: Santa Caterina 주차장(1박 €35).' };
-  if (siena) await up(siena, sienaPayload, '숙소·시에나 갱신');
-  else { try { const s = await fbAdd('journey', sienaPayload); if (typeof journeyData!=='undefined') journeyData.push(s); console.log('➕ 숙소·시에나 신규 추가'); } catch(e){ console.error('시에나 숙소 추가 실패', e); } }
+  // 시에나 숙소 — 취소됨(로마 왕복 전환) → 기존 레코드 있으면 삭제
+  const sienaLodge = lodgings.find(r=>/palazzetto|terrazza|athena|ravizza|barriera|시에나.*캄포|캄포.*시에나/i.test(hay(r)));
+  if (sienaLodge) { try { await fbDelete('journey', sienaLodge._id);
+    if (typeof journeyData!=='undefined'){ const i=journeyData.findIndex(x=>x._id===sienaLodge._id); if(i>=0) journeyData.splice(i,1); }
+    console.log('🗑️ 시에나 숙소 삭제(취소됨)'); } catch(e){ console.error('시에나 숙소 삭제 실패', e); } }
+  else console.log('ℹ️ 삭제할 시에나 숙소 없음(이미 없음)');
 
   // ═══ 6) 항공편 ═══
   const flights = recs.filter(r => r.type === '항공편');
   for (const f of flights) { const t = hay(f);
     if (/ICN|인천/.test(t) && /FRA|프랑크푸르트/.test(t)) await up(f, { date:'2026-10-04', time:'09:50' }, '항공·TW403 ICN→FRA 10/4');
     else if (/FCO|로마/.test(t) && /ICN|인천/.test(t) && !/BER/.test(t)) await up(f, { date:'2026-10-12', time:'21:15' }, '항공·TW403 FCO→ICN 10/12');
-    else if (/BER|베를린|ezy|easyjet|이지젯|psa|피사|fco/i.test(t)) await up(f,
-      { title:'EasyJet BER → 피사 PSA (약 2H)', city:SI, date:'2026-10-08', time:'12:05',
-        description:'❗미예약 — 낮편 예약 + 위탁수하물 필수. 로마 대신 피사(값 절반+낮 도착 하강루트). 렌트카는 피사→로마 편도.' },
-      '항공·EasyJet BER→PSA 10/8');
+    else if (/BER|베를린|ezy|easyjet|이지젯|psa|피사|fco|로마|ryanair|라이언/i.test(t)) await up(f,
+      { title:'라이언에어 BER → 로마 FCO (2H 10M)', city:PZ, date:'2026-10-08', time:'12:20',
+        description:'✅ 예약 확정(₩187,552, 12:20→14:30). ⚠️ 위탁수하물 포함 확인. 로마 왕복이라 렌터카 편도료 없음.' },
+      '항공·라이언에어 BER→로마 10/8');
   }
 
   // ═══ 7) 렌트카 ═══
   const rental = recs.find(r => r.type === '렌트카');
-  await up(rental, { date:'2026-10-08', time:'14:45', city:'Pisa Airport (PSA)', drop_city:'Roma Fiumicino (FCO)',
-    pickup_location:'Pisa Airport (PSA) 렌터카 센터', drop_location:'Roma Fiumicino (FCO) 렌터카 센터',
+  await up(rental, { date:'2026-10-08', time:'15:20', city:'Roma Fiumicino (FCO)', drop_city:'Roma Fiumicino (FCO)',
+    pickup_location:'Roma Fiumicino (FCO) Rental Car Center', drop_location:'Roma Fiumicino (FCO) Rental Car Center',
     checkout_date:'2026-10-12', checkout:'18:30', payment_status:'결제 예정',
-    notes:'⚠️ 재예약. ★피사 픽업 10/8 → 로마 반납 10/12 (편도, 수수료 €50~100 견적포함)★.\n· 오토매틱은 "보장형(guaranteed)" 선택 (or similar 금지). 이탈리아 수동 기본이라 물량 적음 → 일찍. 오토 10~15% 비쌈.\n· Premium Cover (자기부담 €0, 유리·타이어, ~€33/일).\n· 보증금 €500, 본인명의 실물 신용카드(체크·선불·가상 불가).\n· 픽업 시 하부+360도 영상, 연료 사진. "Full to Full." 국제운전면허증+여권.\n\n★비포장 주의: Europcar/Hertz는 자갈길(strade bianche) 주행 시 보험 무효 조항 있음. 단 이번 일정은 전부 포장으로 소화 가능(숙소 2곳 시내, 명소 포장 접근, 비탈레타는 걸어감) → 포장만 다니면 Europcar OK(최저가). 흰 자갈길 사진 자유롭게 원하면 조항 없는 Sixt/Maggiore.' }, '렌트카·PSA→FCO 편도');
+    notes:'✅ 예약 완료 — ★Sixt Fiat Grande Panda 오토, 로마 FCO 왕복(10/8 픽업 → 10/12 반납)★.\n· Smart Protection = 면책금(자기부담) €0 + 충돌·도난·유리·타이어. 24/7 기본고장출동 포함.\n· 픽업시결제 = 픽업 전까지 무료취소.\n· 왕복이라 편도료 없음 → 피사 편도 대비 ~₩37만 절약. 총 ~₩79만.\n· 픽업 시 360도 영상+연료 사진. "Full to Full." 국제운전면허증+여권+본인 신용카드.\n· 포장도로만 주행(숙소·명소 전부 포장, 비탈레타는 걸어감).' }, '렌트카·Sixt 로마 FCO 왕복 10/8~12');
 
   // ═══ 8) UI + 체크리스트 ═══
   if (typeof loadCities==='function'){ try{ await loadCities(tripId);}catch(e){} }
@@ -265,14 +258,14 @@
 
   const TODO = [
     '① Casa Camper 베를린 — 10/5~10/8 ★3박★ 재예약 (구 2박)',
-    '② La Terrazza Sul Campo 시에나 — 10/8 1박 ★신규★ (87% 매진, 급함! / 대안 La Barriera €137 무료취소)',
-    '③ La Scala 1572 산퀴리코 — 10/9~10/12 ✅예약완료 (호스트 Carola에 실내 계단만 확인 / 별로면 무료취소→La Casetta)',
+    '② Casa Camper 베를린 — 10/5~10/8 3박 ✅유지',
+    '③ La Scala 1572 산퀴리코 — 10/8~10/12 ✅예약완료(4박) (호스트 Carola에 실내 계단만 확인)',
     '④ 프랑크푸르트 호텔 — 10/4 1박 재예약',
-    '⑤ EasyJet BER→PSA 10/8 12:05 — ★신규 예약★ + 위탁수하물',
-    '⑥ 렌트카 — PSA 픽업 10/8 → FCO 반납 10/12, 오토매틱, 비포장조항 없는 회사',
+    '⑤ 라이언에어 BER→로마 10/8 12:20 — ✅예약완료(수하물 포함 확인)',
+    '⑥ 렌트카 Sixt Grande Panda — 로마 FCO 왕복 10/8~12 ✅예약완료',
     '⑦ ICE Frankfurt→Berlin 10/5 오후 — 재예약 (도착역 확인)',
     '⑧ 라이히스타크 돔 — visite.bundestag.de 사전예약 (10/6, 무료, 여권)',
-    '⑨ 시에나 두오모 — operaduomo.siena.it 시간지정 예약 (10/9, 공개기간 혼잡)',
+    '⑨ 시에나 두오모 — operaduomo.siena.it 시간지정 예약 (10/9 당일치기, 공개기간 혼잡)',
     '⑩ ARCHITECT@WORK — berlin.architectatwork.de 사전등록 (10/7)',
     '⑪ Palazzo Contucci — ☎️+39 0578 757006 사전확인 (10/10, 수확철)',
   ];
@@ -280,5 +273,5 @@
   TODO.forEach(t=>console.log('  '+t));
   console.log('═'.repeat(58));
   console.log('\n✅ v2 재구성 완료 — 일정 ' + ok + '개 (실패 ' + fail + ')');
-  alert('✅ v2 재구성 완료!\n\n· 피사 하강 루트 (시에나1박 → 산퀴리코3박)\n· 데사우 삭제, 베를린 3박\n· 몬탈치노·크레테세네시 추가\n· 일정 ' + ok + '개 (실패 ' + fail + ')\n\n⚠️ 콘솔 체크리스트 11건 확인.\n특히 시에나·La Scala 예약 완료 — 나머지 항공·렌트카·베를린 예약 진행!\n\n새로고침하세요.');
+  alert('✅ 최종 재구성 완료 (로마 왕복)!\n\n· 로마 IN/OUT + 산 퀴리코 4박 거점\n· 시에나는 당일치기(숙박 취소)\n· 데사우 삭제, 베를린 3박(Casa Camper)\n· 일정 ' + ok + '개 (실패 ' + fail + ')\n\n예약 완료: 라이언에어·Sixt·La Scala.\n남은 것: 프랑크푸르트·ICE·사전예약(라이히스타크·시에나두오모·ARCHITECT@WORK).\n\n새로고침하세요.');
 })();
