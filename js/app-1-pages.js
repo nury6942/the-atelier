@@ -13689,7 +13689,7 @@
       if (sEl) sEl.textContent = fmt(spent);
       if (rEl) {
         rEl.textContent = (remain >= 0 ? fmt(remain) + ' 남음' : fmt(-remain) + ' 초과');
-        rEl.className = 'font-bold ' + (remain >= 0 ? 'text-emerald-600' : 'text-rose-600');
+        rEl.className = 'trav-stat-v ' + (remain >= 0 ? 'text-emerald-600' : 'text-rose-600');  // 히어로 스탯 서체 유지
       }
       el.style.display = 'flex';
     } catch(e) {
