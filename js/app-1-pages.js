@@ -3680,14 +3680,14 @@
       if (!prev.lat || !prev.lng || !item.lat || !item.lng) return;
       var el = document.getElementById('travel-' + idx);
       if (!el) return;
-      getTravelTime(prev.lat, prev.lng, item.lat, item.lng, function(result) {
-        if (!result || !document.getElementById('travel-' + idx)) return;
-        var icon = result.mode === 'walk' ? 'directions_walk' : 'directions_transit';
-        var modeText = result.mode === 'walk' ? '도보' : '대중교통';
-        el.innerHTML = '<div class="relative pl-6 my-1">' +
-          '<div class="ml-1 flex items-center gap-1.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
-          '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">' + icon + '</span>' +
-          '<span>' + modeText + ' ' + result.duration + ' (' + result.distance + ')</span>' +
+      // ★ (2026-07-23) DistanceMatrix 불가 시 직선거리 추정 폴백 포함 (_travelBetween)
+      _travelBetween(prev, item, function(txt) {
+        var elNow = document.getElementById('travel-' + idx);
+        if (!elNow) return;
+        if (!txt) { elNow.style.display = 'none'; return; }
+        elNow.innerHTML = '<div class="relative pl-6 my-1">' +
+          '<div class="ml-1 inline-flex items-center gap-1.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
+          '<span>' + txt + '</span>' +
           '</div></div>';
       });
     });
@@ -3888,6 +3888,8 @@
     container.appendChild(div);
     div.scrollIntoView({behavior:'smooth',block:'center'});
     document.getElementById('sched-add-time').focus();
+    // ★ (2026-07-23) 제목 input 장소 자동완성 (고르면 좌표 함께 저장)
+    if (typeof attachPlaceAutocomplete === 'function') attachPlaceAutocomplete(document.getElementById('sched-add-title'), cityName);
     // Store context
     div.dataset.date = dateStr;
     div.dataset.city = cityName;
@@ -3910,6 +3912,7 @@
     var clsInp = document.getElementById('sched-add-closed');
     var obj = { trip_id: currentTripId, type:'일정', date:div.dataset.date, time:time, end_time:endTime, city:cityFinal, title:title, description:desc,
       reservation: !!(resChk && resChk.checked), indoor: !!(indChk && indChk.checked), closed: (clsInp && clsInp.value.trim()) || '' };
+    applyPickedCoords(obj, document.getElementById('sched-add-title')); // ★ 자동완성 좌표
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
@@ -4210,6 +4213,7 @@
       rng.textContent = first + (first !== last && last ? ' ~ ' + last : '');
     }
 
+    var travelQueue = []; // ★ (2026-07-23) 스팟 간 이동시간 커넥터 — 렌더 후 비동기 채움
     grid.innerHTML = chunk.map(function(entry, idx) {
       var actualIdx = currentWeekChunkStart + idx;
       var dayNum = entry.day;
@@ -4260,7 +4264,7 @@
 
       var itemsHtml = items.length === 0
         ? '<div class="text-xs text-slate-400 py-4 italic text-center">일정 없음</div>'
-        : items.map(function(item){
+        : items.map(function(item, iIdx){
             // ─── 편집 모드 ───
             if (_weekEditingId === item._id) {
               var curColor = isReservationItem(item) ? 'pink' : (isPinnedItem(item) ? 'mint' : 'none');
@@ -4373,7 +4377,18 @@
             if (reserv) slotClasses.push('is-reservation');
             if (pinned) slotClasses.push('is-pinned');
             if (isSouvenir) slotClasses.push('is-shopping');
-            return '<div class="' + slotClasses.join(' ') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
+            // ★ (2026-07-23) 앞 스팟과 둘 다 좌표가 있으면 이동시간 커넥터 삽입
+            var travelRow = '';
+            if (iIdx > 0) {
+              var prevIt = items[iIdx - 1];
+              if (typeof prevIt.lat === 'number' && typeof prevIt.lng === 'number' &&
+                  typeof item.lat === 'number' && typeof item.lng === 'number') {
+                var tvId = 'wk-travel-' + actualIdx + '-' + iIdx;
+                travelQueue.push({ id: tvId, a: prevIt, b: item });
+                travelRow = '<div class="j-slot-travel" id="' + tvId + '"><span style="opacity:.55">이동시간…</span></div>';
+              }
+            }
+            return travelRow + '<div class="' + slotClasses.join(' ') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               '<div class="j-slot-time">' + (time ? (time + endTime + badge) : '<span style="opacity:0.5">—</span>') + '</div>' +
               '<div class="j-slot-body">' +
                 '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p></div>' +
@@ -4465,12 +4480,25 @@
     if (_weekAddingDate) {
       var chunkPos = chunk.findIndex(function(e){ return e.date === _weekAddingDate; });
       if (chunkPos >= 0) {
+        var acCity = chunk[chunkPos].cityName || '';
         setTimeout(function() {
           var inp = document.getElementById('wk-add-time-' + chunkPos);
           if (inp) inp.focus();
+          // ★ (2026-07-23) 제목 input에 장소 자동완성 (고르면 좌표가 함께 저장됨)
+          var tEl = document.getElementById('wk-add-title-' + chunkPos);
+          if (tEl && typeof attachPlaceAutocomplete === 'function') attachPlaceAutocomplete(tEl, acCity);
         }, 30);
       }
     }
+    // ★ (2026-07-23) 이동시간 커넥터 채우기 + Day-Pins 지도 갱신
+    travelQueue.forEach(function(t) {
+      _travelBetween(t.a, t.b, function(txt) {
+        var el = document.getElementById(t.id);
+        if (!el) return;
+        if (txt) el.innerHTML = txt; else el.style.display = 'none';
+      });
+    });
+    if (typeof renderDayPinsMap === 'function') renderDayPinsMap();
   }
 
   // ── 주간 카드 인라인 추가/편집 함수들 ──
@@ -4568,6 +4596,7 @@
       title: title,
       description: desc
     };
+    applyPickedCoords(obj, document.getElementById('wk-add-title-' + idx)); // ★ 자동완성 좌표
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
@@ -4628,6 +4657,7 @@
       }
     }, 50);
   }
+  window.jumpToDay = jumpToDay; // ★ (2026-07-23) Day-Pins 지도 팝업에서 사용
 
   function inlineEditTd(td, saveCallback) {
     if (td.querySelector('input')) return;
@@ -13732,7 +13762,10 @@
     if (show) {
       var sel = document.getElementById('place-add-cat');
       if (sel && !sel.options.length) sel.innerHTML = PLACE_CATS.map(function(c) { return '<option>' + c + '</option>'; }).join('');
-      document.getElementById('place-add-name').focus();
+      var nmEl = document.getElementById('place-add-name');
+      nmEl.focus();
+      // ★ (2026-07-23) 장소 자동완성 (고르면 좌표 함께 저장 → 지도 회색 핀)
+      if (typeof attachPlaceAutocomplete === 'function') attachPlaceAutocomplete(nmEl, (document.getElementById('place-add-city').value || '').trim());
     }
   };
 
@@ -13749,13 +13782,18 @@
       description: (document.getElementById('place-add-memo').value || '').trim(),
       status: 'pool'
     };
+    var nmEl2 = document.getElementById('place-add-name');
+    applyPickedCoords(obj, nmEl2); // ★ 자동완성 좌표
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       ['place-add-name', 'place-add-city', 'place-add-closed', 'place-add-memo'].forEach(function(id) { document.getElementById(id).value = ''; });
       document.getElementById('place-add-reserve').checked = false;
       document.getElementById('place-add-indoor').checked = false;
+      // 폼은 남아있으므로 지난 좌표가 다음 입력에 승계되지 않게 초기화
+      if (nmEl2) { delete nmEl2.dataset.plat; delete nmEl2.dataset.plng; delete nmEl2.dataset.paddr; }
       window.renderPlaces();
+      if (typeof renderDayPinsMap === 'function') renderDayPinsMap();
     } catch(e) { alert('저장 실패'); }
   };
 
@@ -13854,6 +13892,9 @@
       city: p.city || '', title: p.title || '', description: p.description || '',
       reservation: p.reservation === true || isReservationItem(p), indoor: p.indoor === true, closed: p.closed || ''
     };
+    // ★ (2026-07-23) 스팟에 좌표가 있으면 일정으로 승계 → 지도 핀 + 이동시간
+    if (typeof p.lat === 'number' && typeof p.lng === 'number') { obj.lat = p.lat; obj.lng = p.lng; }
+    if (p.address) obj.address = p.address;
     try {
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
@@ -13874,6 +13915,318 @@
       window.renderPlaces();
     } catch(e) { alert('삭제 실패'); }
   };
+
+  // ═══ (2026-07-23) Wanderlog 이식 1단계: 장소 자동완성 + Day-Pins 지도 + 좌표 소급 ═══
+  // 입력 시점에 좌표(lat/lng)를 심으면 지도 핀·스팟 간 이동시간(getTravelTime)이 전부 살아난다
+
+  // ── ① 장소 자동완성 (Google Places 우선 — 이미 로드된 키 재사용, 실패 시 Photon 무료 폴백) ──
+  var _acBox = null, _acToken = 0;
+  function _acHide() { if (_acBox) { _acBox.remove(); _acBox = null; } }
+  function _cityBias(cityName) {
+    var c = (citiesData || []).find(function(x){ return x.name === cityName && typeof x.lat === 'number'; });
+    if (!c) c = (citiesData || []).find(function(x){ return typeof x.lat === 'number'; });
+    return c ? { lat: c.lat, lng: c.lng } : null;
+  }
+  function attachPlaceAutocomplete(inputEl, cityName) {
+    if (!inputEl || inputEl._acAttached) return;
+    inputEl._acAttached = true;
+    inputEl.setAttribute('autocomplete', 'off');
+    var debounce = null;
+    inputEl.addEventListener('input', function() {
+      // 직접 타이핑 시작 = 이전에 고른 장소의 좌표 무효화
+      delete inputEl.dataset.plat; delete inputEl.dataset.plng; delete inputEl.dataset.paddr;
+      var q = inputEl.value.trim();
+      clearTimeout(debounce);
+      if (q.length < 2) { _acHide(); return; }
+      debounce = setTimeout(function(){ _acSearch(inputEl, q, cityName); }, 280);
+    });
+    inputEl.addEventListener('blur', function() { setTimeout(_acHide, 250); });
+    inputEl.addEventListener('keydown', function(e) { if (e.key === 'Escape') _acHide(); });
+  }
+  window.attachPlaceAutocomplete = attachPlaceAutocomplete;
+
+  async function _acSearch(inputEl, q, cityName) {
+    var token = ++_acToken;
+    var bias = _cityBias(cityName);
+    var results = await _acGoogle(q, bias);
+    if (!results || !results.length) results = await _acPhoton(q, bias);
+    if (token !== _acToken || document.activeElement !== inputEl) return; // 오래된 응답/포커스 이탈
+    _acRender(inputEl, results || []);
+  }
+
+  function _acGoogle(q, bias) {
+    return new Promise(function(resolve) {
+      try {
+        if (typeof google === 'undefined' || !google.maps || !google.maps.places) { resolve(null); return; }
+        var svc = new google.maps.places.AutocompleteService();
+        var req = { input: q, language: 'ko' };
+        if (bias) { req.location = new google.maps.LatLng(bias.lat, bias.lng); req.radius = 40000; }
+        svc.getPlacePredictions(req, function(preds, status) {
+          if (status !== 'OK' || !preds || !preds.length) { resolve(null); return; }
+          resolve(preds.slice(0, 5).map(function(p) {
+            return { name: p.structured_formatting ? p.structured_formatting.main_text : p.description,
+                     addr: p.structured_formatting ? (p.structured_formatting.secondary_text || '') : '',
+                     placeId: p.place_id, src: 'google' };
+          }));
+        });
+      } catch(e) { resolve(null); }
+    });
+  }
+
+  async function _acPhoton(q, bias) {
+    try {
+      var url = 'https://photon.komoot.io/api/?limit=5&q=' + encodeURIComponent(q) +
+        (bias ? '&lat=' + bias.lat + '&lon=' + bias.lng : '');
+      var r = await fetch(url);
+      var j = await r.json();
+      if (!j || !j.features) return null;
+      return j.features.map(function(f) {
+        var p = f.properties || {};
+        var addr = [p.street, p.district, p.city, p.country].filter(Boolean).join(', ');
+        return { name: p.name || q, addr: addr,
+                 lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], src: 'photon' };
+      });
+    } catch(e) { return null; }
+  }
+
+  function _acRender(inputEl, results) {
+    _acHide();
+    if (!results.length) return;
+    var r = inputEl.getBoundingClientRect();
+    _acBox = document.createElement('div');
+    _acBox.className = 'plc-ac';
+    _acBox.style.left = r.left + 'px';
+    _acBox.style.top = (r.bottom + 4) + 'px';
+    _acBox.style.width = Math.max(r.width, 240) + 'px';
+    results.forEach(function(res) {
+      var item = document.createElement('div');
+      item.className = 'plc-ac-item';
+      item.innerHTML = '<div class="plc-ac-name"></div>' + (res.addr ? '<div class="plc-ac-addr"></div>' : '');
+      item.querySelector('.plc-ac-name').textContent = res.name;
+      if (res.addr) item.querySelector('.plc-ac-addr').textContent = res.addr;
+      // mousedown: blur보다 먼저 실행돼 클릭이 씹히지 않게
+      item.addEventListener('mousedown', function(e) { e.preventDefault(); _acPick(inputEl, res); });
+      _acBox.appendChild(item);
+    });
+    document.body.appendChild(_acBox);
+  }
+
+  async function _acPick(inputEl, res) {
+    _acHide();
+    inputEl.value = res.name;
+    var coord = null;
+    if (res.src === 'google' && res.placeId) coord = await _acGoogleDetails(res.placeId);
+    if (!coord && typeof res.lat === 'number') coord = { lat: res.lat, lng: res.lng, addr: res.addr };
+    if (coord) {
+      inputEl.dataset.plat = coord.lat; inputEl.dataset.plng = coord.lng;
+      inputEl.dataset.paddr = coord.addr || res.addr || '';
+    }
+    inputEl.focus();
+  }
+
+  function _acGoogleDetails(placeId) {
+    return new Promise(function(resolve) {
+      try {
+        var svc = new google.maps.places.PlacesService(document.createElement('div'));
+        svc.getDetails({ placeId: placeId, fields: ['geometry', 'formatted_address'] }, function(place, status) {
+          if (status === 'OK' && place && place.geometry && place.geometry.location) {
+            resolve({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng(), addr: place.formatted_address || '' });
+          } else resolve(null);
+        });
+      } catch(e) { resolve(null); }
+    });
+  }
+
+  // 자동완성으로 고른 좌표를 input dataset에서 꺼내 저장 객체에 붙이기 (저장 경로 공용)
+  function applyPickedCoords(obj, inputEl) {
+    if (!inputEl || !inputEl.dataset || !inputEl.dataset.plat) return;
+    var la = parseFloat(inputEl.dataset.plat), ln = parseFloat(inputEl.dataset.plng);
+    if (isNaN(la) || isNaN(ln)) return;
+    obj.lat = la; obj.lng = ln;
+    if (inputEl.dataset.paddr) obj.address = inputEl.dataset.paddr;
+  }
+
+  // ── ② 스팟 간 이동시간: Google DistanceMatrix 우선, 불가 시 직선거리 추정 폴백 ──
+  function _travelBetween(a, b, cb) {
+    getTravelTime(a.lat, a.lng, b.lat, b.lng, function(result) {
+      if (result) {
+        var icon = result.mode === 'walk' ? '🚶' : '🚇';
+        cb(icon + ' ' + result.duration + ' · ' + result.distance);
+        return;
+      }
+      var km = _haversineKm(a, b);
+      if (!isFinite(km)) { cb(null); return; }
+      var walkMin = Math.round(km / 4.5 * 60 * 1.3); // 직선→실보행 보정 1.3배
+      cb(km <= 2.2
+        ? ('🚶 ~' + walkMin + '분 · ' + km.toFixed(1) + 'km (직선 추정)')
+        : ('🚇 ~' + Math.max(8, Math.round(km * 4 + 8)) + '분 · ' + km.toFixed(1) + 'km (추정)'));
+    });
+  }
+
+  // ── ③ Day-Pins 지도: 일자별 색 핀(방문 순서 번호) + 저장소(pool) 회색 핀 ──
+  var _dayPinsMap = null, _dayPinsLayer = null, _dayPinsFilter = 'all';
+  var _DAY_COLORS = ['#7c3aed', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
+
+  window.setDayPinsFilter = function(f) { _dayPinsFilter = f; renderDayPinsMap(); };
+
+  function _dayPinsMissingCount() {
+    return (journeyData || []).filter(function(d) {
+      return (d.type === '일정' || d.type === '스팟') &&
+             !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
+             (d.title || '').trim() && d.auto_sun == null &&
+             !/일출|일몰|sunrise|sunset/i.test(d.title || '');
+    }).length;
+  }
+
+  function renderDayPinsMap() {
+    var wrap = document.getElementById('daylog-map-wrap');
+    var mount = document.getElementById('daylog-map');
+    if (!wrap || !mount || typeof L === 'undefined') return;
+    var dayMap = getDayMap();
+    var dateToDay = {};
+    dayMap.forEach(function(e){ dateToDay[e.date] = e.day; });
+    var sched = [], pool = [];
+    (journeyData || []).forEach(function(d) {
+      if (typeof d.lat !== 'number' || typeof d.lng !== 'number') return;
+      if (d.type === '일정' && dateToDay[d.date]) sched.push({ it: d, day: dateToDay[d.date] });
+      else if (d.type === '스팟' && d.status !== 'planned') pool.push(d);
+    });
+    var missing = _dayPinsMissingCount();
+    if (!sched.length && !pool.length && !missing) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+
+    // 필터 칩: 전체 / N일차… / 저장소
+    var chips = document.getElementById('daylog-map-chips');
+    if (chips) {
+      var defs = [{ v: 'all', label: '전체' }];
+      dayMap.forEach(function(e) {
+        var cnt = sched.filter(function(s){ return s.day === e.day; }).length;
+        if (cnt) defs.push({ v: String(e.day), label: e.day + '일차', color: _DAY_COLORS[(e.day - 1) % _DAY_COLORS.length] });
+      });
+      if (pool.length) defs.push({ v: 'pool', label: '저장소 ' + pool.length });
+      chips.innerHTML = defs.map(function(d) {
+        var on = _dayPinsFilter === d.v;
+        var dot = d.color ? '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + d.color + ';margin-right:4px"></span>' : '';
+        return '<button onclick="setDayPinsFilter(\'' + d.v + '\')" class="px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ' +
+          (on ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600') + '">' + dot + d.label + '</button>';
+      }).join('');
+    }
+
+    if (!_dayPinsMap) {
+      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      }).addTo(_dayPinsMap);
+      // 핀이 아직 없어도 죽지 않게 초기 뷰 부여 (첫 도시 좌표 or 세계 전도)
+      var c0 = (citiesData || []).find(function(x){ return typeof x.lat === 'number'; });
+      _dayPinsMap.setView(c0 ? [c0.lat, c0.lng] : [20, 0], c0 ? 11 : 2);
+    }
+    if (_dayPinsLayer) _dayPinsMap.removeLayer(_dayPinsLayer);
+    _dayPinsLayer = L.layerGroup().addTo(_dayPinsMap);
+
+    var latlngs = [];
+    var byDay = {};
+    sched.forEach(function(s){ (byDay[s.day] = byDay[s.day] || []).push(s.it); });
+    Object.keys(byDay).forEach(function(dayKey) {
+      var day = parseInt(dayKey, 10);
+      if (_dayPinsFilter !== 'all' && _dayPinsFilter !== String(day)) return;
+      var color = _DAY_COLORS[(day - 1) % _DAY_COLORS.length];
+      var items = byDay[dayKey].slice().sort(function(a, b){ return (a.time || '').localeCompare(b.time || ''); });
+      var line = [];
+      items.forEach(function(it, i) {
+        latlngs.push([it.lat, it.lng]); line.push([it.lat, it.lng]);
+        var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-inner" style="background:' + color + '">' + (i + 1) + '</div>', iconSize: [24, 24], iconAnchor: [12, 12] });
+        var pop = '<strong>' + String(it.title || '').replace(/</g, '&lt;') + '</strong><br>' +
+          '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
+          '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
+        L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+      });
+      // 하루만 선택하면 방문 순서 경로선 표시
+      if (_dayPinsFilter === String(day) && line.length > 1) {
+        L.polyline(line, { color: color, weight: 3, opacity: 0.8, dashArray: '5 7' }).addTo(_dayPinsLayer);
+      }
+    });
+    if (_dayPinsFilter === 'all' || _dayPinsFilter === 'pool') {
+      pool.forEach(function(p) {
+        latlngs.push([p.lat, p.lng]);
+        var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-pool"></div>', iconSize: [13, 13], iconAnchor: [7, 7] });
+        var pop = '<strong>' + String(p.title || '').replace(/</g, '&lt;') + '</strong><br><span style="color:#94a3b8">저장소 (미배치)' + (p.category ? ' · ' + p.category : '') + '</span>';
+        L.marker([p.lat, p.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+      });
+    }
+
+    var foot = document.getElementById('daylog-map-foot');
+    if (foot && !_geoBusy) {
+      foot.innerHTML = '<span>핀 ' + latlngs.length + '개 · 색 = 일차 · 회색 = 저장소 미배치</span>' +
+        (missing ? '<button onclick="geocodeTripSpots()" class="px-2 py-0.5 rounded-md border border-indigo-200 text-indigo-600 font-bold hover:bg-indigo-50" style="font-size:10px">📍 좌표 없는 ' + missing + '곳 자동 찾기</button>' : '');
+    }
+
+    if (latlngs.length) {
+      var bounds = L.latLngBounds(latlngs);
+      var fitOpts = { padding: [36, 36], maxZoom: 15 };
+      _dayPinsMap.fitBounds(bounds, fitOpts);
+      setTimeout(function() { if (_dayPinsMap) { _dayPinsMap.invalidateSize(); _dayPinsMap.fitBounds(bounds, fitOpts); } }, 250);
+    }
+  }
+  window.renderDayPinsMap = renderDayPinsMap;
+
+  // ── ④ 좌표 소급: 기존 일정/스팟 좌표 자동 찾기 (도시 60km 검증으로 오매칭 차단) ──
+  var _geoBusy = false;
+  window.geocodeTripSpots = async function() {
+    if (_geoBusy) return;
+    _geoBusy = true;
+    var foot = document.getElementById('daylog-map-foot');
+    var dayMap = getDayMap();
+    var dateToCity = {};
+    dayMap.forEach(function(e){ dateToCity[e.date] = e.cityName; });
+    var targets = (journeyData || []).filter(function(d) {
+      return (d.type === '일정' || d.type === '스팟') &&
+             !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
+             (d.title || '').trim() && d.auto_sun == null &&
+             !/일출|일몰|sunrise|sunset/i.test(d.title || '');
+    });
+    var ok = 0, fail = [];
+    for (var i = 0; i < targets.length; i++) {
+      var it = targets[i];
+      if (foot) foot.innerHTML = '<span>📍 좌표 찾는 중... ' + (i + 1) + '/' + targets.length + ' — ' + String(it.title || '').replace(/</g, '&lt;') + '</span>';
+      var cityName = (it.city || '').trim() || dateToCity[it.date] || '';
+      var cityRef = (citiesData || []).find(function(c){ return c.name === cityName && typeof c.lat === 'number'; });
+      var geo = await _geocodePOI(it.title, cityName);
+      if (geo && cityRef && _haversineKm(geo, cityRef) > 60) geo = null; // 다른 대륙 오매칭 방지
+      if (geo) {
+        it.lat = geo.lat; it.lng = geo.lng;
+        if (it._id) { try { await fbUpdate('journey', it._id, { lat: geo.lat, lng: geo.lng }); } catch(e) {} }
+        ok++;
+      } else fail.push(it.title);
+      await new Promise(function(r){ setTimeout(r, 1100); }); // Nominatim 예의 (1req/s)
+    }
+    _geoBusy = false;
+    renderDayPinsMap();
+    if (typeof renderWeekView === 'function') renderWeekView();
+    if (typeof renderDayView === 'function') renderDayView();
+    alert('좌표 찾기 완료 — 성공 ' + ok + '곳' + (fail.length ? '\n못 찾음(' + fail.length + '): ' + fail.slice(0, 8).join(', ') + (fail.length > 8 ? ' 외' : '') : ''));
+  };
+
+  async function _geocodePOI(title, cityName) {
+    var q = String(title || '').trim() + (cityName ? ', ' + cityName : '');
+    if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+      try {
+        var g = await new Promise(function(resolve) {
+          new google.maps.Geocoder().geocode({ address: q }, function(res, status) {
+            if (status === 'OK' && res && res[0]) resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng() });
+            else resolve(null);
+          });
+        });
+        if (g) return g;
+      } catch(e) {}
+    }
+    try {
+      var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } });
+      var j = await r.json();
+      if (j && j[0]) return { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
+    } catch(e) {}
+    return null;
+  }
 
   window.trvJumpSec = function(id) {
     var scrollTargetId = id;
