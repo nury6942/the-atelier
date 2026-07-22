@@ -10,6 +10,7 @@
   var SECTIONS = [
     { id: 'trv-hero',      label: 'Voyage' },
     { id: 'trv-stops',     label: 'Stops' },
+    { id: 'trv-places',    label: 'Places' },
     { id: 'journey-week-view', label: 'Daily Log' },
     { id: 'trv-ledger',    label: 'Records' },
   ];

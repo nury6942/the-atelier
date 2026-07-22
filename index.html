@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=213" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=214" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -9203,6 +9203,37 @@
           <div id="journey-city-cards" class="j-stops-grid"></div>
         </section>
 
+        <!-- ═══ Places 스팟 저장소 (2026-07-22 Phase D): '가고 싶은 곳'을 먼저 모으고
+             → 일정에 배치하는 2단계 흐름 (trip 리포의 POI pool 패턴) ═══ -->
+        <section id="trv-places" class="j-section">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Places</p><h3 class="trv-sec-title">스팟 저장소</h3></div>
+            <div class="trv-sec-actions">
+              <span id="places-count" class="text-xs font-semibold text-slate-400"></span>
+              <button onclick="togglePlaceAdd()" class="trav-act"><span class="material-symbols-outlined">add</span> 스팟 추가</button>
+            </div>
+          </div>
+          <div id="place-add-form" style="display:none" class="mb-4 p-4 rounded-xl border-2 border-dashed border-indigo-200" >
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+              <input id="place-add-name" type="text" placeholder="장소 이름 *" class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
+              <input id="place-add-city" type="text" placeholder="도시" class="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-indigo-200"/>
+            </div>
+            <div class="flex items-center gap-3 mb-2 flex-wrap text-[11px]">
+              <select id="place-add-cat" class="px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs outline-none"></select>
+              <label class="inline-flex items-center gap-1 cursor-pointer text-rose-600 font-bold"><input id="place-add-reserve" type="checkbox" class="w-3.5 h-3.5 rounded"/>🎫 예약 필수</label>
+              <label class="inline-flex items-center gap-1 cursor-pointer text-indigo-600 font-bold"><input id="place-add-indoor" type="checkbox" class="w-3.5 h-3.5 rounded"/>🏠 실내</label>
+              <span class="inline-flex items-center gap-1 text-amber-700 font-bold">⛔ 휴무<input id="place-add-closed" type="text" placeholder="예: 월" class="w-16 px-1 py-1 rounded bg-slate-50 border border-slate-200 text-[11px] outline-none"/></span>
+            </div>
+            <textarea id="place-add-memo" placeholder="메모 (선택)" rows="2" class="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs outline-none resize-none mb-2"></textarea>
+            <div class="flex justify-end gap-2">
+              <button onclick="togglePlaceAdd()" class="trav-act">취소</button>
+              <button onclick="savePlaceInline()" class="trav-act trav-act-primary">저장</button>
+            </div>
+          </div>
+          <div id="place-filters" class="flex items-center gap-1.5 mb-4 flex-wrap"></div>
+          <div id="place-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </section>
+
         <!-- 트립 노트 -->
         <section class="mb-8">
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -13270,7 +13301,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=213" defer></script>
+<script src="js/app-1-pages.js?v=214" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -14136,7 +14167,7 @@
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
-<script src="js/travel-toc.js?v=3" defer></script>
+<script src="js/travel-toc.js?v=4" defer></script>
 
 </body>
 </html>

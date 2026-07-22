@@ -13720,6 +13720,161 @@
     });
   };
 
+  // ═══ Places 스팟 저장소 (2026-07-22 Phase D) — POI pool → 일정 배치 ═══
+  var PLACE_CATS = ['명소', '미술관·전시', '맛집', '카페·디저트', '쇼핑', '자연·전망', '기타'];
+  var _placeFilter = '전체';
+
+  window.togglePlaceAdd = function() {
+    var f = document.getElementById('place-add-form');
+    if (!f) return;
+    var show = f.style.display === 'none';
+    f.style.display = show ? '' : 'none';
+    if (show) {
+      var sel = document.getElementById('place-add-cat');
+      if (sel && !sel.options.length) sel.innerHTML = PLACE_CATS.map(function(c) { return '<option>' + c + '</option>'; }).join('');
+      document.getElementById('place-add-name').focus();
+    }
+  };
+
+  window.savePlaceInline = async function() {
+    var name = (document.getElementById('place-add-name').value || '').trim();
+    if (!name) { alert('장소 이름을 입력해줘!'); return; }
+    var obj = {
+      trip_id: currentTripId, type: '스팟', title: name,
+      city: (document.getElementById('place-add-city').value || '').trim(),
+      category: document.getElementById('place-add-cat').value || '기타',
+      reservation: !!document.getElementById('place-add-reserve').checked,
+      indoor: !!document.getElementById('place-add-indoor').checked,
+      closed: (document.getElementById('place-add-closed').value || '').trim(),
+      description: (document.getElementById('place-add-memo').value || '').trim(),
+      status: 'pool'
+    };
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      ['place-add-name', 'place-add-city', 'place-add-closed', 'place-add-memo'].forEach(function(id) { document.getElementById(id).value = ''; });
+      document.getElementById('place-add-reserve').checked = false;
+      document.getElementById('place-add-indoor').checked = false;
+      window.renderPlaces();
+    } catch(e) { alert('저장 실패'); }
+  };
+
+  window.setPlaceFilter = function(f) { _placeFilter = f; window.renderPlaces(); };
+
+  window.renderPlaces = function() {
+    var grid = document.getElementById('place-grid');
+    var filtersEl = document.getElementById('place-filters');
+    var cntEl = document.getElementById('places-count');
+    if (!grid) return;
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var places = jd.filter(function(d) { return d.type === '스팟'; });
+    if (cntEl) {
+      var placed = places.filter(function(p) { return p.status === 'planned'; }).length;
+      cntEl.textContent = places.length ? places.length + '곳 · 배치 ' + placed : '';
+    }
+    // 필터 칩
+    if (filtersEl) {
+      var cats = ['전체'].concat(PLACE_CATS).concat(['☔ 실내만']);
+      filtersEl.innerHTML = cats.map(function(c) {
+        var on = c === _placeFilter;
+        return '<button onclick="setPlaceFilter(\'' + c + '\')" class="px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ' +
+          (on ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600') + '">' + c + '</button>';
+      }).join('');
+    }
+    var list = places.filter(function(p) {
+      if (_placeFilter === '전체') return true;
+      if (_placeFilter === '☔ 실내만') return p.indoor === true;
+      return p.category === _placeFilter;
+    });
+    if (!list.length) {
+      grid.innerHTML = '<div class="col-span-full text-center text-slate-400 text-xs py-8">' +
+        (places.length ? '이 필터에 해당하는 스팟이 없어요' : '아직 스팟이 없어요 — 가고 싶은 곳을 먼저 모아두고, 일정에 배치해봐!') + '</div>';
+      return;
+    }
+    grid.innerHTML = list.map(function(p) {
+      var idx = journeyData.indexOf(p);
+      var badges = '';
+      if (isReservationItem(p)) badges += '<span class="text-[9px] font-bold px-1.5 bg-rose-100 text-rose-700 rounded">🎫 예약</span> ';
+      if (p.indoor === true) badges += '<span class="text-[9px] font-bold px-1.5 bg-indigo-100 text-indigo-700 rounded">🏠 실내</span> ';
+      if (p.closed) badges += '<span class="text-[9px] font-bold px-1.5 bg-amber-100 text-amber-700 rounded">⛔ ' + String(p.closed) + ' 휴무</span> ';
+      var placedLabel = '';
+      if (p.status === 'planned' && p.placed_date) {
+        placedLabel = '<div class="mt-2 text-[10px] font-bold text-emerald-600">✓ ' + p.placed_date.slice(5).replace('-', '/') + ' 일정에 배치됨</div>';
+      }
+      var memo = p.description ? '<p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + String(p.description).replace(/</g, '&lt;') + '</p>' : '';
+      return '<div class="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-indigo-300 transition-colors group">' +
+        '<div class="flex items-start justify-between gap-2">' +
+          '<div class="min-w-0">' +
+            '<div class="text-[9px] font-bold uppercase tracking-widest text-slate-400">' + (p.category || '기타') + (p.city ? ' · ' + String(p.city).replace(/</g, '&lt;') : '') + '</div>' +
+            '<div class="font-bold text-sm text-slate-900 mt-0.5" style="word-break:keep-all">' + _trvMapsLink(p.title || '', p.city || '') + '</div>' +
+          '</div>' +
+          '<div class="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100">' +
+            '<button onclick="deletePlace(' + idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
+          '</div>' +
+        '</div>' +
+        (badges ? '<div class="mt-2 flex flex-wrap gap-1">' + badges + '</div>' : '') +
+        memo + placedLabel +
+        '<div class="mt-2.5" id="place-assign-' + idx + '">' +
+          '<button onclick="openPlaceAssign(' + idx + ')" class="w-full py-1.5 rounded-lg border border-dashed border-indigo-200 text-[11px] font-bold text-indigo-500 hover:bg-indigo-50 transition-colors">📅 일정에 배치</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  };
+
+  window.openPlaceAssign = function(idx) {
+    var wrap = document.getElementById('place-assign-' + idx);
+    if (!wrap) return;
+    var dayMap = getDayMap();
+    if (!dayMap.length) { alert('먼저 Stops에 도시/날짜를 추가해줘!'); return; }
+    var opts = dayMap.map(function(e) {
+      return '<option value="' + e.date + '">' + e.day + '일차 · ' + e.date.slice(5).replace('-', '/') + ' · ' + (e.cityName || '') + '</option>';
+    }).join('');
+    wrap.innerHTML = '<div class="flex items-center gap-1.5">' +
+      '<select id="place-assign-day-' + idx + '" class="flex-1 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] outline-none">' + opts + '</select>' +
+      '<input id="place-assign-time-' + idx + '" type="text" placeholder="10:00" class="w-14 px-1 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-center outline-none"/>' +
+      '<button onclick="confirmPlaceAssign(' + idx + ')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold">배치</button>' +
+    '</div>';
+  };
+
+  window.confirmPlaceAssign = async function(idx) {
+    var p = journeyData[idx];
+    if (!p) return;
+    var date = (document.getElementById('place-assign-day-' + idx) || {}).value;
+    var time = ((document.getElementById('place-assign-time-' + idx) || {}).value || '').trim();
+    if (!date) return;
+    // 휴무 요일 충돌 사전 경고
+    if (p.closed) {
+      try {
+        var wd = ['일', '월', '화', '수', '목', '금', '토'][new Date(date + 'T00:00:00').getDay()];
+        if (String(p.closed).indexOf(wd) >= 0 && !confirm('⚠️ 이 날은 ' + wd + '요일 — "' + p.title + '" 정기휴무(' + p.closed + ')와 겹쳐!\n그래도 배치할까?')) return;
+      } catch(e) {}
+    }
+    var obj = {
+      trip_id: currentTripId, type: '일정', date: date, time: time, end_time: '',
+      city: p.city || '', title: p.title || '', description: p.description || '',
+      reservation: p.reservation === true || isReservationItem(p), indoor: p.indoor === true, closed: p.closed || ''
+    };
+    try {
+      var saved = await fbAdd('journey', obj);
+      journeyData.push(saved);
+      if (p._id) { try { await fbUpdate('journey', p._id, { status: 'planned', placed_date: date }); } catch(e) {} }
+      p.status = 'planned'; p.placed_date = date;
+      window.renderPlaces();
+      renderDayView();
+      if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + p.title + '" → ' + date.slice(5).replace('-', '/') + ' 일정에 배치!');
+    } catch(e) { alert('배치 실패'); }
+  };
+
+  window.deletePlace = async function(idx) {
+    var p = journeyData[idx];
+    if (!p || !confirm('"' + (p.title || '') + '" 스팟을 삭제할까?')) return;
+    try {
+      if (p._id) await fbDelete('journey', p._id);
+      journeyData.splice(idx, 1);
+      window.renderPlaces();
+    } catch(e) { alert('삭제 실패'); }
+  };
+
   window.trvJumpSec = function(id) {
     var scrollTargetId = id;
     if (window._trvLedgerIds.indexOf(id) >= 0) {
@@ -13856,6 +14011,7 @@
     try { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); } catch(e) {}
     try { if (typeof window.trvRestoreCollapsed === 'function') window.trvRestoreCollapsed(); } catch(e) {}
     try { if (typeof window.renderLedgerTabs === 'function') window.renderLedgerTabs(); } catch(e) {}
+    try { if (typeof window.renderPlaces === 'function') window.renderPlaces(); } catch(e) {}
     var el = document.getElementById('travel-mini-summary');
     if (!el) return;
     try {
