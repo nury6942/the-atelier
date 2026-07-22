@@ -24,8 +24,8 @@
 // 숙소 (전부 재예약 필요, 무료취소/미결제 전제):
 //   · 프랑크푸르트  10/4~10/5 (1박)
 //   · Casa Camper 베를린  10/5~10/8 (★3박★)
-//   · Palazzetto Rosso 시에나  10/8~10/9 (1박) [신규]
-//   · GARAGE47 피엔차  10/9~10/12 (3박)
+//   · La Terrazza Sul Campo 시에나  10/8~10/9 (1박) [신규, 전용욕실]
+//   · Affittacamere del Corso 피엔차  10/9~10/12 (3박) [신규, 전용욕실]
 //
 // 사용: Travel 페이지 "2026 독일&이탈리아" 활성 → F12 → Console →
 //       붙여넣기 → Enter → confirm 3번 → 새로고침
@@ -149,7 +149,7 @@
     R('2026-10-08','14:45','15:30',SI,'🚗 렌트카 픽업 (피사 PSA) — ⚠️ 재예약 필요','❗구 예약은 로마/피사 혼재. ★피사 픽업 → 로마 반납 편도★로 재예약. 오토매틱 반드시 지정.\n픽업 시: 360도 영상 + 연료 사진. "Full to Full." 국제운전면허증+여권+본인 신용카드.'),
     P('2026-10-08','15:30','17:00',SI,'🛣️ 드라이브: 피사 → 시에나 (약 1H 30M / 130km)','수페르스트라다. 시에나 근접 시 ⚠️ ZTL 절대 진입 금지.'),
     N('2026-10-08','17:00','17:30',SI,'🅿️ Santa Caterina 주차 + 구시가 진입','24시간 커버드, 1박 최대 €35. ★에스컬레이터로 구시가 직행★. (Hotel Athena 선택 시 자체 무료차고라 이 단계 스킵)'),
-    N('2026-10-08','17:30','18:00',SI,'🏨 Palazzetto Rosso 체크인','⚠️ 신규 예약. 📍캄포 350m, 13세기 붉은벽돌 탑 저택→아트호텔. 9.5점. 발레파킹으로 문앞 짐 내림.\n(주차 스트레스 싫으면 Hotel Athena €251 — ZTL 밖+무료차고로 대체)'),
+    N('2026-10-08','17:30','18:00',SI,'🏨 La Terrazza Sul Campo 체크인','⚠️ 신규 예약. 📍★Piazza del Campo 바로 위★ 9.6점, 전용욕실, €145. 문 열면 광장.\n(안전대안: La Barriera di San Lorenzo €137 — 무료취소+4실+조식)'),
     N('2026-10-08','18:00','18:43',SI,'🌇 캄포광장 + 골목 해질녘 산책','★당일치기 관광객 빠진 시에나★ Piazza del Campo 조개모양 붉은 광장에 앉기. 일몰 18:43. Via di Città 부티크 구경.'),
     N('2026-10-08','19:00','21:00',SI,'🍷 아페리티보 + 저녁 (사람구경)','Via Banchi di Sopra / Via Pantaneto 바·트라토리아. Pici, 시에나 요리. ★걸어서 숙소 복귀 = 와인 곁들여도 OK★.'),
 
@@ -160,12 +160,12 @@
     N('2026-10-09','11:30','12:30',SI,'🛍️ Via di Città + Via Stalloreggi','부티크·가죽·도자기 + 공방·아틀리에. 누리 골목.'),
     N('2026-10-09','12:30','13:30',SI,'🍝 시에나 점심'),
     P('2026-10-09','13:30','15:30',PZ,'🚗 시에나 → 크레테 세네시 → 피엔차 (약 1H 30M, 경치길)','★발도르차 초록과 완전 다른 회색 점토 황무지★ 아시아노 방향 SP438. 차로 달리는 뷰 맛집 — 렌트카 살린 보람. 사진 정차. 남하하며 발도르차로.'),
-    N('2026-10-09','15:30','16:00',PZ,'🏛️ GARAGE47 체크인 (피엔차, 3박)','⚠️ 재예약 필요. 📍Via Mario Mencatelli 14. ★옛 자동차 정비공장 개조 로프트★ 9.8점, 위치 9.9, 조식 포함, 무료주차, 1층. 성벽 밖이라 ZTL 무관 + 시내 도보.\n⚠️ 예약 시 10월 난방 가동 여부 확인.'),
+    N('2026-10-09','15:30','16:00',PZ,'🏨 피엔차 숙소 체크인 (3박)','⚠️ 신규 예약. Affittacamere del Corso (피엔차 시내 Corso, 9.0점, 전용욕실, 3박 €220) 또는 La Casa di Enrico(San Quirico, €324, 더 안정적).\n성벽 밖 주차 후 도보. ⚠️ 10월 난방 확인.'),
     N('2026-10-09','16:30','18:40',PZ,'🌅 사이프러스 길 + 비탈레타 일몰 (SP146)','★토스카나 엽서의 그 사이프러스 길★ 산 퀴리코 북쪽, 피엔차 서쪽 약 10km. 황금빛 지그재그. 일몰 18:40. ⚠️ 비탈레타 진입로 흙길 — 비 온 다음날이면 미끄러움.'),
     N('2026-10-09','19:00','20:30',PZ,'🍽️ 피엔차 시내 첫 저녁 (도보)','Corso Rossellino 트라토리아. ★차 두고 걸어서★.'),
 
     // ═══ Day 7 — 10/10 (토) 피엔차 + 몬테풀차노  [일몰 18:38] ═══
-    N('2026-10-10','07:30','08:30',PZ,'☕ GARAGE47 조식','포함. 피엔차 도보권이라 오전 여유.'),
+    N('2026-10-10','07:30','08:30',PZ,'☕ 피엔차 카페 조식 (Corso)','숙소 조식 없음 — 시내 카페 코르네토+에스프레소. 피엔차 도보권.'),
     N('2026-10-10','09:00','10:00',PZ,'⛪ Cappella di Vitaleta (차량 9.4km)','아침 빛 최고. 입구 주차 후 도보 15분. ⚠️ 흙길.'),
     N('2026-10-10','10:00','12:00',PZ,'🏛️ 피엔차 골목 + Piazza Pio II (★도보★)','교황 비오2세의 "완벽한 도시"(유네스코). 르네상스 이상도시. Via dell\'Amore. 성벽 밖 숙소라 차 없이 걸어서. 로컬 샵·치즈가게.'),
     N('2026-10-10','12:00','13:00',PZ,'🧀 Pecorino 시식 + 치즈 쇼핑','Corso Rossellino 치즈가게 20곳. 24개월 숙성 시식. 진공포장 구매.'),
@@ -177,7 +177,7 @@
     N('2026-10-10','19:00','20:30',PZ,'🍽️ 피엔차 시내 저녁 (도보)','Corso Rossellino. 비노 노빌레 곁들여도 걸어서 복귀.'),
 
     // ═══ Day 8 — 10/11 (일) 몬탈치노 + 바뇨비뇨니  [일몰 18:37] ═══
-    N('2026-10-11','07:30','08:30',PZ,'☕ GARAGE47 조식'),
+    N('2026-10-11','07:30','08:30',PZ,'☕ 피엔차 카페 조식'),
     N('2026-10-11','09:00','09:40',PZ,'🚗 몬탈치노 드라이브 (약 40분)','⚠️ 성벽 밖 주차. Piazzale Fortezza 또는 Via Strozzi.'),
     N('2026-10-11','09:40','11:30',PZ,'🏰 몬탈치노 요새(Fortezza) 성벽 + 골목','★성벽 위 걸으면 발도르차가 발밑에 쫙★ 브루넬로 와인의 성지. 언덕 위 성벽 마을. 골목마다 에노테카·수공예·식료품. 누리 스타일 정중앙.'),
     N('2026-10-11','11:30','13:00',PZ,'🍷 에노테카 브루넬로 시음 + 사람구경','Piazza del Popolo. 요새 안 Enoteca La Fortezza 또는 시내 와인숍. 로컬+관광객 사람구경.'),
@@ -189,8 +189,8 @@
 
     // ═══ Day 9 — 10/12 (월) 피엔차 → 오르비에토 → FCO → 귀국 ═══
     N('2026-10-12','07:00','08:00',PZ,'☀️ 기상 + 짐 마무리'),
-    N('2026-10-12','08:00','08:50',PZ,'🥐 GARAGE47 마지막 조식'),
-    P('2026-10-12','08:50','09:20',PZ,'🏛️ GARAGE47 체크아웃 (10:00 deadline)','무료 주차장에서 바로 출발.'),
+    N('2026-10-12','08:00','08:50',PZ,'🥐 피엔차 카페 마지막 조식'),
+    P('2026-10-12','08:50','09:20',PZ,'🏨 피엔차 숙소 체크아웃 (10:00 deadline)','짐 싣고 출발.'),
     N('2026-10-12','09:20','10:20',PZ,'🚗 피엔차 → 오르비에토 (약 1H)','응회암 절벽 위 도시. Campo della Fiera 주차 → 푸니쿨라. A1 길목이라 어차피 지남.'),
     N('2026-10-12','10:30','11:45',PZ,'⛪ Duomo di Orvieto (금빛 파사드)','월 09:30~19:00. €8(San Brizio 예배당 + 지하 포함). 이탈리아 최고 고딕 파사드. Signorelli "최후의 심판" 프레스코(미켈란젤로가 연구).'),
     N('2026-10-12','11:55','12:40',PZ,'🕳️ Pozzo di San Patrizio (이중나선 우물)','10월 09:00~19:00. €6. 248단, 깊이 54m. ★올라가는 사람과 내려가는 사람이 안 마주치는 이중나선★ 동선 설계 고전.'),
@@ -225,17 +225,17 @@
     { title:'Casa Camper Berlin', address:'Weinmeisterstraße 1, 10178 Berlin', phone:'030-20003410', city:BL,
       date:'2026-10-05', checkout_date:'2026-10-08', payment_status:'결제 예정',
       notes:'⚠️ 재예약 필요. 구 2박 → ★3박★ (10/5~10/8). U8 Weinmeisterstraße 역 바로 위. 데사우 삭제로 4박→3박.' }, '숙소·Casa Camper 10/5~8 (3박)');
-  await up(lodgings.find(r=>/pienza|피엔차|garage|바냐이아|바그나이아|아그리투리스모/i.test(hay(r))),
-    { title:'GARAGE47 Storica Officina Meccanica LOFT B&B', address:'Via Mario Mencatelli 14, 53026 Pienza SI', city:PZ,
+  await up(lodgings.find(r=>/pienza|피엔차|garage|바냐이아|바그나이아|아그리투리스모|corso|enrico/i.test(hay(r))),
+    { title:'Affittacamere del Corso (피엔차)', address:'Corso il Rossellino, 53026 Pienza SI', city:PZ,
       date:'2026-10-09', checkout_date:'2026-10-12', payment_status:'결제 예정',
-      notes:'⚠️ 재예약 필요. 옛 정비공장 개조 로프트, 9.8점, 조식·무료주차, 1층, 성벽밖(ZTL무관). 3박 €440. ⚠️ 10월 난방 확인.' }, '숙소·GARAGE47 10/9~12');
+      notes:"⚠️ 신규 예약 (방 1개, 급함). ★피엔차 시내 Corso 100m★ 9.0점(446), 위치 9.8, 전용욕실. 3박 €220≈₩372k(₩124k/박). ⚠️ 조식 없음(affittacamere) — 시내 카페.\n안전대안: La Casa di Enrico(San Quirico d'Orcia) 3박 €324, 9.1점, 전용욕실, 더 안정적. ⚠️ 10월 난방 확인." }, '숙소·피엔차 저예산 10/9~12');
 
   // 시에나 숙소 — 없으면 신규 생성
   let siena = lodgings.find(r=>/siena|시에나|palazzetto|athena|ravizza/i.test(hay(r)));
-  const sienaPayload = { trip_id:tripId, type:'숙소', title:'Palazzetto Rosso – Art Hotel (시에나)',
-    address:'Via dei Malcontenti 8, 53100 Siena', city:SI, date:'2026-10-08', checkout_date:'2026-10-09',
+  const sienaPayload = { trip_id:tripId, type:'숙소', title:'La Terrazza Sul Campo – Rooms Only (시에나)',
+    address:'Piazza del Campo, 53100 Siena', city:SI, date:'2026-10-08', checkout_date:'2026-10-09',
     payment_status:'결제 예정',
-    notes:'⚠️ 신규 예약 (94% 매진, 방 1개). 캄포 350m, 13세기 탑 저택→아트호텔, 9.5점. 발레파킹.\n대안: Hotel Athena €251 (ZTL 밖 무료차고) / Palazzo Ravizza €224 (무료취소).' };
+    notes:'⚠️ 신규 예약 (전용욕실 87% 매진, 급함!). ★Piazza del Campo 바로 위★ 9.6점(452), 전용욕실. €145≈₩245k. 문 열면 사람구경.\n안전대안(무료취소·4실 남음): La Barriera di San Lorenzo €137(9.4, 조식 포함, 캄포 0.7km).\n주차: Santa Caterina 주차장(1박 €35).' };
   if (siena) await up(siena, sienaPayload, '숙소·시에나 갱신');
   else { try { const s = await fbAdd('journey', sienaPayload); if (typeof journeyData!=='undefined') journeyData.push(s); console.log('➕ 숙소·시에나 신규 추가'); } catch(e){ console.error('시에나 숙소 추가 실패', e); } }
 
@@ -264,8 +264,8 @@
 
   const TODO = [
     '① Casa Camper 베를린 — 10/5~10/8 ★3박★ 재예약 (구 2박)',
-    '② Palazzetto Rosso 시에나 — 10/8 1박 ★신규★ (94% 매진, 방1개! 급함)',
-    '③ GARAGE47 피엔차 — 10/9~10/12 재예약 (난방 확인)',
+    '② La Terrazza Sul Campo 시에나 — 10/8 1박 ★신규★ (87% 매진, 급함! / 대안 La Barriera €137 무료취소)',
+    '③ Affittacamere del Corso 피엔차 — 10/9~10/12 ★신규★ (방1개 / 대안 La Casa di Enrico €324, 난방 확인)',
     '④ 프랑크푸르트 호텔 — 10/4 1박 재예약',
     '⑤ EasyJet BER→PSA 10/8 12:05 — ★신규 예약★ + 위탁수하물',
     '⑥ 렌트카 — PSA 픽업 10/8 → FCO 반납 10/12, 오토매틱, 비포장조항 없는 회사',
