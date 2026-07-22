@@ -255,7 +255,7 @@
   await up(rental, { date:'2026-10-08', time:'14:45', city:'Pisa Airport (PSA)', drop_city:'Roma Fiumicino (FCO)',
     pickup_location:'Pisa Airport (PSA) 렌터카 센터', drop_location:'Roma Fiumicino (FCO) 렌터카 센터',
     checkout_date:'2026-10-12', checkout:'18:30', payment_status:'결제 예정',
-    notes:'⚠️ 재예약. ★피사 픽업 10/8 → 로마 반납 10/12 (편도)★. 오토매틱 지정. 360도 영상+연료 사진. "Full to Full." 국제운전면허증+여권+본인 신용카드. 비포장 조항 없는 회사(식스트/마조레) 유리.' }, '렌트카·PSA→FCO 편도');
+    notes:'⚠️ 재예약. ★피사 픽업 10/8 → 로마 반납 10/12 (편도, 수수료 €50~100 견적포함)★.\n· 오토매틱은 "보장형(guaranteed)" 선택 (or similar 금지). 이탈리아 수동 기본이라 물량 적음 → 일찍. 오토 10~15% 비쌈.\n· Premium Cover (자기부담 €0, 유리·타이어, ~€33/일).\n· 보증금 €500, 본인명의 실물 신용카드(체크·선불·가상 불가).\n· 픽업 시 하부+360도 영상, 연료 사진. "Full to Full." 국제운전면허증+여권.\n\n★비포장 주의: Europcar/Hertz는 자갈길(strade bianche) 주행 시 보험 무효 조항 있음. 단 이번 일정은 전부 포장으로 소화 가능(숙소 2곳 시내, 명소 포장 접근, 비탈레타는 걸어감) → 포장만 다니면 Europcar OK(최저가). 흰 자갈길 사진 자유롭게 원하면 조항 없는 Sixt/Maggiore.' }, '렌트카·PSA→FCO 편도');
 
   // ═══ 8) UI + 체크리스트 ═══
   if (typeof loadCities==='function'){ try{ await loadCities(tripId);}catch(e){} }
