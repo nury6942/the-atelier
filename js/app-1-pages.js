@@ -13541,6 +13541,26 @@
     "jobhunt": { "title": "Job Hunt" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
+  // ═══ Travel 공통 탭바 (2026-07-22): 4개 탭에 흩어져 있던 복붙 탭바를 단일 렌더러로 ═══
+  window._travelTabsHtml = function(active){
+    var tabs = [
+      ['schedule', 'route', '일정'],
+      ['budget', 'payments', '예산'],
+      ['checklist', 'checklist', '체크리스트'],
+      ['atlas', 'public', 'Atlas']
+    ];
+    return '<nav class="trav-tabs">' + tabs.map(function(t){
+      return '<button onclick="switchTravelTab(\'' + t[0] + '\')" class="trav-tab' + (t[0] === active ? ' trav-tab-active' : '') + '" data-tab="' + t[0] + '">' +
+        '<span class="material-symbols-outlined">' + t[1] + '</span>' + t[2] + '</button>';
+    }).join('') + '</nav>';
+  };
+  function renderTravelChrome(){
+    document.querySelectorAll('[data-travel-tabs]').forEach(function(slot){
+      slot.innerHTML = window._travelTabsHtml(slot.getAttribute('data-travel-tabs'));
+    });
+  }
+  try { renderTravelChrome(); } catch(e) { console.warn('travel chrome', e); }
+
   function switchTravelTab(tab) {
     // Atlas 탭 진입/이탈 처리 — 모든 분기에서 hide 호출
     if (tab !== 'atlas' && typeof window.hideAtlasView === 'function') {

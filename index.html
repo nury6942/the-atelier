@@ -5408,6 +5408,39 @@
       color: var(--atlas-ink);
       background: #fff;
     }
+
+    /* ═══ Travel 공통 크롬 (2026-07-22): Atlas 에디토리얼 무드로 4개 탭 통일 ═══ */
+    .trav-tabs { display:flex; gap:28px; border-bottom:1px solid var(--gray-200,#e2e8f0); margin-bottom:0; }
+    .trav-tab { display:inline-flex; align-items:center; gap:6px; padding:10px 2px 12px; background:none; border:none; cursor:pointer;
+      font-family:'Inter','Pretendard',sans-serif; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em;
+      color:#94a3b8; border-bottom:2px solid transparent; margin-bottom:-1px; transition:color .15s, border-color .15s; }
+    .trav-tab .material-symbols-outlined { font-size:15px; }
+    .trav-tab:hover { color:#334155; }
+    .trav-tab-active { color:#0f172a; border-bottom-color:#7c3aed; }
+    .trav-hero { padding:34px 0 30px; border-bottom:1px solid var(--gray-200,#e2e8f0); margin-bottom:22px;
+      display:grid; grid-template-columns:1fr; gap:24px; align-items:end; }
+    @media (min-width:1024px){ .trav-hero { grid-template-columns:2fr 1fr; } .trav-hero-right { text-align:right; } }
+    .trav-eyebrow { font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:600; text-transform:uppercase;
+      letter-spacing:0.18em; color:#8b8b98; margin:0 0 12px; }
+    .trav-title { font-family:'Manrope','Pretendair','Pretendard',sans-serif; font-size:clamp(30px,4vw,46px); line-height:1.05;
+      letter-spacing:-0.03em; font-weight:800; margin:0 0 10px; color:#0f172a; }
+    .trav-title .amp { color:#7c3aed; }
+    .trav-sub { font-size:13px; line-height:1.6; color:#64748b; max-width:520px; margin:0; }
+    .trav-hero-right { display:flex; flex-direction:column; gap:8px; }
+    .trav-stat { display:flex; justify-content:space-between; align-items:baseline; gap:24px; }
+    @media (min-width:1024px){ .trav-stat { justify-content:flex-end; } }
+    .trav-stat-l { font-family:'Inter','Pretendard',sans-serif; font-size:10px; font-weight:600; text-transform:uppercase;
+      letter-spacing:0.1em; color:#8b8b98; }
+    .trav-stat-v { font-family:'Manrope','Pretendard',sans-serif; font-size:17px; font-weight:700; color:#0f172a; font-variant-numeric:tabular-nums; }
+    .trav-toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+    .trav-toolbar-spacer { flex:1; }
+    .trav-act { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; border:1px solid var(--gray-200,#e2e8f0);
+      background:#fff; color:#475569; font-size:11px; font-weight:700; letter-spacing:0.02em; cursor:pointer; transition:all .15s; }
+    .trav-act:hover { border-color:#c4b5fd; color:#6d28d9; background:#faf8ff; }
+    .trav-act .material-symbols-outlined { font-size:15px; }
+    .trav-act-primary { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .trav-act-primary:hover { background:#1e1b4b; border-color:#1e1b4b; color:#fff; }
+
     #travel-atlas-section .atlas-hero {
       padding: var(--space-8) 0 48px;
       border-bottom: 1px solid var(--atlas-line);
@@ -9016,8 +9049,21 @@
   <div id="page-journey" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Page Intro + Trip Selector -->
-      <div class="mb-4 flex items-center gap-3">
+      <!-- ═══ Travel 공통 크롬: 탭 → 히어로 → 툴바 (2026-07-22 통일) ═══ -->
+      <div data-travel-tabs="schedule"></div>
+      <header class="trav-hero">
+        <div>
+          <p class="trav-eyebrow">Travel &middot; Itinerary</p>
+          <h1 class="trav-title">The Journey</h1>
+          <p class="trav-sub">도시·항공·숙소를 한 흐름으로. 지금 여행의 모든 경로가 여기에.</p>
+        </div>
+        <div class="trav-hero-right" id="travel-mini-summary" style="display:none">
+          <div class="trav-stat"><span class="trav-stat-l">Budget</span><span class="trav-stat-v" id="travel-mini-budget">—</span></div>
+          <div class="trav-stat"><span class="trav-stat-l">Spent</span><span class="trav-stat-v" id="travel-mini-spent">—</span></div>
+          <div class="trav-stat"><span class="trav-stat-l">Remaining</span><span class="trav-stat-v" id="travel-mini-remain" style="color:#059669">—</span></div>
+        </div>
+      </header>
+      <div class="trav-toolbar">
         <div class="relative" id="journey-dd-wrap">
           <button onclick="toggleJourneyDropdown()" id="journey-dd-btn" class="trip-dd-btn">
             <span id="journey-dd-label">여행 선택...</span>
@@ -9027,47 +9073,11 @@
             <div id="journey-dd-options" class="py-1"></div>
           </div>
         </div>
-        <button onclick="openTripModal()" class="gradient-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm shrink-0">
-          <span class="material-symbols-outlined text-sm">flight_takeoff</span> 여행 추가
-        </button>
-      </div>
-
-      <!-- 탭 (일정 / 예산 / 체크리스트) + 미니 요약 -->
-      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
-        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
-          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="schedule">
-            📅 일정
-          </button>
-          <button onclick="switchTravelTab('budget')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">
-            💰 예산
-          </button>
-          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
-            ✅ 체크리스트
-          </button>
-          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
-            🗺️ Atlas
-          </button>
-        </div>
-        <!-- 예약 스캔 + AI 추천 + API 설정 버튼 -->
-        <div class="flex items-center gap-1.5">
-          <button onclick="openTravelRecommendModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#ec4899,#a855f7)">
-            <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">auto_awesome</span> AI 추천
-          </button>
-          <button onclick="openBookingScanModal()" class="px-3 py-1.5 rounded-xl text-white font-bold text-[11px] flex items-center gap-1.5 hover:opacity-90 active:scale-[0.97] transition-all shadow-sm" style="background:linear-gradient(135deg,#7c3aed,var(--indigo-600))">
-            <span class="material-symbols-outlined" style="font-size: var(--font-size-body)">document_scanner</span> 예약 스캔
-          </button>
-          <button onclick="openApiSettingsModal()" title="API 설정" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-400 hover:text-violet-600 flex items-center justify-center transition-colors" id="travel-api-key-btn">
-            <span class="material-symbols-outlined" style="font-size: var(--font-size-body-lg)">key</span>
-          </button>
-        </div>
-        <!-- 미니 요약 (예산 상태) -->
-        <div id="travel-mini-summary" class="text-xs text-slate-500 flex items-center gap-3" style="display:none">
-          <span>총 예산 <span id="travel-mini-budget" class="font-bold text-slate-700">—</span></span>
-          <span class="text-slate-300">·</span>
-          <span>지출 <span id="travel-mini-spent" class="font-bold text-slate-700">—</span></span>
-          <span class="text-slate-300">·</span>
-          <span id="travel-mini-remain" class="font-bold text-emerald-600">—</span>
-        </div>
+        <button onclick="openTripModal()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">flight_takeoff</span> 여행 추가</button>
+        <div class="trav-toolbar-spacer"></div>
+        <button onclick="openTravelRecommendModal()" class="trav-act"><span class="material-symbols-outlined">auto_awesome</span> AI 추천</button>
+        <button onclick="openBookingScanModal()" class="trav-act"><span class="material-symbols-outlined">document_scanner</span> 예약 스캔</button>
+        <button onclick="openApiSettingsModal()" title="API 설정" class="trav-act" id="travel-api-key-btn" style="padding:8px 10px"><span class="material-symbols-outlined">key</span></button>
       </div>
 
       <!-- 도시 관리 패널 -->
@@ -10509,8 +10519,15 @@
   <div id="page-finance" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- 트립 선택 (일정/체크리스트와 통일, 여행 추가는 일정 탭에서만) -->
-      <div class="mb-4 flex items-center gap-3">
+      <div data-travel-tabs="budget"></div>
+      <header class="trav-hero">
+        <div>
+          <p class="trav-eyebrow">Travel &middot; Finance</p>
+          <h1 class="trav-title">The Budget <span class="amp">&amp;</span> Balance</h1>
+          <p class="trav-sub">여행 자금의 입금·지출·잔액. 트립별로 흐름을 추적.</p>
+        </div>
+      </header>
+      <div class="trav-toolbar">
         <div class="relative" id="finance-dd-wrap">
           <button onclick="toggleFinanceDropdown()" id="finance-dd-btn" class="trip-dd-btn">
             <span id="finance-dd-label">전체</span>
@@ -10519,24 +10536,6 @@
           <div id="finance-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
             <div id="finance-dd-options" class="py-1"></div>
           </div>
-        </div>
-      </div>
-
-      <!-- 탭 (일정 / 예산 / 체크리스트) -->
-      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
-        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
-          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">
-            📅 일정
-          </button>
-          <button onclick="switchTravelTab('budget')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="budget">
-            💰 예산
-          </button>
-          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="checklist">
-            ✅ 체크리스트
-          </button>
-          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
-            🗺️ Atlas
-          </button>
         </div>
       </div>
 
@@ -13249,8 +13248,15 @@
   <div id="page-packing" class="page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto">
 
-      <!-- Trip Selector (일정/예산과 통일된 너비) -->
-      <div class="mb-4 flex items-center gap-3">
+      <div data-travel-tabs="checklist"></div>
+      <header class="trav-hero">
+        <div>
+          <p class="trav-eyebrow">Travel &middot; Preparation</p>
+          <h1 class="trav-title">The Packing</h1>
+          <p class="trav-sub">"짐을 꾸리는 일은 선택의 의식 — 삶을 하나의 가방에 증류하는 일."</p>
+        </div>
+      </header>
+      <div class="trav-toolbar">
         <div class="relative" id="pk-dropdown-wrap">
           <button onclick="togglePkDropdown()" id="pk-dropdown-btn" class="trip-dd-btn">
             <span id="pk-dropdown-label">여행 선택...</span>
@@ -13264,34 +13270,6 @@
         </div>
       </div>
 
-      <!-- 탭 (일정 / 예산 / 체크리스트) -->
-      <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
-        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
-          <button onclick="switchTravelTab('schedule')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="schedule">
-            📅 일정
-          </button>
-          <button onclick="switchTravelTab('budget')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="budget">
-            💰 예산
-          </button>
-          <button onclick="switchTravelTab('checklist')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="checklist">
-            ✅ 체크리스트
-          </button>
-          <button onclick="switchTravelTab('atlas')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="atlas">
-            🗺️ Atlas
-          </button>
-        </div>
-      </div>
-
-      <!-- ═══ Editorial Hero (stitch_checklist design + Atelier tokens) ═══ -->
-      <header class="pk-hero">
-        <div class="pk-hero-text">
-          <p class="pk-eyebrow">TRIP PREPARATION</p>
-          <h1 class="pk-title">Packing Checklist</h1>
-        </div>
-        <div class="pk-hero-quote">
-          "The art of packing is a ritual of selection—distilling one's life into a single vessel for the journey ahead."
-        </div>
-      </header>
 
       <!-- ═══ Progress Bar (editorial caps style) ═══ -->
       <section class="pk-progress-section">
@@ -14121,7 +14099,7 @@
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=5" defer></script>
-<script src="js/atlas-pages.js?v=5" defer></script>
+<script src="js/atlas-pages.js?v=6" defer></script>
 
 <!-- Journey Hero 이미지 업로드 (P2) -->
 <script src="js/journey-hero.js?v=2" defer></script>
