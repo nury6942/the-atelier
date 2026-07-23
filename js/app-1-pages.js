@@ -5500,28 +5500,64 @@
   // ═══ ★ (2026-07-23) 숙소 상세 메타 — 객실 / 조식 / 인원 ═══
   //   journey 숙소 doc에 additive 필드(room_type · breakfast · guests). 값 없는 칸은 생략,
   //   셋 다 없으면 행 자체를 그리지 않는다. 각 값 더블클릭 → 인라인 편집(fbInlineEdit).
+  //   ★ (2026-07-23 개편) 카드마다 섹션을 있는 것만 그리다 보니 3장이 서로 높이·줄 위치가
+  //   전부 달라 보였다. → 값이 없어도 슬롯은 항상 같은 개수로 내보내고(빈 칸은 '—'),
+  //   CSS subgrid로 카드끼리 같은 행에 정렬시킨다.
+  function _lodgeDbl(realIdx, field) {
+    return ' class="rec-lg-meta-t" ondblclick="event.stopPropagation();fbInlineEdit(this,' + realIdx +
+      ',\'' + field + '\',\'숙소\')" title="더블클릭하여 편집"';
+  }
   function _lodgeMetaRow(item, realIdx) {
-    var dbl = function(field) {
-      return ' class="rec-lg-meta-t" ondblclick="event.stopPropagation();fbInlineEdit(this,' + realIdx +
-        ',\'' + field + '\',\'숙소\')" title="더블클릭하여 편집"';
+    var dash = '<span class="rec-lg-dash">—</span>';
+    var cell = function(label, field, inner) {
+      return '<div><p class="rec-micro">' + label + '</p><p class="rec-lg-meta-v' +
+        (field === 'breakfast' && inner.bf ? ' is-bf' : '') + '">' + inner.html + '</p></div>';
     };
-    var cells = [];
-    if (item.room_type) {
-      cells.push('<div><p class="rec-micro">Room</p><p class="rec-lg-meta-v"><span' + dbl('room_type') + '>' +
-        _spotEsc(item.room_type) + '</span></p></div>');
-    }
-    if (item.breakfast) {
-      var bf = String(item.breakfast).trim();
-      var inc = bf.indexOf('포함') >= 0 && bf.indexOf('불포함') < 0 && bf.indexOf('미포함') < 0;
-      cells.push('<div><p class="rec-micro">Breakfast</p><p class="rec-lg-meta-v' + (inc ? ' is-bf' : '') + '">' +
-        (inc ? '<i>🍳</i>' : '') + '<span' + dbl('breakfast') + '>' + _spotEsc(bf) + '</span></p></div>');
-    }
-    if (item.guests) {
-      cells.push('<div><p class="rec-micro">Guests</p><p class="rec-lg-meta-v"><span' + dbl('guests') + '>' +
-        _spotEsc(item.guests) + '</span></p></div>');
-    }
-    if (!cells.length) return '';
-    return '<div class="rec-lg-meta">' + cells.join('') + '</div>';
+    var room = item.room_type
+      ? { html: '<span' + _lodgeDbl(realIdx, 'room_type') + '>' + _spotEsc(item.room_type) + '</span>' }
+      : { html: '<span' + _lodgeDbl(realIdx, 'room_type') + '>' + dash + '</span>' };
+    var bfRaw = String(item.breakfast || '').trim();
+    var bfInc = bfRaw && bfRaw.indexOf('포함') >= 0 && bfRaw.indexOf('불포함') < 0 && bfRaw.indexOf('미포함') < 0;
+    var bf = { bf: bfInc, html: (bfInc ? '<i>🍳</i>' : '') +
+      '<span' + _lodgeDbl(realIdx, 'breakfast') + '>' + (bfRaw ? _spotEsc(bfRaw) : dash) + '</span>' };
+    var gs = { html: '<span' + _lodgeDbl(realIdx, 'guests') + '>' +
+      (item.guests ? _spotEsc(item.guests) : dash) + '</span>' };
+    return '<div class="rec-lg-meta">' +
+      cell('Room', 'room_type', room) + cell('Breakfast', 'breakfast', bf) + cell('Guests', 'guests', gs) +
+    '</div>';
+  }
+  // ★ (2026-07-23) 예약 확인서에서 뽑은 상세 — 결제 방식 / 현장 결제 / 취소 규정 / 체크인 안내.
+  //   Firestore에는 있었는데 카드가 안 그리고 있던 필드들(payment_method·onsite_fee·
+  //   cancel_policy_detail·checkin_note)을 파트별 슬롯으로 노출한다.
+  function _lodgePayRow(item, realIdx) {
+    var dash = '<span class="rec-lg-dash">—</span>';
+    var pm = String(item.payment_method || '').trim();
+    var cashOnly = /현금/.test(pm) && /만|only|불가/i.test(pm);
+    var fee = String(item.onsite_fee || '').trim();
+    return '<div class="rec-lg-pay">' +
+      '<div><p class="rec-micro">Payment</p><p class="rec-lg-pay-v' + (cashOnly ? ' is-cash' : '') + '">' +
+        (cashOnly ? '<span class="material-symbols-outlined">payments</span>' : '') +
+        '<span' + _lodgeDbl(realIdx, 'payment_method') + '>' + (pm ? _spotPriceHtml(pm) : dash) + '</span></p></div>' +
+      '<div><p class="rec-micro">On-site</p><p class="rec-lg-pay-v' + (fee ? ' is-fee' : '') + '">' +
+        '<span' + _lodgeDbl(realIdx, 'onsite_fee') + '>' + (fee ? _spotPriceHtml(fee) : dash) + '</span></p></div>' +
+    '</div>';
+  }
+  function _lodgePolicyRow(item, realIdx, cancelVar, cancelText) {
+    var det = String(item.cancel_policy_detail || '').trim();
+    return '<div class="rec-lg-policy">' +
+      '<p class="rec-micro">Cancellation</p>' +
+      '<p class="rec-lg-cancel ' + cancelVar + '">' + cancelText + '</p>' +
+      '<p class="rec-lg-policy-d"><span' + _lodgeDbl(realIdx, 'cancel_policy_detail') + '>' +
+        (det ? _spotPriceHtml(det) : '<span class="rec-lg-dash">—</span>') + '</span></p>' +
+    '</div>';
+  }
+  function _lodgeTipRow(item, realIdx) {
+    var note = String(item.checkin_note || '').trim();
+    return '<div class="rec-lg-tip' + (note ? '' : ' is-empty') + '">' +
+      '<p class="rec-micro">Check-in note</p>' +
+      '<p class="rec-lg-tip-v"><span' + _lodgeDbl(realIdx, 'checkin_note') + '>' +
+        (note ? _spotPriceHtml(note) : '<span class="rec-lg-dash">—</span>') + '</span></p>' +
+    '</div>';
   }
 
   // ═══ ★ (2026-07-23) 결제 상태 단일 판정 — payment_date에서 파생 ═══
@@ -6875,7 +6911,7 @@
             (notesR.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(notesR.join(' · ')) + '</p>' : '');
         }
         var dirQ = encodeURIComponent(item.address ? item.address : ((item.title || '') + (item.city ? ', ' + item.city : '')));
-        return '<div class="rec-lg-card">' +
+        return '<div class="rec-lg-card is-detailed">' +
           '<div class="j-lodge-img" ' +
               'onmouseenter="window.journeyLodgeImageSetActive && journeyLodgeImageSetActive(\'' + safeLodgeKey + '\')" ' +
               'onmouseleave="window.journeyLodgeImageClearActive && journeyLodgeImageClearActive(\'' + safeLodgeKey + '\')">' +
@@ -6906,9 +6942,13 @@
               '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="rec-lg-sub">' + item.checkout + '</p>' : '') + '</div>' +
             '</div>' +
             _lodgeMetaRow(item, realIdx) +
-            '<p class="rec-lg-cancel ' + cancelVar + '">' + cancelText + '</p>' +
-            memoPillsR +
-            (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
+            _lodgePayRow(item, realIdx) +
+            _lodgePolicyRow(item, realIdx, cancelVar, cancelText) +
+            _lodgeTipRow(item, realIdx) +
+            '<div class="rec-lg-memo' + (memoPillsR ? '' : ' is-empty') + '">' + memoPillsR + '</div>' +
+            '<div class="rec-lg-attach">' +
+              (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
+            '</div>' +
           '</div>' +
           '<div class="rec-lg-foot">' +
             '<span class="rec-lg-foot-amt">' + _trvAmtHtml(item.amount) + '<span class="rec-lg-sub">Rate</span></span>' +
@@ -8182,17 +8222,21 @@
   }
   // ★ (2026-07-23) 도시별 실제 체류 기간 — citiesData start_date/end_date → "10/05~10/08"
   //   여행에 없는 도시(당일치기 목적지 등)는 '' 반환 → 호출부에서 날짜 생략
-  function _cityStayRange(city) {
-    if (!city) return '';
+  // ★ (2026-07-23) 숙박 도시 매칭 행 — 날짜 텍스트/원본 ISO를 둘 다 쓰려고 분리
+  function _cityStayHit(city) {
+    if (!city) return null;
     var c = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
     var nc = _normCityKey(city);
-    if (!nc) return '';
-    var hit = null;
+    if (!nc) return null;
     for (var i = 0; i < c.length; i++) {
       var n = _normCityKey(c[i].name || '');
       if (!n) continue;
-      if (n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0) { hit = c[i]; break; }
+      if (n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0) return c[i];
     }
+    return null;
+  }
+  function _cityStayRange(city) {
+    var hit = _cityStayHit(city);
     if (!hit || !hit.start_date) return '';
     var md = function(ds) {
       var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ds || ''));
@@ -8216,7 +8260,12 @@
     'Siena': '시에나',
     "San Quirico d'Orcia": '산 퀴리코',
     'Berlin': '베를린',
-    'Frankfurt am Main': '프랑크푸르트'
+    'Frankfurt am Main': '프랑크푸르트',
+    'Rome': '로마', 'Roma': '로마', 'Florence': '피렌체', 'Firenze': '피렌체',
+    'Milan': '밀라노', 'Milano': '밀라노', 'Venice': '베네치아', 'Venezia': '베네치아',
+    'Naples': '나폴리', 'Napoli': '나폴리', 'Bologna': '볼로냐', 'Verona': '베로나',
+    'Dresden': '드레스덴', 'Munich': '뮌헨', 'München': '뮌헨', 'Hamburg': '함부르크',
+    'Cologne': '쾰른', 'Köln': '쾰른', 'Leipzig': '라이프치히', 'Potsdam': '포츠담'
   };
   // 도시명(원문) → 한글 별칭. 표에 없으면 '' (표 키는 대소문자 무시 + 부분 일치 허용)
   function _cityKoAlias(city) {
@@ -8228,6 +8277,11 @@
       if (k === raw || raw.indexOf(k) >= 0 || k.indexOf(raw) >= 0) return _CITY_KO_ALIAS[keys[i]];
     }
     return '';
+  }
+  // ★ (2026-07-23) 도시 칩 라벨 — 한글 별칭 우선. 영문 원문은 길이 편차가 커서(San Quirico d'Orcia
+  //   vs Siena) 칩 높이가 제각각이 되던 원인. 별칭 없으면 영문 짧은 이름.
+  function _cityLabelShort(raw) {
+    return _cityKoAlias(raw) || _displayCityShort(raw) || '';
   }
   var _cityDateCache = null; // 렌더당 1회만 계산 (좌표 매칭이 무거워 매 칩마다 돌지 않게)
   function _cityDateCacheReset() { _cityDateCache = null; }
@@ -8241,7 +8295,10 @@
   }
   function _cityDateInfoCalc(city) {
     var stay = _cityStayRange(city);
-    if (stay) return { text: stay, kind: 'stay' };
+    if (stay) {
+      var sh = _cityStayHit(city) || {};
+      return { text: stay, kind: 'stay', s0: sh.start_date || '', e0: sh.end_date || sh.start_date || '' };
+    }
     if (!city) return { text: '', kind: '' };
     var nc = _normCityKey(city);
     if (!nc) return { text: '', kind: '' };
@@ -8253,7 +8310,7 @@
     var pack = function(min, max) {
       if (!min) return null;
       var s = md2(min), e = md2(max);
-      return { text: (e && e !== s) ? (s + '~' + e) : s, kind: 'daytrip' };
+      return { text: (e && e !== s) ? (s + '~' + e) : s, kind: 'daytrip', s0: min, e0: max || min };
     };
     var isSched = function(it) {
       return it && it.type === '일정' && it.date && /^\d{4}-\d{2}-\d{2}$/.test(String(it.date));
@@ -15682,7 +15739,7 @@
       var rawCity = String(p.city || '').trim();
       var ck = _normCityKey(rawCity) || '미지정';
       if (!cityMap[ck]) {
-        cityMap[ck] = { label: _displayCityShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity),
+        cityMap[ck] = { label: _cityLabelShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity),
           dt: (typeof _cityDateInfo === 'function' ? _cityDateInfo(rawCity) : { text: '', kind: '' }) };
         cityKeys.push(ck);
       }
@@ -15697,25 +15754,81 @@
     if (_placeCity !== '전체' && !cityMap[_placeCity]) _placeCity = '전체';
     if (cityEl) {
       cityEl.style.display = cityKeys.length > 1 ? '' : 'none';
+      // ★ (2026-07-23) 도시 칩 재편 — 칩마다 날짜를 달다 보니 ① 이름 길이에 따라 날짜가
+      //   윗줄/아랫줄로 튀어 높이가 제각각이고 ② 오르차 계곡 7개 도시가 같은 '10/8~10/12'를
+      //   7번 반복해 노이즈였다. → 체류 구간별로 묶어서 날짜는 줄 왼쪽에 한 번만,
+      //   칩은 [이름 + 개수] 한 줄 고정. 구간과 다른 날짜만 칩에 따로 표시.
+      var stayBands = [];   // [{ s0, e0, label, keys: [] }]
+      // 날짜는 'YYYY-MM-DD' 문자열이라 Math.min/max를 그대로 쓰면 NaN이 된다 — 일수로 바꿔서 계산.
+      // 겹치는 구간 중 '가장 많이 겹치는' 쪽에 붙인다. (체크아웃 당일 하루만 걸치는 이전 도시보다
+      //  실제로 머무는 도시가 맞으므로 — 10/8 오르차 근교가 베를린에 붙던 문제)
+      var dayNo = function(d) { var t = Date.parse(String(d) + 'T00:00:00Z'); return isNaN(t) ? null : Math.round(t / 86400000); };
+      var bandOf = function(s0, e0) {
+        if (!s0) return null;
+        var aS = dayNo(s0), aE = dayNo(e0 || s0);
+        if (aS === null) return null;
+        if (aE === null || aE < aS) aE = aS;
+        var best = null, bestOv = 0;
+        for (var b = 0; b < stayBands.length; b++) {
+          var bd = stayBands[b];
+          var bS = dayNo(bd.s0), bE = dayNo(bd.e0);
+          if (bS === null) continue;
+          if (bE === null || bE < bS) bE = bS;
+          var ov = Math.min(aE, bE) - Math.max(aS, bS) + 1;
+          if (ov > bestOv) { bestOv = ov; best = bd; }
+        }
+        return best;
+      };
+      // 1) 숙박 도시로 구간 뼈대를 먼저 만든다 (여행 순서 = 시작일 순)
+      cityKeys.forEach(function(k) {
+        var dt = cityMap[k].dt || {};
+        if (dt.kind !== 'stay' || !dt.s0) return;
+        var exist = null;
+        for (var b = 0; b < stayBands.length; b++) {
+          if (stayBands[b].s0 === dt.s0 && stayBands[b].e0 === (dt.e0 || dt.s0)) { exist = stayBands[b]; break; }
+        }
+        if (!exist) { exist = { s0: dt.s0, e0: dt.e0 || dt.s0, label: dt.text, keys: [] }; stayBands.push(exist); }
+        exist.keys.push(k);
+      });
+      stayBands.sort(function(a, b) { return a.s0.localeCompare(b.s0); });
+      // 2) 당일치기 도시는 날짜가 겹치는 숙박 구간에 붙인다
+      var loose = [];
+      cityKeys.forEach(function(k) {
+        var dt = cityMap[k].dt || {};
+        if (dt.kind === 'stay' && dt.s0) return;
+        var bd = dt.s0 ? bandOf(dt.s0, dt.e0) : null;
+        if (bd) bd.keys.push(k); else loose.push(k);
+      });
+      if (loose.length) stayBands.push({ s0: '', e0: '', label: '', keys: loose });
+
+      var chipHtml = function(k, bandLabel) {
+        var dt = cityMap[k].dt || { text: '', kind: '' };
+        var isTrip = (dt.kind === 'daytrip');
+        // 구간 날짜와 똑같으면 칩에서는 생략 (같은 날짜 반복 제거)
+        var showDate = dt.text && dt.text !== bandLabel;
+        var tip = _spotEsc(cityMap[k].label) +
+          (dt.text ? ' · ' + (isTrip ? '당일치기 ' : '숙박 ') + dt.text : '');
+        return '<button class="spot-citytab' + (k === _placeCity ? ' is-active' : '') +
+          (isTrip ? ' is-daytrip' : ' is-stay') +
+          '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')" title="' + tip + '"><b>' +
+          _spotEsc(cityMap[k].label) + '</b>' +
+          (showDate ? '<em>' + dt.text + '</em>' : '') +
+          '<i>' + cityMap[k].n + '</i></button>';
+      };
       cityEl.innerHTML =
-        '<button class="spot-citytab' + (_placeCity === '전체' ? ' is-active' : '') +
-          '" onclick="setPlaceCity(\'전체\')"><b>전체</b><span class="ct-meta"><i>' +
-          cityScope.length + '</i></span></button>' +
-        cityKeys.map(function(k) {
-          // ★ (2026-07-23) 날짜 병기 — 숙박 도시는 체류 기간, 당일치기는 일정 날짜(🚗 표식)
-          var dt = cityMap[k].dt || { text: '', kind: '' };
-          var isTrip = (dt.kind === 'daytrip');
-          var dateHtml = dt.text
-            ? '<em class="' + (isTrip ? 'is-trip' : 'is-stay') + '">' +
-                (isTrip ? '🚗 ' : '') + dt.text + '</em>'
-            : '';
-          var tip = _spotEsc(cityMap[k].label) +
-            (dt.text ? ' · ' + (isTrip ? '당일치기 ' : '숙박 ') + dt.text : '');
-          return '<button class="spot-citytab' + (k === _placeCity ? ' is-active' : '') +
-            (isTrip ? ' is-daytrip' : '') +
-            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')" title="' + tip + '"><b>' +
-            _spotEsc(cityMap[k].label) + '</b><span class="ct-meta">' + dateHtml +
-            '<i>' + cityMap[k].n + '</i></span></button>';
+        '<div class="spot-citygrp">' +
+          '<span class="scg-date is-all">ALL</span>' +
+          '<div class="scg-chips">' +
+            '<button class="spot-citytab is-stay' + (_placeCity === '전체' ? ' is-active' : '') +
+              '" onclick="setPlaceCity(\'전체\')"><b>전체</b><i>' + cityScope.length + '</i></button>' +
+          '</div>' +
+        '</div>' +
+        stayBands.map(function(bd) {
+          if (!bd.keys.length) return '';
+          return '<div class="spot-citygrp">' +
+            '<span class="scg-date">' + (bd.label || '날짜 미정') + '</span>' +
+            '<div class="scg-chips">' + bd.keys.map(function(k) { return chipHtml(k, bd.label); }).join('') + '</div>' +
+          '</div>';
         }).join('');
     }
     // 카테고리 텍스트 탭 (전체/카테고리/실내만 — 국가 탭과 AND 조합)

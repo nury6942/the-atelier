@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=263" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=264" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5719,6 +5719,39 @@
       padding:2px 9px; width:fit-content; }
     .rec-lg-meta-t { cursor:text; border-bottom:1px dashed transparent; }
     .rec-lg-meta-t:hover { border-bottom-color:#c4b5fd; }
+    .rec-lg-dash { color:#cbd5e1; font-weight:600; }
+
+    /* ★ (2026-07-23) 예약 확인서 상세 — 결제 방식 / 현장 결제 / 취소 규정 / 체크인 안내.
+       값이 없어도 슬롯은 항상 그린다(카드 간 행 정렬용). 각 값 더블클릭 → 인라인 편집. */
+    .rec-lg-pay { display:grid; grid-template-columns:1.35fr 1fr; gap:10px;
+      border-top:1px solid #f1f5f9; padding-top:9px; margin-top:9px; }
+    .rec-lg-pay-v { display:flex; align-items:flex-start; gap:4px; margin:0;
+      font-size:11.5px; font-weight:700; color:#334155; line-height:1.4; }
+    .rec-lg-pay-v .material-symbols-outlined { font-size:13px; line-height:1.25; flex:none; }
+    .rec-lg-pay-v.is-fee { color:#b45309; }
+    .rec-lg-pay-v.is-cash { color:#be123c; }
+    .rec-lg-policy { border-top:1px solid #f1f5f9; padding-top:9px; margin-top:9px; }
+    .rec-lg-policy .rec-lg-cancel { margin:0; }
+    .rec-lg-policy-d { font-size:10.5px; line-height:1.5; color:#64748b; margin:3px 0 0; }
+    .rec-lg-tip { border-top:1px solid #f1f5f9; padding-top:9px; margin-top:9px; }
+    .rec-lg-tip.is-empty { border-top-color:transparent; }
+    .rec-lg-tip-v { font-size:10.5px; line-height:1.5; color:#475569; margin:2px 0 0; }
+    /* 빈 메모도 슬롯은 남긴다 — display:none을 주면 subgrid 행이 한 칸씩 밀려 정렬이 깨짐 */
+    .rec-lg-memo:empty { min-height:0; }
+
+    /* ★ (2026-07-23) 카드 3장 행 정렬 — subgrid로 이미지·제목·체크인·결제… 모든 섹션이
+       카드끼리 같은 높이에서 시작하게 한다(가장 긴 카드 기준). 호텔명 길이나 객실 설명
+       줄 수가 달라도 섹션 위치가 안 밀린다. row-gap은 subgrid가 부모 값을 물려받아
+       섹션 사이가 벌어지므로 0으로 죽이고, 카드 간격은 margin-bottom으로 준다. */
+    @supports (grid-template-rows: subgrid) {
+      @media (min-width:768px) {
+        #journey-lodging-list { row-gap:0; align-items:stretch; }
+        #journey-lodging-list > .rec-lg-card.is-detailed {
+          display:grid; grid-row:span 12; grid-template-rows:subgrid; row-gap:0; margin-bottom:16px; }
+        #journey-lodging-list > .rec-lg-card.is-detailed > .rec-lg-body {
+          display:grid; grid-row:span 10; grid-template-rows:subgrid; row-gap:0; align-content:start; }
+      }
+    }
 
     /* 교통/렌트 — 미니 카드 */
     .rec-tr-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:14px 15px;
@@ -5864,25 +5897,37 @@
     .spot-ctab.is-active { background:#fff; color:#7c3aed; box-shadow:0 1px 3px rgba(15,23,42,.1); }
     /* ★ (2026-07-23) 국가 아래 도시 칩 줄 — 국가 AND 도시 AND 카테고리 3단 필터 */
     /* ★ (2026-07-23) 칩이 길면 2줄까지 자연 줄바꿈 — 가로 스크롤 제거, 칩 줄은 flex-wrap */
-    .spot-city-tabs { display:flex; flex-wrap:wrap; gap:7px; margin:-2px 0 14px; padding-bottom:2px; }
-    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:6px 12px;
-      border-radius:14px; font-size:10.5px; font-weight:700; color:#64748b; transition:all .15s;
-      display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:flex-start;
-      gap:1px 7px; line-height:1.45; max-width:210px; text-align:left;
-      white-space:normal; word-break:keep-all; overflow-wrap:break-word; }
+    /* ★ (2026-07-23) 체류 구간별 그룹 — 날짜는 줄 왼쪽 배지로 한 번만, 칩은 전부 한 줄 고정 높이.
+       (기존엔 칩마다 날짜를 달아 이름 길이에 따라 2줄로 튀고, 같은 날짜가 7번 반복됐음) */
+    .spot-city-tabs { display:flex; flex-direction:column; gap:7px; margin:-2px 0 14px; padding-bottom:2px; }
+    .spot-citygrp { display:flex; align-items:flex-start; gap:9px; }
+    .scg-date { flex:none; align-self:flex-start; min-width:88px; text-align:center;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px; font-weight:700;
+      letter-spacing:0.03em; color:#7c3aed; background:#f5f3ff; border:1px solid #ede9fe;
+      border-radius:999px; padding:6px 9px; line-height:1.35; }
+    .scg-date.is-all { color:#64748b; background:#f8fafc; border-color:#e2e8f0; letter-spacing:0.12em; }
+    .scg-chips { display:flex; flex-wrap:wrap; gap:6px; min-width:0; }
+    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:6px 11px;
+      border-radius:999px; font-size:10.5px; font-weight:700; color:#475569; transition:all .15s;
+      display:inline-flex; align-items:center; gap:6px; line-height:1.35;
+      white-space:nowrap; text-align:left; }
     .spot-citytab:hover { border-color:#c4b5fd; color:#0f172a; }
     .spot-citytab.is-active { background:#7c3aed; border-color:#7c3aed; color:#fff; }
     .spot-citytab > b { font-weight:700; }
-    .spot-citytab .ct-meta { display:inline-flex; align-items:center; gap:6px; flex-shrink:0; }
     .spot-citytab i { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px;
       font-weight:700; color:#94a3b8; background:#f1f5f9; border-radius:999px; padding:0 6px; line-height:1.65; }
     .spot-citytab em { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px;
-      font-weight:600; opacity:.75; letter-spacing:0.01em; }
+      font-weight:600; color:#94a3b8; letter-spacing:0.01em; }
     .spot-citytab.is-active i { background:rgba(255,255,255,.2); color:#fff; }
-    .spot-citytab.is-active em { opacity:.85; }
-    /* 숙박 도시 vs 당일치기 도시 구분 — 당일치기는 🚗 + 앰버 */
-    .spot-citytab em.is-trip { color:#c2410c; opacity:1; }
-    .spot-citytab.is-active em.is-trip { color:#fde68a; opacity:1; }
+    .spot-citytab.is-active em { color:#e9d5ff; }
+    /* 당일치기 도시 — 점 하나로만 구분 (기존 빨간 🚗는 과했음) */
+    .spot-citytab.is-daytrip > b::before { content:''; display:inline-block; width:4px; height:4px;
+      border-radius:50%; background:#c4b5fd; margin-right:5px; vertical-align:1.5px; }
+    .spot-citytab.is-daytrip.is-active > b::before { background:rgba(255,255,255,.7); }
+    @media (max-width:640px){
+      .spot-citygrp { flex-direction:column; gap:5px; }
+      .scg-date { min-width:0; }
+    }
     .spot-cat-tabs { display:flex; gap:18px; border-bottom:1px solid #e2e8f0; margin-bottom:18px;
       flex-wrap:wrap; }
     .spot-cattab { border:none; background:none; cursor:pointer; padding:6px 1px 10px; margin-bottom:-1px;
@@ -14245,7 +14290,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=263" defer></script>
+<script src="js/app-1-pages.js?v=264" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
