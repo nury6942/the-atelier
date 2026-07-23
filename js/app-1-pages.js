@@ -4325,6 +4325,9 @@
       // (2) 사전 예약 미니 패널은 제거 — 일정 카드 자체에 빨간색으로 강조되고 권장 예약 시점도 표시되므로 중복 방지
       // (3) 쇼핑 가이드 박스 제거 — Souvenir Checklist 섹션에서 도시별로 묶어 표시되므로 일차 카드 안 중복 제거
 
+      // ★ (2026-07-23) 시간 겹침 감지 — 앞 일정 끝나기 전에 시작하면 ⚠ 배지
+      var _prevEndMin = null;
+      var _t2m = function(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
       var itemsHtml = items.length === 0
         ? '<div class="text-xs text-slate-400 py-4 italic text-center">일정 없음</div>'
         : items.map(function(item, iIdx){
@@ -4455,8 +4458,12 @@
             var mapBtn = (typeof item.lat === 'number' && typeof item.lng === 'number')
               ? '<button class="j-slot-mapbtn" title="지도에서 보기" onclick="focusDayPin(\'' + safeId + '\', event)">📍</button>'
               : '';
+            var confChip = '';
+            var _sMin = _t2m(item.time), _eMin = _t2m(item.end_time);
+            if (_sMin != null && _prevEndMin != null && _sMin < _prevEndMin) confChip = ' <span class="j-conflict-chip" title="앞 일정이 끝나기 전에 시작돼요 — 시간을 조정해주세요">⚠ 겹침</span>';
+            if (_sMin != null) _prevEndMin = Math.max(_prevEndMin || 0, (_eMin != null && _eMin > _sMin) ? _eMin : _sMin);
             return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
-              '<div class="j-slot-time">' + (time ? (time + endTime + badge) : '<span style="opacity:0.5">—</span>') + '</div>' +
+              '<div class="j-slot-time">' + (time ? (time + endTime + badge + confChip) : '<span style="opacity:0.5">—</span>') + '</div>' +
               '<div class="j-slot-body">' +
                 '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' + mapBtn + '</div>' +
                 (renderDesc ? '<p class="j-slot-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>' : '') +
@@ -14741,14 +14748,22 @@
       function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
       function toHHMM(min){ min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
       var slots = items.map(function(it){ return it.time; });
+      var cursorMin = null; // ★ 직전 일정이 끝나는 시각 — "앞 일정 끝나기 전 시작" 자동 보정
       for (var k = 0; k < newSeq.length; k++) {
         var it2 = newSeq[k];
-        if (it2._id === items[k]._id) continue;
-        var dur = null, s0 = toMin(it2.time), e0 = toMin(it2.end_time);
-        if (s0 != null && e0 != null && e0 > s0) dur = e0 - s0;
-        var ns = slots[k];
-        var ne = (dur != null && toMin(ns) != null) ? toHHMM(toMin(ns) + dur) : '';
+        var s0 = toMin(it2.time), e0 = toMin(it2.end_time);
+        var dur = (s0 != null && e0 != null && e0 > s0) ? (e0 - s0) : null;
+        if (it2._id === items[k]._id) {
+          // 자리 고정(또는 원위치) — 시간 불변, 커서만 전진
+          if (s0 != null) cursorMin = Math.max(cursorMin || 0, dur != null ? s0 + dur : s0);
+          continue;
+        }
+        var nsMin = toMin(slots[k]);
+        if (nsMin != null && cursorMin != null && nsMin < cursorMin) nsMin = cursorMin; // 겹침 방지: 앞 일정 끝으로 밀기
+        var ns = (nsMin != null) ? toHHMM(nsMin) : slots[k];
+        var ne = (dur != null && nsMin != null) ? toHHMM(nsMin + dur) : '';
         it2.time = ns; it2.end_time = ne;
+        if (nsMin != null) cursorMin = Math.max(cursorMin || 0, dur != null ? nsMin + dur : nsMin);
         if (it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
       }
       renderWeekView();
@@ -14826,7 +14841,7 @@
         if (it._id) { try { await fbUpdate('journey', it._id, { lat: geo.lat, lng: geo.lng }); } catch(e) {} }
         ok++;
       } else fail.push(it.title);
-      await new Promise(function(r){ setTimeout(r, 1100); }); // Nominatim 예의 (1req/s)
+      await new Promise(function(r){ setTimeout(r, 1400); }); // 구글 스로틀·Nominatim 예의
     }
     _geoBusy = false;
     renderDayPinsMap();
@@ -14845,7 +14860,7 @@
     return s.replace(/\s{2,}/g, ' ').trim();
   }
 
-  function _googleGeo(q) {
+  function _googleGeo(q, isRetry) {
     return new Promise(function(resolve) {
       try {
         if (typeof google === 'undefined' || !google.maps || !google.maps.Geocoder) { resolve(null); return; }
@@ -14855,6 +14870,9 @@
             resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng(),
                       // 주(region)/국가 수준 결과 = 지명을 못 찾고 큰 행정구역만 잡은 약한 매칭
                       weak: t.indexOf('administrative_area_level_1') >= 0 || t.indexOf('country') >= 0 });
+          } else if (status === 'OVER_QUERY_LIMIT' && !isRetry) {
+            // 배치 실행 중 순간 폭주 스로틀 — 1.3초 쉬고 1회 재시도
+            setTimeout(function(){ _googleGeo(q, true).then(resolve); }, 1300);
           } else resolve(null);
         });
       } catch(e) { resolve(null); }
