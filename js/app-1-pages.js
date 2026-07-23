@@ -12716,24 +12716,102 @@
       });
     }
 
-    // Category breakdown
-    var cats = {};
-    financeFiltered.forEach(function(r){ if(r[3]==='입금') return; var c=r[3]||'기타'; cats[c]=(cats[c]||0)+(parseFloat(r[4])||0); });
-    var maxCat = Math.max(...Object.values(cats), 1);
-    var bdEl = document.getElementById('finance-category-breakdown');
-    if(bdEl) bdEl.innerHTML = Object.entries(cats).sort(function(a,b){return b[1]-a[1];}).map(function(e){
-      var bg = FIN_CAT_BG[e[0]]||'bg-slate-50 text-slate-600 border-slate-200';
-      var pct = Math.round((e[1]/maxCat)*100);
-      return '<div class="flex items-center gap-3 bg-white border border-slate-100 rounded-xl px-4 py-2.5 shadow-sm">' +
-        '<span class="material-symbols-outlined text-sm ' + (FIN_CAT_COLORS[e[0]]||'text-slate-500') + '">' + (FIN_CAT_ICONS[e[0]]||'more_horiz') + '</span>' +
-        '<span class="text-xs font-bold text-slate-700">' + e[0] + '</span>' +
-        '<div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full gradient-primary rounded-full" style="width:'+pct+'%"></div></div>' +
-        '<span class="text-xs font-black text-slate-600">₩'+Math.round(e[1]).toLocaleString('ko-KR')+'</span>' +
-        '</div>';
-    }).join('');
+    renderFinanceDonut();
 
     updateFinanceFxChip();
     renderTripBudget();
+  }
+
+  // ===== 항목별 지출 도넛 =====
+  var FIN_CAT_HEX = {'항공':'#0ea5e9','이동':'#6366f1','숙소':'#3b82f6','환전':'#f97316','렌트':'#ec4899','티켓':'#f59e0b','통신':'#8b5cf6','보험':'#06b6d4','교통':'#84cc16','식비':'#a855f7','여가':'#14b8a6','쇼핑':'#f43f5e','기타':'#94a3b8'};
+
+  function renderFinanceDonut() {
+    var el = document.getElementById('finance-category-breakdown');
+    if (!el) return;
+    var cats = {};
+    financeFiltered.forEach(function(r){ if(r[3]==='입금') return; var c=r[3]||'기타'; cats[c]=(cats[c]||0)+(parseFloat(r[4])||0); });
+    var entries = Object.keys(cats).map(function(k){ return [k, cats[k]]; })
+      .filter(function(e){ return e[1] > 0; })
+      .sort(function(a,b){ return b[1]-a[1]; });
+    var total = entries.reduce(function(s,e){ return s+e[1]; }, 0);
+    if (!entries.length || total <= 0) {
+      el.innerHTML = '<p class="text-sm text-slate-400 text-center py-6">아직 지출 내역이 없어요</p>';
+      return;
+    }
+    var fmt = function(n){ return '₩' + Math.round(n).toLocaleString('ko-KR'); };
+
+    // 세그먼트: 5% 미만이 2개 이상이면 하나로 묶음 (범례는 전부 표시)
+    var big = [], small = [];
+    entries.forEach(function(e){ (e[1]/total < 0.05 ? small : big).push(e); });
+    var segs = big.map(function(e){ return { label: e[0], value: e[1], color: FIN_CAT_HEX[e[0]]||'#94a3b8' }; });
+    var segOf = {};
+    big.forEach(function(e,i){ segOf[e[0]] = i; });
+    if (small.length >= 2) {
+      var smallSum = 0;
+      small.forEach(function(e){ smallSum += e[1]; segOf[e[0]] = big.length; });
+      segs.push({ label: small[0][0] + ' 외 ' + (small.length-1), value: smallSum, color: '#cbd5e1' });
+    } else {
+      small.forEach(function(e){ segOf[e[0]] = segs.length; segs.push({ label: e[0], value: e[1], color: FIN_CAT_HEX[e[0]]||'#94a3b8' }); });
+    }
+
+    // SVG 도넛 (stroke-dasharray 링)
+    var R = 76, SW = 22, C = 2*Math.PI*R;
+    var gap = segs.length > 1 ? C*0.008 : 0;
+    var off = 0;
+    var svg = '<svg width="180" height="180" viewBox="0 0 180 180" style="display:block">';
+    segs.forEach(function(s,i){
+      var len = (s.value/total)*C;
+      svg += '<circle class="fin-donut-seg" data-seg="'+i+'" cx="90" cy="90" r="'+R+'" fill="none"' +
+        ' stroke="'+s.color+'" stroke-width="'+SW+'"' +
+        ' stroke-dasharray="'+Math.max(len-gap,0.5).toFixed(2)+' '+C.toFixed(2)+'"' +
+        ' stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 90 90)"' +
+        ' style="transition:stroke-width .15s,opacity .15s;cursor:pointer">' +
+        '<title>'+s.label+' '+fmt(s.value)+' · '+Math.round((s.value/total)*100)+'%</title></circle>';
+      off += len;
+    });
+    svg += '</svg>';
+
+    var html = '<div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">' +
+      '<div style="position:relative;width:180px;height:180px;flex-shrink:0">' + svg +
+        '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">' +
+          '<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">총 지출</span>' +
+          '<span class="font-manrope font-extrabold text-slate-900" style="font-size:17px;font-variant-numeric:tabular-nums">' + fmt(total) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fin-donut-legend" style="flex:1 1 240px;min-width:220px;max-width:420px">' +
+      entries.map(function(e){
+        var pct = Math.round((e[1]/total)*100);
+        return '<div class="fin-donut-row flex items-center gap-2.5 py-1" data-seg="'+segOf[e[0]]+'" style="transition:opacity .15s">' +
+          '<span style="width:8px;height:8px;border-radius:9999px;background:'+(FIN_CAT_HEX[e[0]]||'#94a3b8')+';flex-shrink:0"></span>' +
+          '<span class="text-xs font-bold text-slate-700 flex-1 truncate">'+e[0]+'</span>' +
+          '<span class="text-xs font-bold text-slate-800" style="font-variant-numeric:tabular-nums">'+fmt(e[1])+'</span>' +
+          '<span class="text-[11px] font-semibold text-slate-400" style="width:34px;text-align:right;font-variant-numeric:tabular-nums">'+(pct<1?'<1':pct)+'%</span>' +
+        '</div>';
+      }).join('') +
+      '</div></div>';
+    el.innerHTML = html;
+
+    // 호버: 해당 세그먼트 굵게 + 나머지 흐림 (범례↔도넛 양방향)
+    function setActive(idx) {
+      var segEls = el.querySelectorAll('.fin-donut-seg');
+      var rowEls = el.querySelectorAll('.fin-donut-row');
+      var i;
+      for (i = 0; i < segEls.length; i++) {
+        var mine = segEls[i].getAttribute('data-seg') === String(idx);
+        segEls[i].style.opacity = (idx === null || mine) ? '1' : '0.25';
+        segEls[i].setAttribute('stroke-width', (idx !== null && mine) ? '28' : String(SW));
+      }
+      for (i = 0; i < rowEls.length; i++) {
+        rowEls[i].style.opacity = (idx === null || rowEls[i].getAttribute('data-seg') === String(idx)) ? '1' : '0.35';
+      }
+    }
+    var hoverEls = el.querySelectorAll('[data-seg]');
+    for (var h = 0; h < hoverEls.length; h++) {
+      (function(node){
+        node.addEventListener('mouseenter', function(){ setActive(parseInt(node.getAttribute('data-seg'), 10)); });
+        node.addEventListener('mouseleave', function(){ setActive(null); });
+      })(hoverEls[h]);
+    }
   }
 
   // ===== 트립 예산 (4 그룹) =====
@@ -12795,24 +12873,47 @@
     }
 
     var totalRemaining = totalBudget - totalSpent;
-    var totalPct = totalBudget > 0 ? Math.min(100, (totalSpent / totalBudget) * 100) : 0;
-    var totalOverPct = totalBudget > 0 && totalSpent > totalBudget ? Math.min(100, ((totalSpent - totalBudget) / totalBudget) * 100) : 0;
+    var fmtW = function(n){ return '₩' + Math.round(Math.abs(n)).toLocaleString('ko-KR'); };
 
+    // 남음=emerald / 초과=rose / 예산 없음=slate 미니 배지
+    var badge = function(rem, b, mini) {
+      var style, label;
+      if (b <= 0) { style = 'background:#f1f5f9;color:#64748b'; label = '예산 없음'; }
+      else if (rem < 0) { style = 'background:#fff1f2;color:#e11d48'; label = fmtW(rem) + ' 초과'; }
+      else { style = 'background:#ecfdf5;color:#059669'; label = fmtW(rem) + ' 남음'; }
+      return '<span class="font-bold rounded-full flex-shrink-0" style="' + style +
+        ';font-size:' + (mini ? '10px' : '11px') + ';padding:' + (mini ? '2px 8px' : '3px 10px') +
+        ';font-variant-numeric:tabular-nums;white-space:nowrap">' + label + '</span>';
+    };
+
+    // 진행바: 초과 시 바 전체 폭 = 지출 기준, 끝에 초과분 진한 rose 세그먼트
+    var bar = function(s, b, color, hCls) {
+      if (b > 0 && s > b) {
+        var basePct = (b / s) * 100;
+        return '<div class="' + hCls + ' bg-slate-100 rounded-full overflow-hidden flex">' +
+          '<div style="width:' + basePct.toFixed(1) + '%;background:' + color + '"></div>' +
+          '<div style="width:' + (100 - basePct).toFixed(1) + '%;background:#e11d48"></div>' +
+        '</div>';
+      }
+      var pct = b > 0 ? Math.min(100, (s / b) * 100) : 0;
+      return '<div class="' + hCls + ' bg-slate-100 rounded-full overflow-hidden">' +
+        '<div class="h-full transition-all" style="width:' + pct.toFixed(1) + '%;background:' + color + '"></div>' +
+      '</div>';
+    };
+
+    var totalUsePct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
     var html = '<div class="mb-6 pb-6 border-b border-slate-100">' +
-      '<div class="flex justify-between items-baseline mb-2">' +
+      '<div class="flex items-center justify-between mb-2">' +
         '<span class="text-xs font-bold uppercase tracking-widest text-slate-500">전체</span>' +
-        '<div class="text-right">' +
-          '<span class="text-2xl font-extrabold ' + (totalRemaining >= 0 ? 'text-slate-800' : 'text-red-500') + '">₩' + Math.round(Math.abs(totalRemaining)).toLocaleString('ko-KR') + '</span>' +
-          '<span class="text-xs text-slate-400 ml-2">' + (totalRemaining >= 0 ? '남음' : '초과') + '</span>' +
-        '</div>' +
+        badge(totalRemaining, totalBudget, false) +
       '</div>' +
-      '<div class="flex justify-between text-xs text-slate-500 mb-2">' +
-        '<span>지출 ₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</span>' +
-        '<span>예산 ₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
+      '<div class="flex items-baseline gap-2 flex-wrap mb-3">' +
+        '<span class="font-manrope text-2xl font-extrabold text-slate-900" style="font-variant-numeric:tabular-nums">₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</span>' +
+        '<span class="text-lg font-bold text-slate-300">/</span>' +
+        '<span class="font-manrope text-2xl font-extrabold text-slate-400" style="font-variant-numeric:tabular-nums">₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
+        '<span class="text-[11px] font-semibold text-slate-400 ml-1">지출 / 예산 · ' + totalUsePct + '%</span>' +
       '</div>' +
-      '<div class="h-3 bg-slate-100 rounded-full overflow-hidden relative">' +
-        '<div class="h-full transition-all" style="width:' + totalPct + '%;background:' + (totalSpent > totalBudget ? '#ef4444' : 'linear-gradient(90deg,#6366f1,#8b5cf6)') + '"></div>' +
-      '</div>' +
+      bar(totalSpent, totalBudget, 'linear-gradient(90deg,#6366f1,#7c3aed)', 'h-3') +
     '</div>';
 
     html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
@@ -12820,28 +12921,22 @@
       var cfg = BUDGET_GROUPS[g];
       var b = parseFloat(budget[BUDGET_FIELDS[g]]) || 0;
       var s = spent[g] || 0;
-      var rem = b - s;
-      var pct = b > 0 ? Math.min(100, (s / b) * 100) : 0;
-      var over = s > b && b > 0;
-      var barColor = over ? '#ef4444' : cfg.color;
+      var gPct = b > 0 ? Math.round((s / b) * 100) : 0;
 
-      html += '<div class="border border-slate-100 rounded-xl p-4">' +
-        '<div class="flex items-center justify-between mb-2">' +
-          '<div class="flex items-center gap-2">' +
+      html += '<div class="bg-white border rounded-xl p-4" style="border-color:#e2e8f0">' +
+        '<div class="flex items-center justify-between gap-2 mb-2.5">' +
+          '<div class="flex items-center gap-2 min-w-0">' +
             '<span class="material-symbols-outlined text-base" style="color:' + cfg.color + '">' + cfg.icon + '</span>' +
-            '<span class="text-sm font-bold text-slate-700">' + g + '</span>' +
+            '<span class="text-sm font-bold text-slate-700 truncate">' + g + '</span>' +
           '</div>' +
-          '<span class="text-xs font-bold ' + (rem >= 0 ? 'text-slate-500' : 'text-red-500') + '">' +
-            (rem >= 0 ? '₩' + Math.round(rem).toLocaleString('ko-KR') + ' 남음' : '₩' + Math.round(-rem).toLocaleString('ko-KR') + ' 초과') +
-          '</span>' +
+          badge(b - s, b, true) +
         '</div>' +
-        '<div class="flex justify-between text-[11px] text-slate-400 mb-1.5">' +
-          '<span>₩' + Math.round(s).toLocaleString('ko-KR') + '</span>' +
-          '<span>/ ₩' + Math.round(b).toLocaleString('ko-KR') + '</span>' +
+        '<div class="flex items-baseline gap-1.5 flex-wrap mb-1.5">' +
+          '<span class="text-base font-extrabold text-slate-900" style="font-variant-numeric:tabular-nums">₩' + Math.round(s).toLocaleString('ko-KR') + '</span>' +
+          '<span class="text-xs font-bold text-slate-400" style="font-variant-numeric:tabular-nums">/ ₩' + Math.round(b).toLocaleString('ko-KR') + '</span>' +
+          '<span class="text-[10px] font-semibold text-slate-400 ml-auto">' + (b > 0 ? gPct + '%' : '—') + '</span>' +
         '</div>' +
-        '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
-          '<div class="h-full transition-all" style="width:' + pct + '%;background:' + barColor + '"></div>' +
-        '</div>' +
+        bar(s, b, cfg.color, 'h-2') +
       '</div>';
     });
     html += '</div>';

@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=240" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=241" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -3305,19 +3305,13 @@
       #finance-budget-body .grid.grid-cols-2 .text-xs { font-size: var(--font-size-tiny) !important; }
       #finance-budget-body .grid.grid-cols-2 .text-\[11px\] { font-size: var(--font-size-tiny) !important; }
 
-      /* 카테고리 분석 chip - 2열 그리드 + 작게 */
-      #finance-category-breakdown {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: var(--space-2) !important;
-      }
-      #finance-category-breakdown > div {
-        padding: var(--space-2) var(--space-2-5) !important;
-        gap: var(--space-1-5) !important;
+      /* 항목별 지출 도넛 - 작은 화면 */
+      #finance-category-breakdown { padding: 0.75rem !important; }
+      #finance-category-breakdown .fin-donut-legend {
+        flex-basis: 100% !important;
         min-width: 0 !important;
+        max-width: none !important;
       }
-      #finance-category-breakdown .text-xs { font-size: var(--font-size-micro) !important; }
-      #finance-category-breakdown .w-16 { width: 28px !important; }
 
       /* 거래 내역 테이블 - 잔액/관리 칼럼 숨겨서 좌우 스크롤 최소화 */
       #finance-table-wrap table { width: 100% !important; min-width: 0 !important; }
@@ -10770,9 +10764,15 @@
         </section>
       </div>
 
-      <!-- 카테고리 분석 -->
+      <!-- 항목별 지출 도넛 -->
       <section class="mb-6">
-        <div id="finance-category-breakdown" class="flex gap-3 flex-wrap"></div>
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+            <h4 class="font-manrope font-bold text-slate-800">항목별 지출</h4>
+            <p class="text-[10px] text-slate-400 font-medium mt-0.5">전체 여행 비용 구성 · 예정 포함</p>
+          </div>
+          <div id="finance-category-breakdown" class="p-6"></div>
+        </div>
       </section>
 
       <!-- 잔액 3-스탯 밴드 (오늘 기준) -->
@@ -13432,7 +13432,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=240" defer></script>
+<script src="js/app-1-pages.js?v=241" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
