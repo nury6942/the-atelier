@@ -14188,6 +14188,11 @@
     var dayMap = getDayMap();
     var dateToCity = {};
     dayMap.forEach(function(e){ dateToCity[e.date] = e.cityName; });
+    // 검증 기준이 되는 도시 좌표부터 확보 (없으면 지오코드 후 Firestore에 1회 저장)
+    if (foot) foot.innerHTML = '<span>📍 도시 기준 좌표 확보 중...</span>';
+    for (var c0 = 0; c0 < (citiesData || []).length; c0++) {
+      try { await ensureCityCoord(citiesData[c0]); } catch(e) {}
+    }
     var targets = (journeyData || []).filter(function(d) {
       return (d.type === '일정' || d.type === '스팟') &&
              !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
