@@ -14832,7 +14832,14 @@
           });
         }
       }
-      // 기준 좌표가 없으면 스킵 — 엉뚱한 대륙 오매칭 방지가 우선
+      // 기준 좌표가 없으면: 아이템의 도시명을 직접 지오코딩해 기준으로 (저장소 스팟의 당일치기 도시 등)
+      if (!cityRef && cands.length) {
+        try {
+          var cg = await geocodeCity(cands[0]);
+          if (cg) cityRef = { name: cands[0], lat: cg.lat, lng: cg.lng };
+        } catch(e) {}
+      }
+      if (!cityRef) cityRef = (citiesData || []).find(function(c){ return typeof c.lat === 'number'; }) || null;
       if (!cityRef) { fail.push(it.title); continue; }
       var geo = await _geocodePOI(it.title, cityRef.name, cityRef);
       if (geo && cityRef && _haversineKm(geo, cityRef) > 200) geo = null; // 당일치기 반경(200km) 밖 = 오매칭 (세부 한도는 _geocodePOI가 소스별로 적용)
@@ -14879,12 +14886,35 @@
     });
   }
 
+  // 구글 Places 텍스트검색 — POI 이름(온천 광장·두오모 등)에 Geocoder보다 훨씬 강함
+  function _googlePlaceSearch(q, bias, isRetry) {
+    return new Promise(function(resolve) {
+      try {
+        if (typeof google === 'undefined' || !google.maps || !google.maps.places) { resolve(null); return; }
+        var svc = new google.maps.places.PlacesService(document.createElement('div'));
+        var req = { query: q };
+        if (bias) { req.location = new google.maps.LatLng(bias.lat, bias.lng); req.radius = 50000; }
+        svc.textSearch(req, function(res, status) {
+          if (status === 'OK' && res && res[0] && res[0].geometry) {
+            resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng() });
+          } else if (status === 'OVER_QUERY_LIMIT' && !isRetry) {
+            setTimeout(function(){ _googlePlaceSearch(q, bias, true).then(resolve); }, 1300);
+          } else resolve(null);
+        });
+      } catch(e) { resolve(null); }
+    });
+  }
+
   async function _geocodePOI(title, cityName, cityRef) {
     var base = _cleanPOITitle(title);
     if (!base) return null;
     var latin = (base.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9@&'.\- ]{2,}/g) || []).join(' ').replace(/\s{2,}/g, ' ').trim();
     var bias = cityRef ? { lat: cityRef.lat, lng: cityRef.lng } : null;
     var LIM_G = 200, LIM_FREE = 60; // 구글 결과는 당일치기 반경(200km)까지 신뢰, 무료 소스는 60km 엄격
+
+    // 0) Places 텍스트검색 (도시 바이어스) — POI 최강 소스
+    var ps = await _googlePlaceSearch(base, bias);
+    if (ps && (!cityRef || _haversineKm(ps, cityRef) <= LIM_G)) return ps;
 
     // ── 구글: 제목 단독 먼저 (제목 속 지명 — 몬탈치노·오르비에토 등 당일치기 대응),
     //    그다음 제목+숙박도시 (단독 검색이 애매할 때의 안전망)
