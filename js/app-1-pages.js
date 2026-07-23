@@ -4506,7 +4506,8 @@
             if (renderDesc) subHtml += '<p class="wk4-sub wk4-sub-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>';
             return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               '<div class="wk4-line">' +
-                '<p class="j-slot-title wk4-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' +
+                // ★ (2026-07-23) 제목 텍스트만 감싸는 span — 예약/고정/쇼핑 항목에 형광펜 하이라이트
+                '<p class="j-slot-title wk4-slot-title"><span class="wk4-hl">' + (renderTitle || '(제목 없음)') + '</span></p>' +
                 mapBtn +
               '</div>' +
               (badge || cityChip || flagChips || confChip ? '<div class="wk4-chips">' + badge + cityChip + flagChips + confChip + '</div>' : '') +
@@ -4660,7 +4661,11 @@
       _travelBetween(t.a, t.b, function(txt) {
         var el = document.getElementById(t.id);
         if (!el) return;
-        if (txt) el.innerHTML = txt; else el.style.display = 'none';
+        if (!txt) { el.style.display = 'none'; return; }
+        // ★ (2026-07-23) 밋밋한 인라인 텍스트 → 알약 칩. 맨 앞 이모지만 떼어 아이콘 자리로
+        var m = String(txt).match(/^(\S+)\s+([\s\S]*)$/);
+        el.innerHTML = '<span class="wk4-travel-chip">' +
+          (m ? '<i>' + m[1] + '</i><span>' + m[2] + '</span>' : '<span>' + txt + '</span>') + '</span>';
       });
     });
     bindWeekDnd(); // ★ 드래그 앤 드롭 + 호버→핀 강조 (1회 바인딩)
@@ -5492,6 +5497,59 @@
       'onload="var h=this.parentNode;if(h){var i=h.querySelector(\'.rec-fl-headico\');if(i)i.style.visibility=\'hidden\';}">';
   }
 
+  // ═══ ★ (2026-07-23) 숙소 상세 메타 — 객실 / 조식 / 인원 ═══
+  //   journey 숙소 doc에 additive 필드(room_type · breakfast · guests). 값 없는 칸은 생략,
+  //   셋 다 없으면 행 자체를 그리지 않는다. 각 값 더블클릭 → 인라인 편집(fbInlineEdit).
+  function _lodgeMetaRow(item, realIdx) {
+    var dbl = function(field) {
+      return ' class="rec-lg-meta-t" ondblclick="event.stopPropagation();fbInlineEdit(this,' + realIdx +
+        ',\'' + field + '\',\'숙소\')" title="더블클릭하여 편집"';
+    };
+    var cells = [];
+    if (item.room_type) {
+      cells.push('<div><p class="rec-micro">Room</p><p class="rec-lg-meta-v"><span' + dbl('room_type') + '>' +
+        _spotEsc(item.room_type) + '</span></p></div>');
+    }
+    if (item.breakfast) {
+      var bf = String(item.breakfast).trim();
+      var inc = bf.indexOf('포함') >= 0 && bf.indexOf('불포함') < 0 && bf.indexOf('미포함') < 0;
+      cells.push('<div><p class="rec-micro">Breakfast</p><p class="rec-lg-meta-v' + (inc ? ' is-bf' : '') + '">' +
+        (inc ? '<i>🍳</i>' : '') + '<span' + dbl('breakfast') + '>' + _spotEsc(bf) + '</span></p></div>');
+    }
+    if (item.guests) {
+      cells.push('<div><p class="rec-micro">Guests</p><p class="rec-lg-meta-v"><span' + dbl('guests') + '>' +
+        _spotEsc(item.guests) + '</span></p></div>');
+    }
+    if (!cells.length) return '';
+    return '<div class="rec-lg-meta">' + cells.join('') + '</div>';
+  }
+
+  // ═══ ★ (2026-07-23) 결제 상태 단일 판정 — payment_date에서 파생 ═══
+  //   예산 장부(finIsPending)는 결제일 기준인데 Records 카드는 payment_status 필드만 읽어서
+  //   같은 건이 "결제 완료"/"결제 예정"으로 다르게 보이던 불일치를 없앤다.
+  //   저장 필드는 건드리지 않고 표시할 때만 판정 (숙소·항공·교통·렌트 카드 공용).
+  function _trvPayStatus(item) {
+    if (!item) return '';
+    if (item.unpaid === true) return '현장 결제';
+    var pd = String(item.payment_date || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(pd)) {
+      var today = new Date().toISOString().split('T')[0];
+      if (pd <= today) return '결제 완료';
+      return '결제 예정 (' + pd.substring(5, 7) + '/' + pd.substring(8, 10) + ')';
+    }
+    return item.payment_status || '';
+  }
+  // 뱃지 색/아이콘용 분류 — 'done' | 'due' | 'onsite' | ''
+  function _trvPayKind(status) {
+    var s = String(status || '');
+    if (s.indexOf('결제 완료') === 0) return 'done';
+    if (s.indexOf('결제 예정') === 0) return 'due';
+    if (s.indexOf('현장') === 0) return 'onsite';
+    return '';
+  }
+  window._trvPayStatus = _trvPayStatus;
+  window._trvPayKind = _trvPayKind;
+
   function renderRentalCard(item, actionBtns) {
     var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
     var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
@@ -5505,17 +5563,18 @@
     } else if (pickupCity) {
       cityBadgeHtml = '<span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider bg-indigo-100 text-indigo-700">' + pickupCity + '</span>';
     }
-    // 결제 상태 뱃지
-    var payStatus = item.payment_status || '';
+    // 결제 상태 뱃지 — payment_date 기준 파생 (예산 장부와 동일 규칙)
+    var payStatus = _trvPayStatus(item);
+    var payKind = _trvPayKind(payStatus);
     var payBadge = '';
     if (payStatus) {
-      var payClass = payStatus === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
-                     payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
-                     payStatus === '현장 결제' ? 'bg-sky-100 text-sky-700' :
+      var payClass = payKind === 'done' ? 'bg-emerald-100 text-emerald-700' :
+                     payKind === 'due' ? 'bg-amber-100 text-amber-700' :
+                     payKind === 'onsite' ? 'bg-sky-100 text-sky-700' :
                      'bg-slate-100 text-slate-600';
-      var payIcon = payStatus === '결제 완료' ? 'check_circle' :
-                    payStatus === '결제 예정' ? 'schedule' :
-                    payStatus === '현장 결제' ? 'storefront' : 'payments';
+      var payIcon = payKind === 'done' ? 'check_circle' :
+                    payKind === 'due' ? 'schedule' :
+                    payKind === 'onsite' ? 'storefront' : 'payments';
       payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + payIcon + '</span>' + payStatus + '</span>';
     }
     // 추가 정보 칩 — 핵심만 (예약번호 / 운전자 / 무료취소 / 결제일)
@@ -5551,7 +5610,7 @@
     var vendorM = String(item.title || '').match(/\(([^)]+)\)/);
     var titleMain = String(item.title || '—').replace(/\s*\([^)]*\)/, '').trim() || '—';
     var vendorBadge = vendorM ? '<span class="rec-tr-vendor">' + vendorM[1] + '</span>' : '';
-    var payPillT = payStatus ? '<span class="rec-pill ' + (payStatus === '결제 완료' ? 'is-ok' : (payStatus === '현장 결제' ? 'is-warn' : '')) + '">' + payStatus + '</span>' : '';
+    var payPillT = payStatus ? '<span class="rec-pill ' + (payKind === 'done' ? 'is-ok' : (payKind === 'onsite' ? 'is-warn' : '')) + '">' + payStatus + '</span>' : '';
     var recChips = [];
     if (pickupCity && dropCity && pickupCity !== dropCity) recChips.push('<span class="rec-pill is-accent">' + pickupCity + ' → ' + dropCity + '</span>');
     else if (pickupCity) recChips.push('<span class="rec-pill is-accent">' + pickupCity + '</span>');
@@ -5667,6 +5726,11 @@
       '</div>' +
       '<div class="rec-tr-foot">' +
         '<p class="rec-tr-price">' + _trvAmtHtml(item.amount) + '</p>' +
+        // 결제 상태 — payment_date 기준 파생 (예산 장부와 동일 규칙)
+        (function(){
+          var ps = _trvPayStatus(item), pk = _trvPayKind(ps);
+          return ps ? '<span class="rec-pill ' + (pk === 'done' ? 'is-ok' : (pk === 'onsite' ? 'is-warn' : '')) + '">' + ps + '</span>' : '';
+        })() +
         (status ? '<span class="rec-pill ' + (status === '확정' ? 'is-accent' : (status === '환불 가능' ? 'is-ok' : 'is-warn')) + '">' + status + '</span>' : '') +
       '</div>' +
       (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
@@ -6046,6 +6110,9 @@
     setV('stay-edit-cancel-date', item.cancel_date);
     setV('stay-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
     setV('stay-edit-notes', item.notes);
+    setV('stay-edit-room-type', item.room_type);
+    setV('stay-edit-breakfast', item.breakfast);
+    setV('stay-edit-guests', item.guests);
 
     _stayEditPayStatus = item.payment_status || '결제 예정';
     selectStayEditType(_stayEditType);
@@ -6074,6 +6141,10 @@
       cancel_date: document.getElementById('stay-edit-cancel-date').value,
       amount: document.getElementById('stay-edit-price').value.replace(/,/g,''),
       notes: (document.getElementById('stay-edit-notes')||{}).value || '',
+      // ★ (2026-07-23) 객실/조식/인원 — 카드 메타 행에 표시되는 additive 필드
+      room_type: ((document.getElementById('stay-edit-room-type')||{}).value || '').trim(),
+      breakfast: ((document.getElementById('stay-edit-breakfast')||{}).value || '').trim(),
+      guests: ((document.getElementById('stay-edit-guests')||{}).value || '').trim(),
       payment_status: _stayEditPayStatus || '',
       description: _stayEditType === 'Airbnb' ? 'Airbnb' : ''
     };
@@ -6122,6 +6193,10 @@
       payment_status: _stayAddPayStatus || '',
       amount: document.getElementById('stay-price').value.replace(/,/g,''),
       notes: getV('stay-notes'),
+      // ★ (2026-07-23) 객실/조식/인원 — 카드 메타 행에 표시되는 additive 필드
+      room_type: getV('stay-room-type'),
+      breakfast: getV('stay-breakfast'),
+      guests: getV('stay-guests'),
       description: _stayType === 'Airbnb' ? 'Airbnb' : ''
     };
     try {
@@ -6132,7 +6207,7 @@
       renderJourneyLodging();
       updateJourneyCost();
       // 폼 초기화
-      ['stay-city','stay-name','stay-address','stay-phone','stay-checkin-date','stay-checkout-date','stay-checkin-time','stay-checkout-time','stay-cancel-date','stay-payment-date','stay-price','stay-notes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      ['stay-city','stay-name','stay-address','stay-phone','stay-checkin-date','stay-checkout-date','stay-checkin-time','stay-checkout-time','stay-cancel-date','stay-payment-date','stay-price','stay-notes','stay-room-type','stay-breakfast','stay-guests'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
       _stayType = 'Hotel'; selectStayType('Hotel');
       _stayAddCancel = '가능'; selectStayAddCancel('가능');
       _stayAddPayStatus = '결제 예정'; selectStayAddPayStatus('결제 예정');
@@ -6686,17 +6761,18 @@
         var typeBadge = isAirbnb
           ? '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 text-rose-600 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">home</span>AIRBNB</span>'
           : '<span class="flex items-center gap-1 px-2.5 py-0.5 bg-slate-50 text-slate-500 rounded-full text-[9px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-xs">hotel</span>HOTEL</span>';
-        // 결제 상태 뱃지
-        var payStatus = item.payment_status || '';
+        // 결제 상태 뱃지 — payment_date 기준 파생 (예산 장부와 동일 규칙)
+        var payStatus = _trvPayStatus(item);
+        var payKind = _trvPayKind(payStatus);
         var payBadge = '';
         if (payStatus) {
-          var payClass = payStatus === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
-                         payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
-                         payStatus === '현장 결제' ? 'bg-sky-100 text-sky-700' :
+          var payClass = payKind === 'done' ? 'bg-emerald-100 text-emerald-700' :
+                         payKind === 'due' ? 'bg-amber-100 text-amber-700' :
+                         payKind === 'onsite' ? 'bg-sky-100 text-sky-700' :
                          'bg-slate-100 text-slate-600';
-          var payIcon = payStatus === '결제 완료' ? 'check_circle' :
-                        payStatus === '결제 예정' ? 'schedule' :
-                        payStatus === '현장 결제' ? 'storefront' : 'payments';
+          var payIcon = payKind === 'done' ? 'check_circle' :
+                        payKind === 'due' ? 'schedule' :
+                        payKind === 'onsite' ? 'storefront' : 'payments';
           payBadge = '<span class="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined text-xs">' + payIcon + '</span>' + payStatus + '</span>';
         }
         // 메모를 칩으로 분해 (객실/인원/금연/식사/보증금 등)
@@ -6726,7 +6802,7 @@
           : '<span class="j-status-tag j-status-soft" style="display:inline-flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">hotel</span>HOTEL</span>';
         var payBadgeSt = '';
         if (payStatus) {
-          var payVarL = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
+          var payVarL = payKind === 'done' ? 'j-status-success' : (payKind === 'onsite' ? 'j-status-warn' : 'j-status-soft');
           payBadgeSt = '<span class="j-status-tag ' + payVarL + '">' + payStatus + '</span>';
         }
         // ★ (2026-07-23) 메모 정리: 짧은 조각만 태그 칩(종류별 색), 긴 문장은 메모 줄로 분리
@@ -6773,7 +6849,8 @@
         var typePillR = '<span class="rec-pill">' + (isAirbnb ? 'AIRBNB' : 'HOTEL') + '</span>';
         var payPillR = '';
         if (payStatus) {
-          payPillR = '<span class="rec-pill ' + (payStatus === '결제 완료' ? 'is-ok' : (payStatus === '현장 결제' ? 'is-warn' : '')) + '">' + payStatus + (item.payment_date ? ' · ' + item.payment_date : '') + '</span>';
+          var payDateSfx = (item.payment_date && payStatus.indexOf('(') < 0) ? ' · ' + item.payment_date : '';
+          payPillR = '<span class="rec-pill ' + (payKind === 'done' ? 'is-ok' : (payKind === 'onsite' ? 'is-warn' : '')) + '">' + payStatus + payDateSfx + '</span>';
         } else if (item.payment_date) {
           payPillR = '<span class="rec-pill">결제일 ' + item.payment_date + '</span>';
         }
@@ -6828,6 +6905,7 @@
               '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + (item.date || '—') + '</p>' + (item.checkin ? '<p class="rec-lg-sub">' + item.checkin + '</p>' : '') + '</div>' +
               '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="rec-lg-sub">' + item.checkout + '</p>' : '') + '</div>' +
             '</div>' +
+            _lodgeMetaRow(item, realIdx) +
             '<p class="rec-lg-cancel ' + cancelVar + '">' + cancelText + '</p>' +
             memoPillsR +
             (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
@@ -7412,7 +7490,11 @@
     if (f.pnr) cells.push(cell('PNR', f.pnr, true));
     if (f.fare_type) cells.push(cell('Fare', f.fare_type));
     if (f.baggage) cells.push(cell('Baggage', f.baggage));
-    if (f.payment_status || f.payment_date) cells.push(cell('Payment', (f.payment_status || '') + (f.payment_date ? ' · ' + f.payment_date : '')));
+    // 결제 상태 — payment_date 기준 파생 (예산 장부와 동일 규칙).
+    // 파생 문구에 이미 날짜가 들어간 '결제 예정 (MM/DD)'이면 날짜를 또 붙이지 않는다
+    var fPay = _trvPayStatus(f);
+    var fPayDate = (f.payment_date && fPay.indexOf('(') < 0) ? ' · ' + f.payment_date : '';
+    if (fPay || f.payment_date) cells.push(cell('Payment', fPay + fPayDate));
     if (f.price && f.price !== '—') cells.push(cell('Price', _trvAmtHtml(f.price)));
     // ★ (2026-07-23) 다크 헤더 좌측 항공사 로고 — 실패 시 기존 아이콘+편명 레이아웃 그대로
     var flLogo = _airlineLogoHtml(_airlineIata(f));
@@ -7705,7 +7787,7 @@
         depart:f.time, arrive:f.arrive||'', duration:f.duration||'', baggage:f.baggage||'',
         price:amt?'₩'+amt.toLocaleString('ko-KR'):'—',
         pnr:f.pnr, passenger:f.passenger, seat_class:f.seat_class, seat_number:f.seat_number,
-        fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status,
+        fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status, unpaid:f.unpaid,
         _id:f._id, attachments:f.attachments
       }, actionBtns);
     }).join('');
@@ -8122,32 +8204,120 @@
   }
   // ★ (2026-07-23) 당일치기 도시 날짜 — citiesData(숙박)에 없으면 journey 일정에서 최소~최대 날짜
   //   반환: { text:'10/9' | '10/9~10/10' | '', kind:'stay' | 'daytrip' | '' }
+  //   ★ (2026-07-23 보강) 일정의 city가 비어있거나 제목이 한글이라 문자열 매칭이 0건이던 문제
+  //     (Bagno Vignoni · Montalcino 등) — 좌표 매칭과 한↔영 도시명 표를 폴백으로 추가
+  var _CITY_KO_ALIAS = {
+    'Montalcino': '몬탈치노',
+    'Montepulciano': '몬테풀차노',
+    'Bagno Vignoni': '바뇨 비뇨니',
+    "Castiglione d'Orcia": '카스틸리오네',
+    'Orvieto': '오르비에토',
+    'Pienza': '피엔차',
+    'Siena': '시에나',
+    "San Quirico d'Orcia": '산 퀴리코',
+    'Berlin': '베를린',
+    'Frankfurt am Main': '프랑크푸르트'
+  };
+  // 도시명(원문) → 한글 별칭. 표에 없으면 '' (표 키는 대소문자 무시 + 부분 일치 허용)
+  function _cityKoAlias(city) {
+    var raw = String(city || '').split(',')[0].trim().toLowerCase();
+    if (!raw) return '';
+    var keys = Object.keys(_CITY_KO_ALIAS);
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i].toLowerCase();
+      if (k === raw || raw.indexOf(k) >= 0 || k.indexOf(raw) >= 0) return _CITY_KO_ALIAS[keys[i]];
+    }
+    return '';
+  }
+  var _cityDateCache = null; // 렌더당 1회만 계산 (좌표 매칭이 무거워 매 칩마다 돌지 않게)
+  function _cityDateCacheReset() { _cityDateCache = null; }
   function _cityDateInfo(city) {
+    var ckey = _normCityKey(city) || String(city || '');
+    if (!_cityDateCache) _cityDateCache = {};
+    if (_cityDateCache[ckey] !== undefined) return _cityDateCache[ckey];
+    var out = _cityDateInfoCalc(city);
+    _cityDateCache[ckey] = out;
+    return out;
+  }
+  function _cityDateInfoCalc(city) {
     var stay = _cityStayRange(city);
     if (stay) return { text: stay, kind: 'stay' };
     if (!city) return { text: '', kind: '' };
     var nc = _normCityKey(city);
     if (!nc) return { text: '', kind: '' };
     var j = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
-    var min = '', max = '';
-    for (var i = 0; i < j.length; i++) {
-      var it = j[i];
-      if (!it || it.type !== '일정' || !it.date) continue;
-      var n = _normCityKey(it.city || '');
-      if (!n) continue;
-      if (!(n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0)) continue;
-      var d = String(it.date);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
-      if (!min || d < min) min = d;
-      if (!max || d > max) max = d;
-    }
-    if (!min) return { text: '', kind: '' };
     var md2 = function(ds) {
       var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ds || ''));
       return m ? (+m[2]) + '/' + (+m[3]) : '';
     };
-    var s2 = md2(min), e2 = md2(max);
-    return { text: (e2 && e2 !== s2) ? (s2 + '~' + e2) : s2, kind: 'daytrip' };
+    var pack = function(min, max) {
+      if (!min) return null;
+      var s = md2(min), e = md2(max);
+      return { text: (e && e !== s) ? (s + '~' + e) : s, kind: 'daytrip' };
+    };
+    var isSched = function(it) {
+      return it && it.type === '일정' && it.date && /^\d{4}-\d{2}-\d{2}$/.test(String(it.date));
+    };
+
+    // 1) 좌표 매칭 — 해당 도시 스팟들의 중심점에서 15km 이내 일정
+    var cx = 0, cy = 0, cn = 0;
+    for (var s = 0; s < j.length; s++) {
+      var sp = j[s];
+      if (!sp || sp.type !== '스팟') continue;
+      if (typeof sp.lat !== 'number' || typeof sp.lng !== 'number') continue;
+      var sn = _normCityKey(sp.city || '');
+      if (!sn) continue;
+      if (!(sn === nc || sn.indexOf(nc) >= 0 || nc.indexOf(sn) >= 0)) continue;
+      cx += sp.lat; cy += sp.lng; cn++;
+    }
+    if (cn) {
+      var ctr = { lat: cx / cn, lng: cy / cn };
+      var gmin = '', gmax = '';
+      for (var g = 0; g < j.length; g++) {
+        var gi = j[g];
+        if (!isSched(gi)) continue;
+        if (typeof gi.lat !== 'number' || typeof gi.lng !== 'number') continue;
+        if (_haversineKm(ctr, { lat: gi.lat, lng: gi.lng }) > 15) continue;
+        var gd = String(gi.date);
+        if (!gmin || gd < gmin) gmin = gd;
+        if (!gmax || gd > gmax) gmax = gd;
+      }
+      var geoHit = pack(gmin, gmax);
+      if (geoHit) return geoHit;
+    }
+
+    // 2) 기존 문자열 매칭 (일정의 city 필드)
+    var min = '', max = '';
+    for (var i = 0; i < j.length; i++) {
+      var it = j[i];
+      if (!isSched(it)) continue;
+      var n = _normCityKey(it.city || '');
+      if (!n) continue;
+      if (!(n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0)) continue;
+      var d = String(it.date);
+      if (!min || d < min) min = d;
+      if (!max || d > max) max = d;
+    }
+    var strHit = pack(min, max);
+    if (strHit) return strHit;
+
+    // 3) 한↔영 별칭 — 일정 제목/설명에 한글 도시명이 들어있으면 그 날짜 사용
+    var ko = _cityKoAlias(city);
+    if (ko) {
+      var kmin = '', kmax = '';
+      for (var k = 0; k < j.length; k++) {
+        var ki = j[k];
+        if (!isSched(ki)) continue;
+        var hay = String(ki.title || '') + ' ' + String(ki.description || '') + ' ' + String(ki.city || '');
+        if (hay.indexOf(ko) < 0) continue;
+        var kd = String(ki.date);
+        if (!kmin || kd < kmin) kmin = kd;
+        if (!kmax || kd > kmax) kmax = kd;
+      }
+      var koHit = pack(kmin, kmax);
+      if (koHit) return koHit;
+    }
+    return { text: '', kind: '' };
   }
 
   // 도시별로 다시 sub-group (한 국가 안에서)
@@ -14845,6 +15015,7 @@
     var tabs = [
       ['schedule', 'route', '일정'],
       ['places', 'push_pin', '스팟'],
+      ['flight', 'flight', '항공'],
       ['budget', 'payments', '예산'],
       ['checklist', 'checklist', '체크리스트'],
       ['atlas', 'public', 'Atlas']
@@ -15447,6 +15618,7 @@
     var cityEl = document.getElementById('place-city-tabs');
     var cntEl = document.getElementById('places-count');
     if (!grid) return;
+    _cityDateCacheReset(); // 도시 날짜(좌표 매칭 포함) 캐시는 렌더 단위로만 재사용
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
     var places = jd.filter(function(d) { return d.type === '스팟'; });
     // 환율은 최초 1회만 요청 — 도착하면 재렌더 (캐시 hit로 동기 호출되는 경우는 재렌더 생략)
@@ -16846,6 +17018,782 @@
     }
   };
 
+  // ═══════════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-23) 항공(Flight) 탭 — 외부 항공권 API 의존 없이 3축 구성
+  //    1) Departure Prep : 현재 트립 항공편의 D-day + 시간순 준비 체크리스트
+  //    2) Flight Profile : 전체 트립 누적 비행 통계 · 세계지도 궤적 · 연도별 차트
+  //    3) Price Watch    : 관심 노선 등록 + 수기 가격 스냅샷 (SVG 라인 차트)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // 공항 IATA → [위도, 경도, 도시, 국가코드, 국가명]
+  // 거리 계산 · 지도 궤적 · ETIAS 판정 전부 이 표로 처리 (외부 API 없음)
+  var _FLT_AIRPORTS = {
+    ICN: [37.4602, 126.4407, '인천', 'KR', '대한민국'],
+    GMP: [37.5583, 126.7906, '서울', 'KR', '대한민국'],
+    PUS: [35.1795, 128.9382, '부산', 'KR', '대한민국'],
+    CJU: [33.5113, 126.4930, '제주', 'KR', '대한민국'],
+    TAE: [35.8941, 128.6586, '대구', 'KR', '대한민국'],
+    NRT: [35.7720, 140.3929, '도쿄', 'JP', '일본'],
+    HND: [35.5494, 139.7798, '도쿄', 'JP', '일본'],
+    KIX: [34.4347, 135.2440, '오사카', 'JP', '일본'],
+    ITM: [34.7855, 135.4382, '오사카', 'JP', '일본'],
+    CTS: [42.7752, 141.6923, '삿포로', 'JP', '일본'],
+    FUK: [33.5859, 130.4510, '후쿠오카', 'JP', '일본'],
+    OKA: [26.1958, 127.6459, '오키나와', 'JP', '일본'],
+    NGO: [34.8584, 136.8054, '나고야', 'JP', '일본'],
+    PVG: [31.1434, 121.8052, '상하이', 'CN', '중국'],
+    PEK: [40.0801, 116.5846, '베이징', 'CN', '중국'],
+    PKX: [39.5098, 116.4105, '베이징', 'CN', '중국'],
+    CAN: [23.3924, 113.2988, '광저우', 'CN', '중국'],
+    HKG: [22.3080, 113.9185, '홍콩', 'HK', '홍콩'],
+    TPE: [25.0777, 121.2328, '타이베이', 'TW', '대만'],
+    SIN: [1.3644, 103.9915, '싱가포르', 'SG', '싱가포르'],
+    BKK: [13.6900, 100.7501, '방콕', 'TH', '태국'],
+    DMK: [13.9126, 100.6068, '방콕', 'TH', '태국'],
+    HKT: [8.1132, 98.3169, '푸껫', 'TH', '태국'],
+    HAN: [21.2212, 105.8072, '하노이', 'VN', '베트남'],
+    SGN: [10.8188, 106.6520, '호치민', 'VN', '베트남'],
+    DAD: [16.0439, 108.1994, '다낭', 'VN', '베트남'],
+    KUL: [2.7456, 101.7099, '쿠알라룸푸르', 'MY', '말레이시아'],
+    MNL: [14.5086, 121.0198, '마닐라', 'PH', '필리핀'],
+    CEB: [10.3075, 123.9794, '세부', 'PH', '필리핀'],
+    CGK: [-6.1256, 106.6559, '자카르타', 'ID', '인도네시아'],
+    DPS: [-8.7482, 115.1675, '발리', 'ID', '인도네시아'],
+    DEL: [28.5562, 77.1000, '델리', 'IN', '인도'],
+    BOM: [19.0896, 72.8656, '뭄바이', 'IN', '인도'],
+    DXB: [25.2532, 55.3657, '두바이', 'AE', '아랍에미리트'],
+    AUH: [24.4330, 54.6511, '아부다비', 'AE', '아랍에미리트'],
+    DOH: [25.2731, 51.6081, '도하', 'QA', '카타르'],
+    IST: [41.2753, 28.7519, '이스탄불', 'TR', '튀르키예'],
+    SAW: [40.8986, 29.3092, '이스탄불', 'TR', '튀르키예'],
+    TLV: [32.0114, 34.8867, '텔아비브', 'IL', '이스라엘'],
+    FRA: [50.0379, 8.5622, '프랑크푸르트', 'DE', '독일'],
+    MUC: [48.3537, 11.7750, '뮌헨', 'DE', '독일'],
+    BER: [52.3667, 13.5033, '베를린', 'DE', '독일'],
+    TXL: [52.5597, 13.2877, '베를린', 'DE', '독일'],
+    DUS: [51.2895, 6.7668, '뒤셀도르프', 'DE', '독일'],
+    HAM: [53.6304, 9.9882, '함부르크', 'DE', '독일'],
+    CGN: [50.8659, 7.1427, '쾰른', 'DE', '독일'],
+    STR: [48.6899, 9.2220, '슈투트가르트', 'DE', '독일'],
+    CDG: [49.0097, 2.5479, '파리', 'FR', '프랑스'],
+    ORY: [48.7233, 2.3794, '파리', 'FR', '프랑스'],
+    NCE: [43.6584, 7.2159, '니스', 'FR', '프랑스'],
+    LYS: [45.7256, 5.0811, '리옹', 'FR', '프랑스'],
+    MRS: [43.4393, 5.2214, '마르세유', 'FR', '프랑스'],
+    LHR: [51.4700, -0.4543, '런던', 'GB', '영국'],
+    LGW: [51.1537, -0.1821, '런던', 'GB', '영국'],
+    STN: [51.8860, 0.2389, '런던', 'GB', '영국'],
+    MAN: [53.3537, -2.2750, '맨체스터', 'GB', '영국'],
+    EDI: [55.9500, -3.3725, '에든버러', 'GB', '영국'],
+    AMS: [52.3105, 4.7683, '암스테르담', 'NL', '네덜란드'],
+    BRU: [50.9014, 4.4844, '브뤼셀', 'BE', '벨기에'],
+    FCO: [41.8003, 12.2389, '로마', 'IT', '이탈리아'],
+    MXP: [45.6301, 8.7255, '밀라노', 'IT', '이탈리아'],
+    LIN: [45.4451, 9.2767, '밀라노', 'IT', '이탈리아'],
+    BGY: [45.6739, 9.7042, '밀라노', 'IT', '이탈리아'],
+    VCE: [45.5053, 12.3519, '베네치아', 'IT', '이탈리아'],
+    NAP: [40.8860, 14.2908, '나폴리', 'IT', '이탈리아'],
+    FLR: [43.8100, 11.2051, '피렌체', 'IT', '이탈리아'],
+    PSA: [43.6839, 10.3927, '피사', 'IT', '이탈리아'],
+    CTA: [37.4668, 15.0664, '카타니아', 'IT', '이탈리아'],
+    BCN: [41.2974, 2.0833, '바르셀로나', 'ES', '스페인'],
+    MAD: [40.4719, -3.5626, '마드리드', 'ES', '스페인'],
+    AGP: [36.6749, -4.4991, '말라가', 'ES', '스페인'],
+    PMI: [39.5517, 2.7388, '팔마', 'ES', '스페인'],
+    SVQ: [37.4180, -5.8931, '세비야', 'ES', '스페인'],
+    LIS: [38.7742, -9.1342, '리스본', 'PT', '포르투갈'],
+    OPO: [41.2481, -8.6814, '포르투', 'PT', '포르투갈'],
+    VIE: [48.1103, 16.5697, '빈', 'AT', '오스트리아'],
+    ZRH: [47.4647, 8.5492, '취리히', 'CH', '스위스'],
+    GVA: [46.2381, 6.1089, '제네바', 'CH', '스위스'],
+    PRG: [50.1008, 14.2600, '프라하', 'CZ', '체코'],
+    BUD: [47.4369, 19.2556, '부다페스트', 'HU', '헝가리'],
+    WAW: [52.1657, 20.9671, '바르샤바', 'PL', '폴란드'],
+    KRK: [50.0777, 19.7848, '크라쿠프', 'PL', '폴란드'],
+    CPH: [55.6180, 12.6560, '코펜하겐', 'DK', '덴마크'],
+    ARN: [59.6519, 17.9186, '스톡홀름', 'SE', '스웨덴'],
+    OSL: [60.1939, 11.1004, '오슬로', 'NO', '노르웨이'],
+    HEL: [60.3172, 24.9633, '헬싱키', 'FI', '핀란드'],
+    KEF: [63.9850, -22.6056, '레이캬비크', 'IS', '아이슬란드'],
+    ATH: [37.9364, 23.9445, '아테네', 'GR', '그리스'],
+    JTR: [36.3992, 25.4793, '산토리니', 'GR', '그리스'],
+    ZAG: [45.7429, 16.0688, '자그레브', 'HR', '크로아티아'],
+    DBV: [42.5614, 18.2682, '두브로브니크', 'HR', '크로아티아'],
+    DUB: [53.4213, -6.2701, '더블린', 'IE', '아일랜드'],
+    JFK: [40.6413, -73.7781, '뉴욕', 'US', '미국'],
+    EWR: [40.6895, -74.1745, '뉴욕', 'US', '미국'],
+    LAX: [33.9416, -118.4085, '로스앤젤레스', 'US', '미국'],
+    SFO: [37.6213, -122.3790, '샌프란시스코', 'US', '미국'],
+    SEA: [47.4502, -122.3088, '시애틀', 'US', '미국'],
+    ORD: [41.9742, -87.9073, '시카고', 'US', '미국'],
+    BOS: [42.3656, -71.0096, '보스턴', 'US', '미국'],
+    IAD: [38.9531, -77.4565, '워싱턴', 'US', '미국'],
+    ATL: [33.6407, -84.4277, '애틀랜타', 'US', '미국'],
+    LAS: [36.0840, -115.1537, '라스베이거스', 'US', '미국'],
+    HNL: [21.3187, -157.9224, '호놀룰루', 'US', '미국'],
+    YVR: [49.1967, -123.1815, '밴쿠버', 'CA', '캐나다'],
+    YYZ: [43.6777, -79.6248, '토론토', 'CA', '캐나다'],
+    YUL: [45.4706, -73.7408, '몬트리올', 'CA', '캐나다'],
+    MEX: [19.4363, -99.0721, '멕시코시티', 'MX', '멕시코'],
+    GRU: [-23.4356, -46.4731, '상파울루', 'BR', '브라질'],
+    SYD: [-33.9399, 151.1753, '시드니', 'AU', '호주'],
+    MEL: [-37.6690, 144.8410, '멜버른', 'AU', '호주'],
+    BNE: [-27.3842, 153.1175, '브리즈번', 'AU', '호주'],
+    AKL: [-37.0082, 174.7850, '오클랜드', 'NZ', '뉴질랜드'],
+    GUM: [13.4839, 144.7961, '괌', 'GU', '괌'],
+    SPN: [15.1190, 145.7294, '사이판', 'MP', '북마리아나']
+  };
+
+  // 온라인 체크인이 24시간 전에 열리는 LCC (그 외 국제선은 48시간 기본)
+  var _FLT_LCC = ['TW', '7C', 'LJ', 'BX', 'RS', 'ZE', 'FR', 'U2', 'W6', 'VY', 'HV', 'PC',
+    'V7', 'DY', 'D8', 'EW', 'LS', 'AK', 'D7', 'FD', 'TR', 'JQ', '3K', 'MM', 'GK', 'VJ',
+    'VZ', 'SL', '5J', 'Z2', 'QZ', 'ID', 'IX', '6E', 'SG', 'G9', 'FZ', 'NK', 'F9', 'WN'];
+
+  // ETIAS 대상(솅겐/EU) 국가코드 — 2026년 시행 예정이라 안내 문구용
+  var _FLT_ETIAS = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR',
+    'HU', 'IS', 'IT', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SK',
+    'SI', 'ES', 'SE', 'CH'];
+
+  var _FLT_DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  var _FLT_EARTH_KM = 40075; // 지구 둘레(적도)
+
+  function _fltPad2(n) { return (n < 10 ? '0' : '') + n; }
+  function _fltEsc(s) { return _spotEsc(s); }
+
+  // 항공편 date(YYYY-MM-DD) + time(HH:MM) → Date. 기기 시각(KST) 기준으로 계산한다
+  function _fltDT(dateStr, timeStr) {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
+    var m = String(timeStr == null ? '' : timeStr).match(/(\d{1,2})\s*:\s*(\d{2})/);
+    var d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return null;
+    d.setHours(m ? parseInt(m[1], 10) : 0, m ? parseInt(m[2], 10) : 0, 0, 0);
+    return d;
+  }
+  function _fltFmtWhen(d) {
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' (' + _FLT_DOW[d.getDay()] + ') ' +
+      _fltPad2(d.getHours()) + ':' + _fltPad2(d.getMinutes());
+  }
+  function _fltDday(dateStr) {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return null;
+    return Math.round((d.getTime() - today.getTime()) / 86400000);
+  }
+  // duration 문자열 → 분. '12h 30m' · '12시간 30분' · '12:30' · '12' 모두 허용
+  function _fltDurMin(s) {
+    var raw = String(s == null ? '' : s).trim();
+    if (!raw) return 0;
+    var c = raw.match(/^(\d{1,2})\s*:\s*(\d{2})$/);
+    if (c) return parseInt(c[1], 10) * 60 + parseInt(c[2], 10);
+    var h = raw.match(/(\d+)\s*(?:h|H|시간|시)/);
+    var m = raw.match(/(\d+)\s*(?:m|M|분)/);
+    if (h || m) return (h ? parseInt(h[1], 10) : 0) * 60 + (m ? parseInt(m[1], 10) : 0);
+    var n = raw.match(/^(\d+(?:\.\d+)?)$/);
+    if (n) return Math.round(parseFloat(n[1]) * 60);
+    return 0;
+  }
+  function _fltHm(min) {
+    if (!min) return '—';
+    var h = Math.floor(min / 60), m = min % 60;
+    return (h ? h + '시간 ' : '') + (m ? m + '분' : (h ? '' : '0분'));
+  }
+  // 루트 문자열에서 출·도착 IATA 추출 — '인천(ICN) → 프랑크푸르트(FRA)' / 'ICN → FRA'
+  function _fltRoute(f) {
+    var raw = String((f && (f.route || f.description)) || '');
+    var codes = [], m, re = /\(([A-Z]{3})\)/g;
+    while ((m = re.exec(raw))) codes.push(m[1]);
+    if (codes.length < 2) {
+      var parts = raw.toUpperCase().split(/→|->|~|—|>/);
+      codes = [];
+      for (var i = 0; i < parts.length; i++) {
+        var mm = String(parts[i]).match(/\b([A-Z]{3})\b/);
+        if (mm && _FLT_AIRPORTS[mm[1]]) codes.push(mm[1]);
+      }
+    }
+    var from = codes[0] || '', to = codes.length > 1 ? codes[codes.length - 1] : '';
+    return { from: from, to: to, legKm: _fltLegKm(from, to) };
+  }
+  function _fltLegKm(a, b) {
+    var pa = _FLT_AIRPORTS[a], pb = _FLT_AIRPORTS[b];
+    if (!pa || !pb) return 0;
+    return _haversineKm({ lat: pa[0], lng: pa[1] }, { lat: pb[0], lng: pb[1] });
+  }
+  function _fltIata(f) {
+    return _airlineIata({ flight: f.flight || f.city, airline: f.airline, title: f.title });
+  }
+  function _fltAirlineName(f) {
+    return String((f && (f.airline || f.title)) || '').trim();
+  }
+  function _fltKrwShort(n) {
+    var v = Math.round(Number(n) || 0);
+    if (v >= 10000) {
+      var man = v / 10000;
+      return (man >= 100 ? Math.round(man) : Math.round(man * 10) / 10) + '만';
+    }
+    return v.toLocaleString('ko-KR');
+  }
+
+  // ───────────── 섹션 1 · Departure Prep ─────────────
+  // 출발 시각 기준 준비 마일스톤 자동 생성
+  function _fltMilestones(f) {
+    var dep = _fltDT(f.date, f.time || f.depart);
+    if (!dep) return [];
+    var lcc = _FLT_LCC.indexOf(_fltIata(f)) >= 0;
+    var ciH = lcc ? 24 : 48;
+    var t = dep.getTime();
+    return [
+      { key: 'checkin', label: '온라인 체크인 오픈', at: new Date(t - ciH * 3600000),
+        note: ciH + '시간 전 · ' + (lcc ? 'LCC 기준' : '국제선 기본'), icon: 'how_to_reg' },
+      { key: 'seat', label: '좌석 지정 · 사전 수하물 마감', at: new Date(t - 24 * 3600000),
+        note: '출발 24시간 전', icon: 'airline_seat_recline_normal' },
+      { key: 'airport', label: '공항 도착 권장', at: new Date(t - 3 * 3600000),
+        note: '국제선 3시간 전', icon: 'local_airport' },
+      { key: 'boarding', label: '탑승 마감', at: new Date(t - 40 * 60000),
+        note: '출발 40분 전', icon: 'flight_takeoff' }
+    ].sort(function(a, b) { return a.at - b.at; });
+  }
+
+  window.fltSavePassport = function() {
+    var el = document.getElementById('flight-passport-input');
+    if (!el) return;
+    try { localStorage.setItem('atelier_passport_expiry', (el.value || '').trim()); } catch(e) {}
+    _fltRenderPrep();
+    if (typeof showSyncToast === 'function') {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">badge</span> 여권 만료일 저장');
+    }
+  };
+
+  window.fltTogglePrep = async function(flightId, key) {
+    var f = null, jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    for (var i = 0; i < jd.length; i++) { if (jd[i]._id === flightId) { f = jd[i]; break; } }
+    if (!f) return;
+    var done = Array.isArray(f.prep_done) ? f.prep_done.slice() : [];
+    var ix = done.indexOf(key);
+    if (ix >= 0) done.splice(ix, 1); else done.push(key);
+    f.prep_done = done;
+    _fltRenderPrep();
+    try { await fbUpdate('journey', flightId, { prep_done: done }); }
+    catch(e) { console.warn('[flight] prep_done', e); }
+  };
+
+  function _fltPassportBar(firstDep) {
+    var saved = '';
+    try { saved = localStorage.getItem('atelier_passport_expiry') || ''; } catch(e) {}
+    var msg = '<span class="flt-pp-msg">출발일 기준 유효기간 6개월을 자동으로 확인해요</span>';
+    if (saved && /^\d{4}-\d{2}-\d{2}$/.test(saved) && firstDep) {
+      var exp = new Date(saved + 'T00:00:00');
+      var need = new Date(firstDep.getTime()); need.setMonth(need.getMonth() + 6);
+      var leftD = Math.round((exp.getTime() - firstDep.getTime()) / 86400000);
+      if (exp < need) {
+        msg = '<span class="flt-pp-msg is-warn"><span class="material-symbols-outlined">warning</span>' +
+          '출발일 기준 잔여 ' + leftD + '일 — 6개월 미만이라 입국 거부 위험. 갱신을 먼저 확인해줘</span>';
+      } else {
+        msg = '<span class="flt-pp-msg is-ok"><span class="material-symbols-outlined">check_circle</span>' +
+          '출발일 기준 잔여 ' + leftD + '일 · 6개월 요건 충족</span>';
+      }
+    }
+    return '<div class="flt-passport">' +
+      '<span class="material-symbols-outlined flt-pp-ico">badge</span>' +
+      '<span class="flt-pp-l">여권 만료일</span>' +
+      '<input id="flight-passport-input" type="date" class="flt-pp-input" value="' + _fltEsc(saved) +
+        '" onchange="fltSavePassport()">' + msg + '</div>';
+  }
+
+  function _fltRenderPrep() {
+    var box = document.getElementById('flight-prep-list');
+    var bar = document.getElementById('flight-passport-bar');
+    var cnt = document.getElementById('flight-prep-count');
+    if (!box) return;
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var flights = jd.filter(function(d) { return d && d.type === '항공편'; }).slice();
+    flights.sort(function(a, b) {
+      return String(a.date || '').localeCompare(String(b.date || '')) ||
+        String(a.time || '').localeCompare(String(b.time || ''));
+    });
+    if (cnt) cnt.textContent = flights.length ? flights.length + '편' : '';
+
+    var firstDep = null;
+    for (var q = 0; q < flights.length; q++) {
+      var dq = _fltDT(flights[q].date, flights[q].time);
+      if (dq && (!firstDep || dq < firstDep)) firstDep = dq;
+    }
+    if (bar) bar.innerHTML = _fltPassportBar(firstDep);
+
+    if (!flights.length) {
+      box.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">flight</span>' +
+        '<p>이 트립에 등록된 항공편이 없어요. <strong>일정 탭 → Records → Flights</strong>에서 추가하면 ' +
+        '체크인 오픈·공항 도착 시각이 자동으로 계산돼요.</p></div>';
+      return;
+    }
+    var now = new Date();
+    box.innerHTML = flights.map(function(f) {
+      var rt = _fltRoute(f);
+      var dep = _fltDT(f.date, f.time);
+      var dd = f.date ? _fltDday(f.date) : null;
+      var isDone = dd !== null && dd < 0;
+      var ddText = isDone ? '완료' : (dd === null ? '—' : (dd === 0 ? 'D-DAY' : 'D-' + dd));
+      var done = Array.isArray(f.prep_done) ? f.prep_done : [];
+      var steps = _fltMilestones(f);
+      var nextIdx = -1;
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].at > now && done.indexOf(steps[i].key) < 0) { nextIdx = i; break; }
+      }
+      var stepsHtml = steps.length ? steps.map(function(s, i) {
+        var past = s.at <= now;
+        var checked = past || done.indexOf(s.key) >= 0;
+        var cls = 'flt-step' + (checked ? ' is-done' : '') + (i === nextIdx ? ' is-next' : '');
+        var btn = f._id
+          ? '<button class="flt-step-check" onclick="fltTogglePrep(\'' + f._id + '\',\'' + s.key +
+            '\')" title="완료 토글"><span class="material-symbols-outlined">check</span></button>'
+          : '<span class="flt-step-check is-static"><span class="material-symbols-outlined">check</span></span>';
+        return '<li class="' + cls + '">' + btn +
+          '<div class="flt-step-body"><p class="flt-step-t">' +
+            '<span class="material-symbols-outlined flt-step-ico">' + s.icon + '</span>' + s.label + '</p>' +
+          '<p class="flt-step-w">' + _fltFmtWhen(s.at) + '<i>' + s.note + '</i></p></div>' +
+          (i === nextIdx ? '<span class="flt-step-tag">다음</span>' : '') + '</li>';
+      }).join('') : '<li class="flt-step"><div class="flt-step-body"><p class="flt-step-w">' +
+        '출발 날짜·시각을 입력하면 준비 타임라인이 계산돼요</p></div></li>';
+
+      var etias = '';
+      var arrCode = rt.to && _FLT_AIRPORTS[rt.to] ? _FLT_AIRPORTS[rt.to] : null;
+      if (arrCode && _FLT_ETIAS.indexOf(arrCode[3]) >= 0) {
+        etias = '<p class="flt-note"><span class="material-symbols-outlined">travel_explore</span>' +
+          arrCode[4] + '(솅겐) 도착 — <strong>ETIAS 사전 승인</strong> 필요 여부를 출발 전 확인해줘 (시행 시점 변동, 참고용)</p>';
+      }
+      var bagHtml = '<div class="flt-bag"><p class="flt-eyebrow">Baggage</p>' +
+        '<p class="flt-bag-l"><span class="material-symbols-outlined">luggage</span>위탁 · ' +
+          (f.baggage ? _fltEsc(f.baggage) : '규정 미입력 — 항공사 확인 필요') + '</p>' +
+        '<p class="flt-bag-l is-sub"><span class="material-symbols-outlined">backpack</span>' +
+          '기내 반입 기본 — 10kg / 55×40×20cm 1개 + 개인 소지품 1개, 액체는 100ml 이하 용기만 (총 1L 지퍼백)</p></div>';
+
+      var logo = _airlineLogoHtml(_fltIata(f));
+      return '<article class="flt-card flt-prep' + (isDone ? ' is-done' : '') + '">' +
+        '<div class="flt-prep-head">' +
+          '<div class="flt-dday' + (isDone ? ' is-done' : (dd === 0 ? ' is-today' : '')) + '">' +
+            '<span class="flt-dday-n">' + ddText + '</span></div>' +
+          '<div class="flt-prep-id">' +
+            '<p class="flt-eyebrow">' + _fltEsc(f.date || '날짜 미정') +
+              (f.city ? ' · ' + _fltEsc(f.city) : '') + '</p>' +
+            '<h4 class="flt-prep-route">' + (rt.from || '—') + (rt.to ? ' → ' + rt.to : '') + '</h4>' +
+            '<p class="flt-prep-sub">' + (_fltAirlineName(f) ? _fltEsc(_fltAirlineName(f)) + ' · ' : '') +
+              (dep ? _fltPad2(dep.getHours()) + ':' + _fltPad2(dep.getMinutes()) : '—') + ' 출발' +
+              (f.arrive ? ' → ' + _fltEsc(f.arrive) + ' 도착' : '') +
+              (rt.legKm ? ' · ' + Math.round(rt.legKm).toLocaleString('ko-KR') + 'km' : '') + '</p>' +
+          '</div>' + (logo ? '<span class="flt-prep-logo">' + logo + '</span>' : '') +
+        '</div>' +
+        '<ol class="flt-steps">' + stepsHtml + '</ol>' + bagHtml + etias +
+      '</article>';
+    }).join('');
+  }
+
+  // ───────────── 섹션 2 · Flight Profile ─────────────
+  var _fltAllFlights = null;
+  var _fltMap = null, _fltMapLayer = null;
+
+  function _fltFromDocs(docs) {
+    return (docs || []).filter(function(d) { return d && d.type === '항공편'; });
+  }
+  function _fltLoadCached() {
+    if (_fltAllFlights) return _fltAllFlights;
+    try {
+      var raw = localStorage.getItem('atelier_snapshot_journey');
+      if (raw) {
+        var c = JSON.parse(raw);
+        if (c && c.data) { _fltAllFlights = _fltFromDocs(c.data); return _fltAllFlights; }
+      }
+    } catch(e) {}
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    _fltAllFlights = _fltFromDocs(jd);
+    return _fltAllFlights;
+  }
+  async function _fltRefreshAll() {
+    try {
+      var docs = await fbRead('journey');
+      _fltAllFlights = _fltFromDocs(docs);
+      _fltRenderProfile();
+    } catch(e) { console.warn('[flight] refresh', e); }
+  }
+
+  function _fltStats(flights) {
+    var km = 0, min = 0, noDur = 0, legs = [], ports = {}, airlines = {}, years = {};
+    flights.forEach(function(f) {
+      var rt = _fltRoute(f);
+      if (rt.legKm) { km += rt.legKm; legs.push([rt.from, rt.to]); }
+      if (rt.from && _FLT_AIRPORTS[rt.from]) ports[rt.from] = true;
+      if (rt.to && _FLT_AIRPORTS[rt.to]) ports[rt.to] = true;
+      var d = _fltDurMin(f.duration);
+      if (d) min += d; else noDur++;
+      var key = _fltIata(f) || _fltAirlineName(f) || '기타';
+      if (!airlines[key]) airlines[key] = { n: 0, iata: _fltIata(f), name: _fltAirlineName(f) };
+      airlines[key].n++;
+      if (!airlines[key].name && _fltAirlineName(f)) airlines[key].name = _fltAirlineName(f);
+      var y = String(f.date || '').slice(0, 4);
+      if (/^\d{4}$/.test(y)) years[y] = (years[y] || 0) + 1;
+    });
+    // 방문 국가·도시는 한국(홈베이스) 제외
+    var ctry = {}, city = {};
+    Object.keys(ports).forEach(function(p) {
+      var a = _FLT_AIRPORTS[p];
+      if (!a || a[3] === 'KR') return;
+      ctry[a[3]] = a[4]; city[a[2]] = true;
+    });
+    var alRank = Object.keys(airlines).map(function(k) {
+      return { key: k, n: airlines[k].n, iata: airlines[k].iata, name: airlines[k].name || k };
+    }).sort(function(a, b) { return b.n - a.n || a.name.localeCompare(b.name); });
+    var yRows = Object.keys(years).sort().map(function(y) { return [y, years[y]]; });
+    return { km: km, min: min, noDur: noDur, legs: legs, ports: Object.keys(ports),
+      countries: Object.keys(ctry).length, cities: Object.keys(city).length,
+      airlines: alRank, years: yRows, total: flights.length };
+  }
+
+  // 연도별 비행 횟수 미니 바 차트 (외부 라이브러리 없이 SVG 직접 생성)
+  function _fltYearBarSvg(rows) {
+    if (!rows.length) return '';
+    var BW = 30, GAP = 16, PT = 18, PB = 26, H = 132;
+    var n = rows.length, W = Math.max(200, n * BW + (n - 1) * GAP + 8);
+    var maxc = 1;
+    rows.forEach(function(r) { if (r[1] > maxc) maxc = r[1]; });
+    var ih = H - PT - PB;
+    var bars = rows.map(function(r, i) {
+      var x = 4 + i * (BW + GAP);
+      var h = Math.max(3, Math.round(r[1] / maxc * ih));
+      var y = PT + (ih - h);
+      return '<rect x="' + x + '" y="' + y + '" width="' + BW + '" height="' + h + '" rx="5" fill="#7c3aed" opacity="0.85"></rect>' +
+        '<text x="' + (x + BW / 2) + '" y="' + (y - 5) + '" class="flt-svg-n" text-anchor="middle">' + r[1] + '</text>' +
+        '<text x="' + (x + BW / 2) + '" y="' + (H - 8) + '" class="flt-svg-x" text-anchor="middle">' + r[0] + '</text>';
+    }).join('');
+    return '<svg class="flt-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="연도별 비행 횟수">' +
+      '<line x1="0" y1="' + (H - PB + 2) + '" x2="' + W + '" y2="' + (H - PB + 2) + '" stroke="#e2e8f0" stroke-width="1"></line>' +
+      bars + '</svg>';
+  }
+
+  function _fltRenderProfile() {
+    var box = document.getElementById('flight-profile-body');
+    if (!box) return;
+    var flights = _fltLoadCached() || [];
+    var s = _fltStats(flights);
+    if (!s.total) {
+      box.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">public</span>' +
+        '<p>아직 기록된 항공편이 없어요. 트립에 항공편을 등록하면 누적 거리·국가 수·노선 궤적이 여기에 쌓여요.</p></div>';
+      var mp0 = document.getElementById('flight-map-wrap');
+      if (mp0) mp0.style.display = 'none';
+      return;
+    }
+    var laps = s.km / _FLT_EARTH_KM;
+    var stat = function(l, v, sub) {
+      return '<div class="flt-stat"><p class="flt-eyebrow">' + l + '</p><p class="flt-stat-v">' + v + '</p>' +
+        (sub ? '<p class="flt-stat-s">' + sub + '</p>' : '') + '</div>';
+    };
+    var cards = stat('Total Distance', Math.round(s.km).toLocaleString('ko-KR') + '<i>km</i>',
+        '지구 ' + (laps >= 1 ? (Math.round(laps * 100) / 100) : (Math.round(laps * 1000) / 1000)) + '바퀴') +
+      stat('Air Time', _fltHm(s.min), s.noDur ? s.noDur + '편은 소요시간 미입력' : '기록된 소요시간 합계') +
+      stat('Countries', s.countries + '<i>개국</i>', '한국 제외 · 공항 기준') +
+      stat('Cities', s.cities + '<i>개 도시</i>', s.ports.length + '개 공항 경유') +
+      stat('Flights', s.total + '<i>편</i>', s.years.length ? s.years[0][0] + '~' + s.years[s.years.length - 1][0] : '');
+
+    var alHtml = s.airlines.slice(0, 8).map(function(a, i) {
+      var logo = _airlineLogoHtml(a.iata);
+      var w = Math.round(a.n / s.airlines[0].n * 100);
+      return '<li class="flt-al"><span class="flt-al-rk">' + (i + 1) + '</span>' +
+        '<span class="flt-al-logo">' + (logo || '<span class="material-symbols-outlined">flight</span>') + '</span>' +
+        '<span class="flt-al-nm">' + _fltEsc(a.name || a.iata || '기타') + '</span>' +
+        '<span class="flt-al-bar"><i style="width:' + w + '%"></i></span>' +
+        '<span class="flt-al-n">' + a.n + '회</span></li>';
+    }).join('');
+
+    box.innerHTML = '<div class="flt-stats">' + cards + '</div>' +
+      '<div class="flt-2col">' +
+        '<div class="flt-panel"><p class="flt-eyebrow">Airlines</p>' +
+          '<ul class="flt-al-list">' + alHtml + '</ul></div>' +
+        '<div class="flt-panel"><p class="flt-eyebrow">Flights by Year</p>' +
+          '<div class="flt-svg-wrap">' + (_fltYearBarSvg(s.years) ||
+            '<p class="flt-dim">연도를 알 수 있는 항공편이 없어요</p>') + '</div></div>' +
+      '</div>';
+
+    var wrap = document.getElementById('flight-map-wrap');
+    if (wrap) wrap.style.display = '';
+    _fltRenderMap(s);
+  }
+
+  function _fltRenderMap(s) {
+    var mount = document.getElementById('flight-map');
+    var msg = document.getElementById('flight-map-msg');
+    if (!mount) return;
+    if (typeof L === 'undefined') { if (msg) msg.textContent = '지도 로딩 실패 (오프라인?)'; return; }
+    if (!s.ports.length) { if (msg) msg.textContent = '공항 코드를 인식한 노선이 없어요 (루트에 IATA 3자리 표기 필요)'; return; }
+    if (msg) msg.textContent = s.ports.length + '개 공항 · ' + s.legs.length + '개 노선';
+    if (!_fltMap) {
+      _fltMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, worldCopyJump: true, attributionControl: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      }).addTo(_fltMap);
+      _trvMapWheelGate(_fltMap, mount);
+      _fltMap.setView([30, 60], 2);
+    }
+    if (_fltMapLayer) _fltMap.removeLayer(_fltMapLayer);
+    _fltMapLayer = L.layerGroup().addTo(_fltMap);
+
+    var pts = [];
+    s.ports.forEach(function(code) {
+      var a = _FLT_AIRPORTS[code];
+      if (!a) return;
+      pts.push([a[0], a[1]]);
+      var icon = L.divIcon({ className: 'flt-pin', html: '<div class="flt-pin-in">' + code + '</div>',
+        iconSize: [34, 18], iconAnchor: [17, 9] });
+      L.marker([a[0], a[1]], { icon: icon })
+        .bindPopup('<strong>' + code + '</strong><br>' + a[2] + ' · ' + a[4]).addTo(_fltMapLayer);
+    });
+    s.legs.forEach(function(lg) {
+      var a = _FLT_AIRPORTS[lg[0]], b = _FLT_AIRPORTS[lg[1]];
+      if (!a || !b) return;
+      // 대권 항로 느낌 — 중간점을 살짝 띄운 3점 곡선(외부 라이브러리 없이 근사)
+      var mid = [(a[0] + b[0]) / 2 + Math.abs(a[1] - b[1]) * 0.055, (a[1] + b[1]) / 2];
+      L.polyline([[a[0], a[1]], mid, [b[0], b[1]]], {
+        color: '#7c3aed', weight: 2, opacity: 0.7, smoothFactor: 1
+      }).addTo(_fltMapLayer);
+    });
+    if (!pts.length) return;
+    var bounds = L.latLngBounds(pts);
+    var fit = { padding: [40, 40], maxZoom: 6 };
+    _fltMap.fitBounds(bounds, fit);
+    setTimeout(function() {
+      if (!_fltMap) return;
+      _fltMap.invalidateSize();
+      _fltMap.fitBounds(bounds, fit);
+    }, 260);
+  }
+
+  // ───────────── 섹션 3 · Price Watch (수기 가격 로그) ─────────────
+  //  Firestore 컬렉션 flight_watch 하나에 두 종류 문서를 함께 저장:
+  //   · type:'watch'        {route_from, route_to, depart_date, return_date, memo, created_at}
+  //   · type:'flight_price' {watch_id, price_krw, source, note, ts}
+  var _fltWatch = [];
+  var _FLT_SOURCES = ['스카이스캐너', '구글 항공권', '네이버 항공권', '항공사 직접', '여행사', '기타'];
+
+  function _fltIsPrice(d) { return d && d.type === 'flight_price'; }
+  function _fltIsWatch(d) { return d && d.type !== 'flight_price'; }
+
+  async function _fltLoadWatch() {
+    try { _fltWatch = await fbRead('flight_watch'); }
+    catch(e) { _fltWatch = []; console.warn('[flight] watch load', e); }
+    _fltRenderWatch();
+  }
+
+  window.fltToggleWatchForm = function() {
+    var f = document.getElementById('flight-watch-form');
+    if (!f) return;
+    f.style.display = (f.style.display === 'none' || !f.style.display) ? 'block' : 'none';
+    if (f.style.display === 'block') {
+      var el = document.getElementById('fw-from');
+      if (el) el.focus();
+    }
+  };
+
+  window.fltSaveWatch = async function() {
+    var g = function(id) { var e = document.getElementById(id); return e ? (e.value || '').trim() : ''; };
+    var from = g('fw-from').toUpperCase(), to = g('fw-to').toUpperCase();
+    if (!from || !to) { alert('출발·도착 공항(또는 도시)을 입력해줘.'); return; }
+    var obj = {
+      type: 'watch', route_from: from, route_to: to,
+      depart_date: g('fw-depart'), return_date: g('fw-return'),
+      memo: g('fw-memo'), created_at: new Date().toISOString()
+    };
+    try {
+      var saved = await fbAdd('flight_watch', obj);
+      _fltWatch.push(saved);
+      ['fw-from', 'fw-to', 'fw-depart', 'fw-return', 'fw-memo'].forEach(function(id) {
+        var e = document.getElementById(id); if (e) e.value = '';
+      });
+      window.fltToggleWatchForm();
+      _fltRenderWatch();
+      if (typeof showSyncToast === 'function') {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">flight</span> 관심 노선 추가');
+      }
+    } catch(e) { alert('저장에 실패했어요.'); }
+  };
+
+  window.fltDeleteWatch = async function(id) {
+    if (!confirm('이 노선과 등록된 가격 기록을 모두 지울까?')) return;
+    var kids = _fltWatch.filter(function(d) { return _fltIsPrice(d) && d.watch_id === id; });
+    try {
+      for (var i = 0; i < kids.length; i++) { await fbDelete('flight_watch', kids[i]._id); }
+      await fbDelete('flight_watch', id);
+      _fltWatch = _fltWatch.filter(function(d) { return d._id !== id && d.watch_id !== id; });
+      _fltRenderWatch();
+      if (typeof showSyncToast === 'function') {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">delete</span> 노선 삭제 (스냅샷 ' + kids.length + '건 정리)');
+      }
+    } catch(e) { alert('삭제에 실패했어요.'); }
+  };
+
+  window.fltAddPrice = async function(watchId) {
+    var amtEl = document.getElementById('fp-amt-' + watchId);
+    var srcEl = document.getElementById('fp-src-' + watchId);
+    var noteEl = document.getElementById('fp-note-' + watchId);
+    var amt = amtEl ? parseInt(String(amtEl.value || '').replace(/[^0-9]/g, ''), 10) : 0;
+    if (!amt) { alert('금액(₩)을 입력해줘.'); return; }
+    var obj = {
+      type: 'flight_price', watch_id: watchId, price_krw: amt,
+      source: srcEl ? srcEl.value : '', note: noteEl ? (noteEl.value || '').trim() : '',
+      ts: new Date().toISOString()
+    };
+    try {
+      var saved = await fbAdd('flight_watch', obj);
+      _fltWatch.push(saved);
+      if (amtEl) amtEl.value = '';
+      if (noteEl) noteEl.value = '';
+      _fltRenderWatch();
+      if (typeof showSyncToast === 'function') {
+        showSyncToast('<span class="material-symbols-outlined text-sm mr-1">savings</span> ₩' +
+          amt.toLocaleString('ko-KR') + ' 기록');
+      }
+    } catch(e) { alert('저장에 실패했어요.'); }
+  };
+
+  window.fltDeletePrice = async function(id) {
+    try {
+      await fbDelete('flight_watch', id);
+      _fltWatch = _fltWatch.filter(function(d) { return d._id !== id; });
+      _fltRenderWatch();
+    } catch(e) { alert('삭제에 실패했어요.'); }
+  };
+
+  // 가격 추이 SVG 라인 차트 (외부 차트 라이브러리 금지 → 좌표 직접 계산)
+  function _fltPriceChartSvg(pts) {
+    if (pts.length < 2) return '';
+    var W = 620, H = 168, PL = 60, PR = 14, PT = 16, PB = 26;
+    var iw = W - PL - PR, ih = H - PT - PB;
+    var min = pts[0].v, max = pts[0].v, t0 = pts[0].t, t1 = pts[pts.length - 1].t;
+    pts.forEach(function(p) { if (p.v < min) min = p.v; if (p.v > max) max = p.v; });
+    var span = max - min;
+    if (!span) { span = Math.max(1, max * 0.08); min = max - span / 2; max = min + span; }
+    if (t1 === t0) t1 = t0 + 1;
+    var X = function(p) { return PL + (p.t - t0) / (t1 - t0) * iw; };
+    var Y = function(p) { return PT + (1 - (p.v - min) / (max - min)) * ih; };
+    var grid = '', labels = '';
+    for (var g = 0; g <= 2; g++) {
+      var gy = PT + ih * g / 2;
+      var gv = max - (max - min) * g / 2;
+      grid += '<line x1="' + PL + '" y1="' + gy + '" x2="' + (W - PR) + '" y2="' + gy +
+        '" stroke="#eef2f7" stroke-width="1"></line>';
+      labels += '<text x="' + (PL - 8) + '" y="' + (gy + 4) + '" class="flt-svg-y" text-anchor="end">₩' +
+        _fltKrwShort(gv) + '</text>';
+    }
+    var d = pts.map(function(p, i) { return (i ? 'L' : 'M') + X(p).toFixed(1) + ' ' + Y(p).toFixed(1); }).join(' ');
+    var area = d + ' L' + X(pts[pts.length - 1]).toFixed(1) + ' ' + (PT + ih) + ' L' + X(pts[0]).toFixed(1) + ' ' + (PT + ih) + ' Z';
+    var dots = pts.map(function(p) {
+      var lo = p.v === min, hi = p.v === max;
+      return '<circle cx="' + X(p).toFixed(1) + '" cy="' + Y(p).toFixed(1) + '" r="' + (lo || hi ? 4.5 : 3) +
+        '" fill="' + (lo ? '#059669' : (hi ? '#e11d48' : '#7c3aed')) + '"><title>' +
+        p.label + ' · ₩' + p.v.toLocaleString('ko-KR') + '</title></circle>';
+    }).join('');
+    var xa = '<text x="' + PL + '" y="' + (H - 7) + '" class="flt-svg-x">' + pts[0].label + '</text>' +
+      '<text x="' + (W - PR) + '" y="' + (H - 7) + '" class="flt-svg-x" text-anchor="end">' +
+      pts[pts.length - 1].label + '</text>';
+    return '<svg class="flt-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H +
+      '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="가격 추이">' +
+      grid + labels +
+      '<path d="' + area + '" fill="#7c3aed" opacity="0.07"></path>' +
+      '<path d="' + d + '" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>' +
+      dots + xa + '</svg>';
+  }
+
+  function _fltRenderWatch() {
+    var box = document.getElementById('flight-watch-list');
+    if (!box) return;
+    var watches = _fltWatch.filter(_fltIsWatch).slice().sort(function(a, b) {
+      return String(a.depart_date || '9999').localeCompare(String(b.depart_date || '9999')) ||
+        String(a.created_at || '').localeCompare(String(b.created_at || ''));
+    });
+    if (!watches.length) {
+      box.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">savings</span>' +
+        '<p>관심 노선을 등록하고 스카이스캐너·구글 항공권에서 본 가격을 그때그때 적어두면, ' +
+        '실제로 <strong>언제가 쌀지</strong>가 내 손으로 쌓인 데이터로 보여요.</p></div>';
+      return;
+    }
+    box.innerHTML = watches.map(function(w) {
+      var snaps = _fltWatch.filter(function(d) { return _fltIsPrice(d) && d.watch_id === w._id; })
+        .sort(function(a, b) { return String(a.ts || '').localeCompare(String(b.ts || '')); });
+      var pts = snaps.map(function(sn) {
+        var t = new Date(sn.ts || 0).getTime();
+        var dl = String(sn.ts || '').slice(5, 10).replace('-', '/');
+        return { t: isNaN(t) ? 0 : t, v: Number(sn.price_krw) || 0, label: dl };
+      }).filter(function(p) { return p.v > 0; });
+
+      var lo = 0, hi = 0, cur = 0;
+      pts.forEach(function(p) {
+        if (!lo || p.v < lo) lo = p.v;
+        if (p.v > hi) hi = p.v;
+      });
+      if (pts.length) cur = pts[pts.length - 1].v;
+      var diff = (pts.length > 1) ? cur - pts[pts.length - 2].v : 0;
+
+      var statHtml = pts.length ? '<div class="flt-price-stats">' +
+        '<div><p class="flt-eyebrow">Lowest</p><p class="flt-price-v is-lo">' + _trvAmtHtml(lo) + '</p></div>' +
+        '<div><p class="flt-eyebrow">Highest</p><p class="flt-price-v is-hi">' + _trvAmtHtml(hi) + '</p></div>' +
+        '<div><p class="flt-eyebrow">Current</p><p class="flt-price-v">' + _trvAmtHtml(cur) +
+          (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
+            Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</p></div>' +
+        '<div><p class="flt-eyebrow">Logs</p><p class="flt-price-v">' + pts.length + '<i>건</i></p></div>' +
+      '</div>' : '';
+
+      var chart = pts.length > 1 ? '<div class="flt-svg-wrap">' + _fltPriceChartSvg(pts) + '</div>'
+        : (pts.length === 1 ? '<p class="flt-dim">2건 이상 기록하면 추이 그래프가 그려져요</p>' : '');
+
+      var snapList = snaps.length ? '<ul class="flt-snap-list">' + snaps.slice().reverse().map(function(sn) {
+        return '<li class="flt-snap"><span class="flt-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
+          '<span class="flt-snap-p">' + _trvAmtHtml(sn.price_krw) + '</span>' +
+          '<span class="flt-snap-s">' + _fltEsc(sn.source || '—') + '</span>' +
+          '<span class="flt-snap-n">' + _fltEsc(sn.note || '') + '</span>' +
+          '<button class="flt-snap-del" onclick="fltDeletePrice(\'' + sn._id + '\')" title="삭제">' +
+            '<span class="material-symbols-outlined">close</span></button></li>';
+      }).join('') + '</ul>' : '';
+
+      var srcOpts = _FLT_SOURCES.map(function(s) { return '<option>' + s + '</option>'; }).join('');
+      var dates = (w.depart_date ? _fltEsc(w.depart_date) : '출발일 미정') +
+        (w.return_date ? ' ~ ' + _fltEsc(w.return_date) : '');
+
+      return '<article class="flt-card flt-watch">' +
+        '<div class="flt-watch-head">' +
+          '<div><p class="flt-eyebrow">Watching</p>' +
+            '<h4 class="flt-watch-route">' + _fltEsc(w.route_from || '—') + ' → ' + _fltEsc(w.route_to || '—') + '</h4>' +
+            '<p class="flt-watch-sub">' + dates + (w.memo ? ' · ' + _fltEsc(w.memo) : '') + '</p></div>' +
+          '<button class="flt-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제">' +
+            '<span class="material-symbols-outlined">delete</span></button>' +
+        '</div>' + statHtml + chart +
+        '<div class="flt-snap-form">' +
+          '<input id="fp-amt-' + w._id + '" type="text" inputmode="numeric" placeholder="금액 ₩" class="flt-in is-amt">' +
+          '<select id="fp-src-' + w._id + '" class="flt-in is-src">' + srcOpts + '</select>' +
+          '<input id="fp-note-' + w._id + '" type="text" placeholder="메모 (예: 왕복 직항, 수하물 포함)" class="flt-in is-note">' +
+          '<button class="trav-act trav-act-primary" onclick="fltAddPrice(\'' + w._id + '\')">' +
+            '<span class="material-symbols-outlined">add</span> 기록</button>' +
+        '</div>' + snapList +
+      '</article>';
+    }).join('');
+  }
+
+  // ───────────── 탭 진입/이탈 ─────────────
+  window.showTravelFlight = function() {
+    var sec = document.getElementById('travel-flight-section');
+    if (!sec) return;
+    sec.style.display = 'block';
+    try { _fltRenderPrep(); } catch(e) { console.warn('[flight] prep', e); }
+    try { _fltRenderProfile(); } catch(e) { console.warn('[flight] profile', e); }
+    try { _fltRefreshAll(); } catch(e) {}
+    try { _fltLoadWatch(); } catch(e) { console.warn('[flight] watch', e); }
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = 'Travel · Flight';
+  };
+  window.hideTravelFlight = function() {
+    var sec = document.getElementById('travel-flight-section');
+    if (sec) sec.style.display = 'none';
+    var page = document.getElementById('page-journey');
+    if (page) {
+      var contentWrap = page.querySelector('.page-content-wrap');
+      if (contentWrap) contentWrap.style.display = '';
+    }
+  };
+
   function switchTravelTab(tab) {
     // Atlas/스팟 탭 진입/이탈 처리 — 모든 분기에서 hide 호출
     if (tab !== 'atlas' && typeof window.hideAtlasView === 'function') {
@@ -16853,6 +17801,21 @@
     }
     if (tab !== 'places' && typeof window.hideTravelPlaces === 'function') {
       window.hideTravelPlaces();
+    }
+    if (tab !== 'flight' && typeof window.hideTravelFlight === 'function') {
+      window.hideTravelFlight();
+    }
+    if (tab === 'flight') {
+      // 스팟 탭과 동일 패턴 — journey 페이지 안에서 일정 콘텐츠를 숨기고 항공 섹션만 표시
+      navigate('journey');
+      setTimeout(function() {
+        var page = document.getElementById('page-journey');
+        if (!page) return;
+        var contentWrap = page.querySelector('.page-content-wrap');
+        if (contentWrap) contentWrap.style.display = 'none';
+        if (typeof window.showTravelFlight === 'function') window.showTravelFlight();
+      }, 50);
+      return;
     }
     if (tab === 'places') {
       // journey 페이지로 이동 후 places section 표시 + page-content-wrap hide (Atlas 방식)
