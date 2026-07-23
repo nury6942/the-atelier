@@ -22170,27 +22170,28 @@
       }).join('');
 
       var isActive = _pkActiveDate === dateStr;
+      // ★ (2026-07-23) 카드형 리디자인: DAY NN 아이브로 + 도시 타이틀, 2열 그리드용
+      var dayNum = String(idx + 1).padStart(2, '0');
       html+='<div class="pk-day-card'+(isActive?' active':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
-        '<div class="pk-day-grid">' +
-          '<div>' +
-            '<div class="pk-day-date-month">'+mon+'</div>' +
-            '<div class="pk-day-date-day">'+day+'</div>' +
-            '<div class="pk-day-date-dow'+(isWeekend?' weekend':'')+'">'+dow+'</div>' +
+        '<div class="pk-card-head">' +
+          '<div class="pk-card-head-l">' +
+            '<div class="pk-card-eyebrow'+(isWeekend?' weekend':'')+'">DAY '+dayNum+' · '+dow+', '+mon+' '+day+'</div>' +
+            '<div class="pk-card-title">'+(city||'—')+'</div>' +
+          '</div>' +
+          '<div class="pk-card-side">' +
+            '<div class="pk-day-wx" id="pk-wx-'+idx+'"><span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span></div>' +
             '<div class="pk-day-actions">' +
               '<button onclick="event.stopPropagation();pkCopyDay(\''+dateStr+'\')" class="pk-day-act-btn" title="복사"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_copy</span></button>' +
               '<button onclick="event.stopPropagation();pkPasteDay(\''+dateStr+'\')" class="pk-day-act-btn" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_paste</span></button>' +
             '</div>' +
           '</div>' +
-          '<div class="pk-day-wx" id="pk-wx-'+idx+'"><span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span></div>' +
-          '<div class="pk-day-body">' +
-            '<div class="pk-day-city">'+(city||'—')+'</div>' +
-            '<div class="pk-day-items">'+itemsHtml+'</div>' +
-            '<div class="pk-day-input-row">' +
-              '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
-              '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
-            '</div>' +
-          '</div>' +
-        '</div></div>';
+        '</div>' +
+        '<div class="pk-day-items">'+itemsHtml+'</div>' +
+        '<div class="pk-day-input-row">' +
+          '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
+          '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
+        '</div>' +
+      '</div>';
     });
     container.innerHTML=html;
 

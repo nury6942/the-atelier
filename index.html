@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=241" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=242" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -4216,24 +4216,63 @@
       font-size: var(--font-size-body);
       color: var(--slate-400);
     }
-    #page-packing .pk-day-card {
-      padding: var(--space-5) var(--space-4);
-      border-bottom: 1px solid var(--slate-200);
-      cursor: default;
-      transition: background 0.15s ease;
-    }
-    #page-packing .pk-day-card:hover { background: var(--slate-50); }
-    #page-packing .pk-day-card:last-child { border-bottom: none; }
-    #page-packing .pk-day-card.active {
-      background: var(--lavender-50);
-      border-left: 3px solid var(--lavender-deep);
-      padding-left: calc(var(--space-4) - 3px);
-    }
-    #page-packing .pk-day-card .pk-day-grid {
+    /* ★ (2026-07-23) 카드형 리디자인 — 한 줄에 이틀씩 2열 그리드 */
+    #page-packing #pk-daily-planner {
       display: grid;
-      grid-template-columns: 90px 64px 1fr;
-      gap: var(--space-5);
-      align-items: start;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+    #page-packing #pk-daily-planner .pk-daily-empty { grid-column: 1 / -1; }
+    #page-packing .pk-day-card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: var(--space-5);
+      cursor: default;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #page-packing .pk-day-card:hover { border-color: #c4b5fd; }
+    #page-packing .pk-day-card.active {
+      border-color: var(--lavender-deep);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+    }
+    #page-packing .pk-card-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3);
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--slate-100);
+    }
+    #page-packing .pk-card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-tiny);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate-400);
+      font-weight: 700;
+    }
+    #page-packing .pk-card-eyebrow.weekend { color: var(--lavender-deep); }
+    #page-packing .pk-card-title {
+      font-family: 'Plus Jakarta Sans', 'Pretendard', sans-serif;
+      font-size: var(--font-size-h2);
+      letter-spacing: -0.01em;
+      color: var(--slate-900);
+      font-weight: 800;
+      margin-top: var(--space-1);
+    }
+    #page-packing .pk-card-side { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+    #page-packing .pk-card-side .pk-day-wx { flex-direction: row; padding-top: 0; gap: var(--space-1-5); }
+    #page-packing .pk-card-side .pk-day-wx .material-symbols-outlined { font-size: 20px; }
+    #page-packing .pk-card-side .pk-day-actions { margin-top: 0; }
+    #page-packing .pk-day-card .pk-day-items {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px var(--space-4);
+    }
+    @media (max-width: 1023px) {
+      #page-packing #pk-daily-planner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      #page-packing .pk-day-card .pk-day-items { grid-template-columns: 1fr; }
     }
     #page-packing .pk-day-date-month {
       font-family: var(--font-mono);
@@ -13432,7 +13471,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=241" defer></script>
+<script src="js/app-1-pages.js?v=242" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
