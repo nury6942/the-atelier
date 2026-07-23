@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=260" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=261" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5619,6 +5619,8 @@
       display:block; background:#fff; border-radius:5px; padding:3px 4px; }
     .rec-tr-ico.has-logo { background:#fff; border:1px solid #e2e8f0; padding:6px; }
     .rec-tr-logo { width:100%; height:100%; object-fit:contain; display:block; }
+    /* ★ (2026-07-23) 파비콘 소스는 정사각이라 살짝 더 여백 */
+    .rec-tr-ico.has-logo:has(.rec-tr-logo.is-favicon) { padding:5px; }
 
     /* 항공 — 보딩패스 */
     .rec-fl-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;
@@ -5629,9 +5631,11 @@
     .rec-fl-card.is-past .rec-fl-head { background:#64748b; }
     .rec-fl-head { display:flex; align-items:center; gap:8px; background:#0f172a; color:#fff; padding:9px 14px; }
     .rec-fl-head > .material-symbols-outlined { font-size:15px; opacity:.65; margin:0 auto; }
-    .rec-fl-code, .rec-fl-route { font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    /* 편명(코드)만 mono 유지, 루트 텍스트는 본문 폰트로 가독성 확보 */
+    .rec-fl-code { font-family:var(--font-mono); font-size:10.5px; font-weight:600;
       letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
-    .rec-fl-route { overflow:hidden; text-overflow:ellipsis; min-width:0; }
+    .rec-fl-route { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:600;
+      letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
     .rec-fl-body { display:flex; justify-content:space-between; gap:8px; padding:16px 14px 14px;
       border-bottom:1px dashed #e2e8f0; }
     .rec-fl-leg { min-width:0; }
@@ -5639,18 +5643,22 @@
     .rec-fl-time { font-family:'Manrope','Pretendard',sans-serif; font-size:23px; font-weight:800;
       color:#0f172a; line-height:1; margin:0; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
     .rec-fl-date { font-size:11px; font-weight:500; color:#64748b; margin:5px 0 0; }
-    .rec-fl-mid { display:flex; flex-direction:column; align-items:center; padding-top:9px; flex:1 1 auto; min-width:52px; max-width:96px; }
-    .rec-fl-mid-line { width:100%; height:1px; background:#e2e8f0; position:relative; margin-bottom:7px; }
+    .rec-fl-mid { display:flex; flex-direction:column; align-items:center; padding-top:9px; flex:1 1 auto; min-width:64px; max-width:110px; }
+    /* ★ (2026-07-23) 비행시간 강조 — 점선·아이콘·텍스트를 포인트 컬러로 통일 */
+    .rec-fl-mid-line { width:100%; height:1px; position:relative; margin-bottom:8px;
+      background-image:repeating-linear-gradient(to right,#ddd6fe 0 4px,transparent 4px 8px); }
     .rec-fl-mid-line .material-symbols-outlined { position:absolute; top:-9px; left:50%;
-      transform:translateX(-50%); background:#fff; padding:0 3px; font-size:15px; color:#94a3b8; }
-    .rec-fl-mid-dur { font-family:var(--font-mono); font-size:9.5px; font-weight:600; color:#94a3b8;
-      margin:0; text-transform:uppercase; letter-spacing:0.04em; white-space:nowrap; }
+      transform:translateX(-50%); background:#fff; padding:0 4px; font-size:16px; color:#7c3aed; }
+    .rec-fl-mid-dur { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:700;
+      color:#7c3aed; margin:0; text-transform:uppercase; letter-spacing:-0.005em; white-space:nowrap; }
     .rec-fl-foot { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 12px;
       padding:11px 14px 12px; background:#f8fafc; flex:1; align-content:start; }
     .rec-fl-foot .rec-micro { margin-bottom:2px; font-size:9px; }
-    .rec-fl-foot-v { font-size:12px; font-weight:700; color:#0f172a; margin:0; letter-spacing:-0.01em;
+    /* 값은 본문 폰트 + 살짝 키워 가독성 확보 (라벨 rec-micro만 mono 유지) */
+    .rec-fl-foot-v { font-family:'Manrope','Pretendard',sans-serif; font-size:13px; font-weight:700;
+      color:#0f172a; margin:0; letter-spacing:-0.01em;
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .rec-fl-foot-v.is-accent { color:#7c3aed; font-family:var(--font-mono); font-weight:600; }
+    .rec-fl-foot-v.is-accent { color:#7c3aed; font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:0.02em; }
     .rec-fl-card .j-attach-row { margin:0 14px 10px; }
 
     /* 숙소 — 이미지 카드 */
@@ -5843,15 +5851,23 @@
     .spot-ctab:hover { color:#0f172a; }
     .spot-ctab.is-active { background:#fff; color:#7c3aed; box-shadow:0 1px 3px rgba(15,23,42,.1); }
     /* ★ (2026-07-23) 국가 아래 도시 칩 줄 — 국가 AND 도시 AND 카테고리 3단 필터 */
-    .spot-city-tabs { display:flex; flex-wrap:wrap; gap:6px; margin:-2px 0 14px; }
-    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:5px 11px;
-      border-radius:999px; font-size:11px; font-weight:700; color:#64748b; transition:all .15s;
-      display:inline-flex; align-items:center; gap:5px; line-height:1.4; }
+    /* 칩에 체류 날짜가 붙어 길어지므로 한 줄 유지 + 넘치면 가로 스크롤 */
+    .spot-city-tabs { display:flex; flex-wrap:nowrap; gap:6px; margin:-2px 0 14px;
+      overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
+    .spot-city-tabs::-webkit-scrollbar { height:4px; }
+    .spot-city-tabs::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:999px; }
+    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:5px 10px;
+      border-radius:999px; font-size:10.5px; font-weight:700; color:#64748b; transition:all .15s;
+      display:inline-flex; align-items:center; gap:4px; line-height:1.4;
+      white-space:nowrap; flex-shrink:0; }
     .spot-citytab:hover { border-color:#c4b5fd; color:#0f172a; }
     .spot-citytab.is-active { background:#7c3aed; border-color:#7c3aed; color:#fff; }
     .spot-citytab i { font-style:normal; font-family:var(--font-mono); font-size:9.5px;
       font-weight:700; opacity:.6; }
-    .spot-citytab.is-active i { opacity:.85; }
+    .spot-citytab em { font-style:normal; font-family:var(--font-mono); font-size:9.5px;
+      font-weight:600; opacity:.75; letter-spacing:0.01em; }
+    .spot-citytab em::before { content:'·'; margin-right:4px; opacity:.5; }
+    .spot-citytab.is-active i, .spot-citytab.is-active em { opacity:.85; }
     .spot-cat-tabs { display:flex; gap:18px; border-bottom:1px solid #e2e8f0; margin-bottom:18px;
       flex-wrap:wrap; }
     .spot-cattab { border:none; background:none; cursor:pointer; padding:6px 1px 10px; margin-bottom:-1px;
@@ -8150,18 +8166,159 @@
     .dlv-toggle { display: inline-flex; align-items: center; align-self: center; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; padding: 2px; flex-shrink: 0; }
     .dlv-toggle button { border: 0; background: transparent; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; transition: all 0.15s; }
     .dlv-toggle button.is-active { background: #fff; color: #7c3aed; box-shadow: 0 1px 3px rgba(15,23,42,0.12); }
-    /* 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 4개 */
-    #dlv-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); position: relative; margin: -18px 0 18px; height: 18px; }
-    #dlv-progress::before { content: ''; position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: #e2e8f0; }
-    .dlv-prog-cell { position: relative; display: flex; justify-content: center; }
+    /* 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 + 그 아래 mono 라벨 */
+    #dlv-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; margin: -6px 0 26px; }
+    .dlv-prog-track { position: absolute; top: 8px; height: 1px; background: #e2e8f0; }
+    .dlv-prog-fill { position: absolute; top: 8px; height: 1px; background: #7c3aed; }
+    .dlv-prog-cell { position: relative; display: flex; flex-direction: column; align-items: center; }
     .dlv-prog-dot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; box-shadow: 0 0 0 4px #fff; margin-top: 5px; z-index: 1; }
-    .dlv-prog-dot.is-past { background: #c4b5fd; }
+    .dlv-prog-dot.is-past { background: #a78bfa; }
     .dlv-prog-dot.is-today { background: #7c3aed; box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgba(124,58,237,0.18); }
+    .dlv-prog-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-top: 13px; white-space: nowrap; }
+    .dlv-prog-label.is-today { color: #7c3aed; }
     /* 컬럼 상단 eyebrow (OCT 04 · 1일차) + 오늘(LIVE) 강조 */
     .dlv-eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8; margin: 0 0 2px; }
     .dlv-eyebrow.is-today { color: #7c3aed; }
     .dlv-live { display: inline-block; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; background: #7c3aed; color: #fff; border-radius: 4px; padding: 2px 5px; margin-left: 6px; vertical-align: middle; }
     #page-journey .j-day-card.is-today { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(124,58,237,0.08); }
+
+    /* ════════════════════════════════════════════════════════════
+       ★ (2026-07-23) wk4 — 4-Day 뷰 리디자인 (Stitch 목업)
+       담백한 여백 + 얇은 세로 구분선, 카드 테두리/배경 없음.
+       기능 훅(.j-slot / data-jid / .j-day-card[data-date])은 그대로 유지.
+       ════════════════════════════════════════════════════════════ */
+    #journey-week-grid.j-daylog-stack.wk4 { gap: 0; }
+    #journey-week-grid.wk4 .j-day-card {
+      border: 0; border-left: 1px solid #f1f5f9; border-radius: 0;
+      background: transparent; box-shadow: none;
+      padding: 2px 22px 10px; transition: opacity 0.2s;
+    }
+    #journey-week-grid.wk4 .j-day-card:first-child { border-left: 0; padding-left: 2px; }
+    #journey-week-grid.wk4 .j-day-card:hover { border-color: transparent; border-left-color: #f1f5f9; }
+    #journey-week-grid.wk4 .j-day-card:first-child:hover { border-left-color: transparent; }
+    #journey-week-grid.wk4 .j-day-card.is-current,
+    #journey-week-grid.wk4 .j-day-card.is-today { border-color: transparent; border-left-color: #f1f5f9; box-shadow: none; }
+    #journey-week-grid.wk4 .j-day-card.is-today:first-child,
+    #journey-week-grid.wk4 .j-day-card.is-current:first-child { border-left-color: transparent; }
+    #journey-week-grid.wk4 .j-day-card.wk4-past { opacity: 0.55; }
+    #journey-week-grid.wk4 .j-day-card.is-drop-target { outline: 2px dashed #7c3aed; outline-offset: 2px; opacity: 1; }
+
+    /* 컬럼 헤더 */
+    #journey-week-grid.wk4 .j-day-head {
+      display: block; position: relative; text-align: center;
+      margin-bottom: 26px; padding: 0 0 2px; flex-wrap: nowrap;
+    }
+    #journey-week-grid.wk4 .j-day-num,
+    #journey-week-grid.wk4 .j-day-head-tag { display: none; }
+    .wk4-eyebrow {
+      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8;
+      margin: 0 0 7px; cursor: pointer; transition: color 0.15s;
+    }
+    .wk4-eyebrow:hover { color: #7c3aed; }
+    .wk4-eyebrow.is-today { color: #7c3aed; }
+    .wk4-title {
+      font-family: 'Manrope', 'Pretendard', sans-serif; font-size: 20px; font-weight: 700;
+      letter-spacing: -0.015em; line-height: 1.25; color: #0f172a;
+      margin: 0; padding: 0 30px; cursor: pointer; word-break: keep-all;
+    }
+    .wk4-title.is-past { color: #cbd5e1; }
+    .wk4-title.is-today { color: #0f172a; }
+    .wk4-daytrip { font-size: 10px; font-weight: 600; color: #c2410c; margin: 7px 0 0; }
+    #journey-week-grid.wk4 .j-day-route-btn {
+      position: absolute; top: -2px; right: 0; margin: 0;
+      border: 0; background: transparent; color: #cbd5e1;
+      font-size: 10px; font-weight: 700; padding: 2px 4px; border-radius: 6px;
+    }
+    #journey-week-grid.wk4 .j-day-route-btn:hover { color: #7c3aed; background: #f5f3ff; border-color: transparent; }
+
+    /* 숙소 미등록 경고 / 도시 교통편 미니패널 — 담백 톤 */
+    #journey-week-grid.wk4 .j-night-warn {
+      background: transparent; border: 0; border-radius: 0; padding: 0;
+      margin: 0 0 14px; font-size: 10px; font-weight: 700; color: #b45309; justify-content: center;
+    }
+    #journey-week-grid.wk4 .j-day-panels { gap: 10px; margin-bottom: 18px; }
+    .wk4-transit { border-left: 2px solid #ddd6fe; padding-left: 10px; }
+    .wk4-transit-t {
+      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; color: #7c3aed; margin: 0 0 3px;
+    }
+    .wk4-transit-b { font-size: 11px; line-height: 1.55; color: #64748b; margin: 0; }
+
+    /* 일정 아이템 — 아이콘 대신 왼쪽 3px 컬러 바로 색상 코딩 유지 */
+    #journey-week-grid.wk4 .j-day-card .j-day-timeline { padding-left: 0; }
+    #journey-week-grid.wk4 .j-day-card .j-day-timeline::before { display: none; }
+    #journey-week-grid.wk4 .j-slot,
+    #journey-week-grid.wk4 .j-slot.is-pinned,
+    #journey-week-grid.wk4 .j-slot.is-reservation,
+    #journey-week-grid.wk4 .j-slot.is-shopping {
+      display: block; position: relative;
+      margin: 0 0 22px; padding: 0 0 0 12px;
+      background: transparent; box-shadow: none; border: 0; border-radius: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #journey-week-grid.wk4 .j-slot::before {
+      content: ''; position: absolute; left: 0; top: 3px; bottom: 3px;
+      width: 3px; height: auto; border-radius: 2px;
+      border: 0; background: #e2e8f0;
+    }
+    #journey-week-grid.wk4 .j-slot.is-reservation::before { background: #f43f5e; }
+    #journey-week-grid.wk4 .j-slot.is-pinned::before { background: #10b981; }
+    #journey-week-grid.wk4 .j-slot.is-shopping::before { background: #fb923c; }
+    #journey-week-grid.wk4 .j-slot:hover { background: transparent; }
+    #journey-week-grid.wk4 .j-slot:hover .wk4-slot-title { color: #7c3aed; }
+    #journey-week-grid.wk4 .j-slot.is-dragging { opacity: 0.4; }
+    /* 오늘의 현재 아이템만 흰 카드로 강조 */
+    #journey-week-grid.wk4 .j-slot.wk4-slot.wk4-now {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 13px 14px 13px 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+    }
+    #journey-week-grid.wk4 .j-slot.wk4-slot.wk4-now::before { left: 6px; top: 13px; bottom: 13px; }
+    .wk4-line { display: flex; align-items: flex-start; gap: 6px; }
+    #journey-week-grid.wk4 .wk4-slot .wk4-slot-title {
+      font-family: 'Manrope', 'Pretendard', sans-serif; font-size: 14px; font-weight: 700;
+      color: #0f172a; line-height: 1.4; letter-spacing: -0.01em; margin: 0;
+      flex: 1; min-width: 0; word-break: keep-all; overflow-wrap: break-word;
+      transition: color 0.15s;
+    }
+    #journey-week-grid.wk4 .j-slot.is-reservation .wk4-slot-title { color: #be123c; }
+    #journey-week-grid.wk4 .j-slot-mapbtn { font-size: 13px; margin: 1px 0 0; }
+    .wk4-sub { font-size: 12px; line-height: 1.55; color: #94a3b8; margin: 3px 0 0; }
+    .wk4-sub .wk4-time { font-family: var(--font-mono); font-weight: 600; color: #64748b; letter-spacing: 0.02em; }
+    .wk4-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+    .wk4-chip {
+      display: inline-flex; align-items: center; font-size: 9px; font-weight: 800;
+      letter-spacing: 0.02em; padding: 2px 6px; border-radius: 5px; white-space: nowrap;
+    }
+    .wk4-chip.is-resv { background: #fff1f2; color: #be123c; }
+    .wk4-chip.is-pin { background: #ecfdf5; color: #047857; }
+    .wk4-chip.is-shop { background: #fff7ed; color: #c2410c; }
+    .wk4-chip.is-city { background: #fffbeb; color: #b45309; cursor: pointer; }
+    .wk4-chip.is-city:hover { background: #fef3c7; }
+    .wk4-chip.is-indoor { background: #eef2ff; color: #4f46e5; }
+    .wk4-chip.is-closed { background: #fffbeb; color: #b45309; }
+    .wk4-chip.is-clash { background: #e11d48; color: #fff; }
+    .wk4-chip.is-conflict { background: #fef2f2; color: #dc2626; }
+    .wk4-prebook { font-size: 10px; font-weight: 700; color: #be123c; margin: 5px 0 0; }
+    /* 이동시간 커넥터 — 앰버 박스 → 작은 보라 인라인 텍스트 */
+    #journey-week-grid.wk4 .j-slot-travel {
+      background: transparent; border: 0; border-radius: 0;
+      padding: 0 0 0 12px; margin: -14px 0 16px;
+      font-size: 11px; font-weight: 600; color: #7c3aed; letter-spacing: 0.01em;
+    }
+    /* 빈 상태 + 일정 추가 */
+    #journey-week-grid.wk4 .j-slot-empty {
+      padding: 6px 0 2px; text-align: left; font-style: normal;
+      font-size: 12px; color: #cbd5e1;
+    }
+    #journey-week-grid.wk4 .j-day-card .j-day-add { margin-top: 12px; justify-content: flex-start; }
+    #journey-week-grid.wk4 .j-day-card .j-day-add-btn {
+      border: 0; background: transparent; padding: 3px 0;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+      text-transform: none; color: #cbd5e1;
+    }
+    #journey-week-grid.wk4 .j-day-card .j-day-add-btn:hover { background: transparent; border-color: transparent; color: #7c3aed; }
+    .wk4-addform { border-top: 1px solid #e2e8f0; padding: 12px 0 4px; margin-top: 12px; }
     /* Single 모드 2열: 지도(~62%) + 하루 타임라인 패널(~38%) */
     @media (min-width: 1024px) {
       #dlv-wrap.is-single { display: grid; grid-template-columns: 62fr 38fr; gap: 20px; align-items: start; margin-bottom: 22px; }
@@ -9695,7 +9852,7 @@
           </div>
           <!-- ★ (2026-07-23) dlv 4-Day 가로 진행선 (점 4개, 오늘 점 보라) -->
           <div id="dlv-progress" style="display:none"></div>
-          <div id="journey-week-grid" class="j-daylog-stack">
+          <div id="journey-week-grid" class="j-daylog-stack wk4">
             <div class="j-stop-empty">도시를 추가하면 일차가 자동 생성돼!</div>
           </div>
         </section>
@@ -13781,7 +13938,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=260" defer></script>
+<script src="js/app-1-pages.js?v=261" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

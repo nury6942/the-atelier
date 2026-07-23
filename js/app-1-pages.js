@@ -3849,6 +3849,7 @@
     item.city = newCity;
     fbUpdate('journey', item._id, {city: newCity}).catch(function(){});
     renderDayView();
+    if (typeof renderWeekView === 'function') renderWeekView(); // 4-Day 도시 칩도 즉시 갱신
   };
 
   function inlineEditTextarea(el, currentValue, saveCallback) {
@@ -4320,9 +4321,9 @@
         weekday = ['일','월','화','수','목','금','토'][d.getDay()];
       }
       var isCurrent = (actualIdx === currentDayIndex);
-      var headerBg = isCurrent
-        ? 'background:linear-gradient(135deg,#6366f1,#a855f7);color:white;'
-        : 'background:linear-gradient(135deg,#e0e7ff,#fce7f3);color:#4338ca;';
+      // ★ (2026-07-23) wk4: 오늘/지난 날 판정을 아이템 렌더보다 먼저 (현재 진행 아이템 강조용)
+      var isToday = !!(dateStr && dateStr === todayStr);
+      var isPastCol = !!(dateStr && todayStr && dateStr < todayStr);
 
       // 당일치기 도시 (숙박 도시와 다른 일정 도시들)
       var dayTrips = getDayTripCities(items, cityName);
@@ -4334,14 +4335,9 @@
       var thisCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (thisCity && thisCity.transit_guide && dateStr === thisCity.start_date) {
         var tgSafe = _spotPriceHtml(String(thisCity.transit_guide)).replace(/\n/g,' · ');
-        miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#eef2ff;border-left-color:#6366f1">' +
-          '<div class="flex items-start gap-1.5">' +
-            '<span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-body-sm);margin-top:1px">directions_transit</span>' +
-            '<div class="flex-1 min-w-0">' +
-              '<div class="text-[9px] font-black uppercase tracking-widest text-indigo-600 mb-0.5">' + cityName + ' 교통편</div>' +
-              '<div class="text-[11px] text-slate-700 leading-snug">' + tgSafe + '</div>' +
-            '</div>' +
-          '</div>' +
+        miniPanelHtml += '<div class="wk4-transit">' +
+          '<p class="wk4-transit-t">' + String(cityName).replace(/</g,'&lt;') + ' 교통편</p>' +
+          '<p class="wk4-transit-b">' + tgSafe + '</p>' +
         '</div>';
       }
       // (2) 사전 예약 미니 패널은 제거 — 일정 카드 자체에 빨간색으로 강조되고 권장 예약 시점도 표시되므로 중복 방지
@@ -4350,8 +4346,26 @@
       // ★ (2026-07-23) 시간 겹침 감지 — 앞 일정 끝나기 전에 시작하면 ⚠ 배지
       var _prevEndMin = null;
       var _t2m = function(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+      // ★ (2026-07-23) wk4: 오늘 컬럼에서 "지금 진행 중(없으면 다음)" 아이템 1개만 흰 카드 강조
+      var nowIdx = -1;
+      if (isToday && items.length) {
+        var _nowD = new Date();
+        var nowMin = _nowD.getHours() * 60 + _nowD.getMinutes();
+        for (var ni = 0; ni < items.length; ni++) {
+          var _s = _t2m(items[ni].time), _e = _t2m(items[ni].end_time);
+          if (_s == null) continue;
+          if (nowMin >= _s && nowMin <= (_e != null && _e > _s ? _e : _s + 90)) { nowIdx = ni; break; }
+        }
+        if (nowIdx < 0) {
+          for (var nj = 0; nj < items.length; nj++) {
+            var _s2 = _t2m(items[nj].time);
+            if (_s2 != null && _s2 >= nowMin) { nowIdx = nj; break; }
+          }
+        }
+        if (nowIdx < 0) nowIdx = items.length - 1;
+      }
       var itemsHtml = items.length === 0
-        ? '<div class="text-xs text-slate-400 py-4 italic text-center">일정 없음</div>'
+        ? '<div class="j-slot-empty">일정 없음</div>'
         : items.map(function(item, iIdx){
             // ─── 편집 모드 ───
             if (_weekEditingId === item._id) {
@@ -4404,39 +4418,40 @@
             }
             // ─── 일반 표시 모드 ───
             var time = item.time || '';
-            var endTime = item.end_time ? '-' + item.end_time : '';
+            var endTime = item.end_time ? ' — ' + item.end_time : '';
             var title = (item.title || '').replace(/</g,'&lt;');
             var desc = (item.description || '').replace(/</g,'&lt;');
             var isSouvenir = (item.type === '기념품');
             var pinned = !isSouvenir && isPinnedItem(item);
             var reserv = !isSouvenir && isReservationItem(item);
-            // 일정 city 가 숙박과 다르면 작은 칩
+            var realIdx = journeyData.indexOf(item);
+            // 일정 city 가 숙박과 다르면 작은 칩 (더블클릭 → 행선지 편집)
             var itemCityRaw = (item.city||'').trim();
             var cityChip = '';
             if (itemCityRaw) {
               var iN = _normCityKey(itemCityRaw);
               if (iN && iN !== baseN2) {
-                cityChip = '<span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 mr-1.5 align-middle">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
+                cityChip = '<span class="wk4-chip is-city" title="더블클릭하여 행선지 변경" onclick="event.stopPropagation()" ondblclick="editScheduleCity(' + realIdx + ', event)">📍' + _displayCityShort(itemCityRaw).replace(/</g,'&lt;') + '</span>';
               }
             }
-            // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반
-            var itemBg, timeC, badge;
-            if (isSouvenir) {
-              itemBg = 'bg-orange-50 border-l-[3px] border-orange-400 -ml-2 pl-3 pr-2';
-              timeC = 'text-orange-700';
-              badge = ' <span class="text-[10px] ml-0.5">🛍</span>';
-            } else if (reserv) {
-              itemBg = 'bg-rose-50 border-l-[3px] border-rose-400 -ml-2 pl-3 pr-2';
-              timeC = 'text-rose-700';
-              badge = ' <span class="text-[10px] ml-0.5">🎫</span>';
-            } else if (pinned) {
-              itemBg = 'bg-emerald-50 border-l-[3px] border-emerald-400 -ml-2 pl-3 pr-2';
-              timeC = 'text-emerald-700';
-              badge = ' <span class="text-[10px] ml-0.5">📌</span>';
-            } else {
-              itemBg = '';
-              timeC = 'text-indigo-600';
-              badge = '';
+            // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반 — 담백한 톤이라 왼쪽 3px 컬러 바 + 이모지 칩으로 전달
+            var badge;
+            if (isSouvenir) badge = '<span class="wk4-chip is-shop">🛍 쇼핑</span>';
+            else if (reserv) badge = '<span class="wk4-chip is-resv">🎫 예약</span>';
+            else if (pinned) badge = '<span class="wk4-chip is-pin">📌 고정</span>';
+            else badge = '';
+            // ★ (2026-07-22 이식) 실내 / 정기휴무 / 휴무 겹침 칩
+            var flagChips = '';
+            if (!isSouvenir && item.indoor === true) flagChips += '<span class="wk4-chip is-indoor">🏠 실내</span>';
+            var closedTxt = (!isSouvenir && item.closed) ? String(item.closed).replace(/</g,'&lt;') : '';
+            if (closedTxt) {
+              var closedClash = false;
+              if (dateStr) {
+                try { closedClash = closedTxt.indexOf(['일','월','화','수','목','금','토'][new Date(dateStr + 'T00:00:00').getDay()]) >= 0; } catch(e) {}
+              }
+              flagChips += closedClash
+                ? '<span class="wk4-chip is-clash" title="이 일정 날짜가 정기휴무 요일과 겹칩니다!">⚠️ ' + closedTxt + ' 휴무 겹침</span>'
+                : '<span class="wk4-chip is-closed">⛔ ' + closedTxt + ' 휴무</span>';
             }
             // 기념품일 때 카드 내용 다르게 (제목 = 품목, 부제 = 장소/대상, 가격 표시)
             var renderTitle, renderDesc;
@@ -4457,14 +4472,15 @@
             if (reserv) {
               var info = _getPrebookLeadInfo(item);
               if (info && info.recDate) {
-                prebookLine = '<div class="mt-1.5 px-2 py-1 rounded bg-rose-100/70 border border-rose-200 flex items-center gap-1 text-[10px]"><span class="material-symbols-outlined text-rose-600" style="font-size: var(--font-size-micro)">schedule</span><span class="text-rose-700 font-bold">' + info.label + ' 예약 (~' + info.recDate + ')</span></div>';
+                prebookLine = '<p class="wk4-prebook">⏳ ' + info.label + ' 예약 (~' + info.recDate + ')</p>';
               }
             }
-            // stitch j-slot 디자인
-            var slotClasses = ['j-slot'];
+            // wk4 j-slot (기능 훅 유지: data-jid / draggable / hover→핀)
+            var slotClasses = ['j-slot', 'wk4-slot'];
             if (reserv) slotClasses.push('is-reservation');
             if (pinned) slotClasses.push('is-pinned');
             if (isSouvenir) slotClasses.push('is-shopping');
+            if (isToday && iIdx === nowIdx) slotClasses.push('wk4-now');
             // ★ (2026-07-23) 앞 스팟과 둘 다 좌표가 있으면 이동시간 커넥터 삽입
             var travelRow = '';
             if (iIdx > 0) {
@@ -4473,7 +4489,7 @@
                   typeof item.lat === 'number' && typeof item.lng === 'number') {
                 var tvId = 'wk-travel-' + actualIdx + '-' + iIdx;
                 travelQueue.push({ id: tvId, a: prevIt, b: item });
-                travelRow = '<div class="j-slot-travel" id="' + tvId + '"><span style="opacity:.55">이동시간…</span></div>';
+                travelRow = '<div class="j-slot-travel wk4-travel" id="' + tvId + '"><span style="opacity:.55">이동시간…</span></div>';
               }
             }
             // ★ (2026-07-23) 좌표 있는 아이템: 📍 클릭 → 지도가 그 핀으로 날아감 (Wanderlog식)
@@ -4482,56 +4498,53 @@
               : '';
             var confChip = '';
             var _sMin = _t2m(item.time), _eMin = _t2m(item.end_time);
-            if (_sMin != null && _prevEndMin != null && _sMin < _prevEndMin) confChip = ' <span class="j-conflict-chip" title="앞 일정이 끝나기 전에 시작돼요 — 시간을 조정해주세요">⚠ 겹침</span>';
+            if (_sMin != null && _prevEndMin != null && _sMin < _prevEndMin) confChip = '<span class="wk4-chip is-conflict" title="앞 일정이 끝나기 전에 시작돼요 — 시간을 조정해주세요">⏱ 겹침</span>';
             if (_sMin != null) _prevEndMin = Math.max(_prevEndMin || 0, (_eMin != null && _eMin > _sMin) ? _eMin : _sMin);
+            // 서브라인: 시간 · 설명 (12px slate-400)
+            var subParts = [];
+            if (time) subParts.push('<span class="wk4-time">' + time + endTime + '</span>');
+            if (renderDesc) subParts.push(renderDesc);
+            var subHtml = subParts.length
+              ? '<p class="wk4-sub" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + subParts.join(' · ') + '</p>'
+              : '';
             return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
-              '<div class="j-slot-time">' + (time ? (time + endTime + badge + confChip) : '<span style="opacity:0.5">—</span>') + '</div>' +
-              '<div class="j-slot-body">' +
-                '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' + mapBtn + '</div>' +
-                (renderDesc ? '<p class="j-slot-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>' : '') +
-                prebookLine +
+              '<div class="wk4-line">' +
+                '<p class="j-slot-title wk4-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' +
+                mapBtn +
               '</div>' +
+              (badge || cityChip || flagChips || confChip ? '<div class="wk4-chips">' + badge + cityChip + flagChips + confChip + '</div>' : '') +
+              subHtml +
+              prebookLine +
             '</div>';
           }).join('');
 
-      // 헤더: stitch j-day-head — 원형 번호 + 도시명 + 날짜·요일
-      var WEEKDAY_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      var weekdayEn = '';
-      if (dateStr) {
-        try { weekdayEn = WEEKDAY_EN[new Date(dateStr).getDay()]; } catch(e) {}
-      }
+      // 헤더: wk4 — mono eyebrow(OCT 12 (월) • DAY 01) + 큰 일차 타이틀 + 우측 고스트 동선 버튼
       var headerCityHtml = '';
       if (dayTrips.length > 0) {
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
-        headerCityHtml = '<p class="j-day-h3-meta" title="당일치기 행선지" style="margin-top: var(--space-1);color:#c2410c;font-weight:600">🚆 ' + tripsTxt + ' (당일)</p>';
+        headerCityHtml = '<p class="wk4-daytrip" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</p>';
       }
-      // ★ (2026-07-23) dlv eyebrow: "OCT 04 · 1일차" (mono uppercase) + 오늘이면 CURRENT/LIVE
-      var isToday = !!(dateStr && dateStr === todayStr);
       var eyebrowTxt = '';
       if (dateStr) {
         try {
           var _MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
           var _ed = new Date(dateStr + 'T00:00:00');
-          eyebrowTxt = _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') + ' · ' + dayNum + '일차' + (isToday ? ' · CURRENT' : '');
-        } catch(e) { eyebrowTxt = dayNum + '일차'; }
+          eyebrowTxt = _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') +
+            (weekday ? ' (' + weekday + ')' : '') + ' • ' + (isToday ? 'TODAY' : 'DAY ' + String(dayNum).padStart(2,'0'));
+        } catch(e) { eyebrowTxt = 'DAY ' + String(dayNum).padStart(2,'0'); }
+      } else {
+        eyebrowTxt = 'DAY ' + String(dayNum).padStart(2,'0');
       }
-      var eyebrowHtml = eyebrowTxt ? '<p class="dlv-eyebrow' + (isToday ? ' is-today' : '') + '">' + eyebrowTxt + '</p>' : '';
       var liveBadge = isToday ? '<span class="dlv-live">LIVE</span>' : '';
+      var titleCls = 'wk4-title' + (isToday ? ' is-today' : (isPastCol ? ' is-past' : ''));
       var dayHeadHtml =
-        '<div class="j-day-head">' +
-          '<div class="j-day-head-left">' +
-            '<div class="j-day-num' + (isCurrent ? '' : ' is-muted') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기" style="cursor:pointer">' + String(dayNum).padStart(2,'0') + '</div>' +
-            '<div>' +
-              eyebrowHtml +
-              '<h3 class="j-day-h3">' + (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge + '</h3>' +
-              '<p class="j-day-h3-meta">' + (dateStr || '—') + (weekday ? ' · ' + weekday + (weekdayEn ? ' (' + weekdayEn + ')' : '') : '') + '</p>' +
-              headerCityHtml +
-            '</div>' +
-          '</div>' +
-          '<button class="j-day-route-btn" onclick="optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
-          '<div class="j-day-head-tag">' +
-            '<span class="j-status-tag j-status-soft">' + dayNum + '일차</span>' +
-          '</div>' +
+        '<div class="j-day-head wk4-head">' +
+          '<p class="wk4-eyebrow' + (isToday ? ' is-today' : '') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' + eyebrowTxt + '</p>' +
+          '<h3 class="' + titleCls + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' +
+            (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge +
+          '</h3>' +
+          headerCityHtml +
+          '<button class="j-day-route-btn wk4-route" onclick="event.stopPropagation();optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
         '</div>';
 
       // 빈 일정 메시지
@@ -4546,7 +4559,7 @@
       if (_weekAddingDate === dateStr) {
         var phCity = cityName ? ('비우면 ' + cityName) : '행선지 (선택)';
         addFormHtml =
-          '<div class="border-t-2 border-indigo-300 p-2 bg-indigo-50/40" onclick="event.stopPropagation()">' +
+          '<div class="wk4-addform" onclick="event.stopPropagation()">' +
             '<div class="flex items-center gap-1 mb-1">' +
               '<input id="wk-add-time-' + idx + '" type="text" placeholder="09:00" class="w-12 text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 rounded px-1 py-0.5 outline-none focus:border-indigo-500 text-center"/>' +
               '<span class="text-[9px] text-slate-400">-</span>' +
@@ -4568,18 +4581,17 @@
       } else {
         addFormHtml =
           '<div class="j-day-add">' +
-            '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="j-day-add-btn" title="이 날에 일정 추가">' +
-              '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 일정 추가' +
-            '</button>' +
+            '<button onclick="event.stopPropagation();startWeekAdd(\'' + dateStr + '\')" class="j-day-add-btn" title="이 날에 일정 추가">+ 일정 추가</button>' +
           '</div>';
       }
 
-      // stitch j-day-card 통째로
-      var dayCardClasses = ['j-day-card'];
+      // wk4 컬럼 (카드 테두리·배경 없음 — 얇은 세로 구분선만)
+      var dayCardClasses = ['j-day-card', 'wk4-col'];
       if (isCurrent) dayCardClasses.push('is-current');
-      if (isToday) dayCardClasses.push('is-today'); // ★ 오늘 컬럼 보라 테두리
+      if (isToday) dayCardClasses.push('is-today');
+      if (isPastCol) dayCardClasses.push('wk4-past'); // 지난 날 컬럼 전체 흐리게
       var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
-      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn">🛏 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
+      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn wk4-night">🛏 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
       return '<div class="' + dayCardClasses.join(' ') + '" data-date="' + dateStr + '">' +
           dayHeadHtml +
           nightWarnHtml +
@@ -4603,15 +4615,47 @@
         }, 30);
       }
     }
-    // ★ (2026-07-23) dlv 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 (오늘 = 보라)
+    // ★ (2026-07-23) wk4 가로 진행선 — 컬럼과 정렬되는 점 + 그 아래 "OCT 12 • DEPARTURE" 라벨
     var prog = document.getElementById('dlv-progress');
     if (prog) {
-      prog.innerHTML = chunk.map(function(e) {
-        var cls = 'dlv-prog-dot';
-        if (e.date && e.date === todayStr) cls += ' is-today';
-        else if (e.date && todayStr && e.date < todayStr) cls += ' is-past';
-        return '<div class="dlv-prog-cell"><span class="' + cls + '"></span></div>';
+      var _MONS2 = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      var pastN = 0, todayPos = -1;
+      chunk.forEach(function(e, i) {
+        if (e.date && e.date === todayStr) todayPos = i;
+        else if (e.date && todayStr && e.date < todayStr) pastN++;
+      });
+      var cells = chunk.map(function(e, i) {
+        var actual = currentWeekChunkStart + i;
+        var isT = !!(e.date && e.date === todayStr);
+        var isP = !!(e.date && todayStr && e.date < todayStr);
+        var cls = 'dlv-prog-dot' + (isT ? ' is-today' : (isP ? ' is-past' : ''));
+        // 라벨: 오늘=CURRENT, 첫날=DEPARTURE, 마지막날=RETURN, 도시 바뀌는 날=ARRIVAL, 나머지=DAY NN
+        var kind;
+        if (isT) kind = 'CURRENT';
+        else if (actual === 0) kind = 'DEPARTURE';
+        else if (actual === dayMap.length - 1) kind = 'RETURN';
+        else if (actual > 0 && dayMap[actual - 1] && (dayMap[actual - 1].cityName || '') !== (e.cityName || '')) kind = 'ARRIVAL';
+        else kind = 'DAY ' + String(e.day).padStart(2, '0');
+        var md = '';
+        if (e.date) {
+          try {
+            var _pd = new Date(e.date + 'T00:00:00');
+            md = _MONS2[_pd.getMonth()] + ' ' + String(_pd.getDate()).padStart(2, '0') + ' • ';
+          } catch(err) {}
+        }
+        return '<div class="dlv-prog-cell"><span class="' + cls + '"></span>' +
+          '<span class="dlv-prog-label' + (isT ? ' is-today' : '') + '">' + md + kind + '</span></div>';
       }).join('');
+      // 트랙/채움은 첫 점 ~ 마지막 점 사이만 (컬럼 4칸 기준 중앙 정렬)
+      var _n = WEEK_CHUNK_SIZE;
+      var trackL = (0.5 / _n) * 100;
+      var trackW = ((chunk.length - 1) / _n) * 100;
+      var fillIdx = todayPos >= 0 ? todayPos : (pastN >= chunk.length ? chunk.length - 1 : 0);
+      var fillW = (fillIdx / _n) * 100;
+      prog.innerHTML =
+        '<span class="dlv-prog-track" style="left:' + trackL + '%;width:' + trackW + '%"></span>' +
+        '<span class="dlv-prog-fill" style="left:' + trackL + '%;width:' + fillW + '%"></span>' + cells;
+      prog.style.gridTemplateColumns = 'repeat(' + _n + ',1fr)';
       prog.style.display = (typeof _dlvIsSingleActive === 'function' && _dlvIsSingleActive()) ? 'none' : '';
     }
     // ★ (2026-07-23) 이동시간 커넥터 채우기 + Day-Pins 지도 갱신
@@ -5359,12 +5403,17 @@
   }
 
   // 아이콘 칩 — 브랜드 매칭되면 로고 <img>, 실패하면 기존 material 아이콘 그대로
+  // ★ (2026-07-23) Clearbit Logo API 종료(연결 실패) → Google s2 favicons(1순위) → DuckDuckGo ip3(2순위) → 아이콘(3순위)
   function _recIcoHtml(icon, txt) {
     var dom = _brandDomainFor(txt);
     if (!dom) return '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>';
+    var src1 = 'https://www.google.com/s2/favicons?domain=' + dom + '&sz=128';
+    var src2 = 'https://icons.duckduckgo.com/ip3/' + dom + '.ico';
+    var onErr = 'if(!this.dataset.fb){this.dataset.fb=\'1\';this.src=\'' + src2 + '\';return;}' +
+      'this.onerror=null;this.style.display=\'none\';var p=this.parentNode;' +
+      'if(p){p.className=\'rec-tr-ico\';var s=p.querySelector(\'.rec-tr-ico-fb\');if(s)s.style.display=\'\';}';
     return '<div class="rec-tr-ico has-logo">' +
-      '<img class="rec-tr-logo" src="https://logo.clearbit.com/' + dom + '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
-        'onerror="this.style.display=\'none\';var p=this.parentNode;if(p){p.className=\'rec-tr-ico\';var s=p.querySelector(\'.rec-tr-ico-fb\');if(s)s.style.display=\'\';}">' +
+      '<img class="rec-tr-logo is-favicon" src="' + src1 + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="' + onErr + '">' +
       '<span class="material-symbols-outlined rec-tr-ico-fb" style="display:none">' + icon + '</span>' +
     '</div>';
   }
@@ -8052,6 +8101,29 @@
     }
     return 9999;
   }
+  // ★ (2026-07-23) 도시별 실제 체류 기간 — citiesData start_date/end_date → "10/05~10/08"
+  //   여행에 없는 도시(당일치기 목적지 등)는 '' 반환 → 호출부에서 날짜 생략
+  function _cityStayRange(city) {
+    if (!city) return '';
+    var c = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+    var nc = _normCityKey(city);
+    if (!nc) return '';
+    var hit = null;
+    for (var i = 0; i < c.length; i++) {
+      var n = _normCityKey(c[i].name || '');
+      if (!n) continue;
+      if (n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0) { hit = c[i]; break; }
+    }
+    if (!hit || !hit.start_date) return '';
+    var md = function(ds) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ds || ''));
+      return m ? (+m[2]) + '/' + (+m[3]) : '';
+    };
+    var s = md(hit.start_date), e = md(hit.end_date);
+    if (!s) return '';
+    return (e && e !== s) ? (s + '~' + e) : s;
+  }
+
   // 도시별로 다시 sub-group (한 국가 안에서)
   function _groupSouvenirsByCity(items) {
     var groups = {};
@@ -15412,7 +15484,8 @@
       var rawCity = String(p.city || '').trim();
       var ck = _normCityKey(rawCity) || '미지정';
       if (!cityMap[ck]) {
-        cityMap[ck] = { label: _displayCityShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity) };
+        cityMap[ck] = { label: _displayCityShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity),
+          stay: (typeof _cityStayRange === 'function' ? _cityStayRange(rawCity) : '') };
         cityKeys.push(ck);
       }
       cityMap[ck].n++;
@@ -15430,9 +15503,12 @@
         '<button class="spot-citytab' + (_placeCity === '전체' ? ' is-active' : '') +
           '" onclick="setPlaceCity(\'전체\')">전체 <i>' + cityScope.length + '</i></button>' +
         cityKeys.map(function(k) {
+          // ★ (2026-07-23) 실제 체류 날짜 병기 — 여행에 없는 도시는 개수만
+          var stay = cityMap[k].stay ? '<em>' + cityMap[k].stay + '</em>' : '';
           return '<button class="spot-citytab' + (k === _placeCity ? ' is-active' : '') +
-            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')">' + _spotEsc(cityMap[k].label) +
-            ' <i>' + cityMap[k].n + '</i></button>';
+            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')" title="' + _spotEsc(cityMap[k].label) +
+            (cityMap[k].stay ? ' · ' + cityMap[k].stay : '') + '">' + _spotEsc(cityMap[k].label) +
+            stay + ' <i>' + cityMap[k].n + '</i></button>';
         }).join('');
     }
     // 카테고리 텍스트 탭 (전체/카테고리/실내만 — 국가 탭과 AND 조합)
