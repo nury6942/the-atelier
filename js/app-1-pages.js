@@ -14334,6 +14334,8 @@
           '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
           '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
         var mk = L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        // ★ 핀 클릭 한 번 = 그 지점으로 확 줌인 (Wanderlog식) — 멀리서 볼 땐 15레벨로 점프
+        mk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.setView(mk.getLatLng(), 15); });
         if (it._id) window._dayPinsMarkers[it._id] = mk;
       });
       // 하루만 선택하면 방문 순서 경로선 표시
@@ -14346,7 +14348,8 @@
         latlngs.push([p.lat, p.lng]);
         var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-pool"></div>', iconSize: [13, 13], iconAnchor: [7, 7] });
         var pop = '<strong>' + String(p.title || '').replace(/</g, '&lt;') + '</strong><br><span style="color:#94a3b8">저장소 (미배치)' + (p.category ? ' · ' + p.category : '') + '</span>';
-        L.marker([p.lat, p.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        var pmk = L.marker([p.lat, p.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        pmk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.setView(pmk.getLatLng(), 15); });
       });
     }
 
@@ -14382,7 +14385,7 @@
     var needRerender = !(window._dayPinsMarkers || {})[jid];
     if (needRerender) { _dayPinsFilter = 'all'; renderDayPinsMap(); } // 필터에 가려져 있으면 전체로
     var wrap = document.getElementById('daylog-map-wrap');
-    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 지도가 화면 한가운데 오도록
     // 재렌더 시 fitBounds 재시도(250ms)가 setView를 덮지 않게 이후에 실행
     setTimeout(function() {
       if (!_dayPinsMap) return;
