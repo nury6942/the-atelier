@@ -2640,23 +2640,32 @@
     }
   }
 
-  var _ddState = { journey: false, finance: false, pk: false };
+  var _ddState = { journey: false, finance: false, pk: false, spot: false, flight: false };
+
+  // ★ (2026-07-24) 여행 선택 드롭다운을 스팟·항공 탭에도 — 일정 탭과 같은 마크업/위치/크기.
+  //   데이터 로직은 하나만 두고 대상 엘리먼트만 늘린다(중복 구현 금지).
+  var _TRIP_DD_TARGETS = [
+    { label: 'journey-dd-label', opts: 'journey-dd-options', pick: 'selectTripFromDd' },
+    { label: 'spot-dd-label',    opts: 'spot-dd-options',    pick: 'selectTripFromSpotDd' },
+    { label: 'flight-dd-label',  opts: 'flight-dd-options',  pick: 'selectTripFromFlightDd' }
+  ];
 
   // ===== JOURNEY PAGE DROPDOWN =====
   function renderTripTabs() {
-    var label = document.getElementById('journey-dd-label');
-    if (!tripsData.length) {
-      if (label) label.textContent = '여행 선택...';
-      renderJourneyDdOptions();
-      return;
-    }
-    var trip = tripsData.find(function(t){ return t._id === currentTripId; });
-    if (label) label.textContent = trip ? trip.name : '여행 선택...';
+    var trip = tripsData.length ? tripsData.find(function(t){ return t._id === currentTripId; }) : null;
+    var text = trip ? trip.name : '여행 선택...';
+    _TRIP_DD_TARGETS.forEach(function(t) {
+      var label = document.getElementById(t.label);
+      if (label) label.textContent = text;
+    });
     renderJourneyDdOptions();
   }
 
   function renderJourneyDdOptions() {
-    var optEl = document.getElementById('journey-dd-options');
+    _TRIP_DD_TARGETS.forEach(function(tg) { _renderTripDdInto(tg.opts, tg.pick); });
+  }
+  function _renderTripDdInto(optsId, pickFn) {
+    var optEl = document.getElementById(optsId);
     if (!optEl) return;
     if (!tripsData.length) { optEl.innerHTML = '<div class="px-5 py-3 text-sm text-slate-400">여행을 추가해봐!</div>'; return; }
     var sorted = _tripSortForDropdown(tripsData);
@@ -2669,7 +2678,7 @@
       var isPast = t.end_date && t.end_date < today;
       var stateClass = isOngoing ? 'ongoing' : isFuture ? 'future' : isPast ? 'past' : '';
       var metaLabel = isOngoing ? '진행 중' : isFuture ? '예정' : isPast ? '지난 여행' : '';
-      return '<button onclick="selectTripFromDd(\'' + t._id + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + (stateClass ? ' ' + stateClass : '') + '">' +
+      return '<button onclick="' + pickFn + '(\'' + t._id + '\')" class="trip-dd-opt' + (isActive ? ' active' : '') + (stateClass ? ' ' + stateClass : '') + '">' +
         '<span class="truncate flex items-center gap-2">' +
           '<span>' + t.name + '</span>' +
           (metaLabel && !isActive ? '<span class="dd-meta">' + metaLabel + '</span>' : '') +
@@ -2683,10 +2692,20 @@
   }
 
   function toggleJourneyDropdown() { _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey'); }
+  function toggleSpotDropdown()    { _toggleDropdown('spot-dd-panel','spot-dd-chevron',_ddState,'spot'); }
+  function toggleFlightDropdown()  { _toggleDropdown('flight-dd-panel','flight-dd-chevron',_ddState,'flight'); }
 
   function selectTripFromDd(tripId) {
     _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey');
     selectTrip(tripId);
+  }
+  function selectTripFromSpotDd(tripId) {
+    if (_ddState.spot) toggleSpotDropdown();
+    selectTrip(tripId).then(function(){ if (typeof renderPlaces === 'function') renderPlaces(); });
+  }
+  function selectTripFromFlightDd(tripId) {
+    if (_ddState.flight) toggleFlightDropdown();
+    selectTrip(tripId).then(function(){ if (typeof window.showTravelFlight === 'function') window.showTravelFlight(); });
   }
 
   async function selectTrip(tripId) {
@@ -15691,10 +15710,15 @@
         }
       } catch(e) {}
     }
-    if (cntEl) {
-      var placed = places.filter(function(p) { return p.status === 'planned'; }).length;
-      cntEl.textContent = places.length ? places.length + '곳 · 배치 ' + placed : '';
-    }
+    var placed = places.filter(function(p) { return p.status === 'planned'; }).length;
+    if (cntEl) cntEl.textContent = places.length ? places.length + '곳 · 배치 ' + placed : '';
+    // ★ (2026-07-24) 히어로 우측 스탯 — 일정 탭(Budget/Spent/Remaining)과 같은 자리·크기
+    var _cityN = {};
+    places.forEach(function(p) { var k = _normCityKey(p.city || ''); if (k) _cityN[k] = 1; });
+    var _setStat = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+    _setStat('places-mini-total', places.length ? String(places.length) : '—');
+    _setStat('places-mini-sched', places.length ? String(placed) : '—');
+    _setStat('places-mini-cities', places.length ? String(Object.keys(_cityN).length) : '—');
     // 📷 사진 채우기 버튼 (photo_url 없는 스팟 수) — 일괄 실행 중엔 진행 표시 유지
     var fillBtn = document.getElementById('places-photo-fill-btn');
     if (fillBtn && !fillBtn.getAttribute('data-running')) {
@@ -17116,6 +17140,7 @@
     var sec = document.getElementById('travel-places-section');
     if (!sec) return;
     sec.style.display = 'block';
+    try { renderTripTabs(); } catch(e) {}   // 여행 선택 드롭다운 라벨/옵션 채우기
     try { if (typeof window.renderPlaces === 'function') window.renderPlaces(); } catch(e) {}
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Places';
@@ -17585,6 +17610,11 @@
     if (!box) return;
     var flights = _fltLoadCached() || [];
     var s = _fltStats(flights);
+    // ★ (2026-07-24) 히어로 우측 스탯 — 일정 탭과 같은 자리·크기
+    var _setF = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+    _setF('flight-mini-count', s.total ? s.total + '편' : '—');
+    _setF('flight-mini-dist', s.km ? Math.round(s.km).toLocaleString('ko-KR') + 'km' : '—');
+    _setF('flight-mini-countries', s.countries ? String(s.countries) : '—');
     if (!s.total) {
       box.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">public</span>' +
         '<p>아직 기록된 항공편이 없어요. 트립에 항공편을 등록하면 누적 거리·국가 수·노선 궤적이 여기에 쌓여요.</p></div>';
@@ -17890,6 +17920,7 @@
     var sec = document.getElementById('travel-flight-section');
     if (!sec) return;
     sec.style.display = 'block';
+    try { renderTripTabs(); } catch(e) {}   // 여행 선택 드롭다운 라벨/옵션 채우기
     try { _fltRenderPrep(); } catch(e) { console.warn('[flight] prep', e); }
     try { _fltRenderProfile(); } catch(e) { console.warn('[flight] profile', e); }
     try { _fltRefreshAll(); } catch(e) {}
@@ -24600,7 +24631,9 @@
   function selectPkTrip(tripId, tripName) {
     pkTripId = null;
     setPkDropdownLabel(tripId);
-    togglePkDropdown();
+    // ★ (2026-07-24) 무조건 토글이라, 탭 전환 시 프로그램적으로 호출되면(switchTravelTab의
+    //   트립 sync) 닫혀 있던 패널이 '열려'버렸다. 열려 있을 때만 닫는다.
+    if (_ddState.pk) togglePkDropdown();
     renderPkDropdownOptions(pkTrips);
     pkOnTripSelect(tripId);
   }
@@ -24610,6 +24643,8 @@
     if (_ddState.pk && !e.target.closest('#pk-dropdown-wrap')) togglePkDropdown();
     if (_ddState.journey && !e.target.closest('#journey-dd-wrap')) toggleJourneyDropdown();
     if (_ddState.finance && !e.target.closest('#finance-dd-wrap')) toggleFinanceDropdown();
+    if (_ddState.spot && !e.target.closest('#spot-dd-wrap')) toggleSpotDropdown();
+    if (_ddState.flight && !e.target.closest('#flight-dd-wrap')) toggleFlightDropdown();
   });
   // ESC로 모든 드롭다운 닫기
   document.addEventListener('keydown', function(e) {
@@ -24617,6 +24652,8 @@
       if (_ddState.pk) togglePkDropdown();
       if (_ddState.journey) toggleJourneyDropdown();
       if (_ddState.finance) toggleFinanceDropdown();
+      if (_ddState.spot) toggleSpotDropdown();
+      if (_ddState.flight) toggleFlightDropdown();
     }
   });
 

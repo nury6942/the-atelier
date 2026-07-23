@@ -211,22 +211,22 @@
     html += (window._travelTabsHtml ? window._travelTabsHtml('atlas') : '');
 
     // ──────── HERO ────────
-    html += '<section class="atlas-hero">';
-    html += '<div class="atlas-hero-grid">';
-    html += '<div class="atlas-hero-left">';
-    html += '<p class="atlas-eyebrow">Issue No. 04 — 2027 / 2028 itinerary</p>';
-    html += '<h1 class="atlas-hero-h1">The Atlas <span class="atlas-hero-amp">&amp;</span><br>Almanac</h1>';
-    html += '<p class="atlas-hero-tagline">먼 미래의 여행을 미리 그려보는 페이지. 일정·예산·PTO는 러프하게, 그래도 다 적혀있게.</p>';
+    // ★ (2026-07-24) 일정·스팟·항공·예산·체크리스트와 같은 .trav-hero로 통일.
+    //   제목이 <br>로 2줄이라 다른 탭보다 헤더가 유독 높았음 → 한 줄로.
+    html += '<header class="trav-hero">';
+    html += '<div>';
+    html += '<p class="trav-eyebrow">Travel &middot; Almanac</p>';
+    html += '<h1 class="trav-title">The Atlas <span class="amp">&amp;</span> Almanac</h1>';
+    html += '<p class="trav-sub">먼 미래의 여행을 미리 그려보는 페이지. 일정·예산·PTO는 러프하게, 그래도 다 적혀있게.</p>';
     html += '</div>';
-    html += '<div class="atlas-hero-right">';
+    html += '<div class="trav-hero-right">';
     html += _heroStat('Year Range', '2027—2028');
     html += _heroStat('Total Volume', t.trips + ' Major Trips');
     html += _heroStat('Duration', t.days + ' Global Days');
     html += _heroStat('Countries', String(t.countries));
     html += _heroStat('PTO Days', String(t.pto));
     html += '</div>';
-    html += '</div>';
-    html += '</section>';
+    html += '</header>';
 
     // ──────── HORIZONTAL TIMELINE (연도별 그룹) ────────
     var byYear = _groupByYear(trips);
@@ -376,9 +376,9 @@
   }
 
   function _heroStat(label, value) {
-    return '<div class="atlas-hero-stat">' +
-      '<span class="atlas-hero-stat-l">' + _esc(label) + '</span>' +
-      '<span class="atlas-hero-stat-v">' + _esc(value) + '</span>' +
+    return '<div class="trav-stat">' +
+      '<span class="trav-stat-l">' + _esc(label) + '</span>' +
+      '<span class="trav-stat-v">' + _esc(value) + '</span>' +
     '</div>';
   }
 
