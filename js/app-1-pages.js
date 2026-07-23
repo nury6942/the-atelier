@@ -12841,6 +12841,11 @@
     section.style.display = '';
 
     var budget = trip.budget || {};
+    // ★ (2026-07-23) 숙소 예산은 1박치 × 박 수로 파생 — 저장된 총액이 옛 계산(일수 기준)이어도 자동 보정
+    var _bAmt = function(field) {
+      if (field === 'accom' && budget.accomPerDay) return (parseFloat(budget.accomPerDay) || 0) * getTripNights(trip);
+      return parseFloat(budget[field]) || 0;
+    };
     var hasBudget = Object.keys(BUDGET_FIELDS).some(function(g){ return parseFloat(budget[BUDGET_FIELDS[g]])||0 > 0; });
 
     document.getElementById('finance-budget-edit-label').textContent = hasBudget ? '수정' : '예산 설정';
@@ -12853,7 +12858,7 @@
       spent[g] += (parseFloat(r[4]) || 0);
     });
 
-    var totalBudget = Object.values(BUDGET_FIELDS).reduce(function(s,f){ return s + (parseFloat(budget[f])||0); }, 0);
+    var totalBudget = Object.values(BUDGET_FIELDS).reduce(function(s,f){ return s + _bAmt(f); }, 0);
     var totalSpent = Object.values(spent).reduce(function(s,v){ return s+v; }, 0);
 
     var statusEl = document.getElementById('finance-budget-status');
@@ -12919,7 +12924,7 @@
     html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
     Object.keys(BUDGET_GROUPS).forEach(function(g) {
       var cfg = BUDGET_GROUPS[g];
-      var b = parseFloat(budget[BUDGET_FIELDS[g]]) || 0;
+      var b = _bAmt(BUDGET_FIELDS[g]);
       var s = spent[g] || 0;
       var gPct = b > 0 ? Math.round((s / b) * 100) : 0;
 
@@ -13298,8 +13303,11 @@
     var days = Math.round((end - start) / 86400000) + 1;
     return days > 0 ? days : 1;
   }
+  // ★ (2026-07-23) 숙박 수 = 일수 - 1 (9일 여행 = 8박). 숙소 예산만 이 값을 쓴다
+  function getTripNights(trip) { return Math.max(1, getTripDays(trip) - 1); }
 
   var _budgetEditingDays = 1;
+  var _budgetEditingNights = 1;
 
   function openBudgetModal() {
     if (currentFinanceTrip === 'all') return;
@@ -13307,8 +13315,9 @@
     if (!trip) return;
     var b = trip.budget || {};
     _budgetEditingDays = getTripDays(trip);
+    _budgetEditingNights = getTripNights(trip);
     document.getElementById('budget-modal-title').textContent = trip.name + ' 예산';
-    document.getElementById('budget-days-display').textContent = _budgetEditingDays + '일';
+    document.getElementById('budget-days-display').textContent = _budgetEditingDays + '일 · ' + _budgetEditingNights + '박';
     document.getElementById('budget-flight').value = _fmtAmt(parseFloat(b.flight)||0);
     document.getElementById('budget-accom-per-day').value = _fmtAmt(parseFloat(b.accomPerDay)||0);
     document.getElementById('budget-tour-per-day').value = _fmtAmt(parseFloat(b.tourPerDay)||0);
@@ -13327,7 +13336,7 @@
     var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
     var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
     var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
-    var accomTotal = accomPerDay * days;
+    var accomTotal = accomPerDay * _budgetEditingNights; // 숙소는 박 수 기준
     var tourTotal = tourPerDay * days;
     var livingTotal = livingPerDay * days;
     document.getElementById('budget-accom-total').textContent = '₩' + accomTotal.toLocaleString('ko-KR');
@@ -13346,15 +13355,17 @@
     var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
     var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
     var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
+    var nights = _budgetEditingNights;
     var budget = {
       flight: flight,
-      accom: accomPerDay * days,
+      accom: accomPerDay * nights, // 숙소는 박 수 기준 (9일 여행 = 8박)
       tour: tourPerDay * days,
       living: livingPerDay * days,
       accomPerDay: accomPerDay,
       tourPerDay: tourPerDay,
       livingPerDay: livingPerDay,
       days: days,
+      nights: nights,
     };
     var btn = document.getElementById('budget-save-btn');
     btn.disabled = true;
@@ -15411,7 +15422,8 @@
       var tripName = trip.name || '';
       // 예산 총합
       var b = trip.budget;
-      var totalBudget = (parseFloat(b.flight)||0) + (parseFloat(b.accom)||0) + (parseFloat(b.tour)||0) + (parseFloat(b.living)||0);
+      var _accomB = b.accomPerDay ? (parseFloat(b.accomPerDay)||0) * getTripNights(trip) : (parseFloat(b.accom)||0); // 박 수 기준 보정
+      var totalBudget = (parseFloat(b.flight)||0) + _accomB + (parseFloat(b.tour)||0) + (parseFloat(b.living)||0);
       if (totalBudget <= 0) { el.style.display = 'none'; return; }
 
       // 지출 합: 우선 financeData(이미 로드됨) 사용, 없으면 fbRead

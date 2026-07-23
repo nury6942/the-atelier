@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=245" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=246" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -10792,8 +10792,8 @@
         </div>
       </section>
 
-      <!-- 예산 vs 지출 + 도시별 숙소 예산 (2열 grid) -->
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-start">
+      <!-- 예산 vs 지출 + 도시별 숙소 예산 (2열 grid, 높이 맞춤) -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 items-stretch">
         <!-- 예산 vs 지출 -->
         <section id="finance-budget-section" style="display:none">
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden h-full">
@@ -11012,7 +11012,7 @@
           <!-- 숙소/투어/생활비: 1일치 × 일수 -->
           <div class="atl-grid-2">
             <div class="atl-field">
-              <label>숙소 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
+              <label>숙소 <span class="text-[10px] font-normal text-slate-400 ml-1">(1박치)</span></label>
               <div class="atl-field-input">
                 <span class="atl-field-icon material-symbols-outlined">bed</span>
                 <input id="budget-accom-per-day" type="text" placeholder="예: 170,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
@@ -13499,7 +13499,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=245" defer></script>
+<script src="js/app-1-pages.js?v=246" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
