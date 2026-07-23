@@ -5031,6 +5031,7 @@
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
+      if (typeof trvConsumeScanAttach === 'function') trvConsumeScanAttach(saved._id);
       renderJourneyRental();
       if (typeof updateTravelMiniSummary === 'function') updateTravelMiniSummary();
       ['rc-company','rc-model','rc-city','rc-drop-city','rc-pickup-date','rc-pickup-time','rc-pickup-location','rc-drop-date','rc-drop-time','rc-drop-location','rc-payment-date','rc-price','rc-notes','rc-booking-ref','rc-driver','rc-cancel-date'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
@@ -5244,6 +5245,7 @@
         '</div>' +
         (tagPillsSt ? '<div class="j-inter-tags">' + tagPillsSt + '</div>' : '') +
         memoBox +
+        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
       '</div>' +
     '</div>';
   }
@@ -5308,6 +5310,7 @@
           '<div><p class="j-inter-meta-l">Date</p><p class="j-inter-meta-v">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
           '<div><p class="j-inter-meta-l">Time</p><p class="j-inter-meta-v">' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p></div>' +
         '</div>' +
+        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
       '</div>' +
     '</div>';
   }
@@ -5767,6 +5770,7 @@
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
+      if (typeof trvConsumeScanAttach === 'function') trvConsumeScanAttach(saved._id);
       renderJourneyLodging();
       updateJourneyCost();
       // 폼 초기화
@@ -6324,6 +6328,7 @@
               '<div><p class="j-inter-meta-l">Type</p><p class="j-inter-meta-v">' + (isAirbnb ? 'Airbnb' : 'Hotel') + '</p></div>' +
             '</div>' +
             memoChipsSt +
+            (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
           '</div>' +
         '</div>';
       }).join('');
@@ -6940,6 +6945,7 @@
           '<div class="j-trip-actions">' + actionsSt + '</div>' +
         '</div>' +
         (tagPills ? '<div class="j-flight-tags">' + tagPills + '</div>' : '') +
+        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(f) : '') +
       '</div>' +
     '</div>';
   }
@@ -7204,7 +7210,8 @@
         depart:f.time, arrive:f.arrive||'', duration:f.duration||'', baggage:f.baggage||'',
         price:amt?'₩'+amt.toLocaleString('ko-KR'):'—',
         pnr:f.pnr, passenger:f.passenger, seat_class:f.seat_class, seat_number:f.seat_number,
-        fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status
+        fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status,
+        _id:f._id, attachments:f.attachments
       }, actionBtns);
     }).join('');
 
@@ -7311,6 +7318,7 @@
       var saved = await fbAdd('journey', obj);
       journeyData.push(saved);
       await syncJourneyToFinance(saved);
+      if (typeof trvConsumeScanAttach === 'function') trvConsumeScanAttach(saved._id);
       ['flt-airline','flt-code','flt-dep','flt-arr','flt-date','flt-time','flt-arrive','flt-duration','flt-baggage','flt-seat-class','flt-seat-number','flt-fare-type','flt-pnr','flt-passenger','flt-payment-date','flt-payment-status','flt-price'].forEach(function(id){var el=document.getElementById(id); if(el) el.value='';});
       renderJourneyFlights();
     } catch(e) { alert('저장 실패'); }
@@ -8427,6 +8435,7 @@
   }
 
   function openJourneyModal(type) {
+    window._trvPendingScanAttach = null;
     currentJourneyType = type;
     var titles = {'일정':'일정 추가','이동수단':'이동 수단 추가','렌트카':'렌트카 추가','기념품':'기념품 추가','항공편':'항공편 추가'};
     document.getElementById('journey-modal-title').textContent = titles[type]||'항목 추가';
@@ -8976,6 +8985,8 @@
 
   // ===== TRAVEL 인라인 폼 → 모달 헬퍼 =====
   function openTravelModal(id) {
+    // 수동 열기 시 스캔 첨부 대기열 초기화 (스캔 경로는 열린 뒤 다시 세팅)
+    window._trvPendingScanAttach = null;
     var el = document.getElementById(id);
     if (el) el.style.cssText = 'display:flex!important';
   }
@@ -9587,6 +9598,7 @@
         var saved = await fbAdd('journey', obj);
         journeyData.push(saved);
         await syncJourneyToFinance(saved);
+        if (typeof trvConsumeScanAttach === 'function') trvConsumeScanAttach(saved._id);
       }
       renderDayView();
       renderJourneyTransport();
@@ -14103,6 +14115,140 @@
       journeyData.splice(idx, 1);
       window.renderPlaces();
     } catch(e) { alert('삭제 실패'); }
+  };
+
+  // ═══ (2026-07-23) 장부 첨부파일 (Wanderlog 예약&첨부 이식) ═══
+  var TRV_ATTACH_MAX = 10 * 1024 * 1024;
+
+  function _trvAttachEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  }
+
+  function _trvAttachFind(docId) {
+    var arr = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    for (var i = 0; i < arr.length; i++) { if (arr[i]._id === docId) return arr[i]; }
+    return null;
+  }
+
+  function _trvAttachRerender(type) {
+    if (type === '항공편') renderJourneyFlights();
+    else if (type === '숙소') renderJourneyLodging();
+    else if (type === '이동수단') renderJourneyTransport();
+    else if (type === '렌트카') renderJourneyRental();
+  }
+
+  // 카드 하단 첨부 행 HTML (Firebase 문서만 — seed 항목은 빈 문자열)
+  window.trvAttachRowHtml = function(item) {
+    if (!item || !item._id) return '';
+    var docId = String(item._id).replace(/['"\\<>]/g, '');
+    var atts = item.attachments || [];
+    var chips = atts.map(function(a, i) {
+      var url = _trvAttachEsc(String(a.url || '').replace(/'/g, '%27'));
+      var name = _trvAttachEsc(a.name || '파일');
+      return '<span class="j-attach-chip" title="' + name + '" onclick="event.stopPropagation();window.open(\'' + url + '\',\'_blank\')">' +
+        '📎 <span class="nm">' + name + '</span>' +
+        '<span class="j-attach-del" title="삭제" onclick="event.stopPropagation();trvAttachDelete(\'' + docId + '\',' + i + ')">×</span></span>';
+    }).join('');
+    return '<div class="j-attach-row" id="trv-attach-' + docId + '" onclick="event.stopPropagation()">' + chips +
+      '<button type="button" class="j-attach-add" onclick="event.stopPropagation();trvAttachPick(\'' + docId + '\')">+ 첨부</button></div>';
+  };
+
+  // blob 업로드 → journey.attachments push + 메모리 동기화
+  function _trvAttachUploadBlob(docId, blob, name, ctype) {
+    var item = _trvAttachFind(docId);
+    if (!item) return Promise.reject(new Error('journey 문서를 찾을 수 없음: ' + docId));
+    if (!window.storage) return Promise.reject(new Error('storage 미초기화'));
+    var safeName = String(name || 'file').replace(/[\/\\#?%\[\]]/g, '_');
+    var path = 'trips/' + (item.trip_id || currentTripId || 'unknown') + '/attach/' + docId + '/' + Date.now() + '_' + safeName;
+    var mime = ctype || blob.type || 'application/octet-stream';
+    return window.storage.ref(path).put(blob, { contentType: mime }).then(function(snap) {
+      return snap.ref.getDownloadURL();
+    }).then(function(url) {
+      var entry = { name: String(name || safeName), url: url, ctype: mime, size: blob.size || 0, ts: new Date().toISOString() };
+      var atts = (item.attachments || []).concat([entry]);
+      return fbUpdate('journey', docId, { attachments: atts }).then(function() {
+        item.attachments = atts;
+        return entry;
+      });
+    });
+  }
+
+  window.trvAttachPick = function(docId) {
+    var item = _trvAttachFind(docId);
+    if (!item) { alert('항목을 찾을 수 없어요.'); return; }
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/pdf,image/*';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = function() {
+      var file = input.files && input.files[0];
+      if (input.parentNode) input.parentNode.removeChild(input);
+      if (!file) return;
+      if (file.size > TRV_ATTACH_MAX) { alert('10MB 이하 파일만 첨부할 수 있어요.'); return; }
+      var row = document.getElementById('trv-attach-' + docId);
+      if (row) row.insertAdjacentHTML('beforeend', '<span class="j-attach-uploading">업로드 중…</span>');
+      _trvAttachUploadBlob(docId, file, file.name, file.type).then(function() {
+        if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">attach_file</span> 첨부 완료');
+        _trvAttachRerender(item.type);
+      }).catch(function(err) {
+        console.error('[trvAttach] 업로드 실패:', err);
+        alert('첨부 업로드에 실패했어요.');
+        _trvAttachRerender(item.type);
+      });
+    };
+    input.click();
+  };
+
+  window.trvAttachDelete = function(docId, idx) {
+    var item = _trvAttachFind(docId);
+    if (!item || !item.attachments || !item.attachments[idx]) return;
+    var att = item.attachments[idx];
+    if (!confirm('"' + (att.name || '첨부') + '" 첨부를 삭제할까요?')) return;
+    var atts = item.attachments.slice();
+    atts.splice(idx, 1);
+    fbUpdate('journey', docId, { attachments: atts }).then(function() {
+      item.attachments = atts;
+      // Storage 원본 삭제는 best-effort
+      try { window.storage.refFromURL(att.url).delete().catch(function() {}); } catch (e) {}
+      _trvAttachRerender(item.type);
+    }).catch(function(err) {
+      console.error('[trvAttach] 삭제 실패:', err);
+      alert('첨부 삭제에 실패했어요.');
+    });
+  };
+
+  // 예약 스캔 원본(base64)을 첨부로 자동 업로드 — 실패해도 문서 저장은 유지
+  window.trvAttachScanImage = function(docId, b64, ctype) {
+    try {
+      if (!docId || !b64) return Promise.resolve(null);
+      var bin = atob(b64);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var blob = new Blob([bytes], { type: ctype || 'image/jpeg' });
+      var ext = ctype === 'application/pdf' ? '.pdf' : (ctype === 'image/png' ? '.png' : '.jpg');
+      var name = 'scan_' + new Date().toISOString().slice(0, 10) + ext;
+      return _trvAttachUploadBlob(docId, blob, name, ctype || 'image/jpeg').then(function(entry) {
+        var item = _trvAttachFind(docId);
+        if (item) _trvAttachRerender(item.type);
+        return entry;
+      }).catch(function(err) {
+        console.warn('[trvAttach] 스캔 이미지 첨부 실패 (문서는 저장됨):', err);
+        return null;
+      });
+    } catch (e) {
+      console.warn('[trvAttach] 스캔 이미지 첨부 실패 (문서는 저장됨):', e);
+      return Promise.resolve(null);
+    }
+  };
+
+  // 스캔→폼 자동입력 경로: 저장 시 소비되는 첨부 대기열
+  window._trvPendingScanAttach = null;
+  window.trvConsumeScanAttach = function(docId) {
+    var p = window._trvPendingScanAttach;
+    window._trvPendingScanAttach = null;
+    if (!p || !docId) return;
+    window.trvAttachScanImage(docId, p.b64, p.ctype);
   };
 
   // ═══ (2026-07-23) Wanderlog 이식 1단계: 장소 자동완성 + Day-Pins 지도 + 좌표 소급 ═══
@@ -23706,6 +23852,7 @@ function closeBookingScanModal() {
 function resetBookingScan() {
   _scanImageBase64 = null;
   _scanResult = null;
+  window._trvPendingScanAttach = null;
   var placeholder = document.getElementById('scan-drop-placeholder');
   var preview = document.getElementById('scan-preview-img');
   var resultArea = document.getElementById('scan-result-area');
@@ -24171,6 +24318,12 @@ function showScanResult(r) {
 function applyBookingScan() {
   if (!_scanResult) return;
   var r = _scanResult;
+  // 스캔 원본을 저장 시 첨부하기 위해 캡처 (모달 닫아도 유지)
+  var _scanAttachB64 = _scanImageBase64;
+  var _scanAttachType = _scanImageType;
+  var _queueScanAttach = function() {
+    if (_scanAttachB64) window._trvPendingScanAttach = { b64: _scanAttachB64, ctype: _scanAttachType };
+  };
   closeBookingScanModal();
 
   // 타입별 폼 열기 + 채우기
@@ -24211,6 +24364,7 @@ function applyBookingScan() {
           if (payAllowed.indexOf(payVal) >= 0) paySel.value = payVal;
         }
         if (f.price_krw) _setVal('flt-price', String(f.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        _queueScanAttach();
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 항공편 정보가 자동 입력됐어요 ✈️');
       }, 300);
 
@@ -24257,6 +24411,7 @@ function applyBookingScan() {
         }
         if (r.notes) memoParts.push(r.notes);
         _setVal('stay-notes', memoParts.join(' · '));
+        _queueScanAttach();
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 숙소 정보가 자동 입력됐어요 🏨');
       }, 300);
 
@@ -24268,6 +24423,7 @@ function applyBookingScan() {
         _setVal('jf-date', r.dep_date);
         _setVal('jf-time', r.dep_time);
         if (r.price_krw) _setVal('jf-amount', String(r.price_krw).replace(/\B(?=(\d{3})+(?!\d))/g,','));
+        _queueScanAttach();
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 이동수단 정보가 자동 입력됐어요 🚆');
       }, 300);
 
@@ -24343,6 +24499,7 @@ function applyBookingScan() {
         if (depositLabel) memoParts.push(depositLabel);
         if (r.notes) memoParts.push(r.notes);
         _setVal('rc-notes', memoParts.join(' · '));
+        _queueScanAttach();
         showSyncToast('<span class="material-symbols-outlined text-sm mr-1">auto_awesome</span> 렌트카 정보가 자동 입력됐어요 🚗');
       }, 300);
     }
@@ -24368,6 +24525,8 @@ async function _saveAllFlights(r) {
   var commonPnr = r.pnr || '';
   var commonPax = r.passenger || '';
   var saved = 0, failed = 0;
+  var savedDocs = [];
+  var scanB64 = _scanImageBase64, scanCt = _scanImageType;
   for (var i = 0; i < flights.length; i++) {
     var f = flights[i];
     var obj = {
@@ -24394,11 +24553,18 @@ async function _saveAllFlights(r) {
       var savedDoc = await fbAdd('journey', obj);
       journeyData.push(savedDoc);
       if (typeof syncJourneyToFinance === 'function') await syncJourneyToFinance(savedDoc);
+      savedDocs.push(savedDoc);
       saved++;
     } catch(e) {
       console.error('[BookingScan] 항공편 저장 실패:', e, obj);
       failed++;
     }
+  }
+  // 스캔 원본 이미지를 각 항공편에 첨부 (best-effort — 실패해도 무시)
+  if (scanB64 && savedDocs.length && typeof window.trvAttachScanImage === 'function') {
+    savedDocs.forEach(function(d) {
+      try { window.trvAttachScanImage(d._id, scanB64, scanCt); } catch(e) { console.warn('[BookingScan] 첨부 실패:', e); }
+    });
   }
   // UI 갱신
   if (typeof renderJourneyFlights === 'function') renderJourneyFlights();
