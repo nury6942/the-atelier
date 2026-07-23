@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=265" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=266" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5484,6 +5484,10 @@
     .trav-tab-active { color:#0f172a; border-bottom-color:#7c3aed; }
     .trav-hero { padding:34px 0 30px; border-bottom:1px solid var(--gray-200,#e2e8f0); margin-bottom:22px;
       display:grid; grid-template-columns:1fr; gap:24px; align-items:end; }
+    /* ★ (2026-07-24) 제목 블록은 항상 맨 위 고정.
+       align-items:end라 오른쪽 스탯이 더 길면(ATLAS는 5개) 왼쪽 제목이 아래로 밀려
+       탭마다 제목 높이가 달라 보였다. 스탯 개수와 무관하게 제목 y좌표를 통일. */
+    .trav-hero > :first-child { align-self:start; }
     @media (min-width:1024px){ .trav-hero { grid-template-columns:2fr 1fr; } .trav-hero-right { text-align:right; } }
     .trav-eyebrow { font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:600; text-transform:uppercase;
       letter-spacing:0.18em; color:#8b8b98; margin:0 0 12px; }
@@ -14338,7 +14342,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=265" defer></script>
+<script src="js/app-1-pages.js?v=266" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
