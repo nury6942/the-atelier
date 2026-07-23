@@ -4500,13 +4500,10 @@
             var _sMin = _t2m(item.time), _eMin = _t2m(item.end_time);
             if (_sMin != null && _prevEndMin != null && _sMin < _prevEndMin) confChip = '<span class="wk4-chip is-conflict" title="앞 일정이 끝나기 전에 시작돼요 — 시간을 조정해주세요">⏱ 겹침</span>';
             if (_sMin != null) _prevEndMin = Math.max(_prevEndMin || 0, (_eMin != null && _eMin > _sMin) ? _eMin : _sMin);
-            // 서브라인: 시간 · 설명 (12px slate-400)
-            var subParts = [];
-            if (time) subParts.push('<span class="wk4-time">' + time + endTime + '</span>');
-            if (renderDesc) subParts.push(renderDesc);
-            var subHtml = subParts.length
-              ? '<p class="wk4-sub" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + subParts.join(' · ') + '</p>'
-              : '';
+            // 서브라인: 시간 줄 / 설명 줄 분리 (한 덩어리로 붙어 빽빽하던 문제 해소)
+            var subHtml = '';
+            if (time) subHtml += '<p class="wk4-sub wk4-sub-time"><span class="wk4-time">' + time + endTime + '</span></p>';
+            if (renderDesc) subHtml += '<p class="wk4-sub wk4-sub-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>';
             return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               '<div class="wk4-line">' +
                 '<p class="j-slot-title wk4-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' +
@@ -8122,6 +8119,35 @@
     var s = md(hit.start_date), e = md(hit.end_date);
     if (!s) return '';
     return (e && e !== s) ? (s + '~' + e) : s;
+  }
+  // ★ (2026-07-23) 당일치기 도시 날짜 — citiesData(숙박)에 없으면 journey 일정에서 최소~최대 날짜
+  //   반환: { text:'10/9' | '10/9~10/10' | '', kind:'stay' | 'daytrip' | '' }
+  function _cityDateInfo(city) {
+    var stay = _cityStayRange(city);
+    if (stay) return { text: stay, kind: 'stay' };
+    if (!city) return { text: '', kind: '' };
+    var nc = _normCityKey(city);
+    if (!nc) return { text: '', kind: '' };
+    var j = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var min = '', max = '';
+    for (var i = 0; i < j.length; i++) {
+      var it = j[i];
+      if (!it || it.type !== '일정' || !it.date) continue;
+      var n = _normCityKey(it.city || '');
+      if (!n) continue;
+      if (!(n === nc || n.indexOf(nc) >= 0 || nc.indexOf(n) >= 0)) continue;
+      var d = String(it.date);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+      if (!min || d < min) min = d;
+      if (!max || d > max) max = d;
+    }
+    if (!min) return { text: '', kind: '' };
+    var md2 = function(ds) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ds || ''));
+      return m ? (+m[2]) + '/' + (+m[3]) : '';
+    };
+    var s2 = md2(min), e2 = md2(max);
+    return { text: (e2 && e2 !== s2) ? (s2 + '~' + e2) : s2, kind: 'daytrip' };
   }
 
   // 도시별로 다시 sub-group (한 국가 안에서)
@@ -15485,7 +15511,7 @@
       var ck = _normCityKey(rawCity) || '미지정';
       if (!cityMap[ck]) {
         cityMap[ck] = { label: _displayCityShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity),
-          stay: (typeof _cityStayRange === 'function' ? _cityStayRange(rawCity) : '') };
+          dt: (typeof _cityDateInfo === 'function' ? _cityDateInfo(rawCity) : { text: '', kind: '' }) };
         cityKeys.push(ck);
       }
       cityMap[ck].n++;
@@ -15501,14 +15527,23 @@
       cityEl.style.display = cityKeys.length > 1 ? '' : 'none';
       cityEl.innerHTML =
         '<button class="spot-citytab' + (_placeCity === '전체' ? ' is-active' : '') +
-          '" onclick="setPlaceCity(\'전체\')">전체 <i>' + cityScope.length + '</i></button>' +
+          '" onclick="setPlaceCity(\'전체\')"><b>전체</b><span class="ct-meta"><i>' +
+          cityScope.length + '</i></span></button>' +
         cityKeys.map(function(k) {
-          // ★ (2026-07-23) 실제 체류 날짜 병기 — 여행에 없는 도시는 개수만
-          var stay = cityMap[k].stay ? '<em>' + cityMap[k].stay + '</em>' : '';
+          // ★ (2026-07-23) 날짜 병기 — 숙박 도시는 체류 기간, 당일치기는 일정 날짜(🚗 표식)
+          var dt = cityMap[k].dt || { text: '', kind: '' };
+          var isTrip = (dt.kind === 'daytrip');
+          var dateHtml = dt.text
+            ? '<em class="' + (isTrip ? 'is-trip' : 'is-stay') + '">' +
+                (isTrip ? '🚗 ' : '') + dt.text + '</em>'
+            : '';
+          var tip = _spotEsc(cityMap[k].label) +
+            (dt.text ? ' · ' + (isTrip ? '당일치기 ' : '숙박 ') + dt.text : '');
           return '<button class="spot-citytab' + (k === _placeCity ? ' is-active' : '') +
-            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')" title="' + _spotEsc(cityMap[k].label) +
-            (cityMap[k].stay ? ' · ' + cityMap[k].stay : '') + '">' + _spotEsc(cityMap[k].label) +
-            stay + ' <i>' + cityMap[k].n + '</i></button>';
+            (isTrip ? ' is-daytrip' : '') +
+            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')" title="' + tip + '"><b>' +
+            _spotEsc(cityMap[k].label) + '</b><span class="ct-meta">' + dateHtml +
+            '<i>' + cityMap[k].n + '</i></span></button>';
         }).join('');
     }
     // 카테고리 텍스트 탭 (전체/카테고리/실내만 — 국가 탭과 AND 조합)

@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=261" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=262" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -157,6 +157,8 @@
       /* ── 6. 폰트 패밀리 ── */
       --font-sans:  'Pretendard', -apple-system, system-ui, sans-serif;
       --font-mono:  'JetBrains Mono', 'SF Mono', Consolas, monospace;
+      /* Travel 전역 숫자/코드/마이크로 라벨 — Manrope (tabular-nums 지원, 가독성 우선) */
+      --font-num:   'Manrope', 'Pretendard', sans-serif;
       --font-serif: 'Noto Serif KR', serif;
 
       /* ── 7. Spacing (Tailwind-style 4px 그리드 + 0.5 변형) ── */
@@ -3081,7 +3083,7 @@
     .prose-tn strong { color: var(--slate-800); font-weight: 700; }
     .prose-tn hr { border: none; border-top: 1px solid var(--slate-200); margin: 1.5rem 0; }
     .prose-tn em { color: #6b7280; font-style: italic; }
-    .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: var(--radius-xs); font-family: ui-monospace, monospace; font-size: 0.85em; }
+    .prose-tn code { background: var(--slate-100); padding: 0.1em 0.4em; border-radius: var(--radius-xs); font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 0.9em; }
     .prose-tn .tn-empty { color: var(--slate-400); font-style: italic; padding: 2rem 0; text-align: center; }
 
     /* ===== 캘린더 모바일 대응 ===== */
@@ -3787,7 +3789,7 @@
       position: relative;
     }
     #page-packing .pk-eyebrow {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -3838,7 +3840,7 @@
       margin-bottom: var(--space-3);
     }
     #page-packing .pk-progress-label {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -3852,20 +3854,20 @@
       flex-wrap: wrap;
     }
     #page-packing .pk-progress-count {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-body-sm);
       color: var(--slate-700);
       letter-spacing: 0.02em;
     }
     #page-packing .pk-progress-pct {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-body);
       color: var(--lavender-deep);
       font-weight: 700;
       letter-spacing: 0.02em;
     }
     #page-packing .pk-template-btn {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -3914,7 +3916,7 @@
       margin-bottom: var(--space-5);
     }
     #page-packing .pk-tpl-editor-eyebrow {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -4201,7 +4203,7 @@
       transform: translateY(-3px);
     }
     #page-packing .pk-section-meta {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -4245,7 +4247,7 @@
       border-bottom: 1px solid var(--slate-100);
     }
     #page-packing .pk-card-eyebrow {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -4274,7 +4276,7 @@
     }
     #page-packing .pk-cat-head {
       display: flex; align-items: center; gap: var(--space-1-5);
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -4305,7 +4307,7 @@
       #page-packing .pk-cat-cols { grid-template-columns: 1fr; }
     }
     #page-packing .pk-day-date-month {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -4322,7 +4324,7 @@
       letter-spacing: -0.03em;
     }
     #page-packing .pk-day-date-dow {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -4348,7 +4350,7 @@
     }
     #page-packing .pk-day-wx .material-symbols-outlined { font-size: 28px; }
     #page-packing .pk-day-wx-temp {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.04em;
       color: var(--slate-600);
@@ -4426,7 +4428,7 @@
       font-weight: 400;
     }
     #page-packing .pk-item-badge {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-nano);
       letter-spacing: 0.06em;
       color: var(--lavender-deep);
@@ -4466,7 +4468,7 @@
     #page-packing .pk-day-input:focus { border-bottom-color: var(--lavender-deep); }
     #page-packing .pk-day-input::placeholder { color: var(--slate-400); }
     #page-packing .pk-day-input-btn {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -4534,7 +4536,7 @@
       display: flex; align-items: center; gap: var(--space-2);
     }
     #page-packing .pk-cat-meta {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.12em;
       color: var(--lavender-deep);
@@ -4564,7 +4566,7 @@
       text-align: center;
     }
     #page-packing .pk-add-item-btn {
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-tiny);
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -4587,7 +4589,7 @@
     }
     #page-packing .pk-add-cat-btn {
       width: 100%;
-      font-family: var(--font-mono);
+      font-family: var(--font-num); font-variant-numeric: tabular-nums;
       font-size: var(--font-size-meta);
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -5599,7 +5601,7 @@
     @media (min-width:768px){ .rec-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media (min-width:1280px){ .rec-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     .rec-grid > .text-center { grid-column:1/-1; }
-    .rec-micro { font-family:var(--font-mono); font-size:10px; font-weight:600; text-transform:uppercase;
+    .rec-micro { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:600; text-transform:uppercase;
       letter-spacing:0.14em; color:#94a3b8; margin:0 0 4px; }
     .rec-pill { display:inline-flex; align-items:center; gap:3px; background:#f1f5f9; color:#475569;
       border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; letter-spacing:0.02em; }
@@ -5632,7 +5634,7 @@
     .rec-fl-head { display:flex; align-items:center; gap:8px; background:#0f172a; color:#fff; padding:9px 14px; }
     .rec-fl-head > .material-symbols-outlined { font-size:15px; opacity:.65; margin:0 auto; }
     /* 편명(코드)만 mono 유지, 루트 텍스트는 본문 폰트로 가독성 확보 */
-    .rec-fl-code { font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    .rec-fl-code { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10.5px; font-weight:600;
       letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
     .rec-fl-route { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:600;
       letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
@@ -5658,7 +5660,7 @@
     .rec-fl-foot-v { font-family:'Manrope','Pretendard',sans-serif; font-size:13px; font-weight:700;
       color:#0f172a; margin:0; letter-spacing:-0.01em;
       overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .rec-fl-foot-v.is-accent { color:#7c3aed; font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:0.02em; }
+    .rec-fl-foot-v.is-accent { color:#7c3aed; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px; font-weight:600; letter-spacing:0.02em; }
     .rec-fl-card .j-attach-row { margin:0 14px 10px; }
 
     /* 숙소 — 이미지 카드 */
@@ -5671,7 +5673,7 @@
        이미지 안쪽 우상단 흰 필 칩, 얇은 그림자만 */
     .rec-lg-card .j-lodge-img { position:relative; }
     .rec-lg-badge { position:absolute; top:12px; right:12px; z-index:3; background:rgba(255,255,255,.95);
-      border-radius:999px; padding:4px 10px; font-family:var(--font-mono); font-size:10px; font-weight:700;
+      border-radius:999px; padding:4px 10px; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700;
       letter-spacing:0.14em; text-transform:uppercase; color:#334155; box-shadow:0 1px 3px rgba(15,23,42,.10); }
     .rec-lg-badge.is-upcoming { color:#7c3aed; }
     /* ★ (2026-07-23) 배지와 이미지 컨트롤 겹침 해소 — .rec-lg-card 스코프 한정:
@@ -5722,7 +5724,7 @@
       color:#0f172a; margin:0; letter-spacing:-0.01em; overflow-wrap:anywhere; line-height:1.35; }
     /* 소요시간·업체 배지 — 포인트 컬러로 크게 (검정·소형이라 안 보인다는 피드백) */
     .rec-tr-vendor { background:#7c3aed; color:#fff; border-radius:8px; padding:4px 10px;
-      font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:0.08em;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:800; letter-spacing:0.08em;
       text-transform:uppercase; white-space:nowrap; flex-shrink:0; margin-top:0;
       box-shadow:0 1px 4px rgba(124,58,237,.28); }
     /* 구조화 노트 목록 */
@@ -5734,7 +5736,7 @@
     .rec-note-row.is-act { border-left-color:#0ea5e9; color:#0369a1; }
     .rec-tr-sub { font-size:11.5px; color:#64748b; margin:3px 0 0; overflow-wrap:anywhere; }
     .rec-tr-sub a { color:inherit; }
-    .rec-tr-conf { font-family:var(--font-mono); font-size:10px; font-weight:600; letter-spacing:0.06em;
+    .rec-tr-conf { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:600; letter-spacing:0.06em;
       color:#7c3aed; margin:6px 0 0; text-transform:uppercase; }
     .rec-tr-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px solid #eef2f7; padding-top:9px; }
     .rec-tr-foot { display:flex; justify-content:space-between; align-items:center; gap:8px;
@@ -5774,26 +5776,26 @@
       font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif; }
     .sv-country-title h3 { font-family:'Manrope','Pretendard',sans-serif; font-size:26px; font-weight:800;
       letter-spacing:-0.02em; text-transform:uppercase; color:#0f172a; margin:0; line-height:1.1; }
-    .sv-country-sub { font-family:var(--font-mono); font-size:10px; font-weight:600; letter-spacing:0.16em;
+    .sv-country-sub { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:600; letter-spacing:0.16em;
       text-transform:uppercase; color:#64748b; margin:0; }
     .sv-city { margin-bottom:34px; }
     .sv-city:last-child { margin-bottom:0; }
     .sv-city-h { display:flex; align-items:center; justify-content:space-between; gap:10px;
       border-bottom:1px solid #e2e8f0; padding-bottom:9px; margin-bottom:14px; }
     .sv-city-h-l { display:flex; align-items:center; gap:9px; min-width:0; }
-    .sv-stop { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.15em;
+    .sv-stop { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9px; font-weight:700; letter-spacing:0.15em;
       text-transform:uppercase; color:#7c3aed; background:#f3efff; padding:3px 8px; border-radius:4px;
       flex-shrink:0; }
     .sv-city-name { font-family:'Manrope','Pretendard',sans-serif; font-size:15px; font-weight:800;
       letter-spacing:-0.005em; text-transform:uppercase; color:#0f172a; overflow-wrap:anywhere; }
-    .sv-city-count { font-family:var(--font-mono); font-size:9.5px; font-weight:600; letter-spacing:0.12em;
+    .sv-city-count { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px; font-weight:600; letter-spacing:0.12em;
       text-transform:uppercase; color:#94a3b8; flex-shrink:0; }
     .sv-cat { margin-bottom:24px; }
     .sv-cat:last-child { margin-bottom:0; }
     .sv-cat-h { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .sv-cat-label { border-left:3px solid #7c3aed; padding-left:8px; font-size:11.5px; font-weight:800;
       letter-spacing:0.14em; text-transform:uppercase; color:#7c3aed; line-height:1.4; }
-    .sv-cat-count { font-family:var(--font-mono); font-size:9.5px; font-weight:600; color:#94a3b8; }
+    .sv-cat-count { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px; font-weight:600; color:#94a3b8; }
     .sv-list { display:flex; flex-direction:column; border-top:1px solid #e2e8f0; margin-top:11px; }
     .sv-row { display:flex; align-items:flex-start; gap:13px; padding:13px 2px;
       border-bottom:1px solid #e2e8f0; transition:background .15s; }
@@ -5810,13 +5812,13 @@
     .sv-name a { color:inherit; }
     .sv-desc { font-size:11px; color:#64748b; margin:3px 0 0; line-height:1.5; overflow-wrap:anywhere;
       word-break:keep-all; }
-    .sv-loc { display:flex; flex-wrap:wrap; gap:3px 12px; font-family:var(--font-mono); font-size:9px;
+    .sv-loc { display:flex; flex-wrap:wrap; gap:3px 12px; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9px;
       font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#94a3b8; margin:7px 0 0; }
     /* ★ (2026-07-23) 구체 매장·장소 (그룹 헤더에 없는 추가 정보만) */
     .sv-extra { font-size:10.5px; color:#94a3b8; margin:4px 0 0; line-height:1.45; overflow-wrap:anywhere; }
     .sv-extra a { color:inherit; }
     /* 대상·도시는 그룹/도시 헤더와 중복 → 평소엔 숨기고, 행 호버 시에만 편집용으로 노출 */
-    .sv-edit { display:flex; flex-wrap:wrap; align-items:center; gap:3px 10px; font-family:var(--font-mono);
+    .sv-edit { display:flex; flex-wrap:wrap; align-items:center; gap:3px 10px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
       font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#cbd5e1;
       margin:0; max-height:0; opacity:0; overflow:hidden; transition:opacity .15s, max-height .15s, margin .15s; }
     .sv-row:hover .sv-edit,
@@ -5846,32 +5848,35 @@
     .spot-country-tabs { display:inline-flex; gap:3px; background:#f1f5f9; border:1px solid #e2e8f0;
       border-radius:12px; padding:3px; flex-wrap:wrap; margin-bottom:12px; }
     .spot-ctab { border:none; background:transparent; cursor:pointer; padding:6px 13px; border-radius:9px;
-      font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:0.08em;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; letter-spacing:0.08em;
       text-transform:uppercase; color:#64748b; transition:all .15s; }
     .spot-ctab:hover { color:#0f172a; }
     .spot-ctab.is-active { background:#fff; color:#7c3aed; box-shadow:0 1px 3px rgba(15,23,42,.1); }
     /* ★ (2026-07-23) 국가 아래 도시 칩 줄 — 국가 AND 도시 AND 카테고리 3단 필터 */
-    /* 칩에 체류 날짜가 붙어 길어지므로 한 줄 유지 + 넘치면 가로 스크롤 */
-    .spot-city-tabs { display:flex; flex-wrap:nowrap; gap:6px; margin:-2px 0 14px;
-      overflow-x:auto; padding-bottom:2px; scrollbar-width:thin; }
-    .spot-city-tabs::-webkit-scrollbar { height:4px; }
-    .spot-city-tabs::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:999px; }
-    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:5px 10px;
-      border-radius:999px; font-size:10.5px; font-weight:700; color:#64748b; transition:all .15s;
-      display:inline-flex; align-items:center; gap:4px; line-height:1.4;
-      white-space:nowrap; flex-shrink:0; }
+    /* ★ (2026-07-23) 칩이 길면 2줄까지 자연 줄바꿈 — 가로 스크롤 제거, 칩 줄은 flex-wrap */
+    .spot-city-tabs { display:flex; flex-wrap:wrap; gap:7px; margin:-2px 0 14px; padding-bottom:2px; }
+    .spot-citytab { border:1px solid #e2e8f0; background:#fff; cursor:pointer; padding:6px 12px;
+      border-radius:14px; font-size:10.5px; font-weight:700; color:#64748b; transition:all .15s;
+      display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:flex-start;
+      gap:1px 7px; line-height:1.45; max-width:210px; text-align:left;
+      white-space:normal; word-break:keep-all; overflow-wrap:break-word; }
     .spot-citytab:hover { border-color:#c4b5fd; color:#0f172a; }
     .spot-citytab.is-active { background:#7c3aed; border-color:#7c3aed; color:#fff; }
-    .spot-citytab i { font-style:normal; font-family:var(--font-mono); font-size:9.5px;
-      font-weight:700; opacity:.6; }
-    .spot-citytab em { font-style:normal; font-family:var(--font-mono); font-size:9.5px;
+    .spot-citytab > b { font-weight:700; }
+    .spot-citytab .ct-meta { display:inline-flex; align-items:center; gap:6px; flex-shrink:0; }
+    .spot-citytab i { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px;
+      font-weight:700; color:#94a3b8; background:#f1f5f9; border-radius:999px; padding:0 6px; line-height:1.65; }
+    .spot-citytab em { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px;
       font-weight:600; opacity:.75; letter-spacing:0.01em; }
-    .spot-citytab em::before { content:'·'; margin-right:4px; opacity:.5; }
-    .spot-citytab.is-active i, .spot-citytab.is-active em { opacity:.85; }
+    .spot-citytab.is-active i { background:rgba(255,255,255,.2); color:#fff; }
+    .spot-citytab.is-active em { opacity:.85; }
+    /* 숙박 도시 vs 당일치기 도시 구분 — 당일치기는 🚗 + 앰버 */
+    .spot-citytab em.is-trip { color:#c2410c; opacity:1; }
+    .spot-citytab.is-active em.is-trip { color:#fde68a; opacity:1; }
     .spot-cat-tabs { display:flex; gap:18px; border-bottom:1px solid #e2e8f0; margin-bottom:18px;
       flex-wrap:wrap; }
     .spot-cattab { border:none; background:none; cursor:pointer; padding:6px 1px 10px; margin-bottom:-1px;
-      font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:0.08em;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10.5px; font-weight:700; letter-spacing:0.08em;
       text-transform:uppercase; color:#94a3b8; border-bottom:2px solid transparent;
       transition:color .15s; white-space:nowrap; }
     .spot-cattab:hover { color:#334155; }
@@ -5893,7 +5898,7 @@
     /* Google Places 대표 사진 — 도시 이미지/플레이스홀더 위에 겹침 (onerror 시 display:none → 아래 레이어 폴백) */
     .spot-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
     .spot-city-badge { position:absolute; z-index:2; top:9px; left:9px; background:#7c3aed; color:#fff;
-      font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:0.1em;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:8.5px; font-weight:700; letter-spacing:0.1em;
       text-transform:uppercase; padding:2px 7px; border-radius:6px; }
     .spot-body { padding:10px 12px 10px; flex:1; display:flex; flex-direction:column; }
     .spot-title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
@@ -5906,7 +5911,7 @@
     .spot-del:hover { background:#fff1f2; color:#e11d48; }
     .spot-del .material-symbols-outlined { font-size:16px; }
     .spot-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
-    .spot-chip { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-mono);
+    .spot-chip { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
       font-size:8px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
       padding:2px 6px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; color:#64748b; }
     .spot-chip .material-symbols-outlined { font-size:11px; }
@@ -5944,21 +5949,21 @@
     /* ═══ ★ (2026-07-23) 스팟 평점 · 추천 TOP · 펼쳐보기 상세 · 배치 추천 ═══ */
     .spot-chip.is-sched { color:#475569; border-color:#cbd5e1; background:#f1f5f9; }
     .spot-rating { display:inline-flex; align-items:center; gap:3px; margin-top:7px; align-self:flex-start;
-      font-family:var(--font-mono); font-size:10.5px; font-weight:800; color:#f59e0b; letter-spacing:-0.01em; }
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10.5px; font-weight:800; color:#f59e0b; letter-spacing:-0.01em; }
     .spot-rating i { font-style:normal; font-weight:700; color:#94a3b8; }
     .spot-rating.is-big { margin-top:0; font-size:15px; }
     .spot-card.is-top { border-color:#fcd34d; box-shadow:0 5px 16px rgba(245,158,11,.14); }
     .spot-card.is-top::before { content:''; display:block; height:3px; flex-shrink:0;
       background:linear-gradient(90deg,#f59e0b,#fcd34d); }
     .spot-top-badge { align-self:flex-start; margin-bottom:5px; padding:2px 7px; border-radius:6px;
-      font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:0.06em;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9px; font-weight:800; letter-spacing:0.06em;
       color:#78350f; background:linear-gradient(135deg,#fde68a,#fcd34d); }
     .spot-top-why { font-size:10px; line-height:1.45; color:#b45309; margin:0 0 6px;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .spot-desc.is-clickable { cursor:pointer; }
     .spot-desc.is-clickable:hover { color:#475569; }
     .spot-more { align-self:flex-start; margin-top:7px; padding:2px 0; border:none; background:transparent;
-      cursor:pointer; font-family:var(--font-mono); font-size:10px; font-weight:800; color:#7c3aed; }
+      cursor:pointer; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:800; color:#7c3aed; }
     .spot-more:hover { text-decoration:underline; }
     /* 인라인 풀폭 패널(.spot-detail*)은 드로어로 대체 — 드로어에서 재사용하는 조각만 남김 */
     .spot-detail-norate { font-size:11px; font-weight:700; color:#94a3b8; }
@@ -5970,7 +5975,7 @@
     @media (min-width:768px){ .spot-detail-revs { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     .spot-rev { padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fff; }
     .spot-rev-top { display:flex; align-items:center; gap:6px; font-size:10.5px; color:#0f172a; }
-    .spot-rev-star { font-family:var(--font-mono); font-weight:800; color:#f59e0b; }
+    .spot-rev-star { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; color:#f59e0b; }
     .spot-rev p { font-size:10.5px; line-height:1.55; color:#64748b; margin:4px 0 0; }
     .spot-rec { margin-bottom:6px; padding:5px 8px; border-radius:9px; line-height:1.45;
       font-size:10.5px; font-weight:700; color:#0f766e; background:#f0fdfa; border:1px solid #99f6e4; }
@@ -5978,7 +5983,7 @@
 
     /* ═══ ★ (2026-07-23) 스팟 가격 미니 라인 · 일정 중복 비활성 버튼 · 카드 전체 클릭 ═══ */
     .spot-card { cursor:pointer; }
-    .spot-price { margin-top:6px; font-family:var(--font-mono); font-size:9.5px; font-weight:700;
+    .spot-price { margin-top:6px; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9.5px; font-weight:700;
       color:#0f766e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .spot-price b { font-weight:800; color:#0d9488; }
     .spot-assign-btn.is-done { flex:1; min-width:0; border-color:#e2e8f0; background:#f1f5f9;
@@ -6020,7 +6025,7 @@
       border:1px solid #ccfbf1; background:#f0fdfa; }
     .spot-dw-price-main { font-size:13px; font-weight:800; color:#0f766e; line-height:1.5; }
     .spot-dw-price-note { font-size:11.5px; line-height:1.65; color:#0d9488; margin-top:4px; }
-    .spot-dw-price-lvl { font-family:var(--font-mono); font-size:11.5px; font-weight:800;
+    .spot-dw-price-lvl { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11.5px; font-weight:800;
       color:#0f766e; margin-top:5px; }
     .spot-dw-price-lvl i { font-style:normal; font-weight:700; color:#94a3b8; }
     /* 좁은 드로어 → 리뷰 3열 대신 세로 카드 나열 */
@@ -8164,20 +8169,20 @@
     .j-conflict-chip { color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 9px; font-weight: 800; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
     /* ★ (2026-07-23) dlv: Daily Log Single/4-Day 뷰 전환 (Stitch 이식) */
     .dlv-toggle { display: inline-flex; align-items: center; align-self: center; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; padding: 2px; flex-shrink: 0; }
-    .dlv-toggle button { border: 0; background: transparent; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; transition: all 0.15s; }
+    .dlv-toggle button { border: 0; background: transparent; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; transition: all 0.15s; }
     .dlv-toggle button.is-active { background: #fff; color: #7c3aed; box-shadow: 0 1px 3px rgba(15,23,42,0.12); }
-    /* 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 + 그 아래 mono 라벨 */
-    #dlv-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; margin: -6px 0 26px; }
+    /* 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 + 그 아래 Manrope 라벨 */
+    #dlv-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; margin: -6px 0 34px; }
     .dlv-prog-track { position: absolute; top: 8px; height: 1px; background: #e2e8f0; }
     .dlv-prog-fill { position: absolute; top: 8px; height: 1px; background: #7c3aed; }
     .dlv-prog-cell { position: relative; display: flex; flex-direction: column; align-items: center; }
     .dlv-prog-dot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; box-shadow: 0 0 0 4px #fff; margin-top: 5px; z-index: 1; }
     .dlv-prog-dot.is-past { background: #a78bfa; }
     .dlv-prog-dot.is-today { background: #7c3aed; box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgba(124,58,237,0.18); }
-    .dlv-prog-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-top: 13px; white-space: nowrap; }
+    .dlv-prog-label { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-top: 13px; white-space: nowrap; }
     .dlv-prog-label.is-today { color: #7c3aed; }
     /* 컬럼 상단 eyebrow (OCT 04 · 1일차) + 오늘(LIVE) 강조 */
-    .dlv-eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8; margin: 0 0 2px; }
+    .dlv-eyebrow { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8; margin: 0 0 2px; }
     .dlv-eyebrow.is-today { color: #7c3aed; }
     .dlv-live { display: inline-block; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; background: #7c3aed; color: #fff; border-radius: 4px; padding: 2px 5px; margin-left: 6px; vertical-align: middle; }
     #page-journey .j-day-card.is-today { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(124,58,237,0.08); }
@@ -8191,9 +8196,14 @@
     #journey-week-grid.wk4 .j-day-card {
       border: 0; border-left: 1px solid #f1f5f9; border-radius: 0;
       background: transparent; box-shadow: none;
-      padding: 2px 22px 10px; transition: opacity 0.2s;
+      padding: 2px 22px 18px; transition: opacity 0.2s;
     }
     #journey-week-grid.wk4 .j-day-card:first-child { border-left: 0; padding-left: 2px; }
+    /* 4열 그리드일 때만 컬럼 좌우 여백 확대 (모바일 stack에서는 폭 낭비 방지) */
+    @media (min-width: 1024px) {
+      #journey-week-grid.wk4 .j-day-card { padding-left: 32px; padding-right: 32px; }
+      #journey-week-grid.wk4 .j-day-card:first-child { padding-left: 6px; }
+    }
     #journey-week-grid.wk4 .j-day-card:hover { border-color: transparent; border-left-color: #f1f5f9; }
     #journey-week-grid.wk4 .j-day-card:first-child:hover { border-left-color: transparent; }
     #journey-week-grid.wk4 .j-day-card.is-current,
@@ -8206,25 +8216,25 @@
     /* 컬럼 헤더 */
     #journey-week-grid.wk4 .j-day-head {
       display: block; position: relative; text-align: center;
-      margin-bottom: 26px; padding: 0 0 2px; flex-wrap: nowrap;
+      margin-bottom: 36px; padding: 0 0 4px; flex-wrap: nowrap;
     }
     #journey-week-grid.wk4 .j-day-num,
     #journey-week-grid.wk4 .j-day-head-tag { display: none; }
     .wk4-eyebrow {
-      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+      font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 9px; font-weight: 700;
       text-transform: uppercase; letter-spacing: 0.12em; color: #94a3b8;
-      margin: 0 0 7px; cursor: pointer; transition: color 0.15s;
+      margin: 0 0 11px; cursor: pointer; transition: color 0.15s;
     }
     .wk4-eyebrow:hover { color: #7c3aed; }
     .wk4-eyebrow.is-today { color: #7c3aed; }
     .wk4-title {
       font-family: 'Manrope', 'Pretendard', sans-serif; font-size: 20px; font-weight: 700;
-      letter-spacing: -0.015em; line-height: 1.25; color: #0f172a;
+      letter-spacing: -0.015em; line-height: 1.3; color: #0f172a;
       margin: 0; padding: 0 30px; cursor: pointer; word-break: keep-all;
     }
     .wk4-title.is-past { color: #cbd5e1; }
     .wk4-title.is-today { color: #0f172a; }
-    .wk4-daytrip { font-size: 10px; font-weight: 600; color: #c2410c; margin: 7px 0 0; }
+    .wk4-daytrip { font-size: 10.5px; font-weight: 600; line-height: 1.6; color: #c2410c; margin: 10px 0 0; }
     #journey-week-grid.wk4 .j-day-route-btn {
       position: absolute; top: -2px; right: 0; margin: 0;
       border: 0; background: transparent; color: #cbd5e1;
@@ -8235,15 +8245,15 @@
     /* 숙소 미등록 경고 / 도시 교통편 미니패널 — 담백 톤 */
     #journey-week-grid.wk4 .j-night-warn {
       background: transparent; border: 0; border-radius: 0; padding: 0;
-      margin: 0 0 14px; font-size: 10px; font-weight: 700; color: #b45309; justify-content: center;
+      margin: 0 0 18px; font-size: 10px; font-weight: 700; color: #b45309; justify-content: center;
     }
-    #journey-week-grid.wk4 .j-day-panels { gap: 10px; margin-bottom: 18px; }
-    .wk4-transit { border-left: 2px solid #ddd6fe; padding-left: 10px; }
+    #journey-week-grid.wk4 .j-day-panels { gap: 14px; margin-bottom: 26px; }
+    .wk4-transit { border-left: 2px solid #ddd6fe; padding-left: 12px; }
     .wk4-transit-t {
-      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em; color: #7c3aed; margin: 0 0 3px;
+      font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; color: #7c3aed; margin: 0 0 5px;
     }
-    .wk4-transit-b { font-size: 11px; line-height: 1.55; color: #64748b; margin: 0; }
+    .wk4-transit-b { font-size: 11.5px; line-height: 1.65; color: #64748b; margin: 0; }
 
     /* 일정 아이템 — 아이콘 대신 왼쪽 3px 컬러 바로 색상 코딩 유지 */
     #journey-week-grid.wk4 .j-day-card .j-day-timeline { padding-left: 0; }
@@ -8253,7 +8263,7 @@
     #journey-week-grid.wk4 .j-slot.is-reservation,
     #journey-week-grid.wk4 .j-slot.is-shopping {
       display: block; position: relative;
-      margin: 0 0 22px; padding: 0 0 0 12px;
+      margin: 0 0 30px; padding: 0 0 0 15px;
       background: transparent; box-shadow: none; border: 0; border-radius: 0;
       transition: background 0.15s, border-color 0.15s;
     }
@@ -8271,10 +8281,10 @@
     /* 오늘의 현재 아이템만 흰 카드로 강조 */
     #journey-week-grid.wk4 .j-slot.wk4-slot.wk4-now {
       background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 13px 14px 13px 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+      padding: 16px 16px 16px 19px; box-shadow: 0 4px 12px rgba(15,23,42,0.05);
     }
-    #journey-week-grid.wk4 .j-slot.wk4-slot.wk4-now::before { left: 6px; top: 13px; bottom: 13px; }
-    .wk4-line { display: flex; align-items: flex-start; gap: 6px; }
+    #journey-week-grid.wk4 .j-slot.wk4-slot.wk4-now::before { left: 7px; top: 16px; bottom: 16px; }
+    .wk4-line { display: flex; align-items: flex-start; gap: 7px; }
     #journey-week-grid.wk4 .wk4-slot .wk4-slot-title {
       font-family: 'Manrope', 'Pretendard', sans-serif; font-size: 14px; font-weight: 700;
       color: #0f172a; line-height: 1.4; letter-spacing: -0.01em; margin: 0;
@@ -8283,9 +8293,12 @@
     }
     #journey-week-grid.wk4 .j-slot.is-reservation .wk4-slot-title { color: #be123c; }
     #journey-week-grid.wk4 .j-slot-mapbtn { font-size: 13px; margin: 1px 0 0; }
-    .wk4-sub { font-size: 12px; line-height: 1.55; color: #94a3b8; margin: 3px 0 0; }
-    .wk4-sub .wk4-time { font-family: var(--font-mono); font-weight: 600; color: #64748b; letter-spacing: 0.02em; }
-    .wk4-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+    /* 서브라인 — 시간 줄 / 설명 줄 분리 + 행간 확보 (빽빽함 해소) */
+    .wk4-sub { font-size: 12px; line-height: 1.7; color: #94a3b8; margin: 7px 0 0; }
+    .wk4-sub-time { margin-top: 7px; }
+    .wk4-sub-desc { margin-top: 5px; }
+    .wk4-sub .wk4-time { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 12.5px; font-weight: 700; color: #64748b; letter-spacing: 0.01em; }
+    .wk4-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
     .wk4-chip {
       display: inline-flex; align-items: center; font-size: 9px; font-weight: 800;
       letter-spacing: 0.02em; padding: 2px 6px; border-radius: 5px; white-space: nowrap;
@@ -8299,19 +8312,19 @@
     .wk4-chip.is-closed { background: #fffbeb; color: #b45309; }
     .wk4-chip.is-clash { background: #e11d48; color: #fff; }
     .wk4-chip.is-conflict { background: #fef2f2; color: #dc2626; }
-    .wk4-prebook { font-size: 10px; font-weight: 700; color: #be123c; margin: 5px 0 0; }
-    /* 이동시간 커넥터 — 앰버 박스 → 작은 보라 인라인 텍스트 */
+    .wk4-prebook { font-size: 10.5px; font-weight: 700; line-height: 1.6; color: #be123c; margin: 8px 0 0; }
+    /* 이동시간 커넥터 — 앰버 박스 → 작은 보라 인라인 텍스트 (위아래 여백 확보) */
     #journey-week-grid.wk4 .j-slot-travel {
       background: transparent; border: 0; border-radius: 0;
-      padding: 0 0 0 12px; margin: -14px 0 16px;
-      font-size: 11px; font-weight: 600; color: #7c3aed; letter-spacing: 0.01em;
+      padding: 0 0 0 15px; margin: -18px 0 22px;
+      font-size: 11.5px; font-weight: 600; line-height: 1.6; color: #7c3aed; letter-spacing: 0.01em;
     }
     /* 빈 상태 + 일정 추가 */
     #journey-week-grid.wk4 .j-slot-empty {
-      padding: 6px 0 2px; text-align: left; font-style: normal;
+      padding: 10px 0 4px; text-align: left; font-style: normal;
       font-size: 12px; color: #cbd5e1;
     }
-    #journey-week-grid.wk4 .j-day-card .j-day-add { margin-top: 12px; justify-content: flex-start; }
+    #journey-week-grid.wk4 .j-day-card .j-day-add { margin-top: 18px; justify-content: flex-start; }
     #journey-week-grid.wk4 .j-day-card .j-day-add-btn {
       border: 0; background: transparent; padding: 3px 0;
       font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
@@ -8331,8 +8344,8 @@
     .dlv-panel-date { font-size: 11px; color: #64748b; margin: 2px 0 0; }
     .dlv-panel-nav { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
     #dlv-single-body { padding: 14px 18px 18px; max-height: 640px; overflow-y: auto; }
-    /* Single 패널 타임라인: 시간 eyebrow는 mono uppercase (시안 위계) */
-    #dlv-single-panel .dlv-time { font-family: var(--font-mono); letter-spacing: 0.08em; }
+    /* Single 패널 타임라인: 시간 eyebrow는 Manrope uppercase (시안 위계) */
+    #dlv-single-panel .dlv-time { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
     /* Voyage Path 스텝퍼 (Single 뷰 지도 아래, citiesData 기반) */
     #page-journey .j-voyage-map-placeholder {
       position: absolute;
@@ -9790,7 +9803,7 @@
               <!-- Rendered View (default) -->
               <div id="trip-notes-view" class="prose-tn min-h-[200px]"></div>
               <!-- Edit Mode -->
-              <textarea id="trip-notes-textarea" placeholder="자유롭게 작성하세요. 마크다운 지원: ## 제목, **굵게**, - 리스트, - [ ] 체크박스, --- 구분선&#10;&#10;예:&#10;## 예약 체크리스트&#10;- [ ] 보로스 컬렉션 (베를린) — 공식 홈페이지, 6~7월 확인&#10;- [ ] 독일 ICE 1등석 — DB Navigator, 1개월 전" class="w-full min-h-[300px] p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-mono outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 leading-relaxed" style="resize:vertical;display:none"></textarea>
+              <textarea id="trip-notes-textarea" placeholder="자유롭게 작성하세요. 마크다운 지원: ## 제목, **굵게**, - 리스트, - [ ] 체크박스, --- 구분선&#10;&#10;예:&#10;## 예약 체크리스트&#10;- [ ] 보로스 컬렉션 (베를린) — 공식 홈페이지, 6~7월 확인&#10;- [ ] 독일 ICE 1등석 — DB Navigator, 1개월 전" class="w-full min-h-[300px] p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 leading-relaxed" style="resize:vertical;display:none;font-family:'Manrope','Pretendard',sans-serif;font-variant-numeric:tabular-nums"></textarea>
               <div class="flex justify-between items-center mt-3">
                 <p id="trip-notes-saved" class="text-[10px] text-slate-400">—</p>
                 <div class="flex gap-2">
@@ -10989,7 +11002,7 @@
               </div>
               <p class="text-sm font-bold text-slate-700 mb-1">스크린샷 / PDF 업로드</p>
               <p class="text-xs text-slate-400">카톡 예약 알림, 항공사/호텔 확인 이메일 · PDF 예약서</p>
-              <p class="text-[10px] text-slate-400 mt-1.5">클릭 · 드래그 · <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-mono text-[10px]">Ctrl</kbd> + <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-mono text-[10px]">V</kbd> 붙여넣기</p>
+              <p class="text-[10px] text-slate-400 mt-1.5">클릭 · 드래그 · <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-manrope text-[10px]">Ctrl</kbd> + <kbd class="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-manrope text-[10px]">V</kbd> 붙여넣기</p>
             </div>
             <img id="scan-preview-img" src="" alt="" class="hidden max-h-40 mx-auto rounded-xl object-contain shadow-md"/>
             <div id="scan-preview-pdf" class="hidden flex flex-col items-center gap-2 py-3">
@@ -13938,7 +13951,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=261" defer></script>
+<script src="js/app-1-pages.js?v=262" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
