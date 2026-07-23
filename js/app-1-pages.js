@@ -1659,7 +1659,9 @@
   function showConfirm(opts) {
     var m = document.getElementById('atl-confirm'); if (!m) return;
     document.getElementById('atl-confirm-title').textContent = opts.title || '확인';
-    document.getElementById('atl-confirm-msg').textContent = opts.message || '진행하시겠어요?';
+    // ★ (2026-07-23) 리치 컨텐츠 지원 — opts.html이 있으면 innerHTML (동선 최적화 미리보기 등)
+    var msgEl = document.getElementById('atl-confirm-msg');
+    if (opts.html) msgEl.innerHTML = opts.html; else msgEl.textContent = opts.message || '진행하시겠어요?';
     document.getElementById('atl-confirm-icon').textContent = opts.icon || '❓';
     var wrap = document.getElementById('atl-confirm-icon-wrap');
     var okBtn = document.getElementById('atl-confirm-ok');
@@ -14692,27 +14694,54 @@
       return s;
     }
     var before = chainKm(items), after = chainKm(newSeq);
-    if (after >= before * 0.97) { alert('지금 순서가 이미 거의 최적이야! (총 이동 ' + before.toFixed(1) + 'km)'); return; }
-    var seqTxt = newSeq.map(function(it, n){ return (n + 1) + '. ' + String(it.title || '').slice(0, 22) + (locked[n] ? ' 🔒' : ''); }).join('\n');
-    if (!confirm('🧭 동선 최적화 제안 — 총 이동 ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km (' + Math.round((1 - after / before) * 100) + '% 절감)\n\n새 순서 (🔒=자리 고정):\n' + seqTxt + '\n\n시간대는 그대로 두고 방문 스팟만 바꿔 적용할까? (각 일정의 소요시간 유지)')) return;
+    if (after >= before * 0.97) {
+      if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 지금 순서가 이미 거의 최적! (총 ' + before.toFixed(1) + 'km)');
+      else alert('지금 순서가 이미 거의 최적이야! (총 이동 ' + before.toFixed(1) + 'km)');
+      return;
+    }
+    var pct = Math.round((1 - after / before) * 100);
 
     // 적용: 원래 시간 슬롯에 새 순서 아이템 배치, 소요시간은 각자 유지
-    function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
-    function toHHMM(min){ min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
-    var slots = items.map(function(it){ return it.time; });
-    for (var k = 0; k < newSeq.length; k++) {
-      var it2 = newSeq[k];
-      if (it2._id === items[k]._id) continue;
-      var dur = null, s0 = toMin(it2.time), e0 = toMin(it2.end_time);
-      if (s0 != null && e0 != null && e0 > s0) dur = e0 - s0;
-      var ns = slots[k];
-      var ne = (dur != null && toMin(ns) != null) ? toHHMM(toMin(ns) + dur) : '';
-      it2.time = ns; it2.end_time = ne;
-      if (it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
+    var applyRoute = async function() {
+      function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+      function toHHMM(min){ min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
+      var slots = items.map(function(it){ return it.time; });
+      for (var k = 0; k < newSeq.length; k++) {
+        var it2 = newSeq[k];
+        if (it2._id === items[k]._id) continue;
+        var dur = null, s0 = toMin(it2.time), e0 = toMin(it2.end_time);
+        if (s0 != null && e0 != null && e0 > s0) dur = e0 - s0;
+        var ns = slots[k];
+        var ne = (dur != null && toMin(ns) != null) ? toHHMM(toMin(ns) + dur) : '';
+        it2.time = ns; it2.end_time = ne;
+        if (it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
+      }
+      renderWeekView();
+      if (typeof renderDayView === 'function') renderDayView();
+      if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">route</span> 동선 최적화 적용 — ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km');
+    };
+
+    // 아뜰리에 스타일 미리보기 모달 (커스텀 확인창 재사용, 없으면 confirm 폴백)
+    var listHtml = newSeq.map(function(it, n) {
+      return '<li style="display:flex;align-items:center;gap:7px;padding:3.5px 0;font-size:12px;color:#334155;text-align:left">' +
+        '<span style="width:18px;height:18px;border-radius:50%;background:#ede9fe;color:#6d28d9;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">' + (n + 1) + '</span>' +
+        '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + String(it.title || '').replace(/</g, '&lt;') + '</span>' +
+        (locked[n] ? '<span style="font-size:9px;font-weight:700;color:#94a3b8;background:#f1f5f9;border-radius:6px;padding:1px 6px;flex-shrink:0">고정</span>' : '') +
+      '</li>';
+    }).join('');
+    var html =
+      '<span style="display:flex;align-items:baseline;gap:8px;justify-content:center;margin-bottom:10px">' +
+        '<span style="font-size:13px;color:#94a3b8;text-decoration:line-through">' + before.toFixed(1) + 'km</span>' +
+        '<span style="font-size:20px;font-weight:800;color:#7c3aed">' + after.toFixed(1) + 'km</span>' +
+        '<span style="font-size:11px;font-weight:800;color:#059669;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
+      '</span>' +
+      '<ol style="list-style:none;margin:0;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;max-height:230px;overflow-y:auto">' + listHtml + '</ol>' +
+      '<span style="display:block;font-size:10px;color:#94a3b8;margin-top:8px">시간대는 유지 · 방문 순서만 변경 · 예약/이동 일정은 자리 고정</span>';
+    if (typeof showConfirm === 'function' && document.getElementById('atl-confirm')) {
+      showConfirm({ title: '동선 최적화', icon: '🧭', html: html, confirmText: '적용', onConfirm: function(){ applyRoute(); } });
+    } else if (confirm('🧭 동선 최적화 — 총 이동 ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km (' + pct + '% 절감). 적용할까?')) {
+      applyRoute();
     }
-    renderWeekView();
-    if (typeof renderDayView === 'function') renderDayView();
-    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">route</span> 동선 최적화 적용 — ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km');
   };
 
   // ── ④ 좌표 소급: 기존 일정/스팟 좌표 자동 찾기 (도시 60km 검증으로 오매칭 차단) ──
