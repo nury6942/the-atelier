@@ -3145,7 +3145,7 @@
 
     // 지도 인스턴스 생성 (await 이전 = 동시호출 경합 방지)
     if (!_leafletMap) {
-      _leafletMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+      _leafletMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, zoomAnimation: false, attributionControl: true });
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(_leafletMap);
@@ -14298,7 +14298,8 @@
     }
 
     if (!_dayPinsMap) {
-      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+      // zoomAnimation:false — 사이트 CSS와 Leaflet 줌 전환 충돌로 애니메이션 줌이 조용히 실패 (2026-07-23 실측)
+      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: true, zoomAnimation: false, attributionControl: true });
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(_dayPinsMap);
