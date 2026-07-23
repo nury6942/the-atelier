@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=248" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=249" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11022,15 +11022,7 @@
               <p class="text-[10px] text-slate-400 mt-1 text-right">총 <span id="budget-accom-total" class="font-bold text-slate-600">₩0</span></p>
             </div>
             <div class="atl-field">
-              <label>투어 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
-              <div class="atl-field-input">
-                <span class="atl-field-icon material-symbols-outlined">attractions</span>
-                <input id="budget-tour-per-day" type="text" placeholder="예: 120,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
-              </div>
-              <p class="text-[10px] text-slate-400 mt-1 text-right">총 <span id="budget-tour-total" class="font-bold text-slate-600">₩0</span></p>
-            </div>
-            <div class="atl-field">
-              <label>생활비 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치)</span></label>
+              <label>생활비 <span class="text-[10px] font-normal text-slate-400 ml-1">(1일치 · 티켓/여가 포함)</span></label>
               <div class="atl-field-input">
                 <span class="atl-field-icon material-symbols-outlined">restaurant</span>
                 <input id="budget-living-per-day" type="text" placeholder="예: 140,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');updateBudgetTotal()" class="atl-input w-full"/>
@@ -13505,7 +13497,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=248" defer></script>
+<script src="js/app-1-pages.js?v=249" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

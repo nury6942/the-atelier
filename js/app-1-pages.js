@@ -12815,15 +12815,14 @@
   }
 
   // ===== 트립 예산 (4 그룹) =====
-  // ★ (2026-07-23) 대분류 5개 / 소분류 매핑 정리 — 렌트가 '투어'로, ICE 기차가 '항공권'으로 섞이던 문제 해소
+  // ★ (2026-07-23) 대분류 4개 / 소분류 매핑 — 티켓·여가는 생활비로 흡수 (누리 방침)
   const BUDGET_GROUPS = {
-    '항공권':    { cats: ['항공'], icon: 'flight', color: '#6366f1' },
-    '숙소':      { cats: ['숙소'], icon: 'bed', color: '#3b82f6' },
-    '교통':      { cats: ['이동','렌트','교통'], icon: 'directions_car', color: '#ec4899' },
-    '투어·티켓': { cats: ['티켓','여가'], icon: 'attractions', color: '#14b8a6' },
-    '생활비':    { cats: ['식비','쇼핑','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
+    '항공권': { cats: ['항공'], icon: 'flight', color: '#6366f1' },
+    '숙소':   { cats: ['숙소'], icon: 'bed', color: '#3b82f6' },
+    '교통':   { cats: ['이동','렌트','교통'], icon: 'directions_car', color: '#ec4899' },
+    '생활비': { cats: ['식비','티켓','여가','쇼핑','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
   };
-  const BUDGET_FIELDS = { '항공권': 'flight', '숙소': 'accom', '교통': 'transport', '투어·티켓': 'tour', '생활비': 'living' };
+  const BUDGET_FIELDS = { '항공권': 'flight', '숙소': 'accom', '교통': 'transport', '생활비': 'living' };
 
   function _categoryToGroup(cat) {
     for (var g in BUDGET_GROUPS) {
@@ -12846,6 +12845,7 @@
     // ★ (2026-07-23) 숙소 예산은 1박치 × 박 수로 파생 — 저장된 총액이 옛 계산(일수 기준)이어도 자동 보정
     var _bAmt = function(field) {
       if (field === 'accom' && budget.accomPerDay) return (parseFloat(budget.accomPerDay) || 0) * getTripNights(trip);
+      if (field === 'living') return (parseFloat(budget.living) || 0) + (parseFloat(budget.tour) || 0); // 옛 투어 예산은 생활비에 흡수
       return parseFloat(budget[field]) || 0;
     };
     var hasBudget = Object.keys(BUDGET_FIELDS).some(function(g){ return parseFloat(budget[BUDGET_FIELDS[g]])||0 > 0; });
@@ -13336,8 +13336,8 @@
     var trEl = document.getElementById('budget-transport');
     if (trEl) trEl.value = _fmtAmt(parseFloat(b.transport)||0);
     document.getElementById('budget-accom-per-day').value = _fmtAmt(parseFloat(b.accomPerDay)||0);
-    document.getElementById('budget-tour-per-day').value = _fmtAmt(parseFloat(b.tourPerDay)||0);
-    document.getElementById('budget-living-per-day').value = _fmtAmt(parseFloat(b.livingPerDay)||0);
+    // 옛 투어 1일치는 생활비에 합쳐서 보여줌 (저장 시 생활비로 흡수 완료)
+    document.getElementById('budget-living-per-day').value = _fmtAmt((parseFloat(b.livingPerDay)||0) + (parseFloat(b.tourPerDay)||0));
     updateBudgetTotal();
     document.getElementById('budget-modal').style.cssText = 'display:flex!important';
   }
@@ -13350,16 +13350,13 @@
     var days = _budgetEditingDays;
     var flight = _parseAmt(document.getElementById('budget-flight').value);
     var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
-    var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
     var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
     var accomTotal = accomPerDay * _budgetEditingNights; // 숙소는 박 수 기준
-    var tourTotal = tourPerDay * days;
     var livingTotal = livingPerDay * days;
     var transport = _parseAmt((document.getElementById('budget-transport')||{}).value || '');
     document.getElementById('budget-accom-total').textContent = '₩' + accomTotal.toLocaleString('ko-KR');
-    document.getElementById('budget-tour-total').textContent = '₩' + tourTotal.toLocaleString('ko-KR');
     document.getElementById('budget-living-total').textContent = '₩' + livingTotal.toLocaleString('ko-KR');
-    var total = flight + transport + accomTotal + tourTotal + livingTotal;
+    var total = flight + transport + accomTotal + livingTotal;
     document.getElementById('budget-total-display').textContent = '₩' + total.toLocaleString('ko-KR');
   }
 
@@ -13370,7 +13367,6 @@
     var days = _budgetEditingDays;
     var flight = _parseAmt(document.getElementById('budget-flight').value);
     var accomPerDay = _parseAmt(document.getElementById('budget-accom-per-day').value);
-    var tourPerDay = _parseAmt(document.getElementById('budget-tour-per-day').value);
     var livingPerDay = _parseAmt(document.getElementById('budget-living-per-day').value);
     var nights = _budgetEditingNights;
     var transport = _parseAmt((document.getElementById('budget-transport')||{}).value || '');
@@ -13378,10 +13374,9 @@
       flight: flight,
       transport: transport, // 기차·렌트 총액
       accom: accomPerDay * nights, // 숙소는 박 수 기준 (9일 여행 = 8박)
-      tour: tourPerDay * days,
+      tour: 0, tourPerDay: 0, // 투어 그룹 폐지 — 생활비에 흡수됨
       living: livingPerDay * days,
       accomPerDay: accomPerDay,
-      tourPerDay: tourPerDay,
       livingPerDay: livingPerDay,
       days: days,
       nights: nights,
