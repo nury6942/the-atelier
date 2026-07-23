@@ -9339,7 +9339,7 @@
     } else {
       desc = item.title || item.type || '여행 비용';
     }
-    return {
+    var obj = {
       date: item.payment_date || item.date || '',
       description: desc,
       trip: tripName,
@@ -9348,6 +9348,9 @@
       currency: 'KRW',
       journey_id: item._id,
     };
+    // 결제일이 명시된 경우에만 paid_date 동기화 (빈 값으로 덮어쓰지 않음)
+    if (item.payment_date) obj.paid_date = item.payment_date;
+    return obj;
   }
 
   async function syncJourneyToFinance(item) {
@@ -12140,6 +12143,40 @@
     } catch(e) { console.error('[FinanceLocal] Firebase save 실패:', e); }
   }
 
+  // ===== 결제일(paid_date) 헬퍼 =====
+  // 정렬·잔액 기준일 우선순위: finance.paid_date > journey.payment_date > date
+  var financeJourneyPayMap = {};
+  function finPaidKey(row) {
+    if (!row) return '';
+    return row.paidDate || row.jPayDate || row[0] || '';
+  }
+  function finHasExplicitPaid(row) {
+    return !!(row && (row.paidDate || row.jPayDate));
+  }
+  function finTodayStr() { return new Date().toISOString().split('T')[0]; }
+  // 예정(미결제) 판정: unpaid 플래그 or 결제일이 미래
+  function finIsPending(row, todayStr) {
+    if (!row) return false;
+    if (row.unpaid) return true;
+    var k = finPaidKey(row);
+    return !!k && k > todayStr;
+  }
+  function finFmtDate(d) {
+    if (!d || String(d).length < 10) return d || '—';
+    return d.substring(5, 7) + '.' + d.substring(8, 10);
+  }
+  function finSortByPaid(arr) {
+    arr.sort(function(a, b) { return finPaidKey(a).localeCompare(finPaidKey(b)); });
+  }
+  function finAttachRowMeta(row, d) {
+    row.paidDate = d.paid_date || '';
+    row.unpaid = d.unpaid === true;
+    row.journeyId = d.journey_id || '';
+    var j = row.journeyId ? financeJourneyPayMap[row.journeyId] : null;
+    row.jPayDate = (j && j.payment_date) ? j.payment_date : '';
+    return row;
+  }
+
   async function loadFinance() {
     document.getElementById('finance-loading').style.display = 'flex';
     document.getElementById('finance-table-wrap').style.display = 'none';
@@ -12147,8 +12184,15 @@
     try {
       // 삭제/수정 목록 Firebase에서 먼저 로드 (다기기 동기화)
       await loadFinanceLocalStateFromFirebase();
-      var [initialDocs, tripDocs] = await Promise.all([fbRead('finance'), fbRead('trips')]);
+      var [initialDocs, tripDocs, journeyDocs] = await Promise.all([
+        fbRead('finance'), fbRead('trips'),
+        fbRead('journey').catch(function(){ return []; })
+      ]);
       financeTrips = tripDocs;
+      financeJourneyPayMap = {};
+      journeyDocs.forEach(function(j) {
+        financeJourneyPayMap[j._id] = { payment_date: j.payment_date || '' };
+      });
 
       // 1회성 마이그레이션: 하드코딩 defaults를 Firestore에 실제 문서로 옮김
       // 이후엔 getFinanceDefaults()가 []를 반환하므로 삭제하면 진짜 삭제됨
@@ -12157,12 +12201,12 @@
       var didResync = await migrateJourneyFinanceDescriptions();
       var docs = (didMigrate || didResync) ? await fbRead('finance') : initialDocs;
 
-      financeData = docs.map(function(d){ return objToRow('finance', d).concat([d._id]); });
+      financeData = docs.map(function(d){ return finAttachRowMeta(objToRow('finance', d).concat([d._id]), d); });
       console.log('[Finance Load] Firestore docs=' + financeData.length + (didMigrate ? ' (마이그레이션 후 재로드)' : ''));
       var defaults = getFinanceDefaults();
       if (defaults.length) console.log('[Finance Load] Defaults added=' + defaults.length + ' (마이그레이션 폴백)');
       financeData = financeData.concat(defaults);
-      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+      finSortByPaid(financeData);
       document.getElementById('finance-loading').style.display = 'none';
       buildFinanceTripFilters();
       // ★ 컨텍스트 유지: Travel에서 선택된 trip → Finance에도 동일 trip 자동 선택
@@ -12233,42 +12277,73 @@
   function renderFinanceTable() {
     var tbody = document.getElementById('finance-tbody');
     tbody.innerHTML = '';
-    // 잔액: 시간순(오름차순) + 원본 순서 유지로 계산
+    var todayStr = finTodayStr();
+    // 잔액: 결제일(paid_date||date) 오름차순 누적, 예정(미결제·미래) 행은 제외
     var indexed = financeFiltered.map(function(row, i){ return {row:row, origIdx:i}; });
     indexed.sort(function(a,b){
-      var dc = (a.row[0]||'').localeCompare(b.row[0]||'');
+      var dc = finPaidKey(a.row).localeCompare(finPaidKey(b.row));
       return dc !== 0 ? dc : a.origIdx - b.origIdx;
     });
     var balMap = new Map();
     var running = 0;
     indexed.forEach(function(item){
-      var c = item.row[3]||'기타';
+      if (finIsPending(item.row, todayStr)) return;
       var a = parseFloat(item.row[4])||0;
-      if (c==='입금') running += a; else running -= a;
+      if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
       balMap.set(item.row, running);
     });
-    console.log('[Balance] 계산완료: 최종잔액=' + running + ', 항목수=' + indexed.length);
+    var currentBalance = running;
+    console.log('[Balance] 계산완료: 현재잔액=' + currentBalance + ', 항목수=' + indexed.length);
     // 입력 행 맨 위
     appendFinanceInputRow(tbody);
-    // 역순 표시 (최신→오래된, 같은 날짜 내에서는 원본 역순)
+    // 역순 표시 (결제일 최신→오래된)
     var reversed = financeFiltered.map(function(row, i){ return {row:row, origIdx:i}; });
     reversed.sort(function(a,b){
-      var dc = (b.row[0]||'').localeCompare(a.row[0]||'');
+      var dc = finPaidKey(b.row).localeCompare(finPaidKey(a.row));
       return dc !== 0 ? dc : b.origIdx - a.origIdx;
     });
-    reversed = reversed.map(function(item){ return item.row; });
-    reversed.forEach(function(row) {
+    var fmtSigned = function(n) { return (n < 0 ? '-' : '') + '₩' + Math.round(Math.abs(n)).toLocaleString('ko-KR'); };
+    var todayMarked = false;
+    var curMonth = '';
+    var pendingCount = 0;
+    var appendTodayMarker = function() {
+      var mtr = document.createElement('tr');
+      mtr.className = 'fin-today-row';
+      mtr.innerHTML = '<td colspan="6"><div class="fin-today-line"><span>오늘</span>' +
+        '<span class="fin-today-bal">현재 잔액 ' + fmtSigned(currentBalance) + '</span>' +
+        '<span class="fin-today-date">' + todayStr + '</span></div></td>';
+      tbody.appendChild(mtr);
+      todayMarked = true;
+    };
+    reversed.forEach(function(item) {
+      var row = item.row;
+      var key = finPaidKey(row);
+      if (!todayMarked && key <= todayStr) appendTodayMarker();
+      var mon = key ? key.substring(0, 7) : '';
+      if (mon && mon !== curMonth) {
+        curMonth = mon;
+        var htr = document.createElement('tr');
+        htr.className = 'fin-month-row';
+        htr.innerHTML = '<td colspan="6">' + parseInt(mon.substring(0,4),10) + '년 ' + parseInt(mon.substring(5,7),10) + '월</td>';
+        tbody.appendChild(htr);
+      }
       var realIdx = financeData.indexOf(row);
       var cat = row[3]||'기타';
       var icon = FIN_CAT_ICONS[cat]||'more_horiz';
-      var color = FIN_CAT_COLORS[cat]||'text-slate-500';
+      var chipBg = FIN_CAT_BG[cat]||'bg-slate-50 text-slate-600 border-slate-200';
       var amt = parseFloat(row[4])||0;
-      var bal = balMap.get(row)||0;
-      var balColor = bal >= 0 ? 'text-indigo-600' : 'text-rose-600';
       var isDeposit = cat === '입금';
+      var isPending = finIsPending(row, todayStr);
+      if (isPending) pendingCount++;
       var tr = document.createElement('tr');
-      tr.className = 'hover:bg-indigo-50/30 transition-colors group';
+      tr.className = 'fin-row group' + (isPending ? ' fin-row-pending' : '');
       tr.dataset.finIdx = realIdx;
+      // 날짜 셀: 결제일 표시 + 클릭 편집. 파생 행에 결제일 미설정이면 연필 힌트
+      var needHint = !!row.journeyId && !finHasExplicitPaid(row);
+      var dateTitle = needHint ? '탑승·체크인 일자예요 — 클릭해서 실제 결제일로 바꿔줘' : '클릭해서 결제일 수정';
+      var dateHtml = '<span class="fin-date" title="' + dateTitle + '">' + finFmtDate(key) +
+        (needHint ? '<span class="material-symbols-outlined fin-pencil">edit</span>' : '') + '</span>' +
+        (isPending ? '<span class="fin-chip fin-pending-chip">예정</span>' : '');
       // EUR 행은 € 표시 + ₩ 병기 (저장된 환산액 우선, 없으면 오늘 환율)
       var isEur = row[5] === 'EUR';
       var sym = isEur ? '€' : '₩';
@@ -12276,21 +12351,34 @@
       if (isEur) {
         var krwStored = parseFloat(row[6]) || 0;
         var approx = krwStored ? '≈ ₩' + Math.round(krwStored).toLocaleString('ko-KR') : fmtKrwFromEur(amt);
-        if (approx) krwNote = '<span class="block text-[10px] text-slate-400 font-medium">' + approx + '</span>';
+        if (approx) krwNote = '<span class="fin-desc-sub">' + approx + '</span>';
       }
       var amtHtml = isDeposit
-        ? '<span class="font-bold text-indigo-600">+' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote
-        : '<span class="font-bold text-rose-600">-' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote;
+        ? '<span class="fin-amt fin-amt-dep">+' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote
+        : '<span class="fin-amt fin-amt-exp">-' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote;
+      var balHtml;
+      if (balMap.has(row)) {
+        var bal = balMap.get(row);
+        balHtml = '<span class="fin-bal' + (bal < 0 ? ' fin-bal-neg' : '') + '">' + fmtSigned(bal) + '</span>';
+      } else {
+        balHtml = '<span class="fin-bal fin-bal-skip">—</span>';
+      }
+      var tglTitle = row.unpaid ? '결제 완료로 표시' : '미결제(현장결제)로 표시';
+      var tglIcon = row.unpaid ? 'event_available' : 'schedule';
       tr.innerHTML =
-        '<td class="px-6 py-3 text-slate-500 text-sm cursor-pointer" onclick="clickEditFinance('+realIdx+',0,this)">' + (row[0]||'—') + '</td>' +
-        '<td class="px-6 py-3 cursor-pointer" onclick="clickEditFinance('+realIdx+',1,this)"><p class="font-semibold text-slate-800 text-sm">' + (row[1]||'—') + '</p></td>' +
-        '<td class="px-6 py-3 cursor-pointer" onclick="clickEditFinance('+realIdx+',2,this)"><span class="flex items-center gap-1.5 text-xs font-bold ' + color + '"><span class="material-symbols-outlined text-sm">' + icon + '</span>' + cat + '</span></td>' +
-        '<td class="px-6 py-3 text-right cursor-pointer" onclick="clickEditFinance('+realIdx+',3,this)">' + amtHtml + '</td>' +
-        '<td class="px-6 py-3 text-right text-xs font-semibold ' + balColor + '">₩' + Math.round(bal).toLocaleString('ko-KR') + '</td>' +
-        '<td class="px-6 py-3 text-center"><button onclick="deleteFinanceAny('+realIdx+')" class="p-1 hover:bg-rose-100 rounded-lg text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined text-sm">delete</span></button></td>';
+        '<td class="fin-td" onclick="editFinancePaidDate('+realIdx+',this)">' + dateHtml + '</td>' +
+        '<td class="fin-td cursor-pointer" onclick="clickEditFinance('+realIdx+',1,this)"><span class="fin-desc">' + (row[1]||'—') + '</span></td>' +
+        '<td class="fin-td cursor-pointer" onclick="clickEditFinance('+realIdx+',2,this)"><span class="fin-chip fin-chip-cat ' + chipBg + '"><span class="material-symbols-outlined">' + icon + '</span>' + cat + '</span></td>' +
+        '<td class="fin-td text-right cursor-pointer" onclick="clickEditFinance('+realIdx+',3,this)">' + amtHtml + '</td>' +
+        '<td class="fin-td text-right">' + balHtml + '</td>' +
+        '<td class="fin-td text-center"><div class="fin-acts">' +
+          '<button onclick="toggleFinanceUnpaid('+realIdx+')" title="' + tglTitle + '" class="fin-act-btn' + (row.unpaid ? ' fin-act-on' : '') + '"><span class="material-symbols-outlined">' + tglIcon + '</span></button>' +
+          '<button onclick="deleteFinanceAny('+realIdx+')" title="삭제" class="fin-act-btn fin-act-del"><span class="material-symbols-outlined">delete</span></button>' +
+        '</div></td>';
       tbody.appendChild(tr);
     });
-    document.getElementById('finance-status').textContent = financeFiltered.length + '개 항목';
+    if (!todayMarked) appendTodayMarker();
+    document.getElementById('finance-status').textContent = financeFiltered.length + '개 항목' + (pendingCount ? ' · 예정 ' + pendingCount + '건' : '');
   }
 
   function clickEditFinance(idx, col, td) {
@@ -12358,22 +12446,92 @@
     } catch(e) { console.error('[Finance Edit] Update error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message); }
   }
 
+  // 날짜 셀 단독 인라인 편집 → paid_date 저장
+  function editFinancePaidDate(idx, td) {
+    var row = financeData[idx]; if (!row) return;
+    if (td.querySelector('input')) return;
+    if (row[7] === '__default__') { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 내용을 먼저 한 번 저장한 뒤 결제일을 바꿀 수 있어요'); return; }
+    var cur = finPaidKey(row);
+    td.innerHTML = '<input type="date" value="' + (cur || '') + '" class="fin-date-input"/>';
+    var input = td.querySelector('input');
+    initInlineDatePickers(td);
+    var done = false;
+    var commit = function() {
+      if (done) return; done = true;
+      var v = input.value;
+      if (!v || v === cur) { filterFinanceByTrip(currentFinanceTrip); return; }
+      saveFinancePaidDate(idx, v);
+    };
+    input.addEventListener('change', commit);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') { e.preventDefault(); done = true; filterFinanceByTrip(currentFinanceTrip); }
+    });
+    input.addEventListener('blur', function() { setTimeout(commit, 150); });
+    if (input._flatpickr) input._flatpickr.open(); else input.focus();
+  }
+
+  async function saveFinancePaidDate(idx, val) {
+    var row = financeData[idx]; if (!row) return;
+    var id = row[7];
+    try {
+      var patch = { paid_date: val };
+      // 수기 행은 날짜 자체가 결제일 — date도 함께 갱신
+      if (!row.journeyId) patch.date = val;
+      await fbUpdate('finance', id, patch);
+      row.paidDate = val;
+      if (!row.journeyId) row[0] = val;
+      // 파생 행이면 원본 journey 문서에도 결제일 반영 (재동기화 시 유지)
+      if (row.journeyId) {
+        try {
+          await fbUpdate('journey', row.journeyId, { payment_date: val });
+          row.jPayDate = val;
+          financeJourneyPayMap[row.journeyId] = { payment_date: val };
+        } catch(e) { console.warn('[Finance PaidDate] journey 동기화 실패:', e); }
+      }
+      finSortByPaid(financeData);
+      filterFinanceByTrip(currentFinanceTrip);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 결제일 저장: ' + val);
+    } catch(e) {
+      console.error('[Finance PaidDate]', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message);
+      filterFinanceByTrip(currentFinanceTrip);
+    }
+  }
+
+  // 결제/미결제(현장결제) 인라인 토글
+  async function toggleFinanceUnpaid(idx) {
+    var row = financeData[idx]; if (!row) return;
+    var id = row[7];
+    if (id === '__default__') { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 내용을 먼저 한 번 저장한 뒤 표시할 수 있어요'); return; }
+    var next = !row.unpaid;
+    try {
+      await fbUpdate('finance', id, { unpaid: next });
+      row.unpaid = next;
+      filterFinanceByTrip(currentFinanceTrip);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (next ? '예정 지출로 표시했어 (잔액에서 제외)' : '결제 완료로 표시했어'));
+    } catch(e) {
+      console.error('[Finance Unpaid]', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message);
+    }
+  }
+
   function appendFinanceInputRow(tbody) {
-    var ic = 'border border-slate-200 rounded px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-200';
+    var ic = 'border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-violet-200 bg-white';
     var catOpts = ['입금','이동','숙소','렌트','티켓','환전','보험','통신','식비','교통','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
     var tripVal = currentFinanceTrip!=='all' ? currentFinanceTrip : (financeTrips.length?financeTrips[0].name:'');
     var tr = document.createElement('tr');
     tr.id = 'fin-input-row';
-    tr.className = 'bg-indigo-50/30';
+    tr.className = 'fin-input-row';
     tr.innerHTML =
       '<td class="px-4 py-2"><input id="fir-date" type="date" value="'+new Date().toISOString().split('T')[0]+'" class="'+ic+'" style="width:120px"/></td>' +
       '<td class="px-4 py-2"><input id="fir-desc" type="text" placeholder="내용 입력..." class="'+ic+' w-full"/></td>' +
-      '<td class="px-4 py-2"><select id="fir-cat" class="'+ic+' bg-white" style="width:90px" onchange="(function(s){var amt=document.getElementById(\'fir-amount\');if(s.value===\'입금\'){amt.classList.add(\'text-indigo-600\');amt.classList.remove(\'text-rose-600\');amt.placeholder=\'입금\';}else{amt.classList.add(\'text-rose-600\');amt.classList.remove(\'text-indigo-600\');amt.placeholder=\'출금\';}})(this)">' + catOpts + '</select></td>' +
+      '<td class="px-4 py-2"><select id="fir-cat" class="'+ic+'" style="width:90px" onchange="(function(s){var amt=document.getElementById(\'fir-amount\');if(s.value===\'입금\'){amt.classList.add(\'text-emerald-600\');amt.classList.remove(\'text-rose-600\');amt.placeholder=\'입금\';}else{amt.classList.add(\'text-rose-600\');amt.classList.remove(\'text-emerald-600\');amt.placeholder=\'출금\';}})(this)">' + catOpts + '</select></td>' +
       '<td class="px-4 py-2 text-right"><input id="fir-amount" type="text" placeholder="출금" inputmode="numeric" class="'+ic+' text-right text-rose-600" style="width:120px" oninput="finAmtFmt(this)"/></td>' +
       '<td class="px-4 py-2 text-right text-xs text-slate-300">—</td>' +
       '<td class="px-4 py-2 text-center">' +
         '<input type="hidden" id="fir-trip" value="'+tripVal+'"/>' +
-        '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-indigo-600 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span></button>' +
+        '<button onclick="submitFinanceInputRow()" class="p-1.5 bg-violet-100 hover:bg-violet-200 rounded-lg text-violet-700 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-h3)">add</span></button>' +
       '</td>';
     tbody.appendChild(tr);
     initInlineDatePickers(tr);
@@ -12407,9 +12565,13 @@
     var row = [date, desc, trip, cat, String(amt), 'KRW', ''];
     console.log('[Finance] Saving:', { date:date, desc:desc, trip:trip, cat:cat, amt:amt });
     try {
-      var saved = await fbAdd('finance', rowToObj('finance', row));
-      financeData.push(row.concat([saved._id]));
-      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+      var obj = rowToObj('finance', row);
+      obj.paid_date = date; // 수기 행: 입력 날짜 = 결제일
+      var saved = await fbAdd('finance', obj);
+      var newRow = row.concat([saved._id]);
+      newRow.paidDate = date;
+      financeData.push(newRow);
+      finSortByPaid(financeData);
       buildFinanceTripFilters();
       filterFinanceByTrip(currentFinanceTrip);
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장 완료');
@@ -12486,6 +12648,24 @@
     var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?(parseFloat(r[4])||0):0); }, 0);
     var depositTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?(parseFloat(r[4])||0):0); }, 0);
     var balance = depositTotal - expenseTotal;
+
+    // 오늘 기준 3-스탯: 현재 잔액(오늘까지 결제분) / 예정 지출 / 최종 예상 잔액
+    var fsToday = finTodayStr();
+    var curBal = 0, plannedExp = 0, plannedDep = 0;
+    financeFiltered.forEach(function(r) {
+      var a = parseFloat(r[4])||0;
+      var dep = (r[3]||'기타') === '입금';
+      if (finIsPending(r, fsToday)) { if (dep) plannedDep += a; else plannedExp += a; }
+      else { curBal += dep ? a : -a; }
+    });
+    var finalBal = curBal + plannedDep - plannedExp;
+    var fsFmt = function(n) { return (n < 0 ? '-' : '') + '₩' + Math.round(Math.abs(n)).toLocaleString('ko-KR'); };
+    var fsCur = document.getElementById('fin-stat-current');
+    if (fsCur) { fsCur.textContent = fsFmt(curBal); fsCur.style.color = curBal < 0 ? '#e11d48' : '#0f172a'; }
+    var fsPln = document.getElementById('fin-stat-planned');
+    if (fsPln) fsPln.textContent = fsFmt(plannedExp);
+    var fsFin = document.getElementById('fin-stat-final');
+    if (fsFin) { fsFin.textContent = fsFmt(finalBal); fsFin.style.color = finalBal < 0 ? '#e11d48' : '#334155'; }
     console.log('[Finance Stats] 입금=' + depositTotal + ', 출금=' + expenseTotal + ', 잔액=' + balance);
     var depEl = document.getElementById('finance-main-deposit');
     if (depEl) depEl.textContent = '₩' + Math.round(depositTotal).toLocaleString('ko-KR');
@@ -13321,9 +13501,13 @@
     if (cat === '입금') desc = desc || '입금';
     var row = [date, desc, trip, cat, amt, 'KRW', ''];
     try {
-      var saved = await fbAdd('finance', rowToObj('finance', row));
-      financeData.push(row.concat([saved._id]));
-      financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+      var obj = rowToObj('finance', row);
+      obj.paid_date = date;
+      var saved = await fbAdd('finance', obj);
+      var newRow = row.concat([saved._id]);
+      newRow.paidDate = date;
+      financeData.push(newRow);
+      finSortByPaid(financeData);
       cancelFinanceInline();
       buildFinanceTripFilters();
       filterFinanceByTrip(currentFinanceTrip);
@@ -13385,10 +13569,14 @@
       var newRow = [date, desc, row[2], cat, String(amt), 'KRW', ''];
       try {
         await fbUpdate('finance', row[7], rowToObj('finance', newRow));
-        financeData[idx] = newRow.concat([row[7]]);
+        var repl = newRow.concat([row[7]]);
+        // 결제일/미결제 메타 유지
+        repl.paidDate = row.paidDate; repl.unpaid = row.unpaid;
+        repl.journeyId = row.journeyId; repl.jPayDate = row.jPayDate;
+        financeData[idx] = repl;
       } catch(e) { alert('저장 실패'); return; }
     }
-    financeData.sort(function(a,b){ return (a[0]||'').localeCompare(b[0]||''); });
+    finSortByPaid(financeData);
     filterFinanceByTrip(currentFinanceTrip);
   }
 

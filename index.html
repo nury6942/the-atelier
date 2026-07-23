@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=235" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=236" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5437,6 +5437,61 @@
     .trav-act { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; border:1px solid var(--gray-200,#e2e8f0);
       background:#fff; color:#475569; font-size:11px; font-weight:700; letter-spacing:0.02em; cursor:pointer; transition:all .15s; }
     .trav-act:hover { border-color:#c4b5fd; color:#6d28d9; background:#faf8ff; }
+
+    /* ═══ Finance 장부 리디자인 (2026-07-23): 결제일 기준 데이터 에디토리얼 ═══ */
+    .fin-band { display:grid; grid-template-columns:1fr; background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden; }
+    @media (min-width:768px){ .fin-band { grid-template-columns:1.25fr 1fr 1fr; } }
+    .fin-band-cell { padding:20px 24px; }
+    .fin-band-cell + .fin-band-cell { border-top:1px solid #f1f5f9; }
+    @media (min-width:768px){ .fin-band-cell + .fin-band-cell { border-top:none; border-left:1px solid #f1f5f9; } }
+    .fin-band-main { font-size:27px !important; letter-spacing:-0.02em; }
+    .fin-band-sub { font-size:21px !important; letter-spacing:-0.01em; color:#334155; }
+    .fin-thead th { font-family:'Inter','Pretendard',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em;
+      color:#94a3b8; background:#fff; border-bottom:1px solid #e2e8f0; padding:12px 24px; text-align:left; }
+    .fin-thead th.text-right { text-align:right; }
+    .fin-thead th.text-center { text-align:center; }
+    .fin-td { padding:13px 24px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+    .fin-row { transition:background .12s; }
+    .fin-row:hover { background:#faf8ff; }
+    .fin-row-pending { background:#fcfcfd; }
+    .fin-row-pending .fin-desc, .fin-row-pending .fin-amt, .fin-row-pending .fin-bal,
+    .fin-row-pending .fin-chip-cat, .fin-row-pending .fin-date, .fin-row-pending .fin-desc-sub { opacity:.5; }
+    .fin-month-row td { padding:26px 24px 9px; font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.15em; color:#a1a1b3; border-bottom:1px solid #e2e8f0; }
+    .fin-today-row td { padding:9px 24px; background:#faf8ff; border-top:1px solid #ede9fe; border-bottom:1px solid #ede9fe; }
+    .fin-today-line { display:flex; align-items:baseline; gap:10px; }
+    .fin-today-line > span:first-child { font-family:'Inter','Pretendard',sans-serif; font-size:10px; font-weight:800;
+      text-transform:uppercase; letter-spacing:0.16em; color:#7c3aed; }
+    .fin-today-bal { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:800; color:#0f172a; font-variant-numeric:tabular-nums; }
+    .fin-today-date { font-family:'Inter','Pretendard',sans-serif; font-size:10px; font-weight:600; color:#c4b5fd; margin-left:auto; font-variant-numeric:tabular-nums; }
+    .fin-date { font-family:'Inter','Pretendard',sans-serif; font-size:12.5px; font-weight:600; color:#64748b; font-variant-numeric:tabular-nums;
+      display:inline-flex; align-items:center; gap:4px; cursor:pointer; }
+    .fin-date:hover { color:#7c3aed; }
+    .fin-pencil { font-size:13px !important; color:#c4b5fd; }
+    .fin-date:hover .fin-pencil { color:#7c3aed; }
+    .fin-date-input { border:1px solid #ddd6fe; border-radius:8px; padding:4px 8px; font-size:12px; width:118px; outline:none; }
+    .fin-desc { font-size:13px; font-weight:600; color:#1e293b; line-height:1.45; }
+    .fin-desc-sub { display:block; font-size:10.5px; font-weight:500; color:#94a3b8; margin-top:2px; font-variant-numeric:tabular-nums; }
+    .fin-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:999px; border-width:1px; border-style:solid;
+      font-size:10.5px; font-weight:700; white-space:nowrap; }
+    .fin-chip .material-symbols-outlined { font-size:12px; }
+    .fin-pending-chip { background:#fffbeb; color:#b45309; border-color:#fde68a; margin-left:6px; }
+    .fin-amt { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+    .fin-amt-exp { color:#dc2626; }
+    .fin-amt-dep { color:#059669; }
+    .fin-bal { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:700; color:#334155; font-variant-numeric:tabular-nums; }
+    .fin-bal-neg { color:#e11d48; }
+    .fin-bal-skip { color:#cbd5e1; font-weight:600; }
+    .fin-acts { display:flex; gap:4px; justify-content:center; }
+    .fin-act-btn { padding:4px; border-radius:8px; border:none; background:none; color:#cbd5e1; cursor:pointer; opacity:0; transition:all .12s; }
+    .fin-row:hover .fin-act-btn { opacity:1; }
+    .fin-act-btn:hover { background:#f1f5f9; color:#64748b; }
+    .fin-act-btn .material-symbols-outlined { font-size:16px; display:block; }
+    .fin-act-on { opacity:1 !important; color:#b45309; }
+    .fin-act-on:hover { background:#fffbeb; color:#b45309; }
+    .fin-act-del:hover { background:#ffe4e6; color:#e11d48; }
+    .fin-input-row { background:#fcfbff; }
+    .fin-input-row td { border-bottom:1px solid #ede9fe; }
     .trav-act .material-symbols-outlined { font-size:15px; }
     .trav-act-primary { background:#0f172a; border-color:#0f172a; color:#fff; }
     .trav-act-primary:hover { background:#1e1b4b; border-color:#1e1b4b; color:#fff; }
@@ -10717,6 +10772,24 @@
         <div id="finance-category-breakdown" class="flex gap-3 flex-wrap"></div>
       </section>
 
+      <!-- 잔액 3-스탯 밴드 (오늘 기준) -->
+      <section class="mb-6">
+        <div class="fin-band">
+          <div class="fin-band-cell">
+            <p class="trav-stat-l" style="margin-bottom:6px">현재 잔액 · 오늘까지 결제분</p>
+            <p class="trav-stat-v fin-band-main" id="fin-stat-current">₩0</p>
+          </div>
+          <div class="fin-band-cell">
+            <p class="trav-stat-l" style="margin-bottom:6px">예정 지출 · 미결제 포함</p>
+            <p class="trav-stat-v fin-band-sub" id="fin-stat-planned">₩0</p>
+          </div>
+          <div class="fin-band-cell">
+            <p class="trav-stat-l" style="margin-bottom:6px">최종 예상 잔액</p>
+            <p class="trav-stat-v fin-band-sub" id="fin-stat-final">₩0</p>
+          </div>
+        </div>
+      </section>
+
       <!-- 거래 내역 테이블 -->
       <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
@@ -10724,7 +10797,7 @@
             <h4 class="font-manrope font-bold text-slate-800">거래 내역</h4>
             <p id="finance-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
-          <div class="text-[10px] text-slate-400 font-medium">테이블 하단에서 바로 입력</div>
+          <div class="text-[10px] text-slate-400 font-medium">맨 위 행에서 바로 입력 · 날짜 클릭으로 결제일 수정</div>
         </div>
 
         <div id="finance-loading" class="flex items-center justify-center py-12 text-slate-400">
@@ -10734,17 +10807,17 @@
 
         <div id="finance-table-wrap" style="display:none" class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widests text-slate-500">
+            <thead class="fin-thead">
               <tr>
-                <th class="px-6 py-3 border-b border-slate-100">날짜</th>
-                <th class="px-6 py-3 border-b border-slate-100">내용</th>
-                <th class="px-6 py-3 border-b border-slate-100">카테고리</th>
-                <th class="px-6 py-3 border-b border-slate-100 text-right">금액</th>
-                <th class="px-6 py-3 border-b border-slate-100 text-right">잔액</th>
-                <th class="px-6 py-3 border-b border-slate-100 text-center w-20">관리</th>
+                <th>결제일</th>
+                <th>내용</th>
+                <th>카테고리</th>
+                <th class="text-right">금액</th>
+                <th class="text-right">잔액</th>
+                <th class="text-center" style="width:84px">관리</th>
               </tr>
             </thead>
-            <tbody id="finance-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
+            <tbody id="finance-tbody" class="fin-tbody text-sm"></tbody>
           </table>
         </div>
 
@@ -13356,7 +13429,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=235" defer></script>
+<script src="js/app-1-pages.js?v=236" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
