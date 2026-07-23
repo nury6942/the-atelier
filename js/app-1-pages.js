@@ -7433,7 +7433,12 @@
         (city ? ' <span style="color:var(--j-on-surface-variant);font-size: var(--font-size-micro)"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
         (descSub ? '<span class="j-souvenir-desc">' + descSub + '</span>' : '') +
       '</div>' +
-      '<span class="j-souvenir-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + '</span>' +
+      '<span class="j-souvenir-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + (function(){
+        // 단일 숫자 금액만 ₩ 병기 (범위 "40~120"은 스킵)
+        if (!amount || !/^[0-9]+(\.[0-9]+)?$/.test(String(amount).trim())) return '';
+        var k = fmtKrwFromEur(amount);
+        return k ? '<span style="display:block;font-size:10px;font-weight:600;color:#94a3b8">' + k + '</span>' : '';
+      })() + '</span>' +
       '<div class="j-souvenir-actions">' +
         (editFn ? '<button onclick="' + editFn + '"><span class="material-symbols-outlined">edit_square</span></button>' : '') +
         '<button class="danger" onclick="' + deleteFn + '"><span class="material-symbols-outlined">delete</span></button>' +
@@ -12254,9 +12259,18 @@
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-indigo-50/30 transition-colors group';
       tr.dataset.finIdx = realIdx;
+      // EUR 행은 € 표시 + ₩ 병기 (저장된 환산액 우선, 없으면 오늘 환율)
+      var isEur = row[5] === 'EUR';
+      var sym = isEur ? '€' : '₩';
+      var krwNote = '';
+      if (isEur) {
+        var krwStored = parseFloat(row[6]) || 0;
+        var approx = krwStored ? '≈ ₩' + Math.round(krwStored).toLocaleString('ko-KR') : fmtKrwFromEur(amt);
+        if (approx) krwNote = '<span class="block text-[10px] text-slate-400 font-medium">' + approx + '</span>';
+      }
       var amtHtml = isDeposit
-        ? '<span class="font-bold text-indigo-600">+₩' + amt.toLocaleString('ko-KR') + '</span>'
-        : '<span class="font-bold text-rose-600">-₩' + amt.toLocaleString('ko-KR') + '</span>';
+        ? '<span class="font-bold text-indigo-600">+' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote
+        : '<span class="font-bold text-rose-600">-' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote;
       tr.innerHTML =
         '<td class="px-6 py-3 text-slate-500 text-sm cursor-pointer" onclick="clickEditFinance('+realIdx+',0,this)">' + (row[0]||'—') + '</td>' +
         '<td class="px-6 py-3 cursor-pointer" onclick="clickEditFinance('+realIdx+',1,this)"><p class="font-semibold text-slate-800 text-sm">' + (row[1]||'—') + '</p></td>' +
@@ -12392,6 +12406,71 @@
     } catch(err) { console.error('[Finance] Save error:', err); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + err.message); }
   }
 
+  // ===== EUR→KRW 환율 (예산 탭 칩 + € 금액 ₩ 병기) =====
+  // 캐시: localStorage atelier_fx_eur_krw {rate, at}, 12시간
+  var _fxEurKrwRate = 0;
+  var _fxEurKrwCbs = null; // fetch 진행 중 대기 콜백 큐 (null=미진행)
+  function getFxEurKrw(cb) {
+    var CACHE_KEY = 'atelier_fx_eur_krw';
+    if (_fxEurKrwRate) { if (cb) cb(_fxEurKrwRate); return; }
+    try {
+      var c = JSON.parse(localStorage.getItem(CACHE_KEY));
+      if (c && c.rate && (Date.now() - c.at < 43200000)) {
+        _fxEurKrwRate = c.rate;
+        if (cb) cb(_fxEurKrwRate);
+        return;
+      }
+    } catch(e) {}
+    if (_fxEurKrwCbs) { if (cb) _fxEurKrwCbs.push(cb); return; }
+    _fxEurKrwCbs = cb ? [cb] : [];
+    var done = function(rate) {
+      var cbs = _fxEurKrwCbs || [];
+      _fxEurKrwCbs = null;
+      if (rate) {
+        _fxEurKrwRate = rate;
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ rate: rate, at: Date.now() })); } catch(e) {}
+      } else {
+        // 양쪽 API 모두 실패 → 만료된 캐시라도 사용
+        try {
+          var old = JSON.parse(localStorage.getItem(CACHE_KEY));
+          if (old && old.rate) _fxEurKrwRate = old.rate;
+        } catch(e) {}
+      }
+      cbs.forEach(function(fn) { if (fn) fn(_fxEurKrwRate || null); });
+    };
+    fetch('https://api.frankfurter.app/latest?from=EUR&to=KRW')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var rate = d && d.rates && d.rates.KRW;
+        if (!rate) throw new Error('no KRW rate');
+        done(rate);
+      })
+      .catch(function() {
+        fetch('https://open.er-api.com/v6/latest/EUR')
+          .then(function(r) { return r.json(); })
+          .then(function(d) { done((d && d.rates && d.rates.KRW) || null); })
+          .catch(function() { done(null); });
+      });
+  }
+  function fmtKrwFromEur(eur) {
+    var n = parseFloat(String(eur).replace(/,/g, ''));
+    if (isNaN(n) || !n || !_fxEurKrwRate) return '';
+    return '≈ ₩' + Math.round(n * _fxEurKrwRate).toLocaleString('ko-KR');
+  }
+  window.getFxEurKrw = getFxEurKrw;
+  window.fmtKrwFromEur = fmtKrwFromEur;
+
+  function updateFinanceFxChip() {
+    var el = document.getElementById('finance-fx-chip');
+    if (!el) return;
+    getFxEurKrw(function(rate) {
+      if (!rate) { el.textContent = '—'; return; }
+      el.innerHTML = '€1 = ₩' + Math.round(rate).toLocaleString('ko-KR') +
+        '<span style="font-size:11px;font-weight:600;color:#94a3b8"> · 오늘</span>';
+    });
+  }
+  try { updateFinanceFxChip(); } catch(e) {}
+
   function updateFinanceStats() {
     // 출금/입금 합계
     var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?(parseFloat(r[4])||0):0); }, 0);
@@ -12451,6 +12530,7 @@
         '</div>';
     }).join('');
 
+    updateFinanceFxChip();
     renderTripBudget();
   }
 
