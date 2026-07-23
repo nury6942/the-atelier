@@ -12293,6 +12293,14 @@
       balMap.set(item.row, running);
     });
     var currentBalance = running;
+    // ★ 예정(미결제·미래) 행도 예상 잔액으로 이어서 계산 — 잔액이 어떻게 말라가는지 보이게 (흐린 ≈ 표시)
+    var projMap = new Map();
+    indexed.forEach(function(item){
+      if (!finIsPending(item.row, todayStr)) return;
+      var a = parseFloat(item.row[4])||0;
+      if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
+      projMap.set(item.row, running);
+    });
     console.log('[Balance] 계산완료: 현재잔액=' + currentBalance + ', 항목수=' + indexed.length);
     // 입력 행 맨 위
     appendFinanceInputRow(tbody);
@@ -12360,6 +12368,9 @@
       if (balMap.has(row)) {
         var bal = balMap.get(row);
         balHtml = '<span class="fin-bal' + (bal < 0 ? ' fin-bal-neg' : '') + '">' + fmtSigned(bal) + '</span>';
+      } else if (projMap.has(row)) {
+        var pbal = projMap.get(row);
+        balHtml = '<span class="fin-bal fin-bal-proj' + (pbal < 0 ? ' fin-bal-neg' : '') + '" title="예상 잔액 (이 결제 후 남는 돈)">≈ ' + fmtSigned(pbal) + '</span>';
       } else {
         balHtml = '<span class="fin-bal fin-bal-skip">—</span>';
       }
