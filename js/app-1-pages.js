@@ -6384,15 +6384,26 @@
           var payVarL = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
           payBadgeSt = '<span class="j-status-tag ' + payVarL + '">' + payStatus + '</span>';
         }
-        // memoChips → j-tag-pill로 (간단)
+        // ★ (2026-07-23) 메모 정리: 짧은 조각만 태그 칩(종류별 색), 긴 문장은 메모 줄로 분리
         var memoChipsSt = '';
         if (item.notes) {
-          var chips2 = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
-          if (chips2.length) {
-            memoChipsSt = '<div class="j-lodge-tags">' + chips2.map(function(c){
-              return '<span class="j-tag-pill">' + c.trim() + '</span>';
-            }).join('') + '</div>';
-          }
+          var frags = String(item.notes).split(/\s*·\s*|\s*,\s*|\n+/).map(function(c){ return c.trim(); }).filter(Boolean);
+          var tags = [], notes = [];
+          frags.forEach(function(t) {
+            // 14자 이하 + 문장부호 없음 = 태그, 그 외는 메모
+            if (t.length <= 14 && !/[.!?。]$/.test(t) && !/\s→\s|습니다|해요|하기|바꾸|필요/.test(t)) tags.push(t);
+            else notes.push(t);
+          });
+          var tagHtml = tags.map(function(t) {
+            var kind = '', icon = 'sell';
+            if (/주방|욕실|침대|룸|객실|에어컨|세탁|와이파이|wifi|주차|테라스|발코니|엘리베이터|베드/i.test(t)) { kind = ' is-facility'; icon = 'bed'; }
+            else if (/취소|결제|카드|보증금|환불|예약/i.test(t)) { kind = ' is-policy'; icon = 'verified'; }
+            else if (/역|도보|분|km|중심|거점/i.test(t)) { icon = 'directions_walk'; }
+            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + t.replace(/</g, '&lt;') + '</span>';
+          }).join('');
+          memoChipsSt =
+            (tagHtml ? '<div class="rec-lg-tagrow">' + tagHtml + '</div>' : '') +
+            (notes.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + notes.join(' · ').replace(/</g, '&lt;') + '</p>' : '');
         }
         var cancelClassSt = item.cancel === '가능' ? 'j-lodge-cancel-ok' : (item.cancel === '조건부' ? 'j-lodge-cancel-warn' : 'j-lodge-cancel-danger');
         var paymentDateRowSt = item.payment_date

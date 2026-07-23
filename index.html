@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=256" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=257" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5723,9 +5723,23 @@
     .rec-tr-card .j-attach-row { margin:0; }
     /* 교통/렌트 카드 긴 설명 2줄 클램프 — 클릭하면 펼침 (정보 손실 없음)
        ★ (2026-07-23) rec-tr-* 블록 뒤 + 높은 특이도로 이동: 후행 규칙에 덮이지 않게 */
-    .rec-tr-card .rec-tr-sub.rec-tr-desc { display:-webkit-box; -webkit-line-clamp:2;
+    /* 2줄 클램프 — -webkit-box가 브라우저에서 flow-root로 블록화되는 케이스가 있어 max-height 병행 */
+    .rec-tr-card .rec-tr-sub.rec-tr-desc { max-height:2.9em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
       -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; }
-    .rec-tr-card .rec-tr-sub.rec-tr-desc.expanded { display:block; -webkit-line-clamp:unset; overflow:visible; }
+    .rec-tr-card .rec-tr-sub.rec-tr-desc.expanded { max-height:none; display:block; -webkit-line-clamp:unset; overflow:visible; }
+    /* 숙소 태그 정리: 짧은 태그만 칩, 긴 문장은 메모 줄로 분리 */
+    .rec-lg-tagrow { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .rec-lg-tag { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:6px;
+      font-size:10px; font-weight:700; background:#f8fafc; color:#475569; border:1px solid #e2e8f0; }
+    .rec-lg-tag .material-symbols-outlined { font-size:12px; color:#94a3b8; }
+    .rec-lg-tag.is-facility { background:#f5f3ff; color:#6d28d9; border-color:#ddd6fe; }
+    .rec-lg-tag.is-facility .material-symbols-outlined { color:#a78bfa; }
+    .rec-lg-tag.is-policy { background:#ecfdf5; color:#047857; border-color:#a7f3d0; }
+    .rec-lg-tag.is-policy .material-symbols-outlined { color:#34d399; }
+    .rec-lg-note { font-size:11px; line-height:1.55; color:#64748b; margin-top:8px; cursor:pointer;
+      max-height:3.4em; overflow:hidden; }
+    .rec-lg-note.expanded { max-height:none; }
+    .rec-lg-note::before { content:'📝 '; opacity:.6; }
 
     /* ═══ 기념품 — Stitch 해어라인 체크리스트 (2026-07-23) .sv-* ═══
        2열 국가 컬럼 > 국가 헤더(국기+대문자) > 도시(STOP 배지) > 대상(보라 바) > 해어라인 행 */
@@ -13654,7 +13668,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=256" defer></script>
+<script src="js/app-1-pages.js?v=257" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
