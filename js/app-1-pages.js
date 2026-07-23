@@ -3489,6 +3489,18 @@
     document.getElementById('journey-day-badge').textContent = dayNum + '일차';
     document.getElementById('journey-day-date').textContent = dateStr || '';
 
+    // ★ (2026-07-23) dlv Single 패널 헤더 (같은 renderDayView 산출물을 데스크탑 Single 뷰에서도 사용)
+    var dlvTitleEl = document.getElementById('dlv-single-title');
+    if (dlvTitleEl) {
+      dlvTitleEl.textContent = (cityName || 'Day ' + dayNum) + ' · ' + dayNum + '일차';
+      var dlvDateEl = document.getElementById('dlv-single-date');
+      if (dlvDateEl) {
+        var _dlvWd = '';
+        if (dateStr) { try { _dlvWd = ['일','월','화','수','목','금','토'][new Date(dateStr + 'T00:00:00').getDay()]; } catch(e) {} }
+        dlvDateEl.textContent = (dateStr || '—') + (_dlvWd ? ' (' + _dlvWd + ')' : '');
+      }
+    }
+
     // 일정 + 시간 있는 기념품 함께 표시
     var items = journeyData.filter(function(d){
       if ((d.date||'') !== dateStr) return false;
@@ -3674,7 +3686,7 @@
       }
       return travelHtml + '<div class="relative pl-6" data-schedule-idx="' + realIdx + '">' +
         '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full ' + dotColor + ' ring-4 ring-white shadow-sm"></div>' +
-        (item.time ? '<div class="text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + badgeHtml + '</div>' : '') +
+        (item.time ? '<div class="dlv-time text-[10px] font-black ' + timeColor + ' uppercase tracking-wider mb-1 cursor-pointer" title="더블클릭하여 시간 편집 (시작-끝)" ondblclick="editScheduleTime(this,'+realIdx+')">' + timeLabel + badgeHtml + '</div>' : '') +
         '<div class="' + cardBg + ' p-3.5 rounded-xl border transition-colors shadow-sm group">' +
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h5>' +
@@ -4192,6 +4204,11 @@
         currentDayIndex = idx;
         currentWeekChunkStart = Math.floor(idx / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
         if (typeof renderWeekView === 'function') renderWeekView();
+        // ★ (2026-07-23) dlv Single 모드: 패널 갱신 + 지도 필터를 그 일차로
+        if (typeof _dlvIsSingleActive === 'function' && _dlvIsSingleActive()) {
+          if (typeof renderDayView === 'function') renderDayView();
+          if (typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter(String(dayMap[idx].day));
+        }
       }
       var sec = document.getElementById('journey-week-view');
       if (sec) {
@@ -4245,6 +4262,7 @@
   function renderWeekView() {
     var grid = document.getElementById('journey-week-grid');
     if (!grid) return;
+    if (typeof _dlvApplyLayout === 'function') _dlvApplyLayout(); // ★ (2026-07-23) dlv 뷰 배치 동기화 (idempotent)
     var dayMap = getDayMap();
     if (!dayMap.length) {
       grid.innerHTML = '<div class="text-xs text-slate-400 py-2">도시를 추가하면 일차가 자동 생성돼!</div>';
@@ -4252,6 +4270,8 @@
       if (lbl0) lbl0.textContent = '—';
       var rng0 = document.getElementById('journey-week-range');
       if (rng0) rng0.textContent = '—';
+      var prog0 = document.getElementById('dlv-progress');
+      if (prog0) prog0.innerHTML = '';
       return;
     }
     // 청크 클램프 (마지막 청크는 잔여 일수만큼만 — 5일 안 채워도 그대로)
@@ -4274,6 +4294,7 @@
 
     var travelQueue = []; // ★ (2026-07-23) 스팟 간 이동시간 커넥터 — 렌더 후 비동기 채움
     var nightGaps = getUncoveredNights(); // ★ 숙소 미등록 밤
+    var todayStr = _dlvTodayStr(); // ★ (2026-07-23) dlv: 오늘 컬럼 강조 (CURRENT/LIVE)
     grid.innerHTML = chunk.map(function(entry, idx) {
       var actualIdx = currentWeekChunkStart + idx;
       var dayNum = entry.day;
@@ -4483,12 +4504,25 @@
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
         headerCityHtml = '<p class="j-day-h3-meta" title="당일치기 행선지" style="margin-top: var(--space-1);color:#c2410c;font-weight:600">🚆 ' + tripsTxt + ' (당일)</p>';
       }
+      // ★ (2026-07-23) dlv eyebrow: "OCT 04 · 1일차" (mono uppercase) + 오늘이면 CURRENT/LIVE
+      var isToday = !!(dateStr && dateStr === todayStr);
+      var eyebrowTxt = '';
+      if (dateStr) {
+        try {
+          var _MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+          var _ed = new Date(dateStr + 'T00:00:00');
+          eyebrowTxt = _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') + ' · ' + dayNum + '일차' + (isToday ? ' · CURRENT' : '');
+        } catch(e) { eyebrowTxt = dayNum + '일차'; }
+      }
+      var eyebrowHtml = eyebrowTxt ? '<p class="dlv-eyebrow' + (isToday ? ' is-today' : '') + '">' + eyebrowTxt + '</p>' : '';
+      var liveBadge = isToday ? '<span class="dlv-live">LIVE</span>' : '';
       var dayHeadHtml =
         '<div class="j-day-head">' +
           '<div class="j-day-head-left">' +
             '<div class="j-day-num' + (isCurrent ? '' : ' is-muted') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기" style="cursor:pointer">' + String(dayNum).padStart(2,'0') + '</div>' +
             '<div>' +
-              '<h3 class="j-day-h3">' + (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + '</h3>' +
+              eyebrowHtml +
+              '<h3 class="j-day-h3">' + (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge + '</h3>' +
               '<p class="j-day-h3-meta">' + (dateStr || '—') + (weekday ? ' · ' + weekday + (weekdayEn ? ' (' + weekdayEn + ')' : '') : '') + '</p>' +
               headerCityHtml +
             '</div>' +
@@ -4542,6 +4576,7 @@
       // stitch j-day-card 통째로
       var dayCardClasses = ['j-day-card'];
       if (isCurrent) dayCardClasses.push('is-current');
+      if (isToday) dayCardClasses.push('is-today'); // ★ 오늘 컬럼 보라 테두리
       var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
       var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn">🛏 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
       return '<div class="' + dayCardClasses.join(' ') + '" data-date="' + dateStr + '">' +
@@ -4567,6 +4602,18 @@
         }, 30);
       }
     }
+    // ★ (2026-07-23) dlv 4-Day 가로 진행선 — 그리드 컬럼과 정렬되는 점 (오늘 = 보라)
+    var prog = document.getElementById('dlv-progress');
+    if (prog) {
+      prog.innerHTML = chunk.map(function(e) {
+        var cls = 'dlv-prog-dot';
+        if (e.date && e.date === todayStr) cls += ' is-today';
+        else if (e.date && todayStr && e.date < todayStr) cls += ' is-past';
+        return '<div class="dlv-prog-cell"><span class="' + cls + '"></span></div>';
+      }).join('');
+      prog.style.display = (typeof _dlvIsSingleActive === 'function' && _dlvIsSingleActive()) ? 'none' : '';
+    }
+    if (typeof _renderDlvVoyagePath === 'function') _renderDlvVoyagePath(); // ★ Single 뷰 Voyage Path 스텝퍼
     // ★ (2026-07-23) 이동시간 커넥터 채우기 + Day-Pins 지도 갱신
     travelQueue.forEach(function(t) {
       _travelBetween(t.a, t.b, function(txt) {
@@ -4842,6 +4889,11 @@
     currentDayIndex = idx;
     syncWeekChunkToCurrentDay();
     renderDayView();
+    // ★ (2026-07-23) dlv Single 모드: 일차 선택 시 지도 필터도 그 일차로
+    if (typeof _dlvIsSingleActive === 'function' && _dlvIsSingleActive()) {
+      var _je = getDayMap()[idx];
+      if (_je && typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter(String(_je.day));
+    }
     // 일차 카드 영역으로 부드럽게 스크롤 + 옵션: 일정 추가 폼 자동 열기
     setTimeout(function() {
       var dayCard = document.getElementById('journey-schedule-list');
@@ -4857,6 +4909,137 @@
     }, 50);
   }
   window.jumpToDay = jumpToDay; // ★ (2026-07-23) Day-Pins 지도 팝업에서 사용
+
+  // ═══ ★ (2026-07-23) dlv: Daily Log Single/4-Day 뷰 전환 (Stitch 이식) ═══
+  //   Single(데스크탑) = #dlv-wrap을 섹션 안으로 옮겨 지도(62%)+타임라인(38%) 2열,
+  //   모바일 타임라인(#daylog-day-body)을 패널로 재배치 — 동일 노드 이동이라 id 중복 없음.
+  var _dlvMedia = (typeof window.matchMedia === 'function') ? window.matchMedia('(min-width: 1024px)') : null;
+  function _dlvTodayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function _dlvMode() {
+    var v = '4day';
+    try { v = localStorage.getItem('atelier_daylog_view') || '4day'; } catch(e) {}
+    return (v === 'single') ? 'single' : '4day';
+  }
+  function _dlvIsSingleActive() {
+    return _dlvMode() === 'single' && (!_dlvMedia || _dlvMedia.matches);
+  }
+  // 레이아웃 배치만 담당 (렌더 호출 없음 — 호출부가 렌더 담당). 호출은 idempotent.
+  function _dlvApplyLayout() {
+    var wrap = document.getElementById('dlv-wrap');
+    var sec = document.getElementById('journey-week-view');
+    if (!wrap || !sec) return;
+    var single = _dlvIsSingleActive();
+    var mode = _dlvMode();
+    var bS = document.getElementById('dlv-btn-single');
+    var b4 = document.getElementById('dlv-btn-4day');
+    if (bS) bS.classList.toggle('is-active', mode === 'single');
+    if (b4) b4.classList.toggle('is-active', mode !== 'single');
+    var grid = document.getElementById('journey-week-grid');
+    var prog = document.getElementById('dlv-progress');
+    var nav = sec.querySelector('.j-week-nav');
+    var panel = document.getElementById('dlv-single-panel');
+    var vp = document.getElementById('dlv-voyage-path');
+    var body = document.getElementById('daylog-day-body');
+    var host = document.getElementById('dlv-single-body');
+    var moved = false;
+    if (single) {
+      if (wrap.parentNode !== sec) { sec.insertBefore(wrap, prog || grid); moved = true; }
+      wrap.classList.add('is-single');
+      if (grid) grid.style.display = 'none';
+      if (prog) prog.style.display = 'none';
+      if (nav) nav.style.display = 'none';
+      if (panel) panel.style.display = '';
+      if (vp) vp.style.display = '';
+      if (body && host && body.parentNode !== host) { host.appendChild(body); moved = true; }
+    } else {
+      var anchor = document.getElementById('dlv-anchor');
+      if (anchor && wrap.previousElementSibling !== anchor) { anchor.parentNode.insertBefore(wrap, anchor.nextSibling); moved = true; }
+      wrap.classList.remove('is-single');
+      if (grid) grid.style.display = '';
+      if (prog) prog.style.display = '';
+      if (nav) nav.style.display = '';
+      if (panel) panel.style.display = 'none';
+      if (vp) vp.style.display = 'none';
+      var bAnchor = document.getElementById('dlv-body-anchor');
+      if (body && bAnchor && body.previousElementSibling !== bAnchor) { bAnchor.parentNode.insertBefore(body, bAnchor.nextSibling); moved = true; }
+    }
+    // 컨테이너 폭 변경 → Leaflet 리사이즈 (스펙: Single 진입 시 invalidateSize)
+    if (moved && _dayPinsMap) {
+      setTimeout(function() {
+        try {
+          _dayPinsMap.invalidateSize();
+          if (_dayPinsLastBounds) _dayPinsMap.fitBounds(_dayPinsLastBounds, { padding: [36, 36], maxZoom: 15 });
+        } catch(e) {}
+      }, 80);
+    }
+  }
+  window.setDaylogView = function(v) {
+    try { localStorage.setItem('atelier_daylog_view', v === 'single' ? 'single' : '4day'); } catch(e) {}
+    _dlvApplyLayout();
+    if (_dlvIsSingleActive()) {
+      renderDayView(); // 패널 타임라인 + 주간 그리드(숨김) 갱신
+      var dm = getDayMap();
+      var e = dm[currentDayIndex];
+      if (e && typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter(String(e.day));
+    } else {
+      // Single이 걸어둔 일차 필터는 전체로 복귀 (저장소 필터는 존중)
+      if (_dayPinsFilter !== 'all' && _dayPinsFilter !== 'pool' && typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter('all');
+      renderWeekView();
+    }
+  };
+  // Single 패널 ‹ › 하루 이동 (currentDayIndex 연동 + 지도 필터 동기화, 스크롤 없음)
+  window.dlvNavDay = function(delta) {
+    var dm = getDayMap();
+    if (!dm.length) return;
+    var idx = currentDayIndex + delta;
+    if (idx < 0 || idx >= dm.length) return;
+    currentDayIndex = idx;
+    syncWeekChunkToCurrentDay();
+    renderDayView();
+    if (_dlvIsSingleActive() && typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter(String(dm[idx].day));
+  };
+  // Single 패널 헤더 🧭 동선 — 현재 일차 날짜로 optimizeDayRoute 재사용
+  window.dlvOptimizeRoute = function() {
+    var e = getDayMap()[currentDayIndex];
+    if (e && e.date && typeof window.optimizeDayRoute === 'function') window.optimizeDayRoute(e.date);
+  };
+  // Voyage Path 스텝퍼 (Single 뷰 지도 아래) — citiesData 기반, 오늘 도시 보라
+  function _renderDlvVoyagePath() {
+    var el = document.getElementById('dlv-voyage-path');
+    if (!el) return;
+    var cities = (citiesData || []).filter(function(c) { return c.name; })
+      .slice().sort(function(a, b) { return (a.start_date || '').localeCompare(b.start_date || ''); });
+    if (!cities.length) { el.innerHTML = ''; return; }
+    var todayStr = _dlvTodayStr();
+    var _MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var fmtD = function(ds) {
+      if (!ds) return '';
+      try { var d = new Date(ds + 'T00:00:00'); return _MONS[d.getMonth()] + ' ' + String(d.getDate()).padStart(2, '0'); } catch(e) { return ds; }
+    };
+    el.innerHTML = '<div class="dlv-vp-head">Voyage Path</div><div class="dlv-vp-track">' +
+      cities.map(function(c) {
+        var isCur = !!(c.start_date && c.end_date && todayStr >= c.start_date && todayStr <= c.end_date);
+        var nm = (typeof _displayCityShort === 'function' ? _displayCityShort(c.name) : c.name);
+        var safeName = String(c.name).replace(/\\/g, '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return '<button class="dlv-vp-stop' + (isCur ? ' is-current' : '') + '" onclick="journeyStopJump(\'' + safeName + '\')" title="이 도시 일정으로 이동">' +
+          '<span class="dlv-vp-dot"></span>' +
+          '<span class="dlv-vp-name">' + String(nm).replace(/</g, '&lt;') + '</span>' +
+          '<span class="dlv-vp-date">' + fmtD(c.start_date) + '</span>' +
+        '</button>';
+      }).join('') + '</div>';
+  }
+  // 뷰포트 경계(1024px) 넘나들 때 배치 재계산 (모바일에선 항상 원래 자리)
+  if (_dlvMedia) {
+    var _dlvOnMedia = function() {
+      _dlvApplyLayout();
+      if (_dlvIsSingleActive()) renderDayView(); else renderWeekView();
+    };
+    if (_dlvMedia.addEventListener) _dlvMedia.addEventListener('change', _dlvOnMedia);
+    else if (_dlvMedia.addListener) _dlvMedia.addListener(_dlvOnMedia);
+  }
 
   function inlineEditTd(td, saveCallback) {
     if (td.querySelector('input')) return;
