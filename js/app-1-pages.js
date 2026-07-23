@@ -2795,6 +2795,13 @@
     _refreshStayCityDatalist();
     _refreshRentalCityDatalist();
     if (typeof _updateTravelApiKeyBtn === 'function') _updateTravelApiKeyBtn();
+    // ★ (2026-07-24) 항공 탭이 열린 채 데이터가 늦게 도착하면 '항공편 없어요'로 굳어 있던 문제.
+    //   프로필은 localStorage 스냅샷(전체 트립)을 읽어 3편으로 나오는데 준비 타임라인은
+    //   journeyData(비동기)를 읽어 0편이라 같은 화면에서 숫자가 어긋났다.
+    var _fltSec = document.getElementById('travel-flight-section');
+    if (_fltSec && _fltSec.style.display !== 'none' && typeof window.showTravelFlight === 'function') {
+      try { window.showTravelFlight(); } catch(e) {}
+    }
   }
 
   function getCurrentTrip() {
@@ -17604,6 +17611,15 @@
     if (!box) return;
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
     var flights = jd.filter(function(d) { return d && d.type === '항공편'; }).slice();
+    // journeyData가 아직 안 왔으면 localStorage 스냅샷에서 현재 트립분으로 대체 (첫 진입 레이스)
+    if (!flights.length) {
+      try {
+        var _snap = JSON.parse(localStorage.getItem('atelier_snapshot_journey') || 'null');
+        if (_snap && _snap.data && typeof currentTripId !== 'undefined' && currentTripId) {
+          flights = _snap.data.filter(function(d) { return d && d.type === '항공편' && d.trip_id === currentTripId; }).slice();
+        }
+      } catch(e) {}
+    }
     flights.sort(function(a, b) {
       return String(a.date || '').localeCompare(String(b.date || '')) ||
         String(a.time || '').localeCompare(String(b.time || ''));
