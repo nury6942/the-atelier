@@ -5419,7 +5419,7 @@
         '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>' +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain2 + '</h4>' + vendorBadge2 + '</div>' +
-          '<p class="rec-tr-sub">' +
+          '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' +
             (routeParts[0] || '') +
             (routeParts.length > 1 ? ' <span style="color:#94a3b8">→</span> ' + routeParts[1] : '') +
           '</p>' +
@@ -14477,15 +14477,17 @@
   function _placeCountryOf(city) {
     var raw = String(city || '').trim();
     if (!raw) return '기타';
+    // "시에나 이탈리아" 같은 지역+국가 혼합은 마지막 단어만 국가로 (중복 탭 방지)
+    var tail = function(s) { var toks = String(s).trim().split(/\s+/); return toks[toks.length - 1] || '기타'; };
     var parts = raw.split(',');
-    if (parts.length > 1 && parts[parts.length - 1].trim()) return parts[parts.length - 1].trim();
+    if (parts.length > 1 && parts[parts.length - 1].trim()) return tail(parts[parts.length - 1]);
     var key = _normCityKey(raw);
     var cd = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
     for (var i = 0; i < cd.length; i++) {
       var nm = String(cd[i].name || '');
       if (_normCityKey(nm) === key) {
         var ps = nm.split(',');
-        if (ps.length > 1 && ps[ps.length - 1].trim()) return ps[ps.length - 1].trim();
+        if (ps.length > 1 && ps[ps.length - 1].trim()) return tail(ps[ps.length - 1]);
         return '기타';
       }
     }
