@@ -14748,23 +14748,36 @@
       function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
       function toHHMM(min){ min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
       var slots = items.map(function(it){ return it.time; });
-      var cursorMin = null; // ★ 직전 일정이 끝나는 시각 — "앞 일정 끝나기 전 시작" 자동 보정
+      // ★ 겹침 없는 타임라인 보장: 자유 일정 전부(이동한 것 + 제자리인 것)에
+      //   ① 앞 일정 끝 이후 시작  ② 뒤 고정 일정 시작 전 종료(초과 시 방문시간 축소) 적용
+      var cursorMin = null;
+      var lockedStarts = []; // k 이후의 고정 일정 시작 시각들
+      for (var li = 0; li < items.length; li++) { if (locked[li]) { var lm = toMin(items[li].time); if (lm != null) lockedStarts.push({ k: li, min: lm }); } }
+      function nextLockedStart(k) {
+        for (var q = 0; q < lockedStarts.length; q++) { if (lockedStarts[q].k > k) return lockedStarts[q].min; }
+        return null;
+      }
       for (var k = 0; k < newSeq.length; k++) {
         var it2 = newSeq[k];
         var s0 = toMin(it2.time), e0 = toMin(it2.end_time);
         var dur = (s0 != null && e0 != null && e0 > s0) ? (e0 - s0) : null;
-        if (it2._id === items[k]._id) {
-          // 자리 고정(또는 원위치) — 시간 불변, 커서만 전진
+        if (locked[k]) {
+          // 고정 일정 — 시간 불변, 커서만 전진
           if (s0 != null) cursorMin = Math.max(cursorMin || 0, dur != null ? s0 + dur : s0);
           continue;
         }
-        var nsMin = toMin(slots[k]);
-        if (nsMin != null && cursorMin != null && nsMin < cursorMin) nsMin = cursorMin; // 겹침 방지: 앞 일정 끝으로 밀기
-        var ns = (nsMin != null) ? toHHMM(nsMin) : slots[k];
-        var ne = (dur != null && nsMin != null) ? toHHMM(nsMin + dur) : '';
+        var moved = (it2._id !== items[k]._id);
+        var nsMin = moved ? toMin(slots[k]) : s0;
+        if (nsMin != null && cursorMin != null && nsMin < cursorMin) nsMin = cursorMin; // 앞 일정 끝으로 밀기
+        var neMin = (dur != null && nsMin != null) ? nsMin + dur : null;
+        var wall = nextLockedStart(k);
+        if (neMin != null && wall != null && nsMin < wall && neMin > wall) neMin = wall; // 뒤 고정 일정 침범 시 방문시간 축소
+        var ns = (nsMin != null) ? toHHMM(nsMin) : (moved ? slots[k] : it2.time);
+        var ne = (neMin != null) ? toHHMM(neMin) : (moved ? '' : (it2.end_time || ''));
+        var changed = (ns !== it2.time) || (ne !== (it2.end_time || ''));
         it2.time = ns; it2.end_time = ne;
-        if (nsMin != null) cursorMin = Math.max(cursorMin || 0, dur != null ? nsMin + dur : nsMin);
-        if (it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
+        if (nsMin != null) cursorMin = Math.max(cursorMin || 0, neMin != null ? neMin : nsMin);
+        if (changed && it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
       }
       renderWeekView();
       if (typeof renderDayView === 'function') renderDayView();
