@@ -65,6 +65,7 @@
   }
   function _rerender() {
     if (typeof renderCityCards === 'function') renderCityCards();
+    if (typeof window.renderPlaces === 'function') window.renderPlaces(); // 스팟 카드도 도시 이미지 재사용
   }
   function _apply(k, url) {
     _cache[k] = url || null;
