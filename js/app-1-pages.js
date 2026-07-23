@@ -14162,7 +14162,16 @@
     }
 
     if (latlngs.length) {
-      var bounds = L.latLngBounds(latlngs);
+      // 인천공항 등 원거리 핀이 있어도 여행 도시 인근 핀 위주로 화면 맞춤 (세계지도 줌아웃 방지)
+      var nearRefs = (citiesData || []).filter(function(c){ return typeof c.lat === 'number'; });
+      var focus = latlngs;
+      if (nearRefs.length) {
+        var near = latlngs.filter(function(p) {
+          return nearRefs.some(function(c){ return _haversineKm({ lat: p[0], lng: p[1] }, c) <= 300; });
+        });
+        if (near.length) focus = near;
+      }
+      var bounds = L.latLngBounds(focus);
       var fitOpts = { padding: [36, 36], maxZoom: 15 };
       _dayPinsMap.fitBounds(bounds, fitOpts);
       setTimeout(function() { if (_dayPinsMap) { _dayPinsMap.invalidateSize(); _dayPinsMap.fitBounds(bounds, fitOpts); } }, 250);
@@ -14189,18 +14198,24 @@
     for (var i = 0; i < targets.length; i++) {
       var it = targets[i];
       if (foot) foot.innerHTML = '<span>📍 좌표 찾는 중... ' + (i + 1) + '/' + targets.length + ' — ' + String(it.title || '').replace(/</g, '&lt;') + '</span>';
-      var cityName = (it.city || '').trim() || dateToCity[it.date] || '';
-      var cityRef = (citiesData || []).find(function(c){ return c.name === cityName && typeof c.lat === 'number'; });
-      if (!cityRef && cityName && typeof _normCityKey === 'function') {
-        // "Berlin" vs "Berlin, 독일" 같은 부분 일치 허용
-        var ck = _normCityKey(cityName);
-        cityRef = (citiesData || []).find(function(c) {
-          if (typeof c.lat !== 'number') return false;
-          var cn = _normCityKey(c.name || '');
-          return ck && cn && (cn === ck || cn.indexOf(ck) >= 0 || ck.indexOf(cn) >= 0);
-        });
+      // 검증 기준 도시: 아이템 city(한글일 수 있음) → 그 날짜의 Stops 도시 순으로 좌표 있는 쪽
+      var cands = [(it.city || '').trim(), dateToCity[it.date] || ''].filter(Boolean);
+      var cityRef = null;
+      for (var ci2 = 0; ci2 < cands.length && !cityRef; ci2++) {
+        var nm = cands[ci2];
+        cityRef = (citiesData || []).find(function(c){ return c.name === nm && typeof c.lat === 'number'; });
+        if (!cityRef && typeof _normCityKey === 'function') {
+          var ck = _normCityKey(nm);
+          cityRef = (citiesData || []).find(function(c) {
+            if (typeof c.lat !== 'number') return false;
+            var cn = _normCityKey(c.name || '');
+            return ck && cn && (cn === ck || cn.indexOf(ck) >= 0 || ck.indexOf(cn) >= 0);
+          });
+        }
       }
-      var geo = await _geocodePOI(it.title, cityName, cityRef);
+      // 기준 좌표가 없으면 스킵 — 엉뚱한 대륙 오매칭 방지가 우선
+      if (!cityRef) { fail.push(it.title); continue; }
+      var geo = await _geocodePOI(it.title, cityRef.name, cityRef);
       if (geo && cityRef && _haversineKm(geo, cityRef) > 60) geo = null; // 다른 대륙 오매칭 방지
       if (geo) {
         it.lat = geo.lat; it.lng = geo.lng;
