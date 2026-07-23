@@ -14490,11 +14490,19 @@
 
   function _dayPinsMissingCount() {
     return (journeyData || []).filter(function(d) {
+      if (d.type === '숙소') return !(typeof d.lat === 'number' && typeof d.lng === 'number') && (d.title || d.name || '').trim();
       return (d.type === '일정' || d.type === '스팟') &&
              !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
-             (d.title || '').trim() && d.auto_sun == null &&
-             !/일출|일몰|sunrise|sunset/i.test(d.title || '');
+             (d.title || '').trim() && d.auto_sun == null;
     }).length;
+  }
+
+  // 이 날짜 밤을 커버하는 숙소 (동선 앵커·지도 🏨 핀용)
+  function _lodgingForDate(dateStr) {
+    return (journeyData || []).find(function(d) {
+      return d.type === '숙소' && typeof d.lat === 'number' && typeof d.lng === 'number' && d.date &&
+             d.date <= dateStr && (d.checkout_date ? dateStr < d.checkout_date : d.date === dateStr);
+    }) || null;
   }
 
   function renderDayPinsMap() {
@@ -14510,6 +14518,7 @@
       if (d.type === '일정' && dateToDay[d.date]) sched.push({ it: d, day: dateToDay[d.date] });
       else if (d.type === '스팟' && d.status !== 'planned') pool.push(d);
     });
+    var hotels = (journeyData || []).filter(function(d){ return d.type === '숙소' && typeof d.lat === 'number' && typeof d.lng === 'number'; });
     var missing = _dayPinsMissingCount();
     if (!sched.length && !pool.length && !missing) { wrap.style.display = 'none'; return; }
     wrap.style.display = '';
@@ -14517,7 +14526,8 @@
     // ★ (2026-07-23) 변경 없으면 스킵 — 렌더마다 지도가 전체 뷰로 리셋되며 줌/애니메이션을 삼키던 근본 원인 제거
     var sig = _dayPinsFilter + '|' +
       sched.map(function(s){ return s.it._id + ':' + s.it.lat.toFixed(5) + ',' + s.it.lng.toFixed(5) + ':' + (s.it.time || '') + ':' + s.day; }).join(';') + '|' +
-      pool.map(function(p){ return p._id + ':' + p.lat.toFixed(5) + ',' + p.lng.toFixed(5); }).join(';') + '|' + missing;
+      pool.map(function(p){ return p._id + ':' + p.lat.toFixed(5) + ',' + p.lng.toFixed(5); }).join(';') + '|' +
+      hotels.map(function(h){ return h._id + ':' + h.lat.toFixed(5); }).join(';') + '|' + missing;
     if (sig === _dayPinsSig && _dayPinsMap) {
       // 데이터 동일 → 뷰(줌·중심·팝업) 보존. 컨테이너 폭이 크게 바뀐 경우만 재맞춤
       var wNow = mount.clientWidth;
@@ -14562,6 +14572,7 @@
     _dayPinsLayer = L.layerGroup().addTo(_dayPinsMap);
 
     var latlngs = [];
+    var seenPos = {}; // 동일 좌표 겹침 감지 → 살짝 벌려 표시
     var byDay = {};
     sched.forEach(function(s){ (byDay[s.day] = byDay[s.day] || []).push(s.it); });
     Object.keys(byDay).forEach(function(dayKey) {
@@ -14574,12 +14585,17 @@
       });
       var line = [];
       items.forEach(function(it, i) {
-        latlngs.push([it.lat, it.lng]); line.push([it.lat, it.lng]);
+        // 동일 좌표에 겹친 핀은 살짝 벌려서 번호가 다 보이게 (~70m)
+        var la = it.lat, ln = it.lng;
+        var pk = la.toFixed(4) + ',' + ln.toFixed(4);
+        var dup = seenPos[pk] || 0; seenPos[pk] = dup + 1;
+        if (dup) { la += 0.0006 * dup; ln += 0.0009 * dup; }
+        latlngs.push([la, ln]); line.push([la, ln]);
         var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-inner" style="background:' + color + '">' + (i + 1) + '</div>', iconSize: [24, 24], iconAnchor: [12, 12] });
         var pop = '<strong>' + String(it.title || '').replace(/</g, '&lt;') + '</strong><br>' +
           '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
           '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
-        var mk = L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        var mk = L.marker([la, ln], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
         // ★ 핀 클릭 한 번 = 그 지점으로 스르륵 비행 (Wanderlog식). stop()으로 잔여 애니메이션 정리 후 출발
         mk.on('click', function() { if (_dayPinsMap.getZoom() < 14) { _dayPinsMap.stop(); _dayPinsMap.flyTo(mk.getLatLng(), 15, { duration: 0.9 }); } });
         if (it._id) window._dayPinsMarkers[it._id] = mk;
@@ -14598,6 +14614,22 @@
         pmk.on('click', function() { if (_dayPinsMap.getZoom() < 14) { _dayPinsMap.stop(); _dayPinsMap.flyTo(pmk.getLatLng(), 15, { duration: 0.9 }); } });
       });
     }
+
+    // ★ 숙소 🏨 핀 — 전체 보기: 모든 숙소 / 일차 선택: 그 밤의 숙소만
+    var showHotels = hotels;
+    if (_dayPinsFilter === 'pool') showHotels = [];
+    else if (_dayPinsFilter !== 'all') {
+      var fDay = parseInt(_dayPinsFilter, 10);
+      var fEntry = dayMap.filter(function(e){ return e.day === fDay; })[0];
+      showHotels = fEntry ? hotels.filter(function(h){ return h.date && h.date <= fEntry.date && (h.checkout_date ? fEntry.date < h.checkout_date : h.date === fEntry.date); }) : [];
+    }
+    showHotels.forEach(function(h) {
+      latlngs.push([h.lat, h.lng]);
+      var hIcon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-hotel">🏨</div>', iconSize: [26, 26], iconAnchor: [13, 13] });
+      var hPop = '<strong>' + String(h.title || h.name || '숙소').replace(/</g, '&lt;') + '</strong><br><span style="color:#0f172a;font-weight:700">숙소</span>' +
+        (h.date ? ' · ' + h.date.slice(5).replace('-', '/') + '~' + String(h.checkout_date || '').slice(5).replace('-', '/') : '');
+      L.marker([h.lat, h.lng], { icon: hIcon, zIndexOffset: 500 }).bindPopup(hPop).addTo(_dayPinsLayer);
+    });
 
     var foot = document.getElementById('daylog-map-foot');
     if (foot && !_geoBusy) {
@@ -14669,15 +14701,17 @@
     if (items.length < 3) { alert('좌표와 시간이 있는 일정이 3개 이상일 때 의미가 있어요.'); return; }
     var locked = items.map(function(it) {
       return it.reservation === true || it.pinned === true || it.auto_sun != null ||
-             /체크인|체크아웃|공항|이동|출발|도착|기차|비행|ICE|짐 /i.test(it.title || '');
+             /체크인|체크아웃|공항|이동|출발|도착|기차|비행|ICE|짐 |일몰|일출|노을|sunset|sunrise/i.test(it.title || '');
     });
     var pool = [];
     items.forEach(function(it, i){ if (!locked[i]) pool.push(it); });
     if (pool.length < 2) { alert('재배치할 수 있는 자유 일정이 부족해요 (예약·고정·이동 일정은 자리를 지켜요).'); return; }
 
     // nearest-neighbor: 잠긴 슬롯 사이를 자유 일정으로 가까운 순 채우기
+    // ★ 숙소가 있으면 그 밤의 숙소를 출발·복귀 기준점으로
+    var hotel = (typeof _lodgingForDate === 'function') ? _lodgingForDate(dateStr) : null;
     var newSeq = items.slice();
-    var cur = null;
+    var cur = hotel;
     for (var i = 0; i < newSeq.length; i++) {
       if (locked[i]) { cur = items[i]; continue; }
       var bi = 0, bd = Infinity;
@@ -14689,8 +14723,9 @@
       cur = newSeq[i];
     }
     function chainKm(arr) {
-      var s = 0;
-      for (var c = 1; c < arr.length; c++) s += _haversineKm(arr[c - 1], arr[c]);
+      var s = 0, prev = hotel;
+      for (var c = 0; c < arr.length; c++) { if (prev) s += _haversineKm(prev, arr[c]); prev = arr[c]; }
+      if (hotel && prev) s += _haversineKm(prev, hotel); // 마지막 → 숙소 복귀
       return s;
     }
     var before = chainKm(items), after = chainKm(newSeq);
@@ -14736,7 +14771,7 @@
         '<span style="font-size:11px;font-weight:800;color:#059669;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
       '</span>' +
       '<ol style="list-style:none;margin:0;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;max-height:230px;overflow-y:auto">' + listHtml + '</ol>' +
-      '<span style="display:block;font-size:10px;color:#94a3b8;margin-top:8px">시간대는 유지 · 방문 순서만 변경 · 예약/이동 일정은 자리 고정</span>';
+      '<span style="display:block;font-size:10px;color:#94a3b8;margin-top:8px">' + (hotel ? '🏨 ' + String(hotel.title || '숙소').replace(/</g, '&lt;').slice(0, 20) + ' 출발·복귀 기준 · ' : '') + '시간대는 유지 · 방문 순서만 변경 · 예약/이동/일몰 일정은 자리 고정</span>';
     if (typeof showConfirm === 'function' && document.getElementById('atl-confirm')) {
       showConfirm({ title: '동선 최적화', icon: '🧭', html: html, confirmText: '적용', onConfirm: function(){ applyRoute(); } });
     } else if (confirm('🧭 동선 최적화 — 총 이동 ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km (' + pct + '% 절감). 적용할까?')) {
@@ -14759,10 +14794,9 @@
       try { await ensureCityCoord(citiesData[c0]); } catch(e) {}
     }
     var targets = (journeyData || []).filter(function(d) {
-      return (d.type === '일정' || d.type === '스팟') &&
-             !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
-             (d.title || '').trim() && d.auto_sun == null &&
-             !/일출|일몰|sunrise|sunset/i.test(d.title || '');
+      if (typeof d.lat === 'number' && typeof d.lng === 'number') return false;
+      if (d.type === '숙소') return !!(d.title || d.name || '').trim();
+      return (d.type === '일정' || d.type === '스팟') && (d.title || '').trim() && d.auto_sun == null;
     });
     var ok = 0, fail = [];
     for (var i = 0; i < targets.length; i++) {
