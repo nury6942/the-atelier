@@ -4485,6 +4485,7 @@
             '</div>' +
           '</div>' +
           '<div class="j-day-head-tag">' +
+            '<button class="j-day-route-btn" onclick="optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
             '<span class="j-status-tag j-status-soft">' + dayNum + '일차</span>' +
           '</div>' +
         '</div>';
@@ -14653,6 +14654,65 @@
     window.setDayPinsFilter(String(day));
     var wrap = document.getElementById('daylog-map-wrap');
     if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  // ★ (2026-07-23) 하루 안 동선 최적화 — 시간 슬롯은 유지, 방문 스팟만 가까운 순으로 재배치.
+  //   예약·고정·이동류(체크인/공항/기차 등)는 자리를 지키고, 자유 일정만 움직인다. 적용 전 미리보기 confirm.
+  window.optimizeDayRoute = async function(dateStr) {
+    var items = (journeyData || []).filter(function(d) {
+      return d.type === '일정' && d.date === dateStr &&
+             typeof d.lat === 'number' && typeof d.lng === 'number' && d.time;
+    });
+    items.sort(function(a, b){ return (a.time || '').localeCompare(b.time || ''); });
+    if (items.length < 3) { alert('좌표와 시간이 있는 일정이 3개 이상일 때 의미가 있어요.'); return; }
+    var locked = items.map(function(it) {
+      return it.reservation === true || it.pinned === true || it.auto_sun != null ||
+             /체크인|체크아웃|공항|이동|출발|도착|기차|비행|ICE|짐 /i.test(it.title || '');
+    });
+    var pool = [];
+    items.forEach(function(it, i){ if (!locked[i]) pool.push(it); });
+    if (pool.length < 2) { alert('재배치할 수 있는 자유 일정이 부족해요 (예약·고정·이동 일정은 자리를 지켜요).'); return; }
+
+    // nearest-neighbor: 잠긴 슬롯 사이를 자유 일정으로 가까운 순 채우기
+    var newSeq = items.slice();
+    var cur = null;
+    for (var i = 0; i < newSeq.length; i++) {
+      if (locked[i]) { cur = items[i]; continue; }
+      var bi = 0, bd = Infinity;
+      for (var p = 0; p < pool.length; p++) {
+        var d = cur ? _haversineKm(cur, pool[p]) : 0;
+        if (d < bd) { bd = d; bi = p; }
+      }
+      newSeq[i] = pool.splice(bi, 1)[0];
+      cur = newSeq[i];
+    }
+    function chainKm(arr) {
+      var s = 0;
+      for (var c = 1; c < arr.length; c++) s += _haversineKm(arr[c - 1], arr[c]);
+      return s;
+    }
+    var before = chainKm(items), after = chainKm(newSeq);
+    if (after >= before * 0.97) { alert('지금 순서가 이미 거의 최적이야! (총 이동 ' + before.toFixed(1) + 'km)'); return; }
+    var seqTxt = newSeq.map(function(it, n){ return (n + 1) + '. ' + String(it.title || '').slice(0, 22) + (locked[n] ? ' 🔒' : ''); }).join('\n');
+    if (!confirm('🧭 동선 최적화 제안 — 총 이동 ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km (' + Math.round((1 - after / before) * 100) + '% 절감)\n\n새 순서 (🔒=자리 고정):\n' + seqTxt + '\n\n시간대는 그대로 두고 방문 스팟만 바꿔 적용할까? (각 일정의 소요시간 유지)')) return;
+
+    // 적용: 원래 시간 슬롯에 새 순서 아이템 배치, 소요시간은 각자 유지
+    function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+    function toHHMM(min){ min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
+    var slots = items.map(function(it){ return it.time; });
+    for (var k = 0; k < newSeq.length; k++) {
+      var it2 = newSeq[k];
+      if (it2._id === items[k]._id) continue;
+      var dur = null, s0 = toMin(it2.time), e0 = toMin(it2.end_time);
+      if (s0 != null && e0 != null && e0 > s0) dur = e0 - s0;
+      var ns = slots[k];
+      var ne = (dur != null && toMin(ns) != null) ? toHHMM(toMin(ns) + dur) : '';
+      it2.time = ns; it2.end_time = ne;
+      if (it2._id) { try { await fbUpdate('journey', it2._id, { time: ns, end_time: ne }); } catch(e) {} }
+    }
+    renderWeekView();
+    if (typeof renderDayView === 'function') renderDayView();
+    if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">route</span> 동선 최적화 적용 — ' + before.toFixed(1) + 'km → ' + after.toFixed(1) + 'km');
   };
 
   // ── ④ 좌표 소급: 기존 일정/스팟 좌표 자동 찾기 (도시 60km 검증으로 오매칭 차단) ──
