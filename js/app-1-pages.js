@@ -14191,7 +14191,16 @@
       if (foot) foot.innerHTML = '<span>📍 좌표 찾는 중... ' + (i + 1) + '/' + targets.length + ' — ' + String(it.title || '').replace(/</g, '&lt;') + '</span>';
       var cityName = (it.city || '').trim() || dateToCity[it.date] || '';
       var cityRef = (citiesData || []).find(function(c){ return c.name === cityName && typeof c.lat === 'number'; });
-      var geo = await _geocodePOI(it.title, cityName);
+      if (!cityRef && cityName && typeof _normCityKey === 'function') {
+        // "Berlin" vs "Berlin, 독일" 같은 부분 일치 허용
+        var ck = _normCityKey(cityName);
+        cityRef = (citiesData || []).find(function(c) {
+          if (typeof c.lat !== 'number') return false;
+          var cn = _normCityKey(c.name || '');
+          return ck && cn && (cn === ck || cn.indexOf(ck) >= 0 || ck.indexOf(cn) >= 0);
+        });
+      }
+      var geo = await _geocodePOI(it.title, cityName, cityRef);
       if (geo && cityRef && _haversineKm(geo, cityRef) > 60) geo = null; // 다른 대륙 오매칭 방지
       if (geo) {
         it.lat = geo.lat; it.lng = geo.lng;
@@ -14207,24 +14216,60 @@
     alert('좌표 찾기 완료 — 성공 ' + ok + '곳' + (fail.length ? '\n못 찾음(' + fail.length + '): ' + fail.slice(0, 8).join(', ') + (fail.length > 8 ? ' 외' : '') : ''));
   };
 
-  async function _geocodePOI(title, cityName) {
-    var q = String(title || '').trim() + (cityName ? ', ' + cityName : '');
-    if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
-      try {
-        var g = await new Promise(function(resolve) {
-          new google.maps.Geocoder().geocode({ address: q }, function(res, status) {
-            if (status === 'OK' && res && res[0]) resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng() });
-            else resolve(null);
+  // 제목 정리: 이모지·★주석★·(괄호)·대시 뒤 설명 제거 — 지오코더가 읽을 수 있는 형태로
+  function _cleanPOITitle(t) {
+    var s = String(t || '');
+    s = s.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}️→←⇄]/gu, ' ');
+    s = s.replace(/★[^★]*★/g, ' ');
+    s = s.replace(/\([^)]*\)/g, ' ');
+    s = s.split('—')[0].split('–')[0];
+    return s.replace(/\s{2,}/g, ' ').trim();
+  }
+
+  async function _geocodePOI(title, cityName, cityRef) {
+    var base = _cleanPOITitle(title);
+    if (!base) return null;
+    // 라틴 문자 상호명이 섞여 있으면 그것만 따로 시도 (OSM 검색에 가장 잘 맞음)
+    var latin = (base.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9@&'.\- ]{2,}/g) || []).join(' ').replace(/\s{2,}/g, ' ').trim();
+    var tries = [];
+    if (latin && latin.length >= 4) tries.push(latin);
+    if (tries.indexOf(base) < 0) tries.push(base);
+    var bias = cityRef ? { lat: cityRef.lat, lng: cityRef.lng } : null;
+
+    for (var t = 0; t < tries.length; t++) {
+      var q = tries[t];
+      // Google (키에 API 활성화돼 있을 때만 성공 — 현재 키는 REQUEST_DENIED라 사실상 스킵)
+      if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+        try {
+          var g = await new Promise(function(resolve) {
+            new google.maps.Geocoder().geocode({ address: q + (cityName ? ', ' + cityName : '') }, function(res, status) {
+              if (status === 'OK' && res && res[0]) resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng() });
+              else resolve(null);
+            });
           });
-        });
-        if (g) return g;
+          if (g && (!cityRef || _haversineKm(g, cityRef) <= 60)) return g;
+        } catch(e) {}
+      }
+      // Photon (무료·키없음, POI 이름에 강함) — 도시 좌표로 바이어스 후 60km 이내 첫 후보
+      try {
+        var ph = await _acPhoton(q, bias);
+        if (ph && ph.length) {
+          for (var pi = 0; pi < ph.length; pi++) {
+            var cand = { lat: ph[pi].lat, lng: ph[pi].lng };
+            if (!cityRef || _haversineKm(cand, cityRef) <= 60) return cand;
+          }
+        }
+      } catch(e) {}
+      // Nominatim 최후 폴백
+      try {
+        var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q + (cityName ? ', ' + cityName : '')), { headers: { 'Accept': 'application/json' } });
+        var j = await r.json();
+        if (j && j[0]) {
+          var nCand = { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
+          if (!cityRef || _haversineKm(nCand, cityRef) <= 60) return nCand;
+        }
       } catch(e) {}
     }
-    try {
-      var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } });
-      var j = await r.json();
-      if (j && j[0]) return { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
-    } catch(e) {}
     return null;
   }
 
