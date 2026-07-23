@@ -3106,11 +3106,23 @@
         if (g) return g;
       } catch(e) {}
     }
-    try {
-      var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), {headers: {'Accept': 'application/json'}});
-      var j = await r.json();
-      if (j && j[0]) return {lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon)};
-    } catch(e) {}
+    // ★ (2026-07-23) 한글 꼬리표("…, 독일")가 붙으면 Nominatim이 0건 — 라틴 세그먼트만 추린 변형도 시도
+    var latinSegs = String(q).split(',').map(function(s){ return s.trim(); }).filter(function(s){ return /[A-Za-zÀ-ÿ]/.test(s); });
+    var variants = [];
+    if (latinSegs.length) variants.push(latinSegs.join(', '));
+    if (variants.indexOf(q) < 0) variants.push(q);
+    for (var vi = 0; vi < variants.length; vi++) {
+      var v = variants[vi];
+      try {
+        var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(v), {headers: {'Accept': 'application/json'}});
+        var j = await r.json();
+        if (j && j[0]) return {lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon)};
+      } catch(e) {}
+      try {
+        var ph = await _acPhoton(v, null);
+        if (ph && ph.length) return {lat: ph[0].lat, lng: ph[0].lng};
+      } catch(e) {}
+    }
     return null;
   }
 
