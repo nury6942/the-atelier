@@ -14505,6 +14505,133 @@
   }
   window._placePhotoFor = _placePhotoFor;
 
+  // ═══ ★ (2026-07-23) 스팟 구글 평점 파이프라인 ═══
+  //   findPlaceFromQuery(place_id) → getDetails(rating/user_ratings_total). 항상 cb({pid,rating,count}|null).
+  function _placeRatingFor(query, cb) {
+    try {
+      if (!query || typeof google === 'undefined' || !google.maps || !google.maps.places) { cb(null); return; }
+      var svc = new google.maps.places.PlacesService(document.createElement('div'));
+      svc.findPlaceFromQuery({ query: query, fields: ['place_id'] }, function(results, status) {
+        try {
+          if (status !== google.maps.places.PlacesServiceStatus.OK || !results || !results[0] || !results[0].place_id) { cb(null); return; }
+          var pid = results[0].place_id;
+          svc.getDetails({ placeId: pid, fields: ['rating', 'user_ratings_total'] }, function(place, s2) {
+            try {
+              if (s2 !== google.maps.places.PlacesServiceStatus.OK || !place) { cb(null); return; }
+              cb({ pid: pid,
+                   rating: (typeof place.rating === 'number' ? place.rating : 0),
+                   count: (typeof place.user_ratings_total === 'number' ? place.user_ratings_total : 0) });
+            } catch(e) { cb(null); }
+          });
+        } catch(e) { cb(null); }
+      });
+    } catch(e) { cb(null); }
+  }
+  window._placeRatingFor = _placeRatingFor;
+
+  function _spotEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // 리뷰 수 한국식 축약 — 1만 이상 'X.X만', 미만은 그대로
+  function _spotCountKo(n) {
+    var v = Number(n) || 0;
+    if (v < 10000) return String(v);
+    var man = Math.round(v / 1000) / 10;
+    return (man % 1 === 0 ? String(man) : man.toFixed(1)) + '만';
+  }
+
+  // 추천 정렬 점수 = 평점 × log10(리뷰수+1)
+  function _spotScore(p) {
+    var r = Number(p && p.g_rating) || 0;
+    if (!r) return 0;
+    var c = Number(p && p.g_count) || 0;
+    return r * (Math.log(c + 1) / Math.LN10);
+  }
+
+  // 카드/패널용 평점 조각 — 평점 없으면 빈 문자열
+  function _spotRatingHtml(p, big) {
+    var r = Number(p && p.g_rating) || 0;
+    if (!r) return '';
+    var c = Number(p && p.g_count) || 0;
+    return '<span class="spot-rating' + (big ? ' is-big' : '') + '">★ ' + r.toFixed(1) +
+      (c ? ' <i>· ' + _spotCountKo(c) + '</i>' : '') + '</span>';
+  }
+
+  // TOP 추천 이유 한 줄 — description 첫 문장 + 평점 요약
+  function _spotWhyLine(p) {
+    var d = String((p && p.description) || '').replace(/\s+/g, ' ').trim();
+    var first = '';
+    if (d) {
+      var parts = d.split(/[.!?。\n]/);
+      for (var i = 0; i < parts.length; i++) { if (parts[i].trim()) { first = parts[i].trim(); break; } }
+      if (first.length > 46) first = first.slice(0, 46) + '…';
+    }
+    var r = Number(p && p.g_rating) || 0, c = Number(p && p.g_count) || 0;
+    var rt = r ? ('★' + r.toFixed(1) + (c ? '(' + _spotCountKo(c) + ')' : '')) : '';
+    if (first && rt) return first + ' · ' + rt;
+    return first || rt;
+  }
+
+  // ── 스팟 ↔ 일정 제목 매칭: 이모지·괄호 제거 후 (a) 라틴 4자+ 상호 포함 (b) 한글 핵심 토큰 4자+ 포함
+  function _spotNormTitle(s) {
+    var t = String(s == null ? '' : s);
+    t = t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}️→←⇄]/gu, ' ');
+    t = t.replace(/\([^)]*\)/g, ' ').replace(/\[[^\]]*\]/g, ' ');
+    t = t.replace(/[^0-9a-zA-Z가-힣\s]/g, ' ');
+    return t.replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
+  function _spotSig(title) {
+    var n = _spotNormTitle(title);
+    var latin = n.replace(/[^a-z0-9]+/g, '');
+    var kor = n.replace(/[^가-힣]/g, '');
+    var toks = [];
+    var parts = n.split(/[^가-힣]+/);
+    for (var i = 0; i < parts.length; i++) { if (parts[i].length >= 4) toks.push(parts[i]); }
+    if (kor.length >= 4 && toks.indexOf(kor) < 0) toks.push(kor);
+    return { n: n, latin: latin, kor: kor, toks: toks };
+  }
+
+  function _spotSigMatch(a, b) {
+    if (!a || !b || !a.n || !b.n) return false;
+    if (a.n === b.n) return true;
+    if (a.latin.length >= 4 && b.latin.length >= 4 &&
+        (a.latin.indexOf(b.latin) >= 0 || b.latin.indexOf(a.latin) >= 0)) return true;
+    var i;
+    for (i = 0; i < a.toks.length; i++) { if (b.kor.indexOf(a.toks[i]) >= 0) return true; }
+    for (i = 0; i < b.toks.length; i++) { if (a.kor.indexOf(b.toks[i]) >= 0) return true; }
+    return false;
+  }
+
+  // 일정(type='일정') 제목 시그니처 목록 — 렌더 1회당 한 번만 계산
+  function _spotSchedSigs() {
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var dayOf = {};
+    try {
+      var dm = getDayMap();
+      for (var d = 0; d < dm.length; d++) dayOf[dm[d].date] = dm[d].day;
+    } catch(e) {}
+    var out = [];
+    for (var i = 0; i < jd.length; i++) {
+      var it = jd[i];
+      if (!it || it.type !== '일정' || !it.title) continue;
+      var sig = _spotSig(it.title);
+      if (!sig.n) continue;
+      out.push({ sig: sig, date: it.date || '', day: dayOf[it.date] || 0 });
+    }
+    return out;
+  }
+
+  function _spotSchedHit(p, sigs) {
+    if (!sigs || !sigs.length) return null;
+    var s = _spotSig((p && p.title) || '');
+    if (!s.n) return null;
+    for (var i = 0; i < sigs.length; i++) { if (_spotSigMatch(s, sigs[i].sig)) return sigs[i]; }
+    return null;
+  }
+
   window.togglePlaceAdd = function() {
     var f = document.getElementById('place-add-form');
     if (!f) return;
@@ -14555,6 +14682,16 @@
           }).catch(function() {});
         });
       } catch(e) {}
+      // ★ (2026-07-23) 구글 평점도 함께 (g_pid/g_rating/g_count)
+      try {
+        _placeRatingFor((obj.title + ' ' + (obj.city || '')).trim(), function(rt) {
+          if (!rt || !saved || !saved._id) return;
+          fbUpdate('journey', saved._id, { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count }).then(function() {
+            saved.g_pid = rt.pid; saved.g_rating = rt.rating; saved.g_count = rt.count;
+            try { window.renderPlaces(); } catch(e) {}
+          }).catch(function() {});
+        });
+      } catch(e) {}
     } catch(e) { alert('저장 실패'); }
   };
 
@@ -14593,6 +14730,39 @@
     step(0);
   };
 
+  // ★ (2026-07-23) 기존 스팟 일괄 평점 채우기 — 600ms 간격 순차, 버튼에 진행 표시
+  window.fillPlaceRatings = function() {
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var targets = jd.filter(function(d) { return d.type === '스팟' && !d.g_pid && d._id; });
+    var btn = document.getElementById('places-rating-fill-btn');
+    if (!targets.length) {
+      if (btn) btn.style.display = 'none';
+      return;
+    }
+    if (btn && btn.getAttribute('data-running')) return; // 중복 실행 방지
+    if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
+    var ok = 0;
+    function step(i) {
+      if (i >= targets.length) {
+        if (btn) { btn.removeAttribute('data-running'); btn.disabled = false; }
+        try { window.renderPlaces(); } catch(e) {}
+        if (typeof showSyncToast === 'function') showSyncToast('★ 스팟 평점 ' + ok + '/' + targets.length + '건 채웠어!');
+        return;
+      }
+      if (btn) btn.innerHTML = '<span class="material-symbols-outlined">star</span> ' + (i + 1) + '/' + targets.length + ' 처리 중…';
+      var p = targets[i];
+      _placeRatingFor(((p.title || '') + ' ' + (p.city || '')).trim(), function(rt) {
+        if (rt) {
+          ok++;
+          p.g_pid = rt.pid; p.g_rating = rt.rating; p.g_count = rt.count;
+          fbUpdate('journey', p._id, { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count }).catch(function() {});
+        }
+        setTimeout(function() { step(i + 1); }, 600);
+      });
+    }
+    step(0);
+  };
+
   window.setPlaceFilter = function(f) { _placeFilter = f; window.renderPlaces(); };
   window.setPlaceCountry = function(c) { _placeCountry = c; window.renderPlaces(); };
 
@@ -14614,6 +14784,13 @@
       var noPhoto = places.filter(function(p) { return !p.photo_url && p._id; }).length;
       fillBtn.style.display = noPhoto ? '' : 'none';
       fillBtn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> 사진 채우기 (' + noPhoto + ')';
+    }
+    // ★ 평점 채우기 버튼 (g_pid 없는 스팟 수)
+    var rateBtn = document.getElementById('places-rating-fill-btn');
+    if (rateBtn && !rateBtn.getAttribute('data-running')) {
+      var noRate = places.filter(function(p) { return !p.g_pid && p._id; }).length;
+      rateBtn.style.display = noRate ? '' : 'none';
+      rateBtn.innerHTML = '<span class="material-symbols-outlined">star</span> 평점 채우기 (' + noRate + ')';
     }
     // 국가 세그먼트 탭 (스팟 있는 국가만 동적 생성)
     if (countryEl) {
@@ -14650,6 +14827,20 @@
         (places.length ? '이 필터에 해당하는 스팟이 없어요' : '아직 스팟이 없어요 — 가고 싶은 곳을 먼저 모아두고, 일정에 배치해봐!') + '</div>';
       return;
     }
+    // ★ (2026-07-23) 추천 순위 — 점수(평점×log10(리뷰수+1)) 내림차순, 평점 없는 스팟은 뒤(기존 순서 유지)
+    var deco = list.map(function(p, i) { return { p: p, i: i, s: _spotScore(p) }; });
+    deco.sort(function(a, b) { return (b.s - a.s) || (a.i - b.i); });
+    list = deco.map(function(d) { return d.p; });
+    // ★ TOP 5 — 현재 필터와 무관하게 전체 스팟 기준 전역 계산
+    var topDeco = [];
+    places.forEach(function(p, i) {
+      var s = _spotScore(p);
+      if (s > 0) topDeco.push({ p: p, i: i, s: s });
+    });
+    topDeco.sort(function(a, b) { return (b.s - a.s) || (a.i - b.i); });
+    var topList = topDeco.slice(0, 5).map(function(d) { return d.p; });
+    // ★ "일정에 있음" 배지용 일정 제목 시그니처 (렌더당 1회)
+    var schedSigs = _spotSchedSigs();
     grid.innerHTML = list.map(function(p) {
       var idx = journeyData.indexOf(p);
       var catIco = PLACE_CAT_ICONS[p.category] || 'place';
@@ -14668,7 +14859,22 @@
       if (isReservationItem(p)) chips += '<span class="spot-chip is-reserve">🎫 예약 필수</span>';
       if (p.indoor === true) chips += '<span class="spot-chip is-indoor">🏠 실내</span>';
       if (p.closed) chips += '<span class="spot-chip is-closed">⛔ ' + String(p.closed).replace(/</g, '&lt;') + ' 휴무</span>';
-      var memo = p.description ? '<p class="spot-desc">' + String(p.description).replace(/</g, '&lt;') + '</p>' : '';
+      // ★ (2026-07-23) 이미 일정에 있는 스팟이면 슬레이트 칩으로 인지 (배치 버튼은 그대로)
+      var hit = _spotSchedHit(p, schedSigs);
+      if (hit) chips += '<span class="spot-chip is-sched">📅 ' + (hit.day ? hit.day + '일차 ' : '') + '일정에 있음</span>';
+      var memo = p.description
+        ? '<p class="spot-desc is-clickable" onclick="togglePlaceDetail(' + idx + ')">' + String(p.description).replace(/</g, '&lt;') + '</p>'
+        : '';
+      // ★ TOP 5 배지 + 추천 이유 미니 라인
+      var topRank = topList.indexOf(p);
+      var topHtml = '';
+      if (topRank >= 0) {
+        var why = _spotWhyLine(p);
+        topHtml = '<div class="spot-top-badge">★ TOP ' + (topRank + 1) + '</div>' +
+          (why ? '<div class="spot-top-why">' + _spotEsc(why) + '</div>' : '');
+      }
+      var rateHtml = _spotRatingHtml(p, false);
+      var moreHtml = '<button class="spot-more" id="spot-more-' + idx + '" onclick="togglePlaceDetail(' + idx + ')">자세히 ▾</button>';
       var foot;
       if (p.status === 'planned' && p.placed_date) {
         foot = '<div class="spot-foot-row">' +
@@ -14679,31 +14885,251 @@
       } else {
         foot = '<button class="spot-assign-btn" onclick="openPlaceAssign(' + idx + ')"><span class="material-symbols-outlined">add</span>일정에 배치</button>';
       }
-      return '<div class="spot-card">' + imgHtml +
+      return '<div class="spot-card' + (topRank >= 0 ? ' is-top' : '') + '">' + imgHtml +
         '<div class="spot-body">' +
+          topHtml +
           '<div class="spot-title-row">' +
             '<h4 class="spot-title">' + _trvMapsLink(p.title || '', p.city || '') + '</h4>' +
             '<button class="spot-del" onclick="deletePlace(' + idx + ')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
           '</div>' +
           '<div class="spot-chips">' + chips + '</div>' +
+          rateHtml +
           memo +
+          moreHtml +
           '<div class="spot-foot"><div class="spot-foot-inner" id="place-assign-' + idx + '">' + foot + '</div></div>' +
         '</div>' +
-      '</div>';
+      '</div>' +
+      '<div class="spot-detail" id="spot-detail-' + idx + '" style="display:none"></div>';
     }).join('');
   };
+
+  // ═══ ★ (2026-07-23) 스팟 펼쳐보기 상세 — 그리드 풀폭 패널 (카드 아래) ═══
+  window.togglePlaceDetail = function(idx) {
+    var el = document.getElementById('spot-detail-' + idx);
+    if (!el) return;
+    var btn = document.getElementById('spot-more-' + idx);
+    if (el.getAttribute('data-open') === '1') {
+      el.style.display = 'none'; el.removeAttribute('data-open'); el.innerHTML = '';
+      if (btn) btn.innerHTML = '자세히 ▾';
+      return;
+    }
+    el.style.display = ''; el.setAttribute('data-open', '1');
+    if (btn) btn.innerHTML = '접기 ▴';
+    _renderPlaceDetail(idx);
+  };
+
+  // g_pid로 리뷰·영업시간·웹사이트 지연 로드 → 트림해서 g_details로 캐시 (재펼침 시 재호출 없음)
+  function _placeDetailsFetch(p, cb) {
+    try {
+      if (!p || !p.g_pid || typeof google === 'undefined' || !google.maps || !google.maps.places) { cb(null); return; }
+      var svc = new google.maps.places.PlacesService(document.createElement('div'));
+      svc.getDetails({ placeId: p.g_pid, fields: ['reviews', 'opening_hours', 'website'] }, function(place, status) {
+        try {
+          if (status !== google.maps.places.PlacesServiceStatus.OK || !place) { cb(null); return; }
+          var revs = [], src = place.reviews || [];
+          for (var i = 0; i < src.length && revs.length < 3; i++) {
+            var t = String(src[i].text || '').replace(/\s+/g, ' ').trim();
+            if (!t) continue;
+            revs.push({ n: String(src[i].author_name || '익명').slice(0, 24),
+                        r: Number(src[i].rating) || 0,
+                        t: t.length > 160 ? t.slice(0, 160) + '…' : t });
+          }
+          var hrs = (place.opening_hours && place.opening_hours.weekday_text)
+            ? place.opening_hours.weekday_text.slice(0, 7) : [];
+          var det = { reviews: revs, hours: hrs, web: String(place.website || '').slice(0, 300),
+                      fetched: new Date().toISOString().slice(0, 10) };
+          p.g_details = det;
+          if (p._id) { try { fbUpdate('journey', p._id, { g_details: det }).catch(function() {}); } catch(e) {} }
+          cb(det);
+        } catch(e) { cb(null); }
+      });
+    } catch(e) { cb(null); }
+  }
+
+  function _spotDetailBody(g) {
+    var out = '';
+    var hrs = (g && g.hours) || [];
+    if (hrs.length) {
+      var todayIdx = (new Date().getDay() + 6) % 7; // weekday_text는 월요일 시작
+      var line = hrs[todayIdx] || '';
+      if (line) out += '<div class="spot-detail-hours">🕒 오늘 · ' + _spotEsc(line) + '</div>';
+    }
+    if (g && g.web) {
+      out += '<div class="spot-detail-web"><a href="' + _spotEsc(g.web) + '" target="_blank" rel="noopener">🔗 공식 웹사이트</a></div>';
+    }
+    var revs = (g && g.reviews) || [];
+    if (revs.length) {
+      out += '<div class="spot-detail-revs">' + revs.map(function(r) {
+        return '<div class="spot-rev">' +
+          '<div class="spot-rev-top"><b>' + _spotEsc(r.n) + '</b>' +
+            (r.r ? '<span class="spot-rev-star">★ ' + (Number(r.r) || 0).toFixed(1) + '</span>' : '') + '</div>' +
+          '<p>' + _spotEsc(r.t) + '</p></div>';
+      }).join('') + '</div>';
+    }
+    if (!out) out = '<div class="spot-detail-note">추가 정보가 없어.</div>';
+    return out;
+  }
+
+  function _renderPlaceDetail(idx) {
+    var el = document.getElementById('spot-detail-' + idx);
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var p = jd[idx];
+    if (!el || !p) return;
+    var head = '<div class="spot-detail-head">' +
+      '<div class="spot-detail-title">' + _spotEsc(p.title || '') + '</div>' +
+      (_spotRatingHtml(p, true) || '<span class="spot-detail-norate">평점 정보 없음</span>') +
+      '<button class="spot-detail-close" onclick="togglePlaceDetail(' + idx + ')">닫기 ▴</button>' +
+    '</div>';
+    var desc = p.description ? '<p class="spot-detail-desc">' + _spotEsc(p.description) + '</p>' : '';
+    var g = p.g_details;
+    if (g && typeof g === 'string') { try { g = JSON.parse(g); } catch(e) { g = null; } }
+    if (g) { el.innerHTML = head + desc + _spotDetailBody(g); return; }
+    if (!p.g_pid) {
+      el.innerHTML = head + desc + '<div class="spot-detail-note">구글 상세 정보가 아직 없어 — 헤더의 "★ 평점 채우기"를 먼저 눌러줘.</div>';
+      return;
+    }
+    el.innerHTML = head + desc + '<div class="spot-detail-note">⏳ 구글 리뷰·영업시간 불러오는 중…</div>';
+    _placeDetailsFetch(p, function(res) {
+      var el2 = document.getElementById('spot-detail-' + idx);
+      if (!el2 || el2.getAttribute('data-open') !== '1') return;
+      el2.innerHTML = head + desc + (res ? _spotDetailBody(res)
+        : '<div class="spot-detail-note">상세 정보를 못 불러왔어 (구글 응답 없음).</div>');
+    });
+  }
+
+  // ═══ ★ (2026-07-23) 배치 추천 — 우회거리 최소 일차 + 60분+ 빈 시간 탐색 ═══
+  function _spotMin(t) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(String(t || '').trim());
+    if (!m) return -1;
+    return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+  }
+  function _spotHHMM(min) {
+    var h = Math.floor(min / 60), m = min % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  }
+  function _spotShortTitle(t) {
+    var s = String(t || '').replace(/<[^>]+>/g, '').trim();
+    try { if (typeof _cleanPOITitle === 'function') s = _cleanPOITitle(s) || s; } catch(e) {}
+    return s.length > 12 ? s.slice(0, 12) + '…' : s;
+  }
+  // 자유 일정 = 예약·고정이 아니고 이동/체크인류 키워드도 아닌 일정
+  function _spotFreeItem(items) {
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.reservation === true || it.pinned === true) continue;
+      if (/체크인|체크아웃|공항|이동|출발|도착|기차|비행|버스|렌트|픽업|숙소|짐 /i.test(it.title || '')) continue;
+      return it;
+    }
+    return null;
+  }
+
+  function _spotAssignRec(p) {
+    var dayMap = [];
+    try { dayMap = getDayMap(); } catch(e) {}
+    if (!p || !dayMap.length) return null;
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var hasCo = (typeof p.lat === 'number' && typeof p.lng === 'number');
+    var pCity = _normCityKey(p.city || '');
+    var WD = ['일', '월', '화', '수', '목', '금', '토'];
+    var cands = [];
+    for (var i = 0; i < dayMap.length; i++) {
+      var d = dayMap[i];
+      // 휴무 요일 충돌 제외
+      if (p.closed) {
+        try {
+          var wd = WD[new Date(d.date + 'T00:00:00').getDay()];
+          if (String(p.closed).indexOf(wd) >= 0) continue;
+        } catch(e) {}
+      }
+      var items = [];
+      for (var j = 0; j < jd.length; j++) {
+        if (jd[j].type === '일정' && jd[j].date === d.date) items.push(jd[j]);
+      }
+      items.sort(function(a, b) { return String(a.time || '~').localeCompare(String(b.time || '~')); });
+      // 근접 판정: 좌표 30km 이내 또는 도시명 매칭
+      var minD = Infinity, k;
+      if (hasCo) {
+        for (k = 0; k < items.length; k++) {
+          if (typeof items[k].lat === 'number' && typeof items[k].lng === 'number') {
+            var dd = _haversineKm(p, items[k]);
+            if (dd < minD) minD = dd;
+          }
+        }
+      }
+      var near = isFinite(minD) && minD <= 30;
+      if (!near && pCity) {
+        if (_normCityKey(d.cityName || '') === pCity) near = true;
+        else {
+          for (k = 0; k < items.length; k++) {
+            if (_normCityKey(items[k].city || '') === pCity) { near = true; break; }
+          }
+        }
+      }
+      if (!near) continue;
+      // 우회거리 = min over 연속 일정쌍(a,b) [dist(a,스팟)+dist(스팟,b)−dist(a,b)]
+      var detour = Infinity, pa = null, pb = null;
+      if (hasCo) {
+        for (k = 1; k < items.length; k++) {
+          var a = items[k - 1], b = items[k];
+          if (typeof a.lat !== 'number' || typeof a.lng !== 'number') continue;
+          if (typeof b.lat !== 'number' || typeof b.lng !== 'number') continue;
+          var v = _haversineKm(a, p) + _haversineKm(p, b) - _haversineKm(a, b);
+          if (v < detour) { detour = v; pa = a; pb = b; }
+        }
+      }
+      // 빈 시간: 연속 일정 사이 60분+ 구간 (종료시간 없으면 60분 소요 가정)
+      var gap = null;
+      for (k = 1; k < items.length; k++) {
+        var s0 = _spotMin(items[k - 1].time), e0 = _spotMin(items[k - 1].end_time);
+        var s1 = _spotMin(items[k].time);
+        if (s0 < 0 || s1 < 0) continue;
+        if (e0 < 0 || e0 < s0) e0 = s0 + 60;
+        if (s1 - e0 >= 60) { gap = { s: e0, e: s1 }; break; }
+      }
+      cands.push({ date: d.date, day: d.day, items: items, minD: minD, detour: detour, pa: pa, pb: pb, gap: gap });
+    }
+    if (!cands.length) return null;
+    cands.sort(function(a, b) {
+      var ka = isFinite(a.detour) ? a.detour : (isFinite(a.minD) ? a.minD + 1000 : 2000);
+      var kb = isFinite(b.detour) ? b.detour : (isFinite(b.minD) ? b.minD + 1000 : 2000);
+      return (ka - kb) || (a.day - b.day);
+    });
+    return cands[0];
+  }
+
+  function _spotRecLine(rec) {
+    if (!rec) return '';
+    var head = rec.day + '일차(' + String(rec.date).slice(5).replace('-', '/') + ')';
+    if (rec.gap) {
+      var mid = (rec.pa && rec.pb)
+        ? (' — ' + _spotEsc(_spotShortTitle(rec.pa.title)) + '↔' + _spotEsc(_spotShortTitle(rec.pb.title)) + ' 사이') : '';
+      var dt = isFinite(rec.detour) ? (', 우회 +' + (Math.round(rec.detour * 10) / 10) + 'km') : '';
+      return '<div class="spot-rec">🎯 추천: ' + head + mid + dt + ', ' +
+        _spotHHMM(rec.gap.s) + '~' + _spotHHMM(rec.gap.e) + ' 여유</div>';
+    }
+    var free = _spotFreeItem(rec.items);
+    return '<div class="spot-rec is-warn">⚠️ ' + head + '가 동선상 최적이지만 빈 시간이 없어 — ' +
+      (free ? ('그 날 자유 일정(\'' + _spotEsc(_spotShortTitle(free.title)) + '\') 조정 추천')
+            : '그 날 일정 조정이 필요해') + '</div>';
+  }
 
   window.openPlaceAssign = function(idx) {
     var wrap = document.getElementById('place-assign-' + idx);
     if (!wrap) return;
     var dayMap = getDayMap();
     if (!dayMap.length) { alert('먼저 Stops에 도시/날짜를 추가해줘!'); return; }
+    // ★ (2026-07-23) 배치 추천 — 최적 일차 preselect + 빈 시간 시작시각 프리필
+    var rec = null;
+    try { rec = _spotAssignRec(journeyData[idx]); } catch(e) { rec = null; }
     var opts = dayMap.map(function(e) {
-      return '<option value="' + e.date + '">' + e.day + '일차 · ' + e.date.slice(5).replace('-', '/') + ' · ' + (e.cityName || '') + '</option>';
+      return '<option value="' + e.date + '"' + (rec && rec.date === e.date ? ' selected' : '') + '>' +
+        e.day + '일차 · ' + e.date.slice(5).replace('-', '/') + ' · ' + (e.cityName || '') + '</option>';
     }).join('');
-    wrap.innerHTML = '<div class="spot-assign-row">' +
+    var timeVal = (rec && rec.gap) ? _spotHHMM(rec.gap.s) : '';
+    wrap.innerHTML = _spotRecLine(rec) +
+      '<div class="spot-assign-row">' +
       '<select id="place-assign-day-' + idx + '">' + opts + '</select>' +
-      '<input id="place-assign-time-' + idx + '" type="text" placeholder="10:00"/>' +
+      '<input id="place-assign-time-' + idx + '" type="text" placeholder="10:00" value="' + timeVal + '"/>' +
       '<button class="spot-assign-go" onclick="confirmPlaceAssign(' + idx + ')">배치</button>' +
     '</div>';
   };

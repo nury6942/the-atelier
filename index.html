@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=255" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=256" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5875,6 +5875,49 @@
     .spot-add-form { margin-bottom:16px; padding:16px; border-radius:16px;
       border:1.5px dashed #c4b5fd; background:#faf8ff; }
 
+    /* ═══ ★ (2026-07-23) 스팟 평점 · 추천 TOP · 펼쳐보기 상세 · 배치 추천 ═══ */
+    .spot-chip.is-sched { color:#475569; border-color:#cbd5e1; background:#f1f5f9; }
+    .spot-rating { display:inline-flex; align-items:center; gap:3px; margin-top:7px; align-self:flex-start;
+      font-family:var(--font-mono); font-size:10.5px; font-weight:800; color:#f59e0b; letter-spacing:-0.01em; }
+    .spot-rating i { font-style:normal; font-weight:700; color:#94a3b8; }
+    .spot-rating.is-big { margin-top:0; font-size:15px; }
+    .spot-card.is-top { border-color:#fcd34d; box-shadow:0 5px 16px rgba(245,158,11,.14); }
+    .spot-card.is-top::before { content:''; display:block; height:3px; flex-shrink:0;
+      background:linear-gradient(90deg,#f59e0b,#fcd34d); }
+    .spot-top-badge { align-self:flex-start; margin-bottom:5px; padding:2px 7px; border-radius:6px;
+      font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:0.06em;
+      color:#78350f; background:linear-gradient(135deg,#fde68a,#fcd34d); }
+    .spot-top-why { font-size:10px; line-height:1.45; color:#b45309; margin:0 0 6px;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .spot-desc.is-clickable { cursor:pointer; }
+    .spot-desc.is-clickable:hover { color:#475569; }
+    .spot-more { align-self:flex-start; margin-top:7px; padding:2px 0; border:none; background:transparent;
+      cursor:pointer; font-family:var(--font-mono); font-size:10px; font-weight:800; color:#7c3aed; }
+    .spot-more:hover { text-decoration:underline; }
+    .spot-detail { grid-column:1 / -1; padding:14px 16px; border-radius:12px;
+      border:1px solid #e2e8f0; border-left:3px solid #f59e0b; background:#fffdf6; }
+    .spot-detail-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .spot-detail-title { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px;
+      font-weight:800; color:#0f172a; }
+    .spot-detail-norate { font-size:11px; font-weight:700; color:#94a3b8; }
+    .spot-detail-close { margin-left:auto; padding:3px 9px; border:1px solid #e2e8f0; border-radius:8px;
+      background:#fff; cursor:pointer; font-size:10px; font-weight:800; color:#64748b; }
+    .spot-detail-close:hover { color:#0f172a; border-color:#cbd5e1; }
+    .spot-detail-desc { font-size:11.5px; line-height:1.65; color:#475569; margin:9px 0 0; }
+    .spot-detail-note { font-size:11px; font-weight:700; color:#94a3b8; margin-top:9px; }
+    .spot-detail-hours { font-size:11px; font-weight:700; color:#b45309; margin-top:10px; }
+    .spot-detail-web { font-size:11px; margin-top:5px; }
+    .spot-detail-web a { color:#7c3aed; font-weight:700; }
+    .spot-detail-revs { display:grid; grid-template-columns:1fr; gap:7px; margin-top:10px; }
+    @media (min-width:768px){ .spot-detail-revs { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    .spot-rev { padding:8px 10px; border:1px solid #f1f5f9; border-radius:10px; background:#fff; }
+    .spot-rev-top { display:flex; align-items:center; gap:6px; font-size:10.5px; color:#0f172a; }
+    .spot-rev-star { font-family:var(--font-mono); font-weight:800; color:#f59e0b; }
+    .spot-rev p { font-size:10.5px; line-height:1.55; color:#64748b; margin:4px 0 0; }
+    .spot-rec { margin-bottom:6px; padding:5px 8px; border-radius:9px; line-height:1.45;
+      font-size:10.5px; font-weight:700; color:#0f766e; background:#f0fdfa; border:1px solid #99f6e4; }
+    .spot-rec.is-warn { color:#b45309; background:#fffbeb; border-color:#fde68a; }
+
     #travel-atlas-section .atlas-hero {
       padding: var(--space-8) 0 48px;
       border-bottom: 1px solid var(--atlas-line);
@@ -10836,6 +10879,7 @@
           <div class="trv-sec-actions">
             <span id="places-count" class="text-xs font-semibold text-slate-400"></span>
             <button id="places-photo-fill-btn" onclick="fillPlacePhotos()" class="trav-act" style="display:none" title="사진 없는 스팟에 Google Places 대표 사진을 순차로 채워요"><span class="material-symbols-outlined">photo_camera</span> 사진 채우기</button>
+            <button id="places-rating-fill-btn" onclick="fillPlaceRatings()" class="trav-act" style="display:none" title="평점 없는 스팟에 Google 평점·리뷰 수를 순차로 채워요"><span class="material-symbols-outlined">star</span> 평점 채우기</button>
             <button onclick="togglePlaceAdd()" class="trav-act"><span class="material-symbols-outlined">add</span> 스팟 추가</button>
           </div>
         </div>
@@ -13610,7 +13654,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=255" defer></script>
+<script src="js/app-1-pages.js?v=256" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
