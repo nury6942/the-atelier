@@ -14820,7 +14820,7 @@
       // 기준 좌표가 없으면 스킵 — 엉뚱한 대륙 오매칭 방지가 우선
       if (!cityRef) { fail.push(it.title); continue; }
       var geo = await _geocodePOI(it.title, cityRef.name, cityRef);
-      if (geo && cityRef && _haversineKm(geo, cityRef) > 60) geo = null; // 다른 대륙 오매칭 방지
+      if (geo && cityRef && _haversineKm(geo, cityRef) > 200) geo = null; // 당일치기 반경(200km) 밖 = 오매칭 (세부 한도는 _geocodePOI가 소스별로 적용)
       if (geo) {
         it.lat = geo.lat; it.lng = geo.lng;
         if (it._id) { try { await fbUpdate('journey', it._id, { lat: geo.lat, lng: geo.lng }); } catch(e) {} }
@@ -14845,47 +14845,63 @@
     return s.replace(/\s{2,}/g, ' ').trim();
   }
 
+  function _googleGeo(q) {
+    return new Promise(function(resolve) {
+      try {
+        if (typeof google === 'undefined' || !google.maps || !google.maps.Geocoder) { resolve(null); return; }
+        new google.maps.Geocoder().geocode({ address: q }, function(res, status) {
+          if (status === 'OK' && res && res[0]) {
+            var t = res[0].types || [];
+            resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng(),
+                      // 주(region)/국가 수준 결과 = 지명을 못 찾고 큰 행정구역만 잡은 약한 매칭
+                      weak: t.indexOf('administrative_area_level_1') >= 0 || t.indexOf('country') >= 0 });
+          } else resolve(null);
+        });
+      } catch(e) { resolve(null); }
+    });
+  }
+
   async function _geocodePOI(title, cityName, cityRef) {
     var base = _cleanPOITitle(title);
     if (!base) return null;
-    // 라틴 문자 상호명이 섞여 있으면 그것만 따로 시도 (OSM 검색에 가장 잘 맞음)
     var latin = (base.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9@&'.\- ]{2,}/g) || []).join(' ').replace(/\s{2,}/g, ' ').trim();
+    var bias = cityRef ? { lat: cityRef.lat, lng: cityRef.lng } : null;
+    var LIM_G = 200, LIM_FREE = 60; // 구글 결과는 당일치기 반경(200km)까지 신뢰, 무료 소스는 60km 엄격
+
+    // ── 구글: 제목 단독 먼저 (제목 속 지명 — 몬탈치노·오르비에토 등 당일치기 대응),
+    //    그다음 제목+숙박도시 (단독 검색이 애매할 때의 안전망)
+    var gq = [];
+    if (latin && latin.length >= 4 && latin !== base) gq.push({ q: latin, titleOnly: true });
+    gq.push({ q: base, titleOnly: true });
+    gq.push({ q: base + (cityName ? ', ' + cityName : ''), titleOnly: false });
+    for (var g = 0; g < gq.length; g++) {
+      var r = await _googleGeo(gq[g].q);
+      if (!r) continue;
+      if (gq[g].titleOnly && r.weak) continue; // "토스카나 저녁" → 토스카나 주(州) 같은 뭉툭한 결과 배제
+      if (!cityRef || _haversineKm(r, cityRef) <= LIM_G) return { lat: r.lat, lng: r.lng };
+    }
+
+    // ── 무료 폴백 (Photon → Nominatim, 60km 엄격)
     var tries = [];
     if (latin && latin.length >= 4) tries.push(latin);
     if (tries.indexOf(base) < 0) tries.push(base);
-    var bias = cityRef ? { lat: cityRef.lat, lng: cityRef.lng } : null;
-
     for (var t = 0; t < tries.length; t++) {
       var q = tries[t];
-      // Google (키에 API 활성화돼 있을 때만 성공 — 현재 키는 REQUEST_DENIED라 사실상 스킵)
-      if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
-        try {
-          var g = await new Promise(function(resolve) {
-            new google.maps.Geocoder().geocode({ address: q + (cityName ? ', ' + cityName : '') }, function(res, status) {
-              if (status === 'OK' && res && res[0]) resolve({ lat: res[0].geometry.location.lat(), lng: res[0].geometry.location.lng() });
-              else resolve(null);
-            });
-          });
-          if (g && (!cityRef || _haversineKm(g, cityRef) <= 60)) return g;
-        } catch(e) {}
-      }
-      // Photon (무료·키없음, POI 이름에 강함) — 도시 좌표로 바이어스 후 60km 이내 첫 후보
       try {
         var ph = await _acPhoton(q, bias);
         if (ph && ph.length) {
           for (var pi = 0; pi < ph.length; pi++) {
             var cand = { lat: ph[pi].lat, lng: ph[pi].lng };
-            if (!cityRef || _haversineKm(cand, cityRef) <= 60) return cand;
+            if (!cityRef || _haversineKm(cand, cityRef) <= LIM_FREE) return cand;
           }
         }
       } catch(e) {}
-      // Nominatim 최후 폴백
       try {
-        var r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q + (cityName ? ', ' + cityName : '')), { headers: { 'Accept': 'application/json' } });
-        var j = await r.json();
+        var rr = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q + (cityName ? ', ' + cityName : '')), { headers: { 'Accept': 'application/json' } });
+        var j = await rr.json();
         if (j && j[0]) {
           var nCand = { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
-          if (!cityRef || _haversineKm(nCand, cityRef) <= 60) return nCand;
+          if (!cityRef || _haversineKm(nCand, cityRef) <= LIM_FREE) return nCand;
         }
       } catch(e) {}
     }
