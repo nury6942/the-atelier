@@ -11914,9 +11914,10 @@
   let editingFinanceIndex = null;
   let currentFinanceTrip = 'all';
 
-  const FIN_CAT_ICONS = {'입금':'savings','이동':'flight','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','렌트':'directions_car','교통':'directions_subway','기타':'more_horiz'};
-  const FIN_CAT_COLORS = {'입금':'text-emerald-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','렌트':'text-pink-600','교통':'text-lime-600','기타':'text-slate-500'};
-  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','렌트':'bg-pink-50 text-pink-700 border-pink-200','교통':'bg-lime-50 text-lime-700 border-lime-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+  const FIN_CAT_ICONS = {'입금':'savings','항공':'flight','이동':'train','숙소':'bed','식비':'restaurant','여가':'attractions','쇼핑':'shopping_bag','티켓':'confirmation_number','보험':'shield','통신':'sim_card','환전':'currency_exchange','렌트':'directions_car','교통':'directions_subway','기타':'more_horiz'};
+  const FIN_CAT_COLORS = {'입금':'text-emerald-600','항공':'text-sky-600','이동':'text-indigo-600','숙소':'text-blue-600','식비':'text-purple-600','여가':'text-teal-600','쇼핑':'text-rose-500','티켓':'text-amber-600','보험':'text-cyan-600','통신':'text-violet-600','환전':'text-orange-600','렌트':'text-pink-600','교통':'text-lime-600','기타':'text-slate-500'};
+  const FIN_CAT_BG = {'입금':'bg-emerald-50 text-emerald-700 border-emerald-200','항공':'bg-sky-50 text-sky-700 border-sky-200','이동':'bg-indigo-50 text-indigo-700 border-indigo-200','숙소':'bg-blue-50 text-blue-700 border-blue-200','식비':'bg-purple-50 text-purple-700 border-purple-200','여가':'bg-teal-50 text-teal-700 border-teal-200','쇼핑':'bg-rose-50 text-rose-700 border-rose-200','티켓':'bg-amber-50 text-amber-700 border-amber-200','보험':'bg-cyan-50 text-cyan-700 border-cyan-200','통신':'bg-violet-50 text-violet-700 border-violet-200','환전':'bg-orange-50 text-orange-700 border-orange-200','렌트':'bg-pink-50 text-pink-700 border-pink-200','교통':'bg-lime-50 text-lime-700 border-lime-200','기타':'bg-slate-50 text-slate-600 border-slate-200'};
+  var FIN_CATS = Object.keys(FIN_CAT_ICONS); // 카테고리 단일 소스 — 드롭다운 전부 여기서
 
   var FINANCE_SEED_TRIP = '2026 체코&크로아티아';
   var FINANCE_DEFAULTS = [
@@ -12397,7 +12398,7 @@
     var tr = td.closest('tr');
     var cat = row[3]||'기타'; var amt = parseFloat(row[4])||0; var isDeposit = cat === '입금';
     var ic = 'border border-slate-200 rounded px-1.5 py-1 text-xs outline-none focus:ring-1 focus:ring-indigo-200 w-full';
-    var catOpts = ['입금','이동','숙소','렌트','티켓','환전','보험','통신','식비','교통','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
+    var catOpts = FIN_CATS.map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
     tr.className = 'bg-indigo-50/40';
     var amtCls = isDeposit ? 'text-indigo-600' : 'text-rose-600';
     var amtPlaceholder = isDeposit ? '입금' : '출금';
@@ -12529,7 +12530,7 @@
 
   function appendFinanceInputRow(tbody) {
     var ic = 'border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-violet-200 bg-white';
-    var catOpts = ['입금','이동','숙소','렌트','티켓','환전','보험','통신','식비','교통','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    var catOpts = FIN_CATS.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
     var tripVal = currentFinanceTrip!=='all' ? currentFinanceTrip : (financeTrips.length?financeTrips[0].name:'');
     var tr = document.createElement('tr');
     tr.id = 'fin-input-row';
@@ -13540,7 +13541,7 @@
     var amt = parseFloat(row[4])||0;
     var isDeposit = cat === '입금';
     var ic = 'border border-slate-200 rounded px-1.5 py-1 text-xs outline-none focus:ring-1 focus:ring-indigo-200 w-full';
-    var catOpts = ['입금','이동','숙소','렌트','티켓','환전','보험','통신','식비','교통','여가','쇼핑','기타'].map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
+    var catOpts = FIN_CATS.map(function(c){ return '<option value="'+c+'"'+(c===cat?' selected':'')+'>'+c+'</option>'; }).join('');
     tr.className = 'bg-indigo-50/40';
     tr.innerHTML =
       '<td class="px-4 py-2"><input id="fie-date" type="date" value="'+(row[0]||'')+'" class="'+ic+'"/></td>' +
