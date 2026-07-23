@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=259" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=260" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5614,6 +5614,11 @@
     .rec-abtn:hover { opacity:1; background:rgba(148,163,184,.18); }
     .rec-abtn.danger:hover { color:#e11d48; background:rgba(225,29,72,.1); }
     .rec-abtn .material-symbols-outlined { font-size:16px; display:block; }
+    /* ★ (2026-07-23) 브랜드/항공사 로고 — CDN 차단 시 onerror로 사라지고 기존 아이콘이 남음 */
+    .rec-fl-logo { height:22px; width:auto; max-width:72px; object-fit:contain; flex-shrink:0;
+      display:block; background:#fff; border-radius:5px; padding:3px 4px; }
+    .rec-tr-ico.has-logo { background:#fff; border:1px solid #e2e8f0; padding:6px; }
+    .rec-tr-logo { width:100%; height:100%; object-fit:contain; display:block; }
 
     /* 항공 — 보딩패스 */
     .rec-fl-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;
@@ -9981,7 +9986,10 @@
             <section id="trv-lodging" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Lodging</p><h3 class="trv-sec-title">숙소</h3></div>
-                <div class="trv-sec-actions"><button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions">
+                  <button id="lodge-photo-fill-btn" onclick="fillLodgePhotos()" class="trav-act" style="display:none" title="사진 없는 숙소에 Google Places 사진을 순차로 채워요"><span class="material-symbols-outlined">photo_camera</span> 호텔 사진 채우기</button>
+                  <button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
+                </div>
               </div>
               <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
               <div id="journey-lodging-recs" style="display:none"></div>
@@ -13773,7 +13781,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=259" defer></script>
+<script src="js/app-1-pages.js?v=260" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

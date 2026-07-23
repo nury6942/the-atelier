@@ -5308,6 +5308,144 @@
     } catch(e) { alert('저장 실패: ' + e.message); }
   }
 
+  // ═══ ★ (2026-07-23) 브랜드 로고 — 렌트카·기차·버스 업체 ═══
+  //   제목/설명에서 키워드 매칭 → logo.clearbit.com/{domain} (PNG).
+  //   실패(CSP·차단·미등록) 시 onerror로 기존 material 아이콘 칩으로 자연 폴백.
+  var _BRAND_LOGOS = [
+    // 렌트카
+    [/sixt|식스트/i, 'sixt.com'],
+    [/hertz|허츠/i, 'hertz.com'],
+    [/\bavis\b|에이비스/i, 'avis.com'],
+    [/europcar|유럽카/i, 'europcar.com'],
+    [/enterprise/i, 'enterprise.com'],
+    [/alamo/i, 'alamo.com'],
+    [/national\s*car/i, 'nationalcar.com'],
+    [/thrifty/i, 'thrifty.com'],
+    [/\bbudget\s*(rent|car)/i, 'budget.com'],
+    [/discover\s*cars|디스커버\s*카/i, 'discovercars.com'],
+    [/rentalcars/i, 'rentalcars.com'],
+    // 버스
+    [/flix\s*bus|flixbus|플릭스/i, 'flixbus.com'],
+    [/blablacar|블라블라/i, 'blablacar.com'],
+    [/arriva/i, 'arriva.co.uk'],
+    // 기차
+    [/leo\s*express|레오\s*익스프레스/i, 'leoexpress.com'],
+    [/regiojet|레지오젯/i, 'regiojet.com'],
+    [/české\s*dráhy|ceske\s*drahy|체코\s*철도/i, 'cd.cz'],
+    [/deutsche\s*bahn|도이치\s*반|\bdb\b|\bice\b/i, 'bahn.de'],
+    [/trenitalia|트렌이탈리아|프레차로사|frecciarossa/i, 'trenitalia.com'],
+    [/italo/i, 'italotreno.it'],
+    [/eurostar|유로스타/i, 'eurostar.com'],
+    [/thalys|탈리스/i, 'thalys.com'],
+    [/\bsncf\b|\btgv\b/i, 'sncf.com'],
+    [/renfe|렌페/i, 'renfe.com'],
+    [/öbb|oebb/i, 'oebb.at'],
+    [/\bsbb\b/i, 'sbb.ch'],
+    [/trainline/i, 'thetrainline.com'],
+    [/\bomio\b/i, 'omio.com'],
+    // 페리·기타
+    [/jadrolinija/i, 'jadrolinija.hr'],
+    [/\buber\b|우버/i, 'uber.com'],
+    [/\bbolt\b/i, 'bolt.eu']
+  ];
+
+  function _brandDomainFor(txt) {
+    var s = String(txt || '');
+    if (!s) return '';
+    for (var i = 0; i < _BRAND_LOGOS.length; i++) {
+      if (_BRAND_LOGOS[i][0].test(s)) return _BRAND_LOGOS[i][1];
+    }
+    return '';
+  }
+
+  // 아이콘 칩 — 브랜드 매칭되면 로고 <img>, 실패하면 기존 material 아이콘 그대로
+  function _recIcoHtml(icon, txt) {
+    var dom = _brandDomainFor(txt);
+    if (!dom) return '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>';
+    return '<div class="rec-tr-ico has-logo">' +
+      '<img class="rec-tr-logo" src="https://logo.clearbit.com/' + dom + '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
+        'onerror="this.style.display=\'none\';var p=this.parentNode;if(p){p.className=\'rec-tr-ico\';var s=p.querySelector(\'.rec-tr-ico-fb\');if(s)s.style.display=\'\';}">' +
+      '<span class="material-symbols-outlined rec-tr-ico-fb" style="display:none">' + icon + '</span>' +
+    '</div>';
+  }
+
+  // ═══ ★ (2026-07-23) 항공사 로고 — 편명 IATA 2자리 파싱 → pics.avs.io 투명 PNG ═══
+  var _AIRLINE_IATA = [
+    [/t['’]?way|티웨이/i, 'TW'],
+    [/ryanair|라이언에어/i, 'FR'],
+    [/easyjet|이지젯/i, 'U2'],
+    [/lufthansa|루프트한자/i, 'LH'],
+    [/korean\s*air|대한항공/i, 'KE'],
+    [/asiana|아시아나/i, 'OZ'],
+    [/ita\s*airways|alitalia/i, 'AZ'],
+    [/air\s*europa/i, 'UX'],
+    [/turkish|터키시|터키\s*항공/i, 'TK'],
+    [/finnair|핀에어/i, 'AY'],
+    [/scandinavian|\bsas\b/i, 'SK'],
+    [/air\s*canada|에어\s*캐나다/i, 'AC'],
+    [/air\s*france|에어\s*프랑스/i, 'AF'],
+    [/\bklm\b/i, 'KL'],
+    [/british\s*airways/i, 'BA'],
+    [/iberia/i, 'IB'],
+    [/vueling/i, 'VY'],
+    [/wizz/i, 'W6'],
+    [/eurowings/i, 'EW'],
+    [/aer\s*lingus/i, 'EI'],
+    [/swiss\s*(air|intl|international)?/i, 'LX'],
+    [/austrian\s*air/i, 'OS'],
+    [/czech\s*airlines/i, 'OK'],
+    [/polish\s*airlines/i, 'LO'],
+    [/norwegian/i, 'DY'],
+    [/emirates|에미레이트/i, 'EK'],
+    [/qatar|카타르/i, 'QR'],
+    [/etihad/i, 'EY'],
+    [/singapore\s*airlines/i, 'SQ'],
+    [/cathay/i, 'CX'],
+    [/all\s*nippon/i, 'NH'],
+    [/japan\s*airlines/i, 'JL'],
+    [/vietnam\s*airlines/i, 'VN'],
+    [/thai\s*airways/i, 'TG'],
+    [/china\s*eastern/i, 'MU'],
+    [/air\s*china/i, 'CA'],
+    [/united\s*airlines/i, 'UA'],
+    [/delta\s*air/i, 'DL'],
+    [/american\s*airlines/i, 'AA'],
+    [/aegean/i, 'A3'],
+    [/tap\s*(portugal|air)/i, 'TP'],
+    [/croatia\s*airlines/i, 'OU'],
+    [/volotea/i, 'V7'],
+    [/transavia/i, 'HV'],
+    [/pegasus/i, 'PC'],
+    [/jeju\s*air|제주항공/i, '7C'],
+    [/jin\s*air|진에어/i, 'LJ'],
+    [/air\s*busan|에어부산/i, 'BX'],
+    [/air\s*seoul|에어서울/i, 'RS'],
+    [/eastar|이스타/i, 'ZE'],
+    [/air\s*premia|에어\s*프레미아/i, 'YP']
+  ];
+
+  function _airlineIata(f) {
+    // 1순위: 편명에서 IATA 2자리 (TW403 → TW, U21234 → U2)
+    var raw = String((f && (f.flight || f.city)) || '').toUpperCase().replace(/[\s\-]/g, '');
+    var m = raw.match(/([A-Z0-9]{2})(\d{1,4})[A-Z]?$/);
+    if (m && /[A-Z]/.test(m[1])) return m[1];
+    // 2순위: 항공사명 매핑
+    var name = String((f && f.airline) || '') + ' ' + String((f && f.title) || '');
+    for (var i = 0; i < _AIRLINE_IATA.length; i++) {
+      if (_AIRLINE_IATA[i][0].test(name)) return _AIRLINE_IATA[i][1];
+    }
+    return '';
+  }
+
+  // 로드 성공 시 헤더 비행기 아이콘은 visibility만 숨김(가운데 spacer 폭 유지), 실패 시 로고만 사라짐
+  function _airlineLogoHtml(iata) {
+    if (!iata) return '';
+    return '<img class="rec-fl-logo" src="https://pics.avs.io/60/24/' + iata + '@2x.png" alt="" ' +
+      'loading="lazy" referrerpolicy="no-referrer" ' +
+      'onerror="this.style.display=\'none\'" ' +
+      'onload="var h=this.parentNode;if(h){var i=h.querySelector(\'.rec-fl-headico\');if(i)i.style.visibility=\'hidden\';}">';
+  }
+
   function renderRentalCard(item, actionBtns) {
     var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
     var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
@@ -5386,7 +5524,7 @@
       .replace(/text-xl/g, '');
     return '<div class="rec-tr-card">' +
       '<div class="rec-tr-top">' +
-        '<div class="rec-tr-ico"><span class="material-symbols-outlined">directions_car</span></div>' +
+        _recIcoHtml('directions_car', (item.title || '') + ' ' + (item.description || '') + ' ' + (item.vendor || '')) +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain + '</h4>' + vendorBadge + '</div>' +
           (item.description ? '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(item.description) + '</p>' : '') +
@@ -5463,7 +5601,7 @@
     var vendorBadge2 = vendorM2 ? '<span class="rec-tr-vendor">' + vendorM2[1] + '</span>' : '';
     return '<div class="rec-tr-card">' +
       '<div class="rec-tr-top">' +
-        '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>' +
+        _recIcoHtml(icon, (item.title || '') + ' ' + (item.description || '')) +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain2 + '</h4>' + vendorBadge2 + '</div>' +
           // ★ (2026-07-23) 설명이 짧으면 경로 한 줄, 길면 구조화 노트 목록(경고·핵심·일반 색 구분)
@@ -6371,6 +6509,114 @@
     el.style.display = '';
   }
 
+  // ═══ ★ (2026-07-23) 숙소 대표 사진 (Google Places) ═══
+  //   우선순위: 사용자 업로드 이미지 > photo_url(Places) > 그라디언트 플레이스홀더.
+  //   렌더 시 둘 다 없으면 카드당 1회 자동 조회 → 성공하면 doc에 photo_url 저장(additive).
+  var _lodgePhotoTried = {};
+
+  function _lodgePhotoQuery(o) {
+    return (String((o && o.title) || '').trim() + ' ' + String((o && o.city) || '').trim()).trim();
+  }
+  function _lodgeUserImg(key) {
+    return (window.journeyLodgeImageGet && window.journeyLodgeImageGet(key)) || null;
+  }
+  // 사진(업로드/photo_url) 둘 다 없는 숙소 목록 — FB 트립은 doc, 시드 트립은 localStorage
+  function _lodgePhotoTargets() {
+    var out = [];
+    if (!isSeedTrip()) {
+      journeyData.filter(function(d) { return d.type === '숙소'; }).forEach(function(item) {
+        var key = String(item._id || '');
+        if (!key || item.photo_url || _lodgeUserImg(key)) return;
+        var q = _lodgePhotoQuery(item);
+        if (!q) return;
+        out.push({ key: key, query: q, item: item });
+      });
+      return out;
+    }
+    getLodgingData().forEach(function(d, i) {
+      var key = 'lodge-seed-' + i;
+      if (d.photo_url || _lodgeUserImg(key)) return;
+      var q2 = _lodgePhotoQuery(d);
+      if (!q2) return;
+      out.push({ key: key, query: q2, seedIdx: i });
+    });
+    return out;
+  }
+  function _lodgePhotoSave(t, url, cb) {
+    if (t.item && t.item._id) {
+      fbUpdate('journey', t.item._id, { photo_url: url }).then(function() {
+        t.item.photo_url = url; cb(true);
+      }).catch(function() { cb(false); });
+      return;
+    }
+    try {
+      var data = getLodgingData();
+      if (data[t.seedIdx]) { data[t.seedIdx].photo_url = url; saveLodgingData(data); }
+      cb(true);
+    } catch(e) { cb(false); }
+  }
+  // 렌더 직후 자동 채움 — Places 미로딩이면 마킹 없이 조용히 넘어가 다음 렌더에 재시도
+  function _lodgePhotoAuto() {
+    if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+    if (typeof window._placePhotoFor !== 'function') return;
+    var targets = _lodgePhotoTargets().filter(function(t) { return !_lodgePhotoTried[t.key]; });
+    if (!targets.length) return;
+    targets.forEach(function(t, i) {
+      _lodgePhotoTried[t.key] = true;
+      setTimeout(function() {
+        try {
+          window._placePhotoFor(t.query, function(url) {
+            if (!url) return;
+            _lodgePhotoSave(t, url, function(ok) {
+              if (ok) { try { renderJourneyLodging(); } catch(e) {} }
+            });
+          });
+        } catch(e) {}
+      }, 400 + i * 700);
+    });
+  }
+  function _updateLodgePhotoBtn() {
+    var btn = document.getElementById('lodge-photo-fill-btn');
+    if (!btn || btn.getAttribute('data-running')) return;
+    var n = _lodgePhotoTargets().length;
+    btn.style.display = n ? '' : 'none';
+    btn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> 호텔 사진 채우기 (' + n + ')';
+  }
+  // 헤더 버튼 — 600ms 간격 순차 (fillPlacePhotos와 동일 패턴)
+  window.fillLodgePhotos = function() {
+    var targets = _lodgePhotoTargets();
+    var btn = document.getElementById('lodge-photo-fill-btn');
+    if (!targets.length) { if (btn) btn.style.display = 'none'; return; }
+    if (btn && btn.getAttribute('data-running')) return;
+    if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
+    var ok = 0;
+    function step(i) {
+      if (i >= targets.length) {
+        if (btn) { btn.removeAttribute('data-running'); btn.disabled = false; }
+        try { renderJourneyLodging(); } catch(e) {}
+        if (typeof showSyncToast === 'function') showSyncToast('📷 호텔 사진 ' + ok + '/' + targets.length + '건 채웠어!');
+        return;
+      }
+      if (btn) btn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> ' + (i + 1) + '/' + targets.length + ' 처리 중…';
+      var t = targets[i];
+      _lodgePhotoTried[t.key] = true;
+      try {
+        window._placePhotoFor(t.query, function(url) {
+          if (url) { ok++; _lodgePhotoSave(t, url, function() {}); }
+          setTimeout(function() { step(i + 1); }, 600);
+        });
+      } catch(e) { setTimeout(function() { step(i + 1); }, 600); }
+    }
+    step(0);
+  };
+
+  // 자동 사진 <img> — 로드 실패 시 사라져 그라디언트 플레이스홀더가 그대로 남음
+  function _lodgeAutoImgHtml(url, alt) {
+    return '<img class="j-lodge-img-src" src="' + String(url).replace(/"/g, '&quot;') + '" alt="' +
+      String(alt || '').replace(/"/g, '') + '" loading="lazy" referrerpolicy="no-referrer" ' +
+      'onerror="this.style.display=\'none\'">';
+  }
+
   function renderJourneyLodging() {
     // 도시 간 이동 + 추천 숙소 섹션 (큐레이션 있는 trip만 표시)
     _renderTransitRecs();
@@ -6382,7 +6628,7 @@
     if (!isSeedTrip()) {
       var fbItems = journeyData.filter(function(d){ return d.type === '숙소'; });
       fbItems.sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
-      if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-8 text-sm text-slate-400">숙소를 추가해봐!</div>'; return; }
+      if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-8 text-sm text-slate-400">숙소를 추가해봐!</div>'; _updateLodgePhotoBtn(); return; }
       container.innerHTML = fbItems.map(function(item) {
         var realIdx = journeyData.indexOf(item);
         var cancelColor = item.cancel === '가능' ? 'text-emerald-600' : (item.cancel === '조건부' ? 'text-amber-600' : 'text-rose-600');
@@ -6466,8 +6712,11 @@
         var lodgeKey = String(item._id || ('lodge-fb-' + realIdx));
         var safeLodgeKey = lodgeKey.replace(/'/g, "\\'");
         var lodgeImg = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey)) || null;
+        // ★ (2026-07-23) 업로드 이미지 없으면 Places 사진(photo_url) 사용 — 실패 시 그라디언트
+        var lodgeAuto = (!lodgeImg && item.photo_url) ? String(item.photo_url) : '';
         var lodgeImgEmpty = lodgeImg ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
-        var lodgeImgEl = lodgeImg ? '<img class="j-lodge-img-src" src="' + lodgeImg + '" alt="' + (item.title || '').replace(/"/g,'') + '">' : '';
+        var lodgeImgEl = lodgeImg ? '<img class="j-lodge-img-src" src="' + lodgeImg + '" alt="' + (item.title || '').replace(/"/g,'') + '">'
+          : (lodgeAuto ? _lodgeAutoImgHtml(lodgeAuto, item.title) : '');
         var lodgeCtrl = lodgeImg
           ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + safeLodgeKey + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
             '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + safeLodgeKey + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
@@ -6544,12 +6793,14 @@
         '</div>';
       }).join('');
       if (typeof window.journeyLodgeImageHydrateAll === 'function') window.journeyLodgeImageHydrateAll();
+      _updateLodgePhotoBtn();
+      _lodgePhotoAuto();
       return;
     }
 
     // 시드 여행: localStorage 기반
     var data = getLodgingData();
-    if (data.length === 0) { container.innerHTML = '<div class="text-center py-8 text-sm text-slate-400">숙소를 추가해봐!</div>'; return; }
+    if (data.length === 0) { container.innerHTML = '<div class="text-center py-8 text-sm text-slate-400">숙소를 추가해봐!</div>'; _updateLodgePhotoBtn(); return; }
     container.innerHTML = data.map(function(d, idx) {
       var cancelOk = d.cancel_override !== undefined ? d.cancel_override : (d.cancel_date >= new Date().toISOString().split('T')[0]);
       var cancelColor = cancelOk ? 'text-emerald-600' : 'text-rose-600';
@@ -6563,8 +6814,11 @@
       // 이미지 영역 (사용자 업로드 + Ctrl+V)
       var lodgeKey2 = String('lodge-seed-' + idx);
       var lodgeImg2 = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey2)) || null;
+      // ★ (2026-07-23) 업로드 이미지 없으면 Places 사진(photo_url) 사용 — 실패 시 그라디언트
+      var lodgeAuto2 = (!lodgeImg2 && d.photo_url) ? String(d.photo_url) : '';
       var lodgeImgEmpty2 = lodgeImg2 ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
-      var lodgeImgEl2 = lodgeImg2 ? '<img class="j-lodge-img-src" src="' + lodgeImg2 + '" alt="' + (d.title || '').replace(/"/g,'') + '">' : '';
+      var lodgeImgEl2 = lodgeImg2 ? '<img class="j-lodge-img-src" src="' + lodgeImg2 + '" alt="' + (d.title || '').replace(/"/g,'') + '">'
+        : (lodgeAuto2 ? _lodgeAutoImgHtml(lodgeAuto2, d.title) : '');
       var lodgeCtrl2 = lodgeImg2
         ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + lodgeKey2 + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
           '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + lodgeKey2 + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
@@ -6607,6 +6861,8 @@
       '</div>';
     }).join('');
     if (typeof window.journeyLodgeImageHydrateAll === 'function') window.journeyLodgeImageHydrateAll();
+    _updateLodgePhotoBtn();
+    _lodgePhotoAuto();
   }
 
 
@@ -7112,10 +7368,13 @@
     if (f.baggage) cells.push(cell('Baggage', f.baggage));
     if (f.payment_status || f.payment_date) cells.push(cell('Payment', (f.payment_status || '') + (f.payment_date ? ' · ' + f.payment_date : '')));
     if (f.price && f.price !== '—') cells.push(cell('Price', _trvAmtHtml(f.price)));
+    // ★ (2026-07-23) 다크 헤더 좌측 항공사 로고 — 실패 시 기존 아이콘+편명 레이아웃 그대로
+    var flLogo = _airlineLogoHtml(_airlineIata(f));
     return '<div class="rec-fl-card' + (isPast ? ' is-past' : '') + '">' +
       '<div class="rec-fl-head">' +
+        flLogo +
         '<span class="rec-fl-code">' + (code || airline || '—') + '</span>' +
-        '<span class="material-symbols-outlined">flight</span>' +
+        '<span class="material-symbols-outlined rec-fl-headico">flight</span>' +
         '<span class="rec-fl-route">' + depIata + (arrIata ? ' → ' + arrIata : '') + '</span>' +
         (actionsSt ? '<div class="rec-actions">' + actionsSt + '</div>' : '') +
       '</div>' +
