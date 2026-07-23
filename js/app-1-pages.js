@@ -3151,6 +3151,7 @@
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(_leafletMap);
+      _trvMapWheelGate(_leafletMap, mount); // 클릭 후에만 휠 줌
     }
 
     if (mapMsg) mapMsg.textContent = '지도를 불러오는 중...';
@@ -3439,6 +3440,34 @@
     return out;
   }
 
+  // ═══ ★ (2026-07-23) 지도 휠 줌 게이트 — 지도를 클릭했을 때만 휠 확대/축소 ═══
+  //   트랙패드로 페이지를 스크롤하다 지도 위를 지나가기만 해도 줌되던 문제 해결.
+  //   드래그(panning) · +/− 버튼 · 핀 flyTo 는 항상 그대로 동작 (휠만 제어).
+  function _trvMapWheelGate(map, mount) {
+    if (!map || !mount || mount.getAttribute('data-wheel-gate')) return;
+    mount.setAttribute('data-wheel-gate', '1');
+    var off = function() {
+      try { map.scrollWheelZoom.disable(); } catch(e) {}
+      mount.classList.remove('map-zoom-on');
+    };
+    var on = function() {
+      try { map.scrollWheelZoom.enable(); } catch(e) {}
+      mount.classList.add('map-zoom-on');
+    };
+    off();
+    var hint = document.createElement('div');
+    hint.className = 'map-zoom-hint';
+    hint.textContent = '🖱 클릭하면 확대/축소';
+    mount.appendChild(hint);
+    try { map.on('click', on); } catch(e) {}
+    mount.addEventListener('click', on);
+    mount.addEventListener('mouseleave', off);
+    document.addEventListener('click', function(e) {
+      if (!mount.contains(e.target)) off();
+    });
+  }
+  window._trvMapWheelGate = _trvMapWheelGate;
+
   // ──────── Travel 자동 구글맵 링크 헬퍼 ────────
   // 장소/주소 이름을 구글맵 검색 링크로 감싸기
   // city를 컨텍스트로 추가하면 검색 정확도 향상
@@ -3551,7 +3580,7 @@
       // (1) 도시별 교통편 가이드 — 이 도시 첫날일 때만 표시
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (currentCity && currentCity.transit_guide && dateStr === currentCity.start_date) {
-        var tg = String(currentCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,'<br>');
+        var tg = _spotPriceHtml(String(currentCity.transit_guide)).replace(/\n/g,'<br>');
         panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);border-left-color:#6366f1">' +
           '<div class="flex items-start gap-3">' +
             '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
@@ -3650,7 +3679,7 @@
         var metaParts = [];
         if (item.location) metaParts.push('📍 ' + _trvMapsLink(item.location, dlCityCtx));
         if (item.title) metaParts.push('대상: ' + item.title);
-        if (item.amount) metaParts.push('€' + item.amount);
+        if (item.amount) metaParts.push(_spotPriceHtml('€' + item.amount));
         displayDescHtml = metaParts.length ? '<p class="text-xs text-slate-500 mt-1 leading-relaxed">' + metaParts.join(' · ') + '</p>' : '';
       } else {
         displayTitle = _trvMapsLink(item.title || '', dlCityCtx);
@@ -4304,7 +4333,7 @@
       // (1) 교통편 가이드 — 이 도시 첫날만
       var thisCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (thisCity && thisCity.transit_guide && dateStr === thisCity.start_date) {
-        var tgSafe = String(thisCity.transit_guide).replace(/</g,'&lt;').replace(/\n/g,' · ');
+        var tgSafe = _spotPriceHtml(String(thisCity.transit_guide)).replace(/\n/g,' · ');
         miniPanelHtml += '<div class="mb-2 p-2 rounded-lg border-l-[3px]" style="background:#eef2ff;border-left-color:#6366f1">' +
           '<div class="flex items-start gap-1.5">' +
             '<span class="material-symbols-outlined text-indigo-500" style="font-size: var(--font-size-body-sm);margin-top:1px">directions_transit</span>' +
@@ -4416,7 +4445,7 @@
               var meta = [];
               if (item.location) meta.push('📍 ' + String(item.location).replace(/</g,'&lt;'));
               if (item.title) meta.push('대상: ' + String(item.title).replace(/</g,'&lt;'));
-              if (item.amount) meta.push('€' + item.amount);
+              if (item.amount) meta.push(_spotPriceHtml('€' + item.amount));
               renderDesc = meta.length ? meta.join(' · ') : '';
             } else {
               renderTitle = title;
@@ -5282,7 +5311,7 @@
   function renderRentalCard(item, actionBtns) {
     var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
     var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
-    var price = item.amount ? '₩'+Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—';
+    var price = _trvAmtHtml(item.amount);
     var shortCity = function(c){ return (c||'').split(',')[0].trim(); };
     var pickupCity = shortCity(item.city);
     var dropCity = shortCity(item.drop_city);
@@ -5323,7 +5352,7 @@
     // 보험/옵션은 별도 박스 (한 줄, 토글 가능)
     var memoBox = '';
     if (item.notes) {
-      var notesEsc = String(item.notes).replace(/</g,'&lt;');
+      var notesEsc = _spotPriceHtml(String(item.notes));
       var nid = (item._id||'').replace(/[^a-zA-Z0-9]/g,'').slice(0,12);
       memoBox = '<div class="mt-2.5 ml-[52px] rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">' +
         '<button type="button" onclick="event.stopPropagation();var b=document.getElementById(\'rc-memo-' + nid + '\');var i=document.getElementById(\'rc-memo-ico-' + nid + '\');if(b){var open=b.style.display!==\'none\';b.style.display=open?\'none\':\'block\';if(i)i.textContent=open?\'expand_more\':\'expand_less\';}" class="w-full px-3 py-1.5 flex items-center justify-between text-[10px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">' +
@@ -5360,7 +5389,7 @@
         '<div class="rec-tr-ico"><span class="material-symbols-outlined">directions_car</span></div>' +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain + '</h4>' + vendorBadge + '</div>' +
-          (item.description ? '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + item.description + '</p>' : '') +
+          (item.description ? '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(item.description) + '</p>' : '') +
           (item.booking_ref ? '<p class="rec-tr-conf">Conf: ' + item.booking_ref + '</p>' : '') +
         '</div>' +
         '<div class="rec-actions">' + actionsSt + '</div>' +
@@ -5407,7 +5436,7 @@
       else if (/확인|재확인|필수|예매|예약/.test(p)) { kind = 'act'; }
       var clean = p.replace(/^[⚠️★\s]+/, '').replace(/★/g, '').trim();
       if (!clean) return '';
-      return '<li class="rec-note-row is-' + kind + '">' + clean.replace(/</g, '&lt;') + '</li>';
+      return '<li class="rec-note-row is-' + kind + '">' + _spotPriceHtml(clean) + '</li>';
     }).filter(Boolean).join('');
     return rows ? '<ul class="rec-note-list">' + rows + '</ul>' : '';
   }
@@ -5453,7 +5482,7 @@
         actionsSt +
       '</div>' +
       '<div class="rec-tr-foot">' +
-        '<p class="rec-tr-price">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
+        '<p class="rec-tr-price">' + _trvAmtHtml(item.amount) + '</p>' +
         (status ? '<span class="rec-pill ' + (status === '확정' ? 'is-accent' : (status === '환불 가능' ? 'is-ok' : 'is-warn')) + '">' + status + '</span>' : '') +
       '</div>' +
       (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
@@ -6268,9 +6297,9 @@
           '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#4338ca;background:rgba(99,102,241,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + leg.mode + '</span>' +
           '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + leg.dur + '</span>' +
           '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
-          '<span style="font-size: var(--font-size-tiny);color:#64748b">' + leg.price + '</span>' +
+          '<span style="font-size: var(--font-size-tiny);color:#64748b">' + _spotPriceHtml(leg.price) + '</span>' +
         '</div>' +
-        '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + leg.detail + '</p>' +
+        '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + _spotPriceHtml(leg.detail) + '</p>' +
         '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
       '</div>';
     });
@@ -6305,7 +6334,7 @@
       html += '<div style="margin-bottom: var(--space-4-5)">';
       html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + cityRec.budget + dateRange + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + _spotPriceHtml(cityRec.budget) + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap: var(--space-2-5)">';
       cityRec.options.forEach(function(opt, oi) {
@@ -6321,7 +6350,7 @@
           '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
             '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
             '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
-            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.price + '</span>' +
+            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + _spotPriceHtml(opt.price) + '</span>' +
             (opt.rating ? '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span><span style="font-size: var(--font-size-tiny);color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
           '</div>' +
           '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
@@ -6423,11 +6452,11 @@
             if (/주방|욕실|침대|룸|객실|에어컨|세탁|와이파이|wifi|주차|테라스|발코니|엘리베이터|베드/i.test(t)) { kind = ' is-facility'; icon = 'bed'; }
             else if (/취소|결제|카드|보증금|환불|예약/i.test(t)) { kind = ' is-policy'; icon = 'verified'; }
             else if (/역|도보|분|km|중심|거점/i.test(t)) { icon = 'directions_walk'; }
-            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + t.replace(/</g, '&lt;') + '</span>';
+            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + _spotPriceHtml(t) + '</span>';
           }).join('');
           memoChipsSt =
             (tagHtml ? '<div class="rec-lg-tagrow">' + tagHtml + '</div>' : '') +
-            (notes.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + notes.join(' · ').replace(/</g, '&lt;') + '</p>' : '');
+            (notes.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(notes.join(' · ')) + '</p>' : '');
         }
         var cancelClassSt = item.cancel === '가능' ? 'j-lodge-cancel-ok' : (item.cancel === '조건부' ? 'j-lodge-cancel-warn' : 'j-lodge-cancel-danger');
         var paymentDateRowSt = item.payment_date
@@ -6467,11 +6496,11 @@
             if (/주방|욕실|침대|룸|객실|에어컨|세탁|와이파이|wifi|주차|테라스|발코니|엘리베이터|베드/i.test(t)) { kind = ' is-facility'; icon = 'bed'; }
             else if (/취소|결제|카드|보증금|환불|예약/i.test(t)) { kind = ' is-policy'; icon = 'verified'; }
             else if (/역|도보|분|km|중심|거점/i.test(t)) { icon = 'directions_walk'; }
-            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + t.replace(/</g, '&lt;') + '</span>';
+            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + _spotPriceHtml(t) + '</span>';
           }).join('');
           memoPillsR =
             (tagHtmlR ? '<div class="rec-lg-tagrow">' + tagHtmlR + '</div>' : '') +
-            (notesR.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + notesR.join(' · ').replace(/</g, '&lt;') + '</p>' : '');
+            (notesR.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + _spotPriceHtml(notesR.join(' · ')) + '</p>' : '');
         }
         var dirQ = encodeURIComponent(item.address ? item.address : ((item.title || '') + (item.city ? ', ' + item.city : '')));
         return '<div class="rec-lg-card">' +
@@ -6509,7 +6538,7 @@
             (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
           '</div>' +
           '<div class="rec-lg-foot">' +
-            '<span class="rec-lg-foot-amt">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '<span class="rec-lg-sub">Rate</span></span>' +
+            '<span class="rec-lg-foot-amt">' + _trvAmtHtml(item.amount) + '<span class="rec-lg-sub">Rate</span></span>' +
             '<a class="rec-lg-dir" href="https://www.google.com/maps/search/?api=1&query=' + dirQ + '" target="_blank" rel="noopener"><span class="material-symbols-outlined">near_me</span>Directions</a>' +
           '</div>' +
         '</div>';
@@ -6572,7 +6601,7 @@
           '<p class="rec-lg-cancel ' + (cancelOk ? 'is-ok' : 'is-danger') + '" onclick="toggleLodgingCancel(' + idx + ')" style="cursor:pointer">' + cancelText + '</p>' +
         '</div>' +
         '<div class="rec-lg-foot">' +
-          '<span class="rec-lg-foot-amt">' + d.price + '<span class="rec-lg-sub">per night</span></span>' +
+          '<span class="rec-lg-foot-amt">' + _trvAmtHtml(d.price) + '<span class="rec-lg-sub">per night</span></span>' +
           '<a class="rec-lg-dir" href="https://www.google.com/maps/search/?api=1&query=' + dirQ2 + '" target="_blank" rel="noopener"><span class="material-symbols-outlined">near_me</span>Directions</a>' +
         '</div>' +
       '</div>';
@@ -7082,7 +7111,7 @@
     if (f.fare_type) cells.push(cell('Fare', f.fare_type));
     if (f.baggage) cells.push(cell('Baggage', f.baggage));
     if (f.payment_status || f.payment_date) cells.push(cell('Payment', (f.payment_status || '') + (f.payment_date ? ' · ' + f.payment_date : '')));
-    if (f.price && f.price !== '—') cells.push(cell('Price', f.price));
+    if (f.price && f.price !== '—') cells.push(cell('Price', _trvAmtHtml(f.price)));
     return '<div class="rec-fl-card' + (isPast ? ' is-past' : '') + '">' +
       '<div class="rec-fl-head">' +
         '<span class="rec-fl-code">' + (code || airline || '—') + '</span>' +
@@ -7300,7 +7329,7 @@
             '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
             '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + opt.duration + '</span>' +
             '<span style="font-size: var(--font-size-tiny);color:#9ca3af">·</span>' +
-            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0c4a6e">' + opt.price + '</span>' +
+            '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0c4a6e">' + _spotPriceHtml(opt.price) + '</span>' +
           '</div>' +
           '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 4px;font-family:ui-monospace,Menlo,monospace;font-weight:600">' + opt.schedule + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
@@ -7571,32 +7600,83 @@
     return { flag:'🌍', name:(city || '기타').toUpperCase(), kr: city || '기타' };
   }
 
+  // ★ (2026-07-23) description을 품목(제목) / 설명(부연)으로 분리
+  //   "Apfelwein 사과주 (Possmann) — 프랑크푸르트 특산 사과 와인" → name / note
+  //   구분자: " — "(em dash) · " – "(en dash) · " - "(하이픈). 없으면 전체가 품목.
+  function _svSplitDesc(desc) {
+    var lines = String(desc == null ? '' : desc).split('\n');
+    var head = String(lines[0] || '').trim();
+    var rest = lines.slice(1).join(' ').trim();
+    var m = head.match(/^([\s\S]*?)\s+[—–-]\s+([\s\S]+)$/);
+    var name = m ? m[1].trim() : head;
+    var note = m ? m[2].trim() : '';
+    if (rest) note = note ? (note + ' · ' + rest) : rest;
+    return { name: name, note: note };
+  }
+
+  // 분리 편집한 조각을 다시 한 필드(description)로 합치기 — 여러 줄은 2번째 줄부터 보존
+  function _svMergeDesc(orig, part, val) {
+    var lines = String(orig == null ? '' : orig).split('\n');
+    var head = String(lines[0] || '').trim();
+    var m = head.match(/^([\s\S]*?)\s+[—–-]\s+([\s\S]+)$/);
+    var name = m ? m[1].trim() : head;
+    var note = m ? m[2].trim() : '';
+    if (part === 'note') note = String(val || '').trim();
+    else name = String(val || '').trim();
+    var merged = name + (note ? ' — ' + note : '');
+    return [merged].concat(lines.slice(1)).join('\n');
+  }
+
+  // 품목/설명 인라인 편집 — 조각만 고쳐도 description 원본은 합쳐서 저장 (정보 손실 방지)
+  function svPartEdit(el, idx, part, mode) {
+    inlineEditTd(el, function(val) {
+      if (mode === 'seed') {
+        var data = getSouvenirData();
+        if (!data[idx]) return;
+        data[idx].description = _svMergeDesc(data[idx].description, part, val);
+        saveSouvenirData(data);
+        renderJourneySouvenir();
+        return;
+      }
+      var it = journeyData[idx];
+      if (!it) return;
+      it.description = _svMergeDesc(it.description, part, val);
+      fbUpdate('journey', it._id, { description: it.description })
+        .then(function() { renderJourneySouvenir(); })
+        .catch(function() { alert('저장 실패'); renderJourneySouvenir(); });
+    });
+  }
+
   // stitch souvenir row — 해어라인 리스트 행 (.sv-*)
-  function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn) {
+  // ★ (2026-07-23) 품목/설명 2단 분리 + 중복 메타(대상·도시) 제거 — 대상은 그룹 헤더, 도시는 도시 헤더에 이미 있음
+  //   partFn: 'svPartEdit(this,IDX,\'%PART%\',\'fb|seed\')' — 품목/설명 조각 편집용
+  function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn, partFn) {
     var title = (item.title || '').replace(/</g,'&lt;'); // 대상 (가족/동료/나)
-    var desc = (item.description || '').replace(/</g,'&lt;'); // 품목
     var city = (item.city || '').replace(/</g,'&lt;');
     var amount = item.amount;
-    // 첫 줄만 메인, 나머지는 sub
-    var descParts = desc.split('\n');
-    var descMain = descParts[0];
-    var descSub = descParts.slice(1).join(' ');
+    var split = _svSplitDesc(item.description);
+    var nameTxt = split.name.replace(/</g,'&lt;');
+    var noteTxt = split.note.replace(/</g,'&lt;');
     var checkInner = checked ? '<span class="material-symbols-outlined">check</span>' : '';
-    var descMainLinked = descMain && descMain !== '—' ? _trvMapsLink(descMain, city) : (descMain || '—');
-    var krw = '';
-    if (amount && /^[0-9]+(\.[0-9]+)?$/.test(String(amount).trim())) krw = fmtKrwFromEur(amount);
+    var nameLinked = nameTxt && nameTxt !== '—' ? _trvMapsLink(nameTxt, city) : (nameTxt || '—');
+    // 그룹핑에 안 쓰이는 추가 정보만 유지 (구체 매장·장소)
+    var loc = String(item.location || '').trim().replace(/</g,'&lt;');
+    var nameDbl = partFn ? partFn.replace('%PART%','name') : (dblClickFn ? dblClickFn.replace('%FIELD%','description') : '');
+    var noteDbl = partFn ? partFn.replace('%PART%','note') : (dblClickFn ? dblClickFn.replace('%FIELD%','description') : '');
+    var krw = amount ? _eurKrwOnly(String(amount)) : '';
     return '<div class="sv-row' + (checked ? ' is-done' : '') + '">' +
       '<div class="sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
       '<div class="sv-main">' +
-        '<h5 class="sv-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</h5>' +
-        (descSub ? '<p class="sv-desc">' + descSub + '</p>' : '') +
-        '<p class="sv-loc">' +
-          '<span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
-          (city ? '<span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>' + city + '</span>' : '') +
-        '</p>' +
+        '<h5 class="sv-name"' + (nameDbl ? ' ondblclick="' + nameDbl + '"' : '') + '>' + nameLinked + '</h5>' +
+        (noteTxt ? '<p class="sv-desc"' + (noteDbl ? ' ondblclick="' + noteDbl + '"' : '') + '>' + noteTxt + '</p>' : '') +
+        (loc ? '<p class="sv-extra">📍 ' + _trvMapsLink(loc, city) + '</p>' : '') +
+        // 대상·도시는 헤더와 중복이라 평소엔 숨김 — 행에 마우스를 올렸을 때만 편집용으로 노출
+        (dblClickFn ? '<p class="sv-edit"><span ondblclick="' + dblClickFn.replace('%FIELD%','title') + '">' + (title || '대상') + '</span>' +
+          (city ? '<span ondblclick="' + dblClickFn.replace('%FIELD%','city') + '">' + city + '</span>' : '') +
+          '<em>더블클릭 편집</em></p>' : '') +
       '</div>' +
       '<div class="sv-right">' +
-        '<div class="sv-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + '</div>' +
+        '<div class="sv-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + String(amount).replace(/^\s*€\s*/, '') : '—') + '</div>' +
         (krw ? '<div class="sv-krw">' + krw + '</div>' : '') +
       '</div>' +
       '<div class="sv-actions">' +
@@ -7745,6 +7825,7 @@
   function renderJourneySouvenir() {
     var container = document.getElementById('journey-souvenir-list');
     if (!container) return;
+    _trvFxWarm(); // € 금액 원화 병기용 환율 (도착하면 카드 재렌더)
 
     if (!isSeedTrip()) {
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
@@ -7759,7 +7840,8 @@
               'toggleSouvenir(' + realIdx + ',' + !checked + ')',
               'deleteJourneyRow(' + realIdx + ')',
               'editJourneyItem(' + realIdx + ')',
-              'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+              'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')',
+              'svPartEdit(this,' + realIdx + ',\'%PART%\',\'fb\')');
           });
         }).join('') +
       '</div>';
@@ -7775,8 +7857,9 @@
           return svRowSt(item, item.checked,
             'toggleSouvenirLocal(' + origIdx + ')',
             'deleteSouvenirLocal(' + origIdx + ')',
-            null,
-            'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+            'openSouvenirEditModal(' + origIdx + ')',
+            'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')',
+            'svPartEdit(this,' + origIdx + ',\'%PART%\',\'seed\')');
         });
       }).join('') +
     '</div>';
@@ -14491,6 +14574,7 @@
     '카페·디저트': 'local_cafe', '쇼핑': 'shopping_bag', '자연·전망': 'landscape', '기타': 'place' };
   var _placeFilter = '전체';
   var _placeCountry = '전체';
+  var _placeCity = '전체'; // ★ (2026-07-23) 국가 아래 도시 단계 (3단 필터: 국가 AND 도시 AND 카테고리)
 
   // 스팟 city → 국가 유추: "도시, 국가" 자체 표기 우선, 없으면 trip_cities 매칭
   function _placeCountryOf(city) {
@@ -14511,6 +14595,30 @@
       }
     }
     return '기타';
+  }
+
+  // ★ (2026-07-23) 여행 순서(citiesData = start_date 순) 기준 국가 등장 순서
+  function _placeCountryTripOrder() {
+    var out = [], seen = {};
+    var cd = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+    for (var i = 0; i < cd.length; i++) {
+      var c = _placeCountryOf(cd[i].name || '');
+      if (!c || c === '기타' || seen[c]) continue;
+      seen[c] = true; out.push(c);
+    }
+    return out;
+  }
+
+  // 탭 정렬 랭크 — 여행 순서 우선, 트립에 없는 값은 뒤(가나다), '기타/미지정'은 항상 맨 뒤
+  function _placeTabRank(name, tripOrder) {
+    if (name === '기타' || name === '미지정') return 99999;
+    var i = tripOrder.indexOf(name);
+    return i >= 0 ? i : 9000;
+  }
+
+  // onclick 인자용 이스케이프 — 도시명의 아포스트로피(d'Orcia) 대응
+  function _spotArg(s) {
+    return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
   }
 
   // 스팟 city → Stops 도시 이미지 재사용 (journey-city-images.js)
@@ -14651,6 +14759,48 @@
     return _spotEsc(out);
   }
   window._spotPriceHtml = _spotPriceHtml;
+
+  // ═══ ★ (2026-07-23) € 원화 병기 Travel 공용 헬퍼 (스팟 전용 → 전역 승격) ═══
+  // 원화 줄만 필요할 때 — "5~10" / "€5~10" → "≈₩8,000~16,000" (환율 미로드면 '')
+  function _eurKrwOnly(str) {
+    var s = String(str == null ? '' : str);
+    var m = s.match(/(\d+(?:[.,]\d+)?)(?:\s*[~\-–—]\s*€?\s*(\d+(?:[.,]\d+)?))?/);
+    if (!m) return '';
+    var ka = _spotKrwOf(m[1]);
+    if (!ka) return '';
+    var kb = m[2] ? _spotKrwOf(m[2]).replace(/^₩/, '') : '';
+    return '≈' + ka + (kb ? '~' + kb : '');
+  }
+  window._eurKrwOnly = _eurKrwOnly;
+
+  // 숙소·교통·렌트·항공 카드 금액 — €면 원화 병기, 숫자만이면 기존 ₩ 포맷, 그 외는 원문 유지
+  function _trvAmtHtml(amount) {
+    var raw = String(amount == null ? '' : amount).trim();
+    if (!raw) return '—';
+    if (raw.indexOf('€') >= 0) return _spotPriceHtml(raw);
+    if (/^[0-9][0-9.,]*$/.test(raw)) return '₩' + Number(raw.replace(/[^0-9.]/g, '')).toLocaleString('ko-KR');
+    return _spotEsc(raw);
+  }
+  window._trvAmtHtml = _trvAmtHtml;
+
+  // 환율 워밍업 — 비동기로 도착하면 € 표기가 있는 Records 카드들을 한 번 다시 그림
+  var _trvFxWarmDone = false;
+  function _trvFxWarm() {
+    if (_trvFxWarmDone) return;
+    _trvFxWarmDone = true;
+    try {
+      if (typeof getFxEurKrw !== 'function') return;
+      var sync = true;
+      getFxEurKrw(function(rate) {
+        if (!rate || sync) return;
+        ['renderJourneySouvenir', 'renderJourneyTransport', 'renderJourneyRental',
+         'renderJourneyLodging', 'renderJourneyFlights'].forEach(function(fn) {
+          try { if (typeof window[fn] === 'function') window[fn](); } catch(e) {}
+        });
+      });
+      sync = false;
+    } catch(e) {}
+  }
 
   // 카드용 미니 한 줄 — "€€ · 🎫 €18 (≈₩24,000)"
   function _spotPriceMini(p) {
@@ -14927,7 +15077,9 @@
   };
 
   window.setPlaceFilter = function(f) { _placeFilter = f; window.renderPlaces(); };
-  window.setPlaceCountry = function(c) { _placeCountry = c; window.renderPlaces(); };
+  // 국가를 바꾸면 도시 선택은 '전체'로 리셋 (국가 밖 도시가 남아 빈 화면이 되는 것 방지)
+  window.setPlaceCountry = function(c) { _placeCountry = c; _placeCity = '전체'; window.renderPlaces(); };
+  window.setPlaceCity = function(c) { _placeCity = c; window.renderPlaces(); };
 
   var _spotFxWarm = false; // € 가격 원화 병기용 환율 워밍업 1회
 
@@ -14935,6 +15087,7 @@
     var grid = document.getElementById('place-grid');
     var filtersEl = document.getElementById('place-filters');
     var countryEl = document.getElementById('place-country-tabs');
+    var cityEl = document.getElementById('place-city-tabs');
     var cntEl = document.getElementById('places-count');
     if (!grid) return;
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
@@ -14971,20 +15124,57 @@
       rateBtn.innerHTML = '<span class="material-symbols-outlined">star</span> 평점 채우기 (' + noRate + ')';
     }
     // 국가 세그먼트 탭 (스팟 있는 국가만 동적 생성)
+    // ★ (2026-07-23) 정렬 = 실제 여행 순서(citiesData start_date 순) → 트립 밖 국가 → '기타' 맨 뒤
+    var tripOrder = _placeCountryTripOrder();
     if (countryEl) {
       var countries = []; var seenC = {};
       places.forEach(function(p) {
         var c = _placeCountryOf(p.city);
         if (!seenC[c]) { seenC[c] = true; countries.push(c); }
       });
-      var gi = countries.indexOf('기타');
-      if (gi >= 0) { countries.splice(gi, 1); countries.push('기타'); }
-      if (_placeCountry !== '전체' && countries.indexOf(_placeCountry) < 0) _placeCountry = '전체';
+      countries.sort(function(a, b) {
+        var ra = _placeTabRank(a, tripOrder), rb = _placeTabRank(b, tripOrder);
+        if (ra !== rb) return ra - rb;
+        return String(a).localeCompare(String(b), 'ko');
+      });
+      if (_placeCountry !== '전체' && countries.indexOf(_placeCountry) < 0) { _placeCountry = '전체'; _placeCity = '전체'; }
       countryEl.style.display = countries.length > 1 ? '' : 'none';
       countryEl.innerHTML = ['전체'].concat(countries).map(function(c) {
         return '<button class="spot-ctab' + (c === _placeCountry ? ' is-active' : '') +
-          '" onclick="setPlaceCountry(\'' + c.replace(/\\/g, '').replace(/'/g, "\\'") + '\')">' + c + '</button>';
+          '" onclick="setPlaceCountry(\'' + _spotArg(c) + '\')">' + _spotEsc(c) + '</button>';
       }).join('');
+    }
+    // ★ (2026-07-23) 도시 칩 줄 — 선택 국가의 도시만, 여행 순서대로, 각 칩에 스팟 수
+    var cityScope = places.filter(function(p) {
+      return _placeCountry === '전체' || _placeCountryOf(p.city) === _placeCountry;
+    });
+    var cityMap = {}, cityKeys = [];
+    cityScope.forEach(function(p) {
+      var rawCity = String(p.city || '').trim();
+      var ck = _normCityKey(rawCity) || '미지정';
+      if (!cityMap[ck]) {
+        cityMap[ck] = { label: _displayCityShort(rawCity) || '미지정', n: 0, rank: _souvenirCityRank(rawCity) };
+        cityKeys.push(ck);
+      }
+      cityMap[ck].n++;
+    });
+    cityKeys.sort(function(a, b) {
+      var ra = (a === '미지정') ? 99999 : cityMap[a].rank;
+      var rb = (b === '미지정') ? 99999 : cityMap[b].rank;
+      if (ra !== rb) return ra - rb;
+      return cityMap[a].label.localeCompare(cityMap[b].label, 'ko');
+    });
+    if (_placeCity !== '전체' && !cityMap[_placeCity]) _placeCity = '전체';
+    if (cityEl) {
+      cityEl.style.display = cityKeys.length > 1 ? '' : 'none';
+      cityEl.innerHTML =
+        '<button class="spot-citytab' + (_placeCity === '전체' ? ' is-active' : '') +
+          '" onclick="setPlaceCity(\'전체\')">전체 <i>' + cityScope.length + '</i></button>' +
+        cityKeys.map(function(k) {
+          return '<button class="spot-citytab' + (k === _placeCity ? ' is-active' : '') +
+            '" onclick="setPlaceCity(\'' + _spotArg(k) + '\')">' + _spotEsc(cityMap[k].label) +
+            ' <i>' + cityMap[k].n + '</i></button>';
+        }).join('');
     }
     // 카테고리 텍스트 탭 (전체/카테고리/실내만 — 국가 탭과 AND 조합)
     if (filtersEl) {
@@ -14996,6 +15186,7 @@
     }
     var list = places.filter(function(p) {
       if (_placeCountry !== '전체' && _placeCountryOf(p.city) !== _placeCountry) return false;
+      if (_placeCity !== '전체' && (_normCityKey(p.city) || '미지정') !== _placeCity) return false;
       if (_placeFilter === '전체') return true;
       if (_placeFilter === '☔ 실내만') return p.indoor === true;
       return p.category === _placeFilter;
@@ -15806,10 +15997,12 @@
 
     if (!_dayPinsMap) {
       // 줌 애니메이션 복원 (2026-07-23): 애니메이션을 삼키던 진범은 렌더마다 실행되던 fitBounds 리셋 — sig 스킵으로 제거됨
-      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: true, attributionControl: true });
+      // ★ (2026-07-23) 휠 줌은 클릭 후에만 — 트랙패드 스크롤 중 지도 위를 지나가며 줌되던 문제
+      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(_dayPinsMap);
+      _trvMapWheelGate(_dayPinsMap, mount);
       // 핀이 아직 없어도 죽지 않게 초기 뷰 부여 (첫 도시 좌표 or 세계 전도)
       var c0 = (citiesData || []).find(function(x){ return typeof x.lat === 'number'; });
       _dayPinsMap.setView(c0 ? [c0.lat, c0.lng] : [20, 0], c0 ? 11 : 2);
