@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=266" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=267" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5851,6 +5851,13 @@
       flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff;
       transition:all .15s; margin-top:2px; background:#fff; }
     .sv-check:hover { border-color:#7c3aed; }
+    /* ★ (2026-07-24) 기념품 썸네일 — 위키피디아 제품 사진, 못 찾으면 종류 이모지 칩 */
+    .sv-thumb { width:42px; height:42px; border-radius:9px; flex-shrink:0; overflow:hidden;
+      background:#f8fafc; border:1px solid #e9eef5; display:flex; align-items:center; justify-content:center;
+      margin-top:1px; cursor:default; }
+    .sv-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .sv-thumb.is-fallback { font-size:19px; line-height:1; background:#f5f3ff; border-color:#ede9fe; }
+    .sv-row.is-done .sv-thumb { opacity:.45; filter:grayscale(1); }
     .sv-check.is-checked { background:#7c3aed; border-color:#7c3aed; }
     .sv-check .material-symbols-outlined { font-size:13px; font-variation-settings:'FILL' 1; }
     .sv-main { flex:1; min-width:0; }
@@ -11078,7 +11085,10 @@
             <section id="trv-souvenir" class="mb-2">
               <div class="trv-sec-head">
                 <div><p class="trv-sec-eyebrow">Souvenir</p><h3 class="trv-sec-title">기념품 체크리스트</h3></div>
-                <div class="trv-sec-actions"><button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+                <div class="trv-sec-actions">
+                  <button id="sv-photo-fill-btn" onclick="fillSouvenirPhotos()" class="trav-act" style="display:none" title="위키피디아에서 제품 사진을 찾아 채워요 (못 찾으면 이모지로 표시)"><span class="material-symbols-outlined">image</span> 이미지 채우기</button>
+                  <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
+                </div>
               </div>
               <!-- List -->
               <div id="journey-souvenir-list" class="space-y-2"></div>
@@ -14342,7 +14352,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=266" defer></script>
+<script src="js/app-1-pages.js?v=267" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

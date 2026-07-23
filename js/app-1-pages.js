@@ -8093,10 +8093,145 @@
     });
   }
 
+  // ═══ ★ (2026-07-24) 기념품 썸네일 ═══
+  //   글자만 있어 뭘 사는 건지 안 와닿는다는 피드백. 제품 사진을 위키피디아(무료·키 불필요·CORS)에서
+  //   가져오고, 못 찾으면 품목 종류 이모지 칩으로 대체한다.
+  //   ★ 틀린 사진 > 사진 없음 이므로 판정을 빡세게: 페이지 제목에 브랜드 토큰이 있어야 하고,
+  //     Wikidata 설명이 '사람'이거나 목록 문서면 버린다 (Marvis→복서, Savini→소설가 오매칭 사례).
+  var _SV_KIND = [
+    [/치약|toothpaste/i,                       '🪥'],
+    [/커피|에스프레소|coffee|espresso|모카/i,   '☕'],
+    [/초콜릿|쇼콜라|choco/i,                    '🍫'],
+    [/젤리|구미|haribo/i,                       '🍬'],
+    [/과자|쿠키|비스킷|진저브레드|마지팬|빵/i,   '🍪'],
+    [/와인|사과주|wine|프로세코|스푸만테/i,      '🍷'],
+    [/맥주|beer/i,                              '🍺'],
+    [/그라파|리큐르|아마로|위스키|술/i,          '🥃'],
+    [/차\b|티백|tea/i,                          '🍵'],
+    [/치즈|cheese|페코리노|파르미지아노/i,       '🧀'],
+    [/소금|오일|식초|조미료|트러플|발사믹/i,     '🧂'],
+    [/파스타|면|리조또|쌀/i,                     '🍝'],
+    [/잼|꿀|honey|스프레드/i,                    '🍯'],
+    [/향신료|허브|사프란|후추/i,                 '🌿'],
+    [/신발|샌들|슈즈|shoe|sandal|버켄|birkenstock/i, '👟'],
+    [/가방|백팩|파우치|지갑|bag/i,               '👜'],
+    [/향수|퍼퓸|perfume|디퓨저|캔들/i,           '🕯️'],
+    [/크림|로션|화장품|비누|샴푸/i,              '🧴'],
+    [/문구|펜|노트|연필|스티커|엽서/i,           '✏️'],
+    [/그릇|컵|잔|주방|냄비|포트|커틀러리|도마/i, '🍽️'],
+    [/옷|셔츠|니트|양말|스카프|모자/i,           '🧣'],
+    [/책|화보|도록/i,                            '📖'],
+    [/레고|장난감|피규어/i,                      '🧸']
+  ];
+  function _svEmoji(item) {
+    var hay = ((item && item.description) || '') + ' ' + ((item && item.title) || '');
+    for (var i = 0; i < _SV_KIND.length; i++) if (_SV_KIND[i][0].test(hay)) return _SV_KIND[i][1];
+    return '🎁';
+  }
+  // 검색어: 라틴 문자 덩어리 우선(괄호 안까지 훑음). 한글만 있으면 검색 포기.
+  function _svImgQuery(item) {
+    var name = _svSplitDesc(item.description).name || '';
+    var cands = [];
+    var paren = name.match(/\(([^)]*)\)/g) || [];
+    var outside = name.replace(/\([^)]*\)/g, ' ');
+    var pick = function(s) {
+      var m = String(s).replace(/[·+*/,]/g, ' ').match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’\-]*(?:\s+[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’\-]*)?/);
+      if (!m) return '';
+      var q = m[0].trim();
+      return q.length >= 3 ? q : '';
+    };
+    var a = pick(outside); if (a) cands.push(a);
+    paren.forEach(function(p) { var b = pick(p.slice(1, -1)); if (b && cands.indexOf(b) < 0) cands.push(b); });
+    return cands;
+  }
+  // 사람/목록 문서 배제 — Wikidata 설명 기준
+  var _SV_REJECT = /(boxer|minister|writer|scrittor|footballer|calciator|politic|actor|attore|attrice|singer|cantante|painter|pittor|Schriftsteller|Fußball|Politiker|Schauspieler|Sänger|Maler|musician|musicista|regista|director|player|giocator|storico|historian|\(\d{4}|\d{4}\s*[–\-]\s*\d{4})/i;
+  function _svWikiPhoto(q, lang, cb) {
+    var token = String(q).split(/\s+/)[0].toLowerCase();
+    var url = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&generator=search' +
+      '&gsrsearch=' + encodeURIComponent(q) + '&gsrlimit=1' +
+      '&prop=pageimages|pageterms&piprop=thumbnail&pithumbsize=200&wbptterms=description' +
+      '&format=json&origin=*';
+    fetch(url).then(function(r){ return r.json(); }).then(function(d) {
+      var pages = (d && d.query && d.query.pages) || {};
+      var keys = Object.keys(pages);
+      if (!keys.length) return cb(null);
+      var v = pages[keys[0]];
+      var title = String(v.title || '');
+      var thumb = v.thumbnail && v.thumbnail.source;
+      if (!thumb) return cb(null);
+      if (title.toLowerCase().indexOf(token) < 0) return cb(null);           // 브랜드 토큰 불일치
+      if (/^(List of|Liste |Lista )/i.test(title)) return cb(null);          // 목록 문서
+      var desc = ((v.terms && v.terms.description) || [''])[0];
+      if (_SV_REJECT.test(desc)) return cb(null);                            // 사람 문서
+      cb(thumb);
+    }).catch(function(){ cb(null); });
+  }
+  // 국가별 우선 언어 → 영어 순으로 시도
+  function _svPhotoFor(item, cb) {
+    var ctry = _souvenirCountry(item.city || '');
+    var langs = ({ 'GERMANY':['de','en'], 'ITALY':['it','en'], 'FRANCE':['fr','en'], 'SPAIN':['es','en'],
+      'JAPAN':['ja','en'], 'CZECHIA':['cs','en'], 'AUSTRIA':['de','en'], 'DENMARK':['da','en'],
+      'SWEDEN':['sv','en'] })[ctry.name] || ['en'];
+    var qs = _svImgQuery(item);
+    if (!qs.length) return cb(null);
+    var jobs = [];
+    qs.forEach(function(q) { langs.forEach(function(l) { jobs.push([q, l]); }); });
+    (function next(i) {
+      if (i >= jobs.length) return cb(null);
+      _svWikiPhoto(jobs[i][0], jobs[i][1], function(url) {
+        if (url) return cb(url);
+        setTimeout(function(){ next(i + 1); }, 120);
+      });
+    })(0);
+  }
+  // 일괄 채우기 — 순차 실행, 버튼에 진행 표시. 못 찾은 건 photo_none으로 표시해 재시도 대상에서 제외
+  window.fillSouvenirPhotos = function() {
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var targets = jd.filter(function(d) { return d.type === '기념품' && d._id && !d.photo_url && !d.photo_none; });
+    var btn = document.getElementById('sv-photo-fill-btn');
+    if (!targets.length) { if (btn) btn.style.display = 'none'; return; }
+    if (btn && btn.getAttribute('data-running')) return;
+    if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
+    var ok = 0;
+    (function step(i) {
+      if (i >= targets.length) {
+        if (btn) { btn.removeAttribute('data-running'); btn.disabled = false; }
+        try { renderJourneySouvenir(); } catch(e) {}
+        if (typeof showSyncToast === 'function') showSyncToast('🎁 기념품 사진 ' + ok + '/' + targets.length + '건 찾았어! (못 찾은 건 이모지로 표시)');
+        return;
+      }
+      if (btn) btn.innerHTML = '<span class="material-symbols-outlined">image</span> ' + (i + 1) + '/' + targets.length + ' 찾는 중…';
+      var it = targets[i];
+      _svPhotoFor(it, function(url) {
+        var patch = url ? { photo_url: url } : { photo_none: true };
+        if (url) ok++;
+        fbUpdate('journey', it._id, patch).then(function() {
+          Object.assign(it, patch);
+          try { renderJourneySouvenir(); } catch(e) {}
+        }).catch(function(){});
+        setTimeout(function(){ step(i + 1); }, 260);
+      });
+    })(0);
+  };
+  // 썸네일 셀 — 사진 있으면 이미지, 없으면 종류 이모지. 더블클릭으로 이미지 주소 직접 편집
+  function _svThumbHtml(item, realIdx, scope) {
+    var dbl = (realIdx != null && scope === 'fb')
+      ? ' ondblclick="event.stopPropagation();fbInlineEdit(this,' + realIdx + ',\'photo_url\',\'기념품\')" title="더블클릭하여 이미지 주소 입력/삭제"'
+      : '';
+    if (item.photo_url) {
+      return '<div class="sv-thumb"' + dbl + '>' +
+        '<img src="' + String(item.photo_url).replace(/"/g, '&quot;') + '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
+        'onerror="this.parentNode.classList.add(\'is-fallback\');this.parentNode.innerHTML=\'' + _svEmoji(item) + '\'">' +
+      '</div>';
+    }
+    return '<div class="sv-thumb is-fallback"' + dbl + '>' + _svEmoji(item) + '</div>';
+  }
+
   // stitch souvenir row — 해어라인 리스트 행 (.sv-*)
   // ★ (2026-07-23) 품목/설명 2단 분리 + 중복 메타(대상·도시) 제거 — 대상은 그룹 헤더, 도시는 도시 헤더에 이미 있음
   //   partFn: 'svPartEdit(this,IDX,\'%PART%\',\'fb|seed\')' — 품목/설명 조각 편집용
-  function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn, partFn) {
+  function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn, partFn, realIdx, scope) {
     var title = (item.title || '').replace(/</g,'&lt;'); // 대상 (가족/동료/나)
     var city = (item.city || '').replace(/</g,'&lt;');
     var amount = item.amount;
@@ -8112,6 +8247,7 @@
     var krw = amount ? _eurKrwOnly(String(amount)) : '';
     return '<div class="sv-row' + (checked ? ' is-done' : '') + '">' +
       '<div class="sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
+      _svThumbHtml(item, realIdx, scope) +
       '<div class="sv-main">' +
         '<h5 class="sv-name"' + (nameDbl ? ' ondblclick="' + nameDbl + '"' : '') + '>' + nameLinked + '</h5>' +
         (noteTxt ? '<p class="sv-desc"' + (noteDbl ? ' ondblclick="' + noteDbl + '"' : '') + '>' + noteTxt + '</p>' : '') +
@@ -8433,6 +8569,12 @@
     if (!isSeedTrip()) {
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
       if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
+      var svBtn = document.getElementById('sv-photo-fill-btn');
+      if (svBtn && !svBtn.getAttribute('data-running')) {
+        var noImg = fbItems.filter(function(d){ return d._id && !d.photo_url && !d.photo_none; }).length;
+        svBtn.style.display = noImg ? '' : 'none';
+        svBtn.innerHTML = '<span class="material-symbols-outlined">image</span> 이미지 채우기 (' + noImg + ')';
+      }
       var groupsFb = _groupSouvenirsByCountry(fbItems);
       container.innerHTML = '<div class="sv-grid">' +
         groupsFb.map(function(g) {
@@ -8444,7 +8586,7 @@
               'deleteJourneyRow(' + realIdx + ')',
               'editJourneyItem(' + realIdx + ')',
               'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')',
-              'svPartEdit(this,' + realIdx + ',\'%PART%\',\'fb\')');
+              'svPartEdit(this,' + realIdx + ',\'%PART%\',\'fb\')', realIdx, 'fb');
           });
         }).join('') +
       '</div>';
@@ -8462,7 +8604,7 @@
             'deleteSouvenirLocal(' + origIdx + ')',
             'openSouvenirEditModal(' + origIdx + ')',
             'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')',
-            'svPartEdit(this,' + origIdx + ',\'%PART%\',\'seed\')');
+            'svPartEdit(this,' + origIdx + ',\'%PART%\',\'seed\')', origIdx, 'seed');
         });
       }).join('') +
     '</div>';
@@ -16602,7 +16744,25 @@
   var _dayPinsSig = '', _dayPinsFitW = 0, _dayPinsLastBounds = null; // 변경 감지 — 같은 데이터면 지도 뷰를 건드리지 않음
   var _DAY_COLORS = ['#7c3aed', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
 
-  window.setDayPinsFilter = function(f) { _dayPinsFilter = f; renderDayPinsMap(); };
+  // ★ (2026-07-24) 지도 일차 칩 → Daily Log 패널 양방향 동기화.
+  //   기존엔 패널 ‹ › → 지도 한 방향만 있어서, 지도에서 9일차를 눌러도 옆 패널은 1일차 그대로였다.
+  //   currentDayIndex가 이미 같으면 재렌더를 건너뛰어(무한 루프 방지) 안전하다.
+  window.setDayPinsFilter = function(f) {
+    _dayPinsFilter = f;
+    renderDayPinsMap();
+    if (f === 'all' || f === 'pool') return;
+    var d = parseInt(f, 10);
+    if (!d) return;
+    var dm = getDayMap(), idx = -1;
+    for (var i = 0; i < dm.length; i++) { if (dm[i].day === d) { idx = i; break; } }
+    if (idx < 0 || idx === currentDayIndex) return;
+    currentDayIndex = idx;
+    try { syncWeekChunkToCurrentDay(); } catch(e) {}
+    try {
+      if (_dlvIsSingleActive()) renderDayView();
+      else if (typeof renderWeekView === 'function') renderWeekView();
+    } catch(e) {}
+  };
 
   function _dayPinsMissingCount() {
     return (journeyData || []).filter(function(d) {
