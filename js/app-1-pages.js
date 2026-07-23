@@ -4484,8 +4484,8 @@
               headerCityHtml +
             '</div>' +
           '</div>' +
+          '<button class="j-day-route-btn" onclick="optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
           '<div class="j-day-head-tag">' +
-            '<button class="j-day-route-btn" onclick="optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
             '<span class="j-status-tag j-status-soft">' + dayNum + '일차</span>' +
           '</div>' +
         '</div>';
