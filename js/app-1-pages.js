@@ -5394,6 +5394,24 @@
     }).join('');
   }
 
+  // ★ (2026-07-23) 긴 메모 → 구조화 목록: ⚠️ 경고(앰버) / ★ 핵심(바이올렛) / 확인·필수(액션) / 일반
+  function _recNoteList(raw) {
+    var txt = String(raw || '').replace(/★/g, ' ★');
+    // 문장 단위 분해 (마침표 뒤 공백, 줄바꿈, ⚠️ 앞)
+    var parts = txt.split(/(?<=[.。])\s+|\n+|(?=⚠️)/).map(function(s){ return s.trim(); }).filter(Boolean);
+    if (parts.length < 2) parts = [txt.trim()];
+    var rows = parts.map(function(p) {
+      var kind = 'info', icon = '';
+      if (/⚠️|주의|불가|폐쇄|변경|필요/.test(p)) { kind = 'warn'; }
+      else if (/★|꼭|추천|무료/.test(p)) { kind = 'key'; }
+      else if (/확인|재확인|필수|예매|예약/.test(p)) { kind = 'act'; }
+      var clean = p.replace(/^[⚠️★\s]+/, '').replace(/★/g, '').trim();
+      if (!clean) return '';
+      return '<li class="rec-note-row is-' + kind + '">' + clean.replace(/</g, '&lt;') + '</li>';
+    }).filter(Boolean).join('');
+    return rows ? '<ul class="rec-note-list">' + rows + '</ul>' : '';
+  }
+
   function renderTransportCard(item, deleteBtn) {
     var status = item.status||'';
     var statusVar = status==='확정' ? 'j-status-primary' : status==='환불 가능' ? 'j-status-success' : 'j-status-warn';
@@ -5419,10 +5437,16 @@
         '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>' +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain2 + '</h4>' + vendorBadge2 + '</div>' +
-          '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' +
-            (routeParts[0] || '') +
-            (routeParts.length > 1 ? ' <span style="color:#94a3b8">→</span> ' + routeParts[1] : '') +
-          '</p>' +
+          // ★ (2026-07-23) 설명이 짧으면 경로 한 줄, 길면 구조화 노트 목록(경고·핵심·일반 색 구분)
+          (function(){
+            var raw = String(item.description || '').trim();
+            if (!raw) return '';
+            if (raw.length <= 60) {
+              return '<p class="rec-tr-sub">' + (routeParts[0] || '') +
+                (routeParts.length > 1 ? ' <span style="color:#94a3b8">→</span> ' + routeParts[1] : '') + '</p>';
+            }
+            return _recNoteList(raw);
+          })() +
           '<p class="rec-tr-sub">' + (item.date ? shortDate(item.date) : '—') + ' · ' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p>' +
           (item.seat ? '<p class="rec-tr-conf">Seat: ' + item.seat + '</p>' : '') +
         '</div>' +
@@ -6429,14 +6453,25 @@
         } else if (item.payment_date) {
           payPillR = '<span class="rec-pill">결제일 ' + item.payment_date + '</span>';
         }
+        // ★ (2026-07-23) 메모 정리: 짧은 조각만 태그 칩(종류별 색), 긴 문장은 접히는 메모 줄로
         var memoPillsR = '';
         if (item.notes) {
-          var chipsR = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
-          if (chipsR.length) {
-            memoPillsR = '<div class="rec-lg-chips">' + chipsR.map(function(c){
-              return '<span class="rec-pill">' + c.trim() + '</span>';
-            }).join('') + '</div>';
-          }
+          var fragsR = String(item.notes).split(/\s*·\s*|\s*,\s*|\n+/).map(function(c){ return c.trim(); }).filter(Boolean);
+          var tagsR = [], notesR = [];
+          fragsR.forEach(function(t) {
+            if (t.length <= 14 && !/[.!?。]$/.test(t) && !/\s→\s|습니다|해요|하기|바꾸|필요/.test(t)) tagsR.push(t);
+            else notesR.push(t);
+          });
+          var tagHtmlR = tagsR.map(function(t) {
+            var kind = '', icon = 'sell';
+            if (/주방|욕실|침대|룸|객실|에어컨|세탁|와이파이|wifi|주차|테라스|발코니|엘리베이터|베드/i.test(t)) { kind = ' is-facility'; icon = 'bed'; }
+            else if (/취소|결제|카드|보증금|환불|예약/i.test(t)) { kind = ' is-policy'; icon = 'verified'; }
+            else if (/역|도보|분|km|중심|거점/i.test(t)) { icon = 'directions_walk'; }
+            return '<span class="rec-lg-tag' + kind + '"><span class="material-symbols-outlined">' + icon + '</span>' + t.replace(/</g, '&lt;') + '</span>';
+          }).join('');
+          memoPillsR =
+            (tagHtmlR ? '<div class="rec-lg-tagrow">' + tagHtmlR + '</div>' : '') +
+            (notesR.length ? '<p class="rec-lg-note" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + notesR.join(' · ').replace(/</g, '&lt;') + '</p>' : '');
         }
         var dirQ = encodeURIComponent(item.address ? item.address : ((item.title || '') + (item.city ? ', ' + item.city : '')));
         return '<div class="rec-lg-card">' +
@@ -14517,7 +14552,8 @@
   window._placePhotoFor = _placePhotoFor;
 
   // ═══ ★ (2026-07-23) 스팟 구글 평점 파이프라인 ═══
-  //   findPlaceFromQuery(place_id) → getDetails(rating/user_ratings_total). 항상 cb({pid,rating,count}|null).
+  //   findPlaceFromQuery(place_id) → getDetails(rating/user_ratings_total/price_level).
+  //   항상 cb({pid,rating,count,price_level}|null). price_level은 미제공 시 -1 (0=무료를 살리기 위해).
   function _placeRatingFor(query, cb) {
     try {
       if (!query || typeof google === 'undefined' || !google.maps || !google.maps.places) { cb(null); return; }
@@ -14526,12 +14562,13 @@
         try {
           if (status !== google.maps.places.PlacesServiceStatus.OK || !results || !results[0] || !results[0].place_id) { cb(null); return; }
           var pid = results[0].place_id;
-          svc.getDetails({ placeId: pid, fields: ['rating', 'user_ratings_total'] }, function(place, s2) {
+          svc.getDetails({ placeId: pid, fields: ['rating', 'user_ratings_total', 'price_level'] }, function(place, s2) {
             try {
               if (s2 !== google.maps.places.PlacesServiceStatus.OK || !place) { cb(null); return; }
               cb({ pid: pid,
                    rating: (typeof place.rating === 'number' ? place.rating : 0),
-                   count: (typeof place.user_ratings_total === 'number' ? place.user_ratings_total : 0) });
+                   count: (typeof place.user_ratings_total === 'number' ? place.user_ratings_total : 0),
+                   price_level: (typeof place.price_level === 'number' ? place.price_level : -1) });
             } catch(e) { cb(null); }
           });
         } catch(e) { cb(null); }
@@ -14568,6 +14605,75 @@
     var c = Number(p && p.g_count) || 0;
     return '<span class="spot-rating' + (big ? ' is-big' : '') + '">★ ' + r.toFixed(1) +
       (c ? ' <i>· ' + _spotCountKo(c) + '</i>' : '') + '</span>';
+  }
+
+  // ═══ ★ (2026-07-23) 스팟 가격 정보 — price_adult/price_note(수동) + price_level/g_price_level(구글 0~4) ═══
+  // 0~4 정수만 인정, 없으면 -1 (0=무료를 살리기 위해 falsy 판정 대신 -1 사용)
+  function _spotPriceLevelOf(p) {
+    if (!p) return -1;
+    var raw = (typeof p.price_level === 'number' || typeof p.price_level === 'string') ? p.price_level : p.g_price_level;
+    var v = (typeof raw === 'string' && /^[0-4]$/.test(raw.trim())) ? parseInt(raw, 10) : raw;
+    if (typeof v !== 'number' || !isFinite(v) || v < 0 || v > 4) return -1;
+    return Math.round(v);
+  }
+
+  function _spotPriceLevelStr(lvl) {
+    if (lvl < 0) return '';
+    if (lvl === 0) return '무료';
+    return new Array(lvl + 1).join('€');
+  }
+
+  // 가격대 기호는 맛집·카페처럼 1인 단가 감이 필요한 카테고리에만
+  function _spotPriceLevelFor(p) {
+    var cat = String((p && p.category) || '');
+    if (cat !== '맛집' && cat !== '카페·디저트') return '';
+    return _spotPriceLevelStr(_spotPriceLevelOf(p));
+  }
+
+  // € → ₩ 한 건 ('₩24,000', 환율 미로드면 '')
+  function _spotKrwOf(eur) {
+    var s = '';
+    try { if (typeof window.fmtKrwFromEur === 'function') s = window.fmtKrwFromEur(eur) || ''; } catch(e) { s = ''; }
+    return s.replace(/^≈\s*/, '');
+  }
+
+  // 문자열 안의 €금액을 모두 찾아 원화 병기 — "€18~25" → "€18~25 (≈₩24,000~33,000)"
+  function _spotPriceHtml(str) {
+    var s = String(str == null ? '' : str);
+    if (!s) return '';
+    var out = s.replace(/€\s?(\d+(?:[.,]\d+)?)(\s*[~\-–—]\s*€?\s*(\d+(?:[.,]\d+)?))?/g,
+      function(m, a, r2, b) {
+        var ka = _spotKrwOf(a);
+        if (!ka) return m;
+        var kb = b ? _spotKrwOf(b).replace(/^₩/, '') : ''; // 범위는 ₩ 한 번만
+        return m + ' (≈' + ka + (kb ? '~' + kb : '') + ')';
+      });
+    return _spotEsc(out);
+  }
+  window._spotPriceHtml = _spotPriceHtml;
+
+  // 카드용 미니 한 줄 — "€€ · 🎫 €18 (≈₩24,000)"
+  function _spotPriceMini(p) {
+    var bits = [];
+    var lvl = _spotPriceLevelFor(p);
+    var adult = String((p && p.price_adult) || '').trim();
+    if (lvl) bits.push('<b>' + _spotEsc(lvl) + '</b>');
+    if (adult) bits.push('🎫 ' + _spotPriceHtml(adult));
+    if (!bits.length) return '';
+    return '<div class="spot-price">' + bits.join(' · ') + '</div>';
+  }
+
+  // 드로어용 전체 블록 — 입장료 + 부가 요금 메모 + 구글 가격대
+  function _spotPriceBlock(p) {
+    var rows = '';
+    var adult = String((p && p.price_adult) || '').trim();
+    var note = String((p && p.price_note) || '').trim();
+    var lvl = _spotPriceLevelFor(p);
+    if (adult) rows += '<div class="spot-dw-price-main">🎫 입장료 ' + _spotPriceHtml(adult) + '</div>';
+    if (note) rows += '<div class="spot-dw-price-note">' + _spotPriceHtml(note) + '</div>';
+    if (lvl) rows += '<div class="spot-dw-price-lvl">' + _spotEsc(lvl) + ' <i>구글 가격대</i></div>';
+    if (!rows) return '';
+    return '<div class="spot-dw-price">' + rows + '</div>';
   }
 
   // TOP 추천 이유 한 줄 — description 첫 문장 + 평점 요약
@@ -14643,6 +14749,46 @@
     return null;
   }
 
+  // ═══ ★ (2026-07-23) 이미 일정에 있는 스팟 → 배치 버튼을 비활성 라벨로 ═══
+  function _spotDayNoOf(date) {
+    if (!date) return 0;
+    try {
+      var dm = getDayMap();
+      for (var i = 0; i < dm.length; i++) { if (dm[i].date === date) return dm[i].day; }
+    } catch(e) {}
+    return 0;
+  }
+
+  function _spotSchedLabel(day, date) {
+    var d = date ? String(date).slice(5).replace('-', '/') : '';
+    if (day && d) return '📅 ' + day + '일차(' + d + ') 일정에 있음';
+    if (day) return '📅 ' + day + '일차 일정에 있음';
+    if (d) return '📅 ' + d + ' 일정에 있음';
+    return '📅 일정에 있음';
+  }
+
+  // 일정 제목 매칭(hit) 또는 저장소에서 배치(status='planned') → 라벨, 아니면 ''
+  function _spotPlacedLabel(p, hit) {
+    if (hit) return _spotSchedLabel(hit.day, hit.date);
+    if (p && p.status === 'planned' && p.placed_date) return _spotSchedLabel(_spotDayNoOf(p.placed_date), p.placed_date);
+    return '';
+  }
+
+  // 카드/드로어 공용 하단 액션 — hostId를 주면 그 컨테이너에 배치 폼을 그림 (드로어용)
+  function _spotFootHtml(p, idx, hit, hostId) {
+    var arg = idx + (hostId ? (", '" + hostId + "'") : '');
+    var lbl = _spotPlacedLabel(p, hit);
+    if (lbl) {
+      return '<div class="spot-foot-row">' +
+        '<button class="spot-assign-btn is-done" disabled>' + lbl + '</button>' +
+        '<button class="spot-readd" onclick="openPlaceAssign(' + arg + ')" title="일정에 다시 배치">' +
+          '<span class="material-symbols-outlined">event_repeat</span></button>' +
+      '</div>';
+    }
+    return '<button class="spot-assign-btn" onclick="openPlaceAssign(' + arg + ')">' +
+      '<span class="material-symbols-outlined">add</span>일정에 배치</button>';
+  }
+
   window.togglePlaceAdd = function() {
     var f = document.getElementById('place-add-form');
     if (!f) return;
@@ -14697,8 +14843,11 @@
       try {
         _placeRatingFor((obj.title + ' ' + (obj.city || '')).trim(), function(rt) {
           if (!rt || !saved || !saved._id) return;
-          fbUpdate('journey', saved._id, { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count }).then(function() {
+          var upd = { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count };
+          if (rt.price_level >= 0) upd.g_price_level = rt.price_level;
+          fbUpdate('journey', saved._id, upd).then(function() {
             saved.g_pid = rt.pid; saved.g_rating = rt.rating; saved.g_count = rt.count;
+            if (rt.price_level >= 0) saved.g_price_level = rt.price_level;
             try { window.renderPlaces(); } catch(e) {}
           }).catch(function() {});
         });
@@ -14765,8 +14914,11 @@
       _placeRatingFor(((p.title || '') + ' ' + (p.city || '')).trim(), function(rt) {
         if (rt) {
           ok++;
+          var upd = { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count };
+          if (rt.price_level >= 0) upd.g_price_level = rt.price_level;
           p.g_pid = rt.pid; p.g_rating = rt.rating; p.g_count = rt.count;
-          fbUpdate('journey', p._id, { g_pid: rt.pid, g_rating: rt.rating, g_count: rt.count }).catch(function() {});
+          if (rt.price_level >= 0) p.g_price_level = rt.price_level;
+          fbUpdate('journey', p._id, upd).catch(function() {});
         }
         setTimeout(function() { step(i + 1); }, 600);
       });
@@ -14777,6 +14929,8 @@
   window.setPlaceFilter = function(f) { _placeFilter = f; window.renderPlaces(); };
   window.setPlaceCountry = function(c) { _placeCountry = c; window.renderPlaces(); };
 
+  var _spotFxWarm = false; // € 가격 원화 병기용 환율 워밍업 1회
+
   window.renderPlaces = function() {
     var grid = document.getElementById('place-grid');
     var filtersEl = document.getElementById('place-filters');
@@ -14785,6 +14939,19 @@
     if (!grid) return;
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
     var places = jd.filter(function(d) { return d.type === '스팟'; });
+    // 환율은 최초 1회만 요청 — 도착하면 재렌더 (캐시 hit로 동기 호출되는 경우는 재렌더 생략)
+    if (!_spotFxWarm) {
+      _spotFxWarm = true;
+      try {
+        if (typeof window.getFxEurKrw === 'function') {
+          var fxSync = true;
+          window.getFxEurKrw(function(rate) {
+            if (rate && !fxSync) { try { window.renderPlaces(); } catch(e) {} }
+          });
+          fxSync = false;
+        }
+      } catch(e) {}
+    }
     if (cntEl) {
       var placed = places.filter(function(p) { return p.status === 'planned'; }).length;
       cntEl.textContent = places.length ? places.length + '곳 · 배치 ' + placed : '';
@@ -14842,14 +15009,25 @@
     var deco = list.map(function(p, i) { return { p: p, i: i, s: _spotScore(p) }; });
     deco.sort(function(a, b) { return (b.s - a.s) || (a.i - b.i); });
     list = deco.map(function(d) { return d.p; });
-    // ★ TOP 5 — 현재 필터와 무관하게 전체 스팟 기준 전역 계산
-    var topDeco = [];
+    // ★ (2026-07-23) 카테고리별 TOP 1~5 — 전역 TOP 대신 카테고리 안에서 점수 상위 5
+    //   현재 필터와 무관하게 전체 스팟 기준으로 계산 (탭을 옮겨도 순위가 흔들리지 않게)
+    var byCat = {};
     places.forEach(function(p, i) {
       var s = _spotScore(p);
-      if (s > 0) topDeco.push({ p: p, i: i, s: s });
+      if (s <= 0) return;
+      var c = p.category || '기타';
+      if (!byCat[c]) byCat[c] = [];
+      byCat[c].push({ p: p, i: i, s: s });
     });
-    topDeco.sort(function(a, b) { return (b.s - a.s) || (a.i - b.i); });
-    var topList = topDeco.slice(0, 5).map(function(d) { return d.p; });
+    var topPs = [], topInfo = [];
+    Object.keys(byCat).forEach(function(c) {
+      var arr = byCat[c];
+      arr.sort(function(a, b) { return (b.s - a.s) || (a.i - b.i); });
+      arr.slice(0, 5).forEach(function(d, k) {
+        topPs.push(d.p);
+        topInfo.push({ rank: k + 1, cat: c });
+      });
+    });
     // ★ "일정에 있음" 배지용 일정 제목 시그니처 (렌더당 1회)
     var schedSigs = _spotSchedSigs();
     grid.innerHTML = list.map(function(p) {
@@ -14870,63 +15048,40 @@
       if (isReservationItem(p)) chips += '<span class="spot-chip is-reserve">🎫 예약 필수</span>';
       if (p.indoor === true) chips += '<span class="spot-chip is-indoor">🏠 실내</span>';
       if (p.closed) chips += '<span class="spot-chip is-closed">⛔ ' + String(p.closed).replace(/</g, '&lt;') + ' 휴무</span>';
-      // ★ (2026-07-23) 이미 일정에 있는 스팟이면 슬레이트 칩으로 인지 (배치 버튼은 그대로)
+      // ★ (2026-07-23) 일정 중복은 칩 대신 하단 비활성 버튼으로 (정보 이전)
       var hit = _spotSchedHit(p, schedSigs);
-      if (hit) chips += '<span class="spot-chip is-sched">📅 ' + (hit.day ? hit.day + '일차 ' : '') + '일정에 있음</span>';
       var memo = p.description
-        ? '<p class="spot-desc is-clickable" onclick="togglePlaceDetail(' + idx + ')">' + String(p.description).replace(/</g, '&lt;') + '</p>'
+        ? '<p class="spot-desc is-clickable">' + String(p.description).replace(/</g, '&lt;') + '</p>'
         : '';
-      // ★ TOP 5 배지 + 추천 이유 미니 라인
-      var topRank = topList.indexOf(p);
+      // ★ 카테고리별 TOP 배지 + 추천 이유 미니 라인
+      var ti = topPs.indexOf(p);
+      var isTop = ti >= 0;
       var topHtml = '';
-      if (topRank >= 0) {
+      if (isTop) {
         var why = _spotWhyLine(p);
-        topHtml = '<div class="spot-top-badge">★ TOP ' + (topRank + 1) + '</div>' +
+        topHtml = '<div class="spot-top-badge" title="' + _spotEsc(topInfo[ti].cat) + ' 카테고리 ' + topInfo[ti].rank + '위">★ TOP ' + topInfo[ti].rank + '</div>' +
           (why ? '<div class="spot-top-why">' + _spotEsc(why) + '</div>' : '');
       }
       var rateHtml = _spotRatingHtml(p, false);
-      var moreHtml = '<button class="spot-more" id="spot-more-' + idx + '" onclick="togglePlaceDetail(' + idx + ')">자세히 ▾</button>';
-      var foot;
-      if (p.status === 'planned' && p.placed_date) {
-        foot = '<div class="spot-foot-row">' +
-          '<span class="spot-placed"><span class="material-symbols-outlined">calendar_today</span>' +
-            p.placed_date.slice(5).replace('-', '/') + ' 일정에 배치됨</span>' +
-          '<button class="spot-readd" onclick="openPlaceAssign(' + idx + ')" title="일정에 다시 배치"><span class="material-symbols-outlined">event_repeat</span></button>' +
-        '</div>';
-      } else {
-        foot = '<button class="spot-assign-btn" onclick="openPlaceAssign(' + idx + ')"><span class="material-symbols-outlined">add</span>일정에 배치</button>';
-      }
-      return '<div class="spot-card' + (topRank >= 0 ? ' is-top' : '') + '">' + imgHtml +
+      var priceHtml = _spotPriceMini(p);
+      var moreHtml = '<button class="spot-more" onclick="event.stopPropagation();openSpotDrawer(' + idx + ')">자세히</button>';
+      var foot = _spotFootHtml(p, idx, hit, null);
+      return '<div class="spot-card' + (isTop ? ' is-top' : '') + '" onclick="openSpotDrawer(' + idx + ')">' + imgHtml +
         '<div class="spot-body">' +
           topHtml +
           '<div class="spot-title-row">' +
             '<h4 class="spot-title">' + _trvMapsLink(p.title || '', p.city || '') + '</h4>' +
-            '<button class="spot-del" onclick="deletePlace(' + idx + ')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
+            '<button class="spot-del" onclick="event.stopPropagation();deletePlace(' + idx + ')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
           '</div>' +
           '<div class="spot-chips">' + chips + '</div>' +
           rateHtml +
+          priceHtml +
           memo +
           moreHtml +
-          '<div class="spot-foot"><div class="spot-foot-inner" id="place-assign-' + idx + '">' + foot + '</div></div>' +
+          '<div class="spot-foot" onclick="event.stopPropagation()"><div class="spot-foot-inner" id="place-assign-' + idx + '">' + foot + '</div></div>' +
         '</div>' +
-      '</div>' +
-      '<div class="spot-detail" id="spot-detail-' + idx + '" style="display:none"></div>';
+      '</div>';
     }).join('');
-  };
-
-  // ═══ ★ (2026-07-23) 스팟 펼쳐보기 상세 — 그리드 풀폭 패널 (카드 아래) ═══
-  window.togglePlaceDetail = function(idx) {
-    var el = document.getElementById('spot-detail-' + idx);
-    if (!el) return;
-    var btn = document.getElementById('spot-more-' + idx);
-    if (el.getAttribute('data-open') === '1') {
-      el.style.display = 'none'; el.removeAttribute('data-open'); el.innerHTML = '';
-      if (btn) btn.innerHTML = '자세히 ▾';
-      return;
-    }
-    el.style.display = ''; el.setAttribute('data-open', '1');
-    if (btn) btn.innerHTML = '접기 ▴';
-    _renderPlaceDetail(idx);
   };
 
   // g_pid로 리뷰·영업시간·웹사이트 지연 로드 → 트림해서 g_details로 캐시 (재펼침 시 재호출 없음)
@@ -14981,32 +15136,131 @@
     return out;
   }
 
-  function _renderPlaceDetail(idx) {
-    var el = document.getElementById('spot-detail-' + idx);
+  // ═══════════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-23) 스팟 상세 드로어 — body 직속 우측 슬라이드 패널
+  //    기존 인라인 풀폭 패널(.spot-detail) 대체: 그리드를 깨지 않고 닫기 버튼이 항상 같은 자리.
+  //    데이터는 기존 _placeDetailsFetch/g_details 캐시를 그대로 재사용.
+  // ═══════════════════════════════════════════════════════════════════════
+  var _spotDrawerIdx = -1;
+  var _spotDrawerBound = false;
+
+  function _spotDrawerEnsure() {
+    var el = document.getElementById('spot-drawer');
+    if (el) return el;
+    var bd = document.createElement('div');
+    bd.id = 'spot-drawer-backdrop';
+    bd.className = 'spot-drawer-backdrop';
+    bd.onclick = function() { window.closeSpotDrawer(); };
+    document.body.appendChild(bd);
+    el = document.createElement('aside');
+    el.id = 'spot-drawer';
+    el.className = 'spot-drawer';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    document.body.appendChild(el);
+    if (!_spotDrawerBound) {
+      _spotDrawerBound = true;
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && _spotDrawerIdx >= 0) { e.preventDefault(); window.closeSpotDrawer(); }
+      });
+    }
+    return el;
+  }
+
+  function _spotMapsHref(p) {
+    var nm = String((p && p.title) || '').replace(/<[^>]+>/g, '').trim();
+    var q = nm + ((p && p.city) ? (', ' + p.city) : '');
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  }
+
+  function _spotDrawerHtml(p, idx, g, loading) {
+    var catIco = PLACE_CAT_ICONS[p.category] || 'place';
+    var head = '<div class="spot-dw-head">' +
+      '<h3 class="spot-dw-title">' + _spotEsc(p.title || '') + '</h3>' +
+      '<button class="spot-dw-close" onclick="closeSpotDrawer()" title="닫기" aria-label="닫기">✕</button>' +
+    '</div>';
+    var photo = p.photo_url
+      ? '<img class="spot-dw-photo" src="' + String(p.photo_url).replace(/"/g, '&quot;') + '" alt="" onerror="this.style.display=\'none\'">'
+      : '';
+    var chips = '<span class="spot-chip"><span class="material-symbols-outlined">' + catIco + '</span>' + _spotEsc(p.category || '기타') + '</span>';
+    var cityShort = _displayCityShort(p.city || '');
+    if (cityShort) chips = '<span class="spot-chip is-city">📍 ' + _spotEsc(cityShort) + '</span>' + chips;
+    if (isReservationItem(p)) chips += '<span class="spot-chip is-reserve">🎫 예약 필수</span>';
+    if (p.indoor === true) chips += '<span class="spot-chip is-indoor">🏠 실내</span>';
+    if (p.closed) chips += '<span class="spot-chip is-closed">⛔ ' + _spotEsc(p.closed) + ' 휴무</span>';
+    var meta = '<div class="spot-dw-meta">' +
+      (_spotRatingHtml(p, true) || '<span class="spot-detail-norate">평점 정보 없음</span>') +
+      '<div class="spot-chips">' + chips + '</div>' +
+    '</div>';
+    var desc = p.description ? '<p class="spot-dw-desc">' + _spotEsc(p.description) + '</p>' : '';
+    var body;
+    if (loading) {
+      body = '<div class="spot-dw-loading"><span class="spot-dw-spin"></span>구글 리뷰·영업시간 불러오는 중…</div>';
+    } else if (g) {
+      body = _spotDetailBody(g);
+    } else if (!p.g_pid) {
+      body = '<div class="spot-detail-note">구글 상세 정보가 아직 없어 — 헤더의 "★ 평점 채우기"를 먼저 눌러줘.</div>';
+    } else {
+      body = '<div class="spot-detail-note">상세 정보를 못 불러왔어 (구글 응답 없음).</div>';
+    }
+    var scroll = '<div class="spot-dw-scroll">' + photo + meta + desc + _spotPriceBlock(p) + body + '</div>';
+    var hit = _spotSchedHit(p, _spotSchedSigs());
+    var actions = '<div class="spot-dw-actions">' +
+      '<div class="spot-dw-assign" id="spot-drawer-assign">' + _spotFootHtml(p, idx, hit, 'spot-drawer-assign') + '</div>' +
+      '<a class="spot-dw-maps" href="' + _spotEsc(_spotMapsHref(p)) + '" target="_blank" rel="noopener">' +
+        '<span class="material-symbols-outlined">place</span>구글맵 열기</a>' +
+    '</div>';
+    return head + scroll + actions;
+  }
+
+  window.openSpotDrawer = function(idx) {
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
     var p = jd[idx];
-    if (!el || !p) return;
-    var head = '<div class="spot-detail-head">' +
-      '<div class="spot-detail-title">' + _spotEsc(p.title || '') + '</div>' +
-      (_spotRatingHtml(p, true) || '<span class="spot-detail-norate">평점 정보 없음</span>') +
-      '<button class="spot-detail-close" onclick="togglePlaceDetail(' + idx + ')">닫기 ▴</button>' +
-    '</div>';
-    var desc = p.description ? '<p class="spot-detail-desc">' + _spotEsc(p.description) + '</p>' : '';
+    if (!p) return;
+    var el = _spotDrawerEnsure();
+    _spotDrawerIdx = idx;
     var g = p.g_details;
     if (g && typeof g === 'string') { try { g = JSON.parse(g); } catch(e) { g = null; } }
-    if (g) { el.innerHTML = head + desc + _spotDetailBody(g); return; }
-    if (!p.g_pid) {
-      el.innerHTML = head + desc + '<div class="spot-detail-note">구글 상세 정보가 아직 없어 — 헤더의 "★ 평점 채우기"를 먼저 눌러줘.</div>';
-      return;
-    }
-    el.innerHTML = head + desc + '<div class="spot-detail-note">⏳ 구글 리뷰·영업시간 불러오는 중…</div>';
+    var needFetch = !g && !!p.g_pid;
+    el.innerHTML = _spotDrawerHtml(p, idx, g, needFetch);
+    var bd = document.getElementById('spot-drawer-backdrop');
+    if (bd) bd.classList.add('is-open');
+    try { document.body.classList.add('spot-drawer-lock'); } catch(e) {}
+    // 다음 프레임에 클래스 부여 → transform 트랜지션이 실제로 재생됨
+    setTimeout(function() { el.classList.add('is-open'); }, 10);
+    if (!needFetch) return;
     _placeDetailsFetch(p, function(res) {
-      var el2 = document.getElementById('spot-detail-' + idx);
-      if (!el2 || el2.getAttribute('data-open') !== '1') return;
-      el2.innerHTML = head + desc + (res ? _spotDetailBody(res)
-        : '<div class="spot-detail-note">상세 정보를 못 불러왔어 (구글 응답 없음).</div>');
+      if (_spotDrawerIdx !== idx) return;
+      var el2 = document.getElementById('spot-drawer');
+      if (!el2) return;
+      el2.innerHTML = _spotDrawerHtml(p, idx, res, false);
     });
+  };
+
+  window.closeSpotDrawer = function() {
+    var el = document.getElementById('spot-drawer');
+    var bd = document.getElementById('spot-drawer-backdrop');
+    _spotDrawerIdx = -1;
+    if (el) el.classList.remove('is-open');
+    if (bd) bd.classList.remove('is-open');
+    try { document.body.classList.remove('spot-drawer-lock'); } catch(e) {}
+  };
+
+  // 드로어가 열려있는 스팟이면 내용 갱신 (배치 직후 등)
+  function _spotDrawerRefresh() {
+    if (_spotDrawerIdx < 0) return;
+    var idx = _spotDrawerIdx;
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var p = jd[idx];
+    var el = document.getElementById('spot-drawer');
+    if (!el || !p) { window.closeSpotDrawer(); return; }
+    var g = p.g_details;
+    if (g && typeof g === 'string') { try { g = JSON.parse(g); } catch(e) { g = null; } }
+    el.innerHTML = _spotDrawerHtml(p, idx, g, false);
   }
+
+  // 하위 호환 — 예전 인라인 패널 호출부가 남아있어도 드로어를 연다
+  window.togglePlaceDetail = function(idx) { window.openSpotDrawer(idx); };
 
   // ═══ ★ (2026-07-23) 배치 추천 — 우회거리 최소 일차 + 60분+ 빈 시간 탐색 ═══
   function _spotMin(t) {
@@ -15124,8 +15378,10 @@
             : '그 날 일정 조정이 필요해') + '</div>';
   }
 
-  window.openPlaceAssign = function(idx) {
-    var wrap = document.getElementById('place-assign-' + idx);
+  // hostId를 주면 그 컨테이너에 폼을 그림 (드로어) — 카드와 id가 겹치지 않게 uid를 분리
+  window.openPlaceAssign = function(idx, hostId) {
+    var uid = hostId ? (idx + '-d') : String(idx);
+    var wrap = document.getElementById(hostId || ('place-assign-' + idx));
     if (!wrap) return;
     var dayMap = getDayMap();
     if (!dayMap.length) { alert('먼저 Stops에 도시/날짜를 추가해줘!'); return; }
@@ -15139,17 +15395,18 @@
     var timeVal = (rec && rec.gap) ? _spotHHMM(rec.gap.s) : '';
     wrap.innerHTML = _spotRecLine(rec) +
       '<div class="spot-assign-row">' +
-      '<select id="place-assign-day-' + idx + '">' + opts + '</select>' +
-      '<input id="place-assign-time-' + idx + '" type="text" placeholder="10:00" value="' + timeVal + '"/>' +
-      '<button class="spot-assign-go" onclick="confirmPlaceAssign(' + idx + ')">배치</button>' +
+      '<select id="place-assign-day-' + uid + '">' + opts + '</select>' +
+      '<input id="place-assign-time-' + uid + '" type="text" placeholder="10:00" value="' + timeVal + '"/>' +
+      '<button class="spot-assign-go" onclick="confirmPlaceAssign(' + idx + ", '" + uid + '\')">배치</button>' +
     '</div>';
   };
 
-  window.confirmPlaceAssign = async function(idx) {
+  window.confirmPlaceAssign = async function(idx, uid) {
     var p = journeyData[idx];
     if (!p) return;
-    var date = (document.getElementById('place-assign-day-' + idx) || {}).value;
-    var time = ((document.getElementById('place-assign-time-' + idx) || {}).value || '').trim();
+    if (uid == null || uid === '') uid = String(idx);
+    var date = (document.getElementById('place-assign-day-' + uid) || {}).value;
+    var time = ((document.getElementById('place-assign-time-' + uid) || {}).value || '').trim();
     if (!date) return;
     // 휴무 요일 충돌 사전 경고
     if (p.closed) {
@@ -15172,6 +15429,7 @@
       if (p._id) { try { await fbUpdate('journey', p._id, { status: 'planned', placed_date: date }); } catch(e) {} }
       p.status = 'planned'; p.placed_date = date;
       window.renderPlaces();
+      try { _spotDrawerRefresh(); } catch(e) {}
       renderDayView();
       if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + p.title + '" → ' + date.slice(5).replace('-', '/') + ' 일정에 배치!');
     } catch(e) { alert('배치 실패'); }
@@ -15183,6 +15441,7 @@
     try {
       if (p._id) await fbDelete('journey', p._id);
       journeyData.splice(idx, 1);
+      try { window.closeSpotDrawer(); } catch(e) {} // splice로 인덱스가 밀리므로 드로어는 닫음
       window.renderPlaces();
     } catch(e) { alert('삭제 실패'); }
   };
