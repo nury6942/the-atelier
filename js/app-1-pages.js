@@ -3494,7 +3494,10 @@
       if (d.type === '기념품' && d.time) return true;
       return false;
     });
-    items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+    items.sort(function(a,b){
+      var t = (a.time||'').localeCompare(b.time||'');
+      return t !== 0 ? t : ((a.order||0) - (b.order||0)); // 시간 없는 아이템끼리는 order 2차 정렬
+    });
 
     // 헤더 타이틀: 숙박 도시 + 당일치기 도시 배지
     var titleEl = document.getElementById('journey-day-title');
@@ -3526,6 +3529,11 @@
     var extraPanel = document.getElementById('day-extra-panel');
     if (extraPanel) {
       var panelHtml = '';
+      // (0) ★ (2026-07-23) 숙소 미등록 밤 경고
+      var nightGapsDV = getUncoveredNights();
+      if (dateStr && nightGapsDV[dateStr]) {
+        panelHtml += '<div class="j-night-warn">🛏 이 밤 숙소 미등록 — Records에서 확인</div>';
+      }
       // (1) 도시별 교통편 가이드 — 이 도시 첫날일 때만 표시
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (currentCity && currentCity.transit_guide && dateStr === currentCity.start_date) {
@@ -4195,6 +4203,42 @@
     currentWeekChunkStart = chunkOf;
   }
 
+  // ★ (2026-07-23) 숙소 없는 밤 감지 — 숙소(date=체크인, checkout_date=체크아웃)가 커버 못하는 밤 (Wanderlog 이식 2단계)
+  function getUncoveredNights() {
+    var trip = getCurrentTrip();
+    if (!trip || !trip.start_date || !trip.end_date) return {};
+    var lodgings;
+    if (typeof isSeedTrip === 'function' && isSeedTrip()) {
+      lodgings = (typeof getLodgingData === 'function') ? getLodgingData() : [];
+    } else {
+      lodgings = (journeyData || []).filter(function(d){ return d.type === '숙소'; });
+    }
+    var fmt = function(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+    var covered = {};
+    lodgings.forEach(function(lg) {
+      if (!lg.date) return;
+      if (lg.checkout_date && lg.checkout_date > lg.date) {
+        var cur = new Date(lg.date + 'T00:00:00');
+        var end = new Date(lg.checkout_date + 'T00:00:00');
+        var guard = 0;
+        while (cur < end && guard < 120) { covered[fmt(cur)] = true; cur.setDate(cur.getDate() + 1); guard++; }
+      } else {
+        covered[lg.date] = true; // 체크아웃 미입력 → 체크인 밤만 커버로 간주
+      }
+    });
+    var gaps = {};
+    var c2 = new Date(trip.start_date + 'T00:00:00');
+    var e2 = new Date(trip.end_date + 'T00:00:00');
+    var g2 = 0;
+    while (c2 < e2 && g2 < 120) { // 마지막 날은 밤이 아님
+      var ds = fmt(c2);
+      if (!covered[ds]) gaps[ds] = true;
+      c2.setDate(c2.getDate() + 1);
+      g2++;
+    }
+    return gaps;
+  }
+
   function renderWeekView() {
     var grid = document.getElementById('journey-week-grid');
     if (!grid) return;
@@ -4226,6 +4270,7 @@
     }
 
     var travelQueue = []; // ★ (2026-07-23) 스팟 간 이동시간 커넥터 — 렌더 후 비동기 채움
+    var nightGaps = getUncoveredNights(); // ★ 숙소 미등록 밤
     grid.innerHTML = chunk.map(function(entry, idx) {
       var actualIdx = currentWeekChunkStart + idx;
       var dayNum = entry.day;
@@ -4239,7 +4284,10 @@
         if (d.type === '기념품' && d.time) return true; // 시간 있는 기념품은 일정처럼 끼워넣기
         return false;
       });
-      items.sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+      items.sort(function(a,b){
+        var t = (a.time||'').localeCompare(b.time||'');
+        return t !== 0 ? t : ((a.order||0) - (b.order||0)); // 시간 없는 아이템끼리는 order 2차 정렬
+      });
 
       var weekday = '';
       if (dateStr) {
@@ -4400,7 +4448,7 @@
                 travelRow = '<div class="j-slot-travel" id="' + tvId + '"><span style="opacity:.55">이동시간…</span></div>';
               }
             }
-            return travelRow + '<div class="' + slotClasses.join(' ') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
+            return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               '<div class="j-slot-time">' + (time ? (time + endTime + badge) : '<span style="opacity:0.5">—</span>') + '</div>' +
               '<div class="j-slot-body">' +
                 '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p></div>' +
@@ -4480,8 +4528,10 @@
       var dayCardClasses = ['j-day-card'];
       if (isCurrent) dayCardClasses.push('is-current');
       var miniPanelsWrap = miniPanelHtml ? '<div class="j-day-panels">' + miniPanelHtml + '</div>' : '';
-      return '<div class="' + dayCardClasses.join(' ') + '">' +
+      var nightWarnHtml = nightGaps[dateStr] ? '<div class="j-night-warn">🛏 이 밤 숙소 미등록 — Records에서 확인</div>' : '';
+      return '<div class="' + dayCardClasses.join(' ') + '" data-date="' + dateStr + '">' +
           dayHeadHtml +
+          nightWarnHtml +
           miniPanelsWrap +
           '<div class="j-day-timeline">' + itemsHtml + '</div>' +
           addFormHtml +
@@ -4510,6 +4560,7 @@
         if (txt) el.innerHTML = txt; else el.style.display = 'none';
       });
     });
+    bindWeekDnd(); // ★ 드래그 앤 드롭 + 호버→핀 강조 (1회 바인딩)
     if (typeof renderDayPinsMap === 'function') renderDayPinsMap();
   }
 
@@ -4636,6 +4687,127 @@
     window.startWeekAdd = startWeekAdd;
     window.cancelWeekAdd = cancelWeekAdd;
     window.saveWeekAdd = saveWeekAdd;
+  }
+
+  // ★ (2026-07-23) 주간 카드 드래그 앤 드롭 + 리스트 호버 → 지도 핀 강조 (Wanderlog 이식 2단계)
+  var _weekDragId = null;
+  function _timelessItemsOf(dateStr) {
+    var list = (journeyData || []).filter(function(d) {
+      return (d.date || '') === dateStr && d.type === '일정' && !d.time;
+    });
+    list.sort(function(a, b){ return (a.order || 0) - (b.order || 0); });
+    return list;
+  }
+  function _nextWeekOrder(dateStr) {
+    var max = 0;
+    _timelessItemsOf(dateStr).forEach(function(d){ if ((d.order || 0) > max) max = d.order || 0; });
+    return max + 10;
+  }
+  function _refreshAfterWeekDnd() {
+    renderWeekView();
+    if (typeof renderDayView === 'function') renderDayView();
+    if (typeof renderDayPinsMap === 'function') renderDayPinsMap();
+  }
+  function _setPinHighlight(jid, on) {
+    var m = window._dayPinsMarkers ? window._dayPinsMarkers[jid] : null;
+    if (!m) return;
+    try {
+      m.setZIndexOffset(on ? 1000 : 0);
+      if (m._icon) m._icon.classList[on ? 'add' : 'remove']('is-hi');
+    } catch(e) {}
+  }
+  function bindWeekDnd() {
+    var grid = document.getElementById('journey-week-grid');
+    if (!grid || grid._dndBound) return;
+    grid._dndBound = true;
+    // ── 드래그 앤 드롭 ──
+    grid.addEventListener('dragstart', function(e) {
+      var slot = e.target.closest ? e.target.closest('.j-slot[data-jid]') : null;
+      if (!slot || !slot.getAttribute('data-jid')) return;
+      _weekDragId = slot.getAttribute('data-jid');
+      try { e.dataTransfer.setData('text/plain', _weekDragId); e.dataTransfer.effectAllowed = 'move'; } catch(err) {}
+      slot.classList.add('is-dragging');
+    });
+    grid.addEventListener('dragend', function() {
+      _weekDragId = null;
+      grid.querySelectorAll('.is-dragging').forEach(function(el){ el.classList.remove('is-dragging'); });
+      grid.querySelectorAll('.is-drop-target').forEach(function(el){ el.classList.remove('is-drop-target'); });
+    });
+    grid.addEventListener('dragover', function(e) {
+      if (!_weekDragId) return;
+      var card = e.target.closest ? e.target.closest('.j-day-card[data-date]') : null;
+      if (!card) return;
+      e.preventDefault();
+      try { e.dataTransfer.dropEffect = 'move'; } catch(err) {}
+      grid.querySelectorAll('.is-drop-target').forEach(function(el){ if (el !== card) el.classList.remove('is-drop-target'); });
+      card.classList.add('is-drop-target');
+    });
+    grid.addEventListener('drop', async function(e) {
+      var jid = _weekDragId;
+      _weekDragId = null;
+      var card = e.target.closest ? e.target.closest('.j-day-card[data-date]') : null;
+      grid.querySelectorAll('.is-drop-target').forEach(function(el){ el.classList.remove('is-drop-target'); });
+      if (!jid || !card) return;
+      e.preventDefault();
+      var item = (journeyData || []).find(function(j){ return j._id === jid; });
+      if (!item) return;
+      var targetDate = card.getAttribute('data-date');
+      if (!targetDate) return;
+      // (a) 다른 날 컬럼에 드롭 → 날짜 이동 (time은 유지)
+      if ((item.date || '') !== targetDate) {
+        var upd = { date: targetDate };
+        if (!item.time) upd.order = _nextWeekOrder(targetDate);
+        try {
+          await fbUpdate('journey', jid, upd);
+          Object.assign(item, upd);
+          _refreshAfterWeekDnd();
+        } catch(err) { alert('날짜 이동 실패: ' + (err.message || err)); }
+        return;
+      }
+      // (b) 같은 날 안 재정렬 — 시간 없는 아이템만 (시간 있는 건 시간 정렬이 우선)
+      if (item.time) return;
+      var slots = _timelessItemsOf(targetDate);
+      var fromIdx = slots.indexOf(item);
+      if (fromIdx < 0) return;
+      slots.splice(fromIdx, 1);
+      var toIdx = slots.length; // 기본: 맨 뒤
+      var overSlot = e.target.closest ? e.target.closest('.j-slot[data-jid]') : null;
+      if (overSlot) {
+        var overItem = slots.find(function(s){ return s._id === overSlot.getAttribute('data-jid'); });
+        if (overItem) {
+          var r = overSlot.getBoundingClientRect();
+          toIdx = slots.indexOf(overItem) + (e.clientY > r.top + r.height / 2 ? 1 : 0);
+        }
+      }
+      slots.splice(toIdx, 0, item);
+      var changed = [];
+      slots.forEach(function(it, i) {
+        var ord = (i + 1) * 10;
+        if (it.order !== ord) { it.order = ord; changed.push(it); }
+      });
+      if (!changed.length) return;
+      try {
+        for (var u = 0; u < changed.length; u++) {
+          await fbUpdate('journey', changed[u]._id, { order: changed[u].order });
+        }
+        _refreshAfterWeekDnd();
+      } catch(err) { alert('순서 저장 실패: ' + (err.message || err)); }
+    });
+    // ── 호버 → 지도 핀 강조 (panTo 없음, 좌표 없는 아이템은 레지스트리에 없어 무시됨) ──
+    grid.addEventListener('mouseover', function(e) {
+      var slot = e.target.closest ? e.target.closest('.j-slot[data-jid]') : null;
+      if (!slot) return;
+      var from = (e.relatedTarget && e.relatedTarget.closest) ? e.relatedTarget.closest('.j-slot[data-jid]') : null;
+      if (from === slot) return;
+      _setPinHighlight(slot.getAttribute('data-jid'), true);
+    });
+    grid.addEventListener('mouseout', function(e) {
+      var slot = e.target.closest ? e.target.closest('.j-slot[data-jid]') : null;
+      if (!slot) return;
+      var to = (e.relatedTarget && e.relatedTarget.closest) ? e.relatedTarget.closest('.j-slot[data-jid]') : null;
+      if (to === slot) return;
+      _setPinHighlight(slot.getAttribute('data-jid'), false);
+    });
   }
 
   function prevWeekChunk() {
@@ -14094,6 +14266,7 @@
     var wrap = document.getElementById('daylog-map-wrap');
     var mount = document.getElementById('daylog-map');
     if (!wrap || !mount || typeof L === 'undefined') return;
+    window._dayPinsMarkers = {}; // ★ (2026-07-23) 리스트 호버 → 핀 강조용 레지스트리 (journey _id → marker)
     var dayMap = getDayMap();
     var dateToDay = {};
     dayMap.forEach(function(e){ dateToDay[e.date] = e.day; });
@@ -14143,7 +14316,10 @@
       var day = parseInt(dayKey, 10);
       if (_dayPinsFilter !== 'all' && _dayPinsFilter !== String(day)) return;
       var color = _DAY_COLORS[(day - 1) % _DAY_COLORS.length];
-      var items = byDay[dayKey].slice().sort(function(a, b){ return (a.time || '').localeCompare(b.time || ''); });
+      var items = byDay[dayKey].slice().sort(function(a, b){
+        var t = (a.time || '').localeCompare(b.time || '');
+        return t !== 0 ? t : ((a.order || 0) - (b.order || 0));
+      });
       var line = [];
       items.forEach(function(it, i) {
         latlngs.push([it.lat, it.lng]); line.push([it.lat, it.lng]);
@@ -14151,7 +14327,8 @@
         var pop = '<strong>' + String(it.title || '').replace(/</g, '&lt;') + '</strong><br>' +
           '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
           '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
-        L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        var mk = L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
+        if (it._id) window._dayPinsMarkers[it._id] = mk;
       });
       // 하루만 선택하면 방문 순서 경로선 표시
       if (_dayPinsFilter === String(day) && line.length > 1) {
