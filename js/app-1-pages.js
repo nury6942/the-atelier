@@ -22156,7 +22156,13 @@
       var outfit = getOutfit(dateStr);
       var items = outfit ? (outfit.items||[]) : [];
 
-      var itemsHtml = items.map(function(item, ii){
+      // ★ (2026-07-23) 의류/신발/악세 3단 구분 (mockup 양식) — cat 없는 기존 아이템은 의류로
+      var PK_CATS = [
+        { key: '의류', label: 'CLOTHING', icon: 'checkroom' },
+        { key: '신발', label: 'FOOTWEAR', icon: 'footprint' },
+        { key: '악세', label: 'ACCESSORIES', icon: 'watch' }
+      ];
+      function rowHtml(item, ii) {
         var cls = item.checked ? 'checked' : '';
         var isSel = _pkSelected.some(function(s) { return s.date === dateStr && s.idx === ii; });
         var badge = (_pkNameCount[(item.name||'').trim()]||0) > 1 ? ' <span class="pk-item-badge">×'+_pkNameCount[(item.name||'').trim()]+'</span>' : '';
@@ -22166,6 +22172,17 @@
           '<span class="pk-item-name '+cls+' flex-1">'+item.name+badge+'</span>' +
           '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
+        '</div>';
+      }
+      var itemsHtml = PK_CATS.map(function(cd) {
+        var rows = '';
+        items.forEach(function(item, ii) {
+          var c = item.cat || '의류';
+          if (c === cd.key) rows += rowHtml(item, ii);
+        });
+        return '<div class="pk-cat-col" ondragover="pkDragOver(event)" ondrop="pkColDrop(event,\''+dateStr+'\',\''+cd.key+'\')">' +
+          '<div class="pk-cat-head"><span class="material-symbols-outlined">'+cd.icon+'</span>'+cd.label+'</div>' +
+          (rows || '<div class="pk-cat-empty">—</div>') +
         '</div>';
       }).join('');
 
@@ -22186,9 +22203,10 @@
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="pk-day-items">'+itemsHtml+'</div>' +
+        '<div class="pk-cat-cols">'+itemsHtml+'</div>' +
         '<div class="pk-day-input-row">' +
-          '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠, 청바지)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
+          '<select id="pk-outfit-cat-'+idx+'" class="pk-cat-select" onclick="event.stopPropagation()"><option value="의류">의류</option><option value="신발">신발</option><option value="악세">악세</option></select>' +
+          '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
           '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
         '</div>' +
       '</div>';
@@ -22206,17 +22224,47 @@
     var input = document.getElementById('pk-outfit-input-'+inputIdx);
     var name = input.value.trim();
     if (!name) return;
+    var catSel = document.getElementById('pk-outfit-cat-'+inputIdx);
+    var cat = (catSel && catSel.value) || '의류';
     var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
     if (outfit) {
-      outfit.items.push({name:name,checked:false});
+      outfit.items.push({name:name,checked:false,cat:cat});
       await fbUpdate('outfits', outfit._id, {items:outfit.items});
     } else {
-      var obj = {trip_id:pkTripId, date:dateStr, items:[{name:name,checked:false}]};
+      var obj = {trip_id:pkTripId, date:dateStr, items:[{name:name,checked:false,cat:cat}]};
       var saved = await fbAdd('outfits', obj);
       pkOutfits.push(saved);
     }
     pkRenderDaily(); pkRenderProgress();
   }
+
+  // ★ (2026-07-23) 컬럼(의류/신발/악세)에 드롭 → 카테고리 이동
+  window.pkColDrop = async function(e, dateStr, catKey) {
+    e.preventDefault(); e.stopPropagation();
+    if (!_pkDragData) return;
+    var fromOutfit = pkOutfits.find(function(o){return o.date===_pkDragData.fromDate;});
+    if (!fromOutfit || !fromOutfit.items[_pkDragData.fromIdx]) return;
+    var item = fromOutfit.items[_pkDragData.fromIdx];
+    if (_pkDragData.fromDate === dateStr) {
+      item.cat = catKey;
+      await fbUpdate('outfits', fromOutfit._id, {items:fromOutfit.items});
+    } else {
+      // 다른 날짜 컬럼으로 드롭: 날짜 이동 + 카테고리 변경
+      fromOutfit.items.splice(_pkDragData.fromIdx, 1);
+      await fbUpdate('outfits', fromOutfit._id, {items:fromOutfit.items});
+      var toOutfit = pkOutfits.find(function(o){return o.date===dateStr;});
+      var moved = {name:item.name, checked:item.checked, cat:catKey};
+      if (toOutfit) {
+        toOutfit.items.push(moved);
+        await fbUpdate('outfits', toOutfit._id, {items:toOutfit.items});
+      } else {
+        var saved = await fbAdd('outfits', {trip_id:pkTripId, date:dateStr, items:[moved]});
+        pkOutfits.push(saved);
+      }
+    }
+    _pkDragData = null;
+    pkRenderDaily(); pkRenderProgress();
+  };
 
   async function pkToggleOutfit(dateStr, ii, checked) {
     var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
