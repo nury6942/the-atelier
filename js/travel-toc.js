@@ -7,10 +7,10 @@
   'use strict';
 
   // ★ (2026-07-22) 장부 5종은 Records 패널 하나로 통합 — TOC도 4개로 압축
+  // ★ (2026-07-23) Places는 상단 '스팟' 탭으로 분리 — TOC는 일정 뷰 전용이라 제거
   var SECTIONS = [
     { id: 'trv-hero',      label: 'Voyage' },
     { id: 'trv-stops',     label: 'Stops' },
-    { id: 'trv-places',    label: 'Places' },
     { id: 'journey-week-view', label: 'Daily Log' },
     { id: 'trv-ledger',    label: 'Records' },
   ];
