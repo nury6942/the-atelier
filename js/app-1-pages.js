@@ -5207,56 +5207,45 @@
       '</div>';
     }
 
-    // stitch 변환: payBadge → j-status-tag
-    var payVar2 = payStatus === '결제 완료' ? 'j-status-success' : (payStatus === '현장 결제' ? 'j-status-warn' : 'j-status-soft');
-    var payBadgeSt = payStatus ? '<span class="j-status-tag ' + payVar2 + '">' + payStatus + '</span>' : '';
-    var cityRouteSt = '';
-    if (pickupCity && dropCity && pickupCity !== dropCity) {
-      cityRouteSt = '<span class="j-tag-pill j-tag-pill-accent">' + pickupCity + ' → ' + dropCity + '</span>';
-    } else if (pickupCity) {
-      cityRouteSt = '<span class="j-tag-pill j-tag-pill-accent">' + pickupCity + '</span>';
+    // 업체 배지 — title 괄호 안 텍스트, 없으면 생략
+    var vendorM = String(item.title || '').match(/\(([^)]+)\)/);
+    var titleMain = String(item.title || '—').replace(/\s*\([^)]*\)/, '').trim() || '—';
+    var vendorBadge = vendorM ? '<span class="rec-tr-vendor">' + vendorM[1] + '</span>' : '';
+    var payPillT = payStatus ? '<span class="rec-pill ' + (payStatus === '결제 완료' ? 'is-ok' : (payStatus === '현장 결제' ? 'is-warn' : '')) + '">' + payStatus + '</span>' : '';
+    var recChips = [];
+    if (pickupCity && dropCity && pickupCity !== dropCity) recChips.push('<span class="rec-pill is-accent">' + pickupCity + ' → ' + dropCity + '</span>');
+    else if (pickupCity) recChips.push('<span class="rec-pill is-accent">' + pickupCity + '</span>');
+    if (item.driver) recChips.push('<span class="rec-pill">' + item.driver + '</span>');
+    if (item.cancel) {
+      var cancelVarR = item.cancel === '가능' ? 'is-ok' : (item.cancel === '조건부' ? 'is-warn' : 'is-danger');
+      var cancelTxtR = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + item.cancel_date : '무료취소 가능') :
+                       item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부 취소') :
+                       '환불 불가';
+      recChips.push('<span class="rec-pill ' + cancelVarR + '">' + cancelTxtR + '</span>');
     }
-    // tag-pill 변환 (chipsRow)
-    var tagPillsSt = chips.map(function(c){
-      return c
-        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill j-tag-pill-accent')
-        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill j-tag-pill-accent')
-        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill')
-        .replace(/inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-\[11px\] font-semibold/g, 'j-tag-pill');
-    }).join('');
+    if (item.payment_date) recChips.push('<span class="rec-pill">결제일 ' + item.payment_date + '</span>');
     var actionsSt = String(actionBtns || '')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="rec-abtn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="rec-abtn danger"')
       .replace(/text-xl/g, '');
-    return '<div class="j-inter-card" style="margin-bottom: var(--space-4)">' +
-      '<div class="j-inter-head">' +
-        '<div class="j-inter-head-l">' +
-          '<span class="material-symbols-outlined">directions_car</span>' +
-          '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
+    return '<div class="rec-tr-card">' +
+      '<div class="rec-tr-top">' +
+        '<div class="rec-tr-ico"><span class="material-symbols-outlined">directions_car</span></div>' +
+        '<div class="rec-tr-info">' +
+          '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain + '</h4>' + vendorBadge + '</div>' +
+          (item.description ? '<p class="rec-tr-sub">' + item.description + '</p>' : '') +
+          (item.booking_ref ? '<p class="rec-tr-conf">Conf: ' + item.booking_ref + '</p>' : '') +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
-          payBadgeSt +
-        '</div>' +
+        '<div class="rec-actions">' + actionsSt + '</div>' +
       '</div>' +
-      '<div class="j-inter-body">' +
-        '<div class="j-inter-row">' +
-          '<div>' +
-            (cityRouteSt ? '<div style="margin-bottom: var(--space-2)">' + cityRouteSt + '</div>' : '') +
-            (item.description ? '<p class="j-inter-meta-sub" style="font-size: var(--font-size-meta);margin:0">' + item.description + '</p>' : '') +
-          '</div>' +
-          '<div style="text-align:right;display:flex;align-items:center;gap: var(--space-3)">' +
-            '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + price + '</p>' +
-            '<div class="j-trip-actions">' + actionsSt + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="j-inter-meta-grid cols-2">' +
-          '<div><p class="j-inter-meta-l">픽업</p><p class="j-inter-meta-v">' + pickup + '</p>' + (item.pickup_location ? '<p class="j-inter-meta-sub">' + _trvMapsLink(item.pickup_location, pickupCity || '') + '</p>' : '') + '</div>' +
-          '<div><p class="j-inter-meta-l">드롭</p><p class="j-inter-meta-v">' + drop + '</p>' + (item.drop_location ? '<p class="j-inter-meta-sub">' + _trvMapsLink(item.drop_location, dropCity || pickupCity || '') + '</p>' : '') + '</div>' +
-        '</div>' +
-        (tagPillsSt ? '<div class="j-inter-tags">' + tagPillsSt + '</div>' : '') +
-        memoBox +
-        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
+      '<div class="rec-tr-grid2">' +
+        '<div><p class="rec-micro">Pick-up</p><p class="rec-lg-v">' + pickup + '</p>' + (item.pickup_location ? '<p class="rec-lg-sub">' + _trvMapsLink(item.pickup_location, pickupCity || '') + '</p>' : '') + '</div>' +
+        '<div><p class="rec-micro">Drop-off</p><p class="rec-lg-v">' + drop + '</p>' + (item.drop_location ? '<p class="rec-lg-sub">' + _trvMapsLink(item.drop_location, dropCity || pickupCity || '') + '</p>' : '') + '</div>' +
       '</div>' +
+      ((recChips.length || payPillT) ? '<div class="rec-tr-tags">' + recChips.join('') + payPillT + '</div>' : '') +
+      memoBox +
+      '<div class="rec-tr-foot"><p class="rec-tr-price">' + price + '</p></div>' +
+      (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
     '</div>';
   }
 
@@ -5290,38 +5279,33 @@
       return clean ? _trvMapsLink(p, '') : p;
     });
     var actionsSt = String(deleteBtn || '')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
+      .replace(/class="flex gap-1 transition-all"/g, 'class="rec-actions"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="rec-abtn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="rec-abtn danger"')
       .replace(/text-xl/g, '');
-    return '<div class="j-inter-card" style="margin-bottom: var(--space-4)">' +
-      '<div class="j-inter-head">' +
-        '<div class="j-inter-head-l">' +
-          '<span class="material-symbols-outlined">' + icon + '</span>' +
-          '<h4 class="j-inter-head-title">' + (item.title || '—') + '</h4>' +
+    // 업체 배지 — title 괄호 안 텍스트
+    var vendorM2 = String(item.title || '').match(/\(([^)]+)\)/);
+    var titleMain2 = String(item.title || '—').replace(/\s*\([^)]*\)/, '').trim() || '—';
+    var vendorBadge2 = vendorM2 ? '<span class="rec-tr-vendor">' + vendorM2[1] + '</span>' : '';
+    return '<div class="rec-tr-card">' +
+      '<div class="rec-tr-top">' +
+        '<div class="rec-tr-ico"><span class="material-symbols-outlined">' + icon + '</span></div>' +
+        '<div class="rec-tr-info">' +
+          '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain2 + '</h4>' + vendorBadge2 + '</div>' +
+          '<p class="rec-tr-sub">' +
+            (routeParts[0] || '') +
+            (routeParts.length > 1 ? ' <span style="color:#94a3b8">→</span> ' + routeParts[1] : '') +
+          '</p>' +
+          '<p class="rec-tr-sub">' + (item.date ? shortDate(item.date) : '—') + ' · ' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p>' +
+          (item.seat ? '<p class="rec-tr-conf">Seat: ' + item.seat + '</p>' : '') +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap: var(--space-2)">' +
-          (status ? '<span class="j-status-tag ' + statusVar + '">' + status + '</span>' : '') +
-        '</div>' +
+        actionsSt +
       '</div>' +
-      '<div class="j-inter-body">' +
-        '<div class="j-inter-row">' +
-          '<div>' +
-            '<p class="j-trip-name" style="font-size: var(--font-size-body-lg);margin-bottom: var(--space-1-5)">' +
-              (routeParts[0] || '') +
-              (routeParts.length > 1 ? ' <span style="color:var(--j-on-surface-variant);font-weight:600">→</span> ' + routeParts[1] : '') +
-            '</p>' +
-          '</div>' +
-          '<div style="text-align:right;display:flex;align-items:center;gap: var(--space-3)">' +
-            '<p class="j-trip-price" style="font-size: var(--font-size-h2-lg)">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
-            '<div class="j-trip-actions">' + actionsSt + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="j-inter-meta-grid cols-2">' +
-          '<div><p class="j-inter-meta-l">Date</p><p class="j-inter-meta-v">' + (item.date ? shortDate(item.date) : '—') + '</p></div>' +
-          '<div><p class="j-inter-meta-l">Time</p><p class="j-inter-meta-v">' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p></div>' +
-        '</div>' +
-        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
+      '<div class="rec-tr-foot">' +
+        '<p class="rec-tr-price">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
+        (status ? '<span class="rec-pill ' + (status === '확정' ? 'is-accent' : (status === '환불 가능' ? 'is-ok' : 'is-warn')) + '">' + status + '</span>' : '') +
       '</div>' +
+      (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
     '</div>';
   }
 
@@ -6297,7 +6281,27 @@
           ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + safeLodgeKey + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
             '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + safeLodgeKey + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
           : '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + safeLodgeKey + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
-        return '<div class="j-lodge-card">' +
+        var today = new Date().toISOString().split('T')[0];
+        var isUpcoming = !!(item.date && item.date > today);
+        var cancelVar = item.cancel === '가능' ? 'is-ok' : (item.cancel === '조건부' ? 'is-warn' : 'is-danger');
+        var typePillR = '<span class="rec-pill">' + (isAirbnb ? 'AIRBNB' : 'HOTEL') + '</span>';
+        var payPillR = '';
+        if (payStatus) {
+          payPillR = '<span class="rec-pill ' + (payStatus === '결제 완료' ? 'is-ok' : (payStatus === '현장 결제' ? 'is-warn' : '')) + '">' + payStatus + (item.payment_date ? ' · ' + item.payment_date : '') + '</span>';
+        } else if (item.payment_date) {
+          payPillR = '<span class="rec-pill">결제일 ' + item.payment_date + '</span>';
+        }
+        var memoPillsR = '';
+        if (item.notes) {
+          var chipsR = String(item.notes).split(/\s*·\s*|\s*,\s*/).filter(function(c){ return c.trim(); });
+          if (chipsR.length) {
+            memoPillsR = '<div class="rec-lg-chips">' + chipsR.map(function(c){
+              return '<span class="rec-pill">' + c.trim() + '</span>';
+            }).join('') + '</div>';
+          }
+        }
+        var dirQ = encodeURIComponent(item.address ? item.address : ((item.title || '') + (item.city ? ', ' + item.city : '')));
+        return '<div class="rec-lg-card">' +
           '<div class="j-lodge-img" ' +
               'onmouseenter="window.journeyLodgeImageSetActive && journeyLodgeImageSetActive(\'' + safeLodgeKey + '\')" ' +
               'onmouseleave="window.journeyLodgeImageClearActive && journeyLodgeImageClearActive(\'' + safeLodgeKey + '\')">' +
@@ -6306,39 +6310,34 @@
             '<input type="file" accept="image/*" style="display:none" data-lodge-key="' + safeLodgeKey + '" onchange="journeyLodgeImageFileSelected(event,\'' + safeLodgeKey + '\')">' +
             '<div class="j-lodge-img-controls' + (lodgeImg ? '' : ' is-empty') + '">' + lodgeCtrl + '</div>' +
             '<div class="j-lodge-paste-hint">Ctrl+V로 붙여넣기</div>' +
+            '<div class="rec-lg-badge' + (isUpcoming ? ' is-upcoming' : '') + '">' + (isUpcoming ? 'Upcoming' : 'Confirmed') + '</div>' +
           '</div>' +
-          '<div class="j-lodge-body">' +
-            '<div class="j-lodge-head">' +
-              '<div class="j-lodge-head-l">' +
-                '<div class="j-lodge-tags-top">' +
-                  (item.city ? '<span class="j-status-tag j-status-primary">' + item.city + '</span>' : '') +
-                  typeBadgeSt +
-                  payBadgeSt +
-                '</div>' +
-                '<h3 class="j-lodge-h3">' + (item.title ? _trvMapsLink(item.title, item.city || '') : '—') + '</h3>' +
-                '<div style="display:flex;flex-wrap:wrap;gap: var(--space-3-5)">' +
-                  (item.address ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">location_on</span>' + _trvMapsAddr(item.address) + '</p>' : '') +
-                  (item.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + item.phone + '</p>' : '') +
-                '</div>' +
-              '</div>' +
-              '<div class="j-lodge-head-r">' +
-                '<p class="j-trip-price">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '</p>' +
-                '<p class="j-lodge-rate-meta">Rate</p>' +
-                paymentDateRowSt +
-                '<div class="j-trip-actions" style="margin-top: var(--space-2-5);justify-content:flex-end">' +
-                  '<button onclick="editJourneyItem(' + realIdx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
-                  '<button onclick="deleteJourneyRow(' + realIdx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
-                '</div>' +
+          '<div class="rec-lg-body">' +
+            '<div class="rec-lg-tags">' +
+              (item.city ? '<span class="rec-pill is-accent">' + item.city + '</span>' : '') +
+              typePillR +
+              payPillR +
+              '<div class="rec-actions">' +
+                '<button onclick="editJourneyItem(' + realIdx + ')" class="rec-abtn"><span class="material-symbols-outlined">edit_square</span></button>' +
+                '<button onclick="deleteJourneyRow(' + realIdx + ')" class="rec-abtn danger"><span class="material-symbols-outlined">delete</span></button>' +
               '</div>' +
             '</div>' +
-            '<div class="j-lodge-meta-grid">' +
-              '<div><p class="j-inter-meta-l">Check-in</p><p class="j-inter-meta-v">' + (item.date || '—') + '</p>' + (item.checkin ? '<p class="j-inter-meta-sub">' + item.checkin + '</p>' : '') + '</div>' +
-              '<div><p class="j-inter-meta-l">Check-out</p><p class="j-inter-meta-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="j-inter-meta-sub">' + item.checkout + '</p>' : '') + '</div>' +
-              '<div><p class="j-inter-meta-l">Cancellation</p><p class="j-inter-meta-v ' + cancelClassSt + '">' + cancelText + '</p></div>' +
-              '<div><p class="j-inter-meta-l">Type</p><p class="j-inter-meta-v">' + (isAirbnb ? 'Airbnb' : 'Hotel') + '</p></div>' +
+            '<h3 class="rec-lg-title">' + (item.title ? _trvMapsLink(item.title, item.city || '') : '—') + '</h3>' +
+            '<p class="rec-lg-addr">' +
+              (item.address ? '<span><span class="material-symbols-outlined">location_on</span>' + _trvMapsAddr(item.address) + '</span>' : '') +
+              (item.phone ? '<span><span class="material-symbols-outlined">call</span>' + item.phone + '</span>' : '') +
+            '</p>' +
+            '<div class="rec-lg-grid">' +
+              '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + (item.date || '—') + '</p>' + (item.checkin ? '<p class="rec-lg-sub">' + item.checkin + '</p>' : '') + '</div>' +
+              '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="rec-lg-sub">' + item.checkout + '</p>' : '') + '</div>' +
             '</div>' +
-            memoChipsSt +
+            '<p class="rec-lg-cancel ' + cancelVar + '">' + cancelText + '</p>' +
+            memoPillsR +
             (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(item) : '') +
+          '</div>' +
+          '<div class="rec-lg-foot">' +
+            '<span class="rec-lg-foot-amt">' + (item.amount ? '₩' + Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '—') + '<span class="rec-lg-sub">Rate</span></span>' +
+            '<a class="rec-lg-dir" href="https://www.google.com/maps/search/?api=1&query=' + dirQ + '" target="_blank" rel="noopener"><span class="material-symbols-outlined">near_me</span>Directions</a>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -6368,7 +6367,10 @@
         ? '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + lodgeKey2 + '\')" title="이미지 변경"><span class="material-symbols-outlined">edit</span>변경</button>' +
           '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageDelete(\'' + lodgeKey2 + '\')" title="이미지 삭제"><span class="material-symbols-outlined">delete</span></button>'
         : '<button class="j-lodge-img-ctrl" onclick="journeyLodgeImageUpload(\'' + lodgeKey2 + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
-      return '<div class="j-lodge-card">' +
+      var todayS = new Date().toISOString().split('T')[0];
+      var isUpcoming2 = !!(d.date && d.date > todayS);
+      var dirQ2 = encodeURIComponent((d.title || '') + (d.city ? ', ' + d.city : ''));
+      return '<div class="rec-lg-card">' +
         '<div class="j-lodge-img" ' +
             'onmouseenter="window.journeyLodgeImageSetActive && journeyLodgeImageSetActive(\'' + lodgeKey2 + '\')" ' +
             'onmouseleave="window.journeyLodgeImageClearActive && journeyLodgeImageClearActive(\'' + lodgeKey2 + '\')">' +
@@ -6377,32 +6379,28 @@
           '<input type="file" accept="image/*" style="display:none" data-lodge-key="' + lodgeKey2 + '" onchange="journeyLodgeImageFileSelected(event,\'' + lodgeKey2 + '\')">' +
           '<div class="j-lodge-img-controls' + (lodgeImg2 ? '' : ' is-empty') + '">' + lodgeCtrl2 + '</div>' +
           '<div class="j-lodge-paste-hint">Ctrl+V로 붙여넣기</div>' +
+          '<div class="rec-lg-badge' + (isUpcoming2 ? ' is-upcoming' : '') + '">' + (isUpcoming2 ? 'Upcoming' : 'Confirmed') + '</div>' +
         '</div>' +
-        '<div class="j-lodge-body">' +
-          '<div class="j-lodge-head">' +
-            '<div class="j-lodge-head-l">' +
-              '<div class="j-lodge-tags-top">' +
-                '<span class="j-status-tag j-status-primary">' + d.city + '</span>' +
-                typeBadgeSt2 +
-              '</div>' +
-              '<h3 class="j-lodge-h3" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:var(--j-primary);font-variation-settings:\'FILL\' 1">verified</span></h3>' +
-              (d.phone ? '<p class="j-lodge-addr"><span class="material-symbols-outlined">call</span>' + d.phone + '</p>' : '') +
-            '</div>' +
-            '<div class="j-lodge-head-r">' +
-              '<p class="j-trip-price">' + d.price + '</p>' +
-              '<p class="j-lodge-rate-meta">per night</p>' +
-              '<div class="j-trip-actions" style="margin-top: var(--space-2-5);justify-content:flex-end">' +
-                '<button onclick="openLodgingEditModal(' + idx + ')" class="j-trip-action-btn"><span class="material-symbols-outlined">edit_square</span></button>' +
-                '<button onclick="deleteLodgingLocal(' + idx + ')" class="j-trip-action-btn danger"><span class="material-symbols-outlined">delete</span></button>' +
-              '</div>' +
+        '<div class="rec-lg-body">' +
+          '<div class="rec-lg-tags">' +
+            '<span class="rec-pill is-accent">' + d.city + '</span>' +
+            '<span class="rec-pill">' + baseType + '</span>' +
+            '<div class="rec-actions">' +
+              '<button onclick="openLodgingEditModal(' + idx + ')" class="rec-abtn"><span class="material-symbols-outlined">edit_square</span></button>' +
+              '<button onclick="deleteLodgingLocal(' + idx + ')" class="rec-abtn danger"><span class="material-symbols-outlined">delete</span></button>' +
             '</div>' +
           '</div>' +
-          '<div class="j-lodge-meta-grid">' +
-            '<div><p class="j-inter-meta-l">Check-in</p><p class="j-inter-meta-v">' + shortDate(d.date) + '</p><p class="j-inter-meta-sub">' + d.checkin + '</p></div>' +
-            '<div><p class="j-inter-meta-l">Check-out</p><p class="j-inter-meta-v">' + shortDate(d.checkout_date) + '</p><p class="j-inter-meta-sub">' + d.checkout + '</p></div>' +
-            '<div><p class="j-inter-meta-l">Cancellation</p><p class="j-inter-meta-v ' + cancelClassSt2 + '" onclick="toggleLodgingCancel(' + idx + ')" style="cursor:pointer">' + cancelText + '</p></div>' +
-            '<div><p class="j-inter-meta-l">Type</p><p class="j-inter-meta-v">' + (isAirbnb2 ? 'Airbnb' : 'Hotel') + '</p></div>' +
+          '<h3 class="rec-lg-title" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7c3aed;font-variation-settings:\'FILL\' 1">verified</span></h3>' +
+          (d.phone ? '<p class="rec-lg-addr"><span><span class="material-symbols-outlined">call</span>' + d.phone + '</span></p>' : '') +
+          '<div class="rec-lg-grid">' +
+            '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + shortDate(d.date) + '</p><p class="rec-lg-sub">' + d.checkin + '</p></div>' +
+            '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + shortDate(d.checkout_date) + '</p><p class="rec-lg-sub">' + d.checkout + '</p></div>' +
           '</div>' +
+          '<p class="rec-lg-cancel ' + (cancelOk ? 'is-ok' : 'is-danger') + '" onclick="toggleLodgingCancel(' + idx + ')" style="cursor:pointer">' + cancelText + '</p>' +
+        '</div>' +
+        '<div class="rec-lg-foot">' +
+          '<span class="rec-lg-foot-amt">' + d.price + '<span class="rec-lg-sub">per night</span></span>' +
+          '<a class="rec-lg-dir" href="https://www.google.com/maps/search/?api=1&query=' + dirQ2 + '" target="_blank" rel="noopener"><span class="material-symbols-outlined">near_me</span>Directions</a>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -6889,74 +6887,54 @@
     var arrCode = routeParts[1] ? routeParts[1].match(/\(([A-Z]{3})\)/)||[] : [];
     var depIata = depCode[1]||routeParts[0]||'';
     var arrIata = arrCode[1]||routeParts[1]||'';
-    var isTK = (f.airline||f.title||'').indexOf('Turkish') >= 0;
-    var iconBg = isTK ? 'bg-indigo-100' : 'bg-amber-100';
-    var iconColor = isTK ? 'text-indigo-600' : 'text-amber-600';
-    // 결제 상태 뱃지
-    var payStatus = f.payment_status || '';
-    var payBadge = '';
-    if (payStatus) {
-      var payClass = payStatus === '결제 완료' ? 'bg-emerald-100 text-emerald-700' :
-                     payStatus === '결제 예정' ? 'bg-amber-100 text-amber-700' :
-                     'bg-slate-100 text-slate-600';
-      var payIcon = payStatus === '결제 완료' ? 'check_circle' : 'schedule';
-      payBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ' + payClass + '"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">' + payIcon + '</span>' + payStatus + '</span>';
-    }
-    // 추가 정보 칩 (PNR / 탑승객 / 좌석 / 운임)
-    var chips = [];
-    if (f.pnr) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">confirmation_number</span>PNR ' + f.pnr + '</span>');
-    if (f.passenger) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">person</span>' + f.passenger + '</span>');
+    var code = f.flight || f.city || '';
+    var airline = f.airline || f.title || '';
+    var isPast = !!(f.date && /^\d{4}-\d{2}-\d{2}$/.test(f.date) && f.date < new Date().toISOString().split('T')[0]);
+    var actionsSt = String(deleteHtml || '')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="rec-abtn"')
+      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="rec-abtn danger"')
+      .replace(/text-xl/g, '');
     var seatLabel = '';
     if (f.seat_class) seatLabel = f.seat_class;
     if (f.seat_number) seatLabel = (seatLabel ? seatLabel + ' · ' : '') + f.seat_number;
-    if (seatLabel) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">airline_seat_recline_normal</span>' + seatLabel + '</span>');
-    if (f.fare_type) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">sell</span>' + f.fare_type + '</span>');
-    if (f.payment_date) chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-micro)">event_available</span>결제일 ' + f.payment_date + '</span>');
-    // stitch j-status-tag로 변환 (payBadge / chips)
-    var payTagSt = '';
-    if (payStatus) {
-      var payVar = payStatus === '결제 완료' ? 'j-status-success' : 'j-status-soft';
-      payTagSt = '<span class="j-status-tag ' + payVar + '">' + payStatus + '</span>';
-    }
-    var tagPills = '';
-    if (f.pnr) tagPills += '<span class="j-tag-pill j-tag-pill-accent">PNR ' + f.pnr + '</span>';
-    if (f.passenger) tagPills += '<span class="j-tag-pill j-tag-pill-accent">' + f.passenger + '</span>';
-    var seatLbl2 = '';
-    if (f.seat_class) seatLbl2 = f.seat_class;
-    if (f.seat_number) seatLbl2 = (seatLbl2 ? seatLbl2 + ' · ' : '') + f.seat_number;
-    if (seatLbl2) tagPills += '<span class="j-tag-pill j-tag-pill-accent">' + seatLbl2 + '</span>';
-    if (f.fare_type) tagPills += '<span class="j-tag-pill">' + f.fare_type + '</span>';
-    if (f.payment_date) tagPills += '<span class="j-tag-pill">결제일 ' + f.payment_date + '</span>';
-    // delete/edit 버튼을 stitch j-trip-action-btn으로 변환
-    var actionsSt = String(deleteHtml || '')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="j-trip-action-btn"')
-      .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 transition-colors text-slate-400 hover:text-rose-500"/g, 'class="j-trip-action-btn danger"')
-      .replace(/text-xl/g, '');
-    return '<div class="j-trip-card">' +
-      '<div class="j-flight-card">' +
-        '<div class="j-flight-main">' +
-          '<div class="j-trip-card-icon">' + airlineLogoHTML(f.airline || f.title || '', f.flight || f.city || '') + '</div>' +
-          '<div class="j-flight-info">' +
-            '<div class="j-flight-name-row">' +
-              '<p class="j-trip-name">' + (f.airline || f.title || '') + '</p>' +
-              payTagSt +
-              '<span class="j-tag-pill">' + (f.flight || f.city || '') + ' · ' + (f.date || '') + '</span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="j-flight-route">' +
-            '<div class="j-flight-port"><p class="j-flight-iata">' + depIata + '</p><p class="j-flight-time">' + (f.depart || f.time || '') + '</p></div>' +
-            '<div class="j-flight-duration"><div class="j-flight-duration-line"></div><p class="j-flight-duration-text">' + (f.duration || '') + '</p></div>' +
-            '<div class="j-flight-port"><p class="j-flight-iata">' + arrIata + '</p><p class="j-flight-time">' + (f.arrive || '') + '</p></div>' +
-          '</div>' +
-          '<div style="text-align:right">' +
-            '<p class="j-trip-price">' + (f.price || f.amount || '—') + '</p>' +
-            '<p class="j-trip-price-meta">' + (f.baggage || '') + '</p>' +
-          '</div>' +
-          '<div class="j-trip-actions">' + actionsSt + '</div>' +
-        '</div>' +
-        (tagPills ? '<div class="j-flight-tags">' + tagPills + '</div>' : '') +
-        (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(f) : '') +
+    // 하단 3열 그리드 — 있는 필드만
+    var cells = [];
+    var cell = function(l, v, accent) {
+      return '<div><p class="rec-micro">' + l + '</p><p class="rec-fl-foot-v' + (accent ? ' is-accent' : '') + '">' + v + '</p></div>';
+    };
+    if (airline && airline !== code) cells.push(cell('Airline', airline));
+    if (f.passenger) cells.push(cell('Passenger', f.passenger));
+    if (seatLabel) cells.push(cell('Seat', seatLabel));
+    if (f.pnr) cells.push(cell('PNR', f.pnr, true));
+    if (f.fare_type) cells.push(cell('Fare', f.fare_type));
+    if (f.baggage) cells.push(cell('Baggage', f.baggage));
+    if (f.payment_status || f.payment_date) cells.push(cell('Payment', (f.payment_status || '') + (f.payment_date ? ' · ' + f.payment_date : '')));
+    if (f.price && f.price !== '—') cells.push(cell('Price', f.price));
+    return '<div class="rec-fl-card' + (isPast ? ' is-past' : '') + '">' +
+      '<div class="rec-fl-head">' +
+        '<span class="rec-fl-code">' + (code || airline || '—') + '</span>' +
+        '<span class="material-symbols-outlined">flight</span>' +
+        '<span class="rec-fl-route">' + depIata + (arrIata ? ' → ' + arrIata : '') + '</span>' +
+        (actionsSt ? '<div class="rec-actions">' + actionsSt + '</div>' : '') +
       '</div>' +
+      '<div class="rec-fl-body">' +
+        '<div class="rec-fl-leg">' +
+          '<p class="rec-micro">Departure</p>' +
+          '<p class="rec-fl-time">' + (f.depart || f.time || '—') + '</p>' +
+          '<p class="rec-fl-date">' + (f.date || '') + '</p>' +
+        '</div>' +
+        '<div class="rec-fl-mid">' +
+          '<div class="rec-fl-mid-line"><span class="material-symbols-outlined">flight</span></div>' +
+          (f.duration ? '<p class="rec-fl-mid-dur">' + f.duration + '</p>' : '') +
+        '</div>' +
+        '<div class="rec-fl-leg is-arr">' +
+          '<p class="rec-micro">Arrival</p>' +
+          '<p class="rec-fl-time">' + (f.arrive || '—') + '</p>' +
+          '<p class="rec-fl-date">&nbsp;</p>' +
+        '</div>' +
+      '</div>' +
+      (cells.length ? '<div class="rec-fl-foot">' + cells.join('') + '</div>' : '') +
+      (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(f) : '') +
     '</div>';
   }
 
@@ -7430,26 +7408,25 @@
     var descParts = desc.split('\n');
     var descMain = descParts[0];
     var descSub = descParts.slice(1).join(' ');
-    var rowCls = checked ? 'j-souvenir-row is-done' : 'j-souvenir-row';
+    var rowCls = checked ? 'rec-sv-row is-done' : 'rec-sv-row';
     var checkInner = checked ? '<span class="material-symbols-outlined">check</span>' : '';
-    // descMain에서 첫 product 이름만 추출 — "Apfelwein 사과주 (Possmann · Höhl 브랜드)" → 첫 phrase 검색
-    // 너무 일반적인 품목명은 링크 안 함
     var descMainLinked = descMain && descMain !== '—' ? _trvMapsLink(descMain, city) : (descMain || '—');
     return '<div class="' + rowCls + '">' +
-      '<div class="j-souvenir-check ' + (checked ? 'is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
-      '<div class="j-souvenir-info">' +
-        '<span class="j-souvenir-cat"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
-        '<span class="j-souvenir-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</span>' +
-        (city ? ' <span style="color:var(--j-on-surface-variant);font-size: var(--font-size-micro)"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
-        (descSub ? '<span class="j-souvenir-desc">' + descSub + '</span>' : '') +
+      '<div class="rec-sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
+      '<div class="rec-sv-info">' +
+        '<span class="rec-sv-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</span>' +
+        '<span class="rec-sv-meta">' +
+          '<span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
+          (city ? ' <span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
+        '</span>' +
+        (descSub ? '<span class="rec-sv-desc">' + descSub + '</span>' : '') +
       '</div>' +
-      '<span class="j-souvenir-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + (function(){
-        // 단일 숫자 금액만 ₩ 병기 (범위 "40~120"은 스킵)
+      '<span class="rec-sv-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + (function(){
         if (!amount || !/^[0-9]+(\.[0-9]+)?$/.test(String(amount).trim())) return '';
         var k = fmtKrwFromEur(amount);
-        return k ? '<span style="display:block;font-size:10px;font-weight:600;color:#94a3b8">' + k + '</span>' : '';
+        return k ? '<span class="krw">' + k + '</span>' : '';
       })() + '</span>' +
-      '<div class="j-souvenir-actions">' +
+      '<div class="rec-sv-actions">' +
         (editFn ? '<button onclick="' + editFn + '"><span class="material-symbols-outlined">edit_square</span></button>' : '') +
         '<button class="danger" onclick="' + deleteFn + '"><span class="material-symbols-outlined">delete</span></button>' +
       '</div>' +

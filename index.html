@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=249" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=250" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5594,6 +5594,158 @@
       padding:1px 7px; font-size:10px; font-weight:800; color:#64748b; letter-spacing:0; }
     .trv-ltab.is-active .cnt { background:#ede9fe; color:#6d28d9; }
 
+    /* ═══ Records 카드 리디자인 (2026-07-23 Stitch) — .rec-* ═══ */
+    .rec-grid { display:grid; grid-template-columns:1fr; gap:16px; align-items:start; }
+    @media (min-width:768px){ .rec-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (min-width:1280px){ .rec-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    .rec-grid > .text-center { grid-column:1/-1; }
+    .rec-micro { font-family:var(--font-mono); font-size:10px; font-weight:600; text-transform:uppercase;
+      letter-spacing:0.14em; color:#94a3b8; margin:0 0 4px; }
+    .rec-pill { display:inline-flex; align-items:center; gap:3px; background:#f1f5f9; color:#475569;
+      border-radius:999px; padding:2px 8px; font-size:10px; font-weight:700; letter-spacing:0.02em; }
+    .rec-pill.is-accent { background:#f3eeff; color:#7c3aed; }
+    .rec-pill.is-ok { background:#ecfdf5; color:#059669; }
+    .rec-pill.is-warn { background:#fffbeb; color:#b45309; }
+    .rec-pill.is-danger { background:#fff1f2; color:#e11d48; }
+    .rec-actions { display:flex; gap:2px; flex-shrink:0; }
+    .rec-abtn { border:none; background:transparent; cursor:pointer; padding:4px; border-radius:8px;
+      color:inherit; opacity:0; transition:opacity .15s, background .15s, color .15s; display:inline-flex; }
+    .rec-fl-card:hover .rec-abtn, .rec-lg-card:hover .rec-abtn, .rec-tr-card:hover .rec-abtn { opacity:.7; }
+    .rec-abtn:hover { opacity:1; background:rgba(148,163,184,.18); }
+    .rec-abtn.danger:hover { color:#e11d48; background:rgba(225,29,72,.1); }
+    .rec-abtn .material-symbols-outlined { font-size:16px; display:block; }
+
+    /* 항공 — 보딩패스 */
+    .rec-fl-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;
+      display:flex; flex-direction:column; transition:box-shadow .2s, opacity .2s; }
+    .rec-fl-card:hover { box-shadow:0 6px 18px rgba(15,23,42,.08); }
+    .rec-fl-card.is-past { opacity:.62; }
+    .rec-fl-card.is-past:hover { opacity:1; }
+    .rec-fl-card.is-past .rec-fl-head { background:#64748b; }
+    .rec-fl-head { display:flex; align-items:center; gap:8px; background:#0f172a; color:#fff; padding:9px 14px; }
+    .rec-fl-head > .material-symbols-outlined { font-size:15px; opacity:.65; margin:0 auto; }
+    .rec-fl-code, .rec-fl-route { font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+      letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; }
+    .rec-fl-route { overflow:hidden; text-overflow:ellipsis; min-width:0; }
+    .rec-fl-body { display:flex; justify-content:space-between; gap:8px; padding:16px 14px 14px;
+      border-bottom:1px dashed #e2e8f0; }
+    .rec-fl-leg { min-width:0; }
+    .rec-fl-leg.is-arr { text-align:right; }
+    .rec-fl-time { font-family:'Manrope','Pretendard',sans-serif; font-size:23px; font-weight:800;
+      color:#0f172a; line-height:1; margin:0; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+    .rec-fl-date { font-size:11px; font-weight:500; color:#64748b; margin:5px 0 0; }
+    .rec-fl-mid { display:flex; flex-direction:column; align-items:center; padding-top:9px; flex:1 1 auto; min-width:52px; max-width:96px; }
+    .rec-fl-mid-line { width:100%; height:1px; background:#e2e8f0; position:relative; margin-bottom:7px; }
+    .rec-fl-mid-line .material-symbols-outlined { position:absolute; top:-9px; left:50%;
+      transform:translateX(-50%); background:#fff; padding:0 3px; font-size:15px; color:#94a3b8; }
+    .rec-fl-mid-dur { font-family:var(--font-mono); font-size:9.5px; font-weight:600; color:#94a3b8;
+      margin:0; text-transform:uppercase; letter-spacing:0.04em; white-space:nowrap; }
+    .rec-fl-foot { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 12px;
+      padding:11px 14px 12px; background:#f8fafc; flex:1; align-content:start; }
+    .rec-fl-foot .rec-micro { margin-bottom:2px; font-size:9px; }
+    .rec-fl-foot-v { font-size:12px; font-weight:700; color:#0f172a; margin:0; letter-spacing:-0.01em;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rec-fl-foot-v.is-accent { color:#7c3aed; font-family:var(--font-mono); font-weight:600; }
+    .rec-fl-card .j-attach-row { margin:0 14px 10px; }
+
+    /* 숙소 — 이미지 카드 */
+    .rec-lg-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;
+      display:flex; flex-direction:column; transition:box-shadow .2s; }
+    .rec-lg-card:hover { box-shadow:0 6px 18px rgba(15,23,42,.08); }
+    #page-journey .rec-lg-card .j-lodge-img { width:100%; aspect-ratio:auto; height:172px; }
+    #journey-lodging-list > .rec-lg-card { padding:0 !important; }
+    .rec-lg-badge { position:absolute; top:12px; right:12px; z-index:3; background:rgba(255,255,255,.95);
+      border-radius:999px; padding:4px 10px; font-family:var(--font-mono); font-size:9px; font-weight:700;
+      letter-spacing:0.14em; text-transform:uppercase; color:#64748b; box-shadow:0 1px 4px rgba(15,23,42,.14); }
+    .rec-lg-badge.is-upcoming { color:#7c3aed; }
+    .rec-lg-body { padding:15px 16px 13px; flex:1; }
+    .rec-lg-tags { display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin-bottom:8px; }
+    .rec-lg-tags .rec-actions { margin-left:auto; }
+    .rec-lg-title { font-family:'Manrope','Pretendard',sans-serif; font-size:16px; font-weight:800;
+      letter-spacing:-0.015em; color:#0f172a; margin:0 0 3px; line-height:1.3; }
+    .rec-lg-title a { color:inherit; }
+    .rec-lg-addr { font-size:11.5px; color:#64748b; margin:0; display:flex; flex-wrap:wrap; gap:3px 12px; align-items:center; }
+    .rec-lg-addr .material-symbols-outlined { font-size:13px; vertical-align:-2px; }
+    .rec-lg-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; border-top:1px solid #e2e8f0;
+      margin-top:13px; padding-top:12px; }
+    .rec-lg-v { font-size:13px; font-weight:700; color:#0f172a; margin:0; }
+    .rec-lg-sub { font-size:10.5px; color:#94a3b8; margin:2px 0 0; }
+    .rec-lg-cancel { font-size:11px; font-weight:600; margin:10px 0 0; }
+    .rec-lg-cancel.is-ok { color:#059669; }
+    .rec-lg-cancel.is-warn { color:#b45309; }
+    .rec-lg-cancel.is-danger { color:#e11d48; }
+    .rec-lg-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
+    .rec-lg-foot { display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 16px; background:#f8fafc; border-top:1px solid #eef2f7; }
+    .rec-lg-foot-amt { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:800;
+      color:#0f172a; font-variant-numeric:tabular-nums; }
+    .rec-lg-foot-amt .rec-lg-sub { display:inline; margin-left:5px; font-weight:600; }
+    .rec-lg-dir { font-size:11.5px; font-weight:700; color:#7c3aed; text-decoration:none;
+      display:inline-flex; gap:3px; align-items:center; white-space:nowrap; }
+    .rec-lg-dir:hover { text-decoration:underline; }
+    .rec-lg-dir .material-symbols-outlined { font-size:14px; }
+    .rec-lg-body .j-attach-row { margin-top:10px; }
+
+    /* 교통/렌트 — 미니 카드 */
+    .rec-tr-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:14px 15px;
+      display:flex; flex-direction:column; gap:10px; transition:box-shadow .2s; }
+    .rec-tr-card:hover { box-shadow:0 6px 18px rgba(15,23,42,.08); }
+    .rec-tr-top { display:flex; align-items:flex-start; gap:11px; }
+    .rec-tr-ico { width:40px; height:40px; border-radius:10px; background:#f1f5f9; display:flex;
+      align-items:center; justify-content:center; color:#475569; flex-shrink:0; }
+    .rec-tr-ico .material-symbols-outlined { font-size:20px; }
+    .rec-tr-info { flex:1; min-width:0; }
+    .rec-tr-titlerow { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+    .rec-tr-title { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:800;
+      color:#0f172a; margin:0; letter-spacing:-0.01em; overflow-wrap:anywhere; line-height:1.35; }
+    .rec-tr-vendor { background:#0f172a; color:#fff; border-radius:6px; padding:2.5px 7px;
+      font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:0.1em;
+      text-transform:uppercase; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+    .rec-tr-sub { font-size:11.5px; color:#64748b; margin:3px 0 0; overflow-wrap:anywhere; }
+    .rec-tr-sub a { color:inherit; }
+    .rec-tr-conf { font-family:var(--font-mono); font-size:10px; font-weight:600; letter-spacing:0.06em;
+      color:#7c3aed; margin:6px 0 0; text-transform:uppercase; }
+    .rec-tr-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px solid #eef2f7; padding-top:9px; }
+    .rec-tr-foot { display:flex; justify-content:space-between; align-items:center; gap:8px;
+      border-top:1px solid #eef2f7; padding-top:9px; }
+    .rec-tr-price { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:800;
+      color:#0f172a; font-variant-numeric:tabular-nums; margin:0; }
+    .rec-tr-tags { display:flex; flex-wrap:wrap; gap:5px; }
+    .rec-tr-card .j-attach-row { margin:0; }
+
+    /* 기념품 — 체크리스트 행 */
+    #page-journey .j-souvenir-list { display:grid; grid-template-columns:1fr; gap:8px; }
+    @media (min-width:768px){ #page-journey .j-souvenir-list { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (min-width:1280px){ #page-journey .j-souvenir-list { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    .rec-sv-row { display:flex; align-items:flex-start; gap:10px; background:#fff; border:1px solid #eef2f7;
+      border-radius:12px; padding:9px 11px; }
+    .rec-sv-check { width:19px; height:19px; border-radius:6px; border:1.5px solid #cbd5e1; cursor:pointer;
+      flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff;
+      transition:all .15s; margin-top:1px; background:#fff; }
+    .rec-sv-check:hover { border-color:#7c3aed; }
+    .rec-sv-check.is-checked { background:#7c3aed; border-color:#7c3aed; }
+    .rec-sv-check .material-symbols-outlined { font-size:13px; font-variation-settings:'FILL' 1; }
+    .rec-sv-info { flex:1; min-width:0; }
+    .rec-sv-name { display:block; font-size:12.5px; font-weight:600; color:#0f172a; overflow-wrap:anywhere; }
+    .rec-sv-name a { color:inherit; }
+    .rec-sv-row.is-done .rec-sv-name { text-decoration:line-through; color:#94a3b8; }
+    .rec-sv-meta { display:block; font-size:10.5px; color:#94a3b8; margin-top:2px; }
+    .rec-sv-desc { display:block; font-size:10.5px; color:#94a3b8; margin-top:2px; overflow-wrap:anywhere; }
+    .rec-sv-price { font-family:'Manrope','Pretendard',sans-serif; font-size:11.5px; font-weight:700;
+      color:#7c3aed; text-align:right; flex-shrink:0; font-variant-numeric:tabular-nums; }
+    .rec-sv-price .krw { display:block; font-size:9.5px; font-weight:600; color:#94a3b8; }
+    .rec-sv-actions { display:flex; gap:2px; opacity:0; transition:opacity .15s; flex-shrink:0; }
+    .rec-sv-row:hover .rec-sv-actions { opacity:1; }
+    .rec-sv-actions button { border:none; background:transparent; cursor:pointer; padding:3px;
+      border-radius:7px; color:#94a3b8; display:inline-flex; }
+    .rec-sv-actions button:hover { background:#f1f5f9; color:#475569; }
+    .rec-sv-actions button.danger:hover { background:#fff1f2; color:#e11d48; }
+    .rec-sv-actions .material-symbols-outlined { font-size:15px; }
+    .rec-sv-add { width:100%; margin-top:14px; padding:11px; border:1.5px dashed #cbd5e1;
+      border-radius:12px; background:transparent; cursor:pointer; font-size:12px; font-weight:700;
+      color:#64748b; transition:all .15s; }
+    .rec-sv-add:hover { border-color:#7c3aed; color:#7c3aed; background:#faf8ff; }
+
     #travel-atlas-section .atlas-hero {
       padding: var(--space-8) 0 48px;
       border-bottom: 1px solid var(--atlas-line);
@@ -9531,7 +9683,7 @@
               </div>
               <!-- 항공편 추천 큐레이션 — trip 매칭 시 자동 표시 -->
               <div id="journey-flight-recs" style="display:none"></div>
-              <div id="journey-flight-list" class="space-y-4"></div>
+              <div id="journey-flight-list" class="rec-grid"></div>
               <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
             </section>
 
@@ -9740,7 +9892,7 @@
               </div>
               <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
               <div id="journey-lodging-recs" style="display:none"></div>
-              <div id="journey-lodging-list" class="flex flex-col gap-4"></div>
+              <div id="journey-lodging-list" class="rec-grid"></div>
             </section>
 
             <!-- 숙소 추가 모달 -->
@@ -9997,7 +10149,7 @@
               </div>
               <!-- 도시 간 이동 (큐레이션) — trip 매칭 시 자동 표시. 숙소 섹션에서 이 섹션으로 이동(2026-06-17) -->
               <div id="journey-transit-recs" style="display:none"></div>
-              <div id="journey-transport-list" class="flex flex-col gap-4"></div>
+              <div id="journey-transport-list" class="rec-grid"></div>
             </section>
 
             <!-- 이동수단 추가 모달 -->
@@ -10129,7 +10281,7 @@
                 <div><p class="trv-sec-eyebrow">Rental</p><h3 class="trv-sec-title">렌트카</h3></div>
                 <div class="trv-sec-actions"><button onclick="openTravelModal('rental-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
-              <div id="journey-rental-list" class="flex flex-col gap-4"></div>
+              <div id="journey-rental-list" class="rec-grid"></div>
             </section>
 
             <!-- 렌트카 추가 모달 -->
@@ -10364,16 +10516,9 @@
                 <div><p class="trv-sec-eyebrow">Souvenir</p><h3 class="trv-sec-title">기념품 체크리스트</h3></div>
                 <div class="trv-sec-actions"><button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
               </div>
-              <!-- Grid Header -->
-              <div class="grid grid-cols-12 px-5 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                <div class="col-span-3">대상</div>
-                <div class="col-span-3">품목</div>
-                <div class="col-span-2">도시</div>
-                <div class="col-span-2 text-right">가격</div>
-                <div class="col-span-2 text-right">상태</div>
-              </div>
               <!-- List -->
               <div id="journey-souvenir-list" class="space-y-2"></div>
+              <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="rec-sv-add">+ 아이템 추가</button>
             </section>
 
             <!-- 기념품 추가 모달 -->
@@ -13497,7 +13642,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=249" defer></script>
+<script src="js/app-1-pages.js?v=250" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
