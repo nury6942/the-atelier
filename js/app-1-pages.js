@@ -14254,6 +14254,7 @@
 
   // ── ③ Day-Pins 지도: 일자별 색 핀(방문 순서 번호) + 저장소(pool) 회색 핀 ──
   var _dayPinsMap = null, _dayPinsLayer = null, _dayPinsFilter = 'all';
+  var _dayPinsSig = '', _dayPinsFitW = 0, _dayPinsLastBounds = null; // 변경 감지 — 같은 데이터면 지도 뷰를 건드리지 않음
   var _DAY_COLORS = ['#7c3aed', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
 
   window.setDayPinsFilter = function(f) { _dayPinsFilter = f; renderDayPinsMap(); };
@@ -14271,7 +14272,6 @@
     var wrap = document.getElementById('daylog-map-wrap');
     var mount = document.getElementById('daylog-map');
     if (!wrap || !mount || typeof L === 'undefined') return;
-    window._dayPinsMarkers = {}; // ★ (2026-07-23) 리스트 호버 → 핀 강조용 레지스트리 (journey _id → marker)
     var dayMap = getDayMap();
     var dateToDay = {};
     dayMap.forEach(function(e){ dateToDay[e.date] = e.day; });
@@ -14284,6 +14284,23 @@
     var missing = _dayPinsMissingCount();
     if (!sched.length && !pool.length && !missing) { wrap.style.display = 'none'; return; }
     wrap.style.display = '';
+
+    // ★ (2026-07-23) 변경 없으면 스킵 — 렌더마다 지도가 전체 뷰로 리셋되며 줌/애니메이션을 삼키던 근본 원인 제거
+    var sig = _dayPinsFilter + '|' +
+      sched.map(function(s){ return s.it._id + ':' + s.it.lat.toFixed(5) + ',' + s.it.lng.toFixed(5) + ':' + (s.it.time || '') + ':' + s.day; }).join(';') + '|' +
+      pool.map(function(p){ return p._id + ':' + p.lat.toFixed(5) + ',' + p.lng.toFixed(5); }).join(';') + '|' + missing;
+    if (sig === _dayPinsSig && _dayPinsMap) {
+      // 데이터 동일 → 뷰(줌·중심·팝업) 보존. 컨테이너 폭이 크게 바뀐 경우만 재맞춤
+      var wNow = mount.clientWidth;
+      if (wNow && Math.abs(wNow - _dayPinsFitW) > 40) {
+        _dayPinsFitW = wNow;
+        _dayPinsMap.invalidateSize();
+        if (_dayPinsLastBounds) _dayPinsMap.fitBounds(_dayPinsLastBounds, { padding: [36, 36], maxZoom: 15 });
+      }
+      return;
+    }
+    _dayPinsSig = sig;
+    window._dayPinsMarkers = {}; // 리스트 호버 → 핀 강조용 레지스트리 (journey _id → marker)
 
     // 필터 칩: 전체 / N일차… / 저장소
     var chips = document.getElementById('daylog-map-chips');
@@ -14303,8 +14320,8 @@
     }
 
     if (!_dayPinsMap) {
-      // zoomAnimation:false — 사이트 CSS와 Leaflet 줌 전환 충돌로 애니메이션 줌이 조용히 실패 (2026-07-23 실측)
-      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: true, zoomAnimation: false, attributionControl: true });
+      // 줌 애니메이션 복원 (2026-07-23): 애니메이션을 삼키던 진범은 렌더마다 실행되던 fitBounds 리셋 — sig 스킵으로 제거됨
+      _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: true, attributionControl: true });
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(_dayPinsMap);
@@ -14334,8 +14351,8 @@
           '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
           '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
         var mk = L.marker([it.lat, it.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
-        // ★ 핀 클릭 한 번 = 그 지점으로 확 줌인 (Wanderlog식) — 멀리서 볼 땐 15레벨로 점프
-        mk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.setView(mk.getLatLng(), 15); });
+        // ★ 핀 클릭 한 번 = 그 지점으로 스르륵 비행 (Wanderlog식)
+        mk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.flyTo(mk.getLatLng(), 15, { duration: 0.9 }); });
         if (it._id) window._dayPinsMarkers[it._id] = mk;
       });
       // 하루만 선택하면 방문 순서 경로선 표시
@@ -14349,7 +14366,7 @@
         var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-pool"></div>', iconSize: [13, 13], iconAnchor: [7, 7] });
         var pop = '<strong>' + String(p.title || '').replace(/</g, '&lt;') + '</strong><br><span style="color:#94a3b8">저장소 (미배치)' + (p.category ? ' · ' + p.category : '') + '</span>';
         var pmk = L.marker([p.lat, p.lng], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
-        pmk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.setView(pmk.getLatLng(), 15); });
+        pmk.on('click', function() { if (_dayPinsMap.getZoom() < 14) _dayPinsMap.flyTo(pmk.getLatLng(), 15, { duration: 0.9 }); });
       });
     }
 
@@ -14371,8 +14388,10 @@
       }
       var bounds = L.latLngBounds(focus);
       var fitOpts = { padding: [36, 36], maxZoom: 15 };
+      _dayPinsLastBounds = bounds;
+      _dayPinsFitW = mount.clientWidth;
       _dayPinsMap.fitBounds(bounds, fitOpts);
-      setTimeout(function() { if (_dayPinsMap) { _dayPinsMap.invalidateSize(); _dayPinsMap.fitBounds(bounds, fitOpts); } }, 250);
+      setTimeout(function() { if (_dayPinsMap) { _dayPinsMap.invalidateSize(); _dayPinsMap.fitBounds(bounds, fitOpts); _dayPinsFitW = mount.clientWidth; } }, 250);
     }
   }
   window.renderDayPinsMap = renderDayPinsMap;
@@ -14389,7 +14408,7 @@
     // 재렌더 시 fitBounds 재시도(250ms)가 setView를 덮지 않게 이후에 실행
     setTimeout(function() {
       if (!_dayPinsMap) return;
-      _dayPinsMap.setView([it.lat, it.lng], Math.max(_dayPinsMap.getZoom(), 15));
+      _dayPinsMap.flyTo([it.lat, it.lng], Math.max(_dayPinsMap.getZoom(), 15), { duration: 0.9 });
       var mk = (window._dayPinsMarkers || {})[jid];
       if (mk) {
         mk.openPopup();
