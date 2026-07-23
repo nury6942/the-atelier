@@ -5360,7 +5360,7 @@
         '<div class="rec-tr-ico"><span class="material-symbols-outlined">directions_car</span></div>' +
         '<div class="rec-tr-info">' +
           '<div class="rec-tr-titlerow"><h4 class="rec-tr-title">' + titleMain + '</h4>' + vendorBadge + '</div>' +
-          (item.description ? '<p class="rec-tr-sub">' + item.description + '</p>' : '') +
+          (item.description ? '<p class="rec-tr-sub rec-tr-desc" title="클릭해서 펼치기/접기" onclick="this.classList.toggle(\'expanded\');event.stopPropagation()">' + item.description + '</p>' : '') +
           (item.booking_ref ? '<p class="rec-tr-conf">Conf: ' + item.booking_ref + '</p>' : '') +
         '</div>' +
         '<div class="rec-actions">' + actionsSt + '</div>' +
@@ -7525,7 +7525,7 @@
     return { flag:'🌍', name:(city || '기타').toUpperCase(), kr: city || '기타' };
   }
 
-  // stitch souvenir row
+  // stitch souvenir row — 해어라인 리스트 행 (.sv-*)
   function svRowSt(item, checked, checkFn, deleteFn, editFn, dblClickFn) {
     var title = (item.title || '').replace(/</g,'&lt;'); // 대상 (가족/동료/나)
     var desc = (item.description || '').replace(/</g,'&lt;'); // 품목
@@ -7535,28 +7535,67 @@
     var descParts = desc.split('\n');
     var descMain = descParts[0];
     var descSub = descParts.slice(1).join(' ');
-    var rowCls = checked ? 'rec-sv-row is-done' : 'rec-sv-row';
     var checkInner = checked ? '<span class="material-symbols-outlined">check</span>' : '';
     var descMainLinked = descMain && descMain !== '—' ? _trvMapsLink(descMain, city) : (descMain || '—');
-    return '<div class="' + rowCls + '">' +
-      '<div class="rec-sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
-      '<div class="rec-sv-info">' +
-        '<span class="rec-sv-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</span>' +
-        '<span class="rec-sv-meta">' +
+    var krw = '';
+    if (amount && /^[0-9]+(\.[0-9]+)?$/.test(String(amount).trim())) krw = fmtKrwFromEur(amount);
+    return '<div class="sv-row' + (checked ? ' is-done' : '') + '">' +
+      '<div class="sv-check' + (checked ? ' is-checked' : '') + '" onclick="' + checkFn + '">' + checkInner + '</div>' +
+      '<div class="sv-main">' +
+        '<h5 class="sv-name"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','description') + '"' : '') + '>' + descMainLinked + '</h5>' +
+        (descSub ? '<p class="sv-desc">' + descSub + '</p>' : '') +
+        '<p class="sv-loc">' +
           '<span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','title') + '"' : '') + '>' + (title || '대상') + '</span>' +
-          (city ? ' <span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>· ' + city + '</span>' : '') +
-        '</span>' +
-        (descSub ? '<span class="rec-sv-desc">' + descSub + '</span>' : '') +
+          (city ? '<span' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','city') + '"' : '') + '>' + city + '</span>' : '') +
+        '</p>' +
       '</div>' +
-      '<span class="rec-sv-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + (function(){
-        if (!amount || !/^[0-9]+(\.[0-9]+)?$/.test(String(amount).trim())) return '';
-        var k = fmtKrwFromEur(amount);
-        return k ? '<span class="krw">' + k + '</span>' : '';
-      })() + '</span>' +
-      '<div class="rec-sv-actions">' +
+      '<div class="sv-right">' +
+        '<div class="sv-price"' + (dblClickFn ? ' ondblclick="' + dblClickFn.replace('%FIELD%','amount') + '"' : '') + '>' + (amount ? '€' + amount : '—') + '</div>' +
+        (krw ? '<div class="sv-krw">' + krw + '</div>' : '') +
+      '</div>' +
+      '<div class="sv-actions">' +
         (editFn ? '<button onclick="' + editFn + '"><span class="material-symbols-outlined">edit_square</span></button>' : '') +
         '<button class="danger" onclick="' + deleteFn + '"><span class="material-symbols-outlined">delete</span></button>' +
       '</div>' +
+    '</div>';
+  }
+
+  // 국가 컬럼 1개 HTML (헤더 + 도시 + 카테고리 그룹) — rowFn: item → 행 HTML
+  function _svCountryBlockHtml(g, rowFn) {
+    var cities = _groupSouvenirsByCity(g.items);
+    var citiesHtml = cities.map(function(cityGroup) {
+      var subs = _groupSouvenirsByCategory(cityGroup.items);
+      var subsHtml = subs.map(function(sub) {
+        var rowsHtml = sub.items.map(rowFn).join('');
+        return '<div class="sv-cat">' +
+          '<div class="sv-cat-h">' +
+            '<span class="sv-cat-label">' + sub.cat + '</span>' +
+            '<span class="sv-cat-count">' + sub.items.length + '</span>' +
+          '</div>' +
+          '<div class="sv-list">' + rowsHtml + '</div>' +
+        '</div>';
+      }).join('');
+      var orderLabel = (cityGroup.rank < 9999) ? ('STOP ' + (cityGroup.rank + 1)) : '';
+      return '<div class="sv-city">' +
+        '<div class="sv-city-h">' +
+          '<div class="sv-city-h-l">' +
+            (orderLabel ? '<span class="sv-stop">' + orderLabel + '</span>' : '') +
+            '<span class="sv-city-name">' + cityGroup.city + '</span>' +
+          '</div>' +
+          '<span class="sv-city-count">' + cityGroup.items.length + ' items</span>' +
+        '</div>' +
+        subsHtml +
+      '</div>';
+    }).join('');
+    return '<div class="sv-country">' +
+      '<div class="sv-country-h">' +
+        '<div class="sv-country-title">' +
+          '<span class="sv-flag">' + g.country.flag + '</span>' +
+          '<h3>' + g.country.name + '</h3>' +
+        '</div>' +
+        '<p class="sv-country-sub">' + g.country.kr + ' • ' + g.items.length + ' items</p>' +
+      '</div>' +
+      citiesHtml +
     '</div>';
   }
 
@@ -7665,51 +7704,17 @@
       var fbItems = journeyData.filter(function(d){ return d.type === '기념품'; });
       if (fbItems.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
       var groupsFb = _groupSouvenirsByCountry(fbItems);
-      container.innerHTML = '<div class="j-souvenir-grid">' +
+      container.innerHTML = '<div class="sv-grid">' +
         groupsFb.map(function(g) {
-          // 국가 안에서 도시별 그룹 (여행 순서대로)
-          var cities = _groupSouvenirsByCity(g.items);
-          var citiesHtml = cities.map(function(cityGroup) {
-            // 도시 안에서 카테고리 sub-group
-            var subs = _groupSouvenirsByCategory(cityGroup.items);
-            var subsHtml = subs.map(function(sub) {
-              var rowsHtml = sub.items.map(function(item) {
-                var realIdx = journeyData.indexOf(item);
-                var checked = item.status === '완료';
-                return svRowSt(item, checked,
-                  'toggleSouvenir(' + realIdx + ',' + !checked + ')',
-                  'deleteJourneyRow(' + realIdx + ')',
-                  'editJourneyItem(' + realIdx + ')',
-                  'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
-              }).join('');
-              return '<div class="j-souvenir-subgroup">' +
-                '<div class="j-souvenir-subgroup-h">' +
-                  '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
-                  '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
-                '</div>' +
-                '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
-              '</div>';
-            }).join('');
-            var orderLabel = (cityGroup.rank < 9999) ? ('STOP ' + (cityGroup.rank + 1)) : '';
-            return '<div class="j-souvenir-cityblock">' +
-              '<div class="j-souvenir-city-h">' +
-                '<div class="j-souvenir-city-h-l">' +
-                  (orderLabel ? '<span class="j-souvenir-city-order">' + orderLabel + '</span>' : '') +
-                  '<span class="j-souvenir-city-name">' + cityGroup.city + '</span>' +
-                '</div>' +
-                '<span class="j-souvenir-city-count">' + cityGroup.items.length + ' items</span>' +
-              '</div>' +
-              subsHtml +
-            '</div>';
-          }).join('');
-          return '<div class="j-souvenir-group">' +
-            '<h3 class="j-souvenir-group-h">' +
-              '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-              '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left: var(--space-1-5)">(' + g.country.kr + ')</span></span>' +
-              '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
-            '</h3>' +
-            citiesHtml +
-          '</div>';
+          return _svCountryBlockHtml(g, function(item) {
+            var realIdx = journeyData.indexOf(item);
+            var checked = item.status === '완료';
+            return svRowSt(item, checked,
+              'toggleSouvenir(' + realIdx + ',' + !checked + ')',
+              'deleteJourneyRow(' + realIdx + ')',
+              'editJourneyItem(' + realIdx + ')',
+              'fbInlineEdit(this,' + realIdx + ',\'%FIELD%\',\'기념품\')');
+          });
         }).join('') +
       '</div>';
       return;
@@ -7717,48 +7722,16 @@
     var data = getSouvenirData();
     if (data.length === 0) { container.innerHTML = '<div class="text-center py-6 text-sm text-slate-400">기념품을 추가해봐!</div>'; return; }
     var groupsSeed = _groupSouvenirsByCountry(data);
-    container.innerHTML = '<div class="j-souvenir-grid">' +
+    container.innerHTML = '<div class="sv-grid">' +
       groupsSeed.map(function(g) {
-        var cities = _groupSouvenirsByCity(g.items);
-        var citiesHtml = cities.map(function(cityGroup) {
-          var subs = _groupSouvenirsByCategory(cityGroup.items);
-          var subsHtml = subs.map(function(sub) {
-            var rowsHtml = sub.items.map(function(item) {
-              var origIdx = data.indexOf(item);
-              return svRowSt(item, item.checked,
-                'toggleSouvenirLocal(' + origIdx + ')',
-                'deleteSouvenirLocal(' + origIdx + ')',
-                null,
-                'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
-            }).join('');
-            return '<div class="j-souvenir-subgroup">' +
-              '<div class="j-souvenir-subgroup-h">' +
-                '<span class="j-souvenir-subgroup-h-l">' + sub.cat + '</span>' +
-                '<span class="j-souvenir-subgroup-count">' + sub.items.length + '</span>' +
-              '</div>' +
-              '<div class="j-souvenir-list">' + rowsHtml + '</div>' +
-            '</div>';
-          }).join('');
-          var orderLabel = (cityGroup.rank < 9999) ? ('STOP ' + (cityGroup.rank + 1)) : '';
-          return '<div class="j-souvenir-cityblock">' +
-            '<div class="j-souvenir-city-h">' +
-              '<div class="j-souvenir-city-h-l">' +
-                (orderLabel ? '<span class="j-souvenir-city-order">' + orderLabel + '</span>' : '') +
-                '<span class="j-souvenir-city-name">' + cityGroup.city + '</span>' +
-              '</div>' +
-              '<span class="j-souvenir-city-count">' + cityGroup.items.length + ' items</span>' +
-            '</div>' +
-            subsHtml +
-          '</div>';
-        }).join('');
-        return '<div class="j-souvenir-group">' +
-          '<h3 class="j-souvenir-group-h">' +
-            '<span class="j-souvenir-group-h-flag">' + g.country.flag + '</span>' +
-            '<span>' + g.country.name + ' <span style="color:var(--j-on-surface-variant);font-weight:600;font-size: var(--font-size-body);margin-left: var(--space-1-5)">(' + g.country.kr + ')</span></span>' +
-            '<span class="j-souvenir-group-h-meta">' + g.items.length + ' items</span>' +
-          '</h3>' +
-          citiesHtml +
-        '</div>';
+        return _svCountryBlockHtml(g, function(item) {
+          var origIdx = data.indexOf(item);
+          return svRowSt(item, item.checked,
+            'toggleSouvenirLocal(' + origIdx + ')',
+            'deleteSouvenirLocal(' + origIdx + ')',
+            null,
+            'souvenirInlineEdit(this,' + origIdx + ',\'%FIELD%\')');
+        });
       }).join('') +
     '</div>';
   }
