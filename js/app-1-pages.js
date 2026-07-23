@@ -3677,6 +3677,7 @@
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
+          ((typeof item.lat === 'number' && typeof item.lng === 'number') ? '<button onclick="event.stopPropagation();focusDayPin(\'' + (item._id || '') + '\', event)" class="p-0.5 hover:bg-indigo-100 rounded text-slate-400 hover:text-indigo-600" title="지도에서 보기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">map</span></button>' : '') +
           '<button onclick="editScheduleFlags(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600" title="플래그: 예약필수·실내·정기휴무"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">flag</span></button>' +
           '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">location_on</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
@@ -4448,10 +4449,14 @@
                 travelRow = '<div class="j-slot-travel" id="' + tvId + '"><span style="opacity:.55">이동시간…</span></div>';
               }
             }
+            // ★ (2026-07-23) 좌표 있는 아이템: 📍 클릭 → 지도가 그 핀으로 날아감 (Wanderlog식)
+            var mapBtn = (typeof item.lat === 'number' && typeof item.lng === 'number')
+              ? '<button class="j-slot-mapbtn" title="지도에서 보기" onclick="focusDayPin(\'' + safeId + '\', event)">📍</button>'
+              : '';
             return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
               '<div class="j-slot-time">' + (time ? (time + endTime + badge) : '<span style="opacity:0.5">—</span>') + '</div>' +
               '<div class="j-slot-body">' +
-                '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p></div>' +
+                '<div class="j-slot-title-row">' + cityChip + '<p class="j-slot-title">' + (renderTitle || '(제목 없음)') + '</p>' + mapBtn + '</div>' +
                 (renderDesc ? '<p class="j-slot-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>' : '') +
                 prebookLine +
               '</div>' +
@@ -4472,7 +4477,7 @@
       var dayHeadHtml =
         '<div class="j-day-head">' +
           '<div class="j-day-head-left">' +
-            '<div class="j-day-num' + (isCurrent ? '' : ' is-muted') + '">' + String(dayNum).padStart(2,'0') + '</div>' +
+            '<div class="j-day-num' + (isCurrent ? '' : ' is-muted') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기" style="cursor:pointer">' + String(dayNum).padStart(2,'0') + '</div>' +
             '<div>' +
               '<h3 class="j-day-h3">' + (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + '</h3>' +
               '<p class="j-day-h3-meta">' + (dateStr || '—') + (weekday ? ' · ' + weekday + (weekdayEn ? ' (' + weekdayEn + ')' : '') : '') + '</p>' +
@@ -14368,6 +14373,38 @@
     }
   }
   window.renderDayPinsMap = renderDayPinsMap;
+
+  // ★ (2026-07-23) 리스트 → 지도 포커스 (Wanderlog식): 아이템 📍 → 그 핀으로 줌+팝업
+  window.focusDayPin = function(jid, ev) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    var it = (journeyData || []).find(function(d){ return d._id === jid; });
+    if (!it || typeof it.lat !== 'number' || typeof it.lng !== 'number') return;
+    var needRerender = !(window._dayPinsMarkers || {})[jid];
+    if (needRerender) { _dayPinsFilter = 'all'; renderDayPinsMap(); } // 필터에 가려져 있으면 전체로
+    var wrap = document.getElementById('daylog-map-wrap');
+    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // 재렌더 시 fitBounds 재시도(250ms)가 setView를 덮지 않게 이후에 실행
+    setTimeout(function() {
+      if (!_dayPinsMap) return;
+      _dayPinsMap.setView([it.lat, it.lng], Math.max(_dayPinsMap.getZoom(), 15));
+      var mk = (window._dayPinsMarkers || {})[jid];
+      if (mk) {
+        mk.openPopup();
+        if (typeof _setPinHighlight === 'function') {
+          _setPinHighlight(jid, true);
+          setTimeout(function(){ _setPinHighlight(jid, false); }, 1800);
+        }
+      }
+    }, needRerender ? 350 : 50);
+  };
+
+  // 일차 번호 클릭 → 그 날 핀+경로선으로 지도 전환
+  window.focusDayOnMap = function(day, ev) {
+    if (ev) { ev.stopPropagation(); }
+    window.setDayPinsFilter(String(day));
+    var wrap = document.getElementById('daylog-map-wrap');
+    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
 
   // ── ④ 좌표 소급: 기존 일정/스팟 좌표 자동 찾기 (도시 60km 검증으로 오매칭 차단) ──
   var _geoBusy = false;
