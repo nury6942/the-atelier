@@ -18274,16 +18274,17 @@
   // ★ (2026-07-24) 대한항공 공식 공지표 그대로 — 대권거리(마일) 9단계.
   //   출처: koreanair.com/contents/footer/customer-support/notice/2026/2608-infuel
   //   URL이 YYMM-infuel 패턴이라 다음 달 공지 주소를 예측할 수 있다(스크래핑은 403으로 막힘).
+  // 공지의 '주요 노선'을 그대로 — 요약하지 않는다 (어느 구간인지 찾으려면 전체가 보여야 함)
   var _FUEL_BANDS = [
-    { max: 499,  zone: '~499',        ex: '후쿠오카·칭다오·선양' },
-    { max: 999,  zone: '500~999',     ex: '도쿄·오사카·베이징·타이베이' },
-    { max: 1499, zone: '1,000~1,499', ex: '홍콩·광저우·마카오' },
-    { max: 1999, zone: '1,500~1,999', ex: '마닐라·하노이·다낭' },
-    { max: 2999, zone: '2,000~2,999', ex: '방콕·싱가포르·호찌민·괌' },
-    { max: 3999, zone: '3,000~3,999', ex: '자카르타·덴파사르' },
-    { max: 4999, zone: '4,000~4,999', ex: '두바이·호놀룰루·이스탄불' },
-    { max: 6499, zone: '5,000~6,499', ex: '런던·파리·로마·밴쿠버·LA' },
-    { max: 99999,zone: '6,500~9,999', ex: '뉴욕·시카고·토론토' }
+    { max: 499,  zone: '~499',        ex: '인천-선양·칭다오·다롄·옌지·후쿠오카 / 부산-후쿠오카·상하이푸동' },
+    { max: 999,  zone: '500~999',     ex: '인천-상하이푸동·베이징·톈진·창사·난징·나고야·나리타·오사카·타이베이·삿포로·오키나와 / 김포-하네다 / 부산-나리타·타이베이' },
+    { max: 1499, zone: '1,000~1,499', ex: '인천-광저우·시안·선전·샤먼·홍콩·울란바타르·마카오' },
+    { max: 1999, zone: '1,500~1,999', ex: '인천-마닐라·하노이·세부·다낭' },
+    { max: 2999, zone: '2,000~2,999', ex: '인천-방콕·싱가포르·양곤·쿠알라룸푸르·프놈펜·호찌민·괌·델리·카트만두·치앙마이·푸껫·나트랑·푸꾸옥' },
+    { max: 3999, zone: '3,000~3,999', ex: '인천-자카르타·덴파사르' },
+    { max: 4999, zone: '4,000~4,999', ex: '인천-모스크바·두바이·호놀룰루·브리즈번·이스탄불' },
+    { max: 6499, zone: '5,000~6,499', ex: '인천-런던·로스앤젤레스·라스베거스·밴쿠버·샌프란시스코·시드니·시애틀·암스테르담·오클랜드·파리·프랑크푸르트·밀라노·비엔나·로마·부다페스트·프라하·취리히·마드리드·리스본' },
+    { max: 99999,zone: '6,500~9,999', ex: '인천-뉴욕·댈러스·보스턴·시카고·애틀랜타·워싱턴·토론토' }
   ];
   var _FUEL_SEED = {
     month: '2026-08', airline: '대한항공', step: '14단계',
@@ -18833,6 +18834,28 @@
 
   // ★ (2026-07-24) 0건일 때 막다른 길을 만들지 않는다 — 데이터가 있는 달을 자동으로 찾아 제시.
   //   (시세는 실제 검색 기록이 쌓인 것이라, 먼 미래·비인기 노선일수록 비어 있다. 실측: ICN→AKL 2027-01 0건 / 2026-09 3건)
+  // ★ (2026-07-24) 1년 뒤 실제 요금은 항공사 실시간 조회라 무료 집계 데이터로는 못 본다.
+  //   그 구간은 1년치를 보여주는 곳(구글 항공권·스카이스캐너·대한항공)으로 바로 넘긴다.
+  function _pwFarLinks(from, to, month) {
+    var m = /^(\d{4})-(\d{2})$/.exec(String(month || ''));
+    var mn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var label = m ? (mn[+m[2] - 1] + ' ' + m[1]) : '';
+    var gq = 'Flights from ' + from + ' to ' + to + (label ? ' in ' + label : '');
+    var g = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
+    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + from.toLowerCase() + '/' + to.toLowerCase() + '/' +
+      (m ? m[1].slice(2) + m[2] + '/' : '');
+    var ke = 'https://www.koreanair.com/kr/ko/booking/search-flight';
+    return '<div class="pw-far">' +
+      '<span class="pw-l">먼 날짜는 여기서 — 1년치 실시간 요금</span>' +
+      '<div>' +
+        '<a class="pw-btn is-dark" href="' + g + '" target="_blank" rel="noopener">구글 항공권' + (label ? ' · ' + (m[1] + '.' + m[2]) : '') + ' ↗</a>' +
+        '<a class="pw-btn" href="' + sky + '" target="_blank" rel="noopener">스카이스캐너 ↗</a>' +
+        '<a class="pw-btn" href="' + ke + '" target="_blank" rel="noopener">대한항공 ↗</a>' +
+      '</div>' +
+      '<p class="flt-acc-note">우리 시세는 <b>실제 검색이 쌓인 무료 데이터</b>라 6개월 앞부터 얇아져요. ' +
+      '1년 뒤 요금은 항공사 실시간 조회라 무료로는 못 가져와요 — 대신 위에서 바로 보고, 본 가격을 아래 <b>가격 로그</b>에 적어두면 추이가 쌓여요.</p>' +
+    '</div>';
+  }
   async function _pwSuggestMonths(from, to, month, out) {
     out.innerHTML = '<p class="flt-acc-note">이 달엔 기록이 없어 — 데이터 있는 달을 찾는 중…</p>';
     try {
@@ -18842,8 +18865,8 @@
       var rows = (j.data || []).filter(function(r){ return r && r.price; });
       if (!rows.length) {
         out.innerHTML = '<p class="flt-acc-note"><b>' + from + ' → ' + to + '</b>는 앞으로 12개월 안에 쌓인 시세가 아직 없어요. ' +
-          '이 시세는 실제 검색 기록이 모인 거라 <b>먼 미래·비인기 노선일수록 비어 있어요.</b> ' +
-          '출발 6개월 전쯤부터 채워지기 시작해요.</p>';
+          '이 시세는 실제 검색 기록이 모인 거라 <b>먼 미래·비인기 노선일수록 비어 있어요.</b></p>' +
+          _pwFarLinks(from, to, month);
         return;
       }
       var lo = Math.min.apply(null, rows.map(function(r){ return r.price; }));
@@ -18854,7 +18877,8 @@
             '<span>' + r.month.slice(2).replace('-', '.') + '</span>' +
             '<b>' + Math.round(r.price / 10000) + '만</b>' +
             '<em>' + r.days + '일치</em></button>';
-        }).join('') + '</div>';
+        }).join('') + '</div>' +
+        _pwFarLinks(from, to, month);
     } catch(e) {
       out.innerHTML = '<p class="flt-acc-note flt-err">' + _spotEsc(e.message) + '</p>';
     }

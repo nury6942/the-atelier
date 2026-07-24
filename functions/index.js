@@ -248,16 +248,14 @@ function cronKm(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-exports.flightPriceCron = onSchedule(
-  { schedule: "0 6 * * *", timeZone: "Asia/Seoul", secrets: [travelpayoutsToken], memory: "256MiB", timeoutSeconds: 300 },
-  async () => {
+async function collectFlightPrices() {
     const db = admin.firestore();
     const today = new Date().toISOString().slice(0, 10);
 
     const snap = await db.collection("flight_watch").get();
     const docs = snap.docs.map((d) => ({ _id: d.id, ...d.data() }));
     const watches = docs.filter((d) => d.type === "watch" && d.route_from && d.route_to);
-    if (!watches.length) { logger.info("flightPriceCron: 관심 노선 없음"); return; }
+    if (!watches.length) { logger.info("flightPriceCron: 관심 노선 없음"); return { watches: 0, saved: 0, skipped: 0, empty: 0 }; }
 
     // 유류할증료(최신 1건)
     const fuelDoc = docs.filter((d) => d.type === "fuel" && Array.isArray(d.rows))
@@ -312,6 +310,30 @@ exports.flightPriceCron = onSchedule(
       await new Promise((res) => setTimeout(res, 400)); // 레이트 리밋 여유
     }
     logger.info("flightPriceCron 완료", { watches: watches.length, saved, skipped, empty });
+    return { watches: watches.length, saved, skipped, empty };
+}
+
+exports.flightPriceCron = onSchedule(
+  { schedule: "0 6 * * *", timeZone: "Asia/Seoul", secrets: [travelpayoutsToken], memory: "256MiB", timeoutSeconds: 300 },
+  async () => { await collectFlightPrices(); }
+);
+
+// 같은 수집을 버튼으로도 — 크론을 기다리지 않고 지금 채우고 싶을 때
+exports.flightPriceCollectNow = onRequest(
+  { secrets: [travelpayoutsToken, atelierAuthToken], cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 300 },
+  async (req, res) => {
+    corsHeaders(res);
+    res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    const token = req.headers["x-atelier-token"];
+    if (!token || token !== atelierAuthToken.value()) return res.status(401).json({ error: "Unauthorized" });
+    try {
+      const r = await collectFlightPrices();
+      return res.status(200).json({ ok: true, ...r });
+    } catch (e) {
+      logger.error("collectNow error", e);
+      return res.status(500).json({ error: e.message });
+    }
   }
 );
 
