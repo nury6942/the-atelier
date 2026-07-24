@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=274" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=275" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6210,6 +6210,27 @@
     .flt-mo-day i { position:absolute; top:3px; right:5px; font-style:normal; font-size:13px; line-height:1; color:#7c3aed; }
     .flt-mo-day.is-best i { color:#a7f3d0; }
     .flt-acc-note.flt-err { color:#be123c; font-weight:600; }
+    /* ★ (2026-07-24) 지금 사라/기다려라 판정 배지 + 예약 딥링크 */
+    .flt-vd { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; margin:0 0 12px;
+      padding:9px 12px; border-radius:11px; border:1px solid #e2e8f0; background:#f8fafc; }
+    .flt-vd-l { font-size:12.5px; font-weight:800; letter-spacing:-0.01em; color:#334155; }
+    .flt-vd-w { font-size:10.5px; font-weight:600; color:#94a3b8; }
+    .flt-vd.is-buy  { background:#ecfdf5; border-color:#a7f3d0; }
+    .flt-vd.is-buy .flt-vd-l  { color:#047857; }
+    .flt-vd.is-buy .flt-vd-w  { color:#059669; }
+    .flt-vd.is-ok   { background:#f0fdf4; border-color:#bbf7d0; }
+    .flt-vd.is-ok .flt-vd-l   { color:#15803d; }
+    .flt-vd.is-wait { background:#fff1f2; border-color:#fecdd3; }
+    .flt-vd.is-wait .flt-vd-l { color:#be123c; }
+    .flt-vd.is-wait .flt-vd-w { color:#e11d48; }
+    .flt-vd.is-need { background:#f8fafc; border-style:dashed; }
+    .flt-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+    .flt-link { font-size:10.5px; font-weight:800; color:#6d28d9; background:#f5f3ff; border:1px solid #ede9fe;
+      border-radius:999px; padding:6px 11px; text-decoration:none; transition:all .15s; white-space:nowrap; }
+    .flt-link:hover { background:#ede9fe; border-color:#c4b5fd; }
+    .flt-link.is-alt { color:#0e7490; background:#ecfeff; border-color:#cffafe; }
+    .flt-link.is-alt:hover { background:#cffafe; }
+    .flt-link em { font-style:normal; font-weight:600; opacity:.7; margin-left:3px; }
     /* ★ (2026-07-24) 12개월 최저가 막대 — '가장 싼 달' 한눈에 */
     .flt-yr { display:flex; align-items:flex-end; gap:6px; margin:14px 0 4px; overflow-x:auto; padding-bottom:4px; }
     .flt-yr-col { flex:1 1 0; min-width:52px; display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -14538,7 +14559,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=274" defer></script>
+<script src="js/app-1-pages.js?v=275" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

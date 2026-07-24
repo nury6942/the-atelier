@@ -18493,6 +18493,43 @@
     }
   };
 
+  // ★ (2026-07-24) "지금 사라 vs 기다려라" 판정 — 쌓인 가격 로그의 분포에서 현재가 위치를 본다.
+  //   Hopper 같은 ML 예측이 아니라 '내 기록 대비 지금이 싼가'를 보여주는 것. 근거를 같이 노출한다.
+  function _fltVerdict(pts) {
+    if (!pts || pts.length < 3) {
+      return { key:'need', label:'기록 더 필요', why:(pts ? pts.length : 0) + '건 · 3건부터 판정해요' };
+    }
+    var vals = pts.map(function(p){ return p.v; }).slice().sort(function(a,b){ return a-b; });
+    var lo = vals[0], hi = vals[vals.length-1];
+    var mid = vals.length % 2 ? vals[(vals.length-1)/2] : Math.round((vals[vals.length/2-1]+vals[vals.length/2])/2);
+    var cur = pts[pts.length-1].v;
+    var pctFromLo = lo ? Math.round((cur-lo)/lo*100) : 0;
+    if (cur <= lo * 1.03) return { key:'buy', label:'지금 사', why:'기록 최저가 수준 (최저 대비 +' + pctFromLo + '%)' };
+    if (cur <= mid)        return { key:'ok',  label:'괜찮아', why:'중간값 이하 · 최저 대비 +' + pctFromLo + '%' };
+    if (cur >= mid * 1.15) return { key:'wait',label:'기다려', why:'중간값보다 비쌈 · 최저 대비 +' + pctFromLo + '%' };
+    return { key:'mid', label:'보통', why:'최저 대비 +' + pctFromLo + '%' };
+  }
+  // 예약/비교 사이트 딥링크 — 우리가 못 만드는 부분은 바로 넘겨준다
+  function _fltBookLinks(w) {
+    var f = String(w.route_from || '').toUpperCase(), t = String(w.route_to || '').toUpperCase();
+    if (!f || !t) return '';
+    var d = String(w.depart_date || '');
+    var r = String(w.return_date || '');
+    var ymd = d.replace(/-/g, '').slice(2);          // 270511
+    var rymd = r.replace(/-/g, '').slice(2);
+    var gq = 'Flights from ' + f + ' to ' + t + (d ? ' on ' + d : '') + (r ? ' through ' + r : '');
+    var gfl = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
+    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + f.toLowerCase() + '/' + t.toLowerCase() + '/' +
+      (ymd ? ymd + '/' : '') + (rymd ? rymd + '/' : '');
+    var cityOf = function(c){ var a = _FLT_AIRPORTS[c]; return a ? a[2] : c; };
+    var r2r = 'https://www.rome2rio.com/s/' + encodeURIComponent(cityOf(f)) + '/' + encodeURIComponent(cityOf(t));
+    return '<div class="flt-links">' +
+      '<a href="' + gfl + '" target="_blank" rel="noopener" class="flt-link">구글 항공권</a>' +
+      '<a href="' + sky + '" target="_blank" rel="noopener" class="flt-link">스카이스캐너</a>' +
+      '<a href="' + r2r + '" target="_blank" rel="noopener" class="flt-link is-alt">Rome2Rio <em>기차·버스</em></a>' +
+    '</div>';
+  }
+
   function _fltRenderWatch() {
     var box = document.getElementById('flight-watch-list');
     if (!box) return;
@@ -18535,6 +18572,12 @@
       var chart = pts.length > 1 ? '<div class="flt-svg-wrap">' + _fltPriceChartSvg(pts) + '</div>'
         : (pts.length === 1 ? '<p class="flt-dim">2건 이상 기록하면 추이 그래프가 그려져요</p>' : '');
 
+      var vd = _fltVerdict(pts);
+      var vdHtml = '<div class="flt-vd is-' + vd.key + '">' +
+        '<span class="flt-vd-l">' + vd.label + '</span>' +
+        '<span class="flt-vd-w">' + vd.why + '</span>' +
+      '</div>';
+
       var snapList = snaps.length ? '<ul class="flt-snap-list">' + snaps.slice().reverse().map(function(sn) {
         return '<li class="flt-snap"><span class="flt-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
           '<span class="flt-snap-p">' + _trvAmtHtml(sn.price_krw) + '</span>' +
@@ -18559,7 +18602,7 @@
             '<button class="flt-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제">' +
               '<span class="material-symbols-outlined">delete</span></button>' +
           '</div>' +
-        '</div>' + statHtml + chart +
+        '</div>' + vdHtml + statHtml + chart + _fltBookLinks(w) +
         '<div class="flt-snap-form">' +
           '<input id="fp-amt-' + w._id + '" type="text" inputmode="numeric" placeholder="금액 ₩" class="flt-in is-amt">' +
           '<select id="fp-src-' + w._id + '" class="flt-in is-src">' + srcOpts + '</select>' +
