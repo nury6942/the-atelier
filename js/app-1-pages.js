@@ -17706,6 +17706,28 @@
     MNL:['마닐라','manila'], SYD:['시드니','sydney'], MEL:['멜버른','melbourne'],
     AKL:['오클랜드','auckland'], DUB:['더블린','dublin'], EDI:['에든버러','edinburgh']
   };
+  // 공항 코드 → 국기 이모지 + 나라 이름 (관심 노선 카드용)
+  // _FLT_AIRPORTS[code] = [lat, lng, 도시(ko), 나라코드(ISO2), 나라이름(ko)]
+  function _fltFlagOf(cc) {
+    var s = String(cc || '').toUpperCase();
+    if (!/^[A-Z]{2}$/.test(s)) return '';
+    return String.fromCodePoint(0x1F1E6 + s.charCodeAt(0) - 65, 0x1F1E6 + s.charCodeAt(1) - 65);
+  }
+  function _fltPortMeta(code) {
+    var a = _FLT_AIRPORTS[String(code || '').trim().toUpperCase()];
+    if (!a) return null;
+    return { city: a[2] || '', cc: a[3] || '', country: a[4] || '', flag: _fltFlagOf(a[3]) };
+  }
+  // 카드 헤더용: 국기 + 코드(크게) + 나라이름(작게). 미등록 코드는 코드만.
+  function _fltPortHtml(code) {
+    var m = _fltPortMeta(code);
+    var codeTxt = _fltEsc(code || '—');
+    if (!m) return '<span class="pw-port"><b>' + codeTxt + '</b></span>';
+    return '<span class="pw-port"><b>' +
+      (m.flag ? '<span class="pw-fl">' + m.flag + '</span>' : '') + codeTxt + '</b>' +
+      '<em>' + _fltEsc(m.country + (m.city ? ' · ' + m.city : '')) + '</em></span>';
+  }
+
   function _fltAirportSearch(q, limit) {
     var s = String(q || '').trim().toLowerCase();
     if (!s) return [];
@@ -19684,9 +19706,9 @@
         '<div class="pw-card-head">' +
           '<div class="pw-head-l">' +
             '<div><span class="pw-l is-accent">Watching</span>' +
-              '<div class="pw-route"><b>' + _fltEsc(w.route_from || '—') + '</b>' +
+              '<div class="pw-route">' + _fltPortHtml(w.route_from) +
                 '<span class="material-symbols-outlined">trending_flat</span>' +
-                '<b>' + _fltEsc(w.route_to || '—') + '</b></div></div>' +
+                _fltPortHtml(w.route_to) + '</div></div>' +
             '<div class="pw-status"><span class="pw-l">Status</span><p>' + statTxt + '</p></div>' +
           '</div>' +
           '<div class="pw-head-r">' +
