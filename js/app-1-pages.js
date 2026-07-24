@@ -14725,11 +14725,27 @@
   // ===== SETTINGS: INCOME CATEGORIES =====
   let incomeCategories = [];
 
+  // ★ (2026-07-24) 중복 폭증 버그 수정.
+  //   기존엔 fbRead가 빈 배열을 주면 무조건 기본 4개를 다시 심었다. 읽기가 일시적으로 비면
+  //   (권한 blip·오프라인·경합) 접속할 때마다 재생성돼 실측 19개 중 13개가 중복이었다.
+  //   ① 한 번이라도 시드했으면 다시 안 심고 ② 읽어온 목록도 이름 기준으로 중복을 걷어낸다.
+  var INCOME_CAT_SEEDED_KEY = 'atelier_income_cat_seeded';
+  function _dedupeByName(docs) {
+    var seen = {}, out = [];
+    (docs || []).forEach(function(d) {
+      var n = String((d && d.name) || '').trim();
+      if (!n || seen[n]) return;
+      seen[n] = 1; out.push(d);
+    });
+    return out;
+  }
   async function loadIncomeCategories() {
     try {
-      const docs = await fbRead('income_categories');
-      if (docs.length === 0) {
-        // 기본 카테고리 세팅
+      const docs = _dedupeByName(await fbRead('income_categories'));
+      var seeded = false;
+      try { seeded = localStorage.getItem(INCOME_CAT_SEEDED_KEY) === '1'; } catch(e) {}
+      if (docs.length === 0 && !seeded) {
+        // 최초 1회만 기본 카테고리 세팅
         const defaults = ['에디토리얼 시리얼', '크리에이티브 시리얼', '스페셜 프로젝트', '기타'];
         for (const name of defaults) {
           await fbAdd('income_categories', {name: name});
@@ -14738,9 +14754,11 @@
       } else {
         incomeCategories = docs;
       }
+      if (incomeCategories.length) { try { localStorage.setItem(INCOME_CAT_SEEDED_KEY, '1'); } catch(e) {} }
       refreshIncomeCategorySelect();
     } catch(err) {
       console.error('Category load error:', err);
+      // 실패 시엔 화면 표시용 기본값만 쓰고 DB엔 아무것도 쓰지 않는다 (이게 중복의 원인이었음)
       incomeCategories = [{name:'에디토리얼 시리얼'},{name:'크리에이티브 시리얼'},{name:'스페셜 프로젝트'},{name:'기타'}];
       refreshIncomeCategorySelect();
     }
@@ -14867,6 +14885,11 @@
   async function saveNewIncomeCategory() {
     var name = document.getElementById('settings-new-cat').value.trim();
     if (!name) return;
+    // 같은 이름이 이미 있으면 추가하지 않는다 (중복 방지)
+    if (incomeCategories.some(function(c){ return String(c.name || '').trim() === name; })) {
+      alert('"' + name + '" 카테고리는 이미 있어요.');
+      return;
+    }
     try {
       var saved = await fbAdd('income_categories', {name: name});
       incomeCategories.push({name: name, _id: saved._id});
