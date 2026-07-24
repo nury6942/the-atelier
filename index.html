@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=302" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=303" as="script">
   <link rel="preload" href="js/app-2-init.js?v=173" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6496,7 +6496,29 @@
     .pw-snaps li:last-child { border-bottom:none; }
     .pw-snap-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; color:#7b7487; font-weight:700; }
     .pw-snap-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; color:#1a1c1d; }
-    .pw-snap-s { color:#7b7487; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pw-snap-s { color:#7b7487; overflow:hidden; display:flex; align-items:center; gap:6px;
+      flex-wrap:wrap; min-width:0; }
+    .pw-snap-s > span { white-space:nowrap; }
+    /* ★ (2026-07-25) UX 정리 — 히어로 가격 / 접이식 직접입력 */
+    .pw-hero { display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      padding:16px 24px; border-bottom:1px solid #eeeef0; }
+    .pw-hero-m { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+    .pw-hero-m b { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:30px;
+      font-weight:800; letter-spacing:-0.03em; color:#7c3aed; line-height:1.1; }
+    .pw-hero-s { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11.5px; color:#7b7487; }
+    .pw-hero-s em { font-style:normal; font-family:'Manrope','Pretendard',sans-serif; color:#ccc3d8; }
+    .pw-recwrap { border-top:1px solid #eeeef0; }
+    .pw-recwrap > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:6px;
+      padding:11px 24px; font-size:11.5px; font-weight:700; color:#7b7487; background:#fbfbfc; }
+    .pw-recwrap > summary::-webkit-details-marker { display:none; }
+    .pw-recwrap > summary:hover { color:#7c3aed; background:#faf9ff; }
+    .pw-recwrap > summary .material-symbols-outlined { font-size:16px; }
+    .pw-recwrap[open] > summary { color:#1a1c1d; border-bottom:1px solid #eeeef0; }
+    .pw-recwrap .pw-rec { background:#fbfbfc; border-bottom:none; }
+    .pw-recwrap .pw-rec-f input, .pw-recwrap .pw-rec-f select { background:#fff; border:1px solid #e5e5e5;
+      padding:6px 9px; margin-top:3px; }
+    .pw-recwrap .pw-amt { display:flex; align-items:center; gap:4px; }
     .pw-snaps button { border:none; background:none; color:#ccc3d8; cursor:pointer; padding:2px; }
     .pw-snaps button:hover { color:#ba1a1a; }
     .pw-snaps .material-symbols-outlined { font-size:15px; }
@@ -15138,7 +15160,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=302" defer></script>
+<script src="js/app-1-pages.js?v=303" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

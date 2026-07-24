@@ -19674,22 +19674,32 @@
       // 가장 최근 기록의 상세(항공사·편명·경유·출발일)
       var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;
       var lastDetail = lastSnap ? _fltSnapDetail(lastSnap) : '';
+      // 기록 1건이면 최저/최고/현재가 전부 같은 값 → 노이즈. 2건 이상일 때만 최저·최고 표시
       var stats = pts.length ? '<div class="pw-stats">' +
-        '<div><span class="pw-l">Lowest</span><b class="is-lo">' + _trvAmtHtml(lo) + '</b></div>' +
-        '<div><span class="pw-l">Highest</span><b>' + _trvAmtHtml(hi) + '</b></div>' +
-        '<div><span class="pw-l">Current</span><b>' + _trvAmtHtml(cur) +
+        (pts.length > 1
+          ? '<div><span class="pw-l">최저가</span><b class="is-lo">' + _trvAmtHtml(lo) + '</b></div>' +
+            '<div><span class="pw-l">최고가</span><b>' + _trvAmtHtml(hi) + '</b></div>'
+          : '') +
+        '<div><span class="pw-l">항공권가</span><b>' + _trvAmtHtml(cur) +
           (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
             Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</b></div>' +
-        '<div><span class="pw-l">Logs</span><b>' + pts.length + '</b></div>' +
+        '<div><span class="pw-l">기록</span><b>' + pts.length + '건</b></div>' +
       '</div>' +
       (lastDetail ? '<div class="pw-lastdet">' + lastDetail + '</div>' : '') : '';
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
       var fuelInfo = _fuelForRoute(w.route_from, w.route_to);
-      var realHtml = (cur && fuelInfo) ? '<div class="pw-real">' +
-        '<span class="pw-l">실제 낼 돈 <em>' + _spotEsc(fuelInfo.month) + ' 유류할증료 기준 · 세금 별도</em></span>' +
-        '<div><span>항공권 ' + _fltKrw(cur) + '</span><span>+ 유류 ' + _fltKrw(fuelInfo.krw * (w.return_date ? 2 : 1)) + '</span>' +
-        '<b>' + _fltKrw(cur + fuelInfo.krw * (w.return_date ? 2 : 1)) + '</b></div>' +
+      // ★ 히어로 가격 — 카드에서 가장 먼저 봐야 할 숫자(실제 낼 돈)를 맨 위로
+      var fuelKrw = fuelInfo ? fuelInfo.krw * (w.return_date ? 2 : 1) : 0;
+      var heroHtml = cur ? '<div class="pw-hero">' +
+        '<div class="pw-hero-m">' +
+          '<span class="pw-l">' + (fuelInfo ? '실제 낼 돈' : '현재가') + '</span>' +
+          '<b>' + _fltKrw(cur + fuelKrw) + '</b>' +
+        '</div>' +
+        (fuelInfo ? '<div class="pw-hero-s"><span>항공권 ' + _fltKrw(cur) + '</span>' +
+          '<span>+ 유류 ' + _fltKrw(fuelKrw) + '</span>' +
+          '<em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></div>' : '') +
       '</div>' : '';
+      var realHtml = '';
       var chart = pts.length > 1 ? '<div class="pw-chart">' + _fltPriceChartSvg(pts) + '</div>' : '';
       var snapList = snaps.length ? '<ul class="pw-snaps">' + snaps.slice().reverse().map(function(sn) {
         var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
@@ -19722,17 +19732,21 @@
             '<p><b>' + vd.label + '</b> ' + vd.why + '</p></div>' +
           '<div class="pw-bar"><span style="width:' + prog + '%"></span></div>' +
         '</div>' +
-        '<div class="pw-rec">' +
-          '<div class="pw-rec-f"><label class="pw-l">Amount</label>' +
-            '<div class="pw-amt"><span>₩</span><input id="fp-amt-' + w._id + '" type="number" placeholder="0"></div></div>' +
-          '<div class="pw-rec-f"><label class="pw-l">Platform</label>' +
-            '<select id="fp-src-' + w._id + '">' + srcOpts + '</select></div>' +
-          '<div class="pw-rec-f is-grow"><label class="pw-l">Memo</label>' +
-            '<input id="fp-note-' + w._id + '" type="text" placeholder="예: 왕복 직항, 수하물 포함"></div>' +
-          '<button class="pw-rec-b" onclick="fltAddPrice(\'' + w._id + '\')">' +
-            '<span class="material-symbols-outlined">add</span>기록</button>' +
-        '</div>' +
+        heroHtml +
         stats + realHtml + chart + _fltBookLinks(w) + snapList +
+        // 직접 입력은 가끔 쓰는 기능 → 기본 접힘. 열면 폼 톤(회색 배경+테두리)으로 데이터와 구분
+        '<details class="pw-recwrap"><summary><span class="material-symbols-outlined">edit_note</span>가격 직접 입력</summary>' +
+          '<div class="pw-rec">' +
+            '<div class="pw-rec-f"><label class="pw-l">가격</label>' +
+              '<div class="pw-amt"><span>₩</span><input id="fp-amt-' + w._id + '" type="number" placeholder="0"></div></div>' +
+            '<div class="pw-rec-f"><label class="pw-l">사이트</label>' +
+              '<select id="fp-src-' + w._id + '">' + srcOpts + '</select></div>' +
+            '<div class="pw-rec-f is-grow"><label class="pw-l">메모</label>' +
+              '<input id="fp-note-' + w._id + '" type="text" placeholder="예: 왕복 직항, 수하물 포함"></div>' +
+            '<button class="pw-rec-b" onclick="fltAddPrice(\'' + w._id + '\')">' +
+              '<span class="material-symbols-outlined">add</span>기록</button>' +
+          '</div>' +
+        '</details>' +
       '</article>';
     }).join('');
 
