@@ -296,11 +296,14 @@ async function collectFlightPrices() {
         const fuel = fuelFor(w.route_from, w.route_to);
 
         await db.collection("flight_watch").add({
-          type: "flight_price", watch_id: w._id, price_krw: fare, fuel_krw: fuel,
+          type: "flight_price", watch_id: w._id, price_krw: fare,
+          fuel_krw: fuel * (w.return_date ? 2 : 1),
           source: "자동 수집",
-          note: [best.airline || "", best.flight_number || "",
-            best.transfers === 0 ? "직항" : (best.transfers ? "경유" + best.transfers : ""),
-            best.departure_at ? String(best.departure_at).slice(0, 10) + " 출발" : ""].filter(Boolean).join(" "),
+          airline: best.airline || "", flight_no: best.flight_number || "",
+          transfers: (typeof best.transfers === "number") ? best.transfers : null,
+          depart_on: best.departure_at ? String(best.departure_at).slice(0, 10) : "",
+          return_on: best.return_at ? String(best.return_at).slice(0, 10) : "",
+          note: "",
           ts: new Date().toISOString(),
         });
         saved++;

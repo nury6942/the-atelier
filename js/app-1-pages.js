@@ -18982,33 +18982,78 @@
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   // ── 관심 노선 현재 최저가 조회 → 가격 로그에 자동 기록 ──
-  window.fltCheckPrice = async function(watchId) {
+  // ★ (2026-07-24) 기간을 골라서 그 달의 최저가를 조회한다. '아무 날짜나 최저가'는 의미가 없다.
+  //   저장할 때 항공사·편명·경유·출발일을 각각 필드로 남겨(통계 카드에서 보이게).
+  window.fltCheckPrice = function(watchId) {
+    var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
+    if (!w) return;
+    // 기간 선택 팝업
+    var host = document.querySelector('[data-fltcheck="' + watchId + '"]');
+    var wrap = host && host.parentNode;
+    var old = document.getElementById('pw-chkpop'); if (old) old.remove();
+    var now = new Date();
+    var months = [];
+    for (var i = 0; i < 12; i++) { var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      months.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')); }
+    var pop = document.createElement('div');
+    pop.id = 'pw-chkpop'; pop.className = 'pw-chkpop';
+    pop.innerHTML = '<p class="pw-l">언제 출발 기준으로 최저가를 볼까?</p>' +
+      '<div class="pw-chk-ms">' + months.map(function(m) {
+        return '<button type="button" data-m="' + m + '">' + m.slice(2).replace('-', '.') + '</button>';
+      }).join('') + '</div>' +
+      '<p class="pw-chk-hint">고른 달 안에서 가장 싼 출발일을 찾아 기록해요.</p>';
+    (wrap || document.body).appendChild(pop);
+    pop.addEventListener('mousedown', function(e) {
+      var b = e.target.closest && e.target.closest('button[data-m]');
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      pop.remove();
+      _fltDoCheck(watchId, b.getAttribute('data-m'));
+    });
+    setTimeout(function() {
+      var close = function(ev) {
+        if (ev.target.closest && ev.target.closest('#pw-chkpop')) return;
+        pop.remove(); document.removeEventListener('mousedown', close);
+      };
+      document.addEventListener('mousedown', close);
+    }, 0);
+  };
+  async function _fltDoCheck(watchId, month) {
     var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
     if (!w) return;
     var btn = document.querySelector('[data-fltcheck="' + watchId + '"]');
-    if (btn) { btn.disabled = true; btn.textContent = '조회 중…'; }
+    if (btn) { btn.disabled = true; btn.textContent = month.slice(2).replace('-', '.') + ' 조회 중…'; }
     try {
-      var p = { mode: 'cheapest', origin: w.route_from, destination: w.route_to, currency: 'krw' };
-      if (w.depart_date) p.depart_date = w.depart_date;
-      if (w.return_date) p.return_date = w.return_date; else p.one_way = 'true';
-      var j = await _fltFetchPrices(p);
-      var arr = (j.data && j.data.data) || [];
-      if (!arr.length) throw new Error('조회된 가격이 없어');
-      var cheapest = arr.reduce(function(a, b){ return (Number(b.price) < Number(a.price)) ? b : a; });
+      // 그 달의 날짜별 최저가 → 가장 싼 날 하나를 고른다
+      var j = await _fltFetchPrices({ mode: 'month', origin: w.route_from, destination: w.route_to,
+        month: month, currency: 'krw', one_way: String(!w.return_date) });
+      var rows = (j.data && j.data.data) || {};
+      var best = null;
+      Object.keys(rows).forEach(function(k) {
+        var v = rows[k] || {}, pr = Number(v.price) || 0;
+        if (pr && (!best || pr < best.price)) best = v;
+      });
+      if (!best) throw new Error(month + '엔 조회된 가격이 없어요 (인기 노선일수록 데이터가 많아요)');
+      var fuel = _fuelForRoute(w.route_from, w.route_to);
       await fbAdd('flight_watch', { type: 'flight_price', watch_id: watchId,
-        price_krw: Math.round(Number(cheapest.price) || 0), source: 'Aviasales (자동)',
-        note: (cheapest.airline || '') + (cheapest.flight_number || '') +
-          (cheapest.transfers === 0 ? ' 직항' : (cheapest.transfers ? ' 경유' + cheapest.transfers : '')) +
-          (cheapest.departure_at ? ' · ' + String(cheapest.departure_at).slice(0, 10) : ''),
+        price_krw: Math.round(Number(best.price) || 0),
+        fuel_krw: fuel ? fuel.krw * (w.return_date ? 2 : 1) : 0,
+        source: 'Aviasales (자동)',
+        airline: best.airline || '', flight_no: best.flight_number || '',
+        transfers: (typeof best.transfers === 'number') ? best.transfers : null,
+        depart_on: best.departure_at ? String(best.departure_at).slice(0, 10) : '',
+        return_on: best.return_at ? String(best.return_at).slice(0, 10) : '',
+        query_month: month,
+        note: '',
         ts: new Date().toISOString() });
       await _fltLoadWatch();
-      if (typeof showSyncToast === 'function') showSyncToast('✈️ 최저가 ' + _fltKrw(cheapest.price) + ' 기록했어');
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + month + ' 최저가 ' + _fltKrw(best.price) + ' 기록');
     } catch(e) {
-      alert('시세 조회 실패: ' + e.message);
+      alert(e.message);
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = '최저가 조회'; }
     }
-  };
+  }
 
   // ★ (2026-07-24) "지금 사라 vs 기다려라" 판정 — 쌓인 가격 로그의 분포에서 현재가 위치를 본다.
   //   Hopper 같은 ML 예측이 아니라 '내 기록 대비 지금이 싼가'를 보여주는 것. 근거를 같이 노출한다.
@@ -19213,6 +19258,34 @@
     } catch(e) { alert('저장 실패'); }
   };
 
+  // ★ (2026-07-24) 기록 한 건의 상세(항공사·편명·경유·출발일)를 사람이 읽는 문자열로.
+  //   note에 뭉쳐 저장하던 걸 필드로 분리했지만, 옛 기록(note만 있는 것)도 그대로 살려준다.
+  var _FLT_AIRLINE_KR = { KE:'대한항공', OZ:'아시아나', JL:'JAL', NH:'ANA', CX:'캐세이', SQ:'싱가포르항공',
+    TG:'타이항공', VN:'베트남항공', MU:'중국동방', CZ:'중국남방', CA:'중국국제', JQ:'젯스타', QF:'콴타스',
+    NZ:'뉴질랜드항공', UA:'유나이티드', DL:'델타', AA:'아메리칸', AF:'에어프랑스', KL:'KLM', LH:'루프트한자',
+    BA:'브리티시', TK:'터키항공', EK:'에미레이트', QR:'카타르', TW:'티웨이', LJ:'진에어', "7C":'제주항공', BX:'에어부산' };
+  function _fltAirlineLabel(code) {
+    var c = String(code || '').toUpperCase();
+    return _FLT_AIRLINE_KR[c] ? _FLT_AIRLINE_KR[c] + ' ' + c : c;
+  }
+  function _fltSnapDetail(sn) {
+    if (!sn) return '';
+    var parts = [];
+    if (sn.airline || sn.flight_no) {
+      parts.push('<span class="pw-det-air">' + _spotEsc(_fltAirlineLabel(sn.airline) + (sn.flight_no ? ' ' + sn.flight_no : '')) + '</span>');
+    }
+    if (typeof sn.transfers === 'number') {
+      parts.push('<span class="pw-det-t' + (sn.transfers === 0 ? ' is-direct' : '') + '">' +
+        (sn.transfers === 0 ? '직항' : '경유 ' + sn.transfers) + '</span>');
+    }
+    if (sn.depart_on) {
+      parts.push('<span class="pw-det-d">' + _spotEsc(sn.depart_on) + (sn.return_on ? ' ~ ' + _spotEsc(sn.return_on) : '') + ' 출발</span>');
+    }
+    if (sn.query_month) parts.push('<span class="pw-det-q">' + _spotEsc(sn.query_month) + ' 조회</span>');
+    if (!parts.length && sn.note) return '<span class="pw-det-air">' + _spotEsc(sn.note) + '</span>';
+    return parts.join('');
+  }
+
   function _fltRenderWatch() {
     var box = document.getElementById('flight-watch-list');
     if (!box) return;
@@ -19252,6 +19325,9 @@
         (w.return_date ? ' ~ ' + _fltEsc(w.return_date) : '') +
         (w.memo ? ' · ' + _fltEsc(w.memo) : '');
 
+      // 가장 최근 기록의 상세(항공사·편명·경유·출발일)
+      var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;
+      var lastDetail = lastSnap ? _fltSnapDetail(lastSnap) : '';
       var stats = pts.length ? '<div class="pw-stats">' +
         '<div><span class="pw-l">Lowest</span><b class="is-lo">' + _trvAmtHtml(lo) + '</b></div>' +
         '<div><span class="pw-l">Highest</span><b>' + _trvAmtHtml(hi) + '</b></div>' +
@@ -19259,7 +19335,8 @@
           (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
             Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</b></div>' +
         '<div><span class="pw-l">Logs</span><b>' + pts.length + '</b></div>' +
-      '</div>' : '';
+      '</div>' +
+      (lastDetail ? '<div class="pw-lastdet">' + lastDetail + '</div>' : '') : '';
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
       var fuelInfo = _fuelForRoute(w.route_from, w.route_to);
       var realHtml = (cur && fuelInfo) ? '<div class="pw-real">' +
@@ -19269,12 +19346,13 @@
       '</div>' : '';
       var chart = pts.length > 1 ? '<div class="pw-chart">' + _fltPriceChartSvg(pts) + '</div>' : '';
       var snapList = snaps.length ? '<ul class="pw-snaps">' + snaps.slice().reverse().map(function(sn) {
-        var isAuto = String(sn.source || '') === '자동 수집';
+        var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
+        var det = _fltSnapDetail(sn);
         return '<li' + (isAuto ? ' class="is-auto"' : '') + '><span class="pw-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
           '<span class="pw-snap-p">' + _trvAmtHtml(sn.price_krw) +
             (sn.fuel_krw ? '<em>+유류 ' + Math.round(Number(sn.fuel_krw)/10000) + '만</em>' : '') + '</span>' +
           '<span class="pw-snap-s">' + (isAuto ? '<b class="pw-auto">AUTO</b>' : '') +
-            _fltEsc(sn.source || '') + (sn.note ? ' · ' + _fltEsc(sn.note) : '') + '</span>' +
+            (det || _fltEsc(sn.source || '')) + '</span>' +
           '<button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제"><span class="material-symbols-outlined">close</span></button></li>';
       }).join('') + '</ul>' : '';
 

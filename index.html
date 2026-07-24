@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=290" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=291" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6348,7 +6348,7 @@
     .pw-route .material-symbols-outlined { color:#7c3aed; font-size:22px; }
     .pw-status { min-width:0; }
     .pw-status p { margin:5px 0 0; font-size:12.5px; line-height:1.5; color:#4a4455; }
-    .pw-head-r { display:flex; align-items:center; gap:10px; flex:none; }
+    .pw-head-r { display:flex; align-items:center; gap:10px; flex:none; position:relative; }
     .pw-chip { border:none; background:#eaddff; color:#630ed4; font-size:12px; font-weight:800; letter-spacing:0.03em;
       padding:9px 16px; cursor:pointer; transition:background .15s; white-space:nowrap; }
     .pw-chip:hover:not(:disabled) { background:#d2bbff; }
@@ -6397,6 +6397,24 @@
     .pw-stats b i.is-down { color:#15803d; }
     .pw-stats b i.is-up { color:#be123c; }
     .pw-chart { padding:16px 20px; border-bottom:1px solid #eeeef0; }
+    /* ★ (2026-07-24) 최저가 상세(항공사·편명·경유·출발일) + 기간 선택 팝업 */
+    .pw-lastdet { display:flex; flex-wrap:wrap; gap:7px; padding:11px 24px; background:#faf9ff;
+      border-bottom:1px solid #eeeef0; }
+    .pw-lastdet > span { display:inline-flex; align-items:center; font-size:11px; font-weight:700;
+      padding:3px 9px; border:1px solid #ede9fe; background:#fff; color:#4a4455; }
+    .pw-det-air { color:#1a1c1d !important; font-weight:800 !important; }
+    .pw-det-t { color:#7b7487 !important; }
+    .pw-det-t.is-direct { color:#15803d !important; border-color:#bbf7d0 !important; background:#f0fdf4 !important; }
+    .pw-det-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+    .pw-det-q { color:#7c3aed !important; border-color:#ddd6fe !important; }
+    .pw-chkpop { position:absolute; top:100%; right:0; z-index:70; margin-top:6px; width:288px;
+      background:#fff; border:1px solid #1a1c1d; box-shadow:0 10px 30px rgba(15,23,42,.16); padding:14px; }
+    .pw-chkpop .pw-l { color:#1a1c1d; margin-bottom:10px; }
+    .pw-chk-ms { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
+    .pw-chk-ms button { border:1px solid #e5e5e5; background:#fff; padding:9px 0; font-size:11px; font-weight:700;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; color:#1a1c1d; cursor:pointer; transition:all .12s; }
+    .pw-chk-ms button:hover { background:#7c3aed; border-color:#7c3aed; color:#fff; }
+    .pw-chk-hint { margin:10px 0 0; font-size:10.5px; line-height:1.55; color:#7b7487; }
     .pw-card .flt-links { margin:0; padding:14px 24px; border-bottom:1px solid #eeeef0; }
     .pw-card .flt-link { border-radius:0; }
     .pw-snaps { list-style:none; margin:0; padding:0; }
@@ -14984,7 +15002,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=290" defer></script>
+<script src="js/app-1-pages.js?v=291" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
