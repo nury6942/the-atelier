@@ -18734,6 +18734,17 @@
     '</div>';
   }
 
+  // ★ (2026-07-24) Stitch 시안 이식 — 각진 모서리·헤어라인·큰 IATA. 기능은 100% 그대로.
+  var _pwTrip = 'round';
+  window.pwSetTrip = function(v) {
+    _pwTrip = v;
+    var seg = document.getElementById('pw-trip-seg');
+    if (seg) Array.prototype.forEach.call(seg.querySelectorAll('.pw-seg-b'), function(b) {
+      b.classList.toggle('is-on', b.getAttribute('data-trip') === v);
+    });
+  };
+  window._pwIsOneWay = function() { return _pwTrip === 'oneway'; };
+
   function _fltRenderWatch() {
     var box = document.getElementById('flight-watch-list');
     if (!box) return;
@@ -18741,81 +18752,112 @@
       return String(a.depart_date || '9999').localeCompare(String(b.depart_date || '9999')) ||
         String(a.created_at || '').localeCompare(String(b.created_at || ''));
     });
+    var sumEl = document.getElementById('flight-watch-summary');
     if (!watches.length) {
-      box.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">savings</span>' +
-        '<p>관심 노선을 등록하고 스카이스캐너·구글 항공권에서 본 가격을 그때그때 적어두면, ' +
-        '실제로 <strong>언제가 쌀지</strong>가 내 손으로 쌓인 데이터로 보여요.</p></div>';
+      box.innerHTML = '<div class="pw-empty"><span class="material-symbols-outlined">savings</span>' +
+        '<p>관심 노선을 등록해두면 <b>최저가 조회</b>로 시세를 쌓고, 지금이 살 때인지 판정해줘요.</p></div>';
+      if (sumEl) sumEl.innerHTML = '';
       return;
     }
+    var srcOpts = _FLT_SOURCES.map(function(x) { return '<option>' + x + '</option>'; }).join('');
+    var allPts = [], cheapest = null;
+
     box.innerHTML = watches.map(function(w) {
       var snaps = _fltWatch.filter(function(d) { return _fltIsPrice(d) && d.watch_id === w._id; })
         .sort(function(a, b) { return String(a.ts || '').localeCompare(String(b.ts || '')); });
       var pts = snaps.map(function(sn) {
         var t = new Date(sn.ts || 0).getTime();
-        var dl = String(sn.ts || '').slice(5, 10).replace('-', '/');
-        return { t: isNaN(t) ? 0 : t, v: Number(sn.price_krw) || 0, label: dl };
+        return { t: isNaN(t) ? 0 : t, v: Number(sn.price_krw) || 0, label: String(sn.ts || '').slice(5, 10).replace('-', '/') };
       }).filter(function(p) { return p.v > 0; });
+      pts.forEach(function(p) { allPts.push(p); });
 
       var lo = 0, hi = 0, cur = 0;
-      pts.forEach(function(p) {
-        if (!lo || p.v < lo) lo = p.v;
-        if (p.v > hi) hi = p.v;
-      });
+      pts.forEach(function(p) { if (!lo || p.v < lo) lo = p.v; if (p.v > hi) hi = p.v; });
       if (pts.length) cur = pts[pts.length - 1].v;
+      if (lo && (!cheapest || lo < cheapest.v)) cheapest = { v: lo, rt: (w.route_from || '?') + ' → ' + (w.route_to || '?') };
       var diff = (pts.length > 1) ? cur - pts[pts.length - 2].v : 0;
 
-      var statHtml = pts.length ? '<div class="flt-price-stats">' +
-        '<div><p class="flt-eyebrow">Lowest</p><p class="flt-price-v is-lo">' + _trvAmtHtml(lo) + '</p></div>' +
-        '<div><p class="flt-eyebrow">Highest</p><p class="flt-price-v is-hi">' + _trvAmtHtml(hi) + '</p></div>' +
-        '<div><p class="flt-eyebrow">Current</p><p class="flt-price-v">' + _trvAmtHtml(cur) +
-          (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
-            Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</p></div>' +
-        '<div><p class="flt-eyebrow">Logs</p><p class="flt-price-v">' + pts.length + '<i>건</i></p></div>' +
-      '</div>' : '';
-
-      var chart = pts.length > 1 ? '<div class="flt-svg-wrap">' + _fltPriceChartSvg(pts) + '</div>'
-        : (pts.length === 1 ? '<p class="flt-dim">2건 이상 기록하면 추이 그래프가 그려져요</p>' : '');
-
       var vd = _fltVerdict(pts);
-      var vdHtml = '<div class="flt-vd is-' + vd.key + '">' +
-        '<span class="flt-vd-l">' + vd.label + '</span>' +
-        '<span class="flt-vd-w">' + vd.why + '</span>' +
-      '</div>';
+      var prog = Math.min(100, Math.round((pts.length / 3) * 100));
+      var statTxt = (w.depart_date ? '출발일 ' + _fltEsc(w.depart_date) : '출발일 미정') +
+        (w.return_date ? ' ~ ' + _fltEsc(w.return_date) : '') +
+        (w.memo ? ' · ' + _fltEsc(w.memo) : '');
 
-      var snapList = snaps.length ? '<ul class="flt-snap-list">' + snaps.slice().reverse().map(function(sn) {
-        return '<li class="flt-snap"><span class="flt-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
-          '<span class="flt-snap-p">' + _trvAmtHtml(sn.price_krw) + '</span>' +
-          '<span class="flt-snap-s">' + _fltEsc(sn.source || '—') + '</span>' +
-          '<span class="flt-snap-n">' + _fltEsc(sn.note || '') + '</span>' +
-          '<button class="flt-snap-del" onclick="fltDeletePrice(\'' + sn._id + '\')" title="삭제">' +
-            '<span class="material-symbols-outlined">close</span></button></li>';
+      var stats = pts.length ? '<div class="pw-stats">' +
+        '<div><span class="pw-l">Lowest</span><b class="is-lo">' + _trvAmtHtml(lo) + '</b></div>' +
+        '<div><span class="pw-l">Highest</span><b>' + _trvAmtHtml(hi) + '</b></div>' +
+        '<div><span class="pw-l">Current</span><b>' + _trvAmtHtml(cur) +
+          (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
+            Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</b></div>' +
+        '<div><span class="pw-l">Logs</span><b>' + pts.length + '</b></div>' +
+      '</div>' : '';
+      var chart = pts.length > 1 ? '<div class="pw-chart">' + _fltPriceChartSvg(pts) + '</div>' : '';
+      var snapList = snaps.length ? '<ul class="pw-snaps">' + snaps.slice().reverse().map(function(sn) {
+        return '<li><span class="pw-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
+          '<span class="pw-snap-p">' + _trvAmtHtml(sn.price_krw) + '</span>' +
+          '<span class="pw-snap-s">' + _fltEsc(sn.source || '') + (sn.note ? ' · ' + _fltEsc(sn.note) : '') + '</span>' +
+          '<button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제"><span class="material-symbols-outlined">close</span></button></li>';
       }).join('') + '</ul>' : '';
 
-      var srcOpts = _FLT_SOURCES.map(function(s) { return '<option>' + s + '</option>'; }).join('');
-      var dates = (w.depart_date ? _fltEsc(w.depart_date) : '출발일 미정') +
-        (w.return_date ? ' ~ ' + _fltEsc(w.return_date) : '');
-
-      return '<article class="flt-card flt-watch">' +
-        '<div class="flt-watch-head">' +
-          '<div><p class="flt-eyebrow">Watching</p>' +
-            '<h4 class="flt-watch-route">' + _fltEsc(w.route_from || '—') + ' → ' + _fltEsc(w.route_to || '—') + '</h4>' +
-            '<p class="flt-watch-sub">' + dates + (w.memo ? ' · ' + _fltEsc(w.memo) : '') + '</p></div>' +
-          '<div class="flt-watch-act">' +
-            '<button class="flt-chk" data-fltcheck="' + w._id + '" onclick="fltCheckPrice(\'' + w._id + '\')" ' +
-              'title="지금 최저가를 조회해서 아래 로그에 자동 기록해요">최저가 조회</button>' +
-            '<button class="flt-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제">' +
-              '<span class="material-symbols-outlined">delete</span></button>' +
+      return '<article class="pw-card">' +
+        '<div class="pw-card-head">' +
+          '<div class="pw-head-l">' +
+            '<div><span class="pw-l is-accent">Watching</span>' +
+              '<div class="pw-route"><b>' + _fltEsc(w.route_from || '—') + '</b>' +
+                '<span class="material-symbols-outlined">trending_flat</span>' +
+                '<b>' + _fltEsc(w.route_to || '—') + '</b></div></div>' +
+            '<div class="pw-status"><span class="pw-l">Status</span><p>' + statTxt + '</p></div>' +
           '</div>' +
-        '</div>' + vdHtml + statHtml + chart + _fltBookLinks(w) +
-        '<div class="flt-snap-form">' +
-          '<input id="fp-amt-' + w._id + '" type="text" inputmode="numeric" placeholder="금액 ₩" class="flt-in is-amt">' +
-          '<select id="fp-src-' + w._id + '" class="flt-in is-src">' + srcOpts + '</select>' +
-          '<input id="fp-note-' + w._id + '" type="text" placeholder="메모 (예: 왕복 직항, 수하물 포함)" class="flt-in is-note">' +
-          '<button class="trav-act trav-act-primary" onclick="fltAddPrice(\'' + w._id + '\')">' +
-            '<span class="material-symbols-outlined">add</span> 기록</button>' +
-        '</div>' + snapList +
+          '<div class="pw-head-r">' +
+            '<button class="pw-chip" data-fltcheck="' + w._id + '" onclick="fltCheckPrice(\'' + w._id + '\')">최저가 조회</button>' +
+            '<button class="pw-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제"><span class="material-symbols-outlined">delete</span></button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pw-verdict is-' + vd.key + '">' +
+          '<div class="pw-vd-l"><span class="material-symbols-outlined">' +
+            (vd.key === 'buy' ? 'check_circle' : (vd.key === 'wait' ? 'schedule' : 'info')) + '</span>' +
+            '<p><b>' + vd.label + '</b> ' + vd.why + '</p></div>' +
+          '<div class="pw-bar"><span style="width:' + prog + '%"></span></div>' +
+        '</div>' +
+        '<div class="pw-rec">' +
+          '<div class="pw-rec-f"><label class="pw-l">Amount</label>' +
+            '<div class="pw-amt"><span>₩</span><input id="fp-amt-' + w._id + '" type="number" placeholder="0"></div></div>' +
+          '<div class="pw-rec-f"><label class="pw-l">Platform</label>' +
+            '<select id="fp-src-' + w._id + '">' + srcOpts + '</select></div>' +
+          '<div class="pw-rec-f is-grow"><label class="pw-l">Memo</label>' +
+            '<input id="fp-note-' + w._id + '" type="text" placeholder="예: 왕복 직항, 수하물 포함"></div>' +
+          '<button class="pw-rec-b" onclick="fltAddPrice(\'' + w._id + '\')">' +
+            '<span class="material-symbols-outlined">add</span>기록</button>' +
+        '</div>' +
+        stats + chart + _fltBookLinks(w) + snapList +
       '</article>';
     }).join('');
+
+    if (sumEl) {
+      var since = Date.now() - 30 * 86400000;
+      var recent = allPts.filter(function(p) { return p.t >= since; }).sort(function(a, b) { return a.t - b.t; });
+      var bars = '';
+      if (recent.length) {
+        var rlo = Math.min.apply(null, recent.map(function(p){ return p.v; }));
+        var rhi = Math.max.apply(null, recent.map(function(p){ return p.v; }));
+        bars = recent.slice(-12).map(function(p) {
+          var h = rhi > rlo ? 22 + Math.round((p.v - rlo) / (rhi - rlo) * 78) : 60;
+          return '<div class="pw-tb' + (p.v === rlo ? ' is-min' : '') + '" style="height:' + h + '%" title="' + p.label + ' ' + _fltKrw(p.v) + '"></div>';
+        }).join('');
+      }
+      sumEl.innerHTML =
+        '<div class="pw-trend"><span class="pw-l">Price trend analysis</span>' +
+          '<h4>지난 30일간의 가격 변동 추이</h4>' +
+          (bars ? '<div class="pw-bars">' + bars + '</div>'
+                : '<p class="pw-dim">아직 30일 내 기록이 없어요. 최저가 조회를 몇 번 돌리면 여기 쌓여요.</p>') +
+        '</div>' +
+        '<div class="pw-side">' +
+          '<div class="pw-kpi is-accent"><span class="pw-l">Cheapest route found</span>' +
+            '<div>' + (cheapest ? '<b>' + _fltEsc(cheapest.rt) + '</b><b>' + _fltKrw(cheapest.v) + '</b>' : '<b>—</b><b></b>') + '</div></div>' +
+          '<div class="pw-kpi"><span class="pw-l">Active alerts</span>' +
+            '<div><b>' + watches.length + ' Destinations</b><span class="material-symbols-outlined">notifications_active</span></div></div>' +
+        '</div>';
+    }
   }
 
   // ───────────── 탭 진입/이탈 ─────────────

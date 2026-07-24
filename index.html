@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=279" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=280" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6263,6 +6263,158 @@
     .flt-mo-day i { position:absolute; top:3px; right:5px; font-style:normal; font-size:13px; line-height:1; color:#7c3aed; }
     .flt-mo-day.is-best i { color:#a7f3d0; }
     .flt-acc-note.flt-err { color:#be123c; font-weight:600; }
+
+    /* ══ ★ (2026-07-24) 가격 로그 — Stitch 시안(.pw-*) ══
+       0px 라운드 · 헤어라인 #e5e5e5 · 언더라인 입력 · 그림자 없음 · 보라는 액션에만 */
+    .pw-l { display:block; font-size:10px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase;
+      color:#7b7487; line-height:1.4; }
+    .pw-l.is-accent { color:#7c3aed; }
+    .pw-l em { font-style:normal; letter-spacing:0.04em; color:#ccc3d8; text-transform:none; margin-left:3px; }
+    .pw-btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid #e5e5e5;
+      background:#fff; color:#1a1c1d; padding:9px 15px; border-radius:0; font-size:12px; font-weight:700;
+      letter-spacing:0.04em; cursor:pointer; white-space:nowrap; transition:background .15s,border-color .15s; }
+    .pw-btn:hover { background:#f3f3f5; }
+    .pw-btn.is-dark { background:#1a1c1d; border-color:#1a1c1d; color:#fff; }
+    .pw-btn.is-dark:hover { background:#000; }
+    .pw-btn .material-symbols-outlined { font-size:17px; }
+
+    .pw-search { border:1px solid #e5e5e5; background:#fff; padding:22px 24px; margin-bottom:22px; }
+    .pw-search-top { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      padding-bottom:18px; border-bottom:1px solid #eeeef0; }
+    .pw-seg { display:flex; gap:3px; background:#f3f3f5; border:1px solid #e5e5e5; padding:3px; }
+    .pw-seg-b { border:1px solid transparent; background:none; padding:6px 17px; font-size:12px; font-weight:700;
+      letter-spacing:0.05em; color:#4a4455; cursor:pointer; transition:all .15s; }
+    .pw-seg-b:hover { color:#1a1c1d; }
+    .pw-seg-b.is-on { background:#fff; border-color:#e5e5e5; color:#7c3aed; font-weight:800; }
+    .pw-top-acts { display:flex; gap:9px; flex-wrap:wrap; }
+
+    .pw-search-grid { display:grid; grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) minmax(0,1fr);
+      gap:18px; align-items:end; padding-top:20px; }
+    .pw-tag { display:flex; align-items:center; justify-content:center; border-right:1px solid #ccc3d8;
+      padding-right:18px; height:52px; }
+    .pw-tag span { font-size:9.5px; font-weight:800; letter-spacing:-0.01em; color:#7b7487;
+      text-transform:uppercase; text-align:center; line-height:1.25; }
+    .pw-fld { position:relative; min-width:0; }
+    .pw-fld.is-wide { grid-column:1 / -2; }
+    .pw-in { width:100%; border:0; border-bottom:1px solid #ccc3d8; background:transparent; padding:8px 0;
+      font-size:19px; font-weight:600; letter-spacing:-0.01em; color:#1a1c1d; outline:none;
+      transition:border-color .15s; border-radius:0; }
+    .pw-in::placeholder { color:#ccc3d8; font-weight:500; }
+    .pw-in:focus { border-bottom-color:#7c3aed; }
+    .pw-arrow { display:flex; align-items:center; justify-content:center; height:52px; color:#7b7487; }
+    .pw-out:not(:empty) { margin-top:20px; padding-top:18px; border-top:1px solid #eeeef0; }
+
+    .pw-form { border:1px solid #e5e5e5; background:#fff; padding:20px 24px; margin-bottom:20px; }
+    .pw-form-grid { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+      gap:16px; align-items:end; }
+    .pw-form-grid.is-b { grid-template-columns:minmax(0,1fr) auto; margin-top:16px; }
+    .pw-form-btns { display:flex; gap:8px; }
+
+    .pw-cards { display:flex; flex-direction:column; gap:20px; }
+    .pw-card { border:1px solid #e5e5e5; background:#fff; }
+    .pw-card-head { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+      padding:20px 24px; border-bottom:1px solid #eeeef0; }
+    .pw-head-l { display:flex; align-items:center; gap:44px; flex-wrap:wrap; min-width:0; }
+    .pw-route { display:flex; align-items:center; gap:13px; margin-top:5px; }
+    .pw-route b { font-family:'Manrope','Pretendard',sans-serif; font-size:27px; font-weight:800;
+      letter-spacing:-0.045em; color:#1a1c1d; }
+    .pw-route .material-symbols-outlined { color:#7c3aed; font-size:22px; }
+    .pw-status { min-width:0; }
+    .pw-status p { margin:5px 0 0; font-size:12.5px; line-height:1.5; color:#4a4455; }
+    .pw-head-r { display:flex; align-items:center; gap:10px; flex:none; }
+    .pw-chip { border:none; background:#eaddff; color:#630ed4; font-size:12px; font-weight:800; letter-spacing:0.03em;
+      padding:9px 16px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+    .pw-chip:hover:not(:disabled) { background:#d2bbff; }
+    .pw-chip:disabled { opacity:.5; cursor:default; }
+    .pw-x { border:none; background:none; color:#7b7487; cursor:pointer; padding:6px; transition:color .15s; }
+    .pw-x:hover { color:#ba1a1a; }
+
+    .pw-verdict { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+      padding:13px 24px; background:#f3f3f5; border-bottom:1px solid #eeeef0; }
+    .pw-vd-l { display:flex; align-items:center; gap:11px; min-width:0; }
+    .pw-vd-l .material-symbols-outlined { font-size:19px; color:#7b7487; }
+    .pw-vd-l p { margin:0; font-size:12.5px; color:#4a4455; }
+    .pw-vd-l p b { color:#7c3aed; font-weight:800; margin-right:4px; }
+    .pw-verdict.is-buy { background:#f0fdf4; }
+    .pw-verdict.is-buy .material-symbols-outlined, .pw-verdict.is-buy p b { color:#15803d; }
+    .pw-verdict.is-wait { background:#fff1f2; }
+    .pw-verdict.is-wait .material-symbols-outlined, .pw-verdict.is-wait p b { color:#be123c; }
+    .pw-bar { flex:1; max-width:280px; height:4px; background:#ccc3d8; }
+    .pw-bar span { display:block; height:100%; background:#7c3aed; }
+    .pw-verdict.is-buy .pw-bar span { background:#15803d; }
+    .pw-verdict.is-wait .pw-bar span { background:#be123c; }
+
+    .pw-rec { display:flex; align-items:stretch; border-bottom:1px solid #eeeef0; flex-wrap:wrap; }
+    .pw-rec-f { padding:13px 16px; border-right:1px solid #eeeef0; display:flex; flex-direction:column;
+      justify-content:center; gap:3px; min-width:0; }
+    .pw-rec-f.is-grow { flex:1; }
+    .pw-rec-f input, .pw-rec-f select { border:0; background:transparent; outline:none; padding:0;
+      font-size:13px; color:#1a1c1d; width:100%; }
+    .pw-rec-f select { cursor:pointer; }
+    .pw-amt { display:flex; align-items:baseline; gap:3px; color:#7c3aed; font-weight:800; }
+    .pw-amt span { font-size:17px; }
+    .pw-amt input { font-size:17px; font-weight:800; color:#7c3aed; font-family:var(--font-num);
+      font-variant-numeric:tabular-nums; }
+    .pw-rec-b { border:none; background:#1a1c1d; color:#fff; padding:0 30px; font-size:13px; font-weight:800;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; margin-left:auto;
+      transition:background .15s; }
+    .pw-rec-b:hover { background:#000; }
+
+    .pw-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:1px;
+      background:#eeeef0; border-bottom:1px solid #eeeef0; }
+    .pw-stats > div { background:#fff; padding:13px 16px; }
+    .pw-stats b { display:block; margin-top:4px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:15px; font-weight:800; color:#1a1c1d; }
+    .pw-stats b.is-lo { color:#15803d; }
+    .pw-stats b i { font-style:normal; font-size:10.5px; font-weight:700; margin-left:6px; }
+    .pw-stats b i.is-down { color:#15803d; }
+    .pw-stats b i.is-up { color:#be123c; }
+    .pw-chart { padding:16px 20px; border-bottom:1px solid #eeeef0; }
+    .pw-card .flt-links { margin:0; padding:14px 24px; border-bottom:1px solid #eeeef0; }
+    .pw-card .flt-link { border-radius:0; }
+    .pw-snaps { list-style:none; margin:0; padding:0; }
+    .pw-snaps li { display:grid; grid-template-columns:78px 108px 1fr auto; gap:12px; align-items:center;
+      padding:9px 24px; font-size:11.5px; border-bottom:1px solid #f3f3f5; }
+    .pw-snaps li:nth-child(even) { background:#f9f9fb; }
+    .pw-snaps li:last-child { border-bottom:none; }
+    .pw-snap-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; color:#7b7487; font-weight:700; }
+    .pw-snap-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; color:#1a1c1d; }
+    .pw-snap-s { color:#7b7487; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pw-snaps button { border:none; background:none; color:#ccc3d8; cursor:pointer; padding:2px; }
+    .pw-snaps button:hover { color:#ba1a1a; }
+    .pw-snaps .material-symbols-outlined { font-size:15px; }
+
+    .pw-empty { border:1px solid #e5e5e5; background:#fff; padding:28px 24px; display:flex; gap:14px;
+      align-items:flex-start; }
+    .pw-empty .material-symbols-outlined { color:#ccc3d8; font-size:24px; }
+    .pw-empty p { margin:0; font-size:13px; line-height:1.7; color:#4a4455; }
+    .pw-empty b { color:#1a1c1d; }
+    .pw-dim { font-size:12px; color:#7b7487; margin:14px 0 0; }
+
+    .pw-sum { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:16px; margin-top:22px; }
+    .pw-sum:empty { display:none; }
+    .pw-trend { border:1px solid #e5e5e5; background:#fff; padding:22px 24px; }
+    .pw-trend h4 { margin:6px 0 18px; font-size:17px; font-weight:700; color:#1a1c1d; letter-spacing:-0.01em; }
+    .pw-bars { display:flex; align-items:flex-end; gap:4px; height:126px; border-bottom:1px solid #eeeef0; }
+    .pw-tb { flex:1; background:#ede0ff; transition:background .15s; }
+    .pw-tb:hover { background:#d2bbff; }
+    .pw-tb.is-min { background:#7c3aed; }
+    .pw-side { display:flex; flex-direction:column; gap:16px; }
+    .pw-kpi { border:1px solid #e5e5e5; background:#e2e2e4; padding:20px 22px; flex:1;
+      display:flex; flex-direction:column; justify-content:center; }
+    .pw-kpi.is-accent { background:#7c3aed; border-color:#7c3aed; }
+    .pw-kpi.is-accent .pw-l { color:rgba(255,255,255,.72); }
+    .pw-kpi > div { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-top:7px; }
+    .pw-kpi b { font-size:17px; font-weight:800; color:#1a1c1d; letter-spacing:-0.01em; }
+    .pw-kpi.is-accent b { color:#fff; font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+    .pw-kpi .material-symbols-outlined { color:#7c3aed; }
+    @media (max-width:900px){
+      .pw-search-grid, .pw-form-grid { grid-template-columns:1fr; }
+      .pw-tag, .pw-arrow { display:none; }
+      .pw-form-grid.is-b { grid-template-columns:1fr; }
+      .pw-sum { grid-template-columns:1fr; }
+      .pw-rec-b { width:100%; padding:14px; margin-left:0; }
+    }
     /* ★ (2026-07-24) 지금 사라/기다려라 판정 배지 + 예약 딥링크 */
     .flt-vd { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; margin:0 0 12px;
       padding:9px 12px; border-radius:11px; border:1px solid #e2e8f0; background:#f8fafc; }
@@ -11837,54 +11989,57 @@
             <button onclick="fltToggleWatchForm()" class="trav-act"><span class="material-symbols-outlined">add</span> 노선 추가</button>
           </div>
         </div>
-        <!-- ★ (2026-07-24) 월별 최저가 — "이 달에 제일 싼 날" 한 화면. Functions 프록시 경유 -->
-        <div class="flt-mo">
-          <div class="flt-mo-bar">
-            <p class="flt-eyebrow">Cheapest by date</p>
-            <label class="flt-fld"><span class="flt-fld-l">출발</span><input id="fmo-from" type="text" placeholder="인천 / ICN" class="flt-in is-iata"></label>
-            <span class="flt-mo-arrow">→</span>
-            <label class="flt-fld"><span class="flt-fld-l">도착</span><input id="fmo-to" type="text" placeholder="도쿄 / NRT" class="flt-in is-iata"></label>
-            <label class="flt-fld"><span class="flt-fld-l">기준 달</span><input id="fmo-month" type="month" class="flt-in"></label>
-            <button onclick="fltMonthSearch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">search</span> 이 달에서 싼 날</button>
-            <button onclick="fltYearSearch()" class="trav-act"><span class="material-symbols-outlined">calendar_month</span> 12개월 중 싼 달</button>
+        <!-- ★ (2026-07-24) Stitch 시안 이식 — 0px 라운드·헤어라인·언더라인 입력 (.pw-*) -->
+        <section class="pw-search">
+          <div class="pw-search-top">
+            <div class="pw-seg" id="pw-trip-seg">
+              <button class="pw-seg-b" data-trip="oneway" onclick="pwSetTrip('oneway')">편도</button>
+              <button class="pw-seg-b is-on" data-trip="round" onclick="pwSetTrip('round')">왕복</button>
+            </div>
+            <div class="pw-top-acts">
+              <button onclick="fltMonthSearch()" class="pw-btn is-dark"><span class="material-symbols-outlined">search</span>이 달에서 싼 날</button>
+              <button onclick="fltYearSearch()" class="pw-btn"><span class="material-symbols-outlined">history</span>12개월 중 싼 달</button>
+            </div>
           </div>
-          <div id="flight-month-out"></div>
-        </div>
-        <!-- ★ (2026-07-24) 폼 재구성 — 라벨 없는 빈 날짜 네모 2개가 뭘 넣는 칸인지 알 수 없었음 -->
-        <div id="flight-watch-form" class="flt-watch-form" style="display:none">
-          <p class="flt-wf-title">관심 노선 등록</p>
-          <div class="flt-wf-grid">
-            <label class="flt-fld">
-              <span class="flt-fld-l">출발</span>
-              <input id="fw-from" type="text" placeholder="ICN" maxlength="3" class="flt-in is-iata">
-            </label>
-            <span class="flt-wf-arrow">→</span>
-            <label class="flt-fld">
-              <span class="flt-fld-l">도착</span>
-              <input id="fw-to" type="text" placeholder="FRA" maxlength="3" class="flt-in is-iata">
-            </label>
-            <label class="flt-fld is-grow">
-              <span class="flt-fld-l">가는 날</span>
-              <input id="fw-depart" type="date" class="flt-in">
-            </label>
-            <label class="flt-fld is-grow">
-              <span class="flt-fld-l">오는 날 <em>선택</em></span>
-              <input id="fw-return" type="date" class="flt-in">
-            </label>
+          <div class="pw-search-grid">
+            <div class="pw-tag"><span>Cheapest<br>by Date</span></div>
+            <div class="pw-fld">
+              <label class="pw-l">출발</label>
+              <input id="fmo-from" type="text" placeholder="인천 / ICN" class="pw-in">
+            </div>
+            <div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+            <div class="pw-fld">
+              <label class="pw-l">도착</label>
+              <input id="fmo-to" type="text" placeholder="도쿄 / NRT" class="pw-in">
+            </div>
+            <div class="pw-fld is-date">
+              <label class="pw-l">기준 설정</label>
+              <input id="fmo-month" type="month" class="pw-in">
+            </div>
           </div>
-          <label class="flt-fld is-full">
-            <span class="flt-fld-l">메모 <em>선택</em></span>
-            <input id="fw-memo" type="text" placeholder="예: 왕복 직항, 수하물 포함 조건" class="flt-in">
-          </label>
-          <div class="flt-wf-foot">
-            <p class="flt-wf-hint">공항 코드는 3글자로 넣어줘. 오는 날을 비우면 편도로 조회해요.</p>
-            <div class="flt-wf-btns">
-              <button onclick="fltToggleWatchForm()" class="trav-act">취소</button>
-              <button onclick="fltSaveWatch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">save</span> 저장</button>
+          <div id="flight-month-out" class="pw-out"></div>
+        </section>
+
+        <!-- 관심 노선 등록 -->
+        <div id="flight-watch-form" class="pw-form" style="display:none">
+          <div class="pw-form-grid">
+            <div class="pw-fld"><label class="pw-l">출발</label><input id="fw-from" type="text" placeholder="ICN" class="pw-in"></div>
+            <div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+            <div class="pw-fld"><label class="pw-l">도착</label><input id="fw-to" type="text" placeholder="NRT" class="pw-in"></div>
+            <div class="pw-fld"><label class="pw-l">가는 날</label><input id="fw-depart" type="date" class="pw-in"></div>
+            <div class="pw-fld"><label class="pw-l">오는 날 <em>선택</em></label><input id="fw-return" type="date" class="pw-in"></div>
+          </div>
+          <div class="pw-form-grid is-b">
+            <div class="pw-fld is-wide"><label class="pw-l">메모 <em>선택</em></label><input id="fw-memo" type="text" placeholder="예: 왕복 직항, 수하물 포함 조건" class="pw-in"></div>
+            <div class="pw-form-btns">
+              <button onclick="fltToggleWatchForm()" class="pw-btn">취소</button>
+              <button onclick="fltSaveWatch()" class="pw-btn is-dark"><span class="material-symbols-outlined">save</span>저장</button>
             </div>
           </div>
         </div>
-        <div id="flight-watch-list" class="flt-grid"></div>
+
+        <div id="flight-watch-list" class="pw-cards"></div>
+        <div id="flight-watch-summary" class="pw-sum"></div>
       </section>
     </div>
 
@@ -14636,7 +14791,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=279" defer></script>
+<script src="js/app-1-pages.js?v=280" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
