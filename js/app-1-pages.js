@@ -19063,34 +19063,59 @@
     _pwMpRender();
     pop.style.display = 'block';
   };
-  function _pwMpRender() {
+  function _pwMpBuild() {
+    var pop = document.getElementById('pw-monthpop');
+    if (!pop) return;
+    var now = new Date(), nowY = now.getFullYear(), nowM = now.getMonth() + 1;
+    pop.innerHTML =
+      '<div class="pw-mp-head">' +
+        '<button type="button" class="pw-mp-nav" data-dir="-1" aria-label="이전 해"><span class="material-symbols-outlined">chevron_left</span></button>' +
+        '<b class="pw-mp-y"></b>' +
+        '<button type="button" class="pw-mp-nav" data-dir="1" aria-label="다음 해"><span class="material-symbols-outlined">chevron_right</span></button>' +
+      '</div>' +
+      '<div class="pw-mp-grid">' +
+        Array.from({ length: 12 }, function(_, i) {
+          return '<button type="button" class="pw-mp-m" data-m="' + (i + 1) + '">' + (i + 1) + '월</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="pw-mp-foot">' +
+        '<button type="button" class="pw-mp-now">이번 달</button>' +
+        '<button type="button" class="pw-mp-clear">지우기</button>' +
+      '</div>';
+    // 노드를 다시 그리지 않고 클릭만 위임 — 렌더 때마다 버튼이 사라져 바깥클릭으로 오판되던 문제 해결
+    pop.addEventListener('mousedown', function(e) {
+      var b = e.target.closest && e.target.closest('button');
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      if (b.classList.contains('pw-mp-nav')) { _pwMpYear += (b.getAttribute('data-dir') === '1' ? 1 : -1); _pwMpPaint(); }
+      else if (b.classList.contains('pw-mp-m')) { window.pwPickMonth(_pwMpYear, +b.getAttribute('data-m')); }
+      else if (b.classList.contains('pw-mp-now')) { window.pwPickMonth(nowY, nowM); }
+      else if (b.classList.contains('pw-mp-clear')) { window.pwClearMonth(); }
+    });
+    pop.setAttribute('data-built', '1');
+  }
+  // 값만 다시 칠한다(노드는 유지) — 연도 숫자 + 각 월 버튼의 상태 클래스만 갱신
+  function _pwMpPaint() {
     var pop = document.getElementById('pw-monthpop');
     if (!pop) return;
     var cur = (document.getElementById('fmo-month') || {}).value || '';
     var m = /^(\d{4})-(\d{2})$/.exec(cur);
     var selY = m ? +m[1] : null, selM = m ? +m[2] : null;
     var now = new Date(), nowY = now.getFullYear(), nowM = now.getMonth() + 1;
-    pop.innerHTML =
-      '<div class="pw-mp-head">' +
-        '<button type="button" onclick="pwMpYear(-1)" aria-label="이전 해"><span class="material-symbols-outlined">chevron_left</span></button>' +
-        '<b>' + _pwMpYear + '</b>' +
-        '<button type="button" onclick="pwMpYear(1)" aria-label="다음 해"><span class="material-symbols-outlined">chevron_right</span></button>' +
-      '</div>' +
-      '<div class="pw-mp-grid">' +
-        Array.from({ length: 12 }, function(_, i) {
-          var mm = i + 1;
-          var past = (_pwMpYear < nowY) || (_pwMpYear === nowY && mm < nowM);
-          var on = (selY === _pwMpYear && selM === mm);
-          return '<button type="button" class="pw-mp-m' + (on ? ' is-on' : '') + (past ? ' is-past' : '') + '"' +
-            ' onclick="pwPickMonth(' + _pwMpYear + ',' + mm + ')">' + mm + '월</button>';
-        }).join('') +
-      '</div>' +
-      '<div class="pw-mp-foot">' +
-        '<button type="button" onclick="pwPickMonth(' + nowY + ',' + nowM + ')">이번 달</button>' +
-        '<button type="button" onclick="pwClearMonth()">지우기</button>' +
-      '</div>';
+    var yb = pop.querySelector('.pw-mp-y'); if (yb) yb.textContent = _pwMpYear;
+    Array.prototype.forEach.call(pop.querySelectorAll('.pw-mp-m'), function(btn) {
+      var mm = +btn.getAttribute('data-m');
+      var past = (_pwMpYear < nowY) || (_pwMpYear === nowY && mm < nowM);
+      btn.classList.toggle('is-past', past);
+      btn.classList.toggle('is-on', selY === _pwMpYear && selM === mm);
+    });
   }
-  window.pwMpYear = function(d) { _pwMpYear += d; _pwMpRender(); };
+  function _pwMpRender() {
+    var pop = document.getElementById('pw-monthpop');
+    if (!pop) return;
+    if (!pop.getAttribute('data-built')) _pwMpBuild();
+    _pwMpPaint();
+  }
   window.pwPickMonth = function(y, m) {
     var v = y + '-' + String(m).padStart(2, '0');
     var el = document.getElementById('fmo-month'); if (el) el.value = v;
@@ -19102,7 +19127,8 @@
     var lb = document.getElementById('fmo-month-label'); if (lb) lb.textContent = '달 선택';
     var pop = document.getElementById('pw-monthpop'); if (pop) pop.style.display = 'none';
   };
-  document.addEventListener('click', function(e) {
+  // 바깥 클릭 시 닫기 — 팝업 내부는 mousedown에서 이미 처리(preventDefault)하므로 여기 안 옴
+  document.addEventListener('mousedown', function(e) {
     var pop = document.getElementById('pw-monthpop');
     if (!pop || pop.style.display !== 'block') return;
     if (e.target.closest && (e.target.closest('#pw-monthpop') || e.target.closest('#fmo-month-btn'))) return;
