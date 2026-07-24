@@ -22865,7 +22865,8 @@
     var dynW = Math.max(900, Math.round(totalDays / 30 * 100));
     var pct = function(d) { return Math.max(0, Math.min(100, ((d.getTime() - rStart.getTime()) / totalMs * 100))); };
     var todayPct = pct(today);
-    var phaseColors = { synopsis:'#c084fc', draft:'#60a5fa', revision:'#fbbf24', rest:'#cbd5e1', publishing:'#22c55e' };
+    // 연간 파이프라인과 동일한 팔레트·톤 (2026-07-25 디자인 통일)
+    var phaseColors = { synopsis:'#7c3aed', draft:'#3b82f6', revision:'#eab308', rest:'#94a3b8', publishing:'#22c55e' };
     var MO = ['1','2','3','4','5','6','7','8','9','10','11','12'];
     // Month header — collect all months first
     var months = [];
@@ -22875,7 +22876,7 @@
     for (var mi=0;mi<months.length;mi++) {
       var mm = months[mi], nextP = mi<months.length-1 ? months[mi+1].p : 100;
       var mw = nextP - mm.p; var isYr = mm.m===0;
-      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-right: 1px solid var(--slate-200);display:flex;flex-direction:column;justify-content:center;padding:0 6px' + (isYr?';background:rgba(99,102,241,0.06)':'') + '">' +
+      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-left: 1px solid var(--slate-100);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px' + (isYr?';background:rgba(99,102,241,0.04)':'') + '">' +
         (isYr?'<span class="text-[9px] font-black text-indigo-600">'+mm.y+'</span>':'') +
         '<span class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
     }
@@ -22888,19 +22889,18 @@
       var s = seriesById[w.series_id]; if (!s) { s = seriesData.find(function(x){return x.name===w.series_name;})||{name:'?',color:'slate'}; }
       var sColor = (_seriesHexMap[s.color]||'#6366f1');
       var sShort = (s.name||'?').charAt(0);
-        rowsHtml += '<div class="flex items-stretch" style="height:38px;border-bottom:1px solid #f3f4f6">';
+        rowsHtml += '<div class="flex items-stretch" style="height:36px;border-bottom: 1px solid var(--slate-50)">';
         var isDraft = w.status !== 'confirmed';
         var actBtns = '<div class="shrink-0 flex gap-0.5 opacity-40 group-hover:opacity-100 transition-opacity">' +
           (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span></button>' :
                      '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">sync</span></button>') +
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
           '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
-        rowsHtml += '<div class="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fafafa;z-index:6;border-right: 1px solid var(--slate-200);box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)" title="'+w.title+' ('+s.name+')">' +
-          '<span style="width:3px;height:60%;border-radius:2px;background:'+sColor+';margin-left: var(--space-1);flex-shrink:0"></span>' +
-          '<span class="text-[9px] font-black px-1 py-0.5 rounded-full shrink-0" style="color:'+sColor+';border:1px solid '+sColor+'40;background:'+sColor+'08">('+sShort+')</span>' +
+        rowsHtml += '<div class="shrink-0 flex items-center gap-1.5 px-3 text-[11px] font-bold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fff;z-index:6;border-right: 1px solid var(--slate-100)" title="'+w.title+' ('+s.name+')">' +
+          '<span class="text-[10px] font-black shrink-0" style="color:'+sColor+'">'+sShort+'</span>' +
           '<span class="truncate flex-1 min-w-0">'+w.title+'</span>' + actBtns + '</div>';
-        rowsHtml += '<div class="relative flex-1" style="height:38px">';
-        var allPh = ['synopsis','draft','revision'];
+        rowsHtml += '<div class="relative flex-1" style="height:36px">';
+        var allPh = ['synopsis','draft','revision','rest'];
         if (w.publish_start&&w.publish_end) { w.phases = w.phases||{}; w.phases._pub={start:w.publish_start,end:w.publish_end}; allPh.push('_pub'); }
         allPh.forEach(function(pk) {
           var rk = pk==='_pub'?'publishing':pk;
@@ -22912,18 +22912,18 @@
           var cw=Math.max(0.3,cr-cl);
           var col = rk==='publishing'?sColor:(phaseColors[rk]||'#94a3b8');
           var lbl = {synopsis:'시놉',draft:'초고',revision:'퇴고',rest:'휴식',publishing:'연재'}[rk]||rk;
-          rowsHtml += '<div class="absolute rounded-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all overflow-visible" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;top:6px;height:24px;background:'+col+';box-shadow:0 1px 3px rgba(0,0,0,0.1)" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
-          rowsHtml += '<span class="text-[9px] font-bold text-white px-1 truncate block leading-6" style="text-shadow:0 1px 2px rgba(0,0,0,0.3)">'+lbl+'</span>';
+          rowsHtml += '<div class="absolute top-1.5 rounded-sm cursor-pointer" style="left:'+cl.toFixed(1)+'%;width:'+cw.toFixed(1)+'%;height:20px;background:'+col+';opacity:0.85" title="'+lbl+': '+ph.start+' ~ '+ph.end+'">';
+          if (cw > 3) rowsHtml += '<span class="text-[8px] font-bold text-white px-1 truncate block leading-5">'+lbl+'</span>';
           rowsHtml += '</div>';
         });
         if (w.phases&&w.phases._pub) delete w.phases._pub;
-        rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(1)+'%;width:2px;background:#ef4444;opacity:0.4"></div>';
+        rowsHtml += '<div class="absolute top-0 bottom-0" style="left:'+todayPct.toFixed(2)+'%;width:1px;background:#ef4444;opacity:0.5"></div>';
         rowsHtml += '</div></div>';
     });
     var chartHtml = '<div style="min-width:'+dynW+'px;position:relative">' +
-      '<div class="flex items-stretch" style="height:40px;border-bottom:2px solid #e5e7eb">' +
-        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider" style="width:210px;position:sticky;left:0;background:white;z-index:8;border-right: 1px solid var(--slate-200);box-shadow:3px 0 6px -3px rgba(0,0,0,0.06)">작품</div>' +
-        '<div class="relative flex-1" style="background:#f9fafb;border-radius:0 8px 0 0">' + hHtml + '</div>' +
+      '<div class="flex items-stretch" style="height:34px;border-bottom: 1px solid var(--slate-100)">' +
+        '<div class="shrink-0 flex items-center px-3 text-[10px] font-bold text-slate-400" style="width:210px;position:sticky;left:0;background:#fff;z-index:8;border-right: 1px solid var(--slate-100)">작품</div>' +
+        '<div class="relative flex-1">' + hHtml + '</div>' +
       '</div><div>'+rowsHtml+'</div></div>';
     if (chart) chart.innerHTML = chartHtml;
     if (calChart) calChart.innerHTML = chartHtml;
