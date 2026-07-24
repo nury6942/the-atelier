@@ -18233,6 +18233,17 @@
     return { iata:iata, from:rt.from, to:rt.to, km:km, miles:miles,
       prog:p.prog, rate:p.rate, earn:Math.round(miles * p.rate / 100), none:false };
   }
+  // ★ (2026-07-24) 정사각 항공사 로고 — pics.avs.io는 가로형 워드마크라 정사각 칸에서 찌그러진다.
+  //   구글 항공권용 로고(70px 정사각)를 1순위로, 실패 시 kiwi → avs 순으로 폴백. (실측 3곳 모두 200)
+  function _airlineIconHtml(iata, cls) {
+    if (!iata) return '';
+    var c = String(iata).toUpperCase();
+    return '<img class="' + (cls || 'mil-logo') + '" alt="' + c + '" loading="lazy" referrerpolicy="no-referrer"' +
+      ' src="https://www.gstatic.com/flights/airline_logos/70px/' + c + '.png"' +
+      ' onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src=\'https://images.kiwi.com/airlines/64/' + c + '.png\';}' +
+      'else{this.style.display=\'none\';}">';
+  }
+
   // 프로그램 → 항공사(로고·예약 링크) 매핑
   var _FLT_PROG_META = {
     '스카이패스':      { iata:'KE', name:'대한항공',  book:'https://www.koreanair.com/booking/award',
@@ -18285,7 +18296,7 @@
       var head =
         '<div class="mil-head">' +
           '<div class="mil-id">' +
-            (meta.iata ? _airlineLogoHtml(meta.iata) : '') +
+            (meta.iata ? _airlineIconHtml(meta.iata) : '') +
             '<div><p class="mil-prog">' + _spotEsc(meta.name || pk) + '<em>' + _spotEsc(pk) + '</em></p>' +
               '<p class="mil-total">' + total.toLocaleString('ko-KR') + '<span>mi</span></p></div>' +
           '</div>' +
