@@ -8153,6 +8153,10 @@
   }
   // 사람/목록 문서 배제 — Wikidata 설명 기준
   var _SV_REJECT = /(boxer|minister|writer|scrittor|footballer|calciator|politic|actor|attore|attrice|singer|cantante|painter|pittor|Schriftsteller|Fußball|Politiker|Schauspieler|Sänger|Maler|musician|musicista|regista|director|player|giocator|storico|historian|\(\d{4}|\d{4}\s*[–\-]\s*\d{4})/i;
+  // ★ (2026-07-24) 지명·행정구역 문서도 배제 — 실측 오매칭: 사프란→마을 깃발, Meissen 도자기→도시 성당
+  var _SV_REJECT_PLACE = /(comune|citt[aà]|\bcity\b|\btown\b|Stadt|Gemeinde|municipalit|village|commune|\bfrazione\b|castle|Burg\b|cathedral|Dom\b|Landkreis|distret|district|\bregion|provincia|province|\bisland\b|\briver\b|mountain|Berg\b)/i;
+  // 깃발·문장·지도 파일도 제품 사진이 아님
+  var _SV_REJECT_FILE = /(bandiera|wappen|stemma|flag[_-]of|coat[_-]of[_-]arms|karte|map[_-]of|_map\.|location|locator|\bblason\b)/i;
   function _svWikiPhoto(q, lang, cb) {
     var token = String(q).split(/\s+/)[0].toLowerCase();
     var url = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&generator=search' +
@@ -8171,6 +8175,8 @@
       if (/^(List of|Liste |Lista )/i.test(title)) return cb(null);          // 목록 문서
       var desc = ((v.terms && v.terms.description) || [''])[0];
       if (_SV_REJECT.test(desc)) return cb(null);                            // 사람 문서
+      if (_SV_REJECT_PLACE.test(desc)) return cb(null);                      // 도시·마을 등 지명 문서
+      if (_SV_REJECT_FILE.test(decodeURIComponent(thumb))) return cb(null);  // 깃발·문장·지도 이미지
       cb(thumb);
     }).catch(function(){ cb(null); });
   }
