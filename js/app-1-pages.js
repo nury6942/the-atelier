@@ -18187,6 +18187,112 @@
       dots + xa + '</svg>';
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-24) 실시간 시세 조회 — Firebase Functions 프록시(flightPrices) 경유
+  //    가격 API 중 CORS 되는 곳이 없어 브라우저 직접 호출이 불가 → 함수가 중계한다.
+  //    토큰은 서버 시크릿(TRAVELPAYOUTS_TOKEN)에만 있고 브라우저엔 안 내려온다.
+  // ═══════════════════════════════════════════════════════════════════
+  var FLT_PRICE_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/flightPrices';
+  function _fltAuthToken() { try { return localStorage.getItem('atelier_coach_auth_token') || ''; } catch(e) { return ''; } }
+  async function _fltFetchPrices(params) {
+    var tk = _fltAuthToken();
+    if (!tk) throw new Error('인증 토큰이 없어. 설정 → AI 코치 설정에서 먼저 입력해줘.');
+    var url = FLT_PRICE_API + '?' + new URLSearchParams(params).toString();
+    var r = await fetch(url, { headers: { 'X-Atelier-Token': tk } });
+    var j = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error(j.detail || j.error || ('HTTP ' + r.status));
+    return j;
+  }
+  function _fltKrw(n) { return '₩' + Math.round(Number(n) || 0).toLocaleString('ko-KR'); }
+
+  // ── 월별 최저가 그리드 ("이달에 제일 싼 날") ──
+  window.fltMonthSearch = async function() {
+    var g = function(id){ var e = document.getElementById(id); return e ? e.value.trim().toUpperCase() : ''; };
+    var from = g('fmo-from'), to = g('fmo-to');
+    var monEl = document.getElementById('fmo-month');
+    var month = monEl ? monEl.value.trim() : '';
+    var out = document.getElementById('flight-month-out');
+    if (!out) return;
+    if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) { out.innerHTML = '<p class="flt-acc-note">공항 코드를 IATA 3글자로 넣어줘 (예: ICN → FRA)</p>'; return; }
+    if (!/^\d{4}-\d{2}$/.test(month)) { out.innerHTML = '<p class="flt-acc-note">월을 골라줘</p>'; return; }
+    out.innerHTML = '<p class="flt-acc-note">조회 중…</p>';
+    try {
+      var j = await _fltFetchPrices({ mode: 'month', origin: from, destination: to, month: month, currency: 'krw' });
+      var rows = (j.data && j.data.data) || {};
+      var keys = Object.keys(rows);
+      if (!keys.length) { out.innerHTML = '<p class="flt-acc-note">이 달엔 조회된 가격이 없어. 다른 달로 바꿔볼래?</p>'; return; }
+      var list = keys.map(function(k) {
+        var v = rows[k] || {};
+        return { date: String(v.departure_at || k).slice(0, 10), price: Number(v.price) || 0,
+          airline: v.airline || '', transfers: v.transfers, flight: v.flight_number || '' };
+      }).filter(function(x){ return x.price > 0; }).sort(function(a, b){ return a.date.localeCompare(b.date); });
+      if (!list.length) { out.innerHTML = '<p class="flt-acc-note">이 달엔 조회된 가격이 없어.</p>'; return; }
+      var min = Math.min.apply(null, list.map(function(x){ return x.price; }));
+      var max = Math.max.apply(null, list.map(function(x){ return x.price; }));
+      var best = list.filter(function(x){ return x.price === min; });
+      out.innerHTML =
+        '<div class="flt-mo-best">가장 싼 날 <b>' + best.map(function(b){ return b.date.slice(5).replace('-', '/'); }).join(', ') +
+          '</b><em>' + _fltKrw(min) + '</em>' +
+          '<span class="flt-dim">최고 ' + _fltKrw(max) + ' · 차이 ' + _fltKrw(max - min) + '</span></div>' +
+        '<div class="flt-mo-grid">' + list.map(function(x) {
+          var ratio = max > min ? (x.price - min) / (max - min) : 0;
+          var cls = x.price === min ? ' is-best' : (ratio <= 0.25 ? ' is-cheap' : (ratio >= 0.75 ? ' is-pricey' : ''));
+          var d = x.date.slice(8);
+          return '<button class="flt-mo-day' + cls + '" title="' + x.date + (x.airline ? ' · ' + x.airline + x.flight : '') +
+            (x.transfers === 0 ? ' · 직항' : (x.transfers ? ' · 경유 ' + x.transfers : '')) + '"' +
+            ' onclick="fltUseMonthDate(\'' + x.date + '\',' + x.price + ')">' +
+            '<span class="flt-mo-d">' + d + '</span>' +
+            '<span class="flt-mo-p">' + Math.round(x.price / 10000 * 10) / 10 + '만</span>' +
+            (x.transfers === 0 ? '<i title="직항">•</i>' : '') +
+          '</button>';
+        }).join('') + '</div>' +
+        '<p class="flt-acc-note">날짜를 누르면 관심 노선 등록 폼에 자동으로 채워져. 조회 시각 ' +
+          new Date(j.fetched_at).toLocaleString('ko-KR') + ' · 편도 기준 · 출처 Aviasales</p>';
+    } catch(e) {
+      out.innerHTML = '<p class="flt-acc-note flt-err">' + _spotEsc(e.message) +
+        (/Unauthorized|토큰/.test(e.message) ? '' : ' — Travelpayouts 토큰이 설정됐는지 확인해줘') + '</p>';
+    }
+  };
+  window.fltUseMonthDate = function(date, price) {
+    var f = document.getElementById('flight-watch-form');
+    if (f && f.style.display !== 'block') window.fltToggleWatchForm();
+    var set = function(id, v){ var e = document.getElementById(id); if (e) e.value = v; };
+    set('fw-from', (document.getElementById('fmo-from') || {}).value || '');
+    set('fw-to', (document.getElementById('fmo-to') || {}).value || '');
+    set('fw-depart', date);
+    set('fw-memo', '월별 최저가 조회에서 선택 · ' + _fltKrw(price));
+    var el = document.getElementById('flight-watch-form');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  // ── 관심 노선 현재 최저가 조회 → 가격 로그에 자동 기록 ──
+  window.fltCheckPrice = async function(watchId) {
+    var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
+    if (!w) return;
+    var btn = document.querySelector('[data-fltcheck="' + watchId + '"]');
+    if (btn) { btn.disabled = true; btn.textContent = '조회 중…'; }
+    try {
+      var p = { mode: 'cheapest', origin: w.route_from, destination: w.route_to, currency: 'krw' };
+      if (w.depart_date) p.depart_date = w.depart_date;
+      if (w.return_date) p.return_date = w.return_date; else p.one_way = 'true';
+      var j = await _fltFetchPrices(p);
+      var arr = (j.data && j.data.data) || [];
+      if (!arr.length) throw new Error('조회된 가격이 없어');
+      var cheapest = arr.reduce(function(a, b){ return (Number(b.price) < Number(a.price)) ? b : a; });
+      await fbAdd('flight_watch', { type: 'flight_price', watch_id: watchId,
+        price_krw: Math.round(Number(cheapest.price) || 0), source: 'Aviasales (자동)',
+        note: (cheapest.airline || '') + (cheapest.flight_number || '') +
+          (cheapest.transfers === 0 ? ' 직항' : (cheapest.transfers ? ' 경유' + cheapest.transfers : '')) +
+          (cheapest.departure_at ? ' · ' + String(cheapest.departure_at).slice(0, 10) : ''),
+        ts: new Date().toISOString() });
+      await _fltLoadWatch();
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ 최저가 ' + _fltKrw(cheapest.price) + ' 기록했어');
+    } catch(e) {
+      alert('시세 조회 실패: ' + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '최저가 조회'; }
+    }
+  };
+
   function _fltRenderWatch() {
     var box = document.getElementById('flight-watch-list');
     if (!box) return;
@@ -18247,8 +18353,12 @@
           '<div><p class="flt-eyebrow">Watching</p>' +
             '<h4 class="flt-watch-route">' + _fltEsc(w.route_from || '—') + ' → ' + _fltEsc(w.route_to || '—') + '</h4>' +
             '<p class="flt-watch-sub">' + dates + (w.memo ? ' · ' + _fltEsc(w.memo) : '') + '</p></div>' +
-          '<button class="flt-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제">' +
-            '<span class="material-symbols-outlined">delete</span></button>' +
+          '<div class="flt-watch-act">' +
+            '<button class="flt-chk" data-fltcheck="' + w._id + '" onclick="fltCheckPrice(\'' + w._id + '\')" ' +
+              'title="지금 최저가를 조회해서 아래 로그에 자동 기록해요">최저가 조회</button>' +
+            '<button class="flt-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제">' +
+              '<span class="material-symbols-outlined">delete</span></button>' +
+          '</div>' +
         '</div>' + statHtml + chart +
         '<div class="flt-snap-form">' +
           '<input id="fp-amt-' + w._id + '" type="text" inputmode="numeric" placeholder="금액 ₩" class="flt-in is-amt">' +

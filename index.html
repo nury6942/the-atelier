@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=269" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=270" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6182,6 +6182,39 @@
     .flt-acc-unk { font-size:10.5px; font-weight:700; color:#b45309; white-space:nowrap; }
     .flt-acc-note { margin:9px 0 0; font-size:10.5px; line-height:1.6; color:#94a3b8; }
     @media (max-width:720px){ .flt-acc-row { grid-template-columns:1fr auto; gap:4px 10px; } }
+    /* ★ (2026-07-24) 월별 최저가 그리드 — 싼 날은 초록, 비싼 날은 로즈 */
+    .flt-mo { border:1px solid #e2e8f0; border-radius:14px; padding:13px 15px 15px; margin-bottom:16px; background:#fff; }
+    .flt-mo-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .flt-mo-bar .flt-eyebrow { margin:0 4px 0 0; }
+    .flt-in.is-iata { width:66px; text-align:center; font-family:var(--font-num); font-weight:800;
+      letter-spacing:0.08em; text-transform:uppercase; }
+    .flt-mo-arrow { color:#94a3b8; font-weight:700; }
+    .flt-mo-best { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; margin:14px 0 10px;
+      font-size:12px; font-weight:700; color:#475569; }
+    .flt-mo-best b { font-family:var(--font-num); font-variant-numeric:tabular-nums; color:#047857; font-size:13px; }
+    .flt-mo-best em { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:16px; font-weight:800; color:#059669; }
+    .flt-mo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(62px,1fr)); gap:6px; }
+    .flt-mo-day { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px;
+      padding:7px 4px 6px; border:1px solid #e9eef5; border-radius:9px; background:#fff; cursor:pointer;
+      transition:all .15s; }
+    .flt-mo-day:hover { border-color:#c4b5fd; transform:translateY(-1px); }
+    .flt-mo-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; color:#94a3b8; }
+    .flt-mo-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px; font-weight:800; color:#334155; }
+    .flt-mo-day.is-cheap { background:#f0fdf4; border-color:#bbf7d0; }
+    .flt-mo-day.is-cheap .flt-mo-p { color:#047857; }
+    .flt-mo-day.is-pricey { background:#fff1f2; border-color:#fecdd3; }
+    .flt-mo-day.is-pricey .flt-mo-p { color:#be123c; }
+    .flt-mo-day.is-best { background:#059669; border-color:#059669; box-shadow:0 3px 10px rgba(5,150,105,.28); }
+    .flt-mo-day.is-best .flt-mo-d, .flt-mo-day.is-best .flt-mo-p { color:#fff; }
+    .flt-mo-day i { position:absolute; top:3px; right:5px; font-style:normal; font-size:13px; line-height:1; color:#7c3aed; }
+    .flt-mo-day.is-best i { color:#a7f3d0; }
+    .flt-acc-note.flt-err { color:#be123c; font-weight:600; }
+    .flt-watch-act { display:flex; align-items:center; gap:6px; flex:none; }
+    .flt-chk { border:1px solid #ddd6fe; background:#f5f3ff; color:#6d28d9; border-radius:999px;
+      padding:5px 11px; font-size:10.5px; font-weight:800; cursor:pointer; white-space:nowrap; transition:all .15s; }
+    .flt-chk:hover:not(:disabled) { background:#ede9fe; border-color:#c4b5fd; }
+    .flt-chk:disabled { opacity:.55; cursor:default; }
 
     /* ── 여권 배너 ── */
     .flt-passport { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;
@@ -11663,6 +11696,18 @@
             <button onclick="fltToggleWatchForm()" class="trav-act"><span class="material-symbols-outlined">add</span> 노선 추가</button>
           </div>
         </div>
+        <!-- ★ (2026-07-24) 월별 최저가 — "이 달에 제일 싼 날" 한 화면. Functions 프록시 경유 -->
+        <div class="flt-mo">
+          <div class="flt-mo-bar">
+            <p class="flt-eyebrow">Cheapest by date</p>
+            <input id="fmo-from" type="text" placeholder="ICN" maxlength="3" class="flt-in is-iata">
+            <span class="flt-mo-arrow">→</span>
+            <input id="fmo-to" type="text" placeholder="FRA" maxlength="3" class="flt-in is-iata">
+            <input id="fmo-month" type="month" class="flt-in">
+            <button onclick="fltMonthSearch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">search</span> 이 달 최저가</button>
+          </div>
+          <div id="flight-month-out"></div>
+        </div>
         <div id="flight-watch-form" class="flt-watch-form" style="display:none">
           <div class="flt-wf-row">
             <input id="fw-from" type="text" placeholder="출발 (예: ICN)" class="flt-in">
@@ -14428,7 +14473,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=269" defer></script>
+<script src="js/app-1-pages.js?v=270" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
