@@ -19671,46 +19671,62 @@
         : '<span class="pw-tm-empty">추적할 여행 달을 추가하세요 →</span>';
       statTxt += '<button class="pw-tm-add" onclick="fltAddTargetMonth(\'' + w._id + '\')" title="추적할 달 추가"><span class="material-symbols-outlined">add</span></button>';
 
-      // 가장 최근 기록의 상세(항공사·편명·경유·출발일)
-      var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;
-      var lastDetail = lastSnap ? _fltSnapDetail(lastSnap) : '';
-      // 기록 1건이면 최저/최고/현재가 전부 같은 값 → 노이즈. 2건 이상일 때만 최저·최고 표시
-      var stats = pts.length ? '<div class="pw-stats">' +
-        (pts.length > 1
-          ? '<div><span class="pw-l">최저가</span><b class="is-lo">' + _trvAmtHtml(lo) + '</b></div>' +
-            '<div><span class="pw-l">최고가</span><b>' + _trvAmtHtml(hi) + '</b></div>'
-          : '') +
-        '<div><span class="pw-l">항공권가</span><b>' + _trvAmtHtml(cur) +
-          (diff ? '<i class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' + (diff < 0 ? '▼' : '▲') +
-            Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</b></div>' +
-        '<div><span class="pw-l">기록</span><b>' + pts.length + '건</b></div>' +
-      '</div>' +
-      (lastDetail ? '<div class="pw-lastdet">' + lastDetail + '</div>' : '') : '';
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
       var fuelInfo = _fuelForRoute(w.route_from, w.route_to);
-      // ★ 히어로 가격 — 카드에서 가장 먼저 봐야 할 숫자(실제 낼 돈)를 맨 위로
       var fuelKrw = fuelInfo ? fuelInfo.krw * (w.return_date ? 2 : 1) : 0;
-      var heroHtml = cur ? '<div class="pw-hero">' +
-        '<div class="pw-hero-m">' +
-          '<span class="pw-l">' + (fuelInfo ? '실제 낼 돈' : '현재가') + '</span>' +
-          '<b>' + _fltKrw(cur + fuelKrw) + '</b>' +
-        '</div>' +
-        (fuelInfo ? '<div class="pw-hero-s"><span>항공권 ' + _fltKrw(cur) + '</span>' +
-          '<span>+ 유류 ' + _fltKrw(fuelKrw) + '</span>' +
-          '<em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></div>' : '') +
+
+      // ═══ ① 가격 블록 — 큰 숫자 + 분해 + 최저/최고 + 추이 차트 + 판정을 한 덩어리로 ═══
+      //    (예전엔 히어로·통계·차트·판정이 4개 줄로 흩어져 같은 숫자가 3번 반복됐다)
+      var mstats = pts.length > 1 ? '<div class="pw-mstats">' +
+        '<span><i>최저</i><b class="is-lo">' + _fltKrw(lo) + '</b></span>' +
+        '<span><i>최고</i><b>' + _fltKrw(hi) + '</b></span>' +
+        (diff ? '<span><i>직전 대비</i><b class="' + (diff < 0 ? 'is-down' : 'is-up') + '">' +
+          (diff < 0 ? '▼' : '▲') + Math.abs(diff).toLocaleString('ko-KR') + '</b></span>' : '') +
       '</div>' : '';
-      var realHtml = '';
-      var chart = pts.length > 1 ? '<div class="pw-chart">' + _fltPriceChartSvg(pts) + '</div>' : '';
-      var snapList = snaps.length ? '<ul class="pw-snaps">' + snaps.slice().reverse().map(function(sn) {
-        var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
-        var det = _fltSnapDetail(sn);
-        return '<li' + (isAuto ? ' class="is-auto"' : '') + '><span class="pw-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
-          '<span class="pw-snap-p">' + _trvAmtHtml(sn.price_krw) +
-            (sn.fuel_krw ? '<em>+유류 ' + Math.round(Number(sn.fuel_krw)/10000) + '만</em>' : '') + '</span>' +
-          '<span class="pw-snap-s">' + (isAuto ? '<b class="pw-auto">AUTO</b>' : '') +
-            (det || _fltEsc(sn.source || '')) + '</span>' +
-          '<button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제"><span class="material-symbols-outlined">close</span></button></li>';
-      }).join('') + '</ul>' : '';
+      var moneyBlock = '<div class="pw-money">' +
+        '<div class="pw-money-top">' +
+          '<div class="pw-money-l">' +
+            (cur
+              ? '<span class="pw-l">' + (fuelInfo ? '실제 낼 돈' : '현재가') + '</span>' +
+                '<b class="pw-big">' + _fltKrw(cur + fuelKrw) + '</b>' +
+                (fuelInfo ? '<p class="pw-brk">항공권 ' + _fltKrw(cur) + ' + 유류 ' + _fltKrw(fuelKrw) +
+                  ' <em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></p>' : '')
+              : '<span class="pw-l">가격</span><b class="pw-big is-dim">기록 없음</b>') +
+            mstats +
+          '</div>' +
+          (pts.length > 1 ? '<div class="pw-money-r">' + _fltPriceChartSvg(pts) + '</div>' : '') +
+        '</div>' +
+        '<div class="pw-vline is-' + vd.key + '">' +
+          '<span class="material-symbols-outlined">' +
+            (vd.key === 'buy' ? 'check_circle' : (vd.key === 'wait' ? 'schedule' : 'info')) + '</span>' +
+          '<p><b>' + vd.label + '</b> ' + vd.why + '</p>' +
+          '<div class="pw-bar"><span style="width:' + prog + '%"></span></div>' +
+        '</div>' +
+      '</div>';
+
+      // ═══ ② 기록 표 — 칩(최근 상세) + 리스트로 중복되던 걸 표 하나로 통합 ═══
+      var logTable = snaps.length ? '<div class="pw-logs"><table class="pw-lt">' +
+        '<thead><tr><th>기록일</th><th class="ta-r">항공권</th><th class="ta-r">유류</th>' +
+        '<th>항공사</th><th>경유</th><th>출발일</th><th>조회</th><th></th></tr></thead><tbody>' +
+        snaps.slice().reverse().map(function(sn) {
+          var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
+          var alab = sn.airline ? (_fltAirlineLabel(sn.airline) + (sn.flight_no ? ' ' + sn.flight_no : '')) : (sn.airline_name || '');
+          var trf = (typeof sn.transfers === 'number')
+            ? (sn.transfers === 0 ? '<b class="is-direct">직항</b>' : '경유 ' + sn.transfers) : '—';
+          var dep = sn.depart_on ? (_spotEsc(sn.depart_on) + (sn.return_on ? ' ~ ' + _spotEsc(sn.return_on) : '')) : '—';
+          return '<tr' + (isAuto ? ' class="is-auto"' : '') + '>' +
+            '<td class="num">' + _fltEsc(String(sn.ts || '').slice(0, 10)) +
+              (isAuto ? ' <b class="pw-auto">AUTO</b>' : '') + '</td>' +
+            '<td class="ta-r num is-p">' + _fltKrw(sn.price_krw) + '</td>' +
+            '<td class="ta-r num is-dim">' + (sn.fuel_krw ? _fltKrw(sn.fuel_krw) : '—') + '</td>' +
+            '<td>' + (alab ? _spotEsc(alab) : (_fltEsc(sn.source || '') || '—')) + '</td>' +
+            '<td>' + trf + '</td>' +
+            '<td class="num">' + dep + '</td>' +
+            '<td class="is-dim">' + (sn.query_month ? _spotEsc(sn.query_month) : '—') + '</td>' +
+            '<td class="ta-r"><button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제">' +
+              '<span class="material-symbols-outlined">close</span></button></td>' +
+          '</tr>';
+        }).join('') + '</tbody></table></div>' : '';
 
       return '<article class="pw-card">' +
         '<div class="pw-card-head">' +
@@ -19726,14 +19742,7 @@
             '<button class="pw-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제"><span class="material-symbols-outlined">delete</span></button>' +
           '</div>' +
         '</div>' +
-        '<div class="pw-verdict is-' + vd.key + '">' +
-          '<div class="pw-vd-l"><span class="material-symbols-outlined">' +
-            (vd.key === 'buy' ? 'check_circle' : (vd.key === 'wait' ? 'schedule' : 'info')) + '</span>' +
-            '<p><b>' + vd.label + '</b> ' + vd.why + '</p></div>' +
-          '<div class="pw-bar"><span style="width:' + prog + '%"></span></div>' +
-        '</div>' +
-        heroHtml +
-        stats + realHtml + chart + _fltBookLinks(w) + snapList +
+        moneyBlock + logTable + _fltBookLinks(w) +
         // 직접 입력은 가끔 쓰는 기능 → 기본 접힘. 열면 폼 톤(회색 배경+테두리)으로 데이터와 구분
         '<details class="pw-recwrap"><summary><span class="material-symbols-outlined">edit_note</span>가격 직접 입력</summary>' +
           '<div class="pw-rec">' +

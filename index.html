@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=303" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=304" as="script">
   <link rel="preload" href="js/app-2-init.js?v=173" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6499,6 +6499,56 @@
     .pw-snap-s { color:#7b7487; overflow:hidden; display:flex; align-items:center; gap:6px;
       flex-wrap:wrap; min-width:0; }
     .pw-snap-s > span { white-space:nowrap; }
+    /* ★ (2026-07-25) UX 재정리 — 가격 블록(숫자+차트+판정) 한 덩어리 */
+    .pw-money { border-bottom:1px solid #eeeef0; }
+    .pw-money-top { display:flex; align-items:center; justify-content:space-between; gap:24px;
+      flex-wrap:wrap; padding:18px 24px 14px; }
+    .pw-money-l { min-width:210px; }
+    .pw-big { display:block; margin-top:3px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:32px; font-weight:800; letter-spacing:-0.035em; color:#7c3aed; line-height:1.08; }
+    .pw-big.is-dim { color:#ccc3d8; font-size:20px; }
+    .pw-brk { margin:6px 0 0; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:11.5px; color:#7b7487; }
+    .pw-brk em { font-style:normal; font-family:'Manrope','Pretendard',sans-serif; color:#ccc3d8; margin-left:6px; }
+    .pw-mstats { display:flex; gap:18px; flex-wrap:wrap; margin-top:12px; }
+    .pw-mstats span { display:flex; flex-direction:column; gap:2px; }
+    .pw-mstats i { font-style:normal; font-size:9px; font-weight:800; letter-spacing:0.09em;
+      text-transform:uppercase; color:#ccc3d8; }
+    .pw-mstats b { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:13px;
+      font-weight:800; color:#1a1c1d; }
+    .pw-mstats b.is-lo { color:#15803d; }
+    .pw-mstats b.is-down { color:#15803d; }
+    .pw-mstats b.is-up { color:#be123c; }
+    .pw-money-r { flex:1; min-width:200px; max-width:420px; }
+    .pw-vline { display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      padding:9px 24px; background:#f7f7f9; border-top:1px solid #f1f1f4; }
+    .pw-vline .material-symbols-outlined { font-size:17px; color:#7b7487; }
+    .pw-vline p { margin:0; font-size:11.5px; color:#7b7487; }
+    .pw-vline p b { color:#1a1c1d; margin-right:4px; }
+    .pw-vline .pw-bar { flex:1; min-width:110px; height:4px; background:#e8e8ec; border-radius:2px; overflow:hidden; }
+    .pw-vline .pw-bar span { display:block; height:100%; background:#7c3aed; }
+    .pw-vline.is-buy { background:#f0fdf4; border-top-color:#dcfce7; }
+    .pw-vline.is-buy .material-symbols-outlined, .pw-vline.is-buy p b { color:#15803d; }
+    .pw-vline.is-buy .pw-bar span { background:#15803d; }
+    .pw-vline.is-wait { background:#fff1f2; border-top-color:#ffe4e6; }
+    .pw-vline.is-wait .material-symbols-outlined, .pw-vline.is-wait p b { color:#be123c; }
+    .pw-vline.is-wait .pw-bar span { background:#be123c; }
+    /* 기록 표 — 칩+리스트 중복을 표 하나로 */
+    .pw-logs { overflow-x:auto; border-bottom:1px solid #eeeef0; }
+    .pw-lt { width:100%; border-collapse:collapse; font-size:11.5px; }
+    .pw-lt th { text-align:left; padding:8px 12px; font-size:9px; font-weight:800; letter-spacing:0.09em;
+      text-transform:uppercase; color:#ccc3d8; border-bottom:1px solid #f1f1f4; white-space:nowrap; }
+    .pw-lt td { padding:9px 12px; border-bottom:1px solid #f6f6f8; color:#4a4455; white-space:nowrap; }
+    .pw-lt tr:last-child td { border-bottom:none; }
+    .pw-lt tr.is-auto { background:#fbfaff; }
+    .pw-lt .ta-r { text-align:right; }
+    .pw-lt .num { font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+    .pw-lt td.is-p { font-weight:800; color:#1a1c1d; }
+    .pw-lt td.is-dim { color:#a9a2b5; }
+    .pw-lt b.is-direct { color:#15803d; font-weight:700; }
+    .pw-lt button { border:none; background:none; color:#ccc3d8; cursor:pointer; padding:2px; }
+    .pw-lt button:hover { color:#ba1a1a; }
+    .pw-lt .material-symbols-outlined { font-size:15px; }
     /* ★ (2026-07-25) UX 정리 — 히어로 가격 / 접이식 직접입력 */
     .pw-hero { display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap;
       padding:16px 24px; border-bottom:1px solid #eeeef0; }
@@ -15160,7 +15210,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=303" defer></script>
+<script src="js/app-1-pages.js?v=304" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
