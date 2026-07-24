@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=293" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=294" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6330,6 +6330,46 @@
     .pw-in:focus { border-bottom-color:#7c3aed; }
     .pw-arrow { display:flex; align-items:center; justify-content:center; height:52px; color:#7b7487; }
     .pw-out:not(:empty) { margin-top:20px; padding-top:18px; border-top:1px solid #eeeef0; }
+    /* ★ (2026-07-24) 월별 요금 차트 — 스카이스캐너 스타일 세로 막대 */
+    .pw-mo-load { font-size:12.5px; color:#7b7487; padding:20px 0; }
+    .pw-mo-head { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+    .pw-mo-nav { display:flex; align-items:center; gap:12px; }
+    .pw-mo-nav b { font-size:16px; font-weight:800; color:#1a1c1d; letter-spacing:-0.01em; min-width:96px; text-align:center; }
+    .pw-mo-nav button { border:1px solid #e5e5e5; background:#fff; cursor:pointer; padding:5px 7px; display:flex; color:#1a1c1d; transition:background .15s; }
+    .pw-mo-nav button:hover { background:#f3f3f5; }
+    .pw-mo-nav .material-symbols-outlined { font-size:19px; }
+    .pw-mo-sum { text-align:right; }
+    .pw-mo-sum b { display:block; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:14px;
+      font-weight:800; color:#15803d; margin-top:2px; }
+    .pw-mo-sum em { font-style:normal; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:10.5px; font-weight:600; color:#94a3b8; }
+    .pw-mo-chart { display:flex; align-items:flex-end; gap:3px; height:190px; overflow-x:auto; padding-bottom:2px; }
+    .pw-mo-col { flex:1 1 0; min-width:26px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+      gap:3px; height:100%; border:none; background:none; cursor:pointer; padding:0; position:relative; }
+    .pw-mo-col.is-empty { cursor:default; opacity:.5; }
+    .pw-mo-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:9px; font-weight:700;
+      color:#94a3b8; opacity:0; transition:opacity .12s; }
+    .pw-mo-col:hover .pw-mo-p, .pw-mo-col.is-best .pw-mo-p { opacity:1; }
+    .pw-mo-col.is-best .pw-mo-p { color:#15803d; font-weight:800; }
+    .pw-mo-bar { width:76%; border-radius:3px 3px 0 0; background:#d8d3e4; transition:background .12s, transform .12s; }
+    .pw-mo-col:hover .pw-mo-bar { transform:scaleY(1.02); }
+    .pw-mo-col.is-cheap .pw-mo-bar { background:#a7f3d0; }
+    .pw-mo-col.is-pricey .pw-mo-bar { background:#e6c8ff; }
+    .pw-mo-col.is-best .pw-mo-bar { background:#15803d; }
+    .pw-mo-col:not(.is-best):not(.is-cheap):not(.is-pricey):not(.is-empty) .pw-mo-bar { background:#c4b5fd; }
+    .pw-mo-dir { position:absolute; bottom:26px; width:4px; height:4px; border-radius:50%; background:#fff;
+      box-shadow:0 0 0 1.5px #15803d; }
+    .pw-mo-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; color:#4a4455; }
+    .pw-mo-w { font-size:8.5px; font-weight:700; color:#ccc3d8; }
+    .pw-mo-w.is-sun { color:#e11d48; }
+    .pw-mo-w.is-sat { color:#2563eb; }
+    .pw-mo-legend { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:14px;
+      font-size:10px; font-weight:700; color:#7b7487; }
+    .pw-mo-legend .k { width:12px; height:8px; display:inline-block; margin-left:10px; }
+    .pw-mo-legend .k:first-child { margin-left:0; }
+    .pw-mo-legend .k.best { background:#15803d; } .pw-mo-legend .k.cheap { background:#a7f3d0; }
+    .pw-mo-legend .k.mid { background:#c4b5fd; } .pw-mo-legend .k.pricey { background:#e6c8ff; }
+    .pw-mo-legend .k.dir { width:8px; height:8px; border-radius:50%; background:#fff; box-shadow:0 0 0 1.5px #15803d; }
 
     .pw-form { border:1px solid #e5e5e5; background:#fff; padding:20px 24px; margin-bottom:20px; }
     .pw-form-grid { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
@@ -15019,7 +15059,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=293" defer></script>
+<script src="js/app-1-pages.js?v=294" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

@@ -18757,53 +18757,116 @@
   function _fltKrw(n) { return '₩' + Math.round(Number(n) || 0).toLocaleString('ko-KR'); }
 
   // ── 월별 최저가 그리드 ("이달에 제일 싼 날") ──
+  // ★ (2026-07-24) 스카이스캐너 '월별 요금' 차트 — 날짜별 세로 막대, 싼 날은 진하게.
+  //   데이터는 이미 다 온다(30일·항공사·직항). 문제는 안 보이던 것 → 큰 차트로 전면.
+  var _pwMoState = { from:'', to:'', month:'', oneway:false };
   window.fltMonthSearch = async function() {
     var g = function(id){ var e = document.getElementById(id); return e ? e.value.trim().toUpperCase() : ''; };
     var from = g('fmo-from'), to = g('fmo-to');
-    var monEl = document.getElementById('fmo-month');
-    var month = monEl ? monEl.value.trim() : '';
+    var month = (document.getElementById('fmo-month') || {}).value || '';
     var out = document.getElementById('flight-month-out');
     if (!out) return;
-    if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) { out.innerHTML = '<p class="flt-acc-note">공항 코드를 IATA 3글자로 넣어줘 (예: ICN → FRA)</p>'; return; }
-    if (!/^\d{4}-\d{2}$/.test(month)) { out.innerHTML = '<p class="flt-acc-note">월을 골라줘</p>'; return; }
-    out.innerHTML = '<p class="flt-acc-note">조회 중…</p>';
+    if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) { out.innerHTML = '<p class="flt-acc-note">출발·도착 공항을 골라줘 (예: 인천 → 도쿄)</p>'; return; }
+    if (!/^\d{4}-\d{2}$/.test(month)) { out.innerHTML = '<p class="flt-acc-note">기준 설정에서 달을 골라줘</p>'; return; }
+    _pwMoState = { from:from, to:to, month:month, oneway:(typeof window._pwIsOneWay==='function' && window._pwIsOneWay()) };
+    return _pwMoRender();
+  };
+  window.pwMoStep = function(delta) {
+    var m = /^(\d{4})-(\d{2})$/.exec(_pwMoState.month); if (!m) return;
+    var y = +m[1], mo = +m[2] + delta;
+    while (mo > 12) { mo -= 12; y++; } while (mo < 1) { mo += 12; y--; }
+    _pwMoState.month = y + '-' + String(mo).padStart(2, '0');
+    var el = document.getElementById('fmo-month'); if (el) el.value = _pwMoState.month;
+    var lb = document.getElementById('fmo-month-label'); if (lb) lb.textContent = y + '년 ' + mo + '월';
+    _pwMoRender();
+  };
+  async function _pwMoRender() {
+    var st = _pwMoState, out = document.getElementById('flight-month-out');
+    if (!out) return;
+    var m = /^(\d{4})-(\d{2})$/.exec(st.month);
+    var ml = m ? (m[1] + '년 ' + (+m[2]) + '월') : st.month;
+    out.innerHTML = '<div class="pw-mo-load">' + _spotEsc(st.from) + ' → ' + _spotEsc(st.to) + ' · ' + _spotEsc(ml) + ' 조회 중…</div>';
     try {
-      var j = await _fltFetchPrices({ mode: 'month', origin: from, destination: to, month: month, currency: 'krw' });
+      var j = await _fltFetchPrices({ mode:'month', origin:st.from, destination:st.to, month:st.month, currency:'krw', one_way:String(st.oneway) });
       var rows = (j.data && j.data.data) || {};
-      var keys = Object.keys(rows);
-      if (!keys.length) { return _pwSuggestMonths(from, to, month, out); }
-      var list = keys.map(function(k) {
+      var list = Object.keys(rows).map(function(k) {
         var v = rows[k] || {};
-        return { date: String(v.departure_at || k).slice(0, 10), price: Number(v.price) || 0,
-          airline: v.airline || '', transfers: v.transfers, flight: v.flight_number || '' };
-      }).filter(function(x){ return x.price > 0; }).sort(function(a, b){ return a.date.localeCompare(b.date); });
-      if (!list.length) { return _pwSuggestMonths(from, to, month, out); }
+        return { date:String(v.departure_at || k).slice(0,10), day:+String(v.departure_at || k).slice(8,10),
+          price:Number(v.price) || 0, airline:v.airline || '', transfers:v.transfers, flight:v.flight_number || '' };
+      }).filter(function(x){ return x.price > 0; }).sort(function(a,b){ return a.day - b.day; });
+      if (!list.length) { var w={route_from:st.from,route_to:st.to,return_date:st.oneway?'':'x'}; return _fltCheckFallback(w, st.month); }
+
       var min = Math.min.apply(null, list.map(function(x){ return x.price; }));
       var max = Math.max.apply(null, list.map(function(x){ return x.price; }));
-      var best = list.filter(function(x){ return x.price === min; });
+      var best = list.filter(function(x){ return x.price === min; })[0];
+      // 그 달의 일수만큼 슬롯을 만들어 빈 날은 흐리게(스카이스캐너처럼 달력 폭 유지)
+      var dim = new Date(+m[1], +m[2], 0).getDate();
+      var byDay = {}; list.forEach(function(x){ byDay[x.day] = x; });
+      var dow = ['일','월','화','수','목','금','토'];
+      var bars = '';
+      for (var d = 1; d <= dim; d++) {
+        var x = byDay[d];
+        var wd = new Date(+m[1], +m[2]-1, d).getDay();
+        if (!x) {
+          bars += '<div class="pw-mo-col is-empty"><span class="pw-mo-bar" style="height:6%"></span>' +
+            '<span class="pw-mo-d">' + d + '</span><span class="pw-mo-w' + (wd===0?' is-sun':(wd===6?' is-sat':'')) + '">' + dow[wd] + '</span></div>';
+          continue;
+        }
+        var ratio = max > min ? (x.price - min) / (max - min) : 0;
+        var h = 14 + Math.round((1 - ratio) * 82);            // 쌀수록 높게 (스카이스캐너 반대지만 '싼 날 눈에 띄게')
+        var cls = x.price === min ? ' is-best' : (ratio <= 0.25 ? ' is-cheap' : (ratio >= 0.72 ? ' is-pricey' : ''));
+        var tip = x.date + ' · ' + _fltKrw(x.price) + (x.airline ? ' · ' + _fltAirlineLabel(x.airline) : '') +
+          (x.transfers === 0 ? ' · 직항' : (x.transfers ? ' · 경유' + x.transfers : ''));
+        bars += '<button class="pw-mo-col' + cls + '" title="' + _spotEsc(tip) + '" onclick="pwMoLog(\'' + x.date + '\',' + x.price + ',\'' + (x.airline||'') + '\',' + (x.transfers==null?'null':x.transfers) + ',\'' + (x.flight||'') + '\')">' +
+          '<span class="pw-mo-p">' + Math.round(x.price/10000*10)/10 + '</span>' +
+          '<span class="pw-mo-bar" style="height:' + h + '%"></span>' +
+          (x.transfers === 0 ? '<i class="pw-mo-dir" title="직항"></i>' : '') +
+          '<span class="pw-mo-d">' + d + '</span><span class="pw-mo-w' + (wd===0?' is-sun':(wd===6?' is-sat':'')) + '">' + dow[wd] + '</span></button>';
+      }
       out.innerHTML =
-        '<div class="flt-mo-best">가장 싼 날 <b>' + best.map(function(b){ return b.date.slice(5).replace('-', '/'); }).join(', ') +
-          '</b><em>' + _fltKrw(min) + '</em>' +
-          '<span class="flt-dim">최고 ' + _fltKrw(max) + ' · 차이 ' + _fltKrw(max - min) + '</span></div>' +
-        '<div class="flt-mo-grid">' + list.map(function(x) {
-          var ratio = max > min ? (x.price - min) / (max - min) : 0;
-          var cls = x.price === min ? ' is-best' : (ratio <= 0.25 ? ' is-cheap' : (ratio >= 0.75 ? ' is-pricey' : ''));
-          var d = x.date.slice(8);
-          return '<button class="flt-mo-day' + cls + '" title="' + x.date + (x.airline ? ' · ' + x.airline + x.flight : '') +
-            (x.transfers === 0 ? ' · 직항' : (x.transfers ? ' · 경유 ' + x.transfers : '')) + '"' +
-            ' onclick="fltUseMonthDate(\'' + x.date + '\',' + x.price + ')">' +
-            '<span class="flt-mo-d">' + d + '</span>' +
-            '<span class="flt-mo-p">' + Math.round(x.price / 10000 * 10) / 10 + '만</span>' +
-            (x.transfers === 0 ? '<i title="직항">•</i>' : '') +
-          '</button>';
-        }).join('') + '</div>' +
-        '<p class="flt-acc-note">날짜를 누르면 관심 노선 등록 폼에 자동으로 채워져. 조회 시각 ' +
-          new Date(j.fetched_at).toLocaleString('ko-KR') + ' · 편도 기준 · 출처 Aviasales</p>';
+        '<div class="pw-mo">' +
+          '<div class="pw-mo-head">' +
+            '<div class="pw-mo-nav"><button onclick="pwMoStep(-1)"><span class="material-symbols-outlined">chevron_left</span></button>' +
+              '<b>' + _spotEsc(ml) + '</b>' +
+              '<button onclick="pwMoStep(1)"><span class="material-symbols-outlined">chevron_right</span></button></div>' +
+            '<div class="pw-mo-sum"><span class="pw-l">가장 싼 날</span>' +
+              '<b>' + best.date.slice(5).replace('-', '/') + '요일 · ' + _fltKrw(min) + '</b>' +
+              '<em>최고 ' + _fltKrw(max) + ' · 차이 ' + _fltKrw(max - min) + '</em></div>' +
+          '</div>' +
+          '<div class="pw-mo-chart">' + bars + '</div>' +
+          '<div class="pw-mo-legend"><span class="k best"></span>최저<span class="k cheap"></span>싼 편<span class="k mid"></span>보통<span class="k pricey"></span>비싼 편<span class="k dir"></span>직항</div>' +
+          '<p class="flt-acc-note">막대를 누르면 그 날 최저가가 <b>기록</b>돼 추이에 쌓여요 · ' + (st.oneway ? '편도' : '왕복') + ' 기준 · 출처 Aviasales(무료 집계) · ' +
+            (j.fetched_at ? new Date(j.fetched_at).toLocaleString('ko-KR') : '') + '</p>' +
+        '</div>';
     } catch(e) {
       out.innerHTML = '<p class="flt-acc-note flt-err">' + _spotEsc(e.message) +
-        (/Unauthorized|토큰/.test(e.message) ? '' : ' — Travelpayouts 토큰이 설정됐는지 확인해줘') + '</p>';
+        (/Unauthorized|토큰/.test(e.message) ? ' — 설정에서 출입증을 넣어줘' : '') + '</p>';
     }
+  }
+  // 막대 클릭 → 그 노선을 관심 목록에 없으면 만들고, 그 날 가격을 기록
+  window.pwMoLog = async function(date, price, airline, transfers, flight) {
+    var st = _pwMoState;
+    try {
+      var w = (_fltWatch || []).filter(_fltIsWatch).filter(function(x){
+        return x.route_from === st.from && x.route_to === st.to; })[0];
+      if (!w) {
+        var nid = await fbAdd('flight_watch', { type:'watch', route_from:st.from, route_to:st.to,
+          depart_date:'', return_date:'', memo:'월별 요금 차트에서 추가', created_at:new Date().toISOString() });
+        w = { _id:(nid&&nid.id)?nid.id:nid, type:'watch', route_from:st.from, route_to:st.to };
+        _fltWatch.push(w);
+      }
+      var fuel = _fuelForRoute(st.from, st.to);
+      var doc = { type:'flight_price', watch_id:w._id, price_krw:Math.round(price),
+        fuel_krw: fuel ? fuel.krw * (st.oneway ? 1 : 2) : 0, source:'Aviasales (자동)',
+        airline:airline||'', flight_no:flight||'', transfers:(transfers===null?null:transfers),
+        depart_on:date, query_month:st.month, note:'', ts:new Date().toISOString() };
+      var pid = await fbAdd('flight_watch', doc); doc._id = (pid&&pid.id)?pid.id:pid;
+      _fltWatch.push(doc);
+      _fltRenderWatch();
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + date + ' ' + _fltKrw(price) + ' 기록 — 추이에 쌓였어');
+    } catch(e) { alert('기록 실패: ' + e.message); }
   };
+
   // ── 연간 최저가 ("가장 싼 달") — 12개월을 한 번에 비교 ──
   window.fltYearSearch = async function() {
     var g = function(id){ var e=document.getElementById(id); return e? e.value.trim().toUpperCase():''; };
