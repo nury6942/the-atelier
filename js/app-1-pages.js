@@ -18372,13 +18372,20 @@
           : (diff === 0 ? '동일'
           : (diff < 0 ? '▼ ' : '▲ ') + Math.abs(diff).toLocaleString('ko-KR') + ' (' + (dPct > 0 ? '+' : '') + dPct + '%)');
         return '<div class="fuel-row">' +
-          '<span class="fuel-z">' + _spotEsc(r.zone) + '<em>' + _spotEsc(r.ex || '') + '</em></span>' +
-          '<span class="fuel-bars">' +
-            (pv ? '<span class="fuel-bar is-prev" title="전월 ' + _fltKrw(pv.krw) + '"><i style="width:' + ppct + '%"></i></span>' : '') +
-            '<span class="fuel-bar" title="이번 달 ' + _fltKrw(r.krw) + '"><i style="width:' + pct + '%"></i></span>' +
-          '</span>' +
-          '<span class="fuel-v">' + _fltKrw(r.krw) + '<em>왕복 ' + _fltKrw(r.krw * 2) + '</em>' +
-            '<em class="fuel-diff' + dCls + '">' + dTxt + '</em></span>' +
+          '<div class="fuel-main">' +
+            '<p class="fuel-route">' + _spotEsc(r.ex || r.zone) + '</p>' +
+            '<p class="fuel-band">대권거리 ' + _spotEsc(r.zone) + ' 마일</p>' +
+            '<div class="fuel-bars">' +
+              (pv ? '<span class="fuel-bar is-prev" title="' + _spotEsc(prev.month) + ' ' + _fltKrw(pv.krw) + '"><i style="width:' + ppct + '%"></i></span>' : '') +
+              '<span class="fuel-bar" title="' + _spotEsc(f.month) + ' ' + _fltKrw(r.krw) + '"><i style="width:' + pct + '%"></i></span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="fuel-v">' +
+            (pv ? '<p class="fuel-was"><span>' + _spotEsc(prev.month) + '</span>' + _fltKrw(pv.krw) + '<i>→</i></p>' : '') +
+            '<p class="fuel-now"><span>' + _spotEsc(f.month) + '</span>' + _fltKrw(r.krw) + '</p>' +
+            '<p class="fuel-rt">왕복 ' + _fltKrw(r.krw * 2) + (pv ? ' <b>(전월 ' + _fltKrw(pv.krw * 2) + ')</b>' : '') + '</p>' +
+            '<p class="fuel-diff' + dCls + '">' + dTxt + '</p>' +
+          '</div>' +
         '</div>';
       }).join('') + '</div>' +
       '<p class="flt-acc-note">' + (isSeed ? '기본값이에요 — 매달 공지가 바뀌면 [수정]으로 갱신하거나 저한테 "유류할증료 업데이트해줘"라고 하면 돼요. ' : '') +
