@@ -409,3 +409,70 @@ exports.fuelSurchargeCron = onSchedule(
     logger.info("fuelSurchargeCron 완료", { targetMonth, found: uniq.length, step: pending.step });
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ (2026-07-24) 항공권 스크린샷 판독 — 스카이스캐너·구글 캡처를 비전으로 읽어
+//    항공사·시간·직항·가격·날짜를 구조화 JSON으로 반환. 사용자가 타이핑할 필요 없음.
+//    비용: Haiku 비전, 스크린샷 1장당 수십 원 수준.
+// ══════════════════════════════════════════════════════════════════════
+exports.flightScanShot = onRequest(
+  { secrets: [anthropicApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "512MiB", timeoutSeconds: 60 },
+  async (req, res) => {
+    corsHeaders(res);
+    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+    const token = req.headers["x-atelier-token"];
+    if (!token || token !== atelierAuthToken.value()) return res.status(401).json({ error: "Unauthorized" });
+
+    try {
+      const { imageBase64, mediaType } = req.body;
+      if (!imageBase64) return res.status(400).json({ error: "imageBase64 required" });
+
+      const Anthropic = require("@anthropic-ai/sdk");
+      const anthropic = new Anthropic({ apiKey: anthropicApiKey.value() });
+
+      const sys = "You extract flight prices from Skyscanner/Google Flights/Kayak screenshots (Korean UI). " +
+        "Return ONLY a JSON array, no prose. Each element = one distinct flight option visible in the image. " +
+        "Schema: {price_krw:int (KRW number, strip ₩ and commas), airline:string (Korean name if shown, e.g. 대한항공/젯스타/에어뉴질랜드), " +
+        "direct:boolean (직항=true, 경유=false), transfers:int|null (경유 count if shown), " +
+        "depart_date:string 'YYYY-MM-DD' or '' if not shown, return_date:string 'YYYY-MM-DD' or '', " +
+        "depart_time:string 'HH:MM' or '', arrive_time:string 'HH:MM' or '', route:string like 'ICN→AKL' or ''}. " +
+        "If a '최저가/lowest' price is highlighted, put that option FIRST. Prefer the cheapest clearly-shown option. " +
+        "If only a monthly price chart is visible with a selected day, use that day's price and date. " +
+        "Dates: infer year from context (charts show year+month). If ambiguous, leave date ''. Output max 5 options.";
+
+      const message = await anthropic.messages.create({
+        model: "claude-haiku-4-5",
+        max_tokens: 1024,
+        system: sys,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType || "image/jpeg", data: imageBase64 } },
+            { type: "text", text: "이 화면에서 항공권 정보를 JSON 배열로 뽑아줘. 가격·항공사·직항여부·날짜·시간." },
+          ],
+        }],
+      });
+
+      let text = (message.content[0] && message.content[0].text || "").trim();
+      // 코드펜스 제거
+      text = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+      let parsed;
+      try { parsed = JSON.parse(text); }
+      catch (e) {
+        const m = text.match(/\[[\s\S]*\]/);
+        parsed = m ? JSON.parse(m[0]) : [];
+      }
+      if (!Array.isArray(parsed)) parsed = [parsed];
+
+      logger.info("flightScanShot", { options: parsed.length, inTok: message.usage.input_tokens, outTok: message.usage.output_tokens });
+      return res.status(200).json({ ok: true, options: parsed,
+        usage: { input_tokens: message.usage.input_tokens, output_tokens: message.usage.output_tokens } });
+    } catch (error) {
+      logger.error("flightScanShot error:", error);
+      return res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  }
+);

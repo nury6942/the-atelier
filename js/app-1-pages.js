@@ -19425,6 +19425,10 @@
           '<a href="' + g + '" target="_blank" rel="noopener">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
           '<a href="' + sky + '" target="_blank" rel="noopener">스카이스캐너 ↗</a>' +
         '</div>' +
+        '<button class="pw-q-scan" onclick="pwScanTrigger()" title="스카이스캐너·구글 캡처를 넣으면 자동으로 읽어요 (Ctrl+V도 가능)">' +
+          '<span class="material-symbols-outlined">photo_camera</span>스크린샷 넣기</button>' +
+        '<input id="pw-scan-file" type="file" accept="image/*" style="display:none" onchange="pwScanFile(event)">' +
+        '<span id="pw-scan-status" class="pw-scan-status" style="display:none"></span>' +
       '</div>' +
       '<div class="pw-q-row">' +
         '<label class="pw-q-f"><span>출발 날짜</span>' +
@@ -19445,6 +19449,104 @@
     var box = document.getElementById('pw-quick');
     if (box) { box.setAttribute('data-sel', id); window.pwRenderQuick(); }
   };
+  // ★ (2026-07-24) 스크린샷 판독 — 스카이스캐너 캡처를 붙이면 비전 AI가 읽어 자동 입력.
+  //   타이핑 없이 항공사·시간·직항·가격·날짜를 채운다. (Cloud Function flightScanShot)
+  var FLT_SCAN_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/flightScanShot';
+  window.pwScanTrigger = function() {
+    var inp = document.getElementById('pw-scan-file');
+    if (inp) inp.click();
+  };
+  window.pwScanFile = function(ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (f) _pwScanImage(f);
+    ev.target.value = '';
+  };
+  // 붙여넣기(Ctrl+V)로도 — 빠른기록 바에 포커스 없어도 항공 탭 활성 시 받음
+  function _pwScanPaste(e) {
+    var flt = document.getElementById('travel-flight-section');
+    if (!flt || flt.style.display === 'none') return;
+    var items = (e.clipboardData || {}).items || [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file' && items[i].type.indexOf('image/') === 0) {
+        var blob = items[i].getAsFile();
+        if (blob) { e.preventDefault(); _pwScanImage(blob); return; }
+      }
+    }
+  }
+  if (!window._pwScanPasteReg) { document.addEventListener('paste', _pwScanPaste); window._pwScanPasteReg = true; }
+
+  async function _pwScanImage(file) {
+    var tk = _fltAuthToken();
+    if (!tk) { alert('설정에서 출입증을 먼저 넣어줘'); return; }
+    var box = document.getElementById('pw-quick');
+    var status = document.getElementById('pw-scan-status');
+    if (status) { status.style.display = 'inline-flex'; status.innerHTML = '<span class="material-symbols-outlined pw-spin">progress_activity</span> 스크린샷 읽는 중…'; }
+    try {
+      // 리사이즈 (긴 변 1400) + base64
+      var dataUrl = await new Promise(function(res, rej) {
+        var r = new FileReader();
+        r.onload = function(e) {
+          var img = new Image();
+          img.onload = function() {
+            var mx = 1400, w = img.width, h = img.height;
+            if (w > mx) { h = Math.round(h * mx / w); w = mx; }
+            var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(img, 0, 0, w, h);
+            res(cv.toDataURL('image/jpeg', 0.85));
+          };
+          img.onerror = function(){ rej(new Error('이미지 디코딩 실패')); };
+          img.src = e.target.result;
+        };
+        r.onerror = function(){ rej(new Error('파일 읽기 실패')); };
+        r.readAsDataURL(file);
+      });
+      var b64 = dataUrl.split(',')[1];
+      var resp = await fetch(FLT_SCAN_API, { method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': tk },
+        body: JSON.stringify({ imageBase64: b64, mediaType: 'image/jpeg' }) });
+      var j = await resp.json();
+      if (!resp.ok) throw new Error(j.message || j.error || ('HTTP ' + resp.status));
+      var opts = (j.options || []).filter(function(o){ return o && Number(o.price_krw); });
+      if (!opts.length) throw new Error('항공권 정보를 못 찾았어 — 가격이 보이는 화면으로 다시 캡처해줄래?');
+      if (status) status.style.display = 'none';
+      _pwScanShowResult(opts);
+    } catch(e) {
+      if (status) { status.innerHTML = '<span class="material-symbols-outlined" style="color:#fda4af">error</span> ' + _spotEsc(e.message); }
+    }
+  }
+  // 판독 결과 → 확인 팝업 (여러 개면 고르게)
+  function _pwScanShowResult(opts) {
+    var box = document.getElementById('pw-quick');
+    var old = document.getElementById('pw-scan-pop'); if (old) old.remove();
+    var pop = document.createElement('div'); pop.id = 'pw-scan-pop'; pop.className = 'pw-scan-pop';
+    pop.innerHTML = '<div class="pw-scan-h"><b>읽은 항공권 ' + opts.length + '건</b>' +
+      '<button class="pw-x" onclick="this.closest(\'#pw-scan-pop\').remove()"><span class="material-symbols-outlined">close</span></button></div>' +
+      '<div class="pw-scan-list">' + opts.map(function(o, i) {
+        var dir = o.direct || o.transfers === 0;
+        return '<button class="pw-scan-opt" onclick="pwScanPick(' + i + ')">' +
+          '<span class="pw-scan-p">' + _fltKrw(o.price_krw) + '</span>' +
+          '<span class="pw-scan-meta">' + _spotEsc(o.airline || '항공사?') +
+            '<i class="' + (dir ? 'is-direct' : '') + '">' + (dir ? '직항' : (o.transfers ? '경유' + o.transfers : '경유')) + '</i>' +
+            (o.depart_date ? '<em>' + _spotEsc(o.depart_date) + (o.depart_time ? ' ' + o.depart_time : '') + '</em>' : '') +
+          '</span></button>';
+      }).join('') + '</div>' +
+      '<p class="pw-scan-note">고르면 아래 빠른 기록에 채워져요. 날짜·가격 확인하고 기록 누르면 끝.</p>';
+    box.appendChild(pop);
+    window._pwScanOpts = opts;
+  }
+  window.pwScanPick = function(i) {
+    var o = (window._pwScanOpts || [])[i]; if (!o) return;
+    var set = function(id, v){ var e = document.getElementById(id); if (e != null && v != null) e.value = v; };
+    set('pw-q-date', o.depart_date || '');
+    set('pw-q-air', o.airline || '');
+    var dc = document.getElementById('pw-q-direct'); if (dc) dc.checked = !!(o.direct || o.transfers === 0);
+    set('pw-q-val', o.price_krw || '');
+    var src = document.getElementById('pw-q-src'); if (src) src.value = '스카이스캐너';
+    var pop = document.getElementById('pw-scan-pop'); if (pop) pop.remove();
+    var vEl = document.getElementById('pw-q-val'); if (vEl) { vEl.focus(); vEl.scrollIntoView({ block:'center' }); }
+    if (typeof showSyncToast === 'function') showSyncToast('📷 읽었어 — 확인하고 [기록] 눌러줘');
+  };
+
   window.pwQuickSave = async function() {
     var box = document.getElementById('pw-quick');
     if (!box) return;
