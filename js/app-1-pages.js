@@ -19126,23 +19126,34 @@
     return { key:'mid', label:'보통', why:'최저 대비 +' + pctFromLo + '%' };
   }
   // 예약/비교 사이트 딥링크 — 우리가 못 만드는 부분은 바로 넘겨준다
+  //   노선에 날짜가 없으면 상단 '기준 설정'에서 고른 달을 가져와 그 달로 링크를 만든다.
+  //   Rome2Rio(기차·버스)는 대권거리 1,500km 이하 근거리에만 — 서울↔오클랜드에 붙던 오류 제거.
+  var _MONTH_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   function _fltBookLinks(w) {
     var f = String(w.route_from || '').toUpperCase(), t = String(w.route_to || '').toUpperCase();
     if (!f || !t) return '';
     var d = String(w.depart_date || '');
     var r = String(w.return_date || '');
-    var ymd = d.replace(/-/g, '').slice(2);          // 270511
-    var rymd = r.replace(/-/g, '').slice(2);
-    var gq = 'Flights from ' + f + ' to ' + t + (d ? ' on ' + d : '') + (r ? ' through ' + r : '');
+    // 노선 자체 날짜가 없으면 상단 기준 달을 사용
+    var qMonth = (document.getElementById('fmo-month') || {}).value || '';
+    var mm = /^(\d{4})-(\d{2})$/.exec(d) || /^(\d{4})-(\d{2})$/.exec(qMonth);
+    var when = mm ? (_MONTH_EN[+mm[2] - 1] + ' ' + mm[1]) : '';
+    var whenLbl = mm ? (mm[1].slice(2) + '.' + mm[2]) : '';
+    var gq = 'Flights from ' + f + ' to ' + t + (d ? ' on ' + d + (r ? ' through ' + r : '') : (when ? ' in ' + when : ''));
     var gfl = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
+    var ymd = d ? d.replace(/-/g, '').slice(2) : (mm && !d ? mm[1].slice(2) + mm[2] : '');
+    var rymd = r.replace(/-/g, '').slice(2);
     var sky = 'https://www.skyscanner.co.kr/transport/flights/' + f.toLowerCase() + '/' + t.toLowerCase() + '/' +
       (ymd ? ymd + '/' : '') + (rymd ? rymd + '/' : '');
+    var km = _fltLegKm(f, t);
+    var isNear = km && km <= 1500;   // 근거리만 기차·버스 의미 있음
     var cityOf = function(c){ var a = _FLT_AIRPORTS[c]; return a ? a[2] : c; };
     var r2r = 'https://www.rome2rio.com/s/' + encodeURIComponent(cityOf(f)) + '/' + encodeURIComponent(cityOf(t));
+    var sfx = whenLbl ? '<em>' + whenLbl + '</em>' : '';
     return '<div class="flt-links">' +
-      '<a href="' + gfl + '" target="_blank" rel="noopener" class="flt-link">구글 항공권</a>' +
+      '<a href="' + gfl + '" target="_blank" rel="noopener" class="flt-link">구글 항공권' + sfx + '</a>' +
       '<a href="' + sky + '" target="_blank" rel="noopener" class="flt-link">스카이스캐너</a>' +
-      '<a href="' + r2r + '" target="_blank" rel="noopener" class="flt-link is-alt">Rome2Rio <em>기차·버스</em></a>' +
+      (isNear ? '<a href="' + r2r + '" target="_blank" rel="noopener" class="flt-link is-alt">Rome2Rio <em>기차·버스</em></a>' : '') +
     '</div>';
   }
 
@@ -19220,6 +19231,8 @@
     var el = document.getElementById('fmo-month'); if (el) el.value = v;
     var lb = document.getElementById('fmo-month-label'); if (lb) lb.textContent = y + '년 ' + m + '월';
     var pop = document.getElementById('pw-monthpop'); if (pop) pop.style.display = 'none';
+    try { _fltRenderWatch(); } catch(e) {}       // 카드 딥링크가 이 달로 갱신되도록
+    try { window.pwRenderQuick(); } catch(e) {}  // 빠른 기록 바 링크도 이 달로
   };
   window.pwClearMonth = function() {
     var el = document.getElementById('fmo-month'); if (el) el.value = '';
@@ -19266,9 +19279,14 @@
     box.setAttribute('data-sel', sel);
     var w = watches.filter(function(x){ return x._id === sel; })[0];
     var cityOf = function(c){ var a = _FLT_AIRPORTS[c]; return a ? a[2] : c; };
-    var gq = 'Flights from ' + w.route_from + ' to ' + w.route_to;
+    // ★ 상단 '기준 설정'에서 고른 달을 링크에 반영 — 안 그러면 구글이 기본(가장 가까운 달)을 열어버림
+    var qMonth = (document.getElementById('fmo-month') || {}).value || '';
+    var qm = /^(\d{4})-(\d{2})$/.exec(qMonth);
+    var when = qm ? (_MONTH_EN[+qm[2] - 1] + ' ' + qm[1]) : '';
+    var whenLbl = qm ? (qm[1].slice(2) + '.' + qm[2]) : '';
+    var gq = 'Flights from ' + w.route_from + ' to ' + w.route_to + (when ? ' in ' + when : '');
     var g = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
-    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + String(w.route_from).toLowerCase() + '/' + String(w.route_to).toLowerCase() + '/';
+    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + String(w.route_from).toLowerCase() + '/' + String(w.route_to).toLowerCase() + '/' + (qm ? qm[1].slice(2) + qm[2] + '/' : '');
     var srcOpts = _FLT_SOURCES.map(function(x) { return '<option>' + x + '</option>'; }).join('');
     box.innerHTML =
       '<div class="pw-q-l"><span class="pw-l">빠른 기록</span>' +
@@ -19279,7 +19297,7 @@
             x.route_from + ' → ' + x.route_to + ' · ' + _spotEsc(cityOf(x.route_to)) + '</option>';
         }).join('') + '</select>' +
       '<div class="pw-q-links">' +
-        '<a href="' + g + '" target="_blank" rel="noopener" title="구글 항공권에서 이 노선 보기">구글 ↗</a>' +
+        '<a href="' + g + '" target="_blank" rel="noopener" title="구글 항공권' + (when ? ' · ' + whenLbl : '') + '">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
         '<a href="' + sky + '" target="_blank" rel="noopener" title="스카이스캐너에서 이 노선 보기">스카이 ↗</a>' +
       '</div>' +
       '<div class="pw-q-amt"><span>₩</span>' +
