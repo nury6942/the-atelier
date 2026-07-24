@@ -19051,6 +19051,67 @@
   };
   window._pwIsOneWay = function() { return _pwTrip === 'oneway'; };
 
+  // ★ (2026-07-24) 빠른 기록 바 — 개인이 쓸 수 있는 1년치 실시간 요금 API가 없다는 결론
+  //   (Amadeus 종료 / Kiwi 승인제 / Duffel 법인 필수 / 스카이스캐너 파트너 전용).
+  //   그래서 '구글에서 보고 → 옮겨적는' 흐름이 남는데, 그 옮겨적기를 3초로 줄인다.
+  //   노선 고르면 구글·스카이스캐너 링크가 그 노선으로 바뀌고, 금액 치고 Enter면 끝.
+  window.pwRenderQuick = function() {
+    var box = document.getElementById('pw-quick');
+    if (!box) return;
+    var watches = (_fltWatch || []).filter(_fltIsWatch);
+    if (!watches.length) { box.innerHTML = ''; return; }
+    watches.sort(function(a, b) { return String(a.route_to || '').localeCompare(String(b.route_to || '')); });
+    var sel = box.getAttribute('data-sel') || watches[0]._id;
+    if (!watches.some(function(w){ return w._id === sel; })) sel = watches[0]._id;
+    box.setAttribute('data-sel', sel);
+    var w = watches.filter(function(x){ return x._id === sel; })[0];
+    var cityOf = function(c){ var a = _FLT_AIRPORTS[c]; return a ? a[2] : c; };
+    var gq = 'Flights from ' + w.route_from + ' to ' + w.route_to;
+    var g = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
+    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + String(w.route_from).toLowerCase() + '/' + String(w.route_to).toLowerCase() + '/';
+    var srcOpts = _FLT_SOURCES.map(function(x) { return '<option>' + x + '</option>'; }).join('');
+    box.innerHTML =
+      '<div class="pw-q-l"><span class="pw-l">빠른 기록</span>' +
+        '<p>보고 온 가격을 여기 바로 적으면 추이가 쌓여요</p></div>' +
+      '<select class="pw-q-sel" onchange="pwQuickPick(this.value)">' +
+        watches.map(function(x) {
+          return '<option value="' + x._id + '"' + (x._id === sel ? ' selected' : '') + '>' +
+            x.route_from + ' → ' + x.route_to + ' · ' + _spotEsc(cityOf(x.route_to)) + '</option>';
+        }).join('') + '</select>' +
+      '<div class="pw-q-links">' +
+        '<a href="' + g + '" target="_blank" rel="noopener" title="구글 항공권에서 이 노선 보기">구글 ↗</a>' +
+        '<a href="' + sky + '" target="_blank" rel="noopener" title="스카이스캐너에서 이 노선 보기">스카이 ↗</a>' +
+      '</div>' +
+      '<div class="pw-q-amt"><span>₩</span>' +
+        '<input id="pw-q-val" type="number" placeholder="금액" onkeydown="if(event.key===\'Enter\')pwQuickSave()"></div>' +
+      '<select id="pw-q-src" class="pw-q-src">' + srcOpts + '</select>' +
+      '<button class="pw-btn is-dark" onclick="pwQuickSave()">기록</button>';
+  };
+  window.pwQuickPick = function(id) {
+    var box = document.getElementById('pw-quick');
+    if (box) { box.setAttribute('data-sel', id); window.pwRenderQuick(); }
+  };
+  window.pwQuickSave = async function() {
+    var box = document.getElementById('pw-quick');
+    if (!box) return;
+    var id = box.getAttribute('data-sel');
+    var v = (document.getElementById('pw-q-val') || {}).value || '';
+    var amt = Number(String(v).replace(/[^\d]/g, ''));
+    if (!amt) { alert('금액을 넣어줘'); return; }
+    var src = (document.getElementById('pw-q-src') || {}).value || '';
+    try {
+      var doc = { type: 'flight_price', watch_id: id, price_krw: amt, source: src, note: '', ts: new Date().toISOString() };
+      var w = (_fltWatch || []).filter(function(x){ return x._id === id; })[0];
+      if (w) { var f = _fuelForRoute(w.route_from, w.route_to); if (f) doc.fuel_krw = f.krw; }
+      var nid = await fbAdd('flight_watch', doc);
+      doc._id = (nid && nid.id) ? nid.id : nid;
+      _fltWatch.push(doc);
+      var el = document.getElementById('pw-q-val'); if (el) { el.value = ''; el.focus(); }
+      _fltRenderWatch(); window.pwRenderQuick();
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + _fltKrw(amt) + ' 기록');
+    } catch(e) { alert('저장 실패'); }
+  };
+
   function _fltRenderWatch() {
     var box = document.getElementById('flight-watch-list');
     if (!box) return;
@@ -19059,6 +19120,7 @@
         String(a.created_at || '').localeCompare(String(b.created_at || ''));
     });
     var sumEl = document.getElementById('flight-watch-summary');
+    try { window.pwRenderQuick(); } catch(e) {}
     if (!watches.length) {
       box.innerHTML = '<div class="pw-empty"><span class="material-symbols-outlined">savings</span>' +
         '<p>관심 노선을 등록해두면 <b>최저가 조회</b>로 시세를 쌓고, 지금이 살 때인지 판정해줘요.</p></div>';
