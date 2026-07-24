@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=280" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=281" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6390,6 +6390,42 @@
     .pw-empty p { margin:0; font-size:13px; line-height:1.7; color:#4a4455; }
     .pw-empty b { color:#1a1c1d; }
     .pw-dim { font-size:12px; color:#7b7487; margin:14px 0 0; }
+    /* ★ (2026-07-24) 유류할증료 · 보너스 좌석 오픈 */
+    .fuel-box { border:1px solid #e5e5e5; background:#fff; padding:20px 24px; }
+    .fuel-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      padding-bottom:16px; border-bottom:1px solid #eeeef0; }
+    .fuel-step { margin:5px 0 0; font-size:20px; font-weight:800; color:#1a1c1d; letter-spacing:-0.02em; }
+    .fuel-step em { font-style:normal; font-size:11px; font-weight:600; color:#7b7487; margin-left:8px; letter-spacing:0; }
+    .fuel-acts { display:flex; gap:8px; flex-wrap:wrap; }
+    .fuel-acts .pw-btn { text-decoration:none; }
+    .fuel-rows { margin-top:16px; }
+    .fuel-row { display:grid; grid-template-columns:minmax(150px,1.3fr) minmax(80px,1.6fr) auto; gap:16px;
+      align-items:center; padding:11px 0; border-bottom:1px solid #f3f3f5; }
+    .fuel-row:last-child { border-bottom:none; }
+    .fuel-z { font-size:12.5px; font-weight:700; color:#1a1c1d; }
+    .fuel-bar { display:block; height:6px; background:#f3f3f5; }
+    .fuel-bar i { display:block; height:100%; background:#7c3aed; }
+    .fuel-v { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:14px; font-weight:800;
+      color:#1a1c1d; text-align:right; white-space:nowrap; }
+    .fuel-v em { display:block; font-style:normal; font-size:10px; font-weight:600; color:#7b7487; margin-top:2px; }
+    .ao-rows { display:flex; flex-direction:column; }
+    .ao-row { display:grid; grid-template-columns:minmax(150px,1.4fr) auto auto auto; gap:16px; align-items:center;
+      padding:13px 0; border-bottom:1px solid #f3f3f5; }
+    .ao-row:last-child { border-bottom:none; }
+    .ao-t { font-size:13px; font-weight:800; color:#1a1c1d; }
+    .ao-t em, .ao-d em { display:block; font-style:normal; font-size:10.5px; font-weight:600; color:#7b7487; margin-top:2px; }
+    .ao-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12.5px; font-weight:700; color:#4a4455; }
+    .ao-dd { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px; font-weight:800;
+      padding:5px 12px; background:#f3f3f5; color:#4a4455; white-space:nowrap; }
+    .ao-row.is-now .ao-dd { background:#7c3aed; color:#fff; }
+    .ao-row.is-open .ao-dd { background:#f0fdf4; color:#15803d; }
+    .ao-go { font-size:11px; font-weight:800; color:#630ed4; background:#eaddff; padding:6px 12px;
+      text-decoration:none; white-space:nowrap; }
+    .ao-go:hover { background:#d2bbff; }
+    @media (max-width:760px){
+      .fuel-row, .ao-row { grid-template-columns:1fr; gap:6px; }
+      .fuel-v, .ao-dd { text-align:left; }
+    }
 
     .pw-sum { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:16px; margin-top:22px; }
     .pw-sum:empty { display:none; }
@@ -11951,6 +11987,22 @@
         </div>
       </section>
 
+      <!-- ★ (2026-07-24) 유류할증료 — 매달 공지되는 고정 표. 항공권 표시가에 빠져 있어 실제 낼 돈을 가린다 -->
+      <section id="flight-fuel" class="j-section">
+        <div class="trv-sec-head">
+          <div><p class="trv-sec-eyebrow">Fuel Surcharge</p><h3 class="trv-sec-title">유류할증료</h3></div>
+        </div>
+        <div id="flight-fuel-body" class="fuel-box"></div>
+      </section>
+
+      <!-- ★ (2026-07-24) 보너스 좌석 오픈 D-day -->
+      <section id="flight-awardopen" class="j-section">
+        <div class="trv-sec-head">
+          <div><p class="trv-sec-eyebrow">Award Seat Release</p><h3 class="trv-sec-title">보너스 좌석 오픈</h3></div>
+        </div>
+        <div id="flight-awardopen-body" class="fuel-box"></div>
+      </section>
+
       <!-- ★ (2026-07-24) 마일리지 — 지갑(소멸 카운트다운) + 노선 거리 기반 적립 예상 -->
       <section id="flight-mileage" class="j-section">
         <div class="trv-sec-head">
@@ -14791,7 +14843,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=280" defer></script>
+<script src="js/app-1-pages.js?v=281" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

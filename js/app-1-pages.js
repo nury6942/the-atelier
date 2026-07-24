@@ -18265,6 +18265,122 @@
     { zone:'동남아',            eco:40000,  biz:80000  },
     { zone:'미주·유럽·대양주',  eco:70000,  biz:140000 }
   ];
+  // ═══════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-24) 유류할증료 — 매달 항공사가 공지하는 고정 표라 스크래핑 없이 데이터로 관리.
+  //    Firestore(flight_watch, type='fuel')에 저장 → 화면에서 직접 수정 가능.
+  //    비어 있으면 아래 시드값(2026-08, 대한항공 14단계)으로 채운다.
+  //    ※ 출처: 대한항공 8월 발권분 공지 (7월 19단계 → 8월 14단계, 3개월 연속 인하)
+  // ═══════════════════════════════════════════════════════════════════
+  var _FUEL_SEED = {
+    month: '2026-08', airline: '대한항공', step: '14단계',
+    rows: [
+      { zone: '동북아 단거리 (후쿠오카·칭다오)', krw: 35200 },
+      { zone: '동북아 주요 (도쿄·베이징)',       krw: 49600 },
+      { zone: '동남아 (방콕·싱가포르·호찌민)',   krw: 99200 },
+      { zone: '유럽·미 서부 (런던·파리·LA)',     krw: 225600 },
+      { zone: '미 동부 (뉴욕·워싱턴)',           krw: 259200 }
+    ]
+  };
+  var _fltFuel = null;
+  function _fuelDoc() {
+    var d = (_fltWatch || []).filter(function(r){ return r && r.type === 'fuel'; })
+      .sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); })[0];
+    return d || null;
+  }
+  function _fuelData() {
+    var d = _fuelDoc();
+    if (d && d.rows && d.rows.length) return d;
+    return _FUEL_SEED;
+  }
+  // 노선 구간 → 유류할증료 추정 (공항 거리 기준으로 가장 가까운 구간)
+  function _fuelForRoute(from, to) {
+    var km = _fltLegKm(String(from||'').toUpperCase(), String(to||'').toUpperCase());
+    if (!km) return null;
+    var f = _fuelData(), rows = f.rows || [];
+    var idx = km < 1500 ? 0 : km < 2500 ? 1 : km < 5000 ? 2 : km < 9500 ? 3 : 4;
+    if (idx >= rows.length) idx = rows.length - 1;
+    return rows[idx] ? { krw: rows[idx].krw, zone: rows[idx].zone, month: f.month, airline: f.airline } : null;
+  }
+  window.fltRenderFuel = function() {
+    var box = document.getElementById('flight-fuel-body');
+    if (!box) return;
+    var f = _fuelData();
+    var isSeed = !_fuelDoc();
+    var max = Math.max.apply(null, f.rows.map(function(r){ return r.krw; }));
+    box.innerHTML =
+      '<div class="fuel-head">' +
+        '<div><span class="pw-l">' + _spotEsc(f.airline) + ' · ' + _spotEsc(f.month) + ' 발권분</span>' +
+          '<p class="fuel-step">' + _spotEsc(f.step || '') + '<em>편도 기준</em></p></div>' +
+        '<div class="fuel-acts">' +
+          '<a class="pw-btn" href="https://www.koreanair.com/contents/booking/reservation-guide/fare-rule/fuel-surcharge" target="_blank" rel="noopener">공지 확인 ↗</a>' +
+          '<button class="pw-btn is-dark" onclick="fltEditFuel()"><span class="material-symbols-outlined">edit</span>수정</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fuel-rows">' + f.rows.map(function(r) {
+        var pct = max ? Math.round(r.krw / max * 100) : 0;
+        return '<div class="fuel-row">' +
+          '<span class="fuel-z">' + _spotEsc(r.zone) + '</span>' +
+          '<span class="fuel-bar"><i style="width:' + pct + '%"></i></span>' +
+          '<span class="fuel-v">' + _fltKrw(r.krw) + '<em>왕복 ' + _fltKrw(r.krw * 2) + '</em></span>' +
+        '</div>';
+      }).join('') + '</div>' +
+      '<p class="flt-acc-note">' + (isSeed ? '기본값이에요 — 매달 공지가 바뀌면 [수정]으로 갱신하거나 저한테 "유류할증료 업데이트해줘"라고 하면 돼요. ' : '') +
+        '항공권 표시가에 유류할증료가 빠져 있는 경우가 많아요. 실제 낼 돈 = 항공권 + 유류할증료 + 세금이에요.</p>';
+  };
+  window.fltEditFuel = async function() {
+    var f = _fuelData();
+    var month = prompt('적용 월 (YYYY-MM)', f.month);
+    if (!month) return;
+    var rows = [];
+    for (var i = 0; i < f.rows.length; i++) {
+      var v = prompt((i+1) + '/' + f.rows.length + '  ' + f.rows[i].zone + '\n편도 유류할증료(원)', String(f.rows[i].krw));
+      if (v === null) return;
+      rows.push({ zone: f.rows[i].zone, krw: Number(String(v).replace(/[^\d]/g,'')) || 0 });
+    }
+    var step = prompt('단계 (예: 14단계)', f.step || '') || '';
+    var doc = { type:'fuel', month:month, airline:f.airline, step:step, rows:rows, updated_at:new Date().toISOString() };
+    try {
+      var ex = _fuelDoc();
+      if (ex && ex._id) { await fbUpdate('flight_watch', ex._id, doc); Object.assign(ex, doc); }
+      else { var id = await fbAdd('flight_watch', doc); doc._id = (id && id.id) ? id.id : id; _fltWatch.push(doc); }
+      window.fltRenderFuel(); _fltRenderWatch();
+      if (typeof showSyncToast === 'function') showSyncToast('⛽ 유류할증료 ' + month + ' 갱신');
+    } catch(e) { alert('저장 실패'); }
+  };
+
+  // ★ (2026-07-24) 보너스 좌석 오픈 D-day — 대한항공은 출발 361일 전에 열리고 인기 노선은 몇 시간 만에 사라진다.
+  var KE_AWARD_OPEN_DAYS = 361;
+  function _fltAwardOpenRows() {
+    var trips = ((typeof tripsData !== 'undefined' && tripsData) ? tripsData : [])
+      .filter(function(t){ return t.start_date && /^\d{4}-\d{2}-\d{2}$/.test(t.start_date); });
+    var today = new Date(); today.setHours(0,0,0,0);
+    return trips.map(function(t) {
+      var dep = new Date(t.start_date + 'T00:00:00');
+      var open = new Date(dep.getTime() - KE_AWARD_OPEN_DAYS * 86400000);
+      var dd = Math.ceil((open - today) / 86400000);
+      return { name: t.name, depart: t.start_date, open: open.toISOString().slice(0,10), dd: dd };
+    }).sort(function(a,b){ return a.open.localeCompare(b.open); });
+  }
+  window.fltRenderAwardOpen = function() {
+    var box = document.getElementById('flight-awardopen-body');
+    if (!box) return;
+    var rows = _fltAwardOpenRows();
+    if (!rows.length) { box.innerHTML = '<p class="pw-dim">여행을 등록하면 보너스 좌석이 열리는 날을 계산해줘요.</p>'; return; }
+    box.innerHTML = '<div class="ao-rows">' + rows.map(function(r) {
+      var st = r.dd > 0 ? { k:'wait', t:'D-' + r.dd.toLocaleString('ko-KR') }
+             : (r.dd === 0 ? { k:'now', t:'오늘 열림' }
+             : { k:'open', t:'이미 열림' });
+      return '<div class="ao-row is-' + st.k + '">' +
+        '<span class="ao-t">' + _spotEsc(r.name) + '<em>출발 ' + r.depart + '</em></span>' +
+        '<span class="ao-d">' + r.open + '<em>좌석 오픈</em></span>' +
+        '<span class="ao-dd">' + st.t + '</span>' +
+        '<a class="ao-go" href="https://www.koreanair.com/booking/calendar-fare-bonus" target="_blank" rel="noopener">달력 열기 ↗</a>' +
+      '</div>';
+    }).join('') + '</div>' +
+    '<p class="flt-acc-note">대한항공은 출발 ' + KE_AWARD_OPEN_DAYS + '일 전에 보너스 좌석을 열어요. 인기 노선은 오픈 당일에 사라지니 그날 바로 확인하는 게 좋아요. ' +
+      '좌석 유무는 로그인이 필요해 우리가 대신 못 봐요 — <a href="https://seats.aero/" target="_blank" rel="noopener">seats.aero</a>에서 무료 이메일 알림을 걸어두면 좌석이 뜰 때 메일로 알려줘요.</p>';
+  };
+
   function _fltRenderMileage() {
     var wrap = document.getElementById('flight-mileage-body');
     if (!wrap) return;
@@ -18428,6 +18544,7 @@
     try { _fltWatch = await fbRead('flight_watch'); }
     catch(e) { _fltWatch = []; console.warn('[flight] watch load', e); }
     _fltRenderWatch();
+    try { window.fltRenderFuel(); } catch(e) {}
   }
 
   window.fltToggleWatchForm = function() {
@@ -18872,6 +18989,8 @@
     try { _fltRefreshAll(); } catch(e) {}
     try { _fltLoadWatch(); } catch(e) { console.warn('[flight] watch', e); }
     try { _fltLoadMileage(); } catch(e) { console.warn('[flight] mileage', e); }
+    try { window.fltRenderFuel(); } catch(e) {}
+    try { window.fltRenderAwardOpen(); } catch(e) {}
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Flight';
   };
