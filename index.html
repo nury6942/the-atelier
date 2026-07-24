@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=276" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=277" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6141,6 +6141,55 @@
     .flt-lb { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; color:#64748b; }
     .flt-form-hint { margin:8px 0 0; font-size:10.5px; line-height:1.6; color:#94a3b8; }
     .flt-form-hint b { color:#475569; }
+    /* ★ (2026-07-24) 마일리지 재설계 — 항공사 로고·총 보유·공제표 기반 '뭘 탈 수 있나' */
+    .mil-card { border:1px solid #e2e8f0; border-radius:16px; background:#fff; padding:16px 18px 18px; margin-bottom:14px; }
+    .mil-head { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      padding-bottom:14px; border-bottom:1px solid #f1f5f9; }
+    .mil-id { display:flex; align-items:center; gap:13px; }
+    .mil-id .rec-fl-logo { width:44px; height:auto; border-radius:7px; flex:none; }
+    .mil-prog { margin:0; font-size:13px; font-weight:800; color:#0f172a; letter-spacing:-0.01em; }
+    .mil-prog em { font-style:normal; font-size:10px; font-weight:700; color:#94a3b8; margin-left:7px;
+      letter-spacing:0.04em; }
+    .mil-total { margin:2px 0 0; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:30px; font-weight:800; color:#0f172a; line-height:1.05; letter-spacing:-0.03em; }
+    .mil-total span { font-size:12px; font-weight:700; color:#94a3b8; margin-left:5px; letter-spacing:0; }
+    .mil-book { display:inline-flex; align-items:center; gap:5px; background:#0f172a; color:#fff; text-decoration:none;
+      border-radius:999px; padding:8px 14px; font-size:11px; font-weight:800; white-space:nowrap; transition:background .15s; }
+    .mil-book:hover { background:#1e293b; }
+    .mil-book .material-symbols-outlined { font-size:15px; }
+    .mil-sub { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:16px 0 9px; }
+    .mil-sub .flt-eyebrow { margin:0; }
+    .mil-src { font-size:10px; font-weight:700; color:#7c3aed; text-decoration:none; }
+    .mil-src:hover { text-decoration:underline; }
+    .mil-award-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:7px; }
+    .mil-aw { display:grid; grid-template-columns:1fr auto; gap:1px 8px; padding:9px 11px; border-radius:10px;
+      border:1px solid #eef2f7; background:#f8fafc; }
+    .mil-aw.is-ok { background:#f0fdf4; border-color:#bbf7d0; }
+    .mil-aw-z { font-size:11.5px; font-weight:800; color:#334155; }
+    .mil-aw-c { font-size:10px; font-weight:600; color:#94a3b8; grid-column:1; }
+    .mil-aw-m { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:700;
+      color:#94a3b8; grid-column:2; grid-row:1; text-align:right; }
+    .mil-aw-r { grid-column:2; grid-row:2; text-align:right; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:10.5px; }
+    .mil-aw-r b { color:#047857; font-weight:800; }
+    .mil-aw-r i { font-style:normal; color:#94a3b8; font-weight:600; margin-left:5px; }
+    .mil-aw-r u { text-decoration:none; color:#cbd5e1; font-weight:700; }
+    .mil-soon { font-size:10.5px; font-weight:700; color:#94a3b8; }
+    .mil-soon.is-warn { color:#b45309; }
+    .mil-buckets { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+    .mil-bk { position:relative; border:1px solid #e9eef5; border-radius:11px; padding:10px 12px 9px; background:#fff; }
+    .mil-bk.is-warn { border-color:#fcd34d; background:#fffbeb; }
+    .mil-bk.is-crit { border-color:#fda4af; background:#fff1f2; }
+    .mil-bk-top { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
+    .mil-bk-v { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:15px; font-weight:800; color:#0f172a; }
+    .mil-bk-v em { font-style:normal; font-size:9.5px; font-weight:700; color:#94a3b8; margin-left:3px; }
+    .mil-bk-d { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; color:#94a3b8; }
+    .mil-bk-bar { height:4px; border-radius:999px; background:#f1f5f9; margin:8px 0 6px; overflow:hidden; }
+    .mil-bk-bar span { display:block; height:100%; border-radius:999px; background:#a78bfa; }
+    .mil-bk.is-warn .mil-bk-bar span { background:#f59e0b; }
+    .mil-bk.is-crit .mil-bk-bar span { background:#f43f5e; }
+    .mil-bk-foot { display:flex; justify-content:space-between; font-family:var(--font-num);
+      font-variant-numeric:tabular-nums; font-size:9.5px; font-weight:700; color:#94a3b8; }
     .flt-mile-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
     .flt-mile-card { position:relative; background:#fff; border:1px solid #e2e8f0; border-radius:14px;
       padding:14px 15px 12px; transition:box-shadow .2s; }
@@ -14583,7 +14632,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=276" defer></script>
+<script src="js/app-1-pages.js?v=277" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

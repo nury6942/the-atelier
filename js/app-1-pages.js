@@ -18233,74 +18233,143 @@
     return { iata:iata, from:rt.from, to:rt.to, km:km, miles:miles,
       prog:p.prog, rate:p.rate, earn:Math.round(miles * p.rate / 100), none:false };
   }
+  // 프로그램 → 항공사(로고·예약 링크) 매핑
+  var _FLT_PROG_META = {
+    '스카이패스':      { iata:'KE', name:'대한항공',  book:'https://www.koreanair.com/booking/award',
+                       chart:'https://www.koreanair.com/contents/skypass/use-miles/award-ticket/redemption' },
+    '아시아나클럽':    { iata:'OZ', name:'아시아나항공' },
+    '마일즈&모어':     { iata:'LH', name:'루프트한자' },
+    '플라잉블루':      { iata:'AF', name:'에어프랑스·KLM' },
+    'ANA 마일리지클럽':{ iata:'NH', name:'ANA' },
+    'JAL 마일리지뱅크':{ iata:'JL', name:'JAL' }
+  };
+  // ★ (2026-07-24) 대한항공 보너스 항공권 공제표 (평수기·왕복 기준, 편도는 50%, 성수기 +50%)
+  //   공개된 고정 데이터라 API 없이 넣을 수 있다. 출처를 화면에 링크로 병기한다.
+  var _KE_AWARD = [
+    { zone:'국내선',            eco:10000,  biz:12000  },
+    { zone:'일본·중국·동북아',  eco:30000,  biz:60000  },
+    { zone:'동남아',            eco:40000,  biz:80000  },
+    { zone:'미주·유럽·대양주',  eco:70000,  biz:140000 }
+  ];
   function _fltRenderMileage() {
     var wrap = document.getElementById('flight-mileage-body');
     if (!wrap) return;
     var rows = (_fltMiles || []).filter(function(r){ return r && r.type === 'mileage'; });
     rows.sort(function(a, b) { return String(_fltMileExpiry(a)).localeCompare(String(_fltMileExpiry(b))); });
 
-    // ── 지갑 ──
-    var walletHtml = rows.length ? rows.map(function(r) {
-      var exp = _fltMileExpiry(r);
-      var dd = _fltDdayTo(exp);
-      var warn = (dd !== null && dd <= 365);
-      var crit = (dd !== null && dd <= 90);
-      var ddTxt = dd === null ? '소멸일 미정' : (dd < 0 ? '소멸됨' : 'D-' + dd.toLocaleString('ko-KR'));
-      return '<article class="flt-mile-card' + (crit ? ' is-crit' : (warn ? ' is-warn' : '')) + '">' +
-        '<div class="flt-mile-top">' +
-          '<div><p class="flt-eyebrow">' + _spotEsc(r.program || '프로그램') + '</p>' +
-            '<p class="flt-mile-v">' + Number(r.balance || 0).toLocaleString('ko-KR') + '<em>mi</em></p></div>' +
-          '<span class="flt-mile-dd">' + ddTxt + '</span>' +
+    // ── 프로그램별 합계 ──
+    var byProg = {};
+    rows.forEach(function(r) {
+      var k = String(r.program || '기타').trim();
+      if (!byProg[k]) byProg[k] = { total: 0, buckets: [] };
+      byProg[k].total += Number(r.balance) || 0;
+      byProg[k].buckets.push(r);
+    });
+    var progKeys = Object.keys(byProg);
+
+    if (!progKeys.length) {
+      wrap.innerHTML = '<div class="flt-empty"><span class="material-symbols-outlined">card_membership</span>' +
+        '<p>보유 마일리지를 등록하면 <strong>소멸 예정일까지 남은 날</strong>과 <strong>지금 뭘 탈 수 있는지</strong>를 계산해줘요.</p></div>';
+      return;
+    }
+
+    var html = progKeys.map(function(pk) {
+      var g = byProg[pk];
+      var meta = _FLT_PROG_META[pk] || {};
+      var total = g.total;
+      // 가장 먼저 소멸하는 뭉치
+      var soon = g.buckets.slice().sort(function(a,b){ return String(_fltMileExpiry(a)).localeCompare(String(_fltMileExpiry(b))); })[0];
+      var soonExp = soon ? _fltMileExpiry(soon) : '';
+      var soonDd = _fltDdayTo(soonExp);
+
+      var head =
+        '<div class="mil-head">' +
+          '<div class="mil-id">' +
+            (meta.iata ? _airlineLogoHtml(meta.iata) : '') +
+            '<div><p class="mil-prog">' + _spotEsc(meta.name || pk) + '<em>' + _spotEsc(pk) + '</em></p>' +
+              '<p class="mil-total">' + total.toLocaleString('ko-KR') + '<span>mi</span></p></div>' +
+          '</div>' +
+          (meta.book ? '<a class="mil-book" href="' + meta.book + '" target="_blank" rel="noopener">' +
+            '<span class="material-symbols-outlined">confirmation_number</span>보너스 항공권 예약</a>' : '') +
+        '</div>';
+
+      // ── 이 마일로 뭘 탈 수 있나 (대한항공만 공제표 보유) ──
+      var canHtml = '';
+      if (pk === '스카이패스') {
+        canHtml = '<div class="mil-award">' +
+          '<div class="mil-sub"><p class="flt-eyebrow">지금 탈 수 있는 것</p>' +
+            '<a class="mil-src" href="' + meta.chart + '" target="_blank" rel="noopener">공제표 원문 ↗</a></div>' +
+          '<div class="mil-award-list">' +
+          _KE_AWARD.map(function(a) {
+            return ['eco','biz'].map(function(cab) {
+              var need = a[cab];
+              var can = total >= need;
+              var n = Math.floor(total / need);
+              return '<div class="mil-aw' + (can ? ' is-ok' : '') + '">' +
+                '<span class="mil-aw-z">' + a.zone + '</span>' +
+                '<span class="mil-aw-c">' + (cab === 'eco' ? '이코노미' : '비즈니스') + ' 왕복</span>' +
+                '<span class="mil-aw-m">' + need.toLocaleString('ko-KR') + 'mi</span>' +
+                '<span class="mil-aw-r">' + (can
+                  ? '<b>' + (n > 1 ? n + '회 가능' : '가능') + '</b><i>' + (total - need * n).toLocaleString('ko-KR') + 'mi 남음</i>'
+                  : '<u>' + (need - total).toLocaleString('ko-KR') + 'mi 부족</u>') + '</span>' +
+              '</div>';
+            }).join('');
+          }).join('') +
+          '</div>' +
+          '<p class="flt-acc-note">평수기·왕복 기준. 편도는 절반, 성수기는 약 1.5배가 공제돼요. 실제 좌석 여부는 예약 화면에서 확인해야 해요.</p>' +
+        '</div>';
+      }
+
+      // ── 소멸 뭉치 ──
+      var bucketHtml = '<div class="mil-sub"><p class="flt-eyebrow">유효기간별</p>' +
+        (soonDd !== null ? '<span class="mil-soon' + (soonDd <= 365 ? ' is-warn' : '') + '">가장 먼저 ' + soonExp + ' 소멸 · D-' + soonDd.toLocaleString('ko-KR') + '</span>' : '') +
         '</div>' +
-        '<div class="flt-mile-meta">' +
-          (exp ? '<span>소멸 예정 ' + exp + '</span>' : '') +
-          (r.earned_date ? '<span>최종 적립 ' + r.earned_date + '</span>' : '') +
-          (r.member_no ? '<span>' + _spotEsc(r.member_no) + '</span>' : '') +
-        '</div>' +
-        (r.memo ? '<p class="flt-mile-memo">' + _spotEsc(r.memo) + '</p>' : '') +
-        '<button class="flt-mile-del" onclick="fltDeleteMileage(\'' + r._id + '\')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
-      '</article>';
-    }).join('') : '<div class="flt-empty"><span class="material-symbols-outlined">card_membership</span>' +
-        '<p>보유 마일리지를 등록해두면 <strong>소멸 예정일까지 남은 날</strong>을 자동으로 세어줘요. ' +
-        '스카이패스는 적립일로부터 만 10년이 되는 해의 12월 31일에 소멸돼요.</p></div>';
+        '<div class="mil-buckets">' + g.buckets.map(function(r) {
+          var exp = _fltMileExpiry(r), dd = _fltDdayTo(exp);
+          var warn = (dd !== null && dd <= 365), crit = (dd !== null && dd <= 90);
+          var pct = total ? Math.round((Number(r.balance)||0) / total * 100) : 0;
+          return '<div class="mil-bk' + (crit ? ' is-crit' : (warn ? ' is-warn' : '')) + '">' +
+            '<div class="mil-bk-top"><span class="mil-bk-v">' + (Number(r.balance)||0).toLocaleString('ko-KR') + '<em>mi</em></span>' +
+              '<span class="mil-bk-d">' + (exp ? exp.slice(0,7) : '미정') + '</span></div>' +
+            '<div class="mil-bk-bar"><span style="width:' + pct + '%"></span></div>' +
+            '<div class="mil-bk-foot"><span>' + pct + '%</span>' +
+              '<span>' + (dd === null ? '' : (dd < 0 ? '소멸됨' : 'D-' + dd.toLocaleString('ko-KR'))) + '</span></div>' +
+            '<button class="flt-mile-del" onclick="fltDeleteMileage(\'' + r._id + '\')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
+          '</div>';
+        }).join('') + '</div>';
+
+      return '<article class="mil-card">' + head + canHtml + bucketHtml + '</article>';
+    }).join('');
 
     // ── 적립 예상 ──
     var flights = _fltLoadCached() || [];
     var accHtml = '';
     if (flights.length) {
-      var byProg = {}, noneRows = [];
+      var accBy = {}, noneRows = [];
       var lines = flights.map(function(f) {
         var a = _fltAccrual(f);
-        if (a.earn) byProg[a.prog] = (byProg[a.prog] || 0) + a.earn;
-        if (a.none) noneRows.push(a);
+        if (a.earn) accBy[a.prog] = (accBy[a.prog] || 0) + a.earn;
+        if (a.none) noneRows.push(a.why);
         var right = a.none ? '<span class="flt-acc-none">적립 없음</span>'
           : (a.unknown ? '<span class="flt-acc-unk">확인 필요</span>'
           : '<span class="flt-acc-earn">+' + Number(a.earn || 0).toLocaleString('ko-KR') + ' mi</span>');
         return '<div class="flt-acc-row">' +
           '<span class="flt-acc-rt">' + (a.from && a.to ? a.from + ' → ' + a.to : (f.title || '—')) + '</span>' +
           '<span class="flt-acc-km">' + (a.km ? Math.round(a.km).toLocaleString('ko-KR') + 'km · ' + a.miles.toLocaleString('ko-KR') + 'mi' : '거리 미상') + '</span>' +
-          '<span class="flt-acc-p">' + (a.prog || a.why || '') + '</span>' +
-          right +
+          '<span class="flt-acc-p">' + (a.prog || a.why || '') + '</span>' + right +
         '</div>';
       }).join('');
-      var totals = Object.keys(byProg).map(function(k) {
-        return '<span class="flt-acc-total"><b>' + _spotEsc(k) + '</b>+' + byProg[k].toLocaleString('ko-KR') + ' mi</span>';
+      var totals = Object.keys(accBy).map(function(k) {
+        return '<span class="flt-acc-total"><b>' + _spotEsc(k) + '</b>+' + accBy[k].toLocaleString('ko-KR') + ' mi</span>';
       }).join('');
       accHtml = '<div class="flt-acc">' +
-        (totals ? '<div class="flt-acc-sum">' + totals + '</div>' : '') +
-        lines +
-        (noneRows.length ? '<p class="flt-acc-note">※ ' + noneRows.map(function(n){ return n.why; })
-          .filter(function(v,i,arr){ return arr.indexOf(v)===i; }).join(' · ') + '</p>' : '') +
+        '<div class="flt-sub-h"><p class="flt-eyebrow">Estimated Earning</p><span class="flt-dim">등록된 항공편 기준</span></div>' +
+        (totals ? '<div class="flt-acc-sum">' + totals + '</div>' : '') + lines +
+        (noneRows.length ? '<p class="flt-acc-note">※ ' + noneRows.filter(function(v,i,arr){return arr.indexOf(v)===i;}).join(' · ') + '</p>' : '') +
         '<p class="flt-acc-note">※ FSC 적립률은 예약 클래스에 따라 25~100%로 달라져요. 위 수치는 정상운임(100%) 기준 상한이에요.</p>' +
       '</div>';
-    } else {
-      accHtml = '<div class="flt-empty"><span class="material-symbols-outlined">calculate</span><p>항공편을 등록하면 노선 거리로 적립 예상 마일을 계산해요.</p></div>';
     }
-
-    wrap.innerHTML =
-      '<div class="flt-mile-grid">' + walletHtml + '</div>' +
-      '<div class="flt-sub-h"><p class="flt-eyebrow">Estimated Earning</p><span class="flt-dim">등록된 항공편 기준</span></div>' +
-      accHtml;
+    wrap.innerHTML = html + accHtml;
   }
   window.fltToggleMileForm = function() {
     var f = document.getElementById('flight-mile-form');
