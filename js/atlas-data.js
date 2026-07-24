@@ -298,10 +298,20 @@
     return Math.round(s * 10) / 10;
   }
 
+  // ★ (2026-07-24) 여행 → 항공권 추적 매핑. route 첫 도시=입국, 끝 도시=출국 공항.
+  //   months는 dates에서 뽑은 여행 기간에 걸치는 달 전부(그 달들만 시세를 추적).
+  var FLIGHT_MAP = {
+    'scandinavia-2027': { to: 'CPH', city: '코펜하겐', months: ['2027-05'] },
+    'canada-2027':      { to: 'YUL', city: '몬트리올', months: ['2027-09', '2027-10'] },
+    'ireland-2028':     { to: 'DUB', city: '더블린',   months: ['2028-04', '2028-05'] },
+    'iceland-2028':     { to: 'KEF', city: '레이캬비크', months: ['2028-09', '2028-10'] }
+  };
+
   // 글로벌 export
   window.ATLAS_DATA = {
     TRIPS: TRIPS,
     WISHLIST: WISHLIST,
+    FLIGHT_MAP: FLIGHT_MAP,
     totals: totals,
     tripBudgetSum: tripBudgetSum,
     findTrip: function(id) {

@@ -98,6 +98,7 @@
       var atlasSection = document.getElementById('travel-atlas-section');
       if (atlasSection && (!_currentTripView || _currentTripView === 'dashboard')) {
         atlasSection.innerHTML = renderAtlas();
+        setTimeout(function(){ if(window.atlasMarkTracked) window.atlasMarkTracked(); }, 100);
       }
     } else {
       // 디테일 페이지가 활성이면 그 페이지 재렌더 (hero 이미지)
@@ -193,6 +194,7 @@
         if (atlasSection && atlasSection.style.display !== 'none' &&
             (!_currentTripView || _currentTripView === 'dashboard')) {
           atlasSection.innerHTML = renderAtlas();
+        setTimeout(function(){ if(window.atlasMarkTracked) window.atlasMarkTracked(); }, 100);
         }
       });
     });
@@ -299,6 +301,14 @@
         html += '<div class="atlas-trip-row"><span class="atlas-trip-k">STAY</span><span class="atlas-trip-v">' + tr.days + ' Days · ' + tr.nights + ' Nights</span></div>';
         html += '<p class="atlas-trip-route">' + _esc((tr.route || []).slice(0, 3).join(' → ')) + '</p>';
         html += '</div>';
+        // ★ (2026-07-24) 항공권 추적 버튼 — 이 여행을 항공 탭 관심 노선으로 등록
+        var fm = (window.ATLAS_DATA && window.ATLAS_DATA.FLIGHT_MAP) ? window.ATLAS_DATA.FLIGHT_MAP[tr.id] : null;
+        if (fm) {
+          html += '<button class="atlas-track-btn" data-track="' + tr.id + '" ' +
+            'onclick="event.stopPropagation();atlasTrackFlight(\'' + tr.id + '\')">' +
+            '<span class="material-symbols-outlined">flight_takeoff</span>' +
+            '<span class="atlas-track-label">항공권 추적</span></button>';
+        }
         html += '</div>';
       });
       html += '</div>';
@@ -628,11 +638,64 @@
     if (!atlasSection) return;
     _currentTripView = 'dashboard';
     atlasSection.innerHTML = renderAtlas();
+        setTimeout(function(){ if(window.atlasMarkTracked) window.atlasMarkTracked(); }, 100);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Atlas';
   }
   window.atlasOpenTrip = atlasOpenTrip;
+
+  // ★ (2026-07-24) Atlas 여행 → 항공 탭 관심 노선 등록/해제.
+  //   이미 있으면 해당 여행의 추적 달을 병합, 없으면 새로 만든다. 토글식(있으면 알림).
+  window.atlasTrackFlight = async function(tripId) {
+    var trip = window.ATLAS_DATA && window.ATLAS_DATA.findTrip(tripId);
+    var fm = window.ATLAS_DATA && window.ATLAS_DATA.FLIGHT_MAP && window.ATLAS_DATA.FLIGHT_MAP[tripId];
+    if (!trip || !fm) return;
+    var btn = document.querySelector('[data-track="' + tripId + '"]');
+    if (btn) { btn.disabled = true; btn.querySelector('.atlas-track-label').textContent = '등록 중…'; }
+    try {
+      var snap = await db.collection('flight_watch').where('type', '==', 'watch')
+        .where('route_to', '==', fm.to).get();
+      var existing = null;
+      snap.forEach(function(d){ var x = d.data(); if (x.route_from === 'ICN') existing = { id: d.id, tm: x.target_months || [] }; });
+      var memo = '✈️ ' + (trip.name || trip.title || '') + ' · ' + fm.city;
+      if (existing) {
+        var merged = [];
+        (existing.tm || []).concat(fm.months).forEach(function(m){ if (merged.indexOf(m) < 0) merged.push(m); });
+        merged.sort();
+        await db.collection('flight_watch').doc(existing.id).update({ target_months: merged, memo: memo, atlas_trip: trip.name || '' });
+      } else {
+        await db.collection('flight_watch').add({ type: 'watch', route_from: 'ICN', route_to: fm.to,
+          depart_date: '', return_date: '', target_months: fm.months.slice(), memo: memo,
+          atlas_trip: trip.name || '', created_at: new Date().toISOString() });
+      }
+      if (btn) {
+        btn.classList.add('is-done');
+        btn.querySelector('.atlas-track-label').textContent = '추적 중 ✓';
+        var ic = btn.querySelector('.material-symbols-outlined'); if (ic) ic.textContent = 'check_circle';
+      }
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + fm.city + ' 항공권 추적 시작 (' + fm.months.join(', ') + ')');
+    } catch(e) {
+      if (btn) { btn.disabled = false; btn.querySelector('.atlas-track-label').textContent = '항공권 추적'; }
+      alert('등록 실패: ' + e.message);
+    }
+  };
+  // 렌더 후 이미 추적 중인 여행은 버튼을 '추적 중'으로 표시
+  window.atlasMarkTracked = async function() {
+    try {
+      var snap = await db.collection('flight_watch').where('type', '==', 'watch').get();
+      var tracked = {};
+      snap.forEach(function(d){ var x = d.data(); if (x.route_to && (x.target_months||[]).length) tracked[x.route_to] = 1; });
+      var fmAll = (window.ATLAS_DATA && window.ATLAS_DATA.FLIGHT_MAP) || {};
+      Object.keys(fmAll).forEach(function(tid){
+        if (tracked[fmAll[tid].to]) {
+          var btn = document.querySelector('[data-track="' + tid + '"]');
+          if (btn) { btn.classList.add('is-done'); var l = btn.querySelector('.atlas-track-label'); if (l) l.textContent = '추적 중 ✓';
+            var ic = btn.querySelector('.material-symbols-outlined'); if (ic) ic.textContent = 'check_circle'; }
+        }
+      });
+    } catch(e) {}
+  };
   window.atlasBackToAtlas = atlasBackToAtlas;
 
   // Atlas 탭 표시 (journey 페이지 안에서 호출)
@@ -643,6 +706,7 @@
     _atlasHydrateImagesFromLS();
     _atlasRegisterPaste();
     atlasSection.innerHTML = renderAtlas();
+        setTimeout(function(){ if(window.atlasMarkTracked) window.atlasMarkTracked(); }, 100);
     atlasSection.style.display = 'block';
     // Firestore 백그라운드 fetch (변경 시 자동 재렌더)
     _atlasActivateImages();
