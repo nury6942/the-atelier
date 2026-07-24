@@ -18271,21 +18271,41 @@
   //    비어 있으면 아래 시드값(2026-08, 대한항공 14단계)으로 채운다.
   //    ※ 출처: 대한항공 8월 발권분 공지 (7월 19단계 → 8월 14단계, 3개월 연속 인하)
   // ═══════════════════════════════════════════════════════════════════
+  // ★ (2026-07-24) 대한항공 공식 공지표 그대로 — 대권거리(마일) 9단계.
+  //   출처: koreanair.com/contents/footer/customer-support/notice/2026/2608-infuel
+  //   URL이 YYMM-infuel 패턴이라 다음 달 공지 주소를 예측할 수 있다(스크래핑은 403으로 막힘).
+  var _FUEL_BANDS = [
+    { max: 499,  zone: '~499',        ex: '후쿠오카·칭다오·선양' },
+    { max: 999,  zone: '500~999',     ex: '도쿄·오사카·베이징·타이베이' },
+    { max: 1499, zone: '1,000~1,499', ex: '홍콩·광저우·마카오' },
+    { max: 1999, zone: '1,500~1,999', ex: '마닐라·하노이·다낭' },
+    { max: 2999, zone: '2,000~2,999', ex: '방콕·싱가포르·호찌민·괌' },
+    { max: 3999, zone: '3,000~3,999', ex: '자카르타·덴파사르' },
+    { max: 4999, zone: '4,000~4,999', ex: '두바이·호놀룰루·이스탄불' },
+    { max: 6499, zone: '5,000~6,499', ex: '런던·파리·로마·밴쿠버·LA' },
+    { max: 99999,zone: '6,500~9,999', ex: '뉴욕·시카고·토론토' }
+  ];
   var _FUEL_SEED = {
     month: '2026-08', airline: '대한항공', step: '14단계',
-    rows: [
-      { zone: '동북아 단거리 (후쿠오카·칭다오)', krw: 35200 },
-      { zone: '동북아 주요 (도쿄·베이징)',       krw: 49600 },
-      { zone: '동남아 (방콕·싱가포르·호찌민)',   krw: 99200 },
-      { zone: '유럽·미 서부 (런던·파리·LA)',     krw: 225600 },
-      { zone: '미 동부 (뉴욕·워싱턴)',           krw: 259200 }
-    ]
+    rows: [35200, 49600, 64000, 80000, 99200, 100800, 160000, 225600, 259200]
+      .map(function(v, i){ return { zone: _FUEL_BANDS[i].zone, ex: _FUEL_BANDS[i].ex, krw: v }; })
   };
   var _fltFuel = null;
-  function _fuelDoc() {
-    var d = (_fltWatch || []).filter(function(r){ return r && r.type === 'fuel'; })
-      .sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); })[0];
-    return d || null;
+  function _fuelNextMonth() {
+    var f = _fuelData(); var m = /^(\d{4})-(\d{2})$/.exec(f.month || '');
+    if (!m) return '';
+    var y = +m[1], mo = +m[2] + 1; if (mo > 12) { mo = 1; y++; }
+    return y + '-' + String(mo).padStart(2, '0');
+  }
+  function _fuelDocs() {
+    return (_fltWatch || []).filter(function(r){ return r && r.type === 'fuel' && r.rows && r.rows.length; })
+      .sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); });
+  }
+  function _fuelDoc() { return _fuelDocs()[0] || null; }
+  function _fuelPrev() { return _fuelDocs()[1] || null; }
+  function _fuelPending() {
+    return (_fltWatch || []).filter(function(r){ return r && r.type === 'fuel_pending'; })
+      .sort(function(a,b){ return String(b.month||'').localeCompare(String(a.month||'')); })[0] || null;
   }
   function _fuelData() {
     var d = _fuelDoc();
@@ -18293,35 +18313,71 @@
     return _FUEL_SEED;
   }
   // 노선 구간 → 유류할증료 추정 (공항 거리 기준으로 가장 가까운 구간)
+  // 공지표가 '대권거리(마일)' 기준이라 km를 마일로 바꿔 구간을 찾는다
   function _fuelForRoute(from, to) {
     var km = _fltLegKm(String(from||'').toUpperCase(), String(to||'').toUpperCase());
     if (!km) return null;
+    var mi = km / KM_PER_MILE;
+    var idx = 0;
+    for (var i = 0; i < _FUEL_BANDS.length; i++) { if (mi <= _FUEL_BANDS[i].max) { idx = i; break; } idx = i; }
     var f = _fuelData(), rows = f.rows || [];
-    var idx = km < 1500 ? 0 : km < 2500 ? 1 : km < 5000 ? 2 : km < 9500 ? 3 : 4;
     if (idx >= rows.length) idx = rows.length - 1;
-    return rows[idx] ? { krw: rows[idx].krw, zone: rows[idx].zone, month: f.month, airline: f.airline } : null;
+    return rows[idx] ? { krw: rows[idx].krw, zone: rows[idx].zone, ex: rows[idx].ex,
+      mi: Math.round(mi), month: f.month, airline: f.airline } : null;
+  }
+  // 다음 달 공지 주소 (YYMM-infuel 패턴)
+  function _fuelNoticeUrl(ym) {
+    var m = /^(\d{4})-(\d{2})$/.exec(String(ym || ''));
+    if (!m) return 'https://www.koreanair.com/contents/footer/customer-support/notice';
+    return 'https://www.koreanair.com/contents/footer/customer-support/notice/' + m[1] + '/' + m[1].slice(2) + m[2] + '-infuel';
   }
   window.fltRenderFuel = function() {
     var box = document.getElementById('flight-fuel-body');
     if (!box) return;
     var f = _fuelData();
     var isSeed = !_fuelDoc();
-    var max = Math.max.apply(null, f.rows.map(function(r){ return r.krw; }));
+    var prev = _fuelPrev();
+    var pend = _fuelPending();
+    var max = Math.max.apply(null, f.rows.concat((prev && prev.rows) || []).map(function(r){ return r.krw; }));
     box.innerHTML =
+      (pend && pend.month > f.month ?
+        '<div class="fuel-pend">' +
+          '<div><b>' + _spotEsc(pend.month) + ' 유류할증료가 공지된 것 같아요</b>' +
+            (pend.step ? ' <span>' + _spotEsc(pend.step) + '</span>' : '') +
+            '<p>자동 감지한 후보 금액: ' + ((pend.candidates || []).slice(0, 8).map(function(v){ return _fltKrw(v); }).join(' · ') || '못 찾음') +
+            '<br>잘못 읽었을 수 있어서 자동 반영은 안 했어요. 공지를 확인하고 [수정]으로 넣어주세요.</p></div>' +
+          '<a class="pw-btn" href="' + (pend.source || '#') + '" target="_blank" rel="noopener">기사 보기 ↗</a>' +
+        '</div>' : '') +
       '<div class="fuel-head">' +
         '<div><span class="pw-l">' + _spotEsc(f.airline) + ' · ' + _spotEsc(f.month) + ' 발권분</span>' +
           '<p class="fuel-step">' + _spotEsc(f.step || '') + '<em>편도 기준</em></p></div>' +
+        (prev ? '<div class="fuel-legend"><span class="is-prev"></span>' + _spotEsc(prev.month) +
+          '<span class="is-cur"></span>' + _spotEsc(f.month) + '</div>' : '') +
         '<div class="fuel-acts">' +
-          '<a class="pw-btn" href="https://www.koreanair.com/contents/booking/reservation-guide/fare-rule/fuel-surcharge" target="_blank" rel="noopener">공지 확인 ↗</a>' +
+          '<a class="pw-btn" href="' + _fuelNoticeUrl(_fuelNextMonth()) + '" target="_blank" rel="noopener" title="' + _fuelNextMonth() + ' 공지로 바로 가기">다음 달 공지 ↗</a>' +
+          '<a class="pw-btn" href="' + _fuelNoticeUrl(f.month) + '" target="_blank" rel="noopener">이번 달 공지 ↗</a>' +
           '<button class="pw-btn is-dark" onclick="fltEditFuel()"><span class="material-symbols-outlined">edit</span>수정</button>' +
         '</div>' +
       '</div>' +
       '<div class="fuel-rows">' + f.rows.map(function(r) {
         var pct = max ? Math.round(r.krw / max * 100) : 0;
+        // 전월 같은 구간 찾기 → 비교 바 + 증감
+        var pv = prev ? (prev.rows || []).filter(function(x){ return x.zone === r.zone; })[0] : null;
+        var ppct = (pv && max) ? Math.round(pv.krw / max * 100) : 0;
+        var diff = pv ? (r.krw - pv.krw) : null;
+        var dPct = (pv && pv.krw) ? Math.round((r.krw - pv.krw) / pv.krw * 100) : null;
+        var dCls = diff === null ? '' : (diff < 0 ? ' is-down' : (diff > 0 ? ' is-up' : ' is-same'));
+        var dTxt = diff === null ? '<u>전월 자료 없음</u>'
+          : (diff === 0 ? '동일'
+          : (diff < 0 ? '▼ ' : '▲ ') + Math.abs(diff).toLocaleString('ko-KR') + ' (' + (dPct > 0 ? '+' : '') + dPct + '%)');
         return '<div class="fuel-row">' +
-          '<span class="fuel-z">' + _spotEsc(r.zone) + '</span>' +
-          '<span class="fuel-bar"><i style="width:' + pct + '%"></i></span>' +
-          '<span class="fuel-v">' + _fltKrw(r.krw) + '<em>왕복 ' + _fltKrw(r.krw * 2) + '</em></span>' +
+          '<span class="fuel-z">' + _spotEsc(r.zone) + '<em>' + _spotEsc(r.ex || '') + '</em></span>' +
+          '<span class="fuel-bars">' +
+            (pv ? '<span class="fuel-bar is-prev" title="전월 ' + _fltKrw(pv.krw) + '"><i style="width:' + ppct + '%"></i></span>' : '') +
+            '<span class="fuel-bar" title="이번 달 ' + _fltKrw(r.krw) + '"><i style="width:' + pct + '%"></i></span>' +
+          '</span>' +
+          '<span class="fuel-v">' + _fltKrw(r.krw) + '<em>왕복 ' + _fltKrw(r.krw * 2) + '</em>' +
+            '<em class="fuel-diff' + dCls + '">' + dTxt + '</em></span>' +
         '</div>';
       }).join('') + '</div>' +
       '<p class="flt-acc-note">' + (isSeed ? '기본값이에요 — 매달 공지가 바뀌면 [수정]으로 갱신하거나 저한테 "유류할증료 업데이트해줘"라고 하면 돼요. ' : '') +
@@ -18340,7 +18396,8 @@
     var step = prompt('단계 (예: 14단계)', f.step || '') || '';
     var doc = { type:'fuel', month:month, airline:f.airline, step:step, rows:rows, updated_at:new Date().toISOString() };
     try {
-      var ex = _fuelDoc();
+      // 같은 달이면 갱신, 새 달이면 새 문서 — 전월 비교를 위해 이력을 남긴다
+      var ex = _fuelDocs().filter(function(d){ return d.month === month; })[0];
       if (ex && ex._id) { await fbUpdate('flight_watch', ex._id, doc); Object.assign(ex, doc); }
       else { var id = await fbAdd('flight_watch', doc); doc._id = (id && id.id) ? id.id : id; _fltWatch.push(doc); }
       window.fltRenderFuel(); _fltRenderWatch();
@@ -19016,11 +19073,21 @@
             Math.abs(diff).toLocaleString('ko-KR') + '</i>' : '') + '</b></div>' +
         '<div><span class="pw-l">Logs</span><b>' + pts.length + '</b></div>' +
       '</div>' : '';
+      // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
+      var fuelInfo = _fuelForRoute(w.route_from, w.route_to);
+      var realHtml = (cur && fuelInfo) ? '<div class="pw-real">' +
+        '<span class="pw-l">실제 낼 돈 <em>' + _spotEsc(fuelInfo.month) + ' 유류할증료 기준 · 세금 별도</em></span>' +
+        '<div><span>항공권 ' + _fltKrw(cur) + '</span><span>+ 유류 ' + _fltKrw(fuelInfo.krw * (w.return_date ? 2 : 1)) + '</span>' +
+        '<b>' + _fltKrw(cur + fuelInfo.krw * (w.return_date ? 2 : 1)) + '</b></div>' +
+      '</div>' : '';
       var chart = pts.length > 1 ? '<div class="pw-chart">' + _fltPriceChartSvg(pts) + '</div>' : '';
       var snapList = snaps.length ? '<ul class="pw-snaps">' + snaps.slice().reverse().map(function(sn) {
-        return '<li><span class="pw-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
-          '<span class="pw-snap-p">' + _trvAmtHtml(sn.price_krw) + '</span>' +
-          '<span class="pw-snap-s">' + _fltEsc(sn.source || '') + (sn.note ? ' · ' + _fltEsc(sn.note) : '') + '</span>' +
+        var isAuto = String(sn.source || '') === '자동 수집';
+        return '<li' + (isAuto ? ' class="is-auto"' : '') + '><span class="pw-snap-d">' + _fltEsc(String(sn.ts || '').slice(0, 10)) + '</span>' +
+          '<span class="pw-snap-p">' + _trvAmtHtml(sn.price_krw) +
+            (sn.fuel_krw ? '<em>+유류 ' + Math.round(Number(sn.fuel_krw)/10000) + '만</em>' : '') + '</span>' +
+          '<span class="pw-snap-s">' + (isAuto ? '<b class="pw-auto">AUTO</b>' : '') +
+            _fltEsc(sn.source || '') + (sn.note ? ' · ' + _fltEsc(sn.note) : '') + '</span>' +
           '<button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제"><span class="material-symbols-outlined">close</span></button></li>';
       }).join('') + '</ul>' : '';
 
@@ -19054,7 +19121,7 @@
           '<button class="pw-rec-b" onclick="fltAddPrice(\'' + w._id + '\')">' +
             '<span class="material-symbols-outlined">add</span>기록</button>' +
         '</div>' +
-        stats + chart + _fltBookLinks(w) + snapList +
+        stats + realHtml + chart + _fltBookLinks(w) + snapList +
       '</article>';
     }).join('');
 
