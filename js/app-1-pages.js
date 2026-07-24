@@ -18164,7 +18164,14 @@
   var _FLT_SOURCES = ['스카이스캐너', '구글 항공권', '네이버 항공권', '항공사 직접', '여행사', '기타'];
 
   function _fltIsPrice(d) { return d && d.type === 'flight_price'; }
-  function _fltIsWatch(d) { return d && d.type !== 'flight_price'; }
+  // ★ (2026-07-24) 같은 컬렉션에 mileage·fuel·fuel_pending이 추가되면서, '가격이 아니면 전부 노선'
+  //   이던 이 판정이 마일리지·유류할증료 문서까지 노선 카드로 그려버렸다(undefined → undefined).
+  function _fltIsWatch(d) {
+    if (!d) return false;
+    if (d.type === 'watch') return true;
+    // 초기 문서는 type이 없을 수 있음 — 노선 필드가 있으면 노선으로 인정
+    return !d.type && !!(d.route_from && d.route_to);
+  }
 
   // ═══════════════════════════════════════════════════════════════════
   //  ★ (2026-07-24) 섹션 · 마일리지 (Mileage)
@@ -18835,7 +18842,8 @@
     }catch(e){ out.innerHTML='<p class="flt-acc-note flt-err">'+_spotEsc(e.message)+'</p>'; }
   };
   window.fltZoomMonth = function(ym) {
-    var el=document.getElementById('fmo-month'); if(el) el.value=ym;
+    var m = /^(\d{4})-(\d{2})$/.exec(String(ym || ''));
+    if (m) window.pwPickMonth(+m[1], +m[2]);
     window.fltMonthSearch();
   };
 
@@ -19041,6 +19049,66 @@
 
   // ★ (2026-07-24) Stitch 시안 이식 — 각진 모서리·헤어라인·큰 IATA. 기능은 100% 그대로.
   var _pwTrip = 'round';
+  // ★ (2026-07-24) 월 선택기 — 브라우저 기본 모달은 연도를 스크롤로 넘겨야 해서 불편했다.
+  //   연도는 ‹ › 버튼, 월은 4×3 그리드. 아뜰리에 톤(각진 모서리·헤어라인·보라 액티브).
+  var _pwMpYear = new Date().getFullYear();
+  window.pwOpenMonth = function(ev) {
+    if (ev) ev.stopPropagation();
+    var pop = document.getElementById('pw-monthpop');
+    if (!pop) return;
+    if (pop.style.display === 'block') { pop.style.display = 'none'; return; }
+    var cur = (document.getElementById('fmo-month') || {}).value || '';
+    var m = /^(\d{4})-(\d{2})$/.exec(cur);
+    _pwMpYear = m ? +m[1] : new Date().getFullYear();
+    _pwMpRender();
+    pop.style.display = 'block';
+  };
+  function _pwMpRender() {
+    var pop = document.getElementById('pw-monthpop');
+    if (!pop) return;
+    var cur = (document.getElementById('fmo-month') || {}).value || '';
+    var m = /^(\d{4})-(\d{2})$/.exec(cur);
+    var selY = m ? +m[1] : null, selM = m ? +m[2] : null;
+    var now = new Date(), nowY = now.getFullYear(), nowM = now.getMonth() + 1;
+    pop.innerHTML =
+      '<div class="pw-mp-head">' +
+        '<button type="button" onclick="pwMpYear(-1)" aria-label="이전 해"><span class="material-symbols-outlined">chevron_left</span></button>' +
+        '<b>' + _pwMpYear + '</b>' +
+        '<button type="button" onclick="pwMpYear(1)" aria-label="다음 해"><span class="material-symbols-outlined">chevron_right</span></button>' +
+      '</div>' +
+      '<div class="pw-mp-grid">' +
+        Array.from({ length: 12 }, function(_, i) {
+          var mm = i + 1;
+          var past = (_pwMpYear < nowY) || (_pwMpYear === nowY && mm < nowM);
+          var on = (selY === _pwMpYear && selM === mm);
+          return '<button type="button" class="pw-mp-m' + (on ? ' is-on' : '') + (past ? ' is-past' : '') + '"' +
+            ' onclick="pwPickMonth(' + _pwMpYear + ',' + mm + ')">' + mm + '월</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="pw-mp-foot">' +
+        '<button type="button" onclick="pwPickMonth(' + nowY + ',' + nowM + ')">이번 달</button>' +
+        '<button type="button" onclick="pwClearMonth()">지우기</button>' +
+      '</div>';
+  }
+  window.pwMpYear = function(d) { _pwMpYear += d; _pwMpRender(); };
+  window.pwPickMonth = function(y, m) {
+    var v = y + '-' + String(m).padStart(2, '0');
+    var el = document.getElementById('fmo-month'); if (el) el.value = v;
+    var lb = document.getElementById('fmo-month-label'); if (lb) lb.textContent = y + '년 ' + m + '월';
+    var pop = document.getElementById('pw-monthpop'); if (pop) pop.style.display = 'none';
+  };
+  window.pwClearMonth = function() {
+    var el = document.getElementById('fmo-month'); if (el) el.value = '';
+    var lb = document.getElementById('fmo-month-label'); if (lb) lb.textContent = '달 선택';
+    var pop = document.getElementById('pw-monthpop'); if (pop) pop.style.display = 'none';
+  };
+  document.addEventListener('click', function(e) {
+    var pop = document.getElementById('pw-monthpop');
+    if (!pop || pop.style.display !== 'block') return;
+    if (e.target.closest && (e.target.closest('#pw-monthpop') || e.target.closest('#fmo-month-btn'))) return;
+    pop.style.display = 'none';
+  });
+
   window.pwSetTrip = function(v) {
     _pwTrip = v;
     var seg = document.getElementById('pw-trip-seg');
