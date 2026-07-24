@@ -18246,7 +18246,10 @@
 
   // 프로그램 → 항공사(로고·예약 링크) 매핑
   var _FLT_PROG_META = {
-    '스카이패스':      { iata:'KE', name:'대한항공',  book:'https://www.koreanair.com/booking/award',
+    // ★ (2026-07-24) /booking/award는 404였음(브라우저 실측). 아래 두 경로는 실제 렌더 확인함.
+    '스카이패스':      { iata:'KE', name:'대한항공',
+                       book:'https://www.koreanair.com/contents/skypass/use-miles/award-ticket/guide',
+                       book2:'https://www.koreanair.com/kr/ko/booking/search-flight',
                        chart:'https://www.koreanair.com/contents/skypass/use-miles/award-ticket/redemption' },
     '아시아나클럽':    { iata:'OZ', name:'아시아나항공' },
     '마일즈&모어':     { iata:'LH', name:'루프트한자' },
@@ -18300,8 +18303,13 @@
             '<div><p class="mil-prog">' + _spotEsc(meta.name || pk) + '<em>' + _spotEsc(pk) + '</em></p>' +
               '<p class="mil-total">' + total.toLocaleString('ko-KR') + '<span>mi</span></p></div>' +
           '</div>' +
-          (meta.book ? '<a class="mil-book" href="' + meta.book + '" target="_blank" rel="noopener">' +
-            '<span class="material-symbols-outlined">confirmation_number</span>보너스 항공권 예약</a>' : '') +
+          '<div class="mil-acts">' +
+            (meta.book2 ? '<a class="mil-book" href="' + meta.book2 + '" target="_blank" rel="noopener" ' +
+              'title="예약 화면에서 \'보너스 항공권\'을 켜고 조회하세요">' +
+              '<span class="material-symbols-outlined">flight_takeoff</span>항공권 조회</a>' : '') +
+            (meta.book ? '<a class="mil-book is-ghost" href="' + meta.book + '" target="_blank" rel="noopener">' +
+              '<span class="material-symbols-outlined">menu_book</span>보너스 안내</a>' : '') +
+          '</div>' +
         '</div>';
 
       // ── 이 마일로 뭘 탈 수 있나 (대한항공만 공제표 보유) ──
