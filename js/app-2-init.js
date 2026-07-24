@@ -3373,7 +3373,11 @@ function _ldgParseCardPaste(text) {
   var shinhanDateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+\d{2}:\d{2}\s+/;
   var hyTimeRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})(\d{2}):(\d{2})/; // 현대 신형: 날짜 뒤에 시간이 붙음 (26. 7. 3 + 12:36 = 312:36)
   var hyDateRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})/;                 // 현대 구형: 시간 없음 (폴백)
+  var hyRelRe = /(오늘|어제|그제)/;                                      // 현대: 최근 거래는 날짜 대신 "오늘/어제"로 표시
   var foreignRe = /^[A-Z]{3}\s+[\d,.]+$/;
+  function _pad2(n){ return ('0' + n).slice(-2); }
+  function _fmtLocal(d){ return d.getFullYear() + '-' + _pad2(d.getMonth() + 1) + '-' + _pad2(d.getDate()); }
+  var _today = new Date(); _today.setHours(0, 0, 0, 0);
   var out = [];
   for (var i = 0; i < lines.length; i++) {
     var am = amountRe.exec(lines[i]);
@@ -3390,6 +3394,15 @@ function _ldgParseCardPaste(text) {
     if (hy) {
       var mo = ('0' + hy[2]).slice(-2), da = ('0' + hy[3]).slice(-2);
       out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount, card: '현대카드',
+        cancelled: /취소/.test(hline), foreign: '' });
+      continue;
+    }
+    // 현대 상대날짜: "…(포인트형)오늘02:51:54일시불" — 카드 메타줄일 때만 인정
+    var rel = hyRelRe.exec(hline);
+    if (rel && /현대카드|일시불|할부|무이자/.test(hline)) {
+      var off = { '오늘': 0, '어제': 1, '그제': 2 }[rel[1]] || 0;
+      var rd = new Date(_today.getTime()); rd.setDate(rd.getDate() - off);
+      out.push({ date: _fmtLocal(rd), merchant: lines[i - 2] || '', amount: amount, card: '현대카드',
         cancelled: /취소/.test(hline), foreign: '' });
       continue;
     }
