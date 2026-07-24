@@ -19018,6 +19018,60 @@
       document.addEventListener('mousedown', close);
     }, 0);
   };
+  // ★ (2026-07-24) 그 달에 데이터가 없을 때 — alert 하나 띄우고 끝내지 않는다.
+  //   ① 12개월을 훑어 '기록 있는 달'을 버튼으로 제시 ② 그 달의 구글 항공권 딥링크로 바로 넘김.
+  async function _fltCheckFallback(w, month) {
+    var host = document.querySelector('[data-fltcheck="' + w._id + '"]');
+    var card = host && host.closest('.pw-card');
+    var box = card && card.querySelector('.pw-chkfb');
+    if (!box) {
+      box = document.createElement('div'); box.className = 'pw-chkfb';
+      var head = card && card.querySelector('.pw-verdict');
+      if (head && head.parentNode) head.parentNode.insertBefore(box, head.nextSibling);
+      else if (card) card.appendChild(box);
+    }
+    var gq = 'Flights from ' + w.route_from + ' to ' + w.route_to + ' in ' +
+      ['January','February','March','April','May','June','July','August','September','October','November','December'][+month.slice(5,7)-1] + ' ' + month.slice(0,4);
+    var g = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(gq);
+    var sky = 'https://www.skyscanner.co.kr/transport/flights/' + String(w.route_from).toLowerCase() + '/' + String(w.route_to).toLowerCase() + '/' + month.slice(2).replace('-','') + '/';
+    box.innerHTML = '<div class="pw-chkfb-h"><span class="material-symbols-outlined">search_off</span>' +
+      '<p><b>' + _spotEsc(month) + '</b>은 아직 자동 수집된 시세가 없어요 — 찾는 중…</p>' +
+      '<button class="pw-x" onclick="this.closest(\'.pw-chkfb\').remove()"><span class="material-symbols-outlined">close</span></button></div>';
+    // 실시간 조회 링크는 즉시
+    var links = '<div class="pw-chkfb-links">' +
+      '<a class="pw-btn is-dark" href="' + g + '" target="_blank" rel="noopener">구글 항공권 · ' + _spotEsc(month) + ' ↗</a>' +
+      '<a class="pw-btn" href="' + sky + '" target="_blank" rel="noopener">스카이스캐너 ↗</a>' +
+      '</div>' +
+      '<p class="pw-chkfb-note">' + _spotEsc(month) + '은 1년 가까이 남아 무료 집계에 아직 안 쌓였어요. 위에서 실제 요금을 보고, ' +
+      '<b>맨 위 빠른 기록</b>에 그 가격을 적으면 추이가 시작돼요.</p>';
+    // 데이터 있는 달 탐색
+    try {
+      var now = new Date();
+      var j = await _fltFetchPrices({ mode: 'year', origin: w.route_from, destination: w.route_to,
+        start: now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), currency: 'krw', one_way: String(!w.return_date) });
+      var rows = (j.data || []).filter(function(r){ return r && r.price; });
+      var alt = '';
+      if (rows.length) {
+        var lo = Math.min.apply(null, rows.map(function(r){ return r.price; }));
+        alt = '<p class="pw-chkfb-sub">대신 이 달들엔 시세가 있어요 — 눌러서 그 달 최저가 기록:</p>' +
+          '<div class="pw-alt">' + rows.map(function(r) {
+            return '<button class="pw-alt-b' + (r.price === lo ? ' is-best' : '') + '" onclick="_fltPickAltMonth(\'' + w._id + '\',\'' + r.month + '\')">' +
+              '<span>' + r.month.slice(2).replace('-', '.') + '</span><b>' + Math.round(r.price / 10000) + '만</b><em>' + r.days + '일치</em></button>';
+          }).join('') + '</div>';
+      }
+      box.querySelector('.pw-chkfb-h p').innerHTML = '<b>' + _spotEsc(month) + '</b>은 아직 자동 수집된 시세가 없어요';
+      box.insertAdjacentHTML('beforeend', links + alt);
+    } catch(e) {
+      box.insertAdjacentHTML('beforeend', links);
+    }
+  }
+  window._fltPickAltMonth = function(watchId, month) {
+    var card = document.querySelector('[data-fltcheck="' + watchId + '"]');
+    var fb = card && card.closest('.pw-card') && card.closest('.pw-card').querySelector('.pw-chkfb');
+    if (fb) fb.remove();
+    _fltDoCheck(watchId, month);
+  };
+
   async function _fltDoCheck(watchId, month) {
     var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
     if (!w) return;
@@ -19033,7 +19087,7 @@
         var v = rows[k] || {}, pr = Number(v.price) || 0;
         if (pr && (!best || pr < best.price)) best = v;
       });
-      if (!best) throw new Error(month + '엔 조회된 가격이 없어요 (인기 노선일수록 데이터가 많아요)');
+      if (!best) { if (btn) { btn.disabled = false; btn.textContent = '최저가 조회'; } return _fltCheckFallback(w, month); }
       var fuel = _fuelForRoute(w.route_from, w.route_to);
       await fbAdd('flight_watch', { type: 'flight_price', watch_id: watchId,
         price_krw: Math.round(Number(best.price) || 0),
