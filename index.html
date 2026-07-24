@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=281" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=282" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6390,6 +6390,39 @@
     .pw-empty p { margin:0; font-size:13px; line-height:1.7; color:#4a4455; }
     .pw-empty b { color:#1a1c1d; }
     .pw-dim { font-size:12px; color:#7b7487; margin:14px 0 0; }
+    /* ★ (2026-07-24) 0건일 때 대체 달 제안 + 다구간 */
+    .pw-alt { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+    .pw-alt-b { display:flex; flex-direction:column; align-items:center; gap:2px; border:1px solid #e5e5e5;
+      background:#fff; padding:9px 14px; cursor:pointer; transition:all .15s; }
+    .pw-alt-b:hover { border-color:#7c3aed; }
+    .pw-alt-b span { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10.5px; font-weight:700; color:#7b7487; }
+    .pw-alt-b b { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:14px; font-weight:800; color:#1a1c1d; }
+    .pw-alt-b em { font-style:normal; font-size:9.5px; font-weight:600; color:#ccc3d8; }
+    .pw-alt-b.is-best { border-color:#15803d; background:#f0fdf4; }
+    .pw-alt-b.is-best b { color:#15803d; }
+    .pw-legs { padding-top:20px; }
+    .pw-leg { display:grid; grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) minmax(0,1fr) auto;
+      gap:14px; align-items:end; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid #f3f3f5; }
+    .pw-leg-n { width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+      background:#1a1c1d; color:#fff; font-size:11px; font-weight:800; margin-bottom:6px; }
+    .pw-leg-acts { display:flex; gap:8px; flex-wrap:wrap; }
+    .pw-legres { border:1px solid #e5e5e5; margin-top:14px; }
+    .pw-legres-r { display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:12px 16px; border-bottom:1px solid #f3f3f5; }
+    .pw-legres-r.is-none { background:#f9f9fb; }
+    .pw-legres-rt { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:13px; font-weight:800; color:#1a1c1d; }
+    .pw-legres-rt em, .pw-legres-p em { font-style:normal; font-family:'Manrope','Pretendard',sans-serif;
+      font-size:10px; font-weight:600; color:#7b7487; margin-left:8px; }
+    .pw-legres-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:14px; font-weight:800; color:#1a1c1d; }
+    .pw-legres-p u { text-decoration:none; color:#ccc3d8; font-size:12px; }
+    .pw-legres-sum { display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+      padding:13px 16px; background:#f3f3f5; font-size:12.5px; font-weight:700; color:#4a4455; }
+    .pw-legres-sum b { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:16px; font-weight:800; color:#1a1c1d; }
+    .pw-legres-sum.is-sub { background:#fff; color:#7b7487; border-top:1px solid #f3f3f5; }
+    .pw-legres-sum.is-sub b { font-size:14px; color:#4a4455; }
+    .pw-legres-sum.is-tot { background:#7c3aed; color:rgba(255,255,255,.8); }
+    .pw-legres-sum.is-tot b { color:#fff; font-size:18px; }
+    @media (max-width:900px){ .pw-leg { grid-template-columns:1fr; } }
     /* ★ (2026-07-24) 유류할증료 · 보너스 좌석 오픈 */
     .fuel-box { border:1px solid #e5e5e5; background:#fff; padding:20px 24px; }
     .fuel-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;
@@ -12047,13 +12080,14 @@
             <div class="pw-seg" id="pw-trip-seg">
               <button class="pw-seg-b" data-trip="oneway" onclick="pwSetTrip('oneway')">편도</button>
               <button class="pw-seg-b is-on" data-trip="round" onclick="pwSetTrip('round')">왕복</button>
+              <button class="pw-seg-b" data-trip="multi" onclick="pwSetTrip('multi')">다구간</button>
             </div>
-            <div class="pw-top-acts">
+            <div class="pw-top-acts" id="pw-top-acts">
               <button onclick="fltMonthSearch()" class="pw-btn is-dark"><span class="material-symbols-outlined">search</span>이 달에서 싼 날</button>
               <button onclick="fltYearSearch()" class="pw-btn"><span class="material-symbols-outlined">history</span>12개월 중 싼 달</button>
             </div>
           </div>
-          <div class="pw-search-grid">
+          <div class="pw-search-grid" id="pw-single-grid">
             <div class="pw-tag"><span>Cheapest<br>by Date</span></div>
             <div class="pw-fld">
               <label class="pw-l">출발</label>
@@ -12069,6 +12103,7 @@
               <input id="fmo-month" type="month" class="pw-in">
             </div>
           </div>
+          <div id="pw-legs" class="pw-legs" style="display:none"></div>
           <div id="flight-month-out" class="pw-out"></div>
         </section>
 
@@ -14843,7 +14878,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=281" defer></script>
+<script src="js/app-1-pages.js?v=282" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

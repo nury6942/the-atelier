@@ -18699,13 +18699,13 @@
       var j = await _fltFetchPrices({ mode: 'month', origin: from, destination: to, month: month, currency: 'krw' });
       var rows = (j.data && j.data.data) || {};
       var keys = Object.keys(rows);
-      if (!keys.length) { out.innerHTML = '<p class="flt-acc-note">이 달엔 조회된 가격이 없어. 다른 달로 바꿔볼래?</p>'; return; }
+      if (!keys.length) { return _pwSuggestMonths(from, to, month, out); }
       var list = keys.map(function(k) {
         var v = rows[k] || {};
         return { date: String(v.departure_at || k).slice(0, 10), price: Number(v.price) || 0,
           airline: v.airline || '', transfers: v.transfers, flight: v.flight_number || '' };
       }).filter(function(x){ return x.price > 0; }).sort(function(a, b){ return a.date.localeCompare(b.date); });
-      if (!list.length) { out.innerHTML = '<p class="flt-acc-note">이 달엔 조회된 가격이 없어.</p>'; return; }
+      if (!list.length) { return _pwSuggestMonths(from, to, month, out); }
       var min = Math.min.apply(null, list.map(function(x){ return x.price; }));
       var max = Math.max.apply(null, list.map(function(x){ return x.price; }));
       var best = list.filter(function(x){ return x.price === min; });
@@ -18772,6 +18772,106 @@
   window.fltZoomMonth = function(ym) {
     var el=document.getElementById('fmo-month'); if(el) el.value=ym;
     window.fltMonthSearch();
+  };
+
+  // ★ (2026-07-24) 0건일 때 막다른 길을 만들지 않는다 — 데이터가 있는 달을 자동으로 찾아 제시.
+  //   (시세는 실제 검색 기록이 쌓인 것이라, 먼 미래·비인기 노선일수록 비어 있다. 실측: ICN→AKL 2027-01 0건 / 2026-09 3건)
+  async function _pwSuggestMonths(from, to, month, out) {
+    out.innerHTML = '<p class="flt-acc-note">이 달엔 기록이 없어 — 데이터 있는 달을 찾는 중…</p>';
+    try {
+      var now = new Date();
+      var start = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      var j = await _fltFetchPrices({ mode:'year', origin:from, destination:to, start:start, currency:'krw' });
+      var rows = (j.data || []).filter(function(r){ return r && r.price; });
+      if (!rows.length) {
+        out.innerHTML = '<p class="flt-acc-note"><b>' + from + ' → ' + to + '</b>는 앞으로 12개월 안에 쌓인 시세가 아직 없어요. ' +
+          '이 시세는 실제 검색 기록이 모인 거라 <b>먼 미래·비인기 노선일수록 비어 있어요.</b> ' +
+          '출발 6개월 전쯤부터 채워지기 시작해요.</p>';
+        return;
+      }
+      var lo = Math.min.apply(null, rows.map(function(r){ return r.price; }));
+      out.innerHTML =
+        '<p class="flt-acc-note"><b>' + _spotEsc(month) + '</b>엔 기록이 없어요. 대신 <b>이 달들에 시세가 있어요</b> — 눌러서 바로 보기:</p>' +
+        '<div class="pw-alt">' + rows.map(function(r) {
+          return '<button class="pw-alt-b' + (r.price === lo ? ' is-best' : '') + '" onclick="fltZoomMonth(\'' + r.month + '\')">' +
+            '<span>' + r.month.slice(2).replace('-', '.') + '</span>' +
+            '<b>' + Math.round(r.price / 10000) + '만</b>' +
+            '<em>' + r.days + '일치</em></button>';
+        }).join('') + '</div>';
+    } catch(e) {
+      out.innerHTML = '<p class="flt-acc-note flt-err">' + _spotEsc(e.message) + '</p>';
+    }
+  }
+
+  // ── 다구간: 구간마다 최저가를 조회해 합산 (시세 API가 다구간을 지원하지 않아 구간별 합으로 계산) ──
+  var _pwLegs = [{ from:'', to:'', month:'' }, { from:'', to:'', month:'' }];
+  window.pwRenderLegs = function() {
+    var box = document.getElementById('pw-legs');
+    if (!box) return;
+    box.innerHTML = _pwLegs.map(function(lg, i) {
+      return '<div class="pw-leg">' +
+        '<span class="pw-leg-n">' + (i + 1) + '</span>' +
+        '<div class="pw-fld"><label class="pw-l">출발</label><input class="pw-in" id="pwl-f-' + i + '" value="' + _spotEsc(lg.from) + '" placeholder="ICN"></div>' +
+        '<div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>' +
+        '<div class="pw-fld"><label class="pw-l">도착</label><input class="pw-in" id="pwl-t-' + i + '" value="' + _spotEsc(lg.to) + '" placeholder="CDG"></div>' +
+        '<div class="pw-fld"><label class="pw-l">기준 달</label><input class="pw-in" id="pwl-m-' + i + '" type="month" value="' + _spotEsc(lg.month) + '"></div>' +
+        (_pwLegs.length > 2 ? '<button class="pw-x" onclick="pwRemoveLeg(' + i + ')"><span class="material-symbols-outlined">close</span></button>' : '<span></span>') +
+      '</div>';
+    }).join('') +
+    '<div class="pw-leg-acts">' +
+      '<button class="pw-btn" onclick="pwAddLeg()"><span class="material-symbols-outlined">add</span>구간 추가</button>' +
+      '<button class="pw-btn is-dark" onclick="pwSearchLegs()"><span class="material-symbols-outlined">search</span>구간별 최저가 합산</button>' +
+    '</div>';
+    ['fmo-from','fmo-to'].forEach(function(){});
+    _pwLegs.forEach(function(_, i){ _fltAttachAirport('pwl-f-' + i); _fltAttachAirport('pwl-t-' + i); });
+  };
+  function _pwSyncLegs() {
+    _pwLegs = _pwLegs.map(function(_, i) {
+      var g = function(p){ var e = document.getElementById('pwl-' + p + '-' + i); return e ? e.value.trim() : ''; };
+      return { from: g('f').toUpperCase(), to: g('t').toUpperCase(), month: g('m') };
+    });
+  }
+  window.pwAddLeg = function() { _pwSyncLegs(); _pwLegs.push({ from:'', to:'', month:'' }); window.pwRenderLegs(); };
+  window.pwRemoveLeg = function(i) { _pwSyncLegs(); _pwLegs.splice(i, 1); window.pwRenderLegs(); };
+  window.pwSearchLegs = async function() {
+    _pwSyncLegs();
+    var out = document.getElementById('flight-month-out');
+    if (!out) return;
+    var bad = _pwLegs.filter(function(l){ return !/^[A-Z]{3}$/.test(l.from) || !/^[A-Z]{3}$/.test(l.to) || !/^\d{4}-\d{2}$/.test(l.month); });
+    if (bad.length) { out.innerHTML = '<p class="flt-acc-note">모든 구간에 출발·도착 공항과 기준 달을 넣어줘.</p>'; return; }
+    out.innerHTML = '<p class="flt-acc-note">' + _pwLegs.length + '개 구간 조회 중…</p>';
+    var res = [];
+    for (var i = 0; i < _pwLegs.length; i++) {
+      var l = _pwLegs[i];
+      try {
+        var j = await _fltFetchPrices({ mode:'month', origin:l.from, destination:l.to, month:l.month, currency:'krw' });
+        var rows = (j.data && j.data.data) || {};
+        var best = null;
+        Object.keys(rows).forEach(function(k) {
+          var v = rows[k] || {}, pr = Number(v.price) || 0;
+          if (pr && (!best || pr < best.price)) best = { price: pr, date: String(v.departure_at || k).slice(0, 10) };
+        });
+        res.push({ leg: l, best: best });
+      } catch(e) { res.push({ leg: l, best: null, err: e.message }); }
+    }
+    var found = res.filter(function(r){ return r.best; });
+    var total = found.reduce(function(a, r){ return a + r.best.price; }, 0);
+    var fuel = res.reduce(function(a, r){ var f = _fuelForRoute(r.leg.from, r.leg.to); return a + (f ? f.krw : 0); }, 0);
+    out.innerHTML =
+      '<div class="pw-legres">' + res.map(function(r) {
+        return '<div class="pw-legres-r' + (r.best ? '' : ' is-none') + '">' +
+          '<span class="pw-legres-rt">' + r.leg.from + ' → ' + r.leg.to + '<em>' + r.leg.month + '</em></span>' +
+          '<span class="pw-legres-p">' + (r.best ? _fltKrw(r.best.price) + '<em>' + r.best.date + '</em>' : '<u>기록 없음</u>') + '</span>' +
+        '</div>';
+      }).join('') +
+      '<div class="pw-legres-sum">' +
+        '<span>' + found.length + '/' + res.length + '구간 합계</span>' +
+        '<b>' + _fltKrw(total) + '</b>' +
+      '</div>' +
+      (fuel ? '<div class="pw-legres-sum is-sub"><span>+ 유류할증료 (' + _fuelData().month + ' 기준)</span><b>' + _fltKrw(fuel) + '</b></div>' +
+              '<div class="pw-legres-sum is-tot"><span>실제 낼 돈 (세금 별도)</span><b>' + _fltKrw(total + fuel) + '</b></div>' : '') +
+      '</div>' +
+      (found.length < res.length ? '<p class="flt-acc-note">기록 없는 구간은 합계에서 빠졌어요 — 먼 미래·비인기 노선은 시세가 아직 안 쌓였을 수 있어요.</p>' : '');
   };
 
   window.fltUseMonthDate = function(date, price) {
@@ -18859,6 +18959,14 @@
     if (seg) Array.prototype.forEach.call(seg.querySelectorAll('.pw-seg-b'), function(b) {
       b.classList.toggle('is-on', b.getAttribute('data-trip') === v);
     });
+    var multi = (v === 'multi');
+    var g = document.getElementById('pw-single-grid');
+    var l = document.getElementById('pw-legs');
+    var acts = document.getElementById('pw-top-acts');
+    if (g) g.style.display = multi ? 'none' : '';
+    if (l) l.style.display = multi ? 'block' : 'none';
+    if (acts) acts.style.display = multi ? 'none' : '';
+    if (multi) window.pwRenderLegs();
   };
   window._pwIsOneWay = function() { return _pwTrip === 'oneway'; };
 
