@@ -17892,6 +17892,176 @@
   function _fltIsPrice(d) { return d && d.type === 'flight_price'; }
   function _fltIsWatch(d) { return d && d.type !== 'flight_price'; }
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-24) 섹션 · 마일리지 (Mileage)
+  //    1) 지갑 : 프로그램별 보유 마일 + 소멸 예정일 카운트다운 (핵심 가치 = 만료 알림)
+  //    2) 적립 예상 : 등록된 항공편의 대권거리 → 구간 마일 × 적립률
+  //    ※ 팩트: 스카이패스는 적립일로부터 만 10년이 되는 해의 12/31 자정 소멸(2008-07-01 이후 적립분).
+  //      티웨이·라이언에어 등 LCC는 마일리지 제도 자체가 없어 '적립 없음'으로 명시한다.
+  //      FSC 적립률은 예약 클래스별로 25~100%라 단정할 수 없어 기본값 100% + 사용자가 조정.
+  // ═══════════════════════════════════════════════════════════════════
+  var _fltMiles = [];
+  var KM_PER_MILE = 1.609344;
+  // 마일리지 제도가 없는 항공사 (IATA) — 적립 0으로 확정 표기
+  var _FLT_NO_MILEAGE = {
+    TW:"티웨이", RS:"에어서울", LJ:"진에어", BX:"에어부산", "7C":"제주항공", ZE:"이스타항공",
+    RF:"에어로케이", YP:"에어프레미아",
+    FR:"라이언에어", U2:"이지젯", W6:"위즈에어", VY:"부엘링", HV:"트랜사비아", DY:"노르웨이전",
+    PC:"페가수스", EW:"유로윙스", "0B":"블루에어"
+  };
+  // 프로그램 매핑 — 적립률 기본값(%)은 일반석 정상운임 기준
+  var _FLT_PROGRAMS = {
+    KE: { prog:"스카이패스",   rate:100 },
+    OZ: { prog:"아시아나클럽", rate:100 },
+    LH: { prog:"마일즈&모어",  rate:100 },
+    AF: { prog:"플라잉블루",   rate:100 },
+    KL: { prog:"플라잉블루",   rate:100 },
+    AZ: { prog:"볼라레",       rate:100 },
+    BA: { prog:"이그제큐티브클럽", rate:100 },
+    TK: { prog:"마일즈&스마일즈", rate:100 },
+    QR: { prog:"프리빌리지클럽",  rate:100 },
+    EK: { prog:"스카이워즈",   rate:100 },
+    SQ: { prog:"크리스플라이어", rate:100 },
+    CX: { prog:"아시아마일",   rate:100 },
+    NH: { prog:"ANA 마일리지클럽", rate:100 },
+    JL: { prog:"JAL 마일리지뱅크", rate:100 }
+  };
+  // 소멸 예정일 — 스카이패스/아시아나클럽 계열은 '적립일 + 10년'이 되는 해의 12월 31일
+  function _fltMileExpiry(row) {
+    if (row && row.expire_date && /^\d{4}-\d{2}-\d{2}$/.test(row.expire_date)) return row.expire_date;
+    var e = String((row && row.earned_date) || '');
+    var m = /^(\d{4})-\d{2}-\d{2}$/.exec(e);
+    if (!m) return '';
+    return (parseInt(m[1], 10) + 10) + '-12-31';
+  }
+  function _fltDdayTo(dateStr) {
+    if (!dateStr) return null;
+    var t = Date.parse(dateStr + 'T23:59:59');
+    if (isNaN(t)) return null;
+    return Math.ceil((t - Date.now()) / 86400000);
+  }
+  // 항공편 → 적립 판정
+  function _fltAccrual(f) {
+    var iata = _fltIata(f) || '';
+    var rt = _fltRoute(f);
+    var km = rt.legKm || 0;
+    var miles = km ? Math.round(km / KM_PER_MILE) : 0;
+    if (_FLT_NO_MILEAGE[iata]) {
+      // 구간 마일 자체는 그대로 보여준다 (적립만 0) — '8,544km · 0mi'는 거리까지 0으로 오해됨
+      return { iata:iata, from:rt.from, to:rt.to, km:km, miles:miles, prog:'', rate:0, earn:0,
+        none:true, why:_FLT_NO_MILEAGE[iata] + ' — 마일리지 제도 없음' };
+    }
+    var p = _FLT_PROGRAMS[iata];
+    if (!p) {
+      return { iata:iata, from:rt.from, to:rt.to, km:km, miles:miles, prog:'', rate:null,
+        none:false, unknown:true, why:'제휴 여부 확인 필요' };
+    }
+    return { iata:iata, from:rt.from, to:rt.to, km:km, miles:miles,
+      prog:p.prog, rate:p.rate, earn:Math.round(miles * p.rate / 100), none:false };
+  }
+  function _fltRenderMileage() {
+    var wrap = document.getElementById('flight-mileage-body');
+    if (!wrap) return;
+    var rows = (_fltMiles || []).filter(function(r){ return r && r.type === 'mileage'; });
+    rows.sort(function(a, b) { return String(_fltMileExpiry(a)).localeCompare(String(_fltMileExpiry(b))); });
+
+    // ── 지갑 ──
+    var walletHtml = rows.length ? rows.map(function(r) {
+      var exp = _fltMileExpiry(r);
+      var dd = _fltDdayTo(exp);
+      var warn = (dd !== null && dd <= 365);
+      var crit = (dd !== null && dd <= 90);
+      var ddTxt = dd === null ? '소멸일 미정' : (dd < 0 ? '소멸됨' : 'D-' + dd.toLocaleString('ko-KR'));
+      return '<article class="flt-mile-card' + (crit ? ' is-crit' : (warn ? ' is-warn' : '')) + '">' +
+        '<div class="flt-mile-top">' +
+          '<div><p class="flt-eyebrow">' + _spotEsc(r.program || '프로그램') + '</p>' +
+            '<p class="flt-mile-v">' + Number(r.balance || 0).toLocaleString('ko-KR') + '<em>mi</em></p></div>' +
+          '<span class="flt-mile-dd">' + ddTxt + '</span>' +
+        '</div>' +
+        '<div class="flt-mile-meta">' +
+          (exp ? '<span>소멸 예정 ' + exp + '</span>' : '') +
+          (r.earned_date ? '<span>최종 적립 ' + r.earned_date + '</span>' : '') +
+          (r.member_no ? '<span>' + _spotEsc(r.member_no) + '</span>' : '') +
+        '</div>' +
+        (r.memo ? '<p class="flt-mile-memo">' + _spotEsc(r.memo) + '</p>' : '') +
+        '<button class="flt-mile-del" onclick="fltDeleteMileage(\'' + r._id + '\')" title="삭제"><span class="material-symbols-outlined">delete</span></button>' +
+      '</article>';
+    }).join('') : '<div class="flt-empty"><span class="material-symbols-outlined">card_membership</span>' +
+        '<p>보유 마일리지를 등록해두면 <strong>소멸 예정일까지 남은 날</strong>을 자동으로 세어줘요. ' +
+        '스카이패스는 적립일로부터 만 10년이 되는 해의 12월 31일에 소멸돼요.</p></div>';
+
+    // ── 적립 예상 ──
+    var flights = _fltLoadCached() || [];
+    var accHtml = '';
+    if (flights.length) {
+      var byProg = {}, noneRows = [];
+      var lines = flights.map(function(f) {
+        var a = _fltAccrual(f);
+        if (a.earn) byProg[a.prog] = (byProg[a.prog] || 0) + a.earn;
+        if (a.none) noneRows.push(a);
+        var right = a.none ? '<span class="flt-acc-none">적립 없음</span>'
+          : (a.unknown ? '<span class="flt-acc-unk">확인 필요</span>'
+          : '<span class="flt-acc-earn">+' + Number(a.earn || 0).toLocaleString('ko-KR') + ' mi</span>');
+        return '<div class="flt-acc-row">' +
+          '<span class="flt-acc-rt">' + (a.from && a.to ? a.from + ' → ' + a.to : (f.title || '—')) + '</span>' +
+          '<span class="flt-acc-km">' + (a.km ? Math.round(a.km).toLocaleString('ko-KR') + 'km · ' + a.miles.toLocaleString('ko-KR') + 'mi' : '거리 미상') + '</span>' +
+          '<span class="flt-acc-p">' + (a.prog || a.why || '') + '</span>' +
+          right +
+        '</div>';
+      }).join('');
+      var totals = Object.keys(byProg).map(function(k) {
+        return '<span class="flt-acc-total"><b>' + _spotEsc(k) + '</b>+' + byProg[k].toLocaleString('ko-KR') + ' mi</span>';
+      }).join('');
+      accHtml = '<div class="flt-acc">' +
+        (totals ? '<div class="flt-acc-sum">' + totals + '</div>' : '') +
+        lines +
+        (noneRows.length ? '<p class="flt-acc-note">※ ' + noneRows.map(function(n){ return n.why; })
+          .filter(function(v,i,arr){ return arr.indexOf(v)===i; }).join(' · ') + '</p>' : '') +
+        '<p class="flt-acc-note">※ FSC 적립률은 예약 클래스에 따라 25~100%로 달라져요. 위 수치는 정상운임(100%) 기준 상한이에요.</p>' +
+      '</div>';
+    } else {
+      accHtml = '<div class="flt-empty"><span class="material-symbols-outlined">calculate</span><p>항공편을 등록하면 노선 거리로 적립 예상 마일을 계산해요.</p></div>';
+    }
+
+    wrap.innerHTML =
+      '<div class="flt-mile-grid">' + walletHtml + '</div>' +
+      '<div class="flt-sub-h"><p class="flt-eyebrow">Estimated Earning</p><span class="flt-dim">등록된 항공편 기준</span></div>' +
+      accHtml;
+  }
+  window.fltToggleMileForm = function() {
+    var f = document.getElementById('flight-mile-form');
+    if (!f) return;
+    f.style.display = (f.style.display === 'none' || !f.style.display) ? 'block' : 'none';
+    if (f.style.display === 'block') { var el = document.getElementById('fm-prog'); if (el) el.focus(); }
+  };
+  window.fltSaveMileage = async function() {
+    var g = function(id){ var e = document.getElementById(id); return e ? e.value.trim() : ''; };
+    var prog = g('fm-prog'), bal = g('fm-balance');
+    if (!prog) { alert('프로그램 이름을 입력해줘 (예: 스카이패스)'); return; }
+    var doc = { type:'mileage', program:prog, balance:Number(String(bal).replace(/[^\d.-]/g,'')) || 0,
+      member_no:g('fm-member'), earned_date:g('fm-earned'), expire_date:g('fm-expire'), memo:g('fm-memo') };
+    try {
+      var id = await fbAdd('flight_watch', doc);
+      doc._id = (id && id.id) ? id.id : id;
+      _fltMiles.push(doc);
+      ['fm-prog','fm-balance','fm-member','fm-earned','fm-expire','fm-memo'].forEach(function(i){ var e=document.getElementById(i); if(e) e.value=''; });
+      window.fltToggleMileForm();
+      _fltRenderMileage();
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ 마일리지 등록 완료');
+    } catch(e) { alert('저장 실패'); }
+  };
+  window.fltDeleteMileage = async function(id) {
+    if (!confirm('이 마일리지 기록을 지울까?')) return;
+    try { await fbDelete('flight_watch', id); } catch(e) {}
+    _fltMiles = _fltMiles.filter(function(r){ return r._id !== id; });
+    _fltRenderMileage();
+  };
+  async function _fltLoadMileage() {
+    try { _fltMiles = await fbRead('flight_watch'); }
+    catch(e) { _fltMiles = []; }
+    _fltRenderMileage();
+  }
+
   async function _fltLoadWatch() {
     try { _fltWatch = await fbRead('flight_watch'); }
     catch(e) { _fltWatch = []; console.warn('[flight] watch load', e); }
@@ -18101,6 +18271,7 @@
     try { _fltRenderProfile(); } catch(e) { console.warn('[flight] profile', e); }
     try { _fltRefreshAll(); } catch(e) {}
     try { _fltLoadWatch(); } catch(e) { console.warn('[flight] watch', e); }
+    try { _fltLoadMileage(); } catch(e) { console.warn('[flight] mileage', e); }
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Flight';
   };

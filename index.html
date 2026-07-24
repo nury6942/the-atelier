@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=268" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=269" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6137,6 +6137,51 @@
       font-size:12px; font-weight:600; color:#0f172a; outline:none; transition:border-color .15s; min-width:0; }
     .flt-in:focus { border-color:#c4b5fd; background:#fff; }
     .flt-in.is-note { flex:1; }
+    /* ★ (2026-07-24) 마일리지 — 지갑 카드 + 적립 예상 목록 */
+    .flt-lb { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; color:#64748b; }
+    .flt-form-hint { margin:8px 0 0; font-size:10.5px; line-height:1.6; color:#94a3b8; }
+    .flt-form-hint b { color:#475569; }
+    .flt-mile-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+    .flt-mile-card { position:relative; background:#fff; border:1px solid #e2e8f0; border-radius:14px;
+      padding:14px 15px 12px; transition:box-shadow .2s; }
+    .flt-mile-card:hover { box-shadow:0 6px 18px rgba(15,23,42,.07); }
+    .flt-mile-card.is-warn { border-color:#fcd34d; background:#fffbeb; }
+    .flt-mile-card.is-crit { border-color:#fda4af; background:#fff1f2; }
+    .flt-mile-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .flt-mile-v { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:23px; font-weight:800;
+      color:#0f172a; margin:3px 0 0; letter-spacing:-0.02em; }
+    .flt-mile-v em { font-style:normal; font-size:11px; font-weight:700; color:#94a3b8; margin-left:4px; }
+    .flt-mile-dd { flex:none; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:800;
+      letter-spacing:0.06em; padding:4px 9px; border-radius:999px; background:#f1f5f9; color:#475569; }
+    .flt-mile-card.is-warn .flt-mile-dd { background:#fde68a; color:#92400e; }
+    .flt-mile-card.is-crit .flt-mile-dd { background:#fecdd3; color:#9f1239; }
+    .flt-mile-meta { display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:9px;
+      font-size:10.5px; font-weight:600; color:#94a3b8; }
+    .flt-mile-memo { margin:7px 0 0; font-size:11px; line-height:1.55; color:#64748b; }
+    .flt-mile-del { position:absolute; right:8px; bottom:8px; border:none; background:none; cursor:pointer;
+      color:#cbd5e1; padding:3px; opacity:0; transition:opacity .15s; }
+    .flt-mile-card:hover .flt-mile-del { opacity:1; }
+    .flt-mile-del:hover { color:#e11d48; }
+    .flt-mile-del .material-symbols-outlined { font-size:16px; }
+    .flt-sub-h { display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+      margin:20px 0 9px; padding-top:14px; border-top:1px solid #eef2f7; }
+    .flt-sub-h .flt-eyebrow { margin:0; }
+    .flt-acc-sum { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
+    .flt-acc-total { display:inline-flex; align-items:baseline; gap:6px; background:#f5f3ff; border:1px solid #ede9fe;
+      border-radius:999px; padding:5px 11px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:11.5px; font-weight:800; color:#6d28d9; }
+    .flt-acc-total b { font-family:'Manrope','Pretendard',sans-serif; font-size:10px; font-weight:700; color:#8b8b98;
+      text-transform:uppercase; letter-spacing:0.08em; }
+    .flt-acc-row { display:grid; grid-template-columns:minmax(88px,auto) minmax(0,1fr) minmax(0,1.1fr) auto;
+      gap:12px; align-items:baseline; padding:9px 2px; border-bottom:1px solid #f1f5f9; font-size:11.5px; }
+    .flt-acc-rt { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; color:#0f172a; letter-spacing:0.02em; }
+    .flt-acc-km { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:600; color:#94a3b8; }
+    .flt-acc-p { font-weight:700; color:#64748b; }
+    .flt-acc-earn { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; color:#6d28d9; white-space:nowrap; }
+    .flt-acc-none { font-size:10.5px; font-weight:700; color:#94a3b8; white-space:nowrap; }
+    .flt-acc-unk { font-size:10.5px; font-weight:700; color:#b45309; white-space:nowrap; }
+    .flt-acc-note { margin:9px 0 0; font-size:10.5px; line-height:1.6; color:#94a3b8; }
+    @media (max-width:720px){ .flt-acc-row { grid-template-columns:1fr auto; gap:4px 10px; } }
 
     /* ── 여권 배너 ── */
     .flt-passport { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px;
@@ -11580,6 +11625,37 @@
         </div>
       </section>
 
+      <!-- ★ (2026-07-24) 마일리지 — 지갑(소멸 카운트다운) + 노선 거리 기반 적립 예상 -->
+      <section id="flight-mileage" class="j-section">
+        <div class="trv-sec-head">
+          <div><p class="trv-sec-eyebrow">Mileage</p><h3 class="trv-sec-title">마일리지</h3></div>
+          <div class="trv-sec-actions">
+            <button onclick="fltToggleMileForm()" class="trav-act"><span class="material-symbols-outlined">add</span> 마일리지 추가</button>
+          </div>
+        </div>
+        <div id="flight-mile-form" class="flt-watch-form" style="display:none">
+          <div class="flt-wf-row">
+            <input id="fm-prog" type="text" placeholder="프로그램 (예: 스카이패스)" class="flt-in" list="fm-prog-list">
+            <datalist id="fm-prog-list">
+              <option value="스카이패스"></option><option value="아시아나클럽"></option>
+              <option value="마일즈&amp;모어"></option><option value="플라잉블루"></option>
+              <option value="ANA 마일리지클럽"></option><option value="JAL 마일리지뱅크"></option>
+            </datalist>
+            <input id="fm-balance" type="text" placeholder="보유 마일 (예: 32000)" class="flt-in">
+            <input id="fm-member" type="text" placeholder="회원번호 (선택)" class="flt-in">
+          </div>
+          <div class="flt-wf-row">
+            <label class="flt-lb">최종 적립일<input id="fm-earned" type="date" class="flt-in"></label>
+            <label class="flt-lb">소멸일 직접입력<input id="fm-expire" type="date" class="flt-in"></label>
+            <input id="fm-memo" type="text" placeholder="메모 (선택)" class="flt-in is-note">
+            <button onclick="fltToggleMileForm()" class="trav-act">취소</button>
+            <button onclick="fltSaveMileage()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">save</span> 저장</button>
+          </div>
+          <p class="flt-form-hint">소멸일을 비워두면 <b>최종 적립일 + 10년이 되는 해의 12/31</b>로 자동 계산해요 (스카이패스 기준).</p>
+        </div>
+        <div id="flight-mileage-body"></div>
+      </section>
+
       <section id="flight-watch" class="j-section">
         <div class="trv-sec-head">
           <div><p class="trv-sec-eyebrow">Price Watch</p><h3 class="trv-sec-title">가격 로그</h3></div>
@@ -14352,7 +14428,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=268" defer></script>
+<script src="js/app-1-pages.js?v=269" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
