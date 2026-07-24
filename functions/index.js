@@ -104,7 +104,7 @@ const travelpayoutsToken = defineSecret("TRAVELPAYOUTS_TOKEN");
 const TP_IATA = /^[A-Z]{3}$/;
 
 exports.flightPrices = onRequest(
-  { secrets: [travelpayoutsToken, atelierAuthToken], cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 30 },
+  { secrets: [travelpayoutsToken, atelierAuthToken], cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 90 },
   async (req, res) => {
     corsHeaders(res);
     res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -124,6 +124,46 @@ exports.flightPrices = onRequest(
     if (!TP_IATA.test(origin)) return res.status(400).json({ error: "origin은 IATA 3글자여야 해 (예: ICN)" });
     if (mode !== "anywhere" && !TP_IATA.test(destination)) {
       return res.status(400).json({ error: "destination은 IATA 3글자여야 해 (예: FRA)" });
+    }
+
+    // ── mode=year : 12개월 각각의 최저가를 한 번에 (서버에서 병렬 조회) ──
+    if (mode === "year") {
+      const startRaw = String(q.start || "");
+      const sm = /^(\d{4})-(\d{2})/.exec(startRaw);
+      if (!sm) return res.status(400).json({ error: "start는 YYYY-MM 형식이어야 해" });
+      const months = [];
+      let y = parseInt(sm[1], 10), mo = parseInt(sm[2], 10);
+      for (let i = 0; i < 12; i++) {
+        months.push(`${y}-${String(mo).padStart(2, "0")}`);
+        mo++; if (mo > 12) { mo = 1; y++; }
+      }
+      try {
+        const results = await Promise.all(months.map(async (ym) => {
+          const u = "https://api.travelpayouts.com/aviasales/v3/grouped_prices?" + new URLSearchParams({
+            origin, destination, departure_at: ym, group_by: "departure_at",
+            currency, market: "kr", token: travelpayoutsToken.value(),
+          });
+          try {
+            const r = await fetch(u, { headers: { "Accept-Encoding": "gzip" } });
+            if (!r.ok) return { month: ym, price: null, days: 0 };
+            const j = await r.json();
+            const rows = (j && j.data) || {};
+            let best = null, days = 0;
+            Object.keys(rows).forEach((k) => {
+              const v = rows[k] || {};
+              const pr = Number(v.price) || 0;
+              if (!pr) return;
+              days++;
+              if (!best || pr < best.price) best = { price: pr, date: String(v.departure_at || k).slice(0, 10), airline: v.airline || "", transfers: v.transfers };
+            });
+            return { month: ym, price: best ? best.price : null, date: best ? best.date : "", airline: best ? best.airline : "", transfers: best ? best.transfers : null, days };
+          } catch (e) { return { month: ym, price: null, days: 0 }; }
+        }));
+        return res.status(200).json({ mode, origin, destination, currency, fetched_at: new Date().toISOString(), data: results });
+      } catch (error) {
+        logger.error("flightPrices year error:", error);
+        return res.status(500).json({ error: "Internal server error", message: error.message });
+      }
     }
 
     let url;

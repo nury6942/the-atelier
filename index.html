@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=273" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=274" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6210,6 +6210,19 @@
     .flt-mo-day i { position:absolute; top:3px; right:5px; font-style:normal; font-size:13px; line-height:1; color:#7c3aed; }
     .flt-mo-day.is-best i { color:#a7f3d0; }
     .flt-acc-note.flt-err { color:#be123c; font-weight:600; }
+    /* ★ (2026-07-24) 12개월 최저가 막대 — '가장 싼 달' 한눈에 */
+    .flt-yr { display:flex; align-items:flex-end; gap:6px; margin:14px 0 4px; overflow-x:auto; padding-bottom:4px; }
+    .flt-yr-col { flex:1 1 0; min-width:52px; display:flex; flex-direction:column; align-items:center; gap:4px;
+      border:none; background:none; cursor:pointer; padding:0; }
+    .flt-yr-p { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10.5px; font-weight:800; color:#64748b; }
+    .flt-yr-bar { width:100%; border-radius:6px 6px 3px 3px; background:#e9d5ff; transition:background .15s, transform .15s; }
+    .flt-yr-col:hover .flt-yr-bar { transform:translateY(-2px); background:#c4b5fd; }
+    .flt-yr-m { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; color:#94a3b8; }
+    .flt-yr-col.is-cheap .flt-yr-bar { background:#a7f3d0; }
+    .flt-yr-col.is-cheap .flt-yr-p { color:#047857; }
+    .flt-yr-col.is-best .flt-yr-bar { background:#059669; }
+    .flt-yr-col.is-best .flt-yr-p { color:#059669; }
+    .flt-yr-col.is-best .flt-yr-m { color:#047857; font-weight:800; }
     .flt-watch-act { display:flex; align-items:center; gap:6px; flex:none; }
     .flt-chk { border:1px solid #ddd6fe; background:#f5f3ff; color:#6d28d9; border-radius:999px;
       padding:5px 11px; font-size:10.5px; font-weight:800; cursor:pointer; white-space:nowrap; transition:all .15s; }
@@ -6326,6 +6339,36 @@
       border-radius:16px; background:#fbfaff; }
     .flt-wf-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .flt-wf-row + .flt-wf-row { margin-top:8px; }
+    /* ★ (2026-07-24) 라벨 달린 폼 필드 — 빈 네모만 떠 있어 뭘 넣는지 몰랐던 문제 */
+    .flt-wf-title { margin:0 0 12px; font-size:12px; font-weight:800; color:#0f172a; letter-spacing:-0.01em; }
+    .flt-wf-grid { display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; }
+    .flt-fld { display:flex; flex-direction:column; gap:5px; min-width:0; }
+    .flt-fld.is-grow { flex:1 1 150px; }
+    .flt-fld.is-full { display:flex; margin-top:10px; }
+    .flt-fld-l { font-size:10px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#8b8b98; }
+    .flt-fld-l em { font-style:normal; font-weight:600; letter-spacing:0.04em; color:#c4b5fd; margin-left:3px; text-transform:none; }
+    .flt-fld .flt-in { width:100%; }
+    .flt-wf-arrow { color:#c4b5fd; font-weight:800; font-size:15px; padding-bottom:9px; }
+    .flt-wf-foot { display:flex; align-items:center; justify-content:space-between; gap:12px;
+      flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid #ede9fe; }
+    .flt-wf-hint { margin:0; font-size:10.5px; line-height:1.6; color:#94a3b8; }
+    /* ★ (2026-07-24) 공항 자동완성 드롭다운 */
+    .flt-fld, .flt-mo-bar label, .flt-mo-bar { position:relative; }
+    .flt-ap-pop { position:absolute; top:100%; left:0; z-index:60; min-width:230px; margin-top:5px;
+      background:#fff; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 10px 28px rgba(15,23,42,.14);
+      overflow:hidden; max-height:264px; overflow-y:auto; }
+    .flt-ap-opt { display:flex; align-items:baseline; gap:9px; width:100%; padding:9px 12px; border:none;
+      background:#fff; cursor:pointer; text-align:left; transition:background .12s; }
+    .flt-ap-opt:hover { background:#f5f3ff; }
+    .flt-ap-opt b { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:12px; font-weight:800;
+      letter-spacing:0.06em; color:#6d28d9; flex:none; width:34px; }
+    .flt-ap-city { font-size:12px; font-weight:700; color:#0f172a; }
+    .flt-ap-ctry { font-size:10.5px; font-weight:600; color:#94a3b8; margin-left:auto; flex:none; }
+    .flt-wf-btns { display:flex; gap:7px; flex:none; }
+    @media (max-width:640px){
+      .flt-wf-arrow { display:none; }
+      .flt-fld { flex:1 1 100%; }
+    }
     .flt-watch-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
       padding-bottom:12px; border-bottom:1px solid #eef2f7; margin-bottom:13px; }
     .flt-watch-route { margin:0; font-family:'Manrope','Pretendard',sans-serif; font-size:19px;
@@ -11700,25 +11743,47 @@
         <div class="flt-mo">
           <div class="flt-mo-bar">
             <p class="flt-eyebrow">Cheapest by date</p>
-            <input id="fmo-from" type="text" placeholder="ICN" maxlength="3" class="flt-in is-iata">
+            <label class="flt-fld"><span class="flt-fld-l">출발</span><input id="fmo-from" type="text" placeholder="인천 / ICN" class="flt-in is-iata"></label>
             <span class="flt-mo-arrow">→</span>
-            <input id="fmo-to" type="text" placeholder="FRA" maxlength="3" class="flt-in is-iata">
-            <input id="fmo-month" type="month" class="flt-in">
-            <button onclick="fltMonthSearch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">search</span> 이 달 최저가</button>
+            <label class="flt-fld"><span class="flt-fld-l">도착</span><input id="fmo-to" type="text" placeholder="도쿄 / NRT" class="flt-in is-iata"></label>
+            <label class="flt-fld"><span class="flt-fld-l">기준 달</span><input id="fmo-month" type="month" class="flt-in"></label>
+            <button onclick="fltMonthSearch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">search</span> 이 달에서 싼 날</button>
+            <button onclick="fltYearSearch()" class="trav-act"><span class="material-symbols-outlined">calendar_month</span> 12개월 중 싼 달</button>
           </div>
           <div id="flight-month-out"></div>
         </div>
+        <!-- ★ (2026-07-24) 폼 재구성 — 라벨 없는 빈 날짜 네모 2개가 뭘 넣는 칸인지 알 수 없었음 -->
         <div id="flight-watch-form" class="flt-watch-form" style="display:none">
-          <div class="flt-wf-row">
-            <input id="fw-from" type="text" placeholder="출발 (예: ICN)" class="flt-in">
-            <input id="fw-to" type="text" placeholder="도착 (예: FRA)" class="flt-in">
-            <input id="fw-depart" type="date" class="flt-in">
-            <input id="fw-return" type="date" class="flt-in">
+          <p class="flt-wf-title">관심 노선 등록</p>
+          <div class="flt-wf-grid">
+            <label class="flt-fld">
+              <span class="flt-fld-l">출발</span>
+              <input id="fw-from" type="text" placeholder="ICN" maxlength="3" class="flt-in is-iata">
+            </label>
+            <span class="flt-wf-arrow">→</span>
+            <label class="flt-fld">
+              <span class="flt-fld-l">도착</span>
+              <input id="fw-to" type="text" placeholder="FRA" maxlength="3" class="flt-in is-iata">
+            </label>
+            <label class="flt-fld is-grow">
+              <span class="flt-fld-l">가는 날</span>
+              <input id="fw-depart" type="date" class="flt-in">
+            </label>
+            <label class="flt-fld is-grow">
+              <span class="flt-fld-l">오는 날 <em>선택</em></span>
+              <input id="fw-return" type="date" class="flt-in">
+            </label>
           </div>
-          <div class="flt-wf-row">
-            <input id="fw-memo" type="text" placeholder="메모 (예: 왕복 직항, 수하물 포함 조건)" class="flt-in is-note">
-            <button onclick="fltToggleWatchForm()" class="trav-act">취소</button>
-            <button onclick="fltSaveWatch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">save</span> 저장</button>
+          <label class="flt-fld is-full">
+            <span class="flt-fld-l">메모 <em>선택</em></span>
+            <input id="fw-memo" type="text" placeholder="예: 왕복 직항, 수하물 포함 조건" class="flt-in">
+          </label>
+          <div class="flt-wf-foot">
+            <p class="flt-wf-hint">공항 코드는 3글자로 넣어줘. 오는 날을 비우면 편도로 조회해요.</p>
+            <div class="flt-wf-btns">
+              <button onclick="fltToggleWatchForm()" class="trav-act">취소</button>
+              <button onclick="fltSaveWatch()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">save</span> 저장</button>
+            </div>
           </div>
         </div>
         <div id="flight-watch-list" class="flt-grid"></div>
@@ -14473,7 +14538,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=273" defer></script>
+<script src="js/app-1-pages.js?v=274" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

@@ -17551,6 +17551,116 @@
     return (h ? h + '시간 ' : '') + (m ? m + '분' : (h ? '' : '0분'));
   }
   // 루트 문자열에서 출·도착 IATA 추출 — '인천(ICN) → 프랑크푸르트(FRA)' / 'ICN → FRA'
+  // ═══════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-24) 공항 자동완성 — IATA 코드를 외워서 넣으라는 건 말이 안 됨.
+  //    '서울'·'인천'·'seoul'·'ICN' 아무거나 쳐도 실제 공항이 뜨게 한다.
+  //    _FLT_AIRPORTS에 한글 도시명이 이미 있고, 한 도시에 공항이 여럿이거나
+  //    영문으로 칠 경우를 위해 별칭표를 얹는다.
+  // ═══════════════════════════════════════════════════════════════════
+  var _FLT_AP_ALIAS = {
+    ICN:['서울','인천','seoul','incheon'], GMP:['서울','김포','seoul','gimpo'],
+    PUS:['부산','김해','busan'], CJU:['제주','jeju'], TAE:['대구','daegu'],
+    NRT:['도쿄','나리타','tokyo','narita'], HND:['도쿄','하네다','tokyo','haneda'],
+    KIX:['오사카','간사이','osaka','kansai'], ITM:['오사카','이타미','osaka','itami'],
+    CTS:['삿포로','신치토세','sapporo'], FUK:['후쿠오카','fukuoka'], OKA:['오키나와','나하','okinawa'],
+    FRA:['프랑크푸르트','frankfurt'], MUC:['뮌헨','munich','munchen'], BER:['베를린','berlin'],
+    HAM:['함부르크','hamburg'], DUS:['뒤셀도르프','dusseldorf'], CGN:['쾰른','cologne'],
+    FCO:['로마','피우미치노','rome','roma'], CIA:['로마','치암피노','rome'],
+    MXP:['밀라노','말펜사','milan','milano'], LIN:['밀라노','리나테','milan'], BGY:['밀라노','베르가모','milan'],
+    VCE:['베네치아','베니스','venice','venezia'], FLR:['피렌체','florence','firenze'],
+    PSA:['피사','pisa'], NAP:['나폴리','naples','napoli'], BLQ:['볼로냐','bologna'],
+    CDG:['파리','샤를드골','paris'], ORY:['파리','오를리','paris'],
+    LHR:['런던','히스로','london','heathrow'], LGW:['런던','개트윅','london','gatwick'],
+    STN:['런던','스탠스테드','london'], LCY:['런던','london'],
+    BCN:['바르셀로나','barcelona'], MAD:['마드리드','madrid'],
+    AMS:['암스테르담','amsterdam'], BRU:['브뤼셀','brussels'], ZRH:['취리히','zurich'],
+    VIE:['빈','비엔나','vienna'], PRG:['프라하','prague','praha'], BUD:['부다페스트','budapest'],
+    CPH:['코펜하겐','copenhagen'], ARN:['스톡홀름','stockholm'], OSL:['오슬로','oslo'],
+    HEL:['헬싱키','helsinki'], KEF:['레이캬비크','아이슬란드','reykjavik','keflavik'],
+    LIS:['리스본','lisbon'], OPO:['포르투','porto'], ATH:['아테네','athens'],
+    IST:['이스탄불','istanbul'], DXB:['두바이','dubai'], DOH:['도하','doha'],
+    JFK:['뉴욕','케네디','new york','newyork'], EWR:['뉴욕','뉴어크','new york','newark'],
+    LGA:['뉴욕','라과디아','new york'], LAX:['로스앤젤레스','la','los angeles'],
+    SFO:['샌프란시스코','san francisco'], SEA:['시애틀','seattle'], ORD:['시카고','chicago'],
+    YVR:['밴쿠버','vancouver'], YYZ:['토론토','toronto'], YUL:['몬트리올','montreal'],
+    BKK:['방콕','수완나품','bangkok'], DMK:['방콕','돈므앙','bangkok'],
+    SIN:['싱가포르','singapore'], HKG:['홍콩','hong kong','hongkong'],
+    TPE:['타이베이','대만','taipei'], HAN:['하노이','hanoi'], SGN:['호치민','ho chi minh'],
+    DPS:['발리','덴파사르','bali','denpasar'], KUL:['쿠알라룸푸르','kuala lumpur'],
+    MNL:['마닐라','manila'], SYD:['시드니','sydney'], MEL:['멜버른','melbourne'],
+    AKL:['오클랜드','auckland'], DUB:['더블린','dublin'], EDI:['에든버러','edinburgh']
+  };
+  function _fltAirportSearch(q, limit) {
+    var s = String(q || '').trim().toLowerCase();
+    if (!s) return [];
+    var out = [];
+    Object.keys(_FLT_AIRPORTS).forEach(function(code) {
+      var a = _FLT_AIRPORTS[code];
+      if (!a) return;
+      var city = String(a[2] || ''), country = String(a[4] || '');
+      var alias = _FLT_AP_ALIAS[code] || [];
+      var hay = [code, city, country].concat(alias).join(' ').toLowerCase();
+      var idx = hay.indexOf(s);
+      if (idx < 0) return;
+      // 코드 정확일치 > 도시 앞부분 일치 > 나머지
+      var rank = (code.toLowerCase() === s) ? 0
+        : (city.toLowerCase().indexOf(s) === 0 || alias.some(function(x){ return x.toLowerCase().indexOf(s) === 0; })) ? 1 : 2;
+      out.push({ code: code, city: city, country: country, rank: rank });
+    });
+    out.sort(function(a, b) { return a.rank - b.rank || a.city.localeCompare(b.city, 'ko') || a.code.localeCompare(b.code); });
+    return out.slice(0, limit || 8);
+  }
+  // 입력칸에 자동완성 드롭다운 부착 (여러 칸에 재사용)
+  function _fltAttachAirport(inputId) {
+    var el = document.getElementById(inputId);
+    if (!el || el.getAttribute('data-apauto')) return;
+    el.setAttribute('data-apauto', '1');
+    el.setAttribute('autocomplete', 'off');
+    el.removeAttribute('maxlength'); // '인천' 같은 검색어를 칠 수 있어야 함
+    var wrap = document.createElement('div');
+    wrap.className = 'flt-ap-pop';
+    wrap.style.display = 'none';
+    (el.parentNode || document.body).appendChild(wrap);
+    var hide = function(){ wrap.style.display = 'none'; };
+    var pick = function(code) {
+      el.value = code;
+      hide();
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    wrap._pick = pick;
+    var render = function() {
+      var rows = _fltAirportSearch(el.value, 8);
+      if (!rows.length) { hide(); return; }
+      wrap.innerHTML = rows.map(function(r, i) {
+        return '<button type="button" class="flt-ap-opt" data-code="' + r.code + '">' +
+          '<b>' + r.code + '</b>' +
+          '<span class="flt-ap-city">' + _spotEsc(r.city) + '</span>' +
+          '<span class="flt-ap-ctry">' + _spotEsc(r.country) + '</span>' +
+        '</button>';
+      }).join('');
+      wrap.style.display = 'block';
+    };
+    el.addEventListener('input', render);
+    el.addEventListener('focus', function(){ if (el.value.trim()) render(); });
+    el.addEventListener('blur', function(){ setTimeout(hide, 180); });
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { hide(); return; }
+      if (e.key === 'Enter') {
+        var first = wrap.querySelector('.flt-ap-opt');
+        if (wrap.style.display === 'block' && first) { e.preventDefault(); pick(first.getAttribute('data-code')); }
+      }
+    });
+    wrap.addEventListener('mousedown', function(e) {
+      var b = e.target.closest && e.target.closest('.flt-ap-opt');
+      if (!b) return;
+      e.preventDefault();
+      pick(b.getAttribute('data-code'));
+    });
+  }
+  window._fltInitAirportInputs = function() {
+    ['fmo-from', 'fmo-to', 'fw-from', 'fw-to'].forEach(_fltAttachAirport);
+  };
+
   function _fltRoute(f) {
     var raw = String((f && (f.route || f.description)) || '');
     var codes = [], m, re = /\(([A-Z]{3})\)/g;
@@ -18301,6 +18411,48 @@
         (/Unauthorized|토큰/.test(e.message) ? '' : ' — Travelpayouts 토큰이 설정됐는지 확인해줘') + '</p>';
     }
   };
+  // ── 연간 최저가 ("가장 싼 달") — 12개월을 한 번에 비교 ──
+  window.fltYearSearch = async function() {
+    var g = function(id){ var e=document.getElementById(id); return e? e.value.trim().toUpperCase():''; };
+    var from=g('fmo-from'), to=g('fmo-to');
+    var monEl=document.getElementById('fmo-month');
+    var start=(monEl && monEl.value.trim()) || '';
+    var out=document.getElementById('flight-month-out');
+    if(!out) return;
+    if(!/^[A-Z]{3}$/.test(from)||!/^[A-Z]{3}$/.test(to)){ out.innerHTML='<p class="flt-acc-note">공항을 골라줘</p>'; return; }
+    if(!/^\d{4}-\d{2}$/.test(start)){
+      var d=new Date(); start=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    }
+    out.innerHTML='<p class="flt-acc-note">12개월 훑는 중… (10초쯤 걸려)</p>';
+    try{
+      var j=await _fltFetchPrices({mode:'year',origin:from,destination:to,start:start,currency:'krw'});
+      var rows=(j.data||[]).filter(function(r){ return r && r.price; });
+      if(!rows.length){ out.innerHTML='<p class="flt-acc-note">이 노선은 아직 쌓인 시세가 없어. 인기 노선일수록 데이터가 촘촘해.</p>'; return; }
+      var min=Math.min.apply(null,rows.map(function(r){return r.price;}));
+      var max=Math.max.apply(null,rows.map(function(r){return r.price;}));
+      var best=rows.filter(function(r){return r.price===min;})[0];
+      var mLabel=function(ym){ var p=ym.split('-'); return p[0].slice(2)+'.'+p[1]; };
+      out.innerHTML=
+        '<div class="flt-mo-best">가장 싼 달 <b>'+mLabel(best.month)+'</b><em>'+_fltKrw(min)+'</em>'+
+          '<span class="flt-dim">'+(best.date||'')+' 출발 · 최고 '+_fltKrw(max)+' · 차이 '+_fltKrw(max-min)+'</span></div>'+
+        '<div class="flt-yr">'+rows.map(function(r){
+          var h=max>min? 18+Math.round((max-r.price)/(max-min)*52) : 46;
+          var cls=r.price===min?' is-best':(r.price<=min+(max-min)*0.25?' is-cheap':'');
+          return '<button class="flt-yr-col'+cls+'" title="'+r.month+' · 최저 '+_fltKrw(r.price)+(r.date?' ('+r.date+' 출발)':'')+' · '+r.days+'일치 데이터"'+
+            ' onclick="fltZoomMonth(\''+r.month+'\')">'+
+            '<span class="flt-yr-p">'+Math.round(r.price/10000)+'만</span>'+
+            '<span class="flt-yr-bar" style="height:'+h+'px"></span>'+
+            '<span class="flt-yr-m">'+mLabel(r.month)+'</span>'+
+          '</button>';
+        }).join('')+'</div>'+
+        '<p class="flt-acc-note">막대를 누르면 그 달의 날짜별 최저가로 들어가요 · 편도 기준 · 출처 Aviasales</p>';
+    }catch(e){ out.innerHTML='<p class="flt-acc-note flt-err">'+_spotEsc(e.message)+'</p>'; }
+  };
+  window.fltZoomMonth = function(ym) {
+    var el=document.getElementById('fmo-month'); if(el) el.value=ym;
+    window.fltMonthSearch();
+  };
+
   window.fltUseMonthDate = function(date, price) {
     var f = document.getElementById('flight-watch-form');
     if (f && f.style.display !== 'block') window.fltToggleWatchForm();
@@ -18425,6 +18577,7 @@
     if (!sec) return;
     sec.style.display = 'block';
     try { renderTripTabs(); } catch(e) {}   // 여행 선택 드롭다운 라벨/옵션 채우기
+    try { window._fltInitAirportInputs(); } catch(e) {}
     try { _fltRenderPrep(); } catch(e) { console.warn('[flight] prep', e); }
     try { _fltRenderProfile(); } catch(e) { console.warn('[flight] profile', e); }
     try { _fltRefreshAll(); } catch(e) {}
