@@ -14799,9 +14799,28 @@
       apiStatus.textContent = k ? '설정됨 · ' + m : '미설정';
       apiStatus.className = 'text-[10px] mt-0.5 ' + (k ? 'text-emerald-600 font-bold' : 'text-slate-400');
     }
+    // ★ (2026-07-24) Cloud Functions 출입증 상태 — Anthropic 키와 별개 값
+    var fnStatus = document.getElementById('settings-fn-status');
+    var fnInput = document.getElementById('settings-fn-token');
+    var fnTok = '';
+    try { fnTok = localStorage.getItem('atelier_coach_auth_token') || ''; } catch(e) {}
+    if (fnStatus) {
+      fnStatus.textContent = fnTok ? '설정됨 · ' + fnTok.slice(0, 4) + '••••' : '미설정';
+      fnStatus.className = 'text-[10px] mt-0.5 ' + (fnTok ? 'text-emerald-600 font-bold' : 'text-slate-400');
+    }
+    if (fnInput) fnInput.value = fnTok;
     await loadIncomeCategories();
     renderSettingsCategoryList();
   }
+  window.saveFnAuthToken = function() {
+    var el = document.getElementById('settings-fn-token');
+    var v = el ? el.value.trim() : '';
+    if (!v) { alert('토큰을 입력해줘'); return; }
+    try { localStorage.setItem('atelier_coach_auth_token', v); } catch(e) { alert('저장 실패'); return; }
+    var st = document.getElementById('settings-fn-status');
+    if (st) { st.textContent = '설정됨 · ' + v.slice(0, 4) + '••••'; st.className = 'text-[10px] mt-0.5 text-emerald-600 font-bold'; }
+    if (typeof showSyncToast === 'function') showSyncToast('🔐 출입증 저장 완료 — 항공권 시세 조회가 켜졌어');
+  };
 
   // ===== 전체 백업/복원 =====
   async function exportAllData() {
