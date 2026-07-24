@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=275" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=276" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6231,6 +6231,28 @@
     .flt-link.is-alt { color:#0e7490; background:#ecfeff; border-color:#cffafe; }
     .flt-link.is-alt:hover { background:#cffafe; }
     .flt-link em { font-style:normal; font-weight:600; opacity:.7; margin-left:3px; }
+    /* ★ (2026-07-24) 도시 간 이동 비교 */
+    .hop-box:empty { display:none; }
+    .hop-box { border:1px solid #e2e8f0; border-radius:14px; padding:12px 15px 13px; margin-bottom:14px; background:#fff; }
+    .hop-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
+    .hop-head .flt-eyebrow { margin:0; }
+    .hop-list { display:flex; flex-direction:column; }
+    .hop-row { display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,1.6fr) auto; gap:12px;
+      align-items:center; padding:9px 2px; border-bottom:1px solid #f1f5f9; }
+    .hop-row:last-child { border-bottom:none; }
+    .hop-rt { font-size:12px; font-weight:800; color:#0f172a; letter-spacing:-0.01em; }
+    .hop-modes { display:flex; flex-wrap:wrap; gap:6px; }
+    .hop-m { display:inline-flex; align-items:baseline; gap:5px; background:#f8fafc; border:1px solid #eef2f7;
+      border-radius:999px; padding:4px 10px; font-family:var(--font-num); font-variant-numeric:tabular-nums;
+      font-size:11px; font-weight:800; color:#334155; }
+    .hop-m i { font-style:normal; font-size:11px; }
+    .hop-m em { font-style:normal; font-family:'Manrope','Pretendard',sans-serif; font-size:9.5px; font-weight:600; color:#94a3b8; }
+    .hop-m.is-est { background:#fff; border-style:dashed; color:#94a3b8; }
+    .hop-m.is-none { color:#cbd5e1; }
+    .hop-r2r { font-size:10.5px; font-weight:800; color:#0e7490; background:#ecfeff; border:1px solid #cffafe;
+      border-radius:999px; padding:5px 10px; text-decoration:none; white-space:nowrap; }
+    .hop-r2r:hover { background:#cffafe; }
+    @media (max-width:720px){ .hop-row { grid-template-columns:1fr; gap:5px; } }
     /* ★ (2026-07-24) 12개월 최저가 막대 — '가장 싼 달' 한눈에 */
     .flt-yr { display:flex; align-items:flex-end; gap:6px; margin:14px 0 4px; overflow-x:auto; padding-bottom:4px; }
     .flt-yr-col { flex:1 1 0; min-width:52px; display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -10861,6 +10883,8 @@
               
               </div>
               <!-- 도시 간 이동 (큐레이션) — trip 매칭 시 자동 표시. 숙소 섹션에서 이 섹션으로 이동(2026-06-17) -->
+              <!-- ★ (2026-07-24) 도시 간 이동 비교 (Rome2Rio 대체) -->
+              <div id="trv-hop-compare" class="hop-box"></div>
               <div id="journey-transit-recs" style="display:none"></div>
               <div id="journey-transport-list" class="rec-grid"></div>
             </section>
@@ -14559,7 +14583,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=275" defer></script>
+<script src="js/app-1-pages.js?v=276" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

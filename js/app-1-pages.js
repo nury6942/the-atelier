@@ -6589,6 +6589,104 @@
     return 'https://www.rome2rio.com/s/' + encodeURIComponent(from) + '/' + encodeURIComponent(to);
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  ★ (2026-07-24) 도시 간 이동 비교 — Rome2Rio를 대신할 수 있는 만큼.
+  //    유럽 기차·버스 시간표는 사업자별 유료 API라 우리가 못 모은다. 대신
+  //    ① 직선거리(무료 계산) ② 자동차/대중교통 실제 소요시간(구글, 버튼 눌렀을 때만)
+  //    ③ 기차·버스는 Rome2Rio 딥링크로 넘김 — 세 층을 한 카드에 모은다.
+  //    ※ 유료 호출이라 자동 실행 금지. 반드시 사용자가 버튼을 눌러야 나간다.
+  // ═══════════════════════════════════════════════════════════════════
+  var _trvHopCache = {};
+  function _trvHopKey(a, b) { return a.lat.toFixed(3)+','+a.lng.toFixed(3)+'>'+b.lat.toFixed(3)+','+b.lng.toFixed(3); }
+  function _trvCityCoord(name) {
+    var c = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+    var n = _normCityKey(name);
+    for (var i = 0; i < c.length; i++) {
+      var x = c[i];
+      if (typeof x.lat !== 'number' || typeof x.lng !== 'number') continue;
+      var xn = _normCityKey(x.name || '');
+      if (xn === n || xn.indexOf(n) >= 0 || n.indexOf(xn) >= 0) return { lat: x.lat, lng: x.lng, name: x.name };
+    }
+    return null;
+  }
+  // 여행 순서대로 인접 도시쌍(구간) 만들기
+  function _trvHops() {
+    var c = ((typeof citiesData !== 'undefined' && citiesData) ? citiesData : [])
+      .filter(function(x){ return x.start_date && typeof x.lat === 'number' && typeof x.lng === 'number'; })
+      .slice().sort(function(a,b){ return String(a.start_date).localeCompare(String(b.start_date)); });
+    var hops = [];
+    for (var i = 1; i < c.length; i++) {
+      hops.push({ from: c[i-1], to: c[i],
+        km: _haversineKm({lat:c[i-1].lat,lng:c[i-1].lng}, {lat:c[i].lat,lng:c[i].lng}) });
+    }
+    return hops;
+  }
+  function _hhmm(min) {
+    min = Math.round(min);
+    var h = Math.floor(min / 60), m = min % 60;
+    return (h ? h + '시간' : '') + (m ? (h ? ' ' : '') + m + '분' : (h ? '' : '0분'));
+  }
+  window.renderHopCompare = function() {
+    var box = document.getElementById('trv-hop-compare');
+    if (!box) return;
+    var hops = _trvHops();
+    if (hops.length < 1) { box.innerHTML = ''; return; }
+    var pending = hops.filter(function(h){ return !_trvHopCache[_trvHopKey(h.from, h.to)]; }).length;
+    box.innerHTML =
+      '<div class="hop-head">' +
+        '<p class="flt-eyebrow">Route compare</p>' +
+        (pending ? '<button class="trav-act" onclick="fetchHopTimes()" title="구글 지도로 자동차·대중교통 실제 소요시간을 가져와요 — 예상 ' +
+          _gmapsCostHint(pending * 2) + '">' +
+          '<span class="material-symbols-outlined">timer</span> 실제 소요시간 (' + pending + '구간)</button>'
+          : '<span class="flt-dim">소요시간 조회 완료</span>') +
+      '</div>' +
+      '<div class="hop-list">' + hops.map(function(h) {
+        var k = _trvHopKey(h.from, h.to);
+        var got = _trvHopCache[k];
+        var r2r = 'https://www.rome2rio.com/s/' + encodeURIComponent(_displayCityShort(h.from.name)) +
+          '/' + encodeURIComponent(_displayCityShort(h.to.name));
+        var rows = '';
+        if (got) {
+          if (got.drive) rows += '<span class="hop-m"><i>🚗</i>' + _hhmm(got.drive.min) + '<em>' + got.drive.km + 'km</em></span>';
+          if (got.transit) rows += '<span class="hop-m"><i>🚆</i>' + _hhmm(got.transit.min) + '<em>대중교통</em></span>';
+          if (!got.drive && !got.transit) rows += '<span class="hop-m is-none">경로 없음</span>';
+        } else {
+          rows = '<span class="hop-m is-est"><i>📏</i>직선 ' + Math.round(h.km).toLocaleString('ko-KR') + 'km</span>';
+        }
+        return '<div class="hop-row">' +
+          '<span class="hop-rt">' + _spotEsc(_displayCityShort(h.from.name)) + ' → ' + _spotEsc(_displayCityShort(h.to.name)) + '</span>' +
+          '<span class="hop-modes">' + rows + '</span>' +
+          '<a class="hop-r2r" href="' + r2r + '" target="_blank" rel="noopener" title="기차·버스·페리 시간표는 Rome2Rio에서">기차·버스 ↗</a>' +
+        '</div>';
+      }).join('') + '</div>' +
+      '<p class="flt-acc-note">유럽 기차·버스 시간표는 사업자별 유료 API라 직접 못 모아요. 자동차·대중교통 시간까지가 우리가 낼 수 있는 최선이고, 그다음은 Rome2Rio로 넘어가요.</p>';
+  };
+  window.fetchHopTimes = async function() {
+    var hops = _trvHops().filter(function(h){ return !_trvHopCache[_trvHopKey(h.from, h.to)]; });
+    if (!hops.length) return;
+    if (!_confirmGmapsSpend('도시 간 ' + hops.length + '구간의 실제 소요시간을 조회합니다.', hops.length * 2)) return;
+    if (typeof google === 'undefined' || !google.maps || !google.maps.DistanceMatrixService) { alert('지도 API가 아직 안 떴어. 잠시 후 다시 시도해줘.'); return; }
+    var svc = new google.maps.DistanceMatrixService();
+    var ask = function(o, d, mode) {
+      return new Promise(function(res) {
+        svc.getDistanceMatrix({ origins:[new google.maps.LatLng(o.lat,o.lng)], destinations:[new google.maps.LatLng(d.lat,d.lng)], travelMode:mode },
+          function(r, st) {
+            if (st !== 'OK' || !r.rows[0] || !r.rows[0].elements[0] || r.rows[0].elements[0].status !== 'OK') return res(null);
+            var e = r.rows[0].elements[0];
+            res({ min: e.duration.value / 60, km: Math.round(e.distance.value / 1000) });
+          });
+      });
+    };
+    for (var i = 0; i < hops.length; i++) {
+      var h = hops[i];
+      var drive = await ask(h.from, h.to, 'DRIVING');
+      var transit = await ask(h.from, h.to, 'TRANSIT');
+      _trvHopCache[_trvHopKey(h.from, h.to)] = { drive: drive, transit: transit };
+      window.renderHopCompare();
+      await new Promise(function(r){ setTimeout(r, 220); });
+    }
+  };
+
   function _renderTransitRecs() {
     var el = document.getElementById('journey-transit-recs');
     if (!el) return;
@@ -6803,6 +6901,7 @@
   function renderJourneyLodging() {
     // 도시 간 이동 + 추천 숙소 섹션 (큐레이션 있는 trip만 표시)
     _renderTransitRecs();
+    try { window.renderHopCompare(); } catch(e) {}
     _renderLodgingRecs();
 
     var container = document.getElementById('journey-lodging-list');
@@ -15807,6 +15906,19 @@
   };
 
   // ★ (2026-07-23) 기존 스팟 일괄 사진 채우기 — 600ms 간격 순차, 버튼에 진행 표시
+  // ★ (2026-07-24) 유료 API 일괄 실행 전 예상 비용 고지.
+  //   실측: 2026-07-23 스팟 일괄 채우기 2,376회 → ₩5,393 (효율 단가 약 ₩2.3/회).
+  //   한도를 낮게 걸면 작업 도중 막혀서 더 불편하므로, 막는 대신 '미리 보여주고 확인받는' 쪽으로.
+  var GMAPS_KRW_PER_CALL = 2.3;
+  function _gmapsCostHint(calls) {
+    var won = Math.round(calls * GMAPS_KRW_PER_CALL / 10) * 10;
+    return calls.toLocaleString('ko-KR') + '회 · 약 ₩' + won.toLocaleString('ko-KR');
+  }
+  function _confirmGmapsSpend(what, calls) {
+    if (!calls) return true;
+    return confirm(what + '\n\n구글 지도 API를 ' + _gmapsCostHint(calls) + ' 사용해요.\n(7/23 실측 단가 기준 추정치)\n\n진행할까요?');
+  }
+
   window.fillPlacePhotos = function() {
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
     var targets = jd.filter(function(d) { return d.type === '스팟' && !d.photo_url && d._id; });
@@ -15816,6 +15928,7 @@
       return;
     }
     if (btn && btn.getAttribute('data-running')) return; // 중복 실행 방지
+    if (!_confirmGmapsSpend('스팟 ' + targets.length + '곳에 사진을 채웁니다.', targets.length)) return;
     if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
     var ok = 0;
     function step(i) {
@@ -15851,6 +15964,7 @@
       return;
     }
     if (btn && btn.getAttribute('data-running')) return; // 중복 실행 방지
+    if (!_confirmGmapsSpend('스팟 ' + targets.length + '곳에 평점을 채웁니다.', targets.length * 2)) return;
     if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
     var ok = 0;
     function step(i) {
@@ -15922,6 +16036,7 @@
       var noPhoto = places.filter(function(p) { return !p.photo_url && p._id; }).length;
       fillBtn.style.display = noPhoto ? '' : 'none';
       fillBtn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> 사진 채우기 (' + noPhoto + ')';
+      fillBtn.title = '사진 없는 스팟에 Google Places 대표 사진을 채워요 — 예상 ' + _gmapsCostHint(noPhoto);
     }
     // ★ 평점 채우기 버튼 (g_pid 없는 스팟 수)
     var rateBtn = document.getElementById('places-rating-fill-btn');
@@ -15929,6 +16044,7 @@
       var noRate = places.filter(function(p) { return !p.g_pid && p._id; }).length;
       rateBtn.style.display = noRate ? '' : 'none';
       rateBtn.innerHTML = '<span class="material-symbols-outlined">star</span> 평점 채우기 (' + noRate + ')';
+      rateBtn.title = '평점 없는 스팟에 Google 평점·리뷰 수를 채워요 — 예상 ' + _gmapsCostHint(noRate * 2);
     }
     // 국가 세그먼트 탭 (스팟 있는 국가만 동적 생성)
     // ★ (2026-07-23) 정렬 = 실제 여행 순서(citiesData start_date 순) → 트립 밖 국가 → '기타' 맨 뒤
