@@ -19380,6 +19380,10 @@
         '<a href="' + g + '" target="_blank" rel="noopener" title="구글 항공권' + (when ? ' · ' + whenLbl : '') + '">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
         '<a href="' + sky + '" target="_blank" rel="noopener" title="스카이스캐너에서 이 노선 보기">스카이 ↗</a>' +
       '</div>' +
+      '<input id="pw-q-date" type="date" class="pw-q-date" title="출발 날짜"' + (qm ? ' value="' + qm[1] + '-' + qm[2] + '-15"' : '') + '>' +
+      '<input id="pw-q-air" type="text" class="pw-q-air" placeholder="항공사" list="pw-q-airlist" title="항공사 (선택)">' +
+      '<datalist id="pw-q-airlist"><option value="대한항공"></option><option value="아시아나"></option><option value="티웨이"></option><option value="젯스타"></option><option value="에어뉴질랜드"></option><option value="캐세이"></option><option value="싱가포르항공"></option></datalist>' +
+      '<label class="pw-q-dir" title="직항 여부"><input id="pw-q-direct" type="checkbox">직항</label>' +
       '<div class="pw-q-amt"><span>₩</span>' +
         '<input id="pw-q-val" type="number" placeholder="금액" onkeydown="if(event.key===\'Enter\')pwQuickSave()"></div>' +
       '<select id="pw-q-src" class="pw-q-src">' + srcOpts + '</select>' +
@@ -19397,16 +19401,24 @@
     var amt = Number(String(v).replace(/[^\d]/g, ''));
     if (!amt) { alert('금액을 넣어줘'); return; }
     var src = (document.getElementById('pw-q-src') || {}).value || '';
+    var dOn = (document.getElementById('pw-q-date') || {}).value || '';
+    var air = ((document.getElementById('pw-q-air') || {}).value || '').trim();
+    var direct = !!(document.getElementById('pw-q-direct') || {}).checked;
     try {
-      var doc = { type: 'flight_price', watch_id: id, price_krw: amt, source: src, note: '', ts: new Date().toISOString() };
       var w = (_fltWatch || []).filter(function(x){ return x._id === id; })[0];
-      if (w) { var f = _fuelForRoute(w.route_from, w.route_to); if (f) doc.fuel_krw = f.krw; }
+      var oneway = (typeof window._pwIsOneWay === 'function' && window._pwIsOneWay());
+      var doc = { type: 'flight_price', watch_id: id, price_krw: amt, source: src,
+        depart_on: dOn, airline_name: air, transfers: direct ? 0 : null,
+        note: '', ts: new Date().toISOString() };
+      if (w) { var f = _fuelForRoute(w.route_from, w.route_to); if (f) doc.fuel_krw = f.krw * (oneway ? 1 : 2); }
       var nid = await fbAdd('flight_watch', doc);
       doc._id = (nid && nid.id) ? nid.id : nid;
       _fltWatch.push(doc);
-      var el = document.getElementById('pw-q-val'); if (el) { el.value = ''; el.focus(); }
+      ['pw-q-val','pw-q-air'].forEach(function(i){ var e=document.getElementById(i); if(e) e.value=''; });
+      var dc=document.getElementById('pw-q-direct'); if(dc) dc.checked=false;
       _fltRenderWatch(); window.pwRenderQuick();
-      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + _fltKrw(amt) + ' 기록');
+      var el = document.getElementById('pw-q-val'); if (el) el.focus();
+      if (typeof showSyncToast === 'function') showSyncToast('✈️ ' + _fltKrw(amt) + (dOn ? ' · ' + dOn : '') + ' 기록');
     } catch(e) { alert('저장 실패'); }
   };
 
@@ -19423,8 +19435,9 @@
   function _fltSnapDetail(sn) {
     if (!sn) return '';
     var parts = [];
-    if (sn.airline || sn.flight_no) {
-      parts.push('<span class="pw-det-air">' + _spotEsc(_fltAirlineLabel(sn.airline) + (sn.flight_no ? ' ' + sn.flight_no : '')) + '</span>');
+    if (sn.airline || sn.flight_no || sn.airline_name) {
+      var alab = sn.airline ? (_fltAirlineLabel(sn.airline) + (sn.flight_no ? ' ' + sn.flight_no : '')) : (sn.airline_name || '');
+      if (alab) parts.push('<span class="pw-det-air">' + _spotEsc(alab) + '</span>');
     }
     if (typeof sn.transfers === 'number') {
       parts.push('<span class="pw-det-t' + (sn.transfers === 0 ? ' is-direct' : '') + '">' +
