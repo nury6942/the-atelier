@@ -19303,6 +19303,26 @@
     '</div>';
   }
 
+  // 관심 노선 카드 헤더용 — 실제 쓰는 스카이스캐너만(+근거리면 Rome2Rio).
+  // 카드 아래 '실시간 요금 보러가기' 블록을 없애고 조회 액션을 헤더 한 줄로 모은다.
+  function _fltQuickLinks(w) {
+    var f = String(w.route_from || '').toUpperCase(), t = String(w.route_to || '').toUpperCase();
+    if (!f || !t) return '';
+    var d = String(w.depart_date || '');
+    var qMonth = (document.getElementById('fmo-month') || {}).value || '';
+    var mm = /^(\d{4})-(\d{2})$/.exec(d) || /^(\d{4})-(\d{2})$/.exec(qMonth);
+    var depMonth = d ? d.slice(0, 7) : (mm ? mm[1] + '-' + mm[2] : '');
+    var sky = _skyUrl(f, t, depMonth, !w.return_date);
+    var km = _fltLegKm(f, t);
+    var out = '<a href="' + sky + '" target="_blank" rel="noopener" class="pw-lnk" title="스카이스캐너에서 실시간 요금 보기">스카이스캐너</a>';
+    if (km && km <= 1500) {
+      var cityOf = function(c){ var a = _FLT_AIRPORTS[c]; return a ? a[2] : c; };
+      out += '<a href="https://www.rome2rio.com/s/' + encodeURIComponent(cityOf(f)) + '/' + encodeURIComponent(cityOf(t)) +
+        '" target="_blank" rel="noopener" class="pw-lnk" title="기차·버스 비교">Rome2Rio</a>';
+    }
+    return out;
+  }
+
   // ★ (2026-07-24) Stitch 시안 이식 — 각진 모서리·헤어라인·큰 IATA. 기능은 100% 그대로.
   var _pwTrip = 'round';
   // ★ (2026-07-24) 월 선택기 — 브라우저 기본 모달은 연도를 스크롤로 넘겨야 해서 불편했다.
@@ -19664,11 +19684,12 @@
       var prog = Math.min(100, Math.round((pts.length / 3) * 100));
       // ★ (2026-07-24) 추적 달 — 매일 최저가가 아니라 '내가 계획한 달'만 본다
       var tms = (w.target_months && w.target_months.length) ? w.target_months.slice().sort() : [];
+      // 라벨 명확화: 이 달들이 '매일 자동으로 가격을 모아오는 대상'이라는 걸 드러낸다
       var statTxt = tms.length
-        ? '<b class="pw-tm-lead">추적 달</b> ' + tms.map(function(mm){
-            return '<span class="pw-tm">' + mm.slice(2).replace('-', '.') + '<i onclick="event.stopPropagation();fltRemoveTargetMonth(\'' + w._id + '\',\'' + mm + '\')" title="제거">×</i></span>';
+        ? tms.map(function(mm){
+            return '<span class="pw-tm">' + mm.slice(2).replace('-', '.') + '<i onclick="event.stopPropagation();fltRemoveTargetMonth(\'' + w._id + '\',\'' + mm + '\')" title="자동 수집에서 제외">×</i></span>';
           }).join('')
-        : '<span class="pw-tm-empty">추적할 여행 달을 추가하세요 →</span>';
+        : '<span class="pw-tm-empty">달을 추가하면 매일 자동 수집돼요 →</span>';
       statTxt += '<button class="pw-tm-add" onclick="fltAddTargetMonth(\'' + w._id + '\')" title="추적할 달 추가"><span class="material-symbols-outlined">add</span></button>';
 
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
@@ -19735,14 +19756,14 @@
               '<div class="pw-route">' + _fltPortHtml(w.route_from) +
                 '<span class="material-symbols-outlined">trending_flat</span>' +
                 _fltPortHtml(w.route_to) + '</div></div>' +
-            '<div class="pw-status"><span class="pw-l">Status</span><p>' + statTxt + '</p></div>' +
+            '<div class="pw-status"><span class="pw-l" title="여기 등록한 달만 매일 자동으로 가격을 수집해요 (최저가 조회 버튼과는 별개)">자동 수집 달</span><p>' + statTxt + '</p></div>' +
           '</div>' +
-          '<div class="pw-head-r">' +
+          '<div class="pw-head-r">' + _fltQuickLinks(w) +
             '<button class="pw-chip" data-fltcheck="' + w._id + '" onclick="fltCheckPrice(\'' + w._id + '\')">최저가 조회</button>' +
             '<button class="pw-x" onclick="fltDeleteWatch(\'' + w._id + '\')" title="노선 삭제"><span class="material-symbols-outlined">delete</span></button>' +
           '</div>' +
         '</div>' +
-        moneyBlock + logTable + _fltBookLinks(w) +
+        moneyBlock + logTable +
         // 직접 입력은 가끔 쓰는 기능 → 기본 접힘. 열면 폼 톤(회색 배경+테두리)으로 데이터와 구분
         '<details class="pw-recwrap"><summary><span class="material-symbols-outlined">edit_note</span>가격 직접 입력</summary>' +
           '<div class="pw-rec">' +
