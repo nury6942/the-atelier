@@ -270,50 +270,61 @@ async function collectFlightPrices() {
     };
 
     let saved = 0, skipped = 0, empty = 0;
+    let noTarget = 0;
     for (const w of watches) {
-      // 같은 날 이미 수집했으면 건너뛴다
-      const dup = docs.some((d) => d.type === "flight_price" && d.watch_id === w._id &&
-        String(d.ts || "").slice(0, 10) === today && d.source === "자동 수집");
-      if (dup) { skipped++; continue; }
+      // ★ (2026-07-24) '매일 최저가'가 아니라 '내가 계획한 달'만 추적.
+      //   target_months가 없는 노선은 건너뛴다(추적 대상 아님).
+      const targets = Array.isArray(w.target_months) ? w.target_months.filter((m) => /^\d{4}-\d{2}$/.test(m)) : [];
+      if (!targets.length) { noTarget++; continue; }
 
-      const params = {
-        origin: String(w.route_from).toUpperCase(), destination: String(w.route_to).toUpperCase(),
-        currency: "krw", market: "kr", sorting: "price", limit: "30",
-        one_way: String(!w.return_date), token: travelpayoutsToken.value(),
-      };
-      if (w.depart_date) params.departure_at = String(w.depart_date);
-      if (w.return_date) params.return_at = String(w.return_date);
+      for (const ym of targets) {
+        // 같은 날 + 같은 달을 이미 수집했으면 건너뛴다
+        const dup = docs.some((d) => d.type === "flight_price" && d.watch_id === w._id &&
+          d.query_month === ym && String(d.ts || "").slice(0, 10) === today && d.source === "자동 수집");
+        if (dup) { skipped++; continue; }
 
-      try {
-        const r = await fetch("https://api.travelpayouts.com/aviasales/v3/prices_for_dates?" + new URLSearchParams(params));
-        if (!r.ok) { logger.warn("cron fetch fail", { w: w._id, status: r.status }); continue; }
-        const j = await r.json();
-        const arr = (j && j.data) || [];
-        if (!arr.length) { empty++; continue; }
-        const best = arr.reduce((a, b) => (Number(b.price) < Number(a.price) ? b : a));
-        const fare = Math.round(Number(best.price) || 0);
-        if (!fare) { empty++; continue; }
-        const fuel = fuelFor(w.route_from, w.route_to);
+        const oneway = !w.return_date;
+        const params = {
+          origin: String(w.route_from).toUpperCase(), destination: String(w.route_to).toUpperCase(),
+          departure_at: ym, group_by: "departure_at",
+          currency: "krw", market: "kr", token: travelpayoutsToken.value(),
+        };
+        try {
+          // 그 달 날짜별 최저가 → 가장 싼 날 하나
+          const r = await fetch("https://api.travelpayouts.com/aviasales/v3/grouped_prices?" + new URLSearchParams(params));
+          if (!r.ok) { logger.warn("cron fetch fail", { w: w._id, ym, status: r.status }); continue; }
+          const j = await r.json();
+          const rows = (j && j.data) || {};
+          let best = null;
+          Object.keys(rows).forEach((k) => {
+            const v = rows[k] || {}; const pr = Number(v.price) || 0;
+            if (pr && (!best || pr < best.price)) best = v;
+          });
+          if (!best) { empty++; continue; }
+          const fare = Math.round(Number(best.price) || 0);
+          if (!fare) { empty++; continue; }
+          const fuel = fuelFor(w.route_from, w.route_to);
 
-        await db.collection("flight_watch").add({
-          type: "flight_price", watch_id: w._id, price_krw: fare,
-          fuel_krw: fuel * (w.return_date ? 2 : 1),
-          source: "자동 수집",
-          airline: best.airline || "", flight_no: best.flight_number || "",
-          transfers: (typeof best.transfers === "number") ? best.transfers : null,
-          depart_on: best.departure_at ? String(best.departure_at).slice(0, 10) : "",
-          return_on: best.return_at ? String(best.return_at).slice(0, 10) : "",
-          note: "",
-          ts: new Date().toISOString(),
-        });
-        saved++;
-      } catch (e) {
-        logger.error("cron error", { w: w._id, msg: e.message });
+          await db.collection("flight_watch").add({
+            type: "flight_price", watch_id: w._id, price_krw: fare,
+            fuel_krw: fuel * (oneway ? 1 : 2),
+            source: "자동 수집", query_month: ym,
+            airline: best.airline || "", flight_no: best.flight_number || "",
+            transfers: (typeof best.transfers === "number") ? best.transfers : null,
+            depart_on: best.departure_at ? String(best.departure_at).slice(0, 10) : "",
+            return_on: best.return_at ? String(best.return_at).slice(0, 10) : "",
+            note: "",
+            ts: new Date().toISOString(),
+          });
+          saved++;
+        } catch (e) {
+          logger.error("cron error", { w: w._id, ym, msg: e.message });
+        }
+        await new Promise((res) => setTimeout(res, 400)); // 레이트 리밋 여유
       }
-      await new Promise((res) => setTimeout(res, 400)); // 레이트 리밋 여유
     }
-    logger.info("flightPriceCron 완료", { watches: watches.length, saved, skipped, empty });
-    return { watches: watches.length, saved, skipped, empty };
+    logger.info("flightPriceCron 완료", { watches: watches.length, saved, skipped, empty, noTarget });
+    return { watches: watches.length, saved, skipped, empty, noTarget };
 }
 
 exports.flightPriceCron = onSchedule(

@@ -19046,6 +19046,50 @@
   // ── 관심 노선 현재 최저가 조회 → 가격 로그에 자동 기록 ──
   // ★ (2026-07-24) 기간을 골라서 그 달의 최저가를 조회한다. '아무 날짜나 최저가'는 의미가 없다.
   //   저장할 때 항공사·편명·경유·출발일을 각각 필드로 남겨(통계 카드에서 보이게).
+  // ★ (2026-07-24) 추적 달 관리 — 관심 노선에 '내가 계획한 여행 달'을 붙인다.
+  //   자동 수집(크론)은 이 target_months가 있으면 그 달들만, 없으면 안 돌린다.
+  window.fltAddTargetMonth = function(watchId) {
+    var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
+    if (!w) return;
+    // 월 선택 팝업 재사용 — 간단히 prompt 대신 인라인 미니 팝업
+    var host = document.querySelector('[data-fltcheck="' + watchId + '"]');
+    var card = host && host.closest('.pw-card');
+    var old = document.getElementById('pw-tmpop'); if (old) old.remove();
+    var now = new Date();
+    var months = [];
+    for (var i = 0; i < 15; i++) { var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      months.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')); }
+    var has = (w.target_months || []);
+    var pop = document.createElement('div');
+    pop.id = 'pw-tmpop'; pop.className = 'pw-chkpop';
+    pop.innerHTML = '<p class="pw-l">추적할 여행 달 (여러 개 가능)</p><div class="pw-chk-ms">' +
+      months.map(function(m){ return '<button type="button" data-m="' + m + '"' + (has.indexOf(m) >= 0 ? ' class="is-on"' : '') + '>' + m.slice(2).replace('-', '.') + '</button>'; }).join('') +
+      '</div><p class="pw-chk-hint">고른 달의 시세만 매일 자동으로 쌓아요.</p>';
+    var anchor = card && card.querySelector('.pw-status');
+    (anchor || card || document.body).appendChild(pop);
+    pop.addEventListener('mousedown', async function(e) {
+      var b = e.target.closest && e.target.closest('button[data-m]');
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      var m = b.getAttribute('data-m');
+      var arr = (w.target_months || []).slice();
+      var i = arr.indexOf(m);
+      if (i >= 0) arr.splice(i, 1); else arr.push(m);
+      w.target_months = arr;
+      b.classList.toggle('is-on');
+      try { await fbUpdate('flight_watch', watchId, { target_months: arr }); } catch(err) {}
+      _fltRenderWatch();
+    });
+    setTimeout(function(){ var close = function(ev){ if (ev.target.closest && ev.target.closest('#pw-tmpop')) return; pop.remove(); document.removeEventListener('mousedown', close); }; document.addEventListener('mousedown', close); }, 0);
+  };
+  window.fltRemoveTargetMonth = async function(watchId, month) {
+    var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
+    if (!w) return;
+    w.target_months = (w.target_months || []).filter(function(m){ return m !== month; });
+    try { await fbUpdate('flight_watch', watchId, { target_months: w.target_months }); } catch(e) {}
+    _fltRenderWatch();
+  };
+
   window.fltCheckPrice = function(watchId) {
     var w = (_fltWatch || []).find(function(x){ return x._id === watchId; });
     if (!w) return;
@@ -19369,25 +19413,33 @@
     var sky = _skyUrl(w.route_from, w.route_to, qMonth, oneway);
     var srcOpts = _FLT_SOURCES.map(function(x) { return '<option>' + x + '</option>'; }).join('');
     box.innerHTML =
-      '<div class="pw-q-l"><span class="pw-l">빠른 기록</span>' +
-        '<p>보고 온 가격을 여기 바로 적으면 추이가 쌓여요</p></div>' +
-      '<select class="pw-q-sel" onchange="pwQuickPick(this.value)">' +
-        watches.map(function(x) {
-          return '<option value="' + x._id + '"' + (x._id === sel ? ' selected' : '') + '>' +
-            x.route_from + ' → ' + x.route_to + ' · ' + _spotEsc(cityOf(x.route_to)) + '</option>';
-        }).join('') + '</select>' +
-      '<div class="pw-q-links">' +
-        '<a href="' + g + '" target="_blank" rel="noopener" title="구글 항공권' + (when ? ' · ' + whenLbl : '') + '">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
-        '<a href="' + sky + '" target="_blank" rel="noopener" title="스카이스캐너에서 이 노선 보기">스카이 ↗</a>' +
+      '<div class="pw-q-top">' +
+        '<div class="pw-q-l"><span class="pw-l">빠른 기록</span>' +
+          '<p>스카이스캐너·구글에서 본 가격을 여기 옮겨 적으면 추이가 쌓여요</p></div>' +
+        '<select class="pw-q-sel" onchange="pwQuickPick(this.value)">' +
+          watches.map(function(x) {
+            return '<option value="' + x._id + '"' + (x._id === sel ? ' selected' : '') + '>' +
+              x.route_from + ' → ' + x.route_to + ' · ' + _spotEsc(cityOf(x.route_to)) + '</option>';
+          }).join('') + '</select>' +
+        '<div class="pw-q-links">' +
+          '<a href="' + g + '" target="_blank" rel="noopener">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
+          '<a href="' + sky + '" target="_blank" rel="noopener">스카이스캐너 ↗</a>' +
+        '</div>' +
       '</div>' +
-      '<input id="pw-q-date" type="date" class="pw-q-date" title="출발 날짜"' + (qm ? ' value="' + qm[1] + '-' + qm[2] + '-15"' : '') + '>' +
-      '<input id="pw-q-air" type="text" class="pw-q-air" placeholder="항공사" list="pw-q-airlist" title="항공사 (선택)">' +
-      '<datalist id="pw-q-airlist"><option value="대한항공"></option><option value="아시아나"></option><option value="티웨이"></option><option value="젯스타"></option><option value="에어뉴질랜드"></option><option value="캐세이"></option><option value="싱가포르항공"></option></datalist>' +
-      '<label class="pw-q-dir" title="직항 여부"><input id="pw-q-direct" type="checkbox">직항</label>' +
-      '<div class="pw-q-amt"><span>₩</span>' +
-        '<input id="pw-q-val" type="number" placeholder="금액" onkeydown="if(event.key===\'Enter\')pwQuickSave()"></div>' +
-      '<select id="pw-q-src" class="pw-q-src">' + srcOpts + '</select>' +
-      '<button class="pw-btn is-dark" onclick="pwQuickSave()">기록</button>';
+      '<div class="pw-q-row">' +
+        '<label class="pw-q-f"><span>출발 날짜</span>' +
+          '<input id="pw-q-date" type="date"' + (qm ? ' value="' + qm[1] + '-' + qm[2] + '-15"' : '') + '></label>' +
+        '<label class="pw-q-f"><span>항공사 <em>선택</em></span>' +
+          '<input id="pw-q-air" type="text" placeholder="예: 대한항공" list="pw-q-airlist"></label>' +
+        '<datalist id="pw-q-airlist"><option value="대한항공"></option><option value="아시아나"></option><option value="티웨이"></option><option value="젯스타"></option><option value="에어뉴질랜드"></option><option value="캐세이"></option><option value="싱가포르항공"></option></datalist>' +
+        '<label class="pw-q-chk"><input id="pw-q-direct" type="checkbox"><span>직항</span></label>' +
+        '<label class="pw-q-f is-amt"><span>가격</span>' +
+          '<div class="pw-q-amt"><span class="won">₩</span>' +
+            '<input id="pw-q-val" type="number" placeholder="0" onkeydown="if(event.key===\'Enter\')pwQuickSave()"></div></label>' +
+        '<label class="pw-q-f"><span>출처</span>' +
+          '<select id="pw-q-src">' + srcOpts + '</select></label>' +
+        '<button class="pw-btn is-dark pw-q-save" onclick="pwQuickSave()"><span class="material-symbols-outlined">add</span>기록</button>' +
+      '</div>';
   };
   window.pwQuickPick = function(id) {
     var box = document.getElementById('pw-quick');
@@ -19486,9 +19538,14 @@
 
       var vd = _fltVerdict(pts);
       var prog = Math.min(100, Math.round((pts.length / 3) * 100));
-      var statTxt = (w.depart_date ? '출발일 ' + _fltEsc(w.depart_date) : '출발일 미정') +
-        (w.return_date ? ' ~ ' + _fltEsc(w.return_date) : '') +
-        (w.memo ? ' · ' + _fltEsc(w.memo) : '');
+      // ★ (2026-07-24) 추적 달 — 매일 최저가가 아니라 '내가 계획한 달'만 본다
+      var tms = (w.target_months && w.target_months.length) ? w.target_months.slice().sort() : [];
+      var statTxt = tms.length
+        ? '<b class="pw-tm-lead">추적 달</b> ' + tms.map(function(mm){
+            return '<span class="pw-tm">' + mm.slice(2).replace('-', '.') + '<i onclick="event.stopPropagation();fltRemoveTargetMonth(\'' + w._id + '\',\'' + mm + '\')" title="제거">×</i></span>';
+          }).join('')
+        : '<span class="pw-tm-empty">추적할 여행 달을 추가하세요 →</span>';
+      statTxt += '<button class="pw-tm-add" onclick="fltAddTargetMonth(\'' + w._id + '\')" title="추적할 달 추가"><span class="material-symbols-outlined">add</span></button>';
 
       // 가장 최근 기록의 상세(항공사·편명·경유·출발일)
       var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;

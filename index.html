@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=297" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=298" as="script">
   <link rel="preload" href="js/app-2-init.js?v=172" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6387,7 +6387,18 @@
       letter-spacing:-0.045em; color:#1a1c1d; }
     .pw-route .material-symbols-outlined { color:#7c3aed; font-size:22px; }
     .pw-status { min-width:0; }
-    .pw-status p { margin:5px 0 0; font-size:12.5px; line-height:1.5; color:#4a4455; }
+    .pw-status p { margin:5px 0 0; font-size:12.5px; line-height:1.5; color:#4a4455; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .pw-tm-lead { font-size:9.5px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:#7c3aed; }
+    .pw-tm { display:inline-flex; align-items:center; gap:3px; background:#f5f3ff; border:1px solid #ede9fe;
+      color:#6d28d9; font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:11px; font-weight:800;
+      padding:3px 5px 3px 9px; }
+    .pw-tm i { font-style:normal; cursor:pointer; color:#c4b5fd; font-weight:700; padding:0 2px; }
+    .pw-tm i:hover { color:#e11d48; }
+    .pw-tm-empty { font-size:11.5px; color:#94a3b8; }
+    .pw-tm-add { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
+      border:1px dashed #c4b5fd; background:#fff; color:#7c3aed; cursor:pointer; padding:0; }
+    .pw-tm-add:hover { background:#f5f3ff; }
+    .pw-tm-add .material-symbols-outlined { font-size:15px; }
     .pw-head-r { display:flex; align-items:center; gap:10px; flex:none; position:relative; }
     .pw-chip { border:none; background:#eaddff; color:#630ed4; font-size:12px; font-weight:800; letter-spacing:0.03em;
       padding:9px 16px; cursor:pointer; transition:background .15s; white-space:nowrap; }
@@ -6611,32 +6622,41 @@
     }
 
     /* ★ (2026-07-24) 빠른 기록 바 — 본 가격을 3초에 남기는 곳 (이전 CSS 교체 때 유실되어 복구) */
-    .pw-quick { display:flex; align-items:center; gap:10px; flex-wrap:wrap; border:1px solid #1a1c1d;
-      background:#1a1c1d; padding:14px 18px; margin-bottom:20px; }
+    /* ★ (2026-07-24) 빠른 기록 바 — 라벨 있는 2줄 레이아웃, 중복 스카이스캐너 제거 */
+    .pw-quick { border:1px solid #1a1c1d; background:#1a1c1d; padding:16px 18px; margin-bottom:20px; }
     .pw-quick:empty { display:none; }
-    .pw-q-l { flex:1; min-width:150px; }
+    .pw-q-top { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding-bottom:14px;
+      border-bottom:1px solid rgba(255,255,255,.12); }
+    .pw-q-l { flex:1; min-width:180px; }
     .pw-q-l .pw-l { color:#fff; }
     .pw-q-l p { margin:3px 0 0; font-size:11px; color:rgba(255,255,255,.55); }
-    .pw-q-sel, .pw-q-src { border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:#fff;
-      padding:9px 11px; font-size:12px; font-weight:700; outline:none; cursor:pointer; border-radius:0;
-      font-family:inherit; }
-    .pw-q-sel option, .pw-q-src option { color:#1a1c1d; }
+    .pw-q-sel { border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:#fff;
+      padding:9px 11px; font-size:12px; font-weight:700; outline:none; cursor:pointer; border-radius:0; font-family:inherit; }
+    .pw-q-sel option { color:#1a1c1d; }
     .pw-q-links { display:flex; gap:6px; }
     .pw-q-links a { font-size:10.5px; font-weight:800; color:#d2bbff; border:1px solid rgba(210,187,255,.35);
-      padding:8px 11px; text-decoration:none; white-space:nowrap; }
+      padding:8px 12px; text-decoration:none; white-space:nowrap; }
     .pw-q-links a:hover { background:rgba(210,187,255,.15); }
-    .pw-q-amt { display:flex; align-items:center; gap:4px; background:#fff; padding:7px 12px; }
-    .pw-q-amt span { font-size:14px; font-weight:800; color:#7c3aed; }
-    .pw-q-date, .pw-q-air { border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:#fff;
-      padding:9px 10px; font-size:12px; font-weight:700; outline:none; border-radius:0; font-family:inherit; }
-    .pw-q-date { color-scheme:dark; }
-    .pw-q-air { width:96px; }
-    .pw-q-air::placeholder { color:rgba(255,255,255,.4); }
-    .pw-q-dir { display:inline-flex; align-items:center; gap:5px; color:#fff; font-size:11.5px; font-weight:700;
-      cursor:pointer; white-space:nowrap; }
-    .pw-q-dir input { accent-color:#7c3aed; width:14px; height:14px; }
-    .pw-q-amt input { border:0; outline:none; width:104px; font-family:var(--font-num);
-      font-variant-numeric:tabular-nums; font-size:15px; font-weight:800; color:#1a1c1d; }
+    .pw-q-row { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-top:14px; }
+    .pw-q-f { display:flex; flex-direction:column; gap:5px; min-width:0; }
+    .pw-q-f > span { font-size:9.5px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,.5); }
+    .pw-q-f > span em { font-style:normal; letter-spacing:0.04em; color:rgba(255,255,255,.3); text-transform:none; margin-left:3px; }
+    .pw-q-f input, .pw-q-f select { border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08);
+      color:#fff; padding:9px 11px; font-size:13px; font-weight:700; outline:none; border-radius:0; font-family:inherit; }
+    .pw-q-f input[type=date] { color-scheme:dark; }
+    .pw-q-f select option { color:#1a1c1d; }
+    .pw-q-f input::placeholder { color:rgba(255,255,255,.4); }
+    .pw-q-amt { display:flex; align-items:center; gap:3px; background:#fff; padding:6px 11px; }
+    .pw-q-amt .won { font-size:15px; font-weight:800; color:#7c3aed; }
+    .pw-q-amt input { border:0 !important; background:transparent !important; outline:none; width:120px;
+      font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:15px; font-weight:800; color:#1a1c1d !important; padding:2px !important; }
+    .pw-q-chk { display:inline-flex; align-items:center; gap:6px; color:#fff; font-size:12px; font-weight:700;
+      cursor:pointer; white-space:nowrap; padding-bottom:9px; }
+    .pw-q-chk input { accent-color:#7c3aed; width:15px; height:15px; }
+    .pw-q-save { align-self:stretch; display:flex; align-items:center; gap:5px; padding:0 20px; }
+    .pw-q-save .material-symbols-outlined { font-size:17px; }
+    @media (max-width:820px){ .pw-q-f, .pw-q-save { flex:1 1 100%; } .pw-q-amt input { width:100%; } }
+
     /* 먼 날짜 안내 링크 (유실 복구) */
     .pw-far { margin-top:16px; padding-top:14px; border-top:1px solid #eeeef0; }
     .pw-far > div { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
@@ -15058,7 +15078,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=297" defer></script>
+<script src="js/app-1-pages.js?v=298" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
