@@ -19620,6 +19620,61 @@
     } catch(e) { alert('저장 실패'); }
   };
 
+  // ★ (2026-07-25) 구간 상세 — 편명·기종·터미널·경유시간까지 그대로 보관/표시.
+  //   segments: [{dir:'out'|'ret', flight, airline, from, from_name, from_term, dep,
+  //               to, to_name, to_term, arr, aircraft, duration, layover_before}]
+  window.pwToggleSeg = function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var open = el.style.display !== 'none';
+    el.style.display = open ? 'none' : '';
+    var btn = document.querySelector('[onclick*="' + id + '"] .material-symbols-outlined');
+    if (btn) btn.textContent = open ? 'expand_more' : 'expand_less';
+  };
+  function _fltSegmentsHtml(sn) {
+    var segs = Array.isArray(sn.segments) ? sn.segments : [];
+    if (!segs.length) return '';
+    var groups = [
+      { key: 'out', label: '가는 편', total: sn.duration_out || '' },
+      { key: 'ret', label: '오는 편', total: sn.duration_ret || '' }
+    ];
+    var html = '<div class="pw-segwrap">';
+    groups.forEach(function(g) {
+      var list = segs.filter(function(s){ return (s.dir || 'out') === g.key; });
+      if (!list.length) return;
+      html += '<div class="pw-seg-g"><div class="pw-seg-h">' + g.label +
+        (g.total ? '<em>총 ' + _spotEsc(g.total) + '</em>' : '') + '</div>';
+      list.forEach(function(s) {
+        if (s.layover_before) {
+          html += '<div class="pw-seg-lay"><span class="material-symbols-outlined">more_vert</span>' +
+            '경유 대기 ' + _spotEsc(s.layover_before) + (s.from_name ? ' · ' + _spotEsc(s.from_name) : '') + '</div>';
+        }
+        html += '<div class="pw-seg">' +
+          '<div class="pw-seg-t"><b>' + _spotEsc(s.flight || '') + '</b>' +
+            (s.airline ? '<span>' + _spotEsc(s.airline) + '</span>' : '') +
+            (s.duration ? '<em>' + _spotEsc(s.duration) + '</em>' : '') + '</div>' +
+          '<div class="pw-seg-r">' +
+            '<div><b>' + _spotEsc(s.dep || '') + '</b> ' + _spotEsc(s.from || '') +
+              (s.from_term ? ' <i>' + _spotEsc(s.from_term) + '</i>' : '') +
+              (s.from_name ? '<span>' + _spotEsc(s.from_name) + '</span>' : '') + '</div>' +
+            '<span class="material-symbols-outlined">arrow_forward</span>' +
+            '<div><b>' + _spotEsc(s.arr || '') + '</b> ' + _spotEsc(s.to || '') +
+              (s.to_term ? ' <i>' + _spotEsc(s.to_term) + '</i>' : '') +
+              (s.to_name ? '<span>' + _spotEsc(s.to_name) + '</span>' : '') + '</div>' +
+          '</div>' +
+          (s.aircraft ? '<div class="pw-seg-ac">' + _spotEsc(s.aircraft) + '</div>' : '') +
+        '</div>';
+      });
+      html += '</div>';
+    });
+    if (sn.fare_brand || sn.cabin || sn.note) {
+      html += '<div class="pw-seg-meta">' +
+        (sn.fare_brand ? '<span>' + _spotEsc(sn.fare_brand) + '</span>' : '') +
+        (sn.note ? '<span class="is-note">' + _spotEsc(sn.note) + '</span>' : '') + '</div>';
+    }
+    return html + '</div>';
+  }
+
   // ★ (2026-07-24) 기록 한 건의 상세(항공사·편명·경유·출발일)를 사람이 읽는 문자열로.
   //   note에 뭉쳐 저장하던 걸 필드로 분리했지만, 옛 기록(note만 있는 것)도 그대로 살려준다.
   var _FLT_AIRLINE_KR = { KE:'대한항공', OZ:'아시아나', JL:'JAL', NH:'ANA', CX:'캐세이', SQ:'싱가포르항공',
@@ -19745,8 +19800,14 @@
             : (/스카이스캐너/.test(srcRaw)
                 ? '<b class="pw-src is-sky" title="내가 스카이스캐너에서 보고 기록한 가격">스카이스캐너</b>'
                 : (srcRaw ? '<b class="pw-src">' + _fltEsc(srcRaw) + '</b>' : '<span class="is-dim">—</span>'));
+          // 구간 상세(편명·기종·터미널·경유시간)가 있으면 펼치기 버튼
+          var segs = Array.isArray(sn.segments) ? sn.segments : [];
+          var segId = 'seg-' + (sn._id || Math.random().toString(36).slice(2));
+          var segToggle = segs.length
+            ? '<button class="pw-segbtn" onclick="pwToggleSeg(\'' + segId + '\')" title="구간 상세 보기">' +
+              '<span class="material-symbols-outlined">expand_more</span></button>' : '';
           return '<tr' + (isAuto ? ' class="is-auto"' : '') + '>' +
-            '<td class="num">' + _fltEsc(String(sn.ts || '').slice(0, 10)) +
+            '<td class="num">' + segToggle + _fltEsc(String(sn.ts || '').slice(0, 10)) +
               (sn.query_month ? ' <em class="pw-qm">' + _spotEsc(sn.query_month) + '</em>' : '') + '</td>' +
             '<td>' + srcBadge + '</td>' +
             '<td class="ta-r num is-p">' + _fltKrw(sn.price_krw) + '</td>' +
@@ -19756,7 +19817,9 @@
             '<td class="num">' + dep + '</td>' +
             '<td class="ta-r"><button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제">' +
               '<span class="material-symbols-outlined">close</span></button></td>' +
-          '</tr>';
+          '</tr>' +
+          (segs.length ? '<tr id="' + segId + '" class="pw-segrow" style="display:none">' +
+            '<td colspan="8">' + _fltSegmentsHtml(sn) + '</td></tr>' : '');
         }).join('') + '</tbody></table></div>' : '';
 
       return '<article class="pw-card">' +
