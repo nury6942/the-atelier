@@ -37,22 +37,26 @@
   const writeWM = (key, ts) => {
     try { const w = readWM(); if (!w[key] || ts > w[key]) { w[key] = ts; localStorage.setItem(WM_KEY, JSON.stringify(w)); } } catch (e) {}
   };
-  // 겹침은 "시각" 단위 6시간. 같은 날 오전에 받고 밤에 또 받아도 오전 것까지
-  // 되훑지 않는다. (뒤늦게 반영되는 거래 대비용 최소 마진)
-  const OVERLAP_HOURS = 6;
+  // ⚠️ 커트오프는 반드시 "자정"이어야 한다 (2026-07-26 버그 수정)
+  //   atelier의 일별 집계는 채널|날짜 키로 문서를 통째로 교체한다. 커트오프를
+  //   하루 중간(예: 16:29)으로 잡으면 그날 오후치만 담긴 문서가 오전치를 덮어써
+  //   매출이 사라진다 (7/25 오전 ₩0 사고). 그래서 "마지막 동기화일 -1일 00:00"부터
+  //   긁는다 — 건드리는 날은 항상 하루 전체가 다시 채워진다.
+  //   비용: 최대 2일치 페이지(≈10p). 한 달 전체(≈140p)에 비하면 여전히 훨씬 싸다.
+  const OVERLAP_DAYS = 1;
   const fmtTs = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
 
-  // 워터마크(마지막 동기화 거래 시각)에서 6시간 뺀 지점 — 없으면 null
   const incrCutoff = (wmKey, monthStart) => {
     const wm = readWM()[wmKey];
     if (!wm) return null;
     const b = new Date(String(wm).replace(' ', 'T'));
     if (isNaN(b)) return null;
-    b.setHours(b.getHours() - OVERLAP_HOURS);
+    b.setDate(b.getDate() - OVERLAP_DAYS);
+    b.setHours(0, 0, 0, 0);          // ★ 자정 고정 — 부분일 덮어쓰기 방지
     const safe = fmtTs(b);
     return safe > monthStart ? safe : null;
   };
-  const shortTs = s => s.slice(5, 16).replace('-', '/');  // "07/25 02:14"
+  const shortTs = s => s.slice(5, 10).replace('-', '/');  // "07/25"
 
   const monthRange = (y, m, full) => {  // m: 0-base, full=true면 워터마크 무시
     const monthStart = `${y}-${pad(m + 1)}-01 00:00:00`;
@@ -340,6 +344,7 @@
     series: seriesArr,
     meta: {
       rangeDays: DAYS,
+      cutoff: cutoffStr,   // ★ atelier가 "부분일 덮어쓰기"를 막는 데 쓴다
       mode: modeLabel,
       fetchedAt: new Date().toISOString(),
       channels: channelCounts

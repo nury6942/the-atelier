@@ -1156,11 +1156,25 @@
       const existing = await fbRead(COLL_DAILY);
       // key: channelId + date
       const byKey = {};
-      existing.forEach(d => { if (d.channelId && d.date) byKey[`${d.channelId}|${d.date}`] = d._id; });
+      existing.forEach(d => { if (d.channelId && d.date) byKey[`${d.channelId}|${d.date}`] = d; });
+      // ★ (2026-07-26) 부분일 덮어쓰기 방지 안전망.
+      //   일별 문서는 '그날 전체'를 교체하므로, 수집 커트오프가 하루 중간이면
+      //   그날 오후치만 담긴 문서가 오전치를 지운다 (7/25 오전 ₩0 사고).
+      //   커트오프가 자정이 아니면 그 경계 날짜는 기존 값을 지킨다.
+      const cut = String((payload.meta && payload.meta.cutoff) || '');
+      const partialDay = (cut && !/ 00:00:00$/.test(cut)) ? cut.slice(0, 10) : null;
       for (const d of payload.daily){
         const doc = Object.assign({}, d); delete doc._id;
         const k = `${doc.channelId}|${doc.date}`;
-        if (byKey[k]){ await fbUpdate(COLL_DAILY, byKey[k], doc); result.daily.updated++; }
+        const old = byKey[k];
+        if (old){
+          if (partialDay && doc.date === partialDay && (old.rev || 0) > (doc.rev || 0)){
+            console.warn('[postype] 부분일 덮어쓰기 차단:', k, old.rev, '→', doc.rev);
+            result.daily.skipped = (result.daily.skipped || 0) + 1;
+            continue;
+          }
+          await fbUpdate(COLL_DAILY, old._id, doc); result.daily.updated++;
+        }
         else { await fbAdd(COLL_DAILY, doc); result.daily.added++; }
       }
     }
