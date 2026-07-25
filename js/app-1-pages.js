@@ -19852,10 +19852,12 @@
       statTxt += '<button class="pw-tm-add" onclick="fltAddTargetMonth(\'' + w._id + '\')" title="추적할 달 추가"><span class="material-symbols-outlined">add</span></button>';
 
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
-      // ★ (2026-07-25) 유류할증료 이중계산 방지 — 항공사·스카이스캐너 화면가는 이미 유류 포함.
-      //   기록에 fuel_included=true면 위에 또 더하지 않는다.
+      // ★ (2026-07-25) 유류할증료는 '기본 포함'이 맞다.
+      //   스카이스캐너·항공사 화면가도, 아비아세일즈(자동수집) 값도 전부 총액이라
+      //   앱이 위에 또 더하면 가격이 부풀려진다(실측: 212만 → 235만).
+      //   그래서 기본은 더하지 않고, fuel_included === false 인 기록만 예외로 더한다.
       var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;
-      var fuelIncluded = !!(lastSnap && lastSnap.fuel_included);
+      var fuelIncluded = !(lastSnap && lastSnap.fuel_included === false);
       var fuelInfo = fuelIncluded ? null : _fuelForRoute(w.route_from, w.route_to);
       var fuelKrw = fuelInfo ? fuelInfo.krw * (w.return_date ? 2 : 1) : 0;
 
@@ -19874,7 +19876,7 @@
               ? '<span class="pw-l">' + (fuelInfo || fuelIncluded ? '실제 낼 돈' : '현재가') + '</span>' +
                 '<b class="pw-big">' + _fltKrw(cur + fuelKrw) + '</b>' +
                 (fuelIncluded
-                  ? '<p class="pw-brk"><em>유류할증료·세금 포함가</em></p>'
+                  ? '<p class="pw-brk"><em>유류할증료 포함 표시가</em></p>'
                   : (fuelInfo ? '<p class="pw-brk">항공권 ' + _fltKrw(cur) + ' + 유류 ' + _fltKrw(fuelKrw) +
                       ' <em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></p>' : ''))
               : '<span class="pw-l">가격</span><b class="pw-big is-dim">기록 없음</b>') +
@@ -19892,7 +19894,7 @@
 
       // ═══ ② 기록 표 — 칩(최근 상세) + 리스트로 중복되던 걸 표 하나로 통합 ═══
       var logTable = snaps.length ? '<div class="pw-logs"><table class="pw-lt">' +
-        '<thead><tr><th>기록일</th><th>출처</th><th class="ta-r">항공권</th><th class="ta-r">유류</th>' +
+        '<thead><tr><th>기록일</th><th>출처</th><th class="ta-r">가격</th>' +
         '<th>항공사</th><th>경유</th><th>출발일</th><th></th></tr></thead><tbody>' +
         snaps.slice().reverse().map(function(sn) {
           var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
@@ -19919,8 +19921,6 @@
               (sn.query_month ? ' <em class="pw-qm">' + _spotEsc(sn.query_month) + '</em>' : '') + '</td>' +
             '<td>' + srcBadge + '</td>' +
             '<td class="ta-r num is-p">' + _fltKrw(sn.price_krw) + '</td>' +
-            '<td class="ta-r num is-dim">' + (sn.fuel_included ? '<span class="pw-fincl">포함</span>'
-              : (sn.fuel_krw ? _fltKrw(sn.fuel_krw) : '—')) + '</td>' +
             '<td>' + (alab ? _spotEsc(alab) : '—') + '</td>' +
             '<td>' + trf + '</td>' +
             '<td class="num">' + dep + '</td>' +
@@ -19928,7 +19928,7 @@
               '<span class="material-symbols-outlined">close</span></button></td>' +
           '</tr>' +
           (segs.length ? '<tr id="' + segId + '" class="pw-segrow" style="display:none">' +
-            '<td colspan="8">' + _fltSegmentsHtml(sn) + '</td></tr>' : '');
+            '<td colspan="7">' + _fltSegmentsHtml(sn) + '</td></tr>' : '');
         }).join('') + '</tbody></table></div>' : '';
 
       return '<article class="pw-card">' +
