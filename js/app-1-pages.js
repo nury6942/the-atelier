@@ -7649,6 +7649,27 @@
       FCO:'로마', CIA:'로마', NAP:'나폴리', FLR:'피렌체', PSA:'피사', BZO:'볼차노', INN:'인스브루크',
       CPH:'코펜하겐', ARN:'스톡홀름', OSL:'오슬로', KEF:'케플라비크', DUB:'더블린', YUL:'몬트리올',
       YYZ:'토론토', AKL:'오클랜드', PRG:'프라하', ZAG:'자그레브', VIE:'빈', ZRH:'취리히', AMS:'암스테르담' };
+    // ★ (2026-07-25) 날짜에 요일 + 도착일 표기 (야간편은 +1일)
+    var _DOW = ['일','월','화','수','목','금','토'];
+    var fmtDow = function(iso, plus) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return iso || '';
+      var d = new Date(iso + 'T00:00:00');
+      if (plus) d.setDate(d.getDate() + plus);
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' +
+             String(d.getDate()).padStart(2,'0') + ' (' + _DOW[d.getDay()] + ')';
+    };
+    var _dayShift = function() {
+      if (f.arrive_date) return null; // 명시값 있으면 계산 안 함
+      var dm = String(f.duration || '').match(/(\d+)\s*H(?:\s*(\d+)\s*M)?/i);
+      var dep = String(f.depart || f.time || '').match(/^(\d{1,2}):(\d{2})/);
+      var arr = String(f.arrive || '').match(/^(\d{1,2}):(\d{2})/);
+      if (dm && dep) return Math.floor(((+dep[1]*60 + +dep[2]) + (+dm[1]*60 + (+(dm[2]||0)))) / 1440);
+      if (dep && arr) return ((+arr[1]*60 + +arr[2]) < (+dep[1]*60 + +dep[2])) ? 1 : 0;
+      return 0;
+    };
+    var _shift = _dayShift();
+    var arrDateHtml = f.arrive_date ? fmtDow(f.arrive_date, 0) :
+      (f.date ? fmtDow(f.date, _shift) + (_shift > 0 ? '<span class="rec-fl-nextday">+' + _shift + '일</span>' : '') : '&nbsp;');
     var portHtml = function(part) {
       if (!part) return '';
       var m = String(part).match(/\b([A-Z]{3})\b/);
@@ -7698,7 +7719,7 @@
           '<p class="rec-micro">Departure</p>' +
           portHtml(routeParts[0]) +
           '<p class="rec-fl-time">' + (f.depart || f.time || '—') + '</p>' +
-          '<p class="rec-fl-date">' + (f.date || '') + '</p>' +
+          '<p class="rec-fl-date">' + (f.date ? fmtDow(f.date, 0) : '') + '</p>' +
         '</div>' +
         '<div class="rec-fl-mid">' +
           '<div class="rec-fl-mid-line"><span class="material-symbols-outlined">flight</span></div>' +
@@ -7708,7 +7729,7 @@
           '<p class="rec-micro">Arrival</p>' +
           portHtml(routeParts[1]) +
           '<p class="rec-fl-time">' + (f.arrive || '—') + '</p>' +
-          '<p class="rec-fl-date">&nbsp;</p>' +
+          '<p class="rec-fl-date">' + arrDateHtml + '</p>' +
         '</div>' +
       '</div>' +
       (cells.length ? '<div class="rec-fl-foot">' + cells.join('') + '</div>' : '') +
@@ -9740,8 +9761,24 @@
   var _selectedPlaceLng = null;
   var _travelTimeCache = {};
 
-  function getTravelTime(originLat, originLng, destLat, destLng, callback) {
-    var cacheKey = originLat.toFixed(5) + ',' + originLng.toFixed(5) + '->' + destLat.toFixed(5) + ',' + destLng.toFixed(5);
+  // ★ (2026-07-25) 그날 렌트카가 있으면 이동시간을 자동차 기준으로.
+  //   예전엔 도보 → 실패 시 무조건 대중교통이라, 이탈리아 시골에서 "13시간 8분" 같은
+  //   버스 기준 값이 떴다. 렌트카 문서의 date~checkout_date 안이면 DRIVING을 쓴다.
+  function _hasCarOn(dateStr) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr || '')) return false;
+    var arr = (typeof journeyData !== 'undefined' ? journeyData : []) || [];
+    for (var i = 0; i < arr.length; i++) {
+      var r = arr[i];
+      if (r.type !== '렌트카') continue;
+      if (/취소/.test(r.payment_status || '') || /^❌/.test(r.title || '')) continue;
+      var s = r.date || '', e = r.checkout_date || r.date || '';
+      if (s && e && dateStr >= s && dateStr <= e) return true;
+    }
+    return false;
+  }
+
+  function getTravelTime(originLat, originLng, destLat, destLng, callback, preferDrive) {
+    var cacheKey = originLat.toFixed(5) + ',' + originLng.toFixed(5) + '->' + destLat.toFixed(5) + ',' + destLng.toFixed(5) + (preferDrive ? '|d' : '');
     if (_travelTimeCache[cacheKey]) { callback(_travelTimeCache[cacheKey]); return; }
     if (typeof google === 'undefined' || !google.maps || !google.maps.DistanceMatrixService) { callback(null); return; }
     var service = new google.maps.DistanceMatrixService();
@@ -9754,6 +9791,26 @@
       if (status !== 'OK' || !res.rows[0] || !res.rows[0].elements[0] || res.rows[0].elements[0].status !== 'OK') { callback(null); return; }
       var walkEl = res.rows[0].elements[0];
       var walkMin = Math.round(walkEl.duration.value / 60);
+      // 차가 있으면 주차 수고를 감안해 12분 이내만 도보, 나머지는 자동차
+      if (preferDrive) {
+        if (walkMin <= 12) {
+          var wres = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
+          _travelTimeCache[cacheKey] = wres; callback(wres); return;
+        }
+        service.getDistanceMatrix({
+          origins: [origin], destinations: [dest], travelMode: 'DRIVING'
+        }, function(res3, status3) {
+          if (status3 === 'OK' && res3.rows[0] && res3.rows[0].elements[0] && res3.rows[0].elements[0].status === 'OK') {
+            var dEl = res3.rows[0].elements[0];
+            var dres = { mode: 'drive', duration: dEl.duration.text, distance: dEl.distance.text };
+            _travelTimeCache[cacheKey] = dres; callback(dres);
+          } else {
+            var fres = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
+            _travelTimeCache[cacheKey] = fres; callback(fres);
+          }
+        });
+        return;
+      }
       // 도보 20분 이내면 도보로
       if (walkMin <= 20) {
         var result = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
@@ -16946,19 +17003,26 @@
 
   // ── ② 스팟 간 이동시간: Google DistanceMatrix 우선, 불가 시 직선거리 추정 폴백 ──
   function _travelBetween(a, b, cb) {
+    var drive = _hasCarOn(a.date || b.date); // ★ 렌트 기간이면 자동차 기준
     getTravelTime(a.lat, a.lng, b.lat, b.lng, function(result) {
       if (result) {
-        var icon = result.mode === 'walk' ? '🚶' : '🚇';
+        var icon = result.mode === 'walk' ? '🚶' : (result.mode === 'drive' ? '🚗' : '🚇');
         cb(icon + ' ' + result.duration + ' · ' + result.distance);
         return;
       }
       var km = _haversineKm(a, b);
       if (!isFinite(km)) { cb(null); return; }
       var walkMin = Math.round(km / 4.5 * 60 * 1.3); // 직선→실보행 보정 1.3배
+      if (drive) {
+        cb(km <= 0.9
+          ? ('🚶 ~' + walkMin + '분 · ' + km.toFixed(1) + 'km (직선 추정)')
+          : ('🚗 ~' + Math.max(5, Math.round(km / 55 * 60 * 1.35 + 5)) + '분 · ' + km.toFixed(1) + 'km (추정)'));
+        return;
+      }
       cb(km <= 2.2
         ? ('🚶 ~' + walkMin + '분 · ' + km.toFixed(1) + 'km (직선 추정)')
         : ('🚇 ~' + Math.max(8, Math.round(km * 4 + 8)) + '분 · ' + km.toFixed(1) + 'km (추정)'));
-    });
+    }, drive);
   }
 
   // ── ③ Day-Pins 지도: 일자별 색 핀(방문 순서 번호) + 저장소(pool) 회색 핀 ──
