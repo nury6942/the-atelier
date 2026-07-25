@@ -19456,22 +19456,22 @@
     var srcOpts = _FLT_SOURCES.map(function(x) { return '<option>' + x + '</option>'; }).join('');
     box.innerHTML =
       '<div class="pw-q-top">' +
-        '<div class="pw-q-l"><span class="pw-l">빠른 기록</span>' +
-          '<p>스카이스캐너·구글에서 본 가격을 여기 옮겨 적으면 추이가 쌓여요</p></div>' +
+        '<div class="pw-q-l"><span class="pw-l">스카이스캐너에서 본 가격 기록</span>' +
+          '<p>캡처를 넣으면 항공사·가격·날짜를 자동으로 읽어요 (Ctrl+V도 가능)</p></div>' +
         '<select class="pw-q-sel" onchange="pwQuickPick(this.value)">' +
           watches.map(function(x) {
             return '<option value="' + x._id + '"' + (x._id === sel ? ' selected' : '') + '>' +
               x.route_from + ' → ' + x.route_to + ' · ' + _spotEsc(cityOf(x.route_to)) + '</option>';
           }).join('') + '</select>' +
         '<div class="pw-q-links">' +
-          '<a href="' + g + '" target="_blank" rel="noopener">구글' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
-          '<a href="' + sky + '" target="_blank" rel="noopener">스카이스캐너 ↗</a>' +
+          '<a href="' + sky + '" target="_blank" rel="noopener">스카이스캐너' + (whenLbl ? ' ' + whenLbl : '') + ' ↗</a>' +
         '</div>' +
-        '<button class="pw-q-scan" onclick="pwScanTrigger()" title="스카이스캐너·구글 캡처를 넣으면 자동으로 읽어요 (Ctrl+V도 가능)">' +
+        '<button class="pw-q-scan" onclick="pwScanTrigger()" title="스카이스캐너 캡처를 넣으면 자동으로 읽어요 (Ctrl+V도 가능)">' +
           '<span class="material-symbols-outlined">photo_camera</span>스크린샷 넣기</button>' +
         '<input id="pw-scan-file" type="file" accept="image/*" style="display:none" onchange="pwScanFile(event)">' +
         '<span id="pw-scan-status" class="pw-scan-status" style="display:none"></span>' +
       '</div>' +
+      '<details class="pw-q-manual"><summary>직접 입력 (스크린샷이 안 읽힐 때)</summary>' +
       '<div class="pw-q-row">' +
         '<label class="pw-q-f"><span>출발 날짜</span>' +
           '<input id="pw-q-date" type="date"' + (qm ? ' value="' + qm[1] + '-' + qm[2] + '-15"' : '') + '></label>' +
@@ -19485,7 +19485,7 @@
         '<label class="pw-q-f"><span>출처</span>' +
           '<select id="pw-q-src">' + srcOpts + '</select></label>' +
         '<button class="pw-btn is-dark pw-q-save" onclick="pwQuickSave()"><span class="material-symbols-outlined">add</span>기록</button>' +
-      '</div>';
+      '</div></details>';
   };
   window.pwQuickPick = function(id) {
     var box = document.getElementById('pw-quick');
@@ -19578,6 +19578,8 @@
   }
   window.pwScanPick = function(i) {
     var o = (window._pwScanOpts || [])[i]; if (!o) return;
+    // 입력칸이 접혀 있으면(기본 접힘) 판독 결과가 안 보이므로 먼저 펼친다
+    var man = document.querySelector('.pw-q-manual'); if (man) man.open = true;
     var set = function(id, v){ var e = document.getElementById(id); if (e != null && v != null) e.value = v; };
     set('pw-q-date', o.depart_date || '');
     set('pw-q-air', o.airline || '');
@@ -19727,23 +19729,31 @@
 
       // ═══ ② 기록 표 — 칩(최근 상세) + 리스트로 중복되던 걸 표 하나로 통합 ═══
       var logTable = snaps.length ? '<div class="pw-logs"><table class="pw-lt">' +
-        '<thead><tr><th>기록일</th><th class="ta-r">항공권</th><th class="ta-r">유류</th>' +
-        '<th>항공사</th><th>경유</th><th>출발일</th><th>조회</th><th></th></tr></thead><tbody>' +
+        '<thead><tr><th>기록일</th><th>출처</th><th class="ta-r">항공권</th><th class="ta-r">유류</th>' +
+        '<th>항공사</th><th>경유</th><th>출발일</th><th></th></tr></thead><tbody>' +
         snaps.slice().reverse().map(function(sn) {
           var isAuto = String(sn.source || '') === '자동 수집' || String(sn.source || '').indexOf('Aviasales') >= 0;
           var alab = sn.airline ? (_fltAirlineLabel(sn.airline) + (sn.flight_no ? ' ' + sn.flight_no : '')) : (sn.airline_name || '');
           var trf = (typeof sn.transfers === 'number')
             ? (sn.transfers === 0 ? '<b class="is-direct">직항</b>' : '경유 ' + sn.transfers) : '—';
           var dep = sn.depart_on ? (_spotEsc(sn.depart_on) + (sn.return_on ? ' ~ ' + _spotEsc(sn.return_on) : '')) : '—';
+          // 출처 배지 — 자동수집(아비아세일즈)과 내가 본 스카이스캐너 가격은 다른 시세다.
+          // 섞어서 비교하면 "어제 210만인데 오늘 240만?" 같은 착각이 생겨 반드시 구분한다.
+          var srcRaw = String(sn.source || '');
+          var srcBadge = isAuto
+            ? '<b class="pw-src is-auto" title="자동 수집 — 아비아세일즈 시세 (스카이스캐너와 다름)">아비아세일즈</b>'
+            : (/스카이스캐너/.test(srcRaw)
+                ? '<b class="pw-src is-sky" title="내가 스카이스캐너에서 보고 기록한 가격">스카이스캐너</b>'
+                : (srcRaw ? '<b class="pw-src">' + _fltEsc(srcRaw) + '</b>' : '<span class="is-dim">—</span>'));
           return '<tr' + (isAuto ? ' class="is-auto"' : '') + '>' +
             '<td class="num">' + _fltEsc(String(sn.ts || '').slice(0, 10)) +
-              (isAuto ? ' <b class="pw-auto">AUTO</b>' : '') + '</td>' +
+              (sn.query_month ? ' <em class="pw-qm">' + _spotEsc(sn.query_month) + '</em>' : '') + '</td>' +
+            '<td>' + srcBadge + '</td>' +
             '<td class="ta-r num is-p">' + _fltKrw(sn.price_krw) + '</td>' +
             '<td class="ta-r num is-dim">' + (sn.fuel_krw ? _fltKrw(sn.fuel_krw) : '—') + '</td>' +
-            '<td>' + (alab ? _spotEsc(alab) : (_fltEsc(sn.source || '') || '—')) + '</td>' +
+            '<td>' + (alab ? _spotEsc(alab) : '—') + '</td>' +
             '<td>' + trf + '</td>' +
             '<td class="num">' + dep + '</td>' +
-            '<td class="is-dim">' + (sn.query_month ? _spotEsc(sn.query_month) : '—') + '</td>' +
             '<td class="ta-r"><button onclick="fltDeletePrice(\'' + sn._id + '\')" title="이 기록 삭제">' +
               '<span class="material-symbols-outlined">close</span></button></td>' +
           '</tr>';
