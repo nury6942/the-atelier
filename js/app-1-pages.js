@@ -6850,15 +6850,15 @@
   }
   // 렌더 직후 자동 채움 — Places 미로딩이면 마킹 없이 조용히 넘어가 다음 렌더에 재시도
   function _lodgePhotoAuto() {
-    if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
-    if (typeof window._placePhotoFor !== 'function') return;
+    // ★ (2026-07-25) 렌더될 때마다 구글 Places Photo를 자동 호출해 조용히 과금되던 경로.
+    //   위키피디아로 교체 — 호텔은 대개 위키에 없어서 사실상 무동작이지만, 과금이 0이 된다.
     var targets = _lodgePhotoTargets().filter(function(t) { return !_lodgePhotoTried[t.key]; });
     if (!targets.length) return;
     targets.forEach(function(t, i) {
       _lodgePhotoTried[t.key] = true;
       setTimeout(function() {
         try {
-          window._placePhotoFor(t.query, function(url) {
+          _wikiPhotoFor(t.query, '', function(url) {
             if (!url) return;
             _lodgePhotoSave(t, url, function(ok) {
               if (ok) { try { renderJourneyLodging(); } catch(e) {} }
@@ -6894,11 +6894,11 @@
       var t = targets[i];
       _lodgePhotoTried[t.key] = true;
       try {
-        window._placePhotoFor(t.query, function(url) {
+        _wikiPhotoFor(t.query, '', function(url) {   // ★ 위키 전용 (구글 과금 0)
           if (url) { ok++; _lodgePhotoSave(t, url, function() {}); }
-          setTimeout(function() { step(i + 1); }, 600);
+          setTimeout(function() { step(i + 1); }, 250);
         });
-      } catch(e) { setTimeout(function() { step(i + 1); }, 600); }
+      } catch(e) { setTimeout(function() { step(i + 1); }, 250); }
     }
     step(0);
   };
@@ -16001,9 +16001,10 @@
       if (typeof renderDayPinsMap === 'function') renderDayPinsMap();
       // ★ (2026-07-23) 대표 사진 비동기 채움 — 성공 시 photo_url 저장 + 카드 갱신 (실패해도 무시)
       try {
-        _placePhotoFor((obj.title + ' ' + (obj.city || '')).trim(), function(url) {
+        // ★ (2026-07-25) 구글 Places Photo → 위키피디아 (스팟 추가마다 조용히 과금되던 경로)
+        _wikiPhotoFor(obj.title, obj.city, function(url) {
           if (!url || !saved || !saved._id) return;
-          fbUpdate('journey', saved._id, { photo_url: url }).then(function() {
+          fbUpdate('journey', saved._id, { photo_url: url, photo_src: 'wikipedia' }).then(function() {
             saved.photo_url = url;
             try { window.renderPlaces(); } catch(e) {}
           }).catch(function() {});
