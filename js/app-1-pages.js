@@ -14218,10 +14218,9 @@
           }
         }
       });
-      if (minDate && maxDate) {
-        var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
-        dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
-      }
+      var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+      if (minDate && maxDate) dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
+      var startISO = minDate ? fmt(minDate) : ''; // ★ 날짜순 정렬 키
       // 예산 계산 기준: 일정 야수 우선, 없으면 실제 숙소 야수
       var budgetNights = (plannedNights != null && plannedNights > 0) ? plannedNights : totalNights;
       var hasCityOverride = perDayByCity[displayCity] !== undefined;
@@ -14246,6 +14245,7 @@
         isOver: isOver,
         noBudget: noBudget,
         dateRange: dateRange,
+        startISO: startISO, // ★ 날짜순 정렬 키 (가장 이른 체크인)
         unlinked: unlinked, // ★ finance 미연결 숙소 목록 (배지로 경고)
         source: source // 'itinerary' | 'orphan'
       };
@@ -14265,19 +14265,29 @@
       return buildRow(grp.display, grp.items, plannedNights, itin ? 'itinerary' : 'orphan');
     });
 
-    // 일정 순서대로 정렬 (일정에 있는 도시 우선, 그 안에서는 일정 순; 일정 외는 마지막)
+    // ★ (2026-07-25) 날짜순 정렬 — 예전엔 tripCities '배열 인덱스'를 썼는데
+    //   trip_cities가 order 필드대로 로드된다는 보장이 없어서 프랑크푸르트가 베를린 뒤로 밀렸다.
+    //   이제 ①실제 체크인 날짜 → ②일정의 start_date → ③order 필드 순으로 정렬한다.
     var itinOrder = {};
-    tripCities.forEach(function(c, i){ itinOrder[normCity(c.name)] = i; });
+    tripCities.forEach(function(c, i){ itinOrder[normCity(c.name)] = (c.order != null && c.order !== '') ? (parseInt(c.order, 10) || 0) : i; });
+    var startOf = function(r) {
+      if (r.startISO) return r.startISO;
+      var itin = itineraryByKey[normCity(r.city)];
+      if (itin && itin.start_date) return itin.start_date;
+      if (r.items[0] && r.items[0].date) return r.items[0].date;
+      return '';
+    };
     cityRows.sort(function(a, b) {
+      var ad = startOf(a), bd = startOf(b);
+      if (ad && bd && ad !== bd) return ad < bd ? -1 : 1;   // 이른 날짜 먼저
+      if (ad && !bd) return -1;                              // 날짜 있는 쪽 먼저
+      if (!ad && bd) return 1;
       var ai = itinOrder[normCity(a.city)];
       var bi = itinOrder[normCity(b.city)];
       if (ai != null && bi != null) return ai - bi;
       if (ai != null) return -1;
       if (bi != null) return 1;
-      // 둘 다 일정 외 → 첫 체크인 날짜 순
-      var ad = a.items[0] && a.items[0].date ? a.items[0].date : '9999';
-      var bd = b.items[0] && b.items[0].date ? b.items[0].date : '9999';
-      return ad.localeCompare(bd);
+      return (a.city || '').localeCompare(b.city || '');
     });
 
     var totalNights = cityRows.reduce(function(s,r){ return s + r.budgetNights; }, 0);
