@@ -25,15 +25,44 @@
   //    마감 놓친 지난달만 다시 동기화 가능
   const pad = n => String(n).padStart(2, '0');
   const now = new Date();
-  const monthRange = (y, m) => {  // m: 0-base
-    const cutoff = `${y}-${pad(m + 1)}-01 00:00:00`;
+
+  // ─── 증분 동기화 워터마크 (2026-07-25) ─────────────────────────
+  //  같은 달을 다시 누르면 매번 그 달 1일부터 전부 다시 긁어서 오래 걸렸다.
+  //  월별로 "마지막으로 동기화한 거래 시각"을 postype.com localStorage에 남기고,
+  //  다음 동기화 땐 거기서 2일 겹쳐서만 긁는다 (뒤늦게 반영되는 거래 대비).
+  //  atelier 쪽은 이미 upsert(+추가/~갱신)라 겹쳐도 중복이 안 생긴다.
+  //  전체를 다시 받고 싶으면 월 버튼을 Shift+클릭.
+  const WM_KEY = 'atelier_postype_watermark';
+  const readWM = () => { try { return JSON.parse(localStorage.getItem(WM_KEY) || '{}'); } catch (e) { return {}; } };
+  const writeWM = (key, ts) => {
+    try { const w = readWM(); if (!w[key] || ts > w[key]) { w[key] = ts; localStorage.setItem(WM_KEY, JSON.stringify(w)); } } catch (e) {}
+  };
+  const OVERLAP_DAYS = 2;
+
+  const monthRange = (y, m, full) => {  // m: 0-base, full=true면 워터마크 무시
+    const monthStart = `${y}-${pad(m + 1)}-01 00:00:00`;
     const ny = m === 11 ? y + 1 : y, nm = m === 11 ? 0 : m + 1;
     const isCurrent = (y === now.getFullYear() && m === now.getMonth());
+    const wmKey = `${y}-${pad(m + 1)}`;
+    let cutoff = monthStart, incr = null;
+    if (!full) {
+      const wm = readWM()[wmKey];
+      if (wm) {
+        const b = new Date(String(wm).replace(' ', 'T'));
+        if (!isNaN(b)) {
+          b.setDate(b.getDate() - OVERLAP_DAYS);
+          const safe = `${b.getFullYear()}-${pad(b.getMonth() + 1)}-${pad(b.getDate())} 00:00:00`;
+          if (safe > monthStart) { cutoff = safe; incr = safe.slice(5, 10).replace('-', '/'); }
+        }
+      }
+    }
+    const base = isCurrent ? `이번 달 (${m + 1}월)` : `${y}년 ${m + 1}월만`;
     return {
       cutoffStr: cutoff,
       upperStr: isCurrent ? null : `${ny}-${pad(nm + 1)}-01 00:00:00`,
       DAYS: new Date(y, m + 1, 0).getDate(),
-      modeLabel: isCurrent ? `이번 달 (${m + 1}월)` : `${y}년 ${m + 1}월만`
+      wmKey,
+      modeLabel: incr ? `${base} · 증분 ${incr}~` : (full ? `${base} · 전체 재수집` : base)
     };
   };
 
@@ -45,7 +74,12 @@
     const ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;z-index:999998;background:rgba(8,8,12,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-family:-apple-system,Pretendard,sans-serif';
     let monthBtns = '';
-    for (let m = 0; m <= M; m++) monthBtns += `<button data-m="${m}" style="${MBTN}${m === M ? ';border-color:#6366f1;color:#a5b4fc' : ''}">${m + 1}월</button>`;
+    // 이미 동기화한 달은 ↻ 표시 — 그 달을 누르면 증분만 받는다 (Shift+클릭 = 전체)
+    const _wm = readWM();
+    for (let m = 0; m <= M; m++) {
+      const synced = !!_wm[`${Y}-${pad(m + 1)}`];
+      monthBtns += `<button data-m="${m}" title="${synced ? '증분 동기화 (Shift+클릭 = 전체 재수집)' : '전체 수집'}" style="${MBTN}${m === M ? ';border-color:#6366f1;color:#a5b4fc' : ''}">${m + 1}월${synced ? ' <span style="color:#4ade80">↻</span>' : ''}</button>`;
+    }
     const prevY = M === 0 ? Y - 1 : Y, prevM = M === 0 ? 11 : M - 1;
     ov.innerHTML = `
       <div style="background:#0f0f12;color:#e8e8ec;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:24px;width:340px;max-width:92vw">
@@ -74,9 +108,10 @@
       if (!b) return;
       const act = b.dataset.act, m = b.dataset.m;
       if (act === 'cancel') return done(null);
-      if (act === 'this') return done(monthRange(Y, M));
-      if (act === 'prev') return done(monthRange(prevY, prevM));
-      if (m !== undefined) return done(monthRange(Y, parseInt(m)));
+      const full = e.shiftKey;  // ★ Shift+클릭 = 워터마크 무시하고 전체 재수집
+      if (act === 'this') return done(monthRange(Y, M, full));
+      if (act === 'prev') return done(monthRange(prevY, prevM, full));
+      if (m !== undefined) return done(monthRange(Y, parseInt(m), full));
       if (act === 'ytd') return done({
         cutoffStr: `${Y}-01-01 00:00:00`, upperStr: null,
         DAYS: Math.ceil((now.getTime() - new Date(Y, 0, 1).getTime()) / 86400000) + 1,
@@ -326,6 +361,12 @@
       const d = r.daily || {};
       const p = r.posts || {};
       const s = r.series || {};
+      // ★ 성공했을 때만 워터마크 갱신 — 이번에 본 가장 최신 거래 시각
+      if (range.wmKey && tx.length){
+        let newest = '';
+        tx.forEach(t => { if (t.ts && t.ts > newest) newest = t.ts; });
+        if (newest) writeWM(range.wmKey, newest);
+      }
       setMsg('✅ 동기화 완료', `일별 +${d.added||0}/~${d.updated||0} · 포스트 +${p.added||0}/~${p.updated||0} · 시리즈 +${s.added||0}/~${s.updated||0}`);
       setTimeout(() => panel.remove(), 5000);
       window.removeEventListener('message', onMsg);
