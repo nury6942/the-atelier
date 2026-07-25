@@ -17004,24 +17004,29 @@
   // ── ② 스팟 간 이동시간: Google DistanceMatrix 우선, 불가 시 직선거리 추정 폴백 ──
   function _travelBetween(a, b, cb) {
     var drive = _hasCarOn(a.date || b.date); // ★ 렌트 기간이면 자동차 기준
+    // ★ (2026-07-25) 도착지에 route_note가 있으면 칩 뒤에 도로명을 붙인다.
+    //   예전엔 "🛣️ → 오르비에토 (A1)" 같은 도로 카드를 따로 만들었는데,
+    //   도착지와 좌표가 같아서 그 사이에 "1분 · 1m" 유령 커넥터가 생겼다.
+    var note = String((b && b.route_note) || '').trim();
+    var sfx = note ? ' · ' + note : '';
     getTravelTime(a.lat, a.lng, b.lat, b.lng, function(result) {
       if (result) {
         var icon = result.mode === 'walk' ? '🚶' : (result.mode === 'drive' ? '🚗' : '🚇');
-        cb(icon + ' ' + result.duration + ' · ' + result.distance);
+        cb(icon + ' ' + result.duration + ' · ' + result.distance + sfx);
         return;
       }
       var km = _haversineKm(a, b);
       if (!isFinite(km)) { cb(null); return; }
       var walkMin = Math.round(km / 4.5 * 60 * 1.3); // 직선→실보행 보정 1.3배
       if (drive) {
-        cb(km <= 0.9
+        cb((km <= 0.9
           ? ('🚶 ~' + walkMin + '분 · ' + km.toFixed(1) + 'km (직선 추정)')
-          : ('🚗 ~' + Math.max(5, Math.round(km / 55 * 60 * 1.35 + 5)) + '분 · ' + km.toFixed(1) + 'km (추정)'));
+          : ('🚗 ~' + Math.max(5, Math.round(km / 55 * 60 * 1.35 + 5)) + '분 · ' + km.toFixed(1) + 'km (추정)')) + sfx);
         return;
       }
-      cb(km <= 2.2
+      cb((km <= 2.2
         ? ('🚶 ~' + walkMin + '분 · ' + km.toFixed(1) + 'km (직선 추정)')
-        : ('🚇 ~' + Math.max(8, Math.round(km * 4 + 8)) + '분 · ' + km.toFixed(1) + 'km (추정)'));
+        : ('🚇 ~' + Math.max(8, Math.round(km * 4 + 8)) + '분 · ' + km.toFixed(1) + 'km (추정)')) + sfx);
     }, drive);
   }
 
