@@ -3408,6 +3408,18 @@
   }
 
   // ── 예약 강조: 사전 예약 필수 항목 (핑크색) ──
+  // ★ (2026-07-25) 예약 배지를 예약 페이지 링크로. booking_url이 있으면 <a>로 렌더한다.
+  //   설명에 URL을 글로 적어두면 눌리지도 않고 지저분해서, 배지 자체를 눌러 열게 했다.
+  //   카드 더블클릭=편집과 안 꼬이게 click/dblclick 전파를 막는다.
+  function _resvBadgeHtml(item, cls) {
+    var url = String((item && item.booking_url) || '').trim();
+    if (!/^https?:\/\//i.test(url)) return '<span class="' + cls + '">🎫 예약</span>';
+    var safe = url.replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return '<a class="' + cls + ' is-booklink" href="' + safe + '" target="_blank" rel="noopener"' +
+      ' title="예약 페이지 열기 — ' + safe + '"' +
+      ' onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">🎫 예약 ↗</a>';
+  }
+
   function isReservationItem(item) {
     if (!item) return false;
     if (item.reservation === true) return true;
@@ -3680,7 +3692,7 @@
         dotColor = 'bg-rose-500';
         timeColor = 'text-rose-700';
         cardBg = 'bg-rose-50 border-rose-300 hover:border-rose-500';
-        badgeHtml = ' <span class="text-[9px] font-bold px-1.5 bg-rose-200 text-rose-800 rounded ml-1">🎫 예약</span>';
+        badgeHtml = ' ' + _resvBadgeHtml(item, 'text-[9px] font-bold px-1.5 bg-rose-200 text-rose-800 rounded ml-1');
       } else if (pinned) {
         dotColor = 'bg-emerald-500';
         timeColor = 'text-emerald-700';
@@ -4463,7 +4475,7 @@
             // 우선순위: 기념품(주황) > 예약(핑크) > 시간고정(민트) > 일반 — 담백한 톤이라 왼쪽 3px 컬러 바 + 이모지 칩으로 전달
             var badge;
             if (isSouvenir) badge = '<span class="wk4-chip is-shop">🛍 쇼핑</span>';
-            else if (reserv) badge = '<span class="wk4-chip is-resv">🎫 예약</span>';
+            else if (reserv) badge = _resvBadgeHtml(item, 'wk4-chip is-resv');
             else if (pinned) badge = '<span class="wk4-chip is-pin">📌 고정</span>';
             else badge = '';
             // ★ (2026-07-22 이식) 실내 / 정기휴무 / 휴무 겹침 칩
