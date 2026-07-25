@@ -14189,6 +14189,7 @@
       var totalSpent = 0;
       var dateRange = '';
       var minDate = null, maxDate = null;
+      var unlinked = []; // ★ finance 장부에 연결 안 된 숙소 (왼쪽 예산 카드와 불일치 원인)
       items.forEach(function(lo) {
         var ci = lo.date ? new Date(lo.date + 'T00:00:00') : null;
         var co = lo.checkout_date ? new Date(lo.checkout_date + 'T00:00:00') : null;
@@ -14202,8 +14203,20 @@
           if (!minDate || ci < minDate) minDate = ci;
           if (!maxDate || (co || ci) > maxDate) maxDate = co || ci;
         }
-        var amt = parseFloat(String(lo.amount||'').replace(/[^0-9.]/g,''));
-        if (!isNaN(amt)) totalSpent += amt;
+        // ★ (2026-07-25) 예산 정합성 — finance 장부를 단일 진실 원천으로 삼는다.
+        //   왼쪽 「숙소」 예산 카드는 finance 거래를 합산하는데, 여기서 journey.amount를
+        //   그대로 쓰면 finance에 없는 숙소가 오른쪽에만 잡혀서 두 숫자가 어긋났다.
+        //   finance_id로 연결된 게 있으면 그 금액을, 없으면 journey.amount를 쓰되 미연결로 표시.
+        var fin = lo.finance_id ? financeData.find(function(r){ return r[7] === lo.finance_id; }) : null;
+        if (fin) {
+          totalSpent += parseFloat(fin[4]) || 0;
+        } else {
+          var amt = parseFloat(String(lo.amount||'').replace(/[^0-9.]/g,''));
+          if (!isNaN(amt) && amt > 0) {
+            totalSpent += amt;
+            unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
+          }
+        }
       });
       if (minDate && maxDate) {
         var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
@@ -14233,6 +14246,7 @@
         isOver: isOver,
         noBudget: noBudget,
         dateRange: dateRange,
+        unlinked: unlinked, // ★ finance 미연결 숙소 목록 (배지로 경고)
         source: source // 'itinerary' | 'orphan'
       };
     }
@@ -14310,6 +14324,9 @@
             '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
               '<span class="text-sm font-bold text-slate-900">' + r.city + '</span>' +
               nightsBadge +
+              ((r.unlinked && r.unlinked.length)
+                ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200" title="finance 장부에 연결되지 않아 왼쪽 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g,'&quot;') + '">⚠️ 장부 미연결 ' + r.unlinked.length + '</span>'
+                : '') +
               (r.dateRange ? '<span class="text-[10px] text-slate-400 font-medium">' + r.dateRange + '</span>' : '') +
             '</div>' +
             (titleParts ? '<p class="text-[11px] text-slate-500 truncate" title="' + titleParts + '">' + titleParts + '</p>'
