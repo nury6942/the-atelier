@@ -17002,7 +17002,17 @@
   }
 
   // ── ② 스팟 간 이동시간: Google DistanceMatrix 우선, 불가 시 직선거리 추정 폴백 ──
+  // ★ (2026-07-25) 항공 구간엔 지상 커넥터를 붙이지 않는다.
+  //   예전엔 좌표만 보고 계산해서 BER→베네치아가 "🚇 13시간 20분 · 1,111km"로 떴다.
+  //   비행 시간은 항공 카드 자체에 있으므로 앞뒤 커넥터는 숨긴다.
+  function _isFlightItem(x) {
+    if (!x) return false;
+    if (x.type === '항공편') return true;
+    return /^\s*(✈️|🛫|🛬)/.test(x.title || '');
+  }
+
   function _travelBetween(a, b, cb) {
+    if (_isFlightItem(a) || _isFlightItem(b)) { cb(null); return; }
     var drive = _hasCarOn(a.date || b.date); // ★ 렌트 기간이면 자동차 기준
     // ★ (2026-07-25) 도착지에 route_note가 있으면 칩 뒤에 도로명을 붙인다.
     //   예전엔 "🛣️ → 오르비에토 (A1)" 같은 도로 카드를 따로 만들었는데,
