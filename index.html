@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=312" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=313" as="script">
   <link rel="preload" href="js/app-2-init.js?v=173" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5646,6 +5646,12 @@
       border-bottom:1px dashed #e2e8f0; }
     .rec-fl-leg { min-width:0; }
     .rec-fl-leg.is-arr { text-align:right; }
+    /* ★ (2026-07-25) 공항 코드 + 도시명 — 헤더에만 있어 안 보이던 걸 시간 위로 올림 */
+    .rec-fl-port { font-family:'Manrope','Pretendard',sans-serif; font-size:15px; font-weight:800;
+      color:#4f46e5; line-height:1.15; margin:2px 0 3px; letter-spacing:0.02em;
+      display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+    .rec-fl-leg.is-arr .rec-fl-port { justify-content:flex-end; }
+    .rec-fl-portsub { font-size:11px; font-weight:600; color:#64748b; letter-spacing:0; }
     .rec-fl-time { font-family:'Manrope','Pretendard',sans-serif; font-size:23px; font-weight:800;
       color:#0f172a; line-height:1; margin:0; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
     .rec-fl-date { font-size:11px; font-weight:500; color:#64748b; margin:5px 0 0; }
@@ -15303,7 +15309,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=312" defer></script>
+<script src="js/app-1-pages.js?v=313" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

@@ -7629,13 +7629,35 @@
   }
 
   function flightCard(f, deleteHtml) {
-    var routeParts = (f.route||f.description||'').split('→').map(function(s){return s.trim();});
+    // ★ (2026-07-25) description이 산문이면 노선으로 오인하지 않는다.
+    //   예전엔 "⬜ 미예약 — FR401 19:05→20:45 · 1H40 직항" 같은 설명이 그대로 노선으로 파싱됐다.
+    var _routeSrc = f.route || '';
+    if (!_routeSrc) {
+      var _d = String(f.description || '');
+      if (_d.split('→').length === 2 && _d.length <= 44 && /\b[A-Z]{3}\b/.test(_d)) _routeSrc = _d;
+    }
+    var routeParts = _routeSrc.split('→').map(function(s){return s.trim();});
     var depCode = routeParts[0] ? routeParts[0].match(/\(([A-Z]{3})\)/)||[] : [];
     var arrCode = routeParts[1] ? routeParts[1].match(/\(([A-Z]{3})\)/)||[] : [];
     var depIata = depCode[1]||routeParts[0]||'';
     var arrIata = arrCode[1]||routeParts[1]||'';
     var code = f.flight || f.city || '';
     var airline = f.airline || f.title || '';
+    // ★ (2026-07-25) 공항 코드+도시명을 시간 위에 — 다크 헤더에만 있어서 안 보였다
+    var _APT_CITY = { ICN:'인천', GMP:'김포', FRA:'프랑크푸르트', BER:'베를린', MUC:'뮌헨', TXL:'베를린',
+      VCE:'베네치아', TSF:'베네치아 트레비소', VRN:'베로나', MXP:'밀라노', LIN:'밀라노', BLQ:'볼로냐',
+      FCO:'로마', CIA:'로마', NAP:'나폴리', FLR:'피렌체', PSA:'피사', BZO:'볼차노', INN:'인스브루크',
+      CPH:'코펜하겐', ARN:'스톡홀름', OSL:'오슬로', KEF:'케플라비크', DUB:'더블린', YUL:'몬트리올',
+      YYZ:'토론토', AKL:'오클랜드', PRG:'프라하', ZAG:'자그레브', VIE:'빈', ZRH:'취리히', AMS:'암스테르담' };
+    var portHtml = function(part) {
+      if (!part) return '';
+      var m = String(part).match(/\b([A-Z]{3})\b/);
+      var iata = m ? m[1] : '';
+      var term = (String(part).match(/\(([^)]*)\)/) || [])[1] || '';
+      var sub = [ _APT_CITY[iata] || '', /^T\s?\d/i.test(term) ? term : '' ].filter(Boolean).join(' · ');
+      return '<p class="rec-fl-port">' + (iata || String(part).slice(0, 18)) +
+             (sub ? '<span class="rec-fl-portsub">' + sub + '</span>' : '') + '</p>';
+    };
     var isPast = !!(f.date && /^\d{4}-\d{2}-\d{2}$/.test(f.date) && f.date < new Date().toISOString().split('T')[0]);
     var actionsSt = String(deleteHtml || '')
       .replace(/class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600"/g, 'class="rec-abtn"')
@@ -7674,6 +7696,7 @@
       '<div class="rec-fl-body">' +
         '<div class="rec-fl-leg">' +
           '<p class="rec-micro">Departure</p>' +
+          portHtml(routeParts[0]) +
           '<p class="rec-fl-time">' + (f.depart || f.time || '—') + '</p>' +
           '<p class="rec-fl-date">' + (f.date || '') + '</p>' +
         '</div>' +
@@ -7683,6 +7706,7 @@
         '</div>' +
         '<div class="rec-fl-leg is-arr">' +
           '<p class="rec-micro">Arrival</p>' +
+          portHtml(routeParts[1]) +
           '<p class="rec-fl-time">' + (f.arrive || '—') + '</p>' +
           '<p class="rec-fl-date">&nbsp;</p>' +
         '</div>' +
