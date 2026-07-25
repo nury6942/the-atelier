@@ -92,7 +92,7 @@
     const prevY = M === 0 ? Y - 1 : Y, prevM = M === 0 ? 11 : M - 1;
     ov.innerHTML = `
       <div style="background:#0f0f12;color:#e8e8ec;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:24px;width:340px;max-width:92vw">
-        <div style="font-weight:700;font-size:11px;color:#8b8b98;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">atelier 동기화</div>
+        <div style="font-weight:700;font-size:11px;color:#8b8b98;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">atelier 동기화 <span style="color:#4ade80;font-size:10px">v2 증분</span></div>
         <div style="font-weight:800;font-size:16px;margin-bottom:16px">어느 범위를 가져올까요?</div>
         <button data-act="this" style="${PRIM}">${_thisLabel}</button>
         <div style="display:flex;gap:8px;margin-top:8px">
@@ -144,7 +144,7 @@
   const panel = document.createElement('div');
   panel.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;background:#0f0f12;color:#e8e8ec;padding:20px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.3);font-family:-apple-system,Pretendard,sans-serif;font-size:14px;line-height:1.5;min-width:280px;max-width:380px';
   panel.innerHTML = `
-    <div style="font-weight:700;font-size:13px;color:#a5a5b0;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">atelier 동기화</div>
+    <div style="font-weight:700;font-size:13px;color:#a5a5b0;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">atelier 동기화 <span style="color:#4ade80;font-size:11px">v2 증분</span></div>
     <div id="ps-msg" style="font-weight:500">초기화…</div>
     <div id="ps-prog" style="font-size:11px;color:#888;margin-top:6px">—</div>
   `;
