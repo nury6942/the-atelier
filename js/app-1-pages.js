@@ -16048,31 +16048,66 @@
       return;
     }
     if (btn && btn.getAttribute('data-running')) return; // 중복 실행 방지
-    if (!_confirmGmapsSpend('스팟 ' + targets.length + '곳에 사진을 채웁니다.', targets.length)) return;
+    // ★ (2026-07-25) 사진은 위키피디아 전용 — 구글 Places Photo 과금을 완전히 끊었다.
+    //   위키에 없는 곳(개별 식당·카페·상점)은 사진 없이 남는다. 그게 과금보다 낫다는 게 누리 방침.
     if (btn) { btn.setAttribute('data-running', '1'); btn.disabled = true; }
     var ok = 0;
     function step(i) {
       if (i >= targets.length) {
         if (btn) { btn.removeAttribute('data-running'); btn.disabled = false; }
         try { window.renderPlaces(); } catch(e) {}
-        if (typeof showSyncToast === 'function') showSyncToast('📷 스팟 사진 ' + ok + '/' + targets.length + '건 채웠어!');
+        if (typeof showSyncToast === 'function') showSyncToast('📷 위키 사진 ' + ok + '/' + targets.length + '건 (무과금)');
         return;
       }
       if (btn) btn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> ' + (i + 1) + '/' + targets.length + ' 처리 중…';
       var p = targets[i];
-      _placePhotoFor(((p.title || '') + ' ' + (p.city || '')).trim(), function(url) {
+      _wikiPhotoFor(p.title, p.city, function(url) {
         if (url) {
           ok++;
-          fbUpdate('journey', p._id, { photo_url: url }).then(function() {
-            p.photo_url = url;
+          fbUpdate('journey', p._id, { photo_url: url, photo_src: 'wikipedia' }).then(function() {
+            p.photo_url = url; p.photo_src = 'wikipedia';
             try { window.renderPlaces(); } catch(e) {}
           }).catch(function() {});
         }
-        setTimeout(function() { step(i + 1); }, 600);
+        setTimeout(function() { step(i + 1); }, 250);
       });
     }
     step(0);
   };
+
+  // ★ (2026-07-25) 스팟 사진 = 위키피디아 전용 (구글 Places Photo 미사용, 과금 0)
+  //   제목에서 라틴 표기 / 한글 표기를 뽑아 it → en → de → ko 순으로 조회한다.
+  var _wikiPhotoCache = {};
+  function _wikiPhotoFor(title, city, cb) {
+    var strip = function(t) { return String(t || '').replace(/^[^\p{L}\p{N}]+/u, '').trim(); };
+    var base = strip(title);
+    var mLat = base.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9'’·\-\s]{3,}/);
+    var lat = mLat ? mLat[0].replace(/\s+/g, ' ').trim() : '';
+    var mKor = base.replace(/\([^)]*\)/g, '').match(/[가-힣][가-힣\s·]{1,}/);
+    var kor = mKor ? mKor[0].trim() : '';
+    var tries = [];
+    if (lat) tries.push([lat, 'it'], [lat, 'en'], [lat, 'de']);
+    if (kor) tries.push([kor, 'ko'], [kor, 'en']);
+    if (!tries.length) { cb(null); return; }
+    var i = 0;
+    (function next() {
+      if (i >= tries.length) { cb(null); return; }
+      var term = tries[i][0], lang = tries[i][1]; i++;
+      var key = lang + '|' + term;
+      if (_wikiPhotoCache[key] !== undefined) { if (_wikiPhotoCache[key]) { cb(_wikiPhotoCache[key]); return; } next(); return; }
+      fetch('https://' + lang + '.wikipedia.org/w/api.php?action=query&format=json&origin=*' +
+            '&prop=pageimages&piprop=thumbnail&pithumbsize=1000&generator=search&gsrlimit=1&gsrsearch=' +
+            encodeURIComponent(term))
+        .then(function(r) { return r.json(); })
+        .then(function(j) {
+          var pages = (j.query && j.query.pages) || {}, url = null;
+          for (var k in pages) if (pages[k].thumbnail && pages[k].thumbnail.source) url = pages[k].thumbnail.source;
+          _wikiPhotoCache[key] = url || null;
+          if (url) cb(url); else next();
+        })
+        .catch(function() { _wikiPhotoCache[key] = null; next(); });
+    })();
+  }
 
   // ★ (2026-07-23) 기존 스팟 일괄 평점 채우기 — 600ms 간격 순차, 버튼에 진행 표시
   window.fillPlaceRatings = function() {
