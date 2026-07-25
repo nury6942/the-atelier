@@ -37,32 +37,36 @@
   const writeWM = (key, ts) => {
     try { const w = readWM(); if (!w[key] || ts > w[key]) { w[key] = ts; localStorage.setItem(WM_KEY, JSON.stringify(w)); } } catch (e) {}
   };
-  const OVERLAP_DAYS = 2;
+  // 겹침은 "시각" 단위 6시간. 같은 날 오전에 받고 밤에 또 받아도 오전 것까지
+  // 되훑지 않는다. (뒤늦게 반영되는 거래 대비용 최소 마진)
+  const OVERLAP_HOURS = 6;
+  const fmtTs = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+
+  // 워터마크(마지막 동기화 거래 시각)에서 6시간 뺀 지점 — 없으면 null
+  const incrCutoff = (wmKey, monthStart) => {
+    const wm = readWM()[wmKey];
+    if (!wm) return null;
+    const b = new Date(String(wm).replace(' ', 'T'));
+    if (isNaN(b)) return null;
+    b.setHours(b.getHours() - OVERLAP_HOURS);
+    const safe = fmtTs(b);
+    return safe > monthStart ? safe : null;
+  };
+  const shortTs = s => s.slice(5, 16).replace('-', '/');  // "07/25 02:14"
 
   const monthRange = (y, m, full) => {  // m: 0-base, full=true면 워터마크 무시
     const monthStart = `${y}-${pad(m + 1)}-01 00:00:00`;
     const ny = m === 11 ? y + 1 : y, nm = m === 11 ? 0 : m + 1;
     const isCurrent = (y === now.getFullYear() && m === now.getMonth());
     const wmKey = `${y}-${pad(m + 1)}`;
-    let cutoff = monthStart, incr = null;
-    if (!full) {
-      const wm = readWM()[wmKey];
-      if (wm) {
-        const b = new Date(String(wm).replace(' ', 'T'));
-        if (!isNaN(b)) {
-          b.setDate(b.getDate() - OVERLAP_DAYS);
-          const safe = `${b.getFullYear()}-${pad(b.getMonth() + 1)}-${pad(b.getDate())} 00:00:00`;
-          if (safe > monthStart) { cutoff = safe; incr = safe.slice(5, 10).replace('-', '/'); }
-        }
-      }
-    }
+    const safe = full ? null : incrCutoff(wmKey, monthStart);
     const base = isCurrent ? `이번 달 (${m + 1}월)` : `${y}년 ${m + 1}월만`;
     return {
-      cutoffStr: cutoff,
+      cutoffStr: safe || monthStart,
       upperStr: isCurrent ? null : `${ny}-${pad(nm + 1)}-01 00:00:00`,
       DAYS: new Date(y, m + 1, 0).getDate(),
       wmKey,
-      modeLabel: incr ? `${base} · 증분 ${incr}~` : (full ? `${base} · 전체 재수집` : base)
+      modeLabel: safe ? `${base} · 증분 ${shortTs(safe)}~` : (full ? `${base} · 전체 재수집` : base)
     };
   };
 
@@ -76,6 +80,11 @@
     let monthBtns = '';
     // 이미 동기화한 달은 ↻ 표시 — 그 달을 누르면 증분만 받는다 (Shift+클릭 = 전체)
     const _wm = readWM();
+    // 메인 버튼도 증분 구간을 그대로 보여준다
+    const _thisSafe = incrCutoff(`${Y}-${pad(M + 1)}`, `${Y}-${pad(M + 1)}-01 00:00:00`);
+    const _thisLabel = _thisSafe
+      ? `이번 달 · <span style="opacity:.85">${shortTs(_thisSafe)} ~ 지금</span> <span style="color:#c7d2fe">↻</span>`
+      : `이번 달 (${M + 1}월 1일 ~ 지금)`;
     for (let m = 0; m <= M; m++) {
       const synced = !!_wm[`${Y}-${pad(m + 1)}`];
       monthBtns += `<button data-m="${m}" title="${synced ? '증분 동기화 (Shift+클릭 = 전체 재수집)' : '전체 수집'}" style="${MBTN}${m === M ? ';border-color:#6366f1;color:#a5b4fc' : ''}">${m + 1}월${synced ? ' <span style="color:#4ade80">↻</span>' : ''}</button>`;
@@ -85,7 +94,7 @@
       <div style="background:#0f0f12;color:#e8e8ec;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:24px;width:340px;max-width:92vw">
         <div style="font-weight:700;font-size:11px;color:#8b8b98;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">atelier 동기화</div>
         <div style="font-weight:800;font-size:16px;margin-bottom:16px">어느 범위를 가져올까요?</div>
-        <button data-act="this" style="${PRIM}">이번 달 (${M + 1}월 1일 ~ 지금)</button>
+        <button data-act="this" style="${PRIM}">${_thisLabel}</button>
         <div style="display:flex;gap:8px;margin-top:8px">
           <button data-act="prev" style="${BTN};flex:1">지난달 (${prevM + 1}월)</button>
           <button data-act="ytd" style="${BTN};flex:1">올해 전체</button>
