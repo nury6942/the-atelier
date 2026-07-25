@@ -3759,9 +3759,11 @@
         var elNow = document.getElementById('travel-' + idx);
         if (!elNow) return;
         if (!txt) { elNow.style.display = 'none'; return; }
+        var _p = String(txt).split('\n');
         elNow.innerHTML = '<div class="relative pl-6 my-1">' +
-          '<div class="ml-1 inline-flex items-center gap-1.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
-          '<span>' + txt + '</span>' +
+          '<div class="ml-1 inline-flex flex-col items-start gap-0.5 text-[10px] font-bold py-1.5 px-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700">' +
+          '<span>' + _p[0] + '</span>' +
+          (_p[1] ? '<span class="font-medium text-amber-600/80">' + _p[1] + '</span>' : '') +
           '</div></div>';
       });
     });
@@ -4701,9 +4703,13 @@
         if (!el) return;
         if (!txt) { el.style.display = 'none'; return; }
         // ★ (2026-07-23) 밋밋한 인라인 텍스트 → 알약 칩. 맨 앞 이모지만 떼어 아이콘 자리로
-        var m = String(txt).match(/^(\S+)\s+([\s\S]*)$/);
+        // ★ (2026-07-26) 둘째 줄(route_note) 분리 — 한 줄에 붙이면 시간·거리가 묻힌다
+        var _tv = String(txt).split('\n');
+        var _tvL1 = _tv[0], _tvL2 = _tv[1] || '';
+        var m = _tvL1.match(/^(\S+)\s+([\s\S]*)$/);
         el.innerHTML = '<span class="wk4-travel-chip">' +
-          (m ? '<i>' + m[1] + '</i><span>' + m[2] + '</span>' : '<span>' + txt + '</span>') + '</span>';
+          (m ? '<i>' + m[1] + '</i><span>' + m[2] + '</span>' : '<span>' + _tvL1 + '</span>') +
+          (_tvL2 ? '<em>' + _tvL2 + '</em>' : '') + '</span>';
       });
     });
     bindWeekDnd(); // ★ 드래그 앤 드롭 + 호버→핀 강조 (1회 바인딩)
@@ -17059,15 +17065,30 @@
     return /^\s*(✈️|🛫|🛬)/.test(x.title || '');
   }
 
+  // ★ (2026-07-26) 이동 자체가 하나의 일정인 항목(기차·비행기·버스)은
+  //   출발지 좌표만 갖고 있어서, 그 다음 칸으로 가는 커넥터를 계산하면
+  //   "프랑크푸르트 → 베를린 7시간 20분" 같은 엉뚱한 값이 나왔다 (실제 ICE는 4H).
+  //   도착 좌표(arr_lat/arr_lng)가 있으면 그걸 출발점으로 삼고, 없으면 커넥터를 숨긴다.
+  function _isLegItem(x) {
+    if (!x) return false;
+    if (x.type === '항공편' || x.type === '이동수단') return true;
+    return /^\s*(✈️|🛫|🛬|🚂|🚆|🚄|🚌|⛴️|🚇)/.test(x.title || '');
+  }
+  var _originOf = function(x) {
+    return (typeof x.arr_lat === 'number' && typeof x.arr_lng === 'number')
+      ? { lat: x.arr_lat, lng: x.arr_lng } : { lat: x.lat, lng: x.lng };
+  };
+
   function _travelBetween(a, b, cb) {
-    if (_isFlightItem(a) || _isFlightItem(b)) { cb(null); return; }
+    var aHasArr = a && typeof a.arr_lat === 'number' && typeof a.arr_lng === 'number';
+    if (_isLegItem(a) && !aHasArr) { cb(null); return; }  // 도착 좌표 없으면 계산 불가 → 숨김
+    if (_isLegItem(b)) { cb(null); return; }              // 이동 항목으로 들어가는 커넥터도 숨김
+    var o = _originOf(a);
     var drive = _hasCarOn(a.date || b.date); // ★ 렌트 기간이면 자동차 기준
-    // ★ (2026-07-25) 도착지에 route_note가 있으면 칩 뒤에 도로명을 붙인다.
-    //   예전엔 "🛣️ → 오르비에토 (A1)" 같은 도로 카드를 따로 만들었는데,
-    //   도착지와 좌표가 같아서 그 사이에 "1분 · 1m" 유령 커넥터가 생겼다.
+    // ★ route_note는 칩의 둘째 줄로 뺀다 — 한 줄에 붙이면 시간·거리가 안 보인다.
     var note = String((b && b.route_note) || '').trim();
-    var sfx = note ? ' · ' + note : '';
-    getTravelTime(a.lat, a.lng, b.lat, b.lng, function(result) {
+    var sfx = note ? '\n' + note : '';
+    getTravelTime(o.lat, o.lng, b.lat, b.lng, function(result) {
       if (result) {
         var icon = result.mode === 'walk' ? '🚶' : (result.mode === 'drive' ? '🚗' : '🚇');
         cb(icon + ' ' + result.duration + ' · ' + result.distance + sfx);
