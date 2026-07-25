@@ -17728,6 +17728,30 @@
       '<em>' + _fltEsc(m.country + (m.city ? ' · ' + m.city : '')) + '</em></span>';
   }
 
+  // ★ (2026-07-25) 다구간 노선 — legs:[{from,to,date}] 가 있으면 전체 구간을 이어서 표시.
+  //   (예: ICN → CPH … ARN → ICN 처럼 들어가고 나오는 공항이 다른 오픈조)
+  //   legs가 없으면 기존 route_from → route_to 그대로.
+  function _fltRouteHtml(w) {
+    var legs = Array.isArray(w.legs) ? w.legs.filter(function(l){ return l && l.from && l.to; }) : [];
+    if (!legs.length) {
+      return _fltPortHtml(w.route_from) +
+        '<span class="material-symbols-outlined">trending_flat</span>' +
+        _fltPortHtml(w.route_to);
+    }
+    // 이어지는 구간은 공항을 한 번만 그린다: A→B, B→C ⇒ A → B → C
+    var seq = [legs[0].from];
+    legs.forEach(function(l) {
+      if (seq[seq.length - 1] !== l.from) seq.push(l.from);
+      seq.push(l.to);
+    });
+    var html = '';
+    seq.forEach(function(code, i) {
+      if (i) html += '<span class="material-symbols-outlined">trending_flat</span>';
+      html += _fltPortHtml(code);
+    });
+    return '<span class="pw-multi">다구간</span>' + html;
+  }
+
   function _fltAirportSearch(q, limit) {
     var s = String(q || '').trim().toLowerCase();
     if (!s) return [];
@@ -19644,25 +19668,31 @@
       if (!list.length) return;
       html += '<div class="pw-seg-g"><div class="pw-seg-h">' + g.label +
         (g.total ? '<em>총 ' + _spotEsc(g.total) + '</em>' : '') + '</div>';
+      // 시각/날짜 분리 — 'MM-DD HH:MM' 형태면 시각을 크게, 날짜는 작게
+      var splitDT = function(v) {
+        var m = /^(\d{2}-\d{2})\s+(\d{2}:\d{2})$/.exec(String(v || ''));
+        return m ? { d: m[1], t: m[2] } : { d: '', t: String(v || '') };
+      };
       list.forEach(function(s) {
         if (s.layover_before) {
-          html += '<div class="pw-seg-lay"><span class="material-symbols-outlined">more_vert</span>' +
-            '경유 대기 ' + _spotEsc(s.layover_before) + (s.from_name ? ' · ' + _spotEsc(s.from_name) : '') + '</div>';
+          html += '<div class="pw-lay"><span></span><em>' + _spotEsc(s.layover_before) + ' 대기' +
+            (s.from_name ? ' · ' + _spotEsc(s.from_name) : '') + '</em></div>';
         }
-        html += '<div class="pw-seg">' +
-          '<div class="pw-seg-t"><b>' + _spotEsc(s.flight || '') + '</b>' +
-            (s.airline ? '<span>' + _spotEsc(s.airline) + '</span>' : '') +
-            (s.duration ? '<em>' + _spotEsc(s.duration) + '</em>' : '') + '</div>' +
-          '<div class="pw-seg-r">' +
-            '<div><b>' + _spotEsc(s.dep || '') + '</b> ' + _spotEsc(s.from || '') +
-              (s.from_term ? ' <i>' + _spotEsc(s.from_term) + '</i>' : '') +
-              (s.from_name ? '<span>' + _spotEsc(s.from_name) + '</span>' : '') + '</div>' +
-            '<span class="material-symbols-outlined">arrow_forward</span>' +
-            '<div><b>' + _spotEsc(s.arr || '') + '</b> ' + _spotEsc(s.to || '') +
-              (s.to_term ? ' <i>' + _spotEsc(s.to_term) + '</i>' : '') +
-              (s.to_name ? '<span>' + _spotEsc(s.to_name) + '</span>' : '') + '</div>' +
+        var a = splitDT(s.dep), b = splitDT(s.arr);
+        html += '<div class="pw-leg">' +
+          '<div class="pw-leg-time"><b>' + _spotEsc(a.t) + '</b>' +
+            (a.d ? '<i>' + _spotEsc(a.d) + '</i>' : '') + '</div>' +
+          '<div class="pw-leg-path"><span class="pw-leg-code">' + _spotEsc(s.from || '') +
+              (s.from_term ? ' <em>' + _spotEsc(s.from_term) + '</em>' : '') + '</span>' +
+            '<span class="pw-leg-line"><i></i>' +
+              (s.duration ? '<u>' + _spotEsc(s.duration) + '</u>' : '') + '</span>' +
+            '<span class="pw-leg-code is-r">' + _spotEsc(s.to || '') +
+              (s.to_term ? ' <em>' + _spotEsc(s.to_term) + '</em>' : '') + '</span>' +
           '</div>' +
-          (s.aircraft ? '<div class="pw-seg-ac">' + _spotEsc(s.aircraft) + '</div>' : '') +
+          '<div class="pw-leg-time is-r"><b>' + _spotEsc(b.t) + '</b>' +
+            (b.d ? '<i>' + _spotEsc(b.d) + '</i>' : '') + '</div>' +
+          '<div class="pw-leg-meta">' + _spotEsc(s.flight || '') +
+            (s.aircraft ? ' · ' + _spotEsc(s.aircraft) : '') + '</div>' +
         '</div>';
       });
       html += '</div>';
@@ -19750,7 +19780,11 @@
       statTxt += '<button class="pw-tm-add" onclick="fltAddTargetMonth(\'' + w._id + '\')" title="추적할 달 추가"><span class="material-symbols-outlined">add</span></button>';
 
       // 유류할증료 합산 — 항공권 표시가만 보면 실제 낼 돈을 착각한다
-      var fuelInfo = _fuelForRoute(w.route_from, w.route_to);
+      // ★ (2026-07-25) 유류할증료 이중계산 방지 — 항공사·스카이스캐너 화면가는 이미 유류 포함.
+      //   기록에 fuel_included=true면 위에 또 더하지 않는다.
+      var lastSnap = snaps.length ? snaps[snaps.length - 1] : null;
+      var fuelIncluded = !!(lastSnap && lastSnap.fuel_included);
+      var fuelInfo = fuelIncluded ? null : _fuelForRoute(w.route_from, w.route_to);
       var fuelKrw = fuelInfo ? fuelInfo.krw * (w.return_date ? 2 : 1) : 0;
 
       // ═══ ① 가격 블록 — 큰 숫자 + 분해 + 최저/최고 + 추이 차트 + 판정을 한 덩어리로 ═══
@@ -19765,10 +19799,12 @@
         '<div class="pw-money-top">' +
           '<div class="pw-money-l">' +
             (cur
-              ? '<span class="pw-l">' + (fuelInfo ? '실제 낼 돈' : '현재가') + '</span>' +
+              ? '<span class="pw-l">' + (fuelInfo || fuelIncluded ? '실제 낼 돈' : '현재가') + '</span>' +
                 '<b class="pw-big">' + _fltKrw(cur + fuelKrw) + '</b>' +
-                (fuelInfo ? '<p class="pw-brk">항공권 ' + _fltKrw(cur) + ' + 유류 ' + _fltKrw(fuelKrw) +
-                  ' <em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></p>' : '')
+                (fuelIncluded
+                  ? '<p class="pw-brk"><em>유류할증료·세금 포함가</em></p>'
+                  : (fuelInfo ? '<p class="pw-brk">항공권 ' + _fltKrw(cur) + ' + 유류 ' + _fltKrw(fuelKrw) +
+                      ' <em>' + _spotEsc(fuelInfo.month) + ' 기준 · 세금 별도</em></p>' : ''))
               : '<span class="pw-l">가격</span><b class="pw-big is-dim">기록 없음</b>') +
             mstats +
           '</div>' +
@@ -19811,7 +19847,8 @@
               (sn.query_month ? ' <em class="pw-qm">' + _spotEsc(sn.query_month) + '</em>' : '') + '</td>' +
             '<td>' + srcBadge + '</td>' +
             '<td class="ta-r num is-p">' + _fltKrw(sn.price_krw) + '</td>' +
-            '<td class="ta-r num is-dim">' + (sn.fuel_krw ? _fltKrw(sn.fuel_krw) : '—') + '</td>' +
+            '<td class="ta-r num is-dim">' + (sn.fuel_included ? '<span class="pw-fincl">포함</span>'
+              : (sn.fuel_krw ? _fltKrw(sn.fuel_krw) : '—')) + '</td>' +
             '<td>' + (alab ? _spotEsc(alab) : '—') + '</td>' +
             '<td>' + trf + '</td>' +
             '<td class="num">' + dep + '</td>' +
@@ -19826,9 +19863,7 @@
         '<div class="pw-card-head">' +
           '<div class="pw-head-l">' +
             '<div><span class="pw-l is-accent">Watching</span>' +
-              '<div class="pw-route">' + _fltPortHtml(w.route_from) +
-                '<span class="material-symbols-outlined">trending_flat</span>' +
-                _fltPortHtml(w.route_to) + '</div></div>' +
+              '<div class="pw-route">' + _fltRouteHtml(w) + '</div></div>' +
             '<div class="pw-status"><span class="pw-l" title="여기 등록한 달만 매일 자동으로 가격을 수집해요 (최저가 조회 버튼과는 별개)">자동 수집 달</span><p>' + statTxt + '</p></div>' +
           '</div>' +
           '<div class="pw-head-r">' + _fltQuickLinks(w) +
