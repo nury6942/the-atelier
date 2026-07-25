@@ -18675,21 +18675,93 @@
     }
   };
 
+  // ★ (2026-07-25) 다구간 노선 등록 — 들어가는/나오는 공항이 다른 오픈조 지원
+  var _fwMode = 'simple';
+  var _fwLegN = 0;
+  window.fltSetWatchMode = function(m) {
+    _fwMode = (m === 'multi') ? 'multi' : 'simple';
+    var s = document.getElementById('fw-simple'), mu = document.getElementById('fw-multi');
+    if (s) s.style.display = _fwMode === 'multi' ? 'none' : '';
+    if (mu) mu.style.display = _fwMode === 'multi' ? '' : 'none';
+    ['simple', 'multi'].forEach(function(k) {
+      var b = document.getElementById('fw-mode-' + k);
+      if (b) b.classList.toggle('is-on', k === _fwMode);
+    });
+    // 다구간 첫 진입이면 기본 2구간(들어갈 때 / 나올 때)
+    if (_fwMode === 'multi') {
+      var box = document.getElementById('fw-legs');
+      if (box && !box.children.length) { window.fltAddLegRow(); window.fltAddLegRow(); }
+    }
+  };
+  window.fltAddLegRow = function() {
+    var box = document.getElementById('fw-legs');
+    if (!box) return;
+    var i = ++_fwLegN;
+    var row = document.createElement('div');
+    row.className = 'pw-legrow';
+    row.innerHTML =
+      '<span class="pw-legno">' + (box.children.length + 1) + '</span>' +
+      '<div class="pw-fld"><label class="pw-l">출발</label><input id="fwl-from-' + i + '" type="text" placeholder="ICN" class="pw-in"></div>' +
+      '<div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>' +
+      '<div class="pw-fld"><label class="pw-l">도착</label><input id="fwl-to-' + i + '" type="text" placeholder="CPH" class="pw-in"></div>' +
+      '<div class="pw-fld"><label class="pw-l">날짜 <em>선택</em></label><input id="fwl-date-' + i + '" type="date" class="pw-in"></div>' +
+      '<button type="button" class="pw-legdel" onclick="this.parentNode.remove();fltRenumberLegs()" title="이 구간 삭제">' +
+        '<span class="material-symbols-outlined">close</span></button>';
+    box.appendChild(row);
+    window.fltRenumberLegs();
+    try { _fltAttachAirport('fwl-from-' + i); _fltAttachAirport('fwl-to-' + i); } catch (e) {}
+  };
+  window.fltRenumberLegs = function() {
+    var box = document.getElementById('fw-legs');
+    if (!box) return;
+    Array.prototype.forEach.call(box.children, function(r, k) {
+      var n = r.querySelector('.pw-legno'); if (n) n.textContent = String(k + 1);
+    });
+  };
+  function _fwReadLegs() {
+    var box = document.getElementById('fw-legs');
+    if (!box) return [];
+    var out = [];
+    Array.prototype.forEach.call(box.children, function(r) {
+      var ins = r.querySelectorAll('input');
+      var f = (ins[0] && ins[0].value || '').trim().toUpperCase();
+      var t = (ins[1] && ins[1].value || '').trim().toUpperCase();
+      var d = (ins[2] && ins[2].value || '').trim();
+      if (f && t) out.push({ from: f, to: t, date: d });
+    });
+    return out;
+  }
+
   window.fltSaveWatch = async function() {
     var g = function(id) { var e = document.getElementById(id); return e ? (e.value || '').trim() : ''; };
-    var from = g('fw-from').toUpperCase(), to = g('fw-to').toUpperCase();
-    if (!from || !to) { alert('출발·도착 공항(또는 도시)을 입력해줘.'); return; }
-    var obj = {
-      type: 'watch', route_from: from, route_to: to,
-      depart_date: g('fw-depart'), return_date: g('fw-return'),
-      memo: g('fw-memo'), created_at: new Date().toISOString()
-    };
+    var obj;
+    if (_fwMode === 'multi') {
+      var legs = _fwReadLegs();
+      if (legs.length < 2) { alert('다구간은 구간을 2개 이상 넣어줘.\n(예: ICN→CPH / ARN→ICN)'); return; }
+      obj = {
+        type: 'watch', trip_type: 'multi', legs: legs,
+        route_from: legs[0].from, route_to: legs[0].to,   // 기존 로직 호환용 대표 구간
+        depart_date: legs[0].date || '',
+        return_date: legs[legs.length - 1].date || '',
+        memo: g('fw-memo'), created_at: new Date().toISOString()
+      };
+    } else {
+      var from = g('fw-from').toUpperCase(), to = g('fw-to').toUpperCase();
+      if (!from || !to) { alert('출발·도착 공항(또는 도시)을 입력해줘.'); return; }
+      obj = {
+        type: 'watch', route_from: from, route_to: to,
+        depart_date: g('fw-depart'), return_date: g('fw-return'),
+        memo: g('fw-memo'), created_at: new Date().toISOString()
+      };
+    }
     try {
       var saved = await fbAdd('flight_watch', obj);
       _fltWatch.push(saved);
       ['fw-from', 'fw-to', 'fw-depart', 'fw-return', 'fw-memo'].forEach(function(id) {
         var e = document.getElementById(id); if (e) e.value = '';
       });
+      var lb = document.getElementById('fw-legs'); if (lb) lb.innerHTML = '';
+      window.fltSetWatchMode('simple');
       window.fltToggleWatchForm();
       _fltRenderWatch();
       if (typeof showSyncToast === 'function') {

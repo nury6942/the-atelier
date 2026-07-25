@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=308" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=309" as="script">
   <link rel="preload" href="js/app-2-init.js?v=173" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6386,6 +6386,29 @@
     .pw-route b { font-family:'Manrope','Pretendard',sans-serif; font-size:27px; font-weight:800;
       letter-spacing:-0.045em; color:#1a1c1d; }
     .pw-route .material-symbols-outlined { color:#7c3aed; font-size:22px; }
+    /* 노선 등록 — 편도·왕복 / 다구간 모드 전환 */
+    .pw-mode { display:flex; gap:0; margin-bottom:14px; width:fit-content; border:1px solid #e5e5e5; }
+    .pw-mode-b { border:none; background:#fff; padding:8px 18px; font-size:12px; font-weight:700;
+      color:#7b7487; cursor:pointer; transition:all .12s; }
+    .pw-mode-b + .pw-mode-b { border-left:1px solid #e5e5e5; }
+    .pw-mode-b:hover { color:#1a1c1d; }
+    .pw-mode-b.is-on { background:#1a1c1d; color:#fff; }
+    .pw-multi-hint { margin:0 0 10px; font-size:11px; color:#a9a2b5; }
+    .pw-legrow { display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap;
+      padding:10px 0; border-bottom:1px solid #f3f3f5; }
+    .pw-legno { flex:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:800; color:#7c3aed; background:#f5f3ff; border:1px solid #ddd6fe;
+      margin-bottom:7px; }
+    .pw-legrow .pw-fld { flex:1; min-width:110px; }
+    .pw-legdel { border:none; background:none; color:#ccc3d8; cursor:pointer; padding:4px;
+      margin-bottom:4px; }
+    .pw-legdel:hover { color:#ba1a1a; }
+    .pw-legdel .material-symbols-outlined { font-size:16px; }
+    .pw-leg-add { margin-top:12px; border:1px dashed #ddd6fe; background:#fff; color:#7c3aed;
+      padding:8px 16px; font-size:11.5px; font-weight:700; cursor:pointer; display:inline-flex;
+      align-items:center; gap:5px; transition:all .12s; }
+    .pw-leg-add:hover { background:#faf9ff; border-style:solid; }
+    .pw-leg-add .material-symbols-outlined { font-size:16px; }
     .pw-multi { align-self:center; font-size:9px; font-weight:800; letter-spacing:0.08em;
       color:#7c3aed; background:#f5f3ff; border:1px solid #ddd6fe; padding:3px 7px; margin-right:2px; }
     .pw-port { display:flex; flex-direction:column; gap:1px; min-width:0; }
@@ -12483,12 +12506,23 @@
 
         <!-- 관심 노선 등록 -->
         <div id="flight-watch-form" class="pw-form" style="display:none">
-          <div class="pw-form-grid">
-            <div class="pw-fld"><label class="pw-l">출발</label><input id="fw-from" type="text" placeholder="ICN" class="pw-in"></div>
-            <div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
-            <div class="pw-fld"><label class="pw-l">도착</label><input id="fw-to" type="text" placeholder="NRT" class="pw-in"></div>
-            <div class="pw-fld"><label class="pw-l">가는 날</label><input id="fw-depart" type="date" class="pw-in"></div>
-            <div class="pw-fld"><label class="pw-l">오는 날 <em>선택</em></label><input id="fw-return" type="date" class="pw-in"></div>
+          <div class="pw-mode">
+            <button type="button" id="fw-mode-simple" class="pw-mode-b is-on" onclick="fltSetWatchMode('simple')">편도 · 왕복</button>
+            <button type="button" id="fw-mode-multi" class="pw-mode-b" onclick="fltSetWatchMode('multi')">다구간</button>
+          </div>
+          <div id="fw-simple">
+            <div class="pw-form-grid">
+              <div class="pw-fld"><label class="pw-l">출발</label><input id="fw-from" type="text" placeholder="ICN" class="pw-in"></div>
+              <div class="pw-arrow"><span class="material-symbols-outlined">arrow_forward</span></div>
+              <div class="pw-fld"><label class="pw-l">도착</label><input id="fw-to" type="text" placeholder="NRT" class="pw-in"></div>
+              <div class="pw-fld"><label class="pw-l">가는 날</label><input id="fw-depart" type="date" class="pw-in"></div>
+              <div class="pw-fld"><label class="pw-l">오는 날 <em>선택</em></label><input id="fw-return" type="date" class="pw-in"></div>
+            </div>
+          </div>
+          <div id="fw-multi" style="display:none">
+            <p class="pw-multi-hint">들어가는 공항과 나오는 공항이 다를 때 (예: 코펜하겐 인 · 스톡홀름 아웃)</p>
+            <div id="fw-legs"></div>
+            <button type="button" class="pw-leg-add" onclick="fltAddLegRow()"><span class="material-symbols-outlined">add</span>구간 추가</button>
           </div>
           <div class="pw-form-grid is-b">
             <div class="pw-fld is-wide"><label class="pw-l">메모 <em>선택</em></label><input id="fw-memo" type="text" placeholder="예: 왕복 직항, 수하물 포함 조건" class="pw-in"></div>
@@ -15269,7 +15303,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=308" defer></script>
+<script src="js/app-1-pages.js?v=309" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
