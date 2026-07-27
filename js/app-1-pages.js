@@ -6830,7 +6830,7 @@
     if (!isSeedTrip()) {
       journeyData.filter(function(d) { return d.type === '숙소'; }).forEach(function(item) {
         var key = String(item._id || '');
-        if (!key || item.photo_url || _lodgeUserImg(key)) return;
+        if (!key || _photoUsable(item.photo_url) || _lodgeUserImg(key)) return;
         var q = _lodgePhotoQuery(item);
         if (!q) return;
         out.push({ key: key, query: q, item: item });
@@ -6839,7 +6839,7 @@
     }
     getLodgingData().forEach(function(d, i) {
       var key = 'lodge-seed-' + i;
-      if (d.photo_url || _lodgeUserImg(key)) return;
+      if (_photoUsable(d.photo_url) || _lodgeUserImg(key)) return;
       var q2 = _lodgePhotoQuery(d);
       if (!q2) return;
       out.push({ key: key, query: q2, seedIdx: i });
@@ -7019,7 +7019,7 @@
         var safeLodgeKey = lodgeKey.replace(/'/g, "\\'");
         var lodgeImg = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey)) || null;
         // ★ (2026-07-23) 업로드 이미지 없으면 Places 사진(photo_url) 사용 — 실패 시 그라디언트
-        var lodgeAuto = (!lodgeImg && item.photo_url) ? String(item.photo_url) : '';
+        var lodgeAuto = (!lodgeImg && item.photo_url) ? _photoUsable(item.photo_url) : '';
         var lodgeImgEmpty = lodgeImg ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
         var lodgeImgEl = lodgeImg ? '<img class="j-lodge-img-src" src="' + lodgeImg + '" alt="' + (item.title || '').replace(/"/g,'') + '">'
           : (lodgeAuto ? _lodgeAutoImgHtml(lodgeAuto, item.title) : '');
@@ -7127,7 +7127,7 @@
       var lodgeKey2 = String('lodge-seed-' + idx);
       var lodgeImg2 = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(lodgeKey2)) || null;
       // ★ (2026-07-23) 업로드 이미지 없으면 Places 사진(photo_url) 사용 — 실패 시 그라디언트
-      var lodgeAuto2 = (!lodgeImg2 && d.photo_url) ? String(d.photo_url) : '';
+      var lodgeAuto2 = (!lodgeImg2 && d.photo_url) ? _photoUsable(d.photo_url) : '';
       var lodgeImgEmpty2 = lodgeImg2 ? '' : '<div class="j-lodge-img-empty"><span class="material-symbols-outlined">hotel</span></div>';
       var lodgeImgEl2 = lodgeImg2 ? '<img class="j-lodge-img-src" src="' + lodgeImg2 + '" alt="' + (d.title || '').replace(/"/g,'') + '">'
         : (lodgeAuto2 ? _lodgeAutoImgHtml(lodgeAuto2, d.title) : '');
@@ -8399,9 +8399,9 @@
     var dbl = (realIdx != null && scope === 'fb')
       ? ' ondblclick="event.stopPropagation();fbInlineEdit(this,' + realIdx + ',\'photo_url\',\'기념품\')" title="더블클릭하여 이미지 주소 입력/삭제"'
       : '';
-    if (item.photo_url) {
+    if (_photoUsable(item.photo_url)) {
       return '<div class="sv-thumb"' + dbl + '>' +
-        '<img src="' + String(item.photo_url).replace(/"/g, '&quot;') + '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
+        '<img src="' + _photoUsable(item.photo_url).replace(/"/g, '&quot;') + '" alt="" loading="lazy" referrerpolicy="no-referrer" ' +
         'onerror="this.parentNode.classList.add(\'is-fallback\');this.parentNode.innerHTML=\'' + _svEmoji(item) + '\'">' +
       '</div>';
     }
@@ -16112,9 +16112,19 @@
     return confirm(what + '\n\n구글 지도 API를 ' + _gmapsCostHint(calls) + ' 사용해요.\n(7/23 실측 단가 기준 추정치)\n\n진행할까요?');
   }
 
+  // ★ (2026-07-27) 죽은 사진 URL 거르기.
+  //   구글 Places Photo는 과금 차단(7/25) 후 403인데, 구글이 403과 함께 100×100 에러 이미지를
+  //   같이 돌려줘서 <img onerror>가 안 먹고 그 X 그림이 그대로 그려졌다. → 아예 안 그린다.
+  window._photoUsable = function(u) {
+    u = String(u || '');
+    if (!u || u.indexOf('maps.googleapis.com') >= 0) return '';
+    return u;
+  };
+
   window.fillPlacePhotos = function() {
     var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
-    var targets = jd.filter(function(d) { return d.type === '스팟' && !d.photo_url && d._id; });
+    // ★ (2026-07-27) 죽은 구글 URL이 박힌 스팟도 재충전 대상 — 위키 사진으로 덮어씀
+    var targets = jd.filter(function(d) { return d.type === '스팟' && !_photoUsable(d.photo_url) && d._id; });
     var btn = document.getElementById('places-photo-fill-btn');
     if (!targets.length) {
       if (btn) btn.style.display = 'none';
@@ -16261,7 +16271,8 @@
     // 📷 사진 채우기 버튼 (photo_url 없는 스팟 수) — 일괄 실행 중엔 진행 표시 유지
     var fillBtn = document.getElementById('places-photo-fill-btn');
     if (fillBtn && !fillBtn.getAttribute('data-running')) {
-      var noPhoto = places.filter(function(p) { return !p.photo_url && p._id; }).length;
+      // ★ 죽은 구글 URL은 '사진 없음'으로 세서 재충전 대상에 포함
+      var noPhoto = places.filter(function(p) { return !_photoUsable(p.photo_url) && p._id; }).length;
       fillBtn.style.display = noPhoto ? '' : 'none';
       fillBtn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> 사진 채우기 (' + noPhoto + ')';
       fillBtn.title = '사진 없는 스팟에 Google Places 대표 사진을 채워요 — 예상 ' + _gmapsCostHint(noPhoto);
@@ -16449,8 +16460,9 @@
       // ★ (2026-07-23) 이미지 우선순위: photo_url(Places 대표 사진) → 도시 이미지 → 그라디언트 플레이스홀더
       //   photo는 <img> 오버레이로 얹어 onerror 시 display:none → 아래 레이어(도시/플레이스홀더)로 폴백
       var img = _placeCityImg(p.city);
-      var photoImg = p.photo_url
-        ? '<img class="spot-photo" src="' + String(p.photo_url).replace(/"/g, '&quot;') + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+      var pPhoto = _photoUsable(p.photo_url);   // ★ 죽은 구글 URL 제외
+      var photoImg = pPhoto
+        ? '<img class="spot-photo" src="' + pPhoto.replace(/"/g, '&quot;') + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
         : '';
       var imgHtml = img
         ? '<div class="spot-img" style="background-image:url(\'' + img + '\')">' + photoImg + cityBadge + '</div>'
@@ -16590,8 +16602,8 @@
       '<h3 class="spot-dw-title">' + _spotEsc(p.title || '') + '</h3>' +
       '<button class="spot-dw-close" onclick="closeSpotDrawer()" title="닫기" aria-label="닫기">✕</button>' +
     '</div>';
-    var photo = p.photo_url
-      ? '<img class="spot-dw-photo" src="' + String(p.photo_url).replace(/"/g, '&quot;') + '" alt="" onerror="this.style.display=\'none\'">'
+    var photo = _photoUsable(p.photo_url)
+      ? '<img class="spot-dw-photo" src="' + _photoUsable(p.photo_url).replace(/"/g, '&quot;') + '" alt="" onerror="this.style.display=\'none\'">'
       : '';
     var chips = '<span class="spot-chip"><span class="material-symbols-outlined">' + catIco + '</span>' + _spotEsc(p.category || '기타') + '</span>';
     var cityShort = _displayCityShort(p.city || '');
