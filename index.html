@@ -72,7 +72,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=320" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=321" as="script">
   <link rel="preload" href="js/app-2-init.js?v=173" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11382,13 +11382,21 @@
                   <!-- 1박 가격 + 전화번호 -->
                   <div class="grid grid-cols-2 gap-3">
                     <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격</label>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (카드로 낸 돈)</label>
                       <div class="relative">
                         <input id="stay-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
                       </div>
                     </div>
                     <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 결제</label>
+                      <div class="relative">
+                        <input id="stay-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                      </div>
+                      <p class="text-[9px] text-slate-400 px-1 mt-1">체크인 날 현지에서 내는 돈 · 잔액에서 미리 빠지지 않음</p>
+                    </div>
+                    <div class="col-span-2">
                       <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
                       <input id="stay-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
                     </div>
@@ -11549,9 +11557,17 @@
                     </div>
                     <!-- 가격 -->
                     <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (₩)</label>
                       <div class="relative">
                         <input id="stay-edit-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                      </div>
+                    </div>
+                    <!-- ★ (2026-07-27) 도시세·현장 결제 — 체크인 날 내는 돈, 잔액에서 미리 안 빠짐 -->
+                    <div>
+                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 (₩)</label>
+                      <div class="relative">
+                        <input id="stay-edit-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
                       </div>
                     </div>
@@ -15319,7 +15335,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=320" defer></script>
+<script src="js/app-1-pages.js?v=321" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

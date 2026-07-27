@@ -6189,6 +6189,7 @@
     setV('stay-edit-checkout-time', item.checkout);
     setV('stay-edit-cancel-date', item.cancel_date);
     setV('stay-edit-price', item.amount ? Number(String(item.amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
+    setV('stay-edit-onsite', item.onsite_amount ? Number(String(item.onsite_amount).replace(/[^0-9.]/g,'')).toLocaleString('ko-KR') : '');
     setV('stay-edit-notes', item.notes);
     setV('stay-edit-room-type', item.room_type);
     setV('stay-edit-breakfast', item.breakfast);
@@ -6220,6 +6221,8 @@
       cancel: _stayEditCancel,
       cancel_date: document.getElementById('stay-edit-cancel-date').value,
       amount: document.getElementById('stay-edit-price').value.replace(/,/g,''),
+      // ★ (2026-07-27) 도시세·현장 결제 — 별도 장부 행으로 나감
+      onsite_amount: ((document.getElementById('stay-edit-onsite')||{}).value || '').replace(/,/g,''),
       notes: (document.getElementById('stay-edit-notes')||{}).value || '',
       // ★ (2026-07-23) 객실/조식/인원 — 카드 메타 행에 표시되는 additive 필드
       room_type: ((document.getElementById('stay-edit-room-type')||{}).value || '').trim(),
@@ -6272,6 +6275,8 @@
       payment_date: document.getElementById('stay-payment-date').value,
       payment_status: _stayAddPayStatus || '',
       amount: document.getElementById('stay-price').value.replace(/,/g,''),
+      // ★ (2026-07-27) 도시세·현장 결제 — 별도 장부 행으로 나감
+      onsite_amount: getV('stay-onsite').replace(/,/g,''),
       notes: getV('stay-notes'),
       // ★ (2026-07-23) 객실/조식/인원 — 카드 메타 행에 표시되는 additive 필드
       room_type: getV('stay-room-type'),
@@ -10460,7 +10465,10 @@
     if (!d || String(d).length < 10) return d || '';
     return String(d).substring(5).replace('-','/');
   }
-  function _journeyToFinanceObj(item, tripName) {
+  // ★ (2026-07-27) 숙소 선결제 / 도시세 분리.
+  //   kind='onsite' → 체크인 날 현지에서 내는 돈. unpaid=true라 '현재 잔액'에서 빠지지 않고
+  //   예정 지출(≈ 예상 잔액)로만 잡힌다.
+  function _journeyToFinanceObj(item, tripName, kind) {
     var desc;
     if (item.type === '숙소') {
       var parts = [];
@@ -10512,6 +10520,20 @@
     };
     // 결제일이 명시된 경우에만 paid_date 동기화 (빈 값으로 덮어쓰지 않음)
     if (item.payment_date) obj.paid_date = item.payment_date;
+
+    // ★ 도시세(현장 결제) 분리
+    var onsiteAmt = parseFloat(String(item.onsite_amount||'').replace(/[^0-9.]/g,'')) || 0;
+    if (kind === 'onsite') {
+      obj.description = desc + ' — 도시세·현장 결제';
+      obj.amount = String(onsiteAmt);
+      obj.date = item.date || obj.date;   // 체크인 날
+      obj.paid_date = item.date || '';    // 잔액 기준일도 체크인 날
+      obj.unpaid = true;                  // 아직 안 낸 돈
+      obj.kind = 'onsite';
+    } else if (onsiteAmt > 0) {
+      obj.description = desc + ' — 선결제';
+      obj.kind = 'prepaid';
+    }
     return obj;
   }
 
@@ -10527,8 +10549,10 @@
       if (item.finance_id) {
         try {
           await fbDelete('finance', item.finance_id);
-          await fbUpdate('journey', item._id, { finance_id: '' });
-          item.finance_id = '';
+          // ★ 도시세 행도 같이 정리
+          if (item.finance_onsite_id) { try { await fbDelete('finance', item.finance_onsite_id); } catch(e3) {} }
+          await fbUpdate('journey', item._id, { finance_id: '', finance_onsite_id: '' });
+          item.finance_id = ''; item.finance_onsite_id = '';
         } catch(e) { console.warn('[syncJourneyToFinance] 0금액 정리 실패:', e); }
       } else if (item._id) {
         try {
@@ -10549,25 +10573,67 @@
         await fbUpdate('finance', item.finance_id, financeObj);
       } else {
         // finance_id 없어도 journey_id로 매칭되는 finance가 이미 있는지 한 번 확인 (이중 등록 방지)
+        var linked = false;
         try {
-          var existing = (await fbRead('finance')).find(function(f){ return f.journey_id === item._id; });
+          // ★ 도시세 행(kind='onsite')은 제외 — 선결제 행과 짝이 어긋나지 않게
+          var existing = (await fbRead('finance')).find(function(f){ return f.journey_id === item._id && f.kind !== 'onsite'; });
           if (existing) {
             await fbUpdate('finance', existing._id, financeObj);
             await fbUpdate('journey', item._id, { finance_id: existing._id });
             item.finance_id = existing._id;
-            return;
+            linked = true;
           }
         } catch(e) {}
-        var finSaved = await fbAdd('finance', financeObj);
-        await fbUpdate('journey', item._id, {finance_id: finSaved._id});
-        item.finance_id = finSaved._id;
-        showSyncToast('💰 재정에 자동 등록 (' + tripName + ' · ' + financeObj.category + ')');
+        if (!linked) {
+          var finSaved = await fbAdd('finance', financeObj);
+          await fbUpdate('journey', item._id, {finance_id: finSaved._id});
+          item.finance_id = finSaved._id;
+          showSyncToast('💰 재정에 자동 등록 (' + tripName + ' · ' + financeObj.category + ')');
+        }
       }
     } catch(e) { console.error('[syncJourneyToFinance]', e); }
+
+    // ★ (2026-07-27) 도시세·현장 결제는 체크인 날 내는 돈 → 별도 행으로
+    await _syncJourneyOnsiteFinance(item, tripName);
+  }
+
+  // 숙소 도시세(현장 결제) 전용 finance 행 동기화 — 금액 0이면 기존 행 정리
+  async function _syncJourneyOnsiteFinance(item, tripName) {
+    if (!item || item.type !== '숙소' || !item._id) return;
+    var taxAmt = parseFloat(String(item.onsite_amount||'').replace(/[^0-9.]/g,'')) || 0;
+    try {
+      if (!taxAmt) {
+        if (item.finance_onsite_id) {
+          try { await fbDelete('finance', item.finance_onsite_id); } catch(e) {}
+          await fbUpdate('journey', item._id, { finance_onsite_id: '' });
+          item.finance_onsite_id = '';
+        }
+        return;
+      }
+      var taxObj = _journeyToFinanceObj(item, tripName, 'onsite');
+      if (item.finance_onsite_id) {
+        await fbUpdate('finance', item.finance_onsite_id, taxObj);
+        return;
+      }
+      var found = (await fbRead('finance')).find(function(f){ return f.journey_id === item._id && f.kind === 'onsite'; });
+      if (found) {
+        await fbUpdate('finance', found._id, taxObj);
+        await fbUpdate('journey', item._id, { finance_onsite_id: found._id });
+        item.finance_onsite_id = found._id;
+        return;
+      }
+      var saved = await fbAdd('finance', taxObj);
+      await fbUpdate('journey', item._id, { finance_onsite_id: saved._id });
+      item.finance_onsite_id = saved._id;
+    } catch(e) { console.error('[syncJourneyOnsiteFinance]', e); }
   }
 
   async function deleteJourneyFinance(item) {
     if (!item) return;
+    // ★ (2026-07-27) 도시세(현장 결제) 행 먼저 정리 — 남으면 유령 지출이 됨
+    if (item.finance_onsite_id) {
+      try { await fbDelete('finance', item.finance_onsite_id); item.finance_onsite_id = ''; } catch(e) {}
+    }
     // 1차: finance_id 직접 매칭
     if (item.finance_id) {
       try {
