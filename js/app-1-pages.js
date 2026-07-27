@@ -16468,13 +16468,24 @@
       // ★ (2026-07-23) 이미지 우선순위: photo_url(Places 대표 사진) → 도시 이미지 → 그라디언트 플레이스홀더
       //   photo는 <img> 오버레이로 얹어 onerror 시 display:none → 아래 레이어(도시/플레이스홀더)로 폴백
       var img = _placeCityImg(p.city);
-      var pPhoto = _photoUsable(p.photo_url);   // ★ 죽은 구글 URL 제외
+      // ★ (2026-07-27) 사진 우선순위: 내가 넣은 사진 > 위키 사진 > 도시 이미지 > 플레이스홀더
+      //   (죽은 구글 URL은 _photoUsable이 걸러냄)
+      var myImg = (p._id && typeof journeySpotImageGet === 'function') ? journeySpotImageGet(p._id) : null;
+      var pPhoto = myImg || _photoUsable(p.photo_url);
       var photoImg = pPhoto
         ? '<img class="spot-photo" src="' + pPhoto.replace(/"/g, '&quot;') + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
         : '';
+      // 사진 직접 넣기 — 파일 선택 버튼 + (카드 호버 중) Ctrl+V 붙여넣기
+      var imgCtl = '', hoverAttr = '';
+      if (p._id) {
+        imgCtl = '<input type="file" accept="image/*" data-spot-key="' + p._id + '" style="display:none" onchange="journeySpotImageFileSelected(event,\'' + p._id + '\')">' +
+          '<button class="spot-img-btn" title="사진 넣기 (카드에 마우스 올리고 Ctrl+V 도 가능)" onclick="event.stopPropagation();journeySpotImageUpload(\'' + p._id + '\')"><span class="material-symbols-outlined">add_a_photo</span></button>' +
+          (myImg ? '<button class="spot-img-btn is-del" title="내 사진 삭제" onclick="event.stopPropagation();journeySpotImageDelete(\'' + p._id + '\')"><span class="material-symbols-outlined">delete</span></button>' : '');
+        hoverAttr = ' onmouseenter="journeySpotImageSetActive(\'' + p._id + '\')" onmouseleave="journeySpotImageClearActive(\'' + p._id + '\')"';
+      }
       var imgHtml = img
-        ? '<div class="spot-img" style="background-image:url(\'' + img + '\')">' + photoImg + cityBadge + '</div>'
-        : '<div class="spot-img spot-img-ph"><span class="material-symbols-outlined">' + catIco + '</span>' + photoImg + cityBadge + '</div>';
+        ? '<div class="spot-img"' + hoverAttr + ' style="background-image:url(\'' + img + '\')">' + photoImg + cityBadge + imgCtl + '</div>'
+        : '<div class="spot-img spot-img-ph"' + hoverAttr + '><span class="material-symbols-outlined">' + catIco + '</span>' + photoImg + cityBadge + imgCtl + '</div>';
       var chips = '<span class="spot-chip"><span class="material-symbols-outlined">' + catIco + '</span>' + (p.category || '기타') + '</span>';
       if (isReservationItem(p)) chips += '<span class="spot-chip is-reserve">🎫 예약 필수</span>';
       if (p.indoor === true) chips += '<span class="spot-chip is-indoor">🏠 실내</span>';
@@ -16513,6 +16524,8 @@
         '</div>' +
       '</div>';
     }).join('');
+    // ★ (2026-07-27) 다른 기기에서 넣은 스팟 사진을 백그라운드로 당겨옴
+    try { if (typeof journeySpotImageHydrateAll === 'function') journeySpotImageHydrateAll(); } catch(e) {}
   };
 
   // g_pid로 리뷰·영업시간·웹사이트 지연 로드 → 트림해서 g_details로 캐시 (재펼침 시 재호출 없음)
