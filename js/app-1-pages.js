@@ -16144,7 +16144,9 @@
       }
       if (btn) btn.innerHTML = '<span class="material-symbols-outlined">photo_camera</span> ' + (i + 1) + '/' + targets.length + ' 처리 중…';
       var p = targets[i];
-      _wikiPhotoFor(p.title, p.city, function(url) {
+      // ★ (2026-07-27) wiki_title = 현지 원어명 수동 지정. 한글 음차 이름("티어가르텐")은
+      //   ko/en 위키에서 안 잡히므로, 원어명("Tiergarten")이 있으면 그걸 우선 검색한다.
+      _wikiPhotoFor(p.wiki_title || p.title, p.city, function(url) {
         if (url) {
           ok++;
           fbUpdate('journey', p._id, { photo_url: url, photo_src: 'wikipedia' }).then(function() {
@@ -16168,9 +16170,15 @@
     var lat = mLat ? mLat[0].replace(/\s+/g, ' ').trim() : '';
     var mKor = base.replace(/\([^)]*\)/g, '').match(/[가-힣][가-힣\s·]{1,}/);
     var kor = mKor ? mKor[0].trim() : '';
+    // ★ (2026-07-27) 도시 국가에 맞춰 위키 언어 우선순위를 정한다.
+    //   (기존: 독일 스팟도 이탈리아 위키부터 찾고, 한글을 영어 위키에 넣어 헛돌던 문제)
+    var c = String(city || '');
+    var isDe = /독일|Germany|Deutschland|Berlin|Frankfurt|M(ü|u)nchen|Munich|Dresden|Hamburg|K(ö|o)ln/i.test(c);
+    var isIt = /이탈리아|Ital(y|ia)|Roma|Rome|Siena|Verona|Firenze|Florence|Orvieto|Pienza|Montalcino|Montepulciano|Venez|Venice|Pisa|돌로미티|Dolomit/i.test(c);
+    var langs = isDe ? ['de', 'en', 'it'] : (isIt ? ['it', 'en', 'de'] : ['en', 'it', 'de']);
     var tries = [];
-    if (lat) tries.push([lat, 'it'], [lat, 'en'], [lat, 'de']);
-    if (kor) tries.push([kor, 'ko'], [kor, 'en']);
+    if (lat) langs.forEach(function(L) { tries.push([lat, L]); });
+    if (kor) tries.push([kor, 'ko']);   // 한글은 ko 위키에서만 (영어 위키에 한글 검색은 무의미)
     if (!tries.length) { cb(null); return; }
     var i = 0;
     (function next() {
