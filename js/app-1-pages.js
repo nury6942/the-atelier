@@ -4138,6 +4138,12 @@
     var cleaned = name.replace(/\s*\(.*?\)/g, '').trim();
     // "Plitvička / Zagreb" → 첫 번째 이름 사용
     if (cleaned.indexOf('/') >= 0) cleaned = cleaned.split('/')[0].trim();
+    // ★ (2026-08-02) "Frankfurt am Main, 독일" → "Frankfurt am Main".
+    //   국가명이 붙으면 Open-Meteo 지오코딩이 못 찾아서 일출·일몰이 안 붙었다.
+    if (cleaned.indexOf(',') >= 0) {
+      var head = cleaned.split(',')[0].trim();
+      if (head) cleaned = head;
+    }
     // 한글만 남은 경우 원래 이름의 영문 부분 추출
     if (/^[\uAC00-\uD7A3\s]+$/.test(cleaned) && /[a-zA-Z]/.test(name)) {
       cleaned = name.replace(/[\uAC00-\uD7A3\s()]/g, '').trim();
@@ -13989,6 +13995,31 @@
   // 캐시: localStorage atelier_fx_eur_krw {rate, at}, 12시간
   var _fxEurKrwRate = 0;
   var _fxEurKrwCbs = null; // fetch 진행 중 대기 콜백 큐 (null=미진행)
+  // ★ (2026-08-02) 환율 소스 일원화 — api.frankfurter.app이 .dev로 이전(301)되면서
+  //   브라우저 fetch가 리디렉션에서 막혀 ERR_FAILED가 났다. 새 주소로 바꾸고,
+  //   한 곳이 죽어도 환율이 안 끊기도록 무료·키없음 소스 3개를 순서대로 시도한다.
+  var _FX_URLS = [
+    function(cur) { return 'https://api.frankfurter.dev/v1/latest?base=' + cur + '&symbols=KRW'; },
+    function(cur) { return 'https://open.er-api.com/v6/latest/' + cur; },
+    function(cur) { return 'https://api.exchangerate-api.com/v4/latest/' + cur; }
+  ];
+  // 실패해도 reject 하지 않고 null 을 돌려준다 — 호출부가 캐시로 넘어갈 수 있게
+  function fxFetchKRW(currency) {
+    var i = 0;
+    function tryNext() {
+      if (i >= _FX_URLS.length) return Promise.resolve(null);
+      var url = _FX_URLS[i++](currency);
+      return fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var v = d && d.rates && d.rates.KRW;
+          return (typeof v === 'number' && v > 0) ? v : tryNext();
+        })
+        .catch(function() { return tryNext(); });
+    }
+    return tryNext();
+  }
+
   function getFxEurKrw(cb) {
     var CACHE_KEY = 'atelier_fx_eur_krw';
     if (_fxEurKrwRate) { if (cb) cb(_fxEurKrwRate); return; }
@@ -14017,19 +14048,7 @@
       }
       cbs.forEach(function(fn) { if (fn) fn(_fxEurKrwRate || null); });
     };
-    fetch('https://api.frankfurter.app/latest?from=EUR&to=KRW')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        var rate = d && d.rates && d.rates.KRW;
-        if (!rate) throw new Error('no KRW rate');
-        done(rate);
-      })
-      .catch(function() {
-        fetch('https://open.er-api.com/v6/latest/EUR')
-          .then(function(r) { return r.json(); })
-          .then(function(d) { done((d && d.rates && d.rates.KRW) || null); })
-          .catch(function() { done(null); });
-      });
+    fxFetchKRW('EUR').then(done);
   }
   function fmtKrwFromEur(eur) {
     var n = parseFloat(String(eur).replace(/,/g, ''));
@@ -14907,15 +14926,13 @@
       _fxCurrentRate = _fxCache[cacheKey].rate;
       return _fxCurrentRate;
     }
-    try {
-      var res = await fetch('https://api.frankfurter.app/latest?from=' + currency + '&to=KRW');
-      var data = await res.json();
-      if (data.rates && data.rates.KRW) {
-        _fxCurrentRate = data.rates.KRW;
-        _fxCache[cacheKey] = { rate: _fxCurrentRate, ts: Date.now() };
-        return _fxCurrentRate;
-      }
-    } catch(e) { console.warn('Exchange rate fetch failed:', e); }
+    var rate = await fxFetchKRW(currency);
+    if (rate) {
+      _fxCurrentRate = rate;
+      _fxCache[cacheKey] = { rate: rate, ts: Date.now() };
+      return _fxCurrentRate;
+    }
+    console.warn('[fx] ' + currency + ' 환율 소스 3곳 모두 실패');
     _fxCurrentRate = null;
     return null;
   }
