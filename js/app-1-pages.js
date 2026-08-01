@@ -2146,7 +2146,34 @@
     return citiesData.map(function(c){ return c.name; });
   }
 
-  var _cityPhotoCache = {};
+  // ★ (2026-08-02) 이미지 URL 캐시를 localStorage에 영속화 — Places 자동 과금 차단.
+  //   도시 사진·여행 배경이 렌더될 때마다 Places를 다시 불러서 화면만 열어도 돈이 나갔다.
+  //   같은 도시면 사진도 같으니 한 번 받은 URL은 재사용한다.
+  function _lsPhotoCache(lsKey, ttlDays) {
+    var TTL = (ttlDays || 180) * 86400000, timer = null;
+    var mem = (function() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(lsKey) || '{}'), now = Date.now(), out = {};
+        for (var k in raw) if (raw[k] && raw[k].t && (now - raw[k].t) < TTL && raw[k].u) out[k] = raw[k];
+        return out;
+      } catch (e) { return {}; }
+    })();
+    var save = function() {
+      if (timer) return;
+      timer = setTimeout(function() {
+        timer = null;
+        try { localStorage.setItem(lsKey, JSON.stringify(mem)); }
+        catch (e) { try { localStorage.removeItem(lsKey); } catch (_) {} }
+      }, 800);
+    };
+    return {
+      get: function(k) { return mem[k] && mem[k].u ? mem[k].u : null; },
+      set: function(k, url) { if (url) { mem[k] = { u: url, t: Date.now() }; save(); } },
+      size: function() { return Object.keys(mem).length; }
+    };
+  }
+  var _cityPhotoCache = _lsPhotoCache('atelier_city_photo_cache_v1', 180);
+  var _tripBgStore    = _lsPhotoCache('atelier_trip_bg_cache_v1', 180);
 
   // 순서 뱃지: 영어 ordinal 자동 생성
   function ordinalStop(n) {
@@ -2165,19 +2192,22 @@
   }
 
   function loadCityPhotos() {
-    if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
-    var service = new google.maps.places.PlacesService(document.createElement('div'));
+    var service = null;
     citiesData.forEach(function(city, i) {
-      if (_cityPhotoCache[city.name]) {
+      var hit = _cityPhotoCache.get(city.name);
+      if (hit) {
         var el = document.getElementById('city-img-' + i);
-        if (el) { el.src = _cityPhotoCache[city.name]; el.style.display = 'block'; }
+        if (el) { el.src = hit; el.style.display = 'block'; }
         return;
       }
+      // 캐시에 없을 때만 Places를 부른다 (한 도시당 평생 1회)
+      if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+      if (!service) service = new google.maps.places.PlacesService(document.createElement('div'));
       var query = normalizeCityQuery(city.name) + ' city';
       service.findPlaceFromQuery({query: query, fields: ['photos']}, function(results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0] && results[0].photos && results[0].photos.length > 0) {
           var url = results[0].photos[0].getUrl({maxWidth: 400, maxHeight: 250});
-          _cityPhotoCache[city.name] = url;
+          _cityPhotoCache.set(city.name, url);
           var el = document.getElementById('city-img-' + i);
           if (el) { el.src = url; el.style.display = 'block'; }
         }
@@ -13985,12 +14015,21 @@
     if (badgeEl) badgeEl.textContent = currentFinanceTrip !== 'all' ? '선택된 여행' : '다가오는 여행';
     // 배경 이미지 로드
     var bgImg = document.getElementById('finance-trip-bg');
-    if (bgImg && displayTrip && typeof google !== 'undefined' && google.maps && google.maps.places) {
-      var svc = new google.maps.places.PlacesService(document.createElement('div'));
+    // ★ (2026-08-02) 캐시가 없어서 이 화면이 렌더될 때마다 Places를 호출했다 — 과금 직결.
+    if (bgImg && displayTrip) {
       var cityQuery = typeof normalizeCityQuery === 'function' ? normalizeCityQuery(displayTrip.name.split(/[&,]/)[0].trim()) : displayTrip.name;
-      svc.findPlaceFromQuery({query: cityQuery + ' city landmark', fields:['photos']}, function(res,st){
-        if(st==='OK'&&res&&res[0]&&res[0].photos&&res[0].photos[0]){bgImg.src=res[0].photos[0].getUrl({maxWidth:600});bgImg.style.display='block';}
-      });
+      var _bgHit = _tripBgStore.get(cityQuery);
+      if (_bgHit) { bgImg.src = _bgHit; bgImg.style.display = 'block'; }
+      else if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+        var svc = new google.maps.places.PlacesService(document.createElement('div'));
+        svc.findPlaceFromQuery({query: cityQuery + ' city landmark', fields:['photos']}, function(res,st){
+          if(st==='OK'&&res&&res[0]&&res[0].photos&&res[0].photos[0]){
+            var u = res[0].photos[0].getUrl({maxWidth:600});
+            _tripBgStore.set(cityQuery, u);
+            bgImg.src = u; bgImg.style.display = 'block';
+          }
+        });
+      }
     }
 
     renderFinanceDonut();
