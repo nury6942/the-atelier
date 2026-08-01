@@ -9782,7 +9782,40 @@
 
   var _selectedPlaceLat = null;
   var _selectedPlaceLng = null;
-  var _travelTimeCache = {};
+  // ★ (2026-08-02) 이동시간 캐시를 localStorage에 영속화 — Distance Matrix 과금 차단.
+  //   예전엔 메모리 전용이라 Travel 탭을 열 때마다 커넥터 60~80개를 전부 다시 호출했다.
+  //   호출당 약 ₩7 × 150회 = 페이지 한 번 열 때 ₩1,000, 7월 청구 ₩28,692의 정체.
+  //   좌표가 고정이면 이동시간도 고정이므로 한 번 계산한 값은 재사용한다.
+  var _TT_LS_KEY = 'atelier_travel_time_cache_v1';
+  var _TT_TTL_MS = 180 * 86400000;   // 180일
+  var _travelTimeCache = (function() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(_TT_LS_KEY) || '{}');
+      var now = Date.now(), out = {}, n = 0;
+      for (var k in raw) {
+        var v = raw[k];
+        if (v && v.t && (now - v.t) < _TT_TTL_MS && v.d) { out[k] = v; n++; }
+      }
+      if (n) console.log('[travel-cache] ' + n + '건 복원 (구글 호출 절약)');
+      return out;
+    } catch (e) { return {}; }
+  })();
+  var _ttSaveTimer = null;
+  function _ttPersist() {
+    if (_ttSaveTimer) return;                     // 연속 갱신은 한 번만 저장
+    _ttSaveTimer = setTimeout(function() {
+      _ttSaveTimer = null;
+      try { localStorage.setItem(_TT_LS_KEY, JSON.stringify(_travelTimeCache)); }
+      catch (e) { try { localStorage.removeItem(_TT_LS_KEY); } catch (_) {} }  // 용량 초과 시 비우고 재시작
+    }, 800);
+  }
+  // 저장 포맷: { d: result, t: 저장시각 }. 읽을 땐 .d 만 쓴다.
+  function _ttGet(k) { var v = _travelTimeCache[k]; return v && v.d ? v.d : null; }
+  function _ttSet(k, result) { _travelTimeCache[k] = { d: result, t: Date.now() }; _ttPersist(); }
+  window._travelCacheClear = function() {
+    _travelTimeCache = {}; try { localStorage.removeItem(_TT_LS_KEY); } catch (e) {}
+    console.log('[travel-cache] 비웠어 — 다음 렌더에서 다시 계산(과금)됨');
+  };
 
   // ★ (2026-07-25) 그날 렌트카가 있으면 이동시간을 자동차 기준으로.
   //   예전엔 도보 → 실패 시 무조건 대중교통이라, 이탈리아 시골에서 "13시간 8분" 같은
@@ -9802,11 +9835,27 @@
 
   function getTravelTime(originLat, originLng, destLat, destLng, callback, preferDrive) {
     var cacheKey = originLat.toFixed(5) + ',' + originLng.toFixed(5) + '->' + destLat.toFixed(5) + ',' + destLng.toFixed(5) + (preferDrive ? '|d' : '');
-    if (_travelTimeCache[cacheKey]) { callback(_travelTimeCache[cacheKey]); return; }
+    var _hit = _ttGet(cacheKey);
+    if (_hit) { callback(_hit); return; }
     if (typeof google === 'undefined' || !google.maps || !google.maps.DistanceMatrixService) { callback(null); return; }
     var service = new google.maps.DistanceMatrixService();
     var origin = new google.maps.LatLng(originLat, originLng);
     var dest = new google.maps.LatLng(destLat, destLng);
+    // ★ (2026-08-02) 먼 거리는 도보 조회를 건너뛴다 — 호출이 절반으로 줄어든다.
+    //   예전엔 300km 구간에도 WALKING을 먼저 물어보고 다시 DRIVING을 물어 2회씩 썼다.
+    var _dLat = (destLat - originLat) * 111, _dLng = (destLng - originLng) * 111 * Math.cos(originLat * Math.PI / 180);
+    if (Math.sqrt(_dLat * _dLat + _dLng * _dLng) > 5) {
+      service.getDistanceMatrix({
+        origins: [origin], destinations: [dest], travelMode: preferDrive ? 'DRIVING' : 'TRANSIT'
+      }, function(resF, statusF) {
+        if (statusF === 'OK' && resF.rows[0] && resF.rows[0].elements[0] && resF.rows[0].elements[0].status === 'OK') {
+          var fe = resF.rows[0].elements[0];
+          var fr = { mode: preferDrive ? 'drive' : 'transit', duration: fe.duration.text, distance: fe.distance.text };
+          _ttSet(cacheKey, fr); callback(fr);
+        } else { callback(null); }
+      });
+      return;
+    }
     // 먼저 도보 시도
     service.getDistanceMatrix({
       origins: [origin], destinations: [dest], travelMode: 'WALKING'
@@ -9818,7 +9867,7 @@
       if (preferDrive) {
         if (walkMin <= 12) {
           var wres = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
-          _travelTimeCache[cacheKey] = wres; callback(wres); return;
+          _ttSet(cacheKey, wres); callback(wres); return;
         }
         service.getDistanceMatrix({
           origins: [origin], destinations: [dest], travelMode: 'DRIVING'
@@ -9826,10 +9875,10 @@
           if (status3 === 'OK' && res3.rows[0] && res3.rows[0].elements[0] && res3.rows[0].elements[0].status === 'OK') {
             var dEl = res3.rows[0].elements[0];
             var dres = { mode: 'drive', duration: dEl.duration.text, distance: dEl.distance.text };
-            _travelTimeCache[cacheKey] = dres; callback(dres);
+            _ttSet(cacheKey, dres); callback(dres);
           } else {
             var fres = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
-            _travelTimeCache[cacheKey] = fres; callback(fres);
+            _ttSet(cacheKey, fres); callback(fres);
           }
         });
         return;
@@ -9837,7 +9886,7 @@
       // 도보 20분 이내면 도보로
       if (walkMin <= 20) {
         var result = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
-        _travelTimeCache[cacheKey] = result;
+        _ttSet(cacheKey, result);
         callback(result);
       } else {
         // 대중교통으로 재검색
@@ -9847,12 +9896,12 @@
           if (status2 === 'OK' && res2.rows[0] && res2.rows[0].elements[0] && res2.rows[0].elements[0].status === 'OK') {
             var transitEl = res2.rows[0].elements[0];
             var result = { mode: 'transit', duration: transitEl.duration.text, distance: transitEl.distance.text };
-            _travelTimeCache[cacheKey] = result;
+            _ttSet(cacheKey, result);
             callback(result);
           } else {
             // 대중교통 실패 시 도보 결과 사용
             var result = { mode: 'walk', duration: walkEl.duration.text, distance: walkEl.distance.text };
-            _travelTimeCache[cacheKey] = result;
+            _ttSet(cacheKey, result);
             callback(result);
           }
         });
