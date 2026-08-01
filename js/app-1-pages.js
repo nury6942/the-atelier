@@ -9841,10 +9841,97 @@
   }
   // 저장 포맷: { d: result, t: 저장시각 }. 읽을 땐 .d 만 쓴다.
   function _ttGet(k) { var v = _travelTimeCache[k]; return v && v.d ? v.d : null; }
-  function _ttSet(k, result) { _travelTimeCache[k] = { d: result, t: Date.now() }; _ttPersist(); }
+  function _ttSet(k, result) {
+    _travelTimeCache[k] = { d: result, t: Date.now() };
+    _ttPersist();
+    _ttPending[k] = 1; _ttPushSoon();     // 다른 기기도 쓸 수 있게 Firestore로
+  }
+
+  // ★ (2026-08-02) 이동시간 캐시를 Firestore로도 공유 — 기기별 중복 과금 차단.
+  //   localStorage는 브라우저마다 따로라, 맥북에서 채운 캐시가 아이맥·폰에선 텅 비어
+  //   같은 구간을 기기 수만큼 다시 사고 있었다. 좌표가 같으면 이동시간도 같으니
+  //   한 번 산 값은 세 대가 같이 쓴다. localStorage는 즉시 뜨는 1차 캐시로 남긴다.
+  var _TT_COL = 'travel_cache';
+  var _ttPending = {};        // Firestore에 아직 못 올린 키
+  var _ttPushTimer = null;
+  var _ttLoadStarted = false;
+
+  function _ttDb() { try { return (typeof db !== 'undefined' && db) ? db : null; } catch (e) { return null; } }
+  function _ttDocId(k) { return String(k).replace(/\//g, '_').slice(0, 400); }
+
+  function _ttPushSoon() {
+    if (_ttPushTimer) return;
+    _ttPushTimer = setTimeout(function() {
+      _ttPushTimer = null;
+      var d = _ttDb(); if (!d) return;
+      var keys = Object.keys(_ttPending);
+      if (!keys.length) return;
+      var batch = d.batch(), n = 0;
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i], v = _travelTimeCache[k];
+        delete _ttPending[k];
+        if (!v || !v.d) continue;
+        if (n >= 400) { _ttPending[k] = 1; continue; }   // 배치 한도(500) 여유
+        batch.set(d.collection(_TT_COL).doc(_ttDocId(k)), { k: k, d: v.d, t: v.t });
+        n++;
+      }
+      if (!n) return;
+      batch.commit().then(function() {
+        console.log('[travel-cache] Firestore 저장 ' + n + '건 (다른 기기와 공유)');
+        if (Object.keys(_ttPending).length) _ttPushSoon();   // 남은 건 다음 배치로
+      }).catch(function(e) {
+        console.warn('[travel-cache] Firestore 저장 실패 — 이 기기에서만 캐시됨. 보안 규칙에 travel_cache 쓰기 허용이 필요할 수 있어.', e);
+      });
+    }, 1500);
+  }
+
+  function _ttLoadShared() {
+    if (_ttLoadStarted) return;
+    var d = _ttDb(); if (!d) return;
+    _ttLoadStarted = true;
+    d.collection(_TT_COL).get().then(function(snap) {
+      var now = Date.now(), added = 0, seen = {};
+      snap.forEach(function(doc) {
+        var v = doc.data();
+        if (!v || !v.d || !v.t) return;
+        var k = v.k || doc.id;
+        seen[k] = 1;
+        if ((now - v.t) >= _TT_TTL_MS) return;
+        if (!_travelTimeCache[k]) { _travelTimeCache[k] = { d: v.d, t: v.t }; added++; }
+      });
+      // 이 기기에만 있던 건 올려서 다른 기기도 쓰게 한다
+      var up = 0;
+      for (var k in _travelTimeCache) { if (!seen[k]) { _ttPending[k] = 1; up++; } }
+      console.log('[travel-cache] Firestore에서 ' + added + '건 받음, 이 기기 전용 ' + up + '건 올릴 예정');
+      if (up) _ttPushSoon();
+      if (added) {
+        _ttPersist();
+        // 받아온 값으로 이동시간 칩이 채워지도록 한 번만 다시 그린다
+        try { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); } catch (e) {}
+      }
+    }).catch(function(e) {
+      console.warn('[travel-cache] Firestore 읽기 실패 — localStorage 캐시만 사용해.', e);
+    });
+  }
+  setTimeout(_ttLoadShared, 1500);   // db 준비될 시간을 준 뒤 1회
+
   window._travelCacheClear = function() {
     _travelTimeCache = {}; try { localStorage.removeItem(_TT_LS_KEY); } catch (e) {}
-    console.log('[travel-cache] 비웠어 — 다음 렌더에서 다시 계산(과금)됨');
+    _ttLoadStarted = false;
+    console.log('[travel-cache] 이 기기 캐시를 비웠어. Firestore 공유분은 그대로라 다음 로드에서 다시 받아와 (과금 없음).');
+    console.log('[travel-cache] 공유분까지 지우려면 _travelCacheClearAll()');
+  };
+  // 공유 캐시까지 전부 삭제 — 다음 렌더에서 전부 재조회(과금)되므로 정말 필요할 때만
+  window._travelCacheClearAll = function() {
+    var d = _ttDb(); if (!d) { console.warn('[travel-cache] Firestore 연결이 없어'); return; }
+    d.collection(_TT_COL).get().then(function(snap) {
+      var batch = d.batch(), n = 0;
+      snap.forEach(function(doc) { if (n < 400) { batch.delete(doc.ref); n++; } });
+      return batch.commit().then(function() {
+        _travelTimeCache = {}; try { localStorage.removeItem(_TT_LS_KEY); } catch (e) {}
+        console.log('[travel-cache] 공유 캐시 ' + n + '건 삭제. 다음 렌더에서 다시 계산(과금)돼.');
+      });
+    }).catch(function(e) { console.warn('[travel-cache] 전체 삭제 실패', e); });
   };
 
   // ★ (2026-07-25) 그날 렌트카가 있으면 이동시간을 자동차 기준으로.
@@ -9864,6 +9951,7 @@
   }
 
   function getTravelTime(originLat, originLng, destLat, destLng, callback, preferDrive) {
+    _ttLoadShared();   // 아직이면 공유 캐시부터 (자체 1회 가드)
     var cacheKey = originLat.toFixed(5) + ',' + originLng.toFixed(5) + '->' + destLat.toFixed(5) + ',' + destLng.toFixed(5) + (preferDrive ? '|d' : '');
     var _hit = _ttGet(cacheKey);
     if (_hit) { callback(_hit); return; }
