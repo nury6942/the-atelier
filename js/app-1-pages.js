@@ -4177,15 +4177,17 @@
     return null;
   }
 
-  async function fetchWeather(cityName, dateStr) {
-    var banner = document.getElementById('weather-banner');
-    if (!banner) return;
+  // ★ (2026-08-02) 날씨 "조회"를 배너 "그리기"에서 분리 — 4-DAY 뷰도 같은 데이터를 쓴다.
+  //   반환 Promise<w|null>. 캐시(_weatherCache)는 두 뷰가 공유하므로 같은 날은 1번만 부른다.
+  //   Open-Meteo라 무료·키없음 — 호출이 늘어도 과금은 없다.
+  async function getWeatherData(cityName, dateStr) {
+    if (!cityName || !dateStr) return null;
 
     var cacheKey = cityName + ':' + dateStr;
-    if (_weatherCache[cacheKey]) { showWeatherBanner(_weatherCache[cacheKey]); return; }
+    if (_weatherCache[cacheKey]) return _weatherCache[cacheKey];
 
     var geo = await geocodeCity(cityName);
-    if (!geo) { banner.classList.add('hidden'); return; }
+    if (!geo) return null;
 
     try {
       var today = new Date();
@@ -4227,14 +4229,35 @@
           city: geo.name
         };
         _weatherCache[cacheKey] = w;
-        showWeatherBanner(w);
-      } else {
-        banner.classList.add('hidden');
+        return w;
       }
     } catch(e) {
       console.warn('Weather fetch failed:', e);
-      banner.classList.add('hidden');
     }
+    return null;
+  }
+
+  async function fetchWeather(cityName, dateStr) {
+    var banner = document.getElementById('weather-banner');
+    if (!banner) return;
+    var w = await getWeatherData(cityName, dateStr);
+    if (w) showWeatherBanner(w);
+    else banner.classList.add('hidden');
+  }
+
+  // 4-DAY 뷰 컬럼용 미니 날씨 칩 — 좁은 칸이라 아이콘·최고기온·최저/최고·강수만
+  function _wxChipHtml(w) {
+    var wmo = WMO_WEATHER[w.code] || WMO_WEATHER[2];
+    var _RAIN = {51:1,53:1,55:1,56:1,57:1,61:1,63:1,65:1,66:1,67:1,80:1,81:1,82:1,95:1,96:1,99:1};
+    var isRain = !!_RAIN[w.code] || (w.rain !== null && w.rain !== undefined && w.rain >= 60);
+    return '<span class="wk4-wx" style="background:' + wmo.bg + '" title="' + wmo.desc +
+        (w.historical ? ' · 작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '') + '">' +
+      '<i>' + wmo.icon + '</i>' +
+      '<b>' + w.tempMax + '°</b>' +
+      '<u>↑' + w.tempMax + '° ↓' + w.tempMin + '°</u>' +
+      ((w.rain !== null && w.rain !== undefined) ? '<s' + (isRain ? ' class="is-rain"' : '') + '>💧' + w.rain + '%</s>' : '') +
+      (w.historical ? '<em>작년</em>' : '') +
+    '</span>';
   }
 
   function showWeatherBanner(w) {
@@ -4271,6 +4294,7 @@
   // ── 데스크탑 주간 그리드 뷰 (엑셀 스타일, lg 이상) ──
   var currentWeekChunkStart = 0;
   var WEEK_CHUNK_SIZE = 4;
+  var _wk4WxSeq = 0;   // 날씨 비동기 채움용 렌더 일련번호
 
   // ★ (2026-07-22) Stops 카드 클릭 → 해당 도시의 Daily Log 구간으로 점프
   //   (예쁘게 만들어놓고 클릭해도 아무 반응 없던 기능 미완 해소)
@@ -4371,6 +4395,8 @@
     }
 
     var travelQueue = []; // ★ (2026-07-23) 스팟 간 이동시간 커넥터 — 렌더 후 비동기 채움
+    var wxQueue = [];     // ★ (2026-08-02) 컬럼별 날씨 칩 — 렌더 후 비동기 채움
+    var _wxToken = ++_wk4WxSeq;   // 렌더가 겹치면 옛 응답이 새 화면을 덮지 않게
     var nightGaps = getUncoveredNights(); // ★ 숙소 미등록 밤
     var todayStr = _dlvTodayStr(); // ★ (2026-07-23) dlv: 오늘 컬럼 강조 (CURRENT/LIVE)
     grid.innerHTML = chunk.map(function(entry, idx) {
@@ -4618,8 +4644,10 @@
             (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge +
           '</h3>' +
           headerCityHtml +
+          '<div class="wk4-wx-slot" id="wk4-wx-' + idx + '"></div>' +
           '<button class="j-day-route-btn wk4-route" onclick="event.stopPropagation();optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
         '</div>';
+      if (cityName && dateStr) wxQueue.push({ id: 'wk4-wx-' + idx, city: cityName, date: dateStr });
 
       // 빈 일정 메시지
       if (items.length === 0 && !miniPanelHtml) {
@@ -4746,6 +4774,14 @@
         el.innerHTML = '<span class="wk4-travel-chip">' +
           (m ? '<i>' + m[1] + '</i><span>' + m[2] + '</span>' : '<span>' + _tvL1 + '</span>') +
           (_tvL2 ? '<em>' + _tvL2 + '</em>' : '') + '</span>';
+      });
+    });
+    // ★ (2026-08-02) 컬럼별 날씨 칩 — Single 뷰에만 있던 걸 4-DAY에도. 캐시 공유라 대개 즉시.
+    wxQueue.forEach(function(q) {
+      getWeatherData(q.city, q.date).then(function(w) {
+        if (!w || _wxToken !== _wk4WxSeq) return;   // 그 사이 다시 그렸으면 버림
+        var el = document.getElementById(q.id);
+        if (el) el.innerHTML = _wxChipHtml(w);
       });
     });
     bindWeekDnd(); // ★ 드래그 앤 드롭 + 호버→핀 강조 (1회 바인딩)
