@@ -13606,9 +13606,25 @@
   function finSortByPaid(arr) {
     arr.sort(function(a, b) { return finPaidKey(a).localeCompare(finPaidKey(b)); });
   }
+  // ★ (2026-08-03) 아직 결제 안 한 항목이 외화 가격이면 '오늘 환율'로 환산해서 쓴다.
+  //   결제가 끝난 항목은 그때 실제로 낸 원화가 진실이므로 저장값을 그대로 둔다.
+  //   (잔액·합계도 전부 이 함수를 거치게 해서 표시와 계산이 어긋나지 않게 함)
+  function finRowAmt(row, todayStr) {
+    var base = parseFloat(row && row[4]) || 0;
+    if (!row) return base;
+    var fx = parseFloat(row.fxAmount) || 0;
+    if (!fx) return base;
+    if (!finIsPending(row, todayStr || finTodayStr())) return base;  // 결제 완료 → 고정
+    var rate = (row.fxCurrency === 'EUR') ? _fxEurKrwRate : 0;
+    if (!rate) return base;                                          // 환율 미로드 → 저장값 폴백
+    return Math.round(fx * rate);
+  }
   function finAttachRowMeta(row, d) {
     row.paidDate = d.paid_date || '';
     row.unpaid = d.unpaid === true;
+    // 외화 원가 (예: €529.65) — 있으면 예정 상태일 때 오늘 환율로 환산
+    row.fxAmount = parseFloat(d.fx_amount) || 0;
+    row.fxCurrency = d.fx_currency || '';
     row.journeyId = d.journey_id || '';
     var j = row.journeyId ? financeJourneyPayMap[row.journeyId] : null;
     row.jPayDate = (j && j.payment_date) ? j.payment_date : '';
@@ -13712,10 +13728,18 @@
     document.getElementById('finance-empty').style.display = financeFiltered.length===0?'flex':'none';
   }
 
+  var _finFxWarmed = false;
   function renderFinanceTable() {
     var tbody = document.getElementById('finance-tbody');
     tbody.innerHTML = '';
     var todayStr = finTodayStr();
+    // ★ (2026-08-03) 외화 원가가 붙은 예정 행이 있는데 환율이 아직 없으면,
+    //   환율을 받아온 뒤 한 번 다시 그린다 (금액·잔액이 오늘 환율로 갱신되게)
+    if (!_finFxWarmed && !_fxEurKrwRate &&
+        financeFiltered.some(function(r){ return r.fxAmount && finIsPending(r, todayStr); })) {
+      _finFxWarmed = true;
+      getFxEurKrw(function(){ try { renderFinanceTable(); updateFinanceStats(); } catch(e) {} });
+    }
     // 잔액: 결제일(paid_date||date) 오름차순 누적, 예정(미결제·미래) 행은 제외
     var indexed = financeFiltered.map(function(row, i){ return {row:row, origIdx:i}; });
     indexed.sort(function(a,b){
@@ -13726,7 +13750,7 @@
     var running = 0;
     indexed.forEach(function(item){
       if (finIsPending(item.row, todayStr)) return;
-      var a = parseFloat(item.row[4])||0;
+      var a = finRowAmt(item.row, todayStr);
       if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
       balMap.set(item.row, running);
     });
@@ -13735,7 +13759,7 @@
     var projMap = new Map();
     indexed.forEach(function(item){
       if (!finIsPending(item.row, todayStr)) return;
-      var a = parseFloat(item.row[4])||0;
+      var a = finRowAmt(item.row, todayStr);
       if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
       projMap.set(item.row, running);
     });
@@ -13777,7 +13801,7 @@
       var cat = row[3]||'기타';
       var icon = FIN_CAT_ICONS[cat]||'more_horiz';
       var chipBg = FIN_CAT_BG[cat]||'bg-slate-50 text-slate-600 border-slate-200';
-      var amt = parseFloat(row[4])||0;
+      var amt = finRowAmt(row, todayStr);
       var isDeposit = cat === '입금';
       var isPending = finIsPending(row, todayStr);
       if (isPending) pendingCount++;
@@ -13798,6 +13822,11 @@
         var krwStored = parseFloat(row[6]) || 0;
         var approx = krwStored ? '≈ ₩' + Math.round(krwStored).toLocaleString('ko-KR') : fmtKrwFromEur(amt);
         if (approx) krwNote = '<span class="fin-desc-sub">' + approx + '</span>';
+      }
+      // ★ (2026-08-03) 외화 원가가 붙은 예정 행 — 오늘 환율로 환산됐음을 밝혀준다
+      if (!isEur && row.fxAmount && isPending && row.fxCurrency === 'EUR' && _fxEurKrwRate) {
+        krwNote = '<span class="fin-desc-sub" title="아직 결제 전이라 오늘 환율로 계산했어요. 결제 완료로 바꾸면 그 금액으로 고정돼요.">€' +
+          row.fxAmount.toLocaleString('ko-KR') + ' × ' + Math.round(_fxEurKrwRate).toLocaleString('ko-KR') + '</span>';
       }
       var amtHtml = isDeposit
         ? '<span class="fin-amt fin-amt-dep">+' + sym + amt.toLocaleString('ko-KR') + '</span>' + krwNote
@@ -14107,15 +14136,16 @@
 
   function updateFinanceStats() {
     // 출금/입금 합계
-    var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?(parseFloat(r[4])||0):0); }, 0);
-    var depositTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?(parseFloat(r[4])||0):0); }, 0);
+    // ★ (2026-08-03) 예정 행의 외화 가격은 오늘 환율로 환산된 값을 쓴다 (finRowAmt)
+    var fsToday = finTodayStr();
+    var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?finRowAmt(r, fsToday):0); }, 0);
+    var depositTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?finRowAmt(r, fsToday):0); }, 0);
     var balance = depositTotal - expenseTotal;
 
     // 오늘 기준 3-스탯: 현재 잔액(오늘까지 결제분) / 예정 지출 / 최종 예상 잔액
-    var fsToday = finTodayStr();
     var curBal = 0, plannedExp = 0, plannedDep = 0;
     financeFiltered.forEach(function(r) {
-      var a = parseFloat(r[4])||0;
+      var a = finRowAmt(r, fsToday);
       var dep = (r[3]||'기타') === '입금';
       if (finIsPending(r, fsToday)) { if (dep) plannedDep += a; else plannedExp += a; }
       else { curBal += dep ? a : -a; }
@@ -14188,7 +14218,8 @@
     var el = document.getElementById('finance-category-breakdown');
     if (!el) return;
     var cats = {};
-    financeFiltered.forEach(function(r){ if(r[3]==='입금') return; var c=r[3]||'기타'; cats[c]=(cats[c]||0)+(parseFloat(r[4])||0); });
+    var _dToday = finTodayStr();   // ★ 예정 행은 오늘 환율 환산값으로 (상단 합계와 일치시키기)
+    financeFiltered.forEach(function(r){ if(r[3]==='입금') return; var c=r[3]||'기타'; cats[c]=(cats[c]||0)+finRowAmt(r, _dToday); });
     var entries = Object.keys(cats).map(function(k){ return [k, cats[k]]; })
       .filter(function(e){ return e[1] > 0; })
       .sort(function(a,b){ return b[1]-a[1]; });
@@ -14319,7 +14350,7 @@
       if (r[3] === '입금') return;
       var cat = r[3] || '기타';
       var g = _categoryToGroup(cat);
-      var amt = parseFloat(r[4]) || 0;
+      var amt = finRowAmt(r, finTodayStr());   // ★ 예정 행은 오늘 환율 환산값
       spent[g] += amt;
       catSpent[cat] = (catSpent[cat] || 0) + amt;
     });
@@ -20680,7 +20711,7 @@
           if (!r) return;
           if (r[2] !== tripName) return;
           if (r[3] === '입금') return;
-          spent += parseFloat(r[4]) || 0;
+          spent += finRowAmt(r, finTodayStr());   // ★ 예정 행은 오늘 환율 환산값
         });
       } else {
         // 객체 형태 (fbRead 직접 호출)
