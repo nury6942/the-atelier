@@ -4180,13 +4180,30 @@
   // ★ (2026-08-02) 날씨 "조회"를 배너 "그리기"에서 분리 — 4-DAY 뷰도 같은 데이터를 쓴다.
   //   반환 Promise<w|null>. 캐시(_weatherCache)는 두 뷰가 공유하므로 같은 날은 1번만 부른다.
   //   Open-Meteo라 무료·키없음 — 호출이 늘어도 과금은 없다.
+  // trip_cities에 저장해둔 좌표 찾기 (Firestore에 1회 저장돼 있어 호출·과금 없음)
+  function _cityCoordOf(name) {
+    try {
+      var arr = (typeof citiesData !== 'undefined' && citiesData) ? citiesData : [];
+      for (var i = 0; i < arr.length; i++) {
+        var c = arr[i];
+        if (c && c.name === name && typeof c.lat === 'number' && typeof c.lng === 'number') {
+          return { lat: c.lat, lng: c.lng, name: c.name };
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
   async function getWeatherData(cityName, dateStr) {
     if (!cityName || !dateStr) return null;
 
     var cacheKey = cityName + ':' + dateStr;
     if (_weatherCache[cacheKey]) return _weatherCache[cacheKey];
 
-    var geo = await geocodeCity(cityName);
+    // ★ (2026-08-02) 도시에 저장된 좌표를 먼저 쓴다.
+    //   이름으로만 지오코딩하면 "돌로미티"(산맥·한글)는 아예 못 찾아 날씨가 안 떴고,
+    //   "Venezia"는 동명 소도시(볼로냐 근처)가 잡혀 엉뚱한 날씨가 떴다.
+    var geo = _cityCoordOf(cityName) || await geocodeCity(cityName);
     if (!geo) return null;
 
     try {
