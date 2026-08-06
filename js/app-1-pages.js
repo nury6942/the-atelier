@@ -14653,9 +14653,18 @@
         //   왼쪽 「숙소」 예산 카드는 finance 거래를 합산하는데, 여기서 journey.amount를
         //   그대로 쓰면 finance에 없는 숙소가 오른쪽에만 잡혀서 두 숫자가 어긋났다.
         //   finance_id로 연결된 게 있으면 그 금액을, 없으면 journey.amount를 쓰되 미연결로 표시.
+        // ★ (2026-08-06) 두 가지를 더 맞춘다.
+        //   ① 금액은 finRowAmt()로 읽는다. 왼쪽 카드가 그 함수를 쓰는데 여기서 row[4]를
+        //      생짜로 읽으면 외화 미결제 항목(렌트·도시세)에서 환율 재환산분만큼 어긋난다.
+        //   ② finance_onsite_id(현장 결제 도시세)도 합산한다. 앱은 이 필드를 만들고
+        //      지우기까지 하면서 정작 도시별 집계에서 빼먹어, 도시세만큼 항상 벌어졌다.
+        var _todayStr = (typeof finTodayStr === 'function') ? finTodayStr() : '';
+        var _amtOf = function(r){
+          return (typeof finRowAmt === 'function') ? finRowAmt(r, _todayStr) : (parseFloat(r[4]) || 0);
+        };
         var fin = lo.finance_id ? financeData.find(function(r){ return r[7] === lo.finance_id; }) : null;
         if (fin) {
-          totalSpent += parseFloat(fin[4]) || 0;
+          totalSpent += _amtOf(fin);
         } else {
           var amt = parseFloat(String(lo.amount||'').replace(/[^0-9.]/g,''));
           if (!isNaN(amt) && amt > 0) {
@@ -14663,6 +14672,8 @@
             unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
           }
         }
+        var finOn = lo.finance_onsite_id ? financeData.find(function(r){ return r[7] === lo.finance_onsite_id; }) : null;
+        if (finOn) totalSpent += _amtOf(finOn);
       });
       var fmt = function(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
       if (minDate && maxDate) dateRange = fmt(minDate) + ' ~ ' + fmt(maxDate);
