@@ -2738,9 +2738,11 @@
     selectTrip(tripId).then(function(){ if (typeof window.showTravelFlight === 'function') window.showTravelFlight(); });
   }
 
+  var _journeyFresh = false;   // Firestore 최신본이 도착했는지 (일출/일몰 자동추가 가드)
   async function selectTrip(tripId) {
     currentTripId = tripId;
     currentDayIndex = 0;
+    _journeyFresh = false;
     // 탭 간 컨텍스트 유지 — 마지막 선택 trip ID를 LS에 저장
     try { if (tripId) localStorage.setItem('atelier_current_trip_id', tripId); } catch(e) {}
     renderTripTabs();
@@ -2794,6 +2796,7 @@
     // ★ 2단계: 신선한 데이터 fetch (병렬)
     const [journeyDocs, citiesDocs] = await Promise.all([fbRead('journey'), fbRead('trip_cities')]);
     journeyData = journeyDocs.filter(function(d){ return d.trip_id === tripId; });
+    _journeyFresh = true;
     citiesData = citiesDocs.filter(function(d){ return d.trip_id === tripId; });
     var cityCache2 = getCityCache(tripId);
     if (cityCache2) {
@@ -4030,9 +4033,24 @@
 
   // ===== SUNRISE/SUNSET 자동 추가 =====
   var _sunAttempt = {};
+  // ★ (2026-08-19) 일출·일몰이 하루에 7개까지 쌓이던 버그 수정
+  //   원인 ①: selectTrip 1단계에서 localStorage 캐시로 먼저 그릴 때 journeyData가
+  //           비어 있어 "아직 없네" 판정 → 방문할 때마다 한 개씩 추가됨
+  //   원인 ②: 중복 방지 키에 도시명이 들어 있어, 도시명이 바뀌면(일정 재편) 또 추가됨
+  //   → 신선한 데이터가 온 뒤에만 돌리고, 키는 날짜만, 저장 직전 한 번 더 확인
+  function _sunHas(dateStr, which) {
+    return (journeyData || []).some(function(d){
+      if (d.type!=='일정' || d.date!==dateStr || d.trip_id!==currentTripId) return false;
+      var t = (d.title||'').toUpperCase();
+      return d.auto_sun===which ||
+        (which==='sunrise' ? (t.indexOf('SUNRISE')>=0 || (d.title||'').indexOf('일출')>=0)
+                           : (t.indexOf('SUNSET')>=0  || (d.title||'').indexOf('일몰')>=0));
+    });
+  }
   async function autoAddSunriseSunset(cityName, dateStr) {
     if (!cityName || !dateStr || !currentTripId) return;
-    var key = currentTripId + ':' + cityName + ':' + dateStr;
+    if (!_journeyFresh) return;                       // 캐시 렌더 단계에서는 건너뜀
+    var key = currentTripId + ':' + dateStr;          // 도시명은 키에서 뺀다
     if (_sunAttempt[key]) return;
     _sunAttempt[key] = true;
 
@@ -4081,6 +4099,10 @@
       var srTime = (data.daily.sunrise[0].split('T')[1] || '').substring(0,5);
       var ssTime = (data.daily.sunset[0].split('T')[1] || '').substring(0,5);
       console.log('[sun]', cityName, dateStr, '→', srTime, '/', ssTime);
+
+      // fetch 사이에 신선한 데이터가 도착했을 수 있으니 저장 직전 한 번 더
+      hasSunrise = hasSunrise || _sunHas(dateStr, 'sunrise');
+      hasSunset  = hasSunset  || _sunHas(dateStr, 'sunset');
 
       var added = false;
       if (!hasSunrise && srTime) {
