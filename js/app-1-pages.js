@@ -10743,6 +10743,8 @@
       amount: String(item.amount||'').replace(/,/g,''),
       currency: 'KRW',
       journey_id: item._id,
+      // 카드 금액이 곧 실제 결제액 — 장부가 외화×오늘환율로 되돌아가지 않게 끈다
+      fx_amount: '', fx_currency: '',
     };
     // 결제일이 명시된 경우에만 paid_date 동기화 (빈 값으로 덮어쓰지 않음)
     if (item.payment_date) obj.paid_date = item.payment_date;
@@ -13643,9 +13645,39 @@
     row.fxAmount = parseFloat(d.fx_amount) || 0;
     row.fxCurrency = d.fx_currency || '';
     row.journeyId = d.journey_id || '';
+    row.finKind = d.kind || '';                 // 'onsite' 면 journey 의 onsite_amount 쪽
     var j = row.journeyId ? financeJourneyPayMap[row.journeyId] : null;
     row.jPayDate = (j && j.payment_date) ? j.payment_date : '';
     return row;
+  }
+
+  // ── 장부에서 금액을 고치면 연결된 여행 카드에도 그대로 반영 (양방향 동기화)
+  //    직접 입력한 값 = 실제 카드 매출전표 금액이므로, 외화 자동환산은 여기서 멈춘다.
+  //    (안 그러면 카드가 €×오늘환율로 계속 되돌아가서 양쪽이 또 어긋남)
+  async function _financeAmtToJourney(row, amt) {
+    if (!row || !row.journeyId) return;
+    if (row[3] === '입금') return;              // 환불·입금 행은 카드 금액이 아님
+    if (!(parseFloat(amt) > 0)) return;
+    var isOnsite = (row.finKind === 'onsite');
+    var field = isOnsite ? 'onsite_amount' : 'amount';
+    try {
+      if (row.fxAmount) {
+        await fbUpdate('finance', row[7], { fx_amount: '', fx_currency: '' });
+        row.fxAmount = 0; row.fxCurrency = '';
+      }
+      var patch = {}; patch[field] = String(amt);
+      await fbUpdate('journey', row.journeyId, patch);
+      // 화면에 떠 있는 사본 + 스냅샷 캐시도 같이 (새로고침 전까지 옛 금액이 보이지 않게)
+      var j2 = (journeyData || []).find(function(x){ return x._id === row.journeyId; });
+      if (j2) j2[field] = String(amt);
+      try {
+        var raw = localStorage.getItem('atelier_snapshot_journey');
+        var snap = raw ? JSON.parse(raw) : null;
+        var t = (snap && snap.data || []).find(function(x){ return x._id === row.journeyId; });
+        if (t) { t[field] = String(amt); localStorage.setItem('atelier_snapshot_journey', JSON.stringify(snap)); }
+      } catch(e) {}
+      console.log('[장부→카드] ' + row.journeyId + '.' + field + ' = ' + amt);
+    } catch(e) { console.warn('[장부→카드] 동기화 실패:', e); }
   }
 
   async function loadFinance() {
@@ -13936,6 +13968,7 @@
     try {
       await fbUpdate('finance', id, { date:date, description:desc, category:cat, amount:String(amt) });
       row[0]=date; row[1]=desc; row[3]=cat; row[4]=String(amt);
+      await _financeAmtToJourney(row, amt);
       buildFinanceTripFilters(); filterFinanceByTrip(currentFinanceTrip);
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 수정 완료');
     } catch(e) { console.error('[Finance Edit] Update error:', e); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message); }
@@ -15118,9 +15151,16 @@
     ];
     try {
       if(editingFinanceIndex!==null){
-        const id = financeData[editingFinanceIndex][7];
+        const prev = financeData[editingFinanceIndex];
+        const id = prev[7];
         await fbUpdate('finance', id, rowToObj('finance', row));
-        financeData[editingFinanceIndex]=row.concat([id]);
+        var nrow = row.concat([id]);
+        // 결제일·연결 메타 유지 (안 그러면 카드 연결이 끊겨 보임)
+        nrow.paidDate = prev.paidDate; nrow.unpaid = prev.unpaid;
+        nrow.journeyId = prev.journeyId; nrow.jPayDate = prev.jPayDate;
+        nrow.finKind = prev.finKind; nrow.fxAmount = prev.fxAmount; nrow.fxCurrency = prev.fxCurrency;
+        financeData[editingFinanceIndex]=nrow;
+        await _financeAmtToJourney(nrow, parseFloat(krwAmount || amount) || 0);
       } else {
         const saved = await fbAdd('finance', rowToObj('finance', row));
         financeData.push(row.concat([saved._id]));
@@ -15250,7 +15290,9 @@
         // 결제일/미결제 메타 유지
         repl.paidDate = row.paidDate; repl.unpaid = row.unpaid;
         repl.journeyId = row.journeyId; repl.jPayDate = row.jPayDate;
+        repl.finKind = row.finKind; repl.fxAmount = row.fxAmount; repl.fxCurrency = row.fxCurrency;
         financeData[idx] = repl;
+        await _financeAmtToJourney(repl, amt);
       } catch(e) { alert('저장 실패'); return; }
     }
     finSortByPaid(financeData);
