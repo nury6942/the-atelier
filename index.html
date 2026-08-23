@@ -5794,6 +5794,36 @@
     .rec-tr-sub a { color:inherit; }
     .rec-tr-conf { font-family:var(--font-num); font-variant-numeric:tabular-nums; font-size:10px; font-weight:600; letter-spacing:0.06em;
       color:#7c3aed; margin:6px 0 0; text-transform:uppercase; }
+    /* ── 철도/버스 티켓 스트립 (2026-08-24) — 출발·도착·플랫폼·좌석을 한눈에 */
+    .rec-rail { border-top:1px solid #eef2f7; margin-top:10px; padding-top:11px; }
+    .rec-rail-leg { display:grid; grid-template-columns:minmax(0,1fr) minmax(78px,1.15fr) minmax(0,1fr);
+      align-items:start; gap:8px; }
+    .rec-rail-end { min-width:0; }
+    .rec-rail-end.is-arr { text-align:right; }
+    .rec-rail-time { font-family:var(--font-num),'Manrope',sans-serif; font-variant-numeric:tabular-nums;
+      font-size:19px; font-weight:800; color:#0f172a; line-height:1.1; letter-spacing:-0.02em; }
+    .rec-rail-stn { font-size:11.5px; font-weight:700; color:#334155; margin-top:3px; line-height:1.3;
+      overflow-wrap:anywhere; }
+    .rec-rail-plat { display:inline-block; margin-top:4px; padding:1.5px 6px; border-radius:5px;
+      background:#f1f5f9; color:#475569; font-family:var(--font-num),'Manrope',sans-serif;
+      font-variant-numeric:tabular-nums; font-size:10px; font-weight:700; letter-spacing:0.04em; }
+    .rec-rail-mid { padding-top:4px; text-align:center; }
+    .rec-rail-dur { font-family:var(--font-num),'Manrope',sans-serif; font-variant-numeric:tabular-nums;
+      font-size:10.5px; font-weight:700; color:#7c3aed; letter-spacing:0.04em; }
+    .rec-rail-track { display:flex; align-items:center; gap:0; margin-top:4px; }
+    .rec-rail-track .dot { width:6px; height:6px; border-radius:50%; background:#7c3aed; flex-shrink:0; }
+    .rec-rail-track .bar { flex:1; height:2px; background:linear-gradient(90deg,#ddd6fe,#c4b5fd); }
+    .rec-rail-track .node { width:5px; height:5px; border-radius:50%; background:#fff;
+      border:2px solid #a78bfa; flex-shrink:0; }
+    .rec-rail-xfer { font-size:10px; color:#64748b; margin-top:5px; line-height:1.35; overflow-wrap:anywhere; }
+    .rec-rail-seat { display:flex; align-items:center; gap:6px; margin-top:11px; padding:7px 10px;
+      background:#faf5ff; border:1px solid #ede9fe; border-radius:9px;
+      font-size:11.5px; font-weight:600; color:#5b21b6; overflow-wrap:anywhere; }
+    .rec-rail-seat .material-symbols-outlined { font-size:15px; flex-shrink:0; }
+    @media (max-width:420px) {
+      .rec-rail-time { font-size:17px; }
+      .rec-rail-leg { grid-template-columns:minmax(0,1fr) minmax(62px,.9fr) minmax(0,1fr); }
+    }
     .rec-tr-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:1px solid #eef2f7; padding-top:9px; }
     .rec-tr-foot { display:flex; justify-content:space-between; align-items:center; gap:8px;
       border-top:1px solid #eef2f7; padding-top:9px; }

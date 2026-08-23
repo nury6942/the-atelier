@@ -5719,12 +5719,23 @@
   //   예산 장부(finIsPending)는 결제일 기준인데 Records 카드는 payment_status 필드만 읽어서
   //   같은 건이 "결제 완료"/"결제 예정"으로 다르게 보이던 불일치를 없앤다.
   //   저장 필드는 건드리지 않고 표시할 때만 판정 (숙소·항공·교통·렌트 카드 공용).
+  // ★ (2026-08-24) 로컬(한국시간) 기준 오늘.
+  //   toISOString()은 UTC라 한국 00:00~09:00 사이엔 날짜가 하루 밀린다.
+  //   그래서 오늘 결제한 항목이 "결제 예정 (오늘)"으로 뜨는 버그가 있었다.
+  function _todayLocalStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+  }
+  window._todayLocalStr = _todayLocalStr;
+
   function _trvPayStatus(item) {
     if (!item) return '';
     if (item.unpaid === true) return '현장 결제';
     var pd = String(item.payment_date || '').trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(pd)) {
-      var today = new Date().toISOString().split('T')[0];
+      var today = _todayLocalStr();
       if (pd <= today) return '결제 완료';
       return '결제 예정 (' + pd.substring(5, 7) + '/' + pd.substring(8, 10) + ')';
     }
@@ -5875,6 +5886,50 @@
     return rows ? '<ul class="rec-note-list">' + rows + '</ul>' : '';
   }
 
+  // ── 철도·버스 티켓 스트립 (2026-08-24)
+  //   arrive(도착시각)가 있으면 출발/도착/플랫폼/좌석을 티켓처럼 펼쳐 보여준다.
+  //   없으면 빈 문자열 → 기존 카드 모양 그대로.
+  function _railStripHtml(item) {
+    if (!item || !item.arrive || !item.time) return '';
+    var esc = function(v){ return String(v == null ? '' : v).replace(/[<>"']/g, ''); };
+    var short = function(c){ return String(c || '').split(',')[0].trim(); };
+    var from = short(item.city) || '출발';
+    var to = short(item.drop_city) || '도착';
+
+    // 소요시간 — 자정 넘어가면 +24h
+    var dur = '';
+    var t2m = function(t){ var m = /^(\d{1,2}):(\d{2})$/.exec(String(t||'')); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+    var s0 = t2m(item.time), s1 = t2m(item.arrive);
+    if (s0 != null && s1 != null) {
+      var mins = s1 - s0; if (mins < 0) mins += 1440;
+      dur = (mins >= 60 ? Math.floor(mins / 60) + 'h ' : '') + (mins % 60) + 'm';
+    }
+
+    var hasXfer = !!item.transfer;
+    return '<div class="rec-rail">' +
+      '<div class="rec-rail-leg">' +
+        '<div class="rec-rail-end">' +
+          '<div class="rec-rail-time">' + esc(item.time) + '</div>' +
+          '<div class="rec-rail-stn">' + esc(from) + '</div>' +
+          (item.dep_platform ? '<span class="rec-rail-plat">' + esc(item.dep_platform) + '</span>' : '') +
+        '</div>' +
+        '<div class="rec-rail-mid">' +
+          (dur ? '<div class="rec-rail-dur">' + dur + '</div>' : '') +
+          '<div class="rec-rail-track"><span class="dot"></span><span class="bar"></span>' +
+            (hasXfer ? '<span class="node"></span><span class="bar"></span>' : '') +
+          '<span class="dot"></span></div>' +
+        '</div>' +
+        '<div class="rec-rail-end is-arr">' +
+          '<div class="rec-rail-time">' + esc(item.arrive) + '</div>' +
+          '<div class="rec-rail-stn">' + esc(to) + '</div>' +
+          (item.arr_platform ? '<span class="rec-rail-plat">' + esc(item.arr_platform) + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      (hasXfer ? '<p class="rec-rail-xfer">환승 · ' + esc(item.transfer) + '</p>' : '') +
+      (item.seat ? '<div class="rec-rail-seat"><span class="material-symbols-outlined">airline_seat_recline_normal</span>' + esc(item.seat) + '</div>' : '') +
+    '</div>';
+  }
+
   function renderTransportCard(item, deleteBtn) {
     var status = item.status||'';
     var statusVar = status==='확정' ? 'j-status-primary' : status==='환불 가능' ? 'j-status-success' : 'j-status-warn';
@@ -5910,11 +5965,11 @@
             }
             return _recNoteList(raw);
           })() +
-          '<p class="rec-tr-sub">' + (item.date ? shortDate(item.date) : '—') + ' · ' + (item.time || '—') + (item.arrive ? ' - ' + item.arrive : '') + '</p>' +
-          (item.seat ? '<p class="rec-tr-conf">Seat: ' + item.seat + '</p>' : '') +
+          '<p class="rec-tr-sub">' + (item.date ? shortDate(item.date) : '—') + (item.arrive ? '' : ' · ' + (item.time || '—')) + '</p>' +
         '</div>' +
         actionsSt +
       '</div>' +
+      _railStripHtml(item) +
       '<div class="rec-tr-foot">' +
         '<p class="rec-tr-price">' + _trvAmtHtml(item.amount) + '</p>' +
         // 결제 상태 — payment_date 기준 파생 (예산 장부와 동일 규칙)
@@ -13632,7 +13687,7 @@
   function finHasExplicitPaid(row) {
     return !!(row && (row.paidDate || row.jPayDate));
   }
-  function finTodayStr() { return new Date().toISOString().split('T')[0]; }
+  function finTodayStr() { return _todayLocalStr(); }   // ★ UTC → 로컬(한국시간) (2026-08-24)
   // 예정(미결제) 판정: unpaid 플래그 or 결제일이 미래
   function finIsPending(row, todayStr) {
     if (!row) return false;
