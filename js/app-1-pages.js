@@ -24057,6 +24057,8 @@
     if (ewBusyWrap) ewBusyWrap.style.display = w.busy ? 'flex' : 'none';
     var ewRevChk = document.getElementById('ew-reverse');
     if (ewRevChk) ewRevChk.checked = !!w.reverse;
+    var ewPubOnlyChk = document.getElementById('ew-puback');
+    if (ewPubOnlyChk) ewPubOnlyChk.checked = !!w.publishOnly;
     var ewRevSyn = document.getElementById('ew-reverse-syn');
     if (ewRevSyn) ewRevSyn.checked = !!w.reverseSyn;
     var ewRevSynWrap = document.getElementById('ew-reverse-syn-wrap');
@@ -24255,6 +24257,58 @@
     }
   }
 
+  // ★ (2026-08-07) 연재 일정만 다시 깔기 — 시놉·초고·퇴고 캘린더는 손대지 않는다.
+  //   화별로 직접 옮겨둔 집필 일정을 지키면서 연재 시작일만 바꾸고 싶을 때 쓴다.
+  //   (기본 저장은 autoAddScheduleToCalendar가 통째로 재생성해 수동 편집이 사라진다)
+  async function reschedulePublishingOnly(work) {
+    var eps = work.total_episodes || 20;
+    var cat = '글쓰기';
+    var color = getSeriesColor(work.series_name) || CAT_COLOR[cat] || 'sky';
+    var noteBase = 'work_id:' + work.id + '|series_id:' + work.series_id;
+    var wid = 'work_id:' + work.id;
+    if (!work.publish_start) { if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 연재 시작일을 먼저 넣어주세요'); return 0; }
+
+    // 1) 이 작품의 '연재' 일정만 삭제 (phase:publishing) — 시놉/초고/퇴고는 그대로 둔다
+    var rm = [];
+    plannerData.forEach(function(r, i) {
+      if (!r || (r[4] || '').indexOf(wid) < 0) return;
+      if ((r[4] || '').indexOf('phase:publishing') >= 0) rm.push(i);
+    });
+    rm.sort(function(a, b) { return b - a; });
+    for (var i = 0; i < rm.length; i++) {
+      var row = plannerData[rm[i]], id = row && row[7];
+      if (id) { try { await fbDelete('planner', id); } catch (e) {} }
+      plannerData.splice(rm[i], 1);
+    }
+
+    // 2) 새 연재 시작일 기준 주 1회로 재생성
+    var events = [];
+    var pCur = new Date(work.publish_start + 'T00:00:00');
+    var pubEnd = new Date(pCur.getTime());
+    for (var ep = 1; ep <= eps; ep++) {
+      events.push([_fmtDate(pCur), ep + '화 (' + (work.series_name || '') + ')', cat, color,
+        noteBase + '|phase:publishing', '', '0']);
+      pubEnd = new Date(pCur.getTime());
+      pCur.setDate(pCur.getDate() + 7);
+    }
+    var added = 0;
+    for (var k = 0; k < events.length; k++) {
+      var e2 = events[k];
+      if (plannerData.find(function(r) { return r && r[0] === e2[0] && r[1] === e2[1]; })) continue;
+      try { var sv = await fbAdd('planner', rowToObj('planner', e2)); plannerData.push(e2.concat([sv._id])); added++; }
+      catch (err) { console.error('[pubOnly] save', err); }
+    }
+    work.publish_end = _fmtDate(pubEnd);
+
+    renderCalendar();
+    try {
+      if (typeof syncCalToMatrix === 'function') syncCalToMatrix(parseInt((work.publish_start || '').slice(0, 4)) || _matrixYear);
+      if (typeof renderIncomeMatrix === 'function') renderIncomeMatrix();
+    } catch (e) {}
+    console.log('[pubOnly]', work.title, '연재만 재배치 — 삭제', rm.length, '추가', added, '·', work.publish_start, '~', work.publish_end);
+    return added;
+  }
+
   async function saveEditWork() {
     if (_workSaving || !_editWorkId) return;
     var w = getWorkById(_editWorkId);
@@ -24278,6 +24332,9 @@
     var _fromEpVal = parseInt(ewBusyFromEl && ewBusyFromEl.value) || 1;
     var ewRevChk2 = document.getElementById('ew-reverse');
     w.reverse = ewRevChk2 ? ewRevChk2.checked : false;
+    var ewPubOnly = document.getElementById('ew-puback');
+    w.publishOnly = ewPubOnly ? ewPubOnly.checked : false;
+    if (w.publishOnly) { w.reverse = false; w.busy = false; w.nomad = false; }  // 연재만 변경이 우선
     var ewRevSyn2 = document.getElementById('ew-reverse-syn');
     w.reverseSyn = w.reverse && !!(ewRevSyn2 && ewRevSyn2.checked);  // 시놉까지 역산 배치
     if (w.reverse) w.busy = false; // 역산과 비지는 상호배타
@@ -24295,7 +24352,11 @@
       w.publish_end = _fmtDate(pe);
     }
     w.updated_at = new Date().toISOString();
-    if (w.reverse && w.status === 'confirmed') {
+    if (w.publishOnly && w.status === 'confirmed') {
+      // 연재만 변경: 시놉·초고·퇴고 캘린더는 그대로, 연재 일정만 재생성
+      await reschedulePublishingOnly(w);
+      console.log('[EditWork] 연재만 재배치, pub', w.publish_start);
+    } else if (w.reverse && w.status === 'confirmed') {
       // 역산 모드: 연재일 고정 → 초고·퇴고 자동 밀도로 역산 재배치 (N화부터 유지)
       await rescheduleReverse(w, w.busyFromEp);
       console.log('[EditWork] reverse reschedule, pub', w.publish_start, 'fromEp', w.busyFromEp);
