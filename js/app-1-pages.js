@@ -5995,6 +5995,9 @@
     var titleMain2 = String(item.title || '—').replace(/\s*\([^)]*\)/, '').trim() || '—';
     var vendorBadge2 = vendorM2 ? '<span class="rec-tr-vendor">' + vendorM2[1] + '</span>' : '';
     return '<div class="rec-tr-card">' +
+      // 날짜를 카드 최상단 헤더로 (제목보다 위) — 요일이 먼저 눈에 들어와야 해서
+      '<div class="rec-tr-head">' + _recDateHtml(item.date) +
+        (item.arrive ? '' : '<span class="rec-tr-t">' + (item.time || '—') + '</span>') + '</div>' +
       '<div class="rec-tr-top">' +
         _recIcoHtml(icon, (item.title || '') + ' ' + (item.description || '')) +
         '<div class="rec-tr-info">' +
