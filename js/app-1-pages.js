@@ -5925,9 +5925,53 @@
           (item.arr_platform ? '<span class="rec-rail-plat">' + esc(item.arr_platform) + '</span>' : '') +
         '</div>' +
       '</div>' +
-      (hasXfer ? '<p class="rec-rail-xfer">환승 · ' + esc(item.transfer) + '</p>' : '') +
-      (item.seat ? '<div class="rec-rail-seat"><span class="material-symbols-outlined">airline_seat_recline_normal</span>' + esc(item.seat) + '</div>' : '') +
+      _legsHtml(item, esc) +
     '</div>';
+  }
+
+  // 구간 타임라인 — item.legs(JSON 문자열)가 있으면 환승·플랫폼까지 전부 펼친다.
+  //   [{train,dur,seat,from:{t,stn,pl},to:{t,stn,pl}}, {wait:'24분', note:'...'}, ...]
+  //   없으면 기존 한 줄 환승 메모 + 좌석 박스로 폴백.
+  function _legsHtml(item, esc) {
+    var legs = null;
+    try { legs = item.legs ? (typeof item.legs === 'string' ? JSON.parse(item.legs) : item.legs) : null; } catch (e) { legs = null; }
+    if (!legs || !legs.length) {
+      return (item.transfer ? '<p class="rec-rail-xfer">환승 · ' + esc(item.transfer) + '</p>' : '') +
+        (item.seat ? '<div class="rec-rail-seat"><span class="material-symbols-outlined">airline_seat_recline_normal</span>' + esc(item.seat) + '</div>' : '');
+    }
+    var rows = [];
+    legs.forEach(function(L) {
+      if (L.wait) { rows.push({ k: 'wait', wait: L.wait, note: L.note }); return; }
+      if (!L.from || !L.to) return;
+      rows.push({ k: 'stop', p: L.from });
+      rows.push({ k: 'seg', train: L.train, dur: L.dur, seat: L.seat });
+      rows.push({ k: 'stop', p: L.to });
+    });
+    if (!rows.length) return '';
+    var stopIdx = [];
+    rows.forEach(function(r, i) { if (r.k === 'stop') stopIdx.push(i); });
+    var first = stopIdx[0], last = stopIdx[stopIdx.length - 1];
+
+    var html = rows.map(function(r, i) {
+      if (r.k === 'stop') {
+        var mid = (i !== first && i !== last);
+        return '<div class="rec-leg-stop' + (mid ? ' is-mid' : '') + '">' +
+          '<span class="rec-leg-t">' + esc(r.p.t) + '</span>' +
+          '<span class="rec-leg-node"></span>' +
+          '<span class="rec-leg-stn">' + esc(r.p.stn) + '</span>' +
+          (r.p.pl ? '<span class="rec-leg-pl">' + esc(r.p.pl) + '</span>' : '<span></span>') +
+        '</div>';
+      }
+      if (r.k === 'wait') {
+        return '<div class="rec-leg-seg is-wait"><span></span><span class="rec-leg-bar"></span>' +
+          '<span class="rec-leg-txt">환승 대기 ' + esc(r.wait) + (r.note ? ' · ' + esc(r.note) : '') + '</span></div>';
+      }
+      return '<div class="rec-leg-seg"><span></span><span class="rec-leg-bar"></span>' +
+        '<span class="rec-leg-txt"><b>' + esc(r.train || '') + '</b>' + (r.dur ? ' · ' + esc(r.dur) : '') +
+        (r.seat ? '<span class="rec-leg-seat">💺 ' + esc(r.seat) + '</span>' : '') + '</span></div>';
+    }).join('');
+
+    return '<div class="rec-legs">' + html + '</div>';
   }
 
   function renderTransportCard(item, deleteBtn) {
