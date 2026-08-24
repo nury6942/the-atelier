@@ -5753,8 +5753,8 @@
   window._trvPayKind = _trvPayKind;
 
   function renderRentalCard(item, actionBtns) {
-    var pickup = (item.date ? shortDate(item.date) : '—') + (item.time ? ' ' + item.time : '');
-    var drop = (item.checkout_date ? shortDate(item.checkout_date) : '—') + (item.checkout ? ' ' + item.checkout : '');
+    var pickup = _recDateHtml(item.date, 'is-sm') + (item.time ? '<span class="rec-lg-t">' + item.time + '</span>' : '');
+    var drop = _recDateHtml(item.checkout_date, 'is-sm') + (item.checkout ? '<span class="rec-lg-t">' + item.checkout + '</span>' : '');
     var price = _trvAmtHtml(item.amount);
     var shortCity = function(c){ return (c||'').split(',')[0].trim(); };
     var pickupCity = shortCity(item.city);
@@ -6009,7 +6009,8 @@
             }
             return _recNoteList(raw);
           })() +
-          '<p class="rec-tr-sub">' + (item.date ? shortDate(item.date) : '—') + (item.arrive ? '' : ' · ' + (item.time || '—')) + '</p>' +
+          '<p class="rec-tr-dateline">' + _recDateHtml(item.date) +
+            (item.arrive ? '' : '<span class="rec-tr-t">' + (item.time || '—') + '</span>') + '</p>' +
         '</div>' +
         actionsSt +
       '</div>' +
@@ -6093,6 +6094,22 @@
     if (!d) return '—';
     return d.replace(/^20(\d{2})-/, '$1/').replace(/-/g, '/');
   }
+
+  // ★ (2026-08-24) 카드 공통 날짜 표기 — 날짜 크게 + 요일 칩.
+  //   요일이 개관·휴무를 좌우하는데 11px 회색이라 안 보인다는 피드백.
+  var _DOW_KO = ['일','월','화','수','목','금','토'];
+  function _recDateHtml(v, cls) {
+    var wrap = function(inner){ return '<span class="rec-date' + (cls ? ' ' + cls : '') + '">' + inner + '</span>'; };
+    var t = String(v == null ? '' : v).trim();
+    if (!t) return wrap('—');
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+    if (!m) { var m2 = /^(\d{2})\/(\d{2})\/(\d{2})$/.exec(t); if (m2) m = [null, '20' + m2[1], m2[2], m2[3]]; }
+    if (!m) return wrap(t.replace(/[<>"']/g, ''));
+    var d = new Date(m[1] + '-' + m[2] + '-' + m[3] + 'T00:00:00');
+    return wrap('<span class="rec-date-md">' + m[2] + '.' + m[3] + '</span>' +
+      '<span class="rec-date-dow">' + _DOW_KO[d.getDay()] + '</span>');
+  }
+  window._recDateHtml = _recDateHtml;
 
   function toggleLodgingCancel(idx) {
     var data = getLodgingData();
@@ -7296,8 +7313,8 @@
               (item.phone ? '<span><span class="material-symbols-outlined">call</span>' + item.phone + '</span>' : '') +
             '</p>' +
             '<div class="rec-lg-grid">' +
-              '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + (item.date || '—') + '</p>' + (item.checkin ? '<p class="rec-lg-sub">' + item.checkin + '</p>' : '') + '</div>' +
-              '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + (item.checkout_date || '—') + '</p>' + (item.checkout ? '<p class="rec-lg-sub">' + item.checkout + '</p>' : '') + '</div>' +
+              '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + _recDateHtml(item.date, 'is-sm') + '</p>' + (item.checkin ? '<p class="rec-lg-sub">' + item.checkin + '</p>' : '') + '</div>' +
+              '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + _recDateHtml(item.checkout_date, 'is-sm') + '</p>' + (item.checkout ? '<p class="rec-lg-sub">' + item.checkout + '</p>' : '') + '</div>' +
             '</div>' +
             _lodgeMetaRow(item, realIdx) +
             _lodgePayRow(item, realIdx) +
@@ -7371,8 +7388,8 @@
           '<h3 class="rec-lg-title" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7c3aed;font-variation-settings:\'FILL\' 1">verified</span></h3>' +
           (d.phone ? '<p class="rec-lg-addr"><span><span class="material-symbols-outlined">call</span>' + d.phone + '</span></p>' : '') +
           '<div class="rec-lg-grid">' +
-            '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + shortDate(d.date) + '</p><p class="rec-lg-sub">' + d.checkin + '</p></div>' +
-            '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + shortDate(d.checkout_date) + '</p><p class="rec-lg-sub">' + d.checkout + '</p></div>' +
+            '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + _recDateHtml(d.date, 'is-sm') + '</p><p class="rec-lg-sub">' + d.checkin + '</p></div>' +
+            '<div><p class="rec-micro">Check-out</p><p class="rec-lg-v">' + _recDateHtml(d.checkout_date, 'is-sm') + '</p><p class="rec-lg-sub">' + d.checkout + '</p></div>' +
           '</div>' +
           '<p class="rec-lg-cancel ' + (cancelOk ? 'is-ok' : 'is-danger') + '" onclick="toggleLodgingCancel(' + idx + ')" style="cursor:pointer">' + cancelText + '</p>' +
         '</div>' +
@@ -7888,8 +7905,9 @@
       if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return iso || '';
       var d = new Date(iso + 'T00:00:00');
       if (plus) d.setDate(d.getDate() + plus);
-      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' +
-             String(d.getDate()).padStart(2,'0') + ' (' + _DOW[d.getDay()] + ')';
+      var iso2 = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' +
+             String(d.getDate()).padStart(2,'0');
+      return _recDateHtml(iso2, 'is-sm');
     };
     var _dayShift = function() {
       if (f.arrive_date) return null; // 명시값 있으면 계산 안 함
