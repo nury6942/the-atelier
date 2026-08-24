@@ -3073,7 +3073,7 @@
        칸 맨 아래 고정 트랙에 깔아서, 위쪽 일정 개수와 무관하게 선이 옆 칸과 이어진다. */
     .calendar-page #planner-grid > div { --iv-bleed: -13px; }
     .cal-iv-track {
-      position: absolute; left: var(--space-3); right: var(--space-3); bottom: 5px;
+      position: absolute; left: var(--space-3, 12px); right: var(--space-3, 12px); bottom: 5px;
       display: flex; flex-direction: column; gap: 1px; pointer-events: none; z-index: 6;
     }
     .cal-iv-gap { height: 14px; }
