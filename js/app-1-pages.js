@@ -1121,12 +1121,31 @@
         if (self.options[i].value === cur) { self.focusIdx = i; break; }
       }
       self.renderOptions();
-      // Position fixed popover relative to trigger
+      // ★ (2026-08-25) 항목이 많으면 화면 밖으로 잘려서 아래쪽 선택지를 아예 못 골랐다.
+      //   남는 공간을 재서 위/아래 중 넓은 쪽에 붙이고, 모자라면 스크롤로 처리한다.
       var rect = self.trigger.getBoundingClientRect();
       self.popover.style.left = rect.left + 'px';
       self.popover.style.width = rect.width + 'px';
-      self.popover.style.top = (rect.bottom + 4) + 'px';
-      self.popover.style.display = '';
+      self.popover.style.maxHeight = '';
+      self.popover.style.overflowY = '';
+      self.popover.style.top = '-9999px';
+      self.popover.style.display = '';           // 먼저 그려야 실제 높이를 잰다
+
+      var GAP = 6, EDGE = 12;
+      var natural = self.popover.scrollHeight;
+      var below = window.innerHeight - rect.bottom - GAP - EDGE;
+      var above = rect.top - GAP - EDGE;
+      var openUp = (natural > below) && (above > below);
+      var maxH = Math.max(120, Math.min(natural, openUp ? above : below));
+      self.popover.style.maxHeight = maxH + 'px';
+      if (natural > maxH) { self.popover.style.overflowY = 'auto'; self.popover.classList.add('atl-dd-scroll'); }
+      else { self.popover.classList.remove('atl-dd-scroll'); }
+      self.popover.style.top = (openUp ? (rect.top - maxH - GAP) : (rect.bottom + GAP)) + 'px';
+
+      // 선택된 항목이 스크롤 밖에 있으면 보이게
+      var selEl = document.getElementById(self.id + '-opt-' + self.focusIdx);
+      if (selEl && natural > maxH) selEl.scrollIntoView({ block: 'nearest' });
+
       self.trigger.setAttribute('aria-expanded', 'true');
     };
 
