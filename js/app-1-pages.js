@@ -242,8 +242,26 @@
   };
   const CAT_COLOR = {
     '업무':'rose','데드라인':'deadline','연차':'cyan','특별휴가':'pink','개인':'fuchsia','글쓰기':'sky',
-    '영어':'lime','스터디':'violet','생일':'birthday'
+    '영어':'lime','스터디':'violet','생일':'birthday','인터벌':'rose'
   };
+
+  // ★ (2026-08-25) 인터벌 — 기간을 얇은 화살표 선으로만 표시하는 항목.
+  //   일반 기간 일정(꽉 찬 바)과 달리 "이 구간 내내 이랬다"는 배경 정보를 칸을 안 먹고 보여준다.
+  //   예: 야근 기간, 지연 출근 기간, 생리 주기, 프로젝트 스프린트
+  const IV_HEX = {
+    rose:'#e11d48', orange:'#ea580c', amber:'#d97706', lime:'#65a30d',
+    cyan:'#0891b2', blue:'#2563eb', violet:'#7c3aed', fuchsia:'#c026d3', slate:'#64748b'
+  };
+  function _ivIsInterval(row) { return (row && (row[2]||'').trim()) === '인터벌'; }
+  function _dFmt(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function _dShift(ds, n) {
+    var d = new Date(ds + 'T00:00:00'); d.setDate(d.getDate() + n); return _dFmt(d);
+  }
+  function _dDiff(a, b) {
+    return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / 86400000);
+  }
 
   // ===== 대한민국 공휴일 =====
   function getKoreanHolidays(year) {
@@ -506,8 +524,35 @@
     // ★ (2026-07-21) 연속(기간) 일정 레인 배정 — 같은 일정은 어느 날짜 칸에서든
     //   항상 같은 줄에 오도록 월 렌더 시 한 번 줄 번호를 확정 (바 끊김 방지)
     var _rangeLanes = new Map();
+    var _ivLanes = new Map();
+    var _ivMaxLane = 0;
     (function(){
-      var ranges = plannerData.filter(function(r){ var s=(r[0]||'').toString(), e=(r[5]||'').toString(); return e && e > s; });
+      // 인터벌은 별도 트랙(칸 맨 아래)이라 레인도 따로 잡는다
+      var _vFrom = _dShift(plannerYear + '-' + String(plannerMonth+1).padStart(2,'0') + '-01', -7);
+      var _vTo = _dShift(_dFmt(new Date(plannerYear, plannerMonth + 1, 0)), 7);
+      var ivs = plannerData.filter(function(r){
+        if (!_ivIsInterval(r)) return false;
+        var s = (r[0]||'').toString(); if (!s) return false;
+        var e = (r[5]||'').toString() || s;
+        return s <= _vTo && e >= _vFrom;   // 화면에 걸치는 것만
+      });
+      ivs.sort(function(a,b){ var c=(a[0]||'').toString().localeCompare((b[0]||'').toString()); if (c) return c; return ((b[5]||'').toString()).localeCompare((a[5]||'').toString()); });
+      var ivLaneIvs = [];
+      ivs.forEach(function(r){
+        var s=(r[0]||'').toString(), e=(r[5]||'').toString() || s;
+        var lane = 0;
+        for (;; lane++){
+          var arr = ivLaneIvs[lane] || [];
+          var clash = arr.some(function(iv){ return s <= iv[1] && e >= iv[0]; });
+          if (!clash) break;
+        }
+        (ivLaneIvs[lane] = ivLaneIvs[lane] || []).push([s, e]);
+        _ivLanes.set(r, lane);
+      });
+      _ivMaxLane = ivLaneIvs.length;
+    })();
+    (function(){
+      var ranges = plannerData.filter(function(r){ var s=(r[0]||'').toString(), e=(r[5]||'').toString(); return e && e > s && !_ivIsInterval(r); });
       ranges.sort(function(a,b){ var c=(a[0]||'').toString().localeCompare((b[0]||'').toString()); if (c) return c; return ((b[5]||'').toString()).localeCompare((a[5]||'').toString()); });
       var laneIntervals = [];
       ranges.forEach(function(r){
@@ -546,8 +591,9 @@
       });
       // ★ (2026-07-21) 연속 일정은 레인(고정 줄)으로, 단일 일정은 그 아래로 분리
       //   — 연속 바가 날짜마다 위아래로 널뛰며 끊겨 보이던 문제 해결
-      var rangeEvts = [], singleEvts = [];
+      var rangeEvts = [], singleEvts = [], ivEvts = [];
       events.forEach(function(r){
+        if (_ivIsInterval(r)) { ivEvts.push(r); return; }
         var s = (r[0]||'').toString(), e = (r[5]||'').toString();
         (e && e > s ? rangeEvts : singleEvts).push(r);
       });
@@ -569,6 +615,11 @@
 
       const cell = document.createElement('div');
       cell.className = 'px-3 pt-3 pb-1 min-h-24 transition-all cursor-pointer group';
+      cell.style.position = 'relative';
+      if (_ivMaxLane > 0) {
+        var _ivRow = window.matchMedia('(max-width:768px)').matches ? 12 : 15;
+        cell.style.paddingBottom = (6 + _ivMaxLane * _ivRow) + 'px';
+      }
       if (isOutMonth) {
         cell.style.background = 'rgba(243,244,245,0.4)';
         // ★ 셀 통째로 반투명하게 하면 연속 바가 월 경계에서 색이 꺾여 끊겨 보임 →
@@ -690,6 +741,35 @@
           '</div>';
       }
 
+      // ★ 인터벌 — 얇은 화살표 선. 이 주(週) 안에서의 구간을 계산해 가운데 칸에만 라벨을 찍는다.
+      function renderInterval(ev) {
+        var realIdxI = plannerData.indexOf(ev);
+        var s = (ev[0]||'').toString();
+        var e = (ev[5]||'').toString() || s;
+        var hex = IV_HEX[(ev[3]||'').trim()] || IV_HEX.rose;
+        var dow = gridIdx % 7;
+        // 주 경계로 자른 구간 (달력이 주 단위로 줄바꿈되니 라벨도 주마다 하나)
+        var segStart = _dShift(dateStr, -dow); if (segStart < s) segStart = s;
+        var segEnd   = _dShift(dateStr, 6 - dow); if (segEnd > e) segEnd = e;
+        var mid = _dShift(segStart, Math.floor(_dDiff(segStart, segEnd) / 2));
+        var isSegStart = dateStr === segStart, isSegEnd = dateStr === segEnd;
+        var capL = dateStr === s, capR = dateStr === e;   // 화살촉은 진짜 시작/끝에만
+        var showLabel = dateStr === mid;
+        var ml = isSegStart ? '' : 'margin-left:var(--iv-bleed);';
+        var mr = isSegEnd ? '' : 'margin-right:var(--iv-bleed);';
+        var idxRefI = ev[7] ? "_pi('" + ev[7] + "')" : String(realIdxI);
+        var title = String(ev[1]||'').replace(/[<>"']/g, '');
+        return '<div class="cal-iv' + (isOutMonth ? ' is-out' : '') + '" style="' + ml + mr + '--iv:' + hex + '" ' +
+          'data-pidx="' + realIdxI + '" title="' + title + ' (' + s + (e !== s ? ' ~ ' + e : '') + ')" ' +
+          'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRefI + ')" ondragend="plannerDragEnd(event)" ' +
+          'onclick="event.stopPropagation();selectPlannerEvent(' + idxRefI + ',this)" ondblclick="event.stopPropagation();openPlannerModal(' + idxRefI + ')">' +
+          (capL ? '<span class="cal-iv-cap is-l"></span>' : '') +
+          '<span class="cal-iv-line"></span>' +
+          (showLabel ? '<span class="cal-iv-label">' + title + '</span><span class="cal-iv-line"></span>' : '') +
+          (capR ? '<span class="cal-iv-cap is-r"></span>' : '') +
+        '</div>';
+      }
+
       // 레인 슬롯 조립: 이 날짜에 걸친 연속 일정을 배정된 줄에, 빈 줄은 투명 스페이서로
       var laneSlots = [];
       rangeEvts.forEach(function(ev){
@@ -700,7 +780,20 @@
       for (var li = 0; li < laneSlots.length; li++) {
         barsHtml += laneSlots[li] ? renderEvt(laneSlots[li]) : '<div class="mt-1" style="height:26px"></div>';
       }
-      const eventHtml = barsHtml + singleEvts.map(renderEvt).join('');
+      // 인터벌 트랙 — 칸 맨 아래에 절대배치.
+      //   위쪽 일정 개수가 칸마다 달라도 선 높이가 같아야 옆 칸과 이어져 보이므로,
+      //   모든 칸에 '월 전체 최대 레인 수'만큼 줄을 깔고 빈 줄은 스페이서로 채운다.
+      var ivHtml = '';
+      if (_ivMaxLane > 0) {
+        var ivSlots = [];
+        ivEvts.forEach(function(ev){ var ln = _ivLanes.get(ev); if (ln == null) ln = 0; ivSlots[ln] = ev; });
+        for (var vi = 0; vi < _ivMaxLane; vi++) {
+          ivHtml += ivSlots[vi] ? renderInterval(ivSlots[vi]) : '<div class="cal-iv-gap"></div>';
+        }
+        ivHtml = '<div class="cal-iv-track">' + ivHtml + '</div>';
+      }
+
+      const eventHtml = barsHtml + singleEvts.map(renderEvt).join('') + ivHtml;
 
       cell.innerHTML = dayNum + eventHtml;
       return cell;
@@ -911,7 +1004,27 @@
     if (isLeave) calcLeaveDays();
     var bdayWrap = document.getElementById('p-birthday-wrap');
     bdayWrap.style.display = cat === '생일' ? 'block' : 'none';
+    var ivWrap = document.getElementById('p-iv-wrap');
+    if (ivWrap) { ivWrap.style.display = cat === '인터벌' ? 'block' : 'none'; if (cat === '인터벌') _renderIvSwatches(); }
   }
+
+  // ── 인터벌 색 선택
+  var _ivPickColor = 'rose';
+  function _renderIvSwatches() {
+    var box = document.getElementById('p-iv-colors'); if (!box) return;
+    box.innerHTML = Object.keys(IV_HEX).map(function(k){
+      return '<button type="button" class="p-iv-sw' + (k === _ivPickColor ? ' is-on' : '') + '" ' +
+        'data-iv="' + k + '" onclick="setIvColor(\'' + k + '\')" title="' + k + '">' +
+        '<i style="background:' + IV_HEX[k] + '"></i></button>';
+    }).join('');
+  }
+  function setIvColor(k) {
+    _ivPickColor = k;
+    document.querySelectorAll('#p-iv-colors .p-iv-sw').forEach(function(b){
+      b.classList.toggle('is-on', b.dataset.iv === k);
+    });
+  }
+  window.setIvColor = setIvColor;
 
   // ===== REUSABLE CUSTOM DROPDOWN (AtelierDropdown) =====
   var _atelierDropdowns = {};
@@ -1113,6 +1226,7 @@
       { value: '영어',  dot: '#84cc16', label: '영어' },
       { value: '스터디', dot: '#8b5cf6', label: '스터디' },
       { value: '생일',  dot: '#facc15', label: '생일', emoji: '🎂' },
+      { value: '인터벌', dot: '#e11d48', label: '인터벌', emoji: '↔️' },
     ],
     onSelect: function(val) { toggleLeaveDay(); }
   });
@@ -1301,6 +1415,8 @@
         }
       }
       document.getElementById('p-notes').value = row[4]||'';
+      // 인터벌: 저장된 색 복원
+      if (row[2] === '인터벌') { _ivPickColor = IV_HEX[(row[3]||'').trim()] ? row[3].trim() : 'rose'; }
       // 수정 모드에서는 반복 숨김
       document.getElementById('p-repeat-section').style.display = 'none';
     } else {
@@ -1312,8 +1428,16 @@
       _syncCatTrigger('업무');
       document.getElementById('p-leave-day').value = '1.0';
       document.getElementById('p-leave-day-wrap').style.display = 'none';
+      _ivPickColor = 'rose';
 
       document.getElementById('p-repeat-section').style.display = '';
+    }
+    // 인터벌 전용 필드만 동기화 (toggleLeaveDay는 연차 일수를 재계산해 덮어써서 여기선 안 씀)
+    var _ivW = document.getElementById('p-iv-wrap');
+    if (_ivW) {
+      var _curCat = document.getElementById('p-category').value;
+      _ivW.style.display = _curCat === '인터벌' ? 'block' : 'none';
+      if (_curCat === '인터벌') _renderIvSwatches();
     }
     document.getElementById('planner-modal').style.cssText = 'display:flex!important';
   }
@@ -1384,7 +1508,7 @@
       dateVal,
       pTitle,
       pCat,
-      CAT_COLOR[pCat] || 'mint',
+      pCat === '인터벌' ? _ivPickColor : (CAT_COLOR[pCat] || 'mint'),
       pNotes,
       document.getElementById('p-date-end').value || '',
       editingPlannerIndex !== null ? (plannerData[editingPlannerIndex][6]||'0') : String(maxOrder),
