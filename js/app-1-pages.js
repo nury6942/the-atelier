@@ -1133,14 +1133,21 @@
 
       var GAP = 6, EDGE = 12;
       var natural = self.popover.scrollHeight;
-      var below = window.innerHeight - rect.bottom - GAP - EDGE;
-      var above = rect.top - GAP - EDGE;
-      var openUp = (natural > below) && (above > below);
-      var maxH = Math.max(120, Math.min(natural, openUp ? above : below));
-      self.popover.style.maxHeight = maxH + 'px';
-      if (natural > maxH) { self.popover.style.overflowY = 'auto'; self.popover.classList.add('atl-dd-scroll'); }
-      else { self.popover.classList.remove('atl-dd-scroll'); }
-      self.popover.style.top = (openUp ? (rect.top - maxH - GAP) : (rect.bottom + GAP)) + 'px';
+      var vh = window.innerHeight;
+      if (natural > 0 && vh > 0) {
+        var below = vh - rect.bottom - GAP - EDGE;
+        var above = rect.top - GAP - EDGE;
+        var openUp = (natural > below) && (above > below);
+        var maxH = Math.max(120, Math.min(natural, openUp ? above : below));
+        self.popover.style.maxHeight = maxH + 'px';
+        if (natural > maxH) { self.popover.style.overflowY = 'auto'; self.popover.classList.add('atl-dd-scroll'); }
+        else { self.popover.classList.remove('atl-dd-scroll'); }
+        self.popover.style.top = (openUp ? (rect.top - maxH - GAP) : (rect.bottom + GAP)) + 'px';
+      } else {
+        // 아직 레이아웃이 안 잡혀 높이를 못 재는 경우 — 억지로 자르면 오히려 못 고르게 된다
+        self.popover.classList.remove('atl-dd-scroll');
+        self.popover.style.top = (rect.bottom + GAP) + 'px';
+      }
 
       // 선택된 항목이 스크롤 밖에 있으면 보이게
       var selEl = document.getElementById(self.id + '-opt-' + self.focusIdx);
