@@ -10,13 +10,14 @@ Your job: MINE THE TRANSCRIPT EXHAUSTIVELY and teach like a charismatic top inst
 
 === THE THREE PILLARS (모두 채워야 한다 — 하나라도 비면 실패다) ===
 이 스터디는 세 축으로 간다. 예전엔 숙어만 뽑아서 배울 게 너무 적었다. 이제는:
-  1) EXPRESSIONS (groups) — 관용구·구동사·콜로케이션·문장 틀
+  1) IDIOMS (idioms) — 숙어·관용구·구동사·콜로케이션·문장 틀 ("come down to a conclusion" 같은 것)
   2) GRAMMAR (grammar) — 본문에 실제로 쓰인 문법 구조
   3) VOCAB (vocab) — 단어 하나로 승부 보는 고급 어휘
 셋 다 본문에서 실제로 쓰인 것만. 지어내지 마라.
+**테마별 그룹으로 나누지 마라.** idioms는 하나의 평평한 배열이고, **빈도(stars) 높은 것부터** 정렬한다.
 
 === 분량 목표 (이게 핵심 — 적게 뽑는 게 가장 큰 실패다) ===
-- groups: **4–7개 그룹**, 그룹당 **3–5개 표현** → 총 **15–25개 표현**
+- idioms: **15–25개** (평평한 배열, stars 내림차순)
 - grammar: **4–7개 문법 포인트**
 - vocab: **8–15개 단어**
 - bonus: 3–6개
@@ -29,7 +30,6 @@ Your job: MINE THE TRANSCRIPT EXHAUSTIVELY and teach like a charismatic top inst
 **본문에서 문장을 못 찾겠으면 그 항목 자체를 빼라.** 인용 없는 항목은 실패다.
 
 === TEACHING STYLE (CRITICAL) ===
-- 그룹은 이 콘텐츠에 맞게 네가 정해라. 좋은 축: "한국어 직역으로는 안 나오는 관용구", "한 단어가 한 문장을 이긴다 — 고급 압축 어휘", "비유 한 방으로 머리에 박는 표현", "토론·회의에서 내 의견 꺼낼 때 쓰는 문장 틀", "원어민이 무의식적으로 쓰는 연결어·완충 표현". 각 그룹엔 "왜 중요한지" 훅.
 - 각 항목은 **강의하듯** 써라. 사전 항목처럼 한 줄로 압축하지 마라 (이 "풀어쓰는 깊이"가 머리에 박히게 하는 #1 요소다):
   · stars: 빈도 별점 integer 1–5 (5=초고빈도/매일, 4=꽤 흔함, 3=상황별, 2=글·격식, 1=드묾·showy). freqLabel: 짧은 노트 ("꽤 흔함, 직장 영어 단골").
   · literal(직역) → meaning(진짜 뜻). 직역이 뜻을 가릴 때 그 대비가 곧 수업이다.
@@ -82,31 +82,25 @@ studyData["{{ID}}"] = {
   date: "{{DATE}}",
   subtitle: "이 콘텐츠로 뭘 건지는지 한 줄 한국어 요약",
   intro: "1타 강사 인트로 1–2문장 — 오늘 이 자료에서 뭘 훔칠지.",
-  groups: [
+  idioms: [
     {
-      title: "그룹(카테고리) 제목 — 한국어",
-      why: "이 그룹이 왜 중요한지 강사 입담 1–2문장.",
-      items: [
-        {
-          expr: "the expression / phrase in English",
-          stars: 4,
-          freqLabel: "꽤 흔함, 직장 영어 단골",
-          literal: "직역",
-          meaning: "진짜 뜻",
-          image: "그림·장면으로 외우게 하는 2~4문장.",
-          contrast: "한국인 밋밋 표현 vs 원어민 표현 + 왜 더 센지 + Nuri 개인 멘트.",
-          source: "본문 인용 (필수).",
-          collocations: ["bring real value to the table", "bring experience to the table"],
-          register: "중립 — 회의·면접에서 그대로 씀",
-          examples: [
-            { en: "Natural example sentence.", kr: "예문 한글 뜻.", tag: "면접" },
-            { en: "Another example tied to Nuri's life.", kr: "예문 한글 뜻.", tag: "디자인" }
-          ],
-          related: [ { label: "find one's footing", note: "미국식, 더 흔함 ⭐⭐⭐⭐" } ],
-          warning: "영국식 표현 주의 등.",
-          outro: "자 다시. … 입에 붙었지?"
-        }
-      ]
+      expr: "come down to a conclusion (that ...)",
+      stars: 4,
+      freqLabel: "꽤 흔함, 직장 영어 단골",
+      literal: "직역",
+      meaning: "진짜 뜻",
+      image: "그림·장면으로 외우게 하는 2~4문장.",
+      contrast: "한국인 밋밋 표현 vs 원어민 표현 + 왜 더 센지 + Nuri 개인 멘트.",
+      source: "본문 인용 (필수).",
+      collocations: ["bring real value to the table", "bring experience to the table"],
+      register: "중립 — 회의·면접에서 그대로 씀",
+      examples: [
+        { en: "Natural example sentence.", kr: "예문 한글 뜻.", tag: "면접" },
+        { en: "Another example tied to Nuri's life.", kr: "예문 한글 뜻.", tag: "디자인" }
+      ],
+      related: [ { label: "find one's footing", note: "미국식, 더 흔함 ⭐⭐⭐⭐" } ],
+      warning: "영국식 표현 주의 등.",
+      outro: "자 다시. … 입에 붙었지?"
     }
   ],
   grammar: [
@@ -150,7 +144,8 @@ studyData["{{ID}}"] = {
 6. stars must be an integer 1–5. Empty optional string fields = "". Empty arrays = [].
 7. Do not invent expressions not present in the transcript. Extract what is actually used.
 8. Replace {{ID}} with the id provided in INPUT.
-9. groups / grammar / vocab / bonus 네 배열 모두 채워라. 빈 배열로 두지 마라.
+9. idioms / grammar / vocab / bonus 네 배열 모두 채워라. 빈 배열로 두지 마라.
+10. idioms는 테마 그룹 없이 평평한 배열 하나다. stars 내림차순으로 정렬해라.
 
 === INPUT ===
 
@@ -186,8 +181,7 @@ function renderStudyList(){
   emptyEl.style.display = 'none';
   listEl.style.display = 'block';
   listEl.innerHTML = engStudyData.map(function(s){
-    var groupCount = (s.groups || []).length;
-    var exprCount = (s.groups || []).reduce(function(a,g){ return a + ((g.items || []).length); }, 0);
+    var exprCount = _esIdioms(s).length;
     var bonusCount = (s.bonus || []).length;
     var grammarCount = (s.grammar || []).length;
     var vocabCount = (s.vocab || []).length;
@@ -201,8 +195,7 @@ function renderStudyList(){
           '</div>' +
           '<p class="text-xs text-slate-400 mb-2 truncate">' + (s.subtitle || '') + (s.source ? ' · ' + s.source : '') + '</p>' +
           '<div class="flex flex-wrap gap-2">' +
-            (groupCount ? '<span class="text-[9px] font-bold bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">' + groupCount + ' 그룹</span>' : '') +
-            (exprCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">표현 ' + exprCount + '</span>' : '') +
+            (exprCount ? '<span class="text-[9px] font-bold bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">숙어 ' + exprCount + '</span>' : '') +
             (grammarCount ? '<span class="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">문법 ' + grammarCount + '</span>' : '') +
             (vocabCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">단어 ' + vocabCount + '</span>' : '') +
             (bonusCount ? '<span class="text-[9px] font-bold bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">보너스 ' + bonusCount + '</span>' : '') +
@@ -381,6 +374,15 @@ window.deleteStudy = async function(id){
     if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 삭제됐어요');
   } catch(e){ alert('삭제 실패'); }
 };
+
+// ★ (2026-08-30) 숙어는 평평한 배열(idioms)로 통일.
+//   그 전에 만든 자료는 테마 그룹(groups) 구조라, 없으면 펼쳐서 같이 보여준다.
+function _esIdioms(s){
+  if ((s.idioms || []).length) return s.idioms;
+  var out = [];
+  (s.groups || []).forEach(function(g){ (g.items || []).forEach(function(it){ out.push(it); }); });
+  return out;
+}
 
 // ── 1타 강사 상세 렌더러 ────────────────────────────────────
 function _esEscAttr(s){ return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
@@ -604,16 +606,14 @@ function _esRecordStudyDay(){
 // Practice Challenge + Streak (벤토)
 function _esPracticeStreak(s){
   var C = _ESC, pe = null;
-  (s.groups || []).forEach(function(g){
-    (g.items || []).forEach(function(it){
-      if (pe || !it.expr) return;
-      var exs = it.examples || [], match = null;
-      for (var i = 0; i < exs.length; i++){
-        if (exs[i].en && exs[i].en.toLowerCase().indexOf(String(it.expr).toLowerCase().split(' ')[0]) >= 0){ match = exs[i]; break; }
-      }
-      if (!match) match = exs[0];
-      if (match && match.en) pe = { expr: it.expr, en: match.en, kr: match.kr || '' };
-    });
+  _esIdioms(s).forEach(function(it){
+    if (pe || !it.expr) return;
+    var exs = it.examples || [], match = null;
+    for (var i = 0; i < exs.length; i++){
+      if (exs[i].en && exs[i].en.toLowerCase().indexOf(String(it.expr).toLowerCase().split(' ')[0]) >= 0){ match = exs[i]; break; }
+    }
+    if (!match) match = exs[0];
+    if (match && match.en) pe = { expr: it.expr, en: match.en, kr: match.kr || '' };
   });
   var H = '<section class="grid grid-cols-1 md:grid-cols-3 gap-6" style="margin-top:48px">';
   if (pe){
@@ -684,42 +684,40 @@ function renderStudyDetail(s){
   if (s.intro) H += '<div style="margin-bottom:28px;padding:20px;border-radius:12px;border-left:4px solid ' + C.primary + ';background:' + C.surfLow + '"><p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.text + ';margin:0">' + s.intro + '</p></div>';
 
   // ── 섹션 필터 바 (스티키) — 스크롤이 길어져서 원하는 파트만 보게
+  var _idioms = _esIdioms(s);
   var _navs = [];
-  (s.groups || []).forEach(function(g, gi){
-    _navs.push({ key: 'g' + gi, no: String(gi + 1).padStart(2, '0'),
-      label: g.title || ('그룹 ' + (gi + 1)), n: (g.items || []).length, tone: 'primary' });
-  });
+  if (_idioms.length)           _navs.push({ key: 'idioms', icon: 'format_quote', label: '숙어', n: _idioms.length, tone: 'primary' });
   if ((s.grammar || []).length) _navs.push({ key: 'grammar', icon: 'rule', label: '문법', n: s.grammar.length, tone: 'emerald' });
   if ((s.vocab || []).length)   _navs.push({ key: 'vocab', icon: 'book_2', label: '단어', n: s.vocab.length, tone: 'primary' });
   if ((s.bonus || []).length)   _navs.push({ key: 'bonus', icon: 'emoji_food_beverage', label: '보너스', n: s.bonus.length, tone: 'amber' });
 
   if (_navs.length > 1){
+    var _tot = _navs.reduce(function(a, n){ return a + n.n; }, 0);
     H += '<div class="es-navbar" style="position:sticky;top:0;z-index:30;margin:0 -8px 28px;padding:10px 8px;' +
       'background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);' +
       'border-bottom:1px solid rgba(197,197,215,0.45)">' +
       '<div class="es-navscroll" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">' +
-      '<button onclick="esFilterSection(\'all\',this)" data-sec-btn="all" class="es-chip is-on">전체 <span style="opacity:0.6">' +
-        ((s.groups || []).reduce(function(a, g){ return a + (g.items || []).length; }, 0) + (s.grammar || []).length + (s.vocab || []).length + (s.bonus || []).length) + '</span></button>';
+      '<button onclick="esFilterSection(\'all\',this)" data-sec-btn="all" class="es-chip is-on">전체 <span style="opacity:0.6">' + _tot + '</span></button>';
     _navs.forEach(function(nv){
       H += '<button onclick="esFilterSection(\'' + nv.key + '\',this)" data-sec-btn="' + nv.key + '" class="es-chip tone-' + nv.tone + '">' +
-        (nv.icon ? '<span class="material-symbols-outlined" style="font-size:calc(16px * var(--es-scale, 1));vertical-align:-3px;margin-right:3px">' + nv.icon + '</span>' : '<span style="opacity:0.45;margin-right:4px">' + nv.no + '</span>') +
-        _esStripHtml(nv.label).slice(0, 18) + ' <span style="opacity:0.6">' + nv.n + '</span></button>';
+        '<span class="material-symbols-outlined" style="font-size:calc(16px * var(--es-scale, 1));vertical-align:-3px;margin-right:4px">' + nv.icon + '</span>' +
+        nv.label + ' <span style="opacity:0.6">' + nv.n + '</span></button>';
     });
     H += '</div></div>';
   }
 
-  (s.groups || []).forEach(function(g, gi){
-    H += '<section class="es-sec" data-sec="g' + gi + '">' +
-      '<header style="margin-bottom:24px;' + (gi ? 'margin-top:48px' : '') + '">' +
+  if (_idioms.length){
+    H += '<section class="es-sec" data-sec="idioms">' +
+      '<header style="margin-bottom:20px">' +
         '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
-          '<span style="font-size:calc(30px * var(--es-scale, 1));font-weight:700;color:' + C.primary + ';opacity:0.4">' + String(gi + 1).padStart(2, '0') + '</span>' +
-          '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">' + (g.title || '') + '</h3>' +
+          '<span class="material-symbols-outlined" style="font-size:calc(28px * var(--es-scale, 1));color:' + C.primary + '">format_quote</span>' +
+          '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">숙어 — 통째로 훔쳐 쓰는 것들</h3>' +
         '</div>' +
-        (g.why ? '<p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">' + g.why + '</p>' : '') +
+        '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">관용구·구동사·문장 틀. 자주 쓰이는 순서야.</p>' +
       '</header>';
-    (g.items || []).forEach(function(it){ H += _esStudyCard(it); });
+    _idioms.forEach(function(it){ H += _esStudyCard(it); });
     H += '</section>';
-  });
+  }
 
   if ((s.grammar || []).length){
     H += '<section class="es-sec" data-sec="grammar" style="margin-top:56px">' +
@@ -819,15 +817,12 @@ window.engSpeakStudy = function(id){
   window.speechSynthesis.cancel();
   var q = [];
   if (s.title) q.push([s.title, 'en-US']);
-  (s.groups || []).forEach(function(g){
-    if (g.title) q.push([g.title, 'ko-KR']);
-    (g.items || []).forEach(function(it){
-      if (it.expr) q.push([it.expr, 'en-US']);
-      if (it.meaning) q.push([it.meaning, 'ko-KR']);
-      (it.examples || []).slice(0, 2).forEach(function(ex){
-        if (ex.en) q.push([ex.en, 'en-US']);
-        if (ex.kr) q.push([ex.kr, 'ko-KR']);
-      });
+  _esIdioms(s).forEach(function(it){
+    if (it.expr) q.push([it.expr, 'en-US']);
+    if (it.meaning) q.push([it.meaning, 'ko-KR']);
+    (it.examples || []).slice(0, 2).forEach(function(ex){
+      if (ex.en) q.push([ex.en, 'en-US']);
+      if (ex.kr) q.push([ex.kr, 'ko-KR']);
     });
   });
   (s.grammar || []).forEach(function(g){
