@@ -3094,6 +3094,21 @@
       color: var(--iv); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       letter-spacing: -0.01em;
     }
+    /* ENGLISH STUDY — 섹션 필터 칩 (2026-08-30)
+       표현+문법+단어로 페이지가 길어져서, 원하는 파트만 보게 하는 스티키 바 */
+    .es-navscroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .es-navscroll::-webkit-scrollbar { display: none; }
+    .es-chip {
+      flex: 0 0 auto; padding: 7px 14px; border-radius: 9999px; border: 1px solid rgba(197,197,215,0.6);
+      background: #fff; color: #454654; cursor: pointer; white-space: nowrap;
+      font-size: calc(13px * var(--es-scale, 1)); font-weight: 700; letter-spacing: -0.01em;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .es-chip:hover { background: #eff4ff; }
+    .es-chip.is-on { background: #2036bd; border-color: #2036bd; color: #fff; }
+    .es-chip.tone-emerald.is-on { background: #006f4b; border-color: #006f4b; }
+    .es-chip.tone-amber.is-on { background: #855300; border-color: #855300; }
+
     /* 드롭다운 스크롤 — 항목 많을 때 (2026-08-25) */
     .atl-dd-scroll { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; overscroll-behavior: contain; }
     .atl-dd-scroll::-webkit-scrollbar { width: 6px; }
@@ -16359,7 +16374,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=169" defer></script>
-<script src="js/english-study.js?v=9" defer></script>
+<script src="js/english-study.js?v=10" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>

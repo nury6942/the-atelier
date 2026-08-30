@@ -681,21 +681,48 @@ function renderStudyDetail(s){
     '</div>' +
   '</div>';
 
-  if (s.intro) H += '<div style="margin-bottom:40px;padding:20px;border-radius:12px;border-left:4px solid ' + C.primary + ';background:' + C.surfLow + '"><p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.text + ';margin:0">' + s.intro + '</p></div>';
+  if (s.intro) H += '<div style="margin-bottom:28px;padding:20px;border-radius:12px;border-left:4px solid ' + C.primary + ';background:' + C.surfLow + '"><p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.text + ';margin:0">' + s.intro + '</p></div>';
+
+  // ── 섹션 필터 바 (스티키) — 스크롤이 길어져서 원하는 파트만 보게
+  var _navs = [];
+  (s.groups || []).forEach(function(g, gi){
+    _navs.push({ key: 'g' + gi, no: String(gi + 1).padStart(2, '0'),
+      label: g.title || ('그룹 ' + (gi + 1)), n: (g.items || []).length, tone: 'primary' });
+  });
+  if ((s.grammar || []).length) _navs.push({ key: 'grammar', icon: 'rule', label: '문법', n: s.grammar.length, tone: 'emerald' });
+  if ((s.vocab || []).length)   _navs.push({ key: 'vocab', icon: 'book_2', label: '단어', n: s.vocab.length, tone: 'primary' });
+  if ((s.bonus || []).length)   _navs.push({ key: 'bonus', icon: 'emoji_food_beverage', label: '보너스', n: s.bonus.length, tone: 'amber' });
+
+  if (_navs.length > 1){
+    H += '<div class="es-navbar" style="position:sticky;top:0;z-index:30;margin:0 -8px 28px;padding:10px 8px;' +
+      'background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);' +
+      'border-bottom:1px solid rgba(197,197,215,0.45)">' +
+      '<div class="es-navscroll" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">' +
+      '<button onclick="esFilterSection(\'all\',this)" data-sec-btn="all" class="es-chip is-on">전체 <span style="opacity:0.6">' +
+        ((s.groups || []).reduce(function(a, g){ return a + (g.items || []).length; }, 0) + (s.grammar || []).length + (s.vocab || []).length + (s.bonus || []).length) + '</span></button>';
+    _navs.forEach(function(nv){
+      H += '<button onclick="esFilterSection(\'' + nv.key + '\',this)" data-sec-btn="' + nv.key + '" class="es-chip tone-' + nv.tone + '">' +
+        (nv.icon ? '<span class="material-symbols-outlined" style="font-size:calc(16px * var(--es-scale, 1));vertical-align:-3px;margin-right:3px">' + nv.icon + '</span>' : '<span style="opacity:0.45;margin-right:4px">' + nv.no + '</span>') +
+        _esStripHtml(nv.label).slice(0, 18) + ' <span style="opacity:0.6">' + nv.n + '</span></button>';
+    });
+    H += '</div></div>';
+  }
 
   (s.groups || []).forEach(function(g, gi){
-    H += '<header style="margin-bottom:24px;' + (gi ? 'margin-top:48px' : '') + '">' +
-      '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
-        '<span style="font-size:calc(30px * var(--es-scale, 1));font-weight:700;color:' + C.primary + ';opacity:0.4">' + String(gi + 1).padStart(2, '0') + '</span>' +
-        '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">' + (g.title || '') + '</h3>' +
-      '</div>' +
-      (g.why ? '<p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">' + g.why + '</p>' : '') +
-    '</header>';
+    H += '<section class="es-sec" data-sec="g' + gi + '">' +
+      '<header style="margin-bottom:24px;' + (gi ? 'margin-top:48px' : '') + '">' +
+        '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
+          '<span style="font-size:calc(30px * var(--es-scale, 1));font-weight:700;color:' + C.primary + ';opacity:0.4">' + String(gi + 1).padStart(2, '0') + '</span>' +
+          '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">' + (g.title || '') + '</h3>' +
+        '</div>' +
+        (g.why ? '<p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">' + g.why + '</p>' : '') +
+      '</header>';
     (g.items || []).forEach(function(it){ H += _esStudyCard(it); });
+    H += '</section>';
   });
 
   if ((s.grammar || []).length){
-    H += '<section style="margin-top:56px">' +
+    H += '<section class="es-sec" data-sec="grammar" style="margin-top:56px">' +
       '<header style="margin-bottom:20px">' +
         '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
           '<span class="material-symbols-outlined" style="font-size:calc(28px * var(--es-scale, 1));color:' + C.emeraldContainer + '">rule</span>' +
@@ -708,7 +735,7 @@ function renderStudyDetail(s){
   }
 
   if ((s.vocab || []).length){
-    H += '<section style="margin-top:56px">' +
+    H += '<section class="es-sec" data-sec="vocab" style="margin-top:56px">' +
       '<header style="margin-bottom:20px">' +
         '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
           '<span class="material-symbols-outlined" style="font-size:calc(28px * var(--es-scale, 1));color:' + C.primary + '">book_2</span>' +
@@ -721,7 +748,7 @@ function renderStudyDetail(s){
   }
 
   if ((s.bonus || []).length){
-    H += '<section style="margin-top:48px">' +
+    H += '<section class="es-sec" data-sec="bonus" style="margin-top:48px">' +
       '<h3 style="font-size:calc(24px * var(--es-scale, 1));font-weight:700;color:' + C.text + ';margin:0 0 16px">🍯 보너스 꿀단어</h3>' +
       '<div style="background:#fff;border-radius:16px;padding:24px;border:1px solid rgba(197,197,215,0.4);box-shadow:0 4px 20px rgba(0,0,0,0.04)">';
     s.bonus.forEach(function(b, bi){
@@ -740,6 +767,24 @@ function renderStudyDetail(s){
   H += '</div>';
   return H;
 }
+
+// ── 섹션 필터 (스크롤이 길어져서 원하는 파트만 보기) ─────────
+window.esFilterSection = function(key, btn){
+  var root = document.getElementById('es-detail-root');
+  if (!root) return;
+  root.querySelectorAll('.es-sec').forEach(function(sec){
+    sec.style.display = (key === 'all' || sec.dataset.sec === key) ? '' : 'none';
+  });
+  root.querySelectorAll('[data-sec-btn]').forEach(function(b){ b.classList.remove('is-on'); });
+  if (btn) btn.classList.add('is-on');
+  // 필터를 바꾸면 첫 섹션이 바로 보이게 (바 높이만큼 빼고)
+  var bar = root.querySelector('.es-navbar');
+  var first = root.querySelector('.es-sec:not([style*="display: none"])');
+  if (first && bar){
+    var y = first.getBoundingClientRect().top + window.scrollY - bar.getBoundingClientRect().height - 12;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  }
+};
 
 // ── 오디오 (브라우저 내장 Web Speech API, 무료) ──────────────
 var _esKeepAlive = null;
