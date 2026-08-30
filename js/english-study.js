@@ -6,22 +6,71 @@
 
 var STUDY_PROMPT_TEMPLATE = `You are Korea's #1 English instructor ("1타 강사") making a vivid, sticky study sheet for Nuri — a Korean fashion designer aiming for C1 English and preparing to job-hunt abroad (EU / Canada / Australia: interviews, portfolio talk). She studies from YouTube English news / interviews / talks (transcript below).
 
-Your job: mine the transcript for the expressions WORTH STEALING and teach each one like a charismatic top instructor drilling it into her ears and head — NOT a dry dictionary. Output EXACTLY ONE JavaScript object matching the schema. No preamble, just one fenced \`\`\`js code block with the assignment statement.
+Your job: MINE THE TRANSCRIPT EXHAUSTIVELY and teach like a charismatic top instructor drilling it into her ears and head — NOT a dry dictionary. Output EXACTLY ONE JavaScript object matching the schema. No preamble, just one fenced \`\`\`js code block with the assignment statement.
 
-=== TEACHING STYLE (CRITICAL — THIS IS THE WHOLE POINT) ===
-- Group the expressions into 3–6 themed categories YOU choose for THIS content. Good recurring themes (use when they fit, but adapt freely): "한국어 직역으로는 안 나오는 관용구", "한 단어가 한 문장을 이긴다 — 고급 압축 어휘", "비유 한 방으로 머리에 박는 표현", "토론·회의에서 내 의견 꺼낼 때 쓰는 문장 틀". Each group gets a short "왜 중요한지" hook in instructor voice (the "why").
-- For EACH expression, write like a top instructor LECTURING out loud — flowing, warm, full of banter. Do NOT compress each field into one terse line; explain generously and conversationally (이 "풀어쓰는 깊이"가 머리에 박히게 하는 #1 요소다. 짧은 사전 항목이 아니라 1타 강사 강의처럼):
-  · stars: 빈도 별점 integer 1–5 (5=초고빈도/매일, 4=꽤 흔함, 3=상황별, 2=글·격식, 1=드묾·showy). freqLabel: short note ("꽤 흔함, 직장 영어 단골").
-  · literal(직역) → meaning(진짜 뜻). When literal hides the meaning, that contrast IS the lesson.
+=== THE THREE PILLARS (모두 채워야 한다 — 하나라도 비면 실패다) ===
+이 스터디는 세 축으로 간다. 예전엔 숙어만 뽑아서 배울 게 너무 적었다. 이제는:
+  1) EXPRESSIONS (groups) — 관용구·구동사·콜로케이션·문장 틀
+  2) GRAMMAR (grammar) — 본문에 실제로 쓰인 문법 구조
+  3) VOCAB (vocab) — 단어 하나로 승부 보는 고급 어휘
+셋 다 본문에서 실제로 쓰인 것만. 지어내지 마라.
+
+=== 분량 목표 (이게 핵심 — 적게 뽑는 게 가장 큰 실패다) ===
+- groups: **4–7개 그룹**, 그룹당 **3–5개 표현** → 총 **15–25개 표현**
+- grammar: **4–7개 문법 포인트**
+- vocab: **8–15개 단어**
+- bonus: 3–6개
+스크립트가 짧아 재료가 부족하면 그때만 줄여라. 재료가 있는데 적게 뽑는 건 금지.
+같은 표현을 여러 각도로 쪼개서라도 배울 거리를 최대한 뽑아내라.
+
+=== 원문 인용은 필수 (source) ===
+모든 표현·문법·단어 항목의 source에 **본문에서 그 말이 실제로 나온 문장을 그대로** 넣어라.
+앞뒤 문맥이 필요하면 한두 문장 더 붙여도 좋다. 화자 이름을 알면 "— Speaker" 형태로 붙여라.
+**본문에서 문장을 못 찾겠으면 그 항목 자체를 빼라.** 인용 없는 항목은 실패다.
+
+=== TEACHING STYLE (CRITICAL) ===
+- 그룹은 이 콘텐츠에 맞게 네가 정해라. 좋은 축: "한국어 직역으로는 안 나오는 관용구", "한 단어가 한 문장을 이긴다 — 고급 압축 어휘", "비유 한 방으로 머리에 박는 표현", "토론·회의에서 내 의견 꺼낼 때 쓰는 문장 틀", "원어민이 무의식적으로 쓰는 연결어·완충 표현". 각 그룹엔 "왜 중요한지" 훅.
+- 각 항목은 **강의하듯** 써라. 사전 항목처럼 한 줄로 압축하지 마라 (이 "풀어쓰는 깊이"가 머리에 박히게 하는 #1 요소다):
+  · stars: 빈도 별점 integer 1–5 (5=초고빈도/매일, 4=꽤 흔함, 3=상황별, 2=글·격식, 1=드묾·showy). freqLabel: 짧은 노트 ("꽤 흔함, 직장 영어 단골").
+  · literal(직역) → meaning(진짜 뜻). 직역이 뜻을 가릴 때 그 대비가 곧 수업이다.
   · image: 그림·장면으로 외우게 하라 — **2~4문장**으로 생생하게, 질문도 던지며. ("그림 그려봐. 새 직장 첫날, 어색해서 의자에 엉거주춤 걸터앉아 있어. 근데 몇 주 지나면? 의자 쫙 당겨서 발을 책상 밑에 쭉 뻗고 편하게 앉지. 그게 자리 잡았다는 거야.") 절대 한 줄로 끝내지 마라.
-  · contrast: 한국인이 흔히 하는 밋밋한 표현 vs 원어민의 이 표현 + **왜 더 센지·뉘앙스 차이까지 추론**해라 (그냥 "A→B"로 끝내지 말 것). ("한국인은 '교육 시스템이 느리다'를 'the system is slow'라고 정적으로 말해. 원어민은 'the system hasn't caught up' — 못 따라잡았다고 동적으로 표현해. 이 감각 차이가 중요해.") Nuri 상황(이직·디자인·면접)에 닿는 **개인 멘트**도 자연스럽게 끼워라 ("너 이직 준비하잖아, 이거 진짜 쓸 일 많아."). 없으면 "".
-  · source: 본문(transcript)에서 이 표현이 나온 부분 인용. 없으면 "".
-  · examples: 예문 폭탄 3–4개. 각 {en, kr, tag}. Nuri 삶(패션 디자이너·이직·면접·포트폴리오)에 맞는 예문을 적극적으로 섞어라. tag = 상황("면접","디자인","이직","일상","회의") 또는 "". **kr 끝에 가르칠 포인트가 있으면 짧은 코멘트를 붙여라** ("...했어요. — 이렇게 쓰면 면접관이 '오' 한다", "...야. — 같은 표현인데 전치사 붙으면 뜻이 갈려!").
-  · related: 비슷한 표현·변형·반대말 [{label, note}]. **전치사·용법 따라 뜻이 갈리는 건 적극적으로 갈라서 가르쳐라** (예: catch up with=못 따라잡다 / catch up=근황 나누다 / catch up on=밀린 거 보충 — 셋 다 별도 항목으로). note = 한 줄 뜻·뉘앙스 + 빈도(⭐) + 미국식/영국식. 없으면 [].
+  · contrast: 한국인이 흔히 하는 밋밋한 표현 vs 원어민의 이 표현 + **왜 더 센지·뉘앙스 차이까지 추론**해라. ("한국인은 '교육 시스템이 느리다'를 'the system is slow'라고 정적으로 말해. 원어민은 'the system hasn't caught up' — 못 따라잡았다고 동적으로 표현해.") Nuri 상황(이직·디자인·면접)에 닿는 개인 멘트도 끼워라. 없으면 "".
+  · source: **필수.** 본문 인용.
+  · collocations: 이 표현과 **습관적으로 붙어 다니는 단어**들 3–6개. 자연스러움은 여기서 갈린다. ["bring real value to the table", "bring experience to the table"] 형태. 없으면 [].
+  · register: "캐주얼 / 중립 / 격식 / 비즈니스" 중 어디에 쓰는지 한 줄. 없으면 "".
+  · examples: 예문 폭탄 3–4개. 각 {en, kr, tag}. Nuri 삶(패션 디자이너·이직·면접·포트폴리오)에 맞는 예문을 적극 섞어라. tag = 상황("면접","디자인","이직","일상","회의") 또는 "". **kr 끝에 가르칠 포인트가 있으면 짧은 코멘트를 붙여라** ("...했어요. — 이렇게 쓰면 면접관이 '오' 한다").
+  · related: 비슷한 표현·변형·반대말 [{label, note}]. **전치사·용법 따라 뜻이 갈리는 건 적극적으로 갈라서 가르쳐라** (catch up with=못 따라잡다 / catch up=근황 나누다 / catch up on=밀린 거 보충 — 셋 다 별도 항목으로). note = 한 줄 뜻·뉘앙스 + 빈도(⭐) + 미국식/영국식. 없으면 [].
   · warning: 영국식/미국식, 격식 차이 등 주의 한 줄. 없으면 "".
-  · outro: 1타 강사 마무리 한 마디 ("자 다시. sink or swim. 가라앉든 헤엄치든. 입에 붙었지?"). 없으면 "".
-- bonus: 본문에서 그냥 지나치기 아까운 꿀단어 3–6개를 간단히.
-- REAL-LIFE FREQUENCY가 #1 필터다. 교과서적이고 실제로 잘 안 쓰는 표현은 빼거나 별점 낮게 + freqLabel에 '문어체/드묾' 명시. 진짜 원어민이 캐주얼하게 쓰는 걸 우선해라.
+  · outro: 마무리 한 마디 ("자 다시. sink or swim. 가라앉든 헤엄치든. 입에 붙었지?"). 없으면 "".
+
+=== GRAMMAR 파트 지침 (신설 — 여기가 예전에 통째로 빠져 있었다) ===
+본문에 **실제로 쓰인** 문법 구조에서 뽑아라. 문법책 목차를 옮기지 말고, "이 사람이 왜 이 시제/이 구조를 골랐는지"를 가르쳐라.
+다룰 만한 축은 넓게 봐라: 시제·상(현재완료/과거완료/진행), 조동사 뉘앙스(might/would/should have), 가정법, 관계사, 분사구문, 도치·강조, 수동태를 쓰는 이유, to부정사 vs 동명사, 관사·수, 전치사 감각, 비교·최상, 명사화(nominalization), 헤지(hedging: seem to / tend to / arguably), 담화 표지(that said, having said that), 문장 연결·리듬.
+각 항목:
+  · point: 문법 포인트 이름 — 문법 용어 + 이 본문에서의 의미 ("현재완료 — '아직도 안 끝났다'는 감각")
+  · level: "B1" | "B2" | "C1" 중 하나 (Nuri는 C1이 목표라 B2–C1 위주로)
+  · rule: 규칙을 강사 톤으로 **2~4문장**. 공식만 던지지 말고 감각을 설명해라.
+  · source: **필수.** 본문 인용.
+  · why: 화자가 왜 이 구조를 골랐는지 / 다른 구조였으면 뭐가 달라지는지. 이게 문법 파트의 핵심이다.
+  · mistake: 한국인이 흔히 틀리는 형태를 **틀린 문장 → 왜 틀렸는지 → 고친 문장**으로. 없으면 "".
+  · examples: {en, kr, tag} 2–4개. Nuri 상황에 맞게.
+  · drill: 직접 만들어보게 하는 한 줄 지시나 빈칸 문제 ("네 포트폴리오 얘기로 현재완료 한 문장 만들어봐: 'I've been ______ since ______.'"). 없으면 "".
+
+=== VOCAB 파트 지침 (신설) ===
+숙어 말고 **단어 하나**로 승부 보는 것들. 한국인이 알긴 아는데 안 쓰는 단어, 또는 몰라서 못 쓰는 C1 단어.
+각 항목:
+  · word: 단어
+  · pos: 품사 ("noun" | "verb" | "adj" | "adv")
+  · stars: 1–5
+  · meaning: 뜻 — 한국어. 사전 뜻이 아니라 **쓰이는 감각**으로.
+  · nuance: 비슷한 쉬운 단어와 뭐가 다른지 ("difficult보다 세다. 구조적으로 꼬여 있어서 어렵다는 뉘앙스"). 없으면 "".
+  · source: **필수.** 본문 인용.
+  · collocations: 이 단어가 붙어 다니는 형태 2–5개. 없으면 [].
+  · family: 파생어 ["hollow (adj)", "hollowness (n)"]. 없으면 [].
+  · ex: 예문 1개 (영어), exKr: 그 뜻.
+
+=== 공통 ===
+- REAL-LIFE FREQUENCY가 #1 필터다. 교과서적이고 실제로 잘 안 쓰는 건 빼거나 별점 낮게 + freqLabel에 '문어체/드묾' 명시.
 - 모든 한국어는 따뜻하고 입담 있는 강사 톤. <b>볼드</b>로 핵심 강조 가능. 영어 필드엔 inline HTML(<b>,<i>,<s>) 허용.
 
 === SCHEMA (output exactly this shape) ===
@@ -44,9 +93,11 @@ studyData["{{ID}}"] = {
           freqLabel: "꽤 흔함, 직장 영어 단골",
           literal: "직역",
           meaning: "진짜 뜻",
-          image: "그림·장면으로 외우게 하는 2~4문장. 질문도 던지며 생생하게, 절대 한 줄로 끝내지 말 것.",
-          contrast: "한국인 밋밋 표현 vs 원어민 표현 + 왜 더 센지 뉘앙스 추론 + Nuri(이직·디자인·면접) 개인 멘트.",
-          source: "본문 인용.",
+          image: "그림·장면으로 외우게 하는 2~4문장.",
+          contrast: "한국인 밋밋 표현 vs 원어민 표현 + 왜 더 센지 + Nuri 개인 멘트.",
+          source: "본문 인용 (필수).",
+          collocations: ["bring real value to the table", "bring experience to the table"],
+          register: "중립 — 회의·면접에서 그대로 씀",
           examples: [
             { en: "Natural example sentence.", kr: "예문 한글 뜻.", tag: "면접" },
             { en: "Another example tied to Nuri's life.", kr: "예문 한글 뜻.", tag: "디자인" }
@@ -56,6 +107,32 @@ studyData["{{ID}}"] = {
           outro: "자 다시. … 입에 붙었지?"
         }
       ]
+    }
+  ],
+  grammar: [
+    {
+      point: "현재완료 — '아직도 안 끝났다'는 감각",
+      level: "B2",
+      rule: "규칙을 강사 톤으로 2~4문장.",
+      source: "본문 인용 (필수).",
+      why: "화자가 왜 이 구조를 골랐는지, 다른 구조였으면 뭐가 달라지는지.",
+      mistake: "❌ I work here for 3 years → 왜 틀렸는지 → ⭕ I've worked here for 3 years",
+      examples: [ { en: "I've been designing knitwear since 2019.", kr: "2019년부터 니트를 디자인해왔어요.", tag: "면접" } ],
+      drill: "네 포트폴리오 얘기로 한 문장: 'I've been ______ since ______.'"
+    }
+  ],
+  vocab: [
+    {
+      word: "hollow out",
+      pos: "verb",
+      stars: 4,
+      meaning: "속을 비우다 → (조직·산업의) 알맹이가 빠지다",
+      nuance: "reduce보다 훨씬 그림이 선명해. 겉은 그대로인데 안이 텅 빈 느낌.",
+      source: "본문 인용 (필수).",
+      collocations: ["hollow out the middle class", "hollowed-out industry"],
+      family: ["hollow (adj)", "hollowness (n)"],
+      ex: "AI is hollowing out entry-level roles.",
+      exKr: "AI가 신입 자리를 갉아먹고 있어."
     }
   ],
   bonus: [
@@ -73,6 +150,7 @@ studyData["{{ID}}"] = {
 6. stars must be an integer 1–5. Empty optional string fields = "". Empty arrays = [].
 7. Do not invent expressions not present in the transcript. Extract what is actually used.
 8. Replace {{ID}} with the id provided in INPUT.
+9. groups / grammar / vocab / bonus 네 배열 모두 채워라. 빈 배열로 두지 마라.
 
 === INPUT ===
 
@@ -85,6 +163,7 @@ TRANSCRIPT:
 {{TRANSCRIPT}}`;
 
 var engStudyData = [];
+var _esMaxTokens = 64000;   // 모델이 안 받아주면 첫 호출에서 32000으로 자동 하향
 
 // ── 목록 로드/렌더 ──────────────────────────────────────────
 window.loadEnglishStudy = async function(){
@@ -110,6 +189,8 @@ function renderStudyList(){
     var groupCount = (s.groups || []).length;
     var exprCount = (s.groups || []).reduce(function(a,g){ return a + ((g.items || []).length); }, 0);
     var bonusCount = (s.bonus || []).length;
+    var grammarCount = (s.grammar || []).length;
+    var vocabCount = (s.vocab || []).length;
     var typeIcon = ({ news:'newspaper', interview:'record_voice_over', talk:'forum', lecture:'school', podcast:'podcasts' })[s.sourceType] || 'smart_display';
     return '<div onclick="openStudyDetail(\'' + s._id + '\')" class="bg-white rounded-xl border border-slate-100 p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:var(--shadow-card-sm);border-left:3px solid #8b5cf6">' +
       '<div class="flex justify-between items-start gap-3">' +
@@ -122,6 +203,8 @@ function renderStudyList(){
           '<div class="flex flex-wrap gap-2">' +
             (groupCount ? '<span class="text-[9px] font-bold bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">' + groupCount + ' 그룹</span>' : '') +
             (exprCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">표현 ' + exprCount + '</span>' : '') +
+            (grammarCount ? '<span class="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">문법 ' + grammarCount + '</span>' : '') +
+            (vocabCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">단어 ' + vocabCount + '</span>' : '') +
             (bonusCount ? '<span class="text-[9px] font-bold bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">보너스 ' + bonusCount + '</span>' : '') +
             (s.date ? '<span class="text-[9px] font-bold bg-slate-50 text-slate-400 px-2 py-0.5 rounded-full">' + s.date + '</span>' : '') +
           '</div>' +
@@ -191,8 +274,26 @@ window.autoGenerateStudy = async function(){
         'anthropic-dangerous-direct-browser-access': 'true',
         'content-type': 'application/json'
       },
-      body: JSON.stringify({ model: model, max_tokens: 32000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: model, max_tokens: _esMaxTokens, messages: [{ role: 'user', content: prompt }] })
     });
+    // ★ (2026-08-30) 표현+문법+단어로 분량이 늘어 출력이 잘리던 문제 — 넉넉히 요청하고,
+    //   모델이 그 한도를 안 받아주면 한 번만 32k로 낮춰 재시도한다.
+    if (!res.ok && res.status === 400 && _esMaxTokens > 32000){
+      var eb0 = {}; try { eb0 = await res.clone().json(); } catch(e){}
+      if (/max_tokens/i.test((eb0.error && eb0.error.message) || '')){
+        _esMaxTokens = 32000;
+        res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true',
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({ model: model, max_tokens: 32000, messages: [{ role: 'user', content: prompt }] })
+        });
+      }
+    }
     if (!res.ok){
       var eb = {}; try { eb = await res.json(); } catch(e){}
       var msg = (res.status === 401) ? 'API 키가 유효하지 않아요.'
@@ -371,6 +472,16 @@ function _esStudyCard(it){
     });
     h += '</div>';
   }
+  if ((it.collocations || []).length || it.register){
+    h += '<div style="margin-bottom:20px">' + _esLabel('Collocations · 같이 붙어 다니는 말') +
+      '<div class="flex flex-wrap gap-2" style="margin-top:10px">';
+    (it.collocations || []).forEach(function(c){
+      h += '<span style="padding:6px 12px;border-radius:8px;background:' + C.surfC + ';color:' + C.text + ';font-size:calc(14px * var(--es-scale, 1));font-weight:600">' + c + '</span>' + _esSpkSm(c);
+    });
+    h += '</div>' +
+      (it.register ? '<p style="font-size:calc(13px * var(--es-scale, 1));color:' + C.sub + ';margin:10px 0 0"><b>어디에 쓰나</b> · ' + it.register + '</p>' : '') +
+    '</div>';
+  }
   if ((it.related || []).length || it.warning){
     h += '<div class="grid md:grid-cols-2 gap-6" style="background:' + C.surf + ';padding:20px;border-radius:12px;border:1px solid rgba(197,197,215,0.4)">';
     h += '<div>';
@@ -389,6 +500,88 @@ function _esStudyCard(it){
   }
   if (it.outro){
     h += '<div class="flex items-center justify-center" style="margin-top:24px;padding-top:24px;border-top:1px dashed ' + C.outlineV + '"><div class="inline-flex items-center gap-2" style="background:' + C.primary + ';color:#fff;padding:10px 24px;border-radius:9999px;max-width:100%"><span class="material-symbols-outlined">loop</span><p style="font-size:calc(15px * var(--es-scale, 1));font-weight:700;margin:0">' + it.outro + '</p></div></div>';
+  }
+  h += '</article>';
+  return h;
+}
+
+// 문법 카드
+function _esGrammarCard(g){
+  var C = _ESC;
+  var lv = String(g.level || '').toUpperCase();
+  var lvColor = lv === 'C1' ? C.error : (lv === 'B2' ? C.amber : C.emeraldContainer);
+  var h = '<article style="background:#fff;border-radius:16px;padding:26px;border:1px solid rgba(197,197,215,0.4);border-left:4px solid ' + C.emeraldContainer + ';box-shadow:0 4px 20px rgba(0,0,0,0.04);margin-bottom:20px">';
+  h += '<div class="flex items-center gap-3" style="flex-wrap:wrap;margin-bottom:14px">' +
+    '<span class="material-symbols-outlined" style="color:' + C.emeraldContainer + ';font-size:calc(24px * var(--es-scale, 1))">rule</span>' +
+    '<span style="font-size:calc(20px * var(--es-scale, 1));font-weight:700;letter-spacing:-0.01em;color:' + C.text + '">' + (g.point || '') + '</span>' +
+    (lv ? '<span style="padding:3px 10px;border-radius:9999px;background:' + C.surfHigh + ';color:' + lvColor + ';font-size:calc(11px * var(--es-scale, 1));font-weight:800;letter-spacing:0.05em">' + lv + '</span>' : '') +
+  '</div>';
+  if (g.rule) h += '<p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.65;color:' + C.text + ';margin:0 0 16px">' + g.rule + '</p>';
+  if (g.source){
+    h += '<div class="flex items-start gap-2" style="background:' + C.surfLow + ';border-radius:10px;padding:12px 14px;margin-bottom:14px;color:' + C.sub + '">' +
+      '<span class="material-symbols-outlined" style="font-size:calc(16px * var(--es-scale, 1));padding-top:2px;flex-shrink:0">format_quote</span>' +
+      '<p style="font-size:calc(14px * var(--es-scale, 1));font-style:italic;line-height:1.55;margin:0">' + g.source + '</p>' + _esSpkSm(g.source) +
+    '</div>';
+  }
+  if (g.why){
+    h += '<div class="flex gap-3" style="background:rgba(255,221,184,0.35);border-left:4px solid ' + C.amber + ';padding:14px 16px;border-radius:0 10px 10px 0;margin-bottom:14px">' +
+      '<span class="material-symbols-outlined" style="color:' + C.amber + ';font-size:calc(22px * var(--es-scale, 1));flex-shrink:0">psychology</span>' +
+      '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.onAmber + ';margin:0">' + g.why + '</p>' +
+    '</div>';
+  }
+  if (g.mistake){
+    h += '<div style="border:1px dashed ' + C.error + '55;border-radius:10px;padding:12px 14px;margin-bottom:14px">' +
+      '<div class="flex items-center gap-2" style="font-weight:700;color:' + C.error + ';font-size:calc(13px * var(--es-scale, 1));margin-bottom:6px"><span class="material-symbols-outlined" style="font-size:calc(16px * var(--es-scale, 1))">error</span>한국인이 흔히 틀리는 것</div>' +
+      '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.text + ';margin:0">' + g.mistake + '</p>' +
+    '</div>';
+  }
+  if ((g.examples || []).length){
+    h += _esLabel('Examples');
+    g.examples.forEach(function(ex){
+      h += '<div style="padding-left:14px;border-left:2px solid ' + C.surfHigh + ';margin-top:12px">' +
+        '<p style="font-size:calc(17px * var(--es-scale, 1));line-height:1.5;font-weight:700;color:' + C.text + ';margin:0">' + (ex.en || '') + ' ' + _esSpkSm(ex.en) +
+          (ex.tag ? ' <span style="font-size:calc(10px * var(--es-scale, 1));font-weight:700;background:' + C.surfC + ';color:' + C.sub + ';padding:2px 8px;border-radius:6px;vertical-align:middle">' + ex.tag + '</span>' : '') + '</p>' +
+        (ex.kr ? '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:4px 0 0">' + ex.kr + '</p>' : '') +
+      '</div>';
+    });
+  }
+  if (g.drill){
+    h += '<div class="flex items-center gap-2" style="margin-top:18px;padding:12px 16px;border-radius:10px;background:' + C.primaryFixed + ';color:' + C.primary + '">' +
+      '<span class="material-symbols-outlined" style="font-size:calc(20px * var(--es-scale, 1))">edit</span>' +
+      '<p style="font-size:calc(15px * var(--es-scale, 1));font-weight:700;line-height:1.5;margin:0">' + g.drill + '</p>' +
+    '</div>';
+  }
+  h += '</article>';
+  return h;
+}
+
+// 단어 카드
+function _esVocabCard(v){
+  var C = _ESC;
+  var h = '<article style="background:#fff;border-radius:14px;padding:20px 22px;border:1px solid rgba(197,197,215,0.4);box-shadow:0 2px 12px rgba(0,0,0,0.03);margin-bottom:14px">';
+  h += '<div class="flex items-center gap-2" style="flex-wrap:wrap;margin-bottom:10px">' +
+    '<span style="font-size:calc(22px * var(--es-scale, 1));font-weight:700;color:' + C.primary + '">' + (v.word || '') + '</span>' + _esSpkSm(v.word) +
+    (v.pos ? '<span style="font-size:calc(12px * var(--es-scale, 1));font-style:italic;color:' + C.outline + '">' + v.pos + '</span>' : '') +
+    (v.stars ? _esStarRow(v.stars, 16) : '') +
+  '</div>';
+  if (v.meaning) h += '<p style="font-size:calc(16px * var(--es-scale, 1));line-height:1.6;font-weight:700;color:' + C.text + ';margin:0 0 8px">' + v.meaning + '</p>';
+  if (v.nuance) h += '<p style="font-size:calc(14px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0 0 10px">' + v.nuance + '</p>';
+  if (v.source){
+    h += '<div class="flex items-start gap-2" style="background:' + C.surfLow + ';border-radius:8px;padding:10px 12px;margin-bottom:10px;color:' + C.sub + '">' +
+      '<span class="material-symbols-outlined" style="font-size:calc(14px * var(--es-scale, 1));padding-top:2px;flex-shrink:0">format_quote</span>' +
+      '<p style="font-size:calc(13px * var(--es-scale, 1));font-style:italic;line-height:1.5;margin:0">' + v.source + '</p>' +
+    '</div>';
+  }
+  if ((v.collocations || []).length){
+    h += '<div class="flex flex-wrap gap-1.5" style="margin-bottom:8px">';
+    v.collocations.forEach(function(c){ h += '<span style="padding:4px 10px;border-radius:7px;background:' + C.surfC + ';color:' + C.text + ';font-size:calc(13px * var(--es-scale, 1));font-weight:600">' + c + '</span>'; });
+    h += '</div>';
+  }
+  if ((v.family || []).length){
+    h += '<p style="font-size:calc(13px * var(--es-scale, 1));color:' + C.outline + ';margin:0 0 8px">가족: ' + v.family.join(' · ') + '</p>';
+  }
+  if (v.ex){
+    h += '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.5;color:' + C.text + ';margin:0"><b>' + v.ex + '</b>' + _esSpkSm(v.ex) + (v.exKr ? ' <span style="color:' + C.sub + ';font-weight:400">' + v.exKr + '</span>' : '') + '</p>';
   }
   h += '</article>';
   return h;
@@ -501,6 +694,32 @@ function renderStudyDetail(s){
     (g.items || []).forEach(function(it){ H += _esStudyCard(it); });
   });
 
+  if ((s.grammar || []).length){
+    H += '<section style="margin-top:56px">' +
+      '<header style="margin-bottom:20px">' +
+        '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
+          '<span class="material-symbols-outlined" style="font-size:calc(28px * var(--es-scale, 1));color:' + C.emeraldContainer + '">rule</span>' +
+          '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">문법 — 이 사람이 왜 이렇게 말했나</h3>' +
+        '</div>' +
+        '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">본문에 실제로 쓰인 구조만. 공식이 아니라 감각으로.</p>' +
+      '</header>';
+    s.grammar.forEach(function(g){ H += _esGrammarCard(g); });
+    H += '</section>';
+  }
+
+  if ((s.vocab || []).length){
+    H += '<section style="margin-top:56px">' +
+      '<header style="margin-bottom:20px">' +
+        '<div class="flex items-baseline gap-3" style="margin-bottom:6px">' +
+          '<span class="material-symbols-outlined" style="font-size:calc(28px * var(--es-scale, 1));color:' + C.primary + '">book_2</span>' +
+          '<h3 style="font-size:calc(24px * var(--es-scale, 1));line-height:1.3;font-weight:700;color:' + C.text + ';margin:0">단어 — 하나로 승부 보는 것들</h3>' +
+        '</div>' +
+        '<p style="font-size:calc(15px * var(--es-scale, 1));line-height:1.6;color:' + C.sub + ';margin:0;max-width:720px">알긴 아는데 안 쓰는 단어, 몰라서 못 쓰는 C1 단어.</p>' +
+      '</header>';
+    s.vocab.forEach(function(v){ H += _esVocabCard(v); });
+    H += '</section>';
+  }
+
   if ((s.bonus || []).length){
     H += '<section style="margin-top:48px">' +
       '<h3 style="font-size:calc(24px * var(--es-scale, 1));font-weight:700;color:' + C.text + ';margin:0 0 16px">🍯 보너스 꿀단어</h3>' +
@@ -565,6 +784,19 @@ window.engSpeakStudy = function(id){
         if (ex.kr) q.push([ex.kr, 'ko-KR']);
       });
     });
+  });
+  (s.grammar || []).forEach(function(g){
+    if (g.point) q.push([g.point, 'ko-KR']);
+    if (g.source) q.push([g.source, 'en-US']);
+    (g.examples || []).slice(0, 2).forEach(function(ex){
+      if (ex.en) q.push([ex.en, 'en-US']);
+      if (ex.kr) q.push([ex.kr, 'ko-KR']);
+    });
+  });
+  (s.vocab || []).forEach(function(v){
+    if (v.word) q.push([v.word, 'en-US']);
+    if (v.meaning) q.push([v.meaning, 'ko-KR']);
+    if (v.ex) q.push([v.ex, 'en-US']);
   });
   _esEnqueue(q);
 };
