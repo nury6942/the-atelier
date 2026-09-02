@@ -3353,7 +3353,8 @@ function ldgSaveInput() {
 
 // ═══════════════════════════════════════════════════════════
 //  가계부 — 카드 내역 붙여넣기 가져오기 (신한/현대 카드 앱 복붙)
-//  형식: [가맹점] / [N,NNN원] / [YYYY.MM.DD HH:MM 본인 491* 일시불 신용 (상태)]
+//  신한A(전표형): [가맹점] / [N,NNN원] / [YYYY.MM.DD HH:MM 본인 491* 일시불 신용 (상태)]
+//  신한B(목록형): [* 가맹점N,NNN원] / [YYYY.MM.DD 본인491* 일시불 (상태)]  ← 가맹점+금액 한 줄, 시간 없음
 //  해외건은 4번째 줄(USD 100.00). 승인취소/거래취소는 자동 제외.
 //  분류는 과거 가계부(세부사항→대분류/소분류) 학습으로 자동 배정.
 // ═══════════════════════════════════════════════════════════
@@ -3365,12 +3366,19 @@ function _ldgNormMerchant(s) {
 }
 
 function _ldgParseCardPaste(text) {
-  // 금액줄(N원)을 기준으로 앞뒤를 보고 신한/현대 양식을 자동 구분.
-  //  신한: [가맹점] [N원] [YYYY.MM.DD HH:MM 본인 …]  (날짜가 금액 뒤, 해외는 그 다음줄 USD)
+  // 금액줄을 기준으로 앞뒤를 보고 신한/현대 양식을 자동 구분.
+  //  신한A(전표형): [가맹점] [N원] [YYYY.MM.DD HH:MM 본인 491* 일시불]  (해외는 그 다음줄 USD)
+  //  신한B(목록형): [* 가맹점N원] [YYYY.MM.DD 본인491* 일시불]  ← 가맹점과 금액이 한 줄에 붙고 시간이 없음
   //  현대: [가맹점] [… 26. 6. 30 · 일시불 · 적립예정] [N원]  (날짜가 금액 앞, 2자리 연도)
   var lines = (text || '').split(/\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean);
   var amountRe = /^([\d,]+)원$/;
-  var shinhanDateRe = /^(\d{4})\.(\d{2})\.(\d{2})\s+\d{2}:\d{2}\s+/;
+  // 신한B: 앱 목록을 복사하면 가맹점 오른쪽에 있던 금액이 줄바꿈 없이 그대로 붙어 온다 ("* 천흥마트6,000원")
+  var gluedRe = /^[*•·\-\s]*(.+?)\s*([\d,]+)\s*원$/;
+  // 이름이 숫자로 끝나는 가맹점은 금액과 경계가 모호하다("이마트243,500원" = 이마트24+3,500? 이마트+243,500?)
+  // → 알려진 이름을 먼저 확정해서 가른다. 목록에 없는 새 가맹점은 gluedRe가 긴 쪽 금액으로 읽으니 확인 필요.
+  var digitTailRe = /(이마트24|GS25|지에스25|씨스페이스24|배스킨라빈스31|홈플러스365|와인25)\s*([\d,]+)\s*원$/i;
+  var shinhanDateRe = /^(\d{4})\.(\d{2})\.(\d{2})(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?\s+\S/; // 시간은 양식에 따라 있기도 없기도
+  var pointRe = /포인트\s*사용\s*([\d,]+)\s*P/i;
   var hyTimeRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})(\d{2}):(\d{2})/; // 현대 신형: 날짜 뒤에 시간이 붙음 (26. 7. 3 + 12:36 = 312:36)
   var hyDateRe = /(\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})/;                 // 현대 구형: 시간 없음 (폴백)
   var hyRelRe = /(오늘|어제|그제)/;                                      // 현대: 최근 거래는 날짜 대신 "오늘/어제"로 표시
@@ -3381,12 +3389,30 @@ function _ldgParseCardPaste(text) {
   var out = [];
   for (var i = 0; i < lines.length; i++) {
     var am = amountRe.exec(lines[i]);
-    if (!am) continue;
+    if (!am) {
+      // ── 신한B: 가맹점+금액이 한 줄. 다음 줄이 진짜 날짜줄일 때만 인정해서 오인식을 막는다
+      var dl = lines[i + 1] || '';
+      if (!shinhanDateRe.test(dl)) continue;
+      var gd = digitTailRe.exec(lines[i]), gName = '', gAmt = '';
+      if (gd) { gName = lines[i].slice(0, gd.index + gd[1].length); gAmt = gd[2]; }
+      else { var gm = gluedRe.exec(lines[i]); if (!gm) continue; gName = gm[1]; gAmt = gm[2]; }
+      gName = gName.replace(/^[*•·\-\s]+/, '').trim();
+      var gVal = parseInt(gAmt.replace(/,/g, ''), 10) || 0;
+      if (!gVal || !gName) continue; // 0원 줄은 취소 건의 짝꿍이라 가계부에 남길 게 없음
+      var gsh = shinhanDateRe.exec(dl), gpt = pointRe.exec(dl);
+      out.push({ date: gsh[1] + '-' + gsh[2] + '-' + gsh[3], merchant: gName, amount: gVal, card: '신한카드',
+        cancelled: /취소/.test(dl), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '',
+        point: gpt ? gpt[1] + 'P' : '' });
+      continue;
+    }
     var amount = parseInt(am[1].replace(/,/g, ''), 10) || 0;
+    if (!amount) continue; // 0원 줄은 취소 건의 짝꿍
     var sh = shinhanDateRe.exec(lines[i + 1] || '');
     if (sh) {
+      var pt = pointRe.exec(lines[i + 1] || '');
       out.push({ date: sh[1] + '-' + sh[2] + '-' + sh[3], merchant: lines[i - 1] || '', amount: amount, card: '신한카드',
-        cancelled: /취소/.test(lines[i + 1]), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '' });
+        cancelled: /취소/.test(lines[i + 1]), foreign: foreignRe.test(lines[i + 2] || '') ? lines[i + 2] : '',
+        point: pt ? pt[1] + 'P' : '' });
       continue;
     }
     var hline = lines[i - 1] || '';
@@ -3394,7 +3420,7 @@ function _ldgParseCardPaste(text) {
     if (hy) {
       var mo = ('0' + hy[2]).slice(-2), da = ('0' + hy[3]).slice(-2);
       out.push({ date: '20' + hy[1] + '-' + mo + '-' + da, merchant: lines[i - 2] || '', amount: amount, card: '현대카드',
-        cancelled: /취소/.test(hline), foreign: '' });
+        cancelled: /취소/.test(hline), foreign: '', point: '' });
       continue;
     }
     // 현대 상대날짜: "…(포인트형)오늘02:51:54일시불" — 카드 메타줄일 때만 인정
@@ -3403,7 +3429,7 @@ function _ldgParseCardPaste(text) {
       var off = { '오늘': 0, '어제': 1, '그제': 2 }[rel[1]] || 0;
       var rd = new Date(_today.getTime()); rd.setDate(rd.getDate() - off);
       out.push({ date: _fmtLocal(rd), merchant: lines[i - 2] || '', amount: amount, card: '현대카드',
-        cancelled: /취소/.test(hline), foreign: '' });
+        cancelled: /취소/.test(hline), foreign: '', point: '' });
       continue;
     }
   }
@@ -3488,7 +3514,7 @@ function ldgPreviewPaste() {
     var m = learn[normM] || null;
     var guessed = false;
     if (!m) { var g = _ldgGuessCategory(p.merchant); if (g) { m = g; guessed = true; } }
-    return { date: p.date, merchant: p.merchant, amount: p.amount, cancelled: p.cancelled, foreign: p.foreign,
+    return { date: p.date, merchant: p.merchant, amount: p.amount, cancelled: p.cancelled, foreign: p.foreign, point: p.point || '',
       dup: dup, matched: !!m && !guessed, guessed: guessed, major: m ? m.major : '', minor: m ? m.minor : '', include: !p.cancelled && !dup };
   });
   ldgRenderPastePreview();
@@ -3556,6 +3582,14 @@ function ldgPasteSetMajor(i, v) {
 }
 function ldgPasteSetMinor(i, v) { if (_ldgPasteRows[i]) _ldgPasteRows[i].minor = v; }
 
+// 붙여넣기로 넣은 거래의 비고 문구 — 해외 결제액·사용 포인트가 있으면 뒤에 덧붙인다
+function _ldgPasteNote(r) {
+  var parts = ['카드 가져오기'];
+  if (r.foreign) parts.push(r.foreign);
+  if (r.point) parts.push('포인트 ' + r.point + ' 사용');
+  return parts.join(' \u00b7 ');
+}
+
 function ldgConfirmPasteImport() {
   var pm = (document.getElementById('ldg-paste-pm') || {}).value || '신한카드';
   var toAdd = _ldgPasteRows.filter(function(r){ return r.include && !r.cancelled; });
@@ -3566,7 +3600,7 @@ function ldgConfirmPasteImport() {
   var base = Date.now();
   toAdd.forEach(function(r, k) {
     _ledgerData.transactions.push({ id: 'txn_' + (base + k), date: r.date, '대분류': r.major, '소분류': r.minor,
-      '금액': r.amount, '결제수단': pm, '세부사항': r.merchant, '비고': r.foreign ? ('카드 가져오기 · ' + r.foreign) : '카드 가져오기' });
+      '금액': r.amount, '결제수단': pm, '세부사항': r.merchant, '비고': _ldgPasteNote(r) });
   });
   try { ldgSaveTx(); } catch(e) { console.error('[paste import] save 실패', e); ldgFlashToast('저장 오류: ' + (e && e.message || e)); return; }
   _ldgPasteRows = [];
