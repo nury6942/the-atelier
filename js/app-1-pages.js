@@ -13986,7 +13986,10 @@
       financeTrips = tripDocs;
       financeJourneyPayMap = {};
       journeyDocs.forEach(function(j) {
-        financeJourneyPayMap[j._id] = { payment_date: j.payment_date || '' };
+        // payment_method / onsite_fee 에 유로 원가가 들어있다 (예: "EUR 246.40 현지 결제")
+        // — '유로 환율 반영' 기능이 여기서 € 를 찾는다
+        financeJourneyPayMap[j._id] = { payment_date: j.payment_date || '',
+          payment_method: j.payment_method || '', onsite_fee: j.onsite_fee || '' };
       });
 
       // 1회성 마이그레이션: 하드코딩 defaults를 Firestore에 실제 문서로 옮김
@@ -14306,7 +14309,8 @@
         try {
           await fbUpdate('journey', row.journeyId, { payment_date: val });
           row.jPayDate = val;
-          financeJourneyPayMap[row.journeyId] = { payment_date: val };
+          financeJourneyPayMap[row.journeyId] =
+            Object.assign({}, financeJourneyPayMap[row.journeyId] || {}, { payment_date: val });
         } catch(e) { console.warn('[Finance PaidDate] journey 동기화 실패:', e); }
       }
       finSortByPaid(financeData);
@@ -14475,6 +14479,174 @@
     });
   }
   try { updateFinanceFxChip(); } catch(e) {}
+
+  // ═══════════════════════════════════════════════════════════
+  //  예산 — '유로 환율 반영' (콘솔 스크립트 data/set_finance_fx_amount.js 를 화면 버튼으로)
+  //  예약은 €로 잡혀 있는데 장부엔 넣던 날 환율의 원화가 굳어 있다. 아직 결제 전인 행에
+  //  유로 원가(fx_amount)를 심어두면 finRowAmt 가 매일 오늘 환율로 다시 계산한다.
+  //  ★★ 결제 완료 행은 절대 건드리지 않는다 — 이미 낸 돈은 그때 낸 원화가 진실이고,
+  //     유로가 심겨 있으면 나중에 '미결제'로 토글하는 순간 과거 기록이 되살아나 움직인다.
+  // ═══════════════════════════════════════════════════════════
+  var _finFxTargets = [];
+
+  // "€529.65" / "EUR 246.40" / "246,40 EUR" 에서 숫자 뽑기.
+  // 콤마 뒤가 1~2자리로 끝나면 유럽식 소수점(246,40 = 246.40), 아니면 천단위 구분.
+  // (콤마를 무조건 지우면 246,40 이 24,640 이 돼서 100배로 심기는 사고가 난다)
+  function _finFxNum(raw) {
+    var s = String(raw || '').trim();
+    if (/^\d{1,3}(?:\.\d{3})*,\d{1,2}$/.test(s) || /^\d+,\d{1,2}$/.test(s)) {
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else {
+      s = s.replace(/,/g, '');
+    }
+    var v = parseFloat(s);
+    return v > 0 ? v : 0;
+  }
+  function _finFxGrabEur(s) {
+    var t = String(s || '');
+    var m = t.match(/(?:€|EUR)\s*([\d.,]+)/i) || t.match(/([\d.,]+)\s*(?:€|EUR)/i);
+    return m ? _finFxNum(m[1]) : 0;
+  }
+
+  // 화면에 보이는 행(현재 여행 필터)만 훑는다. 여기서는 아무것도 쓰지 않는다.
+  function _finFxScan() {
+    var today = finTodayStr();
+    var out = [];
+    (financeFiltered || []).forEach(function(row) {
+      if (row.fxAmount) return;                        // 이미 심어짐
+      var j = row.journeyId ? financeJourneyPayMap[row.journeyId] : null;
+      var eur = 0, src = '';
+      if (row.finKind === 'onsite') {
+        // 도시세 행 — 현장 요금 필드에서만 찾는다 (숙소 본체 금액과 섞이면 안 됨)
+        eur = _finFxGrabEur(j && j.onsite_fee); if (eur) src = '현장요금';
+      } else {
+        eur = _finFxGrabEur(row[1]); if (eur) src = '설명글';
+        if (!eur && j) { eur = _finFxGrabEur(j.payment_method); if (eur) src = '예약확인서'; }
+      }
+      if (!eur) return;
+      out.push({ id: row[7], row: row, desc: row[1] || '—', eur: eur, src: src,
+        krwNow: parseFloat(row[4]) || 0, pending: finIsPending(row, today) });
+    });
+    return out;
+  }
+
+  function finFxToggle() {
+    var p = document.getElementById('fin-fx-panel');
+    if (!p) return;
+    var open = !p.style.display || p.style.display === 'none';
+    p.style.display = open ? 'block' : 'none';
+    if (open) finFxPreview();
+  }
+  function finFxClose() {
+    var p = document.getElementById('fin-fx-panel');
+    if (p) p.style.display = 'none';
+  }
+
+  function finFxPreview() {
+    var box = document.getElementById('fin-fx-body');
+    if (!box) return;
+    box.innerHTML = '<p class="text-xs text-slate-400 py-3">환율 확인 중…</p>';
+    getFxEurKrw(function(rate) {
+      if (!rate) {
+        box.innerHTML = '<p class="text-xs text-rose-500 py-3">환율을 못 받아왔어요. 잠시 뒤 다시 눌러주세요.</p>';
+        return;
+      }
+      _finFxTargets = _finFxScan();
+      finFxRender(rate);
+    });
+  }
+
+  // 부호를 ₩ 앞에 붙인다 — '₩-49,654' 가 아니라 '−₩49,654'
+  function _finFxSigned(n) {
+    return (n < 0 ? '−₩' : (n > 0 ? '+₩' : '₩')) + Math.abs(n).toLocaleString('ko-KR');
+  }
+
+  function finFxRender(rate) {
+    var box = document.getElementById('fin-fx-body');
+    if (!box) return;
+    var rows = _finFxTargets;
+    if (!rows.length) {
+      box.innerHTML = '<p class="text-xs text-slate-400 py-3">유로 원가를 찾은 행이 없어요 — 이미 다 심었거나, € 표기가 없는 항목들이에요.</p>';
+      return;
+    }
+    var pend = rows.filter(function(r){ return r.pending; });
+    var skipN = rows.length - pend.length;
+    var diff = pend.reduce(function(s, r){ return s + (Math.round(r.eur * rate) - r.krwNow); }, 0);
+    var diffCls = diff > 0 ? 'text-rose-600' : (diff < 0 ? 'text-emerald-600' : 'text-slate-500');
+
+    var html = '<div class="flex items-center justify-between flex-wrap gap-2 mb-3">' +
+      '<div class="text-xs text-slate-600">오늘 환율 <b>€1 = ₩' + Math.round(rate).toLocaleString('ko-KR') + '</b>' +
+        ' · 심을 대상 <b class="text-indigo-600">' + pend.length + '</b>건' +
+        (skipN ? ' · <span class="text-slate-400">결제 완료 ' + skipN + '건 제외</span>' : '') +
+        ' · 지출 합계 <b class="' + diffCls + '">' + _finFxSigned(diff) + '</b></div></div>';
+
+    html += '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="text-[10px] text-slate-400 uppercase"><tr>' +
+      '<th class="px-2 py-1">항목</th><th class="px-2 py-1">처리</th><th class="px-2 py-1">출처</th>' +
+      '<th class="px-2 py-1 text-right">€ 원가</th><th class="px-2 py-1 text-right">지금</th>' +
+      '<th class="px-2 py-1 text-right">오늘 환율로</th><th class="px-2 py-1 text-right">차이</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      var neu = Math.round(r.eur * rate);
+      var d = neu - r.krwNow;
+      var dCls = d > 0 ? 'text-rose-600' : (d < 0 ? 'text-emerald-600' : 'text-slate-400');
+      var badge = r.pending
+        ? '<span class="text-indigo-600 font-semibold">심음</span>'
+        : '<span class="text-slate-400">결제완료 · 건너뜀</span>';
+      html += '<tr class="border-t border-slate-100"' + (r.pending ? '' : ' style="opacity:0.45"') + '>' +
+        '<td class="px-2 py-1 text-slate-800" title="' + String(r.desc).replace(/"/g, '&quot;') + '">' +
+          String(r.desc).replace(/</g, '&lt;').slice(0, 46) + (String(r.desc).length > 46 ? '…' : '') + '</td>' +
+        '<td class="px-2 py-1 whitespace-nowrap">' + badge + '</td>' +
+        '<td class="px-2 py-1 text-slate-400 whitespace-nowrap">' + r.src + '</td>' +
+        '<td class="px-2 py-1 text-right whitespace-nowrap">€' + r.eur.toLocaleString('ko-KR') + '</td>' +
+        '<td class="px-2 py-1 text-right text-slate-500 whitespace-nowrap">₩' + r.krwNow.toLocaleString('ko-KR') + '</td>' +
+        '<td class="px-2 py-1 text-right font-semibold whitespace-nowrap">' + (r.pending ? '₩' + neu.toLocaleString('ko-KR') : '—') + '</td>' +
+        '<td class="px-2 py-1 text-right whitespace-nowrap ' + (r.pending ? dCls : 'text-slate-300') + '">' +
+          (r.pending ? _finFxSigned(d) : '—') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '<div class="flex items-center justify-end gap-2 mt-3">' +
+      '<span id="fin-fx-msg" class="text-[11px] text-slate-400 mr-auto"></span>' +
+      '<button onclick="finFxClose()" class="text-xs font-bold px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100">닫기</button>' +
+      '<button id="fin-fx-apply" onclick="finFxApply()" class="text-sm font-bold px-4 py-2 rounded-xl text-white"' +
+        (pend.length ? '' : ' disabled style="opacity:0.4;cursor:not-allowed"') +
+        ' style="background:linear-gradient(135deg,#6366f1,#a855f7)">' + pend.length + '건 반영</button></div>';
+    box.innerHTML = html;
+  }
+
+  async function finFxApply() {
+    var rate = _fxEurKrwRate;
+    if (!rate) { finFxPreview(); return; }
+    // ★ 여기서 한 번 더 거른다 — 미리보기 이후 상태가 바뀌었어도 완료 행은 절대 안 쓴다
+    var pend = (_finFxTargets || []).filter(function(t){ return t.pending; });
+    if (!pend.length) return;
+    var btn = document.getElementById('fin-fx-apply');
+    var msg = document.getElementById('fin-fx-msg');
+    if (btn) { btn.disabled = true; btn.textContent = '반영 중…'; btn.style.opacity = '0.6'; }
+    var ok = 0, fail = 0;
+    for (var i = 0; i < pend.length; i++) {
+      var t = pend[i];
+      if (!t.pending) continue;                       // 이중 안전장치
+      try {
+        await fbUpdate('finance', t.id, { fx_amount: String(t.eur), fx_currency: 'EUR' });
+        t.row.fxAmount = t.eur;                       // 메모리에도 반영해 바로 다시 그려지게
+        t.row.fxCurrency = 'EUR';
+        ok++;
+      } catch (e) { console.error('[fin-fx] 실패:', t.desc, e); fail++; }
+    }
+    var skipN = (_finFxTargets || []).length - pend.length;
+    if (msg) {
+      msg.className = 'text-[11px] mr-auto ' + (fail ? 'text-rose-600' : 'text-emerald-600');
+      msg.textContent = '예정 ' + ok + '건 반영' + (fail ? ' · ' + fail + '건 실패(콘솔 확인)' : '') +
+        (skipN ? ' · 결제 완료 ' + skipN + '건은 손대지 않음' : '');
+    }
+    try { renderFinanceTable(); updateFinanceStats(); } catch (e) {}
+    if (btn) { btn.textContent = '완료'; btn.disabled = true; }
+    setTimeout(function(){ finFxPreview(); }, 1400);   // 남은 대상 다시 훑기
+  }
+
+  window.finFxToggle = finFxToggle;
+  window.finFxClose = finFxClose;
+  window.finFxApply = finFxApply;
+  window.finFxPreview = finFxPreview;
 
   function updateFinanceStats() {
     // 출금/입금 합계

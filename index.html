@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=342" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=343" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -12854,7 +12854,22 @@
             <h4 class="font-manrope font-bold text-slate-800">거래 내역</h4>
             <p id="finance-status" class="text-[10px] text-slate-400 font-medium mt-0.5">불러오는 중...</p>
           </div>
-          <div class="text-[10px] text-slate-400 font-medium">맨 위 행에서 바로 입력 · 날짜 클릭으로 결제일 수정</div>
+          <div class="flex items-center gap-3">
+            <div class="text-[10px] text-slate-400 font-medium hidden sm:block">맨 위 행에서 바로 입력 · 날짜 클릭으로 결제일 수정</div>
+            <button onclick="finFxToggle()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 inline-flex items-center gap-1 whitespace-nowrap" title="아직 결제 안 한 유로 항목을 오늘 환율로 자동 환산되게 만들어요 (결제 완료 항목은 안 건드림)"><span class="material-symbols-outlined" style="font-size:15px">currency_exchange</span>유로 환율 반영</button>
+          </div>
+        </div>
+
+        <!-- 유로 원가 심기 — 미리보기 후 반영 (결제 완료 행은 절대 제외) -->
+        <div id="fin-fx-panel" style="display:none;background:#faf8ff" class="px-6 py-4 border-b border-slate-100">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <p class="text-xs font-bold text-slate-700">유로 환율 반영</p>
+              <p class="text-[10px] text-slate-500 mt-0.5 leading-relaxed">아직 결제 안 한 유로 항목에 <b>€ 원가</b>를 저장해두면, 이후로는 매일 그날 환율로 자동 환산돼요.<br><b class="text-slate-700">이미 결제 완료된 항목은 건드리지 않습니다.</b></p>
+            </div>
+            <button onclick="finFxClose()" class="text-slate-400 hover:text-slate-600 shrink-0"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+          </div>
+          <div id="fin-fx-body"></div>
         </div>
 
         <div id="finance-loading" class="flex items-center justify-center py-12 text-slate-400">
@@ -15503,7 +15518,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=342" defer></script>
+<script src="js/app-1-pages.js?v=343" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
