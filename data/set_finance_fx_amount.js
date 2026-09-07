@@ -14,6 +14,11 @@
 // 심고 나면 앱이 '예정' 상태인 동안 매일 환율로 자동 환산해서
 // 금액·잔액·합계를 보여준다. '결제 완료'로 바꾸면 그 시점 금액으로 고정.
 //
+// v3 (2026-09-08): ★ 결제 완료 행은 절대 건드리지 않는다.
+//   이미 낸 돈은 그때 낸 원화가 진실이다. 유로를 심어두면 나중에 그 행을
+//   '미결제'로 토글하는 순간 금액이 오늘 환율로 되살아나 과거 기록이 바뀐다.
+//   예정 판정도 앱의 finIsPending 과 완전히 동일하게 맞췄다.
+//
 // 사용: Travel 페이지 → F12 → Console → 붙여넣기 → Enter
 // ═══════════════════════════════════════════════════════════════
 
@@ -70,7 +75,10 @@
     if (!eur) return;
 
     const krwNow = parseFloat(r.amount) || 0;
-    const paidKey = r.paid_date || r.date || '';
+    // 앱의 finIsPending / finPaidKey 와 판정을 정확히 일치시킨다.
+    // (paid_date → journey.payment_date → date 순. 가운데를 빠뜨리면 앱은 '완료'로 보는데
+    //  스크립트는 '예정'으로 봐서 결제 끝난 행에 유로를 심는 사고가 난다)
+    const paidKey = r.paid_date || (j && j.payment_date) || r.date || '';
     const pending = r.unpaid === true || (paidKey && paidKey > today);
     targets.push({ r, eur, src, krwNow, newKrw: Math.round(eur * rate), pending });
   });
@@ -84,7 +92,7 @@
     'font-weight:bold;font-size:13px;color:#6b38d4');
   console.table(targets.map(t => ({
     '항목': String(t.r.description || '').slice(0, 42),
-    '결제 전?': t.pending ? '예정 ✅' : '결제완료(고정)',
+    '처리': t.pending ? '심음 ✅' : '결제완료 — 건너뜀 ⛔',
     '출처': t.src,
     '€ 원가': '€' + t.eur.toLocaleString('ko-KR'),
     '지금 원화': '₩' + t.krwNow.toLocaleString('ko-KR'),
@@ -101,14 +109,18 @@
     return;
   }
 
-  let ok = 0;
+  let ok = 0, skipped = 0;
   for (const t of targets) {
+    // ★★ 결제 완료 행은 절대 쓰지 않는다. 이미 낸 돈은 그때 낸 원화가 진실이고,
+    //    유로를 심어두면 나중에 '미결제'로 토글하는 순간 금액이 오늘 환율로 되살아난다.
+    if (!t.pending) { skipped++; continue; }
     try {
       await fbUpdate('finance', t.r._id, { fx_amount: String(t.eur), fx_currency: 'EUR' });
       ok++;
       console.log('✅ ' + String(t.r.description || '').slice(0, 40) + ' → €' + t.eur + ' (' + t.src + ')');
     } catch (e) { console.error('❌ 실패:', t.r.description, e); }
   }
-  console.log('%c완료 — ' + ok + '건. 페이지를 새로고침하면 오늘 환율로 계산돼요.',
+  console.log('%c완료 — 예정 ' + ok + '건에 심음. 결제 완료 ' + skipped + '건은 손대지 않았어요.',
     'font-weight:bold;color:#6b38d4');
+  console.log('%c페이지를 새로고침하면 오늘 환율로 계산돼요.', 'color:#6b38d4');
 })();
