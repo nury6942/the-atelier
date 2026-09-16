@@ -13910,6 +13910,21 @@
     var k = finPaidKey(row);
     return !!k && k > todayStr;
   }
+  // ★ (2026-09-16) 경비 봉투 — 환전하는 순간 그 돈은 이미 예산에서 빠져나갔다.
+  //   그 현금으로 내는 항목(도시세·케이블카·식비…)을 또 지출로 세면 같은 돈을 두 번 센다.
+  //   그래서 cash 행은 잔액·합계에서 빼고, '경비에서 얼마 썼나'로만 집계한다.
+  function finIsCash(row) { return !!(row && row.cash); }
+  // 봉투 크기 = 카테고리 '환전' 지출 행의 합 (환전한 돈이 곧 경비)
+  function finCashPool(rows, todayStr) {
+    return (rows || []).reduce(function(s, r) {
+      return s + ((r[3] === '환전' && !finIsCash(r)) ? finRowAmt(r, todayStr) : 0);
+    }, 0);
+  }
+  function finCashUsed(rows, todayStr) {
+    return (rows || []).reduce(function(s, r) {
+      return s + (finIsCash(r) ? finRowAmt(r, todayStr) : 0);
+    }, 0);
+  }
   function finFmtDate(d) {
     if (!d || String(d).length < 10) return d || '—';
     return d.substring(5, 7) + '.' + d.substring(8, 10);
@@ -13938,6 +13953,7 @@
     row.fxCurrency = d.fx_currency || '';
     row.journeyId = d.journey_id || '';
     row.finKind = d.kind || '';                 // 'onsite' 면 journey 의 onsite_amount 쪽
+    row.cash = d.cash === true;                 // ★ (2026-09-16) 경비(환전한 현금)에서 나가는 행
     var j = row.journeyId ? financeJourneyPayMap[row.journeyId] : null;
     row.jPayDate = (j && j.payment_date) ? j.payment_date : '';
     return row;
@@ -14093,6 +14109,7 @@
     var balMap = new Map();
     var running = 0;
     indexed.forEach(function(item){
+      if (finIsCash(item.row)) return;                 // ★ 경비 행은 잔액에 영향 없음
       if (finIsPending(item.row, todayStr)) return;
       var a = finRowAmt(item.row, todayStr);
       if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
@@ -14102,6 +14119,7 @@
     // ★ 예정(미결제·미래) 행도 예상 잔액으로 이어서 계산 — 잔액이 어떻게 말라가는지 보이게 (흐린 ≈ 표시)
     var projMap = new Map();
     indexed.forEach(function(item){
+      if (finIsCash(item.row)) return;                 // ★ 경비 행은 예상 잔액에도 영향 없음
       if (!finIsPending(item.row, todayStr)) return;
       var a = finRowAmt(item.row, todayStr);
       if ((item.row[3]||'기타')==='입금') running += a; else running -= a;
@@ -14148,16 +14166,18 @@
       var amt = finRowAmt(row, todayStr);
       var isDeposit = cat === '입금';
       var isPending = finIsPending(row, todayStr);
+      var isCash = finIsCash(row);
       if (isPending) pendingCount++;
       var tr = document.createElement('tr');
-      tr.className = 'fin-row group' + (isPending ? ' fin-row-pending' : '');
+      tr.className = 'fin-row group' + (isPending ? ' fin-row-pending' : '') + (isCash ? ' fin-row-cash' : '');
       tr.dataset.finIdx = realIdx;
       // 날짜 셀: 결제일 표시 + 클릭 편집. 파생 행에 결제일 미설정이면 연필 힌트
       var needHint = !!row.journeyId && !finHasExplicitPaid(row);
       var dateTitle = needHint ? '탑승·체크인 일자예요 — 클릭해서 실제 결제일로 바꿔줘' : '클릭해서 결제일 수정';
       var dateHtml = '<span class="fin-date" title="' + dateTitle + '">' + finFmtDate(key) +
         (needHint ? '<span class="material-symbols-outlined fin-pencil">edit</span>' : '') + '</span>' +
-        (isPending ? '<span class="fin-chip fin-pending-chip">예정</span>' : '');
+        (isPending ? '<span class="fin-chip fin-pending-chip">예정</span>' : '') +
+        (isCash ? '<span class="fin-chip fin-cash-chip" title="경비(현금)에서 나가요 — 잔액에는 안 잡힙니다">경비</span>' : '');
       // EUR 행은 € 표시 + ₩ 병기 (저장된 환산액 우선, 없으면 오늘 환율)
       var isEur = row[5] === 'EUR';
       var sym = isEur ? '€' : '₩';
@@ -14182,6 +14202,8 @@
       } else if (projMap.has(row)) {
         var pbal = projMap.get(row);
         balHtml = '<span class="fin-bal fin-bal-proj' + (pbal < 0 ? ' fin-bal-neg' : '') + '" title="예상 잔액 (이 결제 후 남는 돈)">≈ ' + fmtSigned(pbal) + '</span>';
+      } else if (isCash) {
+        balHtml = '<span class="fin-bal fin-bal-skip" title="경비에서 나가는 항목이라 잔액에는 안 잡혀요">—</span>';
       } else {
         balHtml = '<span class="fin-bal fin-bal-skip">—</span>';
       }
@@ -14194,6 +14216,7 @@
         '<td class="fin-td text-right cursor-pointer" onclick="clickEditFinance('+realIdx+',3,this)">' + amtHtml + '</td>' +
         '<td class="fin-td text-right">' + balHtml + '</td>' +
         '<td class="fin-td text-center"><div class="fin-acts">' +
+          '<button onclick="toggleFinanceCash('+realIdx+')" title="' + (isCash ? '경비에서 빼기 (잔액에 다시 반영)' : '경비에서 쓰는 걸로 표시 (잔액에서 제외)') + '" class="fin-act-btn' + (isCash ? ' fin-act-on' : '') + '"><span class="material-symbols-outlined">wallet</span></button>' +
           '<button onclick="toggleFinanceUnpaid('+realIdx+')" title="' + tglTitle + '" class="fin-act-btn' + (row.unpaid ? ' fin-act-on' : '') + '"><span class="material-symbols-outlined">' + tglIcon + '</span></button>' +
           '<button onclick="deleteFinanceAny('+realIdx+')" title="삭제" class="fin-act-btn fin-act-del"><span class="material-symbols-outlined">delete</span></button>' +
         '</div></td>';
@@ -14336,6 +14359,24 @@
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (next ? '예정 지출로 표시했어 (잔액에서 제외)' : '결제 완료로 표시했어'));
     } catch(e) {
       console.error('[Finance Unpaid]', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message);
+    }
+  }
+
+  // ★ (2026-09-16) 이 항목을 경비(현금)에서 쓰는 걸로 표시/해제
+  async function toggleFinanceCash(idx) {
+    var row = financeData[idx]; if (!row) return;
+    var id = row[7];
+    if (id === '__default__') { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 내용을 먼저 한 번 저장한 뒤 표시할 수 있어요'); return; }
+    if (row[3] === '환전') { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 환전 행은 경비 자체예요 — 이건 그대로 두면 돼요'); return; }
+    var next = !row.cash;
+    try {
+      await fbUpdate('finance', id, { cash: next });
+      row.cash = next;
+      filterFinanceByTrip(currentFinanceTrip);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> ' + (next ? '경비에서 쓰는 걸로 표시했어 (잔액에서 빠짐)' : '경비에서 뺐어 (잔액에 다시 반영)'));
+    } catch(e) {
+      console.error('[Finance Cash]', e);
       showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패: ' + e.message);
     }
   }
@@ -14652,13 +14693,15 @@
     // 출금/입금 합계
     // ★ (2026-08-03) 예정 행의 외화 가격은 오늘 환율로 환산된 값을 쓴다 (finRowAmt)
     var fsToday = finTodayStr();
-    var expenseTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]!=='입금'?finRowAmt(r, fsToday):0); }, 0);
-    var depositTotal = financeFiltered.reduce(function(s,r){ return s+(r[3]==='입금'?finRowAmt(r, fsToday):0); }, 0);
+    // ★ (2026-09-16) 경비 행은 환전 시점에 이미 빠져나간 돈 — 합계에서 제외 (이중 계산 방지)
+    var expenseTotal = financeFiltered.reduce(function(s,r){ return s+((r[3]!=='입금' && !finIsCash(r))?finRowAmt(r, fsToday):0); }, 0);
+    var depositTotal = financeFiltered.reduce(function(s,r){ return s+((r[3]==='입금' && !finIsCash(r))?finRowAmt(r, fsToday):0); }, 0);
     var balance = depositTotal - expenseTotal;
 
     // 오늘 기준 3-스탯: 현재 잔액(오늘까지 결제분) / 예정 지출 / 최종 예상 잔액
     var curBal = 0, plannedExp = 0, plannedDep = 0;
     financeFiltered.forEach(function(r) {
+      if (finIsCash(r)) return;                        // ★ 경비 행 제외
       var a = finRowAmt(r, fsToday);
       var dep = (r[3]||'기타') === '입금';
       if (finIsPending(r, fsToday)) { if (dep) plannedDep += a; else plannedExp += a; }
@@ -14719,10 +14762,44 @@
       }
     }
 
+    renderCashEnvelope(fsToday);
     renderFinanceDonut();
 
     updateFinanceFxChip();
     renderTripBudget();
+  }
+
+  // ===== 💵 경비 봉투 — 환전한 현금 안에서 자잘한 현장 지출을 관리 =====
+  function renderCashEnvelope(todayStr) {
+    var box = document.getElementById('fin-cash-box');
+    if (!box) return;
+    var t = todayStr || finTodayStr();
+    var pool = finCashPool(financeFiltered, t);
+    var used = finCashUsed(financeFiltered, t);
+    if (!pool && !used) { box.style.display = 'none'; return; }
+    box.style.display = '';
+
+    var left = pool - used;
+    var over = left < 0;
+    var pct = pool > 0 ? Math.round(used / pool * 1000) / 10 : 0;
+    var fmt = function(v) { return '₩' + Math.round(Math.abs(v)).toLocaleString('ko-KR'); };
+    var setTx = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+
+    setTx('fin-cash-pool', fmt(pool));
+    setTx('fin-cash-used', fmt(used));
+    setTx('fin-cash-left', (over ? '-' : '') + fmt(left));
+    setTx('fin-cash-pct', pct + '%');
+    setTx('fin-cash-count', financeFiltered.filter(finIsCash).length + '건');
+
+    var bar = document.getElementById('fin-cash-bar');
+    if (bar) {
+      bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+      bar.classList.toggle('is-over', over);
+    }
+    var leftEl = document.getElementById('fin-cash-left');
+    if (leftEl) leftEl.style.color = over ? '#e11d48' : '#0f172a';
+    var noteEl = document.getElementById('fin-cash-note');
+    if (noteEl) noteEl.textContent = over ? '경비를 넘겼어요 — 초과분은 카드로 나가요' : '이 항목들은 잔액에 안 잡혀요';
   }
 
   // ===== 항목별 지출 도넛 =====
