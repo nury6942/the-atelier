@@ -8,8 +8,9 @@
 //
 // 숙소는 4박 내내 몬구엘포 하나라 동선·거리는 그대로. 날짜만 바뀐다.
 //
-// 사용: Travel 페이지 "2026 독일&이탈리아" 활성 → F12 → Sources → Snippets
-//       (콘솔 직접 붙여넣기는 크롬이 'allow pasting'을 요구함)
+// 사용: Travel 페이지 "2026 독일&이탈리아" 활성 → F12 → Console → 통째로 붙여넣기 → Enter
+//       크롬이 막으면 콘솔에 allow pasting 을 타이핑하고 Enter (처음 한 번만)
+//       붙여넣고 Enter 치기 전에 마지막 줄이 })(); 인지 확인 — 두 번 겹치면 SyntaxError
 window.atelierSwap = (function () {
   const TRIP = 'I5T6Gu4qU1BtbHg2slYE';
   const db = window.db;
