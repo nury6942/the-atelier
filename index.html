@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=343" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=344" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5610,6 +5610,22 @@
       font-size:10.5px; font-weight:700; white-space:nowrap; }
     .fin-chip .material-symbols-outlined { font-size:12px; }
     .fin-pending-chip { background:#fffbeb; color:#b45309; border-color:#fde68a; margin-left:6px; }
+    /* ★ (2026-09-16) 경비(현금 봉투) */
+    .fin-cash-chip { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; margin-left:6px; }
+    .fin-row-cash .fin-amt-exp { color:#15803d; }
+    .fin-cash-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:20px 24px; }
+    .fin-cash-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .fin-cash-title { display:flex; align-items:center; gap:7px; font-weight:700; color:#0f172a; font-size:13px; letter-spacing:-0.01em; }
+    .fin-cash-title .material-symbols-outlined { font-size:18px; color:#15803d; }
+    .fin-cash-sum { font-size:12px; color:#64748b; font-variant-numeric:tabular-nums; }
+    .fin-cash-sum b { color:#0f172a; font-weight:700; }
+    .fin-cash-track { height:8px; background:#f1f5f9; border-radius:999px; overflow:hidden; }
+    .fin-cash-bar { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#34d399,#15803d); transition:width .35s ease; }
+    .fin-cash-bar.is-over { background:linear-gradient(90deg,#fb7185,#e11d48); }
+    .fin-cash-foot { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:14px; flex-wrap:wrap; }
+    .fin-cash-left-l { font-size:11px; color:#94a3b8; letter-spacing:0.02em; }
+    .fin-cash-left-v { font-size:21px; font-weight:800; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+    .fin-cash-note { font-size:11px; color:#94a3b8; }
     .fin-amt { font-family:'Manrope','Pretendard',sans-serif; font-size:13.5px; font-weight:700; font-variant-numeric:tabular-nums; }
     .fin-amt-exp { color:#dc2626; }
     .fin-amt-dep { color:#059669; }
@@ -12847,6 +12863,24 @@
         </div>
       </section>
 
+      <!-- ★ (2026-09-16) 경비 봉투 — 환전한 현금 안에서 자잘한 현장 지출 관리 -->
+      <section class="mb-6" id="fin-cash-box" style="display:none">
+        <div class="fin-cash-card">
+          <div class="fin-cash-head">
+            <span class="fin-cash-title"><span class="material-symbols-outlined">wallet</span>경비 · 현금</span>
+            <span class="fin-cash-sum"><b id="fin-cash-pool">₩0</b> 중 <b id="fin-cash-used">₩0</b> 사용 · <span id="fin-cash-pct">0%</span> · <span id="fin-cash-count">0건</span></span>
+          </div>
+          <div class="fin-cash-track"><div class="fin-cash-bar" id="fin-cash-bar"></div></div>
+          <div class="fin-cash-foot">
+            <div>
+              <p class="fin-cash-left-l">남은 경비</p>
+              <p class="fin-cash-left-v" id="fin-cash-left">₩0</p>
+            </div>
+            <span class="fin-cash-note" id="fin-cash-note">이 항목들은 잔액에 안 잡혀요</span>
+          </div>
+        </div>
+      </section>
+
       <!-- 거래 내역 테이블 -->
       <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
@@ -15518,7 +15552,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=343" defer></script>
+<script src="js/app-1-pages.js?v=344" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
