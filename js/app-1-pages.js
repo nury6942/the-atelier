@@ -28122,9 +28122,10 @@
       var items = outfit ? (outfit.items||[]) : [];
 
       // ★ (2026-07-23) 의류/신발/악세 3단 구분 (mockup 양식) — cat 없는 기존 아이템은 의류로
+      // ★ (2026-09-17) FOOTWEAR 컬럼 삭제 — 신발은 체크리스트 쪽 '신발' 카테고리에서 관리한다.
+      //   기존에 cat:'신발' 로 저장된 아이템이 사라지지 않게 아래에서 의류로 흡수한다.
       var PK_CATS = [
         { key: '의류', label: 'CLOTHING', icon: 'checkroom' },
-        { key: '신발', label: 'FOOTWEAR', icon: 'footprint' },
         { key: '악세', label: 'ACCESSORIES', icon: 'watch' }
       ];
       function rowHtml(item, ii) {
@@ -28143,6 +28144,7 @@
         var rows = '';
         items.forEach(function(item, ii) {
           var c = item.cat || '의류';
+          if (c === '신발') c = '의류';          // ★ FOOTWEAR 컬럼이 없어졌으니 의류로
           if (c === cd.key) rows += rowHtml(item, ii);
         });
         return '<div class="pk-cat-col" ondragover="pkDragOver(event)" ondrop="pkColDrop(event,\''+dateStr+'\',\''+cd.key+'\')">' +
@@ -28170,7 +28172,7 @@
         '</div>' +
         '<div class="pk-cat-cols">'+itemsHtml+'</div>' +
         '<div class="pk-day-input-row">' +
-          '<select id="pk-outfit-cat-'+idx+'" class="pk-cat-select" onclick="event.stopPropagation()"><option value="의류">의류</option><option value="신발">신발</option><option value="악세">악세</option></select>' +
+          '<select id="pk-outfit-cat-'+idx+'" class="pk-cat-select" onclick="event.stopPropagation()"><option value="의류">의류</option><option value="악세">악세</option></select>' +
           '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
           '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
         '</div>' +
