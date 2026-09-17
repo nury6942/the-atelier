@@ -1,3 +1,51 @@
+## 2026-09-17 (원격 · Claude Code on web) — 짐 목록 더블클릭 인라인 수정 (v345)
+
+**왜**: 아이템 이름을 고치려면 행에 마우스를 올려 연필 버튼을 찾아 눌러야 했다.
+"걍 더블클릭하면 수정 모드로 들어가게" — 이 리포는 이미 일정 제목·시간·행선지·메모를
+전부 `ondblclick` 인라인 편집으로 쓰고 있어서 패턴만 맞춘 셈.
+
+**고친 것** — 인라인 편집 함수(`pkStartCatEdit` / `pkStartEdit`)는 이미 있었고 배선만 추가.
+
+BEFORE:
+```js
+'<span class="pk-item-name '+cls+' flex-1">'+item.name+'</span>'
+```
+
+AFTER:
+```js
+'<span class="pk-item-name '+cls+' flex-1" ondblclick="pkStartCatEdit('+ci+','+ii+',this)"
+  title="더블클릭해서 수정">'+item.name+'</span>'
+```
+
+이유: 함수가 span 엘리먼트를 받아 `replaceWith(input)` 하는 구조라 `this` 를 그대로 넘기면 된다.
+연필 버튼은 그대로 뒀다(마우스 올리면 여전히 보임) — 두 경로 다 같은 함수로 들어간다.
+
+- 카테고리 아이템(잠옷/화장품 등) · 데일리 아웃핏 아이템 둘 다 적용
+- 아웃핏 쪽은 행에 `onclick="pkSelectItem"` 이 걸려 있어 `event.stopPropagation()` 추가
+- `.pk-item-name` 에 `user-select:none` — 더블클릭 시 글자가 파랗게 잡히는 것만 차단
+- 캐시 v344→345, SW v432→433
+
+**검증** — 실제 렌더 마크업을 그대로 뽑아 Playwright 로 더블클릭:
+```
+pkStartCatEdit(0,1,<SPAN "잠옷 2">)          ← 깔끔
+row-click · row-click · pkStartEdit(...)     ← 아웃핏은 선택 토글이 2번 먼저
+```
+
+### 🎯 다음 할 일
+- **`atelierSwap` 스크립트 아직 미실행** — 일정 9/28 ↔ 9/30 교환이 앱에 반영 안 됨
+- 유랑 글 9/28·9/30 줄 서로 바꾸기
+- 9/25 차 받으면 **iPASS 번호판 등록** (P26237797) — 안 하면 €40 날아감
+- 9/27쯤 날씨 보고 세체다 구매 (mountain-forecast.com 고도별 + seceda.it 웹캠)
+
+### 💭 메모
+- 아웃핏 아이템은 더블클릭 시 행 `onclick` 이 2번 먼저 실행된다. 선택 토글이 두 번이라
+  결과적으로 제자리로 돌아와서 무해하지만, `stopPropagation` 은 dblclick 에만 걸려서
+  개별 click 은 못 막는다는 걸 기억해둘 것. 막으려면 span 에 `onclick` 도 걸어야 하는데
+  그러면 이름 클릭으로 선택하는 동작이 죽는다 — 그래서 일부러 안 막음
+- **경비 봉투 쓰는 법**: 항목마다 지갑 버튼을 눌러야 경비로 잡힌다. 자동 분류 아님
+
+---
+
 ## 2026-09-16 (원격 · Claude Code on web) — 돌로미티 9/28 ↔ 9/30 맞바꾸기 + 유랑 동행글
 
 **왜**: 트레치메 유료도로(iPASS)를 예약하려고 들어가 보니 **9/28은 10:30까지 통째로 매진**.

@@ -28064,7 +28064,7 @@
             var cls = item.checked ? 'checked' : '';
             return '<div class="pk-item-row group">' +
               '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleItem('+ci+','+ii+',this.checked)" class="pk-checkbox"/>' +
-              '<span class="pk-item-name '+cls+' flex-1">'+item.name+'</span>' +
+              '<span class="pk-item-name '+cls+' flex-1" ondblclick="pkStartCatEdit('+ci+','+ii+',this)" title="더블클릭해서 수정">'+item.name+'</span>' +
               '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
               '<button onclick="event.preventDefault();pkDeleteItem('+ci+','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
             '</div>';
@@ -28134,7 +28134,7 @@
         return '<div class="pk-item-row group'+(isSel?' selected':'')+'" data-date="'+dateStr+'" data-idx="'+ii+'" onclick="pkSelectItem(\''+dateStr+'\','+ii+',event)" ondragover="pkDragOver(event)" ondrop="pkDrop(event,\''+dateStr+'\','+ii+')">' +
           '<span draggable="true" class="material-symbols-outlined pk-drag" ondragstart="pkDragStart(event,\''+dateStr+'\','+ii+')" ondragend="pkDragEnd(event)">drag_indicator</span>' +
           '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleOutfit(\''+dateStr+'\','+ii+',this.checked)" class="pk-checkbox"/>' +
-          '<span class="pk-item-name '+cls+' flex-1">'+item.name+badge+'</span>' +
+          '<span class="pk-item-name '+cls+' flex-1" ondblclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this)" title="더블클릭해서 수정">'+item.name+badge+'</span>' +
           '<button onclick="event.stopPropagation();pkStartEdit(\''+dateStr+'\','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
         '</div>';
