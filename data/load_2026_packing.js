@@ -216,6 +216,18 @@ window.atelierPack = (function () {
         else { const re = await fbAdd('packing', { trip_id: b.trip_id, category: b.category, icon: b.icon, items: b.items }); pkData.push(re); }
       }
     }
+    if (bk.toiletry) {
+      for (const d of pkData.slice()) {
+        if (['세면도구','화장품'].indexOf(norm(d.category)) >= 0 && !bk.toiletry.find(b => b._id === d._id)) {
+          await fbDelete('packing', d._id); pkData.splice(pkData.indexOf(d), 1);
+        }
+      }
+      for (const b of bk.toiletry) {
+        const cur = pkData.find(d => d._id === b._id);
+        if (cur) { cur.category = b.category; cur.icon = b.icon; cur.items = b.items; await fbUpdate('packing', b._id, { category: b.category, icon: b.icon, items: b.items }); }
+        else { const re = await fbAdd('packing', { trip_id: b.trip_id, category: b.category, icon: b.icon, items: b.items }); pkData.push(re); }
+      }
+    }
     if (bk.outfits) {
       for (const id of (bk.outfitsAdded || [])) {
         await fbDelete('outfits', id);
@@ -231,6 +243,49 @@ window.atelierPack = (function () {
     console.log('%c↩️ 되돌림 완료 — 새로고침해줘', 'color:#f59e0b;font-weight:bold');
   }
 
+  // ── 세면도구 + 화장품을 하나로 합치고 아이템을 목록 그대로 교체
+  //   기본 템플릿(PK_TEMPLATE_DEFAULT)의 '치약 & 칫솔' 과 시트의 '치약&칫솔' 처럼
+  //   공백만 다른 이름이 각각 들어가 중복이 쌓였다. 이름을 맞춰 한 번에 정리한다.
+  const TOILETRY = ['헤어밴드','치약&칫솔','샤워 글로브','바디워시/샴푸/린스','클렌징폼/아이리무버 + 솜',
+                    '브러쉬 클렌저','스킨/시카이드 크림','헤어 에센스','헤어 브러쉬','머리 약','바디 스크럽','바디 오일'];
+
+  function mergeToiletriesPreview() {
+    if (!guard()) return;
+    const t = pkData.filter(d => ['세면도구', '화장품'].indexOf(norm(d.category)) >= 0);
+    if (!t.length) return console.error('❌ 세면도구/화장품 카테고리를 못 찾았어');
+    console.log('현재: ' + t.map(d => d.category + '(' + (d.items || []).length + '개)').join(' · '));
+    const all = [...new Set(t.flatMap(d => (d.items || []).map(i => i.name)))];
+    const lost = all.filter(n => TOILETRY.indexOf(n) < 0);
+    console.log('남길 것 ' + TOILETRY.length + '개 · 빠지는 것 ' + lost.length + '개');
+    if (lost.length) console.log('  빠짐: ' + lost.join(', '));
+    console.log('%c\n진행 → atelierPack.mergeToiletries()', 'color:#2563eb;font-weight:bold');
+  }
+
+  async function mergeToiletries() {
+    if (!guard()) return;
+    const t = pkData.filter(d => ['세면도구', '화장품'].indexOf(norm(d.category)) >= 0);
+    if (!t.length) return console.error('❌ 세면도구/화장품 카테고리를 못 찾았어');
+
+    const bk = JSON.parse(localStorage.getItem(BK) || '{}');
+    bk.toiletry = t.map(d => JSON.parse(JSON.stringify(d)));
+
+    // 체크 상태는 이름이 같은 것만 이어받는다
+    const checked = new Set();
+    t.forEach(d => (d.items || []).forEach(i => { if (i.checked) checked.add(norm(i.name)); }));
+
+    const keep = t[0];
+    for (const d of t.slice(1)) { await fbDelete('packing', d._id); pkData.splice(pkData.indexOf(d), 1); }
+
+    keep.category = '세면도구'; keep.icon = 'spa';
+    keep.items = TOILETRY.map(n => ({ name: n, checked: checked.has(norm(n)) }));
+    await fbUpdate('packing', keep._id, { category: '세면도구', icon: 'spa', items: keep.items });
+
+    try { localStorage.setItem(BK, JSON.stringify(bk)); } catch (e) { console.warn('백업 저장 실패:', e.message); }
+    pkRenderCategories(); pkRenderProgress();
+    console.log('%c✅ 세면도구 하나로 합침 — ' + TOILETRY.length + '개', 'color:#16a34a;font-weight:bold;font-size:14px');
+    console.log('   체크 유지: ' + (keep.items.filter(i => i.checked).map(i => i.name).join(', ') || '없음'));
+  }
+
   console.log('%c준비됨 → atelierPack.preview()', 'color:#2563eb;font-weight:bold;font-size:14px');
-  return { preview, applyCats, applyOutfits, undo };
+  return { preview, applyCats, applyOutfits, mergeToiletriesPreview, mergeToiletries, undo };
 })();
