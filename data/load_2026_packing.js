@@ -108,8 +108,16 @@ window.atelierPack = (function () {
     const filled = pkOutfits.filter(o => OUTFITS[o.date] && (o.items || []).length).length;
     console.log('\n■ 외출복 ' + days + '일 · ' + total + '벌  (이미 내용이 있는 날: ' + filled + '일 — 겹치는 이름만 건너뜀)');
 
-    console.log('%c\n카테고리 반영 → atelierPack.applyCats()', 'color:#2563eb;font-weight:bold');
-    console.log('%c외출복 반영  → atelierPack.applyOutfits()', 'color:#2563eb;font-weight:bold');
+    const tt = pkData.filter(d => ['세면도구', '화장품'].indexOf(norm(d.category)) >= 0);
+    if (tt.length > 1) {
+      console.log('\n%c■ 세면도구·화장품이 ' + tt.length + '개로 나뉘어 있어 — 합칠 수 있어', 'color:#b45309;font-weight:bold');
+    }
+
+    console.log('%c\n① 카테고리 반영 → atelierPack.applyCats()', 'color:#2563eb;font-weight:bold');
+    console.log('%c② 외출복 반영  → atelierPack.applyOutfits()', 'color:#2563eb;font-weight:bold');
+    console.log('%c③ 세면도구+화장품 합치기 → atelierPack.mergeToiletries()', 'color:#2563eb;font-weight:bold');
+    console.log('%c   (합치기 전 확인 → atelierPack.mergeToiletriesPreview())', 'color:#94a3b8');
+    console.log('%c↩ 되돌리기 → atelierPack.undo()', 'color:#94a3b8');
   }
 
   async function applyCats() {
