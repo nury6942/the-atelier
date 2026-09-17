@@ -218,7 +218,7 @@ window.atelierPack = (function () {
     }
     if (bk.toiletry) {
       for (const d of pkData.slice()) {
-        if (['세면도구','화장품'].indexOf(norm(d.category)) >= 0 && !bk.toiletry.find(b => b._id === d._id)) {
+        if (['세면도구','화장품',MERGED].indexOf(norm(d.category)) >= 0 && !bk.toiletry.find(b => b._id === d._id)) {
           await fbDelete('packing', d._id); pkData.splice(pkData.indexOf(d), 1);
         }
       }
@@ -246,12 +246,13 @@ window.atelierPack = (function () {
   // ── 세면도구 + 화장품을 하나로 합치고 아이템을 목록 그대로 교체
   //   기본 템플릿(PK_TEMPLATE_DEFAULT)의 '치약 & 칫솔' 과 시트의 '치약&칫솔' 처럼
   //   공백만 다른 이름이 각각 들어가 중복이 쌓였다. 이름을 맞춰 한 번에 정리한다.
+  const MERGED = '세면도구 / 화장품';   // 합친 뒤 카테고리 이름
   const TOILETRY = ['헤어밴드','치약&칫솔','샤워 글로브','바디워시/샴푸/린스','클렌징폼/아이리무버 + 솜',
                     '브러쉬 클렌저','스킨/시카이드 크림','헤어 에센스','헤어 브러쉬','머리 약','바디 스크럽','바디 오일'];
 
   function mergeToiletriesPreview() {
     if (!guard()) return;
-    const t = pkData.filter(d => ['세면도구', '화장품'].indexOf(norm(d.category)) >= 0);
+    const t = pkData.filter(d => ['세면도구', '화장품', MERGED].indexOf(norm(d.category)) >= 0);
     if (!t.length) return console.error('❌ 세면도구/화장품 카테고리를 못 찾았어');
     console.log('현재: ' + t.map(d => d.category + '(' + (d.items || []).length + '개)').join(' · '));
     const all = [...new Set(t.flatMap(d => (d.items || []).map(i => i.name)))];
@@ -263,7 +264,7 @@ window.atelierPack = (function () {
 
   async function mergeToiletries() {
     if (!guard()) return;
-    const t = pkData.filter(d => ['세면도구', '화장품'].indexOf(norm(d.category)) >= 0);
+    const t = pkData.filter(d => ['세면도구', '화장품', MERGED].indexOf(norm(d.category)) >= 0);
     if (!t.length) return console.error('❌ 세면도구/화장품 카테고리를 못 찾았어');
 
     const bk = JSON.parse(localStorage.getItem(BK) || '{}');
@@ -276,13 +277,13 @@ window.atelierPack = (function () {
     const keep = t[0];
     for (const d of t.slice(1)) { await fbDelete('packing', d._id); pkData.splice(pkData.indexOf(d), 1); }
 
-    keep.category = '세면도구'; keep.icon = 'spa';
+    keep.category = MERGED; keep.icon = 'spa';
     keep.items = TOILETRY.map(n => ({ name: n, checked: checked.has(norm(n)) }));
-    await fbUpdate('packing', keep._id, { category: '세면도구', icon: 'spa', items: keep.items });
+    await fbUpdate('packing', keep._id, { category: MERGED, icon: 'spa', items: keep.items });
 
     try { localStorage.setItem(BK, JSON.stringify(bk)); } catch (e) { console.warn('백업 저장 실패:', e.message); }
     pkRenderCategories(); pkRenderProgress();
-    console.log('%c✅ 세면도구 하나로 합침 — ' + TOILETRY.length + '개', 'color:#16a34a;font-weight:bold;font-size:14px');
+    console.log('%c✅ ' + MERGED + ' 하나로 합침 — ' + TOILETRY.length + '개', 'color:#16a34a;font-weight:bold;font-size:14px');
     console.log('   체크 유지: ' + (keep.items.filter(i => i.checked).map(i => i.name).join(', ') || '없음'));
   }
 
