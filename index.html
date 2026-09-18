@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=351" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=352" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -4309,17 +4309,25 @@
     /* ★ (2026-09-19) 3열이 되며 카드가 좁아져 도시명이 두 줄로 깨졌다.
        제목에 한 줄을 통째로 주고, 날씨·버튼은 DAY 아이브로 옆으로 올린다.
        (display:contents 로 감싼 div 를 통과시켜서 마크업은 그대로 둔다) */
+    /* ★ (2026-09-19) 맞바꾸기 버튼이 늘면서 윗줄에 날짜+날씨+버튼 3개가 다 안 들어가
+       날씨 아이콘이 날짜 위로 겹쳤다. 두 줄로 나눈다 —
+         1행  DAY 04  SUN, SEP 27        ☁22° → ⛰11° 1,239m
+         2행  Verona, 베네토 이탈리아                ↔ ⧉ 📋
+       (감싼 div 둘을 display:contents 로 통과시켜 마크업은 그대로 둔다) */
     #page-packing .pk-card-head {
       display: grid; grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start; gap: var(--space-1) var(--space-3);
+      align-items: center; gap: var(--space-1) var(--space-2);
       margin-bottom: var(--space-3);
       padding-bottom: var(--space-3);
       border-bottom: 1px solid var(--slate-100);
     }
-    #page-packing .pk-card-head-l { display: contents; }
-    #page-packing .pk-card-head .pk-card-eyebrow { grid-column: 1; grid-row: 1; align-self: center; }
-    #page-packing .pk-card-head .pk-card-title { grid-column: 1 / -1; grid-row: 2; margin-top: 0; }
-    #page-packing .pk-card-head .pk-card-side { grid-column: 2; grid-row: 1; }
+    #page-packing .pk-card-head-l,
+    #page-packing .pk-card-head .pk-card-side { display: contents; }
+    #page-packing .pk-card-head .pk-card-eyebrow { grid-column: 1; grid-row: 1; }
+    #page-packing .pk-card-head .pk-day-actions  { grid-column: 2; grid-row: 1; justify-self: end; }
+    #page-packing .pk-card-head .pk-card-title   { grid-column: 1 / -1; grid-row: 2; margin-top: 0; min-width: 0; }
+    /* 날씨는 도시명 아래 — 일정 카드가 쓰는 배치와 같게. 긴 도시명이 꺾여도 부딪히지 않는다 */
+    #page-packing .pk-card-head .pk-day-wx       { grid-column: 1 / -1; grid-row: 3; justify-self: start; }
     /* ★ (2026-09-19) 10px 회색이라 안 보이던 DAY 라벨 — 번호는 칠한 칸, 날짜는 12px 진하게 */
     #page-packing .pk-card-eyebrow {
       display: flex; align-items: center; gap: var(--space-2);
@@ -15608,7 +15616,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=351" defer></script>
+<script src="js/app-1-pages.js?v=352" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
