@@ -28157,18 +28157,12 @@
           '<button onclick="pkDeleteOutfitItem(\''+dateStr+'\','+ii+')" class="pk-item-action danger" title="삭제"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">close</span></button>' +
         '</div>';
       }
-      var itemsHtml = PK_CATS.map(function(cd) {
-        var rows = '';
-        items.forEach(function(item, ii) {
-          var c = item.cat || '의류';
-          if (c === '신발') c = '의류';          // ★ FOOTWEAR 컬럼이 없어졌으니 의류로
-          if (c === cd.key) rows += rowHtml(item, ii);
-        });
-        return '<div class="pk-cat-col" ondragover="pkDragOver(event)" ondrop="pkColDrop(event,\''+dateStr+'\',\''+cd.key+'\')">' +
-          '<div class="pk-cat-head"><span class="material-symbols-outlined">'+cd.icon+'</span>'+cd.label+'</div>' +
-          (rows || '<div class="pk-cat-empty">—</div>') +
-        '</div>';
-      }).join('');
+      // ★ (2026-09-19) 의류/악세 컬럼 구분을 없애고 한 목록으로 합쳤다.
+      //   item.cat 값 자체는 그대로 둔다 — 추가 입력에서 아직 쓰고, 되살릴 수도 있으니 지우지 않는다.
+      var rowsAll = items.map(function(item, ii) { return rowHtml(item, ii); }).join('');
+      var itemsHtml = '<div class="pk-cat-col" ondragover="pkDragOver(event)">' +
+        (rowsAll || '<div class="pk-cat-empty">—</div>') +
+      '</div>';
 
       var isActive = _pkActiveDate === dateStr;
       // ★ (2026-07-23) 카드형 리디자인: DAY NN 아이브로 + 도시 타이틀, 2열 그리드용
@@ -28189,8 +28183,10 @@
         '</div>' +
         '<div class="pk-cat-cols">'+itemsHtml+'</div>' +
         '<div class="pk-day-input-row">' +
-          '<select id="pk-outfit-cat-'+idx+'" class="pk-cat-select" onclick="event.stopPropagation()"><option value="의류">의류</option><option value="악세">악세</option></select>' +
-          '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠)" class="pk-day-input" onkeydown="if(event.key===\'Enter\')pkAddOutfitItem(\''+dateStr+'\','+idx+')" onclick="event.stopPropagation()"/>' +
+          // ★ (2026-09-19) 의류/악세 선택 제거 — 목록을 합쳤으니 고를 이유가 없다
+          // ★ event.isComposing 가드: 한글 IME 는 조합 확정과 Enter 로 keydown 을 두 번 쏜다.
+          //   그래서 같은 값이 두 번 저장돼 아이템이 2개씩 생기고 있었다.
+          '<input type="text" id="pk-outfit-input-'+idx+'" placeholder="아이템 추가 (예: 흰 티셔츠)" class="pk-day-input" onkeydown="if(event.key===\'Enter\'&&!event.isComposing){event.preventDefault();pkAddOutfitItem(\''+dateStr+'\','+idx+');}" onclick="event.stopPropagation()"/>' +
           '<button onclick="event.stopPropagation();pkAddOutfitItem(\''+dateStr+'\','+idx+')" class="pk-day-input-btn">추가</button>' +
         '</div>' +
       '</div>';
@@ -28217,21 +28213,28 @@
   }
 
   // Outfit CRUD
+  var _pkAddBusy = false;   // 저장이 끝나기 전에 또 들어오는 것을 막는다
   async function pkAddOutfitItem(dateStr, inputIdx) {
     var input = document.getElementById('pk-outfit-input-'+inputIdx);
-    var name = input.value.trim();
-    if (!name) return;
+    var name = input ? input.value.trim() : '';
+    if (!name || _pkAddBusy) return;
+    _pkAddBusy = true;
+    // ★ (2026-09-19) await 보다 먼저 비운다 — 저장을 기다리는 사이에 같은 값이
+    //   또 읽혀서 아이템이 2개씩 생기던 문제. (한글 IME 의 keydown 2회 발생과 겹침)
+    input.value = '';
     var catSel = document.getElementById('pk-outfit-cat-'+inputIdx);
     var cat = (catSel && catSel.value) || '의류';
-    var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
-    if (outfit) {
-      outfit.items.push({name:name,checked:false,cat:cat});
-      await fbUpdate('outfits', outfit._id, {items:outfit.items});
-    } else {
-      var obj = {trip_id:pkTripId, date:dateStr, items:[{name:name,checked:false,cat:cat}]};
-      var saved = await fbAdd('outfits', obj);
-      pkOutfits.push(saved);
-    }
+    try {
+      var outfit = pkOutfits.find(function(o){return o.date===dateStr;});
+      if (outfit) {
+        outfit.items.push({name:name,checked:false,cat:cat});
+        await fbUpdate('outfits', outfit._id, {items:outfit.items});
+      } else {
+        var obj = {trip_id:pkTripId, date:dateStr, items:[{name:name,checked:false,cat:cat}]};
+        var saved = await fbAdd('outfits', obj);
+        pkOutfits.push(saved);
+      }
+    } finally { _pkAddBusy = false; }
     pkRenderDaily(); pkRenderProgress();
   }
 
@@ -28582,6 +28585,7 @@
         return;
       }
       _pkWeatherCache[key]=coords;
+      var baseElev = 0;   // 마을(숙소) 고도 — 고지대 칩을 띄울지 판단하는 기준
       var today=new Date(), maxF=new Date(today); maxF.setDate(maxF.getDate()+15);
       // forecast 범위와 archive 범위로 분리
       var forecastEntries=[], archiveEntries=[];
@@ -28598,6 +28602,8 @@
         // 짐 쌀 때 제일 중요한 건 비 — 강수확률을 같이 받는다
         var fUrl='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max&start_date='+fMin+'&end_date='+fMax+'&timezone=auto';
         var fr=await fetch(fUrl), fd=await fr.json();
+        // Open-Meteo 가 실제로 쓴 격자 고도를 돌려준다 — 마을 기준 고도로 그대로 쓴다
+        if (typeof fd.elevation === 'number') baseElev = Math.round(fd.elevation);
         if(fd.daily&&fd.daily.time) fd.daily.time.forEach(function(t,i){wm[t]={
           hi:Math.round(fd.daily.temperature_2m_max[i]), lo:Math.round(fd.daily.temperature_2m_min[i]),
           code:fd.daily.weathercode[i],
@@ -28629,11 +28635,106 @@
         el.title = (e.city ? e.city + ' 기준' : '')
           + (wx.past ? (e.city?' · ':'')+'작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '')
           + (wx.rain!=null ? ' · 강수확률 '+wx.rain+'%' : '');
+        el.dataset.base = JSON.stringify({hi:wx.hi, lo:wx.lo, code:wx.code});   // 고지대 칩이 다시 쓴다
         el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span>'+
           '<span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>'+rainHtml+
           (wx.past?'<span class="pk-day-wx-past">작년</span>':'');
       });
+      // ★ (2026-09-19) 산 일정이 있는 날은 정상 고도 날씨를 이어서 덧그린다
+      pkFetchPeaks(entries, coords, baseElev);
     } catch(e){ console.warn('PK weather error:',e); }
+  }
+
+  // ═══ 산 일정이 있는 날 — '그날 제일 높이 올라가는 지점' 의 날씨 ═══
+  //   마을(숙소)과 정상은 10도 넘게 차이난다. 9/30 몬구엘포 20° vs 트레치메 2,345m 4°.
+  var _pkPeakCache = {};
+
+  // 일정 글에 적어둔 해발 표기를 먼저 읽는다. 칼날 능선은 지형 데이터가 뭉개서 실제보다
+  // 낮게 잡히기 때문 (세체다 실제 2,500m → 지형데이터 1,926m).
+  function _pkAltFromText(t) {
+    var str = String(t || '');
+    var m = str.match(/해발\s*([\d,]+)\s*m/);
+    if (!m) m = str.match(/(?:^|[^\dkK])([\d,]{4,6})\s*m(?![a-zA-Z²])/);
+    if (!m) return 0;
+    var v = parseInt(m[1].replace(/,/g, ''), 10);
+    return (v >= 800 && v <= 4000) ? v : 0;   // 알프스 고도대만 인정 (거리·면적 표기 오인 방지)
+  }
+
+  async function pkFetchPeaks(entries, baseCoords, baseElev) {
+    try {
+      if (!baseCoords) return;
+      if (!baseElev) {   // 예보에서 고도를 못 받았으면 지형 고도로 채운다
+        try {
+          var bj = await (await fetch('https://api.open-meteo.com/v1/elevation?latitude='+baseCoords.lat+'&longitude='+baseCoords.lng)).json();
+          baseElev = Math.round((bj.elevation||[0])[0] || 0);
+        } catch(e) {}
+      }
+      var cand = {};
+      entries.forEach(function(e) {
+        var ds = pkFmtDate(e.date), list = [];
+        (pkJourney||[]).forEach(function(it) {
+          if ((it.date||'') !== ds) return;
+          var alt = _pkAltFromText((it.title||'')+' '+(it.description||'')+' '+(it.route_note||''));
+          var hasLL = (typeof it.lat==='number' && typeof it.lng==='number');
+          if (!alt && !hasLL) return;
+          list.push({ name: String(it.title||it.city||'').replace(/[^\wㄱ-ㅎ가-힣A-Za-z0-9 ()·'-]/g,'').trim(),
+                      alt: alt, lat: hasLL?it.lat:null, lng: hasLL?it.lng:null });
+        });
+        if (list.length) cand[ds] = list;
+      });
+      // 해발 표기가 없는 후보는 좌표의 지형 고도로 채운다 (한 번에 묶어서 조회)
+      var need = [];
+      Object.keys(cand).forEach(function(ds){ cand[ds].forEach(function(c){ if(!c.alt && c.lat!=null) need.push(c); }); });
+      if (need.length) {
+        var eu='https://api.open-meteo.com/v1/elevation?latitude='+need.map(function(c){return c.lat;}).join(',')+
+               '&longitude='+need.map(function(c){return c.lng;}).join(',');
+        var ej=await (await fetch(eu)).json();
+        (ej.elevation||[]).forEach(function(v,i){ if(need[i]) need[i].alt=Math.round(v||0); });
+      }
+      for (var k=0;k<entries.length;k++) {
+        var e=entries[k], ds=pkFmtDate(e.date), list=cand[ds];
+        if (!list||!list.length) continue;
+        var peak=list.reduce(function(a,b){ return (b.alt>a.alt)?b:a; });
+        // 마을과 500m 이상 차이날 때만 — 그 아래는 굳이 두 개를 띄울 이유가 없다
+        if (!peak.alt || (peak.alt - (baseElev||0)) < 500) continue;
+        var la=(peak.lat!=null)?peak.lat:baseCoords.lat, ln=(peak.lng!=null)?peak.lng:baseCoords.lng;
+        var ck=la.toFixed(2)+','+ln.toFixed(2)+','+peak.alt+','+ds;
+        var w=_pkPeakCache[ck];
+        if (!w) {
+          var wu='https://api.open-meteo.com/v1/forecast?latitude='+la+'&longitude='+ln+'&elevation='+peak.alt+
+                 '&hourly=temperature_2m,apparent_temperature,precipitation_probability'+
+                 '&start_date='+ds+'&end_date='+ds+'&timezone=auto';
+          var j=await (await fetch(wu)).json();
+          if (!j.hourly||!j.hourly.temperature_2m) continue;
+          var cut=function(a){ return (a||[]).slice(9,17).filter(function(x){return x!=null;}); };  // 낮 09~16시
+          var tt=cut(j.hourly.temperature_2m), ap=cut(j.hourly.apparent_temperature), pr=cut(j.hourly.precipitation_probability);
+          if (!tt.length) continue;
+          w={ lo:Math.round(Math.min.apply(null,tt)), hi:Math.round(Math.max.apply(null,tt)),
+              feel: ap.length?Math.round(Math.min.apply(null,ap)):null,
+              rain: pr.length?Math.max.apply(null,pr):null, elev:peak.alt, name:peak.name };
+          _pkPeakCache[ck]=w;
+        }
+        _pkRenderDrop(e.idx, w);
+      }
+    } catch(err) { console.warn('[PK peak weather]', err); }
+  }
+
+  // 마을 낮기온 → 정상 기온. 낙차가 한눈에 읽히는 게 요점이라 숫자는 하나씩만.
+  function _pkRenderDrop(idx, w) {
+    var el=document.getElementById('pk-wx-'+idx);
+    if (!el || !el.dataset.base) return;
+    var b; try { b=JSON.parse(el.dataset.base); } catch(e){ return; }
+    var info=pkWxInfo(b.code);
+    el.classList.add('has-peak');
+    el.title=(w.name?w.name+' ':'')+w.elev.toLocaleString('ko-KR')+'m · '+w.lo+'°~'+w.hi+'°'+
+      (w.feel!=null?' · 체감 '+w.feel+'°':'')+(w.rain!=null?' · 강수 '+w.rain+'%':'')+
+      '   /   마을 '+b.hi+'°/'+b.lo+'°';
+    el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span>'+
+      '<span class="pk-day-wx-temp">'+b.hi+'°</span>'+
+      '<span class="pk-wx-arrow">→</span>'+
+      '<span class="material-symbols-outlined pk-wx-peak-ico">terrain</span>'+
+      '<span class="pk-wx-peak">'+w.lo+'°</span>'+
+      '<span class="pk-wx-elev">'+w.elev.toLocaleString('ko-KR')+'m</span>';
   }
 
   function pkWxInfo(code) {
