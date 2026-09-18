@@ -4829,22 +4829,27 @@
         var tripsTxt = dayTrips.map(function(c){ return _displayCityShort(c).replace(/</g,'&lt;'); }).join(', ');
         headerCityHtml = '<p class="wk4-daytrip" title="당일치기 행선지">🚆 ' + tripsTxt + ' (당일)</p>';
       }
+      // ★ (2026-09-19) 9px 회색이라 안 보이던 날짜 라벨 — 짐 체크리스트와 같은 모양으로.
+      //   번호는 칠한 칸, 날짜는 12px 진하게, 주말은 빨강.
+      var _isWknd = (weekday === '토' || weekday === '일');
+      var _badge = function(t) { return '<span class="wk4-day-badge">' + t + '</span>'; };
       var eyebrowTxt = '';
       if (dateStr) {
         try {
           var _MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
           var _ed = new Date(dateStr + 'T00:00:00');
-          eyebrowTxt = _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') +
-            (weekday ? ' (' + weekday + ')' : '') + ' • ' + (isToday ? 'TODAY' : 'DAY ' + String(dayNum).padStart(2,'0'));
-        } catch(e) { eyebrowTxt = 'DAY ' + String(dayNum).padStart(2,'0'); }
+          eyebrowTxt = _badge(isToday ? 'TODAY' : 'DAY ' + String(dayNum).padStart(2,'0')) +
+            '<span class="wk4-day-date">' + _MONS[_ed.getMonth()] + ' ' + String(_ed.getDate()).padStart(2,'0') +
+            (weekday ? ' (' + weekday + ')' : '') + '</span>';
+        } catch(e) { eyebrowTxt = _badge('DAY ' + String(dayNum).padStart(2,'0')); }
       } else {
-        eyebrowTxt = 'DAY ' + String(dayNum).padStart(2,'0');
+        eyebrowTxt = _badge('DAY ' + String(dayNum).padStart(2,'0'));
       }
       var liveBadge = isToday ? '<span class="dlv-live">LIVE</span>' : '';
       var titleCls = 'wk4-title' + (isToday ? ' is-today' : (isPastCol ? ' is-past' : ''));
       var dayHeadHtml =
         '<div class="j-day-head wk4-head">' +
-          '<p class="wk4-eyebrow' + (isToday ? ' is-today' : '') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' + eyebrowTxt + '</p>' +
+          '<p class="wk4-eyebrow' + (isToday ? ' is-today' : '') + (_isWknd ? ' is-weekend' : '') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' + eyebrowTxt + '</p>' +
           '<h3 class="' + titleCls + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' +
             (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge +
           '</h3>' +
