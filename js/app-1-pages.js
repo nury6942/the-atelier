@@ -28388,7 +28388,21 @@
     }
     _pkActiveDate = dateStr;
     _pkLastClickIdx = idx;
-    pkRenderDaily();
+    // ★ (2026-09-19) 여기서 pkRenderDaily() 를 부르면 첫 클릭에 행이 통째로 새로 그려진다.
+    //   그러면 두 번째 클릭은 '다른 엘리먼트'에 떨어져서 더블클릭이 아예 안 잡힌다
+    //   (체크리스트 아이템은 행에 onclick 이 없어서 멀쩡했고, 아웃핏 아이템만 죽어 있었음).
+    //   선택은 CSS 클래스 하나가 전부라 굳이 다시 그릴 필요가 없다 — 표시만 갈아끼운다.
+    pkPaintSelection();
+  }
+
+  // 선택 하이라이트만 제자리에서 갱신 (노드를 갈아치우지 않는다)
+  function pkPaintSelection() {
+    var rows = document.querySelectorAll('#page-packing .pk-item-row[data-date]');
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i], d = row.getAttribute('data-date'), ix = +row.getAttribute('data-idx');
+      var on = _pkSelected.some(function(sl) { return sl.date === d && sl.idx === ix; });
+      row.classList.toggle('selected', on);
+    }
   }
 
   function pkSetActiveCard(dateStr) { _pkActiveDate = dateStr; }
@@ -28514,14 +28528,30 @@
 
   async function pkFetchWeather(cityName, entries) {
     try {
-      var key=cityName.toLowerCase(), coords=null;
-      if (_pkWeatherCache[key]) coords=_pkWeatherCache[key]; else {
-        var r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(cityName)+'&count=1&language=en');
-        var g=await r.json();
-        if(!g.results||!g.results.length) return;
-        coords={lat:g.results[0].latitude,lng:g.results[0].longitude};
-        _pkWeatherCache[key]=coords;
+      // ★ (2026-09-19) "Fiumicino, 이탈리아" 를 그대로 물어보면 Open-Meteo 가 못 찾는다.
+      //   이 여행 도시는 전부 국가·지역명이 붙어 있어서 지오코딩이 매번 빈손으로 돌아왔고,
+      //   그대로 return 하는 바람에 날씨 칸이 영원히 '...' 에 머물러 있었다.
+      //   ① 도시에 저장된 좌표를 먼저 쓰고 ② 없을 때만 geocodeCity() 로 넘긴다
+      //   (geocodeCity 는 cleanCityName 으로 국가명을 떼고 한국어 재시도까지 한다 — 일정 쪽에서 쓰던 것)
+      var key=cityName.toLowerCase(), coords=_pkWeatherCache[key]||null;
+      if (!coords) {
+        for (var _ci=0; _ci<pkCities.length; _ci++) {
+          var _pc=pkCities[_ci];
+          if (_pc && _pc.name===cityName && typeof _pc.lat==='number' && typeof _pc.lng==='number') {
+            coords={lat:_pc.lat,lng:_pc.lng}; break;
+          }
+        }
       }
+      if (!coords && typeof geocodeCity==='function') {
+        var _g=await geocodeCity(cityName);
+        if (_g) coords={lat:_g.lat,lng:_g.lng};
+      }
+      if (!coords) {
+        console.warn('[PK weather] 좌표를 못 찾음:', cityName);
+        entries.forEach(function(e){ var el=document.getElementById('pk-wx-'+e.idx); if(el) el.innerHTML=''; });
+        return;
+      }
+      _pkWeatherCache[key]=coords;
       var today=new Date(), maxF=new Date(today); maxF.setDate(maxF.getDate()+15);
       // forecast 범위와 archive 범위로 분리
       var forecastEntries=[], archiveEntries=[];
@@ -28535,9 +28565,14 @@
       if (forecastEntries.length>0) {
         var fDates=forecastEntries.map(function(e){return pkFmtDate(e.date);});
         var fMin=fDates.reduce(function(a,b){return a<b?a:b;}), fMax=fDates.reduce(function(a,b){return a>b?a:b;});
-        var fUrl='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date='+fMin+'&end_date='+fMax+'&timezone=auto';
+        // 짐 쌀 때 제일 중요한 건 비 — 강수확률을 같이 받는다
+        var fUrl='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lng+'&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max&start_date='+fMin+'&end_date='+fMax+'&timezone=auto';
         var fr=await fetch(fUrl), fd=await fr.json();
-        if(fd.daily&&fd.daily.time) fd.daily.time.forEach(function(t,i){wm[t]={hi:Math.round(fd.daily.temperature_2m_max[i]),lo:Math.round(fd.daily.temperature_2m_min[i]),code:fd.daily.weathercode[i]};});
+        if(fd.daily&&fd.daily.time) fd.daily.time.forEach(function(t,i){wm[t]={
+          hi:Math.round(fd.daily.temperature_2m_max[i]), lo:Math.round(fd.daily.temperature_2m_min[i]),
+          code:fd.daily.weathercode[i],
+          rain:(fd.daily.precipitation_probability_max && fd.daily.precipitation_probability_max[i]!=null) ? fd.daily.precipitation_probability_max[i] : null,
+          past:false };});
       }
       // Archive API (작년 데이터)
       if (archiveEntries.length>0) {
@@ -28549,14 +28584,22 @@
         if(ad.daily&&ad.daily.time) ad.daily.time.forEach(function(t,i){
           // 작년 날짜를 올해로 매핑
           var thisYear=t.replace(/^\d{4}/,String(new Date().getFullYear()));
-          wm[thisYear]={hi:Math.round(ad.daily.temperature_2m_max[i]),lo:Math.round(ad.daily.temperature_2m_min[i]),code:ad.daily.weathercode[i]};
+          wm[thisYear]={hi:Math.round(ad.daily.temperature_2m_max[i]),lo:Math.round(ad.daily.temperature_2m_min[i]),code:ad.daily.weathercode[i],rain:null,past:true};
         });
       }
       entries.forEach(function(e){
         var ds=pkFmtDate(e.date), wx=wm[ds];
-        var el=document.getElementById('pk-wx-'+e.idx); if(!el||!wx) return;
+        var el=document.getElementById('pk-wx-'+e.idx); if(!el) return;
+        if(!wx){ el.innerHTML=''; return; }   // 못 받아왔으면 '...' 로 남겨두지 않는다
         var info=pkWxInfo(wx.code);
-        el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span><span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>';
+        // 비 올 확률 30% 부터만 띄운다 — 낮은 숫자까지 다 보이면 카드가 시끄럽다
+        var rainHtml = (wx.rain!=null && wx.rain>=30)
+          ? '<span class="pk-day-wx-rain'+(wx.rain>=60?' heavy':'')+'">💧'+wx.rain+'%</span>' : '';
+        el.title = (wx.past ? '작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '')
+          + (wx.rain!=null ? (wx.past?' · ':'')+'강수확률 '+wx.rain+'%' : '');
+        el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span>'+
+          '<span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>'+rainHtml+
+          (wx.past?'<span class="pk-day-wx-past">작년</span>':'');
       });
     } catch(e){ console.warn('PK weather error:',e); }
   }
