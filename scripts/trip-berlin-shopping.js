@@ -170,7 +170,81 @@ window.atelierShop = (function () {
       'font-weight:bold;color:#6b38d4');
   }
 
-  console.log('%c준비됨 — atelierShop.preview() → atelierShop.apply()  (v1 은 apply 가 알아서 치움)',
+  // ═══ 진단 — 지금 그 날짜에 뭐가 있고 뭐가 깨졌는지 전부 ═══
+  //   겹침이 계속 남는 이유를 추측으로 찾다 계속 틀려서, 실제 데이터를 보고 고치기로 함.
+  let _last = [];
+  async function audit(dates) {
+    const want = dates ? [].concat(dates) : DATES;
+    const s = await db.collection('journey').where('trip_id', '==', TRIP).get();
+    _last = [];
+    for (const d of want) {
+      const rows = [];
+      s.forEach(doc => { const o = doc.data(); if (o.date === d) rows.push({ id: doc.id, o }); });
+      rows.sort((x, y) => (x.o.time || '').localeCompare(y.o.time || ''));
+
+      const table = rows.map(r => {
+        const st = r.o.time || '', en = r.o.end_time || '';
+        const rev = st && en && mins(en) < mins(st);
+        const n = _last.push(r);                       // 1부터
+        return { '#': n, 시각: st || '—', 끝: en || '—',
+                 문제: rev ? '⛔ 끝이 시작보다 빠름' : '',
+                 항목: fmt(r.o.title) };
+      });
+
+      // 구간 겹침
+      for (let i = 0; i < rows.length; i++) {
+        for (let j = i + 1; j < rows.length; j++) {
+          const a = rows[i].o, b = rows[j].o;
+          const ae = mins(a.end_time || a.time), bs = mins(b.time);
+          if (!a.time || !b.time) continue;
+          if (bs < ae && mins(a.time) < mins(b.end_time || b.time)) {
+            const ri = table.find(t => t.항목 === fmt(a.title));
+            const rj = table.find(t => t.항목 === fmt(b.title));
+            if (ri) ri.문제 = (ri.문제 ? ri.문제 + ' · ' : '') + '⚠️ 겹침';
+            if (rj) rj.문제 = (rj.문제 ? rj.문제 + ' · ' : '') + '⚠️ 겹침';
+          }
+        }
+      }
+      // 제목 중복
+      const seen = {};
+      rows.forEach(r => {
+        const k = String(r.o.title || '').replace(/[^\wㄱ-ㅎ가-힣A-Za-z]/g, '').toLowerCase().slice(0, 10);
+        if (!k) return;
+        if (seen[k]) {
+          const t = table.find(t => t.항목 === fmt(r.o.title));
+          if (t) t.문제 = (t.문제 ? t.문제 + ' · ' : '') + '🔁 제목 중복';
+        }
+        seen[k] = true;
+      });
+
+      console.log('%c■ ' + d + '  ' + rows.length + '건', 'font-weight:bold;font-size:13px;color:#6b38d4');
+      console.table(table);
+    }
+    console.log('%c지울 게 있으면 atelierShop.rm(번호) 또는 atelierShop.rm(3,7,9)', 'color:#c60;font-weight:bold');
+    console.log('%c시각을 고치려면 atelierShop.setTime(번호, "13:00", "14:15")', 'color:#c60');
+    return _last.length;
+  }
+
+  async function rm() {
+    const ns = [].slice.call(arguments);
+    if (!ns.length) { console.warn('번호를 줘. 예: atelierShop.rm(3,7)'); return; }
+    for (const n of ns) {
+      const r = _last[n - 1];
+      if (!r) { console.warn('#' + n + ' 없음'); continue; }
+      await db.collection('journey').doc(r.id).delete();
+      console.log('🗑️ #' + n + '  ' + (r.o.time || '') + ' ' + fmt(r.o.title));
+    }
+    console.log('%c삭제 완료 — atelierShop.audit() 로 다시 확인', 'font-weight:bold;color:#6b38d4');
+  }
+
+  async function setTime(n, start, end) {
+    const r = _last[n - 1];
+    if (!r) { console.warn('#' + n + ' 없음'); return; }
+    await db.collection('journey').doc(r.id).update({ time: start, end_time: end || '' });
+    console.log('🕘 #' + n + '  ' + fmt(r.o.title) + '  →  ' + start + (end ? '–' + end : ''));
+  }
+
+  console.log('%c준비됨 — 먼저 atelierShop.audit() 으로 지금 상태부터 보자',
     'font-weight:bold;color:#6b38d4');
-  return { day, preview, apply, undo, ADD };
+  return { audit, rm, setTime, day, preview, apply, undo, ADD };
 })();
