@@ -28170,7 +28170,12 @@
       html+='<div class="pk-day-card'+(isActive?' active':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
         '<div class="pk-card-head">' +
           '<div class="pk-card-head-l">' +
-            '<div class="pk-card-eyebrow'+(isWeekend?' weekend':'')+'">DAY '+dayNum+' · '+dow+', '+mon+' '+day+'</div>' +
+            // ★ (2026-09-19) DAY 라벨이 10px 회색이라 안 보였다 → 번호는 칠한 칸, 날짜는 진하게.
+            //   주말은 색이 바뀐다 (원래 주말만 보라로 구분하던 규칙을 그대로 강화)
+            '<div class="pk-card-eyebrow'+(isWeekend?' weekend':'')+'">' +
+              '<span class="pk-day-badge">DAY '+dayNum+'</span>' +
+              '<span class="pk-day-date">'+dow+', '+mon+' '+day+'</span>' +
+            '</div>' +
             '<div class="pk-card-title">'+(city||'—')+'</div>' +
           '</div>' +
           '<div class="pk-card-side">' +
