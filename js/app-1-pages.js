@@ -28167,7 +28167,7 @@
       var isActive = _pkActiveDate === dateStr;
       // ★ (2026-07-23) 카드형 리디자인: DAY NN 아이브로 + 도시 타이틀, 2열 그리드용
       var dayNum = String(idx + 1).padStart(2, '0');
-      html+='<div class="pk-day-card'+(isActive?' active':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
+      html+='<div class="pk-day-card'+(isActive?' active':'')+(_pkSwapFrom===dateStr?' swap-src':'')+'" data-date="'+dateStr+'" onclick="pkSetActiveCard(\''+dateStr+'\')" ondragover="pkCardDragOver(event)" ondragleave="pkCardDragLeave(event)" ondrop="pkCardDrop(event,\''+dateStr+'\')">' +
         '<div class="pk-card-head">' +
           '<div class="pk-card-head-l">' +
             // ★ (2026-09-19) DAY 라벨이 10px 회색이라 안 보였다 → 번호는 칠한 칸, 날짜는 진하게.
@@ -28181,6 +28181,11 @@
           '<div class="pk-card-side">' +
             '<div class="pk-day-wx" id="pk-wx-'+idx+'"><span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span></div>' +
             '<div class="pk-day-actions">' +
+              // ★ (2026-09-19) 두 날의 옷 목록을 통째로 맞바꾸기 — 누르고, 바꿀 날을 누른다
+              '<button onclick="event.stopPropagation();pkSwapDay(\''+dateStr+'\')" class="pk-day-act-btn' +
+                (_pkSwapFrom===dateStr ? ' swapping' : (_pkSwapFrom ? ' swap-target' : '')) + '" title="' +
+                (_pkSwapFrom===dateStr ? '맞바꾸기 취소' : (_pkSwapFrom ? _pkSwapFrom.substring(5).replace('-','/')+' 와 옷 목록 맞바꾸기' : '다른 날과 옷 목록 통째로 맞바꾸기')) +
+                '"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">swap_horiz</span></button>' +
               '<button onclick="event.stopPropagation();pkCopyDay(\''+dateStr+'\')" class="pk-day-act-btn" title="복사"><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_copy</span></button>' +
               '<button onclick="event.stopPropagation();pkPasteDay(\''+dateStr+'\')" class="pk-day-act-btn" title="붙여넣기" '+(_pkClipboard?'':'disabled')+'><span class="material-symbols-outlined" style="font-size:var(--font-size-body)">content_paste</span></button>' +
             '</div>' +
@@ -28305,6 +28310,49 @@
 
   // ===== Packing Copy/Paste =====
   var _pkClipboard = null;
+
+  // ═══ 두 날의 옷 목록 통째로 맞바꾸기 ═══
+  //   날짜는 그대로 두고 '그날 입을 옷'만 서로 옮긴다. 체크(챙김) 상태는 옷을 따라간다 —
+  //   이미 가방에 넣은 옷이 다른 날로 옮겨가도 넣어둔 사실은 그대로이므로.
+  var _pkSwapFrom = null;
+
+  function pkSwapDay(dateStr) {
+    if (_pkSwapFrom === dateStr) {            // 같은 걸 또 누르면 취소
+      _pkSwapFrom = null; pkRenderDaily(); return;
+    }
+    if (!_pkSwapFrom) {
+      _pkSwapFrom = dateStr;
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">swap_horiz</span> 바꿀 날의 ↔ 를 눌러줘 (다시 누르면 취소)');
+      pkRenderDaily(); return;
+    }
+    var from = _pkSwapFrom; _pkSwapFrom = null;
+    pkDoSwapDays(from, dateStr);
+  }
+
+  async function pkDoSwapDays(a, b) {
+    var oa = pkOutfits.find(function(o){ return o.date===a; });
+    var ob = pkOutfits.find(function(o){ return o.date===b; });
+    var ia = (oa && oa.items) ? oa.items : [];
+    var ib = (ob && ob.items) ? ob.items : [];
+    if (!ia.length && !ib.length) {
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 양쪽 다 비어 있어요');
+      pkRenderDaily(); return;
+    }
+    try {
+      // 한쪽에 아직 문서가 없으면 빈 문서를 만들어 두고 맞바꾼다
+      if (!oa) { oa = await fbAdd('outfits', { trip_id: pkTripId, date: a, items: [] }); pkOutfits.push(oa); }
+      if (!ob) { ob = await fbAdd('outfits', { trip_id: pkTripId, date: b, items: [] }); pkOutfits.push(ob); }
+      oa.items = ib; ob.items = ia;
+      await fbUpdate('outfits', oa._id, { items: oa.items });
+      await fbUpdate('outfits', ob._id, { items: ob.items });
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">swap_horiz</span> ' +
+        a.substring(5).replace('-','/') + ' ↔ ' + b.substring(5).replace('-','/') + ' 옷 목록을 맞바꿨어요');
+    } catch (e) {
+      console.error('[pk swap] 실패', e);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패 — 새로고침 후 다시');
+    }
+    pkRenderDaily(); pkRenderProgress();
+  }
 
   function pkCopyDay(dateStr) {
     var outfit = pkOutfits.find(function(o) { return o.date === dateStr; });
@@ -28450,6 +28498,7 @@
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
     var page = document.getElementById('page-packing');
     if (!page || page.style.display === 'none') return;
+    if (e.key === 'Escape' && _pkSwapFrom) { _pkSwapFrom = null; pkRenderDaily(); return; }
     if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
       if (_pkSelected.length === 0) return;
       e.preventDefault();
