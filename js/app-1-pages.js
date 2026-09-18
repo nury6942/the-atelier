@@ -3661,6 +3661,22 @@
     return out;
   }
 
+  // ★ (2026-09-19) 그날 날씨를 '어느 도시' 로 볼 것인가.
+  //   숙박 도시를 그대로 쓰면, 아침에 차만 받고 바로 다른 지방으로 넘어가는 날이 통째로 틀린다.
+  //   (9/25 = FCO 에서 픽업만 하고 오르비에토·카스틸리오네 도르차에서 하루를 보내고 거기서 잔다.
+  //    그런데 날씨는 45분 스쳐가는 피우미치노 걸 보여주고 있었다)
+  //   → 시간순 '마지막으로 도시가 찍힌 일정' 의 도시 = 그날 저녁을 보내는 곳.
+  //   하루 왕복 당일치기는 마지막 일정이 다시 숙박 도시라서 자연히 원래대로 돌아온다.
+  function _wxCityForDay(items, baseCity) {
+    if (items && items.length) {
+      for (var i = items.length - 1; i >= 0; i--) {
+        var c = ((items[i] && items[i].city) || '').trim();
+        if (c) return c;
+      }
+    }
+    return baseCity || '';
+  }
+
   // ═══ ★ (2026-07-23) 지도 휠 줌 게이트 — 지도를 클릭했을 때만 휠 확대/축소 ═══
   //   트랙패드로 페이지를 스크롤하다 지도 위를 지나가기만 해도 줌되던 문제 해결.
   //   드래그(panning) · +/− 버튼 · 핀 flyTo 는 항상 그대로 동작 (휠만 제어).
@@ -3778,7 +3794,7 @@
 
     // 날씨 배너 업데이트
     if (dateStr) {
-      fetchWeather(cityName || (citiesData.length > 0 ? citiesData[0].name : ''), dateStr);
+      fetchWeather(_wxCityForDay(items, cityName) || (citiesData.length > 0 ? citiesData[0].name : ''), dateStr);
     } else {
       var wb = document.getElementById('weather-banner');
       if (wb) wb.classList.add('hidden');
@@ -4439,7 +4455,7 @@
     var wmo = WMO_WEATHER[w.code] || WMO_WEATHER[2];
     var _RAIN = {51:1,53:1,55:1,56:1,57:1,61:1,63:1,65:1,66:1,67:1,80:1,81:1,82:1,95:1,96:1,99:1};
     var isRain = !!_RAIN[w.code] || (w.rain !== null && w.rain !== undefined && w.rain >= 60);
-    return '<span class="wk4-wx" style="background:' + wmo.bg + '" title="' + wmo.desc +
+    return '<span class="wk4-wx" style="background:' + wmo.bg + '" title="' + (w.city ? w.city + ' · ' : '') + wmo.desc +
         (w.historical ? ' · 작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '') + '">' +
       '<i>' + wmo.icon + '</i>' +
       '<b>' + w.tempMax + '°</b>' +
@@ -4836,7 +4852,8 @@
           '<div class="wk4-wx-slot" id="wk4-wx-' + idx + '"></div>' +
           '<button class="j-day-route-btn wk4-route" onclick="event.stopPropagation();optimizeDayRoute(\'' + dateStr + '\')" title="이 날 스팟 방문 순서를 가까운 순으로 재배치 (예약·고정 일정은 자리 유지)">🧭 동선</button>' +
         '</div>';
-      if (cityName && dateStr) wxQueue.push({ id: 'wk4-wx-' + idx, city: cityName, date: dateStr });
+      var _wxCity = _wxCityForDay(items, cityName);
+      if (_wxCity && dateStr) wxQueue.push({ id: 'wk4-wx-' + idx, city: _wxCity, date: dateStr });
 
       // 빈 일정 메시지
       if (items.length === 0 && !miniPanelHtml) {
@@ -28181,8 +28198,21 @@
     container.innerHTML=html;
 
     // Fetch weather
+    // ★ (2026-09-19) 카드 제목은 숙박 도시지만, 날씨는 '그날 실제로 하루를 보내는 곳' 으로 본다.
+    //   (9/25 는 FCO 픽업만 하고 토스카나로 넘어가는 날 — 피우미치노 날씨를 보면 옷을 잘못 싼다)
+    function getWxCity(date) {
+      var ds = pkFmtDate(date);
+      var dayItems = (pkJourney||[]).filter(function(d){
+        return (d.date||'') === ds && (d.type === '일정' || (d.type === '기념품' && d.time));
+      });
+      dayItems.sort(function(a,b){
+        var t=(a.time||'').localeCompare(b.time||'');
+        return t!==0 ? t : ((a.order||0)-(b.order||0));
+      });
+      return (typeof _wxCityForDay === 'function') ? _wxCityForDay(dayItems, getCity(date)) : getCity(date);
+    }
     var cityDates={};
-    dates.forEach(function(date,idx){ var c=getCity(date); if(c){ if(!cityDates[c]) cityDates[c]=[]; cityDates[c].push({date:date,idx:idx}); }});
+    dates.forEach(function(date,idx){ var c=getWxCity(date); if(c){ if(!cityDates[c]) cityDates[c]=[]; cityDates[c].push({date:date,idx:idx,city:c}); }});
     for (var c in cityDates) pkFetchWeather(c,cityDates[c]);
   }
 
@@ -28595,8 +28625,10 @@
         // 비 올 확률 30% 부터만 띄운다 — 낮은 숫자까지 다 보이면 카드가 시끄럽다
         var rainHtml = (wx.rain!=null && wx.rain>=30)
           ? '<span class="pk-day-wx-rain'+(wx.rain>=60?' heavy':'')+'">💧'+wx.rain+'%</span>' : '';
-        el.title = (wx.past ? '작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '')
-          + (wx.rain!=null ? (wx.past?' · ':'')+'강수확률 '+wx.rain+'%' : '');
+        // 카드 제목(숙박 도시)과 다를 수 있으니 어느 도시 날씨인지 밝혀둔다
+        el.title = (e.city ? e.city + ' 기준' : '')
+          + (wx.past ? (e.city?' · ':'')+'작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '')
+          + (wx.rain!=null ? ' · 강수확률 '+wx.rain+'%' : '');
         el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span>'+
           '<span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>'+rainHtml+
           (wx.past?'<span class="pk-day-wx-past">작년</span>':'');
