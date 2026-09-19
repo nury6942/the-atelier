@@ -279,7 +279,14 @@ window.atelierShop = (function () {
     ['2026-10-02', '유대인박물관 → 오라니엔'],   // 내가 넣은 도보 — 앞 일정이 바뀌어 불필요
     ['2026-10-02', '미테 저녁'],                 // 일몰을 크로이츠베르크에서 보므로 저녁도 거기서
     ['2026-10-02', '저녁 (노이쾰른'],            // 위와 같은 이유 — 베르크만슈트라세 저녁으로 교체
-    ['2026-10-03', '파사주 루프']                // 통일기념일 상점 휴무 — 운하 산책으로 대체
+    ['2026-10-03', '파사주 루프'],               // 통일기념일 상점 휴무 — 일요일 아침 걷기로 흡수
+    // ★ 이동 전용 항목은 전부 뺀다 — 앱이 카드 사이에 이동시간·거리를 자동으로 그려준다
+    ['2026-10-02', '오라니엔 → 노이쾰른'],
+    ['2026-10-02', '노이쾰른 → 빅토리아파크'],
+    ['2026-10-03', '성 토마스 교회 → GRASSI'],
+    ['2026-10-03', 'GRASSI → 플라크비츠'],
+    ['2026-10-03', '역에서 짐 찾아 숙소로'],
+    ['2026-10-02', '박물관섬 → 포츠다머']
   ];
   const PLAN_TIME = [                         // [날짜, 제목조각, 시작, 끝]
     ['2026-10-02', 'Father Carpenter', '09:15', '10:15'],       // 끝=시작(0분) 이던 것
@@ -287,7 +294,6 @@ window.atelierShop = (function () {
     ['2026-10-02', '점심 대충', '13:40', '14:20'],
     ['2026-10-02', '노이에 나치오날갈레리', '14:35', '15:35'],     // 14:30–13:15 뒤집힘 복구
     ['2026-10-02', '오라니엔슈트라세 + Voo', '15:55', '17:05'],
-    ['2026-10-02', '오라니엔 → 노이쾰른', '17:05', '17:15'],
     ['2026-10-02', '노이쾰른 빈티지', '17:15', '18:05'],
     ['2026-10-04', '체크아웃 + 캐리어 맡기기', '08:00', '11:00'],  // 11:00–08:00 뒤집힘 복구
     ['2026-10-03', '성 토마스 교회', '15:00', '15:45'],           // ★ 토요일 15:00 토마너코어 모테트
@@ -295,6 +301,18 @@ window.atelierShop = (function () {
     ['2026-10-03', 'Stay KooooK 체크인', '19:00', '19:30'],       // 짐 회수까지 포함
     ['2026-10-03', 'Gottschedstraße 저녁', '19:45', '21:00']      // 숙소가 이 거리 10번지 — 바로 앞
   ];
+  // 일요일 오전은 목적지를 새로 만들지 않는다 — 숙소에서 역으로 가는 길 자체가 볼거리다
+  const PLAN_DESC = [
+    ['2026-10-04', '라이프치히 마지막 오전',
+     '숙소(Gottschedstr.) → 중앙역까지 걸어가면서 보면 돼. 목적지를 따로 잡을 필요 없어.\n' +
+     '라이프치히 구시가는 **유리지붕 아케이드(파사주)가 그물처럼 얽혀** 있어 —\n' +
+     '건물 안으로 들어갔다가 다른 골목으로 나오는 식으로 도시를 관통할 수 있어.\n' +
+     '· 메들러 파사주 (1914) — 유리지붕·주철·지하에 괴테 파우스트 무대가 된 술집\n' +
+     '· 슈페크스 호프, 한자하우스 등 이어서 통과\n' +
+     '⚠️ 일요일이라 **상점은 닫혀 있지만** 아케이드 안은 지나다닐 수 있어. 건축·인테리어만 보면 돼.\n' +
+     '가는 길에 니콜라이 교회도 지나가 — 굳이 들어가지 않아도 되고.'] ,
+  ];
+
   const PLAN_ADD = [
     { date: '2026-10-02', time: '10:30', end_time: '12:00',
       title: '🌳 티어가르텐 + 전승기념탑', lat: 52.5145, lng: 13.3501,
@@ -302,11 +320,6 @@ window.atelierShop = (function () {
       description: '★ 5/14 원안에 있던 항목을 되살린 것 (베를린이 3박→2박 되며 사라졌었어).\n' +
         '도심 한복판 210만㎡ 숲 공원. 10월 초면 단풍이 들기 시작해.\n' +
         '가운데 전승기념탑(Siegessäule) 285계단을 오르면 공원 전체와 시내가 내려다보여.' },
-    { date: '2026-10-02', time: '18:05', end_time: '18:25',
-      title: '🚇 노이쾰른 → 빅토리아파크', lat: 52.4900, lng: 13.3828,
-      route_note: 'U8 Hermannplatz → U7 Gneisenaustr. 약 4km · 20분',
-      description: '일몰 18:41 에 맞춰 언덕에 오르려면 이때쯤 움직여.' },
-
     { date: '2026-10-02', time: '18:25', end_time: '19:20',
       title: '🌅 빅토리아파크 일몰 (크로이츠베르크 언덕)', lat: 52.4900, lng: 13.3828,
       description: '★ 5/14 원안의 마지막이 이거였어 — 베를린이 3박→2박 되며 사라졌던 걸 되살림.\n' +
@@ -324,16 +337,6 @@ window.atelierShop = (function () {
       route_note: '라이프치히 중앙역 → 성 토마스 교회 0.8km · 도보 14분',
       description: '모테트가 15:00 이라 체크인하고 가면 늦어. 짐만 역에 맡기고 바로 교회로.\n' +
         '중앙역은 유럽 최대 터미널 역이라 로커·상점이 많고, 역 상점은 공휴일·일요일에도 열려.' },
-
-    { date: '2026-10-03', time: '15:50', end_time: '16:05',
-      title: '🚋 성 토마스 교회 → GRASSI', lat: 51.3371, lng: 12.3881,
-      route_note: '시내 관통 약 1.1km · 트램 10분 / 도보 18분',
-      description: 'GRASSI 는 18:00 에 닫아. 두 시간 가까이 쓰려면 바로 움직이는 게 좋아.' },
-
-    { date: '2026-10-03', time: '17:15', end_time: '17:35',
-      title: '🚋 GRASSI → 플라크비츠 (칼하이네 운하)', lat: 51.3303, lng: 12.3318,
-      route_note: '약 4km · 트램 20분',
-      description: '해 지기 전에 운하에 닿게 잡았어. 오늘 일몰 18:43.' },
 
     { date: '2026-10-03', time: '17:40', end_time: '18:50',
       title: '🚤 칼하이네 운하 걷기 (플라크비츠)', lat: 51.3303, lng: 12.3318,
@@ -364,6 +367,9 @@ window.atelierShop = (function () {
     for (const [d, f, a, b] of PLAN_TIME) (await _find(d, f)).forEach(h => tm.push({ 날짜: d, 항목: fmt(h.o.title), 지금: (h.o.time || '—') + '–' + (h.o.end_time || '—'), 바꿀값: a + '–' + b }));
     console.log('%c🕘 시각 보정 ' + tm.length + '건', 'color:#c60;font-weight:bold'); console.table(tm);
 
+    const ds = [];
+    for (const [d, f] of PLAN_DESC) (await _find(d, f)).forEach(h => ds.push({ 날짜: d, 항목: fmt(h.o.title) }));
+    console.log('%c📝 설명 교체 ' + ds.length + '건', 'color:#0a7;font-weight:bold'); console.table(ds);
     console.log('%c➕ 신규 ' + PLAN_ADD.length + '건', 'color:#0a7;font-weight:bold');
     console.table(PLAN_ADD.map(a => ({ 날짜: a.date, 시각: a.time + '–' + a.end_time, 항목: fmt(a.title) })));
     console.log('%c괜찮으면 atelierShop.applyPlan()', 'color:#c60;font-weight:bold');
@@ -373,6 +379,7 @@ window.atelierShop = (function () {
     let dn = 0, tn = 0, an = 0;
     for (const [d, f] of PLAN_DEL) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).delete(); dn++; console.log('🗑️ ' + fmt(h.o.title)); }
     for (const [d, f, a, b] of PLAN_TIME) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).update({ time: a, end_time: b }); tn++; console.log('🕘 ' + fmt(h.o.title) + ' → ' + a + '–' + b); }
+    for (const [d, f, desc] of PLAN_DESC) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).update({ description: desc }); console.log('📝 ' + fmt(h.o.title)); }
     for (const a of PLAN_ADD) { const ref = db.collection('journey').doc(); await ref.set(Object.assign({ trip_id: TRIP, type: '일정', city: CITY }, a)); an++; console.log('➕ ' + fmt(a.title)); }
     localStorage.removeItem(BK); localStorage.removeItem(BK_OLD);
     console.log('%c완료 — 삭제 ' + dn + ' · 보정 ' + tn + ' · 추가 ' + an + '. 새로고침하면 보여.', 'font-weight:bold;color:#6b38d4');
