@@ -313,6 +313,39 @@ window.atelierShop = (function () {
      '가는 길에 니콜라이 교회도 지나가 — 굳이 들어가지 않아도 되고.'] ,
   ];
 
+  // ═══ 가을 메모 — 기존 설명을 덮지 않고 뒤에 덧붙인다 (이미 붙어 있으면 건너뜀) ═══
+  const FALL_MARK = '🍂 가을 메모';
+  const PLAN_APPEND = [
+    ['2026-09-25', '오르비에토',
+     '이 계절 토스카나·움브리아는 **포도 수확철(vendemmia)** 이야. 산조베제가 9월 말~10월 초에\n' +
+     '들어가서, 언덕마다 수확 중인 포도밭이 보여. 포도잎이 노랗게 물들기 시작하는 시기고,\n' +
+     '올리브도 곧 수확이야. 단풍이라기보단 **수확 풍경** 쪽.'],
+
+    ['2026-09-28', '세체다',
+     '★ 이번 여행에서 가을이 가장 진한 곳. **유럽 낙엽송(Larix decidua)** 은 침엽수인데\n' +
+     '**잎이 지는 나무**라, 가을이면 사면이 통째로 황금색이 돼. 절정은 10월 5~20일이지만\n' +
+     '**고도가 높을수록 먼저 물들어서** 2,000m 이상은 9월 말부터 시작해.\n' +
+     '2,500m 능선에서 아래를 내려다보면 물들기 시작한 낙엽송 사면이 보일 거야.'],
+
+    ['2026-09-29', '알페 디 시우시',
+     '고산 초원(1,838m)이라 시야가 트여서 **낙엽송이 물드는 걸 넓게** 볼 수 있어.\n' +
+     '세체다가 위에서 내려다보는 쪽이면 여기는 그 안을 걸어 지나가는 쪽이야.'],
+
+    ['2026-09-30', '트레치메',
+     '2,345m. 여기도 낙엽송 고도대라 오르는 길(미주리나~아우론초)에 물든 사면이 보여.\n' +
+     '정상부는 나무가 없는 암벽이라, **올라가는 길이 더 가을**이야.'],
+
+    ['2026-10-02', '티어가르텐',
+     '독일은 **"Goldener Oktober"(황금빛 10월)** 라는 말을 따로 쓸 만큼 이 철을 챙겨.\n' +
+     '절정은 10월 중순이라 지금은 초입이지만, **전승기념탑 285계단을 오르면\n' +
+     '단풍을 위에서 내려다볼 수 있어** — 베를린에서 단풍 보기 제일 좋은 자리로 꼽혀.'],
+
+    ['2026-10-03', '칼하이네 운하',
+     '라이프치히는 **Auwald(하천 범람림)** 가 도시를 관통해. 도심에 이 규모 숲이 있는 건 드물어.\n' +
+     '운하 산책이 그 가장자리를 걷는 거야.\n' +
+     '참고로 **10월 첫 일요일이 추수감사절(Erntedankfest)** 인데, 올해는 10/4 — 내일이야.']
+  ];
+
   const PLAN_ADD = [
     { date: '2026-10-04', time: '11:30', end_time: '12:20',
       title: '🏛️ 메들러 파사주 · 구시가 아케이드', lat: 51.3404, lng: 12.3752,
@@ -378,6 +411,10 @@ window.atelierShop = (function () {
 
     const ds = [];
     for (const [d, f] of PLAN_DESC) (await _find(d, f)).forEach(h => ds.push({ 날짜: d, 항목: fmt(h.o.title) }));
+    const ap = [];
+    for (const [d, f] of PLAN_APPEND) (await _find(d, f)).forEach(h =>
+      ap.push({ 날짜: d, 항목: fmt(h.o.title), 상태: String(h.o.description||'').indexOf(FALL_MARK) >= 0 ? '이미 있음' : '🍂 덧붙임' }));
+    console.log('%c🍂 가을 메모 ' + ap.filter(x => x.상태 !== '이미 있음').length + '건', 'color:#c60;font-weight:bold'); console.table(ap);
     console.log('%c📝 설명 교체 ' + ds.length + '건', 'color:#0a7;font-weight:bold'); console.table(ds);
     console.log('%c➕ 신규 ' + PLAN_ADD.length + '건', 'color:#0a7;font-weight:bold');
     console.table(PLAN_ADD.map(a => ({ 날짜: a.date, 시각: a.time + '–' + a.end_time, 항목: fmt(a.title) })));
@@ -389,6 +426,12 @@ window.atelierShop = (function () {
     for (const [d, f] of PLAN_DEL) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).delete(); dn++; console.log('🗑️ ' + fmt(h.o.title)); }
     for (const [d, f, a, b] of PLAN_TIME) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).update({ time: a, end_time: b }); tn++; console.log('🕘 ' + fmt(h.o.title) + ' → ' + a + '–' + b); }
     for (const [d, f, desc] of PLAN_DESC) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).update({ description: desc }); console.log('📝 ' + fmt(h.o.title)); }
+    for (const [d, f, add] of PLAN_APPEND) for (const h of await _find(d, f)) {
+      const cur = String(h.o.description || '');
+      if (cur.indexOf(FALL_MARK) >= 0) continue;                 // 두 번 돌려도 안전
+      await db.collection('journey').doc(h.id).update({ description: (cur ? cur + '\n\n' : '') + FALL_MARK + '\n' + add });
+      console.log('🍂 ' + fmt(h.o.title));
+    }
     for (const a of PLAN_ADD) { const ref = db.collection('journey').doc(); await ref.set(Object.assign({ trip_id: TRIP, type: '일정', city: CITY }, a)); an++; console.log('➕ ' + fmt(a.title)); }
     localStorage.removeItem(BK); localStorage.removeItem(BK_OLD);
     console.log('%c완료 — 삭제 ' + dn + ' · 보정 ' + tn + ' · 추가 ' + an + '. 새로고침하면 보여.', 'font-weight:bold;color:#6b38d4');
