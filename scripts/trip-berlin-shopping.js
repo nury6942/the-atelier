@@ -173,8 +173,10 @@ window.atelierShop = (function () {
   // ═══ 진단 — 지금 그 날짜에 뭐가 있고 뭐가 깨졌는지 전부 ═══
   //   겹침이 계속 남는 이유를 추측으로 찾다 계속 틀려서, 실제 데이터를 보고 고치기로 함.
   let _last = [];
+  const GERMANY = ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04'];
   async function audit(dates) {
-    const want = dates ? [].concat(dates) : DATES;
+    // 인자 없으면 독일 구간 전체(10/1~10/4)를 한 번에 본다
+    const want = dates ? [].concat(dates) : GERMANY;
     const s = await db.collection('journey').where('trip_id', '==', TRIP).get();
     _last = [];
     for (const d of want) {
@@ -223,6 +225,25 @@ window.atelierShop = (function () {
     console.log('%c지울 게 있으면 atelierShop.rm(번호) 또는 atelierShop.rm(3,7,9)', 'color:#c60;font-weight:bold');
     console.log('%c시각을 고치려면 atelierShop.setTime(번호, "13:00", "14:15")', 'color:#c60');
     return _last.length;
+  }
+
+  // 5/14 시드에 있던 베를린 원안 항목들이 아직 어딘가 살아있는지 — 여행 전체에서 찾는다
+  const SEED_KEYS = ['Reichstag', '리히스탁', 'Tiergarten', '티어가르텐', '전승기념탑',
+                     'Voo', '빅토리아', 'Viktoria', 'Burgermeister', '유대인', 'Jüdisches'];
+  async function seed() {
+    const s = await db.collection('journey').where('trip_id', '==', TRIP).get();
+    const hit = [];
+    s.forEach(d => {
+      const o = d.data(), t = String(o.title || '');
+      if (SEED_KEYS.some(k => t.indexOf(k) >= 0)) hit.push({ 날짜: o.date || '—', 시각: (o.time || '—') + '–' + (o.end_time || '—'), 항목: fmt(t) });
+    });
+    hit.sort((a, b) => (a.날짜 + a.시각).localeCompare(b.날짜 + b.시각));
+    console.log('%c[5/14 원안 항목이 지금 남아있는 것] ' + hit.length + '건', 'font-weight:bold;color:#6b38d4');
+    console.table(hit);
+    const missing = ['Reichstag 돔', '티어가르텐', 'Voo Store', '빅토리아 공원', 'Burgermeister']
+      .filter(n => !hit.some(h => h.항목.indexOf(n.split(' ')[0]) >= 0));
+    if (missing.length) console.warn('사라진 것: ' + missing.join(' · '));
+    return hit.length;
   }
 
   async function rm() {
@@ -307,7 +328,7 @@ window.atelierShop = (function () {
     console.log('%c확인은 atelierShop.audit()', 'color:#888');
   }
 
-  console.log('%c준비됨 — atelierShop.plan() 으로 정리안을 보고 → atelierShop.applyPlan()',
+  console.log('%c준비됨 — atelierShop.audit() (10/1~10/4 전체) · atelierShop.seed() (5/14 원안 생존 확인)',
     'font-weight:bold;color:#6b38d4');
-  return { plan, applyPlan, audit, rm, setTime, day, preview, apply, undo, ADD };
+  return { audit, seed, plan, applyPlan, rm, setTime, day, preview, apply, undo, ADD };
 })();
