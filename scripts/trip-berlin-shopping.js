@@ -244,7 +244,81 @@ window.atelierShop = (function () {
     console.log('🕘 #' + n + '  ' + fmt(r.o.title) + '  →  ' + start + (end ? '–' + end : ''));
   }
 
-  console.log('%c준비됨 — 먼저 atelierShop.audit() 으로 지금 상태부터 보자',
+  // ═══ 10/1·10/2 한 번에 정리 ═══
+  //   audit() 로 드러난 것: ① 유대인박물관 끝이 15:40 으로 잘못 박혀 오후 전체가 밀렸고
+  //   ② 그 바람에 세 항목의 end_time 이 start 보다 앞서 있으며 ③ 내가 넣은 v2 가 겹쳤다.
+  //   제목 일부로 찾아 지우고/시각 고치고/새로 넣는다.
+  const PLAN_DEL = [                         // 제목에 이 문자열이 있으면 삭제
+    ['2026-10-01', '카스타니엔알레'],          // 내 추가 — 기존 하케셔마르크트와 겹침
+    ['2026-10-01', '저녁 (프렌츠라워베르크'],   // 내 추가 — 기존 저녁 2건과 겹침
+    ['2026-10-02', '노이에스 박물관'],          // 유물 전시 — 취향 아님
+    ['2026-10-02', '안드레아스 무르쿠디스'],    // 명품 편집숍
+    ['2026-10-02', '파노라마풍크트'],           // 유료 전망대 → 템펠호퍼로 대체
+    ['2026-10-02', '미테 저녁'],                // 노이쾰른 저녁과 중복
+    ['2026-10-02', '유대인박물관 → 오라니엔']   // 내 도보 항목 — 출발지가 바뀌어 불필요
+  ];
+  const PLAN_TIME = [                         // [날짜, 제목조각, 시작, 끝]
+    ['2026-10-02', 'Father Carpenter', '09:30', '10:15'],
+    ['2026-10-02', '유대인박물관 (리베스킨트', '12:15', '13:15'],   // ★ 15:40 → 13:15
+    ['2026-10-02', '점심 대충', '13:20', '14:05'],
+    ['2026-10-02', '노이에 나치오날갈레리', '14:15', '15:15'],
+    ['2026-10-02', '오라니엔슈트라세 + Voo', '15:45', '16:45'],
+    ['2026-10-02', '오라니엔 → 노이쾰른', '16:45', '17:00'],
+    ['2026-10-02', '노이쾰른 빈티지', '17:00', '17:50'],
+    ['2026-10-02', '저녁 (노이쾰른', '19:15', '20:45']
+  ];
+  const PLAN_ADD = [
+    { date: '2026-10-02', time: '10:30', end_time: '12:00',
+      title: '🌳 티어가르텐 + 전승기념탑', lat: 52.5145, lng: 13.3501,
+      route_note: '미테 → Tiergarten · U-Bahn 15분',
+      description: '도심 한복판 210만㎡ 숲 공원. 10월 초면 단풍이 들기 시작해.\n' +
+        '가운데 전승기념탑(Siegessäule) 285계단을 오르면 공원 전체와 시내가 내려다보여.\n' +
+        '★ 노이에스 박물관(유물 전시) 자리를 여기로 바꿨어 — 걷는 쪽이 취향에 맞아서.' },
+    { date: '2026-10-02', time: '18:00', end_time: '19:00',
+      title: '🛬 템펠호퍼 펠트 — 활주로에서 일몰', lat: 52.4773, lng: 13.4246,
+      route_note: '베저슈트라세 → Herrfurthstr. 입구 약 1.3km · 도보 22분',
+      description: '옛 공항 300만㎡가 통째로 공원. **활주로 두 개가 그대로 남아 있어** —\n' +
+        '그 위에서 자전거 타고 연 날리고 텃밭 가꿔. 폐허가 아니라 동네 공원이야.\n' +
+        '★ 도심에서 지평선이 보이는 건 여기뿐. 무료.\n' +
+        '⏰ 오늘 일몰 18:41 · 10월엔 19:00 에 문을 닫아. 닫혀도 회전문으로 나올 수 있어.' }
+  ];
+
+  async function _find(date, frag) {
+    const s = await db.collection('journey').where('trip_id', '==', TRIP).get();
+    const hit = [];
+    s.forEach(d => {
+      const o = d.data();
+      if (o.date === date && String(o.title || '').indexOf(frag) >= 0) hit.push({ id: d.id, o });
+    });
+    return hit;
+  }
+
+  async function plan() {
+    console.log('%c[10/1·10/2 정리안] 미리보기', 'font-weight:bold;font-size:14px;color:#6b38d4');
+    const del = [];
+    for (const [d, f] of PLAN_DEL) (await _find(d, f)).forEach(h => del.push({ 날짜: d, 시각: h.o.time || '—', 지울항목: fmt(h.o.title) }));
+    console.log('%c🗑️ 삭제 ' + del.length + '건', 'color:#e11d48;font-weight:bold'); console.table(del);
+
+    const tm = [];
+    for (const [d, f, a, b] of PLAN_TIME) (await _find(d, f)).forEach(h => tm.push({ 날짜: d, 항목: fmt(h.o.title), 지금: (h.o.time || '—') + '–' + (h.o.end_time || '—'), 바꿀값: a + '–' + b }));
+    console.log('%c🕘 시각 보정 ' + tm.length + '건', 'color:#c60;font-weight:bold'); console.table(tm);
+
+    console.log('%c➕ 신규 ' + PLAN_ADD.length + '건', 'color:#0a7;font-weight:bold');
+    console.table(PLAN_ADD.map(a => ({ 날짜: a.date, 시각: a.time + '–' + a.end_time, 항목: fmt(a.title) })));
+    console.log('%c괜찮으면 atelierShop.applyPlan()', 'color:#c60;font-weight:bold');
+  }
+
+  async function applyPlan() {
+    let dn = 0, tn = 0, an = 0;
+    for (const [d, f] of PLAN_DEL) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).delete(); dn++; console.log('🗑️ ' + fmt(h.o.title)); }
+    for (const [d, f, a, b] of PLAN_TIME) for (const h of await _find(d, f)) { await db.collection('journey').doc(h.id).update({ time: a, end_time: b }); tn++; console.log('🕘 ' + fmt(h.o.title) + ' → ' + a + '–' + b); }
+    for (const a of PLAN_ADD) { const ref = db.collection('journey').doc(); await ref.set(Object.assign({ trip_id: TRIP, type: '일정', city: CITY }, a)); an++; console.log('➕ ' + fmt(a.title)); }
+    localStorage.removeItem(BK); localStorage.removeItem(BK_OLD);
+    console.log('%c완료 — 삭제 ' + dn + ' · 보정 ' + tn + ' · 추가 ' + an + '. 새로고침하면 보여.', 'font-weight:bold;color:#6b38d4');
+    console.log('%c확인은 atelierShop.audit()', 'color:#888');
+  }
+
+  console.log('%c준비됨 — atelierShop.plan() 으로 정리안을 보고 → atelierShop.applyPlan()',
     'font-weight:bold;color:#6b38d4');
-  return { audit, rm, setTime, day, preview, apply, undo, ADD };
+  return { plan, applyPlan, audit, rm, setTime, day, preview, apply, undo, ADD };
 })();
