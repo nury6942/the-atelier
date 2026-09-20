@@ -27905,6 +27905,9 @@
   var pkData = [], pkCities = [], pkJourney = [], pkOutfits = [], pkTrips = [], pkTripId = null, _pkCatIcon = 'star', _pkItemCatIdx = null;
   var PK_ICONS = ['star','checkroom','devices','spa','luggage','flight','restaurant','shopping_bag','medication','photo_camera','fitness_center','headphones','book','brush','local_cafe','beach_access'];
   var _pkWeatherCache = {};
+  // ★ (2026-09-20) 렌더된 날씨 칩을 날짜별로 들고 있는다.
+  //   아이템 추가·삭제·맞바꾸기로 다시 그릴 때 '...' 로 깜박이지 않게 바로 복원한다.
+  var _pkWxHtml = {};
 
   function findNearestTrip(trips) {
     var todayStr = new Date().toISOString().split('T')[0];
@@ -28084,7 +28087,7 @@
         ? '<div class="pk-cat-empty">아이템 없음</div>'
         : items.map(function(item, ii) {
             var cls = item.checked ? 'checked' : '';
-            return '<div class="pk-item-row group">' +
+            return '<div class="pk-item-row group" data-ci="'+ci+'" data-ii="'+ii+'">' +
               '<input type="checkbox" '+(item.checked?'checked':'')+' onchange="pkToggleItem('+ci+','+ii+',this.checked)" class="pk-checkbox"/>' +
               '<span class="pk-item-name '+cls+' flex-1" ondblclick="pkStartCatEdit('+ci+','+ii+',this)" title="더블클릭해서 수정">'+item.name+'</span>' +
               '<button onclick="event.stopPropagation();pkStartCatEdit('+ci+','+ii+',this.closest(\'.pk-item-row\').querySelector(\'span.pk-item-name\'))" class="pk-item-action" title="수정"><span class="material-symbols-outlined" style="font-size:var(--font-size-meta)">edit</span></button>' +
@@ -28184,7 +28187,8 @@
             '<div class="pk-card-title">'+(city||'—')+'</div>' +
           '</div>' +
           '<div class="pk-card-side">' +
-            '<div class="pk-day-wx" id="pk-wx-'+idx+'"><span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span></div>' +
+            '<div class="pk-day-wx' + ((_pkWxHtml[dateStr]||{}).peak ? ' has-peak' : '') + '" id="pk-wx-'+idx+'" title="' + ((_pkWxHtml[dateStr]||{}).title || '') + '">' +
+              ((_pkWxHtml[dateStr]||{}).html || '<span class="material-symbols-outlined">cloud</span><span class="pk-day-wx-temp">...</span>') + '</div>' +
             '<div class="pk-day-actions">' +
               // ★ (2026-09-19) 두 날의 옷 목록을 통째로 맞바꾸기 — 누르고, 바꿀 날을 누른다
               '<button onclick="event.stopPropagation();pkSwapDay(\''+dateStr+'\')" class="pk-day-act-btn' +
@@ -28224,7 +28228,13 @@
     }
     var cityDates={};
     dates.forEach(function(date,idx){ var c=getWxCity(date); if(c){ if(!cityDates[c]) cityDates[c]=[]; cityDates[c].push({date:date,idx:idx,city:c}); }});
-    for (var c in cityDates) pkFetchWeather(c,cityDates[c]);
+    // ★ (2026-09-20) 이미 그려둔 날짜는 다시 받지 않는다 — 아이템 하나 추가할 때마다
+    //   날씨 API 를 다시 때리고 있었다. 칩은 위에서 캐시로 복원되므로 화면도 그대로다.
+    //   (새로고침하면 _pkWxHtml 이 비어서 자연히 다시 받는다)
+    for (var c in cityDates) {
+      var need = cityDates[c].filter(function(e){ return !_pkWxHtml[pkFmtDate(e.date)]; });
+      if (need.length) pkFetchWeather(c, need);
+    }
   }
 
   // Outfit CRUD
@@ -28302,7 +28312,25 @@
         if (changed) await fbUpdate('outfits', o._id, {items:o.items});
       }
     }
-    pkRenderDaily(); pkRenderProgress();
+    // ★ (2026-09-20) 여기서 pkRenderDaily() 를 부르면 날씨 칸이 '...' 로 초기화되고
+    //   API 를 다시 때린다. 체크는 클래스 하나가 전부라 제자리에서 칠하면 된다.
+    pkPaintChecked(); pkRenderProgress();
+  }
+
+  // 체크 표시만 데이터 기준으로 다시 칠한다 (노드를 갈아치우지 않는다)
+  function pkPaintChecked() {
+    var rows = document.querySelectorAll('#page-packing .pk-item-row[data-date]');
+    for (var i = 0; i < rows.length; i++) {
+      var d = rows[i].getAttribute('data-date'), ix = +rows[i].getAttribute('data-idx');
+      var o = null;
+      for (var k = 0; k < pkOutfits.length; k++) if (pkOutfits[k].date === d) { o = pkOutfits[k]; break; }
+      var it = o && o.items && o.items[ix];
+      if (!it) continue;
+      var span = rows[i].querySelector('.pk-item-name');
+      if (span) span.classList.toggle('checked', !!it.checked);
+      var box = rows[i].querySelector('input[type="checkbox"]');
+      if (box) box.checked = !!it.checked;
+    }
   }
 
   async function pkDeleteOutfitItem(dateStr, ii) {
@@ -28698,6 +28726,7 @@
         el.innerHTML='<span class="material-symbols-outlined '+info.cls+'">'+info.icon+'</span>'+
           '<span class="pk-day-wx-temp">'+wx.hi+'°/'+wx.lo+'°</span>'+rainHtml+
           (wx.past?'<span class="pk-day-wx-past">작년</span>':'');
+        _pkWxHtml[ds] = { html: el.innerHTML, title: el.title, peak: false };
       });
       // ★ (2026-09-19) 산 일정이 있는 날은 정상 고도 날씨를 이어서 덧그린다
       pkFetchPeaks(entries, coords, baseElev);
@@ -28773,13 +28802,13 @@
               rain: pr.length?Math.max.apply(null,pr):null, elev:peak.alt, name:peak.name };
           _pkPeakCache[ck]=w;
         }
-        _pkRenderDrop(e.idx, w);
+        _pkRenderDrop(e.idx, w, ds);
       }
     } catch(err) { console.warn('[PK peak weather]', err); }
   }
 
   // 마을 낮기온 → 정상 기온. 낙차가 한눈에 읽히는 게 요점이라 숫자는 하나씩만.
-  function _pkRenderDrop(idx, w) {
+  function _pkRenderDrop(idx, w, ds) {
     var el=document.getElementById('pk-wx-'+idx);
     if (!el || !el.dataset.base) return;
     var b; try { b=JSON.parse(el.dataset.base); } catch(e){ return; }
@@ -28794,6 +28823,7 @@
       '<span class="material-symbols-outlined pk-wx-peak-ico">terrain</span>'+
       '<span class="pk-wx-peak">'+w.lo+'°</span>'+
       '<span class="pk-wx-elev">'+w.elev.toLocaleString('ko-KR')+'m</span>';
+    if (ds) _pkWxHtml[ds] = { html: el.innerHTML, title: el.title, peak: true };
   }
 
   function pkWxInfo(code) {
@@ -28842,7 +28872,21 @@
   }
   async function pkToggleItem(ci,ii,checked) {
     pkData[ci].items[ii].checked=checked;
-    try { await fbUpdate('packing',pkData[ci]._id,{items:pkData[ci].items}); pkRenderCategories(); pkRenderProgress(); } catch(e){alert('저장 실패');}
+    // 재렌더 대신 제자리 갱신 — 편집 중이던 입력이나 스크롤 위치가 날아가지 않게
+    try { await fbUpdate('packing',pkData[ci]._id,{items:pkData[ci].items}); pkPaintCatChecked(); pkRenderProgress(); } catch(e){alert('저장 실패');}
+  }
+
+  function pkPaintCatChecked() {
+    var rows = document.querySelectorAll('#page-packing .pk-cat .pk-item-row[data-ci]');
+    for (var i = 0; i < rows.length; i++) {
+      var ci = +rows[i].getAttribute('data-ci'), ii = +rows[i].getAttribute('data-ii');
+      var it = pkData[ci] && pkData[ci].items && pkData[ci].items[ii];
+      if (!it) continue;
+      var span = rows[i].querySelector('.pk-item-name');
+      if (span) span.classList.toggle('checked', !!it.checked);
+      var box = rows[i].querySelector('input[type="checkbox"]');
+      if (box) box.checked = !!it.checked;
+    }
   }
   async function pkDeleteItem(ci,ii) {
     pkData[ci].items.splice(ii,1);
