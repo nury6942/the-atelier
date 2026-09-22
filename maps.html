@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#0f172a"/>
+<title>구글맵 저장 목록 — 2026 독일 & 이탈리아</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#0f172a; --sub:#64748b; --faint:#94a3b8;
+    --line:#e6e9ee; --accent:#4f46e5; --accent-soft:#eef2ff; --star:#b45309; --star-soft:#fffbeb;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1020; --card:#131a2c; --ink:#e8ecf5; --sub:#94a3b8; --faint:#64748b;
+           --line:#233049; --accent:#8b9cff; --accent-soft:#1c2542; --star:#fbbf24; --star-soft:#2a2313; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-size:15px; line-height:1.5; -webkit-text-size-adjust:100%;
+    padding:0 16px calc(48px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:720px;margin:0 auto}
+  header{padding:28px 0 16px}
+  h1{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+  .lede{font-size:13px;color:var(--sub);margin:0}
+  .lede b{color:var(--ink)}
+
+  .tools{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    appearance:none;border:1px solid var(--line);background:var(--card);color:var(--sub);
+    font:inherit;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:999px;cursor:pointer;
+  }
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .count{font-size:12px;color:var(--faint);margin-top:8px}
+
+  section{margin:22px 0 0}
+  .day{display:flex;align-items:baseline;gap:8px;margin:0 0 10px;padding:0 2px}
+  .day .d{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.02em}
+  .day .r{font-size:12px;color:var(--faint);font-weight:600}
+
+  ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  li{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  a.row{
+    display:flex;align-items:flex-start;gap:11px;padding:13px 14px;
+    color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent;
+  }
+  a.row:active{background:var(--accent-soft)}
+  .ico{font-size:17px;line-height:1.35;flex:0 0 auto;width:21px;text-align:center}
+  .body{flex:1;min-width:0}
+  .kr{font-size:14.5px;font-weight:700;letter-spacing:-.01em;word-break:keep-all}
+  .en{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:2px;word-break:break-word}
+  .note{font-size:12px;color:var(--sub);margin-top:4px;word-break:keep-all;line-height:1.45}
+  .go{flex:0 0 auto;align-self:center;font-size:12px;color:var(--faint);font-weight:700}
+
+  li.is-star{border-color:#fcd34d}
+  li.is-star .kr::after{content:'★';color:var(--star);font-size:11px;margin-left:5px;vertical-align:2px}
+  li.is-food{opacity:.72}
+
+  .tips{margin:30px 0 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .tips h2{font-size:14px;margin:0 0 10px;font-weight:800}
+  .tips ol{margin:0;padding-left:18px;font-size:13px;color:var(--sub);line-height:1.7}
+  .tips b{color:var(--ink)}
+  footer{margin:26px 0 0;font-size:11.5px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🗺️ 구글맵 저장 목록</h1>
+    <p class="lede">2026 독일 &amp; 이탈리아 · 9/24 – 10/4 · 누르면 <b>구글맵이 열립니다</b></p>
+  </header>
+
+  <div class="tools">
+    <div class="chips">
+      <button class="chip" data-f="all" aria-pressed="true">전체</button>
+      <button class="chip" data-f="star" aria-pressed="false">★ 핵심만</button>
+      <button class="chip" data-f="nofood" aria-pressed="false">식당 빼고</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="tips">
+    <h2>📌 저장 팁</h2>
+    <ol>
+      <li><b>목록을 나눠서</b> 만드세요 — 구글맵 → 저장됨 → 새 목록. <b>2026 이탈리아</b> / <b>2026 독일</b> 둘로 나누면 현지에서 보기 편해요.</li>
+      <li><b>오프라인 지도를 꼭 받으세요.</b> 돌로미티는 데이터가 끊기는 구간이 있습니다. 구글맵에서 지역을 길게 눌러 "오프라인 지도 다운로드" — <b>발 도르차 / 돌로미티 / 베로나 / 베를린</b>.</li>
+      <li><b>★ 부터 저장하세요.</b> 나머지는 시간 남을 때 보는 곳이라 나중에 해도 됩니다.</li>
+    </ol>
+  </div>
+
+  <footer>The Atelier · 이 페이지는 오프라인에서도 열립니다</footer>
+</div>
+
+<script>
+// [아이콘, 한국어, 구글맵 검색어, 메모, 등급]  등급: 2=핵심 1=기본 0=식당
+const DAYS = [
+ ['9/24 (목)','인천 → 로마',[
+  ['✈️','로마 피우미치노 공항','Aeroporto di Roma Fiumicino','FCO · 19:15 도착, 제3터미널',1],
+  ['🚆','파르코 레오나르도 역','Stazione Parco Leonardo','FL1 한 정거장 · 약 5분 · €1.50',1],
+  ['🏨','B&B Hotel Roma Fiumicino','B&B Hotel Roma Fiumicino Fiera','역에서 도보 5분',1],
+ ]],
+ ['9/25 (금)','로마 → 오르비에토 → 카스틸리오네 도르차',[
+  ['🚗','Europcar 픽업','Europcar Roma Fiumicino Airport','터미널 렌터카 센터',1],
+  ['🅿️','캄포 델라 피에라 주차장','Parcheggio Campo della Fiera Orvieto','제일 편한 주차. 에스컬레이터로 구시가 직결',2],
+  ['⛪','오르비에토 두오모','Duomo di Orvieto','파사드가 본체 · 산 브리치오 예배당',2],
+  ['🌀','산 파트리치오 우물','Pozzo di San Patrizio','62m 이중 나선 계단 248단',2],
+  ['🛍️','Corso Cavour (메인 거리)','Corso Cavour Orvieto','상점·카페가 여기 다 있음',2],
+  ['🗼','토레 델 모로','Torre del Moro Orvieto','250계단 · €3.60 · 360° 전망',2],
+  ['🏛️','레푸블리카 광장','Piazza della Repubblica Orvieto','구시가 중심 광장',1],
+  ['🥾','아넬로 델라 루페','Anello della Rupe Orvieto','절벽 둘레길. 마을을 바깥에서 한 바퀴',1],
+  ['🕳️','오르비에토 지하도시','Orvieto Underground','45분 가이드 투어만 · €7',1],
+  ['🍽','트라토리아 델 모로 아론네','Trattoria del Moro Aronne','움브리아 요리',0],
+  ['🏨','Ermione (숙소)',"Ermione Castiglione d'Orcia",'⚠️ 체크인 19:00 마감',2],
+  ['🏯','로카 디 텐텐나노','Rocca di Tentennano','차로 5분 · 이 일대 최고 전망 · 일몰 19:05',2],
+  ['🏰','로카 알도브란데스카',"Rocca Aldobrandesca Castiglione d'Orcia",'성채 폐허 + 발도르차 전망',1],
+  ['🏛️','피아차 베키에타','Piazza Vecchietta','삼각 광장 + 17세기 우물. 마을 중심',1],
+ ]],
+ ['9/26 (토)','발 도르차 → 베로나',[
+  ['♨️','바뇨 비뇨니 온천 광장','Piazza delle Sorgenti Bagno Vignoni','마을 한복판이 통째로 온천탕 · 입수 금지',2],
+  ['💧','파르코 데이 물리니','Parco dei Mulini Bagno Vignoni','아래쪽 물레방아 유적 + 계곡 전망',1],
+  ['🌿','산 퀴리코 사이프러스 군락',"Cipressi di San Quirico d'Orcia",'그 유명한 사이프러스. 갓길 주차 후 도보',2],
+  ['⛪','비탈레타 예배당','Cappella della Madonna di Vitaleta','글래디에이터 촬영지 · 흙길, 걸어 들어감',2],
+  ['🌳','오르티 레오니니','Horti Leonini San Quirico','르네상스 정원 · 무료',1],
+  ['⛪','콜레지아타 성당','Collegiata dei Santi Quirico e Giulitta','산 퀴리코 성당',1],
+  ['🌄','포데레 벨베데레',"Podere Belvedere San Quirico d'Orcia",'엽서 사진의 그 언덕집. 길에서 보는 것',1],
+  ['⛪','피엔차 두오모','Duomo di Pienza','무료 (기부함)',1],
+  ['🏛️','피우스 2세 광장','Piazza Pio II Pienza','피엔차 중심 광장',1],
+  ['💘','비아 델라모레','Via dell\'Amore Pienza','절벽 따라 난 골목',2],
+  ['🏰','몬티키엘로','Monticchiello','사이프러스 도로 + 성벽 마을',2],
+  ['🅿️','파르케조 치타델라','Parcheggio Cittadella Verona','지하 755면 · 6~24시간 €20',1],
+  ['🏨','Dimora Giardino di Giulietta','Dimora Giardino di Giulietta Verona','ZTL 밖 · 차로 문 앞까지',1],
+  ['🏛️','피아차 브라 (야경)','Piazza Bra Verona','조명 들어온 아레나',2],
+ ]],
+ ['9/27 (일)','베로나 → 돌로미티',[
+  ['🏛️','아레나 디 베로나','Arena di Verona','서기 30년경 · 콜로세움보다 오래됨',2],
+  ['🛍️','Via Mazzini','Via Mazzini Verona','대리석 보행 쇼핑 거리 · 일요일 10시 개점',2],
+  ['🏛️','피아차 델레 에르베','Piazza delle Erbe Verona','로마 포룸 자리 + 프레스코 벽화 건물',2],
+  ['💒','카사 디 줄리에타','Casa di Giulietta','에르베 광장에서 골목 하나',1],
+  ['🏛️','카스텔베키오 미술관','Museo di Castelvecchio','⭐ 오늘의 핵심 · 카를로 스카르파 · 월요일 휴관',2],
+  ['🌉','폰테 스칼리제로','Ponte Scaligero Verona','카스텔베키오 옆 벽돌 다리 · 무료',1],
+  ['🗼','토레 데이 람베르티','Torre dei Lamberti','에르베 광장 전망탑',1],
+  ['🌳','지아르디노 주스티','Giardino Giusti Verona','르네상스 정원 + 전망 · 사람 적음',1],
+  ['🏨','Lienharterhof (숙소)','Lienharterhof Monguelfo','⚠️ 체크인 20:00 마감',1],
+ ]],
+ ['9/28 – 9/30','돌로미티 (몬구엘포 4박)',[
+  ['🏞️','미주리나 호수','Lago di Misurina','트레치메 올라가는 길목',2],
+  ['🅿️','아우론조 산장 주차장','Rifugio Auronzo','⭐ 유료도로 끝 · €40 목적지 · 9/30 10:00 예약',2],
+  ['🥾','라바레도 산장','Rifugio Lavaredo','둘레길 첫 산장',1],
+  ['🥾','로카텔리 산장','Rifugio Locatelli Dreizinnenhuette','⭐⭐ 세 봉우리 정면. 그 사진이 여기',2],
+  ['🏞️','란드로 호수','Lago di Landro Duerrensee','내려오는 길',1],
+  ['🏘️','코르티나 담페초',"Cortina d'Ampezzo",'오후 마을 산책',1],
+  ['🚡','알페 디 시우시 곤돌라','Cabinovia Siusi Alpe di Siusi','⭐ 하부역 · 차는 못 올라감',2],
+  ['🏔️','콤파치 (상부역)','Compatsch Alpe di Siusi','여기서 걷기 시작',2],
+  ['⛪','산 발렌티노 교회','Chiesetta di San Valentino Siusi','초원 위 작은 교회. 알페의 상징 사진',2],
+  ['🥾','살트리아','Saltria Alpe di Siusi','평지 트레일 반대쪽 끝',1],
+  ['🚡','세체다 케이블카','Cabinovia Ortisei Furnes Seceda','⭐ 하부역 · 온라인 시간대 예약 필수',2],
+  ['🏔️','세체다','Seceda','⭐⭐ 2,500m · 톱니 능선이 정면으로',2],
+  ['🥾','피에랄롱기아','Pieralongia Seceda','능선 따라 더 들어가는 쪽',1],
+  ['🏘️','오르티세이','Ortisei','목공예 공방 거리 + 보행자 구역',2],
+  ['🅿️','산탄토니오 광장 주차','Piazza Sant\'Antonio Ortisei','하부역 주차 차면 여기 → 도보 6분',1],
+  ['🛣️','파소 가르데나','Passo Gardena','2,121m 고갯길 · 셀라 그룹 암벽',2],
+  ['🏘️','브루니코','Brunico Bruneck','몬구엘포에서 20분 · 구시가',1],
+ ]],
+ ['10/1 (목)','브라이에스 → 베네치아 → 베를린',[
+  ['🏞️','브라이에스 호수','Lago di Braies Pragser Wildsee','⭐⭐ 일출 · 숙소에서 가까움',2],
+  ['🅿️','브라이에스 주차장','Parcheggio Lago di Braies','호수 앞 유료주차',1],
+  ['✈️','베네치아 마르코폴로 공항','Venice Marco Polo Airport','10:00 반납 · ⚠️ Full-to-Full 주유 먼저',1],
+ ]],
+ ['10/1 – 10/3','베를린',[
+  ['🏨','Casa Camper Berlin','Casa Camper Berlin','미테 한복판',1],
+  ['🏺','노이에스 박물관','Neues Museum Berlin','⭐ 네페르티티 · 10/2 10:00 예약 필요',2],
+  ['✡️','유대인 박물관','Juedisches Museum Berlin','리베스킨트 건축',2],
+  ['🖼️','노이에 나치오날갈레리','Neue Nationalgalerie','미스 반 데어 로에',2],
+  ['🎨','보로스 컬렉션','Boros Collection Berlin','벙커 미술관 · 사전예약제',1],
+  ['🛍️','비키니 베를린','Bikini Berlin','컨셉 스토어',2],
+  ['🌳','템펠호퍼 펠트','Tempelhofer Feld','⭐ 옛 공항 활주로가 통째로 공원',2],
+  ['👗','베저슈트라세','Weserstrasse Berlin','노이쾰른 빈티지 거리',2],
+  ['👗','잔더슈트라세','Sanderstrasse Berlin','같은 동네',1],
+  ['🛍️','오라니엔슈트라세','Oranienstrasse Berlin','크로이츠베르크 메인',1],
+  ['🧱','베를린 장벽 기념관','Gedenkstaette Berliner Mauer','베르나우어 · 무료',2],
+  ['📜','테러의 지형학','Topographie des Terrors','무료 기록 전시관',1],
+  ['🏛️','박물관섬','Museumsinsel Berlin','',1],
+  ['🚪','브란덴부르크 문','Brandenburger Tor','',1],
+  ['🕯️','홀로코스트 추모비','Holocaust-Mahnmal Berlin','',1],
+  ['🎨','RAW 겔렌데','RAW-Gelaende Berlin','그래피티·클럽 지대',1],
+  ['⛰️','빅토리아파크','Viktoriapark Berlin','크로이츠베르크 언덕 전망',1],
+  ['🌳','티어가르텐','Tiergarten Berlin','',1],
+  ['🗼','전승기념탑','Siegessaeule Berlin','',1],
+  ['🍜','마르크트할레 노인','Markthalle Neun Berlin','실내 시장',0],
+ ]],
+ ['10/3 (토)','데사우 → 라이프치히',[
+  ['🚆','베를린 중앙역','Berlin Hauptbahnhof','ICE 597 · 09:27 · Gl.4',1],
+  ['🏛️','바우하우스 데사우','Bauhaus Dessau','⭐⭐ 본관 · 1시간이면 충분',2],
+  ['🏛️','마이스터하우스','Meisterhaeuser Dessau','본관에서 도보',2],
+  ['🚆','데사우 중앙역','Dessau Hauptbahnhof','⚠️ RE13 표는 여기서 현장 발권',1],
+  ['🏨','Stay KooooK Leipzig','Stay KooooK Leipzig City','',1],
+  ['🏛️','메들러 파사주','Maedlerpassage Leipzig','구시가 아케이드',2],
+  ['🏛️','라이프치히 마르크트','Marktplatz Leipzig','구시가 중심',1],
+  ['⛪','토마스 교회','Thomaskirche Leipzig','바흐가 묻힌 교회',1],
+  ['🎨','슈피너라이','Spinnerei Leipzig','옛 방적공장 → 갤러리 단지',1],
+ ]],
+ ['10/4 (일)','라이프치히 → 프랑크푸르트 → 인천',[
+  ['🚆','라이프치히 중앙역','Leipzig Hauptbahnhof','ICE 599 · 12:49 · Gl.11',1],
+  ['✈️','프랑크푸르트 공항','Frankfurt Airport','공항역 → SkyLine → T3 · 출국 19:40',2],
+ ]],
+];
+
+const listEl = document.getElementById('list');
+const countEl = document.getElementById('count');
+let filter = 'all';
+
+function render(){
+  listEl.innerHTML = '';
+  let shown = 0, total = 0;
+  for (const [day, route, places] of DAYS){
+    const keep = places.filter(p => {
+      total++;
+      if (filter === 'star')   return p[4] === 2;
+      if (filter === 'nofood') return p[4] !== 0;
+      return true;
+    });
+    if (!keep.length) continue;
+    shown += keep.length;
+    const sec = document.createElement('section');
+    sec.innerHTML = '<div class="day"><span class="d">' + day + '</span><span class="r">' + route + '</span></div>';
+    const ul = document.createElement('ul');
+    for (const [ico, kr, en, note, rank] of keep){
+      const li = document.createElement('li');
+      li.className = (rank === 2 ? 'is-star' : '') + (rank === 0 ? ' is-food' : '');
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(en);
+      a.target = '_blank'; a.rel = 'noopener';
+      a.innerHTML =
+        '<span class="ico">' + ico + '</span>' +
+        '<span class="body">' +
+          '<span class="kr">' + kr + '</span>' +
+          '<span class="en">' + en + '</span>' +
+          (note ? '<span class="note">' + note + '</span>' : '') +
+        '</span>' +
+        '<span class="go">지도 ↗</span>';
+      li.appendChild(a); ul.appendChild(li);
+    }
+    sec.appendChild(ul); listEl.appendChild(sec);
+  }
+  countEl.textContent = shown + '곳' + (filter !== 'all' ? ' (전체 ' + total + '곳 중)' : '');
+}
+
+document.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    filter = btn.dataset.f;
+    document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+render();
+</script>
+</body>
+</html>
