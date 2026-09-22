@@ -3929,12 +3929,18 @@
         '<div class="flex justify-between items-start gap-2">' +
         '<h5 class="font-bold text-sm text-slate-900 flex-1 cursor-pointer" style="word-break:keep-all;overflow-wrap:break-word" ondblclick="editScheduleTitle(this,'+realIdx+')">' + itemCityChip + displayTitle + (item.time ? '' : badgeHtml) + '</h5>' +
         '<div class="flex items-center gap-0.5 shrink-0">' +
+          // ★ (2026-09-22) 구글맵 열기 / 이름 복사 — 모바일엔 hover 가 없으니 항상 보이게
+          '<button onclick="event.stopPropagation();openGmap(' + realIdx + ')" class="p-0.5 hover:bg-emerald-100 rounded text-slate-400 hover:text-emerald-600" title="구글맵에서 열기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">travel_explore</span></button>' +
+          '<button onclick="event.stopPropagation();copyGmapName(' + realIdx + ')" class="p-0.5 hover:bg-indigo-100 rounded text-slate-400 hover:text-indigo-600" title="장소 이름 복사"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_copy</span></button>' +
           ((typeof item.lat === 'number' && typeof item.lng === 'number') ? '<button onclick="event.stopPropagation();focusDayPin(\'' + (item._id || '') + '\', event)" class="p-0.5 hover:bg-indigo-100 rounded text-slate-400 hover:text-indigo-600" title="지도에서 보기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">map</span></button>' : '') +
           '<button onclick="editScheduleFlags(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-indigo-100 rounded text-slate-300 hover:text-indigo-600" title="플래그: 예약필수·실내·정기휴무"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">flag</span></button>' +
           '<button onclick="editScheduleCity(' + realIdx + ', event)" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-amber-100 rounded text-slate-300 hover:text-amber-600" title="행선지 도시 설정 (당일치기)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">location_on</span></button>' +
           '<button onclick="deleteJourneyRow(' + realIdx + ')" class="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
         '</div>' +
         '</div>' +
+        // ★ (2026-09-22) 원문 병기 — 구글맵에서 찾을 이름
+        (item.name_en ? '<p class="dlv-en" title="더블클릭하여 원문 수정" ondblclick="editScheduleNameEn(this,'+realIdx+')">' + String(item.name_en).replace(/</g,'&lt;') + '</p>'
+                      : '<p class="dlv-en dlv-en-empty" title="더블클릭하여 원문 입력" ondblclick="editScheduleNameEn(this,'+realIdx+')">+ 원문 (더블클릭)</p>') +
         displayDescHtml +
         // 사전 예약 권장 시점 (예약 일정만)
         (function(){
@@ -4002,6 +4008,19 @@
     } catch(e) { alert('플래그 저장 실패'); }
   };
 
+  function editScheduleNameEn(el, idx) {
+    // 안내 문구('+ 원문 (더블클릭)')가 입력값으로 딸려 들어가지 않게 먼저 비운다
+    el.textContent = journeyData[idx].name_en || '';
+    inlineEditTd(el, function(val) {
+      journeyData[idx].name_en = val;
+      fbUpdate('journey', journeyData[idx]._id, { name_en: val }).catch(function(){});
+      renderDayView();
+    });
+    var inp = el.querySelector('input');
+    if (inp) inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') setTimeout(renderDayView, 0);   // 취소 시 안내 문구 복구
+    });
+  }
   function editScheduleTime(el, idx) {
     if (el.querySelector('input')) return;
     var origHtml = el.innerHTML;
@@ -4059,6 +4078,41 @@
     inStart.addEventListener('blur', onBlur);
     inEnd.addEventListener('blur', onBlur);
   }
+  // ★ (2026-09-22) 구글맵 검색어 — 원문(name_en)이 있으면 그걸, 없으면 이모지 뗀 제목 + 도시
+  function _gmapQuery(item) {
+    if (!item) return '';
+    var en = String(item.name_en || '').trim();
+    if (en) return en;
+    var t = String(item.title || '')
+      .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu, '')
+      .replace(/\s+/g, ' ').trim();
+    var c = String(item.city || '').split(',')[0].trim();
+    return (t + (c && t.indexOf(c) < 0 ? ' ' + c : '')).trim();
+  }
+  function openGmap(idx) {
+    var item = journeyData[idx];
+    var q = _gmapQuery(item);
+    if (!q) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">info</span> 검색할 이름이 없어'); return; }
+    window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q), '_blank', 'noopener');
+  }
+  async function copyGmapName(idx) {
+    var item = journeyData[idx];
+    var q = _gmapQuery(item);
+    if (!q) return;
+    try {
+      await navigator.clipboard.writeText(q);
+      showSyncToast('<span class="material-symbols-outlined text-sm mr-1">content_copy</span> 복사했어 — ' + q);
+    } catch (e) {
+      // 클립보드 권한이 없을 때 폴백
+      var ta = document.createElement('textarea');
+      ta.value = q; ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); showSyncToast('<span class="material-symbols-outlined text-sm mr-1">content_copy</span> 복사했어 — ' + q); }
+      catch (e2) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 복사 실패'); }
+      document.body.removeChild(ta);
+    }
+  }
+
   function editScheduleTitle(el, idx) {
     inlineEditTd(el, function(val) {
       journeyData[idx].title = val;
