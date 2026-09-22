@@ -1,3 +1,36 @@
+## 2026-09-22 (원격 · Claude Code on web) — maps.html: 거리 이름 → 실제 가게로 교체
+
+**왜**: `Weserstraße Berlin` 같은 거리 이름은 구글맵에서 **저장이 안 된다.**
+구글맵 목록은 '장소(POI)'만 담기고 길은 못 담는다. 그래서 핀이 안 잡히는 행을 전부
+그 거리 위에 실재하는 장소로 바꿨다. (지어내지 않고 검색해서 주소까지 확인)
+
+**베를린** — 거리 3줄 → 가게 6곳
+
+| 전 | 후 |
+|---|---|
+| Weserstrasse Berlin | Neuzwei (53번지) · Let Them Eat Cake (164) · Loppis (167) |
+| Sanderstrasse Berlin | Sing Blackbird (11번지, 카페 겸업) · Vintage Galore (12) |
+| Oranienstrasse Berlin | Voo Store (24번지, 안뜰 컨셉스토어) |
+
+Neuzwei 는 **목~토 13-19시**라 10/1(목)·10/2(금) 오후만 가능.
+
+**이탈리아** — 같은 이유로
+
+- `Corso Cavour Orvieto` → **Palazzo del Popolo Orvieto** (이걸 저장하고 그 길로 걷기)
+- `Anello della Rupe Orvieto` → **Fortezza Albornoz Orvieto** (둘레길 진입점 + 전망)
+- `Via dell'Amore Pienza` → **Palazzo Piccolomini Pienza** (옆에서 골목 셋이 갈라짐)
+- `Via Mazzini Verona` → **행 삭제.** 브라 광장 ↔ 에르베 광장이 이미 저장돼 있고
+  그 사이를 잇는 길이라 따로 핀이 필요 없다. 메모만 에르베 광장 쪽으로 옮김
+
+**검증**: 93곳 / ★39. 행 길이·검색어 패턴 전수 검사 통과 (거리 형태 검색어 0건)
+
+**다음 할 일**
+- 영업시간은 당일 구글맵에서 한 번 더 확인 (기사 기준이라 바뀌었을 수 있음)
+- 아직 안 돌린 스크립트: `atelierSwap` (9/28↔9/30) · `atelierNameEn` (원문 심기) · `atelierPack.mergeToiletries()`
+- 9/24 '🛌 취침' 항목 도시가 아직 `Frankfurt am Main` (옛 계획 잔재)
+
+---
+
 ## 2026-09-22 (원격 · Claude Code on web) — 구글맵 연동: 원문 병기 · 지도 버튼 · 드래그 복사 원인 (v356)
 
 **왜**: 출발 이틀 전. 구글맵에 장소를 저장하려는데 일정이 전부 한국어라 검색이 안 되고,
