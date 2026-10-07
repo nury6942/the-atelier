@@ -366,13 +366,6 @@
       var head = ds === x.start || dow === 0, tail = ds === x.end || dow === 6;
       h += '<span class="wbc-off' + (head ? ' head' : '') + (tail ? ' tail' : '') + (x.kind === 'sub' ? ' sub' : '') + '" title="' + esc(x.subject) + '">' + (head ? '<i>누리</i>' + esc(x.label) : '&nbsp;') + '</span>';
     });
-    // GTM
-    var gs = gtmOn(ds);
-    if (gs.length) {
-      h += '<span class="wbc-gtms">' + gs.map(function(g) {
-        return '<span class="wbc-gtm s-' + (g.series || 'fw') + (g.key ? ' is-key' : '') + '" title="' + esc(g.team + ' · ' + g.title) + '"><em>' + (g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '</em>' + esc(g.title) + '</span>';
-      }).join('') + '</span>';
-    }
     // 기간 바 (고정 줄)
     var slots = [];
     ranges.forEach(function(r) { var ln = lanes.rangeLanes.get(r); slots[ln == null ? 0 : ln] = r; });
@@ -380,6 +373,13 @@
       h += '<span class="wbc-bars">';
       for (var i = 0; i < slots.length; i++) h += slots[i] ? barHtml(slots[i], ds, dow) : '<span class="wbc-bar-gap"></span>';
       h += '</span>';
+    }
+    // GTM
+    var gs = gtmOn(ds);
+    if (gs.length) {
+      h += '<span class="wbc-gtms">' + gs.map(function(g) {
+        return '<span class="wbc-gtm s-' + (g.series || 'fw') + (g.key ? ' is-key' : '') + '" title="' + esc(g.team + ' · ' + g.title) + '"><em>' + (g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '</em>' + esc(g.title) + '</span>';
+      }).join('') + '</span>';
     }
     // 단일 일정
     var max = _mode === 'week' ? 99 : 4;
