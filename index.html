@@ -5578,6 +5578,11 @@
       line-height: 34px !important;
     }
     .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: var(--indigo-600) !important; }
+    /* ★ (2026-10-07) 토요일 칸이 오른쪽에서 잘리던 문제: 달력 안쪽 폭(298)이 날짜판 기본 폭(308)보다 좁았음
+       → 달력 폭을 날짜판에 맞춰 넓히고, 날짜판·요일줄 좌우 여백을 같게 */
+    .flatpickr-calendar:not(.multiMonth):not(.hasTime.noCalendar) { width: 318px !important; }
+    .flatpickr-days .dayContainer { width: 100% !important; min-width: 0 !important; max-width: none !important; }
+    .flatpickr-weekdays { padding-left: 6px !important; padding-right: 6px !important; box-sizing: border-box !important; }
     /* ★ (2026-10-07) 주말·공휴일 빨간색 + 공휴일 이름 (app-3-flatpickr.js _fpDayCreate) */
     span.flatpickr-weekday:first-child, span.flatpickr-weekday:last-child { color: #e11d48 !important; }
     .flatpickr-day.fp-red:not(.selected):not(.startRange):not(.endRange):not(.prevMonthDay):not(.nextMonthDay) { color: #e11d48 !important; }
