@@ -3058,20 +3058,20 @@
       letter-spacing: 0.1em; color: #494454;
       background: rgba(243,244,245,0.5);
     }
-    .calendar-page #planner-grid > div {
+    .calendar-page #planner-grid:not(.wbc-grid) > div {
       border-right: 1px solid rgba(203,195,215,0.15);
       border-bottom: 1px solid rgba(203,195,215,0.15);
       min-height: 140px; padding: var(--space-3);
       background: #fff; transition: all 0.15s;
       overflow: visible;
     }
-    .calendar-page #planner-grid > div:hover { background: #f3f4f5; }
+    .calendar-page #planner-grid:not(.wbc-grid) > div:hover { background: #f3f4f5; }
     .calendar-page #planner-grid { overflow: visible; }
 
     /* ===== 인터벌 — 기간을 얇은 화살표 선으로만 표시 (2026-08-25) =====
        칸을 통째로 먹는 기간 바와 달리 "이 구간 내내 이랬다"는 배경 정보용.
        칸 맨 아래 고정 트랙에 깔아서, 위쪽 일정 개수와 무관하게 선이 옆 칸과 이어진다. */
-    .calendar-page #planner-grid > div { --iv-bleed: -13px; }
+    .calendar-page #planner-grid:not(.wbc-grid) > div { --iv-bleed: -13px; }
     .cal-iv-track {
       position: absolute; left: var(--space-3, 12px); right: var(--space-3, 12px); bottom: 5px;
       display: flex; flex-direction: column; gap: 1px; pointer-events: none; z-index: 6;
@@ -3150,7 +3150,7 @@
     @media (max-width: 768px) {
       .calendar-page .page-content-wrap { padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 1rem !important; }
       .calendar-page section { padding: 0.5rem !important; border-radius: 0.875rem !important; }
-      .calendar-page #planner-grid > div {
+      .calendar-page #planner-grid:not(.wbc-grid) > div {
         min-height: 72px; padding: 3px 2px;
         --iv-bleed: -3px;
       }
@@ -3160,15 +3160,15 @@
       .calendar-page .cal-day-header { padding: 0.35rem 0.2rem !important; font-size: var(--font-size-nano); }
 
       /* 일자 숫자 모바일에서 작게 */
-      .calendar-page #planner-grid > div > span[class*="font-bold"][class*="text-sm"] {
+      .calendar-page #planner-grid:not(.wbc-grid) > div > span[class*="font-bold"][class*="text-sm"] {
         font-size: var(--font-size-micro) !important;
       }
-      .calendar-page #planner-grid > div > span.inline-flex.items-center.justify-center {
+      .calendar-page #planner-grid:not(.wbc-grid) > div > span.inline-flex.items-center.justify-center {
         width: 22px !important; height: 22px !important; font-size: var(--font-size-tiny) !important;
       }
 
       /* 휴일명: 가로 잘림(말줄임), 세로 쌓임 방지 */
-      .calendar-page #planner-grid > div span[style*="color:#8B1A1A"] {
+      .calendar-page #planner-grid:not(.wbc-grid) > div span[style*="color:#8B1A1A"] {
         display: inline-block; max-width: 100%; overflow: hidden;
         text-overflow: ellipsis; white-space: nowrap; font-size: 7px;
         vertical-align: middle; margin-left: 1px !important;
@@ -3176,9 +3176,9 @@
 
       /* === 이벤트 칩 통일 (모바일) === */
       /* 단일/publishing/range bar 모두 같은 작은 사각 칩으로 */
-      .calendar-page #planner-grid > div > div[data-pidx],
-      .calendar-page #planner-grid > div > div.mt-1,
-      .calendar-page #planner-grid > div > div[class*="mt-1.5"] {
+      .calendar-page #planner-grid:not(.wbc-grid) > div > div[data-pidx],
+      .calendar-page #planner-grid:not(.wbc-grid) > div > div.mt-1,
+      .calendar-page #planner-grid:not(.wbc-grid) > div > div[class*="mt-1.5"] {
         font-size: var(--font-size-nano) !important;
         padding: 1px 3px !important;
         margin-top: 1px !important;
@@ -3191,17 +3191,17 @@
         border-left-width: 2px !important;
       }
       /* publishing rounded-full을 사각으로, 흰글씨 그림자 제거 */
-      .calendar-page #planner-grid > div > div[class*="rounded-full"] {
+      .calendar-page #planner-grid:not(.wbc-grid) > div > div[class*="rounded-full"] {
         border-radius: 3px !important;
         text-shadow: none !important;
       }
-      .calendar-page #planner-grid > div > div[data-pidx] span.truncate {
+      .calendar-page #planner-grid:not(.wbc-grid) > div > div[data-pidx] span.truncate {
         font-size: var(--font-size-nano) !important;
         line-height: 1.3 !important;
       }
       /* 호버 시만 보이는 편집/삭제 버튼은 모바일에서 숨김 (호버 없음) */
-      .calendar-page #planner-grid > div [draggable="true"] > div.opacity-0,
-      .calendar-page #planner-grid > div .opacity-0.group-hover\:opacity-100 {
+      .calendar-page #planner-grid:not(.wbc-grid) > div [draggable="true"] > div.opacity-0,
+      .calendar-page #planner-grid:not(.wbc-grid) > div .opacity-0.group-hover\:opacity-100 {
         display: none !important;
       }
 
@@ -3234,7 +3234,7 @@
       .calendar-page section button .material-symbols-outlined { font-size: var(--font-size-body) !important; }
 
       /* 오늘 셀 outline 줄임 */
-      .calendar-page #planner-grid > div[style*="outline"] { border-radius: var(--radius-sm) !important; }
+      .calendar-page #planner-grid:not(.wbc-grid) > div[style*="outline"] { border-radius: var(--radius-sm) !important; }
     }
 
     /* ===== Year Matrix 모바일 대응 ===== */
@@ -5578,6 +5578,137 @@
       line-height: 34px !important;
     }
     .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: var(--indigo-600) !important; }
+    /* ═══ ★ (2026-10-07) 캘린더 v2 — mlb-fitting 업무 보드(.wb-cal) 디자인 이식 ═══ */
+    .wbc { --ink:#15171c; --text:#2a2e35; --sub:#555b65; --line2:#d5d8dd; --hair:#d9dce1;
+      --blue:#2f64c8; --blue-s:#ebf1fc; --rose:#b8405c; --me:#FF6F5B; --neo-fw:#9BF0C6; --neo-q2:#FBEF86; --key:#E8283F;
+      --num:"Helvetica Neue", Helvetica, Arial, sans-serif; font-family:'Pretendard','Noto Sans KR',sans-serif; color:var(--ink); background:#fff; padding:28px 28px 32px; }
+    .wbc-bar { display:flex; justify-content:space-between; align-items:flex-end; gap:16px 24px; flex-wrap:wrap; padding-bottom:18px; border-bottom:1px solid var(--ink); }
+    .wbc-title { display:flex; align-items:flex-end; gap:14px; }
+    .wbc-title .big { font-family:var(--num); font-size:64px; font-weight:400; line-height:.82; letter-spacing:-0.04em; color:var(--ink); font-variant-numeric:tabular-nums; }
+    .wbc-title .cap { display:flex; flex-direction:column; gap:3px; padding-bottom:2px; }
+    .wbc-title .cap b { font-family:var(--num); font-size:15px; font-weight:600; letter-spacing:.18em; }
+    .wbc-title .cap em { font-family:var(--num); font-style:normal; font-size:12.5px; font-weight:500; letter-spacing:.18em; color:var(--sub); }
+    .wbc-stats { display:flex; gap:26px; align-items:flex-end; margin-right:auto; padding-left:12px; }
+    .wbc-stat { display:grid; grid-template-columns:auto auto; column-gap:6px; align-items:baseline; }
+    .wbc-stat .l { grid-column:1 / -1; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--sub); }
+    .wbc-stat b { font-family:var(--num); font-size:22px; font-weight:500; letter-spacing:-0.02em; color:var(--ink); }
+    .wbc-stat b.neg { color:var(--key); }
+    .wbc-stat .s { grid-column:1 / -1; font-size:11px; color:var(--sub); }
+    .wbc-pen { border:0; background:none; color:var(--sub); cursor:pointer; font-size:13px; padding:0 2px; }
+    .wbc-pen:hover { color:var(--ink); }
+    .wbc-connect { border:1px solid var(--ink); background:#fff; padding:7px 12px; font-size:12px; font-weight:700; cursor:pointer; border-radius:0; }
+    .wbc-connect:hover { background:var(--ink); color:#fff; }
+    .wbc-ctrl { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .wbc-mode { display:inline-flex; gap:14px; }
+    .wbc-mode button, .wbc-txt { font-family:var(--num); font-size:12.5px; font-weight:600; letter-spacing:.16em; padding:6px 0; border:0; border-bottom:1.5px solid transparent; background:none; color:var(--sub); cursor:pointer; border-radius:0; }
+    .wbc-mode button:hover, .wbc-txt:hover { color:var(--ink); }
+    .wbc-mode button.on { color:var(--ink); border-bottom-color:var(--ink); }
+    .wbc-sep { width:1px; height:16px; background:var(--hair); margin:0 10px; }
+    .wbc-txt { margin-right:8px; }
+    .wbc-icon { width:34px; height:34px; border:1px solid var(--hair); border-radius:0; background:#fff; color:var(--ink); font-size:15px; cursor:pointer; }
+    .wbc-icon:hover { border-color:var(--ink); }
+    .wbc-btn { height:34px; padding:0 14px; border:1px solid var(--hair); background:#fff; color:var(--ink); font-size:12.5px; font-weight:700; cursor:pointer; border-radius:0; }
+    .wbc-btn:hover { border-color:var(--ink); }
+    .wbc-btn.is-ink { background:var(--ink); border-color:var(--ink); color:#fff; }
+    .wbc-body { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:28px; align-items:start; padding-top:6px; }
+    @media (max-width:1100px) { .wbc-body { grid-template-columns:minmax(0,1fr); } }
+    .wbc-wds { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
+    .wbc-wds span { font-family:var(--num); font-size:11.5px; font-weight:600; letter-spacing:.2em; color:var(--sub); padding:12px 12px 10px; }
+    .wbc-wds .is-sun { color:var(--rose); } .wbc-wds .is-sat { color:var(--blue); }
+    #planner-grid.wbc-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); border-top:1px solid var(--hair); min-height:0; }
+    .wbc-cd { display:flex; flex-direction:column; gap:6px; min-width:0; position:relative; padding:10px 12px 12px; background:#fff; color:var(--ink); cursor:pointer;
+      border-bottom:1px solid var(--hair); border-right:1px solid var(--hair); --iv-bleed:-13px; }
+    .wbc-cd:nth-child(7n) { border-right:0; }
+    .wbc-grid.week .wbc-cd { min-height:420px; }
+    .wbc-grid.month .wbc-cd { min-height:118px; }
+    .wbc-cd:hover { background:#fafbfc; }
+    .wbc-cd.is-sun, .wbc-cd.is-hol { background:#fdf3f5; }
+    .wbc-cd.is-sat { background:#f3f7fd; }
+    .wbc-cd.is-sel { background:#f6f8fc; }
+    .wbc-cd.is-sel::before { content:''; position:absolute; left:-1px; right:0; top:-1px; height:3px; background:var(--blue); z-index:6; }
+    .wbc-cd.is-drop { outline:2px dashed var(--blue); outline-offset:-2px; }
+    .wbc-cd-head { display:flex; align-items:flex-start; justify-content:space-between; gap:6px; }
+    .wbc-cd-num { font-family:var(--num); font-size:25px; font-weight:400; line-height:1; letter-spacing:-0.03em; color:var(--ink); font-variant-numeric:tabular-nums; padding:2px 0; }
+    .wbc-cd.is-sun .wbc-cd-num, .wbc-cd.is-hol .wbc-cd-num { color:var(--rose); }
+    .wbc-cd.is-sat .wbc-cd-num { color:var(--blue); }
+    .wbc-cd.is-past .wbc-cd-num { opacity:.7; }
+    .wbc-cd.is-other { background:#fcfcfd; }
+    .wbc-cd.is-other .wbc-cd-num, .wbc-cd.is-other .wbc-evs, .wbc-cd.is-other .wbc-gtms { opacity:.35; }
+    .wbc-cd.is-today .wbc-cd-num { background:var(--blue); color:#fff; opacity:1; padding:5px 7px 4px; }
+    .wbc-cd-hol { font-size:12px; font-weight:600; color:var(--rose); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-top:3px; }
+    .wbc-off { display:block; min-height:24px; margin:0 -13px 0 -13px; padding:4px 8px; background:var(--me); color:#fff; font-size:12.5px; font-weight:700; line-height:1.35; white-space:nowrap; position:relative; z-index:1; }
+    .wbc-off.sub { background:#8b5cf6; }
+    .wbc-off.head { margin-left:0; } .wbc-off.tail { margin-right:0; }
+    .wbc-off i { font-style:normal; font-size:11px; font-weight:800; background:#fff; color:var(--me); padding:1px 5px; margin-right:6px; }
+    .wbc-off.sub i { color:#8b5cf6; }
+    .wbc-gtms { display:grid; gap:3px; min-width:0; }
+    .wbc-gtm { display:block; font-size:12.5px; font-weight:600; line-height:1.35; color:#0b0b0b; background:var(--neo-fw); padding:3px 7px; overflow-wrap:anywhere; }
+    .wbc-gtm.s-q2 { background:var(--neo-q2); }
+    .wbc-gtm em { font-style:normal; font-family:var(--num); font-size:10px; font-weight:700; letter-spacing:.14em; opacity:.7; margin-right:6px; }
+    .wbc-gtm.is-key { background:var(--key); color:#fff; padding:5px 8px 5px 9px; border-left:4px solid var(--neo-fw); }
+    .wbc-gtm.s-q2.is-key { border-left-color:var(--neo-q2); }
+    .wbc-gtm.is-key em { color:rgba(255,255,255,.82); opacity:1; }
+    .wbc-bars { display:grid; gap:3px; }
+    .wbc-bar { display:block; height:24px; line-height:24px; margin:0 -13px; padding:0 8px; font-size:12.5px; font-weight:700; white-space:nowrap; overflow:visible; position:relative; z-index:2; cursor:grab; }
+    .wbc-bar.head { margin-left:0; } .wbc-bar.tail { margin-right:0; }
+    .wbc-bar-gap { display:block; height:24px; }
+    .wbc-evs { display:grid; gap:4px; min-width:0; }
+    .wbc-ev { display:flex; align-items:center; gap:4px; font-size:13px; line-height:1.35; padding:3px 4px 3px 8px; border-left:2px solid currentColor; min-width:0; cursor:grab; border-radius:0; }
+    .wbc-ev .t { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+    .wbc-ev .act { display:none; gap:2px; flex:none; }
+    .wbc-ev:hover .act { display:inline-flex; }
+    .wbc-ev .act button { border:0; background:none; color:inherit; cursor:pointer; font-size:12px; padding:0 2px; }
+    .wbc-ev.is-dl { border-left-color:#7a1a00; }
+    .wbc-pub { display:block; font-size:12.5px; font-weight:700; color:#fff; padding:4px 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:grab; }
+    .wbc-pub em { font-style:normal; font-family:var(--num); font-size:10px; font-weight:700; letter-spacing:.12em; opacity:.8; margin-right:6px; }
+    .wbc-more { font-size:12px; font-weight:600; color:var(--sub); padding-left:10px; }
+    .wbc-atts { display:grid; gap:3px; }
+    .wbc-att { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .wbc-att i { font-style:normal; font-size:11px; font-weight:700; background:var(--me); color:#fff; padding:1px 5px; margin-right:5px; }
+    .wbc-att.ot i { background:#0f766e; }
+    .wbc-cd .cal-iv-track { left:0; right:0; }
+    /* 선택일 패널 */
+    .wbc-ag { border-top:1px solid var(--hair); padding-top:14px; position:sticky; top:16px; }
+    .wbc-ag-head { display:flex; align-items:flex-end; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--ink); }
+    .wbc-ag-head .n { font-family:var(--num); font-size:52px; font-weight:400; line-height:.85; letter-spacing:-0.04em; }
+    .wbc-ag-head .n.is-today { color:var(--blue); }
+    .wbc-ag-head .m { display:flex; flex-direction:column; gap:3px; }
+    .wbc-ag-head .m b { font-family:var(--num); font-size:12.5px; font-weight:600; letter-spacing:.16em; }
+    .wbc-ag-head .m em { font-style:normal; font-size:12px; font-weight:600; color:var(--rose); min-height:14px; }
+    .wbc-ag-sec { padding:14px 0; border-bottom:1px solid var(--hair); display:grid; gap:6px; }
+    .wbc-ag-t { font-size:11px; font-weight:700; letter-spacing:.08em; color:var(--sub); margin:0 0 2px; }
+    .wbc-ag-t span { font-family:var(--num); color:var(--ink); margin-left:4px; }
+    .wbc-ag-gtm { font-size:13px; font-weight:600; padding:6px 9px; background:var(--neo-fw); color:#0b0b0b; }
+    .wbc-ag-gtm.s-q2 { background:var(--neo-q2); }
+    .wbc-ag-gtm.is-key { background:var(--key); color:#fff; }
+    .wbc-ag-gtm em { display:block; font-style:normal; font-size:10.5px; font-weight:700; letter-spacing:.06em; opacity:.75; margin-bottom:1px; }
+    .wbc-ag-att { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:baseline; font-size:13px; }
+    .wbc-ag-att b { font-size:11.5px; font-weight:800; background:var(--me); color:#fff; padding:1px 6px; }
+    .wbc-ag-att.otEarn b { background:#334155; } .wbc-ag-att.otUse b { background:#0f766e; } .wbc-ag-att.sub b { background:#8b5cf6; }
+    .wbc-ag-att .h { font-family:var(--num); font-size:12px; color:var(--sub); }
+    .wbc-ag-ev { display:grid; grid-template-columns:8px 1fr; column-gap:9px; align-items:baseline; padding:5px 4px; cursor:pointer; }
+    .wbc-ag-ev:hover { background:#f6f8fc; }
+    .wbc-ag-ev i { width:8px; height:8px; display:inline-block; grid-row:1 / span 2; align-self:start; margin-top:5px; }
+    .wbc-ag-ev .t { font-size:13.5px; font-weight:600; color:var(--ink); }
+    .wbc-ag-ev .c { grid-column:2; font-size:11.5px; color:var(--sub); }
+    .wbc-ag-empty { font-size:12.5px; color:var(--sub); margin:2px 0; }
+    .wbc-ag-add { margin-top:6px; height:34px; border:1px dashed var(--line2); background:#fff; font-size:12.5px; font-weight:700; color:var(--sub); cursor:pointer; }
+    .wbc-ag-add:hover { border-color:var(--ink); color:var(--ink); }
+    @media (max-width:768px) {
+      .wbc { padding:16px 10px 20px; }
+      .wbc-title .big { font-size:44px; }
+      .wbc-stats { padding-left:0; gap:18px; order:3; width:100%; }
+      .wbc-cd { padding:6px 4px 8px; gap:4px; --iv-bleed:-5px; }
+      .wbc-grid.month .wbc-cd { min-height:84px; }
+      .wbc-grid.week .wbc-cd { min-height:200px; }
+      .wbc-cd-num { font-size:16px; }
+      .wbc-cd-hol { display:none; }
+      .wbc-ev, .wbc-gtm, .wbc-pub, .wbc-bar, .wbc-off { font-size:10.5px; }
+      .wbc-ev { padding:2px 2px 2px 4px; }
+      .wbc-bar, .wbc-off { margin:0 -5px; padding:0 4px; height:20px; line-height:20px; }
+      .wbc-wds span { padding:8px 4px; letter-spacing:.08em; font-size:10px; }
+      .wbc-ag { display:none; }
+    }
     /* ★ (2026-10-07) 토요일 칸이 오른쪽에서 잘리던 문제: 달력 안쪽 폭(298)이 날짜판 기본 폭(308)보다 좁았음
        → 달력 폭을 날짜판에 맞춰 넓히고, 날짜판·요일줄 좌우 여백을 같게 */
     .flatpickr-calendar:not(.multiMonth):not(.hasTime.noCalendar) { width: 318px !important; }
@@ -15330,104 +15461,31 @@
   <div id="page-planner" class="page calendar-page" style="display:none">
     <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
 
-      <!-- 탭 (월간 / 매트릭스) -->
-      <div class="flex items-center justify-between flex-wrap gap-3 -mb-4">
-        <div class="inline-flex gap-1 p-1 bg-slate-100 rounded-xl">
-          <button onclick="switchCalendarTab('month')" class="travel-tab-btn travel-tab-active px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5 transition-all" data-tab="month">
-            📅 월간
-          </button>
-          <button onclick="switchCalendarTab('matrix')" class="travel-tab-btn px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-all" data-tab="matrix">
-            🗓️ 매트릭스
-          </button>
-        </div>
-      </div>
-
-      <!-- Calendar -->
-      <section class="bg-white rounded-3xl p-8 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] overflow-hidden relative">
-        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none" style="background:rgba(107,56,212,0.05)"></div>
-        <div class="flex items-center justify-between mb-8">
-          <div class="flex items-center gap-2">
-            <select id="cal-year-select" onchange="calNavJump()" class="cal-nav-select"></select>
-            <select id="cal-month-select" onchange="calNavJump()" class="cal-nav-select"></select>
-            <div class="flex gap-1 ml-1">
-              <button onclick="prevMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
-              <button onclick="nextMonth()" class="p-2 hover:bg-[#f3f4f5] rounded-lg transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
+      <!-- ★ (2026-10-07) 캘린더 v2 — mlb-fitting 업무 보드 디자인 (js/cal-wb.js가 그림). 매트릭스 탭은 화면에서 뺌 -->
+      <section id="wbc" class="wbc">
+        <header class="wbc-bar">
+          <div class="wbc-title"><span class="big" id="wbc-big">--</span><span class="cap"><b id="wbc-range">—</b><em id="wbc-year"></em></span></div>
+          <div class="wbc-stats" id="wbc-stats"></div>
+          <div class="wbc-ctrl">
+            <div class="wbc-mode" role="group" aria-label="보기 방식">
+              <button type="button" data-mode="week" onclick="wbcSetMode('week')">WEEK</button>
+              <button type="button" data-mode="month" onclick="wbcSetMode('month')">MONTH</button>
             </div>
-            <button onclick="calNavToday()" class="ml-2 px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-600 text-xs font-bold hover:bg-indigo-50 transition-all flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">today</span>오늘</button>
+            <span class="wbc-sep"></span>
+            <button type="button" class="wbc-txt" onclick="wbcToday()">TODAY</button>
+            <button type="button" class="wbc-icon" onclick="wbcGo(-1)" aria-label="이전">←</button>
+            <button type="button" class="wbc-icon" onclick="wbcGo(1)" aria-label="다음">→</button>
+            <span class="wbc-sep"></span>
+            <button type="button" class="wbc-btn is-ink" onclick="openPlannerModal()">+ 일정</button>
+            <button type="button" class="wbc-btn" onclick="openNewWorkModal()">새 작품</button>
           </div>
-          <div class="flex items-center gap-3">
-            <div id="cal-leave-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="연차 현황">
-              <span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:#f97316">beach_access</span>
-              <span class="font-bold text-slate-700">연차</span>
-              <span id="cal-leave-used" class="font-black text-slate-900">0</span>
-              <span class="text-slate-300">/</span>
-              <span id="cal-leave-total" class="font-bold text-slate-400">22</span>
-              <span class="text-slate-300 mx-0.5">·</span>
-              <span class="text-xs text-slate-400">남은</span>
-              <span id="cal-leave-left" class="font-black text-indigo-600">22</span>
-              <span class="text-xs text-slate-400">일</span>
-              <button onclick="openLeaveEditModal('cal')" class="ml-1 p-1 hover:bg-indigo-100 rounded-md transition-colors text-slate-400 hover:text-indigo-700" title="연차 총계 수정"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">edit</span></button>
-            </div>
-            <div id="cal-special-tracker" class="flex items-center gap-1.5 px-2 py-2.5 text-sm select-none" title="특별휴가 현황" style="display:none">
-              <span class="material-symbols-outlined" style="font-size: var(--font-size-h3);color:#ec4899">card_giftcard</span>
-              <span class="font-bold text-slate-700">특별</span>
-              <span id="cal-special-used" class="font-black text-pink-600">0</span>
-              <span class="text-xs text-slate-400">일</span>
-            </div>
-            <button onclick="openPlannerModal()" class="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));box-shadow:0 8px 20px rgba(107,56,212,0.2);">
-              <span class="material-symbols-outlined text-sm">add</span> 일정 추가
-            </button>
-            <button onclick="openNewWorkModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 active:scale-95 transition-all border border-[var(--lavender-deep)]/30 text-[var(--lavender-deep)] hover:bg-[var(--lavender-deep)]/5 shadow-sm">
-              <span class="material-symbols-outlined text-sm">edit_note</span> 새 작품
-            </button>
+        </header>
+        <div class="wbc-body">
+          <div class="min-w-0">
+            <div class="wbc-wds"><span class="is-sun">SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span class="is-sat">SAT</span></div>
+            <div id="planner-grid" class="wbc-grid month"></div>
           </div>
-        </div>
-        <div class="grid grid-cols-7 cal-grid-border">
-          <div class="p-4 cal-day-header text-rose-400">일</div>
-          <div class="p-4 cal-day-header">월</div>
-          <div class="p-4 cal-day-header">화</div>
-          <div class="p-4 cal-day-header">수</div>
-          <div class="p-4 cal-day-header">목</div>
-          <div class="p-4 cal-day-header">금</div>
-          <div class="p-4 cal-day-header text-rose-400">토</div>
-        </div>
-        <div id="planner-grid" class="grid grid-cols-7 cal-grid-border" style="min-height:480px">
-          <!-- Initial skeleton (renderCalendar이 첫 호출되면 innerHTML로 교체됨) -->
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div></div>
-          <div class="cal-skel-cell"><div class="cal-skel cal-skel-day"></div><div class="cal-skel cal-skel-event"></div></div>
+          <aside id="wbc-ag" class="wbc-ag"></aside>
         </div>
       </section>
 
@@ -16570,6 +16628,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
+<script src="js/cal-wb.js?v=1" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
