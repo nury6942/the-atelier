@@ -73,9 +73,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=359" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=360" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=164" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
   <link rel="preload" href="js/daily-guides.js?v=163" as="script">
@@ -5583,6 +5583,7 @@
     .flatpickr-day.fp-red:not(.selected):not(.startRange):not(.endRange):not(.prevMonthDay):not(.nextMonthDay) { color: #e11d48 !important; }
     .flatpickr-day.fp-red.prevMonthDay, .flatpickr-day.fp-red.nextMonthDay { color: #fda4af !important; }
     .flatpickr-day.fp-holiday { display: inline-flex !important; flex-direction: column; align-items: center; justify-content: center; line-height: 1 !important; gap: 1px; }
+    .flatpickr-day.fp-hmulti .fp-hname { white-space: pre-line; font-size: 7px; }
     .flatpickr-day .fp-hname { font-size: 8px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
     .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
       background: linear-gradient(135deg, var(--indigo-500), #8b5cf6) !important;
@@ -15695,7 +15696,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=359" defer></script>
+<script src="js/app-1-pages.js?v=360" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -16559,7 +16560,7 @@
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=164" defer></script>
+<script src="js/app-3-flatpickr.js?v=165" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>

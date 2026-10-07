@@ -1,3 +1,8 @@
+## 2026-10-07 (윈도우) — 겹치는 공휴일 이름 합치기 (추석·개천절)
+
+- `getKoreanHolidays`: 같은 날 공휴일이 겹치면 덮어쓰지 않고 `·`로 합침(명절이 앞). 캘린더 페이지에도 똑같이 반영됨. 예: 2028-10-03 추석·개천절, 2025-05-05 부처님오신날·어린이날
+- 달력 팝업: 합친 이름은 두 줄(7px)로 표시
+
 ## 2026-10-07 (윈도우) — 모든 달력 팝업에 주말·공휴일 빨간색 + 공휴일 이름 (flatpickr v164)
 
 - `app-3-flatpickr.js`: `flatpickr.setDefaults({onDayCreate: _fpDayCreate})` + 이미 만들어진 달력엔 `set('onDayCreate')`+redraw. 데이터는 캘린더 페이지 `getKoreanHolidays` 재사용(대체공휴일·선거 포함).

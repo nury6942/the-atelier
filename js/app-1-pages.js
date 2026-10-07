@@ -266,9 +266,13 @@
   // ===== 대한민국 공휴일 =====
   function getKoreanHolidays(year) {
     var holidays = {};
+    // ★ (2026-10-07) 같은 날 공휴일이 겹치면 덮어쓰지 않고 "추석·개천절"처럼 합침
+    function put(key, name, first) { // first: 명절(음력)을 앞에 → "추석·개천절"
+      if (!holidays[key]) holidays[key] = name;
+      else if (holidays[key].split('·').indexOf(name) < 0) holidays[key] = first ? name + '·' + holidays[key] : holidays[key] + '·' + name;
+    }
     function add(m, d, name) {
-      var key = year + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-      holidays[key] = name;
+      put(year + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0'), name);
     }
     // 양력 고정 공휴일
     add(1,1,'신정');
@@ -294,9 +298,9 @@
     };
     if (lunarMap[year]) {
       var lm = lunarMap[year];
-      lm.seol.forEach(function(d){ holidays[year+'-'+d] = '설날'; });
-      lm.chuseok.forEach(function(d){ holidays[year+'-'+d] = '추석'; });
-      holidays[year+'-'+lm.buddha] = '부처님오신날';
+      lm.seol.forEach(function(d){ put(year+'-'+d, '설날', true); });
+      lm.chuseok.forEach(function(d){ put(year+'-'+d, '추석', true); });
+      put(year+'-'+lm.buddha, '부처님오신날', true);
     }
 
     // 임시 공휴일 (선거 등)
@@ -304,7 +308,7 @@
       2026: [['06-03','지방선거']],
     };
     if (specialMap[year]) {
-      specialMap[year].forEach(function(pair){ holidays[year+'-'+pair[0]] = pair[1]; });
+      specialMap[year].forEach(function(pair){ put(year+'-'+pair[0], pair[1]); });
     }
 
     // 대체공휴일 (2024~2030, 공휴일이 주말/다른 공휴일과 겹칠 때)
@@ -322,7 +326,7 @@
       2030: [['02-05','설날 대체공휴일'],['05-06','어린이날 대체공휴일']],
     };
     if (substMap[year]) {
-      substMap[year].forEach(function(pair){ holidays[year+'-'+pair[0]] = pair[1]; });
+      substMap[year].forEach(function(pair){ put(year+'-'+pair[0], pair[1]); });
     }
 
     return holidays;

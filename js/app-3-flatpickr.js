@@ -59,6 +59,8 @@
     if (n === '크리스마스') return '성탄절';
     return n;
   }
+  // 겹친 공휴일("추석·개천절")은 두 줄로
+  function _shortNames(n) { return n.split('·').map(_shortName).join('\n'); }
   window._fpDayCreate = function(selectedDates, dateStr, fp, dayElem) {
     var dt = dayElem && dayElem.dateObj;
     if (!dt) return;
@@ -70,7 +72,8 @@
       dayElem.title = name;
       var s = document.createElement('span');
       s.className = 'fp-hname';
-      s.textContent = _shortName(name);
+      s.textContent = _shortNames(name);
+      if (name.indexOf('·') >= 0) dayElem.classList.add('fp-hmulti');
       dayElem.appendChild(s);
     }
   };
