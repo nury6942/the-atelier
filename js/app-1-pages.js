@@ -3363,8 +3363,8 @@
     // 지도 인스턴스 생성 (await 이전 = 동시호출 경합 방지)
     if (!_leafletMap) {
       _leafletMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, zoomAnimation: false, attributionControl: true });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { // ★ (2026-10-07) CARTO가 키 필수로 바뀜 → 무료 OSM 타일
+        attribution: '&copy; OpenStreetMap', maxZoom: 19
       }).addTo(_leafletMap);
       _trvMapWheelGate(_leafletMap, mount); // 클릭 후에만 휠 줌
     }
@@ -18263,8 +18263,8 @@
       // 줌 애니메이션 복원 (2026-07-23): 애니메이션을 삼키던 진범은 렌더마다 실행되던 fitBounds 리셋 — sig 스킵으로 제거됨
       // ★ (2026-07-23) 휠 줌은 클릭 후에만 — 트랙패드 스크롤 중 지도 위를 지나가며 줌되던 문제
       _dayPinsMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { // ★ (2026-10-07) CARTO가 키 필수로 바뀜 → 무료 OSM 타일
+        attribution: '&copy; OpenStreetMap', maxZoom: 19
       }).addTo(_dayPinsMap);
       _trvMapWheelGate(_dayPinsMap, mount);
       // 핀이 아직 없어도 죽지 않게 초기 뷰 부여 (첫 도시 좌표 or 세계 전도)
@@ -19419,8 +19419,8 @@
     if (msg) msg.textContent = s.ports.length + '개 공항 · ' + s.legs.length + '개 노선';
     if (!_fltMap) {
       _fltMap = L.map(mount, { zoomControl: true, scrollWheelZoom: false, worldCopyJump: true, attributionControl: true });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { // ★ (2026-10-07) CARTO가 키 필수로 바뀜 → 무료 OSM 타일
+        attribution: '&copy; OpenStreetMap', maxZoom: 19
       }).addTo(_fltMap);
       _trvMapWheelGate(_fltMap, mount);
       _fltMap.setView([30, 60], 2);
