@@ -2512,6 +2512,7 @@
     // 도시별 날씨 예보 hydrate (Open-Meteo, 무료)
     window._journeyRainDays = [];
     hydrateCityWeather();
+    try { revalidateCityCoords(); } catch(e) {}
     setTimeout(function() { if (typeof window.renderJourneyOverview === 'function') window.renderJourneyOverview(); }, 4000);
   }
 
@@ -3510,6 +3511,58 @@
     _wxCache[key] = out;
     return out;
   }
+
+  // ★ (2026-10-07) 도시 좌표 재검증: 한글 이름으로 찾다 엉뚱한 곳(한국 등) 좌표가 저장돼
+  //   지도가 한국으로 뜨고, 일정 장소 '좌표 자동 찾기'도 도시 반경 필터에 걸려 실패하던 문제.
+  //   영어 이름(_cityEn)으로 Open-Meteo(무료) 검색 → 여행 도시 다수가 속한 나라 우선 →
+  //   저장 좌표와 150km 넘게 차이나면 교체·저장. 여행당 세션 1회.
+  var _coordFixDone = {};
+  async function _omGeoSearch(q) {
+    try {
+      var r = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=5&language=en');
+      var j = await r.json();
+      return (j && j.results) || [];
+    } catch(e) { return []; }
+  }
+  async function revalidateCityCoords() {
+    var tripKey = (typeof currentTripId !== 'undefined') ? currentTripId : null;
+    var list = (citiesData || []).slice();
+    if (!tripKey || !list.length || _coordFixDone[tripKey]) return;
+    _coordFixDone[tripKey] = true;
+    var results = await Promise.all(list.map(async function(c) {
+      var en = _cityEn(c.name) || normalizeCityQuery(c.name || '');
+      if (!/[A-Za-z]/.test(en)) return [];
+      var plain = en.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      var vars = [en, en.replace(/\s+City$/i, ''), plain, plain.replace(/\s+City$/i, '')];
+      for (var i = 0; i < vars.length; i++) {
+        if (i && vars[i] === vars[i - 1]) continue;
+        var rs = await _omGeoSearch(vars[i]);
+        if (rs.length) return rs;
+      }
+      return [];
+    }));
+    var cnt = {}, cc = null;
+    results.forEach(function(rs) { if (rs[0]) cnt[rs[0].country_code] = (cnt[rs[0].country_code] || 0) + 1; });
+    Object.keys(cnt).forEach(function(k) { if (!cc || cnt[k] > cnt[cc]) cc = k; });
+    var changed = false;
+    for (var i = 0; i < list.length; i++) {
+      var rs = results[i];
+      var pick = rs.filter(function(x) { return x.country_code === cc; })[0] || rs[0];
+      if (!pick) continue;
+      var c = list[i];
+      var cand = { lat: pick.latitude, lng: pick.longitude };
+      var ok = typeof c.lat === 'number' && typeof c.lng === 'number' && _haversineKm({ lat: c.lat, lng: c.lng }, cand) <= 150;
+      if (ok) continue;
+      console.info('[city-coord] 교체', c.name, c.lat, c.lng, '→', cand.lat, cand.lng);
+      c.lat = cand.lat; c.lng = cand.lng; changed = true;
+      if (c._id) { try { await fbUpdate('trip_cities', c._id, { lat: cand.lat, lng: cand.lng }); } catch(e) {} }
+    }
+    if (changed && tripKey === currentTripId) {
+      try { renderDayPinsMap(); } catch(e) {}
+      try { hydrateCityWeather(); } catch(e) {}
+    }
+  }
+  window.revalidateCityCoords = revalidateCityCoords;
 
   function hydrateCityWeather() {
     citiesData.forEach(function(city, i) {
@@ -18400,6 +18453,14 @@
       _dayPinsFitW = mount.clientWidth;
       _dayPinsMap.fitBounds(bounds, fitOpts);
       setTimeout(function() { if (_dayPinsMap) { _dayPinsMap.invalidateSize(); _dayPinsMap.fitBounds(bounds, fitOpts); _dayPinsFitW = mount.clientWidth; } }, 250);
+    } else {
+      // ★ (2026-10-07) 핀이 0개면 여행 도시들로 화면 맞춤
+      var cityPts = (citiesData || []).filter(function(c){ return typeof c.lat === 'number'; }).map(function(c){ return [c.lat, c.lng]; });
+      if (cityPts.length) {
+        var cb = L.latLngBounds(cityPts);
+        _dayPinsLastBounds = cb;
+        _dayPinsMap.fitBounds(cb, { padding: [36, 36], maxZoom: 9 });
+      }
     }
   }
   window.renderDayPinsMap = renderDayPinsMap;
