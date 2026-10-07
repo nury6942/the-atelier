@@ -296,7 +296,7 @@
     var head = ds === s || dow === 0, tail = ds === e || dow === 6;
     var ref = idxRef(ev);
     var cls = colorCls(ev).split(' ').filter(function(c){ return c.indexOf('bg-') === 0 || c.indexOf('text-') === 0; }).join(' ');
-    return '<span class="wbc-bar ' + cls + (head ? ' head' : '') + (tail ? ' tail' : '') + '" draggable="true" ' +
+    return '<span class="wbc-rb ' + cls + (head ? ' head' : '') + (tail ? ' tail' : '') + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? esc(ev[1]) : '&nbsp;') + '</span>';
@@ -371,7 +371,7 @@
     ranges.forEach(function(r) { var ln = lanes.rangeLanes.get(r); slots[ln == null ? 0 : ln] = r; });
     if (slots.length) {
       h += '<span class="wbc-bars">';
-      for (var i = 0; i < slots.length; i++) h += slots[i] ? barHtml(slots[i], ds, dow) : '<span class="wbc-bar-gap"></span>';
+      for (var i = 0; i < slots.length; i++) h += slots[i] ? barHtml(slots[i], ds, dow) : '<span class="wbc-rb-gap"></span>';
       h += '</span>';
     }
     // GTM
