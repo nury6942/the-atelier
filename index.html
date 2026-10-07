@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=358" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=359" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -9301,6 +9301,37 @@
       letter-spacing: -0.01em;
       color: var(--j-on-surface);
     }
+    /* ★ (2026-10-07) Stops 사진 띠 (Daily Log 길잡이) — 큰 카드 그리드를 한 줄 썸네일로 */
+    #dlv-progress { display: none !important; }
+    #page-journey .j-stopstrip { display: flex; align-items: flex-start; gap: 10px; margin: -6px 0 30px; }
+    #page-journey .j-stops-grid.j-stops-strip { display: flex; gap: 10px; overflow-x: auto; flex: 1; min-width: 0; padding: 2px 2px 8px; scrollbar-width: thin; }
+    #page-journey .j-stops-strip .j-stop-card { flex: 0 0 156px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #fff; transition: border-color .15s, box-shadow .15s, opacity .15s; }
+    #page-journey .j-stops-strip .j-stop-card:hover { transform: none; border-color: #c4b5fd; }
+    #page-journey .j-stops-strip.has-active .j-stop-card:not(.is-active) { opacity: .6; }
+    #page-journey .j-stops-strip .j-stop-card.is-active { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,.18); opacity: 1; }
+    #page-journey .j-stops-strip .j-stop-img { aspect-ratio: auto; height: 74px; margin: 0; border: 0; }
+    #page-journey .j-stops-strip .j-stop-label,
+    #page-journey .j-stops-strip .j-stop-paste-hint,
+    #page-journey .j-stops-strip .j-stop-nights-label,
+    #page-journey .j-stops-strip .j-stop-k,
+    #page-journey .j-stops-strip .j-stop-row:not(:first-child) { display: none; }
+    #page-journey .j-stops-strip .j-stop-img-controls { top: 5px; right: 5px; }
+    #page-journey .j-stops-strip .j-stop-img-ctrl { padding: 3px 7px; font-size: 10px; }
+    #page-journey .j-stops-strip .j-stop-name { font-size: 13px; font-weight: 800; margin: 8px 10px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #page-journey .j-stops-strip .j-stop-body { border-top: 0; padding: 0 8px 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+    #page-journey .j-stops-strip .j-stop-row { margin: 0; }
+    #page-journey .j-stops-strip .j-stop-v { font-size: 11.5px; font-weight: 600; color: #64748b; white-space: nowrap; }
+    #page-journey .j-stops-strip .j-stop-body > div:last-child { margin-top: 0 !important; }
+    #page-journey .j-stops-strip .j-stop-body > div:last-child button { width: 20px !important; height: 20px !important; }
+    #page-journey .j-stops-strip .j-stop-empty { padding: 18px 0; font-size: 12px; color: #94a3b8; }
+    #page-journey .j-stopstrip-actions { display: flex; flex-direction: column; gap: 6px; flex: none; }
+    #page-journey .j-stopstrip-actions .j-btn-ghost { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+    #page-journey .j-stopstrip-actions .material-symbols-outlined { font-size: 17px; }
+    /* Day 칸 제목 뒤 도시 사진 (옅게, 아래로 페이드) */
+    #journey-week-grid.wk4 .j-day-head.has-photo { padding-top: 14px; }
+    .wk4-photo { position: absolute; inset: -6px -10px -4px; border-radius: 14px; background-size: cover; background-position: center; opacity: .2; pointer-events: none; z-index: 0;
+      -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent); mask-image: linear-gradient(to bottom, #000 35%, transparent); }
+    .wk4-head.has-photo > *:not(.wk4-photo) { position: relative; z-index: 1; }
     #page-journey .j-stop-nights-label {
       font-family: var(--j-font-body);
       font-size: var(--font-size-tiny);
@@ -11079,7 +11110,6 @@
         <button onclick="openBookingScanModal()" class="trav-act"><span class="material-symbols-outlined">document_scanner</span> 예약 스캔</button>
         <button onclick="openApiSettingsModal()" title="API 설정" class="trav-act" id="travel-api-key-btn" style="padding:8px 10px"><span class="material-symbols-outlined">key</span></button>
       </div>
-      <div id="journey-overview" class="trv-overview" style="display:none"></div>
 
       <!-- 도시 관리 패널 -->
       <div id="journey-city-panel" style="display:none" class="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
@@ -11164,21 +11194,6 @@
           </div>
         </section>
 
-        <!-- ════════════════════════════════════════════════════════════
-             Stops 그리드 (Atlas 매거진 스타일 + Ctrl+V 이미지)
-             ════════════════════════════════════════════════════════════ -->
-        <section id="trv-stops" class="j-section">
-          <div class="j-section-head">
-            <h2 class="j-h2">Stops</h2>
-            <div class="j-section-head-line"></div>
-            <button onclick="optimizeCityRoute()" class="j-btn-ghost" title="지점을 지리적으로 가까운 순서로 재정렬 (nearest-neighbor)"><span class="material-symbols-outlined" style="font-size: var(--font-size-body);vertical-align:middle">route</span> 경로 최적화</button>
-            <button onclick="document.getElementById('city-import-file').click()" class="j-btn-ghost" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기"><span class="material-symbols-outlined" style="font-size: var(--font-size-body);vertical-align:middle">upload_file</span> 가져오기</button>
-            <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
-            <button onclick="openCityModal()" class="j-btn-ghost"><span class="material-symbols-outlined" style="font-size: var(--font-size-body);vertical-align:middle">add_location_alt</span> 도시 추가</button>
-          </div>
-          <div id="journey-city-cards" class="j-stops-grid"></div>
-        </section>
-
         <!-- ═══ Places 스팟 저장소는 상단 '스팟' 탭으로 이동 (2026-07-23) — #travel-places-section 참조 ═══ -->
         <!-- 트립 노트 -->
         <section class="mb-8">
@@ -11255,7 +11270,16 @@
               <span id="journey-week-range" class="j-week-nav-range">—</span>
             </div>
           </div>
-          <!-- ★ (2026-07-23) dlv 4-Day 가로 진행선 (점 4개, 오늘 점 보라) -->
+          <!-- ★ (2026-10-07) Stops → Daily Log 길잡이 사진 띠 (점선 진행선 대체). 카드 클릭 = 그 도시 날짜로 이동 -->
+          <section id="trv-stops" class="j-stopstrip">
+            <div id="journey-city-cards" class="j-stops-grid j-stops-strip"></div>
+            <div class="j-stopstrip-actions">
+              <button onclick="openCityModal()" class="j-btn-ghost" title="도시 추가"><span class="material-symbols-outlined">add_location_alt</span></button>
+              <button onclick="optimizeCityRoute()" class="j-btn-ghost" title="지점을 지리적으로 가까운 순서로 재정렬"><span class="material-symbols-outlined">route</span></button>
+              <button onclick="document.getElementById('city-import-file').click()" class="j-btn-ghost" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기"><span class="material-symbols-outlined">upload_file</span></button>
+              <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
+            </div>
+          </section>
           <div id="dlv-progress" style="display:none"></div>
           <div id="journey-week-grid" class="j-daylog-stack wk4">
             <div class="j-stop-empty">도시를 추가하면 일차가 자동 생성돼!</div>
@@ -11685,6 +11709,8 @@
         </div>
         <button onclick="openTripModal()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">flight_takeoff</span> 여행 추가</button>
       </div>
+      <!-- ★ (2026-10-07) 요약 칩 밴드: 일정 탭 → 예약 탭으로 이동 -->
+      <div id="journey-overview" class="trv-overview" style="display:none"></div>
       <div class="space-y-8">
         <!-- ═══ Records 장부 패널 (2026-07-22 IA 재구조): 항공/숙소/이동/렌트/기념품을
              탭 하나로 묶어 '한 두루마리 스크롤' 해소 — 항상 같은 자리에서 전환 ═══ -->
@@ -15661,7 +15687,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=358" defer></script>
+<script src="js/app-1-pages.js?v=359" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -16546,12 +16572,12 @@
 <!-- Journey Hero 이미지 업로드 (P2) -->
 <script src="js/journey-hero.js?v=2" defer></script>
 <!-- Journey City (Stops) 이미지 업로드 (P5+) -->
-<script src="js/journey-city-images.js?v=1" defer></script>
+<script src="js/journey-city-images.js?v=2" defer></script>
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
-<script src="js/travel-toc.js?v=6" defer></script>
+<script src="js/travel-toc.js?v=7" defer></script>
 
 </body>
 </html>

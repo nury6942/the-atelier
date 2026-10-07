@@ -66,6 +66,7 @@
   function _rerender() {
     if (typeof renderCityCards === 'function') renderCityCards();
     if (typeof window.renderPlaces === 'function') window.renderPlaces(); // 스팟 카드도 도시 이미지 재사용
+    try { if (typeof renderWeekView === 'function') renderWeekView(); } catch(e) {} // ★ (2026-10-07) Day 칸 제목 배경 사진
   }
   function _apply(k, url) {
     _cache[k] = url || null;

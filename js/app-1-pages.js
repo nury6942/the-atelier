@@ -2467,7 +2467,7 @@
           : '<button class="j-stop-img-ctrl" onclick="event.stopPropagation();journeyCityImageUpload(\'' + safeKey + '\')"><span class="material-symbols-outlined">add_photo_alternate</span>이미지 추가</button>';
 
         var safeName = (city.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        return '<div class="j-stop-card" style="cursor:pointer" title="클릭하면 이 도시의 Daily Log로 이동" ' +
+        return '<div class="j-stop-card" data-city="' + safeName + '" style="cursor:pointer" title="클릭하면 이 도시의 Daily Log로 이동" ' +
             'onclick="window.journeyStopJump && journeyStopJump(\'' + safeName + '\')" ' +
             'onmouseenter="window.journeyCityImageSetActive && journeyCityImageSetActive(\'' + safeKey + '\')" ' +
             'onmouseleave="window.journeyCityImageClearActive && journeyCityImageClearActive(\'' + safeKey + '\')">' +
@@ -2499,6 +2499,7 @@
     // Add City 카드는 섹션 헤더 우상단 "도시 추가" 버튼이 대신함 (중복 제거)
 
     container.innerHTML = html;
+    try { _syncStopStrip(); } catch(e) {}
     // 사용자 업로드 이미지 hydrate (Firestore 백그라운드 fetch)
     if (typeof window.journeyCityImageHydrateAll === 'function') {
       window.journeyCityImageHydrateAll();
@@ -4577,13 +4578,49 @@
           if (typeof window.setDayPinsFilter === 'function') window.setDayPinsFilter(String(dayMap[idx].day));
         }
       }
+      // 사진 띠가 Daily Log 안에 있으니, 섹션이 이미 화면에 있으면 스크롤하지 않음
       var sec = document.getElementById('journey-week-view');
       if (sec) {
-        var top = sec.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        var r = sec.getBoundingClientRect();
+        if (r.top < 0 || r.top > window.innerHeight * 0.5) {
+          window.scrollTo({ top: Math.max(0, r.top + window.scrollY - 80), behavior: 'smooth' });
+        }
       }
     } catch(e) { console.warn('[stopJump]', e); }
   };
+
+  // ★ (2026-10-07) Stops 사진 띠: 지금 Daily Log에 보이는 도시 카드 강조
+  function _syncStopStrip() {
+    var strip = document.getElementById('journey-city-cards');
+    if (!strip) return;
+    var dm = getDayMap();
+    var names = {};
+    if (typeof _dlvIsSingleActive === 'function' && _dlvIsSingleActive()) {
+      if (dm[currentDayIndex]) names[dm[currentDayIndex].cityName || ''] = 1;
+    } else {
+      dm.slice(currentWeekChunkStart, currentWeekChunkStart + WEEK_CHUNK_SIZE).forEach(function(e) { names[e.cityName || ''] = 1; });
+    }
+    var any = false, first = null;
+    strip.querySelectorAll('.j-stop-card[data-city]').forEach(function(c) {
+      var on = !!names[c.getAttribute('data-city')];
+      c.classList.toggle('is-active', on);
+      if (on) { any = true; if (!first) first = c; }
+    });
+    strip.classList.toggle('has-active', any);
+    if (first && strip.scrollWidth > strip.clientWidth) {
+      var l = first.offsetLeft - strip.offsetLeft - 8;
+      if (l < strip.scrollLeft || l > strip.scrollLeft + strip.clientWidth - 160) strip.scrollTo({ left: Math.max(0, l), behavior: 'smooth' });
+    }
+  }
+  // 도시 이름 → Stops에 올린 사진 (없으면 null)
+  function _cityPhotoFor(cityName) {
+    if (!cityName || typeof window.journeyCityImageGet !== 'function') return null;
+    var list = citiesData || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].name === cityName) return window.journeyCityImageGet(list[i]._id || ('idx-' + i));
+    }
+    return null;
+  }
 
   function syncWeekChunkToCurrentDay() {
     var chunkOf = Math.floor(currentDayIndex / WEEK_CHUNK_SIZE) * WEEK_CHUNK_SIZE;
@@ -4907,8 +4944,10 @@
       }
       var liveBadge = isToday ? '<span class="dlv-live">LIVE</span>' : '';
       var titleCls = 'wk4-title' + (isToday ? ' is-today' : (isPastCol ? ' is-past' : ''));
+      var _photo = _cityPhotoFor(cityName);
       var dayHeadHtml =
-        '<div class="j-day-head wk4-head">' +
+        '<div class="j-day-head wk4-head' + (_photo ? ' has-photo' : '') + '">' +
+          (_photo ? '<div class="wk4-photo" style="background-image:url(&quot;' + String(_photo).replace(/"/g, '%22') + '&quot;)"></div>' : '') +
           '<p class="wk4-eyebrow' + (isToday ? ' is-today' : '') + (_isWknd ? ' is-weekend' : '') + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' + eyebrowTxt + '</p>' +
           '<h3 class="' + titleCls + '" onclick="focusDayOnMap(' + dayNum + ', event)" title="지도에서 이 날 경로 보기">' +
             (cityName ? cityName.replace(/</g,'&lt;') : 'Day ' + dayNum) + liveBadge +
@@ -4988,6 +5027,7 @@
         }, 30);
       }
     }
+    try { _syncStopStrip(); } catch(e) {}
     // ★ (2026-07-23) wk4 가로 진행선 — 컬럼과 정렬되는 점 + 그 아래 "OCT 12 • DEPARTURE" 라벨
     var prog = document.getElementById('dlv-progress');
     if (prog) {
@@ -16578,7 +16618,7 @@
   window.trvRestoreCollapsed = function() {
     try {
       var m = JSON.parse(localStorage.getItem('trv_collapsed') || '{}');
-      Object.keys(m).forEach(function(k) { if (m[k] && (window._trvLedgerIds || []).indexOf(k) < 0) window.trvToggleSec(k, true); });
+      Object.keys(m).forEach(function(k) { if (m[k] && k !== 'trv-stops' && (window._trvLedgerIds || []).indexOf(k) < 0) window.trvToggleSec(k, true); }); // trv-stops = 사진 띠(접기 없음)
     } catch(e) {}
   };
 
@@ -18671,6 +18711,13 @@
       // ★ (2026-10-07) 장부는 '예약' 탭으로 분리됨 → 탭 전환 후 해당 장부 표시
       try { localStorage.setItem('trv_ledger_tab', id); } catch(e) {}
       window.switchTravelTab('records');
+      return;
+    }
+    // 예약 탭의 칩(Stops/Weather)은 일정 탭으로 넘어가서 이동
+    var recSec = document.getElementById('travel-records-section');
+    if (recSec && recSec.style.display !== 'none') {
+      window.switchTravelTab('schedule');
+      setTimeout(function() { window.trvJumpSec(id); }, 400);
       return;
     }
     var sec = document.getElementById(scrollTargetId);

@@ -1,3 +1,10 @@
+## 2026-10-07 (윈도우) — Stops를 Daily Log 사진 띠로 합침 + 요약 칩은 예약 탭으로 (v359)
+
+- **Stops**: 큰 카드 그리드 섹션 삭제 → Daily Log 헤더 바로 아래 한 줄 사진 띠(`#trv-stops.j-stopstrip`). 점선 진행선(`#dlv-progress`)은 CSS로 숨김. 카드 클릭 = 그 도시 날짜로 이동, 지금 보이는 날짜의 도시 카드 강조(`_syncStopStrip`). 경로최적화/가져오기/도시추가는 띠 오른쪽 아이콘 버튼.
+- **Day 칸 사진**: 4-DAY 칸 제목 뒤에 그 도시 Stops 사진을 옅게(`_cityPhotoFor`, `.wk4-photo`). 사진 바뀌면 journey-city-images.js가 renderWeekView 재호출.
+- **요약 칩 밴드**(`#journey-overview`): 일정 → 예약 탭 툴바 아래. 예약 탭에서 Stops/Weather 칩 누르면 일정 탭으로 넘어감.
+- 일정 TOC에서 Stops 제거. 데스크탑(lg+) 전용 — 모바일 일정 화면은 그대로.
+
 ## 2026-10-07 (윈도우) — 지도 'API KEY REQUIRED' → 무료 OSM 타일 (v358)
 
 CARTO voyager 타일이 키 필수로 바뀌어 지도 3곳(일정 동선·일자 핀·항공 궤적)에 워터마크만 나옴. 결제 없이 tile.openstreetmap.org로 교체.

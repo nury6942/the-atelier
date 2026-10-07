@@ -11,7 +11,6 @@
   // ★ (2026-10-07) Records도 상단 '예약' 탭으로 분리 — 제거
   var SECTIONS = [
     { id: 'trv-hero',      label: 'Voyage' },
-    { id: 'trv-stops',     label: 'Stops' },
     { id: 'journey-week-view', label: 'Daily Log' },
   ];
 
