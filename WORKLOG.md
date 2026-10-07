@@ -1,3 +1,13 @@
+## 2026-10-07 (윈도우) — 예약 & 체크리스트를 상단 '예약' 탭으로 분리 (v357)
+
+**왜**: 일정 탭 맨 아래에 항공/숙소/이동/렌트/기념품 장부가 붙어 있어서 스크롤이 길었음. 사용자 요청으로 상단 탭바로 뺌.
+
+- 상단 탭바: 일정 · 스팟 · 항공 · **예약** · 예산 · 체크리스트 · Atlas
+- `index.html`: Records 블록(장부 탭 + 5개 섹션 + 추가/수정 모달)을 `#travel-records-section`으로 통째 이동. 스팟·항공 탭과 같은 히어로 + 여행 선택 드롭다운(`rec-dd-*`)
+- `app-1-pages.js`: `switchTravelTab('records')`, `showTravelRecords/hideTravelRecords`, `toggleRecDropdown/selectTripFromRecDd`. Overview 칩(Lodging 등) 누르면 예약 탭으로 이동
+- `travel-toc.js`: 일정 좌측 목차에서 Records 제거
+- 모달도 같이 옮김 — 일정 콘텐츠(page-content-wrap)가 숨겨지면 그 안의 모달도 안 뜨기 때문
+
 ## 2026-09-22 (원격 · Claude Code on web) — maps.html: 거리 이름 → 실제 가게로 교체
 
 **왜**: `Weserstraße Berlin` 같은 거리 이름은 구글맵에서 **저장이 안 된다.**

@@ -2820,14 +2820,15 @@
     }
   }
 
-  var _ddState = { journey: false, finance: false, pk: false, spot: false, flight: false };
+  var _ddState = { journey: false, finance: false, pk: false, spot: false, flight: false, rec: false };
 
   // ★ (2026-07-24) 여행 선택 드롭다운을 스팟·항공 탭에도 — 일정 탭과 같은 마크업/위치/크기.
   //   데이터 로직은 하나만 두고 대상 엘리먼트만 늘린다(중복 구현 금지).
   var _TRIP_DD_TARGETS = [
     { label: 'journey-dd-label', opts: 'journey-dd-options', pick: 'selectTripFromDd' },
     { label: 'spot-dd-label',    opts: 'spot-dd-options',    pick: 'selectTripFromSpotDd' },
-    { label: 'flight-dd-label',  opts: 'flight-dd-options',  pick: 'selectTripFromFlightDd' }
+    { label: 'flight-dd-label',  opts: 'flight-dd-options',  pick: 'selectTripFromFlightDd' },
+    { label: 'rec-dd-label',     opts: 'rec-dd-options',     pick: 'selectTripFromRecDd' }
   ];
 
   // ===== JOURNEY PAGE DROPDOWN =====
@@ -2874,6 +2875,11 @@
   function toggleJourneyDropdown() { _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey'); }
   function toggleSpotDropdown()    { _toggleDropdown('spot-dd-panel','spot-dd-chevron',_ddState,'spot'); }
   function toggleFlightDropdown()  { _toggleDropdown('flight-dd-panel','flight-dd-chevron',_ddState,'flight'); }
+  function toggleRecDropdown()     { _toggleDropdown('rec-dd-panel','rec-dd-chevron',_ddState,'rec'); }
+  function selectTripFromRecDd(tripId) {
+    if (_ddState.rec) toggleRecDropdown();
+    selectTrip(tripId).then(function(){ if (typeof window.showTravelRecords === 'function') window.showTravelRecords(); });
+  }
 
   function selectTripFromDd(tripId) {
     _toggleDropdown('journey-dd-panel','journey-dd-chevron',_ddState,'journey');
@@ -16529,6 +16535,7 @@
       ['schedule', 'route', '일정'],
       ['places', 'push_pin', '스팟'],
       ['flight', 'flight', '항공'],
+      ['records', 'receipt_long', '예약'],
       ['budget', 'payments', '예산'],
       ['checklist', 'checklist', '체크리스트'],
       ['atlas', 'public', 'Atlas']
@@ -18661,8 +18668,10 @@
   window.trvJumpSec = function(id) {
     var scrollTargetId = id;
     if (window._trvLedgerIds.indexOf(id) >= 0) {
-      window.trvLedgerShow(id);          // 장부 항목이면 탭 전환 후
-      scrollTargetId = 'trv-ledger';     // 패널 위치(항상 같은 자리)로 이동
+      // ★ (2026-10-07) 장부는 '예약' 탭으로 분리됨 → 탭 전환 후 해당 장부 표시
+      try { localStorage.setItem('trv_ledger_tab', id); } catch(e) {}
+      window.switchTravelTab('records');
+      return;
     }
     var sec = document.getElementById(scrollTargetId);
     if (!sec) return;
@@ -21251,6 +21260,25 @@
     var titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = 'Travel · Flight';
   };
+  // ★ (2026-10-07) 예약 탭: 일정 탭 안의 Records 장부를 별도 탭으로 — 스팟·항공과 같은 방식
+  window.showTravelRecords = function() {
+    var sec = document.getElementById('travel-records-section');
+    if (!sec) return;
+    sec.style.display = 'block';
+    try { renderTripTabs(); } catch(e) {}
+    try { if (typeof window.renderLedgerTabs === 'function') window.renderLedgerTabs(); } catch(e) {}
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = 'Travel · Records';
+  };
+  window.hideTravelRecords = function() {
+    var sec = document.getElementById('travel-records-section');
+    if (sec) sec.style.display = 'none';
+    var page = document.getElementById('page-journey');
+    if (page) {
+      var contentWrap = page.querySelector('.page-content-wrap');
+      if (contentWrap) contentWrap.style.display = '';
+    }
+  };
   window.hideTravelFlight = function() {
     var sec = document.getElementById('travel-flight-section');
     if (sec) sec.style.display = 'none';
@@ -21271,6 +21299,20 @@
     }
     if (tab !== 'flight' && typeof window.hideTravelFlight === 'function') {
       window.hideTravelFlight();
+    }
+    if (tab !== 'records' && typeof window.hideTravelRecords === 'function') {
+      window.hideTravelRecords();
+    }
+    if (tab === 'records') {
+      navigate('journey');
+      setTimeout(function() {
+        var page = document.getElementById('page-journey');
+        if (!page) return;
+        var contentWrap = page.querySelector('.page-content-wrap');
+        if (contentWrap) contentWrap.style.display = 'none';
+        if (typeof window.showTravelRecords === 'function') window.showTravelRecords();
+      }, 50);
+      return;
     }
     if (tab === 'flight') {
       // 스팟 탭과 동일 패턴 — journey 페이지 안에서 일정 콘텐츠를 숨기고 항공 섹션만 표시
@@ -28032,6 +28074,7 @@
     if (_ddState.finance && !e.target.closest('#finance-dd-wrap')) toggleFinanceDropdown();
     if (_ddState.spot && !e.target.closest('#spot-dd-wrap')) toggleSpotDropdown();
     if (_ddState.flight && !e.target.closest('#flight-dd-wrap')) toggleFlightDropdown();
+    if (_ddState.rec && !e.target.closest('#rec-dd-wrap')) toggleRecDropdown();
   });
   // ESC로 모든 드롭다운 닫기
   document.addEventListener('keydown', function(e) {
@@ -28041,6 +28084,7 @@
       if (_ddState.finance) toggleFinanceDropdown();
       if (_ddState.spot) toggleSpotDropdown();
       if (_ddState.flight) toggleFlightDropdown();
+      if (_ddState.rec) toggleRecDropdown();
     }
   });
 

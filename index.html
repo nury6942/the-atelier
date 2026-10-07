@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=356" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=357" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11323,954 +11323,6 @@
             </div><!-- /#daylog-day-body -->
           </section>
 
-          <!-- 오른쪽 (모바일 col-span-12, 데스크탑 col-span-12 - 일정이 위로 빠짐) -->
-          <div class="col-span-12 lg:col-span-12 space-y-8">
-
-            <!-- ═══ Records 장부 패널 (2026-07-22 IA 재구조): 항공/숙소/이동/렌트/기념품을
-                 탭 하나로 묶어 '한 두루마리 스크롤' 해소 — 항상 같은 자리에서 전환 ═══ -->
-            <section id="trv-ledger" style="margin-bottom:-8px">
-              <div class="trv-sec-head" style="border-bottom:none;padding-bottom:0;margin-bottom:6px">
-                <div><p class="trv-sec-eyebrow">Records</p><h3 class="trv-sec-title">예약 &amp; 체크리스트</h3></div>
-              </div>
-              <nav id="trv-ledger-tabs" class="trv-ledger-tabs"></nav>
-            </section>
-
-            <!-- 1. 항공편 -->
-            <section id="trv-flights">
-              <div class="trv-sec-head">
-                <div><p class="trv-sec-eyebrow">Flights</p><h3 class="trv-sec-title">항공편</h3></div>
-                <div class="trv-sec-actions"><button onclick="openFlightAddModal()" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
-              </div>
-              <!-- 항공편 추천 큐레이션 — trip 매칭 시 자동 표시 -->
-              <div id="journey-flight-recs" style="display:none"></div>
-              <div id="journey-flight-list" class="rec-grid"></div>
-              <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
-            </section>
-
-            <!-- 항공편 추가 모달 -->
-            <div id="flight-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('flight-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-              <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6">
-                <div class="flex items-center gap-2 mb-5">
-                  <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">add_circle</span>
-                  <h4 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h4>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
-                    <input id="flt-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
-                    <input id="flt-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40" onchange="lookupFlight(this)"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
-                    <input id="flt-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
-                    <input id="flt-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
-                    <input id="flt-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
-                    <input id="flt-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
-                    <input id="flt-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
-                    <input id="flt-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
-                    <input id="flt-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
-                    <select id="flt-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
-                      <option value="">선택</option>
-                      <option>이코노미</option>
-                      <option>프리미엄 이코노미</option>
-                      <option>비즈니스</option>
-                      <option>일등석</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
-                    <input id="flt-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
-                    <input id="flt-fare-type" type="text" placeholder="Saver, Standard, Flex" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
-                    <input id="flt-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
-                    <input id="flt-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
-                    <input id="flt-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div>
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
-                    <select id="flt-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
-                      <option value="">선택</option>
-                      <option>결제 완료</option>
-                      <option>결제 예정</option>
-                    </select>
-                  </div>
-                  <div class="col-span-2">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
-                    <input id="flt-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-                  </div>
-                  <div class="col-span-2 flex items-end">
-                    <button onclick="saveFlightForm();closeTravelModal('flight-add-modal-wrap')" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
-                      <span class="material-symbols-outlined" style="font-size: var(--font-size-h2);font-variation-settings:'FILL' 1">add_circle</span> 추가
-                    </button>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
-
-    <!-- 항공편 수정 모달 (Add New Flight과 동일 디자인) -->
-    <div id="flight-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-      <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 overflow-hidden relative">
-        <button onclick="closeFlightEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-        <div class="bg-slate-50 p-6 md:p-8">
-          <div class="flex items-center gap-2 mb-5">
-            <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">edit_square</span>
-            <h4 class="text-lg font-bold tracking-tight font-headline">항공편 수정</h4>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
-              <input id="fe-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
-              <input id="fe-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
-              <input id="fe-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
-              <input id="fe-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
-              <input id="fe-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
-              <input id="fe-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
-              <input id="fe-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
-              <input id="fe-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
-              <input id="fe-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
-              <select id="fe-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
-                <option value="">선택</option>
-                <option>이코노미</option>
-                <option>프리미엄 이코노미</option>
-                <option>비즈니스</option>
-                <option>일등석</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
-              <input id="fe-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
-              <input id="fe-fare-type" type="text" placeholder="Saver, Standard" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
-              <input id="fe-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
-              <input id="fe-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
-              <input id="fe-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
-              <select id="fe-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
-                <option value="">선택</option>
-                <option>결제 완료</option>
-                <option>결제 예정</option>
-              </select>
-            </div>
-            <div class="col-span-2">
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
-              <input id="fe-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
-            </div>
-            <div class="col-span-2 flex items-end gap-3">
-              <button onclick="closeFlightEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200/50 rounded-2xl transition-colors">취소</button>
-              <button onclick="saveFlightEdit()" class="flex-1 gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">save</span> 저장
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-            <!-- 2. 숙소 정보 (Curated Stays) -->
-            <section id="trv-lodging" class="mb-2">
-              <div class="trv-sec-head">
-                <div><p class="trv-sec-eyebrow">Lodging</p><h3 class="trv-sec-title">숙소</h3></div>
-                <div class="trv-sec-actions">
-                  <button id="lodge-photo-fill-btn" onclick="fillLodgePhotos()" class="trav-act" style="display:none" title="사진 없는 숙소에 Google Places 사진을 순차로 채워요"><span class="material-symbols-outlined">photo_camera</span> 호텔 사진 채우기</button>
-                  <button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
-                </div>
-              </div>
-              <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
-              <div id="journey-lodging-recs" style="display:none"></div>
-              <div id="journey-lodging-list" class="rec-grid"></div>
-            </section>
-
-            <!-- 숙소 추가 모달 -->
-            <div id="stay-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('stay-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-              <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
-                <div class="flex items-center gap-3 mb-6">
-                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                    <span class="material-symbols-outlined text-lg">add_business</span>
-                  </div>
-                  <div>
-                    <h4 class="font-headline text-base font-bold text-slate-900">Add New Stay</h4>
-                    <p class="text-slate-500 text-[10px]">새로운 숙소를 등록하세요</p>
-                  </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
-                    <div class="relative">
-                      <input id="stay-city" type="text" list="stay-city-list" placeholder="예: Prague" oninput="onInlineStayCityChange()" onchange="onInlineStayCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      <datalist id="stay-city-list"></datalist>
-                      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
-                    <div class="grid grid-cols-2 gap-2">
-                      <button type="button" onclick="selectStayType('Hotel')" id="stay-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm">
-                        <span class="material-symbols-outlined text-sm">hotel</span> Hotel
-                      </button>
-                      <button type="button" onclick="selectStayType('Airbnb')" id="stay-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
-                        <span class="material-symbols-outlined text-sm">home</span> Airbnb
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명</label>
-                    <input id="stay-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div class="md:col-span-2">
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
-                    <input id="stay-address" type="text" placeholder="숙소명 선택 시 자동 입력 (직접 입력도 가능)" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
-                      <input id="stay-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
-                      <input id="stay-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
-                      <input id="stay-checkin-time" type="text" placeholder="14:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
-                      <input id="stay-checkout-time" type="text" placeholder="12:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <!-- 결제일 + 무료취소 마감 -->
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
-                      <input id="stay-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
-                      <input id="stay-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                  </div>
-                  <!-- 결제 상태 + 무료취소 여부 -->
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
-                    <div class="grid grid-cols-3 gap-2">
-                      <button type="button" onclick="selectStayAddPayStatus('결제 예정')" id="stay-add-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
-                      <button type="button" onclick="selectStayAddPayStatus('결제 완료')" id="stay-add-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
-                      <button type="button" onclick="selectStayAddPayStatus('현장 결제')" id="stay-add-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🏨 현장</button>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
-                    <div class="grid grid-cols-3 gap-2">
-                      <button type="button" onclick="selectStayAddCancel('가능')" id="stay-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
-                      <button type="button" onclick="selectStayAddCancel('불가')" id="stay-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
-                      <button type="button" onclick="selectStayAddCancel('조건부')" id="stay-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
-                    </div>
-                  </div>
-                  <!-- 1박 가격 + 전화번호 -->
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (카드로 낸 돈)</label>
-                      <div class="relative">
-                        <input id="stay-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 결제</label>
-                      <div class="relative">
-                        <input id="stay-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                      </div>
-                      <p class="text-[9px] text-slate-400 px-1 mt-1">체크인 날 현지에서 내는 돈 · 잔액에서 미리 빠지지 않음</p>
-                    </div>
-                    <div class="col-span-2">
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
-                      <input id="stay-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <!-- ★ (2026-07-23) 객실 · 조식 · 인원 — 카드 메타 행에 표시 -->
-                  <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">객실</label>
-                      <input id="stay-room-type" type="text" placeholder="예: 2베드룸 아파트" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">조식</label>
-                      <input id="stay-breakfast" type="text" list="stay-breakfast-list" placeholder="포함 / 불포함 / 유료" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      <datalist id="stay-breakfast-list"><option value="포함"><option value="불포함"><option value="유료"></datalist>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">인원</label>
-                      <input id="stay-guests" type="text" placeholder="예: 성인 2" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <!-- 메모 (full width) -->
-                  <div class="md:col-span-2">
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모</label>
-                    <input id="stay-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div class="md:col-span-2 flex items-end">
-                    <button onclick="saveInlineStay();closeTravelModal('stay-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                      숙소 등록
-                    </button>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
-
-            <!-- 숙소 수정 모달 (추가 모달과 동일 디자인) -->
-            <div id="stay-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('stay-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-                <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
-                  <div class="flex items-center gap-3 mb-6">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                      <span class="material-symbols-outlined text-lg">edit_square</span>
-                    </div>
-                    <div>
-                      <h4 class="font-headline text-base font-bold text-slate-900">Edit Stay</h4>
-                      <p class="text-slate-500 text-[10px]">숙소 정보를 수정하세요</p>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    <!-- 도시 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
-                      <div class="relative">
-                        <input id="stay-edit-city" type="text" list="stay-edit-city-list" placeholder="예: Prague" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                        <datalist id="stay-edit-city-list"></datalist>
-                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
-                      </div>
-                    </div>
-                    <!-- 유형 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
-                      <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="selectStayEditType('Hotel')" id="stay-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all">
-                          <span class="material-symbols-outlined text-sm">hotel</span> Hotel
-                        </button>
-                        <button type="button" onclick="selectStayEditType('Airbnb')" id="stay-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
-                          <span class="material-symbols-outlined text-sm">home</span> Airbnb
-                        </button>
-                      </div>
-                    </div>
-                    <!-- 숙소명 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명 *</label>
-                      <input id="stay-edit-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <!-- 전화번호 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
-                      <input id="stay-edit-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <!-- 주소 (full width) -->
-                    <div class="md:col-span-2">
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
-                      <input id="stay-edit-address" type="text" placeholder="예: Europa-Allee 23, 60327 Frankfurt" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <!-- 결제일 + 무료취소 마감 -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
-                        <input id="stay-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
-                        <input id="stay-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                    </div>
-                    <!-- 결제 상태 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
-                      <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectStayPayStatus('결제 예정')" id="stay-edit-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
-                        <button type="button" onclick="selectStayPayStatus('결제 완료')" id="stay-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
-                        <button type="button" onclick="selectStayPayStatus('현장 결제')" id="stay-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🏨 현장</button>
-                      </div>
-                    </div>
-                    <!-- 무료취소 여부 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
-                      <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectStayCancel('가능')" id="stay-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
-                        <button type="button" onclick="selectStayCancel('불가')" id="stay-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
-                        <button type="button" onclick="selectStayCancel('조건부')" id="stay-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
-                      </div>
-                    </div>
-                    <!-- 체크인/아웃 날짜 -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
-                        <input id="stay-edit-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
-                        <input id="stay-edit-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                    </div>
-                    <!-- 체크인/아웃 시간 -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
-                        <input id="stay-edit-checkin-time" type="text" placeholder="15:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
-                        <input id="stay-edit-checkout-time" type="text" placeholder="11:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <!-- ★ (2026-07-23) 객실 · 조식 · 인원 — 카드 메타 행에 표시 -->
-                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">객실</label>
-                        <input id="stay-edit-room-type" type="text" placeholder="예: 2베드룸 아파트" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">조식</label>
-                        <input id="stay-edit-breakfast" type="text" list="stay-edit-breakfast-list" placeholder="포함 / 불포함 / 유료" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                        <datalist id="stay-edit-breakfast-list"><option value="포함"><option value="불포함"><option value="유료"></datalist>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">인원</label>
-                        <input id="stay-edit-guests" type="text" placeholder="예: 성인 2" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <!-- 메모 (full width) -->
-                    <div class="md:col-span-2">
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모</label>
-                      <input id="stay-edit-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <!-- 가격 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (₩)</label>
-                      <div class="relative">
-                        <input id="stay-edit-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                      </div>
-                    </div>
-                    <!-- ★ (2026-07-27) 도시세·현장 결제 — 체크인 날 내는 돈, 잔액에서 미리 안 빠짐 -->
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 (₩)</label>
-                      <div class="relative">
-                        <input id="stay-edit-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                      </div>
-                    </div>
-                    <!-- 저장 버튼 -->
-                    <div class="flex items-end">
-                      <button onclick="saveStayEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                        수정 저장
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. 도시 간 이동 수단 (Voyages) -->
-            <section id="trv-transport" class="mb-2">
-              <div class="trv-sec-head">
-                <div><p class="trv-sec-eyebrow">Transit</p><h3 class="trv-sec-title">도시 간 이동</h3></div>
-                <div class="trv-sec-actions"><span id="transport-count" class="text-xs font-semibold text-slate-400"></span><button onclick="openTravelModal('transport-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
-              
-              </div>
-              <!-- 도시 간 이동 (큐레이션) — trip 매칭 시 자동 표시. 숙소 섹션에서 이 섹션으로 이동(2026-06-17) -->
-              <!-- ★ (2026-07-24) 도시 간 이동 비교 (Rome2Rio 대체) -->
-              <div id="trv-hop-compare" class="hop-box"></div>
-              <div id="journey-transit-recs" style="display:none"></div>
-              <div id="journey-transport-list" class="rec-grid"></div>
-            </section>
-
-            <!-- 이동수단 추가 모달 -->
-            <div id="transport-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('transport-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-              <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
-                <div class="mb-6">
-                  <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Add New Transport</h4>
-                  <p class="text-slate-500 text-xs mt-0.5">새로운 이동 수단을 등록하세요</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                  <div>
-                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">이동 수단</label>
-                    <div class="relative">
-                      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">commute</span>
-                      <input id="tr-type" type="text" placeholder="예: FlixBus, 기차, 택시" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">루트 (출발 → 도착)</label>
-                    <div class="relative">
-                      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">route</span>
-                      <input id="tr-route" type="text" placeholder="예: Prague → Vienna" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
-                      <input id="tr-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">시간</label>
-                      <input id="tr-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
-                      <input id="tr-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
-                      <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                        <input id="tr-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button onclick="saveInlineTransport();closeTravelModal('transport-add-modal-wrap')" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                  <span class="material-symbols-outlined text-sm">check_circle</span> Confirm Voyage
-                </button>
-              </div>
-              </div>
-            </div>
-
-            <!-- 이동수단 수정 모달 -->
-            <div id="transport-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('transport-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-                <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
-                  <div class="mb-6">
-                    <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Edit Transport</h4>
-                    <p class="text-slate-500 text-xs mt-0.5">이동 수단 정보를 수정하세요</p>
-                  </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                    <!-- 이동 수단명 -->
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">이동 수단</label>
-                      <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">commute</span>
-                        <input id="tr-edit-type" type="text" placeholder="예: FlixBus, 기차, 택시" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <!-- 루트 -->
-                    <div>
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">루트 (출발 → 도착)</label>
-                      <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">route</span>
-                        <input id="tr-edit-route" type="text" placeholder="예: Frankfurt → Berlin" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <!-- 탑승 날짜 + 시간 -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
-                        <input id="tr-edit-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">시간</label>
-                        <input id="tr-edit-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <!-- 결제일 + 가격 -->
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
-                        <input id="tr-edit-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
-                        <div class="relative">
-                          <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                          <input id="tr-edit-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- 상태 -->
-                    <div class="md:col-span-2">
-                      <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">예약 상태</label>
-                      <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectTransportStatus('확정')" id="tr-edit-status-confirmed" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 확정</button>
-                        <button type="button" onclick="selectTransportStatus('대기 중')" id="tr-edit-status-pending" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">⏳ 대기 중</button>
-                        <button type="button" onclick="selectTransportStatus('취소')" id="tr-edit-status-cancelled" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 취소</button>
-                      </div>
-                    </div>
-                  </div>
-                  <button onclick="saveTransportEdit()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                    <span class="material-symbols-outlined text-sm">check_circle</span> 수정 저장
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3-2. 렌트카 (Rental Cars) -->
-            <section id="trv-rental" class="mb-2">
-              <div class="trv-sec-head">
-                <div><p class="trv-sec-eyebrow">Rental</p><h3 class="trv-sec-title">렌트카</h3></div>
-                <div class="trv-sec-actions"><button onclick="openTravelModal('rental-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
-              </div>
-              <div id="journey-rental-list" class="rec-grid"></div>
-            </section>
-
-            <!-- 렌트카 추가 모달 -->
-            <div id="rental-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('rental-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-              <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
-                <div class="flex items-center gap-3 mb-6">
-                  <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                    <span class="material-symbols-outlined text-lg">directions_car</span>
-                  </div>
-                  <div>
-                    <h4 class="font-headline text-base font-bold text-slate-900">Add New Rental Car</h4>
-                    <p class="text-slate-500 text-[10px]">새로운 렌트카를 등록하세요</p>
-                  </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
-                    <input id="rc-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
-                    <input id="rc-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
-                    <input id="rc-city" type="text" list="rc-city-list" placeholder="예: Pienza" oninput="onRentalCityChange()" onchange="onRentalCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    <datalist id="rc-city-list"></datalist>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
-                    <input id="rc-drop-city" type="text" list="rc-city-list" placeholder="픽업 도시와 같으면 비워두기" oninput="onRentalDropCityChange()" onchange="onRentalDropCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
-                      <input id="rc-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
-                      <input id="rc-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
-                      <input id="rc-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
-                      <input id="rc-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
-                      <input id="rc-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
-                      <input id="rc-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">예약번호</label>
-                    <input id="rc-booking-ref" type="text" placeholder="예: 1202399155" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">운전자</label>
-                    <input id="rc-driver" type="text" placeholder="예: HONG GILDONG" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
-                    <input id="rc-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
-                    <div class="grid grid-cols-3 gap-2">
-                      <button type="button" onclick="selectRentalAddPayStatus('결제 예정')" id="rc-add-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
-                      <button type="button" onclick="selectRentalAddPayStatus('결제 완료')" id="rc-add-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
-                      <button type="button" onclick="selectRentalAddPayStatus('현장 결제')" id="rc-add-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🚗 현장</button>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
-                    <div class="grid grid-cols-3 gap-2">
-                      <button type="button" onclick="selectRentalAddCancel('가능')" id="rc-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
-                      <button type="button" onclick="selectRentalAddCancel('불가')" id="rc-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
-                      <button type="button" onclick="selectRentalAddCancel('조건부')" id="rc-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
-                    <input id="rc-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
-                    <div class="relative">
-                      <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                      <input id="rc-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                  </div>
-                  <div class="md:col-span-2">
-                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
-                    <input id="rc-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                  </div>
-                  <div class="md:col-span-2">
-                    <button onclick="saveInlineRental();closeTravelModal('rental-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                      렌트카 등록
-                    </button>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
-
-            <!-- 렌트카 수정 모달 -->
-            <div id="rental-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('rental-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-                <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
-                  <div class="flex items-center gap-3 mb-6">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                      <span class="material-symbols-outlined text-lg">edit_square</span>
-                    </div>
-                    <div>
-                      <h4 class="font-headline text-base font-bold text-slate-900">Edit Rental Car</h4>
-                      <p class="text-slate-500 text-[10px]">렌트카 정보를 수정하세요</p>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
-                      <input id="rc-edit-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
-                      <input id="rc-edit-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
-                      <input id="rc-edit-city" type="text" list="rc-edit-city-list" placeholder="예: Pienza" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      <datalist id="rc-edit-city-list"></datalist>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
-                      <input id="rc-edit-drop-city" type="text" list="rc-edit-city-list" placeholder="픽업 도시와 같으면 비워두기" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
-                        <input id="rc-edit-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
-                        <input id="rc-edit-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
-                        <input id="rc-edit-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
-                        <input id="rc-edit-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
-                        <input id="rc-edit-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                      <div>
-                        <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
-                        <input id="rc-edit-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">예약번호</label>
-                      <input id="rc-edit-booking-ref" type="text" placeholder="예: 1202399155" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">운전자</label>
-                      <input id="rc-edit-driver" type="text" placeholder="예: HONG GILDONG" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
-                      <input id="rc-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
-                      <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectRentalEditPayStatus('결제 예정')" id="rc-edit-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
-                        <button type="button" onclick="selectRentalEditPayStatus('결제 완료')" id="rc-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
-                        <button type="button" onclick="selectRentalEditPayStatus('현장 결제')" id="rc-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🚗 현장</button>
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
-                      <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectRentalEditCancel('가능')" id="rc-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
-                        <button type="button" onclick="selectRentalEditCancel('불가')" id="rc-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
-                        <button type="button" onclick="selectRentalEditCancel('조건부')" id="rc-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
-                      <input id="rc-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
-                    </div>
-                    <div class="md:col-span-2">
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
-                      <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
-                        <input id="rc-edit-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                      </div>
-                    </div>
-                    <div class="md:col-span-2">
-                      <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
-                      <input id="rc-edit-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
-                    </div>
-                    <div class="md:col-span-2">
-                      <button onclick="saveRentalEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                        수정 저장
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
-            <section id="trv-souvenir" class="mb-2">
-              <div class="trv-sec-head">
-                <div><p class="trv-sec-eyebrow">Souvenir</p><h3 class="trv-sec-title">기념품 체크리스트</h3></div>
-                <div class="trv-sec-actions">
-                  <button id="sv-photo-fill-btn" onclick="fillSouvenirPhotos()" class="trav-act" style="display:none" title="위키피디아에서 제품 사진을 찾아 채워요 (못 찾으면 이모지로 표시)"><span class="material-symbols-outlined">image</span> 이미지 채우기</button>
-                  <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
-                </div>
-              </div>
-              <!-- List -->
-              <div id="journey-souvenir-list" class="space-y-2"></div>
-              <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="sv-add">+ 아이템 추가</button>
-            </section>
-
-            <!-- 기념품 추가 모달 -->
-            <div id="souvenir-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
-              <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
-                <button onclick="closeTravelModal('souvenir-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
-              <div class="rounded-2xl p-6" style="background:#f3f4f5;">
-                <h4 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">대상 (Recipient)</label>
-                    <input id="sv-recipient" type="text" placeholder="누구를 위한 선물?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">품목 (Item)</label>
-                    <input id="sv-item" type="text" placeholder="무엇을 살 건지?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">도시 (City)</label>
-                    <input id="sv-city" type="text" placeholder="구매 도시" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                  </div>
-                  <div>
-                    <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">가격 (Price)</label>
-                    <input id="sv-price" type="text" placeholder="예상 가격" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
-                  </div>
-                </div>
-                <button onclick="saveInlineSouvenir();closeTravelModal('souvenir-add-modal-wrap')" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
-                  Add to Collection
-                </button>
-              </div>
-              </div>
-            </div>
-
-          </div>
         </div>
       </div>
 
@@ -12605,6 +11657,973 @@
                 <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">save</span> 저장
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 예약(Records) 탭 (2026-10-07): 일정 탭 안에 있던 항공/숙소/이동/렌트/기념품 장부를
+         상단 '예약' 탭으로 분리 — 스팟·항공 탭과 같은 방식(page-content-wrap 숨김 + 이 래퍼만 표시) ═══ -->
+    <div id="travel-records-section" class="px-8 pt-8 pb-20 max-w-[1280px] mx-auto" style="display:none">
+      <div data-travel-tabs="records"></div>
+      <header class="trav-hero">
+        <div>
+          <p class="trav-eyebrow">Travel &middot; Records</p>
+          <h1 class="trav-title">The Bookings</h1>
+          <p class="trav-sub">항공·숙소·이동·렌트·기념품 예약을 한곳에.</p>
+        </div>
+      </header>
+      <div class="trav-toolbar">
+        <div class="relative" id="rec-dd-wrap">
+          <button onclick="toggleRecDropdown()" id="rec-dd-btn" class="trip-dd-btn">
+            <span id="rec-dd-label">여행 선택...</span>
+            <span class="material-symbols-outlined text-violet-400 transition-transform" id="rec-dd-chevron" style="font-size: var(--font-size-h2-lg)">expand_more</span>
+          </button>
+          <div id="rec-dd-panel" class="trip-dd-panel" style="display:none;transform:scaleY(0.95);opacity:0;">
+            <div id="rec-dd-options" class="py-1"></div>
+          </div>
+        </div>
+        <button onclick="openTripModal()" class="trav-act trav-act-primary"><span class="material-symbols-outlined">flight_takeoff</span> 여행 추가</button>
+      </div>
+      <div class="space-y-8">
+        <!-- ═══ Records 장부 패널 (2026-07-22 IA 재구조): 항공/숙소/이동/렌트/기념품을
+             탭 하나로 묶어 '한 두루마리 스크롤' 해소 — 항상 같은 자리에서 전환 ═══ -->
+        <section id="trv-ledger" style="margin-bottom:-8px">
+          <nav id="trv-ledger-tabs" class="trv-ledger-tabs"></nav>
+        </section>
+
+        <!-- 1. 항공편 -->
+        <section id="trv-flights">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Flights</p><h3 class="trv-sec-title">항공편</h3></div>
+            <div class="trv-sec-actions"><button onclick="openFlightAddModal()" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+          </div>
+          <!-- 항공편 추천 큐레이션 — trip 매칭 시 자동 표시 -->
+          <div id="journey-flight-recs" style="display:none"></div>
+          <div id="journey-flight-list" class="rec-grid"></div>
+          <div id="journey-flight-total" class="mt-6 flex justify-end"></div>
+        </section>
+
+        <!-- 항공편 추가 모달 -->
+        <div id="flight-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('flight-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+          <div id="flight-add-form" class="bg-slate-50 rounded-[2rem] p-6">
+            <div class="flex items-center gap-2 mb-5">
+              <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">add_circle</span>
+              <h4 class="text-lg font-bold tracking-tight font-headline">Add New Flight</h4>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
+                <input id="flt-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
+                <input id="flt-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40" onchange="lookupFlight(this)"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
+                <input id="flt-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
+                <input id="flt-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
+                <input id="flt-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
+                <input id="flt-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
+                <input id="flt-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
+                <input id="flt-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
+                <input id="flt-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
+                <select id="flt-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                  <option value="">선택</option>
+                  <option>이코노미</option>
+                  <option>프리미엄 이코노미</option>
+                  <option>비즈니스</option>
+                  <option>일등석</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
+                <input id="flt-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
+                <input id="flt-fare-type" type="text" placeholder="Saver, Standard, Flex" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
+                <input id="flt-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
+                <input id="flt-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
+                <input id="flt-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
+                <select id="flt-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+                  <option value="">선택</option>
+                  <option>결제 완료</option>
+                  <option>결제 예정</option>
+                </select>
+              </div>
+              <div class="col-span-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
+                <input id="flt-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+              </div>
+              <div class="col-span-2 flex items-end">
+                <button onclick="saveFlightForm();closeTravelModal('flight-add-modal-wrap')" class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined" style="font-size: var(--font-size-h2);font-variation-settings:'FILL' 1">add_circle</span> 추가
+                </button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+<!-- 항공편 수정 모달 (Add New Flight과 동일 디자인) -->
+<div id="flight-edit-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+  <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 overflow-hidden relative">
+    <button onclick="closeFlightEditModal()" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+    <div class="bg-slate-50 p-6 md:p-8">
+      <div class="flex items-center gap-2 mb-5">
+        <span class="material-symbols-outlined text-indigo-600 p-1.5 bg-indigo-100/60 rounded-xl" style="font-size: var(--font-size-h2-lg)">edit_square</span>
+        <h4 class="text-lg font-bold tracking-tight font-headline">항공편 수정</h4>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">항공사</label>
+          <input id="fe-airline" type="text" placeholder="예: Turkish Airline" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">편명</label>
+          <input id="fe-code" type="text" placeholder="TK91" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발</label>
+          <input id="fe-dep" type="text" placeholder="ICN" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착</label>
+          <input id="fe-arr" type="text" placeholder="IST" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">날짜</label>
+          <input id="fe-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">출발 시간</label>
+          <input id="fe-time" type="text" placeholder="23:20" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">도착 시간</label>
+          <input id="fe-arrive" type="text" placeholder="04:50" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">비행시간</label>
+          <input id="fe-duration" type="text" placeholder="11H 30M" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">수하물</label>
+          <input id="fe-baggage" type="text" placeholder="23kg" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 등급</label>
+          <select id="fe-seat-class" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+            <option value="">선택</option>
+            <option>이코노미</option>
+            <option>프리미엄 이코노미</option>
+            <option>비즈니스</option>
+            <option>일등석</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">좌석 번호</label>
+          <input id="fe-seat-number" type="text" placeholder="29A" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">운임 종류</label>
+          <input id="fe-fare-type" type="text" placeholder="Saver, Standard" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">예약번호 (PNR)</label>
+          <input id="fe-pnr" type="text" placeholder="ABC123" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">탑승객</label>
+          <input id="fe-passenger" type="text" placeholder="홍길동" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제일</label>
+          <input id="fe-payment-date" type="date" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">결제 상태</label>
+          <select id="fe-payment-status" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40">
+            <option value="">선택</option>
+            <option>결제 완료</option>
+            <option>결제 예정</option>
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block px-1">가격 (₩)</label>
+          <input id="fe-price" type="text" placeholder="예: 1,743,400" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-slate-200/50 border-0 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-400/40"/>
+        </div>
+        <div class="col-span-2 flex items-end gap-3">
+          <button onclick="closeFlightEditModal()" class="px-5 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200/50 rounded-2xl transition-colors">취소</button>
+          <button onclick="saveFlightEdit()" class="flex-1 gradient-primary text-white font-bold py-3 px-6 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined" style="font-size: var(--font-size-h2)">save</span> 저장
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- 2. 숙소 정보 (Curated Stays) -->
+        <section id="trv-lodging" class="mb-2">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Lodging</p><h3 class="trv-sec-title">숙소</h3></div>
+            <div class="trv-sec-actions">
+              <button id="lodge-photo-fill-btn" onclick="fillLodgePhotos()" class="trav-act" style="display:none" title="사진 없는 숙소에 Google Places 사진을 순차로 채워요"><span class="material-symbols-outlined">photo_camera</span> 호텔 사진 채우기</button>
+              <button onclick="openTravelModal('stay-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
+            </div>
+          </div>
+          <!-- 트립닷컴 추천 숙소 (큐레이션) — trip 매칭 시 자동 표시 -->
+          <div id="journey-lodging-recs" style="display:none"></div>
+          <div id="journey-lodging-list" class="rec-grid"></div>
+        </section>
+
+        <!-- 숙소 추가 모달 -->
+        <div id="stay-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('stay-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+          <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                <span class="material-symbols-outlined text-lg">add_business</span>
+              </div>
+              <div>
+                <h4 class="font-headline text-base font-bold text-slate-900">Add New Stay</h4>
+                <p class="text-slate-500 text-[10px]">새로운 숙소를 등록하세요</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
+                <div class="relative">
+                  <input id="stay-city" type="text" list="stay-city-list" placeholder="예: Prague" oninput="onInlineStayCityChange()" onchange="onInlineStayCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <datalist id="stay-city-list"></datalist>
+                  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" onclick="selectStayType('Hotel')" id="stay-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm">
+                    <span class="material-symbols-outlined text-sm">hotel</span> Hotel
+                  </button>
+                  <button type="button" onclick="selectStayType('Airbnb')" id="stay-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
+                    <span class="material-symbols-outlined text-sm">home</span> Airbnb
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명</label>
+                <input id="stay-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div class="md:col-span-2">
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
+                <input id="stay-address" type="text" placeholder="숙소명 선택 시 자동 입력 (직접 입력도 가능)" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
+                  <input id="stay-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
+                  <input id="stay-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
+                  <input id="stay-checkin-time" type="text" placeholder="14:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
+                  <input id="stay-checkout-time" type="text" placeholder="12:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <!-- 결제일 + 무료취소 마감 -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                  <input id="stay-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
+                  <input id="stay-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+              </div>
+              <!-- 결제 상태 + 무료취소 여부 -->
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" onclick="selectStayAddPayStatus('결제 예정')" id="stay-add-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
+                  <button type="button" onclick="selectStayAddPayStatus('결제 완료')" id="stay-add-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
+                  <button type="button" onclick="selectStayAddPayStatus('현장 결제')" id="stay-add-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🏨 현장</button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" onclick="selectStayAddCancel('가능')" id="stay-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                  <button type="button" onclick="selectStayAddCancel('불가')" id="stay-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                  <button type="button" onclick="selectStayAddCancel('조건부')" id="stay-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                </div>
+              </div>
+              <!-- 1박 가격 + 전화번호 -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (카드로 낸 돈)</label>
+                  <div class="relative">
+                    <input id="stay-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 결제</label>
+                  <div class="relative">
+                    <input id="stay-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                  </div>
+                  <p class="text-[9px] text-slate-400 px-1 mt-1">체크인 날 현지에서 내는 돈 · 잔액에서 미리 빠지지 않음</p>
+                </div>
+                <div class="col-span-2">
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
+                  <input id="stay-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <!-- ★ (2026-07-23) 객실 · 조식 · 인원 — 카드 메타 행에 표시 -->
+              <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">객실</label>
+                  <input id="stay-room-type" type="text" placeholder="예: 2베드룸 아파트" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">조식</label>
+                  <input id="stay-breakfast" type="text" list="stay-breakfast-list" placeholder="포함 / 불포함 / 유료" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <datalist id="stay-breakfast-list"><option value="포함"><option value="불포함"><option value="유료"></datalist>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">인원</label>
+                  <input id="stay-guests" type="text" placeholder="예: 성인 2" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <!-- 메모 (full width) -->
+              <div class="md:col-span-2">
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모</label>
+                <input id="stay-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div class="md:col-span-2 flex items-end">
+                <button onclick="saveInlineStay();closeTravelModal('stay-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                  숙소 등록
+                </button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- 숙소 수정 모달 (추가 모달과 동일 디자인) -->
+        <div id="stay-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('stay-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+            <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                  <span class="material-symbols-outlined text-lg">edit_square</span>
+                </div>
+                <div>
+                  <h4 class="font-headline text-base font-bold text-slate-900">Edit Stay</h4>
+                  <p class="text-slate-500 text-[10px]">숙소 정보를 수정하세요</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <!-- 도시 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">도시</label>
+                  <div class="relative">
+                    <input id="stay-edit-city" type="text" list="stay-edit-city-list" placeholder="예: Prague" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                    <datalist id="stay-edit-city-list"></datalist>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">location_on</span>
+                  </div>
+                </div>
+                <!-- 유형 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">유형</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="selectStayEditType('Hotel')" id="stay-edit-type-hotel" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-sm font-bold shadow-sm transition-all">
+                      <span class="material-symbols-outlined text-sm">hotel</span> Hotel
+                    </button>
+                    <button type="button" onclick="selectStayEditType('Airbnb')" id="stay-edit-type-airbnb" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-slate-500 text-sm font-semibold hover:ring-2 hover:ring-indigo-300 transition-all">
+                      <span class="material-symbols-outlined text-sm">home</span> Airbnb
+                    </button>
+                  </div>
+                </div>
+                <!-- 숙소명 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">숙소명 *</label>
+                  <input id="stay-edit-name" type="text" placeholder="예: K+K Hotel Fenix" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <!-- 전화번호 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">전화번호</label>
+                  <input id="stay-edit-phone" type="tel" placeholder="+00 000 000 000" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <!-- 주소 (full width) -->
+                <div class="md:col-span-2">
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">주소</label>
+                  <input id="stay-edit-address" type="text" placeholder="예: Europa-Allee 23, 60327 Frankfurt" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <!-- 결제일 + 무료취소 마감 -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                    <input id="stay-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감</label>
+                    <input id="stay-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                </div>
+                <!-- 결제 상태 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectStayPayStatus('결제 예정')" id="stay-edit-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
+                    <button type="button" onclick="selectStayPayStatus('결제 완료')" id="stay-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
+                    <button type="button" onclick="selectStayPayStatus('현장 결제')" id="stay-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🏨 현장</button>
+                  </div>
+                </div>
+                <!-- 무료취소 여부 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectStayCancel('가능')" id="stay-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                    <button type="button" onclick="selectStayCancel('불가')" id="stay-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                    <button type="button" onclick="selectStayCancel('조건부')" id="stay-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                  </div>
+                </div>
+                <!-- 체크인/아웃 날짜 -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 날짜</label>
+                    <input id="stay-edit-checkin-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 날짜</label>
+                    <input id="stay-edit-checkout-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                </div>
+                <!-- 체크인/아웃 시간 -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크인 시간</label>
+                    <input id="stay-edit-checkin-time" type="text" placeholder="15:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">체크아웃 시간</label>
+                    <input id="stay-edit-checkout-time" type="text" placeholder="11:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <!-- ★ (2026-07-23) 객실 · 조식 · 인원 — 카드 메타 행에 표시 -->
+                <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">객실</label>
+                    <input id="stay-edit-room-type" type="text" placeholder="예: 2베드룸 아파트" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">조식</label>
+                    <input id="stay-edit-breakfast" type="text" list="stay-edit-breakfast-list" placeholder="포함 / 불포함 / 유료" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    <datalist id="stay-edit-breakfast-list"><option value="포함"><option value="불포함"><option value="유료"></datalist>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">인원</label>
+                    <input id="stay-edit-guests" type="text" placeholder="예: 성인 2" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <!-- 메모 (full width) -->
+                <div class="md:col-span-2">
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모</label>
+                  <input id="stay-edit-notes" type="text" placeholder="예: 퀸침대 1개, 성인 2명, 금연, 식사 불포함, 보증금 €20" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <!-- 가격 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">선결제 (₩)</label>
+                  <div class="relative">
+                    <input id="stay-edit-price" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                  </div>
+                </div>
+                <!-- ★ (2026-07-27) 도시세·현장 결제 — 체크인 날 내는 돈, 잔액에서 미리 안 빠짐 -->
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">🏨 도시세 · 현장 (₩)</label>
+                  <div class="relative">
+                    <input id="stay-edit-onsite" type="text" placeholder="0" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-sky-300 text-slate-800 placeholder:text-slate-400"/>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                  </div>
+                </div>
+                <!-- 저장 버튼 -->
+                <div class="flex items-end">
+                  <button onclick="saveStayEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                    수정 저장
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 도시 간 이동 수단 (Voyages) -->
+        <section id="trv-transport" class="mb-2">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Transit</p><h3 class="trv-sec-title">도시 간 이동</h3></div>
+            <div class="trv-sec-actions"><span id="transport-count" class="text-xs font-semibold text-slate-400"></span><button onclick="openTravelModal('transport-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+          
+          </div>
+          <!-- 도시 간 이동 (큐레이션) — trip 매칭 시 자동 표시. 숙소 섹션에서 이 섹션으로 이동(2026-06-17) -->
+          <!-- ★ (2026-07-24) 도시 간 이동 비교 (Rome2Rio 대체) -->
+          <div id="trv-hop-compare" class="hop-box"></div>
+          <div id="journey-transit-recs" style="display:none"></div>
+          <div id="journey-transport-list" class="rec-grid"></div>
+        </section>
+
+        <!-- 이동수단 추가 모달 -->
+        <div id="transport-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('transport-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+          <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
+            <div class="mb-6">
+              <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Add New Transport</h4>
+              <p class="text-slate-500 text-xs mt-0.5">새로운 이동 수단을 등록하세요</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+              <div>
+                <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">이동 수단</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">commute</span>
+                  <input id="tr-type" type="text" placeholder="예: FlixBus, 기차, 택시" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">루트 (출발 → 도착)</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">route</span>
+                  <input id="tr-route" type="text" placeholder="예: Prague → Vienna" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
+                  <input id="tr-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">시간</label>
+                  <input id="tr-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
+                  <input id="tr-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
+                  <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                    <input id="tr-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button onclick="saveInlineTransport();closeTravelModal('transport-add-modal-wrap')" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+              <span class="material-symbols-outlined text-sm">check_circle</span> Confirm Voyage
+            </button>
+          </div>
+          </div>
+        </div>
+
+        <!-- 이동수단 수정 모달 -->
+        <div id="transport-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('transport-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+            <div class="rounded-3xl p-6 md:p-8" style="background:#f3f4f5;">
+              <div class="mb-6">
+                <h4 class="text-xl font-extrabold tracking-tight text-slate-900">Edit Transport</h4>
+                <p class="text-slate-500 text-xs mt-0.5">이동 수단 정보를 수정하세요</p>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <!-- 이동 수단명 -->
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">이동 수단</label>
+                  <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">commute</span>
+                    <input id="tr-edit-type" type="text" placeholder="예: FlixBus, 기차, 택시" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <!-- 루트 -->
+                <div>
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">루트 (출발 → 도착)</label>
+                  <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">route</span>
+                    <input id="tr-edit-route" type="text" placeholder="예: Frankfurt → Berlin" class="w-full pl-10 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <!-- 탑승 날짜 + 시간 -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">탑승 날짜</label>
+                    <input id="tr-edit-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">시간</label>
+                    <input id="tr-edit-time" type="text" placeholder="09:00 - 11:40" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <!-- 결제일 + 가격 -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">결제일</label>
+                    <input id="tr-edit-payment-date" type="date" class="w-full px-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">가격 (₩)</label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                      <input id="tr-edit-price" type="text" placeholder="예: 200,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full pl-8 pr-4 py-3 bg-white rounded-xl border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+                    </div>
+                  </div>
+                </div>
+                <!-- 상태 -->
+                <div class="md:col-span-2">
+                  <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 block mb-1">예약 상태</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectTransportStatus('확정')" id="tr-edit-status-confirmed" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 확정</button>
+                    <button type="button" onclick="selectTransportStatus('대기 중')" id="tr-edit-status-pending" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">⏳ 대기 중</button>
+                    <button type="button" onclick="selectTransportStatus('취소')" id="tr-edit-status-cancelled" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 취소</button>
+                  </div>
+                </div>
+              </div>
+              <button onclick="saveTransportEdit()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                <span class="material-symbols-outlined text-sm">check_circle</span> 수정 저장
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-2. 렌트카 (Rental Cars) -->
+        <section id="trv-rental" class="mb-2">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Rental</p><h3 class="trv-sec-title">렌트카</h3></div>
+            <div class="trv-sec-actions"><button onclick="openTravelModal('rental-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button></div>
+          </div>
+          <div id="journey-rental-list" class="rec-grid"></div>
+        </section>
+
+        <!-- 렌트카 추가 모달 -->
+        <div id="rental-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('rental-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+          <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                <span class="material-symbols-outlined text-lg">directions_car</span>
+              </div>
+              <div>
+                <h4 class="font-headline text-base font-bold text-slate-900">Add New Rental Car</h4>
+                <p class="text-slate-500 text-[10px]">새로운 렌트카를 등록하세요</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
+                <input id="rc-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
+                <input id="rc-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
+                <input id="rc-city" type="text" list="rc-city-list" placeholder="예: Pienza" oninput="onRentalCityChange()" onchange="onRentalCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                <datalist id="rc-city-list"></datalist>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
+                <input id="rc-drop-city" type="text" list="rc-city-list" placeholder="픽업 도시와 같으면 비워두기" oninput="onRentalDropCityChange()" onchange="onRentalDropCityChange()" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
+                  <input id="rc-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
+                  <input id="rc-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
+                  <input id="rc-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
+                  <input id="rc-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
+                  <input id="rc-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
+                  <input id="rc-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">예약번호</label>
+                <input id="rc-booking-ref" type="text" placeholder="예: 1202399155" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">운전자</label>
+                <input id="rc-driver" type="text" placeholder="예: HONG GILDONG" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                <input id="rc-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" onclick="selectRentalAddPayStatus('결제 예정')" id="rc-add-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
+                  <button type="button" onclick="selectRentalAddPayStatus('결제 완료')" id="rc-add-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
+                  <button type="button" onclick="selectRentalAddPayStatus('현장 결제')" id="rc-add-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🚗 현장</button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" onclick="selectRentalAddCancel('가능')" id="rc-add-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                  <button type="button" onclick="selectRentalAddCancel('불가')" id="rc-add-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                  <button type="button" onclick="selectRentalAddCancel('조건부')" id="rc-add-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
+                <input id="rc-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                  <input id="rc-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
+                <input id="rc-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+              </div>
+              <div class="md:col-span-2">
+                <button onclick="saveInlineRental();closeTravelModal('rental-add-modal-wrap')" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                  렌트카 등록
+                </button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- 렌트카 수정 모달 -->
+        <div id="rental-edit-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('rental-edit-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+            <div class="rounded-[2rem] p-6 md:p-8" style="background:#f3f4f5;">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-md" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                  <span class="material-symbols-outlined text-lg">edit_square</span>
+                </div>
+                <div>
+                  <h4 class="font-headline text-base font-bold text-slate-900">Edit Rental Car</h4>
+                  <p class="text-slate-500 text-[10px]">렌트카 정보를 수정하세요</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">렌트카 회사</label>
+                  <input id="rc-edit-company" type="text" placeholder="예: Hertz, Sixt, Europcar" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">차종</label>
+                  <input id="rc-edit-model" type="text" placeholder="예: BMW X3" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 도시</label>
+                  <input id="rc-edit-city" type="text" list="rc-edit-city-list" placeholder="예: Pienza" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  <datalist id="rc-edit-city-list"></datalist>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 도시 <span class="text-slate-400 font-normal normal-case tracking-normal">(다른 도시에 반납 시)</span></label>
+                  <input id="rc-edit-drop-city" type="text" list="rc-edit-city-list" placeholder="픽업 도시와 같으면 비워두기" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 날짜</label>
+                    <input id="rc-edit-pickup-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 시간</label>
+                    <input id="rc-edit-pickup-time" type="text" placeholder="10:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">픽업 장소</label>
+                    <input id="rc-edit-pickup-location" type="text" placeholder="예: FCO 공항" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 날짜</label>
+                    <input id="rc-edit-drop-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 시간</label>
+                    <input id="rc-edit-drop-time" type="text" placeholder="18:00" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">드롭 장소</label>
+                    <input id="rc-edit-drop-location" type="text" placeholder="예: Orvieto 시내" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">예약번호</label>
+                  <input id="rc-edit-booking-ref" type="text" placeholder="예: 1202399155" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">운전자</label>
+                  <input id="rc-edit-driver" type="text" placeholder="예: HONG GILDONG" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제일</label>
+                  <input id="rc-edit-payment-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">결제 상태</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectRentalEditPayStatus('결제 예정')" id="rc-edit-pay-pending" class="py-2.5 rounded-xl bg-white ring-2 ring-amber-500 text-amber-600 text-xs font-bold shadow-sm transition-all">⏳ 예정</button>
+                    <button type="button" onclick="selectRentalEditPayStatus('결제 완료')" id="rc-edit-pay-done" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-emerald-300 transition-all">✓ 완료</button>
+                    <button type="button" onclick="selectRentalEditPayStatus('현장 결제')" id="rc-edit-pay-onsite" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-sky-300 transition-all">🚗 현장</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료 취소</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectRentalEditCancel('가능')" id="rc-edit-cancel-ok" class="py-2.5 rounded-xl bg-white ring-2 ring-indigo-500 text-indigo-600 text-xs font-bold shadow-sm transition-all">✓ 가능</button>
+                    <button type="button" onclick="selectRentalEditCancel('불가')" id="rc-edit-cancel-no" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-rose-300 transition-all">✗ 불가</button>
+                    <button type="button" onclick="selectRentalEditCancel('조건부')" id="rc-edit-cancel-cond" class="py-2.5 rounded-xl bg-white text-slate-500 text-xs font-semibold hover:ring-2 hover:ring-amber-300 transition-all">조건부</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">무료취소 마감일</label>
+                  <input id="rc-edit-cancel-date" type="date" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"/>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">가격 (₩)</label>
+                  <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₩</span>
+                    <input id="rc-edit-price" type="text" placeholder="예: 1,050,000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,',')" class="w-full bg-white border-0 rounded-xl pl-8 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                  </div>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 px-1 block mb-1">메모 (보험·옵션 등)</label>
+                  <input id="rc-edit-notes" type="text" placeholder="예: 풀커버 보험 포함, 추가 운전자 없음" class="w-full bg-white border-0 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"/>
+                </div>
+                <div class="md:col-span-2">
+                  <button onclick="saveRentalEdit()" class="w-full py-3 text-white rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+                    수정 저장
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 기념품 체크리스트 (Souvenir Checklist) -->
+        <section id="trv-souvenir" class="mb-2">
+          <div class="trv-sec-head">
+            <div><p class="trv-sec-eyebrow">Souvenir</p><h3 class="trv-sec-title">기념품 체크리스트</h3></div>
+            <div class="trv-sec-actions">
+              <button id="sv-photo-fill-btn" onclick="fillSouvenirPhotos()" class="trav-act" style="display:none" title="위키피디아에서 제품 사진을 찾아 채워요 (못 찾으면 이모지로 표시)"><span class="material-symbols-outlined">image</span> 이미지 채우기</button>
+              <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="trav-act"><span class="material-symbols-outlined">add</span> 추가</button>
+            </div>
+          </div>
+          <!-- List -->
+          <div id="journey-souvenir-list" class="space-y-2"></div>
+          <button onclick="openTravelModal('souvenir-add-modal-wrap')" class="sv-add">+ 아이템 추가</button>
+        </section>
+
+        <!-- 기념품 추가 모달 -->
+        <div id="souvenir-add-modal-wrap" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center" style="display:none!important">
+          <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeTravelModal('souvenir-add-modal-wrap')" class="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 z-10"><span class="material-symbols-outlined">close</span></button>
+          <div class="rounded-2xl p-6" style="background:#f3f4f5;">
+            <h4 class="text-base font-bold font-headline mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600">add_circle</span> New Souvenir
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">대상 (Recipient)</label>
+                <input id="sv-recipient" type="text" placeholder="누구를 위한 선물?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">품목 (Item)</label>
+                <input id="sv-item" type="text" placeholder="무엇을 살 건지?" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">도시 (City)</label>
+                <input id="sv-city" type="text" placeholder="구매 도시" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500 px-1 block mb-1">가격 (Price)</label>
+                <input id="sv-price" type="text" placeholder="예상 가격" class="w-full px-4 py-3 rounded-xl bg-white border-0 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-300 placeholder:text-slate-400"/>
+              </div>
+            </div>
+            <button onclick="saveInlineSouvenir();closeTravelModal('souvenir-add-modal-wrap')" class="w-full py-3 rounded-2xl text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.98] transition-all" style="background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));">
+              Add to Collection
+            </button>
+          </div>
           </div>
         </div>
       </div>
@@ -15642,7 +15661,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=356" defer></script>
+<script src="js/app-1-pages.js?v=357" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -16532,7 +16551,7 @@
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
-<script src="js/travel-toc.js?v=5" defer></script>
+<script src="js/travel-toc.js?v=6" defer></script>
 
 </body>
 </html>
