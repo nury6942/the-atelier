@@ -1,3 +1,8 @@
+## 2026-10-07 (윈도우) — 모든 달력 팝업에 주말·공휴일 빨간색 + 공휴일 이름 (flatpickr v164)
+
+- `app-3-flatpickr.js`: `flatpickr.setDefaults({onDayCreate: _fpDayCreate})` + 이미 만들어진 달력엔 `set('onDayCreate')`+redraw. 데이터는 캘린더 페이지 `getKoreanHolidays` 재사용(대체공휴일·선거 포함).
+- 긴 이름은 칸에 맞게 줄임(대체공휴일→대체휴일, 부처님오신날→부처님, 크리스마스→성탄절). 전체 이름은 마우스 올리면 툴팁.
+
 ## 2026-10-07 (윈도우) — Stops를 Daily Log 사진 띠로 합침 + 요약 칩은 예약 탭으로 (v359)
 
 - **Stops**: 큰 카드 그리드 섹션 삭제 → Daily Log 헤더 바로 아래 한 줄 사진 띠(`#trv-stops.j-stopstrip`). 점선 진행선(`#dlv-progress`)은 CSS로 숨김. 카드 클릭 = 그 도시 날짜로 이동, 지금 보이는 날짜의 도시 카드 강조(`_syncStopStrip`). 경로최적화/가져오기/도시추가는 띠 오른쪽 아이콘 버튼.

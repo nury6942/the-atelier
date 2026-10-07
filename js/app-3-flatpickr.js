@@ -42,6 +42,54 @@
     cal.style.bottom = '';
   }
 
+  // ★ (2026-10-07) 모든 달력 팝업: 주말·공휴일 빨간색 + 공휴일 이름 작게
+  //   공휴일 데이터는 캘린더 페이지와 같은 getKoreanHolidays(app-1-pages.js) 재사용
+  var _hdCache = {};
+  function _holidayName(dt) {
+    if (typeof getKoreanHolidays !== 'function') return '';
+    var y = dt.getFullYear();
+    if (!_hdCache[y]) { try { _hdCache[y] = getKoreanHolidays(y) || {}; } catch(e) { return ''; } }
+    var k = y + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+    return _hdCache[y][k] || '';
+  }
+  // 칸이 좁아서 긴 이름은 줄임 (전체 이름은 마우스 올리면 보임)
+  function _shortName(n) {
+    if (n.indexOf('대체') >= 0) return '대체휴일';
+    if (n === '부처님오신날') return '부처님';
+    if (n === '크리스마스') return '성탄절';
+    return n;
+  }
+  window._fpDayCreate = function(selectedDates, dateStr, fp, dayElem) {
+    var dt = dayElem && dayElem.dateObj;
+    if (!dt) return;
+    var name = _holidayName(dt);
+    var dow = dt.getDay();
+    if (name || dow === 0 || dow === 6) dayElem.classList.add('fp-red');
+    if (name && !dayElem.querySelector('.fp-hname')) {
+      dayElem.classList.add('fp-holiday');
+      dayElem.title = name;
+      var s = document.createElement('span');
+      s.className = 'fp-hname';
+      s.textContent = _shortName(name);
+      dayElem.appendChild(s);
+    }
+  };
+  function _installHolidayHook() {
+    if (typeof flatpickr !== 'function') return;
+    try { flatpickr.setDefaults({ onDayCreate: window._fpDayCreate }); } catch(e) {}
+    // 이 스크립트보다 먼저 만들어진 달력에도 적용
+    document.querySelectorAll('input').forEach(function(inp) {
+      var fp = inp._flatpickr;
+      if (!fp || fp._hdHooked) return;
+      fp._hdHooked = true;
+      var hooks = fp.config.onDayCreate || [];
+      if (hooks.indexOf(window._fpDayCreate) < 0) {
+        try { fp.set('onDayCreate', hooks.concat([window._fpDayCreate])); fp.redraw(); } catch(e) {}
+      }
+    });
+  }
+  window._installHolidayHook = _installHolidayHook;
+
   function applyFp(input) {
     if (!input || input._flatpickr) return;
     if (typeof flatpickr !== 'function') return;
@@ -74,6 +122,7 @@
   function applyAll() {
     var inputs = document.querySelectorAll('input[type="date"]');
     inputs.forEach(applyFp);
+    _installHolidayHook();
   }
   // 초기 적용
   if (document.readyState === 'loading') {
@@ -97,6 +146,10 @@
     }
   });
   observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('focusin', function(e) {
+    var t = e.target;
+    if (t && t._flatpickr && !t._flatpickr._hdHooked) _installHolidayHook();
+  }, true);
   // 외부에서 강제 재적용 필요 시
   window._refreshFlatpickr = applyAll;
 })();

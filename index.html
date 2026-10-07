@@ -75,7 +75,7 @@
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
   <link rel="preload" href="js/app-1-pages.js?v=359" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
-  <link rel="preload" href="js/app-3-flatpickr.js?v=163" as="script">
+  <link rel="preload" href="js/app-3-flatpickr.js?v=164" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
   <link rel="preload" href="js/daily-guides.js?v=163" as="script">
@@ -5578,6 +5578,12 @@
       line-height: 34px !important;
     }
     .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: var(--indigo-600) !important; }
+    /* ★ (2026-10-07) 주말·공휴일 빨간색 + 공휴일 이름 (app-3-flatpickr.js _fpDayCreate) */
+    span.flatpickr-weekday:first-child, span.flatpickr-weekday:last-child { color: #e11d48 !important; }
+    .flatpickr-day.fp-red:not(.selected):not(.startRange):not(.endRange):not(.prevMonthDay):not(.nextMonthDay) { color: #e11d48 !important; }
+    .flatpickr-day.fp-red.prevMonthDay, .flatpickr-day.fp-red.nextMonthDay { color: #fda4af !important; }
+    .flatpickr-day.fp-holiday { display: inline-flex !important; flex-direction: column; align-items: center; justify-content: center; line-height: 1 !important; gap: 1px; }
+    .flatpickr-day .fp-hname { font-size: 8px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
     .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
       background: linear-gradient(135deg, var(--indigo-500), #8b5cf6) !important;
       border-color: var(--indigo-500) !important;
@@ -16553,7 +16559,7 @@
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
-<script src="js/app-3-flatpickr.js?v=163" defer></script>
+<script src="js/app-3-flatpickr.js?v=164" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
