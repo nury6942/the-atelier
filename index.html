@@ -5694,6 +5694,31 @@
     #page-journey #daylog-map { border:1px solid var(--jv-line); }
     #page-journey #daylog-map .leaflet-tile-pane { filter:grayscale(1) contrast(.92) brightness(1.05); }
     #page-journey .wk4-col { border-left-color:var(--jv-soft); }
+    /* ★ (2026-10-08 v2) Daily Log — 시간 한 줄·왼쪽 여백, 이동/식사/선셋 태그, 일출·일몰 */
+    #page-journey #journey-week-grid.wk4 .j-day-card.wk4-col { border-left:0 !important; }
+    #page-journey #journey-week-grid.wk4 .j-day-head.wk4-head { padding:16px 16px 12px !important; grid-template-columns:76px minmax(0,1fr) auto; }
+    #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { grid-template-columns:112px minmax(0,1fr) auto; column-gap:18px; padding:13px 16px 13px 20px !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-time { white-space:nowrap; font-size:13px; letter-spacing:-.01em; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .jv-en { font-weight:500; color:var(--jv-mute); margin-left:2px; }
+    #page-journey #journey-week-grid.wk4 .wk4-travel { padding-left:150px; }
+    #page-journey #journey-week-grid.wk4 .j-slot-empty { padding-left:150px; }
+    .jv-pill { display:inline-flex; align-items:center; gap:5px; flex:none; margin:1px 8px 0 0; padding:2px 8px 2px 6px; font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.04em; line-height:1.5; white-space:nowrap; border:1px solid var(--jv-ink); color:var(--jv-ink); background:#fff; }
+    .jv-pill i { font-style:normal; font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif; font-size:11px; }
+    /* 이동 줄: 점선 연결선 + 작은 회색 글씨 — 일정 사이 '길'로 보이게 */
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv { padding-top:8px !important; padding-bottom:8px !important; background:linear-gradient(90deg,transparent 0 8px,var(--jv-tint) 8px) !important; position:relative; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv::before { content:''; position:absolute; left:3px; top:4px; bottom:4px; border-left:2px dotted var(--jv-mute); }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .wk4-time { color:var(--jv-mute); font-weight:600; font-size:12px; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .wk4-slot-title { font-size:13px; font-weight:600; color:var(--jv-sub); }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .wk4-sub-desc { font-size:11.5px; color:var(--jv-mute); }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-mv .jv-pill { border-color:var(--jv-soft); color:var(--jv-sub); background:#fff; }
+    .jv-tg-lunch .jv-pill, .jv-tg-dinner .jv-pill, .jv-tg-breakfast .jv-pill, .jv-tg-cafe .jv-pill { border-color:#b5523b; color:#b5523b; }
+    .jv-tg-sunset .jv-pill, .jv-tg-sunrise .jv-pill { border:0; color:#fff; background:linear-gradient(90deg,#f0803c,#d6457a); }
+    .jv-tg-night .jv-pill { border:0; color:#fff; background:#1d2147; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.jv-tg-sunset { background:linear-gradient(90deg,#fff4ec,transparent 70%) !important; }
+    .jv-sun { display:inline-flex; gap:10px; margin-left:12px; padding-left:12px; border-left:1px solid var(--jv-soft); font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; letter-spacing:.06em; color:var(--jv-sub); }
+    .jv-sun b { font-family:'Manrope',sans-serif; font-weight:800; color:var(--jv-ink); font-variant-numeric:tabular-nums; letter-spacing:0; }
+    .jv-sun-s b { color:#d6457a; }
+    @media (max-width:640px) { #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { grid-template-columns:84px minmax(0,1fr); grid-template-areas:"time title" "time desc" "chips chips" "pre pre"; padding-left:12px !important; } #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-time { font-size:12px; } .jv-sun { margin-left:8px; padding-left:8px; } }
     /* ═══ ★ (2026-10-08) 예산 탭 — 일정 탭과 같은 결 (모서리 0, 검정 선, Manrope 큰 숫자, Inter 라벨, 보라 하나) ═══ */
     #page-finance { --jv-ink:#15161a; --jv-sub:#5f6168; --jv-mute:#9a9ca3; --jv-line:#15161a; --jv-soft:#e6e5e1; --jv-tint:#f6f5f2; --jv-accent:#6b38d4; }
     #page-finance, #page-finance *, #page-finance *::before, #page-finance *::after { border-radius:0 !important; }
@@ -5820,6 +5845,77 @@
     #travel-records-section .trav-hero { border-bottom:1px solid #15161a; }
     #travel-records-section .trav-ledger-tabs, #travel-records-section .trv-ledger-tabs { border-bottom:1px solid #15161a !important; }
     #travel-records-section .trv-ltab.is-active { color:#15161a !important; border-bottom-color:#6b38d4 !important; }
+    /* ★ (2026-10-08) 예약 Timeline — 날짜순 장부 (js/bookings-v2.js) · 모서리 0, 검정 선 */
+    #trv-timeline { --bk-ink:#15161a; --bk-sub:#5f6168; --bk-mute:#9a9ca3; --bk-soft:#e6e5e1; --bk-tint:#f6f5f2; --bk-acc:#6b38d4; }
+    #trv-timeline, #trv-timeline * { border-radius:0 !important; }
+    .bk-sum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:2px solid var(--bk-ink); border-bottom:1px solid var(--bk-ink); margin:0 0 28px; }
+    .bk-sum > div { padding:14px 16px; border-left:1px solid var(--bk-soft); }
+    .bk-sum > div:first-child { border-left:0; padding-left:0; }
+    .bk-sum span { display:block; font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:.16em; color:var(--bk-sub); }
+    .bk-sum b { font-family:'Manrope',sans-serif; font-size:30px; font-weight:800; letter-spacing:-.03em; color:var(--bk-ink); font-variant-numeric:tabular-nums; }
+    .bk-sum small { font-size:15px; color:var(--bk-mute); font-weight:700; margin-left:2px; }
+    .bk-sum .is-warn b { color:#d6457a; }
+    .bk-row { display:grid; grid-template-columns:120px minmax(0,1fr); gap:24px; padding:18px 0; border-top:1px solid var(--bk-ink); }
+    .bk-date b { display:block; font-family:'Manrope',sans-serif; font-size:44px; font-weight:800; line-height:.9; letter-spacing:-.04em; color:var(--bk-ink); font-variant-numeric:tabular-nums; }
+    .bk-date span { display:block; margin-top:6px; font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.16em; color:var(--bk-sub); }
+    .bk-date.is-wknd span { color:#d6457a; }
+    .bk-date i { display:inline-block; margin-top:6px; padding:1px 6px; font-style:normal; font-family:'Inter',sans-serif; font-size:10px; font-weight:800; letter-spacing:.12em; color:#fff; background:var(--bk-acc); }
+    .bk-items { display:flex; flex-direction:column; gap:12px; min-width:0; }
+    .bk-card { border:1px solid var(--bk-ink); background:#fff; }
+    .bk-fh { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .bk-fh b { font-family:'Manrope','Pretendard',sans-serif; font-size:14px; font-weight:800; color:var(--bk-ink); }
+    .bk-tag { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; font-family:'Inter',sans-serif; font-size:10px; font-weight:800; letter-spacing:.14em; color:#fff; background:var(--bk-ink); white-space:nowrap; }
+    .bk-mute { font-size:12px; color:var(--bk-sub); }
+    .bk-act { margin-left:auto; display:inline-flex; gap:0; opacity:0; transition:opacity .15s; }
+    .bk-card:hover .bk-act { opacity:1; }
+    .bk-act button { border:1px solid var(--bk-soft); background:#fff; padding:3px 9px; font-size:11px; font-weight:600; color:var(--bk-sub); cursor:pointer; }
+    .bk-act button + button { border-left:0; }
+    .bk-act button:hover { border-color:var(--bk-ink); color:var(--bk-ink); }
+    @media (hover:none) { .bk-act { opacity:1; } }
+    /* 항공 = 탑승권 */
+    .bk-flight { padding:16px 20px; }
+    .bk-route { display:grid; grid-template-columns:auto minmax(60px,1fr) auto; align-items:center; gap:18px; margin:14px 0 12px; }
+    .bk-code { font-family:'Manrope',sans-serif; font-size:40px; font-weight:800; line-height:1; letter-spacing:-.02em; color:var(--bk-ink); }
+    .bk-time { margin-top:4px; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; color:var(--bk-sub); font-variant-numeric:tabular-nums; }
+    .bk-r { text-align:right; }
+    .bk-line { position:relative; height:1px; border-top:1px dashed var(--bk-ink); text-align:center; }
+    .bk-line::after { content:'✈'; position:absolute; right:-4px; top:-10px; font-size:13px; color:var(--bk-ink); }
+    .bk-line span { position:relative; top:-10px; padding:0 8px; background:#fff; font-family:'Inter',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.08em; color:var(--bk-sub); }
+    .bk-kvs { display:flex; flex-wrap:wrap; border-top:1px solid var(--bk-soft); }
+    .bk-kv { display:flex; flex-direction:column; gap:3px; padding:10px 18px 0 0; margin-right:18px; }
+    .bk-kv span { font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; letter-spacing:.16em; color:var(--bk-mute); }
+    .bk-kv b { font-size:13px; font-weight:700; color:var(--bk-ink); }
+    .bk-pay { display:inline-block; padding:1px 6px; font-size:11px; font-weight:700; border:1px solid currentColor; color:var(--bk-sub); }
+    .bk-pay.is-done { color:#1f8a5b; } .bk-pay.is-due { color:#b5523b; } .bk-pay.is-onsite { color:#2c6fb3; }
+    /* 숙소 = 사진 왼쪽 / 정보 오른쪽 */
+    .bk-stay { display:grid; grid-template-columns:200px minmax(0,1fr); }
+    .bk-photo { min-height:170px; background:var(--bk-tint) center/cover no-repeat; border-right:1px solid var(--bk-ink); display:flex; align-items:center; justify-content:center; font-size:30px; color:var(--bk-mute); }
+    .bk-sbody { padding:16px 20px; min-width:0; }
+    .bk-name { margin:10px 0 12px; font-family:'Manrope','Pretendard',sans-serif; font-size:20px; font-weight:800; letter-spacing:-.01em; color:var(--bk-ink); }
+    .bk-io { display:grid; grid-template-columns:1fr auto 1fr; align-items:end; gap:14px; padding-bottom:12px; }
+    .bk-io span { display:block; font-family:'Inter',sans-serif; font-size:9.5px; font-weight:800; letter-spacing:.18em; color:var(--bk-mute); }
+    .bk-io b { font-family:'Manrope','Pretendard',sans-serif; font-size:17px; font-weight:800; color:var(--bk-ink); }
+    .bk-io i { font-style:normal; margin-left:6px; font-size:12px; color:var(--bk-sub); }
+    .bk-io > div:last-child { text-align:right; }
+    .bk-n { align-self:center; padding:2px 10px; border:1px solid var(--bk-ink); font-family:'Manrope',sans-serif; font-size:12px; font-weight:800; }
+    /* 렌트·이동 = 한 줄 */
+    .bk-mini { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 16px; border-color:var(--bk-soft); background:var(--bk-tint); }
+    .bk-mini b { font-size:13.5px; font-weight:700; color:var(--bk-ink); }
+    .bk-mini .bk-tag { background:#fff; color:var(--bk-ink); border:1px solid var(--bk-ink); }
+    .bk-mini-r { display:inline-flex; gap:8px; align-items:center; font-size:12px; color:var(--bk-sub); font-variant-numeric:tabular-nums; }
+    .bk-mini .bk-act { margin-left:0; }
+    .bk-mini .bk-mini-r { margin-left:auto; }
+    .bk-gap { padding:12px 16px; border:1px dashed #d6457a; color:#d6457a; font-size:12.5px; }
+    .bk-gap b { margin-right:8px; font-family:'Inter',sans-serif; font-size:10.5px; letter-spacing:.16em; padding:1px 6px; color:#fff; background:#d6457a; }
+    .bk-empty { padding:28px 0; font-size:13px; color:var(--bk-sub); }
+    @media (max-width:720px) {
+      .bk-sum { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .bk-sum > div:nth-child(3) { border-left:0; padding-left:0; }
+      .bk-row { grid-template-columns:minmax(0,1fr); gap:10px; }
+      .bk-date { display:flex; align-items:baseline; gap:10px; } .bk-date b { font-size:32px; } .bk-date span, .bk-date i { margin-top:0; }
+      .bk-stay { grid-template-columns:minmax(0,1fr); } .bk-photo { min-height:140px; border-right:0; border-bottom:1px solid var(--bk-ink); }
+      .bk-code { font-size:30px; }
+    }
     #travel-records-section .trv-overview { gap:0 !important; border-top:1px solid #15161a; border-bottom:1px solid #15161a; }
     #travel-records-section .trv-ov-chip { border:0 !important; border-right:1px solid #e6e5e1 !important; background:none !important; box-shadow:none !important; padding:14px 16px !important; }
     #travel-records-section .trv-ov-chip:last-child { border-right:0 !important; }
@@ -16941,8 +17037,10 @@
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=5" defer></script>
-<script src="js/plan-apply.js?v=2" defer></script>
+<script src="js/journey-v2.js?v=6" defer></script>
+<script src="js/plans-v2.js?v=1" defer></script>
+<script src="js/plan-apply.js?v=3" defer></script>
+<script src="js/bookings-v2.js?v=1" defer></script>
 
 </body>
 </html>

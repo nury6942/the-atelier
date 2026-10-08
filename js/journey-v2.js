@@ -203,14 +203,80 @@
       var t = head.querySelector('.wk4-title');
       var city = (dm.filter(function(e){ return e.date === col.getAttribute('data-date'); })[0] || {}).cityName;
       if (t && city && !t.querySelector('.jv-cty')) { var ch = window.cityCountryHtml(city); if (ch) t.insertAdjacentHTML('afterbegin', ch); }
+      try { addSun(head, col.getAttribute('data-date'), city); } catch(e) {}
       var s = document.createElement('span');
       s.className = 'jv-dno';
       s.textContent = String(n).padStart(2, '0');
       head.insertBefore(s, head.firstChild);
     });
   }
+  // ── 일출·일몰 (위도·경도로 계산, 그 나라 시간으로 표시) ──
+  var TZ = { DK:'Europe/Copenhagen', SE:'Europe/Stockholm', NO:'Europe/Oslo', FI:'Europe/Helsinki', FR:'Europe/Paris', BE:'Europe/Brussels', NL:'Europe/Amsterdam', DE:'Europe/Berlin',
+    ES:'Europe/Madrid', PT:'Europe/Lisbon', IE:'Europe/Dublin', GB:'Europe/London', IT:'Europe/Rome', CZ:'Europe/Prague', AT:'Europe/Vienna', HR:'Europe/Zagreb', CH:'Europe/Zurich',
+    CA:'America/Toronto', US:'America/New_York', JP:'Asia/Tokyo', KR:'Asia/Seoul' };
+  function sunTimes(dateStr, lat, lng) {
+    var r = Math.PI / 180, J = new Date(dateStr + 'T12:00:00Z') / 864e5 + 2440587.5;
+    var n = Math.round(J - 2451545 + 0.0008), Js = n - lng / 360;
+    var M = (357.5291 + 0.98560028 * Js) % 360;
+    var C = 1.9148 * Math.sin(M * r) + 0.02 * Math.sin(2 * M * r) + 0.0003 * Math.sin(3 * M * r);
+    var L = (M + C + 282.9372) % 360;
+    var Jt = 2451545 + Js + 0.0053 * Math.sin(M * r) - 0.0069 * Math.sin(2 * L * r);
+    var sd = Math.sin(L * r) * Math.sin(23.44 * r), cd = Math.cos(Math.asin(sd));
+    var cw = (Math.sin(-0.833 * r) - Math.sin(lat * r) * sd) / (Math.cos(lat * r) * cd);
+    if (cw < -1) return { always: true }; if (cw > 1) return { never: true };
+    var w = Math.acos(cw) / r / 360, toD = function(j) { return new Date((j - 2440587.5) * 864e5); };
+    return { rise: toD(Jt - w), set: toD(Jt + w) };
+  }
+  function cityLL(city) {
+    var c = (typeof citiesData !== 'undefined' ? citiesData : []).filter(function(x) { return x.name === city && typeof x.lat === 'number'; })[0];
+    return c ? [c.lat, c.lng] : null;
+  }
+  function hm(d, tz) { try { return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz }); } catch(e) { return d.toTimeString().slice(0, 5); } }
+  function addSun(head, date, city) {
+    if (!date || !city || head.querySelector('.jv-sun')) return;
+    var ll = cityLL(city); if (!ll) return;
+    var cc = (window.cityCountry(city) || {}).cc, tz = TZ[cc];
+    var s = sunTimes(date, ll[0], ll[1]), txt;
+    if (s.always) txt = '<span>백야 · 해가 안 짐</span>';
+    else if (s.never) txt = '<span>극야</span>';
+    else txt = '<span class="jv-sun-r">일출 <b>' + hm(s.rise, tz) + '</b></span><span class="jv-sun-s">일몰 <b>' + hm(s.set, tz) + '</b></span>';
+    var eb = head.querySelector('.wk4-eyebrow');
+    if (eb) eb.insertAdjacentHTML('beforeend', '<span class="jv-sun">' + txt + '</span>');
+  }
+  window.jvSunTimes = sunTimes;
+
+  // ── 일정 줄 꾸미기: 이동·식사·선셋 태그, "한국어 (English)"의 영어는 옅게 ──
+  var TAG = {
+    train: ['🚆', '기차'], metro: ['🚇', '지하철·트램'], bus: ['🚌', '버스'], car: ['🚗', '드라이브'], walk: ['🚶', '걸어서'], flight: ['✈', '비행'], boat: ['⛴', '배'], cable: ['🚡', '케이블카'],
+    breakfast: ['☕', 'BREAKFAST'], lunch: ['🍽', 'LUNCH'], dinner: ['🍷', 'DINNER'], cafe: ['☕', 'CAFÉ'], sunset: ['🌅', 'SUNSET'], sunrise: ['🌄', 'SUNRISE'], night: ['🌙', 'NIGHT']
+  };
+  var MOVES = { train:1, metro:1, bus:1, car:1, walk:1, flight:1, boat:1, cable:1 };
+  function dur(a, b) {
+    if (!a || !b) return '';
+    var p = a.split(':'), q = b.split(':'), m = (+q[0] * 60 + +q[1]) - (+p[0] * 60 + +p[1]);
+    if (!(m > 0)) return '';
+    return m >= 60 ? Math.floor(m / 60) + '시간' + (m % 60 ? ' ' + (m % 60) + '분' : '') : m + '분';
+  }
+  function decorateSlots() {
+    var grid = document.getElementById('journey-week-grid');
+    if (!grid || typeof journeyData === 'undefined') return;
+    var byId = {};
+    journeyData.forEach(function(d) { if (d._id) byId[d._id] = d; });
+    grid.querySelectorAll('.wk4-slot[data-jid]').forEach(function(el) {
+      if (el.__jvd) return; el.__jvd = 1;
+      var it = byId[el.getAttribute('data-jid')]; if (!it) return;
+      var hl = el.querySelector('.wk4-hl');
+      if (hl && !hl.querySelector('.jv-en')) hl.innerHTML = hl.innerHTML.replace(/\s*\(([^()]*[A-Za-zÀ-ÿ][^()]*)\)\s*$/, ' <span class="jv-en">$1</span>');
+      var tag = it.tag || it.move; if (!tag || !TAG[tag]) return;
+      var t = TAG[tag], isMove = !!MOVES[tag];
+      el.classList.add(isMove ? 'jv-mv' : 'jv-tg', 'jv-tg-' + tag);
+      var label = isMove ? t[1] + (dur(it.time, it.end_time) ? ' · ' + dur(it.time, it.end_time) : '') : t[1];
+      var line = el.querySelector('.wk4-line');
+      if (line) line.insertAdjacentHTML('afterbegin', '<span class="jv-pill"><i>' + t[0] + '</i>' + label + '</span>');
+    });
+  }
   function boot() {
-    wrap('renderWeekView', decorateLog);
+    wrap('renderWeekView', function() { decorateLog(); decorateSlots(); });
     wrap('renderTripHeader', renderAll);
     wrap('renderCityCards', function() { renderRoute(); renderMast(); });
     wrap('updateTravelMiniSummary', renderMast);

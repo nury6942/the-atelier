@@ -155,7 +155,24 @@
   }];
 
   function current() { try { return getCurrentTrip(); } catch(e) { return null; } }
-  function planFor(t) { for (var i = 0; i < PLANS.length; i++) if (PLANS[i].match(t) && t.planApplied !== PLANS[i].id) return PLANS[i]; return null; }
+  // v2(plans-v2.js) 우선 — v1 적용했어도 v2 버튼이 다시 뜸
+  function planFor(t) {
+    if (!t) return null;
+    var V2 = window.ATELIER_PLANS_V2 || [];
+    for (var i = 0; i < V2.length; i++) if (V2[i].match(t)) return t.planApplied === V2[i].id ? null : V2[i];
+    for (var j = 0; j < PLANS.length; j++) if (PLANS[j].match(t) && t.planApplied !== PLANS[j].id) return PLANS[j];
+    return null;
+  }
+  // 예전 플랜이 넣은 일정(같은 여행 + 같은 날짜·제목, 또는 plan 태그) 찾기
+  function oldPlanItems(t, p) {
+    var keys = {};
+    PLANS.forEach(function(op) { op.items.forEach(function(it) { keys[it[0] + '|' + it[3]] = 1; }); });
+    return (journeyData || []).filter(function(d) {
+      if (d.trip_id !== t._id || d.type !== '일정') return false;
+      if (d.plan && d.plan !== p.id) return true;
+      return !!keys[d.date + '|' + d.title];
+    });
+  }
 
   function renderButton() {
     var head = document.querySelector('#trv-stops .jv-sec-h');
@@ -175,11 +192,12 @@
     var t = current();
     if (!t) return;
     var mine = (citiesData || []).filter(function(c) { return c.trip_id === t._id || !c.trip_id; });
+    var olds = oldPlanItems(t, p);
     var msg = '[' + t.name + '] 에 플랜을 넣을게요.\n\n' +
       '· 여행 날짜: ' + p.trip.start_date + ' ~ ' + p.trip.end_date + '\n' +
       '· 도시(Route): 지금 ' + mine.length + '곳 → 새 ' + p.cities.length + '곳 (' + p.cities.map(function(c){ return c[0]; }).join(' → ') + ')\n' +
       '   지우는 도시는 휴지통에 보관돼요\n' +
-      '· 일정: ' + p.items.length + '개 추가 (기존 일정은 그대로)\n' +
+      '· 일정: ' + p.items.length + '개 추가' + (olds.length ? ' · 예전 플랜 일정 ' + olds.length + '개는 휴지통으로' : '') + ' (직접 넣은 일정은 그대로)\n' +
       '· 예산: ' + p.summary + '\n\n진행할까요?';
     if (!confirm(msg)) return;
     var btn = document.getElementById('jv-plan-apply');
@@ -192,9 +210,10 @@
         var nights = Math.round((new Date(c[2]) - new Date(c[1])) / 864e5);
         await fbAdd('trip_cities', { trip_id: t._id, name: c[0], start_date: c[1], end_date: c[2], nights: nights, desc: '', transit_guide: '', order: c[1], lat: c[3], lng: c[4] });
       }
+      for (var o = 0; o < olds.length; o++) { if (olds[o]._id) await fbDelete('journey', olds[o]._id); }
       for (var k = 0; k < p.items.length; k++) {
         var it = p.items[k];
-        await fbAdd('journey', { trip_id: t._id, type: '일정', date: it[0], time: it[1], end_time: it[2], title: it[3], city: it[4], description: it[5] });
+        await fbAdd('journey', { trip_id: t._id, type: '일정', date: it[0], time: it[1], end_time: it[2], title: it[3], city: it[4], description: it[5], tag: it[6] || "", plan: p.id });
       }
       var days = Math.round((new Date(p.trip.end_date) - new Date(p.trip.start_date)) / 864e5) + 1;
       var nightsAll = days - 1;
