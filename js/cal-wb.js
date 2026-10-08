@@ -268,7 +268,7 @@
       html += '<div class="wbc-stat" title="' + year + '년 연차 ' + total + '일 중 ' + fmtDayH(s.leaveH) + ' 사용 (포털 결재 기준)">' +
           '<span class="l">연차 잔여</span><b' + (left < 0 ? ' class="neg"' : '') + '>' + fmtDayH(left) + '</b>' +
           '<span class="s">' + fmtDayH(s.leaveH) + ' / ' + total + '일 사용</span>' +
-          '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">✎</button></div>' +
+          '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">총계 수정</button></div>' +
         '<div class="wbc-stat" title="' + year + '년 연장근무 적립 ' + fmtH(s.otEarn) + ' − 사용 ' + fmtH(s.otUse) + '">' +
           '<span class="l">연장근무 사용 가능</span><b>' + fmtH(s.otLeft) + '</b>' +
           '<span class="s">적립 ' + fmtH(s.otEarn) + ' · 사용 ' + fmtH(s.otUse) + '</span></div>';
@@ -282,7 +282,7 @@
       });
       html += '<div class="wbc-stat" title="캘린더의 연차 일정 합계"><span class="l">연차 잔여</span><b>' + (total - used) + '일</b>' +
         '<span class="s">' + used + ' / ' + total + '일 사용</span>' +
-        '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">✎</button></div>';
+        '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">총계 수정</button></div>';
     }
     if (_wbState === 'signed-out' || (_wbState === 'error' && !hasMine)) {
       html += '<button class="wbc-connect" onclick="wbcConnect()" title="mlb-fitting 업무 보드에서 GTM·내 근태를 가져와요 (같은 구글 계정)">업무 보드 연결</button>';
