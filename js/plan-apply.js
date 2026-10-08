@@ -196,7 +196,7 @@
     var msg = '[' + t.name + '] 에 플랜을 넣을게요.\n\n' +
       '· 여행 날짜: ' + p.trip.start_date + ' ~ ' + p.trip.end_date + '\n' +
       '· 도시(Route): 지금 ' + mine.length + '곳 → 새 ' + p.cities.length + '곳 (' + p.cities.map(function(c){ return c[0]; }).join(' → ') + ')\n' +
-      '   지우는 도시는 휴지통에 보관돼요\n' +
+      '   같은 이름 도시는 그대로 고쳐 써서 사진이 유지돼요 · 빠지는 도시는 휴지통에 보관\n' +
       '· 일정: ' + p.items.length + '개 추가' + (olds.length ? ' · 예전 플랜 일정 ' + olds.length + '개는 휴지통으로' : '') + ' (직접 넣은 일정은 그대로)\n' +
       '· 예산: ' + p.summary + '\n\n진행할까요?';
     if (!confirm(msg)) return;
@@ -204,16 +204,26 @@
     if (btn) { btn.disabled = true; btn.textContent = '넣는 중…'; }
     try {
       await fbUpdate('trips', t._id, { start_date: p.trip.start_date, end_date: p.trip.end_date });
-      for (var i = 0; i < mine.length; i++) { if (mine[i]._id) await fbDelete('trip_cities', mine[i]._id); }
+      // ★ (2026-10-08) 같은 이름 도시는 지우지 않고 고쳐 씀 — 도시 사진이 도시 id에 묶여 있어서
+      //   지우고 새로 만들면 사진이 끊겼다. 남는 도시만 지우고, 없는 도시만 새로 만든다.
+      var pool = mine.slice();
       for (var j = 0; j < p.cities.length; j++) {
         var c = p.cities[j];
         var nights = Math.round((new Date(c[2]) - new Date(c[1])) / 864e5);
-        await fbAdd('trip_cities', { trip_id: t._id, name: c[0], start_date: c[1], end_date: c[2], nights: nights, desc: '', transit_guide: '', order: c[1], lat: c[3], lng: c[4] });
+        var fields = { trip_id: t._id, name: c[0], start_date: c[1], end_date: c[2], nights: nights, order: c[1], lat: c[3], lng: c[4] };
+        var hit = -1;
+        for (var q = 0; q < pool.length; q++) { if (pool[q]._id && String(pool[q].name || '').trim() === c[0]) { hit = q; break; } }
+        if (hit >= 0) { await fbUpdate('trip_cities', pool[hit]._id, fields); pool.splice(hit, 1); }
+        else { fields.desc = ''; fields.transit_guide = ''; await fbAdd('trip_cities', fields); }
       }
+      for (var i = 0; i < pool.length; i++) { if (pool[i]._id) await fbDelete('trip_cities', pool[i]._id); }
       for (var o = 0; o < olds.length; o++) { if (olds[o]._id) await fbDelete('journey', olds[o]._id); }
       for (var k = 0; k < p.items.length; k++) {
         var it = p.items[k];
-        await fbAdd('journey', { trip_id: t._id, type: '일정', date: it[0], time: it[1], end_time: it[2], title: it[3], city: it[4], description: it[5], tag: it[6] || "", plan: p.id });
+        var row = { trip_id: t._id, type: '일정', date: it[0], time: it[1], end_time: it[2], title: it[3], city: it[4], description: it[5], tag: it[6] || '', plan: p.id };
+        var ll = (window.ATELIER_PLAN_COORDS || {})[it[0] + '|' + it[3]];
+        if (ll) { row.lat = ll[0]; row.lng = ll[1]; }
+        await fbAdd('journey', row);
       }
       var days = Math.round((new Date(p.trip.end_date) - new Date(p.trip.start_date)) / 864e5) + 1;
       var nightsAll = days - 1;

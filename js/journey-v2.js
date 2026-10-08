@@ -146,12 +146,48 @@
           '<p class="jv-stop-meta"><span>' + esc(ds) + '</span><b>' + (c.nights ? c.nights + 'N' : 'DAY') + '</b></p>' +
         '</div>';
       if (i < cs.length - 1) {
-        var lg = legOf(c, cs[i + 1]);
-        h += '<div class="jv-leg" aria-hidden="true"><span>' + (lg ? '≈ ' + (lg.h ? lg.h + 'H ' : '') + (lg.m ? lg.m + 'M' : '') + '<br>' + lg.km + ' KM' : '→') + '</span></div>';
+        h += legHtml(c, cs[i + 1]);
       }
     });
     box.innerHTML = h;
     try { if (typeof _syncStopStrip === 'function') _syncStopStrip(); } catch(e) {}
+  }
+
+  // ★ (2026-10-08) 도시 사이 이동 — 일정에 넣은 이동 항목(기차·비행·차)을 먼저 쓰고, 없으면 거리로 추정.
+  //   기차·차로 가는 긴 구간은 비행기로 가면 얼마나 걸리는지도 같이 (구글 항공편 검색 링크)
+  var LEG_MODE = { train:['🚆','기차'], flight:['✈','비행기'], car:['🚗','차'], bus:['🚌','버스'], boat:['⛴','배'], metro:['🚇','지하철'] };
+  function hmTxt(m) { m = Math.round(m / 5) * 5; return (Math.floor(m / 60) ? Math.floor(m / 60) + 'H ' : '') + (m % 60 ? (m % 60) + 'M' : ''); }
+  function minsOf(a, b) { if (!a || !b) return 0; var p = a.split(':'), q = b.split(':'); var d = (+q[0] * 60 + +q[1]) - (+p[0] * 60 + +p[1]); return d > 0 ? d : 0; }
+  function legHtml(a, b) {
+    var jd = (typeof journeyData !== 'undefined' && journeyData) ? journeyData : [];
+    var day = b.start_date || '';
+    var best = null, sum = {};
+    jd.forEach(function(d) {
+      var t = d.tag || d.move;
+      if (d.type !== '일정' || d.date !== day || !LEG_MODE[t] || t === 'metro' || !/→/.test(d.title || '')) return;
+      sum[t] = (sum[t] || 0) + minsOf(d.time, d.end_time); // 같은 날 같은 수단은 합산 (드라이브 날)
+    });
+    Object.keys(sum).forEach(function(t) { if (!best || sum[t] > best.m) best = { t: t, m: sum[t] }; });
+    var straight = (hasXY(a) && hasXY(b)) ? km(a, b) : 0;
+    var mode, mins, dist = straight ? Math.round(straight * 1.25) : 0;
+    if (best && best.m >= 30) { mode = best.t; mins = best.m; }
+    else if (straight) {
+      if (straight * 1.25 > 600) { mode = 'flight'; mins = straight / 750 * 60 + 35; dist = Math.round(straight); }
+      else { mode = 'car'; mins = straight * 1.25 / 80 * 60; }
+    }
+    if (!mode) return '<div class="jv-leg" aria-hidden="true"><span>→</span></div>';
+    var md = LEG_MODE[mode];
+    var alt = '';
+    if (mode !== 'flight' && straight > 280 && mins > 240) {
+      var fm = straight / 750 * 60 + 35;
+      var q = 'Flights from ' + (enOf(a.name) || a.name) + ' to ' + (enOf(b.name) || b.name) + (day ? ' on ' + day : '');
+      alt = '<a class="jv-leg-alt" href="https://www.google.com/travel/flights?q=' + encodeURIComponent(q) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="비행기로 가면 · 구글 항공편 검색">✈ 비행 ≈' + hmTxt(fm) + '</a>';
+    }
+    return '<div class="jv-leg is-' + mode + '"><span>' +
+      '<em>' + md[0] + ' ' + md[1] + '</em>' +
+      '<b>' + (best ? '' : '≈') + hmTxt(mins) + '</b>' +
+      (dist ? '<i>' + dist + ' KM</i>' : '') + alt +
+    '</span></div>';
   }
 
   // ─────────────── NEXT 바 (여행 중일 때만) ───────────────
@@ -275,8 +311,37 @@
       if (line) line.insertAdjacentHTML('afterbegin', '<span class="jv-pill"><i>' + t[0] + '</i>' + label + '</span>');
     });
   }
+  // ★ (2026-10-08) 플랜 일정 좌표 채우기 — plans-v2-coords.js 표(날짜|제목 → 좌표)로 지도 핀이 바로 뜨게.
+  //   화면용으로 먼저 채우고, 로그인 상태면 한 번만 Firestore에도 저장(다음부터는 표 없이도 핀).
+  var _coordSaved = {};
+  function fillPlanCoords() {
+    var T = window.ATELIER_PLAN_COORDS; if (!T || typeof journeyData === 'undefined' || !journeyData) return;
+    var loggedIn = false;
+    try { loggedIn = !!(window.firebase && firebase.auth && firebase.auth().currentUser); } catch(e) {}
+    journeyData.forEach(function(d) {
+      if (d.type !== '일정' || typeof d.lat === 'number') return;
+      var ll = T[d.date + '|' + d.title]; if (!ll) return;
+      d.lat = ll[0]; d.lng = ll[1]; window.__jvCoordFilled = true;
+      if (loggedIn && d._id && !_coordSaved[d._id] && typeof fbUpdate === 'function') {
+        _coordSaved[d._id] = 1;
+        fbUpdate('journey', d._id, { lat: ll[0], lng: ll[1] }).catch(function(e) { console.warn('[jv] coord save', e); });
+      }
+    });
+  }
+  window.jvFillPlanCoords = fillPlanCoords;
+  function wrapBefore(name, before) {
+    var orig = window[name];
+    if (typeof orig !== 'function' || orig.__jvb) return;
+    var w = function() { try { before(); } catch(e) {} return orig.apply(this, arguments); };
+    w.__jvb = true; w.__jv = orig.__jv; window[name] = w;
+  }
   function boot() {
-    wrap('renderWeekView', function() { decorateLog(); decorateSlots(); });
+    wrapBefore('renderWeekView', fillPlanCoords);
+    wrapBefore('renderDayPinsMap', fillPlanCoords);
+    wrap('renderWeekView', function() {
+      decorateLog(); decorateSlots();
+      if (window.__jvCoordFilled) { window.__jvCoordFilled = false; try { window.renderDayPinsMap && window.renderDayPinsMap(); } catch(e) {} }
+    });
     wrap('renderTripHeader', renderAll);
     wrap('renderCityCards', function() { renderRoute(); renderMast(); });
     wrap('updateTravelMiniSummary', renderMast);

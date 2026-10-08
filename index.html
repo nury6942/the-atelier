@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=367" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=368" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5634,6 +5634,15 @@
     .jv-leg { flex:0 0 78px; display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:70px; }
     .jv-leg::before { content:''; position:absolute; left:8px; right:8px; top:50%; border-top:1px dashed var(--jv-mute); }
     .jv-leg span { position:relative; background:#fff; font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--jv-sub); padding:2px 4px; text-align:center; line-height:1.35; }
+    /* ★ (2026-10-08) 이동수단 + 시간 + 거리 + 비행 대안 */
+    .jv-leg { flex-basis:104px !important; }
+    .jv-leg span { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; }
+    .jv-leg em { font-style:normal; font-family:'Pretendard','Noto Color Emoji',sans-serif; font-size:10.5px; font-weight:700; color:var(--jv-ink); letter-spacing:0; white-space:nowrap; }
+    .jv-leg b { font-family:'Manrope',sans-serif; font-size:13px; font-weight:800; color:var(--jv-ink); letter-spacing:-.01em; white-space:nowrap; }
+    .jv-leg i { font-style:normal; font-size:9.5px; color:var(--jv-mute); }
+    .jv-leg.is-flight b { color:var(--jv-accent); }
+    .jv-leg-alt { margin-top:3px; padding:1px 5px; border:1px solid var(--jv-accent); color:var(--jv-accent); font-size:9.5px; font-weight:700; white-space:nowrap; text-decoration:none; }
+    .jv-leg-alt:hover { background:var(--jv-accent); color:#fff; }
     .jv-empty { font-size:13px; color:var(--jv-mute); padding:24px 0; }
     .jv-now { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:18px; align-items:center; background:var(--jv-ink); color:#fff; padding:14px 18px; margin-top:26px; }
     .jv-now .jv-lbl { color:#c9b8f5; }
@@ -5718,6 +5727,32 @@
     .jv-sun { display:inline-flex; gap:10px; margin-left:12px; padding-left:12px; border-left:1px solid var(--jv-soft); font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; letter-spacing:.06em; color:var(--jv-sub); }
     .jv-sun b { font-family:'Manrope',sans-serif; font-weight:800; color:var(--jv-ink); font-variant-numeric:tabular-nums; letter-spacing:0; }
     .jv-sun-s b { color:#d6457a; }
+    /* ★ (2026-10-08 v3) 날짜 머리 정렬 — 번호 | (날짜·일출일몰 / 도시 + 나라) | 날씨 · 동선, 한 줄 기준선에 맞춤 */
+    #page-journey #journey-week-grid.wk4 .j-day-head.wk4-head { grid-template-columns:76px minmax(0,1fr) auto auto !important; grid-template-areas:"no eb eb eb" "no ti wx rt" "no dt dt dt" !important; column-gap:12px !important; row-gap:8px !important; align-items:center !important; padding:20px 16px 16px 20px !important; position:relative; }
+    #page-journey #journey-week-grid.wk4 .jv-dno { grid-area:no; align-self:end !important; justify-self:start; margin:0 !important; padding:0 !important; background:none !important; color:var(--jv-accent) !important; font-size:52px; line-height:.8; }
+    #page-journey #journey-week-grid.wk4 .is-current .jv-dno, #page-journey #journey-week-grid.wk4 .wk4-head:has(.is-today) .jv-dno { color:var(--jv-ink) !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-eyebrow { grid-area:eb; display:flex !important; align-items:center; gap:0; height:16px; margin:0 !important; padding:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-eyebrow .wk4-day-date { font-family:'Inter','Pretendard',sans-serif !important; font-size:11px !important; font-weight:700 !important; letter-spacing:.14em !important; color:var(--jv-sub) !important; }
+    #page-journey #journey-week-grid.wk4 .jv-sun { font-size:11px; letter-spacing:.04em; }
+    #page-journey #journey-week-grid.wk4 .jv-sun b { font-size:11.5px; }
+    #page-journey #journey-week-grid.wk4 .wk4-title { grid-area:ti; display:flex !important; align-items:baseline; gap:10px; margin:0 !important; font-size:24px !important; line-height:1 !important; font-weight:800 !important; color:var(--jv-ink) !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #page-journey #journey-week-grid.wk4 .wk4-title .jv-cty { order:2; display:inline-flex !important; margin:0 !important; font-size:11px !important; font-weight:600; letter-spacing:.06em; color:var(--jv-sub); }
+    #page-journey #journey-week-grid.wk4 .wk4-title .dlv-live { order:3; }
+    #page-journey #journey-week-grid.wk4 .wk4-wx-slot { grid-area:wx; align-self:center !important; justify-self:end; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-wx { height:28px; padding:0 10px !important; gap:6px; border-radius:0 !important; background:#fff !important; box-shadow:none !important; border:1px solid var(--jv-soft); font-family:'Inter','Pretendard',sans-serif; font-size:11px; color:var(--jv-sub); }
+    #page-journey #journey-week-grid.wk4 .wk4-wx b { font-family:'Manrope',sans-serif; font-size:13px; color:var(--jv-ink); }
+    #page-journey #journey-week-grid.wk4 .wk4-wx em { border-radius:0 !important; background:var(--jv-tint) !important; color:var(--jv-mute); font-size:9.5px; }
+    #page-journey #journey-week-grid.wk4 .wk4-route, #page-journey #journey-week-grid.wk4 .j-day-route-btn { grid-area:rt; position:static !important; align-self:center !important; justify-self:end; display:inline-flex; align-items:center; height:28px; margin:0 !important; padding:0 10px !important; border:1px solid var(--jv-ink) !important; border-radius:0 !important; background:#fff !important; color:var(--jv-ink) !important; font-family:'Inter','Pretendard',sans-serif; font-size:11px !important; font-weight:700 !important; opacity:1 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-route:hover { background:var(--jv-ink) !important; color:#fff !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-daytrip { grid-area:dt; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .j-night-warn { margin:10px 16px 0 20px !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot:not(.jv-mv)::before { content:none !important; }
+    @media (max-width:640px) {
+      #page-journey #journey-week-grid.wk4 .j-day-head.wk4-head { grid-template-columns:52px minmax(0,1fr) auto !important; grid-template-areas:"no eb eb" "no ti ti" "no wx rt" "dt dt dt" !important; padding-left:12px !important; }
+      #page-journey #journey-week-grid.wk4 .jv-dno { font-size:38px; }
+      #page-journey #journey-week-grid.wk4 .wk4-wx-slot { justify-self:start; }
+      #page-journey #journey-week-grid.wk4 .wk4-title { font-size:20px !important; }
+    }
     @media (max-width:640px) { #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { grid-template-columns:84px minmax(0,1fr); grid-template-areas:"time title" "time desc" "chips chips" "pre pre"; padding-left:12px !important; } #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-time { font-size:12px; } .jv-sun { margin-left:8px; padding-left:8px; } }
     /* ═══ ★ (2026-10-08) 예산 탭 — 일정 탭과 같은 결 (모서리 0, 검정 선, Manrope 큰 숫자, Inter 라벨, 보라 하나) ═══ */
     #page-finance { --jv-ink:#15161a; --jv-sub:#5f6168; --jv-mute:#9a9ca3; --jv-line:#15161a; --jv-soft:#e6e5e1; --jv-tint:#f6f5f2; --jv-accent:#6b38d4; }
@@ -5783,6 +5818,9 @@
     .flb-n em { flex-basis:100%; font-style:normal; font-size:10.5px; font-weight:700; color:#d97706; margin-top:3px; }
     .flb-hotel { min-width:0; }
     .flb-hotel p { margin:0; font-size:12.5px; color:#2a2e35; line-height:1.45; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .flb-est-clean { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:14px; padding:10px 14px; border:1px dashed #9a9ca3; font-size:12px; color:#5f6168; }
+    .flb-est-clean button { border:1px solid #15161a; background:#fff; padding:5px 12px; font-size:11.5px; font-weight:700; color:#15161a; cursor:pointer; border-radius:0; }
+    .flb-est-clean button:hover { background:#15161a; color:#fff; }
     .flb-est { display:block; margin-top:4px; font-size:10.5px; font-weight:600; color:#9a9ca3; }
     .flb-warn { display:inline-block; margin-top:4px; font-size:10px; font-weight:700; color:#e11d48; border:1px solid #e11d48; padding:1px 5px; cursor:help; }
     .flb-money { display:grid; grid-template-columns:auto 1fr; column-gap:8px; row-gap:2px; align-items:baseline; font-variant-numeric:tabular-nums; }
@@ -16146,7 +16184,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=367" defer></script>
+<script src="js/app-1-pages.js?v=368" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17032,15 +17070,16 @@
 <!-- Journey Hero 이미지 업로드 (P2) -->
 <script src="js/journey-hero.js?v=2" defer></script>
 <!-- Journey City (Stops) 이미지 업로드 (P5+) -->
-<script src="js/journey-city-images.js?v=2" defer></script>
+<script src="js/journey-city-images.js?v=3" defer></script>
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=6" defer></script>
+<script src="js/journey-v2.js?v=7" defer></script>
 <script src="js/plans-v2.js?v=1" defer></script>
-<script src="js/plan-apply.js?v=3" defer></script>
+<script src="js/plans-v2-coords.js?v=1" defer></script>
+<script src="js/plan-apply.js?v=4" defer></script>
 <script src="js/bookings-v2.js?v=2" defer></script>
 
 </body>

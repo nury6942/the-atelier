@@ -15434,6 +15434,7 @@
       else if (trip.budget.accom && trip.budget.days) perNightBudget = parseFloat(trip.budget.accom) / parseFloat(trip.budget.days);
     }
 
+    var _ldgEstIds = []; // ★ (2026-10-08) 예약 전 예상 숙소 목록 — '예상 숙소 지우기' 버튼용
     // 숙소 도시별 그룹화 (대소문자 / 공백 / 콤마 뒤 국가/주 정규화로 매칭 향상)
     // 예: "Frankfurt am Main, 독일" ↔ "Frankfurt am Main" 매칭 가능
     var normCity = function(s){
@@ -15500,6 +15501,7 @@
               unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
             } else {
               estimate += amt;
+              if (lo._id) _ldgEstIds.push({ id: lo._id, title: lo.title || '(이름없음)', city: lo.city || '', amt: amt });
             }
           }
         }
@@ -15668,8 +15670,31 @@
       '<div class="flb-bar"><i style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#e11d48' : '#6b38d4') + '"></i></div>' +
     '</div>';
 
+    window._ldgEstimates = _ldgEstIds;
+    if (_ldgEstIds.length) {
+      html += '<div class="flb-est-clean"><span>예약 전 예상 숙소 ' + _ldgEstIds.length + '개 · ₩' + Math.round(_ldgEstIds.reduce(function(s, x){ return s + x.amt; }, 0)).toLocaleString('ko-KR') + '</span>' +
+        '<button type="button" onclick="ldgDeleteEstimates()">예상 숙소 지우기</button></div>';
+    }
     bodyEl.innerHTML = html;
   }
+  // ★ (2026-10-08) 예약 안 한 '예상' 숙소 일괄 삭제 — 휴지통(trashBeforeDelete)에 보관됨
+  window.ldgDeleteEstimates = async function() {
+    var list = window._ldgEstimates || [];
+    if (!list.length) return;
+    if (!confirm('예약·결제 전인 예상 숙소 ' + list.length + '개를 지울까요? (휴지통에 보관돼요)\n\n' +
+      list.map(function(x){ return '· ' + x.city + ' — ' + x.title + ' (₩' + Math.round(x.amt).toLocaleString('ko-KR') + ')'; }).join('\n'))) return;
+    var ok = 0;
+    for (var i = 0; i < list.length; i++) {
+      try { await fbDelete('journey', list[i].id); ok++; } catch(e) { console.error('[ldg-est] delete', list[i], e); }
+    }
+    if (typeof journeyData !== 'undefined' && journeyData) {
+      var ids = list.map(function(x){ return x.id; });
+      for (var j = journeyData.length - 1; j >= 0; j--) if (ids.indexOf(journeyData[j]._id) >= 0) journeyData.splice(j, 1);
+    }
+    try { localStorage.removeItem('atelier_snapshot_journey'); } catch(e) {}
+    if (typeof showSyncToast === 'function') showSyncToast('예상 숙소 ' + ok + '개 삭제됨');
+    renderTripLodgingBreakdown();
+  };
 
   // ===== 예산 모달 =====
   function _parseAmt(str) { return parseFloat((str||'').replace(/,/g,'')) || 0; }
@@ -18690,6 +18715,7 @@
     var targets = (journeyData || []).filter(function(d) {
       if (typeof d.lat === 'number' && typeof d.lng === 'number') return false;
       if (d.type === '숙소') return !!(d.title || d.name || '').trim();
+      if (/^(train|metro|bus|car|walk|flight|boat|cable)$/.test(d.tag || d.move || '')) return false; // 이동 줄은 장소가 아님
       return (d.type === '일정' || d.type === '스팟') && (d.title || '').trim() && d.auto_sun == null;
     });
     var ok = 0, fail = [];
@@ -18739,6 +18765,9 @@
   // 제목 정리: 이모지·★주석★·(괄호)·대시 뒤 설명 제거 — 지오코더가 읽을 수 있는 형태로
   function _cleanPOITitle(t) {
     var s = String(t || '');
+    // ★ (2026-10-08) '뉘하운 (Nyhavn)'처럼 괄호 안 영어 이름이 있으면 그걸로 찾는다 (지오코더가 한글 이름을 못 읽음)
+    var _en = s.match(/\(([^()]*[A-Za-zÀ-ÿ][^()]*)\)\s*$/);
+    if (_en) return _en[1].split(/\s*·\s*/)[0].trim();
     s = s.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}️→←⇄]/gu, ' ');
     s = s.replace(/★[^★]*★/g, ' ');
     s = s.replace(/\([^)]*\)/g, ' ');

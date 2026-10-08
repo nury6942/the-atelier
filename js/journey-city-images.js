@@ -133,13 +133,56 @@
       }
       // Firestore 백그라운드
       _loadFB(k).then(function(remote) {
-        if (!remote) return;
+        if (!remote) { if (!_cache[k]) _restoreFromTrash(city, k); return; }
         if (_cache[k] === remote) return;
         _cache[k] = remote;
         _setLS(k, remote);
         _rerender();
       });
     });
+  };
+
+  // ★ (2026-10-08) 플랜 적용으로 도시 문서가 새로 만들어지면서 사진이 끊긴 문제 복구.
+  //   사진은 예전 도시 id로 남아 있으니, 휴지통(atelier_trash)에서 같은 여행·같은 이름의
+  //   옛 도시 id를 찾아 그 사진을 새 id로 복사한다. (최근 삭제된 것부터)
+  function _cityNorm(s) {
+    s = String(s || '').split(',')[0].trim().toLowerCase().replace(/\s+/g, '');
+    try { s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch(e) {}
+    return s;
+  }
+  function _cityNames(name) {
+    var out = [_cityNorm(name)];
+    try { if (typeof _cityEn === 'function') { var en = _cityEn(name); if (en) out.push(_cityNorm(en)); } } catch(e) {}
+    return out;
+  }
+  function _restoreFromTrash(city, k) {
+    if (!city || !city.name) return;
+    var trash = [];
+    try { trash = JSON.parse(localStorage.getItem('atelier_trash') || '[]'); } catch(e) {}
+    var mine = _cityNames(city.name);
+    var olds = trash.filter(function(t) {
+      if (t.collection !== 'trip_cities' || !t.data || t.id === k) return false;
+      if (city.trip_id && t.data.trip_id && t.data.trip_id !== city.trip_id) return false;
+      var theirs = _cityNames(t.data.name);
+      return theirs.some(function(n) { return n && mine.indexOf(n) >= 0; });
+    }).reverse();
+    var i = 0;
+    (function next() {
+      if (i >= olds.length) return;
+      var oid = olds[i++].id;
+      var ls = _getLS(oid);
+      (ls ? Promise.resolve(ls) : _loadFB(oid)).then(function(url) {
+        if (!url) return next();
+        if (_cache[k]) return;
+        _cache[k] = url; _setLS(k, url); _saveFB(k, url);
+        console.log('[city-img] 사진 복구', city.name, oid, '→', k);
+        _rerender();
+      });
+    })();
+  }
+  window.journeyCityImageRestore = function() {
+    var cities = (typeof citiesData !== 'undefined') ? citiesData : [];
+    cities.forEach(function(c, i) { var k = String(c._id || ('idx-' + i)); if (!window.journeyCityImageGet(k)) _restoreFromTrash(c, k); });
   };
 
   // 글로벌 paste 핸들러 — page-journey 활성 + stop 카드 호버 시
