@@ -212,11 +212,11 @@
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
   // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
-  //   (2026-10-08 v2) 흐린 파스텔은 안 보여서 → 채도 높은 형광 파스텔 (GTM 민트·노랑과 겹치지 않게)
-  var SOLID = { sky:["#7CC4FF","#06315e"], amber:["#FFC94D","#4f3300"], violet:["#C792FF","#33106b"], rose:["#FF8FAB","#5e0a22"],
-    lime:["#C3F35E","#294500"], cyan:["#5CE1FF","#003a4d"], orange:["#FFA35C","#552300"], indigo:["#9E8CFF","#1a0d66"],
-    pink:["#FF9ED4","#5e0b3c"], fuchsia:["#FF7FE3","#560049"], blue:["#7FA6FF","#0a2566"], teal:["#4FE3C6","#003b31"],
-    purple:["#D08BFF","#40106b"], slate:["#C3CAD6","#2b3340"], birthday:["#FFE14D","#4a3800"], deadline:["#FF3B00","#ffffff"] };
+  //   (2026-10-08 v3) 같은 계열 진한 글씨는 안 읽혀서 → 글씨는 검정, 배경은 GTM(민트·노랑)처럼 채도 높은 형광 파스텔
+  var SOLID = { sky:["#59C9FF","#0b0b0b"], amber:["#FFD24A","#0b0b0b"], violet:["#C77DFF","#0b0b0b"], rose:["#FF7D9E","#0b0b0b"],
+    lime:["#C5F74F","#0b0b0b"], cyan:["#5EE7FF","#0b0b0b"], orange:["#FFA552","#0b0b0b"], indigo:["#A47CFF","#0b0b0b"],
+    pink:["#FF96CF","#0b0b0b"], fuchsia:["#FF7ADB","#0b0b0b"], blue:["#6FA0FF","#0b0b0b"], teal:["#4DF0CF","#0b0b0b"],
+    purple:["#D47CFF","#0b0b0b"], slate:["#C7CED9","#0b0b0b"], birthday:["#FFE84A","#0b0b0b"], deadline:["#FF3B00","#ffffff"] };
   function solidStyle(ev) {
     var c = SOLID[(ev[3]||"").trim()] || SOLID.indigo;
     return "background:" + c[0] + ";color:" + c[1] + ";";
