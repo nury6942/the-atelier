@@ -142,7 +142,25 @@
     w.__jv = true;
     window[name] = w;
   }
+  // Daily Log 날짜 블록 머리에 큰 날짜 번호(03) — 시안식
+  function decorateLog() {
+    var grid = document.getElementById('journey-week-grid');
+    if (!grid || typeof getDayMap !== 'function') return;
+    var dm = getDayMap(), byDate = {};
+    dm.forEach(function(e) { byDate[e.date] = e.day; });
+    grid.querySelectorAll('.wk4-col[data-date]').forEach(function(col) {
+      var head = col.querySelector('.wk4-head');
+      if (!head || head.querySelector('.jv-dno')) return;
+      var n = byDate[col.getAttribute('data-date')];
+      if (n == null) return;
+      var s = document.createElement('span');
+      s.className = 'jv-dno';
+      s.textContent = String(n).padStart(2, '0');
+      head.insertBefore(s, head.firstChild);
+    });
+  }
   function boot() {
+    wrap('renderWeekView', decorateLog);
     wrap('renderTripHeader', renderAll);
     wrap('renderCityCards', function() { renderRoute(); renderMast(); });
     wrap('updateTravelMiniSummary', renderMast);

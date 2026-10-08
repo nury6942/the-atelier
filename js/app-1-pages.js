@@ -5475,7 +5475,7 @@
     var host = document.getElementById('dlv-single-body');
     var moved = false;
     if (single) {
-      if (wrap.parentNode !== sec) { sec.insertBefore(wrap, prog || grid); moved = true; }
+      if (wrap.parentNode !== sec) { sec.insertBefore(wrap, sec.querySelector('.jv-log') || prog || grid); moved = true; }
       wrap.classList.add('is-single');
       if (grid) grid.style.display = 'none';
       if (prog) prog.style.display = 'none';

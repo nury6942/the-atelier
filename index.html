@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=362" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=363" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5639,6 +5639,49 @@
     .jv-now .jv-next-sub { margin-top:3px; }
     .jv-next-in { font-family:'Manrope',sans-serif; font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; white-space:nowrap; }
     .jv-next-in small { font-size:12px; font-weight:600; color:#c9b8f5; margin-left:4px; }
+    /* ★ (2026-10-08) Daily Log 시안식 — 날짜 블록 세로 목록 + 오른쪽 고정 지도 */
+    .jv-log { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:32px; align-items:start; }
+    .jv-log-r { position:sticky; top:72px; }
+    .jv-log-r:empty, .jv-log-r:not(:has(#dlv-wrap)) { display:none; }
+    .jv-log:not(:has(#dlv-wrap)) { grid-template-columns:minmax(0,1fr); }
+    .jv-log-r #daylog-map { height:560px !important; }
+    @media (max-width:1100px) { .jv-log { grid-template-columns:minmax(0,1fr); } .jv-log-r { position:static; } }
+    #page-journey #journey-week-grid.wk4 { display:block !important; gap:0; }
+    #page-journey #journey-week-grid.wk4 .j-day-card.wk4-col { display:block; border:0 !important; border-top:1px solid var(--jv-line) !important; padding:0 !important; margin:0 0 26px; background:none !important; opacity:1; box-shadow:none !important; }
+    #page-journey #journey-week-grid.wk4 .j-day-card.wk4-past { opacity:.6; }
+    #page-journey #journey-week-grid.wk4 .j-day-head.wk4-head { display:grid !important; grid-template-columns:72px minmax(0,1fr) auto; grid-template-areas:"no eb wx" "no ti wx" "no dt rt"; column-gap:14px; row-gap:2px; align-items:end; text-align:left !important; padding:14px 0 12px !important; margin:0 !important; border-bottom:1px solid var(--jv-soft); }
+    .jv-dno { grid-area:no; align-self:end; font-family:'Manrope',sans-serif; font-size:46px; font-weight:800; line-height:.85; letter-spacing:-.04em; color:var(--jv-accent); font-variant-numeric:tabular-nums; }
+    #page-journey #journey-week-grid.wk4 .is-current .jv-dno { color:#fff; background:var(--jv-accent); padding:6px 6px 4px; justify-self:start; }
+    #page-journey #journey-week-grid.wk4 .wk4-eyebrow { grid-area:eb; justify-content:flex-start !important; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-eyebrow .wk4-day-badge { display:none; }
+    #page-journey #journey-week-grid.wk4 .wk4-eyebrow .wk4-day-date { font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; letter-spacing:.16em; color:var(--jv-sub); }
+    #page-journey #journey-week-grid.wk4 .wk4-title { grid-area:ti; text-align:left !important; padding:0 !important; font-family:'Manrope','Pretendard',sans-serif; font-size:18px; font-weight:800; letter-spacing:-.01em; color:var(--jv-ink); }
+    #page-journey #journey-week-grid.wk4 .wk4-daytrip { grid-area:dt; margin:2px 0 0; }
+    #page-journey #journey-week-grid.wk4 .wk4-wx-slot { grid-area:wx; justify-self:end; align-self:end; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-route { grid-area:rt; position:static !important; justify-self:end; border:1px solid var(--jv-line); background:#fff; padding:3px 8px; font-size:11px; }
+    #page-journey #journey-week-grid.wk4 .j-night-warn { text-align:left; margin:8px 0 0; padding:6px 10px; border:1px dashed var(--jv-accent); color:var(--jv-accent); background:none; }
+    #page-journey #journey-week-grid.wk4 .j-day-timeline { padding:0 !important; margin:0 !important; border:0 !important; }
+    #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { display:grid !important; grid-template-columns:72px minmax(0,1fr) auto; grid-template-areas:"time title chips" "time desc chips" "time pre pre"; column-gap:14px; padding:12px 0 !important; margin:0 !important; border:0 !important; border-bottom:1px solid var(--jv-soft) !important; background:none !important; box-shadow:none !important; cursor:pointer; }
+    #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot:hover { background:var(--jv-tint) !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-line { grid-area:title; display:flex; gap:6px; align-items:flex-start; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-slot-title { margin:0; font-size:14.5px; font-weight:700; line-height:1.4; color:var(--jv-ink); }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-chips { grid-area:chips; display:flex; flex-direction:column; align-items:flex-end; gap:4px; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-chip { font-family:'Inter','Pretendard',sans-serif; font-size:10px; font-weight:700; letter-spacing:.06em; padding:2px 6px; border:1px solid currentColor; background:#fff !important; white-space:nowrap; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-sub-time { grid-area:time; margin:0 !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-time { font-family:'Manrope',sans-serif; font-size:13.5px; font-weight:700; color:var(--jv-ink); font-variant-numeric:tabular-nums; white-space:normal; line-height:1.3; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-sub-desc { grid-area:desc; margin:3px 0 0 !important; font-size:12.5px; color:var(--jv-sub); line-height:1.55; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-prebook { grid-area:pre; margin:4px 0 0; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-hl { background:none !important; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.is-reservation .wk4-slot-title { box-shadow:inset 0 -6px 0 #f7e3f0; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.is-pinned .wk4-slot-title { box-shadow:inset 0 -6px 0 #dcf4ee; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot.wk4-now { outline:2px solid var(--jv-accent); outline-offset:-2px; }
+    #page-journey #journey-week-grid.wk4 .wk4-travel { padding:4px 0 4px 86px; font-size:11px; color:var(--jv-mute); border-bottom:1px solid var(--jv-soft); background:repeating-linear-gradient(90deg,transparent 0 6px,var(--jv-tint) 6px 7px); }
+    #page-journey #journey-week-grid.wk4 .j-slot-empty { padding:14px 0 14px 86px; font-size:12.5px; color:var(--jv-mute); }
+    #page-journey #journey-week-grid.wk4 .j-day-add { margin:10px 0 0; padding:0; }
+    #page-journey #journey-week-grid.wk4 .j-day-add-btn { width:100%; border:1px dashed var(--jv-mute) !important; background:none !important; padding:10px !important; font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.14em; color:var(--jv-sub); }
+    #page-journey #journey-week-grid.wk4 .j-day-add-btn:hover { border-color:var(--jv-ink) !important; color:var(--jv-ink); }
+    #page-journey #journey-week-grid.wk4 .j-day-panels { margin:8px 0 0; }
+    #page-journey #journey-week-view .j-section-head { flex-wrap:wrap; row-gap:10px; }
     /* Daily Log 머리·지도 — 같은 결로 */
     #page-journey #journey-week-view .j-section-head { border-bottom:1px solid var(--jv-line); padding-bottom:12px; }
     #page-journey #journey-week-view .j-h2 { font-family:'Manrope','Pretendard',sans-serif; font-size:26px; font-weight:800; letter-spacing:-.02em; }
@@ -5696,8 +5739,7 @@
     .wbc-grid.week .wbc-cd { min-height:420px; }
     .wbc-grid.month .wbc-cd { min-height:118px; }
     .wbc-cd:hover { background:#fafbfc; }
-    .wbc-cd.is-sun, .wbc-cd.is-hol { background:#fdf3f5; }
-    .wbc-cd.is-sat { background:#f3f7fd; }
+    .wbc-cd.is-hol { background:#fdf3f5; } /* ★ (2026-10-08) 토·일 배경색 삭제 — 숫자 색(빨강/파랑)만 */
     .wbc-cd.is-sel { background:#f6f8fc; }
     .wbc-cd.is-sel::before { content:''; position:absolute; left:-1px; right:0; top:-1px; height:3px; background:var(--blue); z-index:6; }
     .wbc-cd.is-drop { outline:2px dashed var(--blue); outline-offset:-2px; }
@@ -11438,8 +11480,8 @@
         <!-- 여행 중일 때만: 오늘 다음 일정 -->
         <div id="trv-next" class="jv-now" role="note" style="display:none"></div>
 
-        <!-- 트립 노트 -->
-        <section class="mb-8">
+        <!-- 트립 노트 — ★ (2026-10-08) 사용자 요청으로 화면에서 뺌 (데이터는 그대로) -->
+        <section class="mb-8" id="trv-notes" style="display:none">
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between cursor-pointer" onclick="toggleTripNotes()">
               <div class="flex items-center gap-2">
@@ -11469,7 +11511,7 @@
         <!-- ★ (2026-07-23) Day-Pins 지도: 일자별 색 핀 + 저장소 회색 핀 — 섹션 밖으로 이동해 모바일에서도 표시 (Wanderlog 이식 2단계) -->
         <!-- ★ (2026-07-23) dlv: Daily Log Single/4-Day 뷰 전환 (Stitch 이식) — Single 모드(데스크탑)에선
              이 래퍼가 #journey-week-view 헤더 아래로 이동해 지도(62%)+하루 타임라인(38%) 2열이 된다 -->
-        <div id="dlv-anchor" style="display:none"></div>
+        <!-- (dlv-anchor는 Daily Log 오른쪽 칸으로 옮김) -->
         <div id="dlv-wrap">
           <div id="dlv-left" class="min-w-0">
             <div id="daylog-map-wrap" style="display:none">
@@ -11513,9 +11555,15 @@
               <span id="journey-week-range" class="j-week-nav-range">—</span>
             </div>
           </div>
-          <div id="dlv-progress" style="display:none"></div>
-          <div id="journey-week-grid" class="j-daylog-stack wk4">
-            <div class="j-stop-empty">도시를 추가하면 일차가 자동 생성돼!</div>
+          <!-- ★ (2026-10-08) 시안식 Daily Log: 왼쪽 날짜 목록 | 오른쪽 지도 고정 -->
+          <div class="jv-log">
+            <div class="jv-log-l">
+              <div id="dlv-progress" style="display:none"></div>
+              <div id="journey-week-grid" class="j-daylog-stack wk4">
+                <div class="j-stop-empty">도시를 추가하면 일차가 자동 생성돼!</div>
+              </div>
+            </div>
+            <div class="jv-log-r"><div id="dlv-anchor" style="display:none"></div></div>
           </div>
         </section>
 
@@ -15846,7 +15894,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=362" defer></script>
+<script src="js/app-1-pages.js?v=363" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -16711,7 +16759,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=15" defer></script>
+<script src="js/cal-wb.js?v=16" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
@@ -16738,7 +16786,7 @@
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=1" defer></script>
+<script src="js/journey-v2.js?v=2" defer></script>
 
 </body>
 </html>

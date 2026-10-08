@@ -1,3 +1,9 @@
+## 2026-10-08 (윈도우) — 캘린더 A안 + 일정 탭 Daily Log 시안식
+
+- 캘린더: 일정 색 A안(여린 바탕 + 왼쪽 3px 색띠 + 검정 글씨, 기간 바는 첫 칸에만 띠). 토·일 칸 배경색 삭제(공휴일만 유지).
+- 일정 탭: 트립 노트 화면에서 숨김(#trv-notes). Daily Log = 왼쪽 날짜 블록 세로 목록 + 오른쪽 지도 고정(.jv-log, #dlv-anchor를 오른쪽 칸으로 옮김). 4-Day 렌더(편집 기능)는 그대로, CSS로 시안 모양(시간 열·제목·설명·네모 칩·점선 추가 버튼). 날짜 번호 큰 보라 숫자(.jv-dno, renderWeekView 감싸서 삽입), 선택된 날은 보라 상자.
+- _dlvApplyLayout Single 분기: 지도 삽입 위치를 .jv-log 앞으로(구조 변경 대응).
+
 ## 2026-10-08 (윈도우) — 일정 탭 v2 적용 (시안 v1)
 
 - 새 파일 `js/journey-v2.js`: renderTripHeader / renderCityCards / updateTravelMiniSummary 를 감싸서 표지·Route·NEXT 추가 렌더.

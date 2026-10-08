@@ -212,14 +212,16 @@
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
   // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
-  //   (2026-10-08 v3) 같은 계열 진한 글씨는 안 읽혀서 → 글씨는 검정, 배경은 GTM(민트·노랑)처럼 채도 높은 형광 파스텔
-  var SOLID = { sky:["#59C9FF","#0b0b0b"], amber:["#FFD24A","#0b0b0b"], violet:["#C77DFF","#0b0b0b"], rose:["#FF7D9E","#0b0b0b"],
-    lime:["#C5F74F","#0b0b0b"], cyan:["#5EE7FF","#0b0b0b"], orange:["#FFA552","#0b0b0b"], indigo:["#A47CFF","#0b0b0b"],
-    pink:["#FF96CF","#0b0b0b"], fuchsia:["#FF7ADB","#0b0b0b"], blue:["#6FA0FF","#0b0b0b"], teal:["#4DF0CF","#0b0b0b"],
-    purple:["#D47CFF","#0b0b0b"], slate:["#C7CED9","#0b0b0b"], birthday:["#FFE84A","#0b0b0b"], deadline:["#FF3B00","#ffffff"] };
-  function solidStyle(ev) {
-    var c = SOLID[(ev[3]||"").trim()] || SOLID.indigo;
-    return "background:" + c[0] + ";color:" + c[1] + ";";
+  //   (2026-10-08 v4 · A안) 여린 바탕 + 왼쪽 3px 색띠 + 검정 글씨 — 개인 일정은 조용히, GTM만 튀게
+  var SOLID = { sky:["#E4EEFF","#3D7BE0"], blue:["#E3ECFF","#2F63D6"], indigo:["#ECE6FF","#7B5CE0"], violet:["#EFE4FF","#8F4FE0"],
+    purple:["#F2E3FF","#A24BD8"], fuchsia:["#F7E3F0","#D9479B"], pink:["#FCE4EF","#E0528F"], rose:["#FBE5E8","#D33A57"],
+    cyan:["#DDF3F8","#1C9AB7"], teal:["#DCF4EE","#14957A"], lime:["#EBF5D6","#6A9E1F"], amber:["#FBF0D6","#C98A0B"],
+    orange:["#FDEBDD","#E06A1B"], slate:["#EDEFF3","#6B7484"], birthday:["#FFF4C2","#D4A900"], deadline:null };
+  function solidStyle(ev, noBar) {
+    var k = (ev[3]||"").trim();
+    if (k === "deadline") return "background:#FF3B00;color:#fff;";
+    var c = SOLID[k] || SOLID.indigo;
+    return "background:" + c[0] + ";color:#0b0b0b;" + (noBar ? "" : "box-shadow:inset 3px 0 0 " + c[1] + ";");
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
@@ -368,7 +370,7 @@
     var s = (ev[0]||'').toString(), e = (ev[5]||'').toString();
     var head = ds === s || dow === 0, tail = ds === e || dow === 6;
     var ref = idxRef(ev);
-    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev) + '" draggable="true" ' +
+    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head) + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? esc(ev[1]) : '&nbsp;') + '</span>';
