@@ -5022,7 +5022,10 @@
       }
       var liveBadge = isToday ? '<span class="dlv-live">LIVE</span>' : '';
       var titleCls = 'wk4-title' + (isToday ? ' is-today' : (isPastCol ? ' is-past' : ''));
-      var _photo = _cityPhotoFor(cityName);
+      // ★ (2026-10-08) 날짜 머리 배경 사진은 끈다 — Unsplash 로 모든 도시가 채워지면서
+      //   Daily Log 날짜마다 사진이 깔려 지저분해졌다 (누리: "여긴 사진 채우지마").
+      //   도시 사진은 Route 카드에서만 쓴다. 되살리려면 아래 null 을 _cityPhotoFor(cityName) 로.
+      var _photo = null;
       var dayHeadHtml =
         '<div class="j-day-head wk4-head' + (_photo ? ' has-photo' : '') + '">' +
           (_photo ? '<div class="wk4-photo" style="background-image:url(&quot;' + String(_photo).replace(/"/g, '%22') + '&quot;)"></div>' : '') +
