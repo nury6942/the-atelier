@@ -170,6 +170,7 @@
     return (journeyData || []).filter(function(d) {
       if (d.trip_id !== t._id || d.type !== '일정') return false;
       if (d.plan === p.id) return false; // 이번 플랜이 넣은 건 절대 안 건드림
+      if (d.type !== '일정') return false;
       if (d.plan && d.plan !== p.id) return true;
       return !!keys[d.date + '|' + d.title];
     });
@@ -236,7 +237,9 @@
       '· 도시(Route): 지금 ' + mine.length + '곳 → 새 ' + p.cities.length + '곳 (' + p.cities.map(function(c){ return c[0]; }).join(' → ') + ')\n' +
       '   같은 이름 도시는 그대로 고쳐 써서 사진이 유지돼요 · 빠지는 도시는 휴지통에 보관\n' +
       '· 일정: ' + p.items.length + '개 추가' + (olds.length ? ' · 예전 플랜 일정 ' + olds.length + '개는 휴지통으로' : '') + ' (직접 넣은 일정은 그대로)\n' +
-      '· 예산: ' + p.summary + '\n\n진행할까요?';
+      '· 예산: ' + p.summary +
+      (p.bookings && p.bookings.length ? '\n· 예약 탭에 항공편 ' + p.bookings.length + '개 추가: ' + p.bookings.map(function(b){ return b.date.slice(5) + ' ' + b.city + ' ' + b.description; }).join(' / ') : '') +
+      '\n\n진행할까요?';
     if (!confirm(msg)) return;
     var btn = document.getElementById('jv-plan-apply');
     if (btn) { btn.disabled = true; btn.textContent = '넣는 중…'; }
@@ -262,6 +265,15 @@
         var ll = (window.ATELIER_PLAN_COORDS || {})[it[0] + '|' + it[3]];
         if (ll) { row.lat = ll[0]; row.lng = ll[1]; }
         await fbAdd('journey', row);
+      }
+      // ★ (2026-10-08) 플랜에 딸린 예약(항공편 등) — 같은 날짜·편명이 이미 있으면 건너뜀
+      for (var bi = 0; bi < (p.bookings || []).length; bi++) {
+        var bk = p.bookings[bi];
+        var dup = (journeyData || []).some(function(d){ return d.trip_id === t._id && d.type === bk.type && d.date === bk.date && String(d.city || '') === String(bk.city || ''); });
+        if (dup) continue;
+        var row2 = { trip_id: t._id, plan: p.id };
+        for (var kk in bk) row2[kk] = bk[kk];
+        await fbAdd('journey', row2);
       }
       var days = Math.round((new Date(p.trip.end_date) - new Date(p.trip.start_date)) / 864e5) + 1;
       var nightsAll = days - 1;

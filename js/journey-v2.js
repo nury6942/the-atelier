@@ -329,7 +329,7 @@
     try { loggedIn = !!(window.firebase && firebase.auth && firebase.auth().currentUser); } catch(e) {}
     journeyData.forEach(function(d) {
       if (d.type !== '일정' || typeof d.lat === 'number') return;
-      var ll = T[d.date + '|' + d.title]; if (!ll) return;
+      var ll = T[d.date + '|' + d.title] || titleCoord(T, d.title); if (!ll) return;
       d.lat = ll[0]; d.lng = ll[1]; window.__jvCoordFilled = true;
       if (loggedIn && d._id && !_coordSaved[d._id] && typeof fbUpdate === 'function') {
         _coordSaved[d._id] = 1;
@@ -338,6 +338,11 @@
     });
   }
   window.jvFillPlanCoords = fillPlanCoords;
+  var _byTitle = null;
+  function titleCoord(T, title) {
+    if (!_byTitle) { _byTitle = {}; Object.keys(T).forEach(function(k) { var t = k.slice(11); if (!_byTitle[t]) _byTitle[t] = T[k]; }); }
+    return _byTitle[title] || null;
+  }
   function wrapBefore(name, before) {
     var orig = window[name];
     if (typeof orig !== 'function' || orig.__jvb) return;
