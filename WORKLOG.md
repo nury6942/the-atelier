@@ -10,7 +10,7 @@
 **새 탭 📘 PLAYBOOK** — 나라별 판정 · 지원서 문화 · 면접 과정 · 공고 요구 스킬 vs 누리 · 2년 타임라인. 기존 클래스 그대로, 표 스타일만 블롭 안 `<style>` 로.
 
 - 같은 날 추가: 모든 외화에 **원화 병기**(10/8 환율 EUR 1,499 · CAD 940 · AUD 932), 학위 인정 용어 설명(anabin·ZAB·WES ECA·VETASSESS), **영어 = IELTS General 하나(L8 R7 W7 S7)**, 06 포트폴리오 전략 · 07 비용 · 08 영주권 점수 · 09 비자 루트 상세, BOARDS 에 🎨 Portfolio Reference
-- 생성 스크립트는 세션 스크래치(gen.py + jobs.json)였음 — 다음 갱신 때는 RTDB 블롭을 받아 고치거나 새로 생성
+- 생성 소스는 **리포 밖** `~/Documents/job-hunt-src/` (gen.py + jobs.json) — 데이터를 공개 저장소에 안 두는 설계라서. 갱신: jobs.json 수정 → `python3 gen.py` → `firebase database:set /jobHuntData new.json`
 
 **뒤집힌 전제 (기록할 가치)**
 - 호주: Fashion Designer 232311 이 **CSOL 에 없다** (법령 원문 확인) → 482·186 스폰서 사실상 불가. 집계 사이트는 옛 기준으로 '가능'이라 표시해서 헷갈림
