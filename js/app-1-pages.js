@@ -16631,7 +16631,7 @@
     var tabs = [
       ['schedule', 'route', '일정'],
       ['places', 'push_pin', '스팟'],
-      ['flight', 'flight', '항공'],
+      // ['flight', 'flight', '항공'],  // ★ (2026-10-08) 항공 탭 삭제 — 항공편은 '예약' 탭 Flights에
       ['records', 'receipt_long', '예약'],
       ['budget', 'payments', '예산'],
       ['checklist', 'checklist', '체크리스트'],
