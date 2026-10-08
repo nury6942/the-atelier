@@ -212,10 +212,11 @@
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
   // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
-  var SOLID = { sky:["#cfe3ff","#1e4fa3"], amber:["#ffe2a8","#7a4a00"], violet:["#e3d6ff","#4b2aa3"], rose:["#ffd0da","#9b1238"],
-    lime:["#d9f2b4","#3b6a0b"], cyan:["#c4eef5","#0b5f72"], orange:["#ffd8bf","#9a3d06"], indigo:["#d8dbff","#2f35a0"],
-    pink:["#ffd3ea","#9d1a5e"], fuchsia:["#f6d1fb","#86178f"], blue:["#d3e1ff","#1d4ed8"], teal:["#c7efe9","#0f6157"],
-    purple:["#ead6ff","#6b21a8"], slate:["#e2e6ee","#374151"], birthday:["#fde68a","#5c4300"], deadline:["#FF3B00","#ffffff"] };
+  //   (2026-10-08 v2) 흐린 파스텔은 안 보여서 → 채도 높은 형광 파스텔 (GTM 민트·노랑과 겹치지 않게)
+  var SOLID = { sky:["#7CC4FF","#06315e"], amber:["#FFC94D","#4f3300"], violet:["#C792FF","#33106b"], rose:["#FF8FAB","#5e0a22"],
+    lime:["#C3F35E","#294500"], cyan:["#5CE1FF","#003a4d"], orange:["#FFA35C","#552300"], indigo:["#9E8CFF","#1a0d66"],
+    pink:["#FF9ED4","#5e0b3c"], fuchsia:["#FF7FE3","#560049"], blue:["#7FA6FF","#0a2566"], teal:["#4FE3C6","#003b31"],
+    purple:["#D08BFF","#40106b"], slate:["#C3CAD6","#2b3340"], birthday:["#FFE14D","#4a3800"], deadline:["#FF3B00","#ffffff"] };
   function solidStyle(ev) {
     var c = SOLID[(ev[3]||"").trim()] || SOLID.indigo;
     return "background:" + c[0] + ";color:" + c[1] + ";";
@@ -405,7 +406,8 @@
       var tl = normLabel(r[1]);
       if (partLabels.some(function(l){ return tl.indexOf(l) >= 0; })) return;
       if (rowCoveredByAtt(r, tl)) return;
-      if (hasPortalLeave && (r[2] === '연차' || /^(연차|휴가)/.test(tl))) return;
+      // 제목이 연차·휴가·반차인 손 입력만 숨김 (카테고리로 거르면 연차 카테고리로 넣은 "여행 - 차단"까지 사라졌음)
+      if (hasPortalLeave && /^(연차|휴가|반차)/.test(tl)) return;
       if (_ivIsInterval(r)) { ivs.push(r); return; }
       var s = (r[0]||'').toString(), e = (r[5]||'').toString();
       (e && e > s ? ranges : singles).push(r);
