@@ -2403,6 +2403,16 @@
     '오타와':       'Ottawa',
     '알곤퀸':       'Algonquin',
     '토론토':       'Toronto',
+    // Christmas 2027 / Spain·Ireland 2028 (★ 2026-10-08 플랜)
+    '스트라스부르': 'Strasbourg',
+    '콜마르':       'Colmar',
+    '브뤼헤':       'Bruges',
+    '겐트':         'Ghent',
+    '브뤼셀':       'Brussels',
+    '세비야':       'Seville',
+    '론다':         'Ronda',
+    '그라나다':     'Granada',
+    '둘린':         'Doolin',
     // Norway 2027 (★ 2026-10-08 북유럽 플랜)
     '오슬로':       'Oslo',
     '베르겐':       'Bergen',
