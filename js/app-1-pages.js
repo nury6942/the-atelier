@@ -14704,7 +14704,60 @@
   window.getFxEurKrw = getFxEurKrw;
   window.fmtKrwFromEur = fmtKrwFromEur;
 
+  // ★ (2026-10-08) 여행 나라 통화 환율 — 캐나다면 CA$, 북유럽이면 DKK·SEK·NOK
+  var _FX_CC_CUR = { DK:'DKK', SE:'SEK', NO:'NOK', IS:'ISK', GB:'GBP', CH:'CHF', CZ:'CZK', PL:'PLN', HU:'HUF', CA:'CAD', US:'USD', JP:'JPY', AU:'AUD', NZ:'NZD', TH:'THB', VN:'VND', TW:'TWD', HK:'HKD', SG:'SGD', TR:'TRY', MX:'MXN' };
+  var _FX_SYM = { EUR:'€1', USD:'US$1', CAD:'CA$1', GBP:'£1', JPY:'¥100', DKK:'1 DKK', SEK:'1 SEK', NOK:'1 NOK', CHF:'1 CHF', CZK:'1 CZK', AUD:'A$1', NZD:'NZ$1' };
+  var _fxRates = {};
+  function getFxKrw(cur, cb) {
+    if (cur === 'EUR') return getFxEurKrw(cb);
+    if (_fxRates[cur]) return cb(_fxRates[cur]);
+    var key = 'atelier_fx_' + cur.toLowerCase() + '_krw';
+    try { var c = JSON.parse(localStorage.getItem(key)); if (c && c.rate && Date.now() - c.at < 43200000) { _fxRates[cur] = c.rate; return cb(c.rate); } } catch(e) {}
+    fxFetchKRW(cur).then(function(rate) {
+      if (rate) { _fxRates[cur] = rate; try { localStorage.setItem(key, JSON.stringify({ rate: rate, at: Date.now() })); } catch(e) {} }
+      else { try { var o = JSON.parse(localStorage.getItem(key)); if (o && o.rate) rate = o.rate; } catch(e) {} }
+      cb(rate || null);
+    });
+  }
+  window.getFxKrw = getFxKrw;
+  async function _finTripCurrencies() {
+    var trip = (typeof financeTrips !== 'undefined' && typeof currentFinanceTrip !== 'undefined' && currentFinanceTrip !== 'all') ? financeTrips.find(function(t){ return t.name === currentFinanceTrip; }) : null;
+    if (!trip) return ['EUR'];
+    var cities = [];
+    try {
+      if (typeof citiesData !== 'undefined' && citiesData && citiesData.length && currentTripId === trip._id) cities = citiesData.slice();
+      else cities = (await fbRead('trip_cities')).filter(function(c){ return c.trip_id === trip._id; });
+    } catch(e) {}
+    cities.sort(function(a, b){ return String(a.start_date || '').localeCompare(String(b.start_date || '')); });
+    var out = [];
+    cities.forEach(function(c) {
+      var cc = window.cityCountry ? (window.cityCountry(c.name) || {}).cc : '';
+      var cur = cc ? (_FX_CC_CUR[cc] || 'EUR') : '';
+      if (cur && out.indexOf(cur) < 0) out.push(cur);
+    });
+    if (!out.length) {
+      var nm = trip.name || '';
+      if (/캐나다/.test(nm)) out.push('CAD'); else if (/미국|뉴욕/.test(nm)) out.push('USD'); else if (/일본/.test(nm)) out.push('JPY'); else if (/영국|런던/.test(nm)) out.push('GBP'); else out.push('EUR');
+    }
+    return out.slice(0, 3);
+  }
   function updateFinanceFxChip() {
+    var el = document.getElementById('finance-fx-chip');
+    if (!el) return;
+    _finTripCurrencies().then(function(curs) {
+      var parts = [], left = curs.length;
+      el.style.fontSize = curs.length > 1 ? '15px' : '24px';
+      curs.forEach(function(cur, i) {
+        getFxKrw(cur, function(rate) {
+          var mul = cur === 'JPY' ? 100 : 1;
+          parts[i] = rate ? (_FX_SYM[cur] || ('1 ' + cur)) + ' = ₩' + Math.round(rate * mul).toLocaleString('ko-KR') : cur + ' —';
+          if (--left === 0) el.innerHTML = parts.join('<span style="color:#cbd5e1;margin:0 8px">·</span>') +
+            '<span style="font-size:11px;font-weight:600;color:#94a3b8"> · 오늘</span>';
+        });
+      });
+    });
+  }
+  function _updateFinanceFxChipEurOnly() {
     var el = document.getElementById('finance-fx-chip');
     if (!el) return;
     getFxEurKrw(function(rate) {
@@ -15404,6 +15457,8 @@
       var dateRange = '';
       var minDate = null, maxDate = null;
       var unlinked = []; // ★ finance 장부에 연결 안 된 숙소 (왼쪽 예산 카드와 불일치 원인)
+      var estimate = 0;  // ★ (2026-10-08) 예약·결제 전 숙소의 예상 금액 — 지출로 안 셈
+      var stale = 0;     // 여행 기간 밖 날짜로 들어간 숙소 수
       items.forEach(function(lo) {
         var ci = lo.date ? new Date(lo.date + 'T00:00:00') : null;
         var co = lo.checkout_date ? new Date(lo.checkout_date + 'T00:00:00') : null;
@@ -15431,13 +15486,21 @@
           return (typeof finRowAmt === 'function') ? finRowAmt(r, _todayStr) : (parseFloat(r[4]) || 0);
         };
         var fin = lo.finance_id ? financeData.find(function(r){ return r[7] === lo.finance_id; }) : null;
+        if (lo.date && trip.start_date && trip.end_date && (lo.date < trip.start_date || lo.date > trip.end_date)) stale++;
         if (fin) {
           totalSpent += _amtOf(fin);
         } else {
           var amt = parseFloat(String(lo.amount||'').replace(/[^0-9.]/g,''));
           if (!isNaN(amt) && amt > 0) {
-            totalSpent += amt;
-            unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
+            // ★ (2026-10-08) 예약·결제 흔적이 없으면 '예상'으로만 — 예약도 안 했는데 '초과'가 뜨던 문제
+            var _ps = (typeof _trvPayStatus === 'function') ? _trvPayStatus(lo) : (lo.payment_status || '');
+            var booked = /완료|예정|현장/.test(_ps) || !!(lo.pnr || lo.booking_ref || lo.confirmation || lo.booked);
+            if (booked) {
+              totalSpent += amt;
+              unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
+            } else {
+              estimate += amt;
+            }
           }
         }
         var finOn = lo.finance_onsite_id ? financeData.find(function(r){ return r[7] === lo.finance_onsite_id; }) : null;
@@ -15472,6 +15535,8 @@
         dateRange: dateRange,
         startISO: startISO, // ★ 날짜순 정렬 키 (가장 이른 체크인)
         unlinked: unlinked, // ★ finance 미연결 숙소 목록 (배지로 경고)
+        estimate: estimate,
+        stale: stale,
         source: source // 'itinerary' | 'orphan'
       };
     }
@@ -15488,6 +15553,19 @@
       var itin = itineraryByKey[key];
       var plannedNights = itin ? (parseInt(itin.nights, 10) || 0) : 0;
       return buildRow(grp.display, grp.items, plannedNights, itin ? 'itinerary' : 'orphan');
+    });
+    // ★ (2026-10-08) 숙소가 아직 없는 일정 도시도 보여줌 — 예산만 잡히고 지출 0
+    tripCities.forEach(function(c) {
+      var key = normCity(c.name);
+      if (byCity[key]) return;
+      byCity[key] = { display: c.name, items: [] };
+      var n = parseInt(c.nights, 10);
+      if (!(n > 0) && c.start_date && c.end_date) n = Math.round((new Date(c.end_date) - new Date(c.start_date)) / 864e5);
+      if (!(n > 0)) return;
+      var row = buildRow(c.name, [], n, 'itinerary');
+      row.dateRange = (c.start_date || '') + (c.end_date ? ' ~ ' + c.end_date : '');
+      row.startISO = c.start_date || '';
+      cityRows.push(row);
     });
 
     // ★ (2026-07-25) 날짜순 정렬 — 예전엔 tripCities '배열 인덱스'를 썼는데
@@ -15571,6 +15649,8 @@
           '<p class="flb-name">' + r.city + '</p>' + (r.dateRange ? '<p class="flb-date">' + r.dateRange + '</p>' : '') + '</div>' +
         '<div class="flb-n"><b>' + r.budgetNights + '</b><span>박</span>' + nightsNote + '</div>' +
         '<div class="flb-hotel">' + (titleParts ? '<p title="' + titleParts.replace(/"/g, '&quot;') + '">' + titleParts + '</p>' : '<p class="is-none">숙소 미등록</p>') +
+          (r.estimate ? '<span class="flb-est" title="예약·결제 전이라 지출에 안 넣었어요">예약 전 · 예상 ₩' + Math.round(r.estimate).toLocaleString('ko-KR') + '</span>' : '') +
+          (r.stale ? '<span class="flb-warn" title="체크인 날짜가 이 여행 기간 밖이에요 — 예약 탭에서 날짜를 고쳐주세요">날짜가 여행 기간 밖 ' + r.stale + '</span>' : '') +
           ((r.unlinked && r.unlinked.length) ? '<span class="flb-warn" title="finance 장부에 연결되지 않아 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g, '&quot;') + '">장부 미연결 ' + r.unlinked.length + '</span>' : '') + '</div>' +
         '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span>' + budgetHtml + '</div>' +
         '<div class="flb-rem"><b>' + remNum + '</b><span>' + remWord + '</span></div>' +
