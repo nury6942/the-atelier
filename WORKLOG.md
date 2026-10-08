@@ -1,3 +1,7 @@
+## 2026-10-08 (윈도우) — 스팟 탭 같은 결로
+
+- #travel-places-section CSS: 나라 탭 밑줄식, 도시 칩 네모(선택=검정), 카테고리 탭 밑줄 보라, 카드 테두리 없는 사진 카드(4:3, 4열), 도시 배지 흰 바탕 검정 테두리, 버튼 검정 테두리.
+
 ## 2026-10-08 (윈도우) — 나라+국기, 숙소 예산 표, 예약 탭 결 맞춤
 
 - journey-v2: `cityCountry(name)` / `cityCountryHtml(name)` — 아는 도시 표 → 캐시(localStorage jv_city_cc) → Open-Meteo 검색 후 다시 그림. 국기는 이모지(Noto Color Emoji). Route 카드·Daily Log 날짜 머리 도시 앞에 '🇩🇰 덴마크'.
