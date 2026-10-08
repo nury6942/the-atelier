@@ -15511,7 +15511,7 @@
       statusEl.textContent = '총 ' + totalNights + '박 · 1일치 ' + (perNightBudget ? '₩' + Math.round(perNightBudget).toLocaleString('ko-KR') : '미설정') + orphanTxt;
     }
 
-    var html = '<div class="space-y-3">';
+    var html = '<div class="flb-list">';
     cityRows.forEach(function(r) {
       var titleParts = r.items.length ? r.items.map(function(lo){ return lo.title || '(이름없음)'; }).join(', ') : '';
       var isOrphan = r.source === 'orphan';
@@ -15536,71 +15536,41 @@
         nightsBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">' + r.budgetNights + '박</span>';
       }
 
-      var cardBorderClass = isOrphan ? 'border-amber-200 bg-amber-50/30' : (noLodging ? 'border-dashed border-slate-200' : 'border-slate-200');
-
-      html += '<div class="border ' + cardBorderClass + ' rounded-xl p-4 hover:border-blue-300 transition-colors">' +
-        '<div class="flex items-start justify-between mb-2 gap-3">' +
-          '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
-              '<span class="text-sm font-bold text-slate-900">' + r.city + '</span>' +
-              nightsBadge +
-              ((r.unlinked && r.unlinked.length)
-                ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200" title="finance 장부에 연결되지 않아 왼쪽 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g,'&quot;') + '">⚠️ 장부 미연결 ' + r.unlinked.length + '</span>'
-                : '') +
-              (r.dateRange ? '<span class="text-[10px] text-slate-400 font-medium">' + r.dateRange + '</span>' : '') +
-            '</div>' +
-            (titleParts ? '<p class="text-[11px] text-slate-500 truncate" title="' + titleParts + '">' + titleParts + '</p>'
-                        : '<p class="text-[11px] text-slate-400 italic">아직 숙소 미등록 — Travel 페이지에서 추가하세요</p>') +
-          '</div>' +
-          '<div class="text-right shrink-0">' +
-            '<div class="text-sm font-bold ' + remColor + '">' + remLabel + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="flex justify-between items-center text-[11px] text-slate-500 mb-1.5">' +
-          '<span>지출 ₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</span>';
-
-      // 1일치 편집 UI (인라인) 또는 표시
+      // ★ (2026-10-08) 표처럼 읽히는 한 줄: 나라·도시 | 박 | 숙소 | 지출/예산 | 남음 + 아래 가는 막대
+      var nightsNote = '';
+      if (isOrphan) nightsNote = '<em>일정 외</em>';
+      else if (r.plannedNights && r.nights && r.plannedNights !== r.nights) nightsNote = '<em>일정 ' + r.plannedNights + ' · 숙소 ' + r.nights + '</em>';
+      else if (r.plannedNights && !r.nights) nightsNote = '<em>숙소 없음</em>';
+      var budgetHtml;
       if (_flbEditCity === r.city) {
-        var curVal = r.perNight || '';
-        html += '<span class="flex items-center gap-1">' +
-          '<span class="text-[10px] text-slate-400">1일치</span>' +
-          '<input type="text" id="flb-edit-input-' + safeCity + '" value="' + curVal + '" placeholder="160000" class="w-24 text-[10px] px-1.5 py-0.5 border border-blue-300 rounded outline-none focus:ring-1 focus:ring-blue-300 text-right" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCityBudget(\'' + cityEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCityBudget();}"/>' +
-          '<button onclick="ldgSaveCityBudget(\'' + cityEsc + '\')" class="p-0.5 rounded bg-blue-600 text-white hover:bg-blue-700" title="저장 (Enter)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check</span></button>' +
-          '<button onclick="ldgCancelEditCityBudget()" class="p-0.5 rounded hover:bg-slate-100 text-slate-400" title="취소 (Esc)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">close</span></button>' +
-        '</span>';
+        budgetHtml = '<span class="flb-edit"><input type="text" id="flb-edit-input-' + safeCity + '" value="' + (r.perNight || '') + '" placeholder="1박 160000" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ldgSaveCityBudget(\'' + cityEsc + '\');}else if(event.key===\'Escape\'){ldgCancelEditCityBudget();}"/>' +
+          '<button onclick="ldgSaveCityBudget(\'' + cityEsc + '\')">저장</button><button onclick="ldgCancelEditCityBudget()">취소</button></span>';
       } else {
-        html += '<span class="cursor-pointer hover:bg-blue-50/40 px-1 py-0.5 rounded" onclick="ldgStartEditCityBudget(\'' + cityEsc + '\')" title="클릭하여 이 도시 1일치 예산 수정">' +
-          '예산 ' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) +
-          (r.perNight ? ' <span class="text-slate-400">(' + perNightDisplay + '×' + r.budgetNights + overrideBadge + ' <span class="text-[9px] text-slate-300">✏️</span>)</span>' : '') +
-        '</span>';
+        budgetHtml = '<b class="flb-click" onclick="ldgStartEditCityBudget(\'' + cityEsc + '\')" title="클릭하여 이 도시 1박 예산 수정">' + (r.noBudget ? '—' : '₩' + Math.round(r.budget).toLocaleString('ko-KR')) + '</b>' +
+          (r.perNight ? '<span class="flb-per">' + perNightDisplay + ' × ' + r.budgetNights + overrideBadge + '</span>' : '');
       }
-
-      html += '</div>' +
-        '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
-          '<div class="h-full transition-all" style="width:' + r.pct + '%;background:' + barColor + '"></div>' +
-        '</div>' +
+      var remNum = r.noBudget ? '—' : '₩' + Math.round(Math.abs(r.remaining)).toLocaleString('ko-KR');
+      var remWord = r.noBudget ? '예산 없음' : (r.remaining >= 0 ? '남음' : '초과');
+      html += '<div class="flb-row' + (isOrphan ? ' is-orphan' : '') + (noLodging ? ' is-empty' : '') + (r.isOver ? ' is-over' : '') + '">' +
+        '<div class="flb-city">' + (window.cityCountryHtml ? window.cityCountryHtml(r.city) : '') +
+          '<p class="flb-name">' + r.city + '</p>' + (r.dateRange ? '<p class="flb-date">' + r.dateRange + '</p>' : '') + '</div>' +
+        '<div class="flb-n"><b>' + r.budgetNights + '</b><span>박</span>' + nightsNote + '</div>' +
+        '<div class="flb-hotel">' + (titleParts ? '<p title="' + titleParts.replace(/"/g, '&quot;') + '">' + titleParts + '</p>' : '<p class="is-none">숙소 미등록</p>') +
+          ((r.unlinked && r.unlinked.length) ? '<span class="flb-warn" title="finance 장부에 연결되지 않아 「숙소」 예산 카드에는 빠져 있어요.&#10;' + r.unlinked.join('&#10;').replace(/"/g, '&quot;') + '">장부 미연결 ' + r.unlinked.length + '</span>' : '') + '</div>' +
+        '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(r.spent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span>' + budgetHtml + '</div>' +
+        '<div class="flb-rem"><b>' + remNum + '</b><span>' + remWord + '</span></div>' +
+        '<div class="flb-bar"><i style="width:' + r.pct + '%;background:' + (r.isOver ? '#e11d48' : (r.noBudget ? '#9a9ca3' : (isOrphan ? '#d97706' : '#6b38d4'))) + '"></i></div>' +
       '</div>';
     });
     html += '</div>';
 
     // 총합
     var totalBarPct = totalBudget > 0 ? Math.min(100, totalSpent / totalBudget * 100) : 0;
-    var totalRemColor = totalRem >= 0 ? 'text-emerald-600' : 'text-red-500';
-    html += '<div class="mt-4 pt-4 border-t border-slate-100">' +
-      '<div class="flex justify-between items-baseline mb-2">' +
-        '<span class="text-xs font-bold uppercase tracking-widest text-slate-500">전체 ' + totalNights + '박</span>' +
-        '<div class="text-right">' +
-          '<span class="text-lg font-extrabold ' + totalRemColor + '">' + (totalRem >= 0 ? '₩' : '-₩') + Math.round(Math.abs(totalRem)).toLocaleString('ko-KR') + '</span>' +
-          '<span class="text-xs text-slate-400 ml-2">' + (totalRem >= 0 ? '남음' : '초과') + '</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="flex justify-between text-xs text-slate-500 mb-2">' +
-        '<span>지출 ₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</span>' +
-        '<span>예산 ₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
-      '</div>' +
-      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
-        '<div class="h-full transition-all" style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#ef4444' : '#3b82f6') + '"></div>' +
-      '</div>' +
+    html += '<div class="flb-total">' +
+      '<div class="flb-total-l"><span class="flb-k">전체</span><b>' + totalNights + '박</b></div>' +
+      '<div class="flb-money"><span class="flb-k">지출</span><b>₩' + Math.round(totalSpent).toLocaleString('ko-KR') + '</b><span class="flb-k">예산</span><b>₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</b></div>' +
+      '<div class="flb-rem' + (totalRem < 0 ? ' is-over' : '') + '"><b>₩' + Math.round(Math.abs(totalRem)).toLocaleString('ko-KR') + '</b><span>' + (totalRem >= 0 ? '남음' : '초과') + '</span></div>' +
+      '<div class="flb-bar"><i style="width:' + totalBarPct + '%;background:' + (totalSpent > totalBudget ? '#e11d48' : '#6b38d4') + '"></i></div>' +
     '</div>';
 
     bodyEl.innerHTML = html;

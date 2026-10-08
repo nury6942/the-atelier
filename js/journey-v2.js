@@ -25,6 +25,52 @@
     var mins = Math.round(road / 80 * 60 / 10) * 10;
     return { km: Math.round(road), h: Math.floor(mins / 60), m: mins % 60 };
   }
+  // ★ (2026-10-08) 도시 → 나라(국기 + 한글 이름). 한 여행에 두 나라를 다녀서 어느 나라 도시인지 늘 보이게.
+  //   1) 아는 도시 표  2) 브라우저 캐시  3) Open-Meteo(무료)로 영어 이름 검색 → 캐시 후 다시 그림
+  var CITY_CC = { 'frankfurt am main':'DE','frankfurt':'DE','dresden':'DE','berlin':'DE','munich':'DE','hamburg':'DE','dessau':'DE',
+    'pienza':'IT','rome':'IT','pisa':'IT','florence':'IT','venice':'IT','milan':'IT','siena':'IT','dolomiti':'IT','bologna':'IT',
+    'copenhagen':'DK','aarhus':'DK','skagen':'DK','odense':'DK','malmo':'SE','stockholm':'SE','sandhamn':'SE','gothenburg':'SE',
+    'montreal':'CA','charlevoix':'CA','quebec city':'CA','quebec':'CA','mont-tremblant':'CA','ottawa':'CA','algonquin':'CA','toronto':'CA',
+    'prague':'CZ','cesky krumlov':'CZ','dubrovnik':'HR','zagreb':'HR','plitvice':'HR','split':'HR',
+    'dublin':'IE','cork':'IE','kilkenny':'IE','killarney':'IE','galway':'IE','sligo':'IE','belfast':'GB','london':'GB','paris':'FR','vienna':'AT' };
+  var CC_KO = { DE:'독일', IT:'이탈리아', DK:'덴마크', SE:'스웨덴', NO:'노르웨이', FI:'핀란드', CA:'캐나다', US:'미국', CZ:'체코', HR:'크로아티아',
+    IE:'아일랜드', GB:'영국', FR:'프랑스', ES:'스페인', PT:'포르투갈', AT:'오스트리아', CH:'스위스', NL:'네덜란드', BE:'벨기에', HU:'헝가리',
+    PL:'폴란드', GR:'그리스', IS:'아이슬란드', JP:'일본', TW:'대만', TH:'태국', VN:'베트남', KR:'한국', SI:'슬로베니아', SK:'슬로바키아', EE:'에스토니아' };
+  var _ccCache = {}; try { _ccCache = JSON.parse(localStorage.getItem('jv_city_cc') || '{}'); } catch(e) {}
+  var _ccAsk = {};
+  function plain(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+  function flagOf(cc) { return String(cc).toUpperCase().replace(/./g, function(c) { return String.fromCodePoint(127397 + c.charCodeAt(0)); }); }
+  function lookupCC(name) {
+    if (_ccAsk[name]) return; _ccAsk[name] = true;
+    var en = (typeof _cityEn === 'function' && _cityEn(name)) || name;
+    if (!/[A-Za-z]/.test(en)) return;
+    fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(plain(en).replace(/\s+city$/, '')) + '&count=1&language=en')
+      .then(function(r) { return r.json(); }).then(function(j) {
+        var cc = j && j.results && j.results[0] && j.results[0].country_code;
+        if (!cc) return;
+        _ccCache[name] = cc.toUpperCase();
+        try { localStorage.setItem('jv_city_cc', JSON.stringify(_ccCache)); } catch(e) {}
+        try { renderAll(); } catch(e) {}
+        try { if (typeof renderWeekView === 'function') renderWeekView(); } catch(e) {}
+        try { if (typeof renderTripLodgingBreakdown === 'function') renderTripLodgingBreakdown(); } catch(e) {}
+      }).catch(function() {});
+  }
+  window.cityCountry = function(name) {
+    if (!name) return null;
+    var raw = String(name).trim();
+    var cc = _ccCache[raw];
+    if (!cc) {
+      var en = plain((typeof _cityEn === 'function' && _cityEn(raw)) || raw);
+      cc = CITY_CC[en] || CITY_CC[en.split(/[\s,]/)[0]] || null;
+      if (!cc) { lookupCC(raw); return null; }
+    }
+    return { cc: cc, ko: CC_KO[cc] || cc, flag: flagOf(cc) };
+  };
+  window.cityCountryHtml = function(name, cls) {
+    var c = window.cityCountry(name);
+    return c ? '<span class="jv-cty' + (cls ? ' ' + cls : '') + '"><span class="jv-flag">' + c.flag + '</span>' + c.ko + '</span>' : '';
+  };
+
   function cities() { return (typeof citiesData !== 'undefined' && citiesData) ? citiesData : []; }
   function trip() { try { return getCurrentTrip(); } catch(e) { return null; } }
 
@@ -94,6 +140,7 @@
             '</span>' +
             '<input type="file" accept="image/*" style="display:none" data-city-key="' + key + '" onchange="event.stopPropagation();journeyCityImageFileSelected(event,\'' + key + '\')">' +
           '</div>' +
+          '<p class="jv-stop-cty">' + (window.cityCountryHtml(c.name) || '&nbsp;') + '</p>' +
           '<p class="jv-stop-en">' + esc(en || kr) + '</p>' +
           '<p class="jv-stop-kr">' + esc(en ? kr : '') + '</p>' +
           '<p class="jv-stop-meta"><span>' + esc(ds) + '</span><b>' + (c.nights ? c.nights + 'N' : 'DAY') + '</b></p>' +
@@ -153,6 +200,9 @@
       if (!head || head.querySelector('.jv-dno')) return;
       var n = byDate[col.getAttribute('data-date')];
       if (n == null) return;
+      var t = head.querySelector('.wk4-title');
+      var city = (dm.filter(function(e){ return e.date === col.getAttribute('data-date'); })[0] || {}).cityName;
+      if (t && city && !t.querySelector('.jv-cty')) { var ch = window.cityCountryHtml(city); if (ch) t.insertAdjacentHTML('afterbegin', ch); }
       var s = document.createElement('span');
       s.className = 'jv-dno';
       s.textContent = String(n).padStart(2, '0');

@@ -1,3 +1,9 @@
+## 2026-10-08 (윈도우) — 나라+국기, 숙소 예산 표, 예약 탭 결 맞춤
+
+- journey-v2: `cityCountry(name)` / `cityCountryHtml(name)` — 아는 도시 표 → 캐시(localStorage jv_city_cc) → Open-Meteo 검색 후 다시 그림. 국기는 이모지(Noto Color Emoji). Route 카드·Daily Log 날짜 머리 도시 앞에 '🇩🇰 덴마크'.
+- 도시별 숙소 예산(renderTripLodgingBreakdown): 카드 → 표처럼 한 줄(나라·도시 | 박 큰 숫자 | 숙소명 | 지출/예산(클릭 수정) | 남음 큰 숫자) + 3px 막대. 보라/초과 빨강.
+- 예약 탭 CSS: 카드 검정 테두리, 항공·숙소 1열, 항공 공항코드 42px 탑승권, 숙소는 넓은 화면에서 사진 왼쪽 + 정보 오른쪽(Mr & Mrs Smith식), 요약 칩 줄을 숫자 칸 줄로.
+
 ## 2026-10-08 (윈도우) — 예산 탭 같은 결로
 
 - #page-finance CSS만: 모서리 0, 카드 테두리·그림자 제거 → 제목 아래 검정 선 구획, 트립 요약 5칸 숫자 줄(Manrope 800, 잔액 보라), 잔액 밴드 큰 숫자(현재 잔액 보라 44px), 버튼 검정 테두리, 표 머리 대문자 Inter.
