@@ -3,7 +3,7 @@
 누리: *"2년 동안 해외 이직 준비 기간으로 볼게. 루트·비용·CV문화·면접까지 세세하게, 공고도 다시."*
 
 **데이터만 바꿈** — `job-hunt.html` 셸은 그대로, RTDB `jobHuntData/html` 만 `firebase database:set` 으로 교체.
-예전 6월 데이터 백업은 `~/Documents/atelier-backups/jobHuntData-2026-06-18.json` (**리포 밖** — 공개 저장소라 안에 두지 않음).
+예전 6월 데이터는 누리 요청으로 폐기(너무 옛날이라 의미 없음).
 
 **공고 56건** (유럽 24 · 캐나다 16 · 호주 16) — 회사 채용 시스템(adidas SuccessFactors, PUMA/Nike/PVH Workday, Greenhouse, SmartRecruiters)·LinkedIn·SEEK 에서 **오늘 열려 있는 것만**. 마감 공고는 열어 보고 뺐다.
 
