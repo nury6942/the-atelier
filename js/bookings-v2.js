@@ -31,7 +31,7 @@
     return '<span class="bk-act"><button type="button" onclick="event.stopPropagation();editJourneyItem(' + idx + ')">수정</button>' +
       '<button type="button" onclick="event.stopPropagation();deleteJourneyRow(' + idx + ')">삭제</button></span>';
   }
-  function cityHtml(c) { return (c && typeof window.cityCountryHtml === 'function') ? (window.cityCountryHtml(c) || '') + esc(c) : esc(c || ''); }
+  function cityHtml(c) { return (c && typeof window.cityCountryHtml === 'function') ? (window.cityCountryHtml(c) || '') + ' ' + esc(c) : esc(c || ''); }
   function kv(label, val) { return val ? '<div class="bk-kv"><span>' + label + '</span><b>' + val + '</b></div>' : ''; }
 
   // "ICN → CPH" / "ICN-CPH" / "인천 → 코펜하겐" 에서 출발·도착 뽑기
