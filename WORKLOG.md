@@ -1,3 +1,20 @@
+## 2026-10-08 (맥북) — Job Hunt 전면 갱신 + 2028 Playbook 탭
+
+누리: *"2년 동안 해외 이직 준비 기간으로 볼게. 루트·비용·CV문화·면접까지 세세하게, 공고도 다시."*
+
+**데이터만 바꿈** — `job-hunt.html` 셸은 그대로, RTDB `jobHuntData/html` 만 `firebase database:set` 으로 교체.
+예전 6월 데이터 백업은 `~/Documents/atelier-backups/jobHuntData-2026-06-18.json` (**리포 밖** — 공개 저장소라 안에 두지 않음).
+
+**공고 56건** (유럽 24 · 캐나다 16 · 호주 16) — 회사 채용 시스템(adidas SuccessFactors, PUMA/Nike/PVH Workday, Greenhouse, SmartRecruiters)·LinkedIn·SEEK 에서 **오늘 열려 있는 것만**. 마감 공고는 열어 보고 뺐다.
+
+**새 탭 📘 PLAYBOOK** — 나라별 판정 · 지원서 문화 · 면접 과정 · 공고 요구 스킬 vs 누리 · 2년 타임라인. 기존 클래스 그대로, 표 스타일만 블롭 안 `<style>` 로.
+
+**뒤집힌 전제 (기록할 가치)**
+- 호주: Fashion Designer 232311 이 **CSOL 에 없다** (법령 원문 확인) → 482·186 스폰서 사실상 불가. 집계 사이트는 옛 기준으로 '가능'이라 표시해서 헷갈림
+- 독일: 디자이너 = Blue Card **부족직군** → 하한 €45,934. 건국대 anabin H+
+- Cambridge B2 First 는 캐나다·호주 이민 점수로 **불인정**
+- 캐나다 스폰서 명시는 lululemon 뿐 (16건 중 4)
+
 ## 2026-10-08 (맥북) — Route 도시 사진 Unsplash 자동 채우기
 
 누리: *"여기 사진 전부 Unsplash 에서 저 도시 검색해서 자동으로 채워주면 돈이 드나?"*
