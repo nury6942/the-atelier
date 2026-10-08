@@ -5578,6 +5578,76 @@
       line-height: 34px !important;
     }
     .flatpickr-day:hover { background: #eef2ff !important; border-color: #c7d2fe !important; color: var(--indigo-600) !important; }
+    /* ═══ ★ (2026-10-08) 일정 탭 v2 — 시안 v1: 모서리 0, 검정 가는 선, Manrope 큰 숫자, Inter 대문자 라벨, 보라 하나 ═══ */
+    #page-journey { --jv-ink:#15161a; --jv-sub:#5f6168; --jv-mute:#9a9ca3; --jv-line:#15161a; --jv-soft:#e6e5e1; --jv-tint:#f6f5f2; --jv-accent:#6b38d4; }
+    #page-journey, #page-journey *, #page-journey *::before, #page-journey *::after { border-radius:0 !important; }
+    #page-journey .page-content-wrap > .trav-hero { display:none; }
+    #page-journey .trav-tabs { border-bottom-color:var(--jv-line); }
+    #page-journey .trav-tab-active { border-bottom:3px solid var(--jv-accent); }
+    #page-journey .trav-toolbar { padding-top:18px; }
+    #page-journey .trav-act, #page-journey .trip-dd-btn { border:1px solid var(--jv-line); background:#fff; color:var(--jv-ink); box-shadow:none; }
+    #page-journey .trav-act:hover { background:var(--jv-ink); color:#fff; border-color:var(--jv-ink); }
+    #page-journey .trav-act-primary { background:var(--jv-ink); color:#fff; }
+    .jv-lbl { font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--jv-sub); margin:0; }
+    #page-journey #trv-hero.j-hero { margin:0 0 8px; }
+    .jv-mast { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px 40px; align-items:end; padding:30px 0 24px; border-bottom:1px solid var(--jv-line); }
+    .jv-title-row { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .jv-title { font-family:'Manrope','Pretendard',sans-serif; font-weight:800; font-size:clamp(34px,5vw,60px); line-height:1; letter-spacing:-.035em; margin:0; color:var(--jv-ink); text-wrap:balance; }
+    .jv-ico { border:0; border-bottom:1px solid var(--jv-soft); background:none; color:var(--jv-mute); font-size:11px; font-weight:700; padding:0 0 1px; margin-left:6px; cursor:pointer; }
+    .jv-ico:hover { color:var(--jv-ink); border-bottom-color:var(--jv-ink); }
+    .jv-dates { font-family:'Manrope','Pretendard',sans-serif; font-size:15px; font-weight:600; color:var(--jv-sub); margin:14px 0 0; font-variant-numeric:tabular-nums; }
+    .jv-summary { font-size:13px; color:var(--jv-sub); margin:8px 0 0; max-width:62ch; }
+    .jv-dday { text-align:right; }
+    .jv-dday b { display:block; font-family:'Manrope',sans-serif; font-weight:800; font-size:clamp(48px,7vw,96px); line-height:.85; letter-spacing:-.05em; color:var(--jv-accent); font-variant-numeric:tabular-nums; margin-top:6px; white-space:nowrap; }
+    .jv-facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-bottom:1px solid var(--jv-line); }
+    .jv-facts > div { padding:14px 16px 16px; border-right:1px solid var(--jv-soft); }
+    .jv-facts > div:first-child { padding-left:0; } .jv-facts > div:last-child { border-right:0; }
+    .jv-facts b { display:block; font-family:'Manrope','Pretendard',sans-serif; font-size:24px; font-weight:700; letter-spacing:-.02em; margin-top:4px; color:var(--jv-ink); font-variant-numeric:tabular-nums; }
+    .jv-facts b small { font-size:12.5px; font-weight:600; color:var(--jv-sub); margin-left:3px; }
+    @media (max-width:700px) { .jv-mast { grid-template-columns:1fr; } .jv-dday { text-align:left; } .jv-facts { grid-template-columns:repeat(2,minmax(0,1fr)); } .jv-facts > div:nth-child(3) { padding-left:0; } }
+    .jv-sec-h { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; padding-bottom:12px; border-bottom:1px solid var(--jv-line); margin-bottom:20px; }
+    .jv-sec-h h2 { font-family:'Manrope','Pretendard',sans-serif; font-size:26px; font-weight:800; letter-spacing:-.02em; margin:0; color:var(--jv-ink); }
+    .jv-sp { flex:1; }
+    .jv-btn { font-family:'Inter','Pretendard',sans-serif; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--jv-line); background:#fff; color:var(--jv-ink); padding:7px 11px; cursor:pointer; }
+    .jv-btn:hover { background:var(--jv-ink); color:#fff; }
+    #page-journey .jv-route { margin-top:44px; }
+    .jv-route-strip { display:flex; align-items:stretch; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; }
+    #page-journey .jv-route-strip .j-stop-card.jv-stop { flex:0 0 168px; display:grid; gap:3px; align-content:start; cursor:pointer; transform:none; background:none; border:0; opacity:1; box-shadow:none; }
+    .jv-stop-img { position:relative; aspect-ratio:4/5; background:var(--jv-tint) center/cover no-repeat; border:1px solid var(--jv-soft); }
+    .jv-stop-no { position:absolute; left:-1px; top:-1px; background:#fff; font-family:'Manrope',sans-serif; font-size:12px; font-weight:800; padding:4px 7px; border:1px solid var(--jv-line); color:var(--jv-ink); }
+    #page-journey .jv-route-strip.has-active .jv-stop:not(.is-active) .jv-stop-img { filter:saturate(.35) opacity(.75); }
+    #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-img { outline:3px solid var(--jv-accent); outline-offset:-3px; }
+    #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-no { background:var(--jv-accent); border-color:var(--jv-accent); color:#fff; }
+    .jv-stop-ph { position:absolute; inset:auto 0 42%; text-align:center; font-size:11px; color:var(--jv-mute); }
+    .jv-stop-ctl { position:absolute; left:0; right:0; bottom:0; display:flex; opacity:0; transition:opacity .15s; }
+    .jv-stop:hover .jv-stop-ctl { opacity:1; }
+    .jv-stop-ctl button { flex:1; border:0; border-top:1px solid var(--jv-line); border-right:1px solid var(--jv-soft); background:rgba(255,255,255,.95); font-size:10.5px; font-weight:700; padding:6px 0; cursor:pointer; color:var(--jv-ink); }
+    .jv-stop-ctl button:last-child { border-right:0; }
+    .jv-stop-ctl button:hover { background:var(--jv-ink); color:#fff; }
+    .jv-stop-en { font-family:'Manrope','Pretendard',sans-serif; font-size:16px; font-weight:800; letter-spacing:-.01em; margin:8px 0 0; color:var(--jv-ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .jv-stop-kr { font-size:12px; color:var(--jv-sub); margin:0; min-height:16px; }
+    .jv-stop-meta { display:flex; justify-content:space-between; font-family:'Manrope',sans-serif; font-size:12px; color:var(--jv-sub); margin:4px 0 0; border-top:1px solid var(--jv-soft); padding-top:6px; font-variant-numeric:tabular-nums; }
+    .jv-stop-meta b { color:var(--jv-ink); }
+    .jv-leg { flex:0 0 78px; display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:70px; }
+    .jv-leg::before { content:''; position:absolute; left:8px; right:8px; top:50%; border-top:1px dashed var(--jv-mute); }
+    .jv-leg span { position:relative; background:#fff; font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--jv-sub); padding:2px 4px; text-align:center; line-height:1.35; }
+    .jv-empty { font-size:13px; color:var(--jv-mute); padding:24px 0; }
+    .jv-now { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:18px; align-items:center; background:var(--jv-ink); color:#fff; padding:14px 18px; margin-top:26px; }
+    .jv-now .jv-lbl { color:#c9b8f5; }
+    .jv-now b { font-family:'Manrope','Pretendard',sans-serif; font-size:17px; font-weight:700; }
+    .jv-now .jv-next-sub { margin-top:3px; }
+    .jv-next-in { font-family:'Manrope',sans-serif; font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; white-space:nowrap; }
+    .jv-next-in small { font-size:12px; font-weight:600; color:#c9b8f5; margin-left:4px; }
+    /* Daily Log 머리·지도 — 같은 결로 */
+    #page-journey #journey-week-view .j-section-head { border-bottom:1px solid var(--jv-line); padding-bottom:12px; }
+    #page-journey #journey-week-view .j-h2 { font-family:'Manrope','Pretendard',sans-serif; font-size:26px; font-weight:800; letter-spacing:-.02em; }
+    #page-journey #journey-week-view .j-section-head-line { display:none; }
+    #page-journey .dlv-toggle { border:1px solid var(--jv-line); }
+    #page-journey .dlv-toggle button.is-active { background:var(--jv-ink); color:#fff; }
+    #page-journey .j-week-nav-btn { border:1px solid var(--jv-line); background:#fff; }
+    #page-journey #daylog-map { border:1px solid var(--jv-line); }
+    #page-journey #daylog-map .leaflet-tile-pane { filter:grayscale(1) contrast(.92) brightness(1.05); }
+    #page-journey .wk4-col { border-left-color:var(--jv-soft); }
     /* ═══ ★ (2026-10-07) 캘린더 v2 — mlb-fitting 업무 보드(.wb-cal) 디자인 이식 ═══ */
     .wbc { --ink:#15171c; --text:#2a2e35; --sub:#555b65; --line2:#d5d8dd; --hair:#d9dce1;
       --blue:#2f64c8; --blue-s:#ebf1fc; --rose:#b8405c; --me:#FF6F5B; --neo-fw:#9BF0C6; --neo-q2:#FBEF86; --key:#E8283F;
@@ -11294,24 +11364,23 @@
              Trip Hero (stitch P2/P5) — 상단 메타 + 본문 이미지 + Voyage Path 2-col
              ════════════════════════════════════════════════════════════ -->
         <section id="trv-hero" class="j-hero j-section">
-          <div class="j-hero-grid">
-            <div class="j-hero-left">
-              <span class="j-eyebrow">Current Voyage</span>
-              <div class="j-hero-title-row">
-                <h1 id="journey-trip-title" class="j-display j-display-xl">—</h1>
-                <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="j-icon-btn" title="여행 정보 수정"><span class="material-symbols-outlined">edit</span></button>
-                <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="j-icon-btn danger" title="여행 삭제"><span class="material-symbols-outlined">delete</span></button>
+          <!-- ★ (2026-10-08) 일정 v2 표지 — js/journey-v2.js가 채움 (각진 에디토리얼) -->
+          <div class="jv-mast">
+            <div class="jv-mast-l">
+              <p class="jv-lbl" id="jv-eyebrow">Itinerary</p>
+              <div class="jv-title-row">
+                <h1 id="journey-trip-title" class="jv-title">—</h1>
+                <button onclick="openCurrentTripEditModal()" id="journey-trip-edit-btn" class="jv-ico" title="여행 정보 수정">수정</button>
+                <button onclick="confirmDeleteCurrentTrip()" id="journey-trip-delete-btn" class="jv-ico" title="여행 삭제">삭제</button>
               </div>
-              <p id="journey-trip-summary" class="j-hero-summary" style="display:none"></p>
+              <p id="journey-trip-dates" class="jv-dates">—</p>
+              <p id="journey-trip-summary" class="jv-summary" style="display:none"></p>
+              <span id="journey-days-badge" style="display:none"></span>
+              <span id="journey-km-badge" style="display:none"></span>
             </div>
-            <div class="j-hero-right">
-              <p id="journey-trip-dates" class="j-hero-dates">—</p>
-              <div class="j-hero-tags">
-                <span id="journey-days-badge" class="j-status-tag j-status-primary" style="display:none"></span>
-                <span id="journey-km-badge" class="j-meta" style="display:none"></span>
-              </div>
-            </div>
+            <div class="jv-dday"><p class="jv-lbl" id="jv-dday-l">Departure in</p><b id="jv-dday">—</b></div>
           </div>
+          <div class="jv-facts" id="jv-facts"></div>
           <!-- 본문: Hero 이미지 (좌) + Voyage Path 카드 (우) 2-col -->
           <div class="j-hero-body">
             <div id="journey-hero-image" class="j-hero-image"
@@ -11355,6 +11424,19 @@
         </section>
 
         <!-- ═══ Places 스팟 저장소는 상단 '스팟' 탭으로 이동 (2026-07-23) — #travel-places-section 참조 ═══ -->
+        <!-- ★ (2026-10-08) Route — Stippl식 경로 띠 (js/journey-v2.js renderRoute). 카드 클릭 = Daily Log 그 도시 날짜로 -->
+        <section id="trv-stops" class="jv-route j-section">
+          <div class="jv-sec-h"><h2>Route</h2><span class="jv-lbl" id="jv-route-meta"></span><span class="jv-sp"></span>
+            <button type="button" class="jv-btn" onclick="openCityModal()">도시 추가</button>
+            <button type="button" class="jv-btn" onclick="optimizeCityRoute()" title="지점을 지리적으로 가까운 순서로 재정렬">경로 최적화</button>
+            <button type="button" class="jv-btn" onclick="document.getElementById('city-import-file').click()" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기">가져오기</button>
+            <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
+          </div>
+          <div id="journey-city-cards" class="jv-route-strip"></div>
+        </section>
+        <!-- 여행 중일 때만: 오늘 다음 일정 -->
+        <div id="trv-next" class="jv-now" role="note" style="display:none"></div>
+
         <!-- 트립 노트 -->
         <section class="mb-8">
           <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -11430,16 +11512,6 @@
               <span id="journey-week-range" class="j-week-nav-range">—</span>
             </div>
           </div>
-          <!-- ★ (2026-10-07) Stops → Daily Log 길잡이 사진 띠 (점선 진행선 대체). 카드 클릭 = 그 도시 날짜로 이동 -->
-          <section id="trv-stops" class="j-stopstrip">
-            <div id="journey-city-cards" class="j-stops-grid j-stops-strip"></div>
-            <div class="j-stopstrip-actions">
-              <button onclick="openCityModal()" class="j-btn-ghost" title="도시 추가"><span class="material-symbols-outlined">add_location_alt</span></button>
-              <button onclick="optimizeCityRoute()" class="j-btn-ghost" title="지점을 지리적으로 가까운 순서로 재정렬"><span class="material-symbols-outlined">route</span></button>
-              <button onclick="document.getElementById('city-import-file').click()" class="j-btn-ghost" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기"><span class="material-symbols-outlined">upload_file</span></button>
-              <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
-            </div>
-          </section>
           <div id="dlv-progress" style="display:none"></div>
           <div id="journey-week-grid" class="j-daylog-stack wk4">
             <div class="j-stop-empty">도시를 추가하면 일차가 자동 생성돼!</div>
@@ -16665,6 +16737,7 @@
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
+<script src="js/journey-v2.js?v=1" defer></script>
 
 </body>
 </html>

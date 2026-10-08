@@ -1,3 +1,11 @@
+## 2026-10-08 (윈도우) — 일정 탭 v2 적용 (시안 v1)
+
+- 새 파일 `js/journey-v2.js`: renderTripHeader / renderCityCards / updateTravelMiniSummary 를 감싸서 표지·Route·NEXT 추가 렌더.
+- 표지(`#trv-hero .jv-mast`): 여행 이름 크게 + 날짜 + D-day(출발 전 D−N / 여행 중 DAY n/N / 끝 DONE) + Days·Stops·Drive(≈직선×1.25)·Budget left 4칸. 기존 'The Journey' 머리(.trav-hero)는 일정 탭에서 숨김.
+- Route(`#trv-stops.jv-route`): Daily Log 안 사진 띠를 표지 아래 독립 섹션으로. 번호·영/한 이름·날짜·N박, 도시 사이 예상 이동(≈80km/h). 호버 시 사진 추가/수정/삭제. 클릭 = 그 도시 날짜로(기존 journeyStopJump·_syncStopStrip 재사용).
+- NEXT(`#trv-next`): 여행 기간 중일 때만 오늘 다음 일정 + 남은 시간(1분마다 갱신).
+- #page-journey 전체 border-radius 0, 버튼·탭·지도 흑백 톤.
+
 ## 2026-10-08 (윈도우) — 여행 리디자인: 레퍼런스·시안 v1 (코드 변경 없음)
 
 - 무드보드(실제 사이트 캡처 10곳): https://claude.ai/artifact/W6GdRQB6Ls1SuWgx3oViXu — 맛집(Infatuation)은 사용자가 제외.
