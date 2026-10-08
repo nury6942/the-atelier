@@ -29,7 +29,7 @@
   //   1) 아는 도시 표  2) 브라우저 캐시  3) Open-Meteo(무료)로 영어 이름 검색 → 캐시 후 다시 그림
   var CITY_CC = { 'frankfurt am main':'DE','frankfurt':'DE','dresden':'DE','berlin':'DE','munich':'DE','hamburg':'DE','dessau':'DE',
     'pienza':'IT','rome':'IT','pisa':'IT','florence':'IT','venice':'IT','milan':'IT','siena':'IT','dolomiti':'IT','bologna':'IT',
-    'copenhagen':'DK','aarhus':'DK','skagen':'DK','odense':'DK','malmo':'SE','stockholm':'SE','sandhamn':'SE','gothenburg':'SE',
+    'oslo':'NO','bergen':'NO','ulvik':'NO','flam':'NO','voss':'NO','copenhagen':'DK','aarhus':'DK','skagen':'DK','odense':'DK','malmo':'SE','stockholm':'SE','sandhamn':'SE','gothenburg':'SE',
     'montreal':'CA','charlevoix':'CA','quebec city':'CA','quebec':'CA','mont-tremblant':'CA','ottawa':'CA','algonquin':'CA','toronto':'CA',
     'prague':'CZ','cesky krumlov':'CZ','dubrovnik':'HR','zagreb':'HR','plitvice':'HR','split':'HR',
     'dublin':'IE','cork':'IE','kilkenny':'IE','killarney':'IE','galway':'IE','sligo':'IE','belfast':'GB','london':'GB','paris':'FR','vienna':'AT' };

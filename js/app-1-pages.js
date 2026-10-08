@@ -2403,6 +2403,11 @@
     '오타와':       'Ottawa',
     '알곤퀸':       'Algonquin',
     '토론토':       'Toronto',
+    // Norway 2027 (★ 2026-10-08 북유럽 플랜)
+    '오슬로':       'Oslo',
+    '베르겐':       'Bergen',
+    '울빅':         'Ulvik',
+    '플롬':         'Flåm',
     // Czech & Croatia 2026
     '프라하':       'Prague',
     '체스키 크룸로프':'Český Krumlov',
