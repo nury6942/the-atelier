@@ -5610,7 +5610,7 @@
     .wbc-btn { height:34px; padding:0 14px; border:1px solid var(--hair); background:#fff; color:var(--ink); font-size:12.5px; font-weight:700; cursor:pointer; border-radius:0; }
     .wbc-btn:hover { border-color:var(--ink); }
     .wbc-btn.is-ink { background:var(--ink); border-color:var(--ink); color:#fff; }
-    .wbc-body { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:28px; align-items:start; padding-top:6px; }
+    .wbc-body { display:block; padding-top:6px; } /* ★ (2026-10-08) 오른쪽 선택일 패널 제거 — 달력만 풀폭 */
     @media (max-width:1100px) { .wbc-body { grid-template-columns:minmax(0,1fr); } }
     .wbc-wds { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
     .wbc-wds span { font-family:var(--num); font-size:11.5px; font-weight:600; letter-spacing:.2em; color:var(--sub); padding:12px 12px 10px; }
@@ -15459,7 +15459,7 @@
   </div>
 
   <div id="page-planner" class="page calendar-page" style="display:none">
-    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1280px] mx-auto space-y-10">
+    <div class="page-content-wrap px-8 pt-8 pb-20 max-w-[1680px] mx-auto space-y-10">
 
       <!-- ★ (2026-10-07) 캘린더 v2 — mlb-fitting 업무 보드 디자인 (js/cal-wb.js가 그림). 매트릭스 탭은 화면에서 뺌 -->
       <section id="wbc" class="wbc">
@@ -15485,7 +15485,6 @@
             <div class="wbc-wds"><span class="is-sun">SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span class="is-sat">SAT</span></div>
             <div id="planner-grid" class="wbc-grid month"></div>
           </div>
-          <aside id="wbc-ag" class="wbc-ag"></aside>
         </div>
       </section>
 
@@ -16628,7 +16627,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=3" defer></script>
+<script src="js/cal-wb.js?v=4" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
