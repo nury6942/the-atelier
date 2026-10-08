@@ -1,3 +1,11 @@
+## 2026-10-08 (윈도우) — 여행 리디자인: 레퍼런스·시안 v1 (코드 변경 없음)
+
+- 무드보드(실제 사이트 캡처 10곳): https://claude.ai/artifact/W6GdRQB6Ls1SuWgx3oViXu — 맛집(Infatuation)은 사용자가 제외.
+- 시안 v1(일정·예약): https://claude.ai/artifact/WSFkWqX7xk9a4V2wbPDVRy
+- 원칙: 디자인 감도 1순위, **둥근 모서리 금지**(radius 0), 검정 1px 선 구획, Manrope 큰 숫자, Inter 대문자 라벨, 보라 #6b38d4 하나. ATLAS·체크리스트 규칙 기준.
+- UX 출처: 경로 띠=Stippl(도시·N박·이동시간), 일정 목록+지도 나란히=Wanderlog, 여행 중 NEXT 바=Airbnb trips, 예약 날짜순 장부=TripIt, 숙소 사진 카드=Mr & Mrs Smith, 빈 밤 경고.
+- 다음: 사용자 피드백 받고 실제 일정 탭부터 적용 → 예약 → 스팟 → 예산.
+
 ## 2026-10-08 (윈도우) — 캘린더 일정 색 v3: 형광 파스텔 + 검정 글씨
 
 - 같은 계열 진한 글씨가 안 읽힘 → 글씨 #0b0b0b, 배경은 채도 높인 형광 파스텔(GTM 칩과 같은 결).
