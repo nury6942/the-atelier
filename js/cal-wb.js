@@ -69,11 +69,21 @@
       else { _wbState = 'signed-out'; renderHeaderStats(); }
     });
   }
+  // ★ (2026-10-08) 두 번 눌리면 첫 팝업이 취소되며 'cancelled-popup-request' 오류가 뜨던 문제 —
+  //   진행 중이면 무시, 사용자가 닫거나 겹친 경우는 조용히 넘어가고, 팝업이 막히면 페이지 이동 방식으로
+  var _connecting = false;
   window.wbcConnect = function() {
-    var app = fitApp(); if (!app) return;
+    var app = fitApp(); if (!app || _connecting) return;
+    _connecting = true;
     var p = new firebase.auth.GoogleAuthProvider();
     p.setCustomParameters({ prompt: 'select_account' });
-    app.auth().signInWithPopup(p).catch(function(err) {
+    app.auth().signInWithPopup(p).then(function() {
+      _connecting = false;
+    }).catch(function(err) {
+      _connecting = false;
+      var code = err && err.code;
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') return;
+      if (code === 'auth/popup-blocked') { app.auth().signInWithRedirect(p); return; }
       alert('업무 보드 연결 실패: ' + (err && err.message || err));
     });
   };
