@@ -211,13 +211,14 @@
     });
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
-  // ★ (2026-10-08) 파스텔이라 서로 구분이 안 돼서 → 칸 안 일정은 진한 단색 + 흰 글씨
-  var SOLID = { sky:'#1d6fd8', amber:'#c77700', violet:'#6d3fd6', rose:'#d0244f', lime:'#4d8a0c', cyan:'#0a8aa8',
-    orange:'#e0590b', indigo:'#3f46c9', pink:'#d42a83', fuchsia:'#b322c4', blue:'#2563eb', teal:'#0f8a7e', purple:'#8b3fd6',
-    slate:'#56627a', birthday:'#f2c200', deadline:'#FF3B00' };
+  // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
+  var SOLID = { sky:["#cfe3ff","#1e4fa3"], amber:["#ffe2a8","#7a4a00"], violet:["#e3d6ff","#4b2aa3"], rose:["#ffd0da","#9b1238"],
+    lime:["#d9f2b4","#3b6a0b"], cyan:["#c4eef5","#0b5f72"], orange:["#ffd8bf","#9a3d06"], indigo:["#d8dbff","#2f35a0"],
+    pink:["#ffd3ea","#9d1a5e"], fuchsia:["#f6d1fb","#86178f"], blue:["#d3e1ff","#1d4ed8"], teal:["#c7efe9","#0f6157"],
+    purple:["#ead6ff","#6b21a8"], slate:["#e2e6ee","#374151"], birthday:["#fde68a","#5c4300"], deadline:["#FF3B00","#ffffff"] };
   function solidStyle(ev) {
-    var k = (ev[3]||'').trim(), bg = SOLID[k] || '#3f46c9';
-    return 'background:' + bg + ';color:' + (k === 'birthday' ? '#1d1a23' : '#fff') + ';';
+    var c = SOLID[(ev[3]||"").trim()] || SOLID.indigo;
+    return "background:" + c[0] + ";color:" + c[1] + ";";
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
