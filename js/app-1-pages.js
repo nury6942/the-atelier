@@ -6094,7 +6094,7 @@
     if (/^\d{4}-\d{2}-\d{2}$/.test(pd)) {
       var today = _todayLocalStr();
       if (pd <= today) return '결제 완료';
-      return '결제 예정 (' + _dowDate(pd) + ')';
+      return '결제 예정 · ' + _dowDate(pd);
     }
     return item.payment_status || '';
   }
@@ -8312,7 +8312,7 @@
     // 결제 상태 — payment_date 기준 파생 (예산 장부와 동일 규칙).
     // 파생 문구에 이미 날짜가 들어간 '결제 예정 (MM/DD)'이면 날짜를 또 붙이지 않는다
     var fPay = _trvPayStatus(f);
-    var fPayDate = (f.payment_date && fPay.indexOf('(') < 0) ? ' · ' + f.payment_date : '';
+    var fPayDate = (f.payment_date && fPay.indexOf('(') < 0) ? ' · ' + _dowDate(f.payment_date) : '';
     if (fPay || f.payment_date) cells.push(cell('Payment', fPay + fPayDate));
     if (f.price && f.price !== '—') cells.push(cell('Price', _trvAmtHtml(f.price)));
     // ★ (2026-07-23) 다크 헤더 좌측 항공사 로고 — 실패 시 기존 아이콘+편명 레이아웃 그대로
