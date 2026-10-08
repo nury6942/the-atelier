@@ -15555,14 +15555,25 @@
     // 숙소가 등록된 도시들만 카드로 생성 (일정 정보는 매칭해서 보조 표시)
     // 일정 도시 빠른 조회용 인덱스
     var itineraryByKey = {};
+    // ★ (2026-10-08) 같은 도시를 두 번 들르면(베르겐 → … → 베르겐) 박 수를 합산 — 예전엔 마지막 것만 잡혀
+    //   왼쪽 숙소 예산(여행 전체 박 수)과 오른쪽 합계가 1박씩 어긋났다.
+    var itinNights = {}, itinRanges = {};
+    var _cNights = function(c) {
+      var n = parseInt(c.nights, 10);
+      if (!(n > 0) && c.start_date && c.end_date) n = Math.round((new Date(c.end_date) - new Date(c.start_date)) / 864e5);
+      return n > 0 ? n : 0;
+    };
     tripCities.forEach(function(c) {
-      itineraryByKey[normCity(c.name)] = c;
+      var k = normCity(c.name);
+      if (!itineraryByKey[k]) itineraryByKey[k] = c;
+      itinNights[k] = (itinNights[k] || 0) + _cNights(c);
+      (itinRanges[k] = itinRanges[k] || []).push((c.start_date || '') + (c.end_date ? ' ~ ' + c.end_date : ''));
     });
 
     var cityRows = Object.keys(byCity).map(function(key) {
       var grp = byCity[key];
       var itin = itineraryByKey[key];
-      var plannedNights = itin ? (parseInt(itin.nights, 10) || 0) : 0;
+      var plannedNights = itin ? (itinNights[key] || 0) : 0;
       return buildRow(grp.display, grp.items, plannedNights, itin ? 'itinerary' : 'orphan');
     });
     // ★ (2026-10-08) 숙소가 아직 없는 일정 도시도 보여줌 — 예산만 잡히고 지출 0
@@ -15570,14 +15581,24 @@
       var key = normCity(c.name);
       if (byCity[key]) return;
       byCity[key] = { display: c.name, items: [] };
-      var n = parseInt(c.nights, 10);
-      if (!(n > 0) && c.start_date && c.end_date) n = Math.round((new Date(c.end_date) - new Date(c.start_date)) / 864e5);
+      var n = itinNights[key] || 0;
       if (!(n > 0)) return;
       var row = buildRow(c.name, [], n, 'itinerary');
-      row.dateRange = (c.start_date || '') + (c.end_date ? ' ~ ' + c.end_date : '');
+      row.dateRange = (itinRanges[key] || []).join(' · ');
       row.startISO = c.start_date || '';
       cityRows.push(row);
     });
+    // 날짜에 요일 붙이기: '2027-06-25 ~ 2027-06-27' → '06.25 (금) – 06.27 (일)'
+    var _DOWK = ['일','월','화','수','목','금','토'];
+    var _fmtRange = function(s) {
+      return String(s || '').split(' · ').map(function(part) {
+        return part.split(' ~ ').map(function(d) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+          var x = new Date(d + 'T00:00:00');
+          return d.slice(5).replace('-', '.') + ' (' + _DOWK[x.getDay()] + ')';
+        }).join(' – ');
+      }).join('<br>');
+    };
 
     // ★ (2026-07-25) 날짜순 정렬 — 예전엔 tripCities '배열 인덱스'를 썼는데
     //   trip_cities가 order 필드대로 로드된다는 보장이 없어서 프랑크푸르트가 베를린 뒤로 밀렸다.
@@ -15657,7 +15678,7 @@
       var remWord = r.noBudget ? '예산 없음' : (r.remaining >= 0 ? '남음' : '초과');
       html += '<div class="flb-row' + (isOrphan ? ' is-orphan' : '') + (noLodging ? ' is-empty' : '') + (r.isOver ? ' is-over' : '') + '">' +
         '<div class="flb-city">' + (window.cityCountryHtml ? window.cityCountryHtml(r.city) : '') +
-          '<p class="flb-name">' + r.city + '</p>' + (r.dateRange ? '<p class="flb-date">' + r.dateRange + '</p>' : '') + '</div>' +
+          '<p class="flb-name">' + r.city + '</p>' + (r.dateRange ? '<p class="flb-date">' + _fmtRange(r.dateRange) + '</p>' : '') + '</div>' +
         '<div class="flb-n"><b>' + r.budgetNights + '</b><span>박</span>' + nightsNote + '</div>' +
         '<div class="flb-hotel">' + (titleParts ? '<p title="' + titleParts.replace(/"/g, '&quot;') + '">' + titleParts + '</p>' : '<p class="is-none">숙소 미등록</p>') +
           (r.estimate ? '<span class="flb-est" title="예약·결제 전이라 지출에 안 넣었어요">예약 전 · 예상 ₩' + Math.round(r.estimate).toLocaleString('ko-KR') + '</span>' : '') +
