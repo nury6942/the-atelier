@@ -352,7 +352,7 @@
     var d = hit.getAttribute('data-date'), dm = (typeof getDayMap === 'function') ? getDayMap() : [];
     for (var j = 0; j < dm.length; j++) if (dm[j].date === d) { window.setDayPinsFilterQuiet(String(dm[j].day)); break; }
   }
-  document.addEventListener('scroll', function() { if (!_followTick) { _followTick = true; requestAnimationFrame(followScroll); } }, { passive: true, capture: true });
+  document.addEventListener('scroll', function() { if (!_followTick) { _followTick = true; setTimeout(followScroll, 80); } }, { passive: true, capture: true });
   function boot() {
     wrapBefore('renderWeekView', fillPlanCoords);
     wrapBefore('renderDayPinsMap', fillPlanCoords);
