@@ -155,6 +155,13 @@
     _mineCache.plans = out;
     return out;
   }
+  // 여러 날에 걸친 손 입력 근태(예: 지연 출근 화살표 19~20일)는 구간 중 하루라도 같은 이름의 실제 근태가 있으면 통째로 숨김
+  function rowCoveredByAtt(r, tl) {
+    var s = (r[0]||"").toString(), e = (r[5]||"").toString();
+    if (!e || e <= s || !/(지연출근|조기퇴근|연차|휴가|반차)/.test(tl)) return false;
+    var items = mineItems().concat(planItems());
+    return items.some(function(x) { return x.start <= e && x.end >= s && tl.indexOf(normLabel(x.label).replace(/d.*$/, "")) >= 0; });
+  }
   function attOn(ds) {
     var done = mineOn(ds);
     var plans = planItems().filter(function(x) {
@@ -379,6 +386,7 @@
       // 결재·아웃룩 근태가 있는 날은 손으로 넣은 같은 근태 일정(연차·지연 출근·조기 퇴근)은 숨김 (두 번 안 그리게)
       var tl = normLabel(r[1]);
       if (partLabels.some(function(l){ return tl.indexOf(l) >= 0; })) return;
+      if (rowCoveredByAtt(r, tl)) return;
       if (hasPortalLeave && (r[2] === '연차' || /^(연차|휴가)/.test(tl))) return;
       if (_ivIsInterval(r)) { ivs.push(r); return; }
       var s = (r[0]||'').toString(), e = (r[5]||'').toString();
