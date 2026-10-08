@@ -56,7 +56,7 @@
       try {
         _wb = JSON.parse(snap.data().json);
         _wbState = 'ok';
-        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ gtm: _wb.gtm || [], mine: _wb.mine || null })); } catch(e) {}
+        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ gtm: _wb.gtm || [], mine: _wb.mine || null, events: (_wb.events || []).filter(isMyAttEv) })); } catch(e) {}
       } catch(e) { _wbState = 'error'; }
       _mineCache = {};
       rerender();
@@ -110,7 +110,7 @@
       if (!dates.length) return;
       var time = (inner.match(/(\d{2}:\d{2})\s*~\s*(\d{2}:\d{2})/) || []);
       var kind, label, hours = parseHours(inner);
-      if (/연장근무\s*적립\s*사용/.test(subj)) { kind = 'otUse'; label = '연장 사용'; }
+      if (/연장근무\s*적립\s*사용/.test(subj)) { kind = 'otUse'; label = /^09:/.test(time[1] || '') ? '지연출근' : (/^18:/.test(time[2] || '') ? '조기퇴근' : '연장 사용'); }
       else if (/연장근무/.test(subj)) { kind = 'otEarn'; label = '연장근무'; }
       else if (/대체휴가|휴근/.test(subj)) { kind = 'sub'; label = '대체휴가'; if (!hours) hours = 8; }
       else if (/연차|반차|휴가/.test(subj)) {
@@ -131,6 +131,42 @@
     return out;
   }
   function mineOn(ds) { return mineItems().filter(function(x){ return ds >= x.start && ds <= x.end; }); }
+
+  // ★ (2026-10-08) 아웃룩 캘린더에 적어둔 내 근태(연차·지연 출근·조기 퇴근 …) = '계획'.
+  //   같은 날 결재(완료)가 있으면 결재만 보여주고, 결재가 없으면 '결재 전'으로 구분해 보여준다.
+  var MY_ATT_RE = /^(연차|휴가|반차|오전\s*반차|오후\s*반차|조기\s*퇴근|지연\s*출근|휴무|대체\s*휴가|건강\s*검진|리프레시)/;
+  function isMyAttEv(e) { return e && MY_ATT_RE.test(String(e.title || '').trim()); }
+  function normLabel(s) { return String(s || '').replace(/\s+/g, ''); }
+  function planItems() {
+    if (_mineCache.plans) return _mineCache.plans;
+    var out = [];
+    ((_wb && _wb.events) || []).filter(isMyAttEv).forEach(function(e) {
+      var title = String(e.title).trim(), label = normLabel(title.match(MY_ATT_RE)[1]);
+      if (e.allDay) {
+        var s = String(e.start).slice(0, 10), en = String(e.end || e.start).slice(0, 10);
+        out.push({ kind: 'leave', label: label, start: s, end: en < s ? s : en, hours: 8, time: '', full: true, plan: true, subject: '아웃룩 · ' + title + ' (결재 전)' });
+      } else {
+        var st = String(e.start), et = String(e.end || e.start);
+        var d0 = st.slice(0, 10), t = st.slice(11, 16) + '~' + et.slice(11, 16);
+        var hrs = Math.max(0, (new Date(et) - new Date(st)) / 36e5);
+        out.push({ kind: 'part', label: label, start: d0, end: d0, hours: hrs, time: t, full: false, plan: true, subject: '아웃룩 · ' + title + ' ' + t + ' (결재 전)' });
+      }
+    });
+    _mineCache.plans = out;
+    return out;
+  }
+  function attOn(ds) {
+    var done = mineOn(ds);
+    var plans = planItems().filter(function(x) {
+      if (!(ds >= x.start && ds <= x.end)) return false;
+      return !done.some(function(a) {
+        if (a.kind === 'otEarn') return false;
+        if (x.full) return a.full;
+        return !a.full && (normLabel(a.label) === x.label || (a.time && a.time.slice(0, 5) === x.time.slice(0, 5)));
+      });
+    });
+    return done.concat(plans);
+  }
   function fmtH(h) {
     var hh = Math.floor(h + 1e-9), mm = Math.round((h - hh) * 60);
     return (hh ? hh + '시간' : '') + (mm ? (hh ? ' ' : '') + mm + '분' : '') || '0시간';
@@ -334,14 +370,17 @@
     var hol = getKoreanHolidays(d.getFullYear())[ds] || '';
     var other = _mode === 'month' && d.getMonth() !== plannerMonth;
     var evs = eventsOn(ds);
-    var mine = mineOn(ds);
+    var mine = attOn(ds);
     var offs = mine.filter(function(x){ return x.full; });
-    var hasPortalLeave = offs.some(function(x){ return x.kind === 'leave'; });
+    var hasPortalLeave = offs.length > 0;
+    var partLabels = mine.filter(function(x){ return !x.full; }).map(function(x){ return normLabel(x.label); });
     var ranges = [], singles = [], ivs = [];
     evs.forEach(function(r) {
+      // 결재·아웃룩 근태가 있는 날은 손으로 넣은 같은 근태 일정(연차·지연 출근·조기 퇴근)은 숨김 (두 번 안 그리게)
+      var tl = normLabel(r[1]);
+      if (partLabels.some(function(l){ return tl.indexOf(l) >= 0; })) return;
+      if (hasPortalLeave && (r[2] === '연차' || /^(연차|휴가)/.test(tl))) return;
       if (_ivIsInterval(r)) { ivs.push(r); return; }
-      // 포털 연차가 있는 날은 손으로 넣은 '연차' 일정은 숨김 (같은 걸 두 번 그리지 않게)
-      if (hasPortalLeave && r[2] === '연차') return;
       var s = (r[0]||'').toString(), e = (r[5]||'').toString();
       (e && e > s ? ranges : singles).push(r);
     });
@@ -374,7 +413,7 @@
     // 내 부재 (포털 결재) — 종일은 이어지는 띠
     offs.forEach(function(x) {
       var head = ds === x.start || dow === 0, tail = ds === x.end || dow === 6;
-      h += '<span class="wbc-off' + (head ? ' head' : '') + (tail ? ' tail' : '') + (x.kind === 'sub' ? ' sub' : '') + '" title="' + esc(x.subject) + '">' + (head ? '<i>누리</i>' + esc(x.label) : '&nbsp;') + '</span>';
+      h += '<span class="wbc-off' + (head ? ' head' : '') + (tail ? ' tail' : '') + (x.kind === 'sub' ? ' sub' : '') + (x.plan ? ' plan' : '') + '" title="' + esc(x.subject) + '">' + (head ? '<i>누리</i>' + esc(x.label) + (x.plan ? '<s>결재 전</s>' : '') : '&nbsp;') + '</span>';
     });
     // 기간 바 (고정 줄)
     var slots = [];
@@ -401,7 +440,7 @@
     var partial = mine.filter(function(x){ return !x.full && x.kind !== 'otEarn'; });
     if (partial.length) {
       h += '<span class="wbc-atts">' + partial.map(function(x) {
-        return '<span class="wbc-att' + (x.kind === 'otUse' ? ' ot' : '') + '" title="' + esc(x.subject) + '"><i>' + esc(x.label) + '</i>' + esc(x.time || fmtH(x.hours)) + '</span>';
+        return '<span class="wbc-att' + (x.kind === 'otUse' ? ' ot' : '') + (x.plan ? ' plan' : '') + '" title="' + esc(x.subject) + '"><i>' + esc(x.label) + '</i>' + esc(x.time || fmtH(x.hours)) + (x.plan ? '<s>결재 전</s>' : '') + '</span>';
       }).join('') + '</span>';
     }
     // 인터벌 트랙
@@ -432,7 +471,7 @@
         return '<div class="wbc-ag-gtm s-' + (g.series || 'fw') + (g.key ? ' is-key' : '') + '"><em>' + (g.key ? '★ ' : '') + esc(g.team || GTM_TAG[g.series] || '') + '</em>' + esc(g.title) + '</div>';
       }).join('') + '</div>';
     }
-    var mine = mineOn(_sel);
+    var mine = attOn(_sel);
     if (mine.length) {
       h += '<div class="wbc-ag-sec"><p class="wbc-ag-t">내 근태</p>' + mine.map(function(x) {
         return '<div class="wbc-ag-att ' + x.kind + '"><b>' + esc(x.label) + '</b><span>' + esc(x.time || (x.start !== x.end ? x.start.slice(5) + ' ~ ' + x.end.slice(5) : '종일')) + '</span><span class="h">' + fmtH(x.hours) + '</span></div>';

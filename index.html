@@ -5666,6 +5666,12 @@
     .wbc-att { font-size:10.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .wbc-att i { font-style:normal; font-size:9.5px; font-weight:700; background:var(--me); color:#fff; padding:1px 5px; margin-right:5px; }
     .wbc-att.ot i { background:#0f766e; }
+    /* ★ (2026-10-08) 아웃룩에만 있고 결재 안 올린 근태 = 빗금·테두리 + '결재 전' */
+    .wbc-off.plan { background:repeating-linear-gradient(135deg,#ffe6e1 0 6px,#fff3f0 6px 12px); color:#b4532a; box-shadow:inset 0 0 0 1px #ffb4a6; }
+    .wbc-off.plan i { background:var(--me); color:#fff; }
+    .wbc-att.plan i { background:#fff; color:var(--me); box-shadow:inset 0 0 0 1px var(--me); }
+    .wbc-att.plan.ot i { color:#0f766e; box-shadow:inset 0 0 0 1px #0f766e; }
+    .wbc-off s, .wbc-att s { text-decoration:none; font-size:9.5px; font-weight:700; margin-left:5px; padding:0 4px; border:1px solid currentColor; opacity:.85; }
     .wbc-cd .cal-iv-track { left:0; right:0; }
     /* 선택일 패널 */
     .wbc-ag { border-top:1px solid var(--hair); padding-top:14px; position:sticky; top:16px; }
@@ -16627,7 +16633,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=5" defer></script>
+<script src="js/cal-wb.js?v=6" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
