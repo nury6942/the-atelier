@@ -335,6 +335,24 @@
     var w = function() { try { before(); } catch(e) {} return orig.apply(this, arguments); };
     w.__jvb = true; w.__jv = orig.__jv; window[name] = w;
   }
+  // ★ (2026-10-08) 전체 일차 스크롤 — 화면 위쪽에 걸린 날짜를 지도가 따라감 (목록은 다시 안 그림)
+  var _followTick = false;
+  function followScroll() {
+    _followTick = false;
+    var grid = document.getElementById('journey-week-grid');
+    if (!grid || !grid.offsetParent || typeof window.setDayPinsFilterQuiet !== 'function') return;
+    try { if (localStorage.getItem('atelier_daylog_view') === 'single') return; } catch(e) {}
+    var f = window.getDayPinsFilter ? window.getDayPinsFilter() : 'all';
+    if (f === 'pool') return;
+    var cols = grid.querySelectorAll('.wk4-col[data-date]');
+    if (!cols.length) return;
+    var line = Math.min(260, window.innerHeight * 0.35), hit = null;
+    for (var i = 0; i < cols.length; i++) { var r = cols[i].getBoundingClientRect(); if (r.top <= line && r.bottom > line) { hit = cols[i]; break; } }
+    if (!hit) { if (cols[0].getBoundingClientRect().top > line) window.setDayPinsFilterQuiet('all'); return; }
+    var d = hit.getAttribute('data-date'), dm = (typeof getDayMap === 'function') ? getDayMap() : [];
+    for (var j = 0; j < dm.length; j++) if (dm[j].date === d) { window.setDayPinsFilterQuiet(String(dm[j].day)); break; }
+  }
+  document.addEventListener('scroll', function() { if (!_followTick) { _followTick = true; requestAnimationFrame(followScroll); } }, { passive: true, capture: true });
   function boot() {
     wrapBefore('renderWeekView', fillPlanCoords);
     wrapBefore('renderDayPinsMap', fillPlanCoords);

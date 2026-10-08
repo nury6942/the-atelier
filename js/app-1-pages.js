@@ -4631,7 +4631,7 @@
 
   // ── 데스크탑 주간 그리드 뷰 (엑셀 스타일, lg 이상) ──
   var currentWeekChunkStart = 0;
-  var WEEK_CHUNK_SIZE = 4;
+  var WEEK_CHUNK_SIZE = 999; // ★ (2026-10-08) 4일씩 끊지 않고 전체 일차를 한 번에 (스크롤하면 지도가 따라감)
   var _wk4WxSeq = 0;   // 날씨 비동기 채움용 렌더 일련번호
 
   // ★ (2026-07-22) Stops 카드 클릭 → 해당 도시의 Daily Log 구간으로 점프
@@ -5132,7 +5132,7 @@
           '<span class="dlv-prog-label' + (isT ? ' is-today' : '') + '">' + md + kind + '</span></div>';
       }).join('');
       // 트랙/채움은 첫 점 ~ 마지막 점 사이만 (컬럼 4칸 기준 중앙 정렬)
-      var _n = WEEK_CHUNK_SIZE;
+      var _n = Math.max(1, chunk.length);
       var trackL = (0.5 / _n) * 100;
       var trackW = ((chunk.length - 1) / _n) * 100;
       var fillIdx = todayPos >= 0 ? todayPos : (pastN >= chunk.length ? chunk.length - 1 : 0);
@@ -14273,6 +14273,13 @@
 
   function filterFinanceByTrip(trip) {
     currentFinanceTrip = trip;
+    // ★ (2026-10-08) 예산에서 고른 여행을 다른 탭(일정·예약·스팟)도 따라가게 — 공통 저장 키에 기록
+    if (trip && trip !== 'all') {
+      try {
+        var _ft = (financeTrips || []).find(function(t){ return t.name === trip; });
+        if (_ft && _ft._id) localStorage.setItem('atelier_current_trip_id', _ft._id);
+      } catch(e) {}
+    }
     financeFiltered = trip==='all' ? financeData : financeData.filter(function(r){ return r[2]===trip; });
 
     renderFinanceDdOptions();
@@ -15495,7 +15502,9 @@
           if (!isNaN(amt) && amt > 0) {
             // ★ (2026-10-08) 예약·결제 흔적이 없으면 '예상'으로만 — 예약도 안 했는데 '초과'가 뜨던 문제
             var _ps = (typeof _trvPayStatus === 'function') ? _trvPayStatus(lo) : (lo.payment_status || '');
-            var booked = /완료|예정|현장/.test(_ps) || !!(lo.pnr || lo.booking_ref || lo.confirmation || lo.booked);
+            var _ref = !!(lo.pnr || lo.booking_ref || lo.confirmation || lo.booked);
+            var _generic = /\d\s*(?:[-~–]\s*\d\s*)?★/.test(lo.title || ''); // 'N★ 호텔' = 계획 단계 자리표시
+            var booked = _ref || (!_generic && /완료|예정|현장/.test(_ps));
             if (booked) {
               totalSpent += amt;
               unlinked.push((lo.title || '제목없음') + ' ₩' + Math.round(amt).toLocaleString('ko-KR'));
@@ -15671,12 +15680,53 @@
     '</div>';
 
     window._ldgEstimates = _ldgEstIds;
+    // ★ (2026-10-08) 옛 숙소 정리 — 여행 기간 밖 날짜로 남은 숙소: 일정에 있는 도시면 날짜를 일정에 맞추고, 없는 도시면 삭제
+    var _stalePlan = [];
+    lodgings.forEach(function(lo) {
+      if (!lo._id || !lo.date || !trip.start_date || !trip.end_date) return;
+      if (lo.date >= trip.start_date && lo.date <= trip.end_date) return;
+      var c = itineraryByKey[normCity(lo.city || '')];
+      if (c && c.start_date && c.end_date) _stalePlan.push({ id: lo._id, act: 'move', title: lo.title || '', city: lo.city || '', from: lo.date + '~' + (lo.checkout_date || ''), date: c.start_date, out: c.end_date });
+      else _stalePlan.push({ id: lo._id, act: 'del', title: lo.title || '', city: lo.city || '', from: lo.date + '~' + (lo.checkout_date || '') });
+    });
+    window._ldgStale = _stalePlan;
+    if (_stalePlan.length) {
+      html += '<div class="flb-est-clean"><span>여행 기간 밖 옛 숙소 ' + _stalePlan.length + '개 — 일정 도시는 날짜 맞추기 ' + _stalePlan.filter(function(x){ return x.act === 'move'; }).length +
+        ' · 일정에 없는 도시는 삭제 ' + _stalePlan.filter(function(x){ return x.act === 'del'; }).length + '</span><button type="button" onclick="ldgCleanStale()">옛 숙소 정리</button></div>';
+    }
     if (_ldgEstIds.length) {
       html += '<div class="flb-est-clean"><span>예약 전 예상 숙소 ' + _ldgEstIds.length + '개 · ₩' + Math.round(_ldgEstIds.reduce(function(s, x){ return s + x.amt; }, 0)).toLocaleString('ko-KR') + '</span>' +
         '<button type="button" onclick="ldgDeleteEstimates()">예상 숙소 지우기</button></div>';
     }
     bodyEl.innerHTML = html;
   }
+  window.ldgCleanStale = async function() {
+    var list = window._ldgStale || [];
+    if (!list.length) return;
+    var msg = list.map(function(x) {
+      return x.act === 'move' ? '· [날짜 맞춤] ' + x.city + ' — ' + x.title + '  ' + x.from + ' → ' + x.date + '~' + x.out
+                              : '· [삭제] ' + x.city + ' — ' + x.title + '  (' + x.from + ')';
+    }).join('\n');
+    if (!confirm('옛 숙소를 이렇게 정리할까요? (삭제는 휴지통에 보관)\n\n' + msg)) return;
+    var ok = 0;
+    for (var i = 0; i < list.length; i++) {
+      var x = list[i];
+      try {
+        if (x.act === 'move') {
+          await fbUpdate('journey', x.id, { date: x.date, checkout_date: x.out });
+          var it = (journeyData || []).find(function(d){ return d._id === x.id; });
+          if (it) { it.date = x.date; it.checkout_date = x.out; }
+        } else {
+          await fbDelete('journey', x.id);
+          for (var j = (journeyData || []).length - 1; j >= 0; j--) if (journeyData[j]._id === x.id) journeyData.splice(j, 1);
+        }
+        ok++;
+      } catch(e) { console.error('[ldg-stale]', x, e); }
+    }
+    try { localStorage.removeItem('atelier_snapshot_journey'); } catch(e) {}
+    if (typeof showSyncToast === 'function') showSyncToast('옛 숙소 ' + ok + '개 정리됨');
+    renderTripLodgingBreakdown();
+  };
   // ★ (2026-10-08) 예약 안 한 '예상' 숙소 일괄 삭제 — 휴지통(trashBeforeDelete)에 보관됨
   window.ldgDeleteEstimates = async function() {
     var list = window._ldgEstimates || [];
@@ -18359,6 +18409,13 @@
   // ★ (2026-07-24) 지도 일차 칩 → Daily Log 패널 양방향 동기화.
   //   기존엔 패널 ‹ › → 지도 한 방향만 있어서, 지도에서 9일차를 눌러도 옆 패널은 1일차 그대로였다.
   //   currentDayIndex가 이미 같으면 재렌더를 건너뛰어(무한 루프 방지) 안전하다.
+  // ★ (2026-10-08) 스크롤 따라가기용 — 일정 목록은 다시 그리지 않고 지도만 그 일차로
+  window.setDayPinsFilterQuiet = function(f) {
+    if (_dayPinsFilter === f) return;
+    _dayPinsFilter = f;
+    renderDayPinsMap();
+  };
+  window.getDayPinsFilter = function() { return _dayPinsFilter; };
   window.setDayPinsFilter = function(f) {
     _dayPinsFilter = f;
     renderDayPinsMap();
@@ -21496,6 +21553,16 @@
   };
 
   function switchTravelTab(tab) {
+    // ★ (2026-10-08) 여행 선택 하나로 통일 — 마지막으로 고른 여행(atelier_current_trip_id)이
+    //   지금 불러온 여행과 다르면 먼저 그 여행으로 바꾼다 (예산에서 캐나다 → 예약 탭도 캐나다)
+    var _tripSync = null;
+    try {
+      var _want = localStorage.getItem('atelier_current_trip_id');
+      if (tab !== 'budget' && tab !== 'checklist' && _want && _want !== currentTripId &&
+          (tripsData || []).some(function(t){ return t._id === _want; })) {
+        _tripSync = selectTrip(_want);
+      }
+    } catch(e) {}
     // Atlas/스팟 탭 진입/이탈 처리 — 모든 분기에서 hide 호출
     if (tab !== 'atlas' && typeof window.hideAtlasView === 'function') {
       window.hideAtlasView();
@@ -21517,6 +21584,7 @@
         var contentWrap = page.querySelector('.page-content-wrap');
         if (contentWrap) contentWrap.style.display = 'none';
         if (typeof window.showTravelRecords === 'function') window.showTravelRecords();
+        if (_tripSync && _tripSync.then) _tripSync.then(function(){ if (typeof window.showTravelRecords === 'function') window.showTravelRecords(); });
       }, 50);
       return;
     }
@@ -21541,6 +21609,7 @@
         var contentWrap = page.querySelector('.page-content-wrap');
         if (contentWrap) contentWrap.style.display = 'none';
         if (typeof window.showTravelPlaces === 'function') window.showTravelPlaces();
+        if (_tripSync && _tripSync.then) _tripSync.then(function(){ if (typeof renderPlaces === 'function') renderPlaces(); });
       }, 50);
       return;
     }
@@ -21574,7 +21643,8 @@
       try {
         if (typeof currentTripId !== 'undefined' && currentTripId &&
             typeof financeTrips !== 'undefined' && financeTrips.length) {
-          var trip = financeTrips.find(function(t){ return t._id === currentTripId; });
+          var _lastId = currentTripId; try { _lastId = localStorage.getItem('atelier_current_trip_id') || currentTripId; } catch(e) {}
+          var trip = financeTrips.find(function(t){ return t._id === _lastId; });
           if (trip && typeof currentFinanceTrip !== 'undefined') {
             currentFinanceTrip = trip.name;
           }
@@ -21590,7 +21660,8 @@
           if (typeof currentTripId !== 'undefined' && currentTripId &&
               typeof pkTrips !== 'undefined' && pkTrips.length &&
               typeof selectPkTrip === 'function') {
-            var t = pkTrips.find(function(x){ return x._id === currentTripId; });
+            var _lastPk = currentTripId; try { _lastPk = localStorage.getItem('atelier_current_trip_id') || currentTripId; } catch(e) {}
+            var t = pkTrips.find(function(x){ return x._id === _lastPk; });
             if (t) selectPkTrip(t._id, t.name);
           }
         } catch(e) {}
@@ -28264,6 +28335,7 @@
   function togglePkDropdown() { _toggleDropdown('pk-dropdown-panel','pk-dropdown-chevron',_ddState,'pk'); }
 
   function selectPkTrip(tripId, tripName) {
+    try { if (tripId) localStorage.setItem('atelier_current_trip_id', tripId); } catch(e) {} // ★ (2026-10-08) 탭 공통 여행
     pkTripId = null;
     setPkDropdownLabel(tripId);
     // ★ (2026-07-24) 무조건 토글이라, 탭 전환 시 프로그램적으로 호출되면(switchTravelTab의
