@@ -323,12 +323,21 @@
     ivMax = ivL.length;
     var ranges = plannerData.filter(function(r) { var s = (r[0]||'').toString(), e = (r[5]||'').toString(); return e && e > s && !_ivIsInterval(r) && s <= toDs && e >= fromDs; });
     ranges.sort(byStart);
+    // ★ (2026-10-08) 내 종일 부재(연차 띠)도 같은 줄 배정에 넣는다 — 안 그러면 연차 있는 날만
+    //   다른 기간 바가 한 줄 내려가 같은 바가 날마다 엇갈려 보인다. 연차를 먼저 배정(맨 윗줄 우선).
+    var appr = mineItems().filter(function(x){ return x.full; });
+    var offsAll = appr.concat(planItems().filter(function(p) {
+      return p.full && !appr.some(function(a){ return a.start <= p.end && a.end >= p.start; });
+    })).filter(function(x){ return x.start <= toDs && x.end >= fromDs; });
+    offsAll.sort(function(a, b){ return a.start.localeCompare(b.start); });
     var rL = [];
-    ranges.forEach(function(r) {
-      var s = (r[0]||'').toString(), e = (r[5]||'').toString(), lane = 0;
+    var place = function(key, s, e) {
+      var lane = 0;
       while ((rL[lane] || []).some(function(iv){ return s <= iv[1] && e >= iv[0]; })) lane++;
-      (rL[lane] = rL[lane] || []).push([s, e]); rangeLanes.set(r, lane);
-    });
+      (rL[lane] = rL[lane] || []).push([s, e]); rangeLanes.set(key, lane);
+    };
+    offsAll.forEach(function(x) { place(x, x.start, x.end); });
+    ranges.forEach(function(r) { place(r, (r[0]||'').toString(), (r[5]||'').toString()); });
     return { rangeLanes: rangeLanes, ivLanes: ivLanes, ivMax: ivMax };
   }
 
@@ -424,17 +433,18 @@
     });
 
     var h = '<span class="wbc-cd-head"><span class="wbc-cd-num">' + d.getDate() + '</span>' + (hol ? '<span class="wbc-cd-hol">' + esc(hol) + '</span>' : '') + '</span>';
-    // 내 부재 (포털 결재) — 종일은 이어지는 띠
-    offs.forEach(function(x) {
+    // 내 종일 부재(연차 띠) + 기간 바 — 같은 고정 줄 체계
+    var offHtml = function(x) {
       var head = ds === x.start || dow === 0, tail = ds === x.end || dow === 6;
-      h += '<span class="wbc-off' + (head ? ' head' : '') + (tail ? ' tail' : '') + (x.kind === 'sub' ? ' sub' : '') + (x.plan ? ' plan' : '') + '" title="' + esc(x.subject) + '">' + (head ? '<i>누리</i>' + esc(x.label) + (x.plan ? '<s>결재 전</s>' : '') : '&nbsp;') + '</span>';
-    });
-    // 기간 바 (고정 줄)
-    var slots = [];
+      return '<span class="wbc-off' + (head ? ' head' : '') + (tail ? ' tail' : '') + (x.kind === 'sub' ? ' sub' : '') + (x.plan ? ' plan' : '') + '" title="' + esc(x.subject) + '">' + (head ? '<i>누리</i>' + esc(x.label) + (x.plan ? '<s>결재 전</s>' : '') : '&nbsp;') + '</span>';
+    };
+    var slots = [], extra = [];
+    offs.forEach(function(x) { var ln = lanes.rangeLanes.get(x); if (ln == null) extra.push(x); else slots[ln] = x; });
     ranges.forEach(function(r) { var ln = lanes.rangeLanes.get(r); slots[ln == null ? 0 : ln] = r; });
-    if (slots.length) {
+    if (slots.length || extra.length) {
       h += '<span class="wbc-bars">';
-      for (var i = 0; i < slots.length; i++) h += slots[i] ? barHtml(slots[i], ds, dow) : '<span class="wbc-rb-gap"></span>';
+      for (var i = 0; i < slots.length; i++) h += !slots[i] ? '<span class="wbc-rb-gap"></span>' : (Array.isArray(slots[i]) ? barHtml(slots[i], ds, dow) : offHtml(slots[i]));
+      extra.forEach(function(x){ h += offHtml(x); });
       h += '</span>';
     }
     // GTM
