@@ -56,7 +56,7 @@
       try {
         _wb = JSON.parse(snap.data().json);
         _wbState = 'ok';
-        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ gtm: _wb.gtm || [], mine: _wb.mine || null, events: (_wb.events || []).filter(isMyAttEv) })); } catch(e) {}
+        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ gtm: _wb.gtm || [], mine: _wb.mine || null, leaveTotal: _wb.leaveTotal || null, events: (_wb.events || []).filter(isMyAttEv) })); } catch(e) {}
       } catch(e) { _wbState = 'error'; }
       _mineCache = {};
       rerender();
@@ -264,7 +264,9 @@
     var el = document.getElementById('wbc-stats');
     if (!el) return;
     var year = plannerYear;
-    var total = (typeof _leaveTotalByYear !== 'undefined' && _leaveTotalByYear[year] !== undefined) ? _leaveTotalByYear[year] : null;
+    // ★ (2026-10-08) 업무 보드에 적어둔 포털 기준 연차 총계(leaveTotal)가 있으면 그걸 우선 (사이트 설정값은 예전에 21로 잘못 저장돼 있었음)
+    var wbTotal = _wb && _wb.leaveTotal && _wb.leaveTotal[String(year)];
+    var total = (wbTotal != null) ? +wbTotal : ((typeof _leaveTotalByYear !== 'undefined' && _leaveTotalByYear[year] !== undefined) ? _leaveTotalByYear[year] : null);
     if (total === null && typeof getLeaveTotalForYear === 'function') {
       getLeaveTotalForYear(year).then(function() { renderHeaderStats(); });
       total = 17;
