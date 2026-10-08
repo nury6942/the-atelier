@@ -4983,9 +4983,10 @@
             if (_sMin != null) _prevEndMin = Math.max(_prevEndMin || 0, (_eMin != null && _eMin > _sMin) ? _eMin : _sMin);
             // 서브라인: 시간 줄 / 설명 줄 분리 (한 덩어리로 붙어 빽빽하던 문제 해소)
             var subHtml = '';
-            if (time) subHtml += '<p class="wk4-sub wk4-sub-time"><span class="wk4-time">' + time + endTime + '</span></p>';
+            // ★ (2026-10-08) 끌어서 옮기기는 시간 칸에서만 — 나머지는 글자 드래그(복사) 가능
+            if (time) subHtml += '<p class="wk4-sub wk4-sub-time" draggable="true" title="끌어서 다른 날로 옮기기"><span class="wk4-time">' + time + endTime + '</span></p>';
             if (renderDesc) subHtml += '<p class="wk4-sub wk4-sub-desc" style="white-space:pre-line;word-break:keep-all;overflow-wrap:break-word">' + renderDesc + '</p>';
-            return travelRow + '<div class="' + slotClasses.join(' ') + '" draggable="true" data-jid="' + (item._id || '') + '" onclick="event.stopPropagation();' + (isSouvenir ? '' : 'startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '클릭하여 편집') + '">' +
+            return travelRow + '<div class="' + slotClasses.join(' ') + '"' + (time ? '' : ' draggable="true"') + ' data-jid="' + (item._id || '') + '" onclick="event.stopPropagation()" ondblclick="event.stopPropagation();' + (isSouvenir ? '' : 'try{window.getSelection().removeAllRanges()}catch(e){};startWeekEdit(\'' + safeId + '\')') + '" title="' + (isSouvenir ? '쇼핑 일정' : '더블클릭하면 수정 · 시간 칸을 끌면 다른 날로') + '">' +
               '<div class="wk4-line">' +
                 // ★ (2026-07-23) 제목 텍스트만 감싸는 span — 예약/고정/쇼핑 항목에 형광펜 하이라이트
                 '<p class="j-slot-title wk4-slot-title"><span class="wk4-hl">' + (renderTitle || '(제목 없음)') + '</span></p>' +

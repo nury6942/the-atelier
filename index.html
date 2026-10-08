@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=372" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=373" as="script">
   <link rel="preload" href="js/app-2-init.js?v=174" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -5709,6 +5709,12 @@
     #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { grid-template-columns:112px minmax(0,1fr) auto; column-gap:18px; row-gap:2px !important; padding:13px 16px 13px 20px !important; }
     #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-time { white-space:nowrap; font-size:13px; letter-spacing:-.01em; }
     #page-journey #journey-week-grid.wk4 .wk4-slot .jv-en { font-weight:500; color:var(--jv-mute); margin-left:2px; }
+    /* ★ (2026-10-08) 글자 드래그 복사 가능 · 수정은 더블클릭 · 옮기기는 시간 칸 */
+    #page-journey #journey-week-grid.wk4 .j-slot.wk4-slot { cursor:text !important; user-select:text; -webkit-user-select:text; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-sub-time { cursor:grab; user-select:none; -webkit-user-select:none; }
+    #page-journey #journey-week-grid.wk4 .wk4-slot .wk4-sub-time:active { cursor:grabbing; }
+    #page-journey #journey-week-grid.wk4 .wk4-title { flex-wrap:wrap; overflow:visible !important; white-space:normal !important; row-gap:4px; }
+    #page-journey #journey-week-grid.wk4 .wk4-title .jv-cty { white-space:nowrap; }
     /* ★ (2026-10-08) 장소 사이 이동시간 줄 — 줄무늬 배경·음수 여백 제거, 제목 칸에 맞춘 얇은 한 줄 */
     #page-journey #journey-week-grid.wk4 .wk4-travel.j-slot-travel { display:flex !important; align-items:center; width:auto !important; margin:0 !important; padding:5px 16px 5px 150px !important; background:none !important; border:0 !important; border-bottom:1px solid var(--jv-soft) !important; border-radius:0 !important; font-size:11px; color:var(--jv-mute); }
     #page-journey #journey-week-grid.wk4 .wk4-travel .wk4-travel-chip { padding:0 !important; gap:6px; border:0 !important; border-radius:0 !important; background:none !important; color:var(--jv-sub) !important; font-family:'Inter','Pretendard','Noto Color Emoji',sans-serif; font-size:11px; font-weight:600; text-decoration:none !important; }
@@ -16191,7 +16197,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=372" defer></script>
+<script src="js/app-1-pages.js?v=373" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
