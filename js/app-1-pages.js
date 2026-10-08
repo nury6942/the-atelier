@@ -4547,6 +4547,10 @@
         // 16일 이후 미래: 작년 같은 날짜 기후 참고
         isHistorical = true;
         var lastYear = new Date(target); lastYear.setFullYear(lastYear.getFullYear() - 1);
+        // ★ (2026-10-08) 1년 전도 아직 미래면(예: 2027년 12월 여행 → 2026년 12월은 아직 안 옴) 기록이 있는 해까지 더 거슬러 감
+        var _archEdge = new Date(today); _archEdge.setDate(_archEdge.getDate() - 6);
+        while (lastYear > _archEdge) lastYear.setFullYear(lastYear.getFullYear() - 1);
+        var _refYear = lastYear.getFullYear();
         var lyStr = lastYear.getFullYear()+'-'+String(lastYear.getMonth()+1).padStart(2,'0')+'-'+String(lastYear.getDate()).padStart(2,'0');
         url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + geo.lat + '&longitude=' + geo.lng +
           '&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max' +
@@ -4564,6 +4568,7 @@
           rain: data.daily.precipitation_probability_max ? (data.daily.precipitation_probability_max[0] || 0) : null,
           wind: Math.round(data.daily.windspeed_10m_max[0]),
           historical: isHistorical,
+          refYear: isHistorical ? _refYear : null,
           city: geo.name
         };
         _weatherCache[cacheKey] = w;
@@ -4589,12 +4594,12 @@
     var _RAIN = {51:1,53:1,55:1,56:1,57:1,61:1,63:1,65:1,66:1,67:1,80:1,81:1,82:1,95:1,96:1,99:1};
     var isRain = !!_RAIN[w.code] || (w.rain !== null && w.rain !== undefined && w.rain >= 60);
     return '<span class="wk4-wx" style="background:' + wmo.bg + '" title="' + (w.city ? w.city + ' · ' : '') + wmo.desc +
-        (w.historical ? ' · 작년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '') + '">' +
+        (w.historical ? ' · ' + (w.refYear || '작년') + '년 같은 날 기록 (16일 이후는 예보가 없어 참고값)' : '') + '">' +
       '<i>' + wmo.icon + '</i>' +
       '<b>' + w.tempMax + '°</b>' +
       '<u>↑' + w.tempMax + '° ↓' + w.tempMin + '°</u>' +
       ((w.rain !== null && w.rain !== undefined) ? '<s' + (isRain ? ' class="is-rain"' : '') + '>💧' + w.rain + '%</s>' : '') +
-      (w.historical ? '<em>작년</em>' : '') +
+      (w.historical ? '<em>' + (w.refYear ? w.refYear : '작년') + '</em>' : '') +
     '</span>';
   }
 
@@ -6074,6 +6079,14 @@
   }
   window._todayLocalStr = _todayLocalStr;
 
+  // ★ (2026-10-08) 'YYYY-MM-DD' → '06/20 (일)' — 예약 탭 날짜마다 요일
+  function _dowDate(s) {
+    var t = String(s || '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+    var x = new Date(t + 'T00:00:00');
+    return t.slice(5).replace('-', '/') + ' (' + ['일','월','화','수','목','금','토'][x.getDay()] + ')';
+  }
+  window._dowDate = _dowDate;
   function _trvPayStatus(item) {
     if (!item) return '';
     if (item.unpaid === true) return '현장 결제';
@@ -6081,7 +6094,7 @@
     if (/^\d{4}-\d{2}-\d{2}$/.test(pd)) {
       var today = _todayLocalStr();
       if (pd <= today) return '결제 완료';
-      return '결제 예정 (' + pd.substring(5, 7) + '/' + pd.substring(8, 10) + ')';
+      return '결제 예정 (' + _dowDate(pd) + ')';
     }
     return item.payment_status || '';
   }
@@ -6131,8 +6144,8 @@
       var cancelClass = item.cancel === '가능' ? 'bg-emerald-50 text-emerald-700' :
                         item.cancel === '조건부' ? 'bg-amber-50 text-amber-700' :
                         'bg-rose-50 text-rose-700';
-      var cancelTxt = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + item.cancel_date : '무료취소 가능') :
-                      item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부 취소') :
+      var cancelTxt = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + _dowDate(item.cancel_date) : '무료취소 가능') :
+                      item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + _dowDate(item.cancel_date) : '조건부 취소') :
                       '환불 불가';
       chips.push('<span class="inline-flex items-center gap-1 px-2 py-0.5 ' + cancelClass + ' rounded-md text-[11px] font-semibold"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">event_busy</span>' + cancelTxt + '</span>');
     }
@@ -6163,8 +6176,8 @@
     if (item.driver) recChips.push('<span class="rec-pill">' + item.driver + '</span>');
     if (item.cancel) {
       var cancelVarR = item.cancel === '가능' ? 'is-ok' : (item.cancel === '조건부' ? 'is-warn' : 'is-danger');
-      var cancelTxtR = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + item.cancel_date : '무료취소 가능') :
-                       item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부 취소') :
+      var cancelTxtR = item.cancel === '가능' ? (item.cancel_date ? '무료취소 ~' + _dowDate(item.cancel_date) : '무료취소 가능') :
+                       item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + _dowDate(item.cancel_date) : '조건부 취소') :
                        '환불 불가';
       recChips.push('<span class="rec-pill ' + cancelVarR + '">' + cancelTxtR + '</span>');
     }
@@ -7512,8 +7525,8 @@
         var realIdx = journeyData.indexOf(item);
         var cancelColor = item.cancel === '가능' ? 'text-emerald-600' : (item.cancel === '조건부' ? 'text-amber-600' : 'text-rose-600');
         var cancelText = item.cancel === '가능'
-          ? (item.cancel_date ? '무료 취소 ~' + item.cancel_date : '무료 취소 가능')
-          : (item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + item.cancel_date : '조건부') : (item.cancel === '불가' ? '환불 불가' : (item.cancel||'—')));
+          ? (item.cancel_date ? '무료 취소 ~' + _dowDate(item.cancel_date) : '무료 취소 가능')
+          : (item.cancel === '조건부' ? (item.cancel_date ? '조건부 ~' + _dowDate(item.cancel_date) : '조건부') : (item.cancel === '불가' ? '환불 불가' : (item.cancel||'—')));
         // 숙소 유형 뱃지 (description === 'Airbnb' 이면 Airbnb)
         var isAirbnb = (item.description||'').toLowerCase().indexOf('airbnb') >= 0;
         var typeBadge = isAirbnb

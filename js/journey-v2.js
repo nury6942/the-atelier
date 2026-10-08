@@ -239,6 +239,15 @@
       var t = head.querySelector('.wk4-title');
       var city = (dm.filter(function(e){ return e.date === col.getAttribute('data-date'); })[0] || {}).cityName;
       if (t && city && !t.querySelector('.jv-cty')) { var ch = window.cityCountryHtml(city); if (ch) t.insertAdjacentHTML('afterbegin', ch); }
+      if (t && city && !t.querySelector('.jv-city-en')) {
+        var en = enOf(city);
+        if (en && en.toLowerCase() !== String(city).toLowerCase()) {
+          var tn = null;
+          for (var q = 0; q < t.childNodes.length; q++) { if (t.childNodes[q].nodeType === 3 && t.childNodes[q].textContent.trim()) { tn = t.childNodes[q]; break; } }
+          var sp = document.createElement('span'); sp.className = 'jv-city-en'; sp.textContent = en;
+          if (tn && tn.nextSibling) t.insertBefore(sp, tn.nextSibling); else t.appendChild(sp);
+        }
+      }
       try { addSun(head, col.getAttribute('data-date'), city); } catch(e) {}
       var s = document.createElement('span');
       s.className = 'jv-dno';

@@ -169,14 +169,48 @@
     PLANS.forEach(function(op) { op.items.forEach(function(it) { keys[it[0] + '|' + it[3]] = 1; }); });
     return (journeyData || []).filter(function(d) {
       if (d.trip_id !== t._id || d.type !== '일정') return false;
+      if (d.plan === p.id) return false; // 이번 플랜이 넣은 건 절대 안 건드림
       if (d.plan && d.plan !== p.id) return true;
       return !!keys[d.date + '|' + d.title];
     });
   }
 
+  // ★ (2026-10-08) 새 플랜을 적용했는데 예전 플랜 일정이 남아 있으면(적용 당시 캐시가 오래돼 못 지운 경우) 정리 버튼
+  function appliedV2(t) {
+    var V2 = window.ATELIER_PLANS_V2 || [];
+    for (var i = 0; i < V2.length; i++) if (t && t.planApplied === V2[i].id) return V2[i];
+    return null;
+  }
+  function renderLeftover(head) {
+    var t = current(), b = document.getElementById('jv-plan-leftover');
+    var ap = appliedV2(t);
+    var olds = ap ? oldPlanItems(t, ap) : [];
+    if (!olds.length) { if (b) b.remove(); return; }
+    if (!b) {
+      b = document.createElement('button');
+      b.type = 'button'; b.id = 'jv-plan-leftover'; b.className = 'jv-btn';
+      head.appendChild(b);
+    }
+    b.textContent = '예전 플랜 일정 ' + olds.length + '개 정리';
+    b.onclick = async function() {
+      var list = oldPlanItems(current(), ap);
+      if (!list.length) return;
+      if (!confirm('새 일정과 겹치는 예전 플랜 일정 ' + list.length + '개를 지울까요? (휴지통에 보관)\n\n' +
+        list.slice(0, 25).map(function(d){ return '· ' + d.date + ' ' + (d.time || '') + ' ' + d.title; }).join('\n') + (list.length > 25 ? '\n…' : ''))) return;
+      b.disabled = true; b.textContent = '정리 중…';
+      for (var i = 0; i < list.length; i++) { try { await fbDelete('journey', list[i]._id); } catch(e) { console.error('[plan-leftover]', e); } }
+      var ids = list.map(function(d){ return d._id; });
+      for (var j = journeyData.length - 1; j >= 0; j--) if (ids.indexOf(journeyData[j]._id) >= 0) journeyData.splice(j, 1);
+      try { localStorage.removeItem('atelier_snapshot_journey'); } catch(e) {}
+      b.remove();
+      try { renderWeekView(); } catch(e) {}
+    };
+  }
+
   function renderButton() {
     var head = document.querySelector('#trv-stops .jv-sec-h');
     if (!head) return;
+    try { renderLeftover(head); } catch(e) {}
     var old = document.getElementById('jv-plan-apply');
     var p = planFor(current());
     if (!p) { if (old) old.remove(); return; }
@@ -192,6 +226,10 @@
     var t = current();
     if (!t) return;
     var mine = (citiesData || []).filter(function(c) { return c.trip_id === t._id || !c.trip_id; });
+    try {
+      var fresh = await fbRead('journey');
+      if (fresh && fresh.length) { var mineJ = fresh.filter(function(d){ return d.trip_id === t._id; }); if (mineJ.length) { journeyData.length = 0; mineJ.forEach(function(d){ journeyData.push(d); }); } }
+    } catch(e) {}
     var olds = oldPlanItems(t, p);
     var msg = '[' + t.name + '] 에 플랜을 넣을게요.\n\n' +
       '· 여행 날짜: ' + p.trip.start_date + ' ~ ' + p.trip.end_date + '\n' +

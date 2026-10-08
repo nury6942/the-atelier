@@ -12,6 +12,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function jd() { try { return journeyData || []; } catch(e) { return []; } }
   function trip() { try { return getCurrentTrip(); } catch(e) { return null; } }
+  function dw(s) { return (typeof window._dowDate === 'function') ? esc(window._dowDate(s)) : esc(s); }
   function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || '')); }
   function addDay(s, n) { var d = new Date(s + 'T00:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function nightsBetween(a, b) { return (isDate(a) && isDate(b)) ? Math.round((new Date(b) - new Date(a)) / 864e5) : 0; }
@@ -44,7 +45,7 @@
     var r = route(it.description);
     var code = function(x) { var m = /\b([A-Z]{3})\b/.exec(x); return m ? m[1] : x; };
     return '<article class="bk-card bk-flight">' +
-      '<header class="bk-fh"><span class="bk-tag">✈ FLIGHT</span><b>' + esc(it.title || '') + '</b><span class="bk-mute">' + esc(it.city || '') + '</span>' + btns(idx) + '</header>' +
+      '<header class="bk-fh"><span class="bk-tag">✈ FLIGHT</span><b>' + esc(it.title || '') + '</b><span class="bk-mute">' + esc(it.city || '') + (it.date ? ' · ' + dw(it.date) : '') + '</span>' + btns(idx) + '</header>' +
       '<div class="bk-route">' +
         '<div><p class="bk-code">' + esc(code(r[0])) + '</p><p class="bk-time">' + esc(it.time || '') + '</p></div>' +
         '<div class="bk-line"><span>' + esc(it.duration || '') + '</span></div>' +
@@ -63,8 +64,8 @@
     var key = String(it._id || ('lodge-fb-' + idx));
     var img = (window.journeyLodgeImageGet && window.journeyLodgeImageGet(key)) || '';
     var n = nightsBetween(it.date, it.checkout_date);
-    var cancel = it.cancel === '가능' ? '무료 취소' + (it.cancel_date ? ' ~' + esc(it.cancel_date) : '') :
-      it.cancel === '조건부' ? '조건부 취소' + (it.cancel_date ? ' ~' + esc(it.cancel_date) : '') :
+    var cancel = it.cancel === '가능' ? '무료 취소' + (it.cancel_date ? ' ~' + dw(it.cancel_date) : '') :
+      it.cancel === '조건부' ? '조건부 취소' + (it.cancel_date ? ' ~' + dw(it.cancel_date) : '') :
       it.cancel === '불가' ? '환불 불가' : esc(it.cancel || '');
     var kind = /airbnb/i.test(it.description || '') ? 'AIRBNB' : 'HOTEL';
     var d = function(s) { if (!isDate(s)) return esc(s || '—'); var x = new Date(s + 'T00:00:00'); return (x.getMonth() + 1) + '/' + x.getDate() + ' (' + DOW[x.getDay()] + ')'; };
@@ -82,7 +83,7 @@
 
   function miniCard(it, idx, icon, label) {
     var right = it.type === '렌트카'
-      ? esc([it.city, it.drop_city].filter(Boolean).join(' → ')) + (it.checkout_date ? ' · ~' + esc(it.checkout_date.slice(5).replace('-', '/')) : '')
+      ? esc([it.city, it.drop_city].filter(Boolean).join(' → ')) + (it.checkout_date ? ' · ~' + dw(it.checkout_date) : '')
       : esc(it.description || it.city || '');
     return '<article class="bk-card bk-mini"><span class="bk-tag">' + icon + ' ' + label + '</span>' +
       '<b>' + esc(it.title || '') + '</b><span class="bk-mute">' + right + '</span>' +
