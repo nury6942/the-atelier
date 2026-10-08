@@ -5622,6 +5622,17 @@
     #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-img { outline:3px solid var(--jv-accent); outline-offset:-3px; }
     #page-journey .jv-route-strip .jv-stop.is-active .jv-stop-no { background:var(--jv-accent); border-color:var(--jv-accent); color:#fff; }
     .jv-stop-ph { position:absolute; inset:auto 0 42%; text-align:center; font-size:11px; color:var(--jv-mute); }
+    /* ★ (2026-10-08) Unsplash 작가 표기 — 오른쪽 위 (왼쪽 위는 번호, 아래는 호버 버튼) */
+    .jv-stop-credit { position:absolute; right:0; top:0; max-width:72%; padding:3px 7px; background:rgba(0,0,0,.42);
+      font-size:9.5px; line-height:1.3; color:rgba(255,255,255,.9); display:flex; gap:3px; white-space:nowrap; }
+    /* 작가 이름만 줄어들고 'Unsplash' 는 항상 보이게 (이용 조건상 링크 필수) */
+    .jv-stop-credit .nm { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+    .jv-stop-credit .sl { opacity:.6; flex:none; }
+    .jv-stop-credit > a:last-child { flex:none; }
+    .jv-stop-credit a { color:inherit; text-decoration:none; }
+    .jv-stop-credit a:hover { text-decoration:underline; }
+    .jv-unsplash-setup { align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0 4px; font-size:12px; color:var(--jv-mute); }
+    .jv-unsplash-setup input { flex:1; min-width:220px; border:1px solid var(--jv-line); padding:7px 10px; font-size:12px; }
     .jv-stop-ctl { position:absolute; left:0; right:0; bottom:0; display:flex; opacity:0; transition:opacity .15s; }
     .jv-stop:hover .jv-stop-ctl { opacity:1; }
     .jv-stop-ctl button { flex:1; border:0; border-top:1px solid var(--jv-line); border-right:1px solid var(--jv-soft); background:rgba(255,255,255,.95); font-size:10.5px; font-weight:700; padding:6px 0; cursor:pointer; color:var(--jv-ink); }
@@ -11777,6 +11788,14 @@
             <button type="button" class="jv-btn" onclick="optimizeCityRoute()" title="지점을 지리적으로 가까운 순서로 재정렬">경로 최적화</button>
             <button type="button" class="jv-btn" onclick="document.getElementById('city-import-file').click()" title="구글 My Maps / GPX / KML / GeoJSON 파일에서 지점 가져오기">가져오기</button>
             <input type="file" id="city-import-file" accept=".gpx,.kml,.kmz,.geojson,.json,.xml" style="display:none" onchange="importCitiesFromFile(event)">
+            <button type="button" class="jv-btn" onclick="cityUnsplashFill(true)" title="사진 없는 도시를 Unsplash 에서 찾아 채워요 (무료)">사진 채우기</button>
+          </div>
+          <!-- ★ (2026-10-08) Unsplash 키 — 처음 한 번만. Firebase 에 저장돼 모든 기기에서 같이 쓴다 (공개 저장소엔 안 둔다) -->
+          <div id="jv-unsplash-setup" class="jv-unsplash-setup" style="display:none">
+            <span>Unsplash Access Key — 한 번만 넣으면 모든 기기에서 도시 사진이 자동으로 채워져요</span>
+            <input id="jv-unsplash-key" type="password" autocomplete="off" placeholder="Access Key 붙여넣기"
+                   onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();cityUnsplashSaveKey();}">
+            <button type="button" class="jv-btn" onclick="cityUnsplashSaveKey()">저장하고 채우기</button>
           </div>
           <div id="journey-city-cards" class="jv-route-strip"></div>
         </section>
@@ -17083,13 +17102,14 @@
 <!-- Journey Hero 이미지 업로드 (P2) -->
 <script src="js/journey-hero.js?v=2" defer></script>
 <!-- Journey City (Stops) 이미지 업로드 (P5+) -->
-<script src="js/journey-city-images.js?v=3" defer></script>
+<script src="js/journey-city-images.js?v=4" defer></script>
+<script src="js/city-unsplash.js?v=1" defer></script>
 <!-- Journey Lodge (숙소) 이미지 업로드 (P5+) -->
 <script src="js/journey-lodge-images.js?v=1" defer></script>
 <script src="js/journey-spot-images.js?v=1" defer></script>
 <!-- Travel Journey ToC (좌측 sticky sub-nav) -->
 <script src="js/travel-toc.js?v=7" defer></script>
-<script src="js/journey-v2.js?v=11" defer></script>
+<script src="js/journey-v2.js?v=13" defer></script>
 <script src="js/plans-v2.js?v=1" defer></script>
 <script src="js/plans-v3-nordic.js?v=1" defer></script>
 <script src="js/plans-v2-coords.js?v=1" defer></script>

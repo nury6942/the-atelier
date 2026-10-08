@@ -119,6 +119,8 @@
     var meta = document.getElementById('jv-route-meta');
     if (meta) meta.textContent = cs.length ? cs.length + ' stops · ' + cs.reduce(function(n, c){ return n + (c.nights || 0); }, 0) + ' nights' : '';
     if (!cs.length) { box.innerHTML = '<p class="jv-empty">도시를 추가하면 여기에 경로가 생겨요</p>'; return; }
+    // ★ (2026-10-08) 사진 없는 도시는 Unsplash 에서 자동으로 — Firebase 사진 불러오기가 먼저 끝나게 잠깐 기다린다
+    if (window.cityUnsplashAuto) { clearTimeout(renderRoute._uns); renderRoute._uns = setTimeout(window.cityUnsplashAuto, 2500); }
     var h = '';
     cs.forEach(function(c, i) {
       var key = String(c._id || ('idx-' + i)).replace(/'/g, "\\'");
@@ -132,6 +134,14 @@
           'onmouseleave="window.journeyCityImageClearActive && journeyCityImageClearActive(\'' + key + '\')">' +
           '<div class="jv-stop-img"' + (img ? ' style="background-image:url(\'' + img.replace(/'/g, '%27') + '\')"' : '') + '>' +
             '<span class="jv-stop-no">' + String(i + 1).padStart(2, '0') + '</span>' +
+            (function() {
+              var cr = img && window.journeyCityImageCredit && window.journeyCityImageCredit(c._id || ('idx-' + i));
+              if (!cr) return '';
+              // Unsplash 이용 조건 — 사진마다 작가와 Unsplash 를 링크로 표기
+              return '<span class="jv-stop-credit" onclick="event.stopPropagation()">' +
+                '<a class="nm" href="' + esc(cr.link) + '" target="_blank" rel="noopener">' + esc(cr.name) + '</a>' +
+                '<span class="sl">/</span><a href="https://unsplash.com/?utm_source=the_atelier&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></span>';
+            })() +
             (img ? '' : '<span class="jv-stop-ph">사진 없음 · Ctrl+V</span>') +
             '<span class="jv-stop-ctl">' +
               '<button type="button" onclick="event.stopPropagation();journeyCityImageUpload(\'' + key + '\')">' + (img ? '사진 변경' : '사진 추가') + '</button>' +

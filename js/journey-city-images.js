@@ -10,6 +10,19 @@
   var _cache = {};       // cityKey -> dataUrl
   var _hydrated = {};    // cityKey -> true (Firestore fetch 완료)
   var _activeKey = null; // 호버 중인 stop card
+  var _credit = {};      // cityKey -> { name, link, photo } (Unsplash 자동 사진일 때만)
+
+  function _getCreditLS(k) {
+    try { var v = localStorage.getItem('atelier_journey_city_credit_' + k); return v ? JSON.parse(v) : null; }
+    catch(e) { return null; }
+  }
+  function _setCredit(k, c) {
+    _credit[k] = c || null;
+    try {
+      if (c) localStorage.setItem('atelier_journey_city_credit_' + k, JSON.stringify(c));
+      else localStorage.removeItem('atelier_journey_city_credit_' + k);
+    } catch(e) {}
+  }
 
   function _getLS(k) {
     try { return localStorage.getItem('atelier_journey_city_img_' + k) || null; }
@@ -24,7 +37,7 @@
   function _loadFB(k) {
     if (typeof db === 'undefined' || !db) return Promise.resolve(null);
     return db.collection('journeyCityImages').doc(String(k)).get().then(function(doc) {
-      if (doc.exists) return doc.data().image || null;
+      if (doc.exists) { var d = doc.data(); _setCredit(k, d.credit || null); return d.image || null; }
       return null;
     }).catch(function(e) { console.warn('[city-img] FB load failed', e); return null; });
   }
@@ -69,6 +82,7 @@
     try { if (typeof renderWeekView === 'function') renderWeekView(); } catch(e) {} // ★ (2026-10-07) Day 칸 제목 배경 사진
   }
   function _apply(k, url) {
+    _setCredit(k, null);   // 직접 올리거나 지운 사진 — 작가 표기 대상이 아님
     _cache[k] = url || null;
     _setLS(k, url);
     _rerender();
@@ -78,6 +92,22 @@
     if (url) _saveFB(k, url);
     else _deleteFB(k);
   }
+
+  window.journeyCityImageCredit = function(k) {
+    if (!k) return null;
+    if (_credit[k] !== undefined) return _credit[k];
+    var c = _getCreditLS(k); _credit[k] = c; return c;
+  };
+  // Unsplash 자동 사진 저장 — 사진 주소(핫링크)와 작가 표기를 함께
+  window.journeyCityImageSetUnsplash = function(k, url, credit) {
+    k = String(k);
+    _cache[k] = url; _setLS(k, url); _setCredit(k, credit);
+    if (typeof db !== 'undefined' && db) {
+      db.collection('journeyCityImages').doc(k).set({ image: url, credit: credit, source: 'unsplash', updatedAt: Date.now() })
+        .catch(function(e) { console.warn('[city-img] unsplash save failed', e); });
+    }
+    _rerender();
+  };
 
   window.journeyCityImageGet = function(k) {
     if (!k) return null;
