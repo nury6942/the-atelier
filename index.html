@@ -5590,7 +5590,10 @@
     .wbc-title .cap em { font-family:var(--num); font-style:normal; font-size:12.5px; font-weight:500; letter-spacing:.18em; color:var(--sub); }
     .wbc-stats { display:flex; gap:26px; align-items:flex-end; margin-right:auto; padding-left:12px; }
     .wbc-stat { display:grid; grid-template-columns:auto auto; column-gap:6px; align-items:baseline; }
-    .wbc-stat .l { grid-column:1 / -1; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--sub); }
+    .wbc-stat .l { grid-column:1 / -1; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--sub); display:inline-flex; align-items:center; gap:5px; }
+    .wbc-stat .l::before { content:''; width:8px; height:8px; background:currentColor; }
+    .wbc-stat .l.is-leave { color:#e8502f; }
+    .wbc-stat .l.is-ot { color:#0f766e; }
     .wbc-stat b { font-family:var(--num); font-size:22px; font-weight:500; letter-spacing:-0.02em; color:var(--ink); }
     .wbc-stat b.neg { color:var(--key); }
     .wbc-stat .s { grid-column:1 / -1; font-size:11px; color:var(--sub); }
@@ -5634,7 +5637,7 @@
     .wbc-cd.is-past .wbc-cd-num { opacity:.7; }
     .wbc-cd.is-other { background:#fcfcfd; }
     .wbc-cd.is-other .wbc-cd-num, .wbc-cd.is-other .wbc-evs, .wbc-cd.is-other .wbc-gtms { opacity:.35; }
-    .wbc-cd.is-today .wbc-cd-num { background:var(--blue); color:#fff; opacity:1; padding:5px 7px 4px; }
+    .wbc-cd.is-today .wbc-cd-num { background:var(--blue); color:#fff; opacity:1; padding:5px 7px 4px; margin:-5px 0 -4px -7px; }
     .wbc-cd-hol { font-size:12px; font-weight:600; color:var(--rose); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-top:3px; }
     .wbc-off { display:block; min-height:19px; margin:0 -13px 0 -13px; padding:2px 8px; background:var(--me); color:#fff; font-size:11px; font-weight:700; line-height:1.35; white-space:nowrap; position:relative; z-index:1; }
     .wbc-off.sub { background:#8b5cf6; }
@@ -5653,12 +5656,12 @@
     .wbc-rb.head { margin-left:0; } .wbc-rb.tail { margin-right:0; }
     .wbc-rb-gap { display:block; height:20px; }
     .wbc-evs { display:grid; gap:3px; min-width:0; }
-    .wbc-ev { display:flex; align-items:center; gap:4px; font-size:11px; line-height:1.3; padding:2px 3px 2px 6px; border-left:2px solid currentColor; min-width:0; cursor:grab; border-radius:0; }
+    .wbc-ev { display:flex; align-items:center; gap:4px; font-size:11px; line-height:1.3; padding:2px 3px 2px 6px; min-width:0; cursor:grab; border-radius:0; font-weight:600; }
     .wbc-ev .t { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
     .wbc-ev .act { display:none; gap:2px; flex:none; }
     .wbc-ev:hover .act { display:inline-flex; }
     .wbc-ev .act button { border:0; background:none; color:inherit; cursor:pointer; font-size:12px; padding:0 2px; }
-    .wbc-ev.is-dl { border-left-color:#7a1a00; }
+    .wbc-ev.is-dl { box-shadow:inset 3px 0 0 #7a1a00; }
     .wbc-pub { display:block; font-size:11px; font-weight:700; color:#fff; padding:2px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:grab; }
     .wbc-pub em { font-style:normal; font-family:var(--num); font-size:10px; font-weight:700; letter-spacing:.12em; opacity:.8; margin-right:6px; }
     .wbc-more { font-size:10.5px; font-weight:600; color:var(--sub); padding-left:10px; }
@@ -16633,7 +16636,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=8" defer></script>
+<script src="js/cal-wb.js?v=9" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>

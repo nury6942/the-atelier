@@ -211,6 +211,14 @@
     });
   }
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
+  // ★ (2026-10-08) 파스텔이라 서로 구분이 안 돼서 → 칸 안 일정은 진한 단색 + 흰 글씨
+  var SOLID = { sky:'#1d6fd8', amber:'#c77700', violet:'#6d3fd6', rose:'#d0244f', lime:'#4d8a0c', cyan:'#0a8aa8',
+    orange:'#e0590b', indigo:'#3f46c9', pink:'#d42a83', fuchsia:'#b322c4', blue:'#2563eb', teal:'#0f8a7e', purple:'#8b3fd6',
+    slate:'#56627a', birthday:'#f2c200', deadline:'#FF3B00' };
+  function solidStyle(ev) {
+    var k = (ev[3]||'').trim(), bg = SOLID[k] || '#3f46c9';
+    return 'background:' + bg + ';color:' + (k === 'birthday' ? '#1d1a23' : '#fff') + ';';
+  }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
 
@@ -266,11 +274,10 @@
       var s = mineSummary(year);
       var left = total * 8 - s.leaveH;
       html += '<div class="wbc-stat" title="' + year + '년 연차 ' + total + '일 중 ' + fmtDayH(s.leaveH) + ' 사용 (포털 결재 기준)">' +
-          '<span class="l">연차 잔여</span><b' + (left < 0 ? ' class="neg"' : '') + '>' + fmtDayH(left) + '</b>' +
-          '<span class="s">' + fmtDayH(s.leaveH) + ' / ' + total + '일 사용</span>' +
-          '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">총계 수정</button></div>' +
+          '<span class="l is-leave">연차 잔여</span><b' + (left < 0 ? ' class="neg"' : '') + '>' + fmtDayH(left) + '</b>' +
+          '<span class="s">' + fmtDayH(s.leaveH) + ' / ' + total + '일 사용</span></div>' +
         '<div class="wbc-stat" title="' + year + '년 연장근무 적립 ' + fmtH(s.otEarn) + ' − 사용 ' + fmtH(s.otUse) + '">' +
-          '<span class="l">연장근무 사용 가능</span><b>' + fmtH(s.otLeft) + '</b>' +
+          '<span class="l is-ot">연장근무 사용 가능</span><b>' + fmtH(s.otLeft) + '</b>' +
           '<span class="s">적립 ' + fmtH(s.otEarn) + ' · 사용 ' + fmtH(s.otUse) + '</span></div>';
     } else {
       // 업무 보드 미연결: 예전 방식(캘린더 '연차' 일정 합계)
@@ -282,7 +289,7 @@
       });
       html += '<div class="wbc-stat" title="캘린더의 연차 일정 합계"><span class="l">연차 잔여</span><b>' + (total - used) + '일</b>' +
         '<span class="s">' + used + ' / ' + total + '일 사용</span>' +
-        '<button class="wbc-pen" onclick="wbcEditLeaveTotal()" title="' + year + '년 연차 총계 수정">총계 수정</button></div>';
+        '</div>';
     }
     if (_wbState === 'signed-out' || (_wbState === 'error' && !hasMine)) {
       html += '<button class="wbc-connect" onclick="wbcConnect()" title="mlb-fitting 업무 보드에서 GTM·내 근태를 가져와요 (같은 구글 계정)">업무 보드 연결</button>';
@@ -334,7 +341,7 @@
       return '<span class="wbc-pub" style="background:' + hex + '" ' + drag + click + ' title="' + esc(ev[1]) + '"><em>연재</em>' + esc(ev[1]) + '</span>';
     }
     var sid = _getSeriesIdForDoc(ev[7] || '');
-    return '<span class="wbc-ev ' + colorCls(ev) + (ev[2] === '데드라인' ? ' is-dl' : '') + '" ' + drag +
+    return '<span class="wbc-ev' + (ev[2] === '데드라인' ? ' is-dl' : '') + '" style="' + solidStyle(ev) + '" ' + drag +
       'ondragover="event.preventDefault();event.stopPropagation()" ' +
       'ondrop="event.preventDefault();event.stopPropagation();reorderPlannerEvent(event,' + ref + ')" ' + click + ' title="' + esc(ev[1]) + '">' +
       '<span class="t">' + esc(ev[1]) + '</span>' +
@@ -348,8 +355,7 @@
     var s = (ev[0]||'').toString(), e = (ev[5]||'').toString();
     var head = ds === s || dow === 0, tail = ds === e || dow === 6;
     var ref = idxRef(ev);
-    var cls = colorCls(ev).split(' ').filter(function(c){ return c.indexOf('bg-') === 0 || c.indexOf('text-') === 0; }).join(' ');
-    return '<span class="wbc-rb ' + cls + (head ? ' head' : '') + (tail ? ' tail' : '') + '" draggable="true" ' +
+    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev) + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? esc(ev[1]) : '&nbsp;') + '</span>';
@@ -432,7 +438,7 @@
       h += '</span>';
     }
     // GTM
-    var gs = gtmOn(ds);
+    var gs = gtmOn(ds).slice().sort(function(a, b) { return (b.key ? 1 : 0) - (a.key ? 1 : 0); });
     if (gs.length) {
       h += '<span class="wbc-gtms">' + gs.map(function(g) {
         return '<span class="wbc-gtm s-' + (g.series || 'fw') + (g.key ? ' is-key' : '') + '" title="' + esc(g.team + ' · ' + g.title) + '"><em>' + (g.key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '</em>' + esc(g.title) + '</span>';
