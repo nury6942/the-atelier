@@ -5692,6 +5692,50 @@
     #page-journey #daylog-map { border:1px solid var(--jv-line); }
     #page-journey #daylog-map .leaflet-tile-pane { filter:grayscale(1) contrast(.92) brightness(1.05); }
     #page-journey .wk4-col { border-left-color:var(--jv-soft); }
+    /* ═══ ★ (2026-10-08) 예산 탭 — 일정 탭과 같은 결 (모서리 0, 검정 선, Manrope 큰 숫자, Inter 라벨, 보라 하나) ═══ */
+    #page-finance { --jv-ink:#15161a; --jv-sub:#5f6168; --jv-mute:#9a9ca3; --jv-line:#15161a; --jv-soft:#e6e5e1; --jv-tint:#f6f5f2; --jv-accent:#6b38d4; }
+    #page-finance, #page-finance *, #page-finance *::before, #page-finance *::after { border-radius:0 !important; }
+    #page-finance .trav-tabs { border-bottom-color:var(--jv-line); }
+    #page-finance .trav-tab-active { border-bottom:3px solid var(--jv-accent); }
+    #page-finance .trav-hero { border-bottom:1px solid var(--jv-line); }
+    #page-finance .trav-title { color:var(--jv-ink); }
+    #page-finance .trav-title .amp { color:var(--jv-accent); }
+    #page-finance .trav-eyebrow, #page-finance .trav-stat-l { font-family:'Inter','Pretendard',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.16em; color:var(--jv-sub); }
+    #page-finance .trip-dd-btn, #page-finance .trav-act { border:1px solid var(--jv-line) !important; background:#fff; color:var(--jv-ink); box-shadow:none !important; }
+    #page-finance .trav-act:hover { background:var(--jv-ink); color:#fff; }
+    /* 트립 요약: 카드 → 표지 + 5칸 숫자 줄 */
+    #page-finance #finance-main-trip { border:0 !important; background:none !important; padding:6px 0 0 !important; box-shadow:none !important; }
+    #page-finance #finance-main-trip .trav-title { font-weight:800; letter-spacing:-.035em; }
+    #page-finance #finance-main-trip .grid { gap:0 !important; border-top:1px solid var(--jv-line) !important; border-bottom:1px solid var(--jv-line); padding-top:0 !important; }
+    #page-finance #finance-main-trip .grid > div { padding:14px 16px 16px; border-right:1px solid var(--jv-soft); }
+    #page-finance #finance-main-trip .grid > div:last-child { border-right:0; }
+    #page-finance #finance-main-trip .trav-stat-v { font-family:'Manrope','Pretendard',sans-serif; font-weight:800; letter-spacing:-.02em; color:var(--jv-ink); font-size:26px !important; }
+    #page-finance #finance-main-balance { color:var(--jv-accent) !important; }
+    /* 섹션 카드 → 잡지식 구획: 테두리·그림자 없음, 제목 아래 검정 선 */
+    #page-finance .bg-white.rounded-2xl { background:none !important; border:0 !important; box-shadow:none !important; overflow:visible !important; }
+    #page-finance .bg-white.rounded-2xl > .px-6.py-4.border-b { background:none !important; padding:0 0 12px !important; border-bottom:1px solid var(--jv-line) !important; margin-bottom:6px; }
+    #page-finance h4.font-manrope { font-family:'Manrope','Pretendard',sans-serif; font-size:22px; font-weight:800 !important; letter-spacing:-.02em; color:var(--jv-ink); }
+    #page-finance #finance-budget-body, #page-finance #finance-lodging-body, #page-finance #finance-category-breakdown { padding:18px 0 0 !important; }
+    #page-finance #finance-budget-edit-btn, #page-finance [onclick="finFxToggle()"], #page-finance [onclick="ldgSyncFromItinerary()"] { background:#fff !important; color:var(--jv-ink) !important; border:1px solid var(--jv-line) !important; }
+    #page-finance #finance-budget-edit-btn:hover, #page-finance [onclick="finFxToggle()"]:hover { background:var(--jv-ink) !important; color:#fff !important; }
+    #page-finance .mb-6, #page-finance .mb-8 { margin-bottom:44px !important; }
+    /* 잔액 3칸 밴드 */
+    #page-finance .fin-band { border:0 !important; border-top:1px solid var(--jv-line) !important; border-bottom:1px solid var(--jv-line) !important; background:none !important; box-shadow:none !important; padding:0 !important; gap:0 !important; }
+    #page-finance .fin-band-cell { padding:16px 16px 18px !important; border-right:1px solid var(--jv-soft); background:none !important; }
+    #page-finance .fin-band-cell:last-child { border-right:0; }
+    #page-finance .fin-band-main { font-family:'Manrope',sans-serif; font-weight:800; font-size:44px !important; letter-spacing:-.04em; color:var(--jv-accent) !important; }
+    #page-finance .fin-band-sub { font-family:'Manrope',sans-serif; font-weight:800; font-size:28px !important; letter-spacing:-.02em; color:var(--jv-ink) !important; }
+    /* 경비 봉투 */
+    #page-finance .fin-cash-card { border:1px solid var(--jv-line) !important; background:#fff !important; box-shadow:none !important; }
+    #page-finance .fin-cash-track { background:var(--jv-tint) !important; }
+    #page-finance .fin-cash-bar { background:var(--jv-accent) !important; }
+    /* 거래 내역 표 */
+    #page-finance #finance-table-wrap table thead th, #page-finance #finance-table-wrap thead tr { background:none !important; }
+    #page-finance #finance-table-wrap thead th { font-family:'Inter','Pretendard',sans-serif; font-size:10.5px !important; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--jv-sub) !important; border-bottom:1px solid var(--jv-line) !important; }
+    #page-finance .fin-tbody tr { border-bottom:1px solid var(--jv-soft) !important; }
+    #page-finance .fin-tbody tr:hover { background:var(--jv-tint) !important; }
+    #page-finance .fin-tbody td { font-variant-numeric:tabular-nums; }
+    #page-finance input, #page-finance select { border-color:var(--jv-soft); }
     /* ═══ ★ (2026-10-07) 캘린더 v2 — mlb-fitting 업무 보드(.wb-cal) 디자인 이식 ═══ */
     .wbc { --ink:#15171c; --text:#2a2e35; --sub:#555b65; --line2:#d5d8dd; --hair:#d9dce1;
       --blue:#2f64c8; --blue-s:#ebf1fc; --rose:#b8405c; --me:#FF6F5B; --neo-fw:#9BF0C6; --neo-q2:#FBEF86; --key:#E8283F;
