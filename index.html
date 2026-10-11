@@ -6112,6 +6112,7 @@
     .wbc-bars { display:grid; gap:3px; }
     .wbc-rb { display:block; height:20px; line-height:20px; margin:0 -13px; padding:0 8px; font-size:11px; font-weight:700; white-space:nowrap; overflow:visible; position:relative; z-index:2; cursor:grab; }
     .wbc-rb.head { margin-left:0; } .wbc-rb.tail { margin-right:0; }
+    .wbc-rb.head { z-index:3; }   /* 첫 칸 제목이 옆 칸 막대에 가려 잘리지 않게 (2026-10-11) */
     .wbc-rb-gap { display:block; height:20px; }
     .wbc-gtmb { cursor:default; }
     .wbc-gtmb em { font-style:normal; font-family:var(--num); font-size:9.5px; font-weight:700; letter-spacing:.14em; margin-right:6px; opacity:.85; }
@@ -17126,7 +17127,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=31" defer></script>
+<script src="js/cal-wb.js?v=32" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>

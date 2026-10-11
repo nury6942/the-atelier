@@ -476,6 +476,9 @@
     var n = _dDiff(segS, segE) + 1;
     var hex = IV_HEX[(ev[3]||'').trim()] || IV_HEX.rose;
     var bottom = 5 + (ivMax - 1 - lane) * 20;
+    // 첫 칸이 지난달이어도 이번 달에 걸쳐 있으면 이름표는 선명하게 (구간 전체가 다른 달일 때만 흐리게)
+    var inMonth = function(x) { var d = new Date(x + 'T00:00:00'); return d.getFullYear() === plannerYear && d.getMonth() === plannerMonth; };
+    isOther = _mode === 'month' && !inMonth(segS) && !inMonth(segE);
     return '<div class="wbc-ivl' + (isOther ? ' is-out' : '') + '" style="bottom:' + bottom + 'px;width:' + (n * 100) + '%;--iv:' + hex + '"><span>' + esc(ev[1]) + '</span></div>';
   }
 
