@@ -253,7 +253,7 @@
     cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
     orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
   var PINK_TO_YELLOW = { pink: 1, fuchsia: 1 };
-  var WRITE_HEX = { indigo:'#4338CA', amber:'#B45309', rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
+  var WRITE_HEX = { indigo:'#4338CA', amber:['#FF9F1C','#2B1600'] /* 갈색(#B45309)은 못생겼다고 해서 탠저린 */, rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
     cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#6D28D9', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
   var BAR_FULL = true;       // 여러 날 막대도 고른 색으로 꽉 채움
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
@@ -264,7 +264,7 @@
     var k = (ev[3]||"").trim();
     if (k === "deadline") return "background:#FF3B00;color:#fff;";
     // 글쓰기는 작품(시리즈) 색으로 — B·R 시리즈가 구분되게. 시리즈 색을 흰 글씨가 읽히는 진한 톤으로.
-    if (isWriting(ev)) return "background:" + (WRITE_HEX[k] || "#3B23A8") + ";color:#fff;";
+    if (isWriting(ev)) { var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
     // (2026-10-11 v3) 분홍 계열로 고른 일정만 핫 옐로우로 (누리: "핑크가 안 예뻐") — 나머지는 각자 고른 색 그대로.
     //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
     if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
