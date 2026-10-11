@@ -87,7 +87,7 @@
       var app = fitApp();
       if (!app || app.auth().currentUser) return;
       if (e && e.target && e.target.closest && e.target.closest('.wbc-connect')) return; // 버튼은 버튼대로
-      window.wbcConnect();
+      window.wbcConnect(true);
     };
     document.addEventListener('pointerdown', fire, true);
   }
@@ -101,7 +101,7 @@
   // ★ (2026-10-08) 두 번 눌리면 첫 팝업이 취소되며 'cancelled-popup-request' 오류가 뜨던 문제 —
   //   진행 중이면 무시, 사용자가 닫거나 겹친 경우는 조용히 넘어가고, 팝업이 막히면 페이지 이동 방식으로
   var _connecting = false;
-  window.wbcConnect = function() {
+  window.wbcConnect = function(auto) {
     var app = fitApp(); if (!app || _connecting) return;
     _connecting = true;
     var p = new firebase.auth.GoogleAuthProvider();
@@ -112,7 +112,9 @@
       _connecting = false;
       var code = err && err.code;
       if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') return;
-      if (code === 'auth/popup-blocked') { app.auth().signInWithRedirect(p); return; }
+      // 자동 연결(첫 클릭)에서는 화면을 구글 로그인으로 넘기지 않는다 — 버튼만 남겨 두고, 버튼을 직접 눌렀을 때만 페이지 이동 로그인
+      if (code === 'auth/popup-blocked') { if (auto === true) return; app.auth().signInWithRedirect(p); return; }
+      if (auto === true) { console.warn('[cal-wb] 업무 보드 자동 연결 실패', code); return; }
       alert('업무 보드 연결 실패: ' + (err && err.message || err));
     });
   };
@@ -621,6 +623,46 @@
     renderCalendarWb();
     try { updatePlannerTracks(); } catch(e) {}
   };
+  // ─────────────── 연·월 바로 가기 (2026-10-11) ───────────────
+  //   제목(큰 월 숫자·영문 월·연도)을 누르면 작은 창: 연도 ‹ › + 12달 + TODAY. 바깥 클릭·Esc 로 닫힘.
+  var _pickY = null;
+  function pickerEl() { return document.getElementById('wbc-pick'); }
+  function renderPicker() {
+    var el = pickerEl(); if (!el) return;
+    var now = new Date(), h = '<div class="wbc-pick-y"><button type="button" aria-label="이전 해" onclick="wbcPickYear(-1)">‹</button><b>' + _pickY + '</b><button type="button" aria-label="다음 해" onclick="wbcPickYear(1)">›</button></div><div class="wbc-pick-m">';
+    for (var m = 0; m < 12; m++) {
+      var on = _pickY === plannerYear && m === plannerMonth, nw = _pickY === now.getFullYear() && m === now.getMonth();
+      h += '<button type="button" class="' + (on ? 'on' : '') + (nw ? ' now' : '') + '" onclick="wbcJump(' + _pickY + ',' + m + ')">' + MON_EN[m].slice(0, 3) + '</button>';
+    }
+    h += '</div><div class="wbc-pick-f"><button type="button" onclick="wbcPickerClose();wbcToday()">TODAY</button></div>';
+    el.innerHTML = h;
+  }
+  window.wbcPickerToggle = function(e) {
+    if (e) e.stopPropagation();
+    var el = pickerEl(); if (!el) return;
+    if (!el.hidden) { wbcPickerClose(); return; }
+    _pickY = plannerYear; renderPicker(); el.hidden = false;
+    var t = document.getElementById('wbc-title'); if (t) t.classList.add('open');
+  };
+  window.wbcPickerClose = function() {
+    var el = pickerEl(); if (el) el.hidden = true;
+    var t = document.getElementById('wbc-title'); if (t) t.classList.remove('open');
+  };
+  window.wbcPickYear = function(d) { _pickY += d; renderPicker(); };
+  window.wbcJump = function(y, m) {
+    plannerYear = y; plannerMonth = m;
+    _anchor = _mode === 'week' ? new Date(y, m, 1) : null;
+    wbcPickerClose();
+    renderCalendarWb();
+    try { updatePlannerTracks(); } catch(e) {}
+  };
+  document.addEventListener('click', function(e) {
+    var el = pickerEl(); if (!el || el.hidden) return;
+    if (!e.target.isConnected) return;   // 연도 ‹ › 누르면 창 내용을 다시 그려서 누른 버튼이 사라짐 — 바깥 클릭 아님
+    if (!el.contains(e.target)) wbcPickerClose();
+  });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var el = pickerEl(); if (el && !el.hidden) wbcPickerClose(); } });
+
   window.wbcSetMode = function(m) {
     _mode = m === 'week' ? 'week' : 'month';
     try { localStorage.setItem(KEY_MODE, _mode); } catch(e) {}
