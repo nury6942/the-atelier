@@ -25593,11 +25593,25 @@
 
     // 2) 유지분 수집: 시놉 전체 + 초고 1~(fromEp-1) — 삭제 대신 새 세트에 포함시켜 원자 교체
     //    ★ (2026-07-15) 부분 삭제→부분 추가의 반쪽 상태 위험 제거
+    //    ★ (2026-10-11) 1화부터 다시 까는데 편집 창의 시놉 기간이 달력과 다르면 시놉도 새로 깐다
+    //      (예전엔 시놉을 무조건 유지해서 '시놉 시작 7/30 으로 재계산 → 저장' 해도 달력 시놉은 6월에 그대로였음)
+    var ps = (work.phases && work.phases.synopsis) || {};
+    var curSyn = plannerData.filter(function(r) { return isMine(r) && (r[4] || '').indexOf('phase:synopsis') >= 0; }).map(function(r) { return (r[0] || '') + ''; }).sort();
+    var redoSyn = fromEp <= 1 && ps.start && ps.end && ps.start <= ps.end && (!curSyn.length || curSyn[0] !== ps.start || curSyn[curSyn.length - 1] !== ps.end);
     var events = [];
+    if (redoSyn) {
+      var sCur = new Date(ps.start + 'T00:00:00'), sEnd = new Date(ps.end + 'T00:00:00'), sIdx = 0;
+      while (sCur <= sEnd) {
+        var sds = _fmtDate(sCur);
+        if (!isBlockedDay(sds)) events.push([sds, '시놉', cat, color, noteBase + '|phase:synopsis', '', String(sIdx++)]);
+        sCur.setDate(sCur.getDate() + 1);
+      }
+    }
     plannerData.forEach(function(r) {
       if (!isMine(r)) return;
       var notes = r[4] || '';
       if (notes.indexOf('phase:revision') >= 0 || notes.indexOf('phase:publishing') >= 0) return;
+      if (redoSyn && notes.indexOf('phase:synopsis') >= 0) return;
       if (notes.indexOf('phase:draft') >= 0 && draftEp(r) >= fromEp) return;
       events.push([r[0], r[1], r[2], r[3], r[4], r[5] || '', r[6] || '0']);  // 유지 (시놉·초고 1~N-1)
     });
