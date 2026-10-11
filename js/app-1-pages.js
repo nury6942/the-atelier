@@ -1823,10 +1823,12 @@
     okBtn.textContent = opts.confirmText || '확인';
     document.getElementById('atl-confirm-cancel').textContent = opts.cancelText || '취소';
     _atlConfirmCb = opts.onConfirm || null;
+    _atlCancelCb = opts.onCancel || null;
     m.style.display = 'flex';
   }
-  function doAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; if (_atlConfirmCb) _atlConfirmCb(); _atlConfirmCb = null; }
-  function cancelAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; _atlConfirmCb = null; }
+  var _atlCancelCb = null;
+  function doAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; _atlCancelCb = null; if (_atlConfirmCb) _atlConfirmCb(); _atlConfirmCb = null; }
+  function cancelAtlConfirm() { document.getElementById('atl-confirm').style.display = 'none'; _atlConfirmCb = null; var cc = _atlCancelCb; _atlCancelCb = null; if (cc) cc(); }
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var m = document.getElementById('atl-confirm'); if (m && m.style.display !== 'none') cancelAtlConfirm(); } });
 
   function showPlannerToast(msg) {
@@ -24570,6 +24572,10 @@
   }
 
   function renderWorkPipeline() {
+    // (2026-10-11) 달력에서 옮긴 날짜를 작품 정보에도 반영 — 진행 단계·타임라인이 옛 날짜로 남지 않게
+    var _calChanged = false;
+    try { _works.forEach(function(w) { if (_syncWorkFromCal(w)) _calChanged = true; }); } catch(e) {}
+    if (_calChanged) saveWorks();
     _works.forEach(function(w) { w.current_phase = _wpAutoPhase(w); });
     renderWorkTimeline();
   }
@@ -24987,10 +24993,54 @@
   // ===== Work Edit / Confirm / Calendar =====
   var _editWorkId = null;
 
+  // ★ (2026-10-11) 달력이 기준 — 누리는 달력에서 일정을 손으로 많이 옮긴다.
+  //   작품의 시놉·초고·퇴고·연재 날짜를 '실제 달력 일정'에서 다시 읽는다 (단계별 첫날~마지막 날, 휴식 = 퇴고 끝 다음날 ~ 연재 전날).
+  function _phasesFromCal(w) {
+    var key = 'work_id:' + w.id + '|', ph = {}, n = 0;
+    plannerData.forEach(function(r) {
+      if (!r) return;
+      var note = (r[4] || '') + '';
+      if (note.indexOf(key) < 0) return;
+      var m = note.match(/phase:(\w+)/); if (!m) return;
+      var s0 = (r[0] || '') + '', e0 = ((r[5] || '') + '') > s0 ? (r[5] + '') : s0;
+      if (!/^\d{4}-\d{2}-\d{2}/.test(s0)) return;
+      s0 = s0.slice(0, 10); e0 = e0.slice(0, 10);
+      var p = ph[m[1]] || (ph[m[1]] = { start: s0, end: e0 });
+      if (s0 < p.start) p.start = s0;
+      if (e0 > p.end) p.end = e0;
+      n++;
+    });
+    return n ? ph : null;
+  }
+  function _syncWorkFromCal(w) {
+    if (!w || w.status !== 'confirmed') return false;
+    var ph = _phasesFromCal(w); if (!ph) return false;
+    var before = JSON.stringify([w.phases, w.publish_start, w.publish_end]);
+    var P = w.phases = Object.assign({}, w.phases || {});
+    ['synopsis', 'draft', 'revision'].forEach(function(k) { if (ph[k]) P[k] = { start: ph[k].start, end: ph[k].end }; });
+    if (ph.publishing) { w.publish_start = ph.publishing.start; w.publish_end = ph.publishing.end; }
+    if (P.revision && P.revision.end && w.publish_start) {
+      var rs = new Date(P.revision.end + 'T00:00:00'); rs.setDate(rs.getDate() + 1);
+      var re = new Date(w.publish_start + 'T00:00:00'); re.setDate(re.getDate() - 1);
+      P.rest = rs <= re ? { start: _fmtDate(rs), end: _fmtDate(re) } : null;
+    }
+    return before !== JSON.stringify([w.phases, w.publish_start, w.publish_end]);
+  }
+  // 편집 창에서 '달력을 다시 배치해야 하는 값'들 — 열 때 찍어 두고 저장 때 비교
+  var _ewSnap = null;
+  function _ewDateSig() {
+    var v = function(id) { var el = document.getElementById(id); return el ? (el.type === 'checkbox' ? el.checked : el.value) : ''; };
+    return JSON.stringify(['ew-syn-start','ew-syn-end','ew-draft-start','ew-draft-end','ew-rev-start','ew-rev-end','ew-rest-start','ew-rest-end','ew-pub-start',
+      'ew-episodes','ew-publish-day','ew-busy-from','ew-nomad','ew-busy','ew-reverse','ew-puback','ew-reverse-syn'].map(v));
+  }
+
   function openEditWorkModal(id) {
     var w = getWorkById(id);
     if (!w) return;
     _editWorkId = id;
+    // 달력에서 실제 날짜를 먼저 읽어 작품 정보에 반영 (손으로 옮긴 게 우선)
+    var _calSynced = false;
+    try { if (_syncWorkFromCal(w)) { saveWorks(); } _calSynced = !!_phasesFromCal(w); } catch(e) { console.warn('[works] 달력 동기화', e); }
     var series = getSeriesData(_matrixYear);
     var sel = document.getElementById('ew-series');
     sel.innerHTML = series.map(function(s) { return '<option value="' + s.id + '" data-name="' + s.name + '"' + (s.id === w.series_id ? ' selected' : '') + '>' + s.name + '</option>'; }).join('');
@@ -25028,7 +25078,9 @@
     setTimeout(function() {
       ['ew-syn-start','ew-syn-end','ew-draft-start','ew-draft-end','ew-rev-start','ew-rev-end','ew-rest-start','ew-rest-end','ew-pub-start'].forEach(function(id) { initSimpleDatePicker(id); });
       // 비지/역산 모드면 실제 일정을 즉시 계산해 필드에 반영 — 모달이 옛 값 보여주는 것 방지
-      if (w.busy || w.reverse) { try { recalcEditWork(); } catch(e) {} }
+      //   (2026-10-11) 달력에 일정이 있으면 달력 날짜가 기준이므로 자동 재계산하지 않는다
+      if ((w.busy || w.reverse) && !_calSynced) { try { recalcEditWork(); } catch(e) {} }
+      _ewSnap = _ewDateSig();
     }, 120);
   }
 
@@ -25282,6 +25334,20 @@
       var a = document.getElementById(x[0]).value, b = document.getElementById(x[1]).value; return a && b && a > b;
     });
     if (_badPh.length) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> ' + _badPh.map(function(x){ return x[2]; }).join('·') + ' 시작일이 종료일보다 늦어요. 날짜를 고치거나 \'시작일 기준 자동 재계산\'을 눌러주세요'); return; }
+    // ★ (2026-10-11) 날짜·화수·연재 요일·모드를 하나도 안 바꿨으면 달력은 그대로 두고 정보만 저장.
+    //   바꿨으면 다시 배치하기 전에 확인 — 손으로 옮긴 일정이 바뀔 수 있으니까.
+    var _regen = w.status === 'confirmed' && _ewSnap !== null && _ewDateSig() !== _ewSnap;
+    if (w.status === 'confirmed' && _regen) {
+      var _pubOnlyNow = !!(document.getElementById('ew-puback') || {}).checked;
+      var _go = await new Promise(function(res) {
+        showConfirm({ icon: '📅', title: '달력 일정 다시 배치',
+          message: _pubOnlyNow
+            ? '연재 일정을 새 연재 시작일부터 매주로 다시 배치해요.\n시놉·초고·퇴고는 그대로예요.'
+            : '바꾼 날짜·모드대로 이 작품의 달력 일정을 다시 배치해요.\n달력에서 손으로 옮긴 일정도 새 날짜로 바뀌어요.',
+          confirmText: '다시 배치', onConfirm: function() { res(true); }, onCancel: function() { res(false); } });
+      });
+      if (!_go) return;
+    }
     _workSaving = true;
     var btn = document.querySelector('#edit-work-modal button[onclick="saveEditWork()"]'); _lockSaveBtn(btn);
     try {
@@ -25321,7 +25387,9 @@
       w.publish_end = _fmtDate(pe);
     }
     w.updated_at = new Date().toISOString();
-    if (w.publishOnly && w.status === 'confirmed') {
+    if (w.status === 'confirmed' && !_regen) {
+      console.log('[EditWork] 날짜 변경 없음 — 달력 일정 그대로, 정보만 저장');
+    } else if (w.publishOnly && w.status === 'confirmed') {
       // 연재만 변경: 시놉·초고·퇴고 캘린더는 그대로, 연재 일정만 재생성
       await reschedulePublishingOnly(w);
       console.log('[EditWork] 연재만 재배치, pub', w.publish_start);
@@ -25347,7 +25415,7 @@
     saveWorks();
     closeEditWorkModal();
     renderWorkPipeline();
-    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (w.status === 'confirmed' ? ' (캘린더 재동기화)' : ''));
+    showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> "' + w.title + '" 수정됨' + (w.status === 'confirmed' ? (_regen ? ' (달력 다시 배치)' : ' (달력 일정은 그대로)') : ''));
     } finally { _workSaving = false; _unlockSaveBtn(btn); }
   }
 
