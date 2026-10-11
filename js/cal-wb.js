@@ -252,6 +252,7 @@
     purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F8CCEE","#E52BB8","#6E1449"], pink:["#FFCCE3","#FF2E8C","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
     cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
     orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
+  var PERSONAL_ONE = true;   // false 로 바꾸면 예전처럼 일정마다 고른 색
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
   //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
   //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
@@ -260,6 +261,9 @@
     var k = (ev[3]||"").trim();
     if (k === "deadline") return "background:#FF3B00;color:#fff;";
     if (isWriting(ev)) return "background:#3B23A8;color:#fff;";
+    // (2026-10-11 v3) 개인 일정은 색 구분 없이 전부 핫 옐로우 하나로 — 하루짜리·여러 날 막대 모두 꽉 채움.
+    //   빨강(★ 핵심 GTM) · 남보라(글쓰기) · 블루(조퇴·지연) · 회색(GTM 일반)과 안 겹치게.
+    if (PERSONAL_ONE) return "background:#FFE01A;color:#111;";
     var c = SOLID[k] || SOLID.indigo;
     if (full) return "background:" + c[1] + ";color:#fff;";
     return "background:" + c[0] + ";color:" + c[2] + ";" + (noBar ? "" : "box-shadow:inset 4px 0 0 " + c[1] + ";");
