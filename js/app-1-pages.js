@@ -25027,7 +25027,7 @@
     return before !== JSON.stringify([w.phases, w.publish_start, w.publish_end]);
   }
   // 편집 창에서 '달력을 다시 배치해야 하는 값'들 — 열 때 찍어 두고 저장 때 비교
-  var _ewSnap = null;
+  var _ewSnap = null, _ewSnapSyn = '', _ewSnapDraft = '', _ewSynLen = 0;
   function _ewDateSig() {
     var v = function(id) { var el = document.getElementById(id); return el ? (el.type === 'checkbox' ? el.checked : el.value) : ''; };
     return JSON.stringify(['ew-syn-start','ew-syn-end','ew-draft-start','ew-draft-end','ew-rev-start','ew-rev-end','ew-rest-start','ew-rest-end','ew-pub-start',
@@ -25081,6 +25081,9 @@
       //   (2026-10-11) 달력에 일정이 있으면 달력 날짜가 기준이므로 자동 재계산하지 않는다
       if ((w.busy || w.reverse) && !_calSynced) { try { recalcEditWork(); } catch(e) {} }
       _ewSnap = _ewDateSig();
+      _ewSnapSyn = document.getElementById('ew-syn-start').value;
+      _ewSnapDraft = document.getElementById('ew-draft-start').value;
+      _ewSynLen = (function(a, b) { return a && b && a <= b ? Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 864e5) + 1 : 0; })(document.getElementById('ew-syn-start').value, document.getElementById('ew-syn-end').value);
     }, 120);
   }
 
@@ -25130,6 +25133,17 @@
       var bEps = parseInt(document.getElementById('ew-episodes').value) || 20;
       var bFrom = Math.max(1, parseInt((document.getElementById('ew-busy-from') || {}).value) || 1);
       var bDraftStartV = document.getElementById('ew-draft-start').value;
+      // ★ (2026-10-11) '시작일 기준' = 시놉 시작일. 시놉 시작을 바꿨으면(또는 초고 시작을 안 건드렸으면) 시놉부터 다시 깐다:
+      //   시놉 = 그날부터 원래 길이(열 때 길이, 없으면 28일) → 다음날 초고 시작. 초고 시작만 바꿨으면 예전처럼 초고 기준.
+      var bSynS = document.getElementById('ew-syn-start').value;
+      if (bFrom <= 1 && bSynS && (bSynS !== _ewSnapSyn || bDraftStartV === _ewSnapDraft)) {
+        var bSynLen = _ewSynLen > 0 ? _ewSynLen : 28;
+        var bSynE = new Date(bSynS + 'T00:00:00'); bSynE.setDate(bSynE.getDate() + bSynLen - 1);
+        document.getElementById('ew-syn-end').value = _fmtDate(bSynE);
+        var bD0 = new Date(bSynE.getTime()); bD0.setDate(bD0.getDate() + 1);
+        bDraftStartV = _fmtDate(bD0);
+        document.getElementById('ew-draft-start').value = bDraftStartV;
+      }
       if (!bDraftStartV) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 초고 시작일을 입력하세요'); return; }
       var bPubDay = parseInt(document.getElementById('ew-publish-day').value) || 6;
       // 초고 배치 시작점: N화부터면 (N-1)화 다음날, 아니면 초고 시작일
