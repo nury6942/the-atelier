@@ -480,7 +480,7 @@
     cell.className = 'wbc-cd' + (ds === td ? ' is-today' : '') + (ds === _sel ? ' is-sel' : '') + (hol ? ' is-hol' : '') +
       (dow === 0 ? ' is-sun' : dow === 6 ? ' is-sat' : '') + (other ? ' is-other' : '') + (ds < td ? ' is-past' : '');
     cell.dataset.date = ds;
-    if (lanes.ivMax) cell.style.paddingBottom = (12 + lanes.ivMax * 15) + 'px';
+    if (lanes.ivMax) cell.style.paddingBottom = (14 + lanes.ivMax * 20) + 'px';   // 인터벌 줄 높이 19px + 간격 1px
     cell.onclick = function() { selectPlannerDate(ds, cell); };
     cell.ondblclick = function() { openPlannerModal(null, ds); };
     cell.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = (e.ctrlKey || e.metaKey) ? 'copy' : 'move'; cell.classList.add('is-drop'); });
