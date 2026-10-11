@@ -74,7 +74,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
   <link rel="preload" href="js/app-1-pages.js?v=374" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=174" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=175" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
@@ -6032,6 +6032,8 @@
     .wbc-pen:hover { color:var(--ink); }
     .wbc-connect { border:1px solid var(--ink); background:#fff; padding:7px 12px; font-size:12px; font-weight:700; cursor:pointer; border-radius:0; }
     .wbc-connect:hover { background:var(--ink); color:#fff; }
+    .wbc-fresh { align-self:end; font-size:11px; color:var(--sub); white-space:nowrap; }
+    .wbc-fresh.is-stale { color:#e8502f; font-weight:700; }
     .wbc-ctrl { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
     .wbc-mode { display:inline-flex; gap:14px; }
     .wbc-mode button, .wbc-txt { font-family:var(--num); font-size:12.5px; font-weight:600; letter-spacing:.16em; padding:6px 0; border:0; border-bottom:1.5px solid transparent; background:none; color:var(--sub); cursor:pointer; border-radius:0; }
@@ -17077,14 +17079,14 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=174" defer></script>
+<script src="js/app-2-init.js?v=175" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=16" defer></script>
+<script src="js/cal-wb.js?v=17" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>

@@ -138,7 +138,10 @@ document.addEventListener('keydown', function(e) {
 
 function googleSignIn() {
   var provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(function(err) {
+  auth.signInWithPopup(provider).then(function(res) {
+    // 같은 구글 열쇠로 업무 보드(mlb-fitting)도 같이 로그인 — 달력의 '업무 보드 연결'을 따로 안 눌러도 되게
+    try { if (res && res.credential && window.wbcLinkCredential) window.wbcLinkCredential(res.credential); } catch(e) {}
+  }).catch(function(err) {
     var errEl = document.getElementById('login-error');
     if (err.code === 'auth/popup-blocked') {
       errEl.textContent = '팝업이 차단되었어요. 팝업을 허용해주세요.';

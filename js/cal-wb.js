@@ -38,8 +38,9 @@
   var _wbState = 'idle';     // idle | signed-out | loading | ok | error
   var _wbUnsub = null;
   var _fitApp = null;
+  var _wbAt = null;          // 업무 보드가 마지막으로 갱신된 시각 (ms)
   // 같은 기기에선 마지막 값으로 바로 그림 (본인 기기 브라우저에만 저장)
-  try { var _c = localStorage.getItem('wbc_fit_cache'); if (_c) _wb = JSON.parse(_c); } catch(e) {}
+  try { var _c = localStorage.getItem('wbc_fit_cache'); if (_c) { _wb = JSON.parse(_c); _wbAt = _wb.at || null; } } catch(e) {}
 
   function fitApp() {
     if (_fitApp) return _fitApp;
@@ -56,7 +57,9 @@
       try {
         _wb = JSON.parse(snap.data().json);
         _wbState = 'ok';
-        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ gtm: _wb.gtm || [], mine: _wb.mine || null, leaveTotal: _wb.leaveTotal || null, events: (_wb.events || []).filter(isMyAttEv) })); } catch(e) {}
+        var pa = snap.data().pushedAt;
+        _wbAt = pa && pa.toDate ? pa.toDate().getTime() : (Date.parse((_wb.meta && (_wb.meta.lastChecked || _wb.meta.lastUpdated)) || '') || null);
+        try { localStorage.setItem('wbc_fit_cache', JSON.stringify({ at: _wbAt, gtm: _wb.gtm || [], mine: _wb.mine || null, leaveTotal: _wb.leaveTotal || null, events: (_wb.events || []).filter(isMyAttEv) })); } catch(e) {}
       } catch(e) { _wbState = 'error'; }
       _mineCache = {};
       rerender();
@@ -66,8 +69,34 @@
     var app = fitApp(); if (!app) return;
     app.auth().onAuthStateChanged(function(u) {
       if (u) wbSubscribe(u.uid);
-      else { _wbState = 'signed-out'; renderHeaderStats(); }
+      else { _wbState = 'signed-out'; renderHeaderStats(); armAutoConnect(); }
     });
+  }
+  // ★ (2026-10-11) 업무 보드 연결을 손으로 누르지 않게
+  //   ① the-atelier 구글 로그인 때 받은 열쇠로 업무 보드도 같이 로그인 (app-2-init.js googleSignIn → wbcLinkCredential)
+  //   ② 그래도 풀려 있으면, 화면 아무 데나 처음 누를 때 한 번 자동으로 연결 (브라우저가 '사용자가 누른 순간'에만 로그인 창을 허락함)
+  window.wbcLinkCredential = function(cred) {
+    var app = fitApp(); if (!app || !cred || app.auth().currentUser) return;
+    app.auth().signInWithCredential(cred).catch(function(err) { console.warn('[cal-wb] 업무 보드 같이 로그인 실패 — 첫 클릭 때 자동 연결로', err && err.code); armAutoConnect(); });
+  };
+  var _armed = false;
+  function armAutoConnect() {
+    if (_armed) return; _armed = true;
+    var fire = function(e) {
+      document.removeEventListener('pointerdown', fire, true);
+      var app = fitApp();
+      if (!app || app.auth().currentUser) return;
+      if (e && e.target && e.target.closest && e.target.closest('.wbc-connect')) return; // 버튼은 버튼대로
+      window.wbcConnect();
+    };
+    document.addEventListener('pointerdown', fire, true);
+  }
+  function agoText(ms) {
+    var m = Math.round((Date.now() - ms) / 6e4);
+    if (m < 1) return '방금';
+    if (m < 60) return m + '분 전';
+    var h = Math.floor(m / 60);
+    return h < 24 ? h + '시간 전' : Math.floor(h / 24) + '일 전';
   }
   // ★ (2026-10-08) 두 번 눌리면 첫 팝업이 취소되며 'cancelled-popup-request' 오류가 뜨던 문제 —
   //   진행 중이면 무시, 사용자가 닫거나 겹친 경우는 조용히 넘어가고, 팝업이 막히면 페이지 이동 방식으로
@@ -213,15 +242,19 @@
   function colorCls(ev) { return COLOR_MAP[ev[3]] || COLOR_MAP.indigo; }
   // ★ (2026-10-08) 칸 안 일정 색: 불투명 파스텔 배경 + 같은 계열 진한 글씨 (진한 단색은 너무 정신없어서 되돌림)
   //   (2026-10-08 v4 · A안) 여린 바탕 + 왼쪽 3px 색띠 + 검정 글씨 — 개인 일정은 조용히, GTM만 튀게
-  var SOLID = { sky:["#E4EEFF","#3D7BE0"], blue:["#E3ECFF","#2F63D6"], indigo:["#ECE6FF","#7B5CE0"], violet:["#EFE4FF","#8F4FE0"],
-    purple:["#F2E3FF","#A24BD8"], fuchsia:["#F7E3F0","#D9479B"], pink:["#FCE4EF","#E0528F"], rose:["#FBE5E8","#D33A57"],
-    cyan:["#DDF3F8","#1C9AB7"], teal:["#DCF4EE","#14957A"], lime:["#EBF5D6","#6A9E1F"], amber:["#FBF0D6","#C98A0B"],
-    orange:["#FDEBDD","#E06A1B"], slate:["#EDEFF3","#6B7484"], birthday:["#FFF4C2","#D4A900"], deadline:null };
+  //   (2026-10-11 B안) 파스텔이 GTM에 묻혀 안 보인다 → 바탕 한 톤 진하게 + 색띠 4px + 같은 계열 진한 글씨.
+  //   글쓰기(초고·퇴고·시놉 — 메모에 phase:/work_id:)는 흰 바탕 + 진한 보라 테두리 + ✎ 로 따로 띄운다.
+  var SOLID = { sky:["#CFE2FF","#2F6FD6","#143D80"], blue:["#D0DEFF","#2457C8","#12307A"], indigo:["#DDD2FF","#6A48D8","#3A2491"], violet:["#E3D0FF","#7E3BD6","#46197F"],
+    purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F5CCE6","#C9338A","#6E1449"], pink:["#F9CFE2","#D63A7E","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
+    cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
+    orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
+  function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
   function solidStyle(ev, noBar) {
     var k = (ev[3]||"").trim();
     if (k === "deadline") return "background:#FF3B00;color:#fff;";
+    if (isWriting(ev)) return "background:#fff;color:#3A2491;box-shadow:inset 0 0 0 1.5px #5B3BD0;";
     var c = SOLID[k] || SOLID.indigo;
-    return "background:" + c[0] + ";color:#0b0b0b;" + (noBar ? "" : "box-shadow:inset 3px 0 0 " + c[1] + ";");
+    return "background:" + c[0] + ";color:" + c[2] + ";" + (noBar ? "" : "box-shadow:inset 4px 0 0 " + c[1] + ";");
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
   function isPub(ev) { return ((ev[4]||'').indexOf('phase:publishing') >= 0) || /^\d+화\s*\(/.test(ev[1]||''); }
@@ -297,6 +330,10 @@
         '<span class="s">' + used + ' / ' + total + '일 사용</span>' +
         '</div>';
     }
+    if (hasMine && _wbAt) {
+      var stale = Date.now() - _wbAt > 3 * 36e5;
+      html += '<span class="wbc-fresh' + (stale ? ' is-stale' : '') + '" title="회사 포털·아웃룩 내용을 업무 보드가 마지막으로 가져온 시각: ' + new Date(_wbAt).toLocaleString('ko-KR') + '">업무 보드 · ' + agoText(_wbAt) + ' 갱신</span>';
+    }
     if (_wbState === 'signed-out' || (_wbState === 'error' && !hasMine)) {
       html += '<button class="wbc-connect" onclick="wbcConnect()" title="mlb-fitting 업무 보드에서 GTM·내 근태를 가져와요 (같은 구글 계정)">업무 보드 연결</button>';
     }
@@ -359,7 +396,7 @@
     return '<span class="wbc-ev' + (ev[2] === '데드라인' ? ' is-dl' : '') + '" style="' + solidStyle(ev) + '" ' + drag +
       'ondragover="event.preventDefault();event.stopPropagation()" ' +
       'ondrop="event.preventDefault();event.stopPropagation();reorderPlannerEvent(event,' + ref + ')" ' + click + ' title="' + esc(ev[1]) + '">' +
-      '<span class="t">' + esc(ev[1]) + '</span>' +
+      '<span class="t">' + (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) + '</span>' +
       '<span class="act"><button onclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="수정">✎</button>' +
       '<button onclick="event.stopPropagation();deletePlannerRow(' + ref + ')" title="삭제">×</button>' +
       (sid ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + sid + '\')" title="시리즈 전체 삭제">⊘</button>' : '') +
@@ -373,7 +410,7 @@
     return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head) + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
-      (head ? esc(ev[1]) : '&nbsp;') + '</span>';
+      (head ? (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) : '&nbsp;') + '</span>';
   }
 
   function ivHtml(ev, ds, dow, isOther) {
