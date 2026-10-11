@@ -1061,7 +1061,8 @@
     self.popover = document.getElementById(popId);
 
     self.syncTrigger = function(value) {
-      var opt = self.options.find(function(o){ return o.value === value; }) || self.options[0];
+      // 목록에서 뺀 예전 값(업무·연차 등)은 첫 항목으로 바꿔 보이지 말고 이름 그대로 보여준다
+      var opt = self.options.find(function(o){ return o.value === value; }) || (value ? { value: value, label: value, dot: '#9ca3af' } : self.options[0]);
       var dot = document.getElementById(self.id + '-dot');
       var label = document.getElementById(self.id + '-label');
       if (opt.dot) { dot.style.background = opt.dot; dot.style.display = ''; } else { dot.style.display = 'none'; }
@@ -1247,15 +1248,13 @@
     icon: 'category',
     ariaLabel: '카테고리 선택',
     options: [
-      { value: '업무',  dot: '#f43f5e', label: '업무' },
+      // ★ (2026-10-11) 업무·연차(→ 아웃룩·결재 연동)·글쓰기(→ 부업에서 생성)·스터디·생일은 뺐다.
+      //   예전 일정은 카테고리가 그대로 남아 있고 수정도 된다(아래 syncTrigger 가 이름 그대로 보여줌).
+      //   점 색 = 달력에 실제로 칠해지는 색 (js/cal-wb.js)
+      { value: '개인',  dot: '#FFE01A', label: '개인' },
       { value: '데드라인', dot: '#FF3B00', label: '데드라인', emoji: '🚨' },
-      { value: '연차',  dot: '#06b6d4', label: '연차' },
-      { value: '특별휴가', dot: '#ec4899', label: '특별휴가', emoji: '🎁' },
-      { value: '개인',  dot: '#d946ef', label: '개인' },
-      { value: '글쓰기', dot: '#38bdf8', label: '글쓰기' },
-      { value: '영어',  dot: '#84cc16', label: '영어' },
-      { value: '스터디', dot: '#8b5cf6', label: '스터디' },
-      { value: '생일',  dot: '#facc15', label: '생일', emoji: '🎂' },
+      { value: '영어',  dot: '#558A12', label: '영어' },
+      { value: '특별휴가', dot: '#FFE01A', label: '특별휴가', emoji: '🎁' },
       { value: '인터벌', dot: '#e11d48', label: '인터벌', emoji: '↔️' },
     ],
     onSelect: function(val) { toggleLeaveDay(); }
@@ -1454,8 +1453,8 @@
       document.getElementById('p-date-end').value = '';
       document.getElementById('p-title').value = '';
       document.getElementById('p-notes').value = '';
-      document.getElementById('p-category').value = '업무';
-      _syncCatTrigger('업무');
+      document.getElementById('p-category').value = '개인';
+      _syncCatTrigger('개인');
       document.getElementById('p-leave-day').value = '1.0';
       document.getElementById('p-leave-day-wrap').style.display = 'none';
       _ivPickColor = 'rose';
