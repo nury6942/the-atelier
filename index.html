@@ -6081,6 +6081,8 @@
     .wbc-cd.is-hol { background:#fdf3f5; } /* ★ (2026-10-08) 토·일 배경색 삭제 — 숫자 색(빨강/파랑)만 */
     .wbc-cd.is-sel { background:#f6f8fc; }
     .wbc-cd.is-sel::before { content:''; position:absolute; left:-1px; right:0; top:-1px; height:3px; background:var(--blue); z-index:6; }
+    /* 오늘 = 사방 파란 테두리 (2026-10-11 — 위 선만으론 안 보였음). 막대가 칸 밖으로 번져도 테두리가 위에 오게 */
+    .wbc-cd.is-today::after { content:''; position:absolute; inset:-1px; box-shadow:inset 0 0 0 3px var(--blue); z-index:7; pointer-events:none; }
     .wbc-cd.is-drop { outline:2px dashed var(--blue); outline-offset:-2px; }
     .wbc-cd-head { display:flex; align-items:flex-start; justify-content:space-between; gap:6px; }
     .wbc-cd-num { font-family:var(--num); font-size:25px; font-weight:400; line-height:1; letter-spacing:-0.03em; color:var(--ink); font-variant-numeric:tabular-nums; padding:2px 0; }
@@ -17110,7 +17112,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=26" defer></script>
+<script src="js/cal-wb.js?v=27" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
