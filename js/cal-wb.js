@@ -253,11 +253,15 @@
     cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
     orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
-  function solidStyle(ev, noBar) {
+  //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
+  //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
+  //   대신 GTM 일반 항목은 옅게(index.html .wbc-gtm), ★ 핵심만 빨강 그대로.
+  function solidStyle(ev, noBar, full) {
     var k = (ev[3]||"").trim();
     if (k === "deadline") return "background:#FF3B00;color:#fff;";
-    if (isWriting(ev)) return "background:#fff;color:#3A2491;box-shadow:inset 0 0 0 1.5px #5B3BD0;";
+    if (isWriting(ev)) return "background:#3B23A8;color:#fff;";
     var c = SOLID[k] || SOLID.indigo;
+    if (full) return "background:" + c[1] + ";color:#fff;";
     return "background:" + c[0] + ";color:" + c[2] + ";" + (noBar ? "" : "box-shadow:inset 4px 0 0 " + c[1] + ";");
   }
   function idxRef(ev) { return ev[7] ? "_pi('" + ev[7] + "')" : String(plannerData.indexOf(ev)); }
@@ -397,7 +401,7 @@
       return '<span class="wbc-pub" style="background:' + hex + '" ' + drag + click + ' title="' + esc(ev[1]) + '"><em>연재</em>' + esc(ev[1]) + '</span>';
     }
     var sid = _getSeriesIdForDoc(ev[7] || '');
-    return '<span class="wbc-ev' + (ev[2] === '데드라인' ? ' is-dl' : '') + '" style="' + solidStyle(ev) + '" ' + drag +
+    return '<span class="wbc-ev' + (ev[2] === '데드라인' ? ' is-dl' : '') + (isWriting(ev) ? ' is-write' : '') + '" style="' + solidStyle(ev, false, true) + '" ' + drag +
       'ondragover="event.preventDefault();event.stopPropagation()" ' +
       'ondrop="event.preventDefault();event.stopPropagation();reorderPlannerEvent(event,' + ref + ')" ' + click + ' title="' + esc(ev[1]) + '">' +
       '<span class="t">' + (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) + '</span>' +
@@ -411,7 +415,7 @@
     var s = (ev[0]||'').toString(), e = (ev[5]||'').toString();
     var head = ds === s || dow === 0, tail = ds === e || dow === 6;
     var ref = idxRef(ev);
-    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head) + '" draggable="true" ' +
+    return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head, isWriting(ev)) + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) : '&nbsp;') + '</span>';

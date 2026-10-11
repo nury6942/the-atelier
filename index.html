@@ -6079,8 +6079,10 @@
     .wbc-off i { font-style:normal; font-size:10px; font-weight:800; background:#fff; color:var(--me); padding:1px 5px; margin-right:6px; }
     .wbc-off.sub i { color:#8b5cf6; }
     .wbc-gtms { display:grid; gap:3px; min-width:0; }
-    .wbc-gtm { display:block; font-size:11px; font-weight:600; line-height:1.35; color:#0b0b0b; background:var(--neo-fw); padding:2px 6px; overflow-wrap:anywhere; }
-    .wbc-gtm.s-q2 { background:var(--neo-q2); }
+    /* (2026-10-11) GTM 일반 항목은 옅은 회색 + 시즌색 띠 — 개인·글쓰기 일정이 묻히지 않게. ★ 핵심(.is-key)만 빨강 */
+    .wbc-gtm { display:block; font-size:11px; font-weight:500; line-height:1.35; color:#3a3a3a; background:#F3F3F1; box-shadow:inset 3px 0 0 #22B07A; padding:2px 6px 2px 8px; overflow-wrap:anywhere; }
+    .wbc-gtm.s-q2 { box-shadow:inset 3px 0 0 #E0B800; }
+    .wbc-gtm.is-key { box-shadow:none; font-weight:600; }
     .wbc-gtm em { font-style:normal; font-family:var(--num); font-size:9px; font-weight:700; letter-spacing:.14em; opacity:.7; margin-right:6px; }
     .wbc-gtm.is-key { background:var(--key); color:#fff; padding:3px 6px 3px 7px; border-left:3px solid var(--neo-fw); }
     .wbc-gtm.s-q2.is-key { border-left-color:var(--neo-q2); }
@@ -6096,6 +6098,7 @@
     .wbc-ev:hover .act { display:inline-flex; }
     .wbc-ev .act button { border:0; background:none; color:inherit; cursor:pointer; font-size:12px; padding:0 2px; }
     .wbc-ev.is-dl { box-shadow:inset 3px 0 0 #7a1a00; }
+    .wbc-ev.is-write { padding-top:4px; padding-bottom:4px; font-size:11.5px; }
     .wbc-pub { display:block; font-size:11px; font-weight:700; color:#fff; padding:2px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:grab; }
     .wbc-pub em { font-style:normal; font-family:var(--num); font-size:10px; font-weight:700; letter-spacing:.12em; opacity:.8; margin-right:6px; }
     .wbc-more { font-size:10.5px; font-weight:600; color:var(--sub); padding-left:10px; }
@@ -17086,7 +17089,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=18" defer></script>
+<script src="js/cal-wb.js?v=19" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
