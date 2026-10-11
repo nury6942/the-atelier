@@ -1,3 +1,14 @@
+## 2026-10-11 (맥북) — 캘린더 일정 제목 2줄 표시
+
+누리: *"이거 길어지면 2줄 다 나오게 해주라"* (IELTS 일정 제목이 "…AI 말하…"로 잘림)
+
+BEFORE: `.wbc-ev .t` = 한 줄 말줄임 (`white-space:nowrap; text-overflow:ellipsis`)
+AFTER:  2줄까지 보이고 그 뒤 말줄임 (`-webkit-line-clamp:2`, `word-break:keep-all`) — CSS 한 줄만, cal-wb.js 는 안 건드림
+- SW `atelier-v510`
+- 주의: 지금 캘린더 화면은 `cal-wb.js`(wbc-*) 가 그림. `app-1-pages.js` 의 renderCalendar(planner-grid) 가 아님
+
+같은 날: Job Hunt 준비용 IELTS 일정 47건을 캘린더에 넣음 — 카테고리 `스터디`(보라), notes 가 `[job-hunt]` 로 시작 → 한 번에 지우려면 이 접두어로 찾기.
+
 ## 2026-10-11 (아이맥) — GTM 여러 날 일정(색칠 기간) 막대로
 
 - 원인: 엑셀은 '글자 한 칸 + 앞뒤 같은 색 칠하기'로 기간 표시 (27FW CN TRADESHOW: 글자 1/13, 분홍 FF99FF 1/11~1/15). 병합 아님 → 하루만 읽힘

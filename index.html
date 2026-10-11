@@ -6117,7 +6117,8 @@
     .wbc-gtmb em { font-style:normal; font-family:var(--num); font-size:9.5px; font-weight:700; letter-spacing:.14em; margin-right:6px; opacity:.85; }
     .wbc-evs { display:grid; gap:3px; min-width:0; }
     .wbc-ev { display:flex; align-items:center; gap:4px; font-size:11px; line-height:1.3; padding:2px 3px 2px 6px; min-width:0; cursor:grab; border-radius:0; font-weight:600; }
-    .wbc-ev .t { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+    /* ★ (2026-10-11) 긴 일정 제목은 2줄까지 보이고 그 뒤 말줄임 (누리 요청) */
+    .wbc-ev .t { flex:1; min-width:0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:keep-all; overflow-wrap:anywhere; font-weight:600; }
     .wbc-ev .act { display:none; gap:2px; flex:none; }
     .wbc-ev:hover .act { display:inline-flex; }
     .wbc-ev .act button { border:0; background:none; color:inherit; cursor:pointer; font-size:12px; padding:0 2px; }
