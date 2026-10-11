@@ -444,8 +444,21 @@
       'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')">' +
       (ds === s ? '<span class="cal-iv-cap is-l"></span>' : '') + '<span class="cal-iv-line"></span>' +
-      (ds === mid ? '<span class="cal-iv-label">' + title + '</span><span class="cal-iv-line"></span>' : '') +
+      // 글자는 선 위가 아니라 주(週) 구간 전체 가운데에 따로 얹는다 (ivLabelHtml) — 짝수 일수면 한쪽으로 쏠리던 것
+
       (ds === e ? '<span class="cal-iv-cap is-r"></span>' : '') + '</div>';
+  }
+
+  // 인터벌 이름표 — 이번 주에 걸친 구간의 첫 칸에서, 구간 전체 폭(N칸)의 정가운데에 놓는다
+  function ivLabelHtml(ev, ds, dow, lane, ivMax, isOther) {
+    var s = (ev[0]||'').toString(), e = (ev[5]||'').toString() || s;
+    var segS = _dShift(ds, -dow); if (segS < s) segS = s;
+    if (ds !== segS) return '';
+    var segE = _dShift(ds, 6 - dow); if (segE > e) segE = e;
+    var n = _dDiff(segS, segE) + 1;
+    var hex = IV_HEX[(ev[3]||'').trim()] || IV_HEX.rose;
+    var bottom = 5 + (ivMax - 1 - lane) * 20;
+    return '<div class="wbc-ivl' + (isOther ? ' is-out' : '') + '" style="bottom:' + bottom + 'px;width:' + (n * 100) + '%;--iv:' + hex + '"><span>' + esc(ev[1]) + '</span></div>';
   }
 
   function cellEl(d, lanes) {
@@ -534,8 +547,12 @@
       var ivSlots = [];
       ivs.forEach(function(r) { var ln = lanes.ivLanes.get(r); ivSlots[ln == null ? 0 : ln] = r; });
       var t = '';
-      for (var v = 0; v < lanes.ivMax; v++) t += ivSlots[v] ? ivHtml(ivSlots[v], ds, dow, other) : '<div class="cal-iv-gap"></div>';
-      h += '<div class="cal-iv-track">' + t + '</div>';
+      var lbl = '';
+      for (var v = 0; v < lanes.ivMax; v++) {
+        t += ivSlots[v] ? ivHtml(ivSlots[v], ds, dow, other) : '<div class="cal-iv-gap"></div>';
+        if (ivSlots[v]) lbl += ivLabelHtml(ivSlots[v], ds, dow, v, lanes.ivMax, other);
+      }
+      h += '<div class="cal-iv-track">' + t + '</div>' + lbl;
     }
     cell.innerHTML = h;
     return cell;

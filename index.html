@@ -6143,6 +6143,10 @@
     .wbc-cd .cal-iv-cap.is-r { border-left-width:9px; }
     .wbc-cd .cal-iv-label { font-size:12.5px; padding:0 7px; }
     .wbc-cd .cal-iv.planner-selected .cal-iv-line { height:5px; }
+    /* 인터벌 이름표 — 주 구간 전체의 정가운데 (칸 폭 × N). 선 위에 흰 바탕으로 얹고, 클릭은 아래 선으로 통과 */
+    .wbc-ivl { position:absolute; left:0; height:19px; display:flex; align-items:center; justify-content:center; z-index:8; pointer-events:none; }
+    .wbc-ivl span { background:#fff; padding:0 8px; font-size:12.5px; font-weight:800; line-height:1; color:var(--iv); white-space:nowrap; max-width:calc(100% - 40px); overflow:hidden; text-overflow:ellipsis; }
+    .wbc-ivl.is-out { opacity:.45; }
     /* 선택일 패널 */
     .wbc-ag { border-top:1px solid var(--hair); padding-top:14px; position:sticky; top:16px; }
     .wbc-ag-head { display:flex; align-items:flex-end; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--ink); }
@@ -17120,7 +17124,7 @@
      예쁜 보라색 달력 위젯으로 교체
      ═══════════════════════════════════════════════════ -->
 <script src="js/app-3-flatpickr.js?v=165" defer></script>
-<script src="js/cal-wb.js?v=28" defer></script>
+<script src="js/cal-wb.js?v=29" defer></script>
 <script src="js/roadmap-data.js?v=163" defer></script>
 <script src="js/daily-actions.js?v=163" defer></script>
 <script src="js/daily-guides.js?v=163" defer></script>
