@@ -23427,6 +23427,9 @@
     try { db.collection('side_cal_events').doc('list').set({ data: JSON.stringify(d), updatedAt: ts }); } catch(e) {}
   }
 
+  // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 달력(js/cal-wb.js SERIES_FIXED)과 맞춤. R 시리즈 = 청록
+  function _seriesFixedHex(name) { return /^R/i.test(String(name || '').trim()) ? '#0D9488' : null; }
+
   function getSeriesColor(name) {
     var data = getSeriesData();
     var s = data.find(function(x){return x.name===name;});
@@ -24741,7 +24744,7 @@
     var rowsHtml = '';
     sorted.forEach(function(w) {
       var s = seriesById[w.series_id]; if (!s) { s = seriesData.find(function(x){return x.name===w.series_name;})||{name:'?',color:'slate'}; }
-      var sColor = (_seriesHexMap[s.color]||'#6366f1');
+      var sColor = _seriesFixedHex(s.name) || (_seriesHexMap[s.color]||'#6366f1');
       var sShort = (s.name||'?').charAt(0);
         rowsHtml += '<div class="flex items-stretch" style="height:36px;border-bottom: 1px solid var(--slate-50)">';
         var isDraft = w.status !== 'confirmed';
@@ -24875,7 +24878,7 @@
       sWorks.sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       if (sWorks.length === 0) return;
       hasRows = true;
-      var sColor = scMap[s.color] || '#6366f1';
+      var sColor = _seriesFixedHex(s.name) || scMap[s.color] || '#6366f1';
       rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom: var(--space-1-5)">';
       rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
       rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius: var(--radius-xs)">';
