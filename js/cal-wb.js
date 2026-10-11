@@ -263,6 +263,29 @@
   var WRITE_HEX = { indigo:'#4338CA', amber:['#FF9F1C','#2B1600'] /* 갈색(#B45309)은 못생겼다고 해서 탠저린 */, rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
     cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#6D28D9', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
   var BAR_FULL = true;       // 여러 날 막대도 고른 색으로 꽉 채움
+  // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 일정마다 만들어질 때 색이 박혀 있어 같은 R 시리즈도 남색·파랑이 섞였고,
+  //   남색이 IELTS 보라와 겹쳐 안 보였다. R 시리즈는 전부 청록 (글쓰기 진하게 · 연재 조금 밝게).
+  var SERIES_FIXED = [ { re: /^R/i, write: '#0D9488', pub: '#14B8A6' } ];
+  var _sidName = null;
+  function seriesIdNames() {
+    if (_sidName) return _sidName;
+    _sidName = {};
+    try {
+      var y0 = new Date().getFullYear();
+      for (var y = y0 - 1; y <= y0 + 3; y++) (getSeriesData(y) || []).forEach(function(x) { if (x && x.id) _sidName[x.id] = x.name || ''; });
+    } catch (e) {}
+    return _sidName;
+  }
+  function seriesOverride(ev) {
+    var note = (ev[4] || '') + '', name = '';
+    var m = note.match(/series_id:([^|]+)/);
+    if (m) name = seriesIdNames()[m[1]] || '';
+    if (!name) { var t = ((ev[1] || '') + '').match(/\(([^)]+)\)\s*$/); if (t) name = t[1]; }
+    if (!name) return null;
+    for (var i = 0; i < SERIES_FIXED.length; i++) if (SERIES_FIXED[i].re.test(name.trim())) return SERIES_FIXED[i];
+    return null;
+  }
+
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
   //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
   //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
@@ -271,7 +294,8 @@
     var k = (ev[3]||"").trim();
     if (k === "deadline") return "background:#FF3B00;color:#fff;";
     // 글쓰기는 작품(시리즈) 색으로 — B·R 시리즈가 구분되게. 시리즈 색을 흰 글씨가 읽히는 진한 톤으로.
-    if (isWriting(ev)) { var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
+    if (isWriting(ev)) { var so = seriesOverride(ev); if (so) return "background:" + so.write + ";color:#fff;";
+      var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
     // (2026-10-11 v3) 분홍 계열로 고른 일정만 핫 옐로우로 (누리: "핑크가 안 예뻐") — 나머지는 각자 고른 색 그대로.
     //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
     if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
@@ -415,7 +439,8 @@
     var drag = 'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ';
     var click = 'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')"';
     if (isPub(ev)) {
-      var hex = _seriesHexMap[(ev[3]||'').trim()] || '#6366f1';
+      var so = seriesOverride(ev);
+      var hex = so ? so.pub : (_seriesHexMap[(ev[3]||'').trim()] || '#6366f1');
       return '<span class="wbc-pub" style="background:' + hex + '" ' + drag + click + ' title="' + esc(ev[1]) + '"><em>연재</em>' + esc(ev[1]) + '</span>';
     }
     var sid = _getSeriesIdForDoc(ev[7] || '');
@@ -620,6 +645,7 @@
 
   // ─────────────── 메인 렌더 (기존 renderCalendar 대체) ───────────────
   function renderCalendarWb() {
+    _sidName = null;   // 시리즈 이름표는 그릴 때마다 새로
     var grid = document.getElementById('planner-grid');
     if (!grid) return;
     var days = visibleDays();
