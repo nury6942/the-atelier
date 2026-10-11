@@ -286,6 +286,7 @@
     return null;
   }
 
+  function isTrip(ev) { return ((ev[2] || '') + '').trim() === '연차'; }
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
   //   (2026-10-11 v2) 그래도 회사 일정만 보인다 → 하루짜리 개인 일정은 진한 색 꽉 채움 + 흰 글씨,
   //   글쓰기는 진한 남보라 꽉 채움 + ✎ + 조금 더 높게. 여러 날 기간 바는 넓어서 지금처럼 옅게 둔다.
@@ -298,6 +299,8 @@
       var wh = WRITE_HEX[k] || "#3B23A8"; return "background:" + (Array.isArray(wh) ? wh[0] + ";color:" + wh[1] : wh + ";color:#fff") + ";"; }
     // (2026-10-11 v3) 분홍 계열로 고른 일정만 핫 옐로우로 (누리: "핑크가 안 예뻐") — 나머지는 각자 고른 색 그대로.
     //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
+    // (2026-10-11) 연차 카테고리(미리 잡은 여행·휴가 — 예전 기본색 청록이 R 시리즈 청록과 겹침) → 하늘색 사선 줄무늬 + 테두리
+    if (isTrip(ev)) return "background:repeating-linear-gradient(135deg,#BFE6F5 0 6px,#E6F6FC 6px 12px) fixed;color:#0B4F6C;box-shadow:inset 0 1.5px 0 #1C9AB7,inset 0 -1.5px 0 #1C9AB7" + (noBar ? "" : ",inset 1.5px 0 0 #1C9AB7") + ";";
     if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
     var c = SOLID[k] || SOLID.indigo;
     if (full || BAR_FULL) return "background:" + c[1] + ";color:#fff;";
@@ -447,7 +450,7 @@
     return '<span class="wbc-ev' + (ev[2] === '데드라인' ? ' is-dl' : '') + (isWriting(ev) ? ' is-write' : '') + '" style="' + solidStyle(ev, false, true) + '" ' + drag +
       'ondragover="event.preventDefault();event.stopPropagation()" ' +
       'ondrop="event.preventDefault();event.stopPropagation();reorderPlannerEvent(event,' + ref + ')" ' + click + ' title="' + esc(ev[1]) + '">' +
-      '<span class="t">' + (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) + '</span>' +
+      '<span class="t">' + (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + esc(ev[1]) + '</span>' +
       '<span class="act"><button onclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="수정">✎</button>' +
       '<button onclick="event.stopPropagation();deletePlannerRow(' + ref + ')" title="삭제">×</button>' +
       (sid ? '<button onclick="event.stopPropagation();openSeriesDeleteConfirm(\'' + sid + '\')" title="시리즈 전체 삭제">⊘</button>' : '') +
@@ -461,7 +464,7 @@
     return '<span class="wbc-rb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + solidStyle(ev, !head, isWriting(ev)) + '" draggable="true" ' +
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
-      (head ? (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) : '&nbsp;') + '</span>';
+      (head ? (isWriting(ev) ? '✎ ' : (isTrip(ev) ? '✈ ' : '')) + esc(ev[1]) : '&nbsp;') + '</span>';
   }
 
   // 기간 GTM 막대 — ★ 핵심은 빨강, 일반은 회색 + 시즌색 띠 (칸 칩과 같은 말투)
