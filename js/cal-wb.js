@@ -230,7 +230,12 @@
   var GTM_TAG = { fw: '27FW', q2: '27SS Q2' };
   // 핵심 일정(★ 빨강): 업무 보드가 붙인 key + 화면에서 한 번 더 — Tradeshow 도 핵심 (2026-10-11)
   var GTM_KEY_RE = /CEO\s*convention|PLM\s*(마감|deadline)|품평|trade\s*show/i;
-  function gtmOn(ds) { return ((_wb && _wb.gtm) || []).filter(function(g){ return g.date === ds; }).map(function(g) {
+  // (2026-10-11) 기간이 있는 GTM(엑셀에서 색칠로 여러 날 표시한 것 — g.end)은 칸 칩이 아니라 막대로 따로 그린다
+  function gtmIsRange(g) { return g && g.end && g.end > g.date; }
+  function gtmIsKey(g) { return !!(g.key || GTM_KEY_RE.test(g.title || '')); }
+  function gtmRanges(fromDs, toDs) { return ((_wb && _wb.gtm) || []).filter(function(g) { return gtmIsRange(g) && g.date <= toDs && g.end >= fromDs; }); }
+  function gtmAllOn(ds) { return ((_wb && _wb.gtm) || []).filter(function(g) { return ds >= g.date && ds <= (g.end || g.date); }).map(function(g) { return gtmIsKey(g) && !g.key ? Object.assign({}, g, { key: true }) : g; }); }
+  function gtmOn(ds) { return ((_wb && _wb.gtm) || []).filter(function(g){ return g.date === ds && !gtmIsRange(g); }).map(function(g) {
     return g.key || !GTM_KEY_RE.test(g.title || '') ? g : Object.assign({}, g, { key: true });
   }); }
 
@@ -398,6 +403,9 @@
       (rL[lane] = rL[lane] || []).push([s, e]); rangeLanes.set(key, lane);
     };
     offsAll.forEach(function(x) { place(x, x.start, x.end); });
+    var gr = gtmRanges(fromDs, toDs);
+    gr.sort(function(a, b) { return (gtmIsKey(b) ? 1 : 0) - (gtmIsKey(a) ? 1 : 0) || a.date.localeCompare(b.date); });
+    gr.forEach(function(g) { place(g, g.date, g.end); });
     ranges.forEach(function(r) { place(r, (r[0]||'').toString(), (r[5]||'').toString()); });
     return { rangeLanes: rangeLanes, ivLanes: ivLanes, ivMax: ivMax };
   }
@@ -429,6 +437,16 @@
       'ondragstart="event.stopPropagation();plannerDragStart(event,' + ref + ')" ondragend="plannerDragEnd(event)" ' +
       'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')" title="' + esc(ev[1]) + ' (' + s.slice(5) + ' ~ ' + e.slice(5) + ')">' +
       (head ? (isWriting(ev) ? '✎ ' : '') + esc(ev[1]) : '&nbsp;') + '</span>';
+  }
+
+  // 기간 GTM 막대 — ★ 핵심은 빨강, 일반은 회색 + 시즌색 띠 (칸 칩과 같은 말투)
+  function gtmBarHtml(g, ds, dow) {
+    var head = ds === g.date || dow === 0, tail = ds === g.end || dow === 6, key = gtmIsKey(g);
+    var stripe = g.series === 'q2' ? '#E0B800' : '#22B07A';
+    var st = key ? 'background:#E8283F;color:#fff;' : 'background:#F3F3F1;color:#3a3a3a;' + (head ? 'box-shadow:inset 3px 0 0 ' + stripe + ';' : '');
+    var lbl = (key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM') + '  ' + g.title;
+    return '<span class="wbc-rb wbc-gtmb' + (head ? ' head' : '') + (tail ? ' tail' : '') + '" style="' + st + '" title="' + esc((g.team || '') + ' · ' + g.title + ' (' + g.date.slice(5) + ' ~ ' + g.end.slice(5) + ')') + '">' +
+      (head ? '<em>' + esc((key ? '★ ' : '') + (GTM_TAG[g.series] || 'GTM')) + '</em>' + esc(g.title) : '&nbsp;') + '</span>';
   }
 
   function ivHtml(ev, ds, dow, isOther) {
@@ -516,10 +534,12 @@
     var slots = [], extra = [];
     offs.forEach(function(x) { var ln = lanes.rangeLanes.get(x); if (ln == null) extra.push(x); else slots[ln] = x; });
     ranges.forEach(function(r) { var ln = lanes.rangeLanes.get(r); slots[ln == null ? 0 : ln] = r; });
+    gtmRanges(ds, ds).forEach(function(g) { var ln = lanes.rangeLanes.get(g); if (ln == null) extra.push(g); else slots[ln] = g; });
     if (slots.length || extra.length) {
       h += '<span class="wbc-bars">';
-      for (var i = 0; i < slots.length; i++) h += !slots[i] ? '<span class="wbc-rb-gap"></span>' : (Array.isArray(slots[i]) ? barHtml(slots[i], ds, dow) : offHtml(slots[i]));
-      extra.forEach(function(x){ h += offHtml(x); });
+      var pick = function(x) { return Array.isArray(x) ? barHtml(x, ds, dow) : (x.series ? gtmBarHtml(x, ds, dow) : offHtml(x)); };
+      for (var i = 0; i < slots.length; i++) h += !slots[i] ? '<span class="wbc-rb-gap"></span>' : pick(slots[i]);
+      extra.forEach(function(x){ h += pick(x); });
       h += '</span>';
     }
     // GTM
@@ -568,7 +588,7 @@
       '<span class="m"><b>' + WD_EN[d.getDay()] + ' · ' + MON_EN[d.getMonth()] + '</b><em>' +
       [(_sel === td ? 'TODAY' : ''), hol].filter(Boolean).join(' · ') + '</em></span></div>';
 
-    var gs = gtmOn(_sel);
+    var gs = gtmAllOn(_sel);
     if (gs.length) {
       h += '<div class="wbc-ag-sec"><p class="wbc-ag-t">GTM</p>' + gs.map(function(g) {
         return '<div class="wbc-ag-gtm s-' + (g.series || 'fw') + (g.key ? ' is-key' : '') + '"><em>' + (g.key ? '★ ' : '') + esc(g.team || GTM_TAG[g.series] || '') + '</em>' + esc(g.title) + '</div>';
