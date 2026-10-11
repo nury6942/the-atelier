@@ -226,7 +226,11 @@
 
   // ─────────────── GTM ───────────────
   var GTM_TAG = { fw: '27FW', q2: '27SS Q2' };
-  function gtmOn(ds) { return ((_wb && _wb.gtm) || []).filter(function(g){ return g.date === ds; }); }
+  // 핵심 일정(★ 빨강): 업무 보드가 붙인 key + 화면에서 한 번 더 — Tradeshow 도 핵심 (2026-10-11)
+  var GTM_KEY_RE = /CEO\s*convention|PLM\s*(마감|deadline)|품평|trade\s*show/i;
+  function gtmOn(ds) { return ((_wb && _wb.gtm) || []).filter(function(g){ return g.date === ds; }).map(function(g) {
+    return g.key || !GTM_KEY_RE.test(g.title || '') ? g : Object.assign({}, g, { key: true });
+  }); }
 
   // ─────────────── planner 일정 헬퍼 ───────────────
   function eventsOn(ds) {
