@@ -249,7 +249,7 @@
   //   (2026-10-11 B안) 파스텔이 GTM에 묻혀 안 보인다 → 바탕 한 톤 진하게 + 색띠 4px + 같은 계열 진한 글씨.
   //   글쓰기(초고·퇴고·시놉 — 메모에 phase:/work_id:)는 흰 바탕 + 진한 보라 테두리 + ✎ 로 따로 띄운다.
   var SOLID = { sky:["#CFE2FF","#2F6FD6","#143D80"], blue:["#D0DEFF","#2457C8","#12307A"], indigo:["#DDD2FF","#6A48D8","#3A2491"], violet:["#E3D0FF","#7E3BD6","#46197F"],
-    purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F5CCE6","#C9338A","#6E1449"], pink:["#F9CFE2","#D63A7E","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
+    purple:["#E8CCFF","#9133CC","#521A75"], fuchsia:["#F8CCEE","#E52BB8","#6E1449"], pink:["#FFCCE3","#FF2E8C","#7A1745"], rose:["#F8D0D7","#C42747","#701326"],
     cyan:["#C6EBF3","#13849E","#0A4A59"], teal:["#C5EDE2","#0F7F68","#08463A"], lime:["#DCEDB8","#558A12","#2F4D09"], amber:["#F8E2AE","#B07600","#5E3F00"],
     orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
   function isWriting(ev) { var n = (ev[4]||'') + ''; return (n.indexOf('phase:') >= 0 || n.indexOf('work_id:') >= 0) && n.indexOf('phase:publishing') < 0; }
