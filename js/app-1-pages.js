@@ -25103,6 +25103,19 @@
       var bRestStart = new Date(bRevEnd.getTime()); bRestStart.setDate(bRestStart.getDate() + 1);
       var bRestEnd = new Date(bPub.getTime()); bRestEnd.setDate(bRestEnd.getDate() - 1);
       if (bFrom <= 1) document.getElementById('ew-draft-start').value = _fmtDate(bPlaceStart);
+      // ★ (2026-10-11) 시놉도 맞춘다 — 예전엔 비지 재계산이 시놉을 안 건드려서 '시작 1/30 · 종료 1/8' 처럼
+      //   뒤집히거나 초고와 겹친 값이 그대로 남았다(그러면 시놉 일정이 하나도 안 생김).
+      //   시놉이 비었거나 뒤집혔거나 초고 시작일 이후로 넘어가 있으면: 초고 시작 전날에 끝나게, 기간은 원래 길이(없으면 28일).
+      if (bFrom <= 1) {
+        var sSEl = document.getElementById('ew-syn-start'), sEEl = document.getElementById('ew-syn-end');
+        var sS = sSEl.value, sE = sEEl.value, dS = _fmtDate(bPlaceStart);
+        if (!sS || !sE || sS > sE || sE >= dS) {
+          var sLen = (sS && sE && sS <= sE) ? Math.round((new Date(sE + 'T00:00:00') - new Date(sS + 'T00:00:00')) / 864e5) + 1 : 28;
+          var nE = new Date(bPlaceStart.getTime()); nE.setDate(nE.getDate() - 1);
+          var nS = new Date(nE.getTime()); nS.setDate(nS.getDate() - (sLen - 1));
+          sSEl.value = _fmtDate(nS); sEEl.value = _fmtDate(nE);
+        }
+      }
       document.getElementById('ew-draft-end').value = _fmtDate(bDraftEnd);
       document.getElementById('ew-rev-start').value = _fmtDate(bRevStart);
       document.getElementById('ew-rev-end').value = _fmtDate(bRevEnd);
@@ -25264,6 +25277,11 @@
     if (_workSaving || !_editWorkId) return;
     var w = getWorkById(_editWorkId);
     if (!w) return;
+    // ★ (2026-10-11) 시작이 종료보다 늦은 단계가 있으면 저장 막기 — 그 단계 일정이 통째로 안 생기는 걸 미리
+    var _badPh = [['ew-syn-start','ew-syn-end','시놉'],['ew-draft-start','ew-draft-end','초고'],['ew-rev-start','ew-rev-end','퇴고'],['ew-rest-start','ew-rest-end','휴식']].filter(function(x) {
+      var a = document.getElementById(x[0]).value, b = document.getElementById(x[1]).value; return a && b && a > b;
+    });
+    if (_badPh.length) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> ' + _badPh.map(function(x){ return x[2]; }).join('·') + ' 시작일이 종료일보다 늦어요. 날짜를 고치거나 \'시작일 기준 자동 재계산\'을 눌러주세요'); return; }
     _workSaving = true;
     var btn = document.querySelector('#edit-work-modal button[onclick="saveEditWork()"]'); _lockSaveBtn(btn);
     try {
