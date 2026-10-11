@@ -24364,6 +24364,27 @@
     }
   }
 
+  // ★ (2026-10-11) 타임라인 휴지통 — 예전엔 onclick 안 따옴표가 깨져서 눌러도 아무 일도 없었다.
+  //   안내대로 달력 일정도 같이 지운다 (예전 deleteWork 는 작품만 지우고 달력 일정은 남겼음).
+  function askDeleteWork(id) {
+    var w = getWorkById(id); if (!w) return;
+    var n = plannerData.filter(function(r) { return r && ((r[4] || '') + '|').indexOf('work_id:' + id + '|') >= 0; }).length;
+    showConfirm({ icon: '🗑️', type: 'danger', title: '작품 삭제',
+      message: '"' + (w.title || '') + '" 작품을 삭제할까요?\n' + (n ? '달력의 이 작품 일정 ' + n + '개도 함께 삭제돼요.' : '달력에는 이 작품 일정이 없어요.'),
+      confirmText: '삭제', onConfirm: async function() {
+        if (_workSaving) return;
+        _workSaving = true;
+        try {
+          var removed = 0;
+          try { removed = await removeWorkCalEvents(id); } catch (e) { console.warn('[deleteWork] 달력 일정 삭제', e); }
+          deleteWork(id);
+          renderWorkPipeline();
+          showSyncToast('<span class="material-symbols-outlined text-sm mr-1">delete</span> "' + (w.title || '') + '" 삭제' + (removed ? ' · 달력 일정 ' + removed + '개' : ''));
+        } finally { _workSaving = false; }
+      } });
+  }
+  window.askDeleteWork = askDeleteWork;
+
   function deleteWork(id) {
     // ★ 삭제 묘비 기록 (2026-07-15): 낡은 기기의 병합에서 삭제된 작품이 부활하는 것 방지
     try {
@@ -24728,7 +24749,7 @@
           (isDraft ? '<button onclick="event.stopPropagation();confirmWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-indigo-100 text-indigo-500" title="확정"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">check_circle</span></button>' :
                      '<button onclick="event.stopPropagation();resyncWorkCal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="재동기화"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">sync</span></button>') +
           '<button onclick="event.stopPropagation();openEditWorkModal(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-400" title="편집"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">edit</span></button>' +
-          '<button onclick="event.stopPropagation();showConfirm({icon:\'🗑️\',type:\'danger\',title:\'작품 삭제\',message:\'\\\"'+(w.title||'').replace(/'/g,"\\'")+'\\\" 작품을 삭제할까요?\\n캘린더 일정도 함께 삭제됩니다.\',confirmText:\'삭제\',onConfirm:function(){deleteWork(\\\''+w.id+'\\\');renderWorkPipeline()}})" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
+          '<button onclick="event.stopPropagation();askDeleteWork(\''+w.id+'\')" class="w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500" title="삭제"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">delete</span></button></div>';
         rowsHtml += '<div class="shrink-0 flex items-center gap-1.5 px-3 text-[11px] font-bold text-slate-700 group" style="width:210px;position:sticky;left:0;background:#fff;z-index:6;border-right: 1px solid var(--slate-100)" title="'+w.title+' ('+s.name+')">' +
           '<span class="text-[10px] font-black shrink-0" style="color:'+sColor+'">'+sShort+'</span>' +
           '<span class="truncate flex-1 min-w-0">'+w.title+'</span>' + actBtns + '</div>';
@@ -25884,7 +25905,8 @@
     // ★ ID 기반 삭제 (2026-07-14): 인덱스 splice가 await 사이에 어긋나며
     //   무관한 일정을 지우던 버그 수정 — 행 참조로 수집해 문서 ID로 삭제.
     var rowsToRemove = plannerData.filter(function(row) {
-      return ((row[4] || '').toString()).indexOf('work_id:' + workId) >= 0;
+      // 'work_id:12' 이 'work_id:123' 까지 잡지 않게 구분자까지 비교
+      return (((row[4] || '').toString()) + '|').indexOf('work_id:' + workId + '|') >= 0;
     });
     console.log('[RemoveWorkCal] Found', rowsToRemove.length, 'events for work_id:', workId, 'in', plannerData.length, 'total');
     for (var i = 0; i < rowsToRemove.length; i++) {
