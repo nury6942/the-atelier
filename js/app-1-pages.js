@@ -27014,9 +27014,9 @@
           var firestoreId = mi.row[5] || '';
           return '<tr style="border-top: 1px solid var(--slate-100);" class="group hub-drag-row" draggable="true" data-hub-idx="' + mi.idx + '" data-hub-id="' + firestoreId + '" data-hub-month="' + monthKey + '" ondragstart="hubDragStart(event,' + mi.idx + ')" ondragend="hubDragEnd(event)" ondragover="hubDragOver(event)" ondrop="hubDrop(event,' + mi.idx + ')">' +
             '<td class="py-2 w-4 cursor-grab opacity-0 group-hover:opacity-30 text-slate-300" style="font-size: var(--font-size-tiny)" title="드래그로 순서 변경">⋮⋮</td>' +
-            '<td class="py-2 text-slate-400 text-xs w-7 cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + dateDay + '</td>' +
-            '<td class="py-2 text-slate-700 text-xs font-medium cursor-pointer" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + (mi.row[2]||type) + '</td>' +
-            '<td class="py-2 text-right text-xs font-bold cursor-pointer ' + colorCls + '" onclick="startHubInlineEdit(' + mi.idx + ',\'' + monthKey + '\')">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
+            '<td class="hub-cell py-2 text-slate-400 text-xs w-7" data-col="0">' + dateDay + '</td>' +
+            '<td class="hub-cell py-2 text-slate-700 text-xs font-medium" data-col="1">' + (mi.row[2]||type) + '</td>' +
+            '<td class="hub-cell py-2 text-right text-xs font-bold ' + colorCls + '" data-col="2">' + sign + amt.toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right text-[10px] font-medium" style="' + balColor + 'white-space:nowrap;">' + Math.round(itemRunning).toLocaleString('ko-KR') + '</td>' +
             '<td class="py-2 text-right w-8"><div class="opacity-0 group-hover:opacity-100 transition-all">' +
               '<button onclick="event.stopPropagation();deleteHubRow(' + mi.idx + ')" class="p-0.5 hover:bg-rose-100 rounded text-slate-300 hover:text-rose-500"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">delete</span></button>' +
@@ -27043,7 +27043,7 @@
               '<div class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-center"><div class="text-[9px] font-bold text-slate-400 uppercase mb-0.5">저축</div><div class="text-sm font-black text-slate-700">' + Math.round(mSavings).toLocaleString('ko-KR') + '</div></div>' +
             '</div>' +
             '<table class="w-full"><tbody>' +
-              itemsHtml +
+              itemsHtml + _hubNewRowHtml(monthKey) +
             '</tbody></table>' +
             '<div id="hub-inline-' + monthKey + '" style="display:none" class="mt-2 px-1.5 py-1.5 rounded-xl bg-indigo-50/40">' +
               '<div class="flex items-center gap-1">' +
@@ -27055,9 +27055,6 @@
                 '<button onclick="cancelHubInline(\'' + monthKey + '\')" class="p-0.5 rounded hover:bg-slate-200 text-slate-400 flex items-center justify-center shrink-0"><span class="material-symbols-outlined" style="font-size: var(--font-size-body-sm)">close</span></button>' +
               '</div>' +
             '</div>' +
-            '<button onclick="showHubInline(\'' + monthKey + '\')" class="mt-2 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-1 transition-all" style="border:1px dashed #e1e3e4;">' +
-              '<span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span> 추가' +
-            '</button>' +
           '</div>' +
           '<div class="p-5 mt-auto" style="' + footerStyle + '">' +
             '<div class="flex justify-between items-center mb-1">' +
@@ -27204,6 +27201,269 @@
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 순서 변경됨');
     await loadHub();
   }
+
+  // ===== HUB GRID (엑셀식 편집) =====
+  // 클릭 = 칸 선택(테두리) · 타이핑 = 덮어쓰기 · Enter/더블클릭 = 이어서 고치기
+  // Enter = 저장+아래 · Tab = 저장+옆 · 화살표 = 이동 · Esc = 취소 · 칸 밖 클릭 = 저장
+  // 맨 아래 빈 줄(새 항목)에 항목명+금액이 다 차면 그때 새 줄로 저장. 터치 기기는 탭 한 번에 바로 편집.
+  var _hg = { sel: null, editing: false, td: null, orig: '', origHtml: '', drafts: {} };
+  var HG_TYPES = ['지출','수입','저축','출금','이자'];
+  var _hgTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+  (function() {
+    var st = document.createElement('style');
+    st.textContent =
+      '.hub-cell{cursor:cell;padding-left:4px;padding-right:4px;border-radius:4px}' +
+      '.hub-cell.hub-sel{box-shadow:inset 0 0 0 1.5px var(--lavender-deep,#6b38d4);background:rgba(107,56,212,0.05)}' +
+      '.hub-cell.hub-editing{background:#fff}' +
+      '.hub-cell-wrap{display:flex;align-items:center;gap:2px}' +
+      '.hub-cell.text-right .hub-cell-wrap{justify-content:flex-end}' +
+      '.hub-cell-in{all:unset;flex:1;min-width:0;width:100%;font:inherit;color:inherit;text-align:inherit;caret-color:transparent;box-sizing:border-box}' +
+      '.hub-editing .hub-cell-in{caret-color:auto;cursor:text}' +
+      '.hub-sel:not(.hub-editing) .hub-cell-in::selection{background:transparent}' +
+      '.hub-type-sel{font-size:10px;border:none;background:transparent;padding:0;color:#64748b;cursor:pointer}' +
+      '.hub-new-row .hub-cell{color:#cbd5e1;font-weight:500}' +
+      '.hub-new-row .hub-cell.hub-has{color:#64748b}';
+    document.head.appendChild(st);
+  })();
+
+  function _hubNewRowHtml(monthKey) {
+    var d = _hg.drafts[monthKey] || {};
+    var has = function(v) { return v !== undefined && v !== ''; };
+    return '<tr class="hub-new-row" data-hub-new="' + monthKey + '" data-hub-month="' + monthKey + '" style="border-top: 1px solid var(--slate-100);">' +
+      '<td class="py-2 w-4"></td>' +
+      '<td class="hub-cell py-2 text-xs w-7' + (has(d.d) ? ' hub-has' : '') + '" data-col="0">' + (has(d.d) ? d.d : '') + '</td>' +
+      '<td class="hub-cell py-2 text-xs' + (has(d.t) ? ' hub-has' : '') + '" data-col="1">' + (has(d.t) ? escHtml(d.t) : '새 항목') + '</td>' +
+      '<td class="hub-cell py-2 text-right text-xs' + (has(d.a) ? ' hub-has' : '') + '" data-col="2">' + (has(d.a) ? Number(d.a).toLocaleString('ko-KR') : '') + '</td>' +
+      '<td></td><td></td></tr>';
+  }
+
+  function _hgFind(sel) {
+    if (!sel) return null;
+    var tr = sel.idx === 'new'
+      ? document.querySelector('#hub-monthly-grid tr[data-hub-new="' + sel.month + '"]')
+      : document.querySelector('#hub-monthly-grid tr[data-hub-idx="' + sel.idx + '"]');
+    return tr ? tr.querySelector('.hub-cell[data-col="' + sel.col + '"]') : null;
+  }
+
+  function _hgSelFromTd(td) {
+    var tr = td.closest('tr');
+    var isNew = tr.hasAttribute('data-hub-new');
+    return { month: tr.getAttribute('data-hub-month'), idx: isNew ? 'new' : parseInt(tr.getAttribute('data-hub-idx')), col: parseInt(td.getAttribute('data-col')) };
+  }
+
+  function _hgRaw(sel) {
+    if (sel.idx === 'new') {
+      var d = _hg.drafts[sel.month] || {};
+      var v = [d.d, d.t, d.a][sel.col];
+      if (sel.col === 2 && v) return { v: Number(v).toLocaleString('ko-KR'), type: d.type || '지출' };
+      return { v: v === undefined ? '' : String(v), type: d.type || '지출' };
+    }
+    var row = hubData[sel.idx] || [];
+    if (sel.col === 0) return { v: (row[0] || '').substring(8, 10) };
+    if (sel.col === 1) return { v: row[2] || '' };
+    return { v: (parseFloat(row[3]) || 0).toLocaleString('ko-KR'), type: row[4] || '지출' };
+  }
+
+  // 선택한 칸 안에 입력칸을 심는다. 전체 선택돼 있어서 바로 타이핑하면 덮어쓰기(한글 입력도 그대로 됨)
+  function _hgSelect(sel, edit) {
+    var td = _hgFind(sel);
+    if (!td) { _hg.sel = null; return; }
+    _hg.sel = sel; _hg.td = td; _hg.editing = false; _hg.origHtml = td.innerHTML;
+    var raw = _hgRaw(sel);
+    _hg.orig = raw.v; _hg.origType = raw.type;
+    var tr = td.closest('tr'); if (tr) tr.draggable = false;
+    td.classList.add('hub-sel');
+    td.innerHTML = '<span class="hub-cell-wrap"><input class="hub-cell-in" ' + (sel.col !== 1 ? 'inputmode="numeric" ' : '') + '/></span>';
+    var inp = td.querySelector('input');
+    inp.value = raw.v;
+    inp.addEventListener('input', function() {
+      if (sel.col === 2) hubFormatAmt(inp);
+      if (sel.col === 0) inp.value = inp.value.replace(/[^\d]/g, '').slice(0, 2);
+      if (!_hg.editing) _hgBeginEdit(false);
+    });
+    inp.addEventListener('keydown', _hgKey);
+    inp.addEventListener('blur', function() { setTimeout(function() { _hgBlur(td); }, 0); });
+    inp.focus();
+    inp.select();
+    if (edit) _hgBeginEdit(true);
+  }
+
+  function _hgBeginEdit(caretEnd) {
+    var td = _hg.td; if (!td) return;
+    _hg.editing = true;
+    td.classList.add('hub-editing');
+    var inp = td.querySelector('input');
+    if (_hg.sel.col === 2 && !td.querySelector('select')) {
+      var s = document.createElement('select');
+      s.className = 'hub-type-sel';
+      s.innerHTML = HG_TYPES.map(function(t) { return '<option' + (t === _hg.origType ? ' selected' : '') + '>' + t + '</option>'; }).join('');
+      s.addEventListener('keydown', _hgKey);
+      s.addEventListener('blur', function() { setTimeout(function() { _hgBlur(td); }, 0); });
+      td.querySelector('.hub-cell-wrap').insertBefore(s, inp);
+    }
+    if (caretEnd) { var n = inp.value.length; inp.setSelectionRange(n, n); }
+  }
+
+  // 칸 밖으로 나가면 저장하고 선택 해제 (같은 칸 안의 구분 선택상자로 옮긴 건 제외)
+  function _hgBlur(td) {
+    if (_hg.td !== td) return;
+    if (td.contains(document.activeElement)) return;
+    _hgCommit(false);
+  }
+
+  function _hgDeselect() {
+    var td = _hg.td;
+    if (td && td.isConnected) {
+      td.classList.remove('hub-sel', 'hub-editing');
+      td.innerHTML = _hg.origHtml;
+      var tr = td.closest('tr'); if (tr && tr.hasAttribute('data-hub-idx')) tr.draggable = true;
+    }
+    _hg.td = null; _hg.sel = null; _hg.editing = false;
+  }
+
+  function _hgToast(icon, msg) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">' + icon + '</span> ' + msg); }
+
+  // 지금 칸의 값을 저장. 바뀐 게 있으면 바로 화면을 다시 그리고(합계·잔액 재계산), 서버 저장은 뒤에서.
+  function _hgCommit(keepSel) {
+    var td = _hg.td, sel = _hg.sel;
+    if (!td || !sel) return;
+    var inp = td.querySelector('input'), ts = td.querySelector('select');
+    var v = (inp ? inp.value : '').trim();
+    var type = ts ? ts.value : _hg.origType;
+    var changed = _hg.editing && (v !== _hg.orig || (sel.col === 2 && type !== _hg.origType));
+    if (!changed) { _hgDeselect(); return; }
+    var month = sel.month;
+    var maxDay = new Date(parseInt(month.substring(0, 4)), parseInt(month.substring(5, 7)), 0).getDate();
+    var amt = parseInt(v.replace(/[^\d]/g, ''), 10);
+
+    if (sel.idx === 'new') {
+      var d = _hg.drafts[month] || (_hg.drafts[month] = {});
+      if (sel.col === 0) { var dd = parseInt(v, 10); d.d = (dd >= 1 && dd <= maxDay) ? String(dd).padStart(2, '0') : ''; }
+      else if (sel.col === 1) d.t = v;
+      else { d.a = amt > 0 ? amt : ''; d.type = type; }
+      _hg.td = null; _hg.sel = null; _hg.editing = false;
+      if (d.t && d.a) _hgAddDraft(month);
+      updateHubStats();
+      return;
+    }
+
+    var row = hubData[sel.idx], id = row && row[5];
+    if (!row) { _hgDeselect(); return; }
+    if (!id) { _hgDeselect(); _hgToast('hourglass_top', '아직 저장 중인 줄이에요 — 잠시 뒤 다시'); return; }
+    var patch = {};
+    if (sel.col === 0) {
+      var day = parseInt(v, 10);
+      if (!(day >= 1 && day <= maxDay)) { _hgDeselect(); _hgToast('warning', '날짜는 1~' + maxDay + ' 사이로'); return; }
+      patch.date = month + '-' + String(day).padStart(2, '0');
+    } else if (sel.col === 1) {
+      if (!v) { _hgDeselect(); _hgToast('warning', '항목명은 비울 수 없어요 — 지우려면 휴지통'); return; }
+      patch.description = v;
+    } else {
+      if (!(amt > 0)) { _hgDeselect(); _hgToast('warning', '금액은 비울 수 없어요 — 지우려면 휴지통'); return; }
+      patch.amount = amt; patch.type = type;
+    }
+    var before = row.slice();
+    if (patch.date) row[0] = patch.date;
+    if (patch.description !== undefined) row[2] = patch.description;
+    if (patch.amount !== undefined) { row[3] = patch.amount; row[4] = patch.type; }
+    _hg.td = null; _hg.sel = null; _hg.editing = false;
+    updateHubStats();
+    fbUpdate('finance_hub', id, patch).catch(function(e) {
+      console.error('[CashFlow] grid save failed', e);
+      for (var i = 0; i < before.length; i++) row[i] = before[i];
+      updateHubStats();
+      _hgToast('error', '저장 실패 — 되돌렸어요');
+    });
+  }
+
+  function _hgAddDraft(month) {
+    var d = _hg.drafts[month];
+    var today = new Date();
+    var isCur = month === today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+    // 날짜를 안 적었으면: 이번 달은 오늘, 지난 달은 그 달 마지막 항목 날짜 (맨 아래에 붙도록)
+    var lastDay = '01';
+    hubData.forEach(function(r) { var dt = (r[0] || '').toString(); if (dt.substring(0, 7) === month && dt.substring(8, 10) > lastDay) lastDay = dt.substring(8, 10); });
+    var day = d.d || (isCur ? String(today.getDate()).padStart(2, '0') : lastDay);
+    var obj = { date: month + '-' + day, category: '', description: d.t, amount: d.a, type: d.type || '지출', repeat: 'none' };
+    var row = objToRow('finance_hub', obj).concat(['', 0]);
+    hubData.push(row);
+    delete _hg.drafts[month];
+    fbAdd('finance_hub', obj).then(function(saved) {
+      row[5] = saved._id;
+    }).catch(function(e) {
+      console.error('[CashFlow] grid add failed', e);
+      var i = hubData.indexOf(row); if (i >= 0) hubData.splice(i, 1);
+      _hg.drafts[month] = d;
+      updateHubStats();
+      _hgToast('error', '추가 실패 — 다시 입력해 주세요');
+    });
+  }
+
+  // 같은 카드 안에서 줄/칸 이동. 날짜를 바꿔 줄 순서가 바뀌어도 '그 항목' 기준으로 따라간다.
+  function _hgMove(from, dr, dc) {
+    var anchor = from.idx === 'new'
+      ? document.querySelector('#hub-monthly-grid tr[data-hub-new="' + from.month + '"]')
+      : document.querySelector('#hub-monthly-grid tr[data-hub-idx="' + from.idx + '"]');
+    if (!anchor) return;
+    var trs = Array.prototype.slice.call(anchor.closest('tbody').querySelectorAll('tr[data-hub-idx], tr[data-hub-new]'));
+    var r = Math.max(0, Math.min(trs.length - 1, trs.indexOf(anchor) + dr));
+    var c = Math.max(0, Math.min(2, from.col + dc));
+    var tr = trs[r];
+    var next = { month: from.month, idx: tr.hasAttribute('data-hub-new') ? 'new' : parseInt(tr.getAttribute('data-hub-idx')), col: c };
+    _hgSelect(next, _hgTouch);
+  }
+
+  function _hgKey(e) {
+    if (e.isComposing || e.keyCode === 229) return;
+    var sel = _hg.sel; if (!sel) return;
+    var k = e.key, isSelect = e.target.tagName === 'SELECT';
+    if (k === 'Enter') {
+      e.preventDefault();
+      if (!_hg.editing) { _hgBeginEdit(true); return; }
+      var wasNew = sel.idx === 'new', newMonth = sel.month;
+      _hgCommit(true);
+      // 새 항목 줄: 아직 덜 찼으면 비어 있는 칸(항목명→금액)으로, 다 차서 저장됐으면 다음 새 줄의 항목명으로
+      if (wasNew) {
+        var dr = _hg.drafts[newMonth];
+        _hgSelect({ month: newMonth, idx: 'new', col: !dr ? 1 : (!dr.t ? 1 : (!dr.a ? 2 : 1)) }, _hgTouch);
+      } else _hgMove(sel, 1, 0);
+    } else if (k === 'Tab') {
+      e.preventDefault();
+      _hgCommit(true); _hgMove(sel, 0, e.shiftKey ? -1 : 1);
+    } else if (k === 'Escape') {
+      e.preventDefault();
+      if (_hg.editing) {
+        var td = _hg.td, inp = td.querySelector('input'), ts = td.querySelector('select');
+        if (ts) ts.remove();
+        td.classList.remove('hub-editing'); _hg.editing = false;
+        inp.value = _hg.orig; inp.focus(); inp.select();
+      } else _hgDeselect();
+    } else if (!isSelect && (k === 'ArrowUp' || k === 'ArrowDown')) {
+      e.preventDefault();
+      _hgCommit(true); _hgMove(sel, k === 'ArrowUp' ? -1 : 1, 0);
+    } else if (!isSelect && !_hg.editing && (k === 'ArrowLeft' || k === 'ArrowRight')) {
+      e.preventDefault();
+      _hgDeselect(); _hgMove(sel, 0, k === 'ArrowLeft' ? -1 : 1);
+    }
+  }
+
+  document.addEventListener('mousedown', function(e) {
+    var td = e.target.closest && e.target.closest('#hub-monthly-grid .hub-cell');
+    if (!td) return;
+    if (td === _hg.td) {                       // 이미 선택된 칸: 입력칸 바깥 여백을 눌러도 포커스를 뺏기지 않게
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+    var sel = _hgSelFromTd(td);
+    _hgCommit(true);
+    _hgSelect(sel, _hgTouch);
+  }, true);
+  document.addEventListener('dblclick', function(e) {
+    var td = e.target.closest && e.target.closest('#hub-monthly-grid .hub-cell');
+    if (td && td === _hg.td && !_hg.editing) { var inp = td.querySelector('input'); if (inp) inp.focus(); _hgBeginEdit(true); }
+  }, true);
 
   // ===== HUB INLINE EDIT =====
   function startHubInlineEdit(idx, monthKey) {
