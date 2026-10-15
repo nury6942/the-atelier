@@ -582,33 +582,49 @@ function _bStack(parts, scale, h) {
   });
   return '<div style="display:flex;height:' + (h || 12) + 'px">' + segs + '</div>' + _bTags(tags);
 }
-function _boardPlanCard() {
-  var now = new Date(), cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-  var months = []; for (var ym = cur; ym <= '2027-12'; ym = _bYm(ym, 1)) months.push(ym);
-  var P = months.map(function(ym) { return [ym, _bProj(ym)]; }), mx = Math.max.apply(null, P.map(function(x) { return x[1].total; }).concat([1]));
+// 보고 있는 해 한 장: 지난 달은 실제(뱅샐), 이번 달부터는 계획. 2027은 도전안
+function _bActual(ym) {
+  var today = new Date().toISOString().slice(0, 10);
+  var L = _bRows(ym).filter(function(t) { return t['출처'] === '뱅샐' && t.date <= today; });
+  var sal = _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000; }), reg = MIRROR_PROJ.salary(ym);
+  var over = Math.max(0, sal - reg), bonusMonth = /-(04|10)$/.test(ym);  // 인센은 4·10월, 그 밖에 더 들어온 건 연말정산 등 기타
+  var inc = { '월급': Math.min(sal, reg), '인센': bonusMonth ? over : 0, '포타': _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '부업'; }),
+              '기타': (bonusMonth ? 0 : over) + _bSum(L, function(t) { return t['대분류'] === '수입' && !(t['소분류'] === '월급' && t['금액'] >= 2500000) && t['소분류'] !== '부업'; }) };
+  var total = 0; Object.keys(inc).forEach(function(k) { total += inc[k]; });
+  var spend = _bSum(L, _bS), travel = _bSum(L, function(t) { return t['대분류'] === '여행'; });
+  return { inc: inc, total: total, spend: spend, travel: travel, save: total - spend, ev: '', actual: true };
+}
+function _boardPlanCard(year) {
+  var now = new Date(), cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), Y = String(year);
+  var months = []; for (var i = 1; i <= 12; i++) months.push(Y + '-' + String(i).padStart(2, '0'));
+  var P = months.map(function(ym) { return [ym, ym < cur ? _bActual(ym) : _bProj(ym)]; }).filter(function(x) { return x[1].total > 0 || x[0] >= cur; });
+  if (!P.length) return '';
+  var mx = Math.max.apply(null, P.map(function(x) { return x[1].total; }).concat([1]));
   var keys = ['월급', '인센', '포타', '기타'];
-  // 2027 한 해
-  var y = { '월급': 0, '인센': 0, '포타': 0, '기타': 0 }, ys = 0;
-  P.forEach(function(x) { if (x[0] >= '2027-01') { keys.forEach(function(k) { y[k] += x[1].inc[k]; }); ys += x[1].spend; } });
-  var trips27 = (_boardExtra.trips || []).filter(function(t) { return t.start.slice(0, 4) === '2027'; }).reduce(function(a, t) { return a + t.own; }, 0);
-  ys += trips27;
-  var yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys, ymx = Math.max(yt, 9150 * 1e4);
+  var y = { '월급': 0, '인센': 0, '포타': 0, '기타': 0 }, ysLife = 0, ysTrip = 0;
+  P.forEach(function(x) { keys.forEach(function(k) { y[k] += x[1].inc[k]; }); if (x[1].actual) { ysLife += x[1].spend - x[1].travel; ysTrip += x[1].travel; } else ysLife += x[1].spend; });
+  (_boardExtra.trips || []).forEach(function(t) { if (t.start.slice(0, 4) === Y && t.start.slice(0, 7) >= cur) ysTrip += t.own; });
+  var ys = ysLife + ysTrip, yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys;
+  var g = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[Y] || {};
+  var tgt = function(v) { return v ? '<span style="font-weight:400;color:' + BK.sub + '"> / ' + Number(v).toLocaleString() + '</span>' : ''; };
+  var ymx = Math.max(yt, ys, (g['수입'] || 0) * 1e4) * 1.02;
   var head = '<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 110px;gap:4px 10px;align-items:start;font-size:12px">' +
-    '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right">' + _bMan(yt) + '<span style="font-weight:400;color:' + BK.sub + '"> / 9,150</span></b>' +
-    '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ys - trips27, '#e9a39b'], ['여행', trips27, BK.red]], ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right">' + _bMan(ys) + '<span style="font-weight:400;color:' + BK.sub + '"> / 4,600</span></b>' +
-    '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', ysave, BK.green]], ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right;color:' + BK.green + '">' + _bMan(ysave) + '<span style="font-weight:400;color:' + BK.sub + '"> / 4,550</span></b></div>';
+    '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(yt) + tgt(g['수입']) + '</b>' +
+    '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(ys) + tgt(g['지출']) + '</b>' +
+    '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', Math.max(0, ysave), BK.green]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap;color:' + (ysave >= 0 ? BK.green : BK.red) + '">' + _bMan(ysave) + tgt(g['저축']) + '</b></div>';
   var cols = 'grid-template-columns:46px minmax(0,1fr) 52px 52px minmax(0,0.9fr)';
   var rows = P.map(function(x) {
     var ym = x[0], p = x[1];
     return '<div style="display:grid;' + cols + ';gap:8px;align-items:start;font-size:12px;padding:6px 0;border-top:1px solid #eef1f5' + (ym === cur ? ';background:#f5f9ff' : '') + '">' +
-      '<b style="padding-top:1px">' + ym.slice(2).replace('-', '.') + '</b>' +
+      '<b style="padding-top:1px;color:' + (p.actual ? BK.sub : BK.ink) + '">' + ym.slice(2).replace('-', '.') + '</b>' +
       '<div>' + _bStack(keys.map(function(k) { return [k, p.inc[k], MIRROR_INC_COLORS[k]]; }), mx * 1.02, 10) + '</div>' +
       '<b class="lb-n" style="text-align:right;padding-top:1px">' + _bMan(p.total) + '</b>' +
       '<b class="lb-n" style="text-align:right;padding-top:1px;color:' + (p.save >= 0 ? BK.green : BK.red) + '">' + _bMan(p.save) + '</b>' +
-      '<span style="font-size:11px;color:' + BK.ink + ';padding-top:1px">' + _bEsc(p.ev) + '</span></div>';
+      '<span style="font-size:11px;color:' + BK.ink + ';padding-top:1px">' + (p.actual ? '<span style="color:' + BK.sub + '">실제 · 쓴 돈 ' + _bMan(p.spend) + '</span>' : _bEsc(p.ev)) + '</span></div>';
   }).join('');
-  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>앞으로의 계획 · 2027 도전안</span><span>만 원 · 세후 통장 기준 예상</span></p>' + head +
-    '<div style="display:grid;' + cols + ';gap:8px;font-size:11px;color:' + BK.sub + ';font-weight:600;margin-top:12px;padding-bottom:2px"><span>달</span><span>들어올 돈</span><span style="text-align:right">합계</span><span style="text-align:right">모을 돈</span><span>이 달</span></div>' + rows + '</div>';
+  var title = Y === '2027' ? '2027 계획 · 도전안' : Y + ' 한 해 · 지난 달은 실제, ' + (+cur.slice(5)) + '월부터 계획';
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + title + '</span><span>만 원 · 세후 통장 기준</span></p>' + head +
+    '<div style="display:grid;' + cols + ';gap:8px;font-size:11px;color:' + BK.sub + ';font-weight:600;margin-top:12px;padding-bottom:2px"><span>달</span><span>들어온 · 들어올 돈</span><span style="text-align:right">합계</span><span style="text-align:right">남은 돈</span><span>이 달</span></div>' + rows + '</div>';
 }
 
 function _boardSplit(ym, m) {
@@ -696,7 +712,7 @@ function ldgRenderBoard() {
   if (!m.L.length) {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
     el.innerHTML = '<div style="font-size:11px;color:#1d5fd1;background:#eef5fb;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
-      _boardPlaybook(ym, m) + _boardSplit(ym, null) + _boardLiving(ym, null, true) + (function() { try { return _boardPlanCard(); } catch (e) { console.error('[Board plan]', e); return ''; } })();
+      _boardPlaybook(ym, m) + _boardSplit(ym, null) + _boardLiving(ym, null, true) + (function() { try { return _boardPlanCard(_ldgYear); } catch (e) { console.error('[Board plan]', e); return ''; } })();
     try { _bFixTags(el); } catch (e) {}
     return;
   }
@@ -752,7 +768,7 @@ function ldgRenderBoard() {
 
   // ── 연간 목표
   try { h += _boardGoals(); } catch (e) { console.error('[Board goals]', e); }
-  try { h += _boardPlanCard(); } catch (e) { console.error('[Board plan]', e); }
+  try { h += _boardPlanCard(_ldgYear); } catch (e) { console.error('[Board plan]', e); }
 
   // ── 이 달 플레이북 (작년 같은 달 → 올해 할 일)
   try { h += _boardPlaybook(ym, m); } catch (e) { console.error('[Board playbook]', e); }
