@@ -60,12 +60,27 @@ function _boardPlaybook(ym, m) {
   var rec = _bRecurring(ly), next = _bRecurring(_bYm(ym, -11));
   var left = '';
   if (lm.L.length) {
-    var tb = MIRROR_BUCKETS.map(function(bk, i) { return [bk[0], lm.buckets[i], bk[2]]; }).filter(function(x) { return x[1] > 0 && x[0] !== '기타'; }).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 4);
-    var mx = Math.max.apply(null, tb.map(function(x) { return x[1]; }).concat([1]));
-    left = '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span class="lb-n" style="font-size:20px">' + _bMan(lm.spend) + '만</span>' +
-      '<span style="font-size:11px;color:#94a3b8">썼어요 · 지금 ' + mk + ' ' + _bMan(m.spend) + '만</span></div>' +
-      tb.map(function(x) { return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr) 34px;gap:6px;align-items:center;font-size:11px;margin:3px 0"><span style="color:#64748b">' + x[0] + '</span><div style="height:8px;width:' + (x[1] / mx * 100) + '%;background:' + x[2] + ';border-radius:0 3px 3px 0"></div><b class="lb-n" style="text-align:right">' + _bMan(x[1]) + '</b></div>'; }).join('') +
-      '<div style="font-size:11px;color:#94a3b8;margin-top:6px">제일 컸던 것 · ' + lm.bigs.slice(0, 3).map(function(t) { return _bEsc((t['세부사항'] || '').split(' · ').pop().replace(/\(주\)|㈜|주식회사|\(.*?\)/g, '').trim().slice(0, 12)) + ' ' + _bMan(t['금액']); }).join(' · ') + '</div>';
+    // 이번 달이 진행 중이면 작년도 같은 날짜까지만 비교
+    var now = new Date(), curYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    var cut = ym === curYm ? now.getDate() : 31;
+    var lyRows = lm.L.filter(function(t) { return +t.date.slice(8, 10) <= cut && _bS(t); });
+    var lyB = MIRROR_BUCKETS.map(function() { return 0; });
+    lyRows.forEach(function(t) { lyB[_bBucket(t)] += t['금액'] || 0; });
+    var lySpend = lyB.reduce(function(x, y) { return x + y; }, 0);
+    var rowsCmp = MIRROR_BUCKETS.map(function(bk, i) { return [bk[0], m.buckets[i], lyB[i], bk[2]]; }).filter(function(x) { return x[1] > 0 || x[2] > 0; });
+    var mx = Math.max.apply(null, rowsCmp.map(function(x) { return Math.max(x[1], x[2]); }).concat([1]));
+    var d = m.spend - lySpend;
+    left = '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px;flex-wrap:wrap"><span class="lb-n" style="font-size:20px">' + _bMan(m.spend) + '만</span>' +
+      '<span style="font-size:11px;color:#94a3b8">올해 vs 작년 ' + _bMan(lySpend) + '만' + (cut < 31 ? ' (1~' + cut + '일)' : '') + '</span>' +
+      '<span class="lb-n" style="font-size:13px;color:' + (d <= 0 ? '#1baf7a' : '#e34948') + '">' + (d <= 0 ? '▼ ' : '▲ ') + _bMan(Math.abs(d)) + '만</span></div>' +
+      '<div style="display:flex;gap:10px;font-size:10px;color:#94a3b8;margin-bottom:4px"><span><i style="display:inline-block;width:8px;height:5px;background:#cbd5e1;border-radius:1px;margin-right:3px"></i>작년</span><span><i style="display:inline-block;width:8px;height:5px;background:#6366f1;border-radius:1px;margin-right:3px"></i>올해</span></div>' +
+      rowsCmp.map(function(x) {
+        var dd = x[1] - x[2];
+        return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:6px;align-items:center;font-size:11px;margin:4px 0"><span style="color:#64748b">' + x[0] + '</span>' +
+          '<div><div style="height:5px;width:' + (x[2] / mx * 100) + '%;background:#cbd5e1;border-radius:0 2px 2px 0;margin-bottom:2px"></div><div style="height:7px;width:' + Math.max(0, x[1] / mx * 100) + '%;background:' + x[3] + ';border-radius:0 3px 3px 0"></div></div>' +
+          '<span style="text-align:right"><b class="lb-n">' + _bMan(x[1]) + '</b><span style="color:#94a3b8"> / ' + _bMan(x[2]) + '</span> <span class="lb-n" style="font-size:10px;color:' + (dd <= 0 ? '#1baf7a' : '#e34948') + '">' + (dd === 0 ? '' : (dd < 0 ? '▼' : '▲') + _bMan(Math.abs(dd))) + '</span></span></div>';
+      }).join('') +
+      '<div style="font-size:11px;color:#94a3b8;margin-top:6px">작년 ' + mk + ' 전체 ' + _bMan(lm.spend) + '만 · 제일 컸던 것 ' + lm.bigs.slice(0, 2).map(function(t) { return _bEsc((t['세부사항'] || '').split(' · ').pop().replace(/\(주\)|㈜|주식회사|\(.*?\)/g, '').trim().slice(0, 12)) + ' ' + _bMan(t['금액']); }).join(' · ') + '</div>';
   } else {
     left = '<div style="font-size:12px;color:#94a3b8">작년 ' + mk + ' 기록이 없어요</div>';
   }
@@ -74,7 +89,7 @@ function _boardPlaybook(ym, m) {
     .concat(MIRROR_EVERY_MONTH.map(function(t) { return '<span style="color:#64748b">🔁 ' + _bEsc(t) + '</span>'; }));
   var nextHint = next.filter(function(r) { return !r[2]; }).map(function(r) { return r[0] + ' ' + _bMan(r[1]) + '만'; });
   return '<div class="lb-grid">' +
-    '<div class="lb-c lb-6"><p class="lb-t"><span>작년 ' + ly.slice(0, 4) + '년 ' + mk + ' · 같은 달엔</span><span>이걸 보고 올해를 미리 막아요</span></p>' + left + '</div>' +
+    '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' · 작년 같은 달과 비교</span><span>단위 만 · 올해 / 작년</span></p>' + left + '</div>' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>올해 ' + mk + ' 할 일</span><span>작년 데이터로 자동</span></p>' +
       '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#0f172a">' + todo.map(function(t) { return '<div>' + t + '</div>'; }).join('') + '</div>' +
       (nextHint.length ? '<div style="font-size:11px;color:#b45309;background:#fffbeb;border-radius:8px;padding:6px 9px;margin-top:10px">다음 달 예고 · 작년엔 ' + nextHint.join(' · ') + '</div>' : '') +
@@ -305,10 +320,11 @@ function ldgRenderBoard() {
   var maxB = Math.max.apply(null, m.buckets.concat(b ? b.bucketAvg : []).concat([1]));
   var cats = MIRROR_BUCKETS.map(function(bk, i) {
     var v = m.buckets[i], a = b ? b.bucketAvg[i] : 0;
-    return '<div style="display:grid;grid-template-columns:60px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:12px;margin:5px 0"><span style="color:#64748b">' + bk[0] + '</span>' +
+    return '<div style="display:grid;grid-template-columns:60px minmax(0,1fr) 36px 58px;gap:8px;align-items:center;font-size:12px;margin:5px 0"><span style="color:#64748b">' + bk[0] + '</span>' +
       '<div style="position:relative;height:12px"><div style="height:100%;width:' + Math.max(0, v / maxB * 100) + '%;background:' + bk[2] + ';border-radius:0 3px 3px 0"></div>' +
       (a ? '<div title="평소 ' + _bMan(a) + '만" style="position:absolute;top:-2px;bottom:-2px;left:' + (a / maxB * 100) + '%;width:2px;background:#0f172a;opacity:.5"></div>' : '') + '</div>' +
-      '<b class="lb-n" style="text-align:right;color:' + (a && v > a * 1.15 ? RED : '#0f172a') + '">' + _bMan(v) + '</b></div>';
+      '<b class="lb-n" style="text-align:right;color:' + (a && v > a * 1.15 ? RED : '#0f172a') + '">' + _bMan(v) + '</b>' +
+      '<span style="font-size:10px;color:#94a3b8;text-align:right">' + (a ? '평소 ' + _bMan(a) : '') + '</span></div>';
   }).join('');
   h += '<div class="lb-grid">' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 큰 결제 (10만↑) · ' + m.bigs.length + '건 = 지출의 ' + Math.round(m.bigShare * 100) + '%</span><span>⚡ 하루 3건↑ 몰아친 날</span></p>' +
@@ -332,15 +348,35 @@ function ldgRenderBoard() {
       trait('schedule', dn[b.peak[0]] + '요일 ' + b.peak[1] * 3 + '–' + (b.peak[1] * 3 + 3) + '시형', _bMan(b.peakAmt) + '만 (' + b.N + '달)', false, '그 시간엔 장바구니만') +
       '</div></div>';
   }
+  var open = false;
+  try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
+  h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#6366f1;background:#eef2ff;border:0;border-radius:10px;padding:9px;cursor:pointer">' +
+    (open ? '▴ 카테고리별 자세히 접기' : '▾ 카테고리별 자세히 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이 · 카테고리 집계') + '</button>';
   el.innerHTML = h;
+  _applyDetailVisibility();
 }
 window.ldgRenderBoard = ldgRenderBoard;
+
+// 기존 가계부 자세히(KPI·도넛·TOP·일별 추이·카테고리 집계) 보이기/숨기기 — 차트가 0 크기로 그려지지 않게 그리기 전에 적용
+function _applyDetailVisibility() {
+  var open = false;
+  try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
+  ['ldg-kpi-strip', 'ldg-detail-charts', 'ldg-detail-cats'].forEach(function(id) { var x = document.getElementById(id); if (x) x.style.display = open ? '' : 'none'; });
+}
+
+function ldgToggleDetail() {
+  var open = false;
+  try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; localStorage.setItem('atelier_ledger_detail_open', open ? '0' : '1'); } catch (e) {}
+  ldgRenderMonthly();  // 보이게 된 차트를 제 크기로 다시 그림
+  if (!open) setTimeout(function() { var x = document.getElementById('ldg-kpi-strip'); if (x) x.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
+}
+window.ldgToggleDetail = ldgToggleDetail;
 
 // 월별 뷰가 그려질 때마다(달 이동 포함) 보드도 같이
 (function() {
   var orig = window.ldgRenderMonthly;
   if (typeof orig !== 'function' || orig._withBoard) return;
-  var wrapped = function() { var r = orig.apply(this, arguments); try { ldgRenderBoard(); } catch (e) { console.error('[Board]', e); } return r; };
+  var wrapped = function() { try { _applyDetailVisibility(); } catch (e) {} var r = orig.apply(this, arguments); try { ldgRenderBoard(); } catch (e) { console.error('[Board]', e); } return r; };
   wrapped._withBoard = true;
   window.ldgRenderMonthly = wrapped;
 })();
