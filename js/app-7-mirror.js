@@ -100,13 +100,48 @@ function _boardCss() {
     '.lb-row{display:grid;grid-template-columns:58px 8px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-top:1px solid #f1f5f9}',
     '.lb-sq{width:8px;height:8px;border-radius:2px}',
     '.lb-env{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}',
+    '.lb-goal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}',
     '.lb-ms{font-size:11px;color:#94a3b8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.lb-3{grid-column:span 4}.lb-6{grid-column:span 6}',
     '.lb-more{font-size:11px;color:#6366f1;background:none;border:0;padding:4px 0 0;cursor:pointer}',
     '@media (max-width:1100px){.lb-3{grid-column:span 6}.lb-env{grid-template-columns:repeat(3,minmax(0,1fr))}}',
-    '@media (max-width:720px){.lb-3,.lb-6{grid-column:span 12}.lb-env{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+    '@media (max-width:720px){.lb-goal{grid-template-columns:repeat(2,minmax(0,1fr))}.lb-3,.lb-6{grid-column:span 12}.lb-env{grid-template-columns:repeat(2,minmax(0,1fr))}}'
   ].join('\n');
   document.head.appendChild(s);
+}
+
+
+// ── 연간 목표 (설정 → 연간 목표 값, 기존 '연간 목표 진행도'와 같은 계산)
+function _boardGoals() {
+  var year = _ldgYear, goals = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[year] || {};
+  var keys = [['수입', true, '#2a78d6'], ['지출', false, '#e34948'], ['저축', true, '#6366f1'], ['부업', true, '#1baf7a']];
+  if (!keys.some(function(k) { return goals[k[0]]; })) {
+    return '<div class="lb-c" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#64748b">' + year + '년 목표가 아직 없어요' +
+      '<button class="lb-more" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 설정 →</button></div>';
+  }
+  var tot = { '수입': 0, '지출': 0, '저축': 0, '부업': 0 };
+  (_ledgerData.transactions || []).forEach(function(t) {
+    if (!t.date || t.date.slice(0, 4) !== String(year) || t.excludeFromGoal === true) return;
+    var a = t['금액'] || 0;
+    if (t['대분류'] === '수입') { tot['수입'] += a; if (t['소분류'] === '부업') tot['부업'] += a; }
+    else if (t['대분류'] === '저축') tot['저축'] += a;
+    else tot['지출'] += a;
+  });
+  var now = new Date(), isCur = year === now.getFullYear();
+  var prog = isCur ? Math.min(1, (Math.floor((now - new Date(year, 0, 1)) / 86400000) + 1) / 365) : 1;
+  var cells = keys.map(function(k) {
+    var goal = goals[k[0]] || 0, act = Math.round(tot[k[0]] / 10000);
+    if (!goal) return '<div style="font-size:11px;color:#94a3b8">' + k[0] + ' · 목표 없음</div>';
+    var diff = act - goal * prog, good = k[1] ? diff >= 0 : diff <= 0;
+    var col = good ? '#1baf7a' : '#e34948';
+    return '<div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#64748b">' + k[0] + '</span>' +
+      '<span><b class="lb-n">' + act.toLocaleString() + '</b><span style="color:#94a3b8;font-size:11px"> / ' + goal.toLocaleString() + '만</span></span></div>' +
+      '<div class="lb-bar" style="position:relative;overflow:visible"><div style="width:' + Math.min(100, act / goal * 100) + '%;height:100%;background:' + col + ';border-radius:3px"></div>' +
+      '<div title="오늘까지 목표 페이스" style="position:absolute;left:' + Math.round(prog * 100) + '%;top:-3px;bottom:-3px;width:2px;background:#475569"></div></div>' +
+      '<div style="font-size:11px;color:' + col + '">페이스 대비 ' + (diff >= 0 ? '+' : '') + Math.round(diff).toLocaleString() + '만</div></div>';
+  }).join('');
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + year + '년 목표 · 올해 ' + Math.round(prog * 100) + '% 지남</span><span>검정 선 = 오늘까지 목표 페이스 · <a href="javascript:void(0)" style="color:#6366f1" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 고치기</a></span></p>' +
+    '<div class="lb-goal">' + cells + '</div></div>';
 }
 
 var _boardShowAllBig = false;
@@ -150,6 +185,9 @@ function ldgRenderBoard() {
       '<div><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#6366f1">east</span> 10일 부업 <b class="lb-n">' + _bMan(m.side) + '만</b> → 바로 집 통장</div>' +
       '<div><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:' + (m.spend <= m.salary ? GREEN : RED) + '">' + (m.spend <= m.salary ? 'check_circle' : 'cancel') + '</span> 월급 <b class="lb-n">' + _bMan(m.salary) + '만</b> 안에서 살기 <span style="color:' + (m.spend <= m.salary ? GREEN : RED) + '">· ' + _bMan(m.spend) + '만 씀</span></div>' +
       '</div></div></div>';
+
+  // ── 연간 목표
+  try { h += _boardGoals(); } catch (e) { console.error('[Board goals]', e); }
 
   // ── 봉투 5개
   h += '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 봉투 · 쓴 돈 / 한도</span><span>빨강 = 넘침</span></p><div class="lb-env">' +
