@@ -35,7 +35,8 @@ var MIRROR_EVERY_MONTH = ['월급날 80만 · 부업 입금일 전액 → 집 �
 function _bYm(ym, d) { var p = ym.split('-').map(Number), k = p[0] * 12 + (p[1] - 1) + d; return Math.floor(k / 12) + '-' + String(k % 12 + 1).padStart(2, '0'); }
 // 옷은 여행 가기 직전에 산다 (누리) — 여행 시작 달의 전달 + (10일 이후 출발이면) 시작 달이 옷 쇼핑 달
 var MIRROR_TRIP_CLOTHES = 900000;
-var MIRROR_TRAVEL_ACCOUNT = '미래에셋';  // 여행 돈 모으는 통장 (자산 탭 이름 일부)
+var MIRROR_TRAVEL_ACCOUNT = '미래에셋';
+var MIRROR_RETURN_FEE = 5000;  // 쇼핑몰 반품 1번에 환불에서 떼는 배송비 (추정)  // 여행 돈 모으는 통장 (자산 탭 이름 일부)
 function _bClothesMonth(ym) {
   return (_boardExtra.trips || []).filter(function(t) {
     var sm = t.start.slice(0, 7);
@@ -353,6 +354,11 @@ function _boardLeaks() {
       '<span style="font-size:11px;color:#64748b">' + f[2] + '</span>' +
       '<b class="lb-n" style="text-align:right;color:#1baf7a">−' + _bMan(cut) + '</b></div>';
   }).join('');
+  var retN = win.filter(function(t) { return (t['대분류'] === '품위유지비' || t['대분류'] === '생필품비') && t['금액'] < 0; }).length;
+  var retShip = _bSum(win, function(t) { return t['소분류'] === '반품 배송비'; });
+  rows += '<div style="display:grid;grid-template-columns:20px minmax(0,1.2fr) 48px minmax(0,1.3fr) 40px;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-top:1px solid #f1f5f9">' +
+    '<span class="material-symbols-outlined" style="font-size:16px;color:#b45309">undo</span><span><b style="font-weight:600">반품</b> <span style="font-size:11px;color:#94a3b8">· 월 ' + (retN / N).toFixed(1) + '번</span></span>' +
+    '<b class="lb-n" style="text-align:right">' + Math.round((retShip + retN * MIRROR_RETURN_FEE) / N / 1000) + '천</b><span style="font-size:11px;color:#64748b">사기 전에 사이즈표·후기 · 반품비는 돈만 나감</span><b class="lb-n" style="text-align:right;color:#1baf7a">−' + Math.round((retShip + retN * MIRROR_RETURN_FEE) / N / 2000) + '천</b></div>';
   return '<div class="lb-c" style="margin-top:10px"><p class="lb-t"><span>어디서 새나 · 지난 ' + N + '달 ' + _bMan(total) + '만</span><span>습관성 안에서 줄일 곳 · 지금 월 / 줄일 월</span></p>' +
     '<div style="display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:8px">' + bar + '</div>' + rows +
     '<div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #f1f5f9"><span style="font-size:11px;color:#94a3b8">여행·사람·영어는 가치라 지켜요 · 여행은 1년 2번</span><span><b class="lb-n" style="font-size:18px;color:#1baf7a">월 ' + _bMan(cutSum) + '만</b><span style="font-size:11px;color:#94a3b8"> · 연 ' + _bMan(cutSum * 12) + '만</span></span></div></div>';
@@ -434,8 +440,19 @@ function _boardLiving(ym, m, preview) {
     var tv = m && !preview ? m.envs[0].val : 0;
     trip = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid #f1f5f9"><span><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#2a78d6">flight</span> 여행은 따로 · ' + _bEsc(tf.trip.title) + ' (' + tf.trip.start.slice(2, 7).replace('-', '.') + ')' + (tf.trip.support ? ' · 회사 지원 ' + _bMan(tf.trip.support) + '만 포함' : '') + '</span><b class="lb-n" style="color:' + (tv > tf.trip.budget ? RED : '#0f172a') + '">' + (preview ? '' : _bMan(tv) + ' / ') + _bMan(tf.trip.budget) + '만</b></div>';
   }
+  // 반품: 옷·물건에서 돌려받은 돈(음수 행), 반품 배송비(우체국 택배 = 실제) + 쇼핑몰이 환불에서 떼는 반품비(1번 ≈ MIRROR_RETURN_FEE, 추정)
+  var ret = '';
+  if (!preview) {
+    var back = sp.filter(function(t) { return (t['대분류'] === '품위유지비' || t['대분류'] === '생필품비') && t['금액'] < 0; });
+    var ship = _bSum(sp, function(t) { return t['소분류'] === '반품 배송비'; });
+    if (back.length || ship) {
+      var est = back.length * MIRROR_RETURN_FEE;
+      ret = '<div style="font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#b45309">undo</span> 반품 <b class="lb-n">' + back.length + '번</b> · 돌려받은 돈 ' + _bMan(-_bSum(back, function() { return true; })) + '만</span>' +
+        '<span style="color:#b45309">반품비 ≈ <b class="lb-n" style="color:#b45309">' + (ship + est).toLocaleString() + '원</b> <span style="font-size:11px;color:#94a3b8">(우체국 ' + ship.toLocaleString() + ' + 쇼핑몰 반품비 추정 ' + est.toLocaleString() + ')</span></span></div>';
+    }
+  }
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + (+ym.slice(5)) + '월 생활비 · 칸별 한도</span><span>' + (preview ? '한도 ' + _bMan(totCap) + '만' : '<b class="lb-n" style="color:' + (tot > totCap ? RED : GREEN) + '">' + _bMan(tot) + '</b> / ' + _bMan(totCap) + '만') + '</span></p>' +
-    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 16px">' + cells + '</div>' + trip + '</div>';
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 16px">' + cells + '</div>' + ret + trip + '</div>';
 }
 
 var _boardShowAllBig = false;
