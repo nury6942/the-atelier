@@ -225,7 +225,20 @@ function ldgRenderBoard() {
   var ym = _ldgYear + '-' + String(_ldgMonth).padStart(2, '0');
   var mk = _ldgMonth + '월';
   var m = ldgBoardMonth(ym), b = ldgBoardBaseline();
-  if (!m.L.length) { el.innerHTML = '<div class="lb-c" style="color:#94a3b8;font-size:13px">' + mk + '에는 거래가 아직 없어요.</div>'; return; }
+  if (!m.L.length) {
+    // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
+    var lyE = ldgBoardMonth(_bYm(ym, -12)).envs, caps = _bPlan(ym).caps;
+    var budget = MIRROR_ENVELOPES.map(function(e, i) {
+      var cap = caps[e[0]] != null ? caps[e[0]] : e[3], lv = lyE[i] ? lyE[i].val : 0;
+      var capTxt = e[4] === '회' ? cap + '회' : _bMan(cap) + '만', lyTxt = e[4] === '회' ? lv + '회' : _bMan(lv) + '만';
+      return '<div><div style="font-size:12px;display:flex;justify-content:space-between"><span><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#64748b">' + e[1] + '</span> ' + e[0] + '</span><b class="lb-n">' + capTxt + '</b></div>' +
+        '<div class="lb-ms"><span style="color:#b45309">작년 ' + lyTxt + '</span>' + (e[4] !== '회' && lv > cap ? ' → <b style="color:#1baf7a">' + _bMan(lv - cap) + '만 덜 쓰기</b>' : '') + '</div></div>';
+    }).join('');
+    el.innerHTML = '<div style="font-size:11px;color:#6366f1;background:#eef2ff;border-radius:8px;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
+      _boardPlaybook(ym, m) +
+      '<div class="lb-c"><p class="lb-t"><span>' + mk + ' 예산 · 한도</span><span>작년 같은 달과 비교</span></p><div class="lb-env">' + budget + '</div></div>';
+    return;
+  }
   var T = MIRROR_GOAL.amount, RED = '#e34948', GREEN = '#1baf7a', h = '';
   if (!m.L.some(function(t) { return t['출처'] === '뱅샐'; })) {
     h += '<div style="font-size:11px;color:#b45309;background:#fffbeb;border-radius:8px;padding:6px 10px;margin-bottom:8px">' + mk + '은 손으로 적은 기록이에요 — 저축·여행 준비금 같은 이체가 섞여 있어 판정이 정확하지 않을 수 있어요</div>';
