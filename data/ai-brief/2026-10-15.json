@@ -35,7 +35,39 @@
    "chips": [
     "X 게임 글 48개",
     "1위 예시 좋아요 4,600"
-   ]
+   ],
+   "new": [
+    "1M 토큰",
+    "3D·비주얼 코딩",
+    "긴 다단계 작업"
+   ],
+   "reviews": [
+    {
+     "say": "의료 검사 결과를 GPT·Opus보다 잘 풀어줌",
+     "who": "HN sebmellen",
+     "url": "https://news.ycombinator.com/item?id=50080479",
+     "tone": "good"
+    },
+    {
+     "say": "그래픽 버그 잡을 때 검증 코드까지 알아서",
+     "who": "HN charm137",
+     "url": "https://news.ycombinator.com/item?id=50080388",
+     "tone": "good"
+    },
+    {
+     "say": "두 번째 프롬프트부터 루프에 빠져 실망",
+     "who": "HN jiggawatts",
+     "url": "https://news.ycombinator.com/item?id=50084012",
+     "tone": "bad"
+    },
+    {
+     "say": "앱 6개 테스트 4위, 안 되는 걸 된다고 함",
+     "who": "YouTube AICodeKing",
+     "url": "https://www.youtube.com/watch?v=z6rW8PsDxV4",
+     "tone": "bad"
+    }
+   ],
+   "forMe": "시장조사·판매 데이터 정리와 기획서 초안"
   },
   {
    "cat": "vibe",
@@ -106,7 +138,38 @@
     "1K~4K",
     "4:1 와이드 배너"
    ],
-   "forMe": "26FW 룩 컷으로 4:1 시즌 배너 시안 한 장"
+   "forMe": "캐드 넣고 착장컷·룩북 시안 여러 벌 뽑기",
+   "new": [
+    "와이드 비율 개선",
+    "글자·인포그래픽",
+    "사고 단계 선택"
+   ],
+   "reviews": [
+    {
+     "say": "인물이 의상 6벌·배경 바뀌어도 일관 유지",
+     "who": "Novarix Studio",
+     "url": "https://novarixstudio.substack.com/p/nano-banana-2-1-review",
+     "tone": "good"
+    },
+    {
+     "say": "막대그래프 비율·라벨을 요청대로 정확히",
+     "who": "Analytics Vidhya 테스트",
+     "url": "https://www.analyticsvidhya.com/blog/2026/10/nano-banana-2-1-review/",
+     "tone": "good"
+    },
+    {
+     "say": "에디토리얼 포즈는 이전 Lite보다 밋밋",
+     "who": "Novarix Studio",
+     "url": "https://novarixstudio.substack.com/p/nano-banana-2-1-review",
+     "tone": "bad"
+    },
+    {
+     "say": "참조 인물 얼굴 디테일은 Pro보다 놓침",
+     "who": "Fuser 비교 (도구 판매사)",
+     "url": "https://fuser.studio/articles/nano-banana-2-1-vs-nano-banana-2-vs-pro",
+     "tone": "bad"
+    }
+   ]
   }
  ],
  "tryToday": [

@@ -45,7 +45,7 @@
   .chip{font-size:11px;font-weight:700;padding:3px 8px;background:var(--ink);color:#fff;font-variant-numeric:tabular-nums}
   .src{font-size:11px;color:var(--dim);margin-top:8px}
   .forme{margin-top:10px;font-size:13px;font-weight:600;color:var(--accent)}
-  .forme::before{content:"→ "}
+  .forme::before{content:"바로 써보기 → ";color:var(--ink);font-size:10px;font-weight:800;letter-spacing:.1em}
 
   /* 메인 그리드: 큰 판 + 오른쪽 둘 + 아래 둘 */
   .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:20px}
@@ -73,6 +73,16 @@
   .ex span{display:block;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .why{margin-top:10px;font-size:12px;color:var(--mut)}
   .why b{color:var(--ink)}
+
+  .new{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .new span{font-size:12px;font-weight:600;padding:3px 8px;border:1px solid var(--ink)}
+  .new span::before{content:"NEW ";font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--accent)}
+  .rv{margin-top:12px;border-top:1px solid var(--faint);padding-top:10px;display:grid;gap:6px}
+  .rv .h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .rv a{display:grid;grid-template-columns:14px minmax(0,1fr);gap:6px;font-size:13px;line-height:1.45}
+  .rv i{font-style:normal;font-weight:800}
+  .rv .good i{color:#059669} .rv .bad i{color:#dc2626}
+  .rv em{font-style:normal;color:var(--dim);font-size:11px;margin-left:4px}
 
   /* 오늘 해볼 것 */
   .sech{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
@@ -164,18 +174,24 @@
         return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+img(e.image, it.cat)+'<span>'+esc(e.title)+'</span></a>';
       }).join('')+'</div>';
     }
+    var nw = (it.new&&it.new.length) ? '<div class="new">'+it.new.slice(0,3).map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>' : '';
+    var rv = (it.reviews&&it.reviews.length) ? '<div class="rv"><div class="h">써본 사람들</div>'+it.reviews.slice(0,4).map(function(r){
+        var good = r.tone !== 'bad';
+        return '<a class="'+(good?'good':'bad')+'" href="'+esc(r.url||it.url)+'" target="_blank" rel="noopener"><i>'+(good?'▲':'▼')+'</i><span>'+esc(r.say)+(r.who?'<em>'+esc(r.who)+'</em>':'')+'</span></a>';
+      }).join('')+'</div>' : '';
     var why = it.why ? '<div class="why"><b>이게 돼서</b> · '+esc(it.why)+'</div>' : '';
     var how = it.how ? '<div class="how">'+esc(it.how)+'</div>' : '';
     var forme = it.forMe ? '<div class="forme">'+esc(it.forMe)+'</div>' : '';
     // 사례 썸네일 안에 링크가 있어 카드 전체를 <a>로 감싸지 않음
-    var tagName = ex ? 'div' : 'a';
-    var href = ex ? '' : ' href="'+esc(it.url)+'" target="_blank" rel="noopener"';
-    var head = ex ? '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">' : '';
+    var inner = !!(ex || rv);
+    var tagName = inner ? 'div' : 'a';
+    var href = inner ? '' : ' href="'+esc(it.url)+'" target="_blank" rel="noopener"';
+    var head = inner ? '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">' : '';
     return '<'+tagName+' class="card '+(cls||'')+'"'+href+'>'
-      + head + img(it.image, it.cat) + (ex?'</a>':'')
+      + head + img(it.image, it.cat) + (inner?'</a>':'')
       + '<div class="body">'+catTag(it.cat)
-      + (ex?'<a href="'+esc(it.url)+'" target="_blank" rel="noopener">':'')+'<h3>'+esc(it.title)+'</h3>'+(ex?'</a>':'')
-      + rel + how + ex + why + chips(it.chips) + forme
+      + (inner?'<a href="'+esc(it.url)+'" target="_blank" rel="noopener">':'')+'<h3>'+esc(it.title)+'</h3>'+(inner?'</a>':'')
+      + rel + nw + how + ex + rv + why + chips(it.chips) + forme
       + (it.source?'<div class="src">'+esc(it.source)+'</div>':'')
       + '</div></'+tagName+'>';
   }
