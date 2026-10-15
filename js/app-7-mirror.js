@@ -327,7 +327,7 @@ function _boardCss() {
     '.lb-n{font-variant-numeric:tabular-nums;font-weight:700;color:#0f172a;font-family:Manrope,Pretendard,sans-serif}',
     '.lb-bar{height:6px;background:#e0e7ff;overflow:hidden;margin:6px 0 4px}',
     '.lb-row{display:grid;grid-template-columns:58px 8px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-top:1px solid #eef1f5}',
-    '.lb-sq{width:8px;height:8px;',
+    '.lb-sq{width:8px;height:8px}',
     '.lb-env{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}',
     '.lb-goal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}',
     '.lb-ms{font-size:11px;color:#334155;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
