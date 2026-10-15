@@ -54,8 +54,10 @@ function _bLeftTxt(val, cap, save) {
 }
 // 평소 월급(상여 뺀) — 아직 안 들어온 이번 달 월급 자리에 쓴다
 function _bRegularSalary() {
-  var s = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000 && t['금액'] <= 4500000; }).map(function(t) { return t['금액']; }).sort(function(a, b) { return a - b; });
-  return s.length ? s[Math.floor(s.length / 2)] : 3550000;
+  // 최근 3번 월급의 중간값 (연봉 인상 전 월급이 섞이지 않게 — 2026-10 급여명세서로 확인: 인상 뒤 세후 ≈353만)
+  var s = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000 && t['금액'] <= 4500000; })
+    .sort(function(a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 3).map(function(t) { return t['금액']; }).sort(function(a, b) { return a - b; });
+  return s.length ? s[Math.floor(s.length / 2)] : 3530000;
 }
 var MIRROR_PAYDAY = 28;
 var _bIsReturn = function(t) { return (t['대분류'] === '품위유지비' || t['대분류'] === '생필품비') && t['금액'] < 0 && !/^29CM 반품비/.test(t['세부사항'] || ''); };
