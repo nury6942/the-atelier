@@ -8,6 +8,30 @@ var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#d9695e', gree
 // 막대 밑 라벨을 '막대 끝 자리'에 단다 (왼쪽 정렬 줄글 금지 — 누리). tags: [{p: 0~100, h: html}]
 // 가까운 라벨끼리는 겹치지 않게 다음 줄로 내린다
 function _bTags(tags) {
+  var html = tags.filter(function(t) { return t && t.h; }).map(function(t) {
+    var p = Math.max(0, Math.min(100, t.p)), tx = p < 14 ? '0' : p > 86 ? '-100%' : '-50%';
+    return '<span style="position:absolute;top:0;left:' + p + '%;transform:translateX(' + tx + ');white-space:nowrap">' + t.h + '</span>';
+  }).join('');
+  return '<div class="lb-tags" style="position:relative;height:16px;font-size:11px;color:' + BK.sub + '">' + html + '</div>';
+}
+// 그린 뒤 실제 글자 폭을 재서, 진짜 겹치는 라벨만 다음 줄로
+function _bFixTags(root) {
+  (root || document).querySelectorAll('.lb-tags').forEach(function(box) {
+    var spans = Array.prototype.slice.call(box.children), base = box.getBoundingClientRect().left;
+    var items = spans.map(function(sp) { var r = sp.getBoundingClientRect(); return { sp: sp, l: r.left - base, r: r.right - base }; }).sort(function(a, b) { return a.l - b.l; });
+    var ends = [];
+    items.forEach(function(it) {
+      var row = 0;
+      while (ends[row] != null && it.l < ends[row] + 8) row++;
+      ends[row] = it.r; it.sp.style.top = (row * 15) + 'px';
+    });
+    box.style.height = (Math.max(1, ends.length) * 15 + 1) + 'px';
+  });
+}
+// 기준 대비 막대: 채운 만큼 / 넘으면 빨강 / 80%↑ 주황. save=true면 많이 채울수록 좋은 막대
+// 막대 밑 라벨을 '막대 끝 자리'에 단다 (왼쪽 정렬 줄글 금지 — 누리). tags: [{p: 0~100, h: html}]
+// 가까운 라벨끼리는 겹치지 않게 다음 줄로 내린다
+function _bTags(tags) {
   var rows = [];
   tags.filter(function(t) { return t && t.h; }).sort(function(a, b) { return a.p - b.p; }).forEach(function(t) {
     var p = Math.max(0, Math.min(100, t.p)), r = 0;
@@ -29,7 +53,7 @@ function _bBar(val, cap, save, h, noTags, short) {
   var endTxt = save ? (val >= cap ? '<b style="color:' + BK.green + '">목표 ' + _bMan(cap) + ' ✓</b>' : '목표 ' + _bMan(cap) + ' · ' + _bMan(cap - val) + ' 더')
                     : (over ? '<b style="color:' + BK.red + '">' + _bMan(val - cap) + '만 넘음</b> · 한도 ' + _bMan(cap) : _bMan(cap - val) + '만 남음 · 한도 ' + _bMan(cap));
   if (short) endTxt = over && !save ? '<b style="color:' + BK.red + '">+' + _bMan(val - cap) + '</b> / ' + _bMan(cap) : '/ ' + _bMan(cap);
-  return bar + _bTags([{ p: pct, h: '<b style="color:' + (over && !save ? BK.red : BK.ink) + '">' + _bMan(val) + '만</b>' }, { p: 100, h: endTxt, gap: short ? 55 : 60 }]);
+  return bar + _bTags([{ p: pct, h: '<b style="color:' + (over && !save ? BK.red : BK.ink) + '">' + _bMan(val) + '만</b>' }, { p: 100, h: endTxt }]);
 }
 // 남음/넘음 한 줄
 function _bLeftTxt(val, cap, save) {
@@ -387,7 +411,7 @@ function _boardGoals() {
     return '<div><div style="font-size:12px;color:#0f172a;font-weight:600">' + k[0] + '</div>' +
       '<div class="lb-bar" style="position:relative;overflow:visible"><div style="width:' + Math.min(100, act / goal * 100) + '%;height:100%;background:' + col + ';"></div>' +
       '<div title="오늘까지 목표 페이스" style="position:absolute;left:' + Math.round(prog * 100) + '%;top:-3px;bottom:-3px;width:2px;background:#475569"></div></div>' +
-      _bTags([{ p: Math.min(100, act / goal * 100), h: '<b class="lb-n">' + act.toLocaleString() + '</b>' }, { p: prog * 100, h: '오늘 목표 ' + Math.round(goal * prog).toLocaleString(), gap: 30 }, { p: 100, h: '/ ' + goal.toLocaleString() + '만', gap: 30 }]) +
+      _bTags([{ p: Math.min(100, act / goal * 100), h: '<b class="lb-n">' + act.toLocaleString() + '</b>' }, { p: prog * 100, h: '오늘 목표 ' + Math.round(goal * prog).toLocaleString() }, { p: 100, h: '/ ' + goal.toLocaleString() + '만' }]) +
       '<div style="font-size:11px;color:' + col + '">페이스 대비 ' + (diff >= 0 ? '+' : '') + Math.round(diff).toLocaleString() + '만</div></div>';
   }).join('');
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + year + '년 목표 · 올해 ' + Math.round(prog * 100) + '% 지남</span><span>검정 선 = 오늘까지 목표 페이스 · <a href="javascript:void(0)" style="color:#6fa6d9" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 고치기</a></span></p>' +
@@ -575,6 +599,7 @@ function ldgRenderBoard() {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
     el.innerHTML = '<div style="font-size:11px;color:#6fa6d9;background:#eef5fb;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
       _boardPlaybook(ym, m) + _boardSplit(ym, null) + _boardLiving(ym, null, true);
+    try { _bFixTags(el); } catch (e) {}
     return;
   }
   var T = MIRROR_GOAL.amount, RED = '#d9695e', GREEN = '#3fa37f', h = '';
@@ -622,7 +647,7 @@ function ldgRenderBoard() {
       '<div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:4px;align-items:center;margin:8px 0 4px">' +
         eq('들어온 돈', m.inc, BK.ink) + op('+') + eq(m.salaryDue ? '월급 ' + MIRROR_PAYDAY + '일 예정' : '월급 들어옴', m.salaryDue, BK.ink) + op('−') + eq('여행 빼고 쓴 돈', m.life, BK.ink) + op('=') + eq('남음', m.leftLife, m.leftLife >= 0 ? BK.green : BK.red, m.leftLife >= 0 ? '+' : '') + '</div>' +
       '<div style="height:8px;background:' + BK.track + ';overflow:hidden"><div style="width:' + lifePct + '%;height:100%;background:' + BK.data + '"></div></div>' +
-      _bTags([{ p: lifePct, h: '쓴 돈 <b>' + _bMan(m.life) + '</b>' }, { p: 100, h: '남음 <b style="color:' + (m.leftLife >= 0 ? BK.green : BK.red) + '">' + _bMan(m.leftLife) + '</b>', gap: 45 }]) +
+      _bTags([{ p: lifePct, h: '쓴 돈 <b>' + _bMan(m.life) + '</b>' }, { p: 100, h: '남음 <b style="color:' + (m.leftLife >= 0 ? BK.green : BK.red) + '">' + _bMan(m.leftLife) + '</b>' }]) +
       (m.travel ? '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#6fa6d9">flight</span> 여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</div>' : '') + '</div>' +
     '<div class="lb-c lb-3"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= 1830000, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
 
@@ -707,6 +732,7 @@ function ldgRenderBoard() {
   h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#6fa6d9;background:#eef5fb;border:0;padding:9px;cursor:pointer">' +
     (open ? '▴ 차트 접기' : '▾ 차트 더 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이') + '</button>';
   el.innerHTML = h;
+  try { _bFixTags(el); } catch (e) {}
   _applyDetailVisibility();
 }
 window.ldgRenderBoard = ldgRenderBoard;
