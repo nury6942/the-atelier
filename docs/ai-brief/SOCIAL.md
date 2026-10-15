@@ -24,6 +24,9 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
    - 검색은 보조: `/search?q=<검색어>&serp_type=default` (인기 — 대부분 1주 넘은 글이라 7일 컷), `&filter=recent` (최근 — 스팸 많음, 키워드 필터 필수)
      검색어 2~3개만 돌아가며: `AI 꿀팁` · `클로드` · `바이브코딩` · `나노바나나` · `제미나이` · `AI 자동화` · 그날 새 모델 이름
    **X** — 로그인돼 있을 때만(로그인 화면으로 튕기면 건너뜀): `https://x.com/home` 팔로잉 탭, `https://x.com/search?q=<검색어> min_faves:200&f=top`
+   **X 1순위 — 비공개 리스트 "AI Brief"** `https://x.com/i/lists/2110638450106061286` (누리가 승인한 22계정: 한국 실사용·해외 꿀팁·만드는 사람·무료 UI·공식 발표).
+     리스트 화면을 `computer scroll`(10칸) 6~8번 하며 모은다 — 백그라운드 탭은 JS 스크롤로는 새 글이 안 그려진다(실제 입력 이벤트가 필요).
+     최근 48시간 + 좋아요 30↑. 계정을 더하고 뺄 땐 누리 승인 후 리스트 편집(공개로 바꾸지 않는다).
    **X 실측(2026-10-15)** — 누리 X 계정의 For you 는 아직 AI 취향이 아니라(인테리어·연예) 홈 피드는 쓸모없다. **검색이 본진**:
      `"Claude Code" min_faves:300 since:<3일 전>` · `"vibe coding" min_faves:300 …` · `"nano banana" min_faves:300 …` ·
      `(바이브코딩 OR 클로드 OR 제미나이 OR 챗GPT) min_faves:50 …` · 그날 새 모델 이름 — 모두 `&f=top`.
