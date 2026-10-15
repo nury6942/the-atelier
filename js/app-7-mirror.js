@@ -87,6 +87,14 @@ var MIRROR_MONTH_PLAN = {
   10: { caps: {}, todo: ['상여 받는 날 바로 옮기기'] },
   11: { caps: { '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
   12: { caps: { '사람': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
+  // 2026-11·12 조이기 (2026-10-15 누리와 정함) — living = 그 달 생활비 전체 한도
+  '2026-10': { todo: ['10/28 인센(≈510만)은 받는 날 그대로 OK파킹 · 월급은 11/10 카드값용'] },
+  '2026-11': { living: 1600000, caps: { '외식': 250000, '배달': 100000, '카페·간식': 100000, '장보기': 160000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 200000, '주유·교통': 220000, '취미·여가': 100000, '책·공부': 100000, '사람': 200000 },
+               todo: ['블프·11월 행사는 장바구니만 · 결제 0', '물건은 소모품만 10만', '11/10 카드값 내고 남은 돈 120만↑ → OK파킹'] },
+  '2026-12': { living: 2000000, caps: { '외식': 300000, '배달': 100000, '카페·간식': 100000, '장보기': 200000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 200000, '주유·교통': 220000, '취미·여가': 150000, '책·공부': 100000, '사람': 400000 },
+               todo: ['선물 줄 사람·금액 먼저 적기 → 사람 40만 안에서', '송년회는 1차만 · 외식 30만', '12/10 카드값 뒤 120만↑ → OK · 12/28 월급날 80만 → OK', '12/12 새 연재 시작 🎉'] },
+  '2027-01': { todo: ['2027 목표 · 수입 9,150만 · 지출 4,600만 · 저축 4,550만 (반 저금)'] },
+  '2027-02': { todo: ['연말정산 환급 ≈100만 → 들어오는 날 OK파킹'] },
   '2027-03': { todo: ['집 상환 자금 2,500만 완성'] },
   '2027-04': { todo: ['집 마지막 상환 🎉'] }
 };
@@ -109,8 +117,11 @@ function _bPlan(ym) {
   var todo = (a.todo || []).concat(b.todo || []);
   var ct = _bClothesMonth(ym);
   if (ct) { caps['옷·뷰티'] = MIRROR_TRIP_CLOTHES; todo.push('👗 ' + ct.title + ' 가기 전 옷 쇼핑 달 · 한도 ' + _bMan(MIRROR_TRIP_CLOTHES) + '만'); }
-  else todo.push('👗 옷은 여행 직전 달에만 · 이 달은 25만');
-  return { caps: caps, todo: todo };
+  else {
+    var cc = caps['옷·뷰티'] != null ? caps['옷·뷰티'] : _bLivingCap(ym, '옷·뷰티');
+    todo.push(cc ? '👗 옷은 여행 직전 달에만 · 이 달은 ' + _bMan(cc) + '만' : '👗 옷 0 · 다음 여행 직전 달까지');
+  }
+  return { caps: caps, todo: todo, living: b.living || a.living || (ym >= '2027-01' ? 2070000 : 1830000) };
 }
 function _bRows(ym) { return (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym; }); }
 // 작년 그 달에 있었던 '매년 돌아오는 돈' — 데이터에서 찾는다
@@ -510,6 +521,21 @@ var MIRROR_LIVING = [
   ['책·공부', 'menu_book', function(t) { return t['대분류'] === '자기계발비' && t['소분류'] !== '영어 강의'; }, 100000],
   ['사람', 'groups', function(t) { return (t['대분류'] === '관계비' || t['대분류'] === '경조사비') && t['소분류'] !== '할머니용돈'; }, 100000]
 ];
+// 2027 생활비 칸별 기본 한도 (총 207만) — 도전안: 지출 4,600만 · 저축 4,550만
+var MIRROR_LIVING_2027 = { '외식': 180000, '배달': 80000, '카페·간식': 80000, '장보기': 140000, '편의점': 20000, '옷·뷰티': 350000, '물건': 300000, '병원·약': 100000, '주유·교통': 220000, '취미·여가': 80000, '책·공부': 70000, '사람': 450000 };
+function _bLivingCap(ym, name) {
+  if (ym >= '2027-01' && MIRROR_LIVING_2027[name] != null) return MIRROR_LIVING_2027[name];
+  for (var i = 0; i < MIRROR_LIVING.length; i++) if (MIRROR_LIVING[i][0] === name) return MIRROR_LIVING[i][3];
+  return 0;
+}
+var MIRROR_SPLIT_2027 = [
+  ['고정', 850000, '', '할머니·관리비·월주차·통신·구독 (집 이자 4월에 끝)'],
+  ['연간 적립', 250000, '', '영어 수업료·종소세 미리'],
+  ['생활비', 2070000, '', '카드 한 장 · 아래 칸별 한도'],
+  ['여행', 0, '', '덴마크 6월 · 프랑스 12월 · 인센·적립으로 한 번에'],
+  ['집 자금', 2750000, '', '평달 저축 · 4월부터 이주 자금']
+];
+function _bSplitPlan(ym) { return ym >= '2027-01' ? MIRROR_SPLIT_2027 : MIRROR_SPLIT; }
 var _bFixed = function(t) { return ['고정비', '주거비', '세금/보험'].indexOf(t['대분류']) >= 0 || t['소분류'] === '주차비' || t['소분류'] === '할머니용돈'; };
 var _bAnnual = function(t) { return t['소분류'] === '영어 강의' || /종합소득|국세/.test(t['세부사항'] || ''); };
 function _bLivingRow(t) { for (var i = 0; i < MIRROR_LIVING.length; i++) if (MIRROR_LIVING[i][2](t)) return i; return -1; }
@@ -528,7 +554,9 @@ function _boardSplit(ym, m) {
   };
   var tf = _boardTripFor(ym), bonusTo = ym <= MIRROR_GOAL.due ? '집 자금' : (tf ? tf.trip.title + ' 여행' : '여행');
   var live = m && m.L.length;
-  var cells = MIRROR_SPLIT.map(function(x) {
+  var lv = _bPlan(ym).living;
+  var cells = _bSplitPlan(ym).map(function(x) {
+    if (x[0] === '생활비') x = [x[0], lv, x[2], x[3]];
     var name = x[0], plan = x[1], a = act[name], label = name === '집 자금' && ym >= '2027-04' ? '이주 자금' : name;
     var isSave = name === '집 자금', isTravel = name === '여행', body;
     if (!live) body = '<div style="font-size:11px;color:' + BK.sub + ';margin-top:4px">' + x[3] + '</div>';
@@ -551,7 +579,7 @@ function _boardLiving(ym, m, preview) {
   var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(_bS); } catch (e) { return []; } })();
   var tot = 0, totCap = 0;
   var cells = MIRROR_LIVING.map(function(x, i) {
-    var cap = caps[x[0]] != null ? caps[x[0]] : x[3]; totCap += cap;
+    var cap = caps[x[0]] != null ? caps[x[0]] : _bLivingCap(ym, x[0]); totCap += cap;
     var rows = sp.filter(function(t) { return _bLivingRow(t) === i; }), v = _bSum(rows, function() { return true; }); tot += v;
     var lv = _bSum(ly.filter(function(t) { return _bLivingRow(t) === i; }), function() { return true; });
     var pct = cap ? Math.min(100, v / cap * 100) : 0, over = v > cap, col = over ? RED : BK.data;
@@ -617,6 +645,7 @@ function ldgRenderBoard() {
   // 나의 규칙 4개 — 이번 달 지키는 중인지 막대로
   var shopBig = m.L.filter(function(t) { return _bS(t) && (t['대분류'] === '품위유지비' || t['대분류'] === '생필품비') && t['금액'] >= 100000; });
   var netSave = m.saveIn + m.saveOut, salBase = m.salary >= 2500000 ? m.salary : (m.salaryDue || _bRegularSalary());
+  var livCap = _bPlan(ym).living;
   var livingNow = _bSum(m.L, function(t) { return _bS(t) && !_bFixed(t) && !_bAnnual(t) && t['대분류'] !== '여행' && t['대분류'] !== '미분류'; });
   var rule = function(st, title, sub, bar) {
     var ic = { ok: ['check_circle', BK.green], bad: ['cancel', BK.red], warn: ['error', BK.red], wait: ['schedule', BK.indigo] }[st];
@@ -626,7 +655,7 @@ function ldgRenderBoard() {
   var rules = [
     m.side > 0 ? rule(netSave >= m.side ? 'ok' : 'bad', '부업 들어오면 그대로 집 통장', '부업 ' + _bMan(m.side) + '만 들어옴 → 집 통장 순적립 ' + _bMan(netSave) + '만' + (netSave >= m.side ? ' ✓' : ' · ' + _bMan(m.side - netSave) + '만 덜 옮김'), _bBar(netSave, m.side, true, 6))
                : rule('wait', '부업 들어오면 그대로 집 통장', '이 달 부업 입금 아직 (보통 10일)', ''),
-    rule(livingNow > 1830000 ? 'bad' : livingNow > 1830000 * 0.8 ? 'warn' : 'ok', '생활비 183만 안에서', '여행·고정·연간 적립 뺀 생활비', _bBar(livingNow, 1830000, false, 6)),
+    rule(livingNow > livCap ? 'bad' : livingNow > livCap * 0.8 ? 'warn' : 'ok', '생활비 ' + _bMan(livCap) + '만 안에서', '여행·고정·연간 적립 뺀 생활비', _bBar(livingNow, livCap, false, 6)),
     rule(m.life > salBase ? 'bad' : 'ok', '월급 ' + _bMan(salBase) + '만 안에서 살기 (여행 빼고)', '여행 빼고 쓴 돈' + (m.salaryDue ? ' <span style="color:' + BK.mute + '">· 월급 ' + MIRROR_PAYDAY + '일 예정</span>' : ''), _bBar(m.life, salBase, false, 6)),
     rule(shopBig.length >= 3 ? 'bad' : shopBig.length === 2 ? 'warn' : 'ok', '옷·물건 10만↑은 7일 기다렸다 사기', '이 달 10만↑ ' + shopBig.length + '건' + (shopBig.length ? ' · ' + shopBig.slice(0, 2).map(function(t) { return _bEsc((t['세부사항'] || '').split(' · ').pop().replace(/\(주\)|㈜|주식회사|\(.*?\)/g, '').trim().slice(0, 10)) + ' ' + _bMan(t['금액']); }).join(', ') : ' ✓'), '')
   ].join('');
@@ -643,7 +672,7 @@ function ldgRenderBoard() {
       '<div style="height:8px;background:' + BK.track + ';overflow:hidden"><div style="width:' + lifePct + '%;height:100%;background:' + BK.data + '"></div></div>' +
       _bTags([{ p: lifePct, h: '쓴 돈 <b>' + _bMan(m.life) + '</b>' }, { p: 100, h: '남음 <b style="color:' + (m.leftLife >= 0 ? BK.green : BK.red) + '">' + _bMan(m.leftLife) + '</b>' }]) +
       (m.travel ? '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#1d5fd1">flight</span> 여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</div>' : '') + '</div>' +
-    '<div class="lb-c lb-3"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= 1830000, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
+    '<div class="lb-c lb-3"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= livCap, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
 
   // ── 연간 목표
   try { h += _boardGoals(); } catch (e) { console.error('[Board goals]', e); }
