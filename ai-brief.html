@@ -291,8 +291,8 @@
       box.innerHTML='<blockquote class="twitter-tweet" data-dnt="true" data-lang="ko"><a href="'+esc(p.url.replace('x.com','twitter.com'))+'"></a></blockquote>';
       if (window.twttr && twttr.widgets) twttr.widgets.load(box); else loadScript('https://platform.twitter.com/widgets.js');
     } else {
-      box.innerHTML='<blockquote class="text-post-media" data-text-post-permalink="'+esc(p.url)+'" data-text-post-version="0"><a href="'+esc(p.url)+'">Threads에서 보기</a></blockquote>';
-      loadScript('https://www.threads.com/embed.js?'+Date.now());
+      // Threads 의 embed.js 는 높이 신호가 안 와서(0px) 임베드 주소를 직접 띄운다
+      box.innerHTML='<iframe src="'+esc(p.url.replace(/\/$/,''))+'/embed/" style="width:100%;height:620px;border:0;display:block" loading="lazy" title="Threads 원문"></iframe>';
     }
   }
   function wire(){
