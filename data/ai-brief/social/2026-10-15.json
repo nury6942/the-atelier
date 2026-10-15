@@ -193,7 +193,8 @@
     "직접 만든 도구가 토큰을 많이 먹게 짜여 있음",
     "그리고 마지막: 시키는 양 자체가 너무 적음 — 더 많이 맡겨라"
    ],
-   "try": "내 스킬 파일 중 가장 긴 것 하나를 절반으로 줄여보기"
+   "try": "내 스킬 파일 중 가장 긴 것 하나를 절반으로 줄여보기",
+   "media_items": []
   },
   {
    "src": "x",
@@ -212,7 +213,14 @@
     "스킬 설치(npx skills add Seokwoooo/lucian-uxui) 후 '내 홈페이지에 요금제 토글이랑 FAQ 넣어줘'라고만 하면 AI가 프로젝트 테마를 보고 알아서 골라 적용",
     "일본 쪽에서도 'UI는 이제 프롬프트 쓰기가 아니라 고르기'라며 화제"
    ],
-   "try": "lucianlabs.dev/uxui-prompt 에서 Atelier 탭에 쓸 버튼 하나 골라 붙여보기"
+   "try": "lucianlabs.dev/uxui-prompt 에서 Atelier 탭에 쓸 버튼 하나 골라 붙여보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2109637525858131968/img/A_i33T7v8k8MZw3b.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2109637525858131968/vid/avc1/600x360/_oU-7qPCgr1HXKVd.mp4"
+    }
+   ]
   },
   {
    "src": "x",
@@ -229,7 +237,14 @@
     "설명·코드 없이 영상만으로 같은 결과물을 재현해줬다는 후기",
     "글로 설명하기 어려운 UI·동작은 '보여주기'가 더 빠르다는 사례"
    ],
-   "try": "마음에 드는 웹 인터랙션을 맥 화면녹화(⌘⇧5)로 찍어 Claude에 '이거 만들어줘'"
+   "try": "마음에 드는 웹 인터랙션을 맥 화면녹화(⌘⇧5)로 찍어 Claude에 '이거 만들어줘'",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2109478700802813952/img/8Z2qWPetjkrCU1IC.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2109478700802813952/vid/avc1/480x1040/3NDrx-FDm8qAFhWm.mp4"
+    }
+   ]
   },
   {
    "src": "x",
@@ -247,7 +262,14 @@
     "Opus는 딱 세 순간만 등장: 계획 확정 직전, 같은 에러가 두 번 날 때, '끝났다' 선언 전",
     "비싼 Opus 맥락을 아무 데나 안 써서 결과는 좋아지고 토큰은 줄어듦"
    ],
-   "try": "다음 Claude Code 세션을 --advisor opus 로 열어서 평소와 토큰 사용량 비교"
+   "try": "다음 Claude Code 세션을 --advisor opus 로 열어서 평소와 토큰 사용량 비교",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2109727644992352256/img/Sdsrr7M-nDL0zKe7.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2109727644992352256/vid/avc1/480x600/bHo8gF1r9mCeF5y2.mp4"
+    }
+   ]
   },
   {
    "src": "x",
@@ -264,7 +286,8 @@
     "영상 분석 → 자동 편집 → 검수까지 단계별로 정리된 X 아티클",
     "비개발자가 직접 만들어볼 수 있게 쓴 가이드"
    ],
-   "try": "원문 아티클을 열어 첫 단계 프롬프트만 Claude Code에 넣어보기"
+   "try": "원문 아티클을 열어 첫 단계 프롬프트만 Claude Code에 넣어보기",
+   "media_items": []
   },
   {
    "src": "x",
@@ -282,7 +305,14 @@
     "예: 유체 시뮬레이션에서 조건을 바꾸면 결과가 바로 바뀌고, 옆에 수식·코드·측정값이 같이 뜸",
     "'그럴듯해 보여도 틀릴 수 있다' → 검토 팀이 물리 법칙·수치까지 통과시켜야 채택"
    ],
-   "try": "큰 일을 시킬 때 '읽는 역할/만드는 역할/검토하는 역할'로 나눠 달라고 지시해보기"
+   "try": "큰 일을 시킬 때 '읽는 역할/만드는 역할/검토하는 역할'로 나눠 달라고 지시해보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110098434757644289/img/uFK_DbZRaW3O3vYJ.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110098434757644289/vid/avc1/480x600/bptOBgK3AhF4N2Hm.mp4"
+    }
+   ]
   },
   {
    "src": "x",
@@ -300,7 +330,14 @@
     "'이거 병렬로 해줘'라고 하면 작업마다 하위 세션이 따로 돌고, 끝나면 결과만 메인 대화로 보고 → 메인 대화가 안 지저분해짐",
     "왼쪽에 '진행 중/완료' 목록으로 세션마다 뭐 하는지 한눈에"
    ],
-   "try": "지금 쓰는 Claude 앱에서 바로 됨. 리포 여러 개를 '환경'으로 저장해 보기"
+   "try": "지금 쓰는 Claude 앱에서 바로 됨. 리포 여러 개를 '환경'으로 저장해 보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110444209673265152/img/oVtJzxAlfEEN1BFm.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110444209673265152/vid/avc1/588x360/nThxW7VTqHQAI-D3.mp4"
+    }
+   ]
   },
   {
    "src": "x",
@@ -319,7 +356,13 @@
     "AI가 자기 결과를 스스로 채점하게 두지 말고, 바로 돌려볼 수 있는 외부 검증 도구를 쥐여줘라",
     "컴퓨터·설치 가능한 프로그램·데이터 연결을 주면 직접 실험하고 확인한다"
    ],
-   "try": "다음 작업 지시 끝에 '최고 전문가라면 어떻게 할지 먼저 말하고, 결과는 스스로 검증할 방법도 같이'를 붙여보기"
+   "try": "다음 작업 지시 끝에 '최고 전문가라면 어떻게 할지 먼저 말하고, 결과는 스스로 검증할 방법도 같이'를 붙여보기",
+   "media_items": [
+    {
+     "type": "card",
+     "img": "https://pbs.twimg.com/card_img/2110387694551371776/cig58Yw9?format=jpg&name=800x419"
+    }
+   ]
   }
  ]
 }

@@ -17115,8 +17115,10 @@
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
   </div>
   <div id="page-aibrief" class="page" style="display:none;padding:0;background:#fff">
-    <iframe src="./ai-brief.html" title="AI Brief" loading="lazy"
+    <iframe id="aibrief-frame" title="AI Brief" loading="lazy"
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
+    <script>/* 매일 바뀌는 페이지라 브라우저 캐시(10분)에 옛 화면이 남지 않게 매번 새 주소로 */
+      document.getElementById('aibrief-frame').src='./ai-brief.html?t='+Date.now();</script>
   </div>
   <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"

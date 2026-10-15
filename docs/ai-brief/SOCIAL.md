@@ -53,6 +53,8 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
    - `points` **3~5줄** — 원문에 실제로 있는 내용을 내 말로: 구체적 방법·순서·명령어·숫자·결과. "~을 공개" 같은 뜬 말 금지. 이미지에만 있는 내용이면 "이미지에 커리큘럼" 처럼 원문에서 보라고 적는다.
    - `try` (선택) 누리가 오늘 바로 해볼 한 줄 — 진짜 걸릴 때만.
    - `tag` 하나 — `후기` | `꿀팁` | `만든 것` | `소식`.
+   - X 글은 `media_items` 도 채운다(누리: "글자만 있다, 이미지·GIF 는?"): syndication 결과의 `mediaDetails`(없으면 `quoted_tweet.mediaDetails`)에서 최대 4개 `{type, img: media_url_https, mp4?}` — `animated_gif`·`video` 는 `video_info.variants` 중 mp4 를 비트레이트 낮은 쪽에서 두 번째. 링크 카드뿐이면 `{type:"card", img: 카드 이미지}`. 화면은 `<meta name="referrer" content="no-referrer">` 라서 video.twimg.com 이 막히지 않는다(출처를 보내면 403).
+   - Threads 는 사진 주소를 싣지 않는다 — 화면이 카드 위에 원문 미리보기 창(…/embed/)을 띄워 사진·글을 원래 모습으로 보여준다.
    화면이 "원문 보기"로 X·Threads 공식 임베드를 띄우므로 원문 전문을 JSON 에 옮기지 않는다(요약·정리만).
 7. JSON 을 쓰고 문법 검사(`python3 -c 'import json,sys;json.load(open(sys.argv[1]))' 파일`), `data/ai-brief/social/` 만 add → `social: <오늘> X·Threads` 커밋 → main 푸시(거절되면 `git pull --rebase` 후 재시도).
 8. 탭 닫기.
@@ -68,7 +70,8 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
     {"src": "threads", "author": "@handle", "url": "https://www.threads.com/@handle/post/…",
      "at": "2026-10-15T05:44:51Z", "likes": 204, "replies": 15,
      "image": null, "media": true, "tag": "후기", "summary": "…",
-     "points": ["구체적 방법·숫자", "…", "…"], "try": "(선택)"}
+     "points": ["구체적 방법·숫자", "…", "…"], "try": "(선택)",
+     "media_items": [{"type": "video", "img": "https://pbs.twimg.com/…jpg", "mp4": "https://video.twimg.com/…mp4"}]}
   ]
 }
 ```
