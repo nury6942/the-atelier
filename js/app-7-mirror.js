@@ -63,7 +63,9 @@ function ldgBoardBaseline() {
 }
 
 function ldgBoardMonth(ym) {
-  var L = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym; });
+  // 오늘 이후 날짜(고정 거래 자동 예정 행 등)는 아직 일어난 돈이 아니라 뺀다
+  var today = new Date(), todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  var L = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym && t.date <= todayStr; });
   var sp = L.filter(_bS);
   var spend = _bSum(sp, function() { return true; });
   var inc = _bSum(L, _bI);
