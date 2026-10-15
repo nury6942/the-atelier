@@ -5333,6 +5333,8 @@ function ldgApplyRecurringForMonth(year, month) {
   var skipped = ldgGetSkipped();
   var skipList = skipped[monthKey] || [];
   var added = 0, pendingVariable = 0;
+  // 뱅샐로 가져온 기간은 실제 거래가 이미 있으니 고정 거래를 자동으로 만들지 않는다
+  var bankEnd = txs.reduce(function(m, t) { return t['출처'] === '뱅샐' && t.date > m ? t.date : m; }, '');
 
   items.forEach(function(item) {
     if (!item.recId) return;
@@ -5356,6 +5358,7 @@ function ldgApplyRecurringForMonth(year, month) {
 
     var day = Math.min(item.dayOfMonth, new Date(year, month, 0).getDate()); // clamp to month's last day
     var dateStr = monthKey + '-' + String(day).padStart(2,'0');
+    if (bankEnd && dateStr <= bankEnd) return;
     // 결정적 ID: 같은 (recurringId, 월) 조합은 어느 기기에서 만들어도 동일 ID → Firebase merge 시 자동 중복 제거
     var newTx = {
       id: 'txn_auto_' + item.recId + '_' + monthKey,
