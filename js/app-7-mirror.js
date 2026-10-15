@@ -35,6 +35,7 @@ var MIRROR_EVERY_MONTH = ['월급날 80만 · 부업 입금일 전액 → 집 �
 function _bYm(ym, d) { var p = ym.split('-').map(Number), k = p[0] * 12 + (p[1] - 1) + d; return Math.floor(k / 12) + '-' + String(k % 12 + 1).padStart(2, '0'); }
 // 옷은 여행 가기 직전에 산다 (누리) — 여행 시작 달의 전달 + (10일 이후 출발이면) 시작 달이 옷 쇼핑 달
 var MIRROR_TRIP_CLOTHES = 900000;
+var MIRROR_TRAVEL_ACCOUNT = '미래에셋';  // 여행 돈 모으는 통장 (자산 탭 이름 일부)
 function _bClothesMonth(ym) {
   return (_boardExtra.trips || []).filter(function(t) {
     var sm = t.start.slice(0, 7);
@@ -101,7 +102,12 @@ function _boardPlaybook(ym, m) {
       var t = tf.trip, now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
       if (t.start <= ym + '-31') return ['✈️ ' + _bEsc(t.title) + ' ' + t.start.slice(5).replace('-', '/') + '~' + t.end.slice(5).replace('-', '/') + ' · 예산 ' + _bMan(t.budget) + '만 (여행 봉투에서 정산)'];
       var left = Math.max(1, _bMonths(nowYm, t.start.slice(0, 7)));  // 지금부터 출발 달까지 나눠서
-      return ['🧳 다음 여행 ' + _bEsc(t.title) + ' (' + t.start.slice(2, 7).replace('-', '.') + ') 예산 ' + _bMan(t.budget) + '만' + (t.support ? ' − 회사 지원 ' + _bMan(t.support) + '만 = 내 돈 ' + _bMan(t.own) + '만' : '') + ' · 여행 통장에 월 ' + _bMan(t.own / left) + '만'];
+      // 여행 돈은 매달이 아니라 200~300씩 한 번에 넣는다(누리). 여행 통장 = 자산의 '미래에셋'
+      var fund = 0;
+      ((_ledgerData.assets || {})['현금자산'] || []).forEach(function(it) { if ((it['소분류'] || '').indexOf(MIRROR_TRAVEL_ACCOUNT) >= 0) (it['월별'] || []).forEach(function(v) { if (v != null) fund = v; }); });
+      var need = Math.max(0, t.own - fund), times = Math.ceil(need / 2500000);
+      return ['🧳 다음 여행 ' + _bEsc(t.title) + ' (' + t.start.slice(2, 7).replace('-', '.') + ') 예산 ' + _bMan(t.budget) + '만' + (t.support ? ' − 회사 지원 ' + _bMan(t.support) + '만 = 내 돈 ' + _bMan(t.own) + '만' : '') +
+        ' · 여행 통장 ' + _bMan(fund) + '만 있음 → ' + (need ? '남은 ' + _bMan(need) + '만, 200~300씩 ' + times + '번 (상여·부업 많은 달에)' : '다 모였어요 ✓')];
     })())
     .concat(plan.todo.map(function(t) { return (/^👗/.test(t) ? '' : '🎯 ') + _bEsc(t); }))
     .concat(MIRROR_EVERY_MONTH.map(function(t) { return '<span style="color:#64748b">🔁 ' + _bEsc(t) + '</span>'; }));
@@ -359,8 +365,8 @@ var MIRROR_SPLIT = [
   ['고정', 950000, '#888780', '할머니·관리비·월주차·통신·구독'],
   ['연간 적립', 230000, '#b4b2a9', '영어 수업료·종소세 미리'],
   ['생활비', 1830000, '#e87ba4', '카드 한 장 · 아래 칸별 한도'],
-  ['여행', 300000, '#2a78d6', '+ 상여 = 1년 2번'],
-  ['집 자금', 1390000, '#1baf7a', '2027-04부터 이주 자금']
+  ['여행', 0, '#2a78d6', '매달 X · 200~300씩 한 번에'],
+  ['집 자금', 1690000, '#1baf7a', '2027-04부터 이주 자금']
 ];
 // 생활비 칸별 한도 (원). 달별 예외는 MIRROR_MONTH_PLAN caps
 var MIRROR_LIVING = [
@@ -398,8 +404,8 @@ function _boardSplit(ym, m) {
     var name = x[0], plan = x[1], a = act[name], label = name === '집 자금' && ym >= '2027-04' ? '이주 자금' : name;
     var isSave = name === '집 자금', isTravel = name === '여행';
     var good = isSave ? a >= plan : a <= plan;
-    var sub = isTravel ? '이 달 쓴 여행비 ' + _bMan(a) + '만 (여행 통장에서)' : (isSave ? '이 달 OK 순적립 ' + _bMan(a) + '만' : '쓴 돈 ' + _bMan(a) + '만');
-    return '<div style="border-top:3px solid ' + x[2] + ';padding-top:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>' + label + '</span><b class="lb-n">' + _bMan(plan) + '만</b></div>' +
+    var sub = isTravel ? '200~300씩 한 번에 · 이 달 여행비 ' + _bMan(a) + '만' : (isSave ? '이 달 OK 순적립 ' + _bMan(a) + '만' : '쓴 돈 ' + _bMan(a) + '만');
+    return '<div style="border-top:3px solid ' + x[2] + ';padding-top:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>' + label + '</span><b class="lb-n">' + (isTravel ? '한 번에' : _bMan(plan) + '만') + '</b></div>' +
       '<div style="font-size:11px;color:' + (m && m.L.length && !isTravel ? (good ? GREEN : RED) : '#94a3b8') + ';margin-top:2px">' + (m && m.L.length ? sub : x[3]) + '</div></div>';
   }).join('');
   var bonusLine = bonus > 0 ? '<div style="font-size:11px;color:#6366f1;background:#eef2ff;border-radius:8px;padding:6px 10px;margin-top:8px">💰 이 달 상여 ≈ ' + _bMan(bonus) + '만 → 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b></div>' :
