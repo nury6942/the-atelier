@@ -1,0 +1,297 @@
+{
+ "date": "2026-10-16",
+ "generatedAt": "2026-10-16T07:40:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 14개) + 웹 검색 30여 회 · 오늘은 실행 환경에서 사이트 직접 열기가 막혀 링크는 검색 결과로만 확인, 이미지는 맥 수집분만 사용",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "사진 한 장을 8초마다 고쳐 쓰는 편집",
+   "url": "https://www.eachlabs.ai/blog/krea-3-use-cases",
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2110759471916191744/img/2UxPNzulVwQSnBjY.jpg",
+   "source": "each::labs · 6개 팀 활용 사례",
+   "release": {
+    "name": "Krea 3 베타",
+    "date": "2026-10-15",
+    "url": "https://www.krea.ai/blog/introducing-krea-3"
+   },
+   "examples": [
+    {
+     "title": "모델 사진+옷 4장→에디토리얼 컷",
+     "url": "https://fal.ai/learn/tools/krea-3-prompting-guide",
+     "image": null
+    },
+    {
+     "title": "헥스코드로 제품 색만 바꾸기",
+     "url": "https://www.krea.ai/krea-3",
+     "image": null
+    },
+    {
+     "title": "카탈로그 3장으로 모델 스타일링",
+     "url": "https://morphic.com/resources/models/krea-3",
+     "image": null
+    }
+   ],
+   "new": [
+    "2K 8초 편집",
+    "영역 박스 지정",
+    "참조 최대 6장"
+   ],
+   "reviews": [
+    {
+     "say": "속도·가격만 봐도 지금 도구 대체감",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50105648",
+     "tone": "good"
+    },
+    {
+     "say": "제품컷 조명이 좋다 (사전 테스트사)",
+     "who": "Pixelcut · Glitchwire 보도",
+     "url": "https://glitchwire.com/news/krea-3-hits-benchmark-second-place-and-ships-the-first-trainable-image-editor/",
+     "tone": "good"
+    },
+    {
+     "say": "베타에선 3장 한 번 뽑고 막혔다",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50105648",
+     "tone": "bad"
+    },
+    {
+     "say": "글→이미지 생성은 아직 실험 단계",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50105648",
+     "tone": "bad"
+    }
+   ],
+   "why": "원본 느낌 유지한 채 부분만 반복 수정",
+   "chips": [
+    "2K $0.06 · 약 80원",
+    "1K $0.03 · 약 40원"
+   ],
+   "forMe": "저지 팬츠 착장컷 색만 헥스코드로 바꿔 컬러웨이 시안"
+  },
+  {
+   "cat": "release",
+   "title": "Claude에 한 줄로 30초 영상 시키기",
+   "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
+   "image": null,
+   "source": "MindStudio 첫 테스트",
+   "release": {
+    "name": "Kling 4.0 + MCP·CLI",
+    "date": "2026-10-15",
+    "url": "https://runtimewire.com/article/kling-ai-kling-4-mcp-cli-availability"
+   },
+   "examples": [
+    {
+     "title": "식당 긴 대화 장면 립싱크 테스트",
+     "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
+     "image": null
+    },
+    {
+     "title": "예시 영상 3편 프레임 단위 점검",
+     "url": "https://www.klingmotion.com/kling-4-0-review",
+     "image": null
+    },
+    {
+     "title": "MCP로 에이전트가 찍은 시네마틱",
+     "url": "https://kling.ai/blog/kling-mcp-cinematic-performance-workflow",
+     "image": null
+    }
+   ],
+   "new": [
+    "30초 한 번에",
+    "MCP·CLI 연결",
+    "참조 15개"
+   ],
+   "reviews": [
+    {
+     "say": "3.0에서 깨지던 긴 대화 립싱크가 유지",
+     "who": "MindStudio",
+     "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
+     "tone": "good"
+    },
+    {
+     "say": "참조 이미지 기반 짧은 장면에 제일 강함",
+     "who": "KlingMotion",
+     "url": "https://www.klingmotion.com/kling-4-0-review",
+     "tone": "good"
+    },
+    {
+     "say": "인물 연기가 밋밋, 옴니 모드는 720p",
+     "who": "MindStudio",
+     "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
+     "tone": "bad"
+    },
+    {
+     "say": "API는 아직, 공식 MCP·CLI만 작동",
+     "who": "Promptowy 7곳 점검",
+     "url": "https://promptowy.com/kling-4-0-api/",
+     "tone": "bad"
+    }
+   ],
+   "why": "코딩 도구 안에서 영상 생성 자동화",
+   "chips": [
+    "3~30초 클립",
+    "4K·HDR은 예정"
+   ],
+   "forMe": "Claude Code에서 착장컷을 룩북 영상으로 묶기"
+  },
+  {
+   "cat": "vibe",
+   "title": "클로드에 맡겨 걷는 3D 캐릭터까지",
+   "url": "https://x.com/kincha_rin/status/2110704305909219828",
+   "image": "https://pbs.twimg.com/media/HUq4HL-boAIHLZd.jpg",
+   "source": "X @kincha_rin",
+   "how": "Codex 원화→Tripo 3D, 뼈대·동작은 Claude가",
+   "chips": [
+    "2.7만 면으로 경량화",
+    "걷기·달리기·손 흔들기"
+   ]
+  },
+  {
+   "cat": "money",
+   "title": "AI가 추천하게 만들어 매출 5배",
+   "url": "https://x.com/irabukht/status/2110189752666440181",
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2110047771025866753/img/X75hYcl9T0L-dagl.jpg",
+   "source": "X @irabukht · ♥1,586",
+   "how": "설치 가이드 6,653쪽, 끝은 전부 Railway 배포",
+   "chips": [
+    "Claude Code 선택률 82%",
+    "ARR $20M→$100M · 약 1,370억 원"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "포토샵 대체 앱, 11일 만에 별 4.4만",
+   "url": "https://notes.nicolasdeville.com/apps/artcraft/",
+   "image": "https://opengraph.githubassets.com/dc0d9c5e6153e6c7eecf910404e8e964a9699b9cb659319170c50f69bd354789/storytold/artcraft",
+   "source": "Nicolas de Ville 노트",
+   "how": "Claude Opus 5.5로 Rust 작성, 어도비 7종 무료",
+   "chips": [
+    "4일 새 v0.5→v0.7",
+    "GitHub 별 4.4만"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Taste Skill v2로 Atelier 모바일 넘침 잡기",
+   "minutes": 20,
+   "why": "웹디자인 스킬이 247개 사이트를 바탕으로 PC·태블릿·모바일 화면을 검사해 글자 잘림·넘침을 찾아줘요. 무료이고, 디자이너 눈으로 결과를 바로 판단할 수 있어요.",
+   "from": {
+    "label": "@vibe.itji · ♥125",
+    "url": "https://www.threads.com/@vibe.itji/post/DefeG0yk6bX"
+   },
+   "steps": [
+    {
+     "text": "터미널에 스킬 설치",
+     "copy": "npx skills add Leonxlnx/taste-skill"
+    },
+    {
+     "text": "Claude Code에 붙여넣기",
+     "copy": "taste-skill 로 the-atelier 의 ai-brief.html 을 PC·태블릿·모바일 폭에서 검사해줘. 글자 잘림, 가로 넘침, 겹침을 목록으로 먼저 보여주고, 지금 테마(흑백 + 보라 #7c3aed, Inter, 직각 모서리)는 그대로 둔 채 고칠 안을 제안해줘. 고치기 전에 나한테 물어봐."
+    },
+    {
+     "text": "고친 화면 보고 해봤음"
+    }
+   ]
+  },
+  {
+   "title": "Claude에 Kling 연결해 영상 한 편",
+   "minutes": 15,
+   "why": "어제 열린 Kling 공식 MCP는 API 키 없이 Kling 계정 로그인만으로 Claude에서 영상을 만들게 해줘요. 플랜 크레딧이 차감되니 짧은 5초짜리로 먼저 보세요.",
+   "from": {
+    "label": "@choi.openai · ♥65",
+    "url": "https://www.threads.com/@choi.openai/post/DehSNOPAPrU"
+   },
+   "steps": [
+    {
+     "text": "커스텀 커넥터에 주소",
+     "copy": "https://kling.ai/mcp"
+    },
+    {
+     "text": "프롬프트 붙여넣기",
+     "copy": "Kling 으로 5초 영상 하나 만들어줘: 회색 저지 조거 팬츠를 입은 모델이 흰 스튜디오에서 천천히 걸어 나와 정면에서 멈춤. 카메라는 무릎 높이에서 고정, 원단 주름과 밑단 리브가 잘 보이게."
+    },
+    {
+     "text": "영상 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Claude Code 중첩 세션",
+   "url": "https://pasqualepillitteri.it/en/news/24032/claude-code-desktop-nested-sessions-environments",
+   "image": null,
+   "source": "10-14 업데이트 정리",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "Argon 3D 게임 14개",
+   "url": "https://aistudio.google.com/learn/gemini-4-argon-showcase",
+   "image": null,
+   "source": "Google AI Studio"
+  },
+  {
+   "cat": "release",
+   "title": "Argon 게임 개발 실테스트",
+   "url": "https://www.mindstudio.ai/blog/gemini-4-argon-coding-game-dev-tests",
+   "image": null,
+   "source": "MindStudio · 3D 품질은 Opus 아래"
+  },
+  {
+   "cat": "free",
+   "title": "무료 OpenDesign",
+   "url": "https://open-design.ai/alternatives/figma/",
+   "image": null,
+   "source": "Apache-2.0"
+  },
+  {
+   "cat": "vibe",
+   "title": "AI 어도비 클론, 진짜 되나",
+   "url": "https://www.vice.com/en/article/everything-we-know-about-the-free-adobe-clones-built-with-ai-do-they-actually-work/",
+   "image": null,
+   "source": "VICE"
+  },
+  {
+   "cat": "tool",
+   "title": "OpenCode 2.0",
+   "url": "https://www.producthunt.com/leaderboard/daily/2026/10/13",
+   "image": null,
+   "source": "Product Hunt 10-13 순위"
+  },
+  {
+   "cat": "release",
+   "title": "Mistral 가중치 10/27",
+   "url": "https://pasqualepillitteri.it/en/news/21196/mistral-large-4-launches-open-weights-late-october",
+   "image": null,
+   "source": "1조 파라미터 공개 예정"
+  }
+ ],
+ "watching": [
+  {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14",
+   "note": "10-14 중첩 세션·저장 환경 추가, 실사용 사례는 아직 없음"
+  },
+  {
+   "name": "Helix World",
+   "url": "https://noiz.ai/lp/blog/meet-helix-world",
+   "date": "2026-10-12"
+  },
+  {
+   "name": "Meta Muse Wonder",
+   "url": "https://research.meta.ai/blog/muse-wonder",
+   "date": "2026-10-12",
+   "note": "실사용 사례 1건 확인: @lucian__03 3D 슈팅 게임(10-14)"
+  },
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15"
+  }
+ ]
+}
