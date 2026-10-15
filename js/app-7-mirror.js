@@ -169,7 +169,7 @@ function ldgRenderBoard() {
   var mLabel = function(i) { var p = d.cur.split('-').map(Number), k = p[1] - 1 + i; return ((k % 12) + 1) + '월'; };
   var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto" role="img" aria-label="집 상환 통장 전망">' +
     '<line x1="' + P + '" x2="' + (W - 10) + '" y1="' + y(T) + '" y2="' + y(T) + '" stroke="' + C.mute + '" stroke-dasharray="2 3"/>' +
-    '<text x="' + (W - 12) + '" y="' + (y(T) - 6) + '" text-anchor="end" font-size="11" fill="' + C.mute + '">' + _brdMan(T) + '만</text>' +
+    '<text x="' + (P + 4) + '" y="' + (y(T) - 6) + '" text-anchor="start" font-size="11" fill="' + C.mute + '">목표 ' + _brdMan(T) + '만</text>' +
     '<path d="' + path(d.pot, d.pace) + '" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="6 4"/>' +
     '<path d="' + path(d.pot, d.plan) + '" fill="none" stroke="' + C.green + '" stroke-width="2.5"/>' +
     '<circle cx="' + x(d.left) + '" cy="' + y(d.plan) + '" r="5" fill="' + C.green + '"/>' +
