@@ -41,11 +41,12 @@ function ldgBoardBaseline() {
   var bucketAvg = MIRROR_BUCKETS.map(function() { return 0; });
   win.forEach(function(t) { if (_bS(t)) bucketAvg[_bBucket(t)] += t['금액'] / N; });
   var byM = months.map(function(m) { var L = win.filter(function(t) { return t.date.slice(0, 7) === m; }); return _bSum(L, _bI) - _bSum(L, _bS); });
-  var shop = win.filter(function(t) { return t['금액'] > 0 && _bS(t); });
+  var spendRows = win.filter(function(t) { return t['금액'] > 0 && _bS(t); });
+  var shop = spendRows.filter(function(t) { return t['대분류'] === '품위유지비' || t['대분류'] === '생필품비'; });  // 몰아치기는 옷·물건만
   var shopSum = shop.reduce(function(s, t) { return s + t['금액']; }, 0);
   var big = shop.filter(function(t) { return t['금액'] >= 100000; });
   var heat = [0, 1, 2, 3, 4, 5, 6].map(function() { return [0, 0, 0, 0, 0, 0, 0, 0]; });
-  shop.forEach(function(t) {
+  spendRows.forEach(function(t) {
     if (!t['시간'] || t['시간'] === '00:00:00' || ['고정비', '주거비', '세금/보험'].indexOf(t['대분류']) >= 0) return;
     heat[(new Date(t.date + 'T12:00:00').getDay() + 6) % 7][Math.floor(parseInt(t['시간'], 10) / 3)] += t['금액'];
   });
@@ -96,7 +97,7 @@ function _boardCss() {
     '.lb-t{font-size:11px;color:#94a3b8;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}',
     '.lb-n{font-variant-numeric:tabular-nums;font-weight:700;color:#0f172a;font-family:Manrope,Pretendard,sans-serif}',
     '.lb-bar{height:6px;border-radius:3px;background:#eef1f5;overflow:hidden;margin:6px 0 4px}',
-    '.lb-row{display:grid;grid-template-columns:44px 8px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-top:1px solid #f1f5f9}',
+    '.lb-row{display:grid;grid-template-columns:58px 8px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-top:1px solid #f1f5f9}',
     '.lb-sq{width:8px;height:8px;border-radius:2px}',
     '.lb-env{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}',
     '.lb-ms{font-size:11px;color:#94a3b8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
@@ -119,6 +120,9 @@ function ldgRenderBoard() {
   var m = ldgBoardMonth(ym), b = ldgBoardBaseline();
   if (!m.L.length) { el.innerHTML = '<div class="lb-c" style="color:#94a3b8;font-size:13px">' + mk + '에는 거래가 아직 없어요.</div>'; return; }
   var T = MIRROR_GOAL.amount, RED = '#e34948', GREEN = '#1baf7a', h = '';
+  if (!m.L.some(function(t) { return t['출처'] === '뱅샐'; })) {
+    h += '<div style="font-size:11px;color:#b45309;background:#fffbeb;border-radius:8px;padding:6px 10px;margin-bottom:8px">' + mk + '은 손으로 적은 기록이에요 — 저축·여행 준비금 같은 이체가 섞여 있어 판정이 정확하지 않을 수 있어요</div>';
+  }
 
   // ── 큰 그림
   var pot = 0;
@@ -189,7 +193,7 @@ function ldgRenderBoard() {
     h += '<div class="lb-c"><p class="lb-t"><span>나라는 사람 · 지난 ' + b.N + '달로 본 성향</span><span>뱅샐 가져올 때마다 다시 계산</span></p>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">' +
       trait('account_balance_wallet', '쓰고 남으면 모으는 형', b.reds + ' / ' + b.N + '달 적자', b.reds > b.N / 2, '먼저 떼고 쓰기') +
-      trait('bolt', '몰아치기형', '10만↑ ' + b.bigN + '건 = ' + Math.round(b.bigShare * 100) + '%', false, '10만↑은 7일 대기') +
+      trait('bolt', '몰아치기형', '옷·물건 10만↑ ' + b.bigN + '건 = ' + Math.round(b.bigShare * 100) + '%', false, '10만↑은 7일 대기') +
       trait('flight', '경험·사람에 쓰는 형', '여행 ' + _bMan(b.travel) + ' + 사람 ' + _bMan(b.people) + ' / 달', false, '큰 여행은 1년 1번') +
       trait('schedule', dn[b.peak[0]] + '요일 ' + b.peak[1] * 3 + '–' + (b.peak[1] * 3 + 3) + '시형', _bMan(b.peakAmt) + '만 (' + b.N + '달)', false, '그 시간엔 장바구니만') +
       '</div></div>';
