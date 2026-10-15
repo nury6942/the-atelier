@@ -100,10 +100,10 @@ function _boardPlaybook(ym, m) {
       var tf = _boardTripFor(ym); if (!tf) return [];
       var t = tf.trip, now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
       if (t.start <= ym + '-31') return ['✈️ ' + _bEsc(t.title) + ' ' + t.start.slice(5).replace('-', '/') + '~' + t.end.slice(5).replace('-', '/') + ' · 예산 ' + _bMan(t.budget) + '만 (여행 봉투에서 정산)'];
-      var left = Math.max(1, _bMonths(ym < nowYm ? nowYm : ym, t.start.slice(0, 7)));
+      var left = Math.max(1, _bMonths(nowYm, t.start.slice(0, 7)));  // 지금부터 출발 달까지 나눠서
       return ['🧳 다음 여행 ' + _bEsc(t.title) + ' (' + t.start.slice(2, 7).replace('-', '.') + ') 예산 ' + _bMan(t.budget) + '만' + (t.support ? ' − 회사 지원 ' + _bMan(t.support) + '만 = 내 돈 ' + _bMan(t.own) + '만' : '') + ' · 여행 통장에 월 ' + _bMan(t.own / left) + '만'];
     })())
-    .concat(plan.todo.map(function(t) { return '🎯 ' + _bEsc(t); }))
+    .concat(plan.todo.map(function(t) { return (/^👗/.test(t) ? '' : '🎯 ') + _bEsc(t); }))
     .concat(MIRROR_EVERY_MONTH.map(function(t) { return '<span style="color:#64748b">🔁 ' + _bEsc(t) + '</span>'; }));
   var nextHint = next.filter(function(r) { return !r[2]; }).map(function(r) { return r[0] + ' ' + _bMan(r[1]) + '만'; });
   return '<div class="lb-grid">' +
