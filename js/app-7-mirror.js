@@ -550,15 +550,15 @@ var MIRROR_PROJ = {
   events: { '2026-10': '인센 → OK', '2026-11': '블프 0 · 옷 0', '2026-12': '송년 사람 40 · 새 연재', '2027-01': '목표 시작', '2027-02': '환급 → OK · 설',
             '2027-03': '집 2,500 완성', '2027-04': '인센B · 근속 → 덴마크 · 집 상환', '2027-05': '종소세', '2027-10': '인센A → 프랑스' }
 };
-var MIRROR_INC_COLORS = { '월급': '#2f7ff0', '인센': '#1d4ed8', '포타': '#7fb2f7', '기타': '#bcd5fb' };
+var MIRROR_INC_COLORS = { '월급': '#2f7ff0', '인센': '#1d4ed8', '부업': '#7fb2f7', '기타': '#bcd5fb' };
 function _bProj(ym) {
   var now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-  var inc = { '월급': MIRROR_PROJ.salary(ym), '인센': MIRROR_PROJ.bonus[ym] || 0, '포타': MIRROR_PROJ.pota(ym), '기타': MIRROR_PROJ.side(ym) + ((MIRROR_PROJ.extra[ym] || [0])[0]) };
+  var inc = { '월급': MIRROR_PROJ.salary(ym), '인센': MIRROR_PROJ.bonus[ym] || 0, '부업': MIRROR_PROJ.pota(ym), '기타': MIRROR_PROJ.side(ym) + ((MIRROR_PROJ.extra[ym] || [0])[0]) };
   if (ym <= nowYm) {  // 이미 들어온 건 실제로
     var today = now.toISOString().slice(0, 10);
     var L = _bRows(ym).filter(function(t) { return t['출처'] === '뱅샐' && t.date <= today; }), sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000; });
     var pota = _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '부업'; });
-    if (pota) inc['포타'] = pota;
+    if (pota) inc['부업'] = pota;
     if (sal.length) { var tot = sal.reduce(function(a, t) { return a + t['금액']; }, 0), reg = MIRROR_PROJ.salary(ym); inc['월급'] = Math.min(tot, reg); inc['인센'] = Math.max(0, tot - reg); }
   }
   var plan = _bPlan(ym), y27 = ym >= '2027-01';
@@ -588,7 +588,7 @@ function _bActual(ym) {
   var L = _bRows(ym).filter(function(t) { return t['출처'] === '뱅샐' && t.date <= today; });
   var sal = _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000; }), reg = MIRROR_PROJ.salary(ym);
   var over = Math.max(0, sal - reg), bonusMonth = /-(04|10)$/.test(ym);  // 인센은 4·10월, 그 밖에 더 들어온 건 연말정산 등 기타
-  var inc = { '월급': Math.min(sal, reg), '인센': bonusMonth ? over : 0, '포타': _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '부업'; }),
+  var inc = { '월급': Math.min(sal, reg), '인센': bonusMonth ? over : 0, '부업': _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '부업'; }),
               '기타': (bonusMonth ? 0 : over) + _bSum(L, function(t) { return t['대분류'] === '수입' && !(t['소분류'] === '월급' && t['금액'] >= 2500000) && t['소분류'] !== '부업'; }) };
   var total = 0; Object.keys(inc).forEach(function(k) { total += inc[k]; });
   var spend = _bSum(L, _bS), travel = _bSum(L, function(t) { return t['대분류'] === '여행'; });
@@ -600,8 +600,8 @@ function _boardPlanCard(year) {
   var P = months.map(function(ym) { return [ym, ym < cur ? _bActual(ym) : _bProj(ym)]; }).filter(function(x) { return x[1].total > 0 || x[0] >= cur; });
   if (!P.length) return '';
   var mx = Math.max.apply(null, P.map(function(x) { return x[1].total; }).concat([1]));
-  var keys = ['월급', '인센', '포타', '기타'];
-  var y = { '월급': 0, '인센': 0, '포타': 0, '기타': 0 }, ysLife = 0, ysTrip = 0;
+  var keys = ['월급', '인센', '부업', '기타'];
+  var y = { '월급': 0, '인센': 0, '부업': 0, '기타': 0 }, ysLife = 0, ysTrip = 0;
   P.forEach(function(x) { keys.forEach(function(k) { y[k] += x[1].inc[k]; }); if (x[1].actual) { ysLife += x[1].spend - x[1].travel; ysTrip += x[1].travel; } else ysLife += x[1].spend; });
   (_boardExtra.trips || []).forEach(function(t) { if (t.start.slice(0, 4) === Y && t.start.slice(0, 7) >= cur) ysTrip += t.own; });
   var ys = ysLife + ysTrip, yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys;
@@ -612,10 +612,24 @@ function _boardPlanCard(year) {
     '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(yt) + tgt(g['수입']) + '</b>' +
     '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(ys) + tgt(g['지출']) + '</b>' +
     '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', Math.max(0, ysave), BK.green]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap;color:' + (ysave >= 0 ? BK.green : BK.red) + '">' + _bMan(ysave) + tgt(g['저축']) + '</b></div>';
+  var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
+  try { open = localStorage.getItem('atelier_board_plan_open') === '1'; } catch (e) {}
+  // 접었을 때: 12칸 띠 — 칸마다 남은 돈(초록 모음 · 빨강 적자), 보고 있는 달은 테두리, 누르면 그 달로
+  var smx = Math.max.apply(null, P.map(function(x) { return Math.abs(x[1].save); }).concat([1]));
+  var strip = '<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;margin-top:12px">' + months.map(function(ym) {
+    var x = P.filter(function(q) { return q[0] === ym; })[0], sv = x ? x[1].save : null, on = ym === view;
+    var hgt = sv == null ? 0 : Math.max(3, Math.abs(sv) / smx * 34);
+    return '<div onclick="_ldgYear=' + (+ym.slice(0, 4)) + ';_ldgMonth=' + (+ym.slice(5)) + ';ldgRenderMonthly()" style="cursor:pointer;padding:4px 2px 3px;text-align:center;border:' + (on ? '2px solid ' + BK.ink : '1px solid #e2e8f0') + ';background:' + (x && !x[1].actual ? '#f5f9ff' : '#fff') + '">' +
+      '<div style="height:36px;display:flex;align-items:flex-end;justify-content:center"><div style="width:60%;height:' + hgt + 'px;background:' + (sv == null ? 'transparent' : sv >= 0 ? BK.green : BK.red) + '"></div></div>' +
+      '<div class="lb-n" style="font-size:11px;color:' + (sv == null ? BK.mute : sv >= 0 ? BK.green : BK.red) + '">' + (sv == null ? '·' : _bMan(sv)) + '</div>' +
+      '<div style="font-size:11px;color:' + BK.ink + ';font-weight:' + (on ? 700 : 400) + '">' + (+ym.slice(5)) + '월</div></div>';
+  }).join('') + '</div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px;color:' + BK.sub + ';margin-top:4px"><span>막대 = 그 달 남은 돈 · 흰 칸 실제 · 파란 칸 계획</span>' +
+    '<button class="lb-more" onclick="try{localStorage.setItem(\'atelier_board_plan_open\',\'1\')}catch(e){};ldgRenderBoard()">달별로 펼치기 ▾</button></div>';
   var cols = 'grid-template-columns:46px minmax(0,1fr) 52px 52px minmax(0,0.9fr)';
   var rows = P.map(function(x) {
     var ym = x[0], p = x[1];
-    return '<div style="display:grid;' + cols + ';gap:8px;align-items:start;font-size:12px;padding:6px 0;border-top:1px solid #eef1f5' + (ym === cur ? ';background:#f5f9ff' : '') + '">' +
+    return '<div style="display:grid;' + cols + ';gap:8px;align-items:start;font-size:12px;padding:6px 0;border-top:1px solid #eef1f5' + (ym === view ? ';background:#eaf2fe;box-shadow:inset 3px 0 0 ' + BK.data : '') + '">' +
       '<b style="padding-top:1px;color:' + (p.actual ? BK.sub : BK.ink) + '">' + ym.slice(2).replace('-', '.') + '</b>' +
       '<div>' + _bStack(keys.map(function(k) { return [k, p.inc[k], MIRROR_INC_COLORS[k]]; }), mx * 1.02, 10) + '</div>' +
       '<b class="lb-n" style="text-align:right;padding-top:1px">' + _bMan(p.total) + '</b>' +
@@ -623,8 +637,9 @@ function _boardPlanCard(year) {
       '<span style="font-size:11px;color:' + BK.ink + ';padding-top:1px">' + (p.actual ? '<span style="color:' + BK.sub + '">실제 · 쓴 돈 ' + _bMan(p.spend) + '</span>' : _bEsc(p.ev)) + '</span></div>';
   }).join('');
   var title = Y === '2027' ? '2027 계획 · 도전안' : Y + ' 한 해 · 지난 달은 실제, ' + (+cur.slice(5)) + '월부터 계획';
-  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + title + '</span><span>만 원 · 세후 통장 기준</span></p>' + head +
-    '<div style="display:grid;' + cols + ';gap:8px;font-size:11px;color:' + BK.sub + ';font-weight:600;margin-top:12px;padding-bottom:2px"><span>달</span><span>들어온 · 들어올 돈</span><span style="text-align:right">합계</span><span style="text-align:right">남은 돈</span><span>이 달</span></div>' + rows + '</div>';
+  var table = '<div style="display:grid;' + cols + ';gap:8px;font-size:11px;color:' + BK.sub + ';font-weight:600;margin-top:12px;padding-bottom:2px"><span>달</span><span>들어온 · 들어올 돈</span><span style="text-align:right">합계</span><span style="text-align:right">남은 돈</span><span>이 달</span></div>' + rows +
+    '<div style="text-align:right"><button class="lb-more" onclick="try{localStorage.setItem(\'atelier_board_plan_open\',\'0\')}catch(e){};ldgRenderBoard()">접기 ▴</button></div>';
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + title + '</span><span>만 원 · 세후 통장 기준</span></p>' + head + (open ? table : strip) + '</div>';
 }
 
 function _boardSplit(ym, m) {
