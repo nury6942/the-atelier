@@ -15,18 +15,18 @@ var MIRROR_ENVELOPES = [
 // ── 달별 플레이북: 작년 같은 달 데이터로 올해 그 달을 미리 막는다 (2027년엔 2026년 데이터로 저절로)
 // 달(1~12)마다 한도·할 일. 'YYYY-MM' 키는 그 해에만. 한도는 원.
 var MIRROR_MONTH_PLAN = {
-  1:  { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새해 결심 쇼핑 주의 · 큰 물건 프로젝트 없음', '여행 항공은 마일리지 먼저'] },
-  2:  { caps: { '가족·선물': 700000 }, todo: ['설 봉투 70만만', '조용한 달 · 남는 돈 그대로 집 통장'] },
-  3:  { caps: { '옷·뷰티': 900000, '가족·선물': 1000000 }, todo: ['봄 옷은 이 달에만 (시즌 90만)', '가족 선물 봉투 100만'] },
-  4:  { caps: { '옷·뷰티': 100000, '가족·선물': 500000 }, todo: ['상여 받는 날 바로 옮기기', '생일 선물 봉투 50만'] },
+  1:  { caps: { '물건': 300000 }, todo: ['새해 결심 쇼핑 주의 · 큰 물건 프로젝트 없음', '여행 항공은 마일리지 먼저'] },
+  2:  { caps: { '사람': 700000 }, todo: ['설 봉투 70만만', '조용한 달 · 남는 돈 그대로 집 통장'] },
+  3:  { caps: { '옷·뷰티': 900000, '사람': 1000000 }, todo: ['봄 옷은 이 달에만 (시즌 90만)', '가족 선물 봉투 100만'] },
+  4:  { caps: { '사람': 500000 }, todo: ['상여 받는 날 바로 옮기기', '생일 선물 봉투 50만'] },
   5:  { caps: {}, todo: ['종합소득세 · 모아 둔 세금 통장으로'] },
   6:  { caps: { '물건': 500000 }, todo: ['집 프로젝트는 하나만 · 예산 먼저'] },
   7:  { caps: {}, todo: [] },
-  8:  { caps: { '옷·뷰티': 100000 }, todo: ['가을 여행 예약은 일정 확정 뒤 한 번에', '가을 옷은 9월로'] },
+  8:  { caps: {}, todo: ['가을 여행 예약은 일정 확정 뒤 한 번에', '가을 옷은 9월로'] },
   9:  { caps: { '옷·뷰티': 900000 }, todo: ['가을 옷은 이 달에만 (시즌 90만)'] },
   10: { caps: {}, todo: ['상여 받는 날 바로 옮기기'] },
-  11: { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
-  12: { caps: { '옷·뷰티': 200000, '가족·선물': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
+  11: { caps: { '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
+  12: { caps: { '옷·뷰티': 200000, '사람': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
   '2027-03': { todo: ['집 상환 자금 2,500만 완성'] },
   '2027-04': { todo: ['집 마지막 상환 🎉'] }
 };
@@ -335,6 +335,86 @@ function _boardLeaks() {
     '<div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #f1f5f9"><span style="font-size:11px;color:#94a3b8">여행·사람·영어는 가치라 지켜요 · 여행은 1년 2번</span><span><b class="lb-n" style="font-size:18px;color:#1baf7a">월 ' + _bMan(cutSum) + '만</b><span style="font-size:11px;color:#94a3b8"> · 연 ' + _bMan(cutSum * 12) + '만</span></span></div></div>';
 }
 
+
+// ── 통장 나누기 (상여 없는 평달 기준, 원) — 2026-10-15 누리와 정함
+var MIRROR_SPLIT = [
+  // [이름, 계획, 색, 설명]
+  ['고정', 950000, '#888780', '할머니·관리비·월주차·통신·구독'],
+  ['연간 적립', 230000, '#b4b2a9', '영어 수업료·종소세 미리'],
+  ['생활비', 1830000, '#e87ba4', '카드 한 장 · 아래 칸별 한도'],
+  ['여행', 300000, '#2a78d6', '+ 상여 = 1년 2번'],
+  ['집 자금', 1390000, '#1baf7a', '2027-04부터 이주 자금']
+];
+// 생활비 칸별 한도 (원). 달별 예외는 MIRROR_MONTH_PLAN caps
+var MIRROR_LIVING = [
+  ['외식', 'restaurant', function(t) { return t['소분류'] === '외식비'; }, 250000],
+  ['배달', 'delivery_dining', function(t) { return t['소분류'] === '배달'; }, 120000],
+  ['카페·간식', 'local_cafe', function(t) { return t['소분류'] === '간식/카페'; }, 100000],
+  ['장보기', 'shopping_basket', function(t) { return t['소분류'] === '식재료비' || t['소분류'] === '구내식당'; }, 160000],
+  ['편의점', 'storefront', function(t) { return t['소분류'] === '편의점'; }, 30000],
+  ['옷·뷰티', 'checkroom', function(t) { return t['대분류'] === '품위유지비'; }, 250000],
+  ['물건', 'inventory_2', function(t) { return t['대분류'] === '생필품비'; }, 200000],
+  ['병원·약', 'medical_services', function(t) { return t['대분류'] === '건강/의료비'; }, 200000],
+  ['주유·교통', 'local_gas_station', function(t) { return t['대분류'] === '교통비' && t['소분류'] !== '주차비'; }, 220000],
+  ['취미·여가', 'palette', function(t) { return t['대분류'] === '여가비'; }, 100000],
+  ['책·공부', 'menu_book', function(t) { return t['대분류'] === '자기계발비' && t['소분류'] !== '영어 강의'; }, 100000],
+  ['사람', 'groups', function(t) { return (t['대분류'] === '관계비' || t['대분류'] === '경조사비') && t['소분류'] !== '할머니용돈'; }, 100000]
+];
+var _bFixed = function(t) { return ['고정비', '주거비', '세금/보험'].indexOf(t['대분류']) >= 0 || t['소분류'] === '주차비' || t['소분류'] === '할머니용돈'; };
+var _bAnnual = function(t) { return t['소분류'] === '영어 강의' || /종합소득|국세/.test(t['세부사항'] || ''); };
+function _bLivingRow(t) { for (var i = 0; i < MIRROR_LIVING.length; i++) if (MIRROR_LIVING[i][2](t)) return i; return -1; }
+
+function _boardSplit(ym, m) {
+  var L = m ? m.L : [], RED = '#e34948', GREEN = '#1baf7a';
+  var inc = _bSum(L, function(t) { return t['대분류'] === '수입'; });
+  var sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급'; });
+  var bonus = sal.reduce(function(a, t) { return a + (t['금액'] > 4000000 ? t['금액'] - 3550000 : 0); }, 0);  // 평소 월급(≈355만) 넘는 몫 ≈ 상여
+  var act = {
+    '고정': _bSum(L, function(t) { return _bS(t) && _bFixed(t) && !_bAnnual(t); }),
+    '연간 적립': _bSum(L, function(t) { return _bS(t) && _bAnnual(t); }),
+    '생활비': _bSum(L, function(t) { return _bS(t) && !_bFixed(t) && !_bAnnual(t) && t['대분류'] !== '여행' && t['대분류'] !== '미분류'; }),
+    '여행': _bSum(L, function(t) { return t['대분류'] === '여행'; }),
+    '집 자금': _bSum(L, function(t) { return t['소분류'] === 'OK 적립' || t['소분류'] === 'OK 인출'; })
+  };
+  var tf = _boardTripFor(ym), bonusTo = ym <= MIRROR_GOAL.due ? '집 자금' : (tf ? tf.trip.title + ' 여행' : '여행');
+  var cells = MIRROR_SPLIT.map(function(x) {
+    var name = x[0], plan = x[1], a = act[name], label = name === '집 자금' && ym >= '2027-04' ? '이주 자금' : name;
+    var isSave = name === '집 자금', isTravel = name === '여행';
+    var good = isSave ? a >= plan : a <= plan;
+    var sub = isTravel ? '이 달 쓴 여행비 ' + _bMan(a) + '만 (여행 통장에서)' : (isSave ? '이 달 OK 순적립 ' + _bMan(a) + '만' : '쓴 돈 ' + _bMan(a) + '만');
+    return '<div style="border-top:3px solid ' + x[2] + ';padding-top:6px"><div style="display:flex;justify-content:space-between;font-size:12px"><span>' + label + '</span><b class="lb-n">' + _bMan(plan) + '만</b></div>' +
+      '<div style="font-size:11px;color:' + (m && m.L.length && !isTravel ? (good ? GREEN : RED) : '#94a3b8') + ';margin-top:2px">' + (m && m.L.length ? sub : x[3]) + '</div></div>';
+  }).join('');
+  var bonusLine = bonus > 0 ? '<div style="font-size:11px;color:#6366f1;background:#eef2ff;border-radius:8px;padding:6px 10px;margin-top:8px">💰 이 달 상여 ≈ ' + _bMan(bonus) + '만 → 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b></div>' :
+    ((+ym.slice(5) === 4 || +ym.slice(5) === 10) ? '<div style="font-size:11px;color:#6366f1;background:#eef2ff;border-radius:8px;padding:6px 10px;margin-top:8px">💰 상여 달 · 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b>으로</div>' : '');
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + (+ym.slice(5)) + '월 돈 나누기 · 평달 수입 470만 기준</span><span>' + (m && m.L.length ? '이 달 들어온 돈 ' + _bMan(inc) + '만' : '계획') + '</span></p>' +
+    '<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">' + cells + '</div>' + bonusLine + '</div>';
+}
+
+function _boardLiving(ym, m, preview) {
+  var caps = _bPlan(ym).caps, RED = '#e34948', GREEN = '#1baf7a';
+  var sp = m ? m.L.filter(_bS) : [];
+  var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(_bS); } catch (e) { return []; } })();
+  var tot = 0, totCap = 0;
+  var cells = MIRROR_LIVING.map(function(x, i) {
+    var cap = caps[x[0]] != null ? caps[x[0]] : x[3]; totCap += cap;
+    var rows = sp.filter(function(t) { return _bLivingRow(t) === i; }), v = _bSum(rows, function() { return true; }); tot += v;
+    var lv = _bSum(ly.filter(function(t) { return _bLivingRow(t) === i; }), function() { return true; });
+    var pct = cap ? Math.min(100, v / cap * 100) : 0, over = v > cap, col = over ? RED : (pct >= 80 ? '#eda100' : GREEN);
+    return '<div><div style="font-size:12px;display:flex;justify-content:space-between;gap:4px"><span style="white-space:nowrap"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#64748b">' + x[1] + '</span> ' + x[0] + '</span>' +
+      '<b class="lb-n" style="white-space:nowrap;color:' + (over ? RED : '#0f172a') + '">' + (preview ? '' : _bMan(v) + ' / ') + _bMan(cap) + '만</b></div>' +
+      (preview ? '' : '<div class="lb-bar"><div style="width:' + pct + '%;height:100%;background:' + col + '"></div></div>') +
+      '<div class="lb-ms"><span style="color:#b45309">작년 ' + _bMan(lv) + '만</span>' + (lv > cap ? ' → <b style="color:' + GREEN + '">' + _bMan(lv - cap) + ' 덜</b>' : '') + '</div></div>';
+  }).join('');
+  var tf = _boardTripFor(ym), trip = '';
+  if (tf) {
+    var tv = m && !preview ? m.envs[0].val : 0;
+    trip = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid #f1f5f9"><span><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#2a78d6">flight</span> 여행은 따로 · ' + _bEsc(tf.trip.title) + ' (' + tf.trip.start.slice(2, 7).replace('-', '.') + ')</span><b class="lb-n" style="color:' + (tv > tf.trip.budget ? RED : '#0f172a') + '">' + (preview ? '' : _bMan(tv) + ' / ') + _bMan(tf.trip.budget) + '만</b></div>';
+  }
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + (+ym.slice(5)) + '월 생활비 · 칸별 한도</span><span>' + (preview ? '한도 ' + _bMan(totCap) + '만' : '<b class="lb-n" style="color:' + (tot > totCap ? RED : GREEN) + '">' + _bMan(tot) + '</b> / ' + _bMan(totCap) + '만') + '</span></p>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 16px">' + cells + '</div>' + trip + '</div>';
+}
+
 var _boardShowAllBig = false;
 
 function ldgRenderBoard() {
@@ -347,21 +427,8 @@ function ldgRenderBoard() {
   var m = ldgBoardMonth(ym), b = ldgBoardBaseline();
   if (!m.L.length) {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
-    var lyE = ldgBoardMonth(_bYm(ym, -12), true).envs, caps = _bPlan(ym).caps;
-    var tfp = _boardTripFor(ym);
-    var budget = MIRROR_ENVELOPES.map(function(e, i) {
-      var cap = caps[e[0]] != null ? caps[e[0]] : e[3], lv = lyE[i] ? lyE[i].val : 0;
-      if (e[0] === '여행' && tfp) {
-        return '<div><div style="font-size:12px;display:flex;justify-content:space-between"><span><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#64748b">flight</span> 여행</span><b class="lb-n">' + _bMan(tfp.trip.budget) + '만</b></div>' +
-          '<div class="lb-ms">' + _bEsc(tfp.trip.title) + ' · ' + tfp.trip.start.slice(2, 7).replace('-', '.') + ' 예산</div></div>';
-      }
-      var capTxt = e[4] === '회' ? cap + '회' : _bMan(cap) + '만', lyTxt = e[4] === '회' ? lv + '회' : _bMan(lv) + '만';
-      return '<div><div style="font-size:12px;display:flex;justify-content:space-between"><span><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#64748b">' + e[1] + '</span> ' + e[0] + '</span><b class="lb-n">' + capTxt + '</b></div>' +
-        '<div class="lb-ms"><span style="color:#b45309">작년 ' + lyTxt + '</span>' + (e[4] !== '회' && lv > cap ? ' → <b style="color:#1baf7a">' + _bMan(lv - cap) + '만 덜 쓰기</b>' : '') + '</div></div>';
-    }).join('');
     el.innerHTML = '<div style="font-size:11px;color:#6366f1;background:#eef2ff;border-radius:8px;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
-      _boardPlaybook(ym, m) +
-      '<div class="lb-c"><p class="lb-t"><span>' + mk + ' 예산 · 한도</span><span>작년 같은 달과 비교</span></p><div class="lb-env">' + budget + '</div></div>';
+      _boardPlaybook(ym, m) + _boardSplit(ym, null) + _boardLiving(ym, null, true);
     return;
   }
   var T = MIRROR_GOAL.amount, RED = '#e34948', GREEN = '#1baf7a', h = '';
@@ -403,18 +470,8 @@ function ldgRenderBoard() {
   // ── 이 달 플레이북 (작년 같은 달 → 올해 할 일)
   try { h += _boardPlaybook(ym, m); } catch (e) { console.error('[Board playbook]', e); }
 
-  // ── 봉투 5개
-  var lyEnv = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).envs; } catch (e) { return []; } })();
-  h += '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 봉투 · 쓴 돈 / 한도</span><span>빨강 = 넘침</span></p><div class="lb-env">' +
-    m.envs.map(function(e, ei) {
-      var ly = lyEnv[ei] ? (e.unit === '회' ? lyEnv[ei].val + '회' : _bMan(lyEnv[ei].val) + '만') : '';
-      var over = e.cap === 0 ? e.val > 0 : e.val > e.cap, pct = e.cap ? Math.min(100, e.val / e.cap * 100) : (e.val > 0 ? 100 : 0);
-      var col = over ? RED : (pct >= 80 ? '#eda100' : GREEN);
-      var fmt = e.unit === '회' ? e.val + ' / ' + e.cap + '회' : _bMan(e.val) + ' / ' + _bMan(e.cap) + '만';
-      return '<div><div style="font-size:12px;display:flex;justify-content:space-between;gap:6px"><span><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#64748b">' + e.icon + '</span> ' + e.name + '</span><b class="lb-n" style="color:' + (over ? RED : '#0f172a') + '">' + fmt + '</b></div>' +
-        '<div class="lb-bar"><div style="width:' + pct + '%;height:100%;background:' + col + '"></div></div>' +
-        '<div class="lb-ms" title="' + _bEsc(e.top.join(' · ')) + '">' + (ly ? '<span style="color:#b45309">작년 ' + ly + '</span> · ' : '') + (e.unit === '회' ? _bMan(e.money) + '만' : (_bEsc(e.top.join(' · ')) || '없음')) + '</div></div>';
-    }).join('') + '</div></div>';
+  // ── 돈 나누기 + 생활비 칸별 한도 (여행은 따로)
+  try { h += _boardSplit(ym, m) + _boardLiving(ym, m, false); } catch (e) { console.error('[Board split]', e); }
 
   // ── 큰 결제 · 어디에 썼나
   var list = _boardShowAllBig ? m.bigs : m.bigs.slice(0, 6);

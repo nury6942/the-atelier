@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=383" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=384" as="script">
   <link rel="preload" href="js/app-2-init.js?v=180" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11450,6 +11450,10 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">work</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Job Hunt</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-aibrief" onclick="navigate('aibrief'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">auto_awesome</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">AI Brief</span>
+    </a>
 
     <!-- Nomad Master — 단일 항목 (페이지 안에서 sub-sidebar로 28개 sub-page) -->
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-nomad-master" onclick="navigate('nomad-master'); return false;">
@@ -16268,7 +16272,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=383" defer></script>
+<script src="js/app-1-pages.js?v=384" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17095,6 +17099,10 @@
     </div>
 
   <!-- ════════ NOMAD MASTER 페이지 — 내부 sub-sidebar + 메인 콘텐츠 ════════ -->
+  <div id="page-aibrief" class="page" style="display:none;padding:0;background:#fff">
+    <iframe src="./ai-brief.html" title="AI Brief" loading="lazy"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
+  </div>
   <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
@@ -17140,7 +17148,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=171" defer></script>
-<script src="js/app-7-mirror.js?v=20" defer></script>
+<script src="js/app-7-mirror.js?v=21" defer></script>
 <script src="js/english-study.js?v=11" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
