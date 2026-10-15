@@ -313,7 +313,9 @@
   <style>
     *{box-sizing:border-box}
     /* 연회색 글자 금지 (누리 2026-10-15) — 흐린 회색 글자를 전부 읽히는 진하기로 */
-        /* html 접두로 기본 클래스만 이기고, hover:/group-hover: 같은 상태 색은 그대로 둔다 */
+        /* MONEY 쪽(자산·가계부·부업·캐시플로우)은 모서리 전부 직각 (누리 2026-10-15) */
+    #page-finance *,#page-finance-hub *,#page-ledger *,#page-income *{border-radius:0 !important}
+    /* html 접두로 기본 클래스만 이기고, hover:/group-hover: 같은 상태 색은 그대로 둔다 */
     html .text-slate-300,html .text-slate-400,html .text-gray-300,html .text-gray-400,html .text-stone-400,html .text-zinc-400,html .text-neutral-400,html .text-outline-variant{color:#475569}
     html .text-slate-500,html .text-gray-500{color:#334155}
     .placeholder\:text-slate-300::placeholder,.placeholder\:text-slate-400::placeholder,input::placeholder,textarea::placeholder{color:#64748b !important}
@@ -17153,7 +17155,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=171" defer></script>
-<script src="js/app-7-mirror.js?v=27" defer></script>
+<script src="js/app-7-mirror.js?v=28" defer></script>
 <script src="js/english-study.js?v=11" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->

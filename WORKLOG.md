@@ -1,3 +1,11 @@
+## 2026-10-15 (맥북) — 가계부 보드 색 줄이기 · MONEY 직각
+
+- 누리: '무지개라 정신없다, 컬러 수 줄여줘 · 아웃라인 둥근 거 다 직각으로(MONEY 전부)' → 보드 색 = 데이터 남색 #4f46e5 하나 + 작년/평소 연남색 #a5b4fc + 상태 초록/빨강만. 카테고리별 색·주황·하늘·보라 다 없앰, 판정 카드 초록 테두리 없앰, 카드 테두리 #cbd5e1 하나
+- index.html: #page-finance/-finance-hub/-ledger/-income 안 border-radius 0 (!important). board v28, SW v547
+- 현금으로 낸 반품비: 이체 1년치 소액 다 훑었는데 없음 (반품 배송비는 우체국 카드 5건 + 29CM 차감 7건이 전부)
+
+---
+
 ## 2026-10-15 (맥북) — AI Brief: X·Threads 칸 + 맥 수집기
 
 - 누리: 'X, Threads 넣어줘, 실사용자·꿀팁이 여기 진짜 많다' → 화면에 'X · Threads' 칸(작성자·♥·한 줄 요약·후기/꿀팁/만든 것/소식 태그), data/ai-brief/social/YYYY-MM-DD.json 을 따로 읽음
