@@ -1,3 +1,12 @@
+## 2026-10-15 (맥북) — AI Brief: X·Threads 칸 + 맥 수집기
+
+- 누리: 'X, Threads 넣어줘, 실사용자·꿀팁이 여기 진짜 많다' → 화면에 'X · Threads' 칸(작성자·♥·한 줄 요약·후기/꿀팁/만든 것/소식 태그), data/ai-brief/social/YYYY-MM-DD.json 을 따로 읽음
+- 수집: 맥 예약 작업 ai-brief-social 매일 06:20, 로그인된 크롬(Claude in Chrome)으로 읽기만. 지시서 docs/ai-brief/SOCIAL.md, 추출 scripts/ai-brief/extract-posts.js. 07:08 클라우드 루틴이 이 파일을 재료로 씀
+- 실측: Threads 홈(추천) 피드가 검색보다 훨씬 좋음(검색 인기=1주 넘은 글, 최근=스팸). 영문 'ai' 는 단어 경계 필수('daily' 오탐). 같은 계정 도배 → 하루 2개 제한
+- 막힌 점: X 는 크롬에 로그인 안 됨 → 누리가 x.com 한 번 로그인하면 다음 날부터 자동 포함. Threads 이미지 주소는 서명 토큰이라 안 실음(글 카드만)
+
+---
+
 ## 2026-10-15 (맥북) — 실제 반품비 · 보드 친절하게 다시 · 연회색 글자 금지
 
 - 29CM 주문내역 API(apihub …/order/cs/ + /api/v1/order-return/order-as/{AS번호}/ 의 as_refund.customer_return/add_delivery_amount)로 반품비 실제값. 무신사 결제 = 29CM. 뱅샐 기간 반품 7건 39,000원(+우체국 5건) → ~/money/labels.py RETURNS_29CM, 의류에서 빼서 '반품 배송비'로 옮김(합계 그대로). 추정 MIRROR_RETURN_FEE 삭제

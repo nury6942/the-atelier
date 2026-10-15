@@ -1,0 +1,130 @@
+{
+ "date": "2026-10-15",
+ "collectedAt": "2026-10-15T16:40:00+09:00",
+ "skipped": [
+  "x: 크롬에 로그인 안 됨"
+ ],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@enter.high",
+   "url": "https://www.threads.com/@enter.high/post/DeRnz3TCQ0X",
+   "at": "2026-10-09",
+   "likes": 1200,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 Pro로 '유튜브로 돈 벌기' 아이디어를 계속 밀어붙이게 하는 질문법"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DecXeIJD89r",
+   "at": "2026-10-13",
+   "likes": 368,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "앤트로픽이 git 대신 자체 소스 관리를 만듦. 하루 병합 2,500→3만 건"
+  },
+  {
+   "src": "threads",
+   "author": "@bitterbuttbetter",
+   "url": "https://www.threads.com/@bitterbuttbetter/post/DeeSUZkGZIN",
+   "at": "2026-10-14",
+   "likes": 271,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "릴스 스타일 리서치는 에이전트에, 제작은 클로드에, 나레이션은 힉스필드 MCP로 만들어 본 후기"
+  },
+  {
+   "src": "threads",
+   "author": "@ddoominism",
+   "url": "https://www.threads.com/@ddoominism/post/DeTcmnEifxr",
+   "at": "2026-10-10",
+   "likes": 204,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 초보용 30일 챌린지를 무료로 공개. 매일 하나씩 따라 하기"
+  },
+  {
+   "src": "threads",
+   "author": "@hustle_raccoon",
+   "url": "https://www.threads.com/@hustle_raccoon/post/DefkVWPEy0p",
+   "at": "2026-10-14",
+   "likes": 164,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "레딧 Claude 게시판 '아직 모르는 AI 꿀팁' 댓글 200개 정리"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/Decq8AwjWJf",
+   "at": "2026-10-13",
+   "likes": 80,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "말로 설명하면 SolidWorks에서 부품·조립·도면까지 그려주는 MecAgent 2.0"
+  },
+  {
+   "src": "threads",
+   "author": "@raejo_dor",
+   "url": "https://www.threads.com/@raejo_dor/post/DeO9HK8gYcf",
+   "at": "2026-10-08",
+   "likes": 79,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "클로드 스타트업 크레딧 1분 만에 합격, 신청 과정 그대로 공유"
+  },
+  {
+   "src": "threads",
+   "author": "@oeeoam",
+   "url": "https://www.threads.com/@oeeoam/post/DegMiFKoP3c",
+   "at": "2026-10-15",
+   "likes": 68,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "디자이너가 막걸리 패키지 목업·연출컷·영상까지 전부 AI로 다시 만듦"
+  },
+  {
+   "src": "threads",
+   "author": "@climb_yiin",
+   "url": "https://www.threads.com/@climb_yiin/post/DeeMY55kVEM",
+   "at": "2026-10-14",
+   "likes": 56,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "게임 개발 경험 없이 Astra로 시작해 Opus 5.5로 게임을 만드는 중"
+  },
+  {
+   "src": "threads",
+   "author": "@haribosci",
+   "url": "https://www.threads.com/@haribosci/post/DefWKhQEk9D",
+   "at": "2026-10-14",
+   "likes": 42,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Astra가 점점 둔해지는 느낌. 코덱스 시스템을 클로드로도 돌게 긴급 변경 중"
+  },
+  {
+   "src": "threads",
+   "author": "@oneul_maker",
+   "url": "https://www.threads.com/@oneul_maker/post/DegPLeHkbkA",
+   "at": "2026-10-15",
+   "likes": 0,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "개발 경험 0으로 앱을 만들어 토스에 출시. 검토에서 두 번 떨어진 이유까지"
+  }
+ ]
+}

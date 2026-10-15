@@ -25,6 +25,7 @@ cards 5개는 한 카테고리가 3개를 넘지 않게 섞는다.
 
 ## 순서
 
+0. `data/ai-brief/social/<오늘>.json` 이 있으면 먼저 읽는다 — 맥이 06:20 에 누리의 로그인된 Threads·X 에서 모은 실사용 글이다. 여기 나온 화제(새 모델·도구·만든 것)를 카드 후보로 삼고, 해당 글을 `reviews`·`examples` 재료로 쓴다(그 파일 자체는 화면이 따로 보여주므로 같은 글을 pickup 에 또 넣지 않는다). 없으면 그냥 넘어간다.
 1. `data/ai-brief/index.json` 과 최근 7일 JSON 을 읽는다 → 이미 다룬 url 은 다시 쓰지 않는다. 어제 JSON 의 `watching` 목록을 이어받는다.
 2. 지난 24~72시간을 훑는다 (WebSearch 여러 번, 같은 턴에 병렬로):
    - 발표: Anthropic·OpenAI·Google·Meta·xAI·Mistral·DeepSeek·Qwen, Midjourney·Runway·Kling·ElevenLabs·Suno 등 체인지로그/블로그

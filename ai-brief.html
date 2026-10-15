@@ -84,6 +84,23 @@
   .rv .good i{color:#059669} .rv .bad i{color:#dc2626}
   .rv em{font-style:normal;color:var(--dim);font-size:11px;margin-left:4px}
 
+  /* X · Threads */
+  .soc{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  .post{display:flex;flex-direction:column;border:1px solid var(--ink);background:#fff;min-width:0}
+  .post .img{aspect-ratio:16/10}
+  .post .img .ph{font-size:1.3rem}
+  .post .pb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .post .who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;min-width:0}
+  .post .who .pf{flex:none;width:18px;height:18px;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:10px;font-weight:800}
+  .post .who .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .post .who .lk{margin-left:auto;color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .post .sm{font-size:14px;font-weight:600;line-height:1.45;letter-spacing:-.01em}
+  .post .tg{font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 7px;color:#fff;background:var(--tc)}
+  .post:hover{background:var(--wash)}
+  .post:not(.has-img) .sm{font-size:16px;line-height:1.45}
+  .post .ft{margin-top:auto;display:flex;align-items:center;gap:8px}
+  .post .md{font-size:11px;color:var(--dim);font-weight:600}
+
   /* 오늘 해볼 것 */
   .sech{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
     border-bottom:2px solid var(--accent);padding-bottom:10px;margin:56px 0 20px}
@@ -144,7 +161,7 @@
     free:{label:'무료', c:'var(--c-free)', s:'FREE'}
   };
   var app = document.getElementById('app');
-  var dates = [], cur = null, doneMap = {};
+  var dates = [], cur = null, doneMap = {}, social = null;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function cat(k){ return CAT[k] || CAT.tool; }
@@ -229,6 +246,22 @@
       h += '<div class="grid">'+card(cards[0],'hero')+'<div class="side">'+(cards[1]?card(cards[1]):'')+(cards[2]?card(cards[2]):'')+'</div></div>';
       if (cards.length>3) h += '<div class="row2">'+cards.slice(3,5).map(function(c){return card(c);}).join('')+'</div>';
     }
+    if (social && social.posts && social.posts.length){
+      var TG={'후기':'#059669','꿀팁':'#ea580c','만든 것':'#2563eb','소식':'#111'};
+      var posts = social.posts.slice().sort(function(a,b){ return (b.likes||0)-(a.likes||0); });
+      h += '<div class="sech"><h2>X · Threads</h2><span class="cap">써본 사람들 · '+posts.length+'</span></div><div class="soc">'
+        + posts.map(function(p){
+            var k = p.src==='x' ? 'tool' : 'release';
+            return '<a class="post'+(p.image?' has-img':'')+'" href="'+esc(p.url)+'" target="_blank" rel="noopener">'
+              + (p.image ? img(p.image, k) : '')
+              + '<div class="pb"><div class="who"><span class="pf">'+(p.src==='x'?'X':'@')+'</span><span class="nm">'+esc(p.author)+'</span>'
+              + (p.likes ? '<span class="lk">♥ '+Number(p.likes).toLocaleString('ko-KR')+'</span>' : '')+'</div>'
+              + '<div class="sm">'+esc(p.summary)+'</div>'
+              + '<div class="ft">'+(p.tag ? '<span class="tg" style="--tc:'+(TG[p.tag]||'#111')+'">'+esc(p.tag)+'</span>' : '')
+              + (!p.image && p.media ? '<span class="md">사진·영상 ↗</span>' : '')+'</div>'
+              + '</div></a>';
+          }).join('') + '</div>';
+    }
     if (d.tryToday && d.tryToday.length){
       h += '<div class="sech"><h2>오늘 해볼 것</h2><span class="cap">Try today</span></div><div class="tries">'+d.tryToday.slice(0,2).map(tryBlock).join('')+'</div>';
     }
@@ -283,7 +316,11 @@
 
   function load(date){
     return fetch(BASE+date+'.json', {cache:'no-cache'}).then(function(r){ if(!r.ok) throw r.status; return r.json(); })
-      .then(function(d){ cur=d; try{ history.replaceState(null,'','?d='+date); }catch(e){} render(); })
+      .then(function(d){
+        cur=d;
+        return fetch(BASE+'social/'+date+'.json', {cache:'no-cache'}).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+          .then(function(sc){ social=sc; try{ history.replaceState(null,'','?d='+date); }catch(e){} render(); });
+      })
       .catch(function(){ app.innerHTML='<div class="empty">'+esc(date)+' 브리핑을 못 불러왔어요</div>'; });
   }
 
