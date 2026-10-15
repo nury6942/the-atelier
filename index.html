@@ -14237,8 +14237,6 @@
       <!-- Tab Content Panels -->
       <div id="ledger-panel-monthly" class="ledger-panel">
 
-        <!-- [0] 보드: 뱅샐 데이터로 매달 자동 계산 (js/app-7-mirror.js) -->
-        <div id="ldg-board"></div>
 
         <!-- [1] Month Navigation Bar -->
         <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
@@ -14260,11 +14258,14 @@
           </div>
         </div>
 
+        <!-- [1.2] 전략 보드: 고른 달 기준 (js/app-7-mirror.js) — KPI·도넛·TOP·카테고리 집계·일별 추이를 대신함 -->
+        <div id="ldg-board"></div>
+
         <!-- [1.5] Annual Goal Progress Widget -->
         <div id="ldg-annual-goal-wrap" class="mb-6"></div>
 
         <!-- [2] KPI Strip -->
-        <div class="grid grid-cols-5 gap-6 mb-8" id="ldg-kpi-strip"></div>
+        <div class="grid grid-cols-5 gap-6 mb-8" id="ldg-kpi-strip" style="display:none"></div>
 
         <!-- [3] Two-column layout -->
         <div class="grid grid-cols-2 gap-6 mb-8">
@@ -14278,8 +14279,11 @@
               </div>
               <div id="ldg-calendar" class="grid grid-cols-7 gap-1"></div>
             </div>
+          </div>
+          <!-- Right column -->
+          <div class="space-y-6">
             <!-- Payment methods + Checklist side by side -->
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6">
               <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                 <h4 class="font-bold text-slate-800 mb-4 text-sm">결제수단별 지출</h4>
                 <div id="ldg-payment-methods" class="space-y-3"></div>
@@ -14293,9 +14297,7 @@
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Right column -->
-          <div class="space-y-6">
+                      <div style="display:none">
             <!-- Donut charts -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] grid grid-cols-2 gap-6">
               <div class="flex flex-col items-center">
@@ -14317,11 +14319,12 @@
               <h4 class="font-bold text-slate-800 mb-4 text-sm">일별 지출 추이</h4>
               <div class="h-40"><canvas id="ldg-daily-chart"></canvas></div>
             </div>
+            </div>
           </div>
         </div>
 
-        <!-- [4] Category Grid (5 cols) -->
-        <div class="mb-8">
+        <!-- [4] Category Grid (5 cols) — 전략 보드 '어디에'로 대신해서 숨김 -->
+        <div class="mb-8" style="display:none">
           <h4 class="font-bold text-slate-800 text-sm mb-4">카테고리별 집계</h4>
           <div id="ldg-cat-grid" class="grid grid-cols-5 gap-4"></div>
         </div>
@@ -14342,7 +14345,7 @@
               </button>
             </div>
           </div>
-          <div id="ldg-paste-panel" style="display:block" class="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
+          <div id="ldg-paste-panel" style="display:none" class="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
             <div class="flex items-start gap-3 flex-wrap">
               <textarea id="ldg-paste-input" rows="4" placeholder="신한/현대카드 앱 → 이용내역을 복사해서 여기에 붙여넣으세요 (가맹점 / 금액 / 날짜 3줄 형식). 취소건·중복은 자동으로 걸러줍니다." class="flex-1 min-w-[280px] text-xs border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-300" style="resize:vertical"></textarea>
               <button onclick="ldgPreviewPaste()" class="text-sm font-bold px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 whitespace-nowrap"><span class="material-symbols-outlined align-middle" style="font-size:16px">visibility</span> 미리보기</button>
@@ -17137,7 +17140,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=171" defer></script>
-<script src="js/app-7-mirror.js?v=5" defer></script>
+<script src="js/app-7-mirror.js?v=6" defer></script>
 <script src="js/english-study.js?v=11" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
