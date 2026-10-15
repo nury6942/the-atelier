@@ -555,10 +555,11 @@ function _bProj(ym) {
   var now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
   var inc = { '월급': MIRROR_PROJ.salary(ym), '인센': MIRROR_PROJ.bonus[ym] || 0, '포타': MIRROR_PROJ.pota(ym), '기타': MIRROR_PROJ.side(ym) + ((MIRROR_PROJ.extra[ym] || [0])[0]) };
   if (ym <= nowYm) {  // 이미 들어온 건 실제로
-    var L = _bRows(ym), sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000; });
+    var today = now.toISOString().slice(0, 10);
+    var L = _bRows(ym).filter(function(t) { return t['출처'] === '뱅샐' && t.date <= today; }), sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급' && t['금액'] >= 2500000; });
     var pota = _bSum(L, function(t) { return t['대분류'] === '수입' && t['소분류'] === '부업'; });
     if (pota) inc['포타'] = pota;
-    if (sal.length) { var tot = sal.reduce(function(a, t) { return a + t['금액']; }, 0), reg = _bRegularSalary(); inc['월급'] = Math.min(tot, reg); inc['인센'] = Math.max(0, tot - reg); }
+    if (sal.length) { var tot = sal.reduce(function(a, t) { return a + t['금액']; }, 0), reg = MIRROR_PROJ.salary(ym); inc['월급'] = Math.min(tot, reg); inc['인센'] = Math.max(0, tot - reg); }
   }
   var plan = _bPlan(ym), y27 = ym >= '2027-01';
   var spend = (y27 ? 850000 + 250000 : 950000 + 230000) + plan.living;
@@ -592,7 +593,7 @@ function _boardPlanCard() {
   var trips27 = (_boardExtra.trips || []).filter(function(t) { return t.start.slice(0, 4) === '2027'; }).reduce(function(a, t) { return a + t.own; }, 0);
   ys += trips27;
   var yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys, ymx = Math.max(yt, 9150 * 1e4);
-  var head = '<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 74px;gap:4px 10px;align-items:start;font-size:12px">' +
+  var head = '<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 110px;gap:4px 10px;align-items:start;font-size:12px">' +
     '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right">' + _bMan(yt) + '<span style="font-weight:400;color:' + BK.sub + '"> / 9,150</span></b>' +
     '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ys - trips27, '#e9a39b'], ['여행', trips27, BK.red]], ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right">' + _bMan(ys) + '<span style="font-weight:400;color:' + BK.sub + '"> / 4,600</span></b>' +
     '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', ysave, BK.green]], ymx * 1.02, 14) + '</div><b class="lb-n" style="text-align:right;color:' + BK.green + '">' + _bMan(ysave) + '<span style="font-weight:400;color:' + BK.sub + '"> / 4,550</span></b></div>';
