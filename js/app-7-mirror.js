@@ -616,21 +616,22 @@ function _boardPlanCard(year) {
   try { open = localStorage.getItem('atelier_board_plan_open') === '1'; } catch (e) {}
   // 접었을 때: 12칸 띠 — 칸마다 남은 돈(초록 모음 · 빨강 적자), 보고 있는 달은 테두리, 누르면 그 달로
   var smx = Math.max.apply(null, P.map(function(x) { return Math.abs(x[1].save); }).concat([1]));
-  var strip = '<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;margin-top:12px">' + months.map(function(ym) {
+  var strip = '<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;margin-top:16px">' + months.map(function(ym) {
     var x = P.filter(function(q) { return q[0] === ym; })[0], sv = x ? x[1].save : null, on = ym === view;
     var hgt = sv == null ? 0 : Math.max(3, Math.abs(sv) / smx * 34);
-    return '<div onclick="_ldgYear=' + (+ym.slice(0, 4)) + ';_ldgMonth=' + (+ym.slice(5)) + ';ldgRenderMonthly()" style="cursor:pointer;padding:4px 2px 3px;text-align:center;border:' + (on ? '2px solid ' + BK.ink : '1px solid #e2e8f0') + ';background:' + (x && !x[1].actual ? '#f5f9ff' : '#fff') + '">' +
+    return '<div onclick="_ldgYear=' + (+ym.slice(0, 4)) + ';_ldgMonth=' + (+ym.slice(5)) + ';ldgRenderMonthly()" style="cursor:pointer;position:relative;padding:4px 2px 3px;text-align:center;border:' + (on ? '2px solid ' + BK.data : '1px solid #e2e8f0') + ';background:' + (on ? '#dbeafe' : x && !x[1].actual ? '#f5f9ff' : '#fff') + (on ? ';box-shadow:0 2px 0 ' + BK.data : '') + '">' +
+      (on ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:#fff;background:' + BK.data + ';padding:0 5px;white-space:nowrap">보는 달</div>' : '') +
       '<div style="height:36px;display:flex;align-items:flex-end;justify-content:center"><div style="width:60%;height:' + hgt + 'px;background:' + (sv == null ? 'transparent' : sv >= 0 ? BK.green : BK.red) + '"></div></div>' +
       '<div class="lb-n" style="font-size:11px;color:' + (sv == null ? BK.mute : sv >= 0 ? BK.green : BK.red) + '">' + (sv == null ? '·' : _bMan(sv)) + '</div>' +
-      '<div style="font-size:11px;color:' + BK.ink + ';font-weight:' + (on ? 700 : 400) + '">' + (+ym.slice(5)) + '월</div></div>';
+      '<div style="font-size:' + (on ? 12 : 11) + 'px;color:' + (on ? BK.dataText : BK.ink) + ';font-weight:' + (on ? 800 : 400) + '">' + (+ym.slice(5)) + '월</div></div>';
   }).join('') + '</div>' +
     '<div style="display:flex;justify-content:space-between;font-size:11px;color:' + BK.sub + ';margin-top:4px"><span>막대 = 그 달 남은 돈 · 흰 칸 실제 · 파란 칸 계획</span>' +
     '<button class="lb-more" onclick="try{localStorage.setItem(\'atelier_board_plan_open\',\'1\')}catch(e){};ldgRenderBoard()">달별로 펼치기 ▾</button></div>';
   var cols = 'grid-template-columns:46px minmax(0,1fr) 52px 52px minmax(0,0.9fr)';
   var rows = P.map(function(x) {
     var ym = x[0], p = x[1];
-    return '<div style="display:grid;' + cols + ';gap:8px;align-items:start;font-size:12px;padding:6px 0;border-top:1px solid #eef1f5' + (ym === view ? ';background:#eaf2fe;box-shadow:inset 3px 0 0 ' + BK.data : '') + '">' +
-      '<b style="padding-top:1px;color:' + (p.actual ? BK.sub : BK.ink) + '">' + ym.slice(2).replace('-', '.') + '</b>' +
+    return '<div style="display:grid;' + cols + ';gap:8px;align-items:start;font-size:12px;padding:6px 0;border-top:1px solid #eef1f5' + (ym === view ? ';background:#dbeafe;box-shadow:inset 4px 0 0 ' + BK.data + ';padding-left:8px' : '') + '">' +
+      '<b style="padding-top:1px;color:' + (ym === view ? BK.dataText : p.actual ? BK.sub : BK.ink) + (ym === view ? ';font-weight:800' : '') + '">' + ym.slice(2).replace('-', '.') + '</b>' +
       '<div>' + _bStack(keys.map(function(k) { return [k, p.inc[k], MIRROR_INC_COLORS[k]]; }), mx * 1.02, 10) + '</div>' +
       '<b class="lb-n" style="text-align:right;padding-top:1px">' + _bMan(p.total) + '</b>' +
       '<b class="lb-n" style="text-align:right;padding-top:1px;color:' + (p.save >= 0 ? BK.green : BK.red) + '">' + _bMan(p.save) + '</b>' +
