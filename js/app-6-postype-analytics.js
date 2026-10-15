@@ -229,11 +229,13 @@
   // ─── 예측 모델 ──────────────────────────────────────────────────
   // 예측 모델 튜닝 상수 (조정 가능) ───────────────────────────────
   //  LONGTAIL: 한 회차가 발행 당월(100%) 이후 매달 버는 비율 (사용자 입력: "서서히 감소")
-  //  NEW_SERIES_*: 8월 시작하는 R시리즈 등 신작 — 막 키우는 채널이라 보수적으로
+  //  NEW_SERIES_*: 신작 연재 계획 — 실제로 시작하면 { 'YYYY-MM': 그 달 회차 수 } 로 채운다
   const LONGTAIL      = [1, 0.4, 0.2, 0.1, 0.05];
   const FREE_EPISODES = 3;        // 물고뜯기 1~3화 무료 (매출 없음)
-  const NEW_SERIES_E0 = 40000;    // R시리즈 회차당 첫달 매출 (보수)
-  const NEW_SERIES_PUB = { '2026-08':4, '2026-09':4, '2026-10':4, '2026-11':4, '2026-12':4 };
+  const NEW_SERIES_E0 = 40000;    // 신작 회차당 첫달 매출 (보수)
+  const NEW_SERIES_PUB = {};      // 8월~ R시리즈 가정은 시작되지 않아 비움 (2026-10-15)
+  // 완결 회차는 제목이 '完'·'완결'·'최종화' — 숫자 '화'가 없어 회차번호로 안 읽힌다
+  const FINAL_EP_RE = /完|완결|최종화/;
 
   function buildForecastModel(){
     const posts    = allPosts();
@@ -255,9 +257,14 @@
     if (ongoing){
       const sp0 = posts.filter(p => p.series === ongoing.name && p.firstTs);
       const epNum0 = p => { const mm=(p.title||'').match(/(\d+)\s*화/); return mm?parseInt(mm[1]):0; };
-      let maxEp = 0, lastDate = '';
-      sp0.forEach(p => { const n=epNum0(p); if(n>maxEp) maxEp=n; const dt=(p.firstTs||'').slice(0,10); if(dt>lastDate) lastDate=dt; });
-      if (maxEp > 0) ongoing = Object.assign({}, ongoing, { currentEpisode: maxEp, lastPublishDate: lastDate || ongoing.lastPublishDate });
+      let maxEp = 0, lastDate = '', completedDate = '';
+      sp0.forEach(p => {
+        const n=epNum0(p); if(n>maxEp) maxEp=n;
+        const dt=(p.firstTs||'').slice(0,10); if(dt>lastDate) lastDate=dt;
+        if (FINAL_EP_RE.test(p.title||'')) completedDate = dt;
+      });
+      if (completedDate) ongoing = Object.assign({}, ongoing, { currentEpisode: ongoing.totalEpisodes || maxEp, lastPublishDate: completedDate, completedDate });
+      else if (maxEp > 0) ongoing = Object.assign({}, ongoing, { currentEpisode: maxEp, lastPublishDate: lastDate || ongoing.lastPublishDate });
     }
 
     // ── 요일별 가중치 (최근 8주 실측) — 토/일 피크, 목 바닥 같은 주간 패턴 ──
@@ -310,7 +317,8 @@
       sp.forEach(p => { const n=epNum(p); if(n>maxEp) maxEp=n; const dt=(p.firstTs||'').slice(0,10); if(dt>lastDate) lastDate=dt; });
       if (!maxEp) maxEp = core.length + FREE_EPISODES;
       let cur = new Date(lastDate + 'T00:00:00');
-      for (let ep = maxEp + 1; ep <= (ongoing.totalEpisodes||0); ep++){
+      const lastEp = ongoing.completedDate ? maxEp : (ongoing.totalEpisodes||0);  // 완결이면 더 이상 신작 회차 없음
+      for (let ep = maxEp + 1; ep <= lastEp; ep++){
         cur = new Date(cur.getTime() + 7*86400000);
         const m = `${cur.getFullYear()}-${pad(cur.getMonth()+1)}`;
         ongoingPub[m] = (ongoingPub[m]||0) + 1;
@@ -318,18 +326,33 @@
     }
     const ongoingRev = ym => { let t=0; for(const pm in ongoingPub){ const md=monthDiff(pm,ym); if(md>=0) t+=ongoingPub[pm]*E0*lf(md); } return t; };
 
-    // 멤버십 (최근 완전월 실측) — 고정 수입
+    // 멤버십 (최근 완전월 실측) — 고정 수입. 진행 중인 이번 달은 반쪽짜리라 제외
     const memByMonth = {};
     dailyArr.forEach(x => { const m=(x.date||'').slice(0,7); if(m) memByMonth[m]=(memByMonth[m]||0)+((x.byType&&x.byType.membership)||0); });
     const memKeys = Object.keys(memByMonth).sort();
-    const membership = memKeys.length ? memByMonth[memKeys[memKeys.length-1]] : 0;
+    const memFull = memKeys.filter(m => m < thisMonth());
+    const memPick = memFull.length ? memFull[memFull.length-1] : memKeys[memKeys.length-1];
+    const membership = memPick ? memByMonth[memPick] : 0;
 
-    // 기타 baseline = 이번 달 실측 − 연재작 모델분 − 멤버십 (다른 작품들 + 구작, 현 수준 유지 가정)
-    const baseM = thisMonth();
-    const baseActual = dailyArr.filter(x=>(x.date||'').startsWith(baseM)).reduce((a,x)=>a+(x.rev||0),0);
+    // 기타 baseline = 한 달치 실측 − 연재작 모델분 − 멤버십 (다른 작품들 + 구작, 현 수준 유지 가정)
+    //  · 이번 달이 7일 이상 지났으면: 어제까지 실측을 한 달로 환산 (지금 페이스)
+    //  · 아직 초반이면: 지난 완전월 실측
+    //  (예전엔 반쪽짜리 이번 달 실측에서 한 달치 모델을 빼서 baseline 이 0으로 눌렸다 → 11월~ 급락)
+    const nowM = thisMonth(), today = todayStr();
+    const doneDays = parseInt(today.slice(8,10), 10) - 1;
+    let baseM, baseActual;
+    if (doneDays >= 7){
+      baseM = nowM;
+      const sofar = dailyArr.filter(x=>(x.date||'').startsWith(nowM) && x.date < today).reduce((a,x)=>a+(x.rev||0),0);
+      baseActual = sofar / doneDays * daysInMonth(nowM);
+    } else {
+      const d = new Date(today + 'T00:00:00'); d.setDate(0);
+      baseM = `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+      baseActual = dailyArr.filter(x=>(x.date||'').startsWith(baseM)).reduce((a,x)=>a+(x.rev||0),0);
+    }
     const otherBaseline = Math.max(0, baseActual - ongoingRev(baseM) - membership);
 
-    // 신작 R시리즈 (8월~, 보수): 회차당 매출 작게, 매주. 전체 보기에서만 합산.
+    // 신작 (NEW_SERIES_PUB, 보수): 회차당 매출 작게, 매주. 전체 보기에서만 합산.
     const newSeriesPub = (currentChannel === '__all__') ? NEW_SERIES_PUB : {};
     const newSeriesRev = ym => { let t=0; for(const pm in newSeriesPub){ const md=monthDiff(pm,ym); if(md>=0) t+=newSeriesPub[pm]*NEW_SERIES_E0*lf(md); } return t; };
 
@@ -960,10 +983,14 @@
         const ownerChannel = Object.values(CHANNELS).find(c => c.ongoing && c.ongoing.name === ongoing.name);
         if (ownerChannel) channelPrefix = `${ownerChannel.displayName} · `;
       }
+      document.getElementById('postype-ongoing-label').textContent = ongoing.completedDate ? '최근 완결 시리즈' : '진행 중 시리즈';
       document.getElementById('postype-ongoing-name').textContent = channelPrefix + ongoing.name;
       document.getElementById('postype-ongoing-progress').textContent = `${ongoing.currentEpisode}화 / ${ongoing.totalEpisodes}화`;
-      document.getElementById('postype-ongoing-sub').textContent = `남은 ${remaining}화 · 매주 ${dow[ongoing.publishWeekday]} ${ongoing.publishHour}:00 · 완결 ${finishDate.getMonth()+1}/${finishDate.getDate()}`;
+      document.getElementById('postype-ongoing-sub').textContent = ongoing.completedDate
+        ? `완결 ${parseInt(ongoing.completedDate.slice(5,7))}/${parseInt(ongoing.completedDate.slice(8,10))} · 신작 회차 없음 · 이후 예측은 구작 매출만`
+        : `남은 ${remaining}화 · 매주 ${dow[ongoing.publishWeekday]} ${ongoing.publishHour}:00 · 완결 ${finishDate.getMonth()+1}/${finishDate.getDate()}`;
     } else {
+      document.getElementById('postype-ongoing-label').textContent = '진행 중 시리즈';
       const channelMeta = CHANNELS[currentChannel];
       if (channelMeta && channelMeta.note){
         document.getElementById('postype-ongoing-name').textContent = '연재 중 시리즈 없음';
