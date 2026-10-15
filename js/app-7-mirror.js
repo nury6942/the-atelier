@@ -629,7 +629,7 @@ function ldgRenderBoard() {
     if (M === '미분류') return ['bad', '정체 확인 필요'];
     return ['ok', ''];
   };
-  var catName = function(t) { return MIRROR_BUCKETS[_bBucket(t)][0] + (t['소분류'] && t['소분류'] !== '기타' ? '·' + t['소분류'] : ''); };
+  var catName = function(t) { return MIRROR_BUCKETS[_bBucket(t)][0] + (t['소분류'] && !/^기타/.test(t['소분류']) ? '·' + t['소분류'] : ''); };
   var list = _boardShowAllBig ? m.bigs : m.bigs.slice(0, 6);
   var bigRows = list.map(function(t) {
     var col = MIRROR_BUCKETS[_bBucket(t)][2], n = bigNote(t), zap = (m.binge[t.date] || 0) >= 3;
