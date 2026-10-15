@@ -2114,9 +2114,22 @@ function ldgRenderCatGrid() {
       prevCatTotals[major] = (prevCatTotals[major] || 0) + t['금액'];
     }
   });
+  // 전년 같은 달 — 이번 달이 진행 중이면 같은 날짜까지만
+  var lyKey = (_ldgYear - 1) + '-' + String(_ldgMonth).padStart(2,'0');
+  var _now = new Date();
+  var lyCutDay = (_ldgYear === _now.getFullYear() && _ldgMonth === _now.getMonth() + 1) ? _now.getDate() : 0;
+  var lyCatTotals = {}, lyCatTotalsFull = {};
+  (_ledgerData.transactions || []).forEach(function(t) {
+    if (!t.date || t.date.substring(0,7) !== lyKey) return;
+    var major = t['대분류'];
+    lyCatTotalsFull[major] = (lyCatTotalsFull[major] || 0) + t['금액'];
+    var dd = parseInt(t.date.substring(8,10)) || 0;
+    if (lyCutDay && dd > lyCutDay) return;
+    lyCatTotals[major] = (lyCatTotals[major] || 0) + t['금액'];
+  });
   var html = '';
   // 카테고리 표시 순서 (사용자 지정)
-  var CATEGORY_ORDER = ['수입','저축','주거비','고정비','교통비','식비','건강/의료비','여행','생필품비','자기계발비','여가비','품위유지비','관계비','경조사비','세금/보험'];
+  var CATEGORY_ORDER = ['수입','저축','주거비','고정비','교통비','식비','건강/의료비','여행','생필품비','자기계발비','여가비','품위유지비','관계비','경조사비','세금/보험','포인트','미분류'];
   var catKeys = Object.keys(cats);
   catKeys.sort(function(a, b) {
     var ai = CATEGORY_ORDER.indexOf(a);
@@ -2195,6 +2208,9 @@ function ldgRenderCatGrid() {
       // 이미 끝난 과거 달: 전월 전체 한 줄이면 충분 (동일=전체)
       html += cmpLine(prevTotalFull, '전월비', '전월 전체와 비교');
     }
+    // 전년 같은 달
+    if (lyCutDay > 0) html += cmpLine(lyCatTotals[catName] || 0, '전년 동일', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 1일~' + lyCutDay + '일까지와 비교');
+    else html += cmpLine(lyCatTotalsFull[catName] || 0, '전년비', (_ldgYear - 1) + '년 ' + _ldgMonth + '월 전체와 비교');
     html += '</div>';
     html += '<ul class="space-y-1.5 mb-3">';
     subAmts.forEach(function(s) {

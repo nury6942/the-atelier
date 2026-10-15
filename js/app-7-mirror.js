@@ -351,7 +351,7 @@ function ldgRenderBoard() {
   var open = false;
   try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
   h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#6366f1;background:#eef2ff;border:0;border-radius:10px;padding:9px;cursor:pointer">' +
-    (open ? '▴ 카테고리별 자세히 접기' : '▾ 카테고리별 자세히 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이 · 카테고리 집계') + '</button>';
+    (open ? '▴ 차트 접기' : '▾ 차트 더 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이') + '</button>';
   el.innerHTML = h;
   _applyDetailVisibility();
 }
@@ -361,7 +361,7 @@ window.ldgRenderBoard = ldgRenderBoard;
 function _applyDetailVisibility() {
   var open = false;
   try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
-  ['ldg-kpi-strip', 'ldg-detail-charts', 'ldg-detail-cats'].forEach(function(id) { var x = document.getElementById(id); if (x) x.style.display = open ? '' : 'none'; });
+  ['ldg-kpi-strip', 'ldg-detail-charts'].forEach(function(id) { var x = document.getElementById(id); if (x) x.style.display = open ? '' : 'none'; });
 }
 
 function ldgToggleDetail() {
