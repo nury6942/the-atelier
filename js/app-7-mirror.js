@@ -4,9 +4,7 @@
 
 // 글자색은 진하게만 (연회색 금지 — 누리)
 var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#d9695e', green: '#3fa37f', amber: '#334155', indigo: '#6fa6d9', data: '#6fa6d9', soft: '#c8dff2', track: '#edf5fc' };
-// 기준 대비 막대: 채운 만큼 / 넘으면 빨강 / 80%↑ 주황. save=true면 많이 채울수록 좋은 막대
 // 막대 밑 라벨을 '막대 끝 자리'에 단다 (왼쪽 정렬 줄글 금지 — 누리). tags: [{p: 0~100, h: html}]
-// 가까운 라벨끼리는 겹치지 않게 다음 줄로 내린다
 function _bTags(tags) {
   var html = tags.filter(function(t) { return t && t.h; }).map(function(t) {
     var p = Math.max(0, Math.min(100, t.p)), tx = p < 14 ? '0' : p > 86 ? '-100%' : '-50%';
@@ -17,8 +15,8 @@ function _bTags(tags) {
 // 그린 뒤 실제 글자 폭을 재서, 진짜 겹치는 라벨만 다음 줄로
 function _bFixTags(root) {
   (root || document).querySelectorAll('.lb-tags').forEach(function(box) {
-    var spans = Array.prototype.slice.call(box.children), base = box.getBoundingClientRect().left;
-    var items = spans.map(function(sp) { var r = sp.getBoundingClientRect(); return { sp: sp, l: r.left - base, r: r.right - base }; }).sort(function(a, b) { return a.l - b.l; });
+    var base = box.getBoundingClientRect().left;
+    var items = Array.prototype.slice.call(box.children).map(function(sp) { var r = sp.getBoundingClientRect(); return { sp: sp, l: r.left - base, r: r.right - base }; }).sort(function(a, b) { return a.l - b.l; });
     var ends = [];
     items.forEach(function(it) {
       var row = 0;
@@ -27,21 +25,6 @@ function _bFixTags(root) {
     });
     box.style.height = (Math.max(1, ends.length) * 15 + 1) + 'px';
   });
-}
-// 기준 대비 막대: 채운 만큼 / 넘으면 빨강 / 80%↑ 주황. save=true면 많이 채울수록 좋은 막대
-// 막대 밑 라벨을 '막대 끝 자리'에 단다 (왼쪽 정렬 줄글 금지 — 누리). tags: [{p: 0~100, h: html}]
-// 가까운 라벨끼리는 겹치지 않게 다음 줄로 내린다
-function _bTags(tags) {
-  var rows = [];
-  tags.filter(function(t) { return t && t.h; }).sort(function(a, b) { return a.p - b.p; }).forEach(function(t) {
-    var p = Math.max(0, Math.min(100, t.p)), r = 0;
-    while (rows[r] && p - rows[r].last < (t.gap || 34)) r++;
-    rows[r] = rows[r] || { last: -999, html: '' };
-    var tx = p < 14 ? '0' : p > 86 ? '-100%' : '-50%';
-    rows[r].html += '<span style="position:absolute;left:' + p + '%;transform:translateX(' + tx + ');white-space:nowrap">' + t.h + '</span>';
-    rows[r].last = p;
-  });
-  return rows.map(function(r) { return '<div style="position:relative;height:16px;font-size:11px;color:' + BK.sub + '">' + r.html + '</div>'; }).join('');
 }
 // 기준 대비 막대: 채운 만큼 / 넘으면 빨강. save=true면 많이 채울수록 좋은 막대. 숫자는 채운 끝 · 한도는 오른쪽 끝
 function _bBar(val, cap, save, h, noTags, short) {
