@@ -1,16 +1,85 @@
 // ===== DAILY LEDGER: 월별 전략 보드 =====
 // 위에서 고른 달(_ldgYear/_ldgMonth)에 맞춰 다시 그린다. 기존 KPI·도넛·TOP·카테고리 집계·일별 추이를 대신한다.
-// 큰 그림(집 마감 · 그달 판정 · 나의 규칙) → 세부(봉투 5개 · 큰 결제 · 어디에 썼나) → 나라는 사람(지난 달들로 본 성향).
+// 큰 그림(집 마감 · 그달 판정 · 나의 규칙) → 연간 목표 → 이 달 플레이북(작년 같은 달) → 세부(봉투 5개 · 큰 결제 · 어디에 썼나) → 나라는 사람(지난 달들로 본 성향).
 
 var MIRROR_GOAL = { label: '집 마지막 상환', amount: 25000000, due: '2027-04', potName: 'OK파킹' };
 var MIRROR_ENVELOPES = [
   // [이름, 아이콘, 고르는 법, 한도(원) 또는 횟수, 단위]
   ['여행', 'flight', function(t) { return t['대분류'] === '여행'; }, 0, '원'],
-  ['옷·뷰티', 'checkroom', function(t) { return t['대분류'] === '품위유지비'; }, 300000, '원'],
+  ['옷·뷰티', 'checkroom', function(t) { return t['대분류'] === '품위유지비'; }, 100000, '원'],  // 시즌 달은 아래 표에서 90만
   ['물건', 'inventory_2', function(t) { return t['대분류'] === '생필품비'; }, 200000, '원'],
   ['배달', 'delivery_dining', function(t) { return t['소분류'] === '배달'; }, 8, '회'],
   ['가족·선물', 'redeem', function(t) { return t['대분류'] === '관계비' || t['대분류'] === '경조사비'; }, 350000, '원']
 ];
+
+// ── 달별 플레이북: 작년 같은 달 데이터로 올해 그 달을 미리 막는다 (2027년엔 2026년 데이터로 저절로)
+// 달(1~12)마다 한도·할 일. 'YYYY-MM' 키는 그 해에만. 한도는 원.
+var MIRROR_MONTH_PLAN = {
+  1:  { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새해 결심 쇼핑 주의 · 큰 물건 프로젝트 없음', '여행 항공은 마일리지 먼저'] },
+  2:  { caps: { '가족·선물': 700000 }, todo: ['설 봉투 70만만', '조용한 달 · 남는 돈 그대로 집 통장'] },
+  3:  { caps: { '옷·뷰티': 900000, '가족·선물': 1000000 }, todo: ['봄 옷은 이 달에만 (시즌 90만)', '가족 선물 봉투 100만'] },
+  4:  { caps: { '옷·뷰티': 100000, '가족·선물': 500000 }, todo: ['상여 받는 날 바로 옮기기', '생일 선물 봉투 50만'] },
+  5:  { caps: {}, todo: ['종합소득세 · 모아 둔 세금 통장으로'] },
+  6:  { caps: { '물건': 500000 }, todo: ['집 프로젝트는 하나만 · 예산 먼저'] },
+  7:  { caps: {}, todo: [] },
+  8:  { caps: { '옷·뷰티': 100000 }, todo: ['다음 여행 예약은 일정 확정 뒤 한 번에', '가을 옷은 9월로'] },
+  9:  { caps: { '옷·뷰티': 900000 }, todo: ['가을 옷은 이 달에만 (시즌 90만)'] },
+  10: { caps: {}, todo: ['상여 받는 날 바로 옮기기'] },
+  11: { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
+  12: { caps: { '옷·뷰티': 200000, '가족·선물': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
+  '2026-12': { todo: ['새 연재 12/12 시작 · 매주 끊기지 않게'] },
+  '2027-04': { todo: ['집 마지막 상환 🎉'] },
+  '2027-07': { caps: { '여행': 5880000 }, todo: ['북유럽 여행 · 따로 모은 여행 통장으로'] }
+};
+var MIRROR_EVERY_MONTH = ['월급날 80만 · 부업 입금일 전액 → 집 통장', '종합소득세 통장에 10만'];
+
+function _bYm(ym, d) { var p = ym.split('-').map(Number), k = p[0] * 12 + (p[1] - 1) + d; return Math.floor(k / 12) + '-' + String(k % 12 + 1).padStart(2, '0'); }
+function _bPlan(ym) {
+  var a = MIRROR_MONTH_PLAN[+ym.slice(5)] || {}, b = MIRROR_MONTH_PLAN[ym] || {}, caps = {};
+  [a.caps || {}, b.caps || {}].forEach(function(c) { Object.keys(c).forEach(function(k) { caps[k] = c[k]; }); });
+  return { caps: caps, todo: (a.todo || []).concat(b.todo || []) };
+}
+function _bRows(ym) { return (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym; }); }
+// 작년 그 달에 있었던 '매년 돌아오는 돈' — 데이터에서 찾는다
+function _bRecurring(ym) {
+  var L = _bRows(ym), out = [];
+  var add = function(name, f, min) { var v = _bSum(L, f); if (v >= (min || 1)) out.push([name, v]); };
+  add('영어 수업료', function(t) { return t['소분류'] === '영어 강의'; }, 100000);
+  add('세금', function(t) { return /국세|지방세|종합소득|재산세|자동차세/.test(t['세부사항'] || '') || ['종합소득세', '재산세', '자동차세'].indexOf(t['소분류']) >= 0; }, 100000);
+  add('명절', function(t) { return t['소분류'] === '명절' || /세뱃돈/.test(t['세부사항'] || ''); }, 50000);
+  add('선물·가족', function(t) { return t['대분류'] === '관계비' && ['선물', '가족'].indexOf(t['소분류']) >= 0 && t['금액'] > 0; }, 300000);
+  add('보험', function(t) { return ['자동차보험', '운전자보험'].indexOf(t['소분류']) >= 0 && t['금액'] >= 100000; }, 100000);
+  var sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급'; });
+  var big = sal.filter(function(t) { return t['금액'] >= 4500000; });
+  if (big.length) out.push(['상여 (월급 포함)', big.reduce(function(a, t) { return a + t['금액']; }, 0), true]);
+  return out;
+}
+function _boardPlaybook(ym, m) {
+  var ly = _bYm(ym, -12), lm = ldgBoardMonth(ly), mk = (+ym.slice(5)) + '월', plan = _bPlan(ym);
+  var rec = _bRecurring(ly), next = _bRecurring(_bYm(ym, -11));
+  var left = '';
+  if (lm.L.length) {
+    var tb = MIRROR_BUCKETS.map(function(bk, i) { return [bk[0], lm.buckets[i], bk[2]]; }).filter(function(x) { return x[1] > 0 && x[0] !== '기타'; }).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 4);
+    var mx = Math.max.apply(null, tb.map(function(x) { return x[1]; }).concat([1]));
+    left = '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span class="lb-n" style="font-size:20px">' + _bMan(lm.spend) + '만</span>' +
+      '<span style="font-size:11px;color:#94a3b8">썼어요 · 지금 ' + mk + ' ' + _bMan(m.spend) + '만</span></div>' +
+      tb.map(function(x) { return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr) 34px;gap:6px;align-items:center;font-size:11px;margin:3px 0"><span style="color:#64748b">' + x[0] + '</span><div style="height:8px;width:' + (x[1] / mx * 100) + '%;background:' + x[2] + ';border-radius:0 3px 3px 0"></div><b class="lb-n" style="text-align:right">' + _bMan(x[1]) + '</b></div>'; }).join('') +
+      '<div style="font-size:11px;color:#94a3b8;margin-top:6px">제일 컸던 것 · ' + lm.bigs.slice(0, 3).map(function(t) { return _bEsc((t['세부사항'] || '').split(' · ').pop().replace(/\(주\)|㈜|주식회사|\(.*?\)/g, '').trim().slice(0, 12)) + ' ' + _bMan(t['금액']); }).join(' · ') + '</div>';
+  } else {
+    left = '<div style="font-size:12px;color:#94a3b8">작년 ' + mk + ' 기록이 없어요</div>';
+  }
+  var todo = rec.map(function(r) { return (r[2] ? '💰 ' : '📌 ') + r[0] + ' <span style="color:#94a3b8">· 작년 ' + _bMan(r[1]) + '만</span>'; })
+    .concat(plan.todo.map(function(t) { return '🎯 ' + _bEsc(t); }))
+    .concat(MIRROR_EVERY_MONTH.map(function(t) { return '<span style="color:#64748b">🔁 ' + _bEsc(t) + '</span>'; }));
+  var nextHint = next.filter(function(r) { return !r[2]; }).map(function(r) { return r[0] + ' ' + _bMan(r[1]) + '만'; });
+  return '<div class="lb-grid">' +
+    '<div class="lb-c lb-6"><p class="lb-t"><span>작년 ' + ly.slice(0, 4) + '년 ' + mk + ' · 같은 달엔</span><span>이걸 보고 올해를 미리 막아요</span></p>' + left + '</div>' +
+    '<div class="lb-c lb-6"><p class="lb-t"><span>올해 ' + mk + ' 할 일</span><span>작년 데이터로 자동</span></p>' +
+      '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#0f172a">' + todo.map(function(t) { return '<div>' + t + '</div>'; }).join('') + '</div>' +
+      (nextHint.length ? '<div style="font-size:11px;color:#b45309;background:#fffbeb;border-radius:8px;padding:6px 9px;margin-top:10px">다음 달 예고 · 작년엔 ' + nextHint.join(' · ') + '</div>' : '') +
+    '</div></div>';
+}
+
 var MIRROR_BUCKETS = [
   ['여행', function(t) { return t['대분류'] === '여행'; }, '#2a78d6'],
   ['옷·뷰티', function(t) { return t['대분류'] === '품위유지비'; }, '#e87ba4'],
@@ -73,13 +142,14 @@ function ldgBoardMonth(ym) {
   var side = _bSum(L, function(t) { return _bI(t) && t['소분류'] === '부업'; });
   var buckets = MIRROR_BUCKETS.map(function() { return 0; });
   sp.forEach(function(t) { buckets[_bBucket(t)] += t['금액'] || 0; });
+  var caps = _bPlan(ym).caps;
   var envs = MIRROR_ENVELOPES.map(function(e) {
     var rows = sp.filter(e[2]);
     var val = e[4] === '회' ? rows.filter(function(t) { return t['금액'] > 0; }).length : _bSum(rows, function() { return true; });
     var tops = {};
     rows.forEach(function(t) { var k = (t['세부사항'] || '').split(' · ').pop().replace(/\(주\)|㈜|주식회사|\(.*?\)/g, '').trim().slice(0, 12); tops[k] = (tops[k] || 0) + t['금액']; });
     var top = Object.keys(tops).sort(function(a, b) { return tops[b] - tops[a]; }).slice(0, 2).map(function(k) { return k + ' ' + _bMan(tops[k]); });
-    return { name: e[0], icon: e[1], val: val, cap: e[3], unit: e[4], money: _bSum(rows, function() { return true; }), top: top };
+    return { name: e[0], icon: e[1], val: val, cap: caps[e[0]] != null ? caps[e[0]] : e[3], unit: e[4], money: _bSum(rows, function() { return true; }), top: top };
   });
   var bigs = sp.filter(function(t) { return t['금액'] >= 100000; }).sort(function(a, b) { return b['금액'] - a['금액']; });
   var perDay = {};
@@ -191,15 +261,20 @@ function ldgRenderBoard() {
   // ── 연간 목표
   try { h += _boardGoals(); } catch (e) { console.error('[Board goals]', e); }
 
+  // ── 이 달 플레이북 (작년 같은 달 → 올해 할 일)
+  try { h += _boardPlaybook(ym, m); } catch (e) { console.error('[Board playbook]', e); }
+
   // ── 봉투 5개
+  var lyEnv = (function() { try { return ldgBoardMonth(_bYm(ym, -12)).envs; } catch (e) { return []; } })();
   h += '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 봉투 · 쓴 돈 / 한도</span><span>빨강 = 넘침</span></p><div class="lb-env">' +
-    m.envs.map(function(e) {
+    m.envs.map(function(e, ei) {
+      var ly = lyEnv[ei] ? (e.unit === '회' ? lyEnv[ei].val + '회' : _bMan(lyEnv[ei].val) + '만') : '';
       var over = e.cap === 0 ? e.val > 0 : e.val > e.cap, pct = e.cap ? Math.min(100, e.val / e.cap * 100) : (e.val > 0 ? 100 : 0);
       var col = over ? RED : (pct >= 80 ? '#eda100' : GREEN);
       var fmt = e.unit === '회' ? e.val + ' / ' + e.cap + '회' : _bMan(e.val) + ' / ' + _bMan(e.cap) + '만';
       return '<div><div style="font-size:12px;display:flex;justify-content:space-between;gap:6px"><span><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:#64748b">' + e.icon + '</span> ' + e.name + '</span><b class="lb-n" style="color:' + (over ? RED : '#0f172a') + '">' + fmt + '</b></div>' +
         '<div class="lb-bar"><div style="width:' + pct + '%;height:100%;background:' + col + '"></div></div>' +
-        '<div class="lb-ms" title="' + _bEsc(e.top.join(' · ')) + '">' + (e.unit === '회' ? _bMan(e.money) + '만' : (_bEsc(e.top.join(' · ')) || '없음')) + '</div></div>';
+        '<div class="lb-ms" title="' + _bEsc(e.top.join(' · ')) + '">' + (ly ? '<span style="color:#b45309">작년 ' + ly + '</span> · ' : '') + (e.unit === '회' ? _bMan(e.money) + '만' : (_bEsc(e.top.join(' · ')) || '없음')) + '</div></div>';
     }).join('') + '</div></div>';
 
   // ── 큰 결제 · 어디에 썼나
