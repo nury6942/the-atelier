@@ -16802,7 +16802,8 @@
     "planner": { "title": "Calendar" },
     "packing": { "title": "Travel" },
     "reference": { "title": "Memo" },
-    "jobhunt": { "title": "Job Hunt" }
+    "jobhunt": { "title": "Job Hunt" },
+    "aibrief": { "title": "AI Brief" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
   // ═══ Travel 공통 탭바 (2026-07-22): 4개 탭에 흩어져 있던 복붙 탭바를 단일 렌더러로 ═══

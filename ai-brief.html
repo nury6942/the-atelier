@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#7c3aed; --ink:#000; --paper:#fff;
+    --mut:rgba(0,0,0,.6); --dim:rgba(0,0,0,.4); --faint:rgba(0,0,0,.08); --wash:#f6f5f2;
+    --c-release:#7c3aed; --c-vibe:#2563eb; --c-money:#059669; --c-hack:#ea580c; --c-tool:#111; --c-free:#db2777;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Inter','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1152px;margin:0 auto;padding:40px 24px 96px}
+
+  /* 머리 */
+  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:28px}
+  .mast h1{margin:0;font-size:2.6rem;font-weight:800;font-style:italic;letter-spacing:-.03em;line-height:.9;text-transform:uppercase}
+  .mast h1 .star{color:var(--accent);font-style:normal}
+  .mast .meta{display:flex;align-items:center;gap:14px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+  .mast .meta b{color:var(--ink)}
+  .nav{display:flex;gap:4px}
+  .nav button{border:1px solid var(--faint);background:#fff;width:30px;height:30px;display:grid;place-items:center;font-size:14px;color:var(--ink)}
+  .nav button:disabled{opacity:.25;cursor:default}
+  .stale{background:#fff7ed;color:#9a3412;font-size:12px;font-weight:600;padding:8px 12px;margin:-14px 0 24px;border-left:3px solid #ea580c}
+
+  /* 카드 공통 */
+  .cat{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+  .cat::before{content:"";width:7px;height:7px;background:var(--cc)}
+  .img{position:relative;background:var(--wash);overflow:hidden}
+  .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+  .img .ph{position:absolute;inset:0;display:grid;place-items:center;background:var(--cc);color:#fff;
+    font-size:2.4rem;font-weight:800;font-style:italic;letter-spacing:-.03em;opacity:.92;text-transform:uppercase}
+  a.card:hover .img img{transform:scale(1.03)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{font-size:11px;font-weight:700;padding:3px 8px;background:var(--ink);color:#fff;font-variant-numeric:tabular-nums}
+  .src{font-size:11px;color:var(--dim);margin-top:8px}
+  .forme{margin-top:10px;font-size:13px;font-weight:600;color:var(--accent)}
+  .forme::before{content:"→ "}
+
+  /* 메인 그리드: 큰 판 + 오른쪽 둘 + 아래 둘 */
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:20px}
+  .side{display:grid;gap:20px;grid-template-rows:1fr 1fr}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+  .card{display:flex;flex-direction:column;border:1px solid var(--ink);background:#fff;min-width:0}
+  .card .body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+  .card h3{margin:8px 0 0;font-size:1.05rem;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+  .card .how{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.5}
+  .hero .img{aspect-ratio:16/9}
+  .hero h3{font-size:1.6rem;line-height:1.2;letter-spacing:-.02em}
+  .side .card{flex-direction:row}
+  .side .card .img{flex:0 0 42%;min-height:100%}
+  .row2 .card .img{aspect-ratio:16/9}
+  .side .card h3{font-size:1rem}
+
+  /* 발표 → 사람들이 만든 것 */
+  .rel{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--mut);margin-top:6px}
+  .rel b{color:var(--ink)}
+  .ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+  .ex a{display:block;min-width:0}
+  .ex .img{aspect-ratio:1.91/1}
+  .ex .img .ph,.strip .img .ph{background:color-mix(in srgb,var(--cc) 10%,#fff);color:var(--cc);opacity:1}
+  .ex .img .ph{font-size:1rem}
+  .ex span{display:block;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .why{margin-top:10px;font-size:12px;color:var(--mut)}
+  .why b{color:var(--ink)}
+
+  /* 오늘 해볼 것 */
+  .sech{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:2px solid var(--accent);padding-bottom:10px;margin:56px 0 20px}
+  .sech h2{margin:0;font-size:1.4rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.01em}
+  .sech .cap{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+  .tries{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+  .try{background:var(--accent);color:#fff;padding:20px}
+  .try.done{background:var(--ink)}
+  .try .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .try h3{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.01em}
+  .try .min{font-size:11px;font-weight:700;letter-spacing:.14em;opacity:.75;white-space:nowrap}
+  .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+  .step{background:rgba(255,255,255,.12);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+  .step .n{font-size:1.6rem;font-weight:800;line-height:1;opacity:.45}
+  .step .t{font-size:13px;font-weight:600;line-height:1.4;flex:1}
+  .step .act{align-self:flex-start;border:0;background:#fff;color:var(--ink);font-size:11px;font-weight:700;padding:6px 10px;letter-spacing:.04em}
+  .done-btn{margin-top:14px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:12px;font-weight:700;padding:8px 14px;width:100%}
+  .try.done .done-btn{background:#fff;color:var(--ink)}
+
+  /* 주워 담기 */
+  .strip{display:grid;grid-auto-flow:column;grid-auto-columns:240px;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+  .strip a{scroll-snap-align:start;min-width:0}
+  .strip .img{aspect-ratio:1.91/1;border:1px solid var(--faint)}
+  .strip .img .ph{font-size:1.4rem}
+  .strip .tt{font-size:13px;font-weight:600;margin-top:8px;line-height:1.35}
+  .strip .cat{margin-top:6px}
+  .watch{position:absolute;top:8px;left:8px;background:#fff;color:var(--ink);font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 7px}
+
+  .foot{margin-top:56px;padding-top:14px;border-top:1px solid var(--faint);font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .empty{padding:120px 0;text-align:center;color:var(--dim);font-size:14px}
+
+  @media (max-width:860px){
+    .wrap{padding:24px 16px 72px}
+    .mast h1{font-size:2rem}
+    .grid,.row2{grid-template-columns:1fr}
+    .side{grid-template-rows:none}
+    .side .card{flex-direction:column}
+    .side .card .img{flex:none;aspect-ratio:16/9;min-height:0}
+    .hero h3{font-size:1.3rem}
+    .tries{grid-template-columns:1fr}
+    .strip{grid-auto-columns:160px}
+  }
+  @media (max-width:420px){ .steps{grid-template-columns:1fr} .step{flex-direction:row;align-items:center} .step .n{font-size:1.2rem} }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="empty">불러오는 중</div></div>
+
+<script>
+(function(){
+  var BASE = './data/ai-brief/';
+  var CAT = {
+    release:{label:'발표가 만든 것', c:'var(--c-release)', s:'NEW'},
+    vibe:{label:'바이브코딩', c:'var(--c-vibe)', s:'BUILT'},
+    money:{label:'돈 버는 법', c:'var(--c-money)', s:'$'},
+    hack:{label:'기발한 활용', c:'var(--c-hack)', s:'HACK'},
+    tool:{label:'새 도구', c:'var(--c-tool)', s:'TOOL'},
+    free:{label:'무료', c:'var(--c-free)', s:'FREE'}
+  };
+  var app = document.getElementById('app');
+  var dates = [], cur = null, doneMap = {};
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function cat(k){ return CAT[k] || CAT.tool; }
+  function todayKST(){ return new Date(Date.now()+9*3600e3).toISOString().slice(0,10); }
+  function daysAgo(d){ var t=new Date(todayKST()+'T00:00:00Z'), x=new Date(d+'T00:00:00Z'); return Math.round((t-x)/864e5); }
+  function fmtDate(d){ var x=new Date(d+'T00:00:00Z'); return (x.getUTCMonth()+1)+'.'+String(x.getUTCDate()).padStart(2,'0')+' '+['SUN','MON','TUE','WED','THU','FRI','SAT'][x.getUTCDay()]; }
+
+  // 이미지: 원본 주소를 그대로 걸고, 깨지면 카테고리 색 블록
+  function img(src, k, extra){
+    var c = cat(k);
+    var ph = '<div class="ph">'+esc(c.s)+'</div>';
+    var tag = src ? '<img src="'+esc(src)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+    return '<div class="img" style="--cc:'+c.c+'">'+ph+tag+(extra||'')+'</div>';
+  }
+  function chips(a){ return (a&&a.length) ? '<div class="chips">'+a.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</div>' : ''; }
+  function catTag(k){ var c=cat(k); return '<span class="cat" style="--cc:'+c.c+'">'+esc(c.label)+'</span>'; }
+
+  function card(it, cls){
+    var rel = '';
+    if (it.release){
+      var n = daysAgo(it.release.date);
+      rel = '<div class="rel"><b>'+esc(it.release.name)+'</b><span>'+(n<=0?'오늘 발표':n+'일 전 발표')+'</span></div>';
+    }
+    var ex = '';
+    if (it.examples && it.examples.length){
+      ex = '<div class="ex">'+it.examples.slice(0,3).map(function(e){
+        return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+img(e.image, it.cat)+'<span>'+esc(e.title)+'</span></a>';
+      }).join('')+'</div>';
+    }
+    var why = it.why ? '<div class="why"><b>이게 돼서</b> · '+esc(it.why)+'</div>' : '';
+    var how = it.how ? '<div class="how">'+esc(it.how)+'</div>' : '';
+    var forme = it.forMe ? '<div class="forme">'+esc(it.forMe)+'</div>' : '';
+    // 사례 썸네일 안에 링크가 있어 카드 전체를 <a>로 감싸지 않음
+    var tagName = ex ? 'div' : 'a';
+    var href = ex ? '' : ' href="'+esc(it.url)+'" target="_blank" rel="noopener"';
+    var head = ex ? '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">' : '';
+    return '<'+tagName+' class="card '+(cls||'')+'"'+href+'>'
+      + head + img(it.image, it.cat) + (ex?'</a>':'')
+      + '<div class="body">'+catTag(it.cat)
+      + (ex?'<a href="'+esc(it.url)+'" target="_blank" rel="noopener">':'')+'<h3>'+esc(it.title)+'</h3>'+(ex?'</a>':'')
+      + rel + how + ex + why + chips(it.chips) + forme
+      + (it.source?'<div class="src">'+esc(it.source)+'</div>':'')
+      + '</div></'+tagName+'>';
+  }
+
+  function tryBlock(t, i){
+    var key = cur.date+'_'+i, done = !!doneMap[key];
+    var steps = (t.steps||[]).slice(0,3).map(function(s, j){
+      var act = '';
+      if (s.copy) act = '<button class="act" data-copy="'+esc(s.copy)+'">복사</button>';
+      else if (s.url) act = '<a class="act" href="'+esc(s.url)+'" target="_blank" rel="noopener">열기 ↗</a>';
+      return '<div class="step"><div class="n">'+(j+1)+'</div><div class="t">'+esc(s.text)+'</div>'+act+'</div>';
+    }).join('');
+    return '<div class="try'+(done?' done':'')+'" data-key="'+esc(key)+'">'
+      + '<div class="top"><h3>'+esc(t.title)+'</h3><span class="min">'+esc(t.minutes||15)+' MIN</span></div>'
+      + '<div class="steps">'+steps+'</div>'
+      + '<button class="done-btn">'+(done?'해봤음 ✓':'해봤음')+'</button></div>';
+  }
+
+  function pick(p){
+    var w = p.watching ? '<span class="watch">지켜보는 중</span>' : '';
+    return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+img(p.image, p.cat, w)
+      + '<div class="tt">'+esc(p.title)+'</div>'+catTag(p.cat)+'</a>';
+  }
+
+  function render(){
+    var d = cur, cards = d.cards||[];
+    var idx = dates.indexOf(d.date);
+    var stale = (d.date !== todayKST() && idx === 0 && new Date(Date.now()+9*3600e3).getUTCHours() >= 9)
+      ? '<div class="stale">오늘 갱신이 아직 안 됐어요 · '+esc(fmtDate(d.date))+' 브리핑을 보여주는 중</div>' : '';
+    var h = '<header class="mast"><h1>AI Brief<span class="star">*</span></h1>'
+      + '<div class="meta"><span>No. <b>'+String(dates.length-idx).padStart(3,'0')+'</b></span><span><b>'+esc(fmtDate(d.date))+'</b></span>'
+      + '<div class="nav"><button id="prev" '+(idx>=dates.length-1?'disabled':'')+' aria-label="이전 날">‹</button>'
+      + '<button id="next" '+(idx<=0?'disabled':'')+' aria-label="다음 날">›</button></div></div></header>' + stale;
+    if (cards.length){
+      h += '<div class="grid">'+card(cards[0],'hero')+'<div class="side">'+(cards[1]?card(cards[1]):'')+(cards[2]?card(cards[2]):'')+'</div></div>';
+      if (cards.length>3) h += '<div class="row2">'+cards.slice(3,5).map(function(c){return card(c);}).join('')+'</div>';
+    }
+    if (d.tryToday && d.tryToday.length){
+      h += '<div class="sech"><h2>오늘 해볼 것</h2><span class="cap">Try today</span></div><div class="tries">'+d.tryToday.slice(0,2).map(tryBlock).join('')+'</div>';
+    }
+    if (d.pickup && d.pickup.length){
+      h += '<div class="sech"><h2>주워 담기</h2><span class="cap">'+d.pickup.length+' picks</span></div><div class="strip">'+d.pickup.map(pick).join('')+'</div>';
+    }
+    h += '<div class="foot"><span>'+esc(d.sourcesNote||'')+'</span><span>'+(d.generatedAt?'갱신 '+esc(d.generatedAt.replace('T',' ').slice(0,16)):'')+'</span></div>';
+    app.innerHTML = h;
+    wire();
+    window.scrollTo(0,0);
+  }
+
+  function wire(){
+    var p=document.getElementById('prev'), n=document.getElementById('next');
+    var i = dates.indexOf(cur.date);
+    if (p) p.onclick=function(){ load(dates[i+1]); };
+    if (n) n.onclick=function(){ load(dates[i-1]); };
+    app.querySelectorAll('[data-copy]').forEach(function(b){
+      b.onclick=function(){
+        var txt=b.getAttribute('data-copy');
+        (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).catch(function(){
+          var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} ta.remove();
+        }).then(function(){ b.textContent='복사됨'; setTimeout(function(){b.textContent='복사';},1400); });
+      };
+    });
+    app.querySelectorAll('.try .done-btn').forEach(function(b){
+      b.onclick=function(){
+        var box=b.closest('.try'), k=box.getAttribute('data-key');
+        doneMap[k]=!doneMap[k];
+        box.classList.toggle('done',doneMap[k]); b.textContent=doneMap[k]?'해봤음 ✓':'해봤음';
+        saveDone(k, doneMap[k]);
+      };
+    });
+  }
+
+  // 해봤음: 같은 출처의 Atelier(부모 창) Firestore에 저장 → 기기끼리 같게. 안 되면 이 브라우저에만.
+  function store(){ try{ return window.parent && window.parent !== window && window.parent.db ? window.parent.db : null; }catch(e){ return null; } }
+  function loadDone(){
+    try{ doneMap = JSON.parse(localStorage.getItem('atelier_aibrief_done')||'{}'); }catch(e){ doneMap={}; }
+    var db = store(); if (!db) return Promise.resolve();
+    return db.collection('aiBrief').doc('done').get().then(function(s){
+      if (s.exists){ var m=s.data().map||{}; Object.keys(m).forEach(function(k){ doneMap[k]=m[k]; }); }
+    }).catch(function(){});
+  }
+  function saveDone(k, v){
+    try{ localStorage.setItem('atelier_aibrief_done', JSON.stringify(doneMap)); }catch(e){}
+    var db = store(); if (!db) return;
+    var m = {}; m[k] = v;
+    db.collection('aiBrief').doc('done').set({map:m}, {merge:true})
+      .catch(function(e){ console.warn('[ai-brief] done 저장 실패, 이 기기에만 남김', e); });
+  }
+
+  function load(date){
+    return fetch(BASE+date+'.json', {cache:'no-cache'}).then(function(r){ if(!r.ok) throw r.status; return r.json(); })
+      .then(function(d){ cur=d; try{ history.replaceState(null,'','?d='+date); }catch(e){} render(); })
+      .catch(function(){ app.innerHTML='<div class="empty">'+esc(date)+' 브리핑을 못 불러왔어요</div>'; });
+  }
+
+  fetch(BASE+'index.json', {cache:'no-cache'}).then(function(r){ return r.json(); }).then(function(ix){
+    dates = (ix.dates||[]).slice().sort().reverse();
+    if (!dates.length){ app.innerHTML='<div class="empty">첫 브리핑을 기다리는 중</div>'; return; }
+    var q = new URLSearchParams(location.search).get('d');
+    return loadDone().then(function(){ return load(dates.indexOf(q)>=0 ? q : dates[0]); });
+  }).catch(function(){ app.innerHTML='<div class="empty">브리핑 목록을 못 불러왔어요</div>'; });
+})();
+</script>
+</body>
+</html>

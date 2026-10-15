@@ -1,0 +1,254 @@
+{
+ "date": "2026-10-15",
+ "generatedAt": "2026-10-15T14:30:00+09:00",
+ "sourcesNote": "X · Reddit · HN · Product Hunt · GitHub · 공식 블로그 훑음 · 첫 호는 지난 열흘치",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "사진 한 장이 3D 게임이 됐다",
+   "url": "https://blog.sandbase.ai/best-gemini-4-argon-examples-2026/",
+   "image": "https://static.sandbase.ai/blog/covers-v2/best-gemini-4-argon-examples-2026-a61aa8cbee48.webp",
+   "source": "SandBase · X 출시 주간 TOP 20",
+   "release": {
+    "name": "Gemini 4 Argon",
+    "date": "2026-10-13",
+    "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/"
+   },
+   "examples": [
+    {
+     "title": "책상 사진→로봇 시뮬레이션",
+     "url": "https://developers.googleblog.com/gemini-4-argon-for-robotics/",
+     "image": "https://storage.googleapis.com/gweb-developer-goog-blog-assets/images/argon__robotics__hero.2e16d0ba.fill-1200x600.png"
+    },
+    {
+     "title": "출시 직후 3D 게임 10선",
+     "url": "https://x.com/minchoi/status/2110218145277395191",
+     "image": null
+    },
+    {
+     "title": "푸리에 원으로 그린 펠리컨",
+     "url": "https://x.com/fofrAI/status/2110043023954284889",
+     "image": null
+    }
+   ],
+   "why": "사진과 말 한 줄로 3D 세계·게임 제작",
+   "chips": [
+    "X 게임 글 48개",
+    "1위 예시 좋아요 4,600"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "포토샵 대체 다음은 라이트룸 대체",
+   "url": "https://www.reddit.com/r/vibecoding/comments/1x1b3kq/after_replacing_photoshop_now_its_time_for/",
+   "image": "https://tenzen.studio/assets/brand/light-studio-social-preview.png",
+   "source": "Reddit r/vibecoding",
+   "how": "구독 없는 Light Studio, AI 노이즈 제거·MCP까지",
+   "chips": [
+    "전작 사용자 3만 명",
+    "5일 만에 대기자 680명"
+   ]
+  },
+  {
+   "cat": "money",
+   "title": "오프라인 받아쓰기 앱, 28일 1천만 원",
+   "url": "https://www.reddit.com/r/EntrepreneurRideAlong/comments/1x3vko7/my_solo_ios_app_made_76k_in_the_last_28_days_i/",
+   "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/e6/6c/66/e66c6660-6567-9bd9-5ca3-15625fa6969b/Screen_-_1_us.png/320x480bb.jpg",
+   "source": "Reddit r/EntrepreneurRideAlong",
+   "how": "폰에서 Whisper를 직접 돌려 API 비용 0원",
+   "chips": [
+    "28일 $7,591 · 약 1,040만 원",
+    "유료 구독 258명"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "외주 685만 원 모션, 2만 7천 원에",
+   "url": "https://www.reddit.com/r/SaaS/comments/1x4vndw/opus_55_blender_won_in_motion_design_threejs/",
+   "image": "https://external-preview.redd.it/dzhpY3IzdG9jOHZoMZuhHNXEbdjuwGSC6n0dUF1-BvqWRgy_B3w6CiZ01TQf.png?width=640&crop=smart&auto=webp&s=d1b4a378fd7a29c5e3168065159569e09f3bc173",
+   "source": "Reddit r/SaaS",
+   "how": "Opus 5.5가 블렌더를 직접 조작, 약 3시간",
+   "chips": [
+    "비용 $20 · 약 2만 7천 원",
+    "견적 $5,000 · 약 685만 원"
+   ]
+  },
+  {
+   "cat": "release",
+   "title": "룩북 배너까지 4K로 한 번에",
+   "url": "https://www.glbgpt.com/hub/nano-banana-2-1-vs-pro/",
+   "image": "https://wp.glbgpt.com/wp-content/uploads/2026/10/nano-banana-2-1-vs-pro-featured.webp",
+   "source": "GlobalGPT · 같은 프롬프트 비교",
+   "release": {
+    "name": "Nano Banana 2.1",
+    "date": "2026-10-06",
+    "url": "https://deepmind.google/models/model-cards/nano-banana-2-1/"
+   },
+   "examples": [
+    {
+     "title": "Pro와 같은 프롬프트 대결",
+     "url": "https://www.glbgpt.com/hub/nano-banana-2-1-vs-pro/",
+     "image": "https://wp.glbgpt.com/wp-content/uploads/2026/10/nano-banana-2-1-vs-pro-featured.webp"
+    },
+    {
+     "title": "바로 쓰는 프롬프트 14개",
+     "url": "https://picsart.com/blog/nano-banana-2-1-prompts/",
+     "image": null
+    },
+    {
+     "title": "가상피팅 오픈소스 연동",
+     "url": "https://github.com/tryonlabs/opentryon/issues/115",
+     "image": null
+    }
+   ],
+   "why": "옷·모델 일관성을 지킨 4K 편집",
+   "chips": [
+    "1K~4K",
+    "4:1 와이드 배너"
+   ],
+   "forMe": "26FW 룩 컷으로 4:1 시즌 배너 시안 한 장"
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "시즌 흐름도를 에디토리얼로",
+   "minutes": 15,
+   "basedOn": "https://github.com/cathrynlavery/diagram-design",
+   "steps": [
+    {
+     "text": "저장소 훑어보기",
+     "url": "https://github.com/cathrynlavery/diagram-design"
+    },
+    {
+     "text": "터미널에 스킬 설치",
+     "copy": "npx skills add cathrynlavery/diagram-design"
+    },
+    {
+     "text": "Claude에 프롬프트",
+     "copy": "diagram-design 스킬로 MLB 시즌 워크플로를 에디토리얼 타임라인 다이어그램(HTML+SVG)으로 만들어줘. 단계: 룸 기획 → 1차 품평 → 2차 품평 → 수주회 발주, 2달 주기. 각 단계 아래에 산출물(무드보드·캐드·샘플·오더) 한 줄씩. 그림자 없이, 흑백+포인트 네이비 한 색."
+    }
+   ]
+  },
+  {
+   "title": "계정 없이 품평 흐름도",
+   "minutes": 10,
+   "basedOn": "https://www.producthunt.com/products/openflowkit",
+   "steps": [
+    {
+     "text": "OpenFlowKit 열기",
+     "url": "https://openflowkit.com"
+    },
+    {
+     "text": "Mermaid 붙여넣기",
+     "copy": "flowchart LR\n  A[룸 기획] --> B[1차 품평]\n  B --> C[2차 품평]\n  C --> D[수주회 발주]\n  B -. 수정 .-> A\n  C -. 수정 .-> B"
+    },
+    {
+     "text": "다듬고 PNG 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "vibe",
+   "title": "말로 시키면 CAD를",
+   "url": "https://www.reddit.com/r/SideProject/comments/1x5thkv/made_an_app_where_an_ai_agent_does_the_cad_for_me/",
+   "image": "https://repository-images.githubusercontent.com/1413505972/b8a4dabb-3f1f-48e2-8220-85609333bf85",
+   "source": "r/SideProject"
+  },
+  {
+   "cat": "free",
+   "title": "다이어그램 디자인 스킬",
+   "url": "https://github.com/cathrynlavery/diagram-design",
+   "image": "https://opengraph.githubassets.com/ad11ff533a33e357354a0a9c95336317af160d50abe74ff6b47ca6cfd25e7125/cathrynlavery/diagram-design",
+   "source": "GitHub 주간 +10.7k★"
+  },
+  {
+   "cat": "free",
+   "title": "아티스트용 AI IDE",
+   "url": "https://github.com/storytold/artcraft",
+   "image": "https://opengraph.githubassets.com/dc0d9c5e6153e6c7eecf910404e8e964a9699b9cb659319170c50f69bd354789/storytold/artcraft",
+   "source": "GitHub Trending"
+  },
+  {
+   "cat": "free",
+   "title": "HTML→영상 HyperFrames",
+   "url": "https://github.com/heygen-com/hyperframes",
+   "image": "https://opengraph.githubassets.com/ccb7a8052e7d6b0dd17ae3912416b9e8dd678683b02f438164ad76ca13cf3d3c/heygen-com/hyperframes",
+   "source": "HeyGen 오픈소스"
+  },
+  {
+   "cat": "vibe",
+   "title": "지도 링크가 여행 포스터로",
+   "url": "https://www.reddit.com/r/SideProject/comments/1x5xd4i/routetoposter_i_made_a_tool_that_turns_your_road/",
+   "image": "https://opengraph.githubassets.com/96e9cb7647f87943954340f64614dcd1091594098d1bfc5b9887cc7ce02c5452/tusharkurne99/routetoposter",
+   "source": "r/SideProject"
+  },
+  {
+   "cat": "tool",
+   "title": "AI 손그림 화이트보드",
+   "url": "https://www.producthunt.com/products/excaliclaw",
+   "image": "https://ph-files.imgix.net/2cf74ff1-8f62-49a9-9fb2-bd9fc3845ecb.webp?auto=format&fit=crop&frame=1&h=512&w=1024",
+   "source": "Product Hunt"
+  },
+  {
+   "cat": "free",
+   "title": "OpenFlowKit 2",
+   "url": "https://www.producthunt.com/products/openflowkit",
+   "image": "https://ph-files.imgix.net/263b3c42-70b5-4285-bc57-4b320be91c48.gif?auto=format&fit=crop&frame=1&h=512&w=1024",
+   "source": "Product Hunt · MIT"
+  },
+  {
+   "cat": "release",
+   "title": "Haiku 5.5로 게임 $2",
+   "url": "https://www.mindstudio.ai/blog/claude-haiku-5-5-real-world-test",
+   "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/01af2175-c54c-45a7-9538-bcf5ef17ca2e.png?fm=auto&w=1200&h=630&fit=crop",
+   "source": "MindStudio"
+  },
+  {
+   "cat": "release",
+   "title": "소리 나는 공개 영상 AI",
+   "url": "https://comfyui-wiki.com/en/news/2026-10-06-kandinsky-6-0",
+   "image": "https://s.comfyui-wiki.com/news/2026-10-06-kandinsky-6-0/promo-poster.jpg",
+   "source": "Kandinsky 6.0 · MIT"
+  },
+  {
+   "cat": "release",
+   "title": "사진 한 장이 걷는 세계로",
+   "url": "https://noiz.ai/lp/blog/meet-helix-world",
+   "image": "https://noiz.ai/payloadcms/helixworld/helixworld-cover.webp",
+   "source": "Helix World",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "Meta Muse Wonder",
+   "url": "https://research.meta.ai/blog/muse-wonder",
+   "image": "https://research.meta.ai/articles/introducing-muse-wonder/social/muse-wonder-social-v1.webp",
+   "source": "Meta",
+   "watching": true
+  }
+ ],
+ "watching": [
+  {
+   "name": "Helix World",
+   "url": "https://noiz.ai/lp/blog/meet-helix-world",
+   "date": "2026-10-12"
+  },
+  {
+   "name": "Meta Muse Wonder",
+   "url": "https://research.meta.ai/blog/muse-wonder",
+   "date": "2026-10-12"
+  },
+  {
+   "name": "Grok Imagine Video 1.5 Lite",
+   "url": "https://llmgateway.io/models/grok-imagine-video-1-5-lite",
+   "date": "2026-10-08"
+  },
+  {
+   "name": "Mistral Large 4",
+   "url": "https://docs.mistral.ai/models/mistral-large-4-0",
+   "date": "2026-10-06"
+  }
+ ]
+}
