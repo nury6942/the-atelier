@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "collectedAt": "2026-10-15T17:10:00+09:00",
+ "collectedAt": "2026-10-15T18:20:00+09:00",
  "skipped": [],
  "posts": [
   {
@@ -189,6 +189,39 @@
    "media": true,
    "tag": "만든 것",
    "summary": "Claude Code 에이전트로 읽을거리 목록을 직접 실험해 보는 실습장으로 바꿈"
+  },
+  {
+   "src": "x",
+   "author": "@ClaudeDevs",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "at": "2026-10-14",
+   "likes": 16000,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Code 데스크톱 앱 업데이트: 세션을 여러 개 나란히 열고, 각각 뭘 하는지 한눈에"
+  },
+  {
+   "src": "x",
+   "author": "@felixrieseberg",
+   "url": "https://x.com/felixrieseberg/status/2110023283169247623",
+   "at": "2026-10-13",
+   "likes": 10000,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude 엔지니어 리드가 쓴 'AI로 더 크게 시도하는 법' 튜토리얼"
+  },
+  {
+   "src": "x",
+   "author": "@tetumemo",
+   "url": "https://x.com/tetumemo/status/2110146660609482865",
+   "at": "2026-10-13",
+   "likes": 161,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "UI 만들기가 프롬프트 쓰기에서 '보고 고르기'로 바뀌는 흐름 데모"
   }
  ]
 }

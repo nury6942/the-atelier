@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "generatedAt": "2026-10-15T14:30:00+09:00",
+ "generatedAt": "2026-10-15T18:20:00+09:00",
  "sourcesNote": "X · Reddit · HN · Product Hunt · GitHub · 공식 블로그 훑음 · 첫 호는 지난 열흘치",
  "cards": [
   {
@@ -213,6 +213,14 @@
  ],
  "pickup": [
   {
+   "cat": "release",
+   "title": "Claude Code 데스크톱 멀티세션",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "image": null,
+   "source": "@ClaudeDevs · ♥16K",
+   "watching": true
+  },
+  {
    "cat": "vibe",
    "title": "말로 시키면 CAD를",
    "url": "https://www.reddit.com/r/SideProject/comments/1x5thkv/made_an_app_where_an_ai_agent_does_the_cad_for_me/",
@@ -294,6 +302,11 @@
  ],
  "watching": [
   {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14"
+  },
+  {
    "name": "Helix World",
    "url": "https://noiz.ai/lp/blog/meet-helix-world",
    "date": "2026-10-12"
@@ -301,7 +314,8 @@
   {
    "name": "Meta Muse Wonder",
    "url": "https://research.meta.ai/blog/muse-wonder",
-   "date": "2026-10-12"
+   "date": "2026-10-12",
+   "note": "실사용 사례 1건 확인: @lucian__03 3D 슈팅 게임(10-14)"
   },
   {
    "name": "Grok Imagine Video 1.5 Lite",
