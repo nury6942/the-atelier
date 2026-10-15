@@ -87,7 +87,7 @@ function _boardPlaybook(ym, m) {
     .concat((function() {
       var tf = _boardTripFor(ym); if (!tf) return [];
       var t = tf.trip, now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-      if (t.start.slice(0, 7) === ym) return ['✈️ ' + _bEsc(t.title) + ' ' + t.start.slice(5).replace('-', '/') + '~' + t.end.slice(5).replace('-', '/') + ' · 예산 ' + _bMan(t.budget) + '만'];
+      if (t.start <= ym + '-31') return ['✈️ ' + _bEsc(t.title) + ' ' + t.start.slice(5).replace('-', '/') + '~' + t.end.slice(5).replace('-', '/') + ' · 예산 ' + _bMan(t.budget) + '만 (여행 봉투에서 정산)'];
       var left = Math.max(1, _bMonths(ym < nowYm ? nowYm : ym, t.start.slice(0, 7)));
       return ['🧳 다음 여행 ' + _bEsc(t.title) + ' (' + t.start.slice(2, 7).replace('-', '.') + ') 예산 ' + _bMan(t.budget) + '만 · 여행 통장에 월 ' + _bMan(t.budget / left) + '만'];
     })())
@@ -125,7 +125,7 @@ function _boardLoadExtra() {
 function _boardTripFor(ym) {
   var trips = _boardExtra.trips || [], monthEnd = ym + '-31', monthStart = ym + '-01';
   for (var i = 0; i < trips.length; i++) {
-    if (trips[i].end >= monthStart) return { trip: trips[i], from: i ? trips[i - 1].end : '0000', upto: monthEnd < trips[i].end ? monthEnd : trips[i].end };
+    if (trips[i].end >= monthStart) return { trip: trips[i], from: i ? trips[i - 1].end : _bYm(trips[i].start.slice(0, 7), -12) + '-01', upto: monthEnd < trips[i].end ? monthEnd : trips[i].end };
   }
   return null;
 }
@@ -192,7 +192,7 @@ function ldgBoardBaseline() {
   };
 }
 
-function ldgBoardMonth(ym) {
+function ldgBoardMonth(ym, plain) {
   // 오늘 이후 날짜(고정 거래 자동 예정 행 등)는 아직 일어난 돈이 아니라 뺀다
   var today = new Date(), todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
   var L = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym && t.date <= todayStr; });
@@ -204,7 +204,7 @@ function ldgBoardMonth(ym) {
   var buckets = MIRROR_BUCKETS.map(function() { return 0; });
   sp.forEach(function(t) { buckets[_bBucket(t)] += t['금액'] || 0; });
   var caps = _bPlan(ym).caps;
-  var tf = _boardTripFor(ym);
+  var tf = plain ? null : _boardTripFor(ym);
   var envs = MIRROR_ENVELOPES.map(function(e) {
     var rows = sp.filter(e[2]);
     if (e[0] === '여행' && tf) {
@@ -347,7 +347,7 @@ function ldgRenderBoard() {
   var m = ldgBoardMonth(ym), b = ldgBoardBaseline();
   if (!m.L.length) {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
-    var lyE = ldgBoardMonth(_bYm(ym, -12)).envs, caps = _bPlan(ym).caps;
+    var lyE = ldgBoardMonth(_bYm(ym, -12), true).envs, caps = _bPlan(ym).caps;
     var tfp = _boardTripFor(ym);
     var budget = MIRROR_ENVELOPES.map(function(e, i) {
       var cap = caps[e[0]] != null ? caps[e[0]] : e[3], lv = lyE[i] ? lyE[i].val : 0;
@@ -404,7 +404,7 @@ function ldgRenderBoard() {
   try { h += _boardPlaybook(ym, m); } catch (e) { console.error('[Board playbook]', e); }
 
   // ── 봉투 5개
-  var lyEnv = (function() { try { return ldgBoardMonth(_bYm(ym, -12)).envs; } catch (e) { return []; } })();
+  var lyEnv = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).envs; } catch (e) { return []; } })();
   h += '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 봉투 · 쓴 돈 / 한도</span><span>빨강 = 넘침</span></p><div class="lb-env">' +
     m.envs.map(function(e, ei) {
       var ly = lyEnv[ei] ? (e.unit === '회' ? lyEnv[ei].val + '회' : _bMan(lyEnv[ei].val) + '만') : '';
