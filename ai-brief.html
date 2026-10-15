@@ -85,8 +85,8 @@
   .rv em{font-style:normal;color:var(--dim);font-size:11px;margin-left:4px}
 
   /* X · Threads */
-  .soc{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-  .post{display:flex;flex-direction:column;border:1px solid var(--ink);background:#fff;min-width:0}
+  .soc{columns:3 320px;column-gap:16px}
+  .post{display:flex;flex-direction:column;border:1px solid var(--ink);background:#fff;min-width:0;break-inside:avoid;margin:0 0 16px}
   .post .img{aspect-ratio:16/10}
   .post .img .ph{font-size:1.3rem}
   .post .pb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -94,10 +94,18 @@
   .post .who .pf{flex:none;width:18px;height:18px;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:10px;font-weight:800}
   .post .who .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .post .who .lk{margin-left:auto;color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .post .sm{font-size:14px;font-weight:600;line-height:1.45;letter-spacing:-.01em}
+  .post .sm{font-size:16px;font-weight:700;line-height:1.4;letter-spacing:-.015em}
   .post .tg{font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 7px;color:#fff;background:var(--tc)}
-  .post:hover{background:var(--wash)}
-  .post:not(.has-img) .sm{font-size:16px;line-height:1.45}
+  .post .pts{margin:2px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+  .post .pts li{position:relative;padding-left:14px;font-size:13px;line-height:1.55;color:#222}
+  .post .pts li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:2px;background:var(--ink)}
+  .post .tr{font-size:13px;font-weight:600;line-height:1.5;color:var(--accent);border-top:1px solid var(--faint);padding-top:9px}
+  .post .tr::before{content:"바로 해보기 → ";color:var(--ink);font-size:10px;font-weight:800;letter-spacing:.1em}
+  .post .og{border:0;background:none;padding:0;font-size:11px;font-weight:700;color:var(--ink);margin-left:auto;letter-spacing:.04em}
+  .post .emb{border-top:1px solid var(--faint);padding:10px;display:none}
+  .post.open .emb{display:block}
+  .post .emb blockquote{margin:0 auto!important}
+  .post .src-l{font-size:11px;color:var(--dim)}
   .post .ft{margin-top:auto;display:flex;align-items:center;gap:8px}
   .post .md{font-size:11px;color:var(--dim);font-weight:600}
 
@@ -248,18 +256,19 @@
     }
     if (social && social.posts && social.posts.length){
       var TG={'후기':'#059669','꿀팁':'#ea580c','만든 것':'#2563eb','소식':'#111'};
+      window.__posts = social.posts.slice().sort(function(a,b){ return (b.likes||0)-(a.likes||0); });
       var posts = social.posts.slice().sort(function(a,b){ return (b.likes||0)-(a.likes||0); });
       h += '<div class="sech"><h2>X · Threads</h2><span class="cap">써본 사람들 · '+posts.length+'</span></div><div class="soc">'
-        + posts.map(function(p){
-            var k = p.src==='x' ? 'tool' : 'release';
-            return '<a class="post'+(p.image?' has-img':'')+'" href="'+esc(p.url)+'" target="_blank" rel="noopener">'
-              + (p.image ? img(p.image, k) : '')
-              + '<div class="pb"><div class="who"><span class="pf">'+(p.src==='x'?'X':'@')+'</span><span class="nm">'+esc(p.author)+'</span>'
+        + posts.map(function(p, i){
+            var pts = (p.points&&p.points.length) ? '<ul class="pts">'+p.points.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>' : '';
+            return '<div class="post" data-i="'+i+'">'
+              + '<div class="pb"><div class="who"><span class="pf">'+(p.src==='x'?'X':'@')+'</span><a class="nm" href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.author)+'</a>'
               + (p.likes ? '<span class="lk">♥ '+Number(p.likes).toLocaleString('ko-KR')+'</span>' : '')+'</div>'
-              + '<div class="sm">'+esc(p.summary)+'</div>'
+              + '<div class="sm">'+esc(p.summary)+'</div>' + pts
+              + (p.try ? '<div class="tr">'+esc(p.try)+'</div>' : '')
               + '<div class="ft">'+(p.tag ? '<span class="tg" style="--tc:'+(TG[p.tag]||'#111')+'">'+esc(p.tag)+'</span>' : '')
-              + (!p.image && p.media ? '<span class="md">사진·영상 ↗</span>' : '')+'</div>'
-              + '</div></a>';
+              + '<button class="og">원문 보기 ▾</button></div>'
+              + '</div><div class="emb"></div></div>';
           }).join('') + '</div>';
     }
     if (d.tryToday && d.tryToday.length){
@@ -274,7 +283,26 @@
     window.scrollTo(0,0);
   }
 
+  // 원문: X·Threads 공식 임베드를 펼칠 때만 불러온다(사진·영상·전체 글이 원래 모습 그대로)
+  function loadScript(src){ var sc=document.createElement('script'); sc.src=src; sc.async=true; document.body.appendChild(sc); return sc; }
+  function embed(box, p){
+    if (box.getAttribute('data-done')) return; box.setAttribute('data-done','1');
+    if (p.src==='x'){
+      box.innerHTML='<blockquote class="twitter-tweet" data-dnt="true" data-lang="ko"><a href="'+esc(p.url.replace('x.com','twitter.com'))+'"></a></blockquote>';
+      if (window.twttr && twttr.widgets) twttr.widgets.load(box); else loadScript('https://platform.twitter.com/widgets.js');
+    } else {
+      box.innerHTML='<blockquote class="text-post-media" data-text-post-permalink="'+esc(p.url)+'" data-text-post-version="0"><a href="'+esc(p.url)+'">Threads에서 보기</a></blockquote>';
+      loadScript('https://www.threads.com/embed.js?'+Date.now());
+    }
+  }
   function wire(){
+    app.querySelectorAll('.post .og').forEach(function(b){
+      b.onclick=function(){
+        var card=b.closest('.post'), p=(window.__posts||[])[+card.getAttribute('data-i')];
+        var open=card.classList.toggle('open'); b.textContent=open?'원문 접기 ▴':'원문 보기 ▾';
+        if (open && p) embed(card.querySelector('.emb'), p);
+      };
+    });
     var p=document.getElementById('prev'), n=document.getElementById('next');
     var i = dates.indexOf(cur.date);
     if (p) p.onclick=function(){ load(dates[i+1]); };

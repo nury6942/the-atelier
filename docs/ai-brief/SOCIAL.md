@@ -43,9 +43,19 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
    - 광고·강의 판매·"댓글 달면 자료 드림" 미끼글·행사 공지는 뺀다. **같은 사람 글은 하루 2개까지**(홈 피드는 팔로우 중인 계정 하나가 도배하기 쉬움).
 4. 고르기: 12~16개. 우선순위 ① 써본 후기·실사용 결과("해봤더니") ② 바로 따라 할 꿀팁 ③ 만든 것 자랑 ④ 새 기능 소식.
    Threads 와 X 를 섞되 한쪽이 없으면 있는 쪽만.
-5. 각 글: `summary` 한국어 60자 이내(무엇을 했고 결과가 어땠나), `tag` 하나 — `후기` | `꿀팁` | `만든 것` | `소식`.
-6. JSON 을 쓰고 문법 검사(`python3 -c 'import json,sys;json.load(open(sys.argv[1]))' 파일`), `data/ai-brief/social/` 만 add → `social: <오늘> X·Threads` 커밋 → main 푸시(거절되면 `git pull --rebase` 후 재시도).
-7. 탭 닫기.
+5. **고른 글마다 원문을 끝까지 읽는다** (2026-10-15 누리: "헤드라인만 보면 뭔 소린지 모르겠다, 원문을 가져와라").
+   - X: `curl -s "https://cdn.syndication.twimg.com/tweet-result?id=<글번호>&token=a"` 로 본문(`text`)·인용글(`quoted_tweet.text`)·링크 카드 제목. 긴 글(`note_tweet`)은 잘리므로 글 페이지를 열어 `[data-testid="tweetText"]` 전체를 읽는다. 같은 작성자의 이어지는 답글(스레드)도 읽는다.
+   - Threads: 글 페이지를 열어 `[data-pressable-container]` 첫 번째(본문)와 같은 작성자의 이어지는 칸들(1/11 같은 연재)을 읽는다.
+   - 링크가 핵심이면(튜토리얼·아티클) 그 페이지도 읽는다(t.co 는 `curl -sI` 로 location 확인).
+   - 반어·농담 글(예: "PDF 뷰어도 바이브코딩했다" 식 풍자)은 실사용이 아니니 뺀다.
+6. 각 글에 쓴다:
+   - `summary` 한국어 40자 안팎 — 제목 역할. 결과가 보이게.
+   - `points` **3~5줄** — 원문에 실제로 있는 내용을 내 말로: 구체적 방법·순서·명령어·숫자·결과. "~을 공개" 같은 뜬 말 금지. 이미지에만 있는 내용이면 "이미지에 커리큘럼" 처럼 원문에서 보라고 적는다.
+   - `try` (선택) 누리가 오늘 바로 해볼 한 줄 — 진짜 걸릴 때만.
+   - `tag` 하나 — `후기` | `꿀팁` | `만든 것` | `소식`.
+   화면이 "원문 보기"로 X·Threads 공식 임베드를 띄우므로 원문 전문을 JSON 에 옮기지 않는다(요약·정리만).
+7. JSON 을 쓰고 문법 검사(`python3 -c 'import json,sys;json.load(open(sys.argv[1]))' 파일`), `data/ai-brief/social/` 만 add → `social: <오늘> X·Threads` 커밋 → main 푸시(거절되면 `git pull --rebase` 후 재시도).
+8. 탭 닫기.
 
 ## 스키마 — `data/ai-brief/social/YYYY-MM-DD.json`
 
@@ -57,7 +67,8 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
   "posts": [
     {"src": "threads", "author": "@handle", "url": "https://www.threads.com/@handle/post/…",
      "at": "2026-10-15T05:44:51Z", "likes": 204, "replies": 15,
-     "image": null, "media": true, "tag": "후기", "summary": "…"}
+     "image": null, "media": true, "tag": "후기", "summary": "…",
+     "points": ["구체적 방법·숫자", "…", "…"], "try": "(선택)"}
   ]
 }
 ```
