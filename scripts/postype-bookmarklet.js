@@ -10,12 +10,28 @@
   const ATELIER_URL = 'https://nury6942.github.io/the-atelier/?postype-bridge=1';
   const ATELIER_ORIGIN = 'https://nury6942.github.io';
 
+  // ─── 자동 모드 (2026-10-15) ────────────────────────────────────
+  //  맥북 launchd 데몬(scripts/postype-auto/)이 매일 크롬 포스타입 탭에서
+  //  window.__ATELIER_POSTYPE_AUTO = {} 를 앞에 붙여 이 파일을 그대로 실행한다.
+  //  · 범위 패널·alert·confirm 없이 "마지막 동기화 날 -1일 00:00 ~ 지금" 수집
+  //    (달이 바뀌거나 며칠 빠져도 워터마크에서 이어 받음)
+  //  · AUTO.range = { cutoffStr, upperStr } 로 범위를 직접 줄 수도 있다 (백필)
+  //  · 진행 상태는 <html data-atelier-sync="{json}"> 에 남겨 데몬이 읽는다
+  //  · 로그인 풀림·실패 페이지가 있으면 저장하지 않고 멈춘다 (부분일 덮어쓰기 방지)
+  const AUTO = window.__ATELIER_POSTYPE_AUTO || null;
+  delete window.__ATELIER_POSTYPE_AUTO;
+  const report = (state, info) => {
+    try { document.documentElement.dataset.atelierSync = JSON.stringify(Object.assign({ state, at: Date.now() }, info || {})); } catch (e) {}
+  };
+  report('start');
+
   // ─── 사전 체크: 포스타입 수익 페이지인지 ────────────────────────
+  if (AUTO && !location.hostname.includes('postype.com')) return report('error', { reason: 'not-postype' });
   if (!location.hostname.includes('postype.com')){
     alert('이 북마크릿은 postype.com 수익 페이지에서만 동작합니다.');
     return;
   }
-  if (!location.pathname.startsWith('/point/earnings')){
+  if (!AUTO && !location.pathname.startsWith('/point/earnings')){
     if (!confirm('수익 페이지가 아닌데 진행할까요?\n( /point/earnings/list 권장 )')) return;
   }
 
@@ -140,7 +156,31 @@
     });
   });
 
-  const range = await chooseRange();
+  // 자동 모드 범위: 모든 달 워터마크 중 가장 최신 -1일 자정부터 지금까지
+  const autoRange = () => {
+    if (AUTO.range && AUTO.range.cutoffStr){
+      const c = AUTO.range.cutoffStr, u = AUTO.range.upperStr || null;
+      return {
+        cutoffStr: c, upperStr: u, wmKey: null,
+        DAYS: Math.ceil(((u ? new Date(u.replace(' ', 'T')) : now) - new Date(c.replace(' ', 'T'))) / 86400000),
+        modeLabel: `자동 · ${shortTs(c)}~${u ? shortTs(u) : '지금'}`
+      };
+    }
+    const newest = Object.values(readWM()).sort().pop();
+    const monthStart = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01 00:00:00`;
+    let c = monthStart;
+    if (newest){
+      const b = new Date(String(newest).replace(' ', 'T'));
+      if (!isNaN(b)){ b.setDate(b.getDate() - OVERLAP_DAYS); b.setHours(0, 0, 0, 0); c = fmtTs(b); }
+    }
+    return {
+      cutoffStr: c, upperStr: null, wmKey: null,
+      DAYS: Math.ceil((now - new Date(c.replace(' ', 'T'))) / 86400000),
+      modeLabel: `자동 · ${shortTs(c)}~지금`
+    };
+  };
+
+  const range = AUTO ? autoRange() : await chooseRange();
   if (!range) return;  // 취소
   const DAYS = range.DAYS, cutoffStr = range.cutoffStr, upperStr = range.upperStr, modeLabel = range.modeLabel;
 
@@ -212,6 +252,18 @@
     }
   };
 
+  // 자동 모드: 로그인이 풀렸으면 수익 페이지가 로그인 화면으로 넘어간다 → 아무것도 안 쓰고 멈춤
+  if (AUTO){
+    try {
+      const r1 = await fetch('/point/earnings/list?page=1', { credentials: 'include' });
+      if (!r1.ok || !/\/point\/earnings/.test(r1.url) || !/수익 내역/.test(await r1.text())){
+        setMsg('❌ 포스타입 로그인 필요', r1.url);
+        return report('error', { reason: 'login', url: r1.url });
+      }
+    } catch (e) { return report('error', { reason: 'network', message: e.message }); }
+    report('collecting', { mode: modeLabel, cutoff: cutoffStr });
+  }
+
   // 특정 월 동기화: 최신→과거로 페이지를 넘기므로 upper(다음 달 1일) 이후 거래는
   // 건너뛰며 계속 진행하고, cutoff(그 달 1일) 이전 거래를 만나면 종료.
   let stop = false;
@@ -237,6 +289,16 @@
   }
 
   setMsg('집계 중…', `총 ${tx.length}건 수집${failedPages.length ? ` · 영구실패 ${failedPages.length}p` : ''}`);
+  // 자동 모드: 빠진 페이지가 있으면 그날 매출이 덜 담긴 채로 기존 값을 덮으니 저장하지 않는다
+  if (AUTO && failedPages.length){
+    setMsg('❌ 일부 페이지 수집 실패 — 저장 안 함', `${failedPages.length}p`);
+    return report('error', { reason: 'failed-pages', pages: failedPages.slice() });
+  }
+  if (AUTO && !tx.length){
+    setMsg('✅ 새 거래 없음', modeLabel);
+    setTimeout(() => panel.remove(), 3000);
+    return report('done', { mode: modeLabel, tx: 0 });
+  }
 
   // ─── 일별 집계 (채널별 분리) ───────────────────────────────────
   const dailyMap = {};  // key: channelId|date
@@ -358,8 +420,9 @@
   if (!atelierWin){
     setMsg('❌ 팝업 차단됨', '브라우저에서 팝업 허용 후 다시 클릭');
     setTimeout(() => panel.remove(), 6000);
-    return;
+    return report('error', { reason: 'popup-blocked' });
   }
+  report('sending', { mode: modeLabel, tx: tx.length, daily: dailyArr.length });
 
   let done = false;
   const onMsg = (e) => {
@@ -376,11 +439,15 @@
       const p = r.posts || {};
       const s = r.series || {};
       // ★ 성공했을 때만 워터마크 갱신 — 이번에 본 가장 최신 거래 시각
-      if (range.wmKey && tx.length){
+      if (tx.length){
         let newest = '';
         tx.forEach(t => { if (t.ts && t.ts > newest) newest = t.ts; });
-        if (newest) writeWM(range.wmKey, newest);
+        // 자동 모드는 가장 최신 거래가 속한 달 키에 남긴다 (다음 자동 실행이 여기서 이어 받음)
+        const key = range.wmKey || (AUTO && newest ? newest.slice(0, 7) : null);
+        if (newest && key) writeWM(key, newest);
       }
+      report('done', { mode: modeLabel, tx: tx.length, daily: d, posts: p, series: s });
+      if (AUTO) setTimeout(() => { try { atelierWin.close(); } catch (_) {} }, 3000);
       setMsg('✅ 동기화 완료', `일별 +${d.added||0}/~${d.updated||0} · 포스트 +${p.added||0}/~${p.updated||0} · 시리즈 +${s.added||0}/~${s.updated||0}`);
       setTimeout(() => panel.remove(), 5000);
       window.removeEventListener('message', onMsg);
@@ -388,11 +455,12 @@
   };
   window.addEventListener('message', onMsg);
 
-  // 30초 안에 응답 없으면 안내
+  // 30초(자동 모드는 3분) 안에 응답 없으면 안내
   setTimeout(() => {
     if (!done){
       setMsg('⏳ atelier 응답 지연', 'atelier 탭이 열렸는지 확인해주세요');
       setTimeout(() => panel.remove(), 8000);
+      report('error', { reason: 'atelier-timeout' });
     }
-  }, 30000);
+  }, AUTO ? 180000 : 30000);
 })();
