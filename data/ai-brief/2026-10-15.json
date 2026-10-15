@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "generatedAt": "2026-10-15T18:20:00+09:00",
+ "generatedAt": "2026-10-15T19:10:00+09:00",
  "sourcesNote": "X · Reddit · HN · Product Hunt · GitHub · 공식 블로그 훑음 · 첫 호는 지난 열흘치",
  "cards": [
   {
@@ -174,39 +174,46 @@
  ],
  "tryToday": [
   {
-   "title": "시즌 흐름도를 에디토리얼로",
+   "title": "움직이는 UI 200개 중 하나를 Atelier에 붙이기",
    "minutes": 15,
-   "basedOn": "https://github.com/cathrynlavery/diagram-design",
+   "why": "프롬프트를 쓰는 대신 눈으로 '골라서' UI를 바꾸는 방식이에요. 디자이너 감으로 고르면 Claude가 내 사이트 테마에 맞춰 넣어요. 무료이고 상업용도 돼요.",
+   "from": {
+    "label": "@lucian__03 · ♥2,500",
+    "url": "https://x.com/lucian__03/status/2109637939093254646"
+   },
    "steps": [
     {
-     "text": "저장소 훑어보기",
-     "url": "https://github.com/cathrynlavery/diagram-design"
+     "text": "갤러리에서 눌러보고 고르기",
+     "url": "https://lucianlabs.dev/uxui-prompt/"
     },
     {
      "text": "터미널에 스킬 설치",
-     "copy": "npx skills add cathrynlavery/diagram-design"
+     "copy": "npx skills add Seokwoooo/lucian-uxui"
     },
     {
-     "text": "Claude에 프롬프트",
-     "copy": "diagram-design 스킬로 MLB 시즌 워크플로를 에디토리얼 타임라인 다이어그램(HTML+SVG)으로 만들어줘. 단계: 룸 기획 → 1차 품평 → 2차 품평 → 수주회 발주, 2달 주기. 각 단계 아래에 산출물(무드보드·캐드·샘플·오더) 한 줄씩. 그림자 없이, 흑백+포인트 네이비 한 색."
+     "text": "Claude Code에 붙여넣기",
+     "copy": "lucian-uxui 스킬로 the-atelier 의 ai-brief.html '해봤음' 버튼을 누르면 살짝 튀어 오르는 애니메이션 버튼으로 바꿔줘. 지금 테마(흑백 + 보라 #7c3aed, Inter, 직각 모서리)는 그대로 유지하고, 바꾼 뒤 스크린샷으로 보여줘."
     }
    ]
   },
   {
-   "title": "계정 없이 품평 흐름도",
-   "minutes": 10,
-   "basedOn": "https://www.producthunt.com/products/openflowkit",
+   "title": "매일 시키는 일을 '프로그램'으로 바꾸기",
+   "minutes": 20,
+   "why": "레딧 200댓글이 모은 1등 꿀팁이에요. 매일 AI에 시키면 매번 토큰이 들지만, 한 번 스크립트로 만들면 그다음부턴 공짜로 매번 똑같이 돌아요.",
+   "from": {
+    "label": "@hustle_raccoon · ♥164",
+    "url": "https://www.threads.com/@hustle_raccoon/post/DefkVWPEy0p"
+   },
    "steps": [
     {
-     "text": "OpenFlowKit 열기",
-     "url": "https://openflowkit.com"
+     "text": "매일 시키는 일 하나 고르기"
     },
     {
-     "text": "Mermaid 붙여넣기",
-     "copy": "flowchart LR\n  A[룸 기획] --> B[1차 품평]\n  B --> C[2차 품평]\n  C --> D[수주회 발주]\n  B -. 수정 .-> A\n  C -. 수정 .-> B"
+     "text": "Claude Code에 붙여넣기",
+     "copy": "내가 매일 너한테 시키는 '<여기에 작업>'을 앞으로 AI 없이 돌릴 수 있는 스크립트로 만들어줘. 맥에서 명령어 한 줄로 돌게 하고, 사용법은 README 한 장으로."
     },
     {
-     "text": "다듬고 PNG 저장"
+     "text": "한 번 돌려보고 해봤음"
     }
    ]
   }

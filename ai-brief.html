@@ -114,7 +114,16 @@
     border-bottom:2px solid var(--accent);padding-bottom:10px;margin:56px 0 20px}
   .sech h2{margin:0;font-size:1.4rem;font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.01em}
   .sech .cap{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-  .tries{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+  .tries{display:grid;grid-template-columns:1.7fr 1fr;gap:20px;margin-bottom:40px}
+  .try .kick{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;opacity:.85}
+  .try.must{padding:26px 28px}
+  .try.must h3{font-size:1.7rem;line-height:1.2;letter-spacing:-.02em}
+  .try:not(.must){background:#fff;color:var(--ink);border:1px solid var(--ink)}
+  .try:not(.must) .step{background:var(--wash)}
+  .try:not(.must) .step .act{background:var(--ink);color:#fff}
+  .try:not(.must) .done-btn{border-color:var(--ink);color:var(--ink)}
+  .try .why2{margin-top:10px;font-size:14px;line-height:1.55;opacity:.92}
+  .try .from{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;opacity:.75;text-decoration:underline}
   .try{background:var(--accent);color:#fff;padding:20px}
   .try.done{background:var(--ink)}
   .try .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -149,6 +158,7 @@
     .side .card .img{flex:none;aspect-ratio:16/9;min-height:0}
     .hero h3{font-size:1.3rem}
     .tries{grid-template-columns:1fr}
+    .try.must h3{font-size:1.3rem}
     .strip{grid-auto-columns:160px}
   }
   @media (max-width:420px){ .steps{grid-template-columns:1fr} .step{flex-direction:row;align-items:center} .step .n{font-size:1.2rem} }
@@ -229,8 +239,11 @@
       else if (s.url) act = '<a class="act" href="'+esc(s.url)+'" target="_blank" rel="noopener">열기 ↗</a>';
       return '<div class="step"><div class="n">'+(j+1)+'</div><div class="t">'+esc(s.text)+'</div>'+act+'</div>';
     }).join('');
-    return '<div class="try'+(done?' done':'')+'" data-key="'+esc(key)+'">'
+    return '<div class="try'+(i===0?' must':'')+(done?' done':'')+'" data-key="'+esc(key)+'">'
+      + (i===0 ? '<div class="kick">오늘 꼭 해볼 것</div>' : '')
       + '<div class="top"><h3>'+esc(t.title)+'</h3><span class="min">'+esc(t.minutes||15)+' MIN</span></div>'
+      + (t.why ? '<div class="why2">'+esc(t.why)+'</div>' : '')
+      + (t.from ? '<a class="from" href="'+esc(t.from.url)+'" target="_blank" rel="noopener">출처 · '+esc(t.from.label)+' ↗</a>' : '')
       + '<div class="steps">'+steps+'</div>'
       + '<button class="done-btn">'+(done?'해봤음 ✓':'해봤음')+'</button></div>';
   }
@@ -250,6 +263,10 @@
       + '<div class="meta"><span>No. <b>'+String(dates.length-idx).padStart(3,'0')+'</b></span><span><b>'+esc(fmtDate(d.date))+'</b></span>'
       + '<div class="nav"><button id="prev" '+(idx>=dates.length-1?'disabled':'')+' aria-label="이전 날">‹</button>'
       + '<button id="next" '+(idx<=0?'disabled':'')+' aria-label="다음 날">›</button></div></div></header>' + stale;
+    // 누리가 꼭 해봤으면 하는 것이 맨 위 — 0번이 원픽(크게), 1번은 옆에 작게
+    if (d.tryToday && d.tryToday.length){
+      h += '<div class="tries">'+d.tryToday.slice(0,2).map(tryBlock).join('')+'</div>';
+    }
     if (cards.length){
       h += '<div class="grid">'+card(cards[0],'hero')+'<div class="side">'+(cards[1]?card(cards[1]):'')+(cards[2]?card(cards[2]):'')+'</div></div>';
       if (cards.length>3) h += '<div class="row2">'+cards.slice(3,5).map(function(c){return card(c);}).join('')+'</div>';
@@ -270,9 +287,6 @@
               + '<button class="og">원문 보기 ▾</button></div>'
               + '</div><div class="emb"></div></div>';
           }).join('') + '</div>';
-    }
-    if (d.tryToday && d.tryToday.length){
-      h += '<div class="sech"><h2>오늘 해볼 것</h2><span class="cap">Try today</span></div><div class="tries">'+d.tryToday.slice(0,2).map(tryBlock).join('')+'</div>';
     }
     if (d.pickup && d.pickup.length){
       h += '<div class="sech"><h2>주워 담기</h2><span class="cap">'+d.pickup.length+' picks</span></div><div class="strip">'+d.pickup.map(pick).join('')+'</div>';
