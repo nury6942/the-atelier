@@ -11461,6 +11461,10 @@
       <span class="material-symbols-outlined text-[20px] transition-colors">auto_awesome</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">AI Brief</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-interior" onclick="navigate('interior'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">chair</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Interior</span>
+    </a>
 
     <!-- Nomad Master — 단일 항목 (페이지 안에서 sub-sidebar로 28개 sub-page) -->
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-nomad-master" onclick="navigate('nomad-master'); return false;">
@@ -17106,6 +17110,10 @@
     </div>
 
   <!-- ════════ NOMAD MASTER 페이지 — 내부 sub-sidebar + 메인 콘텐츠 ════════ -->
+  <div id="page-interior" class="page" style="display:none;padding:0;background:#fff">
+    <iframe src="./interior.html" title="Interior" loading="lazy"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
+  </div>
   <div id="page-aibrief" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./ai-brief.html" title="AI Brief" loading="lazy"
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
@@ -17155,7 +17163,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=171" defer></script>
-<script src="js/app-7-mirror.js?v=31" defer></script>
+<script src="js/app-7-mirror.js?v=32" defer></script>
 <script src="js/english-study.js?v=11" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
