@@ -18475,6 +18475,8 @@
   function _dayPinsMissingCount() {
     return (journeyData || []).filter(function(d) {
       if (d.type === '숙소') return !(typeof d.lat === 'number' && typeof d.lng === 'number') && (d.title || d.name || '').trim();
+      // 이동 줄(기차·차·비행 등)은 장소가 아니라 지도에 선으로만 그린다 — geocodeTripSpots 와 같은 기준으로 센다
+      if (/^(train|metro|bus|car|walk|flight|boat|cable)$/.test(d.tag || d.move || '')) return false;
       return (d.type === '일정' || d.type === '스팟') &&
              !(typeof d.lat === 'number' && typeof d.lng === 'number') &&
              (d.title || '').trim() && d.auto_sun == null;
