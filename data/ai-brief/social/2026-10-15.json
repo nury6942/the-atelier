@@ -1,9 +1,7 @@
 {
  "date": "2026-10-15",
- "collectedAt": "2026-10-15T16:40:00+09:00",
- "skipped": [
-  "x: 크롬에 로그인 안 됨"
- ],
+ "collectedAt": "2026-10-15T17:10:00+09:00",
+ "skipped": [],
  "posts": [
   {
    "src": "threads",
@@ -73,17 +71,6 @@
   },
   {
    "src": "threads",
-   "author": "@raejo_dor",
-   "url": "https://www.threads.com/@raejo_dor/post/DeO9HK8gYcf",
-   "at": "2026-10-08",
-   "likes": 79,
-   "image": null,
-   "media": true,
-   "tag": "후기",
-   "summary": "클로드 스타트업 크레딧 1분 만에 합격, 신청 과정 그대로 공유"
-  },
-  {
-   "src": "threads",
    "author": "@oeeoam",
    "url": "https://www.threads.com/@oeeoam/post/DegMiFKoP3c",
    "at": "2026-10-15",
@@ -125,6 +112,83 @@
    "media": true,
    "tag": "만든 것",
    "summary": "개발 경험 0으로 앱을 만들어 토스에 출시. 검토에서 두 번 떨어진 이유까지"
+  },
+  {
+   "src": "x",
+   "author": "@mattpocockuk",
+   "url": "https://x.com/mattpocockuk/status/2109973273924579720",
+   "at": "2026-10-13",
+   "likes": 3900,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "Claude Code 흔한 실수 정리: effort 너무 높게, 스킬 너무 길게 쓰는 것 등"
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2109637939093254646",
+   "at": "2026-10-12",
+   "likes": 2500,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "바이브코딩용 '움직이는 UI' 프롬프트 200개를 전부 무료로 공개"
+  },
+  {
+   "src": "x",
+   "author": "@avo_stone",
+   "url": "https://x.com/avo_stone/status/2109478782021333439",
+   "at": "2026-10-12",
+   "likes": 1800,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "남이 올린 클로드 팁 화면녹화를 보여주고 똑같이 만들어 달랬더니 진짜 해줌"
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2109727705709084960",
+   "at": "2026-10-12",
+   "likes": 1300,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code에서 Sonnet·Haiku·Opus 5.5를 역할별로 나눠 돌려 토큰 절약"
+  },
+  {
+   "src": "x",
+   "author": "@svpino",
+   "url": "https://x.com/svpino/status/2110038433880027197",
+   "at": "2026-10-13",
+   "likes": 1000,
+   "image": null,
+   "media": false,
+   "tag": "만든 것",
+   "summary": "내가 돈을 얼마 썼는지 보려고 재무 리포트를 바이브코딩으로 만듦"
+  },
+  {
+   "src": "x",
+   "author": "@Che0dan",
+   "url": "https://x.com/Che0dan/status/2109628658029855038",
+   "at": "2026-10-12",
+   "likes": 936,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "쇼츠 자동 제작 과정 총정리: Claude Code·Codex 프롬프트부터 자동 편집까지"
+  },
+  {
+   "src": "x",
+   "author": "@ch3nweiii",
+   "url": "https://x.com/ch3nweiii/status/2110110226955292805",
+   "at": "2026-10-13",
+   "likes": 388,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude Code 에이전트로 읽을거리 목록을 직접 실험해 보는 실습장으로 바꿈"
   }
  ]
 }

@@ -24,7 +24,13 @@ Threads·X 에서 AI 실사용·꿀팁 글을 모아 `data/ai-brief/social/YYYY-
    - 검색은 보조: `/search?q=<검색어>&serp_type=default` (인기 — 대부분 1주 넘은 글이라 7일 컷), `&filter=recent` (최근 — 스팸 많음, 키워드 필터 필수)
      검색어 2~3개만 돌아가며: `AI 꿀팁` · `클로드` · `바이브코딩` · `나노바나나` · `제미나이` · `AI 자동화` · 그날 새 모델 이름
    **X** — 로그인돼 있을 때만(로그인 화면으로 튕기면 건너뜀): `https://x.com/home` 팔로잉 탭, `https://x.com/search?q=<검색어> min_faves:200&f=top`
+   **X 실측(2026-10-15)** — 누리 X 계정의 For you 는 아직 AI 취향이 아니라(인테리어·연예) 홈 피드는 쓸모없다. **검색이 본진**:
+     `"Claude Code" min_faves:300 since:<3일 전>` · `"vibe coding" min_faves:300 …` · `"nano banana" min_faves:300 …` ·
+     `(바이브코딩 OR 클로드 OR 제미나이 OR 챗GPT) min_faves:50 …` · 그날 새 모델 이름 — 모두 `&f=top`.
+     X 는 로딩이 느리다: 이동 → `computer wait 5초` → `window.scrollBy(0,3000)` 한 번 → `wait 2초` → 모으기. 결과는 `sessionStorage.__acc` 에 쌓아 페이지를 옮겨도 유지.
+     의견·논쟁 글(“바이브코딩 그만 불러라”, “AI 싫어하는 사람 많다”)은 좋아요가 많아도 뺀다 — 실사용·꿀팁·만든 것 위주.
    **요령**
+   - 작업 탭은 백그라운드라 페이지 안 `setTimeout` 이 1분 단위로 늘어진다(숨은 탭 함정) → 스크롤 루프를 JS 안에서 길게 돌리지 말고, 기다림은 `computer wait` 로 밖에서. 한 번의 javascript_tool 은 45초 넘으면 죽는다.
    - AI 글 판별 정규식(영문 `ai` 는 단어 경계 — "daily" 같은 오탐 방지):
      `/((?:^|[^a-z])ai(?:[^a-z]|$)|claude|클로드|gpt|gemini|제미나이|나노바나나|nano ?banana|바이브|vibe ?cod|cursor|커서|코덱스|codex|에이전트|agent|자동화|프롬프트|prompt|미드저니|midjourney|llm|n8n|mcp|오픈ai|openai|앤트로픽|anthropic|sora|veo|kling|runway|힉스필드|higgsfield)/i`
    - 본문 줄에서 `AI 콘텐츠`·`번역하기` 줄은 빼고 판별(이 라벨 때문에 그림 글이 AI 글로 잡힘).
