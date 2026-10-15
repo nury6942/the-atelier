@@ -293,7 +293,7 @@ function ldgBoardMonth(ym, plain) {
     var rows = sp.filter(e[2]);
     if (e[0] === '여행' && tf) {
       // 지난 여행이 끝난 뒤부터 이 달까지 쓴 여행비 = 이 여행 예산에서 쓴 돈
-      var trows = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === '여행' && t.date > tf.from && t.date <= tf.upto; });
+      var trows = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === '여행' && !/^국내/.test(t['소분류'] || '') && t.date > tf.from && t.date <= tf.upto; });
       return { name: '여행', icon: e[1], val: _bSum(trows, function() { return true; }), cap: tf.trip.budget, unit: '원', money: 0,
                top: [tf.trip.title + ' 예산 ' + _bMan(tf.trip.budget) + '만 · ' + tf.trip.start.slice(2, 7).replace('-', '.')], trip: true };
     }
@@ -619,7 +619,11 @@ function ldgRenderBoard() {
   // 큰 결제마다: 무슨 칸인지 + 그래서 어떤 돈인지(괜찮은 돈 / 확인할 돈)
   var bigNote = function(t) {
     var M = t['대분류'], S = t['소분류'], tfx = _boardTripFor(ym);
-    if (M === '여행') return ['ok', '여행 통장에서 · ' + (tfx ? _bEsc(tfx.trip.title) + ' 예산 안' : '여행 예산')];
+    if (M === '여행') {
+      if (/^국내/.test(S || '')) return ['ok', '국내 여행' + (/ · /.test(t['세부사항'] || '') ? ' · ' + _bEsc(t['세부사항'].split(' · ').slice(1).join(' · ')) : '')];
+      var inTrip = tfx && t.date > tfx.from && t.date <= tfx.trip.end;
+      return ['ok', '여행 통장에서 · ' + (inTrip ? _bEsc(tfx.trip.title) + ' 예산 안' : '해외 여행 예산')];
+    }
     if (_bFixed(t)) return ['ok', '매달 나가는 고정비'];
     if (_bAnnual(t)) return ['ok', '연간 적립에서'];
     if (M === '품위유지비') return ['warn', '10만↑ 옷 · 7일 기다렸나? 옷 한도 ' + _bMan(_bPlan(ym).caps['옷·뷰티'] || 250000) + '만'];
