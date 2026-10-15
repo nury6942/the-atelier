@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atelier-v537';
+const CACHE_NAME = 'atelier-v538';
 const urlsToCache = [
   '/the-atelier/',
   '/the-atelier/index.html',
