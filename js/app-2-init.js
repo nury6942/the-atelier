@@ -1475,7 +1475,7 @@ function _ldgInjectMobileToggle(isFullView) {
   wrap.style.cssText = 'margin-bottom: var(--space-2-5);text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#94a3b8;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#475569;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
@@ -1853,7 +1853,7 @@ function ldgRenderDonuts() {
       var total = values.reduce(function(a,b){return a+b;}, 0);
       var html = '<div style="padding: var(--space-3);font-size: var(--font-size-micro);line-height:1.6;">';
       if (labels.length === 0) {
-        html += '<div style="color:#94a3b8;text-align:center;padding: var(--space-5) 0;">데이터 없음</div>';
+        html += '<div style="color:#475569;text-align:center;padding: var(--space-5) 0;">데이터 없음</div>';
       } else {
         labels.slice(0, 6).forEach(function(label, i) {
           var pct = total > 0 ? Math.round(values[i] / total * 100) : 0;
@@ -2952,7 +2952,7 @@ function ldgBuildDD(wrapperId, options, onChange) {
     trigger.classList.add('open');
     var panel = document.createElement('div');
     panel.className = 'ldg-dd-panel';
-    if (options.length === 0) { panel.innerHTML = '<div class="ldg-dd-opt" style="color:#94a3b8;cursor:default">항목 없음</div>'; }
+    if (options.length === 0) { panel.innerHTML = '<div class="ldg-dd-opt" style="color:#475569;cursor:default">항목 없음</div>'; }
     else {
       var selIdx = -1;
       options.forEach(function(opt, i) {

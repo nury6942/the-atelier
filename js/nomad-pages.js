@@ -1705,12 +1705,12 @@ window.NOMAD_PAGES = (function(){
     ];
     metrics.forEach(function(m) {
       html += '<div style="background:#fff;border: 1px solid var(--slate-200);border-radius: var(--radius-2xl);padding: var(--space-8);transition:box-shadow 0.2s;cursor:default" onmouseover="this.style.boxShadow=\'0 6px 18px rgba(15,23,42,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 3px rgba(15,23,42,0.04)\'">';
-      html += '<p style="font-size: var(--font-size-micro);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 16px">' + m.label + '</p>';
+      html += '<p style="font-size: var(--font-size-micro);font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 16px">' + m.label + '</p>';
       html += '<div style="display:flex;align-items:baseline;gap: var(--space-1-5)">' +
         (m.prefix ? '<span style="font-size: var(--font-size-h2);font-weight:700;color:var(--nm-primary)">' + m.prefix + '</span>' : '') +
         '<span style="font-family:var(--nm-font-h);font-size:38px;font-weight:800;letter-spacing:-0.015em;color:' + m.color + '">' + m.value + '</span>' +
       '</div>';
-      html += '<p style="font-size: var(--font-size-micro);font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;margin: var(--space-4-5) 0 0">' + m.sub + '</p>';
+      html += '<p style="font-size: var(--font-size-micro);font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.04em;margin: var(--space-4-5) 0 0">' + m.sub + '</p>';
       html += '</div>';
     });
     html += '</section>';
@@ -1724,7 +1724,7 @@ window.NOMAD_PAGES = (function(){
     html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left">';
     html += '<thead><tr style="background:rgba(248,250,252,0.5)">' +
       ['시나리오','출국 자산','노마드 비용','노마드 수익 (세후)','귀국 자산'].map(function(h){
-        return '<th style="padding: var(--space-3-5) var(--space-7);font-size: var(--font-size-tiny);font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em">' + h + '</th>';
+        return '<th style="padding: var(--space-3-5) var(--space-7);font-size: var(--font-size-tiny);font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.08em">' + h + '</th>';
       }).join('') +
     '</tr></thead>';
     html += '<tbody>';
