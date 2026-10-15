@@ -1329,7 +1329,7 @@ function ldgGetMonthTx() {
   var key = ldgMonthKey();
   return (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.substring(0,7) === key; });
 }
-function ldgIsExpense(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축'; }
+function ldgIsExpense(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축' && t['대분류'] !== '포인트'; }  // 포인트로 낸 건 내 돈이 아님
 function ldgSaveTx() {
   // ⚠️ 거래가 수천 건이면 localStorage(약 5MB)를 초과해 setItem이 QuotaExceededError를 던진다.
   // archived 모드에선 Firebase 연도별 문서가 본체이므로 localStorage 통짜 저장은 불필요.
@@ -1562,6 +1562,7 @@ function ldgRenderAnnualGoal() {
       if (t['소분류'] === '부업') subTotal += amt;
     }
     else if (major === '저축') savTotal += amt;
+    else if (major === '포인트') { /* 포인트 결제는 지출 목표에서 뺌 */ }
     else expTotal += amt;
   });
   // 만원 단위로 환산
@@ -2570,7 +2571,7 @@ function ldgAIComputeRebalance(year, month) {
   var flexCats = []; // 유동 카테고리 분석
 
   Object.keys(cats).forEach(function(cat) {
-    if (cat === '수입' || cat === '저축') return;
+    if (cat === '수입' || cat === '저축' || cat === '포인트') return;
     var pace = ldgAIPaceStatus(cat, year, month);
     if (!pace) return;
     var type = ldgGetCatType(cat);
@@ -2618,7 +2619,7 @@ function ldgAITopAlert(year, month) {
   var cats = _ledgerData.categories || {};
   var alerts = [];
   Object.keys(cats).forEach(function(catName) {
-    if (catName === '수입' || catName === '저축') return; // 지출 카테고리만
+    if (catName === '수입' || catName === '저축' || catName === '포인트') return; // 지출 카테고리만
     var pace = ldgAIPaceStatus(catName, year, month);
     if (!pace) return;
     if (pace.status === 'danger') alerts.push({ catName: catName, pace: pace, severity: 2 });
@@ -2788,8 +2789,8 @@ function ldgRenderTxTable() {
     html += '<tr class="hover:bg-indigo-50/30 transition-colors group" data-tx-id="' + tid + '">';
     html += '<td class="px-4 py-1.5 text-xs font-medium text-slate-600 cursor-pointer"' + clk + dbl('date') + '>' + (t.date||'').substring(5).replace('-','/') + '</td>';
     html += '<td class="px-3 py-1.5 text-xs text-slate-900 whitespace-nowrap cursor-pointer"' + clk + dbl('대분류') + '>' + (t['대분류']||'') + '</td>';
-    html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold">' + (t['소분류']||'') + '</span></td>';
-    html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
+    html += '<td class="px-3 py-1.5 whitespace-nowrap cursor-pointer"' + clk + dbl('소분류') + '><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (t['대분류'] === '저축' ? 'bg-blue-100 text-blue-700' : t['대분류'] === '포인트' ? 'bg-amber-50 text-amber-700' : 'bg-indigo-50 text-indigo-700') + '">' + (t['소분류']||'') + '</span></td>';
+    html += '<td class="px-3 py-1.5 text-xs font-bold text-right cursor-pointer ' + (isIncome ? 'text-emerald-600' : t['대분류'] === '저축' ? 'text-blue-600' : t['대분류'] === '포인트' ? 'text-amber-600' : 'text-slate-900') + '" style="font-feature-settings:\'tnum\'"' + clk + dbl('금액') + '>' + ldgFmt(t['금액']) + '</td>';
     html += '<td class="px-3 py-1.5 text-xs text-slate-500 whitespace-nowrap cursor-pointer"' + clk + dbl('결제수단') + '>' + (t['결제수단']||'') + '</td>';
     html += '<td class="px-3 py-1.5 text-xs text-slate-600 truncate cursor-pointer" style="max-width:230px"' + clk + dbl('세부사항') + '>' + (t['세부사항']||'') + '</td>';
     var assetMarker = t.excludeFromGoal ? '<span class="text-[10px] mr-1" title="자산이동 (목표 추적 제외)">🔁</span>' : '';

@@ -92,7 +92,7 @@ var MIRROR_BUCKETS = [
   ['기타', function() { return true; }, '#c9c7c0']
 ];
 
-var _bS = function(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축'; };
+var _bS = function(t) { return t['대분류'] !== '수입' && t['대분류'] !== '저축' && t['대분류'] !== '포인트'; };
 var _bI = function(t) { return t['대분류'] === '수입'; };
 function _bMan(v) { return (v < 0 ? '−' : '') + Math.round(Math.abs(v) / 10000).toLocaleString(); }
 function _bMonths(a, b) { var x = a.split('-').map(Number), y = b.split('-').map(Number); return (y[0] * 12 + y[1]) - (x[0] * 12 + x[1]); }
@@ -155,8 +155,9 @@ function ldgBoardMonth(ym) {
   var bigs = sp.filter(function(t) { return t['금액'] >= 100000; }).sort(function(a, b) { return b['금액'] - a['금액']; });
   var perDay = {};
   sp.forEach(function(t) { if (t['금액'] > 0 && ['품위유지비', '생필품비', '여가비'].indexOf(t['대분류']) >= 0) perDay[t.date] = (perDay[t.date] || 0) + 1; });
+  var points = _bSum(L, function(t) { return t['대분류'] === '포인트'; });
   var saveIn = _bSum(L, function(t) { return t['소분류'] === 'OK 적립'; }), saveOut = _bSum(L, function(t) { return t['소분류'] === 'OK 인출'; });
-  return { L: L, spend: spend, inc: inc, salary: salary, side: side, left: inc - spend, saveIn: saveIn, saveOut: saveOut, buckets: buckets, envs: envs, bigs: bigs,
+  return { L: L, spend: spend, inc: inc, salary: salary, side: side, left: inc - spend, saveIn: saveIn, saveOut: saveOut, points: points, buckets: buckets, envs: envs, bigs: bigs,
            bigShare: spend ? _bSum(bigs, function() { return true; }) / spend : 0, binge: perDay };
 }
 
@@ -199,6 +200,7 @@ function _boardGoals() {
     var a = t['금액'] || 0;
     if (t['대분류'] === '수입') { tot['수입'] += a; if (t['소분류'] === '부업') tot['부업'] += a; }
     else if (t['대분류'] === '저축') tot['저축'] += a;
+    else if (t['대분류'] === '포인트') return;
     else tot['지출'] += a;
   });
   var now = new Date(), isCur = year === now.getFullYear();
@@ -312,7 +314,8 @@ function ldgRenderBoard() {
     '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 큰 결제 (10만↑) · ' + m.bigs.length + '건 = 지출의 ' + Math.round(m.bigShare * 100) + '%</span><span>⚡ 하루 3건↑ 몰아친 날</span></p>' +
       (bigRows || '<div style="font-size:12px;color:#94a3b8">없음</div>') +
       (m.bigs.length > 6 ? '<button class="lb-more" onclick="_boardShowAllBig=!_boardShowAllBig;ldgRenderBoard()">' + (_boardShowAllBig ? '접기' : '+ ' + (m.bigs.length - 6) + '건 더보기') + '</button>' : '') + '</div>' +
-    '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 어디에 · ' + _bMan(m.spend) + '만</span><span>세로선 = 평소 한 달</span></p>' + cats + '</div></div>';
+    '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 어디에 · ' + _bMan(m.spend) + '만</span><span>세로선 = 평소 한 달</span></p>' + cats +
+      (m.points ? '<div style="font-size:11px;color:#b45309;margin-top:6px">+ 포인트로 낸 돈 ' + (m.points / 10000).toFixed(1) + '만 (지출에 안 넣음)</div>' : '') + '</div></div>';
 
   // ── 나라는 사람
   if (b) {
