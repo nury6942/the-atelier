@@ -2,7 +2,7 @@
 // 위에서 고른 달(_ldgYear/_ldgMonth)에 맞춰 다시 그린다. 기존 KPI·도넛·TOP·카테고리 집계·일별 추이를 대신한다.
 // 큰 그림(집 마감 · 그달 판정 · 나의 규칙) → 연간 목표 → 이 달 플레이북(작년 같은 달) → 세부(봉투 5개 · 큰 결제 · 어디에 썼나) → 나라는 사람(지난 달들로 본 성향).
 
-var MIRROR_GOAL = { label: '집 마지막 상환', amount: 25000000, due: '2027-04', potName: 'OK파킹' };
+var MIRROR_GOAL = { label: '집 상환 자금', amount: 23000000, due: '2027-03', potName: 'OK파킹' };  // 2027-03까지 2,300만, 4월 상환
 var MIRROR_ENVELOPES = [
   // [이름, 아이콘, 고르는 법, 한도(원) 또는 횟수, 단위]
   ['여행', 'flight', function(t) { return t['대분류'] === '여행'; }, 0, '원'],
@@ -28,6 +28,7 @@ var MIRROR_MONTH_PLAN = {
   11: { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
   12: { caps: { '옷·뷰티': 200000, '가족·선물': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
   '2026-12': { todo: ['새 연재 12/12 시작 · 매주 끊기지 않게'] },
+  '2027-03': { todo: ['집 상환 자금 2,300만 완성'] },
   '2027-04': { todo: ['집 마지막 상환 🎉'] },
   '2027-07': { caps: { '여행': 5880000 }, todo: ['북유럽 여행 · 따로 모은 여행 통장으로'] }
 };
@@ -154,7 +155,8 @@ function ldgBoardMonth(ym) {
   var bigs = sp.filter(function(t) { return t['금액'] >= 100000; }).sort(function(a, b) { return b['금액'] - a['금액']; });
   var perDay = {};
   sp.forEach(function(t) { if (t['금액'] > 0 && ['품위유지비', '생필품비', '여가비'].indexOf(t['대분류']) >= 0) perDay[t.date] = (perDay[t.date] || 0) + 1; });
-  return { L: L, spend: spend, inc: inc, salary: salary, side: side, left: inc - spend, buckets: buckets, envs: envs, bigs: bigs,
+  var saveIn = _bSum(L, function(t) { return t['소분류'] === 'OK 적립'; }), saveOut = _bSum(L, function(t) { return t['소분류'] === 'OK 인출'; });
+  return { L: L, spend: spend, inc: inc, salary: salary, side: side, left: inc - spend, saveIn: saveIn, saveOut: saveOut, buckets: buckets, envs: envs, bigs: bigs,
            bigShare: spend ? _bSum(bigs, function() { return true; }) / spend : 0, binge: perDay };
 }
 
@@ -261,7 +263,8 @@ function ldgRenderBoard() {
     '<div class="lb-c lb-3"><p class="lb-t"><span>' + MIRROR_GOAL.label + ' · ' + MIRROR_GOAL.due.replace('-', '.') + '</span><span>' + monthsLeft + '달 남음</span></p>' +
       '<div><span class="lb-n" style="font-size:22px">' + _bMan(pot) + '</span><span style="font-size:12px;color:#94a3b8"> / ' + _bMan(T) + '만</span></div>' +
       '<div class="lb-bar" style="height:8px"><div style="width:' + Math.min(100, pot / T * 100) + '%;height:100%;background:#2a78d6"></div></div>' +
-      '<div style="font-size:11px;color:#64748b">매달 <b class="lb-n">+' + _bMan(need) + '만</b>씩 모여야 해요</div></div>' +
+      '<div style="font-size:11px;color:#64748b">매달 <b class="lb-n">+' + _bMan(need) + '만</b>씩 모여야 해요</div>' +
+      '<div style="font-size:11px;color:#64748b;margin-top:4px">' + mk + ' 저금 <b class="lb-n" style="color:' + GREEN + '">+' + _bMan(m.saveIn) + '</b> · 꺼냄 <b class="lb-n" style="color:' + (m.saveOut < 0 ? RED : '#64748b') + '">' + _bMan(m.saveOut) + '</b> · 순 <b class="lb-n">' + (m.saveIn + m.saveOut >= 0 ? '+' : '') + _bMan(m.saveIn + m.saveOut) + '만</b></div></div>' +
     '<div class="lb-c lb-3" style="border:1.5px solid ' + (ok ? '#bbf7d0' : '#fecaca') + '"><p class="lb-t"><span>' + mk + ' 판정</span><span style="color:' + (ok ? GREEN : RED) + '">목표 ' + (ok ? '+' : '') + _bMan(gap) + '만</span></p>' +
       '<div><span class="lb-n" style="font-size:22px;color:' + (m.left >= 0 ? GREEN : RED) + '">' + (m.left >= 0 ? '+' : '') + _bMan(m.left) + '만</span><span style="font-size:12px;color:#94a3b8"> 남은 돈</span></div>' +
       '<div style="font-size:11px;color:#64748b;margin-top:8px">' + (causes.length ? causes.map(function(c, i) { return '원인 ' + (i + 1) + '위 <b class="lb-n">' + c[0] + ' ' + _bMan(c[2]) + '만</b>'; }).join(' · ') : '평소보다 넘친 항목 없음') + '</div></div>' +
