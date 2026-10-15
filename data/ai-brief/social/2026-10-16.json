@@ -1,0 +1,333 @@
+{
+ "date": "2026-10-16",
+ "collectedAt": "2026-10-16T06:31:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@bb00ngbb00ng1",
+   "url": "https://x.com/bb00ngbb00ng1/status/2110561199134015827",
+   "at": "2026-10-15T02:39:36Z",
+   "likes": 902,
+   "replies": 5,
+   "image": "https://pbs.twimg.com/media/HUo13iLakAEiMV_.png",
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드로 열흘 걸리던 보고서를 하루이틀에",
+   "points": [
+    "하루 8시간 중 7시간 클로드 코드를 켜두는 직장인의 업무 활용법",
+    "폴더 하나 만들고 자료를 넣은 뒤 \"이거 참고해서 초안 써줘\"면 끝",
+    "세부 사용법은 첨부 이미지 2장에 정리",
+    "숫자·사실관계는 반드시 직접 확인할 것"
+   ],
+   "try": "작지·RAW 자료를 한 폴더에 모아 클로드 코드에 \"이거 참고해서 초안 써줘\" 한 번",
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUo13iLakAEiMV_.png"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUo13iObkAA7ttv.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@ministerbtc",
+   "url": "https://x.com/ministerbtc/status/2109788707314168064",
+   "at": "2026-10-12T23:30:00Z",
+   "likes": 247,
+   "replies": 10,
+   "image": "https://pbs.twimg.com/media/HUbNTR9agAARhCk.jpg",
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 만든 사람: 프롬프트 비결은 없다, 딱 3가지만",
+   "points": [
+    "보리스 체르니(Claude Code 책임자): 동료에게 말하듯 목표만 주면 된다",
+    "대신 알려줄 3가지: ① 뭘 만들지 ② 얼마나 공들일지 ③ 결과를 어떻게 확인할지",
+    "예시: 팟캐스트로 결과물 요청 → \"토큰 많이 써라, 뉴요커·NYT 시각화보다 낫게\"",
+    "\"수채화 넣어보면?\" 한마디에 베이지·주황 수채화풍으로 나옴"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUbNTR9agAARhCk.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@yozm_it",
+   "url": "https://x.com/yozm_it/status/2110296952764252413",
+   "at": "2026-10-14T09:09:35Z",
+   "likes": 158,
+   "replies": 4,
+   "image": "https://pbs.twimg.com/media/HUlHjTQaYAA6WSh.png",
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "기획자의 첫 바이브코딩 팁 4가지",
+   "points": [
+    "첫 프로젝트는 작게: 직접 쓸 서비스(예: 아내 직장 휴가 공유 캘린더)",
+    "세팅은 클로드에게 물으며: 구독→VS Code 설치→클로드 코드 설치, 오류는 그대로 붙여넣기",
+    "CLAUDE.md에 \"기존 구조 바꿀 땐 먼저 물어보기\" 같은 규칙 적어두기",
+    "바로 만들지 말고 Shift+Tab 플랜 모드로 계획부터, 로그인·DB도 이때 같이"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUlHjTQaYAA6WSh.png"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUlHqTwa8AAvbDb.png"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUlHtE0bQAAgwDv.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@irabukht",
+   "url": "https://x.com/irabukht/status/2110189752666440181",
+   "at": "2026-10-14T02:03:37Z",
+   "likes": 1586,
+   "replies": 93,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2110047771025866753/img/X75hYcl9T0L-dagl.jpg",
+   "media": true,
+   "tag": "후기",
+   "summary": "Railway가 'AI가 추천하게' 만들어 ARR 5배 된 방법",
+   "points": [
+    "Claude Code가 파이썬 앱 배포처로 Railway를 82% 고름",
+    "무료 도구 설치법 페이지 6,653개 + 프레임워크별 배포 가이드 127개 — 끝은 전부 Railway 배포",
+    "경쟁사(Heroku·Vercel 등) 비교·이전 가이드 페이지 — AI가 비교글을 잘 인용",
+    "창업자가 \"AI 추천\"을 성장 채널로 직접 관리 → $20M→약 $100M ARR(1년)"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110047771025866753/img/X75hYcl9T0L-dagl.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110047771025866753/vid/avc1/640x360/SQEqPWge1zU0YjEO.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@mattpocockuk",
+   "url": "https://x.com/mattpocockuk/status/2110818314499072493",
+   "at": "2026-10-15T19:41:17Z",
+   "likes": 602,
+   "replies": 82,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "에이전트에게 프런트는 '상태 머신'으로 짜게 하라",
+   "points": [
+    "Matt Pocock: 에이전트가 상태 머신(또는 reducer)으로 짰을 때 견고함이 확 올라감",
+    "나중 수정이 쉽고 테스트하기 좋아짐",
+    "특히 프런트엔드에 추천"
+   ],
+   "try": "다음 화면 기능 요청 때 \"상태는 reducer/상태 머신으로\" 한 줄 붙이기",
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@oikon48",
+   "url": "https://x.com/oikon48/status/2109798255542583356",
+   "at": "2026-10-13T00:07:56Z",
+   "likes": 2860,
+   "replies": 43,
+   "image": "https://pbs.twimg.com/ext_tw_video_thumb/2109671885739020288/pu/img/E7eFYZ8Wnr9F2Zp4.jpg",
+   "media": true,
+   "tag": "후기",
+   "summary": "Claude Effort 레벨별 버그 수정 비교 영상",
+   "points": [
+    "같은 버그를 Effort 레벨별로 고치게 한 결과를 시각화",
+    "Effort Max는 과할 만큼 깊게 파고드는 모습",
+    "영상에서 레벨별 차이를 직접 확인"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/ext_tw_video_thumb/2109671885739020288/pu/img/E7eFYZ8Wnr9F2Zp4.jpg",
+     "mp4": "https://video.twimg.com/ext_tw_video/2109671885739020288/pu/vid/avc1/498x360/FldBRKK50hmKcNM0.mp4?tag=12"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@kincha_rin",
+   "url": "https://x.com/kincha_rin/status/2110704305909219828",
+   "at": "2026-10-15T12:08:16Z",
+   "likes": 87,
+   "replies": 6,
+   "image": "https://pbs.twimg.com/media/HUq4HL-boAIHLZd.jpg",
+   "media": true,
+   "tag": "만든 것",
+   "summary": "클로드에 맡겨 Tripo로 걷는 3D 캐릭터 완성",
+   "points": [
+    "순서: 3D에서 안 무너질 형태 조건을 넣은 원화 지시문 작성",
+    "Codex로 원화 → Tripo로 3D화",
+    "게임용으로 2.7만 면까지 줄이고 색·요철은 텍스처로 구움",
+    "뼈대 넣고 걷기·달리기·손 흔들기 동작까지 — 조작은 전부 Claude"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUq4HL-boAIHLZd.jpg"
+    },
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110704261776707584/img/7FahgQx5uwnc5FSE.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110704261776707584/vid/avc1/544x360/afdKfd4lIfLpTPsW.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@krea_ai",
+   "url": "https://x.com/krea_ai/status/2110760037128012146",
+   "at": "2026-10-15T15:49:43Z",
+   "likes": 1265,
+   "replies": 154,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2110759471916191744/img/2UxPNzulVwQSnBjY.jpg",
+   "media": true,
+   "tag": "소식",
+   "summary": "Krea 3 베타: 2K 이미지 편집 8초 안에",
+   "points": [
+    "2K 해상도 편집을 8초 안에 끝까지 처리",
+    "품질은 나노바나나 Pro·GPT Image 2.5급이라고 주장",
+    "영역 박스로 범위 지정 + 여러 번 이어서 정밀 수정"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110759471916191744/img/2UxPNzulVwQSnBjY.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110759471916191744/vid/avc1/640x360/E2gYEU2oi72XGcBg.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@OpenAI",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "at": "2026-10-15T18:19:54Z",
+   "likes": 5986,
+   "replies": 449,
+   "image": "https://pbs.twimg.com/media/HUsEKcobYAAf2Bg.jpg",
+   "media": true,
+   "tag": "소식",
+   "summary": "GPT-Live-1.1: 음성 모드 새 목소리·한국어 추가",
+   "points": [
+    "ChatGPT·Codex·dots 음성에 적용",
+    "새 목소리: 프랑스어·독일어·힌디어·멕시코 스페인어·한국어·일본어",
+    "억양 개선, \"확인 중...\" 대기 멘트 감소",
+    "오늘부터 전체 사용자, API는 곧"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/media/HUsEKcobYAAf2Bg.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110784796872024064/vid/avc1/640x360/6RaSXpCT6iP95Hzr.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/DefeG0yk6bX",
+   "at": "2026-10-14T22:38:38Z",
+   "likes": 125,
+   "replies": 51,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 웹디자인 스킬 Taste Skill v2: 방향부터 검사까지",
+   "points": [
+    "깃허브 스타 9.6만의 웹디자인 스킬이 v2로 새로 만들어짐",
+    "247개 사이트 분석 기반으로 20가지 디자인 방향·레이아웃 제안",
+    "사진·영상 소재 자동 탐색, 타이포·색·애니메이션 구성",
+    "PC·태블릿·모바일 화면 검사로 글자 잘림·넘침 탐지",
+    "설치: npx skills add Leonxlnx/taste-skill"
+   ],
+   "try": "Atelier 화면 손볼 때 Taste Skill 깔고 모바일 넘침 검사부터"
+  },
+  {
+   "src": "threads",
+   "author": "@mi.x.qz",
+   "url": "https://www.threads.com/@mi.x.qz/post/DehF3USEx22",
+   "at": "2026-10-15T13:42:42Z",
+   "likes": 41,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "GPT dots를 슬랙 봇 군단처럼 쓰는 법",
+   "points": [
+    "슬랙 설치 → GPT 연결(플러그인 검색 또는 Dot에게 연결하라고 시키기)",
+    "주제별 채널마다 dots 에이전트를 초대 → 채널별로 세션이 나뉨",
+    "첫 지시: \"네 작업공간에 환경 만들고 결과도 거기 남겨, Codex 로컬·클라우드 작업 금지\" — 안 하면 사용량 소모",
+    "가끔 세션이 초기화되니 구글드라이브로 주기 백업",
+    "메인 말고 사용량 모자랄 때 보조로"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@menhera.osaka",
+   "url": "https://www.threads.com/@menhera.osaka/post/DebopUeAWoc",
+   "at": "2026-10-13T10:51:11Z",
+   "likes": 249,
+   "replies": 57,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "AI 영상 크리에이터의 클로드+GPT+힉스필드 분업",
+   "points": [
+    "도구: 클로드(메인)·GPT·힉스필드·지크",
+    "클로드에 GPT를 하네스로 연결해 엔진별 역할 분담",
+    "GPT로 이미지·시나리오 → 클로드가 검수",
+    "영상 생성은 클로드에서 MCP로 실행",
+    "답글 118개에 다른 크리에이터들의 작업 환경 공유"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gyunative",
+   "url": "https://www.threads.com/@gyunative/post/DegPT6DGp2C",
+   "at": "2026-10-15T05:46:00Z",
+   "likes": 47,
+   "replies": 14,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "로컬에서 도는 무료 'AI 에이전트 오피스'",
+   "points": [
+    "업무를 워크플로로 설계하면 AI가 수행 — n8n과 비슷하지만 로컬 실행",
+    "일하며 얻은 지식은 위키·RAG로 PC에 쌓여 다음 업무에 재활용",
+    "부서별 에이전트 구성, '비서실장' 에이전트가 자동 배정",
+    "무료·개발 중, 윈도우판은 코드서명 전이라 보안 경고 뜰 수 있음",
+    "bigbangoffice.app"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DehSNOPAPrU",
+   "at": "2026-10-15T15:30:33Z",
+   "likes": 65,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "KLING 4.0 정식 출시, MCP·CLI 지원",
+   "points": [
+    "개편된 Kling AI 웹사이트에서 사용",
+    "MCP·CLI 지원 → 코딩 도구·터미널에서 영상 생성 자동화 가능",
+    "4K·1080p 10비트 HDR 출력 추가 예정",
+    "기업·개발자용 API는 추후"
+   ]
+  }
+ ]
+}
