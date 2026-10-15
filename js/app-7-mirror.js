@@ -669,7 +669,7 @@ function _boardCats(ym, m, preview) {
       (av ? '<div title="평소 ' + _bMan(av) + '만" style="position:absolute;left:calc(' + P(av) + '% - 4px);top:3px;width:8px;height:8px;border-radius:50%;border:2px solid ' + BK.dataText + ';background:#fff;box-sizing:border-box"></div>' : '') + '</div>';
     var val = preview ? '<b class="lb-n">' + _bMan(cap) + '</b>' :
       '<b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(v) + '</b><span style="color:' + BK.sub + '"> / ' + _bMan(cap) + '</span>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(v - cap) + '</b>' : '');
-    return '<div style="display:grid;grid-template-columns:86px minmax(0,1fr) 78px;gap:8px;align-items:center;font-size:12px;padding:3px 0">' +
+    return '<div style="display:grid;grid-template-columns:86px minmax(0,640px) 96px;gap:8px;align-items:center;font-size:12px;padding:3px 0">' +
       '<span style="white-space:nowrap;color:' + BK.ink + '"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:' + BK.sub + '">' + x[1] + '</span> ' + x[0] + '</span>' +
       bar + '<span style="text-align:right;white-space:nowrap">' + val + '</span></div>';
   }).join('');
@@ -683,7 +683,7 @@ function _boardCats(ym, m, preview) {
   var tf = _boardTripFor(ym), trip = '';
   if (tf) {
     var tv = m && !preview ? m.envs[0].val : 0;
-    trip = '<div style="display:grid;grid-template-columns:86px minmax(0,1fr) 78px;gap:8px;align-items:center;font-size:12px;margin-top:6px;padding-top:6px;border-top:1px solid #eef1f5">' +
+    trip = '<div style="display:grid;grid-template-columns:86px minmax(0,640px) 96px;gap:8px;align-items:center;font-size:12px;margin-top:6px;padding-top:6px;border-top:1px solid #eef1f5">' +
       '<span style="white-space:nowrap"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px;color:' + BK.data + '">flight</span> 여행</span>' +
       _bLine(Math.min(100, tv / Math.max(tf.trip.budget, 1) * 100), 8, tv > tf.trip.budget ? BK.red : BK.data, _bEsc(tf.trip.title), '', 0.62) +
       '<span style="text-align:right;white-space:nowrap"><b class="lb-n">' + _bMan(tv) + '</b><span style="color:' + BK.sub + '"> / ' + _bMan(tf.trip.budget) + '</span></span></div>';
