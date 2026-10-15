@@ -839,7 +839,6 @@ function switchLedgerTab(tab) {
   if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
   if (tab === 'assets' && _ledgerData.transactions) ldgRenderAssets();
   if (tab === 'settings') ldgRenderSettings();
-  if (tab === 'mirror' && _ledgerData.transactions && typeof ldgRenderMirror === 'function') ldgRenderMirror();
 }
 
 // ── Firebase sync for Daily Ledger (다기기 자동 동기화) ──

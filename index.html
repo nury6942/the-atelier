@@ -74,7 +74,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
   <link rel="preload" href="js/app-1-pages.js?v=383" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=177" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=178" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
@@ -14229,7 +14229,6 @@
       <!-- Pill Tabs -->
       <div class="flex gap-2 mb-8">
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="monthly" onclick="switchLedgerTab('monthly')">월별 뷰</button>
-        <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="mirror" onclick="switchLedgerTab('mirror')">거울</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="annual" onclick="switchLedgerTab('annual')">연간 뷰</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="assets" onclick="switchLedgerTab('assets')">자산</button>
         <button class="ledger-tab px-5 py-2 rounded-full text-sm font-semibold transition-all duration-150" data-tab="settings" onclick="switchLedgerTab('settings')">설정</button>
@@ -14237,6 +14236,9 @@
 
       <!-- Tab Content Panels -->
       <div id="ledger-panel-monthly" class="ledger-panel">
+
+        <!-- [0] 보드: 뱅샐 데이터로 매달 자동 계산 (js/app-7-mirror.js) -->
+        <div id="ldg-board"></div>
 
         <!-- [1] Month Navigation Bar -->
         <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
@@ -14500,10 +14502,6 @@
         </div>
 
       </div>
-      <div id="ledger-panel-mirror" class="ledger-panel" style="display:none">
-        <div id="ldg-mirror" style="max-width:920px"></div>
-      </div>
-
       <div id="ledger-panel-settings" class="ledger-panel" style="display:none">
 
         <!-- Back link -->
@@ -17125,7 +17123,7 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=177" defer></script>
+<script src="js/app-2-init.js?v=178" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
@@ -17139,7 +17137,7 @@
 <script src="js/app-4-roadmap.js?v=163" defer></script>
 <script src="js/app-5-ledger-export.js?v=163" defer></script>
 <script src="js/app-6-postype-analytics.js?v=171" defer></script>
-<script src="js/app-7-mirror.js?v=2" defer></script>
+<script src="js/app-7-mirror.js?v=3" defer></script>
 <script src="js/english-study.js?v=11" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
