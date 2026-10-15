@@ -14,11 +14,12 @@ function _bTags(tags) {
 }
 // 막대 한 줄 + 막대 끝 바로 오른쪽 라벨 (누리: 밑에 쌓지 말고 오른쪽에)
 var B_SCALE = 0.78;
-function _bLine(pct, h, col, label, extra) {
-  var w = Math.max(0, Math.min(100, pct)) * B_SCALE, H = Math.max(h, 15);
+function _bLine(pct, h, col, label, extra, scale, labelAt) {
+  var sc = scale || B_SCALE, w = Math.max(0, Math.min(100, pct)) * sc, H = Math.max(h, 15);
+  var lx = labelAt != null ? Math.max(w, Math.min(100, labelAt) * sc) : w;
   return '<div style="position:relative;height:' + H + 'px">' + (extra || '') +
     '<div style="position:absolute;left:0;top:' + ((H - h) / 2) + 'px;height:' + h + 'px;width:' + w + '%;min-width:2px;background:' + col + '"></div>' +
-    (label ? '<span style="position:absolute;left:calc(' + w + '% + 6px);top:50%;transform:translateY(-50%);font-size:11px;line-height:1;white-space:nowrap;color:' + BK.sub + '">' + label + '</span>' : '') + '</div>';
+    (label ? '<span style="position:absolute;left:calc(' + lx + '% + 7px);top:50%;transform:translateY(-50%);font-size:11px;line-height:1;white-space:nowrap;color:' + BK.sub + '">' + label + '</span>' : '') + '</div>';
 }
 // 그린 뒤 실제 글자 폭을 재서, 진짜 겹치는 라벨만 다음 줄로
 function _bFixTags(root) {
@@ -399,10 +400,10 @@ function _boardGoals() {
     var diff = act - goal * prog, good = k[1] ? diff >= 0 : diff <= 0;
     var col = good ? '#3fa37f' : '#d9695e';
     return '<div><div style="font-size:12px;color:#0f172a;font-weight:600">' + k[0] + '</div>' +
-      '<div style="position:relative;height:15px;margin:4px 0 2px"><div style="position:absolute;left:0;top:4px;height:7px;width:' + (B_SCALE * 100) + '%;background:' + BK.track + '"></div>' +
-        '<div style="position:absolute;left:0;top:4px;height:7px;width:' + (Math.min(100, act / goal * 100) * B_SCALE) + '%;background:' + col + '"></div>' +
-        '<div title="오늘까지 목표 페이스" style="position:absolute;left:' + (prog * 100 * B_SCALE) + '%;top:0;bottom:0;width:2px;background:#475569"></div>' +
-        '<span style="position:absolute;left:calc(' + (B_SCALE * 100) + '% + 6px);top:50%;transform:translateY(-50%);font-size:11px;line-height:1;white-space:nowrap;color:' + BK.sub + '"><b class="lb-n" style="color:' + BK.ink + '">' + act.toLocaleString() + '</b> / ' + goal.toLocaleString() + '</span></div>' +
+      '<div style="position:relative;height:15px;margin:4px 0 2px"><div style="position:absolute;left:0;top:4px;height:7px;width:62%;background:' + BK.track + '"></div>' +
+        '<div style="position:absolute;left:0;top:4px;height:7px;width:' + (Math.min(100, act / goal * 100) * 0.62) + '%;background:' + col + '"></div>' +
+        '<div title="오늘까지 목표 페이스" style="position:absolute;left:' + (prog * 62) + '%;top:0;bottom:0;width:2px;background:#475569"></div>' +
+        '<span style="position:absolute;left:calc(62% + 6px);top:50%;transform:translateY(-50%);font-size:11px;line-height:1;white-space:nowrap;color:' + BK.sub + '"><b class="lb-n" style="color:' + BK.ink + '">' + act.toLocaleString() + '</b> / ' + goal.toLocaleString() + '</span></div>' +
       '<div style="font-size:11px;color:' + BK.sub + '">오늘 목표 ' + Math.round(goal * prog).toLocaleString() + ' · <b style="color:' + col + '">' + (diff >= 0 ? '+' : '') + Math.round(diff).toLocaleString() + '만</b></div></div>';
   }).join('');
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + year + '년 목표 · 올해 ' + Math.round(prog * 100) + '% 지남</span><span>검정 선 = 오늘까지 목표 페이스 · <a href="javascript:void(0)" style="color:#1d5fd1" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 고치기</a></span></p>' +
@@ -464,8 +465,8 @@ function _boardLeaks(ym) {
     return '<div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.4fr) minmax(0,1.5fr) 74px;gap:10px;align-items:center;font-size:12px;padding:7px 0;border-top:1px solid #eef1f5">' +
       '<span style="color:' + BK.ink + '"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + f[1] + '">' + f[0] + '</span> <b style="font-weight:600">' + k + '</b><br><span style="font-size:11px;color:' + BK.sub + '">평소 한 달 ' + ((cnt[k] || 0) / N).toFixed(0) + '번</span></span>' +
       '<div>' + _bLine(mon / mx * 100, 10, BK.track, '평소 <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(mon) + '</b> → 목표 <b class="lb-n" style="color:' + BK.green + '">' + _bMan(goal) + '</b>',
-          '<div style="position:absolute;left:0;top:2.5px;height:10px;width:' + (goal / mx * 100 * B_SCALE) + '%;background:' + BK.soft + ';z-index:1"></div>') +
-        _bLine(nv / mx * 100, 5, nv > goal ? BK.red : BK.data, '지금 <b class="lb-n" style="color:' + (nv > goal ? BK.red : BK.ink) + '">' + _bMan(nv) + '</b>') + '</div>' +
+          '<div style="position:absolute;left:0;top:2.5px;height:10px;width:' + (goal / mx * 100 * 0.55) + '%;background:' + BK.soft + ';z-index:1"></div>', 0.55) +
+        _bLine(nv / mx * 100, 5, nv > goal ? BK.red : BK.data, '지금 <b class="lb-n" style="color:' + (nv > goal ? BK.red : BK.ink) + '">' + _bMan(nv) + '</b>', '', 0.55) + '</div>' +
       '<span style="font-size:11.5px;color:' + BK.ink + '">' + f[2] + '</span>' +
       '<b class="lb-n" style="text-align:right;color:' + BK.green + '">−' + _bMan(cut) + '만</b></div>';
   }).join('');
@@ -691,7 +692,7 @@ function ldgRenderBoard() {
     var v = m.buckets[i], a = b ? b.bucketAvg[i] : 0, d = v - a;
     return '<div style="display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;align-items:center;font-size:12px;margin:7px 0"><span style="color:' + BK.ink + ';font-weight:600">' + bk[0] + '</span>' +
       '<div>' + _bLine(v / maxB * 100, 10, bk[2], '<b class="lb-n" style="color:' + BK.ink + '">' + _bMan(v) + '만</b>' + (a ? ' <b style="color:' + (d > a * 0.15 ? BK.red : BK.green) + '">' + (d > 0 ? '+' : '−') + _bMan(Math.abs(d)) + '</b> <span>· 평소 ' + _bMan(a) + '</span>' : ''),
-        a ? '<div title="평소 ' + _bMan(a) + '만" style="position:absolute;top:0;bottom:0;left:' + (a / maxB * 100 * B_SCALE) + '%;width:2px;background:' + BK.ink + ';z-index:1"></div>' : '') + '</div></div>';
+        a ? '<div title="평소 ' + _bMan(a) + '만" style="position:absolute;top:0;bottom:0;left:' + (a / maxB * 100 * B_SCALE) + '%;width:2px;background:' + BK.ink + ';z-index:1"></div>' : '', null, a ? a / maxB * 100 + 0.6 : null) + '</div></div>';
   }).join('');
   h += '<div class="lb-grid">' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' 10만 원 넘게 쓴 것 · ' + m.bigs.length + '건 = 지출의 ' + Math.round(m.bigShare * 100) + '%</span><span>⚡ 하루 3건↑ 몰아친 날</span></p>' +
