@@ -280,7 +280,13 @@
     const dowWeight = dowAvg.map((a, i) => (dowCnt[i] && dowOverall > 0) ? a / dowOverall : 1);
 
     // ── 최근 30일 실측 일평균 (진행 중 달 예측용 현재 페이스) ──
-    const recentCutoff = new Date(Date.now() - 30*86400000).toISOString().slice(0,10);
+    let recentCutoff = new Date(Date.now() - 30*86400000).toISOString().slice(0,10);
+    // 완결 직후 1주는 몰아보기 매출이 튀어서(9/26 하루 27만) 그 뒤부터만 — 7일 이상 쌓였을 때
+    if (ongoing && ongoing.completedDate){
+      const d = new Date(ongoing.completedDate + 'T00:00:00'); d.setDate(d.getDate() + 8);
+      const afterSpike = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      if (afterSpike > recentCutoff && dailyArr.filter(x => x.date >= afterSpike && x.date < todayStr()).length >= 7) recentCutoff = afterSpike;
+    }
     const recentDaily = dailyArr.filter(d => d.date >= recentCutoff);
     const recentDailyAvg = recentDaily.reduce((a,d)=>a+(d.rev||0),0) / Math.max(recentDaily.length, 1);
 
