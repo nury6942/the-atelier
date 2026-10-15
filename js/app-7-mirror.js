@@ -22,7 +22,7 @@ var MIRROR_MONTH_PLAN = {
   5:  { caps: {}, todo: ['종합소득세 · 모아 둔 세금 통장으로'] },
   6:  { caps: { '물건': 500000 }, todo: ['집 프로젝트는 하나만 · 예산 먼저'] },
   7:  { caps: {}, todo: [] },
-  8:  { caps: { '옷·뷰티': 100000 }, todo: ['다음 여행 예약은 일정 확정 뒤 한 번에', '가을 옷은 9월로'] },
+  8:  { caps: { '옷·뷰티': 100000 }, todo: ['가을 여행 예약은 일정 확정 뒤 한 번에', '가을 옷은 9월로'] },
   9:  { caps: { '옷·뷰티': 900000 }, todo: ['가을 옷은 이 달에만 (시즌 90만)'] },
   10: { caps: {}, todo: ['상여 받는 날 바로 옮기기'] },
   11: { caps: { '옷·뷰티': 100000, '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
@@ -32,7 +32,7 @@ var MIRROR_MONTH_PLAN = {
   '2027-04': { todo: ['집 마지막 상환 🎉'] },
   '2027-07': { caps: { '여행': 5880000 }, todo: ['북유럽 여행 · 따로 모은 여행 통장으로'] }
 };
-var MIRROR_EVERY_MONTH = ['월급날 80만 · 부업 입금일 전액 → 집 통장', '종합소득세 통장에 10만'];
+var MIRROR_EVERY_MONTH = ['월급날 80만 · 부업 입금일 전액 → 집 통장', '종합소득세 통장에 10만', '여행 통장에 적립 · 1년 2번 여행 몫'];
 
 function _bYm(ym, d) { var p = ym.split('-').map(Number), k = p[0] * 12 + (p[1] - 1) + d; return Math.floor(k / 12) + '-' + String(k % 12 + 1).padStart(2, '0'); }
 function _bPlan(ym) {
@@ -235,6 +235,54 @@ function _boardGoals() {
     '<div class="lb-goal">' + cells + '</div></div>';
 }
 
+
+// ── 어디서 새나: 지난 달들(뱅샐)을 필수·가치·일회성·습관성으로 나누고, 습관성에서 줄일 곳
+var MIRROR_LEAK_FIX = {
+  '옷':       ['checkroom', '#e87ba4', '시즌 달(3·9월)에만 · 장바구니 7일', 0.6],
+  '외식':     ['restaurant', '#5f5e5a', '평일 점심은 구내식당 · 외식은 주 2번', 0.33],
+  '배달':     ['delivery_dining', '#6250d6', '평일 낮 0 · 주말 하루만', 0.5],
+  '생활 잡화': ['inventory_2', '#eda100', '온라인은 금요일 한 번에 모아서', 0.4],
+  '구독':     ['autorenew', '#888780', 'AI는 Pro 하나 · 나머지 회사 정산', 0.7],
+  '카페·간식': ['local_cafe', '#a16207', '출근길 한 잔만 · 오후 카페는 금요일', 0.4],
+  '취미·여가': ['palette', '#7f77dd', '한 달 10만 봉투', 0.35],
+  '편의점':   ['storefront', '#94a3b8', '퇴근길 편의점 주 2번', 0.4]
+};
+function _boardLeaks() {
+  var txs = (_ledgerData.transactions || []).filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
+  var all = Array.from(new Set(txs.map(function(t) { return t.date.slice(0, 7); }))).sort(), months = all.slice(1, -1), N = months.length || 1;
+  var win = txs.filter(function(t) { return months.indexOf(t.date.slice(0, 7)) >= 0; });
+  var grp = { '필수·고정': 0, '가치': 0, '일회성': 0, '습관성': 0 }, hab = {}, cnt = {};
+  win.forEach(function(t) {
+    var M = t['대분류'], S = t['소분류'], a = t['금액'] || 0, g, k = null;
+    if (M === '여행' || M === '관계비' || M === '경조사비' || S === '할머니용돈' || S === '영어 강의' || S === '도서') g = '가치';
+    else if ((['고정비', '주거비', '세금/보험'].indexOf(M) >= 0 && S !== '정기구독') || M === '교통비' || M === '건강/의료비' || S === '식재료비' || S === '구내식당') g = '필수·고정';
+    else if (a >= 300000 || M === '미분류') g = '일회성';
+    else {
+      g = '습관성';
+      k = M === '품위유지비' ? '옷' : S === '외식비' ? '외식' : S === '배달' ? '배달' : M === '생필품비' ? '생활 잡화' : S === '정기구독' ? '구독' : S === '간식/카페' ? '카페·간식' : M === '여가비' ? '취미·여가' : S === '편의점' ? '편의점' : null;
+    }
+    grp[g] += a;
+    if (k) { hab[k] = (hab[k] || 0) + a; if (a > 0) cnt[k] = (cnt[k] || 0) + 1; }
+  });
+  var total = Object.keys(grp).reduce(function(x, y) { return x + grp[y]; }, 0) || 1;
+  var cols = { '필수·고정': '#888780', '가치': '#2a78d6', '일회성': '#b4b2a9', '습관성': '#e34948' };
+  var bar = Object.keys(grp).map(function(g) { return '<div title="' + g + ' ' + _bMan(grp[g]) + '만" style="flex:' + Math.max(grp[g], 0) + ';background:' + cols[g] + ';color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">' + g + ' ' + _bMan(grp[g]) + '</div>'; }).join('');
+  var keys = Object.keys(hab).sort(function(a, b) { return hab[b] - hab[a]; });
+  var cutSum = 0;
+  var rows = keys.map(function(k) {
+    var f = MIRROR_LEAK_FIX[k], mon = hab[k] / N, cut = mon * f[3]; cutSum += cut;
+    return '<div style="display:grid;grid-template-columns:20px minmax(0,1.2fr) 48px minmax(0,1.3fr) 40px;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-top:1px solid #f1f5f9">' +
+      '<span class="material-symbols-outlined" style="font-size:16px;color:' + f[1] + '">' + f[0] + '</span>' +
+      '<span><b style="font-weight:600">' + k + '</b> <span style="font-size:11px;color:#94a3b8">· 월 ' + ((cnt[k] || 0) / N).toFixed(1) + '번</span></span>' +
+      '<b class="lb-n" style="text-align:right">' + _bMan(mon) + '만</b>' +
+      '<span style="font-size:11px;color:#64748b">' + f[2] + '</span>' +
+      '<b class="lb-n" style="text-align:right;color:#1baf7a">−' + _bMan(cut) + '</b></div>';
+  }).join('');
+  return '<div class="lb-c" style="margin-top:10px"><p class="lb-t"><span>어디서 새나 · 지난 ' + N + '달 ' + _bMan(total) + '만</span><span>습관성 안에서 줄일 곳 · 지금 월 / 줄일 월</span></p>' +
+    '<div style="display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:8px">' + bar + '</div>' + rows +
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #f1f5f9"><span style="font-size:11px;color:#94a3b8">여행·사람·영어는 가치라 지켜요 · 여행은 1년 2번</span><span><b class="lb-n" style="font-size:18px;color:#1baf7a">월 ' + _bMan(cutSum) + '만</b><span style="font-size:11px;color:#94a3b8"> · 연 ' + _bMan(cutSum * 12) + '만</span></span></div></div>';
+}
+
 var _boardShowAllBig = false;
 
 function ldgRenderBoard() {
@@ -344,10 +392,11 @@ function ldgRenderBoard() {
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">' +
       trait('account_balance_wallet', '쓰고 남으면 모으는 형', b.reds + ' / ' + b.N + '달 적자', b.reds > b.N / 2, '먼저 떼고 쓰기') +
       trait('bolt', '몰아치기형', '옷·물건 10만↑ ' + b.bigN + '건 = ' + Math.round(b.bigShare * 100) + '%', false, '10만↑은 7일 대기') +
-      trait('flight', '경험·사람에 쓰는 형', '여행 ' + _bMan(b.travel) + ' + 사람 ' + _bMan(b.people) + ' / 달', false, '큰 여행은 1년 1번') +
+      trait('flight', '경험·사람에 쓰는 형', '여행 ' + _bMan(b.travel) + ' + 사람 ' + _bMan(b.people) + ' / 달', false, '여행은 1년 2번 · 미리 모은 여행 통장으로') +
       trait('schedule', dn[b.peak[0]] + '요일 ' + b.peak[1] * 3 + '–' + (b.peak[1] * 3 + 3) + '시형', _bMan(b.peakAmt) + '만 (' + b.N + '달)', false, '그 시간엔 장바구니만') +
       '</div></div>';
   }
+  try { h += _boardLeaks(); } catch (e) { console.error('[Board leaks]', e); }
   var open = false;
   try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
   h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#6366f1;background:#eef2ff;border:0;border-radius:10px;padding:9px;cursor:pointer">' +
