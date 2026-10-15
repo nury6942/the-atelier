@@ -1,7 +1,7 @@
 ## 2026-10-15 (맥북) — 가계부 보드 색 줄이기 · MONEY 직각
 
 - 누리: '무지개라 정신없다, 컬러 수 줄여줘 · 아웃라인 둥근 거 다 직각으로(MONEY 전부)' → 보드 색 = 데이터 남색 #4f46e5 하나 + 작년/평소 연남색 #a5b4fc + 상태 초록/빨강만. 카테고리별 색·주황·하늘·보라 다 없앰, 판정 카드 초록 테두리 없앰, 카드 테두리 #cbd5e1 하나
-- index.html: #page-finance/-finance-hub/-ledger/-income 안 border-radius 0 (!important). board v29, SW v548
+- index.html: #page-finance/-finance-hub/-ledger/-income 안 border-radius 0 (!important). board v30, SW v549 · 누리 '쨍한 보라 눈 아프다' → 데이터 #6f7bb0(차분한 회청 남색)·연한 #c3c8e2·바탕 #eceef6, 빨강 #c0504d·초록 #2f8a68 (사이트 키컬러 보라는 보드에서 안 씀)
 - 현금으로 낸 반품비: 이체 1년치 소액 다 훑었는데 없음 (반품 배송비는 우체국 카드 5건 + 29CM 차감 7건이 전부)
 
 ---

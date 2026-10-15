@@ -3,12 +3,12 @@
 // 큰 그림(집 마감 · 그달 판정 · 나의 규칙) → 연간 목표 → 이 달 플레이북(작년 같은 달) → 세부(봉투 5개 · 큰 결제 · 어디에 썼나) → 나라는 사람(지난 달들로 본 성향).
 
 // 글자색은 진하게만 (연회색 금지 — 누리)
-var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#dc2626', green: '#059669', amber: '#334155', indigo: '#4f46e5', data: '#4f46e5', soft: '#a5b4fc', track: '#e0e7ff' };
+var BK = { ink: '#0f172a', sub: '#334155', mute: '#475569', red: '#c0504d', green: '#2f8a68', amber: '#334155', indigo: '#6f7bb0', data: '#6f7bb0', soft: '#c3c8e2', track: '#eceef6' };
 // 기준 대비 막대: 채운 만큼 / 넘으면 빨강 / 80%↑ 주황. save=true면 많이 채울수록 좋은 막대
 function _bBar(val, cap, save, h) {
   var pct = cap > 0 ? Math.max(0, Math.min(100, val / cap * 100)) : 0, over = cap > 0 && val > cap;
   var col = save ? (val >= cap ? BK.green : BK.data) : (over ? BK.red : BK.data);
-  var track = over && !save ? '#fee2e2' : BK.track;
+  var track = over && !save ? '#f6e3e2' : BK.track;
   return '<div style="height:' + (h || 8) + 'px;background:' + track + ';overflow:hidden;margin:5px 0 3px"><div style="width:' + pct + '%;height:100%;background:' + col + ';"></div></div>';
 }
 // 남음/넘음 한 줄
@@ -115,7 +115,7 @@ function _boardPlaybook(ym, m) {
           '<div style="height:5px;width:' + (x[2] / mx * 100) + '%;min-width:2px;background:' + C_LY + ';margin-top:2px"></div>' +
           '<div style="font-size:11px;color:' + BK.sub + ';margin-top:2px">올해 <b class="lb-n" style="color:' + C_TY + '">' + _bMan(x[1]) + '</b> · 작년 <b class="lb-n" style="color:' + BK.sub + '">' + _bMan(x[2]) + '</b>' + (dd ? ' · <b style="color:' + (dd < 0 ? BK.green : BK.red) + '">' + (dd < 0 ? '▼' : '▲') + _bMan(Math.abs(dd)) + '</b>' : '') + '</div></div></div>';
       }).join('') +
-      '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px;padding-top:6px;border-top:1px solid #eef1f5"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#4f46e5">flight</span> 여행은 따로 · 올해 ' + _bMan(m.buckets[ti]) + '만 / 작년 ' + _bMan(lyB[ti]) + '만 (여행 통장)</div>';
+      '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px;padding-top:6px;border-top:1px solid #eef1f5"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#6f7bb0">flight</span> 여행은 따로 · 올해 ' + _bMan(m.buckets[ti]) + '만 / 작년 ' + _bMan(lyB[ti]) + '만 (여행 통장)</div>';
   } else {
     left = '<div style="font-size:12px;color:' + BK.sub + '">작년 ' + mk + ' 기록이 없어요</div>';
   }
@@ -176,7 +176,7 @@ function _boardPlaybook(ym, m) {
   return '<div class="lb-grid">' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>' + mk + ' · 작년 같은 달과 비교</span><span>단위 만 원</span></p>' + left + '</div>' +
     '<div class="lb-c lb-6"><p class="lb-t"><span>올해 ' + mk + ' 할 일 · 작년 이 달을 보고 정함</span><span>' + (live ? doneN + ' / ' + items.length + ' 됨' : '미리 보기') + '</span></p>' + todo +
-      (nextHint.length ? '<div style="font-size:11.5px;color:#0f172a;background:#eef2ff;padding:6px 9px;margin-top:10px">다음 달 미리 · 작년 이맘때 ' + nextHint.join(' · ') + ' 나갔어요</div>' : '') +
+      (nextHint.length ? '<div style="font-size:11.5px;color:#0f172a;background:#f2f3f8;padding:6px 9px;margin-top:10px">다음 달 미리 · 작년 이맘때 ' + nextHint.join(' · ') + ' 나갔어요</div>' : '') +
     '</div></div>';
 }
 
@@ -325,14 +325,14 @@ function _boardCss() {
     '.lb-c{background:#fff;border:1px solid #cbd5e1;padding:14px 16px;min-width:0}',
     '.lb-t{font-size:11.5px;font-weight:600;color:#334155;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}',
     '.lb-n{font-variant-numeric:tabular-nums;font-weight:700;color:#0f172a;font-family:Manrope,Pretendard,sans-serif}',
-    '.lb-bar{height:6px;background:#e0e7ff;overflow:hidden;margin:6px 0 4px}',
+    '.lb-bar{height:6px;background:#eceef6;overflow:hidden;margin:6px 0 4px}',
     '.lb-row{display:grid;grid-template-columns:58px 8px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;padding:5px 0;border-top:1px solid #eef1f5}',
     '.lb-sq{width:8px;height:8px}',
     '.lb-env{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}',
     '.lb-goal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}',
     '.lb-ms{font-size:11px;color:#334155;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.lb-3{grid-column:span 4}.lb-6{grid-column:span 6}',
-    '.lb-more{font-size:11px;color:#4f46e5;background:none;border:0;padding:4px 0 0;cursor:pointer}',
+    '.lb-more{font-size:11px;color:#6f7bb0;background:none;border:0;padding:4px 0 0;cursor:pointer}',
     '@media (max-width:1100px){.lb-3{grid-column:span 6}.lb-env{grid-template-columns:repeat(3,minmax(0,1fr))}}',
     '@media (max-width:720px){.lb-goal{grid-template-columns:repeat(2,minmax(0,1fr))}.lb-3,.lb-6{grid-column:span 12}.lb-env{grid-template-columns:repeat(2,minmax(0,1fr))}}'
   ].join('\n');
@@ -343,7 +343,7 @@ function _boardCss() {
 // ── 연간 목표 (설정 → 연간 목표 값, 기존 '연간 목표 진행도'와 같은 계산)
 function _boardGoals() {
   var year = _ldgYear, goals = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[year] || {};
-  var keys = [['수입', true, '#4f46e5'], ['지출', false, '#dc2626'], ['저축', true, '#4f46e5'], ['부업', true, '#059669']];
+  var keys = [['수입', true, '#6f7bb0'], ['지출', false, '#c0504d'], ['저축', true, '#6f7bb0'], ['부업', true, '#2f8a68']];
   if (!keys.some(function(k) { return goals[k[0]]; })) {
     return '<div class="lb-c" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#334155">' + year + '년 목표가 아직 없어요' +
       '<button class="lb-more" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 설정 →</button></div>';
@@ -363,14 +363,14 @@ function _boardGoals() {
     var goal = goals[k[0]] || 0, act = Math.round(tot[k[0]] / 10000);
     if (!goal) return '<div style="font-size:11px;color:#334155">' + k[0] + ' · 목표 없음</div>';
     var diff = act - goal * prog, good = k[1] ? diff >= 0 : diff <= 0;
-    var col = good ? '#059669' : '#dc2626';
+    var col = good ? '#2f8a68' : '#c0504d';
     return '<div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#334155">' + k[0] + '</span>' +
       '<span><b class="lb-n">' + act.toLocaleString() + '</b><span style="color:#334155;font-size:11px"> / ' + goal.toLocaleString() + '만</span></span></div>' +
       '<div class="lb-bar" style="position:relative;overflow:visible"><div style="width:' + Math.min(100, act / goal * 100) + '%;height:100%;background:' + col + ';"></div>' +
       '<div title="오늘까지 목표 페이스" style="position:absolute;left:' + Math.round(prog * 100) + '%;top:-3px;bottom:-3px;width:2px;background:#475569"></div></div>' +
       '<div style="font-size:11px;color:' + col + '">페이스 대비 ' + (diff >= 0 ? '+' : '') + Math.round(diff).toLocaleString() + '만</div></div>';
   }).join('');
-  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + year + '년 목표 · 올해 ' + Math.round(prog * 100) + '% 지남</span><span>검정 선 = 오늘까지 목표 페이스 · <a href="javascript:void(0)" style="color:#4f46e5" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 고치기</a></span></p>' +
+  return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + year + '년 목표 · 올해 ' + Math.round(prog * 100) + '% 지남</span><span>검정 선 = 오늘까지 목표 페이스 · <a href="javascript:void(0)" style="color:#6f7bb0" onclick="switchLedgerTab(\'settings\');setTimeout(function(){ldgSetSubTab(\'goals\');},50)">목표 고치기</a></span></p>' +
     '<div class="lb-goal">' + cells + '</div></div>';
 }
 
@@ -399,7 +399,7 @@ var MIRROR_LEAK_GROUPS = [
   ['필수·고정', '#0f172a', '안 쓰면 안 되는 돈', '관리비·통신·주유·장보기·병원'],
   ['가치', '#0f172a', '내가 원해서 지키는 돈', '여행·가족·선물·영어·책'],
   ['일회성', '#0f172a', '가끔 크게 한 번', '30만↑ 물건·정체 모를 결제'],
-  ['습관성', '#dc2626', '자주·조금씩 새는 돈', '옷·외식·배달·카페… 줄일 곳']
+  ['습관성', '#c0504d', '자주·조금씩 새는 돈', '옷·외식·배달·카페… 줄일 곳']
 ];
 function _boardLeaks(ym) {
   var txs = (_ledgerData.transactions || []).filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
@@ -451,11 +451,11 @@ function _boardLeaks(ym) {
 // ── 통장 나누기 (상여 없는 평달 기준, 원) — 2026-10-15 누리와 정함
 var MIRROR_SPLIT = [
   // [이름, 계획, 색, 설명]
-  ['고정', 950000, '#4f46e5', '할머니·관리비·월주차·통신·구독'],
+  ['고정', 950000, '#6f7bb0', '할머니·관리비·월주차·통신·구독'],
   ['연간 적립', 230000, '#334155', '영어 수업료·종소세 미리'],
-  ['생활비', 1830000, '#4f46e5', '카드 한 장 · 아래 칸별 한도'],
-  ['여행', 0, '#4f46e5', '매달 X · 200~300씩 한 번에'],
-  ['집 자금', 1690000, '#059669', '2027-04부터 이주 자금']
+  ['생활비', 1830000, '#6f7bb0', '카드 한 장 · 아래 칸별 한도'],
+  ['여행', 0, '#6f7bb0', '매달 X · 200~300씩 한 번에'],
+  ['집 자금', 1690000, '#2f8a68', '2027-04부터 이주 자금']
 ];
 // 생활비 칸별 한도 (원). 달별 예외는 MIRROR_MONTH_PLAN caps
 var MIRROR_LIVING = [
@@ -477,7 +477,7 @@ var _bAnnual = function(t) { return t['소분류'] === '영어 강의' || /종�
 function _bLivingRow(t) { for (var i = 0; i < MIRROR_LIVING.length; i++) if (MIRROR_LIVING[i][2](t)) return i; return -1; }
 
 function _boardSplit(ym, m) {
-  var L = m ? m.L : [], RED = '#dc2626', GREEN = '#059669';
+  var L = m ? m.L : [], RED = '#c0504d', GREEN = '#2f8a68';
   var inc = _bSum(L, function(t) { return t['대분류'] === '수입'; });
   var sal = L.filter(function(t) { return t['대분류'] === '수입' && t['소분류'] === '월급'; });
   var bonus = sal.reduce(function(a, t) { return a + (t['금액'] > 4000000 ? t['금액'] - 3550000 : 0); }, 0);  // 평소 월급(≈355만) 넘는 몫 ≈ 상여
@@ -501,14 +501,14 @@ function _boardSplit(ym, m) {
     } else body = _bBar(a, plan, isSave) + '<div style="font-size:11px">' + _bLeftTxt(a, plan, isSave) + '</div>';
     return '<div style="min-width:0"><div style="display:flex;justify-content:space-between;font-size:12px;color:' + BK.ink + '"><b style="font-weight:600">' + label + '</b><span class="lb-n">' + (isTravel ? '200~300 한 번에' : (isSave ? '목표 ' : '한도 ') + _bMan(plan) + '만') + '</span></div>' + body + '</div>';
   }).join('');
-  var bonusLine = bonus > 0 ? '<div style="font-size:11px;color:#4f46e5;background:#eef2ff;padding:6px 10px;margin-top:8px">💰 이 달 상여 ≈ ' + _bMan(bonus) + '만 → 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b></div>' :
-    ((+ym.slice(5) === 4 || +ym.slice(5) === 10) ? '<div style="font-size:11px;color:#4f46e5;background:#eef2ff;padding:6px 10px;margin-top:8px">💰 상여 달 · 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b>으로</div>' : '');
+  var bonusLine = bonus > 0 ? '<div style="font-size:11px;color:#6f7bb0;background:#f2f3f8;padding:6px 10px;margin-top:8px">💰 이 달 상여 ≈ ' + _bMan(bonus) + '만 → 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b></div>' :
+    ((+ym.slice(5) === 4 || +ym.slice(5) === 10) ? '<div style="font-size:11px;color:#6f7bb0;background:#f2f3f8;padding:6px 10px;margin-top:8px">💰 상여 달 · 받는 날 바로 <b>' + _bEsc(bonusTo) + '</b>으로</div>' : '');
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + (+ym.slice(5)) + '월 돈 나누기 · 칸마다 한도 대비 얼마나 찼나</span><span>' + (m && m.L.length ? '들어온 돈 ' + _bMan(inc) + '만' + (m.salaryDue ? ' + 월급 ' + MIRROR_PAYDAY + '일 예정 ' + _bMan(m.salaryDue) + '만' : '') : '계획') + '</span></p>' +
     '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 16px">' + cells + '</div>' + bonusLine + '</div>';
 }
 
 function _boardLiving(ym, m, preview) {
-  var caps = _bPlan(ym).caps, RED = '#dc2626', GREEN = '#059669';
+  var caps = _bPlan(ym).caps, RED = '#c0504d', GREEN = '#2f8a68';
   var sp = m ? m.L.filter(_bS) : [];
   var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(_bS); } catch (e) { return []; } })();
   var tot = 0, totCap = 0;
@@ -525,7 +525,7 @@ function _boardLiving(ym, m, preview) {
   var tf = _boardTripFor(ym), trip = '';
   if (tf) {
     var tv = m && !preview ? m.envs[0].val : 0;
-    trip = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid #f1f5f9"><span><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#4f46e5">flight</span> 여행은 따로 · ' + _bEsc(tf.trip.title) + ' (' + tf.trip.start.slice(2, 7).replace('-', '.') + ')' + (tf.trip.support ? ' · 회사 지원 ' + _bMan(tf.trip.support) + '만 포함' : '') + '</span><b class="lb-n" style="color:' + (tv > tf.trip.budget ? RED : '#0f172a') + '">' + (preview ? '' : _bMan(tv) + ' / ') + _bMan(tf.trip.budget) + '만</b></div>';
+    trip = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid #f1f5f9"><span><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#6f7bb0">flight</span> 여행은 따로 · ' + _bEsc(tf.trip.title) + ' (' + tf.trip.start.slice(2, 7).replace('-', '.') + ')' + (tf.trip.support ? ' · 회사 지원 ' + _bMan(tf.trip.support) + '만 포함' : '') + '</span><b class="lb-n" style="color:' + (tv > tf.trip.budget ? RED : '#0f172a') + '">' + (preview ? '' : _bMan(tv) + ' / ') + _bMan(tf.trip.budget) + '만</b></div>';
   }
   // 반품: 옷·물건에서 돌려받은 돈(음수 행), 반품 배송비 = 29CM가 환불에서 뗀 돈 + 우체국 택배 (둘 다 실제)
   var ret = '';
@@ -553,13 +553,13 @@ function ldgRenderBoard() {
   var m = ldgBoardMonth(ym), b = ldgBoardBaseline();
   if (!m.L.length) {
     // 아직 오지 않은 달: 작년 같은 달과 올해 할 일·예산을 미리 보여 준다
-    el.innerHTML = '<div style="font-size:11px;color:#4f46e5;background:#eef2ff;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
+    el.innerHTML = '<div style="font-size:11px;color:#6f7bb0;background:#f2f3f8;padding:6px 10px;margin-bottom:8px">' + mk + '은 아직 오지 않았어요 · 작년 같은 달을 보고 미리 짠 계획이에요</div>' +
       _boardPlaybook(ym, m) + _boardSplit(ym, null) + _boardLiving(ym, null, true);
     return;
   }
-  var T = MIRROR_GOAL.amount, RED = '#dc2626', GREEN = '#059669', h = '';
+  var T = MIRROR_GOAL.amount, RED = '#c0504d', GREEN = '#2f8a68', h = '';
   if (!m.L.some(function(t) { return t['출처'] === '뱅샐'; })) {
-    h += '<div style="font-size:11px;color:#334155;background:#eef2ff;padding:6px 10px;margin-bottom:8px">' + mk + '은 손으로 적은 기록이에요 — 저축·여행 준비금 같은 이체가 섞여 있어 판정이 정확하지 않을 수 있어요</div>';
+    h += '<div style="font-size:11px;color:#334155;background:#f2f3f8;padding:6px 10px;margin-bottom:8px">' + mk + '은 손으로 적은 기록이에요 — 저축·여행 준비금 같은 이체가 섞여 있어 판정이 정확하지 않을 수 있어요</div>';
   }
 
   // ── 큰 그림
@@ -603,7 +603,7 @@ function ldgRenderBoard() {
         eq('들어온 돈', m.inc, BK.ink) + op('+') + eq(m.salaryDue ? '월급 ' + MIRROR_PAYDAY + '일 예정' : '월급 들어옴', m.salaryDue, BK.ink) + op('−') + eq('여행 빼고 쓴 돈', m.life, BK.ink) + op('=') + eq('남음', m.leftLife, m.leftLife >= 0 ? BK.green : BK.red, m.leftLife >= 0 ? '+' : '') + '</div>' +
       '<div style="height:8px;background:' + BK.track + ';overflow:hidden"><div style="width:' + lifePct + '%;height:100%;background:' + BK.data + '"></div></div>' +
       '<div style="font-size:11px;color:' + BK.sub + ';margin-top:3px">채운 칸 = 쓴 몫 ' + Math.round(lifePct) + '% · 빈 칸 = 남는 몫</div>' +
-      (m.travel ? '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#4f46e5">flight</span> 여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</div>' : '') + '</div>' +
+      (m.travel ? '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:6px"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:-3px;color:#6f7bb0">flight</span> 여행 ' + _bMan(m.travel) + '만은 여행 통장(' + MIRROR_TRAVEL_ACCOUNT + ')에서 → 여기 안 셈</div>' : '') + '</div>' +
     '<div class="lb-c lb-3"><p class="lb-t"><span>나의 규칙 4개 · 이 달 지키는 중?</span><span>' + [m.side > 0 && netSave >= m.side, livingNow <= 1830000, m.life <= salBase, shopBig.length < 2].filter(Boolean).length + ' / 4 지킴</span></p>' + rules + '</div></div>';
 
   // ── 연간 목표
@@ -680,7 +680,7 @@ function ldgRenderBoard() {
   try { h += _boardLeaks(ym); } catch (e) { console.error('[Board leaks]', e); }
   var open = false;
   try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
-  h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#4f46e5;background:#eef2ff;border:0;padding:9px;cursor:pointer">' +
+  h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#6f7bb0;background:#f2f3f8;border:0;padding:9px;cursor:pointer">' +
     (open ? '▴ 차트 접기' : '▾ 차트 더 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이') + '</button>';
   el.innerHTML = h;
   _applyDetailVisibility();
