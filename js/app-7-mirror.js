@@ -856,7 +856,9 @@ function _boardCats(ym, m, preview) {
   var L = (m && !preview) ? m.L.filter(_bS) : [];
   // 예정: 집계 화면처럼 아직 안 빠져나간 정기 결제(주차·기부·정수기 등 손으로 넣어 둔 줄)도 이 달 몫으로 — 빗금
   var todayS = now.toISOString().slice(0, 10);
-  var due = preview ? [] : _bRows(ym).filter(function(t) { return t['출처'] !== '뱅샐' && t.date > todayS && _bS(t) && t['금액'] > 0; });
+  var paidSubs = {}; _bRows(ym).forEach(function(t) { if (t['출처'] === '뱅샐' && _bS(t)) paidSubs[t['대분류'] + '|' + t['소분류']] = 1; });
+  // 이미 은행에서 빠져나간 같은 소분류(정수기 등)는 예정에서 뺀다 — 자동(고정) 줄과 실제 결제 이중 집계 방지
+  var due = preview ? [] : _bRows(ym).filter(function(t) { return t['출처'] !== '뱅샐' && t.date > todayS && _bS(t) && t['금액'] > 0 && !paidSubs[t['대분류'] + '|' + t['소분류']]; });
   var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(function(t) { return _bS(t) && +t.date.slice(8, 10) <= cut; }); } catch (e) { return []; } })();
   var all = (_ledgerData.transactions || []).filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
   var ms = Array.from(new Set(all.map(function(t) { return t.date.slice(0, 7); }))).filter(function(x) { return x < curYm; }).sort().slice(-6);  // 최근 6달 — 끊은 보험(미래에셋 4월~) 같은 옛 지출이 안 섞이게

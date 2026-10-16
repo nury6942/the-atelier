@@ -5275,14 +5275,31 @@ function ldgDeleteFutureRecurringTx(recId) {
 }
 
 // ── Recurring skip list (deleted auto transactions) ──
+// 지운 자동(고정) 거래 목록은 기기끼리 같이 써야 한다 — 한 기기에서만 기억하면 다른 기기가 같은 id로 되살림 (누리 2026-10-16 정수기)
+// 이 기기 localStorage + 동기화되는 settings.recurringSkipped 를 합쳐서 쓰고, 달라지면 둘 다에 저장
 function ldgGetSkipped() {
-  try { return JSON.parse(localStorage.getItem('atelier_ledger_recurring_skipped')) || {}; } catch(e) { return {}; }
+  var local = {}, shared = {};
+  try { local = JSON.parse(localStorage.getItem('atelier_ledger_recurring_skipped')) || {}; } catch(e) {}
+  try { shared = ((_ledgerData && _ledgerData.settings) || {}).recurringSkipped || {}; } catch(e) {}
+  var out = {}, changed = false;
+  [shared, local].forEach(function(src) { Object.keys(src).forEach(function(mk) { (src[mk] || []).forEach(function(id) { out[mk] = out[mk] || []; if (out[mk].indexOf(id) < 0) out[mk].push(id); }); }); });
+  Object.keys(out).forEach(function(mk) { if ((shared[mk] || []).length !== out[mk].length) changed = true; });
+  if (changed) ldgSaveSkipped(out);
+  return out;
+}
+function ldgSaveSkipped(s) {
+  try { localStorage.setItem('atelier_ledger_recurring_skipped', JSON.stringify(s)); } catch(e) {}
+  try {
+    _ledgerData.settings = _ledgerData.settings || {}; _ledgerData.settings.recurringSkipped = s;
+    try { localStorage.setItem('atelier_ledger_settings', JSON.stringify(_ledgerData.settings)); } catch(e) {}
+    if (typeof db !== 'undefined' && db) db.collection('appSettings').doc('ledgerData').update({ 'settings.recurringSkipped': s }).catch(function(e) { console.error('[Recurring skip sync]', e); });
+  } catch(e) {}
 }
 function ldgAddSkipped(recId, monthKey) {
   var s = ldgGetSkipped();
   if (!s[monthKey]) s[monthKey] = [];
   if (s[monthKey].indexOf(recId) < 0) s[monthKey].push(recId);
-  localStorage.setItem('atelier_ledger_recurring_skipped', JSON.stringify(s));
+  ldgSaveSkipped(s);
 }
 
 var _ldgRecurringMigrated = false;
