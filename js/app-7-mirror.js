@@ -738,6 +738,13 @@ function _bPrevRow(label, cur, prev, segs, scale, upGood, man) {
   return '<div style="padding-right:86px;margin-top:8px"><div style="font-size:11.5px;color:' + BK.sub + ';margin-bottom:3px">작년 <b class="lb-n" style="color:' + BK.ink + '">' + man(prev) + '</b> → 올해 <b class="lb-n" style="color:' + (good ? BK.green : BK.red) + '">' + (d >= 0 ? '+' : '−') + man(Math.abs(d)) + (prev ? ' (' + (pct >= 0 ? '+' : '') + pct + '%)' : '') + '</b></div>' +
     '<div style="position:relative;height:10px;background:#f1f5f9">' + bars + '</div></div>';
 }
+// 집 마지막 상환: 이미 냈으면 데이터(저축/집 상환), 아직이면 계획 (2027-04 2,500 · 누리)
+var BOARD_HOUSE_PLAN = { '2027': ['2027-04', 25000000] };
+function _bHousePay(Y) {
+  var L = (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 4) === Y && t['대분류'] === '저축' && t['소분류'] === '집 상환' && Math.abs(t['금액']) >= 5000000; });
+  if (L.length) return { ym: L[0].date.slice(0, 7), amt: L.reduce(function(a, t) { return a + Math.abs(t['금액']); }, 0), done: true };
+  var pl = BOARD_HOUSE_PLAN[Y]; return pl ? { ym: pl[0], amt: pl[1], done: false } : null;
+}
 function _boardPlanCard(year) {
   var now = new Date(), cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), Y = String(year);
   var months = []; for (var i = 1; i <= 12; i++) months.push(Y + '-' + String(i).padStart(2, '0'));
@@ -754,6 +761,14 @@ function _boardPlanCard(year) {
   var tgt = function(v) { return v ? '<span style="font-weight:400;color:' + BK.sub + '"> / ' + Number(v).toLocaleString() + '</span>' : ''; };
   var gI = (g['수입'] || 0) * 1e4, gS = (g['지출'] || 0) * 1e4, gV = (g['저축'] || 0) * 1e4;
   var ymx = Math.max(yt, ys, gI, gS, gV, 1) * 1.22, man = function(x) { return Math.round(x / 1e4).toLocaleString(); };
+  // 집 상환: 지출 아님(통장 → 집 지분). 막대엔 '그해 상환 달 전까지 모은 몫'만 칠하고, 나머지는 작년까지 모은 돈이라고 적는다 (누리 2026-10-16)
+  var hp = _bHousePay(Y), houseThis = 0, houseNote = '';
+  if (hp) {
+    var before = P.filter(function(x) { return x[0] < hp.ym; }).reduce(function(a, x) { return a + x[1].save; }, 0);
+    houseThis = Math.max(0, Math.min(hp.amt, before, ysave));
+    houseNote = '<div style="font-size:11.5px;color:' + BK.sub + ';margin-top:4px">' + (+hp.ym.slice(5)) + '월 집 상환 <b class="lb-n" style="color:' + BK.ink + '">' + man(hp.amt) + '</b>' + (hp.done ? '' : ' 예정') + ' = ' +
+      (houseThis > 0 ? '올해 ' + (+hp.ym.slice(5) - 1) + '월까지 모은 <b class="lb-n" style="color:' + BK.ink + '">' + man(houseThis) + '</b> + ' : '') + '작년까지 모은 <b class="lb-n" style="color:' + BK.ink + '">' + man(hp.amt - houseThis) + '</b> · 지출 아님(집 지분)' + '</div>';
+  }
   // 줄 이름 밑에 그 줄 합계 (막대 끝 바깥은 남음·넘음만 — 카드 밖으로 안 넘치게)
   var yrow = function(lbl, bul, v) { return '<div style="display:grid;grid-template-columns:58px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0"><div style="padding-top:16px;line-height:1.25"><b style="font-size:12.5px">' + lbl + '</b>' + (v != null ? '<div class="lb-n" style="font-size:14px;font-weight:700;color:' + BK.ink + '">' + man(v) + '</div>' : '') + '</div><div>' + bul + '</div></div>'; };
   var tripLine = MIRROR_TRIP_ACTUAL[Y] ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:3px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div>' : '';
@@ -789,7 +804,9 @@ function _boardPlanCard(year) {
   var pvV = hasPV ? _bPrevRow('모으기', ysave, PV.save, [['모으기', PV.save, BK.green]], scV, true, man) : '';
   var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scaleMin: scI, mode: 'goal', segs: incSegs, noVal: 1, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs, scI) + pvI, yt) +
     yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scaleMin: scS, mode: 'limit', segs: spSegs, noVal: 1, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs, scS) + lifeBar + pvS + tripLine, ys) +
-    yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scaleMin: scV, mode: 'goal', color: BK.green, noVal: 1, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표' }) + pvV, ysave) +
+    yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scaleMin: scV, mode: 'goal', color: BK.green, noVal: 1, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표',
+      segs: houseThis > 0 ? [['집 상환', houseThis, '#23855f', 1], ['현금으로 남기', ysave - houseThis, BK.green]] : null }) +
+      (houseThis > 0 ? segTags([['집 상환', houseThis], ['현금으로 남기', ysave - houseThis]], scV) : '') + houseNote + pvV, ysave) +
     '<div style="text-align:right;margin-top:2px"><button class="lb-more" onclick="try{localStorage.setItem(\'atelier_board_yoy\',\'' + (yoy ? '0' : '1') + '\')}catch(e){};ldgRenderBoard()">' + (yoy ? '전년 비교 접기 ▴' : '+ 전년 비교') + '</button>' +
     (yoy ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:2px">작년 = ' + (year - 1) + '년 실제' + (year - 1 === 2025 ? ' · 1~9월은 아뜰리에 수기 기록(계·집 원금 뺌), 10월부터 은행 연동' : '') + ' · 올해는 계획 포함</div>' : '') + '</div>';
   var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
