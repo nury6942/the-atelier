@@ -161,9 +161,9 @@ var MIRROR_ENVELOPES = [
 // 달(1~12)마다 한도·할 일. 'YYYY-MM' 키는 그 해에만. 한도는 원.
 var MIRROR_MONTH_PLAN = {
   1:  { caps: { '물건': 300000 }, todo: ['새해 결심 쇼핑 주의 · 큰 물건 프로젝트 없음', '여행 항공은 마일리지 먼저'] },
-  2:  { caps: { '사람': 700000 }, todo: ['설 봉투 70만만', '조용한 달 · 남는 돈 그대로 집 통장'] },
-  3:  { caps: { '사람': 1000000 }, todo: ['가족 선물 봉투 100만'] },
-  4:  { caps: { '사람': 500000 }, todo: ['상여 받는 날 바로 옮기기', '생일 선물 봉투 50만'] },
+  2:  { caps: { '사람': 700000 }, todo: ['설 봉투 65만 (경조사비)', '조용한 달 · 남는 돈 그대로 집 통장'] },
+  3:  { caps: { '사람': 1000000 }, todo: ['봄 옷은 한도 안에서 한 번에'] },
+  4:  { caps: { '사람': 500000 }, todo: ['상여 받는 날 바로 옮기기', '슬예 생일 ≈200 · 숙소·식사·선물 먼저 정하기'] },
   5:  { caps: {}, todo: ['종합소득세 · 모아 둔 세금 통장으로'] },
   6:  { caps: { '물건': 500000 }, todo: ['집 프로젝트는 하나만 · 예산 먼저'] },
   7:  { caps: {}, todo: [] },
@@ -171,13 +171,13 @@ var MIRROR_MONTH_PLAN = {
   9:  { caps: {}, todo: [] },
   10: { caps: {}, todo: ['상여 받는 날 바로 옮기기'] },
   11: { caps: { '물건': 300000 }, todo: ['새 여행 예약 0 · 블프는 위시리스트만'] },
-  12: { caps: { '사람': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
+  12: { caps: { '사람': 300000 }, todo: ['연말 모임·선물은 관계비 한도 안에서'] },
   // 2026-11·12 조이기 (2026-10-15 누리와 정함) — living = 그 달 생활비 전체 한도
   '2026-10': { todo: ['10/28 인센(≈510만)은 받는 날 그대로 OK파킹 · 월급은 11/10 카드값용'] },
   '2026-11': { living: 1600000, caps: { '외식': 250000, '배달': 100000, '카페·간식': 100000, '장보기': 160000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 50000, '주유·교통': 220000, '취미·여가': 100000, '책·공부': 100000, '사람': 200000 },
                todo: ['블프·11월 행사는 장바구니만 · 결제 0', '물건은 소모품만 10만', '11/10 카드값 내고 남은 돈 120만↑ → OK파킹'] },
   '2026-12': { living: 2000000, caps: { '외식': 300000, '배달': 100000, '카페·간식': 100000, '장보기': 200000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 50000, '주유·교통': 220000, '취미·여가': 150000, '책·공부': 100000, '사람': 400000 },
-               todo: ['선물 줄 사람·금액 먼저 적기 → 사람 40만 안에서', '송년회는 1차만 · 외식 30만', '12/10 카드값 뒤 120만↑ → OK · 12/28 월급날 80만 → OK', '12/12 새 연재 시작 🎉'] },
+               todo: ['선물 줄 사람·금액 먼저 적기 → 관계비 한도 안에서', '송년회는 1차만 · 외식 28만', '12/10 카드값 뒤 120만↑ → OK · 12/28 월급날 80만 → OK', '12/12 새 연재 시작 🎉'] },
   '2027-01': { todo: ['2027 목표 · 수입 9,150만 · 지출 4,420만 · 저축 4,730만'] },
   '2027-02': { todo: ['연말정산 환급 ≈100만 → 들어오는 날 OK파킹'] },
   '2027-03': { todo: ['집 상환 자금 2,500만 완성'] },
@@ -196,10 +196,31 @@ function _bClothesMonth(ym) {
     return _bYm(sm, -1) === ym || (sm === ym && +t.start.slice(8, 10) >= 10);
   })[0] || null;
 }
+// 아뜰리에 예산(카테고리별 집계) → 보드 옛 칸 이름으로. 그 달 예산이 들어 있으면 보드 계획·할 일·예상이 전부 이걸 따른다 (누리 2026-10-16)
+function _bSubBudget(cat, sub, ym) {
+  var b = (_ledgerData.budgets || {})[cat + '.' + sub];
+  return b ? (b.overrides && b.overrides[ym] !== undefined ? b.overrides[ym] : (b.default || 0)) : 0;
+}
+function _bBudgetPlan(ym) {
+  var B = _ledgerData.budgets || {};
+  if (!Object.keys(B).some(function(k) { return B[k] && B[k].overrides && B[k].overrides[ym] !== undefined && k.indexOf('수입') !== 0 && k.indexOf('여행') !== 0; })) return null;
+  var C = function(c) { return _bCatBudget(c, ym).v; }, S = function(c, sb) { return _bSubBudget(c, sb, ym); };
+  var park = S('교통비', '주차비'), eng = S('자기계발비', '영어 강의'), itax = S('세금/보험', '종합소득세');
+  var caps = { '외식': S('식비', '외식비'), '배달': S('식비', '배달'), '카페·간식': S('식비', '간식/카페'), '장보기': S('식비', '식재료비') + S('식비', '구내식당'), '편의점': S('식비', '편의점'),
+    '옷·뷰티': C('품위유지비'), '물건': C('생필품비'), '병원·약': C('건강/의료비'), '주유·교통': C('교통비') - park, '취미·여가': C('여가비'), '책·공부': C('자기계발비') - eng, '사람': C('관계비') + C('경조사비') };
+  var living = Object.keys(caps).reduce(function(a, k) { return a + caps[k]; }, 0) + Math.max(0, C('식비') - caps['외식'] - caps['배달'] - caps['카페·간식'] - caps['장보기'] - caps['편의점']);
+  return { caps: caps, living: living, fixedCap: C('주거비') + C('고정비') + park + C('세금/보험') - itax, annualCap: eng + itax };
+}
 function _bPlan(ym) {
   var a = MIRROR_MONTH_PLAN[+ym.slice(5)] || {}, b = MIRROR_MONTH_PLAN[ym] || {}, caps = {};
   [a.caps || {}, b.caps || {}].forEach(function(c) { Object.keys(c).forEach(function(k) { caps[k] = c[k]; }); });
   var todo = (a.todo || []).concat(b.todo || []);
+  var bp = _bBudgetPlan(ym);
+  if (bp) {
+    var cl = bp.caps['옷·뷰티'];
+    todo.push(cl >= 400000 ? '👗 옷 쇼핑 달 · 한도 ' + _bMan(cl) + '만' : cl ? '👗 옷은 ' + _bMan(cl) + '만 안에서' : '👗 옷 0 · 다음 옷 달까지');
+    return { caps: bp.caps, todo: todo, living: bp.living, fixedCap: bp.fixedCap, annualCap: bp.annualCap, fromBudget: true };
+  }
   var ct = _bClothesMonth(ym);
   if (ct) { caps['옷·뷰티'] = MIRROR_TRIP_CLOTHES; todo.push('👗 ' + ct.title + ' 가기 전 옷 쇼핑 달 · 한도 ' + _bMan(MIRROR_TRIP_CLOTHES) + '만'); }
   else {
@@ -659,7 +680,7 @@ function _bProj(ym) {
     if (sal.length) { var tot = sal.reduce(function(a, t) { return a + t['금액']; }, 0), reg = MIRROR_PROJ.salary(ym); inc['월급'] = Math.min(tot, reg); inc['인센'] = Math.max(0, tot - reg); }
   }
   var plan = _bPlan(ym), y27 = ym >= '2027-01';
-  var spend = (y27 ? 700000 + 250000 : 950000 + 230000) + plan.living;
+  var spend = (plan.fixedCap != null ? plan.fixedCap : (y27 ? 700000 : 950000)) + (plan.annualCap != null ? plan.annualCap : (y27 ? 250000 : 230000)) + plan.living;
   var trip = (_boardExtra.trips || []).filter(function(t) { return t.start.slice(0, 7) === ym; })[0];
   var ev = MIRROR_PROJ.events[ym] || '';
   if (_bClothesMonth(ym)) ev += (ev ? ' · ' : '') + '옷 달';
