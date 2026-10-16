@@ -39,11 +39,11 @@ function _bBullet(o) {
   var rest = o.mode === 'goal' ? (good ? '<span style="color:' + BK.green + '">+' + fmt(diff) + ' 달성</span>' : '<span style="color:' + BK.red + '">' + fmt(diff) + ' 모자람</span>')
                                : (over ? '<span style="color:' + BK.red + '">' + fmt(diff) + ' 넘음</span>' : '<span style="color:' + BK.dataText + '">' + fmt(diff) + ' 남음</span>');
   var h = '<div style="position:relative;height:22px;background:#e8f1fd;margin-top:' + (o.capTop ? 14 : 0) + 'px">' + fill +
-    (inside ? '<span style="position:absolute;right:' + (100 - pv) + '%;top:0;line-height:22px;padding-right:6px;color:#fff;font-size:12px;white-space:nowrap">' + valTxt + '</span>' : '') +
-    '<span style="position:absolute;left:calc(' + pv + '% + 6px);top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
-    '<div style="position:absolute;left:calc(' + pc + '% - 1px);top:-4px;bottom:-4px;width:2px;background:' + BK.ink + '"></div>';
-  // 한도 숫자: 남음·넘음 글자와 부딪히면 선 위로
-  var restEnd = pv + (inside ? 14 : 24), upper = (pc > pv - 2 && pc < restEnd) || over || pc > 88;
+    (inside ? '<span class="lb-in" data-pc="' + pc + '" style="position:absolute;right:' + (100 - pv) + '%;top:0;line-height:22px;padding-right:6px;color:#fff;font-size:12px;white-space:nowrap">' + valTxt + '</span>' : '') +
+    '<span class="lb-rest" data-pc="' + pc + '"' + (over ? ' data-over="1"' : '') + ' style="position:absolute;left:calc(' + pv + '% + 6px);top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
+    '<div class="lb-capl" style="position:absolute;left:calc(' + pc + '% - 1px);top:-4px;bottom:-4px;width:2px;background:' + BK.ink + '"></div>';
+  // 한도 숫자는 늘 선 위 — 막대 안 글자와 안 부딪힌다 (남음 글자가 선을 가로지르면 _bFixBullets 가 선 오른쪽으로 옮김)
+  var upper = true;
   var capLbl = (o.capLabel ? o.capLabel + ' ' : '') + '<span class="lb-ed" data-k="' + (o.edit || '') + '" onclick="_bEdit(this)" title="눌러서 바꾸기" style="cursor:text;border-bottom:1px dashed ' + BK.ink + '">' + fmt(o.cap) + '</span>' + unit;
   h += upper ? '<span style="position:absolute;left:calc(' + pc + '% + 3px);top:-17px;font-size:11.5px;font-weight:700;color:' + BK.ink + ';white-space:nowrap;' + (pc > 80 ? 'transform:translateX(-100%);margin-left:-8px' : '') + '">' + capLbl + '</span>'
              : '<span style="position:absolute;left:calc(' + pc + '% + 6px);top:0;line-height:22px;font-size:12px;font-weight:700;color:' + BK.ink + ';white-space:nowrap">' + capLbl + '</span>';
@@ -79,8 +79,22 @@ function _bEdit(el) {
 }
 window._bEdit = _bEdit;
 
+// 남음·넘음 글자가 한도선을 가로지르면 선 오른쪽으로 (실제 폭을 재서)
+function _bFixBullets(root) {
+  (root || document).querySelectorAll('.lb-rest').forEach(function(sp) {
+    var line = sp.parentNode.querySelector('.lb-capl'); if (!line || sp.getAttribute('data-over')) return;
+    var a = sp.getBoundingClientRect(), b = line.getBoundingClientRect();
+    if (a.left < b.right + 2 && a.right > b.left - 4) sp.style.left = 'calc(' + sp.getAttribute('data-pc') + '% + 7px)';
+  });
+  (root || document).querySelectorAll('.lb-in').forEach(function(sp) {
+    var line = sp.parentNode.querySelector('.lb-capl'); if (!line) return;
+    var a = sp.getBoundingClientRect(), b = line.getBoundingClientRect();
+    if (a.left < b.right + 2 && a.right > b.left - 2) sp.style.right = 'calc(' + (100 - Number(sp.getAttribute('data-pc'))) + '% + 3px)';
+  });
+}
 // 그린 뒤 실제 글자 폭을 재서, 진짜 겹치는 라벨만 다음 줄로
 function _bFixTags(root) {
+  try { _bFixBullets(root); } catch (e) {}
   (root || document).querySelectorAll('.lb-tags').forEach(function(box) {
     var base = box.getBoundingClientRect().left;
     var items = Array.prototype.slice.call(box.children).map(function(sp) { var r = sp.getBoundingClientRect(); return { sp: sp, l: r.left - base, r: r.right - base }; }).sort(function(a, b) { return a.l - b.l; });
