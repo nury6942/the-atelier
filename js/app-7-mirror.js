@@ -670,7 +670,7 @@ function _boardCats(ym, m, preview) {
     var tags = _bTags([{ p: P(d.cap), h: '한도 <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(d.cap) + '</b>' }].concat(d.av ? [{ p: P(d.av), h: '<span style="color:' + BK.dataText + '">평소 <b class="lb-n">' + _bMan(d.av) + '</b></span>' }] : []));
     var bar = '<div style="position:relative;height:16px">' +
       (preview ? '' : '<div style="position:absolute;left:0;top:2px;height:12px;width:' + P(d.v) + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
-        '<span style="position:absolute;left:calc(' + P(d.v) + '% + 6px);top:0;font-size:12px;line-height:16px;white-space:nowrap"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') +
+        '<span style="position:absolute;left:calc(' + P(d.v) + '% + 4px);top:0;font-size:12px;line-height:16px;white-space:nowrap;background:#fff;padding:0 3px;z-index:2"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') +
       '<div style="position:absolute;left:' + P(d.cap) + '%;top:-3px;bottom:-3px;width:2px;background:' + BK.ink + '"></div>' +
       (d.av ? '<div style="position:absolute;left:calc(' + P(d.av) + '% - 5px);top:3px;width:10px;height:10px;border-radius:50% !important;border:2px solid ' + BK.dataText + ';background:#fff;box-sizing:border-box"></div>' : '') + '</div>';
     var last = '<div style="position:relative;height:13px;margin-top:2px"><div style="position:absolute;left:0;top:4px;height:5px;width:' + P(d.lv) + '%;background:' + BK.soft + '"></div>' +
