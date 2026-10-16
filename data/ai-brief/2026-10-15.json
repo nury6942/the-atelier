@@ -28,7 +28,7 @@
     {
      "title": "푸리에 원으로 그린 펠리컨",
      "url": "https://x.com/fofrAI/status/2110043023954284889",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2110042439679356928/img/9r6fyHnZ6WisSOJZ.jpg"
     }
    ],
    "why": "사진과 말 한 줄로 3D 세계·게임 제작",
@@ -125,7 +125,7 @@
     {
      "title": "바로 쓰는 프롬프트 14개",
      "url": "https://picsart.com/blog/nano-banana-2-1-prompts/",
-     "image": null
+     "image": "https://cdnblog.picsart.com/2026/10/nano-banana-2-1-prompts-cover.png"
     },
     {
      "title": "가상피팅 오픈소스 연동",
@@ -223,7 +223,7 @@
    "cat": "release",
    "title": "Claude Code 데스크톱 멀티세션",
    "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2110444209673265152/img/oVtJzxAlfEEN1BFm.jpg",
    "source": "@ClaudeDevs · ♥16K",
    "watching": true
   },
@@ -245,14 +245,14 @@
    "cat": "free",
    "title": "아티스트용 AI IDE",
    "url": "https://github.com/storytold/artcraft",
-   "image": "https://opengraph.githubassets.com/dc0d9c5e6153e6c7eecf910404e8e964a9699b9cb659319170c50f69bd354789/storytold/artcraft",
+   "image": "https://opengraph.githubassets.com/1/storytold/artcraft",
    "source": "GitHub Trending"
   },
   {
    "cat": "free",
    "title": "HTML→영상 HyperFrames",
    "url": "https://github.com/heygen-com/hyperframes",
-   "image": "https://opengraph.githubassets.com/ccb7a8052e7d6b0dd17ae3912416b9e8dd678683b02f438164ad76ca13cf3d3c/heygen-com/hyperframes",
+   "image": "https://opengraph.githubassets.com/1/heygen-com/hyperframes",
    "source": "HeyGen 오픈소스"
   },
   {

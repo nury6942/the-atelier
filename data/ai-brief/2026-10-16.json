@@ -18,17 +18,17 @@
     {
      "title": "모델 사진+옷 4장→에디토리얼 컷",
      "url": "https://fal.ai/learn/tools/krea-3-prompting-guide",
-     "image": null
+     "image": "https://fal.ai/learn/tools/krea-3-prompting-guide/opengraph-image?840e62b74fecee43"
     },
     {
      "title": "헥스코드로 제품 색만 바꾸기",
      "url": "https://www.krea.ai/krea-3",
-     "image": null
+     "image": "https://s.krea.ai/krea-3-og-boxes-3.webp"
     },
     {
      "title": "카탈로그 3장으로 모델 스타일링",
      "url": "https://morphic.com/resources/models/krea-3",
-     "image": null
+     "image": "https://external-cdn.morphic.com/website-production/assets/images/og/home.avif"
     }
    ],
    "new": [
@@ -73,7 +73,7 @@
    "cat": "release",
    "title": "Claude에 한 줄로 30초 영상 시키기",
    "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
-   "image": null,
+   "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/b8f05d51-071a-4a25-928e-8ac21642fb78.png?fm=auto&w=1200&h=630&fit=crop",
    "source": "MindStudio 첫 테스트",
    "release": {
     "name": "Kling 4.0 + MCP·CLI",
@@ -84,12 +84,12 @@
     {
      "title": "식당 긴 대화 장면 립싱크 테스트",
      "url": "https://www.mindstudio.ai/blog/kling-4-0-first-look",
-     "image": null
+     "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/b8f05d51-071a-4a25-928e-8ac21642fb78.png?fm=auto&w=1200&h=630&fit=crop"
     },
     {
      "title": "예시 영상 3편 프레임 단위 점검",
      "url": "https://www.klingmotion.com/kling-4-0-review",
-     "image": null
+     "image": "https://www.klingmotion.com/logo.webp"
     },
     {
      "title": "MCP로 에이전트가 찍은 시네마틱",
@@ -163,7 +163,7 @@
    "cat": "vibe",
    "title": "포토샵 대체 앱, 11일 만에 별 4.4만",
    "url": "https://notes.nicolasdeville.com/apps/artcraft/",
-   "image": "https://opengraph.githubassets.com/dc0d9c5e6153e6c7eecf910404e8e964a9699b9cb659319170c50f69bd354789/storytold/artcraft",
+   "image": "https://ik.imagekit.io/vhucnsp9j1u/images/notes-twitter-image.jpg",
    "source": "Nicolas de Ville 노트",
    "how": "Claude Opus 5.5로 Rust 작성, 어도비 7종 무료",
    "chips": [
@@ -231,35 +231,35 @@
    "cat": "free",
    "title": "Argon 3D 게임 14개",
    "url": "https://aistudio.google.com/learn/gemini-4-argon-showcase",
-   "image": null,
+   "image": "https://ai.google.dev/static/site-assets/images/share-ais-513315318.png",
    "source": "Google AI Studio"
   },
   {
    "cat": "release",
    "title": "Argon 게임 개발 실테스트",
    "url": "https://www.mindstudio.ai/blog/gemini-4-argon-coding-game-dev-tests",
-   "image": null,
+   "image": "https://i.mscdn.ai/o/iZl0kkZU2R9KXyy7/a/3V2ICO3oSq2QZPii/_published/generated-images/9d4d6c24-d194-445f-93fc-4ffaac809f45.png?fm=auto&w=1200&h=630&fit=crop",
    "source": "MindStudio · 3D 품질은 Opus 아래"
   },
   {
    "cat": "free",
    "title": "무료 OpenDesign",
    "url": "https://open-design.ai/alternatives/figma/",
-   "image": null,
+   "image": "https://open-design.ai/og-homepage-20261009.png",
    "source": "Apache-2.0"
   },
   {
    "cat": "vibe",
    "title": "AI 어도비 클론, 진짜 되나",
    "url": "https://www.vice.com/en/article/everything-we-know-about-the-free-adobe-clones-built-with-ai-do-they-actually-work/",
-   "image": null,
+   "image": "https://www.vice.com/wp-content/uploads/sites/2/2026/10/Everything-We-Know-About-the-Free-Adobe-Clones-Built-With-AI.-Do-They-Actually-Work.jpg?w=2000",
    "source": "VICE"
   },
   {
    "cat": "tool",
    "title": "OpenCode 2.0",
    "url": "https://www.producthunt.com/leaderboard/daily/2026/10/13",
-   "image": null,
+   "image": "https://ph-static.imgix.net/product-hunt-logo-horizontal-orange-background.png?auto=format",
    "source": "Product Hunt 10-13 순위"
   },
   {

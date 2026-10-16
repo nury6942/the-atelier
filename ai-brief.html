@@ -46,7 +46,8 @@
   /* 사진·영상 칸 */
   .img{position:relative;background:var(--wash);overflow:hidden}
   .img img,.img video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .img .ph{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+  .img .ph{position:absolute;inset:0;display:grid;place-items:center;padding:10px;text-align:center;font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--mut);word-break:break-all}
+  .img .ph small{display:block;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
   .img .play{position:absolute;left:10px;bottom:10px;background:rgba(17,17,17,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em;padding:4px 8px}
   .tag{display:inline-block;align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--ink);padding:2px 6px}
   .tag.solid{background:var(--ink);color:var(--paper)}
@@ -84,7 +85,10 @@
   .hero .img{aspect-ratio:16/9}
   .hero h3{font-size:1.6rem;line-height:1.2;letter-spacing:-.025em}
   .side .card{flex-direction:row}
-  .side .card .img{flex:0 0 42%;min-height:100%}
+  .card > a:first-child{display:block;position:relative}
+  .side .card > a:first-child{flex:0 0 42%;min-height:100%}
+  .side .card > a:first-child .img{position:absolute;inset:0}
+  .card .body{min-width:0}
   .row2 .card .img{aspect-ratio:16/9}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .chip{font-size:11px;font-weight:700;padding:3px 8px;background:var(--ink);color:var(--paper);font-variant-numeric:tabular-nums}
@@ -180,7 +184,8 @@
     .grid,.row2,.tries{grid-template-columns:1fr}
     .side{grid-template-rows:none}
     .side .card{flex-direction:column}
-    .side .card .img{flex:none;aspect-ratio:16/9;min-height:0}
+    .side .card > a:first-child{flex:none;min-height:0}
+    .side .card > a:first-child .img{position:relative;inset:auto;aspect-ratio:16/9}
     .hero h3{font-size:1.3rem}
     .try.must h3{font-size:1.35rem}
     .strip{grid-auto-columns:170px}
@@ -247,8 +252,11 @@
   function skey(url){ return String(url).replace(/^https?:\/\//,'').replace(/[^a-zA-Z0-9]/g,'_').slice(0,140); }
 
   // ── 조각 ──
-  function media(src, label, extra){
-    return '<div class="img"><div class="ph">'+esc(label||'')+'</div>'
+  function host(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
+  // 사진이 없거나 깨지면 빈 칸 대신 '어디 글인지'(출처 도메인)를 보여준다
+  function media(src, label, extra, url){
+    var h = url ? host(url) : '';
+    return '<div class="img"><div class="ph"><span>'+(label?'<small>'+esc(label)+'</small>':'')+esc(h)+'</span></div>'
       + (src ? '<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.remove()">' : '') + (extra||'') + '</div>';
   }
   function chips(a){ return (a&&a.length) ? '<div class="chips">'+a.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('')+'</div>' : ''; }
@@ -257,13 +265,13 @@
     var rel = '';
     if (it.release){ var n = daysAgo(it.release.date); rel = '<div class="rel"><b>'+esc(it.release.name)+'</b><span>'+(n<=0?'오늘 발표':n+'일 전 발표')+'</span></div>'; }
     var ex = (it.examples&&it.examples.length) ? '<div class="ex">'+it.examples.slice(0,3).map(function(e){
-        return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener">'+media(e.image,'')+'<span>'+esc(e.title)+'</span></a>'; }).join('')+'</div>' : '';
+        return '<a href="'+esc(e.url)+'" target="_blank" rel="noopener">'+media(e.image,'',null,e.url)+'<span>'+esc(e.title)+'</span></a>'; }).join('')+'</div>' : '';
     var nw = (it.new&&it.new.length) ? '<div class="new">'+it.new.slice(0,3).map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>' : '';
     var rv = (it.reviews&&it.reviews.length) ? '<div class="rv"><div class="h">써본 사람들</div>'+it.reviews.slice(0,4).map(function(r){
         var good = r.tone !== 'bad';
         return '<a class="'+(good?'good':'bad')+'" href="'+esc(r.url||it.url)+'" target="_blank" rel="noopener"><i>'+(good?'▲':'▼')+'</i><span>'+esc(r.say)+(r.who?'<em>'+esc(r.who)+'</em>':'')+'</span></a>'; }).join('')+'</div>' : '';
     return '<div class="card '+(cls||'')+'">'
-      + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(it.image, CATL[it.cat])+'</a>'
+      + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+media(it.image, CATL[it.cat], null, it.url)+'</a>'
       + '<div class="body"><span class="tag">'+esc(CATL[it.cat]||'')+'</span>'
       + '<a href="'+esc(it.url)+'" target="_blank" rel="noopener"><h3>'+esc(it.title)+'</h3></a>'
       + rel + nw + (it.how?'<div class="how">'+esc(it.how)+'</div>':'') + ex + rv
@@ -309,7 +317,7 @@
       + '</div>' + (p.src==='x' ? '<div class="emb"></div>' : '') + '</div>';
   }
   function pick(p){
-    return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+media(p.image, CATL[p.cat], p.watching?'<span class="watch">지켜보는 중</span>':'')
+    return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+media(p.image, CATL[p.cat], p.watching?'<span class="watch">지켜보는 중</span>':'', p.url)
       + '<div class="tt">'+esc(p.title)+'</div><span class="tag">'+esc(CATL[p.cat]||'')+'</span></a>';
   }
 
@@ -396,7 +404,7 @@
       + '<div class="flt">'+VF.map(function(f){ return '<button data-f="'+esc(f)+'" class="'+(f===vf?'on':'')+'">'+esc(f)+'</button>'; }).join('')+'</div></div>';
     h += '<div class="vlist">' + (list.length ? list.map(function(x){
         var k = skey(x.url);
-        return '<div class="vrow"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+media(x.img, x.kind)+'</a>'
+        return '<div class="vrow"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+media(x.img, x.kind, null, x.url)+'</a>'
           + '<div><a href="'+esc(x.url)+'" target="_blank" rel="noopener" class="vt">'+esc(x.t)+'</a>'
           + '<div class="vm"><span class="tag">'+esc(x.kind)+'</span><span>'+esc(md(x.d))+'</span>'+(x.who?'<span>'+esc(x.who)+'</span>':'')+(x.likes?'<span>♥ '+num(x.likes)+'</span>':'')+'</div>'
           + (x.pts.length ? '<ul class="vp">'+x.pts.slice(0,3).map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>' : '') + '</div>'
