@@ -33,7 +33,7 @@ function _bBullet(o) {
   var fillCol = o.color || (o.mode === 'goal' ? BK.green : over ? BK.red : BK.data);
   var fill = '';
   if (o.segs) {
-    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '">' + (w >= 7 && o.v > 0 ? '<span style="position:absolute;left:6px;top:0;line-height:22px;font-size:11.5px;font-weight:700;color:' + _bPctInk(sg[2]) + '">' + Math.round(sg[1] / o.v * 100) + '%</span>' : '') + '</div>'; x += w; });
+    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '">' + (w >= 7 && o.v > 0 ? '<span style="position:absolute;left:' + (pc > x - 0.5 && pc < x + 5 ? 'calc(' + ((pc - x) / w * 100) + '% + 6px)' : '6px') + ';top:0;line-height:22px;font-size:11.5px;font-weight:700;color:' + _bPctInk(sg[2]) + '">' + Math.round(sg[1] / o.v * 100) + '%</span>' : '') + '</div>'; x += w; });
   } else fill = '<div style="position:absolute;left:0;top:0;bottom:0;width:' + pv + '%;min-width:2px;background:' + fillCol + '"></div>';
   var inside = pv >= 13;
   var valTxt = '<b class="lb-n">' + fmt(o.v) + unit + '</b>';
