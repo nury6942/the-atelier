@@ -27,7 +27,7 @@ function _bLine(pct, h, col, label, extra, scale, labelAt) {
 function _bBullet(o) {
   var fmt = o.fmt || function(x) { return _bMan(x); }, unit = o.unit == null ? '' : o.unit;
   // 막대 오른쪽 끝 = 한도·목표 (넘었으면 쓴 돈까지) — 빈 칸이 곧 남은 돈 (누리: 목표 뒤로 빈 막대 금지)
-  o.scale = Math.max(o.cap, o.v, o.scaleMin || 0, 1);
+  o.scale = Math.max(o.cap, o.v, o.scaleMin || 0, Math.max.apply(null, (o.marks || []).map(function(mk) { return mk.v || 0; }).concat([0])), 1);
   var P = function(a) { return Math.max(0, Math.min(100, a / o.scale * 100)); };
   var pv = P(Math.max(0, o.v)), pc = P(o.cap), over = o.v > o.cap, good = o.mode === 'goal' ? o.v >= o.cap : !over;
   var fillCol = o.color || (o.mode === 'goal' ? BK.green : over ? BK.red : BK.data);
@@ -39,10 +39,10 @@ function _bBullet(o) {
   var valTxt = '<b class="lb-n" style="color:inherit">' + fmt(o.v) + unit + '</b>';
   var diff = Math.abs(o.v - o.cap);
   var rest = o.mode === 'goal' ? (good ? '<span style="color:' + BK.green + '">+' + fmt(diff) + ' 달성</span>' : '<span style="color:' + BK.red + '">' + fmt(diff) + ' 모자람</span>')
-                               : (over ? '<span style="color:' + BK.red + '">' + fmt(diff) + ' 넘음</span>' : '<span style="color:' + BK.dataText + '">' + fmt(diff) + ' 남음</span>');
-  var h = '<div style="padding-right:86px"><div style="position:relative;height:22px;background:#e8f1fd;margin-top:' + (o.capTop ? 14 : 0) + 'px">' + fill +
+                               : (over ? '<span style="color:' + BK.red + '">' + fmt(diff) + ' 넘음</span>' : '<span style="color:#23855f;font-weight:700">' + fmt(diff) + ' 남음</span>');
+  var h = '<div style="padding-right:86px"><div style="position:relative;height:22px;margin-top:' + (o.capTop ? 14 : 0) + 'px;box-shadow:inset 0 -1px 0 #dbe4ef"><div style="position:absolute;left:0;top:0;bottom:0;width:' + pc + '%;background:#e8f1fd"></div>' + fill +
     (inside ? '<span class="lb-in" data-pc="' + pc + '" style="position:absolute;z-index:2;right:' + (100 - pv) + '%;top:0;line-height:22px;padding-right:6px;color:#fff;font-size:12px;white-space:nowrap">' + valTxt + '</span>' : '') +
-    '<span class="lb-rest" data-pc="' + pc + '"' + (over ? ' data-over="1"' : '') + ' style="position:absolute;left:' + (over ? 'calc(100% + 6px)' : 'calc(' + pv + '% + 6px)') + ';top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside || o.noVal ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
+    '<span class="lb-rest" data-pc="' + pc + '"' + (over ? ' data-over="1"' : '') + ' style="position:absolute;left:calc(' + pv + '% + 6px);top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside || o.noVal ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
     '<div class="lb-capl" style="position:absolute;left:calc(' + pc + '% - 1px);top:-4px;bottom:-4px;width:2px;background:' + BK.ink + '"></div>';
   // 한도 숫자는 늘 선 위 — 막대 안 글자와 안 부딪힌다 (남음 글자가 선을 가로지르면 _bFixBullets 가 선 오른쪽으로 옮김)
   var upper = true;
@@ -168,9 +168,9 @@ var MIRROR_MONTH_PLAN = {
   12: { caps: { '사람': 300000 }, todo: ['연말 모임·선물 봉투 30만'] },
   // 2026-11·12 조이기 (2026-10-15 누리와 정함) — living = 그 달 생활비 전체 한도
   '2026-10': { todo: ['10/28 인센(≈510만)은 받는 날 그대로 OK파킹 · 월급은 11/10 카드값용'] },
-  '2026-11': { living: 1600000, caps: { '외식': 250000, '배달': 100000, '카페·간식': 100000, '장보기': 160000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 200000, '주유·교통': 220000, '취미·여가': 100000, '책·공부': 100000, '사람': 200000 },
+  '2026-11': { living: 1600000, caps: { '외식': 250000, '배달': 100000, '카페·간식': 100000, '장보기': 160000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 50000, '주유·교통': 220000, '취미·여가': 100000, '책·공부': 100000, '사람': 200000 },
                todo: ['블프·11월 행사는 장바구니만 · 결제 0', '물건은 소모품만 10만', '11/10 카드값 내고 남은 돈 120만↑ → OK파킹'] },
-  '2026-12': { living: 2000000, caps: { '외식': 300000, '배달': 100000, '카페·간식': 100000, '장보기': 200000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 200000, '주유·교통': 220000, '취미·여가': 150000, '책·공부': 100000, '사람': 400000 },
+  '2026-12': { living: 2000000, caps: { '외식': 300000, '배달': 100000, '카페·간식': 100000, '장보기': 200000, '편의점': 30000, '옷·뷰티': 0, '물건': 100000, '병원·약': 50000, '주유·교통': 220000, '취미·여가': 150000, '책·공부': 100000, '사람': 400000 },
                todo: ['선물 줄 사람·금액 먼저 적기 → 사람 40만 안에서', '송년회는 1차만 · 외식 30만', '12/10 카드값 뒤 120만↑ → OK · 12/28 월급날 80만 → OK', '12/12 새 연재 시작 🎉'] },
   '2027-01': { todo: ['2027 목표 · 수입 9,150만 · 지출 4,600만 · 저축 4,550만 (반 저금)'] },
   '2027-02': { todo: ['연말정산 환급 ≈100만 → 들어오는 날 OK파킹'] },
@@ -604,7 +604,7 @@ var MIRROR_LIVING = [
   ['편의점', 'storefront', function(t) { return t['소분류'] === '편의점'; }, 30000],
   ['옷·뷰티', 'checkroom', function(t) { return t['대분류'] === '품위유지비'; }, 250000],
   ['물건', 'inventory_2', function(t) { return t['대분류'] === '생필품비'; }, 200000],
-  ['병원·약', 'medical_services', function(t) { return t['대분류'] === '건강/의료비'; }, 200000],
+  ['병원·약', 'medical_services', function(t) { return t['대분류'] === '건강/의료비'; }, 50000],
   ['주유·교통', 'local_gas_station', function(t) { return t['대분류'] === '교통비' && t['소분류'] !== '주차비'; }, 220000],
   ['취미·여가', 'palette', function(t) { return t['대분류'] === '여가비'; }, 100000],
   ['책·공부', 'menu_book', function(t) { return t['대분류'] === '자기계발비' && t['소분류'] !== '영어 강의'; }, 100000],
