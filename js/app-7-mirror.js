@@ -624,11 +624,11 @@ function _bLivingCap(ym, name) {
   return 0;
 }
 var MIRROR_SPLIT_2027 = [
-  ['고정', 850000, '', '할머니·월주차·통신·구독 (관리비는 소리가 · 집 이자 4월에 끝)'],
+  ['고정', 700000, '', '할머니·월주차·통신·구독 (관리비 15만은 소리가 → 저축으로 · 집 이자 4월에 끝)'],
   ['연간 적립', 250000, '', '영어 수업료·종소세 미리'],
   ['생활비', 1850000, '', '카드 한 장 · 아래 칸별 한도'],
   ['여행', 0, '', '덴마크 6월 · 프랑스 12월 · 인센·적립으로 한 번에'],
-  ['집 자금', 3700000, '', '평달 저축 · 4월부터 이주 자금']
+  ['집 자금', 3850000, '', '평달 저축 · 4월부터 이주 자금 (관리비 몫 +15만)']
 ];
 function _bSplitPlan(ym) { return ym >= '2027-01' ? MIRROR_SPLIT_2027 : MIRROR_SPLIT; }
 var _bFixed = function(t) { return ['고정비', '주거비', '세금/보험'].indexOf(t['대분류']) >= 0 || t['소분류'] === '주차비' || t['소분류'] === '할머니용돈'; };
@@ -659,7 +659,7 @@ function _bProj(ym) {
     if (sal.length) { var tot = sal.reduce(function(a, t) { return a + t['금액']; }, 0), reg = MIRROR_PROJ.salary(ym); inc['월급'] = Math.min(tot, reg); inc['인센'] = Math.max(0, tot - reg); }
   }
   var plan = _bPlan(ym), y27 = ym >= '2027-01';
-  var spend = (y27 ? 850000 + 250000 : 950000 + 230000) + plan.living;
+  var spend = (y27 ? 700000 + 250000 : 950000 + 230000) + plan.living;
   var trip = (_boardExtra.trips || []).filter(function(t) { return t.start.slice(0, 7) === ym; })[0];
   var ev = MIRROR_PROJ.events[ym] || '';
   if (_bClothesMonth(ym)) ev += (ev ? ' · ' : '') + '옷 달';
