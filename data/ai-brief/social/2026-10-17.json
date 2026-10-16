@@ -1,0 +1,121 @@
+{
+ "date": "2026-10-17",
+ "collectedAt": "2026-10-17T06:40:00+09:00",
+ "skipped": [
+  "x: 로그인 안 됨 (리스트·검색 모두 로그인 화면으로 이동)",
+  "threads: 로그인 안 됨 — 홈·팔로잉 피드 불가, 검색 첫 화면(인기)만 수집"
+ ],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@hustle_raccoon",
+   "url": "https://www.threads.com/@hustle_raccoon/post/DefkVWPEy0p",
+   "at": "2026-10-14T23:30:28Z",
+   "likes": 761,
+   "replies": 26,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "레딧 1등 AI 꿀팁: 반복 작업은 프로그램으로 만들게 하라",
+   "points": [
+    "레딧 Claude 게시판 '아직 모르는 AI 꿀팁' 글, 댓글 200개+의 결론이 하나로 모임",
+    "매일 같은 일을 AI에 시키지 말고, 그 일을 하는 프로그램을 AI로 한 번 만들기",
+    "이후엔 AI 없이 프로그램만 돌려 토큰 비용 거의 0, 결과도 매번 같아 더 믿을 만함",
+    "AI 요금이 올라도 이미 만든 프로그램은 계속 쓸 수 있다는 점도 장점"
+   ],
+   "try": "매일 클로드에 시키는 일 하나를 골라 '이걸 대신 하는 스크립트를 만들어줘'로 바꿔보기"
+  },
+  {
+   "src": "threads",
+   "author": "@short_tuber",
+   "url": "https://www.threads.com/@short_tuber/post/DedupkgnF2R",
+   "at": "2026-10-14T06:26:35Z",
+   "likes": 250,
+   "replies": 37,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "쇼츠 한 편 제작을 AI 자동화로 1시간 컷",
+   "points": [
+    "월 6,500(만) 찍은 쇼츠 채널 방식을 재현한 자동화 흐름",
+    "① AI가 소재 수집 ② 대본 생성 ③ 목소리·자막 편집까지 맡김",
+    "④ 영상 소스 리서치 후 컷편집, 영상 링크 주면 알아서 다운로드 ⑤ 효과음 자동 배정",
+    "답글: GPT·클로드 둘 다 쓰고, 결과를 캡컷으로 넘기는 연동도 가능"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@boris_cherny",
+   "url": "https://www.threads.com/@boris_cherny/post/DekKNE2GdSS",
+   "at": "2026-10-16T18:18:21Z",
+   "likes": 175,
+   "replies": 19,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Code Review 정식 출시 — 3배 빠르고 강도 3단계",
+   "points": [
+    "Claude Team·Enterprise 플랜에서 Code Review 정식(GA) 제공",
+    "리서치 프리뷰 대비 대부분 리뷰가 약 3배 빨라짐",
+    "지적은 '문제·발생 조건·고치는 법'을 짧게, 중요한 버그 위주로",
+    "관리자가 저장소마다 Quick·Standard·Deep 중 선택",
+    "자격 되는 Enterprise 조직은 1월 15일까지 1만 달러 이상 크레딧 신청 가능(수령 후 30일)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@kimppopp_",
+   "url": "https://www.threads.com/@kimppopp_/post/Defqvagk-V0",
+   "at": "2026-10-15T00:26:27Z",
+   "likes": 108,
+   "replies": 15,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "한국인용 브라우저 AI 자동화 활용법 40가지",
+   "points": [
+    "홈택스 세금계산서를 거래내역과 대조해 누락분만 뽑기 — '은근 꿀'",
+    "당근마켓 매물이 예산 이하로 올라오면 알림, 경쟁사 가격 변경 감지",
+    "1688 상품 정보 번역→옵션 정리→스마트스토어 등록 초안",
+    "정부지원금 공고 중 내 조건에 맞는 것만 추리기",
+    "네이버 카페 홍보글 자동 게시는 정책 위반 위험이라 비추"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@quitting_time_lab",
+   "url": "https://www.threads.com/@quitting_time_lab/post/DeiF0AwD7Cf",
+   "at": "2026-10-15T23:01:34Z",
+   "likes": 217,
+   "replies": 12,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "쇼핑 숏폼 운영용 GPT 프롬프트 8개",
+   "points": [
+    "제품 정보 → 타깃·망설임 이유 정의 후 훅→문제→제품→혜택3→구매유도 순 15·30·60초 대본",
+    "경쟁 숏폼 분석: 훅 패턴·길이·자막·배경음·댓글 반응 정리 → 기획안 3개로 압축",
+    "내 제작 과정을 단계별로 쪼개 삭제/AI 자동화/외주/직접 4분류",
+    "그 밖에 가상 담당자 5명 검수, 경쟁 셀러 20곳 빈틈 찾기, 성과 보고서 등 — 원문 답글에 전문"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@o_oesyes",
+   "url": "https://www.threads.com/@o_oesyes/post/Dei7euEkoXa",
+   "at": "2026-10-16T06:50:26Z",
+   "likes": 21,
+   "replies": 27,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "AI 자동화 해보니 검수·수정이 새 업무가 됐다",
+   "points": [
+    "브랜드 OS를 AI로 만드는 중 — 자동화율보다 결과물 완성도 맞추기가 어려움",
+    "수동 3시간 일이 자동화 도구로는 검수·코드 수정하다 하루가 감(클로드·코덱스 사용)",
+    "브랜드사가 채택할 수준엔 한계, '딸깍' 강의 기대치와 다름",
+    "대안: 제작 단계를 잘게 나누고, 한 번 검증한 작업은 다시 안 건드리는 구조로"
+   ]
+  }
+ ]
+}
