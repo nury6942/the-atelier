@@ -1173,3 +1173,59 @@ window.ldgToggleDetail = ldgToggleDetail;
   wrapped._withBoard = true;
   window.ldgRenderMonthly = wrapped;
 })();
+
+// ── 뱅샐 월 자동 반영 (맥북 launchd → ~/money/auto/run.sh 가 크롬에서 부름) ─────────────────────
+// rows = to_atelier.py 결과(전부 출처 '뱅샐'). 그 파일이 덮는 기간 안에서만 바꾼다:
+//  · 이미 있는 줄(같은 id)은 누리/Claude 가 아뜰리에에서 고친 칸·메모를 그대로 둔다
+//  · 새 줄은 넣고, 기간 안인데 새 파일에 없는 뱅샐 줄(나중에 취소된 결제 등)은 뺀다
+//  · 기간 안 '자동(고정)' 줄은 은행 기록이 생겼으니 뺀다 · 손으로 쓴 다른 줄은 그대로(개수만 알림)
+// 쓰기 전에 손대는 연도 문서를 ledgerBackups 에 통째로 남긴다. 결과는 <html data-bs-import> 에 JSON 으로.
+window.ldgImportBanksal = async function(rows) {
+  var put = function(o) { document.documentElement.dataset.bsImport = JSON.stringify(o); };
+  try {
+    put({ state: 'running' });
+    var bank = rows.filter(function(r) { return !/^bs_(extra|ret29)/.test(r.id); });
+    var lo = bank.reduce(function(m, r) { return r.date < m ? r.date : m; }, '9999'), hi = bank.reduce(function(m, r) { return r.date > m ? r.date : m; }, '');
+    var inR = function(t) { return t.date && t.date >= lo && t.date <= hi; };
+    var newById = {}; rows.forEach(function(r) { newById[r.id] = r; });
+    var years = []; for (var y = +lo.slice(0, 4); y <= +hi.slice(0, 4); y++) years.push(String(y));
+    var stamp = new Date().toISOString().replace(/[:.]/g, '-'), sum = { added: 0, kept: 0, removed: 0, autoRemoved: 0, manualInRange: 0, range: lo + '~' + hi, big: [] };
+    var seen = {};
+    for (var i = 0; i < years.length; i++) {
+      var Y = years[i], ref = db.collection('ledgerTransactions').doc(Y), snap = await ref.get(), items = (snap.exists && snap.data().items) || [];
+      await db.collection('ledgerBackups').doc(stamp + '_bs_auto_' + Y).set({ items: JSON.stringify(items), at: new Date().toISOString(), note: '뱅샐 자동 반영 전 ' + Y });
+      var out = [];
+      items.forEach(function(t) {
+        if (!inR(t)) { out.push(t); return; }
+        if (t['출처'] === '뱅샐') {
+          var n = newById[t.id];
+          if (!n) { sum.removed++; return; }
+          seen[t.id] = 1; sum.kept++;
+          out.push(Object.assign({}, n, { '대분류': t['대분류'], '소분류': t['소분류'], '세부사항': t['세부사항'], '메모': t['메모'] }, t.excludeFromGoal ? { excludeFromGoal: true } : {}));
+          return;
+        }
+        if (t['비고'] === '자동(고정)') { sum.autoRemoved++; return; }
+        sum.manualInRange++; out.push(t);
+      });
+      rows.forEach(function(r) {
+        if (seen[r.id] || r.date.slice(0, 4) !== Y || !inR(r)) return;
+        seen[r.id] = 1; sum.added++; out.push(r);
+        // 해외 큰 결제(렌터카·호텔 등 30만↑): 승인 ≠ 실제 청구일 수 있어 확인 목록에
+        if (r['금액'] >= 300000 && /^[A-Za-z0-9 *.&'()/_-]+$/.test((r['세부사항'] || '').split(' · ')[0]) && /카드/.test(r['결제수단'] || ''))
+          sum.big.push(r.date.slice(5) + ' ' + Math.round(r['금액'] / 1e4) + '만 ' + (r['세부사항'] || '').split(' · ')[0].slice(0, 24));
+      });
+      out.sort(function(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
+      await ref.set({ items: out, updatedAt: new Date().toISOString() }, { merge: true });
+    }
+    try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
+    sum.state = 'done'; put(sum);
+    return sum;
+  } catch (e) { put({ state: 'error', message: String(e && e.message || e) }); throw e; }
+};
+// 크롬 자동화가 조각(base64)으로 넘긴 rows 를 모아 실행
+window.ldgImportBanksalChunks = function() {
+  var s = (window.__bsChunks || []).join(''), bytes = Uint8Array.from(atob(s), function(c) { return c.charCodeAt(0); });
+  window.__bsChunks = [];
+  window.ldgImportBanksal(JSON.parse(new TextDecoder().decode(bytes)));
+  return 'started';
+};
