@@ -1180,7 +1180,8 @@ window.ldgToggleDetail = ldgToggleDetail;
 //  · 새 줄은 넣고, 기간 안인데 새 파일에 없는 뱅샐 줄(나중에 취소된 결제 등)은 뺀다
 //  · 기간 안 '자동(고정)' 줄은 은행 기록이 생겼으니 뺀다 · 손으로 쓴 다른 줄은 그대로(개수만 알림)
 // 쓰기 전에 손대는 연도 문서를 ledgerBackups 에 통째로 남긴다. 결과는 <html data-bs-import> 에 JSON 으로.
-window.ldgImportBanksal = async function(rows) {
+window.ldgImportBanksal = async function(rows, opt) {
+  opt = opt || {};
   var put = function(o) { document.documentElement.dataset.bsImport = JSON.stringify(o); };
   try {
     put({ state: 'running' });
@@ -1193,7 +1194,7 @@ window.ldgImportBanksal = async function(rows) {
     var seen = {};
     for (var i = 0; i < years.length; i++) {
       var Y = years[i], ref = db.collection('ledgerTransactions').doc(Y), snap = await ref.get(), items = (snap.exists && snap.data().items) || [];
-      await db.collection('ledgerBackups').doc(stamp + '_bs_auto_' + Y).set({ items: JSON.stringify(items), at: new Date().toISOString(), note: '뱅샐 자동 반영 전 ' + Y });
+      if (!opt.dry) await db.collection('ledgerBackups').doc(stamp + '_bs_auto_' + Y).set({ items: JSON.stringify(items), at: new Date().toISOString(), note: '뱅샐 자동 반영 전 ' + Y });
       var out = [];
       items.forEach(function(t) {
         if (!inR(t)) { out.push(t); return; }
@@ -1215,10 +1216,10 @@ window.ldgImportBanksal = async function(rows) {
           sum.big.push(r.date.slice(5) + ' ' + Math.round(r['금액'] / 1e4) + '만 ' + (r['세부사항'] || '').split(' · ')[0].slice(0, 24));
       });
       out.sort(function(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
-      await ref.set({ items: out, updatedAt: new Date().toISOString() }, { merge: true });
+      if (!opt.dry) await ref.set({ items: out, updatedAt: new Date().toISOString() }, { merge: true });
     }
-    try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
-    sum.state = 'done'; put(sum);
+    if (!opt.dry) try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
+    sum.state = 'done'; sum.dry = !!opt.dry; put(sum);
     return sum;
   } catch (e) { put({ state: 'error', message: String(e && e.message || e) }); throw e; }
 };
