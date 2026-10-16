@@ -821,7 +821,7 @@ function _boardCats(ym, m, preview) {
   var due = preview ? [] : _bRows(ym).filter(function(t) { return t['출처'] !== '뱅샐' && t.date > todayS && _bS(t) && t['금액'] > 0; });
   var ly = (function() { try { return ldgBoardMonth(_bYm(ym, -12), true).L.filter(function(t) { return _bS(t) && +t.date.slice(8, 10) <= cut; }); } catch (e) { return []; } })();
   var all = (_ledgerData.transactions || []).filter(function(t) { return t['출처'] === '뱅샐' && t.date && _bS(t); });
-  var ms = Array.from(new Set(all.map(function(t) { return t.date.slice(0, 7); }))).sort().slice(1, -1);
+  var ms = Array.from(new Set(all.map(function(t) { return t.date.slice(0, 7); }))).filter(function(x) { return x < curYm; }).sort().slice(-6);  // 최근 6달 — 끊은 보험(미래에셋 4월~) 같은 옛 지출이 안 섞이게
   // 평소 = 달마다 합의 가운데값 — 몇 달치 이자·1년 한 번 보험처럼 한꺼번에 낸 달은 평소를 끌어올리지 않게 (평균 아님)
   var median = function(arr) { if (!arr.length) return 0; var a = arr.slice().sort(function(x, y) { return x - y; }), h = a.length >> 1; return a.length % 2 ? a[h] : (a[h - 1] + a[h]) / 2; };
   var data = BOARD_CATS.map(function(c) {
