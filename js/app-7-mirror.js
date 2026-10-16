@@ -344,7 +344,8 @@ function ldgBoardMonth(ym, plain) {
     if (e[0] === '여행' && tf) {
       // 지난 여행이 끝난 뒤부터 이 달까지 쓴 여행비 = 이 여행 예산에서 쓴 돈
       var trows = (_ledgerData.transactions || []).filter(function(t) { return t['대분류'] === '여행' && !/^국내/.test(t['소분류'] || '') && t.date > tf.from && t.date <= tf.upto; });
-      return { name: '여행', icon: e[1], val: _bSum(trows, function() { return true; }), cap: tf.trip.budget, unit: '원', money: 0,
+      var known = (MIRROR_TRIP_ACTUAL[tf.trip.start.slice(0, 4)] || []).filter(function(a) { return a[0] === tf.trip.title.replace(/&/g, '·'); })[0];
+      return { name: '여행', icon: e[1], val: known ? known[1] : _bSum(trows, function() { return true; }), cap: tf.trip.budget, unit: '원', money: 0,
                top: [tf.trip.title + ' 예산 ' + _bMan(tf.trip.budget) + '만 · ' + tf.trip.start.slice(2, 7).replace('-', '.')], trip: true };
     }
     var val = e[4] === '회' ? rows.filter(function(t) { return t['금액'] > 0; }).length : _bSum(rows, function() { return true; });
@@ -671,13 +672,13 @@ function _boardCats(ym, m, preview) {
   var row = function(d, scale, extra) {
     totV += d.v; totCap += d.cap;
     var P = function(a) { return Math.max(0, Math.min(100, a / (scale * 1.2) * 100)); }, over = d.v > d.cap, pc = P(d.cap), pv = P(d.v);
-    var bar = '<div style="position:relative;height:26px">' +
-      '<div style="position:absolute;left:0;top:0;height:26px;width:' + pc + '%;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></div>' +
-      '<span style="position:absolute;left:calc(' + pc + '% - 4px);transform:translateX(-100%);bottom:1px;font-size:10px;line-height:11px;color:' + BK.sub + ';white-space:nowrap">한도 ' + _bMan(d.cap) + '</span>' +
-      (preview ? '' : '<div style="position:absolute;left:0;top:4px;height:11px;width:' + pv + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
-        '<span style="position:absolute;left:calc(' + pv + '% + 5px);top:2px;font-size:12px;line-height:15px;white-space:nowrap"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') + '</div>';
+    var bar = '<div style="position:relative;height:30px">' +
+      '<div style="position:absolute;left:0;top:0;height:30px;width:' + pc + '%;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></div>' +
+      '<span style="position:absolute;left:calc(' + pc + '% - 4px);transform:translateX(-100%);bottom:2px;font-size:10px;line-height:11px;color:' + BK.sub + ';white-space:nowrap">한도 ' + _bMan(d.cap) + '</span>' +
+      (preview ? '' : '<div style="position:absolute;left:0;top:3px;height:11px;width:' + pv + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
+        '<span style="position:absolute;left:calc(' + pv + '% + 5px);top:0;font-size:12px;line-height:16px;white-space:nowrap"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') + '</div>';
     var cell = function(v, col) { return '<span class="lb-n" style="text-align:right;font-size:12px;color:' + col + '">' + _bMan(v) + '</span>'; };
-    return '<div style="display:grid;grid-template-columns:92px minmax(0,1fr) 44px 44px;gap:10px;align-items:center;padding:3px 0">' +
+    return '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;align-items:center;padding:3px 0">' +
       '<span style="font-size:12px;color:' + BK.ink + ';white-space:nowrap;font-weight:600"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.sub + '">' + d.icon + '</span> ' + d.name + '</span>' +
       '<div>' + bar + (extra || '') + '</div>' + cell(d.av, BK.dataText) + cell(d.lv, BK.sub) + '</div>';
   };
@@ -698,7 +699,7 @@ function _boardCats(ym, m, preview) {
       '<div style="position:absolute;left:' + P2(tf.trip.budget) + '%;top:-3px;bottom:-3px;width:2px;background:' + BK.ink + '"></div></div></div></div>';
   }
   var sw = function(st, txt) { return '<span style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap">' + st + txt + '</span>'; };
-  var legend = '<div style="display:grid;grid-template-columns:92px minmax(0,1fr) 44px 44px;gap:10px;font-size:11px;color:' + BK.sub + ';margin-bottom:2px;align-items:end"><span></span>' +
+  var legend = '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;font-size:11px;color:' + BK.sub + ';margin-bottom:2px;align-items:end"><span></span>' +
     '<span style="display:flex;gap:14px">' + (preview ? '' : sw('<i style="display:inline-block;width:14px;height:10px;background:' + BK.data + '"></i>', mk + ' 쓴 돈')) +
     sw('<i style="display:inline-block;width:16px;height:12px;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></i>', '한도') + '</span>' +
     '<span style="text-align:right;color:' + BK.dataText + ';font-weight:600">평소</span><span style="text-align:right;font-weight:600">작년</span></div>';
