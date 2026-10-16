@@ -1,0 +1,310 @@
+{
+ "date": "2026-10-17",
+ "generatedAt": "2026-10-17T07:30:00+09:00",
+ "sourcesNote": "Threads(맥 수집 6개, X는 로그인 안 돼 빠짐) + 웹 검색 30여 회 · 실행 환경에서 사이트 직접 열기·Reddit 검색이 막혀 링크는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "게임용 GPU 하나로 4K 시안까지",
+   "url": "https://blog.comfy.org/p/flux-3-image-klein-in-comfyui-56b",
+   "image": null,
+   "source": "ComfyUI 블로그 · 첫날 지원",
+   "release": {
+    "name": "FLUX 3 Image Klein",
+    "date": "2026-10-15",
+    "url": "https://bfl.ai/blog/flux-3-image-klein"
+   },
+   "examples": [
+    {
+     "title": "4K 16:9 한 장, 75초에 약 50원",
+     "url": "https://dev.to/shouvik12/spotted-on-devtv-flux-3-image-klein-just-landed-and-it-renders-text-like-a-sign-painter",
+     "image": null
+    },
+    {
+     "title": "DGX Spark에서 1K 30초·2K 35초",
+     "url": "https://x.com/ivanfioravanti/status/2110771660022264137",
+     "image": null
+    },
+    {
+     "title": "트렌치코트·데님 재킷 화보 프롬프트",
+     "url": "https://bfl.ai/models/flux-3-image-klein",
+     "image": null
+    }
+   ],
+   "new": [
+    "네이티브 4K",
+    "참조 최대 10장",
+    "8GB GPU 구동"
+   ],
+   "reviews": [
+    {
+     "say": "간판 그리듯 글자를 정확히 넣는다",
+     "who": "DEV Community",
+     "url": "https://dev.to/shouvik12/spotted-on-devtv-flux-3-image-klein-just-landed-and-it-renders-text-like-a-sign-painter",
+     "tone": "good"
+    },
+    {
+     "say": "생성 점검 32개 중 24개 통과",
+     "who": "Kingy AI 실테스트",
+     "url": "https://kingy.ai/blog/flux-3-image-klein-tested-benchmarks-costs/",
+     "tone": "good"
+    },
+    {
+     "say": "첫 결과물은 아직 별 감흥 없음",
+     "who": "X @ivanfioravanti",
+     "url": "https://x.com/ivanfioravanti/status/2110771660022264137",
+     "tone": "bad"
+    },
+    {
+     "say": "글→이미지는 이전 4B보다 못하다",
+     "who": "Hugging Face 토론",
+     "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/discussions/8",
+     "tone": "bad"
+    }
+   ],
+   "why": "작은 GPU로도 4K·영역 지정 편집",
+   "chips": [
+    "4K $0.036 · 약 50원",
+    "5.6B 공개 가중치"
+   ],
+   "forMe": "저지 팬츠 프린트 참조 여러 장을 넣어 같은 톤 4K 시안 뽑기 (매출 500만 달러 이하 회사만 상업 무료라 회사 작업은 확인 필요)"
+  },
+  {
+   "cat": "release",
+   "title": "프런티어급 모델을 맥 스튜디오에서",
+   "url": "https://huggingface.co/blog/meta-muse-spark-open",
+   "image": null,
+   "source": "Hugging Face · 맥 한 대 실측",
+   "release": {
+    "name": "Meta Muse Spark Open",
+    "date": "2026-10-15",
+    "url": "https://research.meta.ai/blog/muse-spark-open"
+   },
+   "examples": [
+    {
+     "title": "맥 스튜디오 4대 묶어 초당 36토큰",
+     "url": "https://machinelearning.apple.com/research/mlx-distributed-inference",
+     "image": null
+    },
+    {
+     "title": "맥 스튜디오 2대로 초당 약 20토큰",
+     "url": "https://wccftech.com/metas-muse-spark-open-model-delivers-a-throughput-of-20-tokens-sec-on-2x-apple-m5-ultra-mac-studios/",
+     "image": null
+    }
+   ],
+   "new": [
+    "가중치 공개",
+    "맥 로컬 실행",
+    "100만 토큰 문맥"
+   ],
+   "reviews": [
+    {
+     "say": "512GB 맥 한 대에서도 초당 18토큰",
+     "who": "Hugging Face 블로그",
+     "url": "https://huggingface.co/blog/meta-muse-spark-open",
+     "tone": "good"
+    },
+    {
+     "say": "코딩 점수는 중국 공개 모델에 뒤짐",
+     "who": "Implicator",
+     "url": "https://www.implicator.ai/meta-releases-muse-spark-open-an-816b-model-that-trails-chinese-rivals-at-coding/",
+     "tone": "bad"
+    },
+    {
+     "say": "맥 여러 대라 장비값만 수천만 원",
+     "who": "AppleInsider",
+     "url": "https://appleinsider.com/articles/26/10/15/unlikely-apple-meta-team-up-brings-powerful-local-ai-to-mac-studio",
+     "tone": "bad"
+    },
+    {
+     "say": "가중치는 나왔지만 독립 검증은 아직",
+     "who": "OrcaRouter",
+     "url": "https://www.orcarouter.ai/blog/muse-spark-open",
+     "tone": "bad"
+    }
+   ],
+   "why": "인터넷 없이 사무실 맥에서 큰 모델",
+   "chips": [
+    "816B · 활성 42B",
+    "4대 초당 36토큰"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "유리 효과 하나가 레이어 편집기로",
+   "url": "https://abduzeedo.com/vibe-coding-learning-ai-building-my-personal-photo-editor",
+   "image": null,
+   "source": "Abduzeedo · 디자이너 1인칭 기록",
+   "how": "리드 글라스 생성기에 기능을 말로 덧붙임",
+   "chips": [
+    "Claude Code + Gemini",
+    "레이어 4종"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "게임 런처를 AI로 다시 짰더니",
+   "url": "https://www.pcgamer.com/software/platforms/epic-says-its-new-vibe-coded-epic-games-store-launcher-is-faster-than-steam/",
+   "image": null,
+   "source": "PC Gamer · Epic Games 10-14 미리보기",
+   "how": "작은 팀이 AI로 코드 재작성, 3개 OS 동시",
+   "chips": [
+    "켜는 데 5.47초",
+    "스팀 10.07초 대비 1.8배"
+   ]
+  },
+  {
+   "cat": "money",
+   "title": "헬스 앱 하나로 월 1,780만 원",
+   "url": "https://www.stork.ai/blog/he-ignored-100-rivalsand-hit-13k-mrr",
+   "image": null,
+   "source": "Stork.ai · Maxed AI 사례",
+   "how": "경쟁 앱 100개 무시, 헬스장 숏폼으로 직접 홍보",
+   "chips": [
+    "월 $13K · 약 1,780만 원",
+    "6개월"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "포트폴리오 PDF를 고칠 수 있는 PPT로",
+   "minutes": 30,
+   "why": "PDF·워드·웹페이지를 이미지가 아니라 진짜 도형·표·마스터로 된 PPT로 바꿔줘요. 이직 포트폴리오를 회사마다 조금씩 고쳐 보낼 때 바로 편해져요.",
+   "from": {
+    "label": "GitHub hugohe3/ppt-master · MIT",
+    "url": "https://github.com/hugohe3/ppt-master"
+   },
+   "steps": [
+    {
+     "text": "리포 열어 README 보기",
+     "url": "https://github.com/hugohe3/ppt-master"
+    },
+    {
+     "text": "Claude Code에 붙여넣기",
+     "copy": "github.com/hugohe3/ppt-master 를 ~/tools 에 클론하고 README 대로 설치해줘(Python 3.10 이상, pip install -r requirements.txt). 그다음 내 포트폴리오 PDF(경로는 내가 알려줄게)를 편집 가능한 .pptx 로 바꿔줘. 슬라이드 마스터는 흰 배경 + 검정 글자 + 포인트 보라 #7c3aed, 글꼴은 Inter 로. 설치나 변환 전에 무엇을 할지 먼저 말해줘."
+    },
+    {
+     "text": "키노트로 열어 한 장 고치기"
+    }
+   ]
+  },
+  {
+   "title": "Atelier에 디자인 기준 파일 심기",
+   "minutes": 15,
+   "why": "AI가 만든 화면이 'AI 티' 나지 않게 잡아주는 디자인 스킬이에요. 한 번 /teach-impeccable 을 돌리면 Atelier의 색·톤을 파일로 저장해 다음 수정부터 계속 따라요.",
+   "from": {
+    "label": "GitHub pbakaus/impeccable · 별 약 7.9만",
+    "url": "https://gittrend.io/monthly/2026-10"
+   },
+   "steps": [
+    {
+     "text": "터미널에 스킬 설치",
+     "copy": "npx skills add pbakaus/impeccable"
+    },
+    {
+     "text": "Claude Code에서 실행",
+     "copy": "/teach-impeccable"
+    },
+    {
+     "text": "설정 파일 저장 확인"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "free",
+   "title": "AI 디자인 감각 스킬",
+   "url": "https://github.com/pbakaus/impeccable",
+   "image": null,
+   "source": "GitHub · 10월 트렌딩",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "편집되는 PPT 만들기",
+   "url": "https://github.com/hugohe3/ppt-master",
+   "image": null,
+   "source": "GitHub · MIT",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "Opus 5.5 웹사이트 3편",
+   "url": "https://muz.li/blog/claude-opus-5-5-for-designers/",
+   "image": null,
+   "source": "Muzli · 브리프·프롬프트 공개",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "영상 대신 고칠 코드로",
+   "url": "https://www.dsebastien.net/2026-10-04-claude-opus-5-5-ask-for-a-video-get-a-program-you-can-edit/",
+   "image": null,
+   "source": "Opus 5.5 모션 영상 실험",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "블루스카이서 앱 짜기",
+   "url": "https://techcrunch.com/2026/10/15/bluesky-expands-its-ai-powered-attie-app-to-let-anyone-build-websites-games-and-more",
+   "image": null,
+   "source": "TechCrunch · Attie 확장",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "image": "https://claude.com/resources/articles/code-review-is-now-generally-available/opengraph-image/og",
+   "source": "Team·Enterprise · 리뷰 6~10분",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "목소리+배경음 한 번에",
+   "url": "https://kompozy.io/reviews/suno-speech",
+   "image": null,
+   "source": "Suno Speech 베타 · 리뷰 3.7/5",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "Beam 가중치 곧 공개",
+   "url": "https://aibusiness.com/foundation-models/reflection-s-beam-model-signals-deepening-split",
+   "image": null,
+   "source": "501B 공개 모델 · 이달 가중치",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14",
+   "note": "10-17에도 실사용 사례 못 찾음"
+  },
+  {
+   "name": "Helix World",
+   "url": "https://noiz.ai/lp/blog/meet-helix-world",
+   "date": "2026-10-12"
+  },
+  {
+   "name": "Meta Muse Wonder",
+   "url": "https://research.meta.ai/blog/muse-wonder",
+   "date": "2026-10-12",
+   "note": "실사용 사례 1건 확인: @lucian__03 3D 슈팅 게임(10-14)"
+  },
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15"
+  },
+  {
+   "name": "Claude Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "date": "2026-10-15"
+  }
+ ]
+}
