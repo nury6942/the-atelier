@@ -812,6 +812,21 @@ function _bCatBudget(cat, ym) {
   else Object.keys(B).forEach(function(k) { if (k.indexOf(cat + '.') === 0) { has = true; v += B[k].overrides && B[k].overrides[ym] !== undefined ? B[k].overrides[ym] : (B[k].default || 0); } });
   return { v: v, has: has };
 }
+// 평소 한 달: 생활 칸은 달 합의 가운데값. 고정 성격 칸(주거·고정·세금/보험)은 6달 중 4달 이상 낸 소분류만(정기 결제),
+// 1년 한두 번 몰아 내는 것(재산세·자동차세·자동차보험·종소세)과 끊은 것(미래에셋 6월까지)은 빼고, 집 이자는 달 8만으로 (2,500만×4%÷12 · 누리 2026-10-16)
+var BOARD_FIXEDLIKE = ['주거비', '고정비', '세금/보험'], BOARD_HOUSE_INTEREST = 80000;
+function _bTypical(cat, f, all, ms, median) {
+  var monthly = function(g) { return ms.map(function(ym2) { return _bSum(all, function(t) { return f(t) && g(t) && t.date.slice(0, 7) === ym2; }); }); };
+  if (BOARD_FIXEDLIKE.indexOf(cat) < 0) return median(monthly(function() { return true; }));
+  var subs = {}; all.filter(function(t) { return f(t) && ms.indexOf(t.date.slice(0, 7)) >= 0; }).forEach(function(t) { subs[t['소분류'] || '기타'] = 1; });
+  var v = 0;
+  Object.keys(subs).forEach(function(sb) {
+    if (sb === '대출이자') return;
+    var arr = monthly(function(t) { return (t['소분류'] || '기타') === sb; });
+    if (arr.filter(function(x) { return x > 0; }).length >= 4) v += median(arr);
+  });
+  return v + (cat === '주거비' ? BOARD_HOUSE_INTEREST : 0);
+}
 function _boardCats(ym, m, preview) {
   var mk = (+ym.slice(5)) + '월';
   var now = new Date(), curYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0'), cut = ym === curYm ? now.getDate() : 31;
@@ -828,7 +843,7 @@ function _boardCats(ym, m, preview) {
     var f = function(t) { return t['대분류'] === c[0]; }, bud = _bCatBudget(c[0], ym), subs = {};
     L.filter(f).forEach(function(t) { var k = t['소분류'] || '기타'; subs[k] = (subs[k] || 0) + t['금액']; });
     var dueL = due.filter(f);
-    return { name: c[0], icon: c[1], cap: bud.v, has: bud.has, v: _bSum(L, f), dv: _bSum(dueL, f), dueL: dueL, lv: _bSum(ly, f), av: median(ms.map(function(ym2) { return _bSum(all, function(t) { return f(t) && t.date.slice(0, 7) === ym2; }); })), subs: subs };
+    return { name: c[0], icon: c[1], cap: bud.v, has: bud.has, v: _bSum(L, f), dv: _bSum(dueL, f), dueL: dueL, lv: _bSum(ly, f), av: _bTypical(c[0], f, all, ms, median), subs: subs };
   });
   var totV = 0, totCap = 0;
   var row = function(d) {
