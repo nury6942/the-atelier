@@ -553,6 +553,8 @@ var MIRROR_PROJ = {
   events: { '2026-10': '인센 → OK', '2026-11': '블프 0 · 옷 0', '2026-12': '송년 사람 40 · 새 연재', '2027-01': '목표 시작', '2027-02': '환급 → OK · 설',
             '2027-03': '집 2,500 완성', '2027-04': '인센B · 근속 → 덴마크 · 집 상환', '2027-05': '종소세', '2027-10': '인센A → 프랑스' }
 };
+// 여행별 실제 비용(결제↔취소 짝 지우고 보증금 뺀 값, 2026-10-16 누리 확인)
+var MIRROR_TRIP_ACTUAL = { '2026': [['체코·크로아티아', 5740000], ['독일·이탈리아', 6670000]], '2026note': '체코 315만은 2025년 결제' };
 var MIRROR_INC_COLORS = { '월급': '#2f7ff0', '인센': '#1d4ed8', '부업': '#7fb2f7', '기타': '#bcd5fb' };
 function _bProj(ym) {
   var now = new Date(), nowYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
@@ -606,6 +608,7 @@ function _boardPlanCard(year) {
   var keys = ['월급', '인센', '부업', '기타'];
   var y = { '월급': 0, '인센': 0, '부업': 0, '기타': 0 }, ysLife = 0, ysTrip = 0;
   P.forEach(function(x) { keys.forEach(function(k) { y[k] += x[1].inc[k]; }); if (x[1].actual) { ysLife += x[1].spend - x[1].travel; ysTrip += x[1].travel; } else ysLife += x[1].spend; });
+  if (cur.slice(0, 4) === Y) ysTrip += _bActual(cur).travel;  // 이번 달 이미 쓴 여행비
   (_boardExtra.trips || []).forEach(function(t) { if (t.start.slice(0, 4) === Y && t.start.slice(0, 7) >= cur) ysTrip += t.own; });
   var ys = ysLife + ysTrip, yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys;
   var g = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[Y] || {};
@@ -614,6 +617,7 @@ function _boardPlanCard(year) {
   var head = '<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 110px;gap:4px 10px;align-items:start;font-size:12px">' +
     '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(yt) + tgt(g['수입']) + '</b>' +
     '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(ys) + tgt(g['지출']) + '</b>' +
+    (MIRROR_TRIP_ACTUAL[Y] ? '<span></span><div style="font-size:11px;color:' + BK.sub + ';margin-top:-2px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div><span></span>' : '') +
     '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', Math.max(0, ysave), BK.green]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap;color:' + (ysave >= 0 ? BK.green : BK.red) + '">' + _bMan(ysave) + tgt(g['저축']) + '</b></div>';
   var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
   try { open = localStorage.getItem('atelier_board_plan_open') === '1'; } catch (e) {}
@@ -666,25 +670,23 @@ function _boardCats(ym, m, preview) {
   var totV = 0, totCap = 0;
   var row = function(d, scale, extra) {
     totV += d.v; totCap += d.cap;
-    var P = function(a) { return Math.max(0, Math.min(100, a / scale * 82)); }, over = d.v > d.cap;
-    var tags = _bTags([{ p: P(d.cap), h: '한도 <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(d.cap) + '</b>' }].concat(d.av ? [{ p: P(d.av), h: '<span style="color:' + BK.dataText + '">평소 <b class="lb-n">' + _bMan(d.av) + '</b></span>' }] : []));
-    var bar = '<div style="position:relative;height:16px">' +
-      (preview ? '' : '<div style="position:absolute;left:0;top:2px;height:12px;width:' + P(d.v) + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
-        '<span style="position:absolute;left:calc(' + P(d.v) + '% + 4px);top:0;font-size:12px;line-height:16px;white-space:nowrap;background:#fff;padding:0 3px;z-index:2"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') +
-      '<div style="position:absolute;left:' + P(d.cap) + '%;top:-3px;bottom:-3px;width:2px;background:' + BK.ink + '"></div>' +
-      (d.av ? '<div style="position:absolute;left:calc(' + P(d.av) + '% - 5px);top:3px;width:10px;height:10px;border-radius:50% !important;border:2px solid ' + BK.dataText + ';background:#fff;box-sizing:border-box"></div>' : '') + '</div>';
-    var last = '<div style="position:relative;height:13px;margin-top:2px"><div style="position:absolute;left:0;top:4px;height:5px;width:' + P(d.lv) + '%;background:' + BK.soft + '"></div>' +
-      '<span style="position:absolute;left:calc(' + P(d.lv) + '% + 6px);top:0;font-size:11px;line-height:13px;color:' + BK.sub + ';white-space:nowrap">작년 ' + _bMan(d.lv) + '</span></div>';
-    return '<div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:center;padding:4px 0;border-top:1px solid #f1f5f9">' +
+    var P = function(a) { return Math.max(0, Math.min(100, a / (scale * 1.2) * 100)); }, over = d.v > d.cap, pc = P(d.cap), pv = P(d.v);
+    var bar = '<div style="position:relative;height:26px">' +
+      '<div style="position:absolute;left:0;top:0;height:26px;width:' + pc + '%;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></div>' +
+      '<span style="position:absolute;left:calc(' + pc + '% - 4px);transform:translateX(-100%);bottom:1px;font-size:10px;line-height:11px;color:' + BK.sub + ';white-space:nowrap">한도 ' + _bMan(d.cap) + '</span>' +
+      (preview ? '' : '<div style="position:absolute;left:0;top:4px;height:11px;width:' + pv + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
+        '<span style="position:absolute;left:calc(' + pv + '% + 5px);top:2px;font-size:12px;line-height:15px;white-space:nowrap"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') + '</div>';
+    var cell = function(v, col) { return '<span class="lb-n" style="text-align:right;font-size:12px;color:' + col + '">' + _bMan(v) + '</span>'; };
+    return '<div style="display:grid;grid-template-columns:92px minmax(0,1fr) 44px 44px;gap:10px;align-items:center;padding:3px 0">' +
       '<span style="font-size:12px;color:' + BK.ink + ';white-space:nowrap;font-weight:600"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.sub + '">' + d.icon + '</span> ' + d.name + '</span>' +
-      '<div>' + tags + bar + last + (extra || '') + '</div></div>';
+      '<div>' + bar + (extra || '') + '</div>' + cell(d.av, BK.dataText) + cell(d.lv, BK.sub) + '</div>';
   };
   // 고정 안에 뭐가 있나 (할머니 용돈 · 관리비 · 통신 · 구독 · 기부 · 주차 · 보험)
   var fixParts = {};
   L.filter(fixF).forEach(function(t) { var k = t['소분류'] === '할머니용돈' ? '할머니' : t['소분류'] === '기부' ? '기부' : t['소분류'] === '정기구독' ? '구독' : t['소분류'] === '통신비' ? '통신' : t['소분류'] === '주차비' ? '주차' : t['대분류'] === '세금/보험' ? '보험' : '집'; fixParts[k] = (fixParts[k] || 0) + t['금액']; });
   var fixChips = Object.keys(fixParts).sort(function(x, y) { return fixParts[y] - fixParts[x]; }).map(function(k) { return '<span style="white-space:nowrap">' + k + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(fixParts[k]) + '</b></span>'; }).join(' · ');
   var html = row(data[0], mxFix, fixChips ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:2px">' + fixChips + '</div>' : '') + row(data[1], mxFix) +
-    '<div style="height:6px"></div>' + data.slice(2).map(function(d) { return row(d, mx); }).join('');
+    '<div style="height:8px;border-bottom:1px solid #eef1f5;margin-bottom:6px"></div>' + data.slice(2).map(function(d) { return row(d, mx); }).join('');
   var tf = _boardTripFor(ym), trip = '';
   if (tf) {
     var tv = m && !preview ? m.envs[0].val : 0, P2 = function(a) { return Math.max(0, Math.min(100, a / Math.max(tf.trip.budget, tv, 1) * 82)); };
@@ -696,11 +698,10 @@ function _boardCats(ym, m, preview) {
       '<div style="position:absolute;left:' + P2(tf.trip.budget) + '%;top:-3px;bottom:-3px;width:2px;background:' + BK.ink + '"></div></div></div></div>';
   }
   var sw = function(st, txt) { return '<span style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap">' + st + txt + '</span>'; };
-  var legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:' + BK.sub + ';margin-bottom:4px">' +
-    (preview ? '' : sw('<i style="display:inline-block;width:14px;height:10px;background:' + BK.data + '"></i>', mk + ' 쓴 돈')) +
-    sw('<i style="display:inline-block;width:2px;height:12px;background:' + BK.ink + '"></i>', '한도') +
-    sw('<i style="display:inline-block;width:10px;height:10px;border-radius:50% !important;border:2px solid ' + BK.dataText + ';box-sizing:border-box"></i>', '평소 한 달') +
-    sw('<i style="display:inline-block;width:14px;height:5px;background:' + BK.soft + '"></i>', '작년 같은 달') + '</div>';
+  var legend = '<div style="display:grid;grid-template-columns:92px minmax(0,1fr) 44px 44px;gap:10px;font-size:11px;color:' + BK.sub + ';margin-bottom:2px;align-items:end"><span></span>' +
+    '<span style="display:flex;gap:14px">' + (preview ? '' : sw('<i style="display:inline-block;width:14px;height:10px;background:' + BK.data + '"></i>', mk + ' 쓴 돈')) +
+    sw('<i style="display:inline-block;width:16px;height:12px;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></i>', '한도') + '</span>' +
+    '<span style="text-align:right;color:' + BK.dataText + ';font-weight:600">평소</span><span style="text-align:right;font-weight:600">작년</span></div>';
   var head = preview ? '한도 <b class="lb-n" style="font-size:15px">' + _bMan(totCap) + '</b>만' :
     '<b class="lb-n" style="font-size:16px;color:' + (totV > totCap ? BK.red : BK.ink) + '">' + _bMan(totV) + '</b> 썼어요 / 한도 ' + _bMan(totCap) + '만 · <b style="color:' + (totV > totCap ? BK.red : BK.green) + '">' + (totV > totCap ? _bMan(totV - totCap) + ' 넘음' : _bMan(totCap - totV) + ' 남음') + '</b>';
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 나간 돈 · 이체(할머니·기부 등)까지 전부 · 여행은 따로</span><span>' + head + '</span></p>' + legend + html + trip + '</div>';
