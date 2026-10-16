@@ -35,14 +35,14 @@ function _bBullet(o) {
   if (o.segs) {
     var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '">' + (w >= 4 && o.v > 0 ? '<span style="position:absolute;left:' + (pc > x - 0.5 && pc < x + 5 ? 'calc(' + ((pc - x) / w * 100) + '% + 6px)' : '6px') + ';top:0;line-height:22px;font-size:11.5px;font-weight:700;color:' + _bPctInk(sg[2]) + '">' + Math.round(sg[1] / o.v * 100) + '%</span>' : '') + '</div>'; x += w; });
   } else fill = '<div style="position:absolute;left:0;top:0;bottom:0;width:' + pv + '%;min-width:2px;background:' + fillCol + '"></div>';
-  var inside = pv >= 13 && !o.segs;
+  var inside = pv >= 13 && !o.segs && !o.noVal;
   var valTxt = '<b class="lb-n" style="color:inherit">' + fmt(o.v) + unit + '</b>';
   var diff = Math.abs(o.v - o.cap);
   var rest = o.mode === 'goal' ? (good ? '<span style="color:' + BK.green + '">+' + fmt(diff) + ' 달성</span>' : '<span style="color:' + BK.red + '">' + fmt(diff) + ' 모자람</span>')
                                : (over ? '<span style="color:' + BK.red + '">' + fmt(diff) + ' 넘음</span>' : '<span style="color:' + BK.dataText + '">' + fmt(diff) + ' 남음</span>');
   var h = '<div style="padding-right:86px"><div style="position:relative;height:22px;background:#e8f1fd;margin-top:' + (o.capTop ? 14 : 0) + 'px">' + fill +
     (inside ? '<span class="lb-in" data-pc="' + pc + '" style="position:absolute;right:' + (100 - pv) + '%;top:0;line-height:22px;padding-right:6px;color:#fff;font-size:12px;white-space:nowrap">' + valTxt + '</span>' : '') +
-    '<span class="lb-rest" data-pc="' + pc + '"' + (over ? ' data-over="1"' : '') + ' style="position:absolute;left:' + (over ? 'calc(100% + 6px)' : 'calc(' + pv + '% + 6px)') + ';top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
+    '<span class="lb-rest" data-pc="' + pc + '"' + (over ? ' data-over="1"' : '') + ' style="position:absolute;left:' + (over ? 'calc(100% + 6px)' : 'calc(' + pv + '% + 6px)') + ';top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside || o.noVal ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
     '<div class="lb-capl" style="position:absolute;left:calc(' + pc + '% - 1px);top:-4px;bottom:-4px;width:2px;background:' + BK.ink + '"></div>';
   // 한도 숫자는 늘 선 위 — 막대 안 글자와 안 부딪힌다 (남음 글자가 선을 가로지르면 _bFixBullets 가 선 오른쪽으로 옮김)
   var upper = true;
@@ -727,7 +727,8 @@ function _boardPlanCard(year) {
   var tgt = function(v) { return v ? '<span style="font-weight:400;color:' + BK.sub + '"> / ' + Number(v).toLocaleString() + '</span>' : ''; };
   var gI = (g['수입'] || 0) * 1e4, gS = (g['지출'] || 0) * 1e4, gV = (g['저축'] || 0) * 1e4;
   var ymx = Math.max(yt, ys, gI, gS, gV, 1) * 1.22, man = function(x) { return Math.round(x / 1e4).toLocaleString(); };
-  var yrow = function(lbl, bul) { return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0"><b style="font-size:12.5px;padding-top:3px">' + lbl + '</b><div>' + bul + '</div></div>'; };
+  // 줄 이름 밑에 그 줄 합계 (막대 끝 바깥은 남음·넘음만 — 카드 밖으로 안 넘치게)
+  var yrow = function(lbl, bul, v) { return '<div style="display:grid;grid-template-columns:58px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0"><div style="padding-top:16px;line-height:1.25"><b style="font-size:12.5px">' + lbl + '</b>' + (v != null ? '<div class="lb-n" style="font-size:14px;font-weight:700;color:' + BK.ink + '">' + man(v) + '</div>' : '') + '</div><div>' + bul + '</div></div>'; };
   var tripLine = MIRROR_TRIP_ACTUAL[Y] ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:3px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div>' : '';
   var segTags = function(segs, cap) { var sc = Math.max(cap || 0, segs.reduce(function(a, x) { return a + Math.max(0, x[1]); }, 0), 1); return '<div style="padding-right:86px">' + _bTags(segs.filter(function(x) { return x[1] > 0; }).reduce(function(acc, x) { var st = acc.x; acc.x += x[1] / sc * 100; acc.t.push({ p: st + x[1] / sc * 50, h: '<span style="color:' + BK.sub + '">' + x[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + man(x[1]) + '</b></span>' }); return acc; }, { x: 0, t: [] }).t) + '</div>'; };
   var incSegs = keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; });
@@ -759,9 +760,9 @@ function _boardPlanCard(year) {
   var pvI = hasPV ? _bPrevRow('수입', yt, PV.income, keys.map(function(k) { return [k, PV.inc[k], MIRROR_INC_COLORS[k]]; }), scI, true, man) : '';
   var pvS = hasPV ? _bPrevRow('쓰기', ys, PV.spend, [['고정·세금', PV.sp['고정·세금'], SPC.l], ['생활', PV.sp['생활'], SPC.k], ['여행', PV.sp['여행'], SPC.m]], scS, false, man) : '';
   var pvV = hasPV ? _bPrevRow('모으기', ysave, PV.save, [['모으기', PV.save, BK.green]], scV, true, man) : '';
-  var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scaleMin: scI, mode: 'goal', segs: incSegs, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs, scI) + pvI) +
-    yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scaleMin: scS, mode: 'limit', segs: spSegs, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs, scS) + lifeBar + pvS + tripLine) +
-    yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scaleMin: scV, mode: 'goal', color: BK.green, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표' }) + pvV) +
+  var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scaleMin: scI, mode: 'goal', segs: incSegs, noVal: 1, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs, scI) + pvI, yt) +
+    yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scaleMin: scS, mode: 'limit', segs: spSegs, noVal: 1, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs, scS) + lifeBar + pvS + tripLine, ys) +
+    yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scaleMin: scV, mode: 'goal', color: BK.green, noVal: 1, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표' }) + pvV, ysave) +
     '<div style="text-align:right;margin-top:2px"><button class="lb-more" onclick="try{localStorage.setItem(\'atelier_board_yoy\',\'' + (yoy ? '0' : '1') + '\')}catch(e){};ldgRenderBoard()">' + (yoy ? '전년 비교 접기 ▴' : '+ 전년 비교') + '</button>' +
     (yoy ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:2px">작년 = ' + (year - 1) + '년 실제' + (year - 1 === 2025 ? ' · 1~9월은 아뜰리에 수기 기록(계·집 원금 뺌), 10월부터 은행 연동' : '') + ' · 올해는 계획 포함</div>' : '') + '</div>';
   var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
