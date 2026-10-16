@@ -1202,7 +1202,10 @@ window.ldgImportBanksal = async function(rows, opt) {
           var n = newById[t.id];
           if (!n) { sum.removed++; return; }
           seen[t.id] = 1; sum.kept++;
-          out.push(Object.assign({}, n, { '대분류': t['대분류'], '소분류': t['소분류'], '세부사항': t['세부사항'], '메모': t['메모'] }, t.excludeFromGoal ? { excludeFromGoal: true } : {}));
+          var keep = Object.assign({}, n);
+          ['대분류', '소분류', '세부사항', '메모'].forEach(function(k) { if (t[k] !== undefined) keep[k] = t[k]; });
+          if (t.excludeFromGoal) keep.excludeFromGoal = true;
+          out.push(keep);
           return;
         }
         if (t['비고'] === '자동(고정)') { sum.autoRemoved++; return; }
@@ -1216,6 +1219,7 @@ window.ldgImportBanksal = async function(rows, opt) {
           sum.big.push(r.date.slice(5) + ' ' + Math.round(r['금액'] / 1e4) + '만 ' + (r['세부사항'] || '').split(' · ')[0].slice(0, 24));
       });
       out.sort(function(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
+      out = out.map(function(o) { var c = {}; Object.keys(o).forEach(function(k) { if (o[k] !== undefined) c[k] = o[k]; }); return c; });  // Firestore 는 undefined 칸을 거절
       if (!opt.dry) await ref.set({ items: out, updatedAt: new Date().toISOString() }, { merge: true });
     }
     if (!opt.dry) try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
