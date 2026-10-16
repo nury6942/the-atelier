@@ -33,7 +33,7 @@ function _bBullet(o) {
   var fillCol = o.color || (o.mode === 'goal' ? BK.green : over ? BK.red : BK.data);
   var fill = '';
   if (o.segs) {
-    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:1px solid #fff"></div>'; x += w; });
+    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '"></div>'; x += w; });
   } else fill = '<div style="position:absolute;left:0;top:0;bottom:0;width:' + pv + '%;min-width:2px;background:' + fillCol + '"></div>';
   var inside = pv >= 13;
   var valTxt = '<b class="lb-n">' + fmt(o.v) + unit + '</b>';
@@ -701,9 +701,31 @@ function _boardPlanCard(year) {
   var yrow = function(lbl, bul) { return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0"><b style="font-size:12.5px;padding-top:3px">' + lbl + '</b><div>' + bul + '</div></div>'; };
   var tripLine = MIRROR_TRIP_ACTUAL[Y] ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:3px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div>' : '';
   var segTags = function(segs, cap) { var sc = Math.max(cap || 0, segs.reduce(function(a, x) { return a + Math.max(0, x[1]); }, 0), 1); return '<div style="padding-right:86px">' + _bTags(segs.filter(function(x) { return x[1] > 0; }).reduce(function(acc, x) { var st = acc.x; acc.x += x[1] / sc * 100; acc.t.push({ p: st + x[1] / sc * 50, h: '<span style="color:' + BK.sub + '">' + x[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + man(x[1]) + '</b></span>' }); return acc; }, { x: 0, t: [] }).t) + '</div>'; };
-  var incSegs = keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), spSegs = [['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]];
+  var incSegs = keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; });
+  // 쓰기 = 고정·세금 / 생활(지난 달 실제) / 남은 달 계획(빗금) / 여행 — 생활은 아래 얇은 막대로 펼침 (누리 B안 2026-10-16)
+  var SPC = { k: '#b8433a', m: '#d9695e', l: '#e9a39b', p: '#f3cdc8' }, today = now.toISOString().slice(0, 10);
+  var grp = { '고정·세금': 0, '사람': 0, '물건': 0, '옷·뷰티': 0, '먹는 것': 0, '그 밖': 0 }, lastAct = 0, firstProj = 0, ysProj = 0;
+  P.forEach(function(x) {
+    var mo = +x[0].slice(5);
+    if (!x[1].actual) { ysProj += x[1].spend; if (!firstProj) firstProj = mo; return; }
+    lastAct = mo;
+    _bRows(x[0]).filter(function(t) { return t['출처'] === '뱅샐' && t.date <= today && _bS(t) && t['대분류'] !== '여행'; }).forEach(function(t) {
+      var r = _bLivingRow(t), nm = r >= 0 && MIRROR_LIVING[r] ? MIRROR_LIVING[r][0] : '';
+      var k = (_bFixed(t) || _bAnnual(t)) ? '고정·세금' : grp[nm] != null ? nm : (/^(외식|배달|카페·간식|장보기|편의점)$/.test(nm) || t['대분류'] === '식비') ? '먹는 것' : '그 밖';
+      grp[k] += t['금액'];
+    });
+  });
+  var lifeV = grp['사람'] + grp['물건'] + grp['옷·뷰티'] + grp['먹는 것'] + grp['그 밖'];
+  var spSegs = [['고정·세금', grp['고정·세금'], SPC.l], ['생활' + (lastAct ? ' 1~' + lastAct + '월' : ''), lifeV, SPC.k], [firstProj + '~12월 계획', ysProj, SPC.p, 1], ['여행', ysTrip, SPC.m]].filter(function(x) { return x[1] > 0; });
+  var spSc = Math.max(gS || ys, ys, 1), lifeL = grp['고정·세금'] / spSc * 100, lifeW = lifeV / spSc * 100;
+  var lifeSegs = [['사람', grp['사람'], SPC.k], ['물건', grp['물건'], SPC.k], ['옷·뷰티', grp['옷·뷰티'], SPC.k], ['먹는 것', grp['먹는 것'], SPC.m], ['그 밖', grp['그 밖'], SPC.l]].filter(function(x) { return x[1] > 0; });
+  var lifeBar = lifeV > 0 ? '<div style="padding-right:86px"><div style="position:relative;margin-left:' + lifeL + '%;width:' + lifeW + '%">' +
+    '<div style="height:8px;border:1px solid ' + SPC.k + ';border-top:0;margin-bottom:3px"></div>' +
+    '<div style="position:relative;height:12px">' + lifeSegs.reduce(function(acc, x) { var w = x[1] / lifeV * 100; acc.h += '<div title="' + x[0] + ' ' + man(x[1]) + '" style="position:absolute;left:' + acc.x + '%;width:' + w + '%;top:0;bottom:0;background:' + x[2] + ';border-right:2px solid #fff"></div>'; acc.x += w; return acc; }, { x: 0, h: '' }).h + '</div>' +
+    _bTags(lifeSegs.reduce(function(acc, x) { var w = x[1] / lifeV * 100; acc.t.push({ p: acc.x + w / 2, h: '<span style="color:' + BK.sub + '">' + x[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + man(x[1]) + '</b></span>' }); acc.x += w; return acc; }, { x: 0, t: [] }).t) +
+    '</div></div>' : '';
   var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scale: ymx, mode: 'goal', segs: incSegs, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs, gI || yt)) +
-    yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scale: ymx, mode: 'limit', segs: spSegs, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs, gS || ys) + tripLine) +
+    yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scale: ymx, mode: 'limit', segs: spSegs, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs, gS || ys) + lifeBar + tripLine) +
     yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scale: ymx, mode: 'goal', color: BK.green, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표' }));
   var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
   try { open = localStorage.getItem('atelier_board_plan_open') === '1'; } catch (e) {}
