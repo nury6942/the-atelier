@@ -21,6 +21,64 @@ function _bLine(pct, h, col, label, extra, scale, labelAt) {
     '<div style="position:absolute;left:0;top:' + ((H - h) / 2) + 'px;height:' + h + 'px;width:' + w + '%;min-width:2px;background:' + col + '"></div>' +
     (label ? '<span style="position:absolute;left:calc(' + lx + '% + 7px);top:50%;transform:translateY(-50%);font-size:11px;line-height:1;white-space:nowrap;color:' + BK.sub + '">' + label + '</span>' : '') + '</div>';
 }
+
+// ── 한 막대(불릿): 채운 만큼 · 끝에 금액 · 옆에 남음/넘음(모자람/달성) · 한도선과 숫자(누르면 바꾸기) · 밑에 ▲평소 ▲작년
+// o: { v, cap, scale, mode:'limit'|'goal', segs:[[이름,값,색]], color, unit, edit, marks:[{v,label,color}], fmt }
+function _bBullet(o) {
+  var fmt = o.fmt || function(x) { return _bMan(x); }, unit = o.unit == null ? '' : o.unit;
+  var P = function(a) { return Math.max(0, Math.min(100, a / o.scale * 100)); };
+  var pv = P(Math.max(0, o.v)), pc = P(o.cap), over = o.v > o.cap, good = o.mode === 'goal' ? o.v >= o.cap : !over;
+  var fillCol = o.color || (o.mode === 'goal' ? BK.green : over ? BK.red : BK.data);
+  var fill = '';
+  if (o.segs) {
+    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:1px solid #fff"></div>'; x += w; });
+  } else fill = '<div style="position:absolute;left:0;top:0;bottom:0;width:' + pv + '%;min-width:2px;background:' + fillCol + '"></div>';
+  var inside = pv >= 13;
+  var valTxt = '<b class="lb-n">' + fmt(o.v) + unit + '</b>';
+  var diff = Math.abs(o.v - o.cap);
+  var rest = o.mode === 'goal' ? (good ? '<span style="color:' + BK.green + '">+' + fmt(diff) + ' 달성</span>' : '<span style="color:' + BK.red + '">' + fmt(diff) + ' 모자람</span>')
+                               : (over ? '<span style="color:' + BK.red + '">' + fmt(diff) + ' 넘음</span>' : '<span style="color:' + BK.dataText + '">' + fmt(diff) + ' 남음</span>');
+  var h = '<div style="position:relative;height:22px;background:#e8f1fd;margin-top:' + (o.capTop ? 14 : 0) + 'px">' + fill +
+    (inside ? '<span style="position:absolute;right:' + (100 - pv) + '%;top:0;line-height:22px;padding-right:6px;color:#fff;font-size:12px;white-space:nowrap">' + valTxt + '</span>' : '') +
+    '<span style="position:absolute;left:calc(' + pv + '% + 6px);top:0;line-height:22px;font-size:11.5px;font-weight:600;white-space:nowrap">' + (inside ? '' : '<span style="color:' + BK.ink + '">' + valTxt + '</span> · ') + rest + '</span>' +
+    '<div style="position:absolute;left:calc(' + pc + '% - 1px);top:-4px;bottom:-4px;width:2px;background:' + BK.ink + '"></div>';
+  // 한도 숫자: 남음·넘음 글자와 부딪히면 선 위로
+  var restEnd = pv + (inside ? 14 : 24), upper = (pc > pv - 2 && pc < restEnd) || over || pc > 88;
+  var capLbl = (o.capLabel ? o.capLabel + ' ' : '') + '<span class="lb-ed" data-k="' + (o.edit || '') + '" onclick="_bEdit(this)" title="눌러서 바꾸기" style="cursor:text;border-bottom:1px dashed ' + BK.ink + '">' + fmt(o.cap) + '</span>' + unit;
+  h += upper ? '<span style="position:absolute;left:calc(' + pc + '% + 3px);top:-17px;font-size:11.5px;font-weight:700;color:' + BK.ink + ';white-space:nowrap;' + (pc > 80 ? 'transform:translateX(-100%);margin-left:-8px' : '') + '">' + capLbl + '</span>'
+             : '<span style="position:absolute;left:calc(' + pc + '% + 6px);top:0;line-height:22px;font-size:12px;font-weight:700;color:' + BK.ink + ';white-space:nowrap">' + capLbl + '</span>';
+  h += '</div>';
+  if (upper) h = h.replace('margin-top:0px', 'margin-top:16px');
+  if (o.marks && o.marks.length) h += _bTags(o.marks.filter(function(mk) { return mk.v > 0; }).map(function(mk) { return { p: P(mk.v), h: '<span style="color:' + mk.color + '">▲' + mk.label + ' <b class="lb-n">' + fmt(mk.v) + '</b></span>' }; }));
+  return h;
+}
+// 숫자 눌러서 바꾸기 (엑셀처럼) — 한도는 그 달 것만, 목표는 그 해 것. 아뜰리에 데이터에 저장
+var _BOARD_CAPS_KEY = 'atelier_board_caps';
+function _bCapsOv() { if (_boardExtra.caps) return _boardExtra.caps; try { _boardExtra.caps = JSON.parse(localStorage.getItem(_BOARD_CAPS_KEY)) || {}; } catch (e) { _boardExtra.caps = {}; } return _boardExtra.caps; }
+function _bEdit(el) {
+  if (el.querySelector('input')) return;
+  var k = el.getAttribute('data-k') || '', parts = k.split('|'), old = el.textContent.replace(/[^\d.-]/g, '');
+  el.innerHTML = '<input type="number" value="' + old + '" style="width:64px;font:inherit;font-weight:700;padding:0 2px;border:1px solid ' + BK.data + ';background:#fff">';
+  var inp = el.querySelector('input'); inp.focus(); inp.select();
+  var done = false, save = function() {
+    if (done) return; done = true;
+    var n = Number(inp.value); if (!isFinite(n) || inp.value === '') { ldgRenderBoard(); return; }
+    if (parts[0] === 'cap') {
+      var ov = _bCapsOv(); ov[parts[1]] = ov[parts[1]] || {}; ov[parts[1]][parts[2]] = Math.round(n * 10000);
+      try { localStorage.setItem(_BOARD_CAPS_KEY, JSON.stringify(ov)); } catch (e) {}
+      try { var upd = {}; upd['boardCaps.' + parts[1] + '.' + parts[2]] = Math.round(n * 10000); db.collection('appSettings').doc('ledgerData').update(upd); } catch (e) { console.error('[Board caps save]', e); }
+    } else if (parts[0] === 'goal') {
+      var g = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {}) || {}; g[parts[1]] = g[parts[1]] || {}; g[parts[1]][parts[2]] = Math.round(n); g[parts[1]].updatedAt = new Date().toISOString();
+      try { localStorage.setItem('atelier_ledger_goals', JSON.stringify(g)); } catch (e) {}
+      try { db.collection('appSettings').doc('ledgerData').update({ goals: g }); } catch (e) { console.error('[Board goal save]', e); }
+    }
+    ldgRenderBoard();
+  };
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') save(); if (e.key === 'Escape') { done = true; ldgRenderBoard(); } });
+  inp.addEventListener('blur', save);
+}
+window._bEdit = _bEdit;
+
 // 그린 뒤 실제 글자 폭을 재서, 진짜 겹치는 라벨만 다음 줄로
 function _bFixTags(root) {
   (root || document).querySelectorAll('.lb-tags').forEach(function(box) {
@@ -121,7 +179,10 @@ function _bPlan(ym) {
     var cc = caps['옷·뷰티'] != null ? caps['옷·뷰티'] : _bLivingCap(ym, '옷·뷰티');
     todo.push(cc ? '👗 옷은 여행 직전 달에만 · 이 달은 ' + _bMan(cc) + '만' : '👗 옷 0 · 다음 여행 직전 달까지');
   }
-  return { caps: caps, todo: todo, living: b.living || a.living || (ym >= '2027-01' ? 1850000 : 1830000) };
+  var ov = (_bCapsOv() || {})[ym] || {}, living = b.living || a.living || (ym >= '2027-01' ? 1850000 : 1830000);
+  Object.keys(ov).forEach(function(k) { caps[k] = ov[k]; });
+  if (MIRROR_LIVING.some(function(x) { return ov[x[0]] != null; })) living = MIRROR_LIVING.reduce(function(acc, x) { return acc + (caps[x[0]] != null ? caps[x[0]] : _bLivingCap(ym, x[0])); }, 0);
+  return { caps: caps, todo: todo, living: living, fixedCap: ov['고정'], annualCap: ov['연간 적립'] };
 }
 function _bRows(ym) { return (_ledgerData.transactions || []).filter(function(t) { return t.date && t.date.slice(0, 7) === ym; }); }
 // 작년 그 달에 있었던 '매년 돌아오는 돈' — 데이터에서 찾는다
@@ -240,6 +301,9 @@ function _boardLoadExtra() {
   _boardExtra.loading = true;
   var getTrips = (typeof fbRead === 'function' ? fbRead('trips') : Promise.resolve([])).catch(function() { return []; });
   var getPlanner = (typeof db !== 'undefined' ? db.collection('planner').get().then(function(s) { var a = []; s.forEach(function(d) { a.push(d.data()); }); return a; }) : Promise.resolve([])).catch(function() { return []; });
+  if (typeof db !== 'undefined') db.collection('appSettings').doc('ledgerData').get().then(function(d) {
+    var bc = (d.data() || {}).boardCaps; if (bc) { _boardExtra.caps = bc; try { localStorage.setItem(_BOARD_CAPS_KEY, JSON.stringify(bc)); } catch (e) {} try { ldgRenderBoard(); } catch (e) {} }
+  }).catch(function() {});
   Promise.all([getTrips, getPlanner]).then(function(r) {
     var trips = (Array.isArray(r[0]) ? r[0] : Object.values(r[0] || {})).map(function(x) {
       var b = x.budget || {}, sum = ['flight', 'accom', 'transport', 'living', 'tour'].reduce(function(a, k) { return a + (typeof b[k] === 'number' ? b[k] : 0); }, 0);
@@ -614,12 +678,15 @@ function _boardPlanCard(year) {
   var ys = ysLife + ysTrip, yt = keys.reduce(function(a, k) { return a + y[k]; }, 0), ysave = yt - ys;
   var g = (typeof ldgLoadGoals === 'function' ? ldgLoadGoals() : {})[Y] || {};
   var tgt = function(v) { return v ? '<span style="font-weight:400;color:' + BK.sub + '"> / ' + Number(v).toLocaleString() + '</span>' : ''; };
-  var ymx = Math.max(yt, ys, (g['수입'] || 0) * 1e4) * 1.02;
-  var head = '<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 110px;gap:4px 10px;align-items:start;font-size:12px">' +
-    '<b style="padding-top:1px">수입</b><div>' + _bStack(keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(yt) + tgt(g['수입']) + '</b>' +
-    '<b style="padding-top:1px">쓰기</b><div>' + _bStack([['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap">' + _bMan(ys) + tgt(g['지출']) + '</b>' +
-    (MIRROR_TRIP_ACTUAL[Y] ? '<span></span><div style="font-size:11px;color:' + BK.sub + ';margin-top:-2px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div><span></span>' : '') +
-    '<b style="padding-top:1px">모으기</b><div>' + _bStack([['저축', Math.max(0, ysave), BK.green]], ymx, 14) + '</div><b class="lb-n" style="text-align:right;white-space:nowrap;color:' + (ysave >= 0 ? BK.green : BK.red) + '">' + _bMan(ysave) + tgt(g['저축']) + '</b></div>';
+  var gI = (g['수입'] || 0) * 1e4, gS = (g['지출'] || 0) * 1e4, gV = (g['저축'] || 0) * 1e4;
+  var ymx = Math.max(yt, ys, gI, gS, gV, 1) * 1.22, man = function(x) { return Math.round(x / 1e4).toLocaleString(); };
+  var yrow = function(lbl, bul) { return '<div style="display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0"><b style="font-size:12.5px;padding-top:3px">' + lbl + '</b><div>' + bul + '</div></div>'; };
+  var tripLine = MIRROR_TRIP_ACTUAL[Y] ? '<div style="font-size:11px;color:' + BK.sub + ';margin-top:3px">여행 ' + MIRROR_TRIP_ACTUAL[Y].map(function(t) { return t[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(t[1]) + '</b>'; }).join(' · ') + (MIRROR_TRIP_ACTUAL[Y + 'note'] ? ' · ' + MIRROR_TRIP_ACTUAL[Y + 'note'] : '') + '</div>' : '';
+  var segTags = function(segs) { return _bTags(segs.filter(function(x) { return x[1] > 0; }).reduce(function(acc, x) { var st = acc.x; acc.x += x[1] / ymx * 100; acc.t.push({ p: st + x[1] / ymx * 50, h: '<span style="color:' + BK.sub + '">' + x[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + man(x[1]) + '</b></span>' }); return acc; }, { x: 0, t: [] }).t); };
+  var incSegs = keys.map(function(k) { return [k, y[k], MIRROR_INC_COLORS[k]]; }), spSegs = [['생활·고정', ysLife, '#e9a39b'], ['여행', ysTrip, BK.red]];
+  var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scale: ymx, mode: 'goal', segs: incSegs, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs)) +
+    yrow('쓰기', _bBullet({ v: ys, cap: gS || ys, scale: ymx, mode: 'limit', segs: spSegs, fmt: man, edit: 'goal|' + Y + '|지출', capLabel: '한도' }) + segTags(spSegs) + tripLine) +
+    yrow('모으기', _bBullet({ v: ysave, cap: gV || ysave, scale: ymx, mode: 'goal', color: BK.green, fmt: man, edit: 'goal|' + Y + '|저축', capLabel: '목표' }));
   var view = Y + '-' + String(_ldgMonth).padStart(2, '0'), open = false;
   try { open = localStorage.getItem('atelier_board_plan_open') === '1'; } catch (e) {}
   // 접었을 때: 12칸 띠 — 칸마다 남은 돈(초록 모음 · 빨강 적자), 보고 있는 달은 테두리, 누르면 그 달로
@@ -662,7 +729,7 @@ function _boardCats(ym, m, preview) {
   var win = all.filter(function(t) { return ms.indexOf(t.date.slice(0, 7)) >= 0; });
   var sum = function(list, f) { return _bSum(list.filter(f), function() { return true; }); };
   var fixF = function(t) { return _bFixed(t) && !_bAnnual(t); };
-  var rowsDef = [['고정', 'home', fixF, (y27 ? 850000 : 950000)], ['연간 적립', 'event_repeat', _bAnnual, (y27 ? 250000 : 230000)]].concat(MIRROR_LIVING.map(function(x, i) {
+  var rowsDef = [['고정', 'home', fixF, plan.fixedCap != null ? plan.fixedCap : (y27 ? 850000 : 950000)], ['연간 적립', 'event_repeat', _bAnnual, plan.annualCap != null ? plan.annualCap : (y27 ? 250000 : 230000)]].concat(MIRROR_LIVING.map(function(x, i) {
     return [x[0], x[1], function(t) { return !_bFixed(t) && !_bAnnual(t) && _bLivingRow(t) === i; }, caps[x[0]] != null ? caps[x[0]] : _bLivingCap(ym, x[0])];
   }));
   var data = rowsDef.map(function(x) { return { name: x[0], icon: x[1], cap: x[3], v: sum(L, x[2]), lv: sum(ly, x[2]), av: sum(win, x[2]) / N, f: x[2] }; });
@@ -671,16 +738,11 @@ function _boardCats(ym, m, preview) {
   var totV = 0, totCap = 0;
   var row = function(d, scale, extra) {
     totV += d.v; totCap += d.cap;
-    var P = function(a) { return Math.max(0, Math.min(100, a / (scale * 1.2) * 100)); }, over = d.v > d.cap, pc = P(d.cap), pv = P(d.v);
-    var bar = '<div style="position:relative;height:30px">' +
-      '<div style="position:absolute;left:0;top:0;height:30px;width:' + pc + '%;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></div>' +
-      '<span style="position:absolute;left:calc(' + pc + '% - 4px);transform:translateX(-100%);bottom:2px;font-size:10px;line-height:11px;color:' + BK.sub + ';white-space:nowrap">한도 ' + _bMan(d.cap) + '</span>' +
-      (preview ? '' : '<div style="position:absolute;left:0;top:3px;height:11px;width:' + pv + '%;min-width:2px;background:' + (over ? BK.red : BK.data) + '"></div>' +
-        '<span style="position:absolute;left:calc(' + pv + '% + 5px);top:0;font-size:12px;line-height:16px;white-space:nowrap"><b class="lb-n" style="color:' + (over ? BK.red : BK.ink) + '">' + _bMan(d.v) + '만</b>' + (over ? ' <b style="color:' + BK.red + '">+' + _bMan(d.v - d.cap) + '</b>' : '') + '</span>') + '</div>';
-    var cell = function(v, col) { return '<span class="lb-n" style="text-align:right;font-size:12px;color:' + col + '">' + _bMan(v) + '</span>'; };
-    return '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;align-items:center;padding:3px 0">' +
-      '<span style="font-size:12px;color:' + BK.ink + ';white-space:nowrap;font-weight:600"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.sub + '">' + d.icon + '</span> ' + d.name + '</span>' +
-      '<div>' + bar + (extra || '') + '</div>' + cell(d.av, BK.dataText) + cell(d.lv, BK.sub) + '</div>';
+    var bul = _bBullet({ v: preview ? 0 : d.v, cap: d.cap, scale: scale * 1.25, mode: 'limit', unit: '만', edit: 'cap|' + ym + '|' + d.name,
+      marks: [{ v: d.av, label: '평소', color: BK.dataText }, { v: d.lv, label: '작년', color: BK.sub }] });
+    return '<div style="display:grid;grid-template-columns:96px minmax(0,640px);gap:12px;align-items:start;padding:8px 0 4px;border-top:1px solid #f1f5f9">' +
+      '<span style="font-size:12.5px;color:' + BK.ink + ';white-space:nowrap;font-weight:600;padding-top:3px"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.sub + '">' + d.icon + '</span> ' + d.name + '</span>' +
+      '<div>' + bul + (extra || '') + '</div></div>';
   };
   // 고정 안에 뭐가 있나 (할머니 용돈 · 관리비 · 통신 · 구독 · 기부 · 주차 · 보험)
   var fixParts = {};
@@ -691,18 +753,15 @@ function _boardCats(ym, m, preview) {
   var tf = _boardTripFor(ym), trip = '';
   if (tf) {
     var tv = m && !preview ? m.envs[0].val : 0, P2 = function(a) { return Math.max(0, Math.min(100, a / Math.max(tf.trip.budget, tv, 1) * 82)); };
-    trip = '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;align-items:center;margin-top:6px;padding-top:8px;border-top:1px solid #e2e8f0">' +
-      '<span style="font-size:12px;font-weight:600;white-space:nowrap"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.data + '">flight</span> 여행</span>' +
-      '<div>' + _bTags([{ p: P2(tf.trip.budget), h: _bEsc(tf.trip.title) + ' 예산 <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(tf.trip.budget) + '</b>' }]) +
-      '<div style="position:relative;height:16px"><div style="position:absolute;left:0;top:2px;height:12px;width:' + P2(tv) + '%;background:' + (tv > tf.trip.budget ? BK.red : BK.data) + '"></div>' +
-      '<span style="position:absolute;left:calc(' + P2(tv) + '% + 6px);top:0;font-size:12px;line-height:16px"><b class="lb-n">' + _bMan(tv) + '만</b></span>' +
-      '<div style="position:absolute;left:' + P2(tf.trip.budget) + '%;top:-3px;bottom:-3px;width:2px;background:' + BK.ink + '"></div></div></div></div>';
+    trip = '<div style="display:grid;grid-template-columns:96px minmax(0,640px);gap:12px;align-items:start;margin-top:6px;padding-top:10px;border-top:1px solid #e2e8f0">' +
+      '<span style="font-size:12.5px;font-weight:600;white-space:nowrap;padding-top:3px"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.data + '">flight</span> 여행</span>' +
+      '<div>' + _bBullet({ v: tv, cap: tf.trip.budget, scale: Math.max(tf.trip.budget, tv) * 1.3, mode: 'limit', unit: '만', capLabel: _bEsc(tf.trip.title) + ' 예산' }) + '</div></div>';
   }
   var sw = function(st, txt) { return '<span style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap">' + st + txt + '</span>'; };
-  var legend = '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;font-size:11px;color:' + BK.sub + ';margin-bottom:2px;align-items:end"><span></span>' +
-    '<span style="display:flex;gap:14px">' + (preview ? '' : sw('<i style="display:inline-block;width:14px;height:10px;background:' + BK.data + '"></i>', mk + ' 쓴 돈')) +
-    sw('<i style="display:inline-block;width:16px;height:12px;background:#eef4fd;border-right:2px solid ' + BK.ink + '"></i>', '한도') + '</span>' +
-    '<span style="text-align:right;color:' + BK.dataText + ';font-weight:600">평소</span><span style="text-align:right;font-weight:600">작년</span></div>';
+  var legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:' + BK.sub + ';margin:2px 0 4px">' +
+    (preview ? '' : sw('<i style="display:inline-block;width:14px;height:10px;background:' + BK.data + '"></i>', '쓴 돈')) +
+    sw('<i style="display:inline-block;width:16px;height:10px;background:#e8f1fd;border-right:2px solid ' + BK.ink + '"></i>', '한도 · 숫자 누르면 바꾸기') +
+    sw('<span style="color:' + BK.dataText + '">▲</span>', '평소 한 달') + sw('<span>▲</span>', '작년 같은 달') + '</div>';
   var head = preview ? '한도 <b class="lb-n" style="font-size:15px">' + _bMan(totCap) + '</b>만' :
     '<b class="lb-n" style="font-size:16px;color:' + (totV > totCap ? BK.red : BK.ink) + '">' + _bMan(totV) + '</b> 썼어요 / 한도 ' + _bMan(totCap) + '만 · <b style="color:' + (totV > totCap ? BK.red : BK.green) + '">' + (totV > totCap ? _bMan(totV - totCap) + ' 넘음' : _bMan(totCap - totV) + ' 남음') + '</b>';
   return '<div class="lb-c" style="margin-bottom:10px"><p class="lb-t"><span>' + mk + ' 나간 돈 · 이체(할머니·기부 등)까지 전부 · 여행은 따로</span><span>' + head + '</span></p>' + legend + html + trip + '</div>';
