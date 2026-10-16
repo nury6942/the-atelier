@@ -691,7 +691,7 @@ function _boardCats(ym, m, preview) {
   var tf = _boardTripFor(ym), trip = '';
   if (tf) {
     var tv = m && !preview ? m.envs[0].val : 0, P2 = function(a) { return Math.max(0, Math.min(100, a / Math.max(tf.trip.budget, tv, 1) * 82)); };
-    trip = '<div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:center;margin-top:6px;padding-top:8px;border-top:1px solid #e2e8f0">' +
+    trip = '<div style="display:grid;grid-template-columns:92px minmax(0,560px) 44px 44px;gap:10px;align-items:center;margin-top:6px;padding-top:8px;border-top:1px solid #e2e8f0">' +
       '<span style="font-size:12px;font-weight:600;white-space:nowrap"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-4px;color:' + BK.data + '">flight</span> 여행</span>' +
       '<div>' + _bTags([{ p: P2(tf.trip.budget), h: _bEsc(tf.trip.title) + ' 예산 <b class="lb-n" style="color:' + BK.ink + '">' + _bMan(tf.trip.budget) + '</b>' }]) +
       '<div style="position:relative;height:16px"><div style="position:absolute;left:0;top:2px;height:12px;width:' + P2(tv) + '%;background:' + (tv > tf.trip.budget ? BK.red : BK.data) + '"></div>' +
