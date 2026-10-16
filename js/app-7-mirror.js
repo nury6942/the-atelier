@@ -33,7 +33,7 @@ function _bBullet(o) {
   var fillCol = o.color || (o.mode === 'goal' ? BK.green : over ? BK.red : BK.data);
   var fill = '';
   if (o.segs) {
-    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '"></div>'; x += w; });
+    var x = 0; o.segs.forEach(function(sg) { if (sg[1] <= 0) return; var w = P(sg[1]); fill += '<div title="' + sg[0] + ' ' + fmt(sg[1]) + '" style="position:absolute;left:' + x + '%;top:0;bottom:0;width:' + w + '%;background:' + sg[2] + ';border-right:2px solid #fff' + (sg[3] ? ';background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.6) 4px 6px)' : '') + '">' + (w >= 7 && o.v > 0 ? '<span style="position:absolute;left:6px;top:0;line-height:22px;font-size:11.5px;font-weight:700;color:' + _bPctInk(sg[2]) + '">' + Math.round(sg[1] / o.v * 100) + '%</span>' : '') + '</div>'; x += w; });
   } else fill = '<div style="position:absolute;left:0;top:0;bottom:0;width:' + pv + '%;min-width:2px;background:' + fillCol + '"></div>';
   var inside = pv >= 13;
   var valTxt = '<b class="lb-n">' + fmt(o.v) + unit + '</b>';
@@ -55,6 +55,8 @@ function _bBullet(o) {
   if (o.marks && o.marks.length) h += _bTags(o.marks.filter(function(mk) { return mk.v > 0; }).map(function(mk) { return { p: P(mk.v), h: '<span style="color:' + mk.color + '">▲' + mk.label + ' <b class="lb-n">' + fmt(mk.v) + '</b>' + (mk.v > o.scale ? ' ›' : '') + '</span>' }; }));
   return h + '</div>';
 }
+// 칸 색 위 % 글자색 — 진한 칸은 흰색, 옅은 칸은 같은 계열 진한 색
+function _bPctInk(bg) { return { '#7fb2f7': '#1d4ed8', '#bcd5fb': '#1d4ed8', '#e9a39b': '#8f2f27', '#f3cdc8': '#8f2f27' }[bg] || '#fff'; }
 // 숫자 눌러서 바꾸기 (엑셀처럼) — 한도는 그 달 것만, 목표는 그 해 것. 아뜰리에 데이터에 저장
 var _BOARD_CAPS_KEY = 'atelier_board_caps';
 function _bCapsOv() { if (_boardExtra.caps) return _boardExtra.caps; try { _boardExtra.caps = JSON.parse(localStorage.getItem(_BOARD_CAPS_KEY)) || {}; } catch (e) { _boardExtra.caps = {}; } return _boardExtra.caps; }
@@ -721,7 +723,7 @@ function _boardPlanCard(year) {
   var lifeSegs = [['사람', grp['사람'], SPC.k], ['물건', grp['물건'], SPC.k], ['옷·뷰티', grp['옷·뷰티'], SPC.k], ['먹는 것', grp['먹는 것'], SPC.m], ['그 밖', grp['그 밖'], SPC.l]].filter(function(x) { return x[1] > 0; });
   var lifeBar = lifeV > 0 ? '<div style="padding-right:86px"><div style="position:relative;margin-left:' + lifeL + '%;width:' + lifeW + '%">' +
     '<div style="height:8px;border:1px solid ' + SPC.k + ';border-top:0;margin-bottom:3px"></div>' +
-    '<div style="position:relative;height:12px">' + lifeSegs.reduce(function(acc, x) { var w = x[1] / lifeV * 100; acc.h += '<div title="' + x[0] + ' ' + man(x[1]) + '" style="position:absolute;left:' + acc.x + '%;width:' + w + '%;top:0;bottom:0;background:' + x[2] + ';border-right:2px solid #fff"></div>'; acc.x += w; return acc; }, { x: 0, h: '' }).h + '</div>' +
+    '<div style="position:relative;height:17px">' + lifeSegs.reduce(function(acc, x) { var w = x[1] / lifeV * 100; acc.h += '<div title="' + x[0] + ' ' + man(x[1]) + '" style="position:absolute;left:' + acc.x + '%;width:' + w + '%;top:0;bottom:0;background:' + x[2] + ';border-right:2px solid #fff">' + (w >= 6 ? '<span style="position:absolute;left:5px;top:0;line-height:17px;font-size:11px;font-weight:700;color:' + _bPctInk(x[2]) + '">' + Math.round(w) + '%</span>' : '') + '</div>'; acc.x += w; return acc; }, { x: 0, h: '' }).h + '</div>' +
     _bTags(lifeSegs.reduce(function(acc, x) { var w = x[1] / lifeV * 100; acc.t.push({ p: acc.x + w / 2, h: '<span style="color:' + BK.sub + '">' + x[0] + ' <b class="lb-n" style="color:' + BK.ink + '">' + man(x[1]) + '</b></span>' }); acc.x += w; return acc; }, { x: 0, t: [] }).t) +
     '</div></div>' : '';
   var head = yrow('수입', _bBullet({ v: yt, cap: gI || yt, scale: ymx, mode: 'goal', segs: incSegs, fmt: man, edit: 'goal|' + Y + '|수입', capLabel: '목표' }) + segTags(incSegs, gI || yt)) +
