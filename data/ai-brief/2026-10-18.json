@@ -1,0 +1,263 @@
+{
+ "date": "2026-10-18",
+ "generatedAt": "2026-10-18T07:40:00+09:00",
+ "sourcesNote": "Threads(맥 수집 1개, X는 로그인 안 돼 빠짐) + 웹 검색 30여 회 · 실행 환경에서 사이트 직접 열기가 막혀 링크·숫자는 검색 결과로만 확인",
+ "weekly": {
+  "flow": [
+   "1인 개발자+Claude 대체 앱: 어도비 클론 7종이 10-11 기준 별 8.6만, 이어 오피스 클론 3종까지 공개(WordCraft 별 5,100+)",
+   "공개 모델 몰림: Muse Spark Open·FLUX 3 Klein(10-15), Reflection Beam(10-16), DeepSeek V4.1-Flash-1017(10-17) — 맥·게임 GPU 실측 후기가 쏟아짐",
+   "Claude 쪽은 데스크톱 멀티세션(10-14)·Code Review 정식(10-15)이 나왔지만 '써봤더니' 사례는 아직 드묾"
+  ]
+ },
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "어도비 다음은 워드·엑셀·PPT",
+   "url": "https://www.tomshardware.com/software/microsoft-office/creator-of-free-adobe-clones-unveils-open-source-microsoft-office-excel-powerpoint-and-word-replications-autodesk-tools-and-other-subscription-based-services-may-come-next",
+   "image": null,
+   "source": "Tom's Hardware · ArtCraft 개발자 Brandon Thomas",
+   "how": "Claude로 Rust 오피스 3종, 버튼마다 AI 명령",
+   "chips": [
+    "WordCraft 별 5,100+",
+    "엑셀 함수 513/523개"
+   ]
+  },
+  {
+   "cat": "release",
+   "title": "싼 모델 하나로 게임을 끝까지",
+   "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
+   "image": null,
+   "source": "note @masa_wunder · 25문제 실측",
+   "release": {
+    "name": "DeepSeek V4.1-Flash-1017",
+    "date": "2026-10-17",
+    "url": "https://api-docs.deepseek.com/news/news261017/"
+   },
+   "examples": [
+    {
+     "title": "브라우저 게임 25개 만들기 신구 비교",
+     "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
+     "image": null
+    },
+    {
+     "title": "공식 데모: 레이싱 게임·포탈 2 재현",
+     "url": "https://api-docs.deepseek.com/news/news261017/",
+     "image": null
+    },
+    {
+     "title": "사용법·첫 테스트 정리",
+     "url": "https://medium.com/data-science-in-your-pocket/deepseek-v4-1-flash-1017-is-here-5bb734eaeb18",
+     "image": null
+    }
+   ],
+   "new": [
+    "끝까지 완성 개발"
+   ],
+   "reviews": [
+    {
+     "say": "과하게 안 짜고 개발자처럼 쓴다",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50129045",
+     "tone": "good"
+    },
+    {
+     "say": "일의 90%는 이걸로 충분",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50129045",
+     "tone": "good"
+    },
+    {
+     "say": "점수는 비슷, 망가진 게임은 고쳐냄",
+     "who": "note @masa_wunder",
+     "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
+     "tone": "good"
+    },
+    {
+     "say": "자체 벤치마크가 실사용에 맞을지 의문",
+     "who": "daily.dev 토론",
+     "url": "https://daily.dev/posts/deepseek-v4-1-flash-smaller-kv-cache-native-vision-and-a-free-tier-on-opencode-ft39wvrjm",
+     "tone": "bad"
+    },
+    {
+     "say": "공개 모델 최강이나 최상위엔 못 미침",
+     "who": "Digg 요약",
+     "url": "https://digg.com/ai/phzhdgm4",
+     "tone": "bad"
+    }
+   ],
+   "why": "아주 싼 값에 앱 한 벌 끝까지 짜기",
+   "chips": [
+    "입력 100만 토큰 $0.15 · 약 210원",
+    "가중치 공개"
+   ],
+   "forMe": "Atelier 같은 작은 도구를 시킬 때 비용 걱정 없이 여러 번 다시 뽑아보기(앱은 무료)"
+  },
+  {
+   "cat": "hack",
+   "title": "25년 암호 수수께끼를 30분에",
+   "url": "https://coindesk.com/tech/2026/10/17/wow-it-s-a-real-discovery-claude-cracks-a-25-year-nsa-number-mystery",
+   "image": null,
+   "source": "CoinDesk · Anthropic 10-16 발표",
+   "how": "숫자 패턴 보고 1997년 난수 생성기 역추적",
+   "chips": [
+    "30분 미만",
+    "현상금 걸린 문제"
+   ]
+  },
+  {
+   "cat": "money",
+   "title": "연봉 2억 대신 혼자 AI 창업",
+   "url": "https://businesstoday.in/world/story/left-rs1-89-crore-job-at-microsoft-no-co-founder-and-no-salary-why-this-25-year-old-chose-to-build-an-ai-startup-alone-561931-2026-10-16",
+   "image": null,
+   "source": "Business Today · Treasury 사례",
+   "how": "공동창업자·투자 없이 AI 재무 코칭 앱",
+   "chips": [
+    "누적 매출 $6K+ · 약 840만 원",
+    "팔로워 약 3만"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "보던 페이지를 Claude Code에 바로",
+   "url": "https://chatgate.ai/post/rill-browser",
+   "image": null,
+   "source": "Rill Browser · PH 10-06 데일리 픽",
+   "how": "⌘E 한 번에 페이지를 에이전트 작업으로",
+   "chips": [
+    "무료",
+    "PH 409표"
+   ],
+   "forMe": "레퍼런스 사이트 보다가 ⌘E로 Atelier 수정 요청 바로 넘기기"
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "새 DeepSeek로 컬러웨이 보드 한 장",
+   "minutes": 20,
+   "why": "어제 나온 모델을 무료 채팅에서 바로 써보는 거예요. 저지 팬츠 색 조합을 눌러 바꿔보는 HTML 한 장이 남아요.",
+   "from": {
+    "label": "DeepSeek 공식 · 10-17 발표",
+    "url": "https://api-docs.deepseek.com/news/news261017/"
+   },
+   "steps": [
+    {
+     "text": "DeepSeek 채팅 열기",
+     "url": "https://chat.deepseek.com"
+    },
+    {
+     "text": "프롬프트 붙여넣기",
+     "copy": "HTML 파일 하나로 된 '저지 팬츠 컬러웨이 보드'를 만들어줘. 가운데에 앞판 저지 팬츠 실루엣을 SVG로 그리고, 몸판·옆선 테이프·허리 밴드·로고 4부분을 각각 클릭해 색을 바꿀 수 있게 해줘. 오른쪽에 MLB 팀 컬러 프리셋 6개(양키스 네이비, 다저스 블루, 레드삭스 레드 등) 버튼을 두고, 지금 조합을 PNG로 저장하는 버튼도 넣어줘. 흰 배경, Inter 글꼴, 여백 넉넉하게. 코드 전체를 한 번에 줘."
+    },
+    {
+     "text": "HTML로 저장해 열기"
+    }
+   ]
+  },
+  {
+   "title": "Claude Design으로 프린트 시안",
+   "minutes": 15,
+   "why": "Claude Design이 무료 요금제까지 풀렸어요. 그래픽 티 프린트 아이디어를 말로 넣고 시안을 바로 받아볼 수 있어요.",
+   "from": {
+    "label": "X @claudeai · 10-08 정식 전환",
+    "url": "https://x.com/claudeai/status/2108271559928389679"
+   },
+   "steps": [
+    {
+     "text": "Claude Design 열기",
+     "url": "https://claude.ai/design"
+    },
+    {
+     "text": "요청 붙여넣기",
+     "copy": "MLB 저지 쇼츠 왼쪽 다리에 들어갈 그래픽 3안을 만들어줘. 빈티지 바시티 레터링 + 작은 야구공 심볼, 2도(네이비·크림)만 사용, 실크스크린 느낌. 각 안 옆에 실제 크기(가로 12cm 기준) 표시."
+    },
+    {
+     "text": "마음에 드는 안 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Beam 가중치 공개",
+   "url": "https://reflection.ai/blog/introducing-beam",
+   "image": null,
+   "source": "Reflection · 501B 코딩 모델 10-16",
+   "watching": true
+  },
+  {
+   "cat": "vibe",
+   "title": "어도비 대체 무료 앱 써보니",
+   "url": "https://www.xda-developers.com/tried-replacing-photoshop-premiere-pro-lightroom-with-free-vibe-coded-alternatives/",
+   "image": null,
+   "source": "XDA · 실사용 후기",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "사진 고르기 앱 10분 만에",
+   "url": "https://www.talkphotography.co.uk/posts/9763710/",
+   "image": null,
+   "source": "TalkPhotography · 행사 사진가",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "로컬 목소리 스튜디오",
+   "url": "https://www.implicator.ai/voicestudio-local-voice-cloning/",
+   "image": null,
+   "source": "VoiceStudio · 646개 언어",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "Claude 공식 플러그인 모음",
+   "url": "https://github.com/anthropics/claude-plugins-official",
+   "image": null,
+   "source": "GitHub 트렌딩",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "디자인용 Claude 스킬 10",
+   "url": "https://www.figma.com/resource-library/claude-skills-for-design/",
+   "image": null,
+   "source": "Figma 리소스",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14",
+   "note": "10-18에도 실사용 사례 못 찾음"
+  },
+  {
+   "name": "Helix World",
+   "url": "https://noiz.ai/lp/blog/meet-helix-world",
+   "date": "2026-10-12"
+  },
+  {
+   "name": "Meta Muse Wonder",
+   "url": "https://research.meta.ai/blog/muse-wonder",
+   "date": "2026-10-12",
+   "note": "실사용 사례 1건 확인: @lucian__03 3D 슈팅 게임(10-14)"
+  },
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15"
+  },
+  {
+   "name": "Claude Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "date": "2026-10-15"
+  },
+  {
+   "name": "Reflection Beam (가중치 공개)",
+   "url": "https://reflection.ai/blog/introducing-beam",
+   "date": "2026-10-16"
+  }
+ ]
+}
