@@ -12179,8 +12179,7 @@
       // 두 카테고리를 시간순으로 섞고 상위 5개
       krItems = econ.concat(polit).sort(function(a,b){ return new Date(b.pubDate||0) - new Date(a.pubDate||0); }).slice(0, 5);
       enItems = (enRes && enRes.items) ? enRes.items.slice(0, 5) : [];
-      // Claude로 영어 뉴스 한글 번역 (API 키 있으면)
-      if (enItems.length) await _translateNewsHeadlines(enItems);
+      // 한글 번역은 자동으로 안 함 (API 요금) — 머리줄 '번역' 버튼 → translateDashNews()
       // 캐시
       try { localStorage.setItem(cacheKey, JSON.stringify({ kr: krItems, en: enItems, fetchedAt: Date.now() })); } catch(e){}
     } catch(e) { console.warn('[news]', e); }
@@ -12188,6 +12187,22 @@
     _renderNewsList(krEl, krItems, 'ko');
     _renderNewsList(enEl, enItems, 'en');
   }
+
+  // '번역' 버튼 — 지금 보이는 영어 헤드라인만 번역해서 캐시에 같이 저장
+  window.translateDashNews = async function() {
+    var enEl = document.getElementById('dash-news-en');
+    var btn = document.getElementById('dash-news-en-translate');
+    var cacheKey = 'atelier_news_cache_v2';
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch(e){}
+    if (!cached || !cached.en || !cached.en.length) return;
+    if (!localStorage.getItem('atelier_anthropic_api_key')) { if (typeof openApiSettingsModal === 'function') openApiSettingsModal(); return; }
+    if (btn) { btn.disabled = true; btn.textContent = '번역 중…'; }
+    await _translateNewsHeadlines(cached.en);
+    try { localStorage.setItem(cacheKey, JSON.stringify(cached)); } catch(e){}
+    _renderNewsList(enEl, cached.en, 'en');
+    if (btn) { btn.disabled = false; btn.textContent = '번역'; }
+  };
 
   // 영어 헤드라인 한꺼번에 한글 번역 (한 번의 Claude 호출)
   async function _translateNewsHeadlines(items) {
@@ -12309,6 +12324,10 @@
           return;
         }
       } catch(e){}
+      // API 요금 — 자동 생성 안 함. 버튼(새로고침/만들기)을 눌렀을 때만 호출
+      contentEl.innerHTML = '<div class="text-[11px] text-slate-600">오늘 브리프가 아직 없어요. <button onclick="generateDailyBrief(true)" class="underline font-bold text-violet-700">브리프 만들기</button> <span class="text-slate-500">(API 요금 발생)</span></div>';
+      if (statusEl) statusEl.textContent = '';
+      return;
     }
     // API 키 확인
     var apiKey = localStorage.getItem('atelier_anthropic_api_key');
@@ -13610,6 +13629,10 @@
           return;
         }
       } catch(e){}
+      // API 요금 — 모달만 열어선 생성 안 함. 버튼을 눌렀을 때만 호출
+      contentEl.innerHTML = '<div class="text-sm text-slate-600 p-4 bg-violet-50 rounded-xl">과거 여행 패턴으로 추천을 만들어요. <button onclick="generateTravelRecommend(true)" class="underline font-bold text-violet-700">추천 받기</button> <span class="text-slate-500">(API 요금 발생)</span></div>';
+      if (summaryEl) summaryEl.classList.add('hidden');
+      return;
     }
     // API 키
     var apiKey = localStorage.getItem('atelier_anthropic_api_key');

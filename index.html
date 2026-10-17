@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=385" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=386" as="script">
   <link rel="preload" href="js/app-2-init.js?v=182" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11686,7 +11686,10 @@
               <span class="material-symbols-outlined" style="color:#635b6e;font-size: var(--font-size-h2-lg)">public</span>
               <h3 style="font-size: var(--font-size-body);font-weight:600;color:#121c2a;">🌐 World News (EN)</h3>
             </div>
-            <span id="dash-news-en-source" style="font-size: var(--font-size-tiny);color:#7b7487;">BBC</span>
+            <div style="display:flex;align-items:center;gap: var(--space-2);">
+              <button id="dash-news-en-translate" onclick="translateDashNews()" title="헤드라인 한글 번역 (API 요금 발생)" style="font-size: var(--font-size-tiny);font-weight:700;color:#6d28d9;text-decoration:underline;">번역</button>
+              <span id="dash-news-en-source" style="font-size: var(--font-size-tiny);color:#7b7487;">BBC</span>
+            </div>
           </div>
           <div id="dash-news-en" style="display:flex;flex-direction:column;gap: var(--space-3);font-family:'Pretendard',sans-serif">
             <div style="font-size: var(--font-size-micro);color:#7b7487;font-style:italic;display:flex;align-items:center;gap: var(--space-1);"><span class="material-symbols-outlined animate-spin" style="font-size: var(--font-size-meta)">progress_activity</span>Loading...</div>
@@ -16279,7 +16282,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=385" defer></script>
+<script src="js/app-1-pages.js?v=386" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
