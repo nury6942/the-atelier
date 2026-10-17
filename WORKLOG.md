@@ -1,3 +1,12 @@
+## 2026-10-18 · 아이맥 · 포스타입 자동 동기화를 누리 크롬에서 분리
+
+- 원인: run.sh 가 AppleScript 로 누리 크롬을 조종 → 크롬이 오래 켜져 꼬이면(-1712) 사흘 실패, 크롬 재시작 필요
+- scripts/postype-auto/run.js: 전용 프로필(~/Library/Application Support/atelier-postype/profile) 헤드리스 크롬(playwright-core + 설치된 Chrome)으로 같은 북마클릿 자동 모드 실행. 로그·last-success·알림 그대로
+- 로그인 풀리면: `/usr/local/bin/node "$HOME/Library/Application Support/atelier-postype/run.js" --login` → 뜬 창에서 포스타입 + atelier 구글 로그인 후 ⌘Q
+- 예전 run.sh 는 run-chrome.sh 로 보관 · install.sh 가 plist 를 node run.js 로 바꿈 · 확인 실행 OK (10/01~ 1006건, 전용 프로필엔 워터마크가 없어 첫 회만 월초부터)
+
+---
+
 ## 2026-10-16 (맥북) — AI Brief 빈 사진 잡기
 
 - 첫 자동 실행(클라우드 07시) 정상: 10-16 호가 main 에 푸시됨. 다만 사례·주워 담기 사진이 대부분 비어 있었음

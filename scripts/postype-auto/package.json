@@ -1,0 +1,8 @@
+{
+  "name": "atelier-postype-auto",
+  "private": true,
+  "description": "포스타입 매출 자동 동기화 러너 — install.sh 가 ~/Library/Application Support/atelier-postype 에 복사·설치",
+  "dependencies": {
+    "playwright-core": "1.64.1"
+  }
+}
