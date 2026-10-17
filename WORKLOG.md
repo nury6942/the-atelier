@@ -1,3 +1,10 @@
+## 2026-10-18 · 아이맥 · Job Hunt — 마감일·지난 공고·ALL 목차·글씨 키움 + 매일 07:00 자동 갱신
+
+- 누리: "공고 매일 자동으로, 마감일도 적고 마감되면 빼거나 백업, ALL 안에 카테고리 탭 + 스크롤 하이라이트, 글씨가 작다"
+- 생성 소스(리포 밖 `~/Documents/job-hunt-src/`, iCloud): jobs.json 을 위치 배열 → 이름 붙은 항목으로 바꿈 `{co,flag,title,loc,salary,level,exp,visa,fit,url,tags,posted,deadline,firstSeen,lastChecked}` + 최상위 `checkedAt`. 마감·내려간 공고는 `archive.json` 으로 옮김(지우지 않음) → 화면 맨 아래 접힌 「지난 공고」. 원본은 `bak/*.1018`
+- gen.py: 카드에 "게시 · 마감(7일 이내 빨강, 14일 이내 D-n)", ALL 순서 = TOP5 → 숫자 → **공고(유럽·캐나다·호주)** → PLAYBOOK → CV → BOARDS → ACTION, 유럽 나라별 숫자·확인 날짜 자동, 섹션·장 제목에 `data-nav`. (python3.9 가 긴 한글 줄에서 인코딩 오류 → 첫 줄 `# -*- coding: utf-8 -*-`)
+- job-hunt.html(셸): ALL 일 때만 탭 아래 목차 줄(`data-nav` 를 읽어 자동 생성) · 누르면 그 자리로 · 스크롤하면 지금 칸이 보라색 · 글씨 9~12px → 11~15px (다른 탭 13~14px 에 맞춤)
+- 예약 작업 `job-hunt-daily`(아이맥, 매일 07:00): 새 공고 찾기 · 기존 공고 열려 있는지 확인 · 마감일 기록 · 닫힌 건 archive · gen.py → `firebase database:set /jobHuntData new.json`
 ## 2026-10-18 · 맥북 · 자동 API 호출 끄기 (브리프·여행 추천·뉴스 번역)
 
 - 누리 결정: API 요금은 버튼 눌렀을 때만. 영어 STUDY·ANNIE 리뷰는 앞으로 Claude 구독으로 만들어 크롬으로 Firestore 에 직접 넣음
