@@ -317,15 +317,16 @@
 
   // ── 음성 (Listening) ──
   function stopSpeech(){ try { window.speechSynthesis.cancel(); } catch(e){} }
-  function voiceFor(lang){ var vs=window.speechSynthesis.getVoices()||[]; var pref=vs.filter(function(v){return v.lang===lang;}); var good=pref.filter(function(v){return /premium|enhanced|natural|google/i.test(v.name);}); return good[0]||pref[0]||vs.find(function(v){return /^en/.test(v.lang);})||null; }
+  // 화자별 음성 — js/tts-voice.js 의 atlVoice (장난·네트워크 음성 제외), 두 화자가 같은 목소리 안 되게
+  function castVoices(vmap){ var used=[], out={}; Object.keys(vmap).forEach(function(k){ var v=window.atlVoice?window.atlVoice(vmap[k].lang||'en-GB', used):null; if (v){ used.push(v.name); out[k]=v; } }); return out; }
   function playSection(){
     var R=RUN, s=R.secs[R.cur]; if (!('speechSynthesis' in window)){ toast('이 브라우저는 음성 재생이 안 돼요'); return; }
     if (!R.done && R.played[R.cur]) return;
     stopSpeech(); R.played[R.cur]=true; render();
-    var vmap=s.voices||{};
+    var vmap=s.voices||{}, cast=castVoices(vmap);
     s.script.forEach(function(line){
-      var u=new SpeechSynthesisUtterance(line.text), cfg=vmap[line.who]||{lang:'en-GB'};
-      u.lang=cfg.lang||'en-GB'; var v=voiceFor(u.lang); if (v) u.voice=v; u.rate=cfg.rate||0.95; u.pitch=cfg.pitch||1;
+      var u=new SpeechSynthesisUtterance(line.text), cfg=vmap[line.who]||{lang:'en-GB'}, v=cast[line.who];
+      u.lang=cfg.lang||'en-GB'; if (v){ u.voice=v; u.lang=v.lang; } u.rate=cfg.rate||0.95; u.pitch=cfg.pitch||1;
       window.speechSynthesis.speak(u);
     });
   }

@@ -1,3 +1,10 @@
+## 2026-10-18 · 맥북 · 크롬 읽어주기 음성 고침 (English Review·Study·IELTS 공통)
+
+- 누리: 크롬에서 듣기가 이상하고 사파리는 잘 됨 → 원인: 우리 코드가 lang 만 정하고 voice 를 안 골라서, 크롬은 맥 음성을 이름순으로 받아 en-US 첫 번째 'Albert'(로봇)·'Bad News'·'Bubbles' 같은 장난 음성이나 끊기는 Google 네트워크 음성이 걸림. 사파리는 시스템 기본(Samantha·유나)을 씀
+- 새 js/tts-voice.js: atlVoice(lang, avoid) — 장난·노인·아이 흉내 음성 제외, 고급(Enhanced/Premium)·Siri > 아는 좋은 목소리(Ava·Samantha / Daniel·Kate / Karen·Lee / 유나) > 로컬 > Google 순. atlApplyVoice(u) 로 voice·lang 같이 지정
+- english-study.js(engSpeak·전체 듣기 큐 = Study·ANNIE 리뷰), ielts-app.js(리스닝 화자별, 두 화자 같은 목소리 피함) 둘 다 적용. 실측(미리보기 크롬): en-US Samantha · en-GB Daniel · en-AU Karen · ko 유나
+- 더 자연스럽게: 맥 시스템 설정 › 손쉬운 사용 › 음성 콘텐츠 › 시스템 음성 › 음성 관리에서 'Ava(고급)'·'Daniel(고급)'·'유나(고급)' 받으면 크롬도 자동으로 그걸 고름
+- service-worker v627
 ## 2026-10-18 · 아이맥 · AI Tutor — Annie 리뷰 + IELTS Speaking 모드
 
 - 누리: Annie 리뷰 프롬프트를 적용 + 간단한 오늘의 정리도, IELTS 스피킹 모드도

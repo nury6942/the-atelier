@@ -800,6 +800,7 @@ function engSpeak(text, lang){
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(_esStripHtml(text));
     u.lang = lang || 'en-US';
+    if (window.atlApplyVoice) atlApplyVoice(u, u.lang);   // 크롬: 장난 음성·Google 네트워크 음성 피하기 (js/tts-voice.js)
     u.rate = (lang === 'ko-KR') ? 1.0 : 0.95;
     u.onend = function(){ _esStopKeepAlive(); };
     window.speechSynthesis.speak(u);
@@ -847,6 +848,7 @@ function _esEnqueue(q){
   q.forEach(function(pair, i){
     var u = new SpeechSynthesisUtterance(_esStripHtml(pair[0]));
     u.lang = pair[1];
+    if (window.atlApplyVoice) atlApplyVoice(u, u.lang);
     u.rate = (pair[1] === 'ko-KR') ? 1.0 : 0.95;
     if (i === q.length - 1) u.onend = function(){ _esStopKeepAlive(); };
     window.speechSynthesis.speak(u);
