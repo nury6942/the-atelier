@@ -29,7 +29,13 @@
   }
   async function openArticle(id){
     var it=(RS.index.items||[]).find(function(x){return x.id===id;}); if (!it) return;
-    try { var r=await fetch(it.file+'?v=1'); RS.art=await r.json(); } catch(e){ toast('글을 못 불러왔어요'); return; }
+    try {
+      if (it.private){   // Guardian 처럼 공개 저장소에 못 올리는 글 — 로그인해야 보이는 Firestore readPrivate 에서
+        var d=fb(); if (!d){ toast('로그인해야 볼 수 있는 글이에요'); return; }
+        var snap=await d.collection('readPrivate').doc(it.id).get(); if (!snap.exists){ toast('아직 올라오는 중이에요 — 잠시 뒤에'); return; }
+        RS.art=snap.data(); RS.art.id=it.id;
+      } else { var r=await fetch(it.file+'?v=1'); RS.art=await r.json(); }
+    } catch(e){ toast('글을 못 불러왔어요'); return; }
     RS.view='reader'; RS.sel=null; RS.quizShown={}; RS.paraShown={}; RS.sumShown=false;
     render(); window.scrollTo({top:(document.getElementById('eng-read-view')||{offsetTop:0}).offsetTop-70});
     startTimer();
@@ -102,7 +108,7 @@
   function articleCard(it, big){
     var L=RS.log[it.id], done=L&&L.done, newN=0;
     return '<button class="rd-card" data-open="'+esc(it.id)+'" style="'+(big?'border-top:3px solid #16161A':'')+(done?';opacity:.7':'')+'">'
-      +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="rd-tag" style="background:#16161A;color:#fff">'+esc(it.source)+'</span><span class="rd-tag">'+esc(it.level||'')+'</span><span class="rd-tag" style="background:#F1F1F4;color:#5B5B66">'+esc(it.minutes||'?')+'분 · '+esc(it.topic||'')+'</span>'+(done?'<span class="rd-tag" style="background:#DCFCE7;color:#166534">'+icon('check',13)+' 읽음</span>':L?'<span class="rd-tag" style="background:#FEF3C7;color:#92400E">'+mmss(L.secs)+' 읽는 중</span>':'')+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="rd-tag" style="background:#16161A;color:#fff">'+esc(it.source)+'</span><span class="rd-tag">'+esc(it.level||'')+'</span><span class="rd-tag" style="background:#F1F1F4;color:#5B5B66">'+esc(it.minutes||'?')+'분 · '+esc(it.topic||'')+'</span>'+(it.private?'<span class="rd-tag" style="background:#F1F1F4;color:#5B5B66">'+icon('lock',12)+' 로그인 전용</span>':'')+(done?'<span class="rd-tag" style="background:#DCFCE7;color:#166534">'+icon('check',13)+' 읽음</span>':L?'<span class="rd-tag" style="background:#FEF3C7;color:#92400E">'+mmss(L.secs)+' 읽는 중</span>':'')+'</div>'
       +'<div style="font-size:'+(big?18:15)+'px;font-weight:800;line-height:1.35">'+esc(it.title)+'</div>'
       +(it.gist?'<div style="font-size:13px;color:#475569;line-height:1.55">'+esc(it.gist)+'</div>':'')
       +'<div style="font-size:11.5px;color:#5B5B66;font-weight:600;margin-top:auto">'+esc(it.date)+(it.author?' · '+esc(it.author):'')+'</div></button>';

@@ -612,5 +612,200 @@
   }
  ],
  "summary": "The article argues that fashion lovers can enjoy their hobby without buying too much by restyling what they own, keeping fewer clothes, shopping carefully for quality, renting or sharing, and repairing garments.",
- "gist": "패션을 좋아하면서도 과소비하지 않는 다섯 가지 방법을 소개하는 글.\n옷장 속 옷 재활용, 적게 갖기, 수집가처럼 신중히 사기, 렌탈·공유, 수선을 권한다."
+ "gist": "패션을 좋아하면서도 과소비하지 않는 다섯 가지 방법을 소개하는 글.\n옷장 속 옷 재활용, 적게 갖기, 수집가처럼 신중히 사기, 렌탈·공유, 수선을 권한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Slightly fewer than half of gen Z shoppers buy second-hand clothing.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "Gen Z는 \"this figure increases to just under half\"라고 했으므로 절반보다 조금 적다는 진술이 맞음"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Buying used clothes generally takes the place of fast fashion shopping.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "\"buying used often supplements, rather than replaces, fast fashion habits\" — 대체가 아니라 보충이라고 함"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Renting clothes for a special event usually costs less than buying them.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "대여는 \"occasion wear\"에 유용하고 죄책감을 덜어 준다고만 했을 뿐, 가격 비교는 본문에 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Purchasing second-hand clothing is a much better choice than purchasing new clothing.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자가 \"buying used is far preferential to buying new\"라고 주장함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Shopping only for second-hand clothes removes the risk of overconsumption.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "필자는 \"overconsumption can still be a problem with second-hand clothing\"이라고 함"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 7",
+    "options": [
+     "i  How limited options make choices easier",
+     "ii  The cost of designer garments",
+     "iii  Benefits of a compact, flexible wardrobe",
+     "iv  Avoiding hasty purchases through planning",
+     "v  The environmental impact of textile waste"
+    ],
+    "answer": "iii",
+    "why": "\"a small and versatile wardrobe ... fosters creativity\" — 작고 활용도 높은 옷장의 장점을 다룸"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 13",
+    "options": [
+     "i  How limited options make choices easier",
+     "ii  The cost of designer garments",
+     "iii  Benefits of a compact, flexible wardrobe",
+     "iv  Avoiding hasty purchases through planning",
+     "v  The environmental impact of textile waste"
+    ],
+    "answer": "i",
+    "why": "\"people tend to find it easier to make a choice when they have less to choose from\" — 선택지가 적을수록 고르기 쉽다는 내용"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 17",
+    "options": [
+     "i  How limited options make choices easier",
+     "ii  The cost of designer garments",
+     "iii  Benefits of a compact, flexible wardrobe",
+     "iv  Avoiding hasty purchases through planning",
+     "v  The environmental impact of textile waste"
+    ],
+    "answer": "iv",
+    "why": "\"Planning ahead limits the likelihood of making an impulse purchase\"와 \"Taking 48 hours\" — 계획으로 충동구매를 막는 내용"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions keeping a photographic record of successful outfits?",
+    "options": [
+     "6",
+     "9",
+     "10",
+     "14"
+    ],
+    "answer": "10",
+    "why": "\"snap quick mirror photos ... a personal outfit catalogue\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions decorative ways of repairing damaged clothes?",
+    "options": [
+     "22",
+     "24",
+     "25",
+     "26"
+    ],
+    "answer": "25",
+    "why": "\"contrasting thread colours or turning a hole into a shape like a star\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the article, why does a small wardrobe encourage creativity?",
+    "options": [
+     "A It contains only high-quality items",
+     "B The brain has to solve styling problems with few pieces",
+     "C It reduces the time spent shopping",
+     "D It makes it easier to follow trends"
+    ],
+    "answer": "B",
+    "why": "\"your brain must solve styling puzzles with limited items\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What does the writer suggest for people who prefer not to pay for rental clothing?",
+    "options": [
+     "A Buying second-hand items instead",
+     "B Sharing their wardrobe with a friend",
+     "C Repairing their old garments",
+     "D Searching for ideas on Pinterest"
+    ],
+    "answer": "B",
+    "why": "\"If you don't want to spend on renting, try sharing your wardrobe with a friend\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Owning too many garments may cause ____, where a decision becomes harder than our minds can handle.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "choice overload"
+    ],
+    "why": "\"Having too many clothes can lead to choice overload\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Renting is especially useful for ____ that might otherwise be worn only once.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "occasion wear"
+    ],
+    "why": "\"It's especially helpful for occasion wear you may otherwise only use once\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "On which platforms can people find sewing tutorials?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "YouTube or TikTok"
+    ],
+    "why": "\"look for sewing tutorials on YouTube or TikTok\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    6,
+    12,
+    16
+   ]
+  }
+ }
 }

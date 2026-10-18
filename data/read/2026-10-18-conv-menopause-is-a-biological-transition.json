@@ -631,5 +631,200 @@
   }
  ],
  "summary": "Although greater openness about menopause has helped women, it has also produced a fast-growing market selling often unproven products to vulnerable consumers, so stronger regulation and evidence-based guidance are needed.",
- "gist": "폐경이 금기에서 벗어나 공론화된 건 진전이지만, 동시에 효과가 불확실한 상품을 파는 거대한 시장이 됐다는 글.\n여성을 '책임지는 소비자'로 만드는 마케팅의 위험과 규제·과학적 근거의 필요성을 다룸."
+ "gist": "폐경이 금기에서 벗어나 공론화된 건 진전이지만, 동시에 효과가 불확실한 상품을 파는 거대한 시장이 됐다는 글.\n여성을 '책임지는 소비자'로 만드는 마케팅의 위험과 규제·과학적 근거의 필요성을 다룸.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "More than a billion women around the world are expected to be menopausal by 2030.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "[13] \"more than one billion women worldwide will be menopausal by 2030\"이라고 나옵니다."
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "In France, menopausal hormone therapy can be obtained without a doctor's prescription.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "[16] \"This treatment is available by prescription\"이고 \"strictly regulated\"라고 하므로 처방 없이는 받을 수 없습니다."
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The parliamentary report submitted in 2025 led to new French laws on supplement advertising.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[25] \"A parliamentary report was even submitted to the French government in 2025\"까지만 나오고, 그 결과로 법이 생겼는지는 나오지 않습니다."
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The writer considers the mere existence of commercial menopause products to be the main problem.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "[32] \"The problem is not the existence of commercial solutions\"라며 핵심은 \"scientific validity\"라고 합니다."
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The writer regards greater openness about menopause as a significant advance.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "[44] \"breaking the silence around menopause represents major progress\"라고 씁니다."
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 13",
+    "options": [
+     "i  Income differences shape access to care",
+     "ii  Population change drives commercial interest",
+     "iii  Online sharing eases a feeling of loneliness",
+     "iv  Government bans on misleading products",
+     "v  The ancient origins of a medical term"
+    ],
+    "answer": "ii",
+    "why": "[13] \"Economic interest in menopause is partly explained by demographic changes\"가 문단의 중심 내용입니다."
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 26",
+    "options": [
+     "i  Income differences shape access to care",
+     "ii  Population change drives commercial interest",
+     "iii  Online sharing eases a feeling of loneliness",
+     "iv  Government bans on misleading products",
+     "v  The ancient origins of a medical term"
+    ],
+    "answer": "iii",
+    "why": "[26] 여성들이 경험을 나누며 \"helping to reduce the sense of isolation\"한다는 내용입니다."
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 37",
+    "options": [
+     "i  Income differences shape access to care",
+     "ii  Population change drives commercial interest",
+     "iii  Online sharing eases a feeling of loneliness",
+     "iv  Government bans on misleading products",
+     "v  The ancient origins of a medical term"
+    ],
+    "answer": "i",
+    "why": "[37] \"Women with higher incomes have greater access to specialist medical consultations\"라는 사회적 불평등 이야기입니다."
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a sweet treat advertised as easing symptoms?",
+    "options": [
+     "15",
+     "33",
+     "39",
+     "41"
+    ],
+    "answer": "39",
+    "why": "[39] \"promoting chocolates that supposedly relieve menopause symptoms\"라고 나옵니다."
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions where a term comes from in an ancient language?",
+    "options": [
+     "5",
+     "9",
+     "11",
+     "27"
+    ],
+    "answer": "9",
+    "why": "[9] \"climacteric\"이 \"may derive from the Greek word 'klimax'\"라고 설명합니다."
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the study described in paragraph 10, menopause markets",
+    "options": [
+     "A simply satisfy needs that already existed.",
+     "B influence what is considered a menopausal problem.",
+     "C are supervised mainly by gynaecologists.",
+     "D have been the main reason the taboo disappeared."
+    ],
+    "answer": "B",
+    "why": "[10] 메노마켓은 \"do not merely respond to pre-existing needs\"이고 \"influencing what is defined as a menopausal problem\"이라고 합니다."
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What risk does the writer link to the emphasis on personal responsibility?",
+    "options": [
+     "A It discourages women from seeking information.",
+     "B It makes hormone therapy harder to obtain.",
+     "C It draws attention away from collective responsibilities.",
+     "D It reduces women's understanding of their bodies."
+    ],
+    "answer": "C",
+    "why": "[21] \"it tends to shift attention away from collective responsibilities and towards personal ones\"라고 합니다."
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Some clothing is now designed to reduce the discomfort of hot ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "flushes"
+    ],
+    "why": "[15] \"clothing designed to alleviate the discomfort of hot flushes\"에서 나옵니다."
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "By swapping stories and advice online, women help lessen the sense of ____ that often comes with menopause.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "isolation"
+    ],
+    "why": "[26] \"helping to reduce the sense of isolation associated with menopause\"에서 나옵니다."
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Who appeared in Kate Muir's documentaries in the United Kingdom?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "Davina McCall"
+    ],
+    "why": "[24] \"documentaries by Kate Muir featuring Davina McCall\"이라고 나옵니다."
+   }
+  ],
+  "headings": {
+   "paras": [
+    12,
+    25,
+    36
+   ]
+  }
+ }
 }

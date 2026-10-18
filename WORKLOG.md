@@ -1,3 +1,18 @@
+## 2026-10-19 · 맥북 · IELTS 전문 사이트화 1차 — 자동 채점 · 실제 시험 화면 · 실전 모의고사 · 받아쓰기 · 유형 드릴 · 오답노트
+
+- **AI 자동 채점(0원)**: 사이트에서 'AI 채점 요청' → Firestore ieltsGrading(pending) → 맥북 launchd com.nuri.ielts-grade 5분마다 scripts/ielts-grade/run.sh → grade.py 가 **열려 있는 아뜰리에 크롬 탭**으로 읽고(가계부 자동화와 같은 osascript 방식) claude -p(구독)로 공식 기준 채점 → result(밴드·4기준·인용·틀린 곳·고쳐 쓴 글·다음에 고칠 3가지) 저장. 한 건 약 40초. 필요: 맥북 크롬에 아뜰리에 탭 + '보기›개발자›Apple Events의 JavaScript 허용'. 화면 js/ielts-grade.js(renderResult·renderStatus·watch)
+  - Writing › AI 채점 탭(최근 밴드 막대 + 결과 펼치기), 시험처럼 쓰기에 'AI 채점 요청', 말하기 Part 2 는 말하는 동안 브라우저 받아쓰기 → '채점 요청'. 채점 끝나면 알림
+- **실제 컴퓨터 시험 화면**: 아래 문제 번호 바(답함 검정·표시 주황·채점 후 초록/빨강, 누르면 그 문제로), 문제마다 깃발(다시 볼 문제), 지문 드래그 하이라이트(누르면 지움, 섹션 바꿔도 유지)
+- **실전 모의고사 2시간 40분**(Home): 듣기 전체 → 읽기 60분 → 쓰기 60분(편지+에세이 한 화면, 단어 수, 시간 끝나면 자동 제출) → 쓰기 자동 채점 요청 · 기록 kind:'fullmock'
+- **받아쓰기**(Listening): 음성 파일을 줄 단위로 끊어 듣고 쓰기, 0.75배속, 맞음/빠짐/바꿈 표시, 줄마다 정확도 칸
+- **유형 드릴**(Reading): Read 글마다 IELTS 문제 15개(scripts/read/fetch.mjs 가 claude -p 로 생성·검사, 기존 3편 채움) → 약한 유형 순 타일 → 그 유형만 풀기 · '글 한 편 통째로'
+- **오답노트**(Weak Spots): 틀린 문제를 유형별로 모아 다시 풀기, 맞히면 빠짐(records.wrong[].fixed)
+- **예상 밴드**: Home 영역 칸 = 최근 3회 평균(쓰기 = (편지 + 에세이×2)/3, AI 채점 결과 포함)
+- 진행 중: 공식 채점 기준(6→7 차이)·이번 시즌 기출(js/ielts-official.js·ielts-topics.js — 화면 연결은 해 둠), Guardian Long Read(로그인 전용 Firestore readPrivate — 화면 쪽 연결 해 둠)
+- service-worker v1641
+
+---
+
 ## 2026-10-19 · 맥북 · English › Read 탭 — 매일 긴 글 읽기
 
 - 누리: "긴 글 읽는 습관을 실제로 키우게 사이트에 — 모르는 단어 하이라이트·예문·내 걸로 만드는 공부법". 위젯 시안 컨펌 후 제작

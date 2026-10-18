@@ -562,5 +562,201 @@
   }
  ],
  "summary": "Although Americans worry about food costs, they reject cheap ‘ugly’ or upcycled food because they doubt its quality, so the rescue-food market succeeds mainly when smart labels and logos convince shoppers the food is genuinely good.",
- "gist": "미국인들이 장바구니 물가에 스트레스받으면서도 못생긴·남은 음식을 버리는 이유는 '품질 의심' 때문이라는 글.\n할인이나 환경 메시지보다 '맛·품질이 같다'는 라벨·로고 신호가 구매를 이끈다고 주장함."
+ "gist": "미국인들이 장바구니 물가에 스트레스받으면서도 못생긴·남은 음식을 버리는 이유는 '품질 의심' 때문이라는 글.\n할인이나 환경 메시지보다 '맛·품질이 같다'는 라벨·로고 신호가 구매를 이끈다고 주장함.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Misfits Market sells the food it rescues at an average of more than half off the usual price.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "평균 할인율은 50%가 아니라 35% — \"sells it at an average discount of 35%\""
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Too Good To Go works with several hundred branches of one supermarket chain.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "한 체인의 수백 개 매장과 제휴 — \"partnerships with more than 530 Whole Foods stores\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Flashfood was first created specifically for people who receive public food assistance.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "\"directs shoppers, including those on public food assistance\"라고만 하고, 처음 누구를 위해 만들었는지는 나오지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The writer believes shoppers must become more concerned about the environment for the rescue economy to succeed.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "필자는 반대로 말함 — \"doesn't require shoppers to care more about the planet. It requires them to believe the food is good\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The writer claims that a well-designed logo can change consumers' opinions of a product.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자의 주장 — \"A logo that looks credible, explains itself and signals care can change what shoppers believe\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 4",
+    "options": [
+     "i  Generational differences in attitudes to upcycled products",
+     "ii  Testing whether visual branding can shift opinions",
+     "iii  Online platforms overtaking physical stores",
+     "iv  Quality rather than cost driving shopper choices",
+     "v  Government targets for reducing waste"
+    ],
+    "answer": "iv",
+    "why": "가격보다 품질을 중시한다는 내용 — \"much less fixated on prices... Instead, they care about quality\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 16",
+    "options": [
+     "i  Generational differences in attitudes to upcycled products",
+     "ii  Testing whether visual branding can shift opinions",
+     "iii  Online platforms overtaking physical stores",
+     "iv  Quality rather than cost driving shopper choices",
+     "v  Government targets for reducing waste"
+    ],
+    "answer": "i",
+    "why": "세대별 반응 차이 — \"Generational attitudes differ on this point\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 20",
+    "options": [
+     "i  Generational differences in attitudes to upcycled products",
+     "ii  Testing whether visual branding can shift opinions",
+     "iii  Online platforms overtaking physical stores",
+     "iv  Quality rather than cost driving shopper choices",
+     "v  Government targets for reducing waste"
+    ],
+    "answer": "ii",
+    "why": "로고 디자인 실험 — \"tested whether a simple logo could shift shoppers' perceptions\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a specific example of an expensive upcycled product?",
+    "options": [
+     "12",
+     "13",
+     "15",
+     "17"
+    ],
+    "answer": "15",
+    "why": "비싼 업사이클 제품의 구체적 예 — \"this small bag of specialty flour going for $7\" (12번은 가루를 언급하지만 가격은 없음)"
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions the proportion of worldwide emissions caused by discarded food?",
+    "options": [
+     "2",
+     "5",
+     "9",
+     "23"
+    ],
+    "answer": "2",
+    "why": "전 세계 배출량 중 음식물 쓰레기 비중 — \"8%-10% of carbon emissions globally result from food waste\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the article, why does labelling misshapen produce as \"ugly\" make it more appealing?",
+    "options": [
+     "A It persuades shoppers that the produce is cheaper.",
+     "B It indicates that the only problem is the produce's appearance.",
+     "C It attracts shoppers who care about the environment.",
+     "D It makes shoppers feel better about themselves."
+    ],
+    "answer": "B",
+    "why": "흠이 겉모양뿐이라는 신호 — \"it signals that the only flaw is cosmetic\" (D는 자존감 메시지를 다룬 다른 연구 내용)"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What does the writer say about Gen X shoppers?",
+    "options": [
+     "A They buy groceries online more often than other generations.",
+     "B They are the most enthusiastic buyers of upcycled foods.",
+     "C They tend to cook at home and examine food carefully in shops.",
+     "D They are mainly persuaded by environmental benefits."
+    ],
+    "answer": "C",
+    "why": "집에서 요리하고 매장에서 꼼꼼히 살핌 — \"preferring instead to cook for themselves... scrutinize foods more closely in the store\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "When misfit produce is heavily discounted, many shoppers assume the low price indicates ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "poor quality"
+    ],
+    "why": "싼 가격을 품질이 나쁘다는 뜻으로 받아들임 — \"assume that the low price reflects poor quality\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "To gain Upcycled Certified status, companies must pass an ____ of their supply chain.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "audit"
+    ],
+    "why": "인증 조건 — \"if they pass an audit of their supply chain\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "From what kind of retailers do Gen X skeptics need an assurance of quality?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "brick-and-mortar retailers",
+     "brick-and-mortar"
+    ],
+    "why": "온라인이 아닌 오프라인 매장 — \"assurance of quality from brick-and-mortar retailers they trust\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    3,
+    15,
+    19
+   ]
+  }
+ }
 }
