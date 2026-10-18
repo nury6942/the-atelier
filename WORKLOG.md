@@ -7,7 +7,7 @@
 - 튜터 성격(시스템 프롬프트): 압박 없이 친구처럼, 말 끊지 않고 고쳐 말해주기(recast), 몇 턴에 한 번만 "Quick tip"
 - 최근 대화는 1단계라 이 브라우저 localStorage 에만(`atelier_tutor_history_v1`) → 2단계에서 Firestore + 대화 후 교정 리포트
 - **막힌 점: 아직 실제 대화 테스트 못 함.** GEMINI_API_KEY 시크릿 등록 + `firebase deploy --only functions:tutorToken` 필요. Browser pane 은 마이크가 막혀 있어 화면·오류 문구만 확인
-- service-worker CACHE_NAME v607
+- service-worker CACHE_NAME v609 (다른 세션이 v608 사용)
 
 ---
 

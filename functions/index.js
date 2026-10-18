@@ -476,3 +476,48 @@ exports.flightScanShot = onRequest(
     }
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ (2026-10-18) AI Tutor — Gemini Live 임시 토큰 발급
+//    tutor.html 이 브라우저에서 Gemini Live(WebSocket)에 바로 붙는데,
+//    GEMINI_API_KEY 를 페이지에 넣으면 GitHub Pages 에 공개된다.
+//    → 이 함수가 키 대신 30분짜리 1회용 토큰을 만들어 준다.
+//    키 등록: firebase functions:secrets:set GEMINI_API_KEY
+// ══════════════════════════════════════════════════════════════════════
+const geminiApiKey = defineSecret("GEMINI_API_KEY");
+
+exports.tutorToken = onRequest(
+  { secrets: [geminiApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 20 },
+  async (req, res) => {
+    corsHeaders(res);
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+    const token = req.headers["x-atelier-token"];
+    if (!token || token !== atelierAuthToken.value()) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+      const now = Date.now();
+      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/auth_tokens", {
+        method: "POST",
+        headers: { "x-goog-api-key": geminiApiKey.value(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uses: 1,
+          expireTime: new Date(now + 30 * 60 * 1000).toISOString(),
+          newSessionExpireTime: new Date(now + 2 * 60 * 1000).toISOString(),
+        }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.name) {
+        logger.error("tutorToken upstream error", { status: r.status, data });
+        return res.status(502).json({ error: "Token create failed", message: (data.error && data.error.message) || r.status });
+      }
+      return res.status(200).json({ token: data.name });
+    } catch (error) {
+      logger.error("tutorToken error:", error);
+      return res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  }
+);
