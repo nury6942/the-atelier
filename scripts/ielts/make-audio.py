@@ -26,6 +26,10 @@ DEFAULT = {  # 언어별 (여, 남)
     'en-US': ('en-US-AvaNeural', 'en-US-AndrewNeural'),
     'en-IE': ('en-IE-EmilyNeural', 'en-IE-ConnorNeural'),
 }
+SPARE = {  # 같은 언어·성별 화자가 둘이면 쓰는 두 번째 목소리
+    'en-GB': {'f': 'en-GB-LibbyNeural', 'm': 'en-GB-ThomasNeural'},
+    'en-US': {'f': 'en-US-EmmaNeural', 'm': 'en-US-BrianNeural'},
+}
 PAUSE_LINE = 0.55   # 말 사이 쉼(초)
 PAUSE_START = 1.0
 
@@ -43,9 +47,12 @@ def cast_for(sec):
         if who in c:
             continue
         f, m = DEFAULT.get(cfg.get('lang', 'en-GB'), DEFAULT['en-GB'])
-        pick = f if (cfg.get('pitch') or 1) >= 1.1 else m
+        # 은행에 g:'f'|'m'(성별)이 있으면 그걸, 없으면 음높이로 짐작
+        female = cfg.get('g') == 'f' if cfg.get('g') in ('f', 'm') else (cfg.get('pitch') or 1) >= 1.1
+        pick = f if female else m
         if pick in used:
-            pick = m if pick == f else f
+            alt = SPARE.get(cfg.get('lang', 'en-GB'), {}).get('f' if female else 'm')
+            pick = alt if alt and alt not in used else (m if pick == f else f)
         c[who] = pick
         used.add(pick)
     return c
