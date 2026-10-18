@@ -87,7 +87,7 @@
     .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .card-shadow { box-shadow: 0px 12px 32px rgba(25,28,29,0.04); }
+    .card-shadow { box-shadow: none; border: 1px solid #ECECF0; }
 
     /* Modal */
     .modal-overlay { display: none; position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
@@ -105,6 +105,7 @@
     *,*::before,*::after{border-radius:0 !important}
     .animate-spin{border-radius:9999px !important}
     .shadow-sm,.shadow,.shadow-md,.shadow-lg,.shadow-xl,[class*="shadow-["]{box-shadow:none !important}
+    header.card-shadow,nav.fixed,header.fixed,.sticky{box-shadow:none !important;border-width:0 0 1px 0}
 </style>
 
   <!-- Firebase -->
