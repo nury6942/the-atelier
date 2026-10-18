@@ -784,6 +784,7 @@ function openAnnieReview(id){
   var P = window.parent;
   if (P === window || !P.navigate) return toast('the-atelier 의 English 탭 리뷰 목록에서 볼 수 있어요');
   P.navigate('english');
+  if (P.switchEngTab) P.switchEngTab('annie');              // AI Tutor 탭 → Annie 탭(리뷰 목록)으로
   (async function(){
     try { if (P.loadEnglishSessions) await P.loadEnglishSessions(); } catch(e){}
     try { P.openSessionDetail(id); } catch(e){ toast('English 탭 리뷰 목록에서 열어 주세요'); }

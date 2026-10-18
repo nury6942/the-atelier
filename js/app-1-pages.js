@@ -21823,6 +21823,11 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
+    // AI Tutor 는 2026-10-18 부터 English 안의 탭 — 예전 링크·저장된 마지막 페이지('tutor')도 그리로
+    if (pageId === 'tutor'){
+      try { localStorage.setItem('atelier_eng_tab', 'tutor'); } catch(e){}
+      navigate('english'); if (window.switchEngTab) window.switchEngTab('tutor'); return;
+    }
     // Dashboard·Year Matrix 는 2026-10-18 에 메뉴에서 뺐음(데이터·캘린더 연동 코드는 유지) → 들어오면 Home 으로
     if (pageId === 'dashboard' || pageId === 'matrix') pageId = 'home';
     // Home 에서만 상단바를 숨기고 그림을 화면 전체로 (index.html .atl-home 참고)
@@ -28322,7 +28327,7 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var views = { annie:'eng-annie-view', study:'eng-study-view', ielts:'eng-ielts-view' };
+    var views = { annie:'eng-annie-view', study:'eng-study-view', ielts:'eng-ielts-view', tutor:'eng-tutor-view' };
     if (!views[tab]) tab = 'annie';
     if (!document.getElementById('eng-annie-view')) return;
     Object.keys(views).forEach(function(k){
@@ -28335,6 +28340,10 @@
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
     if (tab === 'study' && typeof loadEnglishStudy === 'function') loadEnglishStudy();
     if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
+    if (tab === 'tutor'){                       // AI Tutor 는 탭을 처음 열 때만 불러옴(마이크·카메라 쓰는 페이지라)
+      var fr = document.getElementById('eng-tutor-frame');
+      if (fr && !fr.getAttribute('src')) fr.setAttribute('src', './tutor.html');
+    }
   };
   // STUDY 파이프라인(생성/저장/렌더/오디오)은 다음 단계에서 연결 — 지금은 골격만
   if (!window.openStudyCreateModal) window.openStudyCreateModal = function(){

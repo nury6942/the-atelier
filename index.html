@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=395" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=396" as="script">
   <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11507,10 +11507,6 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">translate</span>
       <span class="text-[13.5px] font-medium">English</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-tutor" onclick="navigate('tutor'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">record_voice_over</span>
-      <span class="text-[13.5px] font-medium">AI Tutor</span>
-    </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-roadmap" onclick="navigate('roadmap'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">route</span>
       <span class="text-[13.5px] font-medium">Roadmap</span>
@@ -11631,7 +11627,6 @@
           <div class="atl-home-col">
             <h4>Growth</h4>
             <a href="#" onclick="navigate('english');return false;">English</a>
-            <a href="#" onclick="navigate('tutor');return false;">AI Tutor</a>
             <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
             <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
             <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
@@ -15318,6 +15313,7 @@
         <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="travel-tab-btn">Annie</button>
         <button id="eng-tab-study" onclick="switchEngTab('study')" class="travel-tab-btn">Study</button>
         <button id="eng-tab-ielts" onclick="switchEngTab('ielts')" class="travel-tab-btn">IELTS</button>
+        <button id="eng-tab-tutor" onclick="switchEngTab('tutor')" class="travel-tab-btn">AI Tutor</button>
       </div>
 
       <!-- ══════════ ANNIE 뷰 (회화 수업 리뷰 — 기존) ══════════ -->
@@ -15437,6 +15433,12 @@
       </div>
 
       </div><!-- /eng-annie-view -->
+
+      <!-- ══════════ AI TUTOR 뷰 (tutor.html — Oliver 와 영상통화. 탭을 처음 열 때 불러옴) ══════════ -->
+      <div id="eng-tutor-view" style="display:none">
+        <iframe id="eng-tutor-frame" title="AI Tutor" allow="microphone; camera; display-capture; autoplay"
+          style="width:100%;height:calc(100dvh - 170px);min-height:620px;border:1px solid #ECECF0;display:block;background:#fff"></iframe>
+      </div>
 
       <!-- ══════════ IELTS 뷰 (내용은 js/ielts-page.js 의 IELTS 객체) ══════════ -->
       <div id="eng-ielts-view" style="display:none"></div>
@@ -16424,7 +16426,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=395" defer></script>
+<script src="js/app-1-pages.js?v=396" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17261,10 +17263,6 @@
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
     <script>/* 매일 바뀌는 페이지라 브라우저 캐시(10분)에 옛 화면이 남지 않게 매번 새 주소로 */
       document.getElementById('aibrief-frame').src='./ai-brief.html?t='+Date.now();</script>
-  </div>
-  <div id="page-tutor" class="page" style="display:none;padding:0;background:#fff">
-    <iframe src="./tutor.html" title="AI Tutor" loading="lazy" allow="microphone; camera; display-capture; autoplay"
-      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
   </div>
   <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"

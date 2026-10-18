@@ -1,3 +1,13 @@
+## 2026-10-18 · 아이맥 · AI Tutor → English 안의 탭으로
+
+- 누리: AI Tutor 를 English 안에 새 탭으로 → English 탭 줄 Annie · Study · IELTS · **AI Tutor**. `#eng-tutor-view` 안 iframe(마이크·카메라·화면공유 허용), 탭을 처음 열 때만 tutor.html 불러옴
+- 사이드바 GROWTH 의 AI Tutor 항목·Home 목차 링크·`#page-tutor` 삭제. navigate('tutor')(예전 링크·마지막 페이지 기억)는 English + AI Tutor 탭으로 돌림(atelier_eng_tab='tutor' 저장)
+- tutor.html: 리뷰 "열기" → English 의 Annie 탭으로 바꾼 뒤 그 리뷰 엶
+- 1440×860 에서 iframe 1216×690, 화면 안에 다 들어옴
+- app-1-pages.js v396 · service-worker CACHE_NAME v629
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — 에어팟 낄 때 내 목소리 안 가는 문제
 
 - 원인 추정: 마이크 AudioContext 를 16kHz 로 강제했었음 → 에어팟(블루투스, 통화 모드 16/24kHz) 처럼 속도가 다른 마이크에서 소리가 안 들어올 수 있음. 실제 누리 기기에서 재현은 못 함
