@@ -11510,6 +11510,10 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">translate</span>
       <span class="text-[13.5px] font-medium">English</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-tutor" onclick="navigate('tutor'); return false;">
+      <span class="material-symbols-outlined text-[19px] transition-colors">record_voice_over</span>
+      <span class="text-[13.5px] font-medium">AI Tutor</span>
+    </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-roadmap" onclick="navigate('roadmap'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">route</span>
       <span class="text-[13.5px] font-medium">Roadmap</span>
@@ -11565,12 +11569,12 @@
   </header>
 
   <div class="pt-16 flex-1">
-  <!-- ═══════ Home: 그림 한 장 + 전체 섹션 (그림: assets/home/home-ink.webp 판화 바다 — Codex 생성) ═══════ -->
+  <!-- ═══════ Home: 그림 한 장 + 전체 섹션 (그림: assets/home/home-oil.webp 유화 꽃밭·이젤 — Codex 생성) ═══════ -->
   <style>
     /* Home은 상단바·여백 없이 그림이 화면 전체를 채움 (body.atl-on-home 은 navigate()가 붙임) */
-    body.atl-on-home #main-header{display:none}
+    body.atl-on-home #main-header,body.atl-on-home #sidebar,body.atl-on-home #sidebar-overlay{display:none!important}
     #page-home{position:fixed;inset:0;z-index:30;overflow-y:auto}
-    .atl-home{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;color:#fff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;background:#0142a7 url('assets/home/home-ink.webp') center bottom/cover no-repeat}
+    .atl-home{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;color:#fff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;background:#083dbb url('assets/home/home-oil.webp') center 30%/cover no-repeat}
     .atl-home-tools{position:absolute;top:18px;right:20px;display:flex;gap:4px;z-index:2}
     .atl-home-tools button{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;transition:background .15s,color .15s}
     .atl-home-tools button:hover{background:rgba(255,255,255,0.14);color:#fff}
@@ -11584,7 +11588,7 @@
     .atl-home-col a{display:block;padding:4px 0;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,0.72);text-decoration:none;transition:color .15s}
     .atl-home-col a:hover{color:#fff}
     @media (max-width:900px){
-      .atl-home{padding-bottom:300px;background:url('assets/home/home-ink.webp') 62% bottom/240% auto no-repeat,#0142a7}
+      .atl-home{padding-bottom:430px;background:url('assets/home/home-oil.webp') 58% bottom/240% auto no-repeat,url('assets/home/home-oil.webp') 20% top/auto 1500px no-repeat,#083dbb}
       .atl-home-tools{top:10px;right:10px}
       .atl-home-top{grid-template-columns:repeat(2,1fr);gap:24px 20px;padding:56px 24px 0}
       .atl-home-top>div:first-child{grid-column:1/-1}
@@ -11594,7 +11598,6 @@
     <div class="atl-home-wrap">
       <section class="atl-home" id="atl-home">
         <div class="atl-home-tools">
-          <button type="button" aria-label="메뉴" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
           <button type="button" aria-label="설정" onclick="openSettingsPanel()"><span class="material-symbols-outlined">settings</span></button>
         </div>
         <div class="atl-home-top">
@@ -11629,6 +11632,7 @@
           <div class="atl-home-col">
             <h4>Growth</h4>
             <a href="#" onclick="navigate('english');return false;">English</a>
+            <a href="#" onclick="navigate('tutor');return false;">AI Tutor</a>
             <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
             <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
             <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
@@ -17252,6 +17256,10 @@
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
     <script>/* 매일 바뀌는 페이지라 브라우저 캐시(10분)에 옛 화면이 남지 않게 매번 새 주소로 */
       document.getElementById('aibrief-frame').src='./ai-brief.html?t='+Date.now();</script>
+  </div>
+  <div id="page-tutor" class="page" style="display:none;padding:0;background:#fff">
+    <iframe src="./tutor.html" title="AI Tutor" loading="lazy" allow="microphone; camera; display-capture; autoplay"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
   </div>
   <div id="page-jobhunt" class="page" style="display:none;padding:0;background:#fff">
     <iframe src="./job-hunt.html" title="Job Hunt" loading="lazy"

@@ -1,3 +1,16 @@
+## 2026-10-18 · 아이맥 · AI Tutor 1단계 — Gemini Live 영어 화상 회화 화면
+
+- 누리: 스레드 @simon.dsgn 의 Fluentutor(링글 같은 AI 화상 영어) 보고 "우리도 이 정도로" → 새 페이지 `tutor.html`, 사이드바 GROWTH 에 **AI Tutor**(English 아래), Home 목차에도 링크. index 에는 iframe(allow=microphone·camera·display-capture)
+- 화면: 왼쪽 사이드바(새 대화·최근 대화 / 학습 프로필·저장한 표현·복습은 '곧'), 튜터 Emma 아바타, "무엇에 대해 영어로 대화해볼까요?", 모드 3개(프리토킹·면접 연습·포트폴리오 설명), 주제 카드 3장(다른 주제로 섞기), 시작 버튼, 오른쪽 위 MODEL·VOICE 선택
+- 대화 중: 마이크 끄기·카메라·화면 공유·끝내기, 실시간 자막(내 말·튜터 말), 글로 보내기 칸, 타이머. 카메라/화면은 1초에 1장 JPEG 로 보냄
+- 연결: 브라우저 → Gemini Live WebSocket 직접(BidiGenerateContentConstrained). API 키는 새 함수 `tutorToken` 이 서버에서만 쓰고 30분짜리 1회용 토큰만 내려줌. ATELIER 토큰으로 막음. ~10분마다 끊기는 연결은 sessionResumption 핸들 + 새 토큰으로 이어 붙임, 대화 길이는 contextWindowCompression 으로 무제한
+- 튜터 성격(시스템 프롬프트): 압박 없이 친구처럼, 말 끊지 않고 고쳐 말해주기(recast), 몇 턴에 한 번만 "Quick tip"
+- 최근 대화는 1단계라 이 브라우저 localStorage 에만(`atelier_tutor_history_v1`) → 2단계에서 Firestore + 대화 후 교정 리포트
+- **막힌 점: 아직 실제 대화 테스트 못 함.** GEMINI_API_KEY 시크릿 등록 + `firebase deploy --only functions:tutorToken` 필요. Browser pane 은 마이크가 막혀 있어 화면·오류 문구만 확인
+- service-worker CACHE_NAME v607
+
+---
+
 ## 2026-10-18 · 아이맥 · 공통 디자인 4단계 — 로고 코발트 · Packing · Maps
 
 - 로고(icons/icon-512·192·180, favicon-32·16): 같은 그림에서 보라 색상만 코발트로 옮김(Pillow, 색상 −41°·채도↑, 모양·밝기 유지). icon.svg 그라데이션도 코발트, index.html 아이콘 ?v=2 → 3, theme-color·manifest theme_color #7c3aed → #1F4BD8
