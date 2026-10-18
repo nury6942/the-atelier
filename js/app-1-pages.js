@@ -28340,6 +28340,8 @@
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
     if (tab === 'study' && typeof loadEnglishStudy === 'function') loadEnglishStudy();
     if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
+    var pe = document.getElementById('page-english');
+    if (pe) pe.classList.toggle('eng-tutor-on', tab === 'tutor');   // AI Tutor 는 화면 꽉 차게
     if (tab === 'tutor'){                       // AI Tutor 는 탭을 처음 열 때만 불러옴(마이크·카메라 쓰는 페이지라)
       var fr = document.getElementById('eng-tutor-frame');
       if (fr && !fr.getAttribute('src')) fr.setAttribute('src', './tutor.html');

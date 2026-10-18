@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=396" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=397" as="script">
   <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -4935,6 +4935,11 @@
     @media (min-width: 769px) {
       #ref-editor-back-mobile { display: none !important; }
     }
+
+    /* ===== English › AI Tutor 탭: 화면 꽉 차게 (가운데 1280px 제한·좌우 여백 해제) ===== */
+    #page-english.eng-tutor-on .page-content-wrap { max-width: none !important; padding: 10px 16px 0 !important; }
+    #page-english.eng-tutor-on .atl-tabs { margin-bottom: 10px !important; }
+    #eng-tutor-frame { width: 100%; height: calc(100dvh - 64px - 62px); min-height: 560px; border: 1px solid #ECECF0; display: block; background: #fff; }
 
     /* ===== Annie (English) 모바일 대응 ===== */
     @media (max-width: 768px) {
@@ -15436,8 +15441,7 @@
 
       <!-- ══════════ AI TUTOR 뷰 (tutor.html — Oliver 와 영상통화. 탭을 처음 열 때 불러옴) ══════════ -->
       <div id="eng-tutor-view" style="display:none">
-        <iframe id="eng-tutor-frame" title="AI Tutor" allow="microphone; camera; display-capture; autoplay"
-          style="width:100%;height:calc(100dvh - 170px);min-height:620px;border:1px solid #ECECF0;display:block;background:#fff"></iframe>
+        <iframe id="eng-tutor-frame" title="AI Tutor" allow="microphone; camera; display-capture; autoplay"></iframe>
       </div>
 
       <!-- ══════════ IELTS 뷰 (내용은 js/ielts-page.js 의 IELTS 객체) ══════════ -->
@@ -16426,7 +16430,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=396" defer></script>
+<script src="js/app-1-pages.js?v=397" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

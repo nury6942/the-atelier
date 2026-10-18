@@ -323,7 +323,7 @@
       <div class="cards" id="cards"></div>
       <button class="start" onclick="startCall()" aria-label="대화 시작"><span class="ms">mic</span><span>시작하기</span></button>
       <label class="camopt"><input type="checkbox" id="camStart" checked><span>카메라 켜고 시작 (영상통화)</span></label>
-      <div class="hint">카메라나 화면을 켜면 튜터가 보면서 이야기해요</div>
+      <div class="hint">에어팟을 끼면 MIC 를 맥 마이크로 고르는 게 더 잘 들려요 (에어팟 마이크는 통화 음질이라 알아듣기 어려워요)</div>
     </section>
 
     <!-- 학습 프로필 -->
@@ -1164,7 +1164,10 @@ async function connect(){
         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: sess.voice } } }
       },
       systemInstruction: { parts: [{ text: systemPrompt(sess.mode, sess.topic, sess.profile) }] },
-      inputAudioTranscription: {},
+      // 받아 적기 언어 힌트(없으면 자동 감지라 짧은 말이 스페인어 등으로 적힘). 한국어 단어 섞일 때를 위해 ko 도
+      inputAudioTranscription: { languageCodes: ['en-GB', 'en-US', 'ko-KR'] },
+      // 말 끝 판단을 느슨하게: 생각하느라 1초쯤 멈춰도 끼어들지 않게(기본값은 금방 끊어서 "Okay." 처럼 잘게 잘림)
+      realtimeInputConfig: { automaticActivityDetection: { endOfSpeechSensitivity: 'END_SENSITIVITY_LOW', silenceDurationMs: 1200 } },
       outputAudioTranscription: {},
       // 매 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구됨(음성 1초 ≈ 25토큰) → 기억을 1만2천 토큰(~6분)으로 묶어
       // 대답 한 번 값이 계속 커지지 않게. 가장 큰 비용은 사진이 아니라 이 '음성 기억'이다

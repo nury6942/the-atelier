@@ -1,3 +1,15 @@
+## 2026-10-18 · 아이맥 · AI Tutor — 꽉 찬 화면 + 받아 적기·말 끊김 고침
+
+- 누리: English 안 AI Tutor 가 양옆이 남아 답답 → AI Tutor 탭일 때만 #page-english 에 eng-tutor-on: 가운데 1280px 제한·좌우 여백 해제, iframe 높이 = 화면 - 상단바 - 탭줄
+- 누리 실사용 스크린샷: 내 말이 "¿Por qué?", "quedando", "Okay." 로 적히고 Oliver 가 같은 질문 반복
+  - 소리 처리 검증: macOS say 로 만든 영어 문장(48k)을 tutor.html 의 다운샘플러 그대로 통과시켜 Live 에 보냄 → 정확히 받아 적음(16k 직접과 같음). 파이프라인 문제 아님 → 실제 마이크(에어팟 통화 음질) + 언어 자동 감지 + 말 끝 판단이 빠른 탓
+  - inputAudioTranscription languageCodes en-GB·en-US·ko-KR, realtimeInputConfig.automaticActivityDetection endOfSpeechSensitivity LOW + silenceDurationMs 1200(생각하느라 멈춰도 안 끊음). 접속 실측 OK
+  - 홈 안내: 에어팟 끼면 MIC 를 맥 마이크로
+- 다음: Simli 실시간 아바타(누리 가입·키 등록 기다리는 중)
+- app-1-pages.js v397 · service-worker CACHE_NAME v630
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor → English 안의 탭으로
 
 - 누리: AI Tutor 를 English 안에 새 탭으로 → English 탭 줄 Annie · Study · IELTS · **AI Tutor**. `#eng-tutor-view` 안 iframe(마이크·카메라·화면공유 허용), 탭을 처음 열 때만 tutor.html 불러옴
