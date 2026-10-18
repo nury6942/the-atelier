@@ -1,3 +1,12 @@
+## 2026-10-18 · 아이맥 · AI Tutor — 새 Oliver 얼굴(입 움직임 OK)
+
+- 정사각형 얼굴 사진으로 만든 legacy 얼굴 a2d64b6c-f04a-42ec-b877-0dca7e2c364d 완성(약 25분)
+- 측정(Aside, 입 부분 프레임 변화량): 대기 0.84 → 말할 때 평균 1.61·최대 4.59 (예전 c7f0c270 은 0.43). 스크린샷에서도 말할 때 입 벌어지고 이 보임
+- SIMLI_FACE 교체, "움직이는 Oliver" 다시 기본 켬(저장값 simliOn3). 교훈: legacy 는 원본을 얼굴 크게·정사각형·입 살짝 벌린 사진으로
+- service-worker CACHE_NAME v1636
+
+---
+
 ## 2026-10-19 · 맥북 · IELTS Free Tests 에 후기 점수
 
 - 레딧 r/IELTS 약 22개 스레드 + 네이버 블로그·고우해커스 후기를 Aside 로 읽어 사이트마다 별점(5점)·실제 대비(비슷/쉬움/어려움)·장점·단점·쓰는 법 한 줄 → scripts/ielts/reviews.json → build-links.py 가 카드에 붙임, 후기 좋은 순 정렬
