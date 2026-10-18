@@ -89,7 +89,7 @@ window.IELTS_TIPS = {
   },
 
   /* ───────── READING (GT) ───────── */
-  R: {
+  R: {levelup:[{"sec": "S2", "title": "업무 글", "items": [{"icon": "rule", "title": "조건어에 동그라미", "body": "if·unless·only·except·within 이 함정의 90%"}, {"icon": "format_list_numbered", "title": "답은 지문 순서대로", "body": "노트·문장 빈칸은 대부분 순서 그대로 나옴"}, {"icon": "pin", "title": "숫자·날짜 먼저 스캔", "body": "기간·금액·횟수 문제는 숫자로 위치부터"}, {"icon": "work", "title": "업무 단어장", "body": "eligible·entitled·reimburse·compulsory·premises"}, {"icon": "timer", "title": "하루 S2 한 개 20분", "body": "시간 재고 → 틀린 건 근거 문장 표시"}]}, {"sec": "S3", "title": "긴 지문", "items": [{"icon": "view_agenda", "title": "3분 지도 그리기", "body": "문단마다 첫·끝 문장만 → 한 단어 메모"}, {"icon": "title", "title": "제목 고르기를 먼저", "body": "지도로 풀고, 예시 문단은 예시 말고 요지로"}, {"icon": "record_voice_over", "title": "Y/N/NG = 글쓴이 생각", "body": "arguably·surprisingly·it is wrong to 같은 의견 표시 찾기"}, {"icon": "compare_arrows", "title": "바꿔 말하기 표", "body": "문제 단어 ↔ 지문 단어를 매번 표로 — 제일 효과 큼"}, {"icon": "skip_next", "title": "1분 30초 넘으면 넘기기", "body": "표시해 두고 마지막에 — 한 문제에 S3 전체를 잃지 않기"}, {"icon": "newspaper", "title": "긴 글 읽는 습관", "body": "BBC Future·Guardian Long Read·BoF 하루 10분"}]}],paraTable:[{"q": "staff can claim back", "p": "employees will be reimbursed", "k": "동사 바꿈"}, {"q": "is not compulsory", "p": "attendance is optional", "k": "반대말 부정"}, {"q": "became widely adopted", "p": "was taken up by most manufacturers", "k": "구 → 구"}, {"q": "the writer doubts", "p": "it is far from certain that", "k": "의견 표시"}],
     facts: [
       { k: '시간', v: '60분, 옮겨 적기 시간 없음' },
       { k: '구성', v: '3섹션 · 40문항' },

@@ -1,3 +1,10 @@
+## 2026-10-19 · 맥북 · IELTS Reading 공략에 S2·S3 실력 키우기
+
+- 누리: "S1 은 쉬운데 S2·S3 는 어떻게 키워?" → Reading › 공략에 두 칸 카드(S2 업무 글 5 · S3 긴 지문 6, 아이콘+한 줄) + '바꿔 말하기 표' 예시 4줄 (js/ielts-tips.js R.levelup · R.paraTable)
+- service-worker v1638
+
+---
+
 ## 2026-10-19 · 맥북 · IELTS 두 번째 모의고사 세트 (L2 · R2)
 
 - js/ielts-bank.js 에 오리지널 GT 두 번째 세트 추가 — 화면은 test 이름으로 자동 묶여 L2·R2 타일이 생김
