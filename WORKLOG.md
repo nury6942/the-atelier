@@ -19,6 +19,7 @@
 - 지금 수집: **인스티즈 · 디시 실시간 베스트** 2곳. 화면 칩도 전체·인티·디시
 - trendFeed 는 trends-collect.js 의 SITES 에 있는 사이트만 읽음 → Firestore 에 남은 옛 문서(theqoo·82cook·ruliweb·clien)는 무시됨(지우진 않음)
 - 더쿠·82쿡을 살리려면 아이맥(가정용 IP)에서 수집해 보내는 방식밖에 없음 — 필요하면 다음에
+- **다음 할 일(누리와 합의한 안, 아직 안 만듦):** 아이맥 예약 작업이 `aside repl` 로 더쿠 HOT(1시간에 1번)·82쿡(30분) 목록 1페이지만 읽어서 → 새 함수 `trendIngest`(ATELIER 토큰 잠금, 토큰은 누리가 아이맥 파일에 직접)로 보내기. 읽기 코드는 trends-collect.js 의 옛 theqoo·82cook parse(커밋 ea4318b) 재사용. 아이맥 꺼지면 두 곳만 멈춤
 
 ---
 
