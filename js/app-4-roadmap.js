@@ -190,7 +190,7 @@
       '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2-lg)">chevron_right</span></button>';
     // 날짜 라벨 (그라데이션 텍스트)
     var dateLabel = (viewStr === todayStr ? 'TODAY · ' : '') + rmFmtDateKR(viewStr);
-    var dateBadge = '<span class="text-[10px] font-extrabold tracking-[0.25em] uppercase" style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + dateLabel + '</span>';
+    var dateBadge = '<span class="text-[10px] font-extrabold tracking-[0.25em] uppercase" style="background:#1F4BD8;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + dateLabel + '</span>';
     var todayJump = (viewStr !== todayStr)
       ? ' <button onclick="rmDailyToday()" class="ml-2 text-[10px] font-bold tracking-wider uppercase text-violet-600 hover:text-violet-800 underline underline-offset-2">오늘로</button>'
       : '';
@@ -216,7 +216,7 @@
     var checkLabel = isDone ? '완료됨 ✓' : '완료 체크';
     var checkBtnStyle = isDone
       ? 'background:#f1f5f9;color:#64748b'
-      : 'background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%);color:#fff';
+      : 'background:#1F4BD8;color:#fff';
     var titleCls = isDone ? 'line-through text-slate-400' : 'text-slate-900';
 
     // 헤더 + 액션 카드 (화이트 베이스)
@@ -253,7 +253,7 @@
   function renderGuideBody(guide, dateStr, isDone) {
     function sec(label, contentHtml) {
       return '<section class="mb-6 last:mb-0">' +
-        '<h4 class="text-[10px] font-extrabold tracking-[0.25em] uppercase mb-2.5" style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + label + '</h4>' +
+        '<h4 class="text-[10px] font-extrabold tracking-[0.25em] uppercase mb-2.5" style="background:#1F4BD8;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + label + '</h4>' +
         contentHtml +
       '</section>';
     }
@@ -265,7 +265,7 @@
       flowHtml = sec('흐름',
         '<ol class="space-y-2.5">' + guide.flow.map(function(step, i){
           return '<li class="flex gap-3 text-[14px] leading-snug">' +
-            '<span class="shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-bold flex items-center justify-center mt-0.5" style="background:linear-gradient(135deg,#a855f7,#ec4899)">' + (i+1) + '</span>' +
+            '<span class="shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-bold flex items-center justify-center mt-0.5" style="background:#1F4BD8">' + (i+1) + '</span>' +
             '<span class="text-slate-700">' + escape(step) + '</span>' +
           '</li>';
         }).join('') + '</ol>');
@@ -331,7 +331,7 @@
     var checkLabel = isDone ? '완료됨 ✓' : '완료 체크';
     var checkBtnStyle = isDone
       ? 'background:#f1f5f9;color:#64748b'
-      : 'background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%);color:#fff';
+      : 'background:#1F4BD8;color:#fff';
 
     return '<div class="px-6 md:px-7 pb-6 pt-5 border-t border-slate-100 bg-slate-50/30">' +
       flowHtml + decisionHtml + examplesHtml + cautionHtml + resHtml + nextHtml +
@@ -350,7 +350,7 @@
       var opacity = isNow ? '' : 'opacity-50 hover:opacity-100 transition-opacity';
       var dotColor = isNow ? 'ring-4 ring-pink-200' :
                      isDone ? 'bg-violet-300' : 'bg-white border border-slate-300';
-      var dotStyle = isNow ? 'background:linear-gradient(135deg,#a855f7,#ec4899)' : '';
+      var dotStyle = isNow ? 'background:#1F4BD8' : '';
       var lineColor = (isDone || isNow) ? 'bg-violet-400' : 'bg-slate-200';
       var labelColor = isNow ? 'text-pink-600' : 'text-slate-500';
       var titleColor = isNow ? 'text-violet-900' : (isDone ? 'text-slate-500' : 'text-slate-800');
@@ -398,7 +398,7 @@
       '<div class="relative z-10">' +
         '<div class="flex justify-between items-start mb-6 flex-wrap gap-4">' +
           '<div class="min-w-0 flex-1">' +
-            '<span class="inline-block text-[11px] font-bold px-3 py-1 rounded-full mb-3 text-white tracking-wider" style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 50%,#ec4899 100%)">' + statusLabel + ' · Phase ' + active.order + ' · ' + active.name + '</span>' +
+            '<span class="inline-block text-[11px] font-bold px-3 py-1 rounded-full mb-3 text-white tracking-wider" style="background:#1F4BD8">' + statusLabel + ' · Phase ' + active.order + ' · ' + active.name + '</span>' +
             '<h2 class="text-3xl md:text-4xl font-bold leading-tight text-slate-900">' + (active.title||active.name).replace(/</g,'&lt;') + '</h2>' +
             '<p class="text-sm md:text-base mt-2 text-slate-500">' + rmDateRangeShort(active.start, active.end) + '</p>' +
           '</div>' +
@@ -411,10 +411,10 @@
         '<div class="mb-7">' +
           '<div class="flex justify-between text-[11px] font-bold mb-2 tracking-wider">' +
             '<span class="text-slate-500">진척 · ' + doneCount + '/' + totalCount + '</span>' +
-            '<span style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800">' + progress + '%</span>' +
+            '<span style="background:#1F4BD8;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800">' + progress + '%</span>' +
           '</div>' +
           '<div class="h-1.5 w-full bg-slate-100 relative rounded-full overflow-hidden">' +
-            '<div class="h-full transition-all duration-700 rounded-full" style="width:' + progress + '%;background:linear-gradient(90deg,#7c3aed,#ec4899)"></div>' +
+            '<div class="h-full transition-all duration-700 rounded-full" style="width:' + progress + '%;background:#1F4BD8"></div>' +
           '</div>' +
         '</div>' +
         // Checklist (2-col on desktop)
@@ -422,7 +422,7 @@
       '</div>' +
       // 배경 큰 숫자 (옅은 그라데이션)
       '<div class="absolute -right-12 -bottom-16 opacity-[0.06] select-none pointer-events-none">' +
-        '<span class="text-[280px] font-extrabold italic leading-none" style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + String(active.order).padStart(2,'0') + '</span>' +
+        '<span class="text-[280px] font-extrabold italic leading-none" style="background:#1F4BD8;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + String(active.order).padStart(2,'0') + '</span>' +
       '</div>' +
     '</div>';
   }
@@ -464,13 +464,13 @@
           (p.title ? '<h4 class="text-base font-bold text-slate-800 mb-1">' + String(p.title).replace(/</g,'&lt;') + '</h4>' : '') +
           (p.goal ? '<p class="text-[13px] italic text-slate-500 mb-4 leading-snug">' + String(p.goal).replace(/</g,'&lt;') + '</p>' : '') +
           '<div class="flex justify-between text-[11px] font-bold mb-2 tracking-wider text-slate-500"><span>진척 · ' + doneCount + '/' + totalCount + '</span><span>' + progress + '%</span></div>' +
-          '<div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden mb-4"><div class="h-full transition-all duration-500 rounded-full" style="width:' + progress + '%;background:linear-gradient(90deg,#7c3aed,#ec4899)"></div></div>' +
+          '<div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden mb-4"><div class="h-full transition-all duration-500 rounded-full" style="width:' + progress + '%;background:#1F4BD8"></div></div>' +
           '<div class="grid grid-cols-1 md:grid-cols-2 gap-y-0.5 gap-x-8">' + checklistHtml + '</div>' +
         '</div>';
       } else {
         // 미니 진척 바 (접힌 상태에서도 노출)
         bodyHtml = '<div class="px-6 pb-3"><div class="flex items-center gap-3">' +
-          '<div class="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + progress + '%;background:linear-gradient(90deg,#7c3aed,#ec4899)"></div></div>' +
+          '<div class="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + progress + '%;background:#1F4BD8"></div></div>' +
           '<span class="text-[10px] font-bold text-slate-400">' + progress + '% · ' + doneCount + '/' + totalCount + '</span>' +
         '</div></div>';
       }
@@ -620,7 +620,7 @@
     t.id = 'rm-mini-celebrate';
     t.textContent = '✨ 오늘 한 가지 완료';
     t.style.cssText = 'position:fixed;left:50%;top:84px;transform:translateX(-50%);' +
-      'background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;' +
+      'background:#1F4BD8;color:#fff;' +
       'padding: var(--space-2-5) var(--space-4-5);border-radius: var(--radius-full);font-size: var(--font-size-body-sm);font-weight:700;' +
       'box-shadow:0 12px 32px rgba(31,75,216,.35);z-index:9999;' +
       'opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;' +

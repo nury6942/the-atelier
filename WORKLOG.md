@@ -1,3 +1,16 @@
+## 2026-10-18 · 아이맥 · 공통 디자인 3단계 — 그림자 제거 · 나머지 탭 · 별도 페이지
+
+- 카드 그림자 없앰(누리 OK): Tailwind shadow-* 전부 none, --shadow-card·--shadow-button·--nm-shadow-* = none. 떠 있는 것(.fixed 안 모달·.absolute 드롭다운)만 그림자 유지. 그림자로만 구분되던 흰 카드는 얇은 선(outline)으로
+- 위쪽 제목: "ENGLISH" → English, Roadmap 에서 "Memo"로 나오던 버그(pageMeta 에 roadmap 없음) 수정, nomad-master 추가
+- 베이지 계열 회색 제거: Travel --jv-tint #f6f5f2 / --jv-soft #e6e5e1 등 → 중성 회색, Travel 검은 테두리 --jv-line → 연회색, '여행 추가' 검정 → 코발트
+- English: 🎙 ANNIE / 📺 STUDY 알약 → Annie / Study 밑줄 탭(travel-tab-btn), 진행률 카드 보라 그라데이션+그림자 → 코발트 단색
+- Roadmap: 보라→분홍 그라데이션(배지·숫자·진행 막대·저장 버튼) 19곳 → 코발트 단색
+- 별도 페이지도 같은 규칙: ai-brief.html 바탕 #fbfaf7(베이지) → 흰색 + Pretendard, job-hunt.html 포인트 보라 → 코발트 + 직각 + Pretendard, m-ledger.html(휴대폰 가계부) 보라 → 코발트 + 직각
+- 남은 것: 사이드바 로고 그림(보라), 차트·카테고리 구분색 줄(일부러 유지), packing.html·maps.html 은 손 안 댐
+- service-worker CACHE_NAME v604
+
+---
+
 ## 2026-10-18 · 아이맥 · 공통 디자인 2단계 — Calendar
 
 - WEEK/MONTH 대문자 글자 → Week/Month 토글(가계부 보기 전환과 같은 모양), TODAY → 흰 버튼 Today, ←/→ → 화살표 아이콘 흰 버튼

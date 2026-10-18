@@ -6,15 +6,15 @@
 <title>Overseas Fashion Design Jobs — Editorial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   :root{
-    --accent:#7c3aed; --ink:#000; --paper:#fff;
+    --accent:#1F4BD8; --ink:#000; --paper:#fff;
     --mut:rgba(0,0,0,.6); --dim:rgba(0,0,0,.4); --faint:rgba(0,0,0,.08);
   }
   *{box-sizing:border-box}
   body{margin:0;background:#fff;color:#000;
-    font-family:'Inter','Helvetica','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-family:'Pretendard','Helvetica','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
     -webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
   img.emoji{height:1em;width:1em;margin:0 .06em;vertical-align:-.12em;display:inline-block}
@@ -102,7 +102,7 @@
   .jc-spec .sr{display:grid;grid-template-columns:66px 1fr;gap:10px;font-size:13px;align-items:baseline}
   .jc-spec dt{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:0}
   .jc-spec .sr:nth-child(1) dt{color:#0a7d4f}   /* SALARY */
-  .jc-spec .sr:nth-child(2) dt{color:#7c3aed}   /* LEVEL */
+  .jc-spec .sr:nth-child(2) dt{color:var(--accent)}   /* LEVEL */
   .jc-spec .sr:nth-child(3) dt{color:#c2410c}   /* EXP */
   .jc-spec .sr:nth-child(4) dt{color:#2563eb}   /* VISA */
   .jc-spec dd{margin:0;font-weight:600;color:#1a1a1a}
@@ -158,7 +158,7 @@
   .jh-state .ic{font-size:2.4rem;margin-bottom:18px}
   .jh-state h2{font-weight:800;font-style:italic;text-transform:uppercase;font-size:1.4rem;margin:0 0 10px;letter-spacing:-.01em}
   .jh-state p{font-size:13px;color:var(--mut);max-width:420px;line-height:1.7;margin:0}
-  .jh-spin{width:34px;height:34px;border:3px solid rgba(124,58,237,.18);border-top-color:var(--accent);border-radius:50%;animation:jhspin .8s linear infinite}
+  .jh-spin{width:34px;height:34px;border:3px solid rgba(31,75,216,.18);border-top-color:var(--accent);border-radius:50%;animation:jhspin .8s linear infinite}
   @keyframes jhspin{to{transform:rotate(360deg)}}
 
   @media(max-width:980px){
@@ -170,6 +170,9 @@
     .top5,.stats,.jgrid,.boards,.feature .tiles{grid-template-columns:1fr}
     .sech .cap{display:none} .legend{display:none}
   }
+  /* 아뜰리에 공통: 모든 칸 직각 (2026-10-18) */
+  *,*::before,*::after{border-radius:0 !important}
+  .jh-spin{border-radius:50% !important}
 </style>
 </head>
 <body>

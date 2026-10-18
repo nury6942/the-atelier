@@ -16820,7 +16820,9 @@
     "finance-hub": { "title": "Money" },
     "ledger": { "title": "Money" },
     "matrix": { "title": "Calendar" },
-    "english": { "title": "ENGLISH" },
+    "english": { "title": "English" },
+    "roadmap": { "title": "Roadmap" },
+    "nomad-master": { "title": "Nomad Master" },
     "vault": { "title": "Vault" },
     "income": { "title": "Money" },
     "planner": { "title": "Calendar" },
@@ -28329,9 +28331,9 @@
     var isStudy = tab === 'study';
     annie.style.display = isStudy ? 'none' : 'block';
     study.style.display = isStudy ? 'block' : 'none';
-    [ba, bs].forEach(function(b){ if (b){ b.style.background = ''; b.style.color = '#64748b'; b.style.boxShadow = ''; } });
+    [ba, bs].forEach(function(b){ if (b){ b.style.background = ''; b.style.color = ''; b.style.boxShadow = ''; b.classList.remove('travel-tab-active'); } });
     var active = isStudy ? bs : ba;
-    if (active){ active.style.background = '#fff'; active.style.color = '#17348F'; active.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }
+    if (active) active.classList.add('travel-tab-active');
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
     if (isStudy && typeof loadEnglishStudy === 'function') loadEnglishStudy();
   };
