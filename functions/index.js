@@ -523,33 +523,60 @@ exports.tutorToken = onRequest(
 );
 
 // ══════════════════════════════════════════════════════════════════════
-// ── Trend Feed: trafficscent.com 한국 커뮤니티 인기글 대신 받아오기 ──
-//    trafficscent 는 다른 사이트 브라우저의 직접 요청(CORS)을 막아 둬서
-//    이 함수가 받아와 필요한 칸만 추려 넘김. 같은 요청은 5분간 재사용.
+// ── Trends: 한국 커뮤니티 인기글 — 원본 사이트에서 직접 수집 ──
+//    trendCollect (서울, 15분마다) → Firestore trendSites/{사이트} 문서 하나에 목록 통째로
+//    trendFeed (화면용 GET) → 그 문서들을 읽어 급상승·인기·최신으로 정렬해서 넘김
+//    사이트별 읽기 코드는 trends-collect.js
 // ══════════════════════════════════════════════════════════════════════
-const TREND_SORTS = ["rising", "popular", "latest"];
-const trendCache = new Map(); // key → { at, body }
-const TREND_TTL_MS = 5 * 60 * 1000;
+const trends = require("./trends-collect");
 
-// SvelteKit __data.json 은 값을 번호로 참조하는 압축 배열 → 보통 객체로 풀기
-function trendUnflatten(arr) {
-  const memo = {};
-  const h = (i) => {
-    if (i < 0) return null;
-    if (i in memo) return memo[i];
-    const v = arr[i];
-    if (v === null || typeof v !== "object") return (memo[i] = v);
-    if (Array.isArray(v)) {
-      if (typeof v[0] === "string") return (memo[i] = v[0] === "Date" ? v[1] : v);
-      const out = (memo[i] = []);
-      v.forEach((x) => out.push(h(x)));
-      return out;
+async function collectTrends() {
+  const db = admin.firestore();
+  const keys = Object.keys(trends.SITES);
+  const results = await Promise.allSettled(keys.map((k) => trends.fetchSite(k)));
+  await Promise.all(keys.map(async (key, i) => {
+    const ref = db.collection("trendSites").doc(key);
+    const snap = await ref.get();
+    const prev = snap.exists ? snap.data() : {};
+    const r = results[i];
+    if (r.status === "fulfilled") {
+      await ref.set({
+        name: trends.SITES[key].name,
+        ok: true, error: null,
+        updatedAt: Date.now(),
+        items: trends.mergeItems(prev.items, r.value),
+      });
+    } else {
+      // 실패하면 지난 목록은 그대로 두고 오류만 기록
+      logger.warn("trendCollect failed", { key, error: String(r.reason) });
+      await ref.set({ name: trends.SITES[key].name, ok: false, error: String(r.reason).slice(0, 300), failedAt: Date.now() }, { merge: true });
     }
-    const o = (memo[i] = {});
-    for (const k in v) o[k] = h(v[k]);
-    return o;
-  };
-  return h(0);
+  }));
+  try {
+    await db.collection("trendSites").doc("_keywords").set({ items: await trends.fetchKeywords(), updatedAt: Date.now() });
+  } catch (e) {
+    logger.warn("trend keywords failed", { error: String(e) });
+  }
+  return keys.map((k, i) => ({ site: k, ok: results[i].status === "fulfilled", n: results[i].value ? results[i].value.length : 0 }));
+}
+
+exports.trendCollect = onSchedule(
+  { schedule: "every 15 minutes", timeZone: "Asia/Seoul", region: "asia-northeast3", memory: "256MiB", timeoutSeconds: 120 },
+  async () => { await collectTrends(); }
+);
+
+const TREND_SORTS = ["rising", "popular", "latest"];
+const TREND_PAGE = 30;
+let trendDocs = { at: 0, sites: null, keywords: null };
+
+async function readTrendDocs() {
+  if (trendDocs.sites && Date.now() - trendDocs.at < 2 * 60 * 1000) return trendDocs;
+  const snap = await admin.firestore().collection("trendSites").get();
+  const sites = {};
+  let keywords = null;
+  snap.forEach((d) => { if (d.id === "_keywords") keywords = d.data(); else sites[d.id] = d.data(); });
+  trendDocs = { at: Date.now(), sites, keywords };
+  return trendDocs;
 }
 
 exports.trendFeed = onRequest(
@@ -560,59 +587,48 @@ exports.trendFeed = onRequest(
     if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
     const sort = TREND_SORTS.includes(req.query.sort) ? req.query.sort : "rising";
-    const site = String(req.query.site || "전체").slice(0, 20);
+    const site = String(req.query.site || "전체");
     const page = Math.min(Math.max(parseInt(req.query.page, 10) || 1, 1), 10);
-    const key = `${sort}|${site}|${page}`;
-
-    const hit = trendCache.get(key);
-    if (hit && Date.now() - hit.at < TREND_TTL_MS) {
-      res.set("Cache-Control", "public, max-age=120");
-      return res.status(200).json({ ...hit.body, cached: true });
-    }
 
     try {
-      const qs = new URLSearchParams({ category: "all", country: "KR", site, sort, "x-sveltekit-invalidated": "11" });
-      if (page > 1) qs.set("page", String(page));
-      const r = await fetch(`https://trafficscent.com/__data.json?${qs}`, {
-        headers: { "Accept-Language": "ko", "User-Agent": "the-atelier personal reader" },
-      });
-      if (!r.ok) throw new Error(`upstream ${r.status}`);
-      const raw = await r.json();
-      const nodes = (raw.nodes || []).map((n) => (n && n.data ? trendUnflatten(n.data) : {}));
-      const layout = nodes[0] || {};
-      const feed = nodes[1] || {};
+      const { sites, keywords } = await readTrendDocs();
+      const now = Date.now();
+      const born = (p) => (p.postedAt ? Date.parse(p.postedAt) : p.firstSeen);
+      let posts = [];
+      for (const key in sites) {
+        const s = sites[key];
+        if (site !== "전체" && s.name !== site) continue;
+        (s.items || []).forEach((p) => posts.push({ ...p, site: s.name }));
+      }
+      // 조회수 없는 글(82쿡 '많이 읽은 글')은 사이트 순위로 맨 뒤에
+      const tail = (a, b) => (a.hotRank || 99) - (b.hotRank || 99);
+      if (sort === "rising") {
+        posts = posts.filter((p) => now - born(p) <= 10 * 3600000);
+        posts.sort((a, b) => (b.rate != null) - (a.rate != null) || (b.rate || 0) - (a.rate || 0) || tail(a, b));
+      } else if (sort === "popular") {
+        posts.sort((a, b) => (b.views != null) - (a.views != null) || (b.views || 0) - (a.views || 0) || tail(a, b));
+      } else {
+        posts.sort((a, b) => born(b) - born(a));
+      }
 
-      const body = {
+      const status = Object.values(sites).map((s) => ({ site: s.name, ok: s.ok !== false, updatedAt: s.updatedAt || null, error: s.error || null }));
+      const updated = status.map((s) => s.updatedAt || 0);
+      res.set("Cache-Control", "public, max-age=60");
+      return res.status(200).json({
         sort, site, page,
-        totalPages: feed.totalPages || 1,
-        posts: (feed.posts || []).map((p) => ({
-          id: p.id,
-          title: p.title,
-          url: p.source_url,
-          site: p.source_site,
-          category: p.category_name,
-          views: p.views,
-          comments: p.comments_count,
-          upvotes: p.upvotes,
-          thumb: p.thumbnail_url,
-          createdAt: p.created_at ? p.created_at.replace(" ", "T") + "Z" : null,
+        totalPages: Math.max(Math.ceil(posts.length / TREND_PAGE), 1),
+        posts: posts.slice((page - 1) * TREND_PAGE, page * TREND_PAGE).map((p) => ({
+          id: p.id, title: p.title, url: p.url, site: p.site, category: p.category,
+          views: p.views, comments: p.comments, upvotes: p.upvotes, rate: p.rate,
+          createdAt: p.postedAt || new Date(p.firstSeen).toISOString(),
         })),
-        keywords: (layout.trendingKeywords || []).map((k) => ({
-          rank: k.rank, keyword: k.keyword, diff: k.diff, newsTitle: k.newsTitle, newsUrl: k.newsUrl,
-        })),
-        collectedAt: layout.metrics && layout.metrics.lastCollectedAt
-          ? layout.metrics.lastCollectedAt.replace(" ", "T") + "Z" : null,
-        fetchedAt: new Date().toISOString(),
-      };
-      trendCache.set(key, { at: Date.now(), body });
-      if (trendCache.size > 200) trendCache.delete(trendCache.keys().next().value);
-
-      res.set("Cache-Control", "public, max-age=120");
-      return res.status(200).json(body);
+        keywords: (keywords && keywords.items) || [],
+        collectedAt: updated.length ? new Date(Math.max(...updated)).toISOString() : null,
+        sites: status,
+      });
     } catch (error) {
       logger.error("trendFeed error:", error);
-      if (hit) return res.status(200).json({ ...hit.body, cached: true, stale: true });
-      return res.status(502).json({ error: "Upstream failed", message: error.message });
+      return res.status(500).json({ error: "Internal server error", message: error.message });
     }
   }
 );

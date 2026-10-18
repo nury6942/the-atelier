@@ -7,7 +7,7 @@
 <title>Trends</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-  /* 한국 커뮤니티 인기글 — 데이터: trafficscent.com (함수 trendFeed 가 대신 받아옴) */
+  /* 한국 커뮤니티 인기글 — 함수 trendCollect 가 15분마다 원본 사이트에서 직접 수집, trendFeed 가 정렬해서 넘김 */
   :root{
     --ink:#111; --paper:#fff; --wash:#F5F5F7; --line:#ECECF0; --line2:#D9D9E0;
     --mut:rgba(17,17,17,.62); --dim:rgba(17,17,17,.42);
@@ -87,7 +87,7 @@
   <header class="mast">
     <div>
       <h1>Trends</h1>
-      <div class="sub">한국 커뮤니티 인기글 · 출처 <a href="https://trafficscent.com" target="_blank" rel="noopener">TrafficScent</a> · 15분마다 수집</div>
+      <div class="sub">한국 커뮤니티 인기글 · 더쿠 · 인티 · 82쿡 · 디시 · 루리웹 · 클량에서 15분마다 직접 수집</div>
     </div>
     <div class="seg" id="seg">
       <button data-sort="rising">급상승</button>
@@ -106,9 +106,10 @@
       <button class="more" id="more" hidden>더 보기</button>
     </main>
     <aside>
-      <h2>실시간 검색 키워드</h2>
+      <h2>Google 실시간 검색어</h2>
       <ul class="kw" id="kw"></ul>
-      <p class="note">급상승은 최근 10시간, 인기는 최근 48시간 기준이에요. 같은 화면은 5분 동안 다시 받아오지 않아요.</p>
+      <p class="note">급상승은 최근 10시간 안에 올라온 글을 시간당 조회수가 빨리 오르는 순으로, 인기는 최근 48시간 조회수 순으로 보여줘요. 클량은 모두의공원 최신 글만 읽어서 조회수가 낮게 나와요.</p>
+      <p class="note" id="health"></p>
     </aside>
   </div>
 </div>
@@ -121,12 +122,9 @@
   if (qApi && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) API = qApi;
 
   // 여성 독자층 커뮤니티를 앞에, 나머지 큰 곳을 뒤에
-  var SITES = [
-    ['전체'], ['더쿠'], ['네이트판'], ['인티'], ['해연갤'], ['82쿡'], ['미씨쿠폰'], ['블라'], null,
-    ['디시'], ['펨코'], ['루리웹'], ['웃대'], ['뽐뿌'], ['엠팍'], ['클량'], ['보배'], ['아카'], ['오유']
-  ];
+  var SITES = [['전체'], ['더쿠'], ['인티'], ['82쿡'], null, ['디시'], ['루리웹'], ['클량']];
   var SORT_LABEL = { rising:'급상승', popular:'인기', latest:'최신' };
-  var KEY = 'atelier_trends_v1';
+  var KEY = 'atelier_trends_v2';
 
   var st = { sort:'rising', site:'전체', page:1, totalPages:1, seen:0, req:0 };
   try { var saved = JSON.parse(localStorage.getItem(KEY) || '{}'); if (SORT_LABEL[saved.sort]) st.sort = saved.sort; if (saved.site) st.site = saved.site; } catch(e){}
@@ -159,6 +157,7 @@
     if (p.views != null) m.push('조회 ' + num(p.views));
     if (p.comments) m.push('댓글 ' + num(p.comments));
     if (p.upvotes) m.push('추천 ' + num(p.upvotes));
+    if (st.sort === 'rising' && p.rate) m.push('시간당 +' + num(p.rate));
     return '<li class="row"><span class="no">' + (i + 1) + '</span><div>' +
       '<a class="t" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>' +
       '<div class="m">' + m.join('<span>·</span>') + '</div></div>' +
@@ -184,6 +183,8 @@
         $('more').disabled = false;
         $('stamp').textContent = b.collectedAt ? '마지막 수집 ' + ago(b.collectedAt) : '';
         if (b.keywords && b.keywords.length && !append) paintKeywords(b.keywords);
+        var bad = (b.sites || []).filter(function(s){ return !s.ok; }).map(function(s){ return s.site; });
+        $('health').textContent = bad.length ? '지금 못 읽고 있는 곳: ' + bad.join(', ') + ' (지난 목록을 보여줘요)' : '';
       })
       .catch(function(e){
         if (id !== st.req) return;
@@ -197,7 +198,7 @@
     $('kw').innerHTML = list.map(function(k){
       var href = k.newsUrl || ('https://www.google.com/search?q=' + encodeURIComponent(k.keyword));
       return '<li><a href="' + esc(href) + '" target="_blank" rel="noopener">' +
-        '<span class="r">' + esc(k.rank) + '</span><span class="k">' + esc(k.keyword) + '</span><span class="d">' + esc(k.diff || '') + '</span>' +
+        '<span class="r">' + esc(k.rank) + '</span><span class="k">' + esc(k.keyword) + '</span><span class="d">' + esc(k.traffic || '') + '</span>' +
         (k.newsTitle ? '<span class="n">' + esc(k.newsTitle) + '</span>' : '') + '</a></li>';
     }).join('');
   }
