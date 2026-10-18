@@ -1,3 +1,12 @@
+## 2026-10-18 · 아이맥 · 공통 디자인 4단계 — 로고 코발트 · Packing · Maps
+
+- 로고(icons/icon-512·192·180, favicon-32·16): 같은 그림에서 보라 색상만 코발트로 옮김(Pillow, 색상 −41°·채도↑, 모양·밝기 유지). icon.svg 그라데이션도 코발트, index.html 아이콘 ?v=2 → 3, theme-color·manifest theme_color #7c3aed → #1F4BD8
+- packing.html: Tailwind 보라 토큰(primary #6b38d4 등) → 코발트, 바탕 #f8f9fa → 흰색, Inter·Plus Jakarta → Pretendard, 모든 칸 직각, 그림자 없음. 날씨 아이콘 보라(천둥번개)는 의미 색이라 유지
+- maps.html: 바탕 #f6f7f9 → 흰색, 포인트 #4f46e5 → 코발트, 둥글기 0, 다크 모드 자동 전환 제거(누리: 언제나 흰 바탕)
+- service-worker CACHE_NAME v605
+
+---
+
 ## 2026-10-18 · 맥북 · English › IELTS 탭 새로
 
 - 누리: IELTS 정보를 English 탭 안 IELTS 탭에 모아서 계속 쌓아가자 → ANNIE | STUDY | **IELTS** 세 번째 탭

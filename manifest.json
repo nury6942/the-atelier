@@ -5,7 +5,7 @@
   "start_url": "/the-atelier/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#7c3aed",
+  "theme_color": "#1F4BD8",
   "orientation": "portrait-primary",
   "icons": [
     {

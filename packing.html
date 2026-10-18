@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Atelier — Packing Checklist</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script>
     tailwind.config = {
@@ -16,49 +17,49 @@
             "on-tertiary-fixed-variant": "#673d00",
             "error": "#ba1a1a",
             "on-background": "#191c1d",
-            "outline": "#7b7486",
-            "surface-bright": "#f8f9fa",
+            "outline": "#7A7A85",
+            "surface-bright": "#ffffff",
             "surface-container-high": "#e7e8e9",
             "on-error": "#ffffff",
             "tertiary": "#855000",
-            "on-primary-fixed-variant": "#5516be",
+            "on-primary-fixed-variant": "#1A3FB5",
             "surface-container-low": "#f3f4f5",
-            "primary-fixed": "#e9ddff",
-            "primary-fixed-dim": "#d0bcff",
-            "on-secondary-container": "#544183",
+            "primary-fixed": "#DDE5FB",
+            "primary-fixed-dim": "#BCCBF7",
+            "on-secondary-container": "#17348F",
             "surface-variant": "#e1e3e4",
             "on-tertiary-fixed": "#2c1700",
-            "secondary-fixed-dim": "#d0bcff",
+            "secondary-fixed-dim": "#BCCBF7",
             "surface-container-highest": "#e1e3e4",
-            "on-secondary-fixed": "#220b4e",
-            "on-primary-fixed": "#23005c",
+            "on-secondary-fixed": "#0D1C4A",
+            "on-primary-fixed": "#0D1C4A",
             "surface-container": "#edeeef",
-            "on-surface-variant": "#494454",
-            "primary-container": "#8455ef",
-            "secondary-container": "#c9b3fd",
+            "on-surface-variant": "#4A4A55",
+            "primary-container": "#3563DF",
+            "secondary-container": "#BCCBF7",
             "on-primary-container": "#fffbff",
             "tertiary-fixed-dim": "#ffb869",
-            "inverse-primary": "#d0bcff",
+            "inverse-primary": "#BCCBF7",
             "error-container": "#ffdad6",
-            "outline-variant": "#cbc3d7",
+            "outline-variant": "#DCDCE3",
             "on-secondary": "#ffffff",
             "on-primary": "#ffffff",
             "on-tertiary-container": "#fffbff",
-            "surface-tint": "#6d3bd7",
-            "secondary": "#665396",
-            "primary": "#6b38d4",
+            "surface-tint": "#1F4BD8",
+            "secondary": "#3D4F87",
+            "primary": "#1F4BD8",
             "inverse-on-surface": "#f0f1f2",
             "surface-container-lowest": "#ffffff",
             "on-tertiary": "#ffffff",
             "on-error-container": "#93000a",
-            "background": "#f8f9fa",
-            "surface": "#f8f9fa",
+            "background": "#ffffff",
+            "surface": "#ffffff",
             "surface-dim": "#d9dadb",
             "inverse-surface": "#2e3132",
             "tertiary-fixed": "#ffdcbb",
             "on-surface": "#191c1d",
-            "secondary-fixed": "#e9ddff",
-            "on-secondary-fixed-variant": "#4e3b7c"
+            "secondary-fixed": "#DDE5FB",
+            "on-secondary-fixed-variant": "#142C72"
           },
           borderRadius: {
             "DEFAULT": "0.25rem",
@@ -69,7 +70,7 @@
             "full": "9999px"
           },
           fontFamily: {
-            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "headline": ["Pretendard", "sans-serif"],
             "body": ["Inter", "sans-serif"],
             "label": ["Inter", "sans-serif"]
           }
@@ -79,10 +80,10 @@
   </script>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #191c1d; }
-    h1, h2, h3, h4, .headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: #ffffff; color: #191c1d; }
+    h1, h2, h3, h4, .headline { font-family: 'Pretendard', -apple-system, sans-serif; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .gradient-primary { background: linear-gradient(135deg, #6b38d4 0%, #8455ef 100%); }
+    .gradient-primary { background: linear-gradient(135deg, #1F4BD8 0%, #3563DF 100%); }
     .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -95,12 +96,16 @@
     @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
     /* Checkbox custom */
-    input[type="checkbox"] { accent-color: #6b38d4; }
+    input[type="checkbox"] { accent-color: #1F4BD8; }
 
     /* Fade in */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeIn 0.3s ease; }
-  </style>
+      /* 아뜰리에 공통: 모든 칸 직각, 카드 그림자 없음 (2026-10-18) */
+    *,*::before,*::after{border-radius:0 !important}
+    .animate-spin{border-radius:9999px !important}
+    .shadow-sm,.shadow,.shadow-md,.shadow-lg,.shadow-xl,[class*="shadow-["]{box-shadow:none !important}
+</style>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
