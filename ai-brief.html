@@ -325,6 +325,9 @@
   function renderToday(){
     var d = day, B = briefs[d] || {}, S = socials[d];
     var h = '';
+    // 수집기가 로그인 문제로 X·Threads 를 건너뛰었으면 조용히 줄어들지 말고 알린다 (10/17·18 아이맥 크롬 로그아웃 사고)
+    var skipped = (S && S.skipped || []).filter(function(x){ return /로그인/.test(x); });
+    if (skipped.length) h += '<div class="stale" style="margin:0 0 16px">오늘 '+esc(skipped.map(function(x){ return x.split(':')[0].toUpperCase(); }).join('·'))+' 수집이 로그인 문제로 빠졌어요 · 수집하는 컴퓨터(아이맥) 크롬에서 다시 로그인해 주세요</div>';
     if (B.tryToday && B.tryToday.length) h += '<div class="tries">'+B.tryToday.slice(0,2).map(function(t,i){ return tryBlock(d,t,i); }).join('')+'</div>';
     var cards = B.cards || [];
     if (cards.length){
