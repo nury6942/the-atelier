@@ -1297,7 +1297,15 @@ async function _ackAiJob(j){
       t.update(ref, { acked: true });
       return true;
     });
-    if (!mine){ if (j.kind === 'study' && typeof loadEnglishStudy === 'function') await loadEnglishStudy(); return; }
+    if (!mine){
+      // 다른 기기가 마무리를 맡았어도 이 화면 목록은 새로 그린다
+      if (j.kind === 'study'){ if (typeof loadEnglishStudy === 'function') await loadEnglishStudy(); }
+      else {
+        if (typeof loadEnglishSessions === 'function') await loadEnglishSessions();
+        if (typeof loadEnglish === 'function') await loadEnglish();
+      }
+      return;
+    }
     var lesson = null;
     if (j.kind === 'annie'){
       if (typeof ensureLessonExists === 'function') lesson = await ensureLessonExists(j.date);
