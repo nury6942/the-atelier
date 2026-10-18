@@ -28327,7 +28327,7 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var views = { annie:'eng-annie-view', study:'eng-study-view', ielts:'eng-ielts-view', tutor:'eng-tutor-view' };
+    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', tutor:'eng-tutor-view' };
     if (!views[tab]) tab = 'annie';
     if (!document.getElementById('eng-annie-view')) return;
     Object.keys(views).forEach(function(k){
@@ -28340,6 +28340,8 @@
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
     if (tab === 'study' && typeof loadEnglishStudy === 'function') loadEnglishStudy();
     if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
+    if (tab === 'read' && typeof window.renderEnglishRead === 'function') window.renderEnglishRead();
+    if (tab !== 'read' && typeof window.stopEnglishRead === 'function') window.stopEnglishRead();
     var pe = document.getElementById('page-english');
     if (pe) pe.classList.toggle('eng-tutor-on', tab === 'tutor');   // AI Tutor 는 화면 꽉 차게
     if (tab === 'tutor'){                       // AI Tutor 는 탭을 처음 열 때만 불러옴(마이크·카메라 쓰는 페이지라)

@@ -15320,6 +15320,7 @@
       <div class="atl-tabs mb-6">
         <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="travel-tab-btn">Annie</button>
         <button id="eng-tab-study" onclick="switchEngTab('study')" class="travel-tab-btn">Study</button>
+        <button id="eng-tab-read" onclick="switchEngTab('read')" class="travel-tab-btn">Read</button>
         <button id="eng-tab-ielts" onclick="switchEngTab('ielts')" class="travel-tab-btn">IELTS</button>
         <button id="eng-tab-tutor" onclick="switchEngTab('tutor')" class="travel-tab-btn">AI Tutor</button>
       </div>
@@ -15448,6 +15449,8 @@
       </div>
 
       <!-- ══════════ IELTS 뷰 (내용은 js/ielts-page.js 의 IELTS 객체) ══════════ -->
+      <!-- ══════════ READ 뷰 (매일 긴 글 — js/english-read.js, 글은 data/read/) ══════════ -->
+      <div id="eng-read-view" style="display:none"></div>
       <div id="eng-ielts-view" style="display:none"></div>
 
       <!-- ══════════ STUDY 뷰 (콘텐츠 스터디 — 신규) ══════════ -->
@@ -17321,6 +17324,7 @@
 <script src="js/app-7-mirror.js?v=79" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
 <script src="js/english-study.js?v=14" defer></script>
+<script src="js/english-read.js?v=1" defer></script>
 <script src="js/ielts-page.js?v=2" defer></script>
 <script src="js/ielts-bank.js?v=2" defer></script>
 <script src="js/ielts-links.js?v=2" defer></script>

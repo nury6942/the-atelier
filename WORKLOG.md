@@ -1,3 +1,18 @@
+## 2026-10-19 · 맥북 · English › Read 탭 — 매일 긴 글 읽기
+
+- 누리: "긴 글 읽는 습관을 실제로 키우게 사이트에 — 모르는 단어 하이라이트·예문·내 걸로 만드는 공부법". 위젯 시안 컨펌 후 제작
+- **글 가져오기**(scripts/read/fetch.mjs, 설명 README.md): The Conversation 은 본문 전체(CC BY-ND — 원문 그대로 + 출처·링크), BBC Future·Guardian Long Read·BoF 는 제목+링크만(BoF 는 Cloudflare 라 Aside 로 첫 화면 제목만). 글마다 학습팩을 claude -p(구독)로: 단어 풀이 40–70(한국어 뜻·영어 뜻·예문·발음기호), 핵심 단어 10–14, T/F/NG 4, 바꿔 말하기 4–5, 모범 요약, 한국어 두 줄 요지 → data/read/index.json + data/read/<id>.json
+- **매일 자동**: 맥북 launchd com.nuri.atelier-read 매일 07:10 → scripts/read/daily.sh (pull → fetch → data/read 만 커밋·푸시), 로그 ~/Library/Logs/atelier-read.log. 2편+팩 약 1분 40초
+- **화면**(js/english-read.js): Today(최근 3주 읽은 시간 칸·연속일·이번 주 분·내 단어 수·복습 수 / 오늘의 글 카드 / 원문 링크) · Library · My Words · Review
+  - 리더: Arial, 글자 크기 ±, 진행 막대, 읽은 시간(화면 보일 때만). 단어 누르면 오른쪽(폰은 아래)에 뜻·발음(▶)·예문·**이 글에서 그 문장**. 파랑=이 글 핵심 단어, 노랑=내 단어장, 점선=풀이 있는 단어, 2–4단어 구도 한 덩어리. 학습팩에 없는 단어는 무료 사전(dictionaryapi.dev, 영어 뜻 품사별 3개 + 번역 링크)
+  - 읽고 나서 3분: T/F/NG(바로 채점·근거) → 쉬운 말→글의 표현 찾기(누르면 그 문단 반짝) → 한 줄 요약 쓰고 모범 요약 비교 → 다 읽었어요
+  - 내 단어장: 단어 + 나온 문장 + 내가 만든 문장. Review = **그 문장 속 빈칸 채우기**(한국어 힌트·첫 글자) → 맞으면 다음 단계(1·2·4·8·16일 뒤), 틀리면 내일 → 맞힌 뒤 '내 문장으로 써보기'
+  - 기록: Firestore englishRead/state {words, log, daily} + localStorage
+- English 탭 순서 Annie · Study · **Read** · IELTS · AI Tutor (app-1-pages.js switchEngTab)
+- service-worker v1640
+
+---
+
 ## 2026-10-18 · 맥북 · English 「구독으로 만들기」 — 아이맥이 Claude 구독으로 STUDY·ANNIE 생성
 
 - 사이트: STUDY·ANNIE 추가 창에 「구독으로 만들기」(주 버튼) — Firestore `aiJobs` 에 맡기고 창을 닫음. 기존 API 버튼은 보조 버튼 「API로 바로 만들기 (요금 발생)」로 남김
