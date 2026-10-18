@@ -11718,7 +11718,64 @@
       </div>
 
       <!-- Footer -->
-      <footer id="dash-footer" style="padding-top: var(--space-2);text-align:center;font-style:italic;color:rgba(123,116,135,0.5);font-size: var(--font-size-micro);font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif"></footer>
+      <!-- 일러스트 푸터 (판화 스타일, 그림: assets/footer/atelier-footer.webp — Codex 생성) -->
+      <style>
+        .atl-footer{position:relative;overflow:hidden;border-radius:var(--radius-2xl);background:#49178f;color:#f5f0e6;font-family:'Plus Jakarta Sans','Pretendard',sans-serif}
+        .atl-footer-art{display:block;width:100%;height:auto;margin-top:-6%;pointer-events:none;user-select:none}
+        .atl-footer-top{position:relative;z-index:1;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:32px;padding:44px 48px 0}
+        .atl-footer-brand{display:flex;align-items:center;gap:8px;font-family:'Manrope','Pretendard',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.01em;color:#fff}
+        .atl-footer-brand .material-symbols-outlined{font-size:20px}
+        .atl-footer-desc{margin-top:12px;max-width:240px;font-size:12.5px;line-height:1.6;color:rgba(245,240,230,0.62)}
+        .atl-footer-col h4{font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:12px}
+        .atl-footer-col a{display:block;font-size:12.5px;line-height:1.5;padding:3px 0;color:rgba(245,240,230,0.62);text-decoration:none;transition:color .15s}
+        .atl-footer-col a:hover{color:#fff}
+        .atl-footer-bottom{position:relative;z-index:1;display:flex;justify-content:space-between;gap:16px;margin:32px 48px 0;padding-top:16px;border-top:1px solid rgba(245,240,230,0.14);font-size:11.5px;color:rgba(245,240,230,0.5)}
+        @media (max-width:900px){
+          .atl-footer-top{grid-template-columns:repeat(2,1fr);gap:24px;padding:32px 24px 0}
+          .atl-footer-top>div:first-child{grid-column:1/-1}
+          .atl-footer-bottom{margin:24px 24px 0;flex-direction:column;gap:4px}
+          .atl-footer-art{margin-top:0;width:180%;max-width:none;margin-left:-55%}
+        }
+      </style>
+      <footer class="atl-footer">
+        <div class="atl-footer-top">
+          <div>
+            <div class="atl-footer-brand"><span class="material-symbols-outlined">palette</span>The Atelier</div>
+            <p class="atl-footer-desc">하루를 기록하고, 돈과 여행과 배움을 한 화실에서 가꾸는 나만의 작업실.</p>
+          </div>
+          <div class="atl-footer-col">
+            <h4>Everyday</h4>
+            <a href="#" onclick="navigate('planner');return false;">Calendar</a>
+            <a href="#" onclick="navigate('matrix');return false;">Year Matrix</a>
+            <a href="#" onclick="navigate('reference');return false;">Memo</a>
+          </div>
+          <div class="atl-footer-col">
+            <h4>Money</h4>
+            <a href="#" onclick="navigate('finance-hub');return false;">Money</a>
+            <a href="#" onclick="navigate('ledger');return false;">Daily Ledger</a>
+            <a href="#" onclick="navigate('income');return false;">Side Jobs</a>
+          </div>
+          <div class="atl-footer-col">
+            <h4>Travel</h4>
+            <a href="#" onclick="navigate('journey');return false;">Travel</a>
+            <a href="#" onclick="navigate('finance');return false;">Travel Budget</a>
+            <a href="#" onclick="navigate('packing');return false;">Checklist</a>
+            <a href="#" onclick="navigate('nomad-master');return false;">Nomad Master</a>
+          </div>
+          <div class="atl-footer-col">
+            <h4>Growth</h4>
+            <a href="#" onclick="navigate('english');return false;">English</a>
+            <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
+            <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
+            <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
+          </div>
+        </div>
+        <div class="atl-footer-bottom">
+          <span id="dash-footer"></span>
+          <span>© 2026 Nuri · The Atelier</span>
+        </div>
+        <img class="atl-footer-art" src="assets/footer/atelier-footer.webp" alt="" loading="lazy" decoding="async"/>
+      </footer>
 
     </div>
   </div>
