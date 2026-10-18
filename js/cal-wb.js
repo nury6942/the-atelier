@@ -301,7 +301,7 @@
     //   하루짜리·여러 날 막대 모두 꽉 채움 (옅은 바탕 + 왼쪽 띠는 약해 보여서 뺌).
     // (2026-10-11) 연차 카테고리(미리 잡은 여행·휴가 — 예전 기본색 청록이 R 시리즈 청록과 겹침)
     //   (v2) 줄무늬는 못생겼다 → 하늘 → 라벤더 → 핑크 노을 그라데이션. 'fixed' 라 여러 칸에 걸친 막대도 한 장처럼 이어진다
-    if (isTrip(ev)) return "background:linear-gradient(90deg,#0EA5E9 0%,#6366F1 50%,#EC4899 100%) fixed;color:#fff;";
+    if (isTrip(ev)) return "background:#1F4BD8;color:#fff;";
     if (PINK_TO_YELLOW[k]) return "background:#FFE01A;color:#111;";
     var c = SOLID[k] || SOLID.indigo;
     if (full || BAR_FULL) return "background:" + c[1] + ";color:#fff;";
