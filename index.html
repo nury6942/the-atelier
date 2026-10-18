@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=397" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=399" as="script">
   <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -15313,6 +15313,9 @@
 
       <!-- Page Intro -->
 
+      <!-- 구독 작업(아이맥 워커) 진행 줄 — js/english-study.js renderAiJobs -->
+      <div id="eng-ai-jobs" style="display:none" class="mb-4"></div>
+
       <!-- ══ ANNIE | STUDY 탭 ══ -->
       <div class="atl-tabs mb-6">
         <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="travel-tab-btn">Annie</button>
@@ -15554,8 +15557,9 @@
                 <textarea id="review-transcript" rows="12" placeholder="MacWhisper 출력 또는 Notion 등에서 복사한 텍스트를 여기에 붙여넣으세요 (Ctrl/Cmd+V)" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-violet-200 focus:bg-white focus:ring-2 focus:ring-violet-300 focus:border-violet-400 text-sm resize-none font-mono leading-relaxed" style="min-height:260px"></textarea>
               </div>
               <!-- Auto Generate -->
-              <button onclick="autoGenerateReview()" id="review-auto-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2">
-                ✨ 자동 생성
+              <button onclick="queueAiJob('annie')" id="review-sub-btn" class="atl-btn atl-btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2 mb-2">구독으로 만들기 <span style="font-weight:500;opacity:.85">· 무료 · 아이맥이 2~3분</span></button>
+              <button onclick="autoGenerateReview()" id="review-auto-btn" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 mb-2">
+                API로 바로 만들기 (요금 발생)
               </button>
               <p id="review-auto-hint" class="text-[10px] text-slate-400 mb-4 text-center"></p>
 
@@ -15607,7 +15611,8 @@
               </label>
               <textarea id="study-transcript" rows="12" placeholder="MacWhisper로 딴 유튜브 뉴스·인터뷰 스크립트를 여기에 붙여넣으세요 (Ctrl/Cmd+V)" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-violet-200 focus:bg-white focus:ring-2 focus:ring-violet-300 focus:border-violet-400 text-sm resize-none font-mono leading-relaxed" style="min-height:240px"></textarea>
             </div>
-            <button onclick="autoGenerateStudy()" id="study-auto-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200">✨ 1타 강사 정리 생성</button>
+            <button onclick="queueAiJob('study')" id="study-sub-btn" class="atl-btn atl-btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2">구독으로 만들기 <span style="font-weight:500;opacity:.85">· 무료 · 아이맥이 2~3분</span></button>
+            <button onclick="autoGenerateStudy()" id="study-auto-btn" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2">API로 바로 만들기 (요금 발생)</button>
             <p id="study-api-hint" class="text-[10px] text-slate-400 text-center"></p>
 
             <div id="study-loading-overlay" class="hidden p-6 rounded-xl bg-violet-50 border border-violet-100 text-center">
@@ -16430,7 +16435,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=397" defer></script>
+<script src="js/app-1-pages.js?v=399" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17315,7 +17320,7 @@
 <script src="js/app-6-postype-analytics.js?v=172" defer></script>
 <script src="js/app-7-mirror.js?v=79" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
-<script src="js/english-study.js?v=13" defer></script>
+<script src="js/english-study.js?v=14" defer></script>
 <script src="js/ielts-page.js?v=2" defer></script>
 <script src="js/ielts-bank.js?v=2" defer></script>
 <script src="js/ielts-links.js?v=2" defer></script>

@@ -31136,11 +31136,11 @@ function updateAutoGenButton() {
   if (!hasKey) {
     // 인라인 카드가 위에 보이므로 별도 안내 안 함
     btn.disabled = false; // 클릭하면 카드 강조 애니메이션
-    btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
+    btn.className = 'atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 mb-2';
     hint.textContent = '';
   } else {
     btn.disabled = false;
-    btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200 mb-2';
+    btn.className = 'atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 mb-2';
     hint.textContent = '현재 모델: ' + info.label + ' (' + info.cost + ')';
   }
 }

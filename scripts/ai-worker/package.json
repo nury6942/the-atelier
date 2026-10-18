@@ -1,0 +1,9 @@
+{
+  "name": "atelier-ai-worker",
+  "private": true,
+  "description": "사이트의 「구독으로 만들기」 대기열(aiJobs)을 Claude 구독으로 처리하는 아이맥 상주 워커",
+  "main": "worker.js",
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  }
+}

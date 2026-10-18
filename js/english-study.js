@@ -345,7 +345,7 @@ function studyAutoError(msg, raw){
     if (raw){ rawEl.className = 'w-full mt-2 px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs font-mono resize-none'; rawEl.value = raw; }
     else { rawEl.className = 'hidden'; }
   }
-  if (btn){ btn.disabled = false; btn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-violet-200'; }
+  if (btn){ btn.disabled = false; btn.className = 'atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2'; }
 }
 
 // ── 상세 열기/닫기/삭제 ─────────────────────────────────────
@@ -1234,3 +1234,124 @@ window.annieRemoveAudio = async function(dateId){
     if (typeof openSessionDetail === 'function') openSessionDetail(dateId);
   } catch(err){ alert('삭제 실패: ' + (err && err.message ? err.message : '')); }
 };
+
+// ═══════════════════════════════════════════════════════════
+//  구독으로 만들기 — API 요금 없이 아이맥 워커(scripts/ai-worker)가 처리
+//  aiJobs/{id}: { kind:'study'|'annie', status: queued→running→done|error, ... }
+//  완료를 보면 목록을 새로 그리고, ANNIE 는 수업 트래커 'N회차'도 여기서 만든다(ack).
+// ═══════════════════════════════════════════════════════════
+var _aiJobs = [];
+var _aiJobsUnsub = null;
+
+function _aiToast(icon, msg){
+  if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">' + icon + '</span> ' + msg);
+}
+
+window.queueAiJob = async function(kind){
+  var isStudy = kind === 'study';
+  var g = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var date = isStudy ? (g('study-date') || new Date().toISOString().split('T')[0]) : g('review-date');
+  var transcript = g(isStudy ? 'study-transcript' : 'review-transcript');
+  var title = g(isStudy ? 'study-title' : 'review-title');
+  var source = isStudy ? g('study-source') : '';
+  if (!date){ _aiToast('warning', '날짜를 입력하세요'); return; }
+  if (!transcript){ _aiToast('warning', '스크립트를 입력하세요'); return; }
+  var btn = document.getElementById(isStudy ? 'study-sub-btn' : 'review-sub-btn');
+  if (btn) btn.disabled = true;
+  var job = {
+    kind: kind, status: 'queued', date: date, title: title, source: source, transcript: transcript,
+    createdAt: new Date().toISOString()
+  };
+  if (isStudy) job.docId = date + '-' + Date.now().toString(36).slice(-5);
+  try {
+    await db.collection('aiJobs').add(job);
+    _aiToast('schedule', '아이맥에 맡겼어요 · 2~3분 뒤 목록에 생겨요');
+    if (isStudy){ if (typeof closeStudyCreateModal === 'function') closeStudyCreateModal(); }
+    else if (typeof closeReviewCreateModal === 'function') closeReviewCreateModal();
+    ['study-transcript','review-transcript'].forEach(function(id){ if (id === (isStudy ? 'study-transcript' : 'review-transcript')){ var el = document.getElementById(id); if (el) el.value = ''; } });
+    watchAiJobs();
+  } catch(e){
+    _aiToast('error', '맡기기 실패: ' + (e && e.message ? e.message : ''));
+  } finally { if (btn) btn.disabled = false; }
+};
+
+window.watchAiJobs = function(){
+  if (_aiJobsUnsub || typeof db === 'undefined') return;
+  _aiJobsUnsub = db.collection('aiJobs').orderBy('createdAt', 'desc').limit(20).onSnapshot(function(snap){
+    _aiJobs = snap.docs.map(function(d){ var x = d.data(); x._id = d.id; return x; });
+    _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked) _ackAiJob(j); });
+    renderAiJobs();
+  }, function(err){ console.warn('[aiJobs]', err); _aiJobsUnsub = null; });
+};
+
+var _aiAcking = {};
+async function _ackAiJob(j){
+  if (_aiAcking[j._id]) return;
+  _aiAcking[j._id] = true;
+  try {
+    // 여러 기기가 동시에 열려 있어도 한 기기만 처리 (수업 'N회차' 중복 방지)
+    var ref = db.collection('aiJobs').doc(j._id);
+    var mine = await db.runTransaction(async function(t){
+      var cur = await t.get(ref);
+      if (!cur.exists || cur.get('acked')) return false;
+      t.update(ref, { acked: true });
+      return true;
+    });
+    if (!mine){ if (j.kind === 'study' && typeof loadEnglishStudy === 'function') await loadEnglishStudy(); return; }
+    var lesson = null;
+    if (j.kind === 'annie'){
+      if (typeof ensureLessonExists === 'function') lesson = await ensureLessonExists(j.date);
+      if (typeof loadEnglishSessions === 'function') await loadEnglishSessions();
+      if (typeof loadEnglish === 'function') await loadEnglish();
+    } else if (typeof loadEnglishStudy === 'function') {
+      await loadEnglishStudy();
+    }
+    _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : '스터디') + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
+  } catch(e){ console.warn('[aiJobs ack]', e); }
+  finally { delete _aiAcking[j._id]; }
+}
+
+window.retryAiJob = async function(id){
+  try { await db.collection('aiJobs').doc(id).update({ status: 'queued', error: firebase.firestore.FieldValue.delete(), raw: firebase.firestore.FieldValue.delete(), createdAt: new Date().toISOString() }); }
+  catch(e){ _aiToast('error', '다시 맡기기 실패: ' + e.message); }
+};
+window.dismissAiJob = async function(id){
+  try { await db.collection('aiJobs').doc(id).delete(); } catch(e){ _aiToast('error', '지우기 실패: ' + e.message); }
+};
+
+function renderAiJobs(){
+  var el = document.getElementById('eng-ai-jobs');
+  if (!el) return;
+  var live = _aiJobs.filter(function(j){ return j.status === 'queued' || j.status === 'running' || j.status === 'error'; });
+  if (!live.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  var esc = function(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
+  el.style.display = 'block';
+  el.innerHTML = live.map(function(j){
+    var name = (j.kind === 'annie' ? 'ANNIE 리뷰' : 'Study') + ' · ' + esc(j.title || j.date);
+    var mins = function(t){ var m = Math.max(0, Math.round((Date.now() - Date.parse(t || 0)) / 60000)); return m < 1 ? '방금' : m + '분째'; };
+    if (j.status === 'error'){
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid #F3C7CC;background:#FFF5F6;margin-bottom:6px;font-size:13px;color:#9F1D2C">' +
+        '<span class="material-symbols-outlined" style="font-size:18px">error</span>' +
+        '<span style="flex:1"><b>' + name + '</b> — ' + esc(j.error || '실패') + '</span>' +
+        '<button onclick="retryAiJob(\'' + j._id + '\')" class="atl-btn atl-btn-secondary" style="padding:4px 10px;font-size:12px">다시 맡기기</button>' +
+        '<button onclick="dismissAiJob(\'' + j._id + '\')" class="atl-btn atl-btn-ghost" style="padding:4px 8px;font-size:12px;color:#475569">지우기</button></div>';
+    }
+    var running = j.status === 'running';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid #ECECF0;background:#EEF2FD;margin-bottom:6px;font-size:13px;color:#1A3FB5">' +
+      '<span class="material-symbols-outlined' + (running ? ' animate-spin' : '') + '" style="font-size:18px">' + (running ? 'progress_activity' : 'schedule') + '</span>' +
+      '<span style="flex:1"><b>' + name + '</b> — ' + (running ? '아이맥이 만드는 중 · ' + mins(j.startedAt) : '아이맥 차례 기다리는 중 · ' + mins(j.createdAt)) + '</span>' +
+      '<span style="font-size:11px;color:#475569">구독 · 무료</span></div>';
+  }).join('');
+}
+
+// English 페이지를 열면 감시 시작 (로그인 뒤 db 가 생기면)
+(function(){
+  var orig = window.loadEnglishStudy;
+  window.loadEnglishStudy = async function(){ try { watchAiJobs(); } catch(e){} return orig.apply(this, arguments); };
+  var tries = 0;
+  var t = setInterval(function(){
+    tries++;
+    if (typeof db !== 'undefined' && typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser){ clearInterval(t); watchAiJobs(); }
+    else if (tries > 60) clearInterval(t);
+  }, 1000);
+})();

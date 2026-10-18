@@ -1,3 +1,13 @@
+## 2026-10-18 · 맥북 · English 「구독으로 만들기」 — 아이맥이 Claude 구독으로 STUDY·ANNIE 생성
+
+- 사이트: STUDY·ANNIE 추가 창에 「구독으로 만들기」(주 버튼) — Firestore `aiJobs` 에 맡기고 창을 닫음. 기존 API 버튼은 보조 버튼 「API로 바로 만들기 (요금 발생)」로 남김
+- English 페이지 위 진행 줄(#eng-ai-jobs): 기다림/만드는 중/실패(다시 맡기기·지우기). 완료되면 목록 새로 그림, ANNIE 는 여기서 ensureLessonExists(트랜잭션 ack 로 기기 하나만)
+- 아이맥 워커 scripts/ai-worker/worker.js (launchd com.nuri.atelier-ai-worker, 로그 ~/Library/Logs/atelier-ai-worker.log): 10초마다 대기열 확인 → 작업 직전 git pull → 사이트 원본 프롬프트(STUDY_PROMPT_TEMPLATE·REVIEW_PROMPT_TEMPLATE)를 그대로 꺼내 `claude -p --model opus`(개인 계정 구독) → englishStudy / englishSessions 저장 → 원문은 대기열에서 지움
+- 인증: 아이맥 gcloud ADC (새 키 안 만듦). 설치·끄기: `scripts/ai-worker/install.sh` / `install.sh off`
+- 시험: 맥북에서 STUDY 1건(116초)·ANNIE 1건(2099-01-01, 88초) 실측 후 시험 데이터 삭제
+
+---
+
 ## 2026-10-19 · 맥북 · IELTS 바꿔 말하기 사전 (R·L·S·W)
 
 - 누리: "바꿔 말하기 표를 필요한 것 위주로 예쁘게 — 스피킹·리스닝·라이팅도". 새 js/ielts-para.js
