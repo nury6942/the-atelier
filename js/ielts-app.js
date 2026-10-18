@@ -4,7 +4,7 @@
 // 저장 = Firestore `ieltsRecords`(기록 한 건 = 문서 하나) + `ielts/state`(약점 횟수·카드 상자) · 로그인 안 됐으면 localStorage 만
 (function(){
   var LS_KEY = 'atelier_ielts_v1';
-  var ST = { view:'home', records:[], weak:{}, cards:{}, myCards:[], loaded:false, timers:{} };
+  var ST = { view:'home', records:[], weak:{}, cards:{}, myCards:[], watched:{}, loaded:false, timers:{} };
   var ACC = '#1F4BD8', OK = '#15803d', MID = '#b45309', BAD = '#b91c1c';
 
   // ── GT 공식 환산표 (정답 수 → 밴드) ──
@@ -39,8 +39,8 @@
 
   // ── 저장 ──
   function fb(){ return (typeof db!=='undefined' && db && typeof firebase!=='undefined' && firebase.auth && firebase.auth().currentUser) ? db : null; }
-  function cacheSave(){ try { localStorage.setItem(LS_KEY, JSON.stringify({records:ST.records, weak:ST.weak, cards:ST.cards, myCards:ST.myCards})); } catch(e){} }
-  function cacheLoad(){ try { var c=JSON.parse(localStorage.getItem(LS_KEY)||'null'); if (c){ ST.records=c.records||[]; ST.weak=c.weak||{}; ST.cards=c.cards||{}; ST.myCards=c.myCards||[]; } } catch(e){} }
+  function cacheSave(){ try { localStorage.setItem(LS_KEY, JSON.stringify({records:ST.records, weak:ST.weak, cards:ST.cards, myCards:ST.myCards, watched:ST.watched})); } catch(e){} }
+  function cacheLoad(){ try { var c=JSON.parse(localStorage.getItem(LS_KEY)||'null'); if (c){ ST.records=c.records||[]; ST.weak=c.weak||{}; ST.cards=c.cards||{}; ST.myCards=c.myCards||[]; ST.watched=c.watched||{}; } } catch(e){} }
   async function load(){
     cacheLoad();
     var d=fb(); if (!d){ ST.loaded=true; return; }
@@ -48,7 +48,7 @@
       var snap=await d.collection('ieltsRecords').get();
       ST.records=snap.docs.map(function(x){ var o=x.data(); o._id=x.id; return o; });
       var st=await d.collection('ielts').doc('state').get();
-      if (st.exists){ var o=st.data(); ST.weak=o.weak||{}; ST.cards=o.cards||{}; ST.myCards=o.myCards||[]; }
+      if (st.exists){ var o=st.data(); ST.weak=o.weak||{}; ST.cards=o.cards||{}; ST.myCards=o.myCards||[]; ST.watched=o.watched||{}; }
       cacheSave();
     } catch(e){ console.warn('[IELTS] load', e); }
     ST.loaded=true;
@@ -64,7 +64,7 @@
     ST.records=ST.records.filter(function(r){return r._id!==id;}); cacheSave();
     var d=fb(); if (d){ try { if (typeof trashBeforeDelete==='function') await trashBeforeDelete('ieltsRecords', id); await d.collection('ieltsRecords').doc(id).delete(); } catch(e){} }
   }
-  var _stT; function saveState(){ cacheSave(); clearTimeout(_stT); _stT=setTimeout(async function(){ var d=fb(); if (d){ try { await d.collection('ielts').doc('state').set({weak:ST.weak, cards:ST.cards, myCards:ST.myCards, updatedAt:new Date().toISOString()},{merge:true}); } catch(e){} } },600); }
+  var _stT; function saveState(){ cacheSave(); clearTimeout(_stT); _stT=setTimeout(async function(){ var d=fb(); if (d){ try { await d.collection('ielts').doc('state').set({weak:ST.weak, cards:ST.cards, myCards:ST.myCards, watched:ST.watched, updatedAt:new Date().toISOString()},{merge:true}); } catch(e){} } },600); }
   function addWeak(type, n){ if (!type) return; ST.weak[type]=(ST.weak[type]||0)+(n||1); if (ST.weak[type]<0) ST.weak[type]=0; saveState(); }
 
   // ── 기록에서 숫자 뽑기 ──
@@ -85,7 +85,7 @@
   function head(title, sub, right){ return '<div class="ia-head"><div><h3>'+esc(title)+'</h3>'+(sub?'<p>'+esc(sub)+'</p>':'')+'</div>'+(right||'')+'</div>'; }
   function bar(v, max, col, h){ return '<div class="ia-bar" style="height:'+(h||8)+'px"><i style="width:'+Math.max(0,Math.min(100,v/max*100))+'%;background:'+col+'"></i></div>'; }
 
-  var NAV = [['home','Home','space_dashboard'],['listening','Listening','headphones'],['reading','Reading','menu_book'],['writing','Writing','edit_note'],['speaking','Speaking','mic'],['scores','Scores','monitoring'],['weak','Weak Spots','target'],['cards','Cards','style'],['guide','Guide','map']];
+  var NAV = [['home','Home','space_dashboard'],['listening','Listening','headphones'],['reading','Reading','menu_book'],['writing','Writing','edit_note'],['speaking','Speaking','mic'],['scores','Scores','monitoring'],['weak','Weak Spots','target'],['tests','Free Tests','quiz'],['videos','Videos','smart_display'],['cards','Cards','style'],['guide','Guide','map']];
 
   function css(){
     if (document.getElementById('ia-style')) return;
@@ -343,7 +343,7 @@
     var sc=O.graded?40-wrong.length:null, b=sc!=null?toBand(O.area==='L'?BAND_L:BAND_R,sc):null;
     return head('Answer Sheet · '+(O.area==='L'?'Listening':'Reading'), '책(GT 21·20·22)으로 풀 때 — 답을 적고, 책 뒤 정답을 붙여넣으면 자동 채점')
       +'<div class="ia-timer"><span class="clock" id="ia-omr-clock">'+mmss(O.area==='L'?30*60:60*60)+'</span>'
-      +'<select class="ia-in" id="ia-omr-src" style="height:30px;width:auto;background:#fff;color:#16161A">'+['GT 21','GT 20','GT 22','GT 19','기타'].map(function(x){return '<option '+(O.src===x?'selected':'')+'>'+x+'</option>';}).join('')+'</select>'
+      +'<select class="ia-in" id="ia-omr-src" style="height:30px;width:auto;background:#fff;color:#16161A">'+(['GT 21','GT 20','GT 22','GT 19','기타'].indexOf(O.src)<0?[O.src]:[]).concat(['GT 21','GT 20','GT 22','GT 19','기타']).map(function(x){return '<option '+(O.src===x?'selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select>'
       +'<select class="ia-in" id="ia-omr-test" style="height:30px;width:auto;background:#fff;color:#16161A">'+[1,2,3,4].map(function(x){return '<option value="'+x+'" '+(+O.test===x?'selected':'')+'>Test '+x+'</option>';}).join('')+'</select>'
       +'<select class="ia-in" id="ia-omr-mock" style="height:30px;width:auto;background:#fff;color:#16161A"><option value="">연습</option>'+(plan().mocks||[]).map(function(m){return '<option value="'+m.n+'" '+(+O.mock===m.n?'selected':'')+'>모의고사 #'+m.n+'</option>';}).join('')+'</select>'
       +'<span style="margin-left:auto"></span><button class="ia-btn" data-act="omr-exit">닫기</button>'+(O.graded?'':'<button class="ia-btn" data-act="omr-start">'+icon(O.running?'pause':'timer',16)+' '+(O.running?'멈춤':'시간 재기')+'</button>')+'</div>'
@@ -352,6 +352,7 @@
       +(O.graded?'':'<div class="ia-box" style="margin-top:12px"><div class="ia-k" style="margin-bottom:8px">ANSWER KEY — 책 정답 40개를 한 줄에 하나씩 (또는 "1 seaview" 형식) 붙여넣기 · 정답이 여러 개면 / 로 구분</div><textarea class="ia-in" id="ia-key" style="height:120px;padding:10px;font-size:13px" placeholder="1 Seaview\n2 0412 556 873\n3 Thursday/Thurs">'+esc(O.keyRaw||'')+'</textarea><div class="ia-row" style="margin-top:10px;justify-content:flex-end"><button class="ia-btn pri" data-act="omr-grade">'+icon('done_all',16)+' 채점</button></div></div>')
       +typeSel+(O.graded?'<div class="ia-row" style="margin-top:12px;justify-content:flex-end"><button class="ia-btn pri" data-act="omr-save">'+icon('save',16)+' 기록 저장</button></div>':'');
   }
+  function O0link(srcName){ var tn=document.getElementById('ia-omr-test').value; return /^GT \d+$/.test(srcName)?srcName+' Test '+tn:srcName+(OMR.linkId?'':' · '+tn); }
   function parseKey(raw){
     var key={}, lines=String(raw||'').split(/\n+/).map(function(l){return l.trim();}).filter(Boolean), seq=1;
     lines.forEach(function(l){ var m=l.match(/^(\d{1,2})[\s.):-]+(.+)$/); var n, v; if (m){ n=+m[1]; v=m[2]; } else { n=seq; v=l; } seq=n+1; if (n>=1&&n<=40) key[n]=v.split('/').map(function(x){return x.trim();}).filter(Boolean); });
@@ -547,6 +548,59 @@
     CD.i++; CD.flip=false; render();
   }
 
+  // ════════ FREE TESTS (공식·무료 모의고사 — 내용은 그 사이트에서, 기록은 여기서) ════════
+  function links(){ return window.IELTS_LINKS || {tests:[], videos:[], channels:[]}; }
+  var AREA_LABEL={full:'4영역',LR:'듣기+읽기',L:'듣기',R:'읽기',W:'쓰기',S:'말하기'};
+  function viewTests(){
+    var T=links().tests||[];
+    if (!T.length) return head('Free Tests','')+'<div class="ia-empty">목록을 불러오는 중이에요</div>';
+    var tiles=T.map(function(t){
+      var done=ST.records.filter(function(r){ return r.ref===t.id; }), last=done[done.length-1];
+      var omrArea=t.area==='L'?'L':t.area==='R'?'R':null;
+      return '<div class="ia-tile" style="cursor:default;gap:8px'+(t.official?';border-top:3px solid '+ACC:'')+'">'
+        +'<div class="ia-row" style="justify-content:space-between"><span class="ia-tag" style="'+(t.official?'':'background:#FEF3C7;color:#92400E')+'">'+(t.official?'공식':'비공식')+' · '+esc(t.provider)+'</span>'+(done.length?'<span class="ia-tag" style="background:#DCFCE7;color:#166534">'+icon('check',13)+' '+done.length+'회</span>':'')+'</div>'
+        +'<span class="t">'+esc(t.name)+'</span>'
+        +'<div class="ia-row" style="gap:6px">'+[AREA_LABEL[t.area]||t.area, t.module==='GT'?'GT':t.module==='Academic'?'Academic':'GT·AC 공통', t.format==='computer'?'컴퓨터 화면':t.format==='pdf'?'PDF':'웹', t.count?t.count+'세트':null, t.login?'무료 가입':null].filter(Boolean).map(function(x){return '<span style="font-size:11.5px;font-weight:700;color:#5B5B66;border:1px solid #ECECF0;padding:1px 6px">'+esc(x)+'</span>';}).join('')+'</div>'
+        +'<span class="s">'+esc(t.note||'')+'</span>'
+        +(last?'<span class="s" style="font-weight:700;color:'+bandColor(last.band)+'">지난번 '+last.score+'/'+last.total+(last.band!=null?' · '+fmtB(last.band):'')+'</span>':'')
+        +'<div class="ia-row" style="margin-top:auto;padding-top:6px"><a class="ia-btn sm pri" href="'+esc(t.url)+'" target="_blank" rel="noopener">'+icon('open_in_new',15)+' 열기</a>'
+        +(omrArea?'<button class="ia-btn sm" data-omr="'+omrArea+'" data-omr-src="'+esc(t.name)+'" data-omr-link="'+esc(t.id)+'" data-omr-view="'+(omrArea==='L'?'listening':'reading')+'">'+icon('fact_check',15)+' 답안지·채점</button>':'')
+        +(t.area==='full'||t.area==='LR'?'<button class="ia-btn sm" data-omr="L" data-omr-src="'+esc(t.name)+'" data-omr-link="'+esc(t.id)+'" data-omr-view="listening">L 답안지</button><button class="ia-btn sm" data-omr="R" data-omr-src="'+esc(t.name)+'" data-omr-link="'+esc(t.id)+'" data-omr-view="reading">R 답안지</button>':'')
+        +'</div></div>';
+    }).join('');
+    var nOff=T.filter(function(t){return t.official;}).length;
+    return head('Free Tests','공식·무료 모의고사 '+T.length+'곳 · 문제는 그 사이트에서 풀고, 점수·약점은 여기 답안지에 남겨요', '<span class="ia-row" style="font-size:12px;font-weight:700;gap:10px"><span style="color:'+ACC+'">■ 공식 '+nOff+'</span><span style="color:#92400E">■ 비공식 '+(T.length-nOff)+'</span></span>')
+      +'<div class="ia-pick" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">'+tiles+'</div>';
+  }
+
+  // ════════ VIDEOS (유튜브 — 링크와 내 말로 쓴 한 줄 요령만) ════════
+  var VF={area:'all', lang:'all'};
+  function fmtViews(n){ n=+n||0; return n>=1e8?(n/1e8).toFixed(1)+'억':n>=1e4?Math.round(n/1e4)+'만':n>=1e3?(n/1e3).toFixed(1)+'천':String(n); }
+  function viewVideos(){
+    var V=(links().videos||[]).slice(), C=links().channels||[];
+    if (!V.length) return head('Videos','')+'<div class="ia-empty">목록을 불러오는 중이에요</div>';
+    var areas=[['all','전체'],['L','듣기'],['R','읽기'],['W1','편지'],['W2','에세이'],['S','말하기'],['G','시험 안내']];
+    var f=V.filter(function(v){ return (VF.area==='all'||v.area===VF.area) && (VF.lang==='all'||v.lang===VF.lang); });
+    f.sort(function(a,b){ return (ST.watched[a.yt]?1:0)-(ST.watched[b.yt]?1:0) || (b.views||0)-(a.views||0); });
+    var chips='<div class="ia-row" style="gap:4px;margin-bottom:14px">'+areas.map(function(a){ var n=a[0]==='all'?V.length:V.filter(function(v){return v.area===a[0];}).length; return '<button class="ia-btn sm" data-vk="area" data-vf="'+a[0]+'" style="'+(VF.area===a[0]?'background:#16161A;color:#fff;border-color:#16161A':'')+'">'+a[1]+' <span style="opacity:.6">'+n+'</span></button>'; }).join('')
+      +'<span style="flex:1"></span>'+[['all','전체'],['en','영어'],['ko','한국어']].map(function(a){ return '<button class="ia-btn sm" data-vk="lang" data-vf="'+a[0]+'" style="'+(VF.lang===a[0]?'background:'+ACC+';color:#fff;border-color:'+ACC:'')+'">'+a[1]+'</button>'; }).join('')+'</div>';
+    var cards=f.map(function(v){ var w=ST.watched[v.yt];
+      return '<div style="border:1px solid #DCDCE3;background:#fff;display:flex;flex-direction:column;'+(w?'opacity:.55':'')+'">'
+        +'<a href="https://www.youtube.com/watch?v='+esc(v.yt)+'" target="_blank" rel="noopener" style="position:relative;display:block;aspect-ratio:16/9;background:#F1F1F4"><img src="https://i.ytimg.com/vi/'+esc(v.yt)+'/mqdefault.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">'
+          +(v.duration?'<span style="position:absolute;right:6px;bottom:6px;background:#16161A;color:#fff;font-size:11px;font-weight:700;padding:1px 5px">'+esc(v.duration)+'</span>':'')
+          +'<span style="position:absolute;left:6px;top:6px;background:#fff;color:#16161A;font-size:11px;font-weight:800;padding:1px 6px">'+({L:'듣기',R:'읽기',W1:'편지',W2:'에세이',S:'말하기',G:'안내'})[v.area]+'</span></a>'
+        +'<div style="padding:10px 12px;display:flex;flex-direction:column;gap:5px;flex:1">'
+          +'<a href="https://www.youtube.com/watch?v='+esc(v.yt)+'" target="_blank" rel="noopener" style="font-size:13.5px;font-weight:800;line-height:1.35;color:#16161A;text-decoration:none">'+esc(v.title)+'</a>'
+          +'<div style="font-size:11.5px;color:#5B5B66;font-weight:600">'+esc(v.channel)+' · '+fmtViews(v.views)+'회 · '+esc(v.published||'')+'</div>'
+          +(v.tip?'<div style="font-size:12.5px;line-height:1.5;padding:6px 8px;background:#EEF2FD;color:#1A3FB5;margin-top:2px">'+icon('lightbulb',14)+' '+esc(v.tip)+'</div>':'')
+          +'<div style="margin-top:auto;padding-top:4px"><button class="ia-btn sm" data-watch="'+esc(v.yt)+'">'+icon(w?'check_box':'check_box_outline_blank',15)+' 봤어요</button></div>'
+        +'</div></div>'; }).join('');
+    var seen=V.filter(function(v){return ST.watched[v.yt];}).length;
+    return head('Videos','조회수 높고 최신인 IELTS 영상 · 썸네일 누르면 유튜브로', '<div style="min-width:160px"><div class="ia-k" style="margin-bottom:4px">'+seen+' / '+V.length+' 봤어요</div>'+bar(seen,V.length,ACC,6)+'</div>')
+      +chips+'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">'+cards+'</div>'
+      +(C.length?'<div class="ia-box" style="margin-top:20px">'+head('Channels','구독해 두면 좋은 채널')+'<div class="ia-pick" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">'+C.map(function(c){ return '<a class="ia-tile" href="'+esc(c.url)+'" target="_blank" rel="noopener" style="text-decoration:none;color:#16161A;padding:12px"><span class="ia-row" style="justify-content:space-between"><span class="t" style="font-size:14px">'+esc(c.name)+'</span><span class="ia-tag" style="background:#F1F1F4;color:#5B5B66">'+(c.lang==='ko'?'한국어':'EN')+'</span></span><span class="s">'+esc(c.why||'')+'</span></a>'; }).join('')+'</div></div>':'');
+  }
+
   // ════════ GUIDE ════════
   function viewGuide(){ return head('Guide','전략·자료·채점 프롬프트 — 필요할 때만')+(typeof window.ieltsGuideHtml==='function'?window.ieltsGuideHtml():''); }
 
@@ -556,7 +610,7 @@
     css();
     var v=ST.view, body;
     if (OMR && (v==='listening'||v==='reading')) body=viewOmr();
-    else body= v==='listening'?viewPractice('L') : v==='reading'?viewPractice('R') : v==='writing'?viewWriting() : v==='speaking'?viewSpeaking() : v==='scores'?viewScores() : v==='weak'?viewWeak() : v==='cards'?viewCards() : v==='guide'?viewGuide() : viewHome();
+    else body= v==='listening'?viewPractice('L') : v==='reading'?viewPractice('R') : v==='writing'?viewWriting() : v==='speaking'?viewSpeaking() : v==='scores'?viewScores() : v==='weak'?viewWeak() : v==='cards'?viewCards() : v==='tests'?viewTests() : v==='videos'?viewVideos() : v==='guide'?viewGuide() : viewHome();
     el.innerHTML='<div class="ia"><nav class="ia-nav">'+NAV.map(function(n){return '<button data-nav="'+n[0]+'" class="'+(n[0]===v?'on':'')+'">'+icon(n[2],20)+n[1]+'</button>';}).join('')+'</nav><div id="ia-body">'+body+'</div></div>';
     if (v==='listening'||v==='reading'){ if (RUN && !OMR) tickRun(); }
     if (v==='writing' && WR) tickWriting();
@@ -573,7 +627,7 @@
   function bind(){
     var root=document.getElementById('eng-ielts-view'); if (!root || root._iaBound) return; root._iaBound=true;
     root.addEventListener('click', async function(e){
-      var t=e.target.closest('[data-nav],[data-go],[data-run],[data-sec],[data-q],[data-act],[data-omr],[data-del],[data-wt1],[data-wt2],[data-wrand],[data-wfree],[data-wopen],[data-medit],[data-mock],[data-weak],[data-cans]');
+      var t=e.target.closest('[data-watch],[data-vf],[data-nav],[data-go],[data-run],[data-sec],[data-q],[data-act],[data-omr],[data-del],[data-wt1],[data-wt2],[data-wrand],[data-wfree],[data-wopen],[data-medit],[data-mock],[data-weak],[data-cans]');
       if (!t || !root.contains(t)) return;
       var d=t.dataset;
       if (d.nav){ if (RUN && !RUN.done && d.nav!==ST.view && !confirm('푸는 중인 문제를 그만둘까요?')) return; if (d.nav!==ST.view){ RUN=null; OMR=null; } go(d.nav); return; }
@@ -582,7 +636,9 @@
       if (d.run){ startRun(ST.view==='listening'?'L':'R', d.run); render(); return; }
       if (d.sec!=null){ stopSpeech(); RUN.cur=+d.sec; render(); return; }
       if (d.q){ if (RUN.done) return; RUN.ans[d.q]=d.v; t.parentNode.querySelectorAll('button').forEach(function(b){b.classList.toggle('on', b===t);}); return; }
-      if (d.omr){ OMR={area:d.omr, mine:{}, key:{}, keyRaw:'', graded:false, types:{}, src:'GT 21', test:1, mock:'', running:false, t0:0, used:0}; render(); return; }
+      if (d.omr){ OMR={area:d.omr, mine:{}, key:{}, keyRaw:'', graded:false, types:{}, src:d.omrSrc||'GT 21', linkId:d.omrLink||null, test:1, mock:'', running:false, t0:0, used:0}; if (d.omrView) ST.view=d.omrView; render(); return; }
+      if (d.watch){ ST.watched[d.watch]=ST.watched[d.watch]?0:1; saveState(); render(); return; }
+      if (d.vf){ VF[d.vk]=d.vf; render(); return; }
       if (d.del){ if (!confirm('이 기록을 지울까요?')) return; await deleteRecord(d.del); render(); return; }
       if (d.wt1||d.wt2){ var B=bank().writing, p=(d.wt1?B.task1:B.task2).find(function(x){return x.id===(d.wt1||d.wt2);}); startWriting(d.wt1?1:2,p); render(); return; }
       if (d.wrand){ go('writing:'+d.wrand); return; }
@@ -599,8 +655,8 @@
       if (a==='omr-grade'){ OMR.keyRaw=document.getElementById('ia-key').value; OMR.key=parseKey(OMR.keyRaw); var nk=Object.keys(OMR.key).length; if (nk<40 && !confirm('정답이 '+nk+'개만 읽혔어요. 그래도 채점할까요?')) return; OMR.graded=true; OMR.running=false; clearInterval(ST.timers.omr); render(); return; }
       if (a==='omr-save'){ var wrongN=0; for (var i=1;i<=40;i++) if (!isRight(OMR.mine[i],OMR.key[i])) wrongN++; var sc=40-wrongN, b=toBand(OMR.area==='L'?BAND_L:BAND_R,sc);
         Object.keys(OMR.types).forEach(function(n){ if (OMR.types[n]) addWeak(OMR.types[n],1); });
-        var src=document.getElementById('ia-omr-src').value+' Test '+document.getElementById('ia-omr-test').value, mk=document.getElementById('ia-omr-mock').value;
-        await saveRecord({kind:OMR.area==='L'?'listening':'reading', date:today(), ref:src, title:src+' (책)', score:sc, total:40, band:b, bands:OMR.area==='L'?{L:b}:{R:b}});
+        var srcName=document.getElementById('ia-omr-src').value, src=O0link(srcName), mk=document.getElementById('ia-omr-mock').value;
+        await saveRecord({kind:OMR.area==='L'?'listening':'reading', date:today(), ref:OMR.linkId||src, title:src+(OMR.linkId?'':' (책)'), score:sc, total:40, band:b, bands:OMR.area==='L'?{L:b}:{R:b}});
         if (mk){ var m=(plan().mocks||[]).find(function(x){return x.n===+mk;}), r=mockRec(mk)||{kind:'mock', n:+mk, date:m?m.date:today(), bands:{}, raw:{}}; r.bands=r.bands||{}; r.raw=r.raw||{}; r.bands[OMR.area]=b; r.raw[OMR.area]=sc; r.src=src; await saveRecord(r); }
         toast('저장했어요 · '+sc+'/40 · '+fmtB(b)); OMR=null; render(); return; }
       if (a==='wtime'){ if (WR.running){ WR.paused+=(Date.now()-WR.t0)/1000; WR.running=false; } else { WR.running=true; WR.t0=Date.now(); } render(); var ta=document.getElementById('ia-wtext'); if (ta) ta.focus(); return; }

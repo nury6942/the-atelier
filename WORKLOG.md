@@ -1,3 +1,15 @@
+## 2026-10-18 · 맥북 · IELTS 탭에 Free Tests · Videos 추가
+
+- 누리: 사이트·책 문제를 가져오자 → 문제/PDF 복제는 안 하고 "풀기는 원래 사이트, 기록은 여기" 구조로
+- **Free Tests**: 공식·무료 모의고사 16곳(공식 12 · 비공식 4) 카드 — 영역·GT/AC·컴퓨터 화면·가입 필요 태그, '열기'(새 탭) + 'L·R 답안지'(그 시험 이름으로 답안지 열림 → 채점·밴드·약점·모의고사 기록). 몇 번 풀었는지 카드에 표시
+  - 조사 결론: GT 무료 풀세트는 공식 1회(BC Familiarisation, 실제 화면) + 공식 불확실 2회(BC IELTS Ready, 가입 후 GT 여부 확인) + 비공식 ieltsonlinetests GT 36세트(로그인). IDP Essentials 는 GT 읽기·듣기 실제 화면(쓰기 링크 깨짐). 공식 Familiarisation 의 읽기·쓰기는 Academic 뿐
+- **Videos**: 유튜브 32개(듣기 7·읽기 6·편지 6·에세이 6·말하기 5·시험 안내 2, 한국어 4) + 추천 채널 11 — 썸네일·조회수·날짜·한 줄 요령(제목·목차 기반, 영상 직접 시청 X)·'봤어요' 체크(ielts/state.watched). 영역·언어 필터
+- 데이터: scripts/ielts/tests.json · videos.json → `python3 scripts/ielts/build-links.py scripts/ielts/tests.json scripts/ielts/videos.json` → js/ielts-links.js (손으로 고치지 말 것)
+- 조사는 Aside 브라우저(aside repl, 읽기만) — WebFetch 는 BC 등 봇 차단이 많음
+- service-worker v625
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — 기억(통화 중 요약 메모 + 장기 학습 프로필)
 
 - 누리: 6분 지나면 기억이 사라져? → 두 겹 기억
