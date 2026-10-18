@@ -634,6 +634,7 @@ function endCall(){
 function fail(e){
   var msg = e && e.message === 'AUTH' ? 'ATELIER 토큰이 맞지 않아요. 다시 넣어 주세요.'
     : e && e.name === 'NotAllowedError' ? '마이크 권한이 필요해요. 주소창 왼쪽에서 허용해 주세요.'
+    : e && /credits are depleted|billing|quota/i.test(e.message) ? 'Gemini API 크레딧이 없어요. AI Studio(ai.studio/projects)에서 결제를 연결하거나 충전해 주세요.'
     : e && e.message === 'Failed to fetch' ? '튜터 서버(tutorToken)에 닿지 못했어요. 함수가 배포됐는지 확인해 주세요.'
     : (e && e.message) || '연결하지 못했어요';
   console.error('[tutor]', e);

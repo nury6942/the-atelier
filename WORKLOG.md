@@ -1,3 +1,11 @@
+## 2026-10-18 · 아이맥 · AI Tutor — tutorToken 배포
+
+- 누리가 GEMINI_API_KEY 시크릿 등록 → `firebase deploy --only functions:tutorToken` 완료
+- 실측: 토큰 발급 OK, Gemini Live 접속 OK. 단 Google 이 "prepayment credits are depleted"(1011)로 끊음 → **AI Studio 프로젝트에 결제/충전 필요**(ai.studio/projects). 화면에도 이 경우 한글 안내 문구 추가
+- 모델 2개(gemini-3.8-live, gemini-2.5-flash-native-audio-preview-09-2025) 둘 다 같은 이유로 막혀 모델명 자체가 맞는지는 충전 뒤 다시 확인
+
+---
+
 ## 2026-10-18 · 아이맥 · 공통 디자인 5단계 — 규칙 문서화 · Money 월 카드 · AI Tutor
 
 - CLAUDE.md 에 「🎨 디자인 규칙」 절 추가: 흰 바탕·모든 칸 직각·코발트 #1F4BD8 하나·Pretendard 하나·그림자 없음·버튼 3종·탭 2종·메뉴 영어. 별도 HTML 페이지는 index 스타일을 못 받으니 규칙을 파일 안에 직접 넣을 것
