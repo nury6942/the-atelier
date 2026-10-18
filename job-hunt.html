@@ -170,6 +170,13 @@
     .top5,.stats,.jgrid,.boards,.feature .tiles{grid-template-columns:1fr}
     .sech .cap{display:none} .legend{display:none}
   }
+  /* 아뜰리에 공통: 제목·메뉴는 Title Case — 대문자 강제 변환을 끄고, 대문자용으로 넓혀 둔 글자 간격을 좁힌다 (2026-10-18) */
+  *{text-transform:none !important}
+  .sech .cap,.t5 .rec,.t5 .tt,.stats .l,.tab,.ftog,.legend,.info .tag,.live span,.jc-co,.fb,.jc-loc,.jc-spec dt,.jc-tags span,.jc-link,
+  .feature .kicker,.feature .tiles .tn,.bcol h4,.bcol .bn,.action h4,footer.btm .ft,footer.btm .src,footer.btm .cc,.jh-state h2,
+  .pb-t th,.pb-h,.cv-h,.en-h,.pt-h,.ie-h,.sk-h,.arc .cap,.tl-q,.cc-t dt,.subnav a,.sub-tab,.pb-tab,.cc-rank,.vs-tag{letter-spacing:.01em !important}
+  .tab,.ftog{font-size:13px !important}
+  .sech .cap,.stats .l,.legend{font-size:12px !important}
   /* 아뜰리에 공통: 모든 칸 직각 (2026-10-18) */
   *,*::before,*::after{border-radius:0 !important}
   .jh-spin{border-radius:50% !important}
