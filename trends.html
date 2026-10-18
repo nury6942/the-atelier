@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Trends</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* 한국 커뮤니티 인기글 — 데이터: trafficscent.com (함수 trendFeed 가 대신 받아옴) */
+  :root{
+    --ink:#111; --paper:#fff; --wash:#F5F5F7; --line:#ECECF0; --line2:#D9D9E0;
+    --mut:rgba(17,17,17,.62); --dim:rgba(17,17,17,.42);
+    --accent:#1F4BD8; --accent-dark:#1A3FB5; --accent-wash:#EEF2FD; --err:#b42318;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Pretendard','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;
+    word-break:keep-all;overflow-wrap:break-word}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 96px}
+
+  .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .mast > div:first-child{padding-bottom:14px}
+  .mast h1{margin:0;font-size:2.4rem;font-weight:800;letter-spacing:-.035em;line-height:.95}
+  .mast .sub{font-size:12px;color:var(--mut);margin-top:6px}
+  .mast .sub a{text-decoration:underline;text-underline-offset:2px}
+  /* 큰 탭 = 밑줄 */
+  .seg{display:flex;gap:4px}
+  .seg button{border:0;border-bottom:2px solid transparent;background:transparent;padding:10px 14px 12px;font-size:14px;font-weight:600;color:var(--mut);margin-bottom:-1px}
+  .seg button:hover{color:var(--ink)}
+  .seg button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+
+  .chips{display:flex;gap:6px;flex-wrap:wrap;padding:14px 0 0}
+  .chips button{border:1px solid var(--line2);background:var(--paper);padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--mut)}
+  .chips button:hover{border-color:var(--accent);color:var(--accent)}
+  .chips button.on{border-color:var(--accent);background:var(--accent);color:#fff}
+  .chips .sep{width:1px;background:var(--line);margin:2px 4px}
+
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;margin-top:24px}
+  .meta-line{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--dim);padding-bottom:8px;border-bottom:1px solid var(--line2)}
+
+  .list{list-style:none;margin:0;padding:0}
+  .row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:start;padding:13px 0;border-bottom:1px solid var(--line)}
+  .row .no{font-size:13px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums;padding-top:1px}
+  .row:nth-child(-n+3) .no{color:var(--accent)}
+  .row a.t{font-size:15px;font-weight:600;line-height:1.45;letter-spacing:-.01em}
+  .row a.t:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .row a.t:visited{color:var(--mut)}
+  .row .m{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--dim);margin-top:4px;font-variant-numeric:tabular-nums}
+  .row .m .s{font-weight:700;color:var(--mut)}
+  .row .th{width:56px;height:56px;object-fit:cover;background:var(--wash);display:block}
+
+  .more{display:block;width:100%;margin-top:16px;border:1px solid var(--line2);background:var(--paper);padding:11px;font-size:13px;font-weight:600}
+  .more:hover{border-color:var(--accent);color:var(--accent)}
+  .more[disabled]{opacity:.4;cursor:default;border-color:var(--line2);color:var(--ink)}
+  .state{padding:48px 0;text-align:center;font-size:13px;color:var(--mut)}
+  .state.err{color:var(--err)}
+
+  aside h2{margin:0;font-size:13px;font-weight:800;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+  aside .kw{list-style:none;margin:0;padding:0}
+  aside .kw li{border-bottom:1px solid var(--line)}
+  aside .kw a{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;padding:10px 0;font-size:14px;font-weight:600}
+  aside .kw a:hover .k{color:var(--accent)}
+  aside .kw .r{color:var(--dim);font-variant-numeric:tabular-nums;font-size:12.5px;padding-top:1px}
+  aside .kw .d{color:var(--accent);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+  aside .kw .n{grid-column:2/4;font-size:11.5px;font-weight:500;color:var(--dim);margin-top:-4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  aside .note{font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:14px}
+
+  @media (max-width:860px){
+    .wrap{padding:24px 16px 72px}
+    .grid{grid-template-columns:1fr;gap:32px}
+    .mast h1{font-size:2rem}
+    .seg{width:100%}
+    .seg button{flex:1;padding:10px 0 12px}
+    .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:14px 16px 0}
+    .chips::-webkit-scrollbar{display:none}
+    .chips button{flex:none}
+    .row{grid-template-columns:26px minmax(0,1fr) auto;gap:10px}
+    .row .th{width:48px;height:48px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <h1>Trends</h1>
+      <div class="sub">한국 커뮤니티 인기글 · 출처 <a href="https://trafficscent.com" target="_blank" rel="noopener">TrafficScent</a> · 15분마다 수집</div>
+    </div>
+    <div class="seg" id="seg">
+      <button data-sort="rising">급상승</button>
+      <button data-sort="popular">인기</button>
+      <button data-sort="latest">최신</button>
+    </div>
+  </header>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="grid">
+    <main>
+      <div class="meta-line"><span id="caption"></span><span id="stamp"></span></div>
+      <ol class="list" id="list"></ol>
+      <div class="state" id="state">불러오는 중…</div>
+      <button class="more" id="more" hidden>더 보기</button>
+    </main>
+    <aside>
+      <h2>실시간 검색 키워드</h2>
+      <ul class="kw" id="kw"></ul>
+      <p class="note">급상승은 최근 10시간, 인기는 최근 48시간 기준이에요. 같은 화면은 5분 동안 다시 받아오지 않아요.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  // 로컬 확인용: localhost 에서만 ?api= 로 함수 주소를 바꿀 수 있음
+  var API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/trendFeed';
+  var qApi = new URLSearchParams(location.search).get('api');
+  if (qApi && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) API = qApi;
+
+  // 여성 독자층 커뮤니티를 앞에, 나머지 큰 곳을 뒤에
+  var SITES = [
+    ['전체'], ['더쿠'], ['네이트판'], ['인티'], ['해연갤'], ['82쿡'], ['미씨쿠폰'], ['블라'], null,
+    ['디시'], ['펨코'], ['루리웹'], ['웃대'], ['뽐뿌'], ['엠팍'], ['클량'], ['보배'], ['아카'], ['오유']
+  ];
+  var SORT_LABEL = { rising:'급상승', popular:'인기', latest:'최신' };
+  var KEY = 'atelier_trends_v1';
+
+  var st = { sort:'rising', site:'전체', page:1, totalPages:1, seen:0, req:0 };
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || '{}'); if (SORT_LABEL[saved.sort]) st.sort = saved.sort; if (saved.site) st.site = saved.site; } catch(e){}
+
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+  var num = function(n){ if (n == null) return ''; return n >= 10000 ? (n/10000).toFixed(n >= 100000 ? 0 : 1) + '만' : n.toLocaleString('ko-KR'); };
+  function ago(iso){
+    if (!iso) return '';
+    var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (m < 1) return '방금'; if (m < 60) return m + '분 전';
+    var h = Math.floor(m / 60); return h < 24 ? h + '시간 전' : Math.floor(h / 24) + '일 전';
+  }
+
+  $('chips').innerHTML = SITES.map(function(s){
+    return s ? '<button data-site="' + esc(s[0]) + '">' + esc(s[0]) + '</button>' : '<span class="sep"></span>';
+  }).join('');
+
+  function paintControls(){
+    [].forEach.call($('seg').children, function(b){ b.classList.toggle('on', b.dataset.sort === st.sort); });
+    [].forEach.call($('chips').querySelectorAll('button'), function(b){ b.classList.toggle('on', b.dataset.site === st.site); });
+    $('caption').textContent = (st.site === '전체' ? '커뮤니티 전체' : st.site) + ' · ' + SORT_LABEL[st.sort];
+    try { localStorage.setItem(KEY, JSON.stringify({ sort:st.sort, site:st.site })); } catch(e){}
+  }
+
+  function rowHtml(p, i){
+    var m = ['<span class="s">' + esc(p.site) + '</span>'];
+    if (p.category) m.push(esc(p.category));
+    if (p.createdAt) m.push(ago(p.createdAt));
+    if (p.views != null) m.push('조회 ' + num(p.views));
+    if (p.comments) m.push('댓글 ' + num(p.comments));
+    if (p.upvotes) m.push('추천 ' + num(p.upvotes));
+    return '<li class="row"><span class="no">' + (i + 1) + '</span><div>' +
+      '<a class="t" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>' +
+      '<div class="m">' + m.join('<span>·</span>') + '</div></div>' +
+      (p.thumb ? '<img class="th" src="' + esc(p.thumb) + '" alt="" loading="lazy" onerror="this.remove()">' : '<span></span>') + '</li>';
+  }
+
+  function load(append){
+    var id = ++st.req;
+    if (!append){ st.page = 1; st.seen = 0; $('list').innerHTML = ''; }
+    $('state').hidden = append; $('state').className = 'state'; $('state').textContent = '불러오는 중…';
+    $('more').disabled = true;
+    var url = API + '?sort=' + st.sort + '&site=' + encodeURIComponent(st.site) + '&page=' + st.page;
+    fetch(url).then(function(r){ return r.json().then(function(b){ if (!r.ok) throw new Error(b.message || r.status); return b; }); })
+      .then(function(b){
+        if (id !== st.req) return;
+        st.totalPages = b.totalPages || 1;
+        var posts = b.posts || [];
+        $('list').insertAdjacentHTML('beforeend', posts.map(function(p, i){ return rowHtml(p, st.seen + i); }).join(''));
+        st.seen += posts.length;
+        $('state').hidden = st.seen > 0;
+        if (!st.seen) $('state').textContent = '지금은 올라온 글이 없어요.';
+        $('more').hidden = st.page >= st.totalPages || !posts.length;
+        $('more').disabled = false;
+        $('stamp').textContent = b.collectedAt ? '마지막 수집 ' + ago(b.collectedAt) : '';
+        if (b.keywords && b.keywords.length && !append) paintKeywords(b.keywords);
+      })
+      .catch(function(e){
+        if (id !== st.req) return;
+        $('state').hidden = false; $('state').className = 'state err';
+        $('state').textContent = '불러오지 못했어요 (' + e.message + '). 잠시 뒤 다시 눌러 주세요.';
+        $('more').disabled = false;
+      });
+  }
+
+  function paintKeywords(list){
+    $('kw').innerHTML = list.map(function(k){
+      var href = k.newsUrl || ('https://www.google.com/search?q=' + encodeURIComponent(k.keyword));
+      return '<li><a href="' + esc(href) + '" target="_blank" rel="noopener">' +
+        '<span class="r">' + esc(k.rank) + '</span><span class="k">' + esc(k.keyword) + '</span><span class="d">' + esc(k.diff || '') + '</span>' +
+        (k.newsTitle ? '<span class="n">' + esc(k.newsTitle) + '</span>' : '') + '</a></li>';
+    }).join('');
+  }
+
+  $('seg').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b || b.dataset.sort === st.sort) return;
+    st.sort = b.dataset.sort; paintControls(); load(false);
+  });
+  $('chips').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b || b.dataset.site === st.site) return;
+    st.site = b.dataset.site; paintControls(); load(false);
+  });
+  $('more').addEventListener('click', function(){ st.page++; load(true); });
+
+  paintControls();
+  load(false);
+})();
+</script>
+</body>
+</html>

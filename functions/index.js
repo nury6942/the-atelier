@@ -521,3 +521,98 @@ exports.tutorToken = onRequest(
     }
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════
+// ── Trend Feed: trafficscent.com 한국 커뮤니티 인기글 대신 받아오기 ──
+//    trafficscent 는 다른 사이트 브라우저의 직접 요청(CORS)을 막아 둬서
+//    이 함수가 받아와 필요한 칸만 추려 넘김. 같은 요청은 5분간 재사용.
+// ══════════════════════════════════════════════════════════════════════
+const TREND_SORTS = ["rising", "popular", "latest"];
+const trendCache = new Map(); // key → { at, body }
+const TREND_TTL_MS = 5 * 60 * 1000;
+
+// SvelteKit __data.json 은 값을 번호로 참조하는 압축 배열 → 보통 객체로 풀기
+function trendUnflatten(arr) {
+  const memo = {};
+  const h = (i) => {
+    if (i < 0) return null;
+    if (i in memo) return memo[i];
+    const v = arr[i];
+    if (v === null || typeof v !== "object") return (memo[i] = v);
+    if (Array.isArray(v)) {
+      if (typeof v[0] === "string") return (memo[i] = v[0] === "Date" ? v[1] : v);
+      const out = (memo[i] = []);
+      v.forEach((x) => out.push(h(x)));
+      return out;
+    }
+    const o = (memo[i] = {});
+    for (const k in v) o[k] = h(v[k]);
+    return o;
+  };
+  return h(0);
+}
+
+exports.trendFeed = onRequest(
+  { cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 20 },
+  async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
+
+    const sort = TREND_SORTS.includes(req.query.sort) ? req.query.sort : "rising";
+    const site = String(req.query.site || "전체").slice(0, 20);
+    const page = Math.min(Math.max(parseInt(req.query.page, 10) || 1, 1), 10);
+    const key = `${sort}|${site}|${page}`;
+
+    const hit = trendCache.get(key);
+    if (hit && Date.now() - hit.at < TREND_TTL_MS) {
+      res.set("Cache-Control", "public, max-age=120");
+      return res.status(200).json({ ...hit.body, cached: true });
+    }
+
+    try {
+      const qs = new URLSearchParams({ category: "all", country: "KR", site, sort, "x-sveltekit-invalidated": "11" });
+      if (page > 1) qs.set("page", String(page));
+      const r = await fetch(`https://trafficscent.com/__data.json?${qs}`, {
+        headers: { "Accept-Language": "ko", "User-Agent": "the-atelier personal reader" },
+      });
+      if (!r.ok) throw new Error(`upstream ${r.status}`);
+      const raw = await r.json();
+      const nodes = (raw.nodes || []).map((n) => (n && n.data ? trendUnflatten(n.data) : {}));
+      const layout = nodes[0] || {};
+      const feed = nodes[1] || {};
+
+      const body = {
+        sort, site, page,
+        totalPages: feed.totalPages || 1,
+        posts: (feed.posts || []).map((p) => ({
+          id: p.id,
+          title: p.title,
+          url: p.source_url,
+          site: p.source_site,
+          category: p.category_name,
+          views: p.views,
+          comments: p.comments_count,
+          upvotes: p.upvotes,
+          thumb: p.thumbnail_url,
+          createdAt: p.created_at ? p.created_at.replace(" ", "T") + "Z" : null,
+        })),
+        keywords: (layout.trendingKeywords || []).map((k) => ({
+          rank: k.rank, keyword: k.keyword, diff: k.diff, newsTitle: k.newsTitle, newsUrl: k.newsUrl,
+        })),
+        collectedAt: layout.metrics && layout.metrics.lastCollectedAt
+          ? layout.metrics.lastCollectedAt.replace(" ", "T") + "Z" : null,
+        fetchedAt: new Date().toISOString(),
+      };
+      trendCache.set(key, { at: Date.now(), body });
+      if (trendCache.size > 200) trendCache.delete(trendCache.keys().next().value);
+
+      res.set("Cache-Control", "public, max-age=120");
+      return res.status(200).json(body);
+    } catch (error) {
+      logger.error("trendFeed error:", error);
+      if (hit) return res.status(200).json({ ...hit.body, cached: true, stale: true });
+      return res.status(502).json({ error: "Upstream failed", message: error.message });
+    }
+  }
+);

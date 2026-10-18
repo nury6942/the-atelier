@@ -1,3 +1,13 @@
+## 2026-10-18 · 아이맥 · Trends — 한국 커뮤니티 인기글 페이지
+
+- 누리: 스레드에서 본 trafficscent.com(커뮤니티·유튜브·뉴스 등 트래픽 모음) 중 **한국 커뮤니티**만 아뜰리에로 → 새 페이지 `trends.html`, 사이드바 GROWTH 맨 아래 **Trends**(AI Brief 아래), Home 목차에도 링크. index 에는 iframe(`trends.html?v=1`)
+- 화면: 밑줄 탭 급상승(10시간)·인기(48시간)·최신 / 커뮤니티 칩(전체·더쿠·네이트판·인티·해연갤·82쿡·미씨쿠폰·블라 | 디시·펨코·루리웹·웃대·뽐뿌·엠팍·클량·보배·아카·오유) / 글 목록(출처·카테고리·몇 시간 전·조회·댓글·추천, 네이트판은 썸네일) / 더 보기(30개씩) / 오른쪽 실시간 검색 키워드 10개(뉴스 링크). 고른 탭·칩은 localStorage `atelier_trends_v1`
+- 데이터: trafficscent 는 공개 API·RSS 없음 + 다른 사이트 브라우저 요청(CORS) 막혀 있음 → 새 함수 **`trendFeed`**(공개 GET, 시크릿 없음)가 `trafficscent.com/__data.json`(SvelteKit 내부 데이터)을 받아 풀고 필요한 칸만 넘김. 같은 요청 5분 재사용(서버 메모리), 실패 시 마지막 값. **비공식 경로라 trafficscent 가 구조를 바꾸면 깨질 수 있음** → 그땐 함수의 posts 매핑만 고치면 됨
+- 개드립은 칩에서 뺌(필터 값으로 글이 0개). 로컬 확인: localhost 에서만 `trends.html?api=<주소>` 로 함수 주소 바꿀 수 있음
+- 375·데스크탑 폭 넘침 없음, 더 보기 60개 중복 없음. app-1-pages.js v393, service-worker CACHE_NAME v612
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — tutorToken 배포
 
 - 누리가 GEMINI_API_KEY 시크릿 등록 → `firebase deploy --only functions:tutorToken` 완료

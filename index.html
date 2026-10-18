@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=392" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=393" as="script">
   <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11531,6 +11531,10 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">auto_awesome</span>
       <span class="text-[13.5px] font-medium">AI Brief</span>
     </a>
+    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-trends" onclick="navigate('trends'); return false;">
+      <span class="material-symbols-outlined text-[19px] transition-colors">trending_up</span>
+      <span class="text-[13.5px] font-medium">Trends</span>
+    </a>
   </nav>
   <div class="px-4 pt-4 border-t border-slate-100 space-y-1">
     <a href="#" class="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-600 rounded-xl transition-all">
@@ -11641,6 +11645,7 @@
             <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
             <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
             <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
+            <a href="#" onclick="navigate('trends');return false;">Trends</a>
           </div>
         </div>
       </section>
@@ -16429,7 +16434,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=392" defer></script>
+<script src="js/app-1-pages.js?v=393" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17256,6 +17261,11 @@
     </div>
 
   <!-- ════════ NOMAD MASTER 페이지 — 내부 sub-sidebar + 메인 콘텐츠 ════════ -->
+  <!-- ════════ TRENDS — 한국 커뮤니티 인기글 (trends.html, 데이터는 함수 trendFeed) ════════ -->
+  <div id="page-trends" class="page" style="display:none;padding:0;background:#fff">
+    <iframe id="trends-frame" title="Trends" loading="lazy" src="./trends.html?v=1"
+      style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
+  </div>
   <div id="page-aibrief" class="page" style="display:none;padding:0;background:#fff">
     <iframe id="aibrief-frame" title="AI Brief" loading="lazy"
       style="width:100%;height:calc(100dvh - 72px);min-height:600px;border:0;display:block;background:#fff"></iframe>
