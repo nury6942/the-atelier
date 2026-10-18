@@ -326,7 +326,7 @@
       <div class="cards" id="cards"></div>
       <button class="start" onclick="startCall()" aria-label="대화 시작"><span class="ms">mic</span><span>시작하기</span></button>
       <label class="camopt"><input type="checkbox" id="camStart" checked><span>카메라 켜고 시작 (영상통화)</span></label>
-      <label class="camopt" style="margin-top:8px"><input type="checkbox" id="simliOn" checked><span>움직이는 Oliver (실시간 영상 · Simli)</span></label>
+      <label class="camopt" style="margin-top:8px"><input type="checkbox" id="simliOn"><span>움직이는 Oliver (실시간 영상 · Simli · 시험 중)</span></label>
       <div class="hint">에어팟을 끼면 MIC 를 맥 마이크로 고르는 게 더 잘 들려요 (에어팟 마이크는 통화 음질이라 알아듣기 어려워요)</div>
     </section>
 
@@ -556,12 +556,12 @@ function loadPrefs(){
     if (p.model && $('model').querySelector('option[value="' + p.model + '"]')) $('model').value = p.model;
     if (p.voice && $('voice').querySelector('option[value="' + p.voice + '"]')) $('voice').value = p.voice;
     if (p.camStart === false) $('camStart').checked = false;
-    if (p.simliOn === false) $('simliOn').checked = false;
+    if (p.simliOn2 === true) $('simliOn').checked = true;   // 2026-10-18: Oliver 영상 입이 거의 안 움직여 기본은 꺼 둠(예전 저장값 simliOn 은 무시)
     if (p.mic) sess.wantMic = p.mic;
   } catch(e){}
 }
 function savePrefs(){
-  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked, simliOn: $('simliOn').checked, mic: $('mic').value })); } catch(e){}
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked, simliOn2: $('simliOn').checked, mic: $('mic').value })); } catch(e){}
 }
 $('model').onchange = savePrefs; $('voice').onchange = savePrefs; $('camStart').onchange = savePrefs; $('simliOn').onchange = savePrefs; $('mic').onchange = savePrefs;
 

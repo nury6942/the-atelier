@@ -1,3 +1,15 @@
+## 2026-10-18 · 아이맥 · AI Tutor — Simli Oliver 입이 안 움직인 원인
+
+- 누리: "전혀 안 움직이던데" → simliToken 로그상 연결 요청은 정상
+- Aside 창(실제로 그려지는 브라우저)에서 영상 프레임을 requestVideoFrameCallback 로 재서 입 부분 변화량 비교: 기본 얼굴 Tony(Trinity) 대기 0.35 → 말할 때 평균 1.24·최대 8.74(확실히 움직임) / Oliver(legacy, 무료로 만든 것) 대기 0.41 → 말할 때 0.43(사실상 안 움직임). 연결·소리 전달 문제가 아니라 **legacy 얼굴이 입을 거의 안 움직임**
+- 무료 플랜은 동시 연결 1개(남은 테스트 연결 때문에 "RATE LIMIT REACHED" 실측) — 탭 두 개로 동시에 통화하면 안 됨
+- 시도: oliver-1(입 살짝 벌린 사진)을 얼굴 크게 정사각형 512px 로 잘라 legacy 얼굴 다시 생성(face a2d64b6c-f04a-42ec-b877-0dca7e2c364d, 생성 중)
+- 그동안 "움직이는 Oliver" 는 기본 꺼짐(시험 중 표시, 저장값 이름 simliOn2 로 바꿔 예전 켜짐 무시) → 사진 입 3장 방식이 기본
+- 안 되면: Simli 유료로 Trinity 얼굴 만들기(누리가 Billing 에서 가격 확인) 또는 사진 방식 유지
+- service-worker CACHE_NAME v1634
+
+---
+
 ## 2026-10-18 · 맥북 · IELTS — 사람 목소리 리스닝 · 모범답안 따라쓰기 · 영역별 공략
 
 - **리스닝 = 미리 만든 자연 음성 mp3**: 브라우저 음성은 크롬·사파리 모두 로봇 같아서(누리) Microsoft 자연 음성(edge-tts, 무료)으로 섹션별 파일 생성 → audio/ielts/L1-s1~s4.mp3(각 약 3.5–4분, 1.3MB). 화자마다 다른 목소리(영국 Sonia·Ryan·Thomas·Libby / 호주 William·Natasha / 미국 Andrew). 제출 뒤 스크립트 줄을 누르면 그 줄부터 재생·지금 줄 강조
