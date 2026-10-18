@@ -54,6 +54,10 @@
   .pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:7px 10px;background:#fff;font-size:12.5px}
   .pill select{border:0;background:transparent;outline:none;font-weight:600;cursor:pointer}
   .pill .lbl{color:var(--dim);font-size:11px;letter-spacing:.06em}
+  #mic{max-width:180px;text-overflow:ellipsis}
+  .miclvl{width:46px;height:6px;background:rgba(0,0,0,.08);position:relative;overflow:hidden}
+  .miclvl i{position:absolute;left:0;top:0;bottom:0;width:0;background:#18a957;transition:width .08s}
+  .mictest{font-size:11.5px;font-weight:700;color:var(--accent)}
 
   /* 홈 화면 */
   .home{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 48px}
@@ -284,6 +288,11 @@
           <option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option>
         </select>
       </label>
+      <label class="pill"><span class="lbl">MIC</span>
+        <select id="mic"><option value="">기본 마이크</option></select>
+        <span class="miclvl" id="micTestLvl" title="마이크 테스트"><i></i></span>
+        <button type="button" class="mictest" id="micTestBtn" onclick="testMic()">테스트</button>
+      </label>
       <label class="pill"><span class="lbl">VOICE</span>
         <select id="voice">
           <option value="Puck">Puck · 밝음</option>
@@ -513,6 +522,12 @@ function startMeters(){
     lvl += ((sess.micOn ? Math.min(1, rms(mb) * 9) : 0) - lvl) * 0.3;
     setMicLevel(lvl);
     var meTalking = lvl > 0.14 && !sess.emmaTalking;
+    // 연결 뒤 12초 동안 마이크 소리가 한 번도 안 들어오면 알려 줌(에어팟·마이크 선택 문제)
+    if (lvl > 0.06) sess.heardAt = Date.now();
+    if (sess.ready && sess.micOn && !sess.warnedMic && Date.now() - (sess.heardAt || sess.readyAt || Date.now()) > 12000){
+      sess.warnedMic = true;
+      setState('마이크 소리가 안 들어와요 (' + (sess.micLabel || '기본 마이크') + ') — 대화를 마치고 위쪽 MIC 에서 다른 마이크를 골라 보세요', 'err');
+    }
     $('tileMe').classList.toggle('speaking', meTalking);
     if (meTalking){
       if (Date.now() - (sess.lastVoiceAt || 0) > 1500) sess.voiceStartAt = Date.now();   // 말 시작 순간
@@ -534,12 +549,53 @@ function loadPrefs(){
     if (p.model && $('model').querySelector('option[value="' + p.model + '"]')) $('model').value = p.model;
     if (p.voice && $('voice').querySelector('option[value="' + p.voice + '"]')) $('voice').value = p.voice;
     if (p.camStart === false) $('camStart').checked = false;
+    if (p.mic) sess.wantMic = p.mic;
   } catch(e){}
 }
 function savePrefs(){
-  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked })); } catch(e){}
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked, mic: $('mic').value })); } catch(e){}
 }
-$('model').onchange = savePrefs; $('voice').onchange = savePrefs; $('camStart').onchange = savePrefs;
+$('model').onchange = savePrefs; $('voice').onchange = savePrefs; $('camStart').onchange = savePrefs; $('mic').onchange = savePrefs;
+
+// ── 마이크 고르기: 에어팟·외장 마이크 등. 이름은 마이크 권한을 한 번 허용한 뒤에 보임
+async function listMics(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  var want = $('mic').value || sess.wantMic || '';
+  var devs = (await navigator.mediaDevices.enumerateDevices()).filter(function(d){ return d.kind === 'audioinput' && d.deviceId !== 'default' && d.deviceId !== 'communications'; });
+  var sel = $('mic'); sel.innerHTML = '<option value="">기본 마이크 (시스템 설정)</option>';
+  devs.forEach(function(d, i){ var o = document.createElement('option'); o.value = d.deviceId; o.textContent = d.label || ('마이크 ' + (i + 1)); sel.appendChild(o); });
+  if (want && sel.querySelector('option[value="' + CSS.escape(want) + '"]')) sel.value = want;
+}
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) navigator.mediaDevices.addEventListener('devicechange', listMics);
+function micConstraints(){
+  var c = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 };
+  if ($('mic').value) c.deviceId = { exact: $('mic').value };
+  return c;
+}
+// 통화 전에 8초 동안 마이크 소리가 들어오는지 막대로 보여 줌
+async function testMic(){
+  var st, ctx;
+  try {
+    st = await navigator.mediaDevices.getUserMedia({ audio: micConstraints() });
+    await listMics();
+    ctx = new AudioContext();
+    var an = ctx.createAnalyser(); an.fftSize = 512; ctx.createMediaStreamSource(st).connect(an);
+    var buf = new Float32Array(an.fftSize), end = Date.now() + 8000, peak = 0;
+    $('micTestBtn').textContent = '말해 보세요';
+    await new Promise(function(done){
+      (function tick(){
+        an.getFloatTimeDomainData(buf); var l = Math.min(1, rms(buf) * 9); peak = Math.max(peak, l);
+        $('micTestLvl').firstChild.style.width = Math.round(l * 100) + '%';
+        if (Date.now() < end) requestAnimationFrame(tick); else done();
+      })();
+    });
+    toast(peak > 0.12 ? '마이크 잘 들어와요 — ' + (st.getAudioTracks()[0].label || '') : '소리가 거의 안 들어와요. MIC 에서 다른 마이크를 골라 보세요');
+  } catch(e){ toast('마이크를 열 수 없어요: ' + (e.name === 'NotAllowedError' ? '권한을 허용해 주세요' : e.message)); }
+  finally {
+    if (st) st.getTracks().forEach(function(t){ t.stop(); }); if (ctx) ctx.close();
+    $('micTestBtn').textContent = '테스트'; $('micTestLvl').firstChild.style.width = '0';
+  }
+}
 
 function getAuth(){ try { return localStorage.getItem('atelier_coach_auth_token') || ''; } catch(e){ return ''; } }
 function saveAuth(){
@@ -869,9 +925,12 @@ function setCallControls(on){
 // ═══════════════════════════════════════════════════════════
 //  오디오 — 마이크(16kHz PCM) 보내기 / 튜터 목소리(24kHz PCM) 재생
 // ═══════════════════════════════════════════════════════════
-var WORKLET = "class P extends AudioWorkletProcessor{constructor(){super();this.b=new Int16Array(1600);this.i=0}" +
-  "process(inp){var c=inp[0]&&inp[0][0];if(!c)return true;for(var k=0;k<c.length;k++){var s=Math.max(-1,Math.min(1,c[k]));" +
-  "this.b[this.i++]=s<0?s*32768:s*32767;if(this.i===this.b.length){this.port.postMessage(this.b.buffer.slice(0));this.i=0}}return true}}" +
+// 마이크는 기기 원래 속도(보통 48kHz, 블루투스는 16/24kHz)로 받고, 여기서 16kHz 로 줄여서 보냄.
+// (예전엔 AudioContext 를 16kHz 로 강제했는데, 에어팟처럼 속도가 다른 블루투스 마이크에서 소리가 안 들어오는 원인이 될 수 있음)
+var WORKLET = "class P extends AudioWorkletProcessor{constructor(){super();this.r=sampleRate/16000;this.t=0;this.a=0;this.n=0;this.b=new Int16Array(1600);this.i=0}" +
+  "process(inp){var c=inp[0]&&inp[0][0];if(!c)return true;for(var k=0;k<c.length;k++){this.a+=c[k];this.n++;this.t+=1;if(this.t>=this.r){this.t-=this.r;" +
+  "var s=Math.max(-1,Math.min(1,this.a/this.n));this.a=0;this.n=0;this.b[this.i++]=s<0?s*32768:s*32767;" +
+  "if(this.i===this.b.length){this.port.postMessage(this.b.buffer.slice(0));this.i=0}}}return true}}" +
   "registerProcessor('pcm16',P)";
 
 function b64FromBuf(buf){
@@ -881,10 +940,13 @@ function b64FromBuf(buf){
 }
 
 async function startMic(){
-  sess.inCtx = new AudioContext({ sampleRate: 16000 });
+  sess.inCtx = new AudioContext();                                       // 기기 원래 속도
+  if (sess.inCtx.state === 'suspended') await sess.inCtx.resume();
   var url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }));
   await sess.inCtx.audioWorklet.addModule(url);
-  sess.micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+  sess.micStream = await navigator.mediaDevices.getUserMedia({ audio: micConstraints() });
+  listMics();
+  sess.micLabel = (sess.micStream.getAudioTracks()[0] || {}).label || '';
   var src = sess.inCtx.createMediaStreamSource(sess.micStream);
   sess.worklet = new AudioWorkletNode(sess.inCtx, 'pcm16');
   sess.worklet.port.onmessage = function(e){
@@ -1137,6 +1199,7 @@ function onServer(m){
   if (m.setupComplete){
     sess.ready = true;
     setState('대화 중', 'live'); $('rec').classList.add('live');
+    if (!sess.readyAt) sess.readyAt = Date.now();
     if (!sess.greeted){ sess.greeted = true; send({ realtimeInput: { text: 'Hi Oliver!' } }); }
     return;
   }
@@ -1249,7 +1312,7 @@ function toast(t){ var el = $('toast'); el.textContent = t; el.style.display = '
 window.addEventListener('beforeunload', function(e){ if (sess.active){ e.preventDefault(); e.returnValue = ''; } });
 
 $('homeAvatar').innerHTML = '<img src="assets/tutor/oliver-0.jpg" alt="튜터 Oliver">';
-loadPrefs(); shuffleTopics(); renderHist(); renderSpend();
+loadPrefs(); shuffleTopics(); renderHist(); renderSpend(); listMics();
 if (!getAuth()) $('auth').style.display = 'block';
 </script>
 </body>
