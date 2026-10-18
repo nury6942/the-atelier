@@ -186,7 +186,7 @@ function renderStudyList(){
     var grammarCount = (s.grammar || []).length;
     var vocabCount = (s.vocab || []).length;
     var typeIcon = ({ news:'newspaper', interview:'record_voice_over', talk:'forum', lecture:'school', podcast:'podcasts' })[s.sourceType] || 'smart_display';
-    return '<div onclick="openStudyDetail(\'' + s._id + '\')" class="bg-white rounded-xl border border-slate-100 p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:var(--shadow-card-sm);border-left:3px solid #8b5cf6">' +
+    return '<div onclick="openStudyDetail(\'' + s._id + '\')" class="bg-white rounded-xl border border-slate-100 p-5 mb-3 hover:shadow-md transition-all cursor-pointer" style="box-shadow:var(--shadow-card-sm);border-left:3px solid #3563DF">' +
       '<div class="flex justify-between items-start gap-3">' +
         '<div class="flex-1 min-w-0">' +
           '<div class="flex items-center gap-2 mb-1">' +
@@ -913,8 +913,8 @@ function annieAudioHtml(s, dateId){
   }
   // 오디오 오버뷰 프롬프트 (이 세션 자동 생성) — 접기로 숨김
   var nblmPrompt = engBuildNblmPrompt(dateId);
-  inner += '<details class="mt-3" style="border:1px solid #ede9fe;border-radius:12px;overflow:hidden">' +
-    '<summary style="cursor:pointer;list-style:none;padding:10px 14px;font-size:13px;font-weight:700;color:#6d28d9;background:rgba(139,92,246,0.06);display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined" style="font-size:18px">tune</span>오디오 오버뷰 프롬프트 (이 세션 자동 생성 · 펼쳐서 복사)</summary>' +
+  inner += '<details class="mt-3" style="border:1px solid #EEF2FD;border-radius:12px;overflow:hidden">' +
+    '<summary style="cursor:pointer;list-style:none;padding:10px 14px;font-size:13px;font-weight:700;color:#1A3FB5;background:rgba(53,99,223,0.06);display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined" style="font-size:18px">tune</span>오디오 오버뷰 프롬프트 (이 세션 자동 생성 · 펼쳐서 복사)</summary>' +
     '<div style="padding:12px 14px">' +
       '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
         '<button onclick="engCopyNblmPrompt(\'' + dateId + '\')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:calc(15px * var(--es-scale, 1))">content_copy</span>프롬프트 복사</button>' +
@@ -924,7 +924,7 @@ function annieAudioHtml(s, dateId){
     '</div>' +
   '</details>';
   inner += '<input type="file" id="annie-audio-file-' + dateId + '" accept="audio/*" style="display:none" onchange="annieAudioUpload(\'' + dateId + '\', this.files && this.files[0])"/>';
-  return '<div id="annie-audio-box-' + dateId + '" class="mb-8 p-5 rounded-2xl border border-violet-100" style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(99,102,241,0.04))" ondragover="annieAudioDragOver(event)" ondragleave="annieAudioDragLeave(event)" ondrop="annieAudioDrop(event,\'' + dateId + '\')">' + inner + '</div>';
+  return '<div id="annie-audio-box-' + dateId + '" class="mb-8 p-5 rounded-2xl border border-violet-100" style="background:linear-gradient(135deg,rgba(53,99,223,0.06),rgba(53,99,223,0.04))" ondragover="annieAudioDragOver(event)" ondragleave="annieAudioDragLeave(event)" ondrop="annieAudioDrop(event,\'' + dateId + '\')">' + inner + '</div>';
 }
 window.annieAudioHtml = annieAudioHtml;
 
@@ -1169,7 +1169,7 @@ window.engCopyNblmPrompt = function(dateId){
 };
 
 window.annieAudioPick = function(dateId){ var el = document.getElementById('annie-audio-file-' + dateId); if (el) el.click(); };
-window.annieAudioDragOver = function(e){ e.preventDefault(); if (e.currentTarget) e.currentTarget.style.outline = '2px dashed #8b5cf6'; };
+window.annieAudioDragOver = function(e){ e.preventDefault(); if (e.currentTarget) e.currentTarget.style.outline = '2px dashed #3563DF'; };
 window.annieAudioDragLeave = function(e){ if (e.currentTarget) e.currentTarget.style.outline = ''; };
 window.annieAudioDrop = function(e, dateId){
   e.preventDefault();

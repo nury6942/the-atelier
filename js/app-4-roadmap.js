@@ -622,7 +622,7 @@
     t.style.cssText = 'position:fixed;left:50%;top:84px;transform:translateX(-50%);' +
       'background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;' +
       'padding: var(--space-2-5) var(--space-4-5);border-radius: var(--radius-full);font-size: var(--font-size-body-sm);font-weight:700;' +
-      'box-shadow:0 12px 32px rgba(124,58,237,.35);z-index:9999;' +
+      'box-shadow:0 12px 32px rgba(31,75,216,.35);z-index:9999;' +
       'opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;' +
       'font-family:"Plus Jakarta Sans","Pretendard",sans-serif;letter-spacing:.02em';
     document.body.appendChild(t);

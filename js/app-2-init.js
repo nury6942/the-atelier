@@ -336,7 +336,7 @@ function selectMemo(id) {
   // Update pin icon
   var pinIcon = document.getElementById('ref-editor-pin-icon');
   pinIcon.style.fontVariationSettings = card.isPinned ? "'FILL' 1" : "'FILL' 0";
-  pinIcon.style.color = card.isPinned ? '#7c3aed' : '';
+  pinIcon.style.color = card.isPinned ? '#1F4BD8' : '';
 
   // Highlight active item in list
   renderRefList(document.getElementById('ref-search').value.trim());
@@ -571,7 +571,7 @@ async function toggleRefPin(id) {
     if (_refEditingId === id) {
       var pinIcon = document.getElementById('ref-editor-pin-icon');
       pinIcon.style.fontVariationSettings = newPin ? "'FILL' 1" : "'FILL' 0";
-      pinIcon.style.color = newPin ? '#7c3aed' : '';
+      pinIcon.style.color = newPin ? '#1F4BD8' : '';
     }
   } catch(e) {
     console.error('[Reference] pin error:', e);
@@ -825,15 +825,8 @@ function switchLedgerTab(tab) {
   var panel = document.getElementById('ledger-panel-' + tab);
   if (panel) panel.style.display = 'block';
   document.querySelectorAll('.ledger-tab').forEach(function(btn) {
-    if (btn.dataset.tab === tab) {
-      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)';
-      btn.style.color = '#fff';
-      btn.style.boxShadow = '0 2px 8px rgba(99,102,241,0.25)';
-    } else {
-      btn.style.background = '#f1f5f9';
-      btn.style.color = '#64748b';
-      btn.style.boxShadow = 'none';
-    }
+    btn.style.background = ''; btn.style.color = ''; btn.style.boxShadow = '';
+    btn.classList.toggle('is-on', btn.dataset.tab === tab);
   });
   if (tab === 'monthly' && _ledgerData.transactions) ldgRenderMonthly();
   if (tab === 'annual' && _ledgerData.transactions) ldgRenderAnnual();
@@ -1475,7 +1468,7 @@ function _ldgInjectMobileToggle(isFullView) {
   wrap.style.cssText = 'margin-bottom: var(--space-2-5);text-align:center;';
   var label = isFullView ? '⚡ 간소 모드 (빠르게)' : '📊 전체 보기 (차트·캘린더 등)';
   var nextState = isFullView ? 'false' : 'true';
-  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);background:#ede9fe;color:#6d28d9;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#475569;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
+  wrap.innerHTML = '<button onclick="localStorage.setItem(\'atelier_ldg_force_full\',\'' + nextState + '\');location.reload()" style="font-size: var(--font-size-micro);padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);background:#EEF2FD;color:#1A3FB5;border:none;font-weight:600;cursor:pointer;">' + label + '</button><p style="font-size: var(--font-size-nano);color:#475569;margin-top: var(--space-1);">' + (isFullView ? '전체 보기는 모바일에서 무거울 수 있어' : '차트/캘린더/카테고리 그리드 등 추가') + '</p>';
   kpiContainer.parentNode.insertBefore(wrap, kpiContainer);
 }
 
@@ -1626,7 +1619,7 @@ function ldgRenderAnnualGoal() {
   html += '<div class="flex gap-3">';
   html += bar('수입', incA, incGoal, true, '#10b981');
   html += bar('지출', expA, expGoal, false, '#ef4444');
-  html += bar('저축', savA, savGoal, true, '#6366f1');
+  html += bar('저축', savA, savGoal, true, '#3563DF');
   html += '</div>';
 
   // 부업 sub-progress (수입 하위 목표) — 설정된 경우만 표시
@@ -1948,7 +1941,7 @@ function ldgRenderTopCats() {
   el.innerHTML = sorted.map(function(cat) {
     var pct = totalExp > 0 ? (sums[cat] / totalExp * 100).toFixed(1) : 0;
     var barW = max > 0 ? (sums[cat] / max * 100) : 0;
-    return '<div class="space-y-1"><div class="flex justify-between text-xs mb-1"><span class="text-slate-600">' + cat + ' <span class="text-slate-400">(' + pct + '%)</span></span><span class="font-bold" style="font-feature-settings:\'tnum\'">' + ldgFmt(sums[cat]) + '</span></div><div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(90deg,#6366f1,#a855f7)"></div></div></div>';
+    return '<div class="space-y-1"><div class="flex justify-between text-xs mb-1"><span class="text-slate-600">' + cat + ' <span class="text-slate-400">(' + pct + '%)</span></span><span class="font-bold" style="font-feature-settings:\'tnum\'">' + ldgFmt(sums[cat]) + '</span></div><div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:' + barW + '%;background:linear-gradient(90deg,#3563DF,#5B7FE6)"></div></div></div>';
   }).join('');
 }
 
@@ -1994,11 +1987,11 @@ function ldgRenderDailyChart() {
       labels: labels,
       datasets: [{
         data: daily, fill: true,
-        borderColor: '#6366f1', borderWidth: 2,
+        borderColor: '#3563DF', borderWidth: 2,
         backgroundColor: function(ctx) {
           var g = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
-          g.addColorStop(0, 'rgba(99,102,241,0.15)');
-          g.addColorStop(1, 'rgba(99,102,241,0.01)');
+          g.addColorStop(0, 'rgba(53,99,223,0.15)');
+          g.addColorStop(1, 'rgba(53,99,223,0.01)');
           return g;
         },
         tension: 0.3, pointRadius: 0, pointHoverRadius: 4
@@ -3589,7 +3582,7 @@ function ldgRenderPastePreview() {
       '<td class="px-2 py-1">' + badge + '</td></tr>';
   });
   html += '</tbody></table></div>';
-  html += '<div class="flex justify-end mt-3"><button onclick="ldgConfirmPasteImport()" class="text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,#6366f1,#a855f7)"><span class="material-symbols-outlined align-middle" style="font-size:16px">add</span> ' + incl.length + '건 가계부에 추가</button></div>';
+  html += '<div class="flex justify-end mt-3"><button onclick="ldgConfirmPasteImport()" class="text-sm font-bold px-4 py-2 rounded-xl text-white" style="background:linear-gradient(135deg,#3563DF,#5B7FE6)"><span class="material-symbols-outlined align-middle" style="font-size:16px">add</span> ' + incl.length + '건 가계부에 추가</button></div>';
   box.innerHTML = html;
 }
 
@@ -4350,11 +4343,11 @@ function ldgRenderAnnualFlow(monthly, activeMonths) {
     data: {
       labels: labels,
       datasets: [
-        { label: '수입', data: incomeData, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
+        { label: '수입', data: incomeData, backgroundColor: '#3563DF', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '저축', data: savingData, backgroundColor: '#eae0b5', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '지출', data: expenseData, backgroundColor: '#f4a6a6', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
         { label: '(미입력)', data: placeholderData, backgroundColor: '#e2e8f0', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.7, order: 2 },
-        { label: '저축률', data: rateData, type: 'line', borderColor: '#4f46e5', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#4f46e5', tension: 0.3, yAxisID: 'y1', order: 1, spanGaps: false }
+        { label: '저축률', data: rateData, type: 'line', borderColor: '#1A3FB5', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#1A3FB5', tension: 0.3, yAxisID: 'y1', order: 1, spanGaps: false }
       ]
     },
     options: {
@@ -4519,7 +4512,7 @@ function ldgSetSubTab(tab) {
   if (panel) panel.style.display = 'block';
   document.querySelectorAll('.ldg-stab').forEach(function(btn) {
     if (btn.dataset.stab === tab) {
-      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -4926,7 +4919,7 @@ function ldgSetBudgetView(view) {
   _ldgBudgetView = view;
   document.querySelectorAll('.ldg-bview').forEach(function(btn) {
     if (btn.dataset.bview === view) {
-      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -5613,7 +5606,7 @@ function ldgRenderCoach() {
   var html = '<div class="flex items-center justify-between mb-6"><div><h3 class="text-lg font-bold text-slate-900">🎯 ' + _ldgCoachYear + ' 목표 트래커</h3>' +
     '<p class="text-xs text-slate-400 mt-1">' + curMonth + '월 ' + curDay + '일 현재 · 데이터 ' + dataDays + '일' + (remainDays>0?' · 남은 '+remainDays+'일':'') + '</p></div>' +
     '<div class="flex gap-1">' +
-    [2024,2025,2026,2027].map(function(yr){var ac=yr===_ldgCoachYear;return '<button onclick="_ldgCoachYear='+yr+';ldgRenderCoach()" class="px-3 py-1 rounded-full text-xs font-semibold '+(ac?'text-white" style="background:linear-gradient(135deg,#6366f1,#a855f7)':'text-slate-500" style="background:#f1f5f9')+'">' + yr + '</button>';}).join('') +
+    [2024,2025,2026,2027].map(function(yr){var ac=yr===_ldgCoachYear;return '<button onclick="_ldgCoachYear='+yr+';ldgRenderCoach()" class="px-3 py-1 rounded-full text-xs font-semibold '+(ac?'text-white" style="background:linear-gradient(135deg,#3563DF,#5B7FE6)':'text-slate-500" style="background:#f1f5f9')+'">' + yr + '</button>';}).join('') +
     '</div></div>';
 
   // Summary box
@@ -6115,7 +6108,7 @@ function ldgRenderAIDeepResult(content, usage, costKrw, fromCache, at) {
   // 줄바꿈을 <br>로, 이모지 그대로
   var safe = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
   var atDate = at ? new Date(at).toLocaleString('ko-KR') : new Date().toLocaleString('ko-KR');
-  resultEl.innerHTML = '<div class="rounded-2xl p-4 mt-2" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;">' +
+  resultEl.innerHTML = '<div class="rounded-2xl p-4 mt-2" style="background:linear-gradient(135deg,#F5F7FE,#EEF2FD);border:1px solid #ddd6fe;">' +
     '<div class="flex items-start gap-3">' +
       '<span style="font-size: var(--font-size-h1)">🤖</span>' +
       '<div class="flex-1">' +
@@ -6195,7 +6188,7 @@ function ldgRenderGoals() {
   // Year buttons
   document.querySelectorAll('.ldg-goal-yr').forEach(function(btn) {
     if (parseInt(btn.dataset.yr) === _ldgGoalYear) {
-      btn.style.background = 'linear-gradient(135deg,#6366f1,#a855f7)'; btn.style.color = '#fff';
+      btn.style.background = 'linear-gradient(135deg,#3563DF,#5B7FE6)'; btn.style.color = '#fff';
     } else {
       btn.style.background = '#f1f5f9'; btn.style.color = '#64748b';
     }
@@ -6803,7 +6796,7 @@ if ('serviceWorker' in navigator) {
           updateToastShown = true;
           var t = document.createElement('div');
           t.id = 'sw-update-toast';
-          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#7c3aed,#6366f1);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(107,56,212,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
+          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#1F4BD8,#3563DF);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(107,56,212,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
           t.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>새 버전이 있어요. 클릭해서 업데이트</span>';
           t.onclick = function() { window.location.reload(); };
           document.body.appendChild(t);

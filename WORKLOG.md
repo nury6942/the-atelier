@@ -1,3 +1,16 @@
+## 2026-10-18 · 아이맥 · 공통 디자인 1단계 — 사이드바 4묶음 · 전부 직각 · 포인트 코발트 · 글꼴 하나 · Money 탭 정리
+
+- 누리: 탭마다 디자인이 뒤죽박죽 → 통일. 규칙: 바탕 흰색(베이지 금지), 모든 칸 직각, 메뉴 영어, 보라 포인트 지겨움 → 코발트 #1F4BD8. 샘플: https://claude.ai/artifact/TjMuvvzCraKE1BjZ9fBoRG
+- index.html `<style id="atl-design-system">` 새 블록: --atl-accent 등 토큰, `*{border-radius:0!important}`(스피너만 원형), 글꼴 Pretendard 하나(아이콘·코드 제외 강제), 버튼 3종 `.atl-btn-primary/secondary/ghost`, 큰 탭 `.atl-tabs`+`.travel-tab-btn` 밑줄, 가계부 보기 토글 `.ledger-tab.is-on`
+- tailwind.config: indigo·violet·purple 팔레트를 코발트로 덮어씀(클래스 그대로 두고 색만 바뀜), borderRadius 전부 0, fontFamily 전부 Pretendard. --lavender-* 변수도 코발트
+- 하드코딩 보라 hex(#7c3aed 등) 501줄 → 코발트. **차트·카테고리 색 묶음 줄(파랑·초록·주황과 같이 쓰인 40줄)은 일부러 그대로 둠**
+- 사이드바: Home·Dashboard / EVERYDAY(Calendar·Memo) / MONEY(Money) / TRAVEL(Travel·Nomad Master) / GROWTH(English·Roadmap·Job Hunt·AI Brief). 선택 표시는 JS 인라인 그라데이션 → `.nav-item.is-active` 클래스
+- Money: 이모지 탭(📊📒💼) → Assets / Ledger / Side Jobs 밑줄 탭, 버튼 색 8가지 → 3종(색 있는 버튼은 '항목 추가'·'새 작품'만), Series Growth Correlation 제목 크기 통일, 상단 AI 칩 보라→코발트
+- 다음 할 일: Calendar → Travel → English·Job Hunt(별도 job-hunt.html)·AI Brief(ai-brief.html) 순서로 같은 규칙 적용. 카드 그림자 없앨지 누리 확인
+- service-worker CACHE_NAME v602
+
+---
+
 ## 2026-10-18 (맥북) — AI Brief X·Threads 수집을 아이맥 Aside 로 전환
 
 - 누리: '아이맥에 Aside 있는데 그걸로 해주면 안 돼?' → Aside 브라우저는 X·Threads 둘 다 로그인돼 있음(실측: X 리스트 45개·Threads 홈 80개). `aside repl` 로 읽는 scripts/ai-brief/aside-collect.js(후보)·aside-read.js(원문 전체, 연재·긴 글까지)

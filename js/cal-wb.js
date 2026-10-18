@@ -261,7 +261,7 @@
     orange:["#FBD8BD","#CF5A10","#722F06"], slate:["#DDE1E8","#56606F","#2A313C"], birthday:["#FFEC99","#C29A00","#5C4800"], deadline:null };
   var PINK_TO_YELLOW = { pink: 1, fuchsia: 1 };
   var WRITE_HEX = { indigo:'#4338CA', amber:['#FF9F1C','#2B1600'] /* 갈색(#B45309)은 못생겼다고 해서 탠저린 */, rose:'#E11D48', teal:'#0F766E', purple:'#7E22CE', blue:'#1D4ED8',
-    cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#6D28D9', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
+    cyan:'#0E7490', orange:'#EA580C', fuchsia:'#A21CAF', sky:'#0369A1', violet:'#1A3FB5', pink:'#DB2777', lime:'#4D7C0F', slate:'#475569' };
   var BAR_FULL = true;       // 여러 날 막대도 고른 색으로 꽉 채움
   // ★ (2026-10-11) 시리즈 이름으로 색 고정 — 일정마다 만들어질 때 색이 박혀 있어 같은 R 시리즈도 남색·파랑이 섞였고,
   //   남색이 IELTS 보라와 겹쳐 안 보였다. R 시리즈는 전부 청록 (글쓰기 진하게 · 연재 조금 밝게).
@@ -444,7 +444,7 @@
     var click = 'onclick="event.stopPropagation();wbcPickEvent(' + ref + ',this,\'' + ds + '\')" ondblclick="event.stopPropagation();openPlannerModal(' + ref + ')"';
     if (isPub(ev)) {
       var so = seriesOverride(ev);
-      var hex = so ? so.pub : (_seriesHexMap[(ev[3]||'').trim()] || '#6366f1');
+      var hex = so ? so.pub : (_seriesHexMap[(ev[3]||'').trim()] || '#3563DF');
       return '<span class="wbc-pub" style="background:' + hex + '" ' + drag + click + ' title="' + esc(ev[1]) + '"><em>연재</em>' + esc(ev[1]) + '</span>';
     }
     var sid = _getSeriesIdForDoc(ev[7] || '');

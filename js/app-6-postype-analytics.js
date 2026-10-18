@@ -594,7 +594,7 @@
     const weekendBands = full.map((d, i) => {
       if (d.dowIdx !== 0 && d.dowIdx !== 6) return '';
       const cx = xs[i];
-      return `<rect x="${(cx - colW/2).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${H}" fill="#6366f1" opacity="0.04"/>`;
+      return `<rect x="${(cx - colW/2).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${H}" fill="#3563DF" opacity="0.04"/>`;
     }).join('');
     // 공휴일 마커 — 세로 점선 + 상단 점
     const holidayMarks = full.map((d, i) => {
@@ -605,12 +605,12 @@
     }).join('');
     wrap.insertAdjacentHTML('afterbegin', `
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block">
-        <defs><linearGradient id="postype-area-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.25"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+        <defs><linearGradient id="postype-area-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3563DF" stop-opacity="0.25"/><stop offset="1" stop-color="#3563DF" stop-opacity="0"/></linearGradient></defs>
         ${weekendBands}
         ${holidayMarks}
         ${area ? `<path d="${area}" fill="url(#postype-area-grad)"/>` : ''}
         ${prevPath ? `<path d="${prevPath}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" stroke-linejoin="round" opacity="0.7"/>` : ''}
-        <path d="${path}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
+        <path d="${path}" fill="none" stroke="#3563DF" stroke-width="2" stroke-linejoin="round"/>
       </svg>`);
     wrap.__days = full;
   }
@@ -683,14 +683,14 @@
     const lastM = months[months.length - 1];
     if (lastM && lastM.rev !== null && pts.length){
       const p = pts[pts.length - 1];
-      endDot = `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#fff" stroke="#6366f1" stroke-width="2"/>`;
+      endDot = `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="#fff" stroke="#3563DF" stroke-width="2"/>`;
     }
 
     wrap.insertAdjacentHTML('afterbegin', `
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" style="display:block">
-        <defs><linearGradient id="postype-monthly-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.22"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+        <defs><linearGradient id="postype-monthly-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3563DF" stop-opacity="0.22"/><stop offset="1" stop-color="#3563DF" stop-opacity="0"/></linearGradient></defs>
         ${areaPath ? `<path d="${areaPath}" fill="url(#postype-monthly-grad)"/>` : ''}
-        ${linePath ? `<path d="${linePath}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>` : ''}
+        ${linePath ? `<path d="${linePath}" fill="none" stroke="#3563DF" stroke-width="2" stroke-linejoin="round"/>` : ''}
         ${endDot}
       </svg>`);
     wrap.__months = months;
@@ -774,7 +774,7 @@
       const scy = i => SH - 2 - (revs[i] / max) * (SH - 6);
       const pts = eps.map((e, i) => scx(i) + ',' + scy(i)).join(' ');
       const spark = '<svg viewBox="0 0 ' + SW + ' ' + SH + '" style="width:' + SW + 'px;height:' + SH + 'px;display:block">' +
-        '<polyline points="' + pts + '" fill="none" stroke="' + (isSel ? '#6366f1' : '#a5b4fc') + '" stroke-width="1.5"/>' +
+        '<polyline points="' + pts + '" fill="none" stroke="' + (isSel ? '#3563DF' : '#a5b4fc') + '" stroke-width="1.5"/>' +
         '<circle cx="' + scx(it.peakIdx) + '" cy="' + scy(it.peakIdx) + '" r="2.4" fill="#f59e0b"/></svg>';
       const trendHtml = it.trendPct == null ? '<span class="text-slate-300">—</span>' :
         '<span class="' + (it.trendPct >= 0 ? 'text-emerald-600' : 'text-rose-600') + ' font-bold" title="최근 3화 평균 ' + KRW(Math.round(it.recAvg)) + ' vs 이전 평균 ' + KRW(Math.round(it.prevAvg)) + '">' + (it.trendPct >= 0 ? '▲' : '▼') + Math.abs(it.trendPct) + '%</span>';
@@ -908,7 +908,7 @@
       const cells = Array.from({length: 24}, (_, h) => {
         const v = grid[d][h];
         const alpha = Math.min((v / max) * 1.5, 1);
-        return `<div style="aspect-ratio:1;border-radius:2px;background:rgba(99,102,241,${alpha})" title="${dow[d]} ${h}시: ${KRW(v)}"></div>`;
+        return `<div style="aspect-ratio:1;border-radius:2px;background:rgba(53,99,223,${alpha})" title="${dow[d]} ${h}시: ${KRW(v)}"></div>`;
       }).join('');
       return `<div class="text-[11px] text-slate-500 text-right pr-2 flex items-center justify-end">${dow[d]}</div>${cells}`;
     }).join('');
@@ -1041,7 +1041,7 @@
       const aY = H - PADY - actualH;
       return `
         <rect x="${x}" y="${fY}" width="${innerBarW}" height="${forecastH}" fill="#a5b4fc" opacity="0.6" rx="2"/>
-        ${m.actual !== null ? `<rect x="${x}" y="${aY}" width="${innerBarW}" height="${actualH}" fill="#6366f1" rx="2"/>` : ''}
+        ${m.actual !== null ? `<rect x="${x}" y="${aY}" width="${innerBarW}" height="${actualH}" fill="#3563DF" rx="2"/>` : ''}
         ${m.forecast ? `<text x="${x + innerBarW/2}" y="${fY - 6}" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">${(m.forecast/10000).toFixed(0)}만</text>` : ''}
         <text x="${x + innerBarW/2}" y="${H - 10}" text-anchor="middle" fill="#94a3b8" font-size="10">${monthLabelShort(m.ym)}</text>
       `;
@@ -1263,7 +1263,7 @@
   function showBridgeStatus(msg, color){
     const el = document.getElementById('postype-last-sync');
     if (!el) return;
-    el.innerHTML = `<span style="color:${color||'#6366f1'};font-weight:600">${msg}</span>`;
+    el.innerHTML = `<span style="color:${color||'#3563DF'};font-weight:600">${msg}</span>`;
   }
   function ensureSideJobVisible(){
     try { if (typeof navigate === 'function') navigate('income'); else if (typeof window.navigate === 'function') window.navigate('income'); } catch(e){}

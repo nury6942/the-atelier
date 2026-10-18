@@ -6,7 +6,7 @@
   'use strict';
 
   // helper: 날카로운 영어 라벨 + 보라톤 통일
-  // stitch 색: primary #630ed4, accent-vivid #7C3AED, accent-deep var(--lavender-deep)
+  // stitch 색: primary #630ed4, accent-vivid #1F4BD8, accent-deep var(--lavender-deep)
 
   function _esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {

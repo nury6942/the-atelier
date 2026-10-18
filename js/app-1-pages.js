@@ -696,7 +696,7 @@
           var pubPrefix = isPub ? '🎯 ' : '';
           // ★ (2026-07-15) 인덱스 하드코딩 → 클릭 시점 ID 해석 (_pi). ID 없는 행만 인덱스 폴백.
           var idxRef = docId ? "_pi('" + docId + "')" : String(realIdx);
-          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#6366f1') + ';border-left-color:rgba(0,0,0,0.2)' : '') + (isOutMonth ? ';opacity:0.5' : '') + '" ' +
+          return '<div class="' + pubCls + ' ' + (isPub ? '' : color) + '" style="' + pubInline + (isPub ? ';background:' + (_seriesHexMap[evColor3]||'#3563DF') + ';border-left-color:rgba(0,0,0,0.2)' : '') + (isOutMonth ? ';opacity:0.5' : '') + '" ' +
             'data-pidx="' + realIdx + '" ' +
             'draggable="true" ondragstart="event.stopPropagation();plannerDragStart(event,' + idxRef + ')" ondragend="plannerDragEnd(event)" ' +
             'ondragover="event.preventDefault();event.stopPropagation();this.classList.add(\'ring-2\',\'ring-indigo-400\')" ' +
@@ -1819,7 +1819,7 @@
     var wrap = document.getElementById('atl-confirm-icon-wrap');
     var okBtn = document.getElementById('atl-confirm-ok');
     if (opts.type === 'danger') { wrap.style.background = 'linear-gradient(135deg,#fee2e2,#fef2f2)'; okBtn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)'; okBtn.style.boxShadow = '0 2px 8px rgba(239,68,68,0.25)'; }
-    else { wrap.style.background = 'linear-gradient(135deg,#eef2ff,#f5f3ff)'; okBtn.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)'; okBtn.style.boxShadow = '0 2px 8px rgba(99,102,241,0.25)'; }
+    else { wrap.style.background = 'linear-gradient(135deg,#eef2ff,#F5F7FE)'; okBtn.style.background = 'linear-gradient(135deg,#3563DF,#3563DF)'; okBtn.style.boxShadow = '0 2px 8px rgba(53,99,223,0.25)'; }
     okBtn.textContent = opts.confirmText || '확인';
     document.getElementById('atl-confirm-cancel').textContent = opts.cancelText || '취소';
     _atlConfirmCb = opts.onConfirm || null;
@@ -3431,11 +3431,11 @@
         iconSize: [26, 26], iconAnchor: [13, 13]
       });
       var dateStr = c.start ? (c.start + (c.end && c.end !== c.start ? ' ~ ' + c.end : '')) : '';
-      var popup = '<strong>' + c.name + '</strong>' + (dateStr ? '<br><span style="color:#7c3aed">' + dateStr + '</span>' : '');
+      var popup = '<strong>' + c.name + '</strong>' + (dateStr ? '<br><span style="color:#1F4BD8">' + dateStr + '</span>' : '');
       L.marker([c.lat, c.lng], {icon: icon}).bindPopup(popup).addTo(_leafletLayer);
     });
     if (latlngs.length > 1) {
-      L.polyline(latlngs, {color: '#7c3aed', weight: 3, opacity: 0.85, dashArray: '6 8'}).addTo(_leafletLayer);
+      L.polyline(latlngs, {color: '#1F4BD8', weight: 3, opacity: 0.85, dashArray: '6 8'}).addTo(_leafletLayer);
     }
 
     // 화면 맞춤 (숨김 컨테이너 대응 위해 invalidateSize 후 재fit)
@@ -3898,7 +3898,7 @@
       var currentCity = (citiesData||[]).find(function(c){ return c.name === cityName; });
       if (currentCity && currentCity.transit_guide && dateStr === currentCity.start_date) {
         var tg = _spotPriceHtml(String(currentCity.transit_guide)).replace(/\n/g,'<br>');
-        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);border-left-color:#6366f1">' +
+        panelHtml += '<div class="rounded-2xl p-4 border-l-4" style="background:linear-gradient(135deg,#eef2ff,#F5F7FE);border-left-color:#3563DF">' +
           '<div class="flex items-start gap-3">' +
             '<span class="material-symbols-outlined text-indigo-500 mt-0.5" style="font-size: var(--font-size-h2)">directions_transit</span>' +
             '<div class="flex-1 min-w-0">' +
@@ -4273,7 +4273,7 @@
     div.className = 'schedule-inline-add relative pl-6 mt-4';
     div.innerHTML =
       '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-indigo-300 ring-4 ring-white shadow-sm"></div>' +
-      '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(107,56,212,0.06),rgba(99,102,241,0.08))">' +
+      '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(107,56,212,0.06),rgba(53,99,223,0.08))">' +
         '<div class="flex items-center gap-1 mb-1.5">' +
           '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-14 text-center"/>' +
           '<span class="text-[10px] text-slate-400">-</span>' +
@@ -4443,15 +4443,15 @@
     61: {desc:'가벼운 비', icon:'🌧️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
     63: {desc:'비', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#93c5fd 100%)'},
     65: {desc:'폭우', icon:'🌧️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
-    71: {desc:'가벼운 눈', icon:'🌨️', bg:'linear-gradient(135deg,#e0e7ff 0%,#c7d2fe 100%)'},
+    71: {desc:'가벼운 눈', icon:'🌨️', bg:'linear-gradient(135deg,#DDE5FB 0%,#c7d2fe 100%)'},
     73: {desc:'눈', icon:'❄️', bg:'linear-gradient(135deg,#c7d2fe 0%,#a5b4fc 100%)'},
     75: {desc:'폭설', icon:'❄️', bg:'linear-gradient(135deg,#a5b4fc 0%,#818cf8 100%)'},
     80: {desc:'소나기', icon:'🌦️', bg:'linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)'},
     81: {desc:'강한 소나기', icon:'🌧️', bg:'linear-gradient(135deg,#bfdbfe 0%,#60a5fa 100%)'},
     82: {desc:'폭우 소나기', icon:'⛈️', bg:'linear-gradient(135deg,#93c5fd 0%,#3b82f6 100%)'},
-    95: {desc:'뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#c4b5fd 0%,#8b5cf6 100%)'},
-    96: {desc:'우박 뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#a78bfa 0%,#7c3aed 100%)'},
-    99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%)'},
+    95: {desc:'뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#BCCBF7 0%,#3563DF 100%)'},
+    96: {desc:'우박 뇌우', icon:'⛈️', bg:'linear-gradient(135deg,#5B7FE6 0%,#1F4BD8 100%)'},
+    99: {desc:'강한 우박', icon:'⛈️', bg:'linear-gradient(135deg,#3563DF 0%,#1A3FB5 100%)'},
   };
 
   function cleanCityName(name) {
@@ -7310,13 +7310,13 @@
     var legs = _TRANSIT_RECS[trip.name];
     if (!legs || !legs.length) { el.style.display = 'none'; return; }
 
-    var html = '<div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+    var html = '<div style="background:linear-gradient(135deg,#eef2ff,#DDE5FB);border:1px solid #c7d2fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
-        '<span class="material-symbols-outlined" style="color:#4f46e5;font-size: var(--font-size-h1)">route</span>' +
+        '<span class="material-symbols-outlined" style="color:#1A3FB5;font-size: var(--font-size-h1)">route</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#3730a3;letter-spacing:-0.01em;margin:0">도시 간 이동 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#6366f1;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#3563DF;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">기차·버스·렌터카</span>' +
       '</div>' +
-      '<p style="font-size: var(--font-size-micro);color:#4f46e5;margin:0 0 16px;font-style:italic">추천 루트 + 소요시간·대략 가격. "Rome2Rio" 버튼으로 실시간 시각표·전체 옵션 비교</p>';
+      '<p style="font-size: var(--font-size-micro);color:#1A3FB5;margin:0 0 16px;font-style:italic">추천 루트 + 소요시간·대략 가격. "Rome2Rio" 버튼으로 실시간 시각표·전체 옵션 비교</p>';
 
     html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap: var(--space-2-5)">';
     legs.forEach(function(leg){
@@ -7328,13 +7328,13 @@
           '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + leg.toKr + '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
-          '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#4338ca;background:rgba(99,102,241,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + leg.mode + '</span>' +
+          '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#17348F;background:rgba(53,99,223,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + leg.mode + '</span>' +
           '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + leg.dur + '</span>' +
           '<span style="font-size: var(--font-size-tiny);color:#475569">·</span>' +
           '<span style="font-size: var(--font-size-tiny);color:#64748b">' + _spotPriceHtml(leg.price) + '</span>' +
         '</div>' +
         '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + _spotPriceHtml(leg.detail) + '</p>' +
-        '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
+        '<a href="' + r2r + '" target="_blank" rel="noopener" title="Rome2Rio에서 ' + leg.fromKr + '→' + leg.toKr + ' 실시간 교통편 비교" style="display:inline-flex;align-items:center;gap: var(--space-1);background:linear-gradient(135deg,#1A3FB5,#3563DF);color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-3);border-radius: var(--radius-md);text-decoration:none"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>Rome2Rio 실시간 비교</a>' +
       '</div>';
     });
     html += '</div></div>';
@@ -7351,13 +7351,13 @@
     var recs = _LODGING_RECS[trip.name];
     if (!recs || !recs.length) { el.style.display = 'none'; return; }
 
-    var html = '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
+    var html = '<div style="background:linear-gradient(135deg,#F5F7FE,#EEF2FD);border:1px solid #ddd6fe;border-radius:18px;padding: var(--space-5) var(--space-5-5);margin-bottom: var(--space-6)">' +
       '<div style="display:flex;align-items:center;gap: var(--space-2-5);margin-bottom: var(--space-3-5)">' +
         '<span class="material-symbols-outlined" style="color:var(--lavender-deep);font-size: var(--font-size-h1)">recommend</span>' +
         '<h4 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body);font-weight:800;color:#5b21b6;letter-spacing:-0.01em;margin:0">트립닷컴 추천 숙소 큐레이션</h4>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#8b5cf6;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#3563DF;background:#fff;padding: var(--space-0-5) var(--space-2);border-radius: var(--radius-full)">예산·취향·동선 종합</span>' +
       '</div>' +
-      '<p style="font-size: var(--font-size-micro);color:#7c3aed;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
+      '<p style="font-size: var(--font-size-micro);color:#1F4BD8;margin:0 0 16px;font-style:italic">디자인 부띠크 · 모던 미니멀 · 중심가 · 4★ 캘리버 기준 (누리 기존 예약 패턴 참고)</p>';
 
     recs.forEach(function(cityRec) {
       // 한·영 병기 (cityKr 있으면 그것 우선, 없으면 매핑)
@@ -7368,7 +7368,7 @@
       html += '<div style="margin-bottom: var(--space-4-5)">';
       html += '<div style="display:flex;align-items:center;gap: var(--space-2);margin-bottom: var(--space-2-5);flex-wrap:wrap">' +
         '<span style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:800;color:#1e1b4b">' + cityDisplay + '</span>' +
-        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + _spotPriceHtml(cityRec.budget) + dateRange + '</span>' +
+        '<span style="font-size: var(--font-size-tiny);font-weight:700;color:#3563DF;background:rgba(53,99,223,0.1);padding: var(--space-0-5) 7px;border-radius: var(--radius-full)">' + cityRec.nights + '박 · 예산 ' + _spotPriceHtml(cityRec.budget) + dateRange + '</span>' +
       '</div>';
       html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap: var(--space-2-5)">';
       cityRec.options.forEach(function(opt, oi) {
@@ -7382,12 +7382,12 @@
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap: var(--space-1-5);margin-bottom: var(--space-1-5);flex-wrap:wrap">' +
-            '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#7c3aed">' + opt.type + '</span>' +
+            '<span style="font-size: var(--font-size-tiny);font-weight:600;color:#1F4BD8">' + opt.type + '</span>' +
             '<span style="font-size: var(--font-size-tiny);color:#475569">·</span>' +
             '<span style="font-size: var(--font-size-micro);font-weight:700;color:#0f172a">' + _spotPriceHtml(opt.price) + '</span>' +
             (opt.rating ? '<span style="font-size: var(--font-size-tiny);color:#475569">·</span><span style="font-size: var(--font-size-tiny);color:#f59e0b;font-weight:600">' + opt.rating + '</span>' : '') +
           '</div>' +
-          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#a78bfa">location_on</span>' + opt.location + '</p>' +
+          '<p style="font-size: var(--font-size-micro);color:#64748b;margin:0 0 5px;display:flex;align-items:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta);color:#5B7FE6">location_on</span>' + opt.location + '</p>' +
           '<p style="font-size: var(--font-size-micro);color:#475569;line-height:1.55;margin:0 0 10px">' + opt.why + '</p>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
             '<a href="' + tripUrl + '" target="_blank" rel="noopener" title="트립닷컴에서 ' + cityRec.city + ' 호텔 검색 (날짜 미리입력)" style="flex:1;min-width:90px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-tiny);font-weight:700;padding: var(--space-1-5) var(--space-2);border-radius: var(--radius-md);text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap: var(--space-1)"><span class="material-symbols-outlined" style="font-size: var(--font-size-meta)">open_in_new</span>트립닷컴</a>' +
@@ -7750,7 +7750,7 @@
               '<button onclick="deleteLodgingLocal(' + idx + ')" class="rec-abtn danger"><span class="material-symbols-outlined">delete</span></button>' +
             '</div>' +
           '</div>' +
-          '<h3 class="rec-lg-title" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#7c3aed;font-variation-settings:\'FILL\' 1">verified</span></h3>' +
+          '<h3 class="rec-lg-title" style="display:flex;align-items:center;gap: var(--space-1-5)">' + d.title + '<span class="material-symbols-outlined" style="font-size: var(--font-size-h2);color:#1F4BD8;font-variation-settings:\'FILL\' 1">verified</span></h3>' +
           (d.phone ? '<p class="rec-lg-addr"><span><span class="material-symbols-outlined">call</span>' + d.phone + '</span></p>' : '') +
           '<div class="rec-lg-grid">' +
             '<div><p class="rec-micro">Check-in</p><p class="rec-lg-v">' + _recDateHtml(d.date, 'is-sm') + '</p><p class="rec-lg-sub">' + d.checkin + '</p></div>' +
@@ -8049,7 +8049,7 @@
     var tbody = document.getElementById(tbodyId); if(!tbody) return;
     var tr = document.createElement('tr');
     tr.className = 'fixed-input-row';
-    tr.style.cssText = 'background:linear-gradient(135deg,rgba(107,56,212,0.08) 0%,rgba(99,102,241,0.12) 100%);';
+    tr.style.cssText = 'background:linear-gradient(135deg,rgba(107,56,212,0.08) 0%,rgba(53,99,223,0.12) 100%);';
     tr.innerHTML = html;
     tbody.appendChild(tr);
     initInlineDatePickers(tr);
@@ -11766,7 +11766,7 @@
   var DASH_CAT_STYLE = {
     '업무':   'background:#f8bbd0;color:#c2185b', '연차':'background:#ffedd5;color:#c2410c',
     '개인':   'background:#fef3c7;color:#92400e', '글쓰기':'background:#e0f2fe;color:#0369a1',
-    '영어':   'background:#d9f99d;color:#3f6212', '스터디':'background:#ede9fe;color:#6d28d9'
+    '영어':   'background:#d9f99d;color:#3f6212', '스터디':'background:#EEF2FD;color:#1A3FB5'
   };
 
   function renderDashWeek(rows, now, todayStr) {
@@ -12485,7 +12485,7 @@
       }
       // 4개 카드 그리드 렌더 — 각 카드 다른 파스텔 컬러 (순서별 사이클)
       var BRIEF_CARD_PALETTE = [
-        { bg: 'linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%)', iconBg: '#ddd6fe', iconColor: '#7c3aed', border: '#e9d5ff', titleColor: '#3b0764', tagColor: '#6b21a8' },
+        { bg: 'linear-gradient(135deg,#F5F7FE 0%,#EEF2FD 100%)', iconBg: '#ddd6fe', iconColor: '#1F4BD8', border: '#e9d5ff', titleColor: '#3b0764', tagColor: '#6b21a8' },
         { bg: 'linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%)', iconBg: '#fed7aa', iconColor: '#ea580c', border: '#fdba74', titleColor: '#7c2d12', tagColor: '#9a3412' },
         { bg: 'linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)', iconBg: '#bbf7d0', iconColor: '#15803d', border: '#86efac', titleColor: '#14532d', tagColor: '#166534' },
         { bg: 'linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%)', iconBg: '#bfdbfe', iconColor: '#2563eb', border: '#93c5fd', titleColor: '#1e3a8a', tagColor: '#1e40af' }
@@ -13170,7 +13170,7 @@
         if (p.examples && p.examples.length) {
           tp += '<div class="space-y-1">';
           p.examples.slice(0, 4).forEach(function(e) {
-            tp += '<div class="text-[13px] pl-3 border-l-2" style="color:#475569;border-color:#c4b5fd;">"' + e + '"</div>';
+            tp += '<div class="text-[13px] pl-3 border-l-2" style="color:#475569;border-color:#BCCBF7;">"' + e + '"</div>';
           });
           tp += '</div>';
         }
@@ -13565,7 +13565,7 @@
         '【시리즈별 (월평균)】\n' + seriesDetail.map(function(s){return '- ' + s.name + ': 누적 ' + fmt(s.total) + ', 월 ' + fmt(s.avg);}).join('\n') + '\n\n' +
         '【연재 작품】\n' + worksData.map(function(w){return '- ' + w.title + ' (' + w.series + ', 종료 ' + w.end + ')';}).join('\n') + '\n\n' +
         '응답 형식 (HTML, 마크다운 X):\n' +
-        '<h4 style="color:#7c3aed;font-weight:800;margin-bottom: var(--space-1-5)">💡 인사이트</h4>\n<ul style="padding-left: var(--space-4-5);list-style:disc">\n  <li>핵심 트렌드 (1-2문장)</li>\n  <li>주의 사항 (있으면)</li>\n  <li>실행 가능한 액션 (1-2개)</li>\n</ul>\n\n구체적이고 친근한 톤. 액션은 시리즈명·기간 포함해서 구체적으로.';
+        '<h4 style="color:#1F4BD8;font-weight:800;margin-bottom: var(--space-1-5)">💡 인사이트</h4>\n<ul style="padding-left: var(--space-4-5);list-style:disc">\n  <li>핵심 트렌드 (1-2문장)</li>\n  <li>주의 사항 (있으면)</li>\n  <li>실행 가능한 액션 (1-2개)</li>\n</ul>\n\n구체적이고 친근한 톤. 액션은 시리즈명·기간 포함해서 구체적으로.';
 
       var model = localStorage.getItem('atelier_anthropic_model') || 'claude-sonnet-4-6';
       if (model.indexOf('opus') >= 0) model = 'claude-opus-4-7';
@@ -13734,7 +13734,7 @@
 
       // 카드로 렌더
       var html = recs.map(function(r, i){
-        var grad = ['#fce7f3,#fbcfe8', '#ede9fe,#ddd6fe', '#dbeafe,#bfdbfe'][i] || '#f1f5f9,#e2e8f0';
+        var grad = ['#fce7f3,#fbcfe8', '#EEF2FD,#ddd6fe', '#dbeafe,#bfdbfe'][i] || '#f1f5f9,#e2e8f0';
         var iconColor = ['#ec4899','#a855f7','#3b82f6'][i] || '#64748b';
         var highlights = (r.highlights||[]).map(function(h){ return '<span class="inline-flex items-center gap-0.5 text-[11px] px-2 py-0.5 bg-white/70 rounded-full font-medium text-slate-700">📍 ' + String(h).replace(/</g,'&lt;') + '</span>'; }).join(' ');
         return '<div class="rounded-2xl p-4 border" style="background:linear-gradient(135deg,' + grad + ');border-color:' + iconColor + '33">' +
@@ -14944,7 +14944,7 @@
       '<button onclick="finFxClose()" class="text-xs font-bold px-3 py-2 rounded-xl text-slate-500 hover:bg-slate-100">닫기</button>' +
       '<button id="fin-fx-apply" onclick="finFxApply()" class="text-sm font-bold px-4 py-2 rounded-xl text-white"' +
         (pend.length ? '' : ' disabled style="opacity:0.4;cursor:not-allowed"') +
-        ' style="background:linear-gradient(135deg,#6366f1,#a855f7)">' + pend.length + '건 반영</button></div>';
+        ' style="background:linear-gradient(135deg,#3563DF,#5B7FE6)">' + pend.length + '건 반영</button></div>';
     box.innerHTML = html;
   }
 
@@ -15195,7 +15195,7 @@
   const BUDGET_GROUPS = {
     // ★ (2026-08-05) 동의어를 함께 받는다. 예전엔 '숙소'만 인식해서, 스크립트로 넣은
     //   '숙박' 카테고리 거래가 통째로 '생활비'로 흘러가 좌우 카드 금액이 어긋났다.
-    '항공권': { cats: ['항공','항공권','비행기'], icon: 'flight', color: '#6366f1' },
+    '항공권': { cats: ['항공','항공권','비행기'], icon: 'flight', color: '#3563DF' },
     '숙소':   { cats: ['숙소','숙박','호텔'], icon: 'bed', color: '#3b82f6' },
     '교통':   { cats: ['이동','렌트','교통','렌트카','대중교통'], icon: 'directions_car', color: '#ec4899' },
     '생활비': { cats: ['식비','티켓','여가','쇼핑','통신','보험','환전','기타'], icon: 'restaurant', color: '#f97316' },
@@ -15303,7 +15303,7 @@
         '<span class="font-manrope text-2xl font-extrabold text-slate-400" style="font-variant-numeric:tabular-nums">₩' + Math.round(totalBudget).toLocaleString('ko-KR') + '</span>' +
         '<span class="text-[11px] font-semibold text-slate-400 ml-1">지출 / 예산 · ' + totalUsePct + '%</span>' +
       '</div>' +
-      bar(totalSpent, totalBudget, 'linear-gradient(90deg,#6366f1,#7c3aed)', 'h-3') +
+      bar(totalSpent, totalBudget, 'linear-gradient(90deg,#3563DF,#1F4BD8)', 'h-3') +
     '</div>';
 
     html += '<div class="grid grid-cols-2 gap-3 md:gap-4">';
@@ -18607,7 +18607,7 @@
         var icon = L.divIcon({ className: 'daylog-pin', html: '<div class="daylog-pin-inner" style="background:' + color + '">' + (i + 1) + '</div>', iconSize: [24, 24], iconAnchor: [12, 12] });
         var pop = '<strong>' + String(it.title || '').replace(/</g, '&lt;') + '</strong><br>' +
           '<span style="color:' + color + ';font-weight:700">' + day + '일차' + (it.time ? ' · ' + it.time : '') + '</span>' +
-          '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#7c3aed;font-weight:700">일정 보기 →</a>';
+          '<br><a href="#" onclick="jumpToDay(' + (day - 1) + ');return false" style="color:#1F4BD8;font-weight:700">일정 보기 →</a>';
         var mk = L.marker([la, ln], { icon: icon }).bindPopup(pop).addTo(_dayPinsLayer);
         // ★ 핀 클릭 한 번 = 그 지점으로 스르륵 비행 (Wanderlog식). stop()으로 잔여 애니메이션 정리 후 출발
         mk.on('click', function() { if (_dayPinsMap.getZoom() < 14) { _dayPinsMap.stop(); _dayPinsMap.flyTo(mk.getLatLng(), 15, { duration: 0.9 }); } });
@@ -18801,7 +18801,7 @@
     // 아뜰리에 스타일 미리보기 모달 (커스텀 확인창 재사용, 없으면 confirm 폴백)
     var listHtml = newSeq.map(function(it, n) {
       return '<li style="display:flex;align-items:center;gap:7px;padding:3.5px 0;font-size:12px;color:#334155;text-align:left">' +
-        '<span style="width:18px;height:18px;border-radius:50%;background:#ede9fe;color:#6d28d9;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">' + (n + 1) + '</span>' +
+        '<span style="width:18px;height:18px;border-radius:50%;background:#EEF2FD;color:#1A3FB5;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">' + (n + 1) + '</span>' +
         '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + String(it.title || '').replace(/</g, '&lt;') + '</span>' +
         (locked[n] ? '<span style="font-size:9px;font-weight:700;color:#475569;background:#f1f5f9;border-radius:6px;padding:1px 6px;flex-shrink:0">고정</span>' : '') +
       '</li>';
@@ -18809,7 +18809,7 @@
     var html =
       '<span style="display:flex;align-items:baseline;gap:8px;justify-content:center;margin-bottom:10px">' +
         '<span style="font-size:13px;color:#475569;text-decoration:line-through">' + before.toFixed(1) + 'km</span>' +
-        '<span style="font-size:20px;font-weight:800;color:#7c3aed">' + after.toFixed(1) + 'km</span>' +
+        '<span style="font-size:20px;font-weight:800;color:#1F4BD8">' + after.toFixed(1) + 'km</span>' +
         '<span style="font-size:11px;font-weight:800;color:#059669;background:#ecfdf5;border-radius:99px;padding:2px 8px">-' + pct + '%</span>' +
       '</span>' +
       '<ol style="list-style:none;margin:0;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;max-height:230px;overflow-y:auto">' + listHtml + '</ol>' +
@@ -19677,7 +19677,7 @@
       var x = 4 + i * (BW + GAP);
       var h = Math.max(3, Math.round(r[1] / maxc * ih));
       var y = PT + (ih - h);
-      return '<rect x="' + x + '" y="' + y + '" width="' + BW + '" height="' + h + '" rx="5" fill="#7c3aed" opacity="0.85"></rect>' +
+      return '<rect x="' + x + '" y="' + y + '" width="' + BW + '" height="' + h + '" rx="5" fill="#1F4BD8" opacity="0.85"></rect>' +
         '<text x="' + (x + BW / 2) + '" y="' + (y - 5) + '" class="flt-svg-n" text-anchor="middle">' + r[1] + '</text>' +
         '<text x="' + (x + BW / 2) + '" y="' + (H - 8) + '" class="flt-svg-x" text-anchor="middle">' + r[0] + '</text>';
     }).join('');
@@ -19773,7 +19773,7 @@
       // 대권 항로 느낌 — 중간점을 살짝 띄운 3점 곡선(외부 라이브러리 없이 근사)
       var mid = [(a[0] + b[0]) / 2 + Math.abs(a[1] - b[1]) * 0.055, (a[1] + b[1]) / 2];
       L.polyline([[a[0], a[1]], mid, [b[0], b[1]]], {
-        color: '#7c3aed', weight: 2, opacity: 0.7, smoothFactor: 1
+        color: '#1F4BD8', weight: 2, opacity: 0.7, smoothFactor: 1
       }).addTo(_fltMapLayer);
     });
     if (!pts.length) return;
@@ -20436,8 +20436,8 @@
     return '<svg class="flt-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H +
       '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="가격 추이">' +
       grid + labels +
-      '<path d="' + area + '" fill="#7c3aed" opacity="0.07"></path>' +
-      '<path d="' + d + '" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>' +
+      '<path d="' + area + '" fill="#1F4BD8" opacity="0.07"></path>' +
+      '<path d="' + d + '" fill="none" stroke="#1F4BD8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>' +
       dots + xa + '</svg>';
   }
 
@@ -21829,13 +21829,11 @@
       if (nomadContainer) nomadContainer.style.display = 'block';
       // 사이드바 active 처리 (메인 사이드바)
       document.querySelectorAll('.nav-item').forEach(n => {
-        n.style.background=''; n.style.color=''; n.style.borderLeft='';
+        n.style.background=''; n.style.color=''; n.style.borderLeft=''; n.classList.remove('is-active');
       });
       var navEl = document.getElementById('nav-nomad-master');
       if (navEl) {
-        navEl.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
-        navEl.style.color='#4338ca';
-        navEl.style.borderLeft='2px solid #6366f1';
+        navEl.classList.add('is-active');
       }
       try { localStorage.setItem('atelier-page', 'nomad-master'); } catch(e){}
       // 모바일 사이드바 자동 닫힘
@@ -21870,7 +21868,7 @@
     const t = document.getElementById('page-'+pageId);
     if(t) t.style.display='block';
     document.querySelectorAll('.nav-item').forEach(n => {
-      n.style.background=''; n.style.color=''; n.style.borderLeft='';
+      n.style.background=''; n.style.color=''; n.style.borderLeft=''; n.classList.remove('is-active');
     });
     // Travel / Travel Budget / Travel Checklist는 같은 사이드바 (nav-journey) 활성 처리
     let activeNavId = pageId;
@@ -21881,9 +21879,7 @@
     if (pageId === 'ledger' || pageId === 'income') activeNavId = 'finance-hub';
     const a = document.getElementById('nav-'+activeNavId);
     if(a) {
-      a.style.background='linear-gradient(90deg,#e0e7ff,#ede9fe)';
-      a.style.color='#4338ca';
-      a.style.borderLeft='2px solid #6366f1';
+      a.classList.add('is-active');
     }
     // 모바일에서 메뉴 클릭 시 사이드바 자동 닫힘
     if (window.innerWidth <= 768 && _sidebarOpen) {
@@ -22256,7 +22252,7 @@
       5: { color: 'text-sky-900', bg: 'background:rgba(56,189,248,0.25)' },
       6: { color: 'text-emerald-900', bg: 'background:rgba(52,211,153,0.25)' },
       7: { color: 'text-lime-900', bg: 'background:rgba(163,230,53,0.3)' },
-      8: { color: 'text-violet-900', bg: 'background:rgba(139,92,246,0.2)' }
+      8: { color: 'text-violet-900', bg: 'background:rgba(53,99,223,0.2)' }
     };
     // mergeStart[dateStr][colIdx] = spanCount, mergeSkip[dateStr][colIdx] = true
     var mergeStart = {};
@@ -22373,9 +22369,9 @@
           if (_pe && _pe[3] && _pe[3] !== 'sky') {
             var _sc = _pe[3]; // Tailwind color name: indigo, amber, etc.
             chipColor = 'text-' + _sc + '-900';
-            chipBg = 'background:var(--mx-' + _sc + ',rgba(99,102,241,0.25))';
+            chipBg = 'background:var(--mx-' + _sc + ',rgba(53,99,223,0.25))';
             // Inline fallback colors
-            var _scMap = { indigo:'rgba(99,102,241,0.25)', amber:'rgba(245,158,11,0.25)', rose:'rgba(244,63,94,0.25)', teal:'rgba(20,184,166,0.25)', purple:'rgba(168,85,247,0.25)', blue:'rgba(59,130,246,0.25)', cyan:'rgba(6,182,212,0.25)', orange:'rgba(249,115,22,0.25)' };
+            var _scMap = { indigo:'rgba(53,99,223,0.25)', amber:'rgba(245,158,11,0.25)', rose:'rgba(244,63,94,0.25)', teal:'rgba(20,184,166,0.25)', purple:'rgba(91,127,230,0.25)', blue:'rgba(59,130,246,0.25)', cyan:'rgba(6,182,212,0.25)', orange:'rgba(249,115,22,0.25)' };
             if (_scMap[_sc]) chipBg = 'background:' + _scMap[_sc];
           }
         }
@@ -22861,7 +22857,7 @@
     }).join('');
 
     td.innerHTML = tagsHtml +
-      '<input type="text" placeholder="입력 후 Enter" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(99,102,241,0.1)" id="mx-inline-input"/>';
+      '<input type="text" placeholder="입력 후 Enter" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(53,99,223,0.1)" id="mx-inline-input"/>';
     var input = td.querySelector('#mx-inline-input');
     input.focus();
 
@@ -22889,7 +22885,7 @@
     if (!td) return;
     td.classList.add('mx-selected','ring-2','ring-indigo-500');
     td.dataset.oldHtml = td.innerHTML;
-    td.innerHTML = '<input type="text" value="' + oldTitle.replace(/"/g,'&quot;') + '" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(99,102,241,0.1)" id="mx-inline-input"/>';
+    td.innerHTML = '<input type="text" value="' + oldTitle.replace(/"/g,'&quot;') + '" class="w-full px-2 py-1.5 text-[11px] font-medium rounded border-2 border-indigo-400 focus:border-indigo-500 outline-none bg-white" style="box-shadow:0 0 0 3px rgba(53,99,223,0.1)" id="mx-inline-input"/>';
     var input = td.querySelector('#mx-inline-input');
     input.focus(); input.select();
     input.addEventListener('keydown', function(e) {
@@ -24584,7 +24580,7 @@
   }
 
   var _wpMeta = {
-    synopsis:   { icon: '🎯', label: '시놉 진행 중', color: '#7c3aed', bg: 'rgba(124,58,237,0.08)' },
+    synopsis:   { icon: '🎯', label: '시놉 진행 중', color: '#1F4BD8', bg: 'rgba(31,75,216,0.08)' },
     draft:      { icon: '✏️', label: '초고 진행 중', color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
     revision:   { icon: '🔍', label: '퇴고 진행 중', color: '#eab308', bg: 'rgba(234,179,8,0.08)' },
     rest:       { icon: '☕', label: '휴식 중',      color: '#94a3b8', bg: 'rgba(148,163,184,0.08)' },
@@ -24595,7 +24591,7 @@
   var _seriesHexMap = { indigo:'#6366f1', amber:'#f59e0b', rose:'#f43f5e', teal:'#14b8a6', purple:'#a855f7', blue:'#3b82f6', cyan:'#06b6d4', orange:'#f97316', fuchsia:'#d946ef' };
   function _getSeriesHex(seriesName) {
     var c = getSeriesColor(seriesName);
-    return _seriesHexMap[c] || '#6366f1';
+    return _seriesHexMap[c] || '#3563DF';
   }
 
   function _wpProgress(w) {
@@ -24763,7 +24759,7 @@
     for (var mi=0;mi<months.length;mi++) {
       var mm = months[mi], nextP = mi<months.length-1 ? months[mi+1].p : 100;
       var mw = nextP - mm.p; var isYr = mm.m===0;
-      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-left: 1px solid var(--slate-100);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px' + (isYr?';background:rgba(99,102,241,0.04)':'') + '">' +
+      hHtml += '<div style="position:absolute;left:'+mm.p.toFixed(1)+'%;width:'+mw.toFixed(1)+'%;top:0;bottom:0;border-left: 1px solid var(--slate-100);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px' + (isYr?';background:rgba(53,99,223,0.04)':'') + '">' +
         (isYr?'<span class="text-[9px] font-black text-indigo-600">'+mm.y+'</span>':'') +
         '<span class="text-[10px] font-bold' + (isYr?' text-indigo-600':' text-slate-400') + '">'+MO[mm.m]+'월</span></div>';
     }
@@ -24774,7 +24770,7 @@
     var rowsHtml = '';
     sorted.forEach(function(w) {
       var s = seriesById[w.series_id]; if (!s) { s = seriesData.find(function(x){return x.name===w.series_name;})||{name:'?',color:'slate'}; }
-      var sColor = _seriesFixedHex(s.name) || (_seriesHexMap[s.color]||'#6366f1');
+      var sColor = _seriesFixedHex(s.name) || (_seriesHexMap[s.color]||'#3563DF');
       var sShort = (s.name||'?').charAt(0);
         rowsHtml += '<div class="flex items-stretch" style="height:36px;border-bottom: 1px solid var(--slate-50)">';
         var isDraft = w.status !== 'confirmed';
@@ -24908,7 +24904,7 @@
       sWorks.sort(function(a,b){ return (a.publish_start||'9999').localeCompare(b.publish_start||'9999'); });
       if (sWorks.length === 0) return;
       hasRows = true;
-      var sColor = _seriesFixedHex(s.name) || scMap[s.color] || '#6366f1';
+      var sColor = _seriesFixedHex(s.name) || scMap[s.color] || '#3563DF';
       rowsHtml += '<div class="flex items-center" style="height:62px;margin-bottom: var(--space-1-5)">';
       rowsHtml += '<div class="shrink-0 text-[11px] font-bold text-right pr-2 truncate" style="width:60px;color:' + sColor + '">' + s.name + '</div>';
       rowsHtml += '<div class="relative flex-1" style="height:52px;background:#f8fafc;border-radius: var(--radius-xs)">';
@@ -26687,12 +26683,12 @@
     if (isExpense) {
       if (pct >= 100) return '#ef4444';
       if (pct >= 90) return '#eab308';
-      if (pct >= 60) return '#7c3aed';
+      if (pct >= 60) return '#1F4BD8';
       return '#22c55e';
     }
     if (pct >= 100) return '#22c55e';
     if (pct >= 90) return '#eab308';
-    if (pct >= 50) return '#7c3aed';
+    if (pct >= 50) return '#1F4BD8';
     return '#94a3b8';
   }
 
@@ -26874,7 +26870,7 @@
       var diffPct = (prevAssets !== null && prevAssets !== 0) ? Math.round((diff / Math.abs(prevAssets)) * 100) : null;
       var diffWon = diff !== null ? diff * 10000 : 0;
 
-      var border = isCurrent ? 'border:2px solid #7c3aed;' : (hasData ? '' : 'border:2px dashed #e1e3e4;');
+      var border = isCurrent ? 'border:2px solid #1F4BD8;' : (hasData ? '' : 'border:2px dashed #e1e3e4;');
       var bg = isCurrent ? 'background:linear-gradient(135deg,rgba(107,56,212,0.04),rgba(132,85,239,0.04));' : '';
 
       var diffHtml = '';
@@ -27244,7 +27240,7 @@
     var st = document.createElement('style');
     st.textContent =
       '.hub-cell{cursor:cell;padding-left:4px;padding-right:4px;border-radius:4px}' +
-      '.hub-cell.hub-sel{box-shadow:inset 0 0 0 1.5px var(--lavender-deep,#6b38d4);background:rgba(107,56,212,0.05)}' +
+      '.hub-cell.hub-sel{box-shadow:inset 0 0 0 1.5px var(--lavender-deep,#17348F);background:rgba(107,56,212,0.05)}' +
       '.hub-cell.hub-editing{background:#fff}' +
       '.hub-cell-wrap{display:flex;align-items:center;gap:2px}' +
       '.hub-cell.text-right .hub-cell-wrap{justify-content:flex-end}' +
@@ -28335,7 +28331,7 @@
     study.style.display = isStudy ? 'block' : 'none';
     [ba, bs].forEach(function(b){ if (b){ b.style.background = ''; b.style.color = '#64748b'; b.style.boxShadow = ''; } });
     var active = isStudy ? bs : ba;
-    if (active){ active.style.background = '#fff'; active.style.color = '#4338ca'; active.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }
+    if (active){ active.style.background = '#fff'; active.style.color = '#17348F'; active.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
     if (isStudy && typeof loadEnglishStudy === 'function') loadEnglishStudy();
   };
@@ -28469,12 +28465,12 @@
 
       // 구간 소계 행
       var subtotalTr = document.createElement('tr');
-      subtotalTr.innerHTML = '<td class="px-6 py-2 text-[10px] font-bold text-indigo-400 uppercase tracking-wider" style="background:rgba(99,102,241,0.04);">' + group.key + ' Subtotal</td>' +
-        '<td style="background:rgba(99,102,241,0.04);"></td>' +
-        '<td style="background:rgba(99,102,241,0.04);"></td>' +
-        '<td class="px-6 py-2 text-[10px] text-slate-400" style="background:rgba(99,102,241,0.04);">' + sessionCount + ' sessions</td>' +
-        '<td class="px-6 py-2 text-right font-black text-indigo-600 text-sm" style="background:rgba(99,102,241,0.04);">£' + Math.round(trimesterFee) + krwSub(trimesterFee) + '</td>' +
-        '<td style="background:rgba(99,102,241,0.04);"></td><td style="background:rgba(99,102,241,0.04);"></td>';
+      subtotalTr.innerHTML = '<td class="px-6 py-2 text-[10px] font-bold text-indigo-400 uppercase tracking-wider" style="background:rgba(53,99,223,0.04);">' + group.key + ' Subtotal</td>' +
+        '<td style="background:rgba(53,99,223,0.04);"></td>' +
+        '<td style="background:rgba(53,99,223,0.04);"></td>' +
+        '<td class="px-6 py-2 text-[10px] text-slate-400" style="background:rgba(53,99,223,0.04);">' + sessionCount + ' sessions</td>' +
+        '<td class="px-6 py-2 text-right font-black text-indigo-600 text-sm" style="background:rgba(53,99,223,0.04);">£' + Math.round(trimesterFee) + krwSub(trimesterFee) + '</td>' +
+        '<td style="background:rgba(53,99,223,0.04);"></td><td style="background:rgba(53,99,223,0.04);"></td>';
       tbody.appendChild(subtotalTr);
     });
     document.getElementById('english-status').textContent = sorted.length + '개 수업';
@@ -29418,7 +29414,7 @@
     e.dataTransfer.dropEffect = 'move';
     var row = e.target.closest('.pk-item-row');
     document.querySelectorAll('.pk-item-row').forEach(function(el) { el.style.borderTop = ''; });
-    if (row) row.style.borderTop = '2px solid #6366f1';
+    if (row) row.style.borderTop = '2px solid #3563DF';
   }
 
   async function pkDrop(e, toDate, toIdx) {
@@ -30273,7 +30269,7 @@ function openSessionDetail(dateId) {
     if (!freq) return '';
     var map = {
       '매우 흔함': 'background:#dcfce7;color:#15803d',
-      '흔함':      'background:#e0e7ff;color:#4338ca',
+      '흔함':      'background:#DDE5FB;color:#17348F',
       '상황별':    'background:#fef9c3;color:#a16207',
       '문어체':    'background:#f3e8ff;color:#7e22ce',
       '드묾':      'background:#fee2e2;color:#b91c1c'
@@ -30311,14 +30307,14 @@ function openSessionDetail(dateId) {
     var id = 'gembd-' + ui;
     var rows = bd.map(function(b){
       return '<div class="flex gap-3 py-2 border-b border-indigo-50" style="align-items:baseline">' +
-        '<span style="min-width:38%;font-weight:700;color:#4338ca;font-size:13px">' + (b.chunk||'') + '</span>' +
+        '<span style="min-width:38%;font-weight:700;color:#17348F;font-size:13px">' + (b.chunk||'') + '</span>' +
         '<span class="review-note-kr" style="margin:0;font-size:13px">' + (b.meaning||'') + '</span>' +
       '</div>';
     }).join('');
     return '<div style="margin-left:26px;margin-top:10px">' +
       '<button id="' + id + '-btn" onclick="toggleGemBreakdown(\'' + id + '\')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">unfold_more</span>표현 뜯어보기</button>' +
       '<div id="' + id + '" style="display:none;margin-top:8px" class="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100">' +
-        (u.gemMeaningKr ? '<p class="review-note-kr" style="margin:0 0 10px;font-weight:600;color:#4338ca">' + u.gemMeaningKr + '</p>' : '') +
+        (u.gemMeaningKr ? '<p class="review-note-kr" style="margin:0 0 10px;font-weight:600;color:#17348F">' + u.gemMeaningKr + '</p>' : '') +
         rows +
       '</div>' +
     '</div>';
@@ -31399,7 +31395,7 @@ function toggleDrillAnswer(id) {
     result.style.display = 'none'; result.setAttribute('data-shown', '0');
   } else {
     result.style.display = 'block'; result.setAttribute('data-shown', '1');
-    result.innerHTML = '<span style="color:#4338ca;font-weight:700">정답:</span> <span style="color:#1e293b"><b>' + correct + '</b></span>' + (explain ? '<br><span style="color:#64748b">' + explain + '</span>' : '');
+    result.innerHTML = '<span style="color:#17348F;font-weight:700">정답:</span> <span style="color:#1e293b"><b>' + correct + '</b></span>' + (explain ? '<br><span style="color:#64748b">' + explain + '</span>' : '');
   }
 }
 function gradeAllDrills() {
@@ -31839,7 +31835,7 @@ function showScanResult(r) {
   var rows = [];
   var typeLabel = { '항공편':'✈️ 항공편', '숙소':'🏨 숙소', '이동수단':'🚆 이동수단', '렌트카':'🚗 렌트카' }[r.type] || r.type;
 
-  rows.push('<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">' + typeLabel + '</span></div>');
+  rows.push('<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#1F4BD8,#1A3FB5)">' + typeLabel + '</span></div>');
 
   function row(label, val) {
     if (!val && val !== 0) return '';
@@ -31871,7 +31867,7 @@ function showScanResult(r) {
     var flights = (r.flights && r.flights.length) ? r.flights : [r];
     if (flights.length > 1) {
       // 다구간: 각 항공편을 별도 카드로 묶어서 표시
-      rows = ['<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">' + typeLabel + ' × ' + flights.length + '</span><span class="text-[10px] text-slate-500">왕복 · 다구간</span></div>'];
+      rows = ['<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[11px] font-black text-white" style="background:linear-gradient(135deg,#1F4BD8,#1A3FB5)">' + typeLabel + ' × ' + flights.length + '</span><span class="text-[10px] text-slate-500">왕복 · 다구간</span></div>'];
       flights.forEach(function(seg, idx) {
         rows.push('<div class="mt-2 p-3 rounded-xl border border-violet-200 bg-violet-50/30">');
         rows.push('<div class="flex items-center gap-2 mb-2"><span class="text-[10px] font-black text-violet-700">구간 ' + (idx+1) + '</span><span class="text-[10px] text-slate-500">' + (seg.airline||'') + ' ' + (seg.flight_number||'') + '</span></div>');

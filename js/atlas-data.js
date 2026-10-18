@@ -18,7 +18,7 @@
       country: 'DENMARK & SWEDEN',
       countryCodes: 'DK / SE',
       flags: '🇩🇰 🇸🇪',
-      gradient: 'linear-gradient(135deg,#dbeafe 0%,#818cf8 60%,#4338ca 100%)',
+      gradient: 'linear-gradient(135deg,#dbeafe 0%,#818cf8 60%,#17348F 100%)',
       month: 'May 2027',
       monthShort: "May '27",
       dates: 'May 12 → 23, 2027',
