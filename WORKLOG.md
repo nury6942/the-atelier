@@ -2,7 +2,7 @@
 
 - 누리가 GEMINI_API_KEY 시크릿 등록 → `firebase deploy --only functions:tutorToken` 완료
 - 실측: 토큰 발급 OK, Gemini Live 접속 OK. 단 Google 이 "prepayment credits are depleted"(1011)로 끊음 → **AI Studio 프로젝트에 결제/충전 필요**(ai.studio/projects). 화면에도 이 경우 한글 안내 문구 추가
-- 모델 2개(gemini-3.8-live, gemini-2.5-flash-native-audio-preview-09-2025) 둘 다 같은 이유로 막혀 모델명 자체가 맞는지는 충전 뒤 다시 확인
+- 누리가 AI Studio 선불 크레딧 ₩10,000 충전(자동 충전 끔) → 재테스트 OK: 두 모델 모두 접속·24kHz 음성·자막 정상, 3.8 Live 는 이어붙이기 핸들도 옴. 마이크 실사용은 누리 브라우저에서 확인 필요
 
 ---
 
