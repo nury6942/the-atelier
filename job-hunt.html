@@ -264,6 +264,13 @@
                    (next?'<button data-go="'+next+'">'+next+' '+label(next)+' →</button>':'<span></span>');
     });
     document.querySelector('section[data-r="pb"]').addEventListener('click',function(e){
+      var st=e.target.closest('.sub-tab');
+      if(st){
+        var ch=st.closest('.pb-ch'), g=st.getAttribute('data-g');
+        ch.querySelectorAll('.sub-tab').forEach(function(b){ b.classList.toggle('on', b===st); });
+        ch.querySelectorAll('.subp').forEach(function(p){ p.hidden = p.getAttribute('data-g')!==g; });
+        return;
+      }
       var t=e.target.closest('.pb-tab,[data-go]'); if(!t) return;
       go(t.getAttribute('data-ch')||t.getAttribute('data-go'), true);
     });
