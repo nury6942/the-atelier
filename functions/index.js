@@ -574,7 +574,10 @@ async function readTrendDocs() {
   const snap = await admin.firestore().collection("trendSites").get();
   const sites = {};
   let keywords = null;
-  snap.forEach((d) => { if (d.id === "_keywords") keywords = d.data(); else sites[d.id] = d.data(); });
+  snap.forEach((d) => {
+    if (d.id === "_keywords") keywords = d.data();
+    else if (trends.SITES[d.id]) sites[d.id] = d.data(); // 뺀 사이트의 옛 문서는 무시
+  });
   trendDocs = { at: Date.now(), sites, keywords };
   return trendDocs;
 }
@@ -632,3 +635,4 @@ exports.trendFeed = onRequest(
     }
   }
 );
+

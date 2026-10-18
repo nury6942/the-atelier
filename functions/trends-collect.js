@@ -3,10 +3,12 @@
 //   사이트마다 화면 구조가 달라서 SITES[키].parse 를 하나씩 둠.
 //   어느 사이트가 화면을 바꾸면 그 사이트의 parse 만 고치면 됨.
 //   본문은 읽지 않음(제목·주소·조회·댓글·추천·시간만).
+//   더쿠(보안 검사 화면)·82쿡(접속 차단)은 클라우드 서버에서 막혀 뺌, 루리웹·클리앙은 누리 요청으로 뺌.
 // ══════════════════════════════════════════════════════════════════════
 const cheerio = require("cheerio");
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36";
+const UA_MOBILE = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
 
 const toNum = (s) => {
   const n = parseInt(String(s || "").replace(/[^0-9]/g, ""), 10);
@@ -39,33 +41,6 @@ function kstToIso(raw, now = new Date()) {
 }
 
 const SITES = {
-  theqoo: {
-    name: "더쿠",
-    url: "https://theqoo.net/hot",
-    parse($) {
-      const out = [];
-      $("table.theqoo_board_table tbody tr, table tbody tr").each((_, tr) => {
-        const $tr = $(tr);
-        if ($tr.hasClass("notice") || !$tr.find("td.no").length) return;
-        if (!/^\d+$/.test(clean($tr.find("td.no").text()))) return; // 공지는 번호 대신 아이콘
-        const a = $tr.find("td.title a").not(".replyNum").first();
-        const id = (a.attr("href") || "").match(/\/hot\/(\d+)/);
-        if (!id) return;
-        out.push({
-          id: id[1],
-          title: clean(a.text()),
-          url: "https://theqoo.net/hot/" + id[1],
-          category: clean($tr.find("td.cate").text()) || null,
-          comments: toNum($tr.find("a.replyNum").text()),
-          views: toNum($tr.find("td.m_no").text()),
-          upvotes: null,
-          postedAt: kstToIso($tr.find("td.time").text()),
-        });
-      });
-      return out;
-    },
-  },
-
   instiz: {
     name: "인티",
     url: "https://www.instiz.net/pt",
@@ -109,120 +84,32 @@ const SITES = {
     },
   },
 
-  "82cook": {
-    name: "82쿡",
-    url: "https://www.82cook.com/entiz/enti.php?bn=15",
-    parse($) {
-      const out = [];
-      // ① 왼쪽 '최근 많이 읽은 글' — 조회수는 없지만 사이트가 고른 인기글
-      const hot = new Map();
-      $("h2.mostBtn").parent().find("li a[href*='read.php?num=']").each((i, a) => {
-        const id = ($(a).attr("href") || "").match(/num=(\d+)/);
-        if (id) hot.set(id[1], { rank: i + 1, title: clean($(a).attr("title") || $(a).text()) });
-      });
-      // ② 자유게시판 최신 목록 — 조회수·댓글 있음
-      $("td.title a[href*='num=']").each((_, a) => {
-        const $tr = $(a).closest("tr");
-        const id = ($(a).attr("href") || "").match(/num=(\d+)/);
-        if (!id) return;
-        const nums = $tr.find("td.numbers");
-        out.push({
-          id: id[1],
-          title: clean($(a).text()),
-          url: "https://www.82cook.com/entiz/read.php?bn=15&num=" + id[1],
-          category: "자유게시판",
-          comments: toNum($tr.find("td.title em").text()),
-          views: toNum($(nums[nums.length - 1]).text()),
-          upvotes: null,
-          postedAt: kstToIso($tr.find("td.regdate").attr("title") || $tr.find("td.regdate").text()),
-          hotRank: hot.has(id[1]) ? hot.get(id[1]).rank : null,
-        });
-        hot.delete(id[1]);
-      });
-      for (const [id, h] of hot) {
-        out.push({
-          id, title: h.title, url: "https://www.82cook.com/entiz/read.php?bn=15&num=" + id,
-          category: "많이 읽은 글", comments: null, views: null, upvotes: null, postedAt: null, hotRank: h.rank,
-        });
-      }
-      return out;
-    },
-  },
-
+  // PC 페이지는 클라우드 서버에서 빈 화면이 와서 모바일 페이지를 읽음
   dcbest: {
     name: "디시",
-    url: "https://gall.dcinside.com/board/lists/?id=dcbest",
+    url: "https://m.dcinside.com/board/dcbest",
+    mobile: true,
     parse($) {
       const out = [];
-      $("tr.ub-content.us-post").each((_, tr) => {
-        const $tr = $(tr);
-        const no = $tr.attr("data-no");
-        if (!no || !/^\d+$/.test(clean($tr.find("td.gall_num").text()))) return;
-        const a = $tr.find("td.gall_tit a").first();
-        const gall = clean(a.find("strong").first().text()).replace(/[[\]]/g, "") || null;
-        a.find("strong, em, div").remove();
-        out.push({
-          id: no,
-          title: clean(a.text()),
-          url: "https://gall.dcinside.com/board/view/?id=dcbest&no=" + no,
-          category: gall,
-          comments: toNum($tr.find(".reply_num").text()),
-          views: toNum($tr.find("td.gall_count").text()),
-          upvotes: toNum($tr.find("td.gall_recommend").text()),
-          postedAt: kstToIso($tr.find("td.gall_date").attr("title") || $tr.find("td.gall_date").text()),
-        });
-      });
-      return out;
-    },
-  },
-
-  ruliweb: {
-    name: "루리웹",
-    url: "https://bbs.ruliweb.com/best/humor_only",
-    parse($) {
-      const out = [];
-      $("tr.table_body").each((_, tr) => {
-        const $tr = $(tr);
-        if ($tr.hasClass("notice") || $tr.hasClass("best")) return;
-        const a = $tr.find("a.subject_link").first();
-        const href = a.attr("href") || "";
-        const id = href.match(/read\/(\d+)/);
+      $("ul.gall-detail-lst li .gall-detail-lnktb").each((_, box) => {
+        const $b = $(box);
+        const a = $b.find("a.lt").first();
+        const id = (a.attr("href") || "").match(/dcbest\/(\d+)/);
         if (!id) return;
-        $tr.find("td.time input").remove();
+        const subj = a.find(".subjectin").first();
+        const gall = clean(subj.find("b").first().text()).replace(/[[\]]/g, "") || null;
+        subj.find("b").first().remove();
+        const info = a.find("ul.ginfo li").map((__, li) => clean($(li).text())).get();
+        const time = info.find((t) => /^\d{1,2}[:.]\d{2}$|^\d{2,4}\.\d{1,2}\.\d{1,2}$/.test(t));
         out.push({
           id: id[1],
-          title: clean(a.find(".text_over").first().text() || a.text()),
-          url: href.startsWith("http") ? href.split("?")[0] : "https://bbs.ruliweb.com" + href.split("?")[0],
-          category: "유머 베스트",
-          comments: toNum(a.find(".num_reply").text()),
-          views: toNum($tr.find("td.hit").text()),
-          upvotes: toNum($tr.find("td.recomd").text()),
-          postedAt: kstToIso($tr.find("td.time").text()),
-        });
-      });
-      return out;
-    },
-  },
-
-  clien: {
-    name: "클량",
-    url: "https://www.clien.net/service/board/park",
-    parse($) {
-      const out = [];
-      $("div.list_item.symph_row").each((_, row) => {
-        const $r = $(row);
-        if ($r.hasClass("notice")) return;
-        const sn = $r.attr("data-board-sn");
-        if (!sn) return;
-        out.push({
-          id: sn,
-          title: clean($r.find("[data-role=list-title-text]").attr("title") || $r.find(".list_subject").text()),
-          url: "https://www.clien.net/service/board/park/" + sn,
-          category: "모두의공원",
-          comments: toNum($r.attr("data-comment-count")),
-          views: toNum($r.find(".list_hit .hit").text()),
-          upvotes: toNum($r.find("[data-role=list-like-count]").text()),
-          postedAt: kstToIso($r.find(".timestamp").text()),
+          title: clean(subj.text()),
+          url: "https://gall.dcinside.com/board/view/?id=dcbest&no=" + id[1],
+          category: gall,
+          comments: toNum($b.find("a.rt .ct").text()),
+          views: toNum((info.find((t) => t.startsWith("조회")) || "")),
+          upvotes: toNum((info.find((t) => t.startsWith("추천")) || "")),
+          postedAt: kstToIso(time),
         });
       });
       return out;
@@ -233,7 +120,7 @@ const SITES = {
 async function fetchSite(key) {
   const site = SITES[key];
   const r = await fetch(site.url, {
-    headers: { "User-Agent": UA, "Accept-Language": "ko-KR,ko;q=0.9", Accept: "text/html" },
+    headers: { "User-Agent": site.mobile ? UA_MOBILE : UA, "Accept-Language": "ko-KR,ko;q=0.9", Accept: "text/html" },
     signal: AbortSignal.timeout(15000),
   });
   if (!r.ok) throw new Error(`${site.name} HTTP ${r.status}`);

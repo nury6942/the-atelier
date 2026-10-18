@@ -87,7 +87,7 @@
   <header class="mast">
     <div>
       <h1>Trends</h1>
-      <div class="sub">한국 커뮤니티 인기글 · 더쿠 · 인티 · 82쿡 · 디시 · 루리웹 · 클량에서 15분마다 직접 수집</div>
+      <div class="sub">한국 커뮤니티 인기글 · 인스티즈 · 디시 실시간 베스트에서 15분마다 직접 수집</div>
     </div>
     <div class="seg" id="seg">
       <button data-sort="rising">급상승</button>
@@ -108,7 +108,7 @@
     <aside>
       <h2>Google 실시간 검색어</h2>
       <ul class="kw" id="kw"></ul>
-      <p class="note">급상승은 최근 10시간 안에 올라온 글을 시간당 조회수가 빨리 오르는 순으로, 인기는 최근 48시간 조회수 순으로 보여줘요. 클량은 모두의공원 최신 글만 읽어서 조회수가 낮게 나와요.</p>
+      <p class="note">급상승은 최근 10시간 안에 올라온 글을 시간당 조회수가 빨리 오르는 순으로, 인기는 최근 48시간 조회수 순으로 보여줘요.</p>
       <p class="note" id="health"></p>
     </aside>
   </div>
@@ -122,7 +122,7 @@
   if (qApi && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) API = qApi;
 
   // 여성 독자층 커뮤니티를 앞에, 나머지 큰 곳을 뒤에
-  var SITES = [['전체'], ['더쿠'], ['인티'], ['82쿡'], null, ['디시'], ['루리웹'], ['클량']];
+  var SITES = [['전체'], ['인티'], ['디시']];
   var SORT_LABEL = { rising:'급상승', popular:'인기', latest:'최신' };
   var KEY = 'atelier_trends_v2';
 
