@@ -1,3 +1,12 @@
+## 2026-10-18 (맥북) — AI Brief X·Threads 수집을 아이맥 Aside 로 전환
+
+- 누리: '아이맥에 Aside 있는데 그걸로 해주면 안 돼?' → Aside 브라우저는 X·Threads 둘 다 로그인돼 있음(실측: X 리스트 45개·Threads 홈 80개). `aside repl` 로 읽는 scripts/ai-brief/aside-collect.js(후보)·aside-read.js(원문 전체, 연재·긴 글까지)
+- 아이맥 예약 작업 ai-brief-social 프롬프트를 Aside 로 교체(옛 것은 SKILL.md.chrome-backup), SOCIAL.md 브라우저 절 새로
+- 오늘 10/18 X·Threads 다시 수집: 1개 → 11개(X 4·Threads 7), 원문 읽고 핵심 줄 작성, X 사진·영상 3개
+- 함정: while read 루프 안의 ssh 가 표준입력을 먹어 루프가 3번째에서 멈춤 → ssh -n
+
+---
+
 ## 2026-10-18 · 아이맥 · Home 그림 → 판화 바다+요트 하나로 확정
 
 - 누리: 침엽수·기차·들판은 너무 아날로그·가상 느낌 → 단순·깔끔하게. 후보 6장(바다+요트 / 흰 벽+올리브 / 모래 사구 × Ink·Oil) 중 판화 바다 선택, 하늘 더 넓게·바위 빼기로 다시 그림

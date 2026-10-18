@@ -1,11 +1,205 @@
 {
  "date": "2026-10-18",
- "collectedAt": "2026-10-18T06:33:30+09:00",
- "skipped": [
-  "x: 로그인 안 됨 (AI Brief 리스트가 로그인 화면으로 이동)",
-  "threads: 로그인 안 됨 — 홈·팔로잉 피드 불가, 검색 첫 화면(인기)만 수집. 7일 안·AI 글 후보 2개 중 1개는 어제와 중복이라 뺌"
- ],
+ "collectedAt": "2026-10-18T16:40:00+09:00",
+ "skipped": [],
+ "via": "aside",
  "posts": [
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2111306174259691669",
+   "at": "2026-10-17T03:00:00Z",
+   "likes": 3500,
+   "tag": "꿀팁",
+   "summary": "Opus 5.5 프롬프트 하나로 모션그래픽 영상 뽑기",
+   "points": [
+    "'시간당 40만 원짜리 모션그래픽 디자이너'라는 반응의 Opus 5.5 프롬프트 데모",
+    "결과물이 영상으로 첨부 — 원문 보기에서 바로 재생",
+    "프롬프트 전문은 원문 링크에"
+   ],
+   "try": "브랜드 로고 한 장으로 5초 인트로 모션 만들어 보기",
+   "image": null,
+   "media": true,
+   "replies": 0,
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HUzdmXSWsAATSEx.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@mattpocockuk",
+   "url": "https://x.com/mattpocockuk/status/2111708560715292675",
+   "at": "2026-10-18T06:00:00Z",
+   "likes": 145,
+   "tag": "꿀팁",
+   "summary": "오늘의 프롬프트: 5,000토큰 넘는 파일은 커밋 못 하게",
+   "points": [
+    "Claude Code에 '5,000토큰(바이트÷4) 넘는 파일을 막는 pre-commit 훅 만들어줘'",
+    "스테이징된 파일만 검사, 잠금 파일·자동 생성 파일처럼 사람이 안 쓴 건 제외",
+    "막힐 때 에러 메시지에 '파일 쪼개는 방법'을 같이 보여주게",
+    "에이전트가 거대한 파일을 만들어 토큰을 낭비하는 걸 원천 차단"
+   ],
+   "try": "Atelier index.html(17,000줄) 같은 큰 파일 경고용으로 써보기",
+   "image": null,
+   "media": true,
+   "replies": 0,
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2111267033471996315",
+   "at": "2026-10-17T01:00:00Z",
+   "likes": 408,
+   "tag": "소식",
+   "summary": "영상만 보고 '눈으로 추론'하는 새 모델 Glimpse",
+   "points": [
+    "제미나이·애플 MM-1 연구진이 만든 Elorian의 'Glimpse' 공개",
+    "까다로운 개수 세기, 시각 퍼즐, 영상 속 상황 추론에 특화",
+    "'보이는 걸 진짜 이해하는' 시각 사고 모델이라는 소개"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0,
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111266909035393024/img/RRePdEkzsmZ-MoQV.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111266909035393024/vid/avc1/540x540/MdQOXNHy_zcT21Kb.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@naddangs",
+   "url": "https://www.threads.com/@naddangs/post/DenKjYxk9T2",
+   "at": "2026-10-17T22:00:00Z",
+   "likes": 373,
+   "tag": "꿀팁",
+   "summary": "클로드가 내 대화로 학습하지 않게 끄는 설정",
+   "points": [
+    "클로드 설정에 '내 채팅을 Anthropic 모델 학습에 쓰는 데 동의' 항목이 있음",
+    "켜져 있으면 대화 자료가 학습에 쓰일 수 있으니 끄라는 팁",
+    "그 문구만 영어로 돼 있어 지나치기 쉬움 — 캡처 이미지에 위치"
+   ],
+   "try": "Claude 설정 → 개인정보에서 학습 사용 항목 확인하기",
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DemU4dFCYMp",
+   "at": "2026-10-17T14:00:00Z",
+   "likes": 134,
+   "tag": "소식",
+   "summary": "Claude Mythos 5가 논문 최고 기록보다 효율적인 양자회로 설계",
+   "points": [
+    "앤트로픽이 10/16 공개한 STEM 펠로우 연구(하버드 연구진과 공동)",
+    "화학·최적화·물리·정수론 회로 8개를 말로 설명 + 자동 채점기만 붙이고 맡김",
+    "일부 회로는 10배 넘게 줄었고, 타원곡선 회로 하나는 53시간 연속 작업 끝에 나옴"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
+  {
+   "src": "threads",
+   "author": "@simon.dsgn",
+   "url": "https://www.threads.com/@simon.dsgn/post/DelDVliGUgE",
+   "at": "2026-10-17T02:00:00Z",
+   "likes": 93,
+   "tag": "만든 것",
+   "summary": "Gemini Live로 'AI 영어 화상 선생님' 만들었더니 베타 대기 170명",
+   "points": [
+    "Gemini Live가 음성뿐 아니라 카메라·화면 공유 이미지를 실시간으로 읽음",
+    "이걸로 영어 스피킹 화상 수업처럼 대화하는 서비스를 시험",
+    "게시물 조회 1.7만·좋아요 228, 댓글로 베타 희망 약 170명",
+    "다음 단계: 랜딩페이지 + 베타 신청서"
+   ],
+   "try": "Gemini Live 카메라 켜고 영어로 내 작업물 설명 연습 — 이직 면접 대비",
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
+  {
+   "src": "threads",
+   "author": "@solutionsom__",
+   "url": "https://www.threads.com/@solutionsom__/post/Del69w3mkyv",
+   "at": "2026-10-17T10:00:00Z",
+   "likes": 60,
+   "tag": "꿀팁",
+   "summary": "스마트스토어 운영을 노션+AI로 통째로 자동화",
+   "points": [
+    "스토어·인스타·광고·네이버 검색 API를 노션에 연결",
+    "릴스·광고 성과를 누적 분석하고 네이버에서 고객 불만(페인포인트) 조사",
+    "키워드 검색량·광고 클릭량 → 제품 문구에 반영 → 인스타 업로드까지 자동"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
+  {
+   "src": "x",
+   "author": "@BBBang9900",
+   "url": "https://x.com/BBBang9900/status/2111691691233321234",
+   "at": "2026-10-18T05:00:00Z",
+   "likes": 34,
+   "tag": "후기",
+   "summary": "카드뉴스 자동화 계정 이틀 운영 성적 공개",
+   "points": [
+    "카드뉴스를 자동으로 만들어 올리는 계정을 2일 운영",
+    "릴스가 아닌데도 성적이 괜찮다는 후기 — 성과 캡처가 원문에",
+    "계속 운영해 보겠다는 실험 중간 보고"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0,
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HU48ZaoaIAAX-9O.jpg"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@escape.salary",
+   "url": "https://www.threads.com/@escape.salary/post/Den6Rktk_a9",
+   "at": "2026-10-18T05:00:00Z",
+   "likes": 93,
+   "tag": "소식",
+   "summary": "초파리 뇌를 넣었더니 AI가 만든 세계를 진짜인 줄 알고 날아다님",
+   "points": [
+    "AI 연구소 Odyssey가 초파리 뇌 모델을 자사 세계 생성 AI(Odyssey-3)에 넣음",
+    "배경·바람·풍경을 AI가 실시간으로 만들고, 초파리가 그 안을 스스로 돌아다님",
+    "원글 조회 90만+, 일본 반응 '시뮬레이션 우주론 증명됨ㅋㅋ'"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
+  {
+   "src": "threads",
+   "author": "@ssaengcho",
+   "url": "https://www.threads.com/@ssaengcho/post/Dek5Uq7EzIP",
+   "at": "2026-10-17T01:00:00Z",
+   "likes": 25,
+   "tag": "만든 것",
+   "summary": "Kling 4.0 원본 영상 + 클로드·GPT로 VFX·모션 입히기",
+   "points": [
+    "업데이트된 Kling 4.0으로 원본 영상 생성(유행 중인 A2O LITE 패러디)",
+    "클로드+GPT로 VFX와 모션 효과를 덧붙임",
+    "동작이 잘 보이면서 효과를 넣는 게 어렵다는 후기, VFX 프롬프트는 댓글에 공개"
+   ],
+   "image": null,
+   "media": true,
+   "replies": 0
+  },
   {
    "src": "threads",
    "author": "@hyunuk.lim",
