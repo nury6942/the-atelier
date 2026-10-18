@@ -1,0 +1,333 @@
+{
+ "date": "2026-10-19",
+ "collectedAt": "2026-10-19T06:33:02+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@hakimieiqbal",
+   "url": "https://x.com/hakimieiqbal/status/2111428789272019234",
+   "at": "2026-10-17T12:07:06.000Z",
+   "likes": 1200,
+   "replies": 43,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "컨셉아트 한 장을 걸어 다니는 3D 마을로 바꾼 파이프라인",
+   "points": [
+    "GPT로 셀셰이딩 마을 컨셉아트를 먼저 뽑는다",
+    "Opus 5.5가 같은 배치를 단순 3D 블록으로 짓고 고정 카메라로 스크린샷",
+    "GPT가 그 블록 위에 컨셉아트를 참고해 덧칠 → Opus가 셰이더로 그림을 3D 형태에 다시 투사",
+    "실내도 같은 방법, 캐릭터는 GPT 이미지 + Minimax H3로 애니메이션"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/ext_tw_video_thumb/2111428766463369216/pu/img/daGrS1ierV_VhRiC.jpg",
+     "mp4": "https://video.twimg.com/ext_tw_video/2111428766463369216/pu/vid/avc1/640x360/cc-yDfDtUQp_iJKS.mp4?tag=12"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2111885271180390441",
+   "at": "2026-10-18T18:21:00.000Z",
+   "likes": 34,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "CLAUDE.md엔 사실만, 절차는 스킬로 빼서 컨텍스트 아끼기",
+   "points": [
+    "CLAUDE.md는 매 세션 통째로 읽히지만 스킬 본문은 쓸 때만 로드됨",
+    "스택·명령어·규칙만 CLAUDE.md에 두고 단계별 작업은 .claude/skills/<이름>/SKILL.md로",
+    "읽기 전용 잡일은 model: haiku + context: fork 로 별도 서브에이전트에서",
+    "paths: 를 달면 그 폴더 파일 만질 때만 뜸, !`git diff HEAD` 로 실시간 diff 주입",
+    "원문에 'CLAUDE.md 감사해서 사실/절차 나누고 diff 먼저 보여줘' 프롬프트 있음"
+   ],
+   "try": "the-atelier CLAUDE.md에서 절차만 골라 스킬 하나로 옮겨 보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111884277348536320/img/Xp_ckhMKyVJECakH.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111884277348536320/vid/avc1/480x600/JjFcJl31XFSWZhky.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2111867292086939656",
+   "at": "2026-10-18T17:09:33.000Z",
+   "likes": 25,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "무료 오픈웨이트 TTS 'Fish Audio Drama 3'로 목소리 4개 재현",
+   "points": [
+    "롤 아나운서·오징어게임 가드·트럼프·가렌 목소리로 영상 하나 직접 제작",
+    "영어 발음 정확도 93.2%로 ElevenLabs V4(91.7%)보다 높다고 소개(Artificial Analysis 기준)",
+    "한국어 음성 복제에서도 ElevenLabs V4보다 발음 오류율 낮음",
+    "가중치 공개라 고사양 PC면 로컬에서 무료로 돌릴 수 있음"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111867116374937601/img/3nSPniXqZ3OKfnDi.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111867116374937601/vid/avc1/640x360/YY-wFJYd4ffMBo-G.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2111471573395755295",
+   "at": "2026-10-17T14:57:06.000Z",
+   "likes": 196,
+   "replies": 53,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Kling 4.0 전면 공개 — 진짜 같은 영상 7개와 프롬프트",
+   "points": [
+    "1번 브런치 UGC: '폰 전면카메라, 30초 원테이크, 컷 없음, 보정 없음'으로 일상 클립처럼",
+    "9초쯤 웨이터 팔에 폰이 밀리는 식으로 시간대별 사건·대사를 초 단위로 적음",
+    "2번 라이브 공연은 Kling 4.0 + Suno v6 조합, 방송 카메라·24fps 지정",
+    "3번 스키어는 캐릭터 시트 한 장으로 7컷 멀티캠 편집",
+    "나머지 예시·전체 프롬프트는 원문 스레드에"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111468111576563712/img/MbzSebF2545VZc98.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111468111576563712/vid/avc1/480x852/7ZbJAdd9Yzjuugz0.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@OpenDesignHQ",
+   "url": "https://x.com/OpenDesignHQ/status/2111023212129829086",
+   "at": "2026-10-16T09:15:29.000Z",
+   "likes": 1600,
+   "replies": 67,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Motion 오픈소스 대안 'OpenDesign Motion' 공개",
+   "points": [
+    "아무 에이전트·아무 모델로 모션 영상을 만드는 오픈소스 도구",
+    "Opus 5.5 없이도 된다는 게 핵심 주장",
+    "발표 영상 자체를 OpenDesign으로 제작, 다른 데모는 스레드 아래에"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2110996800614301696/img/X0cUllAy6pZXBPSE.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2110996800614301696/vid/avc1/640x360/f7GF3jRLHsuo37Ok.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@stnncm",
+   "url": "https://www.threads.com/@stnncm/post/DeoYpbNmfUg",
+   "at": "2026-10-18T09:41:31.000Z",
+   "likes": 96,
+   "replies": 14,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Aside+클로드코드로 해외몰 세팅·광고 운영을 5시간 만에",
+   "points": [
+    "방치한 카페24 영문·일문·대만몰 디자인과 결제 연동을 나라별 모바일 결제에 맞게 갈아엎음",
+    "3PL 글로벌 배송 자동 연결, 인스타 업로드를 자동 번역해 해외 계정에도 동시 업로드",
+    "메타광고 대만·일본 세팅 후 2시간마다 성과 보고 → 승인하면 증액·감액 자동 변경",
+    "예전엔 세팅 2천만 원 + 외주 월 500만 원 들던 일을 클로드코드 월 100달러로"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gasket_love",
+   "url": "https://www.threads.com/@gasket_love/post/DeoyUWYFJE6",
+   "at": "2026-10-18T13:27:35.000Z",
+   "likes": 29,
+   "replies": 10,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "스마트스토어·쿠팡 주문을 한 화면에 묶은 사내 대시보드",
+   "points": [
+    "네이버 스마트스토어·쿠팡 오픈 API로 주문을 한곳에서 관리하는 웹앱 직접 제작",
+    "우체국 영수증 사진을 클로드에 넘기면 송장을 주문과 맞춰 MCP로 일괄 발송 처리",
+    "데모 영상 모션·디렉팅도 Claude Opus 5.5로",
+    "개발 문서는 답글의 공유방에서 나눔"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@siya_dl",
+   "url": "https://www.threads.com/@siya_dl/post/DepCbqNGnX-",
+   "at": "2026-10-18T15:46:38.000Z",
+   "likes": 80,
+   "replies": 19,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "웹사이트를 CLI·MCP 명령으로 바꿔주는 오픈소스 Hycli",
+   "points": [
+    "사이트를 한 번 분석해 결정론적 CLI로 만들어 두고 명령어로 자동화",
+    "AI 브라우저(playwright식)보다 토큰이 훨씬 적게 듦, 로그인은 AI가 읽지 않음",
+    "작성자는 블로그·카페·배민·당근·홈택스에 사용 중",
+    "대시보드보다 AI 에이전트에게 깃허브 주소를 던져주는 게 낫다고 함"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@figma_tutor",
+   "url": "https://www.threads.com/@figma_tutor/post/DeoRyVpk9TN",
+   "at": "2026-10-18T08:41:34.000Z",
+   "likes": 31,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 모션을 Figma Motion으로 넘겨 드래그로 다듬기",
+   "points": [
+    "클로드에서 모션 작업 → Claude에 Figma 커넥터 설치",
+    "'방금 만든 모션 Figma Motion으로 내보내줘' 요청하면 편집 가능한 레이어로 넘어옴",
+    "'0.2초 당겨줘' 같은 수정은 타임라인 드래그로, 끝나면 MP4로 내보내기",
+    "같이 쓸 스킬: animation-principles, motion-skills(55개), threejs-skills"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ai_leeseul",
+   "url": "https://www.threads.com/@ai_leeseul/post/Deo3QjaCh3o",
+   "at": "2026-10-18T14:09:13.000Z",
+   "likes": 24,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "광고주가 실제 사람인 줄 안 AI 모델 만드는 8가지",
+   "points": [
+    "이미지는 GPT, 영상은 클링",
+    "점·홑꺼풀·비대칭 있는 얼굴, 피부 보정 빼고 모공·잔머리 그대로",
+    "옷·액세서리는 실제 제품 사진을 입히고 배경 흐림 없이, 폰 전면카메라 셀카 각도",
+    "조명은 창가 자연광·집 조명만, 첫 사진을 계속 첨부해 얼굴 유지",
+    "클링에서는 동작을 작게, 한 번에 하나씩"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ai_investor_kr",
+   "url": "https://www.threads.com/@ai_investor_kr/post/DeorrvwEpqx",
+   "at": "2026-10-18T12:27:51.000Z",
+   "likes": 450,
+   "replies": 22,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "제미나이 '구글 옴니'로 영상 편집하는 프롬프트 8개",
+   "points": [
+    "세로 리프레임: 인물이 움직여도 중앙 유지, 머리 잘림·검은 여백 없이",
+    "군말·멈춤·더듬은 구간 잘라내고 편집 전후 길이 알려달라고",
+    "배경 소음·에코·험 제거하고 볼륨 고르게",
+    "릴스식 1~2단어 자막, 핵심어 강조·얼굴 안 가리게",
+    "SNS용 강한 30초 구간 5개를 타임스탬프·첫 문구와 함께 뽑기(나머지는 원문)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@it_by_sso",
+   "url": "https://www.threads.com/@it_by_sso/post/DeoUw3_jxoK",
+   "at": "2026-10-18T09:07:35.000Z",
+   "likes": 215,
+   "replies": 11,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "같은 말 반복해도 AI가 안 나아질 때 — 옵시디언에 기억 쌓기",
+   "points": [
+    "옵시디언을 깔고 AI에게 graphify 오픈소스를 설치하게 함",
+    "지금까지 작업·지식을 전부 옵시디언에 정리시키고 한 번 더 다듬게",
+    "앞으로 모든 지시 전에 옵시디언을 확인하고, 내 말을 기록·학습해 두 번 말하지 않게 하라고 지시"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/DeoPFl5D-mn",
+   "at": "2026-10-18T08:17:59.000Z",
+   "likes": 42,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Code·Codex·Cursor가 기억을 공유하는 'ai-memory'",
+   "points": [
+    "20개 넘는 AI 코딩 도구를 연결해 작업 기록·결정·실패한 방법까지 기억",
+    "Claude Code에서 하던 일을 Codex로 옮겨도 어디까지 했는지 이어받음",
+    "기억은 Markdown 파일이라 직접 고치고 여러 컴퓨터·팀원과 공유 가능",
+    "LLM API 키 없이 기본 동작, MIT 라이선스 — 민감 파일 제외 설정은 꼭 확인"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@nangman_muk",
+   "url": "https://www.threads.com/@nangman_muk/post/DeksyZHAeYK",
+   "at": "2026-10-16T23:20:35.000Z",
+   "likes": 41,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "coucou 0.4 — 노치 승인에 더해 음성 입력·통화 녹음까지",
+   "points": [
+    "맥 노치에서 클로드 코드·코덱스·커서 등의 권한 승인, 자리 비우면 아이폰 잠금화면으로",
+    "0.4 추가: 키 누른 채 말하면 커서 자리에 글이 붙는 음성 입력(Parakeet 오프라인)",
+    "회의에 봇 없이 통화 녹음 → 받아쓰기·요약·할 일까지",
+    "9월 말 공개된 신생 프로젝트라 버전이 빠르게 바뀌는 중"
+   ],
+   "try": "시험 중인 coucou를 0.4로 올려 음성 입력 써 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/Deohq3tj_64",
+   "at": "2026-10-18T11:00:21.000Z",
+   "likes": 59,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "앤트로픽 사내 에이전트 작업시간, 직원의 6배",
+   "points": [
+    "10/16 앤트로픽 경제팀이 사내 고용 보고서와 'AI 기대 격차' 보고서 공개",
+    "대화형 에이전트만 세도 5월에 사람 시간 추월, 8월 6배, 연구 조직은 19배",
+    "같은 기간 기술직 신규 채용 중 주니어 비중 27% → 9%",
+    "에이전트 시간은 추론·도구 실행만, 30분 넘게 멈춘 시간은 제외해 계산"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dukku_ai",
+   "url": "https://www.threads.com/@dukku_ai/post/DeoLfgeEwCR",
+   "at": "2026-10-18T07:46:34.000Z",
+   "likes": 27,
+   "replies": 16,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "M5 울트라 맥스튜디오로 로컬 AI 공장 돌리는 법",
+   "points": [
+    "minimax h3(200GB)를 로컬에 깔아 영상 소스 생산",
+    "Higgs TTS3(24GB)로 내 목소리 클론, 콘텐츠용 TTS를 무료로 무한 생산",
+    "Whisper Turbo로 통화 녹취를 전부 받아써 전화 업무 자동화"
+   ]
+  }
+ ]
+}
