@@ -16813,6 +16813,7 @@
   }
 
   const pageMeta = {
+    "home": { "title": "Home" },
     "dashboard": { "title": "Dashboard" },
     "journey": { "title": "Travel" },
     "finance": { "title": "Travel" },
@@ -21819,6 +21820,8 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
+    // Home 에서만 상단바를 숨기고 그림을 화면 전체로 (index.html .atl-home 참고)
+    document.body.classList.toggle('atl-on-home', pageId === 'home');
     // ═══ Nomad Master 진입 (페이지 내부에 sub-sidebar로 28개 sub-page 처리) ═══
     if (pageId === 'nomad-master') {
       document.querySelectorAll('.page').forEach(p => { p.style.display='none'; });
@@ -21911,7 +21914,8 @@
     // ★ URL ?nav= 우선 처리 (m-ledger.html → 자산/부업 탭 복귀 시 무한 리다이렉트 방지)
     var urlNav = null;
     try { urlNav = new URLSearchParams(window.location.search).get('nav'); } catch(e){}
-    const startPage = urlNav || localStorage.getItem('atelier-page') || 'dashboard';
+    // 앱을 열면 항상 Home(그림 + 전체 섹션)에서 시작. ?nav= 로 들어온 경우만 그 페이지로
+    const startPage = urlNav || 'home';
     // nav 파라미터 사용했으면 URL에서 제거 (새로고침 깔끔하게)
     if (urlNav) {
       try { history.replaceState(null, '', window.location.pathname); } catch(e){}

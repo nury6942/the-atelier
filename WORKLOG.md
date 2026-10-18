@@ -1,3 +1,14 @@
+## 2026-10-18 · 아이맥 · 새 Home — 그림이 화면 전체를 채우는 첫 화면 (판화 Ink / 유화 Oil)
+
+- 누리: 대시보드 아래 푸터 말고, 그림을 화면 전체로 쓰는 홈으로. 그 안에 섹션 링크 전부. 감성 노을·조각상 싫음 → 모티브는 설산·침엽수·기차
+- 그림: `assets/home/home-ink.webp`(코발트 블루+크림 두 색 판화, 기본값) · `home-oil.webp`(인상파 유화, Navvatic 푸터 레퍼런스 색감) — 둘 다 Codex `codex exec --image 레퍼런스 - < 프롬프트파일` 로 생성, 1536×1024
+- index.html `#page-home`: position:fixed 전체 화면, 상단바는 `body.atl-on-home` 일 때 숨김(navigate() 맨 앞에서 붙임/뗌). 오른쪽 위 메뉴·설정 아이콘, 로고·날짜·Oil/Ink 스위치(localStorage `atelier-home-art`), Everyday/Money/Travel/Growth 링크. 배경색 = 그림 하늘 윗줄 평균(#12429e / #073bca)
+- 900px 이하: 링크 아래에 풍경이 오도록 padding-bottom 340px + 그림 240% 확대
+- 앱 시작 페이지: 항상 Home (`?nav=` 만 예외). 사이드바 맨 위 Home 메뉴 추가. 대시보드 아래 라벤더 판화 푸터는 원래 한 줄 푸터로 되돌림
+- app-1-pages.js v388 · CACHE_NAME v600
+
+---
+
 ## 2026-10-18 (맥북) — AI Brief 사진 다시 살림 + 원인 둘
 
 - 누리: '10/17부터 사진·GIF 다 안 뜬다' → 원인 ① 07시 클라우드 루틴 환경이 외부 사이트를 막아 fill-images 가 빈손(10/17·18 카드·사례·주워 담기 사진 0) ② X·Threads 수집이 10/16 아이맥으로 옮겨졌는데 아이맥 크롬이 X·Threads 로그아웃 → X 0개, Threads 검색 첫 화면만(6개·1개)

@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=2">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=386" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=388" as="script">
   <link rel="preload" href="js/app-2-init.js?v=182" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11401,6 +11401,10 @@
     </div>
   </div>
   <nav class="flex-1 space-y-0.5 overflow-y-auto hide-scrollbar">
+    <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-home" onclick="navigate('home'); return false;">
+      <span class="material-symbols-outlined text-[20px] transition-colors">home</span>
+      <span class="font-manrope uppercase tracking-wider text-xs font-bold">Home</span>
+    </a>
     <a href="#" class="nav-item flex items-center gap-3 px-4 py-2.5 mx-1 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all duration-150 group" id="nav-dashboard" onclick="navigate('dashboard'); return false;">
       <span class="material-symbols-outlined text-[20px] transition-colors">dashboard</span>
       <span class="font-manrope uppercase tracking-wider text-xs font-bold">Dashboard</span>
@@ -11510,7 +11514,104 @@
   </header>
 
   <div class="pt-16 flex-1">
-  <div id="page-dashboard" class="page dashboard-page" style="display:block">
+  <!-- ═══════ Home: 그림 한 장 + 전체 섹션 (그림은 Codex 생성, assets/home/) ═══════ -->
+  <style>
+    /* Home은 상단바·여백 없이 그림이 화면 전체를 채움 (body.atl-on-home 은 navigate()가 붙임) */
+    body.atl-on-home #main-header{display:none}
+    #page-home{position:fixed;inset:0;z-index:30;overflow-y:auto}
+    .atl-home{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;color:#fff;font-family:'Plus Jakarta Sans','Pretendard',sans-serif;background:#12429e url('assets/home/home-ink.webp') center 18%/cover no-repeat}
+    .atl-home[data-art="oil"]{background-color:#073bca;background-image:url('assets/home/home-oil.webp')}
+    .atl-home-tools{position:absolute;top:18px;right:20px;display:flex;gap:4px;z-index:2}
+    .atl-home-tools button{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;transition:background .15s,color .15s}
+    .atl-home-tools button:hover{background:rgba(255,255,255,0.14);color:#fff}
+    .atl-home-top{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:40px;padding:64px clamp(32px,5vw,96px) 0}
+    .atl-home-brand{display:flex;align-items:center;gap:10px;font-family:'Manrope','Pretendard',sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.02em}
+    .atl-home-brand .material-symbols-outlined{font-size:26px}
+    .atl-home-desc{margin-top:14px;max-width:300px;word-break:keep-all;font-size:14px;line-height:1.65;color:rgba(255,255,255,0.72)}
+    .atl-home-date{margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:0.04em;color:rgba(255,255,255,0.6)}
+    .atl-home-meta{display:flex;align-items:center;gap:14px;margin-top:20px;font-size:12px;color:rgba(255,255,255,0.6)}
+    .atl-home-col h4{font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:14px;font-weight:700;margin-bottom:14px;color:#fff}
+    .atl-home-col a{display:block;padding:4px 0;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,0.72);text-decoration:none;transition:color .15s}
+    .atl-home-col a:hover{color:#fff}
+    .atl-home-switch{display:inline-flex;gap:2px;padding:2px;border-radius:999px;background:rgba(255,255,255,0.14)}
+    .atl-home-switch button{border:0;background:transparent;color:rgba(255,255,255,0.75);font:inherit;font-size:11.5px;padding:4px 12px;border-radius:999px;cursor:pointer}
+    .atl-home-switch button.on{background:#fff;color:#12429e;font-weight:700}
+    @media (max-width:900px){
+      .atl-home{padding-bottom:340px;background:url('assets/home/home-ink.webp') 30% bottom/240% auto no-repeat,#12429e}
+      .atl-home[data-art="oil"]{background:url('assets/home/home-oil.webp') 30% bottom/240% auto no-repeat,url('assets/home/home-oil.webp') 20% top/auto 1500px no-repeat,#073bca}
+      .atl-home-tools{top:10px;right:10px}
+      .atl-home-top{grid-template-columns:repeat(2,1fr);gap:24px 20px;padding:56px 24px 0}
+      .atl-home-top>div:first-child{grid-column:1/-1}
+    }
+  </style>
+  <div id="page-home" class="page" style="display:block">
+    <div class="atl-home-wrap">
+      <section class="atl-home" id="atl-home" data-art="ink">
+        <div class="atl-home-tools">
+          <button type="button" aria-label="메뉴" onclick="event.preventDefault();event.stopPropagation();toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+          <button type="button" aria-label="설정" onclick="openSettingsPanel()"><span class="material-symbols-outlined">settings</span></button>
+        </div>
+        <div class="atl-home-top">
+          <div>
+            <div class="atl-home-brand"><span class="material-symbols-outlined">palette</span>The Atelier</div>
+            <p class="atl-home-desc">하루를 기록하고, 돈과 여행과 배움을 한곳에서 가꾸는 나만의 작업실.</p>
+            <p class="atl-home-date" id="atl-home-date"></p>
+            <div class="atl-home-meta">
+              <span class="atl-home-switch" role="group" aria-label="그림 바꾸기">
+                <button type="button" data-art="oil" onclick="atlHomeArt('oil')">Oil</button>
+                <button type="button" data-art="ink" onclick="atlHomeArt('ink')">Ink</button>
+              </span>
+              <span>© 2026 Nuri</span>
+            </div>
+          </div>
+          <div class="atl-home-col">
+            <h4>Everyday</h4>
+            <a href="#" onclick="navigate('dashboard');return false;">Dashboard</a>
+            <a href="#" onclick="navigate('planner');return false;">Calendar</a>
+            <a href="#" onclick="navigate('matrix');return false;">Year Matrix</a>
+            <a href="#" onclick="navigate('reference');return false;">Memo</a>
+          </div>
+          <div class="atl-home-col">
+            <h4>Money</h4>
+            <a href="#" onclick="navigate('finance-hub');return false;">Money</a>
+            <a href="#" onclick="navigate('ledger');return false;">Daily Ledger</a>
+            <a href="#" onclick="navigate('income');return false;">Side Jobs</a>
+          </div>
+          <div class="atl-home-col">
+            <h4>Travel</h4>
+            <a href="#" onclick="navigate('journey');return false;">Travel</a>
+            <a href="#" onclick="navigate('finance');return false;">Travel Budget</a>
+            <a href="#" onclick="navigate('packing');return false;">Checklist</a>
+            <a href="#" onclick="navigate('nomad-master');return false;">Nomad Master</a>
+          </div>
+          <div class="atl-home-col">
+            <h4>Growth</h4>
+            <a href="#" onclick="navigate('english');return false;">English</a>
+            <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
+            <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
+            <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script>
+    function atlHomeArt(v){
+      var el=document.getElementById('atl-home'); if(!el) return;
+      if(v!=='oil') v='ink';
+      el.setAttribute('data-art',v);
+      el.querySelectorAll('.atl-home-switch button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-art')===v); });
+      try{ localStorage.setItem('atelier-home-art',v); }catch(e){}
+    }
+    (function(){
+      var v='ink'; try{ v=localStorage.getItem('atelier-home-art')||'ink'; }catch(e){}
+      atlHomeArt(v);
+      var d=new Date(), M=['January','February','March','April','May','June','July','August','September','October','November','December'], D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var el=document.getElementById('atl-home-date'); if(el) el.textContent=D[d.getDay()]+', '+M[d.getMonth()]+' '+d.getDate()+' '+d.getFullYear();
+    })();
+  </script>
+
+  <div id="page-dashboard" class="page dashboard-page" style="display:none">
     <div class="page-content-wrap max-w-[1280px] mx-auto" style="padding: var(--space-6);display:flex;flex-direction:column;gap: var(--space-6);">
 
       <!-- ═══════ Hero: Greeting + Today's Brief (Stitch Immersive + Bento combined) ═══════ -->
@@ -11718,64 +11819,7 @@
       </div>
 
       <!-- Footer -->
-      <!-- 일러스트 푸터 (판화 스타일, 그림: assets/footer/atelier-footer.webp — Codex 생성) -->
-      <style>
-        .atl-footer{position:relative;overflow:hidden;border-radius:var(--radius-2xl);background:#49178f;color:#f5f0e6;font-family:'Plus Jakarta Sans','Pretendard',sans-serif}
-        .atl-footer-art{display:block;width:100%;height:auto;margin-top:-6%;pointer-events:none;user-select:none}
-        .atl-footer-top{position:relative;z-index:1;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:32px;padding:44px 48px 0}
-        .atl-footer-brand{display:flex;align-items:center;gap:8px;font-family:'Manrope','Pretendard',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.01em;color:#fff}
-        .atl-footer-brand .material-symbols-outlined{font-size:20px}
-        .atl-footer-desc{margin-top:12px;max-width:240px;font-size:12.5px;line-height:1.6;color:rgba(245,240,230,0.62)}
-        .atl-footer-col h4{font-family:'Plus Jakarta Sans','Pretendard',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:12px}
-        .atl-footer-col a{display:block;font-size:12.5px;line-height:1.5;padding:3px 0;color:rgba(245,240,230,0.62);text-decoration:none;transition:color .15s}
-        .atl-footer-col a:hover{color:#fff}
-        .atl-footer-bottom{position:relative;z-index:1;display:flex;justify-content:space-between;gap:16px;margin:32px 48px 0;padding-top:16px;border-top:1px solid rgba(245,240,230,0.14);font-size:11.5px;color:rgba(245,240,230,0.5)}
-        @media (max-width:900px){
-          .atl-footer-top{grid-template-columns:repeat(2,1fr);gap:24px;padding:32px 24px 0}
-          .atl-footer-top>div:first-child{grid-column:1/-1}
-          .atl-footer-bottom{margin:24px 24px 0;flex-direction:column;gap:4px}
-          .atl-footer-art{margin-top:0;width:180%;max-width:none;margin-left:-55%}
-        }
-      </style>
-      <footer class="atl-footer">
-        <div class="atl-footer-top">
-          <div>
-            <div class="atl-footer-brand"><span class="material-symbols-outlined">palette</span>The Atelier</div>
-            <p class="atl-footer-desc">하루를 기록하고, 돈과 여행과 배움을 한 화실에서 가꾸는 나만의 작업실.</p>
-          </div>
-          <div class="atl-footer-col">
-            <h4>Everyday</h4>
-            <a href="#" onclick="navigate('planner');return false;">Calendar</a>
-            <a href="#" onclick="navigate('matrix');return false;">Year Matrix</a>
-            <a href="#" onclick="navigate('reference');return false;">Memo</a>
-          </div>
-          <div class="atl-footer-col">
-            <h4>Money</h4>
-            <a href="#" onclick="navigate('finance-hub');return false;">Money</a>
-            <a href="#" onclick="navigate('ledger');return false;">Daily Ledger</a>
-            <a href="#" onclick="navigate('income');return false;">Side Jobs</a>
-          </div>
-          <div class="atl-footer-col">
-            <h4>Travel</h4>
-            <a href="#" onclick="navigate('journey');return false;">Travel</a>
-            <a href="#" onclick="navigate('finance');return false;">Travel Budget</a>
-            <a href="#" onclick="navigate('packing');return false;">Checklist</a>
-            <a href="#" onclick="navigate('nomad-master');return false;">Nomad Master</a>
-          </div>
-          <div class="atl-footer-col">
-            <h4>Growth</h4>
-            <a href="#" onclick="navigate('english');return false;">English</a>
-            <a href="#" onclick="navigate('roadmap');return false;">Roadmap</a>
-            <a href="#" onclick="navigate('jobhunt');return false;">Job Hunt</a>
-            <a href="#" onclick="navigate('aibrief');return false;">AI Brief</a>
-          </div>
-        </div>
-        <div class="atl-footer-bottom">
-          <span id="dash-footer"></span>
-          <span>© 2026 Nuri · The Atelier</span>
-        </div>
-        <img class="atl-footer-art" src="assets/footer/atelier-footer.webp" alt="" loading="lazy" decoding="async"/>
-      </footer>
+      <footer id="dash-footer" style="padding-top: var(--space-2);text-align:center;font-style:italic;color:rgba(123,116,135,0.5);font-size: var(--font-size-micro);font-family:'Plus Jakarta Sans', 'Pretendard', sans-serif"></footer>
 
     </div>
   </div>
@@ -16339,7 +16383,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=386" defer></script>
+<script src="js/app-1-pages.js?v=388" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
