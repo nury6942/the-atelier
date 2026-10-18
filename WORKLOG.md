@@ -1,3 +1,14 @@
+## 2026-10-19 · 맥북 · IELTS 전문 사이트화 2차 — 공식 채점 기준 · 이번 시즌 기출 · 공략 대조
+
+- **공식 채점 기준**(js/ielts-official.js — ielts.org 밴드 디스크립터 원문을 읽고 요약, Writing 2023 개정판): 쓰기 Task1(TA·CC·LR·GRA)·Task2(TR…)·말하기(FC·LR·GRA·P) 12개 기준 × 밴드 9–5 + **6→7 에 정확히 뭐가 달라야 하나**(gap67). 쓰기·말하기 공략 탭 맨 위에 기준 카드(7 초록·6 빨강 줄, 코발트 6→7 칸) · 출처 링크 · 공식 사실 26개
+- **공략을 공식 자료와 대조해 고침**(js/ielts-tips.js): 말하기 대면·화상 / 듣기 단어 수 초과는 '그 문항 오답'·하이픈 단어 1단어 / 매칭 답은 보기 알파벳 / 지도는 지도 위 내 위치 기준 / 근거 없는 '90%' 삭제 / 쓰기 형식·분량 미달 공식 문구 / 외운 답 감점. 영역마다 출처 표시. 읽기 7.0 = 34–35개(환산표는 34 유지 — ielts.org 페이지에 원점수표가 지금은 안 보여 확인 못 함)
+- **이번 시즌 기출**(js/ielts-topics.js — 2026 9–12월, 응시자 제보 기반·공식 아님): 말하기 Part 1 24주제 · Part 2 큐카드 38장(+Part 3, 카드마다 '누리라면' 아이디어) / 쓰기 Task 2 20 · 편지 11(쓰기는 9–10월 후기가 적어 1–8월 섞임, 신뢰도 중간). Speaking 연습에 '이번 시즌 기출 | 연습 카드' 토글, Writing › 시험처럼 쓰기 맨 위에 '최근 기출'
+- Guardian Long Read 본문은 **안 들임** — Open Platform 약관이 AI 가공(6(g)) 금지 + 24시간 넘게 보관 금지. 링크만 유지, 키는 ~/.config/atelier/guardian.key (안 씀)
+- scripts/read/fetch.mjs: 글마다 IELTS 문제 15개 생성·검사(--ielts-only 로 보충) — 1차 때 데이터만 올렸던 것 코드도 반영
+- service-worker v1642
+
+---
+
 ## 2026-10-19 · 맥북 · IELTS 전문 사이트화 1차 — 자동 채점 · 실제 시험 화면 · 실전 모의고사 · 받아쓰기 · 유형 드릴 · 오답노트
 
 - **AI 자동 채점(0원)**: 사이트에서 'AI 채점 요청' → Firestore ieltsGrading(pending) → 맥북 launchd com.nuri.ielts-grade 5분마다 scripts/ielts-grade/run.sh → grade.py 가 **열려 있는 아뜰리에 크롬 탭**으로 읽고(가계부 자동화와 같은 osascript 방식) claude -p(구독)로 공식 기준 채점 → result(밴드·4기준·인용·틀린 곳·고쳐 쓴 글·다음에 고칠 3가지) 저장. 한 건 약 40초. 필요: 맥북 크롬에 아뜰리에 탭 + '보기›개발자›Apple Events의 JavaScript 허용'. 화면 js/ielts-grade.js(renderResult·renderStatus·watch)

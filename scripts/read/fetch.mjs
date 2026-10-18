@@ -2,7 +2,7 @@
 // Read 탭 콘텐츠 파이프라인.
 //  - The Conversation: 본문 전체(CC BY-ND 4.0, 수정 없이 + 출처 + 링크) + 학습팩(claude -p)
 //  - BBC Future · Guardian Long Read · BoF: 제목·주소·날짜만 (본문/요약 저장 금지)
-// 쓰는 법:  node scripts/read/fetch.mjs [--date YYYY-MM-DD] [--count N] [--no-pack]
+// 쓰는 법:  node scripts/read/fetch.mjs [--date YYYY-MM-DD] [--count N] [--no-pack] [--ielts-only]
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,7 +20,8 @@ const arg = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] :
 const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // KST
 const DATE = arg('--date', today);
 const COUNT = Number(arg('--count', 2));
-const NO_PACK = argv.includes('--no-pack');
+const NO_PACK = argv.includes('--no-pack');       // 학습팩·IELTS 둘 다 건너뜀
+const IELTS_ONLY = argv.includes('--ielts-only'); // 기존 글에 IELTS 세트만 채움
 const WINDOW_DAYS = 30;
 if (!/^\d{4}-\d{2}-\d{2}$/.test(DATE)) throw new Error('--date YYYY-MM-DD');
 
@@ -309,6 +310,175 @@ async function makePack(art) {
   }
 }
 
+// ---------- IELTS 문제 세트 (claude -p) ----------
+// 유형별 연습용. ielts = { questions:[{n,type,q,options?,answer,why,limit?}], headings:{paras:[문단 인덱스…]} }
+const IELTS_TYPES = ['r-tfng', 'r-ynng', 'r-heading', 'r-match', 'r-mcq', 'r-gap', 'r-short'];
+const IELTS_COUNT = { 'r-tfng': [3, 4], 'r-ynng': [0, 2], 'r-heading': [3, 5], 'r-match': [2, 2], 'r-mcq': [2, 2], 'r-gap': [2, 3], 'r-short': [1, 1] };
+const IELTS_TOTAL = [12, 15]; // 유형별 최소치 합이 13, YES/NO 2문제가 붙으면 15
+const TFNG = ['TRUE', 'FALSE', 'NOT GIVEN'], YNNG = ['YES', 'NO', 'NOT GIVEN'];
+const LIMITS = { 'r-gap': ['NO MORE THAN TWO WORDS', 2], 'r-short': ['NO MORE THAN THREE WORDS', 3] };
+const ROMAN = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii'];
+const lead = (o) => String(o).trim().split(/\s+/)[0];
+const normTxt = (s) => String(s).toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim();
+const wc = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
+
+function normalizeIelts(raw, paras) {
+  const qs = (raw.questions || []).map((q) => {
+    const type = String(q.type || '').trim();
+    const o = { n: 0, type, q: String(q.q || '').trim() };
+    if (['r-gap', 'r-short'].includes(type)) {
+      o.limit = LIMITS[type][0];
+      o.answer = (Array.isArray(q.answer) ? q.answer : [q.answer]).map((x) => String(x || '').trim()).filter(Boolean);
+    } else {
+      o.options = (q.options || []).map((x) => String(x).trim());
+      if (type === 'r-tfng') o.options = TFNG.slice();
+      if (type === 'r-ynng') o.options = YNNG.slice();
+      o.answer = String(q.answer || '').trim();
+      if (['r-tfng', 'r-ynng'].includes(type)) o.answer = o.answer.toUpperCase();
+      if (type === 'r-mcq') o.answer = o.answer.toUpperCase().replace(/[^A-D]/g, '').slice(0, 1);
+      if (type === 'r-heading') o.answer = o.answer.toLowerCase().replace(/[^ivx]/g, '');
+      if (type === 'r-match') o.answer = o.answer.replace(/\D/g, '');
+    }
+    o.why = String(q.why || '').trim();
+    return o;
+  });
+  // IELTS 순서대로 유형별로 묶고 번호를 다시 매긴다(같은 유형 안의 순서는 그대로)
+  qs.sort((a, b) => IELTS_TYPES.indexOf(a.type) - IELTS_TYPES.indexOf(b.type));
+  qs.forEach((q, i) => (q.n = i + 1));
+  const hp = (raw.headings?.paras || []).map(Number);
+  return { questions: qs, headings: { paras: hp } };
+}
+
+function validateIelts(x, paras) {
+  const errs = [];
+  const body = normTxt(paras.join('\n'));
+  const qs = x.questions;
+  if (qs.length < IELTS_TOTAL[0] || qs.length > IELTS_TOTAL[1]) errs.push(`questions ${qs.length}개 (${IELTS_TOTAL.join('–')})`);
+  const cnt = {};
+  for (const q of qs) {
+    if (!IELTS_TYPES.includes(q.type)) { errs.push(`알 수 없는 type "${q.type}"`); continue; }
+    cnt[q.type] = (cnt[q.type] || 0) + 1;
+    if (!q.q) errs.push(`Q${q.n} q 없음`);
+    if (!q.why) errs.push(`Q${q.n} why 없음`);
+  }
+  for (const [t, [lo, hi]] of Object.entries(IELTS_COUNT)) {
+    const c = cnt[t] || 0;
+    if (t === 'r-ynng' ? (c !== 0 && c !== 2) : (c < lo || c > hi)) errs.push(`${t} ${c}개 (${t === 'r-ynng' ? '0 또는 2' : lo === hi ? lo : `${lo}–${hi}`})`);
+  }
+  for (const q of qs) {
+    const tag = `Q${q.n}(${q.type})`;
+    if (q.type === 'r-tfng' || q.type === 'r-ynng') {
+      if (!q.options.includes(q.answer)) errs.push(`${tag} answer "${q.answer}" 가 ${q.options.join('/')} 중 하나가 아님`);
+    } else if (q.type === 'r-mcq') {
+      if (q.options.length !== 4 || q.options.some((o, i) => lead(o) !== 'ABCD'[i] || wc(o) < 2)) errs.push(`${tag} options 는 "A …"–"D …" 4개`);
+      if (!'ABCD'.includes(q.answer) || !q.answer) errs.push(`${tag} answer 는 A–D 글자 하나`);
+    } else if (q.type === 'r-match') {
+      if (q.options.length < 4 || q.options.some((o) => !/^\d+$/.test(o) || +o < 1 || +o > paras.length)) errs.push(`${tag} options 는 문단 번호 문자열(1–${paras.length}) 4개 이상`);
+      if (!q.options.includes(q.answer)) errs.push(`${tag} answer "${q.answer}" 가 options 에 없음`);
+    } else if (q.type === 'r-heading') {
+      if (!q.options.length) errs.push(`${tag} options 없음`);
+      const leads = q.options.map(lead);
+      if (q.options.some((o, i) => leads[i] !== ROMAN[i] || wc(o) < 3)) errs.push(`${tag} options 는 "i  …", "ii  …" 순서의 제목 목록`);
+      if (!leads.includes(q.answer)) errs.push(`${tag} answer "${q.answer}" 가 options 의 로마 숫자가 아님`);
+    } else if (q.type === 'r-gap' || q.type === 'r-short') {
+      const max = LIMITS[q.type][1];
+      if (!q.answer.length) errs.push(`${tag} answer 없음`);
+      if (q.type === 'r-gap' && !/_{3,}/.test(q.q)) errs.push(`${tag} q 에 빈칸(____) 없음`);
+      for (const a of q.answer) {
+        if (wc(a) > max) errs.push(`${tag} answer "${a}" 가 ${max}단어 초과`);
+        if (!body.includes(normTxt(a))) errs.push(`${tag} answer "${a}" 가 본문에 글자 그대로 없음`);
+      }
+    }
+  }
+  // 문단 제목: 제목 목록은 모든 문제가 같고, 개수 = 문제 수 + 2, 답은 서로 다름, headings.paras 와 'Paragraph X' 일치
+  const hq = qs.filter((q) => q.type === 'r-heading');
+  const hp = x.headings.paras;
+  if (hq.length) {
+    const list = JSON.stringify(hq[0].options);
+    if (hq.some((q) => JSON.stringify(q.options) !== list)) errs.push('r-heading 문제끼리 제목 목록(options)이 다름');
+    if (hq[0].options.length !== hq.length + 2) errs.push(`r-heading options ${hq[0].options.length}개 (문제 수 ${hq.length} + 오답 2 = ${hq.length + 2})`);
+    if (new Set(hq.map((q) => q.answer)).size !== hq.length) errs.push('r-heading 답이 겹침');
+    if (hp.length !== hq.length) errs.push(`headings.paras ${hp.length}개 ≠ r-heading ${hq.length}문제`);
+    hq.forEach((q, i) => {
+      const p = hp[i];
+      if (!Number.isInteger(p) || p < 0 || p >= paras.length) { errs.push(`headings.paras[${i}]=${p} 범위 밖 (0–${paras.length - 1})`); return; }
+      if (wc(paras[p]) < 15) errs.push(`headings.paras[${i}]=${p} 는 소제목/짧은 줄이라 문단 제목 문제로 부적합`);
+      if (q.q !== `Paragraph ${p + 1}`) errs.push(`${'Q' + q.n} q 는 "Paragraph ${p + 1}" 여야 함 (headings.paras[${i}]=${p})`);
+    });
+    if (new Set(hp).size !== hp.length) errs.push('headings.paras 중복');
+  } else if (hp.length) errs.push('r-heading 문제가 없는데 headings.paras 가 있음');
+  return errs;
+}
+
+function ieltsPrompt(art) {
+  const numbered = art.paras.map((p, i) => `[${i + 1}] ${p}`).join('\n\n');
+  return `You are an IELTS examiner writing a General Training Reading Section 3 question set for the article below. A Korean learner (target band 7) will drill each question type separately.
+Reply with ONLY one JSON object (no prose, no markdown fences):
+
+{"questions":[
+ {"type":"r-tfng","q":"statement","options":["TRUE","FALSE","NOT GIVEN"],"answer":"FALSE","why":"한국어 한 줄 — 근거 구절"},
+ {"type":"r-ynng","q":"statement about the WRITER's views/claims","options":["YES","NO","NOT GIVEN"],"answer":"YES","why":"..."},
+ {"type":"r-heading","q":"Paragraph 6","options":["i  Heading one","ii  Heading two", ...],"answer":"iii","why":"..."},
+ {"type":"r-match","q":"Which paragraph mentions a/an ...?","options":["2","5","9","14"],"answer":"9","why":"..."},
+ {"type":"r-mcq","q":"question","options":["A ...","B ...","C ...","D ..."],"answer":"C","why":"..."},
+ {"type":"r-gap","q":"Sentence or summary with ____ for the missing words.","answer":["exact words","accepted variant"],"why":"..."},
+ {"type":"r-short","q":"Wh- question","answer":["exact words"],"why":"..."}
+],
+ "headings":{"paras":[5, ...]}}
+
+Rules (all are checked by code — follow exactly):
+- Paragraphs are numbered [1]..[${art.paras.length}] below. Use those numbers in questions.
+- Counts: r-tfng 3–4; r-ynng exactly 2 ONLY if the writer expresses opinions/claims, otherwise 0; r-heading 3–5; r-match exactly 2; r-mcq exactly 2; r-gap 2–3; r-short exactly 1. Total 13–15.
+- r-tfng / r-ynng: options exactly as shown; answer is one of them. Use a mix of answers (including at least one NOT GIVEN across these).
+- r-heading: pick 3–5 substantial body paragraphs (not one-line subheadings, at least 15 words). Each heading question has q = "Paragraph N" (N = the bracket number) and the SAME options list for every heading question: headings numbered with lower-case roman numerals in order "i  …", "ii  …", "iii  …" (numeral, two spaces, heading), exactly (number of heading questions + 2) headings, i.e. 2 distractors. Answers are distinct numerals. "headings.paras" lists the chosen paragraphs as 0-based indices (N − 1), in the same order as the heading questions.
+- r-match: options are 4 paragraph numbers as strings; answer is one of them. Only one option may be correct.
+- r-mcq: exactly 4 options starting "A ", "B ", "C ", "D "; answer is the letter. Only one defensible answer.
+- r-gap: sentence/summary completion, NO MORE THAN TWO WORDS. q contains "____" for the gap. Every answer string must appear CHARACTER-FOR-CHARACTER in the article (same spelling); list accepted variants (e.g. with/without article) only if each variant also appears verbatim.
+- r-short: short-answer question, NO MORE THAN THREE WORDS, answer copied verbatim from the article.
+- Answers must be unambiguous and derivable from the article text alone. Paraphrase in questions (as real IELTS does); do not copy whole sentences.
+- "why": one Korean line explaining the answer, quoting the key English phrase from the article.
+- Output valid JSON only (double quotes, no trailing commas).
+
+TITLE: ${art.title}
+
+ARTICLE:
+${numbered}`;
+}
+async function makeIelts(art) {
+  let prompt = ieltsPrompt(art);
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const t = Date.now();
+    let x, errs;
+    try {
+      x = normalizeIelts(parseJSON(await claude(prompt)), art.paras);
+      errs = validateIelts(x, art.paras);
+    } catch (e) { errs = [`JSON 파싱 실패: ${e.message}`]; }
+    log(`ielts ${art.id} 시도${attempt} ${((Date.now() - t) / 1000).toFixed(0)}s, 오류 ${errs.length}${errs.length ? ': ' + errs.slice(0, 4).join(' | ') : ''}`);
+    if (!errs.length) return x;
+    prompt = ieltsPrompt(art) + `\n\nYour previous answer had these problems — fix ALL of them and output the full corrected JSON only:\n- ${errs.slice(0, 25).join('\n- ')}`;
+  }
+  return null; // 두 번 다 실패 → 조용히 건너뜀(다음 실행 때 다시 시도)
+}
+
+// --ielts-only: 새 글 없이 기존 글에 IELTS 세트만 채운다
+async function ieltsOnly() {
+  const index = loadIndex();
+  const arts = [];
+  for (const it of index.items || []) {
+    const f = path.join(ROOT, it.file);
+    try { const a = JSON.parse(fs.readFileSync(f, 'utf8')); if (!a.ielts && a.paras?.length) arts.push({ a, f }); } catch {}
+  }
+  log(`ielts-only: 채울 글 ${arts.length}개`);
+  let ok = 0;
+  await Promise.all(arts.map(async ({ a, f }) => {
+    const x = await makeIelts(a);
+    if (!x) { log('ielts 건너뜀', a.id); return; }
+    const cur = JSON.parse(fs.readFileSync(f, 'utf8'));   // 그사이 바뀌었을 수 있으니 다시 읽어 ielts 만 얹는다
+    cur.ielts = x; writeJSON(f, cur); ok++;
+  }));
+  log(`완료: IELTS ${ok}/${arts.length}`);
+}
+
 // ---------- main ----------
 async function main() {
   fs.mkdirSync(DATA, { recursive: true });
@@ -323,7 +493,7 @@ async function main() {
   if (!NO_PACK) {
     for (const it of index.items) {
       const f = path.join(ROOT, it.file);
-      try { const a = JSON.parse(fs.readFileSync(f, 'utf8')); if (!a.vocab?.length) todo.push({ ...a, _file: f, _item: it }); } catch {}
+      try { const a = JSON.parse(fs.readFileSync(f, 'utf8')); if (!a.vocab?.length || !a.ielts) todo.push({ ...a, _file: f, _item: it }); } catch {}
     }
   }
 
@@ -374,11 +544,20 @@ async function main() {
   // 3) 학습팩 (병렬)
   const strip = (a) => Object.fromEntries(Object.entries(a).filter(([k]) => !k.startsWith('_')));
   const failures = [];
+  let ieltsMade = 0;
   await Promise.all([...todo, ...newArts].map(async (a) => {
+    let changed = false;
     if (!NO_PACK) {
-      try { Object.assign(a, await makePack(a)); } catch (e) { failures.push(`${a.id}: ${e.message}`); log('pack 실패', a.id, e.message); }
+      const needPack = !a.vocab?.length;
+      // 학습팩과 IELTS 세트는 서로 독립이라 같이 돌린다
+      await Promise.all([
+        needPack && makePack(a).then((p) => { Object.assign(a, p); changed = true; },
+          (e) => { failures.push(`${a.id}: ${e.message}`); log('pack 실패', a.id, e.message); }),
+        !a.ielts && makeIelts(a).then((x) => { if (x) { a.ielts = x; changed = true; ieltsMade++; } else log('ielts 건너뜀', a.id); },
+          (e) => log('ielts 실패', a.id, e.message)),
+      ]);
     }
-    if (a._item) { if (a.vocab.length) { writeJSON(a._file, strip(a)); a._item.level = a.level; a._item.gist = a.gist; } return; }
+    if (a._item) { if (changed) { writeJSON(a._file, strip(a)); a._item.level = a.level; a._item.gist = a.gist; } return; }
     writeJSON(a._file, strip(a));
   }));
 
@@ -393,8 +572,8 @@ async function main() {
   index.links = await linksP;
   index.updated = new Date().toISOString();
   writeJSON(INDEX, { updated: index.updated, items: index.items, links: index.links });
-  log(`완료: 새 글 ${newArts.length}, 팩 보충 ${todo.length}, 링크 ${index.links.length}, 실패 ${failures.length}`);
+  log(`완료: 새 글 ${newArts.length}, 보충 대상 ${todo.length}, IELTS ${ieltsMade}, 링크 ${index.links.length}, 실패 ${failures.length}`);
   if (failures.length) { failures.forEach((f) => log('  ✗', f)); process.exitCode = 2; }
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+(IELTS_ONLY ? ieltsOnly() : main()).catch((e) => { console.error(e); process.exit(1); });

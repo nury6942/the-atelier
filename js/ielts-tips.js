@@ -2,10 +2,11 @@
    출처 종류: 공식(IDP·British Council 컴퓨터 시험 안내), 강사 사이트(IELTS Liz·Simon·E2·Advantage),
    r/IELTS 고득점 후기, 국내 고득점 블로그. 모두 요약·재작성. */
 window.IELTS_TIPS = {
-  version: '2026-10-18',
+  version: '2026-10-19',  /* 2026-10-19 공식 자료 대조(ielts.org 밴드 디스크립터·형식·채점, IDP·BC 컴퓨터 시험 안내) */
 
   /* ───────── LISTENING ───────── */
   L: {
+    src: [{name:'IELTS GT Listening 형식 (ielts.org)',url:'https://ielts.org/take-a-test/test-types/ielts-general-training-test/ielts-general-training-format-listening'},{name:'IELTS 점수 상세 (ielts.org)',url:'https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail'},{name:'IDP 컴퓨터 시험 FAQ',url:'https://ielts.idp.com/canada/news/article-commonly-asked-questions-ielts-on-computer'},{name:'IELTS Liz 대문자 규칙',url:'https://ieltsliz.com/capital-letters-in-ielts-will-it-affect-your-score/'},{name:'British Council 영·미 철자',url:'https://takeielts.britishcouncil.org/blog/british-or-american-english-ielts'}],
     facts: [
       { k: '시간', v: '약 30분 + 확인 2분' },
       { k: '구성', v: '4파트 × 10문항 = 40문항' },
@@ -45,14 +46,14 @@ window.IELTS_TIPS = {
       {
         id: 'l-map', name: '지도·평면도',
         how: ['시작점·입구 먼저 찾기', '방향어 미리 정리', '손가락처럼 경로 따라가기'],
-        trap: 'left/right 시점 헷갈림 — 화자 기준',
+        trap: 'left/right 헷갈림 — 지도 위 내 위치·바라보는 방향 기준',
         ex: { q: 'Café = ?', heard: 'go past the shop, it’s on your left', a: 'E' }
       },
       {
         id: 'l-match', name: '매칭',
         how: ['보기 목록 먼저 숙지', '문항 순서대로 나옴', '보기는 재사용 가능 여부 확인'],
         trap: '보기 단어가 그대로 안 나옴 — 동의어로',
-        ex: { q: 'Library — opinion?', heard: 'it’s far too crowded these days', a: 'too busy' }
+        ex: { q: 'Library — opinion?', heard: 'it’s far too crowded these days', a: 'C (too busy)' }
       }
     ],
     traps: [
@@ -62,7 +63,7 @@ window.IELTS_TIPS = {
       { name: '철자 불러주기', en: 'That’s M-A-C-K-I-E', ko: '알파벳 하나씩 정확히 타이핑' },
       { name: '숫자', en: 'thirteen vs thirty / double 5', ko: '강세 위치로 구분, double=두 번' },
       { name: '복수형', en: 'two tickets → tickets', ko: '-s 빠지면 오답' },
-      { name: '단어 수', en: 'NO MORE THAN TWO WORDS', ko: '한 단어 넘쳐도 0점' },
+      { name: '단어 수', en: 'NO MORE THAN TWO WORDS', ko: '한 단어만 넘쳐도 오답 · 하이픈 단어는 1단어' },
       { name: '시그널', en: 'Now, moving on to…', ko: '다음 문항 시작 신호' }
     ],
     signposts: [
@@ -89,12 +90,13 @@ window.IELTS_TIPS = {
   },
 
   /* ───────── READING (GT) ───────── */
-  R: {levelup:[{"sec": "S2", "title": "업무 글", "items": [{"icon": "rule", "title": "조건어에 동그라미", "body": "if·unless·only·except·within 이 함정의 90%"}, {"icon": "format_list_numbered", "title": "답은 지문 순서대로", "body": "노트·문장 빈칸은 대부분 순서 그대로 나옴"}, {"icon": "pin", "title": "숫자·날짜 먼저 스캔", "body": "기간·금액·횟수 문제는 숫자로 위치부터"}, {"icon": "work", "title": "업무 단어장", "body": "eligible·entitled·reimburse·compulsory·premises"}, {"icon": "timer", "title": "하루 S2 한 개 20분", "body": "시간 재고 → 틀린 건 근거 문장 표시"}]}, {"sec": "S3", "title": "긴 지문", "items": [{"icon": "view_agenda", "title": "3분 지도 그리기", "body": "문단마다 첫·끝 문장만 → 한 단어 메모"}, {"icon": "title", "title": "제목 고르기를 먼저", "body": "지도로 풀고, 예시 문단은 예시 말고 요지로"}, {"icon": "record_voice_over", "title": "Y/N/NG = 글쓴이 생각", "body": "arguably·surprisingly·it is wrong to 같은 의견 표시 찾기"}, {"icon": "compare_arrows", "title": "바꿔 말하기 표", "body": "문제 단어 ↔ 지문 단어를 매번 표로 — 제일 효과 큼"}, {"icon": "skip_next", "title": "1분 30초 넘으면 넘기기", "body": "표시해 두고 마지막에 — 한 문제에 S3 전체를 잃지 않기"}, {"icon": "newspaper", "title": "긴 글 읽는 습관", "body": "BBC Future·Guardian Long Read·BoF 하루 10분"}]}],paraTable:[{"q": "staff can claim back", "p": "employees will be reimbursed", "k": "동사 바꿈"}, {"q": "is not compulsory", "p": "attendance is optional", "k": "반대말 부정"}, {"q": "became widely adopted", "p": "was taken up by most manufacturers", "k": "구 → 구"}, {"q": "the writer doubts", "p": "it is far from certain that", "k": "의견 표시"}],
+  R: {src:[{name:'IELTS 점수 상세 (ielts.org)',url:'https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail'},{name:'British Council 채점 방식',url:'https://takeielts.britishcouncil.org/results/how-is-ielts-assessed'},{name:'IDP 컴퓨터 시험 작동 방식',url:'https://ielts.idp.com/prepare/article-how-computer-delivered-ielts-works'}],
+    levelup:[{"sec": "S2", "title": "업무 글", "items": [{"icon": "rule", "title": "조건어에 동그라미", "body": "if·unless·only·except·within — 함정 대부분이 여기"}, {"icon": "format_list_numbered", "title": "답은 지문 순서대로", "body": "노트·문장 빈칸은 대부분 순서 그대로 나옴"}, {"icon": "pin", "title": "숫자·날짜 먼저 스캔", "body": "기간·금액·횟수 문제는 숫자로 위치부터"}, {"icon": "work", "title": "업무 단어장", "body": "eligible·entitled·reimburse·compulsory·premises"}, {"icon": "timer", "title": "하루 S2 한 개 20분", "body": "시간 재고 → 틀린 건 근거 문장 표시"}]}, {"sec": "S3", "title": "긴 지문", "items": [{"icon": "view_agenda", "title": "3분 지도 그리기", "body": "문단마다 첫·끝 문장만 → 한 단어 메모"}, {"icon": "title", "title": "제목 고르기를 먼저", "body": "지도로 풀고, 예시 문단은 예시 말고 요지로"}, {"icon": "record_voice_over", "title": "Y/N/NG = 글쓴이 생각", "body": "arguably·surprisingly·it is wrong to 같은 의견 표시 찾기"}, {"icon": "compare_arrows", "title": "바꿔 말하기 표", "body": "문제 단어 ↔ 지문 단어를 매번 표로 — 제일 효과 큼"}, {"icon": "skip_next", "title": "1분 30초 넘으면 넘기기", "body": "표시해 두고 마지막에 — 한 문제에 S3 전체를 잃지 않기"}, {"icon": "newspaper", "title": "긴 글 읽는 습관", "body": "BBC Future·Guardian Long Read·BoF 하루 10분"}]}],paraTable:[{"q": "staff can claim back", "p": "employees will be reimbursed", "k": "동사 바꿈"}, {"q": "is not compulsory", "p": "attendance is optional", "k": "반대말 부정"}, {"q": "became widely adopted", "p": "was taken up by most manufacturers", "k": "구 → 구"}, {"q": "the writer doubts", "p": "it is far from certain that", "k": "의견 표시"}],
     facts: [
       { k: '시간', v: '60분, 옮겨 적기 시간 없음' },
       { k: '구성', v: '3섹션 · 40문항' },
       { k: '지문', v: '광고·안내문 → 업무 → 긴 글' },
-      { k: '7.0 기준', v: '40문항 중 약 34개 (GT)' },
+      { k: '7.0 기준', v: '40문항 중 34–35개 (GT)' },
       { k: '화면 기능', v: '하이라이트·메모·문항 이동' },
       { k: '빈칸', v: '틀려도 감점 없음 — 다 채우기' }
     ],
@@ -181,12 +183,14 @@ window.IELTS_TIPS = {
 
   /* ───────── SPEAKING ───────── */
   S: {
+    src: [{name:'IELTS GT Speaking 형식 (ielts.org)',url:'https://ielts.org/take-a-test/test-types/ielts-general-training-test/ielts-general-training-format-speaking'},{name:'Speaking 밴드 디스크립터 (ielts.org)',url:'https://ielts.org/cdn/ielts-guides/ielts-speaking-band-descriptors.pdf'},{name:'Speaking 핵심 평가 기준 (ielts.org)',url:'https://ielts.org/cdn/ielts-guides/ielts-speaking-key-assessment-criteria.pdf'},{name:'British Council IELTS on computer',url:'https://takeielts.britishcouncil.org/what-is-ielts/how-it-works/test-modes/ielts-on-computer'},{name:'IDP Speaking FAQ (다시 묻기)',url:'https://ielts.idp.com/canada/prepare/article-ielts-faq/ielts-speaking-top-frequently-asked-questions'}],
     facts: [
-      { k: '시간', v: '11–14분, 감독관과 1:1 대면' },
+      { k: '시간', v: '11–14분, 시험관과 1:1 (대면·화상)' },
       { k: '구성', v: 'Part 1 · 2 · 3' },
       { k: '녹음', v: '전 과정 녹음됨' },
       { k: '채점', v: '4개 기준 각 25%' },
-      { k: '준비', v: 'Part 2만 1분 메모 시간' }
+      { k: '준비', v: 'Part 2만 1분 메모 시간' },
+      { k: '외운 답', v: '외운 티 나면 낮게 평가 — 자연스럽게' }
     ],
     criteria: [
       { k: 'Fluency & Coherence', ko: '유창성·흐름', do: '연결어로 길게 이어 말하기', dont: '긴 침묵·같은 말 반복' },
@@ -276,13 +280,16 @@ window.IELTS_TIPS = {
 
   /* ───────── WRITING (GT) ───────── */
   W: {
+    src: [{name:'IELTS GT Writing 형식 (ielts.org)',url:'https://ielts.org/take-a-test/test-types/ielts-general-training-test/ielts-general-training-format-writing'},{name:'Writing 밴드 디스크립터 2023 (ielts.org)',url:'https://ielts.org/cdn/Guides/ielts-writing-band-descriptors.pdf'},{name:'Writing 핵심 평가 기준 (ielts.org)',url:'https://ielts.org/cdn/Guides/ielts-writing-key-assessment-criteria.pdf'},{name:'IDP 컴퓨터 Writing (단어 수·복사)',url:'https://ielts.idp.com/canada/news/article-get-high-writing-score-ielts-computer-in-canada'}],
     facts: [
       { k: '시간', v: '60분 (Task 1 + Task 2)' },
       { k: 'Task 1', v: '편지 150단어+, 약 20분' },
       { k: 'Task 2', v: '에세이 250단어+, 약 40분' },
       { k: '배점', v: 'Task 2가 Task 1의 2배' },
       { k: '화면', v: '단어 수 자동 표시·복사/붙여넣기' },
-      { k: '주의', v: '맞춤법 자동수정 없음' }
+      { k: '주의', v: '맞춤법 자동수정 없음' },
+      { k: '형식', v: '글머리표·메모식 감점, 주소 안 씀' },
+      { k: '분량 미달', v: '근거 부족 → 높은 밴드 불가' }
     ],
     flow: [
       { icon: 'edit_note', title: 'Task 2 먼저', body: '배점 2배 — 40분 확보 후 시작' },
@@ -294,7 +301,7 @@ window.IELTS_TIPS = {
       { icon: 'spellcheck', title: '3분 검토', body: '관사·수일치·시제·철자 점검' }
     ],
     criteria: [
-      { k: 'Task Achievement / Response', ko: '과제 수행', do: '모든 요구 항목·입장 명확히', dont: '질문 일부만 답하기' },
+      { k: 'Task Achievement / Response', ko: '과제 수행', do: 'T1 목적·세 항목·일관된 어조 / T2 입장 끝까지', dont: '질문 일부만 답하기' },
       { k: 'Coherence & Cohesion', ko: '구성·연결', do: '문단당 한 요지, 지시어 활용', dont: '연결어 과다·기계적 나열' },
       { k: 'Lexical Resource', ko: '어휘', do: '정확한 콜로케이션·동의어', dont: '질문 문장 그대로 베끼기' },
       { k: 'Grammatical Range & Accuracy', ko: '문법', do: '복문 섞되 오류 없는 문장', dont: '어려운 구문 억지 시도' }

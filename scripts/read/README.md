@@ -8,7 +8,8 @@
 cd ~/the-atelier
 node scripts/read/fetch.mjs                  # 오늘(한국 날짜) 몫 2개
 node scripts/read/fetch.mjs --date 2026-10-18 --count 3
-node scripts/read/fetch.mjs --no-pack        # 학습팩 없이 본문만 (빠름)
+node scripts/read/fetch.mjs --no-pack        # 학습팩·IELTS 없이 본문만 (빠름)
+node scripts/read/fetch.mjs --ielts-only     # 새 글 없이, 기존 글에 IELTS 문제만 채움
 ```
 
 - 한 번 돌리는 데 약 1분 40초. 거의 다 학습팩(claude -p, 글마다 약 95초, 동시에 돌림) 시간이다.
@@ -16,12 +17,18 @@ node scripts/read/fetch.mjs --no-pack        # 학습팩 없이 본문만 (빠�
 - `--no-pack` 으로 만든 글은 다음에 그냥 돌리면 학습팩이 채워진다.
 - 학습팩은 내 구독의 `claude -p` 로 만든다. 실패(exit 1)하면 `CLAUDE_CONFIG_DIR=~/.claude-work` 로 한 번 더 해 본다.
   JSON 이 틀리면 틀린 곳을 알려 주고 한 번 다시 시킨다.
+- **IELTS 문제 세트**(`ielts`): 글마다 GT Section 3 식 13–15문제를 학습팩과 동시에 만든다(글당 약 40초).
+  유형 = TFNG 3–4 · YNNG 0/2(의견 글만) · 문단 제목 3–5 · 문단 찾기 2 · 객관식 2 · 빈칸 2–3 · 단답 1.
+  코드가 개수·답 형식·빈칸 답이 본문에 그대로 있는지·문단 번호를 검사하고, 틀리면 한 번 다시 시킨다.
+  그래도 틀리면 그 글은 건너뛰고 로그만 남긴다(다음 실행 때 다시 시도). 이미 `ielts` 가 있는 글은 손대지 않는다.
 - BoF 는 직접 요청이 막혀서(Cloudflare 403) Aside 브라우저로 첫 화면 제목만 읽는다. Aside 가 없으면 BoF 만 빠진다.
 
 ## 파일 위치
 
 - `data/read/index.json`: 목록 (items = 기사, 최신순 전부 보관 / links = 링크, 최신 30개)
-- `data/read/<id>.json`: 기사 한 편 (본문 문단 `paras` + 학습팩 `gloss` `vocab` `quiz` `para` `summary` `gist`)
+- `data/read/<id>.json`: 기사 한 편 (본문 문단 `paras` + 학습팩 `gloss` `vocab` `quiz` `para` `summary` `gist` + IELTS `ielts`)
+  - `ielts.questions[]` = `{n, type, q, options?, answer, why, limit?}` — 빈칸·단답은 `answer` 가 허용 답 배열
+  - `ielts.headings.paras` = 문단 제목 문제가 가리키는 `paras` 인덱스(0부터, 문제 순서대로). 화면의 'Paragraph X' 는 인덱스+1
 
 ## 저작권 규칙 (꼭 지킬 것)
 
