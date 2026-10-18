@@ -205,6 +205,29 @@
   .review>p{margin:0 0 12px;font-size:14px;line-height:1.7}
   .review .mist .m{background:#fff}
   .review.loading{color:var(--dim);font-size:13px}
+  .review .more{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--mut);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .review .more button{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+  .bands{display:grid;grid-template-columns:120px repeat(3,1fr);border:1px solid var(--line);margin:4px 0 12px;background:#fff}
+  .bands>div{padding:12px 14px;border-right:1px solid var(--line)}
+  .bands>div:last-child{border-right:0}
+  .bands .k{font-size:10.5px;letter-spacing:.1em;color:var(--dim);font-weight:700;text-transform:uppercase}
+  .bands .v{font-size:24px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+  .bands .ov{background:var(--accent);color:#fff}
+  .bands .ov .k{color:rgba(255,255,255,.75)}
+  .bands .n{font-size:12px;color:var(--mut);line-height:1.5;margin-top:4px}
+  .part{display:none;background:var(--ink);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 8px}
+  /* IELTS Part 2 큐카드 — 대화창 맨 위에 고정 */
+  .cue{display:none;margin:16px 32px 0;border:1px solid var(--ink);background:#fff}
+  .cue .top{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--ink);color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em}
+  .cue .clock{font-size:15px;font-variant-numeric:tabular-nums}
+  .cue .clock.go{color:#7fe0a7}
+  .cue .body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .cue .card{padding:14px 16px;border-right:1px solid var(--line)}
+  .cue h5{margin:0 0 8px;font-size:16px;font-weight:800;line-height:1.4}
+  .cue .card p{margin:0 0 4px;font-size:12px;color:var(--dim)}
+  .cue ul{margin:0;padding-left:18px;font-size:14px;line-height:1.7}
+  .cue textarea{width:100%;height:100%;min-height:120px;border:0;resize:none;outline:none;padding:14px 16px;font:inherit;font-size:13.5px;line-height:1.6;background:var(--panel)}
+
   .spend{border-top:1px solid var(--line);padding:14px 20px 16px;font-variant-numeric:tabular-nums}
   .spend .k{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700;text-transform:uppercase}
   .spend .v{font-size:18px;font-weight:800;margin-top:4px}
@@ -224,6 +247,10 @@
     .mediabar{flex:1 1 100%}
     .card.me .ini{width:44px;height:44px;font-size:18px}
     .lines{padding:16px 14px}
+    .cue{margin:10px 10px 0}
+    .cue .body{grid-template-columns:1fr}
+    .cue .card{border-right:0;border-bottom:1px solid var(--line)}
+    .bands{grid-template-columns:1fr 1fr}
     .chat .state{padding:0 14px 8px}
     .say{margin:0 10px 10px}
     .topbar{justify-content:flex-start;padding:10px 12px;min-height:0}
@@ -280,6 +307,7 @@
         <button class="on" data-mode="free">프리토킹</button>
         <button data-mode="interview">면접 연습</button>
         <button data-mode="portfolio">포트폴리오 설명</button>
+        <button data-mode="ielts">IELTS 스피킹</button>
       </div>
       <label class="topic"><span class="ms">edit</span><input id="topicInput" placeholder="하고 싶은 이야기를 적거나, 아래에서 골라도 돼요 (비워도 OK)"></label>
       <div class="sugg-h"><span>이런 주제는 어때요?</span><button onclick="shuffleTopics()"><span class="ms" style="font-size:16px">refresh</span>다른 주제</button></div>
@@ -297,6 +325,7 @@
       <header class="callbar">
         <div class="ttl">
           <h2 id="callTitle">Free conversation</h2>
+          <span class="part" id="callPart"></span>
           <div class="meta">
             <span class="hide-m"><span class="ms" id="kindIcon">mic</span><span id="callKind">음성 대화</span></span>
             <span class="hide-m"><span class="ms">event</span><span id="callDate"></span></span>
@@ -332,6 +361,13 @@
           </div>
         </div>
         <div class="chat">
+          <div class="cue" id="cue">
+            <div class="top"><span id="cueLabel">PART 2 · 준비 시간</span><span class="clock" id="cueClock">1:00</span></div>
+            <div class="body">
+              <div class="card"><h5 id="cueTopic"></h5><p>You should say:</p><ul id="cuePoints"></ul></div>
+              <textarea id="cueNotes" placeholder="메모 — 언제 · 어디 · 무슨 일 · 왜 (실제 시험처럼 키워드만)"></textarea>
+            </div>
+          </div>
           <div class="lines" id="lines"></div>
           <div class="state" id="state"><span class="dot"></span><span id="stateText">연결 중…</span></div>
           <form class="say" id="say" onsubmit="sendText(event)"><input id="sayInput" placeholder="메시지를 보내세요 — 말이 막힐 때 글로 써도 돼요"><button type="submit" aria-label="보내기"><span class="ms">arrow_upward</span></button></form>
@@ -365,6 +401,9 @@ var TOPICS = {
     ['협업', '의견이 부딪혔던 프로젝트'], ['실패', '실패에서 배운 것'], ['포부', '5년 뒤의 나'],
     ['브랜드', '이 브랜드에 지원한 이유'], ['과정', '컬렉션을 기획하는 방식'], ['압박', '마감에 쫓겼던 경험']
   ],
+  ielts: [
+    ['Full test', 'Part 1 · 2 · 3 실전처럼 (약 14분)'], ['Part 2', '큐카드 2분 말하기 연습'], ['Part 3', '심화 토론 연습']
+  ],
   portfolio: [
     ['대표작', '가장 자신 있는 작업 하나'], ['과정', '리서치에서 완성까지'], ['소재', '소재를 고르는 기준'],
     ['컨셉', '컬렉션 컨셉 설명하기'], ['피드백', '받은 피드백과 수정한 점'], ['타깃', '이 옷을 입을 사람'],
@@ -375,6 +414,7 @@ var TOPICS = {
 var MODE_BRIEF = {
   free: 'Free conversation. Be a curious friend: ask follow-up questions about her life, opinions and stories.',
   interview: 'Mock job interview for a fashion designer role at a European/Canadian/Australian brand. Play a warm but realistic interviewer: ask one question at a time, follow up on vague answers, and at natural pauses give brief tips on how a native speaker would phrase her answer more strongly.',
+  ielts: 'IELTS Speaking practice test (General Training candidate, target band 7.0+).',
   portfolio: 'Portfolio walkthrough practice. She may share her screen or hold work up to the camera. Ask her to explain concept, process, materials and decisions as she would to a hiring manager. Comment specifically on what you can see.'
 };
 
@@ -399,6 +439,7 @@ function systemPrompt(mode, topic, profile){
     'You are Oliver, a 20-year-old British university student from London who tutors English part-time. You are having a relaxed 1:1 video call with Nuri. Speak with a natural Southern British (London) accent and use British vocabulary and expressions. You are bright, warm, a bit playful and genuinely curious — like a friendly younger friend, never stiff or formal.',
     'About Nuri: Korean fashion designer, upper-intermediate (B2) aiming for C1, preparing to work abroad (EU / Canada / Australia). She has had a long-time human tutor, so treat this as relaxed extra speaking practice, not a test. She finds pressure-heavy lessons draining — keep it light and warm.',
     'Session type: ' + MODE_BRIEF[mode],
+  ].concat(mode === 'ielts' ? ieltsRules(topic) : [
     topic ? ('Starting topic: "' + topic + '". Open with a natural question about it.') : 'No topic chosen: greet her and ask a light opener about her day.',
     'How to talk:',
     '- Speak naturally at a moderate pace. Keep your turns short (1–3 sentences) so she does most of the talking.',
@@ -407,11 +448,36 @@ function systemPrompt(mode, topic, profile){
     '- If she gets stuck or uses a Korean word, help her find the English phrase, then continue.',
     '- If she shares her camera or screen, refer to what you actually see when relevant. Never pretend to see something you cannot.',
     '- Always reply in English, unless she explicitly asks for a Korean explanation of a word.',
+  ]).concat([
     '- During the lesson you may receive messages starting with [Lesson notes]: they summarise the earlier part of THIS lesson that you may no longer hear. Use them silently; never reply to them.',
     '',
     memoryBrief(profile)
-  ].join('\n');
+  ]).join('\n');
 }
+
+// IELTS Speaking: 시험관 모드. 큐카드·파트 전환은 함수 호출(show_cue_card / set_part / end_test)로 화면에 알려 줌
+function ieltsRules(topic){
+  var which = /큐카드|^Part 2/.test(topic || '') ? 'Only Part 2 (with a 1-minute rounding-off), then end the test.'
+    : /토론|^Part 3/.test(topic || '') ? 'Only Part 3: pick an everyday theme, ask 5–7 abstract discussion questions, then end the test.'
+    : 'The full test: Part 1 (4–5 min) → Part 2 (3–4 min) → Part 3 (4–5 min).';
+  return [
+    'For this session you are in IELTS EXAMINER MODE (you are still Oliver, but behave exactly like a certified IELTS Speaking examiner).',
+    'Scope: ' + which,
+    'Examiner rules:',
+    '- Neutral, polite and friendly, but no teaching, no corrections, no hints and no comments on her performance during the test. Short transitions only ("Thank you. Now let\'s talk about…").',
+    '- Call set_part with the part number at the start of each part.',
+    '- Part 1: skip ID checks; ask about 2–3 familiar topics (home, work, hobbies, daily life), about 4 short questions each. If an answer is very short, you may ask "Why?" once.',
+    '- Part 2: FIRST call show_cue_card with a typical IELTS topic ("Describe …") and exactly 4 prompts (the last one starting "and explain …"). Then say only: "Here is your topic. You have one minute to prepare. You can make some notes." and stay completely silent until you receive the message [Preparation time is over]. Then say "Please start speaking now. You have two minutes." Let her speak without interrupting. When you receive [Two minutes are up] (or she clearly finishes), say "Thank you" and ask one short rounding-off question.',
+    '- Part 3: 4–5 minutes of abstract, opinion-based questions linked to the Part 2 theme; ask natural follow-ups ("Why do you think that is?").',
+    '- At the end call end_test and say: "That is the end of the speaking test. Thank you." After that you may chat briefly and give 1–2 encouraging general remarks if she asks — the detailed scoring is done separately.',
+    '- Messages in square brackets like [Preparation time is over] come from the test timer, not from her.'
+  ];
+}
+var IELTS_TOOLS = [{ functionDeclarations: [
+  { name: 'set_part', description: 'Tell the screen which IELTS Speaking part is starting.', parameters: { type: 'OBJECT', properties: { part: { type: 'INTEGER', description: '1, 2 or 3' } }, required: ['part'] } },
+  { name: 'show_cue_card', description: 'Show the IELTS Part 2 cue card on the candidate screen and start the 1-minute preparation timer.', parameters: { type: 'OBJECT', properties: { topic: { type: 'STRING', description: 'e.g. "Describe a place you visited that you would like to go back to"' }, points: { type: 'ARRAY', items: { type: 'STRING' }, description: '4 prompts; the last one starts with "and explain"' } }, required: ['topic', 'points'] } },
+  { name: 'end_test', description: 'The speaking test is over.', parameters: { type: 'OBJECT', properties: {} } }
+] }];
 
 // ═══════════════════════════════════════════════════════════
 //  튜터 Oliver — 사진 3장(입 닫힘 / 조금 열림 / 많이 열림, Codex 가 그림)을 목소리 크기에 맞춰 바꿔 끼움
@@ -490,7 +556,8 @@ document.querySelectorAll('#modes button').forEach(function(b){
 });
 
 function shuffleTopics(){
-  var pool = TOPICS[state.mode].slice().sort(function(){ return Math.random() - .5; }).slice(0, 3);
+  var pool = state.mode === 'ielts' ? TOPICS.ielts.slice()      // IELTS 는 순서 고정
+    : TOPICS[state.mode].slice().sort(function(){ return Math.random() - .5; }).slice(0, 3);
   $('cards').innerHTML = '';
   pool.forEach(function(t){
     var b = document.createElement('button');
@@ -603,7 +670,9 @@ function finishMemory(item){
         list.forEach(function(h){ if (h.at === item.at) h.review = j.session; });
         saveHist(list);
       }
-      box.replaceWith(reviewEl(j.session));
+      var el = reviewEl(j.session);
+      box.replaceWith(el);
+      if (item.lines.filter(function(l){ return l.who === 'me'; }).length >= 4) startAnnieReview(item, el);   // 너무 짧은 대화는 자세한 리뷰 생략
       $('lines').scrollTop = $('lines').scrollHeight;
     })
     .catch(function(e){ box.textContent = '정리하지 못했어요: ' + e.message; });
@@ -612,6 +681,7 @@ function reviewEl(r){
   var d = document.createElement('div'); d.className = 'review';
   var h = document.createElement('h4'); h.textContent = '오늘의 정리'; d.appendChild(h);
   if (!r){ d.appendChild(document.createTextNode('기억했어요.')); return d; }
+  if (r.ielts) d.appendChild(bandsEl(r.ielts));
   var p = document.createElement('p'); p.textContent = r.summary || ''; d.appendChild(p);
   if (r.mistakes && r.mistakes.length) d.appendChild(mistakeList(r.mistakes.map(function(m){ return { k: '', bad: m.said, good: m.better, why: m.why }; })));
   if (r.good && r.good.length){
@@ -619,6 +689,49 @@ function reviewEl(r){
     u.appendChild(listEl(r.good.map(function(g){ return '잘했어요 — ' + g; }))); d.appendChild(u);
   }
   return d;
+}
+function bandsEl(b){
+  var w = document.createElement('div');
+  var g = document.createElement('div'); g.className = 'bands';
+  [['Overall', b.overall, b.parts ? '발음 제외 · ' + b.parts : '발음 제외', 'ov'], ['Fluency', b.fc, b.fcNote], ['Lexical', b.lr, b.lrNote], ['Grammar', b.gra, b.graNote]].forEach(function(x){
+    var c = document.createElement('div'); if (x[3]) c.className = x[3];
+    c.innerHTML = '<div class="k"></div><div class="v"></div><div class="n"></div>';
+    c.querySelector('.k').textContent = x[0]; c.querySelector('.v').textContent = x[1] != null ? Number(x[1]).toFixed(1) : '–';
+    c.querySelector('.n').textContent = x[2] || ''; g.appendChild(c);
+  });
+  w.appendChild(g);
+  if (b.toBand && b.toBand.length){ var u = document.createElement('div'); u.style.margin = '0 0 12px'; u.className = 'psec'; u.style.padding = '0'; u.style.border = '0'; u.appendChild(listEl(b.toBand.map(function(t){ return '다음 밴드로 — ' + t; }))); w.appendChild(u); }
+  return w;
+}
+// 자세한 리뷰(Annie 와 같은 프롬프트) — 3분쯤 걸려서 따로 돌리고, 끝나면 English 탭 리뷰 목록에 'Oliver' 로 저장됨
+function startAnnieReview(item, holder){
+  var more = document.createElement('div'); more.className = 'more';
+  more.textContent = 'Annie 리뷰처럼 자세한 리뷰를 만드는 중… (3분쯤, 이 화면을 닫아도 서버에서 계속 만들어요)';
+  holder.appendChild(more);
+  memoryCall('review', { lines: item.lines, mode: item.mode, topic: item.topic, startedAt: item.at }, 560000)
+    .then(function(j){
+      var list = loadHist(); list.forEach(function(h){ if (h.at === item.at) h.reviewId = j.id; }); saveHist(list);
+      more.textContent = ''; more.appendChild(reviewLink(j.id, j.title));
+    })
+    .catch(function(e){ more.textContent = '자세한 리뷰를 만들지 못했어요: ' + e.message; });
+}
+function reviewLink(id, title){
+  var f = document.createDocumentFragment();
+  f.appendChild(document.createTextNode('자세한 리뷰가 English 탭에 저장됐어요' + (title ? ' — ' + title : '') + ' '));
+  var b = document.createElement('button'); b.textContent = '열기';
+  b.onclick = function(){ openAnnieReview(id); };
+  f.appendChild(b);
+  return f;
+}
+// the-atelier 안(iframe)에서 열렸으면 English 탭으로 가서 그 리뷰를 엶
+function openAnnieReview(id){
+  var P = window.parent;
+  if (P === window || !P.navigate) return toast('the-atelier 의 English 탭 리뷰 목록에서 볼 수 있어요');
+  P.navigate('english');
+  (async function(){
+    try { if (P.loadEnglishSessions) await P.loadEnglishSessions(); } catch(e){}
+    try { P.openSessionDetail(id); } catch(e){ toast('English 탭 리뷰 목록에서 열어 주세요'); }
+  })();
 }
 function listEl(items){
   var ul = document.createElement('ul');
@@ -683,7 +796,7 @@ function renderProfile(p, loading){
 // ═══════════════════════════════════════════════════════════
 function loadHist(){ try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e){ return []; } }
 function saveHist(list){ try { localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0, 60))); } catch(e){} }
-var MODE_LABEL = { free: 'Free conversation', interview: 'Interview practice', portfolio: 'Portfolio talk' };
+var MODE_LABEL = { free: 'Free conversation', interview: 'Interview practice', portfolio: 'Portfolio talk', ielts: 'IELTS Speaking' };
 function renderHist(){
   var list = loadHist(), el = $('hist');
   if (!list.length){ el.innerHTML = '<div class="empty">아직 대화가 없어요. 첫 대화를 시작해 보세요.</div>'; return; }
@@ -703,13 +816,17 @@ function showTranscript(h){
   $('home').style.display = 'none'; $('profileView').style.display = 'none'; $('call').style.display = 'flex';
   setNav('');
   resetStage();
-  setState('지난 대화', '');
+  setState('지난 대화', ''); setPart(0); $('cue').style.display = 'none';
   setCallHeader(h.topic || MODE_LABEL[h.mode], h.at);
   $('timer').textContent = fmtTime(h.sec); $('rec').classList.remove('live');
   showCost(h.usd || 0);
   $('lines').innerHTML = '';
   h.lines.forEach(function(l){ addLine(l.who, l.text); });
-  if (h.review) $('lines').appendChild(reviewEl(h.review));
+  if (h.review){
+    var rv = reviewEl(h.review);
+    if (h.reviewId){ var mo = document.createElement('div'); mo.className = 'more'; mo.appendChild(reviewLink(h.reviewId)); rv.appendChild(mo); }
+    $('lines').appendChild(rv);
+  }
   setCallControls(false);
 }
 
@@ -909,6 +1026,56 @@ function togglePause(){
 //  - 토큰: tutorToken 함수가 30분짜리 1회용 토큰을 줌 (API 키는 서버에만)
 //  - 연결은 ~10분마다 끊기므로 sessionResumption 핸들로 새 토큰 받아 이어 붙임
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  IELTS — 시험관이 부르는 함수: 파트 표시 · 큐카드(준비 1분 → 말하기 2분 타이머) · 시험 끝
+// ═══════════════════════════════════════════════════════════
+function onToolCall(calls){
+  calls.forEach(function(f){
+    var a = f.args || {};
+    if (f.name === 'set_part') setPart(a.part);
+    if (f.name === 'show_cue_card') showCue(a.topic, a.points || []);
+    if (f.name === 'end_test'){ setPart(0); hideCue(); setState('시험 끝 — 대화 마치기를 누르면 밴드 점수를 매겨요', 'live'); }
+  });
+  send({ toolResponse: { functionResponses: calls.map(function(f){ return { id: f.id, name: f.name, response: { result: 'ok' } }; }) } });
+}
+function setPart(n){
+  $('callPart').style.display = n ? 'inline-block' : 'none';
+  $('callPart').textContent = 'PART ' + n;
+  if (n && n !== 2) hideCue();
+}
+function showCue(topic, points){
+  setPart(2);
+  $('cueTopic').textContent = topic || '';
+  $('cuePoints').innerHTML = '';
+  points.forEach(function(p){ var li = document.createElement('li'); li.textContent = p; $('cuePoints').appendChild(li); });
+  $('cueNotes').value = '';
+  $('cue').style.display = 'block';
+  runCueClock('PART 2 · 준비 시간 — 메모해도 돼요', 60, false, function(){
+    send({ realtimeInput: { text: '[Preparation time is over]' } });
+    runCueClock('PART 2 · 말하기', 120, true, function(){
+      send({ realtimeInput: { text: '[Two minutes are up]' } });
+      $('cueLabel').textContent = 'PART 2 · 끝'; $('cueClock').textContent = '0:00';
+    });
+  });
+}
+function runCueClock(label, secs, go, done){
+  clearInterval(sess.cueTimer);
+  var end = Date.now() + secs * 1000;
+  $('cueLabel').textContent = label;
+  $('cueClock').classList.toggle('go', go);
+  (function tick(){
+    var left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+    $('cueClock').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    if (!left){ clearInterval(sess.cueTimer); if (sess.active) done(); }
+  })();
+  sess.cueTimer = setInterval(function(){
+    var left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+    $('cueClock').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    if (!left){ clearInterval(sess.cueTimer); if (sess.active) done(); }
+  }, 250);
+}
+function hideCue(){ clearInterval(sess.cueTimer); $('cue').style.display = 'none'; }
+
 var sess = { active: false };
 
 async function fetchToken(){
@@ -939,6 +1106,7 @@ async function connect(){
       // 매 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구됨(음성 1초 ≈ 25토큰) → 기억을 1만2천 토큰(~6분)으로 묶어
       // 대답 한 번 값이 계속 커지지 않게. 가장 큰 비용은 사진이 아니라 이 '음성 기억'이다
       contextWindowCompression: { triggerTokens: 12000, slidingWindow: { targetTokens: 6000 } },
+      tools: sess.mode === 'ielts' ? IELTS_TOOLS : undefined,
       sessionResumption: sess.resumeHandle ? { handle: sess.resumeHandle } : {}
     };
     send({ setup: setup });
@@ -976,6 +1144,7 @@ function onServer(m){
     sess.resumeHandle = m.sessionResumptionUpdate.newHandle;
   }
   if (m.goAway){ try { sess.ws.close(); } catch(e){} return; }   // onclose 에서 이어 붙임
+  if (m.toolCall && m.toolCall.functionCalls){ onToolCall(m.toolCall.functionCalls); return; }
   var sc = m.serverContent; if (!sc) return;
   if (sc.interrupted){ stopPlayback(); breakCaption(); }
   if (sc.inputTranscription && sc.inputTranscription.text) appendCaption('me', sc.inputTranscription.text);
@@ -1002,8 +1171,8 @@ async function startCall(){
   setCallControls(true);
   $('btnPause').innerHTML = '<span class="ms">pause</span><span>일시 정지</span>';
   $('lines').innerHTML = '';
-  resetStage();
-  setCallHeader(sess.topic || MODE_LABEL[sess.mode], sess.startedAt);
+  resetStage(); setPart(0); $('cue').style.display = 'none';
+  setCallHeader(sess.mode === 'ielts' ? 'IELTS Speaking' + (sess.topic ? ' · ' + sess.topic : '') : (sess.topic || MODE_LABEL[sess.mode]), sess.startedAt);
   $('btnMic').classList.remove('off'); $('btnMic').querySelector('.ms').textContent = 'mic'; $('meMic').textContent = 'mic';
   setState('연결 중…', '');
   sess.timer = setInterval(function(){ $('timer').textContent = fmtTime((Date.now() - sess.startedAt) / 1000); }, 1000);
@@ -1033,7 +1202,7 @@ function endCall(){
   if (sess.micStream) sess.micStream.getTracks().forEach(function(t){ t.stop(); });
   try { sess.inCtx && sess.inCtx.close(); } catch(e){}
   try { sess.outCtx && sess.outCtx.close(); } catch(e){}
-  clearInterval(sess.frameTimer); cancelAnimationFrame(sess.raf);
+  clearInterval(sess.frameTimer); cancelAnimationFrame(sess.raf); hideCue(); setPart(0);
   setMouth(0); setMicLevel(0); $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);

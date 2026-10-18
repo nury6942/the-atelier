@@ -646,6 +646,13 @@ exports.trendFeed = onRequest(
 //      finish  : 통화가 끝나면 이번 대화를 반영해 프로필 갱신 + tutorSessions 에 한 줄 기록
 // ══════════════════════════════════════════════════════════════════════
 const TUTOR_MODEL = "claude-opus-5-5";
+const ANNIE_REVIEW_PROMPT = require("./annie-review-prompt");
+
+// 한국 시간 기준 날짜·시각 (서버는 UTC 라 아침 9시 전 대화가 전날로 잡히지 않게)
+function kst(ms) {
+  const d = new Date((ms || Date.now()) + 9 * 3600 * 1000).toISOString();
+  return { date: d.slice(0, 10), hhmm: d.slice(11, 13) + d.slice(14, 16) };
+}
 
 function tutorTranscript(lines) {
   return (lines || [])
@@ -691,7 +698,7 @@ const TUTOR_PROFILE_SHAPE = `{
 }`;
 
 exports.tutorMemory = onRequest(
-  { secrets: [anthropicApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "512MiB", timeoutSeconds: 180 },
+  { secrets: [anthropicApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "512MiB", timeoutSeconds: 540 },
   async (req, res) => {
     corsHeaders(res);
     if (req.method === "OPTIONS") return res.status(204).send("");
@@ -730,7 +737,8 @@ exports.tutorMemory = onRequest(
         if (!transcript) return res.status(400).json({ error: "empty transcript" });
         const snap = await profileRef.get();
         const old = snap.exists ? snap.data() : null;
-        const date = new Date(startedAt || Date.now()).toISOString().slice(0, 10);
+        const date = kst(startedAt).date;
+        const isIelts = mode === "ielts";
         const reply = await tutorClaude(
           "You maintain the long-term learner profile that an AI English tutor (Oliver) reads before every lesson with Nuri — " +
           "a Korean fashion designer (B2 aiming for C1) preparing to work abroad and studying for IELTS. " +
@@ -742,13 +750,23 @@ exports.tutorMemory = onRequest(
           "\n\nReturn ONE JSON object with two keys:\n" +
           "\"profile\": the updated profile, merging today into the current one (keep what is still true, update counts, drop stale or minor items, keep each list within its limit; recentTopics newest first, max 10). Shape:\n" +
           TUTOR_PROFILE_SHAPE +
-          "\n\"session\": {\"summary\": \"오늘 대화 요약 2~3문장, 한국어\", \"mistakes\": [{\"said\": \"누리가 한 문장\", \"better\": \"더 자연스러운 문장\", \"why\": \"한 줄, 한국어\"}] (max 5), \"good\": [\"잘한 표현이나 점, 한국어\"] (max 3)}\n" +
+          "\n\"session\": {\"summary\": \"오늘 대화 요약 2~3문장, 한국어\", \"mistakes\": [{\"said\": \"누리가 한 문장\", \"better\": \"더 자연스러운 문장\", \"why\": \"한 줄, 한국어\"}] (max 5), \"good\": [\"잘한 표현이나 점, 한국어\"] (max 3)" +
+          (isIelts
+            ? ", \"ielts\": {\"fc\": 0, \"lr\": 0, \"gra\": 0, \"overall\": 0, \"fcNote\": \"\", \"lrNote\": \"\", \"graNote\": \"\", \"parts\": \"어느 Part 까지 했는지\", \"toBand\": [\"다음 밴드로 가려면 할 것 3가지\"]}" +
+              " — this was an IELTS Speaking practice test: score it like a certified examiner using the public band descriptors, in 0.5 steps (fc = Fluency & Coherence, lr = Lexical Resource, gra = Grammatical Range & Accuracy; overall = their average rounded to the nearest 0.5). " +
+              "Pronunciation can't be judged from a transcript, so leave it out. Notes in Korean, specific, quoting her words. Be realistic, not flattering."
+            : "") +
+          "}\n" +
           "Output only the JSON.",
           "medium"
         );
         const out = tutorJson(reply);
+        const ieltsLog = ((old && old.ieltsHistory) || []).slice(0, 19);
+        const sc = out.session && out.session.ielts;
+        if (isIelts && sc) ieltsLog.unshift({ date, fc: sc.fc, lr: sc.lr, gra: sc.gra, overall: sc.overall });
         const profile = Object.assign({}, out.profile || {}, {
           sessions: ((old && old.sessions) || 0) + 1,
+          ieltsHistory: ieltsLog,
           updatedAt: new Date().toISOString(),
         });
         await profileRef.set(profile);
@@ -757,9 +775,49 @@ exports.tutorMemory = onRequest(
           summary: (out.session && out.session.summary) || "",
           mistakes: (out.session && out.session.mistakes) || [],
           good: (out.session && out.session.good) || [],
+          ielts: (out.session && out.session.ielts) || null,
           lines: (lines || []).slice(0, 400),
         });
         return res.status(200).json({ profile, session: out.session || null });
+      }
+
+      // ANNIE 와 같은 프롬프트로 자세한 수업 리뷰 → English 탭(englishSessions)에 "Oliver" 수업으로 저장
+      if (action === "review") {
+        const { lines, mode, topic, startedAt } = req.body;
+        const transcript = tutorTranscript(lines);
+        if (!transcript) return res.status(400).json({ error: "empty transcript" });
+        const { date, hhmm } = kst(startedAt);
+        const docId = date + "-oliver-" + hhmm;
+        const note = "(Note: this lesson was with Oliver, an AI English tutor, on a live video call" +
+          (mode === "ielts" ? " — an IELTS Speaking practice test" : "") +
+          ". The transcript is automatic speech recognition, so ignore obvious recognition glitches rather than treating them as Nuri's mistakes.)\n\n";
+        const prompt = ANNIE_REVIEW_PROMPT.replaceAll("{{DATE}}", date).replaceAll("{{TRANSCRIPT}}", note + transcript);
+        const Anthropic = require("@anthropic-ai/sdk");
+        const anthropic = new Anthropic({ apiKey: anthropicApiKey.value() });
+        const msg = await anthropic.beta.messages.stream({
+          model: TUTOR_MODEL,
+          max_tokens: 64000,
+          betas: ["server-side-fallback-2026-07-01"],
+          fallbacks: "default",
+          output_config: { effort: "high" },
+          messages: [{ role: "user", content: prompt }],
+        }).finalMessage();
+        if (msg.stop_reason === "refusal") throw new Error("refusal");
+        const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+        logger.info("tutor review", { input: msg.usage.input_tokens, output: msg.usage.output_tokens, stop: msg.stop_reason });
+        // 출력은 sessionsData["날짜"] = {...}; 모양의 JS — 격리된 샌드박스에서 1초만 실행해 객체로 꺼냄
+        const fence = text.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
+        const code = fence ? fence[1] : text;
+        const vm = require("vm");
+        const ctx = { sessionsData: {} };
+        vm.runInNewContext(code, ctx, { timeout: 1000 });
+        const review = Object.values(ctx.sessionsData)[0];
+        if (!review || !review.title) throw new Error("review parse failed");
+        const doc = Object.assign({}, JSON.parse(JSON.stringify(review)), {
+          date, tutor: "Oliver", source: "ai-tutor", mode: mode || "free", topic: topic || "", createdAt: new Date().toISOString(),
+        });
+        await db.collection("englishSessions").doc(docId).set(doc);
+        return res.status(200).json({ id: docId, title: doc.title, level: doc.level || null });
       }
 
       return res.status(400).json({ error: "unknown action" });

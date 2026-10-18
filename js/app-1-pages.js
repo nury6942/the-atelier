@@ -30081,7 +30081,8 @@ function renderEnglishSessions() {
   if (empty) empty.style.display = 'none';
 
   list.innerHTML = engSessionsData.map(function(s, idx) {
-    var dateObj = new Date(s._id + 'T00:00:00');
+    // AI Tutor(Oliver) 리뷰는 id 가 '2026-10-18-oliver-1828' 모양이라 날짜는 date 필드(없으면 앞 10글자)
+    var dateObj = new Date((s.date || String(s._id).slice(0, 10)) + 'T00:00:00');
     var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     var dayName = days[dateObj.getDay()];
@@ -30112,7 +30113,7 @@ function renderEnglishSessions() {
           '<p class="text-[9px] text-slate-400 font-medium">' + dayName + '</p>' +
         '</div>' +
         '<div class="flex-1 min-w-0">' +
-          '<h4 class="font-bold text-base text-slate-900 font-headline truncate">' + (s.title||'Untitled') + '</h4>' +
+          '<h4 class="font-bold text-base text-slate-900 font-headline truncate">' + (s.tutor ? '<span class="text-[10px] font-bold text-white px-1.5 py-0.5 mr-1.5 align-middle" style="background:#1F4BD8">' + s.tutor + '</span>' : '') + (s.title||'Untitled') + '</h4>' +
           '<p class="text-xs text-slate-400 mb-3 truncate">' + (s.subtitle||'') + '</p>' +
           '<div class="space-y-1 mb-3">' + lvBar(lv.fluency,'Fluency') + lvBar(lv.vocab,'Vocab') + lvBar(lv.grammar,'Grammar') + lvBar(lv.interaction,'Interact') + '</div>' +
           '<div class="flex flex-wrap gap-2">' +
@@ -30228,7 +30229,7 @@ function openSessionDetail(dateId) {
 
   var s = session;
   var lv = s.level || {};
-  var dateObj = new Date(dateId + 'T00:00:00');
+  var dateObj = new Date((s.date || String(dateId).slice(0, 10)) + 'T00:00:00');
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var dayName = days[dateObj.getDay()];

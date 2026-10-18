@@ -1,3 +1,17 @@
+## 2026-10-18 · 아이맥 · AI Tutor — Annie 리뷰 + IELTS Speaking 모드
+
+- 누리: Annie 리뷰 프롬프트를 적용 + 간단한 오늘의 정리도, IELTS 스피킹 모드도
+- `functions/annie-review-prompt.js`: js/app-1-pages.js 의 REVIEW_PROMPT_TEMPLATE 사본(원본 고치면 같이). tutorMemory `review` 액션 — Claude Opus 5.5 effort high, 스트리밍, 출력 JS 를 vm 샌드박스(1초)로 꺼내 `englishSessions/{날짜}-oliver-{HHMM}` 에 저장(tutor:"Oliver", date 필드). 실측 188초, 첫 대화로 "A Quiet Day and Seaweed" 생성
+- English 탭(app-1-pages.js v395): id 가 날짜가 아니어도 date 필드로 날짜 표시 + 목록 제목 앞 코발트 "Oliver" 표
+- 통화 끝: 오늘의 정리(20초) → 내가 네 마디 이상이면 자세한 리뷰(3분, 화면 닫아도 서버에서 계속) → "English 탭에 저장됐어요 · 열기"(iframe 이면 English 탭으로 가서 바로 엶)
+- IELTS 스피킹 모드: 홈에 모드 추가(Full test / Part 2 큐카드 / Part 3 토론). 튜터가 시험관 모드(가르치기·교정 없음). Gemini Live 함수 호출 set_part · show_cue_card · end_test(실측 OK) → 제목 옆 PART 표시, 대화창 위 큐카드 + 메모 칸 + 준비 1:00 → 말하기 2:00 타이머(끝나면 [Preparation time is over]·[Two minutes are up] 를 보냄)
+- IELTS 채점: finish 에서 FC·LR·GRA·Overall(0.5 단위, 발음은 녹취로 못 매겨 제외) + 다음 밴드로 갈 것 → 오늘의 정리 맨 위 점수표, 프로필 ieltsHistory 에 쌓임
+- KST 날짜로 저장(아침 9시 전 대화가 전날로 안 가게)
+- 남은 것(누리 요청 순서): 에어팟 낄 때 내 목소리 안 감 → 움직이는 튜터(사진만이라 몰입 안 됨) → AI Tutor 를 English 안의 탭으로
+- service-worker CACHE_NAME v626
+
+---
+
 ## 2026-10-18 · 맥북 · IELTS 탭에 Free Tests · Videos 추가
 
 - 누리: 사이트·책 문제를 가져오자 → 문제/PDF 복제는 안 하고 "풀기는 원래 사이트, 기록은 여기" 구조로
