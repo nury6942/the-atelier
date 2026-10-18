@@ -1,5 +1,5 @@
-// ═══ ENGLISH › IELTS 탭 (2026-10-18) ═══
-// 정보는 전부 아래 IELTS 객체에 쌓는다. 새 내용 = 이 파일만 고치고 배포.
+// ═══ ENGLISH › IELTS — 계획·전략 데이터 (2026-10-18) ═══
+// 화면(앱)은 js/ielts-app.js. 여기는 계획·전략 글과 Guide 화면만. 새 전략 = 이 파일의 IELTS 객체.
 // 모의고사 점수는 mocks[n].score = {L:정답수, R:정답수, W:밴드, S:밴드} 로 채운다.
 (function(){
   var IELTS = {
@@ -307,7 +307,9 @@
     try { navigator.clipboard.writeText(IELTS.prompt).then(done, done); } catch(e){ done(); }
   };
 
-  window.renderIelts = function(){
+  // 앱(js/ielts-app.js)의 Guide 화면이 이걸 불러 씀 — 전략 글은 여기 한 곳에만
+  window.ieltsGuideHtml = function(){ css(); return stages() + areas() + writing() + resources() + prompt() + facts() + log(); };
+  window.renderIeltsPlan = function(){
     var el = document.getElementById('eng-ielts-view');
     if (!el) return;
     css();
