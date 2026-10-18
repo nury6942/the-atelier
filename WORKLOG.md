@@ -1,3 +1,13 @@
+## 2026-10-19 · 맥북 · IELTS Free Tests 에 후기 점수
+
+- 레딧 r/IELTS 약 22개 스레드 + 네이버 블로그·고우해커스 후기를 Aside 로 읽어 사이트마다 별점(5점)·실제 대비(비슷/쉬움/어려움)·장점·단점·쓰는 법 한 줄 → scripts/ielts/reviews.json → build-links.py 가 카드에 붙임, 후기 좋은 순 정렬
+- 결론: 실제와 제일 비슷 = Cambridge GT 책(4.5) · BC 컴퓨터 연습시험(4.5). ieltsonlinetests·IELTS Ready 는 실제보다 어려움(3.0, 실제 점수가 0.5–1.5 높게 나왔다는 후기 다수) → 화면 적응·훈련용, 점수는 낮게 나온다고 보고 해석
+- 추가 사이트: Road to IELTS · Mini-IELTS · IELTS-Up. Engnovate(케임브리지 문제를 허락 없이 올린 곳)·Keenielts(주소 미확인)는 뺌
+- 공식 샘플류·Liz·IDP 앱은 후기가 거의 없어 '후기 적음' 표시
+- service-worker v1635
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — Simli Oliver 입이 안 움직인 원인
 
 - 누리: "전혀 안 움직이던데" → simliToken 로그상 연결 요청은 정상

@@ -716,8 +716,17 @@
   function links(){ return window.IELTS_LINKS || {tests:[], videos:[], channels:[]}; }
   var AREA_LABEL={full:'4영역',LR:'듣기+읽기',L:'듣기',R:'읽기',W:'쓰기',S:'말하기'};
   function viewTests(){
-    var T=links().tests||[];
+    var T=(links().tests||[]).slice();
     if (!T.length) return head('Free Tests','')+'<div class="ia-empty">목록을 불러오는 중이에요</div>';
+    // 후기 점수 높은 순 (후기 없는 건 뒤로)
+    T.sort(function(a,b){ return ((b.review&&b.review.score)||0)-((a.review&&a.review.score)||0); });
+    var REAL={easier:['실제보다 쉬움','#92400E','#FEF3C7'],similar:['실제와 비슷','#166534','#DCFCE7'],harder:['실제보다 어려움','#991B1B','#FEE2E2'],mixed:['평이 갈림','#5B5B66','#F1F1F4']};
+    function stars(sc){ var h=''; for (var i=1;i<=5;i++){ h+='<span class="material-symbols-outlined" style="font-size:16px;color:'+(sc>=i?'#F59E0B':sc>=i-0.5?'#F59E0B':'#DCDCE3')+';font-variation-settings:\'FILL\' '+(sc>=i-0.5?1:0)+'">'+(sc>=i||sc<i-0.5?'star':'star_half')+'</span>'; } return h; }
+    function revBlock(r){ if (!r) return ''; var re=REAL[r.real]||REAL.mixed;
+      return '<div style="padding:8px 10px;background:#F8F8FA;display:flex;flex-direction:column;gap:5px"><div class="ia-row" style="gap:6px"><span style="display:inline-flex">'+stars(r.score||0)+'</span><b class="ia-num" style="font-size:14px">'+(r.score||0).toFixed(1)+'</b><span class="ia-tag" style="background:'+re[2]+';color:'+re[1]+'">'+re[0]+'</span>'+(r.mentions==='few'?'<span style="font-size:11px;color:#5B5B66">후기 적음</span>':'')+'</div>'
+        +(r.pros?'<div style="font-size:12px;color:#166534;display:flex;gap:4px">'+icon('add',14)+esc(r.pros)+'</div>':'')+(r.cons?'<div style="font-size:12px;color:#991B1B;display:flex;gap:4px">'+icon('remove',14)+esc(r.cons)+'</div>':'')
+        +(r.verdict?'<div style="font-size:12px;font-weight:700">'+icon('arrow_forward',14)+' '+esc(r.verdict)+'</div>':'')+'</div>'; }
+    var BK=links().books;
     var tiles=T.map(function(t){
       var done=ST.records.filter(function(r){ return r.ref===t.id; }), last=done[done.length-1];
       var omrArea=t.area==='L'?'L':t.area==='R'?'R':null;
@@ -725,7 +734,7 @@
         +'<div class="ia-row" style="justify-content:space-between"><span class="ia-tag" style="'+(t.official?'':'background:#FEF3C7;color:#92400E')+'">'+(t.official?'공식':'비공식')+' · '+esc(t.provider)+'</span>'+(done.length?'<span class="ia-tag" style="background:#DCFCE7;color:#166534">'+icon('check',13)+' '+done.length+'회</span>':'')+'</div>'
         +'<span class="t">'+esc(t.name)+'</span>'
         +'<div class="ia-row" style="gap:6px">'+[AREA_LABEL[t.area]||t.area, t.module==='GT'?'GT':t.module==='Academic'?'Academic':'GT·AC 공통', t.format==='computer'?'컴퓨터 화면':t.format==='pdf'?'PDF':'웹', t.count?t.count+'세트':null, t.login?'무료 가입':null].filter(Boolean).map(function(x){return '<span style="font-size:11.5px;font-weight:700;color:#5B5B66;border:1px solid #ECECF0;padding:1px 6px">'+esc(x)+'</span>';}).join('')+'</div>'
-        +'<span class="s">'+esc(t.note||'')+'</span>'
+        +(t.review?revBlock(t.review):'<span class="s">'+esc(t.note||'')+'</span>')
         +(last?'<span class="s" style="font-weight:700;color:'+bandColor(last.band)+'">지난번 '+last.score+'/'+last.total+(last.band!=null?' · '+fmtB(last.band):'')+'</span>':'')
         +'<div class="ia-row" style="margin-top:auto;padding-top:6px"><a class="ia-btn sm pri" href="'+esc(t.url)+'" target="_blank" rel="noopener">'+icon('open_in_new',15)+' 열기</a>'
         +(omrArea?'<button class="ia-btn sm" data-omr="'+omrArea+'" data-omr-src="'+esc(t.name)+'" data-omr-link="'+esc(t.id)+'" data-omr-view="'+(omrArea==='L'?'listening':'reading')+'">'+icon('fact_check',15)+' 답안지·채점</button>':'')
@@ -734,6 +743,7 @@
     }).join('');
     var nOff=T.filter(function(t){return t.official;}).length;
     return head('Free Tests','공식·무료 모의고사 '+T.length+'곳 · 문제는 그 사이트에서 풀고, 점수·약점은 여기 답안지에 남겨요', '<span class="ia-row" style="font-size:12px;font-weight:700;gap:10px"><span style="color:'+ACC+'">■ 공식 '+nOff+'</span><span style="color:#92400E">■ 비공식 '+(T.length-nOff)+'</span></span>')
+      +(BK?'<div class="ia-box" style="margin-bottom:14px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;border-top:3px solid #16161A">'+icon('menu_book',34)+'<div><div class="ia-row" style="gap:8px"><b style="font-size:15px">Cambridge IELTS GT 책 (19·20·21)</b><span style="display:inline-flex">'+stars(BK.score||0)+'</span><b class="ia-num">'+(BK.score||0).toFixed(1)+'</b></div>'+revBlock(BK)+'</div></div>':'')
       +'<div class="ia-pick" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">'+tiles+'</div>';
   }
 
