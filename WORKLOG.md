@@ -1,3 +1,16 @@
+## 2026-10-18 · 아이맥 · AI Tutor — Simli 실시간 영상 Oliver
+
+- 누리: 사진만이라 몰입 안 됨 → Simli(실시간 입 맞춤 아바타). 누리가 가입(무료: 월 50분, 지금 잔여 200분)·`SIMLI_API_KEY` 시크릿 등록
+- 무료 플랜은 Studio 의 Trinity 얼굴 만들기 막힘 → legacy API(`POST api.simli.ai/faces/legacy`, deprecated)로 oliver-0.jpg 올림 → 무료로 접수·완료. face_id `c7f0c270-9ca3-4502-83c8-e56555a499bf`
+- 새 함수 `simliToken`: compose/token(handleSilence, 1시간, idle 5분) + compose/ice → session_token·ICE 만 브라우저로. action faceStatus 로 얼굴 완성 여부
+- simli-client 3.0.2: jsDelivr +esm 이 묶지 못함 → esbuild 로 한 파일(`assets/vendor/simli-client-3.0.2.js`, 600KB, livekit-client 2.23 포함). 처음 쓸 때만 import(). .mjs 는 로컬 서버가 모듈로 안 줘서 .js
+- tutor.html: 홈 "움직이는 Oliver (실시간 영상 · Simli)" 체크(기본 켬). 켜면 Gemini 목소리(24k)를 16k 로 바꿔 Simli 로 보내고, 입 맞춘 영상+소리는 Simli 가 돌려줌(로컬 재생 안 함). 끼어들기 → ClearBuffer. speaking/silent 이벤트로 말하는 중 표시
+- 실측: 기본 얼굴로 영상 512×512·소리 스트림 OK, 영어 음성 보내면 speaking → silent. Oliver 얼굴은 첫 연결 10~20초 걸림 → 8초만 기다리고 사진으로 시작, 준비되면 Oliver 말 사이에 영상으로 바뀜. SDK start() 는 영상이 '그려질 때' 끝나서 가려진 탭에선 안 끝남 → loadeddata 로 대신 판단
+- 비용: Simli 는 무료 분량 안에서는 0원, 넘으면 1분 약 \$0.05(리뷰 사이트 추정, 미확인) — 금액 칸에는 아직 안 넣음
+- service-worker CACHE_NAME v1632
+
+---
+
 ## 2026-10-18 · 맥북 · 사파리 음성 원상복구
 
 - 누리: 고친 뒤 사파리까지 이상해짐 → 원인: atlApplyVoice 가 사파리에서도 Samantha 기본판을 강제. 사파리 기본 음성(시스템 설정 음성, 고급·Siri 포함)이 더 좋았던 것

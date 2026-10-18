@@ -131,6 +131,9 @@
   .card.emma .foot .sub{color:rgba(255,255,255,.8)}
   .tframe{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:4/3;transform:translate(-50%,-50%)}
   .tframe img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  #simliVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#e9e9ec;display:none;z-index:1}
+  .card.emma.simli #simliVideo{display:block}
+  .card.emma.simli .tframe{visibility:hidden}
   .tframe .m{opacity:0;transition:opacity .05s linear;
     -webkit-mask-image:radial-gradient(ellipse 11% 8.5% at 51.8% 50.5%,#000 55%,transparent 100%);
             mask-image:radial-gradient(ellipse 11% 8.5% at 51.8% 50.5%,#000 55%,transparent 100%)}
@@ -323,6 +326,7 @@
       <div class="cards" id="cards"></div>
       <button class="start" onclick="startCall()" aria-label="대화 시작"><span class="ms">mic</span><span>시작하기</span></button>
       <label class="camopt"><input type="checkbox" id="camStart" checked><span>카메라 켜고 시작 (영상통화)</span></label>
+      <label class="camopt" style="margin-top:8px"><input type="checkbox" id="simliOn" checked><span>움직이는 Oliver (실시간 영상 · Simli)</span></label>
       <div class="hint">에어팟을 끼면 MIC 를 맥 마이크로 고르는 게 더 잘 들려요 (에어팟 마이크는 통화 음질이라 알아듣기 어려워요)</div>
     </section>
 
@@ -355,6 +359,7 @@
               <img class="m" id="mouth1" src="assets/tutor/oliver-1.jpg" alt="">
               <img class="m" id="mouth2" src="assets/tutor/oliver-2.jpg" alt="">
             </div></div>
+            <video id="simliVideo" autoplay playsinline muted></video><audio id="simliAudio" autoplay></audio>
             <div class="foot"><b>Oliver</b><span class="sub" id="emmaSub">듣는 중</span></div>
           </div>
           <div class="card me" id="tileMe">
@@ -394,6 +399,8 @@
 var TOKEN_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/tutorToken';
 var WS_URL = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=';
 var MEMORY_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/tutorMemory';
+var SIMLI_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/simliToken';
+var SIMLI_FACE = 'c7f0c270-9ca3-4502-83c8-e56555a499bf';   // Oliver 사진으로 만든 Simli 얼굴(legacy, 2026-10-18 생성 요청)
 var HIST_KEY = 'atelier_tutor_history_v1';   // 대화 원문은 이 브라우저에. 프로필·대화 요약은 Firestore(tutorMemory)
 var PROFILE_KEY = 'atelier_tutor_profile_v1'; // 프로필 마지막 사본(오프라인 보기용)
 var PREF_KEY = 'atelier_tutor_prefs_v1';
@@ -549,13 +556,14 @@ function loadPrefs(){
     if (p.model && $('model').querySelector('option[value="' + p.model + '"]')) $('model').value = p.model;
     if (p.voice && $('voice').querySelector('option[value="' + p.voice + '"]')) $('voice').value = p.voice;
     if (p.camStart === false) $('camStart').checked = false;
+    if (p.simliOn === false) $('simliOn').checked = false;
     if (p.mic) sess.wantMic = p.mic;
   } catch(e){}
 }
 function savePrefs(){
-  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked, mic: $('mic').value })); } catch(e){}
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({ model: $('model').value, voice: $('voice').value, camStart: $('camStart').checked, simliOn: $('simliOn').checked, mic: $('mic').value })); } catch(e){}
 }
-$('model').onchange = savePrefs; $('voice').onchange = savePrefs; $('camStart').onchange = savePrefs; $('mic').onchange = savePrefs;
+$('model').onchange = savePrefs; $('voice').onchange = savePrefs; $('camStart').onchange = savePrefs; $('simliOn').onchange = savePrefs; $('mic').onchange = savePrefs;
 
 // ── 마이크 고르기: 에어팟·외장 마이크 등. 이름은 마이크 권한을 한 번 허용한 뒤에 보임
 async function listMics(){
@@ -960,7 +968,17 @@ async function startMic(){
   src.connect(sess.micAnalyser); sess.micAnalyser.connect(mute); mute.connect(sess.inCtx.destination);
 }
 
+// Simli 가 켜져 있으면 Oliver 목소리를 Simli 로 보내고(24kHz → 16kHz), 입 맞춘 영상+소리를 Simli 가 돌려줌
+function to16k(b64){
+  var bin = atob(b64), bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  var inp = new Int16Array(bytes.buffer, 0, bytes.length >> 1), n = Math.floor(inp.length * 2 / 3), out = new Int16Array(n);
+  for (var k = 0; k < n; k++){ var x = k * 1.5, j = Math.floor(x), f = x - j, a = inp[j], b = inp[Math.min(j + 1, inp.length - 1)]; out[k] = a + (b - a) * f; }
+  return new Uint8Array(out.buffer);
+}
 function playPcm(b64){
+  if (sess.simliPending && !sess.sources.length){ sess.simli = sess.simliPending; sess.simliPending = null; $('tileEmma').classList.add('simli'); }
+  if (sess.simli){ try { sess.simli.sendAudioData(to16k(b64)); setTalking(true); return; } catch(e){ console.warn('[tutor] simli send', e); dropSimli(); } }
   var ctx = sess.outCtx;
   var bin = atob(b64), n = bin.length >> 1, f = new Float32Array(n);
   for (var i = 0; i < n; i++){
@@ -979,6 +997,7 @@ function playPcm(b64){
   setTalking(true);
 }
 function stopPlayback(){
+  if (sess.simli){ try { sess.simli.ClearBuffer(); } catch(e){} }
   sess.sources.forEach(function(s){ try { s.stop(); } catch(e){} });
   sess.sources = []; sess.playAt = 0; setTalking(false);
 }
@@ -1139,6 +1158,46 @@ function runCueClock(label, secs, go, done){
 }
 function hideCue(){ clearInterval(sess.cueTimer); $('cue').style.display = 'none'; }
 
+// ═══════════════════════════════════════════════════════════
+//  Simli — 실시간으로 입 맞춰 움직이는 Oliver. 안 되면 사진(입 3장)으로 계속
+//  simli-client 3.0.2 를 esbuild 로 한 파일로 묶어 assets/vendor 에 둠(jsDelivr 가 묶지 못함)
+// ═══════════════════════════════════════════════════════════
+// Oliver 얼굴이 아직 만들어지는 중이면(사진 → Simli, 몇 시간) 사진으로 — 완성되면 이 브라우저에 기억
+var SIMLI_READY_KEY = 'atelier_tutor_simli_face_ready';
+async function simliFaceReady(){
+  try { if (localStorage.getItem(SIMLI_READY_KEY) === SIMLI_FACE) return true; } catch(e){}
+  var r = await fetch(SIMLI_API, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': getAuth() }, body: JSON.stringify({ action: 'faceStatus', faceId: SIMLI_FACE }) });
+  var j = await r.json().catch(function(){ return {}; });
+  var ok = /complete|done|ready|success/i.test(j.status || '');
+  if (ok) try { localStorage.setItem(SIMLI_READY_KEY, SIMLI_FACE); } catch(e){}
+  return ok;
+}
+async function startSimli(){
+  if (!(await simliFaceReady())){ toast('움직이는 Oliver 얼굴을 아직 만드는 중이에요 — 오늘은 사진으로 할게요'); return; }
+  var r = await fetch(SIMLI_API, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': getAuth() }, body: JSON.stringify({ faceId: SIMLI_FACE }) });
+  var st = await r.json().catch(function(){ return {}; });
+  if (!r.ok || !st.session_token) throw new Error(st.message || ('Simli 토큰 실패 ' + r.status));
+  var mod = await import('./assets/vendor/simli-client-3.0.2.js');
+  var c = new mod.SimliClient(st.session_token, $('simliVideo'), $('simliAudio'), st.iceServers, mod.LogLevel.ERROR, 'p2p');
+  c.on('speaking', function(){ setTalking(true); });
+  c.on('silent', function(){ setTalking(false); });
+  c.on('error', function(m){ console.warn('[tutor] simli error', m); });
+  c.on('stop', function(){ if (sess.simli === c) dropSimli(); });
+  // start() 는 영상 첫 장면이 '그려질 때' 끝나서, 탭이 가려져 있으면 안 끝남 → 영상 데이터가 들어오면 준비된 걸로
+  var v = $('simliVideo');
+  await Promise.race([c.start(), new Promise(function(ok){ v.addEventListener('loadeddata', ok, { once: true }); })]);
+  if (!sess.active){ try { c.stop(); } catch(e){} return; }
+  if (sess.sources && sess.sources.length){ sess.simliPending = c; return; }   // Oliver 가 사진으로 말하는 중이면 그 말이 끝난 뒤 영상으로
+  sess.simli = c;
+  $('tileEmma').classList.add('simli');
+}
+function dropSimli(){
+  var c = sess.simli || sess.simliPending; sess.simli = null; sess.simliPending = null;
+  $('tileEmma').classList.remove('simli');
+  if (c){ try { c.stop(); } catch(e){} }
+}
+function withTimeout(p, ms){ return Promise.race([p, new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('시간 초과')); }, ms); })]); }
+
 var sess = { active: false };
 
 async function fetchToken(){
@@ -1251,9 +1310,15 @@ async function startCall(){
     startMeters();
     if ($('camStart').checked) toggleCam();          // 영상통화로 시작 — 카메라가 안 되면 안내만 하고 음성으로 계속
     sess.frameTimer = setInterval(frameTick, 300);
-    setState('Oliver가 지난 수업을 떠올리는 중…', '');
+    setState($('simliOn').checked ? 'Oliver가 카메라 앞에 앉는 중…' : 'Oliver가 지난 수업을 떠올리는 중…', '');
+    // Simli 첫 연결은 10~20초 걸릴 때가 있음 → 8초만 기다리고 사진으로 먼저 시작, 준비되면 말 사이에 영상으로 바뀜
+    var simliP = $('simliOn').checked
+      ? withTimeout(startSimli(), 45000).catch(function(e){ console.warn('[tutor] simli', e); dropSimli(); if (sess.active) toast('움직이는 Oliver 를 못 불러왔어요 — 사진으로 할게요'); })
+      : Promise.resolve();
+    simliP = Promise.race([simliP, new Promise(function(ok){ setTimeout(ok, 8000); })]);
     try { var pj = await memoryCall('profile', {}, 6000); sess.profile = pj.profile; cacheProfile(pj.profile); }
     catch(e){ sess.profile = cachedProfile(); console.warn('[tutor] profile', e); }   // 못 불러오면 마지막 사본으로
+    await simliP;                                       // 첫인사부터 영상으로 나오게 Simli 준비를 기다림(최대 8초)
     if (!sess.active) return;
     setState('연결 중…', '');
     await connect();
@@ -1269,7 +1334,7 @@ function endCall(){
   if (sess.micStream) sess.micStream.getTracks().forEach(function(t){ t.stop(); });
   try { sess.inCtx && sess.inCtx.close(); } catch(e){}
   try { sess.outCtx && sess.outCtx.close(); } catch(e){}
-  clearInterval(sess.frameTimer); cancelAnimationFrame(sess.raf); hideCue(); setPart(0);
+  clearInterval(sess.frameTimer); cancelAnimationFrame(sess.raf); hideCue(); setPart(0); dropSimli();
   setMouth(0); setMicLevel(0); $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);

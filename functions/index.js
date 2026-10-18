@@ -827,3 +827,51 @@ exports.tutorMemory = onRequest(
     }
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ (2026-10-18) AI Tutor — Simli 실시간 얼굴(입 맞춰 움직이는 Oliver) 세션 토큰
+//    Simli API 키는 서버에만. 브라우저는 이 함수에서 1회용 session_token + ICE 서버만 받음.
+//    키 등록: firebase functions:secrets:set SIMLI_API_KEY
+// ══════════════════════════════════════════════════════════════════════
+const simliApiKey = defineSecret("SIMLI_API_KEY");
+
+exports.simliToken = onRequest(
+  { secrets: [simliApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "256MiB", timeoutSeconds: 30 },
+  async (req, res) => {
+    corsHeaders(res);
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    const token = req.headers["x-atelier-token"];
+    if (!token || token !== atelierAuthToken.value()) return res.status(401).json({ error: "Unauthorized" });
+
+    const { faceId, action } = req.body || {};
+    const key = simliApiKey.value();
+    try {
+      // 얼굴 만들기 진행 상황(사진 → Simli 얼굴, 몇 시간 걸릴 수 있음)
+      if (action === "faceStatus") {
+        const r = await fetch("https://api.simli.ai/faces/legacy/generation_status?face_id=" + encodeURIComponent(faceId || ""), { headers: { "x-simli-api-key": key } });
+        return res.status(r.status).json(await r.json().catch(() => ({})));
+      }
+      if (!faceId) return res.status(400).json({ error: "faceId required" });
+      const [tok, ice] = await Promise.all([
+        fetch("https://api.simli.ai/compose/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-simli-api-key": key },
+          body: JSON.stringify({ faceId, handleSilence: true, maxSessionLength: 3600, maxIdleTime: 300 }),
+        }),
+        fetch("https://api.simli.ai/compose/ice", { headers: { "Content-Type": "application/json", "x-simli-api-key": key } }),
+      ]);
+      if (!tok.ok) {
+        const t = await tok.text();
+        logger.error("simliToken upstream", { status: tok.status, t });
+        return res.status(502).json({ error: "Simli token failed", message: t.slice(0, 300) });
+      }
+      const tj = await tok.json();
+      const iceServers = ice.ok ? await ice.json().catch(() => null) : null;
+      return res.status(200).json({ session_token: tj.session_token, iceServers: iceServers && iceServers.length ? iceServers : [{ urls: ["stun:stun.l.google.com:19302"] }] });
+    } catch (error) {
+      logger.error("simliToken error:", error);
+      return res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  }
+);
