@@ -7,7 +7,7 @@
    "cat": "hack",
    "title": "컨셉아트 한 장이 걷는 3D 마을로",
    "url": "https://x.com/hakimieiqbal/status/2111428789272019234",
-   "image": null,
+   "image": "https://pbs.twimg.com/ext_tw_video_thumb/2111428766463369216/pu/img/daGrS1ierV_VhRiC.jpg",
    "source": "X @hakimieiqbal · ♥1,200",
    "how": "GPT로 그림, Opus 5.5로 블록 짓고 셰이더로 덧입힘",
    "chips": [
@@ -19,7 +19,7 @@
    "cat": "release",
    "title": "무료 공개 TTS로 목소리 연기까지",
    "url": "https://www.marktechpost.com/2026/10/14/fish-audio-drama-3-open-weight-tts-model/",
-   "image": null,
+   "image": "https://www.marktechpost.com/wp-content/uploads/2026/10/WP-BLOG-BANNER-401-2-1-1024x768.png",
    "source": "MarkTechPost · Fish Audio 10-13 공개",
    "release": {
     "name": "Fish Audio Drama 3",
@@ -30,12 +30,12 @@
     {
      "title": "게임·방송 목소리 4개로 영상 한 편",
      "url": "https://x.com/lucian__03/status/2111867292086939656",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2111867116374937601/img/3nSPniXqZ3OKfnDi.jpg"
     },
     {
      "title": "8GB 그래픽카드에서 돌리는 ComfyUI 노드",
      "url": "https://comfyui-wiki.com/en/news/2026-10-14-comfyui-drama3",
-     "image": null
+     "image": "https://s.comfyui-wiki.com/news/2026-10-14-comfyui-drama3/cover.jpg"
     },
     {
      "title": "로컬 실행 감정 연기 테스트 영상",
@@ -83,7 +83,7 @@
    "cat": "vibe",
    "title": "피그마 대체 앱, 9일 새 릴리스 7번",
    "url": "https://github.com/storytold/figcraft",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/storytold/figcraft",
    "source": "GitHub storytold/figcraft · ArtCraft 팀",
    "how": "Rust로 다시 짠 피그마, 에이전트용 MCP 내장",
    "chips": [
@@ -109,7 +109,7 @@
    "cat": "tool",
    "title": "피그마 파일을 여는 무료 AI 편집기",
    "url": "https://github.com/open-pencil/open-pencil",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/open-pencil/open-pencil",
    "source": "GitHub open-pencil · MIT",
    "how": ".fig 파일을 열고 AI 챗(도구 100여 개)으로 수정",
    "chips": [
@@ -170,7 +170,7 @@
    "cat": "release",
    "title": "Kling 4.0 전체 공개",
    "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
-   "image": null,
+   "image": "https://cms-image.pandaily.com/1/kling_fed3acb0c4.png",
    "source": "30초·키프레임 10개 · 10-15",
    "watching": true
   },
@@ -178,7 +178,7 @@
    "cat": "vibe",
    "title": "어도비 클론, 믿어도 될까",
    "url": "https://glyndewis.com/blog/artcraft-cloned-adobe",
-   "image": null,
+   "image": "http://static1.squarespace.com/static/5a4b6d1f9f07f5d01c10f2b6/60f558c3668793736d493295/6acf0c29bc32e923ff7c7b8b/1791989038138/artcraft-thumbnail.png?format=1500w",
    "source": "Glyn Dewis · 사진가 시각",
    "watching": false
   },
@@ -186,7 +186,7 @@
    "cat": "money",
    "title": "실제 출시된 바이브 앱 6개",
    "url": "https://codingwithvibe.com/vibe-coded-apps/",
-   "image": null,
+   "image": "https://codingwithvibe.com/wp-content/uploads/2026/06/A_modern_sleek_technology_illustration_showing.png",
    "source": "Subscribr 월 $6.2만 등 · 자기 보고",
    "watching": false
   },
@@ -194,7 +194,7 @@
    "cat": "tool",
    "title": "맥 받아쓰기 Openbroca",
    "url": "https://trustmrr.com/startup/openbroca",
-   "image": null,
+   "image": "https://trustmrr.com/startup/openbroca/opengraph-image?3c615eca672ee8f1",
    "source": "주 3,000단위 무료 · 28개 언어 번역",
    "watching": false
   },
@@ -202,7 +202,7 @@
    "cat": "free",
    "title": "피그마→영상 스킬",
    "url": "https://open-design.ai/skills/figma/",
-   "image": null,
+   "image": "https://open-design.ai/og-homepage-20261009.png",
    "source": "OpenDesign · HyperFrames 기반",
    "watching": false
   },
@@ -210,7 +210,7 @@
    "cat": "free",
    "title": "Claude 해커톤 일본 온라인",
    "url": "https://cerebralvalley.ai/e/built-with-claude-japan2026",
-   "image": null,
+   "image": "https://cerebralvalley.ai/api/e/og/built-with-claude-japan2026?v=1792360266834",
    "source": "Built with Claude · 11-02~11-10",
    "watching": false
   }
