@@ -18,7 +18,8 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:'Inter','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
+    font-family:'Inter','-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;
+    word-break:keep-all;overflow-wrap:break-word}  /* 한글은 단어 단위로 줄바꿈, 긴 영어·주소만 중간에서 끊기 */
   a{color:inherit;text-decoration:none}
   button{font:inherit;cursor:pointer;color:inherit}
   .wrap{max-width:1180px;margin:0 auto;padding:36px 24px 96px}
@@ -75,7 +76,7 @@
   .try:not(.must).done .done-btn{background:var(--ink);color:var(--paper)}
 
   /* 핵심 카드 */
-  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;align-items:start}  /* 큰 카드가 옆 칸 높이만큼 늘어나 빈칸 생기지 않게 */
   .side{display:grid;gap:16px;grid-template-rows:1fr 1fr}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
   .card{display:flex;flex-direction:column;border:1px solid var(--ink);background:var(--card);min-width:0}
@@ -86,7 +87,7 @@
   .hero h3{font-size:1.6rem;line-height:1.2;letter-spacing:-.025em}
   .side .card{flex-direction:row}
   .card > a:first-child{display:block;position:relative}
-  .side .card > a:first-child{flex:0 0 42%;min-height:100%}
+  .side .card > a:first-child{flex:0 0 34%;min-height:100%}
   .side .card > a:first-child .img{position:absolute;inset:0}
   .card .body{min-width:0}
   .row2 .card .img{aspect-ratio:16/9}
@@ -96,11 +97,17 @@
   .forme,.tr{margin-top:10px;font-size:13px;font-weight:600;line-height:1.5;border-top:1px solid var(--line);padding-top:9px}
   .forme::before,.tr::before{content:"바로 해보기 → ";font-size:10px;font-weight:800;letter-spacing:.1em}
   .rel{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--mut);margin-top:6px}
+  .rel span{flex:none;white-space:nowrap}
   .rel b{color:var(--ink)}
   .ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
   .ex a{display:block;min-width:0}
   .ex .img{aspect-ratio:1.91/1}
-  .ex span{display:block;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ex span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:12px;font-weight:600;margin-top:5px;line-height:1.35;overflow:hidden}
+  .ex .ph,.vrow .ph{padding:4px;font-size:10px;line-height:1.2}
+  .ex .ph small,.vrow .ph small{display:none}  /* 작은 칸은 출처 주소만 */
+  .side .ex{grid-template-columns:1fr;gap:6px}  /* 좁은 옆 카드는 예시를 '작은 사진 + 제목' 목록으로 */
+  .side .ex a{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center}
+  .side .ex span{margin-top:0}
   .why{margin-top:10px;font-size:12px;color:var(--mut)}
   .why b{color:var(--ink)}
   .new{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
