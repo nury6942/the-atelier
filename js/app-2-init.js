@@ -6796,7 +6796,7 @@ if ('serviceWorker' in navigator) {
           updateToastShown = true;
           var t = document.createElement('div');
           t.id = 'sw-update-toast';
-          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#1F4BD8,#3563DF);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(107,56,212,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
+          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#1F4BD8,#3563DF);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 32px rgba(31,75,216,0.35);z-index:99999;display:flex;align-items:center;gap:12px;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;cursor:pointer;animation:slideInRight .3s ease;max-width:320px;';
           t.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>새 버전이 있어요. 클릭해서 업데이트</span>';
           t.onclick = function() { window.location.reload(); };
           document.body.appendChild(t);

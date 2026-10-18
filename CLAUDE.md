@@ -89,6 +89,26 @@ AFTER:
 - localStorage + git 동기화 영속성 패턴
 - 시각적 디테일에 신경 쓰기 (간격, 색, 폰트 — 누리님은 디자이너)
 
+## 🎨 디자인 규칙 (2026-10-18 확정 — 새 화면·새 페이지도 반드시 따를 것)
+
+누리님이 정한 아뜰리에 공통 디자인. 탭마다 뒤죽박죽이던 걸 이 규칙으로 통일했음.
+
+- **바탕은 항상 흰색.** 베이지·크림·종이색 바탕 금지 ("딱 질색"). 다크 모드 자동 전환도 넣지 않음
+- **모든 칸은 직각.** 카드·버튼·입력칸·태그·프로필까지 border-radius 0. (로딩 스피너만 원형)
+- **포인트 색은 코발트 하나** `#1F4BD8` (진한 `#1A3FB5`, 연한 바탕 `#EEF2FD`). 보라·분홍·그라데이션 쓰지 않음
+  - 수입 초록 / 지출 빨강, 차트·일정 카테고리 구분색은 예외 (구분용)
+- **글꼴은 Pretendard 하나.** Manrope·Inter·Plus Jakarta 등 쓰지 않음 (아이콘 글꼴·코드만 예외)
+- **그림자 없음.** 카드는 얇은 선(`#ECECF0`)으로 구분. 떠서 열리는 창·드롭다운만 그림자
+- **버튼 3종:** `atl-btn atl-btn-primary`(코발트, 한 화면에 하나) / `atl-btn-secondary`(흰 바탕+선) / `atl-btn-ghost`(글자만)
+- **탭 2종:** 큰 탭은 밑줄(`atl-tabs` + `travel-tab-btn` / 활성 `travel-tab-active`), 보기 전환은 토글
+- **메뉴·제목은 영어**(Title Case, 대문자로만 쓰지 않음), 설명·내용은 한글. 탭 이름에 이모지 붙이지 않음
+- 사이드바는 Home·Dashboard / EVERYDAY / MONEY / TRAVEL / GROWTH 네 묶음
+
+**어디에 있나:** `index.html`의 `<style id="atl-design-system">` 블록(토큰 `--atl-*`)과 `tailwind.config`
+(indigo·violet·purple 팔레트가 코발트로 덮어써져 있음, borderRadius 전부 0).
+**별도 HTML 페이지**(job-hunt·ai-brief·m-ledger·packing·maps·tutor 등)는 index.html 스타일을 못 받으니
+같은 규칙을 그 파일 안에 직접 넣어야 함.
+
 ## 🖥 멀티 기기 작업
 
 누리님은 **맥북 / 아이맥 / 윈도우 작업컴(C:\Users\AC0987)** 세 곳에서 작업.

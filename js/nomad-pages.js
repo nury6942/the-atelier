@@ -5082,7 +5082,7 @@ window.NOMAD_PAGES = (function(){
   function _renderCityExperiencesV2(experiencesSections) {
     if (!experiencesSections || !experiencesSections.length) return '';
     var colors = [
-      { bg:'#eef2ff', border:'#DDE5FB', iconBg:'#1A3FB5', iconShadow:'rgba(79,70,229,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#17348F' },
+      { bg:'#eef2ff', border:'#DDE5FB', iconBg:'#1A3FB5', iconShadow:'rgba(26,63,181,0.25)', titleColor:'#1e1b4b', subColor:'#3730a3', noteColor:'#17348F' },
       { bg:'#fffbeb', border:'#fef3c7', iconBg:'#d97706', iconShadow:'rgba(217,119,6,0.25)',  titleColor:'#451a03', subColor:'#92400e', noteColor:'#b45309' },
       { bg:'#fff1f2', border:'#ffe4e6', iconBg:'#e11d48', iconShadow:'rgba(225,29,72,0.25)',  titleColor:'#4c0519', subColor:'#9f1239', noteColor:'#be123c' },
       { bg:'#ecfdf5', border:'#d1fae5', iconBg:'#059669', iconShadow:'rgba(5,150,105,0.25)',  titleColor:'#022c22', subColor:'#065f46', noteColor:'#047857' },

@@ -633,13 +633,13 @@
       else if (isHoliday) {
         if (hasLeave) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,#FCC98F60)';
         else if (hasSpecial) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,#FFE0E060)';
-        else if (isToday) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,rgba(107,56,212,0.10))';
+        else if (isToday) cell.style.background = 'linear-gradient(135deg,#FFCDCD 60%,rgba(31,75,216,0.10))';
         else cell.style.background = '#FFCDCD';
       }
-      else if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
-      else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(107,56,212,0.04),rgba(255,224,224,0.5))' : 'rgba(107,56,212,0.04)'; }
+      else if (hasLeave) { cell.style.background = isToday ? 'linear-gradient(135deg,rgba(31,75,216,0.04),rgba(252,201,143,0.4))' : '#FCC98F40'; }
+      else if (isToday) { cell.style.background = hasSpecial ? 'linear-gradient(135deg,rgba(31,75,216,0.04),rgba(255,224,224,0.5))' : 'rgba(31,75,216,0.04)'; }
       else if (hasSpecial) { cell.style.background = '#FFE0E0'; }
-      if (isToday) { cell.style.outline = '2px solid rgba(107,56,212,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
+      if (isToday) { cell.style.outline = '2px solid rgba(31,75,216,0.3)'; cell.style.outlineOffset = '-2px'; cell.style.borderRadius = '12px'; }
       cell.dataset.date = dateStr;
       cell.onclick = function() { selectPlannerDate(dateStr, this); };
       cell.ondblclick = function() { openPlannerModal(null, dateStr); };
@@ -4273,7 +4273,7 @@
     div.className = 'schedule-inline-add relative pl-6 mt-4';
     div.innerHTML =
       '<div class="absolute -left-[5px] top-1 h-3 w-3 rounded-full bg-indigo-300 ring-4 ring-white shadow-sm"></div>' +
-      '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(107,56,212,0.06),rgba(53,99,223,0.08))">' +
+      '<div class="p-3 rounded-xl border-2 border-dashed border-indigo-200" style="background:linear-gradient(135deg,rgba(31,75,216,0.06),rgba(53,99,223,0.08))">' +
         '<div class="flex items-center gap-1 mb-1.5">' +
           '<input id="sched-add-time" type="text" placeholder="09:00" class="'+ic+' text-[10px] font-black text-indigo-600 uppercase tracking-wider w-14 text-center"/>' +
           '<span class="text-[10px] text-slate-400">-</span>' +
@@ -7376,7 +7376,7 @@
         var tripUrl = _tripcomSearchUrl(opt.name, cityRec.city, cityRec.checkIn, cityRec.checkOut);
         var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(opt.name + ', ' + cityRec.city);
         var rankBadge = oi === 0 ? '<span style="position:absolute;top:8px;right:10px;background:linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft));color:#fff;font-size: var(--font-size-nano);font-weight:800;padding: var(--space-0-5) 7px;border-radius: var(--radius-full);letter-spacing:0.05em">⭐ 1순위</span>' : '';
-        html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(107,56,212,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+        html += '<div style="position:relative;background:#fff;border:1px solid #e9d5ff;border-radius: var(--radius-lg);padding:13px 14px 11px;transition:transform 0.15s, box-shadow 0.15s" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 8px 20px rgba(31,75,216,0.12)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
           rankBadge +
           '<div style="display:flex;align-items:baseline;gap: var(--space-1-5);margin-bottom: var(--space-1);padding-right:' + (oi === 0 ? '70px' : '0') + '">' +
             '<h5 style="font-family:var(--j-font-h,Manrope);font-size: var(--font-size-body-sm);font-weight:700;color:#1e1b4b;margin:0;flex:1">' + opt.name + '</h5>' +
@@ -8049,7 +8049,7 @@
     var tbody = document.getElementById(tbodyId); if(!tbody) return;
     var tr = document.createElement('tr');
     tr.className = 'fixed-input-row';
-    tr.style.cssText = 'background:linear-gradient(135deg,rgba(107,56,212,0.08) 0%,rgba(53,99,223,0.12) 100%);';
+    tr.style.cssText = 'background:linear-gradient(135deg,rgba(31,75,216,0.08) 0%,rgba(53,99,223,0.12) 100%);';
     tr.innerHTML = html;
     tbody.appendChild(tr);
     initInlineDatePickers(tr);
@@ -11783,7 +11783,7 @@
       var isToday = ds === todayStr;
       var evts = rows.filter(function(r){ var s=(r[0]||'').toString(),e=(r[5]||'').toString(); if(e&&e>s) return ds>=s&&ds<=e; return s===ds; });
       if (isToday) {
-        return '<div class="p-5 rounded-2xl space-y-3 ring-4" style="background:var(--lavender-deep-soft);ring-color:rgba(107,56,212,0.1);box-shadow:0 8px 24px rgba(107,56,212,0.2)"><div class="text-center"><p class="text-xs font-bold text-white/80 uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-white">'+d.getDate()+'</p></div>' +
+        return '<div class="p-5 rounded-2xl space-y-3 ring-4" style="background:var(--lavender-deep-soft);ring-color:rgba(31,75,216,0.1);box-shadow:0 8px 24px rgba(31,75,216,0.2)"><div class="text-center"><p class="text-xs font-bold text-white/80 uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-white">'+d.getDate()+'</p></div>' +
           evts.slice(0,2).map(function(ev){ return '<div class="bg-white/20 px-2 py-1 rounded-lg text-[10px] font-bold text-white truncate">'+ev[1]+'</div>'; }).join('') + '</div>';
       }
       return '<div class="bg-white p-5 rounded-2xl space-y-3" style="box-shadow:0px 12px 32px rgba(25,28,29,0.02)"><div class="text-center"><p class="text-xs font-bold text-[#494454] uppercase tracking-widest">'+DAYS[i]+'</p><p class="text-lg font-headline font-extrabold text-[#191c1d]">'+d.getDate()+'</p></div>' +
@@ -23470,7 +23470,7 @@
   // ===== Series Growth Chart =====
   var _growthChart = null;
   var CHART_COLORS = {
-    indigo: { line:'rgba(107,56,212,1)', fill:'rgba(107,56,212,0.08)', border:'rgba(107,56,212,0.6)' },
+    indigo: { line:'rgba(31,75,216,1)', fill:'rgba(31,75,216,0.08)', border:'rgba(31,75,216,0.6)' },
     amber:  { line:'rgba(161,140,0,1)',  fill:'rgba(161,140,0,0.05)',  border:'rgba(161,140,0,0.6)' },
     rose:   { line:'rgba(225,29,72,1)',   fill:'rgba(225,29,72,0.06)',  border:'rgba(225,29,72,0.6)' },
     teal:   { line:'rgba(20,184,166,1)',  fill:'rgba(20,184,166,0.06)', border:'rgba(20,184,166,0.6)' },
@@ -23671,7 +23671,7 @@
       // 구분선
       html += '<tr><td colspan="13" class="p-0"><div class="border-t-2 border-indigo-200" style="margin: var(--space-1) 0"></div></td></tr>';
       // 월별 수익 합계
-      html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(107,56,212,0.03)">' +
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors" style="background:rgba(31,75,216,0.03)">' +
         '<td class="p-2 border-l-4 border-indigo-500 whitespace-nowrap"><div class="flex items-center gap-1.5">' +
           '<span class="material-symbols-outlined text-indigo-600" style="font-size: var(--font-size-body)">summarize</span>' +
           '<div><div class="font-bold text-xs text-indigo-700">전체 합산</div>' +
@@ -23685,7 +23685,7 @@
       }
       html += '</tr>';
       // 연간 누적
-      html += '<tr class="hover:bg-indigo-50/30 transition-colors border-b border-indigo-100" style="background:rgba(107,56,212,0.03)">' +
+      html += '<tr class="hover:bg-indigo-50/30 transition-colors border-b border-indigo-100" style="background:rgba(31,75,216,0.03)">' +
         '<td class="p-2 border-l-4 border-indigo-300 whitespace-nowrap"><div class="text-[10px] uppercase tracking-tighter text-indigo-400">연간 누적</div></td>';
       for (var tm2 = 0; tm2 < 12; tm2++) {
         cumulTotal += monthlyTotals[tm2];
@@ -26873,7 +26873,7 @@
       var diffWon = diff !== null ? diff * 10000 : 0;
 
       var border = isCurrent ? 'border:2px solid #1F4BD8;' : (hasData ? '' : 'border:2px dashed #e1e3e4;');
-      var bg = isCurrent ? 'background:linear-gradient(135deg,rgba(107,56,212,0.04),rgba(132,85,239,0.04));' : '';
+      var bg = isCurrent ? 'background:linear-gradient(135deg,rgba(31,75,216,0.04),rgba(132,85,239,0.04));' : '';
 
       var diffHtml = '';
       if (diff !== null && hasData) {
@@ -27009,18 +27009,14 @@
         var isPending = !hasData;
 
         if (isPending) {
-          return '<div class="rounded-3xl overflow-hidden flex flex-col" style="background:#f3f4f5;border:2px dashed #e1e3e4;">' +
+          return '<div class="flex flex-col" style="background:#fff;border:1px dashed #DCDCE3;min-height:100%">' +
             '<div class="px-6 py-4 flex justify-between items-center">' +
-              '<h3 class="font-headline font-bold text-lg text-slate-400">' + MONTHS_KR[idx] + '</h3>' +
-              '<span class="text-[9px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-full font-bold uppercase">Pending</span>' +
+              '<h3 class="font-bold text-lg" style="color:#8A8A95">' + MONTHS_KR[idx] + '</h3>' +
+              '<span class="atl-chip">Planned</span>' +
             '</div>' +
-            '<div class="p-5 flex-grow"><div class="h-24 flex flex-col items-center justify-center gap-2">' +
-              '<span class="material-symbols-outlined text-slate-300 text-3xl">lock</span>' +
-              '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">add</span>항목 추가</button>' +
-              '<button onclick="openMonthCopyModal(\'' + monthKey + '\')" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"><span class="material-symbols-outlined" style="font-size: var(--font-size-body)">content_copy</span>다른 월에서 복사</button>' +
-            '</div></div>' +
-            '<div class="p-4 text-center" style="background:#e7e8e9;">' +
-              '<span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">예정</span>' +
+            '<div class="p-5 flex-grow flex flex-col items-center justify-center gap-2">' +
+              '<button onclick="openHubModalForMonth(\'' + monthKey + '\')" class="atl-btn atl-btn-ghost"><span class="material-symbols-outlined">add</span>항목 추가</button>' +
+              '<button onclick="openMonthCopyModal(\'' + monthKey + '\')" class="atl-btn atl-btn-ghost"><span class="material-symbols-outlined">content_copy</span>다른 월에서 복사</button>' +
             '</div></div>';
         }
 
@@ -27051,12 +27047,12 @@
             '</div></td></tr>';
         }).join('');
 
-        var activeBorder = isActive ? 'border:2px solid rgba(107,56,212,0.2);' : '';
-        var headerBg = isActive ? 'background:rgba(107,56,212,0.05);' : 'background:#f8f9fa;';
+        var activeBorder = isActive ? 'border:2px solid rgba(31,75,216,0.2);' : '';
+        var headerBg = isActive ? 'background:#EEF2FD;' : 'background:#fff;';
         var badge = isActive ?
-          '<span class="text-[9px] text-white px-2.5 py-1 rounded-full font-bold uppercase" style="background:var(--lavender-deep);">Active</span>' :
-          '<span class="text-[9px] px-2.5 py-1 rounded-full font-bold uppercase" style="background:rgba(107,56,212,0.1);color:var(--lavender-deep);">Completed</span>';
-        var footerStyle = isActive ? 'background:var(--lavender-deep);color:white;' : 'background:rgba(107,56,212,0.05);';
+          '<span class="atl-chip is-accent">This month</span>' :
+          '<span class="atl-chip is-done">Done</span>';
+        var footerStyle = isActive ? 'background:var(--atl-accent);color:white;' : 'background:#F8F8FA;border-top:1px solid #ECECF0;';
         var balColor = isActive ? 'color:white;' : 'color:var(--lavender-deep);';
         var balLabel = isActive ? 'color:rgba(255,255,255,0.7);' : 'color:#475569;';
 
@@ -27093,7 +27089,7 @@
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">비유동자산</span>' +
               '<span class="text-base font-black font-headline" style="' + balColor + '">' + Math.round(nonLiquidAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
-            '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(107,56,212,0.12)') + ';">' +
+            '<div class="flex justify-between items-center pt-1 mt-1" style="border-top:1px solid ' + (isActive ? 'rgba(255,255,255,0.2)' : 'rgba(31,75,216,0.12)') + ';">' +
               '<span class="text-[9px] font-bold uppercase tracking-widest" style="' + balLabel + '">총 자산</span>' +
               '<span class="text-2xl font-black font-headline" style="' + (isActive ? 'color:white;' : 'color:var(--lavender-deep);') + '">' + Math.round(runningAssets).toLocaleString('ko-KR') + '</span>' +
             '</div>' +
@@ -27242,7 +27238,7 @@
     var st = document.createElement('style');
     st.textContent =
       '.hub-cell{cursor:cell;padding-left:4px;padding-right:4px;border-radius:4px}' +
-      '.hub-cell.hub-sel{box-shadow:inset 0 0 0 1.5px var(--lavender-deep,#17348F);background:rgba(107,56,212,0.05)}' +
+      '.hub-cell.hub-sel{box-shadow:inset 0 0 0 1.5px var(--lavender-deep,#17348F);background:rgba(31,75,216,0.05)}' +
       '.hub-cell.hub-editing{background:#fff}' +
       '.hub-cell-wrap{display:flex;align-items:center;gap:2px}' +
       '.hub-cell.text-right .hub-cell-wrap{justify-content:flex-end}' +
@@ -30250,7 +30246,7 @@ function openSessionDetail(dateId) {
 
   function krBox(text) {
     if (!text) return '';
-    return '<div class="mt-5 p-5 rounded-xl border-l-4 border-indigo-400" style="background:rgba(107,56,212,0.06);"><p class="review-krbox-text">' + text + '</p></div>';
+    return '<div class="mt-5 p-5 rounded-xl border-l-4 border-indigo-400" style="background:rgba(31,75,216,0.06);"><p class="review-krbox-text">' + text + '</p></div>';
   }
 
   function sectionCard(num, enTitle, krTitle, contentHtml) {
@@ -32398,9 +32394,9 @@ function _sanitizeScanNotes(notes) {
   var _vaultHighlightIdx = -1;
 
   var VAULT_CAT_STYLE = {
-    work: 'background:rgba(107,56,212,0.1);color:var(--lavender-deep)',
+    work: 'background:rgba(31,75,216,0.1);color:var(--lavender-deep)',
     life: 'background:rgba(201,179,253,0.3);color:#544183',
-    study: 'background:rgba(107,56,212,0.1);color:var(--lavender-deep)',
+    study: 'background:rgba(31,75,216,0.1);color:var(--lavender-deep)',
     emotions: 'background:rgba(201,179,253,0.3);color:#544183',
     insights: 'background:rgba(255,220,187,0.4);color:#673d00'
   };

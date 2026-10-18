@@ -73,8 +73,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=391" as="script">
-  <link rel="preload" href="js/app-2-init.js?v=183" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=392" as="script">
+  <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
   <link rel="preload" href="js/daily-actions.js?v=163" as="script">
@@ -83,7 +83,7 @@
   <link rel="preload" href="js/app-5-ledger-export.js?v=163" as="script">
   <link rel="preload" href="js/nomad-data.js?v=172" as="script">
   <link rel="preload" href="js/nomad-cities.js?v=163" as="script">
-  <link rel="preload" href="js/nomad-pages.js?v=192" as="script">
+  <link rel="preload" href="js/nomad-pages.js?v=193" as="script">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Color+Emoji&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- flatpickr (예쁜 날짜 선택기) -->
@@ -357,6 +357,11 @@
     .absolute.shadow-sm,.absolute.shadow,.absolute.shadow-md,.absolute.shadow-lg,.absolute.shadow-xl,.absolute.shadow-2xl{box-shadow:0 8px 28px rgba(20,20,40,.14) !important}
     /* 카드처럼 쓰인 흰 칸에 선이 없으면 테두리를 그려 준다 */
     .bg-white.shadow-sm:not([class*="border"]),.bg-white.shadow:not([class*="border"]),.bg-white.shadow-md:not([class*="border"]),.bg-white.shadow-lg:not([class*="border"]),.bg-white[class*="shadow-["]:not([class*="border"]){outline:1px solid var(--atl-line);outline-offset:-1px}
+    /* 상태 태그: 작은 사각 태그, 대문자 아님 */
+    .atl-chip{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;font-size:11.5px;font-weight:600;background:var(--atl-surface);color:var(--atl-text-2);white-space:nowrap}
+    .atl-chip::before{content:'';width:6px;height:6px;background:currentColor}
+    .atl-chip.is-done{background:var(--atl-accent-soft);color:var(--atl-accent-ink)}
+    .atl-chip.is-accent{background:var(--atl-accent);color:#fff}
     /* 사이드바: 4묶음 + 선택된 메뉴 */
     #sidebar .nav-group{padding:18px 24px 6px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--atl-text-3)}
     #sidebar .nav-item.is-active{background:var(--atl-accent-soft);color:var(--atl-accent-ink);font-weight:600}
@@ -381,7 +386,7 @@
        오늘/연차/공휴일 셀의 hover/focus 강조, 부드러운 transition */
     .calendar-page td, .calendar-page .day-cell { transition: transform 0.12s ease, box-shadow 0.12s ease; }
     .calendar-page td:hover, .calendar-page .day-cell:hover {
-      box-shadow: 0 2px 12px rgba(107, 56, 212, 0.10);
+      box-shadow: 0 2px 12px rgba(31,75,216, 0.10);
       position: relative; z-index: 2;
     }
     /* Matrix 셀 — 호버 시 살짝 부각 */
@@ -393,7 +398,7 @@
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
     /* ═══ flatpickr Atelier 보라색 테마 ═══ */
     /* z-index 최대값 — 어떤 모달/오버레이도 못 가리도록 */
-    .flatpickr-calendar { font-family: 'Manrope', 'Pretendard', 'Inter',system-ui,sans-serif !important; border-radius: var(--radius-xl) !important; box-shadow: 0 16px 40px rgba(107,56,212,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
+    .flatpickr-calendar { font-family: 'Manrope', 'Pretendard', 'Inter',system-ui,sans-serif !important; border-radius: var(--radius-xl) !important; box-shadow: 0 16px 40px rgba(31,75,216,0.25) !important; border: none !important; overflow: hidden; z-index: 2147483647 !important; }
     .flatpickr-calendar.open, .flatpickr-calendar.hasTime.noCalendar, .flatpickr-calendar.inline { z-index: 2147483647 !important; }
     .flatpickr-calendar.arrowTop:before, .flatpickr-calendar.arrowTop:after { border-bottom-color: var(--lavender-deep) !important; }
     .flatpickr-months { background: linear-gradient(135deg,var(--lavender-deep),var(--lavender-deep-soft)) !important; padding: var(--space-3) var(--space-2) !important; border-top-left-radius: 16px; border-top-right-radius: 16px; }
@@ -415,7 +420,7 @@
     .flatpickr-day:hover:not(.selected):not(.flatpickr-disabled) { background: #f3e8ff !important; color: var(--lavender-deep) !important; }
     .flatpickr-day.today { border-color: #BCCBF7 !important; color: var(--lavender-deep) !important; }
     .flatpickr-day.today:hover { background: #EEF2FD !important; }
-    .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--lavender-deep) !important; border-color: var(--lavender-deep) !important; color: #fff !important; box-shadow: 0 4px 10px rgba(107,56,212,0.35) !important; }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--lavender-deep) !important; border-color: var(--lavender-deep) !important; color: #fff !important; box-shadow: 0 4px 10px rgba(31,75,216,0.35) !important; }
     .flatpickr-day.inRange { background: #EEF2FD !important; border-color: #EEF2FD !important; color: var(--lavender-deep) !important; box-shadow: none !important; }
     .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--slate-300) !important; }
     .flatpickr-day.flatpickr-disabled { color: var(--slate-200) !important; }
@@ -425,7 +430,7 @@
     .no-scrollbar::-webkit-scrollbar,.hide-scrollbar::-webkit-scrollbar{display:none}
     .fixed-input-row input,.fixed-input-row select{border-radius:0;border-top:0;border-left:0;border-right:0;}
     .fixed-input-row select{background:transparent;cursor:pointer;}
-    .fixed-input-row input:focus,.fixed-input-row select:focus{background:rgba(107,56,212,0.06);}
+    .fixed-input-row input:focus,.fixed-input-row select:focus{background:rgba(31,75,216,0.06);}
     .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     .ldg-row-selected td{background-color:rgba(53,99,223,0.12)!important}
     .ldg-row-selected td:first-child{border-left:3px solid var(--indigo-500)!important;padding-left:calc(1rem - 3px)!important}
@@ -571,8 +576,8 @@
       font-size: var(--font-size-body); font-weight: 600; color: var(--slate-800);
       cursor: pointer; transition: all 0.15s;
     }
-    .trip-dd-btn:hover { border-color: #1F4BD8; box-shadow: 0 4px 12px rgba(107,56,212,0.12); }
-    .trip-dd-btn:focus { outline: none; ring: 2px; box-shadow: 0 0 0 2px rgba(107,56,212,0.3); }
+    .trip-dd-btn:hover { border-color: #1F4BD8; box-shadow: 0 4px 12px rgba(31,75,216,0.12); }
+    .trip-dd-btn:focus { outline: none; ring: 2px; box-shadow: 0 0 0 2px rgba(31,75,216,0.3); }
     .trip-dd-panel {
       position: absolute; left: 0; top: 100%; margin-top: var(--space-1);
       width: 100%; max-width: 360px;
@@ -2934,7 +2939,7 @@
     .nomad-page .nm-why-takeaway .icon-box {
       width: 48px; height: 48px;
       border-radius: 50%;
-      background: rgba(79, 70, 229, 0.12);
+      background: rgba(26,63,181, 0.12);
       display: flex; align-items: center; justify-content: center;
       color: var(--nm-soft-accent);
       flex-shrink: 0;
@@ -3707,7 +3712,7 @@
         justify-content: space-between !important;
         gap: var(--space-2) !important;
         padding: var(--space-2) var(--space-1) !important;
-        background: rgba(107,56,212,0.04);
+        background: rgba(31,75,216,0.04);
         border-radius: var(--radius-md);
       }
       #journey-flight-list > div > div[style*="grid-template-columns"] > div:nth-child(4) {
@@ -3785,7 +3790,7 @@
       /* 자식 2: 중앙(Date+Time) - flex-1 풀고 양쪽 끝 정렬 + 옅은 배경 */
       #journey-transport-list > div > div.flex.items-center > div.flex-1 {
         justify-content: space-between !important;
-        background: rgba(107,56,212,0.04);
+        background: rgba(31,75,216,0.04);
         border-radius: var(--radius-md);
         padding: var(--space-2) var(--space-3) !important;
         gap: var(--space-3) !important;
@@ -4413,7 +4418,7 @@
     #page-packing .pk-day-act-btn.swap-target { color: var(--lavender-deep); }
     #page-packing .pk-day-card.swap-src {
       border-color: var(--lavender-deep);
-      box-shadow: 0 0 0 2px rgba(107, 56, 212, 0.16);
+      box-shadow: 0 0 0 2px rgba(31,75,216, 0.16);
     }
     #page-packing .pk-card-title {
       font-family: 'Plus Jakarta Sans', 'Pretendard', sans-serif;
@@ -4973,7 +4978,7 @@
     .vault-model-label { display: block; padding: 0.625rem 1rem; border-radius: var(--radius-lg); background: #e7e8e9; font-size: var(--font-size-body-sm); font-weight: 700; text-align: center; transition: all 0.15s; color: #494454; min-width: 100px; }
     .vault-model-label.active, .vault-model-radio input:checked + .vault-model-label { background: var(--lavender-deep); color: #fff; }
     .vault-ai-item { background: #fff; border-radius: var(--radius-xl); padding: 1rem; border: 1px solid rgba(203,195,215,0.15); transition: all 0.15s; }
-    .vault-ai-item:hover { border-color: rgba(107,56,212,0.3); }
+    .vault-ai-item:hover { border-color: rgba(31,75,216,0.3); }
 
     /* Review drop zone active state */
     .review-dz-active {
@@ -11693,7 +11698,7 @@
       <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <!-- 오늘의 영어 (보라 그라데이션 — 디자인 포인트) -->
-        <div id="dash-expr-card" class="relative overflow-hidden" style="background:#1F4BD8;border-radius: var(--radius-2xl);padding: var(--space-6);color:#ffffff;box-shadow:0 8px 24px rgba(124,58,237,0.22);cursor:pointer;transition:transform 0.15s;" onclick="navigate('english')">
+        <div id="dash-expr-card" class="relative overflow-hidden" style="background:#1F4BD8;border-radius: var(--radius-2xl);padding: var(--space-6);color:#ffffff;box-shadow:0 8px 24px rgba(31,75,216,0.22);cursor:pointer;transition:transform 0.15s;" onclick="navigate('english')">
           <div style="position:absolute;top:12px;right:18px;font-size:72px;font-weight:800;opacity:0.16;pointer-events:none;line-height:1;">"</div>
           <div class="flex justify-between items-center mb-2 relative z-10">
             <div class="flex items-center gap-1.5">
@@ -16424,7 +16429,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=391" defer></script>
+<script src="js/app-1-pages.js?v=392" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">
@@ -17292,7 +17297,7 @@
 
 </div><!-- /app-container -->
 
-<script src="js/app-2-init.js?v=183" defer></script>
+<script src="js/app-2-init.js?v=184" defer></script>
 
 <!-- ═══════════════════════════════════════════════════
      flatpickr 자동 적용 — 모든 type="date" 인풋을
@@ -17313,7 +17318,7 @@
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>
 <script src="js/nomad-cities.js?v=163" defer></script>
-<script src="js/nomad-pages.js?v=192" defer></script>
+<script src="js/nomad-pages.js?v=193" defer></script>
 
 <!-- Atlas (미래 여행 계획) 모듈 -->
 <script src="js/atlas-data.js?v=7" defer></script>

@@ -1,3 +1,12 @@
+## 2026-10-18 · 아이맥 · 공통 디자인 5단계 — 규칙 문서화 · Money 월 카드 · AI Tutor
+
+- CLAUDE.md 에 「🎨 디자인 규칙」 절 추가: 흰 바탕·모든 칸 직각·코발트 #1F4BD8 하나·Pretendard 하나·그림자 없음·버튼 3종·탭 2종·메뉴 영어. 별도 HTML 페이지는 index 스타일을 못 받으니 규칙을 파일 안에 직접 넣을 것
+- Money 자산 월 카드: 빈 달(회색 상자+자물쇠+회색 '예정' 띠) → 흰 바탕 점선 칸 + Planned 태그 + 글자 버튼 2개. PENDING/COMPLETED/ACTIVE 대문자 알약 → `.atl-chip` 작은 사각 태그(Planned / Done / This month)
+- 옛 보라 rgba(107,56,212 등) 남은 것 → 코발트 (index·app-1-pages·app-2-init·nomad-pages)
+- tutor.html(AI Tutor): 이미 코발트·Pretendard·직각이었고, 프로필 링·통화 버튼·상태 점 원형 5곳만 사각으로
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor 1단계 — Gemini Live 영어 화상 회화 화면
 
 - 누리: 스레드 @simon.dsgn 의 Fluentutor(링글 같은 AI 화상 영어) 보고 "우리도 이 정도로" → 새 페이지 `tutor.html`, 사이드바 GROWTH 에 **AI Tutor**(English 아래), Home 목차에도 링크. index 에는 iframe(allow=microphone·camera·display-capture)
