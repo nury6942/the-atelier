@@ -1,3 +1,19 @@
+## 2026-10-18 · 아이맥 · AI Tutor — 기억(통화 중 요약 메모 + 장기 학습 프로필)
+
+- 누리: 6분 지나면 기억이 사라져? → 두 겹 기억
+- 새 함수 `tutorMemory`(Claude Opus 5.5, server-side fallback "default", Firestore admin):
+  - `profile`: `tutor/profile` 읽기
+  - `notes`: 통화 중 지금까지를 영어 120단어 이하 메모로(effort low, 실측 6초)
+  - `finish`: 통화 끝나면 프로필 갱신 + `tutorSessions` 에 요약·실수·잘한 점·원문 저장(effort medium, 실측 24초)
+- tutor.html: 시작할 때 프로필을 읽어 시스템 프롬프트에 "지난 수업 기억"으로 넣음(못 읽으면 마지막 사본). 3분 넘게 지나고 새 말 8줄 이상이면 메모를 만들어 Live 에 `clientContent turnComplete:false`([Lesson notes])로 조용히 넣음 — 실측: 대답 안 하고 내용은 기억함
+- 통화 끝(내가 두 마디 이상) → 대화창 아래 **오늘의 정리**(요약·고칠 문장·잘한 점), 지난 대화에도 보관. 사이드바 **내 학습 프로필** 화면(About·Level·Goals·Next lesson·Recurring mistakes·Phrases·Strengths·기억하는 이야기·최근 수업)
+- 테스트 겸 첫 대화(56초, 미역 이야기)로 실제 첫 프로필 생성됨
+- 프로필 내용은 한국어(누리가 읽음) + 영어 예문, 튜터에게는 영어 지시와 함께 그대로 전달
+- 다음: IELTS Speaking 모드(Part 1·2·3, 밴드 채점) → 문장 교정·표현 저장
+- service-worker CACHE_NAME v624
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — 실사 튜터 Oliver + 카메라 켜고 시작
 
 - 누리: 애니 캐릭터 말고 실사로 / 영국·수염 없는·앳된 "hype boy" 느낌 남자 → **이미지는 무조건 Codex**(메모리 저장). 처음에 Claude 가 Gemini 이미지 API 로 여자 후보 3장 만든 건 폐기(크레딧 약간 사용)

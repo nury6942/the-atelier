@@ -636,3 +636,136 @@ exports.trendFeed = onRequest(
   }
 );
 
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ (2026-10-18) AI Tutor 기억 — Claude 가 대화를 요약해 Firestore 에 저장
+//    action:
+//      profile : 장기 학습 프로필 읽기  (tutor/profile)
+//      notes   : 통화 중 요약 메모 만들기 — 튜터(Gemini Live)는 ~6분만 기억하므로
+//                몇 분마다 지난 대화를 몇 줄로 줄여 다시 넣어 준다
+//      finish  : 통화가 끝나면 이번 대화를 반영해 프로필 갱신 + tutorSessions 에 한 줄 기록
+// ══════════════════════════════════════════════════════════════════════
+const TUTOR_MODEL = "claude-opus-5-5";
+
+function tutorTranscript(lines) {
+  return (lines || [])
+    .filter((l) => l && l.text)
+    .map((l) => (l.who === "tutor" ? "Oliver: " : "Nuri: ") + String(l.text).slice(0, 2000))
+    .join("\n");
+}
+
+async function tutorClaude(system, user, effort) {
+  const Anthropic = require("@anthropic-ai/sdk");
+  const anthropic = new Anthropic({ apiKey: anthropicApiKey.value() });
+  const msg = await anthropic.beta.messages.create({
+    model: TUTOR_MODEL,
+    max_tokens: 16000,
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",                 // 안전 필터에 걸리면 서버가 다른 모델로 대신 답함
+    output_config: { effort },
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+  if (msg.stop_reason === "refusal") throw new Error("refusal");
+  const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
+  logger.info("tutorClaude", { effort, input: msg.usage.input_tokens, output: msg.usage.output_tokens });
+  return text;
+}
+
+function tutorJson(text) {
+  const s = text.indexOf("{"), e = text.lastIndexOf("}");
+  if (s < 0 || e < s) throw new Error("no JSON in reply");
+  return JSON.parse(text.slice(s, e + 1));
+}
+
+const TUTOR_PROFILE_SHAPE = `{
+  "about": "누리가 어떤 사람인지 2~4문장 (직업·상황·관심사·성격). 한국어",
+  "level": "현재 영어 실력 한 줄 (예: 'B2 — 일상 대화는 막힘없고, 시제·관사에서 자주 흔들림'). 한국어",
+  "goals": ["목표, 한국어, 최대 4개"],
+  "personalDetails": ["튜터가 다음에 꺼낼 수 있는 개인적인 사실 — 사람·장소·일정·취향. 한국어 + 고유명사 원문, 최대 12개, 오래되거나 덜 중요한 것부터 뺌"],
+  "recentTopics": [{"date": "YYYY-MM-DD", "topic": "주제", "note": "한 줄"}],
+  "recurringMistakes": [{"pattern": "반복되는 실수 이름(한국어)", "example": "누리가 실제로 한 틀린 영어 문장", "fix": "자연스럽게 고친 영어 문장", "count": 1}],
+  "strengths": ["잘하는 점, 한국어, 최대 5개"],
+  "vocabToReuse": [{"phrase": "최근 배운/써보면 좋을 영어 표현", "meaning": "한국어 뜻"}],
+  "nextTime": ["다음 수업에서 해볼 것, 한국어, 최대 3개"]
+}`;
+
+exports.tutorMemory = onRequest(
+  { secrets: [anthropicApiKey, atelierAuthToken], cors: true, invoker: "public", memory: "512MiB", timeoutSeconds: 180 },
+  async (req, res) => {
+    corsHeaders(res);
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    const token = req.headers["x-atelier-token"];
+    if (!token || token !== atelierAuthToken.value()) return res.status(401).json({ error: "Unauthorized" });
+
+    const db = admin.firestore();
+    const profileRef = db.collection("tutor").doc("profile");
+    const { action } = req.body || {};
+
+    try {
+      if (action === "profile") {
+        const snap = await profileRef.get();
+        return res.status(200).json({ profile: snap.exists ? snap.data() : null });
+      }
+
+      if (action === "notes") {
+        const { lines, prevNotes } = req.body;
+        const notes = await tutorClaude(
+          "You keep short running notes for an English tutor (Oliver) during a live video lesson with Nuri, a Korean fashion designer. " +
+          "The tutor's own memory only covers the last few minutes, so your notes are how he remembers the earlier part of this lesson.",
+          (prevNotes ? "Notes so far:\n" + prevNotes + "\n\n" : "") +
+          "New part of the conversation:\n" + tutorTranscript(lines) +
+          "\n\nRewrite the notes to cover the whole lesson so far, in English, under 120 words, as terse bullet points: " +
+          "facts and stories she shared (people, places, plans), topics covered, mistakes she made more than once (with her wording), " +
+          "and any phrase Oliver taught her. Output only the bullet points.",
+          "low"
+        );
+        return res.status(200).json({ notes });
+      }
+
+      if (action === "finish") {
+        const { lines, mode, topic, sec, startedAt } = req.body;
+        const transcript = tutorTranscript(lines);
+        if (!transcript) return res.status(400).json({ error: "empty transcript" });
+        const snap = await profileRef.get();
+        const old = snap.exists ? snap.data() : null;
+        const date = new Date(startedAt || Date.now()).toISOString().slice(0, 10);
+        const reply = await tutorClaude(
+          "You maintain the long-term learner profile that an AI English tutor (Oliver) reads before every lesson with Nuri — " +
+          "a Korean fashion designer (B2 aiming for C1) preparing to work abroad and studying for IELTS. " +
+          "The profile lets Oliver act like a real tutor who remembers her: her life, her recurring mistakes, what to practise next. " +
+          "Be specific and evidence-based: only record what the transcript actually shows. Speech-to-text transcripts contain recognition errors — " +
+          "don't record a 'mistake' that is probably just a transcription glitch.",
+          "Current profile (may be null):\n" + JSON.stringify(old) +
+          "\n\nToday's lesson (" + date + ", mode: " + (mode || "free") + ", topic: " + (topic || "-") + ", " + Math.round((sec || 0) / 60) + " min):\n" + transcript +
+          "\n\nReturn ONE JSON object with two keys:\n" +
+          "\"profile\": the updated profile, merging today into the current one (keep what is still true, update counts, drop stale or minor items, keep each list within its limit; recentTopics newest first, max 10). Shape:\n" +
+          TUTOR_PROFILE_SHAPE +
+          "\n\"session\": {\"summary\": \"오늘 대화 요약 2~3문장, 한국어\", \"mistakes\": [{\"said\": \"누리가 한 문장\", \"better\": \"더 자연스러운 문장\", \"why\": \"한 줄, 한국어\"}] (max 5), \"good\": [\"잘한 표현이나 점, 한국어\"] (max 3)}\n" +
+          "Output only the JSON.",
+          "medium"
+        );
+        const out = tutorJson(reply);
+        const profile = Object.assign({}, out.profile || {}, {
+          sessions: ((old && old.sessions) || 0) + 1,
+          updatedAt: new Date().toISOString(),
+        });
+        await profileRef.set(profile);
+        await db.collection("tutorSessions").add({
+          at: startedAt || Date.now(), date, mode: mode || "free", topic: topic || "", sec: sec || 0,
+          summary: (out.session && out.session.summary) || "",
+          mistakes: (out.session && out.session.mistakes) || [],
+          good: (out.session && out.session.good) || [],
+          lines: (lines || []).slice(0, 400),
+        });
+        return res.status(200).json({ profile, session: out.session || null });
+      }
+
+      return res.status(400).json({ error: "unknown action" });
+    } catch (error) {
+      logger.error("tutorMemory error:", error);
+      return res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  }
+);

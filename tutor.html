@@ -175,6 +175,36 @@
   .say input{flex:1;border:0;outline:none;font-size:14px;background:transparent;padding:6px 0}
   .say button{width:36px;height:36px;display:grid;place-items:center;background:var(--ink);color:#fff}
   .say button .ms{font-size:18px}
+  /* 학습 프로필 화면 */
+  .profile{flex:1;overflow-y:auto;display:none;padding:28px 32px 56px}
+  .profile .wrap{max-width:860px;margin:0 auto}
+  .profile .ph{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .profile .ph img{width:64px;height:64px;object-fit:cover;object-position:52% 38%}
+  .profile .ph h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.01em}
+  .profile .ph p{margin:4px 0 0;font-size:12.5px;color:var(--dim)}
+  .psec{padding:20px 0;border-bottom:1px solid var(--line)}
+  .psec h3{margin:0 0 12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700}
+  .psec p{margin:0;font-size:14.5px;line-height:1.7}
+  .psec ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .psec li{font-size:14px;line-height:1.6;padding-left:14px;position:relative}
+  .psec li::before{content:'';position:absolute;left:0;top:.7em;width:5px;height:5px;background:var(--accent)}
+  .mist{display:grid;grid-template-columns:1fr;gap:10px}
+  .mist .m{border:1px solid var(--line);padding:12px 14px}
+  .mist .k{font-size:12px;font-weight:700;color:var(--mut);margin-bottom:6px}
+  .mist .bad{font-size:14px;color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(212,53,28,.5)}
+  .mist .good{font-size:14.5px;font-weight:600;margin-top:2px}
+  .mist .why{font-size:12.5px;color:var(--mut);margin-top:4px}
+  .vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+  .vocab div{border:1px solid var(--line);padding:10px 12px}
+  .vocab b{display:block;font-size:14px}
+  .vocab span{font-size:12.5px;color:var(--mut)}
+  .pempty{padding:48px 0;color:var(--dim);font-size:14px;line-height:1.7;text-align:center}
+  /* 대화 끝난 뒤 오늘의 정리 */
+  .review{align-self:stretch;max-width:760px;border:1px solid var(--line);background:var(--panel);padding:16px 18px}
+  .review h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .review>p{margin:0 0 12px;font-size:14px;line-height:1.7}
+  .review .mist .m{background:#fff}
+  .review.loading{color:var(--dim);font-size:13px}
   .spend{border-top:1px solid var(--line);padding:14px 20px 16px;font-variant-numeric:tabular-nums}
   .spend .k{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700;text-transform:uppercase}
   .spend .v{font-size:18px;font-weight:800;margin-top:4px}
@@ -209,8 +239,8 @@
   <aside class="side">
     <div class="brand"><span class="mark">T</span>Tutor</div>
     <nav class="nav">
-      <button class="on" onclick="goHome()"><span class="ms">add</span>새 대화</button>
-      <button disabled><span class="ms">person</span>내 학습 프로필<span class="soon">곧</span></button>
+      <button class="on" id="navNew" onclick="goHome()"><span class="ms">add</span>새 대화</button>
+      <button id="navProfile" onclick="showProfile()"><span class="ms">person</span>내 학습 프로필</button>
       <button disabled><span class="ms">bookmark</span>저장한 표현<span class="soon">곧</span></button>
       <button disabled><span class="ms">replay</span>복습<span class="soon">곧</span></button>
     </nav>
@@ -258,6 +288,9 @@
       <label class="camopt"><input type="checkbox" id="camStart" checked><span>카메라 켜고 시작 (영상통화)</span></label>
       <div class="hint">카메라나 화면을 켜면 튜터가 보면서 이야기해요</div>
     </section>
+
+    <!-- 학습 프로필 -->
+    <section class="profile" id="profileView"><div class="wrap" id="profileWrap"></div></section>
 
     <!-- 통화 -->
     <section class="call" id="call">
@@ -315,7 +348,9 @@
 // ═══════════════════════════════════════════════════════════
 var TOKEN_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/tutorToken';
 var WS_URL = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=';
-var HIST_KEY = 'atelier_tutor_history_v1';   // 1단계는 이 브라우저에만 저장. 2단계에서 Firestore 로 옮김
+var MEMORY_API = 'https://us-central1-the-atelier-99b8c.cloudfunctions.net/tutorMemory';
+var HIST_KEY = 'atelier_tutor_history_v1';   // 대화 원문은 이 브라우저에. 프로필·대화 요약은 Firestore(tutorMemory)
+var PROFILE_KEY = 'atelier_tutor_profile_v1'; // 프로필 마지막 사본(오프라인 보기용)
 var PREF_KEY = 'atelier_tutor_prefs_v1';
 
 var TOPICS = {
@@ -343,7 +378,23 @@ var MODE_BRIEF = {
   portfolio: 'Portfolio walkthrough practice. She may share her screen or hold work up to the camera. Ask her to explain concept, process, materials and decisions as she would to a hiring manager. Comment specifically on what you can see.'
 };
 
-function systemPrompt(mode, topic){
+// 장기 기억: 지난 수업들에서 Claude 가 정리해 둔 학습 프로필을 튜터에게 미리 읽힘
+function memoryBrief(p){
+  if (!p) return 'This is your first lesson with Nuri — get to know her.';
+  var out = ['What you remember about Nuri from ' + (p.sessions || 'earlier') + ' previous lesson(s). (Written in Korean by your notes system — use it naturally like a real tutor who remembers; never recite it or mention notes.)'];
+  if (p.about) out.push('- Who she is: ' + p.about);
+  if (p.level) out.push('- Level: ' + p.level);
+  if (p.goals && p.goals.length) out.push('- Goals: ' + p.goals.join(' / '));
+  if (p.personalDetails && p.personalDetails.length) out.push('- Things she told you: ' + p.personalDetails.join(' / '));
+  if (p.recentTopics && p.recentTopics.length) out.push('- Recent lessons: ' + p.recentTopics.slice(0, 4).map(function(t){ return t.date + ' ' + t.topic + ' (' + t.note + ')'; }).join(' / '));
+  if (p.recurringMistakes && p.recurringMistakes.length) out.push('- Mistakes she tends to repeat (listen for these and recast them gently): ' + p.recurringMistakes.map(function(m){ return m.pattern + ': "' + m.example + '" → "' + m.fix + '"'; }).join(' / '));
+  if (p.vocabToReuse && p.vocabToReuse.length) out.push('- Phrases she is learning (create chances for her to use them): ' + p.vocabToReuse.map(function(v){ return v.phrase; }).join(', '));
+  if (p.nextTime && p.nextTime.length) out.push('- Plans for this lesson: ' + p.nextTime.join(' / '));
+  out.push('Open the lesson like someone who remembers her — e.g. pick up a thread from last time — unless she brings her own topic.');
+  return out.join('\n');
+}
+
+function systemPrompt(mode, topic, profile){
   return [
     'You are Oliver, a 20-year-old British university student from London who tutors English part-time. You are having a relaxed 1:1 video call with Nuri. Speak with a natural Southern British (London) accent and use British vocabulary and expressions. You are bright, warm, a bit playful and genuinely curious — like a friendly younger friend, never stiff or formal.',
     'About Nuri: Korean fashion designer, upper-intermediate (B2) aiming for C1, preparing to work abroad (EU / Canada / Australia). She has had a long-time human tutor, so treat this as relaxed extra speaking practice, not a test. She finds pressure-heavy lessons draining — keep it light and warm.',
@@ -355,7 +406,10 @@ function systemPrompt(mode, topic){
     '- Corrections: do NOT interrupt her. When she makes a meaningful mistake or sounds unnatural, recast it casually in your reply ("Oh, so you\'ve been working on it since March — nice!"). At most one explicit tip every few turns: "Quick tip: native speakers would say …".',
     '- If she gets stuck or uses a Korean word, help her find the English phrase, then continue.',
     '- If she shares her camera or screen, refer to what you actually see when relevant. Never pretend to see something you cannot.',
-    '- Always reply in English, unless she explicitly asks for a Korean explanation of a word.'
+    '- Always reply in English, unless she explicitly asks for a Korean explanation of a word.',
+    '- During the lesson you may receive messages starting with [Lesson notes]: they summarise the earlier part of THIS lesson that you may no longer hear. Use them silently; never reply to them.',
+    '',
+    memoryBrief(profile)
   ].join('\n');
 }
 
@@ -455,8 +509,9 @@ function shuffleTopics(){
 function goHome(){
   if (sess.active && !confirm('지금 대화를 끝낼까요?')) return;
   if (sess.active) endCall();
-  $('call').style.display = 'none'; $('home').style.display = 'flex';
+  $('call').style.display = 'none'; $('profileView').style.display = 'none'; $('home').style.display = 'flex';
   document.querySelector('.topbar').style.display = '';
+  setNav('new');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -502,7 +557,129 @@ function renderSpend(){
 }
 
 // ═══════════════════════════════════════════════════════════
-//  최근 대화 (1단계: 이 브라우저에만)
+//  기억 — 통화 중 요약 메모 + 통화 후 학습 프로필 갱신 (tutorMemory 함수, Claude)
+// ═══════════════════════════════════════════════════════════
+async function memoryCall(action, body, ms){
+  var ctl = new AbortController(), t = setTimeout(function(){ ctl.abort(); }, ms || 60000);
+  try {
+    var r = await fetch(MEMORY_API, { method: 'POST', signal: ctl.signal,
+      headers: { 'Content-Type': 'application/json', 'X-Atelier-Token': getAuth() },
+      body: JSON.stringify(Object.assign({ action: action }, body || {})) });
+    var j = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error(j.message || ('기억 서버 오류 ' + r.status));
+    return j;
+  } finally { clearTimeout(t); }
+}
+function cacheProfile(p){ try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch(e){} }
+function cachedProfile(){ try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); } catch(e){ return null; } }
+
+// 튜터(Gemini Live)는 최근 ~6분만 기억 → 3분 넘게 지나고 새 말이 8줄 넘게 쌓이면 지금까지를 몇 줄로 줄여 조용히 넣어 줌
+function maybeNotes(){
+  if (!sess.active || sess.notesBusy) return;
+  var fresh = sess.lines.length - (sess.notesFrom || 0);
+  if (fresh < 8 || Date.now() - (sess.notesAt || sess.startedAt) < 180000) return;
+  sess.notesBusy = true;
+  var upto = sess.lines.length;
+  memoryCall('notes', { lines: sess.lines.slice(sess.notesFrom || 0, upto), prevNotes: sess.notes || '' }, 45000)
+    .then(function(j){
+      if (!sess.active || !j.notes) return;
+      sess.notes = j.notes; sess.notesFrom = upto; sess.notesAt = Date.now();
+      send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '[Lesson notes — do not reply to this]\n' + j.notes }] }], turnComplete: false } });
+    })
+    .catch(function(e){ console.warn('[tutor] notes', e); sess.notesAt = Date.now(); })
+    .then(function(){ sess.notesBusy = false; });
+}
+
+// 통화가 끝나면: 이번 대화를 프로필에 반영 + 대화창 아래에 '오늘의 정리'
+function finishMemory(item){
+  var box = document.createElement('div');
+  box.className = 'review loading'; box.textContent = 'Oliver가 오늘 대화를 정리하고 기억하는 중… (20초쯤 걸려요)';
+  $('lines').appendChild(box); $('lines').scrollTop = $('lines').scrollHeight;
+  memoryCall('finish', { lines: item.lines, mode: item.mode, topic: item.topic, sec: item.sec, startedAt: item.at }, 170000)
+    .then(function(j){
+      if (j.profile) cacheProfile(j.profile);
+      if (j.session){
+        var list = loadHist();
+        list.forEach(function(h){ if (h.at === item.at) h.review = j.session; });
+        saveHist(list);
+      }
+      box.replaceWith(reviewEl(j.session));
+      $('lines').scrollTop = $('lines').scrollHeight;
+    })
+    .catch(function(e){ box.textContent = '정리하지 못했어요: ' + e.message; });
+}
+function reviewEl(r){
+  var d = document.createElement('div'); d.className = 'review';
+  var h = document.createElement('h4'); h.textContent = '오늘의 정리'; d.appendChild(h);
+  if (!r){ d.appendChild(document.createTextNode('기억했어요.')); return d; }
+  var p = document.createElement('p'); p.textContent = r.summary || ''; d.appendChild(p);
+  if (r.mistakes && r.mistakes.length) d.appendChild(mistakeList(r.mistakes.map(function(m){ return { k: '', bad: m.said, good: m.better, why: m.why }; })));
+  if (r.good && r.good.length){
+    var u = document.createElement('div'); u.className = 'psec'; u.style.padding = '12px 0 0'; u.style.border = '0';
+    u.appendChild(listEl(r.good.map(function(g){ return '잘했어요 — ' + g; }))); d.appendChild(u);
+  }
+  return d;
+}
+function listEl(items){
+  var ul = document.createElement('ul');
+  items.forEach(function(t){ var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+  return ul;
+}
+function mistakeList(items){
+  var w = document.createElement('div'); w.className = 'mist';
+  items.forEach(function(m){
+    var c = document.createElement('div'); c.className = 'm';
+    [['k', m.k], ['bad', m.bad], ['good', m.good], ['why', m.why]].forEach(function(x){
+      if (!x[1]) return; var e = document.createElement('div'); e.className = x[0]; e.textContent = x[1]; c.appendChild(e);
+    });
+    w.appendChild(c);
+  });
+  return w;
+}
+
+// ── 학습 프로필 화면
+function setNav(which){
+  $('navNew').classList.toggle('on', which === 'new');
+  $('navProfile').classList.toggle('on', which === 'profile');
+}
+async function showProfile(){
+  if (sess.active) return toast('대화가 끝난 뒤에 볼 수 있어요');
+  $('home').style.display = 'none'; $('call').style.display = 'none'; $('profileView').style.display = 'block';
+  document.querySelector('.topbar').style.display = 'none';
+  setNav('profile');
+  renderProfile(cachedProfile(), true);
+  try { var j = await memoryCall('profile', {}, 15000); cacheProfile(j.profile); renderProfile(j.profile, false); }
+  catch(e){ if (!cachedProfile()) $('profileWrap').innerHTML = '<div class="pempty">프로필을 불러오지 못했어요. ' + (getAuth() ? '' : 'ATELIER 토큰을 먼저 넣어 주세요.') + '</div>'; }
+}
+function renderProfile(p, loading){
+  var w = $('profileWrap'); w.innerHTML = '';
+  var head = document.createElement('div'); head.className = 'ph';
+  head.innerHTML = '<img src="assets/tutor/oliver-0.jpg" alt=""><div><h2>Oliver가 기억하는 누리</h2><p></p></div>';
+  head.querySelector('p').textContent = p
+    ? '수업 ' + (p.sessions || 0) + '번 · ' + new Date(p.updatedAt).toLocaleString('ko-KR') + ' 갱신' + (loading ? ' · 새로 불러오는 중…' : '')
+    : (loading ? '불러오는 중…' : '');
+  w.appendChild(head);
+  if (!p){ if (!loading){ var e = document.createElement('div'); e.className = 'pempty'; e.textContent = '아직 기억이 없어요. Oliver와 한 번 대화하고 나면 여기에 쌓여요.'; w.appendChild(e); } return; }
+  function sec(title, node){ if (!node) return; var s2 = document.createElement('div'); s2.className = 'psec'; var h = document.createElement('h3'); h.textContent = title; s2.appendChild(h); s2.appendChild(node); w.appendChild(s2); }
+  function para(t){ if (!t) return null; var e = document.createElement('p'); e.textContent = t; return e; }
+  function list(a){ return a && a.length ? listEl(a) : null; }
+  sec('About', para(p.about));
+  sec('Level', para(p.level));
+  sec('Goals', list(p.goals));
+  sec('Next lesson', list(p.nextTime));
+  sec('Recurring mistakes', p.recurringMistakes && p.recurringMistakes.length ? mistakeList(p.recurringMistakes.map(function(m){ return { k: m.pattern + (m.count > 1 ? ' · ' + m.count + '번' : ''), bad: m.example, good: m.fix }; })) : null);
+  if (p.vocabToReuse && p.vocabToReuse.length){
+    var v = document.createElement('div'); v.className = 'vocab';
+    p.vocabToReuse.forEach(function(x){ var d = document.createElement('div'); var b = document.createElement('b'); b.textContent = x.phrase; var sp = document.createElement('span'); sp.textContent = x.meaning; d.appendChild(b); d.appendChild(sp); v.appendChild(d); });
+    sec('Phrases to reuse', v);
+  }
+  sec('Strengths', list(p.strengths));
+  sec('Things Oliver remembers', list(p.personalDetails));
+  sec('Recent lessons', list((p.recentTopics || []).map(function(t){ return t.date + ' · ' + t.topic + ' — ' + t.note; })));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  최근 대화 (원문은 이 브라우저에만)
 // ═══════════════════════════════════════════════════════════
 function loadHist(){ try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e){ return []; } }
 function saveHist(list){ try { localStorage.setItem(HIST_KEY, JSON.stringify(list.slice(0, 60))); } catch(e){} }
@@ -523,7 +700,8 @@ function renderHist(){
 }
 function showTranscript(h){
   if (sess.active) return toast('대화가 끝난 뒤에 볼 수 있어요');
-  $('home').style.display = 'none'; $('call').style.display = 'flex';
+  $('home').style.display = 'none'; $('profileView').style.display = 'none'; $('call').style.display = 'flex';
+  setNav('');
   resetStage();
   setState('지난 대화', '');
   setCallHeader(h.topic || MODE_LABEL[h.mode], h.at);
@@ -531,6 +709,7 @@ function showTranscript(h){
   showCost(h.usd || 0);
   $('lines').innerHTML = '';
   h.lines.forEach(function(l){ addLine(l.who, l.text); });
+  if (h.review) $('lines').appendChild(reviewEl(h.review));
   setCallControls(false);
 }
 
@@ -754,7 +933,7 @@ async function connect(){
         mediaResolution: 'MEDIA_RESOLUTION_MEDIUM',    // 펜·글씨 같은 작은 것도 알아보게. 대신 사진은 필요할 때만 보냄(frameTick)
         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: sess.voice } } }
       },
-      systemInstruction: { parts: [{ text: systemPrompt(sess.mode, sess.topic) }] },
+      systemInstruction: { parts: [{ text: systemPrompt(sess.mode, sess.topic, sess.profile) }] },
       inputAudioTranscription: {},
       outputAudioTranscription: {},
       // 매 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구됨(음성 1초 ≈ 25토큰) → 기억을 1만2천 토큰(~6분)으로 묶어
@@ -806,7 +985,7 @@ function onServer(m){
       if (p.inlineData && p.inlineData.data && /audio/.test(p.inlineData.mimeType || 'audio')) playPcm(p.inlineData.data);
     });
   }
-  if (sc.turnComplete) breakCaption();
+  if (sc.turnComplete){ breakCaption(); maybeNotes(); }
 }
 
 async function startCall(){
@@ -818,7 +997,8 @@ async function startCall(){
   };
   showCost(0);
   breakCaption();
-  $('home').style.display = 'none'; $('call').style.display = 'flex';
+  $('home').style.display = 'none'; $('profileView').style.display = 'none'; $('call').style.display = 'flex';
+  setNav('');
   setCallControls(true);
   $('btnPause').innerHTML = '<span class="ms">pause</span><span>일시 정지</span>';
   $('lines').innerHTML = '';
@@ -835,6 +1015,11 @@ async function startCall(){
     startMeters();
     if ($('camStart').checked) toggleCam();          // 영상통화로 시작 — 카메라가 안 되면 안내만 하고 음성으로 계속
     sess.frameTimer = setInterval(frameTick, 300);
+    setState('Oliver가 지난 수업을 떠올리는 중…', '');
+    try { var pj = await memoryCall('profile', {}, 6000); sess.profile = pj.profile; cacheProfile(pj.profile); }
+    catch(e){ sess.profile = cachedProfile(); console.warn('[tutor] profile', e); }   // 못 불러오면 마지막 사본으로
+    if (!sess.active) return;
+    setState('연결 중…', '');
     await connect();
   } catch(e){ fail(e); }
 }
@@ -852,11 +1037,13 @@ function endCall(){
   setMouth(0); setMicLevel(0); $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);
+  var item = { at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, usd: sess.usd, lines: lines };
   if (lines.length || sess.usd){
     var list = loadHist();
-    list.unshift({ at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, usd: sess.usd, lines: lines });
+    list.unshift(item);
     saveHist(list); renderHist();
   }
+  if (lines.filter(function(l){ return l.who === 'me'; }).length >= 2) finishMemory(item);   // 내가 두 마디 이상 했을 때만 기억
   renderSpend();
   setState('대화를 마쳤어요 · ' + fmtTime(sec) + ' · ' + fmtWon(sess.usd), '');
   $('rec').classList.remove('live');
