@@ -318,7 +318,7 @@
   // ── 음성 (Listening) ──
   function stopSpeech(){ try { window.speechSynthesis.cancel(); } catch(e){} }
   // 화자별 음성 — js/tts-voice.js 의 atlVoice (장난·네트워크 음성 제외), 두 화자가 같은 목소리 안 되게
-  function castVoices(vmap){ var used=[], out={}; Object.keys(vmap).forEach(function(k){ var v=window.atlVoice?window.atlVoice(vmap[k].lang||'en-GB', used):null; if (v){ used.push(v.name); out[k]=v; } }); return out; }
+  function castVoices(vmap){ var used=[], out={}; if (window.atlIsSafari) return out; // 사파리는 기본 음성 그대로 Object.keys(vmap).forEach(function(k){ var v=window.atlVoice?window.atlVoice(vmap[k].lang||'en-GB', used):null; if (v){ used.push(v.name); out[k]=v; } }); return out; }
   function playSection(){
     var R=RUN, s=R.secs[R.cur]; if (!('speechSynthesis' in window)){ toast('이 브라우저는 음성 재생이 안 돼요'); return; }
     if (!R.done && R.played[R.cur]) return;

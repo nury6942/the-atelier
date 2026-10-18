@@ -40,7 +40,12 @@
     return bs > 0 ? best : null;
   };
   // 문장에 음성을 붙여 준다 — lang·voice 를 같이 맞춰야 크롬이 다른 음성으로 바꾸지 않음
+  // 사파리는 손대지 않는다 — 사파리 기본 음성(시스템 설정 음성, 고급·Siri 포함)이 Samantha 기본판보다 좋음.
+  // 크롬처럼 장난 음성이 걸리는 브라우저에서만 직접 고른다.
+  var IS_SAFARI = /^((?!chrome|chromium|crios|fxios|edg|android).)*safari/i.test(navigator.userAgent || '');
+  window.atlIsSafari = IS_SAFARI;
   window.atlApplyVoice = function(u, lang){
+    if (IS_SAFARI){ if (lang) u.lang = lang; return u; }
     var v = window.atlVoice(lang || u.lang);
     if (v){ u.voice = v; u.lang = v.lang; } else if (lang) u.lang = lang;
     return u;

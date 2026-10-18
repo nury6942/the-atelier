@@ -1,3 +1,12 @@
+## 2026-10-18 · 맥북 · 사파리 음성 원상복구
+
+- 누리: 고친 뒤 사파리까지 이상해짐 → 원인: atlApplyVoice 가 사파리에서도 Samantha 기본판을 강제. 사파리 기본 음성(시스템 설정 음성, 고급·Siri 포함)이 더 좋았던 것
+- tts-voice.js: 사파리면 voice 를 건드리지 않음(lang 만), IELTS 화자별 음성도 사파리에선 기본. 크롬만 직접 고름
+- 크롬 맥 로컬 음성 자체 품질은 사파리 기본보다 떨어짐 — 근본 해결은 미리 만든 음성 파일 재생(별도 작업)
+- service-worker v1
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — 꽉 찬 화면 + 받아 적기·말 끊김 고침
 
 - 누리: English 안 AI Tutor 가 양옆이 남아 답답 → AI Tutor 탭일 때만 #page-english 에 eng-tutor-on: 가운데 1280px 제한·좌우 여백 해제, iframe 높이 = 화면 - 상단바 - 탭줄
@@ -39,6 +48,9 @@
 - english-study.js(engSpeak·전체 듣기 큐 = Study·ANNIE 리뷰), ielts-app.js(리스닝 화자별, 두 화자 같은 목소리 피함) 둘 다 적용. 실측(미리보기 크롬): en-US Samantha · en-GB Daniel · en-AU Karen · ko 유나
 - 더 자연스럽게: 맥 시스템 설정 › 손쉬운 사용 › 음성 콘텐츠 › 시스템 음성 › 음성 관리에서 'Ava(고급)'·'Daniel(고급)'·'유나(고급)' 받으면 크롬도 자동으로 그걸 고름
 - service-worker v627
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — Annie 리뷰 + IELTS Speaking 모드
 
 - 누리: Annie 리뷰 프롬프트를 적용 + 간단한 오늘의 정리도, IELTS 스피킹 모드도
