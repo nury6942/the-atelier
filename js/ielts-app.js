@@ -286,7 +286,7 @@
   var MOCK=null;
   function startMock(l, r){ var B=bank().writing||{task1:[],task2:[]}; MOCK={active:true, step:'L', l:l, r:r, t1:B.task1[Math.floor(Math.random()*B.task1.length)], t2:B.task2[Math.floor(Math.random()*B.task2.length)], res:{}, t0:Date.now()}; startRun('L', l+'|all'); }
   function mockBar(){
-    if (!MOCK||!MOCK.active) return '';
+    if (!MOCK||!MOCK.active||!((RUN&&RUN.mock)||(WR&&WR.mock))) return '';   // 실전 중일 때만
     var st=[['L','Listening','30분'],['R','Reading','60분'],['W','Writing','60분']];
     return '<div class="ia-row" style="gap:0;margin-bottom:10px;border:1px solid #16161A">'+st.map(function(x){ var on=MOCK.step===x[0], done=MOCK.res[x[0]]!=null;
       return '<div style="flex:1;padding:8px 12px;background:'+(on?'#16161A':done?'#F0FDF4':'#fff')+';color:'+(on?'#fff':'#16161A')+';font-size:12.5px;font-weight:800;display:flex;justify-content:space-between"><span>'+(done?'✓ ':'')+x[1]+'</span><span style="opacity:.7">'+(done&&MOCK.res[x[0]].band!=null?fmtB(MOCK.res[x[0]].band):x[2])+'</span></div>'; }).join('')+'</div>';
@@ -1056,6 +1056,7 @@
       if (a==='mockw'){ WR.cur=+t.dataset.t; render(); var mt=document.getElementById('ia-wtext'); if (mt) mt.focus(); return; }
       if (a==='mockfinish'){ await finishMock(); return; }
       if (a==='mockclose'){ MOCK=null; WR=null; ST.view='home'; render(); return; }
+      if (a==='exit' && RUN && RUN.mock && !RUN.done){ MOCK=null; }   // 실전 도중 그만두면 실전 끝
       if (a==='exit'){ stopSpeech(); RUN=null; render(); return; }
       if (a==='submit'){ var tot=RUN.secs.reduce(function(s,x){return s+x.questions.length;},0), an=Object.keys(RUN.ans).filter(function(k){return RUN.ans[k];}).length; if (an<tot && !confirm((tot-an)+'문항이 비어 있어요. 제출할까요?')) return; submitRun(); return; }
       if (a==='omr-exit'){ clearInterval(ST.timers.omr); OMR=null; render(); return; }
