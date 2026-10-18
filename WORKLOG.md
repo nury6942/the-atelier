@@ -1,3 +1,15 @@
+## 2026-10-18 · 아이맥 · AI Tutor — 화상통화 화면 + 움직이는 Emma + 비용 묶기
+
+- 누리 첫 실사용: 56초 ₩20, 대화 정상(미역을 "biyaku"로 말해도 seaweed 로 알아들음)
+- 누리: Fluentutor(fluentutor.com/ko) 처럼 내 화면 + AI 캐릭터가 보였으면 → 통화 화면을 화상통화 2칸으로: 왼쪽 Emma(캐릭터), 오른쪽 나(카메라 켜면 내 얼굴, 끄면 N 칸). 말하는 쪽 칸에 코발트 테두리, 내 칸 이름표에 마이크 크기 막대
+- Emma: 새로 그린 SVG(단발·코발트 니트·사각 귀걸이). 입은 실제 목소리 크기(AnalyserNode)에 맞춰 열리고 닫힘, 눈 깜빡임, 숨쉬기, 말할 때 살짝 끄덕임. 움직임 줄이기 설정이면 멈춤. 홈 화면 아바타도 Emma 로
+- 카메라·화면 공유 따로 켜짐: 공유 중이면 화면이 가운데 크게, 두 칸은 오른쪽 위 작게. Emma 에게는 공유 화면 우선, 없으면 카메라를 1초 1장(최대 768px)
+- **비용 발견:** Live API 는 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구 → 길게 이어 말할수록 대답 한 번 값이 커짐(1시간 연속이면 만 원 근처 가능). → contextWindowCompression triggerTokens 10000 / targetTokens 5000(최근 ~5분 기억), mediaResolution LOW. 둘 다 접속 실측 OK
+- 휴대폰 폭: 상단 MODEL/VOICE 글자 숨김(넘침 해결)
+- service-worker CACHE_NAME v616
+
+---
+
 ## 2026-10-18 · 아이맥 · Home 그림 → 사막 낙타 (Nova Labs footer 감성)
 
 - 누리: 유화·판화 여러 시안이 감도가 낮음 → Aside 로 X 의 footer 시안 12개 수집(PranavOriginals·alimdesigner_·uisabor·AdityaSur11 등). 누리 원픽 = Nova Labs 사막 낙타("저 감성, 느낌, 컬러 그대로")

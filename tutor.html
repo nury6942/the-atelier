@@ -57,7 +57,8 @@
 
   /* 홈 화면 */
   .home{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 48px}
-  .avatar{width:96px;height:96px;flex:none}
+  .avatar{width:104px;height:104px;flex:none;background:var(--accent-soft);display:grid;place-items:end center;overflow:hidden}
+  .avatar svg{width:100%;height:100%;display:block}
   .home .who{font-size:12px;color:var(--dim);margin-top:6px}
   .home h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:22px 0 22px;text-align:center}
   .modes{display:flex;gap:0;border:1px solid var(--line);margin-bottom:14px}
@@ -94,24 +95,46 @@
 
   /* 통화 화면 */
   .call{flex:1;display:none;grid-template-columns:1fr 360px;min-height:0}
-  .stage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;min-height:0;background:#fff}
-  .stage .tutor{display:flex;flex-direction:column;align-items:center}
-  .ring{width:168px;height:168px;border-radius:0!important;display:grid;place-items:center;position:relative}
-  .ring::before{content:'';position:absolute;inset:0;border-radius:0;border:2px solid var(--accent);opacity:0;transform:scale(.92);transition:opacity .2s}
-  .ring.talking::before{opacity:1;animation:pulse 1.1s ease-in-out infinite}
-  .ring.listening::before{opacity:.35;border-color:var(--ink)}
-  @keyframes pulse{0%,100%{transform:scale(.94)}50%{transform:scale(1.04)}}
-  .ring .avatar{width:132px;height:132px}
-  .state{margin-top:16px;font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:8px}
+  .stage{position:relative;display:flex;flex-direction:column;align-items:center;min-height:0;background:#fff;padding:96px 24px 108px}
+  .tiles{flex:1;width:min(100%,1040px);display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:center;min-height:0}
+  .tile{position:relative;aspect-ratio:4/3;max-height:100%;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+  .tile.speaking{outline:2px solid var(--accent);outline-offset:-2px}
+  .tile .name{position:absolute;left:0;bottom:0;display:flex;align-items:center;gap:6px;background:rgba(11,11,12,.72);color:#fff;font-size:11.5px;font-weight:600;padding:5px 9px;letter-spacing:.02em}
+  .tile .name .ms{font-size:15px}
+  .tile.emma{background:var(--accent-soft)}
+  .emma-wrap{position:absolute;inset:0;display:grid;place-items:end center}
+  .emma-wrap svg{width:78%;height:auto;max-height:96%;display:block}
+  .tile.me{background:#16171a}
+  .tile.me video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}
+  .tile.me.cam video{display:block}
+  .tile.me .off{position:absolute;inset:0;display:grid;place-items:center}
+  .tile.me.cam .off{display:none}
+  .tile.me .ini{width:84px;height:84px;background:#2a2c31;color:#fff;font-size:34px;font-weight:800;display:grid;place-items:center}
+  .lvl{display:inline-flex;align-items:flex-end;gap:2px;height:12px;margin-left:2px}
+  .lvl i{width:3px;height:3px;background:#fff;opacity:.9;transition:height .08s}
+  .stage .tutor{display:flex;flex-direction:column;align-items:center;margin-top:14px}
+  .state{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:8px}
   .state .dot{width:7px;height:7px;background:var(--dim);border-radius:0!important}
   .state.live .dot{background:#18a957}
   .state.err{color:var(--danger)}
   .state.err .dot{background:var(--danger)}
-  .topic-tag{margin-top:10px;font-size:12px;color:var(--dim);max-width:420px;text-align:center}
-  .selfview{position:absolute;right:20px;top:20px;width:220px;aspect-ratio:4/3;background:#000;border:1px solid var(--line);display:none;overflow:hidden}
-  .selfview video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-  .selfview.screen video{object-fit:contain;transform:none}
-  .selfview .tag{position:absolute;left:0;top:0;background:rgba(0,0,0,.6);color:#fff;font-size:10.5px;padding:3px 7px;letter-spacing:.06em}
+  .topic-tag{margin-top:6px;font-size:12px;color:var(--dim);max-width:420px;text-align:center}
+  /* 화면 공유 중: 화면이 크게, 두 사람은 오른쪽 위 작은 칸 */
+  .screenview{display:none;position:relative;flex:1;width:100%;min-height:0;background:#0b0b0c;border:1px solid var(--line)}
+  .screenview video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .screenview .tag{position:absolute;left:0;top:0;background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;padding:4px 8px;letter-spacing:.08em;z-index:1}
+  .stage.sharing .screenview{display:block}
+  .stage.sharing{padding-top:164px}
+  .stage.sharing .tiles{position:absolute;right:24px;top:20px;width:auto;flex:none;grid-template-columns:168px 168px;z-index:2}
+  .stage.sharing .tile .ini{width:44px;height:44px;font-size:18px}
+  /* Emma 움직임: 깜빡임 · 숨쉬기 · 말할 때 끄덕임 */
+  #emmaEyes{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+  @keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+  .emma-head{transform-box:fill-box;transform-origin:50% 90%;animation:breathe 5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.2px)}}
+  .tile.speaking .emma-head{animation:nod 1.8s ease-in-out infinite}
+  @keyframes nod{0%,100%{transform:rotate(0) translateY(0)}30%{transform:rotate(-1.4deg) translateY(-1px)}70%{transform:rotate(1.2deg) translateY(.5px)}}
+  @media (prefers-reduced-motion:reduce){#emmaEyes,.emma-head,.tile.speaking .emma-head{animation:none}}
   .controls{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center}
   .ctl{width:52px;height:52px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;border-radius:0!important}
   .ctl:hover{background:rgba(0,0,0,.04)}
@@ -149,7 +172,13 @@
     .side{display:none}
     .call{grid-template-columns:1fr;grid-template-rows:1fr 38vh}
     .captions{border-left:0;border-top:1px solid var(--line)}
-    .selfview{width:132px;right:12px;top:12px}
+    .stage{padding:84px 12px 96px}
+    .tiles{grid-template-columns:1fr 1fr;gap:8px}
+    .tile .ini{width:48px;height:48px;font-size:20px}
+    .stage.sharing .tiles{right:12px;top:12px;grid-template-columns:96px 96px}
+    .stage.sharing{padding-top:96px}
+    .topbar{justify-content:flex-start;padding:10px 12px;min-height:0}
+    .pill .lbl{display:none}
     .cards{grid-template-columns:1fr}
     .cards button{min-height:0}
     .home h1{font-size:21px}
@@ -195,18 +224,7 @@
         <p>처음 한 번만 필요해요. 설정 → AI 코치 설정에 넣은 <b>ATELIER 토큰</b>을 붙여 넣어 주세요. 같은 브라우저라면 자동으로 채워져요.</p>
         <div class="row"><input id="authInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-1p-ignore placeholder="ATELIER_AUTH_TOKEN"><button class="btn primary" onclick="saveAuth()">저장</button></div>
       </div>
-      <svg class="avatar" id="avatarTpl" viewBox="0 0 120 120" aria-hidden="true">
-        <circle cx="60" cy="60" r="60" fill="#eef1fb"/>
-        <path d="M24 120c2-22 17-34 36-34s34 12 36 34z" fill="#1F4BD8"/>
-        <path d="M50 84h20v10a10 10 0 0 1-20 0z" fill="#f2c9a8"/>
-        <ellipse cx="60" cy="58" rx="22" ry="25" fill="#f6d5ba"/>
-        <path d="M37 54c0-17 10-27 24-27 15 0 24 10 23 27-4-9-12-13-23-13-11 0-19 4-24 13z" fill="#2b211c"/>
-        <circle cx="51" cy="60" r="7.5" fill="none" stroke="#0b0b0c" stroke-width="2"/>
-        <circle cx="69" cy="60" r="7.5" fill="none" stroke="#0b0b0c" stroke-width="2"/>
-        <path d="M58.5 60h3" stroke="#0b0b0c" stroke-width="2"/>
-        <circle cx="51" cy="60" r="1.8" fill="#0b0b0c"/><circle cx="69" cy="60" r="1.8" fill="#0b0b0c"/>
-        <path d="M54 72q6 4 12 0" fill="none" stroke="#a35a3c" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <div class="avatar" id="homeAvatar"></div>
       <div class="who">Your tutor · Emma</div>
       <h1>무엇에 대해 영어로 대화해볼까요?</h1>
       <div class="modes" id="modes">
@@ -223,14 +241,18 @@
 
     <!-- 통화 -->
     <section class="call" id="call">
-      <div class="stage">
+      <div class="stage" id="stage">
         <div class="meter">
           <div class="timer" id="timer">00:00</div>
           <div class="cost"><div class="k">THIS CALL</div><div class="won" id="costWon">₩0</div><div class="usd" id="costUsd">$0.000 · 추정</div></div>
         </div>
-        <div class="selfview" id="selfview"><span class="tag" id="selftag">CAMERA</span><video id="selfvideo" autoplay muted playsinline></video></div>
+        <div class="screenview" id="screenview"><span class="tag">SCREEN</span><video id="screenvideo" autoplay muted playsinline></video></div>
+        <div class="tiles" id="tiles">
+          <div class="tile emma" id="tileEmma"><div class="emma-wrap" id="emmaWrap"></div><div class="name">Emma</div></div>
+          <div class="tile me" id="tileMe"><video id="camvideo" autoplay muted playsinline></video><div class="off"><div class="ini">N</div></div>
+            <div class="name"><span class="ms" id="meMic">mic</span>Nuri<span class="lvl"><i></i><i></i><i></i><i></i></span></div></div>
+        </div>
         <div class="tutor">
-          <div class="ring" id="ring"></div>
           <div class="state" id="state"><span class="dot"></span><span id="stateText">연결 중…</span></div>
           <div class="topic-tag" id="topicTag"></div>
         </div>
@@ -299,6 +321,55 @@ function systemPrompt(mode, topic){
     '- If she shares her camera or screen, refer to what you actually see when relevant. Never pretend to see something you cannot.',
     '- Always reply in English, unless she explicitly asks for a Korean explanation of a word.'
   ].join('\n');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Emma 캐릭터 — 입(emmaMouth)은 목소리 크기에 맞춰 열리고, 눈은 CSS 로 깜빡임
+// ═══════════════════════════════════════════════════════════
+var EMMA_SVG = '<svg viewBox="0 0 200 200" aria-hidden="true"><g class="emma-head">' +
+  '<path d="M50 96c0-40 22-64 50-64s50 24 50 64v62c-12 7-26 8-34 5V104H84v59c-8 3-22 2-34-5z" fill="#3a2a22"/>' +
+  '<path d="M28 200c4-34 32-50 72-50s68 16 72 50z" fill="#1F4BD8"/>' +
+  '<path d="M84 150c6 10 26 10 32 0" fill="none" stroke="#1A3FB5" stroke-width="3"/>' +
+  '<path d="M87 128h26v20c0 9-26 9-26 0z" fill="#ecc0a0"/>' +
+  '<ellipse cx="63" cy="103" rx="6" ry="9" fill="#efc3a3"/><ellipse cx="137" cy="103" rx="6" ry="9" fill="#efc3a3"/>' +
+  '<rect x="60.5" y="113" width="5" height="5" fill="#1F4BD8"/><rect x="134.5" y="113" width="5" height="5" fill="#1F4BD8"/>' +
+  '<ellipse cx="100" cy="98" rx="37" ry="43" fill="#f6d3b6"/>' +
+  '<path d="M61 96c0-30 18-50 41-50 23 0 39 17 39 46-15-3-30-13-38-28-8 17-25 29-42 32z" fill="#3a2a22"/>' +
+  '<path d="M76 85q9-5 18-1M106 84q9-4 18 1" fill="none" stroke="#3a2a22" stroke-width="3" stroke-linecap="round"/>' +
+  '<g id="emmaEyes"><ellipse cx="85" cy="99" rx="4.3" ry="5.2" fill="#1b1b1f"/><ellipse cx="115" cy="99" rx="4.3" ry="5.2" fill="#1b1b1f"/>' +
+  '<circle cx="86.4" cy="97.2" r="1.3" fill="#fff"/><circle cx="116.4" cy="97.2" r="1.3" fill="#fff"/></g>' +
+  '<circle cx="75" cy="114" r="7" fill="#f2a29a" opacity=".35"/><circle cx="125" cy="114" r="7" fill="#f2a29a" opacity=".35"/>' +
+  '<path d="M100 103v9q-3 2-6 1" fill="none" stroke="#d29c7e" stroke-width="2" stroke-linecap="round"/>' +
+  '<path id="emmaSmile" d="M90 122q10 7 20 0" fill="none" stroke="#8a2f2b" stroke-width="2.6" stroke-linecap="round"/>' +
+  '<ellipse id="emmaMouth" cx="100" cy="125" rx="8.5" ry="0" fill="#8a2f2b"/>' +
+  '</g></svg>';
+
+function setMouth(open){
+  var m = $('emmaMouth'), sm = $('emmaSmile'); if (!m) return;
+  m.setAttribute('ry', (open * 8.5).toFixed(2));
+  m.setAttribute('rx', (8.5 - open * 1.5).toFixed(2));
+  sm.style.opacity = open < 0.08 ? 1 : 0;
+}
+function rms(buf){ var t = 0; for (var i = 0; i < buf.length; i++) t += buf[i] * buf[i]; return Math.sqrt(t / buf.length); }
+function setMicLevel(l){
+  var bars = document.querySelectorAll('#tileMe .lvl i');
+  for (var i = 0; i < bars.length; i++) bars[i].style.height = Math.max(3, Math.min(12, l * 12 * (1 - Math.abs(i - 1.5) * 0.18))) + 'px';
+}
+// 목소리·마이크 크기를 화면 그리는 속도(1초 60번)로 읽어 입 모양·내 칸 테두리에 반영
+function startMeters(){
+  var oa = sess.outAnalyser, ma = sess.micAnalyser;
+  var ob = new Float32Array(oa.fftSize), mb = new Float32Array(ma.fftSize), open = 0, lvl = 0;
+  (function tick(){
+    if (!sess.active){ setMouth(0); setMicLevel(0); $('tileMe').classList.remove('speaking'); return; }
+    oa.getFloatTimeDomainData(ob);
+    open += (Math.min(1, rms(ob) * 7) - open) * 0.45;
+    setMouth(open < 0.03 ? 0 : open);
+    ma.getFloatTimeDomainData(mb);
+    lvl += ((sess.micOn ? Math.min(1, rms(mb) * 9) : 0) - lvl) * 0.3;
+    setMicLevel(lvl);
+    $('tileMe').classList.toggle('speaking', lvl > 0.14 && !sess.emmaTalking);
+    sess.raf = requestAnimationFrame(tick);
+  })();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -421,7 +492,7 @@ function renderHist(){
 function showTranscript(h){
   if (sess.active) return toast('대화가 끝난 뒤에 볼 수 있어요');
   $('home').style.display = 'none'; $('call').style.display = 'grid';
-  $('ring').innerHTML = $('avatarTpl').outerHTML.replace('id="avatarTpl"', '');
+  resetStage();
   setState('지난 대화 · ' + new Date(h.at).toLocaleString('ko-KR'), '');
   $('topicTag').textContent = h.topic || MODE_LABEL[h.mode];
   $('timer').textContent = fmtTime(h.sec);
@@ -490,6 +561,9 @@ async function startMic(){
     send({ realtimeInput: { audio: { data: b64FromBuf(e.data), mimeType: 'audio/pcm;rate=16000' } } });
   };
   src.connect(sess.worklet);
+  sess.micAnalyser = sess.inCtx.createAnalyser(); sess.micAnalyser.fftSize = 512;
+  var mute = sess.inCtx.createGain(); mute.gain.value = 0;              // 분석기가 계속 돌도록 소리 없이 출력에 연결
+  src.connect(sess.micAnalyser); sess.micAnalyser.connect(mute); mute.connect(sess.inCtx.destination);
 }
 
 function playPcm(b64){
@@ -500,7 +574,7 @@ function playPcm(b64){
     f[i] = (v >= 32768 ? v - 65536 : v) / 32768;
   }
   var buf = ctx.createBuffer(1, n, 24000); buf.copyToChannel(f, 0);
-  var s = ctx.createBufferSource(); s.buffer = buf; s.connect(ctx.destination);
+  var s = ctx.createBufferSource(); s.buffer = buf; s.connect(sess.outAnalyser);
   var t = Math.max(ctx.currentTime + 0.02, sess.playAt);
   s.start(t); sess.playAt = t + buf.duration;
   sess.sources.push(s);
@@ -515,52 +589,64 @@ function stopPlayback(){
   sess.sources = []; sess.playAt = 0; setTalking(false);
 }
 function setTalking(on){
-  $('ring').classList.toggle('talking', on);
-  $('ring').classList.toggle('listening', !on && sess.active);
+  sess.emmaTalking = on;
+  $('tileEmma').classList.toggle('speaking', on);
 }
 
 // ═══════════════════════════════════════════════════════════
-//  카메라 · 화면 공유 — 1초에 한 장씩 JPEG 로 보냄
+//  카메라 · 화면 공유
+//  - 카메라는 내 칸에, 화면 공유는 가운데 크게. 둘 다 켤 수 있음
+//  - Emma 에게는 1초에 한 장 JPEG 로 보냄. 화면 공유 중이면 화면을, 아니면 카메라를
 // ═══════════════════════════════════════════════════════════
+function stopStream(st){ if (st) st.getTracks().forEach(function(t){ t.stop(); }); }
+function setCamUI(on){
+  $('tileMe').classList.toggle('cam', on);
+  $('btnCam').classList.toggle('on', on); $('btnCam').querySelector('.ms').textContent = on ? 'videocam' : 'videocam_off';
+}
+function setScreenUI(on){
+  $('stage').classList.toggle('sharing', on);
+  $('btnScreen').classList.toggle('on', on);
+}
+async function toggleCam(){
+  if (sess.cam){ stopStream(sess.cam); sess.cam = null; $('camvideo').srcObject = null; setCamUI(false); return; }
+  try { sess.cam = await navigator.mediaDevices.getUserMedia({ video: { width: 960, height: 720 } }); }
+  catch(e){ toast('카메라를 켤 수 없어요'); return; }
+  if (!sess.active){ stopStream(sess.cam); sess.cam = null; return; }
+  $('camvideo').srcObject = sess.cam; setCamUI(true);
+}
+async function toggleScreen(){
+  if (sess.screen){ stopScreen(); return; }
+  if (!navigator.mediaDevices.getDisplayMedia) return toast('이 기기에서는 화면 공유가 안 돼요');
+  try { sess.screen = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 5 }, audio: false }); }
+  catch(e){ toast('화면 공유를 취소했어요'); return; }
+  if (!sess.active){ stopStream(sess.screen); sess.screen = null; return; }
+  $('screenvideo').srcObject = sess.screen; setScreenUI(true);
+  sess.screen.getVideoTracks()[0].onended = stopScreen;     // 브라우저의 '공유 중지' 버튼
+}
+function stopScreen(){ stopStream(sess.screen); sess.screen = null; $('screenvideo').srcObject = null; setScreenUI(false); }
 function stopVideo(){
-  if (sess.videoTimer){ clearInterval(sess.videoTimer); sess.videoTimer = null; }
-  if (sess.videoStream){ sess.videoStream.getTracks().forEach(function(t){ t.stop(); }); sess.videoStream = null; }
-  sess.videoKind = null;
-  $('selfview').style.display = 'none';
-  $('btnCam').classList.remove('on'); $('btnCam').querySelector('.ms').textContent = 'videocam_off';
-  $('btnScreen').classList.remove('on');
+  stopStream(sess.cam); sess.cam = null; $('camvideo').srcObject = null; setCamUI(false);
+  stopScreen();
 }
-async function startVideo(kind){
-  stopVideo();
-  try {
-    sess.videoStream = kind === 'screen'
-      ? await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 5 }, audio: false })
-      : await navigator.mediaDevices.getUserMedia({ video: { width: 960, height: 720 } });
-  } catch(e){ toast(kind === 'screen' ? '화면 공유를 취소했어요' : '카메라를 켤 수 없어요'); return; }
-  sess.videoKind = kind;
-  var v = $('selfvideo'); v.srcObject = sess.videoStream;
-  $('selfview').style.display = 'block';
-  $('selfview').classList.toggle('screen', kind === 'screen');
-  $('selftag').textContent = kind === 'screen' ? 'SCREEN' : 'CAMERA';
-  if (kind === 'screen') $('btnScreen').classList.add('on');
-  else { $('btnCam').classList.add('on'); $('btnCam').querySelector('.ms').textContent = 'videocam'; }
-  sess.videoStream.getVideoTracks()[0].onended = stopVideo;   // 브라우저 '공유 중지' 버튼
-  var canvas = document.createElement('canvas');
-  sess.videoTimer = setInterval(function(){
-    if (!sess.ready || !v.videoWidth) return;
-    var scale = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight));
-    canvas.width = Math.round(v.videoWidth * scale); canvas.height = Math.round(v.videoHeight * scale);
-    canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
-    var data = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
-    send({ realtimeInput: { video: { data: data, mimeType: 'image/jpeg' } } });
-  }, 1000);
+var frameCanvas = document.createElement('canvas');
+function sendFrame(){
+  var v = sess.screen ? $('screenvideo') : sess.cam ? $('camvideo') : null;
+  if (!v || !sess.ready || !v.videoWidth) return;
+  var scale = Math.min(1, 768 / Math.max(v.videoWidth, v.videoHeight));
+  frameCanvas.width = Math.round(v.videoWidth * scale); frameCanvas.height = Math.round(v.videoHeight * scale);
+  frameCanvas.getContext('2d').drawImage(v, 0, 0, frameCanvas.width, frameCanvas.height);
+  send({ realtimeInput: { video: { data: frameCanvas.toDataURL('image/jpeg', 0.7).split(',')[1], mimeType: 'image/jpeg' } } });
 }
-function toggleCam(){ sess.videoKind === 'camera' ? stopVideo() : startVideo('camera'); }
-function toggleScreen(){ sess.videoKind === 'screen' ? stopVideo() : startVideo('screen'); }
+function resetStage(){
+  $('emmaWrap').innerHTML = EMMA_SVG;
+  setCamUI(false); setScreenUI(false); setMouth(0); setMicLevel(0);
+  $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
+}
 function toggleMic(){
   sess.micOn = !sess.micOn;
   $('btnMic').classList.toggle('off', !sess.micOn);
   $('btnMic').querySelector('.ms').textContent = sess.micOn ? 'mic' : 'mic_off';
+  $('meMic').textContent = sess.micOn ? 'mic' : 'mic_off';
   if (!sess.micOn && sess.ready) send({ realtimeInput: { audioStreamEnd: true } });
 }
 
@@ -590,12 +676,14 @@ async function connect(){
       model: 'models/' + sess.model,
       generationConfig: {
         responseModalities: ['AUDIO'],
+        mediaResolution: 'MEDIA_RESOLUTION_LOW',       // 사진 한 장 토큰 줄이기
         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: sess.voice } } }
       },
       systemInstruction: { parts: [{ text: systemPrompt(sess.mode, sess.topic) }] },
       inputAudioTranscription: {},
       outputAudioTranscription: {},
-      contextWindowCompression: { slidingWindow: {} },
+      // 매 대답마다 지난 대화 전체를 다시 읽고 그만큼 청구됨 → 기억을 최근 ~5분(1만 토큰)으로 묶어 대답 한 번 값이 계속 커지지 않게
+      contextWindowCompression: { triggerTokens: 10000, slidingWindow: { targetTokens: 5000 } },
       sessionResumption: sess.resumeHandle ? { handle: sess.resumeHandle } : {}
     };
     send({ setup: setup });
@@ -658,14 +746,18 @@ async function startCall(){
   document.querySelector('.controls').style.display = 'flex';
   document.querySelector('.say').style.display = 'flex';
   $('lines').innerHTML = ''; $('lines').style.visibility = 'visible'; $('capBtn').textContent = '숨기기';
-  $('ring').innerHTML = $('avatarTpl').outerHTML.replace('id="avatarTpl"', '');
+  resetStage();
   $('topicTag').textContent = sess.topic || MODE_LABEL[sess.mode];
-  $('btnMic').classList.remove('off'); $('btnMic').querySelector('.ms').textContent = 'mic';
+  $('btnMic').classList.remove('off'); $('btnMic').querySelector('.ms').textContent = 'mic'; $('meMic').textContent = 'mic';
   setState('연결 중…', '');
   sess.timer = setInterval(function(){ $('timer').textContent = fmtTime((Date.now() - sess.startedAt) / 1000); }, 1000);
   try {
     sess.outCtx = new AudioContext({ sampleRate: 24000 });
+    sess.outAnalyser = sess.outCtx.createAnalyser(); sess.outAnalyser.fftSize = 1024;
+    sess.outAnalyser.connect(sess.outCtx.destination);
     await startMic();
+    startMeters();
+    sess.frameTimer = setInterval(sendFrame, 1000);
     await connect();
   } catch(e){ fail(e); }
 }
@@ -679,7 +771,8 @@ function endCall(){
   if (sess.micStream) sess.micStream.getTracks().forEach(function(t){ t.stop(); });
   try { sess.inCtx && sess.inCtx.close(); } catch(e){}
   try { sess.outCtx && sess.outCtx.close(); } catch(e){}
-  $('ring').classList.remove('listening', 'talking');
+  clearInterval(sess.frameTimer); cancelAnimationFrame(sess.raf);
+  setMouth(0); setMicLevel(0); $('tileEmma').classList.remove('speaking'); $('tileMe').classList.remove('speaking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);
   if (lines.length || sess.usd){
@@ -722,6 +815,7 @@ var toastT;
 function toast(t){ var el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(function(){ el.style.display = 'none'; }, 2600); }
 window.addEventListener('beforeunload', function(e){ if (sess.active){ e.preventDefault(); e.returnValue = ''; } });
 
+$('homeAvatar').innerHTML = EMMA_SVG.replace('id="emmaEyes"', '').replace(/ id="emma(Smile|Mouth)"/g, '');
 loadPrefs(); shuffleTopics(); renderHist(); renderSpend();
 if (!getAuth()) $('auth').style.display = 'block';
 </script>
