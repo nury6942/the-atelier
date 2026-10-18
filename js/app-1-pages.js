@@ -21823,6 +21823,8 @@
   if (typeof window !== 'undefined') window.updateTravelMiniSummary = updateTravelMiniSummary;
 
   function navigate(pageId) {
+    // Dashboard·Year Matrix 는 2026-10-18 에 메뉴에서 뺐음(데이터·캘린더 연동 코드는 유지) → 들어오면 Home 으로
+    if (pageId === 'dashboard' || pageId === 'matrix') pageId = 'home';
     // Home 에서만 상단바를 숨기고 그림을 화면 전체로 (index.html .atl-home 참고)
     document.body.classList.toggle('atl-on-home', pageId === 'home');
     // ═══ Nomad Master 진입 (페이지 내부에 sub-sidebar로 28개 sub-page 처리) ═══

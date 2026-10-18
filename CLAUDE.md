@@ -102,7 +102,7 @@ AFTER:
 - **버튼 3종:** `atl-btn atl-btn-primary`(코발트, 한 화면에 하나) / `atl-btn-secondary`(흰 바탕+선) / `atl-btn-ghost`(글자만)
 - **탭 2종:** 큰 탭은 밑줄(`atl-tabs` + `travel-tab-btn` / 활성 `travel-tab-active`), 보기 전환은 토글
 - **메뉴·제목은 영어**(Title Case, 대문자로만 쓰지 않음), 설명·내용은 한글. 탭 이름에 이모지 붙이지 않음
-- 사이드바는 Home·Dashboard / EVERYDAY / MONEY / TRAVEL / GROWTH 네 묶음
+- 사이드바는 Home / EVERYDAY / MONEY / TRAVEL / GROWTH 네 묶음 (Dashboard·Year Matrix 는 2026-10-18 메뉴에서 뺌, Home 에서는 사이드바 숨김)
 
 **어디에 있나:** `index.html`의 `<style id="atl-design-system">` 블록(토큰 `--atl-*`)과 `tailwind.config`
 (indigo·violet·purple 팔레트가 코발트로 덮어써져 있음, borderRadius 전부 0).

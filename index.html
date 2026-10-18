@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=393" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=394" as="script">
   <link rel="preload" href="js/app-2-init.js?v=184" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -11463,18 +11463,10 @@
       <span class="material-symbols-outlined text-[19px] transition-colors">home</span>
       <span class="text-[13.5px] font-medium">Home</span>
     </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-dashboard" onclick="navigate('dashboard'); return false;">
-      <span class="material-symbols-outlined text-[19px] transition-colors">dashboard</span>
-      <span class="text-[13.5px] font-medium">Dashboard</span>
-    </a>
     <div class="nav-group">Everyday</div>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-planner" onclick="navigate('planner'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">calendar_month</span>
       <span class="text-[13.5px] font-medium">Calendar</span>
-    </a>
-    <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-matrix" onclick="navigate('matrix'); return false;" style="display:none">
-      <span class="material-symbols-outlined text-[19px] transition-colors">grid_view</span>
-      <span class="text-[13.5px] font-medium">Year Matrix</span>
     </a>
     <a href="#" class="nav-item flex items-center gap-3 px-3 py-2 mx-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors duration-150 group" id="nav-reference" onclick="navigate('reference'); return false;">
       <span class="material-symbols-outlined text-[19px] transition-colors">menu_book</span>
@@ -11583,21 +11575,21 @@
     /* Home은 상단바·여백 없이 그림이 화면 전체를 채움 (body.atl-on-home 은 navigate()가 붙임) */
     body.atl-on-home #main-header,body.atl-on-home #sidebar,body.atl-on-home #sidebar-overlay{display:none!important}
     #page-home{position:fixed;inset:0;z-index:30;overflow-y:auto}
-    .atl-home{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;color:#fff;font-family:'Pretendard',sans-serif;background:#173faf url('assets/home/home-desert.webp') center bottom/cover no-repeat}
+    .atl-home{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;color:#fff;text-shadow:0 1px 2px rgba(0,20,80,0.28);-webkit-font-smoothing:antialiased;font-family:'Pretendard',sans-serif;background:#0232b5 url('assets/home/home-desert.webp') center bottom/cover no-repeat}
     .atl-home-tools{position:absolute;top:18px;right:20px;display:flex;gap:4px;z-index:2}
     .atl-home-tools button{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;transition:background .15s,color .15s}
     .atl-home-tools button:hover{background:rgba(255,255,255,0.14);color:#fff}
     .atl-home-top{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:40px;padding:64px clamp(32px,5vw,96px) 0}
-    .atl-home-brand{display:flex;align-items:center;gap:10px;font-family:'Pretendard',sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.02em}
+    .atl-home-brand{display:flex;align-items:center;gap:10px;font-family:'Pretendard',sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.02em}
     .atl-home-brand .material-symbols-outlined{font-size:26px}
-    .atl-home-desc{margin-top:14px;max-width:300px;word-break:keep-all;font-size:14px;line-height:1.65;color:rgba(255,255,255,0.72)}
-    .atl-home-date{margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:0.04em;color:rgba(255,255,255,0.6)}
-    .atl-home-meta{display:flex;align-items:center;gap:14px;margin-top:20px;font-size:12px;color:rgba(255,255,255,0.6)}
-    .atl-home-col h4{font-family:'Pretendard',sans-serif;font-size:14px;font-weight:700;margin-bottom:14px;color:#fff}
-    .atl-home-col a{display:block;padding:4px 0;font-size:14.5px;line-height:1.5;color:rgba(255,255,255,0.72);text-decoration:none;transition:color .15s}
+    .atl-home-desc{margin-top:14px;max-width:300px;word-break:keep-all;font-size:15px;font-weight:500;line-height:1.65;color:rgba(255,255,255,0.92)}
+    .atl-home-date{margin-top:22px;font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85)}
+    .atl-home-meta{display:flex;align-items:center;gap:14px;margin-top:20px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.8)}
+    .atl-home-col h4{font-family:'Pretendard',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;color:#fff}
+    .atl-home-col a{display:block;padding:4px 0;font-size:15.5px;font-weight:600;line-height:1.5;color:rgba(255,255,255,0.94);text-decoration:none;transition:color .15s}
     .atl-home-col a:hover{color:#fff}
     @media (max-width:900px){
-      .atl-home{padding-bottom:300px;background:url('assets/home/home-desert.webp') 66% bottom/200% auto no-repeat,url('assets/home/home-desert.webp') 10% top/auto 1400px no-repeat,#173faf}
+      .atl-home{padding-bottom:300px;background:url('assets/home/home-desert.webp') 66% bottom/200% auto no-repeat,url('assets/home/home-desert.webp') 10% top/auto 1400px no-repeat,#0232b5}
       .atl-home-tools{top:10px;right:10px}
       .atl-home-top{grid-template-columns:repeat(2,1fr);gap:24px 20px;padding:56px 24px 0}
       .atl-home-top>div:first-child{grid-column:1/-1}
@@ -11620,9 +11612,7 @@
           </div>
           <div class="atl-home-col">
             <h4>Everyday</h4>
-            <a href="#" onclick="navigate('dashboard');return false;">Dashboard</a>
             <a href="#" onclick="navigate('planner');return false;">Calendar</a>
-            <a href="#" onclick="navigate('matrix');return false;">Year Matrix</a>
             <a href="#" onclick="navigate('reference');return false;">Memo</a>
           </div>
           <div class="atl-home-col">
@@ -16434,7 +16424,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=393" defer></script>
+<script src="js/app-1-pages.js?v=394" defer></script>
 
   <!-- PACKING PAGE -->
   <div id="page-packing" class="page" style="display:none">

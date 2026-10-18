@@ -1,3 +1,12 @@
+## 2026-10-18 · 아이맥 · Dashboard·Year Matrix 메뉴 삭제 + Home 그림 부드럽게 + 글씨 굵게
+
+- 누리: Dashboard·Year Matrix 안 씀 → 사이드바·Home 링크에서 삭제. navigate('dashboard'|'matrix') 는 Home 으로 돌림. **페이지 HTML·JS·Firebase `matrix` 컬렉션은 그대로**(캘린더 휴가·일정 동기화가 matrix 데이터를 씀 — 지우면 캘린더 깨짐)
+- Home 그림: 같은 구도·색으로 질감만 부드러운 유화로 다시 그림(Codex, 1536×1024 가 도구 최대) → sips 로 3072px 확대 후 webp q86 (`assets/home/home-desert.webp`). 배경색 #0232b5
+- Home 글씨: 링크 15.5px/600, 묶음 제목 800, 소개 15px/500, 흰색 불투명도 0.9 이상 + 옅은 글자 그림자
+- CLAUDE.md 디자인 규칙의 사이드바 줄 갱신 · app-1-pages.js v394 · CACHE_NAME v619
+
+---
+
 ## 2026-10-18 · 아이맥 · AI Tutor — Fluentutor 식 통화 화면으로 재구성
 
 - 누리: Fluentutor UI 가 더 좋음 + 펜 들어 올리면 바로 알아봄 → Aside 로 fluentutor.com/ko 확인(소개 영상은 재생 안 돼 첫 장면만) + 누리 스크린샷 참고
