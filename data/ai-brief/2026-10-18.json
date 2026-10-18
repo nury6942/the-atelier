@@ -14,7 +14,7 @@
    "cat": "vibe",
    "title": "어도비 다음은 워드·엑셀·PPT",
    "url": "https://www.tomshardware.com/software/microsoft-office/creator-of-free-adobe-clones-unveils-open-source-microsoft-office-excel-powerpoint-and-word-replications-autodesk-tools-and-other-subscription-based-services-may-come-next",
-   "image": null,
+   "image": "https://cdn.mos.cms.futurecdn.net/iPvfpzYoJfo4RCLhXPfRAb-2000-80.jpg",
    "source": "Tom's Hardware · ArtCraft 개발자 Brandon Thomas",
    "how": "Claude로 Rust 오피스 3종, 버튼마다 AI 명령",
    "chips": [
@@ -26,7 +26,7 @@
    "cat": "release",
    "title": "싼 모델 하나로 게임을 끝까지",
    "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
-   "image": null,
+   "image": "https://assets.st-note.com/production/uploads/images/325443986/rectangle_large_type_2_3d2c62c7fc984a39c00ec5a82fb4b57b.png?fit=bounds&quality=85&width=1280",
    "source": "note @masa_wunder · 25문제 실측",
    "release": {
     "name": "DeepSeek V4.1-Flash-1017",
@@ -37,17 +37,17 @@
     {
      "title": "브라우저 게임 25개 만들기 신구 비교",
      "url": "https://note.com/masa_wunder/n/n0770dbbe6720?hl=en",
-     "image": null
+     "image": "https://assets.st-note.com/production/uploads/images/325443986/rectangle_large_type_2_3d2c62c7fc984a39c00ec5a82fb4b57b.png?fit=bounds&quality=85&width=1280"
     },
     {
      "title": "공식 데모: 레이싱 게임·포탈 2 재현",
      "url": "https://api-docs.deepseek.com/news/news261017/",
-     "image": null
+     "image": "https://api-docs.deepseek.com/img/deepseek-social-card.jpeg"
     },
     {
      "title": "사용법·첫 테스트 정리",
      "url": "https://medium.com/data-science-in-your-pocket/deepseek-v4-1-flash-1017-is-here-5bb734eaeb18",
-     "image": null
+     "image": "https://miro.medium.com/v2/da:true/resize:fit:1200/0*ZOk6tOY4Ib1sOyo0"
     }
    ],
    "new": [
@@ -96,7 +96,7 @@
    "cat": "hack",
    "title": "25년 암호 수수께끼를 30분에",
    "url": "https://coindesk.com/tech/2026/10/17/wow-it-s-a-real-discovery-claude-cracks-a-25-year-nsa-number-mystery",
-   "image": null,
+   "image": "https://cdn.sanity.io/images/s3y3vcno/production/2297ea2e470af647418127b13e7a3275fed8827a-1920x1200.jpg?auto=format&fit=crop&crop=focalpoint&w=1200&h=675&q=75",
    "source": "CoinDesk · Anthropic 10-16 발표",
    "how": "숫자 패턴 보고 1997년 난수 생성기 역추적",
    "chips": [
@@ -108,7 +108,7 @@
    "cat": "money",
    "title": "연봉 2억 대신 혼자 AI 창업",
    "url": "https://businesstoday.in/world/story/left-rs1-89-crore-job-at-microsoft-no-co-founder-and-no-salary-why-this-25-year-old-chose-to-build-an-ai-startup-alone-561931-2026-10-16",
-   "image": null,
+   "image": "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202610/6ad0f21d5cbbb-the-idea-came-from-his-experience-managing-finances-across-two-countries-picture-credit--business-153243554-16x9.png",
    "source": "Business Today · Treasury 사례",
    "how": "공동창업자·투자 없이 AI 재무 코칭 앱",
    "chips": [
@@ -120,7 +120,7 @@
    "cat": "tool",
    "title": "보던 페이지를 Claude Code에 바로",
    "url": "https://chatgate.ai/post/rill-browser",
-   "image": null,
+   "image": "https://cdn.chatgate.ai/post/2026/10/rill-browser.png",
    "source": "Rill Browser · PH 10-06 데일리 픽",
    "how": "⌘E 한 번에 페이지를 에이전트 작업으로",
    "chips": [
@@ -181,7 +181,7 @@
    "cat": "release",
    "title": "Beam 가중치 공개",
    "url": "https://reflection.ai/blog/introducing-beam",
-   "image": null,
+   "image": "https://cdn.sanity.io/images/sp40emik/production/771cfe201a3d24d7a340c3372e6a1654ec1a6e42-1800x1013.png",
    "source": "Reflection · 501B 코딩 모델 10-16",
    "watching": true
   },
@@ -189,7 +189,7 @@
    "cat": "vibe",
    "title": "어도비 대체 무료 앱 써보니",
    "url": "https://www.xda-developers.com/tried-replacing-photoshop-premiere-pro-lightroom-with-free-vibe-coded-alternatives/",
-   "image": null,
+   "image": "https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2026/10/artcraft-app-icons-like-photocraft-pdfcraft-and-gridcraft-on-an-ipad-beside-a-keyboard.jpeg?w=1600&h=900&fit=crop",
    "source": "XDA · 실사용 후기",
    "watching": false
   },
@@ -205,7 +205,7 @@
    "cat": "free",
    "title": "로컬 목소리 스튜디오",
    "url": "https://www.implicator.ai/voicestudio-local-voice-cloning/",
-   "image": null,
+   "image": "https://www.implicator.ai/content/images/2026/09/20260910-084052-voicestudio_local_voice.webp",
    "source": "VoiceStudio · 646개 언어",
    "watching": false
   },
@@ -213,7 +213,7 @@
    "cat": "free",
    "title": "Claude 공식 플러그인 모음",
    "url": "https://github.com/anthropics/claude-plugins-official",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/anthropics/claude-plugins-official",
    "source": "GitHub 트렌딩",
    "watching": false
   },
@@ -221,7 +221,7 @@
    "cat": "free",
    "title": "디자인용 Claude 스킬 10",
    "url": "https://www.figma.com/resource-library/claude-skills-for-design/",
-   "image": null,
+   "image": "https://cdn.sanity.io/images/599r6htc/regionalized/a7879b106e8145df3a396d42dd4c6a8655476012-1440x720.png?w=1200&q=70&fit=max&auto=format",
    "source": "Figma 리소스",
    "watching": false
   }

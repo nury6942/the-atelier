@@ -1,0 +1,54 @@
+# AI Brief 빈 사진 채우기 — 브리핑·X·Threads JSON 이 올라오면 GitHub 서버에서 fill-images.py 를 돌린다.
+# 왜 여기서: 07시 클라우드 루틴의 실행 환경은 외부 사이트 열기가 막혀 있어서(10/17·18 사진 전부 빈칸)
+# 사진 주소를 못 찾는다. GitHub Actions 는 인터넷이 열려 있다.
+name: ai-brief-images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/ai-brief/*.json'
+      - 'data/ai-brief/social/*.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: ai-brief-images
+  cancel-in-progress: false
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 바뀐 날짜 찾기
+        id: days
+        run: |
+          days=$(git diff --name-only HEAD~1 HEAD -- data/ai-brief | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort -u | tr '\n' ' ')
+          # 손으로 돌릴 땐 최근 이틀
+          if [ -z "$days" ]; then days=$(python3 -c "import json;print(' '.join(json.load(open('data/ai-brief/index.json'))['dates'][:2]))"); fi
+          echo "days=$days" >> "$GITHUB_OUTPUT"
+          echo "대상: $days"
+
+      - name: 빈 사진 채우기
+        run: |
+          for d in ${{ steps.days.outputs.days }}; do python3 scripts/ai-brief/fill-images.py "$d"; done
+
+      - name: 바뀐 게 있으면 올리기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- data/ai-brief; then echo "채울 사진 없음"; exit 0; fi
+          git config user.name "ai-brief-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ai-brief
+          git commit -m "brief: 빈 사진 채움 (${{ steps.days.outputs.days }})"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          # 봇 토큰으로 올린 커밋은 Pages 빌드를 안 깨우므로 직접 요청
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null || true
