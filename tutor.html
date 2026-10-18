@@ -118,7 +118,16 @@
   .ctl.on{background:var(--accent);border-color:var(--accent);color:#fff}
   .ctl.off{background:var(--ink);border-color:var(--ink);color:#fff}
   .ctl.end{background:var(--danger);border-color:var(--danger);color:#fff;width:64px}
-  .timer{position:absolute;left:24px;top:20px;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+  .meter{position:absolute;left:24px;top:20px;display:flex;flex-direction:column;gap:6px;font-variant-numeric:tabular-nums}
+  .timer{font-size:12px;color:var(--dim);letter-spacing:.04em}
+  .cost{border:1px solid var(--line);padding:8px 10px;min-width:132px}
+  .cost .k{font-size:10px;letter-spacing:.12em;color:var(--dim);font-weight:700}
+  .cost .won{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-top:2px}
+  .cost .usd{font-size:11px;color:var(--dim);margin-top:1px}
+  .spend{border-top:1px solid var(--line);padding:14px 20px 16px;font-variant-numeric:tabular-nums}
+  .spend .k{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700;text-transform:uppercase}
+  .spend .v{font-size:18px;font-weight:800;margin-top:4px}
+  .spend .s{font-size:11.5px;color:var(--dim);margin-top:2px}
 
   /* 자막 패널 */
   .captions{border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--panel)}
@@ -159,6 +168,7 @@
     </nav>
     <div class="hist-h">최근 대화</div>
     <div class="hist" id="hist"></div>
+    <div class="spend"><div class="k">This Month</div><div class="v" id="spendMonth">₩0</div><div class="s" id="spendNote">이 브라우저에서 한 대화 기준 · 추정</div></div>
   </aside>
 
   <main class="main">
@@ -166,7 +176,7 @@
       <label class="pill"><span class="lbl">MODEL</span>
         <select id="model">
           <option value="gemini-3.8-live">Gemini 3.8 Live</option>
-          <option value="gemini-2.5-flash-native-audio-preview-09-2025">Gemini 2.5 Flash Audio</option>
+          <option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option>
         </select>
       </label>
       <label class="pill"><span class="lbl">VOICE</span>
@@ -214,7 +224,10 @@
     <!-- 통화 -->
     <section class="call" id="call">
       <div class="stage">
-        <div class="timer" id="timer">00:00</div>
+        <div class="meter">
+          <div class="timer" id="timer">00:00</div>
+          <div class="cost"><div class="k">THIS CALL</div><div class="won" id="costWon">₩0</div><div class="usd" id="costUsd">$0.000 · 추정</div></div>
+        </div>
         <div class="selfview" id="selfview"><span class="tag" id="selftag">CAMERA</span><video id="selfvideo" autoplay muted playsinline></video></div>
         <div class="tutor">
           <div class="ring" id="ring"></div>
@@ -297,7 +310,7 @@ var $ = function(id){ return document.getElementById(id); };
 function loadPrefs(){
   try {
     var p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
-    if (p.model) $('model').value = p.model;
+    if (p.model && $('model').querySelector('option[value="' + p.model + '"]')) $('model').value = p.model;
     if (p.voice) $('voice').value = p.voice;
   } catch(e){}
 }
@@ -344,6 +357,48 @@ function goHome(){
 }
 
 // ═══════════════════════════════════════════════════════════
+//  비용 — 매 턴 끝에 Google 이 보내는 usageMetadata(토큰 수)로 계산
+//  Live API 는 턴마다 지금까지의 대화 전체를 다시 읽어서, 대화가 길어질수록 한 턴이 조금씩 비싸진다.
+//  단가: ai.google.dev/gemini-api/docs/pricing (2026-10-18 확인, USD / 1M 토큰)
+// ═══════════════════════════════════════════════════════════
+var PRICES = {
+  'gemini-3.8-live':               { TEXT: 0.75, AUDIO: 3.00, IMAGE: 1.00, VIDEO: 1.00, outTEXT: 4.50, outAUDIO: 12.00 },
+  'gemini-3.1-flash-live-preview': { TEXT: 0.75, AUDIO: 3.00, IMAGE: 1.00, VIDEO: 1.00, outTEXT: 4.50, outAUDIO: 12.00 }
+};
+var KRW_PER_USD = 1400;   // 환율 추정치. 실제 청구액은 AI Studio 에서 확인
+
+function usageCost(u, model){
+  var P = PRICES[model] || PRICES['gemini-3.8-live'];
+  var usd = 0, seen = 0;
+  (u.promptTokensDetails || []).forEach(function(d){
+    usd += d.tokenCount * (P[d.modality] != null ? P[d.modality] : P.AUDIO); seen += d.tokenCount;
+  });
+  usd += Math.max(0, (u.promptTokenCount || 0) - seen) * P.TEXT;            // 내역에 안 잡힌 나머지(캐시 등)는 글자 단가로
+  seen = 0;
+  (u.responseTokensDetails || []).forEach(function(d){
+    usd += d.tokenCount * (d.modality === 'TEXT' ? P.outTEXT : P.outAUDIO); seen += d.tokenCount;
+  });
+  usd += Math.max(0, (u.responseTokenCount || 0) - seen) * P.outAUDIO;
+  usd += (u.thoughtsTokenCount || 0) * P.outTEXT;                           // 생각 토큰은 글자 출력 단가
+  return usd / 1e6;
+}
+function fmtWon(usd){ return '₩' + Math.round(usd * KRW_PER_USD).toLocaleString('ko-KR'); }
+function showCost(usd){
+  $('costWon').textContent = fmtWon(usd);
+  $('costUsd').textContent = '$' + usd.toFixed(3) + ' · 추정';
+}
+function renderSpend(){
+  var now = new Date(), usd = 0, n = 0;
+  loadHist().forEach(function(h){
+    var d = new Date(h.at);
+    if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && h.usd){ usd += h.usd; n++; }
+  });
+  if (sess.active && sess.usd) usd += sess.usd;
+  $('spendMonth').textContent = fmtWon(usd);
+  $('spendNote').textContent = (now.getMonth() + 1) + '월 · 대화 ' + n + '번 · $' + usd.toFixed(2) + ' · 추정';
+}
+
+// ═══════════════════════════════════════════════════════════
 //  최근 대화 (1단계: 이 브라우저에만)
 // ═══════════════════════════════════════════════════════════
 function loadHist(){ try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e){ return []; } }
@@ -358,7 +413,7 @@ function renderHist(){
     var d = new Date(h.at);
     b.innerHTML = '<div class="t"></div><div class="m"></div>';
     b.querySelector('.t').textContent = h.topic || MODE_LABEL[h.mode] || 'Conversation';
-    b.querySelector('.m').textContent = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ' · ' + Math.max(1, Math.round(h.sec/60)) + '분 · ' + MODE_LABEL[h.mode];
+    b.querySelector('.m').textContent = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ' · ' + Math.max(1, Math.round(h.sec/60)) + '분 · ' + (h.usd ? fmtWon(h.usd) : MODE_LABEL[h.mode]);
     b.onclick = function(){ showTranscript(h); };
     el.appendChild(b);
   });
@@ -370,6 +425,7 @@ function showTranscript(h){
   setState('지난 대화 · ' + new Date(h.at).toLocaleString('ko-KR'), '');
   $('topicTag').textContent = h.topic || MODE_LABEL[h.mode];
   $('timer').textContent = fmtTime(h.sec);
+  showCost(h.usd || 0);
   $('lines').innerHTML = '';
   h.lines.forEach(function(l){ addLine(l.who, l.text); });
   document.querySelector('.controls').style.display = 'none';
@@ -563,6 +619,10 @@ async function connect(){
 }
 
 function onServer(m){
+  if (m.usageMetadata){
+    sess.usd += usageCost(m.usageMetadata, sess.model);
+    showCost(sess.usd); renderSpend();
+  }
   if (m.setupComplete){
     sess.ready = true;
     setState('대화 중', 'live');
@@ -590,8 +650,9 @@ async function startCall(){
   sess = {
     active: true, ready: false, greeted: false, micOn: true, reconnects: 0, resumeHandle: null,
     model: $('model').value, voice: $('voice').value, mode: state.mode, topic: $('topicInput').value.trim(),
-    lines: [], sources: [], playAt: 0, startedAt: Date.now()
+    lines: [], sources: [], playAt: 0, startedAt: Date.now(), usd: 0
   };
+  showCost(0);
   breakCaption();
   $('home').style.display = 'none'; $('call').style.display = 'grid';
   document.querySelector('.controls').style.display = 'flex';
@@ -621,12 +682,13 @@ function endCall(){
   $('ring').classList.remove('listening', 'talking');
   var lines = sess.lines.filter(function(l){ return l.text.trim(); }).map(function(l){ return { who: l.who, text: l.text.replace(/\s+/g, ' ').trim() }; });
   var sec = Math.round((Date.now() - sess.startedAt) / 1000);
-  if (lines.length){
+  if (lines.length || sess.usd){
     var list = loadHist();
-    list.unshift({ at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, lines: lines });
+    list.unshift({ at: sess.startedAt, sec: sec, mode: sess.mode, topic: sess.topic, model: sess.model, usd: sess.usd, lines: lines });
     saveHist(list); renderHist();
   }
-  setState('대화를 마쳤어요 · ' + fmtTime(sec), '');
+  renderSpend();
+  setState('대화를 마쳤어요 · ' + fmtTime(sec) + ' · ' + fmtWon(sess.usd), '');
   document.querySelector('.controls').style.display = 'none';
   document.querySelector('.say').style.display = 'none';
 }
@@ -660,7 +722,7 @@ var toastT;
 function toast(t){ var el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(function(){ el.style.display = 'none'; }, 2600); }
 window.addEventListener('beforeunload', function(e){ if (sess.active){ e.preventDefault(); e.returnValue = ''; } });
 
-loadPrefs(); shuffleTopics(); renderHist();
+loadPrefs(); shuffleTopics(); renderHist(); renderSpend();
 if (!getAuth()) $('auth').style.display = 'block';
 </script>
 </body>

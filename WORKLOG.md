@@ -1,3 +1,13 @@
+## 2026-10-18 · 아이맥 · AI Tutor — 실시간 사용 금액 표시
+
+- 누리: Fluentutor 처럼 쓰는 돈이 실시간으로 보였으면 → 통화 화면 왼쪽 위 THIS CALL 칸(₩ + $), 사이드바 아래 This Month(이번 달 합계), 최근 대화 목록에도 회당 금액
+- 계산: 턴마다 Google 이 주는 usageMetadata(텍스트·음성·이미지 토큰 수) × 공식 단가(3.8 Live·3.1 Flash Live 같음: 입력 텍스트 0.75 / 음성 3 / 이미지 1, 출력 음성 12 / 텍스트·생각 4.5, USD/1M). 실측: 턴마다 프롬프트가 지난 대화만큼 커짐 → 길어질수록 턴이 비싸짐
+- 환율은 1,400원 고정 추정 — 실제 청구는 AI Studio 에서 확인. 월 합계는 이 브라우저 기록 기준
+- 모델 목록: 2.5 Flash Audio(09-2025, 요금표에 없음) → gemini-3.1-flash-live-preview 로 교체(접속 실측 OK)
+- service-worker CACHE_NAME v613
+
+---
+
 ## 2026-10-18 · 아이맥 · Trends — 한국 커뮤니티 인기글 페이지
 
 - 누리: 스레드에서 본 trafficscent.com(커뮤니티·유튜브·뉴스 등 트래픽 모음) 중 **한국 커뮤니티**만 아뜰리에로 → 새 페이지 `trends.html`, 사이드바 GROWTH 맨 아래 **Trends**(AI Brief 아래), Home 목차에도 링크. index 에는 iframe(`trends.html?v=1`)
