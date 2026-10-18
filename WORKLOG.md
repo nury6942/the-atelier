@@ -1,3 +1,13 @@
+## 2026-10-18 · 맥북 · English › IELTS 탭 새로
+
+- 누리: IELTS 정보를 English 탭 안 IELTS 탭에 모아서 계속 쌓아가자 → ANNIE | STUDY | **IELTS** 세 번째 탭
+- 내용은 전부 `js/ielts-page.js` 의 `IELTS` 객체 한 곳에 있음(Firestore 안 씀). 새 정보 = 이 객체만 고치고 배포. 모의고사 점수는 `mocks[n].score = {L,R,W,S}`(L·R은 40문항 중 정답 수, W·S는 밴드)로 채우면 표에 뜸
+- 화면: D-day(2027-09-11)+다음 모의고사 / 영역별 지금→목표 막대(합격선 7.0 실선·도전 점선) / 모의고사 16회 표(다음 회차 코발트 줄) / 4단계 / 영역별 공략 / 쓰기(편지·에세이 틀+7점 체크리스트) / 교재·사이트(초록 씀·노랑 제한·빨강 안 씀) / AI 채점관 프롬프트(복사 버튼) / 시험 정보 / 업데이트 기록
+- 원본은 Job Hunt PLAYBOOK 11(~/Documents/job-hunt-src/gen.py)의 IELTS 절들. 오늘 무료 사이트 5곳 검토도 반영(ieltslab.study 는 스레드 광고 링크 → prepedu 라 '안 씀')
+- switchEngTab 을 탭 3개용으로 일반화(app-1-pages.js v391). 375·1000·2048 폭 넘침 없음. service-worker v605
+
+---
+
 ## 2026-10-18 · 아이맥 · 공통 디자인 3단계 — 그림자 제거 · 나머지 탭 · 별도 페이지
 
 - 카드 그림자 없앰(누리 OK): Tailwind shadow-* 전부 none, --shadow-card·--shadow-button·--nm-shadow-* = none. 떠 있는 것(.fixed 안 모달·.absolute 드롭다운)만 그림자 유지. 그림자로만 구분되던 흰 카드는 얇은 선(outline)으로

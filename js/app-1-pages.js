@@ -28323,19 +28323,19 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var annie = document.getElementById('eng-annie-view');
-    var study = document.getElementById('eng-study-view');
-    var ba = document.getElementById('eng-tab-annie');
-    var bs = document.getElementById('eng-tab-study');
-    if (!annie || !study) return;
-    var isStudy = tab === 'study';
-    annie.style.display = isStudy ? 'none' : 'block';
-    study.style.display = isStudy ? 'block' : 'none';
-    [ba, bs].forEach(function(b){ if (b){ b.style.background = ''; b.style.color = ''; b.style.boxShadow = ''; b.classList.remove('travel-tab-active'); } });
-    var active = isStudy ? bs : ba;
+    var views = { annie:'eng-annie-view', study:'eng-study-view', ielts:'eng-ielts-view' };
+    if (!views[tab]) tab = 'annie';
+    if (!document.getElementById('eng-annie-view')) return;
+    Object.keys(views).forEach(function(k){
+      var v = document.getElementById(views[k]), b = document.getElementById('eng-tab-'+k);
+      if (v) v.style.display = k === tab ? 'block' : 'none';
+      if (b){ b.style.background = ''; b.style.color = ''; b.style.boxShadow = ''; b.classList.remove('travel-tab-active'); }
+    });
+    var active = document.getElementById('eng-tab-'+tab);
     if (active) active.classList.add('travel-tab-active');
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}
-    if (isStudy && typeof loadEnglishStudy === 'function') loadEnglishStudy();
+    if (tab === 'study' && typeof loadEnglishStudy === 'function') loadEnglishStudy();
+    if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
   };
   // STUDY 파이프라인(생성/저장/렌더/오디오)은 다음 단계에서 연결 — 지금은 골격만
   if (!window.openStudyCreateModal) window.openStudyCreateModal = function(){
