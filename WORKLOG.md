@@ -86,6 +86,7 @@
 - 예약 작업 `job-hunt-daily`(아이맥, 매일 07:00): 새 공고 찾기 · 기존 공고 열려 있는지 확인 · 마감일 기록 · 닫힌 건 archive · gen.py → `firebase database:set /jobHuntData new.json`
 - 같은 날 추가 — ai-job-search(MadsLorentzen, ⭐5만, MIT)의 **평가 틀만** 가져옴(설치 X: 포크=공개 리포·LaTeX 필요·덴마크 포털): 공고마다 자격 관문(PASS/미확인/FAIL)·언어 관문(PASS/FLAG/FAIL)·점수(스킬·경력·방향)·강점/약점 한 줄·요구 스킬. fit 은 점수 평균+관문으로 결정. 카드에 "＋/－" 줄, 배지에 점수
 - `job-hunt-src/nuri-profile.json`(사람이 고치는 판정 기준: 국적·비자 조건·언어·경력·방향·스킬 현황) → Playbook 04 표는 열린 공고들의 `skills` 를 gen.py 가 자동 집계(8건 미만이면 10/8 수기 표)
+- 같은 날 UI — 공고 카드·TOP 5 에 **브랜드 로고**(구글 사이트 아이콘, `job-hunt-src/domains.json` 회사→도메인, 없으면 이니셜 칸) + 국기. **PLAYBOOK 을 장별 탭**으로(01~11 격자 버튼, 한 번에 한 장, 장 아래 이전·다음) — 목차 줄에서는 PLAYBOOK 한 칸으로. 아시아 공고 제외(누리: "아시아는 보지도 마")
 ## 2026-10-18 · 맥북 · 자동 API 호출 끄기 (브리프·여행 추천·뉴스 번역)
 
 - 누리 결정: API 요금은 버튼 눌렀을 때만. 영어 STUDY·ANNIE 리뷰는 앞으로 Claude 구독으로 만들어 크롬으로 Firestore 에 직접 넣음

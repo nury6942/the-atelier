@@ -235,6 +235,35 @@
     });
     if(hionly) hionly.addEventListener('click',function(){ hi=!hi; hionly.classList.toggle('on',hi); apply(); });
     jhSubnav(function(){ return curF; });
+    jhPlaybook();
+  }
+
+  // PLAYBOOK 장별 탭: 한 번에 한 장만 보여 준다 (장 아래 이전·다음 버튼)
+  function jhPlaybook(){
+    var tabs=[].slice.call(document.querySelectorAll('.pb-tab'));
+    var chs=[].slice.call(document.querySelectorAll('.pb-ch'));
+    if(!tabs.length) return;
+    var order=tabs.map(function(t){ return t.getAttribute('data-ch'); });
+    function label(ch){ var t=tabs[order.indexOf(ch)]; return t? t.textContent.replace(/^\d\d/,'').trim() : ''; }
+    function go(ch, scroll){
+      tabs.forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-ch')===ch); });
+      chs.forEach(function(c){ c.hidden = c.getAttribute('data-ch')!==ch; });
+      if(scroll){
+        var sec=document.querySelector('section[data-r="pb"] .pb-tabs'), ctl=document.querySelector('.controls');
+        if(sec) window.scrollTo({top: sec.getBoundingClientRect().top+window.scrollY-(ctl?ctl.offsetHeight:0)-16, behavior:'smooth'});
+      }
+    }
+    chs.forEach(function(c){
+      var ch=c.getAttribute('data-ch'), k=order.indexOf(ch), pn=c.querySelector('.pb-pn');
+      if(!pn) return;
+      var prev=order[k-1], next=order[k+1];
+      pn.innerHTML=(prev?'<button data-go="'+prev+'">← '+prev+' '+label(prev)+'</button>':'<span></span>')+
+                   (next?'<button data-go="'+next+'">'+next+' '+label(next)+' →</button>':'<span></span>');
+    });
+    document.querySelector('section[data-r="pb"]').addEventListener('click',function(e){
+      var t=e.target.closest('.pb-tab,[data-go]'); if(!t) return;
+      go(t.getAttribute('data-ch')||t.getAttribute('data-go'), true);
+    });
   }
 
   // ALL 목차 줄: data-nav 가 붙은 섹션·장 제목으로 칩을 만들고, 스크롤 위치에 맞춰 켠다
