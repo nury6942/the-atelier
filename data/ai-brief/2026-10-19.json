@@ -1,0 +1,249 @@
+{
+ "date": "2026-10-19",
+ "generatedAt": "2026-10-19T07:12:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 16개) + 웹 검색 25회 · 실행 환경에서 GitHub 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "hack",
+   "title": "컨셉아트 한 장이 걷는 3D 마을로",
+   "url": "https://x.com/hakimieiqbal/status/2111428789272019234",
+   "image": null,
+   "source": "X @hakimieiqbal · ♥1,200",
+   "how": "GPT로 그림, Opus 5.5로 블록 짓고 셰이더로 덧입힘",
+   "chips": [
+    "♥1,200 · 답글 43",
+    "GPT + Opus 5.5 + Minimax H3"
+   ]
+  },
+  {
+   "cat": "release",
+   "title": "무료 공개 TTS로 목소리 연기까지",
+   "url": "https://www.marktechpost.com/2026/10/14/fish-audio-drama-3-open-weight-tts-model/",
+   "image": null,
+   "source": "MarkTechPost · Fish Audio 10-13 공개",
+   "release": {
+    "name": "Fish Audio Drama 3",
+    "date": "2026-10-13",
+    "url": "https://huggingface.co/fishaudio/drama-3"
+   },
+   "examples": [
+    {
+     "title": "게임·방송 목소리 4개로 영상 한 편",
+     "url": "https://x.com/lucian__03/status/2111867292086939656",
+     "image": null
+    },
+    {
+     "title": "8GB 그래픽카드에서 돌리는 ComfyUI 노드",
+     "url": "https://comfyui-wiki.com/en/news/2026-10-14-comfyui-drama3",
+     "image": null
+    },
+    {
+     "title": "로컬 실행 감정 연기 테스트 영상",
+     "url": "https://www.youtube.com/watch?v=4kN2ACxJ8AY",
+     "image": null
+    }
+   ],
+   "new": [
+    "최대 16명 대사"
+   ],
+   "reviews": [
+    {
+     "say": "롤 아나운서·가렌 목소리까지 그럴듯하게 재현",
+     "who": "X @lucian__03",
+     "url": "https://x.com/lucian__03/status/2111867292086939656",
+     "tone": "good"
+    },
+    {
+     "say": "전문가 부분을 RAM에 두면 8GB 카드로도 돌아감",
+     "who": "ComfyUI Wiki",
+     "url": "https://comfyui-wiki.com/en/news/2026-10-14-comfyui-drama3",
+     "tone": "good"
+    },
+    {
+     "say": "Reddit 원글 기준 48GB 카드 필요, 노트북 무리",
+     "who": "eesel 리뷰(Reddit 인용)",
+     "url": "https://www.eesel.ai/blog/fish-audio-drama-3-review",
+     "tone": "bad"
+    },
+    {
+     "say": "공개 모델 최고지만 음질은 유료 API에 밀림",
+     "who": "eesel 리뷰",
+     "url": "https://www.eesel.ai/blog/fish-audio-drama-3-review",
+     "tone": "bad"
+    }
+   ],
+   "why": "여러 인물 대화 연기를 무료 공개 모델로",
+   "chips": [
+    "35B · 실제 쓰는 건 3B",
+    "83개 언어",
+    "연매출 $50만 미만 상업 무료 · 약 7억 원"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "피그마 대체 앱, 9일 새 릴리스 7번",
+   "url": "https://github.com/storytold/figcraft",
+   "image": null,
+   "source": "GitHub storytold/figcraft · ArtCraft 팀",
+   "how": "Rust로 다시 짠 피그마, 에이전트용 MCP 내장",
+   "chips": [
+    "별 약 2,600",
+    "v0.7.0 · 10-18",
+    "무료 · 오프라인"
+   ],
+   "forMe": "오토레이아웃·컴포넌트를 어떻게 다시 짰는지 보면 VectorCraft 구조 잡는 데 참고가 돼요"
+  },
+  {
+   "cat": "money",
+   "title": "해외몰 세팅 2천만 원어치를 5시간에",
+   "url": "https://www.threads.com/@stnncm/post/DeoYpbNmfUg",
+   "image": null,
+   "source": "Threads @stnncm · ♥96",
+   "how": "Aside+클로드코드로 결제·배송·광고 자동",
+   "chips": [
+    "외주 월 500만 원 → 월 $100 · 약 14만 원",
+    "대만·일본 메타광고 2시간마다 보고"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "피그마 파일을 여는 무료 AI 편집기",
+   "url": "https://github.com/open-pencil/open-pencil",
+   "image": null,
+   "source": "GitHub open-pencil · MIT",
+   "how": ".fig 파일을 열고 AI 챗(도구 100여 개)으로 수정",
+   "chips": [
+    "별 약 9,100",
+    "웹은 설치 없음",
+    "맥 brew 설치"
+   ],
+   "forMe": "Claude Code에 MCP로 붙이면 Atelier 화면 시안을 피그마 형식으로 바로 받아볼 수 있어요"
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "CLAUDE.md 절차를 스킬 하나로 빼기",
+   "minutes": 20,
+   "why": "Atelier CLAUDE.md는 매 세션 통째로 읽혀서 길수록 비싸고 느려져요. 시작·마무리 절차를 스킬로 빼면 필요할 때만 불러와요.",
+   "from": {
+    "label": "X @skunzu · ♥34",
+    "url": "https://x.com/skunzu/status/2111885271180390441"
+   },
+   "steps": [
+    {
+     "text": "원문 영상 보기",
+     "url": "https://x.com/skunzu/status/2111885271180390441"
+    },
+    {
+     "text": "Claude Code에 붙여넣기",
+     "copy": "이 리포의 CLAUDE.md를 감사해줘. 매번 알아야 하는 '사실'(프로젝트 구조, 디자인 규칙, 말투 규칙)과 특정 상황에만 쓰는 '절차'(세션 시작 보고, 세션 마무리, 자동 배포 순서)를 표로 나눠 보여줘. 그다음 '세션 마무리' 절차 하나만 .claude/skills/session-wrap/SKILL.md 로 옮기는 안을 만들고, CLAUDE.md에는 그 스킬을 쓰라는 한 줄만 남겨줘. 파일은 아직 고치지 말고 BEFORE/AFTER diff만 먼저 보여줘. 커밋·푸시하지 마."
+    },
+    {
+     "text": "diff 보고 승인하기"
+    }
+   ]
+  },
+  {
+   "title": "내 피그마 파일을 브라우저로 열기",
+   "minutes": 15,
+   "why": "OpenPencil 웹 앱은 설치·계정 없이 .fig 파일을 열어요. 피그마 없이도 시안을 열어 둘 수 있는지 직접 확인해 볼 수 있어요.",
+   "from": {
+    "label": "GitHub open-pencil · ★9.1k",
+    "url": "https://github.com/open-pencil/open-pencil"
+   },
+   "steps": [
+    {
+     "text": "피그마서 .fig 내려받기"
+    },
+    {
+     "text": "OpenPencil 웹 열기",
+     "url": "https://app.openpencil.dev"
+    },
+    {
+     "text": "파일 끌어다 열기"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Kling 4.0 전체 공개",
+   "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
+   "image": null,
+   "source": "30초·키프레임 10개 · 10-15",
+   "watching": true
+  },
+  {
+   "cat": "vibe",
+   "title": "어도비 클론, 믿어도 될까",
+   "url": "https://glyndewis.com/blog/artcraft-cloned-adobe",
+   "image": null,
+   "source": "Glyn Dewis · 사진가 시각",
+   "watching": false
+  },
+  {
+   "cat": "money",
+   "title": "실제 출시된 바이브 앱 6개",
+   "url": "https://codingwithvibe.com/vibe-coded-apps/",
+   "image": null,
+   "source": "Subscribr 월 $6.2만 등 · 자기 보고",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "맥 받아쓰기 Openbroca",
+   "url": "https://trustmrr.com/startup/openbroca",
+   "image": null,
+   "source": "주 3,000단위 무료 · 28개 언어 번역",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "피그마→영상 스킬",
+   "url": "https://open-design.ai/skills/figma/",
+   "image": null,
+   "source": "OpenDesign · HyperFrames 기반",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "Claude 해커톤 일본 온라인",
+   "url": "https://cerebralvalley.ai/e/built-with-claude-japan2026",
+   "image": null,
+   "source": "Built with Claude · 11-02~11-10",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14",
+   "note": "10-19에도 실사용 사례 못 찾음"
+  },
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15"
+  },
+  {
+   "name": "Claude Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "date": "2026-10-15",
+   "note": "10-19 기준 독립 사용 후기 못 찾음"
+  },
+  {
+   "name": "Reflection Beam (가중치 공개)",
+   "url": "https://reflection.ai/blog/introducing-beam",
+   "date": "2026-10-16",
+   "note": "가중치는 아직 미공개(이달 중 예정)"
+  },
+  {
+   "name": "Kling 4.0 전체 공개",
+   "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
+   "date": "2026-10-15",
+   "note": "사례 1건: X @minchoi 프롬프트 7개(소셜 파일)"
+  }
+ ]
+}
