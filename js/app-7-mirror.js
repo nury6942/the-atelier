@@ -1200,7 +1200,7 @@ function _boardReviewCard() {
       '<button onclick="_bRvOk(this)" aria-label="확인" style="width:22px;height:22px;border:1.5px solid #1d5fd1;background:none;cursor:pointer;padding:0"></button></div>';
   }).join('');
   window._bRvOpts = opts;
-  return '<div class="lb-c" style="margin-bottom:10px;border:1px solid #9cc4fb"><p class="lb-t"><span>이번 주 새로 들어온 <b class="lb-n" style="color:' + BK.ink + '">' + rows.length + '</b>줄 · ' + _bEsc((rv.range || '').split('~')[1] || '') + '까지 · ' + (rv.at ? (+rv.at.slice(5, 7)) + '/' + (+rv.at.slice(8, 10)) + ' 반영' : '') + '</span>' +
+  return '<div class="lb-c" style="margin-bottom:10px;border:1px solid #9cc4fb"><p class="lb-t"><span>이번 주 새로 들어온 <b class="lb-n" style="color:' + BK.ink + '">' + rows.length + '</b>줄 · ' + (function() { var e = (rv.range || '').split('~')[1] || ''; return e ? (+e.slice(5, 7)) + '/' + (+e.slice(8, 10)) + '까지' : ''; })() + (rv.at ? ' · ' + (new Date(rv.at).getMonth() + 1) + '/' + new Date(rv.at).getDate() + ' 반영' : '') + '</span>' +
     '<span><button onclick="_bRvAll()" style="font-size:12px;padding:3px 9px;border:1px solid #1d5fd1;background:#fff;color:#1d5fd1;cursor:pointer">남은 것 모두 확인 ✓</button></span></p>' +
     '<div style="display:flex;gap:14px;font-size:11.5px;color:' + BK.sub + ';margin:-2px 0 4px">칸을 누르면 바로 바꿔요 · <span style="color:#1d6b4c;font-weight:600">초록</span> = 이 가게는 늘 이 칸</div>' + list + '</div>';
 }
