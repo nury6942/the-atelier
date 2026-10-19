@@ -1,0 +1,193 @@
+{
+ "date": "2026-10-20",
+ "generatedAt": "2026-10-20T07:15:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 13개) + 웹 검색 20회 · 실행 환경에서 GitHub 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "hack",
+   "title": "같은 3D 파리 장면, 모델값 217배 차이",
+   "url": "https://x.com/RafaCrackYT/status/2111861310619029557",
+   "image": null,
+   "source": "X @RafaCrackYT · ♥943",
+   "how": "한 프롬프트·코드만으로 '1996 파리' 4개 모델 비교",
+   "chips": [
+    "Opus 5.5 $73.80 · 약 10만 원",
+    "DeepSeek Flash $0.34 · 약 480원",
+    "Gemini 4 Argon 약 $2.50 · 30분"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "클로드 작업이 픽셀 사무실로 보인다",
+   "url": "https://www.threads.com/@cowboy76/post/DeqgY7wiJYa",
+   "image": null,
+   "source": "Threads @cowboy76 · ♥1,500",
+   "how": "세션 기록을 0.25초마다 읽어 캐릭터로 움직임",
+   "chips": [
+    "♥1,500 · 답글 167",
+    "훅·설치 없이 로컬만",
+    "서브에이전트는 엘리베이터 출근"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "일러 대체 앱 VectorCraft, 별 1만",
+   "url": "https://github.com/storytold/vectorcraft",
+   "image": null,
+   "source": "GitHub storytold/vectorcraft · ArtCraft 팀",
+   "how": "Rust로 새로 짠 벡터 툴, .ai 열고 MCP 내장",
+   "chips": [
+    "별 약 10,000",
+    "준비도 65%(자체 평가)",
+    "무료 · 웹에서도"
+   ],
+   "forMe": "누리님 VectorCraft와 이름이 같아요. 펜·패스파인더·메시를 어떻게 나눴는지 구조 참고하고, 이름 겹침도 미리 생각해 두세요"
+  },
+  {
+   "cat": "money",
+   "title": "AI 직원 10명 회의로 공모전 입상",
+   "url": "https://www.threads.com/@chloe_insight/post/Deq8fjXjwzl",
+   "image": null,
+   "source": "Threads @chloe_insight · ♥226",
+   "how": "직원마다 md 2장, 안건당 8번 순차 호출",
+   "chips": [
+    "상금 100만 원",
+    "GPT PRO + Claude MAX를 CLI로"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "언리얼 에디터를 Claude Code가 직접",
+   "url": "https://github.com/EpicGames/unreal-engine-skills-for-claude-code-plugin",
+   "image": null,
+   "source": "GitHub EpicGames · 공식 플러그인",
+   "how": "MCP로 블루프린트·머티리얼 등 30개+ 도구 묶음",
+   "chips": [
+    "별 약 1,300",
+    "MIT",
+    "에디터 MCP는 아직 실험 단계"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Atelier 탐색은 Haiku, 검토만 Opus",
+   "minutes": 20,
+   "why": "Atelier 작업 대부분은 파일 찾기라 싼 Haiku로 충분해요. 무거운 Opus는 마지막 검토에만 쓰면 사용 한도가 훨씬 오래 가요.",
+   "from": {
+    "label": "X @skunzu · ♥50",
+    "url": "https://x.com/skunzu/status/2112238104601919728"
+   },
+   "steps": [
+    {
+     "text": "원문 영상 보기",
+     "url": "https://x.com/skunzu/status/2112238104601919728"
+    },
+    {
+     "text": "Claude Code에 붙여넣기",
+     "copy": "이 리포의 .claude/agents/ 에 서브에이전트 2개를 만드는 안을 보여줘. ① explorer: model haiku, 읽기 전용(Read·Grep·Glob만), 파일 찾기와 구조 요약 담당 ② reviewer: model opus, 작업 마무리 때 diff 검토만 하고 파일은 고치지 않음. 두 파일 내용을 먼저 보여주고, 내가 승인하면 그때 만들어줘. 커밋·푸시하지 마."
+    },
+    {
+     "text": "다음부터 이렇게 시작",
+     "copy": "CLAUDE_CODE_SUBAGENT_MODEL=haiku claude --model sonnet"
+    }
+   ]
+  },
+  {
+   "title": "클로드에서 그림은 GPT 구독으로",
+   "minutes": 15,
+   "why": "ChatGPT 구독이 있으면 추가 요금 없이 Atelier용 더미 이미지를 뽑을 수 있어요. Codex가 API 키로 로그인돼 있으면 요금이 나가니 확인부터 해요.",
+   "from": {
+    "label": "Threads @kez_works · ♥65",
+    "url": "https://www.threads.com/@kez_works/post/DeqqKCKkxsD"
+   },
+   "steps": [
+    {
+     "text": "로그인 방식 확인",
+     "copy": "codex login status"
+    },
+    {
+     "text": "Claude Code에 지시",
+     "copy": "이미지가 필요하면 codex exec 로 Codex에게 생성을 맡겨줘. 테스트로 Atelier 빈 화면용 흰 바탕·코발트(#1F4BD8) 포인트의 미니멀 일러스트 한 장을 만들어 scratch 폴더에 저장해줘. 커밋하지 마."
+    },
+    {
+     "text": "결과 이미지 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "tool",
+   "title": "픽셀 사무실 VS Code판",
+   "url": "https://github.com/pablodelucca/pixel-agents",
+   "image": null,
+   "source": "별 약 9,800 · 가구 타일셋은 유료",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "픽셀 사무실 웹판",
+   "url": "https://github.com/paulrobello/claude-office",
+   "image": null,
+   "source": "v0.25 · MIT · 별 약 570",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "Claude·Codex 검토 루프",
+   "url": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop",
+   "image": null,
+   "source": "Claude 계획 · Codex 검토 스킬",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "언리얼 MCP 5종 실테스트",
+   "url": "https://daily.dev/posts/i-tested-claude-inside-unreal-engine-5-8--wrsua1tyc",
+   "image": null,
+   "source": "모자 줍기 8~9점 · 축구 4점",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "블루프린트는 아직 지저분",
+   "url": "https://ludusengine.com/blog/claude-code-for-unreal-engine",
+   "image": null,
+   "source": "C++는 강하고 BP는 설계 지시 필요",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Claude Code 데스크톱 멀티세션 업데이트",
+   "url": "https://x.com/ClaudeDevs/status/2110445844675838148",
+   "date": "2026-10-14",
+   "note": "10-20에도 실사용 사례 못 찾음 · 10-21 지나면 뺌"
+  },
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15",
+   "note": "10-20 기준 사례 못 찾음"
+  },
+  {
+   "name": "Claude Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "date": "2026-10-15",
+   "note": "10-20 기준 독립 사용 후기 못 찾음"
+  },
+  {
+   "name": "Reflection Beam (가중치 공개)",
+   "url": "https://reflection.ai/blog/introducing-beam",
+   "date": "2026-10-16",
+   "note": "가중치는 아직 미공개(이달 중 예정)"
+  },
+  {
+   "name": "Kling 4.0 전체 공개",
+   "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
+   "date": "2026-10-15",
+   "note": "사례 1건(@minchoi) · 10-20 검색엔 판매사 블로그뿐"
+  }
+ ]
+}
