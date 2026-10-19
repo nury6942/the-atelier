@@ -1,0 +1,261 @@
+{
+ "date": "2026-10-20",
+ "collectedAt": "2026-10-20T06:40:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@cowboy76",
+   "url": "https://www.threads.com/@cowboy76/post/DeqgY7wiJYa",
+   "at": "2026-10-19T05:29:14.000Z",
+   "likes": 1500,
+   "replies": 167,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude Code 작업을 픽셀 사무실로 실시간 시각화",
+   "points": [
+    "파일 읽기는 자료실, 코드 수정은 개발실, 명령·git은 서버실, 웹검색·MCP는 정보검색실로 캐릭터가 이동",
+    "서브에이전트는 엘리베이터로 출근(Explore 초록 옷, Plan 보라 옷)하고 결과 보고 후 퇴근",
+    "프로젝트별로 층, 세션별로 매장 — /clear 하면 같은 층 새 세션으로 따라감",
+    "세션 기록(jsonl)을 0.25초마다 읽는 방식이라 훅·설정·패키지 설치 없이 로컬에서만 동작"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aialnam",
+   "url": "https://www.threads.com/@aialnam/post/DeqYM3ck5Qf",
+   "at": "2026-10-19T04:16:06.000Z",
+   "likes": 705,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Google Omni 영상 편집용 프롬프트 7종 모음",
+   "points": [
+    "영화 같은 색보정·피사계심도 넣기(피사체·동작은 유지하라고 명시)",
+    "배경 교체 — 얼굴·의상·비율 유지 + 조명·그림자·반사를 새 환경에 맞추라고 지시",
+    "특정 물건·사람 지우기, 다른 물건으로 바꾸기, 낮→밤 전환",
+    "공통 요령: '바꿀 것'과 '그대로 둘 것'을 한 프롬프트에 같이 적는다"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@kez_works",
+   "url": "https://www.threads.com/@kez_works/post/DeqqKCKkxsD",
+   "at": "2026-10-19T06:53:00.000Z",
+   "likes": 65,
+   "replies": 7,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드에서 GPT 구독으로 그림 뽑기 — Codex exec 연결",
+   "points": [
+    "'이미지 생성은 항상 Codex exec로 발주해줘, claude.md에도 적어놔'라고 한 번 지시",
+    "이후 클로드에게만 말해도 GPT 구독 사용량으로 이미지 생성(추가 요금 없음)",
+    "웹디자인 더미 이미지·상세페이지 이미지·모션그래픽 소스에 활용",
+    "주의: Codex가 ChatGPT 계정 로그인이어야 함 — API 키 로그인이면 API 요금 발생"
+   ],
+   "try": "Codex CLI가 ChatGPT 계정으로 로그인돼 있는지 `codex login status`로 확인"
+  },
+  {
+   "src": "threads",
+   "author": "@chloe_insight",
+   "url": "https://www.threads.com/@chloe_insight/post/Deq8fjXjwzl",
+   "at": "2026-10-19T09:34:12.000Z",
+   "likes": 226,
+   "replies": 20,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "AI 가상회사 회의 구조로 공모전 입상(상금 100만원)",
+   "points": [
+    "직원 10명을 각자 업무지침서 + 인물정보 md 두 문서로 정의",
+    "GPT PRO·Claude MAX를 CLI로 연결해 안건 1건당 8회 순차 호출(조사 3·토론·회의록)",
+    "첫 호출만 웹검색 허용, 나머지는 전사록만 근거로 삼게 제한",
+    "회의록의 액션아이템을 JSON으로 뽑아 다음 회의 입력으로 재투입"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dhdbtkd",
+   "url": "https://www.threads.com/@dhdbtkd/post/DerCW83kTYT",
+   "at": "2026-10-19T10:24:45.000Z",
+   "likes": 47,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code를 사흘간 무인으로 돌린 claude-codex-loop",
+   "points": [
+    "Claude Code가 작업하고, Codex가 1시간마다 결과를 처음 목표와 대조해 다음 지시 하나만 보냄",
+    "멈출 조건을 시작 때 정함(예: 추가지시 20번·48시간·진전 없는 검토 3번 중 먼저)",
+    "Codex가 클로드 앱 화면을 조작하는 방식이라 컴퓨터 사용·예약 기능 + 앱 켜두기 필요",
+    "MIT 라이선스 Codex 스킬로 공개, 모든 앱에서 검증되진 않았다고 명시"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aicoffeechat",
+   "url": "https://www.threads.com/@aicoffeechat/post/Dep8fj6Cnbw",
+   "at": "2026-10-19T00:21:32.000Z",
+   "likes": 351,
+   "replies": 18,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "말 한 줄로 눌러보는 입체 설명 그림 — Colorfigures 스킬",
+   "points": [
+    "사물 작동 원리를 물으면 펜선 느낌의 인터랙티브 입체 그림을 그려줌",
+    "예시 프롬프트: \"how does a toaster know when to pop? make it a Colorfigure\"",
+    "April Zhu가 무료·오픈소스 스킬로 공개(april-zhu.com)",
+    "아이 학습도구·설명 자료에 바로 응용 가능"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ai_crazyman",
+   "url": "https://www.threads.com/@ai_crazyman/post/Dep0efVjw6C",
+   "at": "2026-10-18T23:03:56.000Z",
+   "likes": 273,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Epic, Claude Code용 언리얼 엔진 공식 플러그인 공개",
+   "points": [
+    "MCP로 Unreal Editor를 직접 조작 — 액터·블루프린트·머티리얼·나이아가라·시퀀서 등 30개+ 툴셋",
+    "unreal-mcp 스킬 + 세션 시작 시 UE 프로젝트임을 알리는 훅 포함",
+    "에디터에 ModelContextProtocol·AllToolsets 플러그인을 켜고 MCP 서버를 시작해야 함",
+    "macOS·Linux·Windows(Git Bash/WSL) 지원"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/Deqnm_1Cu5_",
+   "at": "2026-10-19T06:30:44.000Z",
+   "likes": 342,
+   "replies": 19,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Opus 5.5 + 언리얼로 탐험 가능한 3D 오픈월드 구현",
+   "points": [
+    "개발자 Shikhar 사례 — AI가 지형과 높이맵을 설계",
+    "Blender로 풀·나무 등 3D 모델을 만들고 Unreal Engine에서 한 세계로 합침",
+    "아직 게임이라기보다 걸어 다닐 수 있는 시연 수준"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@RafaCrackYT",
+   "url": "https://x.com/RafaCrackYT/status/2111861310619029557",
+   "at": "2026-10-18T16:45:47.000Z",
+   "likes": 943,
+   "replies": 69,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "같은 프롬프트로 '1996년 파리' 3D 장면 — 모델 4종 비용 비교",
+   "points": [
+    "원샷, 100% 코드로 같은 장면을 만들게 함",
+    "Opus 5.5 $73.80·2시간56분 / Gemini 4 Argon 약 $2.50·30분",
+    "DeepSeek Flash 1017 $0.34·46분 / Grok 4.7 약 $7·2시간7분",
+    "분위기는 Opus가 최고, DeepSeek가 217배 싼 값에 거의 근접 — 영상으로 비교"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111861133535567872/img/mt7higf76X_fqFLn.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111861133535567872/vid/avc1/640x360/QdeRADkfuc-WR9lp.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@praneybehl",
+   "url": "https://x.com/praneybehl/status/2111914767925579978",
+   "at": "2026-10-18T20:18:12.000Z",
+   "likes": 583,
+   "replies": 46,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "Gemini Pro 요금제, Argon은 3~5분 만에 한도 소진",
+   "points": [
+    "Argon 써보려고 Gemini Pro(A$32)로 올림",
+    "Antigravity(agy)로 에이전트 4개 병렬 실행하자 3~4분 만에 gemini-4-argon 쿼터 초과",
+    "병렬 에이전트 작업엔 Pro 요금제 한도가 매우 빡빡하다는 실사용 경고"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2112238104601919728",
+   "at": "2026-10-19T17:43:02.000Z",
+   "likes": 50,
+   "replies": 12,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code 모델 분업 — Sonnet 본진, Haiku 탐색, Opus 검토",
+   "points": [
+    "`CLAUDE_CODE_SUBAGENT_MODEL=haiku claude --model sonnet` 으로 시작",
+    ".claude/agents/ 에 search·grep·audit(Haiku) + architect(model: opus) 서브에이전트 4개",
+    "Opus는 계획 확정 전·같은 에러 2번·마무리 diff 승인 때만 호출",
+    "후반부 JEV 언급은 홍보성이라 무시해도 됨"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112237686165577728/img/qWJDpv5tyg2AWWda.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112237686165577728/vid/avc1/480x600/_GTYe6585Ba64w4R.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@GeminiApp",
+   "url": "https://x.com/GeminiApp/status/2112214581443498261",
+   "at": "2026-10-19T16:09:33.000Z",
+   "likes": 908,
+   "replies": 92,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Gemini 4 Argon으로 3D 마법사 체스 게임을 처음부터 제작",
+   "points": [
+    "맥용 Gemini 앱 안의 Google Antigravity로 작업",
+    "멀티 에이전트가 Blender로 모델링·디자인·애니메이션까지 분담",
+    "아이디어에서 바로 플레이 가능한 실시간 3D 게임까지 — 영상은 원문에서"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@ai_for_success",
+   "url": "https://x.com/ai_for_success/status/2111272112979919247",
+   "at": "2026-10-17T01:44:31.000Z",
+   "likes": 143,
+   "replies": 27,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "맥북용 라이브 3D 수초 어항 배경화면을 코드로 제작",
+   "points": [
+    "Gemini 4 Argon + Antigravity로 'Siam' 배경화면 제작",
+    "절차적 Blender 모델링과 Three.js를 결합, 전부 코드로 처음부터",
+    "결과물은 원문 영상 참고"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2111270427192590336/img/gMv0jlyeBrDETkUt.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2111270427192590336/vid/avc1/624x360/WNVxxSQmbf82F6Gu.mp4"
+    }
+   ]
+  }
+ ]
+}
