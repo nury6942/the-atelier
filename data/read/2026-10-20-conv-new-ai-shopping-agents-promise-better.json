@@ -1,0 +1,773 @@
+{
+ "id": "2026-10-20-conv-new-ai-shopping-agents-promise-better",
+ "title": "New AI shopping agents promise better bargains. But who pays the price?",
+ "url": "https://theconversation.com/new-ai-shopping-agents-promise-better-bargains-but-who-pays-the-price-294461",
+ "source": "The Conversation",
+ "author": "Lynnaire Sheridan",
+ "published": "2026-10-19",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "Meta’s recently launched AI agent Muse promises to be many things: it can fire off emails, book holidays and fill out cumbersome online forms.",
+  "But it’s attracting particular attention for its potential as a personal shopper that can search for bargains and make purchases without a user’s approval.",
+  "Just think of someone hunting for a new pair of running shoes. Within minutes, an AI assistant could scan dozens of retailers and compare different brands to find the cheapest suitable pair.",
+  "And Muse is far from alone. Google and OpenAI are also developing AI-powered shopping tools, as tech giants compete to make these agents part of everyday purchasing.",
+  "The appeal of these new AI agents to consumers is obvious: less time spent shopping, and potentially better deals. For retailers, they could change how products are marketed and recommended online.",
+  "Yet, there’s another important implication getting less attention: what happens to the workers who make those products? And will they be left even worse off?",
+  "The workers we can’t see",
+  "Major global brands negotiate prices with suppliers, which also must manage their own production costs. Materials might be sourced in one country, components manufactured in another and finished products assembled elsewhere. These layers can make workers – and the conditions they operate in – invisible.",
+  "The consequences of buyers’ demands for workers are well documented. Research by the International Labour Organisation involving 31 suppliers across five countries found that buyers’ demands put pressure on wages, increased overtime and sometimes led factories to cut corners on workplace safety.",
+  "Indeed, UK researchers have demonstrated how consumer relationships and global supply chains influence the governance of labour standards. More recently, Australian labour policy expert David Peetz has explored how interconnected technologies can concentrate economic power.",
+  "Millions of AI shopping agents scouring the internet for the lowest prices could intensify these pressures, particularly if algorithms increasingly favour cheaper products. Some businesses might respond through innovation, but others could look for savings by cutting labour costs.",
+  "For workers vulnerable to exploitation, the consequences could be more serious. Worldwide, tens of millions of people already live in modern slavery. Forced labour remains a major problem in global supply chains, particularly in industries such as manufacturing and agriculture.",
+  "Such exploitation isn’t simply the result of unethical employers. Pressure to cut costs, weak regulation and workers’ limited bargaining power can all to poor working conditions.",
+  "So could consumers simply tell their AI shopping agents to buy ethically instead?",
+  "The difficulty is knowing which products meet that standard. Expensive running shoes may cost more because of branding or profit margins, rather than better wages or working conditions. And companies’ ethical sourcing claims may reveal little about what happens in subcontracted factories.",
+  "An AI assistant can readily compare prices, delivery times and customer reviews. But it has a much harder task establishing whether workers are paid fairly, can join unions or have safe workplaces – information even human consumers struggle to obtain.",
+  "There is also a larger economic contradiction. AI shopping promises to increase our purchasing power by helping us find better products, avoid inflated prices and save money.",
+  "But consumers are also workers. If cheaper goods come at the expense of wages and job security, some of the people enjoying those bargains may ultimately have less money to spend. What they gain at the checkout could be offset by what they lose at work.",
+  "Could AI make ethical shopping easier?",
+  "It’s also possible AI shopping agents could help consumers make more informed choices – but only if they have access to reliable information about how products are made.",
+  "Some of that information is already being collected. Open Supply Hub, for example, maintains a public database mapping more than 2.5 million production locations worldwide, helping identify factories and the companies connected to them.",
+  "Imagine an AI shopping assistant using such information, alongside independently verified labour standards, to find running shoes made under fair working conditions rather than simply recommending the cheapest pair.",
+  "But knowing where a product was made is not the same as knowing how workers were treated. That requires independent scrutiny, information from workers themselves and effective protections for their rights.",
+  "The OECD already has guidelines for responsible sourcing in the clothing and footwear industries, while the International Labour Organisation’s Better Work programme has demonstrated that efforts to improve factory conditions can produce results.",
+  "AI could make this information easier for consumers to find and compare. But it can’t replace the regulation, collective bargaining and accountability needed to improve working conditions in the first place.",
+  "Tracing a product’s whakapapa – its origins and connections – means recognising the people and employment relationships behind an everyday purchase.",
+  "Whether AI makes those connections more visible, or obscures them further, will depend partly on the information available and what shopping agents are designed to prioritise."
+ ],
+ "level": "C1",
+ "minutes": 5,
+ "words": 796,
+ "gloss": {
+  "cumbersome": {
+   "w": "cumbersome",
+   "pos": "형용사",
+   "ko": "번거로운, 거추장스러운",
+   "en": "slow and complicated to deal with",
+   "ex": "Renewing a visa involves a cumbersome amount of paperwork.",
+   "ipa": "/ˈkʌmbəsəm/"
+  },
+  "fire off": {
+   "w": "fire off",
+   "pos": "구",
+   "ko": "(메일 등을) 빠르게 보내다",
+   "en": "to send something quickly, often several at once",
+   "ex": "She fired off three emails before her first coffee.",
+   "ipa": "/ˈfaɪər ˈɒf/"
+  },
+  "bargain": {
+   "w": "bargain",
+   "pos": "명사",
+   "ko": "싸게 산 물건, 특가품",
+   "en": "something bought for less than its usual price",
+   "ex": "This wool coat was a real bargain in the winter sale.",
+   "ipa": "/ˈbɑːɡɪn/"
+  },
+  "bargains": {
+   "w": "bargain",
+   "pos": "명사",
+   "ko": "싸게 산 물건, 특가품",
+   "en": "something bought for less than its usual price",
+   "ex": "This wool coat was a real bargain in the winter sale.",
+   "ipa": "/ˈbɑːɡɪnz/"
+  },
+  "retailer": {
+   "w": "retailer",
+   "pos": "명사",
+   "ko": "소매업체",
+   "en": "a business that sells goods directly to the public",
+   "ex": "The brand now sells through two online retailers in Japan.",
+   "ipa": "/ˈriːteɪlə/"
+  },
+  "retailers": {
+   "w": "retailer",
+   "pos": "명사",
+   "ko": "소매업체",
+   "en": "a business that sells goods directly to the public",
+   "ex": "The brand now sells through two online retailers in Japan.",
+   "ipa": "/ˈriːteɪləz/"
+  },
+  "far from alone": {
+   "w": "far from alone",
+   "pos": "구",
+   "ko": "결코 혼자가 아닌, 비슷한 사례가 많은",
+   "en": "definitely not the only one",
+   "ex": "If you find grammar tests stressful, you are far from alone.",
+   "ipa": "/ˈfɑː frəm əˈləʊn/"
+  },
+  "tech giant": {
+   "w": "tech giant",
+   "pos": "구",
+   "ko": "거대 기술 기업",
+   "en": "a very large and powerful technology company",
+   "ex": "Several tech giants opened offices in Seoul this year.",
+   "ipa": "/ˈtek ˌdʒaɪənt/"
+  },
+  "tech giants": {
+   "w": "tech giant",
+   "pos": "구",
+   "ko": "거대 기술 기업",
+   "en": "a very large and powerful technology company",
+   "ex": "Several tech giants opened offices in Seoul this year.",
+   "ipa": "/ˈtek ˌdʒaɪənts/"
+  },
+  "appeal": {
+   "w": "appeal",
+   "pos": "명사",
+   "ko": "매력, 끌림",
+   "en": "the quality that makes something attractive or interesting",
+   "ex": "The appeal of remote work is the freedom to plan your own day.",
+   "ipa": "/əˈpiːl/"
+  },
+  "implication": {
+   "w": "implication",
+   "pos": "명사",
+   "ko": "(예상되는) 영향, 함의",
+   "en": "a possible effect or result of an action or decision",
+   "ex": "The new tax has serious implications for small shops.",
+   "ipa": "/ˌɪmplɪˈkeɪʃn/"
+  },
+  "worse off": {
+   "w": "worse off",
+   "pos": "구",
+   "ko": "형편이 더 나빠진",
+   "en": "in a worse situation, especially financially",
+   "ex": "Many renters are worse off than they were five years ago.",
+   "ipa": "/ˈwɜːs ˈɒf/"
+  },
+  "supplier": {
+   "w": "supplier",
+   "pos": "명사",
+   "ko": "공급업체, 협력업체",
+   "en": "a company that provides goods or materials to another business",
+   "ex": "We switched fabric suppliers after the quality dropped.",
+   "ipa": "/səˈplaɪə/"
+  },
+  "suppliers": {
+   "w": "supplier",
+   "pos": "명사",
+   "ko": "공급업체, 협력업체",
+   "en": "a company that provides goods or materials to another business",
+   "ex": "We switched fabric suppliers after the quality dropped.",
+   "ipa": "/səˈplaɪəz/"
+  },
+  "source": {
+   "w": "source",
+   "pos": "동사",
+   "ko": "(원자재를) 조달하다",
+   "en": "to get something, especially materials, from a particular place",
+   "ex": "The label sources its linen from a mill in Lithuania.",
+   "ipa": "/sɔːs/"
+  },
+  "sourced": {
+   "w": "source",
+   "pos": "동사",
+   "ko": "(원자재를) 조달하다",
+   "en": "to get something, especially materials, from a particular place",
+   "ex": "The label sources its linen from a mill in Lithuania.",
+   "ipa": "/sɔːst/"
+  },
+  "component": {
+   "w": "component",
+   "pos": "명사",
+   "ko": "부품, 구성 요소",
+   "en": "one of the parts that make up a machine or product",
+   "ex": "The zip is the component that fails most often on this jacket.",
+   "ipa": "/kəmˈpəʊnənt/"
+  },
+  "components": {
+   "w": "component",
+   "pos": "명사",
+   "ko": "부품, 구성 요소",
+   "en": "one of the parts that make up a machine or product",
+   "ex": "The zip is the component that fails most often on this jacket.",
+   "ipa": "/kəmˈpəʊnənts/"
+  },
+  "assemble": {
+   "w": "assemble",
+   "pos": "동사",
+   "ko": "조립하다",
+   "en": "to put the parts of something together",
+   "ex": "The bags are cut in Italy but assembled in Portugal.",
+   "ipa": "/əˈsembl/"
+  },
+  "assembled": {
+   "w": "assemble",
+   "pos": "동사",
+   "ko": "조립하다",
+   "en": "to put the parts of something together",
+   "ex": "The bags are cut in Italy but assembled in Portugal.",
+   "ipa": "/əˈsembld/"
+  },
+  "well documented": {
+   "w": "well documented",
+   "pos": "구",
+   "ko": "충분히 기록·입증된",
+   "en": "recorded and proved by a lot of evidence",
+   "ex": "The health benefits of regular walking are well documented.",
+   "ipa": "/ˌwel ˈdɒkjumentɪd/"
+  },
+  "put pressure on": {
+   "w": "put pressure on",
+   "pos": "구",
+   "ko": "~에 압박을 가하다",
+   "en": "to try to force someone or something to change",
+   "ex": "Rising rents put pressure on small studios to move out.",
+   "ipa": "/ˈpʊt ˈpreʃər ɒn/"
+  },
+  "overtime": {
+   "w": "overtime",
+   "pos": "명사",
+   "ko": "초과 근무, 야근",
+   "en": "time worked beyond normal working hours",
+   "ex": "The team did a lot of overtime before the collection launch.",
+   "ipa": "/ˈəʊvətaɪm/"
+  },
+  "cut corners": {
+   "w": "cut corners",
+   "pos": "구",
+   "ko": "(비용·시간 아끼려고) 대충 하다",
+   "en": "to do something badly or cheaply to save time or money",
+   "ex": "If you cut corners on stitching, the seams will split.",
+   "ipa": "/ˈkʌt ˈkɔːnəz/"
+  },
+  "governance": {
+   "w": "governance",
+   "pos": "명사",
+   "ko": "관리 체계, 통치",
+   "en": "the way an organisation or system is controlled and managed",
+   "ex": "Investors are asking for better corporate governance.",
+   "ipa": "/ˈɡʌvənəns/"
+  },
+  "labour standards": {
+   "w": "labour standards",
+   "pos": "구",
+   "ko": "노동 기준",
+   "en": "rules about pay, hours and safety for workers",
+   "ex": "The company audits every factory against basic labour standards.",
+   "ipa": "/ˈleɪbə ˌstændədz/"
+  },
+  "interconnected": {
+   "w": "interconnected",
+   "pos": "형용사",
+   "ko": "서로 연결된",
+   "en": "linked to each other so that each affects the others",
+   "ex": "Climate, trade and migration are deeply interconnected issues.",
+   "ipa": "/ˌɪntəkəˈnektɪd/"
+  },
+  "concentrate": {
+   "w": "concentrate",
+   "pos": "동사",
+   "ko": "(한곳에) 집중시키다",
+   "en": "to bring something together in one place or group",
+   "ex": "Online sales tend to concentrate profits in a few platforms.",
+   "ipa": "/ˈkɒnsntreɪt/"
+  },
+  "scour": {
+   "w": "scour",
+   "pos": "동사",
+   "ko": "샅샅이 뒤지다",
+   "en": "to search a place or thing very thoroughly",
+   "ex": "I scoured vintage markets for the right buttons.",
+   "ipa": "/ˈskaʊə/"
+  },
+  "scouring": {
+   "w": "scour",
+   "pos": "동사",
+   "ko": "샅샅이 뒤지다",
+   "en": "to search a place or thing very thoroughly",
+   "ex": "I scoured vintage markets for the right buttons.",
+   "ipa": "/ˈskaʊərɪŋ/"
+  },
+  "intensify": {
+   "w": "intensify",
+   "pos": "동사",
+   "ko": "심화시키다, 강화하다",
+   "en": "to make something stronger or more extreme",
+   "ex": "Competition intensified after the new mall opened.",
+   "ipa": "/ɪnˈtensɪfaɪ/"
+  },
+  "favour": {
+   "w": "favour",
+   "pos": "동사",
+   "ko": "~을 더 선호하다, 유리하게 하다",
+   "en": "to prefer or give an advantage to something",
+   "ex": "Search results often favour bigger brands.",
+   "ipa": "/ˈfeɪvə/"
+  },
+  "vulnerable to": {
+   "w": "vulnerable to",
+   "pos": "구",
+   "ko": "~에 취약한",
+   "en": "easily harmed or affected by something",
+   "ex": "Cotton crops are vulnerable to sudden droughts.",
+   "ipa": "/ˈvʌlnərəbl tə/"
+  },
+  "exploitation": {
+   "w": "exploitation",
+   "pos": "명사",
+   "ko": "착취",
+   "en": "unfair treatment of people for profit",
+   "ex": "The documentary exposed the exploitation of migrant farm workers.",
+   "ipa": "/ˌeksplɔɪˈteɪʃn/"
+  },
+  "modern slavery": {
+   "w": "modern slavery",
+   "pos": "구",
+   "ko": "현대판 노예제",
+   "en": "forcing people to work through threats, debt or control today",
+   "ex": "The new law requires large firms to report on modern slavery risks.",
+   "ipa": "/ˌmɒdn ˈsleɪvəri/"
+  },
+  "forced labour": {
+   "w": "forced labour",
+   "pos": "구",
+   "ko": "강제 노동",
+   "en": "work people are made to do against their will",
+   "ex": "The brand cut ties with a mill accused of using forced labour.",
+   "ipa": "/ˌfɔːst ˈleɪbə/"
+  },
+  "unethical": {
+   "w": "unethical",
+   "pos": "형용사",
+   "ko": "비윤리적인",
+   "en": "morally wrong or unfair",
+   "ex": "Copying a small designer's work is unethical, even if it is legal.",
+   "ipa": "/ʌnˈeθɪkl/"
+  },
+  "regulation": {
+   "w": "regulation",
+   "pos": "명사",
+   "ko": "규제, 규정",
+   "en": "official rules that control an activity",
+   "ex": "Stricter regulation of chemical dyes is expected next year.",
+   "ipa": "/ˌreɡjuˈleɪʃn/"
+  },
+  "bargaining power": {
+   "w": "bargaining power",
+   "pos": "구",
+   "ko": "협상력",
+   "en": "the ability to get good terms in a negotiation",
+   "ex": "Freelancers often have little bargaining power with big clients.",
+   "ipa": "/ˈbɑːɡənɪŋ ˌpaʊə/"
+  },
+  "profit margin": {
+   "w": "profit margin",
+   "pos": "구",
+   "ko": "이윤 폭, 마진",
+   "en": "the difference between what something costs and its selling price",
+   "ex": "Luxury handbags usually carry very high profit margins.",
+   "ipa": "/ˈprɒfɪt ˌmɑːdʒɪn/"
+  },
+  "profit margins": {
+   "w": "profit margin",
+   "pos": "구",
+   "ko": "이윤 폭, 마진",
+   "en": "the difference between what something costs and its selling price",
+   "ex": "Luxury handbags usually carry very high profit margins.",
+   "ipa": "/ˈprɒfɪt ˌmɑːdʒɪnz/"
+  },
+  "ethical sourcing": {
+   "w": "ethical sourcing",
+   "pos": "구",
+   "ko": "윤리적 조달",
+   "en": "buying materials in ways that treat workers and the environment fairly",
+   "ex": "Our buyers now ask every vendor about ethical sourcing.",
+   "ipa": "/ˌeθɪkl ˈsɔːsɪŋ/"
+  },
+  "subcontracted": {
+   "w": "subcontracted",
+   "pos": "형용사",
+   "ko": "하청을 받은, 하도급된",
+   "en": "given by one company to another to do part of the work",
+   "ex": "The embroidery was subcontracted to a small workshop nearby.",
+   "ipa": "/ˌsʌbkənˈtræktɪd/"
+  },
+  "readily": {
+   "w": "readily",
+   "pos": "부사",
+   "ko": "손쉽게, 선뜻",
+   "en": "quickly and easily",
+   "ex": "Spare parts are not readily available for older models.",
+   "ipa": "/ˈredɪli/"
+  },
+  "contradiction": {
+   "w": "contradiction",
+   "pos": "명사",
+   "ko": "모순",
+   "en": "a situation where two facts or ideas cannot both be true",
+   "ex": "There is a contradiction between fast fashion and sustainability.",
+   "ipa": "/ˌkɒntrəˈdɪkʃn/"
+  },
+  "purchasing power": {
+   "w": "purchasing power",
+   "pos": "구",
+   "ko": "구매력",
+   "en": "the amount that money or a person's income can buy",
+   "ex": "Inflation has reduced the purchasing power of young workers.",
+   "ipa": "/ˈpɜːtʃəsɪŋ ˌpaʊə/"
+  },
+  "inflated": {
+   "w": "inflated",
+   "pos": "형용사",
+   "ko": "(가격이) 부풀려진",
+   "en": "higher than is reasonable or fair",
+   "ex": "Tourist shops often sell souvenirs at inflated prices.",
+   "ipa": "/ɪnˈfleɪtɪd/"
+  },
+  "at the expense of": {
+   "w": "at the expense of",
+   "pos": "구",
+   "ko": "~을 희생하여",
+   "en": "in a way that harms or loses something else",
+   "ex": "He finished the project on time, but at the expense of his health.",
+   "ipa": "/ət ðə ɪkˈspens əv/"
+  },
+  "job security": {
+   "w": "job security",
+   "pos": "구",
+   "ko": "고용 안정",
+   "en": "confidence that you will keep your job",
+   "ex": "Contract work pays well but offers little job security.",
+   "ipa": "/ˈdʒɒb sɪˌkjʊərəti/"
+  },
+  "ultimately": {
+   "w": "ultimately",
+   "pos": "부사",
+   "ko": "결국, 궁극적으로",
+   "en": "in the end, after everything is considered",
+   "ex": "Ultimately, the customer decides whether a design succeeds.",
+   "ipa": "/ˈʌltɪmətli/"
+  },
+  "offset": {
+   "w": "offset",
+   "pos": "동사",
+   "ko": "상쇄하다",
+   "en": "to balance one effect with an opposite one",
+   "ex": "Higher shipping costs were offset by cheaper fabric.",
+   "ipa": "/ˈɒfset/"
+  },
+  "informed choice": {
+   "w": "informed choice",
+   "pos": "구",
+   "ko": "충분히 알고 하는 선택",
+   "en": "a decision made with enough knowledge of the facts",
+   "ex": "Clear labels help shoppers make an informed choice.",
+   "ipa": "/ɪnˌfɔːmd ˈtʃɔɪs/"
+  },
+  "independently verified": {
+   "w": "independently verified",
+   "pos": "구",
+   "ko": "제3자가 검증한",
+   "en": "checked by someone with no connection to the company",
+   "ex": "The carbon figures were independently verified by an auditor.",
+   "ipa": "/ˌɪndɪˈpendəntli ˈverɪfaɪd/"
+  },
+  "scrutiny": {
+   "w": "scrutiny",
+   "pos": "명사",
+   "ko": "면밀한 조사, 감시",
+   "en": "careful and detailed examination",
+   "ex": "The brand's recycling claims came under public scrutiny.",
+   "ipa": "/ˈskruːtəni/"
+  },
+  "collective bargaining": {
+   "w": "collective bargaining",
+   "pos": "구",
+   "ko": "단체 교섭",
+   "en": "talks between a union and employers about pay and conditions",
+   "ex": "Nurses won a pay rise through collective bargaining.",
+   "ipa": "/kəˌlektɪv ˈbɑːɡənɪŋ/"
+  },
+  "accountability": {
+   "w": "accountability",
+   "pos": "명사",
+   "ko": "책임(성)",
+   "en": "the duty to explain and take responsibility for your actions",
+   "ex": "Shareholders want more accountability from the board.",
+   "ipa": "/əˌkaʊntəˈbɪləti/"
+  },
+  "obscure": {
+   "w": "obscure",
+   "pos": "동사",
+   "ko": "가리다, 모호하게 하다",
+   "en": "to make something hard to see or understand",
+   "ex": "Complicated pricing can obscure the real cost of a subscription.",
+   "ipa": "/əbˈskjʊə/"
+  },
+  "obscures": {
+   "w": "obscure",
+   "pos": "동사",
+   "ko": "가리다, 모호하게 하다",
+   "en": "to make something hard to see or understand",
+   "ex": "Complicated pricing can obscure the real cost of a subscription.",
+   "ipa": "/əbˈskjʊəz/"
+  },
+  "prioritise": {
+   "w": "prioritise",
+   "pos": "동사",
+   "ko": "우선시하다",
+   "en": "to treat something as more important than other things",
+   "ex": "This season we will prioritise quality over quantity.",
+   "ipa": "/praɪˈɒrətaɪz/"
+  }
+ },
+ "vocab": [
+  "cumbersome",
+  "implication",
+  "cut corners",
+  "scour",
+  "intensify",
+  "vulnerable to",
+  "exploitation",
+  "contradiction",
+  "at the expense of",
+  "offset",
+  "scrutiny",
+  "accountability",
+  "obscure",
+  "inflated"
+ ],
+ "quiz": [
+  {
+   "q": "Muse is able to buy products without first getting the user's approval.",
+   "a": "TRUE",
+   "why": "2문단에 'make purchases without a user’s approval'라고 나온다."
+  },
+  {
+   "q": "More expensive running shoes are generally made by workers who receive better pay.",
+   "a": "FALSE",
+   "why": "비싼 이유가 임금이 아니라 브랜드·마진 때문일 수 있다고 했다."
+  },
+  {
+   "q": "Open Supply Hub is financially supported by the OECD.",
+   "a": "NOT GIVEN",
+   "why": "Open Supply Hub의 자금 출처는 글에 나오지 않는다."
+  },
+  {
+   "q": "Knowing which factory made a product is enough to know how its workers were treated.",
+   "a": "FALSE",
+   "why": "'not the same as knowing how workers were treated'라고 분명히 부정한다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "complete long, annoying web forms",
+   "article": "fill out cumbersome online forms"
+  },
+  {
+   "simple": "made factories save money by being careless about safety",
+   "article": "led factories to cut corners on workplace safety"
+  },
+  {
+   "simple": "Huge numbers of AI tools searching everywhere online for the cheapest deals",
+   "article": "Millions of AI shopping agents scouring the internet for the lowest prices"
+  },
+  {
+   "simple": "facts that even ordinary shoppers find hard to get",
+   "article": "information even human consumers struggle to obtain"
+  },
+  {
+   "simple": "Money saved when shopping could be cancelled out by money lost in their jobs",
+   "article": "What they gain at the checkout could be offset by what they lose at work"
+  }
+ ],
+ "summary": "Although AI shopping agents may save consumers time and money, their hunt for the lowest prices could worsen pressure on hidden supply-chain workers unless they rely on trustworthy labour data backed by regulation and workers' rights.",
+ "gist": "AI 쇼핑 에이전트가 최저가만 좇으면 공급망 노동자의 임금·안전이 더 나빠질 수 있다는 글.\nAI가 윤리적 소비를 도울 수도 있지만, 믿을 만한 정보와 규제·노동권 보호가 먼저 있어야 한다고 말한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Muse is able to buy goods on a user's behalf without first getting the user's permission.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "2문단 \"make purchases without a user’s approval\" — 승인 없이 구매 가능"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The International Labour Organisation study looked at suppliers in more than five countries.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "9문단 \"31 suppliers across five countries\" — 다섯 나라였지 그보다 많지 않음"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Open Supply Hub receives its funding from large technology companies.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "21문단은 \"maintains a public database\"라고만 하고 자금 출처는 언급 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "AI shopping agents can by themselves bring about better working conditions in factories.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "25문단 \"it can’t replace the regulation, collective bargaining and accountability\" — 필자는 AI만으로는 안 된다고 봄"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The money consumers save through AI shopping could be cancelled out by what they lose as workers.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "18문단 \"What they gain at the checkout could be offset by what they lose at work\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 8",
+    "options": [
+     "i  Why a higher price is no guarantee of fair treatment",
+     "ii  How complex production chains hide labour",
+     "iii  The rapid growth of online retail",
+     "iv  An existing record of factory locations",
+     "v  Government plans to regulate AI agents"
+    ],
+    "answer": "ii",
+    "why": "8문단 \"These layers can make workers ... invisible\" — 여러 단계의 공급망이 노동자를 가림"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 15",
+    "options": [
+     "i  Why a higher price is no guarantee of fair treatment",
+     "ii  How complex production chains hide labour",
+     "iii  The rapid growth of online retail",
+     "iv  An existing record of factory locations",
+     "v  Government plans to regulate AI agents"
+    ],
+    "answer": "i",
+    "why": "15문단 \"may cost more because of branding or profit margins, rather than better wages\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 21",
+    "options": [
+     "i  Why a higher price is no guarantee of fair treatment",
+     "ii  How complex production chains hide labour",
+     "iii  The rapid growth of online retail",
+     "iv  An existing record of factory locations",
+     "v  Government plans to regulate AI agents"
+    ],
+    "answer": "iv",
+    "why": "21문단 \"a public database mapping more than 2.5 million production locations\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a word from another language describing a product's origins?",
+    "options": [
+     "20",
+     "23",
+     "26",
+     "27"
+    ],
+    "answer": "26",
+    "why": "26문단 \"a product’s whakapapa – its origins and connections\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions an academic who has studied how linked technologies can concentrate economic power?",
+    "options": [
+     "9",
+     "10",
+     "13",
+     "16"
+    ],
+    "answer": "10",
+    "why": "10문단 \"David Peetz has explored how interconnected technologies can concentrate economic power\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the article, which task can an AI shopping assistant perform easily?",
+    "options": [
+     "A judging whether workers are allowed to join unions",
+     "B comparing delivery times and customer reviews",
+     "C checking the ethical sourcing claims of companies",
+     "D inspecting conditions in subcontracted factories"
+    ],
+    "answer": "B",
+    "why": "16문단 \"can readily compare prices, delivery times and customer reviews\" — 나머지는 어렵다고 함"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What does the writer say about the International Labour Organisation's Better Work programme?",
+    "options": [
+     "A It was designed with AI shopping tools in mind.",
+     "B It has replaced the OECD's sourcing guidelines.",
+     "C It has shown that efforts to improve factory conditions can succeed.",
+     "D It focuses mainly on the agriculture industry."
+    ],
+    "answer": "C",
+    "why": "24문단 \"has demonstrated that efforts to improve factory conditions can produce results\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Forced labour is a serious issue in global supply chains, especially in manufacturing and ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "agriculture"
+    ],
+    "why": "12문단 \"particularly in industries such as manufacturing and agriculture\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "The ILO research found that pressure from buyers sometimes caused factories to cut corners on ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "workplace safety"
+    ],
+    "why": "9문단 \"sometimes led factories to cut corners on workplace safety\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which company has recently launched the AI agent called Muse?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "Meta"
+    ],
+    "why": "1문단 \"Meta’s recently launched AI agent Muse\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    7,
+    14,
+    20
+   ]
+  }
+ }
+}

@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-18T12:21:39.614Z",
+ "updated": "2026-10-19T23:52:46.168Z",
  "items": [
+  {
+   "id": "2026-10-20-conv-new-ai-shopping-agents-promise-better",
+   "date": "2026-10-20",
+   "source": "The Conversation",
+   "title": "New AI shopping agents promise better bargains. But who pays the price?",
+   "url": "https://theconversation.com/new-ai-shopping-agents-promise-better-bargains-but-who-pays-the-price-294461",
+   "author": "Lynnaire Sheridan",
+   "minutes": 5,
+   "level": "C1",
+   "words": 796,
+   "topic": "경제",
+   "gist": "AI 쇼핑 에이전트가 최저가만 좇으면 공급망 노동자의 임금·안전이 더 나빠질 수 있다는 글.\nAI가 윤리적 소비를 도울 수도 있지만, 믿을 만한 정보와 규제·노동권 보호가 먼저 있어야 한다고 말한다.",
+   "file": "data/read/2026-10-20-conv-new-ai-shopping-agents-promise-better.json"
+  },
+  {
+   "id": "2026-10-20-conv-tabis-are-so-over-what-the",
+   "date": "2026-10-20",
+   "source": "The Conversation",
+   "title": "Tabis are so over – what the mainstreaming of the split-toe shoe says about how fashion loses meaning",
+   "url": "https://theconversation.com/tabis-are-so-over-what-the-mainstreaming-of-the-split-toe-shoe-says-about-how-fashion-loses-meaning-293634",
+   "author": "Catherine Greenwood",
+   "minutes": 4,
+   "level": "C1",
+   "words": 747,
+   "topic": "패션",
+   "gist": "마르지엘라의 상징이던 갈라진 발가락 신발 '타비'가 소셜미디어로 대중화되면서, 아는 사람만 알던 '안목의 표시'라는 의미를 잃었다는 패션 기호학 칼럼.",
+   "file": "data/read/2026-10-20-conv-tabis-are-so-over-what-the.json"
+  },
   {
    "id": "2026-10-18-conv-americans-are-stressed-about-grocery",
    "date": "2026-10-18",
@@ -45,6 +73,12 @@
   }
  ],
  "links": [
+  {
+   "source": "BBC Future",
+   "title": "The rejuvenating secrets of the immortal jellyfish",
+   "url": "https://www.bbc.com/future/article/20261016-the-rejuvenating-secrets-of-the-immortal-jellyfish",
+   "date": "2026-10-19"
+  },
   {
    "source": "BBC Future",
    "title": "The shocking lessons from an infamous experiment",
@@ -218,12 +252,6 @@
    "title": "Labour’s last chance? The people shaping Andy Burnham’s grand plans for Britain",
    "url": "https://www.theguardian.com/news/ng-interactive/2026/sep/24/labours-last-chance-the-people-shaping-andy-burnhams-grand-plans-for-britain",
    "date": "2026-09-24"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "A tale of two trap houses: being cuckooed ruined my friend’s life – but did it then help save him?",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/sep/22/a-tale-of-two-trap-houses-being-cuckooed-ruined-my-friends-life-but-did-it-then-help-save-him",
-   "date": "2026-09-22"
   }
  ]
 }
