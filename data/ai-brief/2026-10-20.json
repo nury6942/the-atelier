@@ -7,7 +7,7 @@
    "cat": "hack",
    "title": "같은 3D 파리 장면, 모델값 217배 차이",
    "url": "https://x.com/RafaCrackYT/status/2111861310619029557",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2111861133535567872/img/mt7higf76X_fqFLn.jpg",
    "source": "X @RafaCrackYT · ♥943",
    "how": "한 프롬프트·코드만으로 '1996 파리' 4개 모델 비교",
    "chips": [
@@ -33,7 +33,7 @@
    "cat": "vibe",
    "title": "일러 대체 앱 VectorCraft, 별 1만",
    "url": "https://github.com/storytold/vectorcraft",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/storytold/vectorcraft",
    "source": "GitHub storytold/vectorcraft · ArtCraft 팀",
    "how": "Rust로 새로 짠 벡터 툴, .ai 열고 MCP 내장",
    "chips": [
@@ -59,7 +59,7 @@
    "cat": "tool",
    "title": "언리얼 에디터를 Claude Code가 직접",
    "url": "https://github.com/EpicGames/unreal-engine-skills-for-claude-code-plugin",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/EpicGames/unreal-engine-skills-for-claude-code-plugin",
    "source": "GitHub EpicGames · 공식 플러그인",
    "how": "MCP로 블루프린트·머티리얼 등 30개+ 도구 묶음",
    "chips": [
@@ -121,7 +121,7 @@
    "cat": "tool",
    "title": "픽셀 사무실 VS Code판",
    "url": "https://github.com/pablodelucca/pixel-agents",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/pablodelucca/pixel-agents",
    "source": "별 약 9,800 · 가구 타일셋은 유료",
    "watching": false
   },
@@ -129,7 +129,7 @@
    "cat": "free",
    "title": "픽셀 사무실 웹판",
    "url": "https://github.com/paulrobello/claude-office",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/paulrobello/claude-office",
    "source": "v0.25 · MIT · 별 약 570",
    "watching": false
   },
@@ -137,7 +137,7 @@
    "cat": "free",
    "title": "Claude·Codex 검토 루프",
    "url": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop",
-   "image": null,
+   "image": "https://www.skills.sh/bear2u/my-skills/codex-claude-loop/opengraph-image?1a82f7707f2a479f",
    "source": "Claude 계획 · Codex 검토 스킬",
    "watching": false
   },
@@ -145,7 +145,7 @@
    "cat": "hack",
    "title": "언리얼 MCP 5종 실테스트",
    "url": "https://daily.dev/posts/i-tested-claude-inside-unreal-engine-5-8--wrsua1tyc",
-   "image": null,
+   "image": "https://api.daily.dev/og/posts/wRsuA1tyC.png",
    "source": "모자 줍기 8~9점 · 축구 4점",
    "watching": false
   },
@@ -153,7 +153,7 @@
    "cat": "tool",
    "title": "블루프린트는 아직 지저분",
    "url": "https://ludusengine.com/blog/claude-code-for-unreal-engine",
-   "image": null,
+   "image": "https://ludusengine.com/ludus-og-card.png",
    "source": "C++는 강하고 BP는 설계 지시 필요",
    "watching": false
   }
