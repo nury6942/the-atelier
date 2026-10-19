@@ -1144,7 +1144,7 @@ function ldgRenderBoard() {
   try { open = localStorage.getItem('atelier_ledger_detail_open') === '1'; } catch (e) {}
   h += '<button onclick="ldgToggleDetail()" style="width:100%;margin-top:10px;font-size:12px;color:#1d5fd1;background:#eef5fb;border:0;padding:9px;cursor:pointer">' +
     (open ? '▴ 차트 접기' : '▾ 차트 더 보기 · KPI · 수입/지출 구성 · TOP 카테고리 · 일별 추이') + '</button>';
-  el.innerHTML = h;
+  el.innerHTML = (function() { try { return _boardReviewCard(); } catch (e) { console.error('[Board review]', e); return ''; } })() + h;
   try { _bFixTags(el); } catch (e) {}
   _applyDetailVisibility();
 }
@@ -1174,6 +1174,57 @@ window.ldgToggleDetail = ldgToggleDetail;
   window.ldgRenderMonthly = wrapped;
 })();
 
+// ── 이번 주 새로 들어온 줄 점검 카드 (보드 맨 위) — 칸 바꾸기 · 확인 · 가게 기억
+function _bShopKey(t) { return String((t['세부사항'] || '').split(' · ')[0]).replace(/\s+/g, ' ').trim(); }
+function _boardReviewLoad(force) {
+  if (typeof db === 'undefined' || (_boardExtra.reviewLoading && !force)) return;
+  _boardExtra.reviewLoading = true;
+  db.collection('appSettings').doc('banksaladReview').get().then(function(d) { _boardExtra.review = d.data() || {}; try { ldgRenderBoard(); } catch (e) {} }).catch(function() {});
+}
+function _boardReviewCard() {
+  var rv = _boardExtra.review; if (!rv) { _boardReviewLoad(); return ''; }
+  var byId = {}; (_ledgerData.transactions || []).forEach(function(t) { if (t.id) byId[t.id] = t; });
+  var rows = (rv.added || []).filter(function(id) { return !(rv.reviewed || {})[id] && byId[id]; }).map(function(id) { return byId[id]; })
+    .sort(function(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (b['금액'] || 0) - (a['금액'] || 0); });
+  if (!rows.length) return '';
+  var cats = _ledgerData.categories || {}, opts = '';
+  Object.keys(cats).filter(function(k) { return k !== '미분류'; }).forEach(function(k) { (Array.isArray(cats[k]) ? cats[k] : []).forEach(function(sb) { var v = k + '/' + (sb.name || sb); opts += '<option value="' + _bEsc(v) + '">' + _bEsc(v) + '</option>'; }); });
+  var rules = rv.shopRules || {};
+  var list = rows.map(function(t) {
+    var cat = t['대분류'] + '/' + t['소분류'], ruled = rules[_bShopKey(t)] === cat;
+    return '<div class="lb-rv" data-id="' + _bEsc(t.id) + '" style="display:grid;grid-template-columns:44px minmax(0,1fr) auto 84px 26px;gap:10px;align-items:center;padding:7px 0;border-top:1px solid #eef1f5;font-size:12.5px">' +
+      '<span style="color:' + BK.sub + ';font-size:11.5px">' + (+t.date.slice(5, 7)) + '/' + (+t.date.slice(8, 10)) + '</span>' +
+      '<span style="color:' + BK.ink + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _bEsc(_bShopKey(t)) + (ruled ? ' <span style="font-size:11px;color:#23855f;font-weight:600">· 가게 기억</span>' : '') + '</span>' +
+      '<span class="lb-rv-c"><button onclick="_bRvPick(this)" style="font-size:11.5px;padding:3px 7px;border:1px solid ' + (ruled ? '#23855f' : '#9cc4fb') + ';background:' + (ruled ? '#e3f4ec' : '#e8f1fd') + ';color:' + (ruled ? '#1d6b4c' : '#1d5fd1') + ';cursor:pointer">' + _bEsc(cat) + '</button></span>' +
+      '<b class="lb-n" style="text-align:right;color:' + (t['금액'] < 0 ? '#23855f' : BK.ink) + '">' + (t['금액'] || 0).toLocaleString() + '</b>' +
+      '<button onclick="_bRvOk(this)" aria-label="확인" style="width:22px;height:22px;border:1.5px solid #1d5fd1;background:none;cursor:pointer;padding:0"></button></div>';
+  }).join('');
+  window._bRvOpts = opts;
+  return '<div class="lb-c" style="margin-bottom:10px;border:1px solid #9cc4fb"><p class="lb-t"><span>이번 주 새로 들어온 <b class="lb-n" style="color:' + BK.ink + '">' + rows.length + '</b>줄 · ' + _bEsc((rv.range || '').split('~')[1] || '') + '까지 · ' + (rv.at ? (+rv.at.slice(5, 7)) + '/' + (+rv.at.slice(8, 10)) + ' 반영' : '') + '</span>' +
+    '<span><button onclick="_bRvAll()" style="font-size:12px;padding:3px 9px;border:1px solid #1d5fd1;background:#fff;color:#1d5fd1;cursor:pointer">남은 것 모두 확인 ✓</button></span></p>' +
+    '<div style="display:flex;gap:14px;font-size:11.5px;color:' + BK.sub + ';margin:-2px 0 4px">칸을 누르면 바로 바꿔요 · <span style="color:#1d6b4c;font-weight:600">초록</span> = 이 가게는 늘 이 칸</div>' + list + '</div>';
+}
+function _bRvSave(patch) { var rv = _boardExtra.review = _boardExtra.review || {}; Object.keys(patch).forEach(function(k) { rv[k] = (typeof patch[k] === 'object' && !Array.isArray(patch[k])) ? Object.assign({}, rv[k] || {}, patch[k]) : patch[k]; }); try { db.collection('appSettings').doc('banksaladReview').set(patch, { merge: true }); } catch (e) { console.error('[Review save]', e); } }
+window._bRvOk = function(btn) { var id = btn.closest('.lb-rv').dataset.id, r = {}; r[id] = true; _bRvSave({ reviewed: r }); ldgRenderBoard(); };
+window._bRvAll = function() { var r = {}; document.querySelectorAll('.lb-rv').forEach(function(x) { r[x.dataset.id] = true; }); _bRvSave({ reviewed: r }); ldgRenderBoard(); };
+window._bRvPick = function(btn) {
+  var row = btn.closest('.lb-rv'), cell = row.querySelector('.lb-rv-c'), cur = btn.textContent;
+  cell.innerHTML = '<select style="font-size:12px;max-width:180px">' + (window._bRvOpts || '') + '</select> <button data-m="once" style="font-size:11px;padding:2px 6px;border:1px solid #1d5fd1;background:#fff;color:#1d5fd1;cursor:pointer">이번만</button> <button data-m="always" style="font-size:11px;padding:2px 6px;border:1px solid #23855f;background:#e3f4ec;color:#1d6b4c;cursor:pointer">이 가게는 늘</button>';
+  var sel = cell.querySelector('select'); sel.value = cur;
+  cell.querySelectorAll('button').forEach(function(b) { b.onclick = function() { _bRvApply(row.dataset.id, sel.value, b.dataset.m === 'always'); }; });
+};
+function _bRvApply(id, cat, always) {
+  var pr = cat.split('/'), t = (_ledgerData.transactions || []).find(function(x) { return x.id === id; }); if (!t) return;
+  var key = _bShopKey(t), ids = [id];
+  if (always) (_boardExtra.review.added || []).forEach(function(x) { var o = (_ledgerData.transactions || []).find(function(y) { return y.id === x; }); if (o && _bShopKey(o) === key && !(_boardExtra.review.reviewed || {})[x]) ids.push(x); });
+  ids.forEach(function(x) { var o = (_ledgerData.transactions || []).find(function(y) { return y.id === x; }); if (o) { o['대분류'] = pr[0]; o['소분류'] = pr.slice(1).join('/'); } });
+  try { ldgSaveTx(); } catch (e) { console.error('[Review tx save]', e); }
+  var r = {}; ids.forEach(function(x) { r[x] = true; }); var patch = { reviewed: r };
+  if (always) { var sr = {}; sr[key] = cat; patch.shopRules = sr; }
+  _bRvSave(patch);
+  ldgRenderBoard();
+}
+
 // ── 뱅샐 월 자동 반영 (맥북 launchd → ~/money/auto/run.sh 가 크롬에서 부름) ─────────────────────
 // rows = to_atelier.py 결과(전부 출처 '뱅샐'). 그 파일이 덮는 기간 안에서만 바꾼다:
 //  · 이미 있는 줄(같은 id)은 누리/Claude 가 아뜰리에에서 고친 칸·메모를 그대로 둔다
@@ -1191,6 +1242,7 @@ window.ldgImportBanksal = async function(rows, opt) {
     var newById = {}; rows.forEach(function(r) { newById[r.id] = r; });
     var years = []; for (var y = +lo.slice(0, 4); y <= +hi.slice(0, 4); y++) years.push(String(y));
     var stamp = new Date().toISOString().replace(/[:.]/g, '-'), sum = { added: 0, kept: 0, removed: 0, autoRemoved: 0, manualInRange: 0, range: lo + '~' + hi, big: [] };
+    var revRef = db.collection('appSettings').doc('banksaladReview'), rev = (await revRef.get()).data() || {}, rules = rev.shopRules || {}, addedIds = [], learned = 0;
     var seen = {};
     for (var i = 0; i < years.length; i++) {
       var Y = years[i], ref = db.collection('ledgerTransactions').doc(Y), snap = await ref.get(), items = (snap.exists && snap.data().items) || [];
@@ -1213,7 +1265,11 @@ window.ldgImportBanksal = async function(rows, opt) {
       });
       rows.forEach(function(r) {
         if (seen[r.id] || r.date.slice(0, 4) !== Y || !inR(r)) return;
-        seen[r.id] = 1; sum.added++; out.push(r);
+        seen[r.id] = 1; sum.added++;
+        // 누리가 '이 가게는 늘'로 고친 가게면 그 칸으로 (점검 카드에서 배운 것)
+        var rule = rules[_bShopKey(r)];
+        if (rule && r['대분류'] !== '수입' && r['대분류'] !== '저축') { var pr = rule.split('/'); r = Object.assign({}, r, { '대분류': pr[0], '소분류': pr.slice(1).join('/') }); learned++; }
+        out.push(r); addedIds.push(r.id);
         // 해외 큰 결제(렌터카·호텔 등 30만↑): 승인 ≠ 실제 청구일 수 있어 확인 목록에
         if (r['금액'] >= 300000 && /^[A-Za-z0-9 *.&'()/_-]+$/.test((r['세부사항'] || '').split(' · ')[0]) && /카드/.test(r['결제수단'] || ''))
           sum.big.push(r.date.slice(5) + ' ' + Math.round(r['금액'] / 1e4) + '만 ' + (r['세부사항'] || '').split(' · ')[0].slice(0, 24));
@@ -1222,7 +1278,14 @@ window.ldgImportBanksal = async function(rows, opt) {
       out = out.map(function(o) { var c = {}; Object.keys(o).forEach(function(k) { if (o[k] !== undefined) c[k] = o[k]; }); return c; });  // Firestore 는 undefined 칸을 거절
       if (!opt.dry) await ref.set({ items: out, updatedAt: new Date().toISOString() }, { merge: true });
     }
-    if (!opt.dry) try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
+    if (!opt.dry) {
+      // 점검 카드: 아직 확인 안 한 지난 줄 + 이번에 새로 들어온 줄
+      var prevPending = (rev.added || []).filter(function(id) { return !(rev.reviewed || {})[id]; });
+      var all = prevPending.concat(addedIds.filter(function(id) { return prevPending.indexOf(id) < 0; }));
+      await revRef.set({ at: new Date().toISOString(), range: lo + '~' + hi, added: all, reviewed: {}, shopRules: rules }, { merge: false });
+      try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
+    }
+    sum.learned = learned;
     sum.state = 'done'; sum.dry = !!opt.dry; put(sum);
     return sum;
   } catch (e) { put({ state: 'error', message: String(e && e.message || e) }); throw e; }

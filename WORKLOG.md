@@ -8,6 +8,11 @@
 
 ---
 
+## 2026-10-19 · 맥북 · 뱅샐 주간 점검 카드 + 가게 기억 (v80)
+- 보드 맨 위 '이번 주 새로 들어온 N줄' 카드: 칸 바로 바꾸기(이번만/이 가게는 늘) · 확인 · 모두 확인 · 다 끝나면 사라짐
+- appSettings/banksaladReview {added, reviewed, shopRules} · ldgImportBanksal 이 새 줄에 shopRules 적용 + 점검 목록 기록
+- 맥북 run.sh: 성공하면 탭을 닫지 않고 새로 불러 점검 카드가 떠 있게
+
 ## 2026-10-19 · 맥북 · IELTS 전문 사이트화 2차 — 공식 채점 기준 · 이번 시즌 기출 · 공략 대조
 
 - **공식 채점 기준**(js/ielts-official.js — ielts.org 밴드 디스크립터 원문을 읽고 요약, Writing 2023 개정판): 쓰기 Task1(TA·CC·LR·GRA)·Task2(TR…)·말하기(FC·LR·GRA·P) 12개 기준 × 밴드 9–5 + **6→7 에 정확히 뭐가 달라야 하나**(gap67). 쓰기·말하기 공략 탭 맨 위에 기준 카드(7 초록·6 빨강 줄, 코발트 6→7 칸) · 출처 링크 · 공식 사실 26개
