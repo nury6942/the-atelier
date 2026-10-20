@@ -1,0 +1,7 @@
+{
+  "유럽": ["london","paris","rome","milan","barcelona","madrid","lisbon","amsterdam","frankfurt","munich","berlin","prague","vienna","zurich","istanbul","athens","helsinki","copenhagen","stockholm","oslo"],
+  "호주": ["sydney","melbourne","brisbane","perth"],
+  "뉴질랜드": ["auckland","christchurch"],
+  "캐나다": ["vancouver","toronto","calgary","montreal"],
+  "미국": ["los-angeles","san-francisco","new-york","seattle","las-vegas","chicago","boston","honolulu"]
+}

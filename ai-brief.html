@@ -183,6 +183,30 @@
   .star.on{opacity:1}
 
   .foot{margin-top:56px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  /* 항공권 특가 — 국산 항공사 최저가를 '보통 가격대' 막대 위 점으로 */
+  .fl{border:1px solid var(--ink)}
+  .fl-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.6fr) minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+  .fl-row:first-child{border-top:0}
+  .fl-row.hot{background:var(--ink);color:var(--paper)}
+  .fl-row.hot .fl-sub,.fl-row.hot .fl-band small{color:rgba(255,255,255,.7)}
+  .fl-city b{display:block;font-size:15px;font-weight:800;letter-spacing:-.01em}
+  .fl-sub{font-size:11px;color:var(--mut);margin-top:2px}
+  .fl-price b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+  .fl-band{position:relative;height:30px}
+  .fl-band .trk{position:absolute;left:0;right:0;top:7px;height:6px;background:var(--wash)}
+  .fl-row.hot .fl-band .trk{background:rgba(255,255,255,.18)}
+  .fl-band .rng{position:absolute;top:7px;height:6px;background:var(--line2)}
+  .fl-row.hot .fl-band .rng{background:rgba(255,255,255,.45)}
+  .fl-band .dot{position:absolute;top:3px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ink);border:2px solid var(--paper)}
+  .fl-row.hot .fl-band .dot,.fl-band .dot.good{background:var(--up)}
+  .fl-band small{position:absolute;top:17px;font-size:10px;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .fl-diff{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+  .fl-diff.good{color:var(--up)} .fl-diff.bad{color:var(--down)}
+  .fl-row.hot .fl-diff.good{color:#6ee7a8}
+  .fl-go{font-size:11px;font-weight:800;letter-spacing:.06em;border:1px solid currentColor;padding:5px 9px;white-space:nowrap}
+  .fl-more{display:block;width:100%;border:0;border-top:1px solid var(--ink);background:var(--wash);padding:10px;font-size:12px;font-weight:700}
+  .fl-none{font-size:13px;color:var(--mut);padding:14px 16px}
+  @media (max-width:860px){ .fl-row{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px} .fl-band{grid-column:1/-1} .fl-diff{text-align:right} .fl-go{display:none} }
   .empty{padding:100px 0;text-align:center;color:var(--dim);font-size:14px;line-height:1.7}
 
   @media (max-width:860px){
@@ -220,6 +244,7 @@
   var BASE = './data/ai-brief/';
   var CATL = { release:'발표가 만든 것', vibe:'바이브코딩', money:'돈 버는 법', hack:'기발한 활용', tool:'새 도구', free:'무료' };
   var app = document.getElementById('app');
+  var flights = null, flOpen = false;   // data/flight-deals/latest.json (아이맥이 하루 두 번 갱신)
   var dates = [], day = null, view = 'today';
   var briefs = {}, socials = {};        // 날짜별 캐시
   var doneMap = {}, starMap = {};
@@ -328,6 +353,40 @@
       + '<div class="tt">'+esc(p.title)+'</div><span class="tag">'+esc(CATL[p.cat]||'')+'</span></a>';
   }
 
+  // ── 항공권 특가 ──
+  function man(n){ return n==null ? '–' : (Math.round(n/1e3)/10).toLocaleString('ko-KR')+'만'; }
+  function flRow(c){
+    var k = c.kr, t = c.typical, hot = c.deal === 'super' || c.deal === 'deal';
+    var price = k ? k.price : (c.rt && c.rt.price);
+    var band = '<div class="fl-band"></div>';
+    if (t && price){
+      var max = Math.max(t.hi * 1.25, price * 1.08), pos = function(v){ return Math.max(0, Math.min(100, v / max * 100)); };
+      band = '<div class="fl-band"><div class="trk"></div><div class="rng" style="left:'+pos(t.lo)+'%;width:'+(pos(t.hi)-pos(t.lo))+'%"></div>'
+        + '<div class="dot'+(price<=t.lo?' good':'')+'" style="left:'+pos(price)+'%"></div>'
+        + '<small style="left:'+Math.min(pos(t.lo),55)+'%">보통 '+man(t.lo)+'~'+man(t.hi)+' · '+t.month+'월이 제일 쌈</small></div>';
+    }
+    var d = c.vsLow, diff = d==null ? '<div></div>' : '<div class="fl-diff '+(d<=0?'good':d>25?'bad':'')+'">'+(d<=0?'▼ ':'▲ ')+Math.abs(d)+'%<div class="fl-sub" style="font-weight:500">보통 최저 대비</div></div>';
+    var name = k ? k.name.replace('Trinity Airways','트리니티') + (k.direct?' · 직항':'') : '국산 항공사 없음';
+    var other = c.rt ? '전체 최저 '+man(c.rt.price)+' · '+esc(c.rt.airline.replace('Trinity Airways','트리니티'))+' · '+esc(c.rt.dates.split('~')[0]) : '';
+    return '<div class="fl-row'+(hot?' hot':'')+'"><div class="fl-city"><b>'+esc(c.city)+'</b><div class="fl-sub">'+esc(c.region)+(c.why?' · '+esc(c.why):'')+'</div></div>'
+      + '<div class="fl-price"><b>'+man(price)+'</b><div class="fl-sub">'+esc(name)+'</div><div class="fl-sub">'+other+'</div></div>'
+      + band + diff + '<a class="fl-go" href="'+esc(c.link)+'" target="_blank" rel="noopener">보기 ↗</a></div>';
+  }
+  function flightsHtml(){
+    var F = flights; if (!F || !F.cities || !F.cities.length) return '';
+    var hot = F.cities.filter(function(c){ return c.deal === 'super' || c.deal === 'deal'; });
+    var rest = F.cities.filter(function(c){ return hot.indexOf(c) < 0; });
+    var h = '<div class="sech"><h2>Flight Deals</h2><span class="cap">인천 왕복 · 국산 항공사 먼저 · '+esc(F.generatedAt.replace('T',' '))+'</span></div><div class="fl" id="fl">';
+    h += hot.length ? hot.map(flRow).join('') : '<div class="fl-none">오늘은 보통보다 싼 국산 항공사 표가 없어요 · '+F.cities.length+'개 도시 보는 중</div>';
+    h += flOpen ? rest.map(flRow).join('') : '';
+    h += '<button class="fl-more" id="fl-more">'+(flOpen ? '접기 ▴' : '다른 도시 '+rest.length+'곳 지금 가격 ▾')+'</button></div>';
+    return h;
+  }
+  function wireFlights(){
+    var b = document.getElementById('fl-more'); if (!b) return;
+    b.onclick = function(){ flOpen = !flOpen; var box = document.getElementById('fl'); var tmp = document.createElement('div'); tmp.innerHTML = flightsHtml(); box.replaceWith(tmp.querySelector('#fl')); wireFlights(); };
+  }
+
   // ── 화면: 오늘(하루치 신문) ──
   function renderToday(){
     var d = day, B = briefs[d] || {}, S = socials[d];
@@ -335,6 +394,8 @@
     // 수집기가 로그인 문제로 X·Threads 를 건너뛰었으면 조용히 줄어들지 말고 알린다 (10/17·18 아이맥 크롬 로그아웃 사고)
     var skipped = (S && S.skipped || []).filter(function(x){ return /로그인/.test(x); });
     if (skipped.length) h += '<div class="stale" style="margin:0 0 16px">오늘 '+esc(skipped.map(function(x){ return x.split(':')[0].toUpperCase(); }).join('·'))+' 수집이 로그인 문제로 빠졌어요 · 수집하는 컴퓨터(아이맥) 크롬에서 다시 로그인해 주세요</div>';
+    var flH = d === dates[0] ? flightsHtml() : '', flHot = flights && flights.cities && flights.cities.some(function(c){ return c.deal === 'super' || c.deal === 'deal'; });
+    if (flHot) h += flH;
     if (B.tryToday && B.tryToday.length) h += '<div class="tries">'+B.tryToday.slice(0,2).map(function(t,i){ return tryBlock(d,t,i); }).join('')+'</div>';
     var cards = B.cards || [];
     if (cards.length){
@@ -348,10 +409,11 @@
       h += '<div class="sech"><h2>X · Threads</h2><span class="cap">써본 사람들 · '+posts.length+'</span></div><div class="soc">'+posts.map(post).join('')+'</div>';
     }
     if (B.pickup && B.pickup.length) h += '<div class="sech"><h2>주워 담기</h2><span class="cap">'+B.pickup.length+' picks</span></div><div class="strip">'+B.pickup.map(pick).join('')+'</div>';
+    if (!flHot) h += flH;
     if (!h) h = '<div class="empty">'+esc(md(d))+' 브리핑이 없어요</div>';
     h += '<div class="foot"><span>'+esc(B.sourcesNote||'')+'</span><span>'+(B.generatedAt?'갱신 '+esc(B.generatedAt.replace('T',' ').slice(0,16)):'')+'</span></div>';
     app.innerHTML = h;
-    wireToday();
+    wireToday(); wireFlights();
   }
 
   // ── 화면: 이번 주(최근 7일 묶음) ──
@@ -505,6 +567,7 @@
   document.getElementById('seg').addEventListener('click', function(e){ var b=e.target.closest('button'); if (b) go(b.getAttribute('data-v')); });
   window.addEventListener('hashchange', function(){ var m=location.hash.match(/^#(today|week|vault)(?:\/(\d{4}-\d{2}-\d{2}))?/); if (m) go(m[1], m[2]); });
 
+  getJSON('./data/flight-deals/latest.json').then(function(F){ flights = F; if (F && view === 'today' && day === dates[0] && dates.length) renderToday(); });
   getJSON(BASE+'index.json').then(function(ix){
     dates = ((ix&&ix.dates)||[]).slice().sort().reverse();
     if (!dates.length){ app.innerHTML='<div class="empty">첫 브리핑을 기다리는 중</div>'; return; }
