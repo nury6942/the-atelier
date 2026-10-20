@@ -7,7 +7,7 @@
    "cat": "vibe",
    "title": "3D 유닛까지 Claude가 그린 RTS 게임",
    "url": "https://x.com/simonw/status/2112630778068881543",
-   "image": null,
+   "image": "https://pbs.twimg.com/media/HVGR6imaIAA62ik.jpg",
    "source": "X @simonw · ♥230",
    "how": "Opus 5.5 + three.js, 기기 간 대전은 소리로 연결",
    "chips": [
@@ -34,7 +34,7 @@
    "cat": "hack",
    "title": "알렉사용 나만의 스포티파이, 구독 해지",
    "url": "https://x.com/levelsio/status/2112586600194424926",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2112586527666528256/img/xWbldnEgRgOnAjLz.jpg",
    "source": "X @levelsio · ♥334",
    "how": "산 MP3를 R2에 두고 Claude Code로 알렉사 스킬",
    "chips": [
@@ -125,7 +125,7 @@
    "cat": "vibe",
    "title": "PhotoCraft, 써보니 아직",
    "url": "https://www.talkphotography.co.uk/threads/very-similar-adobe-alternatives-the-artcraft-apps.776913/",
-   "image": null,
+   "image": "https://www.talkphotography.co.uk/styles/default/xenforo/logo_custom.og.png",
    "source": "TalkPhotography 포럼 · 개체 지우기 포토샵과 비교",
    "watching": false
   },
@@ -141,7 +141,7 @@
    "cat": "tool",
    "title": "MCP를 CLI 명령 하나로",
    "url": "https://github.com/knowsuchagency/mcp2cli",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/fdf319f72acaf85529ce3e0ebcd6a437238e1511093ea755c93f5e4472fbd9f6/knowsuchagency/mcp2cli",
    "source": "GitHub · 도구 설명 토큰 96~99% 절약(제작자 주장)",
    "watching": false
   },
@@ -157,7 +157,7 @@
    "cat": "hack",
    "title": "탈옥 없이 킨들 사진 액자",
    "url": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame",
-   "image": null,
+   "image": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame/opengraph-image/cover?3f17178e83773234",
    "source": "블로그 · 책 표지 화면을 사진으로",
    "watching": false
   },
@@ -165,7 +165,7 @@
    "cat": "release",
    "title": "ChatGPT 슬라이드 공동 편집",
    "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
-   "image": null,
+   "image": "https://techbytes.app/assets/thumbnails/post-chatgpt-pages-slides-collaborative-editing-og.png",
    "source": "Pro·Business·Enterprise · PPT·구글 슬라이드로 내보내기",
    "watching": true
   }
