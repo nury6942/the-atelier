@@ -18,7 +18,8 @@ OUT=$(node scripts/flight-deals/judge.js "$TMP") || { LOG "판정 실패"; exit 
 LOG "$(echo "$OUT" | grep -v '^ALERT')"
 echo "$OUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r TITLE URL; do
   LOG "알림 $TITLE"
-  osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1
+  # 미리알림 권한 창이 안 눌려 있으면 영원히 기다리므로 40초 뒤 포기 (다음 회차에 다시)
+  perl -e 'alarm 40; exec @ARGV' osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1 || LOG "알림 실패 — 아이맥에서 미리알림 권한 확인"
 on run argv
   tell application "Reminders" to make new reminder with properties {name:(item 1 of argv), body:(item 2 of argv), due date:(current date)}
 end run
