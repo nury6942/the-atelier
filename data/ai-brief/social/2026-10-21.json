@@ -1,0 +1,326 @@
+{
+ "date": "2026-10-21",
+ "collectedAt": "2026-10-21T06:50:00+09:00",
+ "skipped": [
+  "검색어 수집(x-search·threads-search)은 홈·리스트 후보가 충분해 생략"
+ ],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@simonw",
+   "url": "https://x.com/simonw/status/2112630778068881543",
+   "at": "2026-10-20T19:43:22Z",
+   "likes": 230,
+   "replies": 69,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Opus 5.5로 브라우저 RTS 게임 'Battle Drones' 완성",
+   "points": [
+    "커맨드앤컨커 스타일 실시간 전략 게임을 주로 Claude Opus 5.5로 제작",
+    "브라우저에서 바로 실행, 설치 없음",
+    "기기 간 멀티플레이를 '소리(오디오 링크)'로 주고받는 방식으로 구현",
+    "3D 유닛 모델도 전부 Claude가 Three.js 코드로 생성 — 모델 탐색 페이지 따로 공개",
+    "LLM 두 개끼리 대전시키는 모드도 있음"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVGR6imaIAA62ik.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVGSc2-bQAA5kzf.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@levelsio",
+   "url": "https://x.com/levelsio/status/2112586600194424926",
+   "at": "2026-10-20T16:47:50Z",
+   "likes": 334,
+   "replies": 81,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Claude Code로 알렉사용 '나만의 스포티파이' 만들고 해지",
+   "points": [
+    "구매한 MP3를 Cloudflare R2 버킷에 넣고 Alexa 스킬 'Jukebox'를 Claude Code와 제작",
+    "Claude가 package.json·index.js를 써주고 Alexa 개발자 콘솔에 붙여 빌드",
+    "'Alexa, coffee jazz' 한마디로 재생되게 루틴은 직접 추가",
+    "폴더에 음악을 넣기만 하면 자동 재생 목록에 반영 → 스포티파이 구독 해지"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112586527666528256/img/xWbldnEgRgOnAjLz.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112586527666528256/vid/avc1/480x852/V2EGsGtR2VW759I-.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@levelsio",
+   "url": "https://x.com/levelsio/status/2112624509714849840",
+   "at": "2026-10-20T19:18:28Z",
+   "likes": 116,
+   "replies": 10,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "알렉사 MP3·인터넷 라디오 스킬 만드는 프롬프트 전문 공개",
+   "points": [
+    "'로그인·허용 클릭·에코 테스트만 나한테 시키고 나머지는 CLI·API로 직접 배포·테스트해'라고 못박는 구조",
+    "음악은 S3/R2의 music/ 아래 폴더 = 장르·앨범, 키는 설정 파일에 두고 출력 금지",
+    "재생·셔플·지금 뭐 나와 등 인텐트 목록과 'ama piano=amapiano' 식 느슨한 이름 매칭까지 지정",
+    "파일마다 12시간 이상 유효한 presigned URL로 재생"
+   ],
+   "try": "'사람만 할 수 있는 것만 나한테 물어봐' 문장을 다음 Claude Code 지시에 붙여보기",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112618382767816704/img/w1j3HM0SQacwLtH5.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112618382767816704/vid/avc1/480x852/Q5Kd2phIKFZoCWxq.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@staskulesh",
+   "url": "https://x.com/staskulesh/status/2112626774634897881",
+   "at": "2026-10-20T19:27:28Z",
+   "likes": 26,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "먼지 쌓인 킨들을 흑백 가족사진 액자로 개조",
+   "points": [
+    "2018년 Kindle Paperwhite 4(펌웨어 5.15.1.1, 2023년부터 오프라인)를 USB로 연결해 Claude Code가 작업",
+    "필름 스캔 1,586장을 1072×1448 화면용 16단계 그레이스케일로 변환",
+    "자동 업데이트가 OS를 덮어쓰지 않게 빈 파일로 저장공간을 꽉 채우는 꼼수",
+    "따라 쓸 수 있는 프롬프트도 스레드에 공개"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112626707249143808/img/VD4qPT-vMPa2pVPq.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112626707249143808/vid/avc1/480x852/e62Qk6Qu_xkmjl-a.mp4"
+    },
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112626707236634624/img/qM-OIHROcJ2VVjlL.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112626707236634624/vid/avc1/480x852/trAyHJSClKCLrHlH.mp4"
+    },
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112626707219857408/img/HzgCX5wkuj9KMpql.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112626707219857408/vid/avc1/480x852/_0M437afotG3uKmF.mp4"
+    },
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112626708331339776/img/BCDk0l5kxa9Y3mHv.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112626708331339776/vid/avc1/480x852/xtr1TonlnkCcpiXL.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2112462071933931629",
+   "at": "2026-10-20T08:33:00Z",
+   "likes": 52,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Gemini-4 아르곤에 three.js만으로 모아이 유적 시켜봤더니 '기대 이상'",
+   "points": [
+    "이스터섬 '아후 통가리키'를 오직 three.js로 만들어달라고 요청",
+    "석상·주변 지형·바다·햇빛·카메라 연출까지 한 번에 나옴",
+    "큰 기대 안 했던 아르곤 평가가 바뀌었다는 후기 — 결과는 영상에서"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112258337295544320/img/uEuS-8WL2HEoivHf.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112258337295544320/vid/avc1/554x360/X9Qh6_7Nhn8F-XTq.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aialnam",
+   "url": "https://www.threads.com/@aialnam/post/DeqYM3ck5Qf",
+   "at": "2026-10-19T04:16:06Z",
+   "likes": 1500,
+   "replies": 32,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Google Omni 무료 영상 편집 — 바로 쓰는 프롬프트 7개",
+   "points": [
+    "영화 같은 분위기: 조명·색보정·피사계 심도 개선, 피사체·동작은 유지",
+    "배경 교체·불필요한 사람/물건 지우기·물건 바꿔치기 — 모든 프레임에서 그림자·조명 일관되게",
+    "낮→밤 변환(달빛·가로등), 고급 시네마 카메라 느낌",
+    "공통 요령: '원래 피사체와 동작은 그대로 유지'를 매번 명시"
+   ],
+   "try": "짧은 영상 하나로 '배경 바꾸기' 프롬프트 시험"
+  },
+  {
+   "src": "threads",
+   "author": "@siya_dl",
+   "url": "https://www.threads.com/@siya_dl/post/DepCbqNGnX-",
+   "at": "2026-10-18T15:46:38Z",
+   "likes": 487,
+   "replies": 79,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "웹사이트를 CLI로 바꿔주는 오픈소스 Hycli",
+   "points": [
+    "웹사이트 작업을 검증된 CLI·MCP 명령으로 바꿔 AI가 브라우저 없이 실행",
+    "Playwright식 AI 브라우저보다 토큰 효율이 훨씬 좋음 — 명령어만 호출",
+    "로그인은 인식하되 AI가 읽지 않음, 악용 방지 장치 포함",
+    "작성자는 블로그·카페·배민·당근·홈택스 자동화에 사용, 대시보드보다 에이전트에 GitHub 주소를 주는 게 낫다고"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@automad.ai",
+   "url": "https://www.threads.com/@automad.ai/post/DesbHliCem6",
+   "at": "2026-10-19T23:20:08Z",
+   "likes": 439,
+   "replies": 15,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code로 동네 가게 홈페이지 외주 시작하는 프롬프트 5단계",
+   "points": [
+    "① 내 경력·인맥 기준으로 홈페이지가 급한 업종 5개 뽑기",
+    "② 가상 업체로 Next.js 랜딩페이지 만들고 Vercel 배포까지 — '흰 배경+포인트 1색, 이모지 금지'",
+    "③ 인스타 DM·톡톡·문자 영업 문구, '시안 먼저 보여드릴까요?'로 마무리",
+    "④ 카톡 요청을 페이지·기능·받을 자료 표로 정리 ⑤ 납품 전 모바일·링크·오타·느린 이미지 점검"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@kez_works",
+   "url": "https://www.threads.com/@kez_works/post/DeqqKCKkxsD",
+   "at": "2026-10-19T06:53:00Z",
+   "likes": 132,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude에게 시켜도 그림은 Codex exec로 — GPT 구독으로 추가비용 없이",
+   "points": [
+    "CLAUDE.md에 '이미지 생성은 항상 Codex exec로 발주' 한 줄 적어두기",
+    "Codex가 ChatGPT 계정으로 로그인돼 있으면 구독 사용량으로 처리(API 키 로그인이면 요금 발생)",
+    "웹디자인 더미 이미지·상세페이지 이미지·모션그래픽 소재를 한 흐름에서 처리"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@boston_builder",
+   "url": "https://www.threads.com/@boston_builder/post/DesVb-sE4-X",
+   "at": "2026-10-19T22:30:30Z",
+   "likes": 130,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI로 만든 사이트 디자인이 구릴 때 쓰는 참고 사이트 10개",
+   "points": [
+    "'예쁘게 해줘' 대신 잘 만든 화면을 보여주고 '이렇게' 시키기",
+    "보고 고르기: Mobbin(앱)·SaaSFrame(웹서비스)·Land-book(업종별)·Godly",
+    "가져다 붙이기: Realtime Colors·Fontshare·shadcn/ui·21st.dev·Magic UI·Lucide"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jwcha10004",
+   "url": "https://www.threads.com/@jwcha10004/post/DetixtzH-zu",
+   "at": "2026-10-20T09:46:14Z",
+   "likes": 116,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Remotion·HyperFrame·OpenMontage 엮어 Claude가 영상 편집",
+   "points": [
+    "Remotion: 움직임·타이밍을 React 코드로 → Claude가 정확히 수정",
+    "HyperFrame: 촬영본 위 자막·강조 그래픽을 HTML/CSS로",
+    "OpenMontage: 대본·나레이션·스톡 영상·BGM·자막 조합하는 쇼츠 파이프라인",
+    "토큰 절약: 매뉴얼은 로컬 폴더에 두고 '폴더 문서 확인해' 한 줄로"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@i.am.freeee",
+   "url": "https://www.threads.com/@i.am.freeee/post/DetKIK7mhFB",
+   "at": "2026-10-20T06:10:50Z",
+   "likes": 56,
+   "replies": 12,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "이사 앞두고 Codex로 만든 우리집 3D 가구배치 앱",
+   "points": [
+    "실제 집 가구의 모양·크기를 그대로 반영(물결 거울까지)",
+    "이사 전 가구 배치 시뮬레이션용 — 화면은 원문 영상에서"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@green_ppappa",
+   "url": "https://www.threads.com/@green_ppappa/post/DetHoxcmqiW",
+   "at": "2026-10-20T05:49:05Z",
+   "likes": 17,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude가 Aside로 제미나이 창 열어 이미지 무료 생성",
+   "points": [
+    "'aside로 제미나이 창 열어 프롬프트 넣고 이미지 저장해'라고 시키면 자동·무료",
+    "제미나이 API로 연결하면 소액이지만 과금됨"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/Det5AwxgRMF",
+   "at": "2026-10-20T13:00:31Z",
+   "likes": 52,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "ChatGPT Slides 실시간 공동 편집 추가",
+   "points": [
+    "여러 명이 같은 슬라이드를 동시에 수정·댓글",
+    "댓글 내용 반영을 ChatGPT에 맡길 수 있음, 텍스트·차트·이미지 직접 수정도",
+    "PowerPoint·Google Slides로 내보내기, Pro·Business·Enterprise 요금제"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/DetuqrXATrH",
+   "at": "2026-10-20T11:30:07Z",
+   "likes": 43,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "앤트로픽, 오픈소스 무료 보안 점검 OSS Scanner 공개",
+   "points": [
+    "자체 모델로 주요 오픈소스를 정기 검사, 재현 방법·수정 코드까지 제공",
+    "초기 검사에서 심각 77건·고위험 803건 보고, curl 취약점도 수정 완료",
+    "주요 오픈소스 관리자는 신청하면 무료(red.anthropic.com)"
+   ]
+  }
+ ]
+}
