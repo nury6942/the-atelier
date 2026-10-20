@@ -119,10 +119,10 @@
   function tile(c){
     var k = c.kr, t = c.typical, price = k ? k.price : (c.rt && c.rt.price), code = k ? k.code : (c.rt && c.rt.code);
     var cut = t ? t.lo + (t.hi - t.lo) * 0.25 : null, gap = cut && price ? price - cut : null;
-    var w = cut && price ? Math.max(6, Math.min(100, cut / price * 100)) : 0;
+    var w = k && cut && price ? Math.max(6, Math.min(100, cut / price * 100)) : 0;
     return '<a class="fdt" href="'+esc(c.link)+'" target="_blank" rel="noopener"><div class="fdt-top">'+flag(c.cc)+'<b>'+esc(c.city)+'</b>'+logo(code)+'</div>' +
       '<div class="fdt-p">'+man(price).replace('만','')+'<span> 만'+(k?'':' · 외항사')+'</span></div>' +
-      '<div class="fdt-bar"><i style="width:'+w+'%"></i></div><div class="fdt-gap">'+(gap!=null ? (gap<=0?'특가선 안':'특가까지 −'+man(gap)) : '')+'</div></a>';
+      '<div class="fdt-bar"><i style="width:'+w+'%"></i></div><div class="fdt-gap">'+(!k ? '국산 항공사 없음' : gap!=null ? (gap<=0?'특가선 안':'특가까지 −'+man(gap)) : '')+'</div></a>';
   }
   function paint(){
     var el = document.getElementById('deals-root'); if (!el) return;
