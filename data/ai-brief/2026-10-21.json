@@ -1,0 +1,204 @@
+{
+ "date": "2026-10-21",
+ "generatedAt": "2026-10-21T07:20:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 15개) + 웹 검색 26회 · 실행 환경에서 GitHub 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "3D 유닛까지 Claude가 그린 RTS 게임",
+   "url": "https://x.com/simonw/status/2112630778068881543",
+   "image": null,
+   "source": "X @simonw · ♥230",
+   "how": "Opus 5.5 + three.js, 기기 간 대전은 소리로 연결",
+   "chips": [
+    "설치 없이 브라우저",
+    "LLM끼리 대전 모드",
+    "댓글 69"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "포토샵을 통째로 다시 짠 PhotoCraft",
+   "url": "https://github.com/storytold/photocraft",
+   "image": "https://raw.githubusercontent.com/storytold/photocraft/HEAD/docs/images/photocraft-demo.jpg",
+   "source": "GitHub storytold · MIT/Apache-2.0",
+   "how": "레이어·마스크·글자·PSD 왕복까지 한 앱에",
+   "chips": [
+    "조정 레이어 16종",
+    "맥·윈도·리눅스·웹",
+    "얼리 알파"
+   ],
+   "forMe": "MLB 프린트 PSD를 구독 없이 열어볼 수 있는지 시험해볼 후보. 단, 제작진도 아직 실무용은 아니라고 밝힘"
+  },
+  {
+   "cat": "hack",
+   "title": "알렉사용 나만의 스포티파이, 구독 해지",
+   "url": "https://x.com/levelsio/status/2112586600194424926",
+   "image": null,
+   "source": "X @levelsio · ♥334",
+   "how": "산 MP3를 R2에 두고 Claude Code로 알렉사 스킬",
+   "chips": [
+    "폴더 = 재생목록",
+    "댓글 81"
+   ]
+  },
+  {
+   "cat": "money",
+   "title": "동네 가게 홈페이지 외주, 프롬프트 5개로",
+   "url": "https://www.threads.com/@automad.ai/post/DesbHliCem6",
+   "image": null,
+   "source": "Threads @automad.ai · ♥439",
+   "how": "업종 고르기→시안 배포→DM 영업→납품 점검",
+   "chips": [
+    "5단계",
+    "Next.js + Vercel"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "코드로 고치는 영상 편집, 도구 3개 조합",
+   "url": "https://www.threads.com/@jwcha10004/post/DetixtzH-zu",
+   "image": null,
+   "source": "Threads @jwcha10004 · ♥116",
+   "how": "Remotion·HyperFrames·OpenMontage를 Claude가",
+   "chips": [
+    "쇼츠 파이프라인",
+    "매뉴얼은 로컬 폴더"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "내 작업 PSD를 PhotoCraft로 열어보기",
+   "minutes": 20,
+   "why": "MLB 작업 PSD가 포토샵 없이 어디까지 열리는지 직접 확인할 수 있어요. 레이어 스타일과 글자 레이어가 살아 있는지가 핵심이에요.",
+   "from": {
+    "label": "GitHub storytold/photocraft",
+    "url": "https://github.com/storytold/photocraft"
+   },
+   "steps": [
+    {
+     "text": "맥용 설치 파일 받기",
+     "url": "https://github.com/storytold/photocraft/releases"
+    },
+    {
+     "text": "작업 PSD 하나 열기"
+    },
+    {
+     "text": "깨진 곳 캡처해 두기"
+    }
+   ]
+  },
+  {
+   "title": "사람만 할 일만 나한테 묻게 하기",
+   "minutes": 15,
+   "why": "Atelier 작업 때 Claude가 확인을 묻는 횟수가 줄어요. 비밀 키를 화면에 띄우지 않는 습관도 같이 생겨요.",
+   "from": {
+    "label": "X @levelsio · ♥116",
+    "url": "https://x.com/levelsio/status/2112624509714849840"
+   },
+   "steps": [
+    {
+     "text": "원문 프롬프트 보기",
+     "url": "https://x.com/levelsio/status/2112624509714849840"
+    },
+    {
+     "text": "다음 지시에 붙이기",
+     "copy": "로그인, 허용 버튼 클릭, 실제 화면 확인처럼 사람만 할 수 있는 일만 나한테 시키고, 나머지 설치·배포·테스트는 네가 명령어로 직접 해. 키나 비밀번호는 설정 파일에만 두고 화면에 출력하지 마."
+    },
+    {
+     "text": "질문 횟수 비교 메모"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "free",
+   "title": "오픈소스 무료 보안 점검",
+   "url": "https://www.producthunt.com/p/opt-in-vulnerability-finding-service/oss-scanner-by-anthropic",
+   "image": null,
+   "source": "Product Hunt · Anthropic OSS Scanner, 관리자 신청제",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "PhotoCraft, 써보니 아직",
+   "url": "https://www.talkphotography.co.uk/threads/very-similar-adobe-alternatives-the-artcraft-apps.776913/",
+   "image": null,
+   "source": "TalkPhotography 포럼 · 개체 지우기 포토샵과 비교",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "PhotoCraft, 데모냐 대체냐",
+   "url": "https://www.kunalganglani.com/blog/photocraft-rust-photo-editor",
+   "image": null,
+   "source": "블로그 · 유망한 데모, GIMP 대체는 아직",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "MCP를 CLI 명령 하나로",
+   "url": "https://github.com/knowsuchagency/mcp2cli",
+   "image": null,
+   "source": "GitHub · 도구 설명 토큰 96~99% 절약(제작자 주장)",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "코딩 AI를 영상 스튜디오로",
+   "url": "https://dev.to/tekmag/openmontage-your-ai-coding-assistant-is-now-a-full-video-production-studio-open-source-from-406l",
+   "image": null,
+   "source": "DEV · OpenMontage, AGPL-3.0",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "탈옥 없이 킨들 사진 액자",
+   "url": "https://javier.xyz/blog/turn-a-kindle-into-a-picture-frame",
+   "image": null,
+   "source": "블로그 · 책 표지 화면을 사진으로",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "ChatGPT 슬라이드 공동 편집",
+   "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
+   "image": null,
+   "source": "Pro·Business·Enterprise · PPT·구글 슬라이드로 내보내기",
+   "watching": true
+  }
+ ],
+ "watching": [
+  {
+   "name": "GPT-Live-1.1 (음성 모드 한국어 목소리)",
+   "url": "https://x.com/OpenAI/status/2110797830361436604",
+   "date": "2026-10-15",
+   "note": "10-21 기준 사례 못 찾음 · 10-22 지나면 뺌"
+  },
+  {
+   "name": "Claude Code Review 정식 출시",
+   "url": "https://claude.com/resources/articles/code-review-is-now-generally-available",
+   "date": "2026-10-15",
+   "note": "10-21 기준 독립 사용 후기 못 찾음 · 10-22 지나면 뺌"
+  },
+  {
+   "name": "Reflection Beam (가중치 공개)",
+   "url": "https://reflection.ai/blog/introducing-beam",
+   "date": "2026-10-16",
+   "note": "10-16 Hugging Face 공개 보도(sbbit) · 만든 사례는 아직 없음"
+  },
+  {
+   "name": "Kling 4.0 전체 공개",
+   "url": "https://letsdatascience.com/news/kling-ai-opens-kling-40-to-all-users-d9dc6422",
+   "date": "2026-10-15",
+   "note": "사례 1건(@minchoi) · 10-21 검색엔 판매사 블로그뿐 · 10-22 지나면 뺌"
+  },
+  {
+   "name": "ChatGPT Slides 실시간 공동 편집",
+   "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
+   "date": "2026-10-20"
+  }
+ ]
+}
