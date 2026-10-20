@@ -8,6 +8,26 @@
 const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '../..'), OUT = path.join(ROOT, 'data/flight-deals');
 const KR = /대한항공|아시아나|Trinity|트리니티|에어프레미아|Air Premia|티웨이|제주항공|진에어|에어부산|이스타|에어서울/;
+// 화면용: 도시 → 나라(국기)·공항 코드, 항공사 → 로고 코드 (gstatic.com/flights/airline_logos/70px/<코드>.png)
+const PLACE = { london:['gb','LON'], paris:['fr','PAR'], rome:['it','ROM'], milan:['it','MIL'], barcelona:['es','BCN'], madrid:['es','MAD'], lisbon:['pt','LIS'],
+  amsterdam:['nl','AMS'], frankfurt:['de','FRA'], munich:['de','MUC'], berlin:['de','BER'], prague:['cz','PRG'], vienna:['at','VIE'], zurich:['ch','ZRH'],
+  istanbul:['tr','IST'], athens:['gr','ATH'], helsinki:['fi','HEL'], copenhagen:['dk','CPH'], stockholm:['se','STO'], oslo:['no','OSL'],
+  sydney:['au','SYD'], melbourne:['au','MEL'], brisbane:['au','BNE'], perth:['au','PER'], auckland:['nz','AKL'], christchurch:['nz','CHC'],
+  vancouver:['ca','YVR'], toronto:['ca','YTO'], calgary:['ca','YYC'], montreal:['ca','YMQ'],
+  'los-angeles':['us','LAX'], 'san-francisco':['us','SFO'], 'new-york':['us','NYC'], seattle:['us','SEA'], 'las-vegas':['us','LAS'], chicago:['us','CHI'], boston:['us','BOS'], honolulu:['us','HNL'] };
+const AIR = { '대한항공':'KE', '아시아나항공':'OZ', 'Trinity Airways':'TW', '트리니티':'TW', '에어프레미아':'YP', '티웨이항공':'TW', '제주항공':'7C', '진에어':'LJ', '에어부산':'BX', '이스타항공':'ZE', '에어서울':'RS',
+  'KLM':'KL', 'LOT 폴란드항공':'LO', 'SAS항공':'SK', 'THAI':'TG', '델타항공':'DL', '루프트한자':'LH', '버진 애틀랜틱항공':'VS', '비엣젯항공':'VJ', '심천항공':'ZH', '아메리칸항공':'AA',
+  '알래스카항공':'AS', '에미레이트항공':'EK', '에어 돌로미티':'EN', '에어아시아':'D7', '에어캐나다':'AC', '에어프랑스':'AF', '에티하드항공':'EY', '웨스트젯':'WS', '유나이티드항공':'UA',
+  '일본항공':'JL', '전일본공수':'NH', '젯스타':'JQ', '중국남방항공':'CZ', '카타르항공':'QR', '캐세이패시픽항공':'CX', '터키항공':'TK', '핀란드항공':'AY', '필리핀항공':'PR', '에어차이나':'CA', '중국동방항공':'MU' };
+const airCode = (name) => { const first = String(name || '').split(',')[0].trim(); return AIR[first] || null; };
+// "11월 5일 (목)~11월 18일 (수)" → ['2026-11-05','2026-11-18'] (지난 달이면 내년)
+function tripDates(txt){
+  const m = [...String(txt || '').matchAll(/(\d+)월 (\d+)일/g)]; if (!m.length) return null;
+  const now = new Date(Date.now() + 9 * 3600e3), y0 = now.getUTCFullYear(), m0 = now.getUTCMonth() + 1;
+  let y = y0, prev = 0;
+  const out = m.slice(0, 2).map((x, i) => { const mo = +x[1]; if (i === 0 && mo < m0) y = y0 + 1; if (i === 1 && mo < prev) y++; prev = mo; return y + '-' + String(mo).padStart(2, '0') + '-' + String(+x[2]).padStart(2, '0'); });
+  return { out: out[0], back: out[1] || null };
+}
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, 'cities.json'), 'utf8'));
 const region = {}; Object.keys(CITIES).forEach((r) => CITIES[r].forEach((s) => (region[s] = r)));
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(path.join(OUT, f), 'utf8')); } catch (e) { return d; } };
@@ -41,7 +61,17 @@ for (const r of rows) {
   }
   const other = !deal && r.rt && low && r.rt.price <= low.lo * 0.9 ? 'other' : null;
   h[today] = { kr: best ? best.price : null, krName: best ? best.name : null, all: r.rt ? r.rt.price : null };
-  const c = { slug: r.slug, city: r.city, region: region[r.slug] || '', kr: best, krAll: kr, rt: r.rt, direct: r.direct, typical: low,
+  // 국산 항공사 표의 날짜: 그 항공사가 직항 최저가나 전체 최저가와 같은 표일 때만 알 수 있다
+  let trip = null;
+  if (best) {
+    const same = (b) => b && b.airline && b.airline.split(',')[0].trim() === best.name && Math.abs(b.price - best.price) / best.price < 0.03;
+    if (same(r.direct)) trip = tripDates(r.direct.dates); else if (same(r.rt)) trip = tripDates(r.rt.dates);
+  }
+  if (best) best.code = airCode(best.name);
+  kr.forEach((a) => (a.code = airCode(a.name)));
+  if (r.rt) r.rt.code = airCode(r.rt.airline);
+  const pl = PLACE[r.slug] || [];
+  const c = { slug: r.slug, city: r.city, region: region[r.slug] || '', cc: pl[0] || null, iata: pl[1] || null, trip, kr: best, krAll: kr, rt: r.rt, direct: r.direct, typical: low,
     median30: med, deal: deal || other, why: deal ? why : other ? '외항사 경유 최저가가 보통보다 쌈' : '',
     vsLow: best && low ? Math.round((best.price / low.lo - 1) * 100) : null, link: r.link };
   cities.push(c);
