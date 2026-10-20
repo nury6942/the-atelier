@@ -13,6 +13,8 @@ Scene she is practising:
 Mode: {{MODE}}
 {{MODE_RULE}}
 
+Priority: in real work she will let AI write her emails and chats. What AI cannot do for her is speak in real time — at fittings with pattern makers, in line reviews when a merchandiser pushes back, in interviews. So for SPOKEN answers, judge whether a colleague would instantly understand and whether she could say it fast; correct only grammar that hurts meaning; make "natural" 2–4 short spoken sentences she can say out loud without notes; make "phrases" short chunks (3–8 words) she can pull out in the moment. For WRITTEN answers, also care about grammar and register (she needs this for IELTS).
+
 Her answer:
 <<<
 {{TEXT}}

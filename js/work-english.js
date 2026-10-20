@@ -143,7 +143,7 @@
     }
     watchJobs();
     var total = (S.content.cards || []).length, done = Object.keys(S.state.done).filter(function(k){ return cardById(k); }).length;
-    var head = '<div class="we-top"><div><h3>Work English</h3><p>실제로 하는 일에서 뽑은 장면을 영어로. 말하거나 써보면 AI가 고쳐줘요.</p></div>' +
+    var head = '<div class="we-top"><div><h3>Work English</h3><p>실제로 하는 일에서 뽑은 장면을 소리 내서. 가봉·품평 전에 그 카드로 5분.</p></div>' +
       '<div style="font-size:13px;color:'+SUB+'">해본 장면 <b id="we-done" style="color:'+ACC_D+'">'+done+'</b> / '+total+'</div></div>';
     var grp = '<div class="we-grp">' + GROUPS.map(function(g){
       var n = g.id === 'glossary' ? ((S.content.glossary||[]).length + S.state.saved.length) : (S.content.cards||[]).filter(function(c){ return c.group === g.id; }).length;
@@ -185,13 +185,13 @@
       '<div class="we-card"><h4>'+esc(c.title)+'</h4><div class="we-sub">'+esc(c.sub||'')+'</div>' +
       '<div class="we-lbl">상황</div><div class="we-sit">'+esc(c.situation||'')+'</div>' +
       (ph ? '<div class="we-lbl">핵심 표현</div><ul class="we-ph">'+ph+'</ul>' : '') +
-      '<div class="we-lbl">말해보기 · 써보기</div><div class="we-task">'+esc(c.task||'')+'</div>' +
-      '<textarea class="we-ta we-en" id="we-ta" placeholder="여기에 영어로 써보세요. 녹음을 누르면 말한 게 받아쓰기로 들어가요." oninput="WORK_EN.draft()"></textarea>' +
+      '<div class="we-lbl">소리 내서 말해보기 <span style="color:'+SUB+';font-weight:500">· 글로 써도 돼요</span></div><div class="we-task">'+esc(c.task||'')+'</div>' +
       '<div class="we-row">' +
-        '<button class="atl-btn atl-btn-primary" onclick="WORK_EN.ask()">AI 피드백 받기</button>' +
-        '<button class="atl-btn atl-btn-secondary we-rec" id="we-rec" onclick="WORK_EN.rec()"><i></i><span>녹음</span></button>' +
-        (c.roleplay ? '<button class="atl-btn atl-btn-ghost" onclick="WORK_EN.roleplay()">ChatGPT 음성으로 롤플레이 ↗</button>' : '') +
+        '<button class="atl-btn atl-btn-primary we-rec" id="we-rec" onclick="WORK_EN.rec()"><i></i><span>말하기 시작</span></button>' +
+        (c.roleplay ? '<button class="atl-btn atl-btn-secondary" onclick="WORK_EN.roleplay()">ChatGPT 음성 롤플레이 ↗</button>' : '') +
       '</div>' +
+      '<textarea class="we-ta we-en" id="we-ta" placeholder="말한 게 여기 받아쓰기로 들어가요. 직접 써도 돼요." oninput="WORK_EN.draft()"></textarea>' +
+      '<div class="we-row"><button class="atl-btn atl-btn-secondary" onclick="WORK_EN.ask()">AI 피드백 받기</button></div>' +
       '<div id="we-fb"></div></div>';
   }
 
@@ -217,10 +217,10 @@
     }).join('');
     box.innerHTML = '<div class="we-fb"><div class="we-fb-h"><span>AI 피드백 · '+(job.mode==='speak'?'말하기':'쓰기')+'</span><span>'+when+'</span></div><div class="we-fb-b">' +
       '<div class="we-verdict">'+esc(r.verdict||'')+'</div>' +
-      '<div class="we-cmp"><div><small>내가 쓴 것 (틀린 데만 고침)</small><p>'+esc(r.fixed||job.text||'')+'</p></div><div><small>현지 동료라면 이렇게</small><p>'+esc(r.natural||'')+'</p></div></div>' +
+      '<div class="we-cmp"><div><small>'+(job.mode==='speak'?'내가 말한 것 (틀린 데만 고침)':'내가 쓴 것 (틀린 데만 고침)')+'</small><p>'+esc(r.fixed||job.text||'')+'</p></div><div><small>'+(job.mode==='speak'?'현지 동료라면 이렇게 말해요':'현지 동료라면 이렇게')+'</small><p>'+esc(r.natural||'')+'</p></div></div>' +
       (errs ? '<ul class="we-err">'+errs+'</ul>' : '') +
       (r.tone ? '<div class="we-tone">'+esc(r.tone)+'</div>' : '') +
-      (ph ? '<div class="we-lbl">가져갈 표현</div><ul class="we-ph">'+ph+'</ul>' : '') +
+      (ph ? '<div class="we-lbl">'+(job.mode==='speak'?'바로 꺼내 쓸 짧은 말':'가져갈 표현')+'</div><ul class="we-ph">'+ph+'</ul>' : '') +
       '</div></div>';
   }
 
@@ -245,7 +245,7 @@
   function draftKey(){ return 'atelier_we_draft_' + S.card; }
   function restoreDraft(){ var ta = document.getElementById('we-ta'); if (!ta) return; try { ta.value = localStorage.getItem(draftKey()) || ''; } catch(e){} }
 
-  function stopRec(){ if (S.rec) { try { S.rec.r.stop(); } catch(e){} S.rec = null; } var b = document.getElementById('we-rec'); if (b) { b.classList.remove('live'); b.querySelector('span').textContent = '녹음'; } }
+  function stopRec(){ if (S.rec) { try { S.rec.r.stop(); } catch(e){} S.rec = null; } var b = document.getElementById('we-rec'); if (b) { b.classList.remove('live'); b.querySelector('span').textContent = '다시 말하기'; } }
 
   window.WORK_EN = {
     render: render,
@@ -280,6 +280,7 @@
       r.onerror = function(e){ if (e.error !== 'no-speech') toast('받아쓰기 오류: ' + e.error); };
       r.onend = function(){ if (S.rec && S.rec.r === r) { try { r.start(); } catch(e){ stopRec(); } } };
       try { r.start(); } catch(e){ stopRec(); return; }
+      ta.setAttribute('data-spoke', '1');
       var b = document.getElementById('we-rec'); if (b) { b.classList.add('live'); b.querySelector('span').textContent = '멈추기'; }
       S.rec.spoke = true;
     },
