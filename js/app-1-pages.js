@@ -16830,6 +16830,7 @@
     "reference": { "title": "Memo" },
     "jobhunt": { "title": "Job Hunt" },
     "aibrief": { "title": "AI Brief" },
+    "deals": { "title": "Flight Deals" },
     "trends": { "title": "Trends" }
   };
   // ── Travel/Travel Budget 통합 탭 ──
