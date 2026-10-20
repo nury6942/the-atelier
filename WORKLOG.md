@@ -10,6 +10,15 @@
 
 ---
 
+## 2026-10-20 (맥북) — Work 탭 Role-play 16장면
+
+- English › Work 맨 앞에 **Role-play** 묶음: 업체 9 · 사내 5 · 공통 2 장면 (캘린더 225건·팀즈 약 230건에서 뽑음, 실명·업체·품번 제거)
+- 흐름: 시작 → 상대 대사가 영어 음성으로 나옴(speechSynthesis) → 내 차례엔 한국어 힌트 보고 말하기(받아쓰기) → 확인하면 "이렇게 말하면 돼요" + 듣기 → 다음 … → 끝나면 **전체 대화 AI 피드백**(kind:'work', ref=rp-id)
+- 힌트 토글(처음부터 보기 / 막힐 때만)·상대 목소리 켜기/끄기는 기기별 localStorage
+- Glossary 에 '사내 영어·약어' 39개 추가 (MD·TD·M/U·S/O·L/DIP·SMS·수주회·셋업·단품 등)
+- 장면 데이터는 Firestore workEnglish/content.scenarios 에만 (공개 리포 X)
+- 다음 할 일: B/T 뜻 확인 후 약어표 추가
+
 ## 2026-10-19 · 맥북 · IELTS·Read 실사용 점검 (로그인된 크롬, 라이브)
 
 - 점검 전 ielts/state·englishRead/state·기록 id 를 백업 → 점검 → 테스트 기록만 지우고 상태를 그대로 되돌림(기록 2개·약점 r-match 2/r-tfng 1·카드 8 그대로)

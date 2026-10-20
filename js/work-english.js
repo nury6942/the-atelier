@@ -7,12 +7,13 @@
 (function(){
   var ACC = '#1F4BD8', ACC_D = '#1A3FB5', ACC_L = '#EEF2FD', LINE = '#ECECF0', SUB = '#475569', INK = '#18181B';
   var GROUPS = [
+    { id:'roleplay', label:'Role-play' },
     { id:'biz', label:'Business' },
     { id:'fashion', label:'Fashion' },
     { id:'interview', label:'Interview' },
     { id:'glossary', label:'Glossary' }
   ];
-  var S = { content:null, state:{ done:{}, saved:[] }, group:'fashion', card:null, mobileCard:false, jobs:{}, unwatch:null, loading:false, rec:null, q:'' };
+  var S = { content:null, state:{ done:{}, saved:[] }, group:'roleplay', card:null, rp:null, mobileCard:false, jobs:{}, unwatch:null, loading:false, rec:null, q:'' };
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function D(){ return (typeof db !== 'undefined' ? db : window.db); }
@@ -86,7 +87,21 @@
       '.we-gl td.nt{color:'+SUB+';font-size:12.5px}',
       '.we-search{width:100%;max-width:320px;border:1px solid '+LINE+';padding:8px 10px;font-size:13px;margin-bottom:10px}',
       '.we-search:focus{outline:none;border-color:'+ACC+'}',
-      '@media (max-width:819px){.we-lay{grid-template-columns:minmax(0,1fr)}.we-list{max-height:none}.we-cmp{grid-template-columns:minmax(0,1fr)}.we-card{padding:16px}}'
+      '.we-tg{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:'+SUB+';margin-top:12px}',
+      '.we-chat{display:flex;flex-direction:column;gap:10px;margin-top:16px}',
+      '.we-t{border:1px solid '+LINE+';padding:10px 12px;max-width:86%}',
+      '.we-t.p{align-self:flex-start;background:#FAFAFB}',
+      '.we-t.n{align-self:flex-end;background:#fff;border-left:3px solid '+ACC+'}',
+      '.we-t.cur{align-self:stretch;max-width:none;border:1px solid '+ACC+';border-left:3px solid '+ACC+'}',
+      '.we-t .who{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:11px;font-weight:700;color:'+SUB+';margin-bottom:5px}',
+      '.we-t .en{font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.55}',
+      '.we-t .skip{font-size:13px;color:'+SUB+'}',
+      '.we-t .model{margin-top:8px;padding-top:8px;border-top:1px dashed '+LINE+'}',
+      '.we-t .model small{display:block;font-size:11px;font-weight:700;color:#15803d;margin-bottom:3px}',
+      '.we-hint{font-size:13.5px;line-height:1.6;background:'+ACC_L+';color:'+ACC_D+';padding:8px 10px}',
+      '.we-t .we-ta{min-height:70px}',
+      '.we-goal{font-size:13.5px;line-height:1.6;border-left:3px solid '+ACC+';padding:2px 0 2px 10px}',
+      '@media (max-width:819px){.we-t{max-width:100%}.we-lay{grid-template-columns:minmax(0,1fr)}.we-list{max-height:none}.we-cmp{grid-template-columns:minmax(0,1fr)}.we-card{padding:16px}}'
     ].join('\n');
     var st = document.createElement('style'); st.id = 'we-style'; st.textContent = css; document.head.appendChild(st);
   }
@@ -112,8 +127,14 @@
     d.collection('workEnglish').doc('state').set({ done:S.state.done, saved:S.state.saved, updatedAt:new Date().toISOString() }, { merge:true })
       .catch(function(e){ console.warn('[work-english] save', e); toast('저장 실패 — 네트워크 확인'); });
   }
-  function cards(){ return ((S.content && S.content.cards) || []).filter(function(c){ return c.group === S.group; }); }
-  function cardById(id){ return ((S.content && S.content.cards) || []).filter(function(c){ return c.id === id; })[0] || null; }
+  function scen(){ return (S.content && S.content.scenarios) || []; }
+  function all(){ return ((S.content && S.content.cards) || []).concat(scen()); }
+  function cards(){ return S.group === 'roleplay' ? scen() : ((S.content && S.content.cards) || []).filter(function(c){ return c.group === S.group; }); }
+  function cardById(id){ return all().filter(function(c){ return c.id === id; })[0] || null; }
+  function subOf(c){ return c.turns ? (c.cat + ' · ' + c.partner) : (c.sub || ''); }
+  function grpOf(c){ return c.turns ? 'roleplay' : c.group; }
+  function pref(k, d){ try { return localStorage.getItem('atelier_we_' + k) || d; } catch(e){ return d; } }
+  function setPref(k, v){ try { localStorage.setItem('atelier_we_' + k, v); } catch(e){} }
 
   function watchJobs(){
     if (S.unwatch) return;
@@ -142,18 +163,18 @@
       return;
     }
     watchJobs();
-    var total = (S.content.cards || []).length, done = Object.keys(S.state.done).filter(function(k){ return cardById(k); }).length;
-    var head = '<div class="we-top"><div><h3>Work English</h3><p>실제로 하는 일에서 뽑은 장면을 소리 내서. 가봉·품평 전에 그 카드로 5분.</p></div>' +
+    var total = all().length, done = Object.keys(S.state.done).filter(function(k){ return cardById(k); }).length;
+    var head = '<div class="we-top"><div><h3>Work English</h3><p>실제로 하는 일에서 뽑은 장면을 소리 내서. 업체 통화·가봉·품평 전에 그 장면으로 5분.</p></div>' +
       '<div style="font-size:13px;color:'+SUB+'">해본 장면 <b id="we-done" style="color:'+ACC_D+'">'+done+'</b> / '+total+'</div></div>';
     var grp = '<div class="we-grp">' + GROUPS.map(function(g){
-      var n = g.id === 'glossary' ? ((S.content.glossary||[]).length + S.state.saved.length) : (S.content.cards||[]).filter(function(c){ return c.group === g.id; }).length;
-      return '<button class="'+(S.group===g.id?'on':'')+'" onclick="WORK_EN.group(\''+g.id+'\')">'+g.label+' <span style="opacity:.7">'+n+'</span></button>';
+      var n = g.id === 'glossary' ? ((S.content.glossary||[]).length + S.state.saved.length) : all().filter(function(c){ return grpOf(c) === g.id; }).length;
+      return '<button id="we-grp-'+g.id+'" class="'+(S.group===g.id?'on':'')+'" onclick="WORK_EN.group(\''+g.id+'\')">'+g.label+' <span style="opacity:.7">'+n+'</span></button>';
     }).join('') + '</div>';
     var body;
     if (S.group === 'glossary') body = '<div id="we-gl">'+glossaryHtml()+'</div>';
     else if (!cards().length) body = '<div class="we-empty">이 묶음엔 아직 카드가 없어요.</div>';
     else {
-      if (!S.card || !cardById(S.card) || cardById(S.card).group !== S.group) S.card = cards()[0].id;
+      if (!S.card || !cardById(S.card) || grpOf(cardById(S.card)) !== S.group) S.card = cards()[0].id;
       if (narrow()) body = S.mobileCard ? '<div id="we-card">'+cardHtml(cardById(S.card), true)+'</div>' : '<div class="we-list" id="we-list"></div>';
       else body = '<div class="we-lay"><div class="we-list" id="we-list"></div><div id="we-card">'+cardHtml(cardById(S.card))+'</div></div>';
     }
@@ -168,7 +189,7 @@
       var dn = !!S.state.done[c.id];
       var job = S.jobs[c.id], badge = job && (job.status === 'pending' || job.status === 'grading') ? ' · <span style="color:'+ACC+'">피드백 중</span>' : '';
       return '<div class="we-it'+(c.id===S.card && !narrow()?' on':'')+'" onclick="WORK_EN.open(\''+esc(c.id)+'\')"><span class="we-chk'+(dn?' on':'')+'">'+(dn?'✓':'')+'</span>' +
-        '<div><b>'+esc(c.title)+'</b><small>'+esc(c.sub||'')+badge+'</small></div></div>';
+        '<div><b>'+esc(c.title)+'</b><small>'+esc(subOf(c))+badge+'</small></div></div>';
     }).join('');
   }
 
@@ -176,6 +197,7 @@
 
   function cardHtml(c, withBack){
     if (!c) return '';
+    if (c.turns) return rpHtml(c, withBack);
     var ph = (c.phrases||[]).map(function(p, i){
       var on = savedHas(p.en);
       return '<li><div><div class="en">'+esc(p.en)+'</div><div class="ko">'+esc(p.ko||'')+'</div></div>' +
@@ -193,6 +215,74 @@
       '<textarea class="we-ta we-en" id="we-ta" placeholder="말한 게 여기 받아쓰기로 들어가요. 직접 써도 돼요." oninput="WORK_EN.draft()"></textarea>' +
       '<div class="we-row"><button class="atl-btn atl-btn-secondary" onclick="WORK_EN.ask()">AI 피드백 받기</button></div>' +
       '<div id="we-fb"></div></div>';
+  }
+
+  // ───────── 롤플레이 ─────────
+  // S.rp = { id, i: 지금 내 차례(턴 번호, -1 = 시작 전), said: {턴: 내가 한 말}, shown: {턴: 모범답 펼침}, hint: {턴: 힌트 열림} }
+  function rpState(c){ if (!S.rp || S.rp.id !== c.id) S.rp = { id:c.id, i:-1, said:{}, shown:{}, hint:{}, spoke:false }; return S.rp; }
+  function rpHtml(c, withBack){
+    var R = rpState(c), T = c.turns, mine = T.filter(function(t){ return t.who === 'nuri'; }).length;
+    var hintMode = pref('hint', 'always'), voice = pref('voice', 'on');
+    var nth = 0, myNo = 0;
+    T.forEach(function(t, k){ if (t.who === 'nuri' && k <= R.i) myNo++; });
+    var head = (withBack ? '<button class="we-back" onclick="WORK_EN.back()">← 목록</button>' : '') +
+      '<div class="we-card"><h4>'+esc(c.title)+'</h4><div class="we-sub">'+esc(c.cat)+' · 상대: '+esc(c.partner)+'</div>' +
+      '<div class="we-lbl">상황</div><div class="we-sit">'+esc(c.setting)+'</div>' +
+      '<div class="we-lbl">내 목표</div><div class="we-goal">'+esc(c.goal)+'</div>' +
+      '<div class="we-tg">힌트 <button class="we-mini'+(hintMode==='always'?' on':'')+'" onclick="WORK_EN.pref(\'hint\',\'always\')">처음부터 보기</button>' +
+        '<button class="we-mini'+(hintMode==='stuck'?' on':'')+'" onclick="WORK_EN.pref(\'hint\',\'stuck\')">막힐 때만</button>' +
+        '<span style="margin-left:8px">상대 목소리</span> <button class="we-mini'+(voice==='on'?' on':'')+'" onclick="WORK_EN.pref(\'voice\',\''+(voice==='on'?'off':'on')+'\')">'+(voice==='on'?'켜짐':'꺼짐')+'</button></div>';
+    if (R.i < 0) return head + '<div class="we-row" style="margin-top:16px"><button class="atl-btn atl-btn-primary" onclick="WORK_EN.step()">시작 ▸</button>' +
+      '<span style="font-size:12.5px;color:'+SUB+'">상대가 먼저 말하면 들리고, 내 차례엔 한국어 힌트를 보고 영어로 말해요. 내 차례 '+mine+'번.</span></div><div id="we-fb"></div></div>';
+    var chat = '';
+    for (var k = 0; k < T.length && k <= R.i; k++) {
+      var t = T[k];
+      if (t.who === 'partner') {
+        chat += '<div class="we-t p"><div class="who"><span>'+esc(c.partner.split(' (')[0])+'</span><button class="we-mini" onclick="WORK_EN.say('+k+')">▶ 듣기</button></div><div class="en">'+esc(t.en)+'</div></div>';
+        continue;
+      }
+      nth++;
+      var cur = k === R.i, open = !!R.shown[k];
+      var model = '<div class="model"><small>이렇게 말하면 돼요</small><div style="display:flex;gap:8px;justify-content:space-between;align-items:flex-start"><div class="en">'+esc(t.en)+'</div><button class="we-mini" onclick="WORK_EN.say('+k+')">▶ 듣기</button></div></div>';
+      if (!cur || open) {
+        chat += '<div class="we-t n'+(cur?' cur':'')+'"><div class="who"><span>나 · '+nth+'/'+mine+'</span></div><div class="we-hint" style="padding:5px 8px;font-size:12.5px">'+esc(t.hint)+'</div>' +
+          (R.said[k] ? '<div class="en" style="margin-top:8px">'+esc(R.said[k])+'</div>' : '<div class="skip" style="margin-top:8px">건너뜀</div>') + model +
+          (cur ? '<div class="we-row"><button class="atl-btn atl-btn-primary" onclick="WORK_EN.step()">'+(R.i >= T.length-1 || !T.slice(k+1).some(function(x){return x.who==='nuri';}) ? '마무리 ▸' : '다음 ▸')+'</button>' +
+            '<button class="atl-btn atl-btn-ghost" onclick="WORK_EN.retry()">다시 말하기</button></div>' : '') + '</div>';
+      } else {
+        var showHint = hintMode === 'always' || R.hint[k];
+        chat += '<div class="we-t n cur"><div class="who"><span>내 차례 · '+nth+'/'+mine+'</span>' + (showHint ? '' : '<button class="we-mini" onclick="WORK_EN.hint('+k+')">힌트 보기</button>') + '</div>' +
+          (showHint ? '<div class="we-hint">'+esc(t.hint)+'</div>' : '') +
+          '<textarea class="we-ta we-en" id="we-ta" placeholder="말하면 여기 받아쓰기로 들어가요. 직접 써도 돼요."></textarea>' +
+          '<div class="we-row"><button class="atl-btn atl-btn-primary we-rec" id="we-rec" onclick="WORK_EN.rec()"><i></i><span>말하기 시작</span></button>' +
+          '<button class="atl-btn atl-btn-secondary" onclick="WORK_EN.check()">확인</button>' +
+          '<button class="atl-btn atl-btn-ghost" onclick="WORK_EN.check(true)">모르겠어요 · 답 보기</button></div></div>';
+      }
+    }
+    var end = '';
+    if (R.i >= T.length) {
+      var said = Object.keys(R.said).length;
+      end = '<div class="we-lbl">대화 끝</div><div class="we-task">내가 말한 '+said+' / '+mine+'턴을 AI가 한꺼번에 봐줘요 — 뜻이 통했는지, 더 짧고 자연스러운 말.</div>' +
+        '<div class="we-row"><button class="atl-btn atl-btn-primary" onclick="WORK_EN.askRp()">전체 대화 AI 피드백 받기</button><button class="atl-btn atl-btn-ghost" onclick="WORK_EN.restart()">처음부터 다시</button></div>';
+    }
+    return head + '<div class="we-chat" id="we-chat">' + chat + '</div>' + end + '<div id="we-fb"></div></div>';
+  }
+  function voiceFor(){
+    var vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+    var en = vs.filter(function(v){ return /^en[-_](US|GB)/i.test(v.lang); });
+    return en.filter(function(v){ return /Samantha|Google US English|Daniel|Karen|Ava|Allison/i.test(v.name); })[0] || en[0] || null;
+  }
+  function speak(text, force){
+    if (!window.speechSynthesis || (!force && pref('voice','on') !== 'on')) return;
+    var u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.96; var v = voiceFor(); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  }
+  function paintRp(scroll){
+    var c = cardById(S.card); var box = document.getElementById('we-card'); if (!c || !box) return;
+    box.innerHTML = rpHtml(c, narrow()); paintFeedback();
+    var cur = box.querySelector('.we-t.cur') || box.querySelector('.we-row:last-of-type');
+    if (scroll && cur) { var r = cur.getBoundingClientRect(); if (r.bottom > window.innerHeight - 20 || r.top < 60) window.scrollBy({ top: r.top - 120, behavior:'smooth' }); }
+    var ta = document.getElementById('we-ta'); if (ta && scroll) try { ta.focus({ preventScroll:true }); } catch(e){}
   }
 
   function paintFeedback(){
@@ -243,19 +333,19 @@
 
   // ───────── 동작 ─────────
   function draftKey(){ return 'atelier_we_draft_' + S.card; }
-  function restoreDraft(){ var ta = document.getElementById('we-ta'); if (!ta) return; try { ta.value = localStorage.getItem(draftKey()) || ''; } catch(e){} }
+  function restoreDraft(){ if (S.group === 'roleplay') return; var ta = document.getElementById('we-ta'); if (!ta) return; try { ta.value = localStorage.getItem(draftKey()) || ''; } catch(e){} }
 
   function stopRec(){ if (S.rec) { try { S.rec.r.stop(); } catch(e){} S.rec = null; } var b = document.getElementById('we-rec'); if (b) { b.classList.remove('live'); b.querySelector('span').textContent = '다시 말하기'; } }
 
   window.WORK_EN = {
     render: render,
     stop: stopRec,
-    group: function(g){ stopRec(); S.group = g; S.mobileCard = false; S.q = ''; render(); },
-    open: function(id){ stopRec(); S.card = id; if (narrow()) { S.mobileCard = true; render(); window.scrollTo(0, (root().getBoundingClientRect().top + window.scrollY) - 80); return; }
+    group: function(g){ stopRec(); if (window.speechSynthesis) speechSynthesis.cancel(); S.group = g; S.mobileCard = false; S.q = ''; render(); },
+    open: function(id){ stopRec(); if (window.speechSynthesis) speechSynthesis.cancel(); S.card = id; if (narrow()) { S.mobileCard = true; render(); window.scrollTo(0, (root().getBoundingClientRect().top + window.scrollY) - 80); return; }
       var c = document.getElementById('we-card'); if (c) c.innerHTML = cardHtml(cardById(id)); paintList(); paintFeedback(); restoreDraft(); },
     back: function(){ stopRec(); S.mobileCard = false; render(); },
     search: function(v){ S.q = v; var g = document.getElementById('we-gl'); if (!g) return; var pos = v.length; g.innerHTML = glossaryHtml(); var i = g.querySelector('.we-search'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } },
-    draft: function(){ var ta = document.getElementById('we-ta'); if (!ta) return; try { localStorage.setItem(draftKey(), ta.value); } catch(e){} },
+    draft: function(){ if (S.group === 'roleplay') return; var ta = document.getElementById('we-ta'); if (!ta) return; try { localStorage.setItem(draftKey(), ta.value); } catch(e){} },
     save: function(cid, i, from){
       var c = cardById(cid); var p = null;
       if (from === 'p') p = c && (c.phrases||[])[i];
@@ -265,7 +355,7 @@
       else S.state.saved.unshift({ en:p.en, ko:p.ko||'', card:cid, at:today() });
       saveState();
       if (S.card === cid) { var box = document.getElementById('we-card'); if (box && from === 'p') { box.innerHTML = cardHtml(c, narrow()); restoreDraft(); paintFeedback(); } else paintFeedback(); }
-      var gb = document.querySelectorAll('.we-grp button')[3]; if (gb) gb.querySelector('span').textContent = (S.content.glossary||[]).length + S.state.saved.length;
+      var gb = document.getElementById('we-grp-glossary'); if (gb) gb.querySelector('span').textContent = (S.content.glossary||[]).length + S.state.saved.length;
     },
     unsave: function(en){ var t = document.createElement('textarea'); t.innerHTML = en; en = t.value; S.state.saved = S.state.saved.filter(function(s){ return s.en !== en; }); saveState(); var g = document.getElementById('we-gl'); if (g) g.innerHTML = glossaryHtml(); },
     rec: function(){
@@ -280,7 +370,7 @@
       r.onerror = function(e){ if (e.error !== 'no-speech') toast('받아쓰기 오류: ' + e.error); };
       r.onend = function(){ if (S.rec && S.rec.r === r) { try { r.start(); } catch(e){ stopRec(); } } };
       try { r.start(); } catch(e){ stopRec(); return; }
-      ta.setAttribute('data-spoke', '1');
+      ta.setAttribute('data-spoke', '1'); if (S.rp && S.group === 'roleplay') S.rp.spoke = true;
       var b = document.getElementById('we-rec'); if (b) { b.classList.add('live'); b.querySelector('span').textContent = '멈추기'; }
       S.rec.spoke = true;
     },
@@ -298,6 +388,45 @@
         text: text, words: (text.match(/[A-Za-z0-9'’-]+/g)||[]).length, createdAt: new Date().toISOString(), status:'pending'
       }).then(function(){ toast('보냈어요 — 맥북이 5분 안에 고쳐줘요'); try { localStorage.removeItem(draftKey()); } catch(e){} })
         .catch(function(e){ toast('보내기 실패: ' + e.message); });
+    },
+    pref: function(k, v){ setPref(k, v); if (k === 'voice' && v === 'off' && window.speechSynthesis) speechSynthesis.cancel(); var ta = document.getElementById('we-ta'), keep = ta ? ta.value : ''; stopRec(); paintRp(); var t2 = document.getElementById('we-ta'); if (t2) t2.value = keep; },
+    hint: function(k){ if (!S.rp) return; S.rp.hint[k] = true; var ta = document.getElementById('we-ta'), keep = ta ? ta.value : ''; paintRp(); var t2 = document.getElementById('we-ta'); if (t2) t2.value = keep; },
+    say: function(k){ var c = cardById(S.card); if (!c || !c.turns[k]) return; if (window.speechSynthesis) speechSynthesis.cancel(); speak(c.turns[k].en, true); },
+    // 다음 내 차례까지 넘기면서 그 사이 상대 말을 읽어준다
+    step: function(){
+      var c = cardById(S.card); if (!c || !c.turns) return; var R = rpState(c);
+      stopRec(); if (window.speechSynthesis) speechSynthesis.cancel();
+      R.i++;
+      while (R.i < c.turns.length && c.turns[R.i].who === 'partner') { speak(c.turns[R.i].en); if (R.i + 1 < c.turns.length && c.turns[R.i+1].who === 'partner') R.i++; else break; }
+      if (R.i < c.turns.length && c.turns[R.i].who === 'partner') R.i++;
+      if (R.i > c.turns.length) R.i = c.turns.length;
+      paintRp(true);
+    },
+    check: function(giveUp){
+      if (!S.rp) return; var ta = document.getElementById('we-ta'); var v = ta ? ta.value.trim() : '';
+      if (!giveUp && (v.match(/[A-Za-z]+/g) || []).length < 2) { toast('영어로 한마디는 해보세요 — 막히면 "답 보기"'); if (ta) ta.focus(); return; }
+      stopRec();
+      if (v && !giveUp) S.rp.said[S.rp.i] = v; else delete S.rp.said[S.rp.i];
+      S.rp.shown[S.rp.i] = true; paintRp(true);
+    },
+    retry: function(){ if (!S.rp) return; delete S.rp.shown[S.rp.i]; delete S.rp.said[S.rp.i]; paintRp(true); var ta = document.getElementById('we-ta'); if (ta) ta.value = ''; },
+    restart: function(){ var c = cardById(S.card); if (!c) return; stopRec(); if (window.speechSynthesis) speechSynthesis.cancel(); S.rp = null; rpState(c); paintRp(true); },
+    askRp: function(){
+      var c = cardById(S.card); var R = S.rp; if (!c || !R) return;
+      var lines = [], mineTxt = [], n = 0;
+      c.turns.forEach(function(t, k){
+        if (t.who === 'partner') lines.push('PARTNER: ' + t.en);
+        else { n++; var s = R.said[k]; lines.push('NURI (turn ' + n + ', goal: ' + t.hint + '): ' + (s || '(skipped)')); if (s) mineTxt.push(n + '. ' + s); }
+      });
+      var text = mineTxt.join('\n');
+      if ((text.match(/[A-Za-z]+/g) || []).length < 5) { toast('말한 턴이 너무 적어요 — 두세 턴은 말해보세요'); return; }
+      var d = D(); if (!d) return;
+      d.collection('ieltsGrading').add({
+        kind:'work', ref:c.id, mode: R.spoke ? 'speak' : 'write',
+        prompt: 'Role-play: ' + c.title + '\nSetting: ' + c.setting + '\nHer goal: ' + c.goal + '\nPartner: ' + c.partner +
+          '\nThe whole conversation (her answer below is only her own numbered turns; judge the turns together — did she reach her goal, was each turn clear and natural for this partner):\n' + lines.join('\n'),
+        text: text, words: (text.match(/[A-Za-z0-9\'’-]+/g)||[]).length, createdAt: new Date().toISOString(), status:'pending'
+      }).then(function(){ toast('보냈어요 — 맥북이 5분 안에 봐줘요'); }).catch(function(e){ toast('보내기 실패: ' + e.message); });
     },
     roleplay: function(){
       var c = cardById(S.card); if (!c || !c.roleplay) return;
