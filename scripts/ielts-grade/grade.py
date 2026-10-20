@@ -137,7 +137,7 @@ def fetch_jobs(tab):
             "var g=await c.where('status','==','grading').get();var lim=Date.now()-%d*60000;"
             "g.forEach(d=>{var x=d.data();var t=Date.parse(x.gradingAt||x.createdAt||0)||0;if(t<lim)out.push(Object.assign({_id:d.id},x));});"
             "out.sort((p,q)=>String(p.createdAt||'').localeCompare(String(q.createdAt||'')));"
-            "return out.map(x=>({_id:x._id,kind:x.kind,task:x.task,part:x.part,prompt:x.prompt,text:x.text,words:x.words,secs:x.secs}));"
+            "return out.map(x=>({_id:x._id,kind:x.kind,task:x.task,part:x.part,prompt:x.prompt,text:x.text,words:x.words,secs:x.secs,mode:x.mode,ref:x.ref}));"
             ) % (json.dumps(COLL), STUCK_MIN)
     return tab.page(body, 60) or []
 
@@ -194,6 +194,40 @@ def build_prompt(job):
     for k, v in rep.items():
         tpl = tpl.replace(k, v)
     return tpl, [k[0] for k in keys]
+
+
+def build_work_prompt(job):
+    """English › Work 탭 — 업무 장면 영어 첨삭 (kind 'work')."""
+    tpl = open(os.path.join(HERE, 'prompt_work.md'), encoding='utf-8').read()
+    speak = job.get('mode') == 'speak'
+    rep = {
+        '{{SCENE}}': (job.get('prompt') or '(not given)').strip(),
+        '{{MODE}}': 'spoken (speech-to-text transcript)' if speak else 'written (chat / email)',
+        '{{MODE_RULE}}': ('It is a speech-to-text transcript: ignore missing punctuation, capitalisation and homophone slips; judge words and grammar only. '
+                          'The "natural" version should sound spoken.') if speak else
+                         'It is written text for a work chat or email: punctuation, capitalisation and register count.',
+        '{{TEXT}}': (job.get('text') or '').strip(),
+    }
+    for k, v in rep.items():
+        tpl = tpl.replace(k, v)
+    return tpl
+
+
+def parse_work(raw, text):
+    s = re.sub(r'^```(?:json)?\s*|\s*```$', '', raw.strip())
+    i, j = s.find('{'), s.rfind('}')
+    if i < 0 or j <= i:
+        raise ValueError('JSON 없음')
+    o = json.loads(s[i:j + 1])
+    nat = str(o.get('natural') or '').strip()
+    if not nat:
+        raise ValueError('natural 비어 있음')
+    errs = [{'wrong': str(e['wrong']), 'right': str(e.get('right') or ''), 'ko': str(e.get('ko') or '')}
+            for e in (o.get('errors') or []) if isinstance(e, dict) and e.get('wrong')]
+    ph = [{'en': str(p['en']), 'ko': str(p.get('ko') or '')} for p in (o.get('phrases') or []) if isinstance(p, dict) and p.get('en')]
+    found = sum(1 for e in errs if e['wrong'] in text)
+    return {'verdict': str(o.get('verdict') or ''), 'fixed': str(o.get('fixed') or text), 'natural': nat,
+            'errors': errs[:8], 'phrases': ph[:4], 'tone': str(o.get('tone') or '')}, (found, len(errs))
 
 
 def run_claude(prompt):
@@ -256,9 +290,22 @@ def parse_validate(raw, keys, text):
 
 
 def grade(job):
-    prompt, keys = build_prompt(job)
     text = job.get('text') or ''
     last = None
+    if job.get('kind') == 'work':
+        prompt = build_work_prompt(job)
+        for attempt in range(2):
+            p = prompt if attempt == 0 else prompt + '\n\nYour previous reply was rejected (%s). Reply again with the single valid JSON object only.' % last
+            raw = run_claude(p)
+            try:
+                res, (found, n) = parse_work(raw, text)
+                log('  work parsed: errors matched %d/%d' % (found, n))
+                return res
+            except Exception as e:
+                last = str(e)[:120]
+                log('  invalid work JSON (attempt %d): %s' % (attempt + 1, last))
+        raise RuntimeError('첨삭 결과 형식 오류: ' + str(last))
+    prompt, keys = build_prompt(job)
     for attempt in range(2):
         p = prompt if attempt == 0 else prompt + '\n\nYour previous reply was rejected (%s). Reply again with the single valid JSON object only.' % last
         raw = run_claude(p)
@@ -296,7 +343,7 @@ def main():
             res = grade(job)
             secs = round(time.time() - t0)
             update_doc(tab, jid, {'status': 'done', 'result': res, 'gradedAt': now_iso(), 'gradeSecs': secs})
-            log('done', jid, 'band', res['band'], '%ds' % secs)
+            log('done', jid, 'band', res.get('band', '-'), '%ds' % secs)
         except Exception as e:
             log('error', jid, e)
             try:

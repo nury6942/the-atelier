@@ -11,7 +11,7 @@
   function bandColor(b){ return b==null ? '#475569' : b>=7 ? OK : b>=6.5 ? MID : BAD; }
   function fmtB(b){ return b==null || isNaN(b) ? '—' : (+b).toFixed(1); }
   function countWords(t){ return (String(t||'').match(/[A-Za-z0-9'’-]+/g) || []).length; }
-  function toDocs(snap){ var out=[]; snap.forEach(function(d){ var x=d.data(); x._id=d.id; out.push(x); }); return out; }
+  function toDocs(snap){ var out=[]; snap.forEach(function(d){ var x=d.data(); if (x.kind === 'work') return; x._id=d.id; out.push(x); }); return out; }  // work = English › Work 탭 첨삭 (같은 채점기 사용)
   function byNewest(a){ return a.sort(function(p,q){ return String(q.createdAt||'').localeCompare(String(p.createdAt||'')); }); }
 
   function injectStyle(){

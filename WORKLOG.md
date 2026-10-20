@@ -1,3 +1,14 @@
+## 2026-10-20 · 맥북 · English › Work 탭 — 실제 업무 장면 영어 (A안: 왼쪽 목록 + 오른쪽 카드)
+
+- 계기: 권태기 얘기 끝에 진짜 막힌 건 '영어로 일하는 것' → 링글 대신 혼자 AI로. 누리: "뇌에 쏙쏙 들어오고 실생활에 쓸 것"
+- 재료: **팀즈 2026-05-26~10-20 누리 메시지 약 330건(서브에이전트, 읽기만)** + mlb-fitting 가봉 코멘트 55건 → 카드 49개(Business 18 · Fashion 25 · Interview 6) · 현장 용어 68개. 이름·업체·품번·수량·가격 제거
+- **카드 내용은 공개 저장소에 안 둠** → Firestore `workEnglish/content`(cards·glossary), 내 기록 `workEnglish/state`(done·saved). 코드만 js/work-english.js
+- 카드 = 상황 → 핵심 표현(+ 내 표현 저장) → 과제 → 쓰기/녹음(브라우저 받아쓰기 en-US) → AI 피드백(틀린 데만 고친 것 · 현지 동료 버전 · 오류 · 톤 · 가져갈 표현) · 14장은 'ChatGPT 음성 롤플레이' 지시문 복사
+- AI 피드백은 IELTS 채점기 재사용: `ieltsGrading` kind:'work' → grade.py work 분기 + prompt_work.md (누리 습관: 인사 따로 보내기·과한 사과·"right!"·불필요한 대문자). IELTS 채점 목록은 work 문서 제외
+- 폭 820 미만은 목록 → 카드(← 목록)로. 375 가로 넘침 없음(로컬 가짜 db로 확인)
+
+---
+
 ## 2026-10-19 · 맥북 · IELTS·Read 실사용 점검 (로그인된 크롬, 라이브)
 
 - 점검 전 ielts/state·englishRead/state·기록 id 를 백업 → 점검 → 테스트 기록만 지우고 상태를 그대로 되돌림(기록 2개·약점 r-match 2/r-tfng 1·카드 8 그대로)

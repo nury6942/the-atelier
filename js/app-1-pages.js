@@ -28327,7 +28327,7 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', tutor:'eng-tutor-view' };
+    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view' };
     if (!views[tab]) tab = 'annie';
     if (!document.getElementById('eng-annie-view')) return;
     Object.keys(views).forEach(function(k){
@@ -28341,6 +28341,8 @@
     if (tab === 'study' && typeof loadEnglishStudy === 'function') loadEnglishStudy();
     if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
     if (tab === 'read' && typeof window.renderEnglishRead === 'function') window.renderEnglishRead();
+    if (tab === 'work' && typeof window.renderWorkEnglish === 'function') window.renderWorkEnglish();
+    if (tab !== 'work' && window.WORK_EN) window.WORK_EN.stop();
     if (tab !== 'read' && typeof window.stopEnglishRead === 'function') window.stopEnglishRead();
     var pe = document.getElementById('page-english');
     if (pe) pe.classList.toggle('eng-tutor-on', tab === 'tutor');   // AI Tutor 는 화면 꽉 차게
