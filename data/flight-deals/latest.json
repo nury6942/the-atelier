@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T08:52",
+ "generatedAt": "2026-10-21T09:02",
  "date": "2026-10-21",
  "count": 38,
  "cities": [
@@ -33,6 +33,18 @@
      "code": "KE"
     }
    ],
+   "sky": {
+    "price": 849000,
+    "direct": 849000,
+    "url": "https://www.skyscanner.co.kr/transport/flights/sela/yvr/261105/261118/?adultsv2=1&cabinclass=economy&rtn=1",
+    "kr": {
+     "name": "Trinity Airways",
+     "price": 849000,
+     "code": "TW"
+    }
+   },
+   "best": 849000,
+   "bestSrc": "sky",
    "rt": {
     "price": 915052,
     "airline": "Trinity Airways",
@@ -49,9 +61,9 @@
     "hi": 1750000
    },
    "median30": null,
-   "deal": "deal",
-   "why": "보통 가격대 아래쪽",
-   "vsLow": 3,
+   "deal": "super",
+   "why": "보통 가격대 맨 아래보다 쌈",
+   "vsLow": -5,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-vancouver.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -78,6 +90,18 @@
      "code": "KE"
     }
    ],
+   "sky": {
+    "price": 1139334,
+    "direct": 1174700,
+    "url": "https://www.skyscanner.co.kr/transport/flights/sela/akl/261101/261117/?adultsv2=1&cabinclass=economy&rtn=1",
+    "kr": {
+     "name": "대한항공",
+     "price": 1174700,
+     "code": "KE"
+    }
+   },
+   "best": 1174700,
+   "bestSrc": "sky",
    "rt": {
     "price": 1229374,
     "airline": "젯스타",
@@ -102,7 +126,7 @@
    "median30": null,
    "deal": "deal",
    "why": "보통 가격대 아래쪽",
-   "vsLow": 10,
+   "vsLow": 7,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-auckland.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -135,6 +159,18 @@
      "code": "KE"
     }
    ],
+   "sky": {
+    "price": 883900,
+    "direct": 883900,
+    "url": "https://www.skyscanner.co.kr/transport/flights/sela/hnl/261204/261213/?adultsv2=1&cabinclass=economy&rtn=1",
+    "kr": {
+     "name": "에어프레미아",
+     "price": 883900,
+     "code": "YP"
+    }
+   },
+   "best": 817100,
+   "bestSrc": "google",
    "rt": {
     "price": 817100,
     "airline": "에어프레미아",
@@ -171,6 +207,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 840300,
     "airline": "LOT 폴란드항공",
@@ -225,6 +264,9 @@
      "code": "OZ"
     }
    ],
+   "sky": null,
+   "best": 959457,
+   "bestSrc": "google",
    "rt": {
     "price": 874600,
     "airline": "심천항공",
@@ -282,6 +324,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1119300,
+   "bestSrc": "google",
    "rt": {
     "price": 883100,
     "airline": "에티하드항공",
@@ -333,6 +378,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1235400,
+   "bestSrc": "google",
    "rt": {
     "price": 894700,
     "airline": "에티하드항공",
@@ -387,6 +435,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 982200,
+   "bestSrc": "google",
    "rt": {
     "price": 790600,
     "airline": "중국남방항공",
@@ -447,6 +498,9 @@
      "code": "OZ"
     }
    ],
+   "sky": null,
+   "best": 960193,
+   "bestSrc": "google",
    "rt": {
     "price": 927471,
     "airline": "젯스타",
@@ -507,6 +561,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1136800,
+   "bestSrc": "google",
    "rt": {
     "price": 895200,
     "airline": "에티하드항공",
@@ -555,6 +612,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1272300,
+   "bestSrc": "google",
    "rt": {
     "price": 932968,
     "airline": "비엣젯항공",
@@ -618,6 +678,18 @@
      "code": "KE"
     }
    ],
+   "sky": {
+    "price": 1008300,
+    "direct": 1008300,
+    "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261119/261202/?adultsv2=1&cabinclass=economy&rtn=1",
+    "kr": {
+     "name": "아시아나항공",
+     "price": 1177300,
+     "code": "OZ"
+    }
+   },
+   "best": 1056100,
+   "bestSrc": "google",
    "rt": {
     "price": 1056100,
     "airline": "에어프레미아",
@@ -678,6 +750,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1096900,
+   "bestSrc": "google",
    "rt": {
     "price": 852700,
     "airline": "에티하드항공",
@@ -729,6 +804,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1476700,
+   "bestSrc": "google",
    "rt": {
     "price": 891500,
     "airline": "에티하드항공",
@@ -783,6 +861,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1247700,
+   "bestSrc": "google",
    "rt": {
     "price": 829100,
     "airline": "중국남방항공",
@@ -840,6 +921,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1135900,
+   "bestSrc": "google",
    "rt": {
     "price": 870300,
     "airline": "에어 돌로미티, 루프트한자",
@@ -894,6 +978,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1350000,
+   "bestSrc": "google",
    "rt": {
     "price": 707500,
     "airline": "중국남방항공",
@@ -954,6 +1041,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1136100,
+   "bestSrc": "google",
    "rt": {
     "price": 1066275,
     "airline": "에어캐나다",
@@ -1002,6 +1092,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1340900,
+   "bestSrc": "google",
    "rt": {
     "price": 834100,
     "airline": "중국남방항공",
@@ -1050,6 +1143,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1368900,
+   "bestSrc": "google",
    "rt": {
     "price": 1191000,
     "airline": "에어캐나다",
@@ -1098,6 +1194,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1456100,
+   "bestSrc": "google",
    "rt": {
     "price": 746600,
     "airline": "중국남방항공",
@@ -1146,6 +1245,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 2137800,
+   "bestSrc": "google",
    "rt": {
     "price": 1420912,
     "airline": "웨스트젯",
@@ -1194,6 +1296,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1868900,
+   "bestSrc": "google",
    "rt": {
     "price": 1173700,
     "airline": "에어캐나다",
@@ -1254,6 +1359,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 1341700,
+   "bestSrc": "google",
    "rt": {
     "price": 1119100,
     "airline": "에어캐나다, 유나이티드항공",
@@ -1305,6 +1413,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 2250100,
+   "bestSrc": "google",
    "rt": {
     "price": 1549700,
     "airline": "필리핀항공",
@@ -1356,6 +1467,9 @@
      "code": "KE"
     }
    ],
+   "sky": null,
+   "best": 2400100,
+   "bestSrc": "google",
    "rt": {
     "price": 1493500,
     "airline": "에어캐나다",
@@ -1392,6 +1506,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 913700,
     "airline": "LOT 폴란드항공",
@@ -1422,6 +1539,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 861700,
     "airline": "에티하드항공",
@@ -1452,6 +1572,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 894006,
     "airline": "에티하드항공",
@@ -1482,6 +1605,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 875500,
     "airline": "중국남방항공",
@@ -1518,6 +1644,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 957700,
     "airline": "에티하드항공",
@@ -1548,6 +1677,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 893200,
     "airline": "LOT 폴란드항공",
@@ -1578,6 +1710,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 997700,
     "airline": "KLM, SAS항공",
@@ -1608,6 +1743,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 963445,
     "airline": "비엣젯항공",
@@ -1644,6 +1782,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 767500,
     "airline": "중국남방항공",
@@ -1674,6 +1815,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 1311400,
     "airline": "중국남방항공",
@@ -1704,6 +1848,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 1424977,
     "airline": "웨스트젯",
@@ -1740,6 +1887,9 @@
    "trip": null,
    "kr": null,
    "krAll": [],
+   "sky": null,
+   "best": null,
+   "bestSrc": "google",
    "rt": {
     "price": 1813800,
     "airline": "카타르항공",

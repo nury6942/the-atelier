@@ -14,15 +14,24 @@ while [ $# -gt 0 ]; do
   aside repl "const CITIES=[$LIST]; $(cat scripts/flight-deals/aside-route.js)" 2>&1 | grep '^FLIGHT_ROUTE' >> "$TMP"
 done
 LOG "수집 $(grep -c '"ok":true' "$TMP")줄"
-OUT=$(node scripts/flight-deals/judge.js "$TMP") || { LOG "판정 실패"; exit 1; }
+# 1차 판정(구글) → 특가 근처 도시만 스카이스캐너에서 같은 날짜로 다시 → 2차 판정
+J1=$(node scripts/flight-deals/judge.js "$TMP" --first) || { LOG "판정 실패"; exit 1; }
+TODO=$(echo "$J1" | grep '^SKY_TODO ' | sed 's/^SKY_TODO //')
+SKYTMP=$(mktemp -t flightsky); trap 'rm -f "$TMP" "$SKYTMP"' EXIT
+if [ -n "$TODO" ] && [ "$TODO" != "[]" ]; then
+  aside repl "const TODO=$TODO; $(cat scripts/flight-deals/aside-sky.js)" 2>&1 | grep '^FLIGHT_SKY' > "$SKYTMP"
+  LOG "스카이스캐너 $(grep -c '"ok":true' "$SKYTMP")/$(echo "$TODO" | grep -o '"slug"' | wc -l | tr -d ' ')곳"
+fi
+OUT=$(node scripts/flight-deals/judge.js "$TMP" "$SKYTMP") || { LOG "판정 실패"; exit 1; }
 LOG "$(echo "$OUT" | grep -v '^ALERT')"
-echo "$OUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r TITLE URL; do
-  LOG "알림 $TITLE"
-  # 미리알림 권한 창이 안 눌려 있으면 영원히 기다리므로 40초 뒤 포기 (다음 회차에 다시)
-  perl -e 'alarm 40; exec @ARGV' osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1 || LOG "알림 실패 — 아이맥에서 미리알림 권한 확인"
+echo "$OUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r KEY PRICE TITLE URL; do
+  # 미리알림 권한 창이 안 눌려 있으면 영원히 기다리므로 40초 뒤 포기 → 알림 기록을 안 남겨서 다음 회차에 다시
+  if perl -e 'alarm 40; exec @ARGV' osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1
 on run argv
   tell application "Reminders" to make new reminder with properties {name:(item 1 of argv), body:(item 2 of argv), due date:(current date)}
 end run
 OSA
+  then node scripts/flight-deals/judge.js --mark "$KEY" "$PRICE"; LOG "알림 $TITLE"
+  else LOG "알림 실패(다음 회차에 다시) — 아이맥 미리알림 권한 확인: $TITLE"; fi
 done
 git add data/flight-deals && git commit -qm "flights: $(date +%F) 특가 점검" && git push -q && LOG "푸시"

@@ -68,7 +68,15 @@
       '.fdc-legs b{font-size:14px;font-weight:800}',
       '.fdc-nights{font-size:11.5px;color:'+SUB+';padding:2px 8px;border:1px solid '+LINE+'}',
       '.fdc-nodate{margin-top:14px;border:1px dashed #CBD5E1;padding:14px;text-align:center;font-size:12.5px;color:'+SUB+'}',
-      '.fdc-go{margin-top:14px;text-align:center;font-size:12.5px;padding:8px}',
+      '.fdc-go{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}',
+      '.fdc-go a{text-align:center;font-size:12.5px;padding:8px}',
+      '.fdc-cmp{margin-top:12px;display:grid;gap:5px}',
+      '.fdc-cmp a{display:grid;grid-template-columns:74px minmax(0,1fr) 58px;gap:8px;align-items:center;font-size:11.5px;color:'+SUB+';text-decoration:none}',
+      '.fdc-cmp a:hover{color:'+ACC_D+'}',
+      '.fdc-cmp i{display:block;height:8px;background:#CBD5E1}',
+      '.fdc-cmp a.win i{background:'+ACC+'}',
+      '.fdc-cmp a.win{color:'+INK+';font-weight:700}',
+      '.fdc-cmp b{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:'+INK+'}',
       '.fdt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}',
       '.fdt{border:1px solid '+LINE+';background:#fff;padding:11px;display:block;color:inherit;text-decoration:none}',
       '.fdt:hover{border-color:'+ACC+'}',
@@ -103,7 +111,16 @@
       '<div class="fdc-legs"><div><small>출발</small><b>'+md(s)+'</b></div><span class="fdc-nights">'+(trip.back ? nights+'박' : '편도')+'</span><div class="r"><small>귀국</small><b>'+(trip.back ? md(e) : '–')+'</b></div></div></div>';
   }
   function card(c){
-    var k = c.kr || {}, t = c.typical, price = c.kr ? k.price : (c.rt && c.rt.price);
+    var sk = c.sky && c.sky.kr, useSky = c.bestSrc === 'sky' && sk;
+    var k = useSky ? sk : (c.kr || {}), t = c.typical, price = c.best || (c.kr ? c.kr.price : (c.rt && c.rt.price));
+    // 같은 날짜 가격 비교 (구글 = 항공사 운임, 스카이스캐너 = 여행사 포함)
+    var cmp = '';
+    if (c.sky && c.kr) {
+      var rows = [['구글', c.kr.price, c.link], ['스카이스캐너', sk ? sk.price : null, c.sky.url]].filter(function(x){ return x[1]; });
+      var mx = Math.max.apply(null, rows.map(function(x){ return x[1]; }));
+      var mn = Math.min.apply(null, rows.map(function(x){ return x[1]; }));
+      cmp = '<div class="fdc-cmp">' + rows.map(function(x){ return '<a class="'+(x[1]===mn?'win':'')+'" href="'+esc(x[2])+'" target="_blank" rel="noopener"><span>'+x[0]+'</span><i style="width:'+Math.round(x[1]/mx*100)+'%"></i><b>'+man(x[1])+'</b></a>'; }).join('') + '</div>';
+    }
     var band = '';
     if (t && price) {
       var max = Math.max(t.hi * 1.2, price * 1.08), pos = function(v){ return Math.max(0, Math.min(100, v / max * 100)); };
@@ -114,10 +131,11 @@
       '<div class="fdc-air">'+logo(k.code, k.name)+esc(kname(k.name||''))+(k.direct?'<span class="fdc-tag">직항</span>':'')+'</div></div>' +
       '<div class="fdc-price"><b>'+man(price).replace('만','')+'</b><span>만원 · 왕복</span>'+(c.deal==='super'?'<span class="fdc-tag" style="margin-left:auto">초특가</span>':'')+'</div>' + band +
       (c.trip ? calHtml(c.trip) : '<div class="fdc-nodate">이 표는 날짜가 안 나와요 · 구글에서 날짜 고르기</div>') +
-      '<a class="atl-btn atl-btn-secondary fdc-go" href="'+esc(c.link)+'" target="_blank" rel="noopener">구글 항공편에서 보기 ↗</a></div>';
+      cmp + '<div class="fdc-go"><a class="atl-btn atl-btn-secondary" href="'+esc(c.link)+'" target="_blank" rel="noopener">구글 ↗</a>' +
+      '<a class="atl-btn '+(c.sky?'atl-btn-primary':'atl-btn-secondary')+'" href="'+esc(c.sky ? c.sky.url : 'https://www.skyscanner.co.kr/transport/flights/sela/'+String(c.iata||'').toLowerCase()+'/')+'" target="_blank" rel="noopener">스카이스캐너 ↗</a></div></div>';
   }
   function tile(c){
-    var k = c.kr, t = c.typical, price = k ? k.price : (c.rt && c.rt.price), code = k ? k.code : (c.rt && c.rt.code);
+    var k = c.kr, t = c.typical, price = c.best || (k ? k.price : (c.rt && c.rt.price)), code = k ? k.code : (c.rt && c.rt.code);
     var cut = t ? t.lo + (t.hi - t.lo) * 0.25 : null, gap = cut && price ? price - cut : null;
     var w = k && cut && price ? Math.max(6, Math.min(100, cut / price * 100)) : 0;
     return '<a class="fdt" href="'+esc(c.link)+'" target="_blank" rel="noopener"><div class="fdt-top">'+flag(c.cc)+'<b>'+esc(c.city)+'</b>'+logo(code)+'</div>' +
