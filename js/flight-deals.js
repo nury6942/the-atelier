@@ -256,12 +256,13 @@
       : fares.length ? '<div class="fdm-est"><div class="h">공홈에 적힌 최저가 (왕복 총액)</div>' + fares.slice(0, 5).map(function(f){
           var c = (F && F.cities || []).find(function(c){ return c.city === f.city || (c.iata && c.iata === f.iata); });
           return '<div class="fdm-er">'+(c&&c.cc?'<img src="https://flagcdn.com/w80/'+c.cc+'.png" alt="">':'<span></span>')+'<div class="c">'+esc(f.city)+'</div><div class="p"><b>'+man(f.price)+'</b></div></div>'; }).join('') + '</div>' : '';
-    var cond = (d.conditions || []).slice(0, 4).map(function(c){ return '<span>'+esc(c)+'</span>'; }).join('') + (d.code ? '<span class="code" title="눌러서 복사" onclick="event.preventDefault();navigator.clipboard&&navigator.clipboard.writeText(\''+esc(d.code)+'\')">코드 '+esc(d.code)+'</span>' : '');
-    return '<a class="fdm" href="'+esc(x.link)+'" target="_blank" rel="noopener">' +
+    var cond = (d.conditions || []).slice(0, 4).map(function(c){ return '<span>'+esc(c)+'</span>'; }).join('') + (d.code ? '<span class="code" title="눌러서 복사" onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(d.code)+'\');this.textContent=\'복사됨\'">코드 '+esc(d.code)+'</span>' : '');
+    return '<div class="fdm">' +
       '<div class="fdm-top">'+logo(x.code, x.airline)+'<span>'+esc(x.airline)+'</span>'+(isNew?'<span class="fdm-new">NEW</span>':'')+
         '<span style="margin-left:auto;font-size:11px;font-weight:800;'+(dl!=null&&dl<=5?'color:'+BAD:'')+'">'+(dl!=null?'구매 D-'+Math.max(0,dl):'')+'</span><div class="fdm-flags" style="margin-left:6px">'+(x.regions||[]).map(function(r){ return RFLAG[r] ? '<img src="https://flagcdn.com/w80/'+RFLAG[r]+'.png" alt="'+esc(r)+'">' : ''; }).join('')+'</div></div>' +
       big + '<div><div class="fdm-t">'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</div>'+(x.sub && x.title.length >= 8 ? '<div class="fdm-s">'+esc(x.sub)+'</div>' : '')+'</div>' +
-      timeline(d) + est + (cond ? '<div class="fdm-cond">'+cond+'</div>' : '') + '</a>';
+      timeline(d) + est + (cond ? '<div class="fdm-cond">'+cond+'</div>' : '') +
+      '<a class="atl-btn atl-btn-secondary" href="'+esc(x.link)+'" target="_blank" rel="noopener" style="text-align:center;font-size:12.5px;padding:8px;margin-top:auto">'+esc(x.airline)+' 공홈에서 보기 ↗</a></div>';
   }
   function promoChip(x){
     var dl = dleft(x.end);
