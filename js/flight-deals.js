@@ -109,7 +109,7 @@
       '.fdm-pl{display:flex;justify-content:space-between;font-size:11px;color:'+SUB+';margin-top:5px;font-variant-numeric:tabular-nums}',
       '.fdm-pl .d{font-weight:800;color:'+INK+'}',
       '.fdm-pl .d.soon{color:'+BAD+'}',
-      '.fdm-new{position:absolute;top:-1px;right:-1px;background:'+ACC+';color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px}',
+      '.fdm-new{background:'+ACC+';color:#fff!important;font-size:9.5px!important;font-weight:800;letter-spacing:.06em;padding:2px 6px}',
       '.fdm-all{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}',
       '.fdm-chip{display:flex;align-items:center;gap:8px;border:1px solid '+LINE+';background:#fff;padding:7px 10px;font-size:12.5px;color:'+INK+';text-decoration:none;max-width:100%}',
       '.fdm-chip:hover{border-color:'+ACC+'}',
@@ -174,8 +174,8 @@
     var dl = dleft(x.end), s0 = pd(x.start), e0 = x.end ? pd(x.end) : null, now = Date.now();
     var prog = e0 ? Math.max(0, Math.min(100, (now - s0) / (e0 - s0) * 100)) : 0;
     var isNew = x.firstSeen && (Date.now() - pd(x.firstSeen)) / 864e5 < 3;
-    return '<a class="fdm" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+(isNew?'<span class="fdm-new">NEW</span>':'') +
-      '<div class="fdm-top">'+logo(x.code, x.airline)+'<span>'+esc(x.airline)+'</span><div class="fdm-flags">'+(x.regions||[]).map(function(r){ return RFLAG[r] ? '<img src="https://flagcdn.com/w80/'+RFLAG[r]+'.png" alt="'+esc(r)+'" title="'+esc(r)+'">' : ''; }).join('')+'</div></div>' +
+    return '<a class="fdm" href="'+esc(x.link)+'" target="_blank" rel="noopener">' +
+      '<div class="fdm-top">'+logo(x.code, x.airline)+'<span>'+esc(x.airline)+'</span>'+(isNew?'<span class="fdm-new">NEW</span>':'')+'<div class="fdm-flags">'+(x.regions||[]).map(function(r){ return RFLAG[r] ? '<img src="https://flagcdn.com/w80/'+RFLAG[r]+'.png" alt="'+esc(r)+'" title="'+esc(r)+'">' : ''; }).join('')+'</div></div>' +
       (x.pct ? '<div class="fdm-pct">'+x.pct+'<small>% 할인</small></div>' : '') +
       '<div><div class="fdm-t">'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</div>'+(x.sub && x.title.length >= 8 ? '<div class="fdm-s">'+esc(x.sub)+'</div>' : '')+'</div>' +
       (e0 ? '<div class="fdm-per"><div class="fdm-bar"><i style="width:'+prog+'%"></i><b style="left:'+prog+'%"></b></div><div class="fdm-pl"><span>'+md(s0)+'</span><span class="d'+(dl<=5?' soon':'')+'">'+(dl<=0?'오늘 끝':'D-'+dl)+'</span><span>'+md(e0)+'</span></div></div>' : '') + '</a>';
