@@ -1,6 +1,6 @@
 #!/bin/bash
 # 항공권 특가 — 아이맥 launchd com.nuri.flight-deals (매일 07:30 · 19:30)
-#  구글 항공편 노선 페이지를 Aside 로 읽고 → judge.js → data/flight-deals 커밋·푸시 → 초특가는 아이폰 미리알림
+#  구글 노선 페이지 → judge.js(1차) → 스카이스캐너 같은 날짜 → judge.js(2차) → 공홈 프로모션 → data/flight-deals 커밋·푸시 → 초특가·새 장거리 프로모션은 아이폰 미리알림
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin
 cd "$(dirname "$0")/../.." || exit 1
 LOG() { echo "$(date '+%F %T') $*"; }
@@ -24,7 +24,11 @@ if [ -n "$TODO" ] && [ "$TODO" != "[]" ]; then
 fi
 OUT=$(node scripts/flight-deals/judge.js "$TMP" "$SKYTMP") || { LOG "판정 실패"; exit 1; }
 LOG "$(echo "$OUT" | grep -v '^ALERT')"
-echo "$OUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r KEY PRICE TITLE URL; do
+# 공홈 프로모션 (대한항공·아시아나·트리니티·에어프레미아 이벤트 목록)
+PTMP=$(mktemp -t flightpromo); trap 'rm -f "$TMP" "$SKYTMP" "$PTMP"' EXIT
+aside repl "$(cat scripts/flight-deals/aside-promo.js)" 2>&1 | grep '^FLIGHT_PROMO' > "$PTMP"
+POUT=$(node scripts/flight-deals/promo.js "$PTMP") && LOG "$(echo "$POUT" | grep -v '^ALERT')" || LOG "프로모션 정리 실패"
+printf '%s\n%s\n' "$OUT" "$POUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r KEY PRICE TITLE URL; do
   # 미리알림 권한 창이 안 눌려 있으면 영원히 기다리므로 40초 뒤 포기 → 알림 기록을 안 남겨서 다음 회차에 다시
   if perl -e 'alarm 40; exec @ARGV' osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1
 on run argv

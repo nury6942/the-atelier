@@ -2,7 +2,8 @@
 // 아이맥(launchd com.nuri.flight-deals, 07:30·19:30)이 구글 항공편 노선 페이지를 읽어 data/flight-deals/latest.json 을 올린다.
 // 여기선 그걸 그려 주기만 한다: 국산 항공사 최저가를 '보통 가격대'(가장 싼 달) 막대 위 점으로.
 (function(){
-  var F = null, loading = false, region = 'all', loadedAt = 0;
+  var F = null, P = null, loading = false, region = 'all', loadedAt = 0;
+  var RFLAG = { '유럽':'eu', '호주':'au', '뉴질랜드':'nz', '캐나다':'ca', '미국':'us' };
   var GOOD = '#15803d', BAD = '#b91c1c', ACC = '#1F4BD8', ACC_D = '#1A3FB5', ACC_L = '#EEF2FD', LINE = '#ECECF0', SUB = '#475569', INK = '#18181B';
   var REGIONS = ['유럽', '호주', '뉴질랜드', '캐나다', '미국'];
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -89,6 +90,32 @@
       '.fdt-bar{height:5px;background:#F1F2F5;margin-top:7px}',
       '.fdt-bar i{display:block;height:5px;background:'+ACC+'}',
       '.fdt-gap{font-size:11px;color:'+SUB+';margin-top:4px;font-variant-numeric:tabular-nums}',
+      '.fdm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}',
+      '.fdm{border:1px solid '+LINE+';background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px;color:inherit;text-decoration:none;position:relative}',
+      '.fdm:hover{border-color:'+ACC+'}',
+      '.fdm-top{display:flex;align-items:center;gap:8px}',
+      '.fdm-top .fdc-logo{width:26px;height:26px}',
+      '.fdm-top span{font-size:12px;font-weight:700}',
+      '.fdm-flags{margin-left:auto;display:flex;gap:4px}',
+      '.fdm-flags img{width:24px;height:16px;object-fit:cover;border:1px solid '+LINE+'}',
+      '.fdm-pct{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;color:'+ACC+'}',
+      '.fdm-pct small{font-size:13px;font-weight:700;margin-left:3px}',
+      '.fdm-t{font-size:14px;font-weight:700;line-height:1.4}',
+      '.fdm-s{font-size:12px;color:'+SUB+';line-height:1.45;margin-top:2px}',
+      '.fdm-per{margin-top:auto}',
+      '.fdm-bar{height:6px;background:#F1F2F5;position:relative}',
+      '.fdm-bar i{position:absolute;left:0;top:0;bottom:0;background:#CBD5E1}',
+      '.fdm-bar b{position:absolute;top:-3px;width:2px;height:12px;background:'+INK+'}',
+      '.fdm-pl{display:flex;justify-content:space-between;font-size:11px;color:'+SUB+';margin-top:5px;font-variant-numeric:tabular-nums}',
+      '.fdm-pl .d{font-weight:800;color:'+INK+'}',
+      '.fdm-pl .d.soon{color:'+BAD+'}',
+      '.fdm-new{position:absolute;top:-1px;right:-1px;background:'+ACC+';color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px}',
+      '.fdm-all{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}',
+      '.fdm-chip{display:flex;align-items:center;gap:8px;border:1px solid '+LINE+';background:#fff;padding:7px 10px;font-size:12.5px;color:'+INK+';text-decoration:none;max-width:100%}',
+      '.fdm-chip:hover{border-color:'+ACC+'}',
+      '.fdm-chip .fdc-logo{width:20px;height:20px}',
+      '.fdm-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+      '.fdm-chip em{font-style:normal;font-weight:800;font-size:11.5px;color:'+SUB+';flex:none}',
       '.fd-none{font-size:13.5px;color:'+SUB+';padding:22px;border:1px dashed #CBD5E1;text-align:center}',
       '@media (max-width:860px){.fdp{padding:22px 16px 80px}.fdp-hero h1{font-size:26px}.fdc-grid{grid-template-columns:minmax(0,1fr)}}'
     ].join('\n');
@@ -142,6 +169,28 @@
       '<div class="fdt-p">'+man(price).replace('만','')+'<span> 만'+(k?'':' · 외항사')+'</span></div>' +
       '<div class="fdt-bar"><i style="width:'+w+'%"></i></div><div class="fdt-gap">'+(!k ? '국산 항공사 없음' : gap!=null ? (gap<=0?'특가선 안':'특가까지 −'+man(gap)) : '')+'</div></a>';
   }
+  function dleft(end){ if (!end) return null; var t = new Date(); t.setHours(0,0,0,0); return Math.round((pd(end) - t) / 864e5); }
+  function promoCard(x){
+    var dl = dleft(x.end), s0 = pd(x.start), e0 = x.end ? pd(x.end) : null, now = Date.now();
+    var prog = e0 ? Math.max(0, Math.min(100, (now - s0) / (e0 - s0) * 100)) : 0;
+    var isNew = x.firstSeen && (Date.now() - pd(x.firstSeen)) / 864e5 < 3;
+    return '<a class="fdm" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+(isNew?'<span class="fdm-new">NEW</span>':'') +
+      '<div class="fdm-top">'+logo(x.code, x.airline)+'<span>'+esc(x.airline)+'</span><div class="fdm-flags">'+(x.regions||[]).map(function(r){ return RFLAG[r] ? '<img src="https://flagcdn.com/w80/'+RFLAG[r]+'.png" alt="'+esc(r)+'" title="'+esc(r)+'">' : ''; }).join('')+'</div></div>' +
+      (x.pct ? '<div class="fdm-pct">'+x.pct+'<small>% 할인</small></div>' : '') +
+      '<div><div class="fdm-t">'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</div>'+(x.sub && x.title.length >= 8 ? '<div class="fdm-s">'+esc(x.sub)+'</div>' : '')+'</div>' +
+      (e0 ? '<div class="fdm-per"><div class="fdm-bar"><i style="width:'+prog+'%"></i><b style="left:'+prog+'%"></b></div><div class="fdm-pl"><span>'+md(s0)+'</span><span class="d'+(dl<=5?' soon':'')+'">'+(dl<=0?'오늘 끝':'D-'+dl)+'</span><span>'+md(e0)+'</span></div></div>' : '') + '</a>';
+  }
+  function promoChip(x){
+    var dl = dleft(x.end);
+    return '<a class="fdm-chip" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+logo(x.code, x.airline)+(x.pct?'<em style="color:'+ACC+'">'+x.pct+'%</em>':'')+'<span>'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</span>'+(dl!=null?'<em>D-'+Math.max(0,dl)+'</em>':'')+'</a>';
+  }
+  function promosHtml(){
+    if (!P || !P.items || !P.items.length) return '';
+    var reg = P.items.filter(function(x){ return x.regions && x.regions.length; }), all = P.items.filter(function(x){ return !x.regions || !x.regions.length; });
+    return '<div class="fdp-h"><h2>공홈 프로모션</h2><span style="font-size:12px;color:'+SUB+'">대한항공 · 아시아나 · 트리니티 · 에어프레미아 이벤트에서 장거리만</span></div>' +
+      (reg.length ? '<div class="fdm-grid">'+reg.map(promoCard).join('')+'</div>' : '') +
+      (all.length ? '<div class="fdm-all">'+all.map(promoChip).join('')+'</div>' : '');
+  }
   function paint(){
     var el = document.getElementById('deals-root'); if (!el) return;
     style();
@@ -156,6 +205,7 @@
     el.innerHTML = '<div class="fdp">' + head(hot.length, all.length, when) +
       '<div class="fdp-h"><h2>지금 특가</h2></div>' +
       (hot.length ? '<div class="fdc-grid">'+hot.map(card).join('')+'</div>' : '<div class="fd-none">지금은 보통보다 싼 국산 항공사 표가 없어요</div>') +
+      promosHtml() +
       '<div class="fdp-h"><h2>지켜보는 도시</h2><div class="fdp-seg">' + ['all'].concat(REGIONS).map(function(r){
           var n = r === 'all' ? rest.length : rest.filter(function(c){ return c.region === r; }).length;
           return '<button class="'+(region===r?'on':'')+'" onclick="FLIGHT_DEALS.region(\''+r+'\')">'+(r==='all'?'전체':r)+' <span style="opacity:.7">'+n+'</span></button>';
@@ -165,7 +215,8 @@
   function load(){
     if (loading) return; loading = true;
     fetch('data/flight-deals/latest.json', { cache:'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(j){ F = j || false; loading = false; loadedAt = Date.now(); paint(); }).catch(function(){ F = F || false; loading = false; paint(); });
+      .then(function(j){ F = j || false; loading = false; loadedAt = Date.now(); paint(); })
+      .then(function(){ return fetch('data/flight-deals/promos.json', { cache:'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){ P = j; paint(); }).catch(function(){}); }).catch(function(){ F = F || false; loading = false; paint(); });
   }
   function render(){ paint(); if (!F || Date.now() - loadedAt > 10*60e3) load(); }
   window.FLIGHT_DEALS = { render: render, region: function(r){ region = r; paint(); } };

@@ -10,6 +10,14 @@
 
 ---
 
+## 2026-10-21 (맥북) — Flight Deals 공홈 프로모션
+
+- `aside-promo.js`: 공홈 '진행 중 이벤트' 목록 4곳 — 대한항공 `koreanair.com/contents/promotion/list` · 아시아나 `flyasiana.com/C/KR/KO/event/index` · 트리니티 `trinityairways.com/app/promotion/event/being` · 에어프레미아 `airpremia.com/event/promotionList` (날짜 줄 앞 1~2줄 = 제목·부제)
+- `promo.js`: 유럽·호주·뉴질랜드·캐나다·미국 지명이 있으면 남김, '전 노선·국제선' 할인은 아시아 지명 없을 때만, 면세·eSIM·구독·보험·기차 등은 뺌 → `data/flight-deals/promos.json`(firstSeen 유지, 못 읽은 항공사는 지난 것 유지)
+- 새 **지역 프로모션**은 아이폰 알림(첫 실행은 기록만 — 한꺼번에 울리지 않게), 전 노선 쿠폰류는 화면에만
+- 화면: '공홈 프로모션' 카드(로고·지역 국기·큰 %·기간 막대+D-day·NEW) + 전 노선은 작은 칩
+- 첫 결과: 대한항공 유럽 카카오페이 8%·프라하 7%·시드니-브리즈번 10%·멜버른 5%, 아시아나 유럽, 트리니티 국제선 최대 22%(~10/31), 에어프레미아 전 노선 5%
+
 ## 2026-10-21 (맥북) — Flight Deals 에 스카이스캐너 합침
 
 - `scripts/flight-deals/aside-sky.js`: 스카이스캐너 **같은 날짜** 왕복 검색(Aside, 캡차 없음) → 여행사 포함 최저가·직항·항공사별 최저가 (판매사 다 받을 때까지 최대 30초)
