@@ -1,0 +1,348 @@
+{
+ "date": "2026-10-22",
+ "collectedAt": "2026-10-22T06:30:23+09:00",
+ "skipped": [
+  "검색어 수집(x-search·threads-search)은 리스트·홈·팔로잉 후보가 충분해 생략"
+ ],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@claudeai",
+   "url": "https://x.com/claudeai/status/2112984664256241837",
+   "at": "2026-10-21T19:09:35Z",
+   "likes": 24000,
+   "replies": 1100,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Duet 공개 — 먼저 챙겨주는 에이전트 앱",
+   "points": [
+    "Claude가 먼저 '지금 봐야 할 것'을 들고 오는 새 앱(연구 미리보기)",
+    "시킨 일을 끝내고, 자리를 비워도 계속 작업",
+    "내 이름으로 행동하기 전에는 반드시 확인을 받음",
+    "비밀번호는 직접 보지 않고, 민감 정보 공유를 막는 분류기 탑재",
+    "미국 Pro·Max 대기 명단으로만 — 급한 일 판단은 아직 틀릴 수 있다고 명시"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/media/HVLUnMDWsAAn7Pw.png",
+     "mp4": "https://video.twimg.com/amplify_video/2112982862186106880/vid/avc1/640x360/L7zosiEUW76tqYr-.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@claudeai",
+   "url": "https://x.com/claudeai/status/2112962248218148878",
+   "at": "2026-10-21T17:40:31Z",
+   "likes": 5500,
+   "replies": 274,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Security, 코드 바뀔 때마다 자동 재검사",
+   "points": [
+    "저장소를 한 번 연결하면 첫 정밀 스캔 후 변경이 들어올 때마다 다시 스캔",
+    "고친 코드는 Claude가 확인해 '해결'로 표시, 문제가 돌아오면 다시 열림",
+    "프로젝트마다 코드 기반 위협 모델을 Claude가 작성",
+    "GitHub·GitLab 등 여러 저장소를 한 프로젝트로, API·MCP 커넥터로 결과 전달",
+    "Claude Enterprise 공개 베타"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVK4ttCWMAAxox-.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@OpenAI",
+   "url": "https://x.com/OpenAI/status/2112945805686604033",
+   "at": "2026-10-21T16:35:11Z",
+   "likes": 6600,
+   "replies": 257,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "PHP 보안 구멍, 내 사이트 영향 여부 Codex 스킬로 점검",
+   "points": [
+    "OpenAI 모델이 웹사이트 약 70%가 쓰는 PHP에서 치명적 취약점을 찾아냄(Patch the Planet)",
+    "점검용 Codex 스킬을 GitHub 'openai/php2shell-checker'로 공개",
+    "Codex에 그 저장소를 가리키면 영향 여부 확인 과정을 안내",
+    "같은 날 levelsio도 서버가 잠시 내려갔다가 우분투 백포트 패치로 복구"
+   ],
+   "try": "PHP 쓰는 사이트가 있으면 php2shell-checker로 한 번 점검",
+   "media_items": [
+    {
+     "type": "card",
+     "img": "https://pbs.twimg.com/card_img/2112932339986612225/Zprok62v?format=jpg&name=800x419"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@levelsio",
+   "url": "https://x.com/levelsio/status/2112944980842946816",
+   "at": "2026-10-21T16:31:54Z",
+   "likes": 524,
+   "replies": 18,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude Code로 GTA 산안드레아스 새 미션 제작, 프롬프트 공개",
+   "points": [
+    "CJ가 SF에서 스타트업을 '바이브코딩'하고 투자 1천만 달러를 받는 미션 'Vibe Coded'",
+    "맥 CrossOver에서 게임을 v1.0으로 내리고(Jetpack Downgrader) CLEO 5·SilentPatch 설치",
+    "파일 크기·CRC로 패치 결과를 검증하며 단계마다 확인하라고 지시",
+    "v1.0용 세이브는 GTASnP.com에서 받음 — 전체 단계는 원문 프롬프트에"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2112685106867453952/img/9MTjI5d5Ntcyr9Vv.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2112685106867453952/vid/avc1/556x360/5A34krtCiYGGnFsf.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@fofrAI",
+   "url": "https://x.com/fofrAI/status/2112978193342992738",
+   "at": "2026-10-21T18:43:53Z",
+   "likes": 69,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Gemini가 스스로 도구 만들어 건축 도면 그림",
+   "points": [
+    "구글 Gradient Canopy 건물의 건축 도면을 만들어 달라고 요청(Argon)",
+    "Gemini가 도면용 도구·개념 세트를 직접 꾸리고 재사용할 CLI 도구까지 만듦",
+    "결과 도면 4장은 이미지에"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVLNVHXWYAAKxKP.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVLNfkAWoAAs-3_.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVLNtVvW4AAjDFa.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVLOascWcAAVCe9.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@swyx",
+   "url": "https://x.com/swyx/status/2113003628835553559",
+   "at": "2026-10-21T20:24:57Z",
+   "likes": 35,
+   "replies": 23,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Latent Space, Claude Mods 정리 — 지금 깔 만한 모드",
+   "points": [
+    "Claude Code의 새 Claude Mods 기본 개념과 쓸 만한 모드 설치·사용법을 정리한 글",
+    "Claude Code를 어떤 분야에든 맞춰 고쳐 쓰는 범용 하네스로 보는 관점",
+    "에이전트-사람 화면이 어디로 갈지까지 다룸 — latent.space/p/claude-mods"
+   ],
+   "try": "latent.space/p/claude-mods에서 추천 모드 하나 골라 설치해 보기",
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVLldA6bEAAuyvy.jpg"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@gasket_love",
+   "url": "https://www.threads.com/@gasket_love/post/Dew7ilUAGuQ",
+   "at": "2026-10-21T17:22:47Z",
+   "likes": 26,
+   "replies": 11,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude가 갤럭시 앱을 직접 조작하는 에이전트 앱",
+   "points": [
+    "직접 만든 apk가 화면을 글자로 읽어 누르고 입력하며 목표를 끝냄(같은 와이파이, 케이블 없음)",
+    "앱에 막히는 곳이 생기면 Claude가 코드를 고쳐 새 버전을 보내고 폰이 스스로 설치",
+    "처음 학습만 Sonnet, 익힌 동작은 레포에 기록해 반복은 Haiku로 — 토큰 절약",
+    "계기: 네이버 세션 로그인이 자꾸 풀리고 QR 숫자 선택을 자동으로 하고 싶어서"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@lucas_flatwhite",
+   "url": "https://www.threads.com/@lucas_flatwhite/post/DewivBFEuQA",
+   "at": "2026-10-21T13:43:35Z",
+   "likes": 44,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "비디오 모델 없이 Opus 5.5 코드로 영상 만드는 레포 4개",
+   "points": [
+    "Opus 5.5로 만든 바이럴 영상+프롬프트 모음 — 프롬프트 복사해 에이전트에 붙여넣기",
+    "51가지 필름 스타일 Claude Code 스킬 — 스타일·스토리만 말하면 단편 제작",
+    "MG(모션그래픽) 15가지 스타일 데모와 프롬프트·소스",
+    "손그림 캐릭터 애니 스타터 키트 — clone 후 '15초 영상 만들어줘'로 스토리보드부터 렌더링까지"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@mg_slowflow",
+   "url": "https://www.threads.com/@mg_slowflow/post/Dev4SlLEikl",
+   "at": "2026-10-21T07:32:42Z",
+   "likes": 73,
+   "replies": 24,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Claude Code 작업을 미니어처 사무실로 보여주는 도구 공개",
+   "points": [
+    "Claude·Codex가 일하는 모습을 개발실·자료실·회의실·휴게실 캐릭터로 보여줌",
+    "브라우저에서 도는 로컬 도구, GitHub 'toplainsoft/claude-office'",
+    "처음부터 만들면 토큰이 많이 드니 받아서 내 환경에 맞게 고쳐 쓰라고 권함"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@tahooki",
+   "url": "https://www.threads.com/@tahooki/post/DevW1HWGsf6",
+   "at": "2026-10-21T02:40:19Z",
+   "likes": 63,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 말투 빼는 글쓰기 스킬, 토스 ux-writing이 제일 좋았다",
+   "points": [
+    "AI 말투를 없애려고 글쓰기 스킬 여러 개를 조사시켜 비교",
+    "그중 토스의 ux-writing 스킬이 가장 좋았다는 후기",
+    "위치: GitHub toss/apps-in-toss-harness → agent-plugin/shared/skills/ux-writing/SKILL.md"
+   ],
+   "try": "토스 ux-writing SKILL.md를 받아 아뜰리에 문구 다듬기에 써 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/Dev4qb_D1dw",
+   "at": "2026-10-21T07:35:57Z",
+   "likes": 38,
+   "replies": 2,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "한국 채용시장용 취업 스킬 'AI Job Search KR'",
+   "points": [
+    "Claude Code·Codex용, 깃허브 트렌딩 ai-job-search의 한국판(MIT)",
+    "이력서로 프로필 생성 → 공고 적합도 분석 → 맞춤 이력서·자소서",
+    "자소서 700자 제한 맞추기·글자 수 확인, 면접 예상 질문, 지원 마감일 정리",
+    "공고 자동 수집·자동 제출은 안 함 — GitHub wing0828/ai-job-search-kr"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dailygrowth_marketing",
+   "url": "https://www.threads.com/@dailygrowth_marketing/post/DewZEHADwab",
+   "at": "2026-10-21T12:19:23Z",
+   "likes": 19,
+   "replies": 7,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "옵시디언+클로드 코드로 세션 하나에서 거의 모든 일",
+   "points": [
+    "AI가 읽기 쉬운 md 기반 옵시디언 볼트를 아이클라우드에 두고 맥·아이폰이 함께 봄",
+    "그 폴더를 Claude Code가 읽는 게 전부",
+    "굿노트 손글씨는 구글 드라이브 백업을 거쳐 볼트로, 지메일·캘린더도 연결",
+    "프로젝트·업무·클라이언트 메일·일정이 한자리라 편함(맥 기준, 아직 미완)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aiwith_paul",
+   "url": "https://www.threads.com/@aiwith_paul/post/Dev44LIH7X1",
+   "at": "2026-10-21T07:37:50Z",
+   "likes": 65,
+   "replies": 15,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "앱 푸시 읽으려 갤럭시로 — 입출금 자동 기록·AI 분류",
+   "points": [
+    "아이폰 단축어는 문자는 읽어도 카드·은행 앱 푸시는 못 읽음",
+    "안드로이드 MacroDroid로 알림이 뜨면 입출금을 관리자 페이지에 자동 기록",
+    "AI가 대관료·통신비·광고선전비처럼 계정과목까지 분류",
+    "세금 계산 때 영수증 뒤질 일이 없어짐"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@lavickim",
+   "url": "https://www.threads.com/@lavickim/post/Dev4voLFO3I",
+   "at": "2026-10-21T07:36:40Z",
+   "likes": 51,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Aside vs ego lite 둘 다 써본 비교",
+   "points": [
+    "Aside: 브라우저 안 에이전트에 할 일을 던지는 방식 — 에이전트 따로 안 쓰면 편함",
+    "ego lite: 브라우저는 그냥 브라우저, 운전은 내 Claude·Codex가 함",
+    "ego lite는 크롬 로그인 그대로, 계정별 프로필 동시 실행, 밤 예약 실행도 잘 됨",
+    "네이버 광고센터·스마트플레이스·서치콘솔도 안 막혔다고"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aicoffeechat",
+   "url": "https://www.threads.com/@aicoffeechat/post/DevO0pyigDh",
+   "at": "2026-10-21T01:32:00Z",
+   "likes": 62,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "레포 컴포넌트를 캔버스에 펼쳐 시안 비교하는 create-canvas 스킬",
+   "points": [
+    "레포의 컴포넌트를 전부 캔버스 한 장에 펼치고 에이전트와 시안 여러 개를 만들어 비교",
+    "피그마에서 그려 코드로 옮기던 과정 대신 캔버스를 코드베이스 안으로",
+    "진짜 컴포넌트·스타일을 가져다 쓰니 컴포넌트가 많은 팀일수록 유리, 첫 화면 단계엔 덜함",
+    "ui-skills.com의 create-canvas(ibelick)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@google",
+   "url": "https://www.threads.com/@google/post/DexMec9kjJ9",
+   "at": "2026-10-21T19:48:50Z",
+   "likes": 27,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "사기 전 옷 입어보기 — Gemini에 내 사진+옷 캡처",
+   "points": [
+    "내 사진과 사려는 옷 스크린샷들을 Gemini에 같이 올림",
+    "'전체 룩을 입은 내 모습'을 이미지로 만들어 달라고 요청",
+    "선수 스타일리스트가 쓰는 팁으로 소개 — 인터뷰 링크는 원문에"
+   ],
+   "try": "사고 싶은 옷 캡처 2~3장과 내 사진으로 Gemini에 착장 이미지 요청해 보기"
+  }
+ ]
+}
