@@ -7,7 +7,7 @@
    "cat": "vibe",
    "title": "GTA 산안드레아스 새 미션, Claude가",
    "url": "https://x.com/levelsio/status/2112944980842946816",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2112685106867453952/img/9MTjI5d5Ntcyr9Vv.jpg",
    "source": "X @levelsio · ♥524",
    "how": "맥 CrossOver + CLEO 모드, 단계마다 검증 지시",
    "chips": [
@@ -35,7 +35,7 @@
    "cat": "hack",
    "title": "건물 도면 4장, Gemini가 도구부터 만들어",
    "url": "https://x.com/fofrAI/status/2112978193342992738",
-   "image": null,
+   "image": "https://pbs.twimg.com/media/HVLNVHXWYAAKxKP.jpg",
    "source": "X @fofrAI · ♥69",
    "how": "도면용 CLI 도구를 Gemini가 직접 짜서 재사용",
    "chips": [
@@ -47,7 +47,7 @@
    "cat": "hack",
    "title": "내 사진+옷 캡처로 입은 모습 미리보기",
    "url": "https://blog.google/products-and-platforms/products/gemini/stylist-outfit-tips-gemini/",
-   "image": null,
+   "image": "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/sydney_bodonaro_social_1.width-1300.png",
    "source": "Google 블로그 · 스타일리스트 팁",
    "how": "Gemini 앱에 내 사진과 옷 캡처를 같이 올림",
    "chips": [
@@ -122,7 +122,7 @@
    "cat": "release",
    "title": "Claude Duet 대기 명단",
    "url": "https://support.claude.com/en/articles/17631495-get-started-with-claude-duet",
-   "image": null,
+   "image": "https://downloads.intercomcdn.com/i/o/lupk8zyo/792494/717b10d3ebd874823db64841659b/76f3062d78ebbb04863fb1de3ef9cca0.png",
    "source": "Claude 도움말 · 미국 Pro·Max",
    "watching": true
   },
@@ -130,7 +130,7 @@
    "cat": "release",
    "title": "Duet, 아직 못 하는 것",
    "url": "https://roo.beehiiv.com/p/claude-duet-explained",
-   "image": null,
+   "image": "https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,quality=80,width=1200,onerror=redirect/uploads/publication/thumbnail/fb8c9560-f48e-4408-840c-21ac3b660a90/landscape_1768760667683.jpg",
    "source": "roo 뉴스레터",
    "watching": false
   },
@@ -138,7 +138,7 @@
    "cat": "tool",
    "title": "PHP2Shell 긴급 패치",
    "url": "https://www.bleepingcomputer.com/news/security/php-ships-emergency-patches-for-critical-php2shell-flaws/",
-   "image": null,
+   "image": "https://www.bleepstatic.com/content/hl-images/2026/10/21/PHP.jpg",
    "source": "BleepingComputer · PHP 8.5.12 등",
    "watching": false
   },
@@ -146,7 +146,7 @@
    "cat": "free",
    "title": "PHP 취약점 점검 스킬",
    "url": "https://github.com/openai/php2shell-checker",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/openai/php2shell-checker",
    "source": "GitHub openai · Codex 스킬",
    "watching": false
   },
@@ -154,7 +154,7 @@
    "cat": "free",
    "title": "한국판 AI 구직 스킬",
    "url": "https://github.com/wing0828/ai-job-search-kr",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/8b5b2d2d88122ec51fe94e0ca2f89a0143996fafe29f4d8ae514b15f038ba868/wing0828/ai-job-search-kr",
    "source": "GitHub wing0828 · MIT 파생",
    "watching": false
   },
@@ -170,7 +170,7 @@
    "cat": "hack",
    "title": "Gemini 착장, 빠진 정보",
    "url": "https://ppc.land/google-shows-gemini-fitting-shoppers-into-outfits-built-from-screenshots/",
-   "image": null,
+   "image": "https://ppc.land/content/images/2026/10/google-gemini-screenshot-outfit-try-on-paper-doll-dark-department-store.jpg",
    "source": "PPC Land · 모델·지역 미표기",
    "watching": false
   }
