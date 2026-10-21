@@ -10,6 +10,16 @@
 
 ---
 
+## 2026-10-21 (맥북) — 공홈 프로모션: 탑승 기간 + '쓰면 얼마'
+
+- 누리 "마감은 저때인데 언제 탈 수 있는 표인지, 적용하면 얼마인지" → 상세 페이지까지 읽음
+- `aside-promo-detail.js`: 대한항공은 목록 카드를 눌러 상세(…/list/2026/aus2610), 트리니티는 `a[data-eventtitle]` 클릭(showEventContent), 에어프레미아는 첫 화면 배너에서 promotionDetail 주소, 아시아나는 detail 주소 그대로
+- `promo-detail.js`: 상세 글 → **claude -p**(구독 0원)로 {구매 기간, 탑승 기간[], 제외 기간, 지역별 할인율, 운임/총액, 받는 법, 코드, 조건, 공홈 표시 가격} — 한 번 읽은 건 캐시
+- `aside-fuel.js`: 대한항공 이번 달 유류할증료 공지(YYMM-infuel) → `fuel.json` (11월 유럽·시드니 구간 편도 37만!)
+- `promo-price.js`: 탑승 기간 안 '2주 뒤 화요일 출발 9박'을 스카이스캐너로 → 할인 = 할인율 × (총액 − 유류할증료 왕복 − 세금 추정), 못 찾으면 구글 최저가(날짜 미정)
+- 발견: 트리니티 '최대 22%'는 베트남, 유럽 3% · 호주·캐나다 7% / 대한항공 유럽 8%는 운임에만이라 프라하 기준 실제 약 −7만
+- 화면: 프로모션 카드 = 구매·탑승 타임라인(오늘 빨간 점선, 제외 기간 빗금) + 도시별 원래가→할인가 + 막대(회색 유류·세금/코발트 운임/초록 할인) + 조건·코드 칩
+
 ## 2026-10-21 (맥북) — Flight Deals 공홈 프로모션
 
 - `aside-promo.js`: 공홈 '진행 중 이벤트' 목록 4곳 — 대한항공 `koreanair.com/contents/promotion/list` · 아시아나 `flyasiana.com/C/KR/KO/event/index` · 트리니티 `trinityairways.com/app/promotion/event/being` · 에어프레미아 `airpremia.com/event/promotionList` (날짜 줄 앞 1~2줄 = 제목·부제)

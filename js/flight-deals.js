@@ -110,6 +110,41 @@
       '.fdm-pl .d{font-weight:800;color:'+INK+'}',
       '.fdm-pl .d.soon{color:'+BAD+'}',
       '.fdm-new{background:'+ACC+';color:#fff!important;font-size:9.5px!important;font-weight:800;letter-spacing:.06em;padding:2px 6px}',
+      '.fdm-grid.big{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}',
+      '.fdm-tl{position:relative;margin-top:2px}',
+      '.fdm-tl .row{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center;height:18px}',
+      '.fdm-tl .row span{font-size:10.5px;font-weight:700;color:'+SUB+'}',
+      '.fdm-tl .trk{position:relative;height:8px;background:#F4F4F6}',
+      '.fdm-tl .trk i{position:absolute;top:0;bottom:0;background:#CBD5E1}',
+      '.fdm-tl .trk i.go{background:'+ACC+'}',
+      '.fdm-tl .trk i.x{background:repeating-linear-gradient(45deg,#fff 0 2px,#FCA5A5 2px 4px)}',
+      '.fdm-tl .ax{position:relative;height:14px;margin-left:42px}',
+      '.fdm-tl .ax em{position:absolute;font-style:normal;font-size:10px;color:'+SUB+';transform:translateX(-50%);white-space:nowrap}',
+      '.fdm-tl .now{position:absolute;top:0;bottom:14px;width:0;border-left:1.5px dashed '+BAD+'}',
+      '.fdm-tlx{display:flex;justify-content:space-between;font-size:11px;color:'+SUB+';margin-top:4px;font-variant-numeric:tabular-nums}',
+      '.fdm-tlx b{color:'+INK+'}',
+      '.fdm-pcts{display:flex;gap:6px;flex-wrap:wrap}',
+      '.fdm-pcts span{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border:1px solid '+LINE+';padding:3px 7px}',
+      '.fdm-pcts img{width:18px;height:12px;object-fit:cover}',
+      '.fdm-est{border-top:1px solid '+LINE+';padding-top:8px;display:grid;gap:7px}',
+      '.fdm-est .h{font-size:10.5px;font-weight:700;color:'+SUB+'}',
+      '.fdm-er{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center}',
+      '.fdm-er img{width:22px;height:15px;object-fit:cover;border:1px solid '+LINE+'}',
+      '.fdm-er .c{font-size:12.5px;font-weight:700}',
+      '.fdm-er .c small{display:block;font-size:10.5px;font-weight:500;color:'+SUB+'}',
+      '.fdm-er .p{text-align:right;font-variant-numeric:tabular-nums}',
+      '.fdm-er .p s{font-size:11px;color:'+SUB+';margin-right:4px}',
+      '.fdm-er .p b{font-size:15px;font-weight:800}',
+      '.fdm-er .p small{display:block;font-size:10.5px;font-weight:700;color:'+GOOD+'}',
+      '.fdm-sbar{grid-column:2/4;height:5px;background:#E2E8F0;position:relative}',
+      '.fdm-sbar i{position:absolute;top:0;bottom:0;left:0;background:#94A3B8}',
+      '.fdm-sbar u{position:absolute;top:0;bottom:0;background:'+ACC+'}',
+      '.fdm-sbar b{position:absolute;top:0;bottom:0;background:'+GOOD+'}',
+      '.fdm-leg{display:flex;gap:10px;font-size:10px;color:'+SUB+'}',
+      '.fdm-leg i{display:inline-block;width:8px;height:8px;margin-right:3px;vertical-align:-1px}',
+      '.fdm-cond{display:flex;gap:5px;flex-wrap:wrap}',
+      '.fdm-cond span{font-size:11px;color:'+SUB+';background:#F4F4F6;padding:3px 7px}',
+      '.fdm-cond .code{background:'+INK+';color:#fff;font-weight:800;letter-spacing:.05em;cursor:copy}',
       '.fdm-all{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}',
       '.fdm-chip{display:flex;align-items:center;gap:8px;border:1px solid '+LINE+';background:#fff;padding:7px 10px;font-size:12.5px;color:'+INK+';text-decoration:none;max-width:100%}',
       '.fdm-chip:hover{border-color:'+ACC+'}',
@@ -180,15 +215,65 @@
       '<div><div class="fdm-t">'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</div>'+(x.sub && x.title.length >= 8 ? '<div class="fdm-s">'+esc(x.sub)+'</div>' : '')+'</div>' +
       (e0 ? '<div class="fdm-per"><div class="fdm-bar"><i style="width:'+prog+'%"></i><b style="left:'+prog+'%"></b></div><div class="fdm-pl"><span>'+md(s0)+'</span><span class="d'+(dl<=5?' soon':'')+'">'+(dl<=0?'오늘 끝':'D-'+dl)+'</span><span>'+md(e0)+'</span></div></div>' : '') + '</a>';
   }
+  // 구매·탑승 기간을 같은 달력 위 막대로 (오늘은 빨간 점선)
+  function timeline(d){
+    var rs = []; if (d.buy && d.buy.from) rs.push(d.buy.from, d.buy.to || d.buy.from);
+    (d.travel || []).forEach(function(t){ rs.push(t.from, t.to); });
+    if (!rs.length) return '';
+    var t0 = new Date(); t0.setHours(0,0,0,0);
+    var a = Math.min.apply(null, rs.map(function(x){ return +pd(x); }).concat([+t0])), b = Math.max.apply(null, rs.map(function(x){ return +pd(x); }));
+    a = new Date(a); a.setDate(1); var bb = new Date(b); bb.setMonth(bb.getMonth()+1, 1);
+    var span = bb - a, X = function(iso){ return ((pd(iso) - a) / span * 100).toFixed(2); };
+    var bar = function(f, t, cls){ return '<i class="'+cls+'" style="left:'+X(f)+'%;width:'+Math.max(0.8, X(t) - X(f))+'%"></i>'; };
+    var ax = '';
+    for (var m = new Date(a); m < bb; m.setMonth(m.getMonth()+1)) ax += '<em style="left:'+((m - a) / span * 100 + 100 * 15 * 864e5 / span).toFixed(2)+'%">'+(m.getMonth()+1)+'월</em>';
+    var now = ((t0 - a) / span * 100).toFixed(2);
+    return '<div class="fdm-tl">' +
+      (d.buy && d.buy.from ? '<div class="row"><span>구매</span><div class="trk">'+bar(d.buy.from, d.buy.to || d.buy.from, '')+'</div></div>' : '') +
+      ((d.travel || []).length ? '<div class="row"><span>탑승</span><div class="trk">'+d.travel.map(function(t){ return bar(t.from, t.to, 'go'); }).join('') +
+        (d.exclude || []).filter(function(e){ return e.from && e.to; }).map(function(e){ return bar(e.from, e.to, 'x'); }).join('')+'</div></div>' : '') +
+      '<div class="ax">'+ax+'</div><div class="now" style="left:calc(42px + (100% - 42px) * '+(now/100).toFixed(4)+')"></div></div>' +
+      '<div class="fdm-tlx">'+(d.buy && d.buy.to ? '<span>구매 <b>~'+md(pd(d.buy.to))+'</b></span>' : '<span></span>') +
+        ((d.travel || []).length ? '<span>탑승 <b>'+md(pd(d.travel[0].from))+' ~ '+md(pd(d.travel[d.travel.length-1].to))+'</b>'+((d.exclude||[]).length?' · 빗금 제외':'')+'</span>' : '')+'</div>';
+  }
+  function estRow(e){
+    var fl = e.cc ? '<img src="https://flagcdn.com/w80/'+esc(e.cc)+'.png" alt="">' : '<span></span>';
+    var when = e.out ? md(pd(e.out))+' – '+md(pd(e.back)) : '날짜 미정 · 구글 최저가';
+    var tot = e.price, fuel = e.fuel || 0, tax = e.onFare ? e.tax : 0, fare = e.fare;
+    var bar = e.onFare && fuel ? '<div class="fdm-sbar"><i style="width:'+((fuel+tax)/tot*100).toFixed(1)+'%"></i><u style="left:'+((fuel+tax)/tot*100).toFixed(1)+'%;width:'+(fare/tot*100).toFixed(1)+'%"></u><b style="left:'+((tot-e.discount)/tot*100).toFixed(1)+'%;width:'+(e.discount/tot*100).toFixed(1)+'%"></b></div>' : '';
+    return '<a class="fdm-er" href="'+esc(e.url)+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">'+fl+'<div class="c">'+esc(e.city)+'<small>'+when+'</small></div>' +
+      '<div class="p"><s>'+man(tot)+'</s><b>'+man(e.final)+'</b><small>−'+man(e.discount)+'</small></div>'+bar+'</a>';
+  }
+  function promoBig(x){
+    var d = x.detail, dl = dleft(d.buy && d.buy.to || x.end);
+    var isNew = x.firstSeen && (Date.now() - pd(x.firstSeen)) / 864e5 < 3;
+    var pcts = (d.discounts || []).filter(function(v){ return v.pct && !/비즈니스|프레스티지/.test(v.cabin||''); });
+    var big = pcts.length === 1 ? '<div class="fdm-pct">'+pcts[0].pct+'<small>% 할인 · '+esc(pcts[0].cabin||'')+'</small></div>'
+      : pcts.length ? '<div class="fdm-pcts">'+pcts.map(function(v){ return '<span>'+(RFLAG[v.region]?'<img src="https://flagcdn.com/w80/'+RFLAG[v.region]+'.png" alt="">':'')+esc(v.region)+' '+v.pct+'%</span>'; }).join('')+'</div>' : '';
+    var fares = (d.fares || []).slice().sort(function(a,b){ return a.price - b.price; });
+    var est = (x.est || []).length ? '<div class="fdm-est"><div class="h">이걸 쓰면 (이코노미 왕복 · 추정)</div>' + x.est.map(estRow).join('') +
+        (x.est.some(function(e){ return e.onFare && e.fuel; }) ? '<div class="fdm-leg"><span><i style="background:#94A3B8"></i>유류할증료·세금 (할인 없음)</span><span><i style="background:'+ACC+'"></i>운임</span><span><i style="background:'+GOOD+'"></i>할인</span></div>' : '') + '</div>'
+      : fares.length ? '<div class="fdm-est"><div class="h">공홈에 적힌 최저가 (왕복 총액)</div>' + fares.slice(0, 5).map(function(f){
+          var c = (F && F.cities || []).find(function(c){ return c.city === f.city || (c.iata && c.iata === f.iata); });
+          return '<div class="fdm-er">'+(c&&c.cc?'<img src="https://flagcdn.com/w80/'+c.cc+'.png" alt="">':'<span></span>')+'<div class="c">'+esc(f.city)+'</div><div class="p"><b>'+man(f.price)+'</b></div></div>'; }).join('') + '</div>' : '';
+    var cond = (d.conditions || []).slice(0, 4).map(function(c){ return '<span>'+esc(c)+'</span>'; }).join('') + (d.code ? '<span class="code" title="눌러서 복사" onclick="event.preventDefault();navigator.clipboard&&navigator.clipboard.writeText(\''+esc(d.code)+'\')">코드 '+esc(d.code)+'</span>' : '');
+    return '<a class="fdm" href="'+esc(x.link)+'" target="_blank" rel="noopener">' +
+      '<div class="fdm-top">'+logo(x.code, x.airline)+'<span>'+esc(x.airline)+'</span>'+(isNew?'<span class="fdm-new">NEW</span>':'')+
+        '<span style="margin-left:auto;font-size:11px;font-weight:800;'+(dl!=null&&dl<=5?'color:'+BAD:'')+'">'+(dl!=null?'구매 D-'+Math.max(0,dl):'')+'</span><div class="fdm-flags" style="margin-left:6px">'+(x.regions||[]).map(function(r){ return RFLAG[r] ? '<img src="https://flagcdn.com/w80/'+RFLAG[r]+'.png" alt="'+esc(r)+'">' : ''; }).join('')+'</div></div>' +
+      big + '<div><div class="fdm-t">'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</div>'+(x.sub && x.title.length >= 8 ? '<div class="fdm-s">'+esc(x.sub)+'</div>' : '')+'</div>' +
+      timeline(d) + est + (cond ? '<div class="fdm-cond">'+cond+'</div>' : '') + '</a>';
+  }
   function promoChip(x){
     var dl = dleft(x.end);
     return '<a class="fdm-chip" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+logo(x.code, x.airline)+(x.pct?'<em style="color:'+ACC+'">'+x.pct+'%</em>':'')+'<span>'+esc(x.sub && x.title.length < 8 ? x.sub : x.title)+'</span>'+(dl!=null?'<em>D-'+Math.max(0,dl)+'</em>':'')+'</a>';
   }
   function promosHtml(){
     if (!P || !P.items || !P.items.length) return '';
-    var reg = P.items.filter(function(x){ return x.regions && x.regions.length; }), all = P.items.filter(function(x){ return !x.regions || !x.regions.length; });
+    var rich = P.items.filter(function(x){ return x.detail && ((x.est && x.est.length) || (x.detail.fares && x.detail.fares.length) || (x.detail.travel && x.detail.travel.length)); });
+    var reg = P.items.filter(function(x){ return rich.indexOf(x) < 0 && x.regions && x.regions.length; }), all = P.items.filter(function(x){ return rich.indexOf(x) < 0 && (!x.regions || !x.regions.length); });
     return '<div class="fdp-h"><h2>공홈 프로모션</h2><span style="font-size:12px;color:'+SUB+'">대한항공 · 아시아나 · 트리니티 · 에어프레미아 이벤트에서 장거리만</span></div>' +
-      (reg.length ? '<div class="fdm-grid">'+reg.map(promoCard).join('')+'</div>' : '') +
+      (rich.length ? '<div class="fdm-grid big">'+rich.map(promoBig).join('')+'</div>' : '') +
+      (reg.length ? '<div class="fdm-grid" style="margin-top:12px">'+reg.map(promoCard).join('')+'</div>' : '') +
       (all.length ? '<div class="fdm-all">'+all.map(promoChip).join('')+'</div>' : '');
   }
   function paint(){

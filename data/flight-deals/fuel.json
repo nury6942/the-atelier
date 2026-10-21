@@ -1,0 +1,43 @@
+{
+ "month": "2026-11",
+ "url": "https://www.koreanair.com/contents/footer/customer-support/notice/2026/2611-infuel",
+ "ok": true,
+ "bands": [
+  {
+   "max": 499,
+   "krw": 55600
+  },
+  {
+   "max": 999,
+   "krw": 76000
+  },
+  {
+   "max": 1499,
+   "krw": 105800
+  },
+  {
+   "max": 1999,
+   "krw": 132900
+  },
+  {
+   "max": 2999,
+   "krw": 185800
+  },
+  {
+   "max": 3999,
+   "krw": 189800
+  },
+  {
+   "max": 4999,
+   "krw": 254900
+  },
+  {
+   "max": 6499,
+   "krw": 370100
+  },
+  {
+   "max": 9999,
+   "krw": 408100
+  }
+ ]
+}
