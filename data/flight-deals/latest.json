@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T09:02",
+ "generatedAt": "2026-10-21T09:03",
  "date": "2026-10-21",
  "count": 38,
  "cities": [
@@ -40,7 +40,8 @@
     "kr": {
      "name": "Trinity Airways",
      "price": 849000,
-     "code": "TW"
+     "code": "TW",
+     "direct": true
     }
    },
    "best": 849000,
@@ -97,7 +98,8 @@
     "kr": {
      "name": "대한항공",
      "price": 1174700,
-     "code": "KE"
+     "code": "KE",
+     "direct": true
     }
    },
    "best": 1174700,
@@ -166,7 +168,8 @@
     "kr": {
      "name": "에어프레미아",
      "price": 883900,
-     "code": "YP"
+     "code": "YP",
+     "direct": true
     }
    },
    "best": 817100,
@@ -685,7 +688,8 @@
     "kr": {
      "name": "아시아나항공",
      "price": 1177300,
-     "code": "OZ"
+     "code": "OZ",
+     "direct": false
     }
    },
    "best": 1056100,

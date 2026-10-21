@@ -73,7 +73,7 @@ for (const r of rows) {
   let sky = null;
   if (sr) {
     const skr = (sr.airlines || []).filter((a) => KR.test(a.name)).sort((a, b) => a.price - b.price)[0] || null;
-    sky = { price: sr.price, direct: sr.direct, url: sr.url, kr: skr ? { name: skr.name.replace('트리니티 항공', 'Trinity Airways'), price: skr.price, code: airCode(skr.name) } : null };
+    sky = { price: sr.price, direct: sr.direct, url: sr.url, kr: skr ? { name: skr.name.replace('트리니티 항공', 'Trinity Airways'), price: skr.price, code: airCode(skr.name), direct: !!(best && best.direct && airCode(best.name) === airCode(skr.name)) } : null };
   }
   const p = Math.min(best ? best.price : Infinity, sky && sky.kr ? sky.kr.price : Infinity);
   const pBest = isFinite(p) ? p : null, pSrc = sky && sky.kr && best && sky.kr.price < best.price ? 'sky' : 'google';

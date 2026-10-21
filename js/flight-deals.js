@@ -131,8 +131,8 @@
       '<div class="fdc-air">'+logo(k.code, k.name)+esc(kname(k.name||''))+(k.direct?'<span class="fdc-tag">직항</span>':'')+'</div></div>' +
       '<div class="fdc-price"><b>'+man(price).replace('만','')+'</b><span>만원 · 왕복</span>'+(c.deal==='super'?'<span class="fdc-tag" style="margin-left:auto">초특가</span>':'')+'</div>' + band +
       (c.trip ? calHtml(c.trip) : '<div class="fdc-nodate">이 표는 날짜가 안 나와요 · 구글에서 날짜 고르기</div>') +
-      cmp + '<div class="fdc-go"><a class="atl-btn atl-btn-secondary" href="'+esc(c.link)+'" target="_blank" rel="noopener">구글 ↗</a>' +
-      '<a class="atl-btn '+(c.sky?'atl-btn-primary':'atl-btn-secondary')+'" href="'+esc(c.sky ? c.sky.url : 'https://www.skyscanner.co.kr/transport/flights/sela/'+String(c.iata||'').toLowerCase()+'/')+'" target="_blank" rel="noopener">스카이스캐너 ↗</a></div></div>';
+      cmp + '<div class="fdc-go"><a class="atl-btn '+(useSky?'atl-btn-secondary':'atl-btn-primary')+'" href="'+esc(c.link)+'" target="_blank" rel="noopener">구글 ↗</a>' +
+      '<a class="atl-btn '+(useSky?'atl-btn-primary':'atl-btn-secondary')+'" href="'+esc(c.sky ? c.sky.url : 'https://www.skyscanner.co.kr/transport/flights/sela/'+String(c.iata||'').toLowerCase()+'/')+'" target="_blank" rel="noopener">스카이스캐너 ↗</a></div></div>';
   }
   function tile(c){
     var k = c.kr, t = c.typical, price = c.best || (k ? k.price : (c.rt && c.rt.price)), code = k ? k.code : (c.rt && c.rt.code);
