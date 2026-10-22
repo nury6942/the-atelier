@@ -1743,20 +1743,25 @@
   window.closeDayEventsModal = closeDayEventsModal;
 
   document.addEventListener('keydown', async function(e) {
-    var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    var ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+    // ★ (2026-10-22) 맥에서도 Ctrl 로 되게 — 전엔 맥은 ⌘만, 윈도우는 Ctrl만 받아서 누리가 맥에서 Ctrl+C 가 안 된다고 함
+    var ctrlOrCmd = e.metaKey || e.ctrlKey;
+    var k = String(e.key || '').toLowerCase();
+    // 글자 칸에서 복사·붙이기 할 땐 일정 복사가 끼어들지 않게
+    var t = e.target, typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+    if (typing && k !== 'escape') return;
+    var onCal = (function(){ var pg = document.getElementById('page-planner'); return pg && pg.style.display !== 'none'; })();
 
-    // Ctrl+C: copy selected event
-    if (ctrlOrCmd && e.key === 'c' && selectedPlannerIdx !== null) {
+    // Ctrl/⌘+C: copy selected event
+    if (ctrlOrCmd && k === 'c' && selectedPlannerIdx !== null && onCal) {
       var row = plannerData[selectedPlannerIdx];
       if (row) {
         copiedPlannerEvent = row.slice(0, 7);
-        showPlannerToast('📋 일정 복사됨! 날짜를 클릭한 뒤 Ctrl+V');
+        showPlannerToast('📋 일정 복사됨! 날짜를 클릭한 뒤 Ctrl(⌘)+V');
       }
     }
 
     // Ctrl+V: paste to clicked date
-    if (ctrlOrCmd && e.key === 'v' && copiedPlannerEvent && selectedPlannerDate) {
+    if (ctrlOrCmd && k === 'v' && copiedPlannerEvent && selectedPlannerDate && onCal) {
       e.preventDefault();
       await pastePlannerEvent(selectedPlannerDate);
     }
