@@ -1,6 +1,6 @@
 #!/bin/bash
 # 항공권 특가 — 아이맥 launchd com.nuri.flight-deals (매일 07:30 · 19:30)
-#  구글 노선 페이지 → judge.js(1차) → 스카이스캐너 같은 날짜 → judge.js(2차) → 공홈 프로모션 → data/flight-deals 커밋·푸시 → 초특가·새 장거리 프로모션은 아이폰 미리알림
+#  구글 노선 페이지 → judge.js(1차) → 스카이스캐너 같은 날짜 → judge.js(2차) → 공홈 프로모션 → data/flight-deals 커밋·푸시 (아이폰 알림 없음 — 사이트 TRAVEL › Flight Deals 에서 확인)
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin
 cd "$(dirname "$0")/../.." || exit 1
 LOG() { echo "$(date '+%F %T') $*"; }
@@ -47,14 +47,5 @@ node -e 'const t=JSON.parse(process.argv[1]||"[]");for(let i=0;i<t.length;i+=4)c
   aside repl "const TODO=$B; $(cat scripts/flight-deals/aside-sky.js)" 2>&1 | grep '^FLIGHT_SKY' >> "$ESKY"
 done
 LOG "$(node scripts/flight-deals/promo-price.js apply "$ESKY" "$FTMP" 2>&1 | tail -1)"; rm -f "$ESKY" "$FTMP"
-printf '%s\n%s\n' "$OUT" "$POUT" | grep '^ALERT ' | sed 's/^ALERT //' | while IFS=$'\t' read -r KEY PRICE TITLE URL; do
-  # 미리알림 권한 창이 안 눌려 있으면 영원히 기다리므로 40초 뒤 포기 → 알림 기록을 안 남겨서 다음 회차에 다시
-  if perl -e 'alarm 40; exec @ARGV' osascript - "$TITLE" "$URL" <<'OSA' >/dev/null 2>&1
-on run argv
-  tell application "Reminders" to make new reminder with properties {name:(item 1 of argv), body:(item 2 of argv), due date:(current date)}
-end run
-OSA
-  then node scripts/flight-deals/judge.js --mark "$KEY" "$PRICE"; LOG "알림 $TITLE"
-  else LOG "알림 실패(다음 회차에 다시) — 아이맥 미리알림 권한 확인: $TITLE"; fi
-done
+# 아이폰 미리알림은 끔(2026-10-22 누리: 사이트에서 직접 볼게) — judge·promo 의 ALERT 줄은 무시한다
 git add data/flight-deals && git commit -qm "flights: $(date +%F) 특가 점검" && git push -q && LOG "푸시"
