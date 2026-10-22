@@ -121,7 +121,7 @@
    "cat": "release",
    "title": "제미나이 앱→구글 사이트",
    "url": "https://workspaceupdates.googleblog.com/2026/10/publish-interactive-apps-from-gemini-app-to-Google-Sites.html",
-   "image": null,
+   "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjP20CQoM0LMQpqO-PJRg-aSa27dnI5pipgL33zAvUKlQ7IpIm3IASQHcfLT9dGcEo3I-bKIcZ7TgjuVNMPU8hyTwk_Nx9nsR7nvFYWtvAE1ppX9r-yLS8eFwiyEh6hNQ0uZ7q6dpWp0B9HK7zVkTCn5uu3S4FCl7jhIqsJj16lsAUanKdNVWcQbgVUeoU/w1200-h630-p-k-no-nu/Publish%20interactive%20apps%20from%20the%20Gemini%20app%20to%20Google%20Sites.gif",
    "source": "Google Workspace 업데이트 · 10-19",
    "watching": true
   },
@@ -153,7 +153,7 @@
    "cat": "hack",
    "title": "TV 개조 열풍, 안 되는 경우도",
    "url": "https://techcrunch.com/2026/10/19/people-are-using-ai-to-make-their-smart-tvs-dumb-again/",
-   "image": null,
+   "image": "https://techcrunch.com/wp-content/uploads/2024/05/Google-TV.jpeg?w=1200",
    "source": "TechCrunch · 10-19",
    "watching": false
   },
@@ -161,7 +161,7 @@
    "cat": "tool",
    "title": "MiniMax H3 로컬 설치",
    "url": "https://docs.comfy.org/tutorials/video/minimax/minimax-h3",
-   "image": null,
+   "image": "https://dripart.mintlify.app/_mintlify/api/og/v2?division=MiniMax+H3&title=ComfyUI+MiniMax+H3+Video+Generation+Guide&description=How+to+use+open-weights+MiniMax+H3+in+ComfyUI%3A+text-to-video%2C+image-to-video%2C+and+reference-to-video+workflows+with+native+stereo+audio%2C+prompt+writing+tips%2C+an&theme=1a95f090d02509a942c408dd&signature=04f81168ae0792c3b1b24f485da1ec645f4b1832f9b970912fe4f07e63f26ed5",
    "source": "ComfyUI 문서 · 다운로드 약 42GB",
    "watching": false
   },
@@ -169,7 +169,7 @@
    "cat": "hack",
    "title": "싱글 게임을 친구와 협동으로",
    "url": "https://github.com/cranebeaker/coop-anything",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/cranebeaker/coop-anything",
    "source": "GitHub cranebeaker · ★838",
    "watching": false
   }
