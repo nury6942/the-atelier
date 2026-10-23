@@ -1,0 +1,338 @@
+{
+ "date": "2026-10-24",
+ "collectedAt": "2026-10-24T06:31:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@_allerg_",
+   "url": "https://www.threads.com/@_allerg_/post/De0G-1ODRBk",
+   "at": "2026-10-22T22:58:07Z",
+   "likes": 584,
+   "replies": 15,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "제미나이를 '수다 친구'로 바꾸니 19일 만에 원어민과 10분 대화",
+   "points": [
+    "'선생님 말고 친구처럼, 틀려도 끊지 말고 고쳐가며 이어가라'고 역할부터 지정",
+    "수준(초·중·고급)과 주제(일상·여행·취미)를 괄호로 넣는 복붙 프롬프트",
+    "카페 주문·공항·체크인 등 실제 상황 100개 롤플레이, 표현 위주로 교정",
+    "내가 반복해 틀리는 문법·표현을 분석해 맞춤 문제·복습 일정 생성",
+    "하루 20분 30일 커리큘럼, 원어민 일상 표현 300개 정리 프롬프트도 포함"
+   ],
+   "try": "제미나이에 1번 '친구 역할' 프롬프트 넣고 5분만 영어로 떠들어 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@giting.kr",
+   "url": "https://www.threads.com/@giting.kr/post/De0mH9WD0h3",
+   "at": "2026-10-23T03:30:33Z",
+   "likes": 147,
+   "replies": 28,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI에 '로딩 넣어줘' 대신 정확한 이름으로 시키기",
+   "points": [
+    "빙글 도는 건 스피너, 회색 뼈대는 스켈레톤, 차오르는 막대는 프로그레스 바",
+    "목록엔 스켈레톤, 업로드엔 프로그레스 바, 버튼엔 '로딩 상태'",
+    "예: '제출 누르면 버튼을 보내는 중으로, 중복 클릭 방지도'",
+    "이런 UI 이름·시키는 문장 129항목 메뉴판을 MIT로 무료 공개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@solostack11",
+   "url": "https://www.threads.com/@solostack11/post/De0BWUSAuOa",
+   "at": "2026-10-22T22:08:56Z",
+   "likes": 51,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드에서 딴 얘기는 따로 — 대화 정리 명령 5개",
+   "points": [
+    "/btw: 기록에 안 남기고 잠깐 묻기",
+    "/subtask: 딴 작업 맡기고 결과만 받기",
+    "/branch로 대화를 갈라 다른 방향 시험, /fork는 복사본을 백그라운드로",
+    "Esc 두 번: 샌 대화 되돌리기·요약",
+    "10/22 v2.1.308에서 직접 돌려 봤다고, '언제 뭘 쓰나' 표는 이미지에"
+   ],
+   "try": "작업 중 궁금한 건 /btw 로 물어 대화 기록 깨끗하게 유지해 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@_keunyoung_",
+   "url": "https://www.threads.com/@_keunyoung_/post/Dey6fuxFBQ4",
+   "at": "2026-10-22T11:49:41Z",
+   "likes": 45,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "안 쓰는 스킬이 토큰 먹는다 — /skill-doctor로 점검",
+   "points": [
+    "CLI에서 /skill-doctor 실행",
+    "스킬별 사용 상태·컨텍스트 비용·호출 횟수 확인",
+    "안 쓰는 스킬 목록을 뽑고, 빼면 품질이 떨어지는지 클로드에 확인",
+    "영향 없으면 모두 제거해 토큰 절약"
+   ],
+   "try": "터미널 claude 에서 /skill-doctor 한 번 돌려 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@kei_n_drive",
+   "url": "https://www.threads.com/@kei_n_drive/post/De16JLqEuMU",
+   "at": "2026-10-23T15:44:20Z",
+   "likes": 29,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Codex 앱 Crashpad 덤프가 맥 SSD 80GB 차지",
+   "points": [
+    "~/Library/Application Support/Codex/Crashpad 와 com.openai.codex/web/Crashpad 확인",
+    "경로별 파일 수·용량, 생성 시기, 지금도 쌓이는지 조사하는 프롬프트 공유",
+    "'읽기 전용으로, 지우거나 설정 바꾸지 말 것' 원칙을 프롬프트에 박아 둠",
+    "작성자는 80GB를 확인 후 지웠다고"
+   ],
+   "try": "du -sh ~/Library/Application\\ Support/Codex/Crashpad 로 용량부터 확인"
+  },
+  {
+   "src": "threads",
+   "author": "@wonderstory.ai",
+   "url": "https://www.threads.com/@wonderstory.ai/post/De0tyfOmm_V",
+   "at": "2026-10-23T04:37:08Z",
+   "likes": 140,
+   "replies": 56,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "같은 이미지로 영상 모델 3종 비교 — 클링 승",
+   "points": [
+    "시댄스(7,700원): 가이드선 제거 안 됨, 자주 끊기고 원본보다 뿌옇게",
+    "그록(90원): 무빙은 자연스럽지만 프롬프트 반영 약함, 밝고 대비 강해짐",
+    "클링(1,900원): 프롬프트 반영·사운드·선명도 최고, 원본 색 유지",
+    "가성비는 그록, 품질은 클링이라는 결론"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@joseongwoo82",
+   "url": "https://www.threads.com/@joseongwoo82/post/De1j45UCebd",
+   "at": "2026-10-23T12:29:52Z",
+   "likes": 23,
+   "replies": 8,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "'일본 개발자 클로드 코드 비법' 직접 확인 — 절반은 과장",
+   "points": [
+    "실체는 Vercel 공식 find-skills 설치 한 줄: npx skills add vercel-labs/skills --skill find-skills -g",
+    "MCP 아니고 SKILL.md 지침 파일 방식, '목표만 말하면 유튜브 자동' 은 과장",
+    "요청에 맞는 기존 스킬을 찾아 설치 제안해 줘서 바퀴 재발명 방지엔 유용",
+    "출처 모를 스킬은 설치 전 SKILL.md를 읽고 공식 출처 위주로"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jwcha10004",
+   "url": "https://www.threads.com/@jwcha10004/post/Dey2jbGH1GU",
+   "at": "2026-10-22T11:15:14Z",
+   "likes": 40,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "클로드로 '1인 영상 편집 팀' — 30시간 작업이 8시간",
+   "points": [
+    "Whisper(로컬)로 초 단위 받아쓰기 → 버벅임·중복 발음 걸러냄",
+    "클로드 데스크톱이 대본 보고 컷·자막 위치·효과음 지정, 모션그래픽은 코드로",
+    "결과를 CapCut 프로젝트로 넘겨 사람이 디테일만 손봄",
+    "고칠 때마다 '오늘 수정한 내용 스킬에 저장해 줘'로 편집 스타일 축적",
+    "외주비 영상당 30~60만 원 절감, 월 20달러 구독만"
+   ],
+   "try": "반복 수정 뒤 '오늘 고친 규칙 스킬에 저장해 줘' 한 줄 붙여 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@gasket_love",
+   "url": "https://www.threads.com/@gasket_love/post/De1k_4VgJ9Q",
+   "at": "2026-10-23T12:43:45Z",
+   "likes": 18,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "카톡 영수증 알림 → 스마트스토어·쿠팡 송장 자동 발송",
+   "points": [
+    "갤럭시에 직접 만든 에이전트 앱이 우체국 카톡 영수증 알림을 감지",
+    "영수증을 열어 송장번호를 읽고 미니맥으로 전달",
+    "미니맥의 스마트스토어·쿠팡 API가 주문과 매칭해 발송 처리",
+    "케이블·같은 와이파이·ADB 없이 동작, 앱 수정도 클로드가 새 버전 배포"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@official.jay",
+   "url": "https://www.threads.com/@official.jay/post/De0wOGLkvXo",
+   "at": "2026-10-23T04:58:23Z",
+   "likes": 40,
+   "replies": 18,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "LLM 위키를 '가족 위키'로 — 아내는 디스코드로 사용",
+   "points": [
+    "위키는 GitHub에 보관, 본인은 Claude Code·Codex CLI로 편집",
+    "시놀로지 NAS에 Hermes 에이전트를 올려 디스코드와 연결",
+    "아내는 디스코드 채팅으로 묻고 기록",
+    "세팅 2주 차, 상세 구조도는 이미지에"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jwon.ig",
+   "url": "https://www.threads.com/@jwon.ig/post/De16RuOkq7y",
+   "at": "2026-10-23T15:45:30Z",
+   "likes": 41,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "클로드로 하루 만에 흩어진 동영상 통합 관리 앱",
+   "points": [
+    "사무실·집·네이버·구글 클라우드에 흩어진 동영상을 한곳에서 관리",
+    "자체 플레이어에 학습 모드",
+    "리뷰·북마크·메모·자막 저장 기능까지",
+    "전체를 하루가 안 걸려 완성했다는 후기"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DezzaqEG5f3",
+   "at": "2026-10-22T20:07:04Z",
+   "likes": 1200,
+   "replies": 64,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "다음 주부터 Claude 웹·데스크톱·앱도 자동 모드가 기본",
+   "points": [
+    "Pro·Max·Team 플랜의 Claude 웹·데스크톱·모바일 세션이 대상",
+    "단계마다 승인 대신 자동 검사기가 위험한 동작만 막음",
+    "언제든 수동 모드로 되돌릴 수 있음",
+    "Claude Code는 8/14부터 이미 자동 모드 기본"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@claudeai",
+   "url": "https://x.com/claudeai/status/2112984664256241837",
+   "at": "2026-10-21T19:09:35Z",
+   "likes": 0,
+   "replies": 2200,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Anthropic, 먼저 연락하는 에이전트 앱 'Claude Duet' 공개",
+   "points": [
+    "주의가 필요한 일을 먼저 알려 주고, 맡긴 일은 자리 비워도 계속 진행",
+    "내 대신 행동하기 전엔 확인을 받음",
+    "비밀번호는 직접 안 보고, 민감정보 공유를 막는 분류기 탑재",
+    "미국 Pro·Max 대상 대기자 명단 리서치 프리뷰"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/media/HVLUnMDWsAAn7Pw.png",
+     "mp4": "https://video.twimg.com/amplify_video/2112982862186106880/vid/avc1/640x360/L7zosiEUW76tqYr-.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@Joash0x",
+   "url": "https://x.com/Joash0x/status/2113248492890063209",
+   "at": "2026-10-22T12:37:57Z",
+   "likes": 316,
+   "replies": 22,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Claude Duet 첫인상 — 연결하자마자 할 일부터 찾아옴",
+   "points": [
+    "계정 연결 직후 맥락을 훑고 대신 처리할 일을 먼저 제안",
+    "Channels: 이름·목표·설명을 준 작업 공간(프로젝트와 비슷)",
+    "작업 현황 화면과 문서·대시보드·웹을 만드는 Make 칸이 따로",
+    "ChatGPT 안 Dots보다 독립 앱이라 열기 빠르다는 평"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2113244869858562048/img/PlfPSLRnfj0VWjGS.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2113244869858562048/vid/avc1/480x960/_zpJV2B9PvqKuTWO.mp4"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVPCCV2WgAA4CeI.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVPCM8fWwAAwIMB.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVPCRJcXwAAjFYf.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2113697866954764705",
+   "at": "2026-10-23T18:23:36Z",
+   "likes": 39,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "자기 전 목표 3개 걸어 두는 클로드 코드 '야간 근무'",
+   "points": [
+    "goals/에 작업별로 측정 가능한 완료 조건 파일을 하나씩",
+    "for 루프로 claude -p -w <작업> --permission-mode auto --max-budget-usd 8 \"/goal …\" 를 병렬 실행",
+    "-w로 작업마다 worktree·브랜치 분리 → 서로 파일 충돌 없음",
+    "판정은 작업 모델이 아닌 별도 모델이 매 턴 '아직·달성·불가능'으로",
+    "끝나면 테스트 통과 브랜치, 또는 불가 사유, 또는 예산 상한에서 멈춤"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2113697736608382976/img/0TXGmB37qz30niM7.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2113697736608382976/vid/avc1/480x600/H6ltb1JasrWwRBpr.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@emilkowalski",
+   "url": "https://x.com/emilkowalski/status/2113707839760089198",
+   "at": "2026-10-23T19:03:14Z",
+   "likes": 1000,
+   "replies": 40,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "AI로 '나만 쓰는 도구'를 많이 만들어라",
+   "points": [
+    "애니메이션 다듬기용 조절 손잡이 많은 도구",
+    "성능 문제를 눈으로 보는 시각화 도구",
+    "UI에 실감 나는 가짜 데이터 채우는 도구",
+    "AI로 '도구를 만드는 도구'부터 만들라는 제안"
+   ],
+   "media_items": []
+  }
+ ]
+}
