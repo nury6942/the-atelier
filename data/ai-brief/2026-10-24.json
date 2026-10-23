@@ -1,0 +1,209 @@
+{
+ "date": "2026-10-24",
+ "generatedAt": "2026-10-24T07:10:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 16개) + 웹 검색 17회 + GitHub 최근 1주 신규 리포 검색 · 실행 환경에서 GitHub(raw·API) 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "아이폰으로 방을 찍으면 고칠 수 있는 3D로",
+   "url": "https://github.com/wesbos/3d-model-anything",
+   "image": "https://raw.githubusercontent.com/wesbos/3d-model-anything/HEAD/docs/images/thumb-1.png",
+   "source": "GitHub wesbos · MIT · ★1천",
+   "how": "LiDAR+사진을 에이전트 스킬이 Three.js 장면으로",
+   "chips": [
+    "공개 3일 만에 ★1천",
+    "인형집·걷기·와이어 보기",
+    "LiDAR 아이폰 필요"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "SVG 그림이 숨 쉬고 눈 깜빡이는 60fps로",
+   "url": "https://github.com/rossark0/rossark-motion-skill",
+   "image": "https://raw.githubusercontent.com/rossark0/rossark-motion-skill/HEAD/demo/reveal.gif",
+   "source": "GitHub rossark0 · ★381",
+   "how": "Claude Code 스킬: 한 시계·관절 축·늦게 따라오는 부분",
+   "chips": [
+    "60fps",
+    "데모 4편 9~10초 루프",
+    "React Native·SwiftUI"
+   ],
+   "forMe": "Atelier 빈 화면이나 VectorCraft 아이콘에 작은 움직임을 넣을 때, AI가 흔히 내는 '뚝뚝 끊기는 애니메이션'을 피하는 규칙집으로 쓸 수 있습니다."
+  },
+  {
+   "cat": "tool",
+   "title": "말하면 HTML 한 장, 디자인 기준 10종",
+   "url": "https://github.com/vercel-labs/fx0",
+   "image": null,
+   "source": "GitHub vercel-labs · 오픈소스 · ★394",
+   "how": "design.md 스타일 골라 채팅, 턴마다 버전 저장",
+   "chips": [
+    "가입 없이 5번 무료",
+    "design.md 10종",
+    "HTML 내려받기"
+   ],
+   "forMe": "Atelier 디자인 규칙을 design.md 로 올리면 새 페이지 시안을 그 규칙대로 뽑아볼 수 있습니다."
+  },
+  {
+   "cat": "tool",
+   "title": "동작을 글로 쓰면 3D 캐릭터가 그대로",
+   "url": "https://github.com/blendi-remade/prompt2rig",
+   "image": "https://raw.githubusercontent.com/blendi-remade/prompt2rig/HEAD/docs/media/banner.png",
+   "source": "GitHub blendi-remade · Apache-2.0 · ★359",
+   "how": "영상 모델이 연기 → 내 GPU가 3D 동작 추출 → Mixamo",
+   "chips": [
+    "손가락 관절까지",
+    "5초 클립 동작 추출 약 4초(4090)",
+    "Blender·Unity 내보내기"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "카톡 영수증 알림이 오면 송장 발송 끝",
+   "url": "https://www.threads.com/@gasket_love/post/De1k_4VgJ9Q",
+   "image": null,
+   "source": "Threads @gasket_love · ♥18",
+   "how": "갤럭시 에이전트 앱 → 미니맥 → 스마트스토어·쿠팡 API",
+   "chips": [
+    "케이블·ADB 없이",
+    "앱 수정도 Claude가 배포",
+    "스마트스토어·쿠팡"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Atelier 규칙으로 MLB 신상 소개 페이지 시안",
+   "minutes": 20,
+   "why": "가입 없이 브라우저에서 5번까지 무료라 바로 해볼 수 있습니다. 내 디자인 규칙을 기준 파일로 주면 결과가 얼마나 지켜지는지도 한 번에 보입니다.",
+   "from": {
+    "label": "GitHub vercel-labs/fx0 · ★394",
+    "url": "https://github.com/vercel-labs/fx0"
+   },
+   "steps": [
+    {
+     "text": "fx0 사이트 열기",
+     "url": "https://fx0.vercel.dev"
+    },
+    {
+     "text": "프롬프트 붙여넣기",
+     "copy": "MLB 저지 와이드 팬츠 신상을 소개하는 한 페이지를 만들어 줘. 바탕은 흰색, 모든 모서리는 직각(border-radius 0), 포인트 색은 코발트 #1F4BD8 하나, 글꼴은 Pretendard, 그림자 없이 얇은 선(#ECECF0)으로 구분. 큰 제목·제품 사진 자리 3칸·디테일 설명(허리 밴드, 사이드 라인, 로고)·사이즈 표 순서로."
+    },
+    {
+     "text": "HTML 내려받아 저장"
+    }
+   ]
+  },
+  {
+   "title": "Atelier용 '나만 쓰는 도구' 하나",
+   "minutes": 15,
+   "why": "남이 만든 도구 대신 내 작업에 딱 맞는 작은 도구를 만들라는 제안입니다. 화면 간격·색을 손잡이로 바로 바꿔 보는 도구 하나면 디자인 다듬기가 빨라져요.",
+   "from": {
+    "label": "@emilkowalski · ♥1,000",
+    "url": "https://x.com/emilkowalski/status/2113707839760089198"
+   },
+   "steps": [
+    {
+     "text": "Claude Code 열기"
+    },
+    {
+     "text": "요청 붙여넣기",
+     "copy": "Atelier index.html 의 --atl-* 디자인 토큰(간격, 선 색, 코발트 색)을 화면 구석의 작은 조절 패널 슬라이더로 실시간 바꿔 볼 수 있는 개발용 도구를 만들어 줘. 주소 끝에 ?tune 을 붙였을 때만 나타나게 하고, 정한 값은 CSS 한 줄로 복사할 수 있게."
+    },
+    {
+     "text": "?tune 으로 열어 보기"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Kimi K3.1 Pro 공개",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "image": null,
+   "source": "Moonshot · 10-23 · 가중치 11-04 공개 예정",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "Duet, 예쁜데 자꾸 잊는다",
+   "url": "https://www.lennysnewsletter.com/p/claude-duet-is-beautiful-i-still",
+   "image": null,
+   "source": "Lenny's Newsletter · Claire Vo 실사용",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "말로 하는 영상 편집 스킬",
+   "url": "https://github.com/soumatheusgomes/editonny",
+   "image": "https://raw.githubusercontent.com/soumatheusgomes/editonny/HEAD/docs/assets/readme/en-US/hero.svg",
+   "source": "GitHub soumatheusgomes · MIT · ★345",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "도트 그림에 빛 받는 입체감",
+   "url": "https://github.com/Hugo-Dz/spritefusion-sprite-normals",
+   "image": "https://raw.githubusercontent.com/Hugo-Dz/spritefusion-sprite-normals/HEAD/static/hero.webp",
+   "source": "GitHub Hugo-Dz · ★640",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "에이전트 여럿을 한 사이드바에",
+   "url": "https://github.com/dominikmartn/harp",
+   "image": null,
+   "source": "GitHub dominikmartn · Warp 비공식 포크 · ★591",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "TV 홈을 tvOS 유리 느낌으로",
+   "url": "https://github.com/lesnolie/Tigris",
+   "image": null,
+   "source": "GitHub lesnolie · 에이전트로 설치 · ★413",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "엘든링 안에 마인크래프트",
+   "url": "https://decrypt.co/380407/ai-video-game-mod-mashups-are-taking-off-here-are-the-wackiest-examples",
+   "image": null,
+   "source": "Decrypt · 다운로드 미공개",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-24 기준 공식 데모·벤치마크만, 독립 실사용 후기 없음"
+  },
+  {
+   "name": "Claude 앱 기본 자동 모드",
+   "url": "https://x.com/claudeai/status/2113360845409583307",
+   "date": "2026-10-22",
+   "note": "다음 주 적용 예정 · 아직 사용 후기 없음"
+  },
+  {
+   "name": "Claude Duet (연구 미리보기)",
+   "url": "https://support.claude.com/en/articles/17631495-get-started-with-claude-duet",
+   "date": "2026-10-21",
+   "note": "10-24: 사용 후기 2건(Claire Vo, X @Joash0x) · 만든 사례는 아직 없음"
+  },
+  {
+   "name": "ChatGPT Slides 실시간 공동 편집",
+   "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
+   "date": "2026-10-20",
+   "note": "10-24 검색에도 직접 써본 후기 못 찾음"
+  },
+  {
+   "name": "Gemini 웹앱 → Google Sites 내보내기",
+   "url": "https://workspaceupdates.googleblog.com/2026/10/publish-interactive-apps-from-gemini-app-to-Google-Sites.html",
+   "date": "2026-10-19",
+   "note": "10-24 검색에도 사례 없음 · 10-26 지나면 정리"
+  }
+ ]
+}
