@@ -34,7 +34,7 @@
    "cat": "tool",
    "title": "말하면 HTML 한 장, 디자인 기준 10종",
    "url": "https://github.com/vercel-labs/fx0",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/4748e38a5a0ed5cc7077b22bbe793f8ea044d4c30fad1d31bad41aa397254467/vercel-labs/fx0",
    "source": "GitHub vercel-labs · 오픈소스 · ★394",
    "how": "design.md 스타일 골라 채팅, 턴마다 버전 저장",
    "chips": [
@@ -121,7 +121,7 @@
    "cat": "release",
    "title": "Kimi K3.1 Pro 공개",
    "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
-   "image": null,
+   "image": "https://kimi-img.kimi.ai/pub/slides/kimi-fs/managed-assets/9558f8d5-08fc-42de-8e4e-339076e03895.webp",
    "source": "Moonshot · 10-23 · 가중치 11-04 공개 예정",
    "watching": true
   },
@@ -129,7 +129,7 @@
    "cat": "release",
    "title": "Duet, 예쁜데 자꾸 잊는다",
    "url": "https://www.lennysnewsletter.com/p/claude-duet-is-beautiful-i-still",
-   "image": null,
+   "image": "https://substackcdn.com/image/fetch/$s_!Jl8N!,w_1200,h_600,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc72797f7-24e9-4238-8217-9f62dc0a0a94_728x524.png",
    "source": "Lenny's Newsletter · Claire Vo 실사용",
    "watching": false
   },
@@ -153,7 +153,7 @@
    "cat": "tool",
    "title": "에이전트 여럿을 한 사이드바에",
    "url": "https://github.com/dominikmartn/harp",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/dominikmartn/harp",
    "source": "GitHub dominikmartn · Warp 비공식 포크 · ★591",
    "watching": false
   },
@@ -161,7 +161,7 @@
    "cat": "vibe",
    "title": "TV 홈을 tvOS 유리 느낌으로",
    "url": "https://github.com/lesnolie/Tigris",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/lesnolie/Tigris",
    "source": "GitHub lesnolie · 에이전트로 설치 · ★413",
    "watching": false
   },
@@ -169,7 +169,7 @@
    "cat": "hack",
    "title": "엘든링 안에 마인크래프트",
    "url": "https://decrypt.co/380407/ai-video-game-mod-mashups-are-taking-off-here-are-the-wackiest-examples",
-   "image": null,
+   "image": "https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2026/10/Minecraft-CallofDuty-gID_7.jpg",
    "source": "Decrypt · 다운로드 미공개",
    "watching": false
   }
