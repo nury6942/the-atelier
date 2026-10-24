@@ -1,0 +1,210 @@
+{
+ "date": "2026-10-25",
+ "generatedAt": "2026-10-25T07:20:00+09:00",
+ "sourcesNote": "X·Threads(맥 수집 16개) + 웹 검색 21회 + GitHub 원본 파일·npm 레지스트리 확인 · 실행 환경에서 GitHub raw·npm 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "포토샵·오토캐드 다음은 프로툴스, 무료로",
+   "url": "https://github.com/storytold/soundcraft",
+   "image": "https://raw.githubusercontent.com/storytold/soundcraft/HEAD/docs/images/edit.png",
+   "source": "GitHub storytold · MIT/Apache-2.0 · ArtCraft 팀",
+   "how": "Rust로 다시 짠 음악 작업 앱, AI가 명령으로 조작",
+   "chips": [
+    "v0.7.0 · 10-14",
+    "이펙트 24 · 가상 악기 3",
+    "프리알파 · .ptx 못 엶"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "AI 티 안 나는 웹페이지, 테마 48종",
+   "url": "https://github.com/Nutlope/hallmark",
+   "image": "https://raw.githubusercontent.com/Nutlope/hallmark/HEAD/site/OG-hallmark.png",
+   "source": "GitHub Nutlope · Together AI · MIT",
+   "how": "디자인 스킬이 테마 골라 짓고 브라우저로 검사",
+   "chips": [
+    "v2 테마 48종",
+    "공개 사진 755장 출처 표기",
+    "audit 는 고치지 않고 보고만"
+   ],
+   "forMe": "/hallmark audit 로 Atelier 페이지를 돌리면 '제목 위 작은 라벨', '한 단어만 색칠' 같은 AI 티를 목록으로 받아볼 수 있습니다."
+  },
+  {
+   "cat": "tool",
+   "title": "화면에서 고치고 댓글, AI에 한 번에",
+   "url": "https://github.com/petergyang/human-review",
+   "image": "https://raw.githubusercontent.com/petergyang/human-review/HEAD/assets/human-review.png",
+   "source": "GitHub petergyang · Threads @nangman_muk 소개",
+   "how": "HTML·마크다운을 구글 문서처럼 편집, Send로 전달",
+   "chips": [
+    "npx 한 줄 설치",
+    "localhost 페이지도",
+    "v0.8.2"
+   ],
+   "forMe": "Atelier 화면 문구·간격 수정을 '세 번째 카드의…'처럼 말로 설명하는 대신, 화면에서 직접 고치고 댓글 달아 Claude Code에 한 번에 넘길 수 있습니다."
+  },
+  {
+   "cat": "hack",
+   "title": "제미나이를 수다 친구로, 19일 만에 영어 10분",
+   "url": "https://www.threads.com/@_allerg_/post/De0G-1ODRBk",
+   "image": null,
+   "source": "Threads @_allerg_ · ♥614",
+   "how": "'선생님 말고 친구' 역할 + 실제 상황 100개 롤플레이",
+   "chips": [
+    "하루 20분",
+    "반복 실수 분석 → 복습 일정",
+    "외국인과 10분 대화"
+   ],
+   "forMe": "해외 이직 면접 대비로 '디자이너 포트폴리오 설명', '연봉 협상' 같은 상황을 롤플레이 목록에 넣어 쓸 수 있습니다."
+  },
+  {
+   "cat": "money",
+   "title": "숨고 인스타 대행, 견적서까지 Claude가",
+   "url": "https://www.threads.com/@promania_ai/post/De3rEKciVzT",
+   "image": null,
+   "source": "Threads @promania_ai · ♥144",
+   "how": "서비스 세팅·견적 발송은 Claude Code, 본인은 승인만",
+   "chips": [
+    "숨고 신규 서비스",
+    "견적 발송 자동",
+    "댓글 26"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Atelier 한 페이지, AI 티 점검받기",
+   "minutes": 20,
+   "why": "audit 는 파일을 고치지 않고 지적 목록만 줘서 안전하게 해볼 수 있습니다. 디자인 규칙을 막 통일한 지금, 남은 'AI가 만든 티'를 눈으로 확인하기 좋아요.",
+   "from": {
+    "label": "GitHub Nutlope/hallmark · Together AI",
+    "url": "https://github.com/Nutlope/hallmark"
+   },
+   "steps": [
+    {
+     "text": "터미널에 설치 명령",
+     "copy": "npx skills add nutlope/hallmark -g --agent claude-code"
+    },
+    {
+     "text": "Claude Code에서 점검",
+     "copy": "/hallmark audit ai-brief.html"
+    },
+    {
+     "text": "지적 목록 저장"
+    }
+   ]
+  },
+  {
+   "title": "AI Brief 문구를 화면에서 고쳐 넘기기",
+   "minutes": 15,
+   "why": "말로 위치를 설명하지 않고 화면에서 바로 고치고 댓글을 달면, Claude가 한 번에 받아 원본에 반영합니다.",
+   "from": {
+    "label": "@nangman_muk · ♥46",
+    "url": "https://www.threads.com/@nangman_muk/post/De2ukQAE8XG"
+   },
+   "steps": [
+    {
+     "text": "터미널에 설치 명령",
+     "copy": "npx -y human-review setup --global"
+    },
+    {
+     "text": "Claude Code에서 열기",
+     "copy": "/human-review ai-brief.html"
+    },
+    {
+     "text": "고치고 댓글 → Send"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "hack",
+   "title": "SoundCraft 써본 정리",
+   "url": "https://pasqualepillitteri.it/en/news/23909/soundcraft-guide-free-pro-tools-alternative",
+   "image": null,
+   "source": "Pasquale Pillitteri · v0.7.0 기준",
+   "watching": false
+  },
+  {
+   "cat": "vibe",
+   "title": "Craft 앱들, 써보니 버그",
+   "url": "https://www.creativebloq.com/news/i-tried-those-free-ai-coded-adobe-creative-cloud-clones-and-they-have-some-big-problems",
+   "image": null,
+   "source": "Creative Bloq · 10-13",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "Rust로 만든 무료 영상 편집기",
+   "url": "https://github.com/AIEraDev/Clypra",
+   "image": "https://raw.githubusercontent.com/AIEraDev/Clypra/HEAD/public/clypra.jpg",
+   "source": "GitHub AIEraDev · MIT · Tauri",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "오픈소스 AI 오피스 GenOffice",
+   "url": "https://github.com/genspark-ai/genoffice",
+   "image": "https://raw.githubusercontent.com/genspark-ai/genoffice/HEAD/docs/assets/readme/hero.webp",
+   "source": "GitHub genspark-ai · Apache-2.0 · 알파",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "AI에게 항공정비 문체로 답하게",
+   "url": "https://searchenginejournal.com/karpathy-llm-aircraft-manual-writing/591813",
+   "image": null,
+   "source": "Search Engine Journal · 카파시 제안",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "AI로 만든 게임 모음",
+   "url": "https://github.com/lappemic/awesome-ai-built-games",
+   "image": "https://raw.githubusercontent.com/lappemic/awesome-ai-built-games/HEAD/public/og-image.png",
+   "source": "GitHub lappemic · 바로 플레이",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-25 검색에도 독립 실사용 후기·만든 사례 없음 · 가중치 11-04 공개 예정"
+  },
+  {
+   "name": "Claude 앱 기본 자동 모드",
+   "url": "https://x.com/claudeai/status/2113360845409583307",
+   "date": "2026-10-22",
+   "note": "다음 주 적용 예정 · 아직 사용 후기 없음"
+  },
+  {
+   "name": "Claude Duet (연구 미리보기)",
+   "url": "https://support.claude.com/en/articles/17631495-get-started-with-claude-duet",
+   "date": "2026-10-21",
+   "note": "10-25: 후기는 Claire Vo 등 소수, 만든 사례는 아직 없음 · 미국 Pro·Max 대기 명단"
+  },
+  {
+   "name": "ChatGPT Slides 실시간 공동 편집",
+   "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
+   "date": "2026-10-20",
+   "note": "10-25 검색에도 직접 써본 후기 못 찾음"
+  },
+  {
+   "name": "Gemini 웹앱 → Google Sites 내보내기",
+   "url": "https://workspaceupdates.googleblog.com/2026/10/publish-interactive-apps-from-gemini-app-to-Google-Sites.html",
+   "date": "2026-10-19",
+   "note": "10-25 검색에도 사례 없음 · 10-26 지나면 정리"
+  }
+ ],
+ "weekly": {
+  "flow": [
+   "ArtCraft 팀 Craft 앱 행렬: FigCraft·VectorCraft·PhotoCraft·CADCraft에 SoundCraft까지 — 후기는 '아직 알파, 버그 많음'이 다수",
+   "디자인 스킬 쏟아짐: fx0(design.md 10종)·Hallmark v2(테마 48종)·모션 스킬 — 'AI 티 안 나는 화면'이 이번 주 키워드",
+   "Claude Duet(10-21)·Kimi K3.1 Pro(10-23) 발표 → 후기 몇 건뿐, 사람들이 만든 사례는 아직 0"
+  ]
+ }
+}
