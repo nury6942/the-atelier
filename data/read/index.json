@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-19T23:52:46.168Z",
+ "updated": "2026-10-24T22:11:42.688Z",
  "items": [
+  {
+   "id": "2026-10-25-conv-a-scuff-on-your-bag-a-dent-in-your-mug",
+   "date": "2026-10-25",
+   "source": "The Conversation",
+   "title": "A scuff on your bag, a dent in your mug – and suddenly it feels like time for a new one",
+   "url": "https://theconversation.com/a-scuff-on-your-bag-a-dent-in-your-mug-and-suddenly-it-feels-like-time-for-a-new-one-293689",
+   "author": "Rebecca Walker Reczek, Aprajita Gautam, Rajagopal Raghunathan",
+   "minutes": 6,
+   "level": "B2+",
+   "words": 1051,
+   "topic": "경제",
+   "gist": "작은 흠집 하나 때문에 멀쩡한 물건을 바꾸고 싶어지는 '완벽한 물건 욕구'를 다룬 마케팅 연구 소개글.\n이런 성향이 쇼핑·수리·기부 행동에 미치는 영향과, 흠을 개성으로 보면(와비사비) 낭비를 줄일 수 있다는 내용.",
+   "file": "data/read/2026-10-25-conv-a-scuff-on-your-bag-a-dent-in-your-mug.json"
+  },
+  {
+   "id": "2026-10-25-conv-the-90s-art-and-fashion-exhibition-at",
+   "date": "2026-10-25",
+   "source": "The Conversation",
+   "title": "The 90s: Art and Fashion Exhibition at Tate Britain – when rebellion became a brand",
+   "url": "https://theconversation.com/the-90s-art-and-fashion-exhibition-at-tate-britain-when-rebellion-became-a-brand-294794",
+   "author": "Caterina Nirta",
+   "minutes": 5,
+   "level": "C1",
+   "words": 880,
+   "topic": "패션",
+   "gist": "테이트 브리튼의 90년대 아트·패션 전시 리뷰로, 반항 정신이 브랜드 상품으로 바뀐 과정을 보여주지만\n그 대가와 배제된 사람들(인종·체형·성소수자)은 제대로 다루지 않는다고 비판하는 글.",
+   "file": "data/read/2026-10-25-conv-the-90s-art-and-fashion-exhibition-at.json"
+  },
   {
    "id": "2026-10-20-conv-new-ai-shopping-agents-promise-better",
    "date": "2026-10-20",
@@ -74,6 +102,114 @@
  ],
  "links": [
   {
+   "source": "BoF",
+   "title": "Cashing In on the Denim Boom Is Harder Than It Looks",
+   "url": "https://www.businessoffashion.com/articles/retail/challenges-of-entering-the-denim-market/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "10 Years of BoF Professional",
+   "url": "https://www.businessoffashion.com/articles/news-analysis/10-years-anniversary-bof-professional/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "How AI Is Transforming Personalisation Into Individualisation",
+   "url": "https://www.businessoffashion.com/articles/marketing-pr/how-ai-is-transforming-personalisation-into-individualisation-klaviyo/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "How Did Zara Home Become Cool?",
+   "url": "https://www.businessoffashion.com/articles/retail/how-did-zara-home-become-cool-and-what-does-that-mean-for-the-20-t-shirts/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Cardi B’s Plan to Win Haircare: the Beauty Supply Store",
+   "url": "https://www.businessoffashion.com/articles/beauty/cardi-b-grow-good-beauty-supply-retail-launch/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Fashion’s Next Growth Opportunity Isn’t Gen Z",
+   "url": "https://www.businessoffashion.com/articles/retail/fashion-retail-older-shoppers-multigenerational-marketing/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Victoria’s Secret Straddles the Line Between Past and Present",
+   "url": "https://www.businessoffashion.com/articles/retail/victorias-secret-straddles-past-and-present/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Why Luxury Marketing Is Getting More Restrained",
+   "url": "https://www.businessoffashion.com/articles/marketing-pr/why-luxury-marketing-is-getting-more-restrained/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Luxury Stores Looted Amid French Protests",
+   "url": "https://www.businessoffashion.com/articles/news-analysis/mass-protests-in-france-spiral-into-worst-riots-in-years/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Paris, We Have a Problem: Why European Luxury Is Under Pressure in China",
+   "url": "https://www.businessoffashion.com/articles/china/paris-we-have-a-problem-why-european-luxury-is-under-pressure-in-china/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Why Did Chanel Invest in Mid-Tier Watchmaker Ebel?",
+   "url": "https://www.businessoffashion.com/articles/luxury/chanel-ebel-investment-fp-journe-swiss-watch-revival/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BoF",
+   "title": "Introducing The BoF 500 Class of 2026",
+   "url": "https://www.businessoffashion.com/articles/news-analysis/introducing-the-bof-500-class-of-2026/",
+   "date": "2026-10-25"
+  },
+  {
+   "source": "BBC Future",
+   "title": "How birdwatching slows down brain ageing",
+   "url": "https://www.bbc.com/future/article/20261019-birdwatching-rewires-the-brain-and-slows-cognitive-decline",
+   "date": "2026-10-23"
+  },
+  {
+   "source": "BBC Future",
+   "title": "What animals could a human outrun?",
+   "url": "https://www.bbc.com/future/article/20261021-what-animals-could-you-beat-in-a-race",
+   "date": "2026-10-22"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "Everyone hates Oxford Street. Will pedestrianisation save it?",
+   "url": "https://www.theguardian.com/news/2026/oct/22/everyone-hates-oxford-street-will-pedestrianisation-save-it",
+   "date": "2026-10-22"
+  },
+  {
+   "source": "BBC Future",
+   "title": "This test predicts your risk of death",
+   "url": "https://www.bbc.com/future/article/20261020-the-heart-recovery-rate-test-that-predicts-your-heart-health",
+   "date": "2026-10-21"
+  },
+  {
+   "source": "BBC Future",
+   "title": "What to eat for younger skin",
+   "url": "https://www.bbc.com/future/article/20261015-what-can-i-eat-for-younger-skin",
+   "date": "2026-10-20"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "‘The last bastion is gone’: the US right idolised Orbán’s Hungary. Can they recover now he has fallen?",
+   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/20/the-last-bastion-is-gone-the-us-right-idolised-orbans-hungary-can-they-recover-now-he-has-fallen",
+   "date": "2026-10-20"
+  },
+  {
    "source": "BBC Future",
    "title": "The rejuvenating secrets of the immortal jellyfish",
    "url": "https://www.bbc.com/future/article/20261016-the-rejuvenating-secrets-of-the-immortal-jellyfish",
@@ -144,114 +280,6 @@
    "title": "Luxury’s Spooky Season: Bad Numbers and Empty Chairs",
    "url": "https://www.businessoffashion.com/articles/luxury/luxurys-spooky-season-bad-numbers-and-empty-chairs/",
    "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Can the Creative Be Commercial?",
-   "url": "https://www.businessoffashion.com/articles/beauty/can-the-creative-be-commercial/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "LVMH Fashion Sales Slip on China Weakness, Dimming Recovery Hopes",
-   "url": "https://www.businessoffashion.com/articles/luxury/lvmh-fashion-sales-slip-on-china-weakness-dimming-recovery-hopes/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The orca brothers preying on great white sharks",
-   "url": "https://www.bbc.com/future/article/20261015-sharks-washed-up-one-after-another-after-another-why-orcas-are-hunting-great-whites",
-   "date": "2026-10-16"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The war over AI consciousness may change your life",
-   "url": "https://www.bbc.com/future/article/20261014-the-strange-new-battle-over-ais-feelings",
-   "date": "2026-10-15"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "A perfect storm: how the super El Niño is devastating the fishing industry",
-   "url": "https://www.theguardian.com/news/2026/oct/15/a-perfect-storm-how-the-super-el-nino-is-devastating-the-fishing-industry",
-   "date": "2026-10-15"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The test that finds (almost) every infection",
-   "url": "https://www.bbc.com/future/article/20261013-how-metagenomics-can-identify-almost-every-infection",
-   "date": "2026-10-14"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The rare behaviour showing elephant grief",
-   "url": "https://www.bbc.com/future/article/20261013-the-rare-behaviour-showing-elephant-grief",
-   "date": "2026-10-13"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "I was kidnapped and held hostage for 977 days. Could I forgive my captors?",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/13/i-was-kidnapped-and-held-hostage-for-977-days-could-i-forgive-my-captors",
-   "date": "2026-10-13"
-  },
-  {
-   "source": "BBC Future",
-   "title": "Why it's easy to eat 30 plants a week",
-   "url": "https://www.bbc.com/future/article/20261008-how-can-i-eat-30-plants-a-week",
-   "date": "2026-10-12"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The US homes built from rice",
-   "url": "https://www.bbc.com/future/article/20261009-the-houses-made-from-rice-husks",
-   "date": "2026-10-10"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The real history behind the philosophers' stone",
-   "url": "https://www.bbc.com/future/article/20261008-the-true-story-of-alchemist-nicholas-flamel-and-the-philosophers-stone",
-   "date": "2026-10-09"
-  },
-  {
-   "source": "BBC Future",
-   "title": "Temperature may trump light for shaping sleep",
-   "url": "https://www.bbc.com/future/article/20261007-how-does-temperature-affect-your-sleep",
-   "date": "2026-10-08"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "A death, a plagiarism scandal and a quest for revenge: the bizarre tale of Otto Z",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/08/a-death-a-plagiarism-scandal-and-a-quest-for-revenge-the-bizarre-tale-of-otto-z",
-   "date": "2026-10-08"
-  },
-  {
-   "source": "BBC Future",
-   "title": "Why a global outbreak of plague is unlikely",
-   "url": "https://www.bbc.com/future/article/20261007-could-we-have-a-global-outbreak-of-pneumonic-plague-today",
-   "date": "2026-10-07"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "‘It could knock a whole street down’: the art of defusing a second world war bomb",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/06/it-could-knock-a-whole-street-down-the-art-of-defusing-a-second-world-war-bomb",
-   "date": "2026-10-06"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Fixer, financier, spymaster: how the UAE’s Sheikh Tahnoon is setting his sights on AI dominance",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/01/fixer-financier-spymaster-how-the-uaes-sheikh-tahnoon-is-setting-his-sights-on-ai-dominance",
-   "date": "2026-10-01"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Why am I obsessed with China’s ancient golden age? I took my daughter on a trip to find out",
-   "url": "https://www.theguardian.com/news/2026/sep/29/why-am-i-obsessed-with-chinas-ancient-golden-age-i-took-my-daughter-on-a-trip-to-find-out",
-   "date": "2026-09-29"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Labour’s last chance? The people shaping Andy Burnham’s grand plans for Britain",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/sep/24/labours-last-chance-the-people-shaping-andy-burnhams-grand-plans-for-britain",
-   "date": "2026-09-24"
   }
  ]
 }

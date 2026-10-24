@@ -547,5 +547,200 @@
   }
  ],
  "summary": "The writer argues that tabi shoes have not really died but have lost their power to signal exclusive fashion knowledge, because social media has made their meaning widely understood.",
- "gist": "마르지엘라의 상징이던 갈라진 발가락 신발 '타비'가 소셜미디어로 대중화되면서, 아는 사람만 알던 '안목의 표시'라는 의미를 잃었다는 패션 기호학 칼럼."
+ "gist": "마르지엘라의 상징이던 갈라진 발가락 신발 '타비'가 소셜미디어로 대중화되면서, 아는 사람만 알던 '안목의 표시'라는 의미를 잃었다는 패션 기호학 칼럼.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Martin Margiela was the first person to design a shoe with a split toe.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "\"has its origins in 15th-century Japan\" — 마르지엘라보다 수백 년 앞서 일본에 이미 있었음"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The Teen Vogue article declaring the end of tabis was based on what people wore at a fashion event in New York.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "\"at New York Fashion Week this September, Teen Vogue published a street-style dispatch\" — 뉴욕 패션위크 스트리트 스타일 기사"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Margiela's first tabi boots sold out soon after they appeared on the runway.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "\"inaugural runway collection\"이라는 언급만 있고 판매 결과는 본문에 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Social media has completely destroyed the appeal of the tabi.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "\"social media has not killed the tabi\" — 글쓴이는 분명히 부정함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Some people may now wear tabis just because they personally enjoy them.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "\"We might simply be wearing it because we like it.\" — 개인 취향으로 신을 수 있다는 주장"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 8",
+    "options": [
+     "i  A legal battle over design ownership",
+     "ii  How a shape gained meaning through constant exposure",
+     "iii  Falling sales in the luxury market",
+     "iv  How online posts spread explanations as well as objects",
+     "v  Recognition without a brand name"
+    ],
+    "answer": "ii",
+    "why": "\"the tabi's meaning has been created through repetition in runway shows, editorial photography...\" — 반복 노출로 의미가 생김"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 11",
+    "options": [
+     "i  A legal battle over design ownership",
+     "ii  How a shape gained meaning through constant exposure",
+     "iii  Falling sales in the luxury market",
+     "iv  How online posts spread explanations as well as objects",
+     "v  Recognition without a brand name"
+    ],
+    "answer": "v",
+    "why": "\"A visible logo makes it relatively easy... but the tabi's meaning depended on recognising the shape itself\" — 로고가 아닌 모양으로 알아봄"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 13",
+    "options": [
+     "i  A legal battle over design ownership",
+     "ii  How a shape gained meaning through constant exposure",
+     "iii  Falling sales in the luxury market",
+     "iv  How online posts spread explanations as well as objects",
+     "v  Recognition without a brand name"
+    ],
+    "answer": "iv",
+    "why": "\"social media trends circulate fashion objects – but they also circulate explanations of them\" — 물건과 설명이 함께 퍼짐"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph compares wearing tabis to appreciating a style of building design?",
+    "options": [
+     "4",
+     "10",
+     "12",
+     "16"
+    ],
+    "answer": "10",
+    "why": "\"the harshness of Brutalist architecture\" — 10문단에서 브루탈리즘 건축과 비교"
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions low-cost copies of the shoe becoming widely available?",
+    "options": [
+     "3",
+     "8",
+     "12",
+     "15"
+    ],
+    "answer": "12",
+    "why": "\"the market being flooded with cheaper imitations\" — 12문단"
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the writer, what is the main change in the tabi's situation?",
+    "options": [
+     "A It has gone completely out of fashion.",
+     "B It has become cheaper to manufacture.",
+     "C Its meaning has become easier to interpret.",
+     "D Fashion professionals have stopped wearing it."
+    ],
+    "answer": "C",
+    "why": "\"What has changed is how easily we can read what it means.\" — 의미를 읽기 쉬워진 것이 핵심 변화"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "British Vogue mentioned tabi flats as part of a description of",
+    "options": [
+     "A a typical person working in fashion PR.",
+     "B a traditional Japanese outfit.",
+     "C a popular summer holiday look.",
+     "D a model on a Margiela runway."
+    ],
+    "answer": "A",
+    "why": "\"as shorthand for somebody working in fashion PR\" — 패션 PR 종사자를 나타내는 표현"
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Margiela first presented his split-toe boot in 1988 as part of his brand's first ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "runway collection"
+    ],
+    "why": "\"for his brand's inaugural runway collection\" — inaugural = first"
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Barthes showed that clothes can carry meanings that go beyond their ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "practical function"
+    ],
+    "why": "\"clothing acquires meanings beyond its practical function\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "What was the title of the book in which Barthes treated fashion as a system of signs?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "The Fashion System"
+    ],
+    "why": "\"In the book The Fashion System (1967), cultural critic Roland Barthes...\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    7,
+    10,
+    12
+   ]
+  }
+ }
 }
