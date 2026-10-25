@@ -18,12 +18,12 @@
     {
      "title": "대행사 브리프 3개를 그대로 돌려본 실험",
      "url": "https://gauravtiwari.org/canva-craft/",
-     "image": null
+     "image": "https://r2.gauravtiwari.org/wp-content/uploads/2026/10/canva-craft-agencies-featured-20261024.webp"
     },
     {
      "title": "Dream Lab에서 Craft 쓰는 순서 정리",
      "url": "https://www.lilachbullock.com/canva-craft/",
-     "image": null
+     "image": "https://www.lilachbullock.com/wp-content/uploads/2026/10/canva-craft.png"
     }
    ],
    "new": [
@@ -108,7 +108,7 @@
    "cat": "tool",
    "title": "보안 점검 스킬 하나에 한 주 별 1.2만",
    "url": "https://github.com/cloudflare/security-audit-skill",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/cloudflare/security-audit-skill",
    "source": "GitHub cloudflare · MIT · 이번 주 트렌딩 1위",
    "how": "찾는 AI·반박하는 AI를 따로 돌려 6단계 점검",
    "chips": [
@@ -183,7 +183,7 @@
    "cat": "vibe",
    "title": "포토샵 클론들, 써보니 한계",
    "url": "https://antyweb.pl/darmowe-klony-photoshopa-zalewaja-internet",
-   "image": null,
+   "image": "https://static.antyweb.pl/img/w_1250,h_550/wp-content/uploads/2026/10/photn.jpg",
    "source": "Antyweb · 스마트 오브젝트 깨짐",
    "watching": false
   },
@@ -191,7 +191,7 @@
    "cat": "hack",
    "title": "포톤 '2천 달러'의 진실",
    "url": "https://aiidelist.com/blog/gpt-6-astra-photoshop-clone-photon-studio",
-   "image": null,
+   "image": "https://cdn.aiidelist.com/api/image/Ltuwohc70O92t9ggBDwNo.webp",
    "source": "AIIDE List · 누적 약 $1만 설",
    "watching": false
   },
@@ -207,7 +207,7 @@
    "cat": "free",
    "title": "강화학습으로 걷는 오리 로봇",
    "url": "https://github.com/pollen-robotics/microduck",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/pollen-robotics/microduck",
    "source": "GitHub pollen-robotics · 25cm·800g",
    "watching": false
   },
@@ -215,7 +215,7 @@
    "cat": "free",
    "title": "TV 정리 따라 하기 기사",
    "url": "https://itsfoss.com/news/debloat-smart-tv/",
-   "image": null,
+   "image": "https://itsfoss.com/content/images/2026/10/debloat-tv-with-ai.webp",
    "source": "It's FOSS · dumbtv·cleanyourtv",
    "watching": false
   },
