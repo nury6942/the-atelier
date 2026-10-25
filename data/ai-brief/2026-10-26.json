@@ -1,0 +1,257 @@
+{
+ "date": "2026-10-26",
+ "generatedAt": "2026-10-26T07:30:00+09:00",
+ "sourcesNote": "웹 검색 38회 + GitHub 트렌딩·README·릴리스 원본 확인 · 오늘 맥 수집(X·Threads) 파일 없음 · 실행 환경에서 GitHub·npm 외 사이트 직접 열기가 막혀 나머지 링크·숫자는 검색 결과로만 확인",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "캔바 첫 자체 이미지 모델, 템플릿으로 배웠다",
+   "url": "https://the-decoder.com/canva-launches-craft-its-first-in-house-image-model/",
+   "image": null,
+   "source": "The Decoder · Canva Research",
+   "release": {
+    "name": "Canva Craft",
+    "date": "2026-10-22",
+    "url": "https://alternativeto.net/news/2026/10/canva-launches-canva-craft-its-first-in-house-image-generation-model/"
+   },
+   "examples": [
+    {
+     "title": "대행사 브리프 3개를 그대로 돌려본 실험",
+     "url": "https://gauravtiwari.org/canva-craft/",
+     "image": null
+    },
+    {
+     "title": "Dream Lab에서 Craft 쓰는 순서 정리",
+     "url": "https://www.lilachbullock.com/canva-craft/",
+     "image": null
+    }
+   ],
+   "new": [
+    "배치 먼저 짜고 그림",
+    "글자 안 깨짐",
+    "비율 약 30종"
+   ],
+   "reviews": [
+    {
+     "say": "브리프 3개 모두 글자는 정확하게 나옴",
+     "who": "블로그 Gaurav Tiwari",
+     "url": "https://gauravtiwari.org/canva-craft/",
+     "tone": "good"
+    },
+    {
+     "say": "시키지 않은 문구를 멋대로 끼워 넣음",
+     "who": "블로그 Gaurav Tiwari",
+     "url": "https://gauravtiwari.org/canva-craft/",
+     "tone": "bad"
+    },
+    {
+     "say": "첫날 순위표 4위, 앞은 전부 OpenAI",
+     "who": "Tech Insider",
+     "url": "https://tech-insider.org/canva-craft-first-image-model-designarena-2026/",
+     "tone": "good"
+    },
+    {
+     "say": "API는 아직 미리보기, 2K가 최대",
+     "who": "Tech Times",
+     "url": "https://www.techtimes.com/articles/329403/20261023/canva-craft-ranks-above-google-microsoft-meta-day-one-api-still-preview.htm",
+     "tone": "bad"
+    }
+   ],
+   "why": "포스터·인포그래픽처럼 글자 들어간 시안을 한 번에",
+   "chips": [
+    "모든 캔바 사용자",
+    "최대 2K",
+    "DesignArena 4위"
+   ],
+   "forMe": "MLB 쇼츠·집업 출시 포스터 시안을 문구까지 넣어 뽑아볼 수 있습니다. 다만 브랜드 키트는 Dream Lab에서 아직 안 붙으니 로고·서체는 따로 얹어야 합니다."
+  },
+  {
+   "cat": "vibe",
+   "title": "혼자 AI로 짠 포토샵, PSD 레이어째 연다",
+   "url": "https://androidauthority.com/new-ai-apps-services-photon-studio-3727165",
+   "image": null,
+   "source": "Android Authority · Tenzen Studio(1인 개발)",
+   "how": "GPT-6 Astra로 바이브코딩, 맥·윈도우용 무료",
+   "chips": [
+    "토큰비 $2,000 · 약 280만 원부터",
+    "총 다운로드 458",
+    "무료 · 오프라인"
+   ],
+   "forMe": "PSD를 레이어 그대로 열고 단축키도 포토샵과 같다고 하니, 집 맥에서 프린트 시안 PSD를 열어 레이어가 버티는지 확인해볼 만합니다. 스마트 오브젝트는 깨진다는 후기가 있어요."
+  },
+  {
+   "cat": "hack",
+   "title": "TV 광고 빼는 레포, 남들이 제 TV용으로",
+   "url": "https://github.com/humblemuzzu/dumbtv",
+   "image": "https://raw.githubusercontent.com/humblemuzzu/dumbtv/HEAD/docs/assets/hero.png",
+   "source": "GitHub humblemuzzu · MIT · 별 1.6k",
+   "how": "코딩 AI에 레포를 읽혀 TV를 ADB로 정리, 루팅 없이",
+   "chips": [
+    "TV 약 20종 실행 보고",
+    "홈 화면 54KB",
+    "전부 되돌리기 가능"
+   ],
+   "examples": [
+    {
+     "title": "대만 파나소닉 TV, 34개 꺼서 전후 비교",
+     "url": "https://github.com/frank410394/panasonic-firetv-debloat",
+     "image": "https://raw.githubusercontent.com/frank410394/panasonic-firetv-debloat/HEAD/docs/images/dumbtv-home.png"
+    },
+    {
+     "title": "애플TV풍 홈에 날씨까지 붙인 갈래",
+     "url": "https://github.com/carlom19/cinema-home-fire-tv",
+     "image": "https://raw.githubusercontent.com/carlom19/cinema-home-fire-tv/HEAD/cinema-launcher/assets/wallpaper.png"
+    }
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "보안 점검 스킬 하나에 한 주 별 1.2만",
+   "url": "https://github.com/cloudflare/security-audit-skill",
+   "image": null,
+   "source": "GitHub cloudflare · MIT · 이번 주 트렌딩 1위",
+   "how": "찾는 AI·반박하는 AI를 따로 돌려 6단계 점검",
+   "chips": [
+    "이번 주 별 +12,680",
+    "6단계",
+    "확인된 것만 보고서로"
+   ],
+   "forMe": "Atelier는 Firebase에 개인 데이터가 있어서, 키·권한이 새는 곳이 없는지 한 번 돌려볼 가치가 있습니다. AI를 여러 개 띄우니 사용량이 많이 듭니다."
+  },
+  {
+   "cat": "tool",
+   "title": "제트브레인스표 AI 작업대, 일감마다 칸 나눔",
+   "url": "https://github.com/JetBrains/thinkrail",
+   "image": "https://raw.githubusercontent.com/JetBrains/thinkrail/HEAD/.github/readme-assets/workbench-light.png",
+   "source": "GitHub JetBrains · 인큐베이터 · 별 1.5k",
+   "how": "작업마다 따로 사본, UI 수정은 전후 시안으로 보여줌",
+   "chips": [
+    "v0.2.0 · 10-18",
+    "데스크톱 앱 · 브라우저",
+    "10-25까지 매일 빌드"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "캔바 Craft로 쇼츠 출시 포스터 한 장",
+   "minutes": 15,
+   "why": "나흘 전 나온 모델이고 캔바 계정만 있으면 바로 됩니다. 글자 들어간 포스터가 강점이라니 누리님 시안 문구가 실제로 안 깨지는지 직접 확인해보세요.",
+   "from": {
+    "label": "블로그 Gaurav Tiwari · 브리프 3개 실험",
+    "url": "https://gauravtiwari.org/canva-craft/"
+   },
+   "steps": [
+    {
+     "text": "캔바 Dream Lab 열기",
+     "url": "https://www.canva.com/help/generate-with-dreamlab/"
+    },
+    {
+     "text": "프롬프트 붙여넣기",
+     "copy": "Vertical 4:5 product launch poster for a baseball-inspired streetwear brand. Hero: a pair of navy jersey mesh shorts with white piping, floating at center, soft studio light, clean white background. Big headline at top in bold sans-serif: \"SUMMER JERSEY DROP\". Small line under it: \"Mesh shorts · Zip-up · 2027 SS\". Minimal layout, lots of white space, cobalt blue accent line at the bottom. No extra text."
+    },
+    {
+     "text": "글자 확인 후 저장"
+    }
+   ]
+  },
+  {
+   "title": "Atelier 보안 점검 보고서 받기",
+   "minutes": 30,
+   "why": "Firebase에 개인 기록이 있는 만큼, 고치지 않고 '확인된 문제'만 보고서로 받아볼 수 있습니다. AI를 여럿 띄워 사용량이 크니 한가한 날 돌리세요.",
+   "from": {
+    "label": "GitHub cloudflare/security-audit-skill · 트렌딩 1위",
+    "url": "https://github.com/cloudflare/security-audit-skill"
+   },
+   "steps": [
+    {
+     "text": "터미널에 설치 명령",
+     "copy": "npx skills add https://github.com/cloudflare/security-audit-skill --skill security-audit --global"
+    },
+    {
+     "text": "Claude Code에 요청",
+     "copy": "the-atelier 폴더를 security-audit 스킬로 점검해줘. 코드는 고치지 말고 보고서만 만들어줘."
+    },
+    {
+     "text": "REPORT.md 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "vibe",
+   "title": "포토샵 클론들, 써보니 한계",
+   "url": "https://antyweb.pl/darmowe-klony-photoshopa-zalewaja-internet",
+   "image": null,
+   "source": "Antyweb · 스마트 오브젝트 깨짐",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "포톤 '2천 달러'의 진실",
+   "url": "https://aiidelist.com/blog/gpt-6-astra-photoshop-clone-photon-studio",
+   "image": null,
+   "source": "AIIDE List · 누적 약 $1만 설",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "클로드·코덱스 묶은 AI 비서",
+   "url": "https://github.com/makecindy/cindy",
+   "image": "https://raw.githubusercontent.com/makecindy/cindy/HEAD/.github/assets/hero-en.webp",
+   "source": "GitHub makecindy · Apache-2.0 · 오늘 트렌딩 1위",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "강화학습으로 걷는 오리 로봇",
+   "url": "https://github.com/pollen-robotics/microduck",
+   "image": null,
+   "source": "GitHub pollen-robotics · 25cm·800g",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "TV 정리 따라 하기 기사",
+   "url": "https://itsfoss.com/news/debloat-smart-tv/",
+   "image": null,
+   "source": "It's FOSS · dumbtv·cleanyourtv",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "Kimi K3로 시안 5개 써본 후기",
+   "url": "https://www.producthunt.com/p/aifire/kimi-k3-5-use-cases-on-free-plan",
+   "image": null,
+   "source": "Product Hunt · 무료 플랜 실험",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-26 검색에도 K3.1 실사용 후기·사례 없음(K3 후기만) · 가중치 11-04 공개 예정"
+  },
+  {
+   "name": "Claude 앱 기본 자동 모드",
+   "url": "https://x.com/claudeai/status/2113360845409583307",
+   "date": "2026-10-22",
+   "note": "이번 주 적용 예정 · 아직 사용 후기 없음"
+  },
+  {
+   "name": "Claude Duet (연구 미리보기)",
+   "url": "https://support.claude.com/en/articles/17631495-get-started-with-claude-duet",
+   "date": "2026-10-21",
+   "note": "10-26: 후기는 Lenny's Newsletter 등 소수, 만든 사례 없음 · 미국 Pro·Max 대기 명단"
+  },
+  {
+   "name": "ChatGPT Slides 실시간 공동 편집",
+   "url": "https://techbytes.app/posts/chatgpt-pages-slides-collaborative-editing/",
+   "date": "2026-10-20",
+   "note": "10-26 검색에도 직접 써본 후기 못 찾음 · 10-27 지나면 정리"
+  }
+ ]
+}
