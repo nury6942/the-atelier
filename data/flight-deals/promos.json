@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T07:38",
+ "generatedAt": "2026-10-25T19:38",
  "sites": [
   "KE",
   "OZ",
@@ -57,17 +57,24 @@
       ],
       "pct": 8,
       "amount": null,
-      "cabin": "일반석"
+      "cabin": "일반석 세이버·스탠다드"
+     },
+     {
+      "region": "전 노선",
+      "cities": [],
+      "pct": null,
+      "amount": 30000,
+      "cabin": "전 좌석"
      }
     ],
     "on": "운임",
-    "how": "홈페이지/앱 결제 단계에서 보유 쿠폰 적용",
+    "how": "홈페이지/앱 결제 단계에서 쿠폰 적용",
     "code": null,
     "conditions": [
      "카카오페이 결제",
      "홈페이지/앱 로그인",
      "세이버·스탠다드만",
-     "공동운항·다구간·보너스 제외"
+     "다구간·공동운항·보너스 제외"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/2610kapay?pageNum=1"
@@ -142,16 +149,16 @@
      "region": "유럽",
      "out": "2026-12-01",
      "back": "2026-12-10",
-     "price": 1727300,
+     "price": 1724000,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/prg/261201/261210/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 8,
      "onFare": true,
      "fuel": 644000,
      "tax": 88000,
-     "fare": 995300,
-     "discount": 79600,
-     "final": 1647700
+     "fare": 992000,
+     "discount": 79400,
+     "final": 1644600
     }
    ]
   },
@@ -176,7 +183,7 @@
     "exclude": [],
     "discounts": [],
     "on": "총액",
-    "how": "홈페이지에서 최저가 조회 후 예매",
+    "how": null,
     "code": null,
     "conditions": [],
     "fares": [
@@ -273,10 +280,10 @@
     "how": "결제 화면에서 쿠폰 발급 클릭",
     "code": null,
     "conditions": [
-     "홈페이지 회원 로그인",
+     "홈페이지 회원 로그인 필수",
      "일반석 스탠다드만 (예약등급 T 제외)",
-     "인천 출발 편도/왕복",
-     "다구간·공동운항편·마일리지 제외"
+     "왕복은 양 구간 모두 대상 등급",
+     "공동운항편·다구간·마일리지 항공권 제외"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/aus2610?pageNum=1"
@@ -386,7 +393,7 @@
     "code": null,
     "conditions": [
      "홈페이지/모바일 로그인 회원",
-     "일반석 스탠다드 운임만",
+     "일반석 스탠다드만 (왕복은 양 구간 모두)",
      "마일리지·다구간·공동운항편 제외",
      "타 쿠폰 중복 불가"
     ],
@@ -409,18 +416,18 @@
      "city": "프라하",
      "cc": "cz",
      "region": "유럽",
-     "out": null,
-     "back": null,
-     "price": 1260800,
-     "src": "google",
+     "out": "2026-11-10",
+     "back": "2026-11-19",
+     "price": 4270800,
+     "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/prg/261110/261119/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 7,
      "onFare": true,
      "fuel": 644000,
      "tax": 88000,
-     "fare": 528800,
-     "discount": 37000,
-     "final": 1223800
+     "fare": 3538800,
+     "discount": 247700,
+     "final": 4023100
     }
    ]
   },
@@ -472,11 +479,11 @@
      }
     ],
     "on": "운임",
-    "how": "결제 화면에서 쿠폰 발급 클릭",
+    "how": "결제 화면에서 '쿠폰 발급' 클릭",
     "code": null,
     "conditions": [
-     "홈페이지·모바일 로그인 회원",
-     "일반석 스탠다드만 (왕복은 양 구간 모두)",
+     "대한항공 홈페이지·모바일 로그인 회원",
+     "인천 출발 멜버른행 편도/왕복, 왕복은 양 구간 모두 일반석 스탠다드",
      "마일리지·다구간·공동운항편 제외",
      "타 쿠폰 중복 불가"
     ],
@@ -646,13 +653,13 @@
      }
     ],
     "on": "총액",
-    "how": "할인 코드 OCT26 입력, 금액 쿠폰은 다운로드 후 결제 시 적용",
+    "how": "할인 코드 입력 또는 이벤트 페이지에서 쿠폰 다운로드 후 결제 시 적용",
     "code": "OCT26",
     "conditions": [
-     "공식 홈페이지·앱 예매만",
-     "쿠폰 회원 ID당 1회",
+     "공식 홈페이지(PC/모바일 웹/앱)만",
+     "쿠폰은 회원 ID당 1회",
      "쿠폰 중복 사용 불가",
-     "성수기 쿠폰 제외"
+     "쿠폰은 30만원 이상 결제 시"
     ],
     "fares": [],
     "url": "https://www.trinityairways.com/app/promotion/event/retrieve/dUA-rGulcB413_OAVrBBVw==/being/n"
@@ -678,7 +685,7 @@
      "slug": "sydney",
      "pct": 7,
      "region": "호주",
-     "google": 1002330,
+     "google": 1002346,
      "out": "2026-11-10",
      "back": "2026-11-19"
     },
@@ -686,7 +693,7 @@
      "slug": "vancouver",
      "pct": 7,
      "region": "캐나다",
-     "google": 916028,
+     "google": 916104,
      "out": "2026-11-10",
      "back": "2026-11-19"
     }
@@ -735,16 +742,16 @@
      "region": "호주",
      "out": "2026-11-10",
      "back": "2026-11-19",
-     "price": 945200,
+     "price": 945300,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/syd/261110/261119/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 7,
      "onFare": false,
      "fuel": 644000,
      "tax": 118000,
-     "fare": 945200,
+     "fare": 945300,
      "discount": 66200,
-     "final": 879000
+     "final": 879100
     },
     {
      "slug": "vancouver",
@@ -753,16 +760,16 @@
      "region": "캐나다",
      "out": null,
      "back": null,
-     "price": 916028,
+     "price": 916104,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/yvr/261110/261119/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 7,
      "onFare": false,
      "fuel": 644000,
      "tax": 98000,
-     "fare": 916028,
+     "fare": 916104,
      "discount": 64100,
-     "final": 851928
+     "final": 852004
     }
    ]
   },
@@ -796,13 +803,13 @@
      }
     ],
     "on": "운임",
-    "how": "신규 회원 가입 후 항공권 검색 화면 하단 프로모션 코드 입력",
+    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
      "신규 회원 가입",
-     "가입 후 14일 이내 사용",
+     "가입일로부터 14일 이내 사용",
      "에어프레미아 쿠폰과 중복 불가",
-     "편도·왕복 모두 적용"
+     "일부 일자·운임 적용 불가"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -851,16 +858,16 @@
      "region": "전 노선",
      "out": "2026-11-10",
      "back": "2026-11-19",
-     "price": 1184100,
+     "price": 1184300,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261110/261119/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 644000,
      "tax": 93000,
-     "fare": 447100,
+     "fare": 447300,
      "discount": 22400,
-     "final": 1161700
+     "final": 1161900
     }
    ]
   }
