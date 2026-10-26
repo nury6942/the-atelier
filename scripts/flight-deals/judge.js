@@ -14,7 +14,7 @@ const SKY_FILE = process.argv[3] && !process.argv[3].startsWith('--') ? process.
 // 화면용: 도시 → 나라(국기)·공항 코드, 항공사 → 로고 코드 (gstatic.com/flights/airline_logos/70px/<코드>.png)
 const PLACE = { london:['gb','LON'], paris:['fr','PAR'], rome:['it','ROM'], milan:['it','MIL'], barcelona:['es','BCN'], madrid:['es','MAD'], lisbon:['pt','LIS'],
   amsterdam:['nl','AMS'], frankfurt:['de','FRA'], munich:['de','MUC'], berlin:['de','BER'], prague:['cz','PRG'], vienna:['at','VIE'], zurich:['ch','ZRH'],
-  istanbul:['tr','IST'], athens:['gr','ATH'], helsinki:['fi','HEL'], copenhagen:['dk','CPH'], stockholm:['se','STO'], oslo:['no','OSL'],
+  istanbul:['tr','IST'], athens:['gr','ATH'], helsinki:['fi','HEL'], copenhagen:['dk','CPH'], stockholm:['se','STO'], oslo:['no','OSL'], budapest:['hu','BUD'],
   sydney:['au','SYD'], melbourne:['au','MEL'], brisbane:['au','BNE'], perth:['au','PER'], auckland:['nz','AKL'], christchurch:['nz','CHC'],
   vancouver:['ca','YVR'], toronto:['ca','YTO'], calgary:['ca','YYC'], montreal:['ca','YMQ'],
   'los-angeles':['us','LAX'], 'san-francisco':['us','SFO'], 'new-york':['us','NYC'], seattle:['us','SEA'], 'las-vegas':['us','LAS'], chicago:['us','CHI'], boston:['us','BOS'], honolulu:['us','HNL'] };
