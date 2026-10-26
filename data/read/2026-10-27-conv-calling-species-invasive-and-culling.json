@@ -1,0 +1,818 @@
+{
+ "id": "2026-10-27-conv-calling-species-invasive-and-culling",
+ "title": "Calling species ‘invasive’ – and culling them – isn’t done lightly. But it matters to Australia’s threatened species",
+ "url": "https://theconversation.com/calling-species-invasive-and-culling-them-isnt-done-lightly-but-it-matters-to-australias-threatened-species-294672",
+ "source": "The Conversation",
+ "author": "Euan Ritchie",
+ "published": "2026-10-26",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "It may sound abstract, but distinctions between “native”, “introduced” or “invasive” species can often be life or death. Species considered invasive in Australia – such as European rabbits and feral pigs – are often culled, while most native animals are generally left alone.",
+  "Debate over these terms doesn’t usually go mainstream. But this month was different. On October 13, independent Senator David Pocock brought a motion in federal parliament calling for a long-term plan to “protect Australia’s landscapes and wildlife from invasive species”.",
+  "In response, Greens Senator Mehreen Faruqi took aim at the term “invasive”, saying:",
+  "There’s no need for labelling introduced species as invasive in a way that blames animals for the man-made problems raised by this motion. Language matters. Animals are not villains to be shot or obstacles to be poisoned to death.",
+  "As an ecologist and conservation scientist, the debate spoke to me about how important it is to explain why “invasive” species are given this title, the damage they can do and why many need to be eradicated or their numbers greatly reduced.",
+  "If we stop trying to control some invasive species, we risk condemning even more native animals to extinction and worsening Australia’s environmental decline.",
+  "Every Australian knows common myna birds are bad, rabbits are worse and feral cats kill native animals unchecked.",
+  "But how do we decide what makes an introduced species “good” or “bad” – and will we ever concede that some species are here to stay?",
+  "Our new series on invasive species explores these questions.",
+  "Why do these terms matter?",
+  "Conservationists and authorities commonly use four words – introduced, feral, invasive and pest – to describe species present in Australia. Definitions can differ and there is debate over their exact meaning. But their broad meanings are clear:",
+  "Introduced species (also known as alien, exotic or non-native)",
+  "An introduced species has been moved by humans to areas outside their known natural historic range. This can be accidental (think black rats on ships) or intentional (deer species introduced for hunting). Native species – such as the superb lyrebird – can also be considered introduced when moved to new locations in the same country.",
+  "Feral",
+  "This term refers to introduced domesticated species that now have wild populations independent of people. Feral cats, goats, horses, pigeons, pigs and camels are common examples in Australia.",
+  "Invasive",
+  "Invasives are introduced species whose presence is concerning, either due to their clear (typically negative) impact on ecosystems or their rapid spread after introduction. Not all introduced species are considered invasive, but all invasive species are introduced.",
+  "Pest",
+  "A species is considered a pest if it damages things humans care about, such as crops. Typically, pest species are relatively abundant. Both native and non-native species can be pests.",
+  "While these terms have some overlap, they are generally not interchangeable. They help inform environmental decision-making and guide conservation efforts – including culling or biological controls.",
+  "Native species matter",
+  "For millions of years, Australia was relatively isolated. This shaped the evolution of the continent’s extraordinary array of native species. Most plants, animals and other lifeforms here are found nowhere else on Earth.",
+  "These species have a right to persist in the face of European colonisation, land clearing and waves of introduced species.",
+  "Native species are vital to healthy, functioning ecosystems. They support our economy and national identity, bring us immense joy and have deep cultural meaning for First Nations peoples.",
+  "Why do we need lethal control?",
+  "In her response, Faruqi stated:",
+  "Protecting our precious environment does not require inhumane treatment and cruelty to sentient animals, whether they’re native or introduced species. […] For decades, successive governments have culled and killed introduced species, and yet native species are in a worse position today.",
+  "She isn’t alone. Some people feel uncomfortable with killing some species to save others.",
+  "The problem with this is that if we do nothing, more and more native species will face extinction.",
+  "Globally, ecologists consider introduced and invasive species to be one of the greatest threats to nature’s wealth of species, alongside destruction or alteration of habitat, climate change, disease and pollution.",
+  "Two invasive predators – foxes and feral cats – have been implicated in the recent extinctions of many native Australian mammal species. Invasive rabbits are pests on farms, devastate many native plants and can bolster cat and fox populations.",
+  "Conservationists seek to do the least harm, maximising animal welfare while still keeping native species and ecosystems intact. But this brings a difficult choice. Sometimes, there’s a need to kill some species to save others.",
+  "If we have to make these decisions, we must ensure they have strong scientific justification. Any lethal control program must be able to clearly state its objectives prior to commencing, and measure and report its outcomes, so we can see if it worked or not, and why.",
+  "No control, no numbats",
+  "The numbat was once widespread across Western Australia. But predation by cats and foxes, habitat destruction via land clearing and changes in fire management drove the charismatic termite-eater to the brink of extinction in the 1970s.",
+  "But their numbers have now rebounded. Numbats are no longer endangered.",
+  "What saved the numbat was the difficult decision to use poison baits and traps to cut the numbers of feral cats and foxes in areas where numbats still survived, alongside establishing predator-free, fenced sanctuaries and breeding programs.",
+  "Conservationists have had many similar successes across Australia. Scores of fenced sanctuaries and islands are helping many native species recover in the absence of non-native predators.",
+  "After the last foxes were removed from Victoria’s Phillip Island, little penguin numbers rose, while eastern barred bandicoots and bush stone-curlews were successfully brought to the island after being wiped out by predators and other pressures elsewhere.",
+  "When invasive species pressure lifts, native species can rebound",
+  "Faruqi’s claim that native species are in a worse position today is inaccurate, as Australia’s threatened mammal index shows.",
+  "Where authorities control invasive predator numbers and take other management actions, native mammals do far better. Populations of these species fell about 20% and largely stabilised between 2000 and 2022. By comparison, populations of threatened mammals without this management intervention fell more than 50% over the same period.",
+  "It’s true Australia’s overall conservation trajectory is dire and deteriorating. But that’s not a reason to stop controlling invasive species – quite the contrary.",
+  "Invasive species are only trying to live. But their success comes at a potentially very real cost to the survival of native Australian species.",
+  "We have a responsibility to try and solve the problems caused by the introductions of species by earlier generations. Letting cats, deer, foxes, horses, pigs, and other invasive species run riot is no answer."
+ ],
+ "level": "C1",
+ "minutes": 6,
+ "words": 1099,
+ "gloss": {
+  "invasive": {
+   "w": "invasive",
+   "pos": "형용사",
+   "ko": "침입성의, 외래 침입종의",
+   "en": "spreading into a new area and causing harm there",
+   "ex": "Gardeners are asked not to plant invasive vines that choke local trees.",
+   "ipa": "/ɪnˈveɪsɪv/"
+  },
+  "culled": {
+   "w": "culled",
+   "pos": "동사",
+   "ko": "(개체 수 조절을 위해) 도태시켰다",
+   "en": "killed some animals to reduce their numbers",
+   "ex": "Thousands of wild goats were culled on the island last year.",
+   "ipa": "/kʌld/"
+  },
+  "cull": {
+   "w": "cull",
+   "pos": "동사",
+   "ko": "(개체 수 조절을 위해) 도태시키다",
+   "en": "to kill some animals to reduce their numbers",
+   "ex": "Officials decided to cull the deer to protect young forests.",
+   "ipa": "/kʌl/"
+  },
+  "culling": {
+   "w": "culling",
+   "pos": "명사",
+   "ko": "도태, 살처분",
+   "en": "the selective killing of animals to control numbers",
+   "ex": "Culling remains a controversial way to manage wildlife.",
+   "ipa": "/ˈkʌlɪŋ/"
+  },
+  "feral": {
+   "w": "feral",
+   "pos": "형용사",
+   "ko": "야생화된",
+   "en": "once domestic but now living wild",
+   "ex": "Feral horses roam freely across the mountain plains.",
+   "ipa": "/ˈferəl/"
+  },
+  "motion": {
+   "w": "motion",
+   "pos": "명사",
+   "ko": "(의회의) 발의, 동의안",
+   "en": "a formal proposal put to a parliament or meeting for a vote",
+   "ex": "The council passed a motion to ban plastic bags.",
+   "ipa": "/ˈməʊʃn/"
+  },
+  "took aim at": {
+   "w": "took aim at",
+   "pos": "구",
+   "ko": "~을 겨냥해 비판했다",
+   "en": "criticised or attacked something",
+   "ex": "The reviewer took aim at the brand's misleading green claims.",
+   "ipa": "/tʊk ˈeɪm æt/"
+  },
+  "take aim at": {
+   "w": "take aim at",
+   "pos": "구",
+   "ko": "~을 겨냥해 비판하다",
+   "en": "to criticise or attack something",
+   "ex": "Many designers take aim at fast fashion for its waste.",
+   "ipa": "/teɪk ˈeɪm æt/"
+  },
+  "villains": {
+   "w": "villains",
+   "pos": "명사",
+   "ko": "악당들",
+   "en": "people or things blamed as the cause of harm",
+   "ex": "In the story, the villains are finally caught.",
+   "ipa": "/ˈvɪlənz/"
+  },
+  "villain": {
+   "w": "villain",
+   "pos": "명사",
+   "ko": "악당, 원흉",
+   "en": "a person or thing blamed as the cause of harm",
+   "ex": "Sugar is often treated as the villain in modern diets.",
+   "ipa": "/ˈvɪlən/"
+  },
+  "eradicated": {
+   "w": "eradicated",
+   "pos": "동사",
+   "ko": "근절된",
+   "en": "completely destroyed or removed",
+   "ex": "Smallpox was eradicated worldwide in 1980.",
+   "ipa": "/ɪˈrædɪkeɪtɪd/"
+  },
+  "eradicate": {
+   "w": "eradicate",
+   "pos": "동사",
+   "ko": "근절하다, 박멸하다",
+   "en": "to destroy or remove something completely",
+   "ex": "The city hopes to eradicate homelessness within ten years.",
+   "ipa": "/ɪˈrædɪkeɪt/"
+  },
+  "condemning": {
+   "w": "condemning",
+   "pos": "동사",
+   "ko": "(나쁜 운명에) 처하게 하는",
+   "en": "forcing someone or something into a bad situation",
+   "ex": "Low wages are condemning many families to poverty.",
+   "ipa": "/kənˈdemɪŋ/"
+  },
+  "condemn": {
+   "w": "condemn",
+   "pos": "동사",
+   "ko": "(나쁜 운명에) 처하게 하다; 비난하다",
+   "en": "to force into an unpleasant fate; to strongly criticise",
+   "ex": "A lack of training could condemn the project to failure.",
+   "ipa": "/kənˈdem/"
+  },
+  "extinction": {
+   "w": "extinction",
+   "pos": "명사",
+   "ko": "멸종",
+   "en": "the state of a species no longer existing",
+   "ex": "Overfishing has pushed several sharks close to extinction.",
+   "ipa": "/ɪkˈstɪŋkʃn/"
+  },
+  "concede": {
+   "w": "concede",
+   "pos": "동사",
+   "ko": "(마지못해) 인정하다",
+   "en": "to admit that something is true, often unwillingly",
+   "ex": "She had to concede that the cheaper fabric looked better.",
+   "ipa": "/kənˈsiːd/"
+  },
+  "here to stay": {
+   "w": "here to stay",
+   "pos": "구",
+   "ko": "계속 남아 있을, 정착한",
+   "en": "permanent and not going to disappear",
+   "ex": "Remote working seems to be here to stay.",
+   "ipa": "/ˌhɪə tə ˈsteɪ/"
+  },
+  "unchecked": {
+   "w": "unchecked",
+   "pos": "형용사",
+   "ko": "억제되지 않은, 제멋대로인",
+   "en": "not controlled or stopped",
+   "ex": "If left unchecked, the mould will spread through the walls.",
+   "ipa": "/ˌʌnˈtʃekt/"
+  },
+  "interchangeable": {
+   "w": "interchangeable",
+   "pos": "형용사",
+   "ko": "서로 바꿔 쓸 수 있는",
+   "en": "able to be exchanged for each other without difference",
+   "ex": "The jacket has interchangeable buttons in three colours.",
+   "ipa": "/ˌɪntəˈtʃeɪndʒəbl/"
+  },
+  "domesticated": {
+   "w": "domesticated",
+   "pos": "형용사",
+   "ko": "가축화된, 길들여진",
+   "en": "bred and kept by humans rather than living wild",
+   "ex": "Dogs were among the first domesticated animals.",
+   "ipa": "/dəˈmestɪkeɪtɪd/"
+  },
+  "persist": {
+   "w": "persist",
+   "pos": "동사",
+   "ko": "존속하다, 지속되다",
+   "en": "to continue to exist",
+   "ex": "Old habits often persist long after we want to change them.",
+   "ipa": "/pəˈsɪst/"
+  },
+  "in the face of": {
+   "w": "in the face of",
+   "pos": "구",
+   "ko": "~에 직면하여, ~에도 불구하고",
+   "en": "when dealing with a difficulty or threat",
+   "ex": "The small shop survived in the face of fierce online competition.",
+   "ipa": "/ɪn ðə ˈfeɪs əv/"
+  },
+  "array": {
+   "w": "array",
+   "pos": "명사",
+   "ko": "다양한 집합, 진열",
+   "en": "a large and varied group of things",
+   "ex": "The market offers a dazzling array of fabrics.",
+   "ipa": "/əˈreɪ/"
+  },
+  "lethal": {
+   "w": "lethal",
+   "pos": "형용사",
+   "ko": "치명적인, 죽이는",
+   "en": "able to cause death",
+   "ex": "Some mushrooms contain a lethal toxin.",
+   "ipa": "/ˈliːθl/"
+  },
+  "sentient": {
+   "w": "sentient",
+   "pos": "형용사",
+   "ko": "지각력이 있는, 감각이 있는",
+   "en": "able to feel pain and experience sensations",
+   "ex": "Many people believe fish are sentient creatures.",
+   "ipa": "/ˈsenʃnt/"
+  },
+  "inhumane": {
+   "w": "inhumane",
+   "pos": "형용사",
+   "ko": "비인도적인, 잔인한",
+   "en": "cruel and causing unnecessary suffering",
+   "ex": "Activists protested against inhumane factory conditions.",
+   "ipa": "/ˌɪnhjuːˈmeɪn/"
+  },
+  "successive": {
+   "w": "successive",
+   "pos": "형용사",
+   "ko": "연이은, 역대의",
+   "en": "following one after another",
+   "ex": "The team won three successive championships.",
+   "ipa": "/səkˈsesɪv/"
+  },
+  "implicated": {
+   "w": "implicated",
+   "pos": "동사",
+   "ko": "(원인으로) 연루된",
+   "en": "shown to be involved in or responsible for something",
+   "ex": "Poor ventilation was implicated in the spread of the virus.",
+   "ipa": "/ˈɪmplɪkeɪtɪd/"
+  },
+  "implicate": {
+   "w": "implicate",
+   "pos": "동사",
+   "ko": "(원인으로) 연루시키다",
+   "en": "to show that something is involved in a problem",
+   "ex": "New data implicate air pollution in rising asthma rates.",
+   "ipa": "/ˈɪmplɪkeɪt/"
+  },
+  "devastate": {
+   "w": "devastate",
+   "pos": "동사",
+   "ko": "황폐화하다, 큰 피해를 주다",
+   "en": "to destroy or badly damage",
+   "ex": "A single storm can devastate an entire coastal town.",
+   "ipa": "/ˈdevəsteɪt/"
+  },
+  "bolster": {
+   "w": "bolster",
+   "pos": "동사",
+   "ko": "강화하다, 북돋우다",
+   "en": "to support or make stronger",
+   "ex": "The new collection helped bolster the brand's sales.",
+   "ipa": "/ˈbəʊlstə/"
+  },
+  "intact": {
+   "w": "intact",
+   "pos": "형용사",
+   "ko": "온전한, 손상되지 않은",
+   "en": "complete and not damaged",
+   "ex": "The vintage dress arrived with all its beads intact.",
+   "ipa": "/ɪnˈtækt/"
+  },
+  "justification": {
+   "w": "justification",
+   "pos": "명사",
+   "ko": "정당한 근거, 정당화",
+   "en": "a good reason for doing something",
+   "ex": "There is no justification for raising prices this much.",
+   "ipa": "/ˌdʒʌstɪfɪˈkeɪʃn/"
+  },
+  "commencing": {
+   "w": "commencing",
+   "pos": "동사",
+   "ko": "시작하는",
+   "en": "beginning",
+   "ex": "Please switch off your phone before commencing the test.",
+   "ipa": "/kəˈmensɪŋ/"
+  },
+  "commence": {
+   "w": "commence",
+   "pos": "동사",
+   "ko": "시작하다 (격식)",
+   "en": "to begin (formal)",
+   "ex": "Construction will commence next spring.",
+   "ipa": "/kəˈmens/"
+  },
+  "widespread": {
+   "w": "widespread",
+   "pos": "형용사",
+   "ko": "널리 퍼진",
+   "en": "found or happening over a large area",
+   "ex": "There is widespread interest in second-hand clothing.",
+   "ipa": "/ˈwaɪdspred/"
+  },
+  "predation": {
+   "w": "predation",
+   "pos": "명사",
+   "ko": "포식, 잡아먹힘",
+   "en": "the killing and eating of animals by other animals",
+   "ex": "Ground-nesting birds suffer heavily from predation.",
+   "ipa": "/prɪˈdeɪʃn/"
+  },
+  "brink of extinction": {
+   "w": "brink of extinction",
+   "pos": "구",
+   "ko": "멸종 직전",
+   "en": "the point where a species almost disappears",
+   "ex": "Conservation work brought the whale back from the brink of extinction.",
+   "ipa": "/ˌbrɪŋk əv ɪkˈstɪŋkʃn/"
+  },
+  "rebounded": {
+   "w": "rebounded",
+   "pos": "동사",
+   "ko": "회복되었다, 반등했다",
+   "en": "increased again after a fall",
+   "ex": "Tourist numbers rebounded after the border reopened.",
+   "ipa": "/rɪˈbaʊndɪd/"
+  },
+  "rebound": {
+   "w": "rebound",
+   "pos": "동사",
+   "ko": "회복하다, 반등하다",
+   "en": "to increase or recover after a fall",
+   "ex": "Experts expect the market to rebound next year.",
+   "ipa": "/rɪˈbaʊnd/"
+  },
+  "sanctuaries": {
+   "w": "sanctuaries",
+   "pos": "명사",
+   "ko": "보호구역들",
+   "en": "protected areas where animals can live safely",
+   "ex": "Several bird sanctuaries line the river.",
+   "ipa": "/ˈsæŋktʃuəriz/"
+  },
+  "sanctuary": {
+   "w": "sanctuary",
+   "pos": "명사",
+   "ko": "보호구역, 피난처",
+   "en": "a protected place where animals live safely",
+   "ex": "The rescued elephants now live in a sanctuary in Thailand.",
+   "ipa": "/ˈsæŋktʃuəri/"
+  },
+  "wiped out": {
+   "w": "wiped out",
+   "pos": "구",
+   "ko": "전멸된, 완전히 없어진",
+   "en": "completely destroyed",
+   "ex": "The village crops were wiped out by the flood.",
+   "ipa": "/ˌwaɪpt ˈaʊt/"
+  },
+  "wipe out": {
+   "w": "wipe out",
+   "pos": "구",
+   "ko": "전멸시키다, 완전히 없애다",
+   "en": "to destroy completely",
+   "ex": "A new disease could wipe out the country's banana farms.",
+   "ipa": "/ˌwaɪp ˈaʊt/"
+  },
+  "trajectory": {
+   "w": "trajectory",
+   "pos": "명사",
+   "ko": "추세, 흐름의 궤적",
+   "en": "the direction in which something is developing",
+   "ex": "Her career has followed an upward trajectory.",
+   "ipa": "/trəˈdʒektəri/"
+  },
+  "dire": {
+   "w": "dire",
+   "pos": "형용사",
+   "ko": "심각한, 끔찍한",
+   "en": "extremely serious or bad",
+   "ex": "The hospital is in dire need of more nurses.",
+   "ipa": "/ˈdaɪə/"
+  },
+  "deteriorating": {
+   "w": "deteriorating",
+   "pos": "동사",
+   "ko": "악화되고 있는",
+   "en": "becoming worse",
+   "ex": "The deteriorating weather forced us to cancel the shoot.",
+   "ipa": "/dɪˈtɪəriəreɪtɪŋ/"
+  },
+  "deteriorate": {
+   "w": "deteriorate",
+   "pos": "동사",
+   "ko": "악화되다",
+   "en": "to become worse",
+   "ex": "Silk can deteriorate quickly in strong sunlight.",
+   "ipa": "/dɪˈtɪəriəreɪt/"
+  },
+  "quite the contrary": {
+   "w": "quite the contrary",
+   "pos": "구",
+   "ko": "오히려 정반대다",
+   "en": "the opposite is true",
+   "ex": "The plan isn't too expensive; quite the contrary, it saves money.",
+   "ipa": "/ˌkwaɪt ðə ˈkɒntrəri/"
+  },
+  "run riot": {
+   "w": "run riot",
+   "pos": "구",
+   "ko": "제멋대로 날뛰다, 마구 퍼지다",
+   "en": "to behave or grow without any control",
+   "ex": "Weeds will run riot if you leave the garden for a month.",
+   "ipa": "/ˌrʌn ˈraɪət/"
+  },
+  "abundant": {
+   "w": "abundant",
+   "pos": "형용사",
+   "ko": "풍부한, 많은",
+   "en": "existing in large quantities",
+   "ex": "Fresh fruit is abundant at the summer market.",
+   "ipa": "/əˈbʌndənt/"
+  },
+  "go mainstream": {
+   "w": "go mainstream",
+   "pos": "구",
+   "ko": "대중화되다, 주류가 되다",
+   "en": "to become widely known or accepted",
+   "ex": "Vintage shopping has finally gone mainstream.",
+   "ipa": "/ˌɡəʊ ˈmeɪnstriːm/"
+  },
+  "overlap": {
+   "w": "overlap",
+   "pos": "명사",
+   "ko": "겹침, 중복",
+   "en": "a shared part between two or more things",
+   "ex": "There is some overlap between the two job roles.",
+   "ipa": "/ˈəʊvəlæp/"
+  },
+  "alteration": {
+   "w": "alteration",
+   "pos": "명사",
+   "ko": "변경, 개조",
+   "en": "a change made to something",
+   "ex": "The tailor charged extra for the alteration to the sleeves.",
+   "ipa": "/ˌɔːltəˈreɪʃn/"
+  },
+  "intervention": {
+   "w": "intervention",
+   "pos": "명사",
+   "ko": "개입, 조치",
+   "en": "action taken to improve a situation",
+   "ex": "Early medical intervention can save lives.",
+   "ipa": "/ˌɪntəˈvenʃn/"
+  },
+  "charismatic": {
+   "w": "charismatic",
+   "pos": "형용사",
+   "ko": "매력적인, 사랑받는",
+   "en": "attractive and appealing in a way that draws attention",
+   "ex": "Pandas are a charismatic symbol of wildlife protection.",
+   "ipa": "/ˌkærɪzˈmætɪk/"
+  },
+  "stabilised": {
+   "w": "stabilised",
+   "pos": "동사",
+   "ko": "안정되었다",
+   "en": "stopped changing and became steady",
+   "ex": "Prices stabilised after months of sharp rises.",
+   "ipa": "/ˈsteɪbəlaɪzd/"
+  },
+  "stabilise": {
+   "w": "stabilise",
+   "pos": "동사",
+   "ko": "안정되다, 안정시키다",
+   "en": "to become or make steady",
+   "ex": "The government acted quickly to stabilise the currency.",
+   "ipa": "/ˈsteɪbəlaɪz/"
+  },
+  "obstacles": {
+   "w": "obstacles",
+   "pos": "명사",
+   "ko": "장애물들",
+   "en": "things that block the way or make progress difficult",
+   "ex": "Language barriers were the biggest obstacles for new staff.",
+   "ipa": "/ˈɒbstəklz/"
+  },
+  "obstacle": {
+   "w": "obstacle",
+   "pos": "명사",
+   "ko": "장애물",
+   "en": "something that blocks the way or makes progress difficult",
+   "ex": "Cost is the main obstacle to buying sustainable clothing.",
+   "ipa": "/ˈɒbstəkl/"
+  },
+  "life or death": {
+   "w": "life or death",
+   "pos": "구",
+   "ko": "생사가 걸린 문제",
+   "en": "extremely important, deciding whether someone survives",
+   "ex": "For the climbers, the weather forecast was a matter of life or death.",
+   "ipa": "/ˌlaɪf ɔː ˈdeθ/"
+  },
+  "scores of": {
+   "w": "scores of",
+   "pos": "구",
+   "ko": "수십의, 많은",
+   "en": "a large number of",
+   "ex": "Scores of fans waited outside the store before it opened.",
+   "ipa": "/ˈskɔːz əv/"
+  }
+ },
+ "vocab": [
+  "eradicate",
+  "condemn",
+  "concede",
+  "unchecked",
+  "interchangeable",
+  "persist",
+  "lethal",
+  "implicate",
+  "bolster",
+  "intact",
+  "rebound",
+  "trajectory",
+  "dire",
+  "deteriorate"
+ ],
+ "quiz": [
+  {
+   "q": "Senator David Pocock’s motion asked for a long-term plan to protect Australia’s wildlife from invasive species.",
+   "a": "TRUE",
+   "why": "10월 13일 Pocock 상원의원이 침입종으로부터 경관과 야생동물을 보호할 장기 계획을 요구하는 발의를 했다고 나온다."
+  },
+  {
+   "q": "Every introduced species in Australia is classed as invasive.",
+   "a": "FALSE",
+   "why": "모든 도입종이 침입종은 아니지만, 모든 침입종은 도입종이라고 명시되어 있다."
+  },
+  {
+   "q": "Most Australians support the culling of feral cats.",
+   "a": "NOT GIVEN",
+   "why": "고양이가 해롭다는 건 다들 안다고만 했지, 도태에 찬성하는 사람의 비율은 나오지 않는다."
+  },
+  {
+   "q": "Between 2000 and 2022, threatened mammals under predator control fell by roughly 20 percent before largely levelling off.",
+   "a": "TRUE",
+   "why": "관리 지역의 개체 수는 약 20% 줄어든 뒤 대체로 안정됐고, 관리하지 않은 곳은 50% 넘게 줄었다고 나온다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "these labels can decide whether animals live or die",
+   "article": "species can often be life or death"
+  },
+  {
+   "simple": "we could push many more native animals to die out",
+   "article": "we risk condemning even more native animals to extinction"
+  },
+  {
+   "simple": "the words cannot usually be swapped for one another",
+   "article": "they are generally not interchangeable"
+  },
+  {
+   "simple": "pushed the popular ant-eating animal close to dying out",
+   "article": "drove the charismatic termite-eater to the brink of extinction"
+  },
+  {
+   "simple": "allowing harmful introduced animals to spread freely does not solve anything",
+   "article": "other invasive species run riot is no answer"
+  }
+ ],
+ "summary": "An Australian ecologist argues that labelling some introduced animals as invasive and killing them, when backed by clear scientific evidence, is necessary to stop native species dying out, pointing to recoveries such as the numbat’s.",
+ "gist": "호주 의회에서 '침입종'이라는 말과 도태(살처분)를 두고 논쟁이 벌어지자, 한 생태학자가 용어들의 차이를 설명하는 글이다.\n여우·들고양이 같은 침입종을 관리해야 토종 동물을 지킬 수 있다고 주장하며 넘뱃 회복 사례와 통계를 근거로 든다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Senator Pocock put forward his motion on invasive species in October.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "[2] \"On October 13, independent Senator David Pocock brought a motion\" — 10월에 발의함"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Every species that has been introduced to Australia is regarded as invasive.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "[17] \"Not all introduced species are considered invasive\" — 모든 도입종이 침입종은 아님"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The programme that saved the numbat was paid for mainly by the federal government.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[37] 미끼·덫·보호구역·번식 프로그램은 나오지만 누가 비용을 댔는지는 언급 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Faruqi is right that native species are worse off today despite decades of culling.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "[41] \"Faruqi's claim that native species are in a worse position today is inaccurate\" — 필자는 틀렸다고 봄"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "A programme that kills animals should set out its aims before it starts.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "[33] \"must be able to clearly state its objectives prior to commencing\" — 시작 전에 목표를 밝혀야 한다고 주장"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 22",
+    "options": [
+     "i  The economic cost of feral animals",
+     "ii  How isolation produced a unique set of wildlife",
+     "iii  Figures comparing managed and unmanaged populations",
+     "iv  Public opposition to the use of poison baits",
+     "v  Combined measures that rescued one species"
+    ],
+    "answer": "ii",
+    "why": "[22] \"Australia was relatively isolated. This shaped the evolution of ... extraordinary array of native species\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 37",
+    "options": [
+     "i  The economic cost of feral animals",
+     "ii  How isolation produced a unique set of wildlife",
+     "iii  Figures comparing managed and unmanaged populations",
+     "iv  Public opposition to the use of poison baits",
+     "v  Combined measures that rescued one species"
+    ],
+    "answer": "v",
+    "why": "[37] \"poison baits and traps ... alongside establishing predator-free, fenced sanctuaries and breeding programs\" — 여러 조치를 함께 써서 넘뱃을 살림"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 42",
+    "options": [
+     "i  The economic cost of feral animals",
+     "ii  How isolation produced a unique set of wildlife",
+     "iii  Figures comparing managed and unmanaged populations",
+     "iv  Public opposition to the use of poison baits",
+     "v  Combined measures that rescued one species"
+    ],
+    "answer": "iii",
+    "why": "[42] \"fell about 20% ... By comparison, populations ... without this management intervention fell more than 50%\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions an example of a species brought to a new place by accident?",
+    "options": [
+     "13",
+     "15",
+     "31",
+     "39"
+    ],
+    "answer": "13",
+    "why": "[13] \"This can be accidental (think black rats on ships)\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions species being returned to an area after predators were removed?",
+    "options": [
+     "31",
+     "35",
+     "39",
+     "44"
+    ],
+    "answer": "39",
+    "why": "[39] \"After the last foxes were removed ... bandicoots and bush stone-curlews were successfully brought to the island\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the article, one way rabbits indirectly harm native wildlife is by",
+    "options": [
+     "A competing with foxes for the same food.",
+     "B spreading disease among native mammals.",
+     "C helping cat and fox numbers to grow.",
+     "D destroying the termite mounds numbats feed on."
+    ],
+    "answer": "C",
+    "why": "[31] \"Invasive rabbits ... can bolster cat and fox populations\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What is the writer's view of Australia's overall conservation situation?",
+    "options": [
+     "A It is improving mainly because of culling.",
+     "B It is serious and getting worse, but this supports continued control.",
+     "C It is impossible to measure accurately.",
+     "D It is better than in most other countries."
+    ],
+    "answer": "B",
+    "why": "[43] \"overall conservation trajectory is dire and deteriorating. But that's not a reason to stop controlling invasive species\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Domesticated animals that were introduced and now live in the wild without relying on humans are described as ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "feral",
+     "Feral"
+    ],
+    "why": "[15] Feral 정의: \"introduced domesticated species that now have wild populations independent of people\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "The example of the superb lyrebird shows that even ____ can count as introduced if they are moved elsewhere within the same country.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "native species",
+     "Native species"
+    ],
+    "why": "[13] \"Native species – such as the superb lyrebird – can also be considered introduced when moved to new locations in the same country\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Between 2000 and 2022, by how much did threatened mammal populations under predator management decline?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "about 20%",
+     "20%"
+    ],
+    "why": "[42] \"Populations of these species fell about 20% and largely stabilised between 2000 and 2022\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    21,
+    36,
+    41
+   ]
+  }
+ }
+}

@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-24T22:11:42.688Z",
+ "updated": "2026-10-26T23:43:50.402Z",
  "items": [
+  {
+   "id": "2026-10-27-conv-calling-species-invasive-and-culling",
+   "date": "2026-10-27",
+   "source": "The Conversation",
+   "title": "Calling species ‘invasive’ – and culling them – isn’t done lightly. But it matters to Australia’s threatened species",
+   "url": "https://theconversation.com/calling-species-invasive-and-culling-them-isnt-done-lightly-but-it-matters-to-australias-threatened-species-294672",
+   "author": "Euan Ritchie",
+   "minutes": 6,
+   "level": "C1",
+   "words": 1099,
+   "topic": "환경",
+   "gist": "호주 의회에서 '침입종'이라는 말과 도태(살처분)를 두고 논쟁이 벌어지자, 한 생태학자가 용어들의 차이를 설명하는 글이다.\n여우·들고양이 같은 침입종을 관리해야 토종 동물을 지킬 수 있다고 주장하며 넘뱃 회복 사례와 통계를 근거로 든다.",
+   "file": "data/read/2026-10-27-conv-calling-species-invasive-and-culling.json"
+  },
+  {
+   "id": "2026-10-27-conv-social-media-hasnt-killed-personal",
+   "date": "2026-10-27",
+   "source": "The Conversation",
+   "title": "Social media hasn’t killed personal style, it’s killed how we communicate it",
+   "url": "https://theconversation.com/social-media-hasnt-killed-personal-style-its-killed-how-we-communicate-it-292483",
+   "author": "Catherine Greenwood",
+   "minutes": 5,
+   "level": "C1",
+   "words": 826,
+   "topic": "패션",
+   "gist": "SNS가 개인 스타일을 없앤 게 아니라, 스타일을 보여주는 '방식'(포즈·장소·캡션 등)을 획일화했다는 칼럼.\n인플루언서 게시물 390개 분석을 근거로, 옷보다 포장 방식에 주목하라고 제안한다.",
+   "file": "data/read/2026-10-27-conv-social-media-hasnt-killed-personal.json"
+  },
   {
    "id": "2026-10-25-conv-a-scuff-on-your-bag-a-dent-in-your-mug",
    "date": "2026-10-25",
@@ -101,6 +129,36 @@
   }
  ],
  "links": [
+  {
+   "source": "BoF",
+   "title": "What Buyers Really Want From Emerging Designers",
+   "url": "https://www.businessoffashion.com/articles/retail/what-buyers-really-want-from-emerging-designers/",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "BoF",
+   "title": "Post-Exit Founders Are Racing to Their Second Acts",
+   "url": "https://www.businessoffashion.com/articles/beauty/post-exit-founders-race-to-launch-their-second-acts/",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "BoF",
+   "title": "US Retailers Face Record Holiday Delivery Prices",
+   "url": "https://www.businessoffashion.com/articles/retail/us-retailers-face-record-holiday-delivery-prices/",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "BoF",
+   "title": "Miuccia Prada: Future-Proofing a Fashion Dynasty",
+   "url": "https://www.businessoffashion.com/articles/luxury/miuccia-prada-future-proofing-a-fashion-dynasty/",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "BBC Future",
+   "title": "How solar became bigger than nuclear",
+   "url": "https://www.bbc.com/future/article/20261023-how-solar-became-bigger-than-nuclear",
+   "date": "2026-10-26"
+  },
   {
    "source": "BoF",
    "title": "Cashing In on the Denim Boom Is Harder Than It Looks",
@@ -249,36 +307,6 @@
    "source": "BoF",
    "title": "Luxury’s Problem With Unsold Stock Comes Under the Microscope",
    "url": "https://www.businessoffashion.com/articles/luxury/luxury-unsold-good-recycling-destruction-laws/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Samuel Guì Yang Does Fashion at Its Own Pace",
-   "url": "https://www.businessoffashion.com/articles/creative-class/samuel-gui-yang-brand-fashion-show-shanghai/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Veronica Leoni to Exit Calvin Klein",
-   "url": "https://www.businessoffashion.com/articles/luxury/veronica-leoni-to-exit-calvin-klein/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Seán McGirr Exits McQueen",
-   "url": "https://www.businessoffashion.com/articles/luxury/sean-mcgirr-exits-mcqueen/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "How to Scale Your Creator Portfolio",
-   "url": "https://www.businessoffashion.com/articles/marketing-pr/how-to-scale-your-creator-portfolio/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Luxury’s Spooky Season: Bad Numbers and Empty Chairs",
-   "url": "https://www.businessoffashion.com/articles/luxury/luxurys-spooky-season-bad-numbers-and-empty-chairs/",
    "date": "2026-10-18"
   }
  ]

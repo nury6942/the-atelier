@@ -1,0 +1,795 @@
+{
+ "id": "2026-10-27-conv-social-media-hasnt-killed-personal",
+ "title": "Social media hasn’t killed personal style, it’s killed how we communicate it",
+ "url": "https://theconversation.com/social-media-hasnt-killed-personal-style-its-killed-how-we-communicate-it-292483",
+ "source": "The Conversation",
+ "author": "Catherine Greenwood",
+ "published": "2026-10-01",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "This summer, social media was filled with posts declaring that almost anything was “kinda chic”. Repeating outfits was kinda chic. Being overdressed was kinda chic. Doing something unfashionable could, apparently, also be kinda chic.",
+  "But can you remember the content of many individual “kinda chic” posts now? Probably not. What is much easier to remember is the format itself: the language, the rhythm, the way an ordinary behaviour or object was reframed as evidence of taste.",
+  "That distinction tells us something important about fashion online. We often worry that social media is making everyone dress the same, but perhaps the greater similarity lies in how we communicate being fashionable.",
+  "Social media does not only circulate products and trends, it circulates recognisable ways of presenting them. A city street or a zebra crossing becomes the setting for an outfit photograph. Coffee appears alongside carefully placed handbags. Hotels, holidays and fashion events become backdrops. Accessories are photographed in close-up, bodies adopt familiar poses and captions perform effortlessness even when the accompanying image is highly composed.",
+  "The individual content changes but the mode of communication often does not.",
+  "Fashion has always depended on shared meanings. Clothes can distinguish us precisely because other people understand something about what they signify. Cowboy boots, a Chanel jacket or a football shirt come with cultural associations long before an individual wears them.",
+  "What social media has changed is the speed and scale at which those meanings, and the conventions used to communicate them, can circulate.",
+  "When difference starts to use the same language",
+  "In a study of 390 Instagram posts from three established luxury fashion influencers between 2022 and 2024, I examined how fashion meaning was constructed through combinations of pose, location, styling, captions, editing and cultural references.",
+  "What I found was not simply repetition of particular brands or garments, but recurring ways of making fashion understandable.",
+  "Some posts communicated aspiration through polished styling, exclusive settings or access to fashion events. Others used everyday routines, informal language and familiar places to create relatability. Cultural knowledge, industry connections, humour and lifestyle storytelling introduced other ways of signalling authority and taste.",
+  "These practices frequently overlapped. An expensive outfit could be photographed on an ordinary street. An exclusive event might be accompanied by an informal caption. Highly controlled imagery could be placed alongside coffee, travel or mundane moments of everyday life.",
+  "The clothes differed, but the communicative patterns were often recognisable.",
+  "This matters because influencers do more than encourage people to buy products. They translate fashion into forms that work on platforms.",
+  "Fashion magazines and runway shows have historically used particular visual conventions to communicate taste, status and desirability. Instagram and TikTok operate through another set of conventions, shaped by speed, intimacy, entertainment, searchability and visibility.",
+  "Influencers move between these languages. They retain recognisable signs of taste and distinction while reshaping them into forms suited to social media. This offers another way to understand why personal style can begin to feel increasingly similar online.",
+  "Two people might own completely different wardrobes yet photograph, position and narrate them in almost identical ways. A minimalist outfit, western boots or a vintage dress can all appear within the same walking shot, city street, coffee-in-hand photograph or accompanied by a deliberately effortless caption.",
+  "The garments change, but the formulation remains the same",
+  "The rise of named aesthetics makes this even clearer. Clean girl, old money, coastal grandma, mob wife and the growing number of “-core” aesthetics – such as cottagecore, balletcore and gorpcore – do more than describe clothing. They assemble recognisable visual worlds, connecting particular garments with locations, objects, beauty choices and behaviours.",
+  "Once an aesthetic becomes recognisable, it becomes searchable. Once searchable, it becomes easier to reproduce, recommend and commercialise.",
+  "The same is true of formats such as “kinda chic”. What travels most successfully may not be one particular outfit or image at all. It may be the structure through which people are invited to communicate taste.",
+  "This creates a paradox. We have access to more fashion imagery than any previous generation, yet this does not necessarily make the way we dress more visually diverse. Instead, the same references, aesthetics and styling cues are repeatedly circulated, giving us shared ways of expressing individuality.",
+  "None of this means personal style has disappeared. Fashion has always involved borrowing, imitation and reinterpretation. What has changed is the efficiency with which platforms package and circulate not only styles, but the conventions through which those styles become meaningful.",
+  "Perhaps the question is therefore not whether social media is making us all dress the same, it is whether it is teaching us all to show our difference in the same way.",
+  "So, next time you like what you’re wearing and you’d like to share it on socials, try something a bit different, a bit unexpected. Similarly, pay attention to the clothes in the posts you scroll rather than the way they have been packaged. You might start to see that personal style is alive and well."
+ ],
+ "level": "C1",
+ "minutes": 5,
+ "words": 826,
+ "gloss": {
+  "kinda chic": {
+   "w": "kinda chic",
+   "pos": "구",
+   "ko": "좀 세련된, 은근 멋있는",
+   "en": "informal phrase meaning somewhat stylish",
+   "ex": "Wearing your dad's old blazer is kinda chic.",
+   "ipa": "/ˈkaɪndə ʃiːk/"
+  },
+  "declaring": {
+   "w": "declare",
+   "pos": "동사",
+   "ko": "선언하다, 단언하다",
+   "en": "to state something firmly and publicly",
+   "ex": "The magazine declared wide-leg trousers the look of the season.",
+   "ipa": "/dɪˈkleərɪŋ/"
+  },
+  "declare": {
+   "w": "declare",
+   "pos": "동사",
+   "ko": "선언하다, 단언하다",
+   "en": "to state something firmly and publicly",
+   "ex": "The magazine declared wide-leg trousers the look of the season.",
+   "ipa": "/dɪˈkleə(r)/"
+  },
+  "apparently": {
+   "w": "apparently",
+   "pos": "부사",
+   "ko": "듣자 하니, 보아하니",
+   "en": "according to what people say or seem to believe",
+   "ex": "Apparently, the store is closing next month.",
+   "ipa": "/əˈpærəntli/"
+  },
+  "overdressed": {
+   "w": "overdressed",
+   "pos": "형용사",
+   "ko": "지나치게 차려입은",
+   "en": "wearing clothes too formal for the occasion",
+   "ex": "I felt overdressed in a suit at the beach party.",
+   "ipa": "/ˌəʊvəˈdrest/"
+  },
+  "reframed": {
+   "w": "reframe",
+   "pos": "동사",
+   "ko": "다른 관점으로 바꿔 제시하다",
+   "en": "to present something in a new or different way",
+   "ex": "She reframed her career break as a chance to retrain.",
+   "ipa": "/riːˈfreɪmd/"
+  },
+  "reframe": {
+   "w": "reframe",
+   "pos": "동사",
+   "ko": "다른 관점으로 바꿔 제시하다",
+   "en": "to present something in a new or different way",
+   "ex": "She reframed her career break as a chance to retrain.",
+   "ipa": "/riːˈfreɪm/"
+  },
+  "evidence of taste": {
+   "w": "evidence of taste",
+   "pos": "구",
+   "ko": "안목(취향)이 있다는 증거",
+   "en": "proof that someone has good aesthetic judgement",
+   "ex": "His carefully chosen bookshelf was evidence of taste.",
+   "ipa": "/ˈevɪdəns əv teɪst/"
+  },
+  "distinction": {
+   "w": "distinction",
+   "pos": "명사",
+   "ko": "구별, 차이; 품격",
+   "en": "a clear difference; also the quality of being special",
+   "ex": "There is a clear distinction between cost and value.",
+   "ipa": "/dɪˈstɪŋkʃn/"
+  },
+  "lies in": {
+   "w": "lie in",
+   "pos": "구",
+   "ko": "~에 있다(원인·핵심이)",
+   "en": "to exist or be found in something",
+   "ex": "The appeal of the brand lies in its simplicity.",
+   "ipa": "/laɪz ɪn/"
+  },
+  "lie in": {
+   "w": "lie in",
+   "pos": "구",
+   "ko": "~에 있다(원인·핵심이)",
+   "en": "to exist or be found in something",
+   "ex": "The appeal of the brand lies in its simplicity.",
+   "ipa": "/laɪ ɪn/"
+  },
+  "circulates": {
+   "w": "circulate",
+   "pos": "동사",
+   "ko": "퍼뜨리다, 유통시키다",
+   "en": "to spread or pass from person to person",
+   "ex": "Rumours circulate quickly in a small office.",
+   "ipa": "/ˈsɜːkjəleɪts/"
+  },
+  "circulate": {
+   "w": "circulate",
+   "pos": "동사",
+   "ko": "퍼뜨리다, 유통시키다",
+   "en": "to spread or pass from person to person",
+   "ex": "Rumours circulate quickly in a small office.",
+   "ipa": "/ˈsɜːkjəleɪt/"
+  },
+  "recognisable": {
+   "w": "recognisable",
+   "pos": "형용사",
+   "ko": "알아볼 수 있는, 익숙한",
+   "en": "easy to identify because it is familiar",
+   "ex": "The logo is instantly recognisable worldwide.",
+   "ipa": "/ˈrekəɡnaɪzəbl/"
+  },
+  "backdrops": {
+   "w": "backdrop",
+   "pos": "명사",
+   "ko": "배경",
+   "en": "the setting or scene behind something",
+   "ex": "The old harbour made a beautiful backdrop for the wedding photos.",
+   "ipa": "/ˈbækdrɒps/"
+  },
+  "backdrop": {
+   "w": "backdrop",
+   "pos": "명사",
+   "ko": "배경",
+   "en": "the setting or scene behind something",
+   "ex": "The old harbour made a beautiful backdrop for the wedding photos.",
+   "ipa": "/ˈbækdrɒp/"
+  },
+  "in close-up": {
+   "w": "in close-up",
+   "pos": "구",
+   "ko": "클로즈업으로",
+   "en": "photographed or filmed from very near",
+   "ex": "The ad shows the watch in close-up.",
+   "ipa": "/ɪn ˈkləʊs ʌp/"
+  },
+  "adopt": {
+   "w": "adopt",
+   "pos": "동사",
+   "ko": "(자세·방식을) 취하다, 채택하다",
+   "en": "to start using a particular manner or method",
+   "ex": "Many companies have adopted flexible working hours.",
+   "ipa": "/əˈdɒpt/"
+  },
+  "effortlessness": {
+   "w": "effortlessness",
+   "pos": "명사",
+   "ko": "힘들이지 않은 듯한 느낌",
+   "en": "the quality of seeming to need no effort",
+   "ex": "Her dancing had a natural effortlessness.",
+   "ipa": "/ˈefətləsnəs/"
+  },
+  "accompanying": {
+   "w": "accompanying",
+   "pos": "형용사",
+   "ko": "함께 딸린, 동반하는",
+   "en": "going together with something else",
+   "ex": "Please read the accompanying instructions before use.",
+   "ipa": "/əˈkʌmpəniɪŋ/"
+  },
+  "composed": {
+   "w": "composed",
+   "pos": "형용사",
+   "ko": "(구도가) 공들여 짜인",
+   "en": "carefully arranged, as in a picture",
+   "ex": "The shop window display was carefully composed.",
+   "ipa": "/kəmˈpəʊzd/"
+  },
+  "precisely": {
+   "w": "precisely",
+   "pos": "부사",
+   "ko": "바로, 정확히",
+   "en": "exactly; for exactly that reason",
+   "ex": "I chose this flat precisely because it is near the station.",
+   "ipa": "/prɪˈsaɪsli/"
+  },
+  "signify": {
+   "w": "signify",
+   "pos": "동사",
+   "ko": "의미하다, 나타내다",
+   "en": "to be a sign of or mean something",
+   "ex": "A red dress can signify confidence.",
+   "ipa": "/ˈsɪɡnɪfaɪ/"
+  },
+  "cultural associations": {
+   "w": "cultural associations",
+   "pos": "구",
+   "ko": "문화적 연상(이미지)",
+   "en": "ideas a culture links with something",
+   "ex": "White has different cultural associations in different countries.",
+   "ipa": "/ˈkʌltʃərəl əˌsəʊsiˈeɪʃnz/"
+  },
+  "conventions": {
+   "w": "convention",
+   "pos": "명사",
+   "ko": "관례, 관습적 방식",
+   "en": "an accepted way of doing something",
+   "ex": "Social conventions differ from one country to another.",
+   "ipa": "/kənˈvenʃnz/"
+  },
+  "convention": {
+   "w": "convention",
+   "pos": "명사",
+   "ko": "관례, 관습적 방식",
+   "en": "an accepted way of doing something",
+   "ex": "Social conventions differ from one country to another.",
+   "ipa": "/kənˈvenʃn/"
+  },
+  "established": {
+   "w": "established",
+   "pos": "형용사",
+   "ko": "자리를 잡은, 인정받는",
+   "en": "respected and successful for a long time",
+   "ex": "She works for an established design studio.",
+   "ipa": "/ɪˈstæblɪʃt/"
+  },
+  "constructed": {
+   "w": "construct",
+   "pos": "동사",
+   "ko": "구성하다, 만들어내다",
+   "en": "to build or form an idea or meaning",
+   "ex": "Advertisers construct an image of the perfect family.",
+   "ipa": "/kənˈstrʌktɪd/"
+  },
+  "construct": {
+   "w": "construct",
+   "pos": "동사",
+   "ko": "구성하다, 만들어내다",
+   "en": "to build or form an idea or meaning",
+   "ex": "Advertisers construct an image of the perfect family.",
+   "ipa": "/kənˈstrʌkt/"
+  },
+  "recurring": {
+   "w": "recurring",
+   "pos": "형용사",
+   "ko": "반복되는",
+   "en": "happening again and again",
+   "ex": "Lack of sleep is a recurring problem for new parents.",
+   "ipa": "/rɪˈkɜːrɪŋ/"
+  },
+  "aspiration": {
+   "w": "aspiration",
+   "pos": "명사",
+   "ko": "동경, 열망",
+   "en": "a strong wish to achieve or have something",
+   "ex": "Owning a home is a common aspiration.",
+   "ipa": "/ˌæspəˈreɪʃn/"
+  },
+  "polished": {
+   "w": "polished",
+   "pos": "형용사",
+   "ko": "세련된, 다듬어진",
+   "en": "elegant and carefully finished",
+   "ex": "The presentation looked polished and professional.",
+   "ipa": "/ˈpɒlɪʃt/"
+  },
+  "exclusive": {
+   "w": "exclusive",
+   "pos": "형용사",
+   "ko": "고급의, 소수만 누리는",
+   "en": "limited to a small, wealthy or special group",
+   "ex": "They stayed at an exclusive resort.",
+   "ipa": "/ɪkˈskluːsɪv/"
+  },
+  "relatability": {
+   "w": "relatability",
+   "pos": "명사",
+   "ko": "공감 가능성",
+   "en": "the quality of being easy to identify with",
+   "ex": "Viewers love the show for its relatability.",
+   "ipa": "/rɪˌleɪtəˈbɪləti/"
+  },
+  "signalling": {
+   "w": "signal",
+   "pos": "동사",
+   "ko": "신호를 보내다, 드러내다",
+   "en": "to show or indicate something",
+   "ex": "His smile signalled that the meeting went well.",
+   "ipa": "/ˈsɪɡnəlɪŋ/"
+  },
+  "signal": {
+   "w": "signal",
+   "pos": "동사",
+   "ko": "신호를 보내다, 드러내다",
+   "en": "to show or indicate something",
+   "ex": "His smile signalled that the meeting went well.",
+   "ipa": "/ˈsɪɡnəl/"
+  },
+  "overlapped": {
+   "w": "overlap",
+   "pos": "동사",
+   "ko": "겹치다",
+   "en": "to cover part of the same area or ideas",
+   "ex": "My holiday overlapped with my sister's visit.",
+   "ipa": "/ˌəʊvəˈlæpt/"
+  },
+  "overlap": {
+   "w": "overlap",
+   "pos": "동사",
+   "ko": "겹치다",
+   "en": "to cover part of the same area or ideas",
+   "ex": "My holiday overlapped with my sister's visit.",
+   "ipa": "/ˌəʊvəˈlæp/"
+  },
+  "mundane": {
+   "w": "mundane",
+   "pos": "형용사",
+   "ko": "평범한, 일상적인",
+   "en": "ordinary and not exciting",
+   "ex": "Even mundane chores feel better with music on.",
+   "ipa": "/mʌnˈdeɪn/"
+  },
+  "desirability": {
+   "w": "desirability",
+   "pos": "명사",
+   "ko": "갖고 싶게 만드는 매력",
+   "en": "the quality of being wanted",
+   "ex": "Limited stock increases the desirability of a product.",
+   "ipa": "/dɪˌzaɪərəˈbɪləti/"
+  },
+  "intimacy": {
+   "w": "intimacy",
+   "pos": "명사",
+   "ko": "친밀함",
+   "en": "a feeling of closeness and familiarity",
+   "ex": "Small venues create a sense of intimacy with the audience.",
+   "ipa": "/ˈɪntɪməsi/"
+  },
+  "searchability": {
+   "w": "searchability",
+   "pos": "명사",
+   "ko": "검색 용이성",
+   "en": "how easily something can be found by searching",
+   "ex": "Good tags improve the searchability of your photos.",
+   "ipa": "/ˌsɜːtʃəˈbɪləti/"
+  },
+  "retain": {
+   "w": "retain",
+   "pos": "동사",
+   "ko": "유지하다, 간직하다",
+   "en": "to keep or continue to have",
+   "ex": "The old building retains much of its original charm.",
+   "ipa": "/rɪˈteɪn/"
+  },
+  "reshaping": {
+   "w": "reshape",
+   "pos": "동사",
+   "ko": "새로 다듬다, 재구성하다",
+   "en": "to change the form or structure of something",
+   "ex": "Remote work is reshaping city centres.",
+   "ipa": "/riːˈʃeɪpɪŋ/"
+  },
+  "reshape": {
+   "w": "reshape",
+   "pos": "동사",
+   "ko": "새로 다듬다, 재구성하다",
+   "en": "to change the form or structure of something",
+   "ex": "Remote work is reshaping city centres.",
+   "ipa": "/riːˈʃeɪp/"
+  },
+  "narrate": {
+   "w": "narrate",
+   "pos": "동사",
+   "ko": "이야기하다, 서술하다",
+   "en": "to tell a story or describe events",
+   "ex": "She narrated her trip through a series of short videos.",
+   "ipa": "/nəˈreɪt/"
+  },
+  "deliberately": {
+   "w": "deliberately",
+   "pos": "부사",
+   "ko": "의도적으로, 일부러",
+   "en": "on purpose",
+   "ex": "He left the shirt deliberately untucked.",
+   "ipa": "/dɪˈlɪbərətli/"
+  },
+  "garments": {
+   "w": "garment",
+   "pos": "명사",
+   "ko": "의류, 옷 한 벌",
+   "en": "a piece of clothing",
+   "ex": "Each garment is checked before it leaves the factory.",
+   "ipa": "/ˈɡɑːmənts/"
+  },
+  "garment": {
+   "w": "garment",
+   "pos": "명사",
+   "ko": "의류, 옷 한 벌",
+   "en": "a piece of clothing",
+   "ex": "Each garment is checked before it leaves the factory.",
+   "ipa": "/ˈɡɑːmənt/"
+  },
+  "formulation": {
+   "w": "formulation",
+   "pos": "명사",
+   "ko": "공식, 틀(표현 방식)",
+   "en": "a particular way of expressing or arranging something",
+   "ex": "The new formulation of the policy is easier to understand.",
+   "ipa": "/ˌfɔːmjuˈleɪʃn/"
+  },
+  "aesthetics": {
+   "w": "aesthetic",
+   "pos": "명사",
+   "ko": "미학, (특정) 스타일 감성",
+   "en": "a particular style or look",
+   "ex": "The café has a minimalist Scandinavian aesthetic.",
+   "ipa": "/iːsˈθetɪks/"
+  },
+  "aesthetic": {
+   "w": "aesthetic",
+   "pos": "명사",
+   "ko": "미학, (특정) 스타일 감성",
+   "en": "a particular style or look",
+   "ex": "The café has a minimalist Scandinavian aesthetic.",
+   "ipa": "/iːsˈθetɪk/"
+  },
+  "assemble": {
+   "w": "assemble",
+   "pos": "동사",
+   "ko": "모으다, 조립하다",
+   "en": "to bring parts together to form a whole",
+   "ex": "It took an hour to assemble the bookshelf.",
+   "ipa": "/əˈsembl/"
+  },
+  "reproduce": {
+   "w": "reproduce",
+   "pos": "동사",
+   "ko": "복제하다, 재현하다",
+   "en": "to make a copy of something",
+   "ex": "It is hard to reproduce the colour of the original painting.",
+   "ipa": "/ˌriːprəˈdjuːs/"
+  },
+  "commercialise": {
+   "w": "commercialise",
+   "pos": "동사",
+   "ko": "상업화하다",
+   "en": "to use something to make money",
+   "ex": "Some people feel festivals have been over-commercialised.",
+   "ipa": "/kəˈmɜːʃəlaɪz/"
+  },
+  "paradox": {
+   "w": "paradox",
+   "pos": "명사",
+   "ko": "역설",
+   "en": "a situation with two seemingly opposite facts",
+   "ex": "It is a paradox that more choice can make us less happy.",
+   "ipa": "/ˈpærədɒks/"
+  },
+  "not necessarily": {
+   "w": "not necessarily",
+   "pos": "구",
+   "ko": "반드시 ~인 것은 아닌",
+   "en": "not always or not certainly",
+   "ex": "Expensive clothes are not necessarily better quality.",
+   "ipa": "/nɒt ˌnesəˈserəli/"
+  },
+  "styling cues": {
+   "w": "styling cues",
+   "pos": "구",
+   "ko": "스타일링 단서(특징 요소)",
+   "en": "small style details that suggest a look",
+   "ex": "The car borrows styling cues from 1960s models.",
+   "ipa": "/ˈstaɪlɪŋ kjuːz/"
+  },
+  "imitation": {
+   "w": "imitation",
+   "pos": "명사",
+   "ko": "모방",
+   "en": "the act of copying someone or something",
+   "ex": "Children learn language through imitation.",
+   "ipa": "/ˌɪmɪˈteɪʃn/"
+  },
+  "reinterpretation": {
+   "w": "reinterpretation",
+   "pos": "명사",
+   "ko": "재해석",
+   "en": "a new explanation or version of something",
+   "ex": "The film is a modern reinterpretation of a classic novel.",
+   "ipa": "/ˌriːɪnˌtɜːprɪˈteɪʃn/"
+  },
+  "package": {
+   "w": "package",
+   "pos": "동사",
+   "ko": "포장하다, (보기 좋게) 꾸며 내놓다",
+   "en": "to present something in an attractive way",
+   "ex": "The tour is packaged as a luxury experience.",
+   "ipa": "/ˈpækɪdʒ/"
+  },
+  "alive and well": {
+   "w": "alive and well",
+   "pos": "구",
+   "ko": "여전히 건재한",
+   "en": "still existing and doing well",
+   "ex": "Despite online shopping, the local market is alive and well.",
+   "ipa": "/əˈlaɪv ənd wel/"
+  }
+ },
+ "vocab": [
+  "circulate",
+  "recognisable",
+  "convention",
+  "signify",
+  "aspiration",
+  "mundane",
+  "retain",
+  "deliberately",
+  "paradox",
+  "commercialise",
+  "lie in",
+  "reinterpretation",
+  "overlap",
+  "not necessarily"
+ ],
+ "quiz": [
+  {
+   "q": "The writer's study examined posts from more than three luxury fashion influencers.",
+   "a": "FALSE",
+   "why": "세 명의 인플루언서(three established luxury fashion influencers) 게시물만 분석했다."
+  },
+  {
+   "q": "The study found that the influencers mainly repeated the same brands and garments.",
+   "a": "FALSE",
+   "why": "특정 브랜드·옷의 반복이 아니라(not simply repetition) 반복되는 소통 방식을 발견했다."
+  },
+  {
+   "q": "Once an aesthetic is easy to search for, it becomes easier to sell.",
+   "a": "TRUE",
+   "why": "검색 가능해지면 재생산·추천·상업화가 쉬워진다고 했다."
+  },
+  {
+   "q": "Each influencer in the study had over one million followers.",
+   "a": "NOT GIVEN",
+   "why": "팔로워 수에 대한 정보는 글에 없다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "the bigger sameness is in the way we show we are stylish",
+   "article": "the greater similarity lies in how we communicate being fashionable"
+  },
+  {
+   "simple": "captions sound relaxed even when the photo is carefully set up",
+   "article": "captions perform effortlessness even when the accompanying image is highly composed"
+  },
+  {
+   "simple": "They turn fashion into content that suits apps.",
+   "article": "They translate fashion into forms that work on platforms."
+  },
+  {
+   "simple": "If people can search for it, it is easier to copy, suggest and sell.",
+   "article": "Once searchable, it becomes easier to reproduce, recommend and commercialise."
+  },
+  {
+   "simple": "Fashion has always meant copying and changing other people's ideas.",
+   "article": "Fashion has always involved borrowing, imitation and reinterpretation."
+  }
+ ],
+ "summary": "The writer argues that social media has not erased personal style but has standardised the visual and verbal formats people use to present it, so different clothes end up being shown in strikingly similar ways.",
+ "gist": "SNS가 개인 스타일을 없앤 게 아니라, 스타일을 보여주는 '방식'(포즈·장소·캡션 등)을 획일화했다는 칼럼.\n인플루언서 게시물 390개 분석을 근거로, 옷보다 포장 방식에 주목하라고 제안한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "The writer's research looked at posts by more than three influencers.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "\"from three established luxury fashion influencers\" — 세 명뿐이므로 FALSE"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "In the study, written text accompanying the images was analysed as well as the visual elements.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "\"combinations of pose, location, styling, captions, editing\" — 캡션(글)도 분석 대상"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The influencers in the study had been paid by luxury brands to feature their products.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "인플루언서가 브랜드에서 돈을 받았는지는 본문에 언급 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Social media has caused personal style to disappear.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "\"None of this means personal style has disappeared\" — 필자는 부정함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Viewers should focus on the clothing in posts rather than on how it is presented.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "\"pay attention to the clothes in the posts you scroll rather than the way they have been packaged\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 4",
+    "options": [
+     "i  Labelled styles that build complete visual worlds",
+     "ii  A decline in fashion magazine readership",
+     "iii  Repeated settings and poses in outfit photographs",
+     "iv  The financial rewards of influencer marketing",
+     "v  Several routes to appearing tasteful"
+    ],
+    "answer": "iii",
+    "why": "\"A city street or a zebra crossing becomes the setting... bodies adopt familiar poses\" — 반복되는 배경과 포즈"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 11",
+    "options": [
+     "i  Labelled styles that build complete visual worlds",
+     "ii  A decline in fashion magazine readership",
+     "iii  Repeated settings and poses in outfit photographs",
+     "iv  The financial rewards of influencer marketing",
+     "v  Several routes to appearing tasteful"
+    ],
+    "answer": "v",
+    "why": "\"aspiration... relatability... other ways of signalling authority and taste\" — 취향을 드러내는 여러 방식"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 19",
+    "options": [
+     "i  Labelled styles that build complete visual worlds",
+     "ii  A decline in fashion magazine readership",
+     "iii  Repeated settings and poses in outfit photographs",
+     "iv  The financial rewards of influencer marketing",
+     "v  Several routes to appearing tasteful"
+    ],
+    "answer": "i",
+    "why": "\"named aesthetics... assemble recognisable visual worlds\" — 이름 붙은 스타일이 하나의 시각 세계를 만듦"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions examples of items that carry cultural meaning before anyone puts them on?",
+    "options": [
+     "4",
+     "6",
+     "17",
+     "19"
+    ],
+    "answer": "6",
+    "why": "\"Cowboy boots, a Chanel jacket or a football shirt come with cultural associations long before an individual wears them\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions a contradiction between how much fashion imagery is available and how varied people's dress actually is?",
+    "options": [
+     "3",
+     "12",
+     "22",
+     "23"
+    ],
+    "answer": "22",
+    "why": "\"This creates a paradox... more fashion imagery... yet this does not necessarily make the way we dress more visually diverse\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the writer, what do people most easily recall about the \"kinda chic\" posts?",
+    "options": [
+     "A the particular outfits they showed",
+     "B the format in which they were written",
+     "C the influencers who created them",
+     "D the brands they promoted"
+    ],
+    "answer": "B",
+    "why": "\"What is much easier to remember is the format itself\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What does the writer say happens once an aesthetic becomes recognisable?",
+    "options": [
+     "A It quickly loses its popularity.",
+     "B It is rejected by traditional fashion magazines.",
+     "C It can be found, copied and sold more easily.",
+     "D It replaces individual outfits in people's wardrobes."
+    ],
+    "answer": "C",
+    "why": "\"it becomes searchable... easier to reproduce, recommend and commercialise\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Unlike magazines, Instagram and TikTok rely on conventions shaped by speed, intimacy, entertainment, ____ and visibility.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "searchability"
+    ],
+    "why": "\"shaped by speed, intimacy, entertainment, searchability and visibility\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "The writer points out that fashion has always relied on borrowing, imitation and ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "reinterpretation"
+    ],
+    "why": "\"Fashion has always involved borrowing, imitation and reinterpretation\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "How many Instagram posts did the writer examine in the study?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "390"
+    ],
+    "why": "\"In a study of 390 Instagram posts\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    3,
+    10,
+    18
+   ]
+  }
+ }
+}
