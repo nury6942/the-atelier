@@ -1,0 +1,343 @@
+{
+ "date": "2026-10-26",
+ "collectedAt": "2026-10-26T10:36:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@leo_lazybuilder",
+   "url": "https://www.threads.com/@leo_lazybuilder/post/De3cq4VnV9D",
+   "at": "2026-10-24T06:05:16.000Z",
+   "likes": 252,
+   "replies": 22,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "카파시 '항공정비 언어로 답해' 규칙, 써보니 강추",
+   "points": [
+    "카파시 팁 4가지: 항공정비 언어(ASD-STE100)·다이어그램·HTML·영상으로 답하게 하기",
+    "특정 에이전트에 '항공정비 언어로 답변' 규칙을 넣어봤더니 효과가 커서 전체로 확대",
+    "답이 '다른 에이전트가 한 일 / 내가 한 일 / 사용자가 할 일'처럼 역할별로 짧게 정리돼 나옴",
+    "이전엔 이해 안 될 때 HTML로 보여달라는 것만 주로 썼다고"
+   ],
+   "try": "CLAUDE.md에 'ASD-STE100 스타일로 짧게 답하라' 한 줄 넣어 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@terracotta.nj",
+   "url": "https://www.threads.com/@terracotta.nj/post/De7xkacG_Es",
+   "at": "2026-10-25T22:24:51.000Z",
+   "likes": 79,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "업무 글쓰기 스킬: STE 표준 80%만 적용",
+   "points": [
+    "'사람처럼 써라'·'AI 습관 반대로 써라' 류 스킬은 결과가 별로였다고",
+    "카파시 팁대로 항공정비 영어 표준(ASD-STE100)을 80%만 따르게 스킬화",
+    "효과: 문장이 짧아지고 한 문장에 한 생각, 결론이 앞에, 숫자 누락 없음",
+    "깃허브 ninajingit/ste-business-writing 에 클로드 스킬로 공개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@bokmanhi",
+   "url": "https://www.threads.com/@bokmanhi/post/De5NQAGCHd2",
+   "at": "2026-10-24T22:29:01.000Z",
+   "likes": 548,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 웹 작업용 글자 효과 용어 8개",
+   "points": [
+    "'글자 멋있게' 대신 '제목은 타이핑 효과, 설명은 마스크 리빌'처럼 이름으로 요청",
+    "효과 이름을 알면 수정 요청이 구체적이 된다는 요지",
+    "타이핑부터 형광펜 효과까지 8개 용어는 이미지에 정리"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@aak.myeye",
+   "url": "https://www.threads.com/@aak.myeye/post/De3PEJMksLV",
+   "at": "2026-10-24T04:06:23.000Z",
+   "likes": 238,
+   "replies": 54,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "에이전트용 브라우저 ego-lite, 실제로 물려 쓰는 중",
+   "points": [
+    "깃허브 트렌딩 1위 citrolabs/ego-lite — AI 에이전트용 브라우저 자동화 도구",
+    "로그인된 브라우저 상태를 Codex·Claude Code와 공유, 인증 세션으로 테스트 가능",
+    "최근 업데이트로 더 빨라지고 안정적, 무료·설정 없음",
+    "작성자가 에이전트에 연결해 실사용 중이라며 추천"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@bang.builder",
+   "url": "https://www.threads.com/@bang.builder/post/De6UvWSj5U5",
+   "at": "2026-10-25T08:53:42.000Z",
+   "likes": 173,
+   "replies": 18,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "AI 냄새 빼는 디자인 스킬 Impeccable, 이것만 쓴다",
+   "points": [
+    "팀원 추천으로 써본 뒤 비슷한 스킬 중 사실상 이것만 사용",
+    "테스트 중인 주차감지앱에 적용한 비포·애프터를 이미지로 공개",
+    "깃허브 pbakaus/impeccable — AI 하네스의 디자인 실력을 올리는 스킬"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/De6xLBEj-bj",
+   "at": "2026-10-25T13:02:09.000Z",
+   "likes": 114,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 티 나는 디자인 벗어나는 깃허브 10선",
+   "points": [
+    "Impeccable: 24개 명령어·62개 규칙으로 UI 점검",
+    "UI UX Pro Max: 요구사항 보고 색·폰트까지 디자인 시스템 제안",
+    "MCP for Blender·img2threejs: 자연어·참고 이미지로 3D 만들기",
+    "Video Shotcraft·HyperFrames·Remotion: 웹페이지·HTML로 영상 렌더링",
+    "Penpot: MCP 되는 피그마 오픈소스 대안"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@choi.openai",
+   "url": "https://www.threads.com/@choi.openai/post/De6jTAJCmWq",
+   "at": "2026-10-25T11:00:54.000Z",
+   "likes": 204,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "AI로 만든 3D 모델 1,300개 무료 공개",
+   "points": [
+    "Scenario가 약 39GB 3D 모델 모음을 허깅페이스에 공개",
+    "Meshy·Tripo·Rodin·Opus 5.5 등으로 생성한 결과물",
+    "완성 파일과 함께 원본 이미지·프롬프트·생성 설정까지 제공",
+    "CC BY 4.0, 출처 표시하면 상업 이용 가능(일부 별도 조건)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@che0dan",
+   "url": "https://www.threads.com/@che0dan/post/De6ewWHD_l8",
+   "at": "2026-10-25T10:21:16.000Z",
+   "likes": 120,
+   "replies": 60,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "문서 넣으면 편집되는 PPT 뽑는 Dashi 스킬",
+   "points": [
+    "문서를 주면 브라우저에서 바로 고칠 수 있는 발표자료를 만드는 에이전트 스킬",
+    "12개 테마·1,020개 레이아웃, 차트·분석 모델 내장",
+    "HTML·PDF·편집 가능한 PPTX로 내보내기",
+    "깃허브 chuspeeism/dashi-ppt-skill, 스타 9,900개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@tofukyung",
+   "url": "https://www.threads.com/@tofukyung/post/De4N56gCSGJ",
+   "at": "2026-10-24T13:15:29.000Z",
+   "likes": 93,
+   "replies": 13,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "OpenCodex로 클로드 코드에 GPT·Grok 붙여 쓰기",
+   "points": [
+    "OpenCodex: Codex·Claude Code에 아무 LLM이나 붙이는 프록시",
+    "클로드 코드에 GPT·Grok을 붙여 오케스트레이션하니 깔끔했다는 후기",
+    "Claude Code Channels 커스텀 + Mod로 슬랙 하네스를 직접 만듦",
+    "깃허브 lidge-jun/opencodex"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@moocimu",
+   "url": "https://www.threads.com/@moocimu/post/De6A67ajkVj",
+   "at": "2026-10-25T06:00:31.000Z",
+   "likes": 20,
+   "replies": 6,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "힉스필드 업스케일러 3종 비교, 가성비는 ByteDance Standard",
+   "points": [
+    "480→1080 업스케일로 3개 비교",
+    "Topaz Starlight Precise(16크레딧): 질감 과함",
+    "ByteDance Old Film Pro(21.33): 외곽이 날카롭고 중간에 색 오염",
+    "ByteDance Old Film Standard(2.13): 매끈하지만 가성비 최고",
+    "결론: 소스는 최소 720으로 뽑고 업스케일해야 품질이 좋음"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2114410397252075590",
+   "at": "2026-10-25T17:34:57.000Z",
+   "likes": 25,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "노트북 꺼도 도는 밤샘 루틴: /schedule 두 개",
+   "points": [
+    "/schedule 로 클라우드 루틴 2개: 3:07 Haiku가 npm audit·테스트·오래된 브랜치 점검",
+    "4:07 Sonnet이 결과 파일 읽고 claude/ 브랜치에서 고쳐 draft PR",
+    "Opus는 루틴 작성·PR 검토·머지 승인 때만",
+    "루틴당 모델 하나, 최소 1시간 간격, 사용량은 요금제에서 차감",
+    "낮에는 /loop 5m 으로 그 PR의 CI·리뷰 감시"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2114409731188015104/img/2OiXmibk3sIMaTKY.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2114409731188015104/vid/avc1/480x600/_ZIue0difndJjkk1.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@Asteri_eth",
+   "url": "https://x.com/Asteri_eth/status/2114082048734359654",
+   "at": "2026-10-24T19:50:12.000Z",
+   "likes": 118,
+   "replies": 12,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code + Remotion으로 다큐풍 지도 애니메이션",
+   "points": [
+    "npx create-video@latest → npx skills add remotion-dev/skills",
+    "'/remotion-maps 리스본→뉴욕 경로, 카메라 따라가게' 처럼 요청",
+    "샷마다 MapLibre·Mapbox·CesiumJS 등 5가지 방식 중 골라 React 코드로 생성",
+    "경로는 GeoJSON 하나 — 도시만 바꾸고 다시 렌더",
+    "MapLibre는 키 불필요, Mapbox·Cesium은 토큰 필요"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2114081899622612992/img/Ez6ZRYbMXd2BQscp.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2114081899622612992/vid/avc1/422x360/Yz66sqFbN6gcKAcU.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@emollick",
+   "url": "https://x.com/emollick/status/2114404221021778347",
+   "at": "2026-10-25T17:10:24.000Z",
+   "likes": 405,
+   "replies": 137,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "책 홈페이지를 Opus 5.5로 다시 만들었더니 거의 혼자 완성",
+   "points": [
+    "Opus 4.8 때는 개성 있는 정적 사이트를 만드는 데 손이 많이 갔음",
+    "Opus 5.5는 거의 혼자 만들어냄",
+    "뻔한 'AI 디자인'에서 짧은 기간에 많이 벗어났다는 평",
+    "완성 사이트는 영상으로 공개"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2114403671660183552/img/ls27qX3jWrYqLrFb.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2114403671660183552/vid/avc1/480x760/JWoMrYkbfSl2Fdgy.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@gokayfem",
+   "url": "https://x.com/gokayfem/status/2114314785575604491",
+   "at": "2026-10-25T11:15:01.000Z",
+   "likes": 251,
+   "replies": 19,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "가우시안 스플랫 정원을 Opus 5.5가 블렌더로 재구성",
+   "points": [
+    "정원 가우시안 스플랫을 주고 블렌더로 장면을 다시 만들라고 요청",
+    "절차적 오브젝트·지오메트리 노드·셰이더 노드로 구성",
+    "캡처한 텍스처를 고른 표면에 매핑",
+    "결과는 영상으로 확인"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2114312639333462016/img/W4aeGsp3AFlnQzSw.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2114312639333462016/vid/avc1/640x360/qyr9_4X1CB12aBlE.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@fofrAI",
+   "url": "https://x.com/fofrAI/status/2114443424577241178",
+   "at": "2026-10-25T19:46:11.000Z",
+   "likes": 72,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "에이전트로 '발견' 작업할 때 검증 요령 5가지",
+   "points": [
+    "파이프라인이 이미 알려진 결과를 블라인드로 재현하는지 먼저 확인",
+    "가짜·장비 오류 데이터는 걸러내는지도 확인",
+    "유도하지 않는 프롬프트로 독립 에이전트를 띄워 반박 리뷰를 반복",
+    "리뷰어가 원본 데이터부터 다시 검증하게",
+    "리뷰에서 찾은 문제는 일반 교훈으로 뽑아 스킬로 저장"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVbEWeyW4AE2bg5.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVbEWepXQAA5eSt.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@lucian__03",
+   "url": "https://x.com/lucian__03/status/2114301914108354708",
+   "at": "2026-10-25T10:23:52.000Z",
+   "likes": 4900,
+   "replies": 90,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "RTX 그래픽카드 AI 연산 제한 푸는 오픈소스 GPU-Unlock",
+   "points": [
+    "FP16/BF16 쪽에 걸린 제한을 풀어 AI 연산 속도를 올리는 오픈소스",
+    "실측: 3060 +78~99%, 3070 +72~81%, 4090 특정 연산 약 2배",
+    "20·30·40 시리즈 데스크탑·노트북 실측이 계속 쌓이는 중",
+    "단, 모델 실행 속도가 그대로 2배 되는 건 아님(작업에 따라 다름)"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVeCWajboAAIfiX.jpg"
+    }
+   ]
+  }
+ ]
+}
