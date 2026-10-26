@@ -10,7 +10,7 @@ window.ATELIER_PLANS_V2 = [
 {
   id: 'nordic-2027-v2', upgradeFrom: 'nordic-2027-v1',
   label: '북유럽 2027 상세 일정 적용',
-  match: function(t) { return t && /덴마크|스웨덴|북유럽/.test(t.name || '') && String(t.start_date || '').slice(0, 4) === '2027'; },
+  match: function(t) { return t && /덴마크|스웨덴|북유럽/.test(t.name || '') && String(t.start_date || '').slice(0, 7) === '2027-06'; },
   trip: { start_date: '2027-06-25', end_date: '2027-07-04' },
   cities: [
     ['코펜하겐', '2027-06-25', '2027-06-27', 55.6761, 12.5683], ['스톡홀름', '2027-06-27', '2027-06-29', 59.3293, 18.0686],
@@ -142,7 +142,7 @@ window.ATELIER_PLANS_V2 = [
 {
   id: 'xmas-2027-v2', upgradeFrom: 'xmas-2027-v1',
   label: '크리스마스 마켓 2027 상세 일정 적용',
-  match: function(t) { return t && (/크리스마스|스트라스부르|알자스|콜마르|벨기에|브뤼/.test(t.name || '') || String(t.start_date || '').slice(0, 7) === '2027-12'); },
+  match: function(t) { return t && String(t.start_date || '').slice(0, 7) === '2027-12'; },
   trip: { start_date: '2027-12-18', end_date: '2027-12-27' },
   cities: [
     ['스트라스부르', '2027-12-18', '2027-12-20', 48.5734, 7.7521], ['콜마르', '2027-12-20', '2027-12-23', 48.0794, 7.3585],
@@ -254,7 +254,7 @@ window.ATELIER_PLANS_V2 = [
 {
   id: 'spain-ireland-2028-v2', upgradeFrom: 'spain-ireland-2028-v1',
   label: '스페인·아일랜드 2028 상세 일정 적용',
-  match: function(t) { return t && (/스페인|아일랜드|세비야|안달루시아/.test(t.name || '') || /^2028-0(4|5)/.test(String(t.start_date || ''))); },
+  match: function(t) { return t && /^2028-0(4|5)/.test(String(t.start_date || '')); },
   trip: { start_date: '2028-04-27', end_date: '2028-05-07' },
   cities: [
     ['세비야', '2028-04-27', '2028-04-30', 37.3891, -5.9845], ['론다', '2028-04-30', '2028-05-01', 36.7423, -5.1666], ['그라나다', '2028-05-01', '2028-05-03', 37.1773, -3.5986],
