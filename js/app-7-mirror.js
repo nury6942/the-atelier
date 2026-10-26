@@ -1208,10 +1208,23 @@ function _bRvSave(patch) { var rv = _boardExtra.review = _boardExtra.review || {
 window._bRvOk = function(btn) { var id = btn.closest('.lb-rv').dataset.id, r = {}; r[id] = true; _bRvSave({ reviewed: r }); ldgRenderBoard(); };
 window._bRvAll = function() { var r = {}; document.querySelectorAll('.lb-rv').forEach(function(x) { r[x.dataset.id] = true; }); _bRvSave({ reviewed: r }); ldgRenderBoard(); };
 window._bRvPick = function(btn) {
-  var row = btn.closest('.lb-rv'), cell = row.querySelector('.lb-rv-c'), cur = btn.textContent;
-  cell.innerHTML = '<select style="font-size:12px;max-width:180px">' + (window._bRvOpts || '') + '</select> <button data-m="once" style="font-size:11px;padding:2px 6px;border:1px solid #1d5fd1;background:#fff;color:#1d5fd1;cursor:pointer">이번만</button> <button data-m="always" style="font-size:11px;padding:2px 6px;border:1px solid #23855f;background:#e3f4ec;color:#1d6b4c;cursor:pointer">이 가게는 늘</button>';
-  var sel = cell.querySelector('select'); sel.value = cur;
-  cell.querySelectorAll('button').forEach(function(b) { b.onclick = function() { _bRvApply(row.dataset.id, sel.value, b.dataset.m === 'always'); }; });
+  document.querySelectorAll('.lb-rv-pop').forEach(function(x) { x.remove(); });
+  var row = btn.closest('.lb-rv'), cell = row.querySelector('.lb-rv-c'), cur = btn.textContent.split('/'), cats = _ledgerData.categories || {};
+  var majors = Object.keys(cats).filter(function(k) { return k !== '미분류' && Array.isArray(cats[k]); });
+  var B = function(txt, on, attr) { return '<button ' + attr + ' style="font-size:12px;padding:4px 9px;border:1px solid ' + (on ? '#1d5fd1' : '#c9d6e8') + ';background:' + (on ? '#1d5fd1' : '#fff') + ';color:' + (on ? '#fff' : '#0f172a') + ';cursor:pointer;margin:0 4px 4px 0">' + _bEsc(txt) + '</button>'; };
+  var pop = document.createElement('div'); pop.className = 'lb-rv-pop';
+  pop.style.cssText = 'position:absolute;right:0;top:calc(100% + 4px);z-index:50;width:min(520px,80vw);background:#fff;border:1px solid #1d5fd1;box-shadow:0 6px 18px rgba(15,23,42,.15);padding:10px 10px 6px';
+  var draw = function(major) {
+    pop.innerHTML = '<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1d6b4c;font-weight:600;margin-bottom:8px;cursor:pointer"><input type="checkbox" class="lb-rv-always"> 이 가게는 늘 이 칸으로</label>' +
+      '<div>' + majors.map(function(k) { return B(k, k === major, 'data-major="' + _bEsc(k) + '"'); }).join('') + '</div>' +
+      '<div style="border-top:1px solid #eef1f5;margin-top:4px;padding-top:8px">' + (cats[major] || []).map(function(sb) { var n = sb.name || sb; return B(n, major === cur[0] && n === cur.slice(1).join('/'), 'data-sub="' + _bEsc(n) + '"'); }).join('') + '</div>';
+    pop.querySelectorAll('[data-major]').forEach(function(b) { b.onclick = function(e) { e.stopPropagation(); var al = pop.querySelector('.lb-rv-always').checked; draw(b.dataset.major); pop.querySelector('.lb-rv-always').checked = al; }; });
+    pop.querySelectorAll('[data-sub]').forEach(function(b) { b.onclick = function(e) { e.stopPropagation(); _bRvApply(row.dataset.id, major + '/' + b.dataset.sub, pop.querySelector('.lb-rv-always').checked); }; });
+  };
+  draw(majors.indexOf(cur[0]) >= 0 ? cur[0] : majors[0]);
+  cell.style.position = 'relative'; cell.appendChild(pop);
+  pop.addEventListener('click', function(e) { e.stopPropagation(); });
+  setTimeout(function() { document.addEventListener('click', function close() { pop.remove(); document.removeEventListener('click', close); }); }, 0);
 };
 function _bRvApply(id, cat, always) {
   var pr = cat.split('/'), t = (_ledgerData.transactions || []).find(function(x) { return x.id === id; }); if (!t) return;
@@ -1280,9 +1293,8 @@ window.ldgImportBanksal = async function(rows, opt) {
     }
     if (!opt.dry) {
       // 점검 카드: 아직 확인 안 한 지난 줄 + 이번에 새로 들어온 줄
-      var prevPending = (rev.added || []).filter(function(id) { return !(rev.reviewed || {})[id]; });
-      var all = prevPending.concat(addedIds.filter(function(id) { return prevPending.indexOf(id) < 0; }));
-      await revRef.set({ at: new Date().toISOString(), range: lo + '~' + hi, added: all, reviewed: {}, shopRules: rules }, { merge: false });
+      // 점검 카드 = 이번 반영에서 새로 들어온 줄만 (지난주 것은 이미 본 걸로 · 누리 2026-10-26)
+      await revRef.set({ at: new Date().toISOString(), range: lo + '~' + hi, added: addedIds, reviewed: {}, shopRules: rules }, { merge: false });
       try { localStorage.removeItem('atelier_ledger_transactions'); } catch (e) {}
     }
     sum.learned = learned;
