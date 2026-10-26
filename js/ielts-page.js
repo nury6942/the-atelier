@@ -4,7 +4,7 @@
 (function(){
   var IELTS = {
     updated: '2026-10-18',
-    exam: { date: '2027-09-11', book: '2027-06-18', type: 'General Training · 컴퓨터 시험', fee: '321,000원 (IDP Korea)' },
+    exam: { date: '2027-08-28', book: '2027-06-18', type: 'General Training · 컴퓨터 시험', fee: '321,000원 (IDP Korea)' },
     // 지금 = Cambridge C1 Advanced(2023-12) 영역 점수를 IELTS로 근사
     goals: [
       { k:'L', name:'Listening', now:6.5, pass:7.0, stretch:8.0, note:'40문항 중 30개 → 35개 · 차이 제일 큼', tone:'r' },
@@ -36,8 +36,8 @@
       { n:12, date:'2027-05-30', src:'BC 컴퓨터 연습시험', focus:'화면 조작 익히기 · 장단점형·질문 2개형' },
       { n:13, date:'2027-06-13', src:'GT 22 · Test 1 (없으면 GT 19)', focus:'3단계 점검 → 판단 규칙 · 6/18 예약', check:true },
       { n:14, date:'2027-07-18', src:'GT 22 · Test 2', focus:'타이핑·화면 조건 그대로' },
-      { n:15, date:'2027-08-22', src:'GT 22 · Test 3', focus:'오전 9시 시작, 실전 순서' },
-      { n:16, date:'2027-09-05', src:'GT 22 · Test 4', focus:'마지막 리허설 — 끝나면 실수 노트만', check:true }
+      { n:15, date:'2027-08-15', src:'GT 22 · Test 3', focus:'오전 9시 시작, 실전 순서' },
+      { n:16, date:'2027-08-21', src:'GT 22 · Test 4', focus:'마지막 리허설 — 끝나면 실수 노트만', check:true }
     ],
     cycle: [
       { when:'모의고사 주말', what:'모의고사 1세트 (2h30)' },
