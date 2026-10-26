@@ -48,4 +48,5 @@ node -e 'const t=JSON.parse(process.argv[1]||"[]");for(let i=0;i<t.length;i+=4)c
 done
 LOG "$(node scripts/flight-deals/promo-price.js apply "$ESKY" "$FTMP" 2>&1 | tail -1)"; rm -f "$ESKY" "$FTMP"
 # 아이폰 미리알림은 끔(2026-10-22 누리: 사이트에서 직접 볼게) — judge·promo 의 ALERT 줄은 무시한다
-git add data/flight-deals && git commit -qm "flights: $(date +%F) 특가 점검" && git push -q && LOG "푸시"
+# 도는 동안 다른 기기가 푸시하면 거절됨(2026-10-26) → 한 번 당겨서 다시 푸시
+git add data/flight-deals && git commit -qm "flights: $(date +%F) 특가 점검" && { git push -q || { git pull -q --rebase && git push -q; }; } && LOG "푸시"
