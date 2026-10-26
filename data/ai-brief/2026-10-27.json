@@ -1,0 +1,217 @@
+{
+ "date": "2026-10-27",
+ "generatedAt": "2026-10-27T07:12:00+09:00",
+ "sourcesNote": "웹 검색 22회 + 오늘 맥 수집(X·Threads 15개) + GitHub 원본 README 확인 · 실행 환경에서 X·github.com·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "release",
+   "title": "같은 일을 3분·300원에, 오픈AI 새 모델",
+   "url": "https://openai.com/index/introducing-gpt-6-1-terra/",
+   "image": null,
+   "source": "OpenAI · X @OpenAI ♥1.6만",
+   "release": {
+    "name": "GPT-6.1 Terra",
+    "date": "2026-10-26",
+    "url": "https://x.com/OpenAI/status/2114780711664398349"
+   },
+   "examples": [
+    {
+     "title": "말로 CAD 모델 만드는 오픈소스를 Terra로 돌린 시연",
+     "url": "https://x.com/earthtojake/status/2114810838662230419",
+     "image": null
+    },
+    {
+     "title": "같은 작업을 Opus 5.5·Sol·Terra에 맡겨 시간·값 비교",
+     "url": "https://x.com/rubenssoto_ai/status/2114796689563304192",
+     "image": null
+    }
+   ],
+   "new": [
+    "값 절반",
+    "속도 3배",
+    "화면 직접 조작"
+   ],
+   "reviews": [
+    {
+     "say": "Terra 3분·$0.22, Opus 5.5는 52분",
+     "who": "X @rubenssoto_ai",
+     "url": "https://x.com/rubenssoto_ai/status/2114796689563304192",
+     "tone": "good"
+    },
+    {
+     "say": "오픈AI 모델 중 가성비로는 최고 선택지",
+     "who": "Android Authority",
+     "url": "https://www.androidauthority.com/gpt-6-1-terra-3728234/",
+     "tone": "good"
+    },
+    {
+     "say": "댓글 다수가 회의적, Sol·Opus보다 아래",
+     "who": "HN",
+     "url": "https://news.ycombinator.com/item?id=50248124",
+     "tone": "bad"
+    },
+    {
+     "say": "어려운 코딩은 오픈AI도 Sol을 권함",
+     "who": "BleepingComputer",
+     "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-launches-gpt-61-terra-with-3x-faster-ai-agents-50-percent-lower-pricing/",
+     "tone": "bad"
+    }
+   ],
+   "why": "앱 오가며 클릭하는 일을 싸고 빠르게",
+   "chips": [
+    "입력 100만 토큰 $1 · 약 1,400원",
+    "Plus부터 · Codex",
+    "API gpt-6.1-terra"
+   ],
+   "forMe": "Atelier 자동화처럼 반복되는 작업을 Codex에 맡길 때 Terra로 바꿔 시간·비용을 비교해볼 만합니다. 손이 많이 가는 큰 수정은 아직 상위 모델이 낫다는 평이 많아요."
+  },
+  {
+   "cat": "hack",
+   "title": "클로드 코드로 지식 유튜브 한 편, 8단계",
+   "url": "https://www.threads.com/@dalcomi20/post/De5puqrjos_",
+   "image": null,
+   "source": "Threads @dalcomi20 · ♥905",
+   "how": "대본→콘티→음성, VectorCraft로 씬부터 그림",
+   "chips": [
+    "♥905 · 댓글 41",
+    "8단계",
+    "씬 1개 먼저 시험"
+   ],
+   "forMe": "누리님이 쓰는 VectorCraft가 장면 그리기 단계에 그대로 들어갑니다. 캐릭터는 배경 없는 시트로 먼저 뽑아야 벡터가 뭉개지지 않는다는 요령이 핵심이에요."
+  },
+  {
+   "cat": "money",
+   "title": "부모님 펜션 예약, 한 달 만에 0→주 4건",
+   "url": "https://www.threads.com/@yoonmi.for/post/De9I3t7ElGs",
+   "image": null,
+   "source": "Threads @yoonmi.for · 실사용 후기",
+   "how": "광고 키워드 분석·경쟁 15곳 조사·홈페이지를 AI로",
+   "chips": [
+    "9월 0건 → 주 4건",
+    "홈페이지 월 방문 229명",
+    "첫 블로그 글 조회 300"
+   ]
+  },
+  {
+   "cat": "vibe",
+   "title": "걸어 다니는 픽셀 들판, 포트폴리오가 된다",
+   "url": "https://www.threads.com/@dailyvitaminai/post/De9cw2XidhD",
+   "image": null,
+   "source": "Threads @dailyvitaminai · ♥271 · bubbbly.com",
+   "how": "Claude Opus 5.5로 나비·꽃 픽셀 들판을 통째로",
+   "chips": [
+    "♥271",
+    "직접 돌아다니며 보기",
+    "Opus 5.5"
+   ],
+   "forMe": "해외 이직용 포트폴리오를 넘겨보는 페이지가 아니라 돌아다니는 화면으로 만드는 참고가 됩니다. 작품 사진을 들판 곳곳에 놓는 식으로요."
+  },
+  {
+   "cat": "tool",
+   "title": "촬영본 폴더 주면 final.mp4, 말로 편집",
+   "url": "https://github.com/browser-use/video-use",
+   "image": "https://raw.githubusercontent.com/browser-use/video-use/HEAD/static/video-use-banner.png",
+   "source": "GitHub browser-use · 오픈소스",
+   "how": "Claude Code에 지시, 군말 컷·색보정·자막까지",
+   "chips": [
+    "오픈소스",
+    "ElevenLabs 키 필요",
+    "Claude Code·Codex"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "Claude Code로 VectorCraft 씬 한 장",
+   "minutes": 20,
+   "why": "어제 화제가 된 유튜브 8단계에서 제일 먼저 하는 게 '씬 하나를 벡터로 그려 보기'입니다. 누리님이 이미 쓰는 VectorCraft에서 바로 열어 고칠 수 있는 SVG 한 장이 남아요.",
+   "from": {
+    "label": "@dalcomi20 · ♥905",
+    "url": "https://www.threads.com/@dalcomi20/post/De5puqrjos_"
+   },
+   "steps": [
+    {
+     "text": "Claude Code에 붙여넣기",
+     "copy": "Draw one flat vector scene as a single SVG file named scene-01.svg, 1920x1080. Scene: a navy baseball jersey mesh shorts on a hanger in a clean white studio, a small sewing table beside it with a tape measure and fabric swatches. Use only 4 colors: #1F4BD8, #1A3FB5, #EEF2FD and #111111 on a white background. Simple geometric shapes, no gradients, no text, each object in its own named group so I can edit it later."
+    },
+    {
+     "text": "VectorCraft 열기",
+     "url": "https://getartcraft.com/apps/vectorcraft"
+    },
+    {
+     "text": "SVG 열어 고쳐 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Terra, 가성비 최고 판정",
+   "url": "https://www.androidauthority.com/gpt-6-1-terra-3728234/",
+   "image": null,
+   "source": "Android Authority · 써본 리뷰",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "Terra 언제 쓰고 언제 Sol",
+   "url": "https://medium.com/@shtse8/how-to-use-gpt-6-1-terra-what-its-good-at-how-to-try-it-today-and-when-to-stick-with-sol-or-clau-1afbbda3c878",
+   "image": null,
+   "source": "Medium · 쓰는 법 정리",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "말로 CAD, 에이전트 스킬",
+   "url": "https://github.com/earthtojake/text-to-cad",
+   "image": null,
+   "source": "GitHub earthtojake · MIT · STEP·STL·3MF",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "잡지풍 HTML 발표 스킬",
+   "url": "https://github.com/op7418/guizang-ppt-skill",
+   "image": null,
+   "source": "GitHub op7418 · Claude Code·Codex",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "테마 36종 HTML 발표",
+   "url": "https://github.com/lewislulu/html-ppt-skill",
+   "image": "https://raw.githubusercontent.com/lewislulu/html-ppt-skill/HEAD/docs/readme/hero.gif",
+   "source": "GitHub lewislulu · MIT · 발표자 모드",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "엔지니어용 작은 스킬 모음",
+   "url": "https://github.com/mattpocock/skills",
+   "image": null,
+   "source": "GitHub mattpocock · 10월 트렌딩",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-27 검색에도 K3.1 실사용 후기·사례 없음 · 가중치 11-04 공개 예정"
+  },
+  {
+   "name": "Claude 앱 기본 자동 모드",
+   "url": "https://x.com/claudeai/status/2113360845409583307",
+   "date": "2026-10-22",
+   "note": "10-27 검색에도 앱 쪽 사용 후기 없음(Claude Code 자동 모드 글만)"
+  },
+  {
+   "name": "Claude Duet (연구 미리보기)",
+   "url": "https://support.claude.com/en/articles/17631495-get-started-with-claude-duet",
+   "date": "2026-10-21",
+   "note": "10-27: 독립 리뷰·만든 사례 없음 · 10-28 지나면 정리"
+  }
+ ]
+}
