@@ -18,12 +18,12 @@
     {
      "title": "말로 CAD 모델 만드는 오픈소스를 Terra로 돌린 시연",
      "url": "https://x.com/earthtojake/status/2114810838662230419",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2114810345441103872/img/Woln7zINuXVujm3z.jpg"
     },
     {
      "title": "같은 작업을 Opus 5.5·Sol·Terra에 맡겨 시간·값 비교",
      "url": "https://x.com/rubenssoto_ai/status/2114796689563304192",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2114796547527299072/img/8afJ9jt9hnmnFBv9.jpg"
     }
    ],
    "new": [
@@ -149,7 +149,7 @@
    "cat": "release",
    "title": "Terra, 가성비 최고 판정",
    "url": "https://www.androidauthority.com/gpt-6-1-terra-3728234/",
-   "image": null,
+   "image": "https://www.androidauthority.com/wp-content/uploads/2026/05/Open-AI-ChatGPT-logo-on-phone-stock-photo-7.jpg",
    "source": "Android Authority · 써본 리뷰",
    "watching": false
   },
@@ -165,7 +165,7 @@
    "cat": "free",
    "title": "말로 CAD, 에이전트 스킬",
    "url": "https://github.com/earthtojake/text-to-cad",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/earthtojake/text-to-cad",
    "source": "GitHub earthtojake · MIT · STEP·STL·3MF",
    "watching": false
   },
@@ -173,7 +173,7 @@
    "cat": "free",
    "title": "잡지풍 HTML 발표 스킬",
    "url": "https://github.com/op7418/guizang-ppt-skill",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/op7418/guizang-ppt-skill",
    "source": "GitHub op7418 · Claude Code·Codex",
    "watching": false
   },
@@ -189,7 +189,7 @@
    "cat": "free",
    "title": "엔지니어용 작은 스킬 모음",
    "url": "https://github.com/mattpocock/skills",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/mattpocock/skills",
    "source": "GitHub mattpocock · 10월 트렌딩",
    "watching": false
   }
