@@ -8261,6 +8261,12 @@
     var arrCode = routeParts[1] ? routeParts[1].match(/\(([A-Z]{3})\)/)||[] : [];
     var depIata = depCode[1]||routeParts[0]||'';
     var arrIata = arrCode[1]||routeParts[1]||'';
+    // ★ (2026-10-26) 구간(legs)이 있으면 스카이스캐너식 — 첫 구간 출발 · 마지막 구간 도착 · 경유 공항 표시
+    var _legs = Array.isArray(f.legs) ? f.legs.filter(function(l){ return l && l.from && l.to; }) : [];
+    if (_legs.length) {
+      depIata = _legs[0].from; arrIata = _legs[_legs.length - 1].to;
+      routeParts = [_legs[0].from, _legs[_legs.length - 1].to];
+    }
     var code = f.flight || f.city || '';
     var airline = f.airline || f.title || '';
     // ★ (2026-07-25) 공항 코드+도시명을 시간 위에 — 다크 헤더에만 있어서 안 보였다
@@ -8345,6 +8351,7 @@
         '<div class="rec-fl-mid">' +
           '<div class="rec-fl-mid-line"><span class="material-symbols-outlined">flight</span></div>' +
           (f.duration ? '<p class="rec-fl-mid-dur">' + f.duration + '</p>' : '') +
+          (_legs.length ? '<p class="rec-fl-mid-stop' + (_legs.length > 1 ? ' is-stop' : '') + '">' + (_legs.length > 1 ? (_legs.length - 1) + '회 경유 · ' + _legs.slice(0, -1).map(function(l){ return l.to; }).join(', ') : '직항') + '</p>' : '') +
         '</div>' +
         '<div class="rec-fl-leg is-arr">' +
           '<p class="rec-micro">Arrival</p>' +
@@ -8353,9 +8360,26 @@
           '<p class="rec-fl-date">' + arrDateHtml + '</p>' +
         '</div>' +
       '</div>' +
+      (_legs.length ? _flightLegsHtml(_legs) : '') +
       (cells.length ? '<div class="rec-fl-foot">' + cells.join('') + '</div>' : '') +
       (typeof window.trvAttachRowHtml === 'function' ? window.trvAttachRowHtml(f) : '') +
     '</div>';
+  }
+  // ★ (2026-10-26) 구간 상세 — 스카이스캐너 '항공편 상세'처럼: 시각 | 점·선 | 공항, 구간마다 항공사·편명·기종, 사이에 경유 대기
+  function _flightLegsHtml(legs) {
+    var e = function(x){ return String(x == null ? '' : x).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+    var plus = function(n){ return n ? '<sup>+' + n + '</sup>' : ''; };
+    return '<div class="rec-fl-legs">' + legs.map(function(l, i) {
+      var lay = (i > 0 && l.layover) ? '<div class="rec-fl-lay"><span class="material-symbols-outlined">schedule</span><b>' + e(l.layover) + ' 경유</b><span>' + e(l.fromCity || '') + ' (' + e(l.from) + ')</span></div>' : '';
+      return lay + '<div class="rec-fl-seg">' +
+        '<div class="rec-fl-seg-t"><b>' + e(l.dep) + plus(l.depPlus) + '</b><i>' + e(l.dur || '') + '</i><b>' + e(l.arr) + plus(l.arrPlus) + '</b></div>' +
+        '<div class="rec-fl-seg-line"><span></span><span></span></div>' +
+        '<div class="rec-fl-seg-p">' +
+          '<p class="rec-fl-seg-apt"><b>' + e(l.from) + '</b> ' + e(l.fromName || '') + '</p>' +
+          '<p class="rec-fl-seg-meta">' + [l.airline, l.flight, l.aircraft, l.cabin].filter(Boolean).map(e).join(' · ') + (l.note ? ' <em>' + e(l.note) + '</em>' : '') + '</p>' +
+          '<p class="rec-fl-seg-apt"><b>' + e(l.to) + '</b> ' + e(l.toName || '') + '</p>' +
+        '</div></div>';
+    }).join('') + '</div>';
   }
 
   // 시드 데이터를 Firebase로 마이그레이션 후 수정/삭제
@@ -8619,7 +8643,7 @@
         price:amt?'₩'+amt.toLocaleString('ko-KR'):'—',
         pnr:f.pnr, passenger:f.passenger, seat_class:f.seat_class, seat_number:f.seat_number,
         fare_type:f.fare_type, payment_date:f.payment_date, payment_status:f.payment_status, unpaid:f.unpaid,
-        _id:f._id, attachments:f.attachments
+        _id:f._id, attachments:f.attachments, legs:f.legs
       }, actionBtns);
     }).join('');
 

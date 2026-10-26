@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=402" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=403" as="script">
   <link rel="preload" href="js/app-2-init.js?v=187" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -6518,6 +6518,25 @@
       transform:translateX(-50%); background:#fff; padding:0 4px; font-size:16px; color:#1F4BD8; }
     .rec-fl-mid-dur { font-family:'Manrope','Pretendard',sans-serif; font-size:12.5px; font-weight:700;
       color:#1F4BD8; margin:0; text-transform:uppercase; letter-spacing:-0.005em; white-space:nowrap; }
+    /* ★ (2026-10-26) 스카이스캐너식 구간 상세 — 시각 | 점·선 | 공항·편명, 사이에 경유 대기 띠 */
+    .rec-fl-mid-stop { margin:3px 0 0; font-size:11px; font-weight:700; color:#475569; white-space:nowrap; }
+    .rec-fl-mid-stop.is-stop { color:#b45309; }
+    .rec-fl-legs { border-top:1px solid #ECECF0; padding:12px 14px 4px; }
+    .rec-fl-seg { display:grid; grid-template-columns:64px 14px 1fr; gap:0 10px; padding:2px 0 10px; }
+    .rec-fl-seg-t { display:flex; flex-direction:column; justify-content:space-between; text-align:right; min-height:76px; }
+    .rec-fl-seg-t b { font-size:14px; font-weight:800; color:#0f172a; font-variant-numeric:tabular-nums; }
+    .rec-fl-seg-t sup { font-size:9px; color:#1A3FB5; margin-left:1px; }
+    .rec-fl-seg-t i { font-style:normal; font-size:11px; font-weight:600; color:#475569; }
+    .rec-fl-seg-line { position:relative; }
+    .rec-fl-seg-line::before { content:''; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:#1F4BD8; }
+    .rec-fl-seg-line span { position:absolute; left:2px; width:10px; height:10px; border:2px solid #1F4BD8; background:#fff; border-radius:50%; }
+    .rec-fl-seg-line span:first-child { top:3px; } .rec-fl-seg-line span:last-child { bottom:3px; }
+    .rec-fl-seg-p { display:flex; flex-direction:column; justify-content:space-between; min-height:76px; }
+    .rec-fl-seg-apt { margin:0; font-size:13px; color:#0f172a; } .rec-fl-seg-apt b { font-weight:800; margin-right:4px; }
+    .rec-fl-seg-meta { margin:0; font-size:12px; color:#475569; }
+    .rec-fl-seg-meta em { font-style:normal; color:#b45309; }
+    .rec-fl-lay { display:flex; align-items:center; gap:6px; margin:0 0 10px 74px; padding:7px 10px; background:#FFF7ED; border:1px solid #FED7AA; font-size:12px; color:#9a3412; }
+    .rec-fl-lay .material-symbols-outlined { font-size:15px; } .rec-fl-lay b { font-weight:800; }
     .rec-fl-foot { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 12px;
       padding:11px 14px 12px; background:#f8fafc; flex:1; align-content:start; }
     .rec-fl-foot .rec-micro { margin-bottom:2px; font-size:9px; }
@@ -16446,7 +16465,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=402" defer></script>
+<script src="js/app-1-pages.js?v=403" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17373,7 +17392,7 @@
 <script src="js/plans-v3-nordic.js?v=1" defer></script>
 <script src="js/plans-v2-coords.js?v=1" defer></script>
 <script src="js/plan-apply.js?v=7" defer></script>
-<script src="js/bookings-v2.js?v=3" defer></script>
+<script src="js/bookings-v2.js?v=4" defer></script>
 
 </body>
 </html>

@@ -43,12 +43,14 @@
 
   function flightCard(it, idx) {
     var r = route(it.description);
+    var legs = Array.isArray(it.legs) ? it.legs : [];
+    if (legs.length) r = [legs[0].from, legs[legs.length - 1].to];
     var code = function(x) { var m = /\b([A-Z]{3})\b/.exec(x); return m ? m[1] : x; };
     return '<article class="bk-card bk-flight">' +
       '<header class="bk-fh"><span class="bk-tag">✈ FLIGHT</span><b>' + esc(it.title || '') + '</b><span class="bk-mute">' + esc(it.city || '') + (it.date ? ' · ' + dw(it.date) : '') + '</span>' + btns(idx) + '</header>' +
       '<div class="bk-route">' +
         '<div><p class="bk-code">' + esc(code(r[0])) + '</p><p class="bk-time">' + esc(it.time || '') + '</p></div>' +
-        '<div class="bk-line"><span>' + esc(it.duration || '') + '</span></div>' +
+        '<div class="bk-line"><span>' + esc(it.duration || '') + (legs.length > 1 ? ' · ' + (legs.length - 1) + '회 경유 ' + esc(legs.slice(0, -1).map(function(l){ return l.to + (legs[legs.indexOf(l) + 1].layover ? ' ' + legs[legs.indexOf(l) + 1].layover : ''); }).join(', ')) : (legs.length ? ' · 직항' : '')) + '</span></div>' +
         '<div class="bk-r"><p class="bk-code">' + esc(code(r[1])) + '</p><p class="bk-time">' + esc(it.arrive || '') + '</p></div>' +
       '</div>' +
       '<div class="bk-kvs">' +
