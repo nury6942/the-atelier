@@ -36,6 +36,10 @@
   var CC_KO = { DE:'독일', IT:'이탈리아', DK:'덴마크', SE:'스웨덴', NO:'노르웨이', FI:'핀란드', CA:'캐나다', US:'미국', CZ:'체코', HR:'크로아티아',
     IE:'아일랜드', GB:'영국', FR:'프랑스', ES:'스페인', PT:'포르투갈', AT:'오스트리아', CH:'스위스', NL:'네덜란드', BE:'벨기에', HU:'헝가리',
     PL:'폴란드', GR:'그리스', IS:'아이슬란드', JP:'일본', TW:'대만', TH:'태국', VN:'베트남', KR:'한국', SI:'슬로베니아', SK:'슬로바키아', EE:'에스토니아' };
+  // ★ (2026-10-26) 한글 도시 이름 → 나라. 모르면 일출·일몰이 한국 시간으로 찍히던 문제 (안트베르펜 13:01 일출)
+  var KO_CC = { '암스테르담':'NL','로테르담':'NL','하를렘':'NL','잔드보르트':'NL','안트베르펜':'BE','겐트':'BE','브뤼헤':'BE','브뤼셀':'BE',
+    '코펜하겐':'DK','부다페스트':'HU','비셰그라드':'HU','에게르':'HU','빌바오':'ES','포테스':'ES','산세바스티안':'ES','마드리드':'ES',
+    '산티야나 델 마르':'ES','게타리아':'ES','스톡홀름':'SE','오슬로':'NO','베르겐':'NO','울빅':'NO','플롬':'NO' };
   var _ccCache = {}; try { _ccCache = JSON.parse(localStorage.getItem('jv_city_cc') || '{}'); } catch(e) {}
   var _ccAsk = {};
   function plain(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
@@ -61,7 +65,7 @@
     var cc = _ccCache[raw];
     if (!cc) {
       var en = plain((typeof _cityEn === 'function' && _cityEn(raw)) || raw);
-      cc = CITY_CC[en] || CITY_CC[en.split(/[\s,]/)[0]] || null;
+      cc = KO_CC[raw] || CITY_CC[en] || CITY_CC[en.split(/[\s,]/)[0]] || null;
       if (!cc) { lookupCC(raw); return null; }
     }
     return { cc: cc, ko: CC_KO[cc] || cc, flag: flagOf(cc) };
@@ -268,6 +272,7 @@
   // ── 일출·일몰 (위도·경도로 계산, 그 나라 시간으로 표시) ──
   var TZ = { DK:'Europe/Copenhagen', SE:'Europe/Stockholm', NO:'Europe/Oslo', FI:'Europe/Helsinki', FR:'Europe/Paris', BE:'Europe/Brussels', NL:'Europe/Amsterdam', DE:'Europe/Berlin',
     ES:'Europe/Madrid', PT:'Europe/Lisbon', IE:'Europe/Dublin', GB:'Europe/London', IT:'Europe/Rome', CZ:'Europe/Prague', AT:'Europe/Vienna', HR:'Europe/Zagreb', CH:'Europe/Zurich',
+    HU:'Europe/Budapest', PL:'Europe/Warsaw', SI:'Europe/Ljubljana', SK:'Europe/Bratislava', GR:'Europe/Athens', IS:'Atlantic/Reykjavik',
     CA:'America/Toronto', US:'America/New_York', JP:'Asia/Tokyo', KR:'Asia/Seoul' };
   function sunTimes(dateStr, lat, lng) {
     var r = Math.PI / 180, J = new Date(dateStr + 'T12:00:00Z') / 864e5 + 2440587.5;
@@ -291,6 +296,8 @@
     if (!date || !city || head.querySelector('.jv-sun')) return;
     var ll = cityLL(city); if (!ll) return;
     var cc = (window.cityCountry(city) || {}).cc, tz = TZ[cc];
+    // 나라·시간대를 모르면 한국 시간으로 잘못 찍지 말고, 유럽 중부(경도 -10~25)면 중부유럽 시간으로 · 그 밖은 표시 안 함
+    if (!tz) { if (ll[0] > 35 && ll[1] > -10 && ll[1] < 25) tz = 'Europe/Paris'; else return; }
     var s = sunTimes(date, ll[0], ll[1]), txt;
     if (s.always) txt = '<span>백야 · 해가 안 짐</span>';
     else if (s.never) txt = '<span>극야</span>';
