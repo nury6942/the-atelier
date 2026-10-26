@@ -998,6 +998,16 @@ async function _saveTxShardedToFirebase(force) {
           var existing = await db.collection('ledgerTransactions').doc(year).get();
           if (existing.exists) {
             var oldCount = (existing.data() || {}).count || ((existing.data() || {}).items || []).length;
+            // 🔒 안전장치 3: 은행(뱅샐) 줄이 크게 사라지면 = 옛 데이터를 든 기기가 덮어쓰려는 것 → 차단
+            // (2026-10 사고: 10/15 이전 사본을 가진 기기가 2025년을 덮어 뱅샐 352줄이 0줄, 옛 수기 줄이 되살아남)
+            var oldBs = ((existing.data() || {}).items || []).filter(function(t) { return t && t['출처'] === '뱅샐'; }).length;
+            var newBs = byYear[year].filter(function(t) { return t && t['출처'] === '뱅샐'; }).length;
+            if (oldBs >= 20 && newBs < oldBs * 0.8) {
+              blocked.push(year + '(뱅샐 ' + oldBs + '→' + newBs + ' 차단됨)');
+              console.error('[LedgerSync] 🚫 ' + year + ' 뱅샐 줄 급감 (' + oldBs + '→' + newBs + ') — 옛 사본 덮어쓰기 차단, 새로고침 필요');
+              if (typeof ldgFlashToast === 'function') ldgFlashToast(year + '년 은행 기록이 옛날 것으로 덮일 뻔해서 막았어요 — 이 화면을 새로고침해 주세요');
+              continue;
+            }
             // 절반 미만으로 줄면서 5건 이상 사라지면 의심 → 차단
             if (oldCount >= 10 && newCount < oldCount * 0.5 && (oldCount - newCount) >= 5) {
               blocked.push(year + '(' + oldCount + '→' + newCount + ' 차단됨)');
