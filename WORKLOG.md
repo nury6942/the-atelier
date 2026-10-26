@@ -1,3 +1,6 @@
+## 2026-10-26 · 맥북 · 항공편 카드 한 줄 3장
+- #travel-records-section 에서 항공편만 1열 강제였던 것 풀고 1 / 2(900+) / 3(1280+)열 · 공항 코드 42→30px · 하단 정보 2열 (숙소는 1열 그대로)
+
 ## 2026-10-26 · 맥북 · 항공편 카드 스카이스캐너식 구간 상세 (app-1-pages v403 · bookings-v2)
 - 누리: "비행기 너무 대충 · 경유도 어디서 하는지 모르겠음 · 스카이스캐너 같은 UI" → journey 항공편에 `legs` 배열(dep·arr·dur·from/fromName·to/toName·airline·flight·aircraft·cabin·note·layover) · 카드에 시각|점·선|공항 + 경유 대기 띠(주황), 가운데 "1회 경유 · AMS"
 - 데이터는 Aside 구글 항공편에서 결과 줄 펼쳐서(편명·기종) 받음: KL 856 · SK 1549→KL 855(AMS 3시간 15분) · SK 1596 · KE 963 · KE 914 · W6 2389
