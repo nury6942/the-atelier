@@ -33,7 +33,7 @@
    "cat": "vibe",
    "title": "코딩 경험 0, 6주 만에 3D 게임 한 편",
    "url": "https://x.com/rewind02/status/2113934403478999211",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2113934333027270656/img/RxohxmKXERZlW3PC.jpg",
    "source": "X @rewind02 · ♥946",
    "how": "Godot 안에서 Claude Code, 기능 하나씩",
    "chips": [
@@ -73,7 +73,7 @@
    "cat": "hack",
    "title": "에이전트 여럿보다 하나에 스킬, 2배 빨라져",
    "url": "https://x.com/minchoi/status/2115082511457939494",
-   "image": null,
+   "image": "https://pbs.twimg.com/media/HVpHHQFXIAEDPEl.jpg",
    "source": "X @minchoi · 앤트로픽 가이드 요약",
    "how": "하위 에이전트를 한 루프로 합치고 스킬은 필요할 때만",
    "chips": [
@@ -144,7 +144,7 @@
    "cat": "free",
    "title": "랜딩 페이지 디자인 스킬",
    "url": "https://github.com/elayadesign/ai-design-skills",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/elayadesign/ai-design-skills",
    "source": "GitHub elayadesign · 10-26 트렌딩 진입",
    "watching": false
   },
@@ -152,7 +152,7 @@
    "cat": "hack",
    "title": "AI 그림인지 제미나이에 묻기",
    "url": "https://x.com/GeminiApp/status/2115171788812669225",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2115171418719883264/img/-RHGa5f3YkVZ1tq6.jpg",
    "source": "X @GeminiApp · SynthID · 구글 생성물만",
    "watching": false
   },
@@ -176,7 +176,7 @@
    "cat": "release",
    "title": "Kimi K3.1 독립 점수 55",
    "url": "https://artificialanalysis.ai/models/kimi-k3-1-pro",
-   "image": null,
+   "image": "https://artificialanalysis.ai/en/models/kimi-k3-1-pro/opengraph-image?3850766eb2d567bc",
    "source": "Artificial Analysis · 속도는 평균 아래",
    "watching": true
   }
