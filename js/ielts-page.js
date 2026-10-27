@@ -4,7 +4,7 @@
 (function(){
   var IELTS = {
     updated: '2026-10-18',
-    exam: { date: '2027-08-28', book: '2027-06-18', type: 'General Training · 컴퓨터 시험', fee: '321,000원 (IDP Korea)' },
+    exam: { date: null, hold: '시험 보류 (2026-10-27) — 유럽 취업비자엔 필요 없음 · 캐나다 영주권 신청 때만 (점수 유효 2년)', type: 'General Training · 컴퓨터 시험', fee: '321,000원 (IDP Korea)' },
     // 지금 = Cambridge C1 Advanced(2023-12) 영역 점수를 IELTS로 근사
     goals: [
       { k:'L', name:'Listening', now:6.5, pass:7.0, stretch:8.0, note:'40문항 중 30개 → 35개 · 차이 제일 큼', tone:'r' },
@@ -210,7 +210,7 @@
   }
 
   function hero(){
-    var d = dday(IELTS.exam.date), nx = nextMock();
+    var d = IELTS.exam.date ? dday(IELTS.exam.date) : null, nx = IELTS.exam.date ? nextMock() : null;
     var MIN=4, MAX=9, pct=function(v){ return ((v-MIN)/(MAX-MIN)*100).toFixed(1)+'%'; };
     var rows = IELTS.goals.map(function(g){
       var col = TONE[g.tone];
@@ -220,8 +220,9 @@
         + (g.stretch ? '<div class="tick s" style="left:'+pct(g.stretch)+'" title="도전 '+band(g.stretch)+'"></div>' : '')
         + '</div><div class="sc">'+(g.nowLabel||band(g.now))+' → <span style="color:var(--atl-accent,#1F4BD8)">'+band(g.stretch||g.pass)+'</span></div></div>';
     }).join('');
-    return '<div class="ie-hero"><div class="ie-dd"><div class="n">'+(d>0?'D-'+d:(d===0?'D-DAY':'D+'+(-d)))+'</div>'
-      + '<div class="l">'+esc(IELTS.exam.date)+' (토) · '+esc(IELTS.exam.type)+'</div>'
+    return '<div class="ie-hero"><div class="ie-dd">'
+      + (IELTS.exam.date ? '<div class="n">'+(d>0?'D-'+d:(d===0?'D-DAY':'D+'+(-d)))+'</div><div class="l">'+esc(IELTS.exam.date)+' (토) · '+esc(IELTS.exam.type)+'</div>'
+                         : '<div class="n">보류</div><div class="l">'+esc(IELTS.exam.hold)+'</div>')
       + (nx ? '<div class="next">다음 모의고사 <b>#'+nx.n+' · '+md(nx.date)+'</b> (D-'+dday(nx.date)+')<br>'+esc(nx.src)+'</div>' : '')
       + '</div><div class="ie-goals">'+rows
       + '<div class="ie-legend"><span><i style="background:#b91c1c"></i><i style="background:#b45309;margin-left:-3px"></i><i style="background:#15803d;margin-left:-3px"></i>지금 (Cambridge 2023 근사 · 색 = 남은 거리)</span><span><i style="background:none;border-left:2px solid #16161A;width:2px"></i>합격선 7.0</span><span><i style="background:none;border-left:2px dotted #16161A;width:2px"></i>도전</span></div>'

@@ -1,3 +1,9 @@
+## 2026-10-27 · 맥북 · IELTS 보류 → 면접 영어로 (ielts-page v4 · ielts-app v14 · 캘린더 48건)
+- 누리 결정: 유럽 취업비자엔 언어시험 없음, 캐나다는 영주권 신청 때만(점수 유효 2년) → 2027 IELTS 시험 안 봄
+- IELTS 화면 D-day 카운트다운·NEXT MOCK → '보류' 표시 (exam.date = null 이면 숨김, 문제·카드·채점기는 그대로 영어 연습용)
+- 캘린더 IELTS 48건 → 같은 날짜로 면접 연습(일=답 다듬기/모의 면접/연습 과제, 수=녹음 20분) · 백업 plannerBackups/2026-10-27-before-ielts-to-interview
+- Job Hunt: 면접 흐름·Glassdoor 후기·연습 브리프·답 초안·DART 지표, 포트폴리오 02 About MLB 추가(41쪽)
+
 ## 2026-10-26~27 · 맥북 · Job Hunt 기준 대정리 + 두 트랙(Sport / Taste)
 - 공고 기준(누리): 현지어 필수 X · 취업자격 필수(스폰서 없음) X · 계약직 X · Junior/Assistant/Intern/Entry/Associate X → 보관함 69건 이동, 아이맥 job-hunt-daily SKILL.md 에 규칙 추가 · 유럽 전역 + 스포츠 브랜드 30여 곳 + 취향 브랜드 20여 곳
 - 두 트랙: track=sport|taste · taste = 취향 브랜드(Acne ❤ 등) + 컨템포러리 여성·유니섹스 저지·니트(방향 65~75) · job-hunt.html 에 Sport / Taste ❤ 토글 · 카드에 나라 이름 · 같은 fit 안 점수 순 정렬(gen.py)

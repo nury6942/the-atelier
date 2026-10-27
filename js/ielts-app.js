@@ -25,7 +25,7 @@
   function typeName(id){ for (var k in TYPES) for (var i=0;i<TYPES[k].length;i++) if (TYPES[k][i][0]===id) return TYPES[k][i][1]; return id; }
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
-  function plan(){ return window.IELTS_DATA || { exam:{date:'2027-08-28'}, mocks:[], goals:[] }; }
+  function plan(){ return window.IELTS_DATA || { exam:{date:null}, mocks:[], goals:[] }; }
   function bank(){ return window.IELTS_BANK || { listening:[], reading:[], writing:{task1:[],task2:[]}, speaking:{part1:[],part2:[]}, vocab:[] }; }
   function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   function days(s){ var a=s.split('-'), t=new Date(); t.setHours(0,0,0,0); return Math.round((new Date(+a[0],+a[1]-1,+a[2])-t)/86400000); }
@@ -178,8 +178,8 @@
 
   // ════════ HOME ════════
   function viewHome(){
-    var P=plan(), d=days(P.exam.date), lb=latestBands(), goals={}; (P.goals||[]).forEach(function(g){goals[g.k]=g;});
-    var mocks=P.mocks||[], next=mocks.find(function(m){ return !mockRec(m.n) && days(m.date)>=-3; });
+    var P=plan(), d=P.exam.date?days(P.exam.date):null, lb=latestBands(), goals={}; (P.goals||[]).forEach(function(g){goals[g.k]=g;});
+    var mocks=P.mocks||[], next=P.exam.date ? mocks.find(function(m){ return !mockRec(m.n) && days(m.date)>=-3; }) : null;
     var ov=overall([lb.L,lb.R,lb.W,lb.S]);
     // 영역 4칸
     var tiles=['L','R','W','S'].map(function(k){
@@ -212,8 +212,9 @@
     return '<div class="ia-grid">'
       +'<div class="ia-home-top" style="display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px">'
         +'<div style="background:'+ACC+';color:#fff;padding:22px;display:flex;flex-direction:column;gap:6px">'
-          +'<div class="ia-num" style="font-size:56px;line-height:1">'+(d>0?'D-'+d:d===0?'D-DAY':'D+'+(-d))+'</div>'
-          +'<div style="font-size:12.5px;font-weight:600;opacity:.9">'+P.exam.date.replace(/-/g,'.')+' · GT · 컴퓨터</div>'
+          +(P.exam.date ? '<div class="ia-num" style="font-size:56px;line-height:1">'+(d>0?'D-'+d:d===0?'D-DAY':'D+'+(-d))+'</div>'
+            +'<div style="font-size:12.5px;font-weight:600;opacity:.9">'+P.exam.date.replace(/-/g,'.')+' · GT · 컴퓨터</div>'
+            : '<div class="ia-num" style="font-size:44px;line-height:1">보류</div><div style="font-size:12.5px;font-weight:600;opacity:.9">시험 안 봄 · 캐나다 영주권 때만</div>')
           +'<div style="margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.35);display:flex;justify-content:space-between;align-items:flex-end">'
             +'<div><div style="font-size:11px;font-weight:700;opacity:.8">OVERALL</div><div class="ia-num" style="font-size:30px">'+fmtB(ov)+'</div></div>'
             +(next?'<div style="text-align:right"><div style="font-size:11px;font-weight:700;opacity:.8">NEXT MOCK</div><div style="font-size:15px;font-weight:800">#'+next.n+' · '+next.date.slice(5).replace('-','/')+'</div><div style="font-size:11px;opacity:.85">D-'+days(next.date)+'</div></div>':'')
