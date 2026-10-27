@@ -412,9 +412,9 @@ function _esViewBar(s, view){
   }).join('') + '</div>';
 }
 function _esWaitOrMake(s, mode, what){
-  if (_esPending(s._id, mode)) return '<p style="font-size:15px;color:#1A3FB5;background:#EEF2FD;padding:18px 20px"><span class="material-symbols-outlined animate-spin" style="font-size:18px;vertical-align:-4px">progress_activity</span> 아이맥이 ' + what + '을(를) 만드는 중이에요 · 몇 분 걸려요</p>';
+  if (_esPending(s._id, mode)) return '<p style="font-size:15px;color:#1A3FB5;background:#EEF2FD;padding:18px 20px"><span class="material-symbols-outlined animate-spin" style="font-size:18px;vertical-align:-4px">progress_activity</span> 아이맥이 「' + what + '」 만드는 중이에요 · 몇 분 걸려요</p>';
   if (!s.transcript) return '<p style="font-size:14px;color:#475569;border:1px dashed #CBD5E1;padding:18px 20px">이 스터디엔 스크립트가 저장돼 있지 않아서 새로 만들 수 없어요.</p>';
-  return '<div style="border:1px dashed #CBD5E1;padding:18px 20px"><p style="font-size:14px;color:#475569;margin:0 0 12px">아직 ' + what + '이(가) 없어요.</p><button class="atl-btn atl-btn-primary" onclick="queueStudyMode(\'' + s._id + '\',\'' + mode + '\')">' + what + ' 만들기</button></div>';
+  return '<div style="border:1px dashed #CBD5E1;padding:18px 20px"><p style="font-size:14px;color:#475569;margin:0 0 12px">「' + what + '」은 아직 안 만들었어요.</p><button class="atl-btn atl-btn-primary" onclick="queueStudyMode(\'' + s._id + '\',\'' + mode + '\')">' + what + ' 만들기</button></div>';
 }
 function _esHeader(s){
   return '<p style="font-size:13px;color:#475569;margin:0 0 4px">' + _esH([s.source, s.date].filter(Boolean).join(' · ')) + '</p>' +
