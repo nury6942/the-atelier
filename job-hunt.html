@@ -226,14 +226,17 @@
     var tabs=document.getElementById('tabs');
     var secs=document.querySelectorAll('section[data-r]');
     var hionly=document.getElementById('hionly');
+    // 2026-10-26: 트랙 필터 — Sport(스포츠·애슬레저) / Taste(취향 브랜드·여성·유니섹스 저지·니트)
+    var sportonly=document.getElementById('sportonly'), tasteonly=document.getElementById('tasteonly');
     if(!tabs) return;
-    var curF='all', hi=false;
+    var curF='all', hi=false, trk='';
     function apply(){
       secs.forEach(function(s){
         var showSec=(curF==='all')||(s.getAttribute('data-r')===curF);
         s.style.display=showSec?'':'none';
         s.querySelectorAll('.jc').forEach(function(c){
-          c.style.display=(showSec&&hi&&c.getAttribute('data-fit')!=='hi')?'none':'';
+          var hide=(hi&&c.getAttribute('data-fit')!=='hi')||(trk&&c.getAttribute('data-track')!==trk);
+          c.style.display=(showSec&&hide)?'none':'';
         });
       });
     }
@@ -244,6 +247,9 @@
       window.scrollTo({top:0,behavior:'smooth'});
     });
     if(hionly) hionly.addEventListener('click',function(){ hi=!hi; hionly.classList.toggle('on',hi); apply(); });
+    function setTrk(v){ trk=(trk===v)?'':v; if(sportonly) sportonly.classList.toggle('on',trk==='sport'); if(tasteonly) tasteonly.classList.toggle('on',trk==='taste'); apply(); }
+    if(sportonly) sportonly.addEventListener('click',function(){ setTrk('sport'); });
+    if(tasteonly) tasteonly.addEventListener('click',function(){ setTrk('taste'); });
     jhSubnav(function(){ return curF; });
     jhPlaybook();
   }
