@@ -23,6 +23,23 @@
   var TS=/Speaker\s*\d+\s*[•·]\s*((?:\d{1,2}:)?\d{1,2}:\d{2})\s*/g;
   function plain(en){ return String(en).replace(TS,'').trim(); }
   function firstTs(en){ TS.lastIndex=0; var m=TS.exec(en); return m?m[1]:''; }
+  // 맥위스퍼 시각은 드문드문(10분에 하나쯤) → 단어 수로 사이를 메워 문단 시작 시각을 어림
+  function sec(t){ return t.split(':').reduce(function(a,x){ return a*60+(+x); }, 0); }
+  function mmss(v){ v=Math.max(0,Math.round(v)); var h=Math.floor(v/3600), m=Math.floor(v%3600/60), x=v%60; return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0'); }
+  function tsAt(s, pi){
+    var ps=paras(s);
+    if (!s._tsAt || s._tsAt.n!==ps.length){
+      var cum=[], w=0, anc=[];
+      ps.forEach(function(p,i){ cum.push(w); var t=firstTs(p.en); if (t) anc.push({ w:w, t:sec(t) }); w+=plain(p.en).split(/\s+/).length; });
+      cum.push(w);
+      if (!anc.length || anc[0].w>0) anc.unshift({ w:0, t:0 });
+      var rate=anc.length>1 ? (anc[anc.length-1].t-anc[0].t)/Math.max(1,anc[anc.length-1].w-anc[0].w) : 0.4;
+      s._tsAt={ n:ps.length, f:function(i){ var x=cum[i], a=anc[0], b=null;
+        for (var k=0;k<anc.length;k++){ if (anc[k].w<=x) a=anc[k]; else { b=anc[k]; break; } }
+        return mmss(b ? a.t+(b.t-a.t)*(x-a.w)/Math.max(1,b.w-a.w) : a.t+(x-a.w)*rate); } };
+    }
+    return s._tsAt.f(Math.min(pi, ps.length));
+  }
   function enHtml(en){ TS.lastIndex=0; return esc(en).replace(/Speaker\s*\d+\s*[•·]\s*((?:\d{1,2}:)?\d{1,2}:\d{2})\s*/g,'<span style="font-size:11px;color:'+SUB+';border:1px solid #E2E8F0;padding:0 5px;margin:0 4px 0 2px;user-select:none">$1</span>'); }
   function zoneOf(s){ var z=pr(s).zone; return typeof z==='number' ? z : 0; }
   function zoneRange(s){ var a=zoneOf(s), n=paras(s).length; return [a, Math.min(a+ZONE, n)]; }
@@ -70,7 +87,7 @@
     for (var z=0; z<n; z+=ZONE){
       var e=Math.min(z+ZONE,n), ps=(s.practice||{}).paras||{}, c=0;
       for (var i=z;i<e;i++) if ((ps[i]||{}).st==='said') c++;
-      var on=z===a, full=c===e-z, ts=firstTs(paras(s)[z].en);
+      var on=z===a, full=c===e-z, ts=tsAt(s,z);
       out.push('<button onclick="practiceZone('+z+')" style="font-size:13px;padding:6px 11px;cursor:pointer;border:1px solid '+(on?ACC:'#CBD5E1')+';background:'+(on?'#EEF2FD':full?'#F8FAFC':'#fff')+';color:'+(on?'#1A3FB5':SUB)+'">'+(z+1)+'–'+e+(ts?' · '+esc(ts):'')+(full?' ✓':c?' · '+c+'/'+(e-z):'')+'</button>');
     }
     return '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px">'+out.join('')+'</div>';
@@ -78,7 +95,7 @@
   function head(s){
     var r=zoneRange(s), ps=pr(s).paras, w=0, ck=0, sd=0;
     for (var i=r[0];i<r[1];i++){ var p=ps[i]||{}; if ((p.mine||'').trim()) w++; if (done(p)) ck++; if (p.st==='said') sd++; }
-    var tot=r[1]-r[0], t0=firstTs(paras(s)[r[0]].en), t1=r[1]<paras(s).length?firstTs(paras(s)[r[1]].en):'끝';
+    var tot=r[1]-r[0], t0=tsAt(s,r[0]), t1=r[1]<paras(s).length?tsAt(s,r[1]):'끝';
     var step=function(no,label,n){ var full=n>=tot; return '<div style="flex:1;min-width:120px;border-top:3px solid '+(full?ACC:n?'#93B4F5':'#E2E8F0')+';padding-top:6px"><p style="font-size:12px;color:'+SUB+';margin:0">'+no+' '+label+'</p><p style="font-size:15px;font-weight:600;margin:0">'+(n==null?(t0?esc(t0)+' ~ '+esc(t1):'자막 없이'):n+' / '+tot)+'</p></div>'; };
     return '<div id="pr-head" style="display:flex;gap:12px;flex-wrap:wrap;margin:0 0 18px">'+step('①','듣기',null)+step('②','내가 해석',w)+step('③','검수',ck)+step('④','되말하기',sd)+'</div>';
   }
@@ -89,7 +106,7 @@
     var en=paras(s)[pi].en, ko=paras(s)[pi].ko, p=(pr(s).paras[pi])||{}, k=s._id+':'+pi;
     var mine=drafts[k]!=null?drafts[k]:(p.mine||''), unk=p.unk||[];
     var h='<div id="pr-'+pi+'" style="border-top:1px solid '+LINE+';padding:18px 0">'+
-      '<p style="font-size:12px;color:'+SUB+';margin:0 0 6px">문단 '+(pi+1)+(p.st==='said'?' · <b style="color:'+ACC+'">끝 ✓</b>':'')+'</p>'+
+      '<p style="font-size:12px;color:'+SUB+';margin:0 0 6px">문단 '+(pi+1)+' · 약 '+tsAt(s,pi)+(p.st==='said'?' · <b style="color:'+ACC+'">끝 ✓</b>':'')+'</p>'+
       '<p class="pr-en" data-pi="'+pi+'" style="font-size:16px;line-height:1.75;margin:0 0 10px;color:#18181B">'+enHtml(en)+'</p>';
     if (!done(p) && p.st!=='checking'){
       h+=(unk.length?'<div style="display:flex;flex-direction:column;gap:6px;margin:0 0 10px">'+unk.map(function(u,i){
