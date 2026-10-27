@@ -165,9 +165,55 @@ var _refDeleteId = null;
 var _refSearchTimer = null;
 var _refEditingId = null;
 
+// ★ (2026-10-28) 메모 실시간 동기화 — 맥북·윈도우·폰이 같은 메모를 iPhone 메모처럼 바로 주고받는다
+//   · 목록은 onSnapshot 으로 늘 최신 → 다른 기기에서 고친 게 바로 들어오고, 옛 내용으로 덮어쓰지 않음
+//   · 열어 둔 메모는 이 기기에서 쓰는 중(저장 대기·저장 중)이 아니면 커서 자리를 지키며 바꿔 끼움
+//   · 새 메모는 문서 id 를 먼저 정해 두고 set → 자동 저장이 겹쳐도 메모가 두 개로 갈라지지 않음
+var _refUnsub = null, _refIsNew = false, _refSaving = 0;
+function _refCaretGet(el) {
+  var sel = window.getSelection();
+  if (!sel || !sel.rangeCount || !el.contains(sel.anchorNode)) return -1;
+  var r = sel.getRangeAt(0).cloneRange(); r.selectNodeContents(el); r.setEnd(sel.anchorNode, sel.anchorOffset);
+  return r.toString().length;
+}
+function _refCaretSet(el, pos) {
+  if (pos < 0) return;
+  var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n, left = pos;
+  while ((n = w.nextNode())) {
+    if (left <= n.length) { var r = document.createRange(); r.setStart(n, left); r.collapse(true); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); return; }
+    left -= n.length;
+  }
+}
+function _refApplyRemote(card) {
+  if (!card || card._id !== _refEditingId) return;
+  if (_refAutoSaveTimer || _refSaving) return;              // 이 기기에서 쓰는 중 → 내 것이 우선
+  var bodyEl = document.getElementById('ref-editor-body'), titleEl = document.getElementById('ref-editor-title');
+  if (!bodyEl) return;
+  var cur = sanitizeHtml(bodyEl.innerHTML).trim();
+  if ((card.body || '') !== cur && !card.isCode) {
+    var pos = _refCaretGet(bodyEl);
+    bodyEl.innerHTML = card.body || '';
+    _refCaretSet(bodyEl, pos);
+  }
+  if (titleEl && document.activeElement !== titleEl && (card.title || '') !== titleEl.value && !(card.title === '제목 없음' && !titleEl.value)) titleEl.value = card.title || '';
+  var d = _refGetDate(card.updatedAt), de = document.getElementById('ref-editor-date');
+  if (de) de.textContent = d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
 async function loadReference() {
+  if (_refUnsub) { renderRefList((document.getElementById('ref-search') || {}).value ? document.getElementById('ref-search').value.trim() : ''); return; }
   try {
-    var snap = await db.collection('workspace_references').orderBy('updatedAt', 'desc').get();
+    await new Promise(function(resolve) {
+      var first = true;
+      _refUnsub = db.collection('workspace_references').orderBy('updatedAt', 'desc').onSnapshot(function(snap) {
+        _refOnSnap(snap, first); if (first) { first = false; resolve(); }
+      }, function(e) { console.error('[Reference] live error:', e); _refUnsub = null; resolve(); });
+    });
+  } catch(e) { console.error('[Reference] load error:', e); }
+}
+function _refOnSnap(snap, first) {
+  try {
+    var openChanged = null;
+    snap.docChanges().forEach(function(ch) { if (ch.doc.id === _refEditingId && ch.type === 'modified' && !ch.doc.metadata.hasPendingWrites) openChanged = ch.doc.id; });
     _refCards = [];
     snap.forEach(function(doc) {
       var data = Object.assign({ _id: doc.id }, doc.data());
@@ -180,15 +226,18 @@ async function loadReference() {
       }
       _refCards.push(data);
     });
-    renderRefList();
-    // Reset editor to empty state
-    if (!_refEditingId || !_refCards.find(function(c) { return c._id === _refEditingId; })) {
+    var q = document.getElementById('ref-search');
+    renderRefList(q ? q.value.trim() : '');
+    if (openChanged) _refApplyRemote(_refCards.find(function(c) { return c._id === openChanged; }));
+    // 열어 둔 메모가 (다른 기기에서) 지워졌으면 닫기 · 아직 저장 전인 새 메모는 그대로
+    if (first ? (!_refEditingId || (!_refIsNew && !_refCards.find(function(c) { return c._id === _refEditingId; })))
+              : (_refEditingId && !_refIsNew && !_refCards.find(function(c) { return c._id === _refEditingId; }))) {
       _refEditingId = null;
       document.getElementById('ref-editor-active').style.display = 'none';
       document.getElementById('ref-editor-empty').style.display = 'flex';
     }
   } catch(e) {
-    console.error('[Reference] load error:', e);
+    console.error('[Reference] snapshot error:', e);
   }
 }
 
@@ -312,7 +361,7 @@ function selectMemo(id) {
     // synchronous-ish flush (await 없이 fire-and-forget)
     saveRefInline({ silent: true });
   }
-  _refEditingId = id;
+  _refEditingId = id; _refIsNew = false;
   var card = _refCards.find(function(c) { return c._id === id; });
   if (!card) return;
 
@@ -360,16 +409,16 @@ async function saveRefInline(opts) {
     statusEl.style.opacity = '1';
   }
 
+  if (!_refEditingId) { _refEditingId = db.collection('workspace_references').doc().id; _refIsNew = true; }
+  var id = _refEditingId, isNew = _refIsNew;
+  _refIsNew = false;
+  _refSaving++;
   try {
-    if (_refEditingId) {
-      await db.collection('workspace_references').doc(_refEditingId).update({ title: title, body: body, updatedAt: now });
-      var card = _refCards.find(function(c) { return c._id === _refEditingId; });
-      if (card) { card.title = title; card.body = body; card.updatedAt = now; }
-    } else {
-      var docRef = await db.collection('workspace_references').add({ title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now });
-      _refCards.unshift({ _id: docRef.id, title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now });
-      _refEditingId = docRef.id;
-    }
+    var card = _refCards.find(function(c) { return c._id === id; });
+    if (card) { card.title = title; card.body = body; card.updatedAt = now; }
+    else _refCards.unshift({ _id: id, title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now });
+    if (isNew) await db.collection('workspace_references').doc(id).set({ title: title, body: body, isCode: false, isPinned: false, createdAt: now, updatedAt: now }, { merge: true });
+    else await db.collection('workspace_references').doc(id).set({ title: title, body: body, updatedAt: now }, { merge: true });
     renderRefList(document.getElementById('ref-search').value.trim());
     if (statusEl) {
       statusEl.textContent = '✓ 저장됨';
@@ -382,6 +431,7 @@ async function saveRefInline(opts) {
     }
     if (!silent) showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 저장됨');
   } catch(e) {
+    if (isNew) _refIsNew = (_refEditingId === id);   // 처음 저장이 실패했으면 다음에 다시 새로 만들기
     console.error('[Reference] save error:', e);
     if (statusEl) {
       statusEl.textContent = '⚠️ 저장 실패';
@@ -389,10 +439,10 @@ async function saveRefInline(opts) {
       statusEl.style.opacity = '1';
     }
     if (!silent) showSyncToast('<span class="material-symbols-outlined text-sm mr-1">error</span> 저장 실패');
-  }
+  } finally { _refSaving--; }
 }
 
-// 자동 저장 — 1.2초 디바운스
+// 자동 저장 — 0.5초 디바운스 (기기를 옮겨 가며 써도 바로 이어지게)
 var _refAutoSaveTimer = null;
 function _refScheduleAutoSave() {
   // ref-editor-active가 보이지 않으면 자동 저장 X
@@ -406,8 +456,9 @@ function _refScheduleAutoSave() {
     statusEl.style.opacity = '1';
   }
   _refAutoSaveTimer = setTimeout(function() {
+    _refAutoSaveTimer = null;
     saveRefInline({ silent: true });
-  }, 1200);
+  }, 500);
 }
 
 // 자동 저장 트리거: 제목/본문 입력 시 + 메모 전환 시 강제 저장
@@ -419,12 +470,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 페이지 떠나기/메모 전환 시 pending auto-save 강제 실행
-window.addEventListener('beforeunload', function() {
+function _refFlushNow() {
   if (_refAutoSaveTimer) {
     clearTimeout(_refAutoSaveTimer);
+    _refAutoSaveTimer = null;
     saveRefInline({ silent: true });
   }
-});
+}
+window.addEventListener('beforeunload', _refFlushNow);
+window.addEventListener('pagehide', _refFlushNow);
+document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') _refFlushNow(); });
 
 function escHtml(s) {
   var d = document.createElement('div');
@@ -513,8 +568,8 @@ function openRefModal(editId) {
     _refAutoSaveTimer = null;
     saveRefInline({ silent: true });
   }
-  // New memo — open inline editor with empty state
-  _refEditingId = null;
+  // New memo — open inline editor with empty state (id 는 첫 저장 때 정해짐)
+  _refEditingId = null; _refIsNew = false;
   document.getElementById('ref-editor-empty').style.display = 'none';
   document.getElementById('ref-editor-active').style.display = 'flex';
   document.getElementById('ref-editor-title').value = '';
