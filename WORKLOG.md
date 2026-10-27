@@ -1,3 +1,10 @@
+## 2026-10-27 · 맥북 · English › My Phrases + Annie 체크 (english-phrases v1 · app-1-pages v404 · english-study v16)
+- 누리 고민: 말은 되는데 문장 구조·단어가 단순(B2→C1 정체), "With ten years behind me … on your line" 같은 전치사 감이 없음 → 단어 말고 **문장 틀을 통째로** 모으고 [빈칸]만 바꿔 끼우기
+- 새 탭 My Phrases: 틀 카드(빈칸=코발트 밑줄) · 내가 하던 말 · 바꿔 끼우기 · 상태 모음→말해 봄→내 것 · 이번 주 3개 · 저장 englishPhrases/state
+- Annie 연결: 맡길 때 스크립트 끝에 틀 목록(id | frame)을 붙임 → REVIEW_PROMPT 에 FRAME CHECK 규칙 + frameCheck 필드 → 완료 시 applyAnnieFrameChecks 가 '내 것'으로 · 리뷰 맨 위에 체크 상자
+- 리뷰 💎 문장마다 gemFrame([빈칸] 틀) + '+ My Phrases' 버튼 · 워커(worker.js)는 안 고침(템플릿을 리포에서 읽음, 작업마다 git pull)
+- 다음: 탭 정리(Speak·Listen 묶기, IELTS 숨기기)는 다음 차례
+
 ## 2026-10-27 · 맥북 · IELTS 보류 → 면접 영어로 (ielts-page v4 · ielts-app v14 · 캘린더 48건)
 - 누리 결정: 유럽 취업비자엔 언어시험 없음, 캐나다는 영주권 신청 때만(점수 유효 2년) → 2027 IELTS 시험 안 봄
 - IELTS 화면 D-day 카운트다운·NEXT MOCK → '보류' 표시 (exam.date = null 이면 숨김, 문제·카드·채점기는 그대로 영어 연습용)

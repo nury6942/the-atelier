@@ -28357,7 +28357,7 @@
 
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
-    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view' };
+    var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view', phrases:'eng-phrases-view' };
     if (!views[tab]) tab = 'annie';
     if (!document.getElementById('eng-annie-view')) return;
     Object.keys(views).forEach(function(k){
@@ -28372,6 +28372,7 @@
     if (tab === 'ielts' && typeof window.renderIelts === 'function') window.renderIelts();
     if (tab === 'read' && typeof window.renderEnglishRead === 'function') window.renderEnglishRead();
     if (tab === 'work' && typeof window.renderWorkEnglish === 'function') window.renderWorkEnglish();
+    if (tab === 'phrases' && typeof window.renderEnglishPhrases === 'function') window.renderEnglishPhrases();
     if (tab !== 'work' && window.WORK_EN) window.WORK_EN.stop();
     if (tab !== 'read' && typeof window.stopEnglishRead === 'function') window.stopEnglishRead();
     var pe = document.getElementById('page-english');
@@ -30377,6 +30378,7 @@ function openSessionDetail(dateId) {
       (u.note ? '<p class="review-note-en mt-3">' + u.note + '</p>' : '') +
       (u.noteKr ? '<p class="review-note-kr">' + u.noteKr + '</p>' : '') +
       gemBreakdownHtml(u, ui) +
+      (typeof addPhraseFromGem === 'function' ? '<div style="margin-left:26px;margin-top:8px"><button id="gemadd-' + ui + '" onclick="addPhraseFromGem(\'' + dateId + '\',' + ui + ')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px">bookmark_add</span>+ My Phrases' + (u.gemFrame ? ' · ' + u.gemFrame.replace(/</g,'&lt;') : '') + '</button></div>' : '') +
     '</div>';
   }).join('') + '</div>' + krBox(s.upgradesKr);
 
@@ -30477,6 +30479,7 @@ function openSessionDetail(dateId) {
     '<div class="flex gap-2"><button onclick="alert(\'편집 기능은 추후 지원 예정\')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600"><span class="material-symbols-outlined text-xl">edit_square</span></button>' +
     '<button onclick="deleteSessionFromDetail(\'' + dateId + '\')" class="p-2 rounded-xl bg-slate-50 hover:bg-rose-100 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-xl">delete</span></button></div></div></div>' +
     '<div class="flex gap-4 mb-8">' + lvBarFull(lv.fluency,'Fluency','fluency') + lvBarFull(lv.vocab,'Vocabulary','vocab') + lvBarFull(lv.grammar,'Grammar','grammar') + lvBarFull(lv.interaction,'Interaction','interaction') + '</div>' +
+    (typeof phrasesCheckHtml === 'function' ? phrasesCheckHtml(s) : '') +
     (typeof annieAudioHtml === 'function' ? annieAudioHtml(s, dateId) : '') +
     tabHtml +
     sectionCard(1,'Summary','총평',sec1) +
@@ -30620,6 +30623,8 @@ Analyze the transcript below from an English tutoring session with a native spea
 - Extract 12–20 useful expressions the tutor (not Nuri) actually used, categorized. Each needs Korean meaning + frequency.
 - Provide 6–10 "upgrade" entries with original / natural B2 / C1 upgrade / note + Korean for the natural version + frequency of the C1 gem.
 - For EACH upgrade's C1 gem, ALSO produce a learner-friendly breakdown so Nuri never has to look it up in GPT/dictionary: gemMeaningKr = the whole gem sentence in natural Korean (1–2 sentences); gemBreakdown = an array of 3–6 { chunk, meaning } items pulling out the tricky or C1-flavored pieces (phrasal verbs, collocations, idioms, grammar patterns like "tend to + V"). "meaning" = Korean sense + nuance; for easily-confused polysemes, contrast explicitly (e.g., "come across as" = gives an impression, NOT "encounter by chance"; "back home" = in one's home country, NOT behind the house). If the gem's structure is non-trivial, make the FIRST item { chunk: "문장 구조", meaning: "주어 … / 동사구 … / 대시 뒤 …" }. Use an empty array [] only for genuinely simple gems.
+- For EACH upgrade, ALSO give gemFrame = the C1 gem turned into a REUSABLE SENTENCE FRAME: keep the native skeleton (fronted phrases, prepositions, collocations) exactly, and put the parts Nuri would swap for her own content in [square brackets]. e.g. gem "With ten years of jersey behind me, I can hit the ground running on your activewear line." → gemFrame "With [ten years of jersey] behind me, I can [hit the ground running] on [your activewear line]." Nuri learns English as whole frames + swapped slots, not word by word.
+- FRAME CHECK: if the INPUT ends with a "NURI'S TARGET FRAMES" block (lines "id | frame"), that block is NOT part of the conversation. For EACH listed frame, decide whether NURI herself (never the tutor) actually produced that frame in the conversation — same skeleton; the [slots] may hold different words; small slips are OK. Output frameCheck: one item per listed frame { id, used: true|false, quote: "Nuri's exact words when used, else empty" }. If there is no such block, output frameCheck: [].
 - Identify 4–6 grammar patterns Nuri struggles with, each with rule + 2–3 examples. Add Korean to the rule.
 - Topic vocab sets: 2–3 topics, each with 5–8 words. Each word needs: Korean meaning, collocations, synonym(s), antonym (or "—" if none), frequency, and a natural example. Favor genuinely useful everyday words over obscure ones.
 - Drills: 2–3 formats (fill-in-blank, reorder, C1 replacement). Each item needs the answer AND a short Korean explanation of why.
@@ -30663,6 +30668,7 @@ sessionsData["{{DATE}}"] = {
       okKr: "자연스러운 버전의 한글 뜻.",
       gem: "C1 upgrade — more sophisticated but still natural. Use C1 structures (inversion, 'rather than', 'what X is Y', etc.)",
       gemKr: "C1 업그레이드 문장의 한글 뜻.",
+      gemFrame: "The gem as a reusable frame — swappable parts in [square brackets].",
       gemMeaningKr: "💎 gem 문장 전체를 자연스러운 한국어로 옮긴 1~2문장 (학습자가 한눈에 의미 파악).",
       gemBreakdown: [
         { chunk: "문장 구조", meaning: "복잡한 문장이면 주어 / 동사구 / 대시 뒤 식으로 한 줄 분해. 단순하면 이 항목은 빼도 됨." },
@@ -30746,7 +30752,11 @@ sessionsData["{{DATE}}"] = {
   goals: [
     { title: "Goal 1 name", desc: "Specific, measurable action for next class. Reference today's mistakes." }
   ],
-  goalsKr: "다음 수업을 위한 동기부여 메시지. 오늘의 핵심 과제를 다시 한 번 짚어주기."
+  goalsKr: "다음 수업을 위한 동기부여 메시지. 오늘의 핵심 과제를 다시 한 번 짚어주기.",
+
+  frameCheck: [
+    { id: "frame id from the TARGET FRAMES block", used: false, quote: "" }
+  ]
 };
 
 === STRICT OUTPUT RULES ===
@@ -31218,6 +31228,7 @@ async function autoGenerateReview() {
   autoBtn.className = 'w-full py-3 rounded-xl bg-slate-300 text-slate-500 font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed mb-2';
 
   // Step B: 프롬프트 조립
+  if (typeof phrasesForAnnie === 'function') transcript += await phrasesForAnnie();
   var filledPrompt = REVIEW_PROMPT_TEMPLATE.replaceAll('{{DATE}}', date).replaceAll('{{TRANSCRIPT}}', transcript);
 
   // Step C: API 호출
@@ -31462,11 +31473,12 @@ function gradeAllDrills() {
   }
 }
 
-function copyReviewPrompt() {
+async function copyReviewPrompt() {
   var date = document.getElementById('review-date').value;
   var transcript = document.getElementById('review-transcript').value.trim();
   if (!date) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 날짜를 입력하세요'); return; }
   if (!transcript) { showSyncToast('<span class="material-symbols-outlined text-sm mr-1">warning</span> 트랜스크립트를 입력하세요'); return; }
+  if (typeof phrasesForAnnie === 'function') transcript += await phrasesForAnnie();
   var prompt = REVIEW_PROMPT_TEMPLATE.replaceAll('{{DATE}}', date).replaceAll('{{TRANSCRIPT}}', transcript);
   navigator.clipboard.writeText(prompt).then(function() {
     showSyncToast('<span class="material-symbols-outlined text-sm mr-1">check_circle</span> 프롬프트가 클립보드에 복사되었습니다');

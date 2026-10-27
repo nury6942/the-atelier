@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=403" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=404" as="script">
   <link rel="preload" href="js/app-2-init.js?v=187" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -15356,6 +15356,7 @@
         <button id="eng-tab-ielts" onclick="switchEngTab('ielts')" class="travel-tab-btn">IELTS</button>
         <button id="eng-tab-work" onclick="switchEngTab('work')" class="travel-tab-btn">Work</button>
         <button id="eng-tab-tutor" onclick="switchEngTab('tutor')" class="travel-tab-btn">AI Tutor</button>
+        <button id="eng-tab-phrases" onclick="switchEngTab('phrases')" class="travel-tab-btn">My Phrases</button>
       </div>
 
       <!-- ══════════ ANNIE 뷰 (회화 수업 리뷰 — 기존) ══════════ -->
@@ -15487,6 +15488,7 @@
       <div id="eng-ielts-view" style="display:none"></div>
       <!-- ══════════ WORK 뷰 (업무 영어 — js/work-english.js, 카드는 Firestore workEnglish/content) ══════════ -->
       <div id="eng-work-view" style="display:none"></div>
+      <div id="eng-phrases-view" style="display:none"></div>
 
       <!-- ══════════ STUDY 뷰 (콘텐츠 스터디 — 신규) ══════════ -->
       <div id="eng-study-view" style="display:none">
@@ -16473,7 +16475,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=403" defer></script>
+<script src="js/app-1-pages.js?v=404" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
@@ -17361,7 +17363,7 @@
 <script src="js/app-6-postype-analytics.js?v=172" defer></script>
 <script src="js/app-7-mirror.js?v=82" defer></script>
 <script src="js/tts-voice.js?v=2" defer></script>
-<script src="js/english-study.js?v=15" defer></script>
+<script src="js/english-study.js?v=16" defer></script>
 <script src="js/english-read.js?v=2" defer></script>
 <script src="js/ielts-page.js?v=4" defer></script>
 <script src="js/ielts-bank.js?v=2" defer></script>
@@ -17375,6 +17377,7 @@
 <script src="js/ielts-topics.js?v=1" defer></script>
 <script src="js/ielts-app.js?v=14" defer></script>
 <script src="js/work-english.js?v=3" defer></script>
+<script src="js/english-phrases.js?v=1" defer></script>
 
 <!-- Nomad Master 모듈 (데이터 + 도시 데이터 + 페이지 렌더링) -->
 <script src="js/nomad-data.js?v=172" defer></script>

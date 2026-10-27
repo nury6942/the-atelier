@@ -1258,6 +1258,8 @@ window.queueAiJob = async function(kind){
   if (!transcript){ _aiToast('warning', '스크립트를 입력하세요'); return; }
   var btn = document.getElementById(isStudy ? 'study-sub-btn' : 'review-sub-btn');
   if (btn) btn.disabled = true;
+  // ANNIE: 스크립트 끝에 My Phrases 틀 목록을 붙여 리뷰가 '실제로 썼나'(frameCheck)를 같이 본다
+  if (!isStudy && typeof phrasesForAnnie === 'function') transcript += await phrasesForAnnie();
   var job = {
     kind: kind, status: 'queued', date: date, title: title, source: source, transcript: transcript,
     createdAt: new Date().toISOString()
@@ -1311,6 +1313,7 @@ async function _ackAiJob(j){
       if (typeof ensureLessonExists === 'function') lesson = await ensureLessonExists(j.date);
       if (typeof loadEnglishSessions === 'function') await loadEnglishSessions();
       if (typeof loadEnglish === 'function') await loadEnglish();
+      if (typeof applyAnnieFrameChecks === 'function') await applyAnnieFrameChecks();
     } else if (typeof loadEnglishStudy === 'function') {
       await loadEnglishStudy();
     }
