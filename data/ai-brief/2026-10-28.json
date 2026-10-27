@@ -1,0 +1,198 @@
+{
+ "date": "2026-10-28",
+ "generatedAt": "2026-10-28T07:10:00+09:00",
+ "sourcesNote": "웹 검색 19회 + 오늘 맥 수집(X·Threads 14개) + GitHub 원본 README·PyPI 확인 · 실행 환경에서 X·Threads·github.com·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "코드로만 단편영화, 화풍 59가지 골라 쓰기",
+   "url": "https://github.com/lemomo-ai/lemo-opuscar",
+   "image": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/docs/cover.jpg",
+   "source": "GitHub lemomo-ai · MIT · Threads @echochip2025 ♥169",
+   "how": "Opus 5.5가 그림·음악·내레이션을 코드로, 한 프레임씩",
+   "examples": [
+    {
+     "title": "아카데미 작품상 98편을 각기 다른 화풍으로, 6분 31초",
+     "url": "https://lemomo-ai.github.io/lemo-opuscar/opuscar98/",
+     "image": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/docs/opuscar98.jpg"
+    },
+    {
+     "title": "광화문광장 멤피스 애니메이션, 장소 네 줄만 바꿔 쓰는 프롬프트",
+     "url": "https://www.threads.com/@contenjoo/post/De_LCElj9Pu",
+     "image": null
+    }
+   ],
+   "chips": [
+    "화풍 59종 + 내 화풍",
+    "영상 한 편 30~60분",
+    "Node·ffmpeg 필요"
+   ],
+   "forMe": "MLB 신상 소개 영상을 촬영 없이 만들 때 화풍만 골라 쓰면 됩니다. 'Make a style your own'으로 아뜰리에 코발트 화풍을 하나 저장해 두면 계속 같은 톤이 나와요."
+  },
+  {
+   "cat": "vibe",
+   "title": "코딩 경험 0, 6주 만에 3D 게임 한 편",
+   "url": "https://x.com/rewind02/status/2113934403478999211",
+   "image": null,
+   "source": "X @rewind02 · ♥946",
+   "how": "Godot 안에서 Claude Code, 기능 하나씩",
+   "chips": [
+    "♥946 · 댓글 60",
+    "6주",
+    "Tripo·Blender·Cascadeur"
+   ],
+   "forMe": "잘 나온 이미지 프롬프트를 JSON 한 파일에 모아 다음 생성에 다시 넣는 요령은 시즌 프린트 그래픽 톤을 맞출 때 그대로 쓸 수 있습니다."
+  },
+  {
+   "cat": "hack",
+   "title": "가족 사진 6TB, 구글포토 끊고 자동 영상",
+   "url": "https://www.threads.com/@ikqooo.roast/post/De-4nnIjyRK",
+   "image": null,
+   "source": "Threads @ikqooo.roast · ♥200 · 댓글 77",
+   "how": "NAS에 Immich, VideoHighlighter로 명장면",
+   "chips": [
+    "구글포토 연 30만원 해지",
+    "6년치 6TB",
+    "주말·여행별 짧은 영상"
+   ]
+  },
+  {
+   "cat": "tool",
+   "title": "세금 계산은 AI 말고 코드로, 근거 조문까지",
+   "url": "https://github.com/UpstageAI/korean-tax-calc-mcp",
+   "image": "https://raw.githubusercontent.com/UpstageAI/korean-tax-calc-mcp/main/docs/demo.gif",
+   "source": "GitHub UpstageAI · MIT · Threads @developk88 ♥119",
+   "how": "Claude에 한 줄로 연결, 법인세·소득세·부가세 계산",
+   "chips": [
+    "도구 76개",
+    "73개는 키 없이 내 PC",
+    "표 없는 연도는 멈춤"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "에이전트 여럿보다 하나에 스킬, 2배 빨라져",
+   "url": "https://x.com/minchoi/status/2115082511457939494",
+   "image": null,
+   "source": "X @minchoi · 앤트로픽 가이드 요약",
+   "how": "하위 에이전트를 한 루프로 합치고 스킬은 필요할 때만",
+   "chips": [
+    "단일 루프 전환 고객 약 2배",
+    "도구 30~50개 넘으면 헷갈림",
+    "골든 예시 10개로 전후 비교"
+   ],
+   "forMe": "Atelier 루틴(AI Brief·자동 배포)을 나눠 맡기기보다 한 에이전트에 스킬로 붙이는 쪽이 낫다는 근거입니다. 도구가 많아지면 묶어서 필요할 때만 부르게 하세요."
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "MLB 쇼츠, 코드 영화 화풍 한 컷 뽑기",
+   "minutes": 25,
+   "why": "오늘 화제인 Lemo-Opuscar는 영상 한 편 전에 '화풍 프레임 한 장'부터 보여 줍니다. 누리님 쇼츠 신상을 59가지 화풍 중 하나로 그린 한 컷이 남고, 마음에 들면 그대로 영상까지 이어갈 수 있어요.",
+   "from": {
+    "label": "@echochip2025 · ♥169",
+    "url": "https://www.threads.com/@echochip2025/post/De-42lwlL_V"
+   },
+   "steps": [
+    {
+     "text": "갤러리에서 화풍 고르기",
+     "url": "https://lemomo-ai.github.io/lemo-opuscar/"
+    },
+    {
+     "text": "터미널에 설치 붙여넣기",
+     "copy": "claude plugin marketplace add lemomo-ai/lemo-opuscar\nclaude plugin install lemo-opuscar@lemolab"
+    },
+    {
+     "text": "Claude에 한 컷 주문",
+     "copy": "Use the lemo-opuscar skill. I want a 15-second product film for navy MLB jersey mesh shorts with a white side stripe. Use the style I picked from the gallery: [style name]. Do NOT render the full film yet: first draw ONE style frame with the real code and show it to me, at 1080x1080. Keep the background white and use cobalt #1F4BD8 as the only accent color."
+    }
+   ]
+  },
+  {
+   "title": "클로드를 내 영어 과외쌤으로, 10분 상황극",
+   "minutes": 15,
+   "why": "해외 이직 면접 대비로 매일 10분씩 말하기 연습이 됩니다. 수업 끝에 틀린 표현 모음이 남아 다음 날 그대로 이어갈 수 있어요.",
+   "from": {
+    "label": "@_allerg_ · ♥287",
+    "url": "https://www.threads.com/@_allerg_/post/De-anf0HwDZ"
+   },
+   "steps": [
+    {
+     "text": "Claude 새 대화 열기",
+     "url": "https://claude.ai/new"
+    },
+    {
+     "text": "세팅 프롬프트 붙여넣기",
+     "copy": "You are a native English tutor with 20 years of experience. My level: I can read well but speak very little (TOEIC around 600 level). Today's topic: a job interview for a fashion designer role at an overseas sportswear brand — you are the interviewer. For every answer I give: 1) correct grammar, 2) give 3 more natural ways to say it, 3) do not just say 'good job'. At the end, list all my mistakes and give me a 5-question quiz on today's expressions."
+    },
+    {
+     "text": "틀린 표현 모음 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "free",
+   "title": "도표 45종, 그림자 없이",
+   "url": "https://github.com/cathrynlavery/diagram-design",
+   "image": "https://raw.githubusercontent.com/cathrynlavery/diagram-design/main/docs/hero/hero-light.webp",
+   "source": "GitHub cathrynlavery · MIT · HTML+SVG 한 장",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "랜딩 페이지 디자인 스킬",
+   "url": "https://github.com/elayadesign/ai-design-skills",
+   "image": null,
+   "source": "GitHub elayadesign · 10-26 트렌딩 진입",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "AI 그림인지 제미나이에 묻기",
+   "url": "https://x.com/GeminiApp/status/2115171788812669225",
+   "image": null,
+   "source": "X @GeminiApp · SynthID · 구글 생성물만",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "AI 팀원 여럿을 내 PC에서",
+   "url": "https://www.producthunt.com/p/openbot-3/openbot-4",
+   "image": null,
+   "source": "Product Hunt · OpenBot · 10-28 트렌딩 2위",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "FigCraft 써본 가이드",
+   "url": "https://pasqualepillitteri.it/en/news/23599/figcraft-guide-free-figma-alternative-rust",
+   "image": null,
+   "source": "Pasquale Pillitteri · .fig 열기는 아직",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "Kimi K3.1 독립 점수 55",
+   "url": "https://artificialanalysis.ai/models/kimi-k3-1-pro",
+   "image": null,
+   "source": "Artificial Analysis · 속도는 평균 아래",
+   "watching": true
+  }
+ ],
+ "watching": [
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-28 검색에도 만든 사례 없음 · '할당량 10분 만에 소진' 반응·독립 점수만 · 가중치 11-04 공개 예정"
+  },
+  {
+   "name": "Claude 앱 기본 자동 모드",
+   "url": "https://x.com/claudeai/status/2113360845409583307",
+   "date": "2026-10-22",
+   "note": "10-28 검색에도 앱 쪽 사용 후기 없음 · 10-29 지나면 정리"
+  }
+ ]
+}
