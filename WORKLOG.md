@@ -1,3 +1,6 @@
+## 2026-10-27 · 맥북 · 유료 API 버튼 숨김
+- 누리 요청: Listen 스터디 추가 · Annie 리뷰 추가 모달의 'API로 바로 만들기 (요금 발생)' 버튼과 모델·요금 안내 줄을 숨김(style display:none) — 구독(아이맥)만 보임. 되살리려면 index.html 에서 display:none 만 지우면 됨
+
 ## 2026-10-27 · 맥북 · Listen: 보기 전 5분 + 전체 해석 (english-study v17 · english-phrases v2 · ai-worker)
 - 누리: 1시간 영상 보기 전에 "이것만 알고 가"가 필요하고, 깊게 공부(기존 Study)는 따로 시간 낼 때 → 모드 셋: 보기 전 5분(quick) · 전체 해석(translate) · 깊게 공부(deep)
 - 스터디 추가 = englishStudy/<id> 에 스크립트 먼저 저장 → aiJobs mode quick(+translate 체크 시) · 상세 위 토글로 셋 전환, 없는 건 '만들기' 버튼(저장된 스크립트로)

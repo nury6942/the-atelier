@@ -15603,10 +15603,10 @@
               </div>
               <!-- Auto Generate -->
               <button onclick="queueAiJob('annie')" id="review-sub-btn" class="atl-btn atl-btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2 mb-2">구독으로 만들기 <span style="font-weight:500;opacity:.85">· 무료 · 아이맥이 2~3분</span></button>
-              <button onclick="autoGenerateReview()" id="review-auto-btn" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 mb-2">
+              <button onclick="autoGenerateReview()" id="review-auto-btn" style="display:none" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 mb-2">
                 API로 바로 만들기 (요금 발생)
               </button>
-              <p id="review-auto-hint" class="text-[10px] text-slate-400 mb-4 text-center"></p>
+              <p id="review-auto-hint" style="display:none" class="text-[10px] text-slate-400 mb-4 text-center"></p>
 
               <!-- Loading Overlay (hidden by default) -->
               <div id="review-loading-overlay" class="hidden mb-4 p-6 rounded-xl bg-violet-50 border border-violet-100 text-center">
@@ -15658,8 +15658,8 @@
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#18181B;cursor:pointer"><input id="study-translate" type="checkbox" checked> 한국어 전체 해석도 같이 만들기 <span style="font-size:12px;color:#475569">· 1시간 영상이면 5~10분</span></label>
             <button onclick="queueAiJob('study')" id="study-sub-btn" class="atl-btn atl-btn-primary w-full py-3 text-sm font-bold flex items-center justify-center gap-2">보기 전 5분 만들기 <span style="font-weight:500;opacity:.85">· 무료 · 아이맥이 2~3분</span></button>
-            <button onclick="autoGenerateStudy()" id="study-auto-btn" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2">API로 바로 만들기 (요금 발생)</button>
-            <p id="study-api-hint" class="text-[10px] text-slate-400 text-center"></p>
+            <button onclick="autoGenerateStudy()" id="study-auto-btn" style="display:none" class="atl-btn atl-btn-secondary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2">API로 바로 만들기 (요금 발생)</button>
+            <p id="study-api-hint" style="display:none" class="text-[10px] text-slate-400 text-center"></p>
 
             <div id="study-loading-overlay" class="hidden p-6 rounded-xl bg-violet-50 border border-violet-100 text-center">
               <span class="material-symbols-outlined text-violet-400 text-3xl mb-2 animate-spin block">progress_activity</span>
