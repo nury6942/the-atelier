@@ -164,10 +164,12 @@ Output EXACTLY ONE fenced js code block containing only the assignment statement
 
 RULES
 - summary: exactly 3 short Korean lines — what the talk is actually about (its main claims), so she can follow the thread. Plain, no fluff.
-- items: 10–12 expressions IN THE ORDER THEY APPEAR in the transcript. Pick idioms, phrasal verbs, collocations and sentence frames that (a) an upper-B2 learner likely doesn't know or would misread, and (b) matter for following the talk. Skip easy words. Skip one-off proper nouns.
+- HOW MANY: scale with length — roughly one expression per 2 minutes of talk (~300 words). A 10-minute video ≈ 6–8 items, 30 minutes ≈ 15–18, ONE HOUR ≈ 25–30. Never stop at 12 for a long talk. Spread them across the WHOLE transcript, beginning to end — not just the first half.
+- items: expressions IN THE ORDER THEY APPEAR in the transcript. Pick idioms, phrasal verbs, collocations and sentence frames that (a) an upper-B2 learner likely doesn't know or would misread, and (b) matter for following the talk. Skip easy words. Skip one-off proper nouns.
   · expr: the expression as a learner should remember it. If it is a reusable sentence frame, put swappable parts in [square brackets], e.g. "it's really about [connection]".
   · kr: ONE short Korean meaning (max ~20 chars), nuance included if it differs from the literal.
   · quote: the exact sentence from the transcript where it appears (trim to the clause if very long).
+- words: SINGLE words (not phrases) an upper-B2 learner likely doesn't know or only half-knows, in order of appearance — again scaled: ≈ one per 3 minutes, so ONE HOUR ≈ 18–25. Don't repeat anything already in items or keywords. Each: word, kr (short Korean meaning in this context), quote (the short clause it appears in).
 - keywords: 3–6 single words the speaker keeps coming back to (topic words), each with a short Korean meaning.
 - title: short English title for the video (use the given TITLE if not empty). subtitle: one Korean line.
 
@@ -177,6 +179,9 @@ studyData["{{ID}}"] = {
   summary: ["한국어 한 줄", "한국어 한 줄", "한국어 한 줄"],
   items: [
     { expr: "lose sight of", kr: "~을 잊고 놓치다", quote: "We sometimes lose sight of what that word actually means." }
+  ],
+  words: [
+    { word: "deathbed", kr: "임종 자리", quote: "most people will go to their deathbeds thinking" }
   ],
   keywords: [
     { word: "vulnerability", kr: "약한 모습, 취약함" }
@@ -437,6 +442,11 @@ function renderStudyQuick(s){
         '<button id="qadd-' + i + '" onclick="studyQuickToPhrase(\'' + s._id + '\',' + i + ')" style="font-size:12px;color:#1F4BD8;white-space:nowrap;cursor:pointer">+ 틀</button>' +
       '</div>';
     }).join('') +
+    ((q.words || []).length ? '<div style="height:18px"></div>' + lab('모를 만한 단어 · 나오는 순서대로 ' + q.words.length + '개') +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 24px">' + q.words.map(function(w){
+        return '<div style="padding:9px 0;border-top:1px solid #ECECF0"><p style="font-size:15px;margin:0"><b>' + _esH(w.word) + '</b> ' + _esSpk(w.word, 'en-US') + ' <span style="color:#475569">' + _esH(w.kr) + '</span></p>' +
+          (w.quote ? '<p style="font-size:13px;font-style:italic;color:#475569;margin:3px 0 0">"' + _esH(w.quote) + '"</p>' : '') + '</div>';
+      }).join('') + '</div>' : '') +
     ((q.keywords || []).length ? '<div style="height:16px"></div>' + lab('계속 나오는 단어') + '<div style="display:flex;gap:6px;flex-wrap:wrap">' + q.keywords.map(function(k){ return '<span style="font-size:14px;padding:4px 10px;background:#EEF2FD;color:#1A3FB5">' + _esH(k.word) + ' <span style="color:#475569">' + _esH(k.kr) + '</span></span>'; }).join('') + '</div>' : '') +
     '<div style="display:flex;gap:8px;border-top:1px solid #ECECF0;margin-top:18px;padding-top:14px;flex-wrap:wrap">' +
       '<button class="atl-btn atl-btn-secondary" onclick="openStudyDetail(\'' + s._id + '\',\'translate\')">전체 해석 보기</button>' +
