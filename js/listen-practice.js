@@ -117,6 +117,8 @@
         '<textarea oninput="practiceDraft('+pi+',this.value)" rows="3" placeholder="내 말로 해석해 보기 (정답은 검수 뒤에 열려요)" style="width:100%;font-size:15px;line-height:1.6;padding:10px 12px;border:1px solid #CBD5E1;font-family:inherit">'+esc(mine)+'</textarea>'+
         '<p id="pr-err-'+pi+'" style="font-size:13px;color:#B91C1C;margin:4px 0 0;display:none"></p>'+
         '<div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><button class="atl-btn atl-btn-primary" onclick="practiceCheck('+pi+')">검수 받기</button>'+
+          '<button class="atl-btn atl-btn-secondary" onclick="practiceSaveNow('+pi+')">중간 저장</button>'+
+          '<span id="pr-saved-'+pi+'" style="font-size:13px;color:'+SUB+'">'+(p.savedAt?'저장됨 · '+hm(p.savedAt):'')+'</span>'+
         '<span style="font-size:13px;color:'+SUB+';background:#F8FAFC;padding:6px 10px"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">lock</span> 정답 해석은 검수 뒤에</span></div>';
     } else if (p.st==='checking'){
       h+='<p style="font-size:15px;line-height:1.6;margin:0 0 10px;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
@@ -170,6 +172,8 @@
     if (zoneOf(s)>=paras(s).length) pr(s).zone=0;
     var r=zoneRange(s), h='<div id="pr-root" style="max-width:860px">'+
       '<p style="font-size:14px;color:'+SUB+';margin:0 0 10px">집중 구간 하나 = 10문단(오디오 6~7분) · 하루 하나면 충분해요</p>'+zoneBar(s)+head(s);
+    var resume=-1; for (var j=r[0];j<r[1];j++){ var pj=pr(s).paras[j]; if (pj && pj.st!=='said'){ resume=j; break; } }
+    if (resume>r[0]) h+='<button class="atl-btn atl-btn-secondary" style="margin:0 0 14px" onclick="var e=document.getElementById(\'pr-'+resume+'\');if(e)e.scrollIntoView({behavior:\'smooth\',block:\'start\'})">이어서 하기 · 문단 '+(resume+1)+' →</button>';
     for (var i=r[0];i<r[1];i++) h+=card(s,i);
     var next=r[1]<paras(s).length;
     return h+'<div style="border-top:1px solid '+LINE+';padding-top:14px">'+(next?'<button class="atl-btn atl-btn-secondary" onclick="practiceZone('+r[1]+')">다음 구간 '+(r[1]+1)+'–'+Math.min(r[1]+ZONE,paras(s).length)+'</button>':'')+'</div></div>';
@@ -181,14 +185,31 @@
     var s=cur(); if (!s) return; pr(s).zone=z; save(s,{ zone:z });
     if (typeof openStudyDetail==='function') openStudyDetail(s._id,'practice');
   };
+  function hm(t){ var d=new Date(t); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  // 쓰는 대로 0.7초 뒤 자동 저장 + '중간 저장' 버튼은 바로 · 창을 닫거나 탭을 옮겨도 남은 건 밀어 넣음
+  function flush(s, pi, manual){
+    var k=s._id+':'+pi; clearTimeout(timers[k]); delete timers[k];
+    var p=P(s,pi), v=drafts[k]!=null?drafts[k]:(p.mine||'');
+    p.mine=v; if (!p.st) p.st='draft'; p.savedAt=new Date().toISOString();
+    var el=document.getElementById('pr-saved-'+pi);
+    return save(s,{ paras:{ [pi]:{ mine:v, unk:p.unk||[], st:p.st, savedAt:p.savedAt } } }).then(function(){
+      if (el) el.innerHTML=(manual?'<b style="color:'+ACC+'">저장했어요</b>':'자동 저장됨')+' · '+hm(p.savedAt);
+      var hd=document.getElementById('pr-head'); if (hd) hd.outerHTML=head(s);
+    });
+  }
   window.practiceDraft=function(pi, v){
     var s=cur(); if (!s) return; var k=s._id+':'+pi; drafts[k]=v;
     var e=document.getElementById('pr-err-'+pi); if (e) e.style.display='none';
-    clearTimeout(timers[k]); timers[k]=setTimeout(function(){ P(s,pi).mine=v; if (!P(s,pi).st) P(s,pi).st='draft'; save(s,{ paras:{ [pi]:{ mine:v, st:P(s,pi).st } } }); var hd=document.getElementById('pr-head'); if (hd) hd.outerHTML=head(s); }, 700);
+    var el=document.getElementById('pr-saved-'+pi); if (el) el.textContent='쓰는 중…';
+    clearTimeout(timers[k]); timers[k]=setTimeout(function(){ flush(s, pi); }, 700);
   };
+  window.practiceSaveNow=function(pi){ var s=cur(); if (s) flush(s, pi, true); };
+  function flushAll(){ var s=cur(); if (!s) return; Object.keys(timers).forEach(function(k){ var i=k.indexOf(':'); if (i>0 && k.slice(0,i)===s._id) flush(s, +k.slice(i+1)); }); }
+  document.addEventListener('visibilitychange', function(){ if (document.visibilityState==='hidden') flushAll(); });
+  window.addEventListener('pagehide', flushAll);
   window.practiceGuess=function(pi, i, v){
     var s=cur(); if (!s) return; var p=P(s,pi); if (!p.unk||!p.unk[i]) return; p.unk[i].guess=v;
-    clearTimeout(timers['g'+pi]); timers['g'+pi]=setTimeout(function(){ save(s,{ paras:{ [pi]:{ unk:p.unk } } }); }, 700);
+    var k=s._id+':'+pi; clearTimeout(timers[k]); timers[k]=setTimeout(function(){ flush(s, pi); }, 700);
   };
   window.practiceUnkDel=function(pi, i){
     var s=cur(); if (!s) return; var p=P(s,pi); (p.unk||[]).splice(i,1); save(s,{ paras:{ [pi]:{ unk:p.unk } } }); paint(s,pi);
