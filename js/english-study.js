@@ -230,7 +230,7 @@ WORDS SHE MARKED AS UNKNOWN (word | her guess):
 
 Output ONLY one JSON object, no code fence, no other text. All explanations in Korean.
 {"summary": "한 줄 총평 — 전체 이해도와 가장 중요한 한 가지",
- "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "key": "the 1–4 word expression she did not really get (e.g. 'if you like', 'considerations', 'dynastic') — empty for ok items", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각"}],
+ "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "key": "the 1–4 word expression she did not really get (e.g. 'if you like', 'considerations', 'dynastic') — empty for ok items", "keyKo": "그 key 만의 짧은 한국어 뜻", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각"}],
  "unknown": [{"w": "marked word", "guess": "her guess", "right": "이 문맥에서의 뜻", "hit": true}],
  "say": [{"en": "a sentence or clause copied EXACTLY from the paragraph", "ko": "자연스러운 한국어"}]}
 

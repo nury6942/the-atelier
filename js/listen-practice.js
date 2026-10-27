@@ -129,7 +129,7 @@
           return '<p style="font-size:14px;margin:0 0 4px">'+chip(u.hit?'ok':'miss')+'<b>'+esc(u.w)+'</b> <span style="color:'+SUB+'">'+esc(u.guess||'추측 없음')+'</span> → '+esc(u.right)+'</p>';
         }).join(''):'')+
         ((c.items||[]).length?lab('검수')+c.items.map(function(it){
-          return '<div style="margin:0 0 8px;font-size:14px;line-height:1.6">'+chip(it.type)+'<b>'+esc(it.en)+'</b>'+(it.key?' <span style="background:#EEF2FD;color:#1A3FB5;padding:0 6px;font-size:13px">'+esc(it.key)+'</span>':'')+(it.mine?' <span style="color:'+SUB+'">· 내 해석 「'+esc(it.mine)+'」</span>':'')+'<br><span style="padding-left:2px">→ '+esc(it.right)+(it.note?' <span style="color:'+SUB+'">· '+esc(it.note)+'</span>':'')+'</span></div>';
+          return '<div style="margin:0 0 8px;font-size:14px;line-height:1.6">'+chip(it.type)+'<b>'+esc(it.en)+'</b>'+(it.key?' <span style="background:#EEF2FD;color:#1A3FB5;padding:0 6px;font-size:13px">'+esc(it.key)+(it.keyKo?' '+esc(it.keyKo):'')+'</span>':'')+(it.mine?' <span style="color:'+SUB+'">· 내 해석 「'+esc(it.mine)+'」</span>':'')+'<br><span style="padding-left:2px">→ '+esc(it.right)+(it.note?' <span style="color:'+SUB+'">· '+esc(it.note)+'</span>':'')+'</span></div>';
         }).join(''):'')+
         lab('정답 해석')+'<p style="font-size:15px;line-height:1.7;margin:0;color:#18181B">'+esc(ko)+'</p>'+
         sayBlock(s, pi, p);
@@ -223,7 +223,7 @@
   async function toWords(s, pi, p){
     var c=p.check||{}; if (p.wordsAdded || !c.items) return;
     var add={}, day=new Date().toISOString().slice(0,10);
-    (c.items||[]).filter(function(it){ return it.type!=='ok' && it.key && it.key.split(/\s+/).length<=5; }).forEach(function(it){ add[String(it.key).toLowerCase().trim()]={ w:it.key, ko:it.right||'', en:'', ex:'', ctx:it.en, src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
+    (c.items||[]).filter(function(it){ return it.type!=='ok' && it.key && it.key.split(/\s+/).length<=5; }).forEach(function(it){ add[String(it.key).toLowerCase().trim()]={ w:it.key, ko:it.keyKo||it.right||'', en:'', ex:'', ctx:it.en, src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
     (c.unknown||[]).filter(function(u){ return !u.hit; }).forEach(function(u){ add[String(u.w).toLowerCase().trim()]={ w:u.w, ko:u.right||'', en:'', ex:'', ctx:'', src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
     p.wordsAdded=true;
     try {
