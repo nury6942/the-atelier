@@ -213,6 +213,33 @@ SENTENCE: {{CONTEXT}}
 Output ONLY one JSON object, no code fence, no other text:
 {"base": "dictionary form to remember (e.g. 'grapple with', 'set up to fail')", "ko": "짧은 한국어 뜻 (이 문맥에서)", "nuance": "한국어 1~2문장 — 이 문맥에서 왜 이 말을 썼는지, 비슷한 쉬운 말과 차이", "ex": [{"en": "natural everyday example", "ko": "뜻"}, {"en": "example Nuri could say at work or in an interview", "ko": "뜻"}], "frame": "reusable sentence frame with swappable parts in [square brackets] if it is a phrase worth reusing, else empty string"}`;
 
+// ── 직접 해석 검수 (2026-10-28) — 누리가 직접 쓴 한 문단 해석을 정답과 비교해 맞음/대충/놓침으로 가른다 ──
+var CHECK_PROMPT_TEMPLATE = `Nuri (Korean fashion designer, upper-B2 English) translated one paragraph of an English talk into Korean BY HERSELF, without looking at the answer. She also marked words she did not know and wrote a guess for each. Check her work like a sharp, kind tutor. The goal is to find exactly what she does not really understand — especially things she THOUGHT she understood.
+
+ENGLISH:
+{{EN}}
+
+REFERENCE KOREAN (a good translation, for you only):
+{{KO}}
+
+NURI'S TRANSLATION:
+{{MINE}}
+
+WORDS SHE MARKED AS UNKNOWN (word | her guess):
+{{UNK}}
+
+Output ONLY one JSON object, no code fence, no other text. All explanations in Korean.
+{"summary": "한 줄 총평 — 전체 이해도와 가장 중요한 한 가지",
+ "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각"}],
+ "unknown": [{"w": "marked word", "guess": "her guess", "right": "이 문맥에서의 뜻", "hit": true}],
+ "say": [{"en": "a sentence or clause copied EXACTLY from the paragraph", "ko": "자연스러운 한국어"}]}
+
+RULES
+- items: 3–8. Most should be vague (뜻은 대충 맞지만 뉘앙스·정확도가 빠짐) or miss (잘못 이해했거나 빼먹었는데 모름 표시도 안 함). Add at most 2 ok items for chunks she got genuinely right that were hard. Skip trivial differences in Korean wording — judge MEANING, not style.
+- unknown: one entry per marked word, hit = her guess is basically right in this context.
+- say: exactly 2 chunks worth saying out loud, 6–20 words each, copied exactly (no "Speaker" labels, no timestamps). Prefer chunks that contain a vague/miss item or a reusable C1 structure.
+- If her translation is empty or nonsense, say so kindly in summary and mark the main ideas as miss.`;
+
 var engStudyData = [];
 var _esMaxTokens = 64000;   // 모델이 안 받아주면 첫 호출에서 32000으로 자동 하향
 
@@ -236,7 +263,7 @@ function renderStudyList(){
   }
   emptyEl.style.display = 'none';
   listEl.style.display = 'block';
-  listEl.innerHTML = engStudyData.map(function(s){
+  listEl.innerHTML = (typeof practiceWeekHtml === 'function' ? practiceWeekHtml() : '') + engStudyData.map(function(s){
     var exprCount = _esIdioms(s).length;
     var bonusCount = (s.bonus || []).length;
     var grammarCount = (s.grammar || []).length;
@@ -257,6 +284,7 @@ function renderStudyList(){
               if (!has && !pend) return '';
               return '<span style="font-size:11px;font-weight:600;padding:2px 8px;' + (has ? 'background:#EEF2FD;color:#1A3FB5' : 'background:#F1F5F9;color:#475569') + '">' + _esModeName(m) + (pend ? ' · 만드는 중' : '') + '</span>';
             }).join('') +
+            (typeof practiceListChip === 'function' ? practiceListChip(s) : '') +
             (exprCount ? '<span class="text-[9px] font-bold bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">숙어 ' + exprCount + '</span>' : '') +
             (grammarCount ? '<span class="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">문법 ' + grammarCount + '</span>' : '') +
             (vocabCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">단어 ' + vocabCount + '</span>' : '') +
@@ -412,14 +440,14 @@ function studyAutoError(msg, raw){
 
 // ── 상세 열기/닫기/삭제 ─────────────────────────────────────
 var _esOpenId = null, _esView = 'quick';
-function _esModeName(m){ return m === 'quick' ? '보기 전 5분' : m === 'translate' ? '전체 해석' : m === 'explain' ? '단어 풀이' : '깊게 공부'; }
+function _esModeName(m){ return m === 'quick' ? '보기 전 5분' : m === 'translate' ? '전체 해석' : m === 'explain' ? '단어 풀이' : m === 'check' ? '해석 검수' : '깊게 공부'; }
 function _esHasDeep(s){ return _esIdioms(s).length || (s.grammar || []).length || (s.vocab || []).length; }
 function _esPending(id, mode){ return _aiJobs.some(function(j){ return j.kind === 'study' && j.docId === id && (j.mode || 'deep') === mode && (j.status === 'queued' || j.status === 'running'); }); }
 function _esH(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
 function _esSlots(t){ return _esH(t).replace(/\[([^\]]+)\]/g, '<span style="color:#1F4BD8;border-bottom:2px solid #1F4BD8;padding:0 2px">$1</span>'); }
 
 function _esViewBar(s, view){
-  var tabs = [{ k:'quick', l:'보기 전 5분' }, { k:'translate', l:'전체 해석' }, { k:'deep', l:'깊게 공부' }];
+  var tabs = [{ k:'quick', l:'보기 전 5분' }, { k:'practice', l:'직접 해석' }, { k:'translate', l:'전체 해석' }, { k:'deep', l:'깊게 공부' }];
   return '<div style="display:flex;gap:6px;margin:0 0 24px;flex-wrap:wrap">' + tabs.map(function(t){
     var on = t.k === view;
     return '<button onclick="openStudyDetail(\'' + s._id + '\',\'' + t.k + '\')" style="font-size:14px;padding:7px 16px;border:1px solid ' + (on ? '#1F4BD8' : '#CBD5E1') + ';background:' + (on ? '#1F4BD8' : '#fff') + ';color:' + (on ? '#fff' : '#475569') + ';cursor:pointer">' + t.l + '</button>';
@@ -473,7 +501,9 @@ function renderStudyTranslation(s){
       return only ? '<p style="font-size:16px;line-height:1.8;margin:0 0 18px">' + _esH(p.ko) + '</p>'
         : '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;padding:14px 0;border-top:1px solid #ECECF0">' +
           '<p class="ls-en" data-pi="' + pi + '" style="font-size:15px;line-height:1.75;margin:0;color:#3F3F46">' + (typeof listenMarkPara === 'function' ? listenMarkPara(s, p.en, pi) : _esH(p.en)) + '</p>' +
-          '<p style="font-size:16px;line-height:1.8;margin:0;color:#18181B">' + _esH(p.ko) + '</p></div>';
+          (typeof practiceLocked === 'function' && practiceLocked(s, pi)
+            ? '<p onclick="openStudyDetail(\'' + s._id + '\',\'practice\')" style="font-size:14px;margin:0;color:#475569;background:#F8FAFC;padding:12px 14px;cursor:pointer;align-self:start"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px">lock</span> 직접 해석 구간이라 잠겨 있어요 · 먼저 내가 해석하기 →</p>'
+            : '<p style="font-size:16px;line-height:1.8;margin:0;color:#18181B">' + _esH(p.ko) + '</p>') + '</div>';
     }).join('') + '</div>';
 }
 window.queueStudyMode = async function(id, mode){
@@ -502,6 +532,7 @@ window.openStudyDetail = function(id, view){
   var content = document.getElementById('eng-study-detail-content');
   var body = view === 'quick' ? _esHeader(s) + _esViewBar(s, view) + renderStudyQuick(s)
     : view === 'translate' ? _esHeader(s) + _esViewBar(s, view) + renderStudyTranslation(s)
+    : view === 'practice' ? _esHeader(s) + _esViewBar(s, view) + (typeof renderListenPractice === 'function' ? renderListenPractice(s) : '')
     : (_esHasDeep(s) ? _esViewBar(s, view) + renderStudyDetail(s) : _esHeader(s) + _esViewBar(s, view) + _esWaitOrMake(s, 'deep', '깊게 공부'));
   if (content) content.innerHTML = body;
   var lc = document.getElementById('eng-study-listcard'); if (lc) lc.style.display = 'none';
@@ -1442,6 +1473,7 @@ window.watchAiJobs = function(){
     _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked) _ackAiJob(j); });
     // 하이라이트 풀이는 어느 기기가 마무리했든 이 화면 카드에 바로 반영
     _aiJobs.forEach(function(j){ if (j.mode === 'explain' && j.status === 'done' && !_esExplainSeen[j._id]){ _esExplainSeen[j._id] = true; if (j.finishedAt && Date.now() - Date.parse(j.finishedAt) < 600000 && typeof listenMarkDone === 'function') listenMarkDone(j); } });
+    _aiJobs.forEach(function(j){ if (j.mode === 'check' && j.status === 'done' && !_esExplainSeen[j._id]){ _esExplainSeen[j._id] = true; if (j.finishedAt && Date.now() - Date.parse(j.finishedAt) < 600000 && typeof listenPracticeDone === 'function') listenPracticeDone(j); } });
     renderAiJobs();
     try { renderStudyList(); } catch(e){}
   }, function(err){ console.warn('[aiJobs]', err); _aiJobsUnsub = null; });
@@ -1478,7 +1510,7 @@ async function _ackAiJob(j){
     } else if (typeof loadEnglishStudy === 'function') {
       await loadEnglishStudy();
     }
-    if (j.kind === 'study' && j.mode === 'explain') return;   // 카드 갱신은 watchAiJobs 가 함
+    if (j.kind === 'study' && (j.mode === 'explain' || j.mode === 'check')) return;   // 카드 갱신은 watchAiJobs 가 함
     if (j.kind === 'study' && _esOpenId === j.docId){ var _o = engStudyData.find(function(x){ return x._id === j.docId; }); if (_o) openStudyDetail(j.docId, _esView); }
     _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : _esModeName(j.mode)) + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
   } catch(e){ console.warn('[aiJobs ack]', e); }

@@ -1,3 +1,11 @@
+## 2026-10-28 · 맥북 · Listen 직접 해석 (listen-practice v1 · english-study v22 · worker check)
+- 누리: 해석본을 바로 보면 input 만 있고 output 이 없다 → 내가 먼저 해석하고, 모르는 걸 체크하고, 검수 받기 + 억지로라도 말하게
+- 새 보기 '직접 해석'(보기 전 5분 다음): 집중 구간 = 10문단(오디오 6~7분) · ①듣기 ②내가 해석(영어 드래그 = 모름 칩 + 뜻 추측, 정답 안 보임) ③검수 ④되말하기
+- 검수 = aiJobs mode check(sonnet, CHECK_PROMPT_TEMPLATE) → practice.paras.<pi>.check {summary, items 맞음/대충/놓침, unknown 추측 판정, say 2문장} · 그제서야 정답 해석 열림
+- 대충·놓침·틀린 추측은 자동으로 My Words(englishRead/state.words) · 되말하기 = 한국어만 보고 마이크(웹 음성 인식) 또는 타이핑 → 원문과 단어 일치 %·빠진 말 빨간 밑줄
+- 잠금: 전체 해석 보기에서 지금 구간 문단의 한국어는 검수 전까지 가림 · Listen 목록 위에 '이번 주 직접 해석 N/2 구간 · 되말하기 N문장'
+- 다음(써 보고): 내 상황으로 한 문장 만들기 + AI 첨삭, 구간 끝나면 Annie 에 그 구간 틀 넘기기
+
 ## 2026-10-27 · 맥북 · Listen 전체 해석에 하이라이트 풀이 (listen-marks v1 · english-study v20 · worker explain)
 - 누리: 모르는 단어를 하이라이트하면 뜻·예문이 바로 나오게, 유기적으로 → 영어 칸 드래그 = 노랑 하이라이트 + 오른쪽 아래 카드(폰은 아래 시트)
 - 카드: 영어 사전 뜻은 바로(dictionaryapi, 단어 하나일 때) · 문맥 속 한국어 뜻·뉘앙스·예문 2·틀은 아이맥 구독(mode explain, sonnet, 20~40초) → englishStudy.marks.<key>

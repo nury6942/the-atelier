@@ -4,7 +4,7 @@
 //
 //  사이트가 Firestore `aiJobs` 에 { kind:'study'|'annie', status:'queued', ... } 를 쓰면
 //  여기서 집어 와서 Claude 구독(`claude -p`)으로 만들고 결과를 저장한다.
-//    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation · explain=하이라이트 풀이 → .marks.<key>)
+//    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation · explain=하이라이트 풀이 → .marks.<key> · check=직접 해석 검수 → .practice.paras.<pi>)
 //    annie → englishSessions/<date>  (수업 트래커 'N회차' 는 사이트가 완료를 보고 만든다)
 //  API 요금 없음. 프롬프트는 사이트 원본(js/*.js)에서 매번 그대로 꺼낸다 — 사본 없음.
 //
@@ -162,6 +162,11 @@ async function translateJob(job) {
 }
 
 async function saveResult(job, parsed) {
+  if (job.kind === 'study' && job.mode === 'check') {
+    const say = (parsed.say || []).map(x => ({ en: String(x.en || ''), ko: String(x.ko || '') })).filter(x => x.en);
+    await db.collection('englishStudy').doc(job.docId).set({ practice: { paras: { [job.pi]: { check: parsed, says: say, st: 'checked', checkedAt: new Date().toISOString() } } } }, { merge: true });
+    return job.docId;
+  }
   if (job.kind === 'study' && job.mode === 'explain') {
     await db.collection('englishStudy').doc(job.docId).set({ marks: { [job.markKey]: Object.assign(parsed, { status: 'done', doneAt: new Date().toISOString() }) } }, { merge: true });
     return job.docId;
@@ -198,6 +203,7 @@ function validJob(job) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(job.date || '')) return '날짜 형식이 이상해요: ' + job.date;
   if (job.kind === 'study' && !/^[\w-]+$/.test(job.docId || '')) return 'docId 가 없어요';
   if (job.mode === 'explain' && !/^\w+$/.test(job.markKey || '')) return 'markKey 가 없어요';
+  if (job.mode === 'check' && !(Number.isInteger(job.pi) && job.pi >= 0)) return '문단 번호가 없어요';
   if (job.kind !== 'study' && job.kind !== 'annie') return '모르는 종류: ' + job.kind;
   return '';
 }
@@ -207,7 +213,7 @@ async function claimNext() {
   const snap = await db.collection('aiJobs').where('status', '==', 'queued').get();
   if (snap.empty) return null;
   // 하이라이트 풀이(explain)는 짧고 누리가 화면 앞에서 기다리는 중 → 먼저
-  const pri = d => (d.get('mode') === 'explain' ? 0 : 1);
+  const pri = d => (d.get('mode') === 'explain' || d.get('mode') === 'check' ? 0 : 1);
   const docs = snap.docs.sort((a, b) => pri(a) - pri(b) || String(a.get('createdAt')).localeCompare(String(b.get('createdAt'))));
   for (const d of docs) {
     const ok = await db.runTransaction(async t => {
@@ -249,6 +255,13 @@ async function processJob(job) {
     if (job.mode === 'translate') parsed = await translateJob(job);
     else if (job.mode === 'explain') {
       const prompt = readTemplate('js/english-study.js', 'EXPLAIN_PROMPT_TEMPLATE').replaceAll('{{PHRASE}}', String(job.phrase || '')).replaceAll('{{CONTEXT}}', String(job.transcript));
+      raw = await runClaude(prompt, job.model || 'sonnet');
+      const m = String(raw).match(/\{[\s\S]*\}/);
+      try { parsed = JSON.parse(m ? m[0] : ''); } catch (e) { parsed = null; }
+    }
+    else if (job.mode === 'check') {
+      const unk = (job.unk || []).map(u => u.w + ' | ' + (u.guess || '(추측 없음)')).join('\n') || '(none)';
+      const prompt = readTemplate('js/english-study.js', 'CHECK_PROMPT_TEMPLATE').replaceAll('{{EN}}', String(job.transcript)).replaceAll('{{KO}}', String(job.ref || '')).replaceAll('{{MINE}}', String(job.mine || '')).replaceAll('{{UNK}}', unk);
       raw = await runClaude(prompt, job.model || 'sonnet');
       const m = String(raw).match(/\{[\s\S]*\}/);
       try { parsed = JSON.parse(m ? m[0] : ''); } catch (e) { parsed = null; }
