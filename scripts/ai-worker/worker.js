@@ -206,7 +206,9 @@ function validJob(job) {
 async function claimNext() {
   const snap = await db.collection('aiJobs').where('status', '==', 'queued').get();
   if (snap.empty) return null;
-  const docs = snap.docs.sort((a, b) => String(a.get('createdAt')).localeCompare(String(b.get('createdAt'))));
+  // 하이라이트 풀이(explain)는 짧고 누리가 화면 앞에서 기다리는 중 → 먼저
+  const pri = d => (d.get('mode') === 'explain' ? 0 : 1);
+  const docs = snap.docs.sort((a, b) => pri(a) - pri(b) || String(a.get('createdAt')).localeCompare(String(b.get('createdAt'))));
   for (const d of docs) {
     const ok = await db.runTransaction(async t => {
       const cur = await t.get(d.ref);
