@@ -222,7 +222,7 @@ async function claimNext() {
       t.update(d.ref, { status: 'running', startedAt: new Date().toISOString(), worker: os.hostname() });
       return true;
     });
-    if (ok) return { ref: d.ref, id: d.id, ...d.data() };
+    if (ok) return { ...d.data(), ref: d.ref, id: d.id };
   }
   return null;
 }
@@ -261,7 +261,7 @@ async function processJob(job) {
     }
     else if (job.mode === 'check') {
       const unk = (job.unk || []).map(u => u.w + ' | ' + (u.guess || '(추측 없음)')).join('\n') || '(none)';
-      const prompt = readTemplate('js/english-study.js', 'CHECK_PROMPT_TEMPLATE').replaceAll('{{EN}}', String(job.transcript)).replaceAll('{{KO}}', String(job.ref || '')).replaceAll('{{MINE}}', String(job.mine || '')).replaceAll('{{UNK}}', unk);
+      const prompt = readTemplate('js/english-study.js', 'CHECK_PROMPT_TEMPLATE').replaceAll('{{EN}}', String(job.transcript)).replaceAll('{{KO}}', String(job.refKo || '')).replaceAll('{{MINE}}', String(job.mine || '')).replaceAll('{{UNK}}', unk);
       raw = await runClaude(prompt, job.model || 'sonnet');
       const m = String(raw).match(/\{[\s\S]*\}/);
       try { parsed = JSON.parse(m ? m[0] : ''); } catch (e) { parsed = null; }

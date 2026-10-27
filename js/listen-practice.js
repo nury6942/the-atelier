@@ -201,7 +201,7 @@
     var para=paras(s)[pi];
     try {
       await save(s,{ paras:{ [pi]:{ mine:mine, unk:p.unk||[], st:'checking' } } });
-      await db.collection('aiJobs').add({ kind:'study', mode:'check', status:'queued', docId:s._id, pi:pi, transcript:plain(para.en), ref:para.ko, mine:mine, unk:(p.unk||[]).map(function(u){ return { w:u.w, guess:u.guess||'' }; }),
+      await db.collection('aiJobs').add({ kind:'study', mode:'check', status:'queued', docId:s._id, pi:pi, transcript:plain(para.en), refKo:para.ko, mine:mine, unk:(p.unk||[]).map(function(u){ return { w:u.w, guess:u.guess||'' }; }),
         date:s.date||new Date().toISOString().slice(0,10), title:'문단 '+(pi+1)+' · '+(s.title||''), model:'sonnet', createdAt:new Date().toISOString() });
       if (typeof watchAiJobs==='function') watchAiJobs();
       if (again) toast('schedule','다시 맡겼어요');
