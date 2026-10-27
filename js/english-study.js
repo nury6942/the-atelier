@@ -230,12 +230,13 @@ WORDS SHE MARKED AS UNKNOWN (word | her guess):
 
 Output ONLY one JSON object, no code fence, no other text. All explanations in Korean.
 {"summary": "한 줄 총평 — 전체 이해도와 가장 중요한 한 가지",
- "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각"}],
+ "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "key": "the 1–4 word expression she did not really get (e.g. 'if you like', 'considerations', 'dynastic') — empty for ok items", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각"}],
  "unknown": [{"w": "marked word", "guess": "her guess", "right": "이 문맥에서의 뜻", "hit": true}],
  "say": [{"en": "a sentence or clause copied EXACTLY from the paragraph", "ko": "자연스러운 한국어"}]}
 
 RULES
 - items: 3–8. Most should be vague (뜻은 대충 맞지만 뉘앙스·정확도가 빠짐) or miss (잘못 이해했거나 빼먹었는데 모름 표시도 안 함). Add at most 2 ok items for chunks she got genuinely right that were hard. Skip trivial differences in Korean wording — judge MEANING, not style.
+- key: for vague/miss, name the exact word or short phrase (from the English, max 4 words) that caused the gap — this goes into her word list, so never a whole sentence.
 - unknown: one entry per marked word, hit = her guess is basically right in this context.
 - say: exactly 2 chunks worth saying out loud, 6–20 words each, copied exactly (no "Speaker" labels, no timestamps). Prefer chunks that contain a vague/miss item or a reusable C1 structure.
 - If her translation is empty or nonsense, say so kindly in summary and mark the main ideas as miss.`;
