@@ -28327,7 +28327,7 @@
   }
 
   async function loadEnglish() {
-    if (typeof window.switchEngTab === 'function') window.switchEngTab(localStorage.getItem('atelier_eng_tab') || 'annie');
+    if (typeof window.switchEngTab === 'function') window.switchEngTab((localStorage.getItem('atelier_eng_tab') || 'annie').replace(/^ielts$/, 'annie'));
     await fetchGbpKrwRate();
     await migrateEnglishFee30();
     await cleanupTestReviewData();
@@ -28358,6 +28358,8 @@
   // ═══ ENGLISH 페이지: ANNIE | STUDY 탭 전환 ═══
   window.switchEngTab = function(tab){
     var views = { annie:'eng-annie-view', study:'eng-study-view', read:'eng-read-view', ielts:'eng-ielts-view', work:'eng-work-view', tutor:'eng-tutor-view', phrases:'eng-phrases-view' };
+    // Speak = Work·AI Tutor 묶음 → 마지막에 본 쪽으로
+    if (tab === 'speak'){ try { tab = localStorage.getItem('atelier_eng_speak') || 'work'; } catch(e){ tab = 'work'; } }
     if (!views[tab]) tab = 'annie';
     if (!document.getElementById('eng-annie-view')) return;
     Object.keys(views).forEach(function(k){
@@ -28365,6 +28367,13 @@
       if (v) v.style.display = k === tab ? 'block' : 'none';
       if (b){ b.style.background = ''; b.style.color = ''; b.style.boxShadow = ''; b.classList.remove('travel-tab-active'); }
     });
+    var isSpeak = tab === 'work' || tab === 'tutor';
+    var sp = document.getElementById('eng-tab-speak');
+    if (sp) sp.classList.toggle('travel-tab-active', isSpeak);
+    var sub = document.getElementById('eng-speak-sub');
+    if (sub) sub.style.display = isSpeak ? 'flex' : 'none';
+    ['work','tutor'].forEach(function(k){ var sb = document.getElementById('eng-sub-'+k); if (sb) sb.classList.toggle('on', k === tab); });
+    if (isSpeak){ try { localStorage.setItem('atelier_eng_speak', tab); } catch(e){} }
     var active = document.getElementById('eng-tab-'+tab);
     if (active) active.classList.add('travel-tab-active');
     try { localStorage.setItem('atelier_eng_tab', tab); } catch(e){}

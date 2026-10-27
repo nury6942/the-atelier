@@ -1,3 +1,7 @@
+## 2026-10-27 · 맥북 · English 탭 정리 (app-1-pages v405)
+- 탭: Annie · Speak · Listen · Read · My Phrases — Speak = Work 카드 + AI Tutor (아래 토글 'Role-play 카드 / AI Tutor 대화', 마지막 본 쪽 기억 atelier_eng_speak) · Study → Listen 이름만(보기 전에 모르는 표현 먼저)
+- IELTS 탭 버튼 뺌(시험 보류) — 화면·데이터·채점기는 그대로, 저장된 마지막 탭이 ielts 면 Annie 로
+
 ## 2026-10-27 · 맥북 · English › My Phrases + Annie 체크 (english-phrases v1 · app-1-pages v404 · english-study v16)
 - 누리 고민: 말은 되는데 문장 구조·단어가 단순(B2→C1 정체), "With ten years behind me … on your line" 같은 전치사 감이 없음 → 단어 말고 **문장 틀을 통째로** 모으고 [빈칸]만 바꿔 끼우기
 - 새 탭 My Phrases: 틀 카드(빈칸=코발트 밑줄) · 내가 하던 말 · 바꿔 끼우기 · 상태 모음→말해 봄→내 것 · 이번 주 3개 · 저장 englishPhrases/state

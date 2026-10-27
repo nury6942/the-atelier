@@ -73,7 +73,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/the-atelier/icons/favicon-32.png?v=3">
   <link rel="icon" type="image/png" sizes="16x16" href="/the-atelier/icons/favicon-16.png?v=3">
   <!-- 우리 앱 JS 미리 다운로드 시작 (HTML 파싱과 병렬) — 모바일 로딩 속도 핵심 -->
-  <link rel="preload" href="js/app-1-pages.js?v=404" as="script">
+  <link rel="preload" href="js/app-1-pages.js?v=405" as="script">
   <link rel="preload" href="js/app-2-init.js?v=187" as="script">
   <link rel="preload" href="js/app-3-flatpickr.js?v=165" as="script">
   <link rel="preload" href="js/roadmap-data.js?v=163" as="script">
@@ -4936,6 +4936,8 @@
       #ref-editor-back-mobile { display: none !important; }
     }
 
+    .eng-sub-btn { font-size: 13px; padding: 6px 14px; border: 1px solid #CBD5E1; background: #fff; color: #475569; border-radius: 0; cursor: pointer; }
+    .eng-sub-btn.on { background: #1F4BD8; border-color: #1F4BD8; color: #fff; }
     /* ===== English › AI Tutor 탭: 화면 꽉 차게 (가운데 1280px 제한·좌우 여백 해제) ===== */
     #page-english.eng-tutor-on .page-content-wrap { max-width: none !important; padding: 10px 16px 0 !important; }
     #page-english.eng-tutor-on .atl-tabs { margin-bottom: 10px !important; }
@@ -15351,12 +15353,15 @@
       <!-- ══ ANNIE | STUDY 탭 ══ -->
       <div class="atl-tabs mb-6">
         <button id="eng-tab-annie" onclick="switchEngTab('annie')" class="travel-tab-btn">Annie</button>
-        <button id="eng-tab-study" onclick="switchEngTab('study')" class="travel-tab-btn">Study</button>
+        <button id="eng-tab-speak" onclick="switchEngTab('speak')" class="travel-tab-btn">Speak</button>
+        <button id="eng-tab-study" onclick="switchEngTab('study')" class="travel-tab-btn">Listen</button>
         <button id="eng-tab-read" onclick="switchEngTab('read')" class="travel-tab-btn">Read</button>
-        <button id="eng-tab-ielts" onclick="switchEngTab('ielts')" class="travel-tab-btn">IELTS</button>
-        <button id="eng-tab-work" onclick="switchEngTab('work')" class="travel-tab-btn">Work</button>
-        <button id="eng-tab-tutor" onclick="switchEngTab('tutor')" class="travel-tab-btn">AI Tutor</button>
         <button id="eng-tab-phrases" onclick="switchEngTab('phrases')" class="travel-tab-btn">My Phrases</button>
+      </div>
+      <!-- Speak = Work 카드 + AI Tutor (보기 전환 토글) · IELTS 는 26-10-27 보류로 탭에서 뺌(화면·데이터는 그대로, switchEngTab('ielts') 로 열림) -->
+      <div id="eng-speak-sub" style="display:none;gap:6px;margin:-8px 0 20px">
+        <button id="eng-sub-work" onclick="switchEngTab('work')" class="eng-sub-btn">Role-play 카드</button>
+        <button id="eng-sub-tutor" onclick="switchEngTab('tutor')" class="eng-sub-btn">AI Tutor 대화</button>
       </div>
 
       <!-- ══════════ ANNIE 뷰 (회화 수업 리뷰 — 기존) ══════════ -->
@@ -15495,8 +15500,8 @@
         <div id="eng-study-listcard" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
           <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
             <div>
-              <h4 class="font-manrope font-bold text-slate-800">콘텐츠 스터디</h4>
-              <p class="text-[10px] text-slate-400 font-medium mt-0.5">유튜브 뉴스·인터뷰 스크립트를 1타 강사 포맷으로 정리</p>
+              <h4 class="font-bold text-slate-800">Listen · 보기 전에 먼저</h4>
+              <p class="text-xs font-medium mt-0.5" style="color:#475569">영상 스크립트를 넣으면 모르는 표현을 먼저 정리 → 알고 나서 보기</p>
             </div>
             <button onclick="openStudyCreateModal()" class="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all shadow-sm">
               <span class="material-symbols-outlined text-sm">add</span> 스터디 추가
@@ -16475,7 +16480,7 @@
     </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="js/app-1-pages.js?v=404" defer></script>
+<script src="js/app-1-pages.js?v=405" defer></script>
 <script src="js/flight-deals.js?v=11" defer></script>
 
   <!-- PACKING PAGE -->
