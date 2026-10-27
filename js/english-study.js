@@ -157,6 +157,48 @@ DATE: {{DATE}}
 TRANSCRIPT:
 {{TRANSCRIPT}}`;
 
+// ── 보기 전 5분 (2026-10-27) — 영상 틀기 직전에 훑는 가벼운 장. 깊게 공부(STUDY_PROMPT)와 따로 ──
+var QUICK_PROMPT_TEMPLATE = `You are preparing a 5-minute "before you watch" sheet for Nuri — a Korean fashion designer at upper-B2 English who understands about 80% of native talk with English subtitles. She will read this sheet, then watch the whole video on a projector with English subtitles only. The goal: the 20% she would miss becomes "oh, that's the one" instead of noise. Keep it LIGHT — this is not a study sheet.
+
+Output EXACTLY ONE fenced js code block containing only the assignment statement below. No text before or after. Double quotes only, no backticks, no comments.
+
+RULES
+- summary: exactly 3 short Korean lines — what the talk is actually about (its main claims), so she can follow the thread. Plain, no fluff.
+- items: 10–12 expressions IN THE ORDER THEY APPEAR in the transcript. Pick idioms, phrasal verbs, collocations and sentence frames that (a) an upper-B2 learner likely doesn't know or would misread, and (b) matter for following the talk. Skip easy words. Skip one-off proper nouns.
+  · expr: the expression as a learner should remember it. If it is a reusable sentence frame, put swappable parts in [square brackets], e.g. "it's really about [connection]".
+  · kr: ONE short Korean meaning (max ~20 chars), nuance included if it differs from the literal.
+  · quote: the exact sentence from the transcript where it appears (trim to the clause if very long).
+- keywords: 3–6 single words the speaker keeps coming back to (topic words), each with a short Korean meaning.
+- title: short English title for the video (use the given TITLE if not empty). subtitle: one Korean line.
+
+studyData["{{ID}}"] = {
+  title: "{{TITLE}}",
+  subtitle: "한 줄 한국어",
+  summary: ["한국어 한 줄", "한국어 한 줄", "한국어 한 줄"],
+  items: [
+    { expr: "lose sight of", kr: "~을 잊고 놓치다", quote: "We sometimes lose sight of what that word actually means." }
+  ],
+  keywords: [
+    { word: "vulnerability", kr: "약한 모습, 취약함" }
+  ]
+};
+
+=== INPUT ===
+ID: {{ID}}
+TITLE: {{TITLE}}
+SOURCE: {{SOURCE}}
+DATE: {{DATE}}
+
+TRANSCRIPT:
+{{TRANSCRIPT}}`;
+
+// ── 전체 해석 (2026-10-27) — 워커가 스크립트를 문단으로 나눠 이 지시로 조각조각 번역한다 ──
+var TRANSLATE_PROMPT_TEMPLATE = `Translate each numbered paragraph of this English talk transcript into natural, spoken-style Korean for Nuri, a Korean learner who will read it side by side with the English. Faithful to the meaning and tone (keep the speaker's jokes and emphasis), but natural Korean — not word-for-word. Keep names in their original form the first time, e.g. 알랭 드 보통(Alain de Botton). If a paragraph is a chapter heading, translate it as a heading.
+
+Output ONLY a JSON array of Korean strings — exactly one string per numbered paragraph, in the same order, same count ({{COUNT}}). No numbering inside the strings, no code fence, no other text.
+
+{{PARAS}}`;
+
 var engStudyData = [];
 var _esMaxTokens = 64000;   // 모델이 안 받아주면 첫 호출에서 32000으로 자동 하향
 
@@ -195,6 +237,12 @@ function renderStudyList(){
           '</div>' +
           '<p class="text-xs text-slate-400 mb-2 truncate">' + (s.subtitle || '') + (s.source ? ' · ' + s.source : '') + '</p>' +
           '<div class="flex flex-wrap gap-2">' +
+            ['quick','translate','deep'].map(function(m){
+              var has = m === 'quick' ? !!s.quick : m === 'translate' ? !!(s.translation && (s.translation.paras || []).length) : !!_esHasDeep(s);
+              var pend = !has && _esPending(s._id, m);
+              if (!has && !pend) return '';
+              return '<span style="font-size:11px;font-weight:600;padding:2px 8px;' + (has ? 'background:#EEF2FD;color:#1A3FB5' : 'background:#F1F5F9;color:#475569') + '">' + _esModeName(m) + (pend ? ' · 만드는 중' : '') + '</span>';
+            }).join('') +
             (exprCount ? '<span class="text-[9px] font-bold bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">숙어 ' + exprCount + '</span>' : '') +
             (grammarCount ? '<span class="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">문법 ' + grammarCount + '</span>' : '') +
             (vocabCount ? '<span class="text-[9px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">단어 ' + vocabCount + '</span>' : '') +
@@ -349,17 +397,100 @@ function studyAutoError(msg, raw){
 }
 
 // ── 상세 열기/닫기/삭제 ─────────────────────────────────────
-window.openStudyDetail = function(id){
+var _esOpenId = null, _esView = 'quick';
+function _esModeName(m){ return m === 'quick' ? '보기 전 5분' : m === 'translate' ? '전체 해석' : '깊게 공부'; }
+function _esHasDeep(s){ return _esIdioms(s).length || (s.grammar || []).length || (s.vocab || []).length; }
+function _esPending(id, mode){ return _aiJobs.some(function(j){ return j.kind === 'study' && j.docId === id && (j.mode || 'deep') === mode && (j.status === 'queued' || j.status === 'running'); }); }
+function _esH(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+function _esSlots(t){ return _esH(t).replace(/\[([^\]]+)\]/g, '<span style="color:#1F4BD8;border-bottom:2px solid #1F4BD8;padding:0 2px">$1</span>'); }
+
+function _esViewBar(s, view){
+  var tabs = [{ k:'quick', l:'보기 전 5분' }, { k:'translate', l:'전체 해석' }, { k:'deep', l:'깊게 공부' }];
+  return '<div style="display:flex;gap:6px;margin:0 0 24px;flex-wrap:wrap">' + tabs.map(function(t){
+    var on = t.k === view;
+    return '<button onclick="openStudyDetail(\'' + s._id + '\',\'' + t.k + '\')" style="font-size:14px;padding:7px 16px;border:1px solid ' + (on ? '#1F4BD8' : '#CBD5E1') + ';background:' + (on ? '#1F4BD8' : '#fff') + ';color:' + (on ? '#fff' : '#475569') + ';cursor:pointer">' + t.l + '</button>';
+  }).join('') + '</div>';
+}
+function _esWaitOrMake(s, mode, what){
+  if (_esPending(s._id, mode)) return '<p style="font-size:15px;color:#1A3FB5;background:#EEF2FD;padding:18px 20px"><span class="material-symbols-outlined animate-spin" style="font-size:18px;vertical-align:-4px">progress_activity</span> 아이맥이 ' + what + '을(를) 만드는 중이에요 · 몇 분 걸려요</p>';
+  if (!s.transcript) return '<p style="font-size:14px;color:#475569;border:1px dashed #CBD5E1;padding:18px 20px">이 스터디엔 스크립트가 저장돼 있지 않아서 새로 만들 수 없어요.</p>';
+  return '<div style="border:1px dashed #CBD5E1;padding:18px 20px"><p style="font-size:14px;color:#475569;margin:0 0 12px">아직 ' + what + '이(가) 없어요.</p><button class="atl-btn atl-btn-primary" onclick="queueStudyMode(\'' + s._id + '\',\'' + mode + '\')">' + what + ' 만들기</button></div>';
+}
+function _esHeader(s){
+  return '<p style="font-size:13px;color:#475569;margin:0 0 4px">' + _esH([s.source, s.date].filter(Boolean).join(' · ')) + '</p>' +
+    '<h2 style="font-size:26px;font-weight:700;line-height:1.25;margin:0 0 6px;color:#18181B">' + _esH(s.title || 'Untitled') + '</h2>' +
+    (s.subtitle ? '<p style="font-size:15px;color:#475569;margin:0 0 20px">' + _esH(s.subtitle) + '</p>' : '<div style="height:16px"></div>');
+}
+function renderStudyQuick(s){
+  var q = s.quick;
+  if (!q) return _esWaitOrMake(s, 'quick', '보기 전 5분');
+  var lab = function(t){ return '<p style="font-size:12px;font-weight:600;color:#475569;margin:0 0 8px">' + t + '</p>'; };
+  return '<div style="border:1px solid #ECECF0;padding:20px 22px;max-width:820px">' +
+    lab('무슨 얘기냐면') + (q.summary || []).map(function(l){ return '<p style="font-size:15px;line-height:1.6;margin:0 0 6px">· ' + _esH(l) + '</p>'; }).join('') +
+    '<div style="height:18px"></div>' + lab('이것만 알고 가 · 나오는 순서대로 ' + (q.items || []).length + '개') +
+    (q.items || []).map(function(it, i){
+      return '<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;padding:12px 0;border-top:1px solid #ECECF0;align-items:start">' +
+        '<span style="font-size:12px;color:#1F4BD8;font-weight:600;padding-top:3px">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<div><p style="font-size:16px;font-weight:600;margin:0">' + _esSlots(it.expr) + ' ' + _esSpk(String(it.expr || '').replace(/[\[\]]/g, ''), 'en-US') + '</p>' +
+          '<p style="font-size:14px;color:#475569;margin:2px 0 0">' + _esH(it.kr) + '</p>' +
+          (it.quote ? '<p style="font-size:14px;font-style:italic;color:#475569;margin:5px 0 0">"' + _esH(it.quote) + '"</p>' : '') + '</div>' +
+        '<button id="qadd-' + i + '" onclick="studyQuickToPhrase(\'' + s._id + '\',' + i + ')" style="font-size:12px;color:#1F4BD8;white-space:nowrap;cursor:pointer">+ 틀</button>' +
+      '</div>';
+    }).join('') +
+    ((q.keywords || []).length ? '<div style="height:16px"></div>' + lab('계속 나오는 단어') + '<div style="display:flex;gap:6px;flex-wrap:wrap">' + q.keywords.map(function(k){ return '<span style="font-size:14px;padding:4px 10px;background:#EEF2FD;color:#1A3FB5">' + _esH(k.word) + ' <span style="color:#475569">' + _esH(k.kr) + '</span></span>'; }).join('') + '</div>' : '') +
+    '<div style="display:flex;gap:8px;border-top:1px solid #ECECF0;margin-top:18px;padding-top:14px;flex-wrap:wrap">' +
+      '<button class="atl-btn atl-btn-secondary" onclick="openStudyDetail(\'' + s._id + '\',\'translate\')">전체 해석 보기</button>' +
+      '<button class="atl-btn atl-btn-secondary" onclick="openStudyDetail(\'' + s._id + '\',\'deep\')">이 영상 깊게 공부하기</button>' +
+    '</div></div>';
+}
+function renderStudyTranslation(s){
+  var t = s.translation;
+  if (!t || !(t.paras || []).length) return _esWaitOrMake(s, 'translate', '전체 해석');
+  var only = localStorage.getItem('atelier_listen_ko') === '1';
+  return '<div style="max-width:1100px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;gap:8px;flex-wrap:wrap"><p style="font-size:13px;color:#475569;margin:0">' + t.paras.length + '문단 · 왼쪽 영어, 오른쪽 한국어</p>' +
+    '<label style="font-size:13px;color:#475569;cursor:pointer"><input type="checkbox" ' + (only ? 'checked' : '') + ' onchange="try{localStorage.setItem(\'atelier_listen_ko\',this.checked?\'1\':\'0\')}catch(e){};openStudyDetail(\'' + s._id + '\',\'translate\')"> 한국어만</label></div>' +
+    t.paras.map(function(p){
+      return only ? '<p style="font-size:16px;line-height:1.8;margin:0 0 18px">' + _esH(p.ko) + '</p>'
+        : '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;padding:14px 0;border-top:1px solid #ECECF0">' +
+          '<p style="font-size:15px;line-height:1.75;margin:0;color:#475569">' + _esH(p.en) + '</p>' +
+          '<p style="font-size:16px;line-height:1.8;margin:0;color:#18181B">' + _esH(p.ko) + '</p></div>';
+    }).join('') + '</div>';
+}
+window.queueStudyMode = async function(id, mode){
+  var s = engStudyData.find(function(x){ return x._id === id; });
+  if (!s || !s.transcript) return;
+  try {
+    await db.collection('aiJobs').add({ kind:'study', mode:mode, status:'queued', docId:id, date:s.date || new Date().toISOString().split('T')[0], title:s.title || '', source:s.source || '', transcript:s.transcript, createdAt:new Date().toISOString() });
+    _aiToast('schedule', '아이맥에 맡겼어요 · ' + _esModeName(mode));
+    watchAiJobs(); setTimeout(function(){ openStudyDetail(id, mode); }, 600);
+  } catch(e){ _aiToast('error', '맡기기 실패: ' + e.message); }
+};
+window.studyQuickToPhrase = async function(id, i){
+  var s = engStudyData.find(function(x){ return x._id === id; });
+  var it = s && s.quick && (s.quick.items || [])[i];
+  if (!it || typeof phrasesAdd !== 'function') return;
+  var ok = await phrasesAdd({ text: it.expr, kr: it.kr, cat: 'Listen', mine: '', swap: it.quote || '', source: 'Listen · ' + (s.title || s.date) });
+  var b = document.getElementById('qadd-' + i); if (b && ok){ b.textContent = '담음 ✓'; b.disabled = true; }
+};
+
+window.openStudyDetail = function(id, view){
   var s = engStudyData.find(function(x){ return x._id === id; });
   if (!s) return;
+  var dflt = s.quick ? 'quick' : (_esHasDeep(s) ? 'deep' : 'quick');
+  view = view || (_esOpenId === id ? _esView : dflt);
+  _esOpenId = id; _esView = view;
   var content = document.getElementById('eng-study-detail-content');
-  if (content) content.innerHTML = renderStudyDetail(s);
+  var body = view === 'quick' ? _esHeader(s) + _esViewBar(s, view) + renderStudyQuick(s)
+    : view === 'translate' ? _esHeader(s) + _esViewBar(s, view) + renderStudyTranslation(s)
+    : (_esHasDeep(s) ? _esViewBar(s, view) + renderStudyDetail(s) : _esHeader(s) + _esViewBar(s, view) + _esWaitOrMake(s, 'deep', '깊게 공부'));
+  if (content) content.innerHTML = body;
   var lc = document.getElementById('eng-study-listcard'); if (lc) lc.style.display = 'none';
   var dv = document.getElementById('eng-study-detail-view'); if (dv) dv.style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 window.closeStudyDetail = function(){
-  engStopSpeak();
+  engStopSpeak(); _esOpenId = null;
   var dv = document.getElementById('eng-study-detail-view'); if (dv) dv.style.display = 'none';
   var lc = document.getElementById('eng-study-listcard'); if (lc) lc.style.display = '';
   window.scrollTo({ top: 0 });
@@ -1266,6 +1397,13 @@ window.queueAiJob = async function(kind){
   };
   if (isStudy) job.docId = date + '-' + Date.now().toString(36).slice(-5);
   try {
+    if (isStudy){
+      // Listen: 스크립트를 문서에 먼저 둔다(나중에 '깊게 공부'·'전체 해석'을 따로 맡길 때 다시 씀) → 보기 전 5분부터
+      await db.collection('englishStudy').doc(job.docId).set({ title: title, source: source, date: date, transcript: transcript, createdAt: job.createdAt }, { merge: true });
+      job.mode = 'quick';
+      var tr = document.getElementById('study-translate');
+      if (!tr || tr.checked) await db.collection('aiJobs').add(Object.assign({}, job, { mode: 'translate', createdAt: new Date(Date.now() + 1).toISOString() }));
+    }
     await db.collection('aiJobs').add(job);
     _aiToast('schedule', '아이맥에 맡겼어요 · 2~3분 뒤 목록에 생겨요');
     if (isStudy){ if (typeof closeStudyCreateModal === 'function') closeStudyCreateModal(); }
@@ -1283,6 +1421,7 @@ window.watchAiJobs = function(){
     _aiJobs = snap.docs.map(function(d){ var x = d.data(); x._id = d.id; return x; });
     _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked) _ackAiJob(j); });
     renderAiJobs();
+    try { renderStudyList(); } catch(e){}
   }, function(err){ console.warn('[aiJobs]', err); _aiJobsUnsub = null; });
 };
 
@@ -1317,7 +1456,8 @@ async function _ackAiJob(j){
     } else if (typeof loadEnglishStudy === 'function') {
       await loadEnglishStudy();
     }
-    _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : '스터디') + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
+    if (j.kind === 'study' && _esOpenId === j.docId){ var _o = engStudyData.find(function(x){ return x._id === j.docId; }); if (_o) openStudyDetail(j.docId, _esView); }
+    _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : _esModeName(j.mode)) + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
   } catch(e){ console.warn('[aiJobs ack]', e); }
   finally { delete _aiAcking[j._id]; }
 }
@@ -1338,7 +1478,7 @@ function renderAiJobs(){
   var esc = function(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
   el.style.display = 'block';
   el.innerHTML = live.map(function(j){
-    var name = (j.kind === 'annie' ? 'ANNIE 리뷰' : 'Study') + ' · ' + esc(j.title || j.date);
+    var name = (j.kind === 'annie' ? 'ANNIE 리뷰' : _esModeName(j.mode)) + ' · ' + esc(j.title || j.date);
     var mins = function(t){ var m = Math.max(0, Math.round((Date.now() - Date.parse(t || 0)) / 60000)); return m < 1 ? '방금' : m + '분째'; };
     if (j.status === 'error'){
       return '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid #F3C7CC;background:#FFF5F6;margin-bottom:6px;font-size:13px;color:#9F1D2C">' +

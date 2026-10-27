@@ -1,3 +1,11 @@
+## 2026-10-27 · 맥북 · Listen: 보기 전 5분 + 전체 해석 (english-study v17 · english-phrases v2 · ai-worker)
+- 누리: 1시간 영상 보기 전에 "이것만 알고 가"가 필요하고, 깊게 공부(기존 Study)는 따로 시간 낼 때 → 모드 셋: 보기 전 5분(quick) · 전체 해석(translate) · 깊게 공부(deep)
+- 스터디 추가 = englishStudy/<id> 에 스크립트 먼저 저장 → aiJobs mode quick(+translate 체크 시) · 상세 위 토글로 셋 전환, 없는 건 '만들기' 버튼(저장된 스크립트로)
+- 보기 전 5분: 요약 3줄 + 나오는 순서대로 표현 10~12개(뜻·원문) + 키워드 · 표현마다 '+ 틀' → My Phrases(phrasesAdd)
+- 전체 해석: 워커가 ~110단어 문단으로 나눠 25문단씩 3갈래 동시 번역(TRANSLATE_PROMPT_TEMPLATE) → translation.paras[{en,ko}] · 좌우 나란히 / 한국어만
+- 워커: mode 별 프롬프트·저장, pull 뒤 worker.js 가 바뀌면 작업을 대기열로 돌리고 스스로 재시작(KeepAlive) — 다음부턴 아이맥에 손댈 필요 없음
+- 맥북 claude -p 응답 앞에 "[F&F Policy Active]" 줄이 붙음(회사 관리 정책) → 해석 JSON 은 '["' 부터 찾음
+
 ## 2026-10-27 · 맥북 · English 탭 정리 (app-1-pages v405)
 - 탭: Annie · Speak · Listen · Read · My Phrases — Speak = Work 카드 + AI Tutor (아래 토글 'Role-play 카드 / AI Tutor 대화', 마지막 본 쪽 기억 atelier_eng_speak) · Study → Listen 이름만(보기 전에 모르는 표현 먼저)
 - IELTS 탭 버튼 뺌(시험 보류) — 화면·데이터·채점기는 그대로, 저장된 마지막 탭이 ielts 면 Annie 로

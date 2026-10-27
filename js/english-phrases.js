@@ -158,6 +158,15 @@
     return '<div style="border:1px solid '+(used.length?OK:LINE)+';background:'+(used.length?OK_L:'#fff')+';padding:14px 16px;margin-bottom:24px">'+
       '<p style="font-size:13px;font-weight:600;margin:0;color:'+(used.length?OK:SUB)+'">My Phrases 체크 · 이번 대화에서 쓴 틀 '+used.length+'개 / '+s.frameCheck.length+'개</p>'+body+'</div>';
   };
+  // 다른 탭(Listen 등)에서 틀 하나 담기 → 담았으면 true
+  window.phrasesAdd=async function(o){
+    await load();
+    var text=strip(o.text); if (!text) return false;
+    if (list().some(function(f){ return strip(f.text)===text; })){ toast('info','이미 모은 틀이에요'); return false; }
+    var id=newId();
+    PS.frames[id]={ id:id, text:text, kr:strip(o.kr), cat:o.cat||'', mine:strip(o.mine), swap:strip(o.swap), status:'new', week:false, used:[], source:o.source||'', created:new Date().toISOString() };
+    save(); toast('bookmark_add','My Phrases에 담았어요'); return true;
+  };
   // 리뷰의 💎 문장 → 틀로 저장
   window.addPhraseFromGem=async function(dateId, ui){
     var s=(typeof engSessionsData!=='undefined'?engSessionsData:[]).find(function(x){ return x._id===dateId; });

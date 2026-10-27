@@ -4,7 +4,7 @@
 //
 //  사이트가 Firestore `aiJobs` 에 { kind:'study'|'annie', status:'queued', ... } 를 쓰면
 //  여기서 집어 와서 Claude 구독(`claude -p`)으로 만들고 결과를 저장한다.
-//    study → englishStudy/<docId>
+//    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation)
 //    annie → englishSessions/<date>  (수업 트래커 'N회차' 는 사이트가 완료를 보고 만든다)
 //  API 요금 없음. 프롬프트는 사이트 원본(js/*.js)에서 매번 그대로 꺼낸다 — 사본 없음.
 //
@@ -27,6 +27,9 @@ const CLAUDE_TIMEOUT_MS = 15 * 60 * 1000;   // 긴 인터뷰 Opus 정리 대비
 const STALE_RUNNING_MS = 30 * 60 * 1000;    // 이보다 오래 running 이면 죽은 걸로 본다
 const DEFAULT_MODEL = process.env.ATELIER_AI_MODEL || 'opus';
 const ONCE = process.argv.includes('--once');
+const crypto = require('crypto');
+function selfHash() { try { return crypto.createHash('md5').update(fs.readFileSync(__filename)).digest('hex'); } catch (e) { return ''; } }
+const BOOT_HASH = selfHash();   // pull 로 worker.js 가 바뀌면 작업을 대기열로 돌려놓고 재시작(KeepAlive)
 
 admin.initializeApp({ credential: admin.credential.applicationDefault(), projectId: PROJECT });
 const db = admin.firestore();
@@ -56,7 +59,7 @@ function readTemplate(file, name) {
 
 function buildPrompt(job) {
   if (job.kind === 'study') {
-    return readTemplate('js/english-study.js', 'STUDY_PROMPT_TEMPLATE')
+    return readTemplate('js/english-study.js', job.mode === 'quick' ? 'QUICK_PROMPT_TEMPLATE' : 'STUDY_PROMPT_TEMPLATE')
       .replaceAll('{{ID}}', job.docId)
       .replaceAll('{{TITLE}}', job.title || '(제목 미입력)')
       .replaceAll('{{SOURCE}}', job.source || '(출처 미입력)')
@@ -123,7 +126,55 @@ function parseResult(text) {
   return null;
 }
 
+// 전체 해석: 문장 단위로 ~110단어 문단을 만들고, 25문단씩 나눠 동시에 번역
+function splitParas(text) {
+  const sents = String(text).replace(/\s+/g, ' ').trim().split(/(?<=[.!?…])\s+(?=["“'A-Z0-9(])/);
+  const paras = []; let cur = [];
+  let n = 0;
+  for (const st of sents) {
+    cur.push(st); n += st.split(' ').length;
+    if (n >= 110) { paras.push(cur.join(' ')); cur = []; n = 0; }
+  }
+  if (cur.length) paras.push(cur.join(' '));
+  return paras;
+}
+async function translateJob(job) {
+  const paras = splitParas(job.transcript);
+  const tpl = readTemplate('js/english-study.js', 'TRANSLATE_PROMPT_TEMPLATE');
+  const groups = [];
+  for (let i = 0; i < paras.length; i += 25) groups.push(paras.slice(i, i + 25));
+  const out = new Array(groups.length);
+  let next = 0;
+  async function lane() {
+    while (next < groups.length) {
+      const gi = next++; const g = groups[gi];
+      const prompt = tpl.replaceAll('{{COUNT}}', String(g.length)).replaceAll('{{PARAS}}', g.map((p, i) => '[' + (i + 1) + '] ' + p).join('\n\n'));
+      const raw = await runClaude(prompt, job.model || DEFAULT_MODEL);
+      const m = String(raw).match(/\[\s*"[\s\S]*\]/);   // 앞에 붙는 안내 줄(예: [F&F Policy Active])은 건너뜀
+      let arr = [];
+      try { arr = JSON.parse(m ? m[0] : '[]'); } catch (e) { throw new Error('해석 ' + (gi + 1) + '번째 묶음 형식 오류'); }
+      out[gi] = g.map((en, i) => ({ en, ko: String(arr[i] || '') }));
+      log('[translate]', job.id, (gi + 1) + '/' + groups.length);
+    }
+  }
+  await Promise.all([lane(), lane(), lane()]);
+  return { paras: [].concat(...out), madeAt: new Date().toISOString() };
+}
+
 async function saveResult(job, parsed) {
+  if (job.kind === 'study' && (job.mode === 'quick' || job.mode === 'translate')) {
+    const ref = db.collection('englishStudy').doc(job.docId);
+    const upd = { updatedAt: new Date().toISOString() };
+    if (job.mode === 'quick') {
+      upd.quick = parsed;
+      const cur = await ref.get();
+      if (!(cur.exists && cur.get('title')) && parsed.title) upd.title = parsed.title;
+      if (!(cur.exists && cur.get('subtitle')) && parsed.subtitle) upd.subtitle = parsed.subtitle;
+    } else upd.translation = parsed;
+    if (job.date) upd.date = job.date;
+    await ref.set(upd, { merge: true });
+    return job.docId;
+  }
   parsed.updatedAt = new Date().toISOString();
   parsed.madeBy = 'subscription';
   if (job.kind === 'study') {
@@ -183,8 +234,13 @@ async function processJob(job) {
   let raw = '';
   try {
     await pullRepo();
-    raw = await runClaude(buildPrompt(job), job.model || DEFAULT_MODEL);
-    const parsed = parseResult(raw);
+    if (selfHash() !== BOOT_HASH) {           // 새 워커 코드가 내려옴 → 이 작업은 새 코드가 하게
+      await job.ref.update({ status: 'queued', startedAt: admin.firestore.FieldValue.delete() });
+      log('[worker] 코드가 바뀜 — 재시작'); process.exit(0);
+    }
+    let parsed;
+    if (job.mode === 'translate') parsed = await translateJob(job);
+    else { raw = await runClaude(buildPrompt(job), job.model || DEFAULT_MODEL); parsed = parseResult(raw); }
     if (!parsed) throw new Error('Claude 응답 형식이 예상과 달라요');
     const resultId = await withTimeout(saveResult(job, parsed), 60000, '결과 저장');
     await withTimeout(job.ref.update({
