@@ -1392,6 +1392,7 @@ window.annieRemoveAudio = async function(dateId){
 // ═══════════════════════════════════════════════════════════
 var _aiJobs = [];
 var _aiJobsUnsub = null;
+var _esExplainSeen = {};
 
 function _aiToast(icon, msg){
   if (typeof showSyncToast === 'function') showSyncToast('<span class="material-symbols-outlined text-sm mr-1">' + icon + '</span> ' + msg);
@@ -1439,6 +1440,8 @@ window.watchAiJobs = function(){
   _aiJobsUnsub = db.collection('aiJobs').orderBy('createdAt', 'desc').limit(20).onSnapshot(function(snap){
     _aiJobs = snap.docs.map(function(d){ var x = d.data(); x._id = d.id; return x; });
     _aiJobs.forEach(function(j){ if (j.status === 'done' && !j.acked) _ackAiJob(j); });
+    // 하이라이트 풀이는 어느 기기가 마무리했든 이 화면 카드에 바로 반영
+    _aiJobs.forEach(function(j){ if (j.mode === 'explain' && j.status === 'done' && !_esExplainSeen[j._id]){ _esExplainSeen[j._id] = true; if (j.finishedAt && Date.now() - Date.parse(j.finishedAt) < 600000 && typeof listenMarkDone === 'function') listenMarkDone(j); } });
     renderAiJobs();
     try { renderStudyList(); } catch(e){}
   }, function(err){ console.warn('[aiJobs]', err); _aiJobsUnsub = null; });
@@ -1475,7 +1478,7 @@ async function _ackAiJob(j){
     } else if (typeof loadEnglishStudy === 'function') {
       await loadEnglishStudy();
     }
-    if (j.kind === 'study' && j.mode === 'explain'){ if (typeof listenMarkDone === 'function') listenMarkDone(j); return; }
+    if (j.kind === 'study' && j.mode === 'explain') return;   // 카드 갱신은 watchAiJobs 가 함
     if (j.kind === 'study' && _esOpenId === j.docId){ var _o = engStudyData.find(function(x){ return x._id === j.docId; }); if (_o) openStudyDetail(j.docId, _esView); }
     _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : _esModeName(j.mode)) + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
   } catch(e){ console.warn('[aiJobs ack]', e); }
