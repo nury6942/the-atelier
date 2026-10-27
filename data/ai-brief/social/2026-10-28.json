@@ -1,0 +1,284 @@
+{
+ "date": "2026-10-28",
+ "collectedAt": "2026-10-28T06:40:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@_allerg_",
+   "url": "https://www.threads.com/@_allerg_/post/De-anf0HwDZ",
+   "at": "2026-10-26T23:02:07.000Z",
+   "likes": 287,
+   "replies": 10,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "클로드로 내 전용 영어 과외쌤 세팅하는 3단계",
+   "points": [
+    "역할 지정: '20년 경력 원어민 과외쌤' + 레벨은 '토익 600점대, 말하기 거의 못함'처럼 구체적으로",
+    "주제(예: 여행 상황극)와 피드백 형식(문법·발음 표기·자연스러운 표현 3가지)을 못박아 'good job'만 하는 것 방지",
+    "수업 끝에 틀린 표현 모음 + 오늘 표현 5개 퀴즈를 자동으로 내게 설정 → 복습 노트화",
+    "대화가 길면 앞부분을 잊으니 '틀린 표현 요약'을 새 대화에 붙여 이어가기, 발음 교정은 별도 앱"
+   ],
+   "try": "클로드 새 대화에 역할·레벨·피드백 형식 세 줄만 넣고 10분 상황극 해보기"
+  },
+  {
+   "src": "threads",
+   "author": "@isaac.perform",
+   "url": "https://www.threads.com/@isaac.perform/post/De_t-LojVJc",
+   "at": "2026-10-27T11:10:23.000Z",
+   "likes": 654,
+   "replies": 23,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "AI 보고서용 차트 종류 모음 — 파이부터 마리메코까지",
+   "points": [
+    "'직관적으로 그려줘' 대신 차트 이름을 콕 집어 시키라는 취지",
+    "파이·마리메코 등 차트 종류별 예시는 이미지에 정리돼 있음(원문 참고)",
+    "저장해 두고 AI에 차트 이름으로 요청하는 용도"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@bokmanhi",
+   "url": "https://www.threads.com/@bokmanhi/post/De-WyBKEqqc",
+   "at": "2026-10-26T22:28:30.000Z",
+   "likes": 372,
+   "replies": 16,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "바이브코딩 요청이 구체해지는 커서·마우스 효과 용어 6개",
+   "points": [
+    "'마우스에 반응하게' 대신 '커스텀 커서 + 카드에 3D 틸트'처럼 이름으로 요청",
+    "커스텀 커서부터 커서 트레일까지 6개 효과의 이름·모습은 이미지에 있음",
+    "용어를 알면 수정 요청도 정확해진다는 게 핵심"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@contenjoo",
+   "url": "https://www.threads.com/@contenjoo/post/De_LCElj9Pu",
+   "at": "2026-10-27T06:08:09.000Z",
+   "likes": 91,
+   "replies": 9,
+   "media": true,
+   "image": null,
+   "tag": "만든 것",
+   "summary": "Claude Code로 광화문광장 멤피스 애니메이션 — 장소만 바꾸는 프롬프트",
+   "points": [
+    "영상 AI 없이 Claude가 Canvas frame(i) 함수로 한 장면씩 그리고, 음악·효과음도 코드로 생성",
+    "색상 코드 7개 + 짙은 남색 외곽선, 컷 없는 원테이크 전진 카메라, 작은 움직임·사건을 지정",
+    "고정 랜덤 시드 → 헤드리스 Chrome 내보내기 → ffmpeg 합성, 1080×1080·30fps·20초",
+    "샘플 프레임 4장 먼저 확인 후 전체 렌더링, 프롬프트 맨 아래 네 줄만 장소로 교체"
+   ],
+   "try": "프롬프트 아래 네 줄을 우리 동네로 바꿔 샘플 프레임 4장만 뽑아보기"
+  },
+  {
+   "src": "threads",
+   "author": "@echochip2025",
+   "url": "https://www.threads.com/@echochip2025/post/De-42lwlL_V",
+   "at": "2026-10-27T03:26:13.000Z",
+   "likes": 169,
+   "replies": 12,
+   "media": true,
+   "image": null,
+   "tag": "소식",
+   "summary": "영상 AI 없이 코드로 영화 만드는 오픈소스 Lemo-Opuscar",
+   "points": [
+    "Claude Opus 5.5가 코드로 장면·움직임·음악·내레이션을 조합해 영상 완성",
+    "스타일 59종(80년대 일본 애니, 16비트 픽셀, 종이책, 3D 미니어처, 다큐 등) + 내 스타일 추가 가능",
+    "스타일마다 스타일 프롬프트 + 코드로만 만든 데모 영상이 짝으로 들어 있음",
+    "아카데미 작품상 98편을 각기 다른 스타일로 재해석한 6분 31초 시연 영상 공개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@developk88",
+   "url": "https://www.threads.com/@developk88/post/De-8wEdj4Cv",
+   "at": "2026-10-27T04:00:22.000Z",
+   "likes": 119,
+   "replies": 8,
+   "media": true,
+   "image": null,
+   "tag": "소식",
+   "summary": "업스테이지 한국 세금 MCP — 계산은 코드로, 근거 조문까지",
+   "points": [
+    "법인세·소득세·부가세·가산세 등 도구 62개, 결과마다 근거 조문·산식 첨부",
+    "기준표 없는 연도는 추정하지 않고 멈춤",
+    "설치: claude mcp add korean-tax-calc -- uvx korean-tax-calc-mcp (MIT)",
+    "계산 도구 59개는 키 없이 내 PC에서, PDF 표 추출 3개만 업스테이지 키 필요"
+   ],
+   "try": "claude mcp add 한 줄로 깔고 종소세 대략 계산 한 번 시켜보기"
+  },
+  {
+   "src": "threads",
+   "author": "@dresstowin2026",
+   "url": "https://www.threads.com/@dresstowin2026/post/De_CjKsASOo",
+   "at": "2026-10-27T04:50:57.000Z",
+   "likes": 37,
+   "replies": 3,
+   "media": true,
+   "image": null,
+   "tag": "후기",
+   "summary": "Aside 브라우저 자동화 실사용 사례 5가지",
+   "points": [
+    "딸 선착순 수영장 등록 자동화",
+    "로그인해야 보이는 블로그 방문자 수를 매주 대신 확인 · 출퇴근 체크",
+    "인스타·틱톡 같은 닫힌 SNS 소재 수집과 레딧 분석",
+    "파워오토메이트와 엮어 자동화를 다시 자동화 — 공통점은 '로그인 후 똑같이 클릭하던 일'"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@ikqooo.roast",
+   "url": "https://www.threads.com/@ikqooo.roast/post/De-4nnIjyRK",
+   "at": "2026-10-27T03:24:11.000Z",
+   "likes": 200,
+   "replies": 77,
+   "media": true,
+   "image": null,
+   "tag": "만든 것",
+   "summary": "6TB 가족 사진, 구글포토 대신 NAS+자동 하이라이트 영상",
+   "points": [
+    "구글포토 5TB에 연 30만원 내던 6년치 6TB를 NAS로 옮김",
+    "Immich로 구글포토 같은 사진 관리·검색",
+    "VideoHighlighter로 영상 속 중요한 장면 추출",
+    "여행 기간·주간·주말별로 즐거웠던 순간을 짧은 영상으로 자동 제작, 유튜브 비공개 업로드 예정"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@opcodey",
+   "url": "https://www.threads.com/@opcodey/post/De_KiPilHIC",
+   "at": "2026-10-27T06:01:20.000Z",
+   "likes": 41,
+   "replies": 2,
+   "media": false,
+   "image": null,
+   "tag": "소식",
+   "summary": "여러 AI 에이전트가 옵시디언 노트를 공유 기억으로 — obsidian-second-brain",
+   "points": [
+    "Claude Code·Codex·Cursor 등이 같은 옵시디언 마크다운 파일을 읽고 이어서 작업",
+    "Crew 기능: 에이전트들이 작업 내역을 공동 로그북 하나에 기록",
+    "시맨틱 검색·자기수정 노트·예약 에이전트 등 커맨드 48개"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DfANCE3iMrp",
+   "at": "2026-10-27T15:41:53.000Z",
+   "likes": 100,
+   "replies": 6,
+   "media": true,
+   "image": null,
+   "tag": "만든 것",
+   "summary": "1862년 '페퍼의 유령' 착시를 Claude와 함께 재현",
+   "points": [
+    "화면 하나와 비스듬히 세운 유리판으로 무대 착시를 다시 만듦",
+    "Claude가 함체(enclosure) 모델링을 도움",
+    "제작 전에 유리 반사를 Claude로 시뮬레이션"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@viktoroddy",
+   "url": "https://x.com/viktoroddy/status/2114684257109254434",
+   "at": "2026-10-26T11:43:10.000Z",
+   "likes": 1700,
+   "replies": 77,
+   "media": true,
+   "image": null,
+   "tag": "소식",
+   "summary": "웹디자인 700개를 스킬 하나로 — MotionSites 무료 공개",
+   "points": [
+    "제작자의 웹사이트 디자인 700여 개를 하나의 스킬로 묶음",
+    "설치하면 에이전트가 흔한 AI 티 대신 시네마틱·애니메이션 사이트를 만든다는 주장",
+    "Claude Code·Codex·Cursor 등 어느 에이전트든 사용, 무료 오픈소스"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2114684115635310592/img/h10bIs3cv0Nw9GZx.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2114684115635310592/vid/avc1/640x360/qQoNgK_bM7oMCpkS.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@rewind02",
+   "url": "https://x.com/rewind02/status/2113934403478999211",
+   "at": "2026-10-24T10:03:31.000Z",
+   "likes": 946,
+   "replies": 60,
+   "media": true,
+   "image": null,
+   "tag": "후기",
+   "summary": "코딩 경험 0, Opus 5.5 + Godot로 6주 만에 게임 완성",
+   "points": [
+    "Godot 프로젝트 안에서 Claude Code(Opus 5.5) 실행, 기능 하나 만들고 게임에서 테스트·조정 후 다음 기능",
+    "게임 화풍 레퍼런스 이미지를 생성하고, 잘 된 이미지 프롬프트를 JSON 하나에 모아 다음 생성에 써서 화풍 유지",
+    "큰 3D 에셋은 Tripo P2, 작은 소품은 Blender 모델링 후 Tripo로 텍스처(더 저렴), 애니메이션은 Cascadeur",
+    "VFX·셰이더는 전부 옵시디언에 기록해 룩 일관성 유지"
+   ],
+   "try": "잘 나온 이미지 프롬프트를 JSON 한 파일에 모으는 습관부터",
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2113934333027270656/img/RxohxmKXERZlW3PC.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2113934333027270656/vid/avc1/640x360/ncDGI2xDvbo0XjiA.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2115082511457939494",
+   "at": "2026-10-27T14:05:41.000Z",
+   "likes": 87,
+   "replies": 81,
+   "media": true,
+   "image": null,
+   "tag": "소식",
+   "summary": "앤트로픽 가이드: 서브에이전트 여럿보다 에이전트 1개 + 스킬",
+   "points": [
+    "에이전트 하나·컨텍스트 하나·루프 하나로 시작, 스킬·도구는 필요할 때만 불러오기",
+    "서브에이전트는 컨텍스트 과부하·병렬 작업·도구 선택 혼란일 때만 — 넘길 때마다 맥락 손실, 단일 루프로 바꾼 고객은 약 2배 빨라짐",
+    "도구 정의가 30~50개를 넘으면 선택 정확도 저하 → 의도별로 묶고 필요할 때 로딩",
+    "옮길 땐 서브에이전트 하나씩: 프롬프트→스킬, API 호출→MCP, 골든 예시 10개로 전후 평가"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVpHHQFXIAEDPEl.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@GeminiApp",
+   "url": "https://x.com/GeminiApp/status/2115171788812669225",
+   "at": "2026-10-27T20:00:27.000Z",
+   "likes": 305,
+   "replies": 29,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "Gemini에 \"AI로 만든 거야?\" 물으면 SynthID로 판별",
+   "points": [
+    "이미지·영상·오디오 파일을 올리고 'Is this AI generated?'라고 물으면 됨",
+    "구글 AI로 만든 콘텐츠에 박힌 SynthID 워터마크를 감지하는 방식",
+    "구글 모델 생성물만 판별 대상"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2115171418719883264/img/-RHGa5f3YkVZ1tq6.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2115171418719883264/vid/avc1/640x360/NgOe79pOrh6x4Ek_.mp4"
+    }
+   ]
+  }
+ ]
+}
