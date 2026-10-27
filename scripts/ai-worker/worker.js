@@ -4,7 +4,7 @@
 //
 //  사이트가 Firestore `aiJobs` 에 { kind:'study'|'annie', status:'queued', ... } 를 쓰면
 //  여기서 집어 와서 Claude 구독(`claude -p`)으로 만들고 결과를 저장한다.
-//    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation)
+//    study → englishStudy/<docId>  (mode: deep=깊게 공부 · quick=보기 전 5분 → .quick · translate=전체 해석 → .translation · explain=하이라이트 풀이 → .marks.<key>)
 //    annie → englishSessions/<date>  (수업 트래커 'N회차' 는 사이트가 완료를 보고 만든다)
 //  API 요금 없음. 프롬프트는 사이트 원본(js/*.js)에서 매번 그대로 꺼낸다 — 사본 없음.
 //
@@ -162,6 +162,10 @@ async function translateJob(job) {
 }
 
 async function saveResult(job, parsed) {
+  if (job.kind === 'study' && job.mode === 'explain') {
+    await db.collection('englishStudy').doc(job.docId).set({ marks: { [job.markKey]: Object.assign(parsed, { status: 'done', doneAt: new Date().toISOString() }) } }, { merge: true });
+    return job.docId;
+  }
   if (job.kind === 'study' && (job.mode === 'quick' || job.mode === 'translate')) {
     const ref = db.collection('englishStudy').doc(job.docId);
     const upd = { updatedAt: new Date().toISOString() };
@@ -193,6 +197,7 @@ function validJob(job) {
   if (!job.transcript || !String(job.transcript).trim()) return '스크립트가 비어 있어요';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(job.date || '')) return '날짜 형식이 이상해요: ' + job.date;
   if (job.kind === 'study' && !/^[\w-]+$/.test(job.docId || '')) return 'docId 가 없어요';
+  if (job.mode === 'explain' && !/^\w+$/.test(job.markKey || '')) return 'markKey 가 없어요';
   if (job.kind !== 'study' && job.kind !== 'annie') return '모르는 종류: ' + job.kind;
   return '';
 }
@@ -240,6 +245,12 @@ async function processJob(job) {
     }
     let parsed;
     if (job.mode === 'translate') parsed = await translateJob(job);
+    else if (job.mode === 'explain') {
+      const prompt = readTemplate('js/english-study.js', 'EXPLAIN_PROMPT_TEMPLATE').replaceAll('{{PHRASE}}', String(job.phrase || '')).replaceAll('{{CONTEXT}}', String(job.transcript));
+      raw = await runClaude(prompt, job.model || 'sonnet');
+      const m = String(raw).match(/\{[\s\S]*\}/);
+      try { parsed = JSON.parse(m ? m[0] : ''); } catch (e) { parsed = null; }
+    }
     else { raw = await runClaude(buildPrompt(job), job.model || DEFAULT_MODEL); parsed = parseResult(raw); }
     if (!parsed) throw new Error('Claude 응답 형식이 예상과 달라요');
     const resultId = await withTimeout(saveResult(job, parsed), 60000, '결과 저장');

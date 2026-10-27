@@ -204,6 +204,15 @@ Output ONLY a JSON array of Korean strings — exactly one string per numbered p
 
 {{PARAS}}`;
 
+// ── 하이라이트 풀이 (2026-10-27) — 전체 해석에서 누리가 고른 단어·표현 하나를 문맥 안에서 풀어 준다 ──
+var EXPLAIN_PROMPT_TEMPLATE = `Nuri (Korean, upper-B2 English learner, fashion designer) highlighted this while reading a talk transcript. Explain it IN THIS CONTEXT, briefly, the way a sharp tutor would.
+
+HIGHLIGHTED: {{PHRASE}}
+SENTENCE: {{CONTEXT}}
+
+Output ONLY one JSON object, no code fence, no other text:
+{"base": "dictionary form to remember (e.g. 'grapple with', 'set up to fail')", "ko": "짧은 한국어 뜻 (이 문맥에서)", "nuance": "한국어 1~2문장 — 이 문맥에서 왜 이 말을 썼는지, 비슷한 쉬운 말과 차이", "ex": [{"en": "natural everyday example", "ko": "뜻"}, {"en": "example Nuri could say at work or in an interview", "ko": "뜻"}], "frame": "reusable sentence frame with swappable parts in [square brackets] if it is a phrase worth reusing, else empty string"}`;
+
 var engStudyData = [];
 var _esMaxTokens = 64000;   // 모델이 안 받아주면 첫 호출에서 32000으로 자동 하향
 
@@ -403,7 +412,7 @@ function studyAutoError(msg, raw){
 
 // ── 상세 열기/닫기/삭제 ─────────────────────────────────────
 var _esOpenId = null, _esView = 'quick';
-function _esModeName(m){ return m === 'quick' ? '보기 전 5분' : m === 'translate' ? '전체 해석' : '깊게 공부'; }
+function _esModeName(m){ return m === 'quick' ? '보기 전 5분' : m === 'translate' ? '전체 해석' : m === 'explain' ? '단어 풀이' : '깊게 공부'; }
 function _esHasDeep(s){ return _esIdioms(s).length || (s.grammar || []).length || (s.vocab || []).length; }
 function _esPending(id, mode){ return _aiJobs.some(function(j){ return j.kind === 'study' && j.docId === id && (j.mode || 'deep') === mode && (j.status === 'queued' || j.status === 'running'); }); }
 function _esH(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
@@ -458,12 +467,12 @@ function renderStudyTranslation(s){
   if (!t || !(t.paras || []).length) return _esWaitOrMake(s, 'translate', '전체 해석');
   var only = localStorage.getItem('atelier_listen_ko') === '1';
   return '<div style="max-width:1100px">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;gap:8px;flex-wrap:wrap"><p style="font-size:13px;color:#475569;margin:0">' + t.paras.length + '문단 · 왼쪽 영어, 오른쪽 한국어</p>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;gap:8px;flex-wrap:wrap"><p style="font-size:13px;color:#475569;margin:0">' + t.paras.length + '문단 · 영어에서 모르는 걸 <b style="background:#FEF3C7;padding:0 3px;color:#18181B">드래그</b>하면 뜻·예문 · <span style="border-bottom:2px solid #93B4F5">파란 밑줄</span> = 보기 전 5분 표현</p>' +
     '<label style="font-size:13px;color:#475569;cursor:pointer"><input type="checkbox" ' + (only ? 'checked' : '') + ' onchange="try{localStorage.setItem(\'atelier_listen_ko\',this.checked?\'1\':\'0\')}catch(e){};openStudyDetail(\'' + s._id + '\',\'translate\')"> 한국어만</label></div>' +
-    t.paras.map(function(p){
+    t.paras.map(function(p, pi){
       return only ? '<p style="font-size:16px;line-height:1.8;margin:0 0 18px">' + _esH(p.ko) + '</p>'
         : '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;padding:14px 0;border-top:1px solid #ECECF0">' +
-          '<p style="font-size:15px;line-height:1.75;margin:0;color:#475569">' + _esH(p.en) + '</p>' +
+          '<p class="ls-en" data-pi="' + pi + '" style="font-size:15px;line-height:1.75;margin:0;color:#3F3F46">' + (typeof listenMarkPara === 'function' ? listenMarkPara(s, p.en, pi) : _esH(p.en)) + '</p>' +
           '<p style="font-size:16px;line-height:1.8;margin:0;color:#18181B">' + _esH(p.ko) + '</p></div>';
     }).join('') + '</div>';
 }
@@ -1466,6 +1475,7 @@ async function _ackAiJob(j){
     } else if (typeof loadEnglishStudy === 'function') {
       await loadEnglishStudy();
     }
+    if (j.kind === 'study' && j.mode === 'explain'){ if (typeof listenMarkDone === 'function') listenMarkDone(j); return; }
     if (j.kind === 'study' && _esOpenId === j.docId){ var _o = engStudyData.find(function(x){ return x._id === j.docId; }); if (_o) openStudyDetail(j.docId, _esView); }
     _aiToast('check_circle', (j.kind === 'annie' ? 'ANNIE 리뷰' : _esModeName(j.mode)) + '가 완성됐어요' + (lesson ? ' · 새 수업(' + lesson + ')' : '') + ' · ' + (j.title || j.date));
   } catch(e){ console.warn('[aiJobs ack]', e); }
