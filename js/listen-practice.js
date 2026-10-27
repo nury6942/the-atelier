@@ -114,11 +114,10 @@
             '<input value="'+esc(u.guess||'')+'" oninput="practiceGuess('+pi+','+i+',this.value)" placeholder="대충이라도 적어 보기" style="flex:1;min-width:160px;font-size:14px;padding:5px 8px;border:1px solid #CBD5E1">'+
             '<button onclick="practiceUnkDel('+pi+','+i+')" style="font-size:13px;color:'+SUB+';cursor:pointer">✕</button></div>';
         }).join('')+'</div>':'<p style="font-size:13px;color:'+SUB+';margin:0 0 8px">모르는 단어·표현은 영어에서 드래그 → 뜻을 먼저 추측해 적어요</p>')+
-        '<textarea oninput="practiceDraft('+pi+',this.value)" rows="3" placeholder="내 말로 해석해 보기 (정답은 검수 뒤에 열려요)" style="width:100%;font-size:15px;line-height:1.6;padding:10px 12px;border:1px solid #CBD5E1;font-family:inherit">'+esc(mine)+'</textarea>'+
+        '<textarea id="pr-ta-'+pi+'" oninput="practiceDraft('+pi+',this.value)" rows="3" placeholder="내 말로 해석해 보기 (정답은 검수 뒤에 열려요)" style="width:100%;font-size:15px;line-height:1.6;padding:10px 12px;border:1px solid #CBD5E1;font-family:inherit">'+esc(mine)+'</textarea>'+
         '<p id="pr-err-'+pi+'" style="font-size:13px;color:#B91C1C;margin:4px 0 0;display:none"></p>'+
         '<div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><button class="atl-btn atl-btn-primary" onclick="practiceCheck('+pi+')">검수 받기</button>'+
-          '<button class="atl-btn atl-btn-secondary" onclick="practiceSaveNow('+pi+')">중간 저장</button>'+
-          '<span id="pr-saved-'+pi+'" style="font-size:13px;color:'+SUB+'">'+(p.savedAt?'저장됨 · '+hm(p.savedAt):'')+'</span>'+
+          '<span id="pr-saved-'+pi+'" style="font-size:13px;color:'+SUB+'">'+(p.savedAt?'<span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">cloud_done</span> 저장됨 · '+hm(p.savedAt):'')+'</span>'+
         '<span style="font-size:13px;color:'+SUB+';background:#F8FAFC;padding:6px 10px"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">lock</span> 정답 해석은 검수 뒤에</span></div>';
     } else if (p.st==='checking'){
       h+='<p style="font-size:15px;line-height:1.6;margin:0 0 10px;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
@@ -167,7 +166,35 @@
     }).join('');
   }
 
+  // 실시간 동기화 — 다른 기기에서 쓰는 글·도착한 검수가 이 화면에 바로 (지금 내가 커서 둔 칸은 안 건드림)
+  var live={ id:null, unsub:null };
+  function watch(s){
+    if (live.id===s._id && live.unsub) return;
+    if (live.unsub) live.unsub();
+    live.id=s._id;
+    live.unsub=db.collection('englishStudy').doc(s._id).onSnapshot(function(snap){
+      if (snap.metadata.hasPendingWrites) return;
+      var x=doc(live.id);
+      if (!x || _esOpenId!==live.id || _esView!=='practice'){ live.unsub(); live.unsub=null; live.id=null; return; }
+      var rp=(snap.get('practice')||{}).paras||{}, r=zoneRange(x);
+      Object.keys(rp).forEach(function(k){
+        var pi=+k, a=rp[k], b=P(x,pi), key=x._id+':'+pi;
+        var ta=document.getElementById('pr-ta-'+pi), focused=ta && document.activeElement===ta;
+        if (timers[key] || focused){ return; }   // 이 기기에서 쓰는 중이면 내 것이 우선
+        var stChanged=a.st!==b.st || JSON.stringify(a.says||null)!==JSON.stringify(b.says||null) || JSON.stringify(a.unk||[])!==JSON.stringify(b.unk||[]);
+        var mineChanged=(a.mine||'')!==(b.mine||'');
+        x.practice.paras[pi]=a; delete drafts[key];
+        if (pi<r[0] || pi>=r[1]) return;
+        if (stChanged) paint(x,pi);
+        else if (mineChanged && ta){ ta.value=a.mine||''; var el=document.getElementById('pr-saved-'+pi); if (el && a.savedAt) el.innerHTML='<span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">sync</span> 다른 기기에서 · '+hm(a.savedAt); }
+      });
+      if (typeof snap.get('practice')==='object' && snap.get('practice').zone!=null && snap.get('practice').zone!==zoneOf(x)){ x.practice.zone=snap.get('practice').zone; }
+    }, function(e){ console.warn('[practice live]', e); live.unsub=null; live.id=null; });
+  }
   window.renderListenPractice=function(s){
+    try { watch(s); } catch(e){}
+    // 이 기기에만 남은(저장 못 한) 글이 있으면 되살림
+    paras(s).forEach(function(_, pi){ var k=s._id+':'+pi; try { var v=localStorage.getItem('atelier_pr_'+k); if (v!=null && v!==(((s.practice||{}).paras||{})[pi]||{}).mine && drafts[k]==null){ drafts[k]=v; timers[k]=setTimeout(function(){ flush(s, pi); }, 400); } } catch(e){} });
     if (!paras(s).length) return typeof _esWaitOrMake==='function' ? _esWaitOrMake(s,'translate','전체 해석') : '';
     if (zoneOf(s)>=paras(s).length) pr(s).zone=0;
     var r=zoneRange(s), h='<div id="pr-root" style="max-width:860px">'+
@@ -193,17 +220,18 @@
     p.mine=v; if (!p.st) p.st='draft'; p.savedAt=new Date().toISOString();
     var el=document.getElementById('pr-saved-'+pi);
     return save(s,{ paras:{ [pi]:{ mine:v, unk:p.unk||[], st:p.st, savedAt:p.savedAt } } }).then(function(){
-      if (el) el.innerHTML=(manual?'<b style="color:'+ACC+'">저장했어요</b>':'자동 저장됨')+' · '+hm(p.savedAt);
+      try { if (drafts[k]==null || drafts[k]===v) localStorage.removeItem('atelier_pr_'+k); } catch(e){}
+      if (el) el.innerHTML='<span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">cloud_done</span> 저장됨 · '+hm(p.savedAt);
       var hd=document.getElementById('pr-head'); if (hd) hd.outerHTML=head(s);
     });
   }
   window.practiceDraft=function(pi, v){
     var s=cur(); if (!s) return; var k=s._id+':'+pi; drafts[k]=v;
     var e=document.getElementById('pr-err-'+pi); if (e) e.style.display='none';
-    var el=document.getElementById('pr-saved-'+pi); if (el) el.textContent='쓰는 중…';
-    clearTimeout(timers[k]); timers[k]=setTimeout(function(){ flush(s, pi); }, 700);
+    var el=document.getElementById('pr-saved-'+pi); if (el) el.textContent='저장 중…';
+    try { localStorage.setItem('atelier_pr_'+k, v); } catch(e){}   // 끊겨도 이 기기엔 남게
+    clearTimeout(timers[k]); timers[k]=setTimeout(function(){ flush(s, pi); }, 400);
   };
-  window.practiceSaveNow=function(pi){ var s=cur(); if (s) flush(s, pi, true); };
   function flushAll(){ var s=cur(); if (!s) return; Object.keys(timers).forEach(function(k){ var i=k.indexOf(':'); if (i>0 && k.slice(0,i)===s._id) flush(s, +k.slice(i+1)); }); }
   document.addEventListener('visibilitychange', function(){ if (document.visibilityState==='hidden') flushAll(); });
   window.addEventListener('pagehide', flushAll);
