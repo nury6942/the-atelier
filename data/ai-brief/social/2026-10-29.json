@@ -1,0 +1,293 @@
+{
+ "date": "2026-10-29",
+ "collectedAt": "2026-10-29T06:55:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@bcherny",
+   "url": "https://x.com/bcherny/status/2115491259381072269",
+   "at": "2026-10-28T17:09:54.000Z",
+   "likes": 1500,
+   "replies": 151,
+   "media": false,
+   "image": null,
+   "tag": "후기",
+   "summary": "유타주 34명 개발자, 클로드 코드 4주 써보니 71%가 20시간↑ 절약",
+   "points": [
+    "유타주 10개 기관 개발자 34명에게 클로드 코드를 4주 시범 도입",
+    "80%가 30분 안에 작업 환경 세팅을 마침",
+    "71%가 시범 기간 동안 20시간 이상 아꼈다고 응답",
+    "인용글: 앤트로픽이 미국 연방조달청(GSA)과 정부기관 대상 40% 할인 계약 확대"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@sundarpichai",
+   "url": "https://x.com/sundarpichai/status/2115489219804352921",
+   "at": "2026-10-28T17:01:48.000Z",
+   "likes": 20000,
+   "replies": 1300,
+   "media": true,
+   "image": null,
+   "tag": "소식",
+   "summary": "구글 Gemini 4 Carbon 공개 — Argon 2주 만에 지수 1위",
+   "points": [
+    "Artificial Analysis 지수 v5.0에서 59점으로 1위",
+    "보안 평가: 취약점 찾기 SEC-bench Pro 88.2%, 패치 CWE-bench 71.0%",
+    "Argon보다 긴 작업(long-horizon) 능력이 크게 좋아졌다고 함",
+    "이번 주 일부 보안 방어 기관부터 단계적 공개, 일반 공개는 곧"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVu5GHmbUAAppsK.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2115290590959329451",
+   "at": "2026-10-28T03:52:31.000Z",
+   "likes": 444,
+   "replies": 48,
+   "media": false,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "앤트로픽 Opus 5.5 프롬프트 가이드 11가지 정리",
+   "points": [
+    "무조건 최대 thinking 말고 medium부터 — Opus 5의 high와 비슷하거나 더 낫다고",
+    "thinking 끄기가 없어졌으니 '생각을 다 써라' 류 옛 프롬프트는 지우기",
+    "긴 작업 중 멈추는 문제: 할 일 체크리스트를 두고 끝나기 전에 남은 일 확인",
+    "여러 곳(메일·문서·CRM)에 걸친 일은 '먼저 관련 자료를 찾아보고 행동하라'고 지시",
+    "에이전트 팀엔 시간 예산을 알려주면 더 빨라짐(나머지는 원문 스레드)"
+   ],
+   "try": "클로드 코드 기본 노력(effort)을 medium으로 두고 평소 일에 차이가 있는지 보기",
+   "media_items": []
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2115520908198547766",
+   "at": "2026-10-28T19:07:43.000Z",
+   "likes": 34,
+   "replies": 3,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "클로드 코드: Sonnet이 일하고 Opus는 조언자로만 부르기",
+   "points": [
+    "원문 주장: claude --model sonnet --advisor opus 로 시작",
+    "Sonnet 5.5가 코드 작성, Haiku 5.5 하위 에이전트 3개(search·grep·docs, 읽기 전용)가 탐색",
+    "Opus는 계획 확정 전·같은 에러 두 번·완료 선언 전 세 순간에만 개입",
+    "CLAUDE.md에 '이 세 순간엔 advisor에게 물어라' 규칙 한 줄 추가 — 비용 절감 목적",
+    "글 뒷부분의 JEV 라우팅은 작성자 쪽 홍보성 내용이라 건너뛰어도 됨"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2115513134345568256/img/asIuB01iH_2I2WHs.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2115513134345568256/vid/avc1/480x600/y25l2fPmt8yWLdL1.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DfC2DntGobp",
+   "at": "2026-10-28T16:18:45.000Z",
+   "likes": 412,
+   "replies": 13,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 팀이 말하는 '루프' 4가지와 언제 쓰나",
+   "points": [
+    "루프 = 멈춤 조건이 될 때까지 에이전트가 작업 사이클을 반복하는 것",
+    "네 가지 유형과 각각 쓸 때는 이미지 카드에 정리(원문 참고)",
+    "Claude 공식 계정 글"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@turtle_buff",
+   "url": "https://www.threads.com/@turtle_buff/post/DfCSEZAp8rn",
+   "at": "2026-10-28T11:05:17.000Z",
+   "likes": 363,
+   "replies": 7,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "클로드 공식 무료 강의 20여 개, 이제 한국어로",
+   "points": [
+    "Anthropic이 만든 강의 20개 넘게 전부 무료, 수료증도 줌",
+    "한국어 버전이 새로 나옴",
+    "처음이면 하루 하나씩 듣는 순서는 이미지에 정리(원문 참고)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@learning.masters",
+   "url": "https://www.threads.com/@learning.masters/post/DfCextQn4iR",
+   "at": "2026-10-28T12:55:19.000Z",
+   "likes": 283,
+   "replies": 3,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "AI 영상용 카메라 용어 24개 한국어 정리",
+   "points": [
+    "패닝부터 J컷·L컷까지 24개 용어를 한국어로 설명",
+    "Higgsfield·Runway 등 영상 AI 프롬프트에 그대로 쓰라는 용도",
+    "작성자는 그록봇에 학습시켜 씀, 목록은 이미지(원문 참고)"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@giting.kr",
+   "url": "https://www.threads.com/@giting.kr/post/DfBGEbJDR9S",
+   "at": "2026-10-28T00:00:37.000Z",
+   "likes": 225,
+   "replies": 20,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "AI에 '차트 움직이게' 대신 모션 이름으로 시키기",
+   "points": [
+    "그냥 시키면 막대가 아래서 올라오는 게 전부 — 차트별 모션 이름이 따로 있음",
+    "원 쓸기·도넛 나누기·와플 채우기·트리맵 나누기·폭포 차트",
+    "예: '와플 채우기로 41%, 10×10 칸이 왼쪽 아래부터 칠해지고 숫자도 같이 올라가게'",
+    "이름+시간+순서를 모은 모션 메뉴판 무료(MIT) 공개, 데이터 모션 26개 포함"
+   ],
+   "try": "Atelier 대시보드 차트 하나에 '와플 채우기' 모션 요청해 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@the.ddanjit",
+   "url": "https://www.threads.com/@the.ddanjit/post/DfBQXAmE69y",
+   "at": "2026-10-28T01:30:15.000Z",
+   "likes": 144,
+   "replies": 22,
+   "media": false,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "개인사업자면 챗GPT·클로드 구독 부가세 10% 빼기",
+   "points": [
+    "결제 정보에 사업자등록번호를 넣으면 다음 결제부터 부가세 10% 빠짐(3.3만→3만원)",
+    "클로드: 설정 → 결제 → 결제 수단 '업데이트' → Tax or VAT ID",
+    "챗GPT: 웹 설정 → 결제 → 결제 정보 수정 → 세금 ID",
+    "앱스토어 결제는 칸이 없음, 이미 낸 건 환급 안 됨, 세금계산서 대신 인보이스가 증빙"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@seungnam.t.kim",
+   "url": "https://www.threads.com/@seungnam.t.kim/post/DfCsfENGPzN",
+   "at": "2026-10-28T14:55:07.000Z",
+   "likes": 43,
+   "replies": 7,
+   "media": false,
+   "image": null,
+   "tag": "후기",
+   "summary": "Codex→클로드 옮기며 본 업무별 차이 7가지",
+   "points": [
+    "PPT는 무조건 Claude, 코딩은 비슷하지만 Claude가 더 빠르고 쌈",
+    "3D 모델링은 Astra·Fable 비슷, Opus 5.5도 크게 뒤지지 않음",
+    "통계·데이터 분석은 GPT가 앞섬 — Claude는 분석 방법을 멋대로 바꾸는 실수",
+    "큰 프로젝트를 단계적으로 끌고 가는 건 Claude가 더 체계적"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@webdaddy.top",
+   "url": "https://www.threads.com/@webdaddy.top/post/DfB66wLkt1g",
+   "at": "2026-10-28T07:41:59.000Z",
+   "likes": 71,
+   "replies": 21,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "제미나이 캔버스 웹페이지 → 구글 사이트로 바로 배포",
+   "points": [
+    "캔버스에서 웹페이지·랜딩 코드를 만든 뒤 우측 상단 [내보내기]",
+    "[Google Sites] 버튼을 누르면 구글 사이트 페이지로 바로 만들어짐",
+    "서버·호스팅 세팅 없이 소개 페이지·이벤트 랜딩용으로 쓰기 좋다고"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@yousungkyu222",
+   "url": "https://www.threads.com/@yousungkyu222/post/DfBy9NxoH6f",
+   "at": "2026-10-28T06:32:25.000Z",
+   "likes": 137,
+   "replies": 20,
+   "media": false,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "긴 영상 하나로 쇼츠 7개 — 제미나이 프롬프트 12개",
+   "points": [
+    "영상을 Gemini에 올려 구간·주제·인상적인 말 표로 '영상 지도' 만들기",
+    "30~45초 클립 후보 12개 → 내용 안 겹치는 7개 고르기",
+    "클립별 15자 후킹 3종, 새 타임라인 컷 계획표, SRT 자막까지 순서대로 요청",
+    "나머지(세로 화면·오디오·업로드 문구·일주일 계획)는 스레드 이어보기"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@marketer.ai.seulki",
+   "url": "https://www.threads.com/@marketer.ai.seulki/post/De_Dd5Mj9kM",
+   "at": "2026-10-27T04:58:58.000Z",
+   "likes": 133,
+   "replies": 21,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "Aside 브라우저로 한컴독스에서 HWP 대신 쓰게 하기",
+   "points": [
+    "Aside에서 Model에 구독 중인 AI 연동(자체 무료 크레딧도 가능)",
+    "한컴독스 웹 에디터(무료)에 고칠 HWP 파일 업로드",
+    "Aside Chat에 '한컴독스 웹 에디터 들어가서 HWP 파일 편집해줘' + 넣을 내용 지시",
+    "글에 초대 링크·단톡방 홍보가 섞여 있음"
+   ],
+   "try": "아이맥 Aside로 회사 HWP 양식 하나 열어 칸 채우기 시켜 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@dopaminecryptokr",
+   "url": "https://www.threads.com/@dopaminecryptokr/post/DfBDCb2llC9",
+   "at": "2026-10-27T23:33:42.000Z",
+   "likes": 61,
+   "replies": 2,
+   "media": true,
+   "image": null,
+   "tag": "만든 것",
+   "summary": "한 줄로 어워즈급 사이트 만드는 /awwwards 스킬",
+   "points": [
+    "'포트폴리오 만들어줘, 내 이름은 Julio' 한 줄로 기획·디자인·코드까지",
+    "만든 뒤 실제 브라우저로 띄워 깨짐을 확인하고 넘겨줌",
+    "설치: npx skills add juliobsz/skills -g (클로드 코드만이면 -a claude-code)",
+    "같은 저장소의 /jury 는 아무 사이트나 어워즈 심사위원처럼 채점"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@vibe.itji",
+   "url": "https://www.threads.com/@vibe.itji/post/De_rUyYD-mv",
+   "at": "2026-10-27T10:47:15.000Z",
+   "likes": 132,
+   "replies": 1,
+   "media": true,
+   "image": null,
+   "tag": "꿀팁",
+   "summary": "옵시디언 CEO가 만든 AI 스킬 + claude-obsidian",
+   "points": [
+    "obsidian-skills(별 5만): AI가 노트 링크·프로퍼티·Bases·Canvas 형식을 이해하게 함",
+    "claude-obsidian(별 1.6만): 흩어진 자료를 읽어 연결된 노트로 정리, 끊긴 링크 점검",
+    "둘을 같이 쓰면 메모를 AI용 개인 지식베이스로 — 둘 다 MIT"
+   ],
+   "try": "webnovel-forge 볼트에 obsidian-skills 깔고 설정 노트 정리 시켜 보기"
+  }
+ ]
+}
