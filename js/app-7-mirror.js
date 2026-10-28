@@ -236,7 +236,7 @@ function _bPlan(ym) {
     var cc = caps['옷·뷰티'] != null ? caps['옷·뷰티'] : _bLivingCap(ym, '옷·뷰티');
     todo.push(cc ? '👗 옷은 여행 직전 달에만 · 이 달은 ' + _bMan(cc) + '만' : '👗 옷 0 · 다음 여행 직전 달까지');
   }
-  var ov = (_bCapsOv() || {})[ym] || {}, living = b.living || a.living || (ym >= '2027-01' ? 1850000 : 1830000);
+  var ov = (_bCapsOv() || {})[ym] || {}, living = b.living || a.living || (ym >= '2026-11' ? 1570000 : 1830000);
   Object.keys(ov).forEach(function(k) { caps[k] = ov[k]; });
   if (MIRROR_LIVING.some(function(x) { return ov[x[0]] != null; })) living = MIRROR_LIVING.reduce(function(acc, x) { return acc + (caps[x[0]] != null ? caps[x[0]] : _bLivingCap(ym, x[0])); }, 0);
   return { caps: caps, todo: todo, living: living, fixedCap: ov['고정'], annualCap: ov['연간 적립'] };
