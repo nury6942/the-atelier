@@ -133,17 +133,16 @@
           return '<p style="font-size:14px;margin:0 0 4px">'+chip(u.hit?'ok':'miss')+'<b>'+esc(u.w)+'</b> <span style="color:'+SUB+'">'+esc(u.guess||'추측 없음')+'</span> → '+esc(u.right)+'</p>';
         }).join(''):'')+
         ((c.items||[]).length?lab('검수 · '+c.items.length)+'<div style="border-top:1px solid '+LINE+'">'+c.items.map(function(it){
-          var open=it.type==='miss';
           return '<div style="border-bottom:1px solid '+LINE+'">'+
             '<div onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'\':\'none\'" style="display:flex;align-items:center;gap:10px;padding:11px 4px;cursor:pointer">'+chip(it.type)+
-              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>':'')+meter(it.key?it.freq:0)+
+              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>'+(it.keyKo?'<span style="font-size:14px;color:#18181B;flex:none">'+esc(it.keyKo)+'</span>':''):'')+meter(it.key?it.freq:0)+
               '<span style="font-size:13px;color:'+SUB+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">'+esc(it.en)+'</span></div>'+
-            '<div style="padding:0 4px 14px;font-size:14px;line-height:1.7'+(open?'':';display:none')+'">'+
+            '<div style="padding:0 4px 14px;font-size:14px;line-height:1.7'+'">'+
               '<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0 0 8px">'+
                 '<div style="background:#F8FAFC;padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">내 해석</span>'+esc(it.mine||'(빠짐)')+'</div>'+
-                '<div style="border:1px solid '+ACC+';padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">맞는 뜻'+(it.keyKo?' · '+esc(it.key)+' = '+esc(it.keyKo):'')+'</span>'+esc(it.right)+'</div></div>'+
+                '<div style="border:1px solid '+ACC+';padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">맞는 뜻'+'</span>'+esc(it.right)+'</div></div>'+
               (it.note?'<p style="margin:0;color:#18181B">'+esc(it.note)+'</p>':'')+
-              (it.use?'<div style="display:flex;gap:10px;padding:8px 10px;background:#EEF2FD;color:#1A3FB5;font-size:13px;margin-top:8px"><span style="flex:none;font-weight:600">쓰임</span><span>'+esc(it.use).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+'</span></div>':'')+
+              (it.use?'<div style="display:flex;gap:10px;padding:8px 10px;background:#EEF2FD;color:#1A3FB5;font-size:13px;margin-top:8px"><span style="flex:none;font-weight:600">쓰임</span><span>'+esc(it.use).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+(it.useKo?'<span style="color:#475569"> · '+esc(it.useKo)+'</span>':'')+'</span></div>':'')+
             '</div></div>';
         }).join('')+'</div>':'')+
         lab('정답 해석')+'<p style="font-size:15px;line-height:1.7;margin:0;color:#18181B">'+esc(ko)+'</p>'+

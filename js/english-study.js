@@ -230,15 +230,17 @@ WORDS SHE MARKED AS UNKNOWN (word | her guess):
 
 Output ONLY one JSON object, no code fence, no other text. All explanations in Korean.
 {"summary": "한 줄 총평 — 전체 이해도와 가장 중요한 한 가지",
- "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "key": "the 1–4 word expression she did not really get (e.g. 'if you like', 'considerations', 'dynastic') — empty for ok items", "keyKo": "그 key 만의 짧은 한국어 뜻", "right": "정확한 뜻 (짧게)", "note": "왜 그런지 한 줄 — 뉘앙스, 문법, 흔한 착각", "freq": 1-5, "use": "실제 쓰임 한 줄"}],
+ "items": [{"type": "ok|vague|miss", "en": "exact English chunk from the paragraph", "mine": "what she wrote for it (short), or empty if she skipped it", "key": "the 1–4 word expression she did not really get (e.g. 'if you like', 'considerations', 'dynastic') — empty for ok items", "keyKo": "그 key 만의 짧은 한국어 뜻", "right": "정확한 뜻 (짧게)", "note": "2–4문장 설명", "freq": 1-5, "use": "실제 쓰임", "useKo": "use 의 영어 예문/대체어 한국어 뜻"}],
  "unknown": [{"w": "marked word", "guess": "her guess", "right": "이 문맥에서의 뜻", "hit": true}],
  "say": [{"en": "a sentence or clause copied EXACTLY from the paragraph", "ko": "자연스러운 한국어"}]}
 
 RULES
-- items: 3–8. Most should be vague (뜻은 대충 맞지만 뉘앙스·정확도가 빠짐) or miss (잘못 이해했거나 빼먹었는데 모름 표시도 안 함). Add at most 2 ok items for chunks she got genuinely right that were hard. Skip trivial differences in Korean wording — judge MEANING, not style.
+- items: cover EVERY sentence of the paragraph — at least one item per sentence that has any gap, 5–12 in total. Do not skip a sentence because it is long.  Most should be vague (뜻은 대충 맞지만 뉘앙스·정확도가 빠짐) or miss (잘못 이해했거나 빼먹었는데 모름 표시도 안 함). Add at most 2 ok items for chunks she got genuinely right that were hard. Skip trivial differences in Korean wording — judge MEANING, not style.
 - key: for vague/miss, name the exact word or short phrase (from the English, max 4 words) that caused the gap — this goes into her word list, so never a whole sentence.
 - freq: how often a native speaker actually USES the key in real life (5 = everyday speech, 4 = common in speech and work, 3 = common but more in writing/talks, 2 = mostly written or formal/talk register, 1 = rare, literary or dated). Judge honestly — do not inflate.
+- note: 2–4 Korean sentences, as detailed as a private tutor. Always (1) quote what she wrote and say exactly what she misread — wrong part of speech, wrong subject, flipped meaning, merged sentences, (2) explain the grammar or nuance that makes the right reading right, (3) name anything she left out (e.g. 'I'd say', 'collectively'). Never just restate the right meaning. vague items need this too — say precisely what nuance is missing.
 - use: one short Korean line about real usage. If freq ≥ 4, give one natural English example sentence (different from the paragraph) in **bold** markers like **Let's not lose sight of the deadline.** If freq ≤ 3, say where it shows up (강연·기사·글) and give the everyday spoken alternative in **bold**, e.g. 평소 말은 **still early days**. Keep it under 70 characters.
+- useKo: the Korean meaning of the bold English in use (예: '마감은 놓치지 맙시다'), short.
 - unknown: one entry per marked word, hit = her guess is basically right in this context.
 - say: exactly 2 chunks worth saying out loud, 6–20 words each, copied exactly (no "Speaker" labels, no timestamps). Prefer chunks that contain a vague/miss item or a reusable C1 structure.
 - If her translation is empty or nonsense, say so kindly in summary and mark the main ideas as miss.`;
