@@ -136,7 +136,7 @@
           var open=it.type==='miss';
           return '<div style="border-bottom:1px solid '+LINE+'">'+
             '<div onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'\':\'none\'" style="display:flex;align-items:center;gap:10px;padding:11px 4px;cursor:pointer">'+chip(it.type)+
-              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>':'')+meter(it.freq)+
+              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>':'')+meter(it.key?it.freq:0)+
               '<span style="font-size:13px;color:'+SUB+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">'+esc(it.en)+'</span></div>'+
             '<div style="padding:0 4px 14px;font-size:14px;line-height:1.7'+(open?'':';display:none')+'">'+
               '<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0 0 8px">'+
