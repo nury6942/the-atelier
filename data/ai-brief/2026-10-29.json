@@ -7,7 +7,7 @@
    "cat": "vibe",
    "title": "한 줄 주문으로 어워즈급 포트폴리오 사이트",
    "url": "https://github.com/juliobsz/skills",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/juliobsz/skills",
    "source": "GitHub juliobsz · MIT · Threads @dopaminecryptokr ♥61",
    "how": "기획·디자인·코드 후 실제 브라우저로 깨짐 확인",
    "examples": [
@@ -69,7 +69,7 @@
    "cat": "tool",
    "title": "옵시디언 메모를 AI가 읽는 지식창고로",
    "url": "https://github.com/kepano/obsidian-skills",
-   "image": null,
+   "image": "https://repository-images.githubusercontent.com/1126947080/074349e0-1fc4-47ce-a412-9b9eef6a81ab",
    "source": "GitHub kepano(옵시디언 CEO) · MIT · Threads @vibe.itji ♥132",
    "how": "스킬을 깔면 링크·Bases·Canvas 형식을 이해",
    "chips": [
@@ -131,7 +131,7 @@
    "cat": "release",
    "title": "Gemini 4 Carbon, 보안팀부터",
    "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
-   "image": null,
+   "image": "https://9to5google.com/wp-content/uploads/sites/4/2026/10/Gemini-4-Carbon-cover.webp?resize=1200,628",
    "source": "9to5Google · AA 지수 59로 1위 · 일반 공개는 아직",
    "watching": true
   },
@@ -139,7 +139,7 @@
    "cat": "release",
    "title": "Carbon 미리 써본 평: 3D↑ UI↓",
    "url": "https://www.testingcatalog.com/gemini-4-carbon-early-test-results/",
-   "image": null,
+   "image": "https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/10/gemini-4-argon__blog-header__2784x1566.width-1300.webp",
    "source": "TestingCatalog · 느리지만 덜 게으름",
    "watching": false
   },
@@ -147,7 +147,7 @@
    "cat": "release",
    "title": "MS 사진 편집 모델 2.7",
    "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
-   "image": null,
+   "image": "https://windowsreport.com/wp-content/uploads/2026/10/mai-image-2.7.jpg",
    "source": "Windows Report · 편집 순위 2~3위 · MAI Playground에서",
    "watching": true
   },
@@ -155,7 +155,7 @@
    "cat": "hack",
    "title": "'깊이 생각해' 지우면 빨라져",
    "url": "https://www.searchenginejournal.com/anthropic-claude-opus-5-5-prompting-guidance/591278/",
-   "image": null,
+   "image": "https://cdn.searchenginejournal.com/wp-content/uploads/2026/09/claude-opus-5-5-prompting-1600x840-1.jpg",
    "source": "Search Engine Journal · Opus 5.5 가이드 정리",
    "watching": false
   },
@@ -163,7 +163,7 @@
    "cat": "free",
    "title": "라이트룸 닮은 무료 RAW 편집",
    "url": "https://flathub.org/apps/io.github.Duecki1.CalibRaw",
-   "image": null,
+   "image": "https://flathub.org/api/appOgImage/io.github.Duecki1.CalibRaw?locale=en",
    "source": "Flathub · CalibRaw · Rust·GPU · 맥은 아직",
    "watching": false
   },
@@ -171,7 +171,7 @@
    "cat": "hack",
    "title": "Kling 4.0, 상품 광고 되나",
    "url": "https://wavespeed.ai/blog/ai-use-cases/kling-4-0-review/",
-   "image": null,
+   "image": "https://static.wavespeed.ai/media/images/444431ee-1387-4a40-81ad-866e095a7c75.webp",
    "source": "WaveSpeed 리뷰 · 업체 블로그",
    "watching": false
   }
