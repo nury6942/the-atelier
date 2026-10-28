@@ -100,6 +100,9 @@
     return '<div id="pr-head" style="display:flex;gap:12px;flex-wrap:wrap;margin:0 0 18px">'+step('①','듣기',null)+step('②','내가 해석',w)+step('③','검수',ck)+step('④','되말하기',sd)+'</div>';
   }
   function chip(t){ var c=C[t]||C.vague; return '<span style="display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;background:'+c[0]+';color:'+c[1]+';margin-right:8px">'+c[2]+'</span>'; }
+  // 실제로 얼마나 자주 쓰나 — 5칸 막대 (옛 검수엔 freq 가 없으니 안 그림)
+  var FQ=['','거의 안 씀','글·격식','글·강연','자주','매일'];
+  function meter(f){ f=Math.round(+f); if (!(f>=1&&f<=5)) return ''; var h=''; for (var i=1;i<=5;i++) h+='<i style="display:block;width:5px;height:12px;background:'+(i<=f?ACC:'#CBD5E1')+'"></i>'; return '<span title="실제 쓰임" style="display:flex;gap:2px;flex:none">'+h+'</span><span style="font-size:12px;color:'+SUB+';flex:none;min-width:48px">'+FQ[f]+'</span>'; }
   function lab(t){ return '<p style="font-size:12px;font-weight:600;color:'+SUB+';margin:14px 0 6px">'+t+'</p>'; }
 
   function card(s, pi){
@@ -121,7 +124,7 @@
         '<span style="font-size:13px;color:'+SUB+';background:#F8FAFC;padding:6px 10px"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">lock</span> 정답 해석은 검수 뒤에</span></div>';
     } else if (p.st==='checking'){
       h+='<p style="font-size:15px;line-height:1.6;margin:0 0 10px;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
-        '<p style="font-size:14px;color:#1A3FB5;background:#EEF2FD;padding:10px 12px;margin:0"><span class="material-symbols-outlined animate-spin" style="font-size:16px;vertical-align:-3px">progress_activity</span> 아이맥이 검수하는 중 · 20~40초 · 그동안 다음 문단 쓰기 <a onclick="practiceCheck('+pi+',true)" style="margin-left:8px;color:'+SUB+';cursor:pointer;text-decoration:underline">다시 맡기기</a></p>';
+        '<p style="font-size:14px;color:#1A3FB5;background:#EEF2FD;padding:10px 12px;margin:0"><span class="material-symbols-outlined animate-spin" style="font-size:16px;vertical-align:-3px">progress_activity</span> 아이맥이 검수하는 중 · 20~30초 · 그동안 다음 문단 쓰기 <a onclick="practiceCheck('+pi+',true)" style="margin-left:8px;color:'+SUB+';cursor:pointer;text-decoration:underline">다시 맡기기</a></p>';
     } else {
       var c=p.check||{};
       h+=lab('내 해석')+'<p style="font-size:15px;line-height:1.6;margin:0;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
@@ -129,9 +132,20 @@
         ((c.unknown||[]).length?lab('모른다고 한 것 · 내 추측')+c.unknown.map(function(u){
           return '<p style="font-size:14px;margin:0 0 4px">'+chip(u.hit?'ok':'miss')+'<b>'+esc(u.w)+'</b> <span style="color:'+SUB+'">'+esc(u.guess||'추측 없음')+'</span> → '+esc(u.right)+'</p>';
         }).join(''):'')+
-        ((c.items||[]).length?lab('검수')+c.items.map(function(it){
-          return '<div style="margin:0 0 8px;font-size:14px;line-height:1.6">'+chip(it.type)+'<b>'+esc(it.en)+'</b>'+(it.key?' <span style="background:#EEF2FD;color:#1A3FB5;padding:0 6px;font-size:13px">'+esc(it.key)+(it.keyKo?' '+esc(it.keyKo):'')+'</span>':'')+(it.mine?' <span style="color:'+SUB+'">· 내 해석 「'+esc(it.mine)+'」</span>':'')+'<br><span style="padding-left:2px">→ '+esc(it.right)+(it.note?' <span style="color:'+SUB+'">· '+esc(it.note)+'</span>':'')+'</span></div>';
-        }).join(''):'')+
+        ((c.items||[]).length?lab('검수 · '+c.items.length)+'<div style="border-top:1px solid '+LINE+'">'+c.items.map(function(it){
+          var open=it.type==='miss';
+          return '<div style="border-bottom:1px solid '+LINE+'">'+
+            '<div onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'\':\'none\'" style="display:flex;align-items:center;gap:10px;padding:11px 4px;cursor:pointer">'+chip(it.type)+
+              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>':'')+meter(it.freq)+
+              '<span style="font-size:13px;color:'+SUB+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">'+esc(it.en)+'</span></div>'+
+            '<div style="padding:0 4px 14px;font-size:14px;line-height:1.7'+(open?'':';display:none')+'">'+
+              '<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0 0 8px">'+
+                '<div style="background:#F8FAFC;padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">내 해석</span>'+esc(it.mine||'(빠짐)')+'</div>'+
+                '<div style="border:1px solid '+ACC+';padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">맞는 뜻'+(it.keyKo?' · '+esc(it.key)+' = '+esc(it.keyKo):'')+'</span>'+esc(it.right)+'</div></div>'+
+              (it.note?'<p style="margin:0;color:#18181B">'+esc(it.note)+'</p>':'')+
+              (it.use?'<div style="display:flex;gap:10px;padding:8px 10px;background:#EEF2FD;color:#1A3FB5;font-size:13px;margin-top:8px"><span style="flex:none;font-weight:600">쓰임</span><span>'+esc(it.use).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+'</span></div>':'')+
+            '</div></div>';
+        }).join('')+'</div>':'')+
         lab('정답 해석')+'<p style="font-size:15px;line-height:1.7;margin:0;color:#18181B">'+esc(ko)+'</p>'+
         sayBlock(s, pi, p);
     }

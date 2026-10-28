@@ -246,7 +246,8 @@ async function processJob(job) {
   log('[start]', job.id, job.kind, job.date, (job.transcript || '').length + '자');
   let raw = '';
   try {
-    await pullRepo();
+    const quick = job.mode === 'check' || job.mode === 'explain';   // 누리가 화면 앞에서 기다리는 짧은 작업
+    if (!quick) await pullRepo();                                  // 짧은 작업은 끝난 뒤에 받아 둔다(아래 finally)
     if (selfHash() !== BOOT_HASH) {           // 새 워커 코드가 내려옴 → 이 작업은 새 코드가 하게
       await job.ref.update({ status: 'queued', startedAt: admin.firestore.FieldValue.delete() });
       log('[worker] 코드가 바뀜 — 재시작'); process.exit(0);
@@ -278,6 +279,7 @@ async function processJob(job) {
     log('[error]', job.id, e.message);
     await job.ref.update({ status: 'error', error: e.message.slice(0, 500), raw: raw.slice(0, 20000), finishedAt: new Date().toISOString() }).catch(() => {});
   }
+  if (job.mode === 'check' || job.mode === 'explain') pullRepo();   // 다음 작업용 최신 프롬프트 (기다리지 않음)
 }
 
 async function tick() {
@@ -289,8 +291,18 @@ async function tick() {
   }
 }
 
+// 새 요청이 대기열에 들어오는 순간 바로 깨운다 (10초 확인은 연결이 끊겼을 때를 위한 안전망)
+let wake = null;
+function sleep(ms) { return new Promise(r => { const t = setTimeout(r, ms); wake = () => { clearTimeout(t); r(); }; }); }
+function watchQueue() {
+  db.collection('aiJobs').where('status', '==', 'queued').onSnapshot(
+    snap => { if (!snap.empty && wake) { const w = wake; wake = null; w(); } },
+    e => { log('[watch 끊김]', e.message); setTimeout(watchQueue, 30000); });
+}
+
 (async function main() {
   log('[worker] 시작', os.hostname(), 'repo=' + REPO, 'model=' + DEFAULT_MODEL);
+  if (!ONCE) watchQueue();
   let failStreak = 0;
   for (;;) {
     try {
@@ -301,6 +313,6 @@ async function tick() {
       if (++failStreak >= 3) { log('[worker] 연속 실패 — 새 연결로 다시 시작'); process.exit(1); }  // KeepAlive 가 다시 띄움
     }
     if (ONCE) process.exit(0);
-    await new Promise(r => setTimeout(r, POLL_MS));
+    await sleep(POLL_MS);
   }
 })();
