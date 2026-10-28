@@ -1,0 +1,199 @@
+{
+ "date": "2026-10-29",
+ "generatedAt": "2026-10-29T07:13:00+09:00",
+ "sourcesNote": "웹 검색 23회 + 오늘 맥 수집(X·Threads 15개) + GitHub 원본 README 확인 · 실행 환경에서 X·Threads·github.com·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "한 줄 주문으로 어워즈급 포트폴리오 사이트",
+   "url": "https://github.com/juliobsz/skills",
+   "image": null,
+   "source": "GitHub juliobsz · MIT · Threads @dopaminecryptokr ♥61",
+   "how": "기획·디자인·코드 후 실제 브라우저로 깨짐 확인",
+   "examples": [
+    {
+     "title": "'포트폴리오 만들어줘, 내 이름은 Julio' 한 줄로 만든 데모 영상",
+     "url": "https://youtu.be/BEcQoDs16IE",
+     "image": null
+    }
+   ],
+   "chips": [
+    "설치 npx 한 줄",
+    "/jury 채점 스킬 동봉",
+    "한 번에 긴 세션·토큰 많이"
+   ],
+   "forMe": "해외 이직 포트폴리오 첫 시안을 이걸로 뽑아 보세요. 사진·글은 표시된 자리표시로 나오니 MLB 팬츠·쇼츠 작업물로 바꿔 넣으면 됩니다."
+  },
+  {
+   "cat": "hack",
+   "title": "차트는 '와플 채우기'처럼 모션 이름으로",
+   "url": "https://www.threads.com/@giting.kr/post/DfBGEbJDR9S",
+   "image": null,
+   "source": "Threads @giting.kr · ♥225 · 댓글 20",
+   "how": "모션 이름+시간+순서를 붙여 AI에 지시",
+   "chips": [
+    "원 쓸기·도넛·트리맵·폭포",
+    "데이터 모션 26개",
+    "모션 메뉴판 MIT 무료"
+   ],
+   "forMe": "Atelier 캐시플로우·트래블 예산 차트에 '막대 올라오기' 말고 이름 붙은 모션을 시키면 훨씬 덜 AI스럽게 나옵니다."
+  },
+  {
+   "cat": "money",
+   "title": "개인사업자면 AI 구독료 10% 덜 내기",
+   "url": "https://www.threads.com/@the.ddanjit/post/DfBQXAmE69y",
+   "image": null,
+   "source": "Threads @the.ddanjit · ♥144 · 댓글 22",
+   "how": "결제 정보에 사업자번호(Tax ID)를 입력",
+   "chips": [
+    "월 3.3만 → 3만 원",
+    "앱스토어 결제는 칸 없음",
+    "이미 낸 건 환급 없음"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "Opus 5.5, 노력은 medium부터",
+   "url": "https://x.com/minchoi/status/2115290590959329451",
+   "image": null,
+   "source": "X @minchoi · ♥444 · 앤트로픽 가이드 요약",
+   "how": "옛 '생각 다 써라' 문장 지우고 체크리스트로",
+   "chips": [
+    "medium ≈ Opus 5의 high",
+    "생각 끄기 옵션 없어짐",
+    "요령 11가지"
+   ],
+   "forMe": "AI Brief 같은 자동 루틴 지시서에 남은 '깊이 생각해' 류 문장을 지우고, 끝나기 전 남은 일을 확인하라는 체크리스트 한 줄로 바꾸면 덜 멈춥니다."
+  },
+  {
+   "cat": "tool",
+   "title": "옵시디언 메모를 AI가 읽는 지식창고로",
+   "url": "https://github.com/kepano/obsidian-skills",
+   "image": null,
+   "source": "GitHub kepano(옵시디언 CEO) · MIT · Threads @vibe.itji ♥132",
+   "how": "스킬을 깔면 링크·Bases·Canvas 형식을 이해",
+   "chips": [
+    "스킬 5개",
+    "클로드 코드·Codex 공용",
+    "플러그인 설치 한 줄"
+   ],
+   "forMe": "webnovel-forge 볼트에 깔아 두면 설정 노트를 링크 끊김 없이 정리시키기 좋습니다."
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "AI Brief 화면, 어워즈 심사위원에게 채점받기",
+   "minutes": 20,
+   "why": "/jury는 사이트를 데스크톱·느린 휴대폰·키보드로 직접 찍고 재서 디자인·사용성 점수와 고칠 순서를 매겨 줍니다. 아뜰리에 디자인 규칙을 세운 직후라 점수표 한 장이 다음에 손볼 목록이 돼요.",
+   "from": {
+    "label": "@dopaminecryptokr · ♥61",
+    "url": "https://www.threads.com/@dopaminecryptokr/post/DfBDCb2llC9"
+   },
+   "steps": [
+    {
+     "text": "터미널에 설치 붙여넣기",
+     "copy": "npx skills add juliobsz/skills -g -a claude-code --skill jury"
+    },
+    {
+     "text": "새 세션에서 채점 주문",
+     "copy": "/jury https://nury6942.github.io/the-atelier/ai-brief.html\n\n점수표와 고칠 목록은 한국어로 정리해 줘. 이 페이지는 흰 바탕, 모든 칸 직각, 포인트 색은 코발트 #1F4BD8 하나, 글꼴은 Pretendard 하나, 그림자 없음이 의도된 규칙이니 그 규칙을 깨라는 제안은 빼 줘."
+    },
+    {
+     "text": "scorecard.md 저장"
+    }
+   ]
+  },
+  {
+   "title": "지출 비율을 와플 채우기 차트로",
+   "minutes": 15,
+   "why": "모션 이름 하나만 붙여도 AI가 만드는 차트가 확 달라지는지 바로 확인할 수 있습니다. 마음에 들면 캐시플로우 탭에 그대로 옮길 HTML 한 장이 남아요.",
+   "from": {
+    "label": "@giting.kr · ♥225",
+    "url": "https://www.threads.com/@giting.kr/post/DfBGEbJDR9S"
+   },
+   "steps": [
+    {
+     "text": "Claude 새 대화 열기",
+     "url": "https://claude.ai/new"
+    },
+    {
+     "text": "모션 주문 붙여넣기",
+     "copy": "Make a single HTML file: a waffle chart showing that 41% of this month's spending went to travel. Motion: 'waffle fill' — a 10x10 grid of square cells fills from the bottom-left, one cell at a time, over 1.2 seconds with ease-out, and the number counts up from 0% to 41% in sync. White background, square corners everywhere (no border-radius), filled cells in cobalt #1F4BD8, empty cells #EEF2FD, Pretendard font, no shadows. Add a small 'Replay' text button."
+    },
+    {
+     "text": "HTML 한 장 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "Gemini 4 Carbon, 보안팀부터",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "image": null,
+   "source": "9to5Google · AA 지수 59로 1위 · 일반 공개는 아직",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "Carbon 미리 써본 평: 3D↑ UI↓",
+   "url": "https://www.testingcatalog.com/gemini-4-carbon-early-test-results/",
+   "image": null,
+   "source": "TestingCatalog · 느리지만 덜 게으름",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "MS 사진 편집 모델 2.7",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "image": null,
+   "source": "Windows Report · 편집 순위 2~3위 · MAI Playground에서",
+   "watching": true
+  },
+  {
+   "cat": "hack",
+   "title": "'깊이 생각해' 지우면 빨라져",
+   "url": "https://www.searchenginejournal.com/anthropic-claude-opus-5-5-prompting-guidance/591278/",
+   "image": null,
+   "source": "Search Engine Journal · Opus 5.5 가이드 정리",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "라이트룸 닮은 무료 RAW 편집",
+   "url": "https://flathub.org/apps/io.github.Duecki1.CalibRaw",
+   "image": null,
+   "source": "Flathub · CalibRaw · Rust·GPU · 맥은 아직",
+   "watching": false
+  },
+  {
+   "cat": "hack",
+   "title": "Kling 4.0, 상품 광고 되나",
+   "url": "https://wavespeed.ai/blog/ai-use-cases/kling-4-0-review/",
+   "image": null,
+   "source": "WaveSpeed 리뷰 · 업체 블로그",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "보안 기관부터 단계 공개 · 만든 사례는 아직 없음, 사전 테스터 평만"
+  },
+  {
+   "name": "MAI-Image-2.7 Preview",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "date": "2026-10-27",
+   "note": "편집 전용 미리보기 · 독립 실사용 후기 아직 없음"
+  },
+  {
+   "name": "Kimi K3.1 Pro",
+   "url": "https://www.kimi.ai/blog/kimi-k3-1-pro",
+   "date": "2026-10-23",
+   "note": "10-29 검색에도 만든 사례 없음 · 가중치 11-04 공개 예정 · 10-30 지나면 정리"
+  }
+ ]
+}
