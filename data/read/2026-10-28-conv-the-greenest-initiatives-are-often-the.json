@@ -1,0 +1,803 @@
+{
+ "id": "2026-10-28-conv-the-greenest-initiatives-are-often-the",
+ "title": "The greenest initiatives are often the most invisible – experts explain why that’s a problem",
+ "url": "https://theconversation.com/the-greenest-initiatives-are-often-the-most-invisible-experts-explain-why-thats-a-problem-294789",
+ "source": "The Conversation",
+ "author": "Diletta Acuti, Giampaolo Viglia",
+ "published": "2026-10-27",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "When a company wants to be more sustainable, adding an eco-friendly feature isn’t always better than taking something away.",
+  "People often favour “more”. Studies suggest that statements framed around “more” are easier to process and remember than those framed around “less”.",
+  "In experiments that involved modifying Lego structures, redesigning miniature golf courses and improving digital grids, it was found that participants routinely overlooked opportunities to improve outcomes through subtraction. People tended to add things rather than remove them, even when subtraction would work better. Recent consumption trends also show this tendency: the size of the average car is growing at a rate of 1cm every two years as larger models have become more popular.",
+  "One reason why people favour more is that additions are visible. When people judge a service or a product, they tend to focus on what is in front of them and overlook what is missing. It is easier to notice something a company has added than to value what it has deliberately removed.",
+  "That can distort how consumers judge sustainability. A hotel room with bamboo toiletries, a recycled plastic water bottle and other eco-friendly extras may look greener than a room with fewer items, even if removing unnecessary products means less waste. This tendency is known as the sustainable additive bias: people perceive environmentally friendly additions more favourably than reductions, even when reducing use or waste may bring greater environmental benefits.",
+  "This bias occurs because visible eco-friendly additions can signal that a company is making an effort and is committed to sustainability. A reduction leaves fewer obvious eco-friendly cues, so consumers may interpret it as “less effort” rather than as a considered attempt to reduce environmental harm.",
+  "We tested this bias across nine studies in different product and service settings in our latest study. In an experiment with 302 hotel guests, rooms with more eco-friendly amenities were judged more sustainable than rooms with fewer. Yet guests in those rooms generated a higher proportion of waste. Across the studies, consumers could recognise the benefits of removing conventional, less sustainable items. The bias arose when they compared adding and removing items presented as eco-friendly.",
+  "Why is this problematic? When hotels replace single-use toiletries with refillable dispensers, or companies remove unnecessary items from product bundles to cut waste, they may expect consumers to hail these changes as environmentally responsible. But the opposite may happen. Companies that genuinely want to reduce their impact on the environment may be misjudged.",
+  "This does not mean companies should avoid replacing less sustainable products with more sustainable alternatives. The concern is adding eco-friendly items that are unnecessary. Companies should explain why reducing these items benefits the environment, so customers do not mistake using less for making less effort.",
+  "So sustainable consumption needs a rethink and a cultural change.",
+  "Less is more",
+  "Companies should explain why less is more and make the work behind those decisions prominent, explaining the environmental logic: which items or resources are being reduced, why they are unnecessary, and how the change cuts waste or environmental impact.",
+  "A food delivery company, for example, could stop automatically including disposable bamboo cutlery and napkins with every order, and instead let consumers request them when needed. The company could explain that it changed its ordering and packing process to avoid sending items many consumers do not use, reducing unnecessary material without changing the meal itself. This helps consumers recognise the effort behind a reduction rather than interpreting it as a lower quality offer or a lack of commitment.",
+  "Italian circular-fashion brand Rifó offers an example of making reduction visible: its sustainability report explains how its pre-order model is designed to match production with demand and avoid making garments customers do not need. They also encourage consumers to repair rather than replace with new items.",
+  "By emphasising the effectiveness of simple solutions, policymakers can celebrate reduction as a virtue. They can showcase production and consumption practices that use fewer resources, offer fewer unnecessary items or prevent waste – thereby reducing their environmental impact. This approach may benefit consumers too: reducing consumption and materialism can improve people’s wellbeing, while minimalism enhances happiness and life satisfaction. Giving positive examples a visible platform can help challenge the assumption that progress always means adding another product or feature.",
+  "Sustainable production alone cannot solve the problem of overconsumption. We need to learn that less can be better. We are accustomed to seeing addition as improvement, but removing what is unnecessary does not mean reducing quality. Sometimes it creates a more efficient service and a genuinely better environmental outcome."
+ ],
+ "level": "B2+",
+ "minutes": 4,
+ "words": 757,
+ "gloss": {
+  "initiatives": {
+   "w": "initiatives",
+   "pos": "명사",
+   "ko": "(새로운) 계획, 시책",
+   "en": "new plans or actions meant to solve a problem or achieve a goal",
+   "ex": "The brand launched several initiatives to cut fabric waste in its studio.",
+   "ipa": "/ɪˈnɪʃətɪvz/"
+  },
+  "initiative": {
+   "w": "initiative",
+   "pos": "명사",
+   "ko": "(새로운) 계획, 시책",
+   "en": "a new plan or action meant to solve a problem or achieve a goal",
+   "ex": "The city's recycling initiative has been surprisingly popular.",
+   "ipa": "/ɪˈnɪʃətɪv/"
+  },
+  "sustainable": {
+   "w": "sustainable",
+   "pos": "형용사",
+   "ko": "지속 가능한, 환경에 해가 적은",
+   "en": "causing little or no damage to the environment and able to continue for a long time",
+   "ex": "She only buys from labels that use sustainable cotton.",
+   "ipa": "/səˈsteɪnəbl/"
+  },
+  "sustainability": {
+   "w": "sustainability",
+   "pos": "명사",
+   "ko": "지속 가능성",
+   "en": "the quality of not harming the environment so that something can continue long-term",
+   "ex": "Sustainability has become a key topic at every fashion week.",
+   "ipa": "/səˌsteɪnəˈbɪləti/"
+  },
+  "eco-friendly": {
+   "w": "eco-friendly",
+   "pos": "형용사",
+   "ko": "친환경적인",
+   "en": "not harmful to the environment",
+   "ex": "The shop switched to eco-friendly paper bags last spring.",
+   "ipa": "/ˈiːkəʊ ˌfrendli/"
+  },
+  "favour": {
+   "w": "favour",
+   "pos": "동사",
+   "ko": "선호하다, 더 좋아하다",
+   "en": "to prefer or choose one thing over another",
+   "ex": "Younger customers tend to favour loose, oversized fits.",
+   "ipa": "/ˈfeɪvə(r)/"
+  },
+  "framed around": {
+   "w": "framed around",
+   "pos": "구",
+   "ko": "~을 중심으로 표현된/구성된",
+   "en": "expressed or presented in terms of a particular idea",
+   "ex": "The campaign was framed around the idea of buying less but better.",
+   "ipa": "/freɪmd əˈraʊnd/"
+  },
+  "frame": {
+   "w": "frame",
+   "pos": "동사",
+   "ko": "(특정 방식으로) 표현하다, 틀을 짜다",
+   "en": "to express or present something in a particular way",
+   "ex": "How you frame a question can change the answer you get.",
+   "ipa": "/freɪm/"
+  },
+  "modifying": {
+   "w": "modifying",
+   "pos": "동사",
+   "ko": "수정하는, 변경하는",
+   "en": "changing something slightly to improve it or make it suitable",
+   "ex": "We are modifying the pattern so the sleeves fit better.",
+   "ipa": "/ˈmɒdɪfaɪɪŋ/"
+  },
+  "modify": {
+   "w": "modify",
+   "pos": "동사",
+   "ko": "수정하다, 변경하다",
+   "en": "to change something slightly to improve it or make it suitable",
+   "ex": "You can modify the recipe to make it vegetarian.",
+   "ipa": "/ˈmɒdɪfaɪ/"
+  },
+  "routinely": {
+   "w": "routinely",
+   "pos": "부사",
+   "ko": "일상적으로, 늘",
+   "en": "regularly, as a normal part of what happens",
+   "ex": "Delivery drivers routinely work more than ten hours a day.",
+   "ipa": "/ruːˈtiːnli/"
+  },
+  "overlooked": {
+   "w": "overlooked",
+   "pos": "동사",
+   "ko": "간과했다, 못 보고 넘겼다",
+   "en": "failed to notice or consider something",
+   "ex": "The editor overlooked a spelling mistake on the cover.",
+   "ipa": "/ˌəʊvəˈlʊkt/"
+  },
+  "overlook": {
+   "w": "overlook",
+   "pos": "동사",
+   "ko": "간과하다, 못 보고 넘기다",
+   "en": "to fail to notice or consider something",
+   "ex": "It is easy to overlook small details when you are in a hurry.",
+   "ipa": "/ˌəʊvəˈlʊk/"
+  },
+  "subtraction": {
+   "w": "subtraction",
+   "pos": "명사",
+   "ko": "빼기, 제거",
+   "en": "the act of taking something away",
+   "ex": "Good design is often about subtraction, not decoration.",
+   "ipa": "/səbˈtrækʃn/"
+  },
+  "tendency": {
+   "w": "tendency",
+   "pos": "명사",
+   "ko": "경향, 성향",
+   "en": "a likelihood to behave or happen in a particular way",
+   "ex": "I have a tendency to buy black clothes without thinking.",
+   "ipa": "/ˈtendənsi/"
+  },
+  "consumption": {
+   "w": "consumption",
+   "pos": "명사",
+   "ko": "소비",
+   "en": "the act of using up goods, energy or resources",
+   "ex": "Energy consumption rises sharply in winter.",
+   "ipa": "/kənˈsʌmpʃn/"
+  },
+  "deliberately": {
+   "w": "deliberately",
+   "pos": "부사",
+   "ko": "의도적으로, 일부러",
+   "en": "on purpose, after careful thought",
+   "ex": "The collar was deliberately left unfinished for a raw look.",
+   "ipa": "/dɪˈlɪbərətli/"
+  },
+  "distort": {
+   "w": "distort",
+   "pos": "동사",
+   "ko": "왜곡하다",
+   "en": "to change something so it is no longer accurate or true",
+   "ex": "Social media can distort our idea of a normal body.",
+   "ipa": "/dɪˈstɔːt/"
+  },
+  "toiletries": {
+   "w": "toiletries",
+   "pos": "명사",
+   "ko": "세면용품",
+   "en": "small products such as soap and shampoo used for washing",
+   "ex": "I always pack my toiletries in a separate clear bag.",
+   "ipa": "/ˈtɔɪlətriz/"
+  },
+  "bias": {
+   "w": "bias",
+   "pos": "명사",
+   "ko": "편향, 편견",
+   "en": "a tendency to judge something unfairly or in a fixed way",
+   "ex": "The survey had a bias towards people living in big cities.",
+   "ipa": "/ˈbaɪəs/"
+  },
+  "perceive": {
+   "w": "perceive",
+   "pos": "동사",
+   "ko": "인식하다, ~로 여기다",
+   "en": "to notice or understand something in a particular way",
+   "ex": "Many shoppers perceive linen as a luxury fabric.",
+   "ipa": "/pəˈsiːv/"
+  },
+  "favourably": {
+   "w": "favourably",
+   "pos": "부사",
+   "ko": "호의적으로, 긍정적으로",
+   "en": "in a positive or approving way",
+   "ex": "Critics reviewed the new collection favourably.",
+   "ipa": "/ˈfeɪvərəbli/"
+  },
+  "signal": {
+   "w": "signal",
+   "pos": "동사",
+   "ko": "(신호로) 보여주다, 나타내다",
+   "en": "to show or suggest something",
+   "ex": "A handwritten note can signal that a shop really cares.",
+   "ipa": "/ˈsɪɡnəl/"
+  },
+  "committed to": {
+   "w": "committed to",
+   "pos": "구",
+   "ko": "~에 전념하는, 헌신하는",
+   "en": "strongly dedicated to a cause or goal",
+   "ex": "The founder is committed to paying fair wages.",
+   "ipa": "/kəˈmɪtɪd tə/"
+  },
+  "cues": {
+   "w": "cues",
+   "pos": "명사",
+   "ko": "단서, 신호",
+   "en": "signs that tell people how to understand or react to something",
+   "ex": "Customers look for visual cues such as labels and colours.",
+   "ipa": "/kjuːz/"
+  },
+  "cue": {
+   "w": "cue",
+   "pos": "명사",
+   "ko": "단서, 신호",
+   "en": "a sign that tells people how to understand or react to something",
+   "ex": "The soft lighting was a cue that the shop was upmarket.",
+   "ipa": "/kjuː/"
+  },
+  "interpret": {
+   "w": "interpret",
+   "pos": "동사",
+   "ko": "해석하다, 이해하다",
+   "en": "to decide what something means",
+   "ex": "How would you interpret his silence in the meeting?",
+   "ipa": "/ɪnˈtɜːprɪt/"
+  },
+  "considered": {
+   "w": "considered",
+   "pos": "형용사",
+   "ko": "숙고한, 신중한",
+   "en": "carefully thought about",
+   "ex": "It was a considered decision, not a sudden one.",
+   "ipa": "/kənˈsɪdəd/"
+  },
+  "amenities": {
+   "w": "amenities",
+   "pos": "명사",
+   "ko": "편의시설, 비품",
+   "en": "features or items that make a place more comfortable",
+   "ex": "The hostel was cheap but had very few amenities.",
+   "ipa": "/əˈmiːnətiz/"
+  },
+  "amenity": {
+   "w": "amenity",
+   "pos": "명사",
+   "ko": "편의시설, 비품",
+   "en": "a feature or item that makes a place more comfortable",
+   "ex": "A free gym is a popular amenity in new apartments.",
+   "ipa": "/əˈmiːnəti/"
+  },
+  "proportion": {
+   "w": "proportion",
+   "pos": "명사",
+   "ko": "비율, 부분",
+   "en": "a part of a whole, compared with the total",
+   "ex": "A large proportion of returned clothes end up in landfill.",
+   "ipa": "/prəˈpɔːʃn/"
+  },
+  "conventional": {
+   "w": "conventional",
+   "pos": "형용사",
+   "ko": "기존의, 전통적인",
+   "en": "usual or traditional, not new or different",
+   "ex": "Organic cotton uses less water than conventional cotton.",
+   "ipa": "/kənˈvenʃənl/"
+  },
+  "arose": {
+   "w": "arose",
+   "pos": "동사",
+   "ko": "생겼다, 발생했다",
+   "en": "began to exist or happen",
+   "ex": "Problems arose when the factory changed suppliers.",
+   "ipa": "/əˈrəʊz/"
+  },
+  "arise": {
+   "w": "arise",
+   "pos": "동사",
+   "ko": "생기다, 발생하다",
+   "en": "to begin to exist or happen",
+   "ex": "Call me if any questions arise during the fitting.",
+   "ipa": "/əˈraɪz/"
+  },
+  "single-use": {
+   "w": "single-use",
+   "pos": "형용사",
+   "ko": "일회용의",
+   "en": "made to be used once and then thrown away",
+   "ex": "The café no longer offers single-use cups.",
+   "ipa": "/ˌsɪŋɡl ˈjuːs/"
+  },
+  "refillable": {
+   "w": "refillable",
+   "pos": "형용사",
+   "ko": "리필 가능한",
+   "en": "able to be filled again after it is empty",
+   "ex": "I bought a refillable perfume bottle to reduce waste.",
+   "ipa": "/ˌriːˈfɪləbl/"
+  },
+  "dispensers": {
+   "w": "dispensers",
+   "pos": "명사",
+   "ko": "디스펜서, 분배기",
+   "en": "devices that release a set amount of something, such as soap",
+   "ex": "The gym installed soap dispensers in every shower.",
+   "ipa": "/dɪˈspensəz/"
+  },
+  "dispenser": {
+   "w": "dispenser",
+   "pos": "명사",
+   "ko": "디스펜서, 분배기",
+   "en": "a device that releases a set amount of something, such as soap",
+   "ex": "The hand sanitiser dispenser by the door is empty.",
+   "ipa": "/dɪˈspensə(r)/"
+  },
+  "bundles": {
+   "w": "bundles",
+   "pos": "명사",
+   "ko": "묶음 (상품)",
+   "en": "groups of products sold together as one package",
+   "ex": "The store sells skincare bundles at a discount.",
+   "ipa": "/ˈbʌndlz/"
+  },
+  "bundle": {
+   "w": "bundle",
+   "pos": "명사",
+   "ko": "묶음 (상품)",
+   "en": "a group of products sold together as one package",
+   "ex": "The phone came in a bundle with headphones and a case.",
+   "ipa": "/ˈbʌndl/"
+  },
+  "hail": {
+   "w": "hail",
+   "pos": "동사",
+   "ko": "(~라고) 칭송하다, 환영하다",
+   "en": "to praise something publicly and with enthusiasm",
+   "ex": "Fashion editors hailed her debut as a fresh new voice.",
+   "ipa": "/heɪl/"
+  },
+  "genuinely": {
+   "w": "genuinely",
+   "pos": "부사",
+   "ko": "진정으로, 진심으로",
+   "en": "truly and sincerely",
+   "ex": "She was genuinely surprised by the award.",
+   "ipa": "/ˈdʒenjuɪnli/"
+  },
+  "misjudged": {
+   "w": "misjudged",
+   "pos": "동사",
+   "ko": "잘못 판단된",
+   "en": "judged or understood wrongly",
+   "ex": "The new manager was misjudged as cold because she was quiet.",
+   "ipa": "/ˌmɪsˈdʒʌdʒd/"
+  },
+  "misjudge": {
+   "w": "misjudge",
+   "pos": "동사",
+   "ko": "잘못 판단하다",
+   "en": "to form a wrong opinion about someone or something",
+   "ex": "Don't misjudge a fabric by how it looks on the roll.",
+   "ipa": "/ˌmɪsˈdʒʌdʒ/"
+  },
+  "mistake for": {
+   "w": "mistake ... for",
+   "pos": "구",
+   "ko": "~을 …로 착각하다",
+   "en": "to wrongly think one thing is another",
+   "ex": "People often mistake my sister for me.",
+   "ipa": "/mɪˈsteɪk fə/"
+  },
+  "rethink": {
+   "w": "rethink",
+   "pos": "명사",
+   "ko": "재고, 다시 생각하기",
+   "en": "a new consideration of something in order to change it",
+   "ex": "Falling sales forced a complete rethink of the brand.",
+   "ipa": "/ˈriːθɪŋk/"
+  },
+  "prominent": {
+   "w": "prominent",
+   "pos": "형용사",
+   "ko": "눈에 잘 띄는, 두드러진",
+   "en": "easy to see or notice",
+   "ex": "The logo is placed in a prominent position on the bag.",
+   "ipa": "/ˈprɒmɪnənt/"
+  },
+  "disposable": {
+   "w": "disposable",
+   "pos": "형용사",
+   "ko": "일회용의",
+   "en": "intended to be thrown away after use",
+   "ex": "Disposable masks have created a new waste problem.",
+   "ipa": "/dɪˈspəʊzəbl/"
+  },
+  "cutlery": {
+   "w": "cutlery",
+   "pos": "명사",
+   "ko": "식기류 (수저·포크·나이프)",
+   "en": "knives, forks and spoons used for eating",
+   "ex": "Please put the cutlery in the top drawer.",
+   "ipa": "/ˈkʌtləri/"
+  },
+  "garments": {
+   "w": "garments",
+   "pos": "명사",
+   "ko": "의류, 옷",
+   "en": "pieces of clothing",
+   "ex": "Each of these garments is sewn by hand.",
+   "ipa": "/ˈɡɑːmənts/"
+  },
+  "garment": {
+   "w": "garment",
+   "pos": "명사",
+   "ko": "의류, 옷 한 벌",
+   "en": "a piece of clothing",
+   "ex": "Check the care label before washing the garment.",
+   "ipa": "/ˈɡɑːmənt/"
+  },
+  "emphasising": {
+   "w": "emphasising",
+   "pos": "동사",
+   "ko": "강조하는",
+   "en": "giving special importance or attention to something",
+   "ex": "The ad is emphasising comfort rather than style.",
+   "ipa": "/ˈemfəsaɪzɪŋ/"
+  },
+  "emphasise": {
+   "w": "emphasise",
+   "pos": "동사",
+   "ko": "강조하다",
+   "en": "to give special importance or attention to something",
+   "ex": "A belt can emphasise the waist in a long dress.",
+   "ipa": "/ˈemfəsaɪz/"
+  },
+  "policymakers": {
+   "w": "policymakers",
+   "pos": "명사",
+   "ko": "정책 입안자",
+   "en": "people in government who decide on official plans and rules",
+   "ex": "Policymakers are discussing a tax on fast fashion.",
+   "ipa": "/ˈpɒləsiˌmeɪkəz/"
+  },
+  "virtue": {
+   "w": "virtue",
+   "pos": "명사",
+   "ko": "미덕, 장점",
+   "en": "a good quality or habit",
+   "ex": "Patience is a real virtue when you are learning to sew.",
+   "ipa": "/ˈvɜːtʃuː/"
+  },
+  "showcase": {
+   "w": "showcase",
+   "pos": "동사",
+   "ko": "선보이다, 소개하다",
+   "en": "to show the best qualities of something to the public",
+   "ex": "The exhibition will showcase work by young Korean designers.",
+   "ipa": "/ˈʃəʊkeɪs/"
+  },
+  "thereby": {
+   "w": "thereby",
+   "pos": "부사",
+   "ko": "그렇게 함으로써",
+   "en": "as a result of the action just mentioned",
+   "ex": "The shop cut its opening hours, thereby saving on energy bills.",
+   "ipa": "/ˌðeəˈbaɪ/"
+  },
+  "materialism": {
+   "w": "materialism",
+   "pos": "명사",
+   "ko": "물질주의",
+   "en": "the belief that owning things is the most important thing in life",
+   "ex": "The film is a gentle criticism of modern materialism.",
+   "ipa": "/məˈtɪəriəlɪzəm/"
+  },
+  "minimalism": {
+   "w": "minimalism",
+   "pos": "명사",
+   "ko": "미니멀리즘, 최소주의",
+   "en": "a style or way of living that uses very few things",
+   "ex": "Her approach to minimalism means owning just thirty pieces of clothing.",
+   "ipa": "/ˈmɪnɪməlɪzəm/"
+  },
+  "enhances": {
+   "w": "enhances",
+   "pos": "동사",
+   "ko": "높인다, 향상시킨다",
+   "en": "improves the quality or value of something",
+   "ex": "A good lining enhances the shape of a jacket.",
+   "ipa": "/ɪnˈhɑːnsɪz/"
+  },
+  "enhance": {
+   "w": "enhance",
+   "pos": "동사",
+   "ko": "높이다, 향상시키다",
+   "en": "to improve the quality or value of something",
+   "ex": "Natural light will enhance the colours in your photos.",
+   "ipa": "/ɪnˈhɑːns/"
+  },
+  "overconsumption": {
+   "w": "overconsumption",
+   "pos": "명사",
+   "ko": "과소비",
+   "en": "using or buying more than is needed or sustainable",
+   "ex": "Cheap online shopping has encouraged overconsumption.",
+   "ipa": "/ˌəʊvəkənˈsʌmpʃn/"
+  },
+  "accustomed to": {
+   "w": "accustomed to",
+   "pos": "구",
+   "ko": "~에 익숙한",
+   "en": "used to something because it is familiar",
+   "ex": "After a year in Berlin, she was accustomed to the cold.",
+   "ipa": "/əˈkʌstəmd tə/"
+  },
+  "assumption": {
+   "w": "assumption",
+   "pos": "명사",
+   "ko": "가정, 당연시하는 생각",
+   "en": "something you believe is true without proof",
+   "ex": "There is a common assumption that expensive means better quality.",
+   "ipa": "/əˈsʌmpʃn/"
+  }
+ },
+ "vocab": [
+  "overlook",
+  "distort",
+  "perceive",
+  "tendency",
+  "deliberately",
+  "interpret",
+  "conventional",
+  "genuinely",
+  "prominent",
+  "emphasise",
+  "accustomed to",
+  "assumption",
+  "proportion",
+  "misjudge"
+ ],
+ "quiz": [
+  {
+   "q": "Research indicates that ideas expressed in terms of 'more' are easier to remember than those expressed in terms of 'less'.",
+   "a": "TRUE",
+   "why": "2문단: 'more'로 표현된 문장이 'less'보다 처리·기억이 더 쉽다고 함"
+  },
+  {
+   "q": "In the hotel study, guests in rooms with more eco-friendly amenities produced a smaller proportion of waste.",
+   "a": "FALSE",
+   "why": "7문단: 그런 방의 투숙객이 오히려 더 높은 비율의 쓰레기를 만들었다고 함"
+  },
+  {
+   "q": "Rifó's pre-order model has lowered the brand's production costs.",
+   "a": "NOT GIVEN",
+   "why": "선주문으로 수요에 맞춰 생산한다는 말만 있고 비용 절감 언급은 없음"
+  },
+  {
+   "q": "The authors advise companies not to replace less sustainable products with greener alternatives.",
+   "a": "FALSE",
+   "why": "9문단: 대체를 피하라는 뜻이 아니고, 불필요한 친환경 품목을 더하는 게 문제라고 함"
+  }
+ ],
+ "para": [
+  {
+   "simple": "people often missed chances to get better results by taking things away",
+   "article": "participants routinely overlooked opportunities to improve outcomes through subtraction"
+  },
+  {
+   "simple": "pay attention to what they can see and miss what isn't there",
+   "article": "focus on what is in front of them and overlook what is missing"
+  },
+  {
+   "simple": "so shoppers may think the company is trying less, not that it made a careful choice",
+   "article": "so consumers may interpret it as “less effort” rather than as a considered attempt"
+  },
+  {
+   "simple": "they may hope customers will praise these changes as good for the planet",
+   "article": "they may expect consumers to hail these changes as environmentally responsible"
+  },
+  {
+   "simple": "We usually think that adding something means making it better",
+   "article": "We are accustomed to seeing addition as improvement"
+  }
+ ],
+ "summary": "Because people notice visible eco-friendly additions more than thoughtful reductions, companies that cut unnecessary items to reduce waste are often undervalued, so they need to explain clearly why using less is actually better for the environment.",
+ "gist": "사람들은 친환경 제품을 '더하는' 것을 '빼는' 것보다 더 친환경적이라고 착각한다(지속가능 가산 편향).\n그래서 기업과 정책 입안자가 '덜어냄'의 효과를 눈에 보이게 설명해야 한다는 글.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "In the hotel experiment, guests staying in rooms with more eco-friendly amenities produced a smaller share of waste.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "[7] 'guests in those rooms generated a higher proportion of waste' — 오히려 쓰레기 비율이 더 높았음"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "The researchers examined the bias in several different commercial contexts.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "[7] 'We tested this bias across nine studies in different product and service settings' — 여러 상품·서비스 환경에서 검증"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "Rifó's pre-order model has helped the brand lower its production costs.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[14] 'match production with demand'라고만 할 뿐 생산 비용 절감에 대한 언급은 없음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Companies should stop swapping less sustainable products for more sustainable ones.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "[9] 'This does not mean companies should avoid replacing less sustainable products with more sustainable alternatives' — 필자는 반대함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "Consuming less can contribute to people's happiness.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "[15] 'reducing consumption and materialism can improve people's wellbeing, while minimalism enhances happiness' — 필자가 긍정함"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 4",
+    "options": [
+     "i  The rising price of eco-friendly products",
+     "ii  Evidence from a series of experiments",
+     "iii  Why what is added gets noticed",
+     "iv  How consumers punish false green claims",
+     "v  Letting customers ask for extras"
+    ],
+    "answer": "iii",
+    "why": "[4] 'additions are visible... overlook what is missing' — 더한 것이 눈에 띄는 이유"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 7",
+    "options": [
+     "i  The rising price of eco-friendly products",
+     "ii  Evidence from a series of experiments",
+     "iii  Why what is added gets noticed",
+     "iv  How consumers punish false green claims",
+     "v  Letting customers ask for extras"
+    ],
+    "answer": "ii",
+    "why": "[7] 'We tested this bias across nine studies... In an experiment with 302 hotel guests' — 연구 결과 제시"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 13",
+    "options": [
+     "i  The rising price of eco-friendly products",
+     "ii  Evidence from a series of experiments",
+     "iii  Why what is added gets noticed",
+     "iv  How consumers punish false green claims",
+     "v  Letting customers ask for extras"
+    ],
+    "answer": "v",
+    "why": "[13] 'let consumers request them when needed' — 필요할 때 요청하게 하는 배달 사례"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a change in the size of a common vehicle?",
+    "options": [
+     "3",
+     "5",
+     "8",
+     "14"
+    ],
+    "answer": "3",
+    "why": "[3] 'the size of the average car is growing at a rate of 1cm every two years' — 자동차 크기 증가"
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions encouraging customers to fix items instead of buying new ones?",
+    "options": [
+     "9",
+     "12",
+     "14",
+     "16"
+    ],
+    "answer": "14",
+    "why": "[14] 'encourage consumers to repair rather than replace with new items' — 수리 권장"
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to the writer, why do visible eco-friendly additions appeal to consumers?",
+    "options": [
+     "A They are usually cheaper than reductions.",
+     "B They suggest that a company is trying hard and is committed.",
+     "C They are required by environmental regulations.",
+     "D They always generate less waste than reductions."
+    ],
+    "answer": "B",
+    "why": "[6] 'visible eco-friendly additions can signal that a company is making an effort and is committed to sustainability'"
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "What did the experiments involving Lego, miniature golf and digital grids show?",
+    "options": [
+     "A Participants found removing items more enjoyable than adding them.",
+     "B Participants often failed to see that taking things away could improve results.",
+     "C Participants performed better when they were allowed to add pieces.",
+     "D Participants preferred digital tasks to physical ones."
+    ],
+    "answer": "B",
+    "why": "[3] 'participants routinely overlooked opportunities to improve outcomes through subtraction'"
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "The tendency to rate green additions more highly than reductions is called the sustainable ____ bias.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "additive"
+    ],
+    "why": "[5] 'This tendency is known as the sustainable additive bias'"
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Hotels may replace single-use toiletries with ____, but guests might not see this as environmentally responsible.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "refillable dispensers"
+    ],
+    "why": "[8] 'When hotels replace single-use toiletries with refillable dispensers'"
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Apart from napkins, what could a food delivery company stop adding to every order automatically?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "bamboo cutlery",
+     "disposable bamboo cutlery"
+    ],
+    "why": "[13] 'stop automatically including disposable bamboo cutlery and napkins with every order'"
+   }
+  ],
+  "headings": {
+   "paras": [
+    3,
+    6,
+    12
+   ]
+  }
+ }
+}

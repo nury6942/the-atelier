@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-26T23:43:50.402Z",
+ "updated": "2026-10-28T11:51:10.740Z",
  "items": [
+  {
+   "id": "2026-10-28-conv-looking-for-work-as-a-disabled-person",
+   "date": "2026-10-28",
+   "source": "The Conversation",
+   "title": "Looking for work as a disabled person? Recognize your strengths and find an accessible workplace",
+   "url": "https://theconversation.com/looking-for-work-as-a-disabled-person-recognize-your-strengths-and-find-an-accessible-workplace-293076",
+   "author": "Erika Katzman",
+   "minutes": 6,
+   "level": "C1",
+   "words": 1031,
+   "topic": "일",
+   "gist": "장애가 있는 구직자가 일상에서 키운 강점(시간·에너지 관리, 문제 해결)을 알아보고 권리와 접근성 좋은 직장 고르는 법을 안내하는 글.\n마지막엔 고용주가 접근성 책임을 먼저 져야 한다고 주장한다.",
+   "file": "data/read/2026-10-28-conv-looking-for-work-as-a-disabled-person.json"
+  },
+  {
+   "id": "2026-10-28-conv-the-greenest-initiatives-are-often-the",
+   "date": "2026-10-28",
+   "source": "The Conversation",
+   "title": "The greenest initiatives are often the most invisible – experts explain why that’s a problem",
+   "url": "https://theconversation.com/the-greenest-initiatives-are-often-the-most-invisible-experts-explain-why-thats-a-problem-294789",
+   "author": "Diletta Acuti, Giampaolo Viglia",
+   "minutes": 4,
+   "level": "B2+",
+   "words": 757,
+   "topic": "환경",
+   "gist": "사람들은 친환경 제품을 '더하는' 것을 '빼는' 것보다 더 친환경적이라고 착각한다(지속가능 가산 편향).\n그래서 기업과 정책 입안자가 '덜어냄'의 효과를 눈에 보이게 설명해야 한다는 글.",
+   "file": "data/read/2026-10-28-conv-the-greenest-initiatives-are-often-the.json"
+  },
   {
    "id": "2026-10-27-conv-calling-species-invasive-and-culling",
    "date": "2026-10-27",
@@ -130,6 +158,42 @@
  ],
  "links": [
   {
+   "source": "BBC Future",
+   "title": "How AI is helping fight art theft",
+   "url": "https://www.bbc.com/future/article/20261027-this-painting-went-missing-20-years-ago-police-tracked-it-down-with-the-help-of-ai",
+   "date": "2026-10-28"
+  },
+  {
+   "source": "BoF",
+   "title": "How Twitch and Discord Are Shaping Menswear’s Next Generation",
+   "url": "https://www.businessoffashion.com/articles/retail/streaming-culture-twitch-discord-menswear/",
+   "date": "2026-10-28"
+  },
+  {
+   "source": "BoF",
+   "title": "Beyond Hype: Scarcity Shoppers Can Believe In",
+   "url": "https://www.businessoffashion.com/articles/retail/genuine-scarcity-vs-artificial-hype-fashion-drops-new-balance/",
+   "date": "2026-10-28"
+  },
+  {
+   "source": "BoF",
+   "title": "Fashion Magazines Find New Momentum in Eastern Europe",
+   "url": "https://www.businessoffashion.com/articles/global-markets/fashion-magazines-find-new-momentum-in-eastern-europe/",
+   "date": "2026-10-28"
+  },
+  {
+   "source": "BoF",
+   "title": "How AI Is Reshaping the Modelling Industry",
+   "url": "https://www.businessoffashion.com/articles/workplace-talent/how-ai-is-reshaping-the-modeling-industry/",
+   "date": "2026-10-28"
+  },
+  {
+   "source": "BoF",
+   "title": "Decoding Italian Beauty’s Global Playbook",
+   "url": "https://www.businessoffashion.com/articles/beauty/made-in-italy-cosmetic-industry-strategy-panel-uk/",
+   "date": "2026-10-28"
+  },
+  {
    "source": "BoF",
    "title": "What Buyers Really Want From Emerging Designers",
    "url": "https://www.businessoffashion.com/articles/retail/what-buyers-really-want-from-emerging-designers/",
@@ -151,6 +215,18 @@
    "source": "BoF",
    "title": "Miuccia Prada: Future-Proofing a Fashion Dynasty",
    "url": "https://www.businessoffashion.com/articles/luxury/miuccia-prada-future-proofing-a-fashion-dynasty/",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "BBC Future",
+   "title": "How we can exercise more without even trying",
+   "url": "https://www.bbc.com/future/article/20261023-how-we-can-exercise-more-without-trying",
+   "date": "2026-10-27"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "Would you pay to have the ‘best baby’? Liberal eugenics and the troubling quest for human perfection",
+   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/27/would-you-pay-to-have-the-best-baby-liberal-eugenics-and-the-troubling-quest-for-human-perfection",
    "date": "2026-10-27"
   },
   {
@@ -260,54 +336,6 @@
    "title": "What to eat for younger skin",
    "url": "https://www.bbc.com/future/article/20261015-what-can-i-eat-for-younger-skin",
    "date": "2026-10-20"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "‘The last bastion is gone’: the US right idolised Orbán’s Hungary. Can they recover now he has fallen?",
-   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/20/the-last-bastion-is-gone-the-us-right-idolised-orbans-hungary-can-they-recover-now-he-has-fallen",
-   "date": "2026-10-20"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The rejuvenating secrets of the immortal jellyfish",
-   "url": "https://www.bbc.com/future/article/20261016-the-rejuvenating-secrets-of-the-immortal-jellyfish",
-   "date": "2026-10-19"
-  },
-  {
-   "source": "BBC Future",
-   "title": "The shocking lessons from an infamous experiment",
-   "url": "https://www.bbc.com/future/article/20261016-the-shocking-truths-about-an-infamous-experiment-in-obedience",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Luca de Meo’s Creative Gamble at Kering",
-   "url": "https://www.businessoffashion.com/articles/luxury/luca-de-meos-creative-gamble-at-kering/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "How Brands Are Democratising the Runway",
-   "url": "https://www.businessoffashion.com/articles/marketing-pr/how-brands-are-democratising-the-runway/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "How Babies Became Luxury’s New Aspirational Category",
-   "url": "https://www.businessoffashion.com/articles/retail/how-babies-became-luxurys-new-aspirational-category/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Opinion: Ray-Ban’s Billionaire Family Drama Is Hitting New Lows",
-   "url": "https://www.businessoffashion.com/articles/professional/ray-ban-family-drama-essilorluxottica-sa/",
-   "date": "2026-10-18"
-  },
-  {
-   "source": "BoF",
-   "title": "Luxury’s Problem With Unsold Stock Comes Under the Microscope",
-   "url": "https://www.businessoffashion.com/articles/luxury/luxury-unsold-good-recycling-destruction-laws/",
-   "date": "2026-10-18"
   }
  ]
 }
