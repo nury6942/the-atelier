@@ -1,0 +1,333 @@
+{
+ "date": "2026-10-30",
+ "collectedAt": "2026-10-30T06:31:19+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "x",
+   "author": "@claudeai",
+   "url": "https://x.com/claudeai/status/2115859377488072879",
+   "at": "2026-10-29T17:32:41.000Z",
+   "likes": 5400,
+   "replies": 288,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "클로드 모바일 앱, 다중 계정·카플레이 음성 지원",
+   "points": [
+    "iOS·안드로이드에서 여러 계정에 로그인한 채 바로 전환 가능",
+    "아이패드에선 클로드가 만든 결과물이 대화 옆 창으로 열림",
+    "아이폰 음성 모드가 애플 카플레이에서 동작, 소음 속 인식도 개선",
+    "앱 언어 24개 추가(총 33개), 곧 '당겨서 검색' 추가 예정"
+   ],
+   "media_items": [
+    {
+     "type": "animated_gif",
+     "img": "https://pbs.twimg.com/tweet_video_thumb/HV0G0uhbwAAclVn.jpg",
+     "mp4": "https://video.twimg.com/tweet_video/HV0G0uhbwAAclVn.mp4"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@claudeai",
+   "url": "https://www.threads.com/@claudeai/post/DfC2DntGobp",
+   "at": "2026-10-28T16:18:45.000Z",
+   "likes": 1400,
+   "replies": 41,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 팀이 정리한 '루프' 4가지 유형",
+   "points": [
+    "루프 = 멈춤 조건이 올 때까지 에이전트가 일을 반복하는 구조",
+    "유형 4가지와 각각 언제 쓰는지는 이미지 카드에 정리",
+    "장시간 자동 작업(예약 수집 등) 설계할 때 참고용"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2115290590959329451",
+   "at": "2026-10-28T03:52:31.000Z",
+   "likes": 660,
+   "replies": 55,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "앤트로픽 Opus 5.5 프롬프트 가이드 11개 요약",
+   "points": [
+    "생각 강도는 medium부터 — Opus 5 high와 비슷하거나 낫다, max는 효과 확인된 일에만",
+    "'깊게 생각해' 같은 지시는 지연만 늘리니 빼라",
+    "긴 작업은 체크리스트를 두고 끝나기 전 미완료 항목 확인시키기",
+    "여러 도구를 쓰는 에이전트엔 '행동 전에 관련 자료부터 찾아라'",
+    "멀티 에이전트엔 경과 시간·예산을 알려주면 병렬로 더 빨리 일함"
+   ],
+   "try": "자동화 프롬프트에서 '깊게 생각해' 문구부터 지워보기",
+   "media_items": []
+  },
+  {
+   "src": "threads",
+   "author": "@turtle_buff",
+   "url": "https://www.threads.com/@turtle_buff/post/DfCSEZAp8rn",
+   "at": "2026-10-28T11:05:17.000Z",
+   "likes": 949,
+   "replies": 43,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "앤트로픽 공식 강의 20여 개, 한국어·무료·수료증",
+   "points": [
+    "앤트로픽이 만든 클로드 강의가 한국어로 제공, 전부 무료에 수료증",
+    "작성자는 클로드 코드로 홈페이지·앱·영상을 혼자 제작 중",
+    "입문자용 수강 순서(하루 하나씩)는 2번째 글 이미지에"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@krblue_",
+   "url": "https://x.com/krblue_/status/2115225783224701389",
+   "at": "2026-10-27T23:35:00.000Z",
+   "likes": 133,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "편집 0번 클로드 코드 다큐, 1주 35만 조회",
+   "points": [
+    "영상 1편 = 폴더 1개, 자료·대본·나레이션·완성본을 다 그 안에 쌓기",
+    "소재는 조회수 큰 원본과 댓글 반응부터 보고 고른다",
+    "지시는 한 번에: 방향·저작권(방송사 영상 금지)·Remotion 모션·일레븐랩스 v4 나레이션·수노 음악",
+    "'캡컷 프로젝트로 만들어줘' 하면 장면별로 고칠 수 있는 상태로 받음",
+    "실존 인물 초상 사용은 저작권 리스크가 있다고 본인도 언급"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVo7hxsaAAAgind.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVo7ilxaYAAOL9s.jpg"
+    },
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVo7jhQawAAbLBp.jpg"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@menhera.osaka",
+   "url": "https://www.threads.com/@menhera.osaka/post/DfD7NISAcab",
+   "at": "2026-10-29T02:22:59.000Z",
+   "likes": 918,
+   "replies": 714,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "피클AI로 매진 기차표 감시→자동 결제 성공",
+   "points": [
+    "국내 서비스와 연결되는 개인 비서형 AI '피클AI' 사용 후기",
+    "매진된 특정 시간 기차를 감시하다 자리 나면 바로 결제하라고 시킴 → 예약 완료",
+    "현재 초대제(1인당 초대권 10장), 댓글에 남은 초대 링크 공유 중"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@jte3797",
+   "url": "https://www.threads.com/@jte3797/post/DfCjbBhlLE0",
+   "at": "2026-10-28T13:35:55.000Z",
+   "likes": 97,
+   "replies": 8,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 /advisor — 평소 싼 모델, 중요할 때만 상위 모델",
+   "points": [
+    "/advisor 명령으로 상위 모델을 '조언자'로 지정",
+    "평소엔 하위 모델로 작업하다 중요한 판단에서만 상위 모델에 물어봄",
+    "토큰 절약법을 찾다가 내장 기능을 발견했다는 1년 사용자 후기"
+   ],
+   "try": "클로드 코드에서 /advisor 입력해 설정 화면 확인하기"
+  },
+  {
+   "src": "x",
+   "author": "@dopamine_crypto",
+   "url": "https://x.com/dopamine_crypto/status/2114937635059716561",
+   "at": "2026-10-27T04:30:00.000Z",
+   "likes": 772,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI 글 티 지우는 humanizer 스킬, 블라인드 16전 16승",
+   "points": [
+    "위키백과 편집자들의 AI 글 판별 가이드를 바탕으로 26가지 패턴 교정",
+    "대표 패턴: '단순한 A가 아니라 B', 폼 잡는 마무리, 뜸 들이는 도입",
+    "설치: /plugin marketplace add blader/humanizer → /plugin install humanizer@humanizer",
+    "탐지기 회피용 아님, 예시가 영어 기준이라 한글 효과는 직접 확인 필요"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVdmQuObMAA2cgV.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@dopamine_crypto",
+   "url": "https://x.com/dopamine_crypto/status/2115068497030267274",
+   "at": "2026-10-27T13:10:00.000Z",
+   "likes": 793,
+   "replies": 11,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "클로드 코드를 게임 스튜디오로 — 에이전트 49명 구조",
+   "points": [
+    "Claude-Code-Game-Studios: 디렉터→부서 리드→전문가 3층 구조(별 2.7만)",
+    "스킬 74개·문서 템플릿 62개, 저장 시 자동 검사 15개",
+    "/start → /design-system → /create-epics → /dev-story → /story-done 순서로 진행",
+    "결정은 본인이 하고 AI는 질문·검수 역할 — 1인 프로젝트 구조 참고용"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVdoW3-awAADjgy.jpg"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@smbluespace",
+   "url": "https://x.com/smbluespace/status/2115681379984044065",
+   "at": "2026-10-29T05:45:23.000Z",
+   "likes": 277,
+   "replies": 6,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "클로드 코드 시작할 때 깔 확장 4개",
+   "points": [
+    "문서 스킬(anthropics/skills): PPT·엑셀·워드·PDF를 말로 제작",
+    "클로드 멤: 지난 작업 요약을 새 대화로 가져옴",
+    "UI UX 프로맥스 + 버셀: 디자인 보정과 '배포해줘' 한마디 배포"
+   ],
+   "media_items": [
+    {
+     "type": "photo",
+     "img": "https://pbs.twimg.com/media/HVtF94bbkAE8Tu9.png"
+    }
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@msnry.sungchul",
+   "url": "https://www.threads.com/@msnry.sungchul/post/DfD3B2BklcF",
+   "at": "2026-10-29T01:46:29.000Z",
+   "likes": 45,
+   "replies": 3,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "실사용 중인 클로드 코드 토큰 절약·품질 도구 모음",
+   "points": [
+    "CodeGraph: 코드베이스 인덱싱 후 MCP로 연결, 한 번에 함수·호출관계 조회(codegraph init)",
+    "Ponytail 플러그인: 장황한 출력 줄임 — 레포 수치 토큰 −45%·비용 −26%",
+    "Firecrawl MCP: 웹페이지를 마크다운으로 가져와 토큰 절약",
+    "Karpathy Skills·Superpowers: 추측 금지·계획→TDD→리뷰 순서를 강제"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dopaminecryptokr",
+   "url": "https://www.threads.com/@dopaminecryptokr/post/DfC-cDvlvqz",
+   "at": "2026-10-28T17:31:59.000Z",
+   "likes": 41,
+   "replies": 5,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "한컴 없이 hwp 읽고 만드는 클로드 스킬 claw-hwp",
+   "points": [
+    "클로드·코덱스가 .hwp/.hwpx를 읽기·새로 만들기·편집 가능한 오픈소스 스킬",
+    "한컴오피스 설치 없이 동작 — 맥 사용자에게 특히 유용",
+    "정부지원사업 신청서·공문 양식 칸 채우기에 활용",
+    "표·서식 복잡한 문서는 결과물을 한 번 열어 확인 권장"
+   ],
+   "try": "맥에서 hwp 양식 하나를 클로드에게 읽혀보기"
+  },
+  {
+   "src": "threads",
+   "author": "@avcd.eee",
+   "url": "https://www.threads.com/@avcd.eee/post/DfBjII6kZn3",
+   "at": "2026-10-28T04:14:06.000Z",
+   "likes": 50,
+   "replies": 14,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Paseo+Tailscale로 맥 3대·아이폰을 한 에이전트 작업대로",
+   "points": [
+    "Paseo(오픈소스 에이전트 작업 환경)로 어느 기기에서든 같은 클로드 코드 세션 이어 보기",
+    "모든 기기에 Tailscale 같은 계정 → 원격 로그인 켜고 ssh://사용자@Tailscale주소로 호스트 추가",
+    "아이폰은 Paseo 맥 앱에서 릴레이 켜고 QR 찍으면 연결(종단간 암호화)",
+    "안 붙으면 Tailscale 꺼졌는지부터 확인"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@moomoo.bongja",
+   "url": "https://www.threads.com/@moomoo.bongja/post/DfEGboxkkgP",
+   "at": "2026-10-29T04:01:05.000Z",
+   "likes": 92,
+   "replies": 27,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Aside·Ego lite·Claude in Chrome 비교 — 효율은 Aside, 메모리는 꼴찌",
+   "points": [
+    "토큰당 효율·작업 완수·속도 벤치마크에서 Aside가 1위",
+    "2탄 메모리 비교에선 Aside가 다른 둘보다 2~3배 더 사용",
+    "세부 수치는 이미지 표에"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@0ooooo0",
+   "url": "https://x.com/0ooooo0/status/2115314132438417765",
+   "at": "2026-10-28T05:26:04.000Z",
+   "likes": 172,
+   "replies": 48,
+   "image": null,
+   "media": false,
+   "tag": "후기",
+   "summary": "Grok+Claude 두 개만 구독하는 이유",
+   "points": [
+    "Grok: 클로드에 없는 이미지·영상 생성, Grok Bot으로 자동화가 편함",
+    "여러 컴퓨터를 오케스트레이션하기에도 Grok이 좋다는 평",
+    "Claude는 개발과 주기 실행 스크립트를 Haiku로 싸게 돌리는 데 사용"
+   ],
+   "media_items": []
+  },
+  {
+   "src": "threads",
+   "author": "@mj.plist",
+   "url": "https://www.threads.com/@mj.plist/post/DfDmY2YAais",
+   "at": "2026-10-28T23:21:05.000Z",
+   "likes": 187,
+   "replies": 29,
+   "image": null,
+   "media": false,
+   "tag": "소식",
+   "summary": "ChatGPT Pro·Business, 월 최대 $500 API 크레딧",
+   "points": [
+    "10/29(한국 시간)부터 대상 구독자에게 매달 API 크레딧 지급",
+    "ChatGPT 결제(Billing) 설정에서 크레딧 청구",
+    "ChatGPT·Codex의 OpenAI Developers 플러그인으로 API 키 생성 후 사용"
+   ]
+  }
+ ]
+}
