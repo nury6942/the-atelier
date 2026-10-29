@@ -7,14 +7,14 @@
    "cat": "vibe",
    "title": "편집 0번 다큐 영상, 1주 만에 35만 조회",
    "url": "https://x.com/krblue_/status/2115225783224701389",
-   "image": null,
+   "image": "https://pbs.twimg.com/media/HVo7hxsaAAAgind.jpg",
    "source": "X @krblue_ · ♥133",
    "how": "영상 1편=폴더 1개, 지시는 한 번에 몰아서",
    "examples": [
     {
      "title": "작업 폴더·지시문 구성 캡처",
      "url": "https://x.com/krblue_/status/2115225783224701389",
-     "image": null
+     "image": "https://pbs.twimg.com/media/HVo7hxsaAAAgind.jpg"
     }
    ],
    "chips": [
@@ -28,7 +28,7 @@
    "cat": "tool",
    "title": "맥 3대·아이폰을 한 에이전트 작업대로",
    "url": "https://github.com/getpaseo/paseo",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/bee4b75f77f18255819d6169301065165935e42d96ea82f0684a65181548316d/getpaseo/paseo",
    "source": "GitHub getpaseo · Threads @avcd.eee ♥50",
    "how": "Paseo + Tailscale, 아이폰은 QR로 연결",
    "examples": [
@@ -49,7 +49,7 @@
    "cat": "tool",
    "title": "AI 글 티 지우는 스킬, 16전 16승",
    "url": "https://github.com/blader/humanizer",
-   "image": null,
+   "image": "https://repository-images.githubusercontent.com/1136666433/96e8e1ef-3e9d-4c03-be6f-15d6fd662f6d",
    "source": "GitHub blader · X @dopamine_crypto ♥772",
    "how": "위키백과 'AI 글 징후' 26패턴으로 고쳐 씀",
    "chips": [
@@ -63,14 +63,14 @@
    "cat": "vibe",
    "title": "클로드 코드를 게임 스튜디오로, 에이전트 49명",
    "url": "https://github.com/Donchitos/Claude-Code-Game-Studios",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/Donchitos/Claude-Code-Game-Studios",
    "source": "GitHub Donchitos · MIT · X @dopamine_crypto ♥793",
    "how": "디렉터→부서 리드→전문가 3층, 결정은 사람이",
    "examples": [
     {
      "title": "제작자 실험: 문서 30장 쓴 버전이 블라인드 평가 꼴찌",
      "url": "https://github.com/Donchitos/Claude-Code-Game-Studios#does-it-produce-games-or-documents",
-     "image": null
+     "image": "https://opengraph.githubassets.com/1/Donchitos/Claude-Code-Game-Studios"
     }
    ],
    "reviews": [
@@ -136,7 +136,7 @@
    "cat": "free",
    "title": "API 크레딧 월 $500 지급",
    "url": "https://community.openai.com/t/claim-up-to-500-in-api-credits-using-your-chatgpt-pro-or-business-subscription/1410579",
-   "image": null,
+   "image": "https://us1.discourse-cdn.com/openai1/original/4X/0/4/c/04c8546833f0824a49d21f50e2b08dd44bfd3d05.png",
    "source": "OpenAI Developer Community · Plus 제외, 이월 안 됨",
    "watching": false
   },
@@ -144,7 +144,7 @@
    "cat": "release",
    "title": "수노, 클로드 안에서 작곡",
    "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
-   "image": null,
+   "image": "https://i0.wp.com/musically.com/wp-content/uploads/2026/07/news-stories-images-4x3-12.png?fit=2000%2C1500&ssl=1",
    "source": "Music Ally · 10-28 베타, 신청제",
    "watching": true
   },
@@ -152,7 +152,7 @@
    "cat": "release",
    "title": "Runway Ads 전면 공개",
    "url": "https://runway.com/news/company-news/runway-ads",
-   "image": null,
+   "image": "https://d3phaj0sisr2ct.cloudfront.net/site/images/sanity/2026/10/runwayads-ga-social-og-no-headline-1600x900-2x-3d214819-c070-4f55-8d8f-c8685168dc16.png",
    "source": "Runway · 10-27 · 메타·구글·틱톡 게시",
    "watching": true
   },
@@ -176,7 +176,7 @@
    "cat": "tool",
    "title": "에이전트용 무료 Figma 대안",
    "url": "https://www.builder.io/blog/agent-native-design-figma-alternative",
-   "image": null,
+   "image": "https://cdn.builder.io/api/v1/image/assets/YJIGb4i01jvw0SRdL5Bt/45e8d35cbd2949b7a6fe053409a4ce0c?width=1200",
    "source": "Builder.io · MIT · 무료",
    "watching": false
   },
@@ -184,7 +184,7 @@
    "cat": "tool",
    "title": "수노 MCP 연결법 정리",
    "url": "https://sunoboard.com/blog/how-to-connect-suno-to-claude",
-   "image": null,
+   "image": "https://sunoboard.com/og/blog-how-to-connect-suno-to-claude.jpg",
    "source": "Sunoboard · Claude.ai·데스크톱·코드",
    "watching": false
   }
