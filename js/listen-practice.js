@@ -99,11 +99,25 @@
     var step=function(no,label,n){ var full=n>=tot; return '<div style="flex:1;min-width:120px;border-top:3px solid '+(full?ACC:n?'#93B4F5':'#E2E8F0')+';padding-top:6px"><p style="font-size:12px;color:'+SUB+';margin:0">'+no+' '+label+'</p><p style="font-size:15px;font-weight:600;margin:0">'+(n==null?(t0?esc(t0)+' ~ '+esc(t1):'자막 없이'):n+' / '+tot)+'</p></div>'; };
     return '<div id="pr-head" style="display:flex;gap:12px;flex-wrap:wrap;margin:0 0 18px">'+step('①','듣기',null)+step('②','내가 해석',w)+step('③','검수',ck)+step('④','되말하기',sd)+'</div>';
   }
-  function chip(t){ var c=C[t]||C.vague; return '<span style="display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;background:'+c[0]+';color:'+c[1]+';margin-right:8px">'+c[2]+'</span>'; }
+  function chip(t){ var c=C[t]||C.vague; return '<span style="display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;background:'+c[0]+';color:'+c[1]+';margin-right:0">'+c[2]+'</span>'; }
   // 실제로 얼마나 자주 쓰나 — 5칸 막대 (옛 검수엔 freq 가 없으니 안 그림)
   var FQ=['','거의 안 씀','글·격식','글·강연','자주','매일'];
-  function meter(f){ f=Math.round(+f); if (!(f>=1&&f<=5)) return ''; var h=''; for (var i=1;i<=5;i++) h+='<i style="display:block;width:5px;height:12px;background:'+(i<=f?ACC:'#CBD5E1')+'"></i>'; return '<span title="실제 쓰임" style="display:flex;gap:2px;flex:none">'+h+'</span><span style="font-size:12px;color:'+SUB+';flex:none;min-width:48px">'+FQ[f]+'</span>'; }
-  function lab(t){ return '<p style="font-size:12px;font-weight:600;color:'+SUB+';margin:14px 0 6px">'+t+'</p>'; }
+  function point(pt){
+    return '<div style="margin:14px 0 0;padding:16px 18px;background:#FFFFFF;border:1px solid '+LINE+'">'+
+      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px">'+chip(pt.type||'vague')+
+        (pt.key?'<b style="font-size:17px;color:#1A3FB5">'+esc(pt.key)+'</b>'+(pt.keyKo?'<span style="font-size:16px;color:#18181B">'+esc(pt.keyKo)+'</span>':''):'')+
+        '<span style="margin-left:auto;display:flex;gap:8px;align-items:center">'+meter(pt.key?pt.freq:0)+'</span></div>'+
+      (pt.note?'<p style="margin:0;font-size:15px;line-height:1.85;color:#18181B">'+esc(pt.note)+'</p>':'')+
+      (pt.use?'<div style="padding:12px 14px;background:#EEF2FD;font-size:15px;line-height:1.7;margin-top:12px"><span style="display:block;font-size:13px;font-weight:600;color:#1A3FB5;margin:0 0 4px">실제 쓰임</span><span style="color:#1A3FB5">'+esc(pt.use).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+'</span>'+(pt.useKo?'<span style="display:block;color:#475569;margin-top:2px">'+esc(pt.useKo)+'</span>':'')+'</div>':'')+
+    '</div>';
+  }
+  function pair(right, mine, type){
+    return '<div style="display:flex;flex-direction:column;gap:8px">'+
+      '<div style="padding:12px 16px;border-left:4px solid '+ACC+';background:#F5F8FF"><span style="display:block;font-size:13px;font-weight:600;color:'+ACC+';margin:0 0 4px">정답 해석</span><span style="font-size:16px;line-height:1.75;color:#18181B">'+esc(right)+'</span></div>'+
+      '<div style="padding:12px 16px;border-left:4px solid #94A3B8;background:#F8FAFC"><span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#475569;margin:0 0 4px">내 해석'+(type?chip(type):'')+'</span><span style="font-size:16px;line-height:1.75;color:#334155">'+esc(mine||'(빠짐)')+'</span></div></div>';
+  }
+  function meter(f){ f=Math.round(+f); if (!(f>=1&&f<=5)) return ''; var h=''; for (var i=1;i<=5;i++) h+='<i style="display:block;width:6px;height:14px;background:'+(i<=f?ACC:'#CBD5E1')+'"></i>'; return '<span title="실제 쓰임" style="display:flex;gap:2px;flex:none">'+h+'</span><span style="font-size:13px;color:#475569;flex:none">'+FQ[f]+'</span>'; }
+  function lab(t){ return '<p style="font-size:14px;font-weight:700;color:#334155;margin:32px 0 12px;letter-spacing:.02em">'+t+'</p>'; }
 
   function card(s, pi){
     var en=paras(s)[pi].en, ko=paras(s)[pi].ko, p=(pr(s).paras[pi])||{}, k=s._id+':'+pi;
@@ -124,28 +138,25 @@
         '<span style="font-size:13px;color:'+SUB+';background:#F8FAFC;padding:6px 10px"><span class="material-symbols-outlined" style="font-size:15px;vertical-align:-3px">lock</span> 정답 해석은 검수 뒤에</span></div>';
     } else if (p.st==='checking'){
       h+='<p style="font-size:15px;line-height:1.6;margin:0 0 10px;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
-        '<p style="font-size:14px;color:#1A3FB5;background:#EEF2FD;padding:10px 12px;margin:0"><span class="material-symbols-outlined animate-spin" style="font-size:16px;vertical-align:-3px">progress_activity</span> 아이맥이 검수하는 중 · 20~30초 · 그동안 다음 문단 쓰기 <a onclick="practiceCheck('+pi+',true)" style="margin-left:8px;color:'+SUB+';cursor:pointer;text-decoration:underline">다시 맡기기</a></p>';
+        '<p style="font-size:14px;color:#1A3FB5;background:#EEF2FD;padding:10px 12px;margin:0"><span class="material-symbols-outlined animate-spin" style="font-size:16px;vertical-align:-3px">progress_activity</span> 아이맥이 검수하는 중 · 40~60초 · 그동안 다음 문단 쓰기 <a onclick="practiceCheck('+pi+',true)" style="margin-left:8px;color:'+SUB+';cursor:pointer;text-decoration:underline">다시 맡기기</a></p>';
     } else {
       var c=p.check||{};
       h+=lab('내 해석')+'<p style="font-size:15px;line-height:1.6;margin:0;padding:10px 12px;background:#F8FAFC">'+esc(p.mine)+'</p>'+
-        (c.summary?'<p style="font-size:15px;font-weight:600;margin:12px 0 0">'+esc(c.summary)+'</p>':'')+
+        (c.summary?'<p style="font-size:17px;line-height:1.7;font-weight:600;margin:20px 0 0;padding:16px 20px;background:#F5F8FF;color:#18181B">'+esc(c.summary)+'</p>':'')+
         ((c.unknown||[]).length?lab('모른다고 한 것 · 내 추측')+c.unknown.map(function(u){
-          return '<p style="font-size:14px;margin:0 0 4px">'+chip(u.hit?'ok':'miss')+'<b>'+esc(u.w)+'</b> <span style="color:'+SUB+'">'+esc(u.guess||'추측 없음')+'</span> → '+esc(u.right)+'</p>';
+          return '<p style="font-size:16px;line-height:1.7;margin:0 0 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+chip(u.hit?'ok':'miss')+'<b>'+esc(u.w)+'</b> <span style="color:'+SUB+'">'+esc(u.guess||'추측 없음')+'</span> → '+esc(u.right)+'</p>';
         }).join(''):'')+
-        ((c.items||[]).length?lab('검수 · '+c.items.length)+'<div style="border-top:1px solid '+LINE+'">'+c.items.map(function(it){
-          return '<div style="border-bottom:1px solid '+LINE+'">'+
-            '<div onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'\':\'none\'" style="display:flex;align-items:center;gap:10px;padding:11px 4px;cursor:pointer">'+chip(it.type)+
-              (it.key?'<b style="font-size:15px;color:#1A3FB5;flex:none">'+esc(it.key)+'</b>'+(it.keyKo?'<span style="font-size:14px;color:#18181B;flex:none">'+esc(it.keyKo)+'</span>':''):'')+meter(it.key?it.freq:0)+
-              '<span style="font-size:13px;color:'+SUB+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">'+esc(it.en)+'</span></div>'+
-            '<div style="padding:0 4px 14px;font-size:14px;line-height:1.7'+'">'+
-              '<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0 0 8px">'+
-                '<div style="background:#F8FAFC;padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">내 해석</span>'+esc(it.mine||'(빠짐)')+'</div>'+
-                '<div style="border:1px solid '+ACC+';padding:8px 10px"><span style="display:block;font-size:12px;color:'+SUB+'">맞는 뜻'+'</span>'+esc(it.right)+'</div></div>'+
-              (it.note?'<p style="margin:0;color:#18181B">'+esc(it.note)+'</p>':'')+
-              (it.use?'<div style="display:flex;gap:10px;padding:8px 10px;background:#EEF2FD;color:#1A3FB5;font-size:13px;margin-top:8px"><span style="flex:none;font-weight:600">쓰임</span><span>'+esc(it.use).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+(it.useKo?'<span style="color:#475569"> · '+esc(it.useKo)+'</span>':'')+'</span></div>':'')+
-            '</div></div>';
+        (c.sents&&c.sents.length?lab('문장별 비교 · '+c.sents.length)+'<div style="display:flex;flex-direction:column;gap:20px">'+c.sents.map(function(st,i){
+          return '<div style="padding:22px 24px;border:1px solid '+LINE+';background:#FCFCFD">'+
+            '<div style="display:flex;gap:12px;margin:0 0 14px"><span style="flex:none;font-size:13px;font-weight:700;color:#475569;padding-top:4px">'+(i+1)+'</span><p style="font-size:18px;line-height:1.6;font-weight:600;color:#18181B;margin:0">'+esc(st.en)+'</p></div>'+
+            pair(st.right, st.mine, st.type||'ok')+(st.points||[]).map(point).join('')+'</div>';
         }).join('')+'</div>':'')+
-        lab('정답 해석')+'<p style="font-size:15px;line-height:1.7;margin:0;color:#18181B">'+esc(ko)+'</p>'+
+        (!(c.sents&&c.sents.length)&&(c.items||[]).length?lab('검수 · '+c.items.length)+'<div style="display:flex;flex-direction:column;gap:20px">'+c.items.map(function(it){
+          return '<div style="padding:22px 24px;border:1px solid '+LINE+';background:#FCFCFD">'+
+            '<p style="font-size:18px;line-height:1.6;font-weight:600;color:#18181B;margin:0 0 14px">'+esc(it.en)+'</p>'+
+            pair(it.right, it.mine, it.type)+(it.key||it.note?point(it):'')+'</div>';
+        }).join('')+'</div>':'')+
+        lab('문단 전체 정답 해석')+'<p style="font-size:16px;line-height:1.85;margin:0;color:#18181B;padding:18px 20px;border:1px solid '+LINE+'">'+esc(ko)+'</p>'+
         sayBlock(s, pi, p);
     }
     return h+'</div>';
@@ -283,9 +294,10 @@
     } catch(e){ console.warn('[practice] done', e); }
   };
   async function toWords(s, pi, p){
-    var c=p.check||{}; if (p.wordsAdded || !c.items) return;
+    var c=p.check||{}; if (p.wordsAdded || !(c.items||c.sents)) return;
+    var flat=c.sents?[].concat.apply([],c.sents.map(function(st){ return (st.points||[]).map(function(pt){ return { type:pt.type||st.type, key:pt.key, keyKo:pt.keyKo, en:st.en }; }); })):(c.items||[]);
     var add={}, day=new Date().toISOString().slice(0,10);
-    (c.items||[]).filter(function(it){ return it.type!=='ok' && it.key && it.key.split(/\s+/).length<=5; }).forEach(function(it){ add[String(it.key).toLowerCase().trim()]={ w:it.key, ko:it.keyKo||it.right||'', en:'', ex:'', ctx:it.en, src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
+    flat.filter(function(it){ return it.type!=='ok' && it.key && it.key.split(/\s+/).length<=5; }).forEach(function(it){ add[String(it.key).toLowerCase().trim()]={ w:it.key, ko:it.keyKo||it.right||'', en:'', ex:'', ctx:it.en, src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
     (c.unknown||[]).filter(function(u){ return !u.hit; }).forEach(function(u){ add[String(u.w).toLowerCase().trim()]={ w:u.w, ko:u.right||'', en:'', ex:'', ctx:'', src:'practice:'+s._id, title:s.title||'', added:day, box:0, due:0 }; });
     p.wordsAdded=true;
     try {
