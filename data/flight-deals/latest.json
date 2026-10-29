@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-10-29T19:37",
- "date": "2026-10-29",
+ "generatedAt": "2026-10-30T07:37",
+ "date": "2026-10-30",
  "count": 39,
  "cities": [
   {
@@ -16,20 +16,20 @@
    "kr": {
     "name": "Trinity Airways",
     "direct": true,
-    "price": 921232,
+    "price": 921838,
     "code": "TW"
    },
    "krAll": [
     {
      "name": "Trinity Airways",
      "direct": true,
-     "price": 921232,
+     "price": 921838,
      "code": "TW"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1775300,
+     "price": 1775800,
      "code": "KE"
     }
    ],
@@ -47,7 +47,7 @@
    "best": 841600,
    "bestSrc": "sky",
    "rt": {
-    "price": 921232,
+    "price": 921838,
     "airline": "Trinity Airways",
     "stops": "직항",
     "dur": "11시간",
@@ -74,7 +74,7 @@
    "cc": "nz",
    "iata": "AKL",
    "trip": {
-    "out": "2026-11-01",
+    "out": "2026-11-02",
     "back": "2026-11-16"
    },
    "kr": {
@@ -92,27 +92,33 @@
     }
    ],
    "sky": {
-    "price": 1184700,
-    "direct": 1184700,
-    "url": "https://www.skyscanner.co.kr/transport/flights/sela/akl/261101/261116/?adultsv2=1&cabinclass=economy&rtn=1",
+    "price": 1165700,
+    "direct": 1165700,
+    "url": "https://www.skyscanner.co.kr/transport/flights/sela/akl/261102/261116/?adultsv2=1&cabinclass=economy&rtn=1",
     "kr": {
      "name": "대한항공",
-     "price": 1184700,
+     "price": 1165700,
      "code": "KE",
      "direct": true
     }
    },
-   "best": 1184700,
+   "best": 1165700,
    "bestSrc": "sky",
    "rt": {
+    "price": 1363400,
+    "airline": "중국남방항공",
+    "stops": "경유 2회",
+    "dur": "30시간",
+    "dates": "12월 20일 (일)~1월 2일 (토)",
+    "code": "CZ"
+   },
+   "direct": {
     "price": 1209800,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "12시간",
-    "dates": "11월 1일 (일)~11월 16일 (월)",
-    "code": "KE"
+    "dates": "11월 2일 (월)~11월 16일 (월)"
    },
-   "direct": null,
    "typical": {
     "month": 3,
     "kind": "low",
@@ -122,7 +128,7 @@
    "median30": 1209800,
    "deal": "deal",
    "why": "보통 가격대 아래쪽",
-   "vsLow": 8,
+   "vsLow": 6,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-auckland.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -151,29 +157,29 @@
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1078100,
+     "price": 1079200,
      "code": "KE"
     }
    ],
    "sky": {
-    "price": 789400,
-    "direct": 789400,
+    "price": 790600,
+    "direct": 790600,
     "url": "https://www.skyscanner.co.kr/transport/flights/sela/hnl/261204/261213/?adultsv2=1&cabinclass=economy&rtn=1",
     "kr": {
      "name": "에어프레미아",
-     "price": 789400,
+     "price": 790600,
      "code": "YP",
      "direct": true
     }
    },
-   "best": 789400,
+   "best": 790600,
    "bestSrc": "sky",
    "rt": {
     "price": 810000,
     "airline": "에어프레미아",
     "stops": "직항",
     "dur": "8시간",
-    "dates": "10월 30일 (금)~11월 6일 (금)",
+    "dates": "11월 2일 (월)~11월 8일 (일)",
     "code": "YP"
    },
    "direct": {
@@ -192,7 +198,7 @@
    "median30": 817100,
    "deal": "deal",
    "why": "보통 가격대 아래쪽",
-   "vsLow": 14,
+   "vsLow": 15,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-honolulu.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -221,35 +227,35 @@
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1246900,
+     "price": 1248000,
      "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1468500,
+     "price": 1469600,
      "code": "KE"
     }
    ],
    "sky": {
-    "price": 1016800,
-    "direct": 1016800,
+    "price": 1019700,
+    "direct": 1019700,
     "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261119/261202/?adultsv2=1&cabinclass=economy&rtn=1",
     "kr": {
      "name": "에어프레미아",
-     "price": 1016800,
+     "price": 1019700,
      "code": "YP",
      "direct": true
     }
    },
-   "best": 1016800,
+   "best": 1019700,
    "bestSrc": "sky",
    "rt": {
     "price": 1047600,
     "airline": "에어프레미아",
     "stops": "직항",
     "dur": "11시간",
-    "dates": "12월 17일 (목)~12월 30일 (수)",
+    "dates": "11월 12일 (목)~11월 25일 (수)",
     "code": "YP"
    },
    "direct": {
@@ -268,65 +274,8 @@
    "median30": 1056100,
    "deal": "deal",
    "why": "보통 가격대 아래쪽",
-   "vsLow": 43,
+   "vsLow": 44,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-los-angeles.html?hl=ko&curr=KRW&gl=KR"
-  },
-  {
-   "slug": "prague",
-   "city": "프라하",
-   "region": "유럽",
-   "cc": "cz",
-   "iata": "PRG",
-   "trip": null,
-   "kr": {
-    "name": "대한항공",
-    "direct": true,
-    "price": 1160400,
-    "code": "KE"
-   },
-   "krAll": [
-    {
-     "name": "대한항공",
-     "direct": true,
-     "price": 1160400,
-     "code": "KE"
-    },
-    {
-     "name": "아시아나항공",
-     "direct": true,
-     "price": 1418800,
-     "code": "OZ"
-    }
-   ],
-   "sky": null,
-   "best": 1160400,
-   "bestSrc": "google",
-   "rt": {
-    "price": 786700,
-    "airline": "KLM",
-    "stops": "경유 1회",
-    "dur": "18시간",
-    "dates": "1월 14일 (목)~1월 27일 (수)",
-    "code": "KL"
-   },
-   "direct": {
-    "price": 1335400,
-    "airline": "대한항공",
-    "stops": "직항",
-    "dur": "14시간",
-    "dates": "1월 22일 (금)~2월 5일 (금)"
-   },
-   "typical": {
-    "month": 11,
-    "kind": "low",
-    "lo": 880000,
-    "hi": 1200000
-   },
-   "median30": 1210800,
-   "deal": "other",
-   "why": "외항사 경유 최저가가 보통보다 쌈",
-   "vsLow": 32,
-   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-prague.html?hl=ko&curr=KRW&gl=KR"
   },
   {
    "slug": "frankfurt",
@@ -336,30 +285,30 @@
    "iata": "FRA",
    "trip": null,
    "kr": {
-    "name": "아시아나항공",
+    "name": "대한항공",
     "direct": true,
-    "price": 1248300,
-    "code": "OZ"
+    "price": 1341400,
+    "code": "KE"
    },
    "krAll": [
     {
-     "name": "아시아나항공",
-     "direct": true,
-     "price": 1248300,
-     "code": "OZ"
-    },
-    {
      "name": "대한항공",
      "direct": true,
-     "price": 1389900,
+     "price": 1341400,
      "code": "KE"
+    },
+    {
+     "name": "아시아나항공",
+     "direct": true,
+     "price": 1349800,
+     "code": "OZ"
     }
    ],
    "sky": null,
-   "best": 1248300,
+   "best": 1341400,
    "bestSrc": "google",
    "rt": {
-    "price": 704600,
+    "price": 709700,
     "airline": "중국남방항공",
     "stops": "경유 2회",
     "dur": "32시간",
@@ -367,7 +316,7 @@
     "code": "CZ"
    },
    "direct": {
-    "price": 1081400,
+    "price": 1088000,
     "airline": "루프트한자",
     "stops": "직항",
     "dur": "14시간",
@@ -379,10 +328,10 @@
     "lo": 800000,
     "hi": 1300000
    },
-   "median30": 1349200,
+   "median30": 1348800,
    "deal": "other",
    "why": "외항사 경유 최저가가 보통보다 쌈",
-   "vsLow": 56,
+   "vsLow": 68,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-frankfurt.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -406,7 +355,7 @@
     "code": "LO"
    },
    "direct": {
-    "price": 1136400,
+    "price": 1142800,
     "airline": "루프트한자",
     "stops": "직항",
     "dur": "14시간",
@@ -434,28 +383,28 @@
    "kr": {
     "name": "Trinity Airways",
     "direct": true,
-    "price": 960043,
+    "price": 962232,
     "code": "TW"
    },
    "krAll": [
     {
      "name": "Trinity Airways",
      "direct": true,
-     "price": 960043,
+     "price": 962232,
      "code": "TW"
     },
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1558500,
+     "price": 1558700,
      "code": "OZ"
     }
    ],
    "sky": null,
-   "best": 960043,
+   "best": 962232,
    "bestSrc": "google",
    "rt": {
-    "price": 813100,
+    "price": 816300,
     "airline": "심천항공",
     "stops": "경유 1회",
     "dur": "23시간",
@@ -463,7 +412,7 @@
     "code": "ZH"
    },
    "direct": {
-    "price": 1169300,
+    "price": 1169500,
     "airline": "Trinity Airways",
     "stops": "직항",
     "dur": "15시간",
@@ -482,6 +431,63 @@
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-barcelona.html?hl=ko&curr=KRW&gl=KR"
   },
   {
+   "slug": "prague",
+   "city": "프라하",
+   "region": "유럽",
+   "cc": "cz",
+   "iata": "PRG",
+   "trip": null,
+   "kr": {
+    "name": "대한항공",
+    "direct": true,
+    "price": 1110800,
+    "code": "KE"
+   },
+   "krAll": [
+    {
+     "name": "대한항공",
+     "direct": true,
+     "price": 1110800,
+     "code": "KE"
+    },
+    {
+     "name": "아시아나항공",
+     "direct": true,
+     "price": 1419200,
+     "code": "OZ"
+    }
+   ],
+   "sky": null,
+   "best": 1110800,
+   "bestSrc": "google",
+   "rt": {
+    "price": 810800,
+    "airline": "KLM",
+    "stops": "경유 1회",
+    "dur": "18시간",
+    "dates": "1월 14일 (목)~1월 27일 (수)",
+    "code": "KL"
+   },
+   "direct": {
+    "price": 1310800,
+    "airline": "대한항공",
+    "stops": "직항",
+    "dur": "14시간",
+    "dates": "1월 22일 (금)~2월 5일 (금)"
+   },
+   "typical": {
+    "month": 11,
+    "kind": "low",
+    "lo": 880000,
+    "hi": 1200000
+   },
+   "median30": 1210600,
+   "deal": null,
+   "why": "",
+   "vsLow": 26,
+   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-prague.html?hl=ko&curr=KRW&gl=KR"
+  },
+  {
    "slug": "paris",
    "city": "파리",
    "region": "유럽",
@@ -491,42 +497,42 @@
    "kr": {
     "name": "Trinity Airways",
     "direct": true,
-    "price": 985400,
+    "price": 986600,
     "code": "TW"
    },
    "krAll": [
     {
      "name": "Trinity Airways",
      "direct": true,
-     "price": 985400,
+     "price": 986600,
      "code": "TW"
     },
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1222300,
+     "price": 1223600,
      "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1511000,
+     "price": 1412300,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 985400,
+   "best": 986600,
    "bestSrc": "google",
    "rt": {
-    "price": 855600,
-    "airline": "에어프랑스",
-    "stops": "직항",
-    "dur": "15시간",
-    "dates": "11월 6일 (금)~11월 19일 (목)",
-    "code": "AF"
+    "price": 936000,
+    "airline": "에티하드항공",
+    "stops": "경유 1회",
+    "dur": "38시간",
+    "dates": "11월 26일 (목)~12월 10일 (목)",
+    "code": "EY"
    },
    "direct": {
-    "price": 943700,
+    "price": 946800,
     "airline": "에어프랑스",
     "stops": "직항",
     "dur": "15시간",
@@ -557,30 +563,30 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 1184700,
+    "price": 1135400,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1184700,
+     "price": 1135400,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1184700,
+   "best": 1135400,
    "bestSrc": "google",
    "rt": {
-    "price": 821500,
+    "price": 845700,
     "airline": "KLM",
     "stops": "경유 1회",
     "dur": "26시간",
-    "dates": "1월 14일 (목)~1월 28일 (목)",
+    "dates": "1월 14일 (목)~1월 27일 (수)",
     "code": "KL"
    },
    "direct": {
-    "price": 1184700,
+    "price": 1135400,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "14시간",
@@ -595,7 +601,7 @@
    "median30": 1185000,
    "deal": null,
    "why": "",
-   "vsLow": 41,
+   "vsLow": 35,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-vienna.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -611,42 +617,42 @@
    "kr": {
     "name": "Trinity Airways",
     "direct": true,
-    "price": 1086692,
+    "price": 1089614,
     "code": "TW"
    },
    "krAll": [
     {
      "name": "Trinity Airways",
      "direct": true,
-     "price": 1086692,
+     "price": 1089614,
      "code": "TW"
     },
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1235600,
+     "price": 1236100,
      "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1427200,
+     "price": 1327700,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1086692,
+   "best": 1089614,
    "bestSrc": "google",
    "rt": {
-    "price": 882100,
-    "airline": "에어프랑스",
+    "price": 902200,
+    "airline": "에티하드항공",
     "stops": "경유 1회",
-    "dur": "28시간",
-    "dates": "11월 19일 (목)~12월 2일 (수)",
-    "code": "AF"
+    "dur": "37시간",
+    "dates": "11월 26일 (목)~12월 10일 (목)",
+    "code": "EY"
    },
    "direct": {
-    "price": 1086692,
+    "price": 1089614,
     "airline": "Trinity Airways",
     "stops": "직항",
     "dur": "14시간",
@@ -665,6 +671,60 @@
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-rome.html?hl=ko&curr=KRW&gl=KR"
   },
   {
+   "slug": "lisbon",
+   "city": "리스본",
+   "region": "유럽",
+   "cc": "pt",
+   "iata": "LIS",
+   "trip": {
+    "out": "2026-11-20",
+    "back": "2026-12-06"
+   },
+   "kr": {
+    "name": "대한항공",
+    "direct": true,
+    "price": 1376700,
+    "code": "KE"
+   },
+   "krAll": [
+    {
+     "name": "대한항공",
+     "direct": true,
+     "price": 1376700,
+     "code": "KE"
+    }
+   ],
+   "sky": null,
+   "best": 1376700,
+   "bestSrc": "google",
+   "rt": {
+    "price": 901400,
+    "airline": "KLM",
+    "stops": "경유 1회",
+    "dur": "21시간",
+    "dates": "1월 14일 (목)~1월 27일 (수)",
+    "code": "KL"
+   },
+   "direct": {
+    "price": 1376700,
+    "airline": "대한항공",
+    "stops": "직항",
+    "dur": "16시간",
+    "dates": "11월 20일 (금)~12월 6일 (일)"
+   },
+   "typical": {
+    "month": 11,
+    "kind": "low",
+    "lo": 930000,
+    "hi": 1400000
+   },
+   "median30": 1476300,
+   "deal": null,
+   "why": "",
+   "vsLow": 48,
+   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-lisbon.html?hl=ko&curr=KRW&gl=KR"
+  },
+  {
    "slug": "istanbul",
    "city": "이스탄불",
    "region": "유럽",
@@ -674,28 +734,28 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 1011800,
+    "price": 1012000,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1011800,
+     "price": 1012000,
      "code": "KE"
     },
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1012000,
+     "price": 1012200,
      "code": "OZ"
     }
    ],
    "sky": null,
-   "best": 1011800,
+   "best": 1012000,
    "bestSrc": "google",
    "rt": {
-    "price": 789200,
+    "price": 793000,
     "airline": "중국남방항공",
     "stops": "경유 1회",
     "dur": "28시간",
@@ -703,7 +763,7 @@
     "code": "CZ"
    },
    "direct": {
-    "price": 982000,
+    "price": 982200,
     "airline": "아시아나항공",
     "stops": "직항",
     "dur": "13시간",
@@ -722,60 +782,6 @@
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-istanbul.html?hl=ko&curr=KRW&gl=KR"
   },
   {
-   "slug": "lisbon",
-   "city": "리스본",
-   "region": "유럽",
-   "cc": "pt",
-   "iata": "LIS",
-   "trip": {
-    "out": "2026-11-20",
-    "back": "2026-12-06"
-   },
-   "kr": {
-    "name": "대한항공",
-    "direct": true,
-    "price": 1476200,
-    "code": "KE"
-   },
-   "krAll": [
-    {
-     "name": "대한항공",
-     "direct": true,
-     "price": 1476200,
-     "code": "KE"
-    }
-   ],
-   "sky": null,
-   "best": 1476200,
-   "bestSrc": "google",
-   "rt": {
-    "price": 942500,
-    "airline": "에티하드항공",
-    "stops": "경유 1회",
-    "dur": "39시간",
-    "dates": "11월 19일 (목)~12월 3일 (목)",
-    "code": "EY"
-   },
-   "direct": {
-    "price": 1476200,
-    "airline": "대한항공",
-    "stops": "직항",
-    "dur": "16시간",
-    "dates": "11월 20일 (금)~12월 6일 (일)"
-   },
-   "typical": {
-    "month": 11,
-    "kind": "low",
-    "lo": 930000,
-    "hi": 1400000
-   },
-   "median30": 1476400,
-   "deal": null,
-   "why": "",
-   "vsLow": 59,
-   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-lisbon.html?hl=ko&curr=KRW&gl=KR"
-  },
-  {
    "slug": "budapest",
    "city": "부다페스트",
    "region": "유럽",
@@ -788,22 +794,22 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 1171800,
+    "price": 1122300,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1171800,
+     "price": 1122300,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1171800,
+   "best": 1122300,
    "bestSrc": "google",
    "rt": {
-    "price": 898700,
+    "price": 905000,
     "airline": "루프트한자",
     "stops": "경유 1회",
     "dur": "19시간",
@@ -811,7 +817,7 @@
     "code": "LH"
    },
    "direct": {
-    "price": 1171800,
+    "price": 1122300,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "13시간",
@@ -826,7 +832,7 @@
    "median30": null,
    "deal": null,
    "why": "",
-   "vsLow": 63,
+   "vsLow": 56,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-budapest.html?hl=ko&curr=KRW&gl=KR"
   },
   {
@@ -839,36 +845,36 @@
    "kr": {
     "name": "아시아나항공",
     "direct": true,
-    "price": 1296800,
+    "price": 1299000,
     "code": "OZ"
    },
    "krAll": [
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1296800,
+     "price": 1299000,
      "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1594800,
+     "price": 1447100,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1296800,
+   "best": 1299000,
    "bestSrc": "google",
    "rt": {
-    "price": 795500,
+    "price": 801300,
     "airline": "중국남방항공",
     "stops": "경유 1회",
-    "dur": "18시간",
+    "dur": "19시간",
     "dates": "11월 19일 (목)~11월 25일 (수)",
     "code": "CZ"
    },
    "direct": {
-    "price": 1196200,
+    "price": 1198400,
     "airline": "버진 애틀랜틱항공",
     "stops": "직항",
     "dur": "15시간",
@@ -880,7 +886,7 @@
     "lo": 790000,
     "hi": 1050000
    },
-   "median30": 1296900,
+   "median30": 1296800,
    "deal": null,
    "why": "",
    "vsLow": 64,
@@ -893,34 +899,34 @@
    "cc": "it",
    "iata": "MIL",
    "trip": {
-    "out": "2026-11-19",
-    "back": "2026-12-05"
+    "out": "2026-11-20",
+    "back": "2026-12-06"
    },
    "kr": {
-    "name": "아시아나항공",
+    "name": "대한항공",
     "direct": true,
-    "price": 1215600,
-    "code": "OZ"
+    "price": 1207500,
+    "code": "KE"
    },
    "krAll": [
     {
-     "name": "아시아나항공",
-     "direct": true,
-     "price": 1215600,
-     "code": "OZ"
-    },
-    {
      "name": "대한항공",
      "direct": true,
-     "price": 1257200,
+     "price": 1207500,
      "code": "KE"
+    },
+    {
+     "name": "아시아나항공",
+     "direct": true,
+     "price": 1215900,
+     "code": "OZ"
     }
    ],
    "sky": null,
-   "best": 1215600,
+   "best": 1207500,
    "bestSrc": "google",
    "rt": {
-    "price": 864300,
+    "price": 870300,
     "airline": "에어 돌로미티, 루프트한자",
     "stops": "경유 1회",
     "dur": "16시간",
@@ -928,11 +934,11 @@
     "code": "EN"
    },
    "direct": {
-    "price": 1215600,
-    "airline": "아시아나항공",
+    "price": 1207500,
+    "airline": "대한항공",
     "stops": "직항",
     "dur": "14시간",
-    "dates": "11월 19일 (목)~12월 5일 (토)"
+    "dates": "11월 20일 (금)~12월 6일 (일)"
    },
    "typical": {
     "month": 12,
@@ -943,8 +949,59 @@
    "median30": 1135900,
    "deal": null,
    "why": "",
-   "vsLow": 71,
+   "vsLow": 70,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-milan.html?hl=ko&curr=KRW&gl=KR"
+  },
+  {
+   "slug": "amsterdam",
+   "city": "암스테르담",
+   "region": "유럽",
+   "cc": "nl",
+   "iata": "AMS",
+   "trip": null,
+   "kr": {
+    "name": "대한항공",
+    "direct": true,
+    "price": 1290700,
+    "code": "KE"
+   },
+   "krAll": [
+    {
+     "name": "대한항공",
+     "direct": true,
+     "price": 1290700,
+     "code": "KE"
+    }
+   ],
+   "sky": null,
+   "best": 1290700,
+   "bestSrc": "google",
+   "rt": {
+    "price": 836300,
+    "airline": "중국남방항공",
+    "stops": "경유 1회",
+    "dur": "18시간",
+    "dates": "11월 19일 (목)~12월 2일 (수)",
+    "code": "CZ"
+   },
+   "direct": {
+    "price": 1174000,
+    "airline": "KLM",
+    "stops": "직항",
+    "dur": "15시간",
+    "dates": "12월 26일 (토)~1월 11일 (월)"
+   },
+   "typical": {
+    "month": 12,
+    "kind": "low",
+    "lo": 760000,
+    "hi": 1300000
+   },
+   "median30": 1450700,
+   "deal": null,
+   "why": "",
+   "vsLow": 70,
+   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-amsterdam.html?hl=ko&curr=KRW&gl=KR"
   },
   {
    "slug": "san-francisco",
@@ -956,42 +1013,42 @@
    "kr": {
     "name": "에어프레미아",
     "direct": true,
-    "price": 1104000,
+    "price": 1127600,
     "code": "YP"
    },
    "krAll": [
     {
      "name": "에어프레미아",
      "direct": true,
-     "price": 1104000,
+     "price": 1127600,
      "code": "YP"
     },
     {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1326900,
+     "price": 1278000,
      "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1428500,
+     "price": 1429600,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1104000,
+   "best": 1127600,
    "bestSrc": "google",
    "rt": {
-    "price": 1069728,
+    "price": 1071018,
     "airline": "에어캐나다",
     "stops": "경유 1회",
-    "dur": "36시간",
+    "dur": "15시간",
     "dates": "1월 21일 (목)~2월 3일 (수)",
     "code": "AC"
    },
    "direct": {
-    "price": 1073928,
+    "price": 1075218,
     "airline": "유나이티드항공",
     "stops": "직항",
     "dur": "11시간",
@@ -1006,110 +1063,8 @@
    "median30": 1096100,
    "deal": null,
    "why": "",
-   "vsLow": 73,
+   "vsLow": 76,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-san-francisco.html?hl=ko&curr=KRW&gl=KR"
-  },
-  {
-   "slug": "las-vegas",
-   "city": "라스베이거스",
-   "region": "미국",
-   "cc": "us",
-   "iata": "LAS",
-   "trip": null,
-   "kr": {
-    "name": "대한항공",
-    "direct": true,
-    "price": 1568500,
-    "code": "KE"
-   },
-   "krAll": [
-    {
-     "name": "대한항공",
-     "direct": true,
-     "price": 1568500,
-     "code": "KE"
-    }
-   ],
-   "sky": null,
-   "best": 1568500,
-   "bestSrc": "google",
-   "rt": {
-    "price": 1173300,
-    "airline": "에어캐나다",
-    "stops": "경유 1회",
-    "dur": "15시간",
-    "dates": "1월 22일 (금)~2월 4일 (목)",
-    "code": "AC"
-   },
-   "direct": {
-    "price": 2018500,
-    "airline": "대한항공",
-    "stops": "직항",
-    "dur": "12시간",
-    "dates": "12월 10일 (목)~12월 23일 (수)"
-   },
-   "typical": {
-    "month": 2,
-    "kind": "low",
-    "lo": 900000,
-    "hi": 1400000
-   },
-   "median30": 1568400,
-   "deal": null,
-   "why": "",
-   "vsLow": 74,
-   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-las-vegas.html?hl=ko&curr=KRW&gl=KR"
-  },
-  {
-   "slug": "brisbane",
-   "city": "브리즈번",
-   "region": "호주",
-   "cc": "au",
-   "iata": "BNE",
-   "trip": null,
-   "kr": {
-    "name": "대한항공",
-    "direct": true,
-    "price": 1473200,
-    "code": "KE"
-   },
-   "krAll": [
-    {
-     "name": "대한항공",
-     "direct": true,
-     "price": 1473200,
-     "code": "KE"
-    }
-   ],
-   "sky": null,
-   "best": 1473200,
-   "bestSrc": "google",
-   "rt": {
-    "price": 1000915,
-    "airline": "젯스타",
-    "stops": "직항",
-    "dur": "10시간",
-    "dates": "12월 24일 (목)~1월 7일 (목)",
-    "code": "JQ"
-   },
-   "direct": {
-    "price": 1153035,
-    "airline": "젯스타",
-    "stops": "직항",
-    "dur": "10시간",
-    "dates": "1월 28일 (목)~2월 11일 (목)"
-   },
-   "typical": {
-    "month": 3,
-    "kind": "low",
-    "lo": 830000,
-    "hi": 1300000
-   },
-   "median30": 1472300,
-   "deal": null,
-   "why": "",
-   "vsLow": 77,
-   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-brisbane.html?hl=ko&curr=KRW&gl=KR"
   },
   {
    "slug": "madrid",
@@ -1117,37 +1072,34 @@
    "region": "유럽",
    "cc": "es",
    "iata": "MAD",
-   "trip": {
-    "out": "2027-01-28",
-    "back": "2027-02-11"
-   },
+   "trip": null,
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 1405800,
+    "price": 1406100,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1405800,
+     "price": 1406100,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1405800,
+   "best": 1406100,
    "bestSrc": "google",
    "rt": {
-    "price": 771700,
+    "price": 775600,
     "airline": "중국남방항공",
     "stops": "경유 1회",
-    "dur": "25시간",
+    "dur": "24시간",
     "dates": "11월 27일 (금)~12월 10일 (목)",
     "code": "CZ"
    },
    "direct": {
-    "price": 1405800,
+    "price": 1356100,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "16시간",
@@ -1159,11 +1111,62 @@
     "lo": 790000,
     "hi": 1300000
    },
-   "median30": 1456000,
+   "median30": 1455900,
    "deal": null,
    "why": "",
    "vsLow": 78,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-madrid.html?hl=ko&curr=KRW&gl=KR"
+  },
+  {
+   "slug": "brisbane",
+   "city": "브리즈번",
+   "region": "호주",
+   "cc": "au",
+   "iata": "BNE",
+   "trip": null,
+   "kr": {
+    "name": "대한항공",
+    "direct": true,
+    "price": 1474700,
+    "code": "KE"
+   },
+   "krAll": [
+    {
+     "name": "대한항공",
+     "direct": true,
+     "price": 1474700,
+     "code": "KE"
+    }
+   ],
+   "sky": null,
+   "best": 1474700,
+   "bestSrc": "google",
+   "rt": {
+    "price": 1001975,
+    "airline": "젯스타",
+    "stops": "직항",
+    "dur": "10시간",
+    "dates": "12월 24일 (목)~1월 7일 (목)",
+    "code": "JQ"
+   },
+   "direct": {
+    "price": 1173184,
+    "airline": "젯스타",
+    "stops": "직항",
+    "dur": "10시간",
+    "dates": "11월 21일 (토)~12월 5일 (토)"
+   },
+   "typical": {
+    "month": 3,
+    "kind": "low",
+    "lo": 830000,
+    "hi": 1300000
+   },
+   "median30": 1472300,
+   "deal": null,
+   "why": "",
+   "vsLow": 78,
+   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-brisbane.html?hl=ko&curr=KRW&gl=KR"
   },
   {
    "slug": "toronto",
@@ -1175,30 +1178,30 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 2137800,
+    "price": 2138500,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 2137800,
+     "price": 2138500,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 2137800,
+   "best": 2138500,
    "bestSrc": "google",
    "rt": {
-    "price": 1743365,
+    "price": 1748764,
     "airline": "에바항공",
     "stops": "경유 1회",
     "dur": "23시간",
-    "dates": "11월 12일 (목)~11월 25일 (수)",
+    "dates": "10월 31일 (토)~11월 13일 (금)",
     "code": null
    },
    "direct": {
-    "price": 1921200,
+    "price": 1921900,
     "airline": "에어캐나다",
     "stops": "직항",
     "dur": "14시간",
@@ -1226,30 +1229,30 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 1368500,
+    "price": 1369600,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1368500,
+     "price": 1369600,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1368500,
+   "best": 1369600,
    "bestSrc": "google",
    "rt": {
-    "price": 1190600,
+    "price": 1191700,
     "airline": "에어캐나다",
     "stops": "경유 1회",
-    "dur": "13시간",
+    "dur": "21시간",
     "dates": "12월 17일 (목)~12월 30일 (수)",
     "code": "AC"
    },
    "direct": {
-    "price": 1350326,
+    "price": 1353811,
     "airline": "알래스카항공",
     "stops": "직항",
     "dur": "11시간",
@@ -1277,34 +1280,34 @@
    "kr": {
     "name": "Trinity Airways",
     "direct": true,
-    "price": 1158082,
+    "price": 1158535,
     "code": "TW"
    },
    "krAll": [
     {
      "name": "Trinity Airways",
      "direct": true,
-     "price": 1158082,
+     "price": 1158535,
      "code": "TW"
-    },
-    {
-     "name": "아시아나항공",
-     "direct": true,
-     "price": 1349400,
-     "code": "OZ"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1617000,
+     "price": 1418700,
      "code": "KE"
+    },
+    {
+     "name": "아시아나항공",
+     "direct": true,
+     "price": 1476100,
+     "code": "OZ"
     }
    ],
    "sky": null,
-   "best": 1158082,
+   "best": 1158535,
    "bestSrc": "google",
    "rt": {
-    "price": 883000,
+    "price": 885260,
     "airline": "중국남방항공",
     "stops": "경유 1회",
     "dur": "21시간",
@@ -1312,11 +1315,11 @@
     "code": "CZ"
    },
    "direct": {
-    "price": 1058589,
+    "price": 1011347,
     "airline": "젯스타",
     "stops": "직항",
     "dur": "11시간",
-    "dates": "12월 14일 (월)~12월 30일 (수)"
+    "dates": "11월 2일 (월)~11월 16일 (월)"
    },
    "typical": {
     "month": 3,
@@ -1331,57 +1334,6 @@
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-sydney.html?hl=ko&curr=KRW&gl=KR"
   },
   {
-   "slug": "amsterdam",
-   "city": "암스테르담",
-   "region": "유럽",
-   "cc": "nl",
-   "iata": "AMS",
-   "trip": null,
-   "kr": {
-    "name": "대한항공",
-    "direct": true,
-    "price": 1389600,
-    "code": "KE"
-   },
-   "krAll": [
-    {
-     "name": "대한항공",
-     "direct": true,
-     "price": 1389600,
-     "code": "KE"
-    }
-   ],
-   "sky": null,
-   "best": 1389600,
-   "bestSrc": "google",
-   "rt": {
-    "price": 831600,
-    "airline": "중국남방항공",
-    "stops": "경유 1회",
-    "dur": "18시간",
-    "dates": "11월 19일 (목)~12월 2일 (수)",
-    "code": "CZ"
-   },
-   "direct": {
-    "price": 1170500,
-    "airline": "KLM",
-    "stops": "직항",
-    "dur": "15시간",
-    "dates": "12월 26일 (토)~1월 11일 (월)"
-   },
-   "typical": {
-    "month": 12,
-    "kind": "low",
-    "lo": 760000,
-    "hi": 1300000
-   },
-   "median30": 1450700,
-   "deal": null,
-   "why": "",
-   "vsLow": 83,
-   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-amsterdam.html?hl=ko&curr=KRW&gl=KR"
-  },
-  {
    "slug": "new-york",
    "city": "뉴욕",
    "region": "미국",
@@ -1389,36 +1341,36 @@
    "iata": "NYC",
    "trip": null,
    "kr": {
-    "name": "에어프레미아",
+    "name": "아시아나항공",
     "direct": true,
-    "price": 1311000,
-    "code": "YP"
+    "price": 1368000,
+    "code": "OZ"
    },
    "krAll": [
     {
-     "name": "에어프레미아",
-     "direct": true,
-     "price": 1311000,
-     "code": "YP"
-    },
-    {
      "name": "아시아나항공",
      "direct": true,
-     "price": 1366900,
+     "price": 1368000,
      "code": "OZ"
+    },
+    {
+     "name": "에어프레미아",
+     "direct": true,
+     "price": 1371400,
+     "code": "YP"
     },
     {
      "name": "대한항공",
      "direct": true,
-     "price": 1649700,
+     "price": 1650800,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 1311000,
+   "best": 1368000,
    "bestSrc": "google",
    "rt": {
-    "price": 1118700,
+    "price": 1119800,
     "airline": "에어캐나다",
     "stops": "경유 1회",
     "dur": "36시간",
@@ -1426,11 +1378,11 @@
     "code": "AC"
    },
    "direct": {
-    "price": 1144500,
+    "price": 1145600,
     "airline": "유나이티드항공",
     "stops": "직항",
     "dur": "14시간",
-    "dates": "10월 30일 (금)~11월 12일 (목)"
+    "dates": "11월 2일 (월)~11월 15일 (일)"
    },
    "typical": {
     "month": 12,
@@ -1441,8 +1393,62 @@
    "median30": 1341700,
    "deal": null,
    "why": "",
-   "vsLow": 102,
+   "vsLow": 110,
    "link": "https://www.google.com/travel/flights/flights-from-seoul-to-new-york.html?hl=ko&curr=KRW&gl=KR"
+  },
+  {
+   "slug": "las-vegas",
+   "city": "라스베이거스",
+   "region": "미국",
+   "cc": "us",
+   "iata": "LAS",
+   "trip": {
+    "out": "2026-12-10",
+    "back": "2026-12-23"
+   },
+   "kr": {
+    "name": "대한항공",
+    "direct": true,
+    "price": 2001400,
+    "code": "KE"
+   },
+   "krAll": [
+    {
+     "name": "대한항공",
+     "direct": true,
+     "price": 2001400,
+     "code": "KE"
+    }
+   ],
+   "sky": null,
+   "best": 2001400,
+   "bestSrc": "google",
+   "rt": {
+    "price": 1174400,
+    "airline": "에어캐나다",
+    "stops": "경유 1회",
+    "dur": "15시간",
+    "dates": "1월 22일 (금)~2월 4일 (목)",
+    "code": "AC"
+   },
+   "direct": {
+    "price": 2019600,
+    "airline": "대한항공",
+    "stops": "직항",
+    "dur": "12시간",
+    "dates": "12월 10일 (목)~12월 23일 (수)"
+   },
+   "typical": {
+    "month": 2,
+    "kind": "low",
+    "lo": 900000,
+    "hi": 1400000
+   },
+   "median30": 1568400,
+   "deal": null,
+   "why": "",
+   "vsLow": 122,
+   "link": "https://www.google.com/travel/flights/flights-from-seoul-to-las-vegas.html?hl=ko&curr=KRW&gl=KR"
   },
   {
    "slug": "chicago",
@@ -1451,40 +1457,40 @@
    "cc": "us",
    "iata": "CHI",
    "trip": {
-    "out": "2026-12-24",
-    "back": "2027-01-06"
+    "out": "2026-12-17",
+    "back": "2026-12-31"
    },
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 2249700,
+    "price": 2250800,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 2249700,
+     "price": 2250800,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 2249700,
+   "best": 2250800,
    "bestSrc": "google",
    "rt": {
-    "price": 1498500,
-    "airline": "필리핀항공",
+    "price": 1625500,
+    "airline": "에어캐나다, 유나이티드항공",
     "stops": "경유 1회",
-    "dur": "36시간",
-    "dates": "1월 28일 (목)~2월 12일 (금)",
-    "code": "PR"
+    "dur": "17시간",
+    "dates": "11월 19일 (목)~12월 2일 (수)",
+    "code": "AC"
    },
    "direct": {
-    "price": 2249700,
+    "price": 2250800,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "13시간",
-    "dates": "12월 24일 (목)~1월 6일 (수)"
+    "dates": "12월 17일 (목)~12월 31일 (목)"
    },
    "typical": {
     "month": 2,
@@ -1511,30 +1517,30 @@
    "kr": {
     "name": "대한항공",
     "direct": true,
-    "price": 2399700,
+    "price": 2400800,
     "code": "KE"
    },
    "krAll": [
     {
      "name": "대한항공",
      "direct": true,
-     "price": 2399700,
+     "price": 2400800,
      "code": "KE"
     }
    ],
    "sky": null,
-   "best": 2399700,
+   "best": 2400800,
    "bestSrc": "google",
    "rt": {
-    "price": 1402000,
+    "price": 1403200,
     "airline": "아메리칸항공",
     "stops": "경유 1회",
-    "dur": "37시간",
+    "dur": "20시간",
     "dates": "11월 6일 (금)~11월 22일 (일)",
     "code": "AA"
    },
    "direct": {
-    "price": 2399700,
+    "price": 2400800,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "14시간",
@@ -1568,7 +1574,7 @@
     "price": 859300,
     "airline": "LOT 폴란드항공",
     "stops": "경유 1회",
-    "dur": "30시간",
+    "dur": "37시간",
     "dates": "1월 16일 (토)~1월 29일 (금)",
     "code": "LO"
    },
@@ -1598,12 +1604,12 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 906200,
-    "airline": "LOT 폴란드항공",
+    "price": 914700,
+    "airline": "에티하드항공",
     "stops": "경유 1회",
-    "dur": "30시간",
-    "dates": "11월 16일 (월)~11월 29일 (일)",
-    "code": "LO"
+    "dur": "19시간",
+    "dates": "11월 12일 (목)~11월 26일 (목)",
+    "code": "EY"
    },
    "direct": null,
    "typical": {
@@ -1631,7 +1637,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 885597,
+    "price": 887620,
     "airline": "스쿳항공",
     "stops": "경유 2회",
     "dur": "41시간",
@@ -1664,7 +1670,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 874000,
+    "price": 877800,
     "airline": "중국남방항공",
     "stops": "경유 1회",
     "dur": "16시간",
@@ -1672,7 +1678,7 @@
     "code": "CZ"
    },
    "direct": {
-    "price": 1549600,
+    "price": 1549700,
     "airline": "핀란드항공",
     "stops": "직항",
     "dur": "14시간",
@@ -1703,11 +1709,11 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 963800,
+    "price": 983900,
     "airline": "LOT 폴란드항공",
     "stops": "경유 1회",
     "dur": "18시간",
-    "dates": "1월 18일 (월)~1월 31일 (일)",
+    "dates": "12월 28일 (월)~1월 10일 (일)",
     "code": "LO"
    },
    "direct": null,
@@ -1736,12 +1742,12 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 826800,
-    "airline": "LOT 폴란드항공",
-    "stops": "경유 1회",
-    "dur": "22시간",
-    "dates": "1월 24일 (일)~2월 7일 (일)",
-    "code": "LO"
+    "price": 952000,
+    "airline": "루프트한자",
+    "stops": "경유 2회",
+    "dur": "31시간",
+    "dates": "12월 24일 (목)~1월 7일 (목)",
+    "code": "LH"
    },
    "direct": null,
    "typical": {
@@ -1769,7 +1775,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 970300,
+    "price": 977200,
     "airline": "루프트한자",
     "stops": "경유 1회",
     "dur": "19시간",
@@ -1802,7 +1808,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 852263,
+    "price": 855008,
     "airline": "심천항공",
     "stops": "경유 1회",
     "dur": "17시간",
@@ -1810,7 +1816,7 @@
     "code": "ZH"
    },
    "direct": {
-    "price": 1476400,
+    "price": 1477700,
     "airline": "대한항공",
     "stops": "직항",
     "dur": "11시간",
@@ -1841,7 +1847,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 782000,
+    "price": 787100,
     "airline": "중국남방항공",
     "stops": "경유 2회",
     "dur": "34시간",
@@ -1874,11 +1880,11 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 1289700,
+    "price": 1283200,
     "airline": "중국남방항공",
     "stops": "경유 2회",
     "dur": "24시간",
-    "dates": "12월 24일 (목)~1월 9일 (토)",
+    "dates": "12월 28일 (월)~1월 12일 (화)",
     "code": "CZ"
    },
    "direct": null,
@@ -1907,7 +1913,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 1444557,
+    "price": 1439700,
     "airline": "웨스트젯",
     "stops": "직항",
     "dur": "11시간",
@@ -1940,7 +1946,7 @@
    "best": null,
    "bestSrc": "google",
    "rt": {
-    "price": 1819200,
+    "price": 1828900,
     "airline": "카타르항공",
     "stops": "경유 1회",
     "dur": "28시간",
