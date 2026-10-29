@@ -1,0 +1,224 @@
+{
+ "date": "2026-10-30",
+ "generatedAt": "2026-10-30T07:10:00+09:00",
+ "sourcesNote": "웹 검색 21회 + 오늘 맥 수집(X·Threads 16개) + GitHub 원본 README 확인 · 실행 환경에서 X·Threads·github.com·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "편집 0번 다큐 영상, 1주 만에 35만 조회",
+   "url": "https://x.com/krblue_/status/2115225783224701389",
+   "image": null,
+   "source": "X @krblue_ · ♥133",
+   "how": "영상 1편=폴더 1개, 지시는 한 번에 몰아서",
+   "examples": [
+    {
+     "title": "작업 폴더·지시문 구성 캡처",
+     "url": "https://x.com/krblue_/status/2115225783224701389",
+     "image": null
+    }
+   ],
+   "chips": [
+    "1주 35만 조회",
+    "편집 0번",
+    "Remotion 모션 + 일레븐랩스 v4 나레이션 + 수노 음악"
+   ],
+   "forMe": "'캡컷 프로젝트로 만들어줘' 하면 장면별로 고칠 수 있게 받는다고 해요. 시즌 룩북·포트폴리오 영상을 이 구조로 한 편 뽑아 보기 좋습니다. 실존 인물 초상은 저작권 위험이 있다고 본인도 적었어요."
+  },
+  {
+   "cat": "tool",
+   "title": "맥 3대·아이폰을 한 에이전트 작업대로",
+   "url": "https://github.com/getpaseo/paseo",
+   "image": null,
+   "source": "GitHub getpaseo · Threads @avcd.eee ♥50",
+   "how": "Paseo + Tailscale, 아이폰은 QR로 연결",
+   "examples": [
+    {
+     "title": "맥 3대+아이폰 연결 후기와 설정 순서",
+     "url": "https://www.threads.com/@avcd.eee/post/DfBjII6kZn3",
+     "image": null
+    }
+   ],
+   "chips": [
+    "오픈소스",
+    "Claude Code·Codex 등 한 화면",
+    "아이폰 릴레이 종단간 암호화"
+   ],
+   "forMe": "맥북·아이맥·윈도우를 오가며 WORKLOG로 맥락을 잇는 지금 방식에, 같은 세션을 어느 기기에서든 이어 보는 길이 하나 더 생깁니다."
+  },
+  {
+   "cat": "tool",
+   "title": "AI 글 티 지우는 스킬, 16전 16승",
+   "url": "https://github.com/blader/humanizer",
+   "image": null,
+   "source": "GitHub blader · X @dopamine_crypto ♥772",
+   "how": "위키백과 'AI 글 징후' 26패턴으로 고쳐 씀",
+   "chips": [
+    "패턴 26개",
+    "블라인드 16/16 선호",
+    "탐지기 회피용 아님"
+   ],
+   "forMe": "해외 이직용 영문 커버레터·자기소개를 AI로 쓴 뒤 마지막 손질로 돌려 보세요. 예시가 영어 기준이라 영문 글에 더 잘 맞습니다."
+  },
+  {
+   "cat": "vibe",
+   "title": "클로드 코드를 게임 스튜디오로, 에이전트 49명",
+   "url": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+   "image": null,
+   "source": "GitHub Donchitos · MIT · X @dopamine_crypto ♥793",
+   "how": "디렉터→부서 리드→전문가 3층, 결정은 사람이",
+   "examples": [
+    {
+     "title": "제작자 실험: 문서 30장 쓴 버전이 블라인드 평가 꼴찌",
+     "url": "https://github.com/Donchitos/Claude-Code-Game-Studios#does-it-produce-games-or-documents",
+     "image": null
+    }
+   ],
+   "reviews": [
+    {
+     "say": "1인 프로젝트 뼈대 참고용으로 좋다",
+     "who": "X @dopamine_crypto",
+     "url": "https://x.com/dopamine_crypto/status/2115068497030267274",
+     "tone": "good"
+    },
+    {
+     "say": "49명이 한 맥락을 나눠 써 독립 검수는 아님",
+     "who": "Game Production Alchemist",
+     "url": "https://gameproductionalchemist.substack.com/p/claude-code-game-studios-49-agents",
+     "tone": "bad"
+    }
+   ],
+   "chips": [
+    "스킬 74개",
+    "자동 검사 15개",
+    "MIT"
+   ]
+  },
+  {
+   "cat": "hack",
+   "title": "매진 기차표 감시하다 자리 나면 결제까지",
+   "url": "https://www.threads.com/@menhera.osaka/post/DfD7NISAcab",
+   "image": null,
+   "source": "Threads @menhera.osaka · ♥918 · 댓글 714",
+   "how": "국내 서비스 연동 비서 앱 '피클'에 감시 지시",
+   "chips": [
+    "네이버·카카오·정부24 연동(보도)",
+    "결제 전 최종 승인",
+    "현재 초대제"
+   ]
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "영문 자기소개 한 단락, AI 티 지우기",
+   "minutes": 15,
+   "why": "이직 서류에 쓸 영문 자기소개를 AI로 초안 잡았다면, 사람이 쓴 것처럼 다듬는 마지막 단계를 바로 시험할 수 있습니다. 전후 비교 한 장이 남아요.",
+   "from": {
+    "label": "@dopamine_crypto · ♥772",
+    "url": "https://x.com/dopamine_crypto/status/2114937635059716561"
+   },
+   "steps": [
+    {
+     "text": "클로드 코드에 설치",
+     "copy": "/plugin marketplace add blader/humanizer\n/plugin install humanizer@humanizer"
+    },
+    {
+     "text": "자기소개 붙여 실행",
+     "copy": "/humanizer:humanizer\n\nRewrite this so it reads like a person wrote it, keep every fact the same. Then show the original and the rewrite side by side in a table.\n\n(여기에 영문 자기소개 한 단락 붙여넣기)"
+    },
+    {
+     "text": "전후 비교 저장"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "free",
+   "title": "API 크레딧 월 $500 지급",
+   "url": "https://community.openai.com/t/claim-up-to-500-in-api-credits-using-your-chatgpt-pro-or-business-subscription/1410579",
+   "image": null,
+   "source": "OpenAI Developer Community · Plus 제외, 이월 안 됨",
+   "watching": false
+  },
+  {
+   "cat": "release",
+   "title": "수노, 클로드 안에서 작곡",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "image": null,
+   "source": "Music Ally · 10-28 베타, 신청제",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "Runway Ads 전면 공개",
+   "url": "https://runway.com/news/company-news/runway-ads",
+   "image": null,
+   "source": "Runway · 10-27 · 메타·구글·틱톡 게시",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "말하는 3D 세계 Genie 4",
+   "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
+   "image": null,
+   "source": "AI Weekly · 10-27 · 테스터 한정",
+   "watching": true
+  },
+  {
+   "cat": "release",
+   "title": "Gemini 4 Carbon 발표",
+   "url": "https://venturebeat.com/technology/google-unveils-gemini-4-carbon-retaking-the-worlds-no-1-spot-on-updated-harder-benchmarks-but-access-is-limited",
+   "image": null,
+   "source": "VentureBeat · 접근 제한, 사례 아직",
+   "watching": true
+  },
+  {
+   "cat": "tool",
+   "title": "에이전트용 무료 Figma 대안",
+   "url": "https://www.builder.io/blog/agent-native-design-figma-alternative",
+   "image": null,
+   "source": "Builder.io · MIT · 무료",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "수노 MCP 연결법 정리",
+   "url": "https://sunoboard.com/blog/how-to-connect-suno-to-claude",
+   "image": null,
+   "source": "Sunoboard · Claude.ai·데스크톱·코드",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Suno MCP (beta)",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "date": "2026-10-28",
+   "note": "신청제 얼리 액세스 · 실사용 후기 아직 없음"
+  },
+  {
+   "name": "Runway Ads",
+   "url": "https://runway.com/news/company-news/runway-ads",
+   "date": "2026-10-27",
+   "note": "유료 플랜 전체 공개 · 사용자 사례 아직 없음"
+  },
+  {
+   "name": "Genie 4",
+   "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
+   "date": "2026-10-27",
+   "note": "신뢰 테스터 한정 · 공개 사례 없음"
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "보안 기관부터 단계 공개 · 만든 사례는 아직 없음"
+  },
+  {
+   "name": "MAI-Image-2.7 Preview",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "date": "2026-10-27",
+   "note": "편집 전용 미리보기 · 독립 실사용 후기 아직 없음"
+  }
+ ]
+}
