@@ -1,0 +1,809 @@
+{
+ "id": "2026-10-30-conv-are-you-a-creature-or-a-machine-how-to",
+ "title": "Are you a creature or a machine? How to live in ecological community in a time of AI",
+ "url": "https://theconversation.com/are-you-a-creature-or-a-machine-how-to-live-in-ecological-community-in-a-time-of-ai-292765",
+ "source": "The Conversation",
+ "author": "Timothy Martin",
+ "published": "2026-10-15",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "We have been bombarded in recent weeks with apocalyptic headlines about “artificial super-intelligence” and the possibilities of a new era of “artificial general intelligence” (AGI) in which AI achieves human capacities for reason and learning.",
+  "Concerns vary from its misuse in bioterrorism to the capacity of AI agents to form collectives, “go rogue” and perform unauthorized attacks on systems, or even to take over the internet and terminate humanity.",
+  "As a scholar interested in public memory, I find myself returning to the writing of Wendell Berry in response as a source of wisdom for these turbulent times. Berry, who died at home in August, was a cultural critic, writer, farmer, environmentalist and an early influence on my thinking. His book, Life is a miracle: An essay against modern superstition reads as an eerie letter to the purveyors of AI.",
+  "For Berry, the mind was shaped by its place in the world, the textures of the local, a sense of home and a notion of history. To have a mind, argued Berry, one must have a world. In a section of the book titled, “Creatures as machines,” he railed against the way in which the metaphor of mind as machine, has turned into an equivalence.",
+  "The death of the earth",
+  "Some thinkers believe AI promises to save us from work. Elon Musk has made radical claims that AI will make work optional within the next two decades. But part of taking our place in the world — and in time — is through work.",
+  "Berry himself gave up a promising life in New York’s literary scene to move back to Kentucky and work the land. Of course, he continued to produce written works as well: no less than 50 books.",
+  "Some analysts also claim that AI could reduce inequality. Berry addressed similar promises made by 20th century science in the domains of nuclear power, genetic engineering and industrial agriculture.",
+  "In the face of systems that were meant bring us global food security, Berry declared that many of us are now mourning “the progressive death of the Earth.”",
+  "Technology without consent",
+  "We are already witnessing how AI is accelerating many breakthroughs in the sciences — from solving previously unsolvable mathematics problems to diverse transformations in health care and disciplines as diverse as meteorology and synthetic biology. Many commentators within science and the AI industry have drawn parallels between AI and the Industrial Revolution.",
+  "The better comparison may be with nuclear weapons. Geneticist Wes Jackson, founder of the Land Institute, once warned “we ought to stay out of the nuclei.” Jackson was concerned about corporate patents on genetically engineered seed crops and the destructive potential of nuclear fission.",
+  "As a plant geneticist, Jackson himself developed innovative perennial grains by looking to the natural resilience of prairie plant communities. By “entering” the nuclei, Jackson held that we were crossing a threshold that should remain off limits to humans, given the risks involved.",
+  "Quoting his friend and collaborator Jackson, Berry invoked a notion of planetary and creaturely consent: “When a few scientists decided to go in, they decided for everybody.”",
+  "Similarly, when Musk warns of a 20 per cent chance of AI destroying humanity and still plugs away at developing it, he is deciding for all of us.",
+  "Avoidance of difficult thoughts",
+  "It’s tough to argue against the expedience brought about by computers, smart phones and artificial intelligence. And yet Berry showed us how the totalitarian regimes of the 20th century grew in alignment with the development of mechanical processes.",
+  "If freedom is our express purpose, Berry argued, then democracy actually requires instruments that impede operation. These include trial by jury, consent of the governed and the idea of minority rights — all concepts with processes that are frustratingly inefficient but more equal and free.",
+  "AI apologists are fond of dismissing doubters and critics as Luddites. But the Luddites themselves protested precarious work and food insecurity in an age of widespread economic inequality in 19th century England. Berry, in a couple of instances, identified with the Luddites.",
+  "The common refrain when it comes to technological development is to embrace it as inevitable. Berry described this recourse to inevitability as the avoidance of difficult thought.",
+  "Minds like trees or computers?",
+  "For the German philosopher Martin Heidegger, technology was less about the knobs and buttons and more a particular expression of reality, influenced by our immersion in particular tools and activities.",
+  "And there is the impasse. For some, inevitable AI is part of “the way reality discloses itself.” To others, an entirely different existence is made possible by attending to the body, land and material objects. The difficulty today is the distance between these two realities.",
+  "Avoiding the digital screen, Berry wrote in “How to Be a Poet (to remind myself),” was a simple matter of staying “away from anything that obscures the place it is in.” In the same poem, he wrote that that “a tree forms itself in answer to its place and the light.”",
+  "It’s perhaps difficult to conceive of ourselves as creatures, tethered to other creatures and to places — the way trees are wedged into soil and connected by underground mycorrhizal networks. It’s maybe easier to accept we are merely computers, and that by making better computers we take the pressure off the computer that lives somewhere between our ears.",
+  "In Berry’s words: “It is easy for me to imagine that the next great division of the world will be between people who wish to live as creatures and people who wish to live as machines.”",
+  "How to live in community",
+  "If he was still with us, Berry might remind us to judge what we make not for its independent utility, but for its wider relationship to the community. Berry despised the word “environment,” and the notion that “we” might be separate from “it.” Instead, he demanded that we conceive of ourselves as part of a community — including creatures, places, the dead and those not yet born.",
+  "He would invite each of us, tech innovators included, to speak a common language and openly reveal our inventions. He disliked academic over-specialization and feared loss of accountability and understanding across disciplinary boundaries.",
+  "He would tell us to find a place, get to know it and consult the land — an essential educational opportunity in an age of declining ecological knowledge and numb senses.",
+  "If I listen hard, I can hear Berry’s voice: Go slowly; be quiet; plant seeds; restore local watersheds; eat what grows; build community with all creatures that come."
+ ],
+ "level": "C1",
+ "minutes": 6,
+ "words": 1081,
+ "gloss": {
+  "bombarded": {
+   "w": "bombard",
+   "pos": "동사",
+   "ko": "(정보·질문 등을) 퍼붓다",
+   "en": "to attack or overwhelm with a large amount of something",
+   "ex": "After the launch, the brand was bombarded with complaints about sizing.",
+   "ipa": "/bɒmˈbɑːd/"
+  },
+  "bombard": {
+   "w": "bombard",
+   "pos": "동사",
+   "ko": "(정보·질문 등을) 퍼붓다",
+   "en": "to attack or overwhelm with a large amount of something",
+   "ex": "After the launch, the brand was bombarded with complaints about sizing.",
+   "ipa": "/bɒmˈbɑːd/"
+  },
+  "apocalyptic": {
+   "w": "apocalyptic",
+   "pos": "형용사",
+   "ko": "종말론적인, 파국적인",
+   "en": "describing or predicting total disaster or the end of the world",
+   "ex": "The film paints an apocalyptic picture of a city without water.",
+   "ipa": "/əˌpɒkəˈlɪptɪk/"
+  },
+  "go rogue": {
+   "w": "go rogue",
+   "pos": "구",
+   "ko": "통제를 벗어나 제멋대로 행동하다",
+   "en": "to start acting independently and outside the rules or control",
+   "ex": "One sales manager went rogue and offered huge discounts without approval.",
+   "ipa": "/ɡəʊ ˈrəʊɡ/"
+  },
+  "unauthorized": {
+   "w": "unauthorized",
+   "pos": "형용사",
+   "ko": "허가받지 않은, 무단의",
+   "en": "done without official permission",
+   "ex": "Unauthorized copies of the design appeared online within days.",
+   "ipa": "/ʌnˈɔːθəraɪzd/"
+  },
+  "terminate": {
+   "w": "terminate",
+   "pos": "동사",
+   "ko": "끝내다, 종결시키다",
+   "en": "to bring something to an end",
+   "ex": "The company decided to terminate the contract with its supplier.",
+   "ipa": "/ˈtɜːmɪneɪt/"
+  },
+  "turbulent": {
+   "w": "turbulent",
+   "pos": "형용사",
+   "ko": "격동의, 혼란스러운",
+   "en": "full of sudden change, conflict or disorder",
+   "ex": "The fashion industry went through a turbulent period during the pandemic.",
+   "ipa": "/ˈtɜːbjələnt/"
+  },
+  "eerie": {
+   "w": "eerie",
+   "pos": "형용사",
+   "ko": "으스스한, 기묘한",
+   "en": "strange in a way that is slightly frightening",
+   "ex": "There was an eerie silence in the empty studio at night.",
+   "ipa": "/ˈɪəri/"
+  },
+  "purveyors": {
+   "w": "purveyor",
+   "pos": "명사",
+   "ko": "(상품·서비스·생각을) 공급하는 사람/업체",
+   "en": "a person or business that supplies something",
+   "ex": "The shop is a well-known purveyor of handmade leather goods.",
+   "ipa": "/pəˈveɪə/"
+  },
+  "purveyor": {
+   "w": "purveyor",
+   "pos": "명사",
+   "ko": "(상품·서비스·생각을) 공급하는 사람/업체",
+   "en": "a person or business that supplies something",
+   "ex": "The shop is a well-known purveyor of handmade leather goods.",
+   "ipa": "/pəˈveɪə/"
+  },
+  "railed against": {
+   "w": "rail against",
+   "pos": "구",
+   "ko": "~을 격렬히 비난하다",
+   "en": "to complain or protest strongly about something",
+   "ex": "Many designers rail against the waste created by fast fashion.",
+   "ipa": "/ˈreɪl əˈɡenst/"
+  },
+  "rail against": {
+   "w": "rail against",
+   "pos": "구",
+   "ko": "~을 격렬히 비난하다",
+   "en": "to complain or protest strongly about something",
+   "ex": "Many designers rail against the waste created by fast fashion.",
+   "ipa": "/ˈreɪl əˈɡenst/"
+  },
+  "metaphor": {
+   "w": "metaphor",
+   "pos": "명사",
+   "ko": "은유, 비유",
+   "en": "a word or idea used to represent something else",
+   "ex": "She used a garden as a metaphor for building a team.",
+   "ipa": "/ˈmetəfə/"
+  },
+  "equivalence": {
+   "w": "equivalence",
+   "pos": "명사",
+   "ko": "동등함, 같다고 봄",
+   "en": "the state of being equal or the same in value or meaning",
+   "ex": "There is no real equivalence between a quick sketch and a finished garment.",
+   "ipa": "/ɪˈkwɪvələns/"
+  },
+  "radical": {
+   "w": "radical",
+   "pos": "형용사",
+   "ko": "급진적인, 극단적인",
+   "en": "very new, extreme and different from what is usual",
+   "ex": "The new director made radical changes to the collection.",
+   "ipa": "/ˈrædɪkəl/"
+  },
+  "inequality": {
+   "w": "inequality",
+   "pos": "명사",
+   "ko": "불평등",
+   "en": "an unfair difference between groups in wealth or opportunity",
+   "ex": "Income inequality has grown in many large cities.",
+   "ipa": "/ˌɪnɪˈkwɒləti/"
+  },
+  "in the face of": {
+   "w": "in the face of",
+   "pos": "구",
+   "ko": "~에 직면하여, ~에도 불구하고",
+   "en": "when dealing with a difficult situation",
+   "ex": "The team stayed calm in the face of a tight deadline.",
+   "ipa": "/ɪn ðə ˈfeɪs əv/"
+  },
+  "mourning": {
+   "w": "mourn",
+   "pos": "동사",
+   "ko": "애도하다, 슬퍼하다",
+   "en": "to feel deep sadness about a loss",
+   "ex": "Locals mourned the closing of the old fabric market.",
+   "ipa": "/mɔːn/"
+  },
+  "mourn": {
+   "w": "mourn",
+   "pos": "동사",
+   "ko": "애도하다, 슬퍼하다",
+   "en": "to feel deep sadness about a loss",
+   "ex": "Locals mourned the closing of the old fabric market.",
+   "ipa": "/mɔːn/"
+  },
+  "accelerating": {
+   "w": "accelerate",
+   "pos": "동사",
+   "ko": "가속화하다",
+   "en": "to make something happen faster",
+   "ex": "Online shopping has accelerated the decline of small boutiques.",
+   "ipa": "/əkˈseləreɪt/"
+  },
+  "accelerate": {
+   "w": "accelerate",
+   "pos": "동사",
+   "ko": "가속화하다",
+   "en": "to make something happen faster",
+   "ex": "Online shopping has accelerated the decline of small boutiques.",
+   "ipa": "/əkˈseləreɪt/"
+  },
+  "breakthroughs": {
+   "w": "breakthrough",
+   "pos": "명사",
+   "ko": "돌파구, 획기적 발전",
+   "en": "an important new discovery or development",
+   "ex": "The new recycled fibre was a real breakthrough for the brand.",
+   "ipa": "/ˈbreɪkθruː/"
+  },
+  "breakthrough": {
+   "w": "breakthrough",
+   "pos": "명사",
+   "ko": "돌파구, 획기적 발전",
+   "en": "an important new discovery or development",
+   "ex": "The new recycled fibre was a real breakthrough for the brand.",
+   "ipa": "/ˈbreɪkθruː/"
+  },
+  "drawn parallels": {
+   "w": "draw parallels",
+   "pos": "구",
+   "ko": "유사점을 비교하다",
+   "en": "to point out similarities between two things",
+   "ex": "Critics have drawn parallels between her work and 1960s minimalism.",
+   "ipa": "/ˌdrɔː ˈpærəlelz/"
+  },
+  "draw parallels": {
+   "w": "draw parallels",
+   "pos": "구",
+   "ko": "유사점을 비교하다",
+   "en": "to point out similarities between two things",
+   "ex": "Critics have drawn parallels between her work and 1960s minimalism.",
+   "ipa": "/ˌdrɔː ˈpærəlelz/"
+  },
+  "threshold": {
+   "w": "threshold",
+   "pos": "명사",
+   "ko": "문턱, 경계점",
+   "en": "the point at which something starts or changes",
+   "ex": "Once sales pass a certain threshold, the factory adds another shift.",
+   "ipa": "/ˈθreʃhəʊld/"
+  },
+  "off limits": {
+   "w": "off limits",
+   "pos": "구",
+   "ko": "출입·사용 금지인",
+   "en": "not allowed to be entered or used",
+   "ex": "The archive room is off limits to visitors.",
+   "ipa": "/ˌɒf ˈlɪmɪts/"
+  },
+  "resilience": {
+   "w": "resilience",
+   "pos": "명사",
+   "ko": "회복력, 탄력성",
+   "en": "the ability to recover quickly from difficulty",
+   "ex": "Small brands showed great resilience during the economic downturn.",
+   "ipa": "/rɪˈzɪliəns/"
+  },
+  "perennial": {
+   "w": "perennial",
+   "pos": "형용사",
+   "ko": "다년생의; 끊임없이 계속되는",
+   "en": "(of plants) living for several years; lasting a long time",
+   "ex": "Lavender is a perennial plant that returns every summer.",
+   "ipa": "/pəˈreniəl/"
+  },
+  "invoked": {
+   "w": "invoke",
+   "pos": "동사",
+   "ko": "(생각·원칙을) 들먹이다, 끌어오다",
+   "en": "to mention or use an idea or authority to support an argument",
+   "ex": "The speaker invoked Coco Chanel to explain her idea of simplicity.",
+   "ipa": "/ɪnˈvəʊk/"
+  },
+  "invoke": {
+   "w": "invoke",
+   "pos": "동사",
+   "ko": "(생각·원칙을) 들먹이다, 끌어오다",
+   "en": "to mention or use an idea or authority to support an argument",
+   "ex": "The speaker invoked Coco Chanel to explain her idea of simplicity.",
+   "ipa": "/ɪnˈvəʊk/"
+  },
+  "consent": {
+   "w": "consent",
+   "pos": "명사",
+   "ko": "동의, 승낙",
+   "en": "permission or agreement to do something",
+   "ex": "Models must give their consent before photos are used in ads.",
+   "ipa": "/kənˈsent/"
+  },
+  "plugs away at": {
+   "w": "plug away at",
+   "pos": "구",
+   "ko": "~을 꾸준히 계속하다",
+   "en": "to keep working hard at something, often despite difficulty",
+   "ex": "She plugged away at her portfolio every evening after work.",
+   "ipa": "/ˌplʌɡ əˈweɪ æt/"
+  },
+  "plug away at": {
+   "w": "plug away at",
+   "pos": "구",
+   "ko": "~을 꾸준히 계속하다",
+   "en": "to keep working hard at something, often despite difficulty",
+   "ex": "She plugged away at her portfolio every evening after work.",
+   "ipa": "/ˌplʌɡ əˈweɪ æt/"
+  },
+  "expedience": {
+   "w": "expedience",
+   "pos": "명사",
+   "ko": "편의, 편리함(을 우선함)",
+   "en": "the quality of being quick and convenient, sometimes at the cost of what is right",
+   "ex": "The decision was made for expedience rather than quality.",
+   "ipa": "/ɪkˈspiːdiəns/"
+  },
+  "totalitarian": {
+   "w": "totalitarian",
+   "pos": "형용사",
+   "ko": "전체주의의",
+   "en": "controlled by one party that has complete power over people's lives",
+   "ex": "The novel describes life under a totalitarian government.",
+   "ipa": "/təʊˌtælɪˈteəriən/"
+  },
+  "regimes": {
+   "w": "regime",
+   "pos": "명사",
+   "ko": "정권, 체제",
+   "en": "a government, especially one that rules strictly",
+   "ex": "The old regime controlled what newspapers could print.",
+   "ipa": "/reɪˈʒiːm/"
+  },
+  "regime": {
+   "w": "regime",
+   "pos": "명사",
+   "ko": "정권, 체제",
+   "en": "a government, especially one that rules strictly",
+   "ex": "The old regime controlled what newspapers could print.",
+   "ipa": "/reɪˈʒiːm/"
+  },
+  "in alignment with": {
+   "w": "in alignment with",
+   "pos": "구",
+   "ko": "~와 나란히, ~에 맞춰",
+   "en": "in agreement with or developing together with something",
+   "ex": "Our new line is in alignment with the company's sustainability goals.",
+   "ipa": "/ɪn əˈlaɪnmənt wɪð/"
+  },
+  "impede": {
+   "w": "impede",
+   "pos": "동사",
+   "ko": "방해하다, 지연시키다",
+   "en": "to slow down or block progress",
+   "ex": "Heavy snow impeded deliveries to the store.",
+   "ipa": "/ɪmˈpiːd/"
+  },
+  "frustratingly": {
+   "w": "frustratingly",
+   "pos": "부사",
+   "ko": "답답할 정도로",
+   "en": "in a way that makes you feel annoyed or impatient",
+   "ex": "The approval process was frustratingly slow.",
+   "ipa": "/frʌˈstreɪtɪŋli/"
+  },
+  "apologists": {
+   "w": "apologist",
+   "pos": "명사",
+   "ko": "옹호론자",
+   "en": "a person who strongly defends something that others criticise",
+   "ex": "Even apologists for fast fashion admit it creates waste.",
+   "ipa": "/əˈpɒlədʒɪst/"
+  },
+  "apologist": {
+   "w": "apologist",
+   "pos": "명사",
+   "ko": "옹호론자",
+   "en": "a person who strongly defends something that others criticise",
+   "ex": "Even apologists for fast fashion admit it creates waste.",
+   "ipa": "/əˈpɒlədʒɪst/"
+  },
+  "dismissing": {
+   "w": "dismiss",
+   "pos": "동사",
+   "ko": "묵살하다, 일축하다",
+   "en": "to refuse to take someone or something seriously",
+   "ex": "He dismissed her idea before she had finished explaining it.",
+   "ipa": "/dɪsˈmɪs/"
+  },
+  "dismiss": {
+   "w": "dismiss",
+   "pos": "동사",
+   "ko": "묵살하다, 일축하다",
+   "en": "to refuse to take someone or something seriously",
+   "ex": "He dismissed her idea before she had finished explaining it.",
+   "ipa": "/dɪsˈmɪs/"
+  },
+  "precarious": {
+   "w": "precarious",
+   "pos": "형용사",
+   "ko": "불안정한, 위태로운",
+   "en": "not safe or secure; likely to change for the worse",
+   "ex": "Many freelance workers are in a precarious financial position.",
+   "ipa": "/prɪˈkeəriəs/"
+  },
+  "refrain": {
+   "w": "refrain",
+   "pos": "명사",
+   "ko": "되풀이되는 말, 후렴",
+   "en": "a comment or complaint that is repeated often",
+   "ex": "\"We need more time\" was a common refrain in the design team.",
+   "ipa": "/rɪˈfreɪn/"
+  },
+  "inevitable": {
+   "w": "inevitable",
+   "pos": "형용사",
+   "ko": "피할 수 없는, 필연적인",
+   "en": "certain to happen and impossible to avoid",
+   "ex": "Some mistakes are inevitable when you try something new.",
+   "ipa": "/ɪnˈevɪtəbəl/"
+  },
+  "recourse": {
+   "w": "recourse",
+   "pos": "명사",
+   "ko": "의지, 기댐(최후 수단)",
+   "en": "turning to something as a way of dealing with a problem",
+   "ex": "Customers have recourse to a full refund if the item is faulty.",
+   "ipa": "/rɪˈkɔːs/"
+  },
+  "immersion": {
+   "w": "immersion",
+   "pos": "명사",
+   "ko": "몰입, 깊이 빠짐",
+   "en": "complete involvement in an activity or environment",
+   "ex": "Total immersion is the fastest way to learn a language.",
+   "ipa": "/ɪˈmɜːʃən/"
+  },
+  "impasse": {
+   "w": "impasse",
+   "pos": "명사",
+   "ko": "교착 상태",
+   "en": "a situation in which no progress is possible",
+   "ex": "Talks between the union and management reached an impasse.",
+   "ipa": "/ˈæmpɑːs/"
+  },
+  "discloses": {
+   "w": "disclose",
+   "pos": "동사",
+   "ko": "드러내다, 밝히다",
+   "en": "to make something known or visible",
+   "ex": "The brand refused to disclose where its cotton comes from.",
+   "ipa": "/dɪsˈkləʊz/"
+  },
+  "disclose": {
+   "w": "disclose",
+   "pos": "동사",
+   "ko": "드러내다, 밝히다",
+   "en": "to make something known or visible",
+   "ex": "The brand refused to disclose where its cotton comes from.",
+   "ipa": "/dɪsˈkləʊz/"
+  },
+  "obscures": {
+   "w": "obscure",
+   "pos": "동사",
+   "ko": "가리다, 흐리게 하다",
+   "en": "to hide something or make it hard to see or understand",
+   "ex": "Thick fog obscured the view of the harbour.",
+   "ipa": "/əbˈskjʊə/"
+  },
+  "obscure": {
+   "w": "obscure",
+   "pos": "동사",
+   "ko": "가리다, 흐리게 하다",
+   "en": "to hide something or make it hard to see or understand",
+   "ex": "Thick fog obscured the view of the harbour.",
+   "ipa": "/əbˈskjʊə/"
+  },
+  "tethered": {
+   "w": "tether",
+   "pos": "동사",
+   "ko": "묶어 두다, 연결하다",
+   "en": "to tie or connect something so it cannot move far away",
+   "ex": "I feel tethered to my phone even on holiday.",
+   "ipa": "/ˈteðə/"
+  },
+  "tether": {
+   "w": "tether",
+   "pos": "동사",
+   "ko": "묶어 두다, 연결하다",
+   "en": "to tie or connect something so it cannot move far away",
+   "ex": "I feel tethered to my phone even on holiday.",
+   "ipa": "/ˈteðə/"
+  },
+  "wedged": {
+   "w": "wedge",
+   "pos": "동사",
+   "ko": "단단히 끼워 넣다",
+   "en": "to fix or squeeze something firmly into a narrow space",
+   "ex": "A small café is wedged between two tall office buildings.",
+   "ipa": "/wedʒ/"
+  },
+  "wedge": {
+   "w": "wedge",
+   "pos": "동사",
+   "ko": "단단히 끼워 넣다",
+   "en": "to fix or squeeze something firmly into a narrow space",
+   "ex": "A small café is wedged between two tall office buildings.",
+   "ipa": "/wedʒ/"
+  },
+  "despised": {
+   "w": "despise",
+   "pos": "동사",
+   "ko": "몹시 싫어하다, 경멸하다",
+   "en": "to dislike someone or something very strongly",
+   "ex": "She despises logos printed across the front of clothes.",
+   "ipa": "/dɪˈspaɪz/"
+  },
+  "despise": {
+   "w": "despise",
+   "pos": "동사",
+   "ko": "몹시 싫어하다, 경멸하다",
+   "en": "to dislike someone or something very strongly",
+   "ex": "She despises logos printed across the front of clothes.",
+   "ipa": "/dɪˈspaɪz/"
+  },
+  "accountability": {
+   "w": "accountability",
+   "pos": "명사",
+   "ko": "책임(성), 설명 책임",
+   "en": "the fact of being responsible for your decisions and having to explain them",
+   "ex": "Shoppers now demand more accountability from clothing factories.",
+   "ipa": "/əˌkaʊntəˈbɪləti/"
+  },
+  "numb": {
+   "w": "numb",
+   "pos": "형용사",
+   "ko": "무감각한, 마비된",
+   "en": "unable to feel physical sensation or emotion",
+   "ex": "My fingers were numb after an hour in the cold.",
+   "ipa": "/nʌm/"
+  }
+ },
+ "vocab": [
+  "apocalyptic",
+  "turbulent",
+  "inequality",
+  "accelerate",
+  "breakthrough",
+  "draw parallels",
+  "threshold",
+  "resilience",
+  "consent",
+  "impede",
+  "precarious",
+  "inevitable",
+  "impasse",
+  "accountability"
+ ],
+ "quiz": [
+  {
+   "q": "Wendell Berry died in a hospital in August.",
+   "a": "FALSE",
+   "why": "글에는 Berry가 8월에 '집에서(at home)' 세상을 떠났다고 나온다."
+  },
+  {
+   "q": "Berry wrote at least fifty books.",
+   "a": "TRUE",
+   "why": "'no less than 50 books'는 최소 50권이라는 뜻이다."
+  },
+  {
+   "q": "Wes Jackson's perennial grains are now grown by farmers across the United States.",
+   "a": "NOT GIVEN",
+   "why": "Jackson이 다년생 곡물을 개발했다는 말만 있고, 얼마나 재배되는지는 언급이 없다."
+  },
+  {
+   "q": "The writer thinks the Industrial Revolution is the most suitable comparison for AI.",
+   "a": "FALSE",
+   "why": "글쓴이는 더 나은 비교 대상이 핵무기일 수 있다고 말한다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "a person's thinking is formed by where they live",
+   "article": "the mind was shaped by its place in the world"
+  },
+  {
+   "simple": "left a successful writing career in New York",
+   "article": "gave up a promising life in New York’s literary scene"
+  },
+  {
+   "simple": "a free society needs tools that slow things down",
+   "article": "democracy actually requires instruments that impede operation"
+  },
+  {
+   "simple": "Berry said calling it unavoidable is a way to skip hard thinking",
+   "article": "Berry described this recourse to inevitability as the avoidance of difficult thought"
+  },
+  {
+   "simple": "he did not like experts being too narrow and worried about no one taking responsibility",
+   "article": "He disliked academic over-specialization and feared loss of accountability"
+  }
+ ],
+ "summary": "Drawing on Wendell Berry's ideas, the author argues that instead of accepting AI as inevitable, we should judge technology by how it affects the wider community of people, places and living things, and choose to live as connected creatures rather than as machines.",
+ "gist": "AI에 대한 공포와 낙관이 커지는 지금, 작가 웬델 베리의 사상을 빌려 기술을 '피할 수 없는 것'으로 받아들이지 말자고 말하는 칼럼.\n인간을 기계가 아닌 땅·공동체와 연결된 생명체로 보고, 기술도 공동체에 미치는 영향으로 판단하자고 제안한다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "Berry stayed in New York's literary world for his entire career.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "뉴욕 문단 생활을 버리고 켄터키로 돌아감 — \"gave up a promising life in New York's literary scene to move back to Kentucky\""
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Berry kept writing after he went back to farming.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "농사를 지으면서도 계속 글을 씀 — \"he continued to produce written works as well\""
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The perennial grains developed by Wes Jackson are now widely grown by commercial farmers.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "Jackson이 다년생 곡물을 개발했다는 말만 있고 상업적 보급 여부는 언급 없음 — \"developed innovative perennial grains\""
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "Comparing AI with nuclear weapons is more fitting than comparing it with the Industrial Revolution.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자는 핵무기와의 비교가 더 낫다고 봄 — \"The better comparison may be with nuclear weapons\""
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "By continuing to develop AI, Elon Musk respects other people's right to make their own choice.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NO",
+    "why": "필자는 Musk가 모두를 대신해 결정한다고 비판 — \"he is deciding for all of us\""
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 12",
+    "options": [
+     "i  A scientist's warning against crossing a dangerous boundary",
+     "ii  How AI could benefit small-scale farmers",
+     "iii  Why slow procedures can protect liberty",
+     "iv  Rejecting the idea that people stand apart from nature",
+     "v  Recent advances in medical AI"
+    ],
+    "answer": "i",
+    "why": "Jackson이 핵(nuclei)에 들어가지 말라고 경고 — \"we ought to stay out of the nuclei\""
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 18",
+    "options": [
+     "i  A scientist's warning against crossing a dangerous boundary",
+     "ii  How AI could benefit small-scale farmers",
+     "iii  Why slow procedures can protect liberty",
+     "iv  Rejecting the idea that people stand apart from nature",
+     "v  Recent advances in medical AI"
+    ],
+    "answer": "iii",
+    "why": "비효율적인 절차가 자유와 평등을 지킨다는 내용 — \"frustratingly inefficient but more equal and free\""
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 28",
+    "options": [
+     "i  A scientist's warning against crossing a dangerous boundary",
+     "ii  How AI could benefit small-scale farmers",
+     "iii  Why slow procedures can protect liberty",
+     "iv  Rejecting the idea that people stand apart from nature",
+     "v  Recent advances in medical AI"
+    ],
+    "answer": "iv",
+    "why": "'우리'와 '환경'을 나누는 생각을 거부함 — \"the notion that \\\"we\\\" might be separate from \\\"it\\\"\""
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a historical protest movement?",
+    "options": [
+     "17",
+     "19",
+     "22",
+     "29"
+    ],
+    "answer": "19",
+    "why": "19세기 영국 러다이트의 항의 — \"the Luddites themselves protested precarious work and food insecurity\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions an underground system linking plants?",
+    "options": [
+     "13",
+     "24",
+     "25",
+     "30"
+    ],
+    "answer": "25",
+    "why": "나무를 잇는 땅속 균근 네트워크 — \"connected by underground mycorrhizal networks\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "According to Berry, what does democracy require if freedom is its aim?",
+    "options": [
+     "A faster ways of reaching decisions",
+     "B mechanisms that deliberately slow processes down",
+     "C fewer protections for minority groups",
+     "D greater reliance on mechanical processes"
+    ],
+    "answer": "B",
+    "why": "민주주의에는 작동을 늦추는 장치가 필요함 — \"democracy actually requires instruments that impede operation\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "Why did Jackson believe humans should not 'enter' the nuclei?",
+    "options": [
+     "A He thought the dangers were too great.",
+     "B He lacked funding for such research.",
+     "C He considered perennial grains inefficient.",
+     "D The government had banned such work."
+    ],
+    "answer": "A",
+    "why": "위험이 커서 넘지 말아야 할 선이라고 봄 — \"should remain off limits to humans, given the risks involved\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "Berry saw the habit of treating technology as inevitable as a way of escaping ____.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "difficult thought"
+    ],
+    "why": "불가피론을 어려운 생각의 회피라고 함 — \"the avoidance of difficult thought\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Jackson developed new grains by looking at the natural resilience of ____ plant communities.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "prairie"
+    ],
+    "why": "초원 식물 군락의 회복력을 참고함 — \"the natural resilience of prairie plant communities\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which word did Berry strongly dislike?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "environment"
+    ],
+    "why": "Berry는 '환경'이라는 단어를 싫어함 — \"Berry despised the word \\\"environment,\\\"\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    11,
+    17,
+    27
+   ]
+  }
+ }
+}

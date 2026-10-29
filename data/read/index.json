@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-28T22:11:26.432Z",
+ "updated": "2026-10-29T22:11:45.519Z",
  "items": [
+  {
+   "id": "2026-10-30-conv-are-you-a-creature-or-a-machine-how-to",
+   "date": "2026-10-30",
+   "source": "The Conversation",
+   "title": "Are you a creature or a machine? How to live in ecological community in a time of AI",
+   "url": "https://theconversation.com/are-you-a-creature-or-a-machine-how-to-live-in-ecological-community-in-a-time-of-ai-292765",
+   "author": "Timothy Martin",
+   "minutes": 6,
+   "level": "C1",
+   "words": 1081,
+   "topic": "일",
+   "gist": "AI에 대한 공포와 낙관이 커지는 지금, 작가 웬델 베리의 사상을 빌려 기술을 '피할 수 없는 것'으로 받아들이지 말자고 말하는 칼럼.\n인간을 기계가 아닌 땅·공동체와 연결된 생명체로 보고, 기술도 공동체에 미치는 영향으로 판단하자고 제안한다.",
+   "file": "data/read/2026-10-30-conv-are-you-a-creature-or-a-machine-how-to.json"
+  },
+  {
+   "id": "2026-10-30-conv-flying-foxes-are-turning-up-starving",
+   "date": "2026-10-30",
+   "source": "The Conversation",
+   "title": "Flying-foxes are turning up starving. Why are we still responding one crisis at a time?",
+   "url": "https://theconversation.com/flying-foxes-are-turning-up-starving-why-are-we-still-responding-one-crisis-at-a-time-295339",
+   "author": "Justin A. Welbergen, Jessica Meade",
+   "minutes": 6,
+   "level": "B2+",
+   "words": 972,
+   "topic": "환경",
+   "gist": "호주 큰박쥐(플라잉폭스)가 먹이 부족·폭염으로 반복해서 떼죽음을 당하는데, 정부는 2017년 권고 이후에도 대응이 없다.\n자원봉사자에게만 맡기지 말고 국가 차원의 조정·모니터링·보호 계획이 필요하다는 주장글.",
+   "file": "data/read/2026-10-30-conv-flying-foxes-are-turning-up-starving.json"
+  },
   {
    "id": "2026-10-29-conv-five-ways-to-find-your-personal-style",
    "date": "2026-10-29",
@@ -186,6 +214,48 @@
  ],
  "links": [
   {
+   "source": "BoF",
+   "title": "Inside the Battle for Luxury’s Million-Dollar Salespeople",
+   "url": "https://www.businessoffashion.com/articles/workplace-talent/the-battle-for-luxurys-million-dollar-salespeople/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BoF",
+   "title": "Lady Gaga Is Haus Labs’ New CEO",
+   "url": "https://www.businessoffashion.com/articles/beauty/lady-gaga-haus-labs-ceo/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BoF",
+   "title": "Puig’s Plan to Go It Alone",
+   "url": "https://www.businessoffashion.com/articles/beauty/puig-vision-2032-capital-markets-day-charlotte-tilbury-byredo/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BoF",
+   "title": "How to Measure the Marketing Impact of Desirability",
+   "url": "https://www.businessoffashion.com/articles/performance-marketing/launchmetrics-alison-bringe-lucinda-bounsall-strategy/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BoF",
+   "title": "The Jennifer Lawrence Beauty Experiment",
+   "url": "https://www.businessoffashion.com/articles/beauty/the-jennifer-lawrence-beauty-experiment/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BBC Future",
+   "title": "The AI bubble could expose your deepest secrets",
+   "url": "https://www.bbc.com/future/article/20261029-the-ai-bubble-could-expose-your-deepest-secrets",
+   "date": "2026-10-29"
+  },
+  {
+   "source": "Guardian Long Read",
+   "title": "Fake film deals and emails from top agents: who is behind the explosion in literary scams?",
+   "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/29/paid-for-book-clubs-fake-film-deals-emails-explosion-literary-scams-authors",
+   "date": "2026-10-29"
+  },
+  {
    "source": "BBC Future",
    "title": "How AI is helping fight art theft",
    "url": "https://www.bbc.com/future/article/20261027-this-painting-went-missing-20-years-ago-police-tracked-it-down-with-the-help-of-ai",
@@ -322,48 +392,6 @@
    "title": "Paris, We Have a Problem: Why European Luxury Is Under Pressure in China",
    "url": "https://www.businessoffashion.com/articles/china/paris-we-have-a-problem-why-european-luxury-is-under-pressure-in-china/",
    "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Why Did Chanel Invest in Mid-Tier Watchmaker Ebel?",
-   "url": "https://www.businessoffashion.com/articles/luxury/chanel-ebel-investment-fp-journe-swiss-watch-revival/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Introducing The BoF 500 Class of 2026",
-   "url": "https://www.businessoffashion.com/articles/news-analysis/introducing-the-bof-500-class-of-2026/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BBC Future",
-   "title": "How birdwatching slows down brain ageing",
-   "url": "https://www.bbc.com/future/article/20261019-birdwatching-rewires-the-brain-and-slows-cognitive-decline",
-   "date": "2026-10-23"
-  },
-  {
-   "source": "BBC Future",
-   "title": "What animals could a human outrun?",
-   "url": "https://www.bbc.com/future/article/20261021-what-animals-could-you-beat-in-a-race",
-   "date": "2026-10-22"
-  },
-  {
-   "source": "Guardian Long Read",
-   "title": "Everyone hates Oxford Street. Will pedestrianisation save it?",
-   "url": "https://www.theguardian.com/news/2026/oct/22/everyone-hates-oxford-street-will-pedestrianisation-save-it",
-   "date": "2026-10-22"
-  },
-  {
-   "source": "BBC Future",
-   "title": "This test predicts your risk of death",
-   "url": "https://www.bbc.com/future/article/20261020-the-heart-recovery-rate-test-that-predicts-your-heart-health",
-   "date": "2026-10-21"
-  },
-  {
-   "source": "BBC Future",
-   "title": "What to eat for younger skin",
-   "url": "https://www.bbc.com/future/article/20261015-what-can-i-eat-for-younger-skin",
-   "date": "2026-10-20"
   }
  ]
 }
