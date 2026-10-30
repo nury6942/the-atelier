@@ -1,0 +1,211 @@
+{
+ "date": "2026-10-31",
+ "generatedAt": "2026-10-31T07:20:00+09:00",
+ "sourcesNote": "웹 검색 17회 + 오늘 맥 수집(X·Threads 15개) + Concat 원본 README 확인 · 실행 환경에서 X·Threads·github.com·뉴스 사이트 직접 열기가 막혀 그쪽 링크·숫자는 검색 결과와 맥 수집 파일로만 확인",
+ "cards": [
+  {
+   "cat": "vibe",
+   "title": "코드 0줄로 맥 정리 앱, 첫 클릭에 14.6GB",
+   "url": "https://x.com/0xMovez/status/2115870373300326503",
+   "image": null,
+   "source": "X @0xMovez · ♥1,200",
+   "how": "시안 9개 먼저 → 에이전트 8개 병렬 구현",
+   "examples": [
+    {
+     "title": "완성 앱 시연 영상과 프롬프트 전문",
+     "url": "https://x.com/0xMovez/status/2115870373300326503",
+     "image": null
+    }
+   ],
+   "chips": [
+    "첫 정리 14.6GB",
+    "맥·윈도우 동시",
+    "삭제 코드 감시 에이전트 1개"
+   ],
+   "forMe": "'디자인 시안부터 여러 장 그리고 고른 뒤 만든다'는 순서가 누리님 작업 방식과 같아요. 지울 수 있는 코드만 따로 공격하게 한 안전장치는 Atelier 데이터 정리 기능에도 그대로 빌려 쓸 만합니다."
+  },
+  {
+   "cat": "vibe",
+   "title": "프롬프트 한 번에 VHS 대여점 포트폴리오",
+   "url": "https://www.threads.com/@viktoroddy/post/DfGMbaYjAtF",
+   "image": null,
+   "source": "Threads @viktoroddy · ♥1,000",
+   "how": "Claude에 가상 감독 필모 사이트 한 줄 주문",
+   "chips": [
+    "테이프 누르면 3D로 회전",
+    "잉크 번지듯 상세 페이지",
+    "작성자: 예전엔 2주 작업"
+   ],
+   "forMe": "작품을 '물건'처럼 꺼내 보는 진열 방식이라, 저지·쇼츠 시즌 작업을 옷걸이나 선반에 건 이직용 포트폴리오로 바꿔 시험해 볼 수 있어요."
+  },
+  {
+   "cat": "hack",
+   "title": "영상 편집을 AI에 맡기고 업로드 주 1→5회",
+   "url": "https://www.threads.com/@thedalbee/post/DfHAD9foKLF",
+   "image": null,
+   "source": "Threads @thedalbee · ♥517",
+   "how": "Whisper로 무음 컷, 말 실수는 앞을 지우게",
+   "chips": [
+    "회사 채널 주 1→5회",
+    "월 조회 19만",
+    "자막은 넷플릭스 한국어 지침"
+   ],
+   "forMe": "녹화 중 실수하면 한 템포 쉬고 다시 말하기만 하면 AI가 앞 테이크를 지워 준다는 규칙이 핵심이에요. 작업 과정 브이로그를 포트폴리오로 쌓을 때 편집 부담이 확 줄어듭니다."
+  },
+  {
+   "cat": "hack",
+   "title": "말로 블렌더 3D 장면, 리깅·애니까지",
+   "url": "https://x.com/sorenxet/status/2116149863935078885",
+   "image": null,
+   "source": "X @sorenxet · ♥422",
+   "how": "공식 Blender MCP + 무료 에셋 BlenderKit",
+   "examples": [
+    {
+     "title": "참고 이미지로 만든 장면 시연",
+     "url": "https://x.com/sorenxet/status/2116149863935078885",
+     "image": null
+    }
+   ],
+   "chips": [
+    "무료 에셋 14만+",
+    "480p 미리보기 후 최종 렌더",
+    "블렌더 5.1 이상"
+   ],
+   "forMe": "소품은 AI가 직접 빚지 말고 에셋을 가져와 배치하게 하라는 규칙이 결과를 가른다고 해요. 쇼츠·집업 룩을 놓을 매장·촬영 세트 배경을 말로 짜 보는 데 쓸 수 있습니다."
+  },
+  {
+   "cat": "tool",
+   "title": "캡컷 대신 무료 편집기, 클로드가 직접 컷",
+   "url": "https://github.com/jub0t/Concat",
+   "image": null,
+   "source": "GitHub jub0t · AGPL-3.0 · Threads @doitai_1 ♥100",
+   "how": "Rust 편집기에 MCP 내장, 자막은 내 맥에서",
+   "chips": [
+    "워터마크·로그인·구독 없음",
+    "4K 내보내기",
+    "v0.2.8 베타"
+   ],
+   "forMe": "@thedalbee 방식(무음 컷·자막)을 캡컷 결제 없이 내 맥 안에서 해 보는 조합이 됩니다. 아직 베타라 서명 안 된 앱 열기 명령이 README에 따로 있어요.",
+   "from": {
+    "label": "Threads @doitai_1 · ♥100",
+    "url": "https://www.threads.com/@doitai_1/post/DfHQ-ogn_vJ"
+   }
+  }
+ ],
+ "tryToday": [
+  {
+   "title": "남의 design.md로 AI 티 빼기",
+   "minutes": 20,
+   "why": "AI가 만든 화면이 다 비슷해 보이는 이유는 기본 디자인 규칙 때문이라, 실제 사이트에서 뽑은 규칙 파일만 바꿔 끼워도 결과가 달라진다고 해요. 같은 주문으로 전후 두 장을 비교해 볼 수 있습니다.",
+   "from": {
+    "label": "@sylvia.global · ♥127",
+    "url": "https://www.threads.com/@sylvia.global/post/DfG264vD1uy"
+   },
+   "steps": [
+    {
+     "text": "Refero에서 스타일 고르기",
+     "url": "https://styles.refero.design"
+    },
+    {
+     "text": "DESIGN.md 붙여 주문",
+     "copy": "아래 DESIGN.md 규칙만 따라서, MLB 저지 팬츠 신상 3종을 소개하는 한 페이지 HTML을 만들어줘. 색·글꼴·간격·모서리는 이 파일에 적힌 값만 쓰고, 파일에 없는 장식은 넣지 마.\n\n(여기에 복사한 DESIGN.md 붙여넣기)"
+    },
+    {
+     "text": "기본판과 나란히 캡처"
+    }
+   ]
+  }
+ ],
+ "pickup": [
+  {
+   "cat": "release",
+   "title": "코파일럿이 모델을 알아서 골라",
+   "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
+   "image": null,
+   "source": "GitHub Changelog · 10-28 · 비용 절반은 자체 측정",
+   "watching": true
+  },
+  {
+   "cat": "tool",
+   "title": "블렌더 공식 MCP 서버",
+   "url": "https://www.blender.org/lab/mcp-server/",
+   "image": null,
+   "source": "Blender Lab · 5.1 이상 · 무료",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "실사이트 DESIGN.md 모음",
+   "url": "https://styles.refero.design",
+   "image": null,
+   "source": "Refero Styles · 복사 무료",
+   "watching": false
+  },
+  {
+   "cat": "free",
+   "title": "한국 사이트 design.md 모음",
+   "url": "https://getdesign.kr",
+   "image": null,
+   "source": "getdesign.kr",
+   "from": {
+    "label": "Threads @sylvia.global · ♥127",
+    "url": "https://www.threads.com/@sylvia.global/post/DfG264vD1uy"
+   },
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "메타, 옷장 코디 앱 시험 출시",
+   "url": "https://windowsreport.com/?p=1513618",
+   "image": null,
+   "source": "Windows Report · Style Sketch · 동남아 3국 한정",
+   "watching": false
+  },
+  {
+   "cat": "tool",
+   "title": "캡컷 대체 셋 비교",
+   "url": "https://www.besthub.dev/articles/open-source-capcut-alternatives-local-first-privacy-vs-ai-agent-programmability-099add554a05",
+   "image": null,
+   "source": "BestHub · Concat 포함",
+   "watching": false
+  }
+ ],
+ "watching": [
+  {
+   "name": "Suno MCP (beta)",
+   "url": "https://musically.com/2026/10/29/suno-launches-mcp-server-to-create-music-right-from-the-chat/",
+   "date": "2026-10-28",
+   "note": "신청제 얼리 액세스 · 실사용 후기 아직 없음"
+  },
+  {
+   "name": "Runway Ads",
+   "url": "https://runway.com/news/company-news/runway-ads",
+   "date": "2026-10-27",
+   "note": "유료 플랜 전체 공개 · 사용자 사례 아직 없음"
+  },
+  {
+   "name": "Genie 4",
+   "url": "https://aiweekly.co/alerts/google-deepmind-debuts-genie-4-world-model-with-native-audio",
+   "date": "2026-10-27",
+   "note": "신뢰 테스터 한정 · 공개 사례 없음"
+  },
+  {
+   "name": "Gemini 4 Carbon",
+   "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+   "date": "2026-10-28",
+   "note": "파트너 한정 · Arena 테스터 '3D·게임 나아짐' 평만, 만든 사례 아직"
+  },
+  {
+   "name": "MAI-Image-2.7 Preview",
+   "url": "https://windowsreport.com/microsofts-new-mai-image-2-7-model-climbs-to-the-top-of-ai-image-editing-charts/",
+   "date": "2026-10-27",
+   "note": "편집 전용 미리보기 · 독립 실사용 후기 아직 없음"
+  },
+  {
+   "name": "GitHub Copilot Fusion",
+   "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
+   "date": "2026-10-28",
+   "note": "정식 공개 · 독립 후기 아직 없음, 비용 비교는 GitHub 자체 측정"
+  }
+ ]
+}
