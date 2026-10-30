@@ -1,6 +1,34 @@
 {
- "updated": "2026-10-29T22:11:45.519Z",
+ "updated": "2026-10-30T22:11:32.629Z",
  "items": [
+  {
+   "id": "2026-10-31-conv-are-american-voters-actually-gloomy",
+   "date": "2026-10-31",
+   "source": "The Conversation",
+   "title": "Are American voters actually gloomy about the economy, or is something else going on?",
+   "url": "https://theconversation.com/are-american-voters-actually-gloomy-about-the-economy-or-is-something-else-going-on-295476",
+   "author": "Erin Kay Lockwood",
+   "minutes": 7,
+   "level": "C1",
+   "words": 1165,
+   "topic": "경제",
+   "gist": "미국 경제 지표는 좋은데 왜 유권자들은 경제를 비관하는지 분석한 글.\n불평등 심화와 '나라 전체'를 기준으로 경제를 판단하는 성향(sociotropic)이 원인일 수 있다고 본다.",
+   "file": "data/read/2026-10-31-conv-are-american-voters-actually-gloomy.json"
+  },
+  {
+   "id": "2026-10-31-conv-flying-foxes-are-starving-why-are-we",
+   "date": "2026-10-31",
+   "source": "The Conversation",
+   "title": "Flying-foxes are starving. Why are we still responding one crisis at a time?",
+   "url": "https://theconversation.com/flying-foxes-are-starving-why-are-we-still-responding-one-crisis-at-a-time-295339",
+   "author": "Justin A. Welbergen, Jessica Meade",
+   "minutes": 6,
+   "level": "B2+",
+   "words": 972,
+   "topic": "환경",
+   "gist": "호주 큰박쥐(flying-fox)가 먹이 부족·폭염으로 반복해서 떼죽음을 당하는데, 정부는 2017년 권고도 이행하지 않고 위기마다 자원봉사자에게 떠넘기고 있다는 비판 칼럼.\n국가 차원의 모니터링·서식지 보호·회복 계획 등 체계적인 협력이 필요하다고 주장함.",
+   "file": "data/read/2026-10-31-conv-flying-foxes-are-starving-why-are-we.json"
+  },
   {
    "id": "2026-10-30-conv-are-you-a-creature-or-a-machine-how-to",
    "date": "2026-10-30",
@@ -215,6 +243,24 @@
  "links": [
   {
    "source": "BoF",
+   "title": "Inside Gucci’s Paris Palazzo, a Blueprint for Its Retail Revamp",
+   "url": "https://www.businessoffashion.com/articles/luxury/gucci-paris-flagship-demna/",
+   "date": "2026-10-31"
+  },
+  {
+   "source": "BoF",
+   "title": "How Fashion Is Doing Business in the Middle East’s ‘New Reality’",
+   "url": "https://www.businessoffashion.com/articles/global-markets/how-fashion-is-doing-business-in-the-middle-easts-new-reality-gulf-dubai-fashion-week-saudi-arabia/",
+   "date": "2026-10-31"
+  },
+  {
+   "source": "BoF",
+   "title": "At Fashion Week Asia, Connecting Asian Creativity With Global Opportunity",
+   "url": "https://www.businessoffashion.com/articles/global-markets/fashion-week-asia-connects-asian-designers-brands-creativity-to-global-opportunity/",
+   "date": "2026-10-31"
+  },
+  {
+   "source": "BoF",
    "title": "Inside the Battle for Luxury’s Million-Dollar Salespeople",
    "url": "https://www.businessoffashion.com/articles/workplace-talent/the-battle-for-luxurys-million-dollar-salespeople/",
    "date": "2026-10-30"
@@ -241,6 +287,12 @@
    "source": "BoF",
    "title": "The Jennifer Lawrence Beauty Experiment",
    "url": "https://www.businessoffashion.com/articles/beauty/the-jennifer-lawrence-beauty-experiment/",
+   "date": "2026-10-30"
+  },
+  {
+   "source": "BBC Future",
+   "title": "How humans shared a world with child-eating birds",
+   "url": "https://www.bbc.com/future/article/20261028-predatory-birds-the-size-of-a-small-aircraft-once-flocked-the-skies-some-of-them-ate-humans",
    "date": "2026-10-30"
   },
   {
@@ -367,30 +419,6 @@
    "source": "BoF",
    "title": "Fashion’s Next Growth Opportunity Isn’t Gen Z",
    "url": "https://www.businessoffashion.com/articles/retail/fashion-retail-older-shoppers-multigenerational-marketing/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Victoria’s Secret Straddles the Line Between Past and Present",
-   "url": "https://www.businessoffashion.com/articles/retail/victorias-secret-straddles-past-and-present/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Why Luxury Marketing Is Getting More Restrained",
-   "url": "https://www.businessoffashion.com/articles/marketing-pr/why-luxury-marketing-is-getting-more-restrained/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Luxury Stores Looted Amid French Protests",
-   "url": "https://www.businessoffashion.com/articles/news-analysis/mass-protests-in-france-spiral-into-worst-riots-in-years/",
-   "date": "2026-10-25"
-  },
-  {
-   "source": "BoF",
-   "title": "Paris, We Have a Problem: Why European Luxury Is Under Pressure in China",
-   "url": "https://www.businessoffashion.com/articles/china/paris-we-have-a-problem-why-european-luxury-is-under-pressure-in-china/",
    "date": "2026-10-25"
   }
  ]

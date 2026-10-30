@@ -1,0 +1,787 @@
+{
+ "id": "2026-10-31-conv-are-american-voters-actually-gloomy",
+ "title": "Are American voters actually gloomy about the economy, or is something else going on?",
+ "url": "https://theconversation.com/are-american-voters-actually-gloomy-about-the-economy-or-is-something-else-going-on-295476",
+ "source": "The Conversation",
+ "author": "Erin Kay Lockwood",
+ "published": "2026-10-30",
+ "license": "CC BY-ND 4.0",
+ "attribution": "This article is republished from The Conversation under a Creative Commons license. Read the original article.",
+ "paras": [
+  "Polling is looking grim for Republicans ahead of the U.S. midterm elections on Nov. 3, 2026, due in large part to deep pessimism among the public about the economy.",
+  "At first glance, this might seem surprising. With the exception of inflation, many economic measures remain strong, including gross domestic product growth. But consumer sentiment continues to languish.",
+  "This has prompted a debate over whether mere “vibes” are in play, or whether these long-used metrics are no longer capturing something fundamental to Americans’ economic well-being.",
+  "This debate matters politically because voters are placing an overwhelming priority on the economy as an issue in the midterms. A Pew Research survey in early October 2026 found that 84% of registered voters said the economy was very important to their vote, and the concern is bipartisan. Among the issues in that Pew survey, for example, “the economy” was the least polarizing, with 82% of Republicans and 88% of Democrats ranking it as very important.",
+  "Meanwhile, the overall drop in voters’ economic outlook has largely been driven by growing pessimism among Republicans. While Democrats remain much gloomier about the economy than Republicans, the gap is narrowing.",
+  "These trends help explain why Democrats are expected to make significant gains in Congress: This election will likely be seen as an indictment of how well the economy is working for ordinary Americans under President Donald Trump and the Republican-controlled Congress, despite strong macroeconomic measures.",
+  "So what is going on?",
+  "As a scholar of financial markets and global inequality, I believe the relationship between how people see their own finances and their view of the broader economy is also changing on a more fundamental level. And this shift will affect how they judge the next class of lawmakers in power.",
+  "Reality versus ‘vibes’",
+  "When scholars try to understand how people judge the economy – and how they separate their own personal circumstances from the broader economy – one of their key reference points is the University of Michigan’s consumer sentiment index. It asks respondents about their personal finances, their short-term and long-term economic outlook, and whether they think it’s a good time to make major purchases.",
+  "This gauge has historically tracked key economic measures of consumer spending and inflation: The state of the broader economy usually shapes the way people think about their own financial well-being.",
+  "But in recent years, these have diverged. By many measures, the economy is doing well, but people feel they’re falling behind. And this has only become more pronounced ahead of the midterms.",
+  "Despite strong consumer spending, robust business investment and low unemployment, consumer sentiment keeps slipping and is now 10% below where it was a year ago, according to the Michigan index.",
+  "Some commentators point to ongoing inflation as the reason for gloom. It has remained stubbornly above the Federal Reserve’s annual 2% target rate due to drivers like tariffs, energy price hikes stemming from Middle East turmoil, and massive amounts of investment in the artificial intelligence build-out.",
+  "But what’s really happening is that consumer sentiment data and inflation data have become untethered. Inflation has actually dropped sharply from its 21st-century peak of 9.1% in June 2022 after the pandemic to 3.7% in September 2026, but consumer sentiment is lower now than it was even then.",
+  "What about wages? Here, too, the data also doesn’t fully explain this disconnect. While inflation makes consumer goods pricier, it also lifts pay. Inflation-adjusted wages actually increased between 2022 and the first half of 2026, all while consumer sentiment remained weak. What has changed in recent months is that inflation-adjusted wages are now falling – which could help explain the darkening outlook among voters.",
+  "Inequality versus growth",
+  "One possibility is that deeply entrenched inequality explains this divergence.",
+  "Compared with other eras of moderate-to-high inflation, the U.S. economy today is much more unequal. Income inequality has increased over the past 20 years, narrowing only during the 2008 and 2020 crises before quickly widening to prior levels.",
+  "This trend is important for understanding which consumers are shelling out cash. The Fed has consistently cited strong consumer spending in its economic assessments, but the richest 10% of Americans account for half of that spending today. Meanwhile, spending by the bottom 80% of earners has fallen behind inflation.",
+  "In other words, the strong total consumer spending figures reported as official data are being driven by very wealthy Americans and fail to reflect the experience of typical consumers who are the bulk of the electorate.",
+  "This trend of increasing inequality has been particularly acute in terms of wealth: The top 0.1% of American households together own five times as much wealth as the bottom 50%. Much of this reflects the uneven gains of the stock market boom and how wealth is taxed.",
+  "In short, Americans’ economic malaise might be driven by concerns over income and wealth that conventional measures don’t fully capture.",
+  "It’s not just about me",
+  "When it comes to consumer surveys like the University of Michigan index, economists generally assume that the answers reflect the personal experience of respondents.",
+  "But I agree with other scholars who argue that sometimes these answers may be based less on people’s own circumstances and more on how they view the economy as a whole. This assessment could reflect, for example, concerns like equity, equality of opportunity and economic justice.",
+  "When responses are driven by a concern for collective well-being rather than just personal material self-interest, social scientists refer to such perceptions as “sociotropic.”",
+  "This last point isn’t just theoretical. Research suggests voters tend to weight their perceptions of the economy more heavily than their personal financial circumstances when deciding whether to vote for the incumbent party.",
+  "Trade is one good example. Americans’ preferences for trade policy are driven less by how a particular measure, like tariffs, would impact them personally and more by how they think it would affect the country as a whole.",
+  "If consumer sentiment follows a similar path, that could explain the divergence between generally strong economic trends and weak consumer sentiment. People are thinking not just about their own conditions but those of the U.S. as a whole, and it’s possible that their understanding of “the economy” includes its relationship to inequality.",
+  "Understanding the disconnect between the economic data traditionally used to assess the economy’s health and Americans’ perceptions of that economy is important not just to the scholars trying to make sense of it – it could also help set an agenda for the incoming Congress. If economic insecurity punishes the governing party at the polls, the next Congress will be expected to do something about it once sworn in.",
+  "Voters generally back the incumbent party when the economy is doing well and the out-party when it’s not. But how they judge the health of the economy is not straightforward, and the past six years suggest that improving headline measures of economic health – without regard to Americans’ lived experience and their concerns about what kind of economy is being built – may not be enough to assuage voters’ concerns."
+ ],
+ "level": "C1",
+ "minutes": 7,
+ "words": 1165,
+ "gloss": {
+  "grim": {
+   "w": "grim",
+   "pos": "형용사",
+   "ko": "암울한, 어두운",
+   "en": "very serious, depressing or worrying",
+   "ex": "The sales report for the spring collection looked grim.",
+   "ipa": "/ɡrɪm/"
+  },
+  "pessimism": {
+   "w": "pessimism",
+   "pos": "명사",
+   "ko": "비관(주의)",
+   "en": "a tendency to expect bad things to happen",
+   "ex": "There is growing pessimism about the future of small fashion labels.",
+   "ipa": "/ˈpesɪmɪzəm/"
+  },
+  "languish": {
+   "w": "languish",
+   "pos": "동사",
+   "ko": "부진하다, 침체되다",
+   "en": "to stay in a weak or unsuccessful state for a long time",
+   "ex": "The project languished for months without enough funding.",
+   "ipa": "/ˈlæŋɡwɪʃ/"
+  },
+  "prompted": {
+   "w": "prompt",
+   "pos": "동사",
+   "ko": "촉발했다, 유발했다",
+   "en": "caused something to happen",
+   "ex": "The heatwave prompted many shoppers to buy linen shirts.",
+   "ipa": "/ˈprɒmptɪd/"
+  },
+  "prompt": {
+   "w": "prompt",
+   "pos": "동사",
+   "ko": "촉발하다, 유발하다",
+   "en": "to cause someone to do something or something to happen",
+   "ex": "Customer complaints may prompt the brand to change its sizing.",
+   "ipa": "/prɒmpt/"
+  },
+  "metrics": {
+   "w": "metric",
+   "pos": "명사",
+   "ko": "지표들, 측정 기준",
+   "en": "measures used to judge or compare performance",
+   "ex": "We track several metrics, including return rates and repeat purchases.",
+   "ipa": "/ˈmetrɪks/"
+  },
+  "metric": {
+   "w": "metric",
+   "pos": "명사",
+   "ko": "지표, 측정 기준",
+   "en": "a standard way of measuring something",
+   "ex": "Profit is not the only metric of a successful business.",
+   "ipa": "/ˈmetrɪk/"
+  },
+  "overwhelming": {
+   "w": "overwhelming",
+   "pos": "형용사",
+   "ko": "압도적인",
+   "en": "very great in amount or strength",
+   "ex": "The new design received overwhelming support from the team.",
+   "ipa": "/ˌəʊvəˈwelmɪŋ/"
+  },
+  "bipartisan": {
+   "w": "bipartisan",
+   "pos": "형용사",
+   "ko": "양당의, 초당적인",
+   "en": "involving or supported by two opposing political parties",
+   "ex": "The new safety law passed with bipartisan support.",
+   "ipa": "/ˌbaɪpɑːtɪˈzæn/"
+  },
+  "polarizing": {
+   "w": "polarize",
+   "pos": "형용사",
+   "ko": "의견을 양극으로 갈라놓는",
+   "en": "causing people to hold strongly opposite opinions",
+   "ex": "Oversized shoulders are a polarizing trend this season.",
+   "ipa": "/ˈpəʊləraɪzɪŋ/"
+  },
+  "polarize": {
+   "w": "polarize",
+   "pos": "동사",
+   "ko": "양극화시키다",
+   "en": "to divide people into two strongly opposed groups",
+   "ex": "The debate over remote work has polarized the office.",
+   "ipa": "/ˈpəʊləraɪz/"
+  },
+  "gloomier": {
+   "w": "gloomy",
+   "pos": "형용사",
+   "ko": "더 비관적인, 더 우울한",
+   "en": "more negative or without hope",
+   "ex": "Retailers are gloomier about the holiday season than last year.",
+   "ipa": "/ˈɡluːmiə/"
+  },
+  "gloomy": {
+   "w": "gloomy",
+   "pos": "형용사",
+   "ko": "비관적인, 우울한",
+   "en": "feeling or showing little hope",
+   "ex": "Despite the gloomy forecast, the shop had a busy weekend.",
+   "ipa": "/ˈɡluːmi/"
+  },
+  "narrowing": {
+   "w": "narrow",
+   "pos": "동사",
+   "ko": "좁혀지는",
+   "en": "becoming smaller in width or difference",
+   "ex": "The price difference between the two suppliers is narrowing.",
+   "ipa": "/ˈnærəʊɪŋ/"
+  },
+  "narrow": {
+   "w": "narrow",
+   "pos": "동사",
+   "ko": "좁히다, 좁혀지다",
+   "en": "to become or make smaller in range or difference",
+   "ex": "Better training could narrow the skills gap in the industry.",
+   "ipa": "/ˈnærəʊ/"
+  },
+  "indictment": {
+   "w": "indictment",
+   "pos": "명사",
+   "ko": "(심각한 결함의) 증거, 비판; 기소",
+   "en": "a sign that a system or situation is seriously wrong",
+   "ex": "The long waiting lists are an indictment of the healthcare system.",
+   "ipa": "/ɪnˈdaɪtmənt/"
+  },
+  "macroeconomic": {
+   "w": "macroeconomic",
+   "pos": "형용사",
+   "ko": "거시경제의",
+   "en": "relating to the economy as a whole",
+   "ex": "Interest rates are a key macroeconomic tool.",
+   "ipa": "/ˌmækrəʊˌiːkəˈnɒmɪk/"
+  },
+  "respondents": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자들",
+   "en": "people who answer a survey or questionnaire",
+   "ex": "Most respondents said they preferred shopping in person.",
+   "ipa": "/rɪˈspɒndənts/"
+  },
+  "respondent": {
+   "w": "respondent",
+   "pos": "명사",
+   "ko": "응답자",
+   "en": "a person who answers questions in a survey",
+   "ex": "Each respondent was asked to rate the fabric quality.",
+   "ipa": "/rɪˈspɒndənt/"
+  },
+  "gauge": {
+   "w": "gauge",
+   "pos": "명사",
+   "ko": "척도, 지표",
+   "en": "a way of measuring or judging something",
+   "ex": "Repeat customers are a good gauge of brand loyalty.",
+   "ipa": "/ɡeɪdʒ/"
+  },
+  "diverged": {
+   "w": "diverge",
+   "pos": "동사",
+   "ko": "갈라졌다, 달라졌다",
+   "en": "went in different directions; became different",
+   "ex": "Our opinions diverged on the colour palette for the show.",
+   "ipa": "/daɪˈvɜːdʒd/"
+  },
+  "diverge": {
+   "w": "diverge",
+   "pos": "동사",
+   "ko": "갈라지다, 달라지다",
+   "en": "to separate and go in different directions",
+   "ex": "Online and in-store sales began to diverge after the pandemic.",
+   "ipa": "/daɪˈvɜːdʒ/"
+  },
+  "pronounced": {
+   "w": "pronounced",
+   "pos": "형용사",
+   "ko": "뚜렷한, 두드러진",
+   "en": "very noticeable or strong",
+   "ex": "There is a pronounced shift towards second-hand clothing.",
+   "ipa": "/prəˈnaʊnst/"
+  },
+  "robust": {
+   "w": "robust",
+   "pos": "형용사",
+   "ko": "탄탄한, 견고한",
+   "en": "strong and healthy; unlikely to fail",
+   "ex": "The company reported robust growth in overseas markets.",
+   "ipa": "/rəʊˈbʌst/"
+  },
+  "slipping": {
+   "w": "slip",
+   "pos": "동사",
+   "ko": "(조금씩) 떨어지는",
+   "en": "gradually becoming lower or worse",
+   "ex": "Her grades have been slipping since she started her part-time job.",
+   "ipa": "/ˈslɪpɪŋ/"
+  },
+  "slip": {
+   "w": "slip",
+   "pos": "동사",
+   "ko": "하락하다, 나빠지다",
+   "en": "to fall to a lower level or standard",
+   "ex": "Profits slipped slightly in the third quarter.",
+   "ipa": "/slɪp/"
+  },
+  "stubbornly": {
+   "w": "stubbornly",
+   "pos": "부사",
+   "ko": "완강하게, 좀처럼 변하지 않고",
+   "en": "in a way that is difficult to change",
+   "ex": "Rents have stayed stubbornly high in the city centre.",
+   "ipa": "/ˈstʌbənli/"
+  },
+  "stemming from": {
+   "w": "stem from",
+   "pos": "구",
+   "ko": "~에서 비롯된",
+   "en": "caused by or originating from",
+   "ex": "Many delays stemming from the strike affected our deliveries.",
+   "ipa": "/ˈstemɪŋ frəm/"
+  },
+  "stem from": {
+   "w": "stem from",
+   "pos": "구",
+   "ko": "~에서 비롯되다",
+   "en": "to be caused by something",
+   "ex": "Her love of textiles stems from her grandmother's sewing shop.",
+   "ipa": "/ˈstem frəm/"
+  },
+  "turmoil": {
+   "w": "turmoil",
+   "pos": "명사",
+   "ko": "혼란, 소란",
+   "en": "a state of great confusion or disorder",
+   "ex": "The sudden resignation left the design team in turmoil.",
+   "ipa": "/ˈtɜːmɔɪl/"
+  },
+  "untethered": {
+   "w": "untethered",
+   "pos": "형용사",
+   "ko": "연결이 끊어진, 따로 노는",
+   "en": "no longer connected or linked",
+   "ex": "House prices seem untethered from what people actually earn.",
+   "ipa": "/ʌnˈteðəd/"
+  },
+  "disconnect": {
+   "w": "disconnect",
+   "pos": "명사",
+   "ko": "괴리, 단절",
+   "en": "a lack of connection or agreement between two things",
+   "ex": "There is a disconnect between what managers say and what staff experience.",
+   "ipa": "/ˈdɪskənekt/"
+  },
+  "entrenched": {
+   "w": "entrenched",
+   "pos": "형용사",
+   "ko": "뿌리 깊은, 고착된",
+   "en": "firmly established and difficult to change",
+   "ex": "Entrenched habits are hard to break, even with good intentions.",
+   "ipa": "/ɪnˈtrentʃt/"
+  },
+  "divergence": {
+   "w": "divergence",
+   "pos": "명사",
+   "ko": "괴리, 차이",
+   "en": "a difference or separation between two things",
+   "ex": "The survey showed a divergence between young and older shoppers.",
+   "ipa": "/daɪˈvɜːdʒəns/"
+  },
+  "shelling out": {
+   "w": "shell out",
+   "pos": "구",
+   "ko": "(돈을) 쓰는, 내는",
+   "en": "spending money, often a lot or unwillingly",
+   "ex": "Fans are shelling out hundreds of dollars for limited-edition sneakers.",
+   "ipa": "/ˈʃelɪŋ aʊt/"
+  },
+  "shell out": {
+   "w": "shell out",
+   "pos": "구",
+   "ko": "(돈을 마지못해) 쓰다",
+   "en": "to pay money, usually more than you want to",
+   "ex": "I didn't want to shell out for express shipping.",
+   "ipa": "/ʃel aʊt/"
+  },
+  "consistently": {
+   "w": "consistently",
+   "pos": "부사",
+   "ko": "일관되게, 꾸준히",
+   "en": "in the same way every time",
+   "ex": "The brand has consistently used recycled materials.",
+   "ipa": "/kənˈsɪstəntli/"
+  },
+  "acute": {
+   "w": "acute",
+   "pos": "형용사",
+   "ko": "심각한, 극심한",
+   "en": "very serious or severe",
+   "ex": "The shortage of skilled tailors is especially acute in rural areas.",
+   "ipa": "/əˈkjuːt/"
+  },
+  "electorate": {
+   "w": "electorate",
+   "pos": "명사",
+   "ko": "유권자 (전체)",
+   "en": "all the people who are allowed to vote",
+   "ex": "Young people now make up a large part of the electorate.",
+   "ipa": "/ɪˈlektərət/"
+  },
+  "malaise": {
+   "w": "malaise",
+   "pos": "명사",
+   "ko": "침체, (막연한) 불안감",
+   "en": "a general feeling of unease or lack of energy, often in a society or economy",
+   "ex": "The retail sector is struggling with a long period of malaise.",
+   "ipa": "/məˈleɪz/"
+  },
+  "conventional": {
+   "w": "conventional",
+   "pos": "형용사",
+   "ko": "전통적인, 기존의",
+   "en": "following the usual or accepted way",
+   "ex": "She rejected conventional sizing and designed her own fit system.",
+   "ipa": "/kənˈvenʃənl/"
+  },
+  "incumbent": {
+   "w": "incumbent",
+   "pos": "형용사",
+   "ko": "현직의, 재임 중인",
+   "en": "currently holding an official position",
+   "ex": "The incumbent mayor is running for a third term.",
+   "ipa": "/ɪnˈkʌmbənt/"
+  },
+  "sociotropic": {
+   "w": "sociotropic",
+   "pos": "형용사",
+   "ko": "사회 전체를 고려하는",
+   "en": "based on concern for society as a whole rather than oneself",
+   "ex": "Sociotropic voters care about national unemployment even if they have a secure job.",
+   "ipa": "/ˌsəʊsiəʊˈtrɒpɪk/"
+  },
+  "perceptions": {
+   "w": "perception",
+   "pos": "명사",
+   "ko": "인식들, 지각",
+   "en": "the ways people understand or see something",
+   "ex": "Social media has changed perceptions of luxury fashion.",
+   "ipa": "/pəˈsepʃnz/"
+  },
+  "perception": {
+   "w": "perception",
+   "pos": "명사",
+   "ko": "인식, 지각",
+   "en": "the way someone understands or thinks about something",
+   "ex": "There is a common perception that sustainable clothing is expensive.",
+   "ipa": "/pəˈsepʃn/"
+  },
+  "assuage": {
+   "w": "assuage",
+   "pos": "동사",
+   "ko": "(걱정 등을) 덜어주다, 달래다",
+   "en": "to make an unpleasant feeling less intense",
+   "ex": "The manager tried to assuage staff fears about job cuts.",
+   "ipa": "/əˈsweɪdʒ/"
+  },
+  "straightforward": {
+   "w": "straightforward",
+   "pos": "형용사",
+   "ko": "간단한, 명쾌한",
+   "en": "easy to understand or simple",
+   "ex": "The return process is quick and straightforward.",
+   "ipa": "/ˌstreɪtˈfɔːwəd/"
+  },
+  "at first glance": {
+   "w": "at first glance",
+   "pos": "구",
+   "ko": "언뜻 보기에",
+   "en": "when you first look at something, before examining it closely",
+   "ex": "At first glance, the two dresses look identical.",
+   "ipa": "/ət ˌfɜːst ˈɡlɑːns/"
+  },
+  "in large part": {
+   "w": "in large part",
+   "pos": "구",
+   "ko": "대체로, 상당 부분",
+   "en": "mostly; to a great degree",
+   "ex": "The show's success was in large part due to the lighting.",
+   "ipa": "/ɪn ˌlɑːdʒ ˈpɑːt/"
+  },
+  "make sense of": {
+   "w": "make sense of",
+   "pos": "구",
+   "ko": "~을 이해하다",
+   "en": "to understand something difficult or confusing",
+   "ex": "I couldn't make sense of the new tax form.",
+   "ipa": "/meɪk ˈsens əv/"
+  },
+  "sworn in": {
+   "w": "swear in",
+   "pos": "구",
+   "ko": "(선서하고) 취임한",
+   "en": "officially put into a position by taking an oath",
+   "ex": "The new judge was sworn in on Monday morning.",
+   "ipa": "/ˌswɔːn ˈɪn/"
+  },
+  "swear in": {
+   "w": "swear in",
+   "pos": "구",
+   "ko": "취임 선서를 시키다",
+   "en": "to make someone take an official oath when starting a role",
+   "ex": "They will swear in the new council members next week.",
+   "ipa": "/ˌsweər ˈɪn/"
+  },
+  "lived experience": {
+   "w": "lived experience",
+   "pos": "구",
+   "ko": "실제 삶의 경험, 체감",
+   "en": "knowledge gained from personally going through something",
+   "ex": "Policies should be shaped by the lived experience of workers.",
+   "ipa": "/ˌlɪvd ɪkˈspɪəriəns/"
+  },
+  "falling behind": {
+   "w": "fall behind",
+   "pos": "구",
+   "ko": "뒤처지는",
+   "en": "failing to keep up with others or with a standard",
+   "ex": "Many small shops feel they are falling behind online competitors.",
+   "ipa": "/ˌfɔːlɪŋ bɪˈhaɪnd/"
+  },
+  "fall behind": {
+   "w": "fall behind",
+   "pos": "구",
+   "ko": "뒤처지다",
+   "en": "to fail to keep the same pace or level as others",
+   "ex": "If you skip practice, you will fall behind the rest of the class.",
+   "ipa": "/ˌfɔːl bɪˈhaɪnd/"
+  },
+  "account for": {
+   "w": "account for",
+   "pos": "구",
+   "ko": "(비율을) 차지하다; 설명하다",
+   "en": "to form a particular amount or part of something",
+   "ex": "Accessories account for nearly a third of our revenue.",
+   "ipa": "/əˈkaʊnt fə/"
+  },
+  "in terms of": {
+   "w": "in terms of",
+   "pos": "구",
+   "ko": "~의 측면에서",
+   "en": "with regard to a particular aspect",
+   "ex": "In terms of comfort, this fabric is the best choice.",
+   "ipa": "/ɪn ˈtɜːmz əv/"
+  },
+  "self-interest": {
+   "w": "self-interest",
+   "pos": "명사",
+   "ko": "사리사욕, 자기 이익",
+   "en": "concern for your own advantage",
+   "ex": "He supported the plan out of pure self-interest.",
+   "ipa": "/ˌselfˈɪntrəst/"
+  },
+  "uneven": {
+   "w": "uneven",
+   "pos": "형용사",
+   "ko": "고르지 않은, 불균등한",
+   "en": "not equal or fairly distributed",
+   "ex": "The recovery has been uneven across different regions.",
+   "ipa": "/ʌnˈiːvn/"
+  },
+  "bulk": {
+   "w": "bulk",
+   "pos": "명사",
+   "ko": "대부분, 대다수",
+   "en": "the largest part of something",
+   "ex": "The bulk of our orders come from repeat customers.",
+   "ipa": "/bʌlk/"
+  }
+ },
+ "vocab": [
+  "grim",
+  "languish",
+  "bipartisan",
+  "diverge",
+  "pronounced",
+  "robust",
+  "untethered",
+  "entrenched",
+  "acute",
+  "malaise",
+  "incumbent",
+  "assuage",
+  "shell out",
+  "indictment"
+ ],
+ "quiz": [
+  {
+   "q": "Apart from inflation, many economic indicators are still performing well.",
+   "a": "TRUE",
+   "why": "인플레이션을 제외하면 GDP 성장 등 많은 경제 지표가 여전히 강하다고 했다."
+  },
+  {
+   "q": "Inflation in September 2026 was higher than its peak in June 2022.",
+   "a": "FALSE",
+   "why": "2022년 6월 9.1%에서 2026년 9월 3.7%로 크게 떨어졌다고 했다."
+  },
+  {
+   "q": "Consumer sentiment in the Michigan index is now at the lowest level in its history.",
+   "a": "NOT GIVEN",
+   "why": "1년 전보다 10% 낮고 2022년보다 낮다고만 했을 뿐, 역대 최저인지는 언급이 없다."
+  },
+  {
+   "q": "Spending by the bottom 80% of earners has kept up with inflation.",
+   "a": "FALSE",
+   "why": "하위 80%의 소비는 인플레이션을 따라가지 못했다(fallen behind)고 했다."
+  }
+ ],
+ "para": [
+  {
+   "simple": "But people still feel bad about the economy.",
+   "article": "But consumer sentiment continues to languish."
+  },
+  {
+   "simple": "both parties share this worry",
+   "article": "the concern is bipartisan"
+  },
+  {
+   "simple": "how people feel and what prices do are no longer linked",
+   "article": "consumer sentiment data and inflation data have become untethered"
+  },
+  {
+   "simple": "Long-lasting inequality may be why the numbers and feelings don't match.",
+   "article": "One possibility is that deeply entrenched inequality explains this divergence."
+  },
+  {
+   "simple": "the wealthiest tenth of people do half of all the spending now",
+   "article": "the richest 10% of Americans account for half of that spending today"
+  }
+ ],
+ "summary": "Although official figures such as GDP growth and total spending look healthy, Americans feel pessimistic about the economy, possibly because rising inequality hides most people's struggles and because voters judge the economy by how the whole country is doing, not just their own finances.",
+ "gist": "미국 경제 지표는 좋은데 왜 유권자들은 경제를 비관하는지 분석한 글.\n불평등 심화와 '나라 전체'를 기준으로 경제를 판단하는 성향(sociotropic)이 원인일 수 있다고 본다.",
+ "ielts": {
+  "questions": [
+   {
+    "n": 1,
+    "type": "r-tfng",
+    "q": "By September 2026, inflation had fallen to below 4%.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "TRUE",
+    "why": "\"to 3.7% in September 2026\"이므로 4% 아래로 떨어진 것이 맞음"
+   },
+   {
+    "n": 2,
+    "type": "r-tfng",
+    "q": "Consumer sentiment today is more positive than it was when inflation peaked in 2022.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "FALSE",
+    "why": "\"consumer sentiment is lower now than it was even then\" — 지금이 그때보다 더 낮음"
+   },
+   {
+    "n": 3,
+    "type": "r-tfng",
+    "q": "The University of Michigan survey is carried out every month.",
+    "options": [
+     "TRUE",
+     "FALSE",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "[10]은 조사 항목만 설명하고 조사 주기(\"every month\")는 언급하지 않음"
+   },
+   {
+    "n": 4,
+    "type": "r-ynng",
+    "q": "The link between how people see their own finances and how they see the wider economy is changing in a basic way.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "YES",
+    "why": "필자가 \"I believe the relationship... is also changing on a more fundamental level\"라고 주장함"
+   },
+   {
+    "n": 5,
+    "type": "r-ynng",
+    "q": "The next Congress should introduce higher taxes on the wealthiest households.",
+    "options": [
+     "YES",
+     "NO",
+     "NOT GIVEN"
+    ],
+    "answer": "NOT GIVEN",
+    "why": "필자는 \"how wealth is taxed\"를 언급하고 의회가 \"do something about it\"할 것이라고만 말할 뿐, 부유세 인상을 주장하지는 않음"
+   },
+   {
+    "n": 6,
+    "type": "r-heading",
+    "q": "Paragraph 15",
+    "options": [
+     "i  A growing gap between price rises and public mood",
+     "ii  Why wages have always risen faster than prices",
+     "iii  Spending figures shaped by a wealthy minority",
+     "iv  A policy area where national concerns outweigh personal ones",
+     "v  How tariffs have lowered household costs"
+    ],
+    "answer": "i",
+    "why": "\"consumer sentiment data and inflation data have become untethered\" — 물가와 소비자 심리가 따로 움직임"
+   },
+   {
+    "n": 7,
+    "type": "r-heading",
+    "q": "Paragraph 20",
+    "options": [
+     "i  A growing gap between price rises and public mood",
+     "ii  Why wages have always risen faster than prices",
+     "iii  Spending figures shaped by a wealthy minority",
+     "iv  A policy area where national concerns outweigh personal ones",
+     "v  How tariffs have lowered household costs"
+    ],
+    "answer": "iii",
+    "why": "\"the richest 10% of Americans account for half of that spending\" — 소수 부유층이 소비 통계를 끌어올림"
+   },
+   {
+    "n": 8,
+    "type": "r-heading",
+    "q": "Paragraph 29",
+    "options": [
+     "i  A growing gap between price rises and public mood",
+     "ii  Why wages have always risen faster than prices",
+     "iii  Spending figures shaped by a wealthy minority",
+     "iv  A policy area where national concerns outweigh personal ones",
+     "v  How tariffs have lowered household costs"
+    ],
+    "answer": "iv",
+    "why": "무역 정책 선호는 \"less by how... would impact them personally and more by how... it would affect the country\"로 정해짐"
+   },
+   {
+    "n": 9,
+    "type": "r-match",
+    "q": "Which paragraph mentions a comparison of how supporters of two political parties rate the importance of an issue?",
+    "options": [
+     "2",
+     "4",
+     "10",
+     "13"
+    ],
+    "answer": "4",
+    "why": "[4] \"82% of Republicans and 88% of Democrats ranking it as very important\""
+   },
+   {
+    "n": 10,
+    "type": "r-match",
+    "q": "Which paragraph mentions several factors that have kept price rises above an official goal?",
+    "options": [
+     "11",
+     "14",
+     "16",
+     "22"
+    ],
+    "answer": "14",
+    "why": "[14] \"above the Federal Reserve's annual 2% target rate due to drivers like tariffs, energy price hikes...\""
+   },
+   {
+    "n": 11,
+    "type": "r-mcq",
+    "q": "What does the writer say about the official figures showing strong consumer spending?",
+    "options": [
+     "A They accurately reflect the experience of most voters.",
+     "B They have been ignored by the Federal Reserve.",
+     "C They are largely the result of spending by very rich Americans.",
+     "D They show that the bottom 80% of earners are keeping up with inflation."
+    ],
+    "answer": "C",
+    "why": "[21] \"being driven by very wealthy Americans and fail to reflect the experience of typical consumers\""
+   },
+   {
+    "n": 12,
+    "type": "r-mcq",
+    "q": "According to the article, a 'sociotropic' perception is one that is based mainly on",
+    "options": [
+     "A a person's own material self-interest.",
+     "B concern for the well-being of society as a whole.",
+     "C short-term changes in prices.",
+     "D loyalty to a particular political party."
+    ],
+    "answer": "B",
+    "why": "[27] \"driven by a concern for collective well-being rather than just personal material self-interest\""
+   },
+   {
+    "n": 13,
+    "type": "r-gap",
+    "q": "The wealthiest 0.1% of American households own ____ as much wealth as the poorer half of households combined.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "five times"
+    ],
+    "why": "[22] \"own five times as much wealth as the bottom 50%\""
+   },
+   {
+    "n": 14,
+    "type": "r-gap",
+    "q": "Over the past two decades, income inequality only became smaller during the 2008 and 2020 ____, and it quickly grew again afterwards.",
+    "limit": "NO MORE THAN TWO WORDS",
+    "answer": [
+     "crises"
+    ],
+    "why": "[19] \"narrowing only during the 2008 and 2020 crises before quickly widening\""
+   },
+   {
+    "n": 15,
+    "type": "r-short",
+    "q": "Which university's index do scholars use as a key reference point when studying how people judge the economy?",
+    "limit": "NO MORE THAN THREE WORDS",
+    "answer": [
+     "University of Michigan",
+     "Michigan"
+    ],
+    "why": "[10] \"one of their key reference points is the University of Michigan's consumer sentiment index\""
+   }
+  ],
+  "headings": {
+   "paras": [
+    14,
+    19,
+    28
+   ]
+  }
+ }
+}
