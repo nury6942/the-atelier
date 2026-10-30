@@ -1,0 +1,305 @@
+{
+ "date": "2026-10-31",
+ "collectedAt": "2026-10-31T06:50:00+09:00",
+ "skipped": [],
+ "posts": [
+  {
+   "src": "threads",
+   "author": "@thedalbee",
+   "url": "https://www.threads.com/@thedalbee/post/DfHAD9foKLF",
+   "at": "2026-10-30T07:03:17.000Z",
+   "likes": 517,
+   "replies": 33,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "영상편집자가 Claude Code에 편집 맡겨 업로드 주5회로",
+   "points": [
+    "회사 유튜브 주1→5회, 개인 주0.5→3회, 월 조회수 190K",
+    "녹화 중 말 실수하면 한 템포 쉬고 다시 — 무음으로 재테이크를 AI가 구분",
+    "whisper l3t 설치 → 무음 컷, 반복 구간은 앞을 지우고 뒤를 살리게 지시",
+    "자막은 '넷플릭스 한국어 자막 지침'을 따르게, 모션은 HyperFrames, 효과음은 earshot"
+   ],
+   "try": "녹화본 하나로 '무음 컷 + 반복 앞부분 삭제'만 Claude Code에 시켜 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@viktoroddy",
+   "url": "https://www.threads.com/@viktoroddy/post/DfGMbaYjAtF",
+   "at": "2026-10-29T23:36:39.000Z",
+   "likes": 1000,
+   "replies": 37,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "프롬프트 한 번에 VHS 비디오가게형 필모 사이트",
+   "points": [
+    "가상 감독의 필모그래피 사이트를 Claude에 요청",
+    "끝없는 VHS 선반, 테이프 등을 누르면 3D로 돌아 표지가 보임",
+    "열면 표지가 잉크 번지듯 펼쳐지며 상세 페이지로",
+    "작성자: 예전엔 일러스트·3D 개발자 2주 작업, 지금은 프롬프트 하나"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@builder.moonz",
+   "url": "https://www.threads.com/@builder.moonz/post/DfH29OSGSqp",
+   "at": "2026-10-30T15:02:49.000Z",
+   "likes": 54,
+   "replies": 9,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Claude Code VS Code 확장 2.1.313 백도어 주장",
+   "points": [
+    "작성자 주장 — 공식 공지로 한 번 더 확인 필요",
+    "정상 코드 앞에 66줄 악성 코드, 확장이 켜지면 바로 실행",
+    "~/.ssh/authorized_keys 에 'svc-telemetry' 이름의 키 추가",
+    "역방향 터널 + 맥은 LaunchAgent로 재부팅 후에도 유지"
+   ],
+   "try": "~/.ssh/authorized_keys 에 svc-telemetry 줄이 있는지 확인"
+  },
+  {
+   "src": "threads",
+   "author": "@moomoo.bongja",
+   "url": "https://www.threads.com/@moomoo.bongja/post/DfEGboxkkgP",
+   "at": "2026-10-29T04:01:05.000Z",
+   "likes": 114,
+   "replies": 33,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "Aside·Ego lite·Claude in Chrome 브라우저 조작 비교",
+   "points": [
+    "토큰당 효율·작업 완수·속도 3가지로 직접 벤치마크",
+    "1탄 결과: 세 항목 모두 Aside가 가장 좋음",
+    "2탄(메모리): Aside가 다른 둘보다 2~3배 더 씀",
+    "표·그래프는 원문 이미지에"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@giting.kr",
+   "url": "https://www.threads.com/@giting.kr/post/DfGPphsDLwR",
+   "at": "2026-10-30T00:00:33.000Z",
+   "likes": 176,
+   "replies": 29,
+   "image": null,
+   "media": true,
+   "tag": "후기",
+   "summary": "'한글 줄바꿈 고쳐줘' 대신 hangul-wrap 스킬로 0군데",
+   "points": [
+    "폰 325px에서 '예약하/세요'처럼 단어가 꺾이는 문제",
+    "그냥 고쳐달라 하니 멀쩡하던 곳까지 3군데 더 깨짐",
+    "hangul-wrap 스킬은 제목·본문·가격 칸을 나눠 고치고 브라우저로 다시 잼",
+    "같은 폭에서 꺾임 0군데"
+   ],
+   "try": "아뜰리에 화면을 폰 폭으로 열어 단어 꺾임 확인"
+  },
+  {
+   "src": "threads",
+   "author": "@sylvia.global",
+   "url": "https://www.threads.com/@sylvia.global/post/DfG264vD1uy",
+   "at": "2026-10-30T05:43:15.000Z",
+   "likes": 127,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "AI스러운 디자인은 design.md 갈아끼우기로",
+   "points": [
+    "원인은 Claude 기본 디자인 시스템에 섞인 AI slop",
+    "다른 서비스의 design.md를 넣으면 AI 티가 줄어듦",
+    "해외 모음 styles.refero.design, 한국 모음 getdesign.kr"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@starlight_korean",
+   "url": "https://www.threads.com/@starlight_korean/post/DfHvGjEH9V_",
+   "at": "2026-10-30T13:54:11.000Z",
+   "likes": 83,
+   "replies": 4,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Claude Code에 깔 만한 스킬 3개",
+   "points": [
+    "superpowers: 기획→계획→테스트→구현 순서로 일하게 함",
+    "ponytail: '정말 필요해?'부터 묻고 코드를 최소로",
+    "ui-ux-pro-max: 색·폰트·레이아웃을 디자인 시스템 기준으로",
+    "셋 다 무료, 깃허브에서 설치"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@dad40.builds",
+   "url": "https://www.threads.com/@dad40.builds/post/DfGN6rzn4mr",
+   "at": "2026-10-29T23:45:31.000Z",
+   "likes": 41,
+   "replies": 8,
+   "image": null,
+   "media": false,
+   "tag": "꿀팁",
+   "summary": "Cloudflare 보안 점검 스킬 무료 공개",
+   "points": [
+    "security-audit-skill, MIT 라이선스, 스타 4만+",
+    "설치 후 'security audit this codebase' 한 줄",
+    "구조 파악→구멍 찾기→다른 AI가 반박하며 재검증",
+    "결과를 확실·확인 필요·기각으로 나눠 보고, AI 사용량은 별도"
+   ],
+   "try": "Firebase 쓰는 앱 하나에 security audit 돌려 보기"
+  },
+  {
+   "src": "threads",
+   "author": "@doitai_1",
+   "url": "https://www.threads.com/@doitai_1/post/DfHQ-ogn_vJ",
+   "at": "2026-10-30T09:31:05.000Z",
+   "likes": 100,
+   "replies": 1,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "캡컷 대체 오픈소스 Concat, MCP 내장",
+   "points": [
+    "Rust로 만든 영상 편집기, 스타 1.2만+",
+    "자막은 로컬 Whisper, 업로드·워터마크·로그인·구독 없음",
+    "MCP 서버 내장 — 한 줄 설정으로 Claude가 직접 편집"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@joyday_0912",
+   "url": "https://www.threads.com/@joyday_0912/post/DfHTgKUiknT",
+   "at": "2026-10-30T09:53:09.000Z",
+   "likes": 404,
+   "replies": 26,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "ChatGPT 이미지 AI티 줄이는 프롬프트 8개",
+   "points": [
+    "화이트밸런스 5000~5500K 자연광, 과한 주황·청록 억제",
+    "50mm·F1.8~2.8 느낌의 자연스러운 심도, 과한 샤프닝 금지",
+    "SNS 썸네일용은 삼분할 + 카피 넣을 여백 확보",
+    "나머지 항목은 원문 연재(1/9~9/9)에"
+   ]
+  },
+  {
+   "src": "threads",
+   "author": "@cuetone.cc",
+   "url": "https://www.threads.com/@cuetone.cc/post/DfGbvEen0es",
+   "at": "2026-10-30T01:45:43.000Z",
+   "likes": 473,
+   "replies": 95,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "교회 음향 문제를 말로 하면 AI가 믹서 조정",
+   "points": [
+    "'1번 마이크가 안 들려요', '너무 울려요'를 큐에어 AI에 말하면",
+    "믹서 설정을 바로 바꿔 해결",
+    "프로그램은 무료, 후원으로 운영"
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@0xMovez",
+   "url": "https://x.com/0xMovez/status/2115870373300326503",
+   "at": "2026-10-29T18:16:22.000Z",
+   "likes": 1200,
+   "replies": 45,
+   "image": null,
+   "media": true,
+   "tag": "만든 것",
+   "summary": "Opus 5.5로 CleanMyMac급 정리 앱, 첫 클릭 14.6GB",
+   "points": [
+    "빈 폴더 + CleanMyMac 스크린샷 + 프롬프트로 시작, 코드 0줄",
+    "디자인 시안 9개를 먼저 그리고 고른 뒤 구현, Electron+React로 맥·윈도우",
+    "에이전트 8개 병렬 + 삭제 코드만 공격하는 안전 에이전트가 위험 경로 잡음",
+    "GitHub Actions로 .dmg·.exe 자동 빌드, 프롬프트 전문은 원문에"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2115870275925315584/img/WkXimd2ZbXW7mSy5.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2115870275925315584/vid/avc1/640x360/mBuRWE8C_MO0N57e.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@sorenxet",
+   "url": "https://x.com/sorenxet/status/2116149863935078885",
+   "at": "2026-10-30T12:46:58.000Z",
+   "likes": 422,
+   "replies": 23,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "Opus 5.5 + Blender MCP로 3D 장면·리깅·애니",
+   "points": [
+    "Blender 5.2.2 + 공식 Blender MCP, /mcp로 연결 확인",
+    "BlenderKit(무료 에셋 14만+) 설치 후 라이브러리 보이는지 먼저 묻기",
+    "참고 이미지 + 평범한 말로 지시, 480p 미리보기 후 최종 렌더",
+    "규칙: 의자 같은 소품은 직접 만들게 하지 말고 에셋을 가져와 배치"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2116138904277409792/img/s5NQK1jsSINr8UeP.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2116138904277409792/vid/avc1/576x360/lqJKJT30ceVD3HJt.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@skunzu",
+   "url": "https://x.com/skunzu/status/2116255491269476550",
+   "at": "2026-10-30T19:46:41.000Z",
+   "likes": 41,
+   "replies": 11,
+   "image": null,
+   "media": true,
+   "tag": "꿀팁",
+   "summary": "PR 리뷰를 별도 worktree에서 — 내 브랜치 그대로",
+   "points": [
+    "claude --worktree \"#1234\" 로 PR을 .claude/worktrees/ 에 따로 받음",
+    "그 안에서 /code-review high --fix 로 리뷰·수정",
+    "Haiku 하위 에이전트가 호출처 찾기·테스트, Opus는 판정 때만",
+    "--comment 로 결과를 PR에 바로 게시"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2116255328899653632/img/1M57Ql5U-eHglqr8.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2116255328899653632/vid/avc1/480x600/zMt7gLBSWhJHfuIq.mp4"
+    }
+   ]
+  },
+  {
+   "src": "x",
+   "author": "@minchoi",
+   "url": "https://x.com/minchoi/status/2115873209132130548",
+   "at": "2026-10-29T18:27:38.000Z",
+   "likes": 118,
+   "replies": 30,
+   "image": null,
+   "media": true,
+   "tag": "소식",
+   "summary": "Pika H3 Flex — 15초 영상을 7초에 생성",
+   "points": [
+    "15초 클립을 최소 7초에 생성(실시간보다 빠름)",
+    "오디오 스템 5개 분리 내보내기, 참고 자료 12개, 4K",
+    "DesignArena 텍스트→영상 오픈웨이트 1위, 가중치 공개 예정"
+   ],
+   "media_items": [
+    {
+     "type": "video",
+     "img": "https://pbs.twimg.com/amplify_video_thumb/2115873027552432128/img/zqQYdepUjXjBCSxN.jpg",
+     "mp4": "https://video.twimg.com/amplify_video/2115873027552432128/vid/avc1/630x360/owshcv-q77HVUgqy.mp4"
+    }
+   ]
+  }
+ ]
+}
