@@ -7,14 +7,14 @@
    "cat": "vibe",
    "title": "코드 0줄로 맥 정리 앱, 첫 클릭에 14.6GB",
    "url": "https://x.com/0xMovez/status/2115870373300326503",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2115870275925315584/img/WkXimd2ZbXW7mSy5.jpg",
    "source": "X @0xMovez · ♥1,200",
    "how": "시안 9개 먼저 → 에이전트 8개 병렬 구현",
    "examples": [
     {
      "title": "완성 앱 시연 영상과 프롬프트 전문",
      "url": "https://x.com/0xMovez/status/2115870373300326503",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2115870275925315584/img/WkXimd2ZbXW7mSy5.jpg"
     }
    ],
    "chips": [
@@ -56,14 +56,14 @@
    "cat": "hack",
    "title": "말로 블렌더 3D 장면, 리깅·애니까지",
    "url": "https://x.com/sorenxet/status/2116149863935078885",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2116138904277409792/img/s5NQK1jsSINr8UeP.jpg",
    "source": "X @sorenxet · ♥422",
    "how": "공식 Blender MCP + 무료 에셋 BlenderKit",
    "examples": [
     {
      "title": "참고 이미지로 만든 장면 시연",
      "url": "https://x.com/sorenxet/status/2116149863935078885",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2116138904277409792/img/s5NQK1jsSINr8UeP.jpg"
     }
    ],
    "chips": [
@@ -77,7 +77,7 @@
    "cat": "tool",
    "title": "캡컷 대신 무료 편집기, 클로드가 직접 컷",
    "url": "https://github.com/jub0t/Concat",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/jub0t/Concat",
    "source": "GitHub jub0t · AGPL-3.0 · Threads @doitai_1 ♥100",
    "how": "Rust 편집기에 MCP 내장, 자막은 내 맥에서",
    "chips": [
@@ -121,7 +121,7 @@
    "cat": "release",
    "title": "코파일럿이 모델을 알아서 골라",
    "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion",
-   "image": null,
+   "image": "https://github.blog/wp-content/uploads/2026/11/683299408-b1d020a6-0c6d-49a5-ab57-5434d64fb7f9.png",
    "source": "GitHub Changelog · 10-28 · 비용 절반은 자체 측정",
    "watching": true
   },
@@ -137,7 +137,7 @@
    "cat": "free",
    "title": "실사이트 DESIGN.md 모음",
    "url": "https://styles.refero.design",
-   "image": null,
+   "image": "https://styles.refero.design/opengraph-image.png",
    "source": "Refero Styles · 복사 무료",
    "watching": false
   },
@@ -145,7 +145,7 @@
    "cat": "free",
    "title": "한국 사이트 design.md 모음",
    "url": "https://getdesign.kr",
-   "image": null,
+   "image": "https://www.getdesign.kr/og/default.png",
    "source": "getdesign.kr",
    "from": {
     "label": "Threads @sylvia.global · ♥127",
@@ -157,7 +157,7 @@
    "cat": "tool",
    "title": "메타, 옷장 코디 앱 시험 출시",
    "url": "https://windowsreport.com/?p=1513618",
-   "image": null,
+   "image": "https://windowsreport.com/wp-content/uploads/2025/06/Meta-feature-banner-image.png",
    "source": "Windows Report · Style Sketch · 동남아 3국 한정",
    "watching": false
   },
@@ -165,7 +165,7 @@
    "cat": "tool",
    "title": "캡컷 대체 셋 비교",
    "url": "https://www.besthub.dev/articles/open-source-capcut-alternatives-local-first-privacy-vs-ai-agent-programmability-099add554a05",
-   "image": null,
+   "image": "https://wsrv.nl/?url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_jpg%2FBplmnKDr3Ric9EkOyGcQdwh3P5GYzCSaX0yfzt3RgM3DAsLK9QGrZic2fLwcGqRayM5ZWCU8RqDtT6jOUoACAic727mAlepbXEPLKibkcENTp1U%2F0%3Fwx_fmt%3Djpeg",
    "source": "BestHub · Concat 포함",
    "watching": false
   }
