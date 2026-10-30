@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-30T19:38",
+ "generatedAt": "2026-10-31T07:38",
  "sites": [
   "KE",
   "OZ",
@@ -30,7 +30,12 @@
     "on": "총액",
     "how": "홈페이지에서 최저가 조회 후 예매",
     "code": null,
-    "conditions": [],
+    "conditions": [
+     "유류할증료·세금 포함 왕복 총액 기준",
+     "게재 시점 기준, 환율·좌석에 따라 변동",
+     "믹스 클래스(비즈니스+이코노미) 구매 가능",
+     "부다페스트 노선 2026-10-23까지 운항"
+    ],
     "fares": [
      {
       "city": "런던",
@@ -126,50 +131,32 @@
     "code": null,
     "conditions": [
      "홈페이지·모바일 회원 로그인",
-     "일반석 스탠다드만 (예약등급 T 제외)",
-     "인천 출발 편도/왕복",
-     "공동운항편·다구간·마일리지 제외"
+     "인천 출발만",
+     "예약등급 T 제외",
+     "다구간·공동운항·마일리지 항공권 제외"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/aus2610?pageNum=1"
    },
    "plan": [
     {
-     "slug": "brisbane",
+     "slug": "sydney",
      "pct": 10,
      "region": "호주",
-     "google": 1374700,
+     "google": 1417900,
      "out": "2026-11-17",
      "back": "2026-11-26"
     },
     {
-     "slug": "sydney",
+     "slug": "brisbane",
      "pct": 10,
      "region": "호주",
-     "google": 1418200,
+     "google": 1549600,
      "out": "2026-11-17",
      "back": "2026-11-26"
     }
    ],
    "est": [
-    {
-     "slug": "brisbane",
-     "city": "브리즈번",
-     "cc": "au",
-     "region": "호주",
-     "out": "2026-11-17",
-     "back": "2026-11-26",
-     "price": 4794700,
-     "src": "sky",
-     "url": "https://www.skyscanner.co.kr/transport/flights/sela/bne/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
-     "pct": 10,
-     "onFare": true,
-     "fuel": 453600,
-     "tax": 118000,
-     "fare": 4223100,
-     "discount": 422300,
-     "final": 4372400
-    },
     {
      "slug": "sydney",
      "city": "시드니",
@@ -177,16 +164,34 @@
      "region": "호주",
      "out": "2026-11-17",
      "back": "2026-11-26",
-     "price": 1372400,
+     "price": 1372100,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/syd/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 10,
      "onFare": true,
      "fuel": 644000,
      "tax": 118000,
-     "fare": 610400,
+     "fare": 610100,
      "discount": 61000,
-     "final": 1311400
+     "final": 1311100
+    },
+    {
+     "slug": "brisbane",
+     "city": "브리즈번",
+     "cc": "au",
+     "region": "호주",
+     "out": null,
+     "back": null,
+     "price": 1549600,
+     "src": "google",
+     "url": "https://www.skyscanner.co.kr/transport/flights/sela/bne/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
+     "pct": 10,
+     "onFare": true,
+     "fuel": 453600,
+     "tax": 118000,
+     "fare": 978000,
+     "discount": 97800,
+     "final": 1451800
     }
    ]
   },
@@ -237,10 +242,10 @@
     "how": "결제 화면에서 쿠폰 발급 클릭",
     "code": null,
     "conditions": [
-     "홈페이지/모바일 로그인 회원",
+     "홈페이지·모바일 회원 로그인",
+     "인천 출발 프라하행",
      "일반석 스탠다드만 (왕복은 양편 모두)",
-     "마일리지·다구간·공동운항편 제외",
-     "타 쿠폰 중복 불가"
+     "마일리지·다구간·공동운항 제외"
     ],
     "fares": [],
     "url": "https://www.koreanair.com/contents/promotion/list/2026/prg2026?pageNum=1"
@@ -324,13 +329,13 @@
      }
     ],
     "on": "운임",
-    "how": "로그인 후 항공권 조회 화면 왼쪽 하단 프로모션 코드 버튼에서 코드 입력",
+    "how": "홈페이지 로그인 후 항공권 조회 화면 왼쪽 하단 프로모션 코드 버튼에 코드 입력",
     "code": "BLKFRIGO",
     "conditions": [
      "에어프레미아 회원 로그인",
-     "11월 2일 10:00 오픈, 평일 10시 특가석 추가",
+     "11월 2일 10:00 오픈",
      "에어프레미아 쿠폰과 중복 불가",
-     "일부 일자·운임은 코드 적용 제한"
+     "탑승 기간에 따라 할인율 상이"
     ],
     "fares": [
      {
@@ -405,16 +410,16 @@
      "region": "미국",
      "out": "2026-11-17",
      "back": "2026-11-26",
-     "price": 1124700,
+     "price": 1123500,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 72,
      "onFare": true,
      "fuel": 644000,
      "tax": 93000,
-     "fare": 387700,
-     "discount": 279100,
-     "final": 845600
+     "fare": 386500,
+     "discount": 278300,
+     "final": 845200
     }
    ]
   },
@@ -526,7 +531,7 @@
       "cities": [],
       "pct": 3,
       "amount": null,
-      "cabin": "일반석"
+      "cabin": "이코노미"
      },
      {
       "region": "유럽",
@@ -540,7 +545,7 @@
       "cities": [],
       "pct": 7,
       "amount": null,
-      "cabin": "일반석"
+      "cabin": "이코노미"
      },
      {
       "region": "호주",
@@ -554,7 +559,7 @@
       "cities": [],
       "pct": 7,
       "amount": null,
-      "cabin": "일반석"
+      "cabin": "이코노미"
      },
      {
       "region": "캐나다",
@@ -568,23 +573,23 @@
       "cities": [],
       "pct": null,
       "amount": 15000,
-      "cabin": "30만원 이상 결제"
+      "cabin": "30만원 이상 결제 쿠폰"
      },
      {
       "region": "전 노선",
       "cities": [],
       "pct": null,
       "amount": 30000,
-      "cabin": "60만원 이상 결제"
+      "cabin": "60만원 이상 결제 쿠폰"
      }
     ],
     "on": "총액",
-    "how": "할인 코드 OCT26 입력, 금액 쿠폰은 다운로드 후 결제 시 적용",
+    "how": "할인 코드 입력 또는 쿠폰 다운로드 후 결제 시 적용",
     "code": "OCT26",
     "conditions": [
      "공식 홈페이지·앱 예매만",
-     "쿠폰 회원 ID당 1회",
-     "타 쿠폰 중복 불가",
+     "쿠폰은 회원 ID당 1회",
+     "쿠폰 중복 사용 불가",
      "성수기 등 쿠폰 제외 기간 있음"
     ],
     "fares": [],
@@ -595,7 +600,7 @@
      "slug": "barcelona",
      "pct": 3,
      "region": "유럽",
-     "google": 961503,
+     "google": 960976,
      "out": "2026-11-17",
      "back": "2026-11-26"
     },
@@ -611,7 +616,7 @@
      "slug": "sydney",
      "pct": 7,
      "region": "호주",
-     "google": 1157254,
+     "google": 1156512,
      "out": "2026-11-17",
      "back": "2026-11-26"
     },
@@ -619,7 +624,7 @@
      "slug": "vancouver",
      "pct": 7,
      "region": "캐나다",
-     "google": 921289,
+     "google": 920194,
      "out": "2026-11-17",
      "back": "2026-11-26"
     }
@@ -632,16 +637,16 @@
      "region": "유럽",
      "out": null,
      "back": null,
-     "price": 961503,
+     "price": 960976,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/bcn/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 3,
      "onFare": false,
      "fuel": 644000,
      "tax": 88000,
-     "fare": 961503,
+     "fare": 960976,
      "discount": 28800,
-     "final": 932703
+     "final": 932176
     },
     {
      "slug": "paris",
@@ -668,16 +673,16 @@
      "region": "호주",
      "out": "2026-11-17",
      "back": "2026-11-26",
-     "price": 1088700,
+     "price": 1192200,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/syd/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 7,
      "onFare": false,
      "fuel": 644000,
      "tax": 118000,
-     "fare": 1088700,
-     "discount": 76200,
-     "final": 1012500
+     "fare": 1192200,
+     "discount": 83500,
+     "final": 1108700
     },
     {
      "slug": "vancouver",
@@ -686,16 +691,16 @@
      "region": "캐나다",
      "out": null,
      "back": null,
-     "price": 921289,
+     "price": 920194,
      "src": "google",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/yvr/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 7,
      "onFare": false,
      "fuel": 644000,
      "tax": 98000,
-     "fare": 921289,
-     "discount": 64500,
-     "final": 856789
+     "fare": 920194,
+     "discount": 64400,
+     "final": 855794
     }
    ]
   },
@@ -729,13 +734,13 @@
      }
     ],
     "on": "운임",
-    "how": "신규 회원 가입 후 항공권 검색 화면 하단 프로모션 코드 버튼에서 코드 입력",
+    "how": "항공권 검색 후 화면 하단 프로모션 코드 버튼에서 코드 입력",
     "code": "WELCOMEV",
     "conditions": [
-     "에어프레미아 신규 회원 가입",
+     "신규 회원 가입",
      "가입일로부터 14일 이내 사용",
      "에어프레미아 쿠폰과 중복 불가",
-     "일부 일자·운임은 코드 사용 불가"
+     "일부 일자·운임 적용 불가"
     ],
     "fares": [],
     "url": "https://www.airpremia.com/event/promotionDetail?detailId=370"
@@ -784,16 +789,16 @@
      "region": "전 노선",
      "out": "2026-11-17",
      "back": "2026-11-26",
-     "price": 1124700,
+     "price": 1123500,
      "src": "sky",
      "url": "https://www.skyscanner.co.kr/transport/flights/sela/lax/261117/261126/?adultsv2=1&cabinclass=economy&rtn=1",
      "pct": 5,
      "onFare": true,
      "fuel": 644000,
      "tax": 93000,
-     "fare": 387700,
-     "discount": 19400,
-     "final": 1105300
+     "fare": 386500,
+     "discount": 19300,
+     "final": 1104200
     }
    ]
   }
