@@ -94,6 +94,7 @@
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .chip{font-size:11px;font-weight:700;padding:3px 8px;background:var(--ink);color:var(--paper);font-variant-numeric:tabular-nums}
   .src{font-size:11px;color:var(--dim);margin-top:8px}
+  .ofrom{align-self:flex-start;font-size:11px;font-weight:700;color:var(--ink);margin-top:6px;border-bottom:1px solid currentColor;text-decoration:none}
   .forme,.tr{margin-top:10px;font-size:13px;font-weight:600;line-height:1.5;border-top:1px solid var(--line);padding-top:9px}
   .forme::before,.tr::before{content:"바로 해보기 → ";font-size:10px;font-weight:800;letter-spacing:.1em}
   .rel{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--mut);margin-top:6px}
@@ -145,7 +146,8 @@
 
   /* 주워 담기 */
   .strip{display:grid;grid-auto-flow:column;grid-auto-columns:240px;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
-  .strip a{scroll-snap-align:start;min-width:0}
+  .strip a,.strip .pk{scroll-snap-align:start;min-width:0}
+  .strip .pk{display:flex;flex-direction:column}
   .strip .img{aspect-ratio:1.91/1;border:1px solid var(--line)}
   .strip .tt{font-size:13px;font-weight:700;margin-top:8px;line-height:1.35}
   .strip .tag{margin-top:6px}
@@ -285,6 +287,7 @@
       + (it.why?'<div class="why"><b>이게 돼서</b> · '+esc(it.why)+'</div>':'') + chips(it.chips)
       + (it.forMe?'<div class="forme">'+esc(it.forMe)+'</div>':'')
       + (it.source?'<div class="src">'+esc(it.source)+'</div>':'')
+      + ofrom(it.from)
       + '</div></div>';
   }
 
@@ -323,7 +326,12 @@
       + '<button class="og">'+(p.src==='x'?'원문 보기 ▾':'원문 펼치기 ▾')+'</button></div>'
       + '</div>' + (p.src==='x' ? '<div class="emb"></div>' : '') + '</div>';
   }
+  // 원문 = 처음 발견한 글(X·Threads 등). 제품 주소(url)와 다를 때만 루틴이 from 을 채움
+  function ofrom(f){
+    return (f && f.url) ? '<a class="ofrom" href="'+esc(f.url)+'" target="_blank" rel="noopener">원문 · '+esc(f.label||host(f.url))+' ↗</a>' : '';
+  }
   function pick(p){
+    if (p.from && p.from.url) return '<div class="pk">'+pick(Object.assign({}, p, {from:null}))+ofrom(p.from)+'</div>';
     return '<a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+media(p.image, CATL[p.cat], p.watching?'<span class="watch">지켜보는 중</span>':'', p.url)
       + '<div class="tt">'+esc(p.title)+'</div><span class="tag">'+esc(CATL[p.cat]||'')+'</span></a>';
   }

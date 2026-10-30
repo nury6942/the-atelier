@@ -49,6 +49,7 @@ cards 5개는 한 카테고리가 3개를 넘지 않게 섞는다.
 - `chips` 숫자만 짧게. 달러면 원화 병기: `월 $3k · 약 410만 원` (환율은 그날 대략값).
 - `new` 최대 3개, 각 10자 이내 태그: 이전 버전 대비 진짜 새로 된 것만(공식 출처로 확인). 예 `4K 출력`, `영상 2배 길이`.
 - `reviews` 각 `say` 34자 이내로 풀어 쓴 요약(긴 인용 금지), `who`(X @handle / r/서브 / HN / 채널명), `url`(그 글 바로가기), `tone`(`good`|`bad`). 사람·글을 지어내지 않는다.
+- `from` (cards·pickup, 2026-10-30 누리: "눌러서 원문으로도 가고 싶다"): `{label: "X @handle · ♥숫자", url}` — 이걸 **처음 발견한 글**(X·Threads·Reddit·HN 등) 바로가기. `url` 은 제품 주소(GitHub·사이트) 그대로 두고, 발견한 글이 제품 주소와 다를 때만 넣는다. 실제로 본 글만, 지어내지 않는다. 없으면 필드를 뺀다.
 - `forMe` 는 **진짜 걸릴 때만** — 누리의 MLB 캐드·프린트·저지, Atelier, VectorCraft, 자동화, 이직 포트폴리오. 없으면 필드를 빼라.
 - 기술 용어는 풀어서. 이모지 쓰지 않는다.
 
@@ -86,7 +87,7 @@ cards 5개는 한 카테고리가 3개를 넘지 않게 섞는다.
       "new": ["4K 출력", "4:1 배너"],
       "reviews": [{"say": "옷 디테일이 안 무너짐", "who": "X @handle", "url": "…", "tone": "good"},
                   {"say": "한글 글자는 여전히 깨짐", "who": "r/StableDiffusion", "url": "…", "tone": "bad"}],
-      "why": "…", "chips": ["…"], "forMe": "(선택)"
+      "why": "…", "chips": ["…"], "forMe": "(선택)", "from": {"label": "X @handle · ♥1,200", "url": "…"}
     },
     {"cat": "money", "title": "…", "url": "…", "image": null, "source": "…", "how": "…", "chips": ["월 $3k · 약 410만 원"]}
   ],
@@ -97,7 +98,7 @@ cards 5개는 한 카테고리가 3개를 넘지 않게 섞는다.
       {"text": "결과 저장"}
     ]}
   ],
-  "pickup": [{"cat": "free", "title": "18자 이내", "url": "…", "image": "…", "source": "…", "watching": false}],
+  "pickup": [{"cat": "free", "title": "18자 이내", "url": "…", "image": "…", "source": "…", "from": {"label": "Threads @handle · ♥18", "url": "…"}, "watching": false}],
   "watching": [{"name": "…", "url": "…", "date": "2026-10-14"}]
 }
 ```
