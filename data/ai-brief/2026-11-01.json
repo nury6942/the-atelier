@@ -7,7 +7,7 @@
    "cat": "tool",
    "title": "에이전트가 내 컴퓨터 앱을 직접 누른다",
    "url": "https://github.com/vercel-labs/agent-desktop",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/vercel-labs/agent-desktop",
    "source": "GitHub vercel-labs · v1.0.2 · Apache-2.0",
    "how": "화면 캡처 대신 앱의 버튼 구조를 읽어 조작",
    "chips": [
@@ -25,7 +25,7 @@
    "cat": "vibe",
    "title": "웹소설 쓰기 전 과정을 스킬로 쪼갰다",
    "url": "https://github.com/zenstory-ai/oh-story-claudecode",
-   "image": null,
+   "image": "https://opengraph.githubassets.com/1/zenstory-ai/oh-story-claudecode",
    "source": "GitHub zenstory-ai · MIT · X @dopamine_crypto ♥248",
    "how": "랭킹 분석→집필→AI 티 빼기→표지 순서",
    "chips": [
@@ -43,14 +43,14 @@
    "cat": "hack",
    "title": "AI 영상은 720p로, 좋은 컷만 키우기",
    "url": "https://x.com/VibeEverything/status/2116431161887203760",
-   "image": null,
+   "image": "https://pbs.twimg.com/amplify_video_thumb/2116424834041405440/img/NWFspPkFFjmh9lpc.jpg",
    "source": "X @VibeEverything · ♥395",
    "how": "싼 화질로 뽑고 프레임 캡처 → 이미지 업스케일",
    "examples": [
     {
      "title": "720p 영상에서 건진 프레임 시연",
      "url": "https://x.com/VibeEverything/status/2116431161887203760",
-     "image": null
+     "image": "https://pbs.twimg.com/amplify_video_thumb/2116424834041405440/img/NWFspPkFFjmh9lpc.jpg"
     }
    ],
    "chips": [
@@ -137,7 +137,7 @@
    "cat": "release",
    "title": "비개발자가 고치는 리플릿 에이전트",
    "url": "https://alphasignal.ai/news/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production",
-   "image": null,
+   "image": "https://api.alphasignal.ai/api/news/preview/replit-s-cloud-agents-let-non-engineers-ship-250-000-lines-to-production/v2/card.jpg",
    "source": "AlphaSignal · 10-27 · 디자인팀 6개월 25만 줄",
    "watching": true
   },
@@ -161,7 +161,7 @@
    "cat": "tool",
    "title": "미스트랄 Large 4, 독립 32위",
    "url": "https://www.vals.ai/models/mistralai_mistral-large-4",
-   "image": null,
+   "image": "https://www.vals.ai/og/models/mistralai_mistral-large-4.png",
    "source": "Vals AI · 44개 중 32위 · 48.05%",
    "watching": false
   },
@@ -169,7 +169,7 @@
    "cat": "free",
    "title": "HyperFrames 클로드 커넥터",
    "url": "https://claude.com/connectors/hyperframes-heygen",
-   "image": null,
+   "image": "https://assets.claude.com/f66071070c4701ea2c37fc01b3c0f83623cf29d3.jpg?w=2400&h=1260&fit=crop",
    "source": "HeyGen · HTML로 모션 영상 · 별 7.6만",
    "from": {
     "label": "Threads @jk_shin81 · ♥195",
@@ -181,7 +181,7 @@
    "cat": "tool",
    "title": "shunt 해설과 한계",
    "url": "https://byteiota.com/spotifys-shunt-plugin-cuts-claude-code-tokens-90/",
-   "image": null,
+   "image": "https://byteiota.com/wp-content/uploads/2026/09/featured-image-96.jpg",
    "source": "byteiota · 350줄 넘는 파일만 넘김",
    "watching": false
   }
